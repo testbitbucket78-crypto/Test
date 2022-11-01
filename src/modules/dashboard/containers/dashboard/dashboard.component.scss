@@ -1,0 +1,19 @@
+@import 'styles/variables.scss';
+
+  .box{
+       background: white;
+    margin: 10px 5px;
+    text-align: center;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+    padding: 30px;
+
+}
+
+ .box h4{
+      font-size: 20px;
+    font-weight: 400;
+}
+
+section{
+	    margin: 50px auto;
+}
