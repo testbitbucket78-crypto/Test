@@ -10,7 +10,7 @@ export const sideNavSections: SideNavSection[] = [
     //     items: ['layouts', 'pages'],
     // },
     {
-        items: ['Contacts', 'teambox', 'campaings', 'automation', 'reports'],
+        items: ['Contacts', 'teambox', 'campaings', 'automation', 'reports','setting'],
     },
 ];
 
@@ -63,26 +63,31 @@ export const sideNavItems: SideNavItems = {
     Contacts: {
         // icon: 'table',
         text: 'Contacts',
-        link: '/',
+        link: '/dashboard/contacts',
     },
     teambox: {
         // icon: 'table',
         text: 'Teambox',
-        link: '/',
+        link: '/dashboard/teambox',
     },
       campaings: {
         // icon: 'table',
         text: 'Campaings',
-        link: '/',
+        link: '/dashboard/campaings',
     },
       automation: {
         // icon: 'table',
         text: 'Automation',
-        link: '/',
+        link: '/dashboard/automation',
     },
       reports: {
         // icon: 'table',
         text: 'Repots',
-        link: '/',
+        link: '/dashboard/repots',
+    },
+     setting: {
+        // icon: 'table',
+        text: 'Setting',
+        link: '/dashboard/setting',
     },
 };

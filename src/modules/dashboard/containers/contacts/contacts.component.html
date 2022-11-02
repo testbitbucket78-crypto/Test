@@ -1,0 +1,60 @@
+<sb-layout-dashboard><sb-dashboard-head title="Contacts" [hideBreadcrumbs]="true"></sb-dashboard-head>
+<div class="row">
+	<div class="col-md-8">
+		<button class="btn btn-primary btn-block col-md-2"><i class="fa fa-filter"></i> Filter</button>
+	</div>
+	<div class="col-md-2">
+		<button class="btn btn-primary btn-block float-right"><i class="fa fa-download"></i> Export Contact</button>
+	</div>
+	<div class="col-md-2">
+		<button class="btn btn-primary btn-block float-right"><i class="fa fa-download"></i> Uploade/Import</button>
+	</div>
+</div>
+<div class="row mt-3 mb-3">
+	<div class="col-md-5">
+	</div>
+	<div class="col-md-5">
+     <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 col-12">
+        <div class="input-group">
+            <input class="form-control" type="text" placeholder="Search form Name, Phone Number and Email" aria-label="Search" aria-describedby="basic-addon2" />
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
+            </div>
+        </div>
+    </form>
+
+	</div>
+	<div class="col-md-2">
+		<button class="btn btn-primary btn-block float-right"><i class="fa fa-plus"></i> Add Contact</button>
+	</div>
+</div>
+
+
+
+	<table class="table table-striped">
+	<thead>
+		<tr>
+			<th scope="col"><input type="checkbox" name=""></th>
+			<th scope="col">Sr. No</th>
+			<th scope="col">Name</th>
+			<th scope="col">Phone Number</th>
+			<th scope="col">Email </th>
+			<th scope="col">Action </th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row"><input type="checkbox" name=""></th>
+			<td>1</td>
+			<td>sample</td>
+			<td>123456</td>
+			<td>gmail.com</td>
+			<td></td>
+		</tr>
+	</tbody>
+</table>
+
+
+
+<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
+ --></sb-layout-dashboard>

@@ -28,42 +28,25 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.DashboardComponent,
     },
-    // {
-    //     path: 'static',
-    //     data: {
-    //         title: 'Dashboard Static - SB Admin Angular',
-    //         breadcrumbs: [
-    //             {
-    //                 text: 'Dashboard',
-    //                 link: '/dashboard',
-    //             },
-    //             {
-    //                 text: 'Static',
-    //                 active: true,
-    //             },
-    //         ],
-    //     } as SBRouteData,
-    //     canActivate: [],
-    //     component: dashboardContainers.StaticComponent,
-    // },
-    // {
-    //     path: 'light',
-    //     data: {
-    //         title: 'Dashboard Light - SB Admin Angular',
-    //         breadcrumbs: [
-    //             {
-    //                 text: 'Dashboard',
-    //                 link: '/dashboard',
-    //             },
-    //             {
-    //                 text: 'Light',
-    //                 active: true,
-    //             },
-    //         ],
-    //     } as SBRouteData,
-    //     canActivate: [],
-    //     component: dashboardContainers.LightComponent,
-    // },
+     {
+        path: 'contacts',
+        data: {
+            title: 'contacts',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'contacts',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ContactsComponent,
+    },
+
 ];
 
 @NgModule({
