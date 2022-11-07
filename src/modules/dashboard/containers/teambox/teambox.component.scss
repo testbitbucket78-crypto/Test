@@ -1,0 +1,54 @@
+.teamnav {
+/*  flex-wrap: unset!important;
+*/  border: 0;
+}
+.teamnav .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    border: 0;
+}
+.chatbox-data .mess {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+.num {
+    background: blue;
+    color: #fff;
+    padding: 5px;
+    border-radius: 50%;
+    margin-left: 2px;
+}
+.list_chat{
+	list-style-type: none;
+	padding: 0;
+}
+.list_chat li{
+display: flex;
+}
+.wpImg img , .headingset img{
+    width: 40px;
+    border-radius: 50%;
+}
+.profile img{
+	 width: 100px;
+    border-radius: 50%;
+}
+.wpImg{
+    margin: auto;}
+.wpDetail{
+	padding: 5px;
+}
+.border-bottom{
+	border-bottom: 1px;
+}
+.border-right{
+	border-right: 1px;
+}
+.chatboxproimg img{
+	width: 40px;
+	border-radius: 50%;
+}
+.chatbox-data{
+	height: 300px;
+	border-bottom: 1px;
+}

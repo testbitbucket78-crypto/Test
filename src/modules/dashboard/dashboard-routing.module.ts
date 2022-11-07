@@ -47,6 +47,43 @@ export const ROUTES: Routes = [
         component: dashboardContainers.ContactsComponent,
     },
 
+     {
+        path: 'teambox',
+        data: {
+            title: 'teambox',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'teambox',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.TeamboxComponent,
+    },
+ {
+        path: 'import',
+        data: {
+            title: 'Import Contact',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Import Contact',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ImportComponent,
+    },
+
 ];
 
 @NgModule({
