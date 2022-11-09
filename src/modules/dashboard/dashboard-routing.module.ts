@@ -83,6 +83,114 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.ImportComponent,
     },
+     {
+        path: 'campaigns',
+        data: {
+            title: 'Campaigns',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Campaigns',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.CampaignsComponent,
+    },
+     {
+        path: 'automation',
+        data: {
+            title: 'Automation',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Automation',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.AutomationComponent,
+    },
+  {
+        path: 'reports',
+        data: {
+            title: 'Reports',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Reports',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ReportsComponent,
+    },
+    {
+        path: 'message',
+        data: {
+            title: 'Message',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Message',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.MessageComponent,
+    },
+      {
+        path: 'campaignReport',
+        data: {
+            title: 'Campaign Report',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Campaign Report',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.CampaignReportComponent,
+    },
+     {
+        path: 'schedule',
+        data: {
+            title: 'Schedule',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Schedule',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ScheduleComponent,
+    },
 
 ];
 

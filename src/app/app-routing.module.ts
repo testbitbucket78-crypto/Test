@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-    {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: '/dashboard',
-    },
+    // {
+    //     path: '',
+    //     pathMatch: 'full',
+    //     redirectTo: '/dashboard',
+    // },
     {
         path: 'dashboard',
         loadChildren: () =>
@@ -15,7 +15,7 @@ const routes: Routes = [
             ),
     },
     {
-        path: 'auth',
+        path: '',
         loadChildren: () =>
             import('modules/auth/auth-routing.module').then(m => m.AuthRoutingModule),
     },

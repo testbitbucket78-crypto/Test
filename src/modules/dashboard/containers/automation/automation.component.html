@@ -1,0 +1,56 @@
+<sb-layout-dashboard><sb-dashboard-head title="Automation/ Funnels" [hideBreadcrumbs]="true"></sb-dashboard-head>
+<div class="row mt-3 mb-3">
+	<div class="col-md-10"></div>
+	<div class="col-md-2">
+		<button class="btn btn-primary btn-block float-right"  (click)="addfunnel()"><i class="fa fa-plus"></i> Add New Funnel</button>
+	</div>
+</div>
+
+	<form class="funnel" id="funnel" style="display: none;">
+		<h4>Add New Funnel</h4>
+		<div class="row">
+			<div class="form-group col-md-5">
+			 	<label class="small mb-1"><b>Name</b></label>
+			 	<input class="form-control py-4" type="text" placeholder="Enter Name" />
+			 </div>
+			 <div class="form-group col-md-5">
+			 	<label class="small mb-1"><b>Description</b></label>
+			 	<input class="form-control py-4" type="text" placeholder="Enter Description" />
+			 </div>
+			 	<div class="col-md-2">
+			<button type="button" class="btn btn-primary" (click)="add()">ADD</button>
+		</div>
+	</div>
+
+			 
+		</form>
+
+	<table class="table table-striped">
+	<thead>
+		<tr>
+			<th scope="col">#</th>
+			<th scope="col">Subscribers</th>
+			<th scope="col">Message</th>
+			<th scope="col">Status</th>
+			<th scope="col">Action </th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>1</td>
+			<td>
+				<button class="btn-primary"><i class="fa fa-user"></i> 2</button>
+			</td>
+			<td>
+				<div class="round-mess">1</div>
+			</td>
+			<td>status</td>
+			<td>
+				<a href="" class="action"><i class="fa fa-trash-o"></i></a>
+				<a routerLink="/dashboard/message" class="action"><i class="fa fa-copy"></i></a>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+
