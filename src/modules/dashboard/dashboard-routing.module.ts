@@ -192,6 +192,25 @@ export const ROUTES: Routes = [
         component: dashboardContainers.ScheduleComponent,
     },
 
+ {
+        path: 'scheduleView',
+        data: {
+            title: 'scheduleView',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'scheduleView',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ScheduleViewComponent,
+    },
+
 ];
 
 @NgModule({

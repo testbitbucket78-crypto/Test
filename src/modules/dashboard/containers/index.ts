@@ -8,9 +8,10 @@ import { ReportsComponent } from './reports/reports.component';
 import { MessageComponent } from './message/message.component';
 import { CampaignReportComponent } from './campaignReport/campaignReport.component';
 import { ScheduleComponent } from './schedule/schedule.component';
+import { ScheduleViewComponent } from './scheduleView/scheduleView.component';
 
 
-export const containers = [DashboardComponent,ContactsComponent,TeamboxComponent,ImportComponent,CampaignsComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent];
+export const containers = [DashboardComponent,ContactsComponent,TeamboxComponent,ImportComponent,CampaignsComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './contacts/contacts.component';
@@ -22,4 +23,5 @@ export * from './reports/reports.component';
 export * from './message/message.component';
 export * from './campaignReport/campaignReport.component';
 export * from './schedule/schedule.component';
+export * from './scheduleView/scheduleView.component';
 
