@@ -21,7 +21,7 @@ export const sideNavItems: SideNavItems = {
         text: 'Campaings',
         submenu: [
         {
-                        text: 'Campaings List',
+                        text: 'Running',
                         link: '/dashboard/campaigns',
                     },
                  {
@@ -29,11 +29,11 @@ export const sideNavItems: SideNavItems = {
                         link: '/dashboard/compose',
                     },
                     {
-                        text: 'Scheduled',
+                        text: 'Schedule',
                         link: '/dashboard/schedule',
                     },
                  {
-                        text: 'Reports',
+                        text: 'Summary',
                         link: '/dashboard/campaignReport',
                     },
                    

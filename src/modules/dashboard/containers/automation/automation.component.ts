@@ -21,5 +21,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
 		 (<HTMLInputElement>document.getElementById("funnel")).style.display = "none";  
 	}
 
+	opensubcribe(subcribe:any) {
+		this.modalService.open(subcribe);
+	}
 
 }

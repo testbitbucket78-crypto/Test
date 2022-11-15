@@ -14,7 +14,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
     ngOnInit() {
 
 }
-	
+	openmenu(menu:any) {
+		this.modalService.open(menu);
+	}
 
 
 }

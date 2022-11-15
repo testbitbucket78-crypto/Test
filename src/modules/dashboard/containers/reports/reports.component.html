@@ -1,4 +1,213 @@
 <sb-layout-dashboard><sb-dashboard-head title="Reports" [hideBreadcrumbs]="true"></sb-dashboard-head>
+<div class="row mb-3">
+		   <form class="d-none d-md-inline-block form-inline">
+        <div class="input-group">
+            <input class="form-control" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
+            </div>
+        </div>
+    </form>
+
+    		<button class="btn btn-primary btn-block col-md-1 ml-1 mr-3 text-center" (click)="opens(contents)"><i class="fa fa-filter"></i> Today</button>
+    		 <p class="m-auto">  | Today Count:786</p>
+    		           <button class="btn btn-warning col-md-1 float-right">Export</button>    	
+    	</div>
+
+    <div class="row">
+        <select class="form-control col-md-3 mr-2" >
+            <option selected>June 2,2022 -June 24,2022</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+          </select>
+          <select class="form-control col-md-3 mr-2" >
+            <option selected>Categories</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+          </select>
+          <select class="form-control col-md-3 mr-2" >
+            <option selected>Teams</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+          </select>
+          <select class="form-control col-md-2 mr-1" >
+            <option selected>User</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+          </select>
+          <button class="btn btn-danger">Clear</button>    	
+    </div>
+
+<div class="row mt-5">
+	<div class=" col-md-6 bg-gray mr-5">
+     <h4>Converrstion</h4>
+     
+        <canvas id="myChart" height="200px"></canvas> 
+		
+	</div>
+	<div class=" col-md-5 bg-gray ml-4">
+		   <h4>Automation</h4>
+      <div class="row justify-content-center mb-3"> 
+		   <div class="col-md-4 border-box">
+                <h6>00.00%</h6>
+                <h6>Automation</h6>
+         </div>
+		     </div>
+
+		     <div class="row justify-content-center mb-3"> 
+		   <div class="col-md-5 border-box mr-3">
+                <h6>00.00%</h6>
+                <h6>Handled by bot</h6>
+         </div>
+          <div class="col-md-5 border-box">
+                <h6>00.00%</h6>
+                <h6>Handled by agent</h6>
+         </div>
+		     </div>
+              <div class="row justify-content-center"> 
+		   <div class="col-md-6 border-box">
+               <h6>Channel wise Automation</h6>
+                <div class="sum d-flex">
+                <p class="col-md-11">Whatsapp Official</p> <h6>00</h6>
+            </div>
+            <div class="sum d-flex">
+                <p class="col-md-11">Whatsapp Web</p> <h6>00</h6>
+            </div>
+         </div>
+		     </div>
+	</div>
+	
+</div>
+
+
+    <div class="row mt-5 mb-5">
+	<div class="col-12">
+		<h4>Campaigns</h4>
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-2">
+			<h1>0 </h1>
+		</div>
+		<div class="col-10 m-auto">
+				<h3>Total</h3>	
+		</div>
+	</div>
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-2">
+			<h1>0 </h1>
+		</div>
+		<div class="col-10 m-auto">
+				<h3>Failed</h3>	
+		</div>
+	</div>
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-2">
+			<h1>0 </h1>
+		</div>
+		<div class="col-10 m-auto">
+				<h3>Pending</h3>	
+		</div>
+	</div>
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-2">
+			<h1>0 </h1>
+		</div>
+		<div class="col-10 m-auto">
+				<h3>Scheduled</h3>	
+		</div>
+	</div>
+	</div>
+	
+
+</div>
+  <button class="btn btn-warning mb-3 float-right"><i class="fa fa-download"></i>Download</button> 
+    <button class="btn btn-warning mb-3 mr-3 float-right" (click)="opend(detail)"><i class="fa fa-table"></i>Detail Report</button>    
+   
+
+   <ng-template #detail let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Caompaign Details</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+
+	   <form class="row mb-3">
+        <div class="input-group col-md-6">
+            <input class="form-control" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
+            </div>
+        </div>
+         <select class="form-control col-md-6" >
+            <option selected>All</option>
+          </select>
+    </form>
+
+	<table class="table table-striped">
+	<thead>
+		<tr>
+			<th scope="col">Message ID</th>
+			<th scope="col">Number</th>
+			<th scope="col">Status</th>
+			<th scope="col">Submited Time </th>
+			<th scope="col">Delivered Time </th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>1</td>
+			<td>8</td>
+			<td>read</td>
+			<td>01-02-22</td>
+			<td></td>
+		</tr>
+	</tbody>
+</table>
+	</div>
+	<div class="modal-footer row popfooter">
+		<div class="col-md-6">
+		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Clear</button>
+	</div>
+	<div class="col-md-6 text-right">
+			<button type="button" class="btn btn-success" (click)="c('Save click')">Download</button>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #contents let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Filter</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<form>
+			<div class="form-group">
+           <input type="checkbox" name=""> Scheduled
+        </div>
+			<div class="form-group">
+				<label>Select</label>
+           <select class="form-control">
+           	<option>Today</option>
+           </select>
+        </div>
+		</form>
+	</div>
+	<div class="modal-footer row popfooter">
+		<div class="col-md-6">
+		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Clear</button>
+	</div>
+	<div class="col-md-6 text-right">
+			<button type="button" class="btn btn-success" (click)="c('Save click')">Apply</button>
+		</div>
+	</div>
+</ng-template>
 
 <!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
  --></sb-layout-dashboard>

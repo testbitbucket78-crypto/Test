@@ -39,13 +39,29 @@
 		<tr>
 			<td>1</td>
 			<td>
-				<button class="btn-primary"><i class="fa fa-user"></i> 2</button>
+				<button class="btn-primary" (click)="opensubcribe(subcribe)"><i class="fa fa-user"></i> 2</button>
 			</td>
 			<td>
 				<div class="round-mess">1</div>
 			</td>
 			<td>status</td>
 			<td>
+				<a href="" class="action"><i class="fa fa-edit"></i></a>
+				<a href="" class="action"><i class="fa fa-trash-o"></i></a>
+				<a routerLink="/dashboard/message" class="action"><i class="fa fa-copy"></i></a>
+			</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td>
+				<button class="btn-primary" (click)="opensubcribe(subcribe)"><i class="fa fa-user"></i> 12</button>
+			</td>
+			<td>
+				<div class="round-mess">31</div>
+			</td>
+			<td>status</td>
+			<td>
+				<a href="" class="action"><i class="fa fa-edit"></i></a>
 				<a href="" class="action"><i class="fa fa-trash-o"></i></a>
 				<a routerLink="/dashboard/message" class="action"><i class="fa fa-copy"></i></a>
 			</td>
@@ -53,4 +69,36 @@
 	</tbody>
 </table>
 
+<ng-template #subcribe let-c="close" let-d="dismiss">
+	<div class="modal-header">
+				<h4 class="modal-title" id="modal-basic-title">Contact</h4>
+			<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+	</div>
+	<div class="modal-body text-center">
+		  <form class="d-none d-md-inline-block form-inline mb-3 col-12">
+        <div class="input-group">
+            <input class="form-control" type="text" placeholder="Search by name/mobile" aria-label="Search" aria-describedby="basic-addon2" />
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
+            </div>
+        </div>
+    </form>
+		<table class="table table-striped">
+	<tbody>
+		<tr>
+			<td><input type="checkbox" name=""></td>
+			<td>918699424667</td>
+		</tr>
+		<tr>
+			<td><input type="checkbox" name=""></td>
+			<td>918699424667</td>
+		</tr>
+	</tbody>
+</table>
+			<button type="button" class="btn btn-danger mr-3" (click)="c('Save click')">Remove</button>
+						<button type="button" class="btn btn-dark mr-3" (click)="c('Save click')">close</button>
+
+			<button type="button" class="btn btn-primary" (click)="c('Save click')">Insert</button>
+	</div>
+</ng-template>
 

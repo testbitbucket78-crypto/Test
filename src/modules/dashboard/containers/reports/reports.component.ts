@@ -6,6 +6,7 @@ import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./reports.component.scss']
 })
 export class ReportsComponent implements OnInit {
+
 constructor(config: NgbModalConfig, private modalService: NgbModal) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -14,7 +15,12 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
     ngOnInit() {
 
 }
-	
+	opens(contents:any) {
+		this.modalService.open(contents);
+	}
+	opend(detail:any) {
+		this.modalService.open(detail);
+	}
 
 
 }
