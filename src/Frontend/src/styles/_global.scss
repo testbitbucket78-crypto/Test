@@ -1,0 +1,33 @@
+// Global styling for this template
+
+html,
+body {
+  height: 100%;
+}
+
+// Set spacing on containers for page symmetry
+
+.container,
+.container-fluid {
+  padding-left: $grid-gutter-width;
+  padding-right: $grid-gutter-width;
+}
+
+
+#layoutAuthentication{
+	background-color:#f7f7f7;
+}
+.popfooter .col-md-6{
+	margin-left:0!important;
+	margin-right: 0!important;
+
+}
+
+.popfooter{
+
+	border-top:unset!important;
+
+}
+.modal-content{
+	margin-top: 5rem;
+}

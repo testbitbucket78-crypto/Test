@@ -37,4 +37,30 @@ app.get('/dashboard', function(req, res){
    res.send(data);
 });
 
+app.get('/Campaign', function(req, res){
+  var data = 
+
+
+    [
+      { "id": 1, "name": "xyz", "time": "10-7-2022", "channel": "Whatsapp web", "message": "ABC" },
+       { "id": 2, "name": "xyz", "time": "10-4-2022", "channel": "Whatsapp web", "message": "ABC" },
+        { "id": 3, "name": "xyz", "time": "13-7-2022", "channel": "Whatsapp web", "message": "ABC" }
+     
+    ]
+   res.send(data);
+});
+
+app.get('/automation', function(req, res){
+  var data = 
+
+
+    [
+      { "id": 1, "subscribers": "2", "status": "active", "message": "6" },
+       { "id": 2, "subscribers": "1", "status": "inactive", "message": "9" },
+        { "id": 3, "subscribers": "6", "status": "active", "message": "2" }
+     
+    ]
+   res.send(data);
+});
+
 app.listen(3000);
