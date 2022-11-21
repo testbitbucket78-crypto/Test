@@ -41,6 +41,7 @@
         "bs-stepper": "^1.7.0",
         "chart.js": "2.9.4",
         "jquery": "^3.6.1",
+        "nodemon": "^2.0.20",
         "object-hash": "2.0.3",
         "rxjs": "6.6.3",
         "tslib": "2.0.3",

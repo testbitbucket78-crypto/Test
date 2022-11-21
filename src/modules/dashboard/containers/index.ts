@@ -9,9 +9,12 @@ import { MessageComponent } from './message/message.component';
 import { CampaignReportComponent } from './campaignReport/campaignReport.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { ScheduleViewComponent } from './scheduleView/scheduleView.component';
+import { SettingComponent } from './setting/setting.component';
+import { GeneralsettingComponent } from './generalsetting/generalsetting.component';
+import { OrganizationComponent } from './organization/organization.component';
 
 
-export const containers = [DashboardComponent,ContactsComponent,TeamboxComponent,ImportComponent,CampaignsComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent];
+export const containers = [DashboardComponent,ContactsComponent,TeamboxComponent,ImportComponent,CampaignsComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './contacts/contacts.component';
@@ -24,4 +27,7 @@ export * from './message/message.component';
 export * from './campaignReport/campaignReport.component';
 export * from './schedule/schedule.component';
 export * from './scheduleView/scheduleView.component';
+export * from './setting/setting.component';
+export * from './generalsetting/generalsetting.component';
+export * from './organization/organization.component';
 

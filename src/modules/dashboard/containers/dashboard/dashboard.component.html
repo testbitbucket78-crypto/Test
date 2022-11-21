@@ -3,83 +3,43 @@
 <!-- <sb-dashboard-card col-md-3s></sb-dashboard-card col-md-3s><sb-dashboard-charts></sb-dashboard-charts><sb-dashboard-tables></sb-dashboard-tables>
  -->
  <section>
+
    <h4>Subscribers</h4>
+  
             <div class="row">
-                
-                    <div class="box col-md-3">
-                        <h4>Total Subscribers</h4>
-                        <span>0</span>
-                    </div>
-                    <div class="box col-md-3">
-                        <h4>Active Subscribers</h4>
-                        <span>0</span>
-                    </div>
-            
-                    <div class="box col-md-3">
-                        <h4>Active Subscribers</h4>
-                        <span>0</span>
-                    </div>
+                 <div *ngFor="let item of dashboard.Subscribers" class="box col-md-3">
+                        <h4>{{ item.title }}</h4>
+                        <span>{{ item.count }}</span>
+                 </div>
               
             </div>
       </section>
       <section>
             <h4>Interactions</h4>
             <div class="row">
-            	<div class="box col-md-3">
-                        <h4>Open Conversation</h4>
-                        <span>0</span>
-                    </div>
-                    <div class="box col-md-3">
-                        <h4>Closed Conversation</h4>
-                        <span>0</span>
-                    </div>
-            
-                    <div class="box col-md-3">
-                        <h4>Closed Conversation</h4>
-                        <span>0</span>
-                    </div>
+            	<div *ngFor="let item of dashboard.Interactions" class="box col-md-3">
+                        <h4>{{ item.title }}</h4>
+                        <span>{{ item.count }}</span>
+                 </div>
             </div>
         </section>
         <section>
             <h4>Campaigns</h4>
             <div class="row">
-            	<div class="box col-md-3">
-                    <h4>Scheduled Campaigns</h4>
-                    <span>0</span>
-                    </div>
-                    <div class="box col-md-3">
-                        <h4>Delivered Campaigns</h4>
-                        <span>0</span>
-                    </div>
-            
-                    <div class="box col-md-3">
-                        <h4>Pending Campaigns</h4>
-                        <span>0</span>
-                    </div>
-
-                    <div class="box col-md-3">
-                        <h4>Failed Campaigns</h4>
-                        <span>0</span>
-                    </div>
+            	<div *ngFor="let item of dashboard.Campaigns" class="box col-md-3">
+                        <h4>{{ item.title }}</h4>
+                        <span>{{ item.count }}</span>
+                 </div>
                 
             </div>
         </section>
         <section>
             <h4>Agents</h4>
             <div class="row">
-            		<div class="box col-md-3">
-                    <h4>Total Agents</h4>
-                    <span>0</span>
-                    </div>
-                    <div class="box col-md-3">
-                       <h4>Active Agents</h4>
-                       <span>0</span>
-                    </div>
-            
-                    <div class="box col-md-3">
-                        <h4>Inactive Agents</h4>
-                        <span>0</span>
-                    </div>
+            		<div *ngFor="let item of dashboard.Agents" class="box col-md-3">
+                        <h4>{{ item.title }}</h4>
+                        <span>{{ item.count }}</span>
+                 </div>
               
             </div>
         </section>

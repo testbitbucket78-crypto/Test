@@ -36,30 +36,15 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
-			<td>1</td>
+		<tr *ngFor="let item of automations; let i =index">
+			<td>{{i+1}}</td>
 			<td>
-				<button class="btn-primary" (click)="opensubcribe(subcribe)"><i class="fa fa-user"></i> 2</button>
+				<button class="btn-primary" (click)="opensubcribe(subcribe)"><i class="fa fa-user"></i> {{item.subscribers}}</button>
 			</td>
 			<td>
-				<div class="round-mess">1</div>
+				<div class="round-mess">{{item.message}}</div>
 			</td>
-			<td>status</td>
-			<td>
-				<a href="" class="action"><i class="fa fa-edit"></i></a>
-				<a href="" class="action"><i class="fa fa-trash-o"></i></a>
-				<a routerLink="/dashboard/message" class="action"><i class="fa fa-copy"></i></a>
-			</td>
-		</tr>
-		<tr>
-			<td>2</td>
-			<td>
-				<button class="btn-primary" (click)="opensubcribe(subcribe)"><i class="fa fa-user"></i> 12</button>
-			</td>
-			<td>
-				<div class="round-mess">31</div>
-			</td>
-			<td>status</td>
+			<td>{{item.status}}</td>
 			<td>
 				<a href="" class="action"><i class="fa fa-edit"></i></a>
 				<a href="" class="action"><i class="fa fa-trash-o"></i></a>

@@ -32,13 +32,13 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
+		<tr *ngFor="let item of RuningCampaigns; let i =index">
 			<th width="80"><input type="checkbox" name=""><a class="col-md-2" (click)="openmenu(menu)"><i class="fa fa-bars"></i></a></th>
-			<td>1</td>
-			<td>sample</td>
-			<td>123456</td>
-			<td>gmail.com</td>
-			<td>ABS</td>
+			<td>{{i+1}}</td>
+			<td>{{item.name}}</td>
+			<td>{{item.time}}</td>
+			<td>{{item.channel}}</td>
+			<td>{{item.message}}</td>
 		</tr>
 	</tbody>
 </table>

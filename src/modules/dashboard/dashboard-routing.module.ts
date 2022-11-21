@@ -210,6 +210,60 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.ScheduleViewComponent,
     },
+     {
+        path: 'setting',
+        data: {
+            title: 'setting',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'setting',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.SettingComponent,
+    },
+      {
+        path: 'generalsetting',
+        data: {
+            title: 'generalsetting',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'setting',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.GeneralsettingComponent,
+    },
+     {
+        path: 'organization',
+        data: {
+            title: 'organization',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'setting',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.OrganizationComponent,
+    },
 
 ];
 

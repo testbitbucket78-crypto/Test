@@ -43,12 +43,12 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
+		<tr *ngFor="let item of contacts; let i =index">
 			<th width="100" class="d-flex"><input type="checkbox" name=""><a class="col-md-1" (click)="openconver(conver)"><i class="fa fa-plus"></i></a><a class="col-md-1" (click)="openmenu(menu)"><i class="fa fa-bars"></i></a></th>
-			<td>1</td>
-			<td>sample</td>
-			<td>123456</td>
-			<td>gmail.com</td>
+			<td>{{i+1}}</td>
+			<td>{{item.name}}</td>
+			<td>{{item.phone_number}}</td>
+			<td>{{item.email}}</td>
 			<td></td>
 		</tr>
 	</tbody>
