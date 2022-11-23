@@ -1,7 +1,6 @@
 var express = require("express");
-var router = express.Router();
-
-router.get('/', function(req, res){
+var app = express();
+app.get('/', function(req, res){
   var data = 
 
 
@@ -14,5 +13,5 @@ router.get('/', function(req, res){
    res.send(data);
 });
 
-module.exports = router;
+app.listen(3003);
 

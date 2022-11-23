@@ -1,7 +1,7 @@
 var express = require("express");
-var router =express.Router();
+var app = express();
 
-router.get('/', function(req, res){
+app.get('/', function(req, res){
   var data = 
 
     {
@@ -37,5 +37,4 @@ router.get('/', function(req, res){
    res.send(data);
 });
 
-module.exports = router;
-
+app.listen(3001);

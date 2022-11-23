@@ -24,4 +24,8 @@ export class DashboardService {
   return this.http.get(API_URL + '/automation');
 
 }
+ public Contact() {
+  return this.http.get(API_URL + '/contact');
+
+}
 }

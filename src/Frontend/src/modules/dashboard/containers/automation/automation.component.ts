@@ -9,6 +9,8 @@ import {DashboardService} from './../../services';
 })
 export class AutomationComponent implements OnInit {
 	automations:any;
+		 contacts:any;
+
 constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: DashboardService) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -16,6 +18,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	}
     ngOnInit() {
 this.getAutomation();
+this.getContact();
+
 }
 	addfunnel(){
 		 (<HTMLInputElement>document.getElementById("funnel")).style.display = "block";  
@@ -31,6 +35,11 @@ this.getAutomation();
   getAutomation() {
     this.apiService.Automation().subscribe(data => {this.automations = data;
 console.log(this.automations);
+    });
+  }
+   getContact() {
+    this.apiService.Contact().subscribe(data => {this.contacts = data;
+console.log(this.contacts);
     });
   }
 
