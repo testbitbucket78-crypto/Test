@@ -1,13 +1,15 @@
 {
-  "name": "cip",
+  "name": "Campaign",
   "version": "1.0.0",
-  "description": "cip backend",
+  "description": "Campaign",
+   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "cip",
   "license": "ISC",
   "dependencies": {
+    "mysql2": "^2.3.3",
     "nodemon": "^2.0.20"
   }
 }
