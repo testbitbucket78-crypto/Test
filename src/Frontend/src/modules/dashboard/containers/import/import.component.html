@@ -1,0 +1,103 @@
+<sb-layout-dashboard><sb-dashboard-head title="Import Contact" [hideBreadcrumbs]="true"></sb-dashboard-head>
+<div class="bs-stepper">
+  <div class="bs-stepper-header" role="tablist">
+    <!-- your steps here -->
+    <div class="step" data-target="#logins-part">
+      <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
+        <span class="bs-stepper-circle">1</span>
+        <span class="bs-stepper-label">Upload CSV File</span>
+      </button>
+    </div>
+    <div class="line"></div>
+    <div class="step" data-target="#information-part">
+      <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger">
+        <span class="bs-stepper-circle">2</span>
+        <span class="bs-stepper-label">Mapping</span>
+      </button>
+    </div>
+     <div class="line"></div>
+    <div class="step" data-target="#review-part">
+      <button type="button" class="step-trigger" role="tab" aria-controls="review-part" id="review-part-trigger">
+        <span class="bs-stepper-circle">3</span>
+        <span class="bs-stepper-label">Review</span>
+      </button>
+    </div>
+  </div>
+  <div class="bs-stepper-content">
+    <!-- your steps content here -->
+    <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+    	<form>
+    		<div class="form-group">
+			 	<label class="small mb-1">Upload a CSV file to add or update contacts.</label>
+			 	<input class="form-control" type="text"/>
+			 </div>
+			 <div class="form-group">
+			 	<input class="form-control" type="file"/>
+			 </div>
+			 <div class="form-group">
+			 	<label class="small mb-1">Download a sample file. <a href="">Here</a></label>
+			 </div>
+    	</form>
+
+    	<button type="button" (click)= "sttapper1()" class="btn btn-primary btn-block col-1">Next</button>
+    </div>
+    <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+    <label class="mb-1">Select tde appropriate contact field for each column in tde CSV</label>
+
+    		<table class="table table-striped">
+    			<thead>
+		<tr>
+			<th scope="col"><input type="checkbox" name=""></th>
+			<th scope="col">Sample Data</th>
+			<th scope="col">Column Nae</th>
+			<th scope="col"></th>
+			<th scope="col">Map to contact field </th>
+			<th scope="col">Do Not Overwrite </th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td scope="col"><input type="checkbox" name=""></td>
+			<td scope="col">Check</td>
+			<td scope="col">First Name</td>
+			<td scope="col">-></td>
+			<td scope="col"><select class="form-control">
+				<option>First Name</option>
+			</select></td>
+			<td scope="col"><input type="checkbox" name=""> </td>
+		</tr>
+		<tr>
+			<td scope="col"><input type="checkbox" name=""></td>
+			<td scope="col">N/A</td>
+			<td scope="col">Last Name</td>
+			<td scope="col">-></td>
+			<td scope="col"><select class="form-control">
+				<option>last Name</option>
+			</select></td>
+			<td scope="col"><input type="checkbox" name=""> </td>
+		</tr>
+		<tr>
+			<td scope="col"><input type="checkbox" name=""></td>
+			<td scope="col">noreply@abc.com</td>
+			<td scope="col">Email</td>
+			<td scope="col">-></td>
+			<td scope="col"><select class="form-control">
+				<option>Select A feild</option>
+			</select></td>
+			<td scope="col"><input type="checkbox" name=""> </td>
+		</tr>
+	</tbody>
+
+</table>
+<!--     	<button type="button" (click)= "sttapper2()" class="btn btn-primary btn-block col-1">Next</button>
+ -->    	<button type="button" (click)= "sttapper()" class="btn btn-primary btn-block col-1">Back</button>
+    </div>
+     <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
+    	hj
+    	<button type="button" (click)= "sttapper()" class="btn btn-primary btn-block col-1">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
+ --></sb-layout-dashboard>
