@@ -13,19 +13,19 @@ export class DashboardService {
         return of({});
     }
     public dashboard() {
-  return this.http.get(API_URL + '/dashboard');
+  return this.http.get('http://localhost:3001');
 
 }
  public RuningCampaign() {
-  return this.http.get(API_URL + '/Campaign');
+  return this.http.get('http://localhost:3003');
 
 }
  public Automation() {
-  return this.http.get(API_URL + '/automation');
+  return this.http.get('http://localhost:3004');
 
 }
  public Contact() {
-  return this.http.get(API_URL + '/contact');
+  return this.http.get('http://localhost:3002');
 
 }
 }

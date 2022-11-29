@@ -180,13 +180,10 @@
 
 	<div class="col-md-2 proSetting">
 		<div class="d-flex headingset border-bottom mb-2">
-			<div class="col-md-9">
-			<h5><i class="fa fa-cog"></i>
-			Setting</h5>
+			<div class="col-md-9 online">
+			<h5><img src="assets/img/online.png" width="10">
+			Online</h5>
 			</div>
-			<div class="col-md-3">
-			<img src="assets/img/dummy.png">
-		</div>
 		</div>
 		<div class="profile text-center">
 			<img src="assets/img/dummy.png">
@@ -208,6 +205,12 @@
         </div>
        
     </form>
+    <div class="smart-reply">
+    	<h5>Smart Replies Paused</h5>
+    	<h5>04:30</h5>
+    	<button type="button" class="btn btn-success mr-1" (click)="c('Save click')">Enable</button>
+			<button type="button" class="btn btn-danger" (click)="c('Save click')">Disable</button>
+    </div>
 	</div>
 </div>
 

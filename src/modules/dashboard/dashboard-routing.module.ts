@@ -119,6 +119,60 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.AutomationComponent,
     },
+      {
+        path: 'smartReplies',
+        data: {
+            title: 'Smart Replies',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Smart Replies',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.SmartRepliesComponent,
+    },
+      {
+        path: 'replyMaterial',
+        data: {
+            title: 'Reply Material',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Reply Material',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ReplyMaterialComponent,
+    },
+      {
+        path: 'flowBuilder',
+        data: {
+            title: 'Flow builder',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Flow builde',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.FlowBuilderComponent,
+    },
   {
         path: 'reports',
         data: {

@@ -39,7 +39,10 @@
 			 </div>
     	</form>
 
-    	<button type="button" (click)= "sttapper1()" class="btn btn-primary btn-block col-1">Next</button>
+
+    	<a (click)= "openinstruction(instruction)" class="link">See Instructions ></a>
+    	    	<button type="button" (click)= "sttapper1()" class="btn btn-primary btn-block col-1 mt-3">Next</button>
+
     </div>
     <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
     <label class="mb-1">Select tde appropriate contact field for each column in tde CSV</label>
@@ -98,6 +101,21 @@
     </div>
   </div>
 </div>
+<ng-template #instruction let-c="close" let-d="dismiss">
+	<div class="modal-header text-right">
+			<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<div class="campaigndata">
+             <p>Upload a csv file</p>
+
+		 </div>
+	</div>
+
+</ng-template>
 
 <!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
  --></sb-layout-dashboard>
+
+
+

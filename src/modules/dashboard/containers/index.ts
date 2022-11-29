@@ -4,6 +4,9 @@ import { TeamboxComponent } from './teambox/teambox.component';
 import { ImportComponent } from './import/import.component';
 import { CampaignsComponent } from './campaigns/campaigns.component';
 import { AutomationComponent } from './automation/automation.component';
+import { SmartRepliesComponent } from './smartReplies/smartReplies.component';
+import { FlowBuilderComponent } from './flowBuilder/flowBuilder.component';
+import { ReplyMaterialComponent } from './replyMaterial/replyMaterial.component';
 import { ReportsComponent } from './reports/reports.component';
 import { MessageComponent } from './message/message.component';
 import { CampaignReportComponent } from './campaignReport/campaignReport.component';
@@ -14,7 +17,7 @@ import { GeneralsettingComponent } from './generalsetting/generalsetting.compone
 import { OrganizationComponent } from './organization/organization.component';
 
 
-export const containers = [DashboardComponent,ContactsComponent,TeamboxComponent,ImportComponent,CampaignsComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent];
+export const containers = [DashboardComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './contacts/contacts.component';
@@ -22,6 +25,9 @@ export * from './teambox/teambox.component';
 export * from './import/import.component';
 export * from './campaigns/campaigns.component';
 export * from './automation/automation.component';
+export * from './flowBuilder/flowBuilder.component';
+export * from './smartReplies/smartReplies.component';
+export * from './replyMaterial/replyMaterial.component';
 export * from './reports/reports.component';
 export * from './message/message.component';
 export * from './campaignReport/campaignReport.component';

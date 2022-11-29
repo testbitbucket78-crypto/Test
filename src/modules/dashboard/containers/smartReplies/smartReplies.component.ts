@@ -4,12 +4,11 @@ import Stepper from 'bs-stepper';
 declare var $: any;
 
 @Component({
-  selector: 'sb-import',
-  templateUrl: './import.component.html',
-  styleUrls: ['./import.component.scss']
+  selector: 'sb-smartReplies',
+  templateUrl: './smartReplies.component.html',
+  styleUrls: ['./smartReplies.component.scss']
 })
-export class ImportComponent implements OnInit {
-	active = 1;
+export class SmartRepliesComponent implements OnInit {
 constructor(config: NgbModalConfig, private modalService: NgbModal) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -19,7 +18,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
    new Stepper($('.bs-stepper')[0]);
 
 }
-
+	
  sttapper1(){
  	var stepper=  new Stepper($('.bs-stepper')[0]);
 

@@ -31,6 +31,9 @@ this.getContact();
 	opensubcribe(subcribe:any) {
 		this.modalService.open(subcribe);
 	}
+		opencontact(contactd:any) {
+		this.modalService.open(contactd);
+	}
 
   getAutomation() {
     this.apiService.Automation().subscribe(data => {this.automations = data;

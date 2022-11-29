@@ -19,11 +19,10 @@
 </div>
 
 
-
-	<table class="table table-striped">
+<h4>Running Campaigns</h4>
+	<table class="table table-striped mb-5">
 	<thead>
 		<tr>
-			<th scope="col"><input type="checkbox" name=""></th>
 			<th scope="col">ID</th>
 			<th scope="col">Campaign Name</th>
 			<th scope="col">Campaign Time</th>
@@ -32,8 +31,107 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr *ngFor="let item of RuningCampaigns; let i =index">
-			<th width="80"><input type="checkbox" name=""><a class="col-md-2" (click)="openmenu(menu)"><i class="fa fa-bars"></i></a></th>
+		<tr *ngFor="let item of RuningCampaigns; let i =index" (click)="SummaryRun()">
+			<td>{{i+1}}</td>
+			<td>{{item.name}}</td>
+			<td>{{item.time}}</td>
+			<td>{{item.channel}}</td>
+			<td>{{item.message}}</td>
+		</tr>
+	</tbody>
+</table>
+<div class="row mt-3" id="SummaryRun" style="display: none;">
+	<div class="col-12">
+	<h3>Summary</h3>
+			<i class="fa fa-close float-right" (click)="SummaryRunclose()"></i>
+</div>
+	<div class="col-12">
+		<h5>Contact</h5>
+
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Total</h3>	
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Sent</h3>	
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Delivered</h3>	
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Pending</h3>	
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Read</h3>	
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Replied</h3>	
+	</div>
+
+
+
+</div>
+<h4>Scheduled Campaigns</h4>
+	<table class="table table-striped mb-5">
+	<thead>
+		<tr>
+			<th scope="col">ID</th>
+			<th scope="col">Campaign Name</th>
+			<th scope="col">Campaign Time</th>
+			<th scope="col">Channel Name </th>
+			<th scope="col">Message </th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let item of RuningCampaigns; let i =index" (click)="opencampaignTime(campaignTime)">
 			<td>{{i+1}}</td>
 			<td>{{item.name}}</td>
 			<td>{{item.time}}</td>
@@ -43,14 +141,125 @@
 	</tbody>
 </table>
 
+<h4>Executed Campaigns</h4>
+	<table class="table table-striped">
+	<thead>
+		<tr>
+			<th scope="col">ID</th>
+			<th scope="col">Campaign Name</th>
+			<th scope="col">Campaign Time</th>
+			<th scope="col">Channel Name </th>
+			<th scope="col">Message </th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let item of RuningCampaigns; let i =index" (click)="SummaryExecuted()">
+			<td>{{i+1}}</td>
+			<td>{{item.name}}</td>
+			<td>{{item.time}}</td>
+			<td>{{item.channel}}</td>
+			<td>{{item.message}}</td>
+		</tr>
+	</tbody>
+</table>
+
+<div class="row mt-3" id="SummaryExecuted" style="display: none;">
+	<div class="col-12">
+	<h3>Summary</h3>
+			<i class="fa fa-close float-right" (click)="SummaryExecutedclose()"></i>
+</div>
+	<div class="col-12">
+		<h5>Contact</h5>
+
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Total</h3>	
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Sent</h3>	
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Delivered</h3>	
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Pending</h3>	
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Read</h3>	
+	</div>
+	<div class="col-3 caompain-box">
+		<div class="row">
+		<div class="col-6">
+			<h3>0</h3>
+		</div>
+		<div class="col-6 text-right">
+			<img src="assets/img/send.png" width="50">
+		</div>
+	</div>
+		<h3>Replied</h3>	
+	</div>
 
 
 
-<ng-template #menu let-c="close" let-d="dismiss">
+</div>
+
+
+<ng-template #campaignTime let-c="close" let-d="dismiss">
 	<div class="modal-header text-right">
 			<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
 	</div>
-	<div class="modal-body text-center">
+	<div class="modal-body">
+		<div class="campaigndata">
+             <h5>ID: ABC</h5>
+             <h5>Campaign Name: ABC</h5>
+             <h5>Campaign Time: 14-10-2-2022</h5>
+             <h5>Channel Name: ABC</h5>
+             <h5>Message: ABC</h5>
+
+		 </div>
+	</div>
+	<div class="modal-footer text-center">
+					<button type="button" class="btn btn-success" (click)="c('Save click')">Edit</button>
 			<button type="button" class="btn btn-danger" (click)="c('Save click')">Delete</button>
 	</div>
 </ng-template>
