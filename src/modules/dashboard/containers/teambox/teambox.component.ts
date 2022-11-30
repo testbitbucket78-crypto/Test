@@ -15,4 +15,11 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
     ngOnInit() {
 
 }
+
+bold(){
+	(<HTMLInputElement>document.getElementById("replyText")).style.fontWeight = "bold";  
+}
+itelic(){
+	(<HTMLInputElement>document.getElementById("replyText")).style.fontStyle = "italic";  
+}
 }

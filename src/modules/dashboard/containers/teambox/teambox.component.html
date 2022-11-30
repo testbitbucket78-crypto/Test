@@ -172,7 +172,24 @@
 			
 		</div>
 		<div class="reply">
-			<input type="text" name=""  class="form-control" placeholder="type your message..."> 
+			<h6>Reply</h6>
+			<textarea name="content" id="replyText" class="form-control" rows="4" cols="50" placeholder="type your message..."></textarea>
+			<button class="btn btn-primary float-right sharebtn"><i class="fa fa-paper-plane"></i></button>
+			<div class="action">
+				<button type="button" class="btn" (click)="bold()"><b>B</b></button>
+				<button type="button" class="btn" (click)="itelic()"> <i>I</i></button>
+				<button type="button" class="btn">$</button>
+				<button type="button" class="btn"> < / ></button>
+				<button type="button" class="btn"><i class="fa fa-share"></i></button>
+				<button type="button" class="btn"> < > </button>
+	<div class="image-upload">
+	<label for="file-input">
+	<i class="fa fa-paperclip"></i>
+	</label>
+	<input id="file-input" type="file" />
+   </div>
+				
+			</div>
 			
 		</div>
 			
@@ -206,7 +223,7 @@
        
     </form>
     <div class="smart-reply">
-    	<h5>Smart Replies Paused</h5>
+    	<h6>Smart Replies Paused</h6>
     	<h5>04:30</h5>
     	<button type="button" class="btn btn-success mr-1" (click)="c('Save click')">Enable</button>
 			<button type="button" class="btn btn-danger" (click)="c('Save click')">Disable</button>

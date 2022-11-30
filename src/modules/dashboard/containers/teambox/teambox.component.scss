@@ -12,6 +12,20 @@
     border-radius: 10px;
     width: 100%;
 }
+.image-upload>input {
+  display: none;
+}
+  .image-upload{  display: inline-block;}
+.action{
+        margin-top: -40px;
+
+}
+.action .btn{
+    padding: 5px;
+}
+.sharebtn{
+    margin-top: -40px;
+}
 .online img{
 width: 10px!important;
 }
