@@ -1,0 +1,78 @@
+
+
+
+
+.container{
+    background-color: green;
+}
+.container h2{
+    color: rgb(17, 17, 163);
+    margin: 0px 20px;
+}
+.container .card{
+    width: 100%;
+    display: flex;
+}
+.container .box{
+    width: 420px;
+    border: solid 1px black;
+    background: rgb(189, 189, 236);
+    height: 80px;
+    margin: 20px 100px;
+}
+.container .box h5{
+    font-weight: 600;
+    margin: 5px 30px;
+}
+.container .box .boxs{
+    width: 320px;
+    border: solid 1px black;
+    background: white;
+    height: 40px;
+    margin: 10px 53px;
+}
+.row3{
+    display: flex;
+    position: relative;
+}
+.circle{
+    background-color: rgb(177 177 229);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid black;
+    margin: 10px 20px;
+}
+.circle p{
+    margin: 5px 10px;
+}
+.row3 h6{
+    margin: 17px -6px;
+}
+.circle1{
+    background-color: rgb(177 177 229);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid black;
+    margin: 10px 35px 0px 115px;
+}
+.circle1 p{
+    margin: 5px 10px;
+}
+.container .btn{
+    width: 70px;
+    height: 35px;
+    border: 1px solid black;
+    margin: 10px 0px 0px 85%;
+    font: message-box;
+}
+.container .btn1{
+    width: 70px;
+    height: 35px;
+    border: 1px solid black;
+    margin: 10px 0px 0px 5px;
+    background-color: blue;
+    color: white;
+    font: message-box;
+}

@@ -5,12 +5,9 @@ export const sideNavSections: SideNavSection[] = [
        
         items: ['dashboard'],
     },
-    // {
-     
-    //     items: ['layouts', 'pages'],
-    // },
+    
     {
-        items: ['Contacts', 'teambox', 'campaings', 'automation', 'reports','setting'],
+        items: ['Contacts', 'teambox', 'camp', 'automation', 'rep','setting'],
     },
 ];
 
@@ -20,46 +17,64 @@ export const sideNavItems: SideNavItems = {
         text: 'Dashboard',
         link: '/dashboard',
     },
-    // pages: {
-    //     icon: 'book-open',
-    //     text: 'Pages',
-    //     submenu: [
-    //         {
-    //             text: 'Authentication',
-    //             submenu: [
-    //                 {
-    //                     text: 'Login',
-    //                     link: '/auth/login',
-    //                 },
-    //                 {
-    //                     text: 'Register',
-    //                     link: '/auth/register',
-    //                 },
-    //                 {
-    //                     text: 'Forgot Password',
-    //                     link: '/auth/forgot-password',
-    //                 },
-    //             ],
-    //         },
-    //         {
-    //             text: 'Error',
-    //             submenu: [
-    //                 {
-    //                     text: '401 Page',
-    //                     link: '/error/401',
-    //                 },
-    //                 {
-    //                     text: '404 Page',
-    //                     link: '/error/404',
-    //                 },
-    //                 {
-    //                     text: '500 Page',
-    //                     link: '/error/500',
-    //                 },
-    //             ],
-    //         },
-    //     ],
-    // },
+    camp: {
+        text: 'Campaings',
+        submenu: [
+        {
+                        text: 'Running',
+                        link: '/dashboard/campaigns',
+                    },
+                 {
+                        text: 'Compose',
+                        link: '/dashboard/compose',
+                    },
+                    {
+                        text: 'Campain Compose',
+                        link: '/dashboard/campaignCompose',
+                    },
+                    {
+                        text: 'Schedule',
+                        link: '/dashboard/schedule',
+                    },
+                 {
+                        text: 'Summary',
+                        link: '/dashboard/campaignReport',
+                    },
+                   
+    
+        ],
+    },
+     rep: {
+        text: 'Reports',
+        submenu: [
+        {
+                        text: 'Reports List',
+                        link: '/dashboard/reports',
+                    },
+                 {
+                        text: 'Conversations Reports',
+                        link: '/dashboard',
+                    },
+                    {
+                        text: 'Campaings Reports',
+                        link: '/dashboard',
+                    },
+                 {
+                        text: 'Automation Reports',
+                        link: '/dashboard',
+                    },
+                    {
+                        text: 'Report Filters',
+                        link: '/dashboard',
+                    },
+                    {
+                        text: 'Export Reports',
+                        link: '/dashboard',
+                    },
+                   
+    
+        ],
+    },
     Contacts: {
         // icon: 'table',
         text: 'Contacts',
@@ -72,8 +87,8 @@ export const sideNavItems: SideNavItems = {
     },
       campaings: {
         // icon: 'table',
-        text: 'Campaings',
-        link: '/dashboard/campaings',
+        text: 'Campaigns',
+        link: '/dashboard/campaigns',
     },
       automation: {
         // icon: 'table',
@@ -83,7 +98,7 @@ export const sideNavItems: SideNavItems = {
       reports: {
         // icon: 'table',
         text: 'Repots',
-        link: '/dashboard/repots',
+        link: '/dashboard/reports',
     },
      setting: {
         // icon: 'table',
