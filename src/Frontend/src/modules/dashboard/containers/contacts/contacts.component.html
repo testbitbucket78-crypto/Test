@@ -1,0 +1,198 @@
+<sb-layout-dashboard><sb-dashboard-head title="Contacts" [hideBreadcrumbs]="true"></sb-dashboard-head>
+<div class="row">
+	<div class="col-md-8">
+		<button class="btn btn-primary btn-block col-md-2" (click)="opens(contents)"><i class="fa fa-filter"></i> Filter</button>
+	</div>
+	<div class="col-md-2">
+		<button class="btn btn-primary btn-block float-right" (click)="open(content)"><i class="fa fa-download"></i> Export Contact</button>
+	</div>
+	<div class="col-md-2">
+		<button class="btn btn-primary btn-block float-right" routerLink="/dashboard/import"><i class="fa fa-download"></i> Uploade/Import</button>
+	</div>
+</div>
+<div class="row mt-3 mb-3">
+	<div class="col-md-5">
+	</div>
+	<div class="col-md-5">
+     <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 col-12">
+        <div class="input-group">
+            <input class="form-control" type="text" placeholder="Search form Name, Phone Number and Email" aria-label="Search" aria-describedby="basic-addon2" />
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
+            </div>
+        </div>
+    </form>
+
+	</div>
+	<div class="col-md-2">
+		<button class="btn btn-primary btn-block float-right"  (click)="openadd(contactadd)"><i class="fa fa-plus"></i> Add Contact</button>
+	</div>
+</div>
+
+
+
+	<table class="table table-striped">
+	<thead>
+		<tr>
+			<th scope="col"><input type="checkbox" name=""></th>
+			<th scope="col">Sr. No</th>
+			<th scope="col">Name</th>
+			<th scope="col">Phone Number</th>
+			<th scope="col">Email </th>
+			<th scope="col">Action </th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let item of contacts; let i =index">
+			<th width="100" class="d-flex"><input type="checkbox" name=""><a class="col-md-1" (click)="openconver(conver)"><i class="fa fa-plus"></i></a><a class="col-md-1" (click)="openmenu(menu)"><i class="fa fa-bars"></i></a></th>
+			<td>{{i+1}}</td>
+			<td>{{item.name}}</td>
+			<td>{{item.phone_number}}</td>
+			<td>{{item.email}}</td>
+			<td></td>
+		</tr>
+	</tbody>
+</table>
+
+
+<ng-template #content let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Export Contact</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<p>Your Contacts (total contacts) will be exported and sent via email to abc@gmail.com.
+</p>
+	</div>
+	<div class="modal-footer popfooter row">
+		<div class="col-md-6">
+			<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Cancel</button>
+		</div>
+		<div class="col-md-6 text-right">
+		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Confirm</button>
+	</div>
+	</div>
+</ng-template>
+
+<ng-template #menu let-c="close" let-d="dismiss">
+	<div class="modal-header text-right">
+			<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+	</div>
+	<div class="modal-body text-center">
+			<button type="button" class="btn btn-success mr-1" (click)="c('Save click')">Edit</button>
+			<button type="button" class="btn btn-danger" (click)="c('Save click')">Delete</button>
+	</div>
+</ng-template>
+
+<ng-template #contents let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Filter</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+	<button class="btn btn-primary btn-block col-md-3 mb-2"><i class="fa fa-plus"></i> Name</button>
+
+		<form>
+			<div class="form-group">
+           <select class="form-control">
+           	<option>Contains</option>
+           </select>
+        </div>
+			<div class="form-group">
+            <input class="form-control" type="text">
+        </div>
+		</form>
+	</div>
+	<div class="modal-footer row popfooter">
+		<div class="col-md-6">
+		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Clear</button>
+	</div>
+	<div class="col-md-6 text-right">
+			<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Apply</button>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #contactadd let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Create Contact</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<form>
+			<div class="form-group">
+			 	<label class="small mb-1">Full Name</label>
+			 	<input class="form-control" type="text" placeholder="Enter the Name" />
+			 </div>
+			 <div class="form-group">
+			 	<label class="small mb-1">Email</label>
+			 	<input class="form-control" type="email" placeholder="Enter the Email" />
+			 </div>
+			  <div class="form-group">
+			 	<label class="small mb-1">Phone</label>
+			 	<input class="form-control" type="text" placeholder="+91 " />
+			 </div>
+			 <h4 class="text-center">Additional Details</h4>
+			  <div class="form-group">
+			 	<label class="small mb-1">Lead Status</label>
+			 	<select class="form-control">
+           	<option>Lead Stage/Status</option>
+           </select><br/>
+           <select class="form-control">
+           	<option>Lead Stage/Status</option>
+           </select>
+			 </div>
+			 
+		</form>
+	</div>
+	<div class="modal-footer row popfooter">
+		<div class="col-md-6">
+		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Clear</button>
+	</div>
+	<div class="col-md-6 text-right">
+			<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Submit</button>
+		</div>
+	</div>
+</ng-template>
+
+
+<ng-template #conver let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+
+	</div>
+	<div class="modal-body">
+		<div class="text-center col-md-12">
+						<img src="assets/img/dummy.png" class="text-center round" width="100">
+												<h4 class="modal-title mb-3" id="modal-basic-title">Profile Image</h4>
+						</div>
+		<form>
+			<div class="form-group">
+			 	<input class="form-control" type="text" placeholder="Name" />
+			 </div>
+			 <div class="form-group">
+			 	<input class="form-control" type="text" placeholder="Phone" />
+			 </div>
+			  <div class="form-group">
+			 	<input class="form-control" type="text" placeholder="Address" />
+			 </div>
+			  <div class="form-group">
+			 	<input class="form-control" type="email" placeholder="Email" />
+			 </div>
+			  <div class="form-group">
+			 	<input class="form-control" type="text" placeholder="Contact Owner" />
+			 </div>
+			  <div class="form-group">
+			 	<input class="form-control" type="text" placeholder="Tags" />
+			 </div>
+			  <div class="form-group">
+			 	<input class="form-control" type="text" placeholder="Lead Status" />
+			 </div>
+			 
+		</form>
+	</div>
+
+</ng-template>
+
+<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
+ --></sb-layout-dashboard>
