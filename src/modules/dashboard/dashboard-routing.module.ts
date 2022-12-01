@@ -318,6 +318,24 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.OrganizationComponent,
     },
+     {
+        path: 'campaignCompose',
+        data: {
+            title: 'Campaign Compose',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Campaign Compose',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.CampaignComposeComponent,
+    }
 
 ];
 
