@@ -15,10 +15,9 @@ import { ScheduleViewComponent } from './scheduleView/scheduleView.component';
 import { SettingComponent } from './setting/setting.component';
 import { GeneralsettingComponent } from './generalsetting/generalsetting.component';
 import { OrganizationComponent } from './organization/organization.component';
-import { CampaignComposeComponent } from './campaignCompose/campaignCompose.component';
 
 
-export const containers = [DashboardComponent,CampaignComposeComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent];
+export const containers = [DashboardComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './contacts/contacts.component';
@@ -37,5 +36,4 @@ export * from './scheduleView/scheduleView.component';
 export * from './setting/setting.component';
 export * from './generalsetting/generalsetting.component';
 export * from './organization/organization.component';
-export * from './campaignCompose/campaignCompose.component';
 

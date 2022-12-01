@@ -28,7 +28,6 @@ opens(contents:any) {
 	openadd(contactadd:any) {
 		this.modalService.open(contactadd);
 	}
-<<<<<<< HEAD
 		opencampaignTime(campaignTime:any) {
 		this.modalService.open(campaignTime);
 	}
@@ -40,16 +39,11 @@ SummaryRunclose(){
 SummaryExecutedclose(){
 		 (<HTMLInputElement>document.getElementById("SummaryExecuted")).style.display = "none";  
 	}
-=======
-
-
->>>>>>> be50f0129825689319f236b51b1225f672a49766
 
 	openmenu(menu:any) {
 		this.modalService.open(menu);
 	}
 
-<<<<<<< HEAD
 SummaryRun(){
 		 (<HTMLInputElement>document.getElementById("SummaryRun")).style.display = "inline-flex";  
 	}
@@ -57,8 +51,6 @@ SummaryRun(){
 		 (<HTMLInputElement>document.getElementById("SummaryExecuted")).style.display = "inline-flex";  
 	}
 
-=======
->>>>>>> be50f0129825689319f236b51b1225f672a49766
 
         getRuningCampaign() {
     this.apiService.RuningCampaign().subscribe(data => {this.RuningCampaigns = data;
