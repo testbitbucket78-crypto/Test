@@ -1,0 +1,60 @@
+@import 'styles/variables.scss';
+
+
+
+.row{
+    width: 80%;
+    height: 100px;
+    background-color: aqua;
+    border: 1px solid black;
+    border-bottom: none;
+    margin: 0px 0px 0px 130px;
+}
+.row h5{
+    color: blue;
+    margin: 10px;
+}
+.row h4{
+   margin:44px 0px 0px -170px ; 
+}
+.row h3{
+    margin: 47px 0px 0px -160px;
+    font-size: 20px;
+}
+.row h6{
+    margin: 10px;
+    font-size: 20px;
+}
+.row1{
+    width: 80%;
+    height: 350px;
+    background-color: aqua;
+    border: 1px solid black;
+    margin: 0px 0px 0px 130px;
+
+}
+.row1 .row2{
+    width: 90%;
+    height: 150px;
+    background-color: rgb(241, 201, 153);
+    border: 1px solid black;
+    margin: 10px 0px 0px 50px;
+}
+.row1 .row2 .btn{
+    width: 70px;
+    height: 35px;
+    background-color: blue;
+    color: white;
+    border: none;
+    float: right;
+    margin: 6px 10px 0px 0px;
+}
+.row1 .row2 h3{
+    color: green;
+    margin: 10px 0px 0px 20px;
+}
+
+.row1 .row2 h4{
+    margin: 5px 0px 0px 20px;
+    font-size: 20px;
+}
