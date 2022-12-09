@@ -1,6 +1,34 @@
-<sb-layout-dashboard><sb-dashboard-head title="Setting" [hideBreadcrumbs]="true"></sb-dashboard-head>
+<sb-layout-dashboard><sb-dashboard-head title="Settings" [hideBreadcrumbs]="true"></sb-dashboard-head>
 
-	
+    <div class="row">
+
+   
+    <div class="row1">
+        <div class="col-md-12">
+        <button class="btn btn-primary btn-block float-left" routerLink="/dashboard/generalsetting">General Settings</button>
+    </div>
+    <div class="col-md-12">
+        <button class="btn btn-primary btn-block float-left" routerLink="/dashboard/organization">Organizational Settings</button>
+    </div>
+    <div class="col-md-12">
+        <button class="btn btn-primary btn-block float-left" routerLink="/dashboard/accountsetting">Account Settings</button>
+    </div>
+</div>
+    <div class="row2">
+    <div class="col-md-12">
+        <button class="btn btn-primary btn-block float-right" routerLink="/dashboard/contactsetting">Contact Settings</button>
+    </div>
+    <div class="col-md-12">
+        <button class="btn btn-primary btn-block float-right" routerLink="/dashboard/inboxsetting">Inbox Settings</button>
+    </div>
+    <div class="col-md-12">
+        <button class="btn btn-primary btn-block float-right" routerLink="/dashboard/campaignsetting">Campaigns Settings</button>
+    </div>
+</div>
+</div>
+
+
+
 
 <!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
  --></sb-layout-dashboard>

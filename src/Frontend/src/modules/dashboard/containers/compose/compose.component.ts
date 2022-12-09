@@ -4,11 +4,11 @@ import Stepper from 'bs-stepper';
 declare var $: any;
 
 @Component({
-  selector: 'sb-import',
-  templateUrl: './import.component.html',
-  styleUrls: ['./import.component.scss']
+  selector: 'sb-compose',
+  templateUrl: './compose.component.html',
+  styleUrls: ['./compose.component.scss']
 })
-export class ImportComponent implements OnInit {
+export class ComposeComponent implements OnInit {
 	active = 1;
 constructor(config: NgbModalConfig, private modalService: NgbModal) {
 		// customize default values of modals used by this component tree

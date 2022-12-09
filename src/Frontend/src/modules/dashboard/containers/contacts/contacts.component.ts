@@ -31,9 +31,7 @@ opens(contents:any) {
 
 
 
-	openmenu(menu:any) {
-		this.modalService.open(menu);
-	}
+
 		openconver(conver:any) {
 		this.modalService.open(conver);
 	}

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
-  selector: 'sb-teambox',
-  templateUrl: './teambox.component.html',
-  styleUrls: ['./teambox.component.scss']
+  selector: 'sb-replyMaterial',
+  templateUrl: './replyMaterial.component.html',
+  styleUrls: ['./replyMaterial.component.scss']
 })
-export class TeamboxComponent implements OnInit {
+export class ReplyMaterialComponent implements OnInit {
 	active = 1;
+
 constructor(config: NgbModalConfig, private modalService: NgbModal) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -15,11 +16,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
     ngOnInit() {
 
 }
+	
 
-bold(){
-	(<HTMLInputElement>document.getElementById("replyText")).style.fontWeight = "bold";  
-}
-itelic(){
-	(<HTMLInputElement>document.getElementById("replyText")).style.fontStyle = "italic";  
-}
+	opentext(textcontent:any) {
+		this.modalService.open(textcontent);
+	}
 }

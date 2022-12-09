@@ -1,0 +1,175 @@
+<sb-layout-dashboard><sb-dashboard-head title="Contact Settings" [hideBreadcrumbs]="true"></sb-dashboard-head>
+<div class="row">
+    <div class="col-md-6">
+        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 col-12 py-3">
+           <div class="input-group">
+               <input class="form-control" type="text" placeholder="Search form Name, Phone Number and Email" aria-label="Search" aria-describedby="basic-addon2" />
+               <div class="input-group-append">
+                   <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
+               </div>
+           </div>
+       </form>
+   
+       </div>
+       <div class="col-md-6 mt-3 text-right">
+        <button type="button" class="btn btn-success" (click)="open(create)"><i class="fa fa-plus"></i>Create Tag</button>
+    <button type="button" class="btn btn-success" (click)="opens(add)"><i class="fa fa-plus"></i>Add Field</button>
+       </div>
+</div>
+<div class="row py-3">
+    <div class="col-md-12">
+    <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs teamnav mt-2">
+        <li [ngbNavItem]="1">
+            <a ngbNavLink>Contacts</a>
+            <ng-template ngbNavContent>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">NAME</th>
+                            <th scope="col">FIELD</th>
+                            <th scope="col">FIELD ID</th>
+                            <th scope="col">TYPE</th>
+                            <th scope="col">DATE ADDED </th>
+                            <th scope="col">DISCRIPTION </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td scope="col">First NAME</td>
+                            <td scope="col">Name</td>
+                            <td scope="col">First-name</td>
+                            <td scope="col">TEXT</td>
+                            <td scope="col">Sep 12, 2022</td>
+                            <td scope="col">N/A</td>
+                        </tr>
+                        <tr>
+                            <td scope="col">Last NAME</td>
+                            <td scope="col">Yags</td>
+                            <td scope="col">Last-name</td>
+                            <td scope="col">MULTI-TEXT</td>
+                            <td scope="col">Sep 12, 2022</td>
+                            <td scope="col">N/A</td>
+                        </tr>
+                        <tr>
+                            <td scope="col">Phone Number</td>
+                            <td scope="col">Phone</td>
+                            <td scope="col">phone-number</td>
+                            <td scope="col">MULTI-TEXT</td>
+                            <td scope="col">Sep 12, 2022</td>
+                            <td scope="col">N/A</td>
+                        </tr>
+                        <tr>
+                            <td scope="col">Email Address</td>
+                            <td scope="col">Email</td>
+                            <td scope="col">email-address</td>
+                            <td scope="col">MULTI TEXT</td>
+                            <td scope="col">Sep 12, 2022</td>
+                            <td scope="col">N/A</td>
+                        </tr>
+                        <tr>
+                            <td scope="col">Country</td>
+                            <td scope="col">Lead</td>
+                            <td scope="col">india</td>
+                            <td scope="col">SELECT</td>
+                            <td scope="col">Sep 12, 2022</td>
+                            <td scope="col">N/A</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </ng-template>
+    
+        </li>
+        <li [ngbNavItem]="2">
+            <a ngbNavLink>Tags</a>
+            <ng-template ngbNavContent let-c="close" let-d="dismiss">
+              
+                <div class="card" style="width: 40rem;">
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">ABC</li>
+                      <li class="list-group-item">cokkie</li>
+                      <li class="list-group-item">Demo</li>
+                      <li class="list-group-item">Foo</li>
+                      <li class="list-group-item">Family</li>
+                      <li class="list-group-item">press</li>
+                      <li class="list-group-item">oxs</li>
+                      <li class="list-group-item">movie</li>
+                      <li class="list-group-item">beer</li>
+                    </ul>
+                  </div>
+            </ng-template>
+          </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+    </div>
+    </div>
+
+   
+   
+    <ng-template #create let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Create tag</h4>
+            <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                     <label class="small mb-1"> Name</label>
+                     <input class="form-control" type="text" placeholder="Enter the Name" />
+                 </div>
+                 <div class="form-group">
+                     <label class="small mb-1">colour</label>
+                     <input class="form-control" type="email" placeholder="Enter colour name" />
+                 </div>
+                 
+            </form>
+        </div>
+        <div class="modal-footer row popfooter">
+            <div class="col-md-6">
+            <button type="button" class="btn btn-danger" (click)="c('Save click')">Cancel</button>
+        </div>
+        <div class="col-md-6 text-right">
+                <button type="button" class="btn btn-success" (click)="c('Save click')">Create</button>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #add let-c="close" let-d="dismiss">
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">ADD CUSTOM FIELDS</h4>
+            <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                     <label class="small mb-1"> Name</label>
+                     <input class="form-control" type="text" placeholder="Name your custom field" />
+                 </div>
+                 <div class="form-group">
+                     <label class="small mb-1">Description</label>
+                     <input class="form-control" type="email" placeholder="Describe the custom Field" />
+                 </div>
+                 <div class="form-group">
+                    <label class="small mb-1">Type</label>
+                    <input class="form-control" type="email" placeholder="Select Type" />
+                </div>
+                 
+            </form>
+        </div>
+        <div class="modal-footer row popfooter">
+            <div class="col-md-6 text-right">
+            <button type="button" class="btn btn-danger" (click)="c('Save click')">Cancel</button>
+        </div>
+        <div class="col-md-2 text-right">
+                <button type="button" class="btn btn-success" (click)="c('Save click')">ADD</button>
+            </div>
+        </div>
+    </ng-template>
+    
+
+
+
+
+
+<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
+ --></sb-layout-dashboard>

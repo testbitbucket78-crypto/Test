@@ -1,0 +1,260 @@
+<sb-layout-dashboard><sb-dashboard-head title="Inbox Settings" [hideBreadcrumbs]="true"></sb-dashboard-head>
+
+
+    <div class="row py-3">
+        <div class="col-md-12">
+            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs teamnav mt-2">
+                <li [ngbNavItem]="1">
+                    <a ngbNavLink>Department</a>
+                    <ng-template ngbNavContent>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 col-12 py-3">
+                                   <div class="input-group">
+                                       <input class="form-control" type="text" placeholder="Search Department" aria-label="Search" aria-describedby="basic-addon2" />
+                                       <div class="input-group-append">
+                                           <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
+                                       </div>
+                                   </div>
+                               </form>
+                           
+                               </div>
+                               <div class="col-md-6 mt-3 text-right">
+                                <button type="button" class="btn btn-success"(click)="open(department)" ><i class="fa fa-plus"></i> Department</button>
+                               </div>
+                        </div>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">NAME</th>
+                                    <th scope="col">COUNT</th>
+                                    <th scope="col">CREATED DATE</th>
+                                    <th scope="col">MANAGE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td scope="col">1</td>
+                                    <td scope="col">EEE</td>
+                                    <td scope="col">2</td>
+                                    <td scope="col">08 JUN 2022</td>
+                                    <td scope="col"></td>
+                                </tr>
+                                <tr>
+                                    <td scope="col">2</td>
+                                    <td scope="col">EFDD</td>
+                                    <td scope="col">6</td>
+                                    <td scope="col">08 JUN 2022</td>
+                                    <td scope="col"></td>
+                                </tr>
+                                <tr>
+                                    <td scope="col">3</td>
+                                    <td scope="col">DDE</td>
+                                    <td scope="col">3</td>
+                                    <td scope="col">10 JUN 2022</td>
+                                    <td scope="col"></td>
+                                </tr>
+                                <tr>
+                                    <td scope="col">4</td>
+                                    <td scope="col">FGGH</td>
+                                    <td scope="col">7</td>
+                                    <td scope="col">13 JUN 2022</td>
+                                    <td scope="col"></td>
+                                </tr>
+                                <tr>
+                                    <td scope="col">5</td>
+                                    <td scope="col">YYHU</td>
+                                    <td scope="col">9</td>
+                                    <td scope="col">18 JUN 2022</td>
+                                    <td scope="col"></td>
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </ng-template>
+            </li>
+
+            <li [ngbNavItem]="2">
+                <a ngbNavLink>Users</a>
+                <ng-template ngbNavContent>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 col-12 py-3">
+                               <div class="input-group">
+                                   <input class="form-control" type="text" placeholder="Search Department" aria-label="Search" aria-describedby="basic-addon2" />
+                                   <div class="input-group-append">
+                                       <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
+                                   </div>
+                               </div>
+                           </form>
+                       
+                           </div>
+                           <div class="col-md-6 mt-3 text-right">
+                            <button type="button" class="btn btn-success" (click)="opens(user)"><i class="fa fa-plus"></i>ADD User</button>
+                        </div>
+                    </div>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">NAME</th>
+                                    <th scope="col">COUNT</th>
+                                    <th scope="col">CREATED DATE</th>
+                                    <th scope="col">MANAGE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td scope="col">1</td>
+                                    <td scope="col">EEE</td>
+                                    <td scope="col">2</td>
+                                    <td scope="col">08 JUN 2022</td>
+                                    <td scope="col"></td>
+                                </tr>
+                                <tr>
+                                    <td scope="col">2</td>
+                                    <td scope="col">EFDD</td>
+                                    <td scope="col">6</td>
+                                    <td scope="col">08 JUN 2022</td>
+                                    <td scope="col"></td>
+                                </tr>
+                                <tr>
+                                    <td scope="col">3</td>
+                                    <td scope="col">DDE</td>
+                                    <td scope="col">3</td>
+                                    <td scope="col">10 JUN 2022</td>
+                                    <td scope="col"></td>
+                                </tr>
+                                <tr>
+                                    <td scope="col">4</td>
+                                    <td scope="col">FGGH</td>
+                                    <td scope="col">7</td>
+                                    <td scope="col">13 JUN 2022</td>
+                                    <td scope="col"></td>
+                                </tr>
+                                <tr>
+                                    <td scope="col">5</td>
+                                    <td scope="col">YYHU</td>
+                                    <td scope="col">9</td>
+                                    <td scope="col">18 JUN 2022</td>
+                                    <td scope="col"></td>
+                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="3">
+                <a ngbNavLink>Routing Rules</a>
+                <ng-template ngbNavContent>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>Route to last Assisted Agent</h4>
+                          This is the method to auto assign the chat to the last assigned agent which helps to understand  context easily
+                        </div>
+                      </div>
+                      <div class="card ml-4 mt-3">
+                        <div class="card-body">
+                            <h4>Broadcast</h4>
+                          All online agents will be notified for a new chat,any agents can accept the chats,once an agent is accepted the chat the notificaton will be dismisted
+                          <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-success">Save</button>
+                        </div>
+                        </div>
+                      </div>
+                      <div class="card ml-4 mt-3">
+                        <div class="card-body">
+                            <h4>Round Robin</h4>
+                          All online agents will be notified for a new chat,any agents can accept the chats,once an agent is accepted the chat the notificaton will be dismisted
+                          <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-success">Save</button>
+                        </div>
+                        </div>
+                      </div>
+                      <div class="card ml-4 mt-3">
+                        <div class="card-body">
+                            <h4>Multiple Chat Assign</h4>
+                          All online agents will be notified for a new chat,any agents can accept the chats,once an agent is accepted the chat the notificaton will be dismisted
+                          <div class="col-md-12 text-right">
+                            <button type="button" class="btn btn-success">Save</button>
+                        </div>
+                        </div>
+                      </div>
+
+                </ng-template>
+            </li>
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+        </div>
+        </div>
+       
+
+        
+
+        <ng-template #department let-c="close" let-d="dismiss">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Department</h4>
+                <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                         <label class="small mb-1"> Department Name</label>
+                         <input class="form-control" type="text" placeholder="Enter the Name" />
+                     </div>
+                     <div class="form-group">
+                         <label class="small mb-1">Users</label>
+                         <input class="form-control" type="email" placeholder="" />
+                     </div>
+                     
+                </form>
+            </div>
+            <div class="modal-footer row popfooter">
+            <div class="col-md-6 text-right">
+                    <button type="button" class="btn btn-success" (click)="c('Save click')">Create New Department</button>
+                </div>
+            </div>
+        </ng-template>
+
+
+        <ng-template #user let-c="close" let-d="dismiss">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Add User</h4>
+                <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                         <label class="small mb-1"> Enter Name</label>
+                         <input class="form-control" type="text" placeholder="Enter the Name" />
+                         <label class="small mb-1"> Email</label>
+                         <input class="form-control" type="text" placeholder="" />
+                     </div>
+                     <div class="form-group">
+                         <label class="small mb-1">Phone No</label>
+                         <input class="form-control" type="email" placeholder="" />
+                         <label class="small mb-1">Internal Refrence Id</label>
+                         <input class="form-control" type="email" placeholder="" />
+                         <label class="small mb-1">Department</label>
+                         <input class="form-control" type="email" placeholder="" />
+                         <label class="small mb-1">Role</label>
+                         <input class="form-control" type="email" placeholder="" />
+                     </div>
+                     
+                </form>
+            </div>
+            <div class="modal-footer row popfooter">
+            <div class="col-md-6 text-right">
+                    <button type="button" class="btn btn-success" (click)="c('Save click')">Create New User</button>
+                </div>
+            </div>
+        </ng-template>
+
+
+
+
+<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
+ --></sb-layout-dashboard>

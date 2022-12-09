@@ -17,24 +17,24 @@ export const sideNavItems: SideNavItems = {
         text: 'Dashboard',
         link: '/dashboard',
     },
-    camp: {
-        text: 'Campaings',
+    automation: {
+        text: 'Automation',
         submenu: [
         {
-                        text: 'Running',
-                        link: '/dashboard/campaigns',
+                        text: 'Funnel',
+                        link: '/dashboard/automation',
                     },
                  {
-                        text: 'Compose',
-                        link: '/dashboard/compose',
+                        text: 'Flow builder',
+                        link: '/dashboard/flowBuilder',
                     },
                     {
-                        text: 'Schedule',
-                        link: '/dashboard/schedule',
+                        text: 'Smart Replies',
+                        link: '/dashboard/smartReplies',
                     },
                  {
-                        text: 'Summary',
-                        link: '/dashboard/campaignReport',
+                        text: 'Reply Material',
+                        link: '/dashboard/replyMaterial',
                     },
                    
     
@@ -71,7 +71,12 @@ export const sideNavItems: SideNavItems = {
     
         ],
     },
-    Contacts: {
+    camp: {
+        // icon: 'table',
+        text: 'Campaings',
+        link: '/dashboard/campaigns',
+    },
+      Contacts: {
         // icon: 'table',
         text: 'Contacts',
         link: '/dashboard/contacts',
@@ -86,11 +91,11 @@ export const sideNavItems: SideNavItems = {
         text: 'Campaigns',
         link: '/dashboard/campaigns',
     },
-      automation: {
-        // icon: 'table',
-        text: 'Automation',
-        link: '/dashboard/automation',
-    },
+    //   automation: {
+    //     // icon: 'table',
+    //     text: 'Automation',
+    //     link: '/dashboard/automation',
+    // },
       reports: {
         // icon: 'table',
         text: 'Repots',

@@ -28,11 +28,27 @@ opens(contents:any) {
 	openadd(contactadd:any) {
 		this.modalService.open(contactadd);
 	}
+		opencampaignTime(campaignTime:any) {
+		this.modalService.open(campaignTime);
+	}
 
+SummaryRunclose(){
+			 (<HTMLInputElement>document.getElementById("SummaryRun")).style.display = "none";  
 
+}
+SummaryExecutedclose(){
+		 (<HTMLInputElement>document.getElementById("SummaryExecuted")).style.display = "none";  
+	}
 
 	openmenu(menu:any) {
 		this.modalService.open(menu);
+	}
+
+SummaryRun(){
+		 (<HTMLInputElement>document.getElementById("SummaryRun")).style.display = "inline-flex";  
+	}
+	SummaryExecuted(){
+		 (<HTMLInputElement>document.getElementById("SummaryExecuted")).style.display = "inline-flex";  
 	}
 
 
