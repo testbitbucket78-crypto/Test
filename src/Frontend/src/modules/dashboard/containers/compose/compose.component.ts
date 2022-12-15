@@ -30,8 +30,17 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
  	console.log(steppers);
 	steppers.next();
 }
-	openinstruction(instruction:any) {
-		this.modalService.open(instruction);
+openinstruction(instruction:any) {
+	this.modalService.open(instruction);
+}
+sttapper3(){
+	var stepper2=  new Stepper($('.bs-stepper')[0]);
+	console.log(stepper2);
+   stepper2.next();
+}
+	
+	openreview(review:any) {
+		this.modalService.open(review);
 	}
  sttapper(){
  	var stepper=  new Stepper($('.bs-stepper')[0]);

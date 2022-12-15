@@ -9,6 +9,9 @@ import { SmartRepliesComponent } from './smartReplies/smartReplies.component';
 import { FlowBuilderComponent } from './flowBuilder/flowBuilder.component';
 import { ReplyMaterialComponent } from './replyMaterial/replyMaterial.component';
 import { ReportsComponent } from './reports/reports.component';
+import { ConversationComponent } from './conversation/conversation.component';
+import { ReportcampaignComponent } from './reportcampaign/reportcampaign.component';
+import { ReportautomationComponent } from './reportautomation/reportautomation.component';
 import { MessageComponent } from './message/message.component';
 import { CampaignReportComponent } from './campaignReport/campaignReport.component';
 import { ScheduleComponent } from './schedule/schedule.component';
@@ -22,7 +25,7 @@ import { ContactsettingComponent } from './contactsetting/contactsetting.compone
 import { InboxsettingComponent } from './inboxsetting/inboxsetting.component';
 
 
-export const containers = [DashboardComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,ComposeComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent,AccountsettingComponent,CampaignsettingComponent,ContactsettingComponent,InboxsettingComponent];
+export const containers = [DashboardComponent,ReportcampaignComponent,ReportautomationComponent,ConversationComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,ComposeComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent,AccountsettingComponent,CampaignsettingComponent,ContactsettingComponent,InboxsettingComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './contacts/contacts.component';
@@ -35,6 +38,9 @@ export * from './flowBuilder/flowBuilder.component';
 export * from './smartReplies/smartReplies.component';
 export * from './replyMaterial/replyMaterial.component';
 export * from './reports/reports.component';
+export * from './conversation/conversation.component';
+export * from './reportcampaign/reportcampaign.component';
+export * from './reportautomation/reportautomation.component';
 export * from './message/message.component';
 export * from './campaignReport/campaignReport.component';
 export * from './schedule/schedule.component';

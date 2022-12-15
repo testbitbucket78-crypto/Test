@@ -191,6 +191,60 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.FlowBuilderComponent,
     },
+    {
+        path: 'reportcampaign',
+        data: {
+            title: 'Report Campaign',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Report Campaign',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ReportcampaignComponent,
+    },
+    {
+        path: 'reportautomation',
+        data: {
+            title: 'Report Automation',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Report Automation',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ReportautomationComponent,
+    },
+    {
+        path: 'conversation',
+        data: {
+            title: 'Conversation',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Conversation',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ConversationComponent,
+    },
   {
         path: 'reports',
         data: {
@@ -209,6 +263,7 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.ReportsComponent,
     },
+    
     {
         path: 'message',
         data: {

@@ -1,27 +1,28 @@
 <sb-layout-dashboard><sb-dashboard-head title="Contact Settings" [hideBreadcrumbs]="true"></sb-dashboard-head>
-<div class="row">
-    <div class="col-md-6">
-        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 col-12 py-3">
-           <div class="input-group">
-               <input class="form-control" type="text" placeholder="Search form Name, Phone Number and Email" aria-label="Search" aria-describedby="basic-addon2" />
-               <div class="input-group-append">
-                   <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
-               </div>
-           </div>
-       </form>
-   
-       </div>
-       <div class="col-md-6 mt-3 text-right">
-        <button type="button" class="btn btn-success" (click)="open(create)"><i class="fa fa-plus"></i>Create Tag</button>
-    <button type="button" class="btn btn-success" (click)="opens(add)"><i class="fa fa-plus"></i>Add Field</button>
-       </div>
-</div>
+
 <div class="row py-3">
     <div class="col-md-12">
     <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs teamnav mt-2">
         <li [ngbNavItem]="1">
             <a ngbNavLink>Contacts</a>
             <ng-template ngbNavContent>
+                <div class="row">
+                    <div class="col-md-6">
+                        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 col-12 py-3">
+                           <div class="input-group">
+                               <input class="form-control" type="text" placeholder="Search form Name, Phone Number and Email" aria-label="Search" aria-describedby="basic-addon2" />
+                               <div class="input-group-append">
+                                   <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
+                               </div>
+                           </div>
+                       </form>
+                   
+                       </div>
+                       <div class="col-md-6 mt-3 text-right">
+                        <button type="button" class="btn btn-success" (click)="open(create)"><i class="fa fa-plus"></i>Create Tag</button>
+                    <button type="button" class="btn btn-success" (click)="opens(add)"><i class="fa fa-plus"></i>Add Field</button>
+                       </div>
+                </div>
                 <table class="table table-striped">
                     <thead>
                         <tr>
