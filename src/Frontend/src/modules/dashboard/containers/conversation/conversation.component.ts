@@ -40,10 +40,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
         
         };
         
-        const myChart = new Chart(
-         document.getElementById("myChart"),
-         config
-        );
+       
         
         
         const data2 = {
@@ -73,10 +70,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
         
         };
         
-        const lineChart = new Chart(
-            document.getElementById("lineChart"),
-            config2
-           );
+        
         
         
         
@@ -109,10 +103,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
         
         };
         
-        const line1Chart = new Chart(
-            document.getElementById("line1Chart"),
-            config2
-           );
+       
         
            const data4 = {
             labels: ['2 Jun', '3 Jun', '4 Jun','5 Jun', '6 Jun', '7 Jun', '8 Jun' ],
@@ -141,10 +132,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
         
         };
         
-        const line2Chart = new Chart(
-            document.getElementById("line2Chart"),
-            config4
-           );
+
 
 }
 open(add:any) {
