@@ -1,12 +1,9 @@
 @import 'styles/variables.scss';
 
-@import 'styles/variables.scss';
-
 .container{
     background-color: white;
     height: 650px;
 }
-
 
 .float-left {
     float: left !important;
@@ -17,7 +14,7 @@
 
 label {
     display: inline-block;
-    margin: 25px 0px 0px -10px;
+    margin: 20px 0px 0px -10px;
     color: #000000;
     font-family: Manroap;
     font-weight: 600;
@@ -32,7 +29,7 @@ label {
     font-size: 14px;
     font-weight: 400;
     line-height: 1.5;
-    color: #7A86A1;;
+    color:  #7A86A1;
     background-color: #ffffff;
     background-clip: padding-box;
     border: 1px solid #ced4da;
@@ -40,11 +37,22 @@ label {
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     margin: 10px 0px 0px -10px;
 }
+.log h3 .b{
+    margin: 20px 0px 0px 0px;
+}
+.font-weight-light {
+    font-weight: bold !important;
+    margin: 20px 0px 0px 0px;
+    font-size: 30px;
+    font-family: Manrope;
+    color: #000000;
+    line-height: 50px;
+}
 .btn:not(:disabled):not(.disabled) {
     cursor: pointer;
     width: 325px;
     border-radius: 15px;
-    margin: 20px 0px 0px -10px;
+    margin: 18px 0px 0px -2px;
     background-image: linear-gradient(to right, #F9B035, #F98C4E, #F96767);
     font-family: Manrope;
     font-weight: bold;
@@ -52,11 +60,54 @@ label {
     color: #000000;
 
 }
-.font-weight-light {
-    font-weight: bold !important;
-    margin: 150px 0px 0px 0px;
-    font-size: 30px;
+.text{
+    margin: 100px 0px 0px 0px;
+    
+}
+.text a{
+    color: #6149CD;
     font-family: Manrope;
-    color: #000000;
-    line-height: 50px;
+    font-size: 14px;
+    font-weight: bold;
+}
+h5, .h5 {
+    font-size: 14px;
+    font-weight: normal;
+    font-family: Manroap;
+    color: #7A86A1;
+    margin: 5px 0px 0px -10px;
+}
+h6, .h6 {
+    font-size: 14px;
+    font-weight: normal;
+    font-family: Manroap;
+    color: #7A86A1;
+    margin: 5px 0px 0px 50px;
+}
+.ml-1, .mx-1 {
+    font-size: 14px;
+    font-family: Manrope;
+    font-weight: bold;
+    color: #6149CD;
+    line-height: 30px;
+    margin: -2px 0px 0px 0px;
+}
+a {
+    font-size: 14px;
+    font-family: Manrope;
+    color: #7A86A1;
+    line-height: 30px;
+}
+.text1{
+    margin: 55px 0px 0px 0px;
+}
+button:not(:disabled), [type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled) {
+    cursor: pointer;
+    width: 105px;
+    height: 29px;
+    margin: 13px -10px 0px -103px;
+    border-radius: 12px;
+    background-color: #6149CD;
+    border: none;
+    color: #ffffff;
 }
