@@ -2,10 +2,72 @@
 		<sb-dashboard-head title="Dashboard" [hideBreadcrumbs]="true"></sb-dashboard-head>
 <!-- <sb-dashboard-card col-md-3s></sb-dashboard-card col-md-3s><sb-dashboard-charts></sb-dashboard-charts><sb-dashboard-tables></sb-dashboard-tables>
  -->
- <section>
-  
+ <div class="card9 float-right">
+  <div class="card-body">
+    <h4>Recent Conversation</h4>
+    <div class="row d-flex">
+      <img src="assets/img/my.jpg">
+      <div class="row2">
+        <div class="mt-5 ml-2">
+        <h5>Bob Dean</h5>
+        <h6>Lorium ipsum dolor...</h6>
+        </div>
+        </div>
+        <div class="ml-3">
+        <h4>9:41am</h4>
+      </div>
+    </div>
+    <div class="row d-flex">
+      <img src="assets/img/my.jpg">
+      <div class="row2">
+        <div class="mt-5 ml-2">
+        <h5>David Harisian</h5>
+        <h6>Lorium ipsum dolor...</h6>
+        </div>
+        </div>
+        <div class="ml-3">
+        <h4>9:35am</h4>
+      </div>
+    </div>
+    <div class="row d-flex">
+      <img src="assets/img/my.jpg">
+      <div class="row2">
+        <div class="mt-5 ml-2">
+        <h5>Jane Tony</h5>
+        <h6>Lorium ipsum dolor...</h6>
+        </div>
+        </div>
+        <div class="ml-3">
+        <h4>8:15am</h4>
+      </div>
+    </div>
+    <div class="row d-flex">
+      <img src="assets/img/my.jpg">
+      <div class="row2">
+        <div class="mt-5 ml-2">
+        <h5>Andrew Green</h5>
+        <h6>Lorium ipsum dolor...</h6>
+        </div>
+        </div>
+        <div class="ml-3">
+        <h4>8:13am</h4>
+      </div>
+    </div>
+    <div class="row d-flex">
+      <img src="assets/img/my.jpg">
+      <div class="row2">
+        <div class="mt-5 ml-2">
+        <h5>William Christopher </h5>
+        <h6>Lorium ipsum dolor...</h6>
+        </div>
+        </div>
+        <div class="ml-3">
+        <h4>9:41am</h4>
+      </div>
+    </div>
+  </div>
+</div>
    <div class="row">
-    <div class="col-sm-4">
       <div class="card">
       
         <div class="card-body">
@@ -28,10 +90,9 @@
                     <h6>Inactive Subscriber</h6>
                 </div>
               </div>
-        </div>
       </div>
     </div>
-    <div class="col-sm-4">
+
       <div class="card">
         <div class="card-body">
             <h4>Interactions</h4>
@@ -55,44 +116,147 @@
               </div>
         </div>
       </div>
-    </div>
-  </div>
-      </section>
-      <section>
-            <h4>Interactions</h4>
-            <div class="row">
-            	<div *ngFor="let item of dashboard.Interactions" class="box col-md-3">
-                        <h4>{{ item.title }}</h4>
-                        <span>{{ item.count }}</span>
-                 </div>
-            </div>
-        </section>
-        <section>
-            <h4>Campaigns</h4>
-            <div class="row">
-            	<div *ngFor="let item of dashboard.Campaigns" class="box col-md-3">
-                        <h4>{{ item.title }}</h4>
-                        <span>{{ item.count }}</span>
-                 </div>
+   
+
+          <div class="card4"  style="height: 400px;" >
+          
+            <div class="card-body">
+              <h4>Campaigns</h4>
+
+              <div class="row d-flex">
+                <img src="assets/img/total.jpg">
+                <div class="row1">
+                <div class="mt-5 ml-4 text-justify">
+                <h5>4735</h5>
+                <h6>Total schedule Campaigns</h6>
+                </div>
                 
+              </div>
+              <div class="line"></div>
+              <div class="row1">
+                <div class="mt-5 ml-4">
+                <h4>56</h4>
+                <h3>Total-schedule Campaign</h3>
+                </div>    
+              </div>
+              <div class="card5">
+                <div class="card-body">
+                  <div class="img">
+                  <img src="assets/img/drop.jpg">
+                </div>
+                <p>Today</p>
+                </div>
+              </div>
             </div>
-        </section>
-        <section>
-            <h4>Agents</h4>
-            <div class="row">
-            		<div *ngFor="let item of dashboard.Agents" class="box col-md-3">
-                        <h4>{{ item.title }}</h4>
-                        <span>{{ item.count }}</span>
-                 </div>
+             <div class="row d-flex">
+                <img src="assets/img/deli.jpg">
+                <div class="row1">
+                <div class="mt-5 ml-4 text-justify">
+                <h5>14237</h5>
+                <h6>Total delivered Campaigns</h6>
+                </div>
+                
+              </div>
+              <div class="line1"></div>
+              <div class="row1">
+                <div class="mt-5 ml-4">
+                <h4>495</h4>
+                <h3>This week-delivered Campaigns</h3>
+                </div>    
+              </div>
+              <div class="card6">
+                <div class="card-body">
+                  <div class="img">
+                  <img src="assets/img/drop.jpg">
+                </div>
+                <p>This week</p>
+                </div>
+              </div>
+            </div>
+            <div class="row d-flex">
+              <img src="assets/img/painding.jpg">
+              <div class="row1">
+              <div class="mt-5 ml-4 text-justify">
+              <h5>14237</h5>
+              <h6>Total pending Campaigns</h6>
+              </div>
               
             </div>
-        </section>
-        <section>
-   <h4>Billing Plan</h4>
-   <div class="row">
-   <div class="box col-md-3">
-                    <h4>Subscription upto</h4>
-                    </div>
+            <div class="line2"></div>
+            <div class="row1">
+              <div class="mt-5 ml-4">
+              <h4>00</h4>
+              <h3>Total-schedule Campaign</h3>
+              </div>    
+            </div>
+            <div class="card5">
+              <div class="card-body">
+                <div class="img">
+                <img src="assets/img/drop.jpg">
+              </div>
+              <p>Today</p>
+              </div>
+            </div>
+          </div>
+          <div class="row d-flex">
+            <img src="assets/img/failed.jpg">
+            <div class="row1">
+            <div class="mt-5 ml-4 text-justify">
+            <h5>14237</h5>
+            <h6>Total failed Campaigns</h6>
+            </div>
+            
+          </div>
+          <div class="line3"></div>
+          <div class="row1">
+            <div class="mt-5 ml-4">
+            <h4>103</h4>
+            <h3>This quater-failed Campaigns</h3>
+            </div>    
+          </div>
+          <div class="card7">
+            <div class="card-body">
+              <div class="img">
+              <img src="assets/img/drop.jpg">
+            </div>
+            <p>This quater</p>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+
+            <div class="card8"  style="height: 180px;" >
+            
+              <div class="card-body">
+                <h4>Agents</h4>
+                <div class="row d-flex">
+                  <img src="assets/img/430.jpg">
+                  <div class="row1">
+                  <div class="mt-5 ml-4 text-justify">
+                  <h5>108</h5>
+                  <h6>Total Agents</h6>
+                  </div>
+                  </div>
+                  <div class="ml-5"></div>
+                  <img src="assets/img/431.jpg">
+                  <div class="row1">
+                  <div class="mt-5 ml-4 text-justify">
+                  <h5>83</h5>
+                  <h6>Active Agents</h6>
+                  </div>
+                  </div>
+                  <div class="ml-5"></div>
+                  <img src="assets/img/432.jpg">
+                  <div class="row1">
+                  <div class="mt-5 ml-4 text-justify">
+                  <h5>25</h5>
+                  <h6>Inactive Agents</h6>
+                  </div>
+                  </div>
                 </div>
-        </section>
+              </div>
+            </div>
+          </div>
+
 </sb-layout-dashboard>
