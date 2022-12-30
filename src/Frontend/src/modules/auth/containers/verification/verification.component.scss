@@ -48,7 +48,7 @@ label {
     color: #000000;
     line-height: 50px;
 }
-.btn:not(:disabled):not(.disabled) {
+.btn2 {
     cursor: pointer;
     width: 325px;
     border-radius: 15px;
@@ -101,7 +101,7 @@ a {
 .text1{
     margin: 55px 0px 0px 0px;
 }
-button:not(:disabled), [type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled) {
+.btn1 {
     cursor: pointer;
     width: 105px;
     height: 29px;
