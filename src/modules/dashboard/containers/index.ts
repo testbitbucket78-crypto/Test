@@ -25,11 +25,7 @@ import { ContactsettingComponent } from './contactsetting/contactsetting.compone
 import { InboxsettingComponent } from './inboxsetting/inboxsetting.component';
 
 
-<<<<<<< HEAD:src/Frontend/src/modules/dashboard/containers/index.ts
 export const containers = [DashboardComponent,ReportcampaignComponent,ReportautomationComponent,ConversationComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,ComposeComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent,AccountsettingComponent,CampaignsettingComponent,ContactsettingComponent,InboxsettingComponent];
-=======
-export const containers = [DashboardComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent];
->>>>>>> master:src/modules/dashboard/containers/index.ts
 
 export * from './dashboard/dashboard.component';
 export * from './contacts/contacts.component';
