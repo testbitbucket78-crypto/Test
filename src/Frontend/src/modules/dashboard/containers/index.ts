@@ -1,0 +1,58 @@
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ContactsComponent } from './contacts/contacts.component';
+import { TeamboxComponent } from './teambox/teambox.component';
+import { ImportComponent } from './import/import.component';
+import { CampaignsComponent } from './campaigns/campaigns.component';
+import { ComposeComponent } from './compose/compose.component';
+import { AutomationComponent } from './automation/automation.component';
+import { SmartRepliesComponent } from './smartReplies/smartReplies.component';
+import { FlowBuilderComponent } from './flowBuilder/flowBuilder.component';
+import { ReplyMaterialComponent } from './replyMaterial/replyMaterial.component';
+import { ReportsComponent } from './reports/reports.component';
+import { ConversationComponent } from './conversation/conversation.component';
+import { ReportcampaignComponent } from './reportcampaign/reportcampaign.component';
+import { ReportautomationComponent } from './reportautomation/reportautomation.component';
+import { MessageComponent } from './message/message.component';
+import { CampaignReportComponent } from './campaignReport/campaignReport.component';
+import { ScheduleComponent } from './schedule/schedule.component';
+import { ScheduleViewComponent } from './scheduleView/scheduleView.component';
+import { SettingComponent } from './setting/setting.component';
+import { GeneralsettingComponent } from './generalsetting/generalsetting.component';
+import { OrganizationComponent } from './organization/organization.component';
+import { AccountsettingComponent } from './accountsetting/accountsetting.component';
+import { CampaignsettingComponent } from './campaignsetting/campaignsetting.component';
+import { ContactsettingComponent } from './contactsetting/contactsetting.component';
+import { InboxsettingComponent } from './inboxsetting/inboxsetting.component';
+
+
+<<<<<<< HEAD:src/Frontend/src/modules/dashboard/containers/index.ts
+export const containers = [DashboardComponent,ReportcampaignComponent,ReportautomationComponent,ConversationComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,ComposeComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent,AccountsettingComponent,CampaignsettingComponent,ContactsettingComponent,InboxsettingComponent];
+=======
+export const containers = [DashboardComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent];
+>>>>>>> master:src/modules/dashboard/containers/index.ts
+
+export * from './dashboard/dashboard.component';
+export * from './contacts/contacts.component';
+export * from './teambox/teambox.component';
+export * from './import/import.component';
+export * from './campaigns/campaigns.component';
+export * from './compose/compose.component';
+export * from './automation/automation.component';
+export * from './flowBuilder/flowBuilder.component';
+export * from './smartReplies/smartReplies.component';
+export * from './replyMaterial/replyMaterial.component';
+export * from './reports/reports.component';
+export * from './conversation/conversation.component';
+export * from './reportcampaign/reportcampaign.component';
+export * from './reportautomation/reportautomation.component';
+export * from './message/message.component';
+export * from './campaignReport/campaignReport.component';
+export * from './schedule/schedule.component';
+export * from './scheduleView/scheduleView.component';
+export * from './setting/setting.component';
+export * from './generalsetting/generalsetting.component';
+export * from './organization/organization.component';
+export * from './accountsetting/accountsetting.component';
+export * from './campaignsetting/campaignsetting.component';
+export * from './contactsetting/contactsetting.component';
+export * from './inboxsetting/inboxsetting.component';

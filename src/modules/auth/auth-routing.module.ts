@@ -44,6 +44,14 @@ export const ROUTES: Routes = [
         } as SBRouteData,
     },
     {
+        path: 'reset-password',
+        canActivate: [],
+        component: authContainers.ResetPasswordComponent,
+        data: {
+            title: 'CIP - Reset Password',
+        } as SBRouteData,
+    },
+    {
         path: 'verification',
         canActivate: [],
         component: authContainers.VerificationComponent,

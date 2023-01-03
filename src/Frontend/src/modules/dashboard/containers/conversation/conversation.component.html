@@ -1,0 +1,95 @@
+<sb-layout-dashboard><sb-dashboard-head title="Report Conversation" [hideBreadcrumbs]="true"></sb-dashboard-head>
+
+
+    <div class="row mt-5">
+    <div class=" col-md-9 bg-lightgray mr-5">
+        <h4>Converstion</h4>
+        
+           <canvas id="myChart" height="200px" width="700px">
+               
+           </canvas> 
+    </div>
+    </div>
+    <div class="row mt-5">
+        <div class=" col-md-6 bg-gray mr-5">
+         <h6>Converrstion first day</h6>
+         
+         <canvas id="lineChart" height="200px" width="400px"></canvas> 
+            <div>
+                <canvas id="myChart"></canvas>
+              </div>
+            
+        </div>
+        <div class=" col-md-5 bg-gray ml-4">
+               <h6>Day First time message user</h6>
+          <div class="row justify-content-center mb-3"> 
+               <div class="col-md-4 border-box">
+             </div>
+                 </div>
+                 <canvas id="line1Chart" height="200px" width="400px"></canvas> 
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class=" col-md-9 bg-lightgray mr-5">
+            <h4>Performance</h4>
+            <canvas id="line2Chart" height="200px" width="700px"></canvas> 
+            
+    </div>
+</div>
+
+
+<button class="btn btn-warning col-md-1 float-right" (click)="open(add)">Export</button> 
+
+<ng-template #add let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Downlod Total user base</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                 <label class="small mb-2"> Format</label>
+                 <div class="div">
+                 <select class="form-select" aria-label="CSV">
+                    <option selected>CSV</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                  </select>
+                </div>
+             </div>
+             <div class="form-group">
+                 <label class="small mb-1">Advance data option</label>
+                 <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                      <h6 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                          Result
+                        </button>
+                      </h6>
+                      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          <strong>With Visualizations options applied</strong> 
+                        </div>
+                      </div>
+                    </div>
+                    
+                   
+                  </div>
+             </div>
+             
+        </form>
+    </div>
+    <div class="modal-footer row popfooter">
+        <div class="col-md-6">
+        <button type="button" class="btn btn-danger" (click)="c('Save click')">Cancel</button>
+    </div>
+    <div class="col-md-6 text-right">
+            <button type="button" class="btn btn-success" (click)="c('Save click')">Downlod</button>
+        </div>
+    </div>
+</ng-template>
+
+    <!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
+     --></sb-layout-dashboard>

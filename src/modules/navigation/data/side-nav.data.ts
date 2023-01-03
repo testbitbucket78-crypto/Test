@@ -48,16 +48,16 @@ export const sideNavItems: SideNavItems = {
                         link: '/dashboard/reports',
                     },
                  {
-                        text: 'Conversations Reports',
-                        link: '/dashboard',
+                        text: ' Report Conversation',
+                        link: '/dashboard/conversation',
                     },
                     {
                         text: 'Campaings Reports',
-                        link: '/dashboard',
+                        link: '/dashboard/reportcampaign',
                     },
                  {
                         text: 'Automation Reports',
-                        link: '/dashboard',
+                        link: '/dashboard/reportautomation',
                     },
                     {
                         text: 'Report Filters',
