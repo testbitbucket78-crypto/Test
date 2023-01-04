@@ -1,0 +1,134 @@
+<sb-layout-dashboard><sb-dashboard-head title="Account Setting" [hideBreadcrumbs]="true"></sb-dashboard-head>
+
+
+
+    <div class="row">
+        <div class="col-md-12 mt-1">
+            <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs teamnav mt-2">
+            <li [ngbNavItem]="1">
+                <a ngbNavLink>Channel</a>
+                <ng-template ngbNavContent>
+                    <div class="dis">
+                        <div class="box">
+                            <div class="col-md-12 text-center">Whatsapp Web Automation</div>
+                            <input type="checkbox" id="toggle-btn-1">
+                                    <label for="toggle-btn-1"></label>
+                    
+                        </div>
+                        <div class="box">
+                            <div class="col-md-12 text-center">Web</div>
+                            <input type="checkbox" id="toggle-btn-2">
+                                    <label for="toggle-btn-2"></label>
+                        </div>
+                        <div class="box">
+                            <div class="col-md-12 text-center">Whatsapp Web Official</div>
+                            <input type="checkbox" id="toggle-btn-3">
+                                    <label for="toggle-btn-3"></label>
+                        </div>
+                    </div>
+                    <div class="box">
+                        <div class="col-md-12 text-center">Facebook Messenger</div>
+                        <input type="checkbox" id="toggle-btn-4">
+                                    <label for="toggle-btn-4"></label>
+                    </div>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="2">
+                <a ngbNavLink>API Token</a>
+                <ng-template ngbNavContent>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">IP Address</th>
+                                <th scope="col">Token</th>
+                                <th scope="col">Status</th>
+                                <th scope="col"><div class="col-md-6 text-right">
+                                    <button type="button" class="btn btn-success" (click)="c('Save click')"><i class="fa fa-plus"></i>Add More</button>
+                                </div></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="col">Enter IP Address</td>
+                                <td scope="col">Token</td>
+                                <td scope="col"></td>
+                                <td scope="col"><div class="col-md-6 text-right">
+                                    <button type="button" class="btn btn-success" (click)="c('Save click')"><i class="fa fa-plus"></i>Generate</button>
+                                </div></td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Enter IP Address</td>
+                                <td scope="col">Token</td>
+                                <td scope="col"></td>
+                                <td scope="col"><div class="col-md-6 text-right">
+                                    <button type="button" class="btn btn-success" (click)="c('Save click')"><i class="fa fa-plus"></i>Generate</button>
+                                </div></td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Enter IP Address</td>
+                                <td scope="col">Token</td>
+                                <td scope="col"></td>
+                                <td scope="col"><div class="col-md-6 text-right">
+                                    <button type="button" class="btn btn-success" (click)="c('Save click')"><i class="fa fa-plus"></i>Generate</button>
+                                </div></td>
+                            </tr>
+                            <tr>
+                                <td scope="col">Enter IP Address</td>
+                                <td scope="col">Token</td>
+                                <td scope="col"></td>
+                                <td scope="col"><div class="col-md-6 text-right">
+                                    <button type="button" class="btn btn-success" (click)="c('Save click')"><i class="fa fa-plus"></i>Generate</button>
+                                </div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="3">
+                <a ngbNavLink>Billing</a>
+                <ng-template ngbNavContent>
+                    
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <td scope="col">SL </td>
+                                <td scope="col">Date and Time</td>
+                                <td scope="col">Description</td>
+                                <td scope="col">Type</td>
+                                <td scope="col">Amount</td>
+
+                            </tr>
+                            <tr>
+                                <td scope="col"></td>
+                                <td scope="col">12:03:2022 12:45pm</td>
+                                <td scope="col">hfgdhjhd</td>
+                                <td scope="col">Credit</td>
+                                <td scope="col">$12.44</td>
+                            </tr>
+                            
+                        </tbody>
+                        
+                    </table>
+                    <div class="col-md-11 text-right">
+                        <button type="button" class="btn btn-success" (click)="c('Save click')"><i class="fa fa-plus"></i>Downlod</button>
+                    </div>
+                </ng-template>
+            </li>
+            <li [ngbNavItem]="4">
+                <a ngbNavLink>Integration</a>
+                <ng-template ngbNavContent>
+                    
+                </ng-template>
+            </li>
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+        </div>
+        </div>
+    
+
+
+
+
+
+<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
+ --></sb-layout-dashboard>
