@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require("./dbhelper");
+const db = require("../dbhelper");
 const bodyParser = require('body-parser');
 const val=require('./constant')
 const app = express();
@@ -51,7 +51,7 @@ const insertUser = (req, res) => {
     IsActive = req.body.IsActive
     
     var values = [[ uid,userId, password, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive]]
-   db.runQuery(req,res,val.query, [values])
+   db.runQuery(req,res,val.insertQuery, [values])
 
 
 }

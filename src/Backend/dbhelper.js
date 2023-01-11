@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const val = require('./constant')
+const val = require('./Authentication/constant')
 
 var db = mysql.createConnection({
     host: val.host,
