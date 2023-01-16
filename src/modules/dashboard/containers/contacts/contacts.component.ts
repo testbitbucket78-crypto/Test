@@ -37,6 +37,7 @@ opens(contents:any) {
 	}
       getContact() {
     this.apiService.Contact().subscribe(data => {this.contacts = data;
+		console.log("getContact")
 console.log(this.contacts);
     });
   }

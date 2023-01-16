@@ -13,7 +13,7 @@ export class DashboardService {
         return of({});
     }
     public dashboard() {
-  return this.http.get('http://localhost:3001');
+  return this.http.get('http://localhost:3001/Interactions');
 
 }
  public RuningCampaign() {
@@ -25,6 +25,7 @@ export class DashboardService {
 
 }
  public Contact() {
+  console.log("contact serveice")
   return this.http.get('http://localhost:3002');
 
 }

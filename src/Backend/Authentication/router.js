@@ -15,5 +15,6 @@ router.post('/login',indexController.login);
 router.post('/forgotPassword',indexController.forgotPassword);
 router.post('/sendOtp',indexController.sendOtp)
 router.post('/verifyOtp',indexController.verifyOtp)
-router.post('/verifyPassword',indexController.verifyPassword)
+router.post('/resetPassword',indexController.resetPassword)
+
 module.exports = router;

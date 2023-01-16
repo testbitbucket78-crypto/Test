@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormsModule, FormBuilder, FormControl, FormGroup, NgForm } from '@angular/forms';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
-import { Validators } from '@angular/forms';
+import { FormGroup ,FormControl} from '@angular/forms';
+
 @Component({
     selector: 'sb-verification',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,22 +10,25 @@ import { Validators } from '@angular/forms';
     styleUrls: ['verification.component.scss'],
 })
 export class VerificationComponent implements OnInit {
-    otpForm= new FormControl({
+
+    otpForm = new FormGroup({
         otp: new FormControl('')
     })
-    constructor(private apiService: AuthService, private router: Router) {}
+    constructor(private apiService: AuthService, private router: Router) { }
     ngOnInit() {
-       
+      this.onVerify();
     }
-    
-    onVerify() {
-        
-            this.apiService.verifyOtp(this.otpForm.value).subscribe(response => {
-                console.warn("verification! ", response)
-                this.router.navigate(['login'])
-        
-            });
 
-        
+    onVerify() {
+
+        this.apiService.verifyOtp(this.otpForm.value).subscribe(response => {
+            console.log(this.otpForm.value)
+            console.warn("verification! ", response)
+
+
+        });
+
+
     }
+
 }

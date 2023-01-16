@@ -22,9 +22,9 @@ db.connect((err) => {
 
 
 function runQuery(req, res, query, param) {
-
-    db.query(query, param, (err, result) => {
     
+    db.query(query, param, (err, result) => {
+       
         if (err) throw err;
         
        res.send(result)

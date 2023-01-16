@@ -1,10 +1,11 @@
 var express = require("express");
 const db = require("../dbhelper");
 var app = express();
-const val=require('./constant');
+const val=require('../Authentication/constant.js');
 const bodyParser = require('body-parser');
+const cors=require('cors')
 app.use(bodyParser.json());
-
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', function(req, res){

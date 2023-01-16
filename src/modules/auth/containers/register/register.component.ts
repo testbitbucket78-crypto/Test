@@ -31,15 +31,22 @@ export class RegisterComponent implements OnInit {
     }
 
     onVerification() {
-        //if (this.registerForm.valid) {
+        if (this.registerForm.valid) {
             console.log(this.registerForm.value)
             this.apiService.sendOtp(this.registerForm.value).subscribe(response => {
                 console.warn("registerdone! ", response)
                 this.router.navigate(['verification'])
             });
 
-       // }
+        }
     }
-   
+    onSubmitRegisterform(){
+        if (this.registerForm.valid) {
+        this.apiService.register(this.registerForm.value).subscribe(response=>{
+            console.warn(" user registered!",response)
+            this.router.navigate(['login']);
+        })
+    }
+    }
 
 }
