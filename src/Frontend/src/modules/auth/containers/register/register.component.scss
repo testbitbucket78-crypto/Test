@@ -44,10 +44,12 @@ label {
     margin: 10px 0px 0px -10px;
     font-family: Manrop;
 }
-input[type=checkbox] {
+
+input[type=radio], input[type=checkbox] {
     box-sizing: border-box;
     padding: 0;
-    margin: -3px 0px 0px -4px;
+    margin: 0px 0px 0px -25px;
+    color: #7A86A1;
 }
 .ml-1 {
     color: #6149CD;
@@ -68,11 +70,7 @@ a{
     font-weight: bold;
     color: #7A86A1;
 }
-a:hover {
-    color: #0056b3;
-    text-decoration: underline;
-    font-size: 14px;
-}
+
 .mb-0, .my-0 {
     margin-bottom: 0 !important;
     font-size: 14px;
@@ -84,7 +82,7 @@ a:hover {
 .custom-control-label {
     position: relative;
     vertical-align: top;
-    margin: -3px 0px 0px 0px;
+    margin: -3px 0px 0px -26px;
     font-family: Manrope;
     font-size: 14px;
     color: #7A86A1;
@@ -93,12 +91,14 @@ a:hover {
 .btn2 {
     cursor: pointer;
     width: 230px;
-    border-radius: 15px;
+    border-radius: 22px;
     background-image: linear-gradient(to right, #F9B035, #F98C4E, #F96767);
     font-family: Manrope;
     font-weight: bold;
     font-size: 16px;
     color: #000000;
+    box-shadow: 4px 23px 57px #6149cd42;
+    opacity: 1;
 }
 .text1{
     margin: 50px 0px 0px 0px;

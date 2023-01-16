@@ -32,34 +32,36 @@ section{
   background-color: #fff;
   background-clip: border-box;
   border: none;
-  border-radius: 18px;
-  box-shadow: 0px 0px 30px 5px #695f9714;
-  margin: 0px 10px;
+  border-radius: 30px;
+  box-shadow: 2px 13px 54px #695f9714;
+  opacity: 1;
+  margin: 20px 10px 0px 10px;
   width: 370px;
 }
 .card1{
   
   height: 55px;
-  border-radius: 10px;
+  border-radius: 20px;
   background-color: #E4DFF5;
+  opacity: 1;
 }
 .card2{
   
   height: 55px;
-  border-radius: 10px;
-  margin: -15px 0px 0px 0px;
+  border-radius: 20px;
+  margin: 20px 0px 0px 0px;
   background-color: #E2F4EC;
 }
 .card3{
   
   height: 55px;
-  border-radius: 10px;
-  margin: -15px 0px 0px 0px;
+  border-radius: 20px;
+  margin: 20px 0px 0px 0px;
   background-color: #EBEDF1;
 }
 h4, .h4 {
   font-size: 22px;
-  margin: -25px 0px 15px 0px;
+  margin: -25px 0px 35px 0px;
   color: #000000;
   font-family: Manroap;
   font-weight: bold;
@@ -86,8 +88,9 @@ h6, .h6 {
   word-wrap: break-word;
   background-color: #FFF4F2;
   background-clip: border-box;
-  border-radius: 18px;
-  box-shadow: 0px 0px 30px 10px #695f9714;
+  border-radius: 30px;
+  box-shadow: 2px 13px 54px #695f9714;
+  opacity: 1;
   margin: 25px 0px 0px 10px;
   width: 95%;
 }
@@ -99,8 +102,9 @@ h6, .h6 {
   word-wrap: break-word;
   background-color: #ffffff;
   background-clip: border-box;
-  border-radius: 18px;
-  box-shadow: 0px 0px 30px 10px #695f9714;
+  border-radius: 30px;
+  box-shadow: 2px 13px 54px #695f9714;
+  opacity: 1;
   margin: 25px 0px 0px 10px;
   width: 95%;
 }
@@ -174,6 +178,11 @@ img {
   width: 13px;
   height: 13px;
   margin: -175px 0px 0px -27px;
+}
+.image img{
+  width: 13px;
+  height: 13px;
+  margin: 18px 18px 0px 0px;
 }
 p {
   margin: -128px 0px 0px 8px;

@@ -1,37 +1,37 @@
 <sb-layout-dashboard><sb-dashboard-head title="Contacts" [hideBreadcrumbs]="true"></sb-dashboard-head>
 <div class="row">
-	<div class="col-md-8">
-		<button class="btn btn-primary btn-block col-md-2" (click)="opens(contents)"><i class="fa fa-filter"></i> Filter</button>
+	<div class="col-md-5 mb-4 mt-4">
+		<div class="col-md-12 mb-4">
+			<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-12">
+			   <div class="input-group">
+				   <input class="form-control" type="text" placeholder="Search form Name, Phone Number and Email" aria-label="Search" aria-describedby="basic-addon2" />
+				   <div class="input-group-append">
+					   <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
+				   </div>
+			   </div>
+		   </form>
+		</div>
+		   </div>
+		
+		   <div class="col-xs-3 ml-5 mb-4 mt-4">
+		<button class="btn btn-primary btn-block float-right" (click)="opens(contents)"><i class="fa fa-filter"></i> Filter</button>
 	</div>
-	<div class="col-md-2">
-		<button class="btn btn-primary btn-block float-right" (click)="open(content)"><i class="fa fa-download"></i> Export Contact</button>
+	<div class="col-xs-3 ml-1 mb-4 mt-4">
+		<button class="btn btn-primary btn-block float-right" (click)="opencollum(collum)"><i class="fa fa-download"></i> Collum Prefrences </button>
 	</div>
-	<div class="col-md-2">
-		<button class="btn btn-primary btn-block float-right" routerLink="/dashboard/import"><i class="fa fa-download"></i> Uploade/Import</button>
-	</div>
-</div>
-<div class="row mt-3 mb-3">
-	<div class="col-md-5 d-flex">
 
-		<button class="btn btn-danger col-md-3 mr-3"><i class="fa fa-trash-o"></i> Delete</button>
-			<button class="btn btn-primary col-md-3"><i class="fa fa-download"></i> Export</button>
-
+	<div class="col-xs-3 ml-1 mb-4 mt-4">
+		<button class="btn btn-primary btn-block float-right" (click)="open(content)"><i class="fa fa-download"></i> Export </button>
 	</div>
-	<div class="col-md-5">
-     <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 col-12">
-        <div class="input-group">
-            <input class="form-control" type="text" placeholder="Search form Name, Phone Number and Email" aria-label="Search" aria-describedby="basic-addon2" />
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
-            </div>
-        </div>
-    </form>
-
+	<div class="col-xs-3 ml-1 mb-4 mt-4">
+		<button class="btn btn-primary btn-block float-right" routerLink="/dashboard/import"><i class="fa fa-download"></i> Import</button>
 	</div>
-	<div class="col-md-2">
+	<div class="col-xs-3 ml-1 mb-4 mt-4">
 		<button class="btn btn-primary btn-block float-right"  (click)="openadd(contactadd)"><i class="fa fa-plus"></i> Add Contact</button>
 	</div>
+
 </div>
+
 
 
 
@@ -39,10 +39,13 @@
 	<thead>
 		<tr>
 			<th scope="col"><input type="checkbox" name=""></th>
-			<th scope="col">Sr. No</th>
+			<th scope="col">ID</th>
 			<th scope="col">Name</th>
 			<th scope="col">Phone Number</th>
 			<th scope="col">Email </th>
+			<th scope="col">Age </th>
+			<th scope="col">Gender </th>
+			<th scope="col">Tag </th>
 		</tr>
 	</thead>
 	<tbody>
@@ -72,6 +75,45 @@
 		</div>
 		<div class="col-md-6 text-right">
 		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Confirm</button>
+	</div>
+	</div>
+</ng-template>
+
+<ng-template #collum let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<h4 class="modal-title" id="modal-basic-title">Collum Prefrences</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
+			<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
+			<label class="custom-control-label" for="rememberPasswordCheck">ID</label></div>
+			<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
+				<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
+				<label class="custom-control-label" for="rememberPasswordCheck">Name</label></div>
+				<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
+					<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
+					<label class="custom-control-label" for="rememberPasswordCheck">Phone Number</label></div>
+					<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
+						<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
+						<label class="custom-control-label" for="rememberPasswordCheck">Email</label></div>
+						<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
+							<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
+							<label class="custom-control-label" for="rememberPasswordCheck">Gender</label></div>
+							<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
+								<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
+								<label class="custom-control-label" for="rememberPasswordCheck">Tag</label></div>
+								<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
+									<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
+									<label class="custom-control-label" for="rememberPasswordCheck">Status</label></div>
+		
+	</div>
+	<div class="modal-footer popfooter row">
+		<div class="col-md-6 text-right">
+			<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Cancel</button>
+		</div>
+		<div class="col-md-2 text-right">
+		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Save</button>
 	</div>
 	</div>
 </ng-template>

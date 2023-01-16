@@ -28,6 +28,10 @@ opens(contents:any) {
 	openadd(contactadd:any) {
 		this.modalService.open(contactadd);
 	}
+	opencollum(collum:any) {
+		this.modalService.open(collum);
+	}
+	
 
 
 
