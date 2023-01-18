@@ -1,0 +1,239 @@
+@import 'styles/variables.scss';
+
+  .box{
+    margin: 10px 0px;
+    text-align: center;
+    box-shadow: 0 1px 4px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 0%);
+    padding: 30px;
+
+}
+
+ .box h4{
+      font-size: 20px;
+    font-weight: 400;
+}
+
+section{
+	    margin: 50px auto;
+}
+.card-body {
+  flex: 1 1 auto;
+  min-height: 1px;
+  padding: 1.25rem;
+  margin: 35px 0px 0px 0px;
+  border-radius: none;
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: none;
+  border-radius: 30px;
+  box-shadow: 2px 13px 54px #695f9714;
+  opacity: 1;
+  margin: 20px 10px 0px 10px;
+  width: 370px;
+}
+.card1{
+  
+  height: 55px;
+  border-radius: 20px;
+  background-color: #E4DFF5;
+  opacity: 1;
+}
+.card2{
+  
+  height: 55px;
+  border-radius: 20px;
+  margin: 20px 0px 0px 0px;
+  background-color: #E2F4EC;
+}
+.card3{
+  
+  height: 55px;
+  border-radius: 20px;
+  margin: 20px 0px 0px 0px;
+  background-color: #EBEDF1;
+}
+h4, .h4 {
+  font-size: 22px;
+  margin: -25px 0px 35px 0px;
+  color: #000000;
+  font-family: Manroap;
+  font-weight: bold;
+  line-height: 0px;
+}
+h5, .h5 {
+  font-size: 24px;
+  margin: -18px 0px 0px 0px;
+  color: #000000;
+  font-family: Manroap;
+  font-weight: bold;
+}
+h6, .h6 {
+  font-size: 15px;
+  color: #000000;
+  font-family: Manroap;
+  font-weight: bold;
+}
+.card4 {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #FFF4F2;
+  background-clip: border-box;
+  border-radius: 30px;
+  box-shadow: 2px 13px 54px #695f9714;
+  opacity: 1;
+  margin: 25px 0px 0px 10px;
+  width: 95%;
+}
+.card8 {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #ffffff;
+  background-clip: border-box;
+  border-radius: 30px;
+  box-shadow: 2px 13px 54px #695f9714;
+  opacity: 1;
+  margin: 25px 0px 0px 10px;
+  width: 95%;
+}
+img {
+  vertical-align: middle;
+  border-style: none;
+  margin: 32px 0px 0px 17px;
+  width: 45px;
+  border-radius: 17px;
+  height: 45px;
+}
+.line{
+  width: 0px;
+  height: 35px;
+  border: 1px solid #E1E1E1;
+  margin: 40px 0px 0px 50px;
+}
+.line1{
+  width: 0px;
+  height: 35px;
+  border: 1px solid #E1E1E1;
+  margin: 40px 0px 0px 47px;
+}
+.line2{
+  width: 0px;
+  height: 35px;
+  border: 1px solid #E1E1E1;
+  margin: 40px 0px 0px 53px;
+}
+.line3{
+  width: 0px;
+  height: 35px;
+  border: 1px solid #E1E1E1;
+  margin: 40px 0px 0px 69px;
+}
+.row1 h4{
+  font-size: 18px;
+  margin: 0px 0px 11px 0px;
+  color: #000000;
+  font-family: Manroap;
+  font-weight: Semibold;
+}
+.row1 h3{
+  font-size: 14px;
+  color: #000000;
+  font-family: Manroap;
+  font-weight: Medium;
+}
+.card5{
+  height: 25px;
+    border-radius: 10px;
+    margin: 46px 0px 0px 120px;
+    background-color: #ffffff;
+    width: 104px;
+}
+ .tol{
+  height: 25px;
+    border-radius: 10px;
+    margin: 46px 0px 0px 139px;
+    background-color: #ffffff;
+    width: 104px;
+}
+.card6{
+  height: 25px;
+    border-radius: 10px;
+    margin: 46px 0px 0px 133px;
+    background-color: #ffffff;
+    width: 104px;
+}
+.card7{
+  height: 25px;
+    border-radius: 10px;
+    margin: 46px 0px 0px 139px;
+    background-color: #ffffff;
+    width: 107px;
+}
+.img img{
+  width: 13px;
+  height: 13px;
+  margin: -175px 0px 0px -27px;
+}
+.image img{
+  width: 13px;
+  height: 13px;
+  margin: 18px 18px 0px 0px;
+}
+p {
+  margin: -128px 0px 0px 8px;
+  font-size: 13px;
+  font-family: Manroap;
+  font-weight: regular;
+  color: #7A86A1;
+}
+.float-right {
+  background-color: #FBF9FE;
+  margin: 0px -25px 0px 0px;
+  width: 300px;
+  height: 980px;
+}
+.row2 h5{
+  font-size: 15px;
+  font-family: Manrope;
+  font-weight: bold;
+  color: #000000;
+}
+.row2 h6{
+  font-size: 14px;
+  font-family: Manrope;
+  font-weight: normal;
+  color: #7A86A1;
+}
+.row .img{
+  vertical-align: middle;
+    border-style: none;
+    margin: 32px 0px 0px 17px;
+    width: 45px;
+    border-radius: 17px;
+    height: 45px;
+}
+.ml-3 h4{
+  font-size: 13px;
+  font-family: Manrope;
+  font-weight: normal;
+  color: #7A86A1;
+  margin: 56px 0px 0px 0px;
+}
+.row4{
+  margin: -48px 0px 0px 80px;
+}
+.row5{
+  margin: -48px 0px 0px 80px;
+}

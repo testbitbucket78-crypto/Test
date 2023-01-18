@@ -1,0 +1,57 @@
+<sb-layout-dashboard><sb-dashboard-head title="Report Campaign" [hideBreadcrumbs]="true"></sb-dashboard-head>
+
+
+    <div class="tab-content pt-4" id="myTabContent">
+        <div class="tab-pane fade show active" id="home">
+        </div>
+      </div>
+      <div class="row g-3 pt-3">
+        <div class="col-sm-6">
+        
+          <input type="text" class="form-control" placeholder="Search" aria-label="City">
+        </div>
+          <div class="col-sm-6">
+            <select class="form-select" aria-label="Default select example">
+                <option selected>All</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
+        </div>
+      </div>
+      <table class="table table-striped mt-5">
+        <tbody>
+            <tr>
+                <td scope="col">Message ID </td>
+                <td scope="col">Number</td>
+                <td scope="col">Status</td>
+                <td scope="col">Submitted Time</td>
+                <td scope="col">Delivered Time</td>
+                <td scope="col">Read Time</td>
+                <td scope="col">Charges</td>
+                <td scope="col">Error Message</td>
+            </tr>
+            <tr>
+                <td scope="col">2234323</td>
+                <td scope="col">8800215152</td>
+                <td scope="col"><button class="btn btn-success" >Read</button> </td>
+                <td scope="col">02-06-2022 </td>
+                <td scope="col">03-06-2022 </td>
+                <td scope="col">03-06-2022 </td>
+                <td scope="col">$12</td>
+            </tr>
+           
+        </tbody>
+    </table>
+    <div class="modal-footer row popfooter">
+        <div class="col-md-3 text-right">
+        <button type="button" class="btn btn-danger">Close</button>
+    </div>
+    <div class="col-md-1 text-right">
+            <button type="button" class="btn btn-success" >Downlod</button>
+        </div>
+    </div>
+
+
+    <!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
+     --></sb-layout-dashboard>
