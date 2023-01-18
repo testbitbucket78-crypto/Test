@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require("./dbhelper");
+const db = require("../dbhelper");
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const app = express();
@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const { json } = require('body-parser');
 const val = require('./constant');
+const { Status } = require('tslint/lib/runner');
+const CryptoJS = require('crypto-js');
 const SECRET_KEY = 'RAUNAK'
 app.use(bodyParser.json());
 
@@ -20,23 +22,26 @@ const allregisterdUser = (req, res) => {
 
 
 }
+
 //post Api for login
 const login = (req, res) => {
     db.db.query(val.loginQuery, [req.body.email_id], function (err, result) {
 
         // user does not exists
         if (err) {
-            throw err;
             return res.status(400).send({
                 msg: err
             });
         }
         if (!result.length) {
+            console.log("length error")
             return res.status(401).send({
                 msg: 'Email or password is incorrect!'
             });
         }
         // check password
+
+
         bcrypt.compare(
             req.body.password,
             result[0]['password'],
@@ -44,9 +49,7 @@ const login = (req, res) => {
                 // wrong password
                 if (bErr) {
                     throw bErr;
-                    return res.status(401).send({
-                        msg: 'Email or password is incorrect!'
-                    });
+
                 }
                 if (bResult) {
                     const token = jwt.sign({ email_id: result.email_id }, SECRET_KEY);
@@ -62,6 +65,7 @@ const login = (req, res) => {
             }
         );
     }
+
     );
 
 }
@@ -73,7 +77,7 @@ const register = function (req, res) {
     mobile_number = req.body.mobile_number
     email_id = req.body.email_id
     password = req.body.password
-   confirmPassword = req.body.confirmPassword
+    confirmPassword = req.body.confirmPassword
     if (password != confirmPassword) {
         throw error;
     } else {
@@ -84,7 +88,7 @@ const register = function (req, res) {
             db.db.query(val.registerQuery, [values], function (err, result, fields) {
                 if (err) {
 
-                    throw err;
+                    res.send(err)
                 }
                 else {
                     const token = jwt.sign({ email_id: result.email }, SECRET_KEY);
@@ -104,46 +108,116 @@ const register = function (req, res) {
 
 
 
+
+//common method for send email through node mailer
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: val.email,
+        pass: val.appPassword
+    },
+    port: val.port,
+    host: val.emailHost
+});
+
 //Post api for forget password
-
-
 const forgotPassword = (req, res) => {
-
+    email_id = req.body.email_id;
 
     db.db.query(val.loginQuery, [req.body.email_id], function (error, results, fields) {
         // Send Email for For forget password varification
 
         if (Object.keys(results).length === 0) {
             console.log(error)
+
         }
         else {
 
-            const msg = {
-                from: val.email,
-                to: req.body.email_id,
-                subject: "Verification mail for forgot Password",
-                text: "Verification For Forgot Password"
-            };
-            nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: val.email,
-                    pass: val.appPassword
-                },
-                port: val.port,
-                host: val.emailHost
-            })
-                .sendMail(msg, (err) => {
-                    if (err) {
-                        return console.log('ERROR');
-                    }
-                    return console.log('Email sent');
+            db.db.query(val.uidresetEmailQuery, [req.body.email_id], function (err, results, fields) {
+                var uid = results;
+               
+                // Encrypt
+                var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
+                
+                
 
-                })
- 
+               
+                    if (err) {
+                        console.log(err)
+                    } else {
+
+                        var mailOptions = {
+                            to: req.body.email_id,
+                            subject: "Request for reset Password: ",
+                            html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                        };
+
+                        transporter.sendMail(mailOptions, (error, info) => {
+                            if (error) {
+                                return console.log(error);
+                            }
+                            console.log('Message sent: %s', info.messageId);
+                            console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+                            res.status(200).send({ msg: "password has been sent" });
+                        });
+                    }
+                
+
+            });
         }
     })
 
 }
 
-module.exports = { allregisterdUser, login, register, forgotPassword };
+//resetPssword api
+const resetPassword = function (req, res) {
+    uid = req.body.uid
+    password = req.body.password
+    confirmPassword = req.body.confirmPassword
+    if (password != confirmPassword) {
+        throw error;
+    }
+    else {
+        bcrypt.hash(password, 10, function (err, hash) {
+            db.runQuery(req, res, val.updatePassword, [hash, email_id]);
+        })
+    }
+
+
+};
+
+// Opt for Varification
+const sendOtp = function (req, res) {
+    email_id = req.body.email_id;
+
+    // send mail with defined transport object
+    var mailOptions = {
+        to: req.body.email_id,
+        subject: "Otp for registration is: ",
+        html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + val.otp + "</h1>" // html body
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+        res.send(Status);
+    });
+};
+const verifyOtp = function (req, res, err) {
+    
+    otp = req.body.otp
+ 
+   
+    if (req.body.otp == val.otp) {
+        return res.send(Status);
+    }
+    return res.send(err)
+};
+
+
+
+module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword };

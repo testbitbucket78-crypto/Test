@@ -1,0 +1,234 @@
+<sb-layout-dashboard><sb-dashboard-head title="Add Campaign" [hideBreadcrumbs]="true"></sb-dashboard-head>
+    <div class="bs-stepper">
+      <div class="bs-stepper-header" role="tablist">
+        <!-- your steps here -->
+        <div class="step" data-target="#logins-part">
+          <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
+            <span class="bs-stepper-circle">1</span>
+            <span class="bs-stepper-label">Add name & select channel</span>
+          </button>
+        </div>
+        <div class="line"></div>
+        <div class="step" data-target="#information-part">
+          <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger">
+            <span class="bs-stepper-circle">2</span>
+            <span class="bs-stepper-label">Select Audience</span>
+          </button>
+        </div>
+         <div class="line"></div>
+        <div class="step" data-target="#review-part">
+          <button type="button" class="step-trigger" role="tab" aria-controls="review-part" id="review-part-trigger">
+            <span class="bs-stepper-circle">3</span>
+            <span class="bs-stepper-label">Add Message</span>
+          </button>
+        </div>
+        <div class="line"></div>
+        <div class="step" data-target="#reviews-part">
+            <button type="button" class="step-trigger" role="tab" aria-controls="reviews-part" id="reviews-part-trigger">
+              <span class="bs-stepper-circle">4</span>
+              <span class="bs-stepper-label">Schedule</span>
+            </button>
+          </div>
+      </div>
+      <div class="bs-stepper-content">
+        <!-- your steps content here -->
+        <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+            <form>
+                <div class="row g-2">
+                    <div class="col-md">
+                      <div class="form-floating">
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Campaign name" id="floatingTextarea2" style="height: 100px"></textarea>
+                          </div>
+                        
+                      </div>
+                    </div>
+                    <div class="col-md">
+                      <div class="form-floating">
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Select Channel" id="floatingTextarea2" style="height: 100px"></textarea>
+                          </div>
+                        
+                      </div>
+                    </div>
+                  </div>
+            </form>
+    
+    
+            <a (click)= "openinstruction(instruction)" class="link">See Instructions ></a>
+                    <button type="button" (click)= "sttapper1()" class="btn btn-primary btn-block col-1 mt-3">Next</button>
+    
+        </div>
+        <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+
+            <div class="bs-stepper-vertical" role="tablist">
+                <!-- your steps here -->
+                <div class="stepper" data-target="#logins-part">
+                  <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
+                    <span class="bs-stepper-circle"></span>
+                    <span class="bs-stepper-label">Segment Audience</span>
+                  </button>
+                </div>
+                <div class="line"></div>
+                <div class="stepper" data-target="#information-part">
+                  <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger">
+                    <span class="bs-stepper-circle"></span>
+                    <span class="bs-stepper-label">Upload Audience</span>
+                  </button>
+                </div>
+                 <div class="line"></div>
+                <div class="stepper" data-target="#review-part">
+                  <button type="button" class="step-trigger" role="tab" aria-controls="review-part" id="review-part-trigger">
+                    <span class="bs-stepper-circle"></span>
+                    <span class="bs-stepper-label">Dynamic Messaging</span>
+                  </button>
+                </div>
+              </div>
+    
+                
+    <!--     	<button type="button" (click)= "sttapper2()" class="btn btn-primary btn-block col-1">Next</button>
+     -->
+     <a (click)= "openreview(review)" class="link">See Instructions ></a>    
+     	<button type="button" (click)= "sttapper()" class="btn btn-primary btn-block col-1">Back</button>
+         <button type="button" (click)= "sttapper2()" class="btn btn-primary btn-block col-1 mt-3">Next</button>
+        </div>
+
+
+
+        <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
+            <label class="mb-1">Select tde appropriate contact field for each column in tde CSV</label>
+        
+                    <table class="table table-striped">
+                        <thead>
+                <tr>
+                    <th scope="col"><input type="checkbox" name=""></th>
+                    <th scope="col">Sample Data</th>
+                    <th scope="col">Column Nae</th>
+                    <th scope="col"></th>
+                    <th scope="col">Map to contact field </th>
+                    <th scope="col">Do Not Overwrite </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td scope="col"><input type="checkbox" name=""></td>
+                    <td scope="col">Check</td>
+                    <td scope="col">First Name</td>
+                    <td scope="col">-></td>
+                    <td scope="col"><select class="form-control">
+                        <option>First Name</option>
+                    </select></td>
+                    <td scope="col"><input type="checkbox" name=""> </td>
+                </tr>
+                <tr>
+                    <td scope="col"><input type="checkbox" name=""></td>
+                    <td scope="col">N/A</td>
+                    <td scope="col">Last Name</td>
+                    <td scope="col">-></td>
+                    <td scope="col"><select class="form-control">
+                        <option>last Name</option>
+                    </select></td>
+                    <td scope="col"><input type="checkbox" name=""> </td>
+                </tr>
+                <tr>
+                    <td scope="col"><input type="checkbox" name=""></td>
+                    <td scope="col">noreply@abc.com</td>
+                    <td scope="col">Email</td>
+                    <td scope="col">-></td>
+                    <td scope="col"><select class="form-control">
+                        <option>Select A feild</option>
+                    </select></td>
+                    <td scope="col"><input type="checkbox" name=""> </td>
+                </tr>
+            </tbody>
+        
+        </table>
+        <!--     	<button type="button" (click)= "sttapper2()" class="btn btn-primary btn-block col-1">Next</button>
+         -->    	<button type="button" (click)= "sttapper1()" class="btn btn-primary btn-block col-1">Back</button>
+                    <button type="button" (click)= "sttapper()" class="btn btn-primary btn-block col-1">Next</button>
+            </div>
+            <div id="reviews-part" class="content" role="tabpanel" aria-labelledby="reviews-part-trigger">
+                <label class="mb-1">Select tde appropriate contact field for each column in tde CSV</label>
+            
+                        <table class="table table-striped">
+                            <thead>
+                    <tr>
+                        <th scope="col"><input type="checkbox" name=""></th>
+                        <th scope="col">Sample Data</th>
+                        <th scope="col">Column Nae</th>
+                        <th scope="col"></th>
+                        <th scope="col">Map to contact field </th>
+                        <th scope="col">Do Not Overwrite </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td scope="col"><input type="checkbox" name=""></td>
+                        <td scope="col">Check</td>
+                        <td scope="col">First Name</td>
+                        <td scope="col">-></td>
+                        <td scope="col"><select class="form-control">
+                            <option>First Name</option>
+                        </select></td>
+                        <td scope="col"><input type="checkbox" name=""> </td>
+                    </tr>
+                    <tr>
+                        <td scope="col"><input type="checkbox" name=""></td>
+                        <td scope="col">N/A</td>
+                        <td scope="col">Last Name</td>
+                        <td scope="col">-></td>
+                        <td scope="col"><select class="form-control">
+                            <option>last Name</option>
+                        </select></td>
+                        <td scope="col"><input type="checkbox" name=""> </td>
+                    </tr>
+                    <tr>
+                        <td scope="col"><input type="checkbox" name=""></td>
+                        <td scope="col">noreply@abc.com</td>
+                        <td scope="col">Email</td>
+                        <td scope="col">-></td>
+                        <td scope="col"><select class="form-control">
+                            <option>Select A feild</option>
+                        </select></td>
+                        <td scope="col"><input type="checkbox" name=""> </td>
+                    </tr>
+                </tbody>
+            
+            </table>
+            <!--     	<button type="button" (click)= "sttapper2()" class="btn btn-primary btn-block col-1">Next</button>
+             -->    	<button type="button" (click)= "sttapper()" class="btn btn-primary btn-block col-1">Back</button>
+                        <button type="button" (click)= "sttapper3()" class="btn btn-primary btn-block col-1">Next</button>
+                </div>
+      </div>
+    </div>
+    <ng-template #instruction let-c="close" let-d="dismiss">
+        <div class="modal-header text-right">
+                <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+        </div>
+        <div class="modal-body">
+            <div class="campaigndata">
+                 <p>Upload a csv file</p>
+    
+             </div>
+        </div>
+    
+    </ng-template>
+    <ng-template #review let-c="close" let-d="dismiss">
+        <div class="modal-header text-right">
+                <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+        </div>
+        <div class="modal-body">
+            <div class="campaigndata">
+                 <p>Upload a csv file</p>
+    
+             </div>
+        </div>
+    
+    </ng-template>
+    
+    <!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
+     --></sb-layout-dashboard>
+    
+    
+    
+    

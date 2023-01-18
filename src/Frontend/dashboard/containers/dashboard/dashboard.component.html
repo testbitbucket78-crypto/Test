@@ -1,0 +1,299 @@
+<sb-layout-dashboard [light]="false">
+  <sb-dashboard-head title="Dashboard" [hideBreadcrumbs]="true"></sb-dashboard-head>
+  <!-- <sb-dashboard-card col-md-3s></sb-dashboard-card col-md-3s><sb-dashboard-charts></sb-dashboard-charts><sb-dashboard-tables></sb-dashboard-tables>
+ -->
+  <div class="card9 float-right">
+    <div class="card-body">
+      <h4>Recent Conversation</h4>
+      <div class="row d-flex">
+        <img src="assets/img/my.png">
+        <div class="row2">
+          <div class="mt-5 ml-2">
+            <h5>Bob Dean</h5>
+            <h6>Lorium ipsum dolor...</h6>
+          </div>
+        </div>
+        <div class="ml-3">
+          <h4>9:41am</h4>
+        </div>
+      </div>
+      <div class="row d-flex">
+        <img src="assets/img/my.png">
+        <div class="row2">
+          <div class="mt-5 ml-2">
+            <h5>David Harisian</h5>
+            <h6>Lorium ipsum dolor...</h6>
+          </div>
+        </div>
+        <div class="ml-3">
+          <h4>9:35am</h4>
+        </div>
+      </div>
+      <div class="row d-flex">
+        <img src="assets/img/my.png">
+        <div class="row2">
+          <div class="mt-5 ml-2">
+            <h5>Jane Tony</h5>
+            <h6>Lorium ipsum dolor...</h6>
+          </div>
+        </div>
+        <div class="ml-3">
+          <h4>8:15am</h4>
+        </div>
+      </div>
+      <div class="row d-flex">
+        <img src="assets/img/my.png">
+        <div class="row2">
+          <div class="mt-5 ml-2">
+            <h5>Andrew Green</h5>
+            <h6>Lorium ipsum dolor...</h6>
+          </div>
+        </div>
+        <div class="ml-3">
+          <h4>8:13am</h4>
+        </div>
+      </div>
+      <div class="row d-flex">
+        <img src="assets/img/my.png">
+        <div class="row2">
+          <div class="mt-5 ml-2">
+            <h5>William Christopher </h5>
+            <h6>Lorium ipsum dolor...</h6>
+          </div>
+        </div>
+        <div class="ml-3">
+          <h4>9:41am</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="card">
+
+      <div class="card-body">
+        <h4>Subscriber</h4>
+        <div *ngFor="let items of dashboard.Subscribers">
+          <div class="card1" *ngIf="(items.title)=='Total Subscribers'">
+            <div class="cc d-flex">
+              <div class="card-body mt-0 ml-1 text-justify">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.title}}</h6>
+              </div>
+              <div class="image">
+                <img src="assets/img/nxt.png">
+              </div>
+            </div>
+          </div>
+          <div class="card2 d-flex" *ngIf="(items.title)=='Active Subscribers'">
+            <div class="card-body mt-0 ml-1 ">
+              <h5>{{items.count}}</h5>
+              <h6>{{items.title}}</h6>
+            </div>
+            <div class="image">
+              <img src="assets/img/nxt.png">
+            </div>
+          </div>
+          <div class="card3 d-flex" *ngIf="(items.title)=='Inactive Subscribers'">
+            <div class="card-body mt-0 ml-1">
+              <h5>{{items.count}}</h5>
+              <h6>{{items.title}}</h6>
+            </div>
+            <div class="image">
+              <img src="assets/img/nxt.png">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <h4>Interactions</h4>
+        <div *ngFor="let items of dashboard.Interactions">
+          <div class="card1 d-flex" *ngIf="(items.title)=='Open Interactions'">
+            <div class="card-body mt-0 ml-1 ">
+              <h5>{{items.count}}</h5>
+              <h6>{{items.title}}</h6>
+            </div>
+            <div class="image">
+              <img src="assets/img/nxt.png">
+            </div>
+          </div>
+          <div class="card2 d-flex" *ngIf="(items.title)=='Closed Interactions'">
+            <div class="card-body mt-0 ml-1">
+              <h5>{{items.count}}</h5>
+              <h6>{{items.title}}</h6>
+            </div>
+            <div class="image">
+              <img src="assets/img/nxt.png">
+            </div>
+          </div>
+          <div class="card3 d-flex" *ngIf="(items.title)=='Total Interactions'">
+            <div class="card-body mt-0 ml-1">
+              <h5>{{items.count}}</h5>
+              <h6>{{items.title}}</h6>
+            </div>
+            <div class="image">
+              <img src="assets/img/nxt.png">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card4" style="height: 400px;">
+
+      <div class="card-body">
+        <h4>Campaigns</h4>
+        <div *ngFor="let items of dashboard.Campaigns">
+          <div class="row d-flex" *ngIf="(items.title)=='Scheduled Campaigns'">
+            <img src="assets/img/total.png">
+            <div class="row1">
+              <div class="mt-5 ml-4 text-justify">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.title}}</h6>
+              </div>
+
+            </div>
+            <div class="line"></div>
+            <div class="row1">
+              <div class="mt-5 ml-4">
+                <h4>{{items.count}}</h4>
+                <h3>{{items.title}}</h3>
+              </div>
+            </div>
+            <div class="card5">
+              <div class="card-body">
+                <div class="img">
+                  <img src="assets/img/drop.png">
+                </div>
+                <p>Today</p>
+              </div>
+            </div>
+          </div>
+          <div class="row d-flex" *ngIf="(items.title)=='Delivered Campaigns'">
+            <img src="assets/img/deli.png">
+            <div class="row1">
+              <div class="mt-5 ml-4 text-justify">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.title}}</h6>
+              </div>
+
+            </div>
+            <div class="line1"></div>
+            <div class="row1">
+              <div class="mt-5 ml-4">
+                <h4>{{items.count}}</h4>
+                <h3>{{items.title}}</h3>
+              </div>
+            </div>
+            <div class="card6">
+              <div class="card-body">
+                <div class="img">
+                  <img src="assets/img/drop.png">
+                </div>
+                <p>This week</p>
+              </div>
+            </div>
+          </div>
+          <div class="row d-flex" *ngIf="(items.title)=='Pending Campaigns'">
+            <img src="assets/img/camp.png">
+            <div class="row1">
+              <div class="mt-5 ml-4 text-justify">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.title}}</h6>
+              </div>
+
+            </div>
+            <div class="line2"></div>
+            <div class="row1">
+              <div class="mt-5 ml-4">
+                <h4>{{items.count}}</h4>
+                <h3>{{items.title}}</h3>
+              </div>
+            </div>
+            <div class="card5 tol">
+              <div class="card-body">
+                <div class="img">
+                  <img src="assets/img/drop.png">
+                </div>
+                <p>Today</p>
+              </div>
+            </div>
+          </div>
+          <div class="row d-flex" *ngIf="(items.title)=='Failed Campaigns'">
+            <img src="assets/img/failed.png">
+            <div class="row1">
+              <div class="mt-5 ml-4 text-justify">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.title}}</h6>
+              </div>
+
+            </div>
+            <div class="line3"></div>
+            <div class="row1">
+              <div class="mt-5 ml-4">
+                <h4>{{items.count}}</h4>
+                <h3>{{items.title}}</h3>
+              </div>
+            </div>
+            <div class="card7">
+              <div class="card-body">
+                <div class="img">
+                  <img src="assets/img/drop.png">
+                </div>
+                <p>This quater</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card8" style="height: 180px;">
+
+      <div class="card-body">
+
+        <h4>Agents</h4>
+
+        <div class="row d-flex">
+
+          <img src="assets/img/430.png">
+          <div *ngFor="let items of dashboard.Agents">
+            <div class="row3" *ngIf="(items.title)=='Total Agents'">
+              <div class="mt-5 ml-4 text-justify">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.title}}</h6>
+              </div>
+            </div>
+
+            <div class="ml-5  col" *ngIf="(items.title)=='Active Agents'">
+              <img src="assets/img/431.png">
+              <div class="row4">
+                <div class="mt-0 ml-10 text-justify">
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.title}}</h6>
+                </div>
+              </div>
+            </div>
+            <div class="ml-5  col" *ngIf="(items.title)=='Inactive Agents'">
+              <img src="assets/img/432.png">
+              <div class="row5">
+                <div class="mt-0 ml-8 text-justify">
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.title}}
+                  </h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</sb-layout-dashboard>

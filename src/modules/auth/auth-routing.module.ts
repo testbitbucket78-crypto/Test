@@ -12,6 +12,9 @@ import * as authContainers from './containers';
 /* Guards */
 import * as authGuards from './guards';
 
+/* dashboard containers */
+import * as dashboardContainers from '../dashboard/containers'
+
 /* Routes */
 export const ROUTES: Routes = [
     {
@@ -57,6 +60,14 @@ export const ROUTES: Routes = [
         component: authContainers.VerificationComponent,
         data: {
             title: 'CIP - Verification',
+        } as SBRouteData,
+    },
+    {   
+        path: 'dashboard',
+        canActivate: [],
+        component: dashboardContainers.DashboardComponent,
+        data: {
+            title: 'CIP - dashboard',
         } as SBRouteData,
     }
 ];

@@ -1,6 +1,6 @@
 const express = require('express');
 const router=express.Router();
-const db = require("./dbhelper");
+const db = require("../dbhelper");
 const userController=require('./user.js');
 const indexController=require('./index.js');
 
@@ -13,5 +13,8 @@ router.get('/getAllRegisteredUser',indexController.allregisterdUser);
 router.post('/register',indexController.register);
 router.post('/login',indexController.login);
 router.post('/forgotPassword',indexController.forgotPassword);
+router.post('/sendOtp',indexController.sendOtp)
+router.post('/verifyOtp',indexController.verifyOtp)
+router.post('/resetPassword',indexController.resetPassword)
 
 module.exports = router;
