@@ -14,6 +14,10 @@ export class DashboardComponent implements OnInit {
     	this.getDashboard();
     }
 
+  
+
+
+
         getDashboard() {
     this.apiService.dashboard().subscribe(data => {this.dashboard = data;
 console.log(this.dashboard);

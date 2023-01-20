@@ -15,8 +15,11 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		config.keyboard = false;
 	}
     ngOnInit() {
-this.getContact();
+		this.getContact();
 }
+
+
+
 	open(content:any) {
 		this.modalService.open(content);
 	}
@@ -32,13 +35,6 @@ opens(contents:any) {
 		this.modalService.open(collum);
 	}
 	
-
-
-
-
-		openconver(conver:any) {
-		this.modalService.open(conver);
-	}
       getContact() {
     this.apiService.Contact().subscribe(data => {this.contacts = data;
 console.log(this.contacts);

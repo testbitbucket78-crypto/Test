@@ -2,62 +2,242 @@
 <div class="row">
 	<div class="col-md-5 mb-4 mt-4">
 		<div class="col-md-12 mb-4">
-			<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-12">
+			<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-9">
 			   <div class="input-group">
-				   <input class="form-control" type="text" placeholder="Search form Name, Phone Number and Email" aria-label="Search" aria-describedby="basic-addon2" />
-				   <div class="input-group-append">
-					   <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
-				   </div>
+				
+				   <input class="form-control"  type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
 			   </div>
 		   </form>
 		</div>
 		   </div>
 		
 		   <div class="col-xs-3 ml-5 mb-4 mt-4">
-		<button class="btn btn-primary btn-block float-right" (click)="opens(contents)"><i class="fa fa-filter"></i> Filter</button>
+		<button class="btn  btn-block float-right" (click)="opens(contents)"><img src="assets/img/filter.png"> Filter</button>
 	</div>
 	<div class="col-xs-3 ml-1 mb-4 mt-4">
-		<button class="btn btn-primary btn-block float-right" (click)="opencollum(collum)"><i class="fa fa-download"></i> Collum Prefrences </button>
+		<button class="btn  btn-block float-right" (click)="opencollum(collum)"><img src="assets/img/column.png"> Collum Prefrences </button>
 	</div>
 
 	<div class="col-xs-3 ml-1 mb-4 mt-4">
-		<button class="btn btn-primary btn-block float-right" (click)="open(content)"><i class="fa fa-download"></i> Export </button>
+		<button class="btn  btn-block float-right" (click)="open(content)"><img src="assets/img/export.png"> Export </button>
 	</div>
 	<div class="col-xs-3 ml-1 mb-4 mt-4">
-		<button class="btn btn-primary btn-block float-right" routerLink="/dashboard/import"><i class="fa fa-download"></i> Import</button>
+		<button class="btn  btn-block float-right" routerLink="/dashboard/import"><img src="assets/img/import.png"> Import</button>
 	</div>
 	<div class="col-xs-3 ml-1 mb-4 mt-4">
-		<button class="btn btn-primary btn-block float-right"  (click)="openadd(contactadd)"><i class="fa fa-plus"></i> Add Contact</button>
+		<button class="btn  btn-block float-right"  (click)="openadd(contactadd)"><i class="fa fa-plus"></i> Add Contact</button>
 	</div>
 
 </div>
 
 
+<div class="box">
+<div class="table-box">
+	<div class="table-row table-head">
+		<div class="table-cell">
+			<p><input type="checkbox" name=""></p>
+		</div>
+		<div class="table-cell">
+			<p>ID <img src="assets/img/sort.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>Name <img src="assets/img/sort.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>Phone Number <img src="assets/img/sort.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>Email <img src="assets/img/sort.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>Age <img src="assets/img/sort.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>Gender <img src="assets/img/sort.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>Tag <img src="assets/img/sort.png"></p>
+		</div>
 
 
-	<table class="table table-striped">
-	<thead>
-		<tr>
-			<th scope="col"><input type="checkbox" name=""></th>
-			<th scope="col">ID</th>
-			<th scope="col">Name</th>
-			<th scope="col">Phone Number</th>
-			<th scope="col">Email </th>
-			<th scope="col">Age </th>
-			<th scope="col">Gender </th>
-			<th scope="col">Tag </th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr *ngFor="let item of contacts; let i =index">
-			<th><input type="checkbox" name=""><a class="col-md-1" (click)="openconver(conver)"><i class="fa fa-plus"></i></a></th>
-			<td>{{i+1}}</td>
-			<td>{{item.name}}</td>
-			<td>{{item.phone_number}}</td>
-			<td>{{item.email}}</td>
-		</tr>
-	</tbody>
-</table>
+	</div>
+	<div class="table-row">
+		<div class="table-cell lower">
+			<p><input type="checkbox" name="">
+			<img src="assets/img/chats.png"></p>
+			
+		</div>
+		<div class="table-cell">
+			<p>1</p>
+		</div>
+		<div class="table-cell">
+			<p>John Applessed</p>
+		</div>
+		<div class="table-cell">
+			<p>+919874563210</p>
+		</div>
+		<div class="table-cell">
+			<p>john@yahoo.in</p>
+		</div>
+		<div class="table-cell">
+			<p>23yrs</p>
+		</div>
+		<div class="table-cell">
+			<p>Male</p>
+		</div>
+		<div class="table-cell">
+			<p>New Customer</p>
+		</div>
+		
+
+	</div>
+	<div class="table-row">
+		<div class="table-cell lower">
+			<p><input type="checkbox" name="">
+				<img src="assets/img/chats.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>2</p>
+		</div>
+		<div class="table-cell">
+			<p>John Applessed</p>
+		</div>
+		<div class="table-cell">
+			<p>+919874563210</p>
+		</div>
+		<div class="table-cell">
+			<p>john@yahoo.in</p>
+		</div>
+		<div class="table-cell">
+			<p>23yrs</p>
+		</div>
+		<div class="table-cell">
+			<p>Male</p>
+		</div>
+		<div class="table-cell">
+			<p>New Customer</p>
+		</div>
+		
+
+	</div>
+	<div class="table-row">
+		<div class="table-cell lower">
+			<p><input type="checkbox" name="">
+				<img src="assets/img/chats.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>3</p>
+		</div>
+		<div class="table-cell">
+			<p>John Applessed</p>
+		</div>
+		<div class="table-cell">
+			<p>+919874563210</p>
+		</div>
+		<div class="table-cell">
+			<p>john@yahoo.in</p>
+		</div>
+		<div class="table-cell">
+			<p>23yrs</p>
+		</div>
+		<div class="table-cell">
+			<p>Male</p>
+		</div>
+		<div class="table-cell">
+			<p>New Customer</p>
+		</div>
+		
+
+	</div>
+	<div class="table-row">
+		<div class="table-cell lower">
+			<p><input type="checkbox" name="">
+				<img src="assets/img/chats.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>4</p>
+		</div>
+		<div class="table-cell">
+			<p>John Applessed</p>
+		</div>
+		<div class="table-cell">
+			<p>+919874563210</p>
+		</div>
+		<div class="table-cell">
+			<p>john@yahoo.in</p>
+		</div>
+		<div class="table-cell">
+			<p>23yrs</p>
+		</div>
+		<div class="table-cell">
+			<p>Male</p>
+		</div>
+		<div class="table-cell">
+			<p>New Customer</p>
+		</div>
+		
+
+	</div>
+	<div class="table-row">
+		<div class="table-cell lower">
+			<p><input type="checkbox" name="">
+				<img src="assets/img/chats.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>5</p>
+		</div>
+		<div class="table-cell">
+			<p>John Applessed</p>
+		</div>
+		<div class="table-cell">
+			<p>+919874563210</p>
+		</div>
+		<div class="table-cell">
+			<p>john@yahoo.in</p>
+		</div>
+		<div class="table-cell">
+			<p>23yrs</p>
+		</div>
+		<div class="table-cell">
+			<p>Male</p>
+		</div>
+		<div class="table-cell">
+			<p>New Customer</p>
+		</div>
+		
+
+	</div>
+	<div class="table-row">
+		<div class="table-cell lower">
+			<p><input type="checkbox" name="">
+				<img src="assets/img/chats.png"></p>
+		</div>
+		<div class="table-cell">
+			<p>6</p>
+		</div>
+		<div class="table-cell">
+			<p>John Applessed</p>
+		</div>
+		<div class="table-cell">
+			<p>+919874563210</p>
+		</div>
+		<div class="table-cell">
+			<p>john@yahoo.in</p>
+		</div>
+		<div class="table-cell">
+			<p>23yrs</p>
+		</div>
+		<div class="table-cell">
+			<p>Male</p>
+		</div>
+		<div class="table-cell">
+			<p>New Customer</p>
+		</div>
+		
+
+	</div>
+</div>
+</div>
 
 
 <ng-template #content let-c="close" let-d="dismiss">
@@ -85,35 +265,94 @@
 		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
 	</div>
 	<div class="modal-body">
-		<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
-			<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
-			<label class="custom-control-label" for="rememberPasswordCheck">ID</label></div>
-			<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
-				<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
-				<label class="custom-control-label" for="rememberPasswordCheck">Name</label></div>
-				<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
-					<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
-					<label class="custom-control-label" for="rememberPasswordCheck">Phone Number</label></div>
-					<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
-						<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
-						<label class="custom-control-label" for="rememberPasswordCheck">Email</label></div>
-						<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
-							<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
-							<label class="custom-control-label" for="rememberPasswordCheck">Gender</label></div>
-							<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
-								<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
-								<label class="custom-control-label" for="rememberPasswordCheck">Tag</label></div>
-								<div class= "form-group mt-3 ml-4 mb-0 custom-checkbox">
-									<input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
-									<label class="custom-control-label" for="rememberPasswordCheck">Status</label></div>
+		<div class= "form-group mt-3 d-flex">
+			<input type="checkbox" name="">
+			<div class="ff ml-2 d-flex">
+				<div class="fff ml-3">
+					<p><img src="assets/img/swipe-s.png"></p>
+				</div>
+				<div class="fff ml-3">
+					<P>ID</P>
+				</div>	
+			</div>
+		</div>
+
+			<div class= "form-group mt-3 d-flex">
+			<input type="checkbox" name="">
+			<div class="ff ml-2 d-flex">
+				<div class="fff ml-3">
+					<p><img src="assets/img/swipe-s.png"></p>
+				</div>
+				<div class="fff ml-3">
+					<P>Name</P>
+				</div>
+			</div>
+		</div>
+
+
+		<div class= "form-group mt-3 d-flex">
+			<input type="checkbox" name="">
+			<div class="ff ml-2 d-flex">
+				<div class="fff ml-3">
+					<p><img src="assets/img/swipe-s.png"></p>
+				</div>
+				<div class="fff ml-3">
+					<P>Phone Number</P>
+				</div>
+			</div>
+		</div>
+		<div class= "form-group mt-3 d-flex">
+			<input type="checkbox" name="">
+			<div class="ff ml-2 d-flex">
+				<div class="fff ml-3">
+					<p><img src="assets/img/swipe-s.png"></p>
+				</div>
+				<div class="fff ml-3">
+					<P>Email</P>
+				</div>
+			</div>
+		</div>
+		<div class= "form-group mt-3 d-flex">
+			<input type="checkbox" name="">
+			<div class="ff ml-2 d-flex">
+				<div class="fff ml-3">
+					<p><img src="assets/img/swipe-s.png"></p>
+				</div>
+				<div class="fff ml-3">
+					<P>Gender</P>
+				</div>
+			</div>
+		</div>
+		<div class= "form-group mt-3 d-flex">
+			<input type="checkbox" name="">
+			<div class="ff ml-2 d-flex">
+				<div class="fff ml-3">
+					<p><img src="assets/img/swipe-s.png"></p>
+				</div>
+				<div class="fff ml-3">
+					<P>Tag</P>
+				</div>
+			</div>
+		</div>
+		<div class= "form-group mt-3 d-flex">
+			<input type="checkbox" name="">
+			<div class="ff ml-2 d-flex">
+				<div class="fff ml-3">
+					<p><img src="assets/img/swipe-s.png"></p>
+				</div>
+				<div class="fff ml-3">
+					<P>Status</P>
+				</div>
+			</div>
+		</div>
 		
 	</div>
 	<div class="modal-footer popfooter row">
-		<div class="col-md-6 text-right">
+		<div class="col-md-6 text-right ">
 			<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Cancel</button>
 		</div>
 		<div class="col-md-2 text-right">
-		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Save</button>
+		<button type="button" class="btn1 btn-outline-dark" (click)="c('Save click')">Save</button>
 	</div>
 	</div>
 </ng-template>
@@ -138,11 +377,11 @@
         </div>
 		</form>
 	</div>
-	<div class="modal-footer row popfooter">
-		<div class="col-md-6">
+	<div class="modal-footer popfooter">
+		<div class="col-md-5">
 		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Clear</button>
 	</div>
-	<div class="col-md-6 text-right">
+	<div class="col-md-0 text-right">
 			<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Apply</button>
 		</div>
 	</div>
@@ -151,90 +390,82 @@
 <ng-template #contactadd let-c="close" let-d="dismiss">
 	<div class="modal-header">
 		<h4 class="modal-title" id="modal-basic-title">Create Contact</h4>
-		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+		<button type="button" class="btn-cross" aria-label="Close" (click)="d('Cross click')"></button>
 	</div>
 	<div class="modal-body">
-		<form>
-			<div class="form-group">
-			 	<label class="small mb-1">Full Name</label>
-			 	<input class="form-control" type="text" placeholder="Enter the Name" />
+		<form> 
+			<div class="row g-2">
+				<div class="col-md">
+					<label for="floatingInputGrid">Name</label>
+				  <div class="form-floating">
+			 	<input class="form-control" type="text" placeholder="Enter Name" />
+				  </div>
+				</div>
+				<div class="col-md">
+					<label for="floatingSelectGrid">Phone Number</label>
+				  <div class="form-floating">
+			 	<input class="form-control" type="text" placeholder="+91 **********" />
 			 </div>
-			 <div class="form-group">
-			 	<label class="small mb-1">Email</label>
-			 	<input class="form-control" type="email" placeholder="Enter the Email" />
+				</div>
+			</div>
+			<div class="row g-2 mt-3">
+				<div class="col-md">
+					<label for="floatingInputGrid">Email</label>
+				  <div class="form-floating">
+			 	<input class="form-control" type="text" placeholder="Enter Email" />
+				  </div>
+				</div>
+				<div class="col-md">
+					<label for="floatingSelectGrid">Age</label>
+				  <div class="form-floating">
+					<select class="form-control">
+						<option>29 year</option>
+						<option>20 year</option>
+						<option>21 year</option>
+						<option>22 year</option>
+					</select>
+			 </div>
+				</div>
+			</div>
+			  <div class="form-group mt-3">
+			 	<label class="small mb-1">Facebook Id</label>
+			 	<input class="form-control" type="text" placeholder="Enter Facebook Id" />
 			 </div>
 			  <div class="form-group">
-			 	<label class="small mb-1">Phone</label>
-			 	<input class="form-control" type="text" placeholder="+91 " />
-			 </div>
-			 <h4 class="text-center">Additional Details</h4>
-			  <div class="form-group">
-			 	<label class="small mb-1">Lead Status</label>
-			 	<select class="form-control">
-           	<option>Lead Stage/Status</option>
-           </select><br/>
-           <select class="form-control">
-           	<option>Lead Stage/Status</option>
-           </select>
+			 	<label class="small mb-1">Instagram Id</label>
+				 <input class="form-control" type="text" placeholder="Enter Instagram Id " />
+				 <br>
+
+			 	<label for="floatingSelectGrid">Tag</label>
+				  <div class="form-floating">
+					<select class="form-control">
+						<option>Paid</option>
+						<option>Unpaid</option>
+						<option>Return</option>
+						<option>New Customer</option>
+						<option>Order Complete</option>
+						<option>New Order</option>
+						<option>Unaviable</option>
+					</select>
+           </div>
+		   <br>
+		   <label for="floatingSelectGrid ">Status</label>
+				  <div class="form-floating">
+					<select class="form-control">
+						<option>Premium</option>
+						<option>New Customer</option>
+					</select>
+           </div>
 			 </div>
 			 
 		</form>
 	</div>
 	<div class="modal-footer row popfooter">
-		<div class="col-md-6">
-		<button type="button" class="btn btn-danger" (click)="c('Save click')">Cancel</button>
-	</div>
+	
 	<div class="col-md-6 text-right">
-			<button type="button" class="btn btn-success" (click)="c('Save click')">Submit</button>
+			<button type="button" class="btn1 btn-success" (click)="c('Save click')">Save</button>
 		</div>
 	</div>
-</ng-template>
-
-
-<ng-template #conver let-c="close" let-d="dismiss">
-	<div class="modal-header">
-		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
-
-	</div>
-	<div class="modal-body">
-		<div class="text-center col-md-12">
-			<img src="assets/img/dummy.png" class="text-center round" width="100">
-			<h4 class="modal-title mb-3" id="modal-basic-title">Profile Image</h4>
-			</div>
-		<form>
-			<div class="row mb-2">
-				<div class="col-md-6">
-		<button type="button" class="btn btn-success" >Edit</button>
-	</div>
-	<div class="col-md-6 text-right">
-			<button type="button" class="btn btn-danger">Delete</button>
-		</div>
-			</div>
-			<div class="form-group">
-			 	<input class="form-control" type="text" placeholder="Name" />
-			 </div>
-			 <div class="form-group">
-			 	<input class="form-control" type="text" placeholder="Phone" />
-			 </div>
-			  <div class="form-group">
-			 	<input class="form-control" type="text" placeholder="Address" />
-			 </div>
-			  <div class="form-group">
-			 	<input class="form-control" type="email" placeholder="Email" />
-			 </div>
-			  <div class="form-group">
-			 	<input class="form-control" type="text" placeholder="Contact Owner" />
-			 </div>
-			  <div class="form-group">
-			 	<input class="form-control" type="text" placeholder="Tags" />
-			 </div>
-			  <div class="form-group">
-			 	<input class="form-control" type="text" placeholder="Lead Status" />
-			 </div>
-			 
-		</form>
-	</div>
-
 </ng-template>
 
 <!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>

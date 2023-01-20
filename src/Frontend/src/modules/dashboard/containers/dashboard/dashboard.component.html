@@ -67,6 +67,9 @@
     </div>
   </div>
 </div>
+<div class="card9">
+  <h2>Your key KPI's for last 30 days</h2>
+  </div>
    <div class="row">
       <div class="card">
       
@@ -138,7 +141,7 @@
       </div>
    
 
-          <div class="card4"  style="height: 400px;" >
+          <div class="card4"  style="height: 300px;" >
           
             <div class="card-body">
               <h4>Campaigns</h4>
@@ -152,21 +155,16 @@
                 </div>
                 
               </div>
-              <div class="line"></div>
+              <div class="line mr-5"></div>
+              <img src="assets/img/camp.png">
               <div class="row1">
-                <div class="mt-5 ml-4">
-                <h4>56</h4>
-                <h3>Total-schedule Campaign</h3>
-                </div>    
+              <div class="mt-5 ml-4 text-justify">
+              <h5>14237</h5>
+              <h6>Total pending Campaigns</h6>
               </div>
-              <div class="card5">
-                <div class="card-body">
-                  <div class="img">
-                  <img src="assets/img/drop.png">
-                </div>
-                <p>Today</p>
-                </div>
-              </div>
+              
+            </div>
+              
             </div>
              <div class="row d-flex">
                 <img src="assets/img/deli.png">
@@ -177,49 +175,8 @@
                 </div>
                 
               </div>
-              <div class="line1"></div>
-              <div class="row1">
-                <div class="mt-5 ml-4">
-                <h4>495</h4>
-                <h3>This week-delivered Campaigns</h3>
-                </div>    
-              </div>
-              <div class="card6">
-                <div class="card-body">
-                  <div class="img">
-                  <img src="assets/img/drop.png">
-                </div>
-                <p>This week</p>
-                </div>
-              </div>
-            </div>
-            <div class="row d-flex">
-              <img src="assets/img/camp.png">
-              <div class="row1">
-              <div class="mt-5 ml-4 text-justify">
-              <h5>14237</h5>
-              <h6>Total pending Campaigns</h6>
-              </div>
-              
-            </div>
-            <div class="line2"></div>
-            <div class="row1">
-              <div class="mt-5 ml-4">
-              <h4>00</h4>
-              <h3>Total-schedule Campaign</h3>
-              </div>    
-            </div>
-            <div class="card5">
-              <div class="card-body">
-                <div class="img">
-                <img src="assets/img/drop.png">
-              </div>
-              <p>Today</p>
-              </div>
-            </div>
-          </div>
-          <div class="row d-flex">
-            <img src="assets/img/failed.png">
+              <div class="line1 mr-5"></div>
+              <img src="assets/img/failed.png">
             <div class="row1">
             <div class="mt-5 ml-4 text-justify">
             <h5>14237</h5>
@@ -227,22 +184,8 @@
             </div>
             
           </div>
-          <div class="line3"></div>
-          <div class="row1">
-            <div class="mt-5 ml-4">
-            <h4>103</h4>
-            <h3>This quater-failed Campaigns</h3>
-            </div>    
-          </div>
-          <div class="card7">
-            <div class="card-body">
-              <div class="img">
-              <img src="assets/img/drop.png">
+             
             </div>
-            <p>This quater</p>
-            </div>
-          </div>
-        </div>
           </div>
         </div>
 
@@ -252,7 +195,7 @@
                 <h4>Agents</h4>
                 <div class="row d-flex">
                   <img src="assets/img/430.png">
-                  <div class="row1">
+                  <div class="row3">
                   <div class="mt-5 ml-4 text-justify">
                   <h5>108</h5>
                   <h6>Total Agents</h6>
@@ -260,7 +203,7 @@
                   </div>
                   <div class="ml-5"></div>
                   <img src="assets/img/431.png">
-                  <div class="row1">
+                  <div class="row4">
                   <div class="mt-5 ml-4 text-justify">
                   <h5>83</h5>
                   <h6>Active Agents</h6>
@@ -268,7 +211,7 @@
                   </div>
                   <div class="ml-5"></div>
                   <img src="assets/img/432.png">
-                  <div class="row1">
+                  <div class="row5">
                   <div class="mt-5 ml-4 text-justify">
                   <h5>25</h5>
                   <h6>Inactive Agents</h6>
@@ -278,5 +221,34 @@
               </div>
             </div>
           </div>
+          <ng-template #add let-c="close" let-d="dismiss">
+            <div class="modal-header">
+              <h4 class="modal-title" id="modal-basic-title">Filter</h4>
+              <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+            </div>
+            <div class="modal-body">
+            <button class="btn btn-primary btn-block col-md-3 mb-2"><i class="fa fa-plus"></i> Name</button>
+          
+              <form>
+                <div class="form-group">
+                     <select class="form-control">
+                       <option>Contains</option>
+                     </select>
+                  </div>
+                <div class="form-group">
+                      <input class="form-control" type="text">
+                  </div>
+              </form>
+            </div>
+            <div class="modal-footer row popfooter">
+              <div class="col-md-6">
+              <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Clear</button>
+            </div>
+            <div class="col-md-6 text-right">
+                <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Apply</button>
+              </div>
+            </div>
+          </ng-template>
+
 
 </sb-layout-dashboard>
