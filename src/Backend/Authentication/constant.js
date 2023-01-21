@@ -40,6 +40,12 @@ var camQuery="Select * from Campaign"
 //Query For automation
 var selectQuery="Select * from AutomatedCampaign"
 
+//Query for dashboard
+interactionsQuery="select interaction_status,count(*) count from Interaction where  (customerId=1) Group by (interaction_status)  union select 'Total Interactions',count(*) count from Interaction where  customerId=1";
+campaignsQuery="select campaign_status,count(*) count from CampaignStats where  (customerID=1) Group by (campaign_status)";
+agentsQuery="select Status,count(*) count from AgentDetails where  (uid=1) Group by (Status) union select 'Total Agents',count(*) count from AgentDetails where  uid=1";
+subscribersQuery="select OptInStatus,count(*) count from EndCustomer  Group by (OptInStatus) union select  'Total Subscriber',count(*) count from EndCustomer";
 
 
-module.exports={host,user,password,database,selectAllQuery,selectByIdQuery,deletQuery,insertQuery,updateQuery,loginQuery,registerQuery,email,appPassword,emailHost,port,sql,sql1,camQuery,selectQuery,otp,updatePassword,uidresetEmailQuery,verifyUid}
+module.exports={host,user,password,database,selectAllQuery,selectByIdQuery,deletQuery,insertQuery,updateQuery,loginQuery,registerQuery,email,appPassword,emailHost,port,sql,sql1,camQuery,selectQuery,otp,updatePassword,uidresetEmailQuery,verifyUid,
+    interactionsQuery,campaignsQuery,agentsQuery,subscribersQuery}

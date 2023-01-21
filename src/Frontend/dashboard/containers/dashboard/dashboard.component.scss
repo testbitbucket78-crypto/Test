@@ -1,3 +1,5 @@
+
+
 @import 'styles/variables.scss';
 
   .box{
@@ -116,88 +118,50 @@ img {
   border-radius: 17px;
   height: 45px;
 }
+.new img{
+  vertical-align: middle;
+  border-style: none;
+  margin: -66px 0px 0px 40px;
+  width: 45px;
+  border-radius: 17px;
+  height: 45px;
+}
 .line{
   width: 0px;
   height: 35px;
   border: 1px solid #E1E1E1;
-  margin: 40px 0px 0px 50px;
+  margin: -40px 0px 0px 300px;
 }
 .line1{
   width: 0px;
   height: 35px;
   border: 1px solid #E1E1E1;
-  margin: 40px 0px 0px 47px;
+  margin: -40px 0px 0px 300px;
 }
-.line2{
-  width: 0px;
-  height: 35px;
-  border: 1px solid #E1E1E1;
-  margin: 40px 0px 0px 53px;
+
+
+.card9{
+  height: 50px;
+    width: 380px;
+    background-color: #ffB8B8;
+    box-shadow: 2px 13px 54px #695f9714;
+    border-radius: 17px;
+    margin: 30px 0px 15px 0px;
 }
-.line3{
-  width: 0px;
-  height: 35px;
-  border: 1px solid #E1E1E1;
-  margin: 40px 0px 0px 69px;
-}
-.row1 h4{
-  font-size: 18px;
-  margin: 0px 0px 11px 0px;
+.card9 h2{
   color: #000000;
-  font-family: Manroap;
-  font-weight: Semibold;
-}
-.row1 h3{
-  font-size: 14px;
-  color: #000000;
-  font-family: Manroap;
-  font-weight: Medium;
-}
-.card5{
-  height: 25px;
-    border-radius: 10px;
-    margin: 46px 0px 0px 120px;
-    background-color: #ffffff;
-    width: 104px;
-}
- .tol{
-  height: 25px;
-    border-radius: 10px;
-    margin: 46px 0px 0px 139px;
-    background-color: #ffffff;
-    width: 104px;
-}
-.card6{
-  height: 25px;
-    border-radius: 10px;
-    margin: 46px 0px 0px 133px;
-    background-color: #ffffff;
-    width: 104px;
-}
-.card7{
-  height: 25px;
-    border-radius: 10px;
-    margin: 46px 0px 0px 139px;
-    background-color: #ffffff;
-    width: 107px;
-}
-.img img{
-  width: 13px;
-  height: 13px;
-  margin: -175px 0px 0px -27px;
-}
+    font-size: 18px;
+    font-family: Manrope;
+    font-weight: 500;
+    padding: 15px 0px 0px 15px;
+  }
+
 .image img{
   width: 13px;
   height: 13px;
   margin: 18px 18px 0px 0px;
 }
-p {
-  margin: -128px 0px 0px 8px;
-  font-size: 13px;
-  font-family: Manroap;
-  font-weight: regular;
-  color: #7A86A1;
-}
+
 .float-right {
   background-color: #FBF9FE;
   margin: 0px -25px 0px 0px;
@@ -237,3 +201,6 @@ p {
 .row5{
   margin: -48px 0px 0px 80px;
 }
+.row9{
+  margin: -115px 0px 0px 90px
+};

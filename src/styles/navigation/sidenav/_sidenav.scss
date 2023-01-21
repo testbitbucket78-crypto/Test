@@ -16,12 +16,18 @@
         font-weight: bold;
         text-transform: uppercase;
       }
+      svg:not(:root).svg-inline--fa {
+        overflow: visible;
+        color: #7A86A1;
+    }
       .nav-link {
         display: flex;
         align-items: center;
         padding-top: 0.75rem;
         padding-bottom: 0.75rem;
         position: relative;
+        color: #7A86A1;
+        margin: 10px 0px 0px 10px;
         .sb-nav-link-icon {
           font-size: 0.9rem;
         }

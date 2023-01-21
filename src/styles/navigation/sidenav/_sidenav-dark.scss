@@ -16,9 +16,15 @@
       .sb-sidenav-collapse-arrow {
         color: $sidenav-dark-icon-color;
       }
+     
+    
       &:hover {
-        color: $sidenav-dark-link-active-color;
-      }
+        color: #FFFFFF;
+        background-color: #6149CD;
+        width: 90%;
+        margin: 10px 0px 0px 10px;
+        border-radius: 24px;
+    }
       &.active {
         color: $sidenav-dark-link-active-color;
         .sb-nav-link-icon {
@@ -31,3 +37,7 @@
     background-color: $sidenav-dark-footer-bg;
   }
 }
+  svg:not(:root).svg-inline--fa::hover {
+    overflow: visible;
+    color: #ffffff;
+  }

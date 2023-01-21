@@ -10,30 +10,30 @@ const routes: Routes = [
     {
         path: 'dashboard',
         loadChildren: () =>
-            import('modules/dashboard/dashboard-routing.module').then(
+            import('Frontend/dashboard/dashboard-routing.module').then(
                 m => m.DashboardRoutingModule
             ),
     },
     {
         path: '',
         loadChildren: () =>
-            import('modules/auth/auth-routing.module').then(m => m.AuthRoutingModule),
+            import('Frontend/auth/auth-routing.module').then(m => m.AuthRoutingModule),
     },
     {
         path: 'error',
         loadChildren: () =>
-            import('modules/error/error-routing.module').then(m => m.ErrorRoutingModule),
+            import('Frontend/error/error-routing.module').then(m => m.ErrorRoutingModule),
     },
     {
         path: 'tables',
         loadChildren: () =>
-            import('modules/tables/tables-routing.module').then(m => m.TablesRoutingModule),
+            import('Frontend/tables/tables-routing.module').then(m => m.TablesRoutingModule),
     },
     {
         path: '**',
         pathMatch: 'full',
         loadChildren: () =>
-            import('modules/error/error-routing.module').then(m => m.ErrorRoutingModule),
+            import('Frontend/error/error-routing.module').then(m => m.ErrorRoutingModule),
     },
 ];
 
