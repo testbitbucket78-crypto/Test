@@ -16,9 +16,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
 		config.keyboard = false;
 	}
     ngOnInit() {
-   new Stepper($('.bs-stepper')[0]);
+	this.stepper = new Stepper($('.bs-stepper')[0], {
+      linear: false,
+      animation: true
+    })
+   //new Stepper($('.bs-stepper')[0]);
 
 }
+next() {
+    this.stepper.next();
+  }
 sttapper(){
 	var stepper=  new Stepper($('.bs-stepper')[0]);
    stepper.previous();
