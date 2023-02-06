@@ -19,23 +19,30 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
    new Stepper($('.bs-stepper')[0]);
 
 }
+sttapper(){
+	var stepper=  new Stepper($('.bs-stepper')[0]);
+   stepper.previous();
+   
+}
 
  sttapper1(){
  	var stepper=  new Stepper($('.bs-stepper')[0]);
-
+	 stepper.previous();
 	stepper.next();
 }
- sttapper2(){
- 	var steppers=  new Stepper($('.bs-stepper')[0]);
- 	console.log(steppers);
-	steppers.next();
+sttapper3(){
+	var stepper=  new Stepper($('.bs-stepper')[1]);
+	stepper.previous();
+   stepper.next();
 }
 	openinstruction(instruction:any) {
 		this.modalService.open(instruction);
 	}
- sttapper(){
- 	var stepper=  new Stepper($('.bs-stepper')[0]);
-	stepper.previous();
-}
+	name:string = ""
+	file:any;
+	getFile(event: any){
+		this.file = event.target.files[0];
+		console.log('file', this.file);
+	}
 
 }

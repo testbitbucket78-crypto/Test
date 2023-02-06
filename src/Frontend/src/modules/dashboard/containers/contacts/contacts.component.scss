@@ -1,8 +1,4 @@
-.input-group > .form-control:not(:last-child), .input-group > .custom-select:not(:last-child) {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    margin: 0px 0px 0px -20px;
-}
+
 
 .input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
     position: relative;
@@ -13,7 +9,7 @@
     font-family: Manrope;
     font-size: 14px;
 }
-button:not(:disabled), [type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled) {
+button:not(:disabled), [type=reset]:not(:disabled) {
     cursor: pointer;
     color: #7A86A1;
     background-color: #ffffff;
@@ -21,6 +17,10 @@ button:not(:disabled), [type=button]:not(:disabled), [type=reset]:not(:disabled)
     border-radius: 17px;
     font-family: Manrope;
     font-size: 14px;
+}
+.btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+    margin: 0px 0px 0px 10px;
 }
 .btn:not(:disabled):not(.disabled):hover {
     cursor: pointer;
@@ -47,6 +47,36 @@ opacity: 1;
     font-size: 15px;
     border-radius: 20px;
     font-family: Manrope;
+}
+.table-row:hover{
+    display: table;
+    width: 95%;
+    margin: 10px auto;
+    background: #FBFAFF;
+    padding: 10px 0;
+    color: #000000;
+    font-size: 15px;
+    border-radius: 20px;
+    font-family: Manrope;
+    box-shadow: 0px 0px 14px #695F972E;
+border: 1px solid #E5E5E5;
+opacity: 1;
+}
+.tt .btn7{
+    margin: 15px 0px 0px 0px;
+    width: 80px;
+    height: 30px;
+    color: #6236FF;
+    background-color: transparent;
+    border: none;
+}
+.tt .btn6{
+    margin: 15px 0px 0px 0px;
+    width: 80px;
+    height: 30px;
+    color: #FF3636;
+    background-color: transparent;
+    border: none;
 }
  .table-head{
     display: table;
@@ -90,7 +120,7 @@ opacity: 1;
 }
 h4, .h4 {
     font-family: Manrope;
-    font-size: 21px;
+    font-size: 22px;
     font-weight: bold;
     color: #000000;
 }
@@ -145,7 +175,121 @@ label {
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     font-family: manrope;
 }
+.dd img {
+    padding: 40px 0px 0px 44%;
+}
+.dd{
+    background-color: #FFF4F2;
+    border-radius: 20px;
+}
+.dd h4{
+    padding: 0px 0px 0px 42%;
+    font-family: Manrope;
+    font-weight: bold;
+    font-size: 22px;
+}
+.dd p{
+    text-align: center;
+    letter-spacing: 0px;
+    color: #7A86A1;
+    opacity: 1;
+}
+.dd .ss img{
+    padding: 0px;
+}
+.dd .text{
+    margin: -60px 0px 0px 0px;
+}
+.dd .btn{
+    margin: 55px 0px 0px -20px;
+    width: 100px;
+    height: 38px;
+}
+.dd .btn1{
+    width: 100px;
+    height: 38px;
+    margin: -5px 0px 0px -20px;
+}
+.sq{
+    background-color: #FFF4F2;
+    width: 46%;
+    min-height: 350px;
+    max-height: 100%;
+    margin: 0px 10px;
+    border-radius: 20px;
+}
 
+
+.sq label{
+    font-size: 15px;
+    font-family: manrope;
+    font-weight: bold;
+    margin: 35px 0px 5px 20px;
+}
+option{
+    font: normal normal normal 14px/23px Manrope;
+ letter-spacing: 0px;
+ color: #7A86A1;
+ opacity: 1;
+
+}
+option:hover{
+   
+ color: #7A86A1!important;
+ opacity: 1;
+ background-color: #000000;
+
+}
+.sq .form-control{
+    color: #7A86A1;
+    width: 90%;
+    margin: 10px 0px 0px 10px;
+    border-radius: 13px;
+    border: 1px solid #EBEBEB;
+    background-color: #ffffff;
+}
+
+.sq .control{
+    color: #000000;
+    width: 90%;
+    margin: 10px 0px 0px 10px;
+    border-radius: 13px;
+    border: 1px solid #EBEBEB;
+    background-color: #ffffff;
+    font-family: manrope;
+    font-size: 15px;
+    height: 35px;
+    padding: 0px 0px 0px 10px;
+}
+.sq .jk label{
+    font-size: 15px;
+    font-family: manrope;
+    margin: 10px 0px 10px 20px;
+    font-weight: 500;
+}
+.sq .jk .form-control{
+    color: #000000;
+    width: 90%;
+    margin: 0px 0px 0px 10px;
+    border-radius: 13px;
+    border: 1px solid #EBEBEB;
+    background-color: #FFF4F2;
+    font-family: manrope;
+    font-size: 15px;
+    height: 35px;
+    padding: 0px 0px 0px 10px;
+}
+.gf img {
+    position: absolute;
+    margin: 11px 0px 0px -8px;
+    width: 15px;
+    height: 15px;
+}
+.input-group > .form-control:not(:last-child), .input-group > .custom-select:not(:last-child) {
+   
+    margin: 0px 0px 0px -20px;
+    padding: 0px 0px 0px 34px;
+}
 
 
 

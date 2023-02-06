@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { ChildActivationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -21,4 +22,5 @@ export class AppComponent {
                 this.titleService.setTitle(snapshot.data.title || 'SB Admin Angular');
             });
     }
+    
 }

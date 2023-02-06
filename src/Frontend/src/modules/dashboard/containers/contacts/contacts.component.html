@@ -1,11 +1,13 @@
-<sb-layout-dashboard><sb-dashboard-head title="Contacts" [hideBreadcrumbs]="true"></sb-dashboard-head>
+<sb-layout-dashboard>
+	<sb-dashboard-head title="Contacts" [hideBreadcrumbs]="true"></sb-dashboard-head>
 <div class="row">
 	<div class="col-md-5 mb-4 mt-4">
 		<div class="col-md-12 mb-4">
 			<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-9">
-			   <div class="input-group">
+			   <div class="input-group gf ">
 				
-				   <input class="form-control"  type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
+				   <input class="form-control" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
+				   <img src="assets/img/search.png">
 			   </div>
 		   </form>
 		</div>
@@ -29,11 +31,18 @@
 	</div>
 
 </div>
-
+<ng-multiselect-dropdown
+  [settings]="dropdownSettings"
+  [data]="dropdownList"
+  [(ngModel)]="selectedItems"
+  (onSelect)="onItemSelect($event)"
+  (onSelectAll)="onSelectAll($event)"
+>
+</ng-multiselect-dropdown>
 
 <div class="box">
 <div class="table-box">
-	<div class="table-row table-head">
+	<div class="table-row1 table-head">
 		<div class="table-cell">
 			<p><input type="checkbox" name=""></p>
 		</div>
@@ -241,22 +250,28 @@
 
 
 <ng-template #content let-c="close" let-d="dismiss">
+	<div class="dd"><img src="assets/img/export1.png">
 	<div class="modal-header">
-		<h4 class="modal-title" id="modal-basic-title">Export Contact</h4>
-		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+		
+		<h4 class="modal-title" id="modal-basic-title">Export</h4>
+		
 	</div>
 	<div class="modal-body">
-		<p>Your Contacts (total contacts) will be exported and sent via email to abc@gmail.com.
+		<p>Your Selected contacts will exported and send on your registed email
 </p>
+<div class="ss">
+<img src="assets/img/your.png">
+</div>
 	</div>
-	<div class="modal-footer popfooter row">
-		<div class="col-md-6">
+	<div class="modal-footer popfooter row text">
+		<div class="col-md-3 text right">
 			<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Cancel</button>
 		</div>
-		<div class="col-md-6 text-right">
-		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Confirm</button>
+		<div class="col-md-5">
+		<button type="button" class="btn1 btn-outline-dark " (click)="c('Save click')">Export</button>
 	</div>
 	</div>
+</div>
 </ng-template>
 
 <ng-template #collum let-c="close" let-d="dismiss">
@@ -363,33 +378,86 @@
 		<h4 class="modal-title" id="modal-basic-title">Filter</h4>
 		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
 	</div>
-	<div class="modal-body">
-	<button class="btn btn-primary btn-block col-md-3 mb-2"><i class="fa fa-plus"></i> Name</button>
-
-		<form>
-			<div class="form-group">
-           <select class="form-control">
-           	<option>Contains</option>
-           </select>
-        </div>
-			<div class="form-group">
-            <input class="form-control" type="text">
-        </div>
+	<div class="modal-body d-flex">
+	<div class="sq">
+			<label for="floatingSelectGrid">Filters</label>
+		  <div class="form-floating">
+			<select class="form-control">
+				<option selected>Search or select filter</option>
+				<option value="1">Name</option>
+				<option value="2">Email</option>
+				<option value="3">Phone Number</option>
+				<option value="4">Tags</option>
+				<option value="5">Contact Created</option>
+				<option value="6">Last Conversation with</option>
+				<option value="7">Conversation Resolved</option>
+				<option value="8">Last Message recieved</option>
+			</select>
+		</div>
+	</div>
+	<div class="sq">
+		<label for="floatingSelectGrid">Filter Phone No.</label>
+		<form [formGroup]="productForm" (ngSubmit)="onSubmit()">  
+		  <div class="form-floating">
+			<select class="control ">
+				<option>Starts With</option>
+				<option>Name</option>
+				<option>Email</option>
+				<option>Phone Number</option>
+				<option>Tags</option>
+				<option>Contact Created</option>
+				<option>Last Conversation with</option>
+				<option>Conversation Resolved</option>
+				<option>Last Message recieved</option>
+			</select>
+		</div>
+		<div class="jk">
+			<label for="floatingInputGrid">Value</label>
+		  <div class="form-floating">
+		 <input class="form-control" type="text" placeholder="+44" />
+		  </div>
+		</div>
+			<tr class="tt">    
+				<th><button type="button" (click)="addQuantity()" class="btn7 btn-primary">+ Add</button></th>  
+			  </tr>  
+			  <tr *ngFor="let quantity of quantities().controls; let i=index" [formGroupName]="i">  
+				<div class="form-floating">
+					<select class="control ">
+						<option>Starts With</option>
+						<option>Name</option>
+						<option>Email</option>
+						<option>Phone Number</option>
+						<option>Tags</option>
+						<option>Contact Created</option>
+						<option>Last Conversation with</option>
+						<option>Conversation Resolved</option>
+						<option>Last Message recieved</option>
+					</select>
+				</div>
+				<div class="jk">
+					<label for="floatingInputGrid">Value</label>
+				  <div class="form-floating">
+				 <input class="form-control" type="text" placeholder="+44" />
+				  </div>
+				  <td class="tt">  
+					<button (click)="removeQuantity(i)" class="btn6 btn-danger">-Remove</button>  
+				</td> 
+				</div>
+			</tr>
+			   	
 		</form>
 	</div>
-	<div class="modal-footer popfooter">
-		<div class="col-md-5">
-		<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Clear</button>
 	</div>
+	<div class="modal-footer popfooter">
 	<div class="col-md-0 text-right">
-			<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Apply</button>
+			<button type="button" class="btn1 btn-outline-dark" (click)="c('Save click')">Apply</button>
 		</div>
 	</div>
 </ng-template>
 
 <ng-template #contactadd let-c="close" let-d="dismiss">
 	<div class="modal-header">
-		<h4 class="modal-title" id="modal-basic-title">Create Contact</h4>
+		<h4 class="modal-title" id="modal-basic-title">Add Contact</h4>
 		<button type="button" class="btn-cross" aria-label="Close" (click)="d('Cross click')"></button>
 	</div>
 	<div class="modal-body">
@@ -410,7 +478,7 @@
 			</div>
 			<div class="row g-2 mt-3">
 				<div class="col-md">
-					<label for="floatingInputGrid">Email</label>
+					<label for="floatingInputGrid">Email Id*</label>
 				  <div class="form-floating">
 			 	<input class="form-control" type="text" placeholder="Enter Email" />
 				  </div>
@@ -460,6 +528,7 @@
 			 
 		</form>
 	</div>
+	
 	<div class="modal-footer row popfooter">
 	
 	<div class="col-md-6 text-right">

@@ -21,7 +21,8 @@
                                   <div class=" col-sm-6">
                                     <label for="floatingInputGrid">Password</label>
                                 
-                                  <input type="text-right " class="form-control" placeholder="8 character" aria-label="State">
+                                  <input [type]="changetype?'password':'text'" class="form-control" placeholder="8 character" aria-label="State">
+                                  <span class="eyeicon"(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye':'fa fa-eye-slash'"></i></span>
                                   </div>
                             </div>
             <div class="form-group row">
