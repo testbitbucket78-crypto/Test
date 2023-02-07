@@ -87,7 +87,7 @@
 			  </div>
 
 
-    	    	<button type="button" (click)= "sttapper1()" class="btn btn-block col-1 mt-3 ">Next</button>
+    	    	<button type="button" (click)= "next()" class="btn btn-block col-1 mt-3 ">Next</button>
 
     </div>
     <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
@@ -265,181 +265,42 @@
 	</div>
 
     		
-	<button type="button" (click)= "sttapper3()" class="btn btn-primary btn-block col-1">Next</button>
+	<button type="button" (click)= "next()" class="btn btn-primary btn-block col-1">Next</button>
     </div>
      <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
-		<div class="sq d-flex">
-			<div class="ss">
-				<h5>Sample Data from your CSV</h5>
-				<h6>Kevin Applessed</h6>
-				<h6>kevinapplessed@gmail.com</h6>
-				<h6>+44 9582360040</h6>
-				<h6>Male</h6>
-				<h6>NA</h6>
-				<h6>NA</h6>
-				<h6>United Kingdom</h6>
-				<h6>North Devon</h6>
+		<div class="ss d-flex">
+			<div class="card">
+				<h4>Imported Files Details</h4>
+				<div class="ggg">
+					<h5>File Name</h5>
+					<h6>Ipsum-contacts-18a.CSV</h6>
+				</div>
+				<div class="ggg">
+					<h5>Purpose</h5>
+					<h6>Upload existing contacts only</h6>
+						
+				</div>
+				<div class="ggg">
+					<h5>Identifier</h5>
+					<h6>Email id</h6>
+				</div>
 			</div>
-			<div class="ss1">
-				<div class="hh d-flex">
-					<h5>Select the columns to input</h5>
-					<h5>Map to Contact Fields</h5>
-				</div>
-				<div class="hh d-flex">
-					<input type="checkbox" name="">
-					<h4>Name</h4>
-					<select class="form-control">
-						<option selected>First Name</option>
-						<option>Email id</option>
-						<option>Mobile No</option>
-						<option>Gender</option>
-						<option>Tag</option>
-						<option>Status</option>
-						<option>Country</option>
-						<option>State</option>
-					</select>
-					<label class="switch">
-						<input type="checkbox">
-						<span class="slider"></span>
-					</label>
-					<h6>override on</h6>
-				</div>
-				<div class="hh d-flex">
-					<input type="checkbox" name="">
-					<h4>Email id</h4>
-					<select class="form-control">
-						<option>First Name</option>
-						<option selected>Email id</option>
-						<option>Mobile No</option>
-						<option>Gender</option>
-						<option>Tag</option>
-						<option>Status</option>
-						<option>Country</option>
-						<option>State</option>
-					</select>
-					<label class="switch">
-						<input type="checkbox">
-						<span class="slider"></span>
-					</label>
-					<h6>override on</h6>
-				</div>
-				<div class="hh d-flex">
-					<input type="checkbox" name="">
-					<h4>Mobile Number</h4>
-					<select class="form-control">
-						<option>First Name</option>
-						<option>Email id</option>
-						<option selected>Mobile No</option>
-						<option>Gender</option>
-						<option>Tag</option>
-						<option>Status</option>
-						<option>Country</option>
-						<option>State</option>
-					</select>
-					<label class="switch">
-						<input type="checkbox">
-						<span class="slider"></span>
-					</label>
-					<h6>override on</h6>
-				</div>
-				<div class="hh d-flex">
-					<input type="checkbox" name="">
-					<h4>Gender</h4>
-					<select class="form-control">
-						<option>First Name</option>
-						<option>Email id</option>
-						<option>Mobile No</option>
-						<option selected>Gender</option>
-						<option>Tag</option>
-						<option>Status</option>
-						<option>Country</option>
-						<option>State</option>
-					</select>
-					<label class="switch">
-						<input type="checkbox">
-						<span class="slider"></span>
-					</label>
-					<h6>override on</h6>
-				</div>
-				<div class="hh d-flex">
-					<input type="checkbox" name="">
-					<h4>Tags</h4>
-					<select class="form-control">
-						<option>First Name</option>
-						<option>Email id</option>
-						<option>Mobile No</option>
-						<option>Gender</option>
-						<option selected>Tag</option>
-						<option>Status</option>
-						<option>Country</option>
-						<option>State</option>
-					</select>
-					<label class="switch">
-						<input type="checkbox">
-						<span class="slider"></span>
-					</label>
-					<h6>override on</h6>
-				</div>
-				<div class="hh d-flex">
-					<input type="checkbox" name="">
-					<h4>Status</h4>
-					<select class="form-control">
-						<option>First Name</option>
-						<option>Email id</option>
-						<option>Mobile No</option>
-						<option>Gender</option>
-						<option>Tag</option>
-						<option selected>Status</option>
-						<option>Country</option>
-						<option>State</option>
-					</select>
-					<label class="switch">
-						<input type="checkbox">
-						<span class="slider"></span>
-					</label>
-					<h6>override on</h6>
-				</div>
-				<div class="hh d-flex">
-					<input type="checkbox" name="">
-					<h4>Country</h4>
-					<select class="form-control">
-						<option>First Name</option>
-						<option>Email id</option>
-						<option>Mobile No</option>
-						<option>Gender</option>
-						<option>Tag</option>
-						<option >Status</option>
-						<option selected>Country</option>
-						<option>State</option>
-					</select>
-					<label class="switch">
-						<input type="checkbox">
-						<span class="slider"></span>
-					</label>
-					<h6>override on</h6>
-				</div>
-				<div class="hh d-flex">
-					<input type="checkbox" name="">
-					<h4>State</h4>
-					<select class="form-control">
-						<option>First Name</option>
-						<option>Email id</option>
-						<option>Mobile No</option>
-						<option>Gender</option>
-						<option>Tag</option>
-						<option>Status</option>
-						<option>Country</option>
-						<option selected>State</option>
-					</select>
-					<label class="switch">
-						<input type="checkbox">
-						<span class="slider"></span>
-					</label>
-					<h6>override on</h6>
-				</div>
+			<div class="card1">
+				<h5>24</h5>
+				<h6>New Contact will added</h6>
+
 			</div>
 		</div>
-    	<button type="button" (click)= "sttapper()" class="btn btn-primary btn-block col-1">Submit</button>
+		<div class="card2">
+			<h5>12</h5>
+			<h6>10 existing contacts will updated</h6>
+		</div>
+		<div class="card3">
+			<h5>7</h5>
+			<h6>Contact skipped due to error</h6>
+				<button class="btn  btn-block "><img src="assets/img/download.png"> Download error file</button>
+		</div>
+    	<button type="button" (click)= "next()" class="btn btn-primary btn-block col-1">Import</button>
     </div>
   </div>
 </div>

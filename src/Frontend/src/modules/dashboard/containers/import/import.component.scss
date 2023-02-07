@@ -297,3 +297,107 @@ span{
 {
     transform: translateX(27px);   
 }
+.ss .card{
+    background-color: #FFF4F2;
+    height: 300px;
+    width: 40%;
+    border-radius: 20px;
+    border: none;
+    margin: 30px 0px 0px 0px;
+}
+.ss .card h4{
+    font-family: Manrope;
+    font-size: 20px;
+    font-weight: bold;
+    color: #000000;
+    margin: 30px 0px 0px 30px;
+}
+.ss .card .ggg h5{
+    font-family: Manrope;
+    font-size: 16px;
+    
+    color: #6149CD;
+    margin: 30px 0px 0px 30px;
+}
+.ss .card .ggg h6{
+    font-family: Manrope;
+    font-size: 16px;
+    
+    color: #000000;
+    margin: 10px 0px 0px 30px;
+}
+.ss .card1{
+    background-color: #EBF9EC;
+    height: 65px;
+    width: 42%;
+    margin: 30px 0px 0px 50px;
+    border-radius: 20px;
+    opacity: 1;
+}
+.ss .card1 h5{
+    color: #000000;
+    font-family: Manrope;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 8px 0px 0px 25px;
+}
+.ss .card1 h6{
+    color: #000000;
+    font-family: Manrope;
+    font-size: 17px;
+    margin: 0px 0px 0px 25px;
+}
+.card2{
+    background-color: #E1E1E1;
+    height: 65px;
+    width: 42%;
+    float: right;
+    margin: -205px 132px 0px 0px;
+    border-radius: 20px;
+}
+.card2 h5{
+    color: #000000;
+    font-family: Manrope;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 8px 0px 0px 25px;
+}
+.card2 h6{
+    color: #000000;
+    font-family: Manrope;
+    font-size: 17px;
+    margin: 0px 0px 0px 25px;
+}
+.card3{
+    background-color: #FDDBDB;
+    height: 110px;
+    width: 42%;
+    float: right;
+    margin: -114px 132px 0px 0px;
+    border-radius: 20px;
+}
+.card3 h5{
+    color: #000000;
+    font-family: Manrope;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 8px 0px 0px 25px;
+}
+.card3 h6{
+    color: #000000;
+    font-family: Manrope;
+    font-size: 17px;
+    margin: 0px 0px 0px 25px;
+}
+.card3 .btn{
+    background-color: #fff4f2;
+    width: 195px;
+    height: 30px;
+    border-radius: 13px;
+    margin: 10px 0px 0px 25px;
+    color: #000000;
+    float: left;
+    cursor: pointer;
+    padding: 0px;
+    font-size: 15px;
+}
