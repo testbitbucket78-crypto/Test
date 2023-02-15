@@ -31,6 +31,14 @@ export class LoginComponent implements OnInit {
             this.router.navigate (['dashboard'])
         });
     }
-    
+   
+    visible:boolean = true;
+    changetype:boolean = true;
+
+    viewpass(){
+        this.visible = !this.visible;
+        this.changetype = !this.changetype;
+        
+    }
     
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpBackend } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpBackend, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 const API_URL = environment.baseUrl;
 
@@ -12,7 +12,7 @@ export class DashboardService {
   getDashboard$(): Observable<{}> {
     return of({});
   }
-  public dashboardSubscribers(){
+  public dashboardSubscribers() {
     return this.http.get('http://localhost:3001/Subscribers')
   }
   public dashboardInteractions() {
@@ -37,7 +37,49 @@ export class DashboardService {
   }
   public Contact() {
     console.log("contact serveice")
-    return this.http.get('http://localhost:3002');
+    return this.http.get('http://localhost:3002/');
 
+  }
+  addContact(data: any) {
+    return this.http.post('http://localhost:3002/contact', data)
+  }
+
+ 
+
+
+  exportAllContact() {
+    return this.http.get('http://localhost:3002/exportAllContact')
+  }
+
+  exportCheckedContact(data: any) {
+    return this.http.post('http://localhost:3002/exportCheckedContact', data)
+  }
+
+  sendExportContact() {
+    return this.http.get('http://localhost:3000/sendExportContact')
+  }
+
+  filter(Phone_number: any) {
+    const params = new HttpParams().set('Phone_number', Phone_number)
+    return this.http.get('http://localhost:3002/filter', { params: params })
+  }
+  search(Phone_number: any, emailId: any, Name: any) {
+    const params = new HttpParams().set('Phone_number', Phone_number).set('emailId', emailId).set('Name', Name)
+    return this.http.get('http://localhost:3002/search', { params: params })
+  }
+
+  download() {
+
+
+    return this.http.get('http://localhost:3002/download', { responseType: 'blob' })
+  }
+
+  update(data: object) {
+    console.log("servise update data" +data)
+    return this.http.post('http://localhost:3002/updateAndSave', data)
+  }
+  
+  updatedDataCount(data:any){
+    return this.http.post('http://localhost:3002/verifyData',data)
   }
 }

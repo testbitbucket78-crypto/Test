@@ -1,5 +1,5 @@
 const db = require("../dbhelper");
-
+const contact=require("../Contact/contact");
 const host= "sdpl-staging.cdjbek5fprnn.ap-south-1.rds.amazonaws.com"
 const user= "scroot"
 const password= "amsdb1234"
@@ -31,7 +31,7 @@ otp = parseInt(otp);
 
 //Query for contactPage
 var sql1="Select * from EndCustomer"
-var sql = "INSERT INTO EndCustomer (Name,Phone_number,emailId) VALUES ?";
+var sql = "INSERT INTO EndCustomer (Name,Phone_number,emailId,age,tag,status,facebookId,InstagramId) VALUES ?";
 
 //Query for campaignPage
 var camQuery="Select * from Campaign"
@@ -46,6 +46,17 @@ campaignsQuery="select campaign_status,count(*) count from CampaignStats where  
 agentsQuery="select Status,count(*) count from AgentDetails where  (uid=1) Group by (Status) union select 'Total Agents',count(*) count from AgentDetails where  uid=1";
 subscribersQuery="select OptInStatus,count(*) count from EndCustomer  Group by (OptInStatus) union select  'Total Subscriber',count(*) count from EndCustomer";
 
+//contact filter
+filterQuery="select * from EndCustomer where Phone_number=?"
+importquery="INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,state,Country,tag,uid,sp_account_id,address,pincode,city,OptInStatus,facebookId,InstagramId) VALUES ?"
+searchQuery="select * from EndCustomer where Phone_number=? or Name=? or emailId=?"
+
+// Path for download sample csv file for import of contact
+var Path='C:/Users/hp/Downloads/data.csv'
+
+//update query for override 
+//updateCustomer='UPDATE EndCustomer SET '+ contact.updateData +'=?' +' WHERE ' + contact.identifierData + '=?'
+verfiyCount="select * from EndCustomer where emailId in (?)"
 
 module.exports={host,user,password,database,selectAllQuery,selectByIdQuery,deletQuery,insertQuery,updateQuery,loginQuery,registerQuery,email,appPassword,emailHost,port,sql,sql1,camQuery,selectQuery,otp,updatePassword,uidresetEmailQuery,verifyUid,
-    interactionsQuery,campaignsQuery,agentsQuery,subscribersQuery}
+    interactionsQuery,campaignsQuery,agentsQuery,subscribersQuery,filterQuery,importquery,searchQuery,Path,verfiyCount}

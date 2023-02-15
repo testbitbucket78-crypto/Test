@@ -13,7 +13,7 @@ const SECRET_KEY = 'RAUNAK'
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
-
+var mailOpt = "";
 
 
 const allregisterdUser = (req, res) => {
@@ -25,8 +25,9 @@ const allregisterdUser = (req, res) => {
 
 //post Api for login
 const login = (req, res) => {
+    var data = req.body.email_id
     db.db.query(val.loginQuery, [req.body.email_id], function (err, result) {
-
+        email = req.body.email_id;
         // user does not exists
         if (err) {
             return res.status(400).send({
@@ -64,12 +65,30 @@ const login = (req, res) => {
                 });
             }
         );
+
     }
 
     );
+    mailOpt=data
 
 }
-
+const get=(req,res)=>{
+    console.log(mailOpt)
+    var mailOptions = {
+        to: mailOpt,
+        subject: "Request for download Contact_Data: ",
+        html: '<p>You requested for download Contact_Data, kindly use this <a href="http://localhost:3002/getCheckedExportContact">link</a>to see your contacts</p>'
+      };
+    
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        res.status(200).send({ msg: "data has been sent" });
+      });
+}
 //post api for register
 
 const register = function (req, res) {
@@ -135,33 +154,33 @@ const forgotPassword = (req, res) => {
 
             db.db.query(val.uidresetEmailQuery, [req.body.email_id], function (err, results, fields) {
                 var uid = results;
-               
+
                 // Encrypt
                 var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
-                
-                
 
-               
-                    if (err) {
-                        console.log(err)
-                    } else {
 
-                        var mailOptions = {
-                            to: req.body.email_id,
-                            subject: "Request for reset Password: ",
-                            html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
-                        };
 
-                        transporter.sendMail(mailOptions, (error, info) => {
-                            if (error) {
-                                return console.log(error);
-                            }
-                            console.log('Message sent: %s', info.messageId);
-                            console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-                            res.status(200).send({ msg: "password has been sent" });
-                        });
-                    }
-                
+
+                if (err) {
+                    console.log(err)
+                } else {
+
+                    var mailOptions = {
+                        to: req.body.email_id,
+                        subject: "Request for reset Password: ",
+                        html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                    };
+
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            return console.log(error);
+                        }
+                        console.log('Message sent: %s', info.messageId);
+                        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+                        res.status(200).send({ msg: "password has been sent" });
+                    });
+                }
+
 
             });
         }
@@ -208,10 +227,10 @@ const sendOtp = function (req, res) {
     });
 };
 const verifyOtp = function (req, res, err) {
-    
+
     otp = req.body.otp
- 
-   
+
+
     if (req.body.otp == val.otp) {
         return res.send(Status);
     }
@@ -220,4 +239,4 @@ const verifyOtp = function (req, res, err) {
 
 
 
-module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword };
+module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, mailOpt ,get};
