@@ -7,7 +7,7 @@
     font-family: Manrope;
     font-size: 14px;
 }
-button:not(:disabled), [type=reset]:not(:disabled) {
+.btn {
     cursor: pointer;
     color: #7A86A1;
     background-color: #ffffff;
@@ -35,7 +35,7 @@ opacity: 1;
 .table-box{
     margin:0px auto;
 }
-.table-row{
+.openbtn{
     display: table;
     width: 95%;
     margin: 10px auto;
@@ -45,7 +45,9 @@ opacity: 1;
     font-size: 15px;
     border-radius: 20px;
     font-family: Manrope;
+    border: none;
 }
+
 .table-row:hover{
     display: table;
     width: 95%;
@@ -114,3 +116,37 @@ opacity: 1;
     margin: 0px 0px 0px -20px;
     padding: 0px 0px 0px 34px;
 }
+
+
+.sidepanel  {
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    height: 250px;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+  
+  .sidepanel a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidepanel a:hover {
+    color: #f1f1f1;
+  }
+  
+  .sidepanel .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+  }  

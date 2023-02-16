@@ -10,21 +10,21 @@ declare var $: any;
 })
 export class ImportComponent implements OnInit {
 	active = 1;
+	stepper: any;
 constructor(config: NgbModalConfig, private modalService: NgbModal) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
-    ngOnInit() {
-		this.Stepper = new Stepper($('.bs-stepper')[0], {
-	    linear: false,
-	    animation: true
-			   })
-
-}
-next() {
-	    this.Stepper.next();
-	  }
+	ngOnInit() {
+		this.stepper = new Stepper($('.bs-stepper')[0], {
+			linear: false,
+			animation: true
+		})
+	}
+	next() {
+		this.stepper.next();
+	}
 
 	openinstruction(instruction:any) {
 		this.modalService.open(instruction);

@@ -48,7 +48,15 @@
 	
 	
 		</div>
-		<div class="table-row">
+		<div id="mySidepanel" class="sidepanel">
+			<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+			<a href="#">About</a>
+			<a href="#">Services</a>
+			<a href="#">Clients</a>
+			<a href="#">Contact</a>
+		  </div>
+		 
+		<button type="button" class="openbtn table-row"  (click)="toggleSideNav()">
 			
 			<div class="table-cell1">
 				<p>1</p>
@@ -71,8 +79,8 @@
 
 			
 	
-		</div>
-		<div class="table-row">
+		</button>
+		<button type="button" class="openbtn table-row" data-bs-target="#mySidebar" data-bs-toggle="offcanvas">
 		
 			<div class="table-cell1">
 				<p>2</p>
@@ -92,8 +100,8 @@
 			<div class="table-cell4">
 				<p>8</p>
 			</div>
-		</div>
-		<div class="table-row">
+		</button>
+		<button type="button" class="openbtn table-row" data-bs-target="#mySidebar">
 			
 			<div class="table-cell1">
 				<p>3</p>
@@ -115,8 +123,8 @@
 			</div>
 			
 	
-		</div>
-		<div class="table-row">
+		</button>
+		<button type="button" class="openbtn table-row" data-bs-target="#mySidebar">
 		
 			<div class="table-cell1">
 				<p>4</p>
@@ -138,8 +146,8 @@
 			</div>
 			
 	
-		</div>
-		<div class="table-row">
+		</button>
+		<button type="button" class="openbtn table-row" data-bs-target="#mySidebar">
 		
 			<div class="table-cell1">
 				<p>5</p>
@@ -161,8 +169,8 @@
 			</div>
 			
 	
-		</div>
-		<div class="table-row">
+		</button>
+		<button type="button" class="openbtn table-row" data-bs-target="#mySidebar">
 		
 			<div class="table-cell1">
 				<p>6</p>
@@ -184,7 +192,7 @@
 			</div>
 			
 	
-		</div>
+		</button>
 	</div>
 	</div>
 
