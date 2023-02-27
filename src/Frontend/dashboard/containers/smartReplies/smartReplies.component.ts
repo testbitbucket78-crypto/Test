@@ -10,6 +10,7 @@ declare var $: any;
 })
 export class SmartRepliesComponent implements OnInit {
 	navigationService: any;
+	
 constructor(config: NgbModalConfig, private modalService: NgbModal) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -18,11 +19,11 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
 	}
 	ngOnInit() {}
 
-	toggleSideNav() {
-		console.log("print");
+	openNav() {
 		document.getElementById("mySidepanel");
-    }
-	closeNav() {
+	  }
+	  
+	  closeNav() {
 		document.getElementById("mySidepanel");
 	  }
 

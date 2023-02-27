@@ -85,8 +85,9 @@ h1{
     margin: 0px 0px 0px 30px;
     height: 150px;
     padding: 0px 0px 100px 15px;
+    color: #7A86A1;;
 }
-.btn{
+.btn5{
     cursor: pointer;
     float: right;
 	background: #6149CD 0% 0% no-repeat padding-box;
@@ -95,6 +96,12 @@ h1{
     opacity: 1;
     color: #ffffff;
     width: 9%;
+    border: none;
+    height: 30px;
+}
+.action{
+    position: absolute;
+    margin: -40px 0px 0px 1px;
 }
 .box1{
     width: 75%;
@@ -152,8 +159,79 @@ h4{
 }
 .box7{
     width: 55%;
-    height: 370px;
+    height: 450px;
     background-color: #FFF4F2;
     border-radius: 30px;
     margin: 30px 0px 0px 20%;
 }
+.box7 p{
+    width: 100%;
+    height: 89px;
+    padding: 0px 0px 47px 12px;
+    color: #000000;
+    font-family: Manrope;
+    border: none;
+    margin: -2px 0px 0px -10px;
+}
+.box7 label{
+    width: 70%;
+    height: 120px;
+    padding: 0px 0px 47px 12px;
+    color: #6149CD;
+    font-size: 16px;
+    font-family: Manrope;
+    border: 1px solid #695F9724;
+    border-radius: 20px;
+    margin: 20px 0px 0px 19px;
+    background-color: #ffffff;
+}
+.box7 .form-control{
+    margin: 235px 0px 0px 0px;
+    width: 100%;
+    height: 95px;
+    padding: 0px 0px 47px 12px;
+    color: #7A86A1;
+    font-family: Manrope;
+}
+.box7 .btn4{
+    position: absolute;
+    background-color: #6149CD;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    width: 75px;
+    height: 32px;
+    font-family: Manrope;
+    text-align: center;
+    margin: -78px 0px 0px 35%;
+}
+
+.box7 .btn3{
+    position: absolute;
+    width: 100%;
+    height: 37px;
+    margin: -43px 0px 0px 13px;
+}
+
+
+.form-floating{
+    margin: 0px 0px 0px 20px;
+}
+.form-select {
+    border: 1px solid #695F9724;
+    color: #6149CD;
+    border-radius: 20px;
+    width: 120px;
+    padding: 0px 9px;
+}
+.box2 .btn7{
+        width: 70px;
+        height: auto;
+        font-family: Manrope;
+        background-color: #6149CD;
+        border: none;
+        color: #ffffff;
+        border-radius: 18px;
+    }
+
+ 

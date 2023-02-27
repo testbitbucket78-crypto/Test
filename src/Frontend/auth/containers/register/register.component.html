@@ -38,12 +38,14 @@
                                 <div class="col-sm-6">
                                       <label for="floatingInputGrid">Password</label>
                                 
-                                  <input type="text-right mr-3" class="form-control" placeholder="8 character" aria-label="City">
+                                  <input [type]="changetype?'password':'text'" class="form-control" placeholder="8 character" aria-label="City">
+                                  <span class="eyeicon"(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye':'fa fa-eye-slash'"></i></span>
                                 </div>
                                   <div class=" col-sm-6">
                                     <label for="floatingInputGrid">Password</label>
                                 
-                                  <input type="text-right " class="form-control" placeholder="8 character" aria-label="State">
+                                  <input [type]="change?'password':'text'" class="form-control" placeholder="8 character" aria-label="State">
+                                  <span class="eyeicon1"(click)="viewpassword()"><i [ngClass]="visible1?'fa fa-eye':'fa fa-eye-slash'"></i></span>
                                   </div>
                             </div> 
                             <div class="form-group row">

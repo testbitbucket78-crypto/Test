@@ -1,3 +1,4 @@
+
 <sb-layout-dashboard><sb-dashboard-head title="Add Smart Reply" [hideBreadcrumbs]="true"></sb-dashboard-head>
   <div class="bs-stepper">
     <div class="bs-stepper-header" role="tablist">
@@ -33,7 +34,7 @@
             <input class="form-control" type="text" placeholder="Enter Name" />
              </div>
         </div>
-              <button type="button" (click)= "next()" class="btn btn-block col-1 mt-3 ">Next</button>
+              <button type="button" (click)= "next()" class="btn5 btn-block col-1 mt-3 ">Next</button>
   
       </div>
       <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
@@ -41,7 +42,7 @@
           <h5>Add Keywords</h5>
           <div class="box2 d-flex">
           <input class="form-control" type="text" placeholder="Enter Keywords" />
-          <button type="button" class="btn btn-block ml-2 ">ADD</button>
+          <button type="button" class="btn7 btn-block ml-2 ">ADD</button>
         </div>
         <span>Please choose a unique keyword which is not already added in other smart replies</span>
         <div class="line1"></div>
@@ -69,15 +70,39 @@
 
       </div>
         </div>
-        <button type="button" (click)= "next()" class="btn btn-block col-1 mt-3 ">Next</button>
+        <button type="button" (click)= "next()" class="btn5 btn-block col-1 mt-3 ">Next</button>
 
       </div>
        <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
+       
         <div class="box7">
+          <label for="ff">Message
+            <p> {{ data }}</p>
+          </label>
           
-          <input class="form-control" type="text" placeholder="Enter Keywords" />
+          <div class="reply">
+            <textarea name="content" id="replyText" class="form-control" rows="4" cols="50" placeholder="type your message..." #input ></textarea>
+            <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)">ADD</button>
+            <div class="action">
+              <button type="button" class="btn" (click)="bold()"><b>B</b></button>
+              <button type="button" class="btn" (click)="itelic()"> <i>I</i></button>
+              <button type="button" class="btn">$</button>
+              <button type="button" class="btn"> < / ></button>
+              <button type="button" class="btn"><i class="fa fa-share"></i></button>
+              <button type="button" class="btn"> < > </button>
+              
+                <select class="form-select" aria-label="Default select example">
+                  <option selected>Add Action</option>
+                  <option value="1">Assign Conversation</option>
+                  <option value="2">Add Contact Tag</option>
+                  <option value="3">Remove Tag</option>
+                </select>
+            </div>
+            
+          </div>
         </div>
-        <button type="button" (click)= "next()" class="btn btn-block col-1 mt-3 ">Submit</button>
+      
+        <button type="button" (click)= "next()" class="btn5 btn-block col-1 mt-3 ">Submit</button>
       </div>
     </div>
   </div>

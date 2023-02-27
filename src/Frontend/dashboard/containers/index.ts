@@ -24,13 +24,14 @@ import { CampaignsettingComponent } from './campaignsetting/campaignsetting.comp
 import { ContactsettingComponent } from './contactsetting/contactsetting.component';
 import { InboxsettingComponent } from './inboxsetting/inboxsetting.component';
 import { AddSmartRepliesComponent } from './addSmartReplies/addSmartReplies.component';
+import { SidenavReplyComponent } from './sidenavReply/sidenavReply.component';
 
-
-export const containers = [DashboardComponent,AddSmartRepliesComponent,ReportcampaignComponent,ReportautomationComponent,ConversationComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,ComposeComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent,AccountsettingComponent,CampaignsettingComponent,ContactsettingComponent,InboxsettingComponent];
+export const containers = [DashboardComponent,SidenavReplyComponent,AddSmartRepliesComponent,ReportcampaignComponent,ReportautomationComponent,ConversationComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,ComposeComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent,AccountsettingComponent,CampaignsettingComponent,ContactsettingComponent,InboxsettingComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './addSmartReplies/addSmartReplies.component';
 export * from './contacts/contacts.component';
+export * from './sidenavReply/sidenavReply.component';
 export * from './teambox/teambox.component';
 export * from './import/import.component';
 export * from './campaigns/campaigns.component';
