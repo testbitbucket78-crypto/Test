@@ -1,5 +1,5 @@
 const db = require("../dbhelper");
-const contact=require("../Contact/contact");
+
 const host= "sdpl-staging.cdjbek5fprnn.ap-south-1.rds.amazonaws.com"
 const user= "scroot"
 const password= "amsdb1234"
@@ -32,7 +32,7 @@ otp = parseInt(otp);
 //Query for contactPage
 var sql1="Select * from EndCustomer"
 var sql = "INSERT INTO EndCustomer (Name,Phone_number,emailId,age,tag,status,facebookId,InstagramId) VALUES ?";
-
+var editContact="UPDATE EndCustomer set Phone_number=?,uid=?,sp_account_id=?,status=?,Name=?,age=?,sex=?,emailId=?,address=?,pincode=?,city=?,state=?,Country=?,OptInStatus=?,tag=?,facebookId=?,InstagramId=? WHERE customerId=?"
 //Query for campaignPage
 var camQuery="Select * from Campaign"
 
@@ -50,7 +50,8 @@ subscribersQuery="select OptInStatus,count(*) count from EndCustomer  Group by (
 filterQuery="select * from EndCustomer where Phone_number=?"
 importquery="INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,state,Country,tag,uid,sp_account_id,address,pincode,city,OptInStatus,facebookId,InstagramId) VALUES ?"
 searchQuery="select * from EndCustomer where Phone_number=? or Name=? or emailId=?"
-
+delet="DELETE FROM EndCustomer WHERE customerId IN (?)"
+selectbyid="select * from EndCustomer where customerId=?"
 // Path for download sample csv file for import of contact
 var Path='C:/Users/hp/Downloads/data.csv'
 
@@ -58,5 +59,64 @@ var Path='C:/Users/hp/Downloads/data.csv'
 //updateCustomer='UPDATE EndCustomer SET '+ contact.updateData +'=?' +' WHERE ' + contact.identifierData + '=?'
 verfiyCount="select * from EndCustomer where emailId in (?)"
 
+
+// smartReplies Queries
+selectAll=`select
+t.ID,
+t.Title,
+t.Description,
+count(distinct s.Keyword) as KeywordCount,
+t.MatchingCriteria,
+count(distinct m.ActionID) as ActionCount
+from
+SmartReply t
+left join SmartReplyAction m ON m.SmartReplyID = t.ID
+left join SmartReplyKeywords s ON s.SmartReplyID = t.ID
+group by
+t.ID,
+t.Title,
+t.Description,
+t.MatchingCriteria`
+
+search=`   select
+t.ID,
+t.Title,
+t.Description,
+count(distinct s.Keyword) as KeywordCount,
+t.MatchingCriteria,
+count(distinct m.ActionID) as ActionCount
+from
+SmartReply t
+left join SmartReplyAction m ON m.SmartReplyID = t.ID
+left join SmartReplyKeywords s ON s.SmartReplyID = t.ID
+where t.ID=?
+group by
+t.ID,
+t.Title,
+t.Description,
+t.MatchingCriteria `
+
+
+
+
+
+sideNavKeywords=`select
+t.ID,
+t.Title,
+t.Description,
+s.Keyword ,
+t.MatchingCriteria,
+m.Message,
+m.Value ,
+n.Name 
+from
+SmartReply t
+left join SmartReplyAction m ON m.SmartReplyID = t.ID
+left join SRActionMaster n ON n.ID=m.ActionID
+left join SmartReplyKeywords s ON s.SmartReplyID = t.ID
+where t.ID=?`
+
+addNewReply=`CALL addnewReply(?, ?,?, ?,?,?)`;
+
 module.exports={host,user,password,database,selectAllQuery,selectByIdQuery,deletQuery,insertQuery,updateQuery,loginQuery,registerQuery,email,appPassword,emailHost,port,sql,sql1,camQuery,selectQuery,otp,updatePassword,uidresetEmailQuery,verifyUid,
-    interactionsQuery,campaignsQuery,agentsQuery,subscribersQuery,filterQuery,importquery,searchQuery,Path,verfiyCount}
+    interactionsQuery,campaignsQuery,agentsQuery,subscribersQuery,filterQuery,importquery,searchQuery,Path,verfiyCount,selectAll,search,sideNavKeywords,addNewReply,delet,editContact,selectbyid}

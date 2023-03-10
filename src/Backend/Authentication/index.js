@@ -198,7 +198,7 @@ const resetPassword = function (req, res) {
     }
     else {
         bcrypt.hash(password, 10, function (err, hash) {
-            db.runQuery(req, res, val.updatePassword, [hash, email_id]);
+            db.runQuery(req, res, val.updatePassword, [hash, uid]);
         })
     }
 

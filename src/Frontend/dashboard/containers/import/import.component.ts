@@ -136,7 +136,9 @@ export class ImportComponent implements OnInit {
 		this.fields.push(data);
 		
 	}
-
+	previous() {
+		this.stepper.previous();
+	}
 	updateAndSave() {
 		
 		var Data = {

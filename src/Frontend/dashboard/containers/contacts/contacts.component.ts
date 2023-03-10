@@ -14,7 +14,8 @@ export class ContactsComponent implements OnInit {
 	checkedConatct: any[] = [];
 	name = 'Angular';
 	productForm: FormGroup;
-
+	orderHeader: String = '';
+	isDesOrder: boolean = true;
 	filterForm=new FormGroup({
 		Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)]))
 	})
@@ -73,8 +74,28 @@ export class ContactsComponent implements OnInit {
 	onSubmit() {
 		console.log(this.productForm.value);
 	}
-
-
+	sort(headerName:String){
+		this.isDesOrder = !this.isDesOrder;
+		this.orderHeader = headerName;
+	
+	   }
+	   onchange(event:any, column:any) {
+		var id = document.getElementsByClassName(column)
+		if(event.target.checked === true) {
+		  for (let i = 0; i<id.length; i++) {
+			id[i].classList.remove("tabCol")
+		  }
+		  
+		//  alert("checked")
+		}
+		else 
+		{
+		  for (let i = 0; i < id.length; i++) {
+			id[i].classList.add("tabCol")
+		  }
+		  // console.log(column)
+		}
+	  }
 
 	open(content: any) {
 		this.modalService.open(content);
