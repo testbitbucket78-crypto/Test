@@ -15,7 +15,7 @@ app.listen(process.env.PORT, () => {
   console.log('Server is running on port ' + process.env.PORT);
 });
 app.get('/', (req, res) => {
-  res.send("Server is running on port 8000");
+  res.send("Welcome in Whatshap webhook ");
 })
 app.get("/webhook", (req, res) => {
 

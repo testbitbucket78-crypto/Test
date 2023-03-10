@@ -12,24 +12,24 @@ export class AuthService {
     }
 
     login(data: Auth): Observable<any> {
-        let API_URL = 'http://localhost:3000/login';
+        let API_URL = 'http://65.0.219.162:3003/login';
         return this.http.post(API_URL, data)
 
     }
     register(data: authRegister): Observable<any> {
-        let API_URL = 'http://localhost:3000/register';
+        let API_URL = 'http://65.0.219.162:3003/register';
         return this.http.post(API_URL, data)
     }
     forgotpassword(data: authForgotPassword): Observable<any> {
-        let API_URL = 'http://localhost:3000/forgotPassword';
+        let API_URL = 'http://65.0.219.162:3003/forgotPassword';
         return this.http.post(API_URL, data)
     }
     sendOtp(data:authSendOtp){
-        let API_URL = 'http://localhost:3000/sendOtp';
+        let API_URL = 'http://65.0.219.162:3003/sendOtp';
         return this.http.post(API_URL, data)
     }
     verifyOtp(data:authVerifyOtp){
-        let API_URL = 'http://localhost:3000/verifyOtp';
+        let API_URL = 'http://65.0.219.162:3003/verifyOtp';
        
         return this.http.post(API_URL, data)
     }

@@ -1,7 +1,7 @@
 var express = require("express");
 const db = require("../dbhelper");
 var app = express();
-const val = require('../Authentication/constant.js');
+const val = require('../Authentication/constant');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -48,6 +48,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //   res.send(data);
 // });
 
+app.get('/',(req,res)=>{
+  console.log("Node is running ")
+  res.send(200)
+})
 
 app.get('/Interactions', (req, res) => {
   db.runQuery(req, res, val.interactionsQuery, [req.body])

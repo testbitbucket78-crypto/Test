@@ -32,21 +32,22 @@ export class RegisterComponent implements OnInit {
 
     onVerification() {
         if (this.registerForm.valid) {
-            console.log(this.registerForm.value)
+           // sessionStorage.setItem('registerFormData',this.registerForm.value)
+            // sessionStorage.setItem('registerName',this.registerForm.value.name)
+            // sessionStorage.setItem('registerPhoneNo',this.registerForm.value.mobile_number)
+            // sessionStorage.setItem('registerEmail',this.registerForm.value.email_id)
+            // sessionStorage.setItem('registerPassword',this.registerForm.value.password)
+            // sessionStorage.setItem('registerConformPass',this.registerForm.value.confirmPassword)
+            sessionStorage.setItem('formValues', JSON.stringify(this.registerForm.value));
+
             this.apiService.sendOtp(this.registerForm.value).subscribe(response => {
                 console.warn("registerdone! ", response)
                 this.router.navigate(['verification'])
             });
 
         }
+        
     }
-    onSubmitRegisterform(){
-        if (this.registerForm.valid) {
-        this.apiService.register(this.registerForm.value).subscribe(response=>{
-            console.warn(" user registered!",response)
-            this.router.navigate(['login']);
-        })
-    }
-    }
+   
 
 }
