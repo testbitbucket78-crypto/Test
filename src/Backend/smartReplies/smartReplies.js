@@ -4,7 +4,7 @@ var app = express();
 const val = require('../Authentication/constant.js');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { Title } = require("@angular/platform-browser");
+
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));

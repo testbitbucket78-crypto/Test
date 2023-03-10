@@ -17,7 +17,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	data: any;
 	val: any;
 	selectedTeam: any;
-	id:any;
+
     newSmartReply:any;
 	newReply=new FormGroup({
 		Title: new FormControl('',Validators.required),
@@ -69,12 +69,12 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.selectedTeam = value;
 	}
 	getNewSmartReplyData(){
-		console.log("REPLY ")
+		
 		if(this.newReply.valid){
 			
 			sessionStorage.setItem('Title' ,this.newReply.value.Title)
 			sessionStorage.setItem('Description' ,this.newReply.value.Description)
-            console.log(this.newReply.value)
+           
 		}
           
 	}
@@ -93,19 +93,11 @@ export class AddSmartRepliesComponent implements OnInit {
 		}
 		console.log("data")
 		console.log(data)
-		this.apiService.addReply(data).subscribe((responce)=>{
+		this.apiService.addNewReply(data).subscribe((responce)=>{
             console.log(responce)
 		})
 	}
-	findNewReplyId(){
-	  var title=sessionStorage.getItem('Title')
-	  var description=sessionStorage.getItem('Description')
-	  console.log(title + " " + description)
-	  this.apiService.newReplyId(title,description).subscribe((responce)=>{
-		this.id=responce
-		console.log(this.id)
-	  })
-	}
+	
 
 	 
 }

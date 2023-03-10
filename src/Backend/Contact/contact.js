@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const { Parser } = require('json2csv');
 const cors = require('cors');
 const fs = require("fs");
+const path = require("path");
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -127,46 +128,7 @@ app.put('/editContact', (req, res) => {
   db.runQuery(req, res, val.editContact, [Phone_number, uid, sp_account_id, statusList, Name, age, sex, emailId, address, pincode, city, state, Country, OptInStatus, tagList, facebookId, InstagramId, customerId])
 })
 
-app.get('/items', (req, res) => {
-  const page = parseInt(req.query.page);
-  const limit = parseInt(req.query.limit);
 
-  // Calculate the starting index of the items to return
-  const startIndex = (page - 1) * limit;
-
-  // Calculate the ending index of the items to return
-  const endIndex = page * limit;
-  db.db.query('select *from EndCustomer', function (error, results, fields) {
-    if (error) {
-      console.log(error)
-    } else {
-      var itemList = results
-      console.log(results)
-      // Slice the items array to return only the items for the requested page
-      const items = itemList.slice(startIndex, endIndex);
-
-      // Create an object with the paginated items and the total number of items
-      const result = {
-        items: items,
-        totalItems: itemList.length
-      };
-
-      // Return the paginated items as a JSON response
-      res.json(result);
-    }
-  })
-  // Slice the items array to return only the items for the requested page
-  const items = itemList.slice(startIndex, endIndex);
-
-  // Create an object with the paginated items and the total number of items
-  const result = {
-    items: items,
-    totalItems: itemList.length
-  };
-
-  // Return the paginated items as a JSON response
-  res.json(result);
-});
 
 app.post('/updateAndSave', (req, res) => {
   var result = req.body;
@@ -249,7 +211,9 @@ app.post('/verifyData', (req, res) => {
 
 
 app.get('/download', (req, res) => {
-  var file = val.Path
+  var file = path.join(__dirname,'/sample_file.csv')
+ 
+
   res.download(file)
 })
 

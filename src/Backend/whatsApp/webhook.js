@@ -5,6 +5,7 @@ const request = require("request"),
   app = express().use(body_parser.json()); // creates express http server
 
 require('dotenv').config();
+const { json } = require("body-parser");
 const db = require('./dbHelper');
 
 const token = process.env.WHATSAPP_TOKEN;
@@ -51,9 +52,9 @@ app.post("/webhook", (req, res) => {
   let body = req.body;
 
   // Check the Incoming webhook message
-
+  var sendedSms="";
   if (body != undefined) {
-    var sendedSms = JSON.stringify(req.body, null, 2)
+    sendedSms = JSON.stringify(req.body, null, 2)
     console.log(sendedSms)
   }
 
@@ -98,7 +99,8 @@ app.post("/webhook", (req, res) => {
         data: {
           messaging_product: "whatsapp",
           to: from,
-          text: { body: "Reply: " + msg_body },
+          text: { body: "Reply: " + sendedSms   }
+          ,
         },
         headers: { "Content-Type": "application/json" },
 

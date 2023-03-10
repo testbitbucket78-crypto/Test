@@ -86,25 +86,23 @@ export class DashboardService {
    //Smart replies API's
 
    getUser() {
-    return this.http.get('http://localhost:3005/getReplies')
+    return this.http.get('http://65.0.219.162:3005/getReplies')
   }
 
   searchSmartReply(ID: any) {
     const params = new HttpParams().set('ID', ID)
     console.log("params  "  + params)
-    return this.http.get('http://localhost:3005/search', { params: params })
+    return this.http.get('http://65.0.219.162:3005/search', { params: params })
   }
 
   sideNav(ID: any){
     const params = new HttpParams().set('ID', ID)
-    return this.http.get('http://localhost:3005/sideNavKeyword', { params: params })
+    return this.http.get('http://65.0.219.162:3005/sideNavKeyword', { params: params })
   }
 
-  addReply(data:any){
-    return this.http.post('http://localhost:3005/addNewReply',data)
+  addNewReply(data:any){
+    return this.http.post('http://65.0.219.162:3005/addNewReply',data)
   }
 
-  newReplyId(title:any,desc:any){
-    return this.http.post('http://localhost:3005/NewReplyID',title,desc)
-  }
+  
 }
