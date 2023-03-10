@@ -164,18 +164,19 @@ h4{
     border-radius: 30px;
     margin: 30px 0px 0px 20%;
 }
-.box7 p{
+.box7 label p{
     width: 100%;
-    height: 89px;
+    height: 100%;
     padding: 0px 0px 47px 12px;
     color: #000000;
     font-family: Manrope;
     border: none;
     margin: -2px 0px 0px -10px;
+    text-align: justify;
+    font-size: 14px;
 }
 .box7 label{
-    width: 70%;
-    height: 120px;
+    width: 60%;
     padding: 0px 0px 47px 12px;
     color: #6149CD;
     font-size: 16px;
@@ -184,16 +185,34 @@ h4{
     border-radius: 20px;
     margin: 20px 0px 0px 19px;
     background-color: #ffffff;
+    
 }
-.box7 .form-control{
-    margin: 235px 0px 0px 0px;
-    width: 100%;
+.box7 .action1{
+    background: #F6EFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #EBEBEB;
+    border-radius: 12px;
+    width: 60%;
+    height: 50px;
+    margin: 20px;
+    color: #6149CD;
+    padding: 0px 0px 0px 10px;
+    font-family: Manrope;
+}
+.box7 .action1 p{
+    
+        font-family: Manrope;
+        color: #000000;
+        font-weight: bold;
+    }
+.reply .form-control{
+    margin: -96px 0px 0px 208px;
+    width: 55%;
     height: 95px;
     padding: 0px 0px 47px 12px;
     color: #7A86A1;
     font-family: Manrope;
 }
-.box7 .btn4{
+.btn4{
     position: absolute;
     background-color: #6149CD;
     color: #ffffff;
@@ -203,10 +222,10 @@ h4{
     height: 32px;
     font-family: Manrope;
     text-align: center;
-    margin: -78px 0px 0px 35%;
+    margin: -78px 0px 0px 50%;
 }
 
-.box7 .btn3{
+.btn3{
     position: absolute;
     width: 100%;
     height: 37px;
@@ -233,5 +252,93 @@ h4{
         color: #ffffff;
         border-radius: 18px;
     }
+    .dropdown{
+        margin: -36px 0px 0px 102%;
+        position: absolute;
+    }
+    .dropdown .btn6
+    {
+        background-color: #FFFFFF;
+        color: #6149CD;
+        border-radius: 17px;
+        border: 1px solid #EBEBEB;
+        width: 122px;
+    }
+.dropdown-menu li{
+    position: relative;
+    color: #6149CD;
+}
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    color: #6149CD;
+}
+.dropdown-item1 {
+    display: block;
+    width: 100%;
+    padding: 0.25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    color: #000000;
+}
+.nav-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #6149CD;
+    margin: 0px 0px 0px 8px;
+}
+.dropdown-menu .submenu
+ {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+ }
+ .dropdown ul{
+background-color: #ffffff;
+border-radius: 20px;
 
- 
+ }
+ .dropdown-menu>li:hover>.submenu {
+    display: block;
+   
+ }
+ .dropdown-menu .submenu .form-check{
+    margin: 0;
+    height: 24px;
+    border: none;
+}
+ .dropdown-menu .submenu .form-check input{
+    margin: 0px 0px 0px -35px;
+    height: 22px;
+}
+ .dropdown-menu .submenu .form-check label{
+    color: #000000;
+    font-size: 16px;
+    font-family: Manrope;
+    margin: 0px;
+    border: none;
+}
+.btn9{
+    margin: 0px;
+    border: none;
+    background-color: #fff;
+    top: -71px;
+    left: -44px;
+    width: 0px;
+}
+.action {
+    position: absolute;
+    margin: -40px 0px 0px 214px;
+}

@@ -21,9 +21,14 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
 			linear: false,
 			animation: true
 		})
+		
 	}
+	
 	next() {
 		this.stepper.next();
+	}
+	previous() {
+		this.stepper.previous();
 	}
 
 	openinstruction(instruction:any) {

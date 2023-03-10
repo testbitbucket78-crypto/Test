@@ -9,7 +9,7 @@
     font-family: Manrope;
     font-size: 14px;
 }
-button:not(:disabled), [type=reset]:not(:disabled) {
+.btn {
     cursor: pointer;
     color: #7A86A1;
     background-color: #ffffff;
@@ -34,34 +34,7 @@ box-shadow: 2px 13px 54px #695F9714;
 border-radius: 30px;
 opacity: 1;
 }
-.table-box{
-    margin:0px auto;
-}
-.table-row{
-    display: table;
-    width: 95%;
-    margin: 10px auto;
-    background: #FBFAFF;
-    padding: 10px 0;
-    color: #000000;
-    font-size: 15px;
-    border-radius: 20px;
-    font-family: Manrope;
-}
-.table-row:hover{
-    display: table;
-    width: 95%;
-    margin: 10px auto;
-    background: #FBFAFF;
-    padding: 10px 0;
-    color: #000000;
-    font-size: 15px;
-    border-radius: 20px;
-    font-family: Manrope;
-    box-shadow: 0px 0px 14px #695F972E;
-border: 1px solid #E5E5E5;
-opacity: 1;
-}
+
 .tt .btn7{
     margin: 15px 0px 0px 0px;
     width: 80px;
@@ -71,37 +44,14 @@ opacity: 1;
     border: none;
 }
 .tt .btn6{
-    margin: 15px 0px 0px 0px;
+    margin: 15px 0px 0px 30px;
     width: 80px;
     height: 30px;
     color: #FF3636;
     background-color: transparent;
     border: none;
 }
- .table-head{
-    display: table;
-    width: 95%;
-    background: transparent;
-    padding: 10px 3px 0px 0px;
-    color: #6149CD;
-    font-size: 14px;
-    margin: 0px 18px;
-    font-family: Manrope;
-}
-.table-cell{
-    display: table-cell;
-    width: 0%;
-    text-align: center;
-    padding: 4px 0;
-
-}
-
-.table-head .table-cell{
-    border-right: none;
-}
-.lower img{
-    margin: -8px 0px 0px 15px;
-}
+ 
 .ff{
     width: 330px;
     height: 32px;
@@ -291,7 +241,122 @@ option:hover{
     padding: 0px 0px 0px 34px;
 }
 
+.table tr {
+    display: table;
+    width: 95%;
+    margin: 10px auto;
+    background: #FBFAFF;
+    padding: 10px 0;
+    color: #000000;
+    font-size: 15px;
+    border-radius: 20px;
+    font-family: Manrope;
+    border: none;
+}
+.table tr:hover{
+    display: table;
+    width: 95%;
+    margin: 10px auto;
+    background: #FBFAFF;
+    padding: 10px 0;
+    color: #000000;
+    font-size: 15px;
+    border-radius: 20px;
+    font-family: Manrope;
+    box-shadow: 0px 0px 14px #695F972E;
+border: none;
+opacity: 1;
+}
+.table th, .table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    border: none;
+    
+}
+.table thead{
+    display: table;
+    width: 95%;
+    background: transparent;
+    padding: 10px 3px 0px 0px;
+    color: #6149CD;
+    font-size: 14px;
+    margin: 0px 18px;
+    font-family: Manrope;
+}
+.table thead .table-box{
+    color: #6149CD;
+    background: transparent;
+    margin: 0px 23px;
+}
+.table thead .table-box:hover{
+    box-shadow: none;
+}
+.table tr td img{
+    margin: -4px 0px 0px 10px;
+}
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+    float: right;
+}
+.page-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #000000;
+    background-color: #fff;
+    border: none;
+}
+.page-link:hover {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #6149CD;
+    background-color: #fff;
+    border: none;
+}
+.hd .btn0{
+    margin: 10px 0px 0px 26%;
+    background-color: #FFF4F2;
+    border: 1px solid #695F9724;
+    color: #7A86A1;
+    border-radius: 20px;
+    width: 58px;
 
+}
+.hd .btn0:active {
+    margin: 10px 0px 0px 26%;
+    background-color: #FFffff;
+    border: 1px solid #695F9724;
+    color: #6149CD;
+    border-radius: 20px;
+    width: 58px;
 
+}
+.hd .btn9{
+    margin: 10px 0px 0px 0px;
+    background-color: #FFF4F2;
+    border: 1px solid #695F9724;
+    color: #7A86A1;
+    border-radius: 20px;
+    width: 58px;
+}
+.hd .btn9:active{
+    margin: 10px 0px 0px 0px;
+    background-color: #FFffff;
+    border: 1px solid #695F9724;
+    color: #6149CD;
+    border-radius: 20px;
+    width: 58px;
 
-
+}
+.tabCol{
+    display: none;
+}

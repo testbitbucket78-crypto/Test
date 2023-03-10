@@ -34,212 +34,52 @@
 
 
 <div class="box">
-<div class="table-box">
-	<div class="table-row1 table-head">
-		<div class="table-cell">
-			<p><input type="checkbox" name=""></p>
-		</div>
-		<div class="table-cell">
-			<p>ID <img src="assets/img/sort.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>Name <img src="assets/img/sort.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>Phone Number <img src="assets/img/sort.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>Email <img src="assets/img/sort.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>Age <img src="assets/img/sort.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>Gender <img src="assets/img/sort.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>Tag <img src="assets/img/sort.png"></p>
-		</div>
-
-
-	</div>
-	<div class="table-row">
-		<div class="table-cell lower">
-			<p><input type="checkbox" name="">
-			<img src="assets/img/chats.png"></p>
-			
-		</div>
-		<div class="table-cell">
-			<p>1</p>
-		</div>
-		<div class="table-cell">
-			<p>John Applessed</p>
-		</div>
-		<div class="table-cell">
-			<p>+919874563210</p>
-		</div>
-		<div class="table-cell">
-			<p>john@yahoo.in</p>
-		</div>
-		<div class="table-cell">
-			<p>23yrs</p>
-		</div>
-		<div class="table-cell">
-			<p>Male</p>
-		</div>
-		<div class="table-cell">
-			<p>New Customer</p>
-		</div>
+	<table class="table">
+		<thead>
+		  <tr class="table-box">
+			<th scope="col"><input type="checkbox" name=""></th>
+			<th scope="col" class="id" (click)="sort('id')">ID <img src="assets/img/sort.png"></th>
+			<th scope="col" class="name" (click)="sort('name')">Name <img src="assets/img/sort.png"></th>
+			<th scope="col" class="phone" (click)="sort('phone')">Phone Number <img src="assets/img/sort.png"></th>
+			<th scope="col" class="email" (click)="sort('email')">Email <img src="assets/img/sort.png"></th>
+			<th scope="col" class="age" (click)="sort('age')">Age <img src="assets/img/sort.png"></th>
+			<th scope="col" class="gender" (click)="sort('gender')">Gender <img src="assets/img/sort.png"></th>
+			<th scope="col" class="tag" (click)="sort('tag')">Tag <img src="assets/img/sort.png"></th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <tr *ngFor="let employee of employees | orderBy: orderHeader: isDesOrder" >
+			<td scope="row"><input type="checkbox" name=""><img src="assets/img/chats.png"></td>
+			<td class="id">{{employee.id}}</td>
+			<td class="name">{{employee.name}}</td>
+			<td class="phone">{{employee.phone}}</td>
+			<td class="email">{{employee.email}}</td>
+			<td class="age">{{employee.age}}</td>
+			<td class="gender">{{employee.gender}}</td>
+			<td class="tag">{{employee.tag}}</td>
+		  </tr>
 		
-
-	</div>
-	<div class="table-row">
-		<div class="table-cell lower">
-			<p><input type="checkbox" name="">
-				<img src="assets/img/chats.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>2</p>
-		</div>
-		<div class="table-cell">
-			<p>John Applessed</p>
-		</div>
-		<div class="table-cell">
-			<p>+919874563210</p>
-		</div>
-		<div class="table-cell">
-			<p>john@yahoo.in</p>
-		</div>
-		<div class="table-cell">
-			<p>23yrs</p>
-		</div>
-		<div class="table-cell">
-			<p>Male</p>
-		</div>
-		<div class="table-cell">
-			<p>New Customer</p>
-		</div>
-		
-
-	</div>
-	<div class="table-row">
-		<div class="table-cell lower">
-			<p><input type="checkbox" name="">
-				<img src="assets/img/chats.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>3</p>
-		</div>
-		<div class="table-cell">
-			<p>John Applessed</p>
-		</div>
-		<div class="table-cell">
-			<p>+919874563210</p>
-		</div>
-		<div class="table-cell">
-			<p>john@yahoo.in</p>
-		</div>
-		<div class="table-cell">
-			<p>23yrs</p>
-		</div>
-		<div class="table-cell">
-			<p>Male</p>
-		</div>
-		<div class="table-cell">
-			<p>New Customer</p>
-		</div>
-		
-
-	</div>
-	<div class="table-row">
-		<div class="table-cell lower">
-			<p><input type="checkbox" name="">
-				<img src="assets/img/chats.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>4</p>
-		</div>
-		<div class="table-cell">
-			<p>John Applessed</p>
-		</div>
-		<div class="table-cell">
-			<p>+919874563210</p>
-		</div>
-		<div class="table-cell">
-			<p>john@yahoo.in</p>
-		</div>
-		<div class="table-cell">
-			<p>23yrs</p>
-		</div>
-		<div class="table-cell">
-			<p>Male</p>
-		</div>
-		<div class="table-cell">
-			<p>New Customer</p>
-		</div>
-		
-
-	</div>
-	<div class="table-row">
-		<div class="table-cell lower">
-			<p><input type="checkbox" name="">
-				<img src="assets/img/chats.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>5</p>
-		</div>
-		<div class="table-cell">
-			<p>John Applessed</p>
-		</div>
-		<div class="table-cell">
-			<p>+919874563210</p>
-		</div>
-		<div class="table-cell">
-			<p>john@yahoo.in</p>
-		</div>
-		<div class="table-cell">
-			<p>23yrs</p>
-		</div>
-		<div class="table-cell">
-			<p>Male</p>
-		</div>
-		<div class="table-cell">
-			<p>New Customer</p>
-		</div>
-		
-
-	</div>
-	<div class="table-row">
-		<div class="table-cell lower">
-			<p><input type="checkbox" name="">
-				<img src="assets/img/chats.png"></p>
-		</div>
-		<div class="table-cell">
-			<p>6</p>
-		</div>
-		<div class="table-cell">
-			<p>John Applessed</p>
-		</div>
-		<div class="table-cell">
-			<p>+919874563210</p>
-		</div>
-		<div class="table-cell">
-			<p>john@yahoo.in</p>
-		</div>
-		<div class="table-cell">
-			<p>23yrs</p>
-		</div>
-		<div class="table-cell">
-			<p>Male</p>
-		</div>
-		<div class="table-cell">
-			<p>New Customer</p>
-		</div>
-		
-
-	</div>
+		</tbody>
+		<nav aria-label="Page navigation example">
+			<ul class="pagination">
+			  <li class="page-item">
+				<a class="page-link" href="#" aria-label="Previous">
+				  <span aria-hidden="true">&laquo;</span>
+				</a>
+			  </li>
+			  <li class="page-item"><a class="page-link" href="#">1</a></li>
+			  <li class="page-item"><a class="page-link" href="#">2</a></li>
+			  <li class="page-item"><a class="page-link" href="#">3</a></li>
+			  <li class="page-item">
+				<a class="page-link" href="#" aria-label="Next">
+				  <span aria-hidden="true">&raquo;</span>
+				</a>
+			  </li>
+			</ul>
+		  </nav>
+	  </table>
 </div>
-</div>
+
 
 
 <ng-template #content let-c="close" let-d="dismiss">
@@ -270,26 +110,31 @@
 <ng-template #collum let-c="close" let-d="dismiss">
 	<div class="modal-header">
 		<h4 class="modal-title" id="modal-basic-title">Collum Prefrences</h4>
-		<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+		<button
+			type="button"
+			class="btn-close"
+			aria-label="Close"
+			(click)="d('Cross click')"
+		></button>
 	</div>
 	<div class="modal-body">
-		<div class= "form-group mt-3 d-flex">
-			<input type="checkbox" name="">
+		<div class="form-group mt-3 d-flex">
+			<input type="checkbox" name="" (change)="onchange($event, 'id')" checked/>
 			<div class="ff ml-2 d-flex">
 				<div class="fff ml-3">
-					<p><img src="assets/img/swipe-s.png"></p>
+					<p><img src="assets/img/swipe-s.png" /></p>
 				</div>
 				<div class="fff ml-3">
 					<P>ID</P>
-				</div>	
+				</div>
 			</div>
 		</div>
 
-			<div class= "form-group mt-3 d-flex">
-			<input type="checkbox" name="">
+		<div class="form-group mt-3 d-flex">
+			<input type="checkbox"  name="" (change)="onchange($event, 'name')" checked/>
 			<div class="ff ml-2 d-flex">
 				<div class="fff ml-3">
-					<p><img src="assets/img/swipe-s.png"></p>
+					<p><img src="assets/img/swipe-s.png" /></p>
 				</div>
 				<div class="fff ml-3">
 					<P>Name</P>
@@ -297,71 +142,73 @@
 			</div>
 		</div>
 
-
-		<div class= "form-group mt-3 d-flex">
-			<input type="checkbox" name="">
+		<div class="form-group mt-3 d-flex">
+			<input type="checkbox"  name="" (change)="onchange($event, 'phone')" checked/>
 			<div class="ff ml-2 d-flex">
 				<div class="fff ml-3">
-					<p><img src="assets/img/swipe-s.png"></p>
+					<p><img src="assets/img/swipe-s.png" /></p>
 				</div>
 				<div class="fff ml-3">
 					<P>Phone Number</P>
 				</div>
 			</div>
 		</div>
-		<div class= "form-group mt-3 d-flex">
-			<input type="checkbox" name="">
+		<div class="form-group mt-3 d-flex">
+			<input type="checkbox"  name="" (change)="onchange($event, 'email')" checked/>
 			<div class="ff ml-2 d-flex">
 				<div class="fff ml-3">
-					<p><img src="assets/img/swipe-s.png"></p>
+					<p><img src="assets/img/swipe-s.png" /></p>
 				</div>
 				<div class="fff ml-3">
 					<P>Email</P>
 				</div>
 			</div>
 		</div>
-		<div class= "form-group mt-3 d-flex">
-			<input type="checkbox" name="">
+		<div class="form-group mt-3 d-flex">
+			<input type="checkbox"  name="" (change)="onchange($event, 'age')" checked/>
 			<div class="ff ml-2 d-flex">
 				<div class="fff ml-3">
-					<p><img src="assets/img/swipe-s.png"></p>
+					<p><img src="assets/img/swipe-s.png" /></p>
+				</div>
+				<div class="fff ml-3">
+					<P>Age</P>
+				</div>
+			</div>
+		</div>
+		<div class="form-group mt-3 d-flex">
+			<input type="checkbox" name="" (change)="onchange($event, 'gender')" checked/>
+			<div class="ff ml-2 d-flex">
+				<div class="fff ml-3">
+					<p><img src="assets/img/swipe-s.png" /></p>
 				</div>
 				<div class="fff ml-3">
 					<P>Gender</P>
 				</div>
 			</div>
 		</div>
-		<div class= "form-group mt-3 d-flex">
-			<input type="checkbox" name="">
+		<div class="form-group mt-3 d-flex">
+			<input type="checkbox" name="" (change)="onchange($event, 'tag')" checked/>
 			<div class="ff ml-2 d-flex">
 				<div class="fff ml-3">
-					<p><img src="assets/img/swipe-s.png"></p>
+					<p><img src="assets/img/swipe-s.png" /></p>
 				</div>
 				<div class="fff ml-3">
 					<P>Tag</P>
 				</div>
 			</div>
 		</div>
-		<div class= "form-group mt-3 d-flex">
-			<input type="checkbox" name="">
-			<div class="ff ml-2 d-flex">
-				<div class="fff ml-3">
-					<p><img src="assets/img/swipe-s.png"></p>
-				</div>
-				<div class="fff ml-3">
-					<P>Status</P>
-				</div>
-			</div>
-		</div>
-		
 	</div>
 	<div class="modal-footer popfooter row">
-		<div class="col-md-6 text-right ">
-			<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Cancel</button>
+		<div class="col-md-6 text-right">
+			<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">
+				Cancel
+			</button>
 		</div>
 		<div class="col-md-2 text-right">
-		<button type="button" class="btn1 btn-outline-dark" (click)="c('Save click')">Save</button>
-	</div>
+			<button type="button" class="btn1 btn-outline-dark" (click)="c('Save click')">
+				Save
+			</button>
+		</div>
 	</div>
 </ng-template>
 
@@ -387,6 +234,7 @@
 				<option value="8">Last Message recieved</option>
 			</select>
 		</div>
+		
 	</div>
 	<div class="sq">
 		<label for="floatingSelectGrid">Filter Phone No.</label>
@@ -414,6 +262,12 @@
 				<th><button type="button" (click)="addQuantity()" class="btn7 btn-primary">+ Add</button></th>  
 			  </tr>  
 			  <tr *ngFor="let quantity of quantities().controls; let i=index" [formGroupName]="i">  
+				<div class="hd d-flex">
+					
+                <button class="btn0 btn-primary" type="submit">And</button>
+                <button class="btn9 btn-primary" type="submit">Or</button>
+
+				</div>
 				<div class="form-floating">
 					<select class="control ">
 						<option>Starts With</option>
@@ -432,7 +286,8 @@
 				  <div class="form-floating">
 				 <input class="form-control" type="text" placeholder="+44" />
 				  </div>
-				  <td class="tt">  
+				  <td class="tt d-flex">  
+					<button type="button" (click)="addQuantity()" class="btn7 btn-primary">+ Add</button>
 					<button (click)="removeQuantity(i)" class="btn6 btn-danger">-Remove</button>  
 				</td> 
 				</div>

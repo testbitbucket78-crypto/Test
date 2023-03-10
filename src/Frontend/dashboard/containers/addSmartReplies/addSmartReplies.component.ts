@@ -13,7 +13,9 @@ export class AddSmartRepliesComponent implements OnInit {
 	stepper: any;
 	data: any;
 	value: any;
-
+	selectedTeam: any;
+	
+	
 constructor(config: NgbModalConfig, private modalService: NgbModal) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -24,10 +26,17 @@ constructor(config: NgbModalConfig, private modalService: NgbModal) {
 		this.stepper = new Stepper($('.bs-stepper')[0], {
 	    linear: false,
 	    animation: true
-			   })
-			
+		
+			   })	
 			  
+			 	  
 }
+
+onSelected(value:string) {
+	console.log("Hello");
+	this.selectedTeam = value;
+}
+
 
 bold(){
 	(<HTMLInputElement>document.getElementById("replyText")).style.fontWeight = "bold";  
@@ -35,12 +44,17 @@ bold(){
 itelic(){
 	(<HTMLInputElement>document.getElementById("replyText")).style.fontStyle = "italic";  
 }
-addqty(value){
+addqty(value:string){
 	this.data = value;
 }
 
+
+
 next() {
 	    this.stepper.next();
+	  }
+	  previous() {
+	    this.stepper.previous();
 	  }
 
 	openinstruction(instruction:any) {

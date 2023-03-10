@@ -51,22 +51,9 @@ h3{
         background-color: #ffffff;
         border-radius: 20px;
         border: 1px solid #EBEBEB;
+        margin: 5px 0px 0px 10px;
     }
-    .box2{
-        width: 100px;
-        height: 30px;
-        background-color: #ffffff;
-        border-radius: 20px;
-        border: 1px solid #EBEBEB;
-    }
-    .box3{
-        width: 130px;
-        height: 30px;
-        background-color: #ffffff;
-        border-radius: 20px;
-        border: 1px solid #EBEBEB;
-        margin: 7px 0px 7px 0px;
-    }
+   
     .box1 h6{
         font-size: 15px;
         color: #7A86A1;
@@ -89,7 +76,7 @@ h3{
     }
     .box4{
         width: 95%;
-        height: 210px;
+        height: 100%;
         background-color: #ffffff;
         border-radius: 20px;
         border: 1px solid #EBEBEB;
@@ -107,4 +94,32 @@ h3{
         color: #000000;
         text-align: inherit;
         padding: 0px 0px 0px 10px;
+    }
+    .box2{
+        width: 95%;
+        height: 100%;
+        background-color: #F6EFFF;
+        border-radius: 20px;
+        border: 1px solid #EBEBEB;
+        margin: 10px 0px 0px 5px;
+    }
+    .box2 h3{
+        font-family: Manrope;
+        font-size: 16px;
+        color: #6149CD;
+        padding: 0px 0px 0px 10px;
+    }
+    .box2 .bb b{
+        font-family: Manrope;
+        font-size: 14px;
+        color: #000000;
+        padding: 0px 0px 0px 6px;
+        margin: -10px 0px 0px 0px;
+    }
+    .box2 .bb p{
+        font-family: Manrope;
+        font-size: 14px;
+        color: #000000;
+        padding: 0px 0px 0px 12px;
+        margin: -10px 0px 0px 0px;
     }
