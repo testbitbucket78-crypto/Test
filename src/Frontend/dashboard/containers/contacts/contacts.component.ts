@@ -11,6 +11,7 @@ interface employee{
   age: number,
   gender: string,
   tag: string,
+  checked?:boolean;
 
 }
 @Component({
@@ -32,6 +33,8 @@ export class ContactsComponent implements OnInit {
     ShowFilter = false;
     limitSelection = false;
     cities: any = [];
+    tag: any = [];
+    status: any = [];
     selectedItems: any = [];
     dropdownSettings = {}; 
    
@@ -64,14 +67,35 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	}
     ngOnInit() {
       this.cities = [
-        { item_id: 1, item_text: 'New Delhi' },
-        { item_id: 2, item_text: 'Mumbai' },
-        { item_id: 3, item_text: 'Bangalore' },
-        { item_id: 4, item_text: 'Pune' },
-        { item_id: 5, item_text: 'Chennai' },
-        { item_id: 6, item_text: 'Navsari' }
+        { item_id: 1, item_text: 'Name' },
+        { item_id: 2, item_text: 'Email' },
+        { item_id: 3, item_text: 'Phone Number' },
+        { item_id: 4, item_text: 'Tags' },
+        { item_id: 5, item_text: 'Contact Created' },
+        { item_id: 6, item_text: 'Last Conversation with' },
+        { item_id: 4, item_text: 'Conversation resolved' },
+        { item_id: 5, item_text: 'Last Message with' },
     ];
-    this.selectedItems = [{ item_id: 4, item_text: 'Pune' }, { item_id: 6, item_text: 'Navsari' }];
+    this.tag = [
+      { item_id: 1, item_text: 'Paid' },
+      { item_id: 2, item_text: 'Unpaid' },
+      { item_id: 3, item_text: 'Return' },
+      { item_id: 4, item_text: 'New Customer' },
+      { item_id: 5, item_text: 'Order Complete' },
+      { item_id: 6, item_text: 'New Order' },
+      { item_id: 4, item_text: 'Unavailable' },
+      
+  ];
+  this.status = [
+    { item_id: 1, item_text: 'Premium' },
+    { item_id: 2, item_text: 'Customer' },
+    { item_id: 3, item_text: 'New Customer' },
+    { item_id: 5, item_text: 'Order Complete' },
+    { item_id: 6, item_text: 'New Order' },
+    { item_id: 4, item_text: 'Unavailable' },
+    
+];
+    // this.selectedItems = [{ item_id: 4, item_text: 'Pune' }, { item_id: 6, item_text: 'Navsari' }];
     this.dropdownSettings = {
         singleSelection: false,
         idField: 'item_id',
@@ -82,9 +106,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
         allowSearchFilter: this.ShowFilter
     };
 
-    this.productForm = this.fb.group({
-        city: [this.selectedItems]
-    });
+    // this.productForm = this.fb.group({
+    //     city: [this.selectedItems]
+    // });
     
 		this.getContact();
    
@@ -163,4 +187,40 @@ console.log(this.contacts);
       // console.log(column)
     }
   }
+   // column header checkbox
+   checkAllCheckBox(event: any) {
+    this.employees.forEach(employee => employee.checked = event.target.checked)
+   
+  }
+
+  isAllCheckBoxChecked() {
+    return this.employees.every(employee => employee.checked);
+    
+  }
+
+   // select checkbox for delete a row
+
+    selCheckBox(event: any) {
+        var id = document.getElementsByClassName('btn  btn-block float-right');
+        if (event.target.checked === true) {
+            for (let i = 0; i < id.length; i++) {
+                id[i].classList.add('tabCol');
+            }
+
+            //  alert("checked")
+        } else {
+            for (let i = 0; i < id.length; i++) {
+                id[i].classList.remove('tabCol');
+            }
+            // console.log(column)
+        }
+    }
+
+    deleteRow(arr:employee["id"]) {
+        var delBtn = confirm(" Do you want to delete ?");
+        if (delBtn == true) {
+            this.employees.splice(arr,1);
+        }
+    }
+
 }

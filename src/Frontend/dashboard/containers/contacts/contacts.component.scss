@@ -360,3 +360,58 @@ opacity: 1;
 .tabCol{
     display: none;
 }
+.multi{
+  
+        display: inline-block;
+        border: 1px solid #EBEBEB;
+        width: 94%;
+        height: 38px;
+        padding: 1px 3px;
+        font-weight: 400;
+        line-height: 1.52857143;
+        text-align: left;
+        vertical-align: middle;
+        cursor: pointer;
+        border-radius: 15px;
+        font-family: Manrope;
+        color: #7A86A1;
+        background-color: #ffffff;
+        margin: 8px 0px 0px 5px;
+    }
+    .multiselect{
+        display: inline-block;
+        border: 1px solid #ced4da;
+        width: 100%;
+        height: 38px;
+        padding: 1px 3px;
+        font-weight: 400;
+        line-height: 1.52857143;
+        text-align: left;
+        vertical-align: middle;
+        cursor: pointer;
+        border-radius: 20px;
+        font-family: Manrope;
+        color: #7A86A1;
+        background-color: #ffffff;
+        margin: -2px 0px 0px 0px;
+    }
+    .multiselect-dropdown .dropdown-btn.selected-item-container.selected-item {
+        border: none;
+        margin-right: 4px;
+        margin-bottom: 4px;
+        background: bisque;
+        padding: 0 5px;
+        color: #000000;
+        border-radius: 7px;
+        float: left;
+    }
+
+.delete img{
+    width: 78px;
+    height: 84px;
+    margin: -29px 0px 0px -36px;
+}
+.delete .btn{
+    width: 29px;
+    height: 31px;
+}
