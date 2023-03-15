@@ -73,19 +73,16 @@
   </div>
   <span>"Summary for last 30 days"</span>
    <div class="row">
-      <div class="card">
+    <button class="btn  btn-block float-right" routerLink="/dashboard/reports">
       
         <div class="card-body">
             <h4>Contacts</h4>
-            <div class="card1">
-              <div class="cc d-flex">
-                <div class="card-body mt-0 ml-1 text-justify">
+            <div class="card1 d-flex">
+              
+                <div class="card-body mt-0 ml-1 ">
                     <h5>14327</h5>
                     <h6>Total Contacts</h6>
-                </div>
-                <div class="image">
-                  <img src="assets/img/nxt.png">
-                </div>
+                
               </div>
               </div>
               <div class="card2 d-flex">
@@ -93,23 +90,19 @@
                     <h5>10373</h5>
                     <h6>Active Contacts</h6>
                 </div>
-                <div class="image">
-                  <img src="assets/img/nxt.png">
-                </div>
+                
               </div>
               <div class="card3 d-flex">
                 <div class="card-body mt-0 ml-1">
                     <h5>3864</h5>
                     <h6>Inactive Contacts</h6>
                 </div>
-                <div class="image">
-                  <img src="assets/img/nxt.png">
-                </div>
+                
               </div>
       </div>
-    </div>
+    </button>
 
-      <div class="card">
+    <button class="btn  btn-block float-right" routerLink="/dashboard/import">
         <div class="card-body">
             <h4>Interactions</h4>
             <div class="card1 d-flex">
@@ -117,33 +110,27 @@
                     <h5>1237</h5>
                     <h6>Total Conversations</h6>
                 </div>
-                <div class="image">
-                  <img src="assets/img/nxt.png">
-                </div>
+                
               </div>
               <div class="card2 d-flex">
                 <div class="card-body mt-0 ml-1">
                     <h5>791</h5>
                     <h6>Open Conversations</h6>
                 </div>
-                <div class="image">
-                  <img src="assets/img/nxt.png">
-                </div>
+                
               </div>
               <div class="card3 d-flex">
                 <div class="card-body mt-0 ml-1">
                     <h5>446</h5>
                     <h6>Resolved Conversations</h6>
                 </div>
-                <div class="image">
-                  <img src="assets/img/nxt.png">
-                </div>
+                
               </div>
         </div>
-      </div>
+        </button>
    
 
-          <div class="card4"  style="height: 300px;" >
+        <button class="btn1  btn-block float-right" routerLink="/dashboard/import">
           
             <div class="card-body">
               <h4>Campaigns</h4>
@@ -189,9 +176,9 @@
              
             </div>
           </div>
-        </div>
+        </button>
 
-            <div class="card8"  style="height: 180px;" >
+        <button class="btn2  btn-block float-right" routerLink="/dashboard/import">
             
               <div class="card-body">
                 <h4>Agents</h4>
@@ -221,8 +208,8 @@
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+        </button>
+   </div>
           <ng-template #add let-c="close" let-d="dismiss">
             <div class="modal-header">
               <h4 class="modal-title" id="modal-basic-title">Filter</h4>

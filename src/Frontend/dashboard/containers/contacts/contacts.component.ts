@@ -37,16 +37,18 @@ export class ContactsComponent implements OnInit {
     status: any = [];
     selectedItems: any = [];
     dropdownSettings = {}; 
+    
    
    orderHeader: String = '';
    isDesOrder: boolean = true;
+   searchInput: employee = { name: '',phone: null, email: '', gender: '', tag: ''};
    employees: employee[] = [
     {id: 1, name: 'John Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 23, gender: 'Male', tag: 'New Customer',},
-    {id: 2, name: 'John Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 23, gender: 'Male', tag: 'New Customer',},
-    {id: 3, name: 'John Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 23, gender: 'Male', tag: 'New Customer',},
-    {id: 4, name: 'John Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 23, gender: 'Male', tag: 'New Customer',},
-    {id: 5, name: 'John Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 23, gender: 'Male', tag: 'New Customer',},
-    {id: 6, name: 'John Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 23, gender: 'Male', tag: 'New Customer',},
+    {id: 2, name: 'Sumit Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 27, gender: 'Male', tag: 'New Customer',},
+    {id: 3, name: 'Rohit Sharma', phone: +919874563210, email: 'john@yahoo.in', age: 33, gender: 'Male', tag: 'New Customer',},
+    {id: 4, name: 'Rishab Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 17, gender: 'Male', tag: 'New Customer',},
+    {id: 5, name: 'Ashok Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 32, gender: 'Male', tag: 'New Customer',},
+    {id: 6, name: 'Manoj Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 29, gender: 'Male', tag: 'New Customer',},
 
    ]
    sort(headerName:String){
@@ -66,6 +68,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		  });
 	}
     ngOnInit() {
+      
       this.cities = [
         { item_id: 1, item_text: 'Name' },
         { item_id: 2, item_text: 'Email' },
@@ -109,9 +112,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
     // this.productForm = this.fb.group({
     //     city: [this.selectedItems]
     // });
+
     
 		this.getContact();
-   
+    this.hideDeleteBtn(event)
    
 } 
 
@@ -222,5 +226,17 @@ console.log(this.contacts);
             this.employees.splice(arr,1);
         }
     }
+    hideDeleteBtn(event: any) {
+      var id = document.getElementsByClassName('btn row-delete-btn');
+      if (event.target.checked === true) {
+          for (let i = 0; i < id.length; i++) {
+              id[i].classList.remove('tabCol');
+          }
+      } else {
+          for (let i = 0; i < id.length; i++) {
+              id[i].classList.add('tabCol');
+          }
+      }
+  }
 
 }

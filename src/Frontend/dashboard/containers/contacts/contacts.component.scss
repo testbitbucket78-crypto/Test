@@ -409,9 +409,12 @@ opacity: 1;
 .delete img{
     width: 78px;
     height: 84px;
-    margin: -29px 0px 0px -36px;
+    margin: -29px -38px 0px 0px;
+    float: right;
 }
 .delete .btn{
     width: 29px;
     height: 31px;
+    float: right;
+    margin: -10% 40px 0px 0px;
 }

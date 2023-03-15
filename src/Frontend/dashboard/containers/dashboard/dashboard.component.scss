@@ -22,14 +22,15 @@ section{
   padding: 1.25rem;
   margin: 35px 0px 0px 0px;
   border-radius: none;
+ 
 }
-.card {
+.btn:not(:disabled):not(.disabled) {
   position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
+  background-color: #ffffff;
   background-clip: border-box;
   border: none;
   border-radius: 30px;
@@ -37,13 +38,16 @@ section{
   opacity: 1;
   margin: 20px 10px 0px 10px;
   width: 370px;
+  height: 300px;
 }
+
 .card1{
   
   height: 55px;
   border-radius: 20px;
   background-color: #E4DFF5;
   opacity: 1;
+  text-align: center;
 }
 .card2{
   
@@ -51,6 +55,8 @@ section{
   border-radius: 20px;
   margin: 20px 0px 0px 0px;
   background-color: #E2F4EC;
+  width: 294px;
+  text-align: center;
 }
 .card3{
   
@@ -58,6 +64,7 @@ section{
   border-radius: 20px;
   margin: 20px 0px 0px 0px;
   background-color: #EBEDF1;
+  text-align: center;
 }
 h4, .h4 {
   font-size: 22px;
@@ -66,6 +73,7 @@ h4, .h4 {
   font-family: Manroap;
   font-weight: bold;
   line-height: 0px;
+  text-align: left;
 }
 h5, .h5 {
   font-size: 24px;
@@ -80,7 +88,7 @@ h6, .h6 {
   font-family: Manroap;
   font-weight: bold;
 }
-.card4 {
+.btn1:not(:disabled):not(.disabled) {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -93,8 +101,10 @@ h6, .h6 {
   opacity: 1;
   margin: 25px 0px 0px 10px;
   width: 95%;
+  height: 300px;
+  border: none;
 }
-.card8 {
+.btn2:not(:disabled):not(.disabled) {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -107,6 +117,8 @@ h6, .h6 {
   opacity: 1;
   margin: 25px 0px 0px 10px;
   width: 95%;
+  height: 180px;
+  border: none;
 }
 img {
   vertical-align: middle;
