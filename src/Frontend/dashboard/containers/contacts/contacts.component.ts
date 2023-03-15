@@ -14,6 +14,7 @@ export class ContactsComponent implements OnInit {
 	checkedConatct: any[] = [];
 	name = 'Angular';
 	productForm: FormGroup;
+	newContact:FormGroup;
 	orderHeader: String = '';
 	isDesOrder: boolean = true;
 	filterForm=new FormGroup({
@@ -26,16 +27,16 @@ export class ContactsComponent implements OnInit {
 		emailId:new FormControl('')
 	})
 
-	newContact = new FormGroup({
-		Name: new FormControl('', Validators.required),
-		Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
-		emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-		age: new FormControl(''),
-		tag: new FormControl('', Validators.required),
-		status: new FormControl('', Validators.required),
-		facebookId: new FormControl(''),
-		InstagramId: new FormControl('')
-	});
+	// newContact = new FormGroup({
+	// 	Name: new FormControl('', Validators.required),
+	// 	Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+	// 	emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+	// 	age: new FormControl(''),
+	// 	tag: new FormControl(''),
+	// 	status: new FormControl(''),
+	// 	facebookId: new FormControl(''),
+	// 	InstagramId: new FormControl('')
+	// });
 
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder) {
 		// customize default values of modals used by this component tree
@@ -46,12 +47,30 @@ export class ContactsComponent implements OnInit {
 			name: '',
 			quantities: this.fb.array([]),
 		});
+
+		this.newContact=this.fb.group({
+		Name: new FormControl('', Validators.required),
+		Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+		emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+		age: new FormControl(''),
+		tag: this.fb.array([]),
+		status:this.fb.array([]),
+		facebookId: new FormControl(''),
+		InstagramId: new FormControl('')
+			
+		});
 		
 	}
 	ngOnInit() {
 		this.getContact();
         
 	}
+	 tag():FormArray{
+		return this.newContact.get("tag") as FormArray
+	 }
+	 status():FormArray{
+		return this.newContact.get("status") as FormArray
+	 }
 	quantities(): FormArray {
 		return this.productForm.get("quantities") as FormArray
 	}
@@ -119,8 +138,11 @@ export class ContactsComponent implements OnInit {
 		});
 	}
 	addContact() {
+
 		if (this.newContact.valid) {
-			this.apiService.addContact(this.newContact.value).subscribe(response => {
+			const data=this.newContact.value;
+			console.log(this.newContact.value)
+			this.apiService.addContact(data).subscribe((response: any) => {
 				console.log(response)
 			})
 		}

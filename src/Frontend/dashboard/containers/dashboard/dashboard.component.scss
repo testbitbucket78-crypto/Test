@@ -25,7 +25,8 @@ section{
   margin: 35px 0px 0px 0px;
   border-radius: none;
 }
-.card {
+.btn:not(:disabled):not(.disabled) {
+  
   position: relative;
   display: flex;
   flex-direction: column;
@@ -39,6 +40,7 @@ section{
   opacity: 1;
   margin: 20px 10px 0px 10px;
   width: 370px;
+  height: 300px;
 }
 .card1{
   
@@ -46,6 +48,7 @@ section{
   border-radius: 20px;
   background-color: #E4DFF5;
   opacity: 1;
+  text-align: center;
 }
 .card2{
   
@@ -53,6 +56,8 @@ section{
   border-radius: 20px;
   margin: 20px 0px 0px 0px;
   background-color: #E2F4EC;
+  width: 294px;
+  text-align: center;
 }
 .card3{
   
@@ -60,6 +65,7 @@ section{
   border-radius: 20px;
   margin: 20px 0px 0px 0px;
   background-color: #EBEDF1;
+  text-align: center;
 }
 h4, .h4 {
   font-size: 22px;
@@ -68,6 +74,7 @@ h4, .h4 {
   font-family: Manroap;
   font-weight: bold;
   line-height: 0px;
+  text-align: left;
 }
 h5, .h5 {
   font-size: 24px;
@@ -82,7 +89,7 @@ h6, .h6 {
   font-family: Manroap;
   font-weight: bold;
 }
-.card4 {
+.btn1:not(:disabled):not(.disabled){
   position: relative;
   display: flex;
   flex-direction: column;
@@ -95,8 +102,10 @@ h6, .h6 {
   opacity: 1;
   margin: 25px 0px 0px 10px;
   width: 95%;
+  height: 350px;
+  border: none;
 }
-.card8 {
+.btn2:not(:disabled):not(.disabled) {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -109,11 +118,13 @@ h6, .h6 {
   opacity: 1;
   margin: 25px 0px 0px 10px;
   width: 95%;
+  height: 300px;
+  border: none;
 }
 img {
   vertical-align: middle;
   border-style: none;
-  margin: 32px 0px 0px 17px;
+  margin: 32px 0px 0px -10px;
   width: 45px;
   border-radius: 17px;
   height: 45px;
@@ -121,7 +132,7 @@ img {
 .new img{
   vertical-align: middle;
   border-style: none;
-  margin: -66px 0px 0px 40px;
+  margin: -70px 30px 0px -60px;
   width: 45px;
   border-radius: 17px;
   height: 45px;
@@ -196,7 +207,7 @@ img {
   margin: 56px 0px 0px 0px;
 }
 .row4{
-  margin: -48px 0px 0px 80px;
+  margin: -48px 0px 0px 100px;
 }
 .row5{
   margin: -48px 0px 0px 80px;

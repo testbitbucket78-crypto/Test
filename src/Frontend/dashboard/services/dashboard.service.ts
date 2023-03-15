@@ -56,7 +56,7 @@ export class DashboardService {
   }
 
   sendExportContact() {
-    return this.http.get('http://65.0.219.162:3002/sendExportContact')
+    return this.http.get('http://65.0.219.162:3003/sendExportContact')
   }
 
   filter(Phone_number: any) {

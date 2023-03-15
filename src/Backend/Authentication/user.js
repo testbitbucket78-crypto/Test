@@ -87,5 +87,11 @@ const updateUser = (req, res) => {
       
     }
 
+ const getAllAgents  =(req,res)=>{
+    db.runQuery(req,res,'select *from user where ParentId=? and UserType=?',[req.body.ParentId,req.body.UserType])
+ }
 
-module.exports = { getUser, getUserById, deletUserById, insertUser, updateUser };
+ const getisActiveAgents=(req,res)=>{
+    db.runQuery(req,res,'select *from user where ParentId=? and UserType=? and IsActive=?',[req.body.ParentId,req.body.UserType,req.body.IsActive])
+ }
+module.exports = { getUser, getUserById, deletUserById, insertUser, updateUser,getAllAgents ,getisActiveAgents};

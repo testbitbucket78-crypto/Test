@@ -53,7 +53,8 @@
 				</thead>
 				<tbody>
 				  <tr *ngFor="let employee of contacts | orderBy: orderHeader: isDesOrder" >
-					<td scope="row"><input type="checkbox" name=""><img src="assets/img/chats.png"></td>
+					<td scope="row"><input type="checkbox" name="" [(ngModel)]="employee.selectedValue "
+						(change)="getCheckBoxEvent(employee.selectedValue,employee)"><img src="assets/img/chats.png"></td>
 					<td class="id">{{employee.customerId}}</td>
 					<td class="name">{{employee.Name}}</td>
 					<td class="phone">{{employee.Phone_number}}</td>
@@ -350,7 +351,7 @@
 
 					<label for="floatingSelectGrid">Tag</label>
 					<div class="form-floating">
-						<select class="form-control" name="tag" formControlName="tag" id="tag">
+						<select class="form-control">
 							<option>Paid</option>
 							<option>Unpaid</option>
 							<option>Return</option>
@@ -363,7 +364,7 @@
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
 					<div class="form-floating">
-						<select class="form-control" name="status" formControlName="status" id="status">
+						<select class="form-control">
 							<option>Premium</option>
 							<option>New Customer</option>
 						</select>

@@ -35,8 +35,8 @@ app.get("/webhook", (req, res) => {
 })
 
 //Variables 
+var Quick_reply_id="";
 var ExternalMessageId = "";
-var Quick_reply_id = "";
 var message_text = "";
 var message_media = "";
 var Message_template_id = "";
@@ -44,6 +44,7 @@ var Type = "";
 var flag = true;
 var count = 0;
 var array = [];
+var uniqueId=""
 // Accepts POST requests at /webhook endpoint
 app.post("/webhook", (req, res) => {
   // Parse the request body from the POST
@@ -71,7 +72,7 @@ app.post("/webhook", (req, res) => {
     ) {
       let phone_number_id =
         req.body.entry[0].changes[0].value.metadata.phone_number_id;
-      let from =
+       let from =
         req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
       let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
       ExternalMessageId = req.body.entry[0].id;
@@ -79,7 +80,7 @@ app.post("/webhook", (req, res) => {
       message_media = req.body.entry[0].changes[0].value.messages[0].type;
       Message_template_id = req.body.entry[0].changes[0].value.messages[0].id;
       Type = req.body.entry[0].changes[0].value.messages[0].type
-
+      
 
 
       array.push(Message_template_id);
@@ -117,14 +118,15 @@ app.post("/webhook", (req, res) => {
 
   if (!flag) {
     Quick_reply_id = req.body.entry[0].changes[0].value.statuses[0].id;
+    uniqueId= req.body.entry[0].changes[0].value.statuses[0].recipient_id;
   }
 
   flag = false;
 
   if (count == 1) {
    
-    var values = [[message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId]]
-    db.query(process.env.sql, [values], function (err, result, fields) {
+    //var values = [uniqueId,'IN',message_text,message_media,Message_template_id,Quick_reply_id,Type,ExternalMessageId]
+    db.query(process.env.query, [uniqueId,'IN',message_text,message_media,Message_template_id,Quick_reply_id,Type,ExternalMessageId], function (err, result, fields) {
       if (err) {
         console.log("Error Occour");
         throw err;

@@ -72,20 +72,18 @@
     <h2>Your key KPI's for last 30 days</h2>
   </div>
   <div class="row">
-    <div class="card">
+    <button class="btn  btn-block float-right" routerLink="/dashboard/reports">
 
       <div class="card-body">
         <h4>Subscriber</h4>
         <div *ngFor="let items of dashboard">
-          <div class="card1" *ngIf="(items.OptInStatus)=='Active Subscribers'">
-            <div class="cc d-flex">
-              <div class="card-body mt-0 ml-1 text-justify">
+          <div class="card1 d-flex" *ngIf="(items.OptInStatus)=='Active Subscribers'">
+           
+              <div class="card-body mt-0 ml-1 ">
                 <h5>{{items.count}}</h5>
                 <h6>{{items.OptInStatus}}</h6>
-              </div>
-              <div class="image">
-                <img src="assets/img/nxt.png">
-              </div>
+             
+             
             </div>
           </div>
           <div class="card2 d-flex" *ngIf="(items.OptInStatus)=='Inactive Subscribers'">
@@ -93,24 +91,20 @@
               <h5>{{items.count}}</h5>
               <h6>{{items.OptInStatus}}</h6>
             </div>
-            <div class="image">
-              <img src="assets/img/nxt.png">
-            </div>
+           
           </div>
           <div class="card3 d-flex" *ngIf="(items.OptInStatus)=='Total Subscriber'">
             <div class="card-body mt-0 ml-1">
               <h5>{{items.count}}</h5>
               <h6>{{items.OptInStatus}}</h6>
             </div>
-            <div class="image">
-              <img src="assets/img/nxt.png">
-            </div>
+           
           </div>
         </div>
       </div>
-    </div>
+    </button>
 
-    <div class="card">
+    <button class="btn  btn-block float-right" routerLink="/dashboard/reports">
       <div class="card-body">
         <h4>Interactions</h4>
         <div *ngFor="let items of interactions">
@@ -119,35 +113,29 @@
               <h5>{{items.count}}</h5>
               <h6>{{items.interaction_status}}</h6>
             </div>
-            <div class="image">
-              <img src="assets/img/nxt.png">
-            </div>
+            
           </div>
           <div class="card2 d-flex" *ngIf="(items.interaction_status)=='Closed Interactions'">
             <div class="card-body mt-0 ml-1">
               <h5>{{items.count}}</h5>
               <h6>{{items.interaction_status}}</h6>
             </div>
-            <div class="image">
-              <img src="assets/img/nxt.png">
-            </div>
+          
           </div>
           <div class="card3 d-flex" *ngIf="(items.interaction_status)=='Total Interactions'">
             <div class="card-body mt-0 ml-1">
               <h5>{{items.count}}</h5>
               <h6>{{items.interaction_status}}</h6>
             </div>
-            <div class="image">
-              <img src="assets/img/nxt.png">
-            </div>
+           
           </div>
         </div>
       </div>
-    </div>
+    </button>
 
 
 
-    <div class="card4" style="height: 300px;">
+    <button class="btn1 btn-block float-right" routerLink="/dashboard/reports">
 
       <div class="card-body">
         <h4>Campaigns</h4>
@@ -195,8 +183,8 @@
 
         </div>
       </div>
-    </div>
-    <div class="card8" style="height: 180px;">
+    </button>
+    <button class="btn2  btn-block float-right" routerLink="/dashboard/reports">
 
       <div class="card-body">
 
@@ -214,21 +202,21 @@
               </div>
             </div>
 
-            <div class="ml-5  col" *ngIf="(items.Status)=='Inactive Agents'">
+            <div class="mr-6  col" *ngIf="(items.Status)=='Inactive Agents'">
               <!-- <img src="assets/img/431.png"> -->
               <img src="assets/img/432.png">
               <div class="row4">
-                <div class="mt-0 ml-10 text-justify">
+                <div class="mt-0 ml-5 text-justify">
                   <h5>{{items.count}}</h5>
                   <h6>{{items.Status}}</h6>
                 </div>
               </div>
             </div>
-            <div class="ml-5  col" *ngIf="(items.Status)=='Total Agents'">
+            <div class="mr-6  col" *ngIf="(items.Status)=='Total Agents'">
               <!-- <img src="assets/img/432.png"> -->
               <img src="assets/img/430.png">
               <div class="row5">
-                <div class="mt-0 ml-8 text-justify">
+                <div class="mt-0 ml-5 text-justify">
                   <h5>{{items.count}}</h5>
                   <h6>{{items.Status}}
                   </h6>
@@ -238,7 +226,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </button>
   </div>
   <ng-template #add let-c="close" let-d="dismiss">
     <div class="modal-header">

@@ -77,7 +77,7 @@ const get=(req,res)=>{
     var mailOptions = {
         to: mailOpt,
         subject: "Request for download Contact_Data: ",
-        html: '<p>You requested for download Contact_Data, kindly use this <a href="http://localhost:3002/getCheckedExportContact">link</a>to see your contacts</p>'
+        html: '<p>You requested for download Contact_Data, kindly use this <a href="http://65.0.219.162:3002/getCheckedExportContact">link</a>to see your contacts</p>'
       };
     
       transporter.sendMail(mailOptions, (error, info) => {
