@@ -24,4 +24,5 @@ export class ResetPasswordComponent implements OnInit {
         this.change = !this.change;
         
     }
+
 }

@@ -1,5 +1,4 @@
 <sb-layout-dashboard [light]="false">
-		
 <!-- <sb-dashboard-card col-md-3s></sb-dashboard-card col-md-3s><sb-dashboard-charts></sb-dashboard-charts><sb-dashboard-tables></sb-dashboard-tables>
  -->
  <div class="card9 float-right">
@@ -77,167 +76,188 @@
       
         <div class="card-body">
             <h4>Contacts</h4>
-            <div class="card1 d-flex">
+            <div *ngFor="let items of dashboard">
+              <div class="card1 d-flex" *ngIf="(items.OptInStatus)=='Active Subscribers'">
               
                 <div class="card-body mt-0 ml-1 ">
-                    <h5>14327</h5>
-                    <h6>Total Contacts</h6>
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.OptInStatus}}</h6>
                 
               </div>
               </div>
-              <div class="card2 d-flex">
+              <div class="card2 d-flex" *ngIf="(items.OptInStatus)=='Inactive Subscribers'">
                 <div class="card-body mt-0 ml-1 ">
-                    <h5>10373</h5>
-                    <h6>Active Contacts</h6>
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.OptInStatus}}</h6>
                 </div>
                 
               </div>
-              <div class="card3 d-flex">
+              <div class="card3 d-flex" *ngIf="(items.OptInStatus)=='Total Subscriber'">
                 <div class="card-body mt-0 ml-1">
-                    <h5>3864</h5>
-                    <h6>Inactive Contacts</h6>
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.OptInStatus}}</h6>
                 </div>
                 
               </div>
       </div>
+        </div>
     </button>
 
     <button class="btn  btn-block float-right" routerLink="/dashboard/import">
         <div class="card-body">
             <h4>Interactions</h4>
-            <div class="card1 d-flex">
+            <div *ngFor="let items of interactions">
+              <div class="card1 d-flex" *ngIf="(items.interaction_status)=='Open Interactions'">
                 <div class="card-body mt-0 ml-1 ">
-                    <h5>1237</h5>
-                    <h6>Total Conversations</h6>
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.interaction_status}}</h6>
                 </div>
                 
               </div>
-              <div class="card2 d-flex">
+              <div class="card2 d-flex" *ngIf="(items.interaction_status)=='Closed Interactions'">
                 <div class="card-body mt-0 ml-1">
-                    <h5>791</h5>
-                    <h6>Open Conversations</h6>
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.interaction_status}}</h6>
                 </div>
                 
               </div>
-              <div class="card3 d-flex">
+              <div class="card3 d-flex" *ngIf="(items.interaction_status)=='Total Interactions'">
                 <div class="card-body mt-0 ml-1">
-                    <h5>446</h5>
-                    <h6>Resolved Conversations</h6>
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.interaction_status}}</h6>
                 </div>
                 
               </div>
         </div>
+        </div>
         </button>
    
 
-        <button class="btn1  btn-block float-right" routerLink="/dashboard/import">
-          
-            <div class="card-body">
-              <h4>Campaigns</h4>
+        <button class="btn1 btn-block float-right" routerLink="/dashboard/reports">
 
-              <div class="row d-flex">
-                <img src="assets/img/total.png">
-                <div class="row1">
-                <div class="mt-5 ml-4 text-justify">
-                <h5>4735</h5>
-                <h6>Total schedule Campaigns</h6>
+          <div class="card-body">
+            <h4>Campaigns</h4>
+    
+            <div class="row d-flex" *ngFor="let items of campaigns">
+              <img src="assets/img/total.png" *ngIf="(items.campaign_status)=='Scheduled Campaigns'">
+              <div class="row1 " *ngIf="(items.campaign_status)=='Scheduled Campaigns'">
+                <div class="mt-5 ml-3 text-justify">
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.campaign_status}}</h6>
                 </div>
-                
+    
               </div>
-              <div class="line mr-5"></div>
-              <img src="assets/img/camp.png">
-              <div class="row1">
-              <div class="mt-5 ml-4 text-justify">
-              <h5>14237</h5>
-              <h6>Total pending Campaigns</h6>
-              </div>
-              
-            </div>
-              
-            </div>
-             <div class="row d-flex">
-                <img src="assets/img/deli.png">
-                <div class="row1">
-                <div class="mt-5 ml-4 text-justify">
-                <h5>14237</h5>
-                <h6>Total delivered Campaigns</h6>
+              <div class="line mr-3" *ngIf="(items.campaign_status)=='Pending Campaigns'"></div>
+              <div class="new" *ngIf="(items.campaign_status)=='Pending Campaigns'">
+                <img src="assets/img/camp.png">
+                <div class="row9">
+                  <div class="mt-5 ml-3 text-justify">
+                    <h5>{{items.count}}</h5>
+                    <h6>{{items.campaign_status}}</h6>
+                  </div>
+    
                 </div>
-                
               </div>
-              <div class="line1 mr-5"></div>
-              <img src="assets/img/failed.png">
-            <div class="row1">
-            <div class="mt-5 ml-4 text-justify">
-            <h5>14237</h5>
-            <h6>Total failed Campaigns</h6>
             </div>
-            
-          </div>
-             
+            <div class="row d-flex" *ngFor="let items of campaigns">
+              <img src="assets/img/deli.png" *ngIf="(items.campaign_status)=='Delivered Campaigns'">
+              <div class="row1" *ngIf="(items.campaign_status)=='Delivered Campaigns'">
+                <div class="mt-5 ml-3 text-justify">
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.campaign_status}}</h6>
+                </div>
+    
+              </div>
+              <div class="line1 mr-3" *ngIf="(items.campaign_status)=='Failed Campaigns'"></div>
+              <div class="new" *ngIf="(items.campaign_status)=='Failed Campaigns'">
+                <img src="assets/img/failed.png">
+                <div class="row9">
+                  <div class="mt-5 ml-3 text-justify">
+                    <h5>{{items.count}}</h5>
+                    <h6>{{items.campaign_status}}</h6>
+                  </div>
+                </div>
+              </div>
+    
             </div>
           </div>
         </button>
-
-        <button class="btn2  btn-block float-right" routerLink="/dashboard/import">
-            
-              <div class="card-body">
-                <h4>Agents</h4>
-                <div class="row d-flex">
-                  <img src="assets/img/430.png">
-                  <div class="row3">
+        <button class="btn2  btn-block float-right" routerLink="/dashboard/reports">
+    
+          <div class="card-body">
+    
+            <h4>Agents</h4>
+    
+            <div class="row d-flex">
+    
+              <!-- <img src="assets/img/430.png"> -->
+              <img src="assets/img/431.png">
+              <div *ngFor="let items of agents">
+                <div class="row3" *ngIf="(items.Status)=='Active Agents'">
                   <div class="mt-5 ml-4 text-justify">
-                  <h5>108</h5>
-                  <h6>Total Agents</h6>
+                    <h5>{{items.count}}</h5>
+                    <h6>{{items.Status}}</h6>
                   </div>
-                  </div>
-                  <div class="ml-5"></div>
-                  <img src="assets/img/431.png">
-                  <div class="row4">
-                  <div class="mt-5 ml-4 text-justify">
-                  <h5>83</h5>
-                  <h6>Active Agents</h6>
-                  </div>
-                  </div>
-                  <div class="ml-5"></div>
+                </div>
+    
+                <div class="mr-6  col" *ngIf="(items.Status)=='Inactive Agents'">
+                  <!-- <img src="assets/img/431.png"> -->
                   <img src="assets/img/432.png">
-                  <div class="row5">
-                  <div class="mt-5 ml-4 text-justify">
-                  <h5>25</h5>
-                  <h6>Inactive Agents</h6>
+                  <div class="row4">
+                    <div class="mt-0 ml-5 text-justify">
+                      <h5>{{items.count}}</h5>
+                      <h6>{{items.Status}}</h6>
+                    </div>
                   </div>
+                </div>
+                <div class="mr-6  col" *ngIf="(items.Status)=='Total Agents'">
+                  <!-- <img src="assets/img/432.png"> -->
+                  <img src="assets/img/430.png">
+                  <div class="row5">
+                    <div class="mt-0 ml-5 text-justify">
+                      <h5>{{items.count}}</h5>
+                      <h6>{{items.Status}}
+                      </h6>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
         </button>
-   </div>
-          <ng-template #add let-c="close" let-d="dismiss">
-            <div class="modal-header">
-              <h4 class="modal-title" id="modal-basic-title">Filter</h4>
-              <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+      </div>
+      <ng-template #add let-c="close" let-d="dismiss">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Filter</h4>
+          <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+        </div>
+        <div class="modal-body">
+          <button class="btn btn-primary btn-block col-md-3 mb-2"><i class="fa fa-plus"></i> Name</button>
+    
+          <form>
+            <div class="form-group">
+              <select class="form-control">
+                <option>Contains</option>
+              </select>
             </div>
-            <div class="modal-body">
-            <button class="btn btn-primary btn-block col-md-3 mb-2"><i class="fa fa-plus"></i> Name</button>
-          
-              <form>
-                <div class="form-group">
-                     <select class="form-control">
-                       <option>Contains</option>
-                     </select>
-                  </div>
-                <div class="form-group">
-                      <input class="form-control" type="text">
-                  </div>
-              </form>
+            <div class="form-group">
+              <input class="form-control" type="text">
             </div>
-            <div class="modal-footer row popfooter">
-              <div class="col-md-6">
-              <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Clear</button>
-            </div>
-            <div class="col-md-6 text-right">
-                <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Apply</button>
-              </div>
-            </div>
-          </ng-template>
-
-
-</sb-layout-dashboard>
+          </form>
+        </div>
+        <div class="modal-footer row popfooter">
+          <div class="col-md-6">
+            <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Clear</button>
+          </div>
+          <div class="col-md-6 text-right">
+            <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Apply</button>
+          </div>
+        </div>
+      </ng-template>
+    
+    
+    
+    </sb-layout-dashboard>
+    
+    
+    

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpBackend ,HttpParams} from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpBackend, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 const API_URL = environment.baseUrl;
 
@@ -12,19 +12,20 @@ export class DashboardService {
   getDashboard$(): Observable<{}> {
     return of({});
   }
-  public dashboardSubscribers(){
-    return this.http.get('http://localhost:3001/Subscribers')
+
+  public dashboardSubscribers() {
+    return this.http.get('https://cip-api.sampanatechnologies.com/Subscribers')
   }
   public dashboardInteractions() {
-    return this.http.get('http://localhost:3001/Interactions');
+    return this.http.get('https://cip-api.sampanatechnologies.com/Interactions');
 
   }
   public dashboardAgents() {
-    return this.http.get('http://localhost:3001/Agents');
+    return this.http.get('https://cip-api.sampanatechnologies.com/Agents');
 
   }
   public dashboardCampaigns() {
-    return this.http.get('http://localhost:3001/Campaigns');
+    return this.http.get('https://cip-api.sampanatechnologies.com/Campaigns');
 
   }
   public RuningCampaign() {
@@ -37,53 +38,72 @@ export class DashboardService {
   }
   public Contact() {
     console.log("contact serveice")
-    return this.http.get('http://localhost:3002/');
+
+    return this.http.get('https://contactapi.sampanatechnologies.com/');
 
   }
-  addContact(data:any){
-    return this.http.post('http://localhost:3002/contact',data)
-  }
-  
-  importContact(file:any){
-    // Create form data 
-
-    const formData = new FormData();  
-
-        
-
-    // Store form name as "file" with file data 
-
-    formData.append("file", file, file.name); 
-    
-    return this.http.post('http://localhost:3002/upload',formData)
+  addContact(data: any) {
+    return this.http.post('https://contactapi.sampanatechnologies.com', data)
   }
 
-
-  exportAllContact(){
-    return this.http.get('http://localhost:3002/exportAllContact')
-  }
-  
-  exportCheckedContact(data:any){
-    return this.http.post('http://localhost:3002/exportCheckedContact',data)
-  }
  
-  sendExportContact(){
-    return this.http.get('http://localhost:3000/sendExportContact')
-  }
-  
-  filter(Phone_number:any){
-    const params = new HttpParams().set('Phone_number',Phone_number)
-    return this.http.get('http://localhost:3002/filter',{params:params})
-  }
-  search(Phone_number:any,emailId:any,Name:any){
-    const params = new HttpParams().set('Phone_number',Phone_number).set('emailId',emailId).set('Name',Name)
-    return this.http.get('http://localhost:3002/search',{params:params})
+
+
+  exportAllContact() {
+    return this.http.get('https://contactapi.sampanatechnologies.com/exportAllContact')
   }
 
-  download(){
-  
-  
-    return this.http.get('http://localhost:3002/download',{responseType: 'blob'})
+  exportCheckedContact(data: any) {
+    return this.http.post('https://contactapi.sampanatechnologies.com/exportCheckedContact', data)
   }
- 
+
+  sendExportContact() {
+    return this.http.get('https://contactapi.sampanatechnologies.com/sendExportContact')
+  }
+
+  filter(Phone_number: any) {
+    const params = new HttpParams().set('Phone_number', Phone_number)
+    return this.http.get('https://contactapi.sampanatechnologies.com/filter', { params: params })
+  }
+  search(Phone_number: any, emailId: any, Name: any) {
+    const params = new HttpParams().set('Phone_number', Phone_number).set('emailId', emailId).set('Name', Name)
+    return this.http.get('https://contactapi.sampanatechnologies.com/search', { params: params })
+  }
+
+  download() {
+
+
+    return this.http.get('https://contactapi.sampanatechnologies.com/download', { responseType: 'blob' })
+  }
+
+  update(data: object) {
+    console.log("servise update data" +data)
+    return this.http.post('https://contactapi.sampanatechnologies.com/updateAndSave', data)
+  }
+  
+  updatedDataCount(data:any){
+    return this.http.post('https://contactapi.sampanatechnologies.com/verifyData',data)
+  }
+
+   //Smart replies API's
+
+   getUser() {
+    return this.http.get('https://smartapi.sampanatechnologies.com/getReplies')
+  }
+
+  searchSmartReply(ID: any) {
+    const params = new HttpParams().set('ID', ID)
+    console.log("params  "  + params)
+    return this.http.get('https://smartapi.sampanatechnologies.com/search', { params: params })
+  }
+
+  sideNav(ID: any){
+    const params = new HttpParams().set('ID', ID)
+    return this.http.get('https://smartapi.sampanatechnologies.com/sideNavKeyword', { params: params })
+  }
+
+  addNewReply(data:any){
+    return this.http.post('https://smartapi.sampanatechnologies.com/addNewReply',data)
+  }
+
 }

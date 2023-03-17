@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {DashboardService} from './../../services';
-import { FormGroup, FormControl, FormArray, FormBuilder } from '@angular/forms';
 
-interface employee{
-  id: number,
-  name: string,
-  phone: number,
-  email: string,
-  age: number,
-  gender: string,
-  tag: string,
-  checked?:boolean;
+// interface employee{
+//   id: number,
+//   name: string,
+//   phone: number,
+//   email: string,
+//   age: number,
+//   gender: string,
+//   tag: string,
+//   checked?:boolean;
 
-}
+// }
 @Component({
   selector: 'sb-contacts',
   templateUrl: './contacts.component.html',
@@ -21,12 +21,12 @@ interface employee{
 })
 export class ContactsComponent implements OnInit {
 
-
 	 contacts:any;
 	 name = 'Angular'; 
    checkedConatct: any[] = [];
 	 productForm: FormGroup;  
    title = 'result-table';
+   newContact:FormGroup;
 
   // multiselect 
     disabled = false;
@@ -38,25 +38,33 @@ export class ContactsComponent implements OnInit {
     selectedItems: any = [];
     dropdownSettings = {}; 
     
-   
+	filterForm=new FormGroup({
+		Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)]))
+	})
    orderHeader: String = '';
    isDesOrder: boolean = true;
-   searchInput: employee = { name: '',phone: null, email: '', gender: '', tag: ''};
-   employees: employee[] = [
-    {id: 1, name: 'John Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 23, gender: 'Male', tag: 'New Customer',},
-    {id: 2, name: 'Sumit Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 27, gender: 'Male', tag: 'New Customer',},
-    {id: 3, name: 'Rohit Sharma', phone: +919874563210, email: 'john@yahoo.in', age: 33, gender: 'Male', tag: 'New Customer',},
-    {id: 4, name: 'Rishab Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 17, gender: 'Male', tag: 'New Customer',},
-    {id: 5, name: 'Ashok Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 32, gender: 'Male', tag: 'New Customer',},
-    {id: 6, name: 'Manoj Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 29, gender: 'Male', tag: 'New Customer',},
+  //  searchInput: employee = { name: '', phone: null, email: '', gender: '', tag: ''};
+  //  employees: employee[] = [
+  //   {id: 1, name: 'John Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 23, gender: 'Male', tag: 'New Customer',},
+  //   {id: 2, name: 'Sumit Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 27, gender: 'Male', tag: 'New Customer',},
+  //   {id: 3, name: 'Rohit Sharma', phone: +919874563210, email: 'john@yahoo.in', age: 33, gender: 'Male', tag: 'New Customer',},
+  //   {id: 4, name: 'Rishab Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 17, gender: 'Male', tag: 'New Customer',},
+  //   {id: 5, name: 'Ashok Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 32, gender: 'Male', tag: 'New Customer',},
+  //   {id: 6, name: 'Manoj Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 29, gender: 'Male', tag: 'New Customer',},
 
-   ]
+  //  ]
+   searchForm=new FormGroup({
+	Phone_number: new FormControl(''),
+	Name:new FormControl(''),
+	emailId:new FormControl('')
+})
+
    sort(headerName:String){
     this.isDesOrder = !this.isDesOrder;
     this.orderHeader = headerName;
 
    }
-   
+ 
   
 constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: DashboardService, private fb:FormBuilder) {
 		// customize default values of modals used by this component tree
@@ -66,6 +74,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			name: '',  
 			quantities: this.fb.array([]) ,  
 		  });
+      this.newContact=this.fb.group({
+        Name: new FormControl('', Validators.required),
+        Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+        emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+        age: new FormControl(''),
+        tag: new FormControl('', Validators.required),
+        status: new FormControl('', Validators.required),
+        facebookId: new FormControl(''),
+        InstagramId: new FormControl('')
+      });
 	}
     ngOnInit() {
       
@@ -191,18 +209,23 @@ console.log(this.contacts);
       // console.log(column)
     }
   }
-   // column header checkbox
    checkAllCheckBox(event: any) {
-    this.employees.forEach(employee => employee.checked = event.target.checked)
+    this.contacts.forEach((employee: { checked: any; }) => employee.checked = event.target.checked)
    
   }
 
   isAllCheckBoxChecked() {
-    return this.employees.every(employee => employee.checked);
+    return this.contacts.every((employee: { checked: any; }) => employee.checked);
     
   }
+  deleteRow(arr:["id"]) {
+    var delBtn = confirm(" Do you want to delete ?");
+    if (delBtn == true) {
+        this.contacts.splice(arr,1);
+    }
+}
 
-   // select checkbox for delete a row
+  
 
     selCheckBox(event: any) {
         var id = document.getElementsByClassName('btn  btn-block float-right');
@@ -220,12 +243,7 @@ console.log(this.contacts);
         }
     }
 
-    deleteRow(arr:employee["id"]) {
-        var delBtn = confirm(" Do you want to delete ?");
-        if (delBtn == true) {
-            this.employees.splice(arr,1);
-        }
-    }
+   
     hideDeleteBtn(event: any) {
       var id = document.getElementsByClassName('btn row-delete-btn');
       if (event.target.checked === true) {
@@ -238,5 +256,70 @@ console.log(this.contacts);
           }
       }
   }
+  addContact() {
+	if (this.newContact.valid) {
+		this.apiService.addContact(this.newContact.value).subscribe(response => {
+			console.log(response)
+		})
+	}
+}
 
+
+
+
+getCheckBoxEvent(isSelected: any, contact: any) {
+	console.log( isSelected,contact);
+	var obj = {
+		data: contact,
+		status: isSelected
+	}
+	if (obj.status === true) {
+		
+		this.checkedConatct.push(obj.data);
+	
+	} else if (obj.status === false) {
+		
+		var index = this.checkedConatct.indexOf(obj.data)
+		console.log(index)
+		this.checkedConatct.splice(index, 1);
+		
+	}
+
+}
+
+exportCheckedContact() {
+	console.log(this.checkedConatct)
+	this.apiService.exportCheckedContact(this.checkedConatct).subscribe(response => {
+		console.log(response);
+
+	})
+	this.sendExportContact()
+	this.checkedConatct.length = 0;
+	console.log(this.checkedConatct)
+}
+
+sendExportContact() {
+	this.apiService.sendExportContact().subscribe(data => {
+		console.log(data)
+	})
+}
+
+filterContact(){
+	var data=this.filterForm.value.Phone_number
+	console.log(data)
+
+	this.apiService.filter(this.filterForm.value.Phone_number).subscribe(data=>{
+		this.contacts=data
+	 console.log(data)
+	})
+
+}
+search(){
+  console.log(this.searchForm.value)
+      this.apiService.search(this.searchForm.value.Phone_number,this.searchForm.value.emailId,this.searchForm.value.Name).subscribe(data=>{
+          this.contacts=data
+    console.log(data)
+  
+  })
+}
 }

@@ -1,4 +1,3 @@
-
 <sb-layout-dashboard><sb-dashboard-head title="Add Smart Reply" [hideBreadcrumbs]="true"></sb-dashboard-head>
   <div class="bs-stepper">
     <div class="bs-stepper-header" role="tablist">
@@ -27,20 +26,22 @@
     <div class="bs-stepper-content">
       <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
        
-        <div class="box">
+        <div class="box"  [formGroup]="newReply">
           <h5>Title</h5>
-          <input class="form-control" type="text" placeholder="Enter Name" />
+          <input class="form-control" type="text" name="Title" id="Title" formControlName="Title"
+          placeholder="Enter Name" />
           <h5>Description</h5>
           <div class="form-floating ff">
-            <input class="form-control" type="text" placeholder="Enter Name" />
+            <input class="form-control" type="text" placeholder="Enter Name" name="Description" id="Description"
+            formControlName="Description" />
              </div>
         </div>
-              <button type="button" (click)= "next()" class="btn5 btn-block col-1 mt-3 ">Next</button>
+        <button type="button" (click)="next()" (click)="getNewSmartReplyData()" class="btn5 btn-block col-1 mt-3 ">Next</button>
   
       </div>
       <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
         <button type="button" (click)= "previous()" class="btn9 btn-block col-1 mt-3 "><img src="assets/img/prev.png"></button>
-       <div class="box1">
+        <div class="box1">
           <h5>Add Keywords</h5>
           <div class="box2 d-flex">
           <input class="form-control" type="text" placeholder="Enter Keywords" />
@@ -48,7 +49,7 @@
         </div>
         
         <span>Please choose a unique keyword which is not already added in other smart replies</span>
-        <div class="line1"></div>
+         <div class="line1"></div>
         <h4>Matching Criteria</h4>
         <div class="ll d-flex">
          
@@ -59,16 +60,25 @@
           </label>
         </div>
         <div class="form-check">
-          <input type="radio" class="form-check-input"  value=" Exact matching" name="exampleRadios">
-          <label class="form-check-label" for="">
-            Exact matching
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="exampleRadios"  value="contains">
-          <label class="form-check-label" for="">
-             Contains
-          </label>
+          <input class="form-check-input" type="radio" name="exampleRadios" value="Fuzzy matching"
+                (change)="onSelectionChange('Fuzzy matching')">
+              <label class="form-check-label" for="exampleRadios1">
+                Fuzzy matching
+              </label>
+            </div>
+            <div class="form-check">
+              <input type="radio" class="form-check-input" value=" Exact matching" name="exampleRadios"
+                (change)="onSelectionChange('Exact matching')">
+              <label class="form-check-label" for="">
+                Exact matching
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="exampleRadios" value="contains"
+                (change)="onSelectionChange('contains')">
+              <label class="form-check-label" for="">
+                Contains
+              </label>
         </div>
 
       </div>
@@ -81,19 +91,26 @@
         
         <button type="button" (click)= "previous()" class="btn9 btn-block col-1 mt-3 "><img src="assets/img/prev.png"></button>
         <div class="box7">
-          <label for="ff">Message
-            <p> {{ data }}</p>
-          </label>
-         <div class="action1">Action
-          <p>Conversation Assigned {{ selectedTeam }}</p>
-         </div>
+          <div  *ngFor="let m of messages; let i = index"  class="box7child">
+            <label  for="ff" >Message
+              <div>
+                <p [contentEditable]="isEditable" (input)="onEdit($event.target.innerText)" [(ngModel)]="editedText">{{ data }}</p>
+                </div>
+                <button class="msg-del-btn btn7" (click)="removeMessage(i)">
+                  <img src="assets/img/delete.png"></button>
+                <div class="action1">Action<p>Conversation Assigned:{{ selectedTeam }}</p></div></label>
+            
+               
+              </div>
+              
           
           
         </div>
         </div>
         <div class="reply">
-            <textarea name="content" id="replyText" class="form-control" rows="4" cols="50" placeholder="type your message..." #input ></textarea>
-            <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)">ADD</button>
+          <textarea name="content" id="replyText" class="form-control" rows="4" cols="50"
+          placeholder="type your message..." #input [(ngModel)]="message"></textarea>
+        <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)" (click)="addMessage()">ADD</button>
             <div class="action">
               <button type="button" class="btn" (click)="bold()"><b>B</b></button>
               <button type="button" class="btn" (click)="itelic()"> <i>I</i></button>
@@ -110,11 +127,9 @@
                   <li><a class="dropdown-item" >Add Action</a></li>
                   <li class="nav-item dropend">
                     <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">Assign Conversation</a>
-                    <ul class="dropdown-menu submenu"#teams (click)="onSelected(teams.value)" >
-                      <li><a class="dropdown-item1">James Watson</a></li>
-                      <li><a class="dropdown-item1">David Harrison</a></li>
-                      <li><a class="dropdown-item1" >Jane Cooper</a></li>
-                      <li><a class="dropdown-item1" >Charies John</a></li>
+                    <ul class="dropdown-menu submenu">
+                      <p>Assign To</p>
+                      <li *ngFor="let t of teams" (click)="onSelected(t)"><a class="dropdown-item1">{{t}}</a></li>
                     </ul></li>
                   <li><a class="dropdown-item" >Add Contact Tag</a></li>
                   

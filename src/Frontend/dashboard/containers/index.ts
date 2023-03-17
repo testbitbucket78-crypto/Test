@@ -23,10 +23,10 @@ import { AccountsettingComponent } from './accountsetting/accountsetting.compone
 import { CampaignsettingComponent } from './campaignsetting/campaignsetting.component';
 import { ContactsettingComponent } from './contactsetting/contactsetting.component';
 import { InboxsettingComponent } from './inboxsetting/inboxsetting.component';
-import { AddSmartRepliesComponent } from './addSmartReplies/addSmartReplies.component';
+import { AddSmartRepliesComponent} from './addSmartReplies/addSmartReplies.component';
 import { SidenavReplyComponent } from './sidenavReply/sidenavReply.component';
 
-export const containers = [DashboardComponent,SidenavReplyComponent,AddSmartRepliesComponent,ReportcampaignComponent,ReportautomationComponent,ConversationComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,ComposeComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent,AccountsettingComponent,CampaignsettingComponent,ContactsettingComponent,InboxsettingComponent];
+export const containers = [DashboardComponent,ReportcampaignComponent,ReportautomationComponent,ConversationComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,ComposeComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent,AccountsettingComponent,CampaignsettingComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent,SidenavReplyComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './addSmartReplies/addSmartReplies.component';
@@ -55,3 +55,4 @@ export * from './accountsetting/accountsetting.component';
 export * from './campaignsetting/campaignsetting.component';
 export * from './contactsetting/contactsetting.component';
 export * from './inboxsetting/inboxsetting.component';
+

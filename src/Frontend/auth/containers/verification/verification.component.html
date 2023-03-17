@@ -1,52 +1,69 @@
-<sb-layout-auth
-    ><div class="container col-lg-12">
-            <img src="assets/img/25.jpg" class="float-left"  >
-            <div class="row">
-                
-                <div class="col-lg-12 mt-4">
-                     
-    
-                            
-                    
-                            <div class=" text"><a routerLink="/register" style="display: inline-flex" > < Back to Create Account</a></div>
 
-                            <div class="log"><h3 class="font-weight-light" >Verify Email & Phone No.</h3>
-                            </div>
-                            <div class="col-lg-10"><a  style="display: inline-flex" > <h5>Please enter verification code sent to your phone no. & email </h5> </a></div>
-                            <form>
-                                <div class= "row col-12">
-                                    <div class="col-sm-7">
-                                        
-                                          <label for="floatingInputGrid">Verify your Phone No. 919513578520</label>
-                                          <div class=" d-md-flex justify-content">
-                                      <input type="text-right mr-3" class="form-control" placeholder="800737" aria-label="City">
-                                      <button class="btn1 me-1" type="button">verify</button>
-                                    </div>
-                                    </div>
-                                    <div class="col-lg-12"><a  style="display: inline-flex" > <h6>Don't receive the code?  </h6> <h6 class="ml-1"> Resend </h6> </a></div>
-                                </div>
-                                <div class= "row col-12">
-                                    <div class="col-sm-7">
-                                          <label for="floatingInputGrid">Verify your Email Id Kevinapplessed@gmail.com</label>
-                                    <div class=" d-md-flex justify-content">
-                                      <input type="text-right mr-3" class="form-control" placeholder="Enter OTP" aria-label="City">
-                                      <button class="btn1 me-1" type="button">verify</button>
-                                    </div>
-                                    </div>
-                                    <div class="col-lg-12"><a  style="display: inline-flex" > <h6>Don't receive the code?  </h6> <h6 class="ml-1"> Resend </h6> </a></div>
-                                </div>
- 
+<sb-layout-auth>
+    <div class="container col-lg-12">
+        <img src="assets/img/25.jpg" class="float-left">
+        <div class="row">
 
-                            <div class="form-group d-flex align-items-center justify-content-between  col-sm-12">
-                            <a class="btn btn2" routerLink="/login">Submit</a>
-                            </div>
-                            
-                            </form>
+            <div class="col-lg-12 mt-4">
+
+
+
+
+                <div class=" text"><a routerLink="/register" style="display: inline-flex">
+                        < Back to Create Account</a>
                 </div>
-                <div class="text1"><a routerLink="/register" style="display: inline-flex">New User?<h6 class="ml-1"> Create an account</h6></a></div>
-                
+
+                <div class="log">
+                    <h3 class="font-weight-light">Verify Email & Phone No.</h3>
+                </div>
+                <div class="col-lg-10"><a style="display: inline-flex">
+                        <h5>Please enter verification code sent to your phone no. & email </h5>
+                    </a></div>
+                <form [formGroup]="otpForm">
+                    <div class="row col-12">
+                        <div class="col-sm-7">
+
+                            <label for="floatingInputGrid">Verify your Phone No. 919513578520</label>
+                            <div class=" d-md-flex justify-content">
+                                <input type="text-right mr-3" class="form-control" placeholder="800737"
+                                    aria-label="City">
+                                <button class="btn1 me-1" type="button">verify</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-12"><a style="display: inline-flex">
+                                <h6>Don't receive the code? </h6>
+                                <h6 class="ml-1"> Resend </h6>
+                            </a></div>
+                    </div>
+                    <div class="row col-12">
+                        <div class="col-sm-7">
+                            <label for="floatingInputGrid">Verify your Email Id Kevinapplessed@gmail.com</label>
+                            <div class=" d-md-flex justify-content">
+                                <input type="text-right mr-3" class="form-control" placeholder="Enter OTP"
+                                    aria-label="City" name="otp" formControlName="otp" id="otp">
+                                <button class="btn1 me-1" type="button" (click)="onVerify()">verify</button>
+                            </div>
+                        </div>
+                        <div class="col-lg-12"><a style="display: inline-flex">
+                                <h6>Don't receive the code? </h6>
+                                <h6 class="ml-1"> Resend </h6>
+                            </a></div>
+                    </div>
+
+
+                    <div class="form-group d-flex align-items-center justify-content-between  col-sm-12">
+                        <!-- <a class="btn btn2" routerLink="/login">Submit</a> -->
+                        <button class="btn btn2" type="submit" (click)="onSubmitRegisterform()">Submit</button>
+                    </div>
+
+                </form>
             </div>
-            
-  
+            <div class="text1"><a routerLink="/register" style="display: inline-flex">New User?<h6 class="ml-1"> Create
+                        an account</h6></a></div>
+
+        </div>
+
+
     </div>
 </sb-layout-auth>
+

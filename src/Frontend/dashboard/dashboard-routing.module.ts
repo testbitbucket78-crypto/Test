@@ -482,16 +482,35 @@ export const ROUTES: Routes = [
         component: dashboardContainers.OrganizationComponent,
     },
     {
-        path: 'sidenavReply',
+        path: 'addSmartReplies',
         data: {
-            title: 'sidenavReply',
+            title: 'Add Replies',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'sidenavReply',
+
+                    text: 'Add Replies',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.AddSmartRepliesComponent,
+    },
+    {
+        path: 'sidenavReply',
+        data: {
+            title: 'SIDENAV Replies',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'sidenav Replies',
                     active: true,
                 },
             ],
