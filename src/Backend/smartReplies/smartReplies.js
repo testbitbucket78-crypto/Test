@@ -45,9 +45,22 @@ app.post('/addNewReply', (req, res) => {
 })
 
  
-
+app.put('/deletSmartReply',(req,res)=>{
+   db.runQuery(req,res,val.deleteSmartReply,[req.body.ID])
+})
  
+app.put('/deleteReply',(req,res)=>{
+  db.runQuery(req,res,val.deletMessage,[req.body.SmartReplyID])
+})
 
+app.put('/editMessage',(req,res)=>{
+   db.runQuery(req,res,val.editMessage,[req.body.Message,req.body.SmartReplyID])
+})
+
+app.put('/editAction',(req,res)=>{
+   
+   db.runQuery(req,res,val.editAction,[req.body.ActionID,req.body.Value,req.body.SmartReplyID])
+})
 app.listen(3005, function () {
    console.log("Node is running on port 3005");
 

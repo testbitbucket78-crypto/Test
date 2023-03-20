@@ -12,7 +12,8 @@ var selectByIdQuery="SELECT * FROM user WHERE userId=?"
 var deletQuery="DELETE FROM user WHERE userId=?"
 var updateQuery="UPDATE user SET userId=?,password=?,email_id=?,address=?,name=?,mobile_number=?,country=?,timezone=?,CreatedDate=?,LastModifiedDate=?,PasswordHint=?,securityquestion=?,Securityanswer=?,ParentId=?,UserType=?,IsDeleted=?,IsActive=? WHERE uid=?";
 var insertQuery = "INSERT INTO user (userId,password,email_id,address,name,mobile_number,country,timezone,CreatedDate,LastModifiedDate,PasswordHint,securityquestion,Securityanswer,ParentId,UserType,IsDeleted,IsActive) VALUES ?";
-
+var allAgents="select *from user where ParentId=? and UserType=?"
+var activeAgent="select *from user where ParentId=? and UserType=? and IsActive=?"
 //for index pages
 
 var loginQuery="SELECT * FROM user WHERE email_id =?"
@@ -45,6 +46,7 @@ interactionsQuery="select interaction_status,count(*) count from Interaction whe
 campaignsQuery="select campaign_status,count(*) count from CampaignStats where  (customerID=1) Group by (campaign_status)";
 agentsQuery="select Status,count(*) count from AgentDetails where  (uid=1) Group by (Status) union select 'Total Agents',count(*) count from AgentDetails where  uid=1";
 subscribersQuery="select OptInStatus,count(*) count from EndCustomer  Group by (OptInStatus) union select  'Total Subscriber',count(*) count from EndCustomer";
+conversationQuery="CALL dashboardRecentConversation()"
 
 //contact filter
 filterQuery="select * from EndCustomer where Phone_number=?"
@@ -52,6 +54,7 @@ importquery="INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,s
 searchQuery="select * from EndCustomer where Phone_number=? or Name=? or emailId=?"
 delet="DELETE FROM EndCustomer WHERE customerId IN (?)"
 selectbyid="select * from EndCustomer where customerId=?"
+isBlockedQuery="UPDATE EndCustomer set  isBlocked=? where customerId=?"
 // Path for download sample csv file for import of contact
 var Path='C:/Users/hp/Downloads/data.csv'
 
@@ -117,6 +120,16 @@ left join SmartReplyKeywords s ON s.SmartReplyID = t.ID
 where t.ID=?`
 
 addNewReply=`CALL addnewReply(?, ?,?, ?,?,?)`;
+deleteSmartReply=`CALL deleteSmartReply(?)`;
+deletMessage=`update SmartReplyAction set isDeleted='1',isDeletedOn=now() where SmartReplyID=?`;
+editMessage=`update SmartReplyAction set Message=? where SmartReplyID=?`;
+editAction=`update SmartReplyAction set ActionID=?,Value=? where SmartReplyID=?`;
 
-module.exports={host,user,password,database,selectAllQuery,selectByIdQuery,deletQuery,insertQuery,updateQuery,loginQuery,registerQuery,email,appPassword,emailHost,port,sql,sql1,camQuery,selectQuery,otp,updatePassword,uidresetEmailQuery,verifyUid,
-    interactionsQuery,campaignsQuery,agentsQuery,subscribersQuery,filterQuery,importquery,searchQuery,Path,verfiyCount,selectAll,search,sideNavKeywords,addNewReply,delet,editContact,selectbyid}
+
+module.exports={host,user,password,database,selectAllQuery,selectByIdQuery,deletQuery,insertQuery,
+    updateQuery, loginQuery,registerQuery,email,appPassword,emailHost,port,sql,sql1,camQuery,selectQuery,
+    otp,updatePassword, uidresetEmailQuery,verifyUid, interactionsQuery,campaignsQuery,agentsQuery,
+    subscribersQuery,filterQuery,importquery,searchQuery,Path,verfiyCount,selectAll,search,sideNavKeywords,
+    addNewReply,delet,editContact,selectbyid,allAgents,activeAgent,conversationQuery,isBlockedQuery,
+    deleteSmartReply,deletMessage,editMessage,editAction
+}

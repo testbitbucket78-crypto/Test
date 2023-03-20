@@ -232,6 +232,10 @@ app.get('/search', (req, res) => {
 
   db.runQuery(req, res, val.searchQuery, [req.query.Phone_number, req.query.Name, req.query.emailId])
 })
+
+app.post('/blockedContact',(req,res)=>{
+  db.runQuery(req,res,val.isBlockedQuery,[req.body.isBlocked,req.body.customerId])
+})
 //module.exports = { updateData, identifierData }
 app.listen(3002);
 
