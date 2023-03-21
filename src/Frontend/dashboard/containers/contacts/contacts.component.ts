@@ -37,6 +37,7 @@ export class ContactsComponent implements OnInit {
     status: any = [];
     selectedItems: any = [];
     dropdownSettings = {}; 
+    items: any;
     
 	filterForm=new FormGroup({
 		Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)]))
@@ -209,6 +210,13 @@ console.log(this.contacts);
       // console.log(column)
     }
   }
+   opensidenav(employee: any){
+    document.getElementById("sidebar").style.width = "300px";
+   }
+   closesidenav(items: any){
+    document.getElementById ("sidebar").style.width = "0";
+   }
+
    checkAllCheckBox(event: any) {
     this.contacts.forEach((employee: { checked: any; }) => employee.checked = event.target.checked)
    

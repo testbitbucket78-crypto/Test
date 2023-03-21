@@ -13,7 +13,7 @@
 		</div>
 		   </div>
 		
-		   <div class="col-xs-3 ml-5 mb-4 mt-4">
+		   <div class="col-xs-3 ml-1 mb-4 mt-4">
 		<button class="btn  btn-block float-right" (click)="opens(contents)"><img src="assets/img/filter.png"> Filter</button>
 	</div>
 	<div class="col-xs-3 ml-1 mb-4 mt-4">
@@ -62,7 +62,7 @@
 		  </tr>
 		</thead>
 		<tbody>
-		  <tr *ngFor="let employee of contacts | orderBy: orderHeader: isDesOrder ; let i = index; let odd = odd" [ngClass]="odd ? 'odd_col': 'even_col'" (change)="hideDeleteBtn($event)">
+		  <tr *ngFor="let employee of contacts | orderBy: orderHeader: isDesOrder ; let i = index; let odd = odd" [ngClass]="odd ? 'odd_col': 'even_col'" (change)="hideDeleteBtn($event)"  (click) = "opensidenav(employee)">
 			<td scope="row"><input type="checkbox" value="{{employee.id}}" [(ngModel)]="employee.selectedValue "(change)="getCheckBoxEvent(employee.selectedValue,employee)" (change)="selCheckBox($event)" name="">
 				<img src="assets/img/chats.png"></td>
 			<td class="id">{{employee.customerId}}</td>
@@ -93,7 +93,104 @@
 			</ul>
 		  </nav>
 	  </table>
+	  <div id= "sidebar" class="sidebar ">
+			<button type="button" class="btn5 btn-close" aria-label="Close" (click)="d('Cross click')"(click) = "closesidenav(items)">X</button>
+	
+			<div class="parent d-flex">
+				<img src="assets/img/my.png">
+				<div class="child">
+					<h4>David Harison</h4>
+					<div class="child1 d-flex">
+						<h5>Customer Id:</h5>
+						<h6>10</h6>
+					</div>
+					<div class="child1 d-flex">
+						<h5>Created Date:</h5>
+						<h6>15 Oct 2022,9:45 PM</h6>
+					</div>
+					<div class="child1 d-flex">
+						<h5>Last Updated:</h5>
+						<h6>19 Oct 2022,7:45 PM</h6>
+					</div>
+				</div>
+			</div>
+			<div class="parent d-flex">
+				<div class="child2">
+					<h5>Email Id</h5>
+					<h6>davidharison@yahoo.com</h6>
+				</div>
+				<div class="child2">
+					<h5>Phone Number</h5>
+					<h6>+44 9513500581</h6>
+				</div>
+			</div>
+			<div class="parent d-flex">
+				<div class="child2">
+					<h5>Message Opt-in</h5>
+					<h6>Yes</h6>
+				</div>
+				<div class="child3">
+					<h5>Contact Owner</h5>
+					<h6>James Watson</h6>
+				</div>
+			</div>
+			<div class="child5">
+				<h5>Tag</h5>
+				<div class="child4 d-flex">
+				<h6 >Paid</h6> <div class="line"></div> <h6>UnPaid</h6>
+			</div>
+			</div>
+			<h4>Custom Fields</h4>
+			<div class="child5">
+				<h5>Lead Status</h5>
+				<div class="child4 d-flex">
+				<h6 >Paid</h6> <div class="line"></div> <h6>UnPaid</h6>
+			</div>
+			</div>
+			<div class="child2">
+				<h5>Instagram Id</h5>
+				<h6>https://www.instagram.com/david-harison/?next=%2F</h6>
+			</div>
+			<div class="parent d-flex">
+				<div class="child2">
+					<h5>Gender</h5>
+					<h6>Male</h6>
+				</div>
+				<div class="child3">
+					<h5>Age</h5>
+					<h6>29 yers</h6>
+				</div>
+			</div>
+			<div class="parent d-flex">
+				<div class="child2">
+					<h5>Country</h5>
+					<h6>USA</h6>
+				</div>
+				<div class="child3">
+					<h5>Default Channel</h5>
+					<h6>Whatsapp Web</h6>
+				</div>
+			</div>
+			<div class="child2">
+				<h5>Facebook Id</h5>
+				<h6>https://www.fb.com/david-harison/?next=%2F</h6>
+			</div>
+			<div class="child2">
+				<h5>Emergency Contact No.</h5>
+				<h6>1998</h6>
+			</div>
+			<div class="button d-flex">
+				<button class="btn6  btn-block "><img src="assets/img/delete.png"> </button>
+				<button class="btn6  btn-block "><img src="assets/img/edit.png"> </button>
+				<button class="btn6  btn-block ">Block </button>
+				<button class="btn7  btn-block "><img src="assets/img/Setting.png"> </button>
+			</div>
+			<div class="bbox">
+				<h6>To add/edit any field according to your business from the settings</h6>
+			</div>
+	</div>
 </div>
+
 
 
 

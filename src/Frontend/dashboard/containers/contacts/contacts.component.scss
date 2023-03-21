@@ -6,7 +6,7 @@
     border: 1px solid #EBEBEB;
     background-color: #ffffff;
     margin: 0px 0px 0px -18px;
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     font-size: 14px;
 }
 .btn {
@@ -15,12 +15,12 @@
     background-color: #ffffff;
     border: 1px solid #EBEBEB;
     border-radius: 17px;
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     font-size: 14px;
 }
 .btn:not(:disabled):not(.disabled) {
     cursor: pointer;
-    margin: 0px 0px 0px 10px;
+    margin: 0px 0px 0px 5px;
 }
 .btn:not(:disabled):not(.disabled):hover {
     cursor: pointer;
@@ -69,13 +69,13 @@ opacity: 1;
     opacity: 1;
 }
 h4, .h4 {
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     font-size: 22px;
     font-weight: bold;
     color: #000000;
 }
 .fff p{
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     font-size: 17px;
     color: #000000;
     margin: 2px 0px 0px 0px
@@ -106,7 +106,7 @@ label {
     display: inline-block;
     margin-bottom: 0.5rem;
     font-size: 15px;
-    font-family: manrope;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
 }
 .form-control {
@@ -123,7 +123,7 @@ label {
     border: 1px solid #ced4da;
     border-radius: 20px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    font-family: manrope;
+    font-family: 'Montserrat', sans-serif;
 }
 .dd img {
     padding: 40px 0px 0px 44%;
@@ -134,7 +134,7 @@ label {
 }
 .dd h4{
     padding: 0px 0px 0px 42%;
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     font-weight: bold;
     font-size: 22px;
 }
@@ -172,15 +172,16 @@ label {
 
 .sq label{
     font-size: 15px;
-    font-family: manrope;
+    font-family: 'Montserrat', sans-serif;
     font-weight: bold;
     margin: 35px 0px 5px 20px;
 }
 option{
-    font: normal normal normal 14px/23px Manrope;
+    font: normal normal normal 14px/23px;
  letter-spacing: 0px;
  color: #7A86A1;
  opacity: 1;
+ font-family: 'Montserrat', sans-serif;
 
 }
 option:hover{
@@ -206,14 +207,14 @@ option:hover{
     border-radius: 13px;
     border: 1px solid #EBEBEB;
     background-color: #ffffff;
-    font-family: manrope;
+    font-family: 'Montserrat', sans-serif;
     font-size: 15px;
     height: 35px;
     padding: 0px 0px 0px 10px;
 }
 .sq .jk label{
     font-size: 15px;
-    font-family: manrope;
+    font-family: 'Montserrat', sans-serif;
     margin: 10px 0px 10px 20px;
     font-weight: 500;
 }
@@ -224,7 +225,7 @@ option:hover{
     border-radius: 13px;
     border: 1px solid #EBEBEB;
     background-color: #FFF4F2;
-    font-family: manrope;
+    font-family: 'Montserrat', sans-serif;
     font-size: 15px;
     height: 35px;
     padding: 0px 0px 0px 10px;
@@ -250,7 +251,7 @@ option:hover{
     color: #000000;
     font-size: 15px;
     border-radius: 20px;
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     border: none;
 }
 .table tr:hover{
@@ -262,7 +263,7 @@ option:hover{
     color: #000000;
     font-size: 15px;
     border-radius: 20px;
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     box-shadow: 0px 0px 14px #695F972E;
 border: none;
 opacity: 1;
@@ -290,7 +291,7 @@ opacity: 1;
     color: #6149CD;
     font-size: 14px;
     margin: 0px 18px;
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
 }
 .table thead .table-box{
     color: #6149CD;
@@ -381,7 +382,7 @@ opacity: 1;
         vertical-align: middle;
         cursor: pointer;
         border-radius: 15px;
-        font-family: Manrope;
+        font-family: 'Montserrat', sans-serif;
         color: #7A86A1;
         background-color: #ffffff;
         margin: 8px 0px 0px 5px;
@@ -398,7 +399,7 @@ opacity: 1;
         vertical-align: middle;
         cursor: pointer;
         border-radius: 20px;
-        font-family: Manrope;
+        font-family: 'Montserrat', sans-serif;
         color: #7A86A1;
         background-color: #ffffff;
         margin: -2px 0px 0px 0px;
@@ -415,9 +416,9 @@ opacity: 1;
     }
 
 .delete img{
-    width: 78px;
-    height: 84px;
-    margin: -29px -38px 0px 0px;
+    width: 22px;
+    height: 23px;
+    margin: -3px -10px 0px 0px;
     float: right;
 }
 .delete .btn{
@@ -425,4 +426,163 @@ opacity: 1;
     height: 31px;
     float: right;
     margin: -10% 40px 0px 0px;
+}
+
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    background-color: #FBF9FE;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+  .sidebar .btn5{
+    border: 1px solid #EBEBEB;
+    border-radius: 14px;
+    background-color: #ffffff;
+    float: right;
+  }
+  
+  .sidebar .parent img{
+    height: 80px;
+    margin: 50px 0px 0px -10px;
+}
+.sidebar .parent .child h4{
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    margin: 50px 0px 5px 0px;
+    color: #000000;
+}
+.sidebar .parent .child .child1{
+    display: block;
+  }
+  .sidebar .parent .child .child1 h5{
+    font-family: "Montserrat", sans-serif;
+    color: #7A86A1;
+    font-size: 12px;
+    font-weight: 500;
+}
+  .sidebar .parent .child .child1 h6{
+    font-family: "Montserrat", sans-serif;
+    color: #000000;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0px 0px 0px 3px;
+} 
+.sidebar .parent .child2{
+    display: block;
+    width: 160px;
+}
+.sidebar .parent .child2 h5{
+    color: #6149CD;
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    margin: 15px 0 0 20px;
+}
+.sidebar .parent .child2 h6{
+    color: #000000;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    margin: 0 0 0 20px;
+}
+.sidebar .parent .child3{
+    margin: 0;
+}
+.sidebar .parent .child3 h5{
+    color: #6149CD;
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    margin: 15px 0 0 20px;
+}
+.sidebar .parent .child3 h6{
+    color: #000000;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    margin: 0 0 0 20px;
+}
+.sidebar .child3{
+    margin: 0 0 0 40px;
+
+}
+.sidebar .child3 h5{
+    color: #6149CD;
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    margin: 15px 0 0 20px;
+}
+.sidebar .child3 h6{
+    color: #000000;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    margin: 10px 0 0 20px;
+}
+.sidebar .child5 .child4 .line{
+    height: 11px;
+    width: 1px;
+    color: #BDC3D0;
+    border: 1px solid #BDC3D0;
+    margin: 10px 0 0 20px;
+}
+.sidebar .child5 h5{
+    color: #6149CD;
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    margin: 15px 0 0 20px;
+}
+.sidebar .child5 h6{
+    color: #000000;
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    margin: 10px 0 0 20px;
+    font-weight: 500;
+}
+.sidebar h4{
+    color: #000000;
+    font-size: 13px;
+    margin: 20px 0px 0px 20px;
+    font-family: "Montserrat", sans-serif;
+}
+.sidebar .child2 h5{
+    color: #6149CD;
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    margin: 15px 0 0 20px;
+}
+.sidebar .child2 h6{
+    color: #000000;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    margin: 10px 0 0 20px;
+    font-weight: 500;
+}
+.button .btn6{
+    background-color: #ffffff;
+    border: 1px solid #695F9724;
+    color: red;
+    border-radius: 60px;
+    margin: 10px 0px 0px 20px;
+    box-shadow: 1px 8px 29px #695F9724;
+}
+.button .btn7{
+    background-color: #FBF9FE;
+    border: 1px solid #695F9724;
+    border-radius: 20px;
+    margin: 10px 0px 0px 20px;
+}
+.sidebar .bbox{
+    background-color: #FBF9FE;
+    border: 1px solid #695F9724;
+    border-radius: 20px;
+    margin: 10px 7px 0px 20px;
+}
+.sidebar .bbox h6{
+    color: #7A86A1;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    padding: 10px 0px 0px 10px;
 }

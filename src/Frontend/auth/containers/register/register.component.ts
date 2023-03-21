@@ -3,6 +3,7 @@ import { FormsModule, FormBuilder, FormControl, FormGroup, NgForm } from '@angul
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { addListener } from 'process';
 
 @Component({
     selector: 'sb-register',
@@ -16,27 +17,58 @@ export class RegisterComponent implements OnInit {
     visible1:boolean = true;
     changetype:boolean = true;
     change:boolean = true;
-   
-
   
-   
-
-
-    registerForm = new FormGroup({
+        registerForm = new FormGroup({
         name: new FormControl('', Validators.required),
         mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
-        email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+        Email: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
         password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
-        confirmPassword: new FormControl('', Validators.required),
-
+        confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
+        
     })
+    title = 'formValidation';
+        submitted = false;
 
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) { }
     ngOnInit() {
+        
+        this.registerForm = this.formBuilder.group({
+            mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+            Email: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+            password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
+            confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
+        })
      
     }
+    onSubmit(){
+        console.log(this.registerForm.value)
+        this.submitted = true
+
+        if (this.registerForm.invalid){
+            return
+        }
+        alert("Success")
+    }
+// (function () {
+//     'use strict'
+  
+//     var forms = document.querySelectorAll('.needs-validation')
+
+//     Array.prototype.slice.call(forms)
+//       .forEach(function (form) {
+//         form.addEventListener('submit', function (event) {
+//           if (!form.checkValidity()) {
+//             event.preventDefault()
+//             event.stopPropagation()
+//           }
+  
+//           form.classList.add('was-validated')
+//         }, false)
+//       })
+//   })()
 
     onVerification() {
+       
         if (this.registerForm.valid) {
            // sessionStorage.setItem('registerFormData',this.registerForm.value)
             // sessionStorage.setItem('registerName',this.registerForm.value.name)

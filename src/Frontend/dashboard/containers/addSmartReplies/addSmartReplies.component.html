@@ -44,11 +44,17 @@
         <div class="box1">
           <h5>Add Keywords</h5>
           <div class="box2 d-flex">
-          <input class="form-control" type="text" placeholder="Enter Keywords" />
-          <button type="button" class="btn7 btn-block ml-2 ">ADD</button>
-        </div>
-        
-        <span>Please choose a unique keyword which is not already added in other smart replies</span>
+            <input class="form-control" #keyowrdtxt   [(ngModel)]="keyword" type="text" placeholder="Enter Keywords"   />
+           <button type="button" class="btn7 btn-block ml-2 " (click)="addKeyword()" [disabled]="keyword=== ''">ADD</button>
+         </div>
+         
+         <span>Please choose a unique keyword which is not already added in other smart replies </span>
+           <span class="row">
+           <div  *ngFor="let k of keywords" class="keywords"style="font-weight: bolder; color: black;"> 
+             <div class="keytext">{{k}}<button class="rmv-btn" (click)="removeKeyword(k)">x</button></div> 
+            
+           </div>
+         </span>
          <div class="line1"></div>
         <h4>Matching Criteria</h4>
         <div class="ll d-flex">
@@ -89,29 +95,31 @@
        <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
         <div data-bs-spy="scroll" data-bs-target="#list-example" data-bs-offset="0" class="scrollspy-example" tabindex="0">
         
-        <button type="button" (click)= "previous()" class="btn9 btn-block col-1 mt-3 "><img src="assets/img/prev.png"></button>
+        <button type="button" (click)= "previous()" class="btn9 btn-block col-1 mt-3 ">
+          <img src="assets/img/prev.png"></button>
         <div class="box7">
-          <div  *ngFor="let m of messages; let i = index"  class="box7child">
-            <label  for="ff" >Message
-              <div>
-                <p [contentEditable]="isEditable" (input)="onEdit($event.target.innerText)" [(ngModel)]="editedText">{{ data }}</p>
-                </div>
-                <button class="msg-del-btn btn7" (click)="removeMessage(i)">
-                  <img src="assets/img/delete.png"></button>
-                <div class="action1">Action<p>Conversation Assigned:{{ selectedTeam }}</p></div></label>
-            
-               
-              </div>
-              
-          
-          
+
+          <div class="box7child">
+            <label  *ngFor="let m of messages; let i = index" for="ff" >Message
+              <p [contentEditable]="isEditable" (input)="onEdit($event.target.innerText)" [(ngModel)]="editedText">{{m}}</p>
+                <button class="msg-edit-btn" (click)="toggleEditable(i)">Edit</button> 
+                <button class="msg-del-btn" (click)="removeMessage(i)">x</button>
+                </label>
+
+                
+                <div class="action1" *ngFor="let a of actions; let i = index" >Action<p [contentEditable]="isEditable">Conversation Assigned:{{ selectedTeam }}</p>
+                   <button class="msg-edit-btn" (click)="toggleEditable(i)">Edit</button> 
+                 <button class="msg-del-btn" (click)="removeAction(i)">x</button>
+                 </div>
+                
+             </div>
         </div>
         </div>
         <div class="reply">
           <textarea name="content" id="replyText" class="form-control" rows="4" cols="50"
-          placeholder="type your message..." #input [(ngModel)]="message"></textarea>
+          placeholder="Type reply.." ngDefaultControl #input [(ngModel)]="message"></textarea>
         <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)" (click)="addMessage()">ADD</button>
-            <div class="action">
+        <div class="action">
               <button type="button" class="btn" (click)="bold()"><b>B</b></button>
               <button type="button" class="btn" (click)="itelic()"> <i>I</i></button>
               <button type="button" class="btn">$</button>

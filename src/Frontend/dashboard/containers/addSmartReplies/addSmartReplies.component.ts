@@ -16,12 +16,9 @@ export class AddSmartRepliesComponent implements OnInit {
 	stepper: any;
 	data: any;
 	val: any;
-	// keyword: string = '';
-	// keywords: string[] = [];
-
+	keywordtxt: any;
 	selectedTeam: any;
-	editedText:string ='';
-
+	selectedDropDown :[] = []; 
     newSmartReply:any;
 	newReply=new FormGroup({
 		Title: new FormControl('',Validators.required),
@@ -36,6 +33,13 @@ export class AddSmartRepliesComponent implements OnInit {
 
 		message = '';	
 	messages:any [] = [];	
+	action = '';
+	actions:any [] = [];
+	
+	keyword: string = '';
+	keywords: string[] = [];
+	
+	editedText:string ='';
 	isEditable: boolean = false;
 	
 	
@@ -54,6 +58,32 @@ export class AddSmartRepliesComponent implements OnInit {
 			  
 			 	  
 }
+addKeyword() {
+	if (this.keyword !== '') {
+		this.keywords.push(this.keyword);
+		this.keyword = '';
+	}
+}
+
+removeKeyword(keyword: string) {
+	this.keywords = this.keywords.filter(k => k !== keyword);
+}
+
+
+addqty(val: any) {
+	this.data = val;
+	this.keywordtxt= val;
+
+}
+addAction() {
+	this.actions.push(this.action);
+	this.action= '';
+}
+
+removeAction(index: number) {
+	this.actions.splice(index, 1);
+}
+
 
 toggleEditable(index: number) {
 	this.isEditable = !this.isEditable;
@@ -80,9 +110,7 @@ bold(){
 itelic(){
 	(<HTMLInputElement>document.getElementById("replyText")).style.fontStyle = "italic";  
 }
-addqty(value:string){
-	this.data = value;
-}
+
 addMessage() {
 			 
 	this.messages.push(this.message);
