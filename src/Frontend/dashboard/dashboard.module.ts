@@ -12,6 +12,7 @@ import { OrderModule } from 'ngx-order-pipe';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
+
 /* Components */
 import * as dashboardComponents from './components';
 

@@ -125,3 +125,18 @@ a{
         font-family: 'Montserrat', sans-serif;
         font-weight: 600;
     }
+    .form-control.is-invalid {
+        border: 1px solid red;
+        background: padding-box;
+    }
+    .form-control.is-valid{
+        border: 1px solid green;
+    }
+    .form-select{
+        position: absolute;
+        width: 54px;
+        border: none;
+        margin: 39px 0px 0px -114px;
+        font-size: 14px;
+    }
+    

@@ -42,11 +42,12 @@
 							<input type="file" (change)="onChange($event)" />
 						</div>
 					</div>
-					<div class="box2 d-flex" (click)="download()">
+					<button class="btn4 btn-block d-flex "  (click)="download()">
+					
 						<img src="assets/img/download.png">
 						<h6>Download Sample File</h6>
 
-					</div>
+				</button>
 
 				</div>
 
@@ -69,9 +70,9 @@
 							<select class="form-select" id="floatingSelectGrid"
 								aria-label="Floating label select example">
 								<option selected>Add new contact only</option>
-								<option value="1">One</option>
-								<option value="2">Two</option>
-								<option value="3">Three</option>
+								<option value="1">Update Existing Contacts Only</option>
+								<option value="2">Add and Update Contacts</option>
+								
 							</select>
 
 						</div>
@@ -312,7 +313,7 @@
 				<div class="card3">
 					<h5>7</h5>
 					<h6>Contact skipped due to error</h6>
-					<button class="btn  btn-block "><img src="assets/img/download.png"> Download error file</button>
+					<button class="btn  btn-block" (click)="download()"><img src="assets/img/download.png"> Download error file</button>
 				</div>
 				<button type="button" (click)="next()" class="btn btn-primary btn-block col-1" (click)="updateAndSave()">Import</button>
 			</div>

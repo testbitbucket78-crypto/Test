@@ -17,6 +17,7 @@ export class RegisterComponent implements OnInit {
     visible1:boolean = true;
     changetype:boolean = true;
     change:boolean = true;
+    
   
         registerForm = new FormGroup({
         name: new FormControl('', Validators.required),
@@ -47,6 +48,8 @@ export class RegisterComponent implements OnInit {
         if (this.registerForm.invalid){
             return
         }
+        else(this.registerForm.valid)
+        
         alert("Success")
     }
 // (function () {

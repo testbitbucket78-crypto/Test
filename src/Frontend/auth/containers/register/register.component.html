@@ -25,8 +25,18 @@
               </div>
               <div class=" col-sm-6">
                 <label for="floatingInputGrid">Phone Number</label>
-
-                <input type="text-right " class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors }" placeholder="+91**********" aria-label="State"
+                <select class="form-select">
+                  <option selected>+91</option>
+                  <option >+98</option>
+                  <option >+1</option>
+                  <option >+44</option>
+                  <option >+380</option>
+                  <option >+93</option>
+                  <option >+213</option>
+                  <option >+54</option>
+                  
+                </select>
+                <input type="text-right " class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }" placeholder="**********" aria-label="State"
                   name="mobile_number" formControlName="mobile_number" id="mobile_number">
               </div>
             </div>

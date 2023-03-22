@@ -137,6 +137,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
     this.hideDeleteBtn(event)
    
 } 
+checks=false
+bulk(e){
+  if(e.target.checked==true){
+    this.checks=true;
+  }
+  else{
+    this.checks=false;
+  }
+}
 
   // multiselect settings
   onItemSelect(item: any) {
