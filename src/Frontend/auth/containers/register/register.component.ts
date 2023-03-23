@@ -3,7 +3,7 @@ import { FormsModule, FormBuilder, FormControl, FormGroup, NgForm } from '@angul
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
-import { addListener } from 'process';
+
 
 @Component({
     selector: 'sb-register',
@@ -33,12 +33,12 @@ export class RegisterComponent implements OnInit {
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) { }
     ngOnInit() {
         
-        this.registerForm = this.formBuilder.group({
-            mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
-            Email: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-            password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
-            confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
-        })
+        // this.registerForm = this.formBuilder.group({
+        //     mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+        //     Email: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+        //     password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
+        //     confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
+        // })
      
     }
     onSubmit(){
@@ -48,7 +48,6 @@ export class RegisterComponent implements OnInit {
         if (this.registerForm.invalid){
             return
         }
-        else(this.registerForm.valid)
         
         alert("Success")
     }
