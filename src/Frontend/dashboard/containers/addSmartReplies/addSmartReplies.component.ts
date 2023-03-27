@@ -26,13 +26,19 @@ export class AddSmartRepliesComponent implements OnInit {
 	
 	})
 	model: any;
+
 	teams: string[] =
 		[
 			"James Whatson", "David Harrison", "Jane Cooper", "Charles John"
 		];
 
-		message = '';	
-	messages:any [] = [];	
+	removeTag: string[] =
+		[
+			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
+		];
+	message = '';	
+	messages:any [] = [];
+	
 	action = '';
 	actions:any [] = [];
 	
@@ -48,98 +54,87 @@ export class AddSmartRepliesComponent implements OnInit {
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
-	
-    ngOnInit() {
+
+	ngOnInit() {
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-	    linear: false,
-	    animation: true
-		
-			   })	
-			  
-			 	  
-}
-addKeyword() {
-	if (this.keyword !== '') {
-		this.keywords.push(this.keyword);
-		this.keyword = '';
+			linear: false,
+			animation: true
+		})
+	
 	}
-}
 
-removeKeyword(keyword: string) {
-	this.keywords = this.keywords.filter(k => k !== keyword);
-}
+	addKeyword() {
+		if (this.keyword !== '') {
+			this.keywords.push(this.keyword);
+			this.keyword = '';
+		}
+	}
 
-
-addqty(val: any) {
-	this.data = val;
-	this.keywordtxt= val;
-
-}
-addAction() {
-	this.actions.push(this.action);
-	this.action= '';
-}
-
-removeAction(index: number) {
-	this.actions.splice(index, 1);
-}
+	removeKeyword(keyword: string) {
+		this.keywords = this.keywords.filter(k => k !== keyword);
+	}
 
 
-toggleEditable(index: number) {
-	this.isEditable = !this.isEditable;
-}
-onEdit(text:string) {
-	this.editedText = text;
-	
-}
-// addKeyword() {
-// 	if (this.keyword !== '') {
-// 		this.keywords.push(this.keyword);
-// 		this.keyword = '';
-// 	}
-// }
+	addqty(val: any) {
+		this.data = val;
+		this.keywordtxt= val;
 
-// removeKeyword(keyword: string) {
-// 	this.keywords = this.keywords.filter(k => k !== keyword);
-// }
+	}
 
+	addAction() {
+		this.actions.push(this.action);
+		this.action= '';
+	}
 
-bold(){
-	(<HTMLInputElement>document.getElementById("replyText")).style.fontWeight = "bold";  
-}
-itelic(){
-	(<HTMLInputElement>document.getElementById("replyText")).style.fontStyle = "italic";  
-}
+	removeAction(index: number) {
+		this.actions.splice(index, 1);
+	}
 
-addMessage() {
+	addMessage() {
 			 
-	this.messages.push(this.message);
-	this.message = '';
-	
-}
-removeMessage(index:number) {
-this.messages.splice(index, 1);
-}
+			this.messages.push(this.message);
+			this.message = '';
+			
+	}
+	removeMessage(index:number) {
+		this.messages.splice(index, 1);
+	}
 
 
-next() {
-	    this.stepper.next();
-	  }
-	  previous() {
-	    this.stepper.previous();
-	  }
 
-	openinstruction(instruction:any) {
+	toggleEditable(index: number) {
+		this.isEditable = !this.isEditable;
+	}
+	onEdit(text:string) {
+		this.editedText = text;
+		
+	}
+
+
+    bold() {
+		(<HTMLInputElement>document.getElementById("replyText")).style.fontWeight = "bold";
+	}
+	itelic() {
+		(<HTMLInputElement>document.getElementById("replyText")).style.fontStyle = "italic";
+	}
+	next() {
+		this.stepper.next();
+	}
+    previous() {
+		this.stepper.previous();
+	}
+	openinstruction(instruction: any) {
 		this.modalService.open(instruction);
 	}
-	
-	file:any;
-	getFile(event: any){
+
+	file: any;
+	getFile(event: any) {
 		this.file = event.target.files[0];
 		console.log('file', this.file);
 	}
-	onSelected(value: string) {
+	onSelected(value: any) {
 		this.selectedTeam = value;
+		this.selectedDropDown = value;
 	}
 	getNewSmartReplyData(){
 		
@@ -164,10 +159,13 @@ next() {
 			Description:this.newReply.value.Description,
 			MatchingCriteria:this.model
 		}
-	
+		console.log("data")
+		console.log(data)
 		this.apiService.addNewReply(data).subscribe((responce)=>{
             console.log(responce)
 		})
 	}
+	
 
+	 
 }

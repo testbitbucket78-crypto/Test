@@ -138,7 +138,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
    
 } 
 checks=false
-bulk(e){
+bulk(e:any){
   if(e.target.checked==true){
     this.checks=true;
   }
@@ -192,8 +192,8 @@ opens(contents:any) {
 	openadd(contactadd:any) {
 		this.modalService.open(contactadd);
 	}
-	opencollum(collum:any) {
-		this.modalService.open(collum);
+	opencolumn(column:any) {
+		this.modalService.open(column);
 	}
 	
       getContact() {
@@ -219,11 +219,12 @@ console.log(this.contacts);
       // console.log(column)
     }
   }
-   opensidenav(employee: any){
-    document.getElementById("sidebar").style.width = "300px";
+  
+  opensidenav(employee: any){
+    document.getElementById("sidebar")!.style.width = "300px";
    }
    closesidenav(items: any){
-    document.getElementById ("sidebar").style.width = "0";
+    document.getElementById ("sidebar")!.style.width = "0";
    }
 
    checkAllCheckBox(event: any) {

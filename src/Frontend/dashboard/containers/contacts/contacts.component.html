@@ -17,7 +17,7 @@
 		<button class="btn  btn-block float-right" (click)="opens(contents)"><img src="assets/img/filter.png"> Filter</button>
 	</div>
 	<div class="col-xs-3 ml-1 mb-4 mt-4">
-		<button class="btn  btn-block float-right" (click)="opencollum(collum)"><img src="assets/img/column.png"> Collum Prefrences </button>
+		<button class="btn  btn-block float-right" (click)="opencolumn(column)"><img src="assets/img/column.png"> Column Prefrences </button>
 	</div>
 
 	<div class="col-xs-3 ml-1 mb-4 mt-4">
@@ -220,9 +220,9 @@
 </div>
 </ng-template>
 
-<ng-template #collum let-c="close" let-d="dismiss">
+<ng-template #column let-c="close" let-d="dismiss">
 	<div class="modal-header">
-		<h4 class="modal-title" id="modal-basic-title">Collum Prefrences</h4>
+		<h4 class="modal-title" id="modal-basic-title">Column Prefrences</h4>
 		<button
 			type="button"
 			class="btn-close"
