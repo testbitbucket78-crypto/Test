@@ -62,7 +62,7 @@
 		  </tr>
 		</thead>
 		<tbody>
-		  <tr *ngFor="let employee of contacts | orderBy: orderHeader: isDesOrder ; let i = index; let odd = odd" [ngClass]="odd ? 'odd_col': 'even_col'" (change)="hideDeleteBtn($event)"  (click) = "opensidenav(employee)">
+		  <tr *ngFor="let employee of contacts | orderBy: orderHeader: isDesOrder ; let i = index; let odd = odd" [ngClass]="odd ? 'odd_col': 'even_col'" (change)="hideDeleteBtn($event)"  (click) = "opensidenav(employee)" >
 			<td scope="row"><input type="checkbox" (change)="getCheckBoxEvent(employee.selectedValue,employee)" (change)="selCheckBox($event)" [checked]="checks" name="">
 				<img src="assets/img/chats.png"></td>
 			<td class="id">{{employee.customerId}}</td>
@@ -94,7 +94,7 @@
 		  </nav>
 	  </table>
 	  <div id= "sidebar" class="sidebar ">
-			<button type="button" class="btn5 btn-close" aria-label="Close" (click)="d('Cross click')"(click) = "closesidenav(items)">X</button>
+		<button type="button" class="btn5 btn-close" aria-label="Close" (click)="d('Cross click')" (click) = "closesidenav(items)">X</button>
 	
 			<div class="parent d-flex">
 				<img src="assets/img/my.png">

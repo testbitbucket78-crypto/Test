@@ -106,61 +106,62 @@
                 
              </div>
  
-          <div class="reply">
-            <textarea name="content" id="replyText" class="form-control" rows="4" cols="50"
-              placeholder="Type reply.." ngDefaultControl #input [(ngModel)]="message"></textarea>
-            <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)" (click)="addMessage()">ADD</button>
-            <div class="action">
-              <button type="button" class="btn" (click)="bold()"><b>B</b></button>
-              <button type="button" class="btn" (click)="itelic()"> <i>I</i></button>
-              <button type="button" class="btn">$</button>
-              <button type="button" class="btn">
-                < />
-              </button>
-              <button type="button" class="btn"><i class="fa fa-share"></i></button>
-              <button type="button" class="btn">
-                <>
-              </button>
+          
+        </div>
+        <div class="reply">
+          <textarea name="content" id="replyText" class="form-control" rows="4" cols="50"
+            placeholder="Type reply.." ngDefaultControl #input [(ngModel)]="message"></textarea>
+          <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)" (click)="addMessage()">ADD</button>
+          <div class="action">
+            <button type="button" class="btn" (click)="bold()"><b>B</b></button>
+            <button type="button" class="btn" (click)="itelic()"> <i>I</i></button>
+            <button type="button" class="btn">$</button>
+            <button type="button" class="btn">
+              < />
+            </button>
+            <button type="button" class="btn"><i class="fa fa-share"></i></button>
+            <button type="button" class="btn">
+              <>
+            </button>
 
-              <div class="dropdown">
-                
-                <button class="btn6 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                  data-bs-toggle="dropdown" aria-expanded="false">
-                 <img style="margin: 0 4px 2px;" src="/assets/img/add.png"> Add Action
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                  <li><a class="dropdown-item" (click)="addAction()">Add Action</a></li>
-                  <li class="nav-item dropend">
-                    <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
-                      aria-expanded="false">Assign Conversation</a>
-                   
-                    <ul class="dropdown-menu submenu">
-                      <p>Assign To</p>
-                      <li *ngFor="let t of teams" (click)="onSelected(t)"><a class="dropdown-item1">{{t}}</a></li>
-                    </ul>
-                  </li>
-                  <li><a class="dropdown-item">Add Contact Tag</a></li>
+            <div class="dropdown">
+              
+              <button class="btn6 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+               <img style="margin: 0 4px 2px;" src="/assets/img/add.png"> Add Action
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" (click)="addAction()">Add Action</a></li>
+                <li class="nav-item dropend">
+                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">Assign Conversation</a>
+                 
+                  <ul class="dropdown-menu submenu">
+                    <p>Assign To</p>
+                    <li *ngFor="let t of teams" (click)="onSelected(t)"><a class="dropdown-item1">{{t}}</a></li>
+                  </ul>
+                </li>
+                <li><a class="dropdown-item">Add Contact Tag</a></li>
 
-                  <li class="nav-item dropend">
-                    <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
-                      aria-expanded="false">Remove Tag</a>
-                    <ul class="dropdown-menu submenu">
-                 <li *ngFor="let tags of removeTag " (click)="onSelected(tags)"><a class="dropdown-item" ><div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                    
-                        <label class="form-check-label" for="flexCheckDefault">{{tags}}</label></div>
-                      </a>
-                    </li>
-                    </ul>
+                <li class="nav-item dropend">
+                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">Remove Tag</a>
+                  <ul class="dropdown-menu submenu">
+               <li *ngFor="let tags of removeTag " (click)="onSelected(tags)"><a class="dropdown-item" ><div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                  
+                      <label class="form-check-label" for="flexCheckDefault">{{tags}}</label></div>
+                    </a>
                   </li>
-                  <li><a class="dropdown-item">Trigger Flow</a></li>
-                  <li><a class="dropdown-item">Name Update</a></li>
-                  <li><a class="dropdown-item">Resolve Conversation</a></li>
-                </ul>
-              </div>
+                  </ul>
+                </li>
+                <li><a class="dropdown-item">Trigger Flow</a></li>
+                <li><a class="dropdown-item">Name Update</a></li>
+                <li><a class="dropdown-item">Resolve Conversation</a></li>
+              </ul>
             </div>
-
           </div>
+
         </div>
 
 
