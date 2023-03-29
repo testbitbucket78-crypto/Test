@@ -11,6 +11,8 @@ import { TablesModule } from 'Frontend/tables/tables.module';
 import { OrderModule } from 'ngx-order-pipe';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { JwPaginationModule } from 'jw-angular-pagination';
+
 
 
 /* Components */
@@ -30,6 +32,7 @@ import * as dashboardServices from './services';
         CommonModule,
         NgMultiSelectDropDownModule.forRoot(),
         OrderModule,
+        JwPaginationModule,
         FilterPipeModule,
         RouterModule,
         ReactiveFormsModule,

@@ -20,7 +20,7 @@
 		<div class="col-xs-3 ">
 			<button class="btn  btn-block " routerLink="/dashboard/addSmartReplies"><i class="fa fa-plus"></i> Add Smart Reply</button>
 		</div>
-		<div *ngFor="let card of Cards"class="card " (click) = "opensidenav(employee)">
+		<div *ngFor="let card of Cards"class="card " (click) = "opensidenav(items)">
 			<div class="card-body gy-2">
 				<h6 class="id">Id:{{ card.Id }}</h6>
 			  <h5 class="card-title">Gift Card Black Friday</h5>
@@ -39,7 +39,7 @@
 			</div>
 			</div>
 			<div id= "sidebar" class="sidebar " [(ngModel)]="items">
-				<button type="button" class="btn5 btn-close" aria-label="Close" (click) ="closesidenav(items)">X</button>
+				<button type="button" class="btn5 btn-close" aria-label="Close" (click)="d('Cross click')" (click) = "closesidenav(items)">X</button>
 			
 				<div class="collumn d-flex" >
 					<h6>Id:</h6>
@@ -85,58 +85,7 @@
 	</div>
 	
 	
-	<!-- <div class="box">
-	<div class="table-box">
-		 <div class="table-row1 table-head">
-			
-			<div class="table-cell1">
-				<p>ID <img src="assets/img/sort.png"></p>
-			</div>
-			<div class="table-cell2">
-				<p>Title <img src="assets/img/sort.png"></p>
-			</div>
-			<div class="table-cell3">
-				<p>Descrption<img src="assets/img/sort.png"></p>
-			</div>
-			<div class="table-cell4">
-				<p>Total Keywords <img src="assets/img/sort.png"></p>
-			</div>
-			<div class="table-cell4">
-				<p>Matching Criteria <img src="assets/img/sort.png"></p>
-			</div>
-			<div class="table-cell4">
-				<p>Reply Action <img src="assets/img/sort.png"></p>
-			</div>
-	
-	
-		</div> -->
 
-		<!-- <div class="table-row" *ngFor="let values of replies" (click)="getID(values.ID)">
-			
-			<div class="table-cell1">
-				<p>{{values.ID}}</p>
-			</div>
-			<div class="table-cell2">
-				<p>{{values.Title}}</p>
-			</div>
-			<div class="table-cell3">
-				<p>{{values.Description}}</p>
-			</div>
-			<div class="table-cell4">
-				<p>{{values.KeywordCount}}</p>
-			</div>
-			<div class="table-cell4">
-				<p>{{values.MatchingCriteria}}</p>
-			</div>
-			<div class="table-cell4">
-				<p>{{values.ActionCount}}</p>
-			</div>
 
-		</div>
-		 -->
-	<!-- </div>
-	</div> -->
-
-<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
- --></sb-layout-dashboard>
+ </sb-layout-dashboard>
 

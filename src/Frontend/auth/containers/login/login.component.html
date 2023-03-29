@@ -18,7 +18,7 @@
                         <div class="col-sm-6">
                             <label for="floatingInputGrid">Your Email</label>
 
-                            <input type="text-right mr-3" class="form-control"[ngClass]="{'is-invalid' :submitted && loginForm.controls.email_id.errors}"
+                            <input type="text-right mr-3" class="form-control" [ngClass]="{'is-invalid' :submitted && loginForm.controls.email_id.errors}"
                              placeholder="Email" aria-label="City" name="email_id" formControlName="email_id" id="email_id" required>
                         </div>
                         
@@ -49,7 +49,7 @@
                         ! Invalid Email Id
                       </div>
                       <div *ngIf= "submitted && loginForm.controls.password.errors" class="text-danger">
-                        ! Password does not match
+                        ! Password can not be empty
                       </div>
                     
                 </form>

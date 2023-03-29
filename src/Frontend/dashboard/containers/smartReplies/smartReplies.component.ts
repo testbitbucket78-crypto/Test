@@ -73,10 +73,6 @@ export class SmartRepliesComponent implements OnInit {
 		
 	   }
 	
-//    getID(data:any){
-// 	  sessionStorage.setItem("ID",data)
-//       console.log("getID")
-// 	  console.log(data)
-//    }
+
 	
 }

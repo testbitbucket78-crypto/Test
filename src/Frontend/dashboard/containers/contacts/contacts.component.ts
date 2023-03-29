@@ -27,6 +27,7 @@ export class ContactsComponent implements OnInit {
 	 productForm: FormGroup;  
    title = 'result-table';
    newContact:FormGroup;
+    pageOfItems: any;
 
   // multiselect 
     disabled = false;
@@ -44,16 +45,7 @@ export class ContactsComponent implements OnInit {
 	})
    orderHeader: String = '';
    isDesOrder: boolean = true;
-  //  searchInput: employee = { name: '', phone: null, email: '', gender: '', tag: ''};
-  //  employees: employee[] = [
-  //   {id: 1, name: 'John Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 23, gender: 'Male', tag: 'New Customer',},
-  //   {id: 2, name: 'Sumit Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 27, gender: 'Male', tag: 'New Customer',},
-  //   {id: 3, name: 'Rohit Sharma', phone: +919874563210, email: 'john@yahoo.in', age: 33, gender: 'Male', tag: 'New Customer',},
-  //   {id: 4, name: 'Rishab Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 17, gender: 'Male', tag: 'New Customer',},
-  //   {id: 5, name: 'Ashok Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 32, gender: 'Male', tag: 'New Customer',},
-  //   {id: 6, name: 'Manoj Applessed', phone: +919874563210, email: 'john@yahoo.in', age: 29, gender: 'Male', tag: 'New Customer',},
 
-  //  ]
    searchForm=new FormGroup({
 	Phone_number: new FormControl(''),
 	Name:new FormControl(''),
@@ -87,6 +79,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
       });
 	}
     ngOnInit() {
+
+      this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
       
       this.cities = [
         { item_id: 1, item_text: 'Name' },
@@ -146,6 +140,12 @@ bulk(e:any){
     this.checks=false;
   }
 }
+
+onChangePage(pageOfItems: any) {
+  // update current page of items
+  this.pageOfItems = pageOfItems;
+}
+
 
   // multiselect settings
   onItemSelect(item: any) {

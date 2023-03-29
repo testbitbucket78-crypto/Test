@@ -62,6 +62,7 @@
 		  </tr>
 		</thead>
 		<tbody>
+			
 		  <tr *ngFor="let employee of contacts | orderBy: orderHeader: isDesOrder ; let i = index; let odd = odd" [ngClass]="odd ? 'odd_col': 'even_col'" (change)="hideDeleteBtn($event)"  (click) = "opensidenav(employee)" >
 			<td scope="row"><input type="checkbox" (change)="getCheckBoxEvent(employee.selectedValue,employee)" (change)="selCheckBox($event)" [checked]="checks" name="">
 				<img src="assets/img/chats.png"></td>
@@ -75,7 +76,11 @@
 		  </tr>
 		
 		</tbody>
-		<nav aria-label="Page navigation example">
+
+		<div class="pagination">
+		<jw-pagination [items]="items" (changePage)="onChangePage($event)"></jw-pagination>
+	</div>
+		<!-- <nav aria-label="Page navigation example">
 			<ul class="pagination">
 			  <li class="page-item">
 				<a class="page-link" href="#" aria-label="Previous">
@@ -91,7 +96,7 @@
 				</a>
 			  </li>
 			</ul>
-		  </nav>
+		  </nav> -->
 	  </table>
 	  <div id= "sidebar" class="sidebar ">
 		<button type="button" class="btn5 btn-close" aria-label="Close" (click)="d('Cross click')" (click) = "closesidenav(items)">X</button>

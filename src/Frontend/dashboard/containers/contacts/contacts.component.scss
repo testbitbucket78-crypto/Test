@@ -541,3 +541,21 @@ opacity: 1;
     font-size: 11px;
     padding: 10px 0px 0px 10px;
 }
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+    float: right;
+    color: #6149CD;
+}
+.page-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 0.85;
+    color: #6149CD;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
