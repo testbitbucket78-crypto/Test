@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
             return
         }
         
-        alert("Success")
+        // alert("Success")
     }
 
     visible:boolean = true;

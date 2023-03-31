@@ -19,7 +19,7 @@ export class AuthService {
     register(data: authRegister): Observable<any> {
 
         let API_URL = 'https://authapi.sampanatechnologies.com/register';
-        return this.http.post(API_URL, data)
+        return this.http.post(API_URL, data,{headers:{'Content-Type':'application/json'}})
     }
     forgotpassword(data: authForgotPassword): Observable<any> {
         let API_URL = 'https://authapi.sampanatechnologies.com/forgotPassword';

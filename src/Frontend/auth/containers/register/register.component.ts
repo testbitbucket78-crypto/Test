@@ -22,7 +22,7 @@ export class RegisterComponent implements OnInit {
         registerForm = new FormGroup({
         name: new FormControl('', Validators.required),
         mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
-        Email: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+        email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
         password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
         confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
         
@@ -47,7 +47,7 @@ export class RegisterComponent implements OnInit {
             return
         }
         
-        alert("Success")
+        // alert("Success")
     }
 
     onVerification() {

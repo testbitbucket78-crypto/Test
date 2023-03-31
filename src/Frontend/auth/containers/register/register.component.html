@@ -19,7 +19,7 @@
                   formControlName="name" id="name">
               </div>
                    
-               <select class="select">
+               <!-- <select class="select">
                   <option selected>+91</option>
                   <option >+98</option>
                   <option >+1</option>
@@ -28,7 +28,7 @@
                   <option >+93</option>
                   <option >+213</option>
                   <option >+54</option>
-                  </select>
+                  </select> -->
               <div class=" col-sm-6">
                 <label for="floatingInputGrid">Phone Number</label>    
                 <input type="text-right " class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }" placeholder="Phone Number" aria-label="State"
@@ -41,8 +41,8 @@
               <div class="col-sm-6">
                 <label for="floatingInputGrid">Your Email</label>
 
-                <input formControlName="Email"  type="text-right mr-3" class="form-control"[ngClass]="{'is-invalid' :submitted && registerForm.controls.Email.errors}" placeholder="Email" aria-label="City" name="email_id"
-                  formControlName="Email" id="Email">
+                <input formControlName="email_id"  type="text-right mr-3" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.email_id.errors}" placeholder="Email" aria-label="City" name="email_id"
+                  formControlName="email_id" id="email_id">
                   <!-- <div class="form-text text-danger" *ngif="Email.errors?.['required']">
                     incorrect email id
                   </div> -->

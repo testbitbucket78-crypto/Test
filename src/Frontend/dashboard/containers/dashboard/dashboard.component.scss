@@ -108,7 +108,7 @@ h6,
     opacity: 1;
     margin: 25px 0px 0px 10px;
     width: 95%;
-    height: 300px;
+    height: 210px;
     border: none;
 }
 img {
@@ -119,6 +119,9 @@ img {
     border-radius: 17px;
     height: 45px;
 }
+.new{
+    margin: 0 0 0 100px;
+}
 .new img {
     vertical-align: middle;
     border-style: none;
@@ -127,17 +130,25 @@ img {
     border-radius: 17px;
     height: 45px;
 }
+.new .image img{ 
+        vertical-align: middle;
+        border-style: none;
+        margin: -70px 30px 0px -22px;
+        width: 45px;
+        border-radius: 17px;
+        height: 45px;
+    }
 .line {
     width: 0px;
     height: 35px;
     border: 1px solid #e1e1e1;
-    margin: -40px 0px 0px 300px;
+    margin: -40px 0px 0px 376px;
 }
 .line1 {
     width: 0px;
     height: 35px;
     border: 1px solid #e1e1e1;
-    margin: -40px 0px 0px 300px;
+    margin: -40px 0px 0px 376px;
 }
 
 .card9 {

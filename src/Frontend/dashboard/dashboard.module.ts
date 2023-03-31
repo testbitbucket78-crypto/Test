@@ -15,6 +15,7 @@ import { JwPaginationModule } from 'jw-angular-pagination';
 
 
 
+
 /* Components */
 import * as dashboardComponents from './components';
 
@@ -26,6 +27,8 @@ import * as dashboardGuards from './guards';
 
 /* Services */
 import * as dashboardServices from './services';
+import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
+
 
 @NgModule({
     imports: [
@@ -41,12 +44,10 @@ import * as dashboardServices from './services';
         NavigationModule,
         ChartsModule,
         TablesModule,
-        FilterPipeModule,
-        OrderModule,
         
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],
-    declarations: [...dashboardContainers.containers, ...dashboardComponents.components],
+    declarations: [...dashboardContainers.containers, ...dashboardComponents.components, SearchfilterPipe],
     exports: [...dashboardContainers.containers, ...dashboardComponents.components],
 })
 export class DashboardModule {}

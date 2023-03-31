@@ -43,7 +43,7 @@ export class DashboardService {
 
   }
   addContact(data: any) {
-    return this.http.post('https://contactapi.sampanatechnologies.com', data)
+    return this.http.post('https://contactapi.sampanatechnologies.com/contact', data)
   }
 
  
@@ -105,5 +105,23 @@ export class DashboardService {
   addNewReply(data:any){
     return this.http.post('https://smartapi.sampanatechnologies.com/addNewReply',data)
   }
+  blockContact(data: any) {
 
+    return this.http.post('https://contactapi.sampanatechnologies.com/blockedContact', data)
+  }
+  getContactById(customerId: any) {
+    //console.log(customerId)
+    const params = new HttpParams().set('customerId', customerId)
+    return this.http.get('https://contactapi.sampanatechnologies.com/getContactById', { params: params })
+  }
+
+  deletContactById(data: any) {
+    console.log("del API")
+    return this.http.post('https://contactapi.sampanatechnologies.com/deletContact', data)
+  }
+  editContact(data: any,customerId:any) {
+    console.log(customerId)
+    const params = new HttpParams().set('customerId', customerId)
+    return this.http.put('https://contactapi.sampanatechnologies.com/editContact',data,{ params: params })
+  }
 }
