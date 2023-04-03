@@ -2,70 +2,70 @@
   <sb-dashboard-head title="Dashboard" [hideBreadcrumbs]="true"></sb-dashboard-head>
   <!-- <sb-dashboard-card col-md-3s></sb-dashboard-card col-md-3s><sb-dashboard-charts></sb-dashboard-charts><sb-dashboard-tables></sb-dashboard-tables>
  -->
-  <div class="card9 float-right">
-    <div class="card-body">
-      <h4>Recent Conversation</h4>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>Bob Dean</h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
+ <div class="card9 float-right">
+  <div class="card-body">
+    <h4>Recent Conversation</h4>
+    <div class="row d-flex">
+      <img src="assets/img/my.png">
+      <div class="row2">
+        <div class="mt-5 ml-2">
+        <h5>Bob Dean</h5>
+        <h6>Lorium ipsum dolor...</h6>
+        </div>
         </div>
         <div class="ml-3">
-          <h4>9:41am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>David Harisian</h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>9:35am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>Jane Tony</h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>8:15am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>Andrew Green</h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>8:13am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>William Christopher </h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>9:41am</h4>
-        </div>
+        <h4>9:41am</h4>
       </div>
     </div>
+    <div class="row d-flex">
+      <img src="assets/img/my.png">
+      <div class="row2">
+        <div class="mt-5 ml-2">
+          <h5>David Harisian</h5>
+          <h6>Lorium ipsum dolor...</h6>
+        </div>
+      </div>
+      <div class="ml-3">
+        <h4>9:35am</h4>
+      </div>
+    </div>
+    <div class="row d-flex">
+      <img src="assets/img/my.png">
+      <div class="row2">
+        <div class="mt-5 ml-2">
+          <h5>Jane Tony</h5>
+          <h6>Lorium ipsum dolor...</h6>
+        </div>
+      </div>
+      <div class="ml-3">
+        <h4>8:15am</h4>
+      </div>
+    </div>
+    <div class="row d-flex">
+      <img src="assets/img/my.png">
+      <div class="row2">
+        <div class="mt-5 ml-2">
+          <h5>Andrew Green</h5>
+          <h6>Lorium ipsum dolor...</h6>
+        </div>
+      </div>
+      <div class="ml-3">
+        <h4>8:13am</h4>
+      </div>
+    </div>
+    <div class="row d-flex">
+      <img src="assets/img/my.png">
+      <div class="row2">
+        <div class="mt-5 ml-2">
+          <h5>William Christopher </h5>
+          <h6>Lorium ipsum dolor...</h6>
+        </div>
+      </div>
+      <div class="ml-3">
+        <h4>9:41am</h4>
+      </div>
+    </div>
+  </div>
   </div>
 
   <div class="card9">
@@ -78,12 +78,12 @@
         <h4>Subscriber</h4>
         <div *ngFor="let items of dashboard">
           <div class="card1 d-flex" *ngIf="(items.OptInStatus)=='Active Subscribers'">
-           
-              <div class="card-body mt-0 ml-1 ">
-                <h5>{{items.count}}</h5>
-                <h6>{{items.OptInStatus}}</h6>
-             
-             
+
+            <div class="card-body mt-0 ml-1 ">
+              <h5>{{items.count}}</h5>
+              <h6>{{items.OptInStatus}}</h6>
+
+
             </div>
           </div>
           <div class="card2 d-flex" *ngIf="(items.OptInStatus)=='Inactive Subscribers'">
@@ -91,14 +91,14 @@
               <h5>{{items.count}}</h5>
               <h6>{{items.OptInStatus}}</h6>
             </div>
-           
+
           </div>
           <div class="card3 d-flex" *ngIf="(items.OptInStatus)=='Total Subscriber'">
             <div class="card-body mt-0 ml-1">
               <h5>{{items.count}}</h5>
               <h6>{{items.OptInStatus}}</h6>
             </div>
-           
+
           </div>
         </div>
       </div>
@@ -113,21 +113,21 @@
               <h5>{{items.count}}</h5>
               <h6>{{items.interaction_status}}</h6>
             </div>
-            
+
           </div>
           <div class="card2 d-flex" *ngIf="(items.interaction_status)=='Closed Interactions'">
             <div class="card-body mt-0 ml-1">
               <h5>{{items.count}}</h5>
               <h6>{{items.interaction_status}}</h6>
             </div>
-          
+
           </div>
           <div class="card3 d-flex" *ngIf="(items.interaction_status)=='Total Interactions'">
             <div class="card-body mt-0 ml-1">
               <h5>{{items.count}}</h5>
               <h6>{{items.interaction_status}}</h6>
             </div>
-           
+
           </div>
         </div>
       </div>

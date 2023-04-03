@@ -12,24 +12,24 @@ export class AuthService {
     }
 
     login(data: Auth): Observable<any> {
-        let API_URL = 'http://65.0.219.162:3003/login';
+        let API_URL = 'https://authapi.sampanatechnologies.com/login';
         return this.http.post(API_URL, data)
 
     }
-    register(data: authRegister): Observable<any> {
-        let API_URL = 'http://65.0.219.162:3003/register';
-        return this.http.post(API_URL, data)
+    register(data: any): Observable<any> {
+        let API_URL = 'https://authapi.sampanatechnologies.com/register';
+        return this.http.post(API_URL, data,{headers:{'Content-Type':'application/json'}})
     }
     forgotpassword(data: authForgotPassword): Observable<any> {
-        let API_URL = 'http://65.0.219.162:3003/forgotPassword';
+        let API_URL = 'https://authapi.sampanatechnologies.com/forgotPassword';
         return this.http.post(API_URL, data)
     }
     sendOtp(data:authSendOtp){
-        let API_URL = 'http://65.0.219.162:3003/sendOtp';
+        let API_URL = 'https://authapi.sampanatechnologies.com/sendOtp';
         return this.http.post(API_URL, data)
     }
     verifyOtp(data:authVerifyOtp){
-        let API_URL = 'http://65.0.219.162:3003/verifyOtp';
+        let API_URL = 'https://authapi.sampanatechnologies.com/verifyOtp';
        
         return this.http.post(API_URL, data)
     }

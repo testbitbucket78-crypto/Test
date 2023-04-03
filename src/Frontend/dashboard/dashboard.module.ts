@@ -10,7 +10,7 @@ import { AppCommonModule } from 'Frontend/app-common/app-common.module';
 import { NavigationModule } from 'Frontend/navigation/navigation.module';
 import { ChartsModule } from 'Frontend/charts/charts.module';
 import { TablesModule } from 'Frontend/tables/tables.module';
-
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 /* Components */
 import * as dashboardComponents from './components';
 
@@ -35,7 +35,7 @@ import * as dashboardServices from './services';
         TablesModule,
         FilterPipeModule,
         OrderModule,
-        
+        NgMultiSelectDropDownModule.forRoot(),
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],
     declarations: [...dashboardContainers.containers, ...dashboardComponents.components],

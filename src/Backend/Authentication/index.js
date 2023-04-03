@@ -92,7 +92,7 @@ const get=(req,res)=>{
 //post api for register
 
 const register = function (req, res) {
-    name = req.body.name
+     name = req.body.name
     mobile_number = req.body.mobile_number
     email_id = req.body.email_id
     password = req.body.password

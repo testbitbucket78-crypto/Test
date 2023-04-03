@@ -7,9 +7,12 @@ const { Parser } = require('json2csv');
 const cors = require('cors');
 const fs = require("fs");
 const path = require("path");
+const { json } = require("stream/consumers");
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
 
 app.get('/', function (req, res) {
 
@@ -19,6 +22,8 @@ app.get('/', function (req, res) {
 
 
 app.post('/contact', function (req, res) {
+  console.log("contact")
+  console.log(req.body)
   Name = req.body.Name
   Phone_number = req.body.Phone_number
   emailId = req.body.emailId
@@ -27,10 +32,24 @@ app.post('/contact', function (req, res) {
   var status = req.body.status
   facebookId = req.body.facebookId
   InstagramId = req.body.InstagramId
-  var tagList = tag.join();
-  var statusList = status.join();
+  //var tagList=JSON.stringify(req.body.tag)
+  var tagList = [];
 
-  var values = [[Name, Phone_number, emailId, age, tagList, statusList, facebookId, InstagramId]];
+  for (var i = 0; i < tag.length; i++) {
+    tagList.push(tag[i].item_text)
+  }
+  var tagListJoin = tagList.join();
+  console.log(tagListJoin)
+  var statusList = [];
+
+  for (var i = 0; i < status.length; i++) {
+    statusList.push(status[i].item_text)
+  }
+  var statusListJoin = statusList.join();
+  console.log(statusListJoin)
+
+
+  var values = [[Name, Phone_number, emailId, age, statusListJoin, tagListJoin, facebookId, InstagramId]];
 
   db.runQuery(req, res, val.sql, [values])
 
@@ -91,10 +110,11 @@ app.get('/getCheckedExportContact', (req, res) => {
 
 })
 
-app.delete('/deletContact', (req, res) => {
+app.post('/deletContact', (req, res) => {
+
   var Ids = req.body.customerId;
-  console.log(Ids)
-  db.runQuery(req, res, val.delet, [Ids])
+  console.log(req.body.customerId)
+  db.runQuery(req, res, val.delet, [req.body.customerId])
 })
 
 app.get('/getContactById', (req, res) => {
@@ -102,30 +122,33 @@ app.get('/getContactById', (req, res) => {
 })
 
 app.put('/editContact', (req, res) => {
-  customerId = req.body.customerId
-  Phone_number = req.body.Phone_number
-  uid = req.body.uid
-  sp_account_id = req.body.sp_account_id
-  var status = req.body.status
-  Name = req.body.Name
-  age = req.body.age
-  sex = req.body.sex
-  emailId = req.body.emailId
-  address = req.body.address
-  pincode = req.body.pincode
-  city = req.body.city
-  state = req.body.state
-  Country = req.body.Country
-  OptInStatus = req.body.OptInStatus
-  var tag = req.body.tag
-  facebookId = req.body.facebookId
-  InstagramId = req.body.InstagramId
+  const id = req.query.customerId;
+  const dataToUpdate = req.body;
+  console.log(dataToUpdate)
+  let query = val.neweditContact;
+  const values = [];
+  Object.keys(dataToUpdate).forEach(key => {
 
-  var tagList = tag.join();
-  var statusList = status.join();
+    query += `${key} = ?, `;
 
-
-  db.runQuery(req, res, val.editContact, [Phone_number, uid, sp_account_id, statusList, Name, age, sex, emailId, address, pincode, city, state, Country, OptInStatus, tagList, facebookId, InstagramId, customerId])
+    if (Array.isArray(dataToUpdate[key])) {
+      var list = dataToUpdate[key];
+      ListofArrays = [];
+      for (var i = 0; i < list.length; i++) {
+        ListofArrays.push(list[i].item_text);
+      }
+      joinList=ListofArrays.join()
+      values.push(joinList);
+    } else {
+      values.push(dataToUpdate[key]);
+    }
+  });
+  query = query.slice(0, -2);
+  //console.log(query)
+  query += ` WHERE customerId = ?`;
+  values.push(id);
+  console.log(values)
+  db.runQuery(req, res, query, values)
 })
 
 
@@ -211,8 +234,8 @@ app.post('/verifyData', (req, res) => {
 
 
 app.get('/download', (req, res) => {
-  var file = path.join(__dirname,'/sample_file.csv')
- 
+  var file = path.join(__dirname, '/sample_file.csv')
+
 
   res.download(file)
 })
@@ -233,9 +256,10 @@ app.get('/search', (req, res) => {
   db.runQuery(req, res, val.searchQuery, [req.query.Phone_number, req.query.Name, req.query.emailId])
 })
 
-app.post('/blockedContact',(req,res)=>{
-  db.runQuery(req,res,val.isBlockedQuery,[req.body.isBlocked,req.body.customerId])
+app.post('/blockedContact', (req, res) => {
+  console.log(req.body.customerId)
+  db.runQuery(req, res, val.isBlockedQuery, [req.body.customerId])
 })
-//module.exports = { updateData, identifierData }
+
 app.listen(3002);
 

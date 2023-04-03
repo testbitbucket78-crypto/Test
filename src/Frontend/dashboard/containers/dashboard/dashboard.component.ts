@@ -12,12 +12,14 @@ export class DashboardComponent implements OnInit {
     dashboard: any;
     campaigns: any;
     agents: any;
+    recentConversation:any;
     constructor(private apiService: DashboardService) { }
     ngOnInit() {
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
         this.getdashboardCampaigns();
         this.getdashboardAgents();
+        this. getRecentConversation();
     }
     
     getDashboardSubscribers(){
@@ -43,5 +45,12 @@ export class DashboardComponent implements OnInit {
             this.agents = data;
             console.log(this.agents);
         });
+    }
+    getRecentConversation(){
+        this.apiService.dashboardRecentConversation().subscribe(data=>{
+            this.recentConversation=data;
+            console.log(this.recentConversation)
+            console.log("recentConversation")
+        })
     }
 }
