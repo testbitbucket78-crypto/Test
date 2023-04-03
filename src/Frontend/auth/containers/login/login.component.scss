@@ -1,31 +1,33 @@
 @import 'styles/variables.scss';
 .container{
     background-color: white;
-    height: 650px;
+    height: 100vh;
 }
 
 .btn:not(:disabled):not(.disabled) {
     cursor: pointer;
     width: 220px;
-    border-radius: 15px;
-    margin: 20px 0px 0px 135px;
+    border-radius: 22px;
+    margin: 20px 0px 0px 206px;
     background-image: linear-gradient(to right, #F9B035, #F98C4E, #F96767);
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     font-weight: bold;
     font-size: 16px;
     color: #000000;
+    box-shadow: 4px 23px 57px #6149cd42;
+    opacity: 1;
 
 }
 .float-left {
     float: left !important;
     margin: 0px 120px 0px -25px;
     width: 570px;
-    height: 657px;
+    height: 100vh;
 }
     label {
         display: inline-block;
         margin: 30px 0px 0px 0px;
-        font-family: manrope;
+        font-family: 'Montserrat', sans-serif;
         font-size: 15px;
         color: #000000;
         line-height: 25px;
@@ -33,7 +35,7 @@
     }
 .custom-control-label{
     margin: 13px 0px 0px -25px;
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     font-size: 14px;
     color: #7A86A1;
     line-height: 23px;
@@ -53,7 +55,7 @@
     border-radius: 15px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     margin: 10px 0px 0px 0px;
-    font-family: Manrope-Regular;
+    font-family: 'Montserrat', sans-serif;
 }
 .log h3 .b{
     margin: 20px 0px 0px 0px;
@@ -62,7 +64,7 @@
     margin: 150px 0px 0px 11px;
     font-size: 30px;
     color: #000000;
-    font-family: manrope;
+    font-family: 'Montserrat', sans-serif;
     font-weight: bold !important;
     line-height: 40px;
 }
@@ -70,21 +72,21 @@ small, .small {
     font-size: 14px;
     font-weight: bold;
     margin: 0px 120px 0px 0px;
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     color: #6149CD;
     line-height: 23px;
 }
 .ml-1, .mx-1 {
     font-size: 14px;
     margin-left: 0.25rem !important;
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     font-weight: bold;
     color: #6149CD;
     line-height: 30px;
 }
 a {
     font-size: 14px;
-    font-family: Manrope;
+    font-family: 'Montserrat', sans-serif;
     color: #7A86A1;
     line-height: 30px;
 }
@@ -96,4 +98,18 @@ a {
     right: 50px;
     top: 70px;
     cursor: pointer;
+}
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+.form-control.is-invalid {
+    border: 1px solid red;
+    background: padding-box;
+}
+.text-danger {
+    color: #dc3545 !important;
+    font-size: 11px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
 }

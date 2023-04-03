@@ -3,6 +3,7 @@ import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { FormGroup ,FormControl} from '@angular/forms';
 
+
 @Component({
     selector: 'sb-verification',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -10,6 +11,7 @@ import { FormGroup ,FormControl} from '@angular/forms';
     styleUrls: ['verification.component.scss'],
 })
 export class VerificationComponent implements OnInit {
+
 
     otpForm = new FormGroup({
         otp: new FormControl('')

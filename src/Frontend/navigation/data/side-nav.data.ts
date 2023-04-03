@@ -13,11 +13,12 @@ export const sideNavSections: SideNavSection[] = [
 
 export const sideNavItems: SideNavItems = {
     dashboard: {
-        icon: 'tachometer-alt',
+        src: ' assets/img/sort.png',
         text: 'Dashboard',
         link: '/dashboard',
     },
     automation: {
+        icon: 'tachometer-alt',
         text: 'Automation',
         submenu: [
         {

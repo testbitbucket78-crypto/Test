@@ -16,8 +16,9 @@ export class AddSmartRepliesComponent implements OnInit {
 	stepper: any;
 	data: any;
 	val: any;
+	keywordtxt: any;
 	selectedTeam: any;
-
+	selectedDropDown :[] = []; 
     newSmartReply:any;
 	newReply=new FormGroup({
 		Title: new FormControl('',Validators.required),
@@ -25,6 +26,27 @@ export class AddSmartRepliesComponent implements OnInit {
 	
 	})
 	model: any;
+
+	teams: string[] =
+		[
+			"James Whatson", "David Harrison", "Jane Cooper", "Charles John"
+		];
+
+	removeTag: string[] =
+		[
+			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
+		];
+	message = '';	
+	messages:any [] = [];
+	
+	action = '';
+	actions:any [] = [];
+	
+	keyword: string = '';
+	keywords: string[] = [];
+	
+	editedText:string ='';
+	isEditable: boolean = false;
 	
 	
 	constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService:DashboardService ) {
@@ -41,9 +63,54 @@ export class AddSmartRepliesComponent implements OnInit {
 	
 	}
 
+	addKeyword() {
+		if (this.keyword !== '') {
+			this.keywords.push(this.keyword);
+			this.keyword = '';
+		}
+	}
+
+	removeKeyword(keyword: string) {
+		this.keywords = this.keywords.filter(k => k !== keyword);
+	}
+
+
 	addqty(val: any) {
 		this.data = val;
+		this.keywordtxt= val;
+
 	}
+
+	addAction() {
+		this.actions.push(this.action);
+		this.action= '';
+	}
+
+	removeAction(index: number) {
+		this.actions.splice(index, 1);
+	}
+
+	addMessage() {
+			 
+			this.messages.push(this.message);
+			this.message = '';
+			
+	}
+	removeMessage(index:number) {
+		this.messages.splice(index, 1);
+	}
+
+
+
+	toggleEditable(index: number) {
+		this.isEditable = !this.isEditable;
+	}
+	onEdit(text:string) {
+		this.editedText = text;
+		
+	}
+
+
     bold() {
 		(<HTMLInputElement>document.getElementById("replyText")).style.fontWeight = "bold";
 	}
@@ -65,8 +132,9 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.file = event.target.files[0];
 		console.log('file', this.file);
 	}
-	onSelected(value: string) {
+	onSelected(value: any) {
 		this.selectedTeam = value;
+		this.selectedDropDown = value;
 	}
 	getNewSmartReplyData(){
 		

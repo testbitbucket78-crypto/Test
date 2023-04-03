@@ -4,9 +4,8 @@
 }
 h1{
     margin-top: 1.5rem !important;
-    font-family: Manrope;
-    font-weight: bold;
-    font-size: 30px;
+    font-weight: 700;
+    font-size: 22px;
     color: #000000;
 	margin: 0px 0px 10px 20px;
 }
@@ -58,7 +57,6 @@ h1{
 }
 .box h5{
     color: #000000;
-    font-family: Manrope;
     font-size: 20px;
     font-weight: bold;
     padding: 35px 0px 0px 35px;
@@ -101,11 +99,11 @@ h1{
 }
 .action{
     position: absolute;
-    margin: -40px 0px 0px 1px;
+    margin: -40px 0px 0px 40px;
 }
 .box1{
     width: 75%;
-    height: 400px;
+    height: 100%;
     background-color: #FFF4F2;
     border-radius: 30px;
     margin: 30px 0px 0px 12%;
@@ -113,13 +111,11 @@ h1{
 }
 .box1 h5{
     color: #000000;
-    font-family: Manrope;
     font-size: 21px;
     font-weight: bold;
     padding: 25px 0px 0px 25px;
 }
 .box1 span{
-    font-family: Manrope;
     font-size: 16px;
     color: #7A86A1;
     padding: 10px 0px 0px 35px;
@@ -128,13 +124,44 @@ h1{
     background-color: #EBEBEB;
     width: 100%;
     height: 2px;
-    margin: 23% 0px 0px 0px;
+    margin: 20% 0px 0px 0px;
+}
+
+.keywords {
+
+
+width: fit-content;
+height: 32px;
+margin: 5px 12px;
+background: #FFFFFF 0% 0% no-repeat padding-box;
+border-radius: 12px;
+opacity: 1;
+}
+
+
+.row .keywords .keytext {
+width: auto;
+height: auto;
+font-weight: 400;
+padding: 0px 0 0 20px;
+margin: 5px 15px;
+text-align: left;
+letter-spacing: 0px;
+color: #000000;
+opacity: 1;
+}
+
+.row .keywords .keytext .rmv-btn {
+  border: none;
+  background-color: #ffffff;
+  outline: none;
+  padding: 0 0 0 30px;
+  color: #7a86a1;
 }
 
 .form-check-label {
     margin-bottom: 0;
     font-size: 19px;
-    font-family: Manrope;
     color: #000000;
 }
 .form-check {
@@ -151,7 +178,6 @@ h1{
 }
 h4{
     color: #000000;
-    font-family: Manrope;
     font-size: 20px;
     font-weight: bold;
     padding: 13px 0px 0px 30px;
@@ -163,13 +189,62 @@ h4{
     background-color: #FFF4F2;
     border-radius: 30px;
     margin: 30px 0px 0px 20%;
+    overflow: hidden;
 }
+
+.box7child {
+    max-height: 78%;
+    overflow-y: scroll;
+}
+
+.msg-del-btn {
+    right: 29%;
+    top: 53%;
+    float: right;
+    margin: -55px -84px 0 0px;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    background-color: #fff4f2;
+
+
+}
+
+.msg-edit-btn {
+    right: 33%;
+    top: 53%;
+    float: right;
+    margin: -54px -51px 0 13px;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    background-color: #fff4f2;
+    
+}
+
+.reply {
+    overflow: hidden;
+    margin: -96px 0px 0px 208px;
+    width: 55%;
+    height: 95px;
+    padding: 0px 0px 47px 12px;
+    color: #7A86A1;
+    font-family: "Montserrat", sans-serif;
+
+}
+
+#replyText {
+    overflow: hidden;
+    width: 95%;
+    height: 96px;
+    font-family: 'Montserrat', sans-serif;
+}
+
 .box7 label p{
     width: 100%;
     height: 100%;
     padding: 0px 0px 47px 12px;
     color: #000000;
-    font-family: Manrope;
     border: none;
     margin: -2px 0px 0px -10px;
     text-align: justify;
@@ -179,8 +254,8 @@ h4{
     width: 60%;
     padding: 0px 0px 47px 12px;
     color: #6149CD;
-    font-size: 16px;
-    font-family: Manrope;
+    font-size: 15px;
+    font-weight: 600;
     border: 1px solid #695F9724;
     border-radius: 20px;
     margin: 20px 0px 0px 19px;
@@ -196,11 +271,9 @@ h4{
     margin: 20px;
     color: #6149CD;
     padding: 0px 0px 0px 10px;
-    font-family: Manrope;
 }
 .box7 .action1 p{
     
-        font-family: Manrope;
         color: #000000;
         font-weight: bold;
     }
@@ -210,9 +283,9 @@ h4{
     height: 95px;
     padding: 0px 0px 47px 12px;
     color: #7A86A1;
-    font-family: Manrope;
 }
-.box7 .btn4{
+
+.btn4{
     position: absolute;
     background-color: #6149CD;
     color: #ffffff;
@@ -220,7 +293,6 @@ h4{
     border-radius: 20px;
     width: 75px;
     height: 32px;
-    font-family: Manrope;
     text-align: center;
     margin: -78px 0px 0px 35%;
 }
@@ -231,6 +303,7 @@ h4{
     height: 37px;
     margin: -43px 0px 0px 13px;
 }
+
 
 
 .form-floating{
@@ -246,7 +319,6 @@ h4{
 .box2 .btn7{
         width: 70px;
         height: auto;
-        font-family: Manrope;
         background-color: #6149CD;
         border: none;
         color: #ffffff;
@@ -261,6 +333,8 @@ h4{
         background-color: #FFFFFF;
         color: #6149CD;
         border-radius: 17px;
+        font-size: 14px;
+        font-weight: 600;
         border: 1px solid #EBEBEB;
         width: 122px;
     }
@@ -274,6 +348,7 @@ h4{
     padding: 0.25rem 1.5rem;
     clear: both;
     font-weight: 400;
+    font-size: 14px;
     text-align: inherit;
     white-space: nowrap;
     background-color: transparent;
@@ -297,7 +372,10 @@ h4{
     padding: 0.5rem 1rem;
     color: #6149CD;
     margin: 0px 0px 0px 8px;
+    font-weight: 400;
+    font-size: 14px;
 }
+
 .dropdown-menu .submenu
  {
     display: none;
@@ -326,7 +404,6 @@ border-radius: 20px;
  .dropdown-menu .submenu .form-check label{
     color: #000000;
     font-size: 16px;
-    font-family: Manrope;
     margin: 0px;
     border: none;
 }

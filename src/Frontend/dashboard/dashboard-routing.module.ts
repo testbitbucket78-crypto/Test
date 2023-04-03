@@ -155,6 +155,24 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.SmartRepliesComponent,
     },
+    {
+        path: 'addSmartReplies',
+        data: {
+            title: 'Add Smart Replies',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Add Smart Replies',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.AddSmartRepliesComponent,
+    },
       {
         path: 'replyMaterial',
         data: {
@@ -473,6 +491,7 @@ export const ROUTES: Routes = [
                     link: '/dashboard',
                 },
                 {
+
                     text: 'Add Replies',
                     active: true,
                 },
@@ -499,6 +518,7 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.SidenavReplyComponent,
     },
+    
 
 ];
 

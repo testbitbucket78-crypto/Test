@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
+import { Cards } from './Cards';
 declare var $: any;
 
 @Component({
@@ -11,6 +12,15 @@ declare var $: any;
 })
 export class SmartRepliesComponent implements OnInit {
 
+	data: any;
+	items:any;
+  
+	mydate:any;
+	active = 1;
+
+	Cards: Cards[] = [
+		new Cards(1107),new Cards(1108),new Cards(1109),new Cards(1110),new Cards(1111),new Cards(1112),new Cards(1113)
+	]
 	replies: any;
 	searchForm = new FormGroup({
 		ID: new FormControl('')
@@ -23,6 +33,10 @@ export class SmartRepliesComponent implements OnInit {
 	}
 	ngOnInit() {
 		this.getReplies()
+
+		console.log(sessionStorage.getItem("ID"))
+		//sessionStorage.removeItem("ID")
+		this.getRepliesByID();
 		
 	}
 
@@ -32,6 +46,12 @@ export class SmartRepliesComponent implements OnInit {
 			console.log(this.replies)
 		})
 	}
+	opensidenav(employee: any){
+		document.getElementById("sidebar")!.style.width = "300px";
+	   }
+	   closesidenav(items: any){
+		document.getElementById ("sidebar")!.style.width = "0";
+	   }
 
 	search() {
 		console.log("this.searchForm.value.ID " + this.searchForm.value.ID)
@@ -40,12 +60,19 @@ export class SmartRepliesComponent implements OnInit {
 			console.log("data " + this.replies)
 		})
 	}
-
+	getRepliesByID() {
+		var value=sessionStorage.getItem("ID")
+		 this.apiService.sideNav(value).subscribe((responce => {
+		   this.data = responce;
+		   this.items=this.data[0]
+		   
+		   console.log(this.data)
+		   
+		   sessionStorage.removeItem("ID")
+		 }))
+		
+	   }
 	
-   getID(data:any){
-	  sessionStorage.setItem("ID",data)
-      console.log("getID")
-	  console.log(data)
-   }
+
 	
 }
