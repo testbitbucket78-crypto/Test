@@ -1,0 +1,576 @@
+<sb-layout-dashboard>
+	<sb-dashboard-head title="Contacts" [hideBreadcrumbs]="true"></sb-dashboard-head>
+	<div class="row">
+		<div class="col-md-5 mb-4 mt-4">
+			<div class="col-md-12 mb-4">
+				<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-9"
+					[formGroup]="searchForm" (ngSubmit)="search()">
+					<div class="input-group gf ">
+
+						<input class="form-control" type="text"  [(ngModel)]="searchText" placeholder="Search" aria-label="Search"
+							aria-describedby="basic-addon2" name="Name" id="Name" formControlName="Name" />
+						<img src="assets/img/search.png">
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<div class="col-xs-3 ml-1 mb-4 mt-4">
+			<button class="btn  btn-block float-right" (click)="opens(contents)"><img src="assets/img/filter.png">
+				Filter</button>
+		</div>
+		<div class="col-xs-3 ml-1 mb-4 mt-4">
+			<button class="btn  btn-block float-right" (click)="opencolumn(column)"><img src="assets/img/column.png">
+				Column Prefrences </button>
+		</div>
+
+		<div class="col-xs-3 ml-1 mb-4 mt-4">
+			<button class="btn  float-right" (click)="open(content)"><img src="assets/img/export.png"> Export </button>
+		</div>
+		<div class="col-xs-3 ml-1 mb-4 mt-4">
+			<button class="btn  btn-block float-right" routerLink="/dashboard/import"><img src="assets/img/import.png">
+				Import</button>
+		</div>
+		<div class="col-xs-3 ml-1 mb-4 mt-4">
+			<button class="btn  btn-block float-right" (click)="openadd(contactadd)"><i class="fa fa-plus"></i> Add
+				Contact</button>
+		</div>
+
+
+	</div>
+	<div class=" delete col-xs-3 ml-1 mb-4 mt-4 ">
+		<button class="btn row-delete-btn" (click)="deleteRow(1)"><img src="assets/img/delete.png"></button>
+	</div>
+	<!-- <form [formGroup]="productForm">
+	<ng-multiselect-dropdown
+	[settings]="dropdownSettings"
+	[data]="cities"
+	[placeholder]="'Select City'"    
+	name="city"
+	formControlName="city"
+	[disabled]="disabled"
+	(onSelect)="onItemSelect($event)">
+	</ng-multiselect-dropdown>
+</form> -->
+
+	<div class="box">
+		<table class="table">
+			<thead>
+				<tr class="table-box">
+					<th scope="col"><input type="checkbox" (change)="bulk($event)" (change)="hideDeleteBtn($event)"
+							name=""></th>
+					<th scope="col" class="id" (click)="sort('id')">ID <img src="assets/img/sort.png"></th>
+					<th scope="col" class="name" (click)="sort('name')">Name <img src="assets/img/sort.png"></th>
+					<th scope="col" class="phone" (click)="sort('phone')">Phone Number <img src="assets/img/sort.png">
+					</th>
+					<th scope="col" class="email" (click)="sort('email')">Email <img src="assets/img/sort.png"></th>
+					<th scope="col" class="age" (click)="sort('age')">Age <img src="assets/img/sort.png"></th>
+					<th scope="col" class="gender" (click)="sort('gender')">Gender <img src="assets/img/sort.png"></th>
+					<th scope="col" class="tag" (click)="sort('tag')">Tag <img src="assets/img/sort.png"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let contact of contacts | searchfilter: searchText | orderBy: orderHeader: isDesOrder ; let i = index; let odd = odd"
+					[ngClass]="odd ? 'odd_col': 'even_col'" (change)="hideDeleteBtn($event)"
+					(click)="opensidenav(contact)" (click)="getContactById(contact)">
+					<td scope="row"><input type="checkbox" [(ngModel)]="contact.selectedValue " (change)="getCheckBoxEvent(contact.selectedValue,contact)"
+							(change)="selCheckBox($event)" [checked]="checks" name="">
+						<img src="assets/img/chats.png">
+					</td>
+					<td class="id">{{contact.customerId}}</td>
+					<td class="name">{{contact.Name}}</td>
+					<td class="phone">{{contact.Phone_number}}</td>
+					<td class="email">{{contact.emailId}}</td>
+					<td class="age">{{contact.age}}</td>
+					<td class="gender">{{contact.sex}}</td>
+					<td class="tag">{{contact.tag}}</td>
+				</tr>
+
+			</tbody>
+			<div class="pagination">
+				<jw-pagination [items]="items" (changePage)="onChangePage($event)"></jw-pagination>
+			</div>
+		</table>
+
+		<div id="sidebar" class="sidebar ">
+			<button type="button" class="btn5 btn-close" aria-label="Close" (click)="d('Cross click')"
+				(click)="closesidenav(items)">X</button>
+			<div *ngFor="let items of customerData ">
+				<div class="parent d-flex">
+					<img src="assets/img/my.png">
+					<div class="child">
+						<h4>{{items.Name}}</h4>
+						<div class="child1 d-flex">
+							<h5>Customer Id:</h5>
+							<h6>{{items.customerId}}</h6>
+						</div>
+						<div class="child1 d-flex">
+							<h5>Created Date:</h5>
+							<h6>{{items.created_at | date:'MMM d y, h:mm a'}}</h6>
+						</div>
+						<div class="child1 d-flex">
+							<h5>Last Updated:</h5>
+							<h6>{{items.updated_at | date: 'MMM d y, h:mm a'}}</h6>
+						</div>
+					</div>
+				</div>
+				<div class="parent d-flex">
+					<div class="child2">
+						<h5>Email Id</h5>
+						<h6>{{items.emailId}}</h6>
+					</div>
+					<div class="child2">
+						<h5>Phone Number</h5>
+						<h6>{{items.Phone_number}}</h6>
+					</div>
+				</div>
+				<div class="parent d-flex">
+					<div class="child2">
+						<h5>Message Opt-in</h5>
+						<h6>{{items.OptInStatus}}</h6>
+					</div>
+					<div class="child3">
+						<h5>Contact Owner</h5>
+						<h6>James Watson</h6>
+					</div>
+				</div>
+				<div class="child5">
+					<h5>Tag</h5>
+					<div class="child4 d-flex">
+						<h6>{{items.tag}}</h6>
+						<div class="line"></div>
+						<!-- <h6>UnPaid</h6> -->
+					</div>
+				</div>
+				<h4>Custom Fields</h4>
+				<div class="child5">
+					<h5>Lead Status</h5>
+					<div class="child4 d-flex">
+						<h6>Paid</h6>
+						<div class="line"></div>
+						<h6>UnPaid</h6>
+					</div>
+				</div>
+				<div class="child2">
+					<h5>Instagram Id</h5>
+					<h6>{{items.InstagramId}}</h6>
+				</div>
+				<div class="parent d-flex">
+					<div class="child2">
+						<h5>Gender</h5>
+						<h6>{{items.sex}}</h6>
+					</div>
+					<div class="child3">
+						<h5>Age</h5>
+						<h6>{{items.age}}</h6>
+					</div>
+				</div>
+				<div class="parent d-flex">
+					<div class="child2">
+						<h5>Country</h5>
+						<h6>{{items.Country}}</h6>
+					</div>
+					<div class="child3">
+						<h5>Default Channel</h5>
+						<h6>{{items.channel}}</h6>
+					</div>
+				</div>
+				<div class="child2">
+					<h5>Facebook Id</h5>
+					<h6>{{items.facebookId}}</h6>
+				</div>
+				<div class="child2">
+					<h5>Emergency Contact No.</h5>
+					<h6>1998</h6>
+				</div>
+				<div class="button d-flex">
+					<button class="btn6  btn-block " (click)="deletContactByID(items)"><img src="assets/img/delete.png">
+					</button>
+					<button class="btn6  btn-block " (click)="openedit(contactedit)"><img src="assets/img/edit.png">
+					</button>
+					<button class="btn6  btn-block " (click)="blockContactByID(items)">Block </button>
+					<button class="btn7  btn-block "><img src="assets/img/Setting.png"> </button>
+				</div>
+				<div class="bbox">
+					<h6>To add/edit any field according to your business from the settings</h6>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<ng-template #content let-c="close" let-d="dismiss">
+		<div class="dd"><img src="assets/img/export1.png">
+			<div class="modal-header">
+
+				<h4 class="modal-title" id="modal-basic-title">Export</h4>
+
+			</div>
+			<div class="modal-body">
+				<p>Your Selected contacts will exported and send on your registed email
+				</p>
+				<div class="ss">
+					<img src="assets/img/your.png">
+				</div>
+			</div>
+			<div class="modal-footer popfooter row text">
+				<div class="col-md-3 text right">
+					<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Cancel</button>
+				</div>
+				<div class="col-md-5">
+					<button type="button" class="btn1 btn-outline-dark "
+						(click)="c(exportCheckedContact())">Export</button>
+				</div>
+			</div>
+		</div>
+	</ng-template>
+
+	<ng-template #column let-c="close" let-d="dismiss">
+		<div class="modal-header">
+			<h4 class="modal-title" id="modal-basic-title">Column Prefrences</h4>
+			<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+		</div>
+		<div class="modal-body">
+			<div class="form-group mt-3 d-flex">
+				<input type="checkbox" name="" (change)="onchange($event, 'id')" checked />
+				<div class="ff ml-2 d-flex">
+					<div class="fff ml-3">
+						<p><img src="assets/img/swipe-s.png" /></p>
+					</div>
+					<div class="fff ml-3">
+						<P>ID</P>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group mt-3 d-flex">
+				<input type="checkbox" name="" (change)="onchange($event, 'name')" checked />
+				<div class="ff ml-2 d-flex">
+					<div class="fff ml-3">
+						<p><img src="assets/img/swipe-s.png" /></p>
+					</div>
+					<div class="fff ml-3">
+						<P>Name</P>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group mt-3 d-flex">
+				<input type="checkbox" name="" (change)="onchange($event, 'phone')" checked />
+				<div class="ff ml-2 d-flex">
+					<div class="fff ml-3">
+						<p><img src="assets/img/swipe-s.png" /></p>
+					</div>
+					<div class="fff ml-3">
+						<P>Phone Number</P>
+					</div>
+				</div>
+			</div>
+			<div class="form-group mt-3 d-flex">
+				<input type="checkbox" name="" (change)="onchange($event, 'email')" checked />
+				<div class="ff ml-2 d-flex">
+					<div class="fff ml-3">
+						<p><img src="assets/img/swipe-s.png" /></p>
+					</div>
+					<div class="fff ml-3">
+						<P>Email</P>
+					</div>
+				</div>
+			</div>
+			<div class="form-group mt-3 d-flex">
+				<input type="checkbox" name="" (change)="onchange($event, 'age')" checked />
+				<div class="ff ml-2 d-flex">
+					<div class="fff ml-3">
+						<p><img src="assets/img/swipe-s.png" /></p>
+					</div>
+					<div class="fff ml-3">
+						<P>Age</P>
+					</div>
+				</div>
+			</div>
+			<div class="form-group mt-3 d-flex">
+				<input type="checkbox" name="" (change)="onchange($event, 'gender')" checked />
+				<div class="ff ml-2 d-flex">
+					<div class="fff ml-3">
+						<p><img src="assets/img/swipe-s.png" /></p>
+					</div>
+					<div class="fff ml-3">
+						<P>Gender</P>
+					</div>
+				</div>
+			</div>
+			<div class="form-group mt-3 d-flex">
+				<input type="checkbox" name="" (change)="onchange($event, 'tag')" checked />
+				<div class="ff ml-2 d-flex">
+					<div class="fff ml-3">
+						<p><img src="assets/img/swipe-s.png" /></p>
+					</div>
+					<div class="fff ml-3">
+						<P>Tag</P>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer popfooter row">
+			<div class="col-md-6 text-right">
+				<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">
+					Cancel
+				</button>
+			</div>
+			<div class="col-md-2 text-right">
+				<button type="button" class="btn1 btn-outline-dark" (click)="c('Save click')">
+					Save
+				</button>
+			</div>
+		</div>
+	</ng-template>
+
+
+	<ng-template #contents let-c="close" let-d="dismiss">
+		<div class="modal-header">
+			<h4 class="modal-title" id="modal-basic-title">Filter</h4>
+			<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+		</div>
+		<div class="modal-body d-flex">
+			<div class="sq">
+				<label for="floatingSelectGrid">Filters</label>
+
+
+				<ng-multiselect-dropdown class="multi" [settings]="dropdownSettings" [data]="cities"
+					[placeholder]="'Search the Filter'" name="city" formControlName="city" [disabled]="disabled"
+					(onSelect)="onItemSelect($event)">
+				</ng-multiselect-dropdown>
+
+
+			</div>
+			<div class="sq">
+				<label for="floatingSelectGrid">Filter Phone No.</label>
+				<form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+					<div class="form-floating">
+						<select class="control ">
+							<option>Starts With</option>
+							<option>Name</option>
+							<option>Email</option>
+							<option>Phone Number</option>
+							<option>Tags</option>
+							<option>Contact Created</option>
+							<option>Last Conversation with</option>
+							<option>Conversation Resolved</option>
+							<option>Last Message recieved</option>
+						</select>
+					</div>
+					<div class="jk" [formGroup]="filterForm">
+						<label for="floatingInputGrid">Value</label>
+						<div class="form-floating">
+							<input class="form-control" type="text" placeholder="+44" name="Phone_number"
+								id="Phone_number" formControlName="Phone_number" />
+						</div>
+					</div>
+					<tr class="tt">
+						<th><button type="button" (click)="addQuantity()" class="btn7 btn-primary">+ Add</button></th>
+					</tr>
+					<tr *ngFor="let quantity of quantities().controls; let i=index" [formGroupName]="i">
+						<div class="hd d-flex">
+
+							<button class="btn0 btn-primary" type="submit">And</button>
+							<button class="btn9 btn-primary" type="submit">Or</button>
+
+						</div>
+						<div class="form-floating">
+							<select class="control ">
+								<option>Starts With</option>
+								<option>Name</option>
+								<option>Email</option>
+								<option>Phone Number</option>
+								<option>Tags</option>
+								<option>Contact Created</option>
+								<option>Last Conversation with</option>
+								<option>Conversation Resolved</option>
+								<option>Last Message recieved</option>
+							</select>
+						</div>
+						<div class="jk">
+							<label for="floatingInputGrid">Value</label>
+							<div class="form-floating">
+								<input class="form-control" type="text" placeholder="+44" />
+							</div>
+							<td class="tt d-flex">
+								<button type="button" (click)="addQuantity()" class="btn7 btn-primary">+ Add</button>
+								<button (click)="removeQuantity(i)" class="btn6 btn-danger">-Remove</button>
+							</td>
+						</div>
+					</tr>
+
+				</form>
+			</div>
+		</div>
+		<div class="modal-footer popfooter">
+			<div class="col-md-0 text-right">
+				<button type="button" class="btn1 btn-outline-dark" (click)="c('Save click')">Apply</button>
+			</div>
+		</div>
+	</ng-template>
+
+	<ng-template #contactadd let-c="close" let-d="dismiss">
+		<div class="modal-header">
+			<h4 class="modal-title" id="modal-basic-title">Add Contact</h4>
+			<button type="button" class="btn-cross" aria-label="Close" (click)="d('Cross click')"></button>
+		</div>
+		<div class="modal-body">
+			<form [formGroup]="newContact" (ngSubmit)="addContact()">
+				<div class="row g-2">
+					<div class="col-md">
+						<label for="floatingInputGrid">Name</label>
+						<div class="form-floating">
+							<input class="form-control" type="text" placeholder="Enter Name" name="Name"
+								formControlName="Name" id="Name" />
+						</div>
+					</div>
+					<div class="col-md">
+						<label for="floatingSelectGrid">Phone Number</label>
+						<div class="form-floating">
+							<input class="form-control" type="text" placeholder="+91 ****" name="Phone_number"
+								formControlName="Phone_number" id="Phone_number" />
+						</div>
+					</div>
+				</div>
+				<div class="row g-2 mt-3">
+					<div class="col-md">
+						<label for="floatingInputGrid">Email Id*</label>
+						<div class="form-floating">
+							<input class="form-control" type="text" placeholder="Enter Email" name="emailId"
+								formControlName="emailId" id="emailId" />
+						</div>
+					</div>
+					<div class="col-md">
+						<label for="floatingSelectGrid">Age</label>
+						<div class="form-floating">
+							<select class="form-control">
+								<option>29 year</option>
+								<option>20 year</option>
+								<option>21 year</option>
+								<option>22 year</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="form-group mt-3">
+					<label class="small mb-1">Facebook Id</label>
+					<input class="form-control" type="text" placeholder="Enter Facebook Id" name="facebookId"
+						formControlName="facebookId" id="facebookId" />
+				</div>
+				<div class="form-group">
+					<label class="small mb-1">Instagram Id</label>
+					<input class="form-control" type="text" placeholder="Enter Instagram Id " name="InstagramId"
+						formControlName="InstagramId" id="InstagramId" />
+					<br>
+
+					<label for="floatingSelectGrid">Tag</label>
+					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="tag"
+						[placeholder]="'Search'" [disabled]="disabled"
+						(onSelect)="onItemSelect($event)">
+					</ng-multiselect-dropdown>
+					<br>
+					<label for="floatingSelectGrid ">Status</label>
+					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="status"
+						[placeholder]="'Search'" [disabled]="disabled"
+						(onSelect)="onItemSelect($event)">
+					</ng-multiselect-dropdown>
+				</div>
+
+			</form>
+		</div>
+
+		<div class="modal-footer row popfooter">
+
+			<div class="col-md-6 text-right">
+				<button type="submit" class="btn1 btn-success" (click)="c(addContact())">Save</button>
+			</div>
+		</div>
+	</ng-template>
+	<ng-template #contactedit let-c="close" let-d="dismiss">
+		<div class="modal-header">
+			<h4 class="modal-title" id="modal-basic-title">Edit Contact</h4>
+			<button type="button" class="btn-cross" aria-label="Close" (click)="d('Cross click')"></button>
+		</div>
+		<div class="modal-body">
+
+			<form [formGroup]="editContact">
+
+				<div class="row g-2">
+					<div class="col-md">
+						<label for="floatingInputGrid">Name</label>
+						<div class="form-floating">
+							<input class="form-control" type="text" placeholder="Enter Name" name="Name"
+								formControlName="Name" id="Name" />
+						</div>
+					</div>
+					<div class="col-md">
+						<label for="floatingSelectGrid">Phone Number</label>
+						<div class="form-floating">
+							<input class="form-control" type="text" placeholder="+91 ****" name="Phone_number"
+							formControlName="Phone_number" id="Phone_number" />
+						</div>
+					</div>
+				</div>
+
+				<div class="row g-2 mt-3">
+					<div class="col-md">
+						<label for="floatingInputGrid">Email Id*</label>
+						<div class="form-floating">
+							<input class="form-control" type="text" placeholder="Enter Email" name="emailId"
+								formControlName="emailId" id="emailId" />
+						</div>
+					</div>
+					<div class="col-md">
+						<label for="floatingSelectGrid" >Age</label>
+						<div class="form-floating">
+							<select class="form-control" name="age"
+							formControlName="age" id="age">
+								<option>29 </option>
+								<option>20 </option>
+								<option>21 </option>
+								<option>22 year</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="form-group mt-3">
+					<label class="small mb-1">Facebook Id</label>
+					<input class="form-control" type="text" placeholder="Enter Facebook Id" name="facebookId"
+						formControlName="facebookId" id="facebookId" />
+				</div>
+				<div class="form-group">
+					<label class="small mb-1">Instagram Id</label>
+					<input class="form-control" type="text" placeholder="Enter Instagram Id " name="InstagramId"
+						formControlName="InstagramId" id="InstagramId" />
+					<br>
+
+					<label for="floatingSelectGrid">Tag</label>
+					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag" formControlName="tag"
+						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
+						(onSelect)="onItemSelect($event)">
+					</ng-multiselect-dropdown>
+					<br>
+					<label for="floatingSelectGrid ">Status</label>
+					<ng-multiselect-dropdown class="multiselect" id="status" name="status" formControlName="status"
+						[settings]="dropdownSettings" [data]="status" [placeholder]="'Search'" [disabled]="disabled"
+						(onSelect)="onItemSelect($event)">
+					</ng-multiselect-dropdown>
+				</div>
+
+			</form>
+		</div>
+
+		<div class="modal-footer row popfooter">
+
+			<div class="col-md-6 text-right">
+				<button type="submit" class="btn1 btn-success" (click)="c(editContactData())">Save</button>
+			</div>
+		</div>
+	</ng-template>
+	<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
+ -->
+</sb-layout-dashboard>

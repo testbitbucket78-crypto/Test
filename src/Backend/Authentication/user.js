@@ -1,9 +1,9 @@
 const express = require('express');
-const db = require("./dbhelper");
+const db = require("../dbhelper");
 const bodyParser = require('body-parser');
 const val=require('./constant')
 const app = express();
-
+const bcrypt = require('bcrypt');
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,7 +31,7 @@ const deletUserById = (req, res) => {
 
 //Inser data
 const insertUser = (req, res) => {
-     uid = req.body.uid
+    // uid = req.body.uid
     userId = req.body.userId
     password = req.body.password
     email_id = req.body.email_id
@@ -50,16 +50,19 @@ const insertUser = (req, res) => {
     IsDeleted = req.body.IsDeleted
     IsActive = req.body.IsActive
     
-    var values = [[ uid,userId, password, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive]]
-   db.runQuery(req,res,val.query, [values])
-
+    bcrypt.hash(password, 10, function (err, hash) {
+       
+    var values = [[ userId, hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive]]
+    db.runQuery(req,res,val.insertQuery, [values])
+  
+    })
 
 }
 
 const updateUser = (req, res) => {
     
     
-        uid = req.body.uid
+        uid=req.body.uid
         userId = req.body.userId
         password = req.body.password
         email_id = req.body.email_id
@@ -78,9 +81,9 @@ const updateUser = (req, res) => {
         IsDeleted = req.body.IsDeleted
         IsActive = req.body.IsActive
 
-         
-        db.runQuery(req,res,val.updateQuery,[uid, password, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive,userId])
-    
+        bcrypt.hash(password, 10, function (err, hash) {
+        db.runQuery(req,res,val.updateQuery,[ userId,hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive,uid])
+        });
       
     }
 

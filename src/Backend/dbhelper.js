@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const val = require('./constant')
+const val = require('./Authentication/constant')
 
 var db = mysql.createConnection({
     host: val.host,
@@ -22,9 +22,9 @@ db.connect((err) => {
 
 
 function runQuery(req, res, query, param) {
-
-    db.query(query, param, (err, result) => {
     
+    db.query(query, param, (err, result) => {
+       
         if (err) throw err;
         
        res.send(result)

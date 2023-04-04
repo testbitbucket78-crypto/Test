@@ -1,0 +1,44 @@
+<div class="card9 float-right">
+
+    <div class="card-body" [(ngModel)]="items">
+        <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+        <div class="collumn d-flex" >
+            <h6>Id:</h6>
+            <h5>{{items.ID}}.</h5>
+            <div class="line"></div>
+            <h6>Created on:</h6>
+            <h5>{{items.CreatedDate | date: 'dd MMM yyyy'}}</h5>
+            <div class="line"></div>
+            <h6>Edited on:</h6>
+            <h5>{{items.ModifiedDate | date: 'dd MMM yyyy'}}</h5>
+        </div>
+        <h4>Help & Support</h4>
+        <div class="row d-flex"  >
+            <h6 class="text-justify">{{items.HelpAndSupport}}.</h6>
+        </div>
+        <h3>Keywords & Criteria </h3>
+        <div class="row">
+            <div class="box"  *ngFor="let values of data">
+                <p>{{values.Keyword}}</p>
+            </div>
+           
+        </div>
+       
+
+        <div class="box1 d-flex">
+            <h6>Matching Criteria:</h6>
+            <h5>{{items.MatchingCriteria}}</h5>
+        </div>
+        <h3>Reply Actions</h3>
+        <div class="box4">
+            <h3>Message</h3>
+            <p>{{items.Message}} </p>
+        </div>
+        <div class="box2">
+            <h3>Action</h3>
+            <div class="bb d-flex">
+            <b>{{items.Name}}</b><p>{{items.Value}}</p>
+        </div>
+    </div>
+</div>
+
