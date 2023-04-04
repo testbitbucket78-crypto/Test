@@ -16,7 +16,8 @@ export class AuthService {
         return this.http.post(API_URL, data)
 
     }
-    register(data: any): Observable<any> {
+    register(data: authRegister): Observable<any> {
+
         let API_URL = 'https://authapi.sampanatechnologies.com/register';
         return this.http.post(API_URL, data,{headers:{'Content-Type':'application/json'}})
     }
@@ -30,7 +31,6 @@ export class AuthService {
     }
     verifyOtp(data:authVerifyOtp){
         let API_URL = 'https://authapi.sampanatechnologies.com/verifyOtp';
-       
         return this.http.post(API_URL, data)
     }
    

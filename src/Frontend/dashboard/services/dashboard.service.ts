@@ -13,7 +13,6 @@ export class DashboardService {
     return of({});
   }
 
-  //********************dashboard API's ************/
   public dashboardSubscribers() {
     return this.http.get('https://cip-api.sampanatechnologies.com/Subscribers')
   }
@@ -51,12 +50,12 @@ export class DashboardService {
 
   }
   addContact(data: any) {
-    return this.http.post('http://localhost:3002/contact', data)
+    return this.http.post('https://contactapi.sampanatechnologies.com/contact', data)
   }
   editContact(data: any,customerId:any) {
     console.log(customerId)
     const params = new HttpParams().set('customerId', customerId)
-    return this.http.put('http://localhost:3002/editContact',data,{ params: params })
+    return this.http.put('https://contactapi.sampanatechnologies.com/editContact',data,{ params: params })
   }
 
 
@@ -70,7 +69,7 @@ export class DashboardService {
   }
 
   sendExportContact() {
-    return this.http.get('http://65.0.219.162:3003/sendExportContact')
+    return this.http.get('https://authapi.sampanatechnologies.com/sendExportContact')
   }
 
   filter(Phone_number: any) {
@@ -89,9 +88,11 @@ export class DashboardService {
   }
 
   update(data: object) {
-    console.log("servise update data" + data)
+    console.log("servise update data" +data)
     return this.http.post('https://contactapi.sampanatechnologies.com/updateAndSave', data)
   }
+  
+ 
 
   updatedDataCount(data: any) {
     return this.http.post('https://contactapi.sampanatechnologies.com/verifyData', data)
@@ -103,7 +104,7 @@ export class DashboardService {
   }
 
   getContactById(customerId: any) {
-    //console.log(customerId)
+   
     const params = new HttpParams().set('customerId', customerId)
     return this.http.get('https://contactapi.sampanatechnologies.com/getContactById', { params: params })
   }
@@ -120,23 +121,24 @@ export class DashboardService {
 
   //******************Smart replies API's*********************//
 
-  getUser() {
-    return this.http.get('http://65.0.219.162:3005/getReplies')
+
+   getUser() {
+    return this.http.get('https://smartapi.sampanatechnologies.com/getReplies')
   }
 
   searchSmartReply(ID: any) {
     const params = new HttpParams().set('ID', ID)
-    console.log("params  " + params)
-    return this.http.get('http://65.0.219.162:3005/search', { params: params })
+    console.log("params  "  + params)
+    return this.http.get('https://smartapi.sampanatechnologies.com/search', { params: params })
   }
 
   sideNav(ID: any) {
     const params = new HttpParams().set('ID', ID)
-    return this.http.get('http://65.0.219.162:3005/sideNavKeyword', { params: params })
+    return this.http.get('https://smartapi.sampanatechnologies.com/sideNavKeyword', { params: params })
   }
 
   addNewReply(data: any) {
-    return this.http.post('http://65.0.219.162:3005/addNewReply', data)
+    return this.http.post('https://smartapi.sampanatechnologies.com/addNewReply', data)
   }
 
 

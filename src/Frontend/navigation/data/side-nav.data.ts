@@ -18,6 +18,7 @@ export const sideNavItems: SideNavItems = {
         link: '/dashboard',
     },
     automation: {
+       
         text: 'Automation',
         submenu: [
         {

@@ -32,7 +32,7 @@ app.post('/contact', function (req, res) {
   var status = req.body.status
   facebookId = req.body.facebookId
   InstagramId = req.body.InstagramId
-  //var tagList=JSON.stringify(req.body.tag)
+ 
   var tagList = [];
 
   for (var i = 0; i < tag.length; i++) {
@@ -144,7 +144,7 @@ app.put('/editContact', (req, res) => {
     }
   });
   query = query.slice(0, -2);
-  //console.log(query)
+ 
   query += ` WHERE customerId = ?`;
   values.push(id);
   console.log(values)

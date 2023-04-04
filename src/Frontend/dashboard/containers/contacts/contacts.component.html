@@ -7,7 +7,7 @@
 					[formGroup]="searchForm" (ngSubmit)="search()">
 					<div class="input-group gf ">
 
-						<input class="form-control" type="text" placeholder="Search" aria-label="Search"
+						<input class="form-control" type="text"  [(ngModel)]="searchText" placeholder="Search" aria-label="Search"
 							aria-describedby="basic-addon2" name="Name" id="Name" formControlName="Name" />
 						<img src="assets/img/search.png">
 					</div>
@@ -20,8 +20,8 @@
 				Filter</button>
 		</div>
 		<div class="col-xs-3 ml-1 mb-4 mt-4">
-			<button class="btn  btn-block float-right" (click)="opencollum(collum)"><img src="assets/img/column.png">
-				Collum Prefrences </button>
+			<button class="btn  btn-block float-right" (click)="opencolumn(column)"><img src="assets/img/column.png">
+				Column Prefrences </button>
 		</div>
 
 		<div class="col-xs-3 ml-1 mb-4 mt-4">
@@ -70,41 +70,26 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr *ngFor="let employee of contacts | orderBy: orderHeader: isDesOrder ; let i = index; let odd = odd"
+				<tr *ngFor="let contact of contacts | searchfilter: searchText | orderBy: orderHeader: isDesOrder ; let i = index; let odd = odd"
 					[ngClass]="odd ? 'odd_col': 'even_col'" (change)="hideDeleteBtn($event)"
-					(click)="opensidenav(employee)" (click)="getContactById(employee)">
-					<td scope="row"><input type="checkbox" [(ngModel)]="employee.selectedValue "
-							(change)="getCheckBoxEvent(employee.selectedValue,employee)" (change)="selCheckBox($event)"
-							[checked]="checks" name="">
+					(click)="opensidenav(contact)" (click)="getContactById(contact)">
+					<td scope="row"><input type="checkbox" [(ngModel)]="contact.selectedValue " (change)="getCheckBoxEvent(contact.selectedValue,contact)"
+							(change)="selCheckBox($event)" [checked]="checks" name="">
 						<img src="assets/img/chats.png">
 					</td>
-					<td class="id">{{employee.customerId}}</td>
-					<td class="name">{{employee.Name}}</td>
-					<td class="phone">{{employee.Phone_number}}</td>
-					<td class="email">{{employee.emailId}}</td>
-					<td class="age">{{employee.age}}</td>
-					<td class="gender">{{employee.sex}}</td>
-					<td class="tag">{{employee.tag}}</td>
+					<td class="id">{{contact.customerId}}</td>
+					<td class="name">{{contact.Name}}</td>
+					<td class="phone">{{contact.Phone_number}}</td>
+					<td class="email">{{contact.emailId}}</td>
+					<td class="age">{{contact.age}}</td>
+					<td class="gender">{{contact.sex}}</td>
+					<td class="tag">{{contact.tag}}</td>
 				</tr>
 
 			</tbody>
-			<nav aria-label="Page navigation example">
-				<ul class="pagination">
-					<li class="page-item">
-						<a class="page-link" href="#" aria-label="Previous">
-							<span aria-hidden="true">&laquo;</span>
-						</a>
-					</li>
-					<li class="page-item"><a class="page-link" href="#">1</a></li>
-					<li class="page-item"><a class="page-link" href="#">2</a></li>
-					<li class="page-item"><a class="page-link" href="#">3</a></li>
-					<li class="page-item">
-						<a class="page-link" href="#" aria-label="Next">
-							<span aria-hidden="true">&raquo;</span>
-						</a>
-					</li>
-				</ul>
-			</nav>
+			<div class="pagination">
+				<!-- <jw-pagination [items]="items" (changePage)="onChangePage($event)"></jw-pagination> -->
+			</div>
 		</table>
 
 		<div id="sidebar" class="sidebar ">
@@ -242,9 +227,9 @@
 		</div>
 	</ng-template>
 
-	<ng-template #collum let-c="close" let-d="dismiss">
+	<ng-template #column let-c="close" let-d="dismiss">
 		<div class="modal-header">
-			<h4 class="modal-title" id="modal-basic-title">Collum Prefrences</h4>
+			<h4 class="modal-title" id="modal-basic-title">Column Prefrences</h4>
 			<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
 		</div>
 		<div class="modal-body">
@@ -446,7 +431,7 @@
 					<div class="col-md">
 						<label for="floatingSelectGrid">Phone Number</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="+91 **********" name="Phone_number"
+							<input class="form-control" type="text" placeholder="+91 ****" name="Phone_number"
 								formControlName="Phone_number" id="Phone_number" />
 						</div>
 					</div>
@@ -462,7 +447,7 @@
 					<div class="col-md">
 						<label for="floatingSelectGrid">Age</label>
 						<div class="form-floating">
-							<select class="form-control" name="age" formControlName="age" id="age">
+							<select class="form-control">
 								<option>29 year</option>
 								<option>20 year</option>
 								<option>21 year</option>

@@ -3,6 +3,7 @@ import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { FormGroup ,FormControl} from '@angular/forms';
 
+
 @Component({
     selector: 'sb-verification',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,18 +23,13 @@ export class VerificationComponent implements OnInit {
     }
 
     onVerify() {
-        // this.registerForm.push(sessionStorage.getItem('registerName'));
-        // this.registerForm.push(sessionStorage.getItem('registerPhoneNo'))
-        // this.registerForm.push(sessionStorage.getItem('registerEmail'))
-        // this.registerForm.push(sessionStorage.getItem('registerPassword'))
-        // this.registerForm.push(sessionStorage.getItem('registerConformPass'))
-       
+      
         this.apiService.verifyOtp(this.otpForm.value).subscribe(response => {
             console.log(response)
             console.log(this.otpForm.value)
             console.warn("verification! ", response)
           
-            //  this.values= JSON.p((sessionStorage.getItem('formValues')))
+           
 
         });
 

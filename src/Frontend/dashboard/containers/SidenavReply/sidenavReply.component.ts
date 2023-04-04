@@ -8,6 +8,7 @@ import { DashboardService } from './../../services';
   styleUrls: ['./sidenavReply.component.scss']
 })
 export class SidenavReplyComponent implements OnInit {
+
   data: any;
   items:any;
 
@@ -36,8 +37,7 @@ export class SidenavReplyComponent implements OnInit {
     }))
    
   }
- 
- 
+
 
 
 }

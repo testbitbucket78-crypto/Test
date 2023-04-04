@@ -3,14 +3,19 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { OrderModule } from 'ngx-order-pipe';
-import { FilterPipeModule } from 'ngx-filter-pipe';
 /* Modules */
 import { AppCommonModule } from 'Frontend/app-common/app-common.module';
 import { NavigationModule } from 'Frontend/navigation/navigation.module';
 import { ChartsModule } from 'Frontend/charts/charts.module';
 import { TablesModule } from 'Frontend/tables/tables.module';
+import { OrderModule } from 'ngx-order-pipe';
+import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+
+
+
+
+
 /* Components */
 import * as dashboardComponents from './components';
 
@@ -22,10 +27,16 @@ import * as dashboardGuards from './guards';
 
 /* Services */
 import * as dashboardServices from './services';
+import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
+
 
 @NgModule({
     imports: [
         CommonModule,
+        NgMultiSelectDropDownModule.forRoot(),
+        OrderModule,
+       
+        FilterPipeModule,
         RouterModule,
         ReactiveFormsModule,
         FormsModule,
@@ -33,12 +44,10 @@ import * as dashboardServices from './services';
         NavigationModule,
         ChartsModule,
         TablesModule,
-        FilterPipeModule,
-        OrderModule,
-        NgMultiSelectDropDownModule.forRoot(),
+        
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],
-    declarations: [...dashboardContainers.containers, ...dashboardComponents.components],
+    declarations: [...dashboardContainers.containers, ...dashboardComponents.components, SearchfilterPipe],
     exports: [...dashboardContainers.containers, ...dashboardComponents.components],
 })
 export class DashboardModule {}
