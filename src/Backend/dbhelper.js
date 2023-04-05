@@ -37,8 +37,23 @@ function runQuery(req, res, query, param) {
 
 
 }
+function excuteQuery(query, param) {
+    
+    db.query(query, param, (err, result) => {
+       
+        if (err) throw err;
+         console.log("result db"+result)
+      return result;
+       
+  
+        
+
+
+    });
+
+
+}
 
 
 
-
-module.exports = {runQuery,db};
+module.exports = {runQuery,db,excuteQuery};

@@ -72,27 +72,11 @@ const login = (req, res) => {
     mailOpt=data
 
 }
-const get=(req,res)=>{
-    console.log(mailOpt)
-    var mailOptions = {
-        to: mailOpt,
-        subject: "Request for download Contact_Data: ",
-        html: '<p>You requested for download Contact_Data, kindly use this <a href="http://localhost:3002/getCheckedExportContact">link</a>to see your contacts</p>'
-      };
-    
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          return console.log(error);
-        }
-        console.log('Message sent: %s', info.messageId);
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-        res.status(200).send({ msg: "data has been sent" });
-      });
-}
+
 //post api for register
 
 const register = function (req, res) {
-    name = req.body.name
+     name = req.body.name
     mobile_number = req.body.mobile_number
     email_id = req.body.email_id
     password = req.body.password
@@ -168,7 +152,7 @@ const forgotPassword = (req, res) => {
                     var mailOptions = {
                         to: req.body.email_id,
                         subject: "Request for reset Password: ",
-                        html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                        html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/reset-password?SP_ID=' + cipherdata + '">link</a>to reset your password</p>'
                     };
 
                     transporter.sendMail(mailOptions, (error, info) => {
@@ -190,7 +174,7 @@ const forgotPassword = (req, res) => {
 
 //resetPssword api
 const resetPassword = function (req, res) {
-    uid = req.body.uid
+    SP_ID = req.body.SP_ID
     password = req.body.password
     confirmPassword = req.body.confirmPassword
     if (password != confirmPassword) {
@@ -198,7 +182,7 @@ const resetPassword = function (req, res) {
     }
     else {
         bcrypt.hash(password, 10, function (err, hash) {
-            db.runQuery(req, res, val.updatePassword, [hash, uid]);
+            db.runQuery(req, res, val.updatePassword, [hash, SP_ID]);
         })
     }
 
@@ -208,7 +192,8 @@ const resetPassword = function (req, res) {
 // Opt for Varification
 const sendOtp = function (req, res) {
     email_id = req.body.email_id;
-
+   console.log("send otp")
+   console.log(val.otp)
     // send mail with defined transport object
     var mailOptions = {
         to: req.body.email_id,
@@ -229,8 +214,8 @@ const sendOtp = function (req, res) {
 const verifyOtp = function (req, res, err) {
 
     otp = req.body.otp
-
-
+      console.log(otp)
+      console.log(val.otp)
     if (req.body.otp == val.otp) {
         return res.send(Status);
     }
@@ -239,4 +224,4 @@ const verifyOtp = function (req, res, err) {
 
 
 
-module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, mailOpt ,get};
+module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, mailOpt };

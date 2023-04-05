@@ -1,7 +1,7 @@
 var express = require("express");
 const db = require("../dbhelper");
 var app = express();
-const val = require('../Authentication/constant');
+const val = require('./constant');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -70,6 +70,9 @@ app.get('/Subscribers', (req, res) => {
   db.runQuery(req, res, val.subscribersQuery, [req.body])
 })
 
+app.get('/recentConversation',(req,res)=>{
+  db.runQuery(req,res,val.conversationQuery,[req.body])
+})
 app.listen(3001, function () {
   console.log("Node is running");
 

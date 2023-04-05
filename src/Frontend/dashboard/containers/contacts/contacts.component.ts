@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {DashboardService} from './../../services';
 
+// }
 @Component({
   selector: 'sb-contacts',
   templateUrl: './contacts.component.html',
@@ -86,6 +87,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 }
     ngOnInit() {
 
+      this.sendExportContact();
       this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
       
       this.cities = [
@@ -253,7 +255,7 @@ console.log(this.contacts);
   }
   
   opensidenav(contact: any){
-    document.getElementById("sidebar")!.style.width = "300px";
+    document.getElementById("sidebar")!.style.width = "350px";
    }
    closesidenav(items: any){
     document.getElementById ("sidebar")!.style.width = "0";
@@ -275,6 +277,7 @@ console.log(this.contacts);
     }
   }
 
+  
 
   
 
@@ -386,14 +389,19 @@ exportCheckedContact() {
 		console.log(response);
 
 	})
-	this.sendExportContact()
-	this.checkedConatct.length = 0;
+ 
+
+  this.checkedConatct.length = 0;
 	console.log(this.checkedConatct)
 }
 
 sendExportContact() {
-	this.apiService.sendExportContact().subscribe(data => {
+  var email_id=JSON.stringify(sessionStorage.getItem('loginDetails'))
+  console.log("sendExportContact",email_id)
+ 
+	this.apiService.sendExportContact(email_id).subscribe(data => {
 		console.log(data)
+   
 	})
 }
 

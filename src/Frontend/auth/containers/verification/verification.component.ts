@@ -11,8 +11,7 @@ import { FormGroup ,FormControl} from '@angular/forms';
     styleUrls: ['verification.component.scss'],
 })
 export class VerificationComponent implements OnInit {
-
-
+    isVerified: boolean = false;
     otpForm = new FormGroup({
         otp: new FormControl('')
     })
@@ -24,16 +23,13 @@ export class VerificationComponent implements OnInit {
     }
 
     onVerify() {
-        // this.registerForm.push(sessionStorage.getItem('registerName'));
-        // this.registerForm.push(sessionStorage.getItem('registerPhoneNo'))
-        // this.registerForm.push(sessionStorage.getItem('registerEmail'))
-        // this.registerForm.push(sessionStorage.getItem('registerPassword'))
-        // this.registerForm.push(sessionStorage.getItem('registerConformPass'))
-       
+      
         this.apiService.verifyOtp(this.otpForm.value).subscribe(response => {
+            console.log(response)
             console.log(this.otpForm.value)
             console.warn("verification! ", response)
-            //  this.values= JSON.p((sessionStorage.getItem('formValues')))
+          
+           
 
         });
 
@@ -43,13 +39,16 @@ export class VerificationComponent implements OnInit {
     onSubmitRegisterform(){
        
          this.values=sessionStorage.getItem('formValues')
-        
+          console.log("onSubmitRegisterform")
+          console.log(this.values) 
            
         this.apiService.register(this.values).subscribe(response=>{
             console.warn(" user registered!",response)
-            
+          
+             console.log(response)
             this.router.navigate(['login']);
             sessionStorage.removeItem('formValues')
+           
         })
     
     

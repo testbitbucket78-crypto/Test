@@ -31,8 +31,7 @@ const deletUserById = (req, res) => {
 
 //Inser data
 const insertUser = (req, res) => {
-    // uid = req.body.uid
-    userId = req.body.userId
+   
     password = req.body.password
     email_id = req.body.email_id
     address = req.body.address
@@ -52,7 +51,7 @@ const insertUser = (req, res) => {
     
     bcrypt.hash(password, 10, function (err, hash) {
        
-    var values = [[ userId, hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive]]
+    var values = [[  hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive]]
     db.runQuery(req,res,val.insertQuery, [values])
   
     })
@@ -62,8 +61,8 @@ const insertUser = (req, res) => {
 const updateUser = (req, res) => {
     
     
-        uid=req.body.uid
-        userId = req.body.userId
+       
+        SP_ID = req.params.id
         password = req.body.password
         email_id = req.body.email_id
         address = req.body.address
@@ -82,10 +81,16 @@ const updateUser = (req, res) => {
         IsActive = req.body.IsActive
 
         bcrypt.hash(password, 10, function (err, hash) {
-        db.runQuery(req,res,val.updateQuery,[ userId,hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive,uid])
+        db.runQuery(req,res,val.updateQuery,[ hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive,SP_ID])
         });
       
     }
 
+ const getAllAgents  =(req,res)=>{
+    db.runQuery(req,res,val.allAgents,[req.body.ParentId,req.body.UserType])
+ }
 
-module.exports = { getUser, getUserById, deletUserById, insertUser, updateUser };
+ const getisActiveAgents=(req,res)=>{
+    db.runQuery(req,res,val.activeAgent,[req.body.ParentId,req.body.UserType,req.body.IsActive])
+ }
+module.exports = { getUser, getUserById, deletUserById, insertUser, updateUser,getAllAgents ,getisActiveAgents};

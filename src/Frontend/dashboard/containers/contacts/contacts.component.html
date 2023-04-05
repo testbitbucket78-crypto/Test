@@ -88,7 +88,7 @@
 
 			</tbody>
 			<div class="pagination">
-				<jw-pagination [items]="items" (changePage)="onChangePage($event)"></jw-pagination>
+				<!-- <jw-pagination [items]="items" (changePage)="onChangePage($event)"></jw-pagination> -->
 			</div>
 		</table>
 
@@ -146,9 +146,9 @@
 				<div class="child5">
 					<h5>Lead Status</h5>
 					<div class="child4 d-flex">
-						<h6>Paid</h6>
+					<h6>{{items.status}}</h6>
 						<div class="line"></div>
-						<h6>UnPaid</h6>
+						<!-- <h6>UnPaid</h6> -->
 					</div>
 				</div>
 				<div class="child2">
@@ -221,7 +221,7 @@
 				</div>
 				<div class="col-md-5">
 					<button type="button" class="btn1 btn-outline-dark "
-						(click)="c(exportCheckedContact())">Export</button>
+						(click)="c(exportCheckedContact())" >Export</button>
 				</div>
 			</div>
 		</div>
@@ -468,15 +468,15 @@
 					<br>
 
 					<label for="floatingSelectGrid">Tag</label>
-					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="tag"
-						[placeholder]="'Search'" [disabled]="disabled"
+					<ng-multiselect-dropdown class="multiselect" name="tag" formControlName="tag" id="tag"
+						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
 						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
 					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="status"
-						[placeholder]="'Search'" [disabled]="disabled"
-						(onSelect)="onItemSelect($event)">
+						[placeholder]="'Search'" name="status" formControlName="status" id="status"
+						[disabled]="disabled" (onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 				</div>
 
@@ -503,15 +503,15 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Name</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="Enter Name" name="Name"
+							<input class="form-control"   type="text" placeholder="Enter Name" name="Name"
 								formControlName="Name" id="Name" />
 						</div>
 					</div>
 					<div class="col-md">
 						<label for="floatingSelectGrid">Phone Number</label>
-						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="+91 ****" name="Phone_number"
-							formControlName="Phone_number" id="Phone_number" />
+						<div class="form-floating" >
+							<input class="form-control"  type="text" placeholder="+91 **********" name="Phone_number"
+								formControlName="Phone_number" id="Phone_number" />
 						</div>
 					</div>
 				</div>
@@ -519,16 +519,15 @@
 				<div class="row g-2 mt-3">
 					<div class="col-md">
 						<label for="floatingInputGrid">Email Id*</label>
-						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="Enter Email" name="emailId"
+						<div class="form-floating" >
+							<input class="form-control"  type="text" placeholder="Enter Email" name="emailId"
 								formControlName="emailId" id="emailId" />
 						</div>
 					</div>
 					<div class="col-md">
-						<label for="floatingSelectGrid" >Age</label>
-						<div class="form-floating">
-							<select class="form-control" name="age"
-							formControlName="age" id="age">
+						<label for="floatingSelectGrid">Age</label>
+						<div class="form-floating" >
+							<select class="form-control"  name="age" formControlName="age" id="age">
 								<option>29 </option>
 								<option>20 </option>
 								<option>21 </option>
@@ -537,9 +536,9 @@
 						</div>
 					</div>
 				</div>
-				<div class="form-group mt-3">
+				<div class="form-group mt-3" >
 					<label class="small mb-1">Facebook Id</label>
-					<input class="form-control" type="text" placeholder="Enter Facebook Id" name="facebookId"
+					<input class="form-control"   type="text" placeholder="Enter Facebook Id" name="facebookId"
 						formControlName="facebookId" id="facebookId" />
 				</div>
 				<div class="form-group">
@@ -549,13 +548,13 @@
 					<br>
 
 					<label for="floatingSelectGrid">Tag</label>
-					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag" formControlName="tag"
+					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag" [formControl]="editContact.controls['tag']"
 						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
 						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
-					<ng-multiselect-dropdown class="multiselect" id="status" name="status" formControlName="status"
+					<ng-multiselect-dropdown class="multiselect" id="status" name="status" [formControl]="editContact.controls['status']"
 						[settings]="dropdownSettings" [data]="status" [placeholder]="'Search'" [disabled]="disabled"
 						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
