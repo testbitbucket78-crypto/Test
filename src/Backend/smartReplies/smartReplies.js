@@ -1,7 +1,7 @@
 var express = require("express");
 const db = require("../dbhelper");
 var app = express();
-const val = require('../Authentication/constant.js');
+const val = require('./constant.js');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 

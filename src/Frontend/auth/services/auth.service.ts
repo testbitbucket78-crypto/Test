@@ -22,6 +22,7 @@ export class AuthService {
         return this.http.post(API_URL, data,{headers:{'Content-Type':'application/json'}})
     }
     forgotpassword(data: authForgotPassword): Observable<any> {
+        console.log("forgotpassword service")
         let API_URL = 'https://authapi.sampanatechnologies.com/forgotPassword';
         return this.http.post(API_URL, data)
     }

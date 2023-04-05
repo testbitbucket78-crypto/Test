@@ -3,7 +3,7 @@ import {DashboardService} from './../../services';
 
 @Component({
     selector: 'sb-dashboard',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './dashboard.component.html',
     styleUrls: ['dashboard.component.scss'],
 })

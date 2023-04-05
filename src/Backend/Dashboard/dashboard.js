@@ -1,7 +1,7 @@
 var express = require("express");
 const db = require("../dbhelper");
 var app = express();
-const val = require('../Authentication/constant');
+const val = require('./constant');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());

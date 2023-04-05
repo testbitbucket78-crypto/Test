@@ -1,13 +1,14 @@
 var express = require("express");
 const db = require("../dbhelper");
 var app = express();
-const val = require('../Authentication/constant.js');
+const val = require('./constant.js');
 const bodyParser = require('body-parser');
 const { Parser } = require('json2csv');
 const cors = require('cors');
 const fs = require("fs");
 const path = require("path");
-const { json } = require("stream/consumers");
+const nodemailer = require('nodemailer');
+// const { json } = require("stream/consumers");
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -259,6 +260,36 @@ app.get('/search', (req, res) => {
 app.post('/blockedContact', (req, res) => {
   console.log(req.body.customerId)
   db.runQuery(req, res, val.isBlockedQuery, [req.body.customerId])
+})
+
+
+//common method for send email through node mailer
+let transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: val.email,
+      pass: val.appPassword
+  },
+  port: val.port,
+  host: val.emailHost
+});
+
+app.get('/sendExportContact',(req,res)=>{
+ console.log(req.body)
+  var mailOptions = {
+      to: req.body.email_id,
+      subject: "Request for download Contact_Data: ",
+      html: '<p>You requested for download Contact_Data, kindly use this <a href="https://contactapi.sampanatechnologies.com/getCheckedExportContact">link</a>to see your contacts</p>'
+    };
+  
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log('Message sent: %s', info.messageId);
+      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+      res.status(200).send({ msg: "data has been sent" });
+    });
 })
 
 app.listen(3002);
