@@ -11,7 +11,7 @@ import { TablesModule } from 'Frontend/tables/tables.module';
 import { OrderModule } from 'ngx-order-pipe';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-import { JwPaginationModule } from 'jw-angular-pagination';
+
 
 
 
@@ -35,7 +35,7 @@ import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
         CommonModule,
         NgMultiSelectDropDownModule.forRoot(),
         OrderModule,
-        JwPaginationModule,
+        
         FilterPipeModule,
         RouterModule,
         ReactiveFormsModule,

@@ -87,13 +87,11 @@
 				</tr>
 
 			</tbody>
-			<div class="pagination">
-				<jw-pagination [items]="items" (changePage)="onChangePage($event)"></jw-pagination>
-			</div>
+			
 		</table>
 
 		<div id="sidebar" class="sidebar ">
-			<button type="button" class="btn5 btn-close" aria-label="Close" (click)="d('Cross click')"
+			<button type="button" class="btn5 btn-close" aria-label="Close" (click)="('Cross click')"
 				(click)="closesidenav(items)">X</button>
 			<div *ngFor="let items of customerData ">
 				<div class="parent d-flex">
@@ -456,13 +454,29 @@
 						<div class="form-floating">
 							<input class="form-control" type="text" [ngClass]="{'is-invalid' :submitted && newContact.controls.Name.errors  }" placeholder="Enter Name" name="Name"
 								formControlName="Name" id="Name" />
+								<div *ngIf= "submitted && newContact.controls.Name.errors" class="text-danger">
+									! Name required
+								  </div>
+								 
+								 
 						</div>
 					</div>
 					<div class="col-md">
 						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" [ngClass]="{'is-invalid' :submitted && newContact.controls.Phone_number.errors  }" placeholder="+91 ****" name="Phone_number"
+							<div class="ss">
+							<select class="dropdown" id="country" [(ngModel)]="selectedCountry" >
+								<option *ngFor="let country of countries"  [value]="country.code" >{{country}}</option>
+								
+							</select>
+							
+							<input class="form-control"  type="tel" [ngClass]="{'is-invalid' :submitted && newContact.controls.Phone_number.errors  }"
+							  [(ngModel)]="code" value={{data}} placeholder="+91 ****" name="Phone_number"
 								formControlName="Phone_number" id="Phone_number" />
+								<div *ngIf= "submitted && newContact.controls.Phone_number.errors" class="text-danger">
+									! Phone number must be 10 digits
+								  </div>
+								</div>
 						</div>
 					</div>
 				</div>
@@ -470,8 +484,12 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Email Id*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text"  [ngClass]="{'is-invalid' :submitted && newContact.controls.email_id.errors}"placeholder="Enter Email" name="emailId"
+							<input class="form-control" type="text"  [ngClass]="{'is-invalid' :submitted && newContact.controls.emailId.errors}"placeholder="Enter Email" name="emailId"
 								formControlName="emailId" id="emailId" />
+
+								<div *ngIf= "submitted && newContact.controls.emailId.errors" class="text-danger">
+									! Invalid Email Id
+								  </div>
 						</div>
 					</div>
 					<div class="col-md">
@@ -512,7 +530,7 @@
 		<div class="modal-footer row popfooter">
 
 			<div class="col-md-6 text-right">
-				<button type="submit" class="btn1 btn-success" (click)="c(addContact())">Save</button>
+				<button type="submit" class="btn1 btn-success" (click)="(addContact())">Save</button>
 			</div>
 		</div>
 	</ng-template>

@@ -9,10 +9,12 @@ import {DashboardService} from './../../services';
   styleUrls: ['./contacts.component.scss']
 })
 export class ContactsComponent implements OnInit {
-
-
   searchText= "";
+  countries: string[] = ['+91','+44','+32','+22'];
 
+  selectedCountry: any;
+  data: any;
+	code: any;
 	 contacts:any;
 	 name = 'Angular'; 
    checkedConatct: any[] = [];
@@ -157,6 +159,11 @@ bulk(e: any) {
   }
   console.log("this.customerId")
   console.log(this.checkedcustomerId)
+}
+
+addqty(code: any) {
+  this.data = code;
+
 }
 
 onChangePage(pageOfItems: any) {

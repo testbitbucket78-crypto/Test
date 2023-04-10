@@ -27,6 +27,8 @@ export class AddSmartRepliesComponent implements OnInit {
 	})
 	model: any;
 
+	
+
 	teams: string[] =
 		[
 			"James Whatson", "David Harrison", "Jane Cooper", "Charles John"

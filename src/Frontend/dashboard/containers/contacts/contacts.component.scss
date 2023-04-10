@@ -594,3 +594,26 @@ opacity: 1;
     margin: 0 0px 15px 0;
     border-radius: 14px;
 }
+select {
+    word-wrap: break-word;
+    border: none;
+    margin: 7px 0 0px 8px;
+    position: absolute;
+    overflow-y: scroll;
+    max-height: 30%;
+}
+.ss .form-control{
+    display: block;
+    width: 100%;
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #ffffff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    padding: 0 0 0 65px;
+}
