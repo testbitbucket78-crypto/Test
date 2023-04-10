@@ -8,8 +8,9 @@
 					[formGroup]="searchForm" (ngSubmit)="search()">
 					<div class="input-group gf ">
 
-						<input class="form-control" type="text"  [(ngModel)]="searchText" placeholder="Search" aria-label="Search"
-							aria-describedby="basic-addon2" name="Name" id="Name" formControlName="Name" />
+						<input class="form-control" type="text" [(ngModel)]="searchText" placeholder="Search"
+							aria-label="Search" aria-describedby="basic-addon2" name="Name" id="Name"
+							formControlName="Name" />
 						<img src="assets/img/search.png">
 					</div>
 				</form>
@@ -84,8 +85,9 @@
 				<tr *ngFor="let contact of contacts | searchfilter: searchText | orderBy: orderHeader: isDesOrder ; let i = index; let odd = odd"
 					[ngClass]="odd ? 'odd_col': 'even_col'" (change)="hideDeleteBtn($event)"
 					(click)="opensidenav(contact)" (click)="getContactById(contact)">
-					<td scope="row"><input type="checkbox" [(ngModel)]="contact.selectedValue " (change)="getCheckBoxEvent(contact.selectedValue,contact)"
-							(change)="selCheckBox($event)" [checked]="checks" name="">
+					<td scope="row"><input type="checkbox" [(ngModel)]="contact.selectedValue "
+							(change)="getCheckBoxEvent(contact.selectedValue,contact)" (change)="selCheckBox($event)"
+							[checked]="checks" name="">
 						<img src="assets/img/chats.png">
 					</td>
 					<td class="id">{{contact.customerId}}</td>
@@ -99,7 +101,7 @@
 
 			</tbody>
 			<div class="pagination">
-				<jw-pagination [items]="items" (changePage)="onChangePage($event)"></jw-pagination>
+				<!-- <jw-pagination [items]="items" (changePage)="onChangePage($event)"></jw-pagination> -->
 			</div>
 		</table> -->
 
@@ -157,9 +159,9 @@
 				<div class="child5">
 					<h5>Lead Status</h5>
 					<div class="child4 d-flex">
-						<h6>Paid</h6>
+						<h6>{{items.status}}</h6>
 						<div class="line"></div>
-						<h6>UnPaid</h6>
+						<!-- <h6>UnPaid</h6> -->
 					</div>
 				</div>
 				<div class="child2">
@@ -459,10 +461,10 @@
 						<label for="floatingSelectGrid">Age</label>
 						<div class="form-floating">
 							<select class="form-control">
-								<option>29 year</option>
-								<option>20 year</option>
-								<option>21 year</option>
-								<option>22 year</option>
+								<option>29 Years</option>
+								<option>20 Years</option>
+								<option>21 Years</option>
+								<option>22 Years</option>
 							</select>
 						</div>
 					</div>
@@ -479,15 +481,15 @@
 					<br>
 
 					<label for="floatingSelectGrid">Tag</label>
-					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="tag"
-						[placeholder]="'Search'" [disabled]="disabled"
+					<ng-multiselect-dropdown class="multiselect" name="tag" formControlName="tag" id="tag"
+						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
 						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
 					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="status"
-						[placeholder]="'Search'" [disabled]="disabled"
-						(onSelect)="onItemSelect($event)">
+						[placeholder]="'Search'" name="status" formControlName="status" id="status"
+						[disabled]="disabled" (onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 				</div>
 
@@ -521,8 +523,8 @@
 					<div class="col-md">
 						<label for="floatingSelectGrid">Phone Number</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="+91 ****" name="Phone_number"
-							formControlName="Phone_number" id="Phone_number" />
+							<input class="form-control" type="text" placeholder="+91 **********" name="Phone_number"
+								formControlName="Phone_number" id="Phone_number" />
 						</div>
 					</div>
 				</div>
@@ -536,14 +538,13 @@
 						</div>
 					</div>
 					<div class="col-md">
-						<label for="floatingSelectGrid" >Age</label>
+						<label for="floatingSelectGrid">Age</label>
 						<div class="form-floating">
-							<select class="form-control" name="age"
-							formControlName="age" id="age">
-								<option>29 </option>
-								<option>20 </option>
-								<option>21 </option>
-								<option>22 year</option>
+							<select class="form-control" name="age" formControlName="age" id="age">
+								<option>29 Years</option>
+								<option>20 Years</option>
+								<option>23 Years</option>
+								<option>22 Years</option>
 							</select>
 						</div>
 					</div>
@@ -560,15 +561,15 @@
 					<br>
 
 					<label for="floatingSelectGrid">Tag</label>
-					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag" formControlName="tag"
-						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
-						(onSelect)="onItemSelect($event)">
+					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag"
+						[formControl]="editContact.controls['tag']" [settings]="dropdownSettings" [data]="tag"
+						[placeholder]="'Search'" [disabled]="disabled" (onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
-					<ng-multiselect-dropdown class="multiselect" id="status" name="status" formControlName="status"
-						[settings]="dropdownSettings" [data]="status" [placeholder]="'Search'" [disabled]="disabled"
-						(onSelect)="onItemSelect($event)">
+					<ng-multiselect-dropdown class="multiselect" id="status" name="status"
+						[formControl]="editContact.controls['status']" [settings]="dropdownSettings" [data]="status"
+						[placeholder]="'Search'" [disabled]="disabled" (onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 				</div>
 

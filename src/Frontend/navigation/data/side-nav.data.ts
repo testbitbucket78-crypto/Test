@@ -18,7 +18,7 @@ export const sideNavItems: SideNavItems = {
         link: '/dashboard',
     },
     automation: {
-        icon: 'tachometer-alt',
+       
         text: 'Automation',
         submenu: [
         {

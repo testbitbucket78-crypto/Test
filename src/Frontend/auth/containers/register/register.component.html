@@ -10,7 +10,7 @@
 
 
         <div class="card-body">
-          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()"(ngSubmit)="onVerification()"  >
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <div class="row col-10">
               <div class="col-sm-6">
                 <label for="floatingInputGrid">Name</label>
@@ -91,7 +91,7 @@
     <div *ngIf= "submitted && registerForm.controls.mobile_number.errors" class="text-danger">
       ! Phone number must be 10 digits
     </div>
-    <div *ngIf= "submitted && registerForm.controls.Email.errors" class="text-danger">
+    <div *ngIf= "submitted && registerForm.controls.email_id.errors" class="text-danger">
       ! Invalid Email Id
     </div>
     <div *ngIf= "submitted && registerForm.controls.password.errors" class="text-danger">

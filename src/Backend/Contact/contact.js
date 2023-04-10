@@ -1,15 +1,18 @@
 var express = require("express");
 const db = require("../dbhelper");
 var app = express();
-const val = require('../Authentication/constant.js');
+const val = require('./constant.js');
 const bodyParser = require('body-parser');
 const { Parser } = require('json2csv');
 const cors = require('cors');
 const fs = require("fs");
 const path = require("path");
+const nodemailer = require('nodemailer');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
 
 app.get('/', function (req, res) {
 
@@ -19,6 +22,8 @@ app.get('/', function (req, res) {
 
 
 app.post('/contact', function (req, res) {
+  console.log("contact")
+  console.log(req.body)
   Name = req.body.Name
   Phone_number = req.body.Phone_number
   emailId = req.body.emailId
@@ -27,10 +32,24 @@ app.post('/contact', function (req, res) {
   var status = req.body.status
   facebookId = req.body.facebookId
   InstagramId = req.body.InstagramId
-  var tagList = tag.join();
-  var statusList = status.join();
 
-  var values = [[Name, Phone_number, emailId, age, tagList, statusList, facebookId, InstagramId]];
+  var tagList = [];
+
+  for (var i = 0; i < tag.length; i++) {
+    tagList.push(tag[i].item_text)
+  }
+  var tagListJoin = tagList.join();
+  console.log(tagListJoin)
+  var statusList = [];
+
+  for (var i = 0; i < status.length; i++) {
+    statusList.push(status[i].item_text)
+  }
+  var statusListJoin = statusList.join();
+  console.log(statusListJoin)
+
+
+  var values = [[Name, Phone_number, emailId, age, statusListJoin, tagListJoin, facebookId, InstagramId]];
 
   db.runQuery(req, res, val.sql, [values])
 
@@ -56,13 +75,13 @@ app.get('/exportAllContact', (req, res) => {
   })
 })
 
-var responceData = "";
-app.post('/exportCheckedContact', (req, res) => {
 
-  var data = req.body
+app.post('/exportCheckedContact', (req, res) => {
+  console.log(req.body)
+  var data = req.body.data
   const json2csvParser = new Parser();
   const csv = json2csvParser.parse(data)
-
+ 
   fs.writeFile("data.csv", csv, function (err) {
     if (err) {
       throw err;
@@ -71,30 +90,39 @@ app.post('/exportCheckedContact', (req, res) => {
   })
 
   res.attachment("data.csv")
-  res.send(csv)
-  responceData = data
-})
-app.get('/getCheckedExportContact', (req, res) => {
-  console.log(responceData)
-  const json2csvParser = new Parser();
-  const csv = json2csvParser.parse(responceData)
+  const timestamp = Date.now();
+  const randomNumber = Math.floor(Math.random() * 10000);
+  var mailOptions = {
+    from: val.email,
+    to: req.body.loginData,
+    subject: "Request for download Contact_Data: ",
+    html: '<p>Please find  the attachment of exported Contact_Data, kindly use  this file to see your contacts</p>',
+    attachments: [
+      {
+        filename: `${timestamp}-${randomNumber}.csv`,
+        path: path.join(__dirname, '/data.csv'),
+      },
+    ]
+  };
 
-  fs.writeFile("data.csv", csv, function (err) {
-    if (err) {
-      throw err;
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
     }
-    console.log('File Saved')
-  })
-
-  res.attachment("data.csv")
-  res.send(csv)
-
+    console.log('Message sent: %s', info.messageId);
+    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+    res.status(200).send({ msg: "data has been sent" });
+  });
+  return res.status(200).send({ msg: "Contacts exported sucessfully!" });
+  
 })
 
-app.delete('/deletContact', (req, res) => {
+
+app.post('/deletContact', (req, res) => {
+
   var Ids = req.body.customerId;
-  console.log(Ids)
-  db.runQuery(req, res, val.delet, [Ids])
+  console.log(req.body.customerId)
+  db.runQuery(req, res, val.delet, [req.body.customerId])
 })
 
 app.get('/getContactById', (req, res) => {
@@ -102,93 +130,113 @@ app.get('/getContactById', (req, res) => {
 })
 
 app.put('/editContact', (req, res) => {
-  customerId = req.body.customerId
-  Phone_number = req.body.Phone_number
-  uid = req.body.uid
-  sp_account_id = req.body.sp_account_id
-  var status = req.body.status
-  Name = req.body.Name
-  age = req.body.age
-  sex = req.body.sex
-  emailId = req.body.emailId
-  address = req.body.address
-  pincode = req.body.pincode
-  city = req.body.city
-  state = req.body.state
-  Country = req.body.Country
-  OptInStatus = req.body.OptInStatus
-  var tag = req.body.tag
-  facebookId = req.body.facebookId
-  InstagramId = req.body.InstagramId
+  const id = req.query.customerId;
+  const dataToUpdate = req.body;
+  console.log(dataToUpdate)
+  let query = val.neweditContact;
+  const values = [];
+  Object.keys(dataToUpdate).forEach(key => {
 
-  var tagList = tag.join();
-  var statusList = status.join();
+    query += `${key} = ?, `;
 
+    if (Array.isArray(dataToUpdate[key])) {
+      var list = dataToUpdate[key];
+      ListofArrays = [];
 
-  db.runQuery(req, res, val.editContact, [Phone_number, uid, sp_account_id, statusList, Name, age, sex, emailId, address, pincode, city, state, Country, OptInStatus, tagList, facebookId, InstagramId, customerId])
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].item_text == undefined) {
+          ListofArrays.push(list[i]);
+        } else {
+          ListofArrays.push(list[i].item_text);
+        }
+      }
+      joinList = ListofArrays.join()
+      values.push(joinList);
+    } else {
+      values.push(dataToUpdate[key]);
+    }
+  });
+  query = query.slice(0, -2);
+
+  query += ` WHERE customerId = ?`;
+  values.push(id);
+  console.log(values)
+  db.runQuery(req, res, query, values)
 })
 
 
 
 app.post('/updateAndSave', (req, res) => {
+  console.log(req.body)
   var result = req.body;
   var fields = result.field
   var data = result.data
   var identifier = result.identifier
+  var purpose = result.purpose
   var rowdataList = [];
   var count = 0
-  if (fields.length == 0) {
+
+  if (purpose == 'Add new contact only') {
     db.runQuery(req, res, val.importquery,
-      [data.map(item => [item.Name, item.Phone_number, item.emailId, item.status, item.sex, item.age, item.state, item.Country, item.tag, item.uid, item.sp_account_id, item.address, item.pincode, item.city, item.OptInStatus, item.facebookId, item.InstagramId])])
-  } else {
-    for (var j = 0; j < fields.length; j++) {
-      for (var i = 0; i < result.data.length; i++) {
-        var updateData = fields[j]
-        var identifierData = identifier[0]
+      [data.map(item => [item.Name, item.Phone_number, item.emailId, item.status, item.sex, item.age, item.state, item.Country, item.tag, item.uid, item.SP_ID, item.address, item.pincode, item.city, item.OptInStatus, item.facebookId, item.InstagramId])])
 
-        rowdataList.push(data[i]);
-        updatedValue = JSON.parse(JSON.stringify(data[i][fields[j]]));
-        identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
+  }
+  // if (purpose == 'Update Existing Contacts Only') {
+  //    console.log(" 2"+purpose)
+  // }
+  else {
+    if (fields.length == 0) {
+      db.runQuery(req, res, val.importquery,
+        [data.map(item => [item.Name, item.Phone_number, item.emailId, item.status, item.sex, item.age, item.state, item.Country, item.tag, item.uid, item.SP_ID, item.address, item.pincode, item.city, item.OptInStatus, item.facebookId, item.InstagramId])])
+    } else {
+      for (var j = 0; j < fields.length; j++) {
+        for (var i = 0; i < result.data.length; i++) {
+          var updateData = fields[j]
+          var identifierData = identifier[0]
+
+          rowdataList.push(data[i]);
+          updatedValue = JSON.parse(JSON.stringify(data[i][fields[j]]));
+          identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
 
 
-        db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?', [updatedValue, identifierValue], function (error, results, next) {
-          if (error) {
-            console.log(error)
-          } else {
+          db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?', [updatedValue, identifierValue], function (error, results, next) {
+            if (error) {
+              console.log(error)
+            } else {
 
-            count = count + 1
+              count = count + 1
 
-            if (JSON.stringify(results.affectedRows) == 0) {
+              if (JSON.stringify(results.affectedRows) == 0) {
 
-              rowdata = rowdataList[count - 1]
-              values = [[rowdata.Name, rowdata.Phone_number, rowdata.emailId, rowdata.status, rowdata.sex, rowdata.age, rowdata.state, rowdata.Country, rowdata.tag, rowdata.uid, rowdata.sp_account_id, rowdata.address, rowdata.pincode, rowdata.city, rowdata.OptInStatus, rowdata.facebookId, rowdata.InstagramId]]
+                rowdata = rowdataList[count - 1]
+                values = [[rowdata.Name, rowdata.Phone_number, rowdata.emailId, rowdata.status, rowdata.sex, rowdata.age, rowdata.state, rowdata.Country, rowdata.tag, rowdata.uid, rowdata.sp_account_id, rowdata.address, rowdata.pincode, rowdata.city, rowdata.OptInStatus, rowdata.facebookId, rowdata.InstagramId]]
 
-              db.db.query(val.importquery, [values], function (err, result) {
-                if (err) {
-                  console.log(err)
-                } else {
-                  console.log(result)
-                }
-              })
+                db.db.query(val.importquery, [values], function (err, result) {
+                  if (err) {
+                    console.log(err)
+                  } else {
+                    console.log(result)
+                  }
+                })
+              }
             }
-          }
-        })
+          })
+        }
       }
+
     }
 
   }
-
-
 })
 
 app.post('/verifyData', (req, res) => {
-  var result = req.body
+  var resdata = req.body
   console.log("verifyData")
   console.log(req.body)
   values = [];
 
-  for (var i = 0; i < result.length; i++) {
-    values[i] = (JSON.parse(JSON.stringify(result[i].emailId)))
+  for (var i = 0; i < resdata.length; i++) {
+    values[i] = (JSON.parse(JSON.stringify(resdata[i].emailId)))
   }
   var queryData = [values];
 
@@ -200,7 +248,8 @@ app.post('/verifyData', (req, res) => {
 
       res.status(200).send({
 
-        count: result.length
+        count: result.length,
+
       });
     }
   })
@@ -211,8 +260,8 @@ app.post('/verifyData', (req, res) => {
 
 
 app.get('/download', (req, res) => {
-  var file = path.join(__dirname,'/sample_file.csv')
- 
+  var file = path.join(__dirname, '/sample_file.csv')
+
 
   res.download(file)
 })
@@ -232,6 +281,26 @@ app.get('/search', (req, res) => {
 
   db.runQuery(req, res, val.searchQuery, [req.query.Phone_number, req.query.Name, req.query.emailId])
 })
-//module.exports = { updateData, identifierData }
+
+app.post('/blockedContact', (req, res) => {
+  console.log(req.body.customerId)
+  db.runQuery(req, res, val.isBlockedQuery, [req.body.customerId])
+})
+
+
+//common method for send email through node mailer
+let transporter = nodemailer.createTransport({
+  //service: 'gmail',
+  host: val.emailHost,
+  port: val.port,
+  secure: false,
+  auth: {
+    user: val.email,
+    pass: val.appPassword
+  },
+});
+
+
+
 app.listen(3002);
 

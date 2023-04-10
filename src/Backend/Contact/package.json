@@ -4,7 +4,7 @@
   "description": "Campaign",
   "main": "index.js",
   "scripts": {
-    "build":"node contact.js",
+    "build": "node contact.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "cip",
@@ -13,6 +13,6 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "mysql2": "^2.3.3",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20"  
   }
 }

@@ -10,11 +10,23 @@
 
 						<input class="form-control" type="text" placeholder="Search" aria-label="Search"
 							aria-describedby="basic-addon2" name="ID" id="ID" formControlName="ID" />
+				<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-9"
+					[formGroup]="searchForm" (ngSubmit)="search()">
+					<div class="input-group gf ">
+
+						<input class="form-control" type="text" placeholder="Search" aria-label="Search"
+							aria-describedby="basic-addon2" name="ID" id="ID" formControlName="ID" />
 
 						<img src="assets/img/search.png">
 					</div>
 				</form>
+						<img src="assets/img/search.png">
+					</div>
+				</form>
 			</div>
+		</div>
+
+
 		</div>
 
 

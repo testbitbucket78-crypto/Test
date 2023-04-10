@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input,OnInit } from '@angular/core';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
-import { FormGroup ,FormControl} from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 
 
 @Component({
@@ -11,50 +11,59 @@ import { FormGroup ,FormControl} from '@angular/forms';
     styleUrls: ['verification.component.scss'],
 })
 export class VerificationComponent implements OnInit {
-
-    @Input()
-    phonenumber!: string; 
-
-    otpForm = new FormGroup({
+    isVerified: boolean = false;
+    otpForm = this.formBuilder.group({
+        otpfieldvalue: sessionStorage.getItem('otpfieldEmailvalue'),
         otp: new FormControl('')
     })
-    values:any;
-    constructor(private apiService: AuthService, private router: Router) { }
+    values: any;
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) { }
     ngOnInit() {
-     
-      
+
+
     }
 
     onVerify() {
-        // this.registerForm.push(sessionStorage.getItem('registerName'));
-        // this.registerForm.push(sessionStorage.getItem('registerPhoneNo'))
-        // this.registerForm.push(sessionStorage.getItem('registerEmail'))
-        // this.registerForm.push(sessionStorage.getItem('registerPassword'))
-        // this.registerForm.push(sessionStorage.getItem('registerConformPass'))
-       
+
         this.apiService.verifyOtp(this.otpForm.value).subscribe(response => {
+            console.log(response)
             console.log(this.otpForm.value)
             console.warn("verification! ", response)
-            //  this.values= JSON.p((sessionStorage.getItem('formValues')))
+
+
 
         });
 
 
     }
-  
-    onSubmitRegisterform(){
-       
-         this.values=sessionStorage.getItem('formValues')
-        
-           
-        this.apiService.register(this.values).subscribe(response=>{
-            console.warn(" user registered!",response)
-            
+
+    onSubmitRegisterform() {
+
+        this.values = sessionStorage.getItem('formValues')
+        console.log("onSubmitRegisterform")
+        console.log(this.values)
+
+        this.apiService.register(this.values).subscribe(response => {
+            console.warn(" user registered!", response)
+
+            console.log(response)
             this.router.navigate(['login']);
             sessionStorage.removeItem('formValues')
+
         })
-    
-    
+
+
+    }
+
+    resendOtp() {
+        var idfs = {
+            "email_id": sessionStorage.getItem('otpfieldEmailvalue'),
+            "mobile_number": sessionStorage.getItem('otpfieldMobilevalue')
+        }
+        this.apiService.sendOtp(idfs).subscribe(response => {
+            console.warn("registerdone! ", response)
+            this.router.navigate(['verification'])
+        });
     }
 
 }

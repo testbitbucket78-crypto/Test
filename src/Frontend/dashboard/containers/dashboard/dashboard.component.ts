@@ -13,12 +13,14 @@ export class DashboardComponent implements OnInit {
     dashboard: any;
     campaigns: any;
     agents: any;
-    constructor(private apiService: DashboardService, private router: Router) {}
+    recentConversation:any;
+    constructor(private apiService: DashboardService) { }
     ngOnInit() {
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
         this.getdashboardCampaigns();
         this.getdashboardAgents();
+        this. getRecentConversation();
     }
 
     getDashboardSubscribers() {
@@ -45,12 +47,11 @@ export class DashboardComponent implements OnInit {
             console.log(this.agents);
         });
     }
-
-    routeToPage() {
-        this.router.navigate(['/dashboard/reports']);
-    }
-
-    routeToPage1 () {
-        this.router.navigate(['/dashboard/import']);
+    getRecentConversation(){
+        this.apiService.dashboardRecentConversation().subscribe((data:any)=>{
+            this.recentConversation=data;
+            console.log(this.recentConversation)
+            console.log("recentConversation")
+        })
     }
 }
