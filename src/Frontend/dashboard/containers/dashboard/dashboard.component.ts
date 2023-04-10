@@ -14,7 +14,7 @@ export class DashboardComponent implements OnInit {
     campaigns: any;
     agents: any;
     recentConversation:any;
-    constructor(private apiService: DashboardService) { }
+    constructor(private apiService: DashboardService, private router: Router) { }
     ngOnInit() {
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
@@ -53,5 +53,13 @@ export class DashboardComponent implements OnInit {
             console.log(this.recentConversation)
             console.log("recentConversation")
         })
+    }
+
+    routeToPage() {
+        this.router.navigate(['/dashboard/reports']);
+    }
+
+    routeToPage1() {
+        this.router.navigate(['/dashboard/import']);
     }
 }
