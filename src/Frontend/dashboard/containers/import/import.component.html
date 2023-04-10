@@ -68,10 +68,10 @@
 						<label for="floatingInputGrid">Purpose</label>
 						<div class="form-floating">
 							<select class="form-select" id="floatingSelectGrid"
-								aria-label="Floating label select example">
-								<option selected>Add new contact only</option>
-								<option value="1">Update Existing Contacts Only</option>
-								<option value="2">Add and Update Contacts</option>
+								aria-label="Floating label select example" #pure (change)="onSelectPurpose(pure.value)">
+								<option value="Add new contact only">Add new contact only</option>
+								<option value="Update Existing Contacts Only">Update Existing Contacts Only</option>
+								<option value="Add and Update Contacts">Add and Update Contacts</option>
 								
 							</select>
 
@@ -120,12 +120,12 @@
 							<h5>Select the columns to input</h5>
 							<h5>Map to Contact Fields</h5>
 						</div>
-						<div *ngFor="let items of headers">
-							<div class="hh d-flex" *ngIf="(items)=='Name'">
+						<div>
+							<div class="hh d-flex">
 								<input type="checkbox" name="">
 								<h4>Name</h4>
 								<select class="form-control">
-									<option selected>{{items}}</option>
+									<option selected>{{headers[0]}}</option>
 									<option>Email id</option>
 									<option>Mobile No</option>
 									<option>Gender</option>
@@ -135,17 +135,17 @@
 									<option>State</option>
 								</select>
 								<label class="switch">
-									<input type="checkbox" (change)="getUpdateFields($event,items)">
+									<input type="checkbox" (change)="getUpdateFields($event,headers[0])">
 									<span class="slider"></span>
 								</label>
 								<h6>override on</h6>
 							</div>
-							<div class="hh d-flex" *ngIf="(items)=='emailId'">
+							<div class="hh d-flex">
 								<input type="checkbox" name="">
 								<h4>Email id</h4>
 								<select class="form-control">
 									<option>First Name</option>
-									<option selected>{{items}}</option>
+									<option selected>{{headers[1]}}</option>
 									<option>Mobile No</option>
 									<option>Gender</option>
 									<option>Tag</option>
@@ -153,19 +153,19 @@
 									<option>Country</option>
 									<option>State</option>
 								</select>
-								<label class="switch" (change)="getUpdateFields($event,items)">
+								<label class="switch" (change)="getUpdateFields($event,headers[1])">
 									<input type="checkbox">
 									<span class="slider"></span>
 								</label>
 								<h6>override on</h6>
 							</div>
-							<div class="hh d-flex" *ngIf="(items) =='Phone_number'">
+							<div class="hh d-flex">
 								<input type="checkbox" name="" >
 								<h4>Mobile Number</h4>
 								<select class="form-control">
 									<option>First Name</option>
 									<option>Email id</option>
-									<option selected>{{items}}</option>
+									<option selected>{{headers[2]}}</option>
 									<option>Gender</option>
 									<option>Tag</option>
 									<option>Status</option>
@@ -173,31 +173,31 @@
 									<option>State</option>
 								</select>
 								<label class="switch">
-									<input type="checkbox" (change)="getUpdateFields($event,items)">
+									<input type="checkbox" (change)="getUpdateFields($event,headers[2])">
 									<span class="slider"></span>
 								</label>
 								<h6>override on</h6>
 							</div>
-							<div class="hh d-flex" *ngIf="(items) =='sex'">
+							<div class="hh d-flex" >
 								<input type="checkbox" name="">
 								<h4>Gender</h4>
 								<select class="form-control">
 									<option>First Name</option>
 									<option>Email id</option>
 									<option>Mobile No</option>
-									<option selected>{{items}}</option>
+									<option selected>{{headers[3]}}</option>
 									<option>Tag</option>
 									<option>Status</option>
 									<option>Country</option>
 									<option>State</option>
 								</select>
 								<label class="switch">
-									<input type="checkbox"  (change)="getUpdateFields($event,items)">
+									<input type="checkbox"  (change)="getUpdateFields($event,headers[3])">
 									<span class="slider"></span>
 								</label>
 								<h6>override on</h6>
 							</div>
-							<div class="hh d-flex" *ngIf="(items) =='tag'">
+							<div class="hh d-flex" >
 								<input type="checkbox" name="">
 								<h4>Tags</h4>
 								<select class="form-control">
@@ -205,18 +205,18 @@
 									<option>Email id</option>
 									<option>Mobile No</option>
 									<option>Gender</option>
-									<option selected>{{items}}</option>
+									<option selected>{{headers[4]}}</option>
 									<option>Status</option>
 									<option>Country</option>
 									<option>State</option>
 								</select>
 								<label class="switch">
-									<input type="checkbox" (change)="getUpdateFields($event,items)">
+									<input type="checkbox" (change)="getUpdateFields($event,headers[4])">
 									<span class="slider"></span>
 								</label>
 								<h6>override on</h6>
 							</div>
-							<div class="hh d-flex" *ngIf="(items) =='status'">
+							<div class="hh d-flex" >
 								<input type="checkbox" name="" >
 								<h4>Status</h4>
 								<select class="form-control">
@@ -225,17 +225,17 @@
 									<option>Mobile No</option>
 									<option>Gender</option>
 									<option>Tag</option>
-									<option selected>{{items}}</option>
+									<option selected>{{headers[5]}}</option>
 									<option>Country</option>
 									<option>State</option>
 								</select>
 								<label class="switch">
-									<input type="checkbox" (change)="getUpdateFields($event,items)">
+									<input type="checkbox" (change)="getUpdateFields($event,headers[5])">
 									<span class="slider"></span>
 								</label>
 								<h6>override on</h6>
 							</div>
-							<div class="hh d-flex" *ngIf="(items) =='Country'">
+							<div class="hh d-flex">
 								<input type="checkbox" name="">
 								<h4>Country</h4>
 								<select class="form-control">
@@ -245,16 +245,16 @@
 									<option>Gender</option>
 									<option>Tag</option>
 									<option>Status</option>
-									<option selected>{{items}}</option>
+									<option selected>{{headers[6]}}</option>
 									<option>State</option>
 								</select>
 								<label class="switch">
-									<input type="checkbox" (change)="getUpdateFields($event,items)">
+									<input type="checkbox" (change)="getUpdateFields($event,headers[6])">
 									<span class="slider"></span>
 								</label>
 								<h6>override on</h6>
 							</div>
-							<div class="hh d-flex" *ngIf="(items) =='state'">
+							<div class="hh d-flex" >
 								<input type="checkbox" name="" >
 								<h4>State</h4>
 								<select class="form-control">
@@ -265,10 +265,10 @@
 									<option>Tag</option>
 									<option>Status</option>
 									<option>Country</option>
-									<option selected>{{items}}</option>
+									<option selected>{{headers[7]}}</option>
 								</select>
 								<label class="switch">
-									<input type="checkbox" (change)="getUpdateFields($event,items)">
+									<input type="checkbox" (change)="getUpdateFields($event,headers[7])">
 									<span class="slider"></span>
 								</label>
 								<h6>override on</h6>
@@ -290,9 +290,9 @@
 							<h5>File Name</h5>
 							<h6>{{fileName}}</h6>
 						</div>
-						<div class="ggg">
+						<div class="ggg" [(ngModel)]="purpose">
 							<h5>Purpose</h5>
-							<h6>Upload existing contacts only</h6>
+							<h6>{{purpose}}</h6>
 
 						</div>
 						<div class="ggg" [(ngModel)]="Identifier">

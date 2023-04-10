@@ -4,131 +4,36 @@
   <div class="card9 float-right">
     <div class="card-body">
       <h4>Recent Conversation</h4>
-      <div class="row d-flex">
+      <div class="row d-flex" *ngFor="let items of recentConversation; let i = index">
         <img src="assets/img/my.png">
         <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>Bob Dean</h5>
-            <h6>Lorium ipsum dolor...</h6>
+          <h5>{{recentConversation[0][i].Name}}</h5>
+          <h6>{{recentConversation[1][i].message_text}}</h6>
+          <div class="date">
+            <h4>{{recentConversation[1][i].created_at | date:'h:mm a'}}</h4>
           </div>
         </div>
-        <div class="ml-3">
-          <h4>9:41 am</h4>
-        </div>
       </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>David Harisian</h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>9:35 am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>Jane Tony</h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>8:15 am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>Andrew Green</h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>8:13 am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>William Christopher </h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>9:41 am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>David Harisian</h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>9:35am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>Jane Tony</h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>8:15am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>Andrew Green</h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>8:13am</h4>
-        </div>
-      </div>
-      <div class="row d-flex">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <div class="mt-5 ml-2">
-            <h5>William Christopher </h5>
-            <h6>Lorium ipsum dolor...</h6>
-          </div>
-        </div>
-        <div class="ml-3">
-          <h4>9:41am</h4>
-        </div>
-      </div>
-    </div>
-  
-  <div class="card10">
-    <div class="card10-p">
-      <img src="assets/img/img2.png" alt="error">
-      <p class="txt-1">Premium+</p>
-      <p class="txt-2">$0.5 per message</p>
 
     </div>
 
-    <div class="card10-c">
-      <p style="margin-top:30px">Your available balance</p>
-      <p style=" font-size: 27px;"><b>$7.309.68</b></p>
-      <button>Add Funds</button>
+    <div class="card10">
+      <div class="card10-p">
+        <img src="assets/img/img2.png" alt="error">
+        <p class="txt-1">Premium+</p>
+        <p class="txt-2">$0.5 per message</p>
+
+      </div>
+
+      <div class="card10-c">
+        <p style="margin-top:30px">Your available balance</p>
+        <p style=" font-size: 27px;"><b>$7.309.68</b></p>
+        <button>Add Funds</button>
+      </div>
     </div>
   </div>
-  </div>
+
+
 
   <div class="card9">
     <h2>"Summary for last 30 days"</h2>

@@ -69,11 +69,6 @@ export class DashboardService {
   }
 
   
-  sendExportContact(data: any): Observable<any> {
-    console.log("service "+data)
-    let API_URL = 'https://contactapi.sampanatechnologies.com/sendExportContact';
-    return this.http.get(API_URL,{headers:{'Content-Type':'application/json'}})
-}
   filter(Phone_number: any) {
     const params = new HttpParams().set('Phone_number', Phone_number)
     return this.http.get('https://contactapi.sampanatechnologies.com/filter', { params: params })
@@ -116,9 +111,9 @@ export class DashboardService {
     return this.http.post('https://contactapi.sampanatechnologies.com/deletContact', data)
   }
 
-  editContactById(data: any) {
-    return this.http.put('https://contactapi.sampanatechnologies.com/editContact', data)
-  }
+  // editContactById(data: any) {
+  //   return this.http.put('https://contactapi.sampanatechnologies.com/editContact', data)
+  // }
 
 
   //******************Smart replies API's*********************//

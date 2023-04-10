@@ -42,7 +42,22 @@ export class RegisterComponent implements OnInit {
     onSubmit(){
         console.log(this.registerForm.value)
         this.submitted = true
+        if (this.registerForm.valid) {
+            sessionStorage.setItem('formValues', JSON.stringify(this.registerForm.value));
+            sessionStorage.setItem('otpfieldEmailvalue',this.registerForm.value.email_id) ;
+            sessionStorage.setItem('otpfieldMobilevalue',this.registerForm.value.mobile_number);
+            
+            var idfs={
+                "email_id":this.registerForm.value.email_id,
+                "mobile_number":this.registerForm.value.mobile_number
+            }
+            this.apiService.sendOtp(idfs).subscribe(response => {
+                console.warn("registerdone! ", response)
+                this.router.navigate(['verification'])
+            });
 
+        }
+       
         if (this.registerForm.invalid){
             return
         }
@@ -50,19 +65,7 @@ export class RegisterComponent implements OnInit {
         // alert("Success")
     }
 
-    onVerification() {
-       
-        if (this.registerForm.valid) {
-            sessionStorage.setItem('formValues', JSON.stringify(this.registerForm.value));
-
-            this.apiService.sendOtp(this.registerForm.value).subscribe(response => {
-                console.warn("registerdone! ", response)
-                this.router.navigate(['verification'])
-            });
-
-        }
-        
-    }
+    
     viewpass(){
         this.visible = !this.visible;
         this.changetype = !this.changetype;

@@ -68,8 +68,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
         Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
         emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
         age: new FormControl(''),
-        tag: new FormControl(''),
-        status: new FormControl(''),
+        tag: new FormControl([]),
+      status:  new FormControl([]),
         facebookId: new FormControl(''),
         InstagramId: new FormControl('')
       });
@@ -79,15 +79,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
     Phone_number: new FormControl(''),
     emailId: new FormControl(''),
     age: new FormControl(''),
-    tag: new FormControl(''),
-    status: new FormControl(''),
+    tag: new FormControl([]),
+    status:  new FormControl([]),
     facebookId: new FormControl(''),
     InstagramId: new FormControl('')
   })
 }
     ngOnInit() {
 
-      this.sendExportContact();
+     
       this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
       
       this.cities = [
@@ -145,12 +145,14 @@ bulk(e: any) {
     console.log(this.contacts[0].customerId)
     for (var i = 0; i < this.contacts.length; i++) {
       this.checkedcustomerId.push(this.contacts[i].customerId)
+      this.checkedConatct.push(this.contacts[i]);
     }
     this.checks = true;
   }
   else {
     this.checks = false;
-    this.checkedcustomerId.length = 0
+    this.checkedcustomerId.length = 0;
+    this.checkedConatct.length=0;
   }
   console.log("this.customerId")
   console.log(this.checkedcustomerId)
@@ -211,14 +213,14 @@ opens(contents:any) {
   openedit(contactedit: any) {
     console.log(sessionStorage.getItem('id'))
     this.apiService.getContactById(sessionStorage.getItem('id')).subscribe((result:any)=>{
-      //console.log(result[0].Name)
+      console.log(result[0].tag +" "+result[0].age)
       this.editContact=this.fb.group({
         Name: new FormControl(result[0].Name),
         Phone_number: new FormControl(result[0].Phone_number),
         emailId: new FormControl(result[0].emailId),
         age: new FormControl(result[0].age),
-        tag: new FormControl(result[0].tag),
-        status: new FormControl(result[0].status),
+        tag: new FormControl([result[0].tag]),
+        status: new FormControl([result[0].status]),
         facebookId: new FormControl(result[0].facebookId),
         InstagramId: new FormControl(result[0].InstagramId)
       })
@@ -385,7 +387,11 @@ getContactById(data: any) {
 
 exportCheckedContact() {
 	console.log(this.checkedConatct)
-	this.apiService.exportCheckedContact(this.checkedConatct).subscribe(response => {
+  var exContact={
+     data:this.checkedConatct,
+     loginData:sessionStorage.getItem('loginDetails')
+  }
+	this.apiService.exportCheckedContact(exContact).subscribe(response => {
 		console.log(response);
 
 	})
@@ -395,15 +401,7 @@ exportCheckedContact() {
 	console.log(this.checkedConatct)
 }
 
-sendExportContact() {
-  var email_id=JSON.stringify(sessionStorage.getItem('loginDetails'))
-  console.log("sendExportContact",email_id)
- 
-	this.apiService.sendExportContact(email_id).subscribe(data => {
-		console.log(data)
-   
-	})
-}
+
 
 filterContact(){
 	var data=this.filterForm.value.Phone_number
