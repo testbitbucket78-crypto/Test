@@ -179,6 +179,11 @@ img {
     width: 300px;
     height: 980px;
 }
+.row2{
+    position: absolute;
+
+    margin: 50px 0px 0px 48px;
+}
 .row2 h5 {
     font-size: 15px;
     color: #000000;
@@ -188,6 +193,9 @@ img {
     color: #7a86a1;
     font-weight: 400;
 }
+.row{
+    position: relative;
+}
 .row .img {
     vertical-align: middle;
     border-style: none;
@@ -196,11 +204,16 @@ img {
     border-radius: 17px;
     height: 45px;
 }
-.ml-3 h4 {
+.row .date {
+    float: right;
+    margin: -27px 0 0 187px;
+}
+.date h4 {
     font-size: 13px;
     font-weight: normal;
     color: #7a86a1;
-    margin: 56px 0px 0px 0px;
+    float: right;
+    display: contents;
 }
 .row4 {
     margin: -48px 0px 0px 125px;

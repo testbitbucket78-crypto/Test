@@ -28,6 +28,9 @@ export class DashboardService {
     return this.http.get('https://cip-api.sampanatechnologies.com/Campaigns');
 
   }
+  public dashboardRecentConversation() {
+    return this.http.get('https://cip-api.sampanatechnologies.com/recentConversation')
+  }
   public RuningCampaign() {
     return this.http.get('http://localhost:3003');
 

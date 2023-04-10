@@ -15,24 +15,13 @@
               <div class="col-sm-6">
                 <label for="floatingInputGrid">Name</label>
 
-                <input type="text-right mr-3" class="form-control" placeholder="Name" aria-label="City" name="name"
+                <input type="text-right mr-3" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.name.errors  }" placeholder="Name" aria-label="City" name="name"
                   formControlName="name" id="name">
               </div>
-                   
-               <!-- <select class="select">
-                  <option selected>+91</option>
-                  <option >+98</option>
-                  <option >+1</option>
-                  <option >+44</option>
-                  <option >+380</option>
-                  <option >+93</option>
-                  <option >+213</option>
-                  <option >+54</option>
-                  </select> -->
               <div class=" col-sm-6">
                 <label for="floatingInputGrid">Phone Number</label>    
                 <input type="text-right " class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }" placeholder="Phone Number" aria-label="State"
-                  name="mobile_number" formControlName="mobile_number" id="mobile_number">
+                  name="mobile_number" formControlName="mobile_number" id="mobile_number" #text>
 
               </div>
          
@@ -68,7 +57,7 @@
               <div class="col-sm-1"></div>
               <div class="form-group mt-4 mb-0 custom-control custom-checkbox">
                  <input type="checkbox" name="text" > I
-                accpet the <a href="#" target="_blank">Terms & Conditions</a> </div>
+                accept the <a href="#" target="_blank">Terms & Conditions</a> </div>
               <div class="form-group mt-4 ml-5 mb-0 custom-control custom-checkbox">
                 <input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
                 <label class="custom-control-label" for="rememberPasswordCheck">Remember Me</label>
@@ -87,14 +76,17 @@
         </div>
       </div>
     </div>
+    <div *ngIf= "submitted && registerForm.controls.name.errors" class="text-danger">
+      ! Name required
+    </div>
     <div *ngIf= "submitted && registerForm.controls.mobile_number.errors" class="text-danger">
       ! Phone number must be 10 digits
     </div>
-    <div *ngIf= "submitted && registerForm.controls.Email.errors" class="text-danger">
+    <div *ngIf= "submitted && registerForm.controls.email_id.errors" class="text-danger">
       ! Invalid Email Id
     </div>
     <div *ngIf= "submitted && registerForm.controls.password.errors" class="text-danger">
-      ! Password must be 8 character and include both numbers and letters
+      ! password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters
     </div>
     <div class=" text1"><a routerLink="/login" style="display: inline-flex">Already member?<h6 class="ml-1"> Sign In
         </h6></a></div>

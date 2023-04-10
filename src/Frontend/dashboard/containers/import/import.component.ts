@@ -18,7 +18,7 @@ export class ImportComponent implements OnInit {
 	fileName: any;
 	numberOfNewContact: any;
 	data: any;
-	public headers: any[] = [];
+	headers: any[] = [];
 	records: any[] = [];
 	checkedConatct: any;
 	checkboxArray = [];
@@ -91,10 +91,8 @@ export class ImportComponent implements OnInit {
 
 	getHeaderArray(csvRecordsArr: any) {
 		let headers = (<string>csvRecordsArr[0]).split(',');
-		let headerArray = [];
-		// for (let j = 0; j < headers.length; j++) {
-		// 	headerArray.push(headers[j]);
-		// }
+		let headerArray: never[] = [];
+	
 		return headerArray;
 	}
 

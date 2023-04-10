@@ -23,8 +23,8 @@ export class RegisterComponent implements OnInit {
         name: new FormControl('', Validators.required),
         mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
-        confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
+        password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')])),
+        confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')])),
         
     })
     title = 'formValidation';
@@ -32,8 +32,6 @@ export class RegisterComponent implements OnInit {
 
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) { }
     ngOnInit() {
-
-
      
     }
 

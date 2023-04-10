@@ -469,19 +469,16 @@ opacity: 1;
     font-size: 11px;
     margin: 0 0 0 20px;
 }
-.sidebar .child3{
-    margin: 0 0 0 40px;
 
-}
 .sidebar .child3 h5{
     color: #6149CD;
     font-size: 13px;
-    margin: 15px 0 0 20px;
+    margin: 15px 0 0 3px;
 }
 .sidebar .child3 h6{
     color: #000000;
     font-size: 11px;
-    margin: 10px 0 0 20px;
+    margin: 10px 0 0 3px;
 }
 .sidebar .child5 .child4 .line{
     height: 11px;
@@ -563,4 +560,37 @@ opacity: 1;
     cursor: pointer;
     border: none;
     background-color: #ffffff;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+    font-size: 11px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+.form-control.is-invalid {
+    border: 1px solid red;
+    background: padding-box;
+}
+
+.modal-dialog .modal-content .modal-body{
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+}
+.modal-dialog .modal-content .deletefile .btn9{
+    border: 1px solid #695F9724;
+    background-color: #ffffff;
+    color: #7A86A1;
+    margin: 0 24px 15px 270px;
+    border-radius: 14px;
+    width: 80px;
+}
+.modal-dialog .modal-content .deletefile .btn99{
+    border: 1px solid #695F9724;
+    color: #ffffff;
+    background: #F23B3B;
+    width: 93px;
+    margin: 0 0px 15px 0;
+    border-radius: 14px;
 }

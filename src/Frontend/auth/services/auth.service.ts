@@ -25,6 +25,11 @@ export class AuthService {
         let API_URL = 'https://authapi.sampanatechnologies.com/forgotPassword';
         return this.http.post(API_URL, data)
     }
+    resetPassword(value:any){
+         console.log(""+value)
+         let API_URL = 'https://authapi.sampanatechnologies.com/resetPassword';
+         return this.http.post(API_URL,value)
+     }
     sendOtp(data:authSendOtp){
         let API_URL = 'https://authapi.sampanatechnologies.com/sendOtp';
         return this.http.post(API_URL, data)

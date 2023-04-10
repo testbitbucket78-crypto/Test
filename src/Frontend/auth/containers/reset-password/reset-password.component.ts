@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormsModule, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
-
+import { AuthService } from './../../services';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'sb-reset-password',
@@ -15,26 +16,37 @@ export class ResetPasswordComponent implements OnInit {
     changetype:boolean = true;
     change:boolean = true;
 
-    resetpassword!:FormGroup
+ 
     title = 'formValidation';
     submit = false;
-    constructor( private formBuilder: FormBuilder) {}
+
+    resetpassword = this.formBuilder.group({
+        id:sessionStorage.getItem('SP_ID'),
+        password: new FormControl('',Validators.compose([Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')])),
+        confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
+        
+    })
+    constructor( private formBuilder: FormBuilder,private router: Router,private apiService :AuthService) {}
     ngOnInit() {
-        this.resetpassword = this.formBuilder.group({
-            passwords: new FormControl('',Validators.compose([Validators.required, Validators.minLength(8)])),
-            confirmpasswords: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
-        })
+       
     }
     
-
+     
     onSubmit(){
+        
+        var SP_ID=sessionStorage.getItem('SP_ID')
+        
+        this.apiService.resetPassword(this.resetpassword.value).subscribe(data => {
+            console.log(data)
+            this.router.navigate (['login'])
+           
+        })
         this.submit = true
-
         if (this.resetpassword.invalid){
             return
         }
         
-        alert("Success")
+        // alert("Success")
     }
 
     viewpass(){

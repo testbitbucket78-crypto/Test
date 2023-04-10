@@ -17,7 +17,7 @@ export class ContactsComponent implements OnInit {
 	 name = 'Angular'; 
    checkedConatct: any[] = [];
 	 productForm: FormGroup;  
-   title = 'result-table';
+  //  title = 'result-table';
    newContact:FormGroup;
    editContact: FormGroup;
    checkedcustomerId: any = [];
@@ -36,7 +36,9 @@ export class ContactsComponent implements OnInit {
     items: any;
     customerData: any;
 	filterForm=new FormGroup({
-		Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)]))
+    Name: new FormControl('', Validators.required),
+    Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+    emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
 	})
    orderHeader: String = '';
    isDesOrder: boolean = true;
@@ -52,6 +54,9 @@ export class ContactsComponent implements OnInit {
     this.orderHeader = headerName;
 
    }
+
+   title = 'formValidation';
+   submitted = false;
  
   
 constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: DashboardService, private fb:FormBuilder) {
@@ -308,10 +313,19 @@ console.log(this.contacts);
       }
   }
   addContact() {
-	
+    console.log(this.newContact.value)
+    this.submitted = true
+
+    // if (this.newContact.invalid){
+    //     return
+    // }
+
 		this.apiService.addContact(this.newContact.value).subscribe(response => {
 			console.log(response)
 		})
+    if (this.newContact.invalid){
+      return
+  }
 }
 
 editContactData() {

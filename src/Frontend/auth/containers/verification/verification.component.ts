@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { FormGroup ,FormControl} from '@angular/forms';
+import { Validators } from '@angular/forms';
 
 
 @Component({
@@ -11,11 +12,13 @@ import { FormGroup ,FormControl} from '@angular/forms';
     styleUrls: ['verification.component.scss'],
 })
 export class VerificationComponent implements OnInit {
-
-
+    text= '9927875494'
     otpForm = new FormGroup({
-        otp: new FormControl('')
+        otp: new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),])),
     })
+
+    title = 'formValidation';
+    submitted = false;
     values:any;
     constructor(private apiService: AuthService, private router: Router) { }
     ngOnInit() {
@@ -23,17 +26,12 @@ export class VerificationComponent implements OnInit {
       
     }
 
+
     onVerify() {
-        // this.registerForm.push(sessionStorage.getItem('registerName'));
-        // this.registerForm.push(sessionStorage.getItem('registerPhoneNo'))
-        // this.registerForm.push(sessionStorage.getItem('registerEmail'))
-        // this.registerForm.push(sessionStorage.getItem('registerPassword'))
-        // this.registerForm.push(sessionStorage.getItem('registerConformPass'))
        
         this.apiService.verifyOtp(this.otpForm.value).subscribe(response => {
             console.log(this.otpForm.value)
             console.warn("verification! ", response)
-            //  this.values= JSON.p((sessionStorage.getItem('formValues')))
 
         });
 
@@ -41,6 +39,12 @@ export class VerificationComponent implements OnInit {
     }
   
     onSubmitRegisterform(){
+        console.log(this.otpForm.value)
+        this.submitted = true
+
+        if (this.otpForm.invalid){
+            return
+        }
        
          this.values=sessionStorage.getItem('formValues')
         
