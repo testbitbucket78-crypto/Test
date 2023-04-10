@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {DashboardService} from './../../services';
+import { DashboardService } from './../../services';
+import { ColDef} from 'ag-grid-community';
+
 
 @Component({
   selector: 'sb-contacts',
@@ -11,6 +13,132 @@ import {DashboardService} from './../../services';
 export class ContactsComponent implements OnInit {
 
 
+  columnDefs: ColDef[] = [
+  
+    {field: '', headerCheckboxSelection: true,
+      headerCheckboxSelectionFilteredOnly: true,
+      checkboxSelection: true
+     
+     },
+    { field: 'id', filter: true, sortable: true,  },
+    { field: 'name', filter: true, sortable: true,},
+    { field: 'phone', filter: true, sortable: true },
+    { field: 'email', filter: true, sortable: true },
+    { field: 'age', filter: true, sortable: true },
+    { field: 'gender', filter: true, sortable: true },
+    { field: 'tag', filter: true, sortable: true 
+  }];
+
+  rowData = [
+    { id: 1, name: 'Ravi', phone: 23232232323, email:'sdsdfhsd@gmail.com', age:21, gender:'male', tag:'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+    { id: 1, name: 'Ravi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 21, gender: 'male', tag: 'New Customer' },
+    { id: 2, name: 'Vipin', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 1, gender: 'male', tag: 'newcustomer' },
+    { id: 3, name: 'Rishi', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 2, gender: 'male', tag: 'newcustomer' },
+    { id: 4, name: 'Gaurav', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 3, gender: 'male', tag: 'newcustomer' },
+    { id: 5, name: 'Rishabh Verma', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 4, gender: 'male', tag: 'newcustomer' },
+    { id: 6, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 5, gender: 'male', tag: 'newcustomer' },
+    { id: 7, name: 'Rishabh', phone: 23232232323, email: 'sdsdfhsd@gmail.com', age: 6, gender: 'male', tag: 'newcustomer' },
+
+
+  ];
+  
   searchText= "";
 
 	 contacts:any;
@@ -22,7 +150,8 @@ export class ContactsComponent implements OnInit {
    editContact: FormGroup;
    checkedcustomerId: any = [];
    editForm: any = [];
-    pageOfItems: any;
+   pageOfItems: any;
+ 
 
   // multiselect 
     disabled = false;
@@ -52,9 +181,24 @@ export class ContactsComponent implements OnInit {
     this.orderHeader = headerName;
 
    }
- 
+
+  // onGridReady(event: GridReadyEvent) {
+  //   this.gridApi = event.api;
+  // }
+  // onSelectionChanged(events: SelectionChangedEvent) {
+  //   const rows = this.gridApi?.getSelectedNodes();
+  //   console.log(rows);
+  // }
+
+  // onRowClicked(event:any) {
+  //   this.getContactById(event.data);
+  //   this.opensidenav(event.contact);
+  //   console.log(event);
+  // }
+
   
-constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: DashboardService, private fb:FormBuilder) {
+  
+ constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -73,17 +217,38 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
         InstagramId: new FormControl('')
       });
 	
-  this.editContact = this.fb.group({
-    Name: new FormControl(''),
-    Phone_number: new FormControl(''),
-    emailId: new FormControl(''),
-    age: new FormControl(''),
-    tag: new FormControl(''),
-    status: new FormControl(''),
-    facebookId: new FormControl(''),
-    InstagramId: new FormControl('')
-  })
+      this.editContact = this.fb.group({
+        Name: new FormControl(''),
+        Phone_number: new FormControl(''),
+        emailId: new FormControl(''),
+        age: new FormControl(''),
+        tag: new FormControl(''),
+        status: new FormControl(''),
+        facebookId: new FormControl(''),
+        InstagramId: new FormControl('')
+      });
+
+
+
 }
+
+
+ 
+  // public onGridReady(params:any) {
+  //   this.gridApi = params.api;
+  //   this.columnApi = params.columnApi;
+  // }
+
+  // public onCheckboxChange(event:any) {
+  //   if (event.target.checked) {
+  //     this.columnApi.setColumnVisible('Name', false);
+  //   } else {
+  //     this.columnApi.setColumnVisible('Name', true);
+  //   }
+  // }
+
+
+
     ngOnInit() {
 
       this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
@@ -253,12 +418,12 @@ console.log(this.contacts);
   }
   
   opensidenav(contact: any){
-    document.getElementById("sidebar")!.style.width = "300px";
+    document.getElementById("sidebar")!.style.width = "494px";
    }
+
    closesidenav(items: any){
     document.getElementById ("sidebar")!.style.width = "0";
    }
-
 
   deleteRow(arr: ["id"]) {
     console.log("delete")
@@ -276,7 +441,30 @@ console.log(this.contacts);
   }
 
 
+  onRowSelected(item: any) {
+   
+    
+
+  };
+
+  rowClicked (event: any) {
+    
+    document.getElementById("sidebar")!.style.width = "494px";
+   
+  }
   
+
+  gridOptions = {
+
+    rowSelection: 'multiple',
+    rowHeight: 48,
+    headerHeight: 50,
+    suppressRowClickSelection: true,
+    groupSelectsChildren: true,
+    onRowClicked: this.rowClicked,
+    onRowSelected: this.onRowSelected
+
+  };
 
     selCheckBox(event: any) {
         var id = document.getElementsByClassName('btn  btn-block float-right');
@@ -416,3 +604,4 @@ search(){
   })
 }
 }
+

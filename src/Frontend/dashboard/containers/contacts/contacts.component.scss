@@ -1,3 +1,55 @@
+html, body {
+   height: 100%;
+   width: 100%;
+   padding: 5px;
+   box-sizing: border-box;
+   -webkit-overflow-scrolling: touch;
+}
+
+.ag-theme-alpine {
+width: 100%; 
+height: 560px;
+background: #FFFFFF 0% 0% no-repeat padding-box;
+box-shadow: 2px 13px 54px #695F9714;
+border-radius: 30px;
+opacity: 1;
+border: none;
+font-family: 'Manrope';
+font-style: normal;
+letter-spacing: 0px;
+font-size :14px;
+color: #6149CD;
+}
+
+.multiselect-dropdown{
+    font-family: 'Manrope';
+}
+
+.ag-theme-alpine.ag-row {
+    font-size: 14px;
+    border: none;
+    border-radius: 30px;
+
+}
+
+.ag-theme-alpine .ag-cell, .ag-theme-alpine .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+    /* border: 1px solid transparent; */
+    border: 1px solid #7070700D;
+    /* border-radius: 24px; */
+    background: #FBF9FE;
+    line-height: 40px;
+    padding-left: 17px;
+    padding-right: 17px;
+    -webkit-font-smoothing: subpixel-antialiased;
+    font-family: 'Manrope';
+
+}
+
+.ag-theme-alpine [class^=ag-], .ag-theme-alpine [class^=ag-]:focus, .ag-theme-alpine [class^=ag-]:after, .ag-theme-alpine [class^=ag-]:before {
+    box-sizing: border-box;
+    outline: none;
+    /* background: #ffffff; */
+}
 
 .input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
     position: relative;
@@ -95,6 +147,7 @@ h4, .h4 {
     opacity: 1;
 
 }
+
 
 label {
     display: inline-block;

@@ -1,15 +1,18 @@
-<sb-layout-dashboard [light]="false">
+<sb-layout-dashboard>
+  <!-- <sb-dashboard-head  [hideBreadcrumbs]="true"></sb-dashboard-head> -->
+  <sb-top-nav title="Dashboard"  > </sb-top-nav>
 <!-- <sb-dashboard-card col-md-3s></sb-dashboard-card col-md-3s><sb-dashboard-charts></sb-dashboard-charts><sb-dashboard-tables></sb-dashboard-tables>
  -->
+ 
  <div class="card9 float-right">
-  <div class="card-body">
-    <h4>Recent conversations</h4>
+  <div class="card-body-right" >
+    <h4 id="card9-h4">Recent conversations</h4>
     <div class="row d-flex">
       <img src="assets/img/my.png">
       <div class="row2">
         <div class="mt-5 ml-2">
         <h5>Bob Dean</h5>
-        <h6>Lorium ipsum dolor...</h6>
+        <h6>Lorium ipsum dolor sit met...</h6>
         </div>
         </div>
         <div class="ml-3">
@@ -21,7 +24,7 @@
       <div class="row2">
         <div class="mt-5 ml-2">
         <h5>David Harisian</h5>
-        <h6>Lorium ipsum dolor...</h6>
+        <h6>Lorium ipsum dolor sit met...</h6>
         </div>
         </div>
         <div class="ml-3">
@@ -33,7 +36,7 @@
       <div class="row2">
         <div class="mt-5 ml-2">
         <h5>Jane Tony</h5>
-        <h6>Lorium ipsum dolor...</h6>
+        <h6>Lorium ipsum dolor sit met...</h6>
         </div>
         </div>
         <div class="ml-3">
@@ -45,7 +48,7 @@
       <div class="row2">
         <div class="mt-5 ml-2">
         <h5>Andrew Green</h5>
-        <h6>Lorium ipsum dolor...</h6>
+        <h6>Lorium ipsum dolor sit met...</h6>
         </div>
         </div>
         <div class="ml-3">
@@ -57,15 +60,14 @@
       <div class="row2">
         <div class="mt-5 ml-2">
         <h5>William Christopher </h5>
-        <h6>Lorium ipsum dolor...</h6>
+        <h6>Lorium ipsum dolor sit met...</h6>
         </div>
         </div>
         <div class="ml-3">
         <h4>9:41 am</h4>
       </div>
     </div>
-  </div>
-  <div class="card10">
+      <div class="card10">
     <div class="card10-p">
       <img src="assets/img/img2.png" alt="error">
      <p class="txt-1">Premium+</p>
@@ -79,15 +81,18 @@
     <button>Add Funds</button>
   </div>
   </div>
-</div>
+  </div>
 
-<div class="card9">
+</div>
+<div id="heading"><p>Hello User-Name, welcome back</p></div>
+<div id="heading2" class="card9">
   <h2>"Summary for last 30 days"</h2>
   
   </div>
-   <div class="row">
-    <button class="btn  btn-block float-right" routerLink="/dashboard/reports">
-      
+   <div class="row main">
+    <div class="row r1">
+    <!-- <button id="contacts-col" class="btn  btn-block float-right" routerLink="/dashboard/reports"> -->
+      <div class="col-sm-5 c1" (click)="routeToPage()">
         <div class="card-body">
             <h4>Contacts</h4>
             <div *ngFor="let items of dashboard">
@@ -118,9 +123,12 @@
               </div>
       </div>
         </div>
-    </button>
+        </div>
+    <!-- </button> -->
 
-    <button class="btn  btn-block float-right" routerLink="/dashboard/import">
+    
+        <div class="col-sm-5 c2" (click)="routeToPage1()">
+    <!-- <button id="contacts-col" class="btn  btn-block float-right" routerLink="/dashboard/import"> -->
         <div class="card-body">
             <h4>Interactions</h4>
             <div *ngFor="let items of interactions">
@@ -147,10 +155,13 @@
               </div>
         </div>
         </div>
-        </button>
-   
+        <!-- </button> -->
+        </div>
+   </div>
 
-        <button class="btn1 btn-block float-right" routerLink="/dashboard/reports">
+   <div class="row r2">
+
+        <button id="campaigns" class="btn1 btn-block float-right" routerLink="/dashboard/reports">
 
           <div class="card-body">
             <h4>Campaigns</h4>
@@ -200,7 +211,11 @@
             </div>
           </div>
         </button>
-        <button class="btn2  btn-block float-right" routerLink="/dashboard/reports">
+
+        </div>
+
+        <div class="row r3">
+        <button id="agents" class="btn2  btn-block float-right" routerLink="/dashboard/reports">
     
           <div class="card-body">
     
@@ -243,6 +258,7 @@
             </div>
           </div>
         </button>
+      </div>
       </div>
       <ng-template #add let-c="close" let-d="dismiss">
         <div class="modal-header">

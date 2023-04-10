@@ -1,91 +1,97 @@
-<sb-layout-dashboard><sb-dashboard-head title="Smart Replies" [hideBreadcrumbs]="true"></sb-dashboard-head>
-
-	
+<sb-layout-dashboard>
+  <sb-top-nav title="Smart Replies"> </sb-top-nav>
 	<div class="row">
 		<div class="col-md-5 mb-4 mt-4">
 			<div class="col-md-12 mb-4">
 
-				<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-9" [formGroup]="searchForm" (ngSubmit)="search()">
-				   <div class="input-group gf ">
-					
-					   <input class="form-control" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" name="ID"  id="ID" formControlName="ID"/>
+				<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-9"
+					[formGroup]="searchForm" (ngSubmit)="search()">
+					<div class="input-group gf ">
 
-					   <img src="assets/img/search.png">
-				   </div>
-			   </form>
-			</div>
-			   </div>
-			
-			
-		<div class="col-xs-3 ">
-			<button class="btn  btn-block " routerLink="/dashboard/addSmartReplies"><i class="fa fa-plus"></i> Add Smart Reply</button>
-		</div>
-		<div *ngFor="let card of Cards"class="card " (click) = "opensidenav(items)">
-			<div class="card-body gy-2">
-				<h6 class="id">Id:{{ card.Id }}</h6>
-			  <h5 class="card-title">Gift Card Black Friday</h5>
-			  
-			  <p class="card-text">Ullabore et dolore magna aliqua. Ut enim ad min im veniam,quis nostrud exercitation</p>
-			  <h6 class="card-subtitle mb-2 text-muted">Exact matching</h6>
-			  <div class="card1 d-flex">
-			  <div class="card-text1">
-				<p>32</p>
-				<h6>Total Keywords</h6>
-			  </div>
-			  <div class="card-text2">
-				<p>16</p>
-				<h6>Reply Action</h6>
-			  </div>
-			</div>
-			</div>
-			<div id= "sidebar" class="sidebar " [(ngModel)]="items">
-				<button type="button" class="btn5 btn-close" aria-label="Close" (click)="d('Cross click')" (click) = "closesidenav(items)">X</button>
-			
-				<div class="collumn d-flex" >
-					<h6>Id:</h6>
-					<h5>{{items.ID}}.</h5>
-					<div class="line"></div>
-					<h6>Created on:</h6>
-					<h5>{{items.CreatedDate | date: 'dd MMM yyyy'}}</h5>
-					<div class="line"></div>
-					<h6>Edited on:</h6>
-					<h5>{{items.ModifiedDate | date: 'dd MMM yyyy'}}</h5>
-				</div>
-				<h4>Help & Support</h4>
-				<div class="row d-flex"  >
-					<h6 class="text-justify">{{items.HelpAndSupport}}.</h6>
-				</div>
-				<h3>Keywords & Criteria </h3>
-				<div class="row">
-					<div class="box"  *ngFor="let values of data">
-						<p>{{values.Keyword}}</p>
+						<input class="form-control" type="text" placeholder="Search" aria-label="Search"
+							aria-describedby="basic-addon2" name="ID" id="ID" formControlName="ID" />
+
+						<img src="assets/img/search.png">
 					</div>
-				   
-				</div>
-			   
-		
-				<div class="box1 d-flex">
-					<h6>Matching Criteria:</h6>
-					<h5>{{items.MatchingCriteria}}</h5>
-				</div>
-				<h3>Reply Actions</h3>
-				<div class="box4">
-					<h3>Message</h3>
-					<p>{{items.Message}} </p>
-				</div>
-				<div class="box2">
-					<h3>Action</h3>
-					<div class="bb d-flex">
-					<b>{{items.Name}}</b><p>{{items.Value}}</p>
-				</div>
-				</div>		
+				</form>
 			</div>
-		  </div>
-	
+		</div>
+
+
+		<div class="col-xs-3 ">
+			<button class="btn  btn-block " routerLink="/dashboard/addSmartReplies"><i class="fa fa-plus"></i> 
+				Add SmartReply</button>
+		</div>
+		<div *ngFor="let reply of replies " class="card ">
+			<div class="card-body gy-2" (click)="opensidenav(reply)" (click)="getRepliesByID(reply)">
+				<h6 class="id">Id:{{ reply.ID }}</h6>
+				<h5 class="card-title">{{reply.Title}}</h5>
+
+				<p class="card-text">{{reply.Description}}
+				</p>
+				<h6 class="card-subtitle mb-2 text-muted">{{reply.MatchingCriteria}}</h6>
+				<div class="card1 d-flex">
+					<div class="card-text1">
+						<p>{{reply.KeywordCount}}</p>
+						<h6>Total Keywords</h6>
+					</div>
+					<div class="card-text2">
+						<p>{{reply.ActionCount}}</p>
+						<h6>Reply Action</h6>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-	
-	
+	<div id="sidebar" class="sidebar " [(ngModel)]="items">
+		<button type="button" class="btn5 btn-close" aria-label="Close" (click)="('Cross click')"
+			(click)="closesidenav(items)">X</button>
+
+		<div class="collumn d-flex">
+			<h6>Id:</h6>
+			<h5>{{items.ID}}.</h5>
+			<div class="line"></div>
+			<h6>Created on:</h6>
+			<h5>{{items.CreatedDate | date: 'dd MMM yyyy'}}</h5>
+			<div class="line"></div>
+			<h6>Edited on:</h6>
+			<h5>{{items.ModifiedDate | date: 'dd MMM yyyy'}}</h5>
+		</div>
+		<h4>Help & Support</h4>
+		<div class="row d-flex">
+			<h6 class="text-justify">{{items.HelpAndSupport}}.</h6>
+		</div>
+		<h3>Keywords & Criteria </h3>
+		<div class="row">
+			<div class="box" *ngFor="let values of data">
+				<p>{{values.Keyword}}</p>
+			</div>
+
+		</div>
 
 
- </sb-layout-dashboard>
+		<div class="box1 d-flex">
+			<h6>Matching Criteria:</h6>
+			<h5>{{items.MatchingCriteria}}</h5>
+		</div>
+		<h3>Reply Actions</h3>
+		<div class="box4">
+			<h3>Message</h3>
+			<p>{{items.Message}} </p>
+		</div>
+		<div class="box2">
+			<h3>Action</h3>
+			<div class="bb d-flex">
+				<b>{{items.Name}}</b>
+				<p>{{items.Value}}</p>
+			</div>
+		</div>
+	</div>
 
+
+
+
+
+
+
+</sb-layout-dashboard>

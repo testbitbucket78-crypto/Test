@@ -30,10 +30,11 @@
                   <option >+54</option>
                   </select> -->
               <div class=" col-sm-6">
-                <label for="floatingInputGrid">Phone Number</label>    
-                <input type="text-right " class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }" placeholder="Phone Number" aria-label="State"
+                <label for="floatingInputGrid">Phone Number</label>  
+                <sb-verification-input [phonenumber]="phonenumber" ></sb-verification-input>  
+                 <input type="text-right " class="form-control" [ngModel]="phonenumber"  [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }" placeholder="Phone Number" aria-label="State"
                   name="mobile_number" formControlName="mobile_number" id="mobile_number">
-
+            
               </div>
          
             </div>

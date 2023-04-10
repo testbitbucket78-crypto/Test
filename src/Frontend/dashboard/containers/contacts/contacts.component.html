@@ -1,5 +1,6 @@
 <sb-layout-dashboard>
-	<sb-dashboard-head title="Contacts" [hideBreadcrumbs]="true"></sb-dashboard-head>
+	<!-- <sb-dashboard-head title="Contacts" [hideBreadcrumbs]="true"></sb-dashboard-head> -->
+	  <sb-top-nav title="Contacts"></sb-top-nav>
 	<div class="row">
 		<div class="col-md-5 mb-4 mt-4">
 			<div class="col-md-12 mb-4">
@@ -52,9 +53,19 @@
 	(onSelect)="onItemSelect($event)">
 	</ng-multiselect-dropdown>
 </form> -->
-
 	<div class="box">
-		<table class="table">
+		
+    <ag-grid-angular  
+	class="ag-theme-alpine"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+	[pagination]="true"
+	[paginationAutoPageSize]="true"
+	 [gridOptions]="gridOptions"
+    [suppressRowClickSelection]="true">
+   </ag-grid-angular>
+
+		<!-- <table class="table">
 			<thead>
 				<tr class="table-box">
 					<th scope="col"><input type="checkbox" (change)="bulk($event)" (change)="hideDeleteBtn($event)"
@@ -90,10 +101,10 @@
 			<div class="pagination">
 				<jw-pagination [items]="items" (changePage)="onChangePage($event)"></jw-pagination>
 			</div>
-		</table>
+		</table> -->
 
 		<div id="sidebar" class="sidebar ">
-			<button type="button" class="btn5 btn-close" aria-label="Close" (click)="d('Cross click')"
+			<button type="button" class="btn5 btn-close" aria-label="Close" (click)="('Cross click')"
 				(click)="closesidenav(items)">X</button>
 			<div *ngFor="let items of customerData ">
 				<div class="parent d-flex">

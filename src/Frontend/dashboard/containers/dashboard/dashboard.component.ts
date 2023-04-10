@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import {DashboardService} from './../../services';
+import { DashboardService } from './../../services';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'sb-dashboard',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './dashboard.component.html',
     styleUrls: ['dashboard.component.scss'],
 })
@@ -12,19 +13,19 @@ export class DashboardComponent implements OnInit {
     dashboard: any;
     campaigns: any;
     agents: any;
-    constructor(private apiService: DashboardService) { }
+    constructor(private apiService: DashboardService, private router: Router) {}
     ngOnInit() {
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
         this.getdashboardCampaigns();
         this.getdashboardAgents();
     }
-    
-    getDashboardSubscribers(){
-        this.apiService.dashboardSubscribers().subscribe(data =>{
-            this.dashboard=data;
-            console.log(this.dashboard)
-        })
+
+    getDashboardSubscribers() {
+        this.apiService.dashboardSubscribers().subscribe(data => {
+            this.dashboard = data;
+            console.log(this.dashboard);
+        });
     }
     getDashboardInteractions() {
         this.apiService.dashboardInteractions().subscribe(data => {
@@ -43,5 +44,13 @@ export class DashboardComponent implements OnInit {
             this.agents = data;
             console.log(this.agents);
         });
+    }
+
+    routeToPage() {
+        this.router.navigate(['/dashboard/reports']);
+    }
+
+    routeToPage1 () {
+        this.router.navigate(['/dashboard/import']);
     }
 }

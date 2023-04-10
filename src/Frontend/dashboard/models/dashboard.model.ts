@@ -18,3 +18,11 @@ export class CSVRecord {
 	public facebookId:any;
 	public InstagramId:any;    
 } 
+
+
+export class Cards {
+	constructor(public ID: number) {
+
+	}
+
+}

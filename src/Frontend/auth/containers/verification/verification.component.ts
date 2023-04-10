@@ -1,17 +1,19 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input,OnInit } from '@angular/core';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { FormGroup ,FormControl} from '@angular/forms';
 
 
 @Component({
-    selector: 'sb-verification',
+    selector: 'sb-verification-input',
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './verification.component.html',
     styleUrls: ['verification.component.scss'],
 })
 export class VerificationComponent implements OnInit {
 
+    @Input()
+    phonenumber!: string; 
 
     otpForm = new FormGroup({
         otp: new FormControl('')
