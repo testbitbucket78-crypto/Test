@@ -47,7 +47,7 @@ export class DashboardComponent implements OnInit {
         });
     }
     getRecentConversation(){
-        this.apiService.dashboardRecentConversation().subscribe(data=>{
+        this.apiService.dashboardRecentConversation().subscribe((data:any)=>{
             this.recentConversation=data;
             console.log(this.recentConversation)
             console.log("recentConversation")

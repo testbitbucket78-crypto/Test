@@ -1,3 +1,4 @@
-"customerId","Phone_number","uid","sp_account_id","status","Name","age","sex","emailId","address","pincode","city","state","Country","OptInStatus","tag","facebookId","InstagramId","selectedValue"
-21,"111111111111",,,,"xyz","21","Male","rkt65111@gmail.com",,,,,,"Active Subscribers","New Customer",,,true
-91,"4040404040",,,"New Customer","up3","","male","Aaa@gmail.com",,,,"","",,"","",,true
+"customerId","Phone_number","channel","uid","SP_ID","status","Name","age","sex","emailId","address","pincode","city","state","Country","OptInStatus","tag","facebookId","InstagramId","created_at","updated_at","isBlocked","isBlockedOn","isDeleted"
+159,"37484947556",,,,"Premium","Sumit","23 Years",,"sumit@gmail.com",,,,,,,"Paid","dsnhfiewiw","hdmiufryunj","2023-03-31T04:25:04.000Z","2023-04-07T11:08:18.000Z",,,
+160,"918130818921",,,,"Premium,Customer","Raunak","23 Years",,"rk@gmail.com",,,,,,,"Order Complete,New Customer","facebook","jahkssrq?file=app%2Fapp","2023-03-31T06:46:13.000Z","2023-04-06T04:35:10.000Z",,,
+167,"0987654321",,,,"Return","Check","",,"abc@gmail.com",,,,,,,"New Customer","srq?file=app%2Fapp","jahkssrq?file=app%2Fapp","2023-04-08T06:22:05.000Z","2023-04-08T06:22:05.000Z",,,

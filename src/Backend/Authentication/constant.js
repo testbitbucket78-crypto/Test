@@ -22,13 +22,14 @@ var uidresetEmailQuery = "select SP_ID from user where email_id=?"
 var verifyUid = "select SP_ID from user where SP_ID=?"
 var updatePassword = "UPDATE user SET password=? WHERE SP_ID=?";
 //Sms varification variables
-const email = "raunakriya816@gmail.com";
-const appPassword = "tmmtkimnhfirrxio";
-const emailHost = "smpt.gmail.com"
-const port = "465"
-var otp = Math.random();
-otp = otp * 1000000;
-otp = parseInt(otp);
+const email = "info@sampana.in";
+const appPassword = "xf*q(F#0";
+const emailHost = "us2.smtp.mailhostbox.com"
+const port = "587"
+// var otp = Math.random();
+// otp = otp * 1000000;
+// otp = parseInt(otp);
+
 
 
 //Query for campaignPage
@@ -39,11 +40,13 @@ var camQuery = "Select * from Campaign"
 var selectQuery = "Select * from AutomatedCampaign"
 
 
+insertOtp="CALL otpVerification(?,?,?)"
+verifyOtp=`SELECT  otp FROM otpVerify WHERE created_at > NOW() - INTERVAL 15 MINUTE and otpfieldvalue=?`
 
 
 module.exports = {
     host, user, password, database, selectAllQuery, selectByIdQuery, deletQuery, insertQuery,
     updateQuery,allAgents,activeAgent, loginQuery, registerQuery, 
     email, appPassword, emailHost, port, 
-    otp, updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery
+     updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp
 }

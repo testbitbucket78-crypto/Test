@@ -6,12 +6,10 @@ const password = "amsdb1234"
 const database = "cip_project"
 
 
-
-//Sms varification variables
-const email = "raunakriya816@gmail.com";
-const appPassword = "tmmtkimnhfirrxio";
-const emailHost = "smpt.gmail.com"
-const port = "465"
+const email = "info@sampana.in";
+const appPassword = "xf*q(F#0";
+const emailHost = "us2.smtp.mailhostbox.com"
+const port = "587"
 var otp = Math.random();
 otp = otp * 1000000;
 otp = parseInt(otp);
@@ -27,7 +25,7 @@ var neweditContact = 'UPDATE EndCustomer SET '
 
 //contact filter
 filterQuery = "select * from EndCustomer where Phone_number=?"
-importquery = "INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,state,Country,tag,uid,sp_account_id,address,pincode,city,OptInStatus,facebookId,InstagramId) VALUES ?"
+importquery = "INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,state,Country,tag,uid,SP_ID,address,pincode,city,OptInStatus,facebookId,InstagramId) VALUES ?"
 searchQuery = "select * from EndCustomer where Phone_number=? or Name=? or emailId=? "
 delet = "UPDATE EndCustomer set isDeleted=1 WHERE customerId IN (?)"
 selectbyid = "select * from EndCustomer where customerId=?"
