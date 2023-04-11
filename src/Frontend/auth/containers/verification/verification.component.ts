@@ -22,7 +22,6 @@ export class VerificationComponent implements OnInit {
     values:any;
     constructor(private apiService: AuthService, private router: Router) { }
     ngOnInit() {
-     
       
     }
 

@@ -12,7 +12,8 @@ import { Validators } from '@angular/forms';
     styleUrls: ['register.component.scss'],
 })
 export class RegisterComponent implements OnInit {
-
+    checkboxChecked = false;
+    buttonColor = '';
     visible:boolean = true;
     visible1:boolean = true;
     changetype:boolean = true;
@@ -35,6 +36,11 @@ export class RegisterComponent implements OnInit {
      
     }
 
+
+    onCheckboxChange(checked: boolean) {
+        this.checkboxChecked = checked;
+        this.buttonColor = checked ? '' : '';
+      }
   
 
     onSubmit(){

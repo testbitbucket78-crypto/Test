@@ -56,8 +56,8 @@
             <div class="form-group row">
               <div class="col-sm-1"></div>
               <div class="form-group mt-4 mb-0 custom-control custom-checkbox">
-                 <input type="checkbox" name="text" > I
-                accept the <a href="#" target="_blank">Terms & Conditions</a> </div>
+                <input type="checkbox" (change)="onCheckboxChange($event.target.checked)">
+                 I accept the <a href="#" target="_blank">Terms & Conditions</a> </div>
               <div class="form-group mt-4 ml-5 mb-0 custom-control custom-checkbox">
                 <input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
                 <label class="custom-control-label" for="rememberPasswordCheck">Remember Me</label>
@@ -67,7 +67,7 @@
               <div class="col-sm-3"></div>
               <div class="form mt-4 mb-0">
                 <!-- <a class="btn btn2" routerLink="/verification">Next</a> -->
-                <button class="btn btn2">Next</button>
+                <button class="btn btn2"  [disabled]="!checkboxChecked" [style.background-color]="buttonColor">Next</button>
               </div>
             </div>
           </form>

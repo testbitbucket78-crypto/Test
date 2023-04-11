@@ -54,6 +54,7 @@ export const ROUTES: Routes = [
             title: 'CIP - Reset Password',
         } as SBRouteData,
     },
+   
     {
         path: 'verification',
         canActivate: [],

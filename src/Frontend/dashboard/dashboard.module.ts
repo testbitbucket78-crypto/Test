@@ -16,6 +16,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 
 
+
 /* Components */
 import * as dashboardComponents from './components';
 
@@ -35,7 +36,6 @@ import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
         CommonModule,
         NgMultiSelectDropDownModule.forRoot(),
         OrderModule,
-        
         FilterPipeModule,
         RouterModule,
         ReactiveFormsModule,

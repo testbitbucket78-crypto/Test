@@ -15,22 +15,39 @@ export class ResetPasswordComponent implements OnInit {
     visible1:boolean = true;
     changetype:boolean = true;
     change:boolean = true;
+  
 
- 
-    title = 'formValidation';
-    submit = false;
 
     resetpassword = this.formBuilder.group({
         id:sessionStorage.getItem('SP_ID'),
         password: new FormControl('',Validators.compose([Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')])),
         confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
         
+        
     })
-    constructor( private formBuilder: FormBuilder,private router: Router,private apiService :AuthService) {}
+    constructor( private formBuilder: FormBuilder,private router: Router,private apiService :AuthService) {
+
+        this.resetpassword = this.formBuilder.group({
+            password: ['', [Validators.required, Validators.minLength(8)]],
+            confirmPassword: ['', Validators.required]
+          }, { validator: this.passwordMatchValidator });
+
+    }
     ngOnInit() {
        
     }
     
+    passwordMatchValidator(g: FormGroup) {
+        const password = g.get('password').value;
+        const confirmPassword = g.get('confirmPassword').value;
+      
+        if (password !== confirmPassword && confirmPassword !== '') {
+          return { 'mismatch': true };
+        }
+      
+        return null;
+      }
+
      
     onSubmit(){
         
@@ -41,12 +58,6 @@ export class ResetPasswordComponent implements OnInit {
             this.router.navigate (['login'])
            
         })
-        this.submit = true
-        if (this.resetpassword.invalid){
-            return
-        }
-        
-        // alert("Success")
     }
 
     viewpass(){
