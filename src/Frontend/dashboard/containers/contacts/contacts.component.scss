@@ -617,3 +617,13 @@ select {
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     padding: 0 0 0 65px;
 }
+.multiselect-dropdown[_ngcontent-rfe-c107] .dropdown-btn[_ngcontent-rfe-c107] .selected-item-container[_ngcontent-rfe-c107] .selected-item[_ngcontent-rfe-c107] {
+    border: 1px solid #FFF4F2;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    background: #FFF4F2!important;
+    padding: 0 5px;
+    color: #fff;
+    border-radius: 2px;
+    float: left;
+}

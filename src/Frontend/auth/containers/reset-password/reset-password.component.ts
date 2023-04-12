@@ -20,15 +20,13 @@ export class ResetPasswordComponent implements OnInit {
 
     resetpassword = this.formBuilder.group({
         id:sessionStorage.getItem('SP_ID'),
-        password: new FormControl('',Validators.compose([Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')])),
-        confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
         
         
     })
     constructor( private formBuilder: FormBuilder,private router: Router,private apiService :AuthService) {
 
         this.resetpassword = this.formBuilder.group({
-            password: ['', [Validators.required, Validators.minLength(8)]],
+            password: ['', [Validators.required,Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
             confirmPassword: ['', Validators.required]
           }, { validator: this.passwordMatchValidator });
 
@@ -38,15 +36,21 @@ export class ResetPasswordComponent implements OnInit {
     }
     
     passwordMatchValidator(g: FormGroup) {
-        const password = g.get('password').value;
-        const confirmPassword = g.get('confirmPassword').value;
+        const passwordControl = g.get('password');
+        const confirmPasswordControl = g.get('confirmPassword');
       
-        if (password !== confirmPassword && confirmPassword !== '') {
-          return { 'mismatch': true };
+        if (passwordControl && confirmPasswordControl) {
+          const password = passwordControl.value;
+          const confirmPassword = confirmPasswordControl.value;
+      
+          if (password !== confirmPassword && confirmPassword !== '') {
+            return { 'mismatch': true };
+          }
         }
       
         return null;
       }
+      
 
      
     onSubmit(){
