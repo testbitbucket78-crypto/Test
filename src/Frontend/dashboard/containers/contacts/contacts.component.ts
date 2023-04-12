@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {DashboardService} from './../../services';
+import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
+declare var $: any; // declare the jQuery variable
 
 @Component({
   selector: 'sb-contacts',
@@ -11,6 +13,18 @@ import {DashboardService} from './../../services';
 export class ContactsComponent implements OnInit {
   searchText= "";
   countries: string[] = ['+91','+44','+32','+22'];
+  separateDialCode = false;
+	SearchCountryField = SearchCountryField;
+	CountryISO = CountryISO;
+  PhoneNumberFormat = PhoneNumberFormat;
+	preferredCountries: CountryISO[] = [CountryISO.India, CountryISO.UnitedStates, CountryISO.UnitedKingdom];
+  phoneForm = new FormGroup({
+		phone: new FormControl(undefined, [Validators.required])
+	});
+
+	changePreferredCountries() {
+		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
+	}
 
   selectedCountry: any;
   data: any;
@@ -320,8 +334,12 @@ console.log(this.contacts);
       }
   }
   addContact() {
+    console.log("******")
     console.log(this.newContact.value)
+    console.log(this.selectedCountry)
+    console.log(this.code);
     this.submitted = true
+    return;
 
     // if (this.newContact.invalid){
     //     return

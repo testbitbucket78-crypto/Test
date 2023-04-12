@@ -11,9 +11,10 @@ import { TablesModule } from 'Frontend/tables/tables.module';
 import { OrderModule } from 'ngx-order-pipe';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 
-
-
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -44,7 +45,7 @@ import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
         NavigationModule,
         ChartsModule,
         TablesModule,
-        
+        NgxIntlTelInputModule,
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],
     declarations: [...dashboardContainers.containers, ...dashboardComponents.components, SearchfilterPipe],

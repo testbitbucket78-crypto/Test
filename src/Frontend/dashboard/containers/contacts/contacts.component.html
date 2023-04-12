@@ -465,8 +465,15 @@
 						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
 							<div class="ss">
-							<select class="dropdown" id="country" [(ngModel)]="selectedCountry" >
-								<option *ngFor="let country of countries"  [value]="country.code" >{{country}}</option>
+								<ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+									[enableAutoCountrySelect]="true" [enablePlaceholder]="false" [searchCountryFlag]="true"
+									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
+									[selectedCountryISO]="CountryISO.India" [maxLength]="15"
+									[phoneValidation]="true" [separateDialCode]="separateDialCode"
+									[numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="phone">
+								</ngx-intl-tel-input>
+							<!-- <select class="dropdown" id="country" [(ngModel)]="selectedCountry" >
+								<option *ngFor="let country of countries"  [ngValue]="country.code" >{{country}}</option>
 								
 							</select>
 							
@@ -475,7 +482,7 @@
 								formControlName="Phone_number" id="Phone_number" />
 								<div *ngIf= "submitted && newContact.controls.Phone_number.errors" class="text-danger">
 									! Phone number must be 10 digits
-								  </div>
+								  </div> -->
 								</div>
 						</div>
 					</div>
