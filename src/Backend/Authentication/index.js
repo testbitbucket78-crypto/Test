@@ -69,14 +69,14 @@ const login = (req, res) => {
     }
 
     );
-    mailOpt=data
+    mailOpt = data
 
 }
 
 //post api for register
 
 const register = function (req, res) {
-     name = req.body.name
+    name = req.body.name
     mobile_number = req.body.mobile_number
     email_id = req.body.email_id
     password = req.body.password
@@ -114,13 +114,18 @@ const register = function (req, res) {
 
 //common method for send email through node mailer
 let transporter = nodemailer.createTransport({
-    service: 'gmail',
+    // service: 'SMTP',
+    host: val.emailHost,
+    port: val.port,
+    secure: false,
     auth: {
         user: val.email,
         pass: val.appPassword
     },
-    port: val.port,
-    host: val.emailHost
+
+
+
+
 });
 
 //Post api for forget password
@@ -150,9 +155,11 @@ const forgotPassword = (req, res) => {
                 } else {
 
                     var mailOptions = {
+                        from: val.email,
                         to: req.body.email_id,
                         subject: "Request for reset Password: ",
-                        html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/reset-password?SP_ID=' + cipherdata + '">link</a>to reset your password</p>'
+                        // html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/reset-password?SP_ID=' + cipherdata + '">link</a>to reset your password</p>'
+                        html: '<p>You requested for reset password, kindly use this page  <a href="https://cip.sampanatechnologies.com/reset-password">link</a>to reset your password</p>'
                     };
 
                     transporter.sendMail(mailOptions, (error, info) => {
@@ -161,7 +168,10 @@ const forgotPassword = (req, res) => {
                         }
                         console.log('Message sent: %s', info.messageId);
                         console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-                        res.status(200).send({ msg: "password has been sent" });
+                        res.status(200).send({
+                            msg: "password has been sent",
+                            id: results
+                        });
                     });
                 }
 
@@ -174,7 +184,10 @@ const forgotPassword = (req, res) => {
 
 //resetPssword api
 const resetPassword = function (req, res) {
-    SP_ID = req.body.SP_ID
+    console.log(req.body)
+    console.log(req.body.id)
+    //console.log("req headrer"+req.body.value)
+    SP_ID = req.body.id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
     if (password != confirmPassword) {
@@ -182,6 +195,7 @@ const resetPassword = function (req, res) {
     }
     else {
         bcrypt.hash(password, 10, function (err, hash) {
+
             db.runQuery(req, res, val.updatePassword, [hash, SP_ID]);
         })
     }
@@ -192,13 +206,16 @@ const resetPassword = function (req, res) {
 // Opt for Varification
 const sendOtp = function (req, res) {
     email_id = req.body.email_id;
-   console.log("send otp")
-   console.log(val.otp)
+    console.log("send otp")
+    console.log(req.body)
+    let otp = Math.floor(100000 + Math.random() * 900000);
+    console.log(otp)
     // send mail with defined transport object
     var mailOptions = {
+        from: val.email,
         to: req.body.email_id,
         subject: "Otp for registration is: ",
-        html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + val.otp + "</h1>" // html body
+        html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -210,16 +227,52 @@ const sendOtp = function (req, res) {
 
         res.send(Status);
     });
+
+    db.db.query(val.insertOtp, [req.body.email_id,otp,'Email'],function (err, result){
+        console.log("  1") 
+     console.log(result)
+    })
+      
+    db.db.query(val.insertOtp, [req.body.mobile_number,otp,'Mobile'],function (err, result){
+        console.log("  2") 
+     console.log(result)
+    })
+    //db.runQuery(req, res, val.insertOtp, [req.body.email_id,otp,'email'])
+    return res.status(200).send({
+        msg: 'Otp Sended sucessfully !',
+    })
+
+
 };
 const verifyOtp = function (req, res, err) {
+    console.log("req.body")
+    console.log(req.body.otpfieldvalue)
+    console.log(req.body.otp)
 
-    otp = req.body.otp
-      console.log(otp)
-      console.log(val.otp)
-    if (req.body.otp == val.otp) {
-        return res.send(Status);
-    }
-    return res.send(err)
+    db.db.query(val.verifyOtp, [req.body.otpfieldvalue], function (err, result) {
+        console.log(result[0].otp)
+        console.log(req.body.otp != result[0].otp)
+        if (err) {
+            throw err;
+        }
+        if (result.length != 0 && req.body.otp == result[0].otp) {
+            return res.status(200).send({
+                msg: 'Otp Verified',
+            })
+        }
+        if ((result.length != 0 && req.body.otp != result[0].otp)) {
+            return res.status(200).send({
+                msg: 'Invalid otp',
+            })
+        }
+        if (result.length == 0) {
+            return res.status(200).send({
+                msg: 'Otp Expired ! Please resend otp',
+            })
+        }
+
+    })
+   
 };
 
 

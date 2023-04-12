@@ -20,6 +20,7 @@ export interface authForgotPassword{
 }
 export interface authSendOtp{
     email_id:string;
+    mobile_number:string;
 }
 export interface authVerifyOtp{
     otp:string;

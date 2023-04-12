@@ -40,7 +40,8 @@ export class ForgotPasswordComponent implements OnInit {
         console.log(this.forgetpassword.value)
         this.submitted = true
         this.apiService.forgotpassword(this.forgetpassword.value).subscribe((result)=>{
-            console.warn("forgotpassword Done! ",result)
+           // console.warn("forgotpassword Done! ",result.id[0].SP_ID)
+            sessionStorage.setItem('SP_ID',result.id[0].SP_ID)
             this.router.navigate (['reset-password'])
         });
         if (this.forgetpassword.invalid){
