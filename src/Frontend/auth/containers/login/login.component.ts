@@ -33,6 +33,10 @@ export class LoginComponent implements OnInit {
         this.apiService.login(this.loginForm.value).subscribe((result)=>{
             console.warn("logindone! ",result)
             sessionStorage.setItem('loginDetails',result.user.email_id)
+            console.log(result.user.UserType)
+            if(result.user.UserType=='Owner'){
+                console.log("Agent ")
+            }
             this.router.navigate (['dashboard'])
         });
     }

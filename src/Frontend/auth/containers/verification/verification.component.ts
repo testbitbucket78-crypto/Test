@@ -12,6 +12,8 @@ import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 })
 export class VerificationComponent implements OnInit {
     isVerified: boolean = false;
+    email:any;
+    phone:any;
     otpForm = this.formBuilder.group({
         otpfieldvalue: sessionStorage.getItem('otpfieldEmailvalue'),
         otp: new FormControl('')
@@ -19,8 +21,8 @@ export class VerificationComponent implements OnInit {
     values: any;
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) { }
     ngOnInit() {
-
-
+       this.email=sessionStorage.getItem('otpfieldEmailvalue')
+       this.phone=sessionStorage.getItem('otpfieldMobilevalue')
     }
 
     onVerify() {

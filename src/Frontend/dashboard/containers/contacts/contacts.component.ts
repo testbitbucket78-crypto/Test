@@ -324,8 +324,8 @@ editContactData() {
 
   console.log("editdata" + customerId)
 
-  this.apiService.editContact(this.editContact.value, customerId).subscribe(response => {
-   
+  this.apiService.editContact(this.editContact.value, customerId).subscribe((response:any) => {
+   console.log(response)
   })
 
 

@@ -20,9 +20,9 @@
                     </a></div>
                 <form [formGroup]="otpForm">
                     <div class="row col-12">
-                        <div class="col-sm-7">
+                        <div class="col-sm-7" [(ngModel)]="phone">
 
-                            <label for="floatingInputGrid">Verify your Phone No. 919513578520</label>
+                            <label for="floatingInputGrid">Verify your Phone No. {{phone}}</label>
                             <div class=" d-md-flex justify-content">
                                 <input type="text-right mr-3" class="form-control" placeholder="Enter OTP"
                                     aria-label="City">
@@ -35,8 +35,8 @@
                             </a></div>
                     </div>
                     <div class="row col-12">
-                        <div class="col-sm-7">
-                            <label for="floatingInputGrid">Verify your Email Id Kevinapplessed@gmail.com</label>
+                        <div class="col-sm-7" [(ngModel)]="email">
+                            <label for="floatingInputGrid">Verify your Email Id {{email}}</label>
                             <div class=" d-md-flex justify-content">
                                 <input type="text-right mr-3" class="form-control" placeholder="Enter OTP"
                                     aria-label="City" name="otp" formControlName="otp" id="otp">

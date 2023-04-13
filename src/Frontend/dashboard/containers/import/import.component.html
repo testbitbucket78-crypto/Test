@@ -39,7 +39,7 @@
 						<h5>Upload a CSV file to add or update contacts</h5>
 						<span>Or</span>
 						<div class="col-xs-3 ">
-							<input type="file" (change)="onChange($event)" />
+							<input type="file" (change)="onUpload($event)" />
 						</div>
 					</div>
 					<button class="btn4 btn-block d-flex "  (click)="download()">
@@ -97,7 +97,7 @@
 
 
 				<button type="button" (click)="next()" class="btn btn-block col-1 mt-3 "
-					(click)="onUpload()">Next</button>
+					>Next</button>
 
 			</div>
 			<div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
@@ -124,15 +124,15 @@
 							<div class="hh d-flex">
 								<input type="checkbox" name="">
 								<h4>Name</h4>
-								<select class="form-control">
-									<option selected>{{headers[0]}}</option>
-									<option>Email id</option>
+								<select class="form-control" [(ngModel)]="headers">
+									<!-- <option selected>{{headers}}</option> -->
+									<!-- <option>Email id</option>
 									<option>Mobile No</option>
 									<option>Gender</option>
 									<option>Tag</option>
 									<option>Status</option>
 									<option>Country</option>
-									<option>State</option>
+									<option>State</option> -->
 								</select>
 								<label class="switch">
 									<input type="checkbox" (change)="getUpdateFields($event,headers[0])">

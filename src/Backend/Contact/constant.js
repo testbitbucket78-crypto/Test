@@ -25,7 +25,7 @@ var neweditContact = 'UPDATE EndCustomer SET '
 
 //contact filter
 filterQuery = "select * from EndCustomer where Phone_number=?"
-importquery = "INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,state,Country,tag,uid,SP_ID,address,pincode,city,OptInStatus,facebookId,InstagramId) VALUES ?"
+importquery = "INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,state,Country,tag,address,pincode,city,OptInStatus,facebookId,InstagramId) VALUES ?"
 searchQuery = "select * from EndCustomer where Phone_number=? or Name=? or emailId=? "
 delet = "UPDATE EndCustomer set isDeleted=1 WHERE customerId IN (?)"
 selectbyid = "select * from EndCustomer where customerId=?"
