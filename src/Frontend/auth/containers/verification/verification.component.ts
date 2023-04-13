@@ -12,7 +12,9 @@ import { Validators } from '@angular/forms';
     styleUrls: ['verification.component.scss'],
 })
 export class VerificationComponent implements OnInit {
-    text= '9927875494'
+    email_id:any;
+    phone:any;
+    verified: boolean = false;
     otpForm = new FormGroup({
         otp: new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),])),
     })
@@ -22,15 +24,18 @@ export class VerificationComponent implements OnInit {
     values:any;
     constructor(private apiService: AuthService, private router: Router) { }
     ngOnInit() {
+        this.email_id=sessionStorage.getItem('otpfieldEmailvalue')
+        this.phone=sessionStorage.getItem('otpfieldMobilevalue')
     }
 
 
     onVerify() {
        
         this.apiService.verifyOtp(this.otpForm.value).subscribe(response => {
+            this.verified = true;
             console.log(this.otpForm.value)
             console.warn("verification! ", response)
-
+            
         });
 
 

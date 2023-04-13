@@ -12,7 +12,6 @@ declare var $: any; // declare the jQuery variable
 })
 export class ContactsComponent implements OnInit {
   searchText= "";
-  countries: string[] = ['+91','+44','+32','+22'];
   separateDialCode = false;
 	SearchCountryField = SearchCountryField;
 	CountryISO = CountryISO;

@@ -86,3 +86,36 @@ body {
   width: 1px;
   color: aqua;
 }
+
+.dropdown-menu.show {
+  display: block;
+  width: 235px!important;
+}
+
+.form-floating .iti--allow-dropdown input, .iti--allow-dropdown input, .iti--allow-dropdown input, .iti--separate-dial-code input, .iti--separate-dial-code input, .iti--separate-dial-code input {
+  padding-right: 6px;
+  padding-left: 52px;
+  margin-left: 0;
+  border-radius: 20px;
+  border: 1px solid #ced4da;
+  height: 35px;
+  color: #495057;
+  font-size: 14px;
+}
+.pp .iti--allow-dropdown input, .iti--allow-dropdown input, .iti--allow-dropdown input, .iti--separate-dial-code input, .iti--separate-dial-code input, .iti--separate-dial-code input {
+  padding-right: 6px;
+  padding-left: 52px;
+  margin-left: 0;
+  border-radius: 14px;
+  border: 1px solid #ced4da;
+  height: 36px;
+  color: #495057;
+  font-size: 14px;
+  margin: 0px 0px 0 -10px;
+  width: 275px;
+}
+.iti {
+  position: relative;
+  display: inline-block;
+  margin: 9px 0 0 0;
+}

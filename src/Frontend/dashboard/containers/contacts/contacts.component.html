@@ -565,10 +565,17 @@
 						</div>
 					</div>
 					<div class="col-md">
-						<label for="floatingSelectGrid">Phone Number</label>
+						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="+91 ****" name="Phone_number"
-							formControlName="Phone_number" id="Phone_number" />
+							<div class="ss">
+								<ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+									[enableAutoCountrySelect]="true" [enablePlaceholder]="false" [searchCountryFlag]="true"
+									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
+									[selectedCountryISO]="CountryISO.India" [maxLength]="15"
+									[phoneValidation]="true" [separateDialCode]="separateDialCode"
+									[numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="phone">
+								</ngx-intl-tel-input>
+								</div>
 						</div>
 					</div>
 				</div>

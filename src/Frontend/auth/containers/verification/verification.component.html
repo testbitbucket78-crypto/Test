@@ -21,9 +21,9 @@
                     </a></div>
                 <form [formGroup]="otpForm" >
                     <div class="row col-12">
-                        <div class="col-sm-7">
+                        <div class="col-sm-7"  [(ngModel)]="phone">
 
-                            <label for="floatingInputGrid">Verify your Phone No. {{text}}</label>
+                            <label for="floatingInputGrid">Verify your Phone No. {{phone}}</label>
                             <div class=" d-md-flex justify-content">
                                 <input type="text-right mr-3" class="form-control" placeholder="Enter OTP"
                                     aria-label="City">
@@ -36,12 +36,12 @@
                             </a></div>
                     </div>
                     <div class="row col-12">
-                        <div class="col-sm-7">
-                            <label for="floatingInputGrid">Verify your Email Id Kevinapplessed@gmail.com</label>
+                        <div class="col-sm-7"  [(ngModel)]="email_id">
+                            <label for="floatingInputGrid">Verify your Email Id. {{email_id}}</label>
                             <div class=" d-md-flex justify-content">
-                                <input type="text-right mr-3" class="form-control" [ngClass]="{'is-invalid' :submitted && otpForm.controls.otp.errors}" placeholder="Enter OTP"
+                                <input type="text-right mr-3" class="form-control"  placeholder="Enter OTP"
                                     aria-label="City" name="otp" formControlName="otp" id="otp">
-                                <button class="btn1 me-1" type="button" (click)="onVerify()">Verify</button>
+                                <button class="btn1 me-1" type="button" (change)="onVerify()">Verify</button>
                             </div>
                         </div>
                         <div class="col-lg-12"><a style="display: inline-flex">

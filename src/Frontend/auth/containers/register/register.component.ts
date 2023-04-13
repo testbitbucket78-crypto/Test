@@ -3,7 +3,7 @@ import { FormsModule, FormBuilder, FormControl, FormGroup, NgForm } from '@angul
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
-
+import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 
 @Component({
     selector: 'sb-register',
@@ -18,6 +18,11 @@ export class RegisterComponent implements OnInit {
     visible1:boolean = true;
     changetype:boolean = true;
     change:boolean = true;
+    separateDialCode = false;
+	SearchCountryField = SearchCountryField;
+	CountryISO = CountryISO;
+  PhoneNumberFormat = PhoneNumberFormat;
+	preferredCountries: CountryISO[] = [CountryISO.India, CountryISO.UnitedStates, CountryISO.UnitedKingdom];
     
   
         registerForm = new FormGroup({
@@ -28,6 +33,9 @@ export class RegisterComponent implements OnInit {
         confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')])),
         
     })
+    changePreferredCountries() {
+		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
+	}
     title = 'formValidation';
         submitted = false;
 
@@ -43,10 +51,25 @@ export class RegisterComponent implements OnInit {
       }
   
 
-    onSubmit(){
+      onSubmit(){
         console.log(this.registerForm.value)
         this.submitted = true
+        if (this.registerForm.valid) {
+            sessionStorage.setItem('formValues', JSON.stringify(this.registerForm.value));
+            sessionStorage.setItem('otpfieldEmailvalue',this.registerForm.value.email_id) ;
+            sessionStorage.setItem('otpfieldMobilevalue',JSON.stringify(this.registerForm.value.mobile_number.internationalNumber));
+            
+            var idfs={
+                "email_id":this.registerForm.value.email_id,
+                "mobile_number":this.registerForm.value.mobile_number
+            }
+            this.apiService.sendOtp(idfs).subscribe(response => {
+                console.warn("registerdone! ", response)
+                this.router.navigate(['verification'])
+            });
 
+        }
+       
         if (this.registerForm.invalid){
             return
         }
@@ -54,19 +77,19 @@ export class RegisterComponent implements OnInit {
         // alert("Success")
     }
 
-    onVerification() {
+    // onVerification() {
        
-        if (this.registerForm.valid) {
-            sessionStorage.setItem('formValues', JSON.stringify(this.registerForm.value));
+    //     if (this.registerForm.valid) {
+    //         sessionStorage.setItem('formValues', JSON.stringify(this.registerForm.value));
 
-            this.apiService.sendOtp(this.registerForm.value).subscribe(response => {
-                console.warn("registerdone! ", response)
-                this.router.navigate(['verification'])
-            });
+    //         this.apiService.sendOtp(this.registerForm.value).subscribe(response => {
+    //             console.warn("registerdone! ", response)
+    //             this.router.navigate(['verification'])
+    //         });
 
-        }
+    //     }
         
-    }
+    // }
     viewpass(){
         this.visible = !this.visible;
         this.changetype = !this.changetype;
