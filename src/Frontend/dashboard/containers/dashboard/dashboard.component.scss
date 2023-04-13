@@ -42,10 +42,10 @@ h1{
 }
 
 #heading {
-    font-size: 20px;
+    font-size: 18px;
     font-family: 'Manrope';
     color: #7a86a1;
-    margin-left: 65px;
+    margin-left: 10px;
     margin-top: 12px;
 }
 
@@ -83,24 +83,6 @@ margin-left: 56px;
 opacity: 1;
 }
 
-
-
-// .btn:not(:disabled):not(.disabled) {
-//     position: relative;
-//     display: flex;
-//     flex-direction: column;
-//     min-width: 0;
-//     word-wrap: break-word;
-//     background-color: #fff;
-//     background-clip: border-box;
-//     border: none;
-//     border-radius: 30px;
-//     box-shadow: 2px 13px 54px #695f9714;
-//     opacity: 1;
-//     margin: 20px 80px 0px 10px;
-//     width: 375px;
-//     height: 300px;
-// }
 .card1 {
     height: 55px;
     border-radius: 20px;
@@ -302,9 +284,6 @@ font-size: 14px;
     color: #7a86a1;
     font-weight: 400;
 }
-.row{
-    position: relative;
-}
 .row .img {
     vertical-align: middle;
     border-style: none;
@@ -344,7 +323,7 @@ font-size: 14px;
     position: absolute;
     float: right;
     right: 82px;
-    margin-top: 30px;
+    margin-top: 100px;
 
   
 }
@@ -437,5 +416,16 @@ font-size: 14px;
   height: 55px;
   color: #6149cd;
   font-weight: bold;
+  cursor: pointer;
   
   }
+
+
+  @media screen and (max-width: 768px) {
+
+    #campaigns {
+     width: 80%;
+    height: 90%;
+    left: 6%;
+}
+}

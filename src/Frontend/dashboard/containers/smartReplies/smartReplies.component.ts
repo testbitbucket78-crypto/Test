@@ -39,13 +39,13 @@ export class SmartRepliesComponent implements OnInit {
 	}
 
 	getReplies() {
-		this.apiService.getUser().subscribe((data: any) => {
+		this.apiService.getSmartReply().subscribe((data: any) => {
 			this.replies = data;
 			console.log(this.replies)
 		})
 	}
 	opensidenav(employee: any) {
-		document.getElementById("sidebar")!.style.width = "300px";
+		document.getElementById("sidebar")!.style.width = "494px";
 	}
 	closesidenav(items: any) {
 		document.getElementById("sidebar")!.style.width = "0";
