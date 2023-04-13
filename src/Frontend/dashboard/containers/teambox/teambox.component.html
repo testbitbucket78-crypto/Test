@@ -1,235 +1,565 @@
-<sb-layout-dashboard><sb-dashboard-head title="Teambox" [hideBreadcrumbs]="true"></sb-dashboard-head>
-<div class="row mt-5">
-	<div class="col-md-4">
-		<div class="row">
-		   <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0 col-9">
-        <div class="input-group">
-            <input class="form-control" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="button"><fa-icon [icon]='["fas", "search"]'></fa-icon></button>
-            </div>
-        </div>
-    </form>
-
-    		<button class="btn btn-primary btn-block col-md-2 text-center"><i class="fa fa-filter"></i></button>
-    	</div>
-
-		<ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs teamnav">
-	<li [ngbNavItem]="1">
-		<a ngbNavLink>Unassigned<span class="num">4</span></a>
-		<ng-template ngbNavContent>
-			<ul class="list_chat">
-				<li>
-					<div class="wpImg col-md-2">
-					<img src="assets/img/dummy.png">
-					</div>
-					<div class="wpDetail col-md-6">
-					<h5>ABC</h5>
-					<p>dhjs</p>
-					</div>
-					<div class="wptime col-md-4">
-						<p>11:22am
-						<img src="assets/img/wp.png" width="20" class="float-right"></p>
-						<span class="round float-right">1</span>
-					</div>
-				</li>
-				<li>
-					<div class="wpImg col-md-2">
-					<img src="assets/img/dummy.png">
-					</div>
-					<div class="wpDetail col-md-6">
-					<h5>ABC</h5>
-					<p>dhjs</p>
-					</div>
-					<div class="wptime col-md-4">
-						<p>11:22am
-						<img src="assets/img/wp.png" width="20" class="float-right"></p>
-						<span class="round float-right">1</span>
-					</div>
-				</li>
-				<li>
-					<div class="wpImg col-md-2">
-					<img src="assets/img/dummy.png">
-					</div>
-					<div class="wpDetail col-md-6">
-					<h5>ABC</h5>
-					<p>dhjs</p>
-					</div>
-					<div class="wptime col-md-4">
-						<p>11:22am
-						<img src="assets/img/wp.png" width="20" class="float-right"></p>
-						<span class="round float-right">1</span>
-					</div>
-				</li>
-				<li>
-					<div class="wpImg col-md-2">
-					<img src="assets/img/dummy.png">
-					</div>
-					<div class="wpDetail col-md-6">
-					<h5>ABC</h5>
-					<p>dhjs</p>
-					</div>
-					<div class="wptime col-md-4">
-						<p>11:22am
-						<img src="assets/img/wp.png" width="20" class="float-right"></p>
-						<span class="round float-right">1</span>
-					</div>
-				</li>
-				<li>
-					<div class="wpImg col-md-2">
-					<img src="assets/img/dummy.png">
-					</div>
-					<div class="wpDetail col-md-6">
-					<h5>ABC</h5>
-					<p>dhjs</p>
-					</div>
-					<div class="wptime col-md-4">
-						<p>11:22am
-						<img src="assets/img/wp.png" width="20" class="float-right"></p>
-						<span class="round float-right">1</span>
-					</div>
-				</li>
-				<li>
-					<div class="wpImg col-md-2">
-					<img src="assets/img/dummy.png">
-					</div>
-					<div class="wpDetail col-md-6">
-					<h5>ABC</h5>
-					<p>dhjs</p>
-					</div>
-					<div class="wptime col-md-4">
-						<p>11:22am
-						<img src="assets/img/wp.png" width="20" class="float-right"></p>
-						<span class="round float-right">1</span>
-					</div>
-				</li>
-				<li>
-					<div class="wpImg col-md-2">
-					<img src="assets/img/dummy.png">
-					</div>
-					<div class="wpDetail col-md-6">
-					<h5>ABC</h5>
-					<p>dhjs</p>
-					</div>
-					<div class="wptime col-md-4">
-						<p>11:22am
-						<img src="assets/img/wp.png" width="20" class="float-right"></p>
-						<span class="round float-right">1</span>
-					</div>
-				</li>
-				
-			</ul>
-		</ng-template>
-	</li>
-	<li [ngbNavItem]="2">
-		<a ngbNavLink>Mine</a>
-		<ng-template ngbNavContent>
-			
-		</ng-template>
-	</li>
-	<li [ngbNavItem]="3">
-		<a ngbNavLink>Mentioned</a>
-		<ng-template ngbNavContent>
-			
-		</ng-template>
-	</li>
-</ul>
-
-<div [ngbNavOutlet]="nav" class="mt-2"></div>
-
+<sb-layout-dashboard>
+	<sb-dashboard-head title="Teambox" [hideBreadcrumbs]="true"></sb-dashboard-head>
+	
+	<div class="team-box-page">
+	<div class="toaster" (click)="hideToaster()">
+		<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+		<p *ngIf="successMessage" class="success">{{successMessage}}</p>
+		<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 	</div>
-	<div class="col-md-6 border-right">
-					<div class="col-md-12 chatbox border-bottom d-flex m-auto">
-						<div class="col-md-2 chatboxproimg m-auto">
-							<img src="assets/img/dummy.png">
-							</div>
-							<div class="col-md-4 chatboxprodet m-auto">
-							<h5>ABC</h5>
-							<p>dhjs</p>
-							</div>
-							<div class="col-md-6 others d-flex m-auto">
-				<div class="m-auto"><span class="num">4</span></div>
-				<div class="m-auto">
-					Resolve
+	<div class="team-box">
+	
+		<div class="custom_row">
+				<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"  [ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
+				<div *ngIf="!searchFocused" class="drop-down-btn">
+				<div class="toggle-box" (click)="toggleFilerOption()"><img src="assets/img/teambox/filter-icon.svg"></div>
+				<div *ngIf="ShowFilerOption" class="popup-dialog">
+					<p class="label">Filter</p>
+					<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''" (click)="filerInteraction('All')"><span>All</span></p>
+					<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''" (click)="filerInteraction('Unassigned')"><span>Unassigned</span></p>
+					<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''" (click)="filerInteraction('Mine')"><span>Mine</span></p>
+					<p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''" (click)="filerInteraction('Open')"><span>Open</span></p>
+					<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''" (click)="filerInteraction('Resolved')"><span>Resolved</span></p>
+					<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''" (click)="filerInteraction('Mentioned')"><span>Mentioned</span></p>
+					<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''" (click)="filerInteraction('Pinned')"><span>Pinned</span></p>
 				</div>
-				<form>
-					<select class="form-control">
-						<option>Select</option>
-					</select>
-				</form>
+			     </div>
+			    <button class="new-message-btn" (click)="openaddMessage(messageadd)"><img class="icon" src="/assets/img/teambox/add.svg" /> New Message</button>		
+		</div>
+		<div class="custom_row mt-3">
+			<p *ngIf="interactionList" class="conversaction_status">Open<span class="total_count red">{{interactionList.length}}</span></p>
+		</div>
+        <div class="all_contacts">
+		<div *ngFor="let item of interactionList; let i = index"  id={{i}} (click)="selectInteraction(item)" [ngClass]="item.selected ? 'contacts_row active' : 'contacts_row'" >
+			<div class="contacts_item">
+				<div class="contacts_list">
+					<div class="contacts_left">
+						<img *ngIf="item.isPinned" class="pin_icon" src="/assets/img/teambox/pinned.svg" />
+						<img *ngIf="!item.isPinned" class="pin_icon" src="/assets/img/teambox/pin.svg" />
+						<img *ngIf="item.avatar" class="profile_icon" src="/assets/img/teambox/Richie_1.png" />
+						<img *ngIf="!item.avatar" class="profile_icon_no-dp" src="/assets/img/teambox/no-dp.svg" />
+						<div class="contacts_detail">
+							<p class="name">{{item.Name}}--{{item.InteractionId}}</p>
+							<p class="message">{{item.lastMessage?item.lastMessage.message_text:'...'}}</p>
+						</div>
+					</div>
+					<div class="contacts_right">
+						<div class="contacts_detail_timelog">
+							<p *ngIf="item.lastMessage" class="time">{{timeSince(item.lastMessage.careated_at)}}</p>
+							<span *ngIf="item.messageList" class="total_count green">{{item.messageList.length}}</span>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="contacts_list mt-2">
+					<div class="contacts_left ml-22">
+							<p *ngIf="item.assignTo" class="assigned_to">Assigned To</p>
+							<div *ngIf="item.assignTo"  class="assigned_to_btn">
+								<div class="inner">
+									<img *ngIf="item.assignTo.avatar" class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
+									<img *ngIf="!item.assignTo.avatar" class="no-dp" src="/assets/img/teambox/no-dp.svg" />
+						
+									{{item.assignTo.name}}
+								</div>
+							</div>
+				
+					</div>
+					<div class="contacts_right">
+						<div class="contacts_detail_timelog">
+							<img *ngIf="item.channel=='WhatsApp Official'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+						</div>
+					</div>
+
+				</div>
+		    </div>
+		</div>
+	    </div>
+
+
+		
+	</div>
+	
+	<div class="inner_box">
+		
+		<div *ngIf="selectedInteraction.Name" class="col-md-12">
+		<div class="custom_row">
+		<div class=" left_part">
+		   <div class="user_info">
+			<p class="user_name">{{selectedInteraction.Name}} </p>
+			<p *ngIf="selectedInteraction.channel=='WhatsApp Official'" class="user_from"><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg"/>WhatsApp Official</p>
+		  </div>
+		</div>
+		<div class=" right_part">
+		    <div class="time_circle">
+				<div  role="progressbar" style={{progressbarPer}}>{{progressbarValue}}H</div>
+				
+			</div>
+			<div class="drop-down-btn">
+		    <button *ngIf="progressbarValue >= 0 || progressbarValue <= 72" style="margin:0 8px" [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : 'drop-down-btn red-color'" (click)="toggleConversationStatusOption()" >
+				<img *ngIf="selectedInteraction.interaction_status=='Resolved'" class="icon" src="/assets/img/check-circle.svg" /> {{selectedInteraction.interaction_status}}
+			</button>
+
+			<button *ngIf="progressbarValue >= 72" style="margin:0 8px" class="drop-down-btn green-color" (click)="toggleConversationStatusOption()" >
+				<img class="icon" src="/assets/img/check-circle.svg" /> Resolved
+			</button>
+
+			<div *ngIf="ShowConversationStatusOption" class="popup-dialog ConversationStatus">
+				<p class="label">Mark Conversation</p>
+				<p [ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'"  (click)="updateConversationStatus('Open')"><span>Open</span></p>
+				<p [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'"  (click)="updateConversationStatus('Resolved')"><span>Resolved</span></p>
+			</div>
+		    </div>
+
+
+			<div *ngIf="!searchChatFocused" class="drop-down-btn">		
+			<button  class="drop-down-btn" (click)="toggleAssignOption()">
+				<span *ngIf="selectedInteraction.assignTo">
+					<img *ngIf="selectedInteraction.assignTo.avatar" class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
+					<img *ngIf="!selectedInteraction.assignTo.avatar" class="no-dp" src="/assets/img/teambox/no-dp.svg" />
+					{{selectedInteraction.assignTo.name}} 
+				</span>
+				<span *ngIf="!selectedInteraction.assignTo">
+					<img class="no-dp" src="/assets/img/teambox/no-dp.svg" />
+				    Assign to 
+				</span>
+
+		     </button>
+			<div *ngIf="ShowAssignOption" class="popup-dialog AssignOption">
+				<p class="label">Assign To</p>
+				<p *ngFor="let Agent of agentsList;let k = index"   (click)="updateInteractionMapping(selectedInteraction.InteractionId,Agent.uid,TeamLeadId)">
+					<span>
+						<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" /> 
+							{{Agent.name}} ({{Agent.usertype}})
+					</span>
+				</p>
+			</div>
+			</div>
+		<input (focus)="focusInChatFunction()" (focusout)="focusOutChatFunction()" (keyup)="seacrhInChat($event)"  [ngClass]="searchChatFocused ? 'chat-search-box active' : 'chat-search-box'" type="text" />
+				
+		</div>	
+		</div>
+
+		<div *ngIf="selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId" class="chat_content_area">
+		
+		
+	  
+			<div *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList.length < 1" class="conversation_blank">
+				<img src="/assets/img/teambox/new-con@2x.png">
+				<p>Initiate Conversation</p>
+				<span>Let’s start a conversation through a message</span>
+			</div>
+			<div  *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList.length>0" class="conversation_list chat" #chatSection>
+				<div *ngFor="let message of selectedInteraction.messageList; let i = index"  id={{i}}  [ngClass]="message.message_direction =='incomming' ? 'message_box left' : 'message_box'" (mouseenter)="updateReadStatus(message)">
+				<label *ngIf="message.message_direction !='incomming'">{{message.AgentName}}</label>
+				<div class="content">
+					<p>{{message.message_text}}</p>
+					<span>{{timeSince(message.updated_at)}}</span>
+			   </div>
+				</div>
+			</div>
+
+			<div *ngIf="showChatNotes=='notes' &&  selectedInteraction.notesList.length <1" class="conversation_blank notes">
+				<img src="/assets/img/teambox/new-notes.png">
+				<p>Add a Note</p>
+				<span>Any note about the customer can be added for future reference</span>
+			</div>
+			
+			<div  *ngIf="showChatNotes=='notes' && selectedInteraction.notesList && selectedInteraction.notesList.length>0" class="conversation_list notes" #notesSection>
+				<div class="message_item" *ngFor="let note of selectedInteraction.notesList; let i = index"  id={{i}}>
+					
+					<div *ngIf="note.is_deleted != 1"  [ngClass]="note.message_direction =='incomming' ? 'message_box left' : 'message_box'">
+					    <label *ngIf="note.message_direction !='incomming'">{{note.AgentName}}</label>
+						<div class="content-box">
+							<div class="content-before"><p (click)="toggleNoteOption(note)">...</p>
+							<div *ngIf="note.selected" class="popup-dialog NoteOption">
+								<p class="label" (click)="hideNoteOption()">Option</p>
+								<p (click)="editNotes()">
+									<span>Edit</span>
+								</p>
+								<p (click)="deleteNotes()">
+									<span>Delete</span>
+								</p>
+							</div>
+							</div>
+
+							<div class="content">
+								<p>{{note.message_text}}</p>
+								<span>{{timeSince(note.updated_at)}}</span>
 							</div>
 						</div>
-		<div class="chatbox-data mt-2 mb-2">
-			<div class="float-left mess">
-				Hi
-			</div>
-			<div class="float-right text-right mess">
-				Hi
-			</div>
-			<div class="float-left mess">
-				Hi
+					</div>
+					
+					<div *ngIf="note.is_deleted == 1" class="content-box-edited">
+						<div class="content_box_edited_inner">
+						<p>Deleted By {{note.deleted_by}}</p>
+						<span>{{timeSince(note.updated_at)}}</span>
+						</div>
+					</div>
+
+
+					<div *ngIf="note.is_deleted != 1 && note.created_at != note.updated_at" class="content-box-edited">
+						<div class="content_box_edited_inner">
+							<p>Edited By {{note.AgentName}}</p>
+							<span>{{timeSince(note.updated_at)}}</span>
+						</div>
+					</div>
+				</div>
 			</div>
 			
-		</div>
-		<div class="reply">
-			<h6>Reply</h6>
-			<textarea name="content" id="replyText" class="form-control" rows="4" cols="50" placeholder="type your message..."></textarea>
-			<button class="btn btn-primary float-right sharebtn"><i class="fa fa-paper-plane"></i></button>
-			<div class="action">
-				<button type="button" class="btn" (click)="bold()"><b>B</b></button>
-				<button type="button" class="btn" (click)="itelic()"> <i>I</i></button>
-				<button type="button" class="btn">$</button>
-				<button type="button" class="btn"> < / ></button>
-				<button type="button" class="btn"><i class="fa fa-share"></i></button>
-				<button type="button" class="btn"> < > </button>
-	<div class="image-upload">
-	<label for="file-input">
-	<i class="fa fa-paperclip"></i>
-	</label>
-	<input id="file-input" type="file" />
-   </div>
+
+			
+         	<div class="conversation_inout_area">
+				<div class="tabs_link flex">
+					<button [ngClass]="showChatNotes=='text' ? 'flex tab_btn active ' : 'flex tab_btn'"  (click)="toggleChatNotes('text')">Chat <span *ngIf="getUnreadMessageCount()>0" class="total_count red">{{getUnreadMessageCount()}}</span></button>
+					<button [ngClass]="showChatNotes=='notes' ? 'tab_btn active' : 'tab_btn'"  (click)="toggleChatNotes('notes')">Notes</button>
+				</div>
 				
+				
+
+
+				<form class="input-area" [formGroup]="newMessage">
+					<textarea formControlName="message_text"  name="message_text" id="message_text" class="text-box" placeholder="Your message ..."></textarea>
+					<button (click)="sendMessage()"><img src="/assets/img/teambox/icon-send.svg"></button>
+				</form>
+				<div class="inout_options">
+					<button><img src="/assets/img/teambox/B.svg"></button>
+					<button><img src="/assets/img/teambox/I.svg"></button>
+					<button><img src="/assets/img/teambox/st.svg"></button>
+					<button><img src="/assets/img/teambox/emoji.svg"></button>
+					<button (click)="openAttachmentBox(attachmentbox)"><img src="assets/img/teambox/attachment-icon.svg"></button>
+					<button><img src="assets/img/teambox/attributes.svg"></button>
+					<button><img src="assets/img/teambox/quick-replies.svg"></button>
+					<button><img src="assets/img/teambox/saved-message.svg"></button>
+				</div>
 			</div>
-			
+
 		</div>
-			
+		
+		</div>
+					
 	</div>
 
-	<div class="col-md-2 proSetting">
-		<div class="d-flex headingset border-bottom mb-2">
-			<div class="col-md-9 online">
-			<h5><img src="assets/img/online.png" width="10">
-			Online</h5>
+	<div class="team-box right_box">
+	<div class="profile" *ngIf="selectedInteraction.InteractionId">
+		<img class="toggle_provice_view" (click)="toggleProfileView()" *ngIf="showFullProfile" src="/assets/img/teambox/search-clear.svg">
+	<div class="custom_row">
+	<div class="col-md-5 flex">
+		<img *ngIf="selectedInteraction.avatar" class="big-thumbnail" src="/assets/img/teambox/Richie_1.png" />
+		<img *ngIf="!selectedInteraction.avatar" class="big-thumbnail" src="/assets/img/teambox/no-dp.svg" />
+		<span class="big-thumbnail-sufix"><img src="/assets/img/teambox/whatsapp-icon-l.svg"></span>
+	</div>
+	
+	<div class="col-md-7 no-padding">
+		<h1>{{selectedInteraction.Name}}</h1>
+		<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
+		<p>Created Date:<span>{{getFormatedDate(selectedInteraction.created_at)}}</span></p>
+		<p>Last Updated:<span>{{getFormatedDate(selectedInteraction.updated_at)}}</span></p>
+	</div>
+	</div>
+	
+	
+	<div class="custom_row mt-3">
+	<div class="col-md-6">
+		<label>Email Id</label>
+		<p>{{selectedInteraction.emailId}}</p>
+		
+		<label>Message Opt-in</label>
+		<p>{{selectedInteraction.OptInStatus}}</p>
+	</div>
+	
+	<div class="col-md-6">
+	    <label>Phone Number</label>
+		<p>{{selectedInteraction.Phone_number}}</p>
+		<label>Contact Owner</label>
+		<p>{{selectedInteraction.Name}}</p>
+	</div>
+	</div>
+	
+	<div class="custom_row">
+		<div class="col-md-12">
+			<label><img class="edit-icon" src="/assets/img/teambox/edit-icon.svg"/>Tag</label>
+				<div class="tag_list">
+			    <div  *ngFor="let tagName of getTagsLIst(selectedInteraction.tag);let last = last;">		
+				<div class="tag_item">
+					<span class={{tagName}}></span>{{tagName}}<span *ngIf="!last" class="tag_item_space">|</span>
+				</div>
+				
+			    </div>
 			</div>
 		</div>
-		<div class="profile text-center">
-			<img src="assets/img/dummy.png">
-			<h5>ABC</h5>
-			<p>dhjs</p>
-		</div>
-		<form class="pl-1">
-			<div class="form-group row"><label class="small">Basic</label>
-            <input class="form-control" type="text" placeholder="" />
-        </div>
-        <div class="form-group row"><label class="small">Email</label>
-            <input class="form-control" type="email" placeholder="Enter Email" />
-        </div>
-         <div class="form-group row"><label class="small">Phone</label>
-            <input class="form-control" type="text" placeholder="+91********78" />
-        </div>
-        <div class="form-group row"><label class="small">Social</label>
-            <input class="form-control" type="text" placeholder="Facebook Url" />
-        </div>
-       
-    </form>
-    <div class="smart-reply">
-    	<h6>Smart Replies Paused</h6>
-    	<h5>04:30</h5>
-    	<button type="button" class="btn btn-success mr-1" (click)="c('Save click')">Enable</button>
-			<button type="button" class="btn btn-danger" (click)="c('Save click')">Disable</button>
-    </div>
 	</div>
+	
+	<div *ngIf="!showFullProfile">
+			<div class="custom_row mt-5">
+				<div class="col-md-12">
+				<button class="pink-link-btn"(click)="toggleProfileView()" ><img class="icon" src="/assets/img/teambox/no-dp.svg" />View Full Profile</button>
+				<button class="pink-link-btn mt-3" ><img class="icon" src="/assets/img/teambox/docs-attachment.svg" />Docs & Attachment</button>
+				</div>
+			</div>	
+			<div class="horizental_line mt-4">
+			</div>
+			<div class="custom_row edit-block-section">
+				<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg" /></button>	
+				<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color" (click)="blockCustomer(selectedInteraction)">Block</button>
+				<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn green-color">Blocked</button>
+			</div>
+
+			<div class="custom_row mt-1">
+				<div class="col-md-12">
+				<div *ngIf="AutoReplyOption" class="popup-dialog autoreply">
+					<p class="label">Enable Auto Replies</p>
+					
+					<p  *ngFor="let option of AutoReplyEnableOption;" [ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''" (click)="SelectReplyOption(option,'Enabled')">
+						<span>{{option}}</span>
+					</p>
+					<p class="label">Pause Auto Replies</p>
+					
+					<p *ngFor="let option of AutoReplyPauseOption;let last = last;" [ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''" (click)="SelectReplyOption(option,'Paused')">
+						<span>{{option}}</span>
+					</p>
+					
+				</div>
+				<button class="auto-rep-btn" (click)="toggleAutoReply()"><img class="icon" src="/assets/img/teambox/time-circle.svg" />{{selectedInteraction.AutoReplyStatus}} <img class="icon right-aligned" src="/assets/img/teambox/dropdown-w.svg" /></button>
+					
+			</div>
+			</div>
+
+			<div class="custom_row edit-block-section mt-4">
+				<div class="col-md-12">
+				<p class="auto-rep-time">4:55</p>
+				<p class="auto-rep-text">Enable from dropdown</p>
+			</div>
+			</div>
+	</div>
+
+	<div *ngIf="showFullProfile">
+
+		<div class="custom_row">
+			<div class="col-md-6">
+				<label class="color_black">Custom Fields</label>
+			</div>
+		</div>
+		<div class="custom_row">
+			<div class="col-md-12">
+				<label>Lead Status</label>
+					<div class="tag_list">
+					<div *ngFor="let tagName of getTagsLIst(selectedInteraction.tag);let last = last;">		
+					<div class="tag_item">
+						{{tagName}}<span *ngIf="!last" class="tag_item_space">|</span>
+					</div>
+					
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div  *ngIf="selectedInteraction.InstagramId"  class="custom_row">
+			<div class="col-md-12">
+				<label>Instagram Id</label>
+					<div class="tag_list">
+					<div class="tag_item">
+						{{selectedInteraction.InstagramId}}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div *ngIf="selectedInteraction.facebookId" class="custom_row">
+			<div class="col-md-12">
+				<label>Facebook Id</label>
+					<div class="tag_list">
+					<div class="tag_item">
+						{{selectedInteraction.facebookId}}
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="custom_row mt-3">
+			<div class="col-md-6">
+				<label>Gender</label>
+				<p>{{selectedInteraction.sex?selectedInteraction.sex:'...'}}</p>
+				
+				<label>Country</label>
+				<p>{{selectedInteraction.Country?selectedInteraction.Country:'...'}}</p>
+			</div>
+			
+			<div class="col-md-6">
+				<label>Age</label>
+				<p>{{selectedInteraction.age?selectedInteraction.age: '...'}}</p>
+				<label>Default channel</label>
+				<p>{{selectedInteraction.channel?selectedInteraction.channel:'...'}}</p>
+			</div>
+		</div>
+
+		<div class="horizental_line mt-4"></div>
+		<div class="custom_row edit-block-section">
+			<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/icon-delete.svg" /></button>	
+			<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg" /></button>	
+			
+			<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color" (click)="blockCustomer(selectedInteraction)">Block</button>
+			<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn green-color">Blocked</button>
+			
+			<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg" /></button>	
+		</div>
+		<div class="custom_row">
+			<button class="small-gradient-btn info_button">To add/edit any field according to your business from the settings</button>	
+		</div>
+
+
+
+
+	</div>
+	
+	</div>			
+	</div>
+
+
 </div>
 
-<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
- --></sb-layout-dashboard>
+
+
+<div *ngIf="showattachmentbox" #attachmentbox class="teambox-white">
+	<div class="modal-header">
+		<div class="modal-header-left">
+			<h4 class="modal-title" id="modal-basic-title"></h4>
+		</div>
+		<div class="modal-header-right">
+			<button type="button" class="close-box" aria-label="Close" (click)="closeAttachmentBox()"><img src="assets/img/teambox/search-clear.svg"></button>
+		</div>
+		</div>
+	<div class="modal-body attachmentboxbody">
+			<h4>Attach file</h4>
+		    <div class="attachmentbox">
+			<div class="attachmentbox_left" ngClass="{{dragAreaClass}}">
+				<img class="icon" src="/assets/img/teambox/image-a@2x.png">
+				<p>Drag & Drop file</p>
+				<p><span>OR</span></p>
+				<label class="custom-file-upload">
+					<input type="file"
+						   #file
+						   [multiple]="false"
+						   (change)="onFileChange($event)"
+						   style="display:none" />
+					<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
+				</label>
+
+			</div>
+			<div class="attachmentbox_right">
+				<div>
+					<img class="icon" src="/assets/img/teambox/instraction@2x.png">
+				</div>
+				<div>
+			    <h4>Instractions</h4>
+				<p>Upload a CSV file with the contacts and details that you would like to import. Ensure the CSV file fulfils the Following requirements: Only CSV files are accepted for import. File size must be 10 MB The file must contain at least.. the CSV file fulfils the Following requirements: Only CSV files are accepted for import. File size must be 10 MB</p>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+	</div>
+	
+</div>
+
+<ng-template #messageadd let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<div class="modal-header-left">
+			<h4 class="modal-title" id="modal-basic-title">New Message</h4>
+		</div>
+		<div class="modal-header-right">
+			<button type="button" class="custom-width-btn" (click)="openadd(contactadd)"><img class="icon" src="/assets/img/teambox/add.svg" /> Create Contacts</button>
+			<button type="button" class="close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/search-clear.svg"></button>
+		</div>
+		</div>
+	<div class="modal-body messageadd">
+		<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchContact($event)"/>
+		<div class="drop-down-btn">
+			<button class="drop-down-btn" (click)="toggleContactOption()">
+				<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WhatsApp Official
+	         </button>
+	    </div>
+		<div *ngIf="ShowContactOption" class="popup-dialog ContactOption">
+			<p (click)="filterContactByType('WhatsApp')">
+				<span>
+					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> 
+					WhatsApp Official
+				</span>
+			</p>
+			<p (click)="filterContactByType('Other')">
+				<span>
+					Other
+				</span>
+			</p>
+		</div>
+
+		<div class="contact_list">
+				
+		<div class="contact_item" *ngFor="let item of contactList; let i = index" (click)="createInteraction(item.customerId)">
+			<div class="contact_item_left">
+			<img class="profile_icon" src="/assets/img/teambox/Richie_1.png" />
+				<div>
+					<p class="name">{{item.Name}}</p>
+					<p class="phone">{{item.Phone_number}}</p>
+				</div>
+		    </div>
+			<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+		</div>
+		</div>
+		
+	</div>
+	
+</ng-template>
+
+
+
+<ng-template #contactadd let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<div class="modal-header-left">
+			<h4 class="modal-title" id="modal-basic-title">Add New Contact</h4>
+		</div>
+		<div class="modal-header-right">
+			<button type="button" class="close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/search-clear.svg"></button>
+		</div>
+		</div>
+	<div class="modal-body">
+		<form class="inner_form" [formGroup]="newContact" (ngSubmit)="createCustomer()">
+				<div class="row">
+					<img class="back-array-icon"  (click)="openaddMessage(messageadd)" src="assets/img/teambox/back-arraw.png">
+				</div>    
+				<div class="row">
+					<label for="floatingInputGrid" class="required">Name</label>
+					<input class="form-control" type="text" placeholder="Enter Name" name="Name"
+							formControlName="Name" id="Name" />
+				</div>
+				<div class="row">
+					<label for="floatingSelectGrid" class="required">Phone Number</label>
+					<input class="form-control" type="text" placeholder="+91 **********" name="Phone_number"
+							formControlName="Phone_number" id="Phone_number" />
+				</div>
+				<div class="row">
+					<label for="floatingSelectGrid" class="required">Channel</label>
+					<input class="form-control" type="text" placeholder="Seelct" name="Channel"
+							formControlName="Channel" id="Channel" />
+				</div>
+				<div class="row">
+					<div class="row_inline">
+					<input class="form-control-checkbox" type="checkbox" id="Opted-in" (click)="updateOptedIn($event)"/>
+					 <span>Contact has opted-in to receive communication from us</span>
+					</div>
+				</div>
+			
+
+		</form>
+	</div>
+	<div class="modal-footer row popfooter">
+
+		<div class="inner_form col-md-6 text-right">
+			<button type="button" class="submit-btn" (click)="createCustomer()">Start Conversation</button>
+		</div>
+	</div>
+</ng-template>
+
+</sb-layout-dashboard>
