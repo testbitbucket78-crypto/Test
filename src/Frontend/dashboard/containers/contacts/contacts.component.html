@@ -1,5 +1,6 @@
 <sb-layout-dashboard>
-	<sb-dashboard-head title="Contacts" [hideBreadcrumbs]="true"></sb-dashboard-head>
+	
+	<sb-top-nav title="Contacts"></sb-top-nav>
 	<div class="row">
 		<div class="col-md-5 mb-4 mt-4">
 			<div class="col-md-12 mb-4">
@@ -144,9 +145,9 @@
 				<div class="child5">
 					<h5>Lead Status</h5>
 					<div class="child4 d-flex">
-						<h6>Paid</h6>
+						<h6>{{items.status}}</h6>
 						<div class="line"></div>
-						<h6>UnPaid</h6>
+						<!-- <h6>UnPaid</h6> -->
 					</div>
 				</div>
 				<div class="child2">

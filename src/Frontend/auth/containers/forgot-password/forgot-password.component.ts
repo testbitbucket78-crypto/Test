@@ -16,20 +16,12 @@ export class ForgotPasswordComponent implements OnInit {
     forgetpassword = new FormGroup({
         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
     })
-    
-    // registerForm = new FormGroup({
-    //     Email: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        
-        
-    // })
+
     title = 'formValidation';
     submitted = false;
     constructor(private apiService :AuthService ,private router: Router,  private formBuilder: FormBuilder) { }
     ngOnInit() {
-        // this.forgetpassword = this.formBuilder.group({
-        //     email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-            
-        // })
+
      }
     onVerification(){
         console.log("onVerification")

@@ -16,5 +16,42 @@ router.post('/forgotPassword',indexController.forgotPassword);
 router.post('/sendOtp',indexController.sendOtp)
 router.post('/verifyOtp',indexController.verifyOtp)
 router.post('/resetPassword',indexController.resetPassword)
+<<<<<<< HEAD
 router.get('/sendExportContact',indexController.get)
+=======
+router.post('/allAgents',userController.getAllAgents)
+router.post('/isActiveAgents',userController.getisActiveAgents)
+
+
+
+/**Added by Raman Bhasker*/
+
+const TeamBoxController=require('./TeamBoxController.js');
+
+router.get('/agents/:spID',TeamBoxController.getAllAgents);
+router.get('/customers/:spID',TeamBoxController.getAllCustomer);
+router.get('/customers/:key',TeamBoxController.searchCustomer);
+router.post('/addcustomers',TeamBoxController.insertCustomers);
+router.post('/blockcustomer',TeamBoxController.blockCustomer);
+
+router.post('/interaction',TeamBoxController.createInteraction);
+router.post('/updateinteraction',TeamBoxController.updateInteraction);
+
+router.get('/interaction',TeamBoxController.getAllInteraction);
+router.get('/interaction/:InteractionId',TeamBoxController.getInteractionById);
+router.get('/filterinteraction/:filterBy/:AgentId',TeamBoxController.getFilteredInteraction);
+router.get('/interactionpinned/:InteractionId/:AgentId',TeamBoxController.checkInteractionPinned);
+router.get('/searchinteraction/:searchKey/:AgentId',TeamBoxController.getSearchInteraction);
+
+
+router.get('/messages/:InteractionId/:Type',TeamBoxController.getAllMessageByInteractionId);
+router.post('/newmessage',TeamBoxController.insertMessage);
+router.post('/deletemessage',TeamBoxController.deleteMessage);
+router.post('/updatemessageread',TeamBoxController.updateMessageRead);
+router.post('/interactionmapping',TeamBoxController.updateInteractionMapping);
+router.get('/interactionmapping/:InteractionId',TeamBoxController.getInteractionMapping);
+
+
+
+>>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
 module.exports = router;
