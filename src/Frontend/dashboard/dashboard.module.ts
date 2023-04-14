@@ -11,6 +11,7 @@ import { TablesModule } from 'Frontend/tables/tables.module';
 import { OrderModule } from 'ngx-order-pipe';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { AgGridModule } from 'ag-grid-angular';
 
 
 
@@ -44,6 +45,7 @@ import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
         NavigationModule,
         ChartsModule,
         TablesModule,
+        AgGridModule.withComponents([dashboardContainers.ContactsComponent])
         
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],

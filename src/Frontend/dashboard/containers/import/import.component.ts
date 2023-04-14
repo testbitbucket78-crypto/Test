@@ -55,6 +55,12 @@ export class ImportComponent implements OnInit {
 
 	}
 
+    //********open error dialog boxes *********/
+	open(content: any) {
+		this.modalService.open(content);
+	}
+
+
 	//*********After upload read file *********/
 	onUpload() {
 

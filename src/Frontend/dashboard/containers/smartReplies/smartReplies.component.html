@@ -1,6 +1,5 @@
-<sb-layout-dashboard><sb-dashboard-head title="Smart Replies" [hideBreadcrumbs]="true"></sb-dashboard-head>
-
-
+<sb-layout-dashboard>
+  <sb-top-nav title="Smart Replies"> </sb-top-nav>
 	<div class="row">
 		<div class="col-md-5 mb-4 mt-4">
 			<div class="col-md-12 mb-4">
@@ -20,24 +19,24 @@
 
 
 		<div class="col-xs-3 ">
-			<button class="btn  btn-block " routerLink="/dashboard/addSmartReplies"><i class="fa fa-plus"></i> Add Smart
-				Reply</button>
+			<button class="btn  btn-block " routerLink="/dashboard/addSmartReplies"><i class="fa fa-plus"></i> 
+				Add SmartReply</button>
 		</div>
-		<div *ngFor="let card of replies" class="card " (click)="opensidenav(card)" (click)="getRepliesByID(card)">
-			<div class="card-body gy-2">
-				<h6 class="id">Id:{{ card.ID }}</h6>
-				<h5 class="card-title">{{card.Title}}</h5>
+		<div *ngFor="let reply of replies " class="card ">
+			<div class="card-body gy-2" (click)="opensidenav(reply)" (click)="getRepliesByID(reply)">
+				<h6 class="id">Id:{{ reply.ID }}</h6>
+				<h5 class="card-title">{{reply.Title}}</h5>
 
-				<p class="card-text">{{card.Description}}
+				<p class="card-text">{{reply.Description}}
 				</p>
-				<h6 class="card-subtitle mb-2 text-muted">{{card.MatchingCriteria}}</h6>
+				<h6 class="card-subtitle mb-2 text-muted">{{reply.MatchingCriteria}}</h6>
 				<div class="card1 d-flex">
 					<div class="card-text1">
-						<p>{{card.KeywordCount}}</p>
+						<p>{{reply.KeywordCount}}</p>
 						<h6>Total Keywords</h6>
 					</div>
 					<div class="card-text2">
-						<p>{{card.ActionCount}}</p>
+						<p>{{reply.ActionCount}}</p>
 						<h6>Reply Action</h6>
 					</div>
 				</div>
@@ -45,7 +44,7 @@
 		</div>
 	</div>
 	<div id="sidebar" class="sidebar " [(ngModel)]="items">
-		<button type="button" class="btn5 btn-close" aria-label="Close" (click)="d('Cross click')"
+		<button type="button" class="btn5 btn-close" aria-label="Close" (click)="('Cross click')"
 			(click)="closesidenav(items)">X</button>
 
 		<div class="collumn d-flex">

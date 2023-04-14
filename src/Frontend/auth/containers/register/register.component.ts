@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormsModule, FormBuilder, FormControl, FormGroup, NgForm } from '@angular/forms';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
@@ -11,8 +11,13 @@ import { Validators } from '@angular/forms';
     templateUrl: './register.component.html',
     styleUrls: ['register.component.scss'],
 })
+
+
 export class RegisterComponent implements OnInit {
 
+    phonenumber!: string;
+
+    mobile_number = "";
     visible:boolean = true;
     visible1:boolean = true;
     changetype:boolean = true;

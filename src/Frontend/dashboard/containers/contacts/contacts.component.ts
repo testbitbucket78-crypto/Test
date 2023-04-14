@@ -1,17 +1,43 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {DashboardService} from './../../services';
+import { DashboardService } from './../../services';
+import { ColDef} from 'ag-grid-community';
 
-// }
+
 @Component({
   selector: 'sb-contacts',
+  changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './contacts.component.html',
   styleUrls: ['./contacts.component.scss']
 })
 export class ContactsComponent implements OnInit {
 
 
+  columnDefs:ColDef [] = [
+  
+    {field: '', headerCheckboxSelection: true,
+      headerCheckboxSelectionFilteredOnly: true,
+      checkboxSelection: true
+     
+     },
+    { field: 'customerId', headerName:'ID' ,filter: true, sortable: true, },
+    { field: 'Name', headerName:'Name', filter: true, sortable: true,},
+    { field: 'Phone_number', headerName:'Phone Number', filter: true, sortable: true },
+    { field: 'emailId', headerName:'Email', filter: true, sortable: true },
+    { field: 'age', headerName: 'Age', filter: true, sortable: true },
+    { field: 'sex', headerName: 'Gender', filter: true, sortable: true },
+    { field: 'tag', headerName:'Tag', filter: true, sortable: true 
+  }
+];
+
+  Tag: string[] =
+    [
+      "Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
+    ];
+
+  rowData = [ ];
+  
   searchText= "";
 
 	 contacts:any;
@@ -23,7 +49,9 @@ export class ContactsComponent implements OnInit {
    editContact: FormGroup;
    checkedcustomerId: any = [];
    editForm: any = [];
-    pageOfItems: any;
+   pageOfItems: any;
+   selectedTag: any;
+ 
 
   // multiselect 
     disabled = false;
@@ -36,16 +64,16 @@ export class ContactsComponent implements OnInit {
     dropdownSettings = {}; 
     items: any;
     customerData: any;
-	filterForm=new FormGroup({
+	  filterForm=new FormGroup({
 		Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)]))
 	})
    orderHeader: String = '';
    isDesOrder: boolean = true;
 
    searchForm=new FormGroup({
-	Phone_number: new FormControl(''),
-	Name:new FormControl(''),
-	emailId:new FormControl('')
+    Phone_number: new FormControl(''),
+    Name:new FormControl(''),
+    emailId:new FormControl('')
 })
 
    sort(headerName:String){
@@ -53,9 +81,13 @@ export class ContactsComponent implements OnInit {
     this.orderHeader = headerName;
 
    }
- 
   
-constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: DashboardService, private fb:FormBuilder) {
+  
+ constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder)
+ 
+ 
+ {
+
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -85,9 +117,12 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
     InstagramId: new FormControl('')
   })
 }
+
+
     ngOnInit() {
 
-     
+      
+
       this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
       
       this.cities = [
@@ -136,7 +171,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 
     
 		this.getContact();
-    this.hideDeleteBtn(event)
    
 } 
 checks=false
@@ -232,9 +266,11 @@ opens(contents:any) {
 		this.modalService.open(column);
 	}
 	
-      getContact() {
-    this.apiService.Contact().subscribe(data => {this.contacts = data;
-console.log(this.contacts);
+  getContact() {
+      this.apiService.Contact().subscribe((data)=> {
+      this.contacts = data;
+      this.rowData = this.contacts;       
+      console.log(this.contacts);
     });
   }
 
@@ -257,31 +293,65 @@ console.log(this.contacts);
   }
   
   opensidenav(contact: any){
-    document.getElementById("sidebar")!.style.width = "350px";
+    document.getElementById("sidebar")!.style.width = "494px";
    }
+
    closesidenav(items: any){
     document.getElementById ("sidebar")!.style.width = "0";
    }
-
 
   deleteRow(arr: ["id"]) {
     console.log("delete")
     console.log(this.checkedcustomerId)
     var delBtn = confirm(" Do you want to delete ?");
     if (delBtn == true) {
-      //this.contacts.splice(arr, 1);
+      this.contacts.splice(arr, 1);
       var data = {
         customerId: this.checkedcustomerId
-      }
+     }
       this.apiService.deletContactById(data).subscribe(response => {
         console.log(response)
       })
     }
+    alert(delBtn);
   }
 
+
+  onRowSelected = (item: any) => {
+   
+    const selectedRows = item;
+
+    console.log(selectedRows);
+    selectedRows.document.getElementsByClassName('btn row-delete-btn')!.style.display='none';
+
+    // if (selectedRows.length > 0)  {
+    //   deleteBtn.style.display = 'block';
+    // } else {
+    //   deleteBtn.style.display = 'none';
+    // }
+    
+  };
+
+   rowClicked = (event:any) => 
+  {
+    this.getContactById(event.data);
+    this.opensidenav(event.contact);
+  };
   
 
-  
+
+  gridOptions = {
+
+    rowSelection: 'multiple',
+    rowHeight: 48,
+    headerHeight: 50,
+    suppressRowClickSelection: true,
+    groupSelectsChildren: true,
+    onRowClicked: this.rowClicked,
+    onRowSelected: this.onRowSelected
+    
+
+  };
 
     selCheckBox(event: any) {
         var id = document.getElementsByClassName('btn  btn-block float-right');
@@ -332,6 +402,11 @@ editContactData() {
 }
 
 
+  onSelectedTag(value: any) {
+    this.selectedTag = value;
+
+  }
+
 
 getCheckBoxEvent(isSelected: any, contact: any) {
   console.log("contact" );
@@ -375,7 +450,7 @@ blockContactByID(data: any) {
 }
 
 getContactById(data: any) {
-  console.log("data")
+  console.log(data)
   sessionStorage.setItem('id', data.customerId)
   this.apiService.getContactById(data.customerId).subscribe((data) => {
    // console.log(data)
@@ -422,3 +497,4 @@ search(){
   })
 }
 }
+

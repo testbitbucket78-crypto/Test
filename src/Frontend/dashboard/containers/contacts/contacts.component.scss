@@ -1,3 +1,59 @@
+html, body {
+   height: 100%;
+   width: 100%;
+   padding: 5px;
+   box-sizing: border-box;
+   -webkit-overflow-scrolling: touch;
+}
+
+.ag-theme-alpine {
+width: 100%; 
+height: 560px;
+background: #FFFFFF 0% 0% no-repeat padding-box;
+box-shadow: 2px 13px 54px #695F9714;
+border-radius: 30px;
+opacity: 1;
+border: none;
+font-family: 'Manrope';
+font-style: normal;
+letter-spacing: 0px;
+font-size :14px;
+color: #6149CD;
+}
+
+.ag-root-wrapper-body {
+    border-radius: 33px;
+}
+
+.multiselect-dropdown{
+    font-family: 'Manrope';
+}
+
+.ag-theme-alpine.ag-row {
+    font-size: 14px;
+    border: none;
+    border-radius: 30px;
+
+}
+
+.ag-theme-alpine .ag-cell, .ag-theme-alpine .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+    /* border: 1px solid transparent; */
+    border: 1px solid #7070700D;
+    /* border-radius: 24px; */
+    background: #FBF9FE;
+    line-height: 40px;
+    padding-left: 17px;
+    padding-right: 17px;
+    -webkit-font-smoothing: subpixel-antialiased;
+    font-family: 'Manrope';
+
+}
+
+.ag-theme-alpine [class^=ag-], .ag-theme-alpine [class^=ag-]:focus, .ag-theme-alpine [class^=ag-]:after, .ag-theme-alpine [class^=ag-]:before {
+    box-sizing: border-box;
+    outline: none;
+    /* background: #ffffff; */
+}
 
 .input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
     position: relative;
@@ -5,7 +61,7 @@
     border: 1px solid #EBEBEB;
     background-color: #ffffff;
     margin: 0px 0px 0px -18px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-size: 14px;
 }
 .btn {
@@ -14,7 +70,7 @@
     background-color: #ffffff;
     border: 1px solid #EBEBEB;
     border-radius: 17px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-size: 14px;
 }
 .btn:not(:disabled):not(.disabled) {
@@ -68,12 +124,12 @@ opacity: 1;
     opacity: 1;
 }
 h4, .h4 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-size: 22px;
     color: #000000;
 }
 .fff p{
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-size: 17px;
     color: #000000;
     margin: 2px 0px 0px 0px
@@ -100,11 +156,12 @@ h4, .h4 {
 
 }
 
+
 label {
     display: inline-block;
     margin-bottom: 0.5rem;
     font-size: 15px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-weight: 600;
 }
 .form-control {
@@ -120,7 +177,7 @@ label {
     border: 1px solid #ced4da;
     border-radius: 20px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
 }
 .dd img {
     padding: 40px 0px 0px 44%;
@@ -131,7 +188,7 @@ label {
 }
 .dd h4{
     padding: 0px 0px 0px 42%;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-weight: bold;
     font-size: 22px;
 }
@@ -169,7 +226,7 @@ label {
 
 .sq label{
     font-size: 15px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-weight: bold;
     margin: 35px 0px 5px 20px;
 }
@@ -178,7 +235,7 @@ option{
  letter-spacing: 0px;
  color: #7A86A1;
  opacity: 1;
- font-family: 'Montserrat', sans-serif;
+ font-family: 'Manrope';
 
 }
 option:hover{
@@ -204,14 +261,14 @@ option:hover{
     border-radius: 13px;
     border: 1px solid #EBEBEB;
     background-color: #ffffff;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-size: 15px;
     height: 35px;
     padding: 0px 0px 0px 10px;
 }
 .sq .jk label{
     font-size: 15px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     margin: 10px 0px 10px 20px;
 }
 .sq .jk .form-control{
@@ -221,7 +278,7 @@ option:hover{
     border-radius: 13px;
     border: 1px solid #EBEBEB;
     background-color: #FFF4F2;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-size: 15px;
     height: 35px;
     padding: 0px 0px 0px 10px;
@@ -247,7 +304,7 @@ option:hover{
     color: #000000;
     font-size: 15px;
     border-radius: 20px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     border: none;
 }
 .table tr:hover{
@@ -259,7 +316,7 @@ option:hover{
     color: #000000;
     font-size: 15px;
     border-radius: 20px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     box-shadow: 0px 0px 14px #695F972E;
 border: none;
 opacity: 1;
@@ -287,7 +344,7 @@ opacity: 1;
     color: #6149CD;
     font-size: 14px;
     margin: 0px 18px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
 }
 .table thead .table-box{
     color: #6149CD;
@@ -378,7 +435,7 @@ opacity: 1;
         vertical-align: middle;
         cursor: pointer;
         border-radius: 15px;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Manrope';
         color: #7A86A1;
         background-color: #ffffff;
         margin: 8px 0px 0px 5px;
@@ -395,7 +452,7 @@ opacity: 1;
         vertical-align: middle;
         cursor: pointer;
         border-radius: 20px;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Manrope';
         color: #7A86A1;
         background-color: #ffffff;
         margin: -2px 0px 0px 0px;
@@ -411,20 +468,21 @@ opacity: 1;
         float: left;
     }
 
-.delete img{
-    width: 22px;
-    height: 23px;
-    margin: -3px -10px 0px 0px;
-    float: right;
-}
-.delete .btn{
-    width: 29px;
-    height: 31px;
-    float: right;
-    margin: -10% 40px 0px 0px;
-}
+// .delete img{
+//     width: 22px;
+//     height: 23px;
+//     margin: -3px -10px 0px 0px;
+//     float: right;
+// }
+// .delete .btn{
+//     width: 29px;
+//     height: 31px;
+//     float: right;
+//     margin: -10% 40px 0px 0px;
+// }
 
 .sidebar {
+    font-family: 'Manrope';
     height: 100%;
     width: 0;
     position: fixed;
@@ -444,27 +502,27 @@ opacity: 1;
   }
   
   .sidebar .parent img{
-    height: 80px;
-    margin: 50px 0px 0px -10px;
+    width: 120px;
+    height: 120px;
+    margin-left: 71px;
+    margin-top: 43px;
+    margin-right: 10px;
 }
 .sidebar .parent .child h4{
-    font-family: "Montserrat", sans-serif;
     font-weight: 600;
     font-size: 17px;
-    margin: 50px 0px 5px 0px;
+    margin: 64px 0px 5px 0px;
     color: #000000;
 }
 .sidebar .parent .child .child1{
     display: block;
   }
   .sidebar .parent .child .child1 h5{
-    font-family: "Montserrat", sans-serif;
     color: #7A86A1;
     font-size: 12px;
     font-weight: 500;
 }
   .sidebar .parent .child .child1 h6{
-    font-family: "Montserrat", sans-serif;
     color: #000000;
     font-size: 12px;
     font-weight: 500;
@@ -476,13 +534,11 @@ opacity: 1;
 }
 .sidebar .parent .child2 h5{
     color: #6149CD;
-    font-family: "Montserrat", sans-serif;
     font-size: 13px;
     margin: 15px 0 0 20px;
 }
 .sidebar .parent .child2 h6{
     color: #000000;
-    font-family: "Montserrat", sans-serif;
     font-size: 11px;
     margin: 0 0 0 20px;
 }
@@ -491,13 +547,11 @@ opacity: 1;
 }
 .sidebar .parent .child3 h5{
     color: #6149CD;
-    font-family: "Montserrat", sans-serif;
     font-size: 13px;
     margin: 15px 0 0 20px;
 }
 .sidebar .parent .child3 h6{
     color: #000000;
-    font-family: "Montserrat", sans-serif;
     font-size: 11px;
     margin: 0 0 0 20px;
 }
@@ -507,13 +561,11 @@ opacity: 1;
 }
 .sidebar .child3 h5{
     color: #6149CD;
-    font-family: "Montserrat", sans-serif;
     font-size: 13px;
     margin: 15px 0 0 20px;
 }
 .sidebar .child3 h6{
     color: #000000;
-    font-family: "Montserrat", sans-serif;
     font-size: 11px;
     margin: 10px 0 0 20px;
 }
@@ -526,13 +578,17 @@ opacity: 1;
 }
 .sidebar .child5 h5{
     color: #6149CD;
-    font-family: "Montserrat", sans-serif;
     font-size: 13px;
     margin: 15px 0 0 20px;
 }
+
+.sidebar .child5 h5 img {
+    width: 11px;
+    height: 11px;
+}
+
 .sidebar .child5 h6{
     color: #000000;
-    font-family: "Montserrat", sans-serif;
     font-size: 12px;
     margin: 10px 0 0 20px;
     font-weight: 500;
@@ -541,17 +597,14 @@ opacity: 1;
     color: #000000;
     font-size: 13px;
     margin: 20px 0px 0px 20px;
-    font-family: "Montserrat", sans-serif;
 }
 .sidebar .child2 h5{
     color: #6149CD;
-    font-family: "Montserrat", sans-serif;
     font-size: 13px;
     margin: 15px 0 0 20px;
 }
 .sidebar .child2 h6{
     color: #000000;
-    font-family: "Montserrat", sans-serif;
     font-size: 11px;
     margin: 10px 0 0 20px;
     font-weight: 500;
@@ -578,7 +631,79 @@ opacity: 1;
 }
 .sidebar .bbox h6{
     color: #7A86A1;
-    font-family: "Montserrat", sans-serif;
     font-size: 11px;
     padding: 10px 0px 0px 10px;
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(5px);
+}
+
+//  edit tag styles //
+
+ 
+ul.edit-tag-dropdown {
+   list-style-type: none;
+}
+
+#edit-tag-head  {
+    font-size: 16px;
+    font-family: 'Manrope';
+    font-weight: 700;
+    margin-left: 43px;
+    margin-top: 7px;
+
+}
+
+#edit-tagnames {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+}
+#edit-tag-dots {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+#edit-btn {
+width: 110px;
+height: 40px;
+background: #ffffff;
+border: 1px solid #ebebeb;
+border-radius: 17px;
+margin-left: 58px;
+opacity: 1;
+font-size: 14px;
+font-weight: 700;
+}
+
+#edit-btn-save {
+width: 110px;
+height: 40px;
+background: #6149cd;
+color: #ffffff;
+border: 1px solid #ebebeb;
+border-radius: 17px;
+margin-left: 20px;
+opacity: 1;
+font-size: 14px;
+font-weight: 700;
+}
+
+#close-btn {
+width: 45px;
+height: 45px;
+background: #FFFFFF;
+border-radius: 19px;
+opacity: 1;
+border: 1px solid #ebebeb;
+font-family: 'Manrope';
+font-size: 13px;
+
+
+}
+
+#close-btn:focus {
+outline: none;
+
 }

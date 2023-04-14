@@ -14,6 +14,7 @@ export class SideNavItemComponent implements OnInit {
     expanded = false;
     routeData!: SBRouteData;
 
+
     constructor() {}
     ngOnInit() {}
 }
