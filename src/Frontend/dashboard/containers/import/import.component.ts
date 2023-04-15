@@ -202,7 +202,7 @@ export class ImportComponent implements OnInit {
 		console.log(this.importedData)
 		this.columnMapping = {
 			"Name": 'First_Name',
-			"emailId": 'Email',
+			"emailId": 'emailId',
 			"Mobile_Number":'',
 			"Gender": '',
 			"Tags": '',
@@ -217,7 +217,7 @@ export class ImportComponent implements OnInit {
 		}
 		this.apiService.updatedDataCount(csvdata).subscribe((data: any) => {
 			this.countUpdatedData = data.count
-			console.log(" get data " + data.count)
+			console.log(" get data " + data)
 
 		})
 
