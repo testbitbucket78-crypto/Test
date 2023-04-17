@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 
 /* Modules */
 import { AppCommonModule } from '../app-common/app-common.module';
@@ -19,9 +20,11 @@ import * as authGuards from './guards';
 /* Services */
 import * as authServices from './services';
 
+
 @NgModule({
     imports: [
         CommonModule,
+        NgxIntlTelInputModule,
         RouterModule,
         ReactiveFormsModule,
         FormsModule,

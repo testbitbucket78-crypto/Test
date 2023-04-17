@@ -1,7 +1,5 @@
 <sb-layout-dashboard>
-    <sb-top-nav title="Smart Replies">
-      
-    </sb-top-nav>
+  <sb-top-nav title="Smart Replies"> </sb-top-nav>
   <div class="bs-stepper">
      <div class="heading">Add Smart Reply</div>
     <div class="bs-stepper-header" role="tablist">
@@ -49,7 +47,7 @@
             src="assets/img/prev.png"></button>
         <div class="box1">
           <h5>Add Keyword</h5>
-          <div class="box2 d-flex">
+          <div class="box2 d-flex" data-required="Use enter key to add ➥"   > 
            <input class="form-control" #keyowrdtxt   [(ngModel)]="keyword" type="text" placeholder="Enter Keywords"   />
           <button type="button" class="btn7 btn-block ml-2 " (click)="addKeyword()" [disabled]="keyword=== ''">ADD</button>
         </div>
@@ -111,11 +109,7 @@
   
 
                 
-                  <!--       
-                <div class="action1" *ngFor="let a of actions; let i = index" [(ngModel)]="addText" >Action<p  [contentEditable]="isEditable" (input)="onEdit($event.target.innerText)" >Conversation Assigned:{{ selectedTeam }}</p>
-                   <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button> 
-                 <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
-                 </div> -->
+               
                 
              </div>
  

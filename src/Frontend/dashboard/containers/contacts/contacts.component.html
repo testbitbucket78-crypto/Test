@@ -8,9 +8,8 @@
 					[formGroup]="searchForm" (ngSubmit)="search()">
 					<div class="input-group gf ">
 
-						<input class="form-control" type="text" [(ngModel)]="searchText" placeholder="Search"
-							aria-label="Search" aria-describedby="basic-addon2" name="Name" id="Name"
-							formControlName="Name" />
+						<input class="form-control" type="text"  [(ngModel)]="searchText" placeholder="Search" aria-label="Search"
+							aria-describedby="basic-addon2" name="Name" id="Name" formControlName="Name" />
 						<img src="assets/img/search.png">
 					</div>
 				</form>
@@ -94,7 +93,7 @@
 					</div>
 					<div class="child3">
 						<h5>Contact Owner</h5>
-						<h6>James Watson</h6>
+						<h6></h6>
 					</div>
 				</div>
 				<div class="child5">
@@ -146,11 +145,11 @@
 					<h6>1998</h6>
 				</div>
 				<div class="button d-flex">
-					<button class="btn6  btn-block " (click)="deletContactByID(items)"><img src="assets/img/delete.png">
+					<button class="btn6  btn-block "  data-bs-toggle="modal" data-bs-target="#Delete" ><img src="assets/img/delete.png">
 					</button>
 					<button class="btn6  btn-block " (click)="openedit(contactedit)"><img src="assets/img/edit.png">
 					</button>
-					<button class="btn6  btn-block " (click)="blockContactByID(items)">Block </button>
+					<button class="btn6  btn-block "   data-bs-toggle="modal" data-bs-target="#Block" >Block </button>
 					<button class="btn7  btn-block "><img src="assets/img/Setting.png"> </button>
 				</div>
 				<div class="bbox">
@@ -162,6 +161,36 @@
 		
 	</div>
 
+
+	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			
+			<div class="modal-body">
+				Do you want to really want delete selected file
+			</div>
+			<div class="deletefile d-flex"  *ngFor="let items of customerData ">
+			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="deletContactByID(items)">Yes Delete</button>
+		  </div>
+		</div>
+		</div>
+	  </div>
+
+	  <div class="modal fade" id="Block" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			
+			<div class="modal-body">
+				Do you want to really want Block selected file
+			</div>
+			<div class="deletefile d-flex" *ngFor="let items of customerData ">
+			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="blockContactByID(items)">Yes Block</button>
+		  </div>
+		</div>
+		</div>
+	  </div>
 
 
 
@@ -383,20 +412,43 @@
 			<button type="button" class="btn-cross" aria-label="Close" id="close-btn"  (click)="d('Cross click')">X</button>
 		</div>
 		<div class="modal-body">
-			<form [formGroup]="newContact" (ngSubmit)="addContact()">
+			<form [formGroup]="newContact" >
 				<div class="row g-2">
 					<div class="col-md">
-						<label for="floatingInputGrid">Name</label>
+						<label for="floatingInputGrid">Name*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="Enter Name" name="Name"
+							<input class="form-control" type="text" [ngClass]="{'is-invalid' :submitted && newContact.controls.Name.errors  }" placeholder="Enter Name" name="Name"
 								formControlName="Name" id="Name" />
+								<div *ngIf= "submitted && newContact.controls.Name.errors" class="text-danger">
+									! Name required
+								  </div>
+								 
+								 
 						</div>
 					</div>
 					<div class="col-md">
-						<label for="floatingSelectGrid">Phone Number</label>
+						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="+91 ****" name="Phone_number"
+							<div class="ss">
+								<ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+									[enableAutoCountrySelect]="true" [enablePlaceholder]="false" [searchCountryFlag]="true"
+									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
+									[selectedCountryISO]="CountryISO.India" [maxLength]="15"
+									[phoneValidation]="true" [separateDialCode]="separateDialCode"
+									[numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="phone">
+								</ngx-intl-tel-input>
+							<!-- <select class="dropdown" id="country" [(ngModel)]="selectedCountry" >
+								<option *ngFor="let country of countries"  [ngValue]="country.code" >{{country}}</option>
+								
+							</select>
+							
+							<input class="form-control"  type="tel" [ngClass]="{'is-invalid' :submitted && newContact.controls.Phone_number.errors  }"
+							  [(ngModel)]="code" value={{data}} placeholder="+91 ****" name="Phone_number"
 								formControlName="Phone_number" id="Phone_number" />
+								<div *ngIf= "submitted && newContact.controls.Phone_number.errors" class="text-danger">
+									! Phone number must be 10 digits
+								  </div> -->
+								</div>
 						</div>
 					</div>
 				</div>
@@ -404,19 +456,19 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Email Id*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="Enter Email" name="emailId"
+							<input class="form-control" type="text"  [ngClass]="{'is-invalid' :submitted && newContact.controls.emailId.errors}"placeholder="Enter Email" name="emailId"
 								formControlName="emailId" id="emailId" />
+
+								<div *ngIf= "submitted && newContact.controls.emailId.errors" class="text-danger">
+									! Invalid Email Id
+								  </div>
 						</div>
 					</div>
 					<div class="col-md">
-						<label for="floatingSelectGrid">Age</label>
+						<label for="floatingInputGrid">Age</label>
 						<div class="form-floating">
-							<select class="form-control">
-								<option>29 Years</option>
-								<option>20 Years</option>
-								<option>21 Years</option>
-								<option>22 Years</option>
-							</select>
+							<input class="form-control" type="text" placeholder="Enter Age" name="emailId"
+								formControlName="emailId" id="emailId" />
 						</div>
 					</div>
 				</div>
@@ -432,15 +484,15 @@
 					<br>
 
 					<label for="floatingSelectGrid">Tag</label>
-					<ng-multiselect-dropdown class="multiselect" name="tag" formControlName="tag" id="tag"
-						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
+					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="tag"
+						[placeholder]="'Search'" [disabled]="disabled"
 						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
 					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="status"
-						[placeholder]="'Search'" name="status" formControlName="status" id="status"
-						[disabled]="disabled" (onSelect)="onItemSelect($event)">
+						[placeholder]="'Search'" [disabled]="disabled"
+						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 				</div>
 
@@ -450,10 +502,16 @@
 		<div class="modal-footer row popfooter">
 
 			<div class="col-md-6 text-right">
-				<button type="submit" class="btn1 btn-success" (click)="c(addContact())">Save</button>
+				<button type="submit" class="btn1 btn-success" (click)="(addContact())">Save</button>
 			</div>
 		</div>
 	</ng-template>
+
+
+
+
+
+
 	<ng-template #contactedit let-c="close" let-d="dismiss">
 		<div class="modal-header">
 			<h4 class="modal-title" id="modal-basic-title">Edit Contact</h4>
@@ -472,10 +530,17 @@
 						</div>
 					</div>
 					<div class="col-md">
-						<label for="floatingSelectGrid">Phone Number</label>
+						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="+91 **********" name="Phone_number"
-								formControlName="Phone_number" id="Phone_number" />
+							<div class="ss">
+								<ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+									[enableAutoCountrySelect]="true" [enablePlaceholder]="false" [searchCountryFlag]="true"
+									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
+									[selectedCountryISO]="CountryISO.India" [maxLength]="15"
+									[phoneValidation]="true" [separateDialCode]="separateDialCode"
+									[numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="phone">
+								</ngx-intl-tel-input>
+								</div>
 						</div>
 					</div>
 				</div>
@@ -489,14 +554,10 @@
 						</div>
 					</div>
 					<div class="col-md">
-						<label for="floatingSelectGrid">Age</label>
+						<label for="floatingInputGrid">Age</label>
 						<div class="form-floating">
-							<select class="form-control" name="age" formControlName="age" id="age">
-								<option>29 Years</option>
-								<option>20 Years</option>
-								<option>23 Years</option>
-								<option>22 Years</option>
-							</select>
+							<input class="form-control" type="text" placeholder="Enter Age" name="emailId"
+								formControlName="emailId" id="emailId" />
 						</div>
 					</div>
 				</div>
@@ -512,15 +573,15 @@
 					<br>
 
 					<label for="floatingSelectGrid">Tag</label>
-					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag"
-						[formControl]="editContact.controls['tag']" [settings]="dropdownSettings" [data]="tag"
-						[placeholder]="'Search'" [disabled]="disabled" (onSelect)="onItemSelect($event)">
+					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag" formControlName="tag"
+						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
+						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
-					<ng-multiselect-dropdown class="multiselect" id="status" name="status"
-						[formControl]="editContact.controls['status']" [settings]="dropdownSettings" [data]="status"
-						[placeholder]="'Search'" [disabled]="disabled" (onSelect)="onItemSelect($event)">
+					<ng-multiselect-dropdown class="multiselect" id="status" name="status" formControlName="status"
+						[settings]="dropdownSettings" [data]="status" [placeholder]="'Search'" [disabled]="disabled"
+						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 				</div>
 

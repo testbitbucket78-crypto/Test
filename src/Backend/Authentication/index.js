@@ -72,7 +72,23 @@ const login = (req, res) => {
     mailOpt = data
 
 }
-
+const get=(req,res)=>{
+    console.log(mailOpt)
+    var mailOptions = {
+        to: mailOpt,
+        subject: "Request for download Contact_Data: ",
+        html: '<p>You requested for download Contact_Data, kindly use this <a href="http://localhost:3002/getCheckedExportContact">link</a>to see your contacts</p>'
+      };
+    
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        res.status(200).send({ msg: "data has been sent" });
+      });
+}
 //post api for register
 
 const register = function (req, res) {
@@ -122,10 +138,8 @@ let transporter = nodemailer.createTransport({
         user: val.email,
         pass: val.appPassword
     },
-
-
-
-
+    port: val.port,
+    host: val.emailHost
 });
 
 //Post api for forget password

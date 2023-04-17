@@ -1,7 +1,11 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { DashboardService } from './../../services';
+
+import {DashboardService} from './../../services';
+import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
+declare var $: any; // declare the jQuery variable
+
 import { ColDef} from 'ag-grid-community';
 
 
@@ -39,12 +43,27 @@ export class ContactsComponent implements OnInit {
   rowData = [ ];
   
   searchText= "";
+  separateDialCode = false;
+	SearchCountryField = SearchCountryField;
+	CountryISO = CountryISO;
+  PhoneNumberFormat = PhoneNumberFormat;
+	preferredCountries: CountryISO[] = [CountryISO.India, CountryISO.UnitedStates, CountryISO.UnitedKingdom];
+  phoneForm = new FormGroup({
+		phone: new FormControl(undefined, [Validators.required])
+	});
 
+	changePreferredCountries() {
+		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
+	}
+
+  selectedCountry: any;
+  data: any;
+	code: any;
 	 contacts:any;
 	 name = 'Angular'; 
    checkedConatct: any[] = [];
 	 productForm: FormGroup;  
-   title = 'result-table';
+  //  title = 'result-table';
    newContact:FormGroup;
    editContact: FormGroup;
    checkedcustomerId: any = [];
@@ -64,8 +83,10 @@ export class ContactsComponent implements OnInit {
     dropdownSettings = {}; 
     items: any;
     customerData: any;
-	  filterForm=new FormGroup({
-		Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)]))
+	filterForm=new FormGroup({
+    Name: new FormControl('', Validators.required),
+    Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+    emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
 	})
    orderHeader: String = '';
    isDesOrder: boolean = true;
@@ -81,6 +102,10 @@ export class ContactsComponent implements OnInit {
     this.orderHeader = headerName;
 
    }
+
+   title = 'formValidation';
+   submitted = false;
+ 
   
   
  constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder)
@@ -112,8 +137,8 @@ export class ContactsComponent implements OnInit {
     Phone_number: new FormControl(''),
     emailId: new FormControl(''),
     age: new FormControl(''),
-    tag: new FormControl([]),
-    status:  new FormControl([]),
+    tag: new FormControl(''),
+    status: new FormControl(''),
     facebookId: new FormControl(''),
     InstagramId: new FormControl('')
   })
@@ -121,8 +146,6 @@ export class ContactsComponent implements OnInit {
 
 
     ngOnInit() {
-
-      
 
       this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
       
@@ -191,6 +214,11 @@ bulk(e: any) {
   }
   console.log("this.customerId")
   console.log(this.checkedcustomerId)
+}
+
+addqty(code: any) {
+  this.data = code;
+
 }
 
 onChangePage(pageOfItems: any) {
@@ -357,10 +385,23 @@ onSelectAll(items: any) {
   };
 
   addContact() {
-	
+    console.log("******")
+    console.log(this.newContact.value)
+    console.log(this.selectedCountry)
+    console.log(this.code);
+    this.submitted = true
+    return;
+
+    // if (this.newContact.invalid){
+    //     return
+    // }
+
 		this.apiService.addContact(this.newContact.value).subscribe(response => {
 			console.log(response)
 		})
+    if (this.newContact.invalid){
+      return
+  }
 }
 
 editContactData() {
@@ -435,21 +476,20 @@ getContactById(data: any) {
 
 exportCheckedContact() {
 	console.log(this.checkedConatct)
-  var exContact={
-     data:this.checkedConatct,
-     loginData:sessionStorage.getItem('loginDetails')
-  }
-	this.apiService.exportCheckedContact(exContact).subscribe(response => {
+	this.apiService.exportCheckedContact(this.checkedConatct).subscribe(response => {
 		console.log(response);
 
 	})
- 
-
-  this.checkedConatct.length = 0;
+	this.sendExportContact()
+	this.checkedConatct.length = 0;
 	console.log(this.checkedConatct)
 }
 
-
+sendExportContact() {
+	this.apiService.sendExportContact().subscribe(data => {
+		console.log(data)
+	})
+}
 
 filterContact(){
 	var data=this.filterForm.value.Phone_number
