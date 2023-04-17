@@ -64,13 +64,13 @@ export const sideNavItems: SideNavItems = {
     },
   
       reports: {
-        icon: 'assets/img/reports.png',
+        icon: 'assets/img/rep.png',
         text: 'Repots',
         link: '/dashboard/reports',
     },
 
     rep: {
-        icon: 'assets/img/reports.png',
+        icon: 'assets/img/rep.png',
         text: 'Reports',
         submenu: [
             {

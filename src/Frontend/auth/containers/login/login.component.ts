@@ -14,7 +14,7 @@ import { Validators } from '@angular/forms';
 export class LoginComponent implements OnInit {
 
     checked  =true;
-   
+    password: any;
     loginForm=new FormGroup({
         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
         password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
@@ -29,12 +29,21 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         
     }
+    // validatePassword(control: FormControl) {
+
+    //     if (control.value !== 'correctPassword') {
+    //       return { invalidPassword: true };
+    //     } else {
+    //       return null;
+    //     }
+    //   }
+
     onSubmit() {
-        this.apiService.login(this.loginForm.value).subscribe((result)=>{
-            console.warn("logindone! ",result)
-            sessionStorage.setItem('loginDetails',result.user.email_id)
-            this.router.navigate (['dashboard'])
-        });
+      this.apiService.login(this.loginForm.value).subscribe((result)=>{
+        console.warn("logindone! ",result)
+        sessionStorage.setItem('loginDetails',result.user.email_id)
+        this.router.navigate (['dashboard'])
+    });
     }
     onVerification(){
         console.log(this.loginForm.value)
@@ -43,8 +52,6 @@ export class LoginComponent implements OnInit {
         if (this.loginForm.invalid){
             return
         }
-        
-        // alert("Success")
     }
 
     visible:boolean = true;

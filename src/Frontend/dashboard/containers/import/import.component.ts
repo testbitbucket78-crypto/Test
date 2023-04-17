@@ -13,17 +13,17 @@ declare var $: any;
 })
 export class ImportComponent implements OnInit {
 	active = 1;
-	file: any;                                           //get file name after click event of upload file **onChange()***Method
+	file: any;                                           
 	stepper: any;
-	fileName: any;                                      //for review page file name 
-	numberOfNewContact: any;                            //csv file customers count
-	public headers: any[] = [];                         //for import data mapping  field
+	fileName: any;                                    
+	numberOfNewContact: any;                           
+	public headers: any[] = [];                         
 	records: any[] = [];
 	selectedIdentifier: any[] = [];
 	Identifier: any;
 	purpose: any;
-	fields: any[] = [];                              // fields that we have to override using ***getUpdateFields()** method
-	countUpdatedData: any;                           //count of already exist customers
+	fields: any[] = [];                              
+	countUpdatedData: any;                          
 
 
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService) {
@@ -132,7 +132,6 @@ export class ImportComponent implements OnInit {
 				csvRecord.InstagramId = curruntRecord[16].trim();
 				csvArr.push(csvRecord);
 			}
-
 
 
 		}

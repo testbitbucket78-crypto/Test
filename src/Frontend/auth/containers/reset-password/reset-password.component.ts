@@ -15,25 +15,46 @@ export class ResetPasswordComponent implements OnInit {
     visible1:boolean = true;
     changetype:boolean = true;
     change:boolean = true;
+  
 
- 
-    title = 'formValidation';
-    submit = false;
 
     resetpassword = this.formBuilder.group({
         id:sessionStorage.getItem('SP_ID'),
-        password: new FormControl('',Validators.compose([Validators.required, Validators.minLength(8)])),
-        confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
+        
         
     })
-    constructor( private formBuilder: FormBuilder,private router: Router,private apiService :AuthService) {}
+    constructor( private formBuilder: FormBuilder,private router: Router,private apiService :AuthService) {
+
+        this.resetpassword = this.formBuilder.group({
+            password: ['', [Validators.required,Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
+            confirmPassword: ['', Validators.required]
+          }, { validator: this.passwordMatchValidator });
+
+    }
     ngOnInit() {
        
     }
     
+    passwordMatchValidator(g: FormGroup) {
+        const passwordControl = g.get('password');
+        const confirmPasswordControl = g.get('confirmPassword');
+      
+        if (passwordControl && confirmPasswordControl) {
+          const password = passwordControl.value;
+          const confirmPassword = confirmPasswordControl.value;
+      
+          if (password !== confirmPassword && confirmPassword !== '') {
+            return { 'mismatch': true };
+          }
+        }
+      
+        return null;
+      }
+      
+
      
     onSubmit(){
-        this.submit = true
+        
         var SP_ID=sessionStorage.getItem('SP_ID')
         
         this.apiService.resetPassword(this.resetpassword.value).subscribe(data => {
@@ -41,11 +62,6 @@ export class ResetPasswordComponent implements OnInit {
             this.router.navigate (['login'])
            
         })
-        if (this.resetpassword.invalid){
-            return
-        }
-        
-        alert("Success")
     }
 
     viewpass(){
