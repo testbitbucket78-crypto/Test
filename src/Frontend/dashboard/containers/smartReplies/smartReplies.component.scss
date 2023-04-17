@@ -111,6 +111,8 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
+    max-height: 100%;
+    overflow-y: scroll;
   }
   .sidebar .btn5{
     border: 1px solid #EBEBEB;
@@ -251,4 +253,24 @@ h3{
 
 .mt-4 {
     font-size: 51px;
+}
+
+.sidebar .footer {
+    width: 496px;
+    height: 60px;
+    margin: 139px 0 0 0;
+    position: absolute;
+    border: 1px solid #695F972E;
+    border-radius: 20px;
+    overflow: hidden;
+}
+.sidebar .footer img{
+    margin: 22px 0 0 16pc;
+background: #FFFFFF;
+box-shadow: 1px 8px 29px #695F9724;
+border: 1px solid #EBEBEB;
+border-radius: 19px;
+opacity: 1;
+width: 20px;
+height: 24px;
 }
