@@ -101,6 +101,7 @@ export class ContactsComponent implements OnInit {
         emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
         age: new FormControl(''),
         tag: new FormControl([]),
+      //  tagControls = tags.map(tag => new FormControl(tag));
       status:  new FormControl([]),
         facebookId: new FormControl(''),
         InstagramId: new FormControl('')
@@ -236,18 +237,12 @@ onSelectAll(items: any) {
 		this.modalService.open(content);
 	}
 
-opens(contents:any) {
-		this.modalService.open(contents);
-	}
-
-	openadd(contactadd:any) {
-		this.modalService.open(contactadd);
-	}
 
   openedit(contactedit: any) {
+    
     console.log(sessionStorage.getItem('id'))
     this.apiService.getContactById(sessionStorage.getItem('id')).subscribe((result:any)=>{
-      console.log(result[0].tag +" "+result[0].age)
+      console.log(result[0].tag.split(',') +" "+result[0].age)
       this.editContact=this.fb.group({
         Name: new FormControl(result[0].Name),
         Phone_number: new FormControl(result[0].Phone_number),
@@ -261,11 +256,9 @@ opens(contents:any) {
     })
     this.modalService.open(contactedit);
   }
+
+
   
-	opencolumn(column:any) {
-		this.modalService.open(column);
-	}
-	
   getContact() {
       this.apiService.Contact().subscribe((data)=> {
       this.contacts = data;
@@ -317,23 +310,33 @@ opens(contents:any) {
   }
 
 
-  onRowSelected = (item: any) => {
-   
-    const selectedRows = item;
 
-    console.log(selectedRows);
-    selectedRows.document.getElementsByClassName('btn row-delete-btn')!.style.display='none';
+  onRowSelected = (event: any) => {
+    const rowChecked = this.checkedConatct.findIndex((item) => item.emailId == event.data.emailId);
+    if (rowChecked < 0) {
+     
+      this.checkedConatct.push(event.data);
+    }
 
-    // if (selectedRows.length > 0)  {
-    //   deleteBtn.style.display = 'block';
-    // } else {
-    //   deleteBtn.style.display = 'none';
-    // }
+    else {
+      this.checkedConatct.splice(rowChecked , 1);
+    }
+    console.log(this.checkedConatct.length);
+    if (this.checkedConatct.length > 0) {
     
+      document.getElementById('import-btn')!.style.display = 'none';
+      document.getElementById('add-contact')!.style.display = 'none';
+    }
+    else {
+     
+      document.getElementById('import-btn')!.style.display = 'block';
+      document.getElementById('add-contact')!.style.display = 'block';
+    }
+   
   };
 
-   rowClicked = (event:any) => 
-  {
+
+   rowClicked = (event: any) => {
     this.getContactById(event.data);
     this.opensidenav(event.contact);
   };
@@ -353,35 +356,6 @@ opens(contents:any) {
 
   };
 
-    selCheckBox(event: any) {
-        var id = document.getElementsByClassName('btn  btn-block float-right');
-        if (event.target.checked === true) {
-            for (let i = 0; i < id.length; i++) {
-                id[i].classList.add('tabCol');
-            }
-
-            //  alert("checked")
-        } else {
-            for (let i = 0; i < id.length; i++) {
-                id[i].classList.remove('tabCol');
-            }
-            // console.log(column)
-        }
-    }
-
-   
-    hideDeleteBtn(event: any) {
-      var id = document.getElementsByClassName('btn row-delete-btn');
-      if (event.target.checked === true) {
-          for (let i = 0; i < id.length; i++) {
-              id[i].classList.remove('tabCol');
-          }
-      } else {
-          for (let i = 0; i < id.length; i++) {
-              id[i].classList.add('tabCol');
-          }
-      }
-  }
   addContact() {
 	
 		this.apiService.addContact(this.newContact.value).subscribe(response => {
@@ -453,7 +427,6 @@ getContactById(data: any) {
   console.log(data)
   sessionStorage.setItem('id', data.customerId)
   this.apiService.getContactById(data.customerId).subscribe((data) => {
-   // console.log(data)
     this.customerData = data
    
   })
@@ -496,5 +469,7 @@ search(){
   
   })
 }
+
+
 }
 
