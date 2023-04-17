@@ -69,11 +69,7 @@ const login = (req, res) => {
     }
 
     );
-<<<<<<< HEAD
-    mailOpt=data
-=======
     mailOpt = data
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
 
 }
 const get=(req,res)=>{
@@ -134,27 +130,16 @@ const register = function (req, res) {
 
 //common method for send email through node mailer
 let transporter = nodemailer.createTransport({
-<<<<<<< HEAD
-    service: 'gmail',
-=======
     // service: 'SMTP',
     host: val.emailHost,
     port: val.port,
     secure: false,
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
     auth: {
         user: val.email,
         pass: val.appPassword
     },
-<<<<<<< HEAD
     port: val.port,
     host: val.emailHost
-=======
-
-
-
-
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
 });
 
 //Post api for forget password
@@ -184,17 +169,11 @@ const forgotPassword = (req, res) => {
                 } else {
 
                     var mailOptions = {
-<<<<<<< HEAD
-                        to: req.body.email_id,
-                        subject: "Request for reset Password: ",
-                        html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
-=======
                         from: val.email,
                         to: req.body.email_id,
                         subject: "Request for reset Password: ",
                         // html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/reset-password?SP_ID=' + cipherdata + '">link</a>to reset your password</p>'
                         html: '<p>You requested for reset password, kindly use this page  <a href="https://cip.sampanatechnologies.com/reset-password">link</a>to reset your password</p>'
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
                     };
 
                     transporter.sendMail(mailOptions, (error, info) => {
@@ -203,14 +182,10 @@ const forgotPassword = (req, res) => {
                         }
                         console.log('Message sent: %s', info.messageId);
                         console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-<<<<<<< HEAD
-                        res.status(200).send({ msg: "password has been sent" });
-=======
                         res.status(200).send({
                             msg: "password has been sent",
                             id: results
                         });
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
                     });
                 }
 
@@ -223,14 +198,10 @@ const forgotPassword = (req, res) => {
 
 //resetPssword api
 const resetPassword = function (req, res) {
-<<<<<<< HEAD
-    uid = req.body.uid
-=======
     console.log(req.body)
     console.log(req.body.id)
     //console.log("req headrer"+req.body.value)
     SP_ID = req.body.id
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
     password = req.body.password
     confirmPassword = req.body.confirmPassword
     if (password != confirmPassword) {
@@ -238,12 +209,8 @@ const resetPassword = function (req, res) {
     }
     else {
         bcrypt.hash(password, 10, function (err, hash) {
-<<<<<<< HEAD
-            db.runQuery(req, res, val.updatePassword, [hash, uid]);
-=======
 
             db.runQuery(req, res, val.updatePassword, [hash, SP_ID]);
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
         })
     }
 
@@ -253,14 +220,6 @@ const resetPassword = function (req, res) {
 // Opt for Varification
 const sendOtp = function (req, res) {
     email_id = req.body.email_id;
-<<<<<<< HEAD
-
-    // send mail with defined transport object
-    var mailOptions = {
-        to: req.body.email_id,
-        subject: "Otp for registration is: ",
-        html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + val.otp + "</h1>" // html body
-=======
     console.log("send otp")
     console.log(req.body)
     let otp = Math.floor(100000 + Math.random() * 900000);
@@ -271,7 +230,6 @@ const sendOtp = function (req, res) {
         to: req.body.email_id,
         subject: "Otp for registration is: ",
         html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -283,18 +241,6 @@ const sendOtp = function (req, res) {
 
         res.send(Status);
     });
-<<<<<<< HEAD
-};
-const verifyOtp = function (req, res, err) {
-
-    otp = req.body.otp
-
-
-    if (req.body.otp == val.otp) {
-        return res.send(Status);
-    }
-    return res.send(err)
-=======
 
     db.db.query(val.insertOtp, [req.body.email_id,otp,'Email'],function (err, result){
         console.log("  1") 
@@ -341,13 +287,8 @@ const verifyOtp = function (req, res, err) {
 
     })
    
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
 };
 
 
 
-<<<<<<< HEAD
-module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, mailOpt ,get};
-=======
 module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, mailOpt };
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b

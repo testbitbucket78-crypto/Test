@@ -16,9 +16,6 @@ router.post('/forgotPassword',indexController.forgotPassword);
 router.post('/sendOtp',indexController.sendOtp)
 router.post('/verifyOtp',indexController.verifyOtp)
 router.post('/resetPassword',indexController.resetPassword)
-<<<<<<< HEAD
-router.get('/sendExportContact',indexController.get)
-=======
 router.post('/allAgents',userController.getAllAgents)
 router.post('/isActiveAgents',userController.getisActiveAgents)
 
@@ -53,5 +50,4 @@ router.get('/interactionmapping/:InteractionId',TeamBoxController.getInteraction
 
 
 
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
 module.exports = router;

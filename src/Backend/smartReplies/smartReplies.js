@@ -1,11 +1,7 @@
 var express = require("express");
 const db = require("../dbhelper");
 var app = express();
-<<<<<<< HEAD
-const val = require('../Authentication/constant.js');
-=======
 const val = require('./constant.js');
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
@@ -18,8 +14,6 @@ app.get('/getReplies', (req, res) => {
    db.runQuery(req, res, val.selectAll, [req.body])
 })
 
-<<<<<<< HEAD
-=======
 app.get('/getReplieswithSPID',(req,res)=>{
   console.log("spid")
   console.log(req.body.SP_ID)
@@ -31,7 +25,6 @@ app.get('/getReplieswithSPID',(req,res)=>{
 app.get('/getalluserofAOwner',(req,res)=>{
    db.runQuery(req,res,val.alluserofAOwner,[req.body.ParentId,req.body.SP_ID])
 })
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
 app.get('/search', (req, res) => {
    console.log(req.query.ID)
    db.runQuery(req, res, val.search, [req.query.ID])
@@ -59,14 +52,6 @@ app.post('/addNewReply', (req, res) => {
     console.log("req.body.Keywords" + jsonData);
     console.log(req.body.ReplyActions)
     console.log(req.body.Tags)
-<<<<<<< HEAD
-   db.runQuery(req,res,val.addNewReply,[req.body.Title,req.body.Description,req.body.MatchingCriteria,params.strings.value,jsonData,listStr])
-})
-
- 
-
- 
-=======
    db.runQuery(req,res,val.addNewReply,[req.body.SP_ID,req.body.Title,req.body.Description,req.body.MatchingCriteria,params.strings.value,jsonData,listStr])
 })
 
@@ -111,7 +96,6 @@ app.put('/updateSmartReply',(req,res)=>{
     console.log(req.body.Tags)
    db.runQuery(req, res, val.updateSmartReply, [req.body.ID,req.body.Title,req.body.Description,req.body.MatchingCriteria,params.strings.value,jsonData,listStr])
 })
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
 
 app.listen(3005, function () {
    console.log("Node is running on port 3005");

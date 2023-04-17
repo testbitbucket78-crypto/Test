@@ -18,6 +18,8 @@
     opacity: 1;
 
 }
+
+
 .float-left {
     float: left !important;
     margin: 0px 170px 0px -25px;
@@ -114,3 +116,16 @@ input::-ms-clear {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
 }
+
+
+@media (min-width: 768px) {
+    /* styles applied when screen width is at least 768px */
+  }
+  
+  @media (min-width: 992px) {
+    /* styles applied when screen width is at least 992px */
+  }
+  
+  @media (min-width: 1200px) {
+    /* styles applied when screen width is at least 1200px */
+  }

@@ -31,12 +31,7 @@ const deletUserById = (req, res) => {
 
 //Inser data
 const insertUser = (req, res) => {
-<<<<<<< HEAD
-    // uid = req.body.uid
-    userId = req.body.userId
-=======
    
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
     password = req.body.password
     email_id = req.body.email_id
     address = req.body.address
@@ -56,11 +51,7 @@ const insertUser = (req, res) => {
     
     bcrypt.hash(password, 10, function (err, hash) {
        
-<<<<<<< HEAD
-    var values = [[ userId, hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive]]
-=======
     var values = [[  hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive]]
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
     db.runQuery(req,res,val.insertQuery, [values])
   
     })
@@ -70,13 +61,8 @@ const insertUser = (req, res) => {
 const updateUser = (req, res) => {
     
     
-<<<<<<< HEAD
-        uid=req.body.uid
-        userId = req.body.userId
-=======
        
         SP_ID = req.params.id
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
         password = req.body.password
         email_id = req.body.email_id
         address = req.body.address
@@ -95,11 +81,7 @@ const updateUser = (req, res) => {
         IsActive = req.body.IsActive
 
         bcrypt.hash(password, 10, function (err, hash) {
-<<<<<<< HEAD
-        db.runQuery(req,res,val.updateQuery,[ userId,hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive,uid])
-=======
         db.runQuery(req,res,val.updateQuery,[ hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive,SP_ID])
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
         });
       
     }

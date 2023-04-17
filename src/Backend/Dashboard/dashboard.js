@@ -1,11 +1,7 @@
 var express = require("express");
 const db = require("../dbhelper");
 var app = express();
-<<<<<<< HEAD
-const val = require('../Authentication/constant');
-=======
 const val = require('./constant');
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -74,12 +70,9 @@ app.get('/Subscribers', (req, res) => {
   db.runQuery(req, res, val.subscribersQuery, [req.body])
 })
 
-<<<<<<< HEAD
-=======
 app.get('/recentConversation',(req,res)=>{
   db.runQuery(req,res,val.conversationQuery,[req.body])
 })
->>>>>>> 77bb05647371b5a0ac2c71a980a19d3a892ea31b
 app.listen(3001, function () {
   console.log("Node is running");
 
