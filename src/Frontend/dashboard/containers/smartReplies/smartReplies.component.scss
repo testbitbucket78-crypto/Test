@@ -4,7 +4,7 @@
     border: 1px solid #EBEBEB;
     background-color: #ffffff;
     margin: 0px 0px 0px -18px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-size: 14px;
 }
 button:not(:disabled), [type=reset]:not(:disabled) {
@@ -13,7 +13,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     background-color: #ffffff;
     border: 1px solid #EBEBEB;
     border-radius: 17px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-size: 14px;
 	width: 165px;
     height: 36px;
@@ -30,37 +30,42 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     background-color: #FDEFEF;
     border-radius: 30px;
     opacity: 1;
-    width: 350px;
-    font-family: 'Montserrat', sans-serif;
+    width: 343px;
+    height: 265px;
+    font-family: 'Manrope';
     margin: 10px 20px;
+    border: none;
 }
 .card .id{
     color: #7A86A1;
     font-size: 15px;
-    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 20px;
+    font-family: 'Manrope';
 }
 .card .card-title {
     margin-bottom: 0.75rem;
-    color: #000000;
-    margin-bottom: 0.75rem;
-    color: #000000;
-    font-weight: 600;
+    margin-left: 11px;
+    font-weight: 700;
     font-size: 19px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
+    letter-spacing: -0.5px;
 
 }
 .card p {
     margin-top: 0;
     color: #7A86A1;
+    margin-left: 14px;
     text-align: justify;
-    font-size: 15px;
-    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-family: 'Manrope';
 }
 .card .text-muted {
     color: #000000!important;
-    font-size: 17px;
-    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-family: 'Manrope';
+    font-weight: 600;
 }
+
 .card .card1 .card-text1{
     display: block;
 }
@@ -74,7 +79,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 }
 .card .card1 .card-text2 h6{
     color: #7A86A1;
-    font-size: 16px;
+    font-size: 13px;
 }
 .card .card1 .card-text1 p{
     color: #000000;
@@ -82,7 +87,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 }
 .card .card1 .card-text1 h6{
     color: #7A86A1;
-    font-size: 16px;
+    font-size: 13px;
 }
 .gf img {
     position: absolute;
@@ -242,4 +247,8 @@ h3{
     color: #000000;
     text-align: inherit;
     padding: 0px 0px 0px 10px;
+}
+
+.mt-4 {
+    font-size: 51px;
 }

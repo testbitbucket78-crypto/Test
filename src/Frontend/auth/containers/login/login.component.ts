@@ -29,25 +29,21 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         
     }
-    validatePassword(control: FormControl) {
-        // Check if password is correct here
-        if (control.value !== 'correctPassword') {
-          return { invalidPassword: true };
-        } else {
-          return null;
-        }
-      }
+    // validatePassword(control: FormControl) {
+
+    //     if (control.value !== 'correctPassword') {
+    //       return { invalidPassword: true };
+    //     } else {
+    //       return null;
+    //     }
+    //   }
 
     onSubmit() {
-        if (this.password.valid) {
-            // Perform login logic here
-          } else {
-            // Do something else if form is invalid
-          }
-        this.apiService.login(this.loginForm.value).subscribe((result)=>{
-            console.warn("logindone! ",result)
-            this.router.navigate (['dashboard'])
-        });
+      this.apiService.login(this.loginForm.value).subscribe((result)=>{
+        console.warn("logindone! ",result)
+        sessionStorage.setItem('loginDetails',result.user.email_id)
+        this.router.navigate (['dashboard'])
+    });
     }
     onVerification(){
         console.log(this.loginForm.value)
@@ -56,8 +52,6 @@ export class LoginComponent implements OnInit {
         if (this.loginForm.invalid){
             return
         }
-        
-        // alert("Success")
     }
 
     visible:boolean = true;

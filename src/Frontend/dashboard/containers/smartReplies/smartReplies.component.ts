@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -7,6 +7,7 @@ declare var $: any;
 
 @Component({
 	selector: 'sb-smartReplies',
+	changeDetection: ChangeDetectionStrategy.Default,
 	templateUrl: './smartReplies.component.html',
 	styleUrls: ['./smartReplies.component.scss']
 })
@@ -28,23 +29,23 @@ export class SmartRepliesComponent implements OnInit {
 	})
 	sidenavReplies: any;
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService) {
-		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
+
 	ngOnInit() {
 		this.getReplies()
 
 	}
 
 	getReplies() {
-		this.apiService.getUser().subscribe((data: any) => {
+		this.apiService.getSmartReply().subscribe((data: any) => {
 			this.replies = data;
 			console.log(this.replies)
 		})
 	}
 	opensidenav(employee: any) {
-		document.getElementById("sidebar")!.style.width = "300px";
+		document.getElementById("sidebar")!.style.width = "494px";
 	}
 	closesidenav(items: any) {
 		document.getElementById("sidebar")!.style.width = "0";

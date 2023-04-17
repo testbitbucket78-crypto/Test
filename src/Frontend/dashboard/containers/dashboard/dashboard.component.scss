@@ -1,15 +1,12 @@
-@import 'styles/variables.scss';
-
+// // @import 'styles/variables.scss';
+// * {
+//     font-family: 'Manrope';
+// }
 .box {
     margin: 10px 0px;
     text-align: center;
     box-shadow: 0 1px 4px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 0%);
     padding: 30px;
-    font-family: 'Manrope';
-}
-
-.box h4 {
-    font-size: 20px;
 }
 
 section {
@@ -19,25 +16,73 @@ section {
     flex: 1 1 auto;
     min-height: 1px;
     padding: 1.25rem;
-    margin: 35px 0px 0px 0px;
+    margin: 35px 0px 0px 26px;
     border-radius: none;
+   
 }
-.btn:not(:disabled):not(.disabled) {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: none;
-    border-radius: 30px;
-    box-shadow: 2px 13px 54px #695f9714;
-    opacity: 1;
-    margin: 20px 10px 0px 10px;
-    width: 370px;
-    height: 300px;
+
+h1{
+    font-size: 52px;
+    letter-spacing: -1.3px;
+    font-weight: bolder;
+    font-family: 'Manrope';
 }
+
+
+.card.d1 {
+    margin-left: 4px;
+}
+
+.row {
+    margin-top: 14px;
+}
+
+.row.r1 {
+    width: 69%;
+}
+
+#heading {
+    font-size: 18px;
+    font-family: 'Manrope';
+    color: #7a86a1;
+    margin-left: 10px;
+    margin-top: 12px;
+}
+
+#heading2 {
+    width: 440px;
+    margin-left: 51px;
+}
+
+#contacts-col {
+width: 484px;
+height: 429px;
+
+}
+
+#campaigns {
+width: 1011px;
+height: 469px;
+left: 46px;
+}
+
+#agents {
+width: 1011px;
+height: 211px;
+left: 50px;
+}
+
+
+.col-sm-5.c1, .col-sm-5.c2  {
+width: 484px;
+height: 429px;
+background: #FFFFFF 0% 0% no-repeat padding-box;
+box-shadow: 2px 13px 54px #695F9714;
+border-radius: 30px;
+margin-left: 56px;
+opacity: 1;
+}
+
 .card1 {
     height: 55px;
     border-radius: 20px;
@@ -48,10 +93,9 @@ section {
 .card2 {
     height: 55px;
     border-radius: 20px;
-    margin: 20px 0px 0px 0px;
     background-color: #e2f4ec;
-    width: 294px;
     text-align: center;
+    margin-top: 25px;
 }
 .card3 {
     height: 55px;
@@ -67,18 +111,30 @@ h4,
     color: #000000;
     line-height: 0px;
     text-align: left;
+    font-family: 'Manrope';
+    font-weight: 700;
+    letter-spacing: -0.55px;
+    
 }
 h5,
 .h5 {
     font-size: 24px;
     margin: -18px 0px 0px 0px;
     color: #000000;
+    font-family: 'Manrope';
+    font-weight: 600;
 }
 h6,
 .h6 {
     font-size: 15px;
+    font-weight: 400;
+    font-family: 'Manrope';
     color: #000000;
+    width: 100%;
+    height: 100%;
 }
+
+
 .btn1:not(:disabled):not(.disabled) {
     position: relative;
     display: flex;
@@ -91,7 +147,7 @@ h6,
     box-shadow: 2px 13px 54px #695f9714;
     opacity: 1;
     margin: 25px 0px 0px 10px;
-    width: 95%;
+    width: 78%;
     height: 350px;
     border: none;
 }
@@ -107,7 +163,7 @@ h6,
     box-shadow: 2px 13px 54px #695f9714;
     opacity: 1;
     margin: 25px 0px 0px 10px;
-    width: 95%;
+    width: 78%;
     height: 210px;
     border: none;
 }
@@ -151,20 +207,54 @@ img {
     margin: -40px 0px 0px 376px;
 }
 
+.row.d-flex {
+    margin-left: 40px;
+}
 .card9 {
     height: 50px;
-    width: 380px;
-    background-color: #ffb8b8;
+    width: 492px;
+    background-color: #fff4f2;
     box-shadow: 2px 13px 54px #695f9714;
-    border-radius: 17px;
+    // border-radius: 17px;
     margin: 30px 0px 15px 0px;
+    border-radius: 15px;
 }
 .card9 h2 {
     font-size: 18px;
     padding: 12px;
-    margin: 0px 0px 0px 20px;
-    font-weight: 500;
+    text-align: center;
+    font-weight: 600;
     color: #7A86A1;
+    font-family: 'Manrope';
+}
+
+#card9-h4 {
+letter-spacing: -0.55px;
+font-size: 22px;
+font-weight: bold;
+text-align: left;
+margin-left: 42px;
+margin-top: 47px;
+font-family: 'Manrope';
+}
+
+.card-body-right {
+background-color: #fbf9fe;
+width: 494px;
+height: 1416px;
+font-family: 'Manrope';
+}
+
+.card-body-right h5 {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.card-body-right h6 {
+letter-spacing: 0px;
+color: #7A86A1;
+opacity: 1;
+font-size: 14px;
 }
 
 .image img {
@@ -175,9 +265,10 @@ img {
 
 .float-right {
     background-color: #fbf9fe;
-    margin: 0px -25px 0px 0px;
-    width: 300px;
-    height: 980px;
+    opacity: 1;
+    // margin: 0px -25px 0px 0px;
+    // width: 300px;
+    // height: 980px;
 }
 .row2{
     position: absolute;
@@ -192,9 +283,6 @@ img {
     font-size: 14px;
     color: #7a86a1;
     font-weight: 400;
-}
-.row{
-    position: relative;
 }
 .row .img {
     vertical-align: middle;
@@ -212,8 +300,8 @@ img {
     font-size: 13px;
     font-weight: normal;
     color: #7a86a1;
-    float: right;
-    display: contents;
+    margin: 56px 0px 0px 0px;
+
 }
 .row4 {
     margin: -48px 0px 0px 125px;
@@ -230,8 +318,13 @@ img {
     border-radius: 30px;
     padding: 30px 30px 30px 30px;
     opacity: 1;
+    width: 369px;
     height: 448px;
-    position: relative;
+    position: absolute;
+    float: right;
+    right: 82px;
+    margin-top: 100px;
+
   
 }
 
@@ -248,9 +341,10 @@ img {
 
 .card10-p img {
   position: absolute;
-  width: 128px;
-  height: 115px;
-  top: 0;
+  width: 120px;
+  height: 111px;
+  top: 6px;
+  left:123px;
 }
 
 
@@ -265,32 +359,36 @@ img {
 }
 
 .card10-p .txt-1 {
-    font-size: 37px; 
-    left: 74px; 
-    top: 156px;
+    font-size: 37px;
+    left: 108px;
+    top: 152px;
+    letter-spacing: -0.93px;
+    font-weight: 600;
    
 }
 
 
 .card10-p .txt-2 {
-   font-size: 15px;
-   left: 97px; 
-   top: 206px;
-  
+    font-size: 15px;
+    left: 126px;
+    top: 207px;
+    letter-spacing: 0px;
 }
+  
+
 .card10-c {
  
     background: transparent url('/assets/img/img3.png')  0% 0% no-repeat padding-box;
     opacity: 1;
     border-radius: 30px;
-    width: 92%;
-    left: 12px;
-    bottom: 18px;
-    height: 193px;
+    width: 91%;
+    left: 18px;
+    bottom: 9px;
+    height: 195px;
     text-align: center;
     /* margin: 88px 0 0 0; */
     position: absolute;
-    font-family: 'Manrope';
+    font-family: "Manrope";
 }
 
 
@@ -319,5 +417,16 @@ img {
   height: 55px;
   color: #6149cd;
   font-weight: bold;
+  cursor: pointer;
   
   }
+
+
+  @media screen and (max-width: 768px) {
+
+    #campaigns {
+     width: 80%;
+    height: 90%;
+    left: 6%;
+}
+}

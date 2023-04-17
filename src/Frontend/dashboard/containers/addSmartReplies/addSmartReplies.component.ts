@@ -18,7 +18,8 @@ export class AddSmartRepliesComponent implements OnInit {
 	val: any;
 	keywordtxt: any;
 	selectedTeam: any;
-	selectedDropDown :[] = []; 
+	selectedTag:any;
+	selectedValue: any;
     newSmartReply:any;
 	newReply=new FormGroup({
 		Title: new FormControl('',Validators.required),
@@ -42,13 +43,18 @@ export class AddSmartRepliesComponent implements OnInit {
 	messages:any [] = [];
 	
 	action = '';
-	actions:any [] = [];
+	addedActions: any[] = [{ id: 1, value: '' },
+		{ id: 2, Value: '' },
+		{ id: 3, Value: '' }];
+
+	selectedAction:any;	
 	
 	keyword: string = '';
 	keywords: string[] = [];
 	
 	editedText:string ='';
 	isEditable: boolean = false;
+	addText:string ='';
 	
 	
 	constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService:DashboardService ) {
@@ -70,6 +76,9 @@ export class AddSmartRepliesComponent implements OnInit {
 			this.keywords.push(this.keyword);
 			this.keyword = '';
 		}
+		else {
+			alert('Type any keyword first!')
+		}
 	}
 
 	removeKeyword(keyword: string) {
@@ -83,20 +92,36 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	}
 
-	addAction() {
-		this.actions.push(this.action);
-		this.action= '';
+	// onSubDropdownSelect(event: any, selectedvalue:number) {
+	// 	this.selectedValue = event.target.innerText;
+	// 	this.selectedAction = this.addedActions.find(this.action =>this.addedActions.id === selectedvalue )
+		
+		
+	// }
+
+	addedAction() {
+		
+		 	
+			this.addedActions.push(this.action);
+			this.action = '';
+		
+		
+
+		
 	}
 
 	removeAction(index: number) {
-		this.actions.splice(index, 1);
+		this.addedActions.splice(index, 1);
 	}
 
 	addMessage() {
-			 
+			 if(this.message !== '') {
 			this.messages.push(this.message);
 			this.message = '';
-			
+		}
+		else {
+			alert('Type any message first!')
+		}
 	}
 	removeMessage(index:number) {
 		this.messages.splice(index, 1);
@@ -134,9 +159,16 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.file = event.target.files[0];
 		console.log('file', this.file);
 	}
-	onSelected(value: any) {
+	onSelectedTeams(value: any) {
 		this.selectedTeam = value;
-		this.selectedDropDown = value;
+		
+
+	}
+
+	onSelectedTag(value: any) {
+		this.selectedTag = value;
+
+
 	}
 	getNewSmartReplyData(){
 		

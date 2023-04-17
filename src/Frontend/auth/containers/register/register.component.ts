@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FormsModule, FormBuilder, FormControl, FormGroup, NgForm } from '@angular/forms';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
@@ -11,6 +11,8 @@ import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-
     templateUrl: './register.component.html',
     styleUrls: ['register.component.scss'],
 })
+
+
 export class RegisterComponent implements OnInit {
     checkboxChecked = false;
     buttonColor = '';
@@ -77,19 +79,7 @@ export class RegisterComponent implements OnInit {
         // alert("Success")
     }
 
-    // onVerification() {
-       
-    //     if (this.registerForm.valid) {
-    //         sessionStorage.setItem('formValues', JSON.stringify(this.registerForm.value));
 
-    //         this.apiService.sendOtp(this.registerForm.value).subscribe(response => {
-    //             console.warn("registerdone! ", response)
-    //             this.router.navigate(['verification'])
-    //         });
-
-    //     }
-        
-    // }
     viewpass(){
         this.visible = !this.visible;
         this.changetype = !this.changetype;

@@ -122,7 +122,7 @@ export class DashboardService {
   //******************Smart replies API's*********************//
 
 
-   getUser() {
+   getSmartReply() {
     return this.http.get('https://smartapi.sampanatechnologies.com/getReplies')
   }
 

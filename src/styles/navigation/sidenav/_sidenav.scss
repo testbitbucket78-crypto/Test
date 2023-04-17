@@ -42,9 +42,17 @@
           }
         }
       }
+
       .sb-sidenav-menu-nested {
         margin-left: 1.5rem;
         flex-direction: column;
+      }
+
+          &.active {
+        color: $sidenav-light-link-active-color;
+        .sb-nav-link-icon {
+          color: $sidenav-light-link-active-color;
+        }
       }
     }
   }

@@ -1,9 +1,7 @@
 // Global styling for this template
+@import 'ag-grid-community/dist/styles/ag-grid.css';
+@import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-html,
-body {
-  height: 100%;
-}
 
 // Set spacing on containers for page symmetry
 
@@ -101,6 +99,7 @@ body {
   height: 35px;
   color: #495057;
   font-size: 14px;
+  width: 218px;
 }
 .pp .iti--allow-dropdown input, .iti--allow-dropdown input, .iti--allow-dropdown input, .iti--separate-dial-code input, .iti--separate-dial-code input, .iti--separate-dial-code input {
   padding-right: 6px;
@@ -114,8 +113,29 @@ body {
   margin: 0px 0px 0 -10px;
   width: 275px;
 }
-.iti {
+
+.pp .iti {
   position: relative;
   display: inline-block;
   margin: 9px 0 0 0;
+}
+.iti input#country-search-box {
+  padding-left: 6px;
+  border: 1px solid #ccc;
+  margin: 0;
+}
+
+
+ .modal-dialog .modal-content .edit-tag {
+   transform: none;
+    width: 70%;
+    height: 458px;
+    box-shadow: 4px 22px 54px #695F971A !important;
+    border-radius: 30px;
+    opacity: 1;
+    border: none;
+    float: right;
+    top: 10rem;
+    left: 13em;
+
 }

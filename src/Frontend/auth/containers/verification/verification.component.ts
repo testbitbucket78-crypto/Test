@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input,OnInit } from '@angular/core';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { FormGroup ,FormControl} from '@angular/forms';
@@ -6,7 +6,7 @@ import { Validators } from '@angular/forms';
 
 
 @Component({
-    selector: 'sb-verification',
+    selector: 'sb-verification-input',
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './verification.component.html',
     styleUrls: ['verification.component.scss'],
