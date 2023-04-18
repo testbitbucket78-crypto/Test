@@ -195,28 +195,30 @@ app.post('/updateAndSave', (req, res) => {
 
   if (purpose == 'Add new contact only') {
     var identifierData = identifier[0]
-    for (var i = 0; i < CSVdata.length; i++) {
+    for(var i=0;i<CSVdata.length;i++){
       var identifierValue = JSON.parse(JSON.stringify(CSVdata[i][emailid_field]))
-      var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field]]
-      //var selexist=`select emailId from EndCustomer where  emailId ?`
-      db.db.query(selexist, [[identifierValue]], function (error, results) {
-        if (error) {
-          console.log(error)
-        } else {
-
-        }
-      })
-      var query = `INSERT INTO EndCustomer (Name,Phone_number,emailId) VALUES ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ` + identifierData + '=?' + ')'
-      // db.db.query(query,[[values],[identifierValue]],function (error, results){
-      //   console.log(query)
+      var values=[CSVdata[i][name_field],CSVdata[i][mobileNo_field],CSVdata[i][emailid_field]]
+      // var selexist=`select `+identifierData+` from EndCustomer where `+identifierData+`= ?`
+      // db.db.query(selexist,[[identifierValue]],function (error, results){
       //   if(error){
-      //     console.log(error);
+      //     console.log(error)
       //   }else{
-      //     console.log(results);
+
       //   }
       // })
-    }
 
+
+      var query= `INSERT INTO EndCustomer (Name,Phone_number,emailId) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ` +identifierData +'=?'+')'
+      db.db.query(query,[[values],[identifierValue]],function (error, results){
+        console.log(query)
+        if(error){
+          console.log(error);
+        }else{
+          console.log(results);
+        }
+      })
+  }
+   
   }
   // if (purpose == 'Update Existing Contacts Only') {
   //    console.log(" 2"+purpose)
