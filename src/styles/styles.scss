@@ -1,11 +1,13 @@
 // Import Custom Variables
 @import "variables.scss";
 
+
 // Import Bootstrap
 @import "bootstrap/scss/bootstrap.scss";
 
 // Import Custom SCSS
 @import "global.scss";
+
 
 // Layout
 @import "layout/authentication.scss";
@@ -19,3 +21,9 @@
 @import "navigation/sidenav/sidenav.scss";
 @import "navigation/sidenav/sidenav-dark.scss";
 @import "navigation/sidenav/sidenav-light.scss";
+
+/* Importing Bootstrap SCSS file. */
+@import "~bootstrap/scss/bootstrap";
+
+/* Importing Datepicker SCSS file. */
+@import "~ngx-bootstrap/datepicker/bs-datepicker";

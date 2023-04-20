@@ -165,24 +165,23 @@ app.put('/editContact', (req, res) => {
 })
 
 
-
 app.post('/updateAndSave', (req, res) => {
   console.log("updateAndSave")
-  console.log(req.body)
+  //console.log(req.body)
   var result = req.body;
   var fields = result.field
-  var CSVdata = result.importedData
+  var CSVdata = result.importCSVdata
   var colMap = result.mapping
   var identifier = result.identifier
   var purpose = result.purpose
-  var rowdataList = [];
-  console.log(colMap)
-  var count = 0
+
+  console.log(result)
+  if(CSVdata!==undefined){
 
   if (colMap !== undefined) {
     console.log("colMap")
-    var name_field = colMap.Name !== undefined ? colMap.Name : 'Name';
-    var emailid_field = colMap.emailId !== undefined ? colMap.emailId : 'emailId';
+    var name_field = colMap.Name !== '' ? colMap.Name : 'Name';
+    var emailid_field = colMap.emailId !== '' ? colMap.emailId : 'emailId';
     var mobileNo_field = colMap.Mobile_Number !== '' ? colMap.Mobile_Number : 'Phone_number'
     var gender_field = colMap.Gender !== '' ? colMap.Gender : 'sex';
     var tag_field = colMap.Tags !== '' ? colMap.Tags : 'tag';
@@ -192,152 +191,262 @@ app.post('/updateAndSave', (req, res) => {
 
   }
 
+  var identifierData = identifier[0]
 
   if (purpose == 'Add new contact only') {
-    var identifierData = identifier[0]
-    for(var i=0;i<CSVdata.length;i++){
-      var identifierValue = JSON.parse(JSON.stringify(CSVdata[i][emailid_field]))
-      var values=[CSVdata[i][name_field],CSVdata[i][mobileNo_field],CSVdata[i][emailid_field]]
-      // var selexist=`select `+identifierData+` from EndCustomer where `+identifierData+`= ?`
-      // db.db.query(selexist,[[identifierValue]],function (error, results){
-      //   if(error){
-      //     console.log(error)
-      //   }else{
 
-      //   }
-      // })
-
-
-      var query= `INSERT INTO EndCustomer (Name,Phone_number,emailId) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ` +identifierData +'=?'+')'
-      db.db.query(query,[[values],[identifierValue]],function (error, results){
+   
+    for (var i = 0; i < CSVdata.length; i++) {
+      var identifierValue = ''
+      if (identifierData === 'emailId') {
+        identifierValue = JSON.parse(JSON.stringify(CSVdata[i][emailid_field]))
+      }
+      if (identifierData === 'Phone_number') {
+        identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
+      }
+      var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID]
+      var query = val.importquery + identifierData + '=?' + ' and isBlocked is null and isDeleted is null )'
+      console.log(query)
+      db.db.query(query, [values, identifierValue], function (error, results) {
         console.log(query)
-        if(error){
+        if (error) {
           console.log(error);
-        }else{
+        } else {
           console.log(results);
         }
       })
+    }
   }
-   
+
+
+  if (purpose == 'Update Existing Contacts Only') {
+    if (fields.length == 0) {
+      for (var i = 0; i < CSVdata.length; i++) {
+        var identifierValue = ''
+        if (identifierData === 'emailId') {
+          identifierValue = JSON.parse(JSON.stringify(CSVdata[i][emailid_field]))
+        }
+        if (identifierData === 'Phone_number') {
+          identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
+        }
+        var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID]
+      
+        var updateQuery = val.importUpdate + identifierData + '=?'
+     
+        db.db.query(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID, identifierValue], function (error, results, next) {
+          if (error) {
+            console.log(error)
+          } else {
+            console.log(results)
+          }
+        })
+      }
+    }
+    else {
+      for (var j = 0; j < fields.length; j++) {
+        for (var i = 0; i < CSVdata.length; i++) {
+          var updateData = fields[j]
+          var identifierData = identifier[0]
+          updatedValue = JSON.parse(JSON.stringify(data[i][fields[j]]));
+          identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
+
+          db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?', [updatedValue, identifierValue], function (error, results, next) {
+            if (error) {
+              console.log(error)
+            }
+            else {
+              console.log(JSON.stringify(results.affectedRows))
+
+            }
+          })
+        }
+      }
+    }
   }
-  // if (purpose == 'Update Existing Contacts Only') {
-  //    console.log(" 2"+purpose)
-  // }
-  // else {
-  //   if (fields.length == 0) {
-  //     db.runQuery(req, res, val.importquery,
-  //       [data.map(item => [item.Name, item.Phone_number, item.emailId, item.status, item.sex, item.age, item.state, item.Country, item.tag, item.uid, item.SP_ID, item.address, item.pincode, item.city, item.OptInStatus, item.facebookId, item.InstagramId])])
-  //   } else {
-  //     for (var j = 0; j < fields.length; j++) {
-  //       for (var i = 0; i < result.data.length; i++) {
-  //         var updateData = fields[j]
-  //         var identifierData = identifier[0]
 
-  //         rowdataList.push(data[i]);
-  //         updatedValue = JSON.parse(JSON.stringify(data[i][fields[j]]));
-  //         identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
+  if (purpose === 'Add and Update Contacts') {
+    //********ADD NEW CONTACT********* */
+    for (var i = 0; i < CSVdata.length; i++) {
+      var identifierValue = ''
+      if (identifierData === 'emailId') {
+        identifierValue = JSON.parse(JSON.stringify(CSVdata[i][emailid_field]))
+      }
+      if (identifierData === 'Phone_number') {
+        identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
+      }
+      var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID]
+      var query = val.importquery + identifierData + '=?' + ')'
+     
+      db.db.query(query, [values, identifierValue], function (error, results) {
+        console.log(query)
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(results);
+        }
+      })
+    }
+
+    //******************************* */
+    if (fields.length == 0) {
+      for (var i = 0; i < CSVdata.length; i++) {
+        var identifierValue = ''
+        if (identifierData === 'emailId') {
+          identifierValue = JSON.parse(JSON.stringify(CSVdata[i][emailid_field]))
+        }
+        if (identifierData === 'Phone_number') {
+          identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
+        }
+        var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID]
+       
+        var updateQuery = val.importUpdate + identifierData + '=?'
+      
+        db.db.query(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID, identifierValue], function (error, results, next) {
+          if (error) {
+            console.log(error)
+          } else {
+            console.log(results)
+          }
+        })
+      }
 
 
-  //         db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?', [updatedValue, identifierValue], function (error, results, next) {
-  //           if (error) {
-  //             console.log(error)
-  //           } else {
+    }
+    else {
+      for (var j = 0; j < fields.length; j++) {
+        for (var i = 0; i < CSVdata.length; i++) {
+          var updateData = fields[j]
+          var identifierData = identifier[0]
+          updatedValue = JSON.parse(JSON.stringify(data[i][fields[j]]));
+          identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
 
-  //             count = count + 1
 
-  //             if (JSON.stringify(results.affectedRows) == 0) {
+          db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?', [updatedValue, identifierValue], function (error, results, next) {
+            if (error) {
+              console.log(error)
+            } else {
+              console.log(JSON.stringify(results.affectedRows))
+            }
+          })
+        }
+      }
 
-  //               rowdata = rowdataList[count - 1]
-  //               values = [[rowdata.Name, rowdata.Phone_number, rowdata.emailId, rowdata.status, rowdata.sex, rowdata.age, rowdata.state, rowdata.Country, rowdata.tag, rowdata.uid, rowdata.sp_account_id, rowdata.address, rowdata.pincode, rowdata.city, rowdata.OptInStatus, rowdata.facebookId, rowdata.InstagramId]]
+    }
 
-  //               db.db.query(val.importquery, [values], function (err, result) {
-  //                 if (err) {
-  //                   console.log(err)
-  //                 } else {
-  //                   console.log(result)
-  //                 }
-  //               })
-  //             }
-  //           }
-  //         })
-  //       }
-  //     }
+  }
 
-  //   }
-
-  //  }
+  }
 })
 
 app.post('/verifyData', (req, res) => {
   var resdata = req.body
-
-  console.log("verifyData")
-  var CSVdata = resdata.importedData;
-
-  console.log(CSVdata)
+  var CSVdata = resdata.importedData
+  var identifier = resdata.identifier
+  var purpose = resdata.purpose
   var colMap = req.body.mapping
+  
+  
+  var identity=identifier[0]
+  
   if (colMap !== undefined) {
     var emailid_field = colMap.emailId !== '' ? colMap.emailId : 'emailId';
     var phoneNo_field = colMap.Mobile_Number !== '' ? colMap.Mobile_Number : 'Phone_number';
   }
-  phoneNo_values = [];
-  emailId_values = [];
-  err_emailId_values = [];
-  err_phone_no = []
-  errData=[]
+
+  errData = []
+  importData = []
+  queryData = []
   for (var i = 0; i < CSVdata.length; i++) {
     var email = (CSVdata[i][emailid_field]);
     var phone = CSVdata[i][phoneNo_field]
-    console.log("email"+email)
     var emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
     var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-    if ((email !==null && email.match(emailFormat)) || (phone !==null && phone.match(phoneno))) {
-      emailId_values[i] = email;
-      phoneNo_values[i]=phone
-      
+    console.log(email.match(emailFormat) + "***" + phone.match(phoneno))
+    if ((!email.match(emailFormat)) || (!phone.match(phoneno))) {
+
+      errData.push(CSVdata[i])
     } else {
-      err_emailId_values[i] = email;
-      err_phone_no[i]=phone
-      errData[i]=CSVdata[i]
-      console.log("err  " + err_emailId_values[i] + "phone" +  err_phone_no[i])
-      console.log(errData[i])
+
+      queryData.push(CSVdata[i][identifier[0]])
+      console.log(queryData)
+      importData.push(CSVdata[i])
+
     }
   }
-  res.send(errData)
+  console.log(errData.length)
+  if (errData.length !== 0) {
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(errData)
+    fs.writeFile("CSVerr.csv", csv, function (err) {
+      if (err) {
+        throw err;
+      }
+      console.log('File Saved')
+    })
+    res.attachment("CSVerr.csv")
+  }
 
-  // for (var i = 0; i < CSVdata.length; i++) {
 
-  //   var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-  //   if (((JSON.parse(JSON.stringify(CSVdata[i][phoneNo_field]))) !== '' && (JSON.parse(JSON.stringify(CSVdata[i][phoneNo_field]))).match(phoneno))) {
-  //     phoneNo_values[i] = (JSON.parse(JSON.stringify(CSVdata[i][phoneNo_field])))
-  //   } else {
+ 
+  if (!importData.length == '0') {
+  
+    var verifyQuery='select * from EndCustomer WHERE ' + identity +' in (?)'+ 'and isBlocked is null and isDeleted is null' 
+    
+    db.db.query(verifyQuery, [queryData], (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      else {
+        if (purpose === 'Add new contact only') {
+          res.status(200).send({
 
-  //     err_phone_no[i] = (JSON.parse(JSON.stringify(CSVdata[i][phoneNo_field])));
+            newCon: (importData.length - result.length),
+            upCont: 0,
+            skipCont: errData.length,
+            importData: importData
+          });
+        }
+        if (purpose === 'Update contact') {
+          res.status(200).send({
 
-  //     console.log("err  " + err_phone_no[i])
-  //   }
+            newCon: 0,
+            upCont: result.length,
+            skipCont: errData.length,
+            importData: importData
+          });
+        }
+        if (purpose === 'Add and Update contact') {
+          res.status(200).send({
 
-  //   // phoneNo_values[i]= (JSON.parse(JSON.stringify(CSVdata[i][phoneNo_field])))
-  // }
-  // console.log(emailId_values + " " + phoneNo_values)
-  // var queryData = [values];
+            newCon: (importData.length - result.length),
+            upCont: result.length,
+            skipCont: errData.length,
+            importData: importData
+          });
+        }
+      }
+    })
+  }
+  else {
+    res.status(200).send({
 
-  // db.db.query(val.verfiyCount, queryData, (err, result) => {
-  //   if (err) {
-  //     console.log(err);
-  //   }
-  //   else {
-
-  //     res.status(200).send({
-
-  //       count: result.length,
-
-  //     });
-  //   }
-  // })
-
+      newCon: 0,
+      upCont: 0,
+      skipCont: errData.length,
+      importData: importData
+    });
+  }
 
 })
+
+app.get('/downloadCSVerror', (req, res) => {
+  console.log("downloadCSVerror")
+  var file = path.join(__dirname, '/CSVerr.csv')
+
+
+  res.download(file)
+})
+
 
 
 

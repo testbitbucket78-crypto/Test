@@ -7,104 +7,101 @@ export const sideNavSections: SideNavSection[] = [
     },
     
     {
-        items: ['Contacts', 'teambox', 'camp', 'automation', 'rep','setting'],
+        items: ['camp', 'teambox', 'Contacts',  'automation', 'rep'],
     },
 ];
 
 export const sideNavItems: SideNavItems = {
     dashboard: {
-        icon: 'tachometer-alt',
+        icon: 'assets/img/dashboard.png',
         text: 'Dashboard',
         link: '/dashboard',
     },
-    automation: {
-       
-        text: 'Automation',
-        submenu: [
-        {
-                        text: 'Funnel',
-                        link: '/dashboard/automation',
-                    },
-                 {
-                        text: 'Flow builder',
-                        link: '/dashboard/flowBuilder',
-                    },
-                    {
-                        text: 'Smart Replies',
-                        link: '/dashboard/smartReplies',
-                    },
-                 {
-                        text: 'Reply Material',
-                        link: '/dashboard/replyMaterial',
-                    },
-                   
     
-        ],
-    },
-     rep: {
-        text: 'Reports',
-        submenu: [
-        {
-                        text: 'Reports List',
-                        link: '/dashboard/reports',
-                    },
-                 {
-                        text: ' Report Conversation',
-                        link: '/dashboard/conversation',
-                    },
-                    {
-                        text: 'Campaings Reports',
-                        link: '/dashboard/reportcampaign',
-                    },
-                 {
-                        text: 'Automation Reports',
-                        link: '/dashboard/reportautomation',
-                    },
-                    {
-                        text: 'Report Filters',
-                        link: '/dashboard',
-                    },
-                    {
-                        text: 'Export Reports',
-                        link: '/dashboard',
-                    },
-                   
-    
-        ],
-    },
     camp: {
-        // icon: 'table',
+        icon: 'assets/img/campaign.png',
         text: 'Campaings',
         link: '/dashboard/campaigns',
     },
-      Contacts: {
-        // icon: 'table',
-        text: 'Contacts',
-        link: '/dashboard/contacts',
-    },
+     
     teambox: {
-        // icon: 'table',
+        icon: 'assets/img/teambox.png',
         text: 'Teambox',
         link: '/dashboard/teambox',
     },
-      campaings: {
-        // icon: 'table',
-        text: 'Campaigns',
-        link: '/dashboard/campaigns',
+    Contacts: {
+        icon: 'assets/img/contacts.png',
+        text: 'Contacts',
+        link: '/dashboard/contacts',
     },
-    //   automation: {
-    //     // icon: 'table',
-    //     text: 'Automation',
-    //     link: '/dashboard/automation',
-    // },
+
+    automation: {
+
+        text: 'Automation',
+        submenu: [
+            {
+                icon: 'assets/img/funnel.png',
+                text: 'Funnel',
+                link: '/dashboard/automation',
+            },
+            {
+                icon: 'assets/img/Flowbuilder.png',
+                text: 'Flow builder',
+                link: '/dashboard/flowBuilder',
+            },
+            {
+                icon: 'assets/img/Smartreplies.png',
+                text: 'Smart Replies',
+                link: '/dashboard/smartReplies',
+            },
+            {
+                text: 'Reply Material',
+                link: '/dashboard/replyMaterial',
+            },
+
+
+        ],
+    },
+  
       reports: {
-        // icon: 'table',
+        icon: 'assets/img/rep.png',
         text: 'Repots',
         link: '/dashboard/reports',
     },
-     setting: {
-        // icon: 'table',
-        text: 'Setting',
-        link: '/dashboard/setting',
+
+    rep: {
+        icon: 'assets/img/rep.png',
+        text: 'Reports',
+        submenu: [
+            {
+                text: 'Reports List',
+                link: '/dashboard/reports',
+            },
+            {
+                icon: 'assets/img/con-report.png',
+                text: ' Report Conversation',
+                link: '/dashboard/conversation',
+            },
+            {
+                icon: 'assets/img/camp-repot.png',
+                text: 'Campaings Reports',
+                link: '/dashboard/reportcampaign',
+            },
+            {
+                text: 'Automation Reports',
+                link: '/dashboard/reportautomation',
+            },
+            {
+                text: 'Report Filters',
+                link: '/dashboard',
+            },
+            {
+                text: 'Export Reports',
+                link: '/dashboard',
+            },
+
+
+        ],
     },
+
 };

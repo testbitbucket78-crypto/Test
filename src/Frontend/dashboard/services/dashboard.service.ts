@@ -68,7 +68,7 @@ export class DashboardService {
     return this.http.post('https://contactapi.sampanatechnologies.com/exportCheckedContact', data)
   }
 
-  
+
   filter(Phone_number: any) {
     const params = new HttpParams().set('Phone_number', Phone_number)
     return this.http.get('https://contactapi.sampanatechnologies.com/filter', { params: params })
@@ -83,7 +83,11 @@ export class DashboardService {
 
     return this.http.get('https://contactapi.sampanatechnologies.com/download', { responseType: 'blob' })
   }
+  downloadErrFile() {
 
+
+    return this.http.get('https://contactapi.sampanatechnologies.com/downloadCSVerror', { responseType: 'blob' })
+  }
   update(data: object) {
     console.log("servise update data" +data)
     return this.http.post('http://localhost:3002/updateAndSave', data)
@@ -119,7 +123,7 @@ export class DashboardService {
   //******************Smart replies API's*********************//
 
 
-   getUser() {
+   getSmartReply() {
     return this.http.get('https://smartapi.sampanatechnologies.com/getReplies')
   }
 

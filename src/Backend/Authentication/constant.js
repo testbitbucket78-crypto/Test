@@ -1,9 +1,9 @@
 const db = require("../dbhelper");
 
-const host = "sdpl-staging.cdjbek5fprnn.ap-south-1.rds.amazonaws.com"
-const user = "scroot"
-const password = "amsdb1234"
-const database = "cip_project"
+const host= "sdpl-staging.cdjbek5fprnn.ap-south-1.rds.amazonaws.com"
+const user= "scroot"
+const password= "amsdb1234"
+const database= "cip_project"
 
 
 //Queries for user.js
@@ -39,14 +39,35 @@ var camQuery = "Select * from Campaign"
 //Query For automation
 var selectQuery = "Select * from AutomatedCampaign"
 
+//Query for dashboard
+interactionsQuery="select interaction_status,count(*) count from Interaction where  (customerId=1) Group by (interaction_status)  union select 'Total Interactions',count(*) count from Interaction where  customerId=1";
+campaignsQuery="select campaign_status,count(*) count from CampaignStats where  (customerID=1) Group by (campaign_status)";
+agentsQuery="select Status,count(*) count from AgentDetails where  (uid=1) Group by (Status) union select 'Total Agents',count(*) count from AgentDetails where  uid=1";
+subscribersQuery="select OptInStatus,count(*) count from EndCustomer  Group by (OptInStatus) union select  'Total Subscriber',count(*) count from EndCustomer";
+
+//contact filter
+filterQuery="select * from EndCustomer where Phone_number=?"
+importquery="INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,state,Country,tag,uid,sp_account_id,address,pincode,city,OptInStatus,facebookId,InstagramId) VALUES ?"
+searchQuery="select * from EndCustomer where Phone_number=? or Name=? or emailId=?"
+delet="DELETE FROM EndCustomer WHERE customerId IN (?)"
+selectbyid="select * from EndCustomer where customerId=?"
+// Path for download sample csv file for import of contact
+var Path='C:/Users/hp/Downloads/data.csv'
+
+//update query for override 
+//updateCustomer='UPDATE EndCustomer SET '+ contact.updateData +'=?' +' WHERE ' + contact.identifierData + '=?'
+verfiyCount="select * from EndCustomer where emailId in (?)"
 
 insertOtp="CALL otpVerification(?,?,?)"
 verifyOtp=`SELECT  otp FROM otpVerify WHERE created_at > NOW() - INTERVAL 15 MINUTE and otpfieldvalue=?`
-
+var access_token='Bearer EAAiPxMFEGCYBADPTwZAXpZCv9JgfullRyIDfr9ULZB5DweHZCc1O0VcsGuZCtE9g3B09exFOPzXHq4FORZA90ZCKq1FzZA9k889oiRqTrGbUpyU6xXHgAUaAqW4K6Lzu7aY6zMgw1QIDimeygGgXEbhGxY5c6rtMsORZAOi3SymrewonbnbGWh4Eb'
+var url='https://graph.facebook.com/v16.0/108525132105860/messages'
+var content_type='application/json'
 
 module.exports = {
     host, user, password, database, selectAllQuery, selectByIdQuery, deletQuery, insertQuery,
     updateQuery,allAgents,activeAgent, loginQuery, registerQuery, 
     email, appPassword, emailHost, port, 
-     updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp
+     updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp,
+     access_token,url,content_type
 }

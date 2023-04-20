@@ -13,18 +13,19 @@ declare var $: any;
 })
 export class ImportComponent implements OnInit {
 	active = 1;
-	file: any;                                           //get file name after click event of upload file **onChange()***Method
+	file: any;                                           
 	stepper: any;
-	fileName: any;                                      //for review page file name 
-	numberOfNewContact: any;                            //csv file customers count
-	public headers: any[] = [];                         //for import data mapping  field
+	fileName: any;                                    
+	numberOfNewContact: any;                           
+	public headers: any[] = [];                         
 	records: any[] = [];
 	selectedIdentifier: any[] = [];
 	Identifier: any;
 	purpose: any;
-	fields: any[] = [];                              // fields that we have to override using ***getUpdateFields()** method
-	countUpdatedData: any;                           //count of already exist customers
-
+	fields: any[] = [];                              
+	countUpdatedData: any;                          
+	importCSVdata:any[]=[];
+	skipCont:any;
 	columnMapping: any;
 	importedData: any[] = [];
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService) {
@@ -56,6 +57,12 @@ export class ImportComponent implements OnInit {
 
 	}
 
+    //********open error dialog boxes *********/
+	open(content: any) {
+		this.modalService.open(content);
+	}
+
+
 	//*********After upload read file *********/
 	onUpload(event: any) {
 
@@ -68,17 +75,15 @@ export class ImportComponent implements OnInit {
 
 			let csvData = reader.result;
 			let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);
-			//console.log(csvRecordsArray)
-			//this.data = csvRecordsArray
+			
 			this.numberOfNewContact = (csvRecordsArray.length) - 2;
 
 			let headersRow = this.getHeaderArray(csvRecordsArray);
 			this.headers = headersRow;
-			//console.log(csvRecordsArray)
+			
 			this.importedData = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
            
-			console.log("this.records")
-			console.log(this.importedData)
+			
 
 
 		}
@@ -112,23 +117,7 @@ export class ImportComponent implements OnInit {
 
 		for (let i = 1; i < csvRecordsArray.length - 1; i++) {
 			let curruntRecord = (<string>csvRecordsArray[i]).split(',');
-			//let values = dataRows[i].split(',');
-			if (curruntRecord.length != headerLength.length) {
-				
-				let errObj: any = new Object();
-				for (let index = 0; index < headerLength.length; index++) {
-					const propertyName: string = headerLength[index];
-
-					let val: any = curruntRecord[index];
-					if (val === '') {
-						val = null;
-					}
-					errObj[propertyName] = val;
-
-				} 
-				errorDataArray.push(errObj)
-			}
-			else {
+		
 				let obj: any = new Object();
 				for (let index = 0; index < headerLength.length; index++) {
 					const propertyName: string = headerLength[index];
@@ -142,7 +131,7 @@ export class ImportComponent implements OnInit {
 				}
 				csvArr.push(obj)
 			}
-		}
+
 		return csvArr;
 	}
 	//*********Override field Method ******** */
@@ -167,9 +156,9 @@ export class ImportComponent implements OnInit {
 			"identifier": this.selectedIdentifier,
 			"purpose": this.purpose,
 			"mapping": this.columnMapping,
-			"importedData": this.importedData
+			"importedData": this.importCSVdata
 		}
-		console.log(this.selectedIdentifier)
+		
 		this.apiService.update(Data).subscribe((Data: any) => {
 
 		})
@@ -199,10 +188,10 @@ export class ImportComponent implements OnInit {
 	//*************************Updated and added data count**************************** */
 	updatedDataCount() {
 		console.log("update count" + this.records.length)
-		console.log(this.importedData)
+		//console.log(this.importedData)
 		this.columnMapping = {
-			"Name": 'First_Name',
-			"emailId": 'emailId',
+			"Name": '',
+			"emailId": '',
 			"Mobile_Number":'',
 			"Gender": '',
 			"Tags": '',
@@ -211,16 +200,32 @@ export class ImportComponent implements OnInit {
 			"State": ''
 		}
 		var csvdata = {
+			"field": this.fields,
+			"identifier": this.selectedIdentifier,
+			"purpose": this.purpose,
 			"mapping": this.columnMapping,
 			"importedData": this.importedData
 			
 		}
 		this.apiService.updatedDataCount(csvdata).subscribe((data: any) => {
-			this.countUpdatedData = data.count
-			console.log(" get data " + data)
+			this.countUpdatedData = data.upCont
+			this.numberOfNewContact=data.newCon
+            this.skipCont=data.skipCont
+            this.importCSVdata=data.importData
+			
 
 		})
 
+	}
+   
+	//*********Download Sample file****************/	
+
+	downloadERRfile() {
+		this.apiService.downloadErrFile().subscribe((data: any) => {
+			const blob = new Blob([data], { type: 'text/csv' });
+			const url = window.URL.createObjectURL(blob);
+			window.open(url);
+		})
 	}
 
 }

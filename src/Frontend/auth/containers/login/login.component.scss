@@ -8,7 +8,7 @@
     cursor: pointer;
     width: 220px;
     border-radius: 22px;
-    margin: 20px 0px 0px 206px;
+    margin: 20px 0px 0px 175px;
     background-image: linear-gradient(to right, #F9B035, #F98C4E, #F96767);
     font-family: 'Montserrat', sans-serif;
     font-weight: bold;
@@ -18,9 +18,11 @@
     opacity: 1;
 
 }
+
+
 .float-left {
     float: left !important;
-    margin: 0px 120px 0px -25px;
+    margin: 0px 170px 0px -25px;
     width: 570px;
     height: 100vh;
 }
@@ -61,7 +63,7 @@
     margin: 20px 0px 0px 0px;
 }
 .font-weight-light {
-    margin: 150px 0px 0px 11px;
+    margin: 200px 0px 0px 11px;
     font-size: 30px;
     color: #000000;
     font-family: 'Montserrat', sans-serif;
@@ -71,7 +73,7 @@
 small, .small {
     font-size: 14px;
     font-weight: bold;
-    margin: 0px 120px 0px 0px;
+    margin: 0px 166px 0px 0px;
     font-family: 'Montserrat', sans-serif;
     color: #6149CD;
     line-height: 23px;
@@ -91,7 +93,8 @@ a {
     line-height: 30px;
 }
 .mt-6{
-    margin: 90px 0px 0px 0px;
+    margin: 150px 0px 0px 37pc;
+    position: absolute;
 }
 .eyeicon{
     position: absolute;
@@ -113,3 +116,16 @@ input::-ms-clear {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
 }
+
+
+@media (min-width: 768px) {
+    /* styles applied when screen width is at least 768px */
+  }
+  
+  @media (min-width: 992px) {
+    /* styles applied when screen width is at least 992px */
+  }
+  
+  @media (min-width: 1200px) {
+    /* styles applied when screen width is at least 1200px */
+  }

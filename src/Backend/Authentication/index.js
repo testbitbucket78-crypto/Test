@@ -9,6 +9,7 @@ const { json } = require('body-parser');
 const val = require('./constant');
 const { Status } = require('tslint/lib/runner');
 const CryptoJS = require('crypto-js');
+var axios = require('axios');
 const SECRET_KEY = 'RAUNAK'
 app.use(bodyParser.json());
 
@@ -72,7 +73,23 @@ const login = (req, res) => {
     mailOpt = data
 
 }
+const get = (req, res) => {
+    console.log(mailOpt)
+    var mailOptions = {
+        to: mailOpt,
+        subject: "Request for download Contact_Data: ",
+        html: '<p>You requested for download Contact_Data, kindly use this <a href="http://localhost:3002/getCheckedExportContact">link</a>to see your contacts</p>'
+    };
 
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        res.status(200).send({ msg: "data has been sent" });
+    });
+}
 //post api for register
 
 const register = function (req, res) {
@@ -122,10 +139,8 @@ let transporter = nodemailer.createTransport({
         user: val.email,
         pass: val.appPassword
     },
-
-
-
-
+    port: val.port,
+    host: val.emailHost
 });
 
 //Post api for forget password
@@ -203,9 +218,44 @@ const resetPassword = function (req, res) {
 
 };
 
+
+
+function sendMessage(data) {
+    var config = {
+        method: 'post',
+        url: val.url,
+        headers: {
+            'Authorization': val.access_token,
+            'Content-Type': val.content_type
+        },
+        data: data
+    };
+
+    return axios(config)
+}
+
+function getTextMessageInput(recipient, text) {
+    return JSON.stringify({
+
+        "messaging_product": "whatsapp",
+        "preview_url": false,
+        "recipient_type": "individual",
+        "to": recipient,
+        "type": "text",
+        "text": {
+            "body": "OTP for verification : "+ text
+        }
+
+    });
+}
+
+
+
+
 // Opt for Varification
 const sendOtp = function (req, res) {
     email_id = req.body.email_id;
+   // mobile_number = req.body.mobile_number;
     console.log("send otp")
     console.log(req.body)
     let otp = Math.floor(100000 + Math.random() * 900000);
@@ -228,16 +278,20 @@ const sendOtp = function (req, res) {
         res.send(Status);
     });
 
-    db.db.query(val.insertOtp, [req.body.email_id,otp,'Email'],function (err, result){
-        console.log("  1") 
-     console.log(result)
+
+    var data = getTextMessageInput('919971129777', otp);
+    var value = JSON.parse(data)
+    console.log(value.text.body)
+    sendMessage(data)
+
+    db.db.query(val.insertOtp, [req.body.email_id, otp, 'Email'], function (err, result) {
+        console.log(result)
     })
-      
-    db.db.query(val.insertOtp, [req.body.mobile_number,otp,'Mobile'],function (err, result){
-        console.log("  2") 
-     console.log(result)
+
+    db.db.query(val.insertOtp, [req.body.mobile_number, otp, 'Mobile'], function (err, result) {
+        console.log(result)
     })
-    //db.runQuery(req, res, val.insertOtp, [req.body.email_id,otp,'email'])
+
     return res.status(200).send({
         msg: 'Otp Sended sucessfully !',
     })
@@ -253,7 +307,7 @@ const verifyOtp = function (req, res, err) {
         console.log(result[0].otp)
         console.log(req.body.otp != result[0].otp)
         if (err) {
-            throw err;
+            return res.send(err);
         }
         if (result.length != 0 && req.body.otp == result[0].otp) {
             return res.status(200).send({
@@ -272,7 +326,7 @@ const verifyOtp = function (req, res, err) {
         }
 
     })
-   
+
 };
 
 

@@ -11,8 +11,11 @@ import { TablesModule } from 'Frontend/tables/tables.module';
 import { OrderModule } from 'ngx-order-pipe';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+import { AgGridModule } from 'ag-grid-angular';
 
-
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -35,7 +38,6 @@ import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
         CommonModule,
         NgMultiSelectDropDownModule.forRoot(),
         OrderModule,
-       
         FilterPipeModule,
         RouterModule,
         ReactiveFormsModule,
@@ -44,6 +46,8 @@ import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
         NavigationModule,
         ChartsModule,
         TablesModule,
+        NgxIntlTelInputModule,
+        AgGridModule.withComponents([dashboardContainers.ContactsComponent])
         
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],

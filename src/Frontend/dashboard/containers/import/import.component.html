@@ -1,6 +1,7 @@
 <sb-layout-dashboard>
-	<h1>Import Contact</h1>
+ <sb-top-nav title="Contacts"></sb-top-nav>
 	<div class="bs-stepper">
+			<h1>Import Contacts</h1>
 		<div class="bs-stepper-header" role="tablist">
 			<!-- your steps here -->
 			<div class="step" data-target="#logins-part">
@@ -36,7 +37,7 @@
 				<div class="box d-flex">
 					<div class="box1">
 						<img src="assets/img/im.png">
-						<h5>Upload a CSV file to add or update contacts</h5>
+						<h5>Upload a CSV file <br />to add or update contacts</h5>
 						<span>Or</span>
 						<div class="col-xs-3 ">
 							<input type="file" (change)="onUpload($event)" />
@@ -85,8 +86,7 @@
 								aria-label="Floating label select example" #identifier (change)="onSelected(identifier.value)">
 								<option value="emailId">Email</option>
 								<option value="Phone_number">Phone_number</option>
-								<option value="2">Two</option>
-								<option value="3">Three</option>
+								
 							</select>
 
 						</div>
@@ -97,9 +97,22 @@
 
 
 				<button type="button" (click)="next()" class="btn btn-block col-1 mt-3 "
-					>Next</button>
+					(click)="onUpload($event)" (click)="open(content)" >Next</button>
 
 			</div>
+
+
+			<ng-template #content let-c="close" let-d="dismiss">
+
+				<div class="incorrect-card-main">
+
+					<p>File is incorrectly formed & cannot <br /> be read. Please try again
+				</p>
+
+				<button type="button" class="btn" (click)="c('Save click')">Close</button>
+				</div>
+	
+	       </ng-template>
 			<div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
 				<button type="button" (click)= "previous()" class="btn5 btn-block col-1 mt-3 "><img src="assets/img/prev.png"></button>
 				<span>Select the appropriate contact field for each column in tde CSV</span>
@@ -276,9 +289,17 @@
 						</div>
 					</div>
 				</div>
+						<ng-template #contents let-c="close" let-d="dismiss">
 
+						<div class="incorrect-card-main">
+					<p>The identifier column must be <br /> mapped before proceeding</p>
 
-				<button type="button" (click)="next()" (click)="updatedDataCount()" class="btn btn-primary btn-block col-1"
+					<button type="button" class="btn" (click)="c('Save click')">Ok, Got it</button>
+						</div>
+						
+						</ng-template>
+
+				<button type="button" (click)="next()" (click)="open(contents)" (click)="updatedDataCount()" class="btn btn-primary btn-block col-1"
 					>Next</button>
 			</div>
 			<div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
@@ -310,27 +331,52 @@
 					<h5>{{countUpdatedData}}</h5>
 					<h6>10 existing contacts will updated</h6>
 				</div>
-				<div class="card3">
-					<h5>7</h5>
+				<div class="card3" [(ngModel)]="skipCont">
+					<h5>{{skipCont}}</h5>
 					<h6>Contact skipped due to error</h6>
-					<button class="btn  btn-block" (click)="download()"><img src="assets/img/download.png"> Download error file</button>
+					<button class="btn  btn-block" (click)="downloadERRfile()"><img src="assets/img/download.png"> Download error file</button>
 				</div>
-				<button type="button" (click)="next()" class="btn btn-primary btn-block col-1" (click)="updateAndSave()">Import</button>
+
+				<ng-template #imports let-c="close" let-d="dismiss">
+					<div class="dd"><img src="assets/img/export1.png">
+						<div class="modal-header">
+
+							<h4 class="modal-title" id="modal-basic-title">Import started in the background</h4>
+
+						</div>
+						<div class="modal-body">
+							<p>We will notify you by email once the job has been <br /> completed. Now you can close this dialog box.
+							</p>
+							<div class="ss">
+								<img src="assets/img/your.png">
+							</div>
+						</div>
+						<div class="modal-footer popfooter row text">
+							<div class="col-md-3">
+								<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Ok, Got it</button>
+							</div>
+			           </div>
+			         </div>
+				</ng-template>
+
+				<button type="button" (click)="next()" (click)="open(imports)" class="btn btn-primary btn-block col-1" (click)="updateAndSave()">Import</button>
+				</div>
 			</div>
 		</div>
-	</div>
-	<ng-template #instruction let-c="close" let-d="dismiss">
-		<div class="modal-header text-right">
-			<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
-		</div>
-		<div class="modal-body">
-			<div class="campaigndata">
-				<p>Upload a csv file</p>
 
+
+		<ng-template #instruction let-c="close" let-d="dismiss">
+			<div class="modal-header text-right">
+				<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
 			</div>
-		</div>
+			<div class="modal-body">
+				<div class="campaigndata">
+					<p>Upload a csv file</p>
 
-	</ng-template>
+				</div>
+			</div>
+
+		</ng-template>
 
 	<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
  -->

@@ -500,24 +500,7 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.AddSmartRepliesComponent,
     },
-    {
-        path: 'sidenavReply',
-        data: {
-            title: 'SIDENAV Replies',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'sidenav Replies',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.SidenavReplyComponent,
-    },
+  
     
 
 ];
