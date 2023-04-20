@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input,OnInit } from '@angular/core';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
-import { FormGroup ,FormControl} from '@angular/forms';
+import { FormGroup ,FormControl,FormBuilder} from '@angular/forms';
 import { Validators } from '@angular/forms';
 
 
@@ -12,27 +12,28 @@ import { Validators } from '@angular/forms';
     styleUrls: ['verification.component.scss'],
 })
 export class VerificationComponent implements OnInit {
-    email_id:any;
+    isVerified: boolean = false;
+    email:any;
     phone:any;
-    verified: boolean = false;
-    otpForm = new FormGroup({
-        otp: new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),])),
+    otpForm = this.formBuilder.group({
+        otpfieldvalue: sessionStorage.getItem('otpfieldEmailvalue'),
+        otp: new FormControl('')
     })
 
     title = 'formValidation';
     submitted = false;
     values:any;
-    constructor(private apiService: AuthService, private router: Router) { }
+    constructor(private apiService: AuthService, private router: Router,private formBuilder:FormBuilder) { }
     ngOnInit() {
-        this.email_id=sessionStorage.getItem('otpfieldEmailvalue')
-        this.phone=sessionStorage.getItem('otpfieldMobilevalue')
+       this.email=sessionStorage.getItem('otpfieldEmailvalue')
+       this.phone=sessionStorage.getItem('otpfieldMobilevalue')
     }
 
 
     onVerify() {
        
         this.apiService.verifyOtp(this.otpForm.value).subscribe(response => {
-            this.verified = true;
+            // this.verified = true;
             console.log(this.otpForm.value)
             console.warn("verification! ", response)
             

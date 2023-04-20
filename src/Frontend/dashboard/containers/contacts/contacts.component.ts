@@ -409,8 +409,8 @@ editContactData() {
 
   console.log("editdata" + customerId)
 
-  this.apiService.editContact(this.editContact.value, customerId).subscribe(response => {
-   
+  this.apiService.editContact(this.editContact.value, customerId).subscribe((response:any) => {
+   console.log(response)
   })
 
 
@@ -476,19 +476,18 @@ getContactById(data: any) {
 
 exportCheckedContact() {
 	console.log(this.checkedConatct)
-	this.apiService.exportCheckedContact(this.checkedConatct).subscribe(response => {
+  var exContact={
+     data:this.checkedConatct,
+     loginData:sessionStorage.getItem('loginDetails')
+  }
+	this.apiService.exportCheckedContact(exContact).subscribe(response => {
 		console.log(response);
 
 	})
-	this.sendExportContact()
-	this.checkedConatct.length = 0;
-	console.log(this.checkedConatct)
-}
+ 
 
-sendExportContact() {
-	this.apiService.sendExportContact().subscribe(data => {
-		console.log(data)
-	})
+  this.checkedConatct.length = 0;
+	console.log(this.checkedConatct)
 }
 
 filterContact(){
