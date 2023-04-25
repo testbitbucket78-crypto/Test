@@ -39,11 +39,15 @@ export class LoginComponent implements OnInit {
     //   }
 
     onSubmit() {
-      this.apiService.login(this.loginForm.value).subscribe((result)=>{
-        console.warn("logindone! ",result)
-        sessionStorage.setItem('loginDetails',JSON.stringify(result.user))
-        this.router.navigate (['dashboard'])
-    });
+        this.apiService.login(this.loginForm.value).subscribe((result)=>{
+            console.warn("logindone! ",result)
+            sessionStorage.setItem('loginDetails',result.user.email_id)
+            console.log(result.user.UserType)
+            if(result.user.UserType=='Owner'){
+                console.log("Agent ")
+            }
+            this.router.navigate (['dashboard'])
+        });
     }
     onVerification(){
         console.log(this.loginForm.value)
