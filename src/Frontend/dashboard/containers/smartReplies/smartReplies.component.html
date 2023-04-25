@@ -18,9 +18,9 @@
 		</div>
 
 
-		<div class="col-xs-3 ">
+		<div class="col-xs-3  ">
 			<button class="btn  btn-block " routerLink="/dashboard/addSmartReplies"><i class="fa fa-plus"></i> 
-				Add SmartReply</button>
+				Add Smart Reply</button>
 		</div>
 		<div *ngFor="let reply of replies " class="card ">
 			<div class="card-body gy-2" (click)="opensidenav(reply)" (click)="getRepliesByID(reply)">
