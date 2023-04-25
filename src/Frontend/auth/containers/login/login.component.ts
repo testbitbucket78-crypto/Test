@@ -12,12 +12,12 @@ import { Validators } from '@angular/forms';
     styleUrls: ['login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-
+    
     checked  =true;
     password: any;
     loginForm=new FormGroup({
         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
+        password: new FormControl('', Validators.compose([Validators.required,Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')])),
         flash:new FormControl(this.checked)
       })
       title = 'formValidation';

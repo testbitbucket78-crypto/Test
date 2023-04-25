@@ -19,7 +19,6 @@
 
 }
 
-
 .float-left {
     float: left !important;
     margin: 0px 170px 0px -25px;
@@ -36,7 +35,7 @@
         font-weight: 600;
     }
 .custom-control-label{
-    margin: 13px 0px 0px -25px;
+    margin: 13px 0px 0px -38px;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
     color: #7A86A1;
@@ -47,7 +46,7 @@
     display: block;
     width: 90%;
     height: calc(1.5em + 0.75rem + 2px);
-    padding: 0.375rem 0.75rem;
+    padding: 0 28px 0px 10px;
     font-size: 14px;
     line-height: 23px;
     color: #7A86A1;
@@ -93,8 +92,9 @@ a {
     line-height: 30px;
 }
 .mt-6{
-    margin: 150px 0px 0px 37pc;
+    margin: 95px 0px 0px -70px;
     position: absolute;
+
 }
 .eyeicon{
     position: absolute;
@@ -118,14 +118,17 @@ input::-ms-clear {
 }
 
 
-@media (min-width: 768px) {
-    /* styles applied when screen width is at least 768px */
-  }
-  
-  @media (min-width: 992px) {
-    /* styles applied when screen width is at least 992px */
-  }
-  
-  @media (min-width: 1200px) {
-    /* styles applied when screen width is at least 1200px */
-  }
+@media all and (max-width:1536px) {
+    .container{
+        background-color: white;
+        height: 100vh;
+    }
+}
+@media all and (max-width:1080px) {
+    .float-left {
+        float: left !important;
+        margin: 0px 170px 0px -25px;
+        width: 670px;
+        height: 100vh;
+    }
+}

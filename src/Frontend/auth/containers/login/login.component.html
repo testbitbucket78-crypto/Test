@@ -47,16 +47,16 @@
                         ! Invalid Email Id
                       </div>
                       <div *ngIf= "submitted && loginForm.controls.password.errors" class="text-danger">
-                        ! Password can not be empty
+                        ! password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters.
                       </div>
                      
                     
                 </form>
-                
+                <div class="mt-6 "><a routerLink="/register" style="display: inline-flex">New User?<h6 class="ml-1"> Create an
+                    account</h6></a></div>
             </div>
         </div>
-        <div class="mt-6 "><a routerLink="/register" style="display: inline-flex">New User?<h6 class="ml-1"> Create an
-                    account</h6></a></div>
+        
     </div>
 
 
