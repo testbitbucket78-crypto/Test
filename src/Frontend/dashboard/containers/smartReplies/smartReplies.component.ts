@@ -19,6 +19,7 @@ export class SmartRepliesComponent implements OnInit {
 	keywords:any[]=[];
 	mydate: any;
 	active = 1;
+	showTopNav: boolean = true;
 
 	Cards: Cards[] = [
 		new Cards(1107), new Cards(1108), new Cards(1109), new Cards(1110), new Cards(1111), new Cards(1112), new Cards(1113)
@@ -34,7 +35,9 @@ export class SmartRepliesComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.getReplies()
+		
+		this.showTopNav = false;
+		this.getReplies();
 
 	}
 

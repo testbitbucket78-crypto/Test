@@ -26,3 +26,40 @@ img {
     margin: -22px -8px -32px 1px;
 }
 
+
+// .sb-topnav.navbar-light #sidebarToggle {
+ 
+//     position: absolute;
+//     top: 42px;
+//     left: 0;
+
+// }
+
+// .btn img {
+//     width: 60px!important;
+//     height: 60px!important;
+ 
+
+// }
+
+
+@media all and (max-width:1536px) {
+    
+    .mt-4 {
+        font-size: 35px!important;
+        margin-top: 28px!important;
+    }
+
+
+    img {
+        width: 15px!important;
+        height: 15px!important;
+}
+    
+    
+    .pick img {
+        width: 60px!important;
+        height: 60px!important;
+        margin-top: -31px!important;
+    }
+}

@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
     onSubmit() {
       this.apiService.login(this.loginForm.value).subscribe((result)=>{
         console.warn("logindone! ",result)
-        sessionStorage.setItem('loginDetails',result.user.email_id)
+        sessionStorage.setItem('loginDetails',JSON.stringify(result.user))
         this.router.navigate (['dashboard'])
     });
     }

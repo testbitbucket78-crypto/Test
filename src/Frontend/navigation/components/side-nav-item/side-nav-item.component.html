@@ -2,7 +2,10 @@
     <div class="sb-nav-link-icon" [ngClass]="{active: isActive}">
         <img [src]="sideNavItem.icon">
     </div>
+    <div class="sidenav-item">
     {{sideNavItem.text}}
+
+    </div>
     <div class="sb-sidenav-collapse-arrow" [ngClass]="{active: isActive}"><fa-icon class="ml-auto" *ngIf="sideNavItem.submenu" [icon]="['fas', 'angle-down']"></fa-icon>
     </div>
    </a>

@@ -1,6 +1,8 @@
 <sb-layout-dashboard>
 
+  <ng-container *ngIf="showTopNav">
   <sb-top-nav title="Dashboard"></sb-top-nav>
+</ng-container>
  
   <div class="card9 float-right">
     <div class="card-body-right">
@@ -9,9 +11,9 @@
         <img src="assets/img/my.png">
         <div class="row2">
           <h5>{{recentConversation[0][i].Name}}</h5>
-          <h6>{{recentConversation[1][i].message_text}}</h6>
+          <h6>{{recentConversation[0][i].message_text}}</h6>
           <div class="date">
-            <h4>{{recentConversation[1][i].created_at | date:'h:mm a'}}</h4>
+            <h4>{{recentConversation[0][i].created_at | date:'h:mm a'}}</h4>
           </div>
         </div>
       </div>
@@ -27,8 +29,8 @@
       </div>
 
       <div class="card10-c">
-        <p style="margin-top:30px">Your available balance</p>
-        <p style=" font-size: 27px;"><b>$7.309.68</b></p>
+        <p class="txt-1" style="margin-top:30px">Your available balance</p>
+        <p class="txt-2" style=" font-size: 27px;"><b>$7.309.68</b></p>
         <button>Add Funds</button>
       </div>
     </div>
@@ -38,7 +40,7 @@
 
 
 
-<div><p id="heading">Hello User-Name, welcome back</p></div>
+<div [(ngModel)]="Name"><p id="heading">Hello {{Name}}, Welcome</p></div>
 <div id="heading2" class="card9">
   <h2>"Summary for last 30 days"</h2>
   
@@ -116,17 +118,49 @@
 
           <div class="card-body">
             <h4>Campaigns</h4>
-    
-            <div class="row d-flex" *ngFor="let items of campaigns">
-              <img src="assets/img/total.png" *ngIf="(items.campaign_status)=='Total Scheduled'">
-              <div class="row1 " *ngIf="(items.campaign_status)=='Total Scheduled'">
-                <div class="mt-5 ml-3 text-justify">
-                  <h5>{{items.count}}</h5>
+            
+            <div class="row r1" *ngFor="let items of campaigns">
+
+            <div class="col c1">
+             <img src="assets/img/total.png" *ngIf="(items.campaign_status)=='Total Scheduled'">
+             <div class="items-c1" *ngIf="(items.campaign_status)=='Total Scheduled'">
+                 <h5>{{items.count}}</h5>
                   <h6>{{items.campaign_status}}</h6>
+                  </div>
+            </div>
+
+               <div class="col c2 line mr-3 " *ngIf="(items.campaign_status)=='Total Completed'"></div>
+
+               <div class="col c3">
+             <img src="assets/img/camp.png" *ngIf="(items.campaign_status)=='Total Completed'">
+                <div class="items-c3" *ngIf="(items.campaign_status)=='Total Completed'"> 
+                 <h5>{{items.count}}</h5>
+                  <h6>{{items.campaign_status}}</h6>
+                  </div>
+            </div>
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+            <!-- <div class="row d-flex r1" *ngFor="let items of campaigns">
+             
+              <div class="row1" *ngIf="(items.campaign_status)=='Total Scheduled'">
+                <div class="mt-5 ml-3 text-justify">
+                
                 </div>
     
               </div>
-              <div class="line mr-3" *ngIf="(items.campaign_status)=='Total Completed'"></div>
+             
               <div class="new" *ngIf="(items.campaign_status)=='Total Completed'">
                 <img src="assets/img/camp.png">
                 <div class="row9">
@@ -137,8 +171,8 @@
     
                 </div>
               </div>
-            </div>
-            <div class="row d-flex" *ngFor="let items of campaigns">
+            </div> -->
+            <div id="running" class="row d-flex" *ngFor="let items of campaigns">
               <img src="assets/img/deli.png" *ngIf="(items.campaign_status)=='Total Running'">
               <div class="row1" *ngIf="(items.campaign_status)=='Total Running'">
                 <div class="mt-5 ml-3 text-justify">
@@ -147,7 +181,7 @@
                 </div>
     
               </div>
-              <div class="line1 mr-3" *ngIf="(items.campaign_status)=='Total Draft'"></div>
+              <div id="draft" class="line1 mr-3" *ngIf="(items.campaign_status)=='Total Draft'"></div>
               <div class="new" *ngIf="(items.campaign_status)=='Total Draft'">
                 <div class="image">
                 <img src="assets/img/failed.png"></div>
@@ -166,18 +200,19 @@
         </div>
 
         <div class="row r3">
-        <button id="agents" class="btn2  btn-block float-right" routerLink="/dashboard/reports">
-    
+        <!-- <button id="agents" class="btn2  btn-block float-right" routerLink="/dashboard/reports"> -->
+        <div class="col-sm-5 r3" (click)="routeToPage2()">
           <div class="card-body">
     
             <h4>Agents</h4>
     
-            <div class="row d-flex">
+            <div id="agents-body">
     
               <!-- <img src="assets/img/430.png"> -->
-              <img src="assets/img/431.png">
+             
               <div *ngFor="let items of agents">
-                <div class="row3" *ngIf="(items.Status)=='Active Agents'">
+                 <img src="assets/img/431.png">
+                <div class="row3 d-flex"  *ngIf="(items.Status)=='Active Agents'">
                   <div class="mt-5 ml-4 text-justify">
                     <h5>{{items.count}}</h5>
                     <h6>{{items.Status}}</h6>
@@ -208,7 +243,7 @@
               </div>
             </div>
           </div>
-        </button>
+        </div>
       </div>
       </div>
       <ng-template #add let-c="close" let-d="dismiss">

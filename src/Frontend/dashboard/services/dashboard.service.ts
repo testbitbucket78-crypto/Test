@@ -28,9 +28,13 @@ export class DashboardService {
     return this.http.get('https://cip-api.sampanatechnologies.com/Campaigns');
 
   }
-  public dashboardRecentConversation() {
-    return this.http.get('https://cip-api.sampanatechnologies.com/recentConversation')
+  public dashboardRecentConversation(spid: any) {
+    const params = new HttpParams().set('spid', spid)
+    return this.http.get('https://cip-api.sampanatechnologies.com/recentConversation/:spid', { params: params })
   }
+
+
+
   public RuningCampaign() {
     return this.http.get('http://localhost:3003');
 
@@ -87,11 +91,16 @@ export class DashboardService {
     return this.http.get('https://contactapi.sampanatechnologies.com/download', { responseType: 'blob' })
   }
 
+  downloadErrFile() {
+
+
+    return this.http.get('https://contactapi.sampanatechnologies.com/downloadCSVerror', { responseType: 'blob' })
+  }
+
   update(data: object) {
-    console.log("servise update data" +data)
+    console.log("servise update data" + data)
     return this.http.post('https://contactapi.sampanatechnologies.com/updateAndSave', data)
   }
-  
  
 
   updatedDataCount(data: any) {
@@ -110,7 +119,6 @@ export class DashboardService {
   }
 
   deletContactById(data: any) {
-    console.log("del API")
     return this.http.post('https://contactapi.sampanatechnologies.com/deletContact', data)
   }
 

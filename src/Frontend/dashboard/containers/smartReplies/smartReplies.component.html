@@ -1,5 +1,7 @@
 <sb-layout-dashboard>
-  <sb-top-nav title="Smart Replies"> </sb-top-nav>
+    <ng-container *ngIf="showTopNav">
+  <sb-top-nav title="Smart Replies"></sb-top-nav>
+</ng-container>
 	<div class="row">
 		<div class="col-md-5 mb-4 mt-4">
 			<div class="col-md-12 mb-4">

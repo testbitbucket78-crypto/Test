@@ -14,6 +14,8 @@ export class DashboardComponent implements OnInit {
     campaigns: any;
     agents: any;
     recentConversation:any;
+    Name:any;
+    showTopNav: boolean = false;
     constructor(private apiService: DashboardService, private router: Router) { }
     ngOnInit() {
         this.getDashboardSubscribers();
@@ -21,6 +23,10 @@ export class DashboardComponent implements OnInit {
         this.getdashboardCampaigns();
         this.getdashboardAgents();
         this. getRecentConversation();
+        this.Name = (JSON.parse(sessionStorage.loginDetails)).name;
+        this.showTopNav = true;
+     
+        console.log(this.Name);
     }
 
     getDashboardSubscribers() {
@@ -47,11 +53,15 @@ export class DashboardComponent implements OnInit {
             console.log(this.agents);
         });
     }
-    getRecentConversation(){
-        this.apiService.dashboardRecentConversation().subscribe((data:any)=>{
-            this.recentConversation=data;
-            console.log(this.recentConversation)
+    getRecentConversation() {
+        sessionStorage.setItem('SP_ID', '1')
+        var SP_ID = sessionStorage.getItem('SP_ID')
+        this.apiService.dashboardRecentConversation(SP_ID).subscribe((data: any) => {
+            // console.log(data)
+            this.recentConversation = data;
             console.log("recentConversation")
+            console.log(this.recentConversation)
+
         })
     }
 
@@ -61,5 +71,8 @@ export class DashboardComponent implements OnInit {
 
     routeToPage1() {
         this.router.navigate(['/dashboard/import']);
+    }
+    routeToPage2() {
+        this.router.navigate(['/dashboard/reports']);
     }
 }

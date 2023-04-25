@@ -17,7 +17,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     font-size: 14px;
 	width: 165px;
     height: 36px;
-    margin: 19px 0px 0px 443px;
+    margin: 62px 0px 0px 600px;
 }
 
 .btn:not(:disabled):not(.disabled):hover {
@@ -26,6 +26,8 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     box-shadow: 1px 8px 29px #695F9724;
     opacity: 1;
 }
+
+
 .card{
     background-color: #FDEFEF;
     border-radius: 30px;
@@ -33,7 +35,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     width: 343px;
     height: 265px;
     font-family: 'Manrope';
-    margin: 10px 20px;
+    margin: 10px 35px;
     border: none;
 }
 .card .id{
@@ -76,18 +78,22 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 .card .card1 .card-text2 p{
     color: #000000;
     font-size: 17px;
+    margin-top:13px;
 }
 .card .card1 .card-text2 h6{
     color: #7A86A1;
     font-size: 13px;
+    margin-top: -12px;
 }
 .card .card1 .card-text1 p{
     color: #000000;
     font-size: 17px;
+    margin-top:13px;
 }
 .card .card1 .card-text1 h6{
     color: #7A86A1;
     font-size: 13px;
+    margin-top: -12px;
 }
 .gf img {
     position: absolute;
@@ -123,6 +129,13 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     height: 27px;
   }
 
+
+  .col-md-12 {
+
+    max-width: 100%;
+    width: 74%;
+    margin-left: 16px;
+  }
 
   .collumn h6 {
 
@@ -273,4 +286,47 @@ border-radius: 19px;
 opacity: 1;
 width: 20px;
 height: 24px;
+}
+
+
+
+@media all and (max-width:1536px) {
+
+    .bs-stepper {
+    width: 1109px!important;
+    height: 597px!important;
+
+}
+
+button:not(:disabled), [type=reset]:not(:disabled) {
+
+    font-size: 12px;
+    width: 126px;
+    height: 36px;
+    margin: 62px 0px 0px 489px; 
+}
+
+.card {
+    width: 329px;
+    height: 249px;
+}
+
+.col-md-12 {
+width: 100%;
+
+}
+
+.card .card1 .card-text1 h6 {
+margin-top: -12px;
+
+}
+
+.card .card1 .card-text2 h6 {
+margin-top: -12px;
+
+}
+
+
+
+
 }

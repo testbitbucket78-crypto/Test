@@ -16,7 +16,7 @@ section {
     flex: 1 1 auto;
     min-height: 1px;
     padding: 1.25rem;
-    margin: 35px 0px 0px 26px;
+    margin: 35px 0px 0px 13px;
     border-radius: none;
    
 }
@@ -45,7 +45,7 @@ h1{
     font-size: 18px;
     font-family: 'Manrope';
     color: #7a86a1;
-    margin-left: 10px;
+    margin-left: 23px;
     margin-top: 12px;
 }
 
@@ -83,23 +83,28 @@ margin-left: 56px;
 opacity: 1;
 }
 
+
 .card1 {
-    height: 55px;
-    border-radius: 20px;
+    height: 89px;
+    width: 391px;
+    border-radius: 30px;
     background-color: #e4dff5;
     opacity: 1;
+    margin-top: 24px;
     text-align: center;
 }
 .card2 {
-    height: 55px;
-    border-radius: 20px;
+    height: 89px;
+    width: 391px;
+    border-radius: 30px;
     background-color: #e2f4ec;
     text-align: center;
     margin-top: 25px;
 }
 .card3 {
-    height: 55px;
-    border-radius: 20px;
+    height: 89px;
+    width: 391px;
+    border-radius: 30px;
     margin: 20px 0px 0px 0px;
     background-color: #ebedf1;
     text-align: center;
@@ -118,7 +123,7 @@ h4,
 }
 h5,
 .h5 {
-    font-size: 24px;
+    font-size: 26px;
     margin: -18px 0px 0px 0px;
     color: #000000;
     font-family: 'Manrope';
@@ -240,7 +245,7 @@ font-family: 'Manrope';
 
 .card-body-right {
 background-color: #fbf9fe;
-width: 494px;
+width: 494vh;
 height: 1416px;
 font-family: 'Manrope';
 }
@@ -421,12 +426,246 @@ font-size: 14px;
   
   }
 
+  
+/***** media queries for low resolution laptops ****/
 
-  @media screen and (max-width: 768px) {
+@media all and (max-width:1536px) {
 
-    #campaigns {
-     width: 80%;
-    height: 90%;
-    left: 6%;
+.col-sm-5.c1, .col-sm-5.c2  {
+width: 200px;
+height: 270px;
+margin-left: 56px;
 }
+
+.card-body{
+    // margin: 19px 22px 0px 25px!important;
+     margin:0!important;
+}
+
+.card1 {
+    margin-top: 12px;
+    width: 274px;
+    height: 56px;
+    border-radius: 26px;
+}
+
+.card2 {
+    margin-top: 12px;
+    width: 274px;
+    height: 56px;
+    border-radius: 26px;
+}
+
+.card3 {
+   margin-top: 12px;
+    width: 274px;
+    height: 56px;
+    border-radius: 26px;
+}
+
+.card-body h4 {
+    font-size: 18px;
+    margin-top: 0px;
+}
+
+.card-body.mt-0.ml-1 {
+    font-size: 17px;
+}
+
+.card-body.mt-0.ml-1 h5 {
+    font-size: 17px;
+}
+
+.card-body.mt-0.ml-1 h6 {
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+.row.r1{
+    width: 63% !important;
+    margin-left: 0;
+
+}
+
+.row{
+    margin-top:37px!important;
+}
+
+
+#campaigns {
+    width: 97%;
+    height: 100%;
+    left: 50px;
+}
+
+
+.row3 .mt-5.ml-4 h5 {
+    font-size:23px!important ;
+}
+
+
+.row3 .mt-5.ml-4 h6 {
+    font-size:13px!important ;
+}
+.row4 .mt-0.ml-5 h5 {
+    font-size:23px!important ;
+}
+
+
+.row4 .mt-0.ml-5 h6 {
+    font-size:13px!important ;
+}
+.row5 .mt-0.ml-5 h5 {
+    font-size:23px!important ;
+}
+
+
+.row5 .mt-0.ml-5 h6 {
+    font-size:13px!important ;
+}
+
+
+#agents {
+    width: auto;
+    left: 55px;
+}
+
+#agents-body {
+   width: max-content;
+   margin: 0;
+}
+
+.card9{
+    width: 39%!important;
+    border-radius: 0px!important;
+}
+
+.card9 h2 {
+    font-size: 13px!important;
+    padding: 16px;
+}
+
+#heading {
+    font-size: 13px;
+    margin-left: 23px;
+    margin-top: 10px;
+}
+
+#heading2 {
+    width: 315px!important;
+    margin-left: 51px;
+}
+
+.card-body-right {
+    width: 400px!important;
+    border-radius: 0px!important;
+    margin-left: 97px!important;
+}
+
+#card9-h4 {
+    font-size: 16px!important;
+    margin-left: 30px!important;
+    margin-top: 41px!important;
+}
+
+// .row.d-flex {
+//     margin-left: 20px!important;
+// }
+
+.row2 h5{
+    font-size: 12px!important;
+}
+
+.row2 h6{
+    font-size: 12px!important;
+}
+
+
+.card10  {
+    width: 303px!important;
+    height: 390px!important;
+    right: 56px!important;
+    margin-top: 85px!important;
+}
+
+.card10-p {
+
+    width: 128px;
+    height: 115px;
+
+   
+}
+
+.card10-p img {
+
+  width: 99px!important;
+  height: 88px!important;
+  top: 0px!important;
+  left:105px!important;
+}
+
+
+.card10-p p {
+
+    letter-spacing: -0.93px;
+    top: 163px;
+    left: 71px;
+   
+}
+
+.card10-p .txt-1 {
+    font-size: 30px!important;
+    left: 89px!important;
+    top: 116px!important;
+    letter-spacing: -0.93px!important;
+   
+}
+
+
+.card10-p .txt-2 {
+    font-size: 12px!important;
+    left: 104px!important;
+    top: 159px!important;
+    letter-spacing: 0px;
+}
+  
+
+.card10-c {
+ 
+    width: 87%!important;
+    left: 21px!important;
+    bottom: 16px!important;
+    height: 170px!important;
+}
+
+
+.card10-c .txt-1 {
+    margin-top: 27px!important;
+    font-size: 13px!important;
+}
+
+.card10-c .txt-2 {
+     margin-top: 7px!important;
+    font-size: 23px!important;
+}
+
+
+.card10-c img {
+  height:100%; 
+  width:auto;
+}
+
+
+
+.card10-c button {
+    margin-top: -12px;
+    font-size: 12px;
+    width: 74%;
+    height: 26%;
+    border-radius: 14px;
+  
+  }
+
+
+
 }

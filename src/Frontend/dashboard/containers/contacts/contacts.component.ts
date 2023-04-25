@@ -22,17 +22,17 @@ export class ContactsComponent implements OnInit {
   
     {field: '', headerCheckboxSelection: true,
       headerCheckboxSelectionFilteredOnly: true,
-      checkboxSelection: true
-     
-     },
-    { field: 'customerId', headerName:'ID' ,filter: true, sortable: true, },
-    { field: 'Name', headerName:'Name', filter: true, sortable: true,},
-    { field: 'Phone_number', headerName:'Phone Number', filter: true, sortable: true },
-    { field: 'emailId', headerName:'Email', filter: true, sortable: true },
-    { field: 'age', headerName: 'Age', filter: true, sortable: true },
-    { field: 'sex', headerName: 'Gender', filter: true, sortable: true },
-    { field: 'tag', headerName:'Tag', filter: true, sortable: true 
-  }
+      checkboxSelection: true ,
+      width: 50,
+      cellStyle: { background: "#FBFAFF" }
+      },
+    { field: 'customerId', headerName: 'ID', width: 90, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
+    { field: 'Name', headerName: 'Name', filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
+    { field: 'Phone_number', headerName: 'Phone Number', width: 190, filter: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }, sortable: true },
+    { field: 'emailId', headerName: 'Email', filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
+    { field: 'age', headerName: 'Age', width: 140, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
+    { field: 'sex', headerName: 'Gender', width: 140, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
+    { field: 'tag', headerName: 'Tag', filter: true, width:210, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } }
 ];
 
   Tag: string[] =
@@ -70,6 +70,7 @@ export class ContactsComponent implements OnInit {
    editForm: any = [];
    pageOfItems: any;
    selectedTag: any;
+   showTopNav: boolean = false;
  
 
   // multiselect 
@@ -83,15 +84,15 @@ export class ContactsComponent implements OnInit {
     dropdownSettings = {}; 
     items: any;
     customerData: any;
-	filterForm=new FormGroup({
+	  filterForm=new FormGroup({
     Name: new FormControl('', Validators.required),
     Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
     emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
 	})
-   orderHeader: String = '';
-   isDesOrder: boolean = true;
+    orderHeader: String = '';
+    isDesOrder: boolean = true;
 
-   searchForm=new FormGroup({
+    searchForm=new FormGroup({
     Phone_number: new FormControl(''),
     Name:new FormControl(''),
     emailId:new FormControl('')
@@ -146,6 +147,9 @@ export class ContactsComponent implements OnInit {
 
 
     ngOnInit() {
+
+      document.getElementById('delete-btn')!.style.display = 'none';
+      this.showTopNav = true;
 
       this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
       
@@ -203,7 +207,7 @@ bulk(e: any) {
     console.log(this.contacts[0].customerId)
     for (var i = 0; i < this.contacts.length; i++) {
       this.checkedcustomerId.push(this.contacts[i].customerId)
-      this.checkedConatct.push(this.contacts[i]);
+      this.checkedConatct.push(this.contacts[i].customerId);
     }
     this.checks = true;
   }
@@ -328,8 +332,8 @@ onSelectAll(items: any) {
     if (delBtn == true) {
       this.contacts.splice(arr, 1);
       var data = {
-        customerId: this.checkedcustomerId
-     }
+        customerId: this.checkedConatct
+      }
       this.apiService.deletContactById(data).subscribe(response => {
         console.log(response)
       })
@@ -344,6 +348,7 @@ onSelectAll(items: any) {
     if (rowChecked < 0) {
      
       this.checkedConatct.push(event.data);
+    
     }
 
     else {
@@ -354,11 +359,14 @@ onSelectAll(items: any) {
     
       document.getElementById('import-btn')!.style.display = 'none';
       document.getElementById('add-contact')!.style.display = 'none';
+      document.getElementById('delete-btn')!.style.display = 'block';
     }
     else {
      
       document.getElementById('import-btn')!.style.display = 'block';
       document.getElementById('add-contact')!.style.display = 'block';
+      document.getElementById('delete-btn')!.style.display = 'none';
+     
     }
    
   };
@@ -379,10 +387,18 @@ onSelectAll(items: any) {
     suppressRowClickSelection: true,
     groupSelectsChildren: true,
     onRowClicked: this.rowClicked,
-    onRowSelected: this.onRowSelected
+    onRowSelected: this.onRowSelected,
+    noRowsOverlay:true,
+    pagination: true,
+    paginationAutoPageSize: true,
+    paginateChildRows:true,
+    overlayNoRowsTemplate: '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
+    overlayLoadingTemplate:'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>'
     
 
   };
+
+  
 
   addContact() {
     console.log("******")
@@ -469,6 +485,7 @@ getContactById(data: any) {
   sessionStorage.setItem('id', data.customerId)
   this.apiService.getContactById(data.customerId).subscribe((data) => {
     this.customerData = data
+    console.log(data);
    
   })
   this.customerData.length = 0;

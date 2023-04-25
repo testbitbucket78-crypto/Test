@@ -139,3 +139,35 @@
     left: 13em;
 
 }
+
+.ag-theme-alpine .ag-root-wrapper {
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px;
+    background: #FFFFFF;
+    border: none;
+}
+
+
+.ag-theme-alpine .ag-header {
+  
+    background: #ffffff;
+}
+
+.ag-header-cell-text {
+
+    color: #6149cd;
+
+}
+.ag-root-wrapper-body {
+    border-radius: 33px;
+}
+
+
+
+@media all and (max-width:1536px) {
+ .ag-theme-alpine .ag-row {
+    font-size: 12px;
+  
+}
+
+}

@@ -35,9 +35,20 @@ export class AddSmartRepliesComponent implements OnInit {
 			"James Whatson", "David Harrison", "Jane Cooper", "Charles John"
 		];
 
+	addTag: string[] =
+		[
+			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
+		];
+
 	removeTag: string[] =
 		[
 			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
+		];
+
+		triggerFlow: string[] = 
+		[
+		        "Flow New Launch","Flow Help", "Flow Buy Product", "Flow Return Product"
+			
 		];
 	message = '';	
 	messages:any [] = [];

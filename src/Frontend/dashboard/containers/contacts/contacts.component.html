@@ -1,6 +1,8 @@
 <sb-layout-dashboard>
-	<!-- <sb-dashboard-head title="Contacts" [hideBreadcrumbs]="true"></sb-dashboard-head> -->
-	  <sb-top-nav title="Contacts"></sb-top-nav>
+
+ <ng-container *ngIf="showTopNav">
+  <sb-top-nav title="Contacts"></sb-top-nav>
+</ng-container>
 	<div class="row">
 		<div class="col-md-5 mb-4 mt-4">
 			<div class="col-md-12 mb-4">
@@ -25,22 +27,23 @@
 				Column Prefrences </button>
 		</div> -->
 
-		<div id="export-btn" class="col-xs-3 ml-1 mb-4 mt-4">
-			<button  class="btn  float-right" (click)="open(content)"><img src="assets/img/export.png"> Export </button>
+	
+		<div id="export-btn" class="col-xs-3 ml-4 mb-4 mt-4">
+			<button  class="btn-9  float-right" (click)="open(content)"><img src="assets/img/export.png"> Export </button>
 		</div>
 		<div id="import-btn" class="col-xs-3 ml-1 mb-4 mt-4">
-			<button class="btn  btn-block float-right" routerLink="/dashboard/import"><img src="assets/img/import.png">
+			<button class="btn  btn-block float-right" id="import-btn" routerLink="/dashboard/import"><img src="assets/img/import.png">
 				Import</button>
 		</div>
 		<div id="add-contact" class="col-xs-3 ml-1 mb-4 mt-4">
-			<button class="btn  btn-block float-right" (click)="open(contactadd)"><i class="fa fa-plus"></i> Add
+			<button class="btn  btn-block float-right" id="add-contact"  (click)="open(contactadd)"><i class="fa fa-plus"></i> Add
 				Contact</button>
 		</div>
 		<div  id="delete-btn" class=" delete col-xs-3 ml-1 mb-4 mt-4 ">
-		<button class="btn row-delete-btn" (click)="deleteRow(1)"><img src="assets/img/delete.png"></button>
+		<button class="btn-delete row-delete-btn" (click)="deleteRow(1)"><img src="assets/img/delete.png"></button>
 	</div>
+    </div>
 
-	</div>
 	
 	<div class="box">
 		
@@ -48,9 +51,9 @@
 	class="ag-theme-alpine"
     [rowData]="rowData"
     [columnDefs]="columnDefs"
-	[pagination]="true"
-	[paginationAutoPageSize]="true"
-	 [gridOptions]="gridOptions"
+	[animateRows]="true"
+	[gridOptions]="gridOptions"
+	suppressResize=true
     [suppressRowClickSelection]="true">
    </ag-grid-angular>
 
@@ -202,7 +205,7 @@
 
 			</div>
 			<div class="modal-body">
-				<p>Your Selected contacts will exported and send on your registed email
+				<p>your selected contacts will exported and <br /> sent on your registered email
 				</p>
 				<div class="ss">
 					<img src="assets/img/your.png">
