@@ -25,8 +25,12 @@ function runQuery(req, res, query, param) {
     
     db.query(query, param, (err, result) => {
        
-        if (err) throw err;
-        
+        if (err) {
+          
+            res.send( err);
+        }
+       
+
        res.send(result)
        
   

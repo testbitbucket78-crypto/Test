@@ -60,11 +60,14 @@ verfiyCount="select * from EndCustomer where emailId in (?)"
 
 insertOtp="CALL otpVerification(?,?,?)"
 verifyOtp=`SELECT  otp FROM otpVerify WHERE created_at > NOW() - INTERVAL 15 MINUTE and otpfieldvalue=?`
-
+var access_token='Bearer EAAiPxMFEGCYBADPTwZAXpZCv9JgfullRyIDfr9ULZB5DweHZCc1O0VcsGuZCtE9g3B09exFOPzXHq4FORZA90ZCKq1FzZA9k889oiRqTrGbUpyU6xXHgAUaAqW4K6Lzu7aY6zMgw1QIDimeygGgXEbhGxY5c6rtMsORZAOi3SymrewonbnbGWh4Eb'
+var url='https://graph.facebook.com/v16.0/108525132105860/messages'
+var content_type='application/json'
 
 module.exports = {
     host, user, password, database, selectAllQuery, selectByIdQuery, deletQuery, insertQuery,
     updateQuery,allAgents,activeAgent, loginQuery, registerQuery, 
     email, appPassword, emailHost, port, 
-     updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp
+     updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp,
+     access_token,url,content_type
 }
