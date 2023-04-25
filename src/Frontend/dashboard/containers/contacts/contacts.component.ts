@@ -418,9 +418,7 @@ opens(contents:any) {
     this.submitted = true
     return;
 
-    // if (this.newContact.invalid){
-    //     return
-    // }
+    
 
 		this.apiService.addContact(this.newContact.value).subscribe(response => {
 			console.log(response)

@@ -28,7 +28,7 @@ export class VerificationComponent implements OnInit {
         this.email_id=sessionStorage.getItem('otpfieldEmailvalue')
         this.phone=sessionStorage.getItem('otpfieldMobilevalue')
 
-        this.onVerify()
+        this.onVerify();
     }
 
 
