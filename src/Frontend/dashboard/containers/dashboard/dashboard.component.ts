@@ -14,6 +14,10 @@ export class DashboardComponent implements OnInit {
     campaigns: any;
     agents: any;
     recentConversation:any;
+    scheduledCampaign:any;
+    completedCampaign:any;
+    runningCampaign:any;
+    draftCampaign:any;
     constructor(private apiService: DashboardService, private router: Router) { }
     ngOnInit() {
         this.getDashboardSubscribers();
@@ -24,7 +28,8 @@ export class DashboardComponent implements OnInit {
     }
 
     getDashboardSubscribers() {
-        this.apiService.dashboardSubscribers().subscribe(data => {
+        var sPid=sessionStorage.getItem('SP_ID')
+        this.apiService.dashboardSubscribers(sPid).subscribe(data => {
             this.dashboard = data;
             console.log(this.dashboard);
         });
@@ -36,22 +41,45 @@ export class DashboardComponent implements OnInit {
         });
     }
     getdashboardCampaigns() {
-        this.apiService.dashboardCampaigns().subscribe(data => {
+        var sPid=sessionStorage.getItem('SP_ID')
+        this.apiService.dashboardCampaigns(sPid).subscribe(data => {
+           
             this.campaigns = data;
+            for(var i=0;i<this.campaigns.length;i++){
+                if(this.campaigns[i].STATUS=='1'){
+                    this.scheduledCampaign=this.campaigns[i].COUNT  
+                }
+                if(this.campaigns[i].STATUS=='2'){
+                    this.completedCampaign=this.campaigns[i].COUNT
+                }
+                if(this.campaigns[i].STATUS=='3'){
+                    this.runningCampaign=this.campaigns[i].COUNT
+                }
+                if(this.campaigns[i].STATUS=='4'){
+                    this.draftCampaign=this.campaigns[i].COUNT
+                      console.log(this.draftCampaign);
+                }
+            }
             console.log(this.campaigns);
         });
     }
     getdashboardAgents() {
+    
         this.apiService.dashboardAgents().subscribe(data => {
             this.agents = data;
             console.log(this.agents);
         });
     }
     getRecentConversation(){
-        this.apiService.dashboardRecentConversation().subscribe((data:any)=>{
+        
+        var SP_ID=sessionStorage.getItem('SP_ID')
+  
+        this.apiService.dashboardRecentConversation(SP_ID).subscribe((data:any)=>{
+            console.log("dashboardRecentConversation")
             this.recentConversation=data;
-            console.log(this.recentConversation)
             console.log("recentConversation")
+            console.log(this.recentConversation[0].length)
+           
         })
     }
 

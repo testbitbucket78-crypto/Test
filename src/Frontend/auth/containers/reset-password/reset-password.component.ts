@@ -19,16 +19,16 @@ export class ResetPasswordComponent implements OnInit {
 
 
     resetpassword = this.formBuilder.group({
-        id:sessionStorage.getItem('SP_ID'),
+        id:sessionStorage.getItem('uid'),
+        password: ['', [Validators.required,Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
+        confirmPassword: ['', Validators.required]
+      }, { validator: this.passwordMatchValidator });
         
-        
-    })
+    
     constructor( private formBuilder: FormBuilder,private router: Router,private apiService :AuthService) {
 
-        this.resetpassword = this.formBuilder.group({
-            password: ['', [Validators.required,Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
-            confirmPassword: ['', Validators.required]
-          }, { validator: this.passwordMatchValidator });
+       
+          
 
     }
     ngOnInit() {
@@ -55,7 +55,7 @@ export class ResetPasswordComponent implements OnInit {
      
     onSubmit(){
         
-        var SP_ID=sessionStorage.getItem('SP_ID')
+       console.log(this.resetpassword.value)
         
         this.apiService.resetPassword(this.resetpassword.value).subscribe(data => {
             console.log(data)

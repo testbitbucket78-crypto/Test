@@ -14,7 +14,7 @@ const SECRET_KEY = 'RAUNAK'
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
-var mailOpt = "";
+
 
 
 const allregisterdUser = (req, res) => {
@@ -70,26 +70,10 @@ const login = (req, res) => {
     }
 
     );
-    mailOpt = data
+   
 
 }
-const get = (req, res) => {
-    console.log(mailOpt)
-    var mailOptions = {
-        to: mailOpt,
-        subject: "Request for download Contact_Data: ",
-        html: '<p>You requested for download Contact_Data, kindly use this <a href="http://localhost:3002/getCheckedExportContact">link</a>to see your contacts</p>'
-    };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log(error);
-        }
-        console.log('Message sent: %s', info.messageId);
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-        res.status(200).send({ msg: "data has been sent" });
-    });
-}
 //post api for register
 
 const register = function (req, res) {
@@ -98,14 +82,15 @@ const register = function (req, res) {
     email_id = req.body.email_id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
+    var mobile=mobile_number.internationalNumber;
     if (password != confirmPassword) {
         throw error;
     } else {
         bcrypt.hash(password, 10, function (err, hash) {
 
-            var values = [[name, mobile_number, email_id, hash]]
+            var values = [name, mobile, email_id, hash]
 
-            db.db.query(val.registerQuery, [values], function (err, result, fields) {
+            db.db.query(val.registerQuery, values, function (err, result, fields) {
                 if (err) {
 
                     res.send(err)
@@ -202,7 +187,7 @@ const resetPassword = function (req, res) {
     console.log(req.body)
     console.log(req.body.id)
     //console.log("req headrer"+req.body.value)
-    SP_ID = req.body.id
+    uid = req.body.id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
     if (password != confirmPassword) {
@@ -211,7 +196,7 @@ const resetPassword = function (req, res) {
     else {
         bcrypt.hash(password, 10, function (err, hash) {
 
-            db.runQuery(req, res, val.updatePassword, [hash, SP_ID]);
+            db.runQuery(req, res, val.updatePassword, [hash, uid]);
         })
     }
 
@@ -331,4 +316,4 @@ const verifyOtp = function (req, res, err) {
 
 
 
-module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, mailOpt };
+module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword };

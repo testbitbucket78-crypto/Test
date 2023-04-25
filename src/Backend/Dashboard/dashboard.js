@@ -58,20 +58,24 @@ app.get('/Interactions', (req, res) => {
 });
 
 
-app.get('/Campaigns', (req, res) => {
-  db.runQuery(req, res, val.campaignsQuery, [req.body])
+app.get('/Campaigns:/sPid', (req, res) => {
+  console.log(req.query.sPid)
+  db.runQuery(req, res, val.campaignsQuery, [req.query.sPid])
 });
 
 app.get('/Agents', (req, res) => {
   db.runQuery(req, res, val.agentsQuery, [req.body])
 })
 
-app.get('/Subscribers', (req, res) => {
-  db.runQuery(req, res, val.subscribersQuery, [req.body])
+app.get('/Subscribers:/sPid', (req, res) => {
+  console.log(req.query.sPid)
+  db.runQuery(req, res, val.subscribersQuery, [req.query.sPid,req.query.sPid])
 })
 
-app.get('/recentConversation',(req,res)=>{
-  db.runQuery(req,res,val.conversationQuery,[req.body])
+app.get('/recentConversation/:spid',(req,res)=>{
+  console.log(req.query.spid)
+
+  db.runQuery(req,res,val.conversationQuery,[req.query.spid])
 })
 app.listen(3001, function () {
   console.log("Node is running");

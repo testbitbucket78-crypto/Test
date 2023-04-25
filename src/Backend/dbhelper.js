@@ -30,7 +30,7 @@ function runQuery(req, res, query, param) {
             res.send( err);
         }
        
-
+        
        res.send(result)
        
   

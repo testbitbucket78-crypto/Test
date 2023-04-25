@@ -189,9 +189,11 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	sendNewSmartReply(){
 		var data={
+			SP_ID:sessionStorage.getItem('SP_ID'),
 			Title:this.newReply.value.Title ,
 			Description:this.newReply.value.Description,
-			MatchingCriteria:this.model
+			MatchingCriteria:this.model,
+			Keywords:this.keywords
 		}
 		console.log("data")
 		console.log(data)

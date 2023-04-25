@@ -42,6 +42,7 @@ export class LoginComponent implements OnInit {
         this.apiService.login(this.loginForm.value).subscribe((result)=>{
             console.warn("logindone! ",result)
             sessionStorage.setItem('loginDetails',result.user.email_id)
+            sessionStorage.setItem('SP_ID',result.user.SP_ID)
             console.log(result.user.UserType)
             if(result.user.UserType=='Owner'){
                 console.log("Agent ")

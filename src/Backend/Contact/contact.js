@@ -8,6 +8,7 @@ const cors = require('cors');
 const fs = require("fs");
 const path = require("path");
 const nodemailer = require('nodemailer');
+const { Key } = require("protractor");
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -15,24 +16,24 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.get('/', function (req, res) {
-
-  db.runQuery(req, res, val.sql1, [req.body.id]);
+  db.runQuery(req, res, val.selectAllContact, [req.query.SP_ID]);
 });
 
 
 
 app.post('/contact', function (req, res) {
   console.log("contact")
-  console.log(req.body)
+ // console.log(req.body)
   Name = req.body.Name
-  Phone_number = req.body.Phone_number
+  Phone_number = req.body.Phone_number.internationalNumber
+  console.log(Phone_number)
   emailId = req.body.emailId
   age = req.body.age
   var tag = req.body.tag
   var status = req.body.status
   facebookId = req.body.facebookId
   InstagramId = req.body.InstagramId
-
+  SP_ID=req.body.SP_ID
   var tagList = [];
 
   for (var i = 0; i < tag.length; i++) {
@@ -49,31 +50,14 @@ app.post('/contact', function (req, res) {
   console.log(statusListJoin)
 
 
-  var values = [[Name, Phone_number, emailId, age, statusListJoin, tagListJoin, facebookId, InstagramId]];
+  var values = [[Name, Phone_number, emailId, age, statusListJoin, tagListJoin, facebookId, InstagramId,SP_ID]];
 
-  db.runQuery(req, res, val.sql, [values])
+  db.runQuery(req, res, val.insertContact, [values])
 
 
 });
 
-app.get('/exportAllContact', (req, res) => {
-  db.db.query(val.sql1, [req.body], (err, result) => {
-    var data = result
-    console.log(data)
-    const json2csvParser = new Parser();
-    const csv = json2csvParser.parse(data)
 
-    fs.writeFile("data.csv", csv, function (err) {
-      if (err) {
-        throw err;
-      }
-      console.log('File Saved')
-    })
-
-    res.attachment("data.csv")
-    res.send(csv)
-  })
-})
 
 
 app.post('/exportCheckedContact', (req, res) => {
@@ -121,18 +105,23 @@ app.post('/exportCheckedContact', (req, res) => {
 app.post('/deletContact', (req, res) => {
 
   var Ids = req.body.customerId;
-  console.log(req.body.customerId)
-  db.runQuery(req, res, val.delet, [req.body.customerId])
+  console.log(Ids)
+  db.runQuery(req, res, val.delet, [req.body.customerId,req.body.SP_ID])
 })
 
 app.get('/getContactById', (req, res) => {
-  db.runQuery(req, res, val.selectbyid, [req.query.customerId])
+  console.log(req.query)
+  db.runQuery(req, res, val.selectbyid, [req.query.customerId,req.query.SP_ID])
 })
 
 app.put('/editContact', (req, res) => {
+  console.log("editContact")
   const id = req.query.customerId;
+  const spid=req.query.SP_ID;
+  const Phone_number=req.body.Phone_number.e164Number
+  
   const dataToUpdate = req.body;
-  console.log(dataToUpdate)
+ console.log(dataToUpdate)
   let query = val.neweditContact;
   const values = [];
   Object.keys(dataToUpdate).forEach(key => {
@@ -152,15 +141,22 @@ app.put('/editContact', (req, res) => {
       }
       joinList = ListofArrays.join()
       values.push(joinList);
-    } else {
-      values.push(dataToUpdate[key]);
+     
+    } 
+    else if(key=='Phone_number'){
+      
+      values.push(Phone_number)
+    }
+    else{
+      values.push(dataToUpdate[key])
     }
   });
   query = query.slice(0, -2);
 
-  query += ` WHERE customerId = ?`;
+  query += ` WHERE customerId = ? and SP_ID=?`;
   values.push(id);
-  console.log(values)
+  values.push(spid);
+
   db.runQuery(req, res, query, values)
 })
 
@@ -170,13 +166,13 @@ app.post('/updateAndSave', (req, res) => {
   //console.log(req.body)
   var result = req.body;
   var fields = result.field
-  var CSVdata = result.importCSVdata
+  var CSVdata = result.importedData
   var colMap = result.mapping
   var identifier = result.identifier
   var purpose = result.purpose
 
   console.log(result)
-  if(CSVdata!==undefined){
+ 
 
   if (colMap !== undefined) {
     console.log("colMap")
@@ -192,7 +188,7 @@ app.post('/updateAndSave', (req, res) => {
   }
 
   var identifierData = identifier[0]
-
+   console.log(purpose)
   if (purpose == 'Add new contact only') {
 
    
@@ -205,7 +201,7 @@ app.post('/updateAndSave', (req, res) => {
         identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
       }
       var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID]
-      var query = val.importquery + identifierData + '=?' + ' and isBlocked is null and isDeleted is null )'
+      var query = val.importquery + identifierData + '=?' + ' and isBlocked is null and isDeleted is null)'
       console.log(query)
       db.db.query(query, [values, identifierValue], function (error, results) {
         console.log(query)
@@ -335,7 +331,7 @@ app.post('/updateAndSave', (req, res) => {
 
   }
 
-  }
+  
 })
 
 app.post('/verifyData', (req, res) => {
@@ -344,7 +340,7 @@ app.post('/verifyData', (req, res) => {
   var identifier = resdata.identifier
   var purpose = resdata.purpose
   var colMap = req.body.mapping
-  
+  console.log(resdata)
   
   var identity=identifier[0]
   
@@ -387,7 +383,8 @@ app.post('/verifyData', (req, res) => {
   }
 
 
- 
+   console.log("importData")
+   console.log(importData)
   if (!importData.length == '0') {
   
     var verifyQuery='select * from EndCustomer WHERE ' + identity +' in (?)'+ 'and isBlocked is null and isDeleted is null' 
@@ -396,8 +393,8 @@ app.post('/verifyData', (req, res) => {
       if (err) {
         console.log(err);
       }
-      else {
-        if (purpose === 'Add new contact only') {
+      
+      else if(purpose === 'Add new contact only') {
           res.status(200).send({
 
             newCon: (importData.length - result.length),
@@ -406,7 +403,7 @@ app.post('/verifyData', (req, res) => {
             importData: importData
           });
         }
-        if (purpose === 'Update contact') {
+        else if(purpose === 'Update Existing Contacts Only') {
           res.status(200).send({
 
             newCon: 0,
@@ -415,7 +412,7 @@ app.post('/verifyData', (req, res) => {
             importData: importData
           });
         }
-        if (purpose === 'Add and Update contact') {
+        else if(purpose === 'Add and Update Contacts') {
           res.status(200).send({
 
             newCon: (importData.length - result.length),
@@ -424,7 +421,7 @@ app.post('/verifyData', (req, res) => {
             importData: importData
           });
         }
-      }
+      
     })
   }
   else {
@@ -458,24 +455,9 @@ app.get('/download', (req, res) => {
 })
 
 
-
-app.get('/filter', (req, res) => {
-  console.log("filter")
-  console.log(req.query)
-
-  db.runQuery(req, res, val.filterQuery, [req.query.Phone_number])
-})
-
-app.get('/search', (req, res) => {
-  console.log("search")
-  console.log(req.query)
-
-  db.runQuery(req, res, val.searchQuery, [req.query.Phone_number, req.query.Name, req.query.emailId])
-})
-
 app.post('/blockedContact', (req, res) => {
   console.log(req.body.customerId)
-  db.runQuery(req, res, val.isBlockedQuery, [req.body.customerId])
+  db.runQuery(req, res, val.isBlockedQuery, [req.body.customerId,req.query.SP_ID])
 })
 
 

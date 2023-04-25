@@ -127,9 +127,10 @@ export class ContactsComponent implements OnInit {
         age: new FormControl(''),
         tag: new FormControl([]),
       //  tagControls = tags.map(tag => new FormControl(tag));
-      status:  new FormControl([]),
+        status:  new FormControl([]),
         facebookId: new FormControl(''),
-        InstagramId: new FormControl('')
+        InstagramId: new FormControl(''),
+        SP_ID:sessionStorage.getItem('SP_ID')
       });
 	
   this.editContact = this.fb.group({
@@ -137,10 +138,11 @@ export class ContactsComponent implements OnInit {
     Phone_number: new FormControl(''),
     emailId: new FormControl(''),
     age: new FormControl(''),
-    tag: new FormControl(''),
-    status: new FormControl(''),
+     tag: new FormControl([]),
+      status:  new FormControl([]),
     facebookId: new FormControl(''),
     InstagramId: new FormControl('')
+   
   })
 }
 
@@ -269,8 +271,8 @@ onSelectAll(items: any) {
   openedit(contactedit: any) {
     
     console.log(sessionStorage.getItem('id'))
-    this.apiService.getContactById(sessionStorage.getItem('id')).subscribe((result:any)=>{
-      console.log(result[0].tag.split(',') +" "+result[0].age)
+    this.apiService.getContactById(sessionStorage.getItem('id'),sessionStorage.getItem('SP_ID')).subscribe((result:any)=>{
+      console.log(result[0].tag)
       this.editContact=this.fb.group({
         Name: new FormControl(result[0].Name),
         Phone_number: new FormControl(result[0].Phone_number),
@@ -288,7 +290,9 @@ onSelectAll(items: any) {
 
   
   getContact() {
-      this.apiService.Contact().subscribe((data)=> {
+      var SP_ID=sessionStorage.getItem('SP_ID')
+      console.log(SP_ID)
+      this.apiService.Contact(SP_ID).subscribe((data)=> {
       this.contacts = data;
       this.rowData = this.contacts;       
       console.log(this.contacts);
@@ -328,7 +332,8 @@ onSelectAll(items: any) {
     if (delBtn == true) {
       this.contacts.splice(arr, 1);
       var data = {
-        customerId: this.checkedcustomerId
+        customerId: this.checkedcustomerId,
+        SP_ID:sessionStorage.getItem('SP_ID')
      }
       this.apiService.deletContactById(data).subscribe(response => {
         console.log(response)
@@ -340,7 +345,7 @@ onSelectAll(items: any) {
 
 
   onRowSelected = (event: any) => {
-    const rowChecked = this.checkedConatct.findIndex((item) => item.emailId == event.data.emailId);
+    const rowChecked = this.checkedConatct.findIndex((item) => item.customerId == event.data.customerId);
     if (rowChecked < 0) {
      
       this.checkedConatct.push(event.data);
@@ -390,7 +395,7 @@ onSelectAll(items: any) {
     console.log(this.selectedCountry)
     console.log(this.code);
     this.submitted = true
-    return;
+  
 
     // if (this.newContact.invalid){
     //     return
@@ -405,11 +410,12 @@ onSelectAll(items: any) {
 }
 
 editContactData() {
+  console.log("editContactData")
   var customerId = sessionStorage.getItem('id')
-
+  var SP_ID=sessionStorage.getItem('SP_ID')
   console.log("editdata" + customerId)
-
-  this.apiService.editContact(this.editContact.value, customerId).subscribe((response:any) => {
+ console.log(this.editContact.value)
+  this.apiService.editContact(this.editContact.value, customerId,SP_ID).subscribe((response:any) => {
    console.log(response)
   })
 
@@ -457,21 +463,23 @@ deletContactByID(data: any) {
 }
 
 blockContactByID(data: any) {
-
-  this.apiService.blockContact(data).subscribe((responce => {
+  var SP_ID=sessionStorage.getItem('SP_ID')
+  this.apiService.blockContact(data,SP_ID).subscribe((responce => {
     console.log(responce)
 
   }))
 }
 
 getContactById(data: any) {
+  console.log("data")
   console.log(data)
   sessionStorage.setItem('id', data.customerId)
-  this.apiService.getContactById(data.customerId).subscribe((data) => {
+  var SP_ID=sessionStorage.getItem('SP_ID')
+  this.apiService.getContactById(data.customerId,SP_ID).subscribe((data) => {
     this.customerData = data
-   
+    console.log(this.customerData)
   })
-  this.customerData.length = 0;
+ // this.customerData.length = 0;
 }
 
 exportCheckedContact() {
@@ -490,24 +498,6 @@ exportCheckedContact() {
 	console.log(this.checkedConatct)
 }
 
-filterContact(){
-	var data=this.filterForm.value.Phone_number
-	console.log(data)
-
-	this.apiService.filter(this.filterForm.value.Phone_number).subscribe(data=>{
-		this.contacts=data
-	 console.log(data)
-	})
-
-}
-search(){
-  console.log(this.searchForm.value)
-      this.apiService.search(this.searchForm.value.Phone_number,this.searchForm.value.emailId,this.searchForm.value.Name).subscribe(data=>{
-          this.contacts=data
-    console.log(data)
-  
-  })
-}
 
 
 }
