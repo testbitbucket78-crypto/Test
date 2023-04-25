@@ -40,7 +40,7 @@
 						<h5>Upload a CSV file <br />to add or update contacts</h5>
 						<span>Or</span>
 						<div class="col-xs-3 ">
-							<input type="file" (change)="onChange($event)" />
+							<input type="file" (change)="onUpload($event)" />
 						</div>
 					</div>
 					<button class="btn4 btn-block d-flex "  (click)="download()">
@@ -97,7 +97,7 @@
 
 
 				<button type="button" (click)="next()" class="btn btn-block col-1 mt-3 "
-					(click)="onUpload()" (click)="open(content)" >Next</button>
+					(click)="onUpload($event)" (click)="open(content)" >Next</button>
 
 			</div>
 
@@ -137,15 +137,15 @@
 							<div class="hh d-flex">
 								<input type="checkbox" name="">
 								<h4>Name</h4>
-								<select class="form-control">
-									<option selected>{{headers[0]}}</option>
-									<option>Email id</option>
+								<select class="form-control" [(ngModel)]="headers">
+									<!-- <option selected>{{headers}}</option> -->
+									<!-- <option>Email id</option>
 									<option>Mobile No</option>
 									<option>Gender</option>
 									<option>Tag</option>
 									<option>Status</option>
 									<option>Country</option>
-									<option>State</option>
+									<option>State</option> -->
 								</select>
 								<label class="switch">
 									<input type="checkbox" (change)="getUpdateFields($event,headers[0])">
@@ -331,10 +331,10 @@
 					<h5>{{countUpdatedData}}</h5>
 					<h6>10 existing contacts will updated</h6>
 				</div>
-				<div class="card3">
-					<h5>7</h5>
+				<div class="card3" [(ngModel)]="skipCont">
+					<h5>{{skipCont}}</h5>
 					<h6>Contact skipped due to error</h6>
-					<button class="btn  btn-block" (click)="download()"><img src="assets/img/download.png"> Download error file</button>
+					<button class="btn  btn-block" (click)="downloadERRfile()"><img src="assets/img/download.png"> Download error file</button>
 				</div>
 
 				<ng-template #imports let-c="close" let-d="dismiss">

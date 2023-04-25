@@ -16,27 +16,27 @@
 			</div>
 		</div>
 
-		<div class="col-xs-3 ml-1 mb-4 mt-4">
+		<!-- <div class="col-xs-3 ml-1 mb-4 mt-4">
 			<button class="btn  btn-block float-right" (click)="opens(contents)"><img src="assets/img/filter.png">
 				Filter</button>
-		</div>
-		<div class="col-xs-3 ml-1 mb-4 mt-4">
+		</div> -->
+		<!-- <div class="col-xs-3 ml-1 mb-4 mt-4">
 			<button class="btn  btn-block float-right" (click)="opencolumn(column)"><img src="assets/img/column.png">
 				Column Prefrences </button>
-		</div>
+		</div> -->
 
-		<div class="col-xs-3 ml-1 mb-4 mt-4">
-			<button class="btn  float-right" (click)="open(content)"><img src="assets/img/export.png"> Export </button>
+		<div id="export-btn" class="col-xs-3 ml-1 mb-4 mt-4">
+			<button  class="btn  float-right" (click)="open(content)"><img src="assets/img/export.png"> Export </button>
 		</div>
-		<div class="col-xs-3 ml-1 mb-4 mt-4">
+		<div id="import-btn" class="col-xs-3 ml-1 mb-4 mt-4">
 			<button class="btn  btn-block float-right" routerLink="/dashboard/import"><img src="assets/img/import.png">
 				Import</button>
 		</div>
-		<div class="col-xs-3 ml-1 mb-4 mt-4">
-			<button class="btn  btn-block float-right" (click)="openadd(contactadd)"><i class="fa fa-plus"></i> Add
+		<div id="add-contact" class="col-xs-3 ml-1 mb-4 mt-4">
+			<button class="btn  btn-block float-right" (click)="open(contactadd)"><i class="fa fa-plus"></i> Add
 				Contact</button>
 		</div>
-		<div class=" delete col-xs-3 ml-1 mb-4 mt-4 ">
+		<div  id="delete-btn" class=" delete col-xs-3 ml-1 mb-4 mt-4 ">
 		<button class="btn row-delete-btn" (click)="deleteRow(1)"><img src="assets/img/delete.png"></button>
 	</div>
 
@@ -607,11 +607,11 @@
 				<div class="incorrect-card-main">
 
 			 <ul class="edit-tag-dropdown">
-			  <li *ngFor="let tags of Tag " (click)="onSelectedTag(tags)"><a class="dropdown-item" >
+			  <li *ngFor="let tag of Tag"><a class="dropdown-item" >
 				<div class="form-check">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
 					  <label  id="edit-tag-dots" class="form-check-label" for="flexCheckDefault"> ● </label>
-                      <label  id="edit-tagnames" class="form-check-label" for="flexCheckDefault"> {{tags}}</label>
+                      <label  id="edit-tagnames" class="form-check-label" for="flexCheckDefault"> {{tag}}</label>
 				</div>
                     </a>
                   </li>
