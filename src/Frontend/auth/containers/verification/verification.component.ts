@@ -12,6 +12,7 @@ import { Validators } from '@angular/forms';
     styleUrls: ['verification.component.scss'],
 })
 export class VerificationComponent implements OnInit {
+    showSecondButton = false;
     email_id:any;
     phone:any;
     verified: boolean = false;
@@ -26,6 +27,8 @@ export class VerificationComponent implements OnInit {
     ngOnInit() {
         this.email_id=sessionStorage.getItem('otpfieldEmailvalue')
         this.phone=sessionStorage.getItem('otpfieldMobilevalue')
+
+        this.onVerify()
     }
 
 

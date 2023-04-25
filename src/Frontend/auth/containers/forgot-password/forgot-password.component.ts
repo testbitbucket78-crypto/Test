@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 @Component({
     selector: 'sb-forgot-password',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './forgot-password.component.html',
     styleUrls: ['forgot-password.component.scss'],
 })
@@ -23,11 +23,11 @@ export class ForgotPasswordComponent implements OnInit {
     ngOnInit() {
 
      }
-    onVerification(){
-        console.log("onVerification")
-        console.log(this.forgetpassword.value)
+    // onVerification(){
+    //     console.log("onVerification")
+    //     console.log(this.forgetpassword.value)
         
-    }
+    // }
     onSubmit(){
         console.log(this.forgetpassword.value)
         this.submitted = true
