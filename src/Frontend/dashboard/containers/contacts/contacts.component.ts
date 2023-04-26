@@ -333,7 +333,10 @@ onSelectAll(items: any) {
       this.contacts.splice(arr, 1);
       var data = {
         customerId: this.checkedConatct
+        
       }
+      console.log(this.checkedConatct + "checkcontact");
+      console.log(data);
       this.apiService.deletContactById(data).subscribe(response => {
         console.log(response)
       })
@@ -348,7 +351,7 @@ onSelectAll(items: any) {
     if (rowChecked < 0) {
      
       this.checkedConatct.push(event.data);
-    
+      
     }
 
     else {

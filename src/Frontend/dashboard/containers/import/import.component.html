@@ -135,7 +135,7 @@
 							<h5>Map to Contact Fields</h5>
 						</div>
 						<div class="hh-parent">
-							<div class="hh d-flex">
+							<div class="hh d-flex" >
 								<input type="checkbox" class="form-control-checkbox" name="">
 								<h4>Name</h4>
 								
@@ -159,14 +159,14 @@
 								<input type="checkbox" class="form-control-checkbox" name="">
 								<h4>Email id</h4>
 								<select class="form-control">
-									<option>First Name</option>
+									<option >{{headers[0]}}</option>
 									<option selected>{{headers[1]}}</option>
-									<option>Mobile No</option>
-									<option>Gender</option>
-									<option>Tag</option>
-									<option>Status</option>
-									<option>Country</option>
-									<option>State</option>
+									<option>{{headers[2]}}</option>
+									<option>{{headers[3]}}</option>
+									<option>{{headers[4]}}</option>
+									<option>{{headers[5]}}</option>
+									<option>{{headers[6]}}</option>
+									<option>{{headers[7]}}</option>
 								</select>
 								<label  for="slider2" class="switch" (change)="getUpdateFields($event,headers[1])" [(ngModel)]="isOverrideOn"  >
 									<input type="checkbox" class="form-control-checkbox" id="slider2"  >
@@ -178,8 +178,8 @@
 								<input type="checkbox" class="form-control-checkbox" name="" >
 								<h4>Mobile Number</h4>
 								<select class="form-control">
-									<option>First Name</option>
-									<option>Email id</option>
+									<option>{{headers[0]}}</option>
+									<option>{{headers[1]}}</option>
 									<option selected>{{headers[2]}}</option>
 									<option>Gender</option>
 									<option>Tag</option>

@@ -15,7 +15,6 @@ export class DashboardComponent implements OnInit {
     agents: any;
     recentConversation:any;
     Name:any;
-    showTopNav: boolean = false;
     constructor(private apiService: DashboardService, private router: Router) { }
     ngOnInit() {
         this.getDashboardSubscribers();
@@ -24,7 +23,6 @@ export class DashboardComponent implements OnInit {
         this.getdashboardAgents();
         this. getRecentConversation();
         this.Name = (JSON.parse(sessionStorage.loginDetails)).name;
-        this.showTopNav = true;
      
         console.log(this.Name);
     }
