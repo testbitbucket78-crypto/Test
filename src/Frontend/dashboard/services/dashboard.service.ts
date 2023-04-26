@@ -53,7 +53,7 @@ export class DashboardService {
   //***************Contact API's *********//
 
 
-  public Contact(SP_ID:any) {
+   Contact(SP_ID:any) {
     console.log("contact serveice"+SP_ID)
     const params = new HttpParams().set('SP_ID',SP_ID)
     return this.http.get('https://contactapi.sampanatechnologies.com/',{ params: params });

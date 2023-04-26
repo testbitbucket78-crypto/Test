@@ -10,7 +10,7 @@ export class TeamboxService {
   constructor(private http: HttpClient) { }
 
   public getAgents(SPID:any) {
-    return this.http.get('https://authapi.sampanatechnologies.comagents/:spID'+SPID);
+    return this.http.get('https://authapi.sampanatechnologies.com/agents/:spID'+SPID);
   }
 
   public getCustomers(SPID:any) {

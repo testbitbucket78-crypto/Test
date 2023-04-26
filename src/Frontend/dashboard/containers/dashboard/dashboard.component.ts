@@ -78,7 +78,7 @@ export class DashboardComponent implements OnInit {
             console.log("dashboardRecentConversation")
             this.recentConversation=data;
             console.log("recentConversation")
-            console.log(this.recentConversation[0].length)
+            console.log(this.recentConversation[0])
            
         })
     }

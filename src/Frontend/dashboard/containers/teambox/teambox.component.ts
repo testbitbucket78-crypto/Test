@@ -21,7 +21,7 @@ export class TeamboxComponent implements AfterViewInit, OnInit {
   
   
 	active = 1;
-	SPID=1;
+	SPID=2;
 	TeamLeadId=44;
 	AgentId=45;
 	showFullProfile=false;

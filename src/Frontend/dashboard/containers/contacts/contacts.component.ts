@@ -201,6 +201,7 @@ export class ContactsComponent implements OnInit {
 } 
 checks=false
 bulk(e: any) {
+  alert("bulk")
   if (e.target.checked == true) {
     console.log(this.contacts[0].customerId)
     for (var i = 0; i < this.contacts.length; i++) {
@@ -331,10 +332,14 @@ onSelectAll(items: any) {
     var delBtn = confirm(" Do you want to delete ?");
     if (delBtn == true) {
       this.contacts.splice(arr, 1);
+      var deleteList=this.checkedConatct.map(x => x.customerId);
       var data = {
-        customerId: this.checkedcustomerId,
+
+        customerId: deleteList,
         SP_ID:sessionStorage.getItem('SP_ID')
      }
+     console.log("delete Id ****")
+     console.log(data)
       this.apiService.deletContactById(data).subscribe(response => {
         console.log(response)
       })
@@ -345,6 +350,7 @@ onSelectAll(items: any) {
 
 
   onRowSelected = (event: any) => {
+    alert("Grid " + this.checkedConatct.length)
     const rowChecked = this.checkedConatct.findIndex((item) => item.customerId == event.data.customerId);
     if (rowChecked < 0) {
      
@@ -494,7 +500,7 @@ exportCheckedContact() {
 	})
  
 
-  this.checkedConatct.length = 0;
+  
 	console.log(this.checkedConatct)
 }
 
