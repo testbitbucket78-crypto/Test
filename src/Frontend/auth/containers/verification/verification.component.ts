@@ -13,6 +13,7 @@ import { Validators } from '@angular/forms';
 })
 export class VerificationComponent implements OnInit {
     showSecondButton = false;
+    showSecondButton1 = false;
     email_id:any;
     isVerified: boolean = false;
     email:any;
@@ -35,13 +36,27 @@ export class VerificationComponent implements OnInit {
 
 
     onVerify() {
-       
-        this.apiService.verifyOtp(this.otpForm.value).subscribe(response => {
+        
+        this.apiService.verifyOtp(this.otpForm.value).subscribe((response) => {
             // this.verified = true;
             console.log(this.otpForm.value)
+            alert("alert1")
+            this.showSecondButton=true
             console.warn("verification! ", response)
             
-        });
+        },
+        (error) => {
+            this.showSecondButton=true
+            alert(error)
+            if (error.status === 401) {
+                alert("Otp Incorrect")
+             
+            } else if (error.status === 410) {
+              // Show payment required message
+            } else if (error.status === 400) {
+              // Show forbidden message
+            }
+          });
 
 
     }

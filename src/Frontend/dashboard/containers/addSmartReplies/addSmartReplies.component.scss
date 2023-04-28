@@ -22,6 +22,14 @@ h1{
 	color: #ffffff;
 	border-radius: 15px;
 }
+.bs-stepper-header {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 65%;
+    margin: 0 257px;
+}
 
 .bs-stepper {
     box-shadow: 4px 22px 54px #695F971A;
@@ -104,11 +112,13 @@ h1{
     opacity: 1;
     margin: 0px 0px 0px 30px;
 }
-.ff input{
-    margin: 0px 0px 0px 30px;
+.ff textarea{
+    margin: 25px 0px 0px 15px;
     height: 150px;
-    padding: 0px 0px 100px 15px;
-    color: #7A86A1;;
+    
+    color: #7A86A1;
+    padding: 15px 0 0 15px;
+    width: 423px;
 }
 .btn5{
     cursor: pointer;
@@ -459,8 +469,8 @@ border-radius: 20px;
     margin: 0px;
     border: none;
     background-color: #fff;
-    top: -71px;
-    left: -44px;
+    top: -90px;
+    left: -29px;
     width: 0px;
 }
 
@@ -474,4 +484,17 @@ border-radius: 20px;
     font-family: "Manrope";
     font-size: 13px;
     margin: -43px 31px 0 0;
+}
+
+input[type=radio], input[type=checkbox] {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 6px 0px 0px -28px!important;
+    width: 20px;
+    height: 16px!important;
+  }
+  #detail {
+    width: 18px;
+    height: 18px;
+    margin: 0 0 0 11px;
 }

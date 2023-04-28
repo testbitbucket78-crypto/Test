@@ -4,7 +4,7 @@
     <div class="head d-flex">
      <div class="heading d-flex">Add Smart Reply
      </div>
-     <button type="button" class="btn-cross" aria-label="Close" id="close-btn"  (click)="('Cross click')">X</button>
+     <button type="button" class="btn-cross" aria-label="Close" id="close-btn" routerLink="/dashboard/smartReplies" (click)="('Cross click')">X</button>
     </div>
     <div class="bs-stepper-header" role="tablist">
      
@@ -39,8 +39,9 @@
             placeholder="Enter title in max 20 character" />
           <h5>Description</h5>
           <div class="form-floating ff">
-            <input class="form-control" type="text" placeholder="Enter description in max 80 character" name="Description" id="Description"
-              formControlName="Description" />
+            <textarea name="Description" id="Description" class="form-control" rows="4" cols="50"
+            placeholder="Enter description in max 80 character"  formControlName="Description" ></textarea>
+            
           </div>
         </div>
         <button type="button" (click)="next()" (click)="getNewSmartReplyData()" class="btn5 btn-block col-1 mt-3 ">Next</button>
@@ -49,10 +50,10 @@
       <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
         <button type="button" (click)="previous()" class="btn9 btn-block col-1 mt-3 "><img
             src="assets/img/prev.png"></button>
-        <div class="box1">
+        <div class="box1" [formGroup]="newReply1">
           <h5>Add Keyword</h5>
           <div class="box2 d-flex" data-required="Use enter key to add ➥"   > 
-           <input class="form-control" #keyowrdtxt   [(ngModel)]="keyword" type="text" placeholder="Enter Keywords"   />
+           <input class="form-control" #keyowrdtxt   [(ngModel)]="keyword" type="text" placeholder="Enter Keywords"   formControlName="Keywords" id="Keywords" [ngClass]="{'is-invalid' :submitted && newReply.controls.Keywords.errors}" />
           <button type="button" class="btn7 btn-block ml-2 " (click)="addKeyword()" [disabled]="keyword=== ''">ADD</button>
         </div>
         
@@ -65,6 +66,7 @@
         </span>
           <div class="line1"></div>
           <h4>Matching Criteria</h4>
+          
           <div class="ll d-flex">
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" value="Fuzzy matching"
@@ -72,6 +74,7 @@
               <label class="form-check-label" for="exampleRadios1">
                 Fuzzy matching
               </label>
+              <img id="detail" src="assets/img/info.png">
             </div>
             <div class="form-check">
               <input type="radio" class="form-check-input" value=" Exact matching" name="exampleRadios"
@@ -79,6 +82,7 @@
               <label class="form-check-label" for="">
                 Exact matching
               </label>
+              <img id="detail" src="assets/img/info.png">
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" value="contains"
@@ -86,6 +90,7 @@
               <label class="form-check-label" for="">
                 Contains
               </label>
+              <img id="detail" src="assets/img/info.png">
             </div>
 
           </div>

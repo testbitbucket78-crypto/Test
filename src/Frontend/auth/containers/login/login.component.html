@@ -43,12 +43,10 @@
                         <button class="btn btn" type="submit">Log In</button>
                         
                     </div>
-                    <div *ngIf= "submitted && loginForm.controls.email_id.errors" class="text-danger">
-                        ! Invalid Email Id
-                      </div>
-                      <div *ngIf= "submitted && loginForm.controls.password.errors" class="text-danger">
-                        ! password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters.
-                      </div>
+                    
+                      <div id="error-message"></div>
+                      
+                      
                      
                     
                 </form>
