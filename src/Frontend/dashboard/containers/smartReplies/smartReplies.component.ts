@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -7,7 +7,7 @@ declare var $: any;
 
 @Component({
 	selector: 'sb-smartReplies',
-	changeDetection: ChangeDetectionStrategy.Default,
+	
 	templateUrl: './smartReplies.component.html',
 	styleUrls: ['./smartReplies.component.scss']
 })
@@ -29,21 +29,26 @@ export class SmartRepliesComponent implements OnInit {
 		ID: new FormControl('')
 	})
 	sidenavReplies: any;
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private cdRef:ChangeDetectorRef) {
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
 
 	ngOnInit() {
 		
-		this.showTopNav = false;
+		this.showTopNav = true;
+		this.Cards;
 		this.getReplies();
+		this.cdRef.detectChanges();
+
+	
 
 	}
 
 	getReplies() {
 		this.apiService.getSmartReply().subscribe((data: any) => {
 			this.replies = data;
+			
 			console.log(this.replies)
 		})
 	}

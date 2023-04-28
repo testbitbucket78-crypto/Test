@@ -126,9 +126,14 @@
 }
 
 
+.modal-content {
+  width: 68%;
+  border-radius: 3.3rem;
+}
+
  .modal-dialog .modal-content .edit-tag {
    transform: none;
-    width: 70%;
+    width: 100%;
     height: 458px;
     box-shadow: 4px 22px 54px #695F971A !important;
     border-radius: 30px;
@@ -138,6 +143,28 @@
     top: 10rem;
     left: 13em;
 
+}
+
+.modal-dialog .modal-content .modal-body{
+  font-family: "Manrope";
+  font-size: 16px;
+  font-weight: 500;
+}
+.modal-dialog .modal-content .deletefile .btn9{
+  border: 1px solid #695F9724;
+  background-color: #ffffff;
+  color: #7A86A1;
+  margin: 0 24px 15px 270px;
+  border-radius: 14px;
+  width: 80px;
+}
+.modal-dialog .modal-content .deletefile .btn99{
+  border: 1px solid #695F9724;
+  color: #ffffff;
+  background: #F23B3B;
+  width: 93px;
+  margin: 0 0px 15px 0;
+  border-radius: 14px;
 }
 
 .ag-theme-alpine .ag-root-wrapper {

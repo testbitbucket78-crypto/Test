@@ -1,8 +1,11 @@
 <sb-layout-dashboard>
   <sb-top-nav title="Smart Replies"> </sb-top-nav>
   <div class="bs-stepper">
-     <div class="heading">Add Smart Reply</div>
-     	<button routerLink="/dashboard/smartReplies" id="close-btn">X</button>
+    <div class="head d-flex">
+     <div class="heading d-flex">Add Smart Reply
+     </div>
+     <button type="button" routerLink="/dashboard/smartReplies" class="btn-cross" aria-label="Close" id="close-btn"  (click)="('Cross click')">X</button>
+    </div>
     <div class="bs-stepper-header" role="tablist">
      
       <!-- your steps here -->
@@ -102,17 +105,27 @@
                 <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
                 </label>
 
-                <div class="action1" *ngFor="let a of addedActions; let i = index " {{a.value}} >
-                {{i}} <p>{{selectedValue}}</p>
+                <div class="action1" *ngFor="let a of addedActions; let i = index ">{{i}}  <p> Conversation Assigned: {{selectedTeam}}</p>
+                 
+                 
               
                  <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
                 </div>
   
 
                 
-               
+              
                 
              </div>
+               <div class="action1" *ngFor="let a of addedActions; let i = index "> {{i}}  <p> Add Tag: {{selectedTag}}</p>
+                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+                  </div>
+
+                   <div class="action1" *ngFor="let t of tf; let i = index "> {{i}}  <p> TriggerFlow: {{triggerFlows}}</p>
+                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+                  </div>
+
+             
  
           
         
@@ -146,7 +159,7 @@
                  
                   <ul class="dropdown-menu submenu">
                     <p>Assign To</p>
-                     <li  *ngFor="let t of teams"><a  class="dropdown-item1">{{t}}</a></li>  <!--(click)="onSubDropdownSelect($event) -->
+                     <li  *ngFor="let t of teams" (click)="onSelectedTeams(t)" ><a class="dropdown-item1">{{t}}</a></li> 
                   </ul>
                 </li>
 
@@ -182,7 +195,7 @@
                     aria-expanded="false">Trigger Flow</a>
                 <ul class="dropdown-menu submenu">
                    <p>Pause Auto Replies</p>
-                <li *ngFor="let trigger of triggerFlow "><a class="dropdown-item1">{{trigger}}</a>
+                <li *ngFor="let trigger of triggerFlow " (click)="onTriggerFlow(trigger)"><a class="dropdown-item1">{{trigger}}</a>
                 
                 </li>
                 </ul>

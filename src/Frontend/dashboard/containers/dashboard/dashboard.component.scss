@@ -62,7 +62,7 @@ height: 429px;
 
 #campaigns {
 width: 1011px;
-height: 469px;
+height: 100%;
 left: 46px;
 }
 
@@ -70,6 +70,10 @@ left: 46px;
 width: 1011px;
 height: 211px;
 left: 50px;
+}
+
+#active-agent{
+    margin-left: 100px;
 }
 
 
@@ -167,8 +171,8 @@ h6,
     border-radius: 30px;
     box-shadow: 2px 13px 54px #695f9714;
     opacity: 1;
-    margin: 25px 0px 0px 10px;
-    width: 78%;
+    margin: 60px 0px 0px 50px;
+    width: 60%;
     height: 210px;
     border: none;
 }
@@ -181,7 +185,8 @@ img {
     height: 45px;
 }
 .new{
-    margin: 0 0 0 100px;
+    margin: 80px 0 0 34pc;
+    position: absolute;
 }
 .new img {
     vertical-align: middle;
@@ -203,16 +208,18 @@ img {
     width: 0px;
     height: 35px;
     border: 1px solid #e1e1e1;
-    margin: -40px 0px 0px 376px;
+    margin: 40px 0px 0px 376px;
+    position: absolute;
 }
 .line1 {
     width: 0px;
     height: 35px;
     border: 1px solid #e1e1e1;
-    margin: -40px 0px 0px 376px;
+    margin: 40px 0px 0px 376px;
+    position: absolute;
 }
 
-.row.d-flex {
+.row8.d-flex {
     margin-left: 40px;
 }
 .card9 {
@@ -490,6 +497,18 @@ margin-left: 56px;
 .row{
     margin-top:37px!important;
 }
+.row.r2{
+    width: 59% !important;
+    margin-left: 0;
+
+}
+
+.btn2:not(:disabled):not(.disabled) {
+  
+    margin: 60px 0px 0px 57px;
+    width: 58%;
+  
+}
 
 
 #campaigns {
@@ -499,30 +518,31 @@ margin-left: 56px;
 }
 
 
-.row3 .mt-5.ml-4 h5 {
-    font-size:23px!important ;
+.row1 .mt-5.ml-3 h5 {
+    font-size: 17px !important;
+}
+.row1 .mt-5.ml-3 h6 {
+    font-size: 12px !important;
+    margin: 66px 0 0 0;
+}
+.row9 .mt-5.ml-3 h5 {
+    font-size: 17px !important;
+}
+.row9 .mt-5.ml-3 h6 {
+    font-size: 12px !important;
+    margin: 64px 0 0 0;
+}
+.line{
+    margin: 40px 0 0 40%;
+}
+.line1{
+    margin: 40px 0 0 40%;
+}
+.new {
+    margin: 80px 0 0 24pc;
 }
 
 
-.row3 .mt-5.ml-4 h6 {
-    font-size:13px!important ;
-}
-.row4 .mt-0.ml-5 h5 {
-    font-size:23px!important ;
-}
-
-
-.row4 .mt-0.ml-5 h6 {
-    font-size:13px!important ;
-}
-.row5 .mt-0.ml-5 h5 {
-    font-size:23px!important ;
-}
-
-
-.row5 .mt-0.ml-5 h6 {
-    font-size:13px!important ;
-}
 
 
 #agents {
@@ -654,7 +674,24 @@ margin-left: 56px;
   height:100%; 
   width:auto;
 }
-
+.row3 .mt-5.ml-4 h5 {
+    font-size: 17px !important;
+}
+.row3 .mt-5.ml-4 h6 {
+    font-size: 12px !important;
+}
+.row4 .mt-0.ml-1 h5 {
+    font-size: 17px !important;
+}
+.row4 .mt-0.ml-1 h6 {
+    font-size: 12px !important;
+}
+.row5 .mt-0.ml-1 h5 {
+    font-size: 17px !important;
+}
+.row5 .mt-0.ml-1 h6 {
+    font-size: 12px !important;
+}
 
 
 .card10-c button {
@@ -666,6 +703,40 @@ margin-left: 56px;
   
   }
 
+  h5,
+.h5 {
+
+    margin: -10px 0px 0px 0px;
+   
+}
+
+  .new img {
+    margin: -83px 30px 0px -60px;
+  }
+
+#scheduledCampaign {
+    margin-left: 47px;
+}
+
+#totalsche {
+        margin: 0 0 0 0;
+}
+
+#totaldraft {
+   margin: -2px 0 0 1px;
+}
+
+#active-agent {
+    margin-left:  42px;
+}
 
 
+
+}
+
+.imga{
+    margin: 0px 0 0 60px;
+}
+.im{
+    margin: 0px 0 0 40px;
 }

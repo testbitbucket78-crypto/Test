@@ -7,11 +7,11 @@
 		<div class="col-md-5 mb-4 mt-4">
 			<div class="col-md-12 mb-4">
 				<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-9"
-					[formGroup]="searchForm" (ngSubmit)="search()">
+					[formGroup]="searchForm">
 					<div class="input-group gf ">
 
-						<input class="form-control" type="text"  [(ngModel)]="searchText" placeholder="Search" aria-label="Search"
-							aria-describedby="basic-addon2" name="Name" id="Name" formControlName="Name" />
+						<input class="form-control" type="text"  placeholder="Search" aria-label="Search"
+							aria-describedby="basic-addon2" name="Name" (input)="onFilterTextBoxChange()" id="Search-Ag" formControlName="Name" />
 						<img src="assets/img/search.png">
 					</div>
 				</form>
@@ -29,7 +29,7 @@
 
 	
 		<div id="export-btn" class="col-xs-3 ml-4 mb-4 mt-4">
-			<button  class="btn-9  float-right" (click)="open(content)"><img src="assets/img/export.png"> Export </button>
+			<button  class="btn-9  float-right" [disabled]="!isButtonEnabled" (click)="open(content)">  <img src="assets/img/export.png"> Export </button>
 		</div>
 		<div id="import-btn" class="col-xs-3 ml-1 mb-4 mt-4">
 			<button class="btn  btn-block float-right" id="import-btn" routerLink="/dashboard/import"><img src="assets/img/import.png">
@@ -40,7 +40,7 @@
 				Contact</button>
 		</div>
 		<div  id="delete-btn" class=" delete col-xs-3 ml-1 mb-4 mt-4 ">
-		<button class="btn-delete row-delete-btn" (click)="deleteRow(1)"><img src="assets/img/delete.png"></button>
+		<button class="btn-delete row-delete-btn"  data-bs-toggle="modal" data-bs-target="#deleteContact" ><img src="assets/img/delete.png"></button>
 	</div>
     </div>
 
@@ -53,6 +53,8 @@
     [columnDefs]="columnDefs"
 	[animateRows]="true"
 	[gridOptions]="gridOptions"
+	(gridReady)="onGridReady($event)"
+	(selectionChanged)="onSelectionChanged($event)"
 	suppressResize=true
     [suppressRowClickSelection]="true">
    </ag-grid-angular>
@@ -164,17 +166,33 @@
 		
 	</div>
 
+	
+	<div  class="modal fade" id="deleteContact" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			
+			<div class="modal-body">
+				Do you really want to delete <br /> selected contact
+			</div>
+			<div class="deletefile d-flex">
+			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="deleteRow(1)"  >Yes, Delete</button>
+		  </div>
+		</div>
+		</div>
+	  </div>
+	
 
 	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 		  <div class="modal-content">
 			
 			<div class="modal-body">
-				Do you want to really want delete selected file
+				Do you really want to delete <br /> selected contact
 			</div>
 			<div class="deletefile d-flex"  *ngFor="let items of customerData ">
 			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
-			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="deletContactByID(items)">Yes Delete</button>
+			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal"  (click)="deletContactByID(items)">Yes, Delete</button>
 		  </div>
 		</div>
 		</div>
@@ -185,11 +203,11 @@
 		  <div class="modal-content">
 			
 			<div class="modal-body">
-				Do you want to really want Block selected file
+				Do you want to really want Block <br /> selected contact
 			</div>
 			<div class="deletefile d-flex" *ngFor="let items of customerData ">
 			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
-			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="blockContactByID(items)">Yes Block</button>
+			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="blockContactByID(items)">Yes, Block</button>
 		  </div>
 		</div>
 		</div>
@@ -470,8 +488,8 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Age</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="Enter Age" name="emailId"
-								formControlName="emailId" id="emailId" />
+							<input class="form-control" type="text" placeholder="Enter Age" name="age"
+								formControlName="age" id="age" />
 						</div>
 					</div>
 				</div>
@@ -559,8 +577,8 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Age</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="Enter Age" name="emailId"
-								formControlName="emailId" id="emailId" />
+							<input class="form-control" type="text" placeholder="Enter Age" name="age"
+								formControlName="age" id="age" />
 						</div>
 					</div>
 				</div>

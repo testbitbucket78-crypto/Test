@@ -11,29 +11,37 @@ import { Router } from '@angular/router';
     styleUrls: ['reset-password.component.scss'],
 })
 export class ResetPasswordComponent implements OnInit {
+
+    inputText!: string;
+    isButtonDisabled: boolean = true;
     visible:boolean = true;
     visible1:boolean = true;
     changetype:boolean = true;
     change:boolean = true;
-  
-
 
     resetpassword = this.formBuilder.group({
-        id:sessionStorage.getItem('SP_ID'),
-        
-        
-    })
+        id:sessionStorage.getItem('uid'),
+        password: ['', [Validators.required,Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
+        confirmPassword: ['', Validators.required]
+      }, { validator: this.passwordMatchValidator });
+
+    title = 'formValidation';
+    submitted = false;
     constructor( private formBuilder: FormBuilder,private router: Router,private apiService :AuthService) {
 
-        this.resetpassword = this.formBuilder.group({
-            password: ['', [Validators.required,Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
-            confirmPassword: ['', Validators.required]
-          }, { validator: this.passwordMatchValidator });
+        // this.resetpassword = this.formBuilder.group({
+        //     password: ['', [Validators.required,Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
+        //     confirmPassword: ['', Validators.required]
+        //   }, { validator: this.passwordMatchValidator });
 
     }
     ngOnInit() {
        
     }
+
+    onInputChange() {
+        this.isButtonDisabled = this.inputText.length === 0;
+      }
     
     passwordMatchValidator(g: FormGroup) {
         const passwordControl = g.get('password');
@@ -50,8 +58,8 @@ export class ResetPasswordComponent implements OnInit {
       
         return null;
       }
-      
-
+    
+    
      
     onSubmit(){
         
@@ -62,6 +70,9 @@ export class ResetPasswordComponent implements OnInit {
             this.router.navigate (['login'])
            
         })
+
+     
+
     }
 
     viewpass(){

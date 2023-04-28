@@ -79,6 +79,7 @@ h5, .h5 {
     font-family: 'Montserrat', sans-serif;
     color: #7A86A1;
     margin: 5px 0px 0px -10px;
+    width: 300px;
 }
 h6, .h6 {
     font-size: 14px;
@@ -93,7 +94,7 @@ h6, .h6 {
     font-weight: bold;
     color: #6149CD;
     line-height: 30px;
-    margin: -2px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 a {
     font-size: 14px;
@@ -123,4 +124,12 @@ a {
 .form-control.is-invalid {
     border: 1px solid red;
     background: padding-box;
+}
+.verified{
+    margin: 52px 0px 0 25pc;
+    background-color: #ffffff;
+    width: 35px;
+    height: 30px;
+    position: absolute;
+    border: none;
 }

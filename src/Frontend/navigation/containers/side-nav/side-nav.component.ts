@@ -32,11 +32,11 @@ export class SideNavComponent implements OnInit, OnDestroy {
 
 
     // openHamburger() {
-    //     const openHam :HTMLScriptElement = document.getElementsByClassName('sidenav-item')[0];
+    //     const openHam: HTMLCollectionOf<HTMLElement> = document.getElementsByClassName('sidenav-item')[0];
     //     const sideNavMenu = document.getElementById('sidenav-menu');
     //     const sideBarToggle = document.getElementById('sidebarToggle');
     //     const mainBody = document.getElementsByClassName('.container-fluid');
-    //     const caret = document.getElementsByClassName('svg-inline--fa fa-angle-down fa-w-10');
+    //     const caret: HTMLCollectionOf<HTMLElement> = document.getElementsByClassName('svg-inline--fa fa-angle-down fa-w-10');
 
 
     //         for (let i=0; i<openHam.length; i++) {
@@ -44,17 +44,17 @@ export class SideNavComponent implements OnInit, OnDestroy {
     //             {
     //                 openHam[i].style.display = "none";
     //                 caret[i].style.display = "none";
-    //                 sideNavMenu!.style.width ="25%";
-    //                 sideNavMenu!.style.border = "0";
+    //                 sideNavMenu.style.width ="25%";
+    //                 sideNavMenu.style.border = "0";
     //                 // mainBody[i].style.marginLeft = "-10%";
     //                 sideBarToggle!.style.marginLeft = "-10px";
     //             }
     //             else {
     //                 openHam[i].style.display = "block";
     //                 caret[i].style.display = "block";
-    //                 sideNavMenu!.style.borderRight = "1px solid #EBEBEB";
-    //                 sideNavMenu!.style.width = "100%";
-    //                 sideBarToggle!.style.marginLeft = "-148px";
+    //                 sideNavMenu.style.borderRight = "1px solid #EBEBEB";
+    //                 sideNavMenu.style.width = "100%";
+    //                 sideBarToggle.style.marginLeft = "-148px";
     //             }
              
     //         }

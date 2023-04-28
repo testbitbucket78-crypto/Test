@@ -2,12 +2,12 @@ import { SideNavItems, SideNavSection } from 'Frontend/navigation/models';
 
 export const sideNavSections: SideNavSection[] = [
     {
-       
+
         items: ['dashboard'],
     },
-    
+
     {
-        items: ['camp', 'teambox', 'Contacts', 'Funnel', 'FlowBuilder','SmartReplies', 'rep'],
+        items: ['camp', 'teambox', 'Contacts', 'Funnel', 'FlowBuilder', 'SmartReplies', 'rep'],
     },
 ];
 
@@ -17,13 +17,13 @@ export const sideNavItems: SideNavItems = {
         text: 'Dashboard',
         link: '/dashboard',
     },
-    
+
     camp: {
         icon: 'assets/img/campaign.png',
         text: 'Campaigns',
         link: '/dashboard/campaigns',
     },
-     
+
     teambox: {
         icon: 'assets/img/teambox.png',
         text: 'Teambox',
@@ -35,10 +35,10 @@ export const sideNavItems: SideNavItems = {
         link: '/dashboard/contacts',
     },
     Funnel: {
-         
-    icon: 'assets/img/funnel.png',
-    text: 'Funnel',
-    link: '/dashboard/automation',
+
+        icon: 'assets/img/funnel.png',
+        text: 'Funnel',
+        link: '/dashboard/automation',
     },
 
     FlowBuilder: {
@@ -52,12 +52,12 @@ export const sideNavItems: SideNavItems = {
         text: 'Smart Replies',
         link: '/dashboard/smartReplies',
     },
-            
+
     rep: {
         icon: 'assets/img/rep.png',
         text: 'Reports',
         submenu: [
-           
+
             {
                 icon: 'assets/img/con-report.png',
                 text: ' Conversational Report',

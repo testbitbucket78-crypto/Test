@@ -332,14 +332,14 @@ line-height: 15px;
     opacity: 1;
     margin: -21px 0px 0px 17px;
 }
-.ss1 .hh h5 {
+.ss1 .hh1 h5 {
     font-family: 'Manrope';
     font-size: 15px;
     color: #000000;
     font-weight: bold;
     margin: 38px 0px 0px 41px;
 }
- .ss1 .hh select {
+ .ss1 .hh1 select {
     word-wrap: normal;
     width: 279px;
     height: 40px;
@@ -353,10 +353,10 @@ line-height: 15px;
     color: #000000;
     margin: 14px 0px 0px 66px;
 }
-.ss1 .hh input {
+.ss1 .hh1 input {
     margin: 30px 0px 0px 40px;
 }
-.ss1 .hh h4 {
+.ss1 .hh1 h4 {
     margin: 29px 0px 0px 35px;
     font-size: 15px;
     font-family: 'manrope';
@@ -364,19 +364,19 @@ line-height: 15px;
     font-weight: 600;
     width: 132px;
 }
-.ss1 .hh h6 {
+.ss1 .hh1 h6 {
     margin: 25px 0px 0px 15px;
     font-size: 14px;
     font-family: 'manrope';
 }
-.ss1 .hh .switch {
+.ss1 .hh1 .switch {
     position: relative;
     display: inline-block;
     width: 55px;
     height: 28px;
     margin: 20px 0px 0px 40px;
 }
-.ss1 .hh .slider {
+.ss1 .hh1 .slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -389,11 +389,11 @@ line-height: 15px;
     transition: 0.4s;
     border-radius: 34px;
 }
-.ss1 .hh .switch input {
+.ss1 .hh1 .switch input {
     display: none;
 }
 
-.ss1 .hh .slider:before {
+.ss1 .hh1 .slider:before {
     position: absolute;
     content: '';
     height: 18px;
@@ -405,12 +405,12 @@ line-height: 15px;
     border-radius: 50px;
     box-shadow: 0.35px 2px 7px #6149cd30;
 }
-.ss1 .hh input:checked+ .slider {
+.ss1 .hh1 input:checked+ .slider {
     background-color: #6149cd;
 }
 
 
-.ss1 .hh input:checked + .slider:before {
+.ss1 .hh1 input:checked + .slider:before {
     transform: translateX(27px);
 }
 
@@ -878,20 +878,20 @@ select {
 
 .ss1 {
 
-    width: 62%;
+    width: 57%;
     height: 63%;
     position: absolute;
-    right: 44px;
+    right: 98px;
     top: 170px;
 }
 
-.ss1 .hh h5 {
+.ss1 .hh1 h5 {
     font-size: 12px;
     margin: 36px 0px 0px 41px
 }
 
 
- .ss1 .hh select {
+ .ss1 .hh1 select {
     word-wrap: normal;
     width: 213px;
     height: 34px;
@@ -903,37 +903,41 @@ select {
     font-size: 10px;
     font-weight: 500;
     color: #000000;
-    margin: 14px 0px 0px 103px;
+    margin: 14px 0px 0px 0px;
 }
-.ss1 .hh input {
-    margin: 30px 0px 0px 40px;
+.ss1 .hh1 input {
+    margin: 22px 0px 0px 40px;
 }
-.ss1 .hh h4 {
-    padding: 0;
-    margin: 0;
+.ss1 .hh1{
+    height: 40px;
+}
+.ss1 .hh1 h4 {
+
     font-size: 12px;
     font-family: "manrope";
     color: #6236ff;
     font-weight: 600;
+    margin: 21px 30px;
     width: 100px;
-    height: 100%!important;
+    
 }
-.ss1 .hh h6 {
+.ss1 .hh1 h6 {
     margin: 22px 0px 0px 15px;
     font-size: 10px;
     font-family: 'manrope';
+    
 }
-.ss1 .hh .switch {
+.ss1 .hh1 .switch {
     position: relative;
     display: inline-block;
     width: 55px;
     height: 28px;
-    margin: 30px 0px 0px 40px;
+    margin: 20px 0px 0px 35px;
 }
-.ss1 .hh .slider {
+.ss1 .hh1 .slider {
     position: absolute;
     cursor: pointer;
-    top: 0;
+    top: -10!important;
     left: 0;
     right: 0;
     bottom: 0;
@@ -943,11 +947,15 @@ select {
     transition: 0.4s;
     border-radius: 34px;
 }
-.ss1 .hh .switch input {
+.ss1 .hh1 .switch input {
     display: none;
 }
+#map-next-btn {
+    left: 140px;
+    top: 15px;
 
-.ss1 .hh .slider:before {
+}
+.ss1 .hh1 .slider:before {
   position: absolute;
     content: "";
     height: 15px;
@@ -959,12 +967,12 @@ select {
     border-radius: 50px;
     box-shadow: 0.35px 2px 7px #6149cd30;
 }
-.ss1 .hh input:checked+ .slider {
+.ss1 .hh1 input:checked+ .slider {
     background-color: #6149cd;
 }
 
 
-.ss1 .hh input:checked + .slider:before {
+.ss1 .hh1 input:checked + .slider:before {
     transform: translateX(27px);
 }
 .form-control-checkbox {
