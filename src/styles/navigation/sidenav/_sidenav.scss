@@ -41,6 +41,26 @@
             transform: rotate(-90deg);
           }
         }
+         &:hover {
+        color: #ffffff;
+        background-color: #6149cd;
+        width: 90%;
+        margin: 10px 0px 0px 10px;
+        border-radius: 24px;
+     }
+    
+        &.active  {
+    
+        color: #ffffff;
+        background-color: #6149cd;
+        width: 90%;
+        margin: 10px 0px 0px 10px;
+         border-radius: 24px;
+        .sb-nav-link-icon {
+          color: #ffffff;
+        }
+      
+    }
       }
 
       .sb-sidenav-menu-nested {
@@ -48,12 +68,12 @@
         flex-direction: column;
       }
 
-          &.active {
-        color: $sidenav-light-link-active-color;
-        .sb-nav-link-icon {
-          color: $sidenav-light-link-active-color;
-        }
-      }
+      //     &.active {
+      //   color: $sidenav-light-link-active-color;
+      //   .sb-nav-link-icon {
+      //     color: $sidenav-light-link-active-color;
+      //   }
+      // }
     }
   }
   .sb-sidenav-footer {

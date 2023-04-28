@@ -4,7 +4,7 @@
     <div class="head d-flex">
      <div class="heading d-flex">Add Smart Reply
      </div>
-     <button type="button" class="btn-cross" aria-label="Close" id="close-btn"  (click)="('Cross click')">X</button>
+     <button type="button" routerLink="/dashboard/smartReplies" class="btn-cross" aria-label="Close" id="close-btn"  (click)="('Cross click')">X</button>
     </div>
     <div class="bs-stepper-header" role="tablist">
      
@@ -64,7 +64,7 @@
           </div>
         </span>
           <div class="line1"></div>
-          <h4>Matching Criteria</h4>
+          <h4 id="line1-h4">Matching Criteria</h4>
           <div class="ll d-flex">
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" value="Fuzzy matching"
@@ -105,17 +105,27 @@
                 <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
                 </label>
 
-                <div class="action1" *ngFor="let a of addedActions; let i = index " {{a.value}} >
-                {{i}} <p>{{selectedValue}}</p>
+                <div class="action1" *ngFor="let a of addedActions; let i = index ">{{i}}  <p> Conversation Assigned: {{selectedTeam}}</p>
+                 
+                 
               
                  <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
                 </div>
   
 
                 
-               
+              
                 
              </div>
+               <div class="action1" *ngFor="let a of addedActions; let i = index "> {{i}}  <p> Add Tag: {{selectedTag}}</p>
+                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+                  </div>
+
+                   <div class="action1" *ngFor="let t of tf; let i = index "> {{i}}  <p> TriggerFlow: {{triggerFlows}}</p>
+                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+                  </div>
+
+             
  
           
         
@@ -149,15 +159,29 @@
                  
                   <ul class="dropdown-menu submenu">
                     <p>Assign To</p>
-                     <li  *ngFor="let t of teams"><a  class="dropdown-item1">{{t}}</a></li>  <!--(click)="onSubDropdownSelect($event) -->
+                     <li  *ngFor="let t of teams" (click)="onSelectedTeams(t)" ><a class="dropdown-item1">{{t}}</a></li> 
                   </ul>
                 </li>
-                <li><a class="dropdown-item">Add Contact Tag</a></li>
+
+              <li class="nav-item dropend">
+                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">Add Contact Tag</a>
+                  <ul class="dropdown-menu submenu">
+                     <p>Add Tag</p>
+               <li *ngFor="let tags of addTag " (click)="onSelectedTag(tags)"><a class="dropdown-item" ><div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                  
+                      <label class="form-check-label" for="flexCheckDefault">{{tags}}</label></div>
+                    </a>
+                  </li>
+                  </ul>
+                </li>
 
                 <li class="nav-item dropend">
                   <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
                     aria-expanded="false">Remove Tag</a>
                   <ul class="dropdown-menu submenu">
+                       <p>Remove Tag</p>
                <li *ngFor="let tags of removeTag " (click)="onSelectedTag(tags)"><a class="dropdown-item" ><div class="form-check">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
                   
@@ -166,7 +190,16 @@
                   </li>
                   </ul>
                 </li>
-                <li><a class="dropdown-item">Trigger Flow</a></li>
+                 <li class="nav-item dropend">
+                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">Trigger Flow</a>
+                <ul class="dropdown-menu submenu">
+                   <p>Pause Auto Replies</p>
+                <li *ngFor="let trigger of triggerFlow " (click)="onTriggerFlow(trigger)"><a class="dropdown-item1">{{trigger}}</a>
+                
+                </li>
+                </ul>
+                </li>
                 <li><a class="dropdown-item">Name Update</a></li>
                 <li><a class="dropdown-item">Resolve Conversation</a></li>
               </ul>

@@ -19,6 +19,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	keywordtxt: any;
 	selectedTeam: any;
 	selectedTag:any;
+	triggerFlows:any;
 	selectedValue: any;
     newSmartReply:any;
 	newReply=new FormGroup({
@@ -35,17 +36,32 @@ export class AddSmartRepliesComponent implements OnInit {
 			"James Whatson", "David Harrison", "Jane Cooper", "Charles John"
 		];
 
+	addTag: string[] =
+		[
+			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
+		];
+
 	removeTag: string[] =
 		[
 			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
 		];
+
+		triggerFlow: string[] = 
+		[
+		        "Flow New Launch","Flow Help", "Flow Buy Product", "Flow Return Product"
+			
+		];
+
+
+
 	message = '';	
 	messages:any [] = [];
 	
 	action = '';
-	addedActions: any[] = [{ id: 1, value: '' },
-		{ id: 2, Value: '' },
-		{ id: 3, Value: '' }];
+	addedActions:any [] =[];
+	
+	tt = '';
+	tf: any [] = []
 
 	selectedAction:any;	
 	
@@ -103,10 +119,9 @@ export class AddSmartRepliesComponent implements OnInit {
 		
 		 	
 			this.addedActions.push(this.action);
+			this.tf.push(this.tt);
 			this.action = '';
 		
-		
-
 		
 	}
 
@@ -167,6 +182,12 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	onSelectedTag(value: any) {
 		this.selectedTag = value;
+
+
+	}
+
+	onTriggerFlow(value: any) {
+		this.triggerFlows = value;
 
 
 	}

@@ -1,9 +1,12 @@
-<a class="nav-link" [routerLink]="sideNavItem.link" (click)="expanded = !expanded" [ngClass]="{active: isActive, collapsed: !expanded}">
-    <div class="sb-nav-link-icon" [ngClass]="{active: isActive}">
+<a class="nav-link" [routerLink]="sideNavItem.link" (click)="expanded = !expanded" [ngClass]="{active: expanded, collapsed: !expanded}">
+    <div class="sb-nav-link-icon" [ngClass]="{active: !expanded}">
         <img [src]="sideNavItem.icon">
     </div>
+    <div class="sidenav-item">
     {{sideNavItem.text}}
-    <div class="sb-sidenav-collapse-arrow" [ngClass]="{active: isActive}"><fa-icon class="ml-auto" *ngIf="sideNavItem.submenu" [icon]="['fas', 'angle-down']"></fa-icon>
+
+    </div>
+    <div class="sb-sidenav-collapse-arrow" [ngClass]="{active: !expanded}"><fa-icon class="ml-auto" *ngIf="sideNavItem.submenu" [icon]="['fas', 'angle-down']"></fa-icon>
     </div>
    </a>
    <nav class="sb-sidenav-menu-nested nav" *ngIf="sideNavItem.submenu &amp;&amp; expanded">

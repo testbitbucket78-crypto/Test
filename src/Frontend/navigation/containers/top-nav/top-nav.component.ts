@@ -25,6 +25,10 @@ export class TopNavComponent implements OnInit {
     constructor(private navigationService: NavigationService) {}
 
     ngOnInit() {}
+
+    // toggleSideNav() {
+    //     this.navigationService.toggleSideNav();
+    // }
    
  }
 
