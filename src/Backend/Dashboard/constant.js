@@ -18,10 +18,10 @@ count(*) count from AgentDetails  where  timings >= NOW() - INTERVAL 30 DAY`;
 subscribersQuery = `select OptInStatus,count(*) count from EndCustomer WHERE created_at >=  NOW() - INTERVAL 30 DAY and SP_ID=?  Group by (OptInStatus) union select  'Total Contacts',
 count(*) count from EndCustomer WHERE created_at >=  NOW() - INTERVAL 30 DAY and SP_ID=?`;
 conversationQuery = "CALL dashboardRecentConversations(?)"
-
+crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
 module.exports = {host,user,password,database,
     interactionsQuery, campaignsQuery, agentsQuery,
-    subscribersQuery, conversationQuery
+    subscribersQuery, conversationQuery,crachlogQuery
 
 }

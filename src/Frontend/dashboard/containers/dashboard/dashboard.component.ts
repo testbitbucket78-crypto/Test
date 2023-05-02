@@ -18,6 +18,7 @@ export class DashboardComponent implements OnInit {
     completedCampaign:any;
     runningCampaign:any;
     draftCampaign:any;
+    Name:any;
     constructor(private apiService: DashboardService, private router: Router) { }
     ngOnInit() {
         this.getDashboardSubscribers();
@@ -25,6 +26,9 @@ export class DashboardComponent implements OnInit {
         this.getdashboardCampaigns();
         this.getdashboardAgents();
         this. getRecentConversation();
+        this.Name = sessionStorage.loginDetails;
+     
+        console.log(sessionStorage);
     }
 
     getDashboardSubscribers() {
@@ -76,9 +80,9 @@ export class DashboardComponent implements OnInit {
   
         this.apiService.dashboardRecentConversation(SP_ID).subscribe((data:any)=>{
             console.log("dashboardRecentConversation")
-            this.recentConversation=data;
+            this.recentConversation=data[0];
             console.log("recentConversation")
-            console.log(this.recentConversation[0])
+            console.log(this.recentConversation)
            
         })
     }
@@ -89,5 +93,8 @@ export class DashboardComponent implements OnInit {
 
     routeToPage1() {
         this.router.navigate(['/dashboard/import']);
+    }
+    routeToPage2() {
+        this.router.navigate(['/dashboard/reports']);
     }
 }

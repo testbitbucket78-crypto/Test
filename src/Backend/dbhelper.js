@@ -22,42 +22,41 @@ db.connect((err) => {
 
 
 function runQuery(req, res, query, param) {
-    
+    if (db.state === 'disconnected'){
+       db.connect();
+    }
     db.query(query, param, (err, result) => {
-       
+     
         if (err) {
-          
-            res.send( err);
+            
+            res.send(err);
         }
+
        
-        
-       res.send(result)
-       
-  
-        
+        res.send(result)
+
+
+
 
 
     });
 
 
 }
+
+
+
 function excuteQuery(query, param) {
-    
-    db.query(query, param, (err, result) => {
-       
-        if (err) throw err;
-         console.log("result db"+result)
-      return result;
-       
-  
-        
-
-
+    if (db.state === 'disconnected'){
+        db.connect();
+     }
+    return new Promise((resolve, reject) => {
+        db.query(query, param, (err, results) => {
+            if (err) return reject(err);
+            return resolve(results);
+        });
     });
-
-
 }
 
-
-
-module.exports = {runQuery,db,excuteQuery};
+  
+module.exports = { runQuery, db, excuteQuery };

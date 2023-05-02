@@ -273,7 +273,7 @@ onSelectAll(items: any) {
     
     console.log(sessionStorage.getItem('id'))
     this.apiService.getContactById(sessionStorage.getItem('id'),sessionStorage.getItem('SP_ID')).subscribe((result:any)=>{
-      console.log(result[0].tag)
+      console.log(result[0])
       this.editContact=this.fb.group({
         Name: new FormControl(result[0].Name),
         Phone_number: new FormControl(result[0].Phone_number),
@@ -403,9 +403,7 @@ onSelectAll(items: any) {
     this.submitted = true
   
 
-    // if (this.newContact.invalid){
-    //     return
-    // }
+    
 
 		this.apiService.addContact(this.newContact.value).subscribe(response => {
 			console.log(response)

@@ -13,21 +13,21 @@ import { Validators } from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
 
-    checked  =true;
+    checked = true;
     password: any;
-    loginForm=new FormGroup({
+    loginForm = new FormGroup({
         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8)])),
-        flash:new FormControl(this.checked)
-      })
-      title = 'formValidation';
-      submitted = false;
-      
-    constructor(private apiService :AuthService ,private router: Router, private formBuilder: FormBuilder) {
-       
+        password: new FormControl('', Validators.compose([Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')])),
+        flash: new FormControl(this.checked)
+    })
+    title = 'formValidation';
+    submitted = false;
+
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) {
+
     }
     ngOnInit() {
-        
+
     }
     // validatePassword(control: FormControl) {
 
@@ -39,32 +39,50 @@ export class LoginComponent implements OnInit {
     //   }
 
     onSubmit() {
-        this.apiService.login(this.loginForm.value).subscribe((result)=>{
-            console.warn("logindone! ",result)
-            sessionStorage.setItem('loginDetails',result.user.email_id)
-            sessionStorage.setItem('SP_ID',result.user.SP_ID)
+        this.apiService.login(this.loginForm.value).subscribe(
+            (result) => {
+            // Handle success response
+            console.warn("logindone! ", result.status)
+            sessionStorage.setItem('loginDetails', result.user.email_id)
+            sessionStorage.setItem('SP_ID', result.user.SP_ID)
             console.log(result.user.UserType)
-            if(result.user.UserType=='Owner'){
-                console.log("Agent ")
-            }
-            this.router.navigate (['dashboard'])
-        });
+            this.router.navigate(['dashboard'])
+            },
+                (error) => {
+                if (error.status === 401) {
+                    // Show unauthorized messagea
+                    alert("401")
+
+                } else if (error.status === 400) {
+                    // Show payment required message
+                    alert("400")
+                } 
+            })
+
+
+            // if(result.user.UserType=='Owner'){
+            //     console.log("Agent ")
+            // }
+           
+
+
+        
     }
-    onVerification(){
+    onVerification() {
         console.log(this.loginForm.value)
         this.submitted = true
 
-        if (this.loginForm.invalid){
-            return
+        if (this.loginForm.invalid) {
+            console.log("invalid password")
         }
     }
 
-    visible:boolean = true;
-    changetype:boolean = true;
+    visible: boolean = true;
+    changetype: boolean = true;
 
-    viewpass(){
+    viewpass() {
         this.visible = !this.visible;
         this.changetype = !this.changetype;
-        
+
     }
 }

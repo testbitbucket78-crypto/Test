@@ -11,12 +11,13 @@ import { Router } from '@angular/router';
     styleUrls: ['reset-password.component.scss'],
 })
 export class ResetPasswordComponent implements OnInit {
+
+    inputText!: string;
+    isButtonDisabled: boolean = true;
     visible:boolean = true;
     visible1:boolean = true;
     changetype:boolean = true;
     change:boolean = true;
-  
-
 
     resetpassword = this.formBuilder.group({
         id:sessionStorage.getItem('uid'),
@@ -34,6 +35,10 @@ export class ResetPasswordComponent implements OnInit {
     ngOnInit() {
        
     }
+
+    onInputChange() {
+        this.isButtonDisabled = this.inputText.length === 0;
+      }
     
     passwordMatchValidator(g: FormGroup) {
         const passwordControl = g.get('password');
@@ -50,8 +55,8 @@ export class ResetPasswordComponent implements OnInit {
       
         return null;
       }
-      
-
+    
+    
      
     onSubmit(){
         
@@ -62,6 +67,9 @@ export class ResetPasswordComponent implements OnInit {
             this.router.navigate (['login'])
            
         })
+
+     
+
     }
 
     viewpass(){

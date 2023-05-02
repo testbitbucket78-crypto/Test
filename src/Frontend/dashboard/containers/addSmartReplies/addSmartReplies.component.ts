@@ -89,6 +89,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	addqty(val: any) {
 		this.data = val;
 		this.keywordtxt= val;
+		console.log("keywordtxt==="+this.keywordtxt)
 
 	}
 

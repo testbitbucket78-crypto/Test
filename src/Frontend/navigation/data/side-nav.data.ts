@@ -34,6 +34,8 @@ export const sideNavItems: SideNavItems = {
         text: 'Contacts',
         link: '/dashboard/contacts',
     },
+ 
+  
 
     automation: {
 

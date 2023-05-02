@@ -18,7 +18,7 @@ router.post('/verifyOtp',indexController.verifyOtp)
 router.post('/resetPassword',indexController.resetPassword)
 router.post('/allAgents',userController.getAllAgents)
 router.post('/isActiveAgents',userController.getisActiveAgents)
-
+router.post('/verifyPhoneOtp',indexController.verifyPhoneOtp)
 
 
 /**Added by Raman Bhasker*/

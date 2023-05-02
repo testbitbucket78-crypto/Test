@@ -19,7 +19,7 @@ from
 SmartReply t
 left join SmartReplyAction m ON m.SmartReplyID = t.ID
 left join SmartReplyKeywords s ON s.SmartReplyID = t.ID
-where t.isDeleted is null and  m.isDeleted is null and  s.isDeleted is null
+where t.isDeleted is null and  m.isDeleted is null and  s.isDeleted is null 
 group by
 t.ID,
 t.Title,
@@ -31,10 +31,12 @@ getsmartReplieswithSPID = `select *from
  CONCAT("[",
          GROUP_CONCAT(
               CONCAT("{ID:'",m.ID,"'"),
+              CONCAT("ActionID:'",m.ActionID,"'"),
               CONCAT("Value:'",m.Value,"'"),
               CONCAT(",Message:'",m.Message,"'}")
          )
-    ,"]")  as ReplyAction from
+    ,"]")  as ReplyAction,
+    count(distinct m.ActionID) as ActionCount  from
 SmartReply t
  left join SmartReplyAction m ON m.SmartReplyID = t.ID
  where t.SP_ID=?) as a
@@ -44,6 +46,7 @@ t.ID AS SRID,
 t.Title,
 t.Description,
 GROUP_CONCAT(s.Keyword) as Keywords,
+count(distinct s.Keyword) as KeywordsCount,
 t.MatchingCriteria
 from
 SmartReply t
@@ -88,7 +91,7 @@ left join SRActionMaster n ON n.ID=m.ActionID
 left join SmartReplyKeywords s ON s.SmartReplyID = t.ID
 where t.ID=?  and t.isDeleted is null and  m.isDeleted is null   and s.isDeleted is null`
 
-alluserofAOwner=`WITH RECURSIVE user_paths AS
+alluserofAOwner = `WITH RECURSIVE user_paths AS
 ( SELECT SP_ID,
          ParentID as ParentId,
          name,
@@ -127,12 +130,12 @@ deleteSmartReply = `CALL deleteSmartUpdate(?)`;
 deletMessage = `update SmartReplyAction set isDeleted='1',isDeletedOn=now() where SmartReplyID=?`;
 editMessage = `update SmartReplyAction set Message=? where SmartReplyID=?`;
 editAction = `update SmartReplyAction set ActionID=?,Value=? where SmartReplyID=?`;
-removeKeyword=`UPDATE SmartReplyKeywords set  isDeleted=1 , isDeletedOn=now() where SmartReplyId=? and Keyword=?`
-updateSmartReply=`CALL updateSmartReply(?,?,?,?,?,?,?) `;
-
+removeKeyword = `UPDATE SmartReplyKeywords set  isDeleted=1 , isDeletedOn=now() where SmartReplyId=? and Keyword=?`
+updateSmartReply = `CALL updateSmartReply(?,?,?,?,?,?,?) `;
+crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
 module.exports = {
-    host, user, password, database,selectAll,search, sideNavKeywords, getsmartReplieswithSPID,
-    alluserofAOwner,addNewReply,deleteSmartReply,deletMessage,editMessage,editAction,
-    removeKeyword,updateSmartReply
+    host, user, password, database, selectAll, search, sideNavKeywords, getsmartReplieswithSPID,
+    alluserofAOwner, addNewReply, deleteSmartReply, deletMessage, editMessage, editAction,
+    removeKeyword, updateSmartReply,crachlogQuery
 }

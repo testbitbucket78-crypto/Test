@@ -25,88 +25,70 @@ const allregisterdUser = (req, res) => {
 }
 
 //post Api for login
-const login = (req, res) => {
-    var data = req.body.email_id
-    db.db.query(val.loginQuery, [req.body.email_id], function (err, result) {
-        email = req.body.email_id;
-        // user does not exists
-        if (err) {
-            return res.status(400).send({
-                msg: err
+const login = async (req, res) => {
+    try {
+        var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id])
+        var password = await bcrypt.compare(req.body.password, credentials[0]['password'])
+        if (!password) {
+            res.status(401).send({
+                msg: 'Username or password is incorrect!',
+                status: 401
             });
         }
-        if (!result.length) {
-            console.log("length error")
-            return res.status(401).send({
-                msg: 'Email or password is incorrect!'
+        else {
+            const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY);
+            res.status(200).send({
+                msg: 'Logged in!',
+                token,
+                user: credentials[0],
+                status: 200
             });
         }
-        // check password
 
-
-        bcrypt.compare(
-            req.body.password,
-            result[0]['password'],
-            (bErr, bResult) => {
-                // wrong password
-                if (bErr) {
-                    throw bErr;
-
-                }
-                if (bResult) {
-                    const token = jwt.sign({ email_id: result.email_id }, SECRET_KEY);
-                    return res.status(200).send({
-                        msg: 'Logged in!',
-                        token,
-                        user: result[0]
-                    });
-                }
-                return res.status(401).send({
-                    msg: 'Username or password is incorrect!'
-                });
-            }
-        );
-
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({
+            msg: 'Internal server error',
+            status: 500
+        });
     }
-
-    );
-   
 
 }
 
 //post api for register
 
-const register = function (req, res) {
+const register = async function (req, res) {
     name = req.body.name
     mobile_number = req.body.mobile_number
     email_id = req.body.email_id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
-    var mobile=mobile_number.internationalNumber;
-    if (password != confirmPassword) {
-        throw error;
-    } else {
-        bcrypt.hash(password, 10, function (err, hash) {
+    var mobile = mobile_number;
 
-            var values = [name, mobile, email_id, hash]
-
-            db.db.query(val.registerQuery, values, function (err, result, fields) {
-                if (err) {
-
-                    res.send(err)
-                }
-                else {
-                    const token = jwt.sign({ email_id: result.email }, SECRET_KEY);
-                    res.status(200).send({
-                        msg: 'Registered !',
-                        token,
-                        user: result
-                    });
-
-                }
-            });
+    try {
+        if (password !== confirmPassword) {
+             res.status(400).json({ error: 'Passwords do not match', status: 400 });
+        }
+        // Hash the password before storing it in the database
+        const hash = await bcrypt.hash(password, 10);
+        var values = [name, mobile, email_id, hash]
+        var registeredUser =await db.excuteQuery(val.registerQuery, values)
+        const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
+        res.status(200).send({
+            msg: 'Registered !',
+            token,
+            user: registeredUser,
+            status: 200
         });
     }
+    catch (err) {
+        res.status(500).send({
+            msg: 'Internal server error',
+            status: 500
+        });
+    }
+
+
 }
 
 
@@ -154,25 +136,25 @@ const forgotPassword = (req, res) => {
                     console.log(err)
                 } else {
 
-                    var mailOptions = {
-                        from: val.email,
-                        to: req.body.email_id,
-                        subject: "Request for reset Password: ",
-                        // html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/reset-password?SP_ID=' + cipherdata + '">link</a>to reset your password</p>'
-                        html: '<p>You requested for reset password, kindly use this page  <a href="https://cip.sampanatechnologies.com/reset-password">link</a>to reset your password</p>'
-                    };
+                    // var mailOptions = {
+                    //     from: val.email,
+                    //     to: req.body.email_id,
+                    //     subject: "Request for reset Password: ",
+                    //     // html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/reset-password?SP_ID=' + cipherdata + '">link</a>to reset your password</p>'
+                    //     html: '<p>You requested for reset password, kindly use this page  <a href="https://cip.sampanatechnologies.com/reset-password">link</a>to reset your password</p>'
+                    // };
 
-                    transporter.sendMail(mailOptions, (error, info) => {
-                        if (error) {
-                            return console.log(error);
-                        }
-                        console.log('Message sent: %s', info.messageId);
-                        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+                    // transporter.sendMail(mailOptions, (error, info) => {
+                    //     if (error) {
+                    //         return console.log(error);
+                    //     }
+
                         res.status(200).send({
                             msg: "password has been sent",
-                            id: results
+                            id: results,
+                            status: 200
                         });
-                    });
+                    // });
                 }
 
 
@@ -184,9 +166,7 @@ const forgotPassword = (req, res) => {
 
 //resetPssword api
 const resetPassword = function (req, res) {
-    console.log(req.body)
-    console.log(req.body.id)
-    //console.log("req headrer"+req.body.value)
+
     uid = req.body.id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
@@ -228,7 +208,7 @@ function getTextMessageInput(recipient, text) {
         "to": recipient,
         "type": "text",
         "text": {
-            "body": "OTP for verification : "+ text
+            "body": "OTP for verification : " + text
         }
 
     });
@@ -240,11 +220,10 @@ function getTextMessageInput(recipient, text) {
 // Opt for Varification
 const sendOtp = function (req, res) {
     email_id = req.body.email_id;
-   // mobile_number = req.body.mobile_number;
-    console.log("send otp")
-    console.log(req.body)
+    mobile_number = req.body.mobile_number.internationalNumber;
+
     let otp = Math.floor(100000 + Math.random() * 900000);
-    console.log(otp)
+
     // send mail with defined transport object
     var mailOptions = {
         from: val.email,
@@ -265,48 +244,79 @@ const sendOtp = function (req, res) {
 
 
     var data = getTextMessageInput('919971129777', otp);
-    var value = JSON.parse(data)
-    console.log(value.text.body)
+
     sendMessage(data)
 
     db.db.query(val.insertOtp, [req.body.email_id, otp, 'Email'], function (err, result) {
-        console.log(result)
+
     })
 
-    db.db.query(val.insertOtp, [req.body.mobile_number, otp, 'Mobile'], function (err, result) {
-        console.log(result)
+    db.db.query(val.insertOtp, [mobile_number, otp, 'Mobile'], function (err, result) {
+
     })
 
     return res.status(200).send({
         msg: 'Otp Sended sucessfully !',
+        status: 200
     })
 
 
 };
 const verifyOtp = function (req, res, err) {
-    console.log("req.body")
-    console.log(req.body.otpfieldvalue)
-    console.log(req.body.otp)
+
 
     db.db.query(val.verifyOtp, [req.body.otpfieldvalue], function (err, result) {
-        console.log(result[0].otp)
-        console.log(req.body.otp != result[0].otp)
+
         if (err) {
             return res.send(err);
         }
         if (result.length != 0 && req.body.otp == result[0].otp) {
             return res.status(200).send({
                 msg: 'Otp Verified',
+                status: 200
             })
         }
         if ((result.length != 0 && req.body.otp != result[0].otp)) {
-            return res.status(200).send({
+            return res.status(401).send({
                 msg: 'Invalid otp',
+                status: 401
             })
         }
         if (result.length == 0) {
-            return res.status(200).send({
+            return res.status(410).send({
                 msg: 'Otp Expired ! Please resend otp',
+                status: 410
+            })
+        }
+
+    })
+
+};
+
+const verifyPhoneOtp = function (req, res, err) {
+
+
+    db.db.query(val.verifyOtp, [req.body.otpfieldvalue], function (err, result) {
+
+        if (err) {
+            return res.send(err);
+        }
+        if (result.length != 0 && req.body.otp == result[0].otp) {
+            return res.status(200).send({
+                msg: 'Otp Verified',
+                status: 200
+            })
+        }
+        if ((result.length != 0 && req.body.otp != result[0].otp)) {
+            return res.status(401).send({
+                msg: 'Invalid otp',
+                status: 401
+            })
+        }
+        if (result.length == 0) {
+            return res.status(410).send({
+                msg: 'Otp Expired ! Please resend otp',
+                status: 410
             })
         }
 
@@ -316,4 +326,4 @@ const verifyOtp = function (req, res, err) {
 
 
 
-module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword };
+module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, verifyPhoneOtp };

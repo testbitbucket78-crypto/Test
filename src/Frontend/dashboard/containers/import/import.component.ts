@@ -77,7 +77,7 @@ export class ImportComponent implements OnInit {
 			let csvData = reader.result;
 			let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);
 			
-			this.numberOfNewContact = (csvRecordsArray.length) - 2;
+		
 
 			let headersRow = this.getHeaderArray(csvRecordsArray);
 			this.headers = headersRow;
@@ -157,7 +157,8 @@ export class ImportComponent implements OnInit {
 			"identifier": this.selectedIdentifier,
 			"purpose": this.purpose,
 			"mapping": this.columnMapping,
-			"importedData": this.importCSVdata
+			"importedData": this.importCSVdata,
+			"SP_ID":sessionStorage.getItem('SP_ID')
 		}
 		console.log(Data)
 		this.apiService.update(Data).subscribe((Data: any) => {
@@ -206,7 +207,8 @@ export class ImportComponent implements OnInit {
 			"identifier": this.selectedIdentifier,
 			"purpose": this.purpose,
 			"mapping": this.columnMapping,
-			"importedData": this.importedData
+			"importedData": this.importedData,
+			"SP_ID":sessionStorage.getItem('SP_ID')
 			
 		}
 		this.apiService.updatedDataCount(csvdata).subscribe((data: any) => {

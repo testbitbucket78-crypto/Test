@@ -32,7 +32,7 @@ export class VerificationComponent implements OnInit {
 
     onVerify() {
        
-        this.apiService.verifyOtp(this.otpForm.value).subscribe(response => {
+        this.apiService.verifyOtp(this.otpForm.value).subscribe((response) => {
             // this.verified = true;
             console.log(this.otpForm.value)
             console.warn("verification! ", response)

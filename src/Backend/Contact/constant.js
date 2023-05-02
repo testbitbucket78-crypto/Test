@@ -15,7 +15,7 @@ otp = otp * 1000000;
 otp = parseInt(otp);
 
 //Query for contactPage
-var selectAllContact = "Select * from EndCustomer where isBlocked is null and isDeleted is null and SP_ID=?"
+var selectAllContact = `SELECT * FROM EndCustomer WHERE (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) AND SP_ID = ?`
 var insertContact = "INSERT INTO EndCustomer (Name,Phone_number,emailId,age,tag,status,facebookId,InstagramId,SP_ID) VALUES ?";
 var neweditContact = 'UPDATE EndCustomer SET '
 delet = "UPDATE EndCustomer set isDeleted=1 WHERE customerId IN (?) and SP_ID=?"
@@ -30,11 +30,11 @@ var Path = 'C:/Users/hp/Downloads/data.csv'
 
 importquery = "INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,state,Country,tag,address,pincode,city,OptInStatus,facebookId,InstagramId,channel,uid,SP_ID) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE "
 verfiyCount = "select * from EndCustomer where emailId in (?) and isBlocked is null and isDeleted is null and SP_ID=?"
-importUpdate=`UPDATE EndCustomer set Name=?,Phone_number=?,emailId=?,status=?,sex=?,age=?,state=?,Country=?,tag=?,address=?,pincode=?,city=?,OptInStatus=?,facebookId=?,InstagramId=?,channel=?,uid=?,SP_ID=? where `
-
+importUpdate=`UPDATE EndCustomer set Name=?,Phone_number=?,emailId=?,status=?,sex=?,age=?,state=?,Country=?,tag=?,address=?,pincode=?,city=?,OptInStatus=?,facebookId=?,InstagramId=?,channel=?,uid=? where `
+crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
 module.exports = {
     host, user, password, database, email, appPassword, emailHost, port, otp, selectAllContact, insertContact
     ,neweditContact, importquery,delet,selectbyid, Path, verfiyCount,  isBlockedQuery,
-    importUpdate
+    importUpdate,crachlogQuery
 }

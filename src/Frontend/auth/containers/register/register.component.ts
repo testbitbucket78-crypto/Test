@@ -15,6 +15,8 @@ import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-
 
 export class RegisterComponent implements OnInit {
     checkboxChecked = false;
+
+
     buttonColor = '';
     visible:boolean = true;
     visible1:boolean = true;
@@ -23,16 +25,20 @@ export class RegisterComponent implements OnInit {
     separateDialCode = false;
 	SearchCountryField = SearchCountryField;
 	CountryISO = CountryISO;
-  PhoneNumberFormat = PhoneNumberFormat;
+    PhoneNumberFormat = PhoneNumberFormat;
 	preferredCountries: CountryISO[] = [CountryISO.India, CountryISO.UnitedStates, CountryISO.UnitedKingdom];
     
   
         registerForm = new FormGroup({
-        name: new FormControl('', Validators.required),
+        name: new FormControl('', [
+            Validators.required,
+            Validators.pattern('[a-zA-Z ]*')
+          ]),
         mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+        
         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        password: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')])),
-        confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8), Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')])),
+        password: new FormControl('', Validators.compose([Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')])),
+        confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8), Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')])),
         
     })
     changePreferredCountries() {

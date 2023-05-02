@@ -31,7 +31,7 @@ export class AuthService {
          return this.http.post(API_URL,value)
      }
     sendOtp(data:authSendOtp){
-        let API_URL = 'https://authapi.sampanatechnologies.com/sendOtp';
+        let API_URL = 'http://localhost:3003/sendOtp';
         return this.http.post(API_URL, data)
     }
     verifyOtp(data:authVerifyOtp){

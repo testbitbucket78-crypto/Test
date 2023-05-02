@@ -28,7 +28,7 @@ var updatePassword = "UPDATE user SET password=? WHERE uid=?";
 
 insertOtp="CALL otpVerification(?,?,?)"
 verifyOtp=`SELECT  otp FROM otpVerify WHERE created_at > NOW() - INTERVAL 15 MINUTE and otpfieldvalue=?`
-
+crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
 var access_token='Bearer EAAiPxMFEGCYBADPTwZAXpZCv9JgfullRyIDfr9ULZB5DweHZCc1O0VcsGuZCtE9g3B09exFOPzXHq4FORZA90ZCKq1FzZA9k889oiRqTrGbUpyU6xXHgAUaAqW4K6Lzu7aY6zMgw1QIDimeygGgXEbhGxY5c6rtMsORZAOi3SymrewonbnbGWh4Eb'
 var url='https://graph.facebook.com/v16.0/108525132105860/messages'
@@ -63,5 +63,5 @@ module.exports = {
     updateQuery,allAgents,activeAgent, loginQuery, registerQuery, 
     email, appPassword, emailHost, port, 
      updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp,
-     access_token,url,content_type
+     access_token,url,content_type,crachlogQuery
 }

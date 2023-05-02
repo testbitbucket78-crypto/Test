@@ -103,9 +103,9 @@ app.post('/exportCheckedContact', (req, res) => {
 
 
 app.post('/deletContact', (req, res) => {
-
+  
   var Ids = req.body.customerId;
-  console.log(Ids)
+  console.log(req.body)
   db.runQuery(req, res, val.delet, [req.body.customerId,req.body.SP_ID])
 })
 
@@ -170,7 +170,7 @@ app.post('/updateAndSave', (req, res) => {
   var colMap = result.mapping
   var identifier = result.identifier
   var purpose = result.purpose
-
+  var SP_ID=result.SP_ID
   console.log(result)
  
 
@@ -200,10 +200,10 @@ app.post('/updateAndSave', (req, res) => {
       if (identifierData === 'Phone_number') {
         identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
       }
-      var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID]
-      var query = val.importquery + identifierData + '=?' + ' and isBlocked is null and isDeleted is null)'
+      var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid,SP_ID]
+      var query = val.importquery + identifierData + '=? AND SP_ID'  + ' and isBlocked is null and isDeleted is null)'
       console.log(query)
-      db.db.query(query, [values, identifierValue], function (error, results) {
+      db.db.query(query, [values, identifierValue,SP_ID], function (error, results) {
         console.log(query)
         if (error) {
           console.log(error);
@@ -225,11 +225,11 @@ app.post('/updateAndSave', (req, res) => {
         if (identifierData === 'Phone_number') {
           identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
         }
-        var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID]
+        var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid]
       
-        var updateQuery = val.importUpdate + identifierData + '=?'
+        var updateQuery = val.importUpdate + identifierData + '=? and SP_ID=?'
      
-        db.db.query(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID, identifierValue], function (error, results, next) {
+        db.db.query(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, identifierValue,SP_ID], function (error, results, next) {
           if (error) {
             console.log(error)
           } else {
@@ -246,7 +246,7 @@ app.post('/updateAndSave', (req, res) => {
           updatedValue = JSON.parse(JSON.stringify(data[i][fields[j]]));
           identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
 
-          db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?', [updatedValue, identifierValue], function (error, results, next) {
+          db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?  and SP_ID=?', [updatedValue, identifierValue,SP_ID], function (error, results, next) {
             if (error) {
               console.log(error)
             }
@@ -270,10 +270,10 @@ app.post('/updateAndSave', (req, res) => {
       if (identifierData === 'Phone_number') {
         identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
       }
-      var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID]
-      var query = val.importquery + identifierData + '=?' + ')'
+      var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid,SP_ID]
+      var query = val.importquery + identifierData + '=? and SP_ID=?' + ')'
      
-      db.db.query(query, [values, identifierValue], function (error, results) {
+      db.db.query(query, [values, identifierValue,SP_ID], function (error, results) {
         console.log(query)
         if (error) {
           console.log(error);
@@ -293,11 +293,11 @@ app.post('/updateAndSave', (req, res) => {
         if (identifierData === 'Phone_number') {
           identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
         }
-        var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID]
+        var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid]
        
-        var updateQuery = val.importUpdate + identifierData + '=?'
+        var updateQuery = val.importUpdate + identifierData + '=? and SP_ID=?'
       
-        db.db.query(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, CSVdata[i].SP_ID, identifierValue], function (error, results, next) {
+        db.db.query(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, identifierValue,SP_ID], function (error, results, next) {
           if (error) {
             console.log(error)
           } else {
@@ -317,7 +317,7 @@ app.post('/updateAndSave', (req, res) => {
           identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
 
 
-          db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?', [updatedValue, identifierValue], function (error, results, next) {
+          db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=? and SP_ID=?', [updatedValue, identifierValue,SP_ID], function (error, results, next) {
             if (error) {
               console.log(error)
             } else {
@@ -340,6 +340,7 @@ app.post('/verifyData', (req, res) => {
   var identifier = resdata.identifier
   var purpose = resdata.purpose
   var colMap = req.body.mapping
+  var SP_ID=resdata.SP_ID
   console.log(resdata)
   
   var identity=identifier[0]
@@ -387,9 +388,9 @@ app.post('/verifyData', (req, res) => {
    console.log(importData)
   if (!importData.length == '0') {
   
-    var verifyQuery='select * from EndCustomer WHERE ' + identity +' in (?)'+ 'and isBlocked is null and isDeleted is null' 
+    var verifyQuery='select * from EndCustomer WHERE ' + identity +' in (?)'+ 'and isBlocked is null and isDeleted is null and SP_ID=?' 
     
-    db.db.query(verifyQuery, [queryData], (err, result) => {
+    db.db.query(verifyQuery, [queryData,SP_ID], (err, result) => {
       if (err) {
         console.log(err);
       }
@@ -473,7 +474,87 @@ let transporter = nodemailer.createTransport({
   },
 });
 
+process.on('beforeExit', code => {
+  // Can make asynchronous calls
+  setTimeout(async () => {
+    const consoleOutput = `Contact :: Process will exit with code: ${code}`;
+    console.log(consoleOutput);
+   
+    try {
+      var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+      console.log(result)
+    } catch (err) {
+      console.error(err);
+    
+    }
+    process.exit(code);
+  }, 100);
+});
 
+process.on('exit', async code => {
+  // Only synchronous calls
+  const consoleOutput = `Contact :: Process exited with code: ${code}`;
+  console.log(consoleOutput);
+  try {
+    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+    console.log(result)
+  } catch (err) {
+    console.error(err);
+  
+  }
+});
+
+process.on('SIGTERM', async signal => {
+  const consoleOutput = `Contact :: Process ${process.pid} received a SIGTERM signal`;
+  console.log(consoleOutput);
+  try {
+    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+    console.log(result)
+  } catch (err) {
+    console.error(err);
+  
+  }
+  process.exit(0);
+});
+
+process.on('SIGINT', async signal => {
+  const consoleOutput = `Contact :: Process ${process.pid} has been interrupted`;
+  console.log(consoleOutput);
+  try {
+    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+    console.log(result)
+  } catch (err) {
+    console.error(err);
+  
+  }
+  process.exit(0);
+});
+
+process.on('uncaughtException', async err => {
+  const consoleOutput = `Contact :: Uncaught Exception: ${err.message}`;
+  console.log(consoleOutput);
+  try {
+    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+    console.log(result)
+  } catch (err) {
+    console.error(err);
+  
+  }
+  process.exit(1);
+});
+
+process.on('unhandledRejection', async (reason, promise) => {
+  const consoleOutput = `Contact :: Unhandled rejection at ${promise}, reason: ${reason.message}`;
+  console.log(consoleOutput);
+  try {
+    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+    console.log(result)
+  } catch (err) {
+    console.error(err);
+  
+  }
+  process.exit(1);
+});
 
 app.listen(3002);
 
