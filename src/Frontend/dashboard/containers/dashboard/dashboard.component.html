@@ -1,6 +1,6 @@
 <sb-layout-dashboard>
-
   <sb-top-nav title="Dashboard"></sb-top-nav>
+
 
   <div class="card9 float-right">
     <div class="card-body-right">
@@ -38,13 +38,14 @@
 
 
 
-  <div>
-    <p id="heading">Hello User-Name, welcome back</p>
+  <div [(ngModel)]="Name">
+    <p id="heading">Hello {{Name}}, Welcome</p>
   </div>
   <div id="heading2" class="card9">
     <h2>"Summary for last 30 days"</h2>
 
   </div>
+ 
   <div class="row main">
     <div class="row r1">
       <div class="col-sm-5 c1" (click)="routeToPage()">
@@ -211,35 +212,5 @@
       </button>
     </div>
   </div>
-  <ng-template #add let-c="close" let-d="dismiss">
-    <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">Filter</h4>
-      <button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
-    </div>
-    <div class="modal-body">
-      <button class="btn btn-primary btn-block col-md-3 mb-2"><i class="fa fa-plus"></i> Name</button>
-
-      <form>
-        <div class="form-group">
-          <select class="form-control">
-            <option>Contains</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <input class="form-control" type="text">
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer row popfooter">
-      <div class="col-md-6">
-        <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Clear</button>
-      </div>
-      <div class="col-md-6 text-right">
-        <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Apply</button>
-      </div>
-    </div>
-  </ng-template>
-
-
 
 </sb-layout-dashboard>

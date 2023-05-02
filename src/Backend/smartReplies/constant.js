@@ -19,7 +19,7 @@ from
 SmartReply t
 left join SmartReplyAction m ON m.SmartReplyID = t.ID
 left join SmartReplyKeywords s ON s.SmartReplyID = t.ID
-where t.isDeleted is null and  m.isDeleted is null and  s.isDeleted is null 
+where t.isDeleted is null and  m.isDeleted is null and  s.isDeleted is null  and t.SP_ID=?
 group by
 t.ID,
 t.Title,

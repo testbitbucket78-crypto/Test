@@ -42,7 +42,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     width: 343px;
     height: 265px;
     font-family: 'Manrope';
-    margin: 10px 20px;
+    margin: 10px 35px;
     border: none;
 }
 .card .id{
@@ -85,18 +85,22 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 .card .card1 .card-text2 p{
     color: #000000;
     font-size: 17px;
+    margin-top:13px;
 }
 .card .card1 .card-text2 h6{
     color: #7A86A1;
     font-size: 13px;
+    margin-top: -12px;
 }
 .card .card1 .card-text1 p{
     color: #000000;
     font-size: 17px;
+    margin-top:13px;
 }
 .card .card1 .card-text1 h6{
     color: #7A86A1;
     font-size: 13px;
+    margin-top: -12px;
 }
 .gf img {
     position: absolute;
@@ -132,6 +136,13 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     height: 27px;
   }
 
+
+  .col-md-12 {
+
+    max-width: 100%;
+    width: 74%;
+    margin-left: 16px;
+  }
 
   .collumn h6 {
 
@@ -282,4 +293,107 @@ border-radius: 19px;
 opacity: 1;
 width: 20px;
 height: 24px;
+}
+
+
+
+@media all and (max-width:1536px) {
+
+    .bs-stepper {
+    width: 1109px!important;
+    height: 597px!important;
+
+}
+
+button:not(:disabled), [type=reset]:not(:disabled) {
+
+    font-size: 11px;
+    width: 126px;
+    height: 36px;
+    margin: 62px 0px 0px 489px; 
+}
+
+.card {
+    width: 329px;
+    height: 249px;
+}
+
+.col-md-12 {
+width: 100%;
+
+}
+
+.card .card1 .card-text1 h6 {
+margin-top: -12px;
+
+}
+
+.card .card1 .card-text2 h6 {
+margin-top: -12px;
+
+}
+
+#close-btn {
+    width: 40px;
+    height: 40px;
+    background: #FFFFFF;
+    border-radius: 17px;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: "Manrope";
+    font-size: 13px;
+    margin: 21px 31px 0 0;
+
+}
+
+.modal-content {
+  
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 310px;
+    height: 196px;
+    top: 190px;
+    left: 115px;
+    pointer-events: auto;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695F971A;
+    border-radius: 30px;
+    outline: 0;
+    border: none;
+}
+
+.modal-dialog .modal-content .modal-body {
+   font-family: "Manrope";
+    font-size: 14px;
+    top: 40px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.modal-dialog .modal-content .deletefile .btn9 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    background-color: #ffffff;
+    color: #7A86A1;
+    margin: -58px 22px 15px 61px;
+    border-radius: 15px;
+    width: 80px;
+    cursor: pointer;
+
+}
+
+
+.modal-dialog .modal-content .deletefile .btn99 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    color: #ffffff;
+    background: #F23B3B;
+    width: 93px;
+    top: 70%;
+    left: 52%;
+    border-radius: 14px;
+    cursor: pointer;
+}
+
 }

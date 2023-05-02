@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy,ChangeDetectorRef } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -6,7 +6,10 @@ import {DashboardService} from './../../services';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 declare var $: any; // declare the jQuery variable
 
-import { ColDef} from 'ag-grid-community';
+import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
+import exp from 'constants';
+
+
 
 
 @Component({
@@ -17,22 +20,32 @@ import { ColDef} from 'ag-grid-community';
 })
 export class ContactsComponent implements OnInit {
 
+  public gridapi!:GridApi;
+
+  onGridReady(params: GridReadyEvent) {
+    this.gridapi = params.api;
+  }
+
 
   columnDefs:ColDef [] = [
   
     {field: '', headerCheckboxSelection: true,
       headerCheckboxSelectionFilteredOnly: true,
-      checkboxSelection: true
-     
-     },
-    { field: 'customerId', headerName:'ID' ,filter: true, sortable: true, },
-    { field: 'Name', headerName:'Name', filter: true, sortable: true,},
-    { field: 'Phone_number', headerName:'Phone Number', filter: true, sortable: true },
-    { field: 'emailId', headerName:'Email', filter: true, sortable: true },
-    { field: 'age', headerName: 'Age', filter: true, sortable: true },
-    { field: 'sex', headerName: 'Gender', filter: true, sortable: true },
-    { field: 'tag', headerName:'Tag', filter: true, sortable: true 
-  }
+      checkboxSelection: true ,
+      width: 50,
+      cellStyle: { background: "#FBFAFF"}
+      },
+    {
+      field: 'customerId', headerName: 'ID', width: 90, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }
+ },
+    {
+      field: 'Name', headerName: 'Name', filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }
+ },
+    { field: 'Phone_number', headerName: 'Phone Number', width: 190, filter: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }, sortable: true, },
+    { field: 'emailId', headerName: 'Email', filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
+    { field: 'age', headerName: 'Age', width: 140, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
+    { field: 'sex', headerName: 'Gender', width: 140, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
+    { field: 'tag', headerName: 'Tag', filter: true, width:210, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } }
 ];
 
   Tag: string[] =
@@ -70,6 +83,8 @@ export class ContactsComponent implements OnInit {
    editForm: any = [];
    pageOfItems: any;
    selectedTag: any;
+   showTopNav: boolean = false;
+   isButtonEnabled = false;
  
 
   // multiselect 
@@ -83,15 +98,15 @@ export class ContactsComponent implements OnInit {
     dropdownSettings = {}; 
     items: any;
     customerData: any;
-	filterForm=new FormGroup({
+	  filterForm=new FormGroup({
     Name: new FormControl('', Validators.required),
     Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
     emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
 	})
-   orderHeader: String = '';
-   isDesOrder: boolean = true;
+    orderHeader: String = '';
+    isDesOrder: boolean = true;
 
-   searchForm=new FormGroup({
+    searchForm=new FormGroup({
     Phone_number: new FormControl(''),
     Name:new FormControl(''),
     emailId:new FormControl('')
@@ -108,7 +123,7 @@ export class ContactsComponent implements OnInit {
  
   
   
- constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder)
+ constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private changeRef:ChangeDetectorRef)
  
  
  {
@@ -130,7 +145,7 @@ export class ContactsComponent implements OnInit {
         status:  new FormControl([]),
         facebookId: new FormControl(''),
         InstagramId: new FormControl(''),
-        SP_ID:sessionStorage.getItem('SP_ID')
+         SP_ID: sessionStorage.getItem('SP_ID')
       });
 	
   this.editContact = this.fb.group({
@@ -138,8 +153,8 @@ export class ContactsComponent implements OnInit {
     Phone_number: new FormControl(''),
     emailId: new FormControl(''),
     age: new FormControl(''),
-     tag: new FormControl([]),
-      status:  new FormControl([]),
+    tag: new FormControl([]),
+    status: new FormControl([]),
     facebookId: new FormControl(''),
     InstagramId: new FormControl('')
    
@@ -148,6 +163,9 @@ export class ContactsComponent implements OnInit {
 
 
     ngOnInit() {
+
+      document.getElementById('delete-btn')!.style.display = 'none';
+      this.showTopNav = true;
 
       this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
       
@@ -199,6 +217,11 @@ export class ContactsComponent implements OnInit {
 		this.getContact();
    
 } 
+
+  onSelectionChanged(event: any) {
+    this.isButtonEnabled = this.checkedConatct.length > 0;
+  }
+
 checks=false
 bulk(e: any) {
   alert("bulk")
@@ -268,12 +291,13 @@ onSelectAll(items: any) {
 		this.modalService.open(content);
 	}
 
+ 
 
   openedit(contactedit: any) {
     
     console.log(sessionStorage.getItem('id'))
-    this.apiService.getContactById(sessionStorage.getItem('id'),sessionStorage.getItem('SP_ID')).subscribe((result:any)=>{
-      console.log(result[0])
+    this.apiService.getContactById(sessionStorage.getItem('id'), sessionStorage.getItem('SP_ID')).subscribe((result: any) =>{
+      console.log(result[0].tag.split(',') +" "+result[0].age)
       this.editContact=this.fb.group({
         Name: new FormControl(result[0].Name),
         Phone_number: new FormControl(result[0].Phone_number),
@@ -291,11 +315,11 @@ onSelectAll(items: any) {
 
   
   getContact() {
-      var SP_ID=sessionStorage.getItem('SP_ID')
-      console.log(SP_ID)
-      this.apiService.Contact(SP_ID).subscribe((data)=> {
+    var SP_ID = sessionStorage.getItem('SP_ID')
+    console.log(SP_ID)
+    this.apiService.Contact(SP_ID).subscribe((data) => {
       this.contacts = data;
-      this.rowData = this.contacts;       
+      this.rowData = this.contacts;
       console.log(this.contacts);
     });
   }
@@ -327,34 +351,30 @@ onSelectAll(items: any) {
    }
 
   deleteRow(arr: ["id"]) {
-    console.log("delete")
-    console.log(this.checkedcustomerId)
-    var delBtn = confirm(" Do you want to delete ?");
-    if (delBtn == true) {
+
+   
       this.contacts.splice(arr, 1);
-      var deleteList=this.checkedConatct.map(x => x.customerId);
+      var deleteList = this.checkedConatct.map(x => x.customerId);
       var data = {
 
         customerId: deleteList,
-        SP_ID:sessionStorage.getItem('SP_ID')
-     }
-     console.log("delete Id ****")
-     console.log(data)
+        SP_ID: sessionStorage.getItem('SP_ID')
+      }
+      
       this.apiService.deletContactById(data).subscribe(response => {
         console.log(response)
-      })
-    }
-    alert(delBtn);
+      });
+  
   }
 
 
 
   onRowSelected = (event: any) => {
-    alert("Grid " + this.checkedConatct.length)
     const rowChecked = this.checkedConatct.findIndex((item) => item.customerId == event.data.customerId);
     if (rowChecked < 0) {
      
       this.checkedConatct.push(event.data);
+      
     }
 
     else {
@@ -365,11 +385,14 @@ onSelectAll(items: any) {
     
       document.getElementById('import-btn')!.style.display = 'none';
       document.getElementById('add-contact')!.style.display = 'none';
+      document.getElementById('delete-btn')!.style.display = 'block';
     }
     else {
      
       document.getElementById('import-btn')!.style.display = 'block';
       document.getElementById('add-contact')!.style.display = 'block';
+      document.getElementById('delete-btn')!.style.display = 'none';
+     
     }
    
   };
@@ -390,10 +413,17 @@ onSelectAll(items: any) {
     suppressRowClickSelection: true,
     groupSelectsChildren: true,
     onRowClicked: this.rowClicked,
-    onRowSelected: this.onRowSelected
-    
-
+    onRowSelected: this.onRowSelected,
+    noRowsOverlay:true,
+    pagination: true,
+    paginationAutoPageSize: true,
+    paginateChildRows:true,
+    overlayNoRowsTemplate: '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
+    overlayLoadingTemplate:'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+  
   };
+
+  
 
   addContact() {
     console.log("******")
@@ -401,30 +431,29 @@ onSelectAll(items: any) {
     console.log(this.selectedCountry)
     console.log(this.code);
     this.submitted = true
-  
-
-    
-
 		this.apiService.addContact(this.newContact.value).subscribe(response => {
 			console.log(response)
+      
 		})
+    this.changeRef.detectChanges();
     if (this.newContact.invalid){
       return
   }
 }
 
-editContactData() {
-  console.log("editContactData")
-  var customerId = sessionStorage.getItem('id')
-  var SP_ID=sessionStorage.getItem('SP_ID')
-  console.log("editdata" + customerId)
- console.log(this.editContact.value)
-  this.apiService.editContact(this.editContact.value, customerId,SP_ID).subscribe((response:any) => {
-   console.log(response)
-  })
+  editContactData() {
+    console.log("editContactData")
+    var customerId = sessionStorage.getItem('id')
+    var SP_ID = sessionStorage.getItem('SP_ID')
+    console.log("editdata" + customerId)
+    console.log(this.editContact.value)
+    this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
+      console.log(response)
+      this.changeRef.detectChanges();
+    })
 
 
-}
+  }
 
 
   onSelectedTag(value: any) {
@@ -433,75 +462,84 @@ editContactData() {
   }
 
 
-getCheckBoxEvent(isSelected: any, contact: any) {
-  console.log("contact" );
-  console.log(isSelected)
-  var obj = {
-    data: contact,
-    status: isSelected
-  }
-  if (obj.status === true) {
-    console.log("obj.status")
-    this.checkedConatct.push(obj.data);
-    this.checkedcustomerId.push(contact.customerId)
-    console.log(this.checkedcustomerId)
-  } else if (obj.status === false) {
+  getCheckBoxEvent(isSelected: any, contact: any) {
+    console.log("contact");
+    console.log(isSelected)
+    var obj = {
+      data: contact,
+      status: isSelected
+    }
+    if (obj.status === true) {
+      console.log("obj.status")
+      this.checkedConatct.push(obj.data);
+      this.checkedcustomerId.push(contact.customerId)
+      console.log(this.checkedcustomerId)
+    } else if (obj.status === false) {
 
-    var index = this.checkedConatct.indexOf(obj.data)
-    console.log(index)
-    this.checkedConatct.splice(index, 1);
-    this.checkedcustomerId.splice(index, 1);
-     console.log("this.splice(index, 1)" )
-     console.log(this.checkedcustomerId)
-  }
+      var index = this.checkedConatct.indexOf(obj.data)
+      console.log(index)
+      this.checkedConatct.splice(index, 1);
+      this.checkedcustomerId.splice(index, 1);
+      console.log("this.splice(index, 1)")
+      console.log(this.checkedcustomerId)
+    }
 
-}
+  }
 
 
 deletContactByID(data: any) {
   console.log("delete")
   console.log(data)
   this.apiService.deletContactById(data).subscribe((responce => {
-  }))
+  }));
+  this.changeRef.detectChanges();
+
 
 }
 
-blockContactByID(data: any) {
-  var SP_ID=sessionStorage.getItem('SP_ID')
-  this.apiService.blockContact(data,SP_ID).subscribe((responce => {
-    console.log(responce)
+  blockContactByID(data: any) {
+    var SP_ID = sessionStorage.getItem('SP_ID')
+    this.apiService.blockContact(data, SP_ID).subscribe((responce => {
+      console.log(responce);
+      this.changeRef.detectChanges();
 
-  }))
-}
-
-getContactById(data: any) {
-  console.log("data")
-  console.log(data)
-  sessionStorage.setItem('id', data.customerId)
-  var SP_ID=sessionStorage.getItem('SP_ID')
-  this.apiService.getContactById(data.customerId,SP_ID).subscribe((data) => {
-    this.customerData = data
-    console.log(this.customerData)
-  })
- // this.customerData.length = 0;
-}
-
-exportCheckedContact() {
-	console.log(this.checkedConatct)
-  var exContact={
-     data:this.checkedConatct,
-     loginData:sessionStorage.getItem('loginDetails')
+    }))
   }
-	this.apiService.exportCheckedContact(exContact).subscribe(response => {
-		console.log(response);
 
-	})
+  getContactById(data: any) {
+    console.log("data")
+    console.log(data)
+    sessionStorage.setItem('id', data.customerId)
+    var SP_ID = sessionStorage.getItem('SP_ID')
+    this.apiService.getContactById(data.customerId, SP_ID).subscribe((data) => {
+      this.customerData = data
+      console.log(this.customerData)
+    })
+    
+  }
+
+
+  exportCheckedContact() {
+    console.log(this.checkedConatct)
+    var exContact = {
+      data: this.checkedConatct,
+      loginData: (JSON.parse(sessionStorage.loginDetails)).email_id
+    }
+    this.apiService.exportCheckedContact(exContact).subscribe(response => {
+      console.log(response);
+      this.changeRef.detectChanges();
+
+    })
+
+  };
+
  
 
-  
-	console.log(this.checkedConatct)
-}
+  onFilterTextBoxChange() {
+    const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
+   this.gridapi.setQuickFilter(searchInput.value);
 
+  }
 
 
 }

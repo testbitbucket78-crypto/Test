@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/getReplies', (req, res) => {
 
-   db.runQuery(req, res, val.selectAll, [req.body])
+   db.runQuery(req, res, val.selectAll, [req.query.SP_ID])
 })
 
 app.get('/getReplieswithSPID', async (req, res) => {

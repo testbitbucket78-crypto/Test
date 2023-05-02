@@ -126,9 +126,14 @@
 }
 
 
+.modal-content {
+  width: 68%;
+  border-radius: 3.3rem;
+}
+
  .modal-dialog .modal-content .edit-tag {
    transform: none;
-    width: 70%;
+    width: 100%;
     height: 458px;
     box-shadow: 4px 22px 54px #695F971A !important;
     border-radius: 30px;
@@ -139,9 +144,10 @@
     left: 13em;
 
 }
+
 .modal-dialog .modal-content .modal-body{
-  font-family: "Montserrat", sans-serif;
-  font-size: 18px;
+  font-family: "Manrope";
+  font-size: 16px;
   font-weight: 500;
 }
 .modal-dialog .modal-content .deletefile .btn9{
@@ -159,4 +165,36 @@
   width: 93px;
   margin: 0 0px 15px 0;
   border-radius: 14px;
+}
+
+.ag-theme-alpine .ag-root-wrapper {
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px;
+    background: #FFFFFF;
+    border: none;
+}
+
+
+.ag-theme-alpine .ag-header {
+  
+    background: #ffffff;
+}
+
+.ag-header-cell-text {
+
+    color: #6149cd;
+
+}
+.ag-root-wrapper-body {
+    border-radius: 33px;
+}
+
+
+
+@media all and (max-width:1536px) {
+ .ag-theme-alpine .ag-row {
+    font-size: 12px;
+  
+}
+
 }
