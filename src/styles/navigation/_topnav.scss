@@ -31,3 +31,11 @@
     color: #7A86A1;
 }
 }
+
+
+
+@media all and (max-width:1536px) {
+    .sb-topnav .navbar-brand {
+        font-size: 25px;
+    }
+}

@@ -72,6 +72,10 @@ height: 211px;
 left: 50px;
 }
 
+#active-agent{
+    margin-left: 100px;
+}
+
 
 .col-sm-5.c1, .col-sm-5.c2  {
 width: 484px;
@@ -248,7 +252,7 @@ font-family: 'Manrope';
 
 .card-body-right {
 background-color: #fbf9fe;
-width: 494px;
+width: 494vh;
 height: 1416px;
 font-family: 'Manrope';
 }
@@ -499,6 +503,13 @@ margin-left: 56px;
 
 }
 
+.btn2:not(:disabled):not(.disabled) {
+  
+    margin: 60px 0px 0px 57px;
+    width: 58%;
+  
+}
+
 
 #campaigns {
     width: 97%;
@@ -512,12 +523,14 @@ margin-left: 56px;
 }
 .row1 .mt-5.ml-3 h6 {
     font-size: 12px !important;
+    margin: 66px 0 0 0;
 }
 .row9 .mt-5.ml-3 h5 {
     font-size: 17px !important;
 }
 .row9 .mt-5.ml-3 h6 {
     font-size: 12px !important;
+    margin: 64px 0 0 0;
 }
 .line{
     margin: 40px 0 0 40%;
@@ -689,6 +702,33 @@ margin-left: 56px;
     border-radius: 14px;
   
   }
+
+  h5,
+.h5 {
+
+    margin: -10px 0px 0px 0px;
+   
+}
+
+  .new img {
+    margin: -83px 30px 0px -60px;
+  }
+
+#scheduledCampaign {
+    margin-left: 47px;
+}
+
+#totalsche {
+        margin: 0 0 0 0;
+}
+
+#totaldraft {
+   margin: -2px 0 0 1px;
+}
+
+#active-agent {
+    margin-left:  42px;
+}
 
 
 

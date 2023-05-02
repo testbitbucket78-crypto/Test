@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder } from "@angular/forms";
 import { FormGroup } from '@angular/forms';
 import { FormControl } from '@angular/forms';
-import { Router, RouterLinkActive } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from './../../services';
 import { Validators } from '@angular/forms';
 @Component({

@@ -1,9 +1,46 @@
-
-
 .sb-sidenav .sb-sidenav-menu {
     flex-grow: 1;
     background-color: #ffffff;
     border-right: 1px solid #EBEBEB;
+
+//    .nav { 
+    
+//      .nav-link:hover {
+//         color: #ffffff;
+//         background-color: #6149cd;
+//         width: 90%;
+//         margin: 10px 0px 0px 10px;
+//         border-radius: 24px;
+//      }
+    
+//     .nav-link:active  {
+    
+//         color: #FFFFFF!important;
+//         background-color: #6149cd!important;
+//         border-radius: 24px;
+//         .sb-nav-link-icon {
+//           color: #ffffff!important;
+//         }
+      
+//     }}
+ 
 }
 
 /* Set the active and hover styles for the nav link */
+
+// @media all and (max-width:1536px) {
+
+// #sidebarToggle {
+//     width: 80px!important;
+//     height: 80px!important;
+// }
+// }
+
+#sidebarToggle img {
+    width: 80px ;
+    height: 80px ;
+}
+
+button:focus {
+    outline: none;
+}

@@ -201,7 +201,7 @@ export const ROUTES: Routes = [
                     link: '/dashboard',
                 },
                 {
-                    text: 'Flow builde',
+                    text: 'Flow builder',
                     active: true,
                 },
             ],

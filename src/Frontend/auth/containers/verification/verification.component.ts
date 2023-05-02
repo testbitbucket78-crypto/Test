@@ -21,7 +21,7 @@ export class VerificationComponent implements OnInit {
     
     otpForm = this.formBuilder.group({
         otpfieldvalue: sessionStorage.getItem('otpfieldEmailvalue'),
-        otp: new FormControl('')
+        otp: new FormControl('', Validators.compose([Validators.required])),
     })
 
     title = 'formValidation';
@@ -53,8 +53,7 @@ export class VerificationComponent implements OnInit {
         (error) => {
           
             
-            if (error.status === 401) {
-               
+            if (error.status === 401) {       
                 alert("Otp invalid")
             } else if (error.status === 410) {
                 alert("Otp expired")
