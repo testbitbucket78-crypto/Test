@@ -12,12 +12,13 @@ import { Validators } from '@angular/forms';
     styleUrls: ['verification.component.scss'],
 })
 export class VerificationComponent implements OnInit {
-    showSecondButton = false;
+    showSecondButton: boolean = false;
     showSecondButton1 = false;
     email_id:any;
     isVerified: boolean = false;
     email:any;
     phone:any;
+    
     otpForm = this.formBuilder.group({
         otpfieldvalue: sessionStorage.getItem('otpfieldEmailvalue'),
         otp: new FormControl('')
@@ -36,26 +37,28 @@ export class VerificationComponent implements OnInit {
 
 
     onVerify() {
-        
-        this.apiService.verifyOtp(this.otpForm.value).subscribe((response) => {
+        // alert("alert")
+        this.apiService.verifyOtp(this.otpForm.value).subscribe((response:any) => {
             // this.verified = true;
             console.log(this.otpForm.value)
-            alert("alert1")
-            this.showSecondButton=true
+        
             console.warn("verification! ", response)
-            
+            // alert("alert1")
+            if (response.status === 200) {
+                // Show forbidden message
+                alert("sucess")
+              }
         },
+        
         (error) => {
-            this.showSecondButton=true
-            alert(error)
+          
+            
             if (error.status === 401) {
-                alert("Otp Incorrect")
-             
+               
+                alert("Otp invalid")
             } else if (error.status === 410) {
-              // Show payment required message
-            } else if (error.status === 400) {
-              // Show forbidden message
-            }
+                alert("Otp expired")
+            } 
           });
 
 
