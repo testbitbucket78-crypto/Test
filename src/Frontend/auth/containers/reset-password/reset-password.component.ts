@@ -21,7 +21,7 @@ export class ResetPasswordComponent implements OnInit {
 
     resetpassword = this.formBuilder.group({
         id:sessionStorage.getItem('uid'),
-        password: ['', [Validators.required,Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
+        password: ['', [Validators.required,Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
         confirmPassword: ['', Validators.required]
       }, { validator: this.passwordMatchValidator });
         

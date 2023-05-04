@@ -58,7 +58,11 @@ app.get('/', async (req, res) => {
     res.send(200);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal server error');
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
   }
 })
 
@@ -69,7 +73,11 @@ app.get('/Interactions', async (req, res) => {
     res.send(users);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal server error');
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
   }
 });
 
@@ -82,18 +90,26 @@ app.get('/Campaigns:/sPid', async (req, res) => {
     res.send(users);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal server error');
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
   }
 });
 
 app.get('/Agents', async (req, res) => {
   // db.runQuery(req, res, val.agentsQuery, [req.body])
   try {
-    const users = await db.excuteQuery( val.agentsQuery, [req.body]);
+    const users = await db.excuteQuery(val.agentsQuery, [req.body]);
     res.send(users);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal server error');
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
   }
 
 })
@@ -106,7 +122,11 @@ app.get('/Subscribers:/sPid', async (req, res) => {
     res.send(users);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal server error');
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
   }
 })
 
@@ -119,92 +139,16 @@ app.get('/recentConversation/:spid', async (req, res) => {
     res.send(users);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal server error');
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
   }
 })
 
 
-process.on('beforeExit', code => {
-  // Can make asynchronous calls
-  setTimeout(async () => {
-    const consoleOutput = `Dash :: Process will exit with code: ${code}`;
-    console.log(consoleOutput);
-   
-    try {
-      var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
-      console.log(result)
-    } catch (err) {
-      console.error(err);
-    
-    }
-    process.exit(code);
-  }, 100);
-});
 
-process.on('exit', async code => {
-  // Only synchronous calls
-  const consoleOutput = `Dash :: Process exited with code: ${code}`;
-  console.log(consoleOutput);
-  try {
-    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
-    console.log(result)
-  } catch (err) {
-    console.error(err);
-  
-  }
-});
-
-process.on('SIGTERM', async signal => {
-  const consoleOutput = `Dash :: Process ${process.pid} received a SIGTERM signal`;
-  console.log(consoleOutput);
-  try {
-    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
-    console.log(result)
-  } catch (err) {
-    console.error(err);
-  
-  }
-  process.exit(0);
-});
-
-process.on('SIGINT', async signal => {
-  const consoleOutput = `Dash :: Process ${process.pid} has been interrupted`;
-  console.log(consoleOutput);
-  try {
-    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
-    console.log(result)
-  } catch (err) {
-    console.error(err);
-  
-  }
-  process.exit(0);
-});
-
-process.on('uncaughtException', async err => {
-  const consoleOutput = `Dash :: Uncaught Exception: ${err.message}`;
-  console.log(consoleOutput);
-  try {
-    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
-    console.log(result)
-  } catch (err) {
-    console.error(err);
-  
-  }
-  process.exit(1);
-});
-
-process.on('unhandledRejection', async (reason, promise) => {
-  const consoleOutput = `Dash :: Unhandled rejection at ${promise}, reason: ${reason.message}`;
-  console.log(consoleOutput);
-  try {
-    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
-    console.log(result)
-  } catch (err) {
-    console.error(err);
-  
-  }
-  process.exit(1);
-});
 
 app.listen(3001, function () {
   console.log("Node is running");

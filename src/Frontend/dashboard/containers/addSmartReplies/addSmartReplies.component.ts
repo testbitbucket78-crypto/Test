@@ -16,17 +16,25 @@ export class AddSmartRepliesComponent implements OnInit {
 	stepper: any;
 	data: any;
 	val: any;
+	
 	keywordtxt: any;
 	selectedTeam: any;
 	selectedTag:any;
 	triggerFlows:any;
 	selectedValue: any;
+	title = 'formValidation';
+        submitted = false;
     newSmartReply:any;
 	newReply=new FormGroup({
 		Title: new FormControl('',Validators.required),
 		Description:new FormControl('',Validators.required)
+		
 	
 	})
+	newReply1=new FormGroup({
+		keywords: new FormControl('',([Validators.required, Validators.maxLength(50)])),
+	})
+	
 	model: any;
 
 	
@@ -84,6 +92,7 @@ export class AddSmartRepliesComponent implements OnInit {
 			linear: false,
 			animation: true
 		})
+	
 	
 	}
 

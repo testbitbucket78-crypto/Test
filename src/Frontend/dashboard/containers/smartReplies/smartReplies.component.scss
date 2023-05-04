@@ -8,6 +8,9 @@
     font-size: 14px;
     width: 30px;
 }
+.collumn{
+    margin: 15px;
+}
 @media (min-width: 576px){
 .form-inline .input-group, .form-inline .custom-select {
     width: 70%;
@@ -179,14 +182,14 @@ h4 {
     color: #000000;
     font-size: 21px;
     font-weight: bold;
-    margin: 15px 0px 15px 0px;
+    margin: 15px 0px 15px 17px;
 }
 
 h3{
         color: #6149CD;
         font-family: Manrope;
         font-size: 17px;
-        margin: 20px 0px 20px 0px;
+        margin: 20px 0px 20px 20px;
         font-weight: bold;
     }
     .box{
@@ -195,16 +198,16 @@ h3{
         background-color: #ffffff;
         border-radius: 20px;
         border: 1px solid #EBEBEB;
-        margin: 5px 0px 0px 10px;
+        margin: 5px -18px 0px 31px;
     }
    
-    .box1 h6{
-        font-size: 15px;
-        color: #7A86A1;
-        font-family: Manrope;
-    border-radius: 20px;
-    border: 1px solid #EBEBEB;
-}
+//     .box1 h6{
+//         font-size: 15px;
+//         color: #7A86A1;
+//         font-family: Manrope;
+//     border-radius: 20px;
+//     border: 1px solid #EBEBEB;
+// }
 
 .box3 {
     width: 130px;
@@ -219,7 +222,7 @@ h3{
     font-size: 15px;
     color: #7A86A1;
     font-family: Manrope;
-    margin: 20px 0px 10px 5px;
+    margin: 20px 0px 10px 26px;
 }
 
 .box1 h5 {
@@ -244,16 +247,16 @@ h3{
     background-color: #ffffff;
     border-radius: 20px;
     border: 1px solid #EBEBEB;
-    margin: 5px 0px 0px 5px;
+    margin: 5px -18px 0px 31px;
 }
 
 .box4 {
-    width: 95%;
+    width: 90%;
     height: 210px;
     background-color: #ffffff;
     border-radius: 20px;
     border: 1px solid #EBEBEB;
-    margin: 10px 0px 0px 5px;
+    margin: 10px 0px 0px 20px;
 }
 
 .box4 h3 {
@@ -276,9 +279,9 @@ h3{
 }
 
 .sidebar .footer {
-    width: 496px;
-    height: 60px;
-    margin: 139px 0 0 0;
+    width: 473px;
+    height: 34px;
+    margin: 120px 0 0 0;
     position: absolute;
     border: 1px solid #695F972E;
     border-radius: 20px;

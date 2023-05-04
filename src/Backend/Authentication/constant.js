@@ -9,9 +9,9 @@ const database= "cip_project"
 //Queries for user.js
 
 var selectAllQuery = "SELECT * FROM user WHERE SP_ID=?";
-var selectByIdQuery = "SELECT * FROM user WHERE SP_ID=?"
-var deletQuery = "UPDATE user SET IsDeleted='1' WHERE SP_ID=?"
-var updateQuery = "UPDATE user SET password=?,email_id=?,address=?,name=?,mobile_number=?,country=?,timezone=?,CreatedDate=?,LastModifiedDate=?,PasswordHint=?,securityquestion=?,Securityanswer=?,ParentId=?,UserType=?,IsDeleted=?,IsActive=? WHERE SP_ID=?";
+var selectByIdQuery = "SELECT * FROM user WHERE uid=? "
+var deletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
+var updateQuery = "UPDATE user SET password=?,email_id=?,address=?,name=?,mobile_number=?,country=?,timezone=?,CreatedDate=?,LastModifiedDate=?,PasswordHint=?,securityquestion=?,Securityanswer=?,ParentId=?,UserType=?,IsDeleted=?,IsActive=? WHERE uid=?";
 var insertQuery = "INSERT INTO user (password,email_id,address,name,mobile_number,country,timezone,CreatedDate,LastModifiedDate,PasswordHint,securityquestion,Securityanswer,ParentId,UserType,IsDeleted,IsActive) VALUES ?";
 var allAgents = "select *from user where ParentId=? and UserType=? and SP_ID=?"
 var activeAgent = "select *from user where ParentId=? and UserType=? and IsActive=? and SP_ID=?"

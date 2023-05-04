@@ -17,7 +17,7 @@ export class RegisterComponent implements OnInit {
     checkboxChecked = false;
 
 
-    buttonColor = '';
+    buttonColor = 'grey';
     visible:boolean = true;
     visible1:boolean = true;
     changetype:boolean = true;

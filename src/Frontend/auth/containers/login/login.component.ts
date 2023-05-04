@@ -16,75 +16,61 @@ export class LoginComponent implements OnInit {
     checked = true;
     password: any;
     loginForm = new FormGroup({
-        email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-         password: new FormControl('', Validators.compose([Validators.required,Validators.minLength(8)])),
-        flash:new FormControl(this.checked)
-      })
-      title = 'formValidation';
-        submitted = false;
-       errorStatusno1 = 401;
-        errorStatusno = 400;
-        
-        errorStatusno3 = 403;
-        errorStatusno4 = 404;
-      
-    constructor(private apiService :AuthService ,private router: Router, private formBuilder: FormBuilder) {
-       
+        email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required])])),
+        password: new FormControl('', Validators.compose([Validators.required])),
+        flash: new FormControl(this.checked)
+    })
+    title = 'formValidation';
+    submitted = false;
+
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) {
+
     }
     ngOnInit() {
-        this.errorStatusno1
-        this.errorStatusno
 
-        this.errorStatusno3
-        this.errorStatusno4
     }
 
 
     onSubmit() {
         this.apiService.login(this.loginForm.value).subscribe(
-            
             (result) => {
-
-                sessionStorage.setItem('loginDetails', JSON.stringify(result.user))
-                sessionStorage.setItem('SP_ID', result.user.SP_ID)
-                console.log(result.user.UserType)
-                if (result.user.UserType == 'Owner') {
-                    console.log("Agent ")
-                    alert('Login Successful');
-                    this.router.navigate(['dashboard'])
-                }
-
+            // Handle success response
+            console.warn("logindone! ", result.status)
+            sessionStorage.setItem('loginDetails', result.user.email_id)
+            sessionStorage.setItem('SP_ID', result.user.SP_ID)
+            console.log(result.user.UserType)
+            this.router.navigate(['dashboard'])
             },
-            (error) => {
-                this.errorStatusno = error.status;
-                this.errorStatusno1 = error.status;
-                this.errorStatusno3 = error.status;
-                this.errorStatusno4 = error.status;
+                (error) => {
+                    if (error?.status === 401) {
+                        const errorMessage = "! Incorrect Email or Password";
+                        const errorDiv = document.getElementById("error-message");
+                        if (errorDiv) {
+                          errorDiv.innerHTML = errorMessage;
+                        }
+                      }   else if (error.status === 400) {
+                    // Show payment required message
+                    alert("API server not work please try after sometime")
+                } 
+                else if (error.status === 502) {
+                    alert("API server not work please try after sometime")
+                  }
+            })
 
-                console.log(this.errorStatusno1);
-                console.log(this.errorStatusno3);
-                console.log(this.errorStatusno4);
-                console.log(this.errorStatusno);
-                // if (error.status === 401) {
-                //     error.staus = 'Forbidden';
-                // } else if (error.status === 403) {
-                //     alert('Forbidden');
-                // } else if (error.status === 404) {
-                //     alert('Not Found');
-                // } else if (error.status === 400) {
-                //     alert('Bad Request')
-                // }
-            }
-        );
+
+            // if(result.user.UserType=='Owner'){
+            //     console.log("Agent ")
+            // }
+           
+
+
+        
     }
-
-    onVerification(){
-        // console.log(this.loginForm.value)
+    onVerification() {
+        console.log(this.loginForm.value)
         this.submitted = true
 
-        if (this.loginForm.invalid) {
-            console.log("invalid password")
-        }
+    
     }
 
     visible: boolean = true;

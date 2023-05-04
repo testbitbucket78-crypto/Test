@@ -10,6 +10,7 @@ const val = require('./constant');
 const { Status } = require('tslint/lib/runner');
 const CryptoJS = require('crypto-js');
 var axios = require('axios');
+const { error } = require('console');
 const SECRET_KEY = 'RAUNAK'
 app.use(bodyParser.json());
 
@@ -28,7 +29,14 @@ const allregisterdUser = (req, res) => {
 const login = async (req, res) => {
     try {
         var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id])
+        if (credentials.length <= 0) {
+            res.status(401).send({
+                msg: 'Invalid User !',
+                status: 401
+            });
+        }
         var password = await bcrypt.compare(req.body.password, credentials[0]['password'])
+
         if (!password) {
             res.status(401).send({
                 msg: 'Username or password is incorrect!',
@@ -47,8 +55,9 @@ const login = async (req, res) => {
 
     } catch (err) {
         console.error(err);
+        db.errlog(err)
         res.status(500).send({
-            msg: 'Internal server error',
+            msg: err,
             status: 500
         });
     }
@@ -66,13 +75,20 @@ const register = async function (req, res) {
     var mobile = mobile_number;
 
     try {
+        var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id])
+        if (credentials.length > 0) {
+            res.status(409).send({
+                msg: 'User Already Exist with this email !',
+                status: 409
+            });
+        }
         if (password !== confirmPassword) {
-             res.status(400).json({ error: 'Passwords do not match', status: 400 });
+            res.status(400).json({ error: 'Passwords do not match', status: 400 });
         }
         // Hash the password before storing it in the database
         const hash = await bcrypt.hash(password, 10);
         var values = [name, mobile, email_id, hash]
-        var registeredUser =await db.excuteQuery(val.registerQuery, values)
+        var registeredUser = await db.excuteQuery(val.registerQuery, values)
         const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
         res.status(200).send({
             msg: 'Registered !',
@@ -82,8 +98,10 @@ const register = async function (req, res) {
         });
     }
     catch (err) {
+        console.error(err);
+        db.errlog(err);
         res.status(500).send({
-            msg: 'Internal server error',
+            msg: err,
             status: 500
         });
     }
@@ -112,75 +130,96 @@ let transporter = nodemailer.createTransport({
 
 //Post api for forget password
 const forgotPassword = (req, res) => {
-    email_id = req.body.email_id;
-
-    db.db.query(val.loginQuery, [req.body.email_id], function (error, results, fields) {
-        // Send Email for For forget password varification
-
-        if (Object.keys(results).length === 0) {
-            console.log(error)
-
+    try {
+        email_id = req.body.email_id;
+        try {
+            db.db.connect();
+        } catch (err) {
+            console.log(err)
         }
-        else {
 
-            db.db.query(val.uidresetEmailQuery, [req.body.email_id], function (err, results, fields) {
-                var uid = results;
+        db.db.query(val.loginQuery, [req.body.email_id], function (error, results, fields) {
+            // Send Email for For forget password varification
 
-                // Encrypt
-                var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
+            if (Object.keys(results).length === 0) {
+                res.send(error)
+
+            }
+            else {
+
+                db.db.query(val.uidresetEmailQuery, [req.body.email_id], function (err, results, fields) {
+                    var uid = results;
+
+                    // Encrypt
+                    var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
 
 
 
 
-                if (err) {
-                    console.log(err)
-                } else {
+                    if (err) {
+                        res.send(err)
+                    } else {
 
-                    // var mailOptions = {
-                    //     from: val.email,
-                    //     to: req.body.email_id,
-                    //     subject: "Request for reset Password: ",
-                    //     // html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/reset-password?SP_ID=' + cipherdata + '">link</a>to reset your password</p>'
-                    //     html: '<p>You requested for reset password, kindly use this page  <a href="https://cip.sampanatechnologies.com/reset-password">link</a>to reset your password</p>'
-                    // };
+                        var mailOptions = {
+                            from: val.email,
+                            to: req.body.email_id,
+                            subject: "Request for reset Password: ",
+                            // html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                            html: '<p>You requested for reset password, kindly use this page  <a href="http://localhost:4200/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                        };
 
-                    // transporter.sendMail(mailOptions, (error, info) => {
-                    //     if (error) {
-                    //         return console.log(error);
-                    //     }
+                        transporter.sendMail(mailOptions, (error, info) => {
+                            if (error) {
+                                res.send(error)
+                            }
 
-                        res.status(200).send({
-                            msg: "password has been sent",
-                            id: results,
-                            status: 200
+                            res.status(200).send({
+                                msg: "password has been sent",
+                                id: results
+                            });
                         });
-                    // });
-                }
+                    }
 
 
-            });
-        }
-    })
+                });
+            }
+        })
+    } catch (err) {
+        db.errlog(err);
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
+    }
 
 }
 
 //resetPssword api
 const resetPassword = function (req, res) {
+    try {
+       
+        uid = req.body.id
+        password = req.body.password
+        confirmPassword = req.body.confirmPassword
+        if (password != confirmPassword) {
 
-    uid = req.body.id
-    password = req.body.password
-    confirmPassword = req.body.confirmPassword
-    if (password != confirmPassword) {
-        throw error;
+            console.log(error)
+        }
+        else {
+            bcrypt.hash(password, 10, function (err, hash) {
+
+                db.runQuery(req, res, val.updatePassword, [hash, uid]);
+            })
+        }
+
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
     }
-    else {
-        bcrypt.hash(password, 10, function (err, hash) {
-
-            db.runQuery(req, res, val.updatePassword, [hash, uid]);
-        })
-    }
-
-
 };
 
 
@@ -219,109 +258,161 @@ function getTextMessageInput(recipient, text) {
 
 // Opt for Varification
 const sendOtp = function (req, res) {
-    email_id = req.body.email_id;
-    mobile_number = req.body.mobile_number.internationalNumber;
-
-    let otp = Math.floor(100000 + Math.random() * 900000);
-
-    // send mail with defined transport object
-    var mailOptions = {
-        from: val.email,
-        to: req.body.email_id,
-        subject: "Otp for registration is: ",
-        html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log(error);
+    
+    try {
+        try {
+            db.db.connect();
+        } catch (err) {
+            console.log(err)
         }
-        console.log('Message sent: %s', info.messageId);
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        email_id = req.body.email_id;
+        mobile_number = req.body.mobile_number.internationalNumber;
+        
+        let otp = Math.floor(100000 + Math.random() * 900000);
 
-        res.send(Status);
-    });
+        // send mail with defined transport object
+        var mailOptions = {
+            from: val.email,
+            to: req.body.email_id,
+            subject: "Otp for registration is: ",
+            html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            try {
 
 
-    var data = getTextMessageInput('919971129777', otp);
+                res.send(Status);
+            } catch (error) {
+               
+                res.send(err)
+            }
 
-    sendMessage(data)
+        });
 
-    db.db.query(val.insertOtp, [req.body.email_id, otp, 'Email'], function (err, result) {
 
-    })
+        var data = getTextMessageInput('919971129777', otp);
 
-    db.db.query(val.insertOtp, [mobile_number, otp, 'Mobile'], function (err, result) {
+        sendMessage(data)
 
-    })
+        db.db.query(val.insertOtp, [req.body.email_id, otp, 'Email'], function (err, result) {
+            try {
+                console.log(result)
+            } catch (err) {
+                console.log(err)
 
-    return res.status(200).send({
-        msg: 'Otp Sended sucessfully !',
-        status: 200
-    })
+            }
+        })
 
+        db.db.query(val.insertOtp, [mobile_number, otp, 'Mobile'], function (err, result) {
+            try {
+                console.log(result)
+            } catch (err) {
+                console.log(err)
+            }
+        })
+
+        return res.status(200).send({
+            msg: 'Otp Sended sucessfully !',
+            status: 200
+        })
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+      
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
+    }
 
 };
 const verifyOtp = function (req, res, err) {
 
-
-    db.db.query(val.verifyOtp, [req.body.otpfieldvalue], function (err, result) {
-
-        if (err) {
-            return res.send(err);
+    try {
+        try {
+            db.db.connect();
+        } catch (err) {
+            console.log(err)
         }
-        if (result.length != 0 && req.body.otp == result[0].otp) {
-            return res.status(200).send({
-                msg: 'Otp Verified',
-                status: 200
-            })
-        }
-        if ((result.length != 0 && req.body.otp != result[0].otp)) {
-            return res.status(401).send({
-                msg: 'Invalid otp',
-                status: 401
-            })
-        }
-        if (result.length == 0) {
-            return res.status(410).send({
-                msg: 'Otp Expired ! Please resend otp',
-                status: 410
-            })
-        }
+        db.db.query(val.verifyOtp, [req.body.otpfieldvalue], function (err, result) {
 
-    })
-
+            try {
+                if (result.length != 0 && req.body.otp == result[0].otp) {
+                    return res.status(200).send({
+                        msg: 'Otp Verified',
+                        status: 200
+                    })
+                }
+                if ((result.length != 0 && req.body.otp != result[0].otp)) {
+                    return res.status(401).send({
+                        msg: 'Invalid otp',
+                        status: 401
+                    })
+                }
+                if (result.length == 0) {
+                    return res.status(410).send({
+                        msg: 'Otp Expired ! Please resend otp',
+                        status: 410
+                    })
+                }
+            } catch (err) {
+                console.log(err)
+                res.send(err)
+            }
+        })
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
+    }
 };
 
 const verifyPhoneOtp = function (req, res, err) {
 
-
-    db.db.query(val.verifyOtp, [req.body.otpfieldvalue], function (err, result) {
-
-        if (err) {
-            return res.send(err);
+    try {
+        try {
+            db.db.connect();
+        } catch (err) {
+            console.log(err)
         }
-        if (result.length != 0 && req.body.otp == result[0].otp) {
-            return res.status(200).send({
-                msg: 'Otp Verified',
-                status: 200
-            })
-        }
-        if ((result.length != 0 && req.body.otp != result[0].otp)) {
-            return res.status(401).send({
-                msg: 'Invalid otp',
-                status: 401
-            })
-        }
-        if (result.length == 0) {
-            return res.status(410).send({
-                msg: 'Otp Expired ! Please resend otp',
-                status: 410
-            })
-        }
+        db.db.query(val.verifyOtp, [req.body.otpfieldvalue], function (err, result) {
 
-    })
-
+            try {
+                if (result.length != 0 && req.body.otp == result[0].otp) {
+                    return res.status(200).send({
+                        msg: 'Otp Verified',
+                        status: 200
+                    })
+                }
+                if ((result.length != 0 && req.body.otp != result[0].otp)) {
+                    return res.status(401).send({
+                        msg: 'Invalid otp',
+                        status: 401
+                    })
+                }
+                if (result.length == 0) {
+                    return res.status(410).send({
+                        msg: 'Otp Expired ! Please resend otp',
+                        status: 410
+                    })
+                }
+            } catch (err) {
+                console.log(err)
+                res.send(err)
+            }
+        })
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
+    }
 };
 
 

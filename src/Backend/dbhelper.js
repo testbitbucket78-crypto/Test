@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
-const val = require('./Authentication/constant')
+const val = require('./Authentication/constant');
+
 
 var db = mysql.createConnection({
     host: val.host,
@@ -13,6 +14,7 @@ var db = mysql.createConnection({
 
 db.connect((err) => {
     if (!err) {
+
         console.log("Connected ");
 
     } else {
@@ -22,20 +24,25 @@ db.connect((err) => {
 
 
 function runQuery(req, res, query, param) {
-    if (db.state === 'disconnected'){
-       db.connect();
+
+    
+    try {
+        db.connect();
+    } catch (err) {
+        console.log(err)
     }
     db.query(query, param, (err, result) => {
-     
-        if (err) {
-            
-            res.send(err);
+
+
+        try {
+            console.log(result)
+            res.send(result)
+        } catch (err) {
+            console.error(err);
+            errlog(err)
+            res.send(err)
+
         }
-
-       
-        res.send(result)
-
-
 
 
 
@@ -44,12 +51,24 @@ function runQuery(req, res, query, param) {
 
 }
 
-
+function errlog(errData) {
+   // console.log(errData)
+   if(errData!=''){
+   var issue= encodeURIComponent(errData)
+   console.log("***********")
+   console.log(issue)
+   excuteQuery(val.crachlogQuery, [issue])
+   }
+}
 
 function excuteQuery(query, param) {
-    if (db.state === 'disconnected'){
+
+
+    try {
         db.connect();
-     }
+    } catch (err) {
+        console.log(err)
+    }
     return new Promise((resolve, reject) => {
         db.query(query, param, (err, results) => {
             if (err) return reject(err);
@@ -58,5 +77,5 @@ function excuteQuery(query, param) {
     });
 }
 
-  
-module.exports = { runQuery, db, excuteQuery };
+
+module.exports = { runQuery, db, excuteQuery, errlog };
