@@ -1,0 +1,10 @@
+<svg id="sch-o" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="42.62" height="42.62" viewBox="0 0 42.62 42.62">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f9b035"/>
+      <stop offset="0.53" stop-color="#f98c4e"/>
+      <stop offset="1" stop-color="#f96767"/>
+    </linearGradient>
+  </defs>
+  <path id="Time_Square" data-name="Time Square" d="M30.558,42.62H12.083C4.856,42.62,0,37.558,0,30.023V12.614C0,5.069,4.856,0,12.083,0H30.558C37.773,0,42.62,5.069,42.62,12.614V30.023C42.62,37.558,37.773,42.62,30.558,42.62ZM20.564,10.483a1.619,1.619,0,0,0-1.6,1.6V22.845a1.562,1.562,0,0,0,.788,1.364l8.355,4.987a1.485,1.485,0,0,0,.83.234,1.588,1.588,0,0,0,1.364-.788,1.535,1.535,0,0,0,.192-1.177,1.624,1.624,0,0,0-.747-1.017l-7.585-4.519V12.081A1.6,1.6,0,0,0,20.564,10.483Z" transform="translate(0 0)" fill="url(#linear-gradient)"/>
+</svg>

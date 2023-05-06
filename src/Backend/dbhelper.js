@@ -14,7 +14,6 @@ var db = mysql.createConnection({
 db.connect((err) => {
     if (!err) {
         console.log("Connected ");
-
     } else {
         console.log("Connection failed" + JSON.stringify(err, undefined, 2));
     }
@@ -42,19 +41,14 @@ function runQuery(req, res, query, param) {
 
 }
 function excuteQuery(query, param) {
-    
     db.query(query, param, (err, result) => {
-       
-        if (err) throw err;
-         console.log("result db"+result)
-      return result;
-       
-  
-        
-
-
+     if(err){
+        console.log(query)
+        console.log(err)
+        }else{
+        return result;
+        }
     });
-
 
 }
 

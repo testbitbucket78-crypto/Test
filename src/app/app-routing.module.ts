@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-    // {
-    //     path: '',
-    //     pathMatch: 'full',
-    //     redirectTo: '/dashboard',
-    // },
+    {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: '/dashboard',
+    },
     {
         path: 'dashboard',
         loadChildren: () =>
@@ -14,11 +14,12 @@ const routes: Routes = [
                 m => m.DashboardRoutingModule
             ),
     },
-    {
+    /*{
         path: '',
         loadChildren: () =>
             import('Frontend/auth/auth-routing.module').then(m => m.AuthRoutingModule),
     },
+    */
     {
         path: 'error',
         loadChildren: () =>

@@ -31,7 +31,7 @@ import * as dashboardGuards from './guards';
 /* Services */
 import * as dashboardServices from './services';
 import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
-
+import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
 
 @NgModule({
     imports: [
@@ -48,6 +48,7 @@ import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
         TablesModule,
         NgxIntlTelInputModule,
         AgGridModule.withComponents([dashboardContainers.ContactsComponent])
+        RichTextEditorModule
         
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],

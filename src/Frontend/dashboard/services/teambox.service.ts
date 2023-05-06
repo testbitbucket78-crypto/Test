@@ -9,10 +9,15 @@ const API_URL = environment.baseUrl;
 export class TeamboxService {
   constructor(private http: HttpClient) { }
 
+  public uploadfile(FileData:any) {
+      return this.http.post('http://authapi.sampanatechnologies.com/uploadfile/',FileData);
+  }
+
   public getAgents(SPID:any) {
     return this.http.get('https://authapi.sampanatechnologies.com/agents/'+SPID);
   }
 
+  
   public getCustomers(SPID:any) {
     return this.http.get('https://authapi.sampanatechnologies.com/customers/'+SPID);
   }
@@ -21,8 +26,8 @@ export class TeamboxService {
     return this.http.post('https://authapi.sampanatechnologies.com/addcustomers/',data);
   }
 
-  public searchCustomer(key:any) {
-    return this.http.get('https://authapi.sampanatechnologies.com/customers/'+key);
+  public searchCustomer(channel:any,SPID:any,key:any) {
+      return this.http.get('http://authapi.sampanatechnologies.com/'+channel+'/'+SPID+'/'+key);
   }
   public blockCustomer(data:any) {
     return this.http.post('https://authapi.sampanatechnologies.com/blockcustomer/',data);
