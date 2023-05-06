@@ -9,10 +9,15 @@ const API_URL = environment.baseUrl;
 export class TeamboxService {
   constructor(private http: HttpClient) { }
 
+  public uploadfile(FileData:any) {
+    return this.http.post('http://localhost:3003/uploadfile/',FileData);
+  }
+
   public getAgents(SPID:any) {
     return this.http.get('http://localhost:3003/agents/'+SPID);
   }
 
+  
   public getCustomers(SPID:any) {
     return this.http.get('http://localhost:3003/customers/'+SPID);
   }
@@ -21,8 +26,8 @@ export class TeamboxService {
     return this.http.post('http://localhost:3003/addcustomers/',data);
   }
 
-  public searchCustomer(key:any) {
-    return this.http.get('http://localhost:3003/customers/'+key);
+  public searchCustomer(channel:any,SPID:any,key:any) {
+    return this.http.get('http://localhost:3003/searchcustomers/'+channel+'/'+SPID+'/'+key);
   }
   public blockCustomer(data:any) {
     return this.http.post('http://localhost:3003/blockcustomer/',data);

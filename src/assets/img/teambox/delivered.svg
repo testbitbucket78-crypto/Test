@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="70" height="70" viewBox="0 0 70 70">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="your_image_here" data-name="your image here" width="70" height="70" rx="28" transform="translate(776 749)" fill="#ecdbea"/>
+    </clipPath>
+  </defs>
+  <g id="delivered" transform="translate(-1680 -1935)">
+    <g id="total-camp" transform="translate(1285 1146)">
+      <g id="project_1" data-name="project 1" transform="translate(-381 40)">
+        <g id="image">
+          <g id="your_image_here-2" data-name="your image here">
+            <rect id="your_image_here-3" data-name="your image here" width="70" height="70" rx="28" transform="translate(776 749)" fill="#e4e7ec"/>
+            <g id="tick" transform="translate(803.716 776.715)">
+              <g id="Time_Circle" data-name="Time Circle" transform="translate(-2.716 -2.716)">
+                <path id="Fill_1" data-name="Fill 1" d="M20,10A10,10,0,1,1,10,0,10,10,0,0,1,20,10" transform="translate(0 0)" fill="#7a86a1"/>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Group_1535" data-name="Group 1535" transform="translate(1707.092 1961.731)">
+      <g id="green-tick">
+        <path id="Union_10" data-name="Union 10" d="M4.934,5.376l-.752-.753.9-.9.3.3L8.849.559a.638.638,0,0,1,.9.9L5.838,5.376a.64.64,0,0,1-.9,0ZM1.692,5,.187,3.5a.638.638,0,1,1,.9-.9L2.144,3.65,5.606.187a.639.639,0,0,1,.9.9L2.6,5a.639.639,0,0,1-.9,0Z" transform="translate(2.939 5.488)" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+</svg>
