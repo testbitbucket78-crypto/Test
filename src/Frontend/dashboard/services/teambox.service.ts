@@ -14,73 +14,73 @@ export class TeamboxService {
   }
 
   public getAgents(SPID:any) {
-    return this.http.get('http://localhost:3003/agents/'+SPID);
+    return this.http.get('https://authapi.sampanatechnologies.com/agents/'+SPID);
   }
 
   
   public getCustomers(SPID:any) {
-    return this.http.get('http://localhost:3003/customers/'+SPID);
+    return this.http.get('https://authapi.sampanatechnologies.com/customers/'+SPID);
   }
 
   public createCustomer(data: any) {
-    return this.http.post('http://localhost:3003/addcustomers/',data);
+    return this.http.post('https://authapi.sampanatechnologies.com/addcustomers/',data);
   }
 
   public searchCustomer(channel:any,SPID:any,key:any) {
-    return this.http.get('http://localhost:3003/searchcustomers/'+channel+'/'+SPID+'/'+key);
+      return this.http.get('http://authapi.sampanatechnologies.com/'+channel+'/'+SPID+'/'+key);
   }
   public blockCustomer(data:any) {
-    return this.http.post('http://localhost:3003/blockcustomer/',data);
+    return this.http.post('https://authapi.sampanatechnologies.com/blockcustomer/',data);
   }
 
   
 
   public createInteraction(data: any) {
-    return this.http.post('http://localhost:3003/interaction/',data);
+    return this.http.post('https://authapi.sampanatechnologies.com/interaction/',data);
   }
   
   public getAllInteraction() {
-    return this.http.get('http://localhost:3003/interaction');
+    return this.http.get('https://authapi.sampanatechnologies.com/interaction');
   }
   
   public getInteractionById(InteractionId:any) {
-    return this.http.get('http://localhost:3003/interaction/'+InteractionId);
+    return this.http.get('https://authapi.sampanatechnologies.com/interaction/'+InteractionId);
   }
   public getFilteredInteraction(InteractionStatus:any,AgentId:any) {
-    return this.http.get('http://localhost:3003/filterinteraction/'+InteractionStatus+'/'+AgentId);
+    return this.http.get('https://authapi.sampanatechnologies.com/filterinteraction/'+InteractionStatus+'/'+AgentId);
   }
   public getSearchInteraction(SearchKey:any,AgentId:any) {
-    return this.http.get('http://localhost:3003/searchinteraction/'+SearchKey+'/'+AgentId);
+    return this.http.get('https://authapi.sampanatechnologies.com/searchinteraction/'+SearchKey+'/'+AgentId);
   }
   public updateInteraction(data: any) {
-    return this.http.post('http://localhost:3003/updateinteraction/',data);
+    return this.http.post('https://authapi.sampanatechnologies.com/updateinteraction/',data);
   }
   
   public checkInteractionPinned(InteractionId:any,AgentId:any) {
-    return this.http.get('http://localhost:3003/interactionpinned/'+InteractionId+'/'+AgentId);
+    return this.http.get('https://authapi.sampanatechnologies.com/interactionpinned/'+InteractionId+'/'+AgentId);
   }
 
   public getAllMessageByInteractionId(InteractionId:any,Type:any) {
-    return this.http.get('http://localhost:3003/messages/'+InteractionId+'/'+Type);
+    return this.http.get('https://authapi.sampanatechnologies.com/messages/'+InteractionId+'/'+Type);
   }
   public sendNewMessage(data: any) {
-    return this.http.post('http://localhost:3003/newmessage/',data);
+    return this.http.post('https://authapi.sampanatechnologies.com/newmessage/',data);
   }
   public deleteMessage(data: any) {
-    return this.http.post('http://localhost:3003/deletemessage/',data);
+    return this.http.post('https://authapi.sampanatechnologies.com/deletemessage/',data);
   }
   public updateMessageRead(data: any) {
-    return this.http.post('http://localhost:3003/updatemessageread/',data);
+    return this.http.post('https://authapi.sampanatechnologies.com/updatemessageread/',data);
   }
   
 
 
 
   public updateInteractionMapping(data: any) {
-    return this.http.post('http://localhost:3003/interactionmapping/',data);
+    return this.http.post('https://authapi.sampanatechnologies.com/interactionmapping/',data);
   }
   public getInteractionMapping(InteractionId:any) {
-    return this.http.get('http://localhost:3003/interactionmapping/'+InteractionId);
+    return this.http.get('https://authapi.sampanatechnologies.com/interactionmapping/'+InteractionId);
   }
 
   

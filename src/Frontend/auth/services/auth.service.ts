@@ -22,16 +22,21 @@ export class AuthService {
         return this.http.post(API_URL, data,{headers:{'Content-Type':'application/json'}})
     }
     forgotpassword(data: authForgotPassword): Observable<any> {
-        console.log("forgotpassword service")
         let API_URL = 'https://authapi.sampanatechnologies.com/forgotPassword';
         return this.http.post(API_URL, data)
     }
+    resetPassword(value:any){
+         console.log(""+value)
+         let API_URL = 'https://authapi.sampanatechnologies.com/resetPassword';
+         return this.http.post(API_URL,value)
+     }
     sendOtp(data:authSendOtp){
         let API_URL = 'https://authapi.sampanatechnologies.com/sendOtp';
         return this.http.post(API_URL, data)
     }
     verifyOtp(data:authVerifyOtp){
         let API_URL = 'https://authapi.sampanatechnologies.com/verifyOtp';
+
         return this.http.post(API_URL, data)
     }
    

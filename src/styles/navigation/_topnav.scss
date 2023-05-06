@@ -15,7 +15,8 @@
       font-weight: bolder;
       font-size: 30px;
       border-right: 1px solid #EBEBEB;
-      
+      width: 209px;
+      height: 57px;
   }
  
 
@@ -29,4 +30,12 @@
     overflow: visible;
     color: #7A86A1;
 }
+}
+
+
+
+@media all and (max-width:1536px) {
+    .sb-topnav .navbar-brand {
+        font-size: 25px;
+    }
 }

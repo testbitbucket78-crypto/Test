@@ -1,107 +1,3 @@
-// import { Component, OnInit } from '@angular/core';
-// import { FormGroup, FormControl, Validators } from '@angular/forms';
-// import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-// import { DashboardService } from './../../services';
-
-// import Stepper from 'bs-stepper';
-// declare var $: any;
-
-// @Component({
-// 	selector: 'sb-addSmartReplies',
-// 	templateUrl: './addSmartReplies.component.html',
-// 	styleUrls: ['./addSmartReplies.component.scss']
-// })
-// export class AddSmartRepliesComponent implements OnInit {
-// 	active = 1;
-// 	stepper: any;
-// 	data: any;
-// 	val: any;
-// 	selectedTeam: any;
-
-//     newSmartReply:any;
-// 	newReply=new FormGroup({
-// 		Title: new FormControl('',Validators.required),
-// 		Description:new FormControl('',Validators.required)
-	
-// 	})
-// 	model: any;
-	
-	
-// 	constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService:DashboardService ) {
-// 		// customize default values of modals used by this component tree
-// 		config.backdrop = 'static';
-// 		config.keyboard = false;
-// 	}
-
-// 	ngOnInit() {
-// 		this.stepper = new Stepper($('.bs-stepper')[0], {
-// 			linear: false,
-// 			animation: true
-// 		})
-	
-// 	}
-
-// 	addqty(val: any) {
-// 		this.data = val;
-// 	}
-//     bold() {
-// 		(<HTMLInputElement>document.getElementById("replyText")).style.fontWeight = "bold";
-// 	}
-// 	itelic() {
-// 		(<HTMLInputElement>document.getElementById("replyText")).style.fontStyle = "italic";
-// 	}
-// 	next() {
-// 		this.stepper.next();
-// 	}
-//     previous() {
-// 		this.stepper.previous();
-// 	}
-// 	openinstruction(instruction: any) {
-// 		this.modalService.open(instruction);
-// 	}
-
-// 	file: any;
-// 	getFile(event: any) {
-// 		this.file = event.target.files[0];
-// 		console.log('file', this.file);
-// 	}
-// 	onSelected(value: string) {
-// 		this.selectedTeam = value;
-// 	}
-// 	getNewSmartReplyData(){
-		
-// 		if(this.newReply.valid){
-			
-// 			sessionStorage.setItem('Title' ,this.newReply.value.Title)
-// 			sessionStorage.setItem('Description' ,this.newReply.value.Description)
-           
-// 		}
-          
-// 	}
-
-// 	onSelectionChange(entry: any): void {
-// 		this.model = entry;
-// 		console.log(this.model)
-// 		sessionStorage.setItem('MatchingCriteria',this.model)
-// 	}
-
-// 	sendNewSmartReply(){
-// 		var data={
-// 			Title:this.newReply.value.Title ,
-// 			Description:this.newReply.value.Description,
-// 			MatchingCriteria:this.model
-// 		}
-// 		console.log("data")
-// 		console.log(data)
-// 		this.apiService.addNewReply(data).subscribe((responce)=>{
-//             console.log(responce)
-// 		})
-// 	}
-	
-
-	 
-// }
-
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -120,37 +16,69 @@ export class AddSmartRepliesComponent implements OnInit {
 	stepper: any;
 	data: any;
 	val: any;
+	
 	keywordtxt: any;
 	selectedTeam: any;
-	selectedDropDown :[] = []; 
+	selectedTag:any;
+	triggerFlows:any;
+	selectedValue: any;
+	title = 'formValidation';
+        submitted = false;
     newSmartReply:any;
 	newReply=new FormGroup({
 		Title: new FormControl('',Validators.required),
 		Description:new FormControl('',Validators.required)
+		
 	
 	})
+	newReply1=new FormGroup({
+		keywords: new FormControl('',([Validators.required, Validators.maxLength(50)])),
+	})
+	
 	model: any;
+
+	
 
 	teams: string[] =
 		[
 			"James Whatson", "David Harrison", "Jane Cooper", "Charles John"
 		];
 
+	addTag: string[] =
+		[
+			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
+		];
+
 	removeTag: string[] =
 		[
 			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
 		];
+
+		triggerFlow: string[] = 
+		[
+		        "Flow New Launch","Flow Help", "Flow Buy Product", "Flow Return Product"
+			
+		];
+
+
+
 	message = '';	
 	messages:any [] = [];
 	
 	action = '';
-	actions:any [] = [];
+	addedActions:any [] =[];
+	
+	tt = '';
+	tf: any [] = []
+
+	selectedAction:any;	
 	
 	keyword: string = '';
 	keywords: string[] = [];
 	
 	editedText:string ='';
 	isEditable: boolean = false;
+	addText:string ='';
 	
 	
 	constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService:DashboardService ) {
@@ -165,12 +93,16 @@ export class AddSmartRepliesComponent implements OnInit {
 			animation: true
 		})
 	
+	
 	}
 
 	addKeyword() {
 		if (this.keyword !== '') {
 			this.keywords.push(this.keyword);
 			this.keyword = '';
+		}
+		else {
+			alert('Type any keyword first!')
 		}
 	}
 
@@ -185,20 +117,35 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	}
 
-	addAction() {
-		this.actions.push(this.action);
-		this.action= '';
+	// onSubDropdownSelect(event: any, selectedvalue:number) {
+	// 	this.selectedValue = event.target.innerText;
+	// 	this.selectedAction = this.addedActions.find(this.action =>this.addedActions.id === selectedvalue )
+		
+		
+	// }
+
+	addedAction() {
+		
+		 	
+			this.addedActions.push(this.action);
+			this.tf.push(this.tt);
+			this.action = '';
+		
+		
 	}
 
 	removeAction(index: number) {
-		this.actions.splice(index, 1);
+		this.addedActions.splice(index, 1);
 	}
 
 	addMessage() {
-			 
+			 if(this.message !== '') {
 			this.messages.push(this.message);
 			this.message = '';
-			
+		}
+		else {
+			alert('Type any message first!')
+		}
 	}
 	removeMessage(index:number) {
 		this.messages.splice(index, 1);
@@ -236,9 +183,22 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.file = event.target.files[0];
 		console.log('file', this.file);
 	}
-	onSelected(value: any) {
+	onSelectedTeams(value: any) {
 		this.selectedTeam = value;
-		this.selectedDropDown = value;
+		
+
+	}
+
+	onSelectedTag(value: any) {
+		this.selectedTag = value;
+
+
+	}
+
+	onTriggerFlow(value: any) {
+		this.triggerFlows = value;
+
+
 	}
 	getNewSmartReplyData(){
 		

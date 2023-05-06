@@ -1,184 +1,13 @@
-<!-- <sb-layout-dashboard><sb-dashboard-head title="Add Smart Reply" [hideBreadcrumbs]="true"></sb-dashboard-head>
+<sb-layout-dashboard>
+  <sb-top-nav title="Smart Replies"> </sb-top-nav>
   <div class="bs-stepper">
-    <div class="bs-stepper-header" role="tablist">
-      <!-- your steps here -->
-      <!-- <div class="step" data-target="#logins-part">
-        <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
-          <span class="bs-stepper-circle">1</span>
-          <span class="bs-stepper-label">New Smart Reply</span>
-        </button>
-      </div>
-      <div class="line"></div>
-      <div class="step" data-target="#information-part">
-        <button type="button" class="step-trigger" role="tab" aria-controls="information-part"
-          id="information-part-trigger">
-          <span class="bs-stepper-circle">2</span>
-          <span class="bs-stepper-label">Keywords and Criteria</span>
-        </button>
-      </div>
-      <div class="line"></div>
-      <div class="step" data-target="#review-part">
-        <button type="button" class="step-trigger" role="tab" aria-controls="review-part" id="review-part-trigger">
-          <span class="bs-stepper-circle">3</span>
-          <span class="bs-stepper-label">Reply Actions</span>
-        </button>
-      </div>
+    <div class="head d-flex">
+     <div class="heading d-flex">Add Smart Reply
+     </div>
+     <button type="button" routerLink="/dashboard/smartReplies" class="btn-cross" aria-label="Close" id="close-btn"  (click)="('Cross click')">X</button>
     </div>
-    <div class="bs-stepper-content">
-      <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
-        <div class="box" [formGroup]="newReply">
-          <h5>Title</h5>
-          <input class="form-control" type="text" name="Title" id="Title" formControlName="Title"
-            placeholder="Enter Name" />
-          <h5>Description</h5>
-          <div class="form-floating ff">
-            <input class="form-control" type="text" placeholder="Enter Name" name="Description" id="Description"
-              formControlName="Description" />
-          </div>
-        </div>
-        <button type="button" (click)="next()" (click)="getNewSmartReplyData()" class="btn5 btn-block col-1 mt-3 ">Next</button>
-
-      </div>
-      <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
-        <button type="button" (click)="previous()" class="btn9 btn-block col-1 mt-3 "><img
-            src="assets/img/prev.png"></button>
-        <div class="box1">
-          <h5>Add Keywords</h5>
-          <div class="box2 d-flex">
-           <input class="form-control" #keyowrdtxt   [(ngModel)]="keyword" type="text" placeholder="Enter Keywords"   />
-          <button type="button" class="btn7 btn-block ml-2 " (click)="addKeyword()" [disabled]="keyword=== ''">ADD</button>
-        </div>
-        
-        <span>Please choose a unique keyword which is not already added in other smart replies </span>
-          <span class="row">
-          <div  *ngFor="let k of keywords" class="keywords"style="font-weight: bolder; color: black;"> 
-            <div class="keytext">{{k}}<button class="rmv-btn" (click)="removeKeyword(k)">x</button></div> 
-           
-          </div>
-        </span>
-          <div class="line1"></div>
-          <h4>Matching Criteria</h4>
-          <div class="ll d-flex">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="exampleRadios" value="Fuzzy matching"
-                (change)="onSelectionChange('Fuzzy matching')">
-              <label class="form-check-label" for="exampleRadios1">
-                Fuzzy matching
-              </label>
-            </div>
-            <div class="form-check">
-              <input type="radio" class="form-check-input" value=" Exact matching" name="exampleRadios"
-                (change)="onSelectionChange('Exact matching')">
-              <label class="form-check-label" for="">
-                Exact matching
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="exampleRadios" value="contains"
-                (change)="onSelectionChange('contains')">
-              <label class="form-check-label" for="">
-                Contains
-              </label>
-            </div>
-
-          </div>
-        </div>
-        <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Next</button>
-
-      </div>
-      <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
-        <button type="button" (click)="previous()" class="btn9 btn-block col-1 mt-3 "><img
-            src="assets/img/prev.png"></button>
-        <div class="box7">
-        
-           <div class="box7child">
-            <label  *ngFor="let m of messages; let i = index" for="ff" >Message
-              <p [contentEditable]="isEditable" (input)="onEdit($event.target.innerText)" [(ngModel)]="editedText">{{m}}</p>
-                <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button> 
-                <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
-                </label>
-
-                
-                <div class="action1" *ngFor="let a of actions; let i = index" >Action<p [contentEditable]="isEditable">Conversation Assigned:{{ selectedTeam }}</p>
-                   <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button> 
-                 <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
-                 </div>
-                
-             </div>
- 
-          
-        </div>
-        <div class="reply">
-          <textarea name="content" id="replyText" class="form-control" rows="4" cols="50"
-            placeholder="Type reply.." ngDefaultControl #input [(ngModel)]="message"></textarea>
-          <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)" (click)="addMessage()">ADD</button>
-          <div class="action">
-            <button type="button" class="btn" (click)="bold()"><b>B</b></button>
-            <button type="button" class="btn" (click)="itelic()"> <i>I</i></button>
-            <button type="button" class="btn">$</button>
-            <button type="button" class="btn">
-              < />
-            </button>
-            <button type="button" class="btn"><i class="fa fa-share"></i></button>
-            <button type="button" class="btn">
-              <>
-            </button>
-
-            <div class="dropdown">
-              
-              <button class="btn6 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
-               <img style="margin: 0 4px 2px;" src="/assets/img/add.png"> Add Action
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" (click)="addAction()">Add Action</a></li>
-                <li class="nav-item dropend">
-                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">Assign Conversation</a>
-                 
-                  <ul class="dropdown-menu submenu">
-                    <p>Assign To</p>
-                    <li *ngFor="let t of teams" (click)="onSelected(t)"><a class="dropdown-item1">{{t}}</a></li>
-                  </ul>
-                </li>
-                <li><a class="dropdown-item">Add Contact Tag</a></li>
-
-                <li class="nav-item dropend">
-                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">Remove Tag</a>
-                  <ul class="dropdown-menu submenu">
-               <li *ngFor="let tags of removeTag " (click)="onSelected(tags)"><a class="dropdown-item" ><div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                  
-                      <label class="form-check-label" for="flexCheckDefault">{{tags}}</label></div>
-                    </a>
-                  </li>
-                  </ul>
-                </li>
-                <li><a class="dropdown-item">Trigger Flow</a></li>
-                <li><a class="dropdown-item">Name Update</a></li>
-                <li><a class="dropdown-item">Resolve Conversation</a></li>
-              </ul>
-            </div>
-          </div>
-
-        </div>
-
-
-
-        <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Save</button>
-      </div>
-    </div>
-  </div>
-
-
-
-
-</sb-layout-dashboard>  -->
-
-<sb-layout-dashboard><sb-dashboard-head title="Add Smart Reply" [hideBreadcrumbs]="true"></sb-dashboard-head>
-  <div class="bs-stepper">
     <div class="bs-stepper-header" role="tablist">
+     
       <!-- your steps here -->
       <div class="step" data-target="#logins-part">
         <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
@@ -207,11 +36,12 @@
         <div class="box" [formGroup]="newReply">
           <h5>Title</h5>
           <input class="form-control" type="text" name="Title" id="Title" formControlName="Title"
-            placeholder="Enter Name" />
+            placeholder="Enter title in max 20 character" />
           <h5>Description</h5>
           <div class="form-floating ff">
-            <input class="form-control" type="text" placeholder="Enter Name" name="Description" id="Description"
-              formControlName="Description" />
+            <textarea name="Description" id="Description" class="form-control" rows="4" cols="50"
+            placeholder="Enter description in max 80 character"  formControlName="Description" ></textarea>
+            
           </div>
         </div>
         <button type="button" (click)="next()" (click)="getNewSmartReplyData()" class="btn5 btn-block col-1 mt-3 ">Next</button>
@@ -220,10 +50,10 @@
       <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
         <button type="button" (click)="previous()" class="btn9 btn-block col-1 mt-3 "><img
             src="assets/img/prev.png"></button>
-        <div class="box1">
-          <h5>Add Keywords</h5>
-          <div class="box2 d-flex">
-           <input class="form-control" #keyowrdtxt   [(ngModel)]="keyword" type="text" placeholder="Enter Keywords"   />
+        <div class="box1" [formGroup]="newReply1">
+          <h5>Add Keyword</h5>
+          <div class="box2 d-flex" data-required="Use enter key to add ➥"   > 
+           <input class="form-control" #keyowrdtxt   [(ngModel)]="keyword" type="text" placeholder="Enter Keywords"   formControlName="Keywords" id="Keywords" [ngClass]="{'is-invalid' :submitted && newReply.controls.Keywords.errors}" />
           <button type="button" class="btn7 btn-block ml-2 " (click)="addKeyword()" [disabled]="keyword=== ''">ADD</button>
         </div>
         
@@ -235,7 +65,7 @@
           </div>
         </span>
           <div class="line1"></div>
-          <h4>Matching Criteria</h4>
+          <h4 id="line1-h4">Matching Criteria</h4>
           <div class="ll d-flex">
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" value="Fuzzy matching"
@@ -243,6 +73,7 @@
               <label class="form-check-label" for="exampleRadios1">
                 Fuzzy matching
               </label>
+              <img id="detail" src="assets/img/info.png">
             </div>
             <div class="form-check">
               <input type="radio" class="form-check-input" value=" Exact matching" name="exampleRadios"
@@ -250,6 +81,7 @@
               <label class="form-check-label" for="">
                 Exact matching
               </label>
+              <img id="detail" src="assets/img/info.png">
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" value="contains"
@@ -257,6 +89,7 @@
               <label class="form-check-label" for="">
                 Contains
               </label>
+              <img id="detail" src="assets/img/info.png">
             </div>
 
           </div>
@@ -271,25 +104,39 @@
         
            <div class="box7child">
             <label  *ngFor="let m of messages; let i = index" for="ff" >Message
-              <p [contentEditable]="isEditable" (input)="onEdit($event.target.innerText)" [(ngModel)]="editedText">{{m}}</p>
+              <p [contentEditable]="isEditable" (input)="onEdit($event.target.innerText)">{{m}}</p>
                 <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button> 
                 <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
                 </label>
 
-                
-                <div class="action1" *ngFor="let a of actions; let i = index" >Action<p [contentEditable]="isEditable">Conversation Assigned:{{ selectedTeam }}</p>
-                   <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button> 
+                <div class="action1" *ngFor="let a of addedActions; let i = index ">{{i}}  <p> Conversation Assigned: {{selectedTeam}}</p>
+                 
+                 
+              
                  <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
-                 </div>
+                </div>
+  
+
+                
+              
                 
              </div>
+               <div class="action1" *ngFor="let a of addedActions; let i = index "> {{i}}  <p> Add Tag: {{selectedTag}}</p>
+                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+                  </div>
+
+                   <div class="action1" *ngFor="let t of tf; let i = index "> {{i}}  <p> TriggerFlow: {{triggerFlows}}</p>
+                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+                  </div>
+
+             
  
           
-        </div>
+        
         <div class="reply">
           <textarea name="content" id="replyText" class="form-control" rows="4" cols="50"
             placeholder="Type reply.." ngDefaultControl #input [(ngModel)]="message"></textarea>
-          <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)" (click)="addMessage()">ADD</button>
+          <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)" (click)="addMessage()">Add</button>
           <div class="action">
             <button type="button" class="btn" (click)="bold()"><b>B</b></button>
             <button type="button" class="btn" (click)="itelic()"> <i>I</i></button>
@@ -306,26 +153,26 @@
               
               <button class="btn6 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
                 data-bs-toggle="dropdown" aria-expanded="false">
-               <img style="margin: 0 4px 2px;" src="/assets/img/add.png"> Add Action
+               <img style="margin: 0 4px 2px;" src="assets/img/add.png" alt="error"> Add Action
               </button>
               <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" (click)="addAction()">Add Action</a></li>
+                <li ><a  class="dropdown-item" (click)="addedAction()">Add Action</a></li>
                 <li class="nav-item dropend">
                   <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
                     aria-expanded="false">Assign Conversation</a>
                  
                   <ul class="dropdown-menu submenu">
                     <p>Assign To</p>
-                    <li *ngFor="let t of teams" (click)="onSelected(t)"><a class="dropdown-item1">{{t}}</a></li>
+                     <li  *ngFor="let t of teams" (click)="onSelectedTeams(t)" ><a class="dropdown-item1">{{t}}</a></li> 
                   </ul>
                 </li>
-                <li><a class="dropdown-item">Add Contact Tag</a></li>
 
-                <li class="nav-item dropend">
+              <li class="nav-item dropend">
                   <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">Remove Tag</a>
+                    aria-expanded="false">Add Contact Tag</a>
                   <ul class="dropdown-menu submenu">
-               <li *ngFor="let tags of removeTag " (click)="onSelected(tags)"><a class="dropdown-item" ><div class="form-check">
+                     <p>Add Tag</p>
+               <li *ngFor="let tags of addTag " (click)="onSelectedTag(tags)"><a class="dropdown-item" ><div class="form-check">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
                   
                       <label class="form-check-label" for="flexCheckDefault">{{tags}}</label></div>
@@ -333,7 +180,30 @@
                   </li>
                   </ul>
                 </li>
-                <li><a class="dropdown-item">Trigger Flow</a></li>
+
+                <li class="nav-item dropend">
+                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">Remove Tag</a>
+                  <ul class="dropdown-menu submenu">
+                       <p>Remove Tag</p>
+               <li *ngFor="let tags of removeTag " (click)="onSelectedTag(tags)"><a class="dropdown-item" ><div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                  
+                      <label class="form-check-label" for="flexCheckDefault">{{tags}}</label></div>
+                    </a>
+                  </li>
+                  </ul>
+                </li>
+                 <li class="nav-item dropend">
+                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">Trigger Flow</a>
+                <ul class="dropdown-menu submenu">
+                   <p>Pause Auto Replies</p>
+                <li *ngFor="let trigger of triggerFlow " (click)="onTriggerFlow(trigger)"><a class="dropdown-item1">{{trigger}}</a>
+                
+                </li>
+                </ul>
+                </li>
                 <li><a class="dropdown-item">Name Update</a></li>
                 <li><a class="dropdown-item">Resolve Conversation</a></li>
               </ul>
@@ -341,10 +211,11 @@
           </div>
 
         </div>
-
+     </div>
 
 
         <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Save</button>
+      
       </div>
     </div>
   </div>

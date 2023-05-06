@@ -23,12 +23,19 @@ db.connect((err) => {
 function runQuery(req, res, query, param) {
     
     db.query(query, param, (err, result) => {
-     if(err){
-        console.log(JSON.stringify(err))
-        console.log(query)
-        }else{
-        res.send(result)
+       
+        if (err) {
+          
+            res.send( err);
         }
+       
+
+       res.send(result)
+       
+  
+        
+
+
     });
 
 

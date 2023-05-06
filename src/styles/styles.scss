@@ -1,11 +1,13 @@
 // Import Custom Variables
 @import "variables.scss";
 
+
 // Import Bootstrap
 @import "bootstrap/scss/bootstrap.scss";
 
 // Import Custom SCSS
 @import "global.scss";
+
 
 // Layout
 @import "layout/authentication.scss";
@@ -37,3 +39,9 @@ body,.modal-content{
 
 
 
+
+/* Importing Bootstrap SCSS file. */
+@import "~bootstrap/scss/bootstrap";
+
+/* Importing Datepicker SCSS file. */
+@import "~ngx-bootstrap/datepicker/bs-datepicker";

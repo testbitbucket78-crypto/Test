@@ -41,7 +41,7 @@ console.log(this.automations);
     });
   }
    getContact() {
-    this.apiService.Contact().subscribe(data => {this.contacts = data;
+    this.apiService.Contact('SP_ID').subscribe(data => {this.contacts = data;
 console.log(this.contacts);
     });
   }

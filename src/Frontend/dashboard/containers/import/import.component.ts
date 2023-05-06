@@ -1,46 +1,66 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CSVRecord } from './../../models'
 import Stepper from 'bs-stepper';
+import { Content } from '@angular/compiler/src/render3/r3_ast';
 declare var $: any;
+
 
 @Component({
 	selector: 'sb-import',
+	changeDetection: ChangeDetectionStrategy.Default,
 	templateUrl: './import.component.html',
 	styleUrls: ['./import.component.scss']
 })
+
+
 export class ImportComponent implements OnInit {
+
 	active = 1;
-	file: any;
+	file: any;                                           
 	stepper: any;
-	fileName: any;
-	numberOfNewContact: any;
-	data: any;
-	public headers: any[] = [];
+	fileName: any;                                    
+	numberOfNewContact: any;                           
+	public headers: any[] = [];                         
 	records: any[] = [];
-	checkedConatct: any;
-	checkboxArray = [];
 	selectedIdentifier: any[] = [];
-	defaultSelectedIdentifier: any = "";
-	Identifier: any = "email"
-	fields: any[] = [];
-	countUpdatedData: any;
+	Identifier: any;
+	purpose: any;
+	fields: any[] = [];                                                       
+	countUpdatedData: any;                        
+	importCSVdata: any[] = [];
+	skipCont: any;
+	columnMapping: any;
+	importedData: any[] = [];
+	fileformat = 'csv';
+	content:any;
+	isOverrideOn!:boolean;
+	showTopNav:boolean = true;
+
+	
+
+
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
 	ngOnInit() {
+
+		this.showTopNav = false;
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: false,
+			linear: true,
 			animation: true
-		})
-		this.defaultSelectedIdentifier = "emailId"
-		this.selectedIdentifier.push(this.defaultSelectedIdentifier)
 		
+		})
+		this.Identifier = "emailId"
+		this.purpose = "Add new contact only"
+		this.selectedIdentifier.push(this.Identifier)
+
 	}
+
 	next() {
 		this.stepper.next();
 	}
@@ -48,38 +68,79 @@ export class ImportComponent implements OnInit {
 		this.modalService.open(instruction);
 	}
 
+	//********csv file upload  *********
 	onChange(event: any) {
 
 		this.file = event.target.files[0];
 
 	}
 
+    //********open error dialog boxes *********/
+	open(any: any) {
+		this.modalService.open(any);
+	}
 
-	onUpload() {
 
+
+	//**** incorrect file format popup ****/
+	incorrectFile = (content:any) => {
 	
+		const currentfileformat = this.file.name.split(".").pop();
+		if(currentfileformat !== this.fileformat) {
+	
+			this.modalService.open(content);
+			
+		}
+
+		else {
+			this.next();
+		}
+	}
+
+	/***** import started in background popup and function ****/
+
+	importStrated = (imports:any) => {
+		if (this.numberOfNewContact !== 0 && this.countUpdatedData !== 0) {
+			this.updateAndSave();
+			this.modalService.open(imports);
+		}
+
+		else {
+			this.next();
+		}
+
+	}
+
+
+
+//*********After upload read file *********/
+	onUpload(event: any) {
+
+		this.file = event.target.files[0];
 		this.fileName = this.file.name
-		
+
 		let reader: FileReader = new FileReader();
 		reader.readAsText(this.file);
 		reader.onload = () => {
-			
+
 			let csvData = reader.result;
 			let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);
-			this.data = csvRecordsArray
-			
-			this.numberOfNewContact = (csvRecordsArray.length) - 2;
-		
+			//console.log(csvRecordsArray)
+			//this.data = csvRecordsArray
+
+
 			let headersRow = this.getHeaderArray(csvRecordsArray);
 			this.headers = headersRow;
-			this.records = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow.length);
-			
+			//console.log(csvRecordsArray)
+			this.importedData = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
+
+			// console.log("this.records")
+			// console.log(this.importedData)
 
 
 		}
 	}
-
-	
+	//*********Download Sample file****************/
 
 	download() {
 		this.apiService.download().subscribe((data: any) => {
@@ -89,6 +150,16 @@ export class ImportComponent implements OnInit {
 		})
 	}
 
+	downloadERRfile() {
+		this.apiService.downloadErrFile().subscribe((data: any) => {
+			const blob = new Blob([data], { type: 'text/csv' });
+			const url = window.URL.createObjectURL(blob);
+			window.open(url);
+		})
+	}
+
+
+	//**********Method to collect header of csv file**********/
 	getHeaderArray(csvRecordsArr: any) {
 		let headers = (<string>csvRecordsArr[0]).split(',');
 		let headerArray = [];
@@ -97,80 +168,127 @@ export class ImportComponent implements OnInit {
 		}
 		return headerArray;
 	}
-
+	//***********Collect csv file headers value******** /
 	getDataRecordsArrayFromCSVFile(csvRecordsArray: any, headerLength: any) {
 		let csvArr: any = [];
+		let errorDataArray: any = [];
+		console.log("headerLength*******", headerLength.length)
 
-		for (let i = 1; i < csvRecordsArray.length; i++) {
+		for (let i = 1; i < csvRecordsArray.length - 1; i++) {
 			let curruntRecord = (<string>csvRecordsArray[i]).split(',');
-			if (curruntRecord.length == headerLength) {
-				let csvRecord: CSVRecord = new CSVRecord();
-				csvRecord.Name = curruntRecord[0].trim();
-				csvRecord.Phone_number = curruntRecord[2].trim();
-				csvRecord.emailId = curruntRecord[1].trim();
-				csvRecord.status = curruntRecord[4].trim();
-				csvRecord.sex = curruntRecord[3].trim();
-				csvRecord.state = curruntRecord[6].trim();
-				csvRecord.Country = curruntRecord[7].trim();
-				csvRecord.tag = curruntRecord[5].trim()
-				csvRecord.uid = curruntRecord[8].trim();
-				csvRecord.sp_account_id = curruntRecord[12].trim();
-				csvRecord.age = curruntRecord[14].trim();
-				csvRecord.address = curruntRecord[11].trim();
-				csvRecord.pincode = curruntRecord[9].trim();
-				csvRecord.city = curruntRecord[10].trim();
-				csvRecord.OptInStatus = curruntRecord[13].trim();
-				csvRecord.facebookId = curruntRecord[15].trim();
-				csvRecord.InstagramId = curruntRecord[16].trim();
-				csvArr.push(csvRecord);
+			//let values = dataRows[i].split(',');
+			// if (curruntRecord.length != headerLength.length) {
+
+			// 	let errObj: any = new Object();
+			// 	for (let index = 0; index < headerLength.length; index++) {
+			// 		const propertyName: string = headerLength[index];
+
+			// 		let val: any = curruntRecord[index];
+			// 		if (val === '') {
+			// 			val = null;
+			// 		}
+			// 		errObj[propertyName] = val;
+
+			// 	} 
+			// 	errorDataArray.push(errObj)
+			// }
+			// else {
+			let obj: any = new Object();
+			for (let index = 0; index < headerLength.length; index++) {
+				const propertyName: string = headerLength[index];
+
+				let val: any = curruntRecord[index];
+				if (val === '') {
+					val = null;
+				}
+				obj[propertyName] = val;
+
 			}
-
-			
-
+			csvArr.push(obj)
 		}
+		//}
 		return csvArr;
 	}
-
+	//*********Override field Method ******** */
 	getUpdateFields(event: any, data: any) {
-		
 		this.fields.push(data);
-		
+
+
 	}
+
+	//********************For move next page************************ */
 	previous() {
 		this.stepper.previous();
 	}
+
+
+	//******************Update and save csv file data******************** /
 	updateAndSave() {
-		
+
 		var Data = {
-			data: this.records,
-			field: this.fields,
-			identifier: this.selectedIdentifier
+
+			"field": this.fields,
+			"identifier": this.selectedIdentifier,
+			"purpose": this.purpose,
+			"mapping": this.columnMapping,
+			"importedData": this.importCSVdata
 		}
+
 		this.apiService.update(Data).subscribe((Data: any) => {
-			
+
 		})
-		
+
 		this.selectedIdentifier.length = 0;
-		
+
 		this.fields.length = 0;
-		
+
 	}
+
+	//************************* Select Identifier of imported file ********************************* */
 
 	onSelected(value: any) {
 		this.Identifier = value
 		this.selectedIdentifier.length = 0;
-	
+
 		this.selectedIdentifier.push(value);
-	
+
 
 	}
 
+	//*******************************Select purose of imported file******************************************* */
+	onSelectPurpose(value: any) {
+		this.purpose = value;
+	}
 
+	//*************************Updated and added data count*************************** /
 	updatedDataCount() {
-		console.log("update count" +this.records.length)
-		this.apiService.updatedDataCount(this.records).subscribe((data: any) => {
-			this.countUpdatedData = data.count
-			console.log(" get data " + data.count)
+		console.log("update count" + this.records.length)
+		console.log(this.importedData)
+		this.columnMapping = {
+			"Name": '',
+			"emailId": '',
+			"Mobile_Number": '',
+			"Gender": '',
+			"Tags": '',
+			"Status": '',
+			"Country": '',
+			"State": ''
+		}
+		var csvdata = {
+			"field": this.fields,
+			"identifier": this.selectedIdentifier,
+			"purpose": this.purpose,
+			"mapping": this.columnMapping,
+			"importedData": this.importedData
+
+		}
+		this.apiService.updatedDataCount(csvdata).subscribe((data: any) => {
+			this.countUpdatedData = data.upCont
+			this.numberOfNewContact = data.newCon
+			this.skipCont = data.skipCont
+			this.importCSVdata = data.importData
+			console.log(" get data ")
+			console.log(this.importCSVdata)
 
 		})
 

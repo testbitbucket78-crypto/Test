@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@a
 import { UserService } from 'Frontend/auth/services';
 import { SideNavItems, SideNavSection } from 'Frontend/navigation/models';
 import { NavigationService } from 'Frontend/navigation/services';
+import { element } from 'protractor';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -20,9 +21,47 @@ export class SideNavComponent implements OnInit, OnDestroy {
 
     constructor(public navigationService: NavigationService, public userService: UserService) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        // this.openHamburger();
+    
+    }
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
     }
+
+
+    // openHamburger() {
+    //     const openHam: HTMLCollectionOf<HTMLElement> = document.getElementsByClassName('sidenav-item')[0];
+    //     const sideNavMenu = document.getElementById('sidenav-menu');
+    //     const sideBarToggle = document.getElementById('sidebarToggle');
+    //     const mainBody = document.getElementsByClassName('.container-fluid');
+    //     const caret: HTMLCollectionOf<HTMLElement> = document.getElementsByClassName('svg-inline--fa fa-angle-down fa-w-10');
+
+
+    //         for (let i=0; i<openHam.length; i++) {
+    //             if (openHam[i].style.display == "block")
+    //             {
+    //                 openHam[i].style.display = "none";
+    //                 caret[i].style.display = "none";
+    //                 sideNavMenu.style.width ="25%";
+    //                 sideNavMenu.style.border = "0";
+    //                 // mainBody[i].style.marginLeft = "-10%";
+    //                 sideBarToggle!.style.marginLeft = "-10px";
+    //             }
+    //             else {
+    //                 openHam[i].style.display = "block";
+    //                 caret[i].style.display = "block";
+    //                 sideNavMenu.style.borderRight = "1px solid #EBEBEB";
+    //                 sideNavMenu.style.width = "100%";
+    //                 sideBarToggle.style.marginLeft = "-148px";
+    //             }
+             
+    //         }
+       
+    // }
+
+   
+
+
 }

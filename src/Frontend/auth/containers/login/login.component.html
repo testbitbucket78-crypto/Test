@@ -1,24 +1,57 @@
-<sb-layout-auth
-    ><div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-5">
-                <div class="card shadow-lg border-0 rounded-lg mt-5">
-                    <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
-                    <div class="card-body">
-                        <form>
-                            <div class="form-group"><label class="small mb-1" for="inputEmailAddress">Email</label><input class="form-control py-4" id="inputEmailAddress" type="email" placeholder="Enter email address" /></div>
-                            <div class="form-group"><label class="small mb-1" for="inputPassword">Password</label><input class="form-control py-4" id="inputPassword" type="password" placeholder="Enter password" /></div>
-                            <div class="form-group">
-                                <div class="custom-control custom-checkbox"><input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" /><label class="custom-control-label" for="rememberPasswordCheck">Remember password</label></div>
-                            </div>
-                            <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0"><a class="small" routerLink="/auth/forgot-password">Forgot Password?</a><a class="btn btn-primary" routerLink="/dashboard">Login</a></div>
-                        </form>
-                    </div>
-                    <div class="card-footer text-center">
-                        <div class="small"><a routerLink="/auth/register">Need an account? Sign up!</a></div>
-                    </div>
+<sb-layout-auth>
+    <div class="container col-lg-12">
+        <img src="assets/img/img-reg.png" class="float-left">
+        <div class="row">
+
+            <div class="col-lg-12 mt-4">
+
+                <div class="log">
+                    <h3 class="font-weight-light">Log In</h3>
                 </div>
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" (ngSubmit)="onVerification()">
+                    <div class="row col-10">
+                        <div class="col-sm-6">
+                            <label for="floatingInputGrid">Your Email</label>
+
+                            <input type="text-right mr-3" class="form-control" [ngClass]="{'is-invalid' :submitted && loginForm.controls.email_id.errors}"
+                             placeholder="Email" aria-label="City" name="email_id" formControlName="email_id" id="email_id" required>
+                        </div>
+                        
+                        
+                        <div class=" col-sm-6">
+                            <label for="floatingInputGrid">Password</label>
+                            <input [type]="changetype?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && loginForm.controls.password.errors}"
+                             placeholder="8 character" aria-label="State" name="password" formControlName="password" id="password">
+                                  <span class="eyeicon"(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye':'fa fa-eye-slash'"></i></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-1 "></div>
+                        <div class="custom-control custom-checkbox">
+                            <input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
+                            <label class="custom-control-label" for="rememberPasswordCheck">Remember Me</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 text-center" ><a class="small" routerLink="/forgot-password" >Forgot
+                            Password?</a></div>
+                    <div class="form-group d-flex align-items-center justify-content-between  col-sm-12">
+                        <button class="btn btn" type="submit">Log In</button>
+                        
+                    </div>
+                    
+                      <div id="error-message"></div>
+                      
+                      
+                     
+                    
+                </form>
+                <div class="mt-6 "><a routerLink="/register" style="display: inline-flex">New User?<h6 class="ml-1"> Create an
+                    account</h6></a></div>
             </div>
         </div>
-    </div></sb-layout-auth
->
+        
+    </div>
+
+
+</sb-layout-auth>

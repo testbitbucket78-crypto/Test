@@ -28,6 +28,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/intl-tel-input/build/css/intlTelInput.css",
               "src/styles/styles.scss"
             ],
             "stylePreprocessorOptions": {
@@ -36,7 +37,7 @@
                 "./node_modules"
               ]
             },
-            "scripts": []
+            "scripts": ["node_modules/intl-tel-input/build/js/intlTelInput.min.js"]
           },
           "configurations": {
             "production": {
@@ -141,4 +142,6 @@
   "cli": {
     "analytics": "85b36ccb-eed5-4d70-8666-ca4bd5f177da"
   }
+  
 }
+

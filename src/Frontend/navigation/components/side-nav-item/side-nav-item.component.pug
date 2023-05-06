@@ -1,7 +1,7 @@
 a.nav-link(
     [routerLink]='sideNavItem.link',
     (click)='expanded = !expanded',
-    [ngClass]='{active: isActive, collapsed: !expanded}'
+    [ngClass]='{active: expended, collapsed: !expanded}'
 )
     .sb-nav-link-icon(*ngIf='sideNavItem.icon')
         fa-icon([icon]='["fas", sideNavItem.icon]')
