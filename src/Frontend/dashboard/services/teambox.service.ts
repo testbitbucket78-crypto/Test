@@ -10,7 +10,7 @@ export class TeamboxService {
   constructor(private http: HttpClient) { }
 
   public uploadfile(FileData:any) {
-    return this.http.post('http://localhost:3003/uploadfile/',FileData);
+      return this.http.post('http://authapi.sampanatechnologies.com/uploadfile/',FileData);
   }
 
   public getAgents(SPID:any) {
