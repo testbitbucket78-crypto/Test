@@ -47,7 +47,7 @@ import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
         ChartsModule,
         TablesModule,
         NgxIntlTelInputModule,
-        AgGridModule.withComponents([dashboardContainers.ContactsComponent])
+        AgGridModule.withComponents([dashboardContainers.ContactsComponent]),
         RichTextEditorModule
         
     ],
