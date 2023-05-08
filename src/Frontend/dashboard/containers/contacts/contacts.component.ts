@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy,ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -85,6 +85,9 @@ export class ContactsComponent implements OnInit {
    selectedTag: any;
    showTopNav: boolean = false;
    isButtonEnabled = false;
+   isButtonDisabled = true;
+   inputText!: string;
+   inputEmail!: string;
  
 
   // multiselect 
@@ -123,7 +126,7 @@ export class ContactsComponent implements OnInit {
  
   
   
- constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private changeRef:ChangeDetectorRef)
+ constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder)
  
  
  {
@@ -159,6 +162,16 @@ export class ContactsComponent implements OnInit {
     InstagramId: new FormControl('')
   })
 }
+
+  onInputChange() {
+    this.isButtonDisabled = this.inputText.length === 0;
+
+  }
+
+  onInputChangeEmail() {
+    this.isButtonDisabled = this.inputEmail.length === 0;
+  }
+
 
 
     ngOnInit() {
@@ -289,6 +302,12 @@ onSelectAll(items: any) {
 		this.modalService.open(content);
 	}
 
+  openaddcontact(addcontact: any) {
+    this.modalService.open(addcontact);
+    this.getContact();
+  }
+
+
  
 
   openedit(contactedit: any) {
@@ -301,8 +320,8 @@ onSelectAll(items: any) {
         Phone_number: new FormControl(result[0].Phone_number),
         emailId: new FormControl(result[0].emailId),
         age: new FormControl(result[0].age),
-        tag: new FormControl([result[0].tag]),
-        status: new FormControl([result[0].status]),
+        tag: new FormControl(result[0].tag.split(',')),
+        status: new FormControl(result[0].status.split(',')),
         facebookId: new FormControl(result[0].facebookId),
         InstagramId: new FormControl(result[0].InstagramId)
       })
@@ -361,6 +380,7 @@ onSelectAll(items: any) {
       
       this.apiService.deletContactById(data).subscribe(response => {
         console.log(response)
+        this.getContact();
       });
   
   }
@@ -426,18 +446,23 @@ onSelectAll(items: any) {
   addContact() {
     console.log("******")
     console.log(this.newContact.value)
+    this.submitted = true;
     console.log(this.selectedCountry)
     console.log(this.code);
-    this.submitted = true
-		this.apiService.addContact(this.newContact.value).subscribe(response => {
+    
+		this.apiService.addContact(this.newContact.value).subscribe((response:any) => {
 			console.log(response)
-      
-		})
-    this.changeRef.detectChanges();
-    if (this.newContact.invalid){
-      return
-  }
+    
+        this.getContact();
+     
+         
+   });
+    
 }
+
+// else if(this.newContact.invalid) {
+//     alert('error something went wrong!');
+//   }
 
   editContactData() {
     console.log("editContactData")
@@ -447,8 +472,9 @@ onSelectAll(items: any) {
     console.log(this.editContact.value)
     this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
       console.log(response)
-      this.changeRef.detectChanges();
-    })
+      this.getContact();
+    });
+   
 
 
   }
@@ -489,8 +515,9 @@ deletContactByID(data: any) {
   console.log("delete")
   console.log(data)
   this.apiService.deletContactById(data).subscribe((responce => {
+    console.log(responce);
   }));
-  this.changeRef.detectChanges();
+  this.getContact();
 
 
 }
@@ -499,9 +526,10 @@ deletContactByID(data: any) {
     var SP_ID = sessionStorage.getItem('SP_ID')
     this.apiService.blockContact(data, SP_ID).subscribe((responce => {
       console.log(responce);
-      this.changeRef.detectChanges();
+    
 
-    }))
+    }));
+    this.getContact();
   }
 
   getContactById(data: any) {
@@ -525,19 +553,20 @@ deletContactByID(data: any) {
     }
     this.apiService.exportCheckedContact(exContact).subscribe(response => {
       console.log(response);
-      this.changeRef.detectChanges();
+   
 
-    })
+    });
+    this.getContact();
 
   };
-
- 
 
   onFilterTextBoxChange() {
     const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
    this.gridapi.setQuickFilter(searchInput.value);
 
   }
+
+
 
 
 }

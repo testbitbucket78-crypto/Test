@@ -5,7 +5,7 @@
   <div class="card9 float-right">
     <div class="card-body-right">
       <h4 id="card9-h4">Recent conversations</h4>
-        <div class="row d-flex" *ngFor="let items of recentConversation">
+        <div class="rowss d-flex" *ngFor="let items of recentConversation">
               <img src="assets/img/my.png">
               <div class="row2">
                 <h5>{{items.Name}}</h5>
@@ -39,7 +39,7 @@
   
 
 <div [(ngModel)]="Name"><p id="heading">Hello {{Name}}, Welcome</p></div>
-<div id="heading2" class="card9">
+<div id="heading2" class="card8">
   <h2>"Summary for last 30 days"</h2>
   
   </div>
@@ -120,7 +120,7 @@
           <div class="row d-flex">
             <img id="scheduledCampaign" src="assets/img/total.png">
             <div class="row1 ">
-              <div class="mt-5 ml-3 text-justify" [(ngModel)]="scheduledCampaign">
+              <div class=" totalscheduled text-justify" [(ngModel)]="scheduledCampaign">
                 <h5>{{scheduledCampaign}}</h5>
                 <h6 id="totalsche">Total Scheduled</h6>
               </div>
@@ -130,7 +130,7 @@
             <div class="new">
               <img id="completedCampaign"  src="assets/img/camp.png">
               <div class="row9">
-                <div class="mt-5 ml-3 text-justify" [(ngModel)]="completedCampaign">
+                <div class="totalcampaign text-justify" [(ngModel)]="completedCampaign">
                   <h5>{{completedCampaign}}</h5>
                   <h6 id="totaldraft">Total Completed</h6>
                 </div>
@@ -141,7 +141,7 @@
           <div class="row d-flex">
             <img  id="scheduledCampaign"src="assets/img/deli.png">
             <div class="row1">
-              <div class="mt-5 ml-3 text-justify" [(ngModel)]="runningCampaign">
+              <div class=" totalscheduled text-justify" [(ngModel)]="runningCampaign">
                 <h5>{{runningCampaign}}</h5>
                 <h6 id="totalsche">Total Running</h6>
               </div>
@@ -153,7 +153,7 @@
                 <img src="assets/img/failed.png">
               </div>
               <div class="row9">
-                <div class="mt-5 ml-3 text-justify" [(ngModel)]="draftCampaign">
+                <div class="totalcampaign text-justify" [(ngModel)]="draftCampaign">
                   <h5>{{draftCampaign}}</h5>
                   <h6 id="totaldraft">Total Draft</h6>
                 </div>

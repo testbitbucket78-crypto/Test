@@ -42,18 +42,16 @@
                     <div *ngIf= "submitted && loginForm.controls.email_id.errors" class="text-danger">
                         ! Incorrect email or password.
                       </div>
-                        <!-- <div *ngIf= "submitted && errorStatusno===401" class="text-danger">
-                        ! Unauthorized.
+                        <div *ngIf= "submitted && errorStatusno===401" class="text-danger">
+                        ! Incorrect email or password.
                       </div>
                          <div *ngIf= "submitted && errorStatusno===403" class="text-danger">
                         ! Forbidden.
                       </div>
-                      <div *ngIf= "submitted && errorStatusno===400" class="text-danger">
+                      <div class="text-danger">
                         ! Bad Request.
                       </div>
-                       <div *ngIf= "submitted && errorStatusno===404 " class="text-danger">
-                        ! Not Found.
-                      </div> -->
+                       <div class="text-danger" id="505-error"></div>
                        </form>
                 <div class="mt-6 "><a routerLink="/register" style="display: inline-flex">New User?<h6 class="ml-1"> Create an
                     account</h6></a></div>

@@ -123,10 +123,10 @@ export class DashboardService {
   //******************Smart replies API's*********************//
 
 
-   getSmartReply() {
-    return this.http.get('https://smartapi.sampanatechnologies.com/getReplies')
+  getSmartReply(SP_ID: any) {
+    const params = new HttpParams().set('SP_ID', SP_ID)
+    return this.http.get('https://smartapi.sampanatechnologies.com/getReplies', { params: params })
   }
-
   searchSmartReply(ID: any) {
     const params = new HttpParams().set('ID', ID)
     console.log("params  "  + params)

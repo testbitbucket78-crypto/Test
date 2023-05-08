@@ -481,27 +481,6 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.OrganizationComponent,
     },
-    {
-        path: 'addSmartReplies',
-        data: {
-            title: 'Add Replies',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-
-                    text: 'Add Replies',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.AddSmartRepliesComponent,
-    },
-  
-    
 
 ];
 

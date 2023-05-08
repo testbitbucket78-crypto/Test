@@ -13,7 +13,7 @@ import { Validators } from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
     
-    checked  =true;
+    checked  = true;
     password: any;
     loginForm=new FormGroup({
         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
@@ -26,17 +26,13 @@ export class LoginComponent implements OnInit {
         errorStatusno = 400;
         
         errorStatusno3 = 403;
-        errorStatusno4 = 404;
+        errorStatusno4 = 502;
       
     constructor(private apiService :AuthService ,private router: Router, private formBuilder: FormBuilder) {
        
     }
     ngOnInit() {
-        this.errorStatusno1
-        this.errorStatusno
-
-        this.errorStatusno3
-        this.errorStatusno4
+    
     }
 
 
@@ -50,49 +46,54 @@ export class LoginComponent implements OnInit {
                 console.log(result.user.UserType)
                 if (result.user.UserType == 'Owner') {
                     console.log("Agent ")
-                    alert('Login Successful');
                     this.router.navigate(['dashboard'])
                 }
 
             },
             (error) => {
-                this.errorStatusno = error.status;
-                this.errorStatusno1 = error.status;
-                this.errorStatusno3 = error.status;
-                this.errorStatusno4 = error.status;
+                if (error.status === this.errorStatusno4) {
+                    document.getElementById("505-error")!.innerText = '! Internal Server Error, Please Try After Some Time.';
+                       
+                }
+                // else if(error.status === this.)
 
-                console.log(this.errorStatusno1);
-                console.log(this.errorStatusno3);
-                console.log(this.errorStatusno4);
-                console.log(this.errorStatusno);
-                // if (error.status === 401) {
-                //     error.staus = 'Forbidden';
-                // } else if (error.status === 403) {
-                //     alert('Forbidden');
-                // } else if (error.status === 404) {
-                //     alert('Not Found');
+
+
+
+                //     if (errorDiv) {
+                //         errorDiv.innerHTML = ;
+                //     }
                 // } else if (error.status === 400) {
-                //     alert('Bad Request')
+                //     // Show payment required message
+                //     alert("Internal Server Error. Please retry after sometime")
                 // }
-            }
-        );
-    }
+                // else if (error.status === 500) {
+                //     alert("Internal Server Error. Please retry after sometime")
+                // }
+            })
 
-    onVerification(){
-        // console.log(this.loginForm.value)
+
+        // if(result.user.UserType=='Owner'){
+        //     console.log("Agent ")
+        // }
+
+
+
+
+    }
+    onVerification() {
+        console.log(this.loginForm.value)
         this.submitted = true
 
-        if (this.loginForm.invalid){
-            return
-        }
+
     }
 
-    visible:boolean = true;
-    changetype:boolean = true;
+    visible: boolean = true;
+    changetype: boolean = true;
 
-    viewpass(){
+    viewpass() {
         this.visible = !this.visible;
         this.changetype = !this.changetype;
-        
+
     }
 }

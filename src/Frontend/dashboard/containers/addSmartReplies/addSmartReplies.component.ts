@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 
@@ -29,19 +29,17 @@ export class AddSmartRepliesComponent implements OnInit {
 	})
 	model: any;
 
-	
-
-	teams: string[] =
+	assignConversation: string[] =
 		[
 			"James Whatson", "David Harrison", "Jane Cooper", "Charles John"
 		];
 
-	addTag: string[] =
+	addContactTag: string[] =
 		[
 			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
 		];
 
-	removeTag: string[] =
+	removeContactTag: string[] =
 		[
 			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
 		];
@@ -53,7 +51,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		];
 
 
-
+	newMessage!: FormGroup;
 	message = '';	
 	messages:any [] = [];
 	
@@ -71,9 +69,19 @@ export class AddSmartRepliesComponent implements OnInit {
 	editedText:string ='';
 	isEditable: boolean = false;
 	addText:string ='';
+	showBox:boolean = false;
+	showBox1: boolean = false;
+	showBox2: boolean = false;
+	showattachmentbox = false;
+	agentsList = ["James Whatson", "David Harrison", "Jane Cooper", "Charles John"];
+	selectedInteraction: any = [];
+	ShowAssignOption = false;
+	errorMessage = '';
+	successMessage = '';
+	warningMessage = '';
+
 	
-	
-	constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService:DashboardService ) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder ) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -81,11 +89,20 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	ngOnInit() {
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: false,
+			linear: true,
 			animation: true
-		})
+		});
+
+		this.newMessage = this.fb.group({
+			message_text: ''
+		});
+	
 	
 	}
+
+
+
+
 
 	addKeyword() {
 		if (this.keyword !== '') {
@@ -129,15 +146,15 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.addedActions.splice(index, 1);
 	}
 
+	/****** Add , Edit and Remove Messages on Reply Action ******/ 
+
 	addMessage() {
-			 if(this.message !== '') {
+		
 			this.messages.push(this.message);
 			this.message = '';
 		}
-		else {
-			alert('Type any message first!')
-		}
-	}
+		
+	
 	removeMessage(index:number) {
 		this.messages.splice(index, 1);
 	}
@@ -152,13 +169,43 @@ export class AddSmartRepliesComponent implements OnInit {
 		
 	}
 
+	/*** Text Formating buttons on Reply Action ***/
+
 
     bold() {
-		(<HTMLInputElement>document.getElementById("replyText")).style.fontWeight = "bold";
+		(<HTMLInputElement>document.getElementById("bold-txt")).style.fontWeight = "bold";
 	}
 	itelic() {
 		(<HTMLInputElement>document.getElementById("replyText")).style.fontStyle = "italic";
 	}
+
+
+  /***  reply-action function  ***/
+	toggleAssignOption() {
+		
+     this.ShowAssignOption = !this.ShowAssignOption;
+		
+	}
+
+	showToaster(message: any, type: any) {
+		if (type == 'success') {
+			this.successMessage = message;
+		} else if (type == 'error') {
+			this.errorMessage = message;
+		} else {
+			this.warningMessage = message;
+		}
+		setTimeout(() => {
+			this.hideToaster()
+		}, 5000);
+
+	}
+	hideToaster() {
+		this.successMessage = '';
+		this.errorMessage = '';
+		this.warningMessage = '';
+	}
+
 	next() {
 		this.stepper.next();
 	}
@@ -222,5 +269,25 @@ export class AddSmartRepliesComponent implements OnInit {
 	}
 	
 
-	 
+	onClickFuzzy(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (target.classList.contains('form-check-label')) {
+			this.showBox = true;
+		}
+	}
+
+	onClickExact(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (target.classList.contains('form-check-label')) {
+			this.showBox1 = true;
+		}
+	}
+
+	onClickContains(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (target.classList.contains('form-check-label')) {
+			this.showBox2 = true;
+		}
+	}
+
 }
