@@ -14,11 +14,12 @@ export class DashboardComponent implements OnInit {
     campaigns: any;
     agents: any;
     recentConversation:any;
+    scheduledCampaign:any;
+    completedCampaign:any;
+    runningCampaign:any;
+    draftCampaign:any;
     Name:any;
-    scheduledCampaign: any;
-    completedCampaign: any;
-    runningCampaign: any;
-    draftCampaign: any;
+   
 
     constructor(private apiService: DashboardService, private router: Router, private cdRef: ChangeDetectorRef) { }
     ngOnInit() {

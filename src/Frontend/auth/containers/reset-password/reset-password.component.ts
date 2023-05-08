@@ -24,15 +24,12 @@ export class ResetPasswordComponent implements OnInit {
         password: ['', [Validators.required,Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
         confirmPassword: ['', Validators.required]
       }, { validator: this.passwordMatchValidator });
-
-    title = 'formValidation';
-    submitted = false;
+        
+    
     constructor( private formBuilder: FormBuilder,private router: Router,private apiService :AuthService) {
 
-        // this.resetpassword = this.formBuilder.group({
-        //     password: ['', [Validators.required,Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
-        //     confirmPassword: ['', Validators.required]
-        //   }, { validator: this.passwordMatchValidator });
+       
+          
 
     }
     ngOnInit() {
@@ -63,7 +60,7 @@ export class ResetPasswordComponent implements OnInit {
      
     onSubmit(){
         
-        var SP_ID=sessionStorage.getItem('SP_ID')
+       console.log(this.resetpassword.value)
         
         this.apiService.resetPassword(this.resetpassword.value).subscribe(data => {
             console.log(data)

@@ -142,7 +142,7 @@ export class ContactsComponent implements OnInit {
         age: new FormControl(''),
         tag: new FormControl([]),
       //  tagControls = tags.map(tag => new FormControl(tag));
-      status:  new FormControl([]),
+        status:  new FormControl([]),
         facebookId: new FormControl(''),
         InstagramId: new FormControl(''),
          SP_ID: sessionStorage.getItem('SP_ID')
@@ -157,6 +157,7 @@ export class ContactsComponent implements OnInit {
     status: new FormControl([]),
     facebookId: new FormControl(''),
     InstagramId: new FormControl('')
+   
   })
 }
 
@@ -223,6 +224,7 @@ export class ContactsComponent implements OnInit {
 
 checks=false
 bulk(e: any) {
+  alert("bulk")
   if (e.target.checked == true) {
     console.log(this.contacts[0].customerId)
     for (var i = 0; i < this.contacts.length; i++) {

@@ -1,116 +1,116 @@
 <sb-layout-dashboard>
   <sb-top-nav title="Dashboard"></sb-top-nav>
 
- 
+
   <div class="card9 float-right">
     <div class="card-body-right">
       <h4 id="card9-h4">Recent conversations</h4>
-        <div class="row d-flex" *ngFor="let items of recentConversation">
-              <img src="assets/img/my.png">
-              <div class="row2">
-                <h5>{{items.Name}}</h5>
-                <h6>{{items.message_text}}</h6>
-                <div class="date">
-                  <h4>{{items.interaction_date | date:'h:mm a'}}</h4>
-                </div>
-              </div>
-            </div>
-
-  
-
-    <div class="card10">
-      <div class="card10-p">
-        <img src="assets/img/img2.png" alt="error">
-        <p class="txt-1">Premium+</p>
-        <p class="txt-2">$0.5 per message</p>
-
+      <div class="row d-flex" *ngFor="let items of recentConversation">
+        <img src="assets/img/my.png">
+        <div class="row2">
+          <h5>{{items.Name}}</h5>
+          <h6>{{items.message_text}}</h6>
+          <div class="date">
+            <h4>{{items.interaction_date | date:'h:mm a'}}</h4>
+          </div>
+        </div>
       </div>
 
-      <div class="card10-c">
-        <p class="txt-1" style="margin-top:30px">Your available balance</p>
-        <p class="txt-2" style=" font-size: 27px;"><b>$7.309.68</b></p>
-        <button>Add Funds</button>
+
+
+      <div class="card10">
+        <div class="card10-p">
+          <img src="assets/img/img2.png" alt="error">
+          <p class="txt-1">Premium+</p>
+          <p class="txt-2">$0.5 per message</p>
+
+        </div>
+
+        <div class="card10-c">
+          <p style="margin-top:30px">Your available balance</p>
+          <p style=" font-size: 27px;"><b>$7.309.68</b></p>
+          <button>Add Funds</button>
+        </div>
       </div>
     </div>
-      </div>
   </div>
 
 
-  
 
-<div [(ngModel)]="Name"><p id="heading">Hello {{Name}}, Welcome</p></div>
-<div id="heading2" class="card9">
-  <h2>"Summary for last 30 days"</h2>
-  
+
+  <div [(ngModel)]="Name">
+    <p id="heading">Hello {{Name}}, Welcome</p>
   </div>
-   <div class="row main">
+  <div id="heading2" class="card9">
+    <h2>"Summary for last 30 days"</h2>
+
+  </div>
+ 
+  <div class="row main">
     <div class="row r1">
       <div class="col-sm-5 c1" (click)="routeToPage()">
         <div class="card-body">
-            <h4>Contacts</h4>
-            <div *ngFor="let items of dashboard">
-              <div class="card1 d-flex" 
-               *ngIf="(items.OptInStatus)=='Active Contacts'">
-              
-                <div class="card-body mt-0 ml-1 ">
-                  <h5>{{items.count}}</h5>
-                  <h6>{{items.OptInStatus}}</h6>
-                
+          <h4>Contacts</h4>
+          <div *ngFor="let items of dashboard">
+            <div class="card1 d-flex" *ngIf="(items.OptInStatus)=='Active Contacts'">
+
+              <div class="card-body mt-0 ml-1 ">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.OptInStatus}}</h6>
+
               </div>
+            </div>
+            <div class="card2 d-flex" *ngIf="(items.OptInStatus)=='Inactive Contacts'">
+              <div class="card-body mt-0 ml-1 ">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.OptInStatus}}</h6>
               </div>
-              <div class="card2 d-flex" 
-              *ngIf="(items.OptInStatus)=='Inactive Contacts'">
-                <div class="card-body mt-0 ml-1 ">
-                  <h5>{{items.count}}</h5>
-                  <h6>{{items.OptInStatus}}</h6>
-                </div>
-                
+
+            </div>
+            <div class="card3 d-flex" *ngIf="(items.OptInStatus)=='Total Contacts'">
+              <div class="card-body mt-0 ml-1">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.OptInStatus}}</h6>
               </div>
-              <div class="card3 d-flex" 
-              *ngIf="(items.OptInStatus)=='Total Contacts'">
-                <div class="card-body mt-0 ml-1">
-                  <h5>{{items.count}}</h5>
-                  <h6>{{items.OptInStatus}}</h6>
-                </div>
-                
-              </div>
+
+            </div>
+          </div>
+        </div>
       </div>
-        </div>
-        </div>
 
 
-    
-        <div class="col-sm-5 c2" (click)="routeToPage1()">
+
+      <div class="col-sm-5 c2" (click)="routeToPage1()">
         <div class="card-body">
-            <h4>Interactions</h4>
-            <div *ngFor="let items of interactions">
-              <div class="card1 d-flex" *ngIf="(items.interaction_status)=='Open Interactions'">
-                <div class="card-body mt-0 ml-1 ">
-                  <h5>{{items.count}}</h5>
-                  <h6>{{items.interaction_status}}</h6>
-                </div>
-                
+          <h4>Interactions</h4>
+          <div *ngFor="let items of interactions">
+            <div class="card1 d-flex" *ngIf="(items.interaction_status)=='Open Interactions'">
+              <div class="card-body mt-0 ml-1 ">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.interaction_status}}</h6>
               </div>
-              <div class="card2 d-flex" *ngIf="(items.interaction_status)=='Resolved Interactions'">
-                <div class="card-body mt-0 ml-1">
-                  <h5>{{items.count}}</h5>
-                  <h6>{{items.interaction_status}}</h6>
-                </div>
-                
-              </div>
-              <div class="card3 d-flex" *ngIf="(items.interaction_status)=='Total Interactions'">
-                <div class="card-body mt-0 ml-1">
-                  <h5>{{items.count}}</h5>
-                  <h6>{{items.interaction_status}}</h6>
-                </div>
-                
-              </div>
-        </div>
-        </div>
-        </div>
-   </div>
 
-        <div class="row r2">
+            </div>
+            <div class="card2 d-flex" *ngIf="(items.interaction_status)=='Resolved Interactions'">
+              <div class="card-body mt-0 ml-1">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.interaction_status}}</h6>
+              </div>
+
+            </div>
+            <div class="card3 d-flex" *ngIf="(items.interaction_status)=='Total Interactions'">
+              <div class="card-body mt-0 ml-1">
+                <h5>{{items.count}}</h5>
+                <h6>{{items.interaction_status}}</h6>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row r2">
 
       <button id="campaigns" class="btn1 btn-block float-right" routerLink="/dashboard/reports">
 
@@ -118,32 +118,32 @@
           <h4>Campaigns</h4>
 
           <div class="row d-flex">
-            <img id="scheduledCampaign" src="assets/img/total.png">
+            <img src="assets/img/total.png">
             <div class="row1 ">
               <div class="mt-5 ml-3 text-justify" [(ngModel)]="scheduledCampaign">
                 <h5>{{scheduledCampaign}}</h5>
-                <h6 id="totalsche">Total Scheduled</h6>
+                <h6>Total Scheduled</h6>
               </div>
 
             </div>
             <div class="line mr-3"></div>
             <div class="new">
-              <img id="completedCampaign"  src="assets/img/camp.png">
+              <img src="assets/img/camp.png">
               <div class="row9">
                 <div class="mt-5 ml-3 text-justify" [(ngModel)]="completedCampaign">
                   <h5>{{completedCampaign}}</h5>
-                  <h6 id="totaldraft">Total Completed</h6>
+                  <h6>Total Completed</h6>
                 </div>
 
               </div>
             </div>
           </div>
           <div class="row d-flex">
-            <img  id="scheduledCampaign"src="assets/img/deli.png">
+            <img src="assets/img/deli.png">
             <div class="row1">
               <div class="mt-5 ml-3 text-justify" [(ngModel)]="runningCampaign">
                 <h5>{{runningCampaign}}</h5>
-                <h6 id="totalsche">Total Running</h6>
+                <h6>Total Running</h6>
               </div>
 
             </div>
@@ -155,7 +155,7 @@
               <div class="row9">
                 <div class="mt-5 ml-3 text-justify" [(ngModel)]="draftCampaign">
                   <h5>{{draftCampaign}}</h5>
-                  <h6 id="totaldraft">Total Draft</h6>
+                  <h6>Total Draft</h6>
                 </div>
               </div>
             </div>
@@ -165,57 +165,52 @@
       </button>
 
     </div>
-      </div>
 
-         <div class="row r3">
-          <div class="btn2" (click)="routeToPage2()">
-    
-            <div class="card-body">
-    
-              <h4>Agents</h4>
-      
-              <div class="row d-flex">
- 
-                <img id="active-agent" src="assets/img/431.png">
-                <div *ngFor="let items of agents">
-                  <div class="row3" *ngIf="(items.Status)=='Active Agents'">
-                    <div class="mt-5 ml-4 text-justify">
-                      <h5>{{items.count}}</h5>
-                      <h6>{{items.Status}}</h6>
-                    </div>
+    <div class="row r3">
+      <button id="agents" class="btn2  btn-block float-right" routerLink="/dashboard/reports">
+
+        <div class="card-body">
+
+          <h4>Agents</h4>
+
+          <div class="row d-flex">
+
+            <!-- <img src="assets/img/430.png"> -->
+            <img src="assets/img/431.png">
+            <div *ngFor="let items of agents">
+              <div class="row3" *ngIf="(items.Status)=='Active Agents'">
+                <div class="mt-5 ml-4 text-justify">
+                  <h5>{{items.count}}</h5>
+                  <h6>{{items.Status}}</h6>
+                </div>
+              </div>
+
+              <div class="mr-6  col" *ngIf="(items.Status)=='Inactive Agents'">
+                <!-- <img src="assets/img/431.png"> -->
+                <img src="assets/img/432.png">
+                <div class="row4">
+                  <div class="mt-0 ml-5 text-justify">
+                    <h5>{{items.count}}</h5>
+                    <h6>{{items.Status}}</h6>
                   </div>
-      
-                  <div class="ml-5  col" *ngIf="(items.Status)=='Inactive Agents'">
-                    <div class="imga">
-                    <img src="assets/img/432.png">
-                  </div>
-                    <div class="row4">
-                      <div class="mt-0 ml-1">
-                        <h5>{{items.count}}</h5>
-                        <h6>{{items.Status}}</h6>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="ml-5  col" *ngIf="(items.Status)=='Total Agents'">
-                    <div class="im">
-                    <img src="assets/img/430.png">
-                  </div>
-                    <div class="row5">
-                      <div class="mt-0 ml-1">
-                        <h5>{{items.count}}</h5>
-                        <h6>{{items.Status}}
-                        </h6>
-                      </div>
-                    </div>
+                </div>
+              </div>
+              <div class="mr-6  col" *ngIf="(items.Status)=='Total Agents'">
+                <!-- <img src="assets/img/432.png"> -->
+                <img src="assets/img/430.png">
+                <div class="row5">
+                  <div class="mt-0 ml-5 text-justify">
+                    <h5>{{items.count}}</h5>
+                    <h6>{{items.Status}}
+                    </h6>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-    
-    
-    </sb-layout-dashboard>
-    
-    
-    
+      </button>
+    </div>
+  </div>
+
+</sb-layout-dashboard>

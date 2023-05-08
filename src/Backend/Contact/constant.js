@@ -15,34 +15,26 @@ otp = otp * 1000000;
 otp = parseInt(otp);
 
 //Query for contactPage
-var sql1 = "Select * from EndCustomer where isBlocked is null and isDeleted is null "
-var sql = "INSERT INTO EndCustomer (Name,Phone_number,emailId,age,tag,status,facebookId,InstagramId) VALUES ?";
-var editContact = "UPDATE EndCustomer set Phone_number=?,uid=?,SP_ID=?,status=?,Name=?,age=?,sex=?,emailId=?,address=?,pincode=?,city=?,state=?,Country=?,OptInStatus=?,tag=?,facebookId=?,InstagramId=? WHERE customerId=?"
+var selectAllContact = `SELECT * FROM EndCustomer WHERE (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) AND SP_ID = ?`
+var insertContact = "INSERT INTO EndCustomer (Name,Phone_number,emailId,age,tag,status,facebookId,InstagramId,SP_ID) VALUES ?";
 var neweditContact = 'UPDATE EndCustomer SET '
+delet = "UPDATE EndCustomer set isDeleted=1 WHERE customerId IN (?) and SP_ID=?"
+selectbyid = "select * from EndCustomer where customerId=? and SP_ID=?"
+isBlockedQuery = "UPDATE EndCustomer set  isBlocked=1,isBlockedOn=now() where customerId=? and SP_ID=?"
 
 
 
-
-//contact filter
-filterQuery = "select * from EndCustomer where Phone_number=?"
-importquery = "INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,state,Country,tag,address,pincode,city,OptInStatus,facebookId,InstagramId) VALUES ?"
-searchQuery = "select * from EndCustomer where Phone_number=? or Name=? or emailId=? "
-delet = "UPDATE EndCustomer set isDeleted=1 WHERE customerId IN (?)"
-selectbyid = "select * from EndCustomer where customerId=?"
-isBlockedQuery = "UPDATE EndCustomer set  isBlocked=1,isBlockedOn=now() where customerId=?"
 // Path for download sample csv file for import of contact
 var Path = 'C:/Users/hp/Downloads/data.csv'
 
-//update query for override 
-//updateCustomer='UPDATE EndCustomer SET '+ contact.updateData +'=?' +' WHERE ' + contact.identifierData + '=?'
-verfiyCount = "select * from EndCustomer where emailId in (?) and isBlocked is null and isDeleted is null"
 
-
-
-
+importquery = "INSERT INTO EndCustomer (Name,Phone_number,emailId,status,sex,age,state,Country,tag,address,pincode,city,OptInStatus,facebookId,InstagramId,channel,uid,SP_ID) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE "
+verfiyCount = "select * from EndCustomer where emailId in (?) and isBlocked is null and isDeleted is null and SP_ID=?"
+importUpdate=`UPDATE EndCustomer set Name=?,Phone_number=?,emailId=?,status=?,sex=?,age=?,state=?,Country=?,tag=?,address=?,pincode=?,city=?,OptInStatus=?,facebookId=?,InstagramId=?,channel=?,uid=? where `
+crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
 module.exports = {
-    host, user, password, database, email, appPassword, emailHost, port, otp, sql, sql1,editContact
-    ,neweditContact,filterQuery, importquery, searchQuery,delet,selectbyid, Path, verfiyCount,  isBlockedQuery
-    
+    host, user, password, database, email, appPassword, emailHost, port, otp, selectAllContact, insertContact
+    ,neweditContact, importquery,delet,selectbyid, Path, verfiyCount,  isBlockedQuery,
+    importUpdate,crachlogQuery
 }

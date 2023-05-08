@@ -11,16 +11,25 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/getReplies', (req, res) => {
 
-   db.runQuery(req, res, val.selectAll, [req.body])
+   db.runQuery(req, res, val.selectAll, [req.query.SP_ID])
 })
 
-app.get('/getReplieswithSPID',(req,res)=>{
-  console.log("spid")
-  console.log(req.body.SP_ID)
-    db.runQuery(req,res,val.getsmartReplieswithSPID,[req.body.SP_ID,req.body.SP_ID])
-   //  console.log("result API" +result)
-   //  res.send(result)
-})
+app.get('/getReplieswithSPID', async (req, res) => {
+   try {
+     const users = await db.excuteQuery(val.getsmartReplieswithSPID,[req.query.SP_ID,req.query.SP_ID]);
+     res.send(users);
+   } catch (err) {
+     console.error(err);
+     res.status(500).send('Internal server error');
+   }
+ });
+// app.get('/getReplieswithSPID',(req,res)=>{
+//   console.log("spid")
+//   console.log(req.query.SP_ID)
+//     db.runQuery(req,res,val.getsmartReplieswithSPID,[req.query.SP_ID,req.query.SP_ID])
+//    //  console.log("result API" +result)
+//    //  res.send(result)
+// })
 
 app.get('/getalluserofAOwner',(req,res)=>{
    db.runQuery(req,res,val.alluserofAOwner,[req.body.ParentId,req.body.SP_ID])
@@ -96,6 +105,100 @@ app.put('/updateSmartReply',(req,res)=>{
     console.log(req.body.Tags)
    db.runQuery(req, res, val.updateSmartReply, [req.body.ID,req.body.Title,req.body.Description,req.body.MatchingCriteria,params.strings.value,jsonData,listStr])
 })
+
+
+
+
+
+
+
+process.on('beforeExit', code => {
+  // Can make asynchronous calls
+  setTimeout(async () => {
+    const consoleOutput = `SReply :: Process will exit with code: ${code}`;
+    console.log(consoleOutput);
+   
+    try {
+      var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+      console.log(result)
+    } catch (err) {
+      console.error(err);
+    
+    }
+    process.exit(code);
+  }, 100);
+});
+
+process.on('exit', async code => {
+  // Only synchronous calls
+  const consoleOutput = `SReply :: Process exited with code: ${code}`;
+  console.log(consoleOutput);
+  try {
+    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+    console.log(result)
+  } catch (err) {
+    console.error(err);
+  
+  }
+});
+
+process.on('SIGTERM', async signal => {
+  const consoleOutput = `SReply :: Process ${process.pid} received a SIGTERM signal`;
+  console.log(consoleOutput);
+  try {
+    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+    console.log(result)
+  } catch (err) {
+    console.error(err);
+  
+  }
+  process.exit(0);
+});
+
+process.on('SIGINT', async signal => {
+  const consoleOutput = `SReply :: Process ${process.pid} has been interrupted`;
+  console.log(consoleOutput);
+  try {
+    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+    console.log(result)
+  } catch (err) {
+    console.error(err);
+  
+  }
+  process.exit(0);
+});
+
+process.on('uncaughtException', async err => {
+  const consoleOutput = `SReply :: Uncaught Exception: ${err.message}`;
+  console.log(consoleOutput);
+  try {
+    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+    console.log(result)
+  } catch (err) {
+    console.error(err);
+  
+  }
+  process.exit(1);
+});
+
+process.on('unhandledRejection', async (reason, promise) => {
+  const consoleOutput = `SReply :: Unhandled rejection at ${promise}, reason: ${reason.message}`;
+  console.log(consoleOutput);
+  try {
+    var result= await db.excuteQuery(val.crachlogQuery, [consoleOutput])
+    console.log(result)
+  } catch (err) {
+    console.error(err);
+  
+  }
+  process.exit(1);
+});
+
+
+
+
+
+
 
 app.listen(3005, function () {
    console.log("Node is running on port 3005");

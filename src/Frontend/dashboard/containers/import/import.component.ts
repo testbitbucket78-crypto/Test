@@ -55,9 +55,10 @@ export class ImportComponent implements OnInit {
 			animation: true
 		
 		})
-		this.Identifier = "emailId"
+		this.Identifier = "Email id"
 		this.purpose = "Add new contact only"
-		this.selectedIdentifier.push(this.Identifier)
+		this.selectedIdentifier.push('emailId')
+		console.log(this.selectedIdentifier)
 
 	}
 
@@ -224,18 +225,17 @@ export class ImportComponent implements OnInit {
 
 	//******************Update and save csv file data******************** /
 	updateAndSave() {
-
 		var Data = {
 
 			"field": this.fields,
 			"identifier": this.selectedIdentifier,
 			"purpose": this.purpose,
 			"mapping": this.columnMapping,
-			"importedData": this.importCSVdata
+			"importedData": this.importCSVdata,
+			"SP_ID":sessionStorage.getItem('SP_ID')
 		}
-
 		this.apiService.update(Data).subscribe((Data: any) => {
-
+           console.log(Data)
 		})
 
 		this.selectedIdentifier.length = 0;
@@ -247,11 +247,12 @@ export class ImportComponent implements OnInit {
 	//************************* Select Identifier of imported file ********************************* */
 
 	onSelected(value: any) {
+		console.log("onSelected"+value)
 		this.Identifier = value
 		this.selectedIdentifier.length = 0;
 
 		this.selectedIdentifier.push(value);
-
+		console.log("onSelected"+this.selectedIdentifier)
 
 	}
 

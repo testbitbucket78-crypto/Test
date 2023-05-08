@@ -93,13 +93,13 @@ export class DashboardService {
   }
   update(data: object) {
     console.log("servise update data" + data)
-    return this.http.post('http://localhost:3002/updateAndSave', data)
+    return this.http.post('https://contactapi.sampanatechnologies.com/updateAndSave', data)
   }
 
 
 
   updatedDataCount(data: any) {
-    return this.http.post('http://localhost:3002/verifyData', data)
+    return this.http.post('https://contactapi.sampanatechnologies.com/verifyData', data)
   }
 
   blockContact(data: any, SP_ID: any) {
@@ -123,8 +123,9 @@ export class DashboardService {
   //******************Smart replies API's*********************//
 
 
-   getSmartReply() {
-    return this.http.get('https://smartapi.sampanatechnologies.com/getReplies')
+   getSmartReply(SP_ID:any) {
+    const params = new HttpParams().set('SP_ID', SP_ID)
+    return this.http.get('https://smartapi.sampanatechnologies.com/getReplies',{params:params})
   }
 
   searchSmartReply(ID: any) {
