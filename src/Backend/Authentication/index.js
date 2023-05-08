@@ -142,7 +142,10 @@ const forgotPassword = (req, res) => {
             // Send Email for For forget password varification
 
             if (Object.keys(results).length === 0) {
-                res.send(error)
+                res.status(400).send({
+                    msg: "Email not found",
+                    status: 400
+                });
 
             }
             else {
