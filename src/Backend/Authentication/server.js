@@ -12,6 +12,6 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/',router);
-app.listen(3003, () => {
-    console.log('Server is running on at http://localhost:3003');
+app.listen(3000, () => {
+    console.log('Server is running on at http://localhost:3000');
 });
