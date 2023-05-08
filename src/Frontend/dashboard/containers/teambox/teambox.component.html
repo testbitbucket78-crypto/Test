@@ -154,10 +154,19 @@
 							<label *ngIf="message.message_direction !='incomming'">{{message.AgentName}}</label>
 							<div class="content" (mouseover)="markItRead(message)">
 								<div *ngIf="message.message_media" class="message_media">
-									<img src={{message.message_media}}>
+									<img class="preview_icon" *ngIf="message.media_type == 'video/mp4'" src="/assets/img/teambox/video_preview.png" (click)="downloadFile(message.message_media)">
+									<img class="preview_icon" *ngIf="message.media_type == 'text/plain'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(message.message_media)">
+									<img class="preview_icon" *ngIf="message.media_type == 'application/pdf'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(message.message_media)">
+									
+									<img *ngIf="message.media_type == 'image/jpeg'" src={{message.message_media}}>
+									<img *ngIf="message.media_type == 'image/jpg'"  src={{message.message_media}}>
+									<img *ngIf="message.media_type == 'image/png'"  src={{message.message_media}}>
+									<img *ngIf="message.media_type == 'image/webp'" src={{message.message_media}}>
+				
+
 								</div>
 								<div class="message_text" [innerHTML]="message.message_text"></div>
-								<span class="message_time">{{timeSince(message.updated_at)}}</span>
+								<span class="message_time" *ngIf="message.created_at">{{timeSince(message.created_at)}}</span>
 						    </div>
 			   		</div>
 				
@@ -194,10 +203,18 @@
 
 							<div class="content">
 								<div *ngIf="note.message_media" class="message_media">
-									<img src={{note.message_media}}>
+									<img class="preview_icon" *ngIf="note.media_type == 'video/mp4'" src="/assets/img/teambox/video_preview.png" (click)="downloadFile(note.message_media)">
+									<img class="preview_icon" *ngIf="note.media_type == 'text/plain'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(note.message_media)">
+									<img class="preview_icon" *ngIf="note.media_type == 'application/pdf'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(note.message_media)">
+									<img *ngIf="note.media_type == 'image/jpeg'" src={{note.message_media}}>
+									<img *ngIf="note.media_type == 'image/jpg'"  src={{note.message_media}}>
+									<img *ngIf="note.media_type == 'image/png'"  src={{note.message_media}}>
+									<img *ngIf="note.media_type == 'image/webp'" src={{note.message_media}}>
+				
+
 								</div>
 								<div class="message_text" [innerHTML]="note.message_text"></div>
-								<span class="message_time">{{timeSince(note.updated_at)}}</span>
+								<span class="message_time" *ngIf="note.created_at">{{timeSince(note.created_at)}}</span>
 							</div>
 						</div>
 					</div>
@@ -230,6 +247,17 @@
 				<div *ngIf="loginAs== 'TL' || selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId" class="input-area">
 				<ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]='100'>
 			    </ejs-richtexteditor>
+				
+					<div *ngIf="showMention" class="popup-dialog mention">
+						<p class="label">@mention</p>
+						<p *ngFor="let user of agentsList;let k = index"   (click)="InsertMentionOption(user)">
+							<span>
+								<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" /> 
+								{{user.name}}
+							</span>
+						</p>
+					</div>
+
 				<div *ngIf="showEmoji" class="popup-dialog" >
 					<div class="tabs">
 						<div [ngClass]="EmojiType=='smiley' ? 'char_block active' : 'char_block'"  (click)="showEmojiType('smiley')">😀</div>
@@ -320,12 +348,9 @@
 					<div class="custom_row mt-1">
 						<div class="col-md-12">
 						<div *ngIf="AutoReplyOption" class="popup-dialog autoreply">
-							<p class="label">Enable Auto Replies</p>
-							
 							<p  *ngFor="let option of AutoReplyEnableOption;" [ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''" (click)="SelectReplyOption(option,'Enabled')">
 								<span>{{option}}</span>
 							</p>
-							<p class="label">Pause Auto Replies</p>
 							
 							<p *ngFor="let option of AutoReplyPauseOption;let last = last;" [ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''" (click)="SelectReplyOption(option,'Paused')">
 								<span>{{option}}</span>
@@ -429,7 +454,17 @@
 	<div class="profile" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
 		<img class="toggle_provice_view" (click)="toggleAttachedMediaView()" src="/assets/img/teambox/search-clear.svg">
 		<div class="attached_media_list" >
-				<img *ngFor="let mmedia of selectedInteraction.allmedia;let m = index" src={{mmedia.message_media}} (click)="openaddMediaGallery(mediagallery,m)">
+			    <p class="preview_media"  *ngFor="let file of selectedInteraction.allmedia;let m = index">
+					<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'" src="/assets/img/teambox/video_preview.png" (click)="downloadFile(file.message_media)">
+					<img class="preview_icon" *ngIf="file.media_type == 'text/plain'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(file.message_media)">
+					<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(file.message_media)">
+					
+					<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}} (click)="openaddMediaGallery(mediagallery,m)">
+					<img *ngIf="file.media_type == 'image/jpg'"  src={{file.message_media}} (click)="openaddMediaGallery(mediagallery,m)">
+					<img *ngIf="file.media_type == 'image/png'"  src={{file.message_media}} (click)="openaddMediaGallery(mediagallery,m)">
+					<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}} (click)="openaddMediaGallery(mediagallery,m)">
+				
+				</p>
 			
 		</div>
 	</div>
@@ -494,7 +529,14 @@
 		</div>
 		</div>
 	    <div class="modal-body message_meida_preview_body">
-			<img class="mediaFile" src={{this.messageMeidaFile}}>
+			<img class="preview_icon" *ngIf="this.mediaType == 'video/mp4'" src="/assets/img/teambox/video_preview.png">
+			<img class="preview_icon" *ngIf="this.mediaType == 'text/plain'" src="/assets/img/teambox/doc_preview.png">
+			<img class="preview_icon" *ngIf="this.mediaType == 'application/pdf'" src="/assets/img/teambox/doc_preview.png">
+			
+			<img class="mediaFile" *ngIf="this.mediaType == 'image/jpeg'" src={{this.messageMeidaFile}}>
+			<img class="mediaFile" *ngIf="this.mediaType == 'image/jpg'"  src={{this.messageMeidaFile}}>
+			<img class="mediaFile" *ngIf="this.mediaType == 'image/png'"  src={{this.messageMeidaFile}}>
+			<img class="mediaFile" *ngIf="this.mediaType == 'image/webp'" src={{this.messageMeidaFile}}>
 		</div>
 		
 	
@@ -896,19 +938,29 @@
 		</div>
 	</div>
 	<div class="attached_media_list_section">
-		<div class="attached_media_list_left">
+		<div class="attached_media_list_left" *ngIf="slideIndex>0">
 				<img (click)="showPrevSlides(slideIndex)" src="assets/img/teambox/prv.svg">
 		</div>
 		<div class="attached_media_list">
 			<div class="container">
 				
-				<div *ngFor="let mediamessage of selectedInteraction.allmedia;let k = index" class="mySlides" [ngClass]="slideIndex==k ? 'mySlides active' : 'mySlides'">
-					<img src={{mediamessage.message_media}}>
+				<div *ngFor="let file of selectedInteraction.allmedia;let k = index" class="mySlides" [ngClass]="slideIndex==k ? 'mySlides active' : 'mySlides'">
+					
+					<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'" src="/assets/img/teambox/video_preview.png" (click)="downloadFile(file.message_media)">
+					<img class="preview_icon" *ngIf="file.media_type == 'text/plain'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(file.message_media)">
+					<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(file.message_media)">
+					
+					<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}>
+					<img *ngIf="file.media_type == 'image/jpg'"  src={{file.message_media}}>
+					<img *ngIf="file.media_type == 'image/png'"  src={{file.message_media}}>
+					<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}>
+				
+
 				</div>
 				
 			</div>
 		</div>
-		<div class="attached_media_list_right">
+		<div class="attached_media_list_right" *ngIf="slideIndex<selectedInteraction.allmedia.length-1">
 			<img (click)="showNextSlides(slideIndex)" src="assets/img/teambox/next.svg">
 		</div>
      </div>

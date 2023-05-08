@@ -247,6 +247,13 @@
 
 
 
+@media all and (max-width:1536px) {
+ .ag-theme-alpine .ag-row {
+    font-size: 12px;
+  
+}
+
+}
 
 
 
@@ -436,6 +443,12 @@
     p span{
       font-size: 12px;
       color: #7A86A1;
+    }
+    
+    .notes .message_text p span.mention,
+    p span.mention{
+      color: #0091FF;
+      font-weight: 600;
     }
     img.icon{
       margin-left:5px;

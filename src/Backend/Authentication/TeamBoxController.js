@@ -153,7 +153,7 @@ if(req.params.Type !='media'){
 var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id="+req.params.InteractionId+" and Type='"+req.params.Type+"'"
 db.runQuery(req,res,getAllMessagesByInteractionId, [req.params.InteractionId,req.params.Type])
 }else{
-var getAllMessagesByInteractionId = "SELECT * from Message where message_media != ' ' and interaction_id="+req.params.InteractionId+" ORDER BY Message_id DESC"
+var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id="+req.params.InteractionId+" ORDER BY Message_id DESC"
 
 db.runQuery(req,res,getAllMessagesByInteractionId, [req.params.InteractionId,req.params.Type])
 
@@ -176,6 +176,8 @@ const deleteMessage = (req, res) => {
 
 
 const insertMessage = (req, res) => {
+
+		
    if(req.body.Message_id ==''){
    var messageQuery = val.insertMessageQuery
    
@@ -184,12 +186,14 @@ const insertMessage = (req, res) => {
     message_direction= "Out"
     message_text= req.body.message_text
     message_media= req.body.message_media
+    media_type= req.body.media_type
     Message_template_id = req.body.template_id
     Quick_reply_id =req.body.quick_reply_id
     Type = req.body.message_type
+    created_at=req.body.created_at
     ExternalMessageId=''
     
-    var values = [[Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,Message_template_id,Quick_reply_id]]
+    var values = [[Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,created_at]]
     db.runQuery(req,res,messageQuery, [values])
     if(req.body.message_type =='text'){
 	   if(req.body.message_media!=''){
@@ -202,7 +206,7 @@ const insertMessage = (req, res) => {
     message_text= req.body.message_text
     Message_id= req.body.Message_id
     var values = [[message_text,Message_id]]
-    var messageQuery = "UPDATE Message SET message_text ='"+message_text+"' WHERE Message_id ="+Message_id;
+    var messageQuery = "UPDATE Message SET updated_at ='"+created_at+"', message_text ='"+message_text+"' WHERE Message_id ="+Message_id;
     db.runQuery(req,res,messageQuery, [values])
    }
    
@@ -251,6 +255,15 @@ function sendMediaOnWhatsApp(messageTo,mediaFile){
 }
 
 function sendTextOnWhatsApp(messageTo,messateText){
+let content =messateText;
+content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+		content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+		content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+		content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+		content = content.replace('&nbsp;', '\n')
+		content = content.replace(/<br[^>]*>/g, '\n')
+		content = content.replace(/<\/?[^>]+(>|$)/g, "")
+		
    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
         var chunks = [];
 		  resBH.on("data", function (chunk) {
@@ -268,7 +281,7 @@ function sendTextOnWhatsApp(messageTo,messateText){
 		"to": messageTo,
 		"type": "text",
         "text": { 
-			"body": messateText
+			"body": content
 			}  
 	   }));
 	  reqBH.end();

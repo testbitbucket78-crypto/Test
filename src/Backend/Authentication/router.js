@@ -83,8 +83,10 @@ router.get('/uploads/:fileName', async (req, res)=> {
 
   fs.readFile('./uploads/'+req.params.fileName, function(err, data) {
      if (!err){ 
-      res.writeHead(200, {'Content-Type': 'image/jpeg'});
-      res.end(data); // Send the file data to the browser.
+     const file = './uploads/'+req.params.fileName
+      res.download(file);
+     // res.writeHead(200, {'Content-Type': 'image/jpeg'});
+      //res.end(data); // Send the file data to the browser.
       }
   });
   
