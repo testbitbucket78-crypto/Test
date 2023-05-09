@@ -302,8 +302,9 @@
 		}
 
 		toggleChatNotes(optionvalue:any){
-
+			
 			if(optionvalue == 'text'){
+				this.chatEditor.value = 'Your message...'
 				this.tools = {
 					items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
 					{
@@ -350,6 +351,7 @@
 					}]
 				}
 			}else{
+				this.chatEditor.value = 'Your content...'
 				this.tools = {
 					items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
 					{
@@ -808,15 +810,14 @@
 			interval = seconds / 3600;
 
 			var hour =parseInt(interval)
-			alert(hour)
-			if (hour >= 1 && hour < 6) {
-				var hrPer = hour*6/100
-				var hourLeft =6-parseInt(interval)
+			if (hour < 48) {
+				var hrPer = (100*hour)/48
+				var hourLeft =48-parseInt(interval)
 			}else{
 				var hrPer =100
 				var hourLeft =0
 				if(this.selectedInteraction['interaction_status']!=='Resolved'){
-					//this.updateConversationStatus('Resolved')
+					this.updateConversationStatus('Resolved')
 				}
 			}
 			this.progressbarPer = "--value:"+hrPer;
