@@ -27,7 +27,7 @@ app.post('/contact', function (req, res) {
     console.log(req.body)
     Name = req.body.Name
     Phone_number = req.body.Phone_number.internationalNumber
-    
+
     emailId = req.body.emailId
     if (Name == '' || Phone_number == '' || emailId == '') {
       res.status(400).send({
@@ -43,26 +43,26 @@ app.post('/contact', function (req, res) {
     InstagramId = req.body.InstagramId
     SP_ID = req.body.SP_ID
     var tagList = [];
-    var tagListJoin='';
+    var tagListJoin = '';
     if (tag != undefined && tag != '') {
       for (var i = 0; i < tag.length; i++) {
         tagList.push(tag[i].item_text)
       }
 
-       tagListJoin = tagList.join();
+      tagListJoin = tagList.join();
       console.log(tagListJoin)
     }
     var statusList = [];
-    var statusListJoin=''
+    var statusListJoin = ''
     if (tag != undefined && tag != '') {
-    for (var i = 0; i < status.length; i++) {
-      statusList.push(status[i].item_text)
+      for (var i = 0; i < status.length; i++) {
+        statusList.push(status[i].item_text)
+      }
+      statusListJoin = statusList.join();
+      console.log(statusListJoin)
     }
-     statusListJoin = statusList.join();
-    console.log(statusListJoin)
-  }
 
-    var values = [[Name, Phone_number, emailId, age, tagListJoin, statusListJoin,  facebookId, InstagramId, SP_ID]];
+    var values = [[Name, Phone_number, emailId, age, tagListJoin, statusListJoin, facebookId, InstagramId, SP_ID]];
 
     db.runQuery(req, res, val.insertContact, [values])
   } catch (err) {
@@ -209,7 +209,7 @@ app.put('/editContact', (req, res) => {
 })
 
 
-app.post('/updateAndSave', (req, res) => {
+app.post('/updateAndSave', async (req, res) => {
   try {
     console.log("updateAndSave")
     //console.log(req.body)
@@ -257,16 +257,16 @@ app.post('/updateAndSave', (req, res) => {
         var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, SP_ID]
         var query = val.importquery + identifierData + '=? AND SP_ID' + ' and isBlocked is null and isDeleted is null)'
         console.log(query)
-        db.db.query(query, [values, identifierValue, SP_ID], function (error, results) {
-          console.log(query)
+        var results = await db.excuteQuery(query, [values, identifierValue, SP_ID])
 
-          try {
-            console.log(results);
-          }
-          catch (err) {
-            console.log(error);
-          }
-        })
+
+        try {
+          console.log(results);
+        }
+        catch (err) {
+          console.log(error);
+        }
+
       }
     }
 
@@ -284,20 +284,15 @@ app.post('/updateAndSave', (req, res) => {
           var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid]
 
           var updateQuery = val.importUpdate + identifierData + '=? and SP_ID=?'
+          var results = await db.excuteQuery(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, identifierValue, SP_ID])
 
-          db.db.query(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, identifierValue, SP_ID], function (error, results, next) {
-            // if (error) {
-            //   console.log(error)
-            // } else {
-            //   console.log(results)
-            // }
-            try {
-              console.log(results);
-            }
-            catch (err) {
-              console.log(err)
-            }
-          })
+          try {
+            console.log(results);
+          }
+          catch (err) {
+            console.log(err)
+          }
+
         }
       }
       else {
@@ -307,22 +302,15 @@ app.post('/updateAndSave', (req, res) => {
             var identifierData = identifier[0]
             updatedValue = JSON.parse(JSON.stringify(data[i][fields[j]]));
             identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
+            var results = await db.excuteQuery('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?  and SP_ID=?', [updatedValue, identifierValue, SP_ID])
 
-            db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?  and SP_ID=?', [updatedValue, identifierValue, SP_ID], function (error, results, next) {
-              // if (error) {
-              //   console.log(error)
-              // }
-              // else {
-              //   console.log(JSON.stringify(results.affectedRows))
+            try {
+              console.log(JSON.stringify(results.affectedRows))
+            }
+            catch (err) {
+              console.log(err)
+            }
 
-              // }
-              try {
-                console.log(JSON.stringify(results.affectedRows))
-              }
-              catch (err) {
-                console.log(err)
-              }
-            })
           }
         }
       }
@@ -340,20 +328,14 @@ app.post('/updateAndSave', (req, res) => {
         }
         var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, SP_ID]
         var query = val.importquery + identifierData + '=? and SP_ID=?' + ')'
+        var results = await db.excuteQuery(query, [values, identifierValue, SP_ID])
 
-        db.db.query(query, [values, identifierValue, SP_ID], function (error, results) {
-          console.log(query)
-          // if (error) {
-          //   console.log(error);
-          // } else {
-          //   console.log(results);
-          // }
-          try {
-            console.log(results);
-          } catch (err) {
-            console.log(err)
-          }
-        })
+        try {
+          console.log(results);
+        } catch (err) {
+          console.log(err)
+        }
+
       }
 
       //******************************* */
@@ -369,19 +351,14 @@ app.post('/updateAndSave', (req, res) => {
           var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid]
 
           var updateQuery = val.importUpdate + identifierData + '=? and SP_ID=?'
+          var results = await db.excuteQuery(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, identifierValue, SP_ID])
 
-          db.db.query(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, identifierValue, SP_ID], function (error, results, next) {
-            // if (error) {
-            //   console.log(error)
-            // } else {
-            //   console.log(results)
-            // }
-            try {
-              console.log(results)
-            } catch (err) {
-              console.log(err)
-            }
-          })
+          try {
+            console.log(results)
+          } catch (err) {
+            console.log(err)
+          }
+
         }
 
 
@@ -393,20 +370,15 @@ app.post('/updateAndSave', (req, res) => {
             var identifierData = identifier[0]
             updatedValue = JSON.parse(JSON.stringify(data[i][fields[j]]));
             identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
+            var results = await db.excuteQuery('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=? and SP_ID=?', [updatedValue, identifierValue, SP_ID])
 
 
-            db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=? and SP_ID=?', [updatedValue, identifierValue, SP_ID], function (error, results, next) {
-              // if (error) {
-              //   console.log(error)
-              // } else {
-              //   console.log(JSON.stringify(results.affectedRows))
-              // }
-              try {
-                console.log(JSON.stringify(results.affectedRows))
-              } catch (err) {
-                console.log(err)
-              }
-            })
+            try {
+              console.log(JSON.stringify(results.affectedRows))
+            } catch (err) {
+              console.log(err)
+            }
+
           }
         }
 
@@ -424,7 +396,7 @@ app.post('/updateAndSave', (req, res) => {
 
 })
 
-app.post('/verifyData', (req, res) => {
+app.post('/verifyData', async (req, res) => {
   try {
     var resdata = req.body
     var CSVdata = resdata.importedData
@@ -436,11 +408,6 @@ app.post('/verifyData', (req, res) => {
 
     var identity = identifier[0]
 
-    try {
-      db.db.connect()
-    } catch (err) {
-      console.log(err)
-    }
     if (colMap !== undefined) {
       var emailid_field = colMap.emailId !== '' ? colMap.emailId : 'emailId';
       var phoneNo_field = colMap.Mobile_Number !== '' ? colMap.Mobile_Number : 'Phone_number';
@@ -485,8 +452,8 @@ app.post('/verifyData', (req, res) => {
     if (!importData.length == '0') {
 
       var verifyQuery = 'select * from EndCustomer WHERE ' + identity + ' in (?)' + 'and isBlocked is null and isDeleted is null and SP_ID=?'
-
-      db.db.query(verifyQuery, [queryData, SP_ID], (err, result) => {
+      var result=await db.excuteQuery(verifyQuery, [queryData, SP_ID])
+     
 
         try {
           if (purpose === 'Add new contact only') {
@@ -528,7 +495,7 @@ app.post('/verifyData', (req, res) => {
         } catch (err) {
           console.log(err)
         }
-      })
+    
     }
   } catch (err) {
     console.error(err);
