@@ -227,7 +227,7 @@
 		showSavedMessage:any=false;
 		showInsertTemplate:any=false;
 		showAttachmenOption:any=false;
-		slideIndex=1;
+		slideIndex=0;
 		
 	
 		active = 1;
@@ -277,6 +277,8 @@
 		showEditTemplateMedia:any=false;
 		TemplatePreview:any=false;
 		messageMeidaFile:any='';
+		mediaType:any='';
+		showMention:any=false;
 		
 		
 		
@@ -299,6 +301,96 @@
 
 		}
 
+		toggleChatNotes(optionvalue:any){
+			
+			if(optionvalue == 'text'){
+				this.chatEditor.value = 'Your message...'
+				this.tools = {
+					items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
+					{
+					tooltipText: 'Emoji',
+					undo: true,
+					click: this.toggleEmoji.bind(this),
+					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
+					},
+					{
+						tooltipText: 'Attachment',
+						undo: true,
+						click: this.ToggleAttachmentBox.bind(this),
+						template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
+					},
+					{
+						tooltipText: 'Attributes',
+						undo: true,
+						click: this.ToggleAttributesOption.bind(this),
+						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+					},
+					{
+						tooltipText: 'Quick Replies',
+						undo: true,
+						click: this.ToggleQuickReplies.bind(this),
+						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
+					},
+					{
+						tooltipText: 'Saved Message',
+						undo: true,
+						click: this.ToggleSavedMessageOption.bind(this),
+						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
+					},
+					{
+						tooltipText: 'Insert Template',
+						undo: true,
+						click: this.ToggleInsertTemplateOption.bind(this),
+						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
+					}]
+				}
+			}else{
+				this.chatEditor.value = 'Your content...'
+				this.tools = {
+					items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
+					{
+					tooltipText: 'Emoji',
+					undo: true,
+					click: this.toggleEmoji.bind(this),
+					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
+					},
+					{
+						tooltipText: 'Attachment',
+						undo: true,
+						click: this.ToggleAttachmentBox.bind(this),
+						template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
+					},
+					{
+						tooltipText: 'Attributes',
+						undo: true,
+						click: this.ToggleAttributesOption.bind(this),
+						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+					},
+					{
+						tooltipText: '@mentions',
+						undo: true,
+						click: this.ToggleShowMentionOption.bind(this),
+						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+								+ '<div class="e-tbar-btn-text">@</div></button>'
+					}]
+				}
+			}
+			this.showChatNotes=optionvalue
+			setTimeout(() => {
+				this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+			}, 100);
+		}
+
 		closeAllModal(){
 		this.editTemplate=false
 		this.showInsertTemplate=false;
@@ -308,6 +400,7 @@
 		this.showAttachmenOption=false;
 		this.showEditTemplateMedia=false;
 		this.TemplatePreview=false;
+		this.showMention=false;
 		}	
 		editMedia(){
 			this.closeAllModal()
@@ -333,6 +426,23 @@
 		this.editTemplate=true
 		this.showInsertTemplate=false;
 	}	
+	ToggleShowMentionOption(){
+		this.showMention=!this.showMention
+		this.showSavedMessage =false
+		this.showEmoji =false;
+		this.showAttachmenOption=false;
+		this.showAttributes=false;
+		this.showQuickResponse=false;
+		this.showInsertTemplate=false;
+		
+	}
+	public InsertMentionOption(user:any){
+		let content:any = this.chatEditor.value;
+		content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+		content = content+'<span class="mention"> @'+user.name+' </span>'
+		this.chatEditor.value = content
+		this.showMention = false;
+	}
 	ToggleSavedMessageOption(){
 		
 		this.showSavedMessage =!this.showSavedMessage
@@ -341,6 +451,7 @@
 		this.showAttributes=false;
 		this.showQuickResponse=false;
 		this.showInsertTemplate=false;
+		this.showMention=false;
 
 	}
 	ToggleInsertTemplateOption(){
@@ -350,6 +461,7 @@
 		this.showQuickResponse=false;
 		this.showSavedMessage=false;
 		this.editTemplate=false
+		this.showMention=false;
 		this.showInsertTemplate =!this.showInsertTemplate
 	}
 
@@ -359,6 +471,7 @@
 		this.showQuickResponse=false;
 		this.showSavedMessage=false;
 		this.showInsertTemplate=false;
+		this.showMention=false;
 		this.showAttributes = !this.showAttributes;
 	}	
 	ToggleQuickReplies(){
@@ -367,6 +480,7 @@
 		this.showAttributes=false;
 		this.showSavedMessage=false;
 		this.showInsertTemplate=false;
+		this.showMention=false;
 		this.showQuickResponse = !this.showQuickResponse;
 	}
 
@@ -377,7 +491,7 @@
 		this.showSavedMessage=false;
 		this.showInsertTemplate=false;
 		this.showQuickResponse = false;
-		console.log(item)
+		this.showMention=false;
 		this.chatEditor.value =item
 	}
 		
@@ -387,6 +501,7 @@
 		this.showQuickResponse=false;
 		this.showSavedMessage=false;
 		this.showInsertTemplate=false;
+		this.showMention=false;
 			this.showEmoji = !this.showEmoji;
 			(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
 			this.range = this.selection.getRange(document);
@@ -423,20 +538,11 @@
 		}
 		onFileChange(event: any) {
 			let files: FileList = event.target.files;
-			let imageFile = files[0]
 			this.saveFiles(files);
-
-			const data = new FormData();
-			data.append('dataFile',imageFile ,imageFile.name);
-			console.log('uploadfile')
-			this.apiService.uploadfile(data).subscribe(uploadStatus =>{
-				console.log('uploadfile status')
-				let responseData:any = uploadStatus
-				if(responseData.filename){
-					this.messageMeidaFile = responseData.filename
-					this.showAttachmenOption=false;
-				}
-			})
+            
+		}
+		downloadFile(fileUrl:any){
+			window.open(fileUrl,'_blank')
 		}
 
 		@HostListener("dragover", ["$event"]) onDragOver(event: any) {
@@ -466,13 +572,19 @@
 		}
 		
 		saveFiles(files: FileList) {
-		
-			if (files.length > 1){
-				//console.log("Only one file at time allow");
-			}
-			else {
-			//console.log(files[0].size,files[0].name,files[0].type);
-			}
+			if(files[0]){
+		    let imageFile = files[0]
+			this.mediaType = files[0].type
+			const data = new FormData();
+			data.append('dataFile',imageFile ,imageFile.name);
+			this.apiService.uploadfile(data).subscribe(uploadStatus =>{
+				let responseData:any = uploadStatus
+				if(responseData.filename){
+					this.messageMeidaFile = responseData.filename
+					this.showAttachmenOption=false;
+				}
+			})
+		  }
 		}
 
 		ngOnInit() {
@@ -484,13 +596,7 @@
 		
 		
 
-		toggleChatNotes(optionvalue:any){
-			this.showChatNotes=optionvalue
-			setTimeout(() => {
-				this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-			}, 100);
-		}
+		
 
 		focusInChatFunction(){
 			this.searchChatFocused = true
@@ -554,13 +660,11 @@
 			})
 
 
-			if(item['interaction_status']!='Resolved'){
 				this.apiService.getInteractionMapping(item.InteractionId).subscribe(mappingList =>{
 					var mapping:any  = mappingList;
 					item['assignTo'] =mapping?mapping[mapping.length - 1]:'';
 			    })
-			}
-
+			
 			this.apiService.checkInteractionPinned(item.InteractionId,this.AgentId).subscribe(pinnedList =>{
 				var isPinnedArray:any =pinnedList
 				if(isPinnedArray.length >0){
@@ -604,7 +708,8 @@
 
 		}
 		async getSearchInteraction(event:any,selectInteraction:any=true){
-			if(event.target.value.length>=3){
+		this.selectedInteraction=[]
+		if(event.target.value.length>=3){
 			var searchKey =event.target.value
 			await this.apiService.getSearchInteraction(searchKey,this.AgentId).subscribe(async data =>{
 				var dataList:any = data;
@@ -678,28 +783,14 @@
 
 		timeSince(date:any) {
 			if(date){
-			var currentDate:any = new Date()
-			var messCreated:any = new Date(date)
-			var seconds = Math.floor((currentDate - messCreated) / 1000);
-			var interval = seconds / 31536000;
-		
-			if (interval > 1) {
-			}
-			interval = seconds / 2592000;
-			if (interval > 1) {
-			}
-			interval = seconds / 86400;
-			if (interval > 1) {
-			}
-			interval = seconds / 3600;
-			if (interval > 1) {
+			var messCreated = new Date(date)
 				var hours = messCreated.getHours() > 12 ? messCreated.getHours() - 12 : messCreated.getHours();
 				var am_pm = messCreated.getHours() >= 12 ? "PM" : "AM";
 				var hoursBH = hours < 10 ? "0" + hours : hours;
 				var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
 				var time = hoursBH + ":" + minutes  + " " + am_pm;
 				return time
-			}
+			
 		}else{
 			return ''
 		}
@@ -719,9 +810,9 @@
 			interval = seconds / 3600;
 
 			var hour =parseInt(interval)
-			if (hour >= 1 && hour < 6) {
-				var hrPer = hour*6/100
-				var hourLeft =6-parseInt(interval)
+			if (hour < 48) {
+				var hrPer = (100*hour)/48
+				var hourLeft =48-parseInt(interval)
 			}else{
 				var hrPer =100
 				var hourLeft =0
@@ -762,6 +853,7 @@
 	}
 
 	filerInteraction(filterBy:any){
+		this.selectedInteraction=[]
 		if(filterBy != 'All'){
 			this.getFilteredInteraction(filterBy)
 		}else{
@@ -804,6 +896,7 @@
 		}
 		this.ShowAssignOption=false
 	}
+
 	toggleAssignOption(){
 		this.ShowConversationStatusOption=false;
 		if(this.selectedInteraction.interaction_status =='Resolved'){
@@ -816,6 +909,7 @@
 		}
 	}
 	}
+
 	showToaster(message:any,type:any){
 	if(type=='success'){
 		this.successMessage=message;
@@ -936,8 +1030,8 @@
 	groupMessageByDate(messageList:any){
 		const data =messageList;
 		data.sort(function(a:any, b:any) {
-			var dateA = new Date(a.created_at).getTime();
-			var dateB = new Date(b.created_at).getTime();
+			var dateA = new Date(a.Message_id);
+			var dateB = new Date(b.Message_id);
 			return dateA > dateB ? 1 : -1; 
 		});
 
@@ -1036,7 +1130,7 @@
 		
 	} 
 	showPrevSlides(n:any) {
-		if(n>1){
+		if(n>0){
 			this.slideIndex = n-1
 		}
 	} 
@@ -1094,21 +1188,8 @@
 	sendMessage(){
 		
 		console.log('sendMessage')
-		if(this.messageMeidaFile!=''){
-			var MessageType = 'mediafile'
-		}else{
-			var MessageType = 'plaintext'
-		}
 		
-		var content = this.chatEditor.value
-		content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-		content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-		content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-		content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-		content = content.replace('&nbsp;', '\n')
-		content = content.replace(/<br[^>]*>/g, '\n')
 		
-
 		let objectDate = new Date();
 		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
 		var cDay = String(objectDate.getDate()).padStart(2, '0');
@@ -1118,18 +1199,19 @@
 			InteractionId: this.selectedInteraction.InteractionId,
 			AgentId: this.AgentId,
 			messageTo:this.selectedInteraction.Phone_number,
-			message_text: content.replace(/<\/?[^>]+(>|$)/g, ""),
+			message_text: this.chatEditor.value,
 			Message_id:this.newMessage.value.Message_id,
 			message_media: this.messageMeidaFile,
+			media_type: this.mediaType,
 			quick_reply_id: '',
 			template_id:'',
 			message_type: this.showChatNotes,
-			MessageType:MessageType
+			created_at:new Date()
 		}
-		console.log(bodyData)
 		this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
 			console.log(data)
 			this.messageMeidaFile='';
+			this.mediaType='';
 			var responseData:any = data
 			if(this.newMessage.value.Message_id==''){
 			
@@ -1142,6 +1224,7 @@
 					"Agent_id": bodyData.AgentId,
 					"message_text": bodyData.message_text,
 					"message_media": bodyData.message_media,
+					"media_type": bodyData.media_type,
 					"Message_template_id": bodyData.message_media,
 					"Quick_reply_id": bodyData.message_media,
 					"Type": bodyData.message_media,
@@ -1162,9 +1245,9 @@
 					var allnotes =this.selectedInteraction.allnotes
 					allnotes.push(lastMessage)
 					this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
-				setTimeout(() => {
-					this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-				}, 500);
+					setTimeout(() => {
+						this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+					}, 500);
 
 				
 				}
