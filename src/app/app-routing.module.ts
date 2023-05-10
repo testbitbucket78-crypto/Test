@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DashboardModule } from 'Frontend/dashboard/dashboard.module';
 
 const routes: Routes = [
-    {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: '/dashboard',
-    },
+    // {
+    //     path: '',
+    //     pathMatch: 'full',
+    //     redirectTo: 'login',
+    // },
     {
         path: 'dashboard',
         loadChildren: () =>
@@ -14,12 +15,12 @@ const routes: Routes = [
                 m => m.DashboardRoutingModule
             ),
     },
-    /*{
+    {
         path: '',
         loadChildren: () =>
             import('Frontend/auth/auth-routing.module').then(m => m.AuthRoutingModule),
     },
-    */
+    
     {
         path: 'error',
         loadChildren: () =>
@@ -39,7 +40,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
+    imports: [DashboardModule, RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
     exports: [RouterModule],
 })
 export class AppRoutingModule {}

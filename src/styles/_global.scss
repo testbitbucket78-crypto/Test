@@ -285,8 +285,9 @@
   
   /* Hide the browser's default checkbox */
   .container input {
-  position: absolute;
-  opacity: 0;
+  height: calc(1.5em + 0.75rem + 2px);
+  //position:absolute;
+  //opacity: 0;
   cursor: pointer;
   height: 0;
   width: 0;
