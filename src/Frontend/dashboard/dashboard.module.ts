@@ -21,6 +21,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 /* Components */
 import * as dashboardComponents from './components';
+//import * as DashboardComponent from './containers/dashboard/dashboard.component';
+ 
 
 /* Containers */
 import * as dashboardContainers from './containers';
@@ -32,6 +34,7 @@ import * as dashboardGuards from './guards';
 import * as dashboardServices from './services';
 import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
 import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
+import { DashboardComponent } from './containers';
 
 @NgModule({
     imports: [
@@ -52,7 +55,7 @@ import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
         
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],
-    declarations: [...dashboardContainers.containers, ...dashboardComponents.components, SearchfilterPipe],
-    exports: [...dashboardContainers.containers, ...dashboardComponents.components],
+    declarations: [...dashboardContainers.containers, ...dashboardComponents.components, DashboardComponent, SearchfilterPipe],
+    exports: [...dashboardContainers.containers, ...dashboardComponents.components, DashboardComponent],
 })
 export class DashboardModule {}
