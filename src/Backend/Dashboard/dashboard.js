@@ -48,31 +48,108 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //   res.send(data);
 // });
 
-app.get('/',(req,res)=>{
-  console.log("Node is running ")
-  res.send(200)
+
+app.get('/', async (req, res) => {
+  // console.log("Node is running ")
+
+  // res.send(200)
+  try {
+    console.log("Node is running ")
+    res.send(200);
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
 })
 
-app.get('/Interactions', (req, res) => {
-  db.runQuery(req, res, val.interactionsQuery, [req.body])
+app.get('/Interactions', async (req, res) => {
+  // db.runQuery(req, res, val.interactionsQuery, [req.body])
+  try {
+    const users = await db.excuteQuery(val.interactionsQuery, [req.body]);
+    res.send(users);
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
 });
 
 
-app.get('/Campaigns', (req, res) => {
-  db.runQuery(req, res, val.campaignsQuery, [req.body])
+app.get('/Campaigns:/sPid', async (req, res) => {
+  console.log(req.query.sPid)
+  // db.runQuery(req, res, val.campaignsQuery, [req.query.sPid])
+  try {
+    const users = await db.excuteQuery(val.campaignsQuery, [req.query.sPid]);
+    res.send(users);
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
 });
 
-app.get('/Agents', (req, res) => {
-  db.runQuery(req, res, val.agentsQuery, [req.body])
+app.get('/Agents', async (req, res) => {
+  // db.runQuery(req, res, val.agentsQuery, [req.body])
+  try {
+    const users = await db.excuteQuery(val.agentsQuery, [req.body]);
+    res.send(users);
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
+
 })
 
-app.get('/Subscribers', (req, res) => {
-  db.runQuery(req, res, val.subscribersQuery, [req.body])
+app.get('/Subscribers:/sPid', async (req, res) => {
+  console.log(req.query.sPid)
+  // db.runQuery(req, res, val.subscribersQuery, [req.query.sPid,req.query.sPid])
+  try {
+    const users = await db.excuteQuery(val.subscribersQuery, [req.query.sPid, req.query.sPid]);
+    res.send(users);
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
 })
 
-app.get('/recentConversation',(req,res)=>{
-  db.runQuery(req,res,val.conversationQuery,[req.body])
+app.get('/recentConversation/:spid', async (req, res) => {
+  console.log(req.query.spid)
+
+  // db.runQuery(req,res,val.conversationQuery,[req.query.spid])
+  try {
+    const users = await db.excuteQuery(val.conversationQuery, [req.query.spid]);
+    res.send(users);
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
 })
+
+
+
+
 app.listen(3001, function () {
   console.log("Node is running");
 

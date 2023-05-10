@@ -23,7 +23,7 @@ label {
 
 .form-control {
     display: block;
-    width: 120%;
+    width: 78%;
     height: calc(1.5em + 0.75rem + 2px);
     padding: 0.375rem 0.75rem;
     font-size: 14px;
@@ -51,9 +51,9 @@ label {
 }
 .btn2 {
     cursor: pointer;
-    width: 325px;
+    width: 300px;
     border-radius: 22px;
-    margin: 18px 0px 0px -2px;
+    margin: 18px 0px 0px 3px;
     background-image: linear-gradient(to right, #F9B035, #F98C4E, #F96767);
     font-family: 'Montserrat', sans-serif;
     font-weight: bold;
@@ -107,9 +107,9 @@ a {
 }
 .btn1 {
     cursor: pointer;
-    width: 105px;
+    width: 92px;
     height: 29px;
-    margin: 13px -10px 0px -103px;
+    margin: 13px 0px 0px -96px;
     border-radius: 12px;
     background-color: #6149CD;
     border: none;
@@ -126,10 +126,19 @@ a {
     background: padding-box;
 }
 .verified{
-    margin: 52px 0px 0 25pc;
+    margin: 52px 0px 0 36%;
     background-color: #ffffff;
     width: 35px;
     height: 30px;
     position: absolute;
     border: none;
 }
+.verified1{
+    margin: 11px 0px 0 61%;
+    background-color: #ffffff;
+    width: 35px;
+    height: 30px;
+    position: absolute;
+    border: none;
+}
+

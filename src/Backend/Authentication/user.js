@@ -62,7 +62,7 @@ const updateUser = (req, res) => {
     
     
        
-        SP_ID = req.params.id
+        uid = req.params.uid
         password = req.body.password
         email_id = req.body.email_id
         address = req.body.address
@@ -81,16 +81,16 @@ const updateUser = (req, res) => {
         IsActive = req.body.IsActive
 
         bcrypt.hash(password, 10, function (err, hash) {
-        db.runQuery(req,res,val.updateQuery,[ hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive,SP_ID])
+        db.runQuery(req,res,val.updateQuery,[ hash, email_id, address, name, mobile_number, country, timezone, CreatedDate, LastModifiedDate, PasswordHint, securityquestion, Securityanswer, ParentId, UserType, IsDeleted, IsActive,uid])
         });
       
     }
 
  const getAllAgents  =(req,res)=>{
-    db.runQuery(req,res,val.allAgents,[req.body.ParentId,req.body.UserType])
+    db.runQuery(req,res,val.allAgents,[req.body.ParentId,req.body.UserType,req.body.SP_ID])
  }
 
  const getisActiveAgents=(req,res)=>{
-    db.runQuery(req,res,val.activeAgent,[req.body.ParentId,req.body.UserType,req.body.IsActive])
+    db.runQuery(req,res,val.activeAgent,[req.body.ParentId,req.body.UserType,req.body.IsActive,req.body.SP_ID])
  }
 module.exports = { getUser, getUserById, deletUserById, insertUser, updateUser,getAllAgents ,getisActiveAgents};

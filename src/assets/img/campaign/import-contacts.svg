@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="39.915" height="39.88" viewBox="0 0 39.915 39.88">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f9b035"/>
+      <stop offset="0.53" stop-color="#f98c4e"/>
+      <stop offset="1" stop-color="#f96767"/>
+    </linearGradient>
+  </defs>
+  <g id="import-contacts" transform="translate(-955.863 -408)">
+    <path id="icon_dowload" data-name="icon dowload" d="M1318.413,898.062v-8.414a1.58,1.58,0,0,1,1.508-1.642,1.564,1.564,0,0,1,1.552,1.432l.014.21v8.414h9.539a9.269,9.269,0,0,1,8.881,9.191v11.03a9.328,9.328,0,0,1-8.446,9.6h-22.607a9.237,9.237,0,0,1-8.861-9.191V907.685a9.333,9.333,0,0,1,8.426-9.6l.415-.01h9.579V911.5l-3.193-3.471a1.455,1.455,0,0,0-2.13-.047c-.016.015-.03.031-.045.047a1.822,1.822,0,0,0-.16,2.155l.16.21,5.808,6.328a1.437,1.437,0,0,0,2.026.149l.149-.149,5.807-6.328a1.776,1.776,0,0,0,0-2.363,1.452,1.452,0,0,0-2-.162l-.171.162-3.173,3.467V898.068Z" transform="translate(-344.129 -480.005)" fill="url(#linear-gradient)"/>
+  </g>
+</svg>

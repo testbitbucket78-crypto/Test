@@ -39,22 +39,25 @@
             placeholder="Enter title in max 20 character" />
           <h5>Description</h5>
           <div class="form-floating ff">
-            <input class="form-control" type="text" placeholder="Enter description in max 80 character" name="Description" id="Description"
-              formControlName="Description" />
+            <textarea name="Description" id="Description" class="form-control" rows="4" cols="50"
+            placeholder="Enter description in max 80 character"  formControlName="Description" ></textarea>
+            
           </div>
         </div>
         <button type="button" (click)="next()" (click)="getNewSmartReplyData()" class="btn5 btn-block col-1 mt-3 ">Next</button>
 
       </div>
-      <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+         <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
         <button type="button" (click)="previous()" class="btn9 btn-block col-1 mt-3 "><img
             src="assets/img/prev.png"></button>
-        <div class="box1">
+        <div class="box1" >
           <h5>Add Keyword</h5>
-          <div class="box2 d-flex" data-required="Use enter key to add ➥"   > 
-           <input class="form-control" #keyowrdtxt   [(ngModel)]="keyword" type="text" placeholder="Enter Keywords"   />
-          <button type="button" class="btn7 btn-block ml-2 " (click)="addKeyword()" [disabled]="keyword=== ''">ADD</button>
-        </div>
+          <div class="box2 d-flex" data-required="Use enter key to add ➥">
+            <input class="form-control" #keyowrdtxt [(ngModel)]="keyword" type="text" placeholder="Enter Keywords" maxlength="56" />
+            <button type="button" class="btn7 btn-block ml-2" (click)="addKeyword()" [disabled]="keyword === ''">ADD</button>
+          </div>
+          <div *ngIf="keyword.length > 56" class="text-danger mt-2"></div>
+          
         
         <span>Please choose a unique keyword which is not already added in other smart replies </span>
           <span class="row">
@@ -72,6 +75,7 @@
               <label class="form-check-label" for="exampleRadios1">
                 Fuzzy matching
               </label>
+              <img id="detail" src="assets/img/info.png">
             </div>
             <div class="desc-radio-input" *ngIf="showBox">
               <p id="p-title">Fuzzy Matching</p>
@@ -84,6 +88,7 @@
               <label class="form-check-label" for="">
                 Exact matching
               </label>
+              <img id="detail" src="assets/img/info.png">
             </div>
               <div class="desc-radio-input-1" *ngIf="showBox1">
               <p id="p-title">Exact Matching</p>
@@ -96,6 +101,7 @@
               <label class="form-check-label" for="">
                 Contains
               </label>
+              <img id="detail" src="assets/img/info.png">
             </div>
 
              <div class="desc-radio-input-2" *ngIf="showBox2">
@@ -107,7 +113,7 @@
 
           </div>
         </div>
-        <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Next</button>
+        <button type="button" (click)="next()" (click)="sendNewSmartReply()" class="btn5 btn-block col-1 mt-3 ">Next</button>
 
       </div>
       <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">

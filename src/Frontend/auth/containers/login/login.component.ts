@@ -12,80 +12,75 @@ import { Validators } from '@angular/forms';
     styleUrls: ['login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-    
-    checked  = true;
+
+    checked = true;
     password: any;
-    loginForm=new FormGroup({
-        email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+    loginForm = new FormGroup({
+         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
          password: new FormControl('', Validators.compose([Validators.required,Validators.minLength(8)])),
-        flash:new FormControl(this.checked)
-      })
-      title = 'formValidation';
-        submitted = false;
-       errorStatusno1 = 401;
-        errorStatusno = 400;
-        
-        errorStatusno3 = 403;
-        errorStatusno4 = 502;
-      
-    constructor(private apiService :AuthService ,private router: Router, private formBuilder: FormBuilder) {
-       
+         flash: new FormControl(this.checked)
+    })
+    title = 'formValidation';
+    submitted = false;
+
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) {
+
     }
     ngOnInit() {
-    
-    }
 
+    }
 
     onSubmit() {
         this.apiService.login(this.loginForm.value).subscribe(
-            
             (result) => {
-
-                sessionStorage.setItem('loginDetails', JSON.stringify(result.user))
-                sessionStorage.setItem('SP_ID', result.user.SP_ID)
-                console.log(result.user.UserType)
+             sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
+                sessionStorage.setItem('SP_ID', result.user.SP_ID);
+                console.log(result.user.UserType);
                 if (result.user.UserType == 'Owner') {
                     console.log("Agent ")
                     this.router.navigate(['dashboard'])
                 }
-
             },
             (error) => {
-                if (error.status === this.errorStatusno4) {
-                    document.getElementById("505-error")!.innerText = '! Internal Server Error, Please Try After Some Time.';
-                       
-                }
-                // else if(error.status === this.)
+                if (error?.status === 401) {
+                    const errorMessage = "! Incorrect Email or Password";
+                    const errorDiv = document.getElementById("error-message");
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                    }   
+                    else if (error?.status === 502) {
+                    const errorMessage = "! Invalid Response.";
+                    const errorDiv = document.getElementById("error-message");
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                }  
+                    else if (error?.status === 500) {
+                        const errorMessage = "! Internal Server Error, Please Try After Sometime.";
+                        const errorDiv = document.getElementById("error-message");
+                        if (errorDiv) {
+                            errorDiv.innerHTML = errorMessage;
+                        }
+                    }    
+                    else  {
+                    const errorMessage = "! Something Went Wrong.";
+                        const errorDiv = document.getElementById("error-message");
+                        if (errorDiv) {
+                            errorDiv.innerHTML = errorMessage;
+                        }
+                    } 
+                  
+                  
+            });
 
-
-
-
-                //     if (errorDiv) {
-                //         errorDiv.innerHTML = ;
-                //     }
-                // } else if (error.status === 400) {
-                //     // Show payment required message
-                //     alert("Internal Server Error. Please retry after sometime")
-                // }
-                // else if (error.status === 500) {
-                //     alert("Internal Server Error. Please retry after sometime")
-                // }
-            })
-
-
-        // if(result.user.UserType=='Owner'){
-        //     console.log("Agent ")
-        // }
-
-
-
-
+        
     }
     onVerification() {
         console.log(this.loginForm.value)
         this.submitted = true
 
-
+    
     }
 
     visible: boolean = true;

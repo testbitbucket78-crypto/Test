@@ -10,11 +10,12 @@ const val = require('./constant');
 const { Status } = require('tslint/lib/runner');
 const CryptoJS = require('crypto-js');
 var axios = require('axios');
+const { error } = require('console');
 const SECRET_KEY = 'RAUNAK'
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
-var mailOpt = "";
+
 
 
 const allregisterdUser = (req, res) => {
@@ -25,103 +26,87 @@ const allregisterdUser = (req, res) => {
 }
 
 //post Api for login
-const login = (req, res) => {
-    var data = req.body.email_id
-    db.db.query(val.loginQuery, [req.body.email_id], function (err, result) {
-        email = req.body.email_id;
-        // user does not exists
-        if (err) {
-            return res.status(400).send({
-                msg: err
+const login = async (req, res) => {
+    try {
+        var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id])
+        if (credentials.length <= 0) {
+            res.status(401).send({
+                msg: 'Invalid User !',
+                status: 401
             });
         }
-        if (!result.length) {
-            console.log("length error")
-            return res.status(401).send({
-                msg: 'Email or password is incorrect!'
+        var password = await bcrypt.compare(req.body.password, credentials[0]['password'])
+
+        if (!password) {
+            res.status(401).send({
+                msg: 'Username or password is incorrect!',
+                status: 401
             });
         }
-        // check password
+        else {
+            const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY);
+            res.status(200).send({
+                msg: 'Logged in!',
+                token,
+                user: credentials[0],
+                status: 200
+            });
+        }
 
-
-        bcrypt.compare(
-            req.body.password,
-            result[0]['password'],
-            (bErr, bResult) => {
-                // wrong password
-                if (bErr) {
-                    throw bErr;
-
-                }
-                if (bResult) {
-                    const token = jwt.sign({ email_id: result.email_id }, SECRET_KEY);
-                    return res.status(200).send({
-                        msg: 'Logged in!',
-                        token,
-                        user: result[0]
-                    });
-                }
-                return res.status(401).send({
-                    msg: 'Username or password is incorrect!'
-                });
-            }
-        );
-
+    } catch (err) {
+        console.error(err);
+        db.errlog(err)
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
     }
 
-    );
-    mailOpt = data
-
 }
-const get = (req, res) => {
-    console.log(mailOpt)
-    var mailOptions = {
-        to: mailOpt,
-        subject: "Request for download Contact_Data: ",
-        html: '<p>You requested for download Contact_Data, kindly use this <a href="http://localhost:3002/getCheckedExportContact">link</a>to see your contacts</p>'
-    };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log(error);
-        }
-        console.log('Message sent: %s', info.messageId);
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-        res.status(200).send({ msg: "data has been sent" });
-    });
-}
 //post api for register
 
-const register = function (req, res) {
+const register = async function (req, res) {
     name = req.body.name
     mobile_number = req.body.mobile_number
     email_id = req.body.email_id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
-    if (password != confirmPassword) {
-        throw error;
-    } else {
-        bcrypt.hash(password, 10, function (err, hash) {
+    var mobile = mobile_number;
 
-            var values = [[name, mobile_number, email_id, hash]]
-
-            db.db.query(val.registerQuery, [values], function (err, result, fields) {
-                if (err) {
-
-                    res.send(err)
-                }
-                else {
-                    const token = jwt.sign({ email_id: result.email }, SECRET_KEY);
-                    res.status(200).send({
-                        msg: 'Registered !',
-                        token,
-                        user: result
-                    });
-
-                }
+    try {
+        var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id])
+        if (credentials.length > 0) {
+            res.status(409).send({
+                msg: 'User Already Exist with this email !',
+                status: 409
             });
+        }
+        if (password !== confirmPassword) {
+            res.status(400).json({ error: 'Passwords do not match', status: 400 });
+        }
+        // Hash the password before storing it in the database
+        const hash = await bcrypt.hash(password, 10);
+        var values = [name, mobile, email_id, hash]
+        var registeredUser = await db.excuteQuery(val.registerQuery, values)
+        const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
+        res.status(200).send({
+            msg: 'Registered !',
+            token,
+            user: registeredUser,
+            status: 200
         });
     }
+    catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
+    }
+
+
 }
 
 
@@ -145,77 +130,99 @@ let transporter = nodemailer.createTransport({
 
 //Post api for forget password
 const forgotPassword = (req, res) => {
-    email_id = req.body.email_id;
-
-    db.db.query(val.loginQuery, [req.body.email_id], function (error, results, fields) {
-        // Send Email for For forget password varification
-
-        if (Object.keys(results).length === 0) {
-            console.log(error)
-
+    try {
+        email_id = req.body.email_id;
+        try {
+            db.db.connect();
+        } catch (err) {
+            console.log(err)
         }
-        else {
 
-            db.db.query(val.uidresetEmailQuery, [req.body.email_id], function (err, results, fields) {
-                var uid = results;
+        db.db.query(val.loginQuery, [req.body.email_id], function (error, results, fields) {
+            // Send Email for For forget password varification
 
-                // Encrypt
-                var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
+            if (Object.keys(results).length === 0) {
+                res.status(400).send({
+                    msg: "Email not found",
+                    status: 400
+                });
+
+            }
+            else {
+
+                db.db.query(val.uidresetEmailQuery, [req.body.email_id], function (err, results, fields) {
+                    var uid = results;
+
+                    // Encrypt
+                    var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
 
 
 
 
-                if (err) {
-                    console.log(err)
-                } else {
+                    if (err) {
+                        res.send(err)
+                    } else {
 
-                    var mailOptions = {
-                        from: val.email,
-                        to: req.body.email_id,
-                        subject: "Request for reset Password: ",
-                        // html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/reset-password?SP_ID=' + cipherdata + '">link</a>to reset your password</p>'
-                        html: '<p>You requested for reset password, kindly use this page  <a href="https://cip.sampanatechnologies.com/reset-password">link</a>to reset your password</p>'
-                    };
+                        var mailOptions = {
+                            from: val.email,
+                            to: req.body.email_id,
+                            subject: "Request for reset Password: ",
+                            // html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                            html: '<p>You requested for reset password, kindly use this page  <a href="http://localhost:4200/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                        };
 
-                    transporter.sendMail(mailOptions, (error, info) => {
-                        if (error) {
-                            return console.log(error);
-                        }
-                        console.log('Message sent: %s', info.messageId);
-                        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-                        res.status(200).send({
-                            msg: "password has been sent",
-                            id: results
+                        transporter.sendMail(mailOptions, (error, info) => {
+                            if (error) {
+                                res.send(error)
+                            }
+
+                            res.status(200).send({
+                                msg: "password has been sent",
+                                id: results
+                            });
                         });
-                    });
-                }
+                    }
 
 
-            });
-        }
-    })
+                });
+            }
+        })
+    } catch (err) {
+        db.errlog(err);
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
+    }
 
 }
 
 //resetPssword api
 const resetPassword = function (req, res) {
-    console.log(req.body)
-    console.log(req.body.id)
-    //console.log("req headrer"+req.body.value)
-    SP_ID = req.body.id
-    password = req.body.password
-    confirmPassword = req.body.confirmPassword
-    if (password != confirmPassword) {
-        throw error;
+    try {
+       
+        uid = req.body.id
+        password = req.body.password
+        confirmPassword = req.body.confirmPassword
+        if (password != confirmPassword) {
+
+            console.log(error)
+        }
+        else {
+            bcrypt.hash(password, 10, function (err, hash) {
+
+                db.runQuery(req, res, val.updatePassword, [hash, uid]);
+            })
+        }
+
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
     }
-    else {
-        bcrypt.hash(password, 10, function (err, hash) {
-
-            db.runQuery(req, res, val.updatePassword, [hash, SP_ID]);
-        })
-    }
-
-
 };
 
 
@@ -243,7 +250,7 @@ function getTextMessageInput(recipient, text) {
         "to": recipient,
         "type": "text",
         "text": {
-            "body": "OTP for verification : "+ text
+            "body": "OTP for verification : " + text
         }
 
     });
@@ -254,81 +261,163 @@ function getTextMessageInput(recipient, text) {
 
 // Opt for Varification
 const sendOtp = function (req, res) {
-    email_id = req.body.email_id;
-   // mobile_number = req.body.mobile_number;
-    console.log("send otp")
-    console.log(req.body)
-    let otp = Math.floor(100000 + Math.random() * 900000);
-    console.log(otp)
-    // send mail with defined transport object
-    var mailOptions = {
-        from: val.email,
-        to: req.body.email_id,
-        subject: "Otp for registration is: ",
-        html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log(error);
+    
+    try {
+        try {
+            db.db.connect();
+        } catch (err) {
+            console.log(err)
         }
-        console.log('Message sent: %s', info.messageId);
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        email_id = req.body.email_id;
+        mobile_number = req.body.mobile_number.internationalNumber;
+        
+        let otp = Math.floor(100000 + Math.random() * 900000);
 
-        res.send(Status);
-    });
+        // send mail with defined transport object
+        var mailOptions = {
+            from: val.email,
+            to: req.body.email_id,
+            subject: "Otp for registration is: ",
+            html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            try {
 
 
-    var data = getTextMessageInput('919971129777', otp);
-    var value = JSON.parse(data)
-    console.log(value.text.body)
-    sendMessage(data)
+                res.send(Status);
+            } catch (error) {
+               
+                res.send(err)
+            }
 
-    db.db.query(val.insertOtp, [req.body.email_id, otp, 'Email'], function (err, result) {
-        console.log(result)
-    })
+        });
 
-    db.db.query(val.insertOtp, [req.body.mobile_number, otp, 'Mobile'], function (err, result) {
-        console.log(result)
-    })
 
-    return res.status(200).send({
-        msg: 'Otp Sended sucessfully !',
-    })
+        var data = getTextMessageInput('919971129777', otp);
 
+        sendMessage(data)
+
+        db.db.query(val.insertOtp, [req.body.email_id, otp, 'Email'], function (err, result) {
+            try {
+                console.log(result)
+            } catch (err) {
+                console.log(err)
+
+            }
+        })
+
+        db.db.query(val.insertOtp, [mobile_number, otp, 'Mobile'], function (err, result) {
+            try {
+                console.log(result)
+            } catch (err) {
+                console.log(err)
+            }
+        })
+
+        return res.status(200).send({
+            msg: 'Otp Sended sucessfully !',
+            status: 200
+        })
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+      
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
+    }
 
 };
 const verifyOtp = function (req, res, err) {
-    console.log("req.body")
-    console.log(req.body.otpfieldvalue)
-    console.log(req.body.otp)
 
-    db.db.query(val.verifyOtp, [req.body.otpfieldvalue], function (err, result) {
-        console.log(result[0].otp)
-        console.log(req.body.otp != result[0].otp)
-        if (err) {
-            return res.send(err);
+    try {
+        try {
+            db.db.connect();
+        } catch (err) {
+            console.log(err)
         }
-        if (result.length != 0 && req.body.otp == result[0].otp) {
-            return res.status(200).send({
-                msg: 'Otp Verified',
-            })
-        }
-        if ((result.length != 0 && req.body.otp != result[0].otp)) {
-            return res.status(200).send({
-                msg: 'Invalid otp',
-            })
-        }
-        if (result.length == 0) {
-            return res.status(200).send({
-                msg: 'Otp Expired ! Please resend otp',
-            })
-        }
+        db.db.query(val.verifyOtp, [req.body.otpfieldvalue], function (err, result) {
 
-    })
+            try {
+                if (result.length != 0 && req.body.otp == result[0].otp) {
+                    return res.status(200).send({
+                        msg: 'Otp Verified',
+                        status: 200
+                    })
+                }
+                if ((result.length != 0 && req.body.otp != result[0].otp)) {
+                    return res.status(401).send({
+                        msg: 'Invalid otp',
+                        status: 401
+                    })
+                }
+                if (result.length == 0) {
+                    return res.status(410).send({
+                        msg: 'Otp Expired ! Please resend otp',
+                        status: 410
+                    })
+                }
+            } catch (err) {
+                console.log(err)
+                res.send(err)
+            }
+        })
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
+    }
+};
 
+const verifyPhoneOtp = function (req, res, err) {
+
+    try {
+        try {
+            db.db.connect();
+        } catch (err) {
+            console.log(err)
+        }
+        db.db.query(val.verifyOtp, [req.body.otpfieldvalue], function (err, result) {
+
+            try {
+                if (result.length != 0 && req.body.otp == result[0].otp) {
+                    return res.status(200).send({
+                        msg: 'Otp Verified',
+                        status: 200
+                    })
+                }
+                if ((result.length != 0 && req.body.otp != result[0].otp)) {
+                    return res.status(401).send({
+                        msg: 'Invalid otp',
+                        status: 401
+                    })
+                }
+                if (result.length == 0) {
+                    return res.status(410).send({
+                        msg: 'Otp Expired ! Please resend otp',
+                        status: 410
+                    })
+                }
+            } catch (err) {
+                console.log(err)
+                res.send(err)
+            }
+        })
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
+    }
 };
 
 
 
-module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, mailOpt };
+module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, verifyPhoneOtp };

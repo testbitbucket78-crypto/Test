@@ -826,7 +826,7 @@ outline: none;
 }
 
 .modal-dialog .modal-content .modal-body {
-   font-family: "Manrope";
+    font-family: "Manrope";
     font-size: 14px;
     top: 40px;
     font-weight: 600;
@@ -836,6 +836,8 @@ outline: none;
 .modal-dialog .modal-content .deletefile .btn9 {
     border: 1px solid #695F9724;
     position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
     background-color: #ffffff;
     color: #7A86A1;
     margin: -58px 22px 15px 61px;
@@ -851,6 +853,8 @@ outline: none;
 .modal-dialog .modal-content .deletefile .btn99 {
     border: 1px solid #695F9724;
     position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
     color: #ffffff;
     background: #F23B3B;
     width: 93px;
@@ -866,20 +870,28 @@ outline: none;
    #contact-save {
     text-align: center;
     font-family: 'Manrope';
-    font-weight: 700;
-    font-size: 16px;
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 38px;
+    width: 100%;
   }
 
   #contact-save-btn {
-    width: 65px;
-    height: 45px;
-    margin-left: -80px;
-    background: #39bb35;
-    border-radius: 19px;
+
+    margin-left: -86px;
     opacity: 1;
-    border: 1px solid #ebebeb;
-    font-family: "Manrope";
-    font-size: 15px;
+    font-family: 'Manrope';
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #695F9724;
+    background-color: #F23B3B;
+    color: #ffffff;
+    border-radius: 15px;
+    margin-top: -5px;
+    width: 80px;
+    height: 36px;
+    cursor: pointer;
+    text-align: center;
 
   }
 

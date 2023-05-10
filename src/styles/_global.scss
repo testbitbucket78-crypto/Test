@@ -29,6 +29,62 @@
 .modal-content{
 	margin-top: 5rem;
 }
+
+.custom_modal{
+  overflow: auto;
+  max-height: 80vh;
+}
+.lg-size .modal-dialog {
+  max-width:800px;
+  
+  }
+  .quickResponse .items_list .item p span{
+    font-size: 14px;
+    color: #6149CD;
+    font-weight: 800;
+}
+  .modal-open .sb-nav-fixed #layoutSidenav #layoutSidenav_nav{
+    z-index: 0!important;
+  }
+  .modal-backdrop{
+    background: rgba(0,0,0,0.5);
+  }
+  .teambox-pink .modal-content{
+    background-color: #FFF4F2!important;
+    border-radius: 20px!important;
+    padding: 20px;
+  }
+  .pink-bg .modal-content{
+    background-color: #FFF4F2!important;
+    border-radius: 20px!important;
+    padding: 20px;
+  }
+
+  .pink-bg-sm .modal-content{
+    background-color: #FFF4F2!important;
+    border-radius: 20px!important;
+    padding: 0px;
+    box-shadow: 4px 22px 54px #695F971A;
+  }
+  .teambox-white .modal-content{
+    background-color: #fff!important;
+    border-radius: 20px!important;
+    padding: 20px;
+  }
+
+  .teambox-transparent .modal-content{
+    background-color: transparent!important;
+    border-radius: 20px!important;
+    padding: 20px;
+    border:0!important;
+  }
+  .teambox-transparent .modal-header{
+    padding: 1rem 0;
+  }
+  .modal-xl {
+		max-width: 950px!important;
+	}
+
 .modal-header {
     display: flex;
     align-items: flex-start;
@@ -198,3 +254,216 @@
 }
 
 }
+
+
+
+.message_box .content p,
+.contacts_detail .message p{
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+}
+
+
+
+.container {
+  position: relative;
+  padding-left: 25px;
+  cursor: pointer;
+  font-size: 12px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: flex-start;
+  width:50%;
+  margin: 0;
+  background: transparent;
+  }
+  
+  /* Hide the browser's default checkbox */
+  .container input {
+  // position: absolute;
+  // opacity: 0;
+   cursor: pointer;
+  height: calc(1.5em + 0.75rem + 2px);
+  width: 0;
+  }
+  
+  /* Create a custom checkbox */
+  .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #C0BDCC;
+  }
+  .checkmark.radio{
+  border-radius: 50%;
+  }
+  
+  /* On mouse-over, add a grey background color */
+  
+  /* When the checkbox is checked, add a blue background */
+  .container input:checked ~ .checkmark {
+  background-color: #6149CD;
+  }
+
+  .container input:checked ~ .checkmark.radio {
+    background-color: #fff;
+    border:2px solid #6149CD
+    }
+
+  
+  .container span.label { 
+  color:#7A86A1; 
+}
+
+ .container input[type="radio"]:checked + span.label {
+  color: #6149CD;
+}
+
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .container input:checked ~ .checkmark:after {
+  display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .container .checkmark:after {
+  left: 5px;
+  top: 3px;
+  width: 4px;
+  height: 7px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  }
+
+
+
+  /*Css for Template box*/
+
+  .template_box{
+    min-height: 400px;
+    background: #FFF4F2;
+    border-radius: 24px;
+    width: 31%;
+    margin: 1%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem 1rem 0 1rem;
+  }
+  .template_box label.container{
+    width: 100%;
+  }
+  .template_box label.container p{
+    margin: 0;
+  }
+
+  .template_box .inner_box{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    position: relative;
+  }
+  .template_box .inner_box img.template_img{
+    width: 100%;
+    border-radius: 15px 15px 0 0;
+  }
+  .template_box .inner_box .template_text{
+    width: 100%;
+    border-radius: 0 0 15px 15px;
+    border-left: 1px solid #EBEBEB;
+    border-right: 1px solid #EBEBEB;
+    border-bottom: 1px solid #EBEBEB;
+    background: #FFFFFF;
+    padding: 1rem;
+  }
+  .template_box .inner_box .template_text p{
+    margin-bottom: 5px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #030303;
+  }
+  .template_box .inner_box .template_text p span{
+    font-size: 14px;
+    font-weight: 300;
+    color: #030303;
+  }
+  .template_box .template_btn{
+    max-width: 100%;
+  }
+  .template_box .template_btn .btn{
+    font-weight: 600;
+    font-size: 12px;
+    margin: 5px 0px;
+  }
+  .template_btn{
+		display: flex;
+		flex-direction: column;
+		max-width:225px;
+		width: 100%;
+		margin:5px 0px 15px 0px;
+	  }
+	  .template_btn .btn{
+		width:100%;
+		height:35px;
+		background: #DCE0E6;
+		border-radius: 12px;
+		color:#030303;
+		font-weight: 800;
+		font-size: 14px;
+		margin:5px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+	  }
+
+    p{
+      line-height: 17px;
+      font-size: 14px;
+    }
+    p span{
+      font-size: 12px;
+      color: #7A86A1;
+    }
+    
+    .notes .message_text p span.mention,
+    p span.mention{
+      color: #0091FF;
+      font-weight: 600;
+    }
+    img.icon{
+      margin-left:5px;
+    }
+    .message_text p,.message_text p span{
+      color:#fff;
+      font-size: 12px;
+    }
+    .notes .message_text p,.notes .message_text p span{
+      color:#000;
+    }
+
+    .message_box.left .content .message_text p,
+    .message_box.left .content .message_text p span{
+        color:#000;
+    }
+
+

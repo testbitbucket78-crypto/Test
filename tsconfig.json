@@ -46,6 +46,6 @@
         ],
         "types": [
           "@angular/localize"
-        ]
+        ],
     }
 }

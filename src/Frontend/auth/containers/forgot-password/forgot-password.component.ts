@@ -28,18 +28,33 @@ export class ForgotPasswordComponent implements OnInit {
     //     console.log(this.forgetpassword.value)
         
     // }
-    onSubmit(){
+    onSubmit() {
         console.log(this.forgetpassword.value)
         this.submitted = true
-        this.apiService.forgotpassword(this.forgetpassword.value).subscribe((result)=>{
-            console.warn("forgotpassword Done! ",result)
-            this.router.navigate (['reset-password'])
-        });
-        if (this.forgetpassword.invalid){
+        this.apiService.forgotpassword(this.forgetpassword.value).subscribe((result) => {
+            if (result.status === 200 && result.id.lenght > 0) {
+                sessionStorage.setItem('uid', result.id[0].uid)
+                this.router.navigate(['reset-password'])
+            }
+
+        },
+            (error) => {
+
+
+                if (error?.status === 400) {
+                    const errorMessage = "! Email Not Found";
+                    const errorDiv = document.getElementById("error-message");
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                }   
+            })
+
+        if (this.forgetpassword.invalid) {
             return
         }
-        
-       // alert("Success")
+
+        // alert("Success")
     }
     
 }

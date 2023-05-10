@@ -7,15 +7,17 @@ const database= "cip_project"
 
 
 //Query for contactPage
-var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked is null";
-
-var selectAllAgentsQuery = "WITH RECURSIVE user_paths AS ( SELECT SP_ID,ParentID as ParentId, uid,name, mobile_number,email_id,address,usertype,1 lvl FROM user WHERE ParentID = 0 and sp_id=? UNION ALL SELECT e.sp_id, e.ParentID, e.uid, e.name, e.mobile_number,e.email_id,e.address,e.usertype,lvl+1 FROM user e INNER JOIN user_paths ep ON ep.sp_id = e.ParentId ) SELECT sp_id, ParentId, uid,name, mobile_number, email_id, address, usertype, lvl FROM user_paths ep ";
-
-var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,OptInStatus) VALUES ?"
+var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked !=1";
+var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,SP_ID,OptInStatus) VALUES ?"
 var filterQuery="SELECT * from EndCustomer where Phone_number=?"
-var searchQuery="SELECT * from EndCustomer where Phone_number=? or Name=?"
+var searchQuery="SELECT * from EndCustomer where SP_ID=? and (Phone_number like ? or Name like ?)"
 var selectByIdQuery="SELECT * FROM EndCustomer WHERE customerId=?"
 var blockCustomerQuery="UPDATE EndCustomer SET isBlocked =? WHERE customerId =?";
+
+
+
+//var selectAllAgentsQuery = "WITH RECURSIVE user_paths AS ( SELECT SP_ID,ParentID as ParentId, uid,name, mobile_number,email_id,address,usertype,1 lvl FROM user WHERE ParentID = 0 and sp_id=? UNION ALL SELECT e.sp_id, e.ParentID, e.uid, e.name, e.mobile_number,e.email_id,e.address,e.usertype,lvl+1 FROM user e INNER JOIN user_paths ep ON ep.sp_id = e.ParentId ) SELECT sp_id, ParentId, uid,name, mobile_number, email_id, address, usertype, lvl FROM user_paths ep ";
+var selectAllAgentsQuery = "SELECT * from user where SP_ID=?";
 
 
 
@@ -28,8 +30,10 @@ var selectInteractionByIdQuery="SELECT * FROM Interaction WHERE Interaction.Inte
 
 
 
-var getAllMessagesByInteractionId = "SELECT Message.* ,user.name As AgentName from Message LEFT JOIN user  ON   Message.Agent_id= user.uid where  Message.interaction_id=? and Type=?"
-var insertMessageQuery = "INSERT INTO Message (Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,Message_template_id,Quick_reply_id) VALUES ?"
+var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=? and Type=?"
+
+
+var insertMessageQuery = "INSERT INTO Message (Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at) VALUES ?"
 
 
 

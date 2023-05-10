@@ -5,6 +5,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { CSVRecord } from './../../models'
 import Stepper from 'bs-stepper';
 import { Content } from '@angular/compiler/src/render3/r3_ast';
+import { Router } from '@angular/router';
 declare var $: any;
 
 
@@ -42,22 +43,25 @@ export class ImportComponent implements OnInit {
 	
 
 
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService , private router:Router) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
 	ngOnInit() {
 
+		
+		this.routerGuard();
 		this.showTopNav = false;
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: true,
+			linear: false,
 			animation: true
 		
 		})
-		this.Identifier = "emailId"
+		this.Identifier = "Email id"
 		this.purpose = "Add new contact only"
-		this.selectedIdentifier.push(this.Identifier)
+		this.selectedIdentifier.push('emailId')
+		console.log(this.selectedIdentifier)
 
 	}
 
@@ -66,6 +70,13 @@ export class ImportComponent implements OnInit {
 	}
 	openinstruction(instruction: any) {
 		this.modalService.open(instruction);
+	}
+
+   //******* Router Guard  *********//
+	routerGuard = () => {
+		if (sessionStorage.getItem('SP_ID') === null) {
+			this.router.navigate(['login']);
+		}
 	}
 
 	//********csv file upload  *********
@@ -84,7 +95,7 @@ export class ImportComponent implements OnInit {
 
 	//**** incorrect file format popup ****/
 	incorrectFile = (content:any) => {
-	
+		alert('Clicked!');
 		const currentfileformat = this.file.name.split(".").pop();
 		if(currentfileformat !== this.fileformat) {
 	
@@ -125,21 +136,17 @@ export class ImportComponent implements OnInit {
 
 			let csvData = reader.result;
 			let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);
-			//console.log(csvRecordsArray)
-			//this.data = csvRecordsArray
 
 
 			let headersRow = this.getHeaderArray(csvRecordsArray);
 			this.headers = headersRow;
-			//console.log(csvRecordsArray)
 			this.importedData = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
-
-			// console.log("this.records")
-			// console.log(this.importedData)
-
 
 		}
 	}
+
+
+	
 	//*********Download Sample file****************/
 
 	download() {
@@ -176,23 +183,7 @@ export class ImportComponent implements OnInit {
 
 		for (let i = 1; i < csvRecordsArray.length - 1; i++) {
 			let curruntRecord = (<string>csvRecordsArray[i]).split(',');
-			//let values = dataRows[i].split(',');
-			// if (curruntRecord.length != headerLength.length) {
 
-			// 	let errObj: any = new Object();
-			// 	for (let index = 0; index < headerLength.length; index++) {
-			// 		const propertyName: string = headerLength[index];
-
-			// 		let val: any = curruntRecord[index];
-			// 		if (val === '') {
-			// 			val = null;
-			// 		}
-			// 		errObj[propertyName] = val;
-
-			// 	} 
-			// 	errorDataArray.push(errObj)
-			// }
-			// else {
 			let obj: any = new Object();
 			for (let index = 0; index < headerLength.length; index++) {
 				const propertyName: string = headerLength[index];
@@ -206,7 +197,7 @@ export class ImportComponent implements OnInit {
 			}
 			csvArr.push(obj)
 		}
-		//}
+
 		return csvArr;
 	}
 	//*********Override field Method ******** */
@@ -224,18 +215,17 @@ export class ImportComponent implements OnInit {
 
 	//******************Update and save csv file data******************** /
 	updateAndSave() {
-
 		var Data = {
 
 			"field": this.fields,
 			"identifier": this.selectedIdentifier,
 			"purpose": this.purpose,
 			"mapping": this.columnMapping,
-			"importedData": this.importCSVdata
+			"importedData": this.importCSVdata,
+			"SP_ID":sessionStorage.getItem('SP_ID')
 		}
-
 		this.apiService.update(Data).subscribe((Data: any) => {
-
+           console.log(Data)
 		})
 
 		this.selectedIdentifier.length = 0;
@@ -247,11 +237,12 @@ export class ImportComponent implements OnInit {
 	//************************* Select Identifier of imported file ********************************* */
 
 	onSelected(value: any) {
+		console.log("onSelected"+value)
 		this.Identifier = value
 		this.selectedIdentifier.length = 0;
 
 		this.selectedIdentifier.push(value);
-
+		console.log("onSelected" + this.selectedIdentifier)
 
 	}
 
@@ -279,7 +270,8 @@ export class ImportComponent implements OnInit {
 			"identifier": this.selectedIdentifier,
 			"purpose": this.purpose,
 			"mapping": this.columnMapping,
-			"importedData": this.importedData
+			"importedData": this.importedData,
+			"SP_ID": sessionStorage.getItem('SP_ID')
 
 		}
 		this.apiService.updatedDataCount(csvdata).subscribe((data: any) => {
@@ -287,12 +279,11 @@ export class ImportComponent implements OnInit {
 			this.numberOfNewContact = data.newCon
 			this.skipCont = data.skipCont
 			this.importCSVdata = data.importData
-			console.log(" get data ")
-			console.log(this.importCSVdata)
-
+			console.log(this.numberOfNewContact)
 		})
 
 	}
+
 
 
 }

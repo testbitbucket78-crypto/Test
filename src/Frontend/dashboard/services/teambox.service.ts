@@ -9,73 +9,78 @@ const API_URL = environment.baseUrl;
 export class TeamboxService {
   constructor(private http: HttpClient) { }
 
-  public getAgents(SPID:any) {
-    return this.http.get('https://authapi.sampanatechnologies.com/agents/'+SPID);
+  public uploadfile(FileData:any) {
+      return this.http.post(API_URL+'/uploadfile/',FileData);
   }
 
+  public getAgents(SPID:any) {
+    return this.http.get(API_URL+'/agents/'+SPID);
+  }
+
+  
   public getCustomers(SPID:any) {
-    return this.http.get('https://authapi.sampanatechnologies.com/customers/'+SPID);
+    return this.http.get(API_URL+'/customers/'+SPID);
   }
 
   public createCustomer(data: any) {
-    return this.http.post('https://authapi.sampanatechnologies.com/addcustomers/',data);
+    return this.http.post(API_URL+'/addcustomers/',data);
   }
 
-  public searchCustomer(key:any) {
-    return this.http.get('https://authapi.sampanatechnologies.com/customers/'+key);
+  public searchCustomer(channel:any,SPID:any,key:any) {
+      return this.http.get(API_URL+'/'+channel+'/'+SPID+'/'+key);
   }
   public blockCustomer(data:any) {
-    return this.http.post('https://authapi.sampanatechnologies.com/blockcustomer/',data);
+    return this.http.post(API_URL+'/blockcustomer/',data);
   }
 
   
 
   public createInteraction(data: any) {
-    return this.http.post('https://authapi.sampanatechnologies.com/interaction/',data);
+    return this.http.post(API_URL+'/interaction/',data);
   }
   
   public getAllInteraction() {
-    return this.http.get('https://authapi.sampanatechnologies.com/interaction');
+    return this.http.get(API_URL+'/interaction');
   }
   
   public getInteractionById(InteractionId:any) {
-    return this.http.get('https://authapi.sampanatechnologies.com/interaction/'+InteractionId);
+    return this.http.get(API_URL+'/interaction/'+InteractionId);
   }
   public getFilteredInteraction(InteractionStatus:any,AgentId:any) {
-    return this.http.get('https://authapi.sampanatechnologies.com/filterinteraction/'+InteractionStatus+'/'+AgentId);
+    return this.http.get(API_URL+'/filterinteraction/'+InteractionStatus+'/'+AgentId);
   }
   public getSearchInteraction(SearchKey:any,AgentId:any) {
-    return this.http.get('https://authapi.sampanatechnologies.com/searchinteraction/'+SearchKey+'/'+AgentId);
+    return this.http.get(API_URL+'/searchinteraction/'+SearchKey+'/'+AgentId);
   }
   public updateInteraction(data: any) {
-    return this.http.post('https://authapi.sampanatechnologies.com/updateinteraction/',data);
+    return this.http.post(API_URL+'/updateinteraction/',data);
   }
   
   public checkInteractionPinned(InteractionId:any,AgentId:any) {
-    return this.http.get('https://authapi.sampanatechnologies.com/interactionpinned/'+InteractionId+'/'+AgentId);
+    return this.http.get(API_URL+'/interactionpinned/'+InteractionId+'/'+AgentId);
   }
 
   public getAllMessageByInteractionId(InteractionId:any,Type:any) {
-    return this.http.get('https://authapi.sampanatechnologies.com/messages/'+InteractionId+'/'+Type);
+    return this.http.get(API_URL+'/messages/'+InteractionId+'/'+Type);
   }
   public sendNewMessage(data: any) {
-    return this.http.post('https://authapi.sampanatechnologies.com/newmessage/',data);
+    return this.http.post(API_URL+'/newmessage/',data);
   }
   public deleteMessage(data: any) {
-    return this.http.post('https://authapi.sampanatechnologies.com/deletemessage/',data);
+    return this.http.post(API_URL+'/deletemessage/',data);
   }
   public updateMessageRead(data: any) {
-    return this.http.post('https://authapi.sampanatechnologies.com/updatemessageread/',data);
+    return this.http.post(API_URL+'/updatemessageread/',data);
   }
   
 
 
 
   public updateInteractionMapping(data: any) {
-    return this.http.post('https://authapi.sampanatechnologies.com/interactionmapping/',data);
+    return this.http.post(API_URL+'/interactionmapping/',data);
   }
   public getInteractionMapping(InteractionId:any) {
-    return this.http.get('https://authapi.sampanatechnologies.com/interactionmapping/'+InteractionId);
+    return this.http.get(API_URL+'/interactionmapping/'+InteractionId);
   }
 
   

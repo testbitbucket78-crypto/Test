@@ -25,6 +25,14 @@ h1 {
     color: #ffffff;
     border-radius: 15px;
 }
+.bs-stepper-header {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 65%;
+    margin: 0 257px;
+}
 
 .bs-stepper {
     box-shadow: 4px 22px 54px #695f971a;
@@ -119,22 +127,24 @@ h1 {
     font-family: 'Manrope';
     font-size: 1rem;
     line-height: 1.5;
-    color: #7a86a1;
+    color: #7A86A1;
     font-weight: 600;
     background-color: #ffffff;
     background-clip: padding-box;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    border: 1px solid #ebebeb;
+    border: 1px solid #EBEBEB;
     border-radius: 17px;
     opacity: 1;
     margin: 0px 0px 0px 30px;
+    padding: 0 150px 0 24px;
 }
-
-.ff input {
-    margin: 0px 0px 0px 30px;
+.ff textarea{
+    margin: 25px 0px 0px 15px;
     height: 150px;
-    padding: 0px 0px 100px 15px;
-    color: #7a86a1;
+    
+    color: #7A86A1;
+    padding: 15px 0 0 15px;
+    width: 383px;
 }
 
 .btn5 {
@@ -476,7 +486,7 @@ input:focus {
 .box2::after {
     content: attr(data-required);
     position: absolute;
-    right: 150px;
+    right: 130px;
     top: 50%;
     font-size: 15px;
     transform: translateY(-50%);
@@ -588,8 +598,8 @@ input:focus {
     margin: 0px;
     border: none;
     background-color: #fff;
-    top: -85px;
-    left: 259px;
+    top: -90px;
+    left: -29px;
     width: 0px;
 }
 
@@ -598,7 +608,7 @@ input:focus {
 @media all and (max-width: 1536px) {
     .bs-stepper {
         width: 1109px !important;
-        height: 597px !important;
+        height: 100%;
         margin: 56px 255px;
     }
 
@@ -681,17 +691,27 @@ input:focus {
         margin: 8px;
         font-weight: 700;
     }
-    #close-btn {
-        width: 38px;
-        height: 38px;
-        background: #ffffff;
-        border-radius: 15px;
-        opacity: 1;
-        border: 1px solid #ebebeb;
-        font-family: 'Manrope';
-        font-size: 13px;
-        margin: 26px 31px 0 0;
+    .ff textarea{
+        margin: 25px 0px 0px 15px;
+        height: 150px;
+        
+        color: #7A86A1;
+        padding: 15px 0 0 15px;
+        width: 360px;
     }
+    #close-btn  { 
+    width: 38px;
+    height: 38px;
+    background: #FFFFFF;
+    border-radius: 15px;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: "Manrope";
+    font-size: 13px;
+    margin: 26px 31px 0 0;
+
+}
+   
 
     input[type='radio'] {
         width: 20px;
@@ -708,7 +728,9 @@ input:focus {
         height: 60%;
         margin: 20% auto;
         border-radius: 50%;
+      
     }
+   
 
     input[type='radio']:checked:before {
         background: #6149cd;

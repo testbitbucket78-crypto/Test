@@ -6,9 +6,34 @@ const app = express();
 const bcrypt = require('bcrypt');
 const http = require("https");
 
+const multer = require('multer');
+let fs = require('fs-extra');
+
+
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
+// handle storage using multer
+var storage = multer.diskStorage({
+   destination: function (req, file, cb) {
+    let path = `./uploads/`;
+    fs.mkdirsSync(path);
+    cb(null, path);
+    
+   },
+   filename: function (req, file, cb) {
+      cb(null, `${Date.now()}-${file.originalname}`);
+   }
+});
+var upload = multer({ storage: storage });
+
+const uploadfile = (req, res) => {
+    upload.single('dataFile') 
+    const file = req.file;
+    
+};
 
 const getAllAgents = (req, res) => {
     db.runQuery(req,res,val.selectAllAgentsQuery,[req.params.spID]);
@@ -29,7 +54,12 @@ db.runQuery(req,res,val.filterQuery,[req.params.id]);
 }
 
 const searchCustomer = (req, res) => {
-db.runQuery(req,res,val.searchQuery,[req.params.key,req.params.key]);
+var sQuery ="SELECT * from EndCustomer where channel = '"+req.params.Channel+"' and SP_ID="+req.params.spID
+if(req.params.key){
+sQuery = sQuery+" and (Phone_number like '%"+req.params.key+"%' or Name like '%"+req.params.key+"%')"
+}
+
+db.runQuery(req,res,sQuery,[req.params.spID,req.params.key,req.params.key]);
 }
 
 const insertCustomers = (req, res) => {
@@ -37,7 +67,8 @@ const insertCustomers = (req, res) => {
     Phone_number= req.body.Phone_number
     channel= req.body.Channel
     OptInStatus= req.body.OptedIn
-    var values = [[ Name, Phone_number, channel,OptInStatus]]
+    SP_ID=req.body.SP_ID
+    var values = [[ Name, Phone_number, channel,SP_ID, OptInStatus]]
     db.runQuery(req,res,val.insertCustomersQuery, [values])
 }
 
@@ -70,7 +101,6 @@ var formattedDate = new Date().toISOString();
     }
     
     
-    console.log(updateQuery)
     db.runQuery(req,res,updateQuery, [])
 }
 
@@ -113,29 +143,41 @@ const getSearchInteraction = (req, res) => {
      }
      queryPath  +=" )"
      
-     console.log(queryPath)
-	db.runQuery(req,res,queryPath, [searchKey])
+    db.runQuery(req,res,queryPath, [searchKey])
 }
 
 
 
 const getAllMessageByInteractionId = (req, res) => {
-    db.runQuery(req,res,val.getAllMessagesByInteractionId, [req.params.InteractionId,req.params.Type])
+if(req.params.Type !='media'){
+var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id="+req.params.InteractionId+" and Type='"+req.params.Type+"'"
+db.runQuery(req,res,getAllMessagesByInteractionId, [req.params.InteractionId,req.params.Type])
+}else{
+var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id="+req.params.InteractionId+" ORDER BY Message_id DESC"
+
+db.runQuery(req,res,getAllMessagesByInteractionId, [req.params.InteractionId,req.params.Type])
+
+}
+
 }
 
 const updateMessageRead = (req, res) => {
+    if(req.body.Message_id > 0){
     var messageQuery = "UPDATE Message SET is_read =1 WHERE Message_id ="+req.body.Message_id;
     var values = []
     db.runQuery(req,res,messageQuery, [values])
+    }
 }
 const deleteMessage = (req, res) => {
-    var messageQuery = "UPDATE Message SET is_deleted ="+req.body.deleted+", deleted_by ="+req.body.deleted_by+" WHERE Message_id ="+req.body.Message_id;
+    var messageQuery = "UPDATE Message SET deleted_at ='"+req.body.deleted_at+"', is_deleted ="+req.body.deleted+", deleted_by ="+req.body.deleted_by+" WHERE Message_id ="+req.body.Message_id;
     var values = []
     db.runQuery(req,res,messageQuery, [values])
 }
 
 
 const insertMessage = (req, res) => {
+
+		
    if(req.body.Message_id ==''){
    var messageQuery = val.insertMessageQuery
    
@@ -144,59 +186,106 @@ const insertMessage = (req, res) => {
     message_direction= "Out"
     message_text= req.body.message_text
     message_media= req.body.message_media
-    Message_template_id = ' '
+    media_type= req.body.media_type
+    Message_template_id = req.body.template_id
     Quick_reply_id =req.body.quick_reply_id
     Type = req.body.message_type
+    created_at=req.body.created_at
     ExternalMessageId=''
-    var values = [[Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,Message_template_id,Quick_reply_id]]
     
+    var values = [[Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,created_at]]
+    db.runQuery(req,res,messageQuery, [values])
+    if(req.body.message_type =='text'){
+	   if(req.body.message_media!=''){
+		 sendMediaOnWhatsApp(req.body.messageTo,message_media)
+	   }
+		 sendTextOnWhatsApp(req.body.messageTo,message_text)
+    }
     
    }else{
     message_text= req.body.message_text
     Message_id= req.body.Message_id
     var values = [[message_text,Message_id]]
-    var messageQuery = "UPDATE Message SET message_text ='"+message_text+"' WHERE Message_id ="+Message_id;
+    var messageQuery = "UPDATE Message SET updated_at ='"+created_at+"', message_text ='"+message_text+"' WHERE Message_id ="+Message_id;
+    db.runQuery(req,res,messageQuery, [values])
    }
-   db.runQuery(req,res,messageQuery, [values])
    
-   if(req.body.message_type =='text'){
-    var options = {
+   
+   
+   
+      
+      
+}
+
+const WHATSAPP_TOKEN='Bearer EAAD3Jp4D3lIBAAXiPHzN4z4HlLOTd3Hn6nKBYfBwUk0ASNvGMCZAXBuIzZA7z07tNzfRYUheZA6XEIph79MtwvvfXZCOIjO0NKyLdh07pU5j24rktuZAazxIxnTgyPAFsEqCwq3Om3R3xTpcANJwonii87Uq1BZBx8Ckj9pj5YPho4zjZCTrZBrUhA3U98rkyAnp5V4BHdxMlAZDZD'
+const WHATSAPPOptions = {
 	  "method": "POST",
 	  "hostname": 'graph.facebook.com',
-	  "path": "/v15.0/116650038030003/messages",
+	  "path": "/v15.0/102711876156078/messages",
 	  "headers": {
-	  	"Authorization": `Bearer EAABx7u3iFZBYBAJZBnZCmklY1s5uZC5120NfeEnGMkKj9GGYfEKeOVKzD2ZCguRyluWs5UifG0TIirp068IZCq1NUGZAZCxdZA4AIZBBC7oIZBOS4xYtTnqhUjlA1k8vuEhhZCD0ZBcvXVDz2J1Dhk6IXZCdeuAOZBqCaZBM2vZCZBEdHSEPGeN4dWPZCrrSnLoutf66vKSPkwHdbuv3U3T9gZDZD`,
-       	"Content-Type": "application/json",
+	  	"Authorization": WHATSAPP_TOKEN,
+	  	"Content-Type": "application/json",
 	  }
 
 	};
-	
-    var reqBH = http.request(options, (resBH) => {
+	  
+function sendMediaOnWhatsApp(messageTo,mediaFile){
+   var reqBH = http.request(WHATSAPPOptions, (resBH) => {
         var chunks = [];
 		  resBH.on("data", function (chunk) {
 			chunks.push(chunk);
 		  });
         resBH.on("end", function () {
 			const body = Buffer.concat(chunks);
-			console.log(body.toString())
+			
 		  });
 	  });
       
       reqBH.write(JSON.stringify({
 		"messaging_product": "whatsapp",    
     	"recipient_type": "individual",
-		"to": req.body.messageTo,
-		"text": {
-			"body": req.body.message_text
-		}
+		"to": messageTo,
+		"type": "image",
+        "image": { 
+			"link":mediaFile
+			}  
+	   }));
+	  reqBH.end();
 	  
-	  }));
+}
+
+function sendTextOnWhatsApp(messageTo,messateText){
+let content =messateText;
+content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+		content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+		content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+		content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+		content = content.replace('&nbsp;', '\n')
+		content = content.replace(/<br[^>]*>/g, '\n')
+		content = content.replace(/<\/?[^>]+(>|$)/g, "")
 		
-      reqBH.end();
+   var reqBH = http.request(WHATSAPPOptions, (resBH) => {
+        var chunks = [];
+		  resBH.on("data", function (chunk) {
+			chunks.push(chunk);
+		  });
+        resBH.on("end", function () {
+			const body = Buffer.concat(chunks);
+			
+		  });
+	  });
       
-      }
-      
-      
+      reqBH.write(JSON.stringify({
+		"messaging_product": "whatsapp",    
+    	"recipient_type": "individual",
+		"to": messageTo,
+		"type": "text",
+        "text": { 
+			"body": content
+			}  
+	   }));
+	  reqBH.end();
+	  
 }
 
 const updateInteractionMapping = (req, res) => {

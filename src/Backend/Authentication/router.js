@@ -18,7 +18,7 @@ router.post('/verifyOtp',indexController.verifyOtp)
 router.post('/resetPassword',indexController.resetPassword)
 router.post('/allAgents',userController.getAllAgents)
 router.post('/isActiveAgents',userController.getisActiveAgents)
-
+router.post('/verifyPhoneOtp',indexController.verifyPhoneOtp)
 
 
 /**Added by Raman Bhasker*/
@@ -27,7 +27,8 @@ const TeamBoxController=require('./TeamBoxController.js');
 
 router.get('/agents/:spID',TeamBoxController.getAllAgents);
 router.get('/customers/:spID',TeamBoxController.getAllCustomer);
-router.get('/customers/:key',TeamBoxController.searchCustomer);
+router.get('/searchcustomers/:Channel/:spID',TeamBoxController.searchCustomer);
+router.get('/searchcustomers/:Channel/:spID/:key',TeamBoxController.searchCustomer);
 router.post('/addcustomers',TeamBoxController.insertCustomers);
 router.post('/blockcustomer',TeamBoxController.blockCustomer);
 
@@ -48,6 +49,48 @@ router.post('/updatemessageread',TeamBoxController.updateMessageRead);
 router.post('/interactionmapping',TeamBoxController.updateInteractionMapping);
 router.get('/interactionmapping/:InteractionId',TeamBoxController.getInteractionMapping);
 
+
+const multer = require('multer');
+let fs = require('fs-extra');
+// handle storage using multer
+var storage = multer.diskStorage({
+   destination: function (req, file, cb) {
+      //cb(null, '/var/www/api/uploads');
+     
+    let path = `./uploads`;
+    fs.mkdirsSync(path);
+    cb(null, path);
+    
+   },
+   filename: function (req, file, cb) {
+      cb(null, `${Date.now()}-${file.originalname}`);
+   }
+});
+var upload = multer({ storage: storage });
+
+// handle single file upload
+router.post('/uploadfile/',upload.single('dataFile'), async (req, res)=> {
+const file = req.file;
+if (!file) {
+res.send({message:'File no uplaoded...'})
+}
+const url = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`
+res.send({filename:url})
+  
+});
+
+router.get('/uploads/:fileName', async (req, res)=> {
+
+  fs.readFile('./uploads/'+req.params.fileName, function(err, data) {
+     if (!err){ 
+     const file = './uploads/'+req.params.fileName
+      res.download(file);
+     // res.writeHead(200, {'Content-Type': 'image/jpeg'});
+      //res.end(data); // Send the file data to the browser.
+      }
+  });
+  
+});
 
 
 module.exports = router;

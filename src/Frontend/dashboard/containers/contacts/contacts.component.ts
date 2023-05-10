@@ -145,7 +145,7 @@ export class ContactsComponent implements OnInit {
         age: new FormControl(''),
         tag: new FormControl([]),
       //  tagControls = tags.map(tag => new FormControl(tag));
-      status:  new FormControl([]),
+        status:  new FormControl([]),
         facebookId: new FormControl(''),
         InstagramId: new FormControl(''),
          SP_ID: sessionStorage.getItem('SP_ID')
@@ -160,6 +160,7 @@ export class ContactsComponent implements OnInit {
     status: new FormControl([]),
     facebookId: new FormControl(''),
     InstagramId: new FormControl('')
+   
   })
 }
 
@@ -397,10 +398,13 @@ onSelectAll(items: any) {
 
     else {
       this.checkedConatct.splice(rowChecked , 1);
+
     }
     console.log(this.checkedConatct.length);
+
+
     if (this.checkedConatct.length > 0) {
-    
+  
       document.getElementById('import-btn')!.style.display = 'none';
       document.getElementById('add-contact')!.style.display = 'none';
       document.getElementById('delete-btn')!.style.display = 'block';
@@ -410,7 +414,7 @@ onSelectAll(items: any) {
       document.getElementById('import-btn')!.style.display = 'block';
       document.getElementById('add-contact')!.style.display = 'block';
       document.getElementById('delete-btn')!.style.display = 'none';
-     
+   
     }
    
   };
@@ -516,8 +520,9 @@ deletContactByID(data: any) {
   console.log(data)
   this.apiService.deletContactById(data).subscribe((responce => {
     console.log(responce);
+    this.getContact();
   }));
-  this.getContact();
+
 
 
 }
@@ -526,10 +531,10 @@ deletContactByID(data: any) {
     var SP_ID = sessionStorage.getItem('SP_ID')
     this.apiService.blockContact(data, SP_ID).subscribe((responce => {
       console.log(responce);
-    
+       this.getContact();
 
     }));
-    this.getContact();
+    
   }
 
   getContactById(data: any) {
@@ -539,7 +544,8 @@ deletContactByID(data: any) {
     var SP_ID = sessionStorage.getItem('SP_ID')
     this.apiService.getContactById(data.customerId, SP_ID).subscribe((data) => {
       this.customerData = data
-      console.log(this.customerData)
+      console.log(this.customerData);
+      this.getContact();
     })
     
   }

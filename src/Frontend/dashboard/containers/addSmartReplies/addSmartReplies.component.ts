@@ -16,17 +16,25 @@ export class AddSmartRepliesComponent implements OnInit {
 	stepper: any;
 	data: any;
 	val: any;
+	
 	keywordtxt: any;
 	selectedTeam: any;
 	selectedTag:any;
 	triggerFlows:any;
 	selectedValue: any;
+	title = 'formValidation';
+        submitted = false;
     newSmartReply:any;
 	newReply=new FormGroup({
 		Title: new FormControl('',Validators.required),
 		Description:new FormControl('',Validators.required)
+		
 	
 	})
+	newReply1=new FormGroup({
+		keywords: new FormControl('',([Validators.required, Validators.maxLength(50)])),
+	})
+	
 	model: any;
 
 	assignConversation: string[] =
@@ -98,6 +106,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		});
 	
 	
+	
 	}
 
 
@@ -122,6 +131,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	addqty(val: any) {
 		this.data = val;
 		this.keywordtxt= val;
+		console.log("keywordtxt==="+this.keywordtxt)
 
 	}
 
@@ -257,9 +267,11 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	sendNewSmartReply(){
 		var data={
+			SP_ID:sessionStorage.getItem('SP_ID'),
 			Title:this.newReply.value.Title ,
 			Description:this.newReply.value.Description,
-			MatchingCriteria:this.model
+			MatchingCriteria:this.model,
+			Keywords:this.keywords
 		}
 		console.log("data")
 		console.log(data)

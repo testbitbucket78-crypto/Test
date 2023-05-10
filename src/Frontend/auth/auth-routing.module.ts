@@ -14,6 +14,7 @@ import * as authGuards from './guards';
 
 /* dashboard containers */
 import * as dashboardContainers from '../dashboard/containers'
+import { DashboardModule } from 'Frontend/dashboard/dashboard.module';
 
 /* Routes */
 export const ROUTES: Routes = [
@@ -74,7 +75,7 @@ export const ROUTES: Routes = [
 ];
 
 @NgModule({
-    imports: [AuthModule, RouterModule.forChild(ROUTES)],
+    imports: [AuthModule, RouterModule.forChild(ROUTES),DashboardModule],
     exports: [RouterModule],
 })
 export class AuthRoutingModule {}

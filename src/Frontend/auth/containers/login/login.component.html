@@ -8,7 +8,7 @@
                 <div class="log">
                     <h3 class="font-weight-light">Log In</h3>
                 </div>
-                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" (ngSubmit)="onVerification()">
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" >
                     <div class="row col-10">
                         <div class="col-sm-6">
                             <label for="floatingInputGrid">Your Email</label>
@@ -39,20 +39,13 @@
                         <button class="btn btn" type="submit">Log In</button>
                         
                     </div>
-                    <div *ngIf= "submitted && loginForm.controls.email_id.errors" class="text-danger">
-                        ! Incorrect email or password.
-                      </div>
-                        <div *ngIf= "submitted && errorStatusno===401" class="text-danger">
-                        ! Incorrect email or password.
-                      </div>
-                         <div *ngIf= "submitted && errorStatusno===403" class="text-danger">
-                        ! Forbidden.
-                      </div>
-                      <div class="text-danger">
-                        ! Bad Request.
-                      </div>
-                       <div class="text-danger" id="505-error"></div>
-                       </form>
+                    
+                      <div id="error-message"></div>
+                      
+                      
+                     
+                    
+                </form>
                 <div class="mt-6 "><a routerLink="/register" style="display: inline-flex">New User?<h6 class="ml-1"> Create an
                     account</h6></a></div>
             </div>

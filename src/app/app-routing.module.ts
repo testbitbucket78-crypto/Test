@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DashboardModule } from 'Frontend/dashboard/dashboard.module';
 
 const routes: Routes = [
     // {
@@ -19,6 +20,7 @@ const routes: Routes = [
         loadChildren: () =>
             import('Frontend/auth/auth-routing.module').then(m => m.AuthRoutingModule),
     },
+    
     {
         path: 'error',
         loadChildren: () =>
@@ -38,7 +40,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
+    imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),DashboardModule],
     exports: [RouterModule],
 })
 export class AppRoutingModule {}

@@ -22,7 +22,8 @@ export class DashboardComponent implements OnInit {
 
     constructor(private apiService: DashboardService, private router: Router, private cdRef: ChangeDetectorRef) { }
     ngOnInit() {
-
+        sessionStorage.setItem('SP_ID', '2');
+        // this.routerGuard();
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
         this.getdashboardCampaigns();
@@ -33,6 +34,13 @@ export class DashboardComponent implements OnInit {
         console.log (sessionStorage);
         console.log(this.Name);
     }
+
+    // //******* Router Guard  *********//
+    // routerGuard = () => {
+    //     if (sessionStorage.getItem('SP_ID') === null) {
+    //         this.router.navigate(['login']);
+    //     }
+    // }
 
     getDashboardSubscribers() {
         var sPid = sessionStorage.getItem('SP_ID')
