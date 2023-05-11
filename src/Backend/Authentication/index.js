@@ -67,12 +67,13 @@ const login = async (req, res) => {
 //post api for register
 
 const register = async function (req, res) {
+    console.log(req.body)
     name = req.body.name
     mobile_number = req.body.mobile_number
     email_id = req.body.email_id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
-    var mobile = mobile_number;
+    var mobile = mobile_number.internationalNumber;
 
     try {
         var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id])
@@ -147,21 +148,18 @@ const forgotPassword = async (req, res) => {
         else {
 
             var uid = results[0].uid
-           
+
             // Encrypt
             var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
-
+            console.log("_____FORGOT PASSWORD ENCRYPT___")
             console.log(cipherdata)
-            const bytes=CryptoJS.AES.decrypt(cipherdata,'secretkey123')
-            if(bytes.toString()){
-            console.log("_______crypto________")
-            console.log(JSON.parse(bytes.toString(CryptoJS.enc.Utf8)))
-        }
+           
             var mailOptions = {
                 from: val.email,
                 to: req.body.email_id,
                 subject: "Request for reset Password: ",
-                html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/#/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+               // html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/#/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
 
             };
 
@@ -191,10 +189,21 @@ const forgotPassword = async (req, res) => {
 //resetPssword api
 const resetPassword = function (req, res) {
     try {
-
-        uid = req.body.id
+        console.log(req.body)
+        console.log("____RESET PASS______")
+        console.log(req.params.uid)
+        id = req.query.uid
+        console.log(id)
         password = req.body.password
         confirmPassword = req.body.confirmPassword
+        var uid="";
+        const bytes = CryptoJS.AES.decrypt(id, 'secretkey123')
+        if (bytes.toString()) {
+            console.log("_______crypto________")
+         uid=JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+            console.log(JSON.parse(bytes.toString(CryptoJS.enc.Utf8)))
+
+        }
         if (password != confirmPassword) {
 
             console.log(error)
@@ -203,6 +212,7 @@ const resetPassword = function (req, res) {
             bcrypt.hash(password, 10, function (err, hash) {
 
                 db.runQuery(req, res, val.updatePassword, [hash, uid]);
+              
             })
         }
 
@@ -256,7 +266,7 @@ const sendOtp = async function (req, res) {
     try {
 
         email_id = req.body.email_id;
-         mobile_number = req.body.mobile_number.internationalNumber;
+        mobile_number = req.body.mobile_number.internationalNumber;
 
         let otp = Math.floor(100000 + Math.random() * 900000);
 
@@ -287,8 +297,8 @@ const sendOtp = async function (req, res) {
         var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
         console.log(storeEmailOtp)
 
-         var storePhoneOtp=await db.excuteQuery(val.insertOtp, [mobile_number, otp, 'Mobile'])
-         console.log(storePhoneOtp)
+        var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, otp, 'Mobile'])
+        console.log(storePhoneOtp)
 
 
         return res.status(200).send({
@@ -350,33 +360,33 @@ const verifyOtp = async function (req, res, err) {
 const verifyPhoneOtp = async function (req, res, err) {
 
     try {
-        
-        var result = await db.excuteQuery(val.verifyOtp, [req.body.otpfieldvalue])
 
-            try {
-                if (result.length != 0 && req.body.otp == result[0].otp) {
-                    return res.status(200).send({
-                        msg: 'Otp Verified',
-                        status: 200
-                    })
-                }
-                if ((result.length != 0 && req.body.otp != result[0].otp)) {
-                    return res.status(401).send({
-                        msg: 'Invalid otp',
-                        status: 401
-                    })
-                }
-                if (result.length == 0) {
-                    return res.status(410).send({
-                        msg: 'Otp Expired ! Please resend otp',
-                        status: 410
-                    })
-                }
-            } catch (err) {
-                console.log(err)
-                res.send(err)
+        var result = await db.excuteQuery(val.verifyOtp, [req.body.otpfieldMobilevalue])
+
+        try {
+            if (result.length != 0 && req.body.otp == result[0].otp) {
+                return res.status(200).send({
+                    msg: 'Otp Verified',
+                    status: 200
+                })
             }
-        
+            if ((result.length != 0 && req.body.otp != result[0].otp)) {
+                return res.status(401).send({
+                    msg: 'Invalid otp',
+                    status: 401
+                })
+            }
+            if (result.length == 0) {
+                return res.status(410).send({
+                    msg: 'Otp Expired ! Please resend otp',
+                    status: 410
+                })
+            }
+        } catch (err) {
+            console.log(err)
+            res.send(err)
+        }
+
     } catch (err) {
         console.error(err);
         db.errlog(err);
