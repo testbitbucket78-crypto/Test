@@ -22,7 +22,8 @@ export class VerificationComponent implements OnInit {
     otpForm = this.formBuilder.group({
         otpfieldvalue: sessionStorage.getItem('otpfieldEmailvalue'),
         otpfieldMobilevalue: sessionStorage.getItem('otpfieldMobilevalue'),
-        otp: new FormControl('', Validators.compose([Validators.required])),
+        otp: new FormControl('', Validators.compose([Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)])),
+        otp1: new FormControl('', Validators.compose([Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)])),
     })
 
     title = 'formValidation';
@@ -33,7 +34,7 @@ export class VerificationComponent implements OnInit {
         this.email_id = sessionStorage.getItem('otpfieldEmailvalue')
         this.phone = sessionStorage.getItem('otpfieldMobilevalue')
 
-        this.onVerify()
+        // this.onVerify()
     }
 
 

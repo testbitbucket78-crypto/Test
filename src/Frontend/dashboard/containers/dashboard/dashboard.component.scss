@@ -274,7 +274,7 @@ font-family: 'Manrope';
 
 .card-body-right {
 background-color: #fbf9fe;
-width: 479px;
+width: 494vh;
 height: 1120px;
 font-family: 'Manrope';
 }
@@ -361,9 +361,9 @@ font-size: 14px;
     opacity: 1;
     width: 369px;
     height: 448px;
-    position: relative;
+    position: absolute;
     float: right;
-    right: 58px;
+    right: 82px;
     margin-top: 100px;
 
   
@@ -384,8 +384,8 @@ font-size: 14px;
   position: absolute;
   width: 120px;
   height: 111px;
-  top: 29px;
-  left: 129px;
+  top: 6px;
+  left:123px;
 }
 
 
@@ -465,7 +465,7 @@ font-size: 14px;
   
 /***** media queries for low resolution laptops ****/
 
-@media screen and (min-width: 1366px) {
+@media screen and (min-width:1536px) {
 
 .col-sm-5.c1, .col-sm-5.c2  {
 width: 200px;
@@ -596,7 +596,7 @@ margin-left: 56px;
 }
 
 #heading {
-    font-size: 14px;
+    font-size: 13px;
     margin-left: 23px;
     margin-top: 10px;
 }
@@ -632,9 +632,8 @@ margin-left: 56px;
 }
 
 .row2 h6{
-    font-size: 12px;
+    font-size: 12px!important;
     margin: 0 0 0 25px;
-    width: 100%;
 }
 
 
@@ -658,7 +657,7 @@ margin-left: 56px;
   width: 99px!important;
   height: 88px!important;
   top: 0px!important;
-  left:88px!important;
+  left:105px!important;
 }
 
 
@@ -673,7 +672,7 @@ margin-left: 56px;
 .card10-p .txt-1 {
     font-size: 30px!important;
     left: 89px!important;
-    top: 135px!important;
+    top: 116px!important;
     letter-spacing: -0.93px!important;
    
 }
@@ -682,7 +681,7 @@ margin-left: 56px;
 .card10-p .txt-2 {
     font-size: 12px!important;
     left: 104px!important;
-    top: 167px!important;
+    top: 159px!important;
     letter-spacing: 0px;
 }
   
@@ -702,7 +701,7 @@ margin-left: 56px;
 }
 
 .card10-c .txt-2 {
-     margin-top: 19px!important;
+     margin-top: 7px!important;
     font-size: 23px!important;
 }
 img {
@@ -749,7 +748,7 @@ img {
 
 
 .card10-c button {
-    margin-top: 15px;
+    margin-top: -12px;
     font-size: 12px;
     width: 74%;
     height: 26%;

@@ -237,7 +237,7 @@ export class ContactsComponent implements OnInit {
 
 checks=false
 bulk(e: any) {
-
+  
   if (e.target.checked == true) {
     console.log(this.contacts[0].customerId)
     for (var i = 0; i < this.contacts.length; i++) {

@@ -808,7 +808,7 @@
 			interval = seconds / 3600;
 
 			var hour =parseInt(interval)
-			alert(hour)
+	
 			if (hour >= 1 && hour < 6) {
 				var hrPer = hour*6/100
 				var hourLeft =6-parseInt(interval)

@@ -9,11 +9,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardModule } from 'Frontend/dashboard/dashboard.module';
+// import { DashboardComponent } from 'Frontend/dashboard/containers';
 
 
 @NgModule({
     declarations: [AppComponent],
-    imports: [BrowserModule, FormsModule, ReactiveFormsModule, HttpClientModule, AppRoutingModule, BrowserAnimationsModule,DashboardModule],
+    imports: [BrowserModule, FormsModule, ReactiveFormsModule,  AppRoutingModule, HttpClientModule, BrowserAnimationsModule, DashboardModule],
     providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],
     bootstrap: [AppComponent],
 })

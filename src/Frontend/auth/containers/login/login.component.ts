@@ -14,6 +14,7 @@ import { Validators } from '@angular/forms';
 export class LoginComponent implements OnInit {
 
     checked = true;
+
     password: any;
     loginForm = new FormGroup({
          email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
@@ -34,13 +35,12 @@ export class LoginComponent implements OnInit {
         this.apiService.login(this.loginForm.value).subscribe(
             (result) => {
              sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
-                sessionStorage.setItem('SP_ID', result.user.SP_ID);
-                console.log(result.user.UserType);
-                if (result.user.UserType == 'Owner') {
-                    console.log("Agent ")
-                    this.router.navigate(['dashboard'])
-                }
-            },
+             sessionStorage.setItem('SP_ID', result.user.SP_ID);
+             console.log(result.user.UserType);
+             console.log("Agent")
+             this.router.navigate(['dashboard'])
+                },
+            
             (error) => {
                 if (error?.status === 401) {
                     const errorMessage = "! Incorrect Email or Password.";

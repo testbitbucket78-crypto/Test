@@ -29,7 +29,7 @@ export class RegisterComponent implements OnInit {
 	preferredCountries: CountryISO[] = [CountryISO.India, CountryISO.UnitedStates, CountryISO.UnitedKingdom];
     
   
-        registerForm = new FormGroup({
+    registerForm = this.formBuilder.group({
         name: new FormControl('', [
             Validators.required,
             Validators.pattern('[a-zA-Z ]*')
@@ -37,10 +37,9 @@ export class RegisterComponent implements OnInit {
         mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
         
         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        password: new FormControl('', Validators.compose([Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')])),
-        confirmPassword: new FormControl('', Validators.compose([Validators.required, Validators.minLength(8), Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')])),
-        
-    })
+        password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
+        confirmPassword: ['', Validators.required]
+    }, { validator: this.passwordMatchValidator });
     changePreferredCountries() {
 		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
 	}
@@ -51,6 +50,23 @@ export class RegisterComponent implements OnInit {
     ngOnInit() {
      
     }
+
+    passwordMatchValidator(g: FormGroup) {
+        const passwordControl = g.get('password');
+        const confirmPasswordControl = g.get('confirmPassword');
+
+        if (passwordControl && confirmPasswordControl) {
+            const password = passwordControl.value;
+            const confirmPassword = confirmPasswordControl.value;
+
+            if (password !== confirmPassword && confirmPassword !== '') {
+                return { 'mismatch': true };
+            }
+        }
+
+        return null;
+    }
+
 
 
     onCheckboxChange(checked: boolean) {
@@ -64,8 +80,8 @@ export class RegisterComponent implements OnInit {
         this.submitted = true
         if (this.registerForm.valid) {
             sessionStorage.setItem('formValues', JSON.stringify(this.registerForm.value));
-            sessionStorage.setItem('otpfieldEmailvalue',this.registerForm.value.email_id) ;
-            sessionStorage.setItem('otpfieldMobilevalue',JSON.stringify(this.registerForm.value.mobile_number.internationalNumber));
+            sessionStorage.setItem('otpfieldEmailvalue',this.registerForm.value.email_id);
+            sessionStorage.setItem('otpfieldMobilevalue',this.registerForm.value.mobile_number.internationalNumber);
             
             var idfs={
                 "email_id":this.registerForm.value.email_id,
@@ -73,6 +89,7 @@ export class RegisterComponent implements OnInit {
             }
             this.apiService.sendOtp(idfs).subscribe(response => {
                 console.warn("registerdone! ", response)
+                console.log(response);
                 this.router.navigate(['verification'])
             });
 

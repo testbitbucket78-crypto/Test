@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Auth, authRegister, authForgotPassword ,authSendOtp,authVerifyOtp} from '../models';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
 
 @Injectable()
 export class AuthService {
@@ -25,11 +25,12 @@ export class AuthService {
         let API_URL = 'https://authapi.sampanatechnologies.com/forgotPassword';
         return this.http.post(API_URL, data)
     }
-    resetPassword(value:any){
-         console.log(""+value)
-         let API_URL = 'https://authapi.sampanatechnologies.com/resetPassword';
-         return this.http.post(API_URL,value)
-     }
+    resetPassword(value: any, uid: any) {
+        console.log("" + value)
+        const params = new HttpParams().set('uid', uid)
+        let API_URL = 'http://localhost:3003/resetPassword/:uid';
+        return this.http.post(API_URL, value, { params: params })
+    }
     sendOtp(data: authSendOtp) {
         let API_URL = 'https://authapi.sampanatechnologies.com/sendOtp';
         return this.http.post(API_URL, data)

@@ -52,7 +52,6 @@ import { DashboardComponent } from './containers';
         NgxIntlTelInputModule,
         AgGridModule.withComponents([dashboardContainers.ContactsComponent]),
         RichTextEditorModule
-
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],
     declarations: [...dashboardContainers.containers, ...dashboardComponents.components, DashboardComponent, SearchfilterPipe],

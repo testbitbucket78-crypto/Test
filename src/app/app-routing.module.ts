@@ -6,7 +6,7 @@ const routes: Routes = [
     // {
     //     path: '',
     //     pathMatch: 'full',
-    //     redirectTo: '/dashboard',
+    //     redirectTo: 'login',
     // },
     {
         path: 'dashboard',
@@ -40,7 +40,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),DashboardModule],
+    imports: [DashboardModule, RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
     exports: [RouterModule],
 })
 export class AppRoutingModule {}

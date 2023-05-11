@@ -3,6 +3,7 @@ import { FormsModule, FormBuilder, FormControl, FormGroup } from '@angular/forms
 import { Validators } from '@angular/forms';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'sb-reset-password',
@@ -18,24 +19,28 @@ export class ResetPasswordComponent implements OnInit {
   visible1: boolean = true;
   changetype: boolean = true;
   change: boolean = true;
-
+  uid: any;
   resetpassword = this.formBuilder.group({
     id: sessionStorage.getItem('uid'),
-    password: ['', [Validators.required, Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
+    password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
     confirmPassword: ['', Validators.required]
   }, { validator: this.passwordMatchValidator });
 
   title = 'formValidation';
   submitted = false;
-  constructor(private formBuilder: FormBuilder, private router: Router, private apiService: AuthService) {
+  constructor(private formBuilder: FormBuilder, private router: Router, private apiService: AuthService, private active: ActivatedRoute) {
 
-    // this.resetpassword = this.formBuilder.group({
-    //     password: ['', [Validators.required,Validators.pattern('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&].{8,}')]],
-    //     confirmPassword: ['', Validators.required]
-    //   }, { validator: this.passwordMatchValidator });
 
   }
+  
   ngOnInit() {
+    this.active.queryParams
+      .subscribe(params => {
+        console.log(params.uid); // { uid: }
+        this.uid = params.uid
+
+      }
+      );
 
   }
 
@@ -65,7 +70,7 @@ export class ResetPasswordComponent implements OnInit {
 
     var SP_ID = sessionStorage.getItem('SP_ID')
 
-    this.apiService.resetPassword(this.resetpassword.value).subscribe(data => {
+    this.apiService.resetPassword(this.resetpassword.value,this.uid).subscribe(data => {
       console.log(data)
       this.router.navigate(['login'])
 
