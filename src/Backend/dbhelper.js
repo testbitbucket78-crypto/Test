@@ -90,7 +90,10 @@ async function excuteQuery(query, param) {
                 return resolve(results);
             });
 
-        });
+        }).catch((reason) => {
+            console.log("Error is loged by promise")
+           console.log(reason);
+          })
 
     } catch (err) {
         console.log("_____DB EXCUTEQUERY ERR ______")
