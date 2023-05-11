@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-/* Modules */
+/ Modules /
 import { AppCommonModule } from 'Frontend/app-common/app-common.module';
 import { NavigationModule } from 'Frontend/navigation/navigation.module';
 import { ChartsModule } from 'Frontend/charts/charts.module';
@@ -19,19 +19,22 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
-/* Components */
+/ Components /
 import * as dashboardComponents from './components';
+//import * as DashboardComponent from './containers/dashboard/dashboard.component';
 
-/* Containers */
+
+/ Containers /
 import * as dashboardContainers from './containers';
 
-/* Guards */
+/ Guards /
 import * as dashboardGuards from './guards';
 
-/* Services */
+/ Services /
 import * as dashboardServices from './services';
 import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
 import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
+import { DashboardComponent } from './containers';
 
 @NgModule({
     imports: [
@@ -49,10 +52,10 @@ import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
         NgxIntlTelInputModule,
         AgGridModule.withComponents([dashboardContainers.ContactsComponent]),
         RichTextEditorModule
-        
+
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],
-    declarations: [...dashboardContainers.containers, ...dashboardComponents.components, SearchfilterPipe],
-    exports: [...dashboardContainers.containers, ...dashboardComponents.components],
+    declarations: [...dashboardContainers.containers, ...dashboardComponents.components, DashboardComponent, SearchfilterPipe],
+    exports: [...dashboardContainers.containers, ...dashboardComponents.components, DashboardComponent],
 })
-export class DashboardModule {}
+export class DashboardModule { }

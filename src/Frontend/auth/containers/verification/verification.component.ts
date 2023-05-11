@@ -55,7 +55,7 @@ export class VerificationComponent implements OnInit {
 
 
                 if (error.status === 401) {
-                    alert("Otp invalid")
+                    console.log("Otp invalid")
                 } else if (error.status === 410) {
                     alert("Otp expired")
                 }

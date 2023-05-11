@@ -25,7 +25,7 @@
 
                             <label for="floatingInputGrid">Verify your Phone No. {{phone}}</label>
                             <div class=" d-md-flex justify-content">
-                                <input type="text-right mr-3" class="form-control" placeholder="Enter OTP"
+                                <input type="text-right mr-3" class="form-control" [ngClass]="{'is-invalid' :submitted && otpForm.controls.otp.errors}" placeholder="Enter OTP"
                                     aria-label="City" name="otp" formControlName="otp" id="otp">
                                <button class="btn1 me-1" type="button"  (click)="onVerifyphoneOtp()" >Verify</button>
                                 <!-- <button class="verified1" *ngIf="showSecondButton1"><img src="assets/img/verified.png"></button> -->
@@ -61,8 +61,11 @@
 
                 </form>
             </div>
+             
             <div class="text1"><a routerLink="/login" style="display: inline-flex">Already a member?<h6 class="ml-1"> Sign In</h6></a></div>
-
+                <div *ngIf= "submitted && otpForm.controls.otp.errors" class="text-danger">
+                ! Otp Required
+                </div>
         </div>
 
 

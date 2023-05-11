@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
             },
             (error) => {
                 if (error?.status === 401) {
-                    const errorMessage = "! Incorrect Email or Password";
+                    const errorMessage = "! Incorrect Email or Password.";
                     const errorDiv = document.getElementById("error-message");
                     if (errorDiv) {
                         errorDiv.innerHTML = errorMessage;

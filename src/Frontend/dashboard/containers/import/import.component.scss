@@ -623,7 +623,7 @@ line-height: 15px;
 /******  media queries for laptop screen *****/
 
 
-@media all and (max-width:1536px) {
+@media all and (min-width:1536px) {
   .bs-stepper {
         width: 1109px !important;
         height: 597px !important;

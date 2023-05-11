@@ -283,14 +283,14 @@
   background: transparent;
   }
   
-  /* Hide the browser's default checkbox */
-  .container input {
-  // position: absolute;
-  // opacity: 0;
-   cursor: pointer;
-  height: calc(1.5em + 0.75rem + 2px);
-  width: 0;
-  }
+  // /* Hide the browser's default checkbox */
+  // .container input {
+  // // position: absolute;
+  // // opacity: 0;
+  //  cursor: pointer;
+  // height: calc(1.5em + 0.75rem + 2px);
+  // width: 0;
+  // }
   
   /* Create a custom checkbox */
   .checkmark {

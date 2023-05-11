@@ -465,7 +465,7 @@ font-size: 14px;
   
 /***** media queries for low resolution laptops ****/
 
-@media all and (max-width:1536px) {
+@media screen and (min-width: 1366px) {
 
 .col-sm-5.c1, .col-sm-5.c2  {
 width: 200px;

@@ -750,9 +750,9 @@ outline: none;
 }
 
 
-/***** media queries for low resolution laptops ****/
+/***** media queries for laptops ****/
 
- @media all and (max-width:1536px) {
+ @media screen and (min-width:1536px) {
 
 
 .bs-stepper {
@@ -897,3 +897,4 @@ outline: none;
 
 
 }
+
