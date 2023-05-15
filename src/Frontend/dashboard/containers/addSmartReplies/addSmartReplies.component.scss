@@ -67,7 +67,7 @@ h1 {
 .heading {
     font-size: 22px;
     letter-spacing: -0.55px;
-    font-weight: 700;
+    font-weight: 800;
     width: 100%;
     height: 30px;
     margin-left: 37px;
@@ -122,7 +122,7 @@ h1 {
 
 .form-control {
     display: block;
-    width: 80%;
+    width: 81%;
     height: calc(1.5em + 0.75rem + 2px);
     font-family: 'Manrope';
     font-size: 1rem;
@@ -141,9 +141,9 @@ h1 {
 .ff textarea{
     margin: 25px 0px 0px 15px;
     height: 150px;
-    
+    resize: none;
     color: #7A86A1;
-    padding: 15px 0 0 15px;
+    padding: 15px 0 0 5px;
     width: 383px;
 }
 
@@ -242,7 +242,7 @@ input[type='radio'],
 input[type='checkbox'] {
     box-sizing: border-box;
     padding: 0;
-    margin: 8px 0px 0px -20px;
+    margin: 7px 0px 0px -20px;
 }
 
 h4 {
@@ -714,8 +714,8 @@ input:focus {
    
 
     input[type='radio'] {
-        width: 20px;
-        height: 20px;
+        width: 23px;
+        height: 23px;
         border-radius: 50%;
         outline: none;
         border: 3px solid #6149cd;
@@ -784,8 +784,8 @@ input:focus {
 
     .desc-radio-input {
         position: absolute;
-        top: 55%;
-        right: 47%;
+        top: 70%;
+        right: 39%;
         width: 270px;
         height: 143px;
         background: #ffffff 0% 0% no-repeat padding-box;
@@ -827,8 +827,8 @@ input:focus {
 
     .desc-radio-input-1 {
         position: absolute;
-        top: 55%;
-        right: 32%;
+        top: 71%;
+        right: 19%;
         width: 270px;
         height: 143px;
         background: #ffffff 0% 0% no-repeat padding-box;
@@ -839,8 +839,8 @@ input:focus {
 
     .desc-radio-input-2 {
         position: absolute;
-        top: 55%;
-        right: 23%;
+        top: 71%;
+        right: 12%;
         width: 270px;
         height: 143px;
         background: #ffffff 0% 0% no-repeat padding-box;
@@ -933,6 +933,7 @@ input:focus {
         color: #6149cd;
         font-weight: 700;
         font-family: 'Manrope';
+        word-wrap: break-word;
     }
 
     #msgbox-head {
@@ -947,6 +948,7 @@ input:focus {
         font-weight: 400;
         font-family: 'Manrope';
         margin: 8px;
+        font-size: 12px;
     }
 
     textarea:focus,
@@ -1067,5 +1069,20 @@ input:focus {
     .popup-dialog .thumbnail {
         width: 30px;
         border-radius: 50%;
+    }
+
+    .popup-dialog.AssignAction {
+        background: #ffffff 0% 0% no-repeat padding-box;
+        box-shadow: 4px 22px 54px #695f9730;
+        border-radius: 20px;
+        padding: 10px 0px;
+        position: absolute;
+        max-width: 200px;
+        margin-top: 10px;
+        max-height: 208px;
+        overflow: auto;
+        z-index: 9;
+        top: 40%;
+        right: 2%;
     }
 }

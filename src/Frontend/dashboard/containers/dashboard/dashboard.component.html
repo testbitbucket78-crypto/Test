@@ -38,7 +38,7 @@
 
   
 
-<div [(ngModel)]="Name"><p id="heading">Hello {{Name}}, Welcome</p></div>
+<div [(ngModel)]="Name"><p id="heading">Hello {{Name}}, welcome back</p></div>
 <div id="heading2" class="card8">
   <h2>"Summary for last 30 days"</h2>
   
@@ -112,7 +112,7 @@
 
         <div class="row r2">
 
-      <button id="campaigns" class="btn1 btn-block float-right" routerLink="/dashboard/reports">
+      <button id="campaigns" class="btn1 btn-block float-right" routerLink="/dashboard/campaigns">
 
         <div class="card-body">
           <h4>Campaigns</h4>
@@ -185,7 +185,7 @@
                     </div>
                   </div>
       
-                  <div class="ml-5  col" *ngIf="(items.Status)=='Inactive Agents'">
+                  <div class="ml-1  col" *ngIf="(items.Status)=='Inactive Agents'">
                     <div class="imga">
                     <img src="assets/img/432.png">
                   </div>
@@ -196,7 +196,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="ml-5  col" *ngIf="(items.Status)=='Total Agents'">
+                  <div class="ml-1  col" *ngIf="(items.Status)=='Total Agents'">
                     <div class="im">
                     <img src="assets/img/430.png">
                   </div>

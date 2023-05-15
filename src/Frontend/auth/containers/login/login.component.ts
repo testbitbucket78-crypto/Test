@@ -63,13 +63,13 @@ export class LoginComponent implements OnInit {
                             errorDiv.innerHTML = errorMessage;
                         }
                     }    
-                    else  {
-                    const errorMessage = "! Something Went Wrong.";
-                        const errorDiv = document.getElementById("error-message");
-                        if (errorDiv) {
-                            errorDiv.innerHTML = errorMessage;
-                        }
-                    } 
+                else  {
+                const errorMessage = "! Something Went Wrong.";
+                    const errorDiv = document.getElementById("error-message");
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                } 
                   
                   
             });

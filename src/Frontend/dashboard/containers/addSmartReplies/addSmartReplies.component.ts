@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
+import { Router } from '@angular/router';
 
 import Stepper from 'bs-stepper';
 declare var $: any;
@@ -12,6 +13,16 @@ declare var $: any;
 	styleUrls: ['./addSmartReplies.component.scss']
 })
 export class AddSmartRepliesComponent implements OnInit {
+
+
+	//******* Router Guard  *********//
+	routerGuard = () => {
+		if (sessionStorage.getItem('SP_ID') === null) {
+			this.router.navigate(['login']);
+		}
+	}
+
+
 	active = 1;
 	stepper: any;
 	data: any;
@@ -84,18 +95,22 @@ export class AddSmartRepliesComponent implements OnInit {
 	agentsList = ["James Whatson", "David Harrison", "Jane Cooper", "Charles John"];
 	selectedInteraction: any = [];
 	ShowAssignOption = false;
+	assignActionList = ["Assign Conversation","Add Contact Tag","Remove Tags","Trigger Flow", "Name Update", "Resolve Conversation" ];
+	ShowAddAction = false;
 	errorMessage = '';
 	successMessage = '';
 	warningMessage = '';
 
 	
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder ) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router ) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
 
 	ngOnInit() {
+
+		
 		this.stepper = new Stepper($('.bs-stepper')[0], {
 			linear: true,
 			animation: true
@@ -105,7 +120,7 @@ export class AddSmartRepliesComponent implements OnInit {
 			message_text: ''
 		});
 	
-	
+		this.routerGuard();
 	
 	
 	}
@@ -194,8 +209,14 @@ export class AddSmartRepliesComponent implements OnInit {
   /***  reply-action function  ***/
 	toggleAssignOption() {
 		
+	 this.ShowAddAction = false;
      this.ShowAssignOption = !this.ShowAssignOption;
 		
+	}
+
+	toggleAddActions() {
+		this.ShowAssignOption = false;
+		this.ShowAddAction = !this.ShowAddAction;
 	}
 
 	showToaster(message: any, type: any) {

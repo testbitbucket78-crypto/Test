@@ -69,39 +69,39 @@
           <div class="line1"></div>
           <h4 id="line1-h4">Matching Criteria</h4>
           <div class="ll d-flex">
-            <div class="form-check" (click)="onClickFuzzy($event)">
+            <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" value="Fuzzy matching"
                 (change)="onSelectionChange('Fuzzy matching')">
               <label class="form-check-label" for="exampleRadios1">
                 Fuzzy matching
               </label>
-              <img id="detail" src="assets/img/info.png">
+              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickFuzzy($event)">
             </div>
             <div class="desc-radio-input" *ngIf="showBox">
               <p id="p-title">Fuzzy Matching</p>
               <p id="p-body">As long as the message contains a <br />certain % of the Keyword. You can also<br /> set emojis as your keyword.</p>
               <button id="radio-close-btn" (click)="showBox=false">X</button>
             </div>
-            <div class="form-check" (click)="onClickExact($event)">
+            <div class="form-check">
               <input type="radio" class="form-check-input" value=" Exact matching" name="exampleRadios"
                 (change)="onSelectionChange('Exact matching')">
               <label class="form-check-label" for="">
                 Exact matching
               </label>
-              <img id="detail" src="assets/img/info.png">
+              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickExact($event)">
             </div>
               <div class="desc-radio-input-1" *ngIf="showBox1">
               <p id="p-title">Exact Matching</p>
               <p id="p-body">As long as the message contains a <br />exact Keyword. You can also<br /> set emojis as your keyword.</p>
               <button id="radio-close-btn" (click)="showBox1=false">X</button>
             </div>
-            <div class="form-check" (click)="onClickContains($event)">
+            <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" value="contains"
                 (change)="onSelectionChange('contains')">
               <label class="form-check-label" for="">
                 Contains
               </label>
-              <img id="detail" src="assets/img/info.png">
+              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickContains($event)">
             </div>
 
              <div class="desc-radio-input-2" *ngIf="showBox2">
@@ -149,7 +149,7 @@
               <button><img src="assets/img/teambox/quick-replies.svg"></button>
               <button><img src="assets/img/teambox/saved-message.svg"></button>
             </div>
-              <button id="add-action-dropdown" type="button" (click)="toggleAssignOption()"><img src="assets/img/teambox/add.svg">Add Action</button>
+              <button id="add-action-dropdown" type="button" (click)="toggleAddActions()"><img src="assets/img/teambox/add.svg">Add Action</button>
            </div>
           
                <div *ngIf="ShowAssignOption"  class="popup-dialog AssignOption">
@@ -158,6 +158,16 @@
                   <span><img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />{{Agent}}</span>
                  </p>
                </div>
+
+               <div *ngIf="ShowAddAction"  class="popup-dialog AssignAction">
+                 <p class="label">Add Action</p>
+                <p *ngFor="let AssignAction of assignActionList;let m = index" (click)="toggleAssignOption()">
+	
+                  <span>{{AssignAction}}</span>
+                 </p>
+               </div>
+
+        
              
          </div>
 

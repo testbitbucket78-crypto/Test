@@ -7,6 +7,7 @@ import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-
 declare var $: any; // declare the jQuery variable
 
 import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
+import { Router } from '@angular/router';
 import exp from 'constants';
 
 
@@ -25,6 +26,14 @@ export class ContactsComponent implements OnInit {
   onGridReady(params: GridReadyEvent) {
     this.gridapi = params.api;
   }
+
+  //******* Router Guard  *********//
+  routerGuard = () => {
+    if (sessionStorage.getItem('SP_ID') === null) {
+      this.router.navigate(['login']);
+    }
+  }
+
 
 
   columnDefs:ColDef [] = [
@@ -101,19 +110,15 @@ export class ContactsComponent implements OnInit {
     dropdownSettings = {}; 
     items: any;
     customerData: any;
+    
 	  filterForm=new FormGroup({
-    Name: new FormControl('', Validators.required),
+      Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern('[a-z\\A-Z ]*'), Validators.minLength(3)])),
     Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
     emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
 	})
     orderHeader: String = '';
     isDesOrder: boolean = true;
 
-    searchForm=new FormGroup({
-    Phone_number: new FormControl(''),
-    Name:new FormControl(''),
-    emailId:new FormControl('')
-})
 
    sort(headerName:String){
     this.isDesOrder = !this.isDesOrder;
@@ -126,7 +131,7 @@ export class ContactsComponent implements OnInit {
  
   
   
- constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder)
+ constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router)
  
  
  {
@@ -139,7 +144,7 @@ export class ContactsComponent implements OnInit {
 			quantities: this.fb.array([]) ,  
 		  });
       this.newContact=this.fb.group({
-        Name: new FormControl('', Validators.required),
+        Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern('[a-z\\A-Z ]*'), Validators.minLength(3)])),
         Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
         emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
         age: new FormControl(''),
@@ -165,17 +170,27 @@ export class ContactsComponent implements OnInit {
 }
 
   onInputChange() {
-    this.isButtonDisabled = this.inputText.length === 0;
+
+    if(this.newContact.valid) {
+      this.isButtonDisabled = false;
+    }
+
+    else {
+      this.isButtonDisabled = true;
+    }
+   
 
   }
 
-  onInputChangeEmail() {
-    this.isButtonDisabled = this.inputEmail.length === 0;
-  }
+  // onInputChangeEmail() {
+  //   this.isButtonDisabled = this.inputEmail.length === 0;
+  // }
 
 
 
     ngOnInit() {
+
+      this.routerGuard();
 
       document.getElementById('delete-btn')!.style.display = 'none';
       this.showTopNav = true;
@@ -408,13 +423,16 @@ onSelectAll(items: any) {
   
       document.getElementById('import-btn')!.style.display = 'none';
       document.getElementById('add-contact')!.style.display = 'none';
+      document.getElementById('export-btn')!.style.display = 'block';
       document.getElementById('delete-btn')!.style.display = 'block';
     }
     else {
      
       document.getElementById('import-btn')!.style.display = 'block';
       document.getElementById('add-contact')!.style.display = 'block';
+      document.getElementById('export-btn')!.style.display = 'block';
       document.getElementById('delete-btn')!.style.display = 'none';
+
    
     }
    
@@ -456,20 +474,21 @@ onSelectAll(items: any) {
     console.log(this.code);
     
 		this.apiService.addContact(this.newContact.value).subscribe((response:any) => {
-			console.log(response)
+      
+			console.log(response);
     
         this.getContact();
      
          
    });
-    
+    this.newContact.reset();
 }
 
 // else if(this.newContact.invalid) {
 //     alert('error something went wrong!');
 //   }
 
-  editContactData() {
+  editContactData = () => {
     console.log("editContactData")
     var customerId = sessionStorage.getItem('id')
     var SP_ID = sessionStorage.getItem('SP_ID')
@@ -478,6 +497,7 @@ onSelectAll(items: any) {
     this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
       console.log(response)
       this.getContact();
+      this.closesidenav(this.items);
     });
    
 
@@ -522,6 +542,7 @@ deletContactByID(data: any) {
   this.apiService.deletContactById(data).subscribe((responce => {
     console.log(responce);
     this.getContact();
+    this.closesidenav(this.items);
   }));
 
 
@@ -533,6 +554,7 @@ deletContactByID(data: any) {
     this.apiService.blockContact(data, SP_ID).subscribe((responce => {
       console.log(responce);
        this.getContact();
+      this.closesidenav(this.items);
 
     }));
     

@@ -35,7 +35,7 @@ export class SideNavComponent implements OnInit, OnDestroy {
         const openHam = (document.getElementsByClassName('sidenav-item')) as unknown as HTMLElement[];
         const sideNavMenu = document.getElementById('sidenav-menu');
         const sideBarToggle = document.getElementById('sidebarToggle');
-       const logo = (document.getElementsByClassName('navbar-light navbar-brand')) as unknown as HTMLElement[];
+        const logo = (document.getElementsByClassName('navbar-brand')) as unknown as HTMLElement[];
         const mainBody = document.getElementsByClassName('container-fluid') as unknown as HTMLElement[];
         const caret = (document.getElementsByClassName('svg-inline--fa fa-angle-down fa-w-10')) as unknown as HTMLElement[];
 
@@ -48,7 +48,8 @@ export class SideNavComponent implements OnInit, OnDestroy {
                 sideNavMenu!.style.border = "0";
                 mainBody[i].style.marginLeft = "-10%";
                 sideBarToggle!.style.marginLeft = "-10px";
-                logo[i].style.border = 'none';
+                logo[i].style.borderRight = '0';
+                
             }
             else {
                 openHam[i].style.display = "block";
@@ -57,7 +58,8 @@ export class SideNavComponent implements OnInit, OnDestroy {
                 sideNavMenu!.style.width = "100%";
                 mainBody[i].style.marginLeft = "0";
                 sideBarToggle!.style.marginLeft = "-148px";
-                logo[i].style.borderRight = 'none';
+                
+                logo[i].style.borderRight = '1px solid #EBEBEB';
             }
         }
       

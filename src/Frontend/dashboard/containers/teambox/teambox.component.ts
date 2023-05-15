@@ -4,7 +4,7 @@
 	import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 	import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 	import { TeamboxService } from './../../services';
-
+	import { Router } from '@angular/router';
 	import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 	import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 
@@ -16,6 +16,15 @@
 	})
 
 	export class TeamboxComponent implements  OnInit {
+
+
+		//******* Router Guard  *********//
+		routerGuard = () => {
+			if (sessionStorage.getItem('SP_ID') === null) {
+				this.router.navigate(['login']);
+			}
+		}
+
 		@ViewChild('notesSection') notesSection: ElementRef |undefined; 
 		@ViewChild('chatSection') chatSection: ElementRef |undefined; 
 		@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
@@ -283,7 +292,7 @@
 		
 		
 
-		constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder) {
+		constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder, private router:Router) {
 			// customize default values of modals used by this component tree
 			config.backdrop = 'static';
 			config.keyboard = false;
@@ -586,9 +595,11 @@
 		}
 
 		ngOnInit() {
+			this.routerGuard()
 			this.getAgents()
 			this.getAllInteraction()
 			this.getCustomers()
+			
 		}
 
 		

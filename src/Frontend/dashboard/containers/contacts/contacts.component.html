@@ -452,10 +452,11 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Name*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text"  [(ngModel)]="inputText" (input)="onInputChange()" [ngClass]="{'is-invalid' :submitted && newContact.controls.Name.errors  }" placeholder="Enter Name" name="Name"
-								formControlName="Name" id="Name" />
-								<div *ngIf= "submitted && newContact.controls.Name.errors" class="text-danger">
-									! Name required
+							<input class="form-control" type="text"  [(ngModel)]="inputText" (input)="onInputChange()" 
+							[ngClass]="{'is-invalid' :submitted && newContact.controls.Name.errors  }" 
+							placeholder="Enter Name" name="Name" formControlName="Name" id="Name" />
+								<div *ngIf="submitted && newContact.controls.Name.errors" class="text-danger">
+									!  Invalid Name Format
 								  </div>
 								 
 								 
@@ -496,15 +497,15 @@
 							   placeholder="Enter Email" name="emailId" formControlName="emailId" id="emailId" />
 
 								<div *ngIf="submitted && newContact.controls.emailId.errors" class="text-danger">
-									! Invalid Email Id
+									!  Invalid Email Id
 								  </div>
 						</div>
 					</div>
 					<div class="col-md">
 						<label for="floatingInputGrid">Age</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="Enter Age" name="age"
-								formControlName="age" id="age" />
+							<input class="form-control" type="number" placeholder="Enter Age" name="age"
+								formControlName="age" id="age" min="18" max="100" />
 						</div>
 					</div>					
 				</div>
