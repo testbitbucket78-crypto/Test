@@ -21,7 +21,7 @@ app.get('/', function (req, res) {
 
 
 
-app.post('/contact', function (req, res) {
+app.post('/contact', async function (req, res) {
   console.log("contact")
   try {
     console.log(req.body)
@@ -64,7 +64,27 @@ app.post('/contact', function (req, res) {
 
     var values = [[Name, Phone_number, emailId, age, tagListJoin, statusListJoin, facebookId, InstagramId, SP_ID]];
 
-    db.runQuery(req, res, val.insertContact, [values])
+    //db.runQuery(req, res, val.insertContact, [values])
+    var result = await db.excuteQuery(val.existContactWithSameSpid, [emailId,Phone_number,SP_ID])
+   
+    if (result.length > 0) {
+      // email or phone number already exist, return an error response
+
+      res.status(409).send({
+        msg: 'Email or phone number already exist !',
+        status: 409
+      });
+    }
+    else{
+     
+      var customers=await db.excuteQuery(val.insertContact, [values])
+   
+      res.status(200).send({
+        msg: 'Contact added successfully !',
+        contact:customers,
+        status: 200
+      });
+    }
   } catch (err) {
     console.log(err)
     db.errlog(err);
@@ -451,13 +471,13 @@ app.post('/verifyData', async (req, res) => {
     }
 
 
-    console.log("importData" +importData.length)
+    console.log("importData" + importData.length)
     console.log(importData)
-    if (importData.length>'0') {
+    if (importData.length > '0') {
 
       var verifyQuery = 'select * from EndCustomer WHERE ' + identity + ' in (?)' + ' and SP_ID=?  and  (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)'
       var result = await db.excuteQuery(verifyQuery, [queryData, SP_ID])
-     console.log("_______"+result.length)
+      console.log("_______" + result.length)
 
       try {
         if (purpose === 'Add new contact only') {

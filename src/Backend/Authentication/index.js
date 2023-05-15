@@ -83,6 +83,7 @@ const register = async function (req, res) {
                 status: 409
             });
         }
+        else{
         if (password !== confirmPassword) {
             res.status(400).json({ error: 'Passwords do not match', status: 400 });
         }
@@ -97,6 +98,7 @@ const register = async function (req, res) {
             user: registeredUser,
             status: 200
         });
+    }
     }
     catch (err) {
         console.error(err);
