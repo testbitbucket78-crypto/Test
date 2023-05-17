@@ -35,7 +35,7 @@ app.get("/webhook", (req, res) => {
 })
 
 //Variables 
-var Quick_reply_id="";
+var Quick_reply_id = "";
 var ExternalMessageId = "";
 var message_text = "";
 var message_media = "";
@@ -44,19 +44,22 @@ var Type = "";
 var flag = true;
 var count = 0;
 var array = [];
-var uniqueId=""
+var uniqueId = "";
+var replymessage = "";
+var autoReply = ""
 // Accepts POST requests at /webhook endpoint
-app.post("/webhook", (req, res) => {
+app.post("/webhook", async (req, res) => {
   // Parse the request body from the POST
 
 
   let body = req.body;
 
   // Check the Incoming webhook message
-  var sendedSms="";
+  var sendedSms = "";
   if (body != undefined) {
     sendedSms = JSON.stringify(req.body, null, 2)
-    console.log(sendedSms)
+    replymessage = await db.excuteQuery(process.env.sreplyQuery, [])
+
   }
 
   // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
@@ -72,7 +75,7 @@ app.post("/webhook", (req, res) => {
     ) {
       let phone_number_id =
         req.body.entry[0].changes[0].value.metadata.phone_number_id;
-       let from =
+      let from =
         req.body.entry[0].changes[0].value.messages[0].from; // extract the phone number from the webhook payload
       let msg_body = req.body.entry[0].changes[0].value.messages[0].text.body; // extract the message text from the webhook payload
       ExternalMessageId = req.body.entry[0].id;
@@ -80,8 +83,20 @@ app.post("/webhook", (req, res) => {
       message_media = req.body.entry[0].changes[0].value.messages[0].type;
       Message_template_id = req.body.entry[0].changes[0].value.messages[0].id;
       Type = req.body.entry[0].changes[0].value.messages[0].type
-      
 
+      try {
+        console.log("message_text" + message_text)
+        console.log("_________process.env.insertMessage__________")
+        console.log(process.env.insertMessage)
+        var sreplyMessage = await db.excuteQuery(process.env.insertMessage, [['62', '1', 'webhook', message_text, 'whatsApp']])
+        console.log(sreplyMessage)
+        replymessage = await db.excuteQuery(process.env.sreplyQuery, [])
+        autoReply = replymessage.Description
+        // console.log(sendedSms)
+        console.log(autoReply)
+      } catch (err) {
+
+      }
 
       array.push(Message_template_id);
 
@@ -100,7 +115,7 @@ app.post("/webhook", (req, res) => {
         data: {
           messaging_product: "whatsapp",
           to: from,
-          text: { body: "Reply: " + sendedSms   }
+          text: { body: "Reply: " + autoReply }
           ,
         },
         headers: { "Content-Type": "application/json" },
@@ -118,22 +133,22 @@ app.post("/webhook", (req, res) => {
 
   if (!flag) {
     Quick_reply_id = req.body.entry[0].changes[0].value.statuses[0].id;
-    uniqueId= req.body.entry[0].changes[0].value.statuses[0].recipient_id;
+    uniqueId = req.body.entry[0].changes[0].value.statuses[0].recipient_id;
   }
 
   flag = false;
 
   if (count == 1) {
-   
+
     //var values = [uniqueId,'IN',message_text,message_media,Message_template_id,Quick_reply_id,Type,ExternalMessageId]
-    db.query(process.env.query, [uniqueId,'IN',message_text,message_media,Message_template_id,Quick_reply_id,Type,ExternalMessageId], function (err, result, fields) {
-      if (err) {
-        console.log("Error Occour");
-        throw err;
-      } else {
-        console.log(result)
-      }
-    });
+    // db.query(process.env.query, [uniqueId,'IN',message_text,message_media,Message_template_id,Quick_reply_id,Type,ExternalMessageId], function (err, result, fields) {
+    //   if (err) {
+    //     console.log("Error Occour");
+    //     throw err;
+    //   } else {
+    //     console.log(result)
+    //   }
+    // });
 
 
   }
