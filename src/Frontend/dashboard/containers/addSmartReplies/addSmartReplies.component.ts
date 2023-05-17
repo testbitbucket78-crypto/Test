@@ -123,6 +123,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.routerGuard();
 	
 	
+	
 	}
 
 

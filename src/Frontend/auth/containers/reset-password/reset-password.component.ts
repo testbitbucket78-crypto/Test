@@ -26,6 +26,7 @@ export class ResetPasswordComponent implements OnInit {
     confirmPassword: ['', Validators.required]
   }, { validator: this.passwordMatchValidator });
 
+<<<<<<< HEAD
   title = 'formValidation';
   submitted = false;
   constructor(private formBuilder: FormBuilder, private router: Router, private apiService: AuthService, private active: ActivatedRoute) {
@@ -40,6 +41,19 @@ export class ResetPasswordComponent implements OnInit {
         console.log(params.uid); // { uid: }
         this.uid = params.uid
         console.log("a to z")
+=======
+    resetpassword = this.formBuilder.group({
+        id:sessionStorage.getItem('uid'),
+        password: ['', [Validators.required,Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
+        confirmPassword: ['', Validators.required]
+      }, { validator: this.passwordMatchValidator });
+        
+    
+    constructor( private formBuilder: FormBuilder,private router: Router,private apiService :AuthService) {
+
+       
+          
+>>>>>>> master
 
       }
       );
@@ -61,6 +75,24 @@ export class ResetPasswordComponent implements OnInit {
       if (password !== confirmPassword && confirmPassword !== '') {
         return { 'mismatch': true };
       }
+<<<<<<< HEAD
+=======
+    
+    
+     
+    onSubmit(){
+        
+       console.log(this.resetpassword.value)
+        
+        this.apiService.resetPassword(this.resetpassword.value).subscribe(data => {
+            console.log(data)
+            this.router.navigate (['login'])
+           
+        })
+
+     
+
+>>>>>>> master
     }
 
     return null;

@@ -17,6 +17,8 @@
 
 	export class TeamboxComponent implements  OnInit {
 
+	import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
+	import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 
 			//******* Router Guard  *********//
 		routerGuard = () => {
@@ -565,6 +567,97 @@
 					allList[i]['is_active']=0
 				}
 		}
+		Interaction['selected']=true
+		this.selectedInteraction =Interaction
+	}
+	
+	counter(i: number) {
+		return new Array(i);
+	}
+
+	filerInteraction(filterBy:any){
+		this.selectedInteraction=[]
+		if(filterBy != 'All'){
+			this.getFilteredInteraction(filterBy)
+		}else{
+			this.getAllInteraction()
+		}
+
+		this.interactionFilterBy=filterBy
+		this.ShowFilerOption =false
+
+	}
+	toggleFilerOption(){
+		this.ShowFilerOption =!this.ShowFilerOption
+	}
+
+	toggleContactOption(){
+		this.ShowContactOption =!this.ShowContactOption;
+	}
+
+	toggleChannelOption(){
+		this.ShowChannelOption =!this.ShowChannelOption;
+	}
+	selectChannelOption(ChannelName:any){
+		this.selectedChannel = ChannelName
+		
+		this.ShowChannelOption=false
+	}
+
+
+	filterContactByType(ChannelName:any){
+		this.selectedChannel = ChannelName
+		this.getSearchContact();
+		this.ShowContactOption=false
+	}
+    
+	toggleConversationStatusOption(){
+		if(this.loginAs =='TL'){
+		this.ShowConversationStatusOption =!this.ShowConversationStatusOption
+		}else{
+			this.showToaster('Opps you dont have permission','')
+		}
+		this.ShowAssignOption=false
+	}
+
+	toggleAssignOption(){
+		this.ShowConversationStatusOption=false;
+		if(this.selectedInteraction.interaction_status =='Resolved'){
+			this.showToaster('Already Resolved','')
+		}else{
+		if(this.loginAs =='TL'){
+			this.ShowAssignOption =!this.ShowAssignOption
+		}else{
+			this.showToaster('Opps you dont have permission','')
+		}
+	}
+	}
+
+	showToaster(message:any,type:any){
+	if(type=='success'){
+		this.successMessage=message;
+	}else if(type=='error'){
+		this.errorMessage=message;
+	}else{
+		this.warningMessage=message;
+	}
+	setTimeout(() => {
+		this.hideToaster()
+	}, 5000);
+	
+	}
+	markItRead(message:any){
+	   
+       if(message.message_direction!='Out' && message.is_read==0){
+		var bodyData = {
+			Message_id:message.Message_id
+		}
+		this.apiService.updateMessageRead(bodyData).subscribe(async data =>{
+			let selectedInteraction =this.selectedInteraction;
+			selectedInteraction['UnreadCount']=selectedInteraction['UnreadCount']>0?selectedInteraction['UnreadCount']-1:0
+			this.selectedInteraction =selectedInteraction
+			message.is_read=1;	
+		})
 	   }
 		var newArray=[];
 	   for(var m=0;m<allList.length;m++){
@@ -597,6 +690,15 @@
 
 	}
 
+	sendMessage(){
+		
+		console.log('sendMessage')
+		
+		
+		let objectDate = new Date();
+		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
+		var cDay = String(objectDate.getDate()).padStart(2, '0');
+		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
 
 	showEmojiType(EmojiType:any){
 		this.EmojiType = EmojiType
@@ -1764,4 +1866,6 @@
 
 
 	}
+
+}
 
