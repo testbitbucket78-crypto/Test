@@ -663,7 +663,7 @@ input:focus {
 
     .box1 {
         width: 731px;
-        height: 398px;
+        height: 100%;
         margin-left: 18%;
         margin-top: -46px;
     }
@@ -714,8 +714,8 @@ input:focus {
    
 
     input[type='radio'] {
-        width: 23px;
-        height: 23px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         outline: none;
         border: 3px solid #6149cd;
@@ -1085,4 +1085,21 @@ input:focus {
         top: 40%;
         right: 2%;
     }
+}
+
+@media screen and (max-width:1366px) {
+
+    .form-check {
+  
+    margin: 10px 0px 30px 70px;
+}
+}
+
+
+@media screen and (max-width:1280px) {
+
+    .form-check {
+  
+    margin: 10px 0px 30px 70px;
+}
 }

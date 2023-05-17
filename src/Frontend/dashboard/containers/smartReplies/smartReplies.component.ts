@@ -64,7 +64,7 @@ export class SmartRepliesComponent implements OnInit {
 		})
 	}
 	opensidenav(employee: any) {
-		document.getElementById("sidebar")!.style.width = "494px";
+		document.getElementById("sidebar")!.style.width = "400px";
 	}
 	closesidenav(items: any) {
 		document.getElementById("sidebar")!.style.width = "0";

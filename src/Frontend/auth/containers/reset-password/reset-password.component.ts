@@ -21,7 +21,7 @@ export class ResetPasswordComponent implements OnInit {
   change: boolean = true;
   uid: any;
   resetpassword = this.formBuilder.group({
-    id: sessionStorage.getItem('uid'),
+    // id: sessionStorage.getItem('uid'),
     password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
     confirmPassword: ['', Validators.required]
   }, { validator: this.passwordMatchValidator });
@@ -36,8 +36,10 @@ export class ResetPasswordComponent implements OnInit {
   ngOnInit() {
     this.active.queryParams
       .subscribe(params => {
+      
         console.log(params.uid); // { uid: }
         this.uid = params.uid
+        console.log("a to z")
 
       }
       );
@@ -72,6 +74,7 @@ export class ResetPasswordComponent implements OnInit {
 
     this.apiService.resetPassword(this.resetpassword.value,this.uid).subscribe(data => {
       console.log(data)
+
       this.router.navigate(['login'])
 
     })

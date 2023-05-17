@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 const API_URL = environment.baseUrl;
 
 
+
 @Injectable()
 export class TeamboxService {
   constructor(private http: HttpClient) { }
@@ -25,6 +26,13 @@ export class TeamboxService {
   public createCustomer(data: any) {
     return this.http.post(API_URL+'/addcustomers/',data);
   }
+  public updatedCustomer(data: any) {
+    return this.http.post(API_URL+'/updatedCustomer/',data);
+  }
+  public updateTags(data: any) {
+    return this.http.post(API_URL+'/updateTags/',data);
+  }
+  
 
   public searchCustomer(channel:any,SPID:any,key:any) {
       return this.http.get(API_URL+'/'+channel+'/'+SPID+'/'+key);
@@ -39,15 +47,19 @@ export class TeamboxService {
     return this.http.post(API_URL+'/interaction/',data);
   }
   
-  public getAllInteraction() {
-    return this.http.get(API_URL+'/interaction');
+
+  
+  
+  public getAllInteraction(body:any) {
+    return this.http.post(API_URL+'/getAllInteraction/',body);
   }
   
   public getInteractionById(InteractionId:any) {
     return this.http.get(API_URL+'/interaction/'+InteractionId);
   }
-  public getFilteredInteraction(InteractionStatus:any,AgentId:any) {
-    return this.http.get(API_URL+'/filterinteraction/'+InteractionStatus+'/'+AgentId);
+  public getFilteredInteraction(InteractionStatus:any,AgentId:any,AgentName:any) {
+    
+    return this.http.get(API_URL+'/filterinteraction/'+InteractionStatus+'/'+AgentId+'/'+AgentName);
   }
   public getSearchInteraction(SearchKey:any,AgentId:any) {
     return this.http.get(API_URL+'/searchinteraction/'+SearchKey+'/'+AgentId);
@@ -55,10 +67,19 @@ export class TeamboxService {
   public updateInteraction(data: any) {
     return this.http.post(API_URL+'/updateinteraction/',data);
   }
+
+  public deleteInteraction(data: any) {
+    return this.http.post(API_URL+'/deleteInteraction/',data);
+  }
   
+
   public checkInteractionPinned(InteractionId:any,AgentId:any) {
     return this.http.get(API_URL+'/interactionpinned/'+InteractionId+'/'+AgentId);
   }
+  public updateInteractionPinned(data: any) {
+    return this.http.post(API_URL+'/interactionpinned/',data);
+  }
+
 
   public getAllMessageByInteractionId(InteractionId:any,Type:any) {
     return this.http.get(API_URL+'/messages/'+InteractionId+'/'+Type);
@@ -72,6 +93,19 @@ export class TeamboxService {
   public updateMessageRead(data: any) {
     return this.http.post(API_URL+'/updatemessageread/',data);
   }
+
+  public getsavedMessages(SPID: any) {
+    return this.http.get(API_URL+'/getsavedMessages/'+SPID);
+  }
+  public getquickReply(SPID: any) {
+    return this.http.get(API_URL+'/getquickReply/'+SPID);
+  }
+
+  public getTemplates(SPID: any) {
+    return this.http.get(API_URL+'/getTemplates/'+SPID);
+  }
+
+  
   
 
 
@@ -79,6 +113,10 @@ export class TeamboxService {
   public updateInteractionMapping(data: any) {
     return this.http.post(API_URL+'/interactionmapping/',data);
   }
+  public resetInteractionMapping(data: any) {
+    return this.http.post(API_URL+'/resetInteractionMapping/',data);
+  }
+  
   public getInteractionMapping(InteractionId:any) {
     return this.http.get(API_URL+'/interactionmapping/'+InteractionId);
   }

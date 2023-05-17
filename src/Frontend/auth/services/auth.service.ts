@@ -28,7 +28,7 @@ export class AuthService {
     resetPassword(value: any, uid: any) {
         console.log("" + value)
         const params = new HttpParams().set('uid', uid)
-        let API_URL = 'http://localhost:3003/resetPassword/:uid';
+        let API_URL = 'https://authapi.sampanatechnologies.com/resetPassword/:uid';
         return this.http.post(API_URL, value, { params: params })
     }
     sendOtp(data: authSendOtp) {

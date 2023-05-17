@@ -12,7 +12,8 @@ import { Validators } from '@angular/forms';
 })
 export class ForgotPasswordComponent implements OnInit {
 
-   
+    showModal = false;
+
     forgetpassword = new FormGroup({
         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
     })
@@ -30,8 +31,15 @@ export class ForgotPasswordComponent implements OnInit {
     // }
     onSubmit() {
         console.log(this.forgetpassword.value)
-        this.submitted = true
-        this.apiService.forgotpassword(this.forgetpassword.value).subscribe((result) => {
+        this.submitted = true;
+
+
+        if (this.forgetpassword.invalid) {
+            return
+        }
+
+        this.apiService.forgotpassword(this.forgetpassword.value).subscribe(
+            (result) => {
             if (result.status === 200 && result.id.lenght > 0) {
                 sessionStorage.setItem('uid', result.id[0].uid)
                 this.router.navigate(['reset-password'])
@@ -48,13 +56,12 @@ export class ForgotPasswordComponent implements OnInit {
                         errorDiv.innerHTML = errorMessage;
                     }
                 }   
-            })
+            });
 
-        if (this.forgetpassword.invalid) {
-            return
-        }
 
-        // alert("Success")
+            this.forgetpassword.reset;
+            this.showModal = true;
+      
     }
     
 }

@@ -18,12 +18,13 @@
 	export class TeamboxComponent implements  OnInit {
 
 
-		//******* Router Guard  *********//
+			//******* Router Guard  *********//
 		routerGuard = () => {
 			if (sessionStorage.getItem('SP_ID') === null) {
 				this.router.navigate(['login']);
 			}
 		}
+
 
 		@ViewChild('notesSection') notesSection: ElementRef |undefined; 
 		@ViewChild('chatSection') chatSection: ElementRef |undefined; 
@@ -55,19 +56,6 @@
 		];
 		
 		public selectedTemplate:any  = { id:1,date:'2023-05-15',name:'Healthkart-Offers',img: 'template-img.png',heading:'{{name}}',content: '<b>Vitamins, Minerals & Supplements</b><br>Are you unable to get the right amount of vitamins {{Product}}<br>essential nutrients through the food that you eat?<br><br>Hurry up!'};
-			
-		
-
-		public SavedMessageList: { [key: string]: Object }[] = [
-			{ id:1,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:2,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:3,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:4,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:5,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:6,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		];
-		
-
 		public smileys: { [key: string]: Object }[] = [
 			{ content: '&#128512;', title: 'Grinning face' },
 			{ content: '&#128513;', title: 'Grinning face with smiling eyes' },
@@ -234,16 +222,23 @@
 		showQuickResponse:any=false;
 		showAttributes:any=false;
 		showSavedMessage:any=false;
+		showQuickReply:any=false;
 		showInsertTemplate:any=false;
 		showAttachmenOption:any=false;
 		slideIndex=0;
+		PauseTime:any='';
+		confirmMessage:any;
 		
 	
 		active = 1;
 		SPID=2;
 		TeamLeadId=6;
-		AgentId=6;
-		loginAs='TL'
+		AgentId=45;
+		messageTimeLimit=10;
+		SIPmaxMessageLimt=25;
+		SIPthreasholdMessages=0;
+		AgentName='Raman Bhasker';
+		loginAs='Agent'//'TL'
 		showFullProfile=false;
 		showAttachedMedia=false;
 		showattachmentbox=false;
@@ -256,9 +251,8 @@
 		selectedNote:any=[];
 		contactList:any = [];
 		interactionList:any = [];
+		interactionListMain:any=[];
 		agentsList:any = [];
-		progressbarPer:any = "--value:0";
-		progressbarValue:any = "0";
 		modalReference: any;
 		OptedIn=false;
 		searchFocused=false;
@@ -275,8 +269,19 @@
 		ShowChannelOption:any=false;
 		
 		newContact: any;
+		editContact: any;
+		ShowGenderOption:any=false;
+		ShowLeadStatusOption:any=false;
+
 		newMessage:any;
 		interactionFilterBy:any='All'
+		interactionSearchKey:any=''
+		tagsoptios:any=[
+		{name:'Paid',status:false},
+		{name:'Unpaid',status:false},
+		{name:'Return',status:false}]
+
+		selectedTags:any='';
 		AutoReplyEnableOption:any=['Extend Pause for 5 mins','Extend Pause for 10 mins','Extend Pause for 15 mins','Extend Pause for 20 mins'];
 		AutoReplyPauseOption:any=['Pause for 5 mins','Pause for 10 mins','Pause for 15 mins','Pause for 20 mins','Auto Reply are Paused'];
 		AutoReply:any='Extend Pause for 5 mins';
@@ -288,11 +293,19 @@
 		messageMeidaFile:any='';
 		mediaType:any='';
 		showMention:any=false;
+		EditContactForm:any=[];
+		SavedMessageList:any=[];
+		QuickReplyList:any=[];
+		SavedMessageListMain:any=[];
+		QuickReplyListMain:any=[];
+		allTemplates:any=[];
+		allTemplatesMain:any=[];
+		filterTemplateOption:any='';
 		
 		
 		
 
-		constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder, private router:Router) {
+		constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private router:Router) {
 			// customize default values of modals used by this component tree
 			config.backdrop = 'static';
 			config.keyboard = false;
@@ -304,15 +317,28 @@
 				Channel: new FormControl('', Validators.required),
 				
 			});
+			this.editContact=fb.group({
+				SP_ID: new FormControl('', Validators.required),
+				Name: new FormControl('', Validators.required),
+				Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+				Channel: new FormControl('', Validators.required),
+			});
+			
 			this.newMessage =fb.group({
 				Message_id:new FormControl(''),
 			});
 
 		}
-
+		resetMessageTex(){
+			if(this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value =='<p>Your content...</p>'){
+				this.chatEditor.value='';
+			}
+			
+		}
 		toggleChatNotes(optionvalue:any){
-
+			if(this.chatEditor){
 			if(optionvalue == 'text'){
+				this.chatEditor.value = 'Your message...'
 				this.tools = {
 					items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
 					{
@@ -359,6 +385,7 @@
 					}]
 				}
 			}else{
+				this.chatEditor.value = 'Your content...'
 				this.tools = {
 					items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
 					{
@@ -391,6 +418,7 @@
 					}]
 				}
 			}
+		}
 			this.showChatNotes=optionvalue
 			setTimeout(() => {
 				this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
@@ -399,15 +427,17 @@
 		}
 
 		closeAllModal(){
-		this.editTemplate=false
-		this.showInsertTemplate=false;
-		this.showAttributes=false;
-		this.showSavedMessage=false;
-		this.showQuickResponse=false;
-		this.showAttachmenOption=false;
-		this.showEditTemplateMedia=false;
-		this.TemplatePreview=false;
-		this.showMention=false;
+			this.showAttachmenOption=false
+			this.messageMeidaFile=false
+			this.showAttributes=false
+			this.showInsertTemplate=false
+			this.editTemplate=false
+			this.TemplatePreview=false
+			this.showSavedMessage=false
+			this.showQuickReply=false
+			this.showMention=false
+			this.showEmoji =false;
+
 		}	
 		editMedia(){
 			this.closeAllModal()
@@ -434,14 +464,8 @@
 		this.showInsertTemplate=false;
 	}	
 	ToggleShowMentionOption(){
+		this.closeAllModal()
 		this.showMention=!this.showMention
-		this.showSavedMessage =false
-		this.showEmoji =false;
-		this.showAttachmenOption=false;
-		this.showAttributes=false;
-		this.showQuickResponse=false;
-		this.showInsertTemplate=false;
-		
 	}
 	public InsertMentionOption(user:any){
 		let content:any = this.chatEditor.value;
@@ -451,68 +475,116 @@
 		this.showMention = false;
 	}
 	ToggleSavedMessageOption(){
-		
+		this.closeAllModal()
 		this.showSavedMessage =!this.showSavedMessage
-		this.showEmoji =false;
-		this.showAttachmenOption=false;
-		this.showAttributes=false;
-		this.showQuickResponse=false;
-		this.showInsertTemplate=false;
-		this.showMention=false;
 
 	}
 	ToggleInsertTemplateOption(){
-		this.showEmoji =false;
-		this.showAttachmenOption=false;
-		this.showAttributes=false;
-		this.showQuickResponse=false;
-		this.showSavedMessage=false;
-		this.editTemplate=false
-		this.showMention=false;
+		this.closeAllModal()
 		this.showInsertTemplate =!this.showInsertTemplate
 	}
 
 	ToggleAttributesOption(){
-		this.showEmoji =false;
-		this.showAttachmenOption=false;
-		this.showQuickResponse=false;
-		this.showSavedMessage=false;
-		this.showInsertTemplate=false;
-		this.showMention=false;
+		this.closeAllModal()
 		this.showAttributes = !this.showAttributes;
 	}	
 	ToggleQuickReplies(){
-		this.showEmoji =false;
-		this.showAttachmenOption=false;
-		this.showAttributes=false;
-		this.showSavedMessage=false;
-		this.showInsertTemplate=false;
-		this.showMention=false;
-		this.showQuickResponse = !this.showQuickResponse;
+		this.closeAllModal()
+		this.showQuickReply = !this.showQuickReply;
 	}
 
 	selectQuickReplies(item:any){
-		this.showEmoji =false;
-		this.showAttachmenOption=false;
-		this.showAttributes=false;
-		this.showSavedMessage=false;
-		this.showInsertTemplate=false;
-		this.showQuickResponse = false;
-		this.showMention=false;
-		this.chatEditor.value =item
+		this.closeAllModal()
+		var htmlContnet = '<p><span style="color: #6149CD;"><b>'+item.title+'</b></span><br>'+item.content+'</p>';
+		this.chatEditor.value =htmlContnet
 	}
+	searchSavedMessage(event:any){
+		let searchKey = event.target.value
+		if(searchKey.length>2){
+		var allList = this.SavedMessageListMain
+		let FilteredArray = [];
+		for(var i=0;i<allList.length;i++){
+			var content = allList[i].title.toLowerCase()
+				if(content.indexOf(searchKey.toLowerCase()) !== -1){
+					FilteredArray.push(allList[i])
+				}
+		}
+		this.SavedMessageList = FilteredArray
+	}else{
+		this.SavedMessageList = this.SavedMessageListMain
+	}
+	}
+	searchQuickReply(event:any){
+		let searchKey = event.target.value
+		if(searchKey.length>2){
+		var allList = this.QuickReplyListMain
+		let FilteredArray = [];
+		for(var i=0;i<allList.length;i++){
+			var content = allList[i].title.toLowerCase()
+				if(content.indexOf(searchKey.toLowerCase()) !== -1){
+					FilteredArray.push(allList[i])
+				}
+		}
+		this.QuickReplyList = FilteredArray
+	    }else{
+			this.QuickReplyList = this.QuickReplyListMain
+		}
+	}
+
+	searchTemplate(event:any){
+		let searchKey = event.target.value
+		if(searchKey.length>2){
+		var allList = this.allTemplates
+		let FilteredArray = [];
+		for(var i=0;i<allList.length;i++){
+			var content = allList[i].title.toLowerCase()
+				if(content.indexOf(searchKey.toLowerCase()) !== -1){
+					FilteredArray.push(allList[i])
+				}
+		}
+		this.allTemplates = FilteredArray
+	    }else{
+			this.allTemplates = this.allTemplates
+		}
+	}
+
+	filterTemplate(temType:any){
+
+		let allList  =this.allTemplatesMain;
+		if(temType.target.checked){
+		var type= temType.target.value;
+		for(var i=0;i<allList.length;i++){
+				if(allList[i]['type'] == type){
+					allList[i]['is_active']=1
+				}
+		}
+	   }else{
+		var type= temType.target.value;
+		for(var i=0;i<allList.length;i++){
+				if(allList[i]['type'] == type){
+					allList[i]['is_active']=0
+				}
+		}
+	   }
+		var newArray=[];
+	   for(var m=0;m<allList.length;m++){
+          if(allList[m]['is_active']==1){
+			newArray.push(allList[m])
+		  }
+
+	   }
+	   this.allTemplates= newArray
+
+		
+	}
+
 		
 	toggleEmoji(){
-		this.showAttachmenOption=false;
-		this.showAttributes=false;
-		this.showQuickResponse=false;
-		this.showSavedMessage=false;
-		this.showInsertTemplate=false;
-		this.showMention=false;
-			this.showEmoji = !this.showEmoji;
-			(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
-			this.range = this.selection.getRange(document);
-			this.saveSelection = this.selection.save(this.range, document);
+		this.closeAllModal()
+		this.showEmoji = !this.showEmoji;
+		(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
+		this.range = this.selection.getRange(document);
+		this.saveSelection = this.selection.save(this.range, document);
 				
 	}
 	public onInsert(item:any) {
@@ -530,12 +602,7 @@
 		this.EmojiType = EmojiType
 	}
 	ToggleAttachmentBox(){
-		this.showEmoji =false;
-		this.showAttributes=false;
-		this.showQuickResponse=false;
-		this.showSavedMessage=false;
-		this.showInsertTemplate=false;
-
+		this.closeAllModal()
 		this.showAttachmenOption=!this.showAttachmenOption
 		this.dragAreaClass = "dragarea";
 		
@@ -599,10 +666,40 @@
 			this.getAgents()
 			this.getAllInteraction()
 			this.getCustomers()
+			this.getsavedMessages()
+			this.getquickReply()
+			this.getTemplates()
+		}
+
+		
+		async getsavedMessages(){
+			this.apiService.getsavedMessages(this.SPID).subscribe(savedMessages =>{
+				this.SavedMessageListMain = savedMessages
+				this.SavedMessageList = savedMessages
+			})
+
+		}
+		async getquickReply(){
+			this.apiService.getquickReply(this.SPID).subscribe(quickReply =>{
+				this.QuickReplyListMain = quickReply
+				this.QuickReplyList = quickReply
+			})
+			
+		}
+
+		async getTemplates(){
+			this.apiService.getTemplates(this.SPID).subscribe(allTemplates =>{
+				console.log('////////allTemplates////////')
+				console.log(allTemplates)
+				this.allTemplatesMain = allTemplates
+				this.allTemplates = allTemplates
+			})
 			
 		}
 
 		
+
+
 		
 
 		
@@ -621,6 +718,7 @@
 			this.searchFocused = false
 		}
 		toggleProfileView(){
+			//console.log(this.selectedInteraction)
 			this.showFullProfile = !this.showFullProfile
 		}
 		toggleAttachedMediaView(){
@@ -629,7 +727,7 @@
 
 		updateOptedIn(event:any){
 			this.OptedIn= event.target.checked
-			this.newContact.value.OptedIn = event.target.checked
+			this.newContact.value.OptedIn = event.target.value
 		}
 		getCustomers(){
 			this.apiService.getCustomers(this.SPID).subscribe(data =>{
@@ -644,7 +742,7 @@
 
 		}
 		async getAssicatedInteractionData(dataList:any,selectInteraction:any=true){
-			
+			let threasholdMessages=0
 			dataList.forEach((item:any) => {
 			
 			item['tags'] = this.getTagsList(item.tag)
@@ -656,7 +754,13 @@
 				var lastMessage = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]:[];
 				item['lastMessage'] = lastMessage
 				item['lastMessageReceved']= this.timeSinceLastMessage(item.lastMessage)
+				item['progressbar']= this.getProgressBar(item.lastMessage)
 				item['UnreadCount']= this.getUnreadCount(item.allmessages)
+				
+				var messageSentCount:any = this.threasholdMessages(item.allmessages)
+				threasholdMessages = threasholdMessages+messageSentCount
+				this.SIPthreasholdMessages= this.SIPmaxMessageLimt-threasholdMessages
+		
 			})
 
 			this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes').subscribe(notesList =>{
@@ -687,6 +791,8 @@
 			});
 
 			this.interactionList= dataList
+			this.interactionListMain= dataList
+			
 			setTimeout(() => {
 				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
 			}, 5000);
@@ -701,43 +807,97 @@
 
 
 		}
+        async updatePinnedStatus(item:any){
+			
+			var bodyData = {
+				AgentId:this.AgentId,
+				isPinned:item.isPinned,
+				InteractionId:item.InteractionId
+			}
+			//console.log(bodyData)
+			this.apiService.updateInteractionPinned(bodyData).subscribe(async response =>{
+				item.isPinned=!item.isPinned;
+			})
+
+
+
+		}
 
 		async getFilteredInteraction(filterBy:any){
-			await this.apiService.getFilteredInteraction(filterBy,this.AgentId).subscribe(async data =>{
+			await this.apiService.getFilteredInteraction(filterBy,this.AgentId,this.AgentName).subscribe(async data =>{
 				var dataList:any = data;
 				this.getAssicatedInteractionData(dataList)
 			});
 		}
 		
 		async getAllInteraction(selectInteraction:any=true){
-			await this.apiService.getAllInteraction().subscribe(async data =>{
+			let bodyData={
+				SearchKey:this.interactionSearchKey,
+				FilterBy:this.interactionFilterBy,
+				AgentId:this.AgentId,
+				SPID:this.SPID,
+				AgentName:this.AgentName
+			}
+			
+			await this.apiService.getAllInteraction(bodyData).subscribe(async data =>{
 				var dataList:any = data;
 				this.getAssicatedInteractionData(dataList,selectInteraction)
 			});
 
 		}
-		async getSearchInteraction(event:any,selectInteraction:any=true){
-		this.selectedInteraction=[]
-		if(event.target.value.length>=3){
+		async getSearchInteraction(event:any){
+		if(event.target.value.length>2){
 			var searchKey =event.target.value
-			await this.apiService.getSearchInteraction(searchKey,this.AgentId).subscribe(async data =>{
-				var dataList:any = data;
-				this.getAssicatedInteractionData(dataList,selectInteraction)
-			});
+			this.interactionSearchKey = searchKey
+			this.getAllInteraction()
 		}else{
-			await this.apiService.getAllInteraction().subscribe(async data =>{
-				var dataList:any = data;
-				this.getAssicatedInteractionData(dataList,selectInteraction)
-			});
-
+			this.interactionSearchKey = ''
+			this.getAllInteraction()
 		}
-
+		
 		}
 
 		async seacrhInChat(event:any,selectInteraction:any=true){
-			console.log('seacrhInChat')
+			//console.log('seacrhInChat')
+			let searchKey = event.target.value
+		  if(searchKey.length>1){
+			let FilteredArray = []
+			let allmessages=[]
+			if(this.showChatNotes=='text'){
+				 allmessages = this.selectedInteraction['allmessages']
+			}else{
+				 allmessages = this.selectedInteraction['allnotes']
+			}
+			for(var i=0;i<allmessages.length;i++){
+				let text = allmessages[i]['message_text']
+				let content = text.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+				content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+				content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+				content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+				content = content.replace('&nbsp;', '\n')
+				content = content.replace(/<br[^>]*>/g, '\n')
+				content = content.replace(/<\/?[^>]+(>|$)/g, "")
+				content = content.toLowerCase()
+
+				if(content.indexOf(searchKey.toLowerCase()) !== -1){
+					FilteredArray.push(allmessages[i])
+				}
+		    }
+			
+			if(this.showChatNotes=='text'){
+				this.selectedInteraction['messageList'] = FilteredArray.length>0?this.groupMessageByDate(FilteredArray):[{}]
+			}else{
+				this.selectedInteraction['notesList'] =   FilteredArray.length>0?this.groupMessageByDate(FilteredArray):[{}]
+			}
+
+
+		}else{
+			this.selectedInteraction['messageList'] = this.groupMessageByDate(this.selectedInteraction['allmessages'])
+			this.selectedInteraction['notesList'] =this.groupMessageByDate(this.selectedInteraction['allnotes'])
+		}
 
 		}
+	
 		
 		getFormatedDate(date:any){
 			if(date){
@@ -805,7 +965,54 @@
 		}
 			
 		}
+        threasholdMessages(allMessage:any){
+             if(allMessage.length>0){
+				let messageCount =0
+				for(var i=0;i<allMessage.length;i++){
+					var fiveMinuteAgo = new Date( Date.now() - 1000 * (60 * this.messageTimeLimit) )
+					var messCreated = new Date(allMessage[i].created_at)
+					if(messCreated > fiveMinuteAgo ){
+						messageCount++
+					}
+				}
+				return messageCount
+			 }
 
+
+		}
+		getProgressBar(lastMessage:any){
+            let progressbar:any=[];
+			if(lastMessage){
+				var date = lastMessage.created_at
+				var currentDate:any = new Date()
+				var messCreated:any = new Date(date)
+				var seconds = Math.floor((currentDate - messCreated) / 1000);
+				var interval:any = seconds / 31536000;
+			
+				interval = seconds / 2592000;
+				interval = seconds / 86400;
+				interval = seconds / 3600;
+	
+				var hour =parseInt(interval)
+				if (hour < 48) {
+					var hrPer = (100*hour)/48
+					var hourLeft =48-parseInt(interval)
+				}else{
+					var hrPer =100
+					var hourLeft =0
+				}
+				progressbar['progressbarPer'] = "--value:"+hrPer;
+				progressbar['progressbarValue']= hourLeft;
+	
+				}else{
+					var hrPer =100
+					var hourLeft =0
+					progressbar['progressbarPer'] = "--value:"+hrPer;
+					progressbar['progressbarValue']= hourLeft;
+				}
+				return progressbar;
+
+		}
 		timeSinceLastMessage(lastMessage:any){
 			if(lastMessage){
 			var date = lastMessage.created_at
@@ -819,33 +1026,28 @@
 			interval = seconds / 3600;
 
 			var hour =parseInt(interval)
-	
-			if (hour >= 1 && hour < 6) {
-				var hrPer = hour*6/100
-				var hourLeft =6-parseInt(interval)
+			if (hour < 48) {
+				var hrPer = (100*hour)/48
+				var hourLeft =48-parseInt(interval)
 			}else{
 				var hrPer =100
 				var hourLeft =0
 				if(this.selectedInteraction['interaction_status']!=='Resolved'){
-					//this.updateConversationStatus('Resolved')
+					this.updateConversationStatus('Resolved')
 				}
 			}
-			this.progressbarPer = "--value:"+hrPer;
-			this.progressbarValue= hourLeft;
-
-			if (interval > 1) {
+			
+			//if (interval > 1) {
 				var hours = messCreated.getHours() > 12 ? messCreated.getHours() - 12 : messCreated.getHours();
 				var am_pm = messCreated.getHours() >= 12 ? "PM" : "AM";
 				var hoursBH = hours < 10 ? "0" + hours : hours;
 				var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
 				var time = hoursBH + ":" + minutes  + " " + am_pm;
 				return time
-			}
+			//}
 		    }else{
 				var hrPer =100
 				var hourLeft =0
-				this.progressbarPer = "--value:"+hrPer;
-			    this.progressbarValue= hourLeft;
 				return '';
 			}
 		}
@@ -856,21 +1058,61 @@
 		}
 		Interaction['selected']=true
 		this.selectedInteraction =Interaction
+		//console.log(Interaction)
+		this.getPausedTimer()
+	}
+
+	getPausedTimer(){
+		//console.log('getPausedTimer')
+		
+		clearInterval(this.PauseTime);
+  if(this.selectedInteraction.paused_till){
+		var countDownDate = new Date(this.selectedInteraction.paused_till).getTime();
+		let that =this;
+		this.PauseTime = setInterval(function() {
+
+			// Get today's date and time
+			var now = new Date().getTime();
+		  
+			// Find the distance between now and the count down date
+			var distance = countDownDate - now;
+		  
+			// Time calculations for days, hours, minutes and seconds
+			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+		  
+			// Display the result in the element with id="demo"
+			that.selectedInteraction['PausedTimer'] =  minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
+		  
+			// If the count down is finished, write some text
+			if (distance < 0) {
+			  clearInterval(that.PauseTime);
+			  that.selectedInteraction['PausedTimer'] = "";
+			  that.selectedInteraction['AutoReplyStatus']='Auto Reply are Paused'
+			}
+		  }, 1000);
+		}else{
+			this.selectedInteraction['PausedTimer'] = "";
+			this.selectedInteraction['AutoReplyStatus']='Auto Reply are Paused'
+		}
+
 	}
 	
 	counter(i: number) {
 		return new Array(i);
 	}
 
-	filerInteraction(filterBy:any){
+	filterInteraction(filterBy:any){
 		this.selectedInteraction=[]
+		/*
 		if(filterBy != 'All'){
 			this.getFilteredInteraction(filterBy)
 		}else{
 			this.getAllInteraction()
 		}
-
+		*/
 		this.interactionFilterBy=filterBy
+		this.getAllInteraction()
 		this.ShowFilerOption =false
 
 	}
@@ -885,10 +1127,77 @@
 	toggleChannelOption(){
 		this.ShowChannelOption =!this.ShowChannelOption;
 	}
+	toggleGenderOption(){
+		this.ShowGenderOption =!this.ShowGenderOption;
+	}
 	selectChannelOption(ChannelName:any){
 		this.selectedChannel = ChannelName
-		
 		this.ShowChannelOption=false
+	}
+	hangeEditContactInuts(item:any){
+		//console.log(item.target.name)
+		if(item.target.name =='OptInStatus'){
+			this.EditContactForm['OptInStatus'] = item.target.value
+			this.EditContactForm['OptInStatusChecked'] = item.target.value?true:false
+		}else{
+			this.EditContactForm[item.target.name] = item.target.value
+		}
+		
+		//this.ShowChannelOption=false
+
+	}
+	toggleLeadStatusOption(){
+		this.ShowLeadStatusOption=!this.ShowLeadStatusOption;
+	}
+	hangeEditContactSelect(name:any,value:any){
+		this.EditContactForm[name] = value
+		this.ShowChannelOption=false
+		this.ShowGenderOption=false
+		this.ShowLeadStatusOption=false;
+
+	}
+
+	updateCustomer(){
+		var bodyData = {
+		Name:this.EditContactForm.Name,
+		Phone_number:this.EditContactForm.Phone_number,
+		channel:this.EditContactForm.channel,
+		status:this.EditContactForm.status,
+		OptInStatus:this.EditContactForm.OptInStatus,
+		sex:this.EditContactForm.sex,
+		age:this.EditContactForm.age,
+		emailId:this.EditContactForm.emailId,
+		Country:this.EditContactForm.Country,
+		facebookId:this.EditContactForm.facebookId,
+		InstagramId:this.EditContactForm.InstagramId,
+		customerId:this.EditContactForm.customerId,
+		}
+
+		if(this.EditContactForm.OptInStatusChecked){
+			bodyData['OptInStatus'] = 'Active Subscribers';
+		}else{
+			bodyData['OptInStatus'] = 'Disabled';
+		}
+		//console.log(bodyData)
+		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
+			this.selectedInteraction['Name']=this.EditContactForm.Name
+		this.selectedInteraction['Phone_number']=this.EditContactForm.Phone_number
+		this.selectedInteraction['channel']=this.EditContactForm.channel
+		this.selectedInteraction['status']=this.EditContactForm.status
+		this.selectedInteraction['OptInStatus']=bodyData['OptInStatus']
+		this.selectedInteraction['sex']=this.EditContactForm.sex
+		this.selectedInteraction['age']=this.EditContactForm.age
+		this.selectedInteraction['emailId']=this.EditContactForm.emailId
+		this.selectedInteraction['Country']=this.EditContactForm.Country
+		this.selectedInteraction['facebookId']=this.EditContactForm.facebookId
+		this.selectedInteraction['InstagramId']=this.EditContactForm.InstagramId
+		
+			if(this.modalReference){
+				this.modalReference.close();
+			}
+			this.showToaster('Contact information updated...','success')
+		});
+	
 	}
 
 
@@ -899,10 +1208,13 @@
 	}
     
 	toggleConversationStatusOption(){
+		
+		
+
 		if(this.loginAs =='TL'){
 		this.ShowConversationStatusOption =!this.ShowConversationStatusOption
 		}else{
-			this.showToaster('Opps you dont have permission','')
+			this.showToaster('Opps you dont have permission','warning')
 		}
 		this.ShowAssignOption=false
 	}
@@ -910,12 +1222,12 @@
 	toggleAssignOption(){
 		this.ShowConversationStatusOption=false;
 		if(this.selectedInteraction.interaction_status =='Resolved'){
-			this.showToaster('Already Resolved','')
+			this.showToaster('Already Resolved','warning')
 		}else{
-		if(this.loginAs =='TL'){
+		if(this.loginAs =='TL' || this.selectedInteraction.interaction_status !='Resolved'){
 			this.ShowAssignOption =!this.ShowAssignOption
 		}else{
-			this.showToaster('Opps you dont have permission','')
+			this.showToaster('Opps you dont have permission','warning')
 		}
 	}
 	}
@@ -968,17 +1280,41 @@
 	toggleAutoReply(){
 		this.AutoReplyOption =!this.AutoReplyOption
 	}
-
+    
 	SelectReplyOption(optionValue:any,optionType:any){
-
+		var LastPaused = this.selectedInteraction.paused_till
+        var PTime = optionValue.match(/(\d+)/);
+		let pausedTill = new Date();
+		if(PTime){
+		
+		if(optionType =='Extend'){
+		var dt1 = (new Date(LastPaused)).getTime();//Unix timestamp (in milliseconds)
+		var addSec = PTime[0]*60*1000
+		var dt2= new Date(dt1+addSec)
+		pausedTill = new Date(dt2);
+		
+		}else{
+		var dt1 = (new Date()).getTime();
+		var addSec = PTime[0]*60*1000
+		var dt2= new Date(dt1+addSec)
+		pausedTill = new Date(dt2);	
+		}	
+	 }
+	
+	
+		
 		var bodyData = {
 			AutoReply:optionValue,
-			InteractionId:this.selectedInteraction.InteractionId
+			InteractionId:this.selectedInteraction.InteractionId,
+			updated_at:new Date(),
+			paused_till:pausedTill
 		}
 		this.apiService.updateInteraction(bodyData).subscribe(async response =>{
 			this.selectedInteraction.AutoReplyStatus =optionValue	
 			this.AutoReplyType ='Pause are '+optionType	
 			this.AutoReplyOption=false;
+			this.selectedInteraction['paused_till'] =pausedTill;
+			this.getPausedTimer()
 			this.showToaster('Pause Applied','success')
 		})
 		
@@ -998,14 +1334,148 @@
 	blockCustomer(selectedInteraction:any){
 		var bodyData = {
 			customerId:selectedInteraction.customerId,
-			isBlocked:1
+			isBlocked:selectedInteraction.isBlocked==1?0:1
 		}
 		this.apiService.blockCustomer(bodyData).subscribe(ResponseData =>{
-			this.selectedInteraction['isBlocked']=1
-			this.showToaster('Account is blocked','success')
+			this.selectedInteraction['isBlocked']=selectedInteraction.isBlocked==1?0:1
+			if(selectedInteraction.isBlocked==1){
+				this.showToaster('Conversations is Unblocked','success')
+			}else{
+				this.showToaster('Conversations is Blocked','success')
+			}
+			
 		});
 	}
 
+	handelBlockConfirm(){
+		if(this.modalReference){
+			this.modalReference.close();
+		}	
+		this.blockCustomer(this.selectedInteraction)
+	}
+	handelStatusConfirm(){
+		if(this.modalReference){
+			this.modalReference.close();
+		}	
+		if(this.selectedInteraction['interaction_status']=='Resolved'){
+			this.updateConversationStatus('Open')
+		}else{
+			this.updateConversationStatus('Resolved')
+		}
+		
+	}
+	handelDeleteConfirm(){
+		if(this.modalReference){
+			this.modalReference.close();
+		}
+		var bodyData = {
+			AgentId:this.AgentId,
+			InteractionId:this.selectedInteraction.InteractionId
+		}
+		this.apiService.deleteInteraction(bodyData).subscribe(async response =>{
+				//console.log(response)
+				this.showToaster('Conversations deleted...','success')
+		});	
+	}
+
+    toggleTagsModal(updatedtags:any){
+		if(this.modalReference){
+			this.modalReference.close();
+		}
+		var activeTags = this.selectedInteraction['tags'];
+		for(var i=0;i<this.tagsoptios.length;i++){
+			var tagItem = this.tagsoptios[i]
+			if(activeTags.indexOf(tagItem.name)>-1){
+				tagItem['status']=true
+				this.selectedTags += tagItem.name+','
+			}
+		}
+     	this.modalReference = this.modalService.open(updatedtags,{ size:'ml', windowClass:'white-bg'});
+	
+	}
+	addTags(tagName:any){
+		if(tagName.target.checked){
+			this.selectedTags += tagName.target.value+','
+		}else{
+			this.selectedTags = this.selectedTags.replace(tagName.target.value+',', "");
+		}
+		//console.log(this.selectedTags)
+	}
+	
+	updateTags(){
+		var bodyData = {
+			tag:this.selectedTags,
+			customerId:this.selectedInteraction.customerId
+		}
+		this.apiService.updateTags(bodyData).subscribe(async response =>{
+			this.selectedInteraction['tags']=this.getTagsList(this.selectedTags)
+			if(this.modalReference){
+				this.modalReference.close();
+			}
+			this.showToaster('Tags updated...','success')
+
+		});
+	}
+
+	triggerEditCustomer(updatecustomer:any){
+		if(this.modalReference){
+			this.modalReference.close();
+		}
+		this.EditContactForm['Name'] =this.selectedInteraction.Name
+		this.EditContactForm['Phone_number'] =this.selectedInteraction.Phone_number
+		this.EditContactForm['channel'] =this.selectedInteraction.channel
+		this.EditContactForm['status'] =this.selectedInteraction.status
+		this.EditContactForm['OptInStatus'] =this.selectedInteraction.OptInStatus
+		this.EditContactForm['OptInStatusChecked'] =this.selectedInteraction.OptInStatus=='Active Subscribers'?true:false
+		
+		this.EditContactForm['sex'] =this.selectedInteraction.sex
+		this.EditContactForm['age'] =this.selectedInteraction.age
+		this.EditContactForm['emailId'] =this.selectedInteraction.emailId
+		this.EditContactForm['Country'] =this.selectedInteraction.Country
+		this.EditContactForm['facebookId'] =this.selectedInteraction.facebookId
+		this.EditContactForm['InstagramId'] =this.selectedInteraction.InstagramId
+		this.EditContactForm['customerId'] =this.selectedInteraction.customerId
+		this.modalReference = this.modalService.open(updatecustomer,{ size:'lg', windowClass:'white-bg'});
+	}
+
+
+	triggerDeleteCustomer(openDeleteAlertmMessage:any){
+		if(this.modalReference){
+			this.modalReference.close();
+		}
+		if(this.loginAs =='TL'){
+		this.confirmMessage= 'Are you sure want to Delete this conversations'
+		this.modalReference = this.modalService.open(openDeleteAlertmMessage,{ size:'sm', windowClass:'white-bg'});
+		}else{
+		this.showToaster('Opps you dont have permission','warning')
+	    }
+	}
+	triggerBlockCustomer(BlockStatus:any,openBlockAlertmMessage:any){
+		if(this.modalReference){
+			this.modalReference.close();
+		}
+		if(this.loginAs =='TL'){
+		this.confirmMessage= 'Are you sure want to '+BlockStatus+' this conversations'
+		this.modalReference = this.modalService.open(openBlockAlertmMessage,{ size:'sm', windowClass:'white-bg'});
+		
+	    }else{
+		this.showToaster('Opps you dont have permission','warning')
+	    }
+	}
+    triggerUpdateConversationStatus(status:any,openStatusAlertmMessage:any){
+		if(this.modalReference){
+			this.modalReference.close();
+		}
+		this.ShowConversationStatusOption=false
+		if(this.selectedInteraction['interaction_status']!=status){
+				if(this.modalReference){
+					this.modalReference.close();
+				}
+				this.confirmMessage= 'Are you sure want to '+status+' this conversations'
+				this.modalReference = this.modalService.open(openStatusAlertmMessage,{ size:'sm', windowClass:'white-bg'});
+	   
+		}
+	}
 
 	updateConversationStatus(status:any){
 		var bodyData = {
@@ -1014,6 +1484,7 @@
 		}
 		this.apiService.updateInteraction(bodyData).subscribe(async response =>{
 			this.ShowConversationStatusOption=false
+			this.showToaster('Conversations updated to '+status+'...','success')
 			/*
 			//////This time it can not be assign to any one
 			var responseData:any = response
@@ -1069,6 +1540,9 @@
 		this.newContact.value.SP_ID =this.SPID;
 		this.newContact.value.Channel = this.selectedChannel
 		var bodyData = this.newContact.value
+		if(bodyData['OptedIn']){
+			bodyData['OptedIn'] = 'Active Subscribers';
+		}
 		this.apiService.createCustomer(bodyData).subscribe(async response =>{
 			var responseData:any = response
 			var insertId:any = responseData.insertId
@@ -1077,6 +1551,10 @@
 			}
 		});
 	}
+
+
+	
+
 
 	createInteraction(customerId:any){
 	var bodyData = {
@@ -1104,16 +1582,15 @@
 			AgentId: AgentId,
 			MappedBy: MappedBy
 		}
-		this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
-			//this.getAllInteraction()
-			this.apiService.getInteractionMapping(InteractionId).subscribe(mappingList =>{
-				var mapping:any  = mappingList;
-				this.selectedInteraction['assignTo'] =mapping?mapping[mapping.length - 1]:'';
-			})
-
-			//console.log(this.selectedInteraction['assignTo'])
-		
-		});
+		this.apiService.resetInteractionMapping(bodyData).subscribe(responseData1 =>{
+			this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
+				this.apiService.getInteractionMapping(InteractionId).subscribe(mappingList =>{
+					var mapping:any  = mappingList;
+					this.selectedInteraction['assignTo'] =mapping?mapping[mapping.length - 1]:'';
+				})
+			
+			});
+	  });
 	}
 
 
@@ -1154,11 +1631,13 @@
 	}
 
 	toggleNoteOption(note:any){
+		//console.log(note)
 		this.hideNoteOption()
-		if(note){
+		if(note && this.selectedNote.Message_id != note.Message_id){
 		note.selected=true
 		this.selectedNote= note
 		}else{
+			note.selected=false
 			this.selectedNote= []
 		
 		}
@@ -1185,9 +1664,9 @@
 			deleted_by:this.AgentId,
 			deleted_at:new Date()
 		}
-		//console.log(bodyData)
+		////console.log(bodyData)
 		this.apiService.deleteMessage(bodyData).subscribe(async data =>{
-			console.log(data)
+			//console.log(data)
 			this.selectedNote.is_deleted=1
 			this.selectedNote.deleted_by=this.selectedNote.AgentName
 		})
@@ -1197,9 +1676,9 @@
 
 	sendMessage(){
 		
-		console.log('sendMessage')
+		//console.log('sendMessage'+this.SIPthreasholdMessages)
 		
-		
+		if(this.SIPthreasholdMessages>0){
 		let objectDate = new Date();
 		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
 		var cDay = String(objectDate.getDate()).padStart(2, '0');
@@ -1207,6 +1686,7 @@
 
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
+			SPID:this.SPID,
 			AgentId: this.AgentId,
 			messageTo:this.selectedInteraction.Phone_number,
 			message_text: this.chatEditor.value,
@@ -1219,7 +1699,8 @@
 			created_at:new Date()
 		}
 		this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
-			console.log(data)
+			this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
+			//console.log(data)
 			this.messageMeidaFile='';
 			this.mediaType='';
 			var responseData:any = data
@@ -1276,8 +1757,9 @@
 
 
 		});
-		
-
+		}else{
+			this.showToaster('Oops! SIP message limit exceed please wait for 5min...','warning')
+		}
 	}
 
 

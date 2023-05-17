@@ -79,8 +79,9 @@ export class DashboardComponent implements OnInit {
         });
     }
     getdashboardAgents() {
+        var SP_ID = sessionStorage.getItem('SP_ID')
 
-        this.apiService.dashboardAgents().subscribe(data => {
+        this.apiService.dashboardAgents(SP_ID).subscribe(data => {
             this.agents = data;
         });
     }

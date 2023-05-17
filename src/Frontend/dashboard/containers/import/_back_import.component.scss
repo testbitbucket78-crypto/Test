@@ -1,0 +1,1376 @@
+// * {
+//     font-family: 'Manrope';
+// }
+
+.bs-stepper {
+    position: relative;
+    width: 1467px;
+    height: 742px;
+    box-shadow: 4px 22px 54px #695f971a;
+    border-radius: 30px;
+    margin: 56px 81px;
+}
+
+.bs-stepper-header {
+    width: 57%;
+    margin: 8px 18%;
+    margin-top: -20px;
+}
+
+#close-btn {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 13px;
+    right: 30px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: "Manrope";
+    font-size: 13px;
+}
+
+
+.link {
+    color: skyblue;
+    font-size: 16px;
+}
+h1 {
+    margin-top: 1.5rem!important;
+    font-family: 'Manrope';
+    font-weight: bold;
+    padding: 18px;
+    font-size: 22px;
+    color: #000000;
+    letter-spacing: -0.55px;
+    margin: 0px 0px 10px 20px;
+}
+.active .bs-stepper-circle {
+    background: #6149cd 0% 0% no-repeat padding-box;
+    box-shadow: 2px 13px 30px #6149cd42;
+    border-radius: 17px;
+    opacity: 1;
+    width: 36px;
+    height: 35px;
+    color: #ffffff;
+    border-radius: 15px;
+}
+.bs-stepper-circle {
+    border: 1px dashed var(#e1e1e1);
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px dashed #e1e1e1;
+    border-radius: 15px;
+    color: #7a86a1;
+    text-align: center;
+    opacity: 1;
+    width: 36px;
+    height: 35px;
+}
+.active .bs-stepper-label {
+    display: inline-block;
+    margin: 0.25rem;
+    text-align: left;
+    letter-spacing: 0px;
+    color: #6149cd;
+    opacity: 1;
+}
+
+.bs-stepper-label {
+    display: inline-block;
+    margin: 0.25rem;
+    text-align: left;
+    letter-spacing: 0px;
+    color: #7a86a1;
+    opacity: 1;
+}
+
+.bs-stepper-label:after {
+    color: #6149cd;
+}
+.box1 {
+    background: #fff4f2 0% 0% no-repeat padding-box;
+    border: 1px dashed #ebebeb;
+    border-radius: 30px;
+    opacity: 1;
+    width: 370px;
+    height: 287px;
+    margin-left: 292px;
+}
+.box1 img {
+    margin: 45px 0px 10px 148px;
+}
+.box1 h5 {
+    font-family: 'Manrope';
+    font-size: 14px;
+    font-weight: bold;
+    color: #000000;
+    text-align: center;
+    margin: 10px 0px 5px 0px;
+}
+.box1 span {
+    color: #7a86a1;
+    opacity: 1;
+    margin-left: 175px;
+    font-weight: 400;
+    font-family: 'Manrope';
+    font-size: 14px;
+}
+.box .box1 input {
+    width: 208px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    margin: 10px 0px 0px 140px;
+    color: #7a86a1;
+}
+.box1 .btn1 {
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px solid #ebebeb;
+    border-radius: 17px;
+    opacity: 1;
+    width: 150px;
+    height: 35px;
+    color: #7a86a1;
+    margin: 10px 0px 0px 140px;
+}
+.btn1 img {
+    margin: 0;
+}
+.box .btn4 {
+    background: #fff4f2 0% 0% no-repeat padding-box;
+    border-radius: 13px;
+    opacity: 1;
+    width: 17%;
+    height: 42px;
+    margin: 0px 0px 0px 37px;
+    border: none;
+}
+.btn4 img {
+    width: 18px;
+    height: 23px;
+    margin: 10px 20px 0px 20px;
+}
+.btn4 h6 {
+    font-family: 'Manrope';
+    font-size: 15px;
+    color: #000000;
+    margin: 10px 0px 0px 0px;
+}
+.box3 {
+
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695f971a;
+    border-radius: 30px;
+    opacity: 1;
+    width: 22%;
+    height: 218px;
+    float: right;
+    margin: -218px 26em 0px 0px;
+
+    
+}
+.box3 .box4 img {
+    width: 21px;
+    height: 23px;
+    margin: 20px 20px 0px 20px;
+}
+.box3 .box4 h6 {
+    font-family: 'Manrope';
+    font-size: 17px;
+    color: #080808;
+    margin: 20px 0px 11px 0px;
+}
+.box3 h5 {
+    font-family: 'Manrope';
+    font-size: 15px;
+    color: #7a86a1;
+    margin: 0px 0px 0px 60px;
+}
+
+#read-more{
+    color: #6149cd;
+    font-size: 11px;
+
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+    width: 100%;
+}
+.row span {
+    color: #7a86a1;
+    opacity: 1;
+    font-size: 14px;
+    font-family: 'Manrope';
+}
+select {
+    word-wrap: normal;
+    width: 70%;
+    height: 45px;
+    margin-left: -5px;
+    margin-bottom: 11px;
+    background: #ffffff;
+    border: 1px solid #ebebeb;
+    border-radius: 19px;
+    opacity: 1;
+    font-family: 'Manrope';
+    font-weight: 400;
+    font-size: 14px;
+    padding: 10px;
+    color: #000000;
+}
+
+input::file-selector-button {
+    font-weight: bold;
+    color: #7a86a1;
+    background-color: #ffffff;
+    font-family: 'Manrope';
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0.5em;
+    border: 1px solid #EBEBEB;
+    border-radius: 17px;
+}
+
+.modal-content {
+    
+    width: 100%;
+    border: none;
+    border-radius: 30px;
+    outline: 0;
+    box-shadow: 4px 22px 54px #695F971A;
+}
+
+.ml-4,
+.mx-4 {
+    margin: 0px 200px 0px 0px;
+}
+label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-family: 'Manrope';
+    font-size: 15px;
+    padding-top: 20px;
+    color: #000000;
+}
+.btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+    float: right;
+    background: #6149cd 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695f9724;
+    border-radius: 17px;
+    opacity: 1;
+    left: -14px;
+    color: #ffffff;
+
+}
+
+
+#upload-head-text {
+   font-size: 18px;
+    font-weight: 700;
+    font-family: "Manrope";
+    text-align: center;
+    margin-left: -51%;
+}
+
+#import-btn {
+    top: 61px;
+    right: 18px;
+}
+span {
+    font-family: 'Manrope';
+    font-size: 17px;
+    color: #7a86a1;
+}
+
+#upload-instructions {
+font-size: 11px;
+font-family: 'Manrope';
+font-weight: 600;
+width: 212px;
+height: 117px;
+line-height: 15px;
+}
+
+
+.col-md {
+
+    max-width: 28%;
+    left: 305px;
+}
+
+.sq .ss {
+    width: 48%;
+    height: 520px;
+    background: #fff4f2 0% 0% no-repeat padding-box;
+    border-radius: 30px;
+    opacity: 1;
+    margin: -22px 0px 0px 140px;
+}
+.sq .ss h5 {
+    font-family: 'Manrope';
+    font-size: 15px;
+    color: #000000;
+    font-weight: bold;
+    margin: 40px 0px 0px 25px;
+}
+.sq .ss h6 {
+    font-family: Manrope;
+    font-size: 15px;
+    color: #000000;
+    margin: 36px 0px 0px 25px;
+}
+.ss1 {
+    width: 135%;
+    height: 520px;
+    background: #fff4f2 0% 0% no-repeat padding-box;
+    border-radius: 30px;
+    opacity: 1;
+    margin: -21px 0px 0px 17px;
+}
+.ss1 .hh1 h5 {
+    font-family: 'Manrope';
+    font-size: 15px;
+    color: #000000;
+    font-weight: bold;
+    margin: 38px 0px 0px 41px;
+}
+ .ss1 .hh1 select {
+    word-wrap: normal;
+    width: 279px;
+    height: 40px;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px solid #ebebeb;
+    border-radius: 19px;
+    opacity: 1;
+    font-family: 'Manrope';
+    font-size: 14px;
+    font-weight: 500;
+    color: #000000;
+    margin: 14px 0px 0px 66px;
+}
+.ss1 .hh1 input {
+    margin: 30px 0px 0px 40px;
+}
+.ss1 .hh1 h4 {
+    margin: 32px 0px 0px 35px;
+    font-size: 15px;
+    font-family: 'manrope';
+    color: #6236ff;
+    font-weight: 600;
+    width: 132px;
+}
+.ss1 .hh1 h6 {
+    margin: 25px 0px 0px 15px;
+    font-size: 14px;
+    font-family: 'manrope';
+}
+.ss1 .hh1 .switch {
+    position: relative;
+    display: inline-block;
+    width: 55px;
+    height: 28px;
+    margin: 20px 0px 0px 40px;
+}
+.ss1 .hh1 .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 26px;
+    width: 45px;
+    background-color: #6149cd30;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+.ss1 .hh1 .switch input {
+    display: none;
+}
+
+.ss1 .hh1 .slider:before {
+    position: absolute;
+    content: '';
+    height: 18px;
+    width: 15px;
+    left: 2px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50px;
+    box-shadow: 0.35px 2px 7px #6149cd30;
+}
+.ss1 .hh1 input:checked+ .slider {
+    background-color: #6149cd;
+}
+
+
+.ss1 .hh1 input:checked + .slider:before {
+    transform: translateX(27px);
+}
+
+
+
+
+#map-next-btn {
+    left: 168px;
+    top: -45px;
+}
+
+
+
+.ss .card {
+    background-color: #fff4f2;
+    height: 365px;
+    width: 472px;
+    border-radius: 20px;
+    border: none;
+    margin: 30px 0px 0px 200px;
+}
+.ss .card h4 {
+    font-family: 'Manrope';
+    font-size: 20px;
+    font-weight: bold;
+    color: #000000;
+    margin: 30px 0px 0px 30px;
+}
+.ss .card .ggg h5 {
+    font-family: 'Manrope';
+    font-size: 16px;
+
+    color: #6149cd;
+    margin: 30px 0px 0px 30px;
+}
+.ss .card .ggg h6 {
+    font-family: 'Manrope';
+    font-size: 16px;
+
+    color: #000000;
+    margin: 10px 0px 0px 30px;
+}
+.ss .card1 {
+    background-color: #ebf9ec;
+    height: 89px;
+    width: 391px;
+    margin: 32px 0px 0px 45px;
+    border-radius: 20px;
+    opacity: 1;
+}
+.ss .card1 h5 {
+    color: #000000;
+    font-family: 'Manrope';
+    font-size: 24px;
+    font-weight: bold;
+    margin: 8px 0px 0px 25px;
+}
+.ss .card1 h6 {
+    color: #000000;
+    font-family: 'Manrope';
+    font-size: 15px;
+    font-weight: 400;
+    margin: 0px 0px 0px 25px;
+}
+.card2 {
+    background-color: #ECE4F5;
+    height: 89px;
+    width: 391px;
+    float: right;
+    margin: -258px 317px 0px 0px;
+    border-radius: 20px;
+}
+.card2 h5 {
+    color: #000000;
+    font-family: 'Manrope';
+    font-size: 24px;
+    font-weight: bold;
+    margin: 8px 0px 0px 25px;
+}
+.card2 h6 {
+    color: #000000;
+    font-family: 'Manrope';
+    font-size: 15px;
+    font-weight: 400;
+    margin: 0px 0px 0px 25px;
+}
+.card3 {
+    background-color: #fddbdb;
+    height: 150px;
+    width: 391px;
+    float: right;
+    margin: -152px 317px 0px 0px;
+    border-radius: 20px;
+}
+.card3 h5 {
+    color: #000000;
+    font-family: 'Manrope';
+    font-size: 24px;
+    font-weight: bold;
+    margin: 8px 0px 0px 25px;
+}
+.card3 h6 {
+    color: #000000;
+    font-family: 'Manrope';
+    font-size: 15px;
+    font-weight: 400;
+    margin: 0px 0px 0px 25px;
+}
+.card3 .btn {
+    background-color: #fff4f2;
+    width: 195px;
+    height: 30px;
+    border-radius: 13px;
+    margin: 10px 0px 0px 25px;
+    color: #000000;
+    float: left;
+    cursor: pointer;
+    padding: 0px;
+    font-size: 15px;
+}
+
+.btn5 {
+    margin: 0px;
+    border: none;
+    background-color: #fff;
+    top: -73px;
+    left: 200px;
+    width: 0px;
+}
+
+#map-span {
+    position: absolute;
+    font-size: 14px;
+    top: 117px;
+    left: 160px;
+    padding: 12px;
+}
+
+
+#information-part {
+    width: 87%;
+}
+
+.incorrect-card-main {
+    width: 498px;
+    height: 196px;
+    box-shadow: 4px 22px 54px #695f971a;
+    border-radius: 30px;
+    font-family: 'Manrope';
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 1;
+}
+
+.incorrect-card-main p {
+    margin-top: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.incorrect-card-main button {
+    margin-right: 12rem;
+    border: 1px solid #ebebeb;
+    border-radius: 17px;
+    opacity: 1;
+    width: 110px;
+    height: 40px;
+}
+
+.dd img {
+    padding: 40px 0px 0px 44%;
+}
+.dd{
+    background-color: #FFF4F2;
+    border-radius: 20px;
+    font-family: 'Manrope';
+    box-shadow: 4px 22px 54px #695F971A;
+}
+.dd h4{
+    padding-left: 54px;
+    font-weight: 700;
+    font-size: 22px;
+}
+.dd p{
+    text-align: center;
+    letter-spacing: 0px;
+    color: #7A86A1;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 1;
+}
+.dd .ss img{
+    padding: 0px;
+}
+.dd .text{
+    margin: -60px 0px 0px 0px;
+}
+.dd .btn{
+   margin: -21px 157px 12px 0px;
+    width: 140px;
+    height: 40px;
+}
+.dd .btn1{
+    margin: -21px 157px 12px 0px;
+    width: 140px;
+    height: 40px;
+}
+
+/******  media queries for laptop screen *****/
+
+
+@media all and (max-width:1536px) {
+  .bs-stepper {
+        width: 1109px !important;
+        height: 597px !important;
+        margin: 56px 255px;
+
+    }
+    
+#close-btn {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    top: 13px;
+    right: 30px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: "Manrope";
+    font-size: 13px;
+}
+
+
+
+    h1 {
+    font-size: 18px;
+    margin: 0px 0px 10px 14px;
+    }
+
+    .box1{
+
+    width: 300px;
+    height: 235px;
+    margin-left: 207px;
+
+
+    }
+
+    .box1 img {
+    margin: 45px 0px 10px 123px;
+    width: 57px;
+    height: 57px;
+}
+
+.box1 h5 {
+    font-size: 12px;
+}
+
+    #import-btn {
+    top: 28px;
+    right: 12px;
+}
+
+.box1 span {
+    margin-left: 141px;
+    font-size: 12px;
+}
+
+input::file-selector-button {
+    font-weight: bold;
+    color: #7a86a1;
+    background-color: #ffffff;
+    font-family: 'Manrope';
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0.5em;
+    border: 1px solid #EBEBEB;
+    border-radius: 17px;
+}
+
+
+#upload-head-text {
+    font-size: 16px;
+}
+.box .box1 input {
+
+    width: 173px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    margin: 10px 0px 0px 107px;
+    color: #7a86a1;
+    font-size: 12px;
+}
+
+.box .btn4 {
+    width: 17%;
+    height: 35px;
+}
+
+.box3 {
+
+    width: 22%;
+    height: 189px;
+    margin: -188px 18em 0px 54px;
+}
+
+.box3 .box4 h6 {
+    font-size: 13px;
+    margin: 24px 0px 11px -18px;
+        
+}
+
+.box3 .box4 img {
+    width: 18px;
+    height: 17px;
+    padding-right: 2px;
+    margin: 23px 20px 0px 12px;
+
+}
+
+.btn4 img {
+    height: 16px;
+    width: 16px;
+    margin: 10px 13px 0px 10px;
+}
+
+.btn4 h6 {
+    font-size: 12px;
+}
+
+.btn5 {
+    top: -73px;
+    left: 132px;
+    width: 0px;
+}
+
+.col-md {
+    max-width: 32%;
+    left: 20%;
+}
+
+label {
+    font-size: 13px;
+    padding-top: 11px;
+}
+
+.row span {
+    font-size: 11px;
+}
+
+select {
+
+    width: 69%;
+    height: 39px;
+    margin-left: -5px;
+    margin-bottom: 2px;
+    font-size: 12px;
+    padding: 10px;
+}
+
+#upload-instructions {
+    font-size: 9px;
+    margin-left: 31px;
+    margin-top: 4px;
+    line-height: 16px;
+
+}
+
+.bs-stepper-label {
+
+ font-size: 15px;
+}
+
+.ss .card {
+    height: 20em;
+    width: 24em;
+    margin: 11px 0px 0px 166px;
+}
+
+.ss .card1 {
+
+    height: 4.5em;
+    width: 18em;
+    margin: 12px 0px 0px 36px;
+    border-radius: 27px;
+
+}
+
+
+.card2 {
+    height: 4.5em;
+    width: 18em;
+    margin: -223px 193px 0px 0px;
+    border-radius: 27px;
+}
+
+.card3 {
+    height: 8em;
+    width: 18em;
+    margin: -130px 191px 0px 0px;
+    border-radius: 25px;
+}
+
+.ss .card1 h6 {
+    font-size: 12px;
+}
+
+.card2 h6 {
+    font-size: 12px;
+}
+.card3 h6 {
+    font-size: 12px;
+}
+
+.card3 .btn {
+    width: 135px;
+    height: 28px;
+    border-radius: 13px;
+    font-size: 12px;
+}
+
+.ss .card h4 {
+    font-size: 17px;
+}
+
+.ss .card .ggg h5 {
+    font-size: 13px;
+}
+
+
+.ss .card .ggg h6 {
+    font-size: 14px;
+}
+
+#map-span {
+    font-size: 12px;
+    left: 133px;
+    top: 117px;
+}
+.hh-parent {
+    height: 100%;
+}
+
+.sq .ss {
+    width: 26%;
+    height: 377px;
+    margin: -25px -66px 0px 108px;
+}
+
+
+.sq .ss h5 {
+  
+    font-size: 12px;
+    margin: 40px 0px 0px 43px;
+}
+
+.sq .ss h6 {
+  
+    font-size: 12px;
+    margin: 22px 0px 0px 42px;
+}
+
+
+
+.ss1 {
+
+    width: 57%;
+    height: 63%;
+    position: absolute;
+    right: 98px;
+    top: 170px;
+}
+
+.ss1 .hh1 h5 {
+    font-size: 12px;
+    margin: 36px 0px 0px 41px
+}
+
+
+ .ss1 .hh1 select {
+    word-wrap: normal;
+    width: 213px;
+    height: 34px;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px solid #ebebeb;
+    border-radius: 19px;
+    opacity: 1;
+    font-family: "Manrope";
+    font-size: 10px;
+    font-weight: 500;
+    color: #000000;
+    margin: 14px 0px 0px 0px;
+}
+.ss1 .hh1 input {
+    margin: 22px 0px 0px 40px;
+}
+.ss1 .hh1{
+    height: 40px;
+}
+.ss1 .hh1 h4 {
+
+    font-size: 12px;
+    font-family: "manrope";
+    color: #6236ff;
+    font-weight: 600;
+    margin: 21px 30px;
+    width: 100px;
+    
+}
+.ss1 .hh1 h6 {
+    margin: 22px 0px 0px 15px;
+    font-size: 10px;
+    font-family: 'manrope';
+    
+}
+.ss1 .hh1 .switch {
+    position: relative;
+    display: inline-block;
+    width: 55px;
+    height: 28px;
+    margin: 20px 0px 0px 35px;
+}
+.ss1 .hh1 .slider {
+    position: absolute;
+    cursor: pointer;
+    top: -10!important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    width: 33px;
+    background-color: #6149cd30;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+.ss1 .hh1 .switch input {
+    display: none;
+}
+#map-next-btn {
+    left: 140px;
+    top: 15px;
+
+}
+.ss1 .hh1 .slider:before {
+  position: absolute;
+    content: "";
+    height: 15px;
+    width: 14px;
+    left: 0;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50px;
+    box-shadow: 0.35px 2px 7px #6149cd30;
+}
+.ss1 .hh1 input:checked+ .slider {
+    background-color: #6149cd;
+}
+
+
+.ss1 .hh1 input:checked + .slider:before {
+    transform: translateX(19px);
+}
+.form-control-checkbox {
+    width: 14px;
+    margin-right: 10px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #6149CD;
+    border-radius: 6px;
+    opacity: 1;
+    display: inline-block;
+    position: relative;
+    height: 14px;
+
+}
+
+.form-control-checkbox:checked {
+    background-color: #6149CD;
+
+}
+
+
+}
+
+/******  media queries for 1366x768 screen *****/
+
+
+@media all and (max-width:1366px) {
+  .bs-stepper {
+        width: 1109px !important;
+        height: 597px !important;
+        margin: 0px 150px;
+
+    }
+    
+#close-btn {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    top: 13px;
+    right: 30px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: "Manrope";
+    font-size: 13px;
+}
+
+
+
+    h1 {
+    font-size: 18px;
+    margin: 0px 0px 10px 14px;
+    }
+
+    .box1{
+
+    width: 300px;
+    height: 235px;
+    margin-left: 207px;
+
+
+    }
+
+    .box1 img {
+    margin: 45px 0px 10px 123px;
+    width: 57px;
+    height: 57px;
+}
+
+.box1 h5 {
+    font-size: 12px;
+}
+
+    #import-btn {
+    top: 28px;
+    right: 12px;
+}
+
+.box1 span {
+    margin-left: 141px;
+    font-size: 12px;
+}
+
+input::file-selector-button {
+    font-weight: bold;
+    color: #7a86a1;
+    background-color: #ffffff;
+    font-family: 'Manrope';
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0.5em;
+    border: 1px solid #EBEBEB;
+    border-radius: 17px;
+}
+
+
+#upload-head-text {
+    font-size: 16px;
+}
+.box .box1 input {
+
+    width: 173px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    margin: 10px 0px 0px 107px;
+    color: #7a86a1;
+    font-size: 12px;
+}
+
+.box .btn4 {
+    width: 17%;
+    height: 35px;
+}
+
+.box3 {
+
+    width: 22%;
+    height: 189px;
+    margin: -188px 18em 0px 54px;
+}
+
+.box3 .box4 h6 {
+    font-size: 13px;
+    margin: 24px 0px 11px -18px;
+        
+}
+
+.box3 .box4 img {
+    width: 18px;
+    height: 17px;
+    padding-right: 2px;
+    margin: 23px 20px 0px 12px;
+
+}
+
+.btn4 img {
+    height: 16px;
+    width: 16px;
+    margin: 10px 13px 0px 10px;
+}
+
+.btn4 h6 {
+    font-size: 12px;
+}
+
+.btn5 {
+    top: -73px;
+    left: 132px;
+    width: 0px;
+}
+
+.col-md {
+    max-width: 32%;
+    left: 20%;
+}
+
+label {
+    font-size: 13px;
+    padding-top: 11px;
+}
+
+.row span {
+    font-size: 11px;
+}
+
+select {
+
+    width: 69%;
+    height: 39px;
+    margin-left: -5px;
+    margin-bottom: 2px;
+    font-size: 12px;
+    padding: 10px;
+}
+
+#upload-instructions {
+    font-size: 9px;
+    margin-left: 31px;
+    margin-top: 4px;
+    line-height: 16px;
+
+}
+
+.bs-stepper-label {
+
+ font-size: 15px;
+}
+
+.ss .card {
+    height: 20em;
+    width: 24em;
+    margin: 11px 0px 0px 166px;
+}
+
+.ss .card1 {
+
+    height: 4.5em;
+    width: 18em;
+    margin: 12px 0px 0px 36px;
+    border-radius: 27px;
+
+}
+
+
+.card2 {
+    height: 4.5em;
+    width: 18em;
+    margin: -223px 193px 0px 0px;
+    border-radius: 27px;
+}
+
+.card3 {
+    height: 8em;
+    width: 18em;
+    margin: -130px 191px 0px 0px;
+    border-radius: 25px;
+}
+
+.ss .card1 h6 {
+    font-size: 12px;
+}
+
+.card2 h6 {
+    font-size: 12px;
+}
+.card3 h6 {
+    font-size: 12px;
+}
+
+.card3 .btn {
+    width: 135px;
+    height: 28px;
+    border-radius: 13px;
+    font-size: 12px;
+}
+
+.ss .card h4 {
+    font-size: 17px;
+}
+
+.ss .card .ggg h5 {
+    font-size: 13px;
+}
+
+
+.ss .card .ggg h6 {
+    font-size: 14px;
+}
+
+#map-span {
+    font-size: 12px;
+    left: 133px;
+    top: 117px;
+}
+.hh-parent {
+    height: 100%;
+}
+
+.sq .ss {
+    width: 26%;
+    height: 377px;
+    margin: -25px -66px 0px 108px;
+}
+
+
+.sq .ss h5 {
+  
+    font-size: 12px;
+    margin: 40px 0px 0px 43px;
+}
+
+.sq .ss h6 {
+  
+    font-size: 12px;
+    margin: 22px 0px 0px 42px;
+}
+
+
+
+.ss1 {
+
+    width: 57%;
+    height: 63%;
+    position: absolute;
+    right: 98px;
+    top: 170px;
+}
+
+.ss1 .hh1 h5 {
+    font-size: 12px;
+    margin: 36px 0px 0px 41px
+}
+
+
+ .ss1 .hh1 select {
+    word-wrap: normal;
+    width: 213px;
+    height: 34px;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px solid #ebebeb;
+    border-radius: 19px;
+    opacity: 1;
+    font-family: "Manrope";
+    font-size: 10px;
+    font-weight: 500;
+    color: #000000;
+    margin: 14px 0px 0px 0px;
+}
+.ss1 .hh1 input {
+    margin: 22px 0px 0px 40px;
+}
+.ss1 .hh1{
+    height: 40px;
+}
+.ss1 .hh1 h4 {
+
+    font-size: 12px;
+    font-family: "manrope";
+    color: #6236ff;
+    font-weight: 600;
+    margin: 21px 30px;
+    width: 100px;
+    
+}
+.ss1 .hh1 h6 {
+    margin: 22px 0px 0px 15px;
+    font-size: 10px;
+    font-family: 'manrope';
+    
+}
+.ss1 .hh1 .switch {
+    position: relative;
+    display: inline-block;
+    width: 55px;
+    height: 28px;
+    margin: 20px 0px 0px 35px;
+}
+.ss1 .hh1 .slider {
+    position: absolute;
+    cursor: pointer;
+    top: -10!important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    width: 33px;
+    background-color: #6149cd30;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+.ss1 .hh1 .switch input {
+    display: none;
+}
+#map-next-btn {
+    left: 140px;
+    top: 15px;
+
+}
+.ss1 .hh1 .slider:before {
+  position: absolute;
+    content: "";
+    height: 15px;
+    width: 14px;
+    left: 0;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50px;
+    box-shadow: 0.35px 2px 7px #6149cd30;
+}
+.ss1 .hh1 input:checked+ .slider {
+    background-color: #6149cd;
+}
+
+
+.ss1 .hh1 input:checked + .slider:before {
+    transform: translateX(19px);
+}
+.form-control-checkbox {
+    width: 14px;
+    margin-right: 10px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #6149CD;
+    border-radius: 6px;
+    opacity: 1;
+    display: inline-block;
+    position: relative;
+    height: 14px;
+
+}
+
+.form-control-checkbox:checked {
+    background-color: #6149CD;
+
+}
+
+
+}
+

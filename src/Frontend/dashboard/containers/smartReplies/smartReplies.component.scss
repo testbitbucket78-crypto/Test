@@ -398,6 +398,11 @@ margin-top: -12px;
     cursor: pointer;
 }
 
+.form-inline .input-group, .form-inline .custom-select {
+    max-width: 340px;
+    margin-left: 17px;
+}
+
 }
 
 
@@ -502,6 +507,8 @@ margin-top: -12px;
     cursor: pointer;
 }
 
+
+
 }
 
 @media screen and (max-width:1280px) {
@@ -513,12 +520,16 @@ margin-top: -12px;
 
 }
 
+.col-9 {
+    max-width: 95%;
+}
+
 button:not(:disabled), [type=reset]:not(:disabled) {
 
     font-size: 11px;
     width: 126px;
     height: 36px;
-    margin: 62px 0px 0px 489px; 
+    margin: 62px 0px 0px 357px; 
 }
 
 .card {

@@ -138,3 +138,60 @@ input::-ms-clear {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
 }
+
+
+@media screen and (max-width:1366px) {
+
+.btn:not(:disabled):not(.disabled) {
+  
+    margin: 20px 0px 0px 102px;
+
+}
+
+.custom-control-label {
+    margin: 13px 0px 0px -28px;
+ }
+
+ .eyeicon {
+    right: 39px;
+
+}
+
+@media screen and (max-width:1280px) {
+    
+.btn:not(:disabled):not(.disabled) {
+  
+    margin: 13px 0px 0px 75px;
+    width: 180px;
+    font-size: 14px;
+
+}
+
+.custom-control-label {
+      margin: 13px 0px 0px -13px;
+ }
+
+ .mt-6 {
+    margin: 41px 0px 0px -117px;
+ }
+
+ .form-control {
+
+    width: 100%;
+
+}
+
+.eyeicon{
+
+    right: 19px;
+
+}
+
+small, .small {
+
+    margin: 0px 166px 0px 35px;
+
+    }
+  }
+
+}

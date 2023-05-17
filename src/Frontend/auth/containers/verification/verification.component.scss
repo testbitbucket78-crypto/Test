@@ -151,3 +151,78 @@ a {
     border: none;
 }
 
+#error-message{
+    color: #dc3545 !important;
+    font-size: 11px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+
+#error-message1{
+    color: #dc3545 !important;
+    font-size: 11px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+
+
+#success-message{
+    color: #39b812 !important;
+    font-size: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+#success-message1{
+    color: #39b812 !important;
+    font-size: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+
+@media screen and (max-width:1366px) {
+    .form-control {
+
+    width: 95%;
+}
+
+.text1 {
+    margin: 12px 0px 0px -15px;
+}
+
+}
+
+@media screen and (max-width:1280px) {
+    .form-control {
+
+    width: 105%;
+}
+
+.btn2 {
+   width: 250px;
+   margin-left: -1px;
+
+}
+
+.text1 {
+    margin: 0px 0px 0px -75px;
+
+   }
+
+h6, .h6 {
+
+    margin: 5px 0px 0px 24px;
+
+ }
+
+ .ml-1, .mx-1{
+
+    margin: -1px 0px 0px 0px;
+
+}
+
+.mt-4, .my-4 {
+    margin-top: -0.5rem!important;
+
+}
+
+}

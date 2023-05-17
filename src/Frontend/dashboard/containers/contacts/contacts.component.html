@@ -646,11 +646,11 @@
 				<div class="incorrect-card-main">
 
 			 <ul class="edit-tag-dropdown">
-			  <li *ngFor="let tag of Tag"><a class="dropdown-item" >
+			  <li *ngFor="let tag of customerData; let j = index"><a class="dropdown-item" >
 				<div class="form-check">
                       <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
 					  <label  id="edit-tag-dots" class="form-check-label" for="flexCheckDefault"> ● </label>
-                      <label  id="edit-tagnames" class="form-check-label" for="flexCheckDefault"> {{tag}}</label>
+                      <label  id="edit-tagnames" class="form-check-label" for="flexCheckDefault"> {{tag.value}}</label>
 				</div>
                     </a>
                   </li>

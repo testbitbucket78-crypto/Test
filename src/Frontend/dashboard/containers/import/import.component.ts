@@ -54,7 +54,7 @@ export class ImportComponent implements OnInit {
 		this.routerGuard();
 		this.showTopNav = false;
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: false,
+			linear: true,
 			animation: true
 		
 		})
@@ -68,6 +68,9 @@ export class ImportComponent implements OnInit {
 	next() {
 		this.stepper.next();
 	}
+
+
+
 	openinstruction(instruction: any) {
 		this.modalService.open(instruction);
 	}
@@ -93,9 +96,9 @@ export class ImportComponent implements OnInit {
 
 
 
-	//**** incorrect file format popup ****/
+
+	// //**** incorrect file format popup ****/
 	incorrectFile = (content:any) => {
-		alert('Clicked!');
 		const currentfileformat = this.file.name.split(".").pop();
 		if(currentfileformat !== this.fileformat) {
 	
@@ -104,20 +107,20 @@ export class ImportComponent implements OnInit {
 		}
 
 		else {
-			this.next();
+			this.stepper.next();
 		}
 	}
 
 	/***** import started in background popup and function ****/
 
-	importStrated = (imports:any) => {
-		if (this.numberOfNewContact !== 0 && this.countUpdatedData !== 0) {
+	importStrated = (imports:any ,importfailed:any) => {
+		if (this.numberOfNewContact !== 0 && this.countUpdatedData === 0) {
 			this.updateAndSave();
 			this.modalService.open(imports);
 		}
 
 		else {
-			this.next();
+			this.modalService.open(importfailed);
 		}
 
 	}
@@ -126,7 +129,6 @@ export class ImportComponent implements OnInit {
 
 //*********After upload read file *********/
 	onUpload(event: any) {
-
 		this.file = event.target.files[0];
 		this.fileName = this.file.name
 

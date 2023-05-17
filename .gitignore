@@ -50,3 +50,4 @@ Thumbs.db
 
 /src/.vs
 /.vs
+src/Backend/Authentication/uploads/

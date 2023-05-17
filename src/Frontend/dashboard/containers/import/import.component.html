@@ -96,8 +96,7 @@
 				</div>
 
 
-				<button type="button" class="btn btn-block col-1 mt-3 "
-					(click)="onUpload($event)" (click)="incorrectFile(content)" >Next</button>
+				<button type="button" class="btn btn-block col-1 mt-3" (click)="incorrectFile(content)" (click)="onUpload($event)">Next</button>
 
 			</div>
 
@@ -300,7 +299,7 @@
 						
 						</ng-template>
 
-				<button type="button" id="map-next-btn" (click)="next()" (click)="open(contents)" (click)="updatedDataCount()" class="btn btn-primary btn-block col-1"
+				<button type="button" id="map-next-btn" (click)="open(contents)" (click)="next()" (click)="updatedDataCount()" class="btn btn-primary btn-block col-1"
 					>Next</button>
 			</div>
 			<div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
@@ -360,7 +359,27 @@
 			         </div>
 				</ng-template>
 
-				<button type="button" id="import-btn" (click)="next()" (click)="importStrated(imports)" class="btn btn-primary btn-block col-1">Import</button>
+				<ng-template #importfailed let-c="close" let-d="dismiss">
+					<div class="dd"><img src="assets/img/export1.png">
+						<div class="modal-header">
+
+						</div>
+						<div class="modal-body">
+							<p>Import has been failed due to error<br /> in csv file.
+							</p>
+							<div class="ss">
+								<img src="assets/img/your.png">
+							</div>
+						</div>
+						<div class="modal-footer popfooter row text">
+							<div class="col-md-3">
+								<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Ok, Got it</button>
+							</div>
+			           </div>
+			         </div>
+				</ng-template>
+
+				<button type="button" id="import-btn" (click)="importStrated(imports,importfailed)" class="btn btn-primary btn-block col-1">Import</button>
 				</div>
 			</div>
 		</div>

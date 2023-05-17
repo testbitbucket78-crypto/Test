@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
 
+.alertmessage p.label {
+    text-align: center;
+    margin: 1rem;
+}
 .e-content p{
     margin: 0!important;
     width: auto!important;
@@ -437,7 +441,7 @@ span.total_count.green{
 }
 img.preview_icon{
     cursor: pointer;
-    width:50px;
+    width:30px;
     height: auto;
 }
 .attached_media_list p.preview_media{
@@ -508,9 +512,9 @@ border: 1px solid #EDEDED;
 }
 
 .message_media img{
-    max-width: 200px;
-    border-radius: 15px;
-    margin: 5px 0px;
+    max-width: 220px;
+    border-radius: 17px;
+    margin: -5px -10px 5px -10px;
 }
 .contacts_detail_timelog{
     display: flex;
@@ -710,7 +714,7 @@ font-weight:600;
     padding:10px 15px;
     display: flex;
     flex-direction: column;
-    min-width: 150px;
+    min-width: 200px;
 }
  
 .message_box.left{
@@ -802,6 +806,7 @@ font-weight:600;
 .conversation_inout_area{
     display: flex;
     flex-direction: column;
+    min-height: 145px;
 }
 .tabs_link{
     border-top: 1px solid #EBEBEB;
@@ -961,6 +966,7 @@ width: 20px;
         color: #6149CD;
         font-size: 32px;
         font-weight: 200;
+        line-height: normal;
     }
     .right_box p.auto-rep-text{
         color: #7A86A1;
@@ -982,7 +988,7 @@ width: 20px;
         position: absolute;
     max-width: 200px;
     margin-top: 10px;
-        max-height: 200px;
+        max-height: 240px;
         overflow: auto;
         z-index: 9;
     }
@@ -1114,6 +1120,16 @@ width: 20px;
         color: #000;
         font-weight: 400;
         font-size: 14px;
+    }
+    .inner_form.large .row{
+        width: 46%;
+        display: block;
+        float: left;
+        margin: 0 2%;
+    }
+    .inner_form.large .row label {
+        display: flex;
+        align-items: center;
     }
     .row_inline{
         display: flex;
@@ -1568,7 +1584,7 @@ flex-wrap: nowrap;
     }
 
     .section_filter{
-    margin: 1rem 1rem 0 1rem;
+    margin: 1rem;
     display: flex;
     }
     .template_list{

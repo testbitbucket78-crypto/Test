@@ -635,8 +635,10 @@ margin-left: 56px;
 }
 
 .row2 h6{
-    font-size: 12px!important;
+    font-size: 12px !important;
     margin: 0 0 0 25px;
+    width: 245px;
+    text-align: justify;
 }
 
 
@@ -1400,7 +1402,7 @@ img {
     width: auto;
 }
 .mt-5, .my-5 {
-    margin-top: 3rem !important;
+    margin-top: 3.3rem !important;
 }
 .row3 .mt-5.ml-4 h5 {
     font-size: 17px !important;
@@ -1416,7 +1418,7 @@ img {
 }
 .row5 .mt-0.ml-1 h5 {
     font-size: 17px !important;
-    margin-top: -56px;
+    margin-top: -49px;
 }
 .row5 .mt-0.ml-1 h6 {
     font-size: 12px !important;
@@ -1471,6 +1473,10 @@ img {
 
 .row2 h6 {
     margin: 0 0 0 19px;
+}
+
+.row4 {
+    margin: -50px 0px 0px 75px!important;
 }
 
 }
