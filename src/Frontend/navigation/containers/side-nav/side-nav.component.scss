@@ -36,10 +36,22 @@
 // }
 // }
 
-#sidebarToggle img {
+button img {
     width: 80px ;
     height: 80px ;
+    border: none;
+    outline: none;
+    border-radius: 50px;
 }
+
+button {
+  border: none;
+  outline: none;
+  padding: 0;
+  background: none;
+}
+
+
 
 button:focus {
     outline: none;

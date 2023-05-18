@@ -5,15 +5,25 @@
   <div class="card9 float-right">
     <div class="card-body-right">
       <h4 id="card9-h4">Recent conversations</h4>
-      <div class="row d-flex" *ngFor="let items of recentConversation">
-        <img src="assets/img/my.png">
-        <div class="row2">
-          <h5>{{items.Name}}</h5>
-          <h6>{{items.message_text}}</h6>
-          <div class="date">
-            <h4>{{items.interaction_date | date:'h:mm a'}}</h4>
-          </div>
-        </div>
+        <div class="rowss d-flex" *ngFor="let items of recentConversation">
+              <img src="assets/img/my.png">
+              <div class="row2">
+                <h5>{{items.Name}}</h5>
+                <h6>{{items.message_text}}</h6>
+                <div class="date">
+                  <h4>{{items.interaction_date | date:'h:mm a'}}</h4>
+                </div>
+              </div>
+            </div>
+
+  
+
+    <div class="card10">
+      <div class="card10-p">
+        <img src="assets/img/img2.png" alt="error">
+        <p class="txt-1">Premium+</p>
+        <p class="txt-2">$0.5 per message</p>
+
       </div>
 
 
@@ -37,9 +47,10 @@
 
 
 
-
-  <div [(ngModel)]="Name">
-    <p id="heading">Hello {{Name}}, Welcome</p>
+<div [(ngModel)]="Name"><p id="heading">Hello {{Name}}, welcome back</p></div>
+<div id="heading2" class="card8">
+  <h2>"Summary for last 30 days"</h2>
+  
   </div>
   <div id="heading2" class="card9">
     <h2>"Summary for last 30 days"</h2>
@@ -112,7 +123,7 @@
 
     <div class="row r2">
 
-      <button id="campaigns" class="btn1 btn-block float-right" routerLink="/dashboard/reports">
+      <button id="campaigns" class="btn1 btn-block float-right" routerLink="/dashboard/campaigns">
 
         <div class="card-body">
           <h4>Campaigns</h4>
@@ -120,7 +131,7 @@
           <div class="row d-flex">
             <img src="assets/img/total.png">
             <div class="row1 ">
-              <div class="mt-5 ml-3 text-justify" [(ngModel)]="scheduledCampaign">
+              <div class=" totalscheduled text-justify" [(ngModel)]="scheduledCampaign">
                 <h5>{{scheduledCampaign}}</h5>
                 <h6>Total Scheduled</h6>
               </div>
@@ -130,7 +141,7 @@
             <div class="new">
               <img src="assets/img/camp.png">
               <div class="row9">
-                <div class="mt-5 ml-3 text-justify" [(ngModel)]="completedCampaign">
+                <div class="totalcampaign text-justify" [(ngModel)]="completedCampaign">
                   <h5>{{completedCampaign}}</h5>
                   <h6>Total Completed</h6>
                 </div>
@@ -141,7 +152,7 @@
           <div class="row d-flex">
             <img src="assets/img/deli.png">
             <div class="row1">
-              <div class="mt-5 ml-3 text-justify" [(ngModel)]="runningCampaign">
+              <div class=" totalscheduled text-justify" [(ngModel)]="runningCampaign">
                 <h5>{{runningCampaign}}</h5>
                 <h6>Total Running</h6>
               </div>
@@ -153,7 +164,7 @@
                 <img src="assets/img/failed.png">
               </div>
               <div class="row9">
-                <div class="mt-5 ml-3 text-justify" [(ngModel)]="draftCampaign">
+                <div class="totalcampaign text-justify" [(ngModel)]="draftCampaign">
                   <h5>{{draftCampaign}}</h5>
                   <h6>Total Draft</h6>
                 </div>
@@ -193,16 +204,29 @@
                     <h5>{{items.count}}</h5>
                     <h6>{{items.Status}}</h6>
                   </div>
-                </div>
-              </div>
-              <div class="mr-6  col" *ngIf="(items.Status)=='Total Agents'">
-                <!-- <img src="assets/img/432.png"> -->
-                <img src="assets/img/430.png">
-                <div class="row5">
-                  <div class="mt-0 ml-5 text-justify">
-                    <h5>{{items.count}}</h5>
-                    <h6>{{items.Status}}
-                    </h6>
+      
+                  <div class="ml-1  col" *ngIf="(items.Status)=='Inactive Agents'">
+                    <div class="imga">
+                    <img src="assets/img/432.png">
+                  </div>
+                    <div class="row4">
+                      <div class="mt-0 ml-1">
+                        <h5>{{items.count}}</h5>
+                        <h6>{{items.Status}}</h6>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="ml-1  col" *ngIf="(items.Status)=='Total Agents'">
+                    <div class="im">
+                    <img src="assets/img/430.png">
+                  </div>
+                    <div class="row5">
+                      <div class="mt-0 ml-1">
+                        <h5>{{items.count}}</h5>
+                        <h6>{{items.Status}}
+                        </h6>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

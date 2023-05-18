@@ -23,9 +23,11 @@ export class DashboardService {
     return this.http.get('https://cip-api.sampanatechnologies.com/Interactions');
 
   }
-  public dashboardAgents() {
-
-    return this.http.get('https://cip-api.sampanatechnologies.com/Agents');
+  public dashboardAgents(sPid:any) {
+    const params = new HttpParams().set('sPid', sPid)
+    
+    return this.http.get('https://cip-api.sampanatechnologies.com/Agents:/sPid', { params: params });
+   
 
   }
   public dashboardCampaigns(sPid: any) {
@@ -127,7 +129,6 @@ export class DashboardService {
     const params = new HttpParams().set('SP_ID', SP_ID)
     return this.http.get('https://smartapi.sampanatechnologies.com/getReplies',{params:params})
   }
-
   searchSmartReply(ID: any) {
     const params = new HttpParams().set('ID', ID)
     console.log("params  "  + params)

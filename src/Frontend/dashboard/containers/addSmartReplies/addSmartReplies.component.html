@@ -1,4 +1,4 @@
-<sb-layout-dashboard>
+
   <sb-top-nav title="Smart Replies"> </sb-top-nav>
   <div class="bs-stepper">
     <div class="head d-flex">
@@ -47,15 +47,17 @@
         <button type="button" (click)="next()" (click)="getNewSmartReplyData()" class="btn5 btn-block col-1 mt-3 ">Next</button>
 
       </div>
-      <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+         <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
         <button type="button" (click)="previous()" class="btn9 btn-block col-1 mt-3 "><img
             src="assets/img/prev.png"></button>
-        <div class="box1" [formGroup]="newReply1">
+        <div class="box1" >
           <h5>Add Keyword</h5>
-          <div class="box2 d-flex" data-required="Use enter key to add ➥"   > 
-           <input class="form-control" #keyowrdtxt   [(ngModel)]="keyword" type="text" placeholder="Enter Keywords"   formControlName="Keywords" id="Keywords" [ngClass]="{'is-invalid' :submitted && newReply.controls.Keywords.errors}" />
-          <button type="button" class="btn7 btn-block ml-2 " (click)="addKeyword()" [disabled]="keyword=== ''">ADD</button>
-        </div>
+          <div class="box2 d-flex" data-required="Use enter key to add ➥">
+            <input class="form-control" #keyowrdtxt [(ngModel)]="keyword" type="text" placeholder="Enter Keywords" maxlength="56" />
+            <button type="button" class="btn7 btn-block ml-2" (click)="addKeyword()" [disabled]="keyword === ''">ADD</button>
+          </div>
+          <div *ngIf="keyword.length > 56" class="text-danger mt-2"></div>
+          
         
         <span>Please choose a unique keyword which is not already added in other smart replies </span>
           <span class="row">
@@ -73,7 +75,12 @@
               <label class="form-check-label" for="exampleRadios1">
                 Fuzzy matching
               </label>
-              <img id="detail" src="assets/img/info.png">
+              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickFuzzy($event)">
+            </div>
+            <div class="desc-radio-input" *ngIf="showBox">
+              <p id="p-title">Fuzzy Matching</p>
+              <p id="p-body">As long as the message contains a <br />certain % of the Keyword. You can also<br /> set emojis as your keyword.</p>
+              <button id="radio-close-btn" (click)="showBox=false">X</button>
             </div>
             <div class="form-check">
               <input type="radio" class="form-check-input" value=" Exact matching" name="exampleRadios"
@@ -81,7 +88,12 @@
               <label class="form-check-label" for="">
                 Exact matching
               </label>
-              <img id="detail" src="assets/img/info.png">
+              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickExact($event)">
+            </div>
+              <div class="desc-radio-input-1" *ngIf="showBox1">
+              <p id="p-title">Exact Matching</p>
+              <p id="p-body">As long as the message contains a <br />exact Keyword. You can also<br /> set emojis as your keyword.</p>
+              <button id="radio-close-btn" (click)="showBox1=false">X</button>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="exampleRadios" value="contains"
@@ -89,8 +101,15 @@
               <label class="form-check-label" for="">
                 Contains
               </label>
-              <img id="detail" src="assets/img/info.png">
+              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickContains($event)">
             </div>
+
+             <div class="desc-radio-input-2" *ngIf="showBox2">
+              <p id="p-title">Contains</p>
+              <p id="p-body">As long as the message contains a <br />Keyword. You can also<br /> set emojis as your keyword.</p>
+              <button id="radio-close-btn" (click)="showBox2=false">X</button>
+            </div>
+             
 
           </div>
         </div>
@@ -100,7 +119,59 @@
       <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
         <button type="button" (click)="previous()" class="btn9 btn-block col-1 mt-3 "><img
             src="assets/img/prev.png"></button>
-        <div class="box7">
+
+
+
+        <div class="interactions">
+          <div class="child-interaction-1">
+               <div class="message-box"  *ngFor="let message of messages; let i = index" >
+                <p id="msgbox-head"> Message</p> 
+                <p id="msgbox-body" [contentEditable]="isEditable" (input)="onEdit($event.target.innerHTML)">{{message}}</p>
+                <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button> 
+                <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
+            </div>
+          </div>
+              <div class="child-interaction-2">
+              
+            <form class="input-area" [formGroup]="newMessage">
+              <textarea #input ngDefaultControl [(ngModel)]="message" formControlName="message_text" 
+              name="message_text" id="message_text" class="text-box" placeholder="Type reply ... ">
+            </textarea>
+              <button type="submit" (click)="addqty(input.value)" (click)="addMessage()" [disabled]="message===''">Add</button>
+            </form>
+            <div class="inout_options">
+              <button id="bold-txt"><img src="/assets/img/teambox/B.svg"></button>
+              <button><img src="/assets/img/teambox/I.svg"></button>
+              <button><img src="/assets/img/teambox/st.svg"></button>
+              <button><img src="/assets/img/teambox/emoji.svg"></button>
+              <button><img src="assets/img/teambox/attachment-icon.svg"></button>
+              <button><img src="assets/img/teambox/attributes.svg"></button>
+              <button><img src="assets/img/teambox/quick-replies.svg"></button>
+              <button><img src="assets/img/teambox/saved-message.svg"></button>
+            </div>
+              <button id="add-action-dropdown" type="button" (click)="toggleAddActions()"><img src="assets/img/teambox/add.svg">Add Action</button>
+           </div>
+          
+               <div *ngIf="ShowAssignOption"  class="popup-dialog AssignOption">
+                 <p class="label">Assign To</p>
+                <p *ngFor="let Agent of agentsList;let k = index">
+                  <span><img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />{{Agent}}</span>
+                 </p>
+               </div>
+
+               <div *ngIf="ShowAddAction"  class="popup-dialog AssignAction">
+                 <p class="label">Add Action</p>
+                <p *ngFor="let AssignAction of assignActionList;let m = index" (click)="toggleAssignOption()">
+	
+                  <span>{{AssignAction}}</span>
+                 </p>
+               </div>
+
+        
+             
+         </div>
+
+        <!-- <div class="box7">
         
            <div class="box7child">
             <label  *ngFor="let m of messages; let i = index" for="ff" >Message
@@ -138,16 +209,15 @@
             placeholder="Type reply.." ngDefaultControl #input [(ngModel)]="message"></textarea>
           <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)" (click)="addMessage()">Add</button>
           <div class="action">
-            <button type="button" class="btn" (click)="bold()"><b>B</b></button>
-            <button type="button" class="btn" (click)="itelic()"> <i>I</i></button>
-            <button type="button" class="btn">$</button>
-            <button type="button" class="btn">
-              < />
-            </button>
-            <button type="button" class="btn"><i class="fa fa-share"></i></button>
-            <button type="button" class="btn">
-              <>
-            </button>
+     	<div class="inout_options">
+					<button><img src="/assets/img/teambox/B.svg"></button>
+					<button><img src="/assets/img/teambox/I.svg"></button>
+					<button><img src="/assets/img/teambox/st.svg"></button>
+					<button><img src="/assets/img/teambox/emoji.svg"></button>
+					<button><img src="assets/img/teambox/attributes.svg"></button>
+					<button><img src="assets/img/teambox/quick-replies.svg"></button>
+					<button><img src="assets/img/teambox/saved-message.svg"></button>
+				</div>
 
             <div class="dropdown">
               
@@ -211,7 +281,10 @@
           </div>
 
         </div>
-     </div>
+     </div> -->
+
+
+
 
 
         <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Save</button>
@@ -223,4 +296,3 @@
 
 
 
-</sb-layout-dashboard>

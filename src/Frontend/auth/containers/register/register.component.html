@@ -98,9 +98,21 @@
     <div *ngIf= "submitted && registerForm.controls.email_id.errors" class="text-danger">
       ! Invalid Email Id
     </div>
-    <div *ngIf= "submitted && registerForm.controls.password.errors" class="text-danger">
+    <!-- <div *ngIf= "submitted && registerForm.controls.password.errors" class="text-danger">
       ! password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters
+    </div> -->
+      <div *ngIf=" registerForm.get('password').hasError('required')" class="text-danger">
+      ! Password is required
     </div>
+    <div *ngIf=" registerForm.get('password').hasError('pattern')" class="text-danger">
+      ! Password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters.
+    </div>
+    <div *ngIf=" registerForm.get('confirmPassword').hasError('required')" class="text-danger">
+      ! Confirm Password is required
+          </div>
+    <div *ngIf=" registerForm.hasError('mismatch')" class="text-danger">
+    !  Passwords do not match
+      </div>
     <div class=" text1"><a routerLink="/login" style="display: inline-flex">Already member?<h6 class="ml-1"> Sign In
         </h6></a></div>
 

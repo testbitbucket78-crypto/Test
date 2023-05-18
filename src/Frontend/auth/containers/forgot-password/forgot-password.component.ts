@@ -12,7 +12,8 @@ import { Validators } from '@angular/forms';
 })
 export class ForgotPasswordComponent implements OnInit {
 
-   
+    showModal = false;
+
     forgetpassword = new FormGroup({
         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
     })
@@ -28,18 +29,39 @@ export class ForgotPasswordComponent implements OnInit {
     //     console.log(this.forgetpassword.value)
         
     // }
-    onSubmit(){
+    onSubmit() {
         console.log(this.forgetpassword.value)
-        this.submitted = true
-        this.apiService.forgotpassword(this.forgetpassword.value).subscribe((result)=>{
-            sessionStorage.setItem('uid',result.id[0].uid)
-            this.router.navigate (['reset-password'])
-        });
-        if (this.forgetpassword.invalid){
+        this.submitted = true;
+
+
+        if (this.forgetpassword.invalid) {
             return
         }
-        
-       // alert("Success")
+
+        this.apiService.forgotpassword(this.forgetpassword.value).subscribe(
+            (result) => {
+            if (result.status === 200 && result.id.lenght > 0) {
+                sessionStorage.setItem('uid', result.id[0].uid)
+                this.router.navigate(['reset-password'])
+            }
+
+        },
+            (error) => {
+
+
+                if (error?.status === 400) {
+                    const errorMessage = "! Email Not Found";
+                    const errorDiv = document.getElementById("error-message");
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                }   
+            });
+
+
+            this.forgetpassword.reset;
+            this.showModal = true;
+      
     }
     
 }

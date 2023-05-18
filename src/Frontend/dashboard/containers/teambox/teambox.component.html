@@ -19,27 +19,28 @@
 				<div class="toggle-box" (click)="toggleFilerOption()"><img src="assets/img/teambox/filter-icon.svg"></div>
 				<div *ngIf="ShowFilerOption" class="popup-dialog">
 					<p class="label">Filter</p>
-					<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''" (click)="filerInteraction('All')"><span>All</span></p>
-					<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''" (click)="filerInteraction('Unassigned')"><span>Unassigned</span></p>
-					<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''" (click)="filerInteraction('Mine')"><span>Mine</span></p>
-					<p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''" (click)="filerInteraction('Open')"><span>Open</span></p>
-					<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''" (click)="filerInteraction('Resolved')"><span>Resolved</span></p>
-					<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''" (click)="filerInteraction('Mentioned')"><span>Mentioned</span></p>
-					<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''" (click)="filerInteraction('Pinned')"><span>Pinned</span></p>
+
+					<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''" (click)="filterInteraction('All')"><span>All</span></p>
+					<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''" (click)="filterInteraction('Unassigned')"><span>Unassigned</span></p>
+					<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''" (click)="filterInteraction('Mine')"><span>Mine</span></p>
+					<p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''" (click)="filterInteraction('Open')"><span>Open</span></p>
+					<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''" (click)="filterInteraction('Resolved')"><span>Resolved</span></p>
+					<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''" (click)="filterInteraction('Mentioned')"><span>Mentioned</span></p>
+					<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''" (click)="filterInteraction('Pinned')"><span>Pinned</span></p>
 				</div>
 			     </div>
 			    <button class="new-message-btn" (click)="openaddMessage(messageadd)"><img class="icon" src="/assets/img/teambox/add.svg" /> New Message</button>		
 		</div>
 		<div class="custom_row mt-3">
-			<p *ngIf="interactionList" class="conversaction_status">Open<span class="total_count red">{{interactionList.length}}</span></p>
+			<p *ngIf="interactionList" class="conversaction_status">{{interactionFilterBy}}<span class="total_count red">{{interactionList.length}}</span></p>
 		</div>
         <div class="all_contacts">
 		<div *ngFor="let item of interactionList; let i = index"  id={{i}} (click)="selectInteraction(item)" [ngClass]="item.selected ? 'contacts_row active' : 'contacts_row'" >
 			<div class="contacts_item">
 				<div class="contacts_list">
 					<div class="contacts_left">
-						<img *ngIf="item.isPinned" class="pin_icon" src="/assets/img/teambox/pinned.svg" />
-						<img *ngIf="!item.isPinned" class="pin_icon" src="/assets/img/teambox/pin.svg" />
+						<img *ngIf="item.isPinned" (click)="updatePinnedStatus(item)" class="pin_icon" src="/assets/img/teambox/pinned.svg" />
+						<img *ngIf="!item.isPinned" (click)="updatePinnedStatus(item)" class="pin_icon" src="/assets/img/teambox/pin.svg" />
 						<img *ngIf="item.avatar" class="profile_icon" src="/assets/img/teambox/Richie_1.png" />
 						<img *ngIf="!item.avatar" class="profile_icon_no-dp" src="/assets/img/teambox/no-dp.svg" />
 						<div class="contacts_detail">
@@ -92,22 +93,22 @@
 		</div>
 		<div class=" right_part">
 		    <div class="time_circle">
-				<div  role="progressbar" style={{progressbarPer}}>{{progressbarValue}}H</div>
+				<div  role="progressbar" style={{selectedInteraction.progressbar.progressbarPer}}>{{selectedInteraction.progressbar.progressbarValue}}H</div>
 				
 			</div>
 			<div class="drop-down-btn">
-		    <button *ngIf="progressbarValue >= 0 || progressbarValue <= 72" style="margin:0 8px" [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : 'drop-down-btn red-color'" (click)="toggleConversationStatusOption()" >
+		    <button *ngIf="selectedInteraction.progressbar.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72" style="margin:0 8px" [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : 'drop-down-btn red-color'" (click)="toggleConversationStatusOption()" >
 				<img *ngIf="selectedInteraction.interaction_status=='Resolved'" class="icon" src="/assets/img/teambox/checked_icon.png" /> {{selectedInteraction.interaction_status}}
 			</button>
 
-			<button *ngIf="progressbarValue >= 72" style="margin:0 8px" class="drop-down-btn green-color" (click)="toggleConversationStatusOption()" >
+			<button *ngIf="selectedInteraction.progressbar.progressbarValue >= 72" style="margin:0 8px" class="drop-down-btn green-color" (click)="toggleConversationStatusOption()" >
 				<img class="icon" src="/assets/img/teambox/checked_icon.png" /> Resolved
 			</button>
 
 			<div *ngIf="ShowConversationStatusOption" class="popup-dialog ConversationStatus">
 				<p class="label">Mark Conversation</p>
-				<p [ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'"  (click)="updateConversationStatus('Open')"><span>Open</span></p>
-				<p [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'"  (click)="updateConversationStatus('Resolved')"><span>Resolved</span></p>
+				<p [ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'"  (click)="triggerUpdateConversationStatus('Open',openStatusAlertmMessage)"><span>Open</span></p>
+				<p [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'"  (click)="triggerUpdateConversationStatus('Resolved',openStatusAlertmMessage)"><span>Resolved</span></p>
 			</div>
 		    </div>
 
@@ -245,7 +246,7 @@
 					<button [ngClass]="showChatNotes=='notes' ? 'tab_btn active' : 'tab_btn'"  (click)="toggleChatNotes('notes')">Notes</button>
 				</div>
 				<div *ngIf="loginAs== 'TL' || selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId" class="input-area">
-				<ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]='100'>
+				<ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]='100' (click)="resetMessageTex()">
 			    </ejs-richtexteditor>
 				
 					<div *ngIf="showMention" class="popup-dialog mention">
@@ -318,7 +319,7 @@
 			
 			<div class="custom_row">
 				<div class="col-md-12">
-					<label><img class="edit-icon" src="/assets/img/teambox/edit-icon.svg"/>Tag</label>
+					<label (click)="toggleTagsModal(updatedtags)" ><img class="edit-icon" src="/assets/img/teambox/edit-icon.svg"/>Tag</label>
 						<div class="tag_list">
 						<div  *ngFor="let tagName of selectedInteraction.tags;let key= index; let last = last;">		
 						<div class="tag_item" key="key">
@@ -340,21 +341,25 @@
 					<div class="horizental_line mt-4">
 					</div>
 					<div class="custom_row edit-block-section">
-						<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg" /></button>	
-						<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color" (click)="blockCustomer(selectedInteraction)">Block</button>
-						<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn green-color">Blocked</button>
+						<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg" (click)="triggerEditCustomer(updatecustomer)"/></button>	
+
+						<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color" (click)="triggerBlockCustomer('Block',openBlockAlertmMessage)">Block</button>
+						<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn green-color" (click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
 					</div>
 
 					<div class="custom_row mt-1">
 						<div class="col-md-12">
 						<div *ngIf="AutoReplyOption" class="popup-dialog autoreply">
-							<p  *ngFor="let option of AutoReplyEnableOption;" [ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''" (click)="SelectReplyOption(option,'Enabled')">
+							<div *ngIf="selectedInteraction.PausedTimer" >
+							<p  *ngFor="let option of AutoReplyEnableOption;" [ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''" (click)="SelectReplyOption(option,'Extend')">
 								<span>{{option}}</span>
 							</p>
-							
+						</div>
+						<div *ngIf="!selectedInteraction.PausedTimer" >
 							<p *ngFor="let option of AutoReplyPauseOption;let last = last;" [ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''" (click)="SelectReplyOption(option,'Paused')">
 								<span>{{option}}</span>
 							</p>
+						</div>
 							
 						</div>
 						<button class="auto-rep-btn" (click)="toggleAutoReply()"><img class="icon" src="/assets/img/teambox/time-circle.svg" />{{selectedInteraction.AutoReplyStatus}} <img class="icon right-aligned" src="/assets/img/teambox/dropdown-w.svg" /></button>
@@ -364,8 +369,8 @@
 
 					<div class="custom_row edit-block-section mt-4">
 						<div class="col-md-12">
-						<p class="auto-rep-time">4:55</p>
-						<p class="auto-rep-text">Enable from dropdown</p>
+						<p class="auto-rep-time">{{selectedInteraction.PausedTimer}}</p>
+						<p *ngIf="selectedInteraction.PausedTimer" class="auto-rep-text">Enable from dropdown</p>
 					</div>
 					</div>
 			</div>
@@ -381,12 +386,11 @@
 					<div class="col-md-12">
 						<label>Lead Status</label>
 							<div class="tag_list">
-							<div *ngFor="let tagName of getTagsLIst(selectedInteraction.tag);let last = last;">		
 							<div class="tag_item">
-								{{tagName}}<span *ngIf="!last" class="tag_item_space">|</span>
+								{{selectedInteraction.status}}
 							</div>
 							
-							</div>
+							
 						</div>
 					</div>
 				</div>
@@ -433,15 +437,18 @@
 
 				<div class="horizental_line mt-4"></div>
 				<div class="custom_row edit-block-section">
-					<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/icon-delete.svg" /></button>	
-					<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg" /></button>	
+					<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/icon-delete.svg" (click)="triggerDeleteCustomer(openDeleteAlertmMessage)"/></button>	
+					<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg" (click)="triggerEditCustomer(updatecustomer)"/></button>	
 					
-					<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color" (click)="blockCustomer(selectedInteraction)">Block</button>
-					<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn green-color">Blocked</button>
 					
-					<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg" /></button>	
+						<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color" (click)="triggerBlockCustomer('Block',openBlockAlertmMessage)">Block</button>
+						<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn green-color" (click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
+					
+
+					<button class="small-gradient-btn"><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></button>	
 				</div>
 				<div class="custom_row">
+					
 					<button class="small-gradient-btn info_button">To add/edit any field according to your business from the settings</button>	
 				</div>
 
@@ -546,36 +553,6 @@
 	
 </div>
 
-
-
-<div *ngIf="showQuickResponse"  class="custom_modal bg-pink sm">
-	<div class="modal-header">
-		<div class="modal-header-left">
-			<h4 class="modal-title" id="modal-basic-title">Quick Response</h4>
-		</div>
-		<div class="modal-header-right">
-			<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg"></p>
-		</div>
-		</div>
-	   <div class="modal-body quickResponse">
-			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchContact($event)"/>
-			<div class="items_list">
-				<div class="item" *ngFor="let QuickReply of QuickRepliesList" (click)="selectQuickReplies(QuickReply.content)">
-					<p [innerHTML]="QuickReply.content"></p>
-				</div>
-			</div>
-
-			<div class="bottom_section">
-				<p class="close-box" ><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></p>
-				<p class="text-box-readonly">To add/edit new replies from the settings</p>
-			</div>
-
-	   </div>
-	
-</div>
-
-
-
 <div *ngIf="showAttributes"  class="custom_modal bg-pink sm">
 	<div class="modal-header">
 		<div class="modal-header-left">
@@ -612,40 +589,41 @@
 		</div>
 		</div>
 	   <div class="modal-body quickResponse">
-			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchContact($event)"/>
+			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchTemplate($event)"/>
 			
 			<div class="section_filter">
 				<label class="container">
-					<input type="checkbox" name="template_filter">
+					<input checked type="checkbox" name="template_filter" value="Interactive" (click)="filterTemplate($event)">
 					<span class="checkmark"></span>
 					<p><span>Interactive</span></p>
 				</label>
 				<label class="container">
-					<input type="checkbox" name="template_filter">
+					<input checked type="checkbox" name="template_filter" value="Media" (click)="filterTemplate($event)">
 					<span class="checkmark"></span>
 					<p><span>Media</span></p>
 				</label>
 				<label class="container">
-					<input type="checkbox" name="template_filter">
+					<input checked type="checkbox" name="template_filter" value="Text" (click)="filterTemplate($event)">
 					<span class="checkmark"></span>
 					<p><span>Text</span></p>
 				</label>
 
 			</div>
 			<div class="template_list">
-				<div class="template_box" *ngFor='let template of TemplateList ;let i = index'>
+				<div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
 					<label class="container">
-						<input type="radio" name="selectedTemplate">
+						<input  type="radio" name="selectedTemplate">
 						<span class="checkmark radio"></span>
-						<p>{{template.name}}</p>
-						<p><span>{{template.date}}</span></p>
+						<p>{{template.title}} {{template.is_active}}</p>
+						<p><span>{{template.created_at}}</span></p>
 					</label>
 					
 					<div class="inner_box">
-						<img class="template_img" src="/assets/img/campaign/{{template.img}}">
-						<div class="template_text">
-							<p>{{template.heading}}</p>
-							<p [innerHTML]="template.content"></p>
+						<img *ngIf="template.image" class="template_img" src="/assets/img/campaign/{{template.image}}">
+						<div *ngIf="!template.image" class="template_img_placeholder"></div>
+						<div [ngClass]="template.image ? 'template_text' : 'template_plain_text'" >
+							<p>{{template.content_heading}}</p>
+							<p [innerHTML]="template.contnet"></p>
 						</div>
 					</div>
 					<div class="template_btn">
@@ -910,10 +888,11 @@
 		</div>
 		</div>
 	   <div class="modal-body quickResponse">
-			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchContact($event)"/>
+			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchSavedMessage($event)"/>
 			<div class="items_list">
 				
-				<div class="item" *ngFor="let Message of SavedMessageList" (click)="selectQuickReplies(Message.content)">
+				<div class="item" *ngFor="let Message of SavedMessageList" (click)="selectQuickReplies(Message)">
+					<p class="label" [innerHTML]="Message.title"></p>
 					<p [innerHTML]="Message.content"></p>
 				</div>
 			</div>
@@ -924,8 +903,39 @@
 			</div>
 
 	   </div>
+	   
 	
 </div>
+
+<div *ngIf="showQuickReply"  class="custom_modal bg-pink sm">
+	<div class="modal-header">
+		<div class="modal-header-left">
+			<h4 class="modal-title" id="modal-basic-title">Quick Response</h4>
+		</div>
+		<div class="modal-header-right">
+			<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg"></p>
+		</div>
+		</div>
+	   <div class="modal-body quickResponse">
+			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchQuickReply($event)"/>
+			<div class="items_list">
+				
+				<div class="item" *ngFor="let Message of QuickReplyList" (click)="selectQuickReplies(Message)">
+					<p class="label" [innerHTML]="Message.title"></p>
+					<p [innerHTML]="Message.content"></p>
+				</div>
+			</div>
+
+			<div class="bottom_section">
+				<p class="close-box" ><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></p>
+				<p class="text-box-readonly">To add/edit new replies from the settings</p>
+			</div>
+
+	   </div>
+	   
+	
+</div>
+
 
 
 
@@ -1072,7 +1082,7 @@
 				</div>
 				<div class="row">
 					<div class="row_inline">
-					<input class="form-control-checkbox" type="checkbox" id="Opted-in" (click)="updateOptedIn($event)"/>
+					 <input class="form-control-checkbox" type="checkbox" id="Opted-in" (click)="updateOptedIn($event)"/>
 					 <span>Contact has opted-in to receive communication from us</span>
 					</div>
 				</div>
@@ -1087,5 +1097,228 @@
 		</div>
 	</div>
 </ng-template>
+
+
+
+
+<ng-template #updatecustomer let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<div class="modal-header-left">
+			<h4 class="modal-title" id="modal-basic-title">Update Contact</h4>
+		</div>
+		<div class="modal-header-right">
+			<p class="close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/icon-close.svg"></p>
+		</div>
+		</div>
+	<div class="modal-body">
+		<form class="inner_form large" (ngSubmit)="updateCustomer()">
+				<div class="row">
+					<label for="floatingInputGrid" class="required">Name</label>
+					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="Name" value={{EditContactForm.Name}}/>
+				</div>
+				<div class="row">
+					<label for="floatingSelectGrid" class="required">Phone Number</label>
+					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="Phone_number" value={{EditContactForm.Phone_number}} />
+				</div>
+
+				<div class="row">
+					<label for="floatingSelectGrid" class="required">Email</label>
+					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text"  name="emailId" value={{EditContactForm.emailId}}  />
+				</div>
+
+				<div class="row">
+					<label for="floatingSelectGrid" class="required">Age</label>
+					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="age" value={{EditContactForm.age}} />
+				</div>
+
+				<div class="row" style="flex-direction:column">
+					<label for="floatingSelectGrid" class="required">Gender</label>
+					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
+						 <button (click)="toggleGenderOption()" type="button"  class="drop-down-btn" style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;">
+							{{EditContactForm.sex}}
+						 </button>
+					</div>
+					<div *ngIf="ShowGenderOption" class="popup-dialog ContactOption">
+						<p (click)="hangeEditContactSelect('sex','Male')">
+							<span>
+								Male
+							</span>
+						</p>
+						<p (click)="hangeEditContactSelect('sex','Female')">
+							<span>
+								Female
+							</span>
+						</p>
+						<p (click)="hangeEditContactSelect('sex','Other')">
+							<span>
+								Other
+							</span>
+						</p>
+					</div>
+
+					
+				</div>
+
+
+				<div class="row">
+					<label for="floatingSelectGrid" class="required">Country</label>
+					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="Country" value={{EditContactForm.Country}}  />
+				</div>
+
+				<div class="row" style="flex-direction:column">
+					<label for="floatingSelectGrid" class="required">Lead Status</label>
+					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
+						 <button (click)="toggleLeadStatusOption()" type="button"  class="drop-down-btn" style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;">
+							{{EditContactForm.status}}
+						 </button>
+					</div>
+					<div *ngIf="ShowLeadStatusOption" class="popup-dialog ContactOption">
+						<p (click)="hangeEditContactSelect('status','Premium')">
+							<span>
+								Premium
+							</span>
+						</p>
+						<p (click)="hangeEditContactSelect('status','New Customer')">
+							<span>
+								New Customer
+							</span>
+						</p>
+						<p (click)="hangeEditContactSelect('status','Paid')">
+							<span>
+								Paid
+							</span>
+						</p>
+					</div>
+
+					
+				</div>
+
+
+				<div class="row">
+					<label for="floatingSelectGrid" class="required">Instagram Id</label>
+					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text"  name="InstagramId" value={{EditContactForm.InstagramId}} />
+				</div>
+
+				<div class="row">
+					<label for="floatingSelectGrid" class="required">Facebook ID</label>
+					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="facebookId" value={{EditContactForm.facebookId}}  />
+				</div>
+
+				<div class="row" style="flex-direction:column">
+					<label for="floatingSelectGrid" class="required">Channel</label>
+					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
+						 <button (click)="toggleChannelOption()" type="button"  class="drop-down-btn" style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;">
+							{{EditContactForm.channel}}
+						 </button>
+					</div>
+					<div *ngIf="ShowChannelOption" class="popup-dialog ContactOption">
+						<p (click)="hangeEditContactSelect('channel','WhatsApp')">
+							<span>
+								<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> 
+								WhatsApp Official
+							</span>
+						</p>
+						<p (click)="hangeEditContactSelect('channel','Other')">
+							<span>
+								Other
+							</span>
+						</p>
+					</div>
+
+					
+				</div>
+
+				<div class="row">
+					<label for="floatingSelectGrid" class="required">OptInStatus
+					<input [(ngModel)]="EditContactForm.OptInStatusChecked" type="checkbox" class="form-control-checkbox ml-2"  name="OptInStatus" (click)="hangeEditContactInuts($event)"/>
+				</label>
+				</div>
+				
+			
+
+		</form>
+	</div>
+	<div class="modal-footer row popfooter">
+
+		<div class="inner_form col-md-6 text-right">
+			<button type="button" class="submit-btn" (click)="updateCustomer()">Update</button>
+		</div>
+	</div>
+</ng-template>
+
+
+<ng-template #updatedtags let-c="close" let-d="dismiss">
+	<div class="modal-header">
+		<div class="modal-header-left">
+			<h4 class="modal-title" id="modal-basic-title">Update Tags</h4>
+		</div>
+		<div class="modal-header-right">
+			<p class="close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/icon-close.svg"></p>
+		</div>
+		</div>
+	<div class="modal-body">
+		<form class="inner_form large" (ngSubmit)="updateTags()">
+				<div class="row" *ngFor="let tag of tagsoptios;">
+				
+
+				<label  for="floatingSelectGrid" class="required">
+					<input  [checked]="tag.status" type="checkbox" name="tags" class="form-control-checkbox ml-2" value="{{tag.name}}" (click)="addTags($event)"/>
+					{{tag.name}}
+				</label>
+
+
+				
+			     </div>
+
+				 
+
+		</form>
+	</div>
+	<div class="modal-footer row popfooter">
+
+		<div class="inner_form col-md-6 text-right">
+			<button type="button" class="submit-btn" (click)="updateTags()">Update</button>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #openStatusAlertmMessage let-c="close" let-d="dismiss">
+		
+	<div class="modal-body alertmessage">
+		<p class="label">{{confirmMessage}}</p>
+		<div class="input_group_btn">
+		<button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
+		<button type="button" class="submit-btn red-bg" aria-label="Close" (click)="handelStatusConfirm()">Confirm</button>
+		</div>
+	</div>
+	
+</ng-template>
+
+
+<ng-template #openBlockAlertmMessage let-c="close" let-d="dismiss">
+		
+	<div class="modal-body alertmessage">
+		<p class="label">{{confirmMessage}}</p>
+		<div class="input_group_btn">
+		<button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
+		<button type="button" class="submit-btn red-bg" aria-label="Close" (click)="handelBlockConfirm()">Confirm</button>
+		</div>
+	</div>
+	
+</ng-template>
+
+
+<ng-template #openDeleteAlertmMessage let-c="close" let-d="dismiss">
+		
+	<div class="modal-body alertmessage">
+		<p class="label">{{confirmMessage}}</p>
+		<div class="input_group_btn">
+		<button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
+		<button type="button" class="submit-btn red-bg" aria-label="Close" (click)="handelDeleteConfirm()">Confirm</button>
+		</div>
+	</div>
+	
+</ng-template>
+
 
 </sb-layout-dashboard>

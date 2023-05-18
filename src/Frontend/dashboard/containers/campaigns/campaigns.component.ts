@@ -2,7 +2,7 @@ import { Component,AfterViewInit, OnInit,ViewChild, ElementRef,HostListener  } f
 
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-
+import { Router } from '@angular/router';
 import {DashboardService} from './../../services';
 
 @Component({
@@ -11,6 +11,14 @@ import {DashboardService} from './../../services';
   styleUrls: ['./campaigns.component.scss']
 })
 export class CampaignsComponent implements OnInit {
+
+	//******* Router Guard  *********//
+	routerGuard = () => {
+		if (sessionStorage.getItem('SP_ID') === null) {
+			this.router.navigate(['login']);
+		}
+	}
+
 	@ViewChild('filterby') filterby: ElementRef |undefined; 
 
 	 allCampaigns:any=[{title:'abc'}]
@@ -18,8 +26,8 @@ export class CampaignsComponent implements OnInit {
 	 RuningCampaigns:any;
 	 confirmMessage:any;
 	 step2Option:any='';
-	 showCampaignDetail:any=false;
-	 showFilterByOption:any=false;
+	 showCampaignDetail = false;
+	 showFilterByOption = false;
 	 
 	 showAdvance:any=false;
 	 ShowChannelOption:any=false;
@@ -54,7 +62,7 @@ export class CampaignsComponent implements OnInit {
 	 attributesoption:any=['{{IP_address}}','{{user_name}}','{{Help}}','{{Support}}','{{email id}}','{{IP_address}}','{{New-Order}}','{{Product YN}}','{{mail_address}}']
 	 
 	 
-constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: DashboardService,private fb: FormBuilder) {
+constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: DashboardService,private fb: FormBuilder, private router:Router) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -124,7 +132,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	  }
 
     ngOnInit() {
-    
+		this.routerGuard();
 	}
 
 	counter(i: number) {

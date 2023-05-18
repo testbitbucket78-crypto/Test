@@ -24,6 +24,7 @@ export class DashboardComponent implements OnInit {
     constructor(private apiService: DashboardService, private router: Router, private cdRef: ChangeDetectorRef) { }
     ngOnInit() {
 
+        this.routerGuard();
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
         this.getdashboardCampaigns();
@@ -33,6 +34,13 @@ export class DashboardComponent implements OnInit {
 
         console.log (sessionStorage);
         console.log(this.Name);
+    }
+
+    //******* Router Guard  *********//
+    routerGuard = () => {
+        if (sessionStorage.getItem('SP_ID') === null) {
+            this.router.navigate(['login']);
+        }
     }
 
     getDashboardSubscribers() {
@@ -71,8 +79,9 @@ export class DashboardComponent implements OnInit {
         });
     }
     getdashboardAgents() {
+        var SP_ID = sessionStorage.getItem('SP_ID')
 
-        this.apiService.dashboardAgents().subscribe(data => {
+        this.apiService.dashboardAgents(SP_ID).subscribe(data => {
             this.agents = data;
         });
     }
@@ -88,14 +97,14 @@ export class DashboardComponent implements OnInit {
     }
 
     routeToPage() {
-        this.router.navigate(['/dashboard/reports']);
+        this.router.navigate(['/dashboard/contacts']);
     }
 
     routeToPage1() {
-        this.router.navigate(['/dashboard/import']);
+        this.router.navigate(['/dashboard/teambox']);
     }
     routeToPage2() {
-        this.router.navigate(['/dashboard/reports']);
+        this.router.navigate(['/dashboard/automation']);
     }
   
 }

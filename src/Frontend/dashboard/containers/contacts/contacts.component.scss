@@ -750,9 +750,9 @@ outline: none;
 }
 
 
-/***** media queries for low resolution laptops ****/
+/***** media queries for laptops ****/
 
- @media all and (max-width:1536px) {
+ @media screen and (min-width:1536px) {
 
 
 .bs-stepper {
@@ -826,7 +826,7 @@ outline: none;
 }
 
 .modal-dialog .modal-content .modal-body {
-   font-family: "Manrope";
+    font-family: "Manrope";
     font-size: 14px;
     top: 40px;
     font-weight: 600;
@@ -836,6 +836,8 @@ outline: none;
 .modal-dialog .modal-content .deletefile .btn9 {
     border: 1px solid #695F9724;
     position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
     background-color: #ffffff;
     color: #7A86A1;
     margin: -58px 22px 15px 61px;
@@ -851,6 +853,8 @@ outline: none;
 .modal-dialog .modal-content .deletefile .btn99 {
     border: 1px solid #695F9724;
     position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
     color: #ffffff;
     background: #F23B3B;
     width: 93px;
@@ -863,6 +867,335 @@ outline: none;
 }
 
 
- 
+   #contact-save {
+    text-align: center;
+    font-family: 'Manrope';
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 38px;
+    width: 100%;
+  }
+
+  #contact-save-btn {
+
+    margin-left: -86px;
+    opacity: 1;
+    font-family: 'Manrope';
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #695F9724;
+    background-color: #F23B3B;
+    color: #ffffff;
+    border-radius: 15px;
+    margin-top: -5px;
+    width: 80px;
+    height: 36px;
+    cursor: pointer;
+    text-align: center;
+
+  }
+
 
 }
+
+
+
+/***** media queries for 1366x768 ****/
+
+ @media screen and (max-width:1366px) {
+
+
+.bs-stepper {
+    margin: 47px 82px;
+    }
+
+ .ag-theme-alpine {
+    width: 95%;
+    height: 590px;
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: 28px;
+    margin-top: -10px;
+
+ }
+
+ .btn-9 {
+      margin: 0px 0px 0px 292px;
+      width: 94px;
+      height: 26px;
+      font-size: 11px;
+ }
+
+
+ #import-btn {
+    width: 94px;
+    height: 26px;
+    font-size: 11px;
+    padding: 0;
+ }
+
+ #add-contact {
+    width: 96px;
+    height: 26px;
+    font-size: 11px;
+    padding: 0;
+ }
+
+ .col-md-12 {
+   
+    left: 26px;
+    width: 80%;
+ }
+
+
+ .btn-delete { 
+    width: 33px;
+    height: 26px;}
+    
+.btn-delete img {
+    width: 12px;
+    height: 13px;
+    margin: -6px -1px 0 0;
+
+ }
+ .modal-content {
+  
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 310px;
+    height: 196px;
+    top: 190px;
+    left: 115px;
+    pointer-events: auto;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695F971A;
+    border-radius: 30px;
+    outline: 0;
+    border: none;
+}
+
+.modal-dialog .modal-content .modal-body {
+    font-family: "Manrope";
+    font-size: 14px;
+    top: 40px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.modal-dialog .modal-content .deletefile .btn9 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
+    background-color: #ffffff;
+    color: #7A86A1;
+    margin: -58px 22px 15px 61px;
+    border-radius: 15px;
+    width: 80px;
+    height: 32px;
+    cursor: pointer;
+   
+
+}
+
+
+.modal-dialog .modal-content .deletefile .btn99 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
+    color: #ffffff;
+    background: #F23B3B;
+    width: 93px;
+    top: 70%;
+    left: 52%;
+    height: 33px;
+    border-radius: 14px;
+    cursor: pointer;
+ 
+}
+
+
+   #contact-save {
+    text-align: center;
+    font-family: 'Manrope';
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 38px;
+    width: 100%;
+  }
+
+  #contact-save-btn {
+
+    margin-left: -86px;
+    opacity: 1;
+    font-family: 'Manrope';
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #695F9724;
+    background-color: #F23B3B;
+    color: #ffffff;
+    border-radius: 15px;
+    margin-top: -5px;
+    width: 80px;
+    height: 36px;
+    cursor: pointer;
+    text-align: center;
+
+  }
+
+
+}
+
+
+/***** media queries for 1280px ****/
+
+ @media screen and (max-width:1280px) {
+
+
+.bs-stepper {
+    margin: 47px 82px;
+    }
+
+ .ag-theme-alpine {
+    width: 95%;
+    height: 590px;
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: 28px;
+    margin-top: -10px;
+
+ }
+
+ .btn-9 {
+      margin: 0px 0px 0px 250px;
+      width: 94px;
+      height: 26px;
+      font-size: 11px;
+ }
+
+
+ #import-btn {
+    width: 94px;
+    height: 26px;
+    font-size: 11px;
+    padding: 0;
+ }
+
+ #add-contact {
+    width: 96px;
+    height: 26px;
+    font-size: 11px;
+    padding: 0;
+ }
+
+ .col-md-12 {
+   
+    left: 26px;
+    width: 80%;
+ }
+
+
+ .btn-delete { 
+    width: 33px;
+    height: 26px;}
+    
+.btn-delete img {
+    width: 12px;
+    height: 13px;
+    margin: -6px -1px 0 0;
+
+ }
+ .modal-content {
+  
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 310px;
+    height: 196px;
+    top: 190px;
+    left: 115px;
+    pointer-events: auto;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695F971A;
+    border-radius: 30px;
+    outline: 0;
+    border: none;
+}
+
+.modal-dialog .modal-content .modal-body {
+    font-family: "Manrope";
+    font-size: 14px;
+    top: 40px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.modal-dialog .modal-content .deletefile .btn9 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
+    background-color: #ffffff;
+    color: #7A86A1;
+    margin: -58px 22px 15px 61px;
+    border-radius: 15px;
+    width: 80px;
+    height: 32px;
+    cursor: pointer;
+   
+
+}
+
+
+.modal-dialog .modal-content .deletefile .btn99 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
+    color: #ffffff;
+    background: #F23B3B;
+    width: 93px;
+    top: 70%;
+    left: 52%;
+    height: 33px;
+    border-radius: 14px;
+    cursor: pointer;
+ 
+}
+
+
+   #contact-save {
+    text-align: center;
+    font-family: 'Manrope';
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 38px;
+    width: 100%;
+  }
+
+  #contact-save-btn {
+
+    margin-left: -86px;
+    opacity: 1;
+    font-family: 'Manrope';
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #695F9724;
+    background-color: #F23B3B;
+    color: #ffffff;
+    border-radius: 15px;
+    margin-top: -5px;
+    width: 80px;
+    height: 36px;
+    cursor: pointer;
+    text-align: center;
+
+  }
+
+
+}
+
+
+

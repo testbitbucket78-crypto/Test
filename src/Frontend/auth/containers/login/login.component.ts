@@ -14,11 +14,12 @@ import { Validators } from '@angular/forms';
 export class LoginComponent implements OnInit {
 
     checked = true;
+
     password: any;
     loginForm = new FormGroup({
-        email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required])])),
-        password: new FormControl('', Validators.compose([Validators.required])),
-        flash: new FormControl(this.checked)
+         email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+         password: new FormControl('', Validators.compose([Validators.required,Validators.minLength(8)])),
+         flash: new FormControl(this.checked)
     })
     title = 'formValidation';
     submitted = false;
@@ -30,39 +31,48 @@ export class LoginComponent implements OnInit {
 
     }
 
-
     onSubmit() {
         this.apiService.login(this.loginForm.value).subscribe(
             (result) => {
-            // Handle success response
-            console.warn("logindone! ", result.status)
-            sessionStorage.setItem('loginDetails', result.user.email_id)
-            sessionStorage.setItem('SP_ID', result.user.SP_ID)
-            console.log(result.user.UserType)
-            this.router.navigate(['dashboard'])
-            },
-                (error) => {
-                    if (error?.status === 401) {
-                        const errorMessage = "! Incorrect Email or Password";
+             sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
+             sessionStorage.setItem('SP_ID', result.user.SP_ID);
+             console.log(result.user.UserType);
+             console.log("Agent")
+             this.router.navigate(['dashboard'])
+                },
+            
+            (error) => {
+                if (error?.status === 401) {
+                    const errorMessage = "! Incorrect Email or Password.";
+                    const errorDiv = document.getElementById("error-message");
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                    }   
+                    else if (error?.status === 502) {
+                    const errorMessage = "! Invalid Response.";
+                    const errorDiv = document.getElementById("error-message");
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                }  
+                    else if (error?.status === 500) {
+                        const errorMessage = "! Internal Server Error, Please Try After Sometime.";
                         const errorDiv = document.getElementById("error-message");
                         if (errorDiv) {
-                          errorDiv.innerHTML = errorMessage;
+                            errorDiv.innerHTML = errorMessage;
                         }
-                      }   else if (error.status === 400) {
-                    // Show payment required message
-                    alert("API server not work please try after sometime")
+                    }    
+                else  {
+                const errorMessage = "! Something Went Wrong.";
+                    const errorDiv = document.getElementById("error-message");
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
                 } 
-                else if (error.status === 502) {
-                    alert("API server not work please try after sometime")
-                  }
-            })
-
-
-            // if(result.user.UserType=='Owner'){
-            //     console.log("Agent ")
-            // }
-           
-
+                  
+                  
+            });
 
         
     }

@@ -2,7 +2,10 @@ import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
+import { Router } from '@angular/router';
 import { Cards } from './../../models';
+import { inputs } from '@syncfusion/ej2-angular-richtexteditor/src/rich-text-editor/richtexteditor.component';
+import { Title } from '@angular/platform-browser';
 declare var $: any;
 
 @Component({
@@ -11,8 +14,15 @@ declare var $: any;
 	templateUrl: './smartReplies.component.html',
 	styleUrls: ['./smartReplies.component.scss']
 })
+
 export class SmartRepliesComponent implements OnInit {
 
+	//******* Router Guard  *********//
+	routerGuard = () => {
+		if (sessionStorage.getItem('SP_ID') === null) {
+			this.router.navigate(['login']);
+		}
+	}
 	data: any;
 	items: any;
     actions:any[]=[];
@@ -29,14 +39,14 @@ export class SmartRepliesComponent implements OnInit {
 		ID: new FormControl('')
 	})
 	sidenavReplies: any;
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private cdRef:ChangeDetectorRef) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private cdRef:ChangeDetectorRef, private router:Router) {
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
 
 	ngOnInit() {
-		
-		this.showTopNav = true;
+		this.routerGuard();
+		// this.showTopNav = true;
 		this.Cards;
 		this.getReplies();
 		this.cdRef.detectChanges();
@@ -49,12 +59,12 @@ export class SmartRepliesComponent implements OnInit {
 		var SP_ID=sessionStorage.getItem('SP_ID')
 		this.apiService.getSmartReply(SP_ID).subscribe((data: any) => {
 			this.replies = data;
-			
+
 			console.log(this.replies)
 		})
 	}
 	opensidenav(employee: any) {
-		document.getElementById("sidebar")!.style.width = "494px";
+		document.getElementById("sidebar")!.style.width = "400px";
 	}
 	closesidenav(items: any) {
 		document.getElementById("sidebar")!.style.width = "0";

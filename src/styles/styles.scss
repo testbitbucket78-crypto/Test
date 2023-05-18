@@ -9,6 +9,9 @@
 @import "global.scss";
 
 
+// Import Custom TeamBoxAnd Campaign SCSS
+@import "./teambox.scss";
+
 // Layout
 @import "layout/authentication.scss";
 @import "layout/dashboard-default.scss";
