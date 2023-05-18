@@ -34,6 +34,8 @@ export class SideNavComponent implements OnInit, OnDestroy {
    openHamburger(): void {
         const openHam = (document.getElementsByClassName('sidenav-item')) as unknown as HTMLElement[];
         const sideNavMenu = document.getElementById('sidenav-menu');
+        const mainheading = document.getElementById('main-heading');
+        const heading = document.getElementById('heading');
         const sideBarToggle = document.getElementById('sidebarToggle');
         const logo = (document.getElementsByClassName('navbar-brand')) as unknown as HTMLElement[];
         const mainBody = document.getElementsByClassName('container-fluid') as unknown as HTMLElement[];
@@ -46,8 +48,10 @@ export class SideNavComponent implements OnInit, OnDestroy {
                 caret[i].style.display = "none";
                 sideNavMenu!.style.width = "25%";
                 sideNavMenu!.style.border = "0";
+                mainheading!.style.marginLeft = "-67px!important";
+                heading!.style.marginLeft = '49px';
                 mainBody[i].style.marginLeft = "-10%";
-                sideBarToggle!.style.marginLeft = "-10px";
+                sideBarToggle!.style.marginLeft = "-3px";
                 logo[i].style.borderRight = '0';
                 
             }
@@ -56,6 +60,8 @@ export class SideNavComponent implements OnInit, OnDestroy {
                 caret[i].style.display = "block";
                 sideNavMenu!.style.borderRight = "1px solid #EBEBEB";
                 sideNavMenu!.style.width = "100%";
+                mainheading!.style.marginLeft = "34px!important"
+                heading!.style.marginLeft = '23px';
                 mainBody[i].style.marginLeft = "0";
                 sideBarToggle!.style.marginLeft = "-148px";
                 

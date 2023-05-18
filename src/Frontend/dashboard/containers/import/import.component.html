@@ -166,11 +166,11 @@
 									<option>{{headers[6]}}</option>
 									<option>{{headers[7]}}</option>
 								</select>
-								<label  for="slider2" class="switch" (change)="getUpdateFields($event,headers[1])" [(ngModel)]="isOverrideOn"  >
-									<input type="checkbox" class="form-control-checkbox" id="slider2"  >
+								<label class="switch">
+									<input type="checkbox" class="form-control-checkbox" (change)="getUpdateFields($event,headers[1])" [(ngModel)]="isOverrideOn1" >
 									<span class="slider 2"></span>
 								</label>
-							 <h6>{{ isOverrideOn ? 'Override on' : 'Override off' }}</h6>
+							 <h6>{{ isOverrideOn1 ? 'Override on' : 'Override off' }}</h6>
 							</div>
 							<div class="hh1 d-flex">
 								<input type="checkbox" class="form-control-checkbox" name="" >
@@ -185,11 +185,11 @@
 									<option>{{headers[6]}}</option>
 									<option>{{headers[7]}}</option>
 								</select>
-								<label for="slider3" class="switch">
-									<input type="checkbox" class="form-control-checkbox" id="slider3" (change)="getUpdateFields($event,headers[2])"  [(ngModel)]="isOverrideOn">
+								<label class="switch">
+									<input type="checkbox" class="form-control-checkbox" (change)="getUpdateFields($event,headers[2])"  [(ngModel)]="isOverrideOn2">
 									<span class="slider 3"></span>
 								</label>
-								 <h6>{{ isOverrideOn ? 'Override on' : 'Override off' }}</h6>
+								 <h6>{{ isOverrideOn2 ? 'Override on' : 'Override off' }}</h6>
 							</div>
 							<div class="hh1 d-flex" >
 								<input type="checkbox" class="form-control-checkbox" name="">
@@ -204,11 +204,11 @@
 									<option>{{headers[6]}}</option>
 									<option>{{headers[7]}}</option>
 								</select>
-								<label for="sldier4" class="switch"  (change)="getUpdateFields($event,headers[3])"  [(ngModel)]="isOverrideOn">
-									<input type="checkbox" class="form-control-checkbox" id="slider4" >
+								<label class="switch">
+									<input type="checkbox" class="form-control-checkbox" (change)="getUpdateFields($event,headers[3])"  [(ngModel)]="isOverrideOn3">
 									<span class="slider 4"></span>
 								</label>
-								 <h6>{{ isOverrideOn ? 'Override on' : 'Override off' }}</h6>
+								 <h6>{{ isOverrideOn3 ? 'Override on' : 'Override off' }}</h6>
 							</div>
 							<div class="hh1 d-flex" >
 								<input type="checkbox" class="form-control-checkbox" class="form-control-checkbox" name="">
@@ -224,10 +224,10 @@
 									<option>{{headers[7]}}</option>
 								</select>
 								<label class="switch">
-									<input type="checkbox" class="form-control-checkbox" (change)="getUpdateFields($event,headers[4])"  [(ngModel)]="isOverrideOn">
+									<input type="checkbox" class="form-control-checkbox" (change)="getUpdateFields($event,headers[4])"  [(ngModel)]="isOverrideOn4">
 									<span class="slider 5"></span>
 								</label>
-								 <h6>{{ isOverrideOn ? 'Override on' : 'Override off' }}</h6>
+								 <h6>{{ isOverrideOn4 ? 'Override on' : 'Override off' }}</h6>
 							</div>
 							<div class="hh1 d-flex" >
 								<input type="checkbox" class="form-control-checkbox" name="" >
@@ -242,11 +242,11 @@
 									<option>{{headers[6]}}</option>
 									<option>{{headers[7]}}</option>
 								</select>
-								<label class="switch" (change)="getUpdateFields($event,headers[5])"  [(ngModel)]="isOverrideOn">
-									<input type="checkbox" class="form-control-checkbox" >
+								<label class="switch">
+									<input type="checkbox" class="form-control-checkbox" (change)="getUpdateFields($event,headers[5])"  [(ngModel)]="isOverrideOn5" >
 									<span class="slider"></span>
 								</label>
-								 <h6>{{ isOverrideOn ? 'Override on' : 'Override off' }}</h6>
+								 <h6>{{ isOverrideOn5 ? 'Override on' : 'Override off' }}</h6>
 							</div>
 							<div class="hh1 d-flex">
 								<input type="checkbox" class="form-control-checkbox" name="">
@@ -262,10 +262,10 @@
 									<option>{{headers[7]}}</option>
 								</select>
 								<label class="switch">
-									<input type="checkbox" class="form-control-checkbox" (change)="getUpdateFields($event,headers[6])"  [(ngModel)]="isOverrideOn">
+									<input type="checkbox" class="form-control-checkbox" (change)="getUpdateFields($event,headers[6])"  [(ngModel)]="isOverrideOn6">
 									<span class="slider"></span>
 								</label>
-							 <h6>{{ isOverrideOn ? 'Override on' : 'Override off' }}</h6>
+							 <h6>{{ isOverrideOn6 ? 'Override on' : 'Override off' }}</h6>
 							</div>
 							<div class="hh1 d-flex" >
 								<input type="checkbox" class="form-control-checkbox" name="" >
@@ -281,10 +281,10 @@
 									<option selected>{{headers[7]}}</option>
 								</select>
 								<label class="switch">
-									<input type="checkbox"class="form-control-checkbox" (change)="getUpdateFields($event,headers[7])"  [(ngModel)]="isOverrideOn">
+									<input type="checkbox"class="form-control-checkbox" (change)="getUpdateFields($event,headers[7])"  [(ngModel)]="isOverrideOn7">
 									<span class="slider"></span>
 								</label>
-								 <h6>{{ isOverrideOn ? 'Override on' : 'Override off' }}</h6>
+								 <h6>{{ isOverrideOn7 ? 'Override on' : 'Override off' }}</h6>
 							</div>
 						</div>
 					</div>

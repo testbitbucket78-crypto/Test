@@ -9,6 +9,7 @@ declare var $: any; // declare the jQuery variable
 import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
 import { Router } from '@angular/router';
 import exp from 'constants';
+import { style } from '@angular/animations';
 
 
 
@@ -423,8 +424,9 @@ onSelectAll(items: any) {
   
       document.getElementById('import-btn')!.style.display = 'none';
       document.getElementById('add-contact')!.style.display = 'none';
-      document.getElementById('export-btn')!.style.display = 'block';
+      document.getElementById('export-btn')!.style.display = 'block'
       document.getElementById('delete-btn')!.style.display = 'block';
+
     }
     else {
      
