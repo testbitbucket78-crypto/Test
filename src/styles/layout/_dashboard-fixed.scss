@@ -12,7 +12,8 @@
       .sb-sidenav {
         padding-top: $topnav-base-height;
         .sb-sidenav-menu {
-          overflow-y: auto;
+          overflow-y: hidden;
+          overflow-x: hidden;
         }
       }
     }

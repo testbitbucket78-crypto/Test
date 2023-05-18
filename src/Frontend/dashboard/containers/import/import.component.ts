@@ -37,7 +37,7 @@ export class ImportComponent implements OnInit {
 	importedData: any[] = [];
 	fileformat = 'csv';
 	content:any;
-	isOverrideOn!:boolean;
+	isOverrideOn!: boolean; isOverrideOn1!: boolean; isOverrideOn2!: boolean; isOverrideOn3!: boolean; isOverrideOn4!: boolean; isOverrideOn5!: boolean; isOverrideOn6!: boolean; isOverrideOn7!: boolean;
 	showTopNav:boolean = true;
 
 	

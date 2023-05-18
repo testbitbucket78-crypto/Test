@@ -43,7 +43,6 @@
     "ag-grid-angular": "^26.2.0",
     "ag-grid-community": "^26.2.0",
     "ag-grid-enterprise": "^26.2.0",
-    "@syncfusion/ej2-angular-richtexteditor": "^21.1.41-ngcc",
     "bcrypt": "^5.1.0",
     "bootstrap": "^4.5.3",
     "bs-stepper": "^1.7.0",
