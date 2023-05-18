@@ -15,7 +15,7 @@ router.post('/login',indexController.login);
 router.post('/forgotPassword',indexController.forgotPassword);
 router.post('/sendOtp',indexController.sendOtp)
 router.post('/verifyOtp',indexController.verifyOtp)
-router.post('/resetPassword',indexController.resetPassword)
+router.post('/resetPassword/:uid',indexController.resetPassword)
 router.post('/allAgents',userController.getAllAgents)
 router.post('/isActiveAgents',userController.getisActiveAgents)
 router.post('/verifyPhoneOtp',indexController.verifyPhoneOtp)
@@ -30,15 +30,22 @@ router.get('/customers/:spID',TeamBoxController.getAllCustomer);
 router.get('/searchcustomers/:Channel/:spID',TeamBoxController.searchCustomer);
 router.get('/searchcustomers/:Channel/:spID/:key',TeamBoxController.searchCustomer);
 router.post('/addcustomers',TeamBoxController.insertCustomers);
+router.post('/updatedCustomer',TeamBoxController.updatedCustomer);
+router.post('/updateTags',TeamBoxController.updateTags);
+
+
 router.post('/blockcustomer',TeamBoxController.blockCustomer);
 
 router.post('/interaction',TeamBoxController.createInteraction);
 router.post('/updateinteraction',TeamBoxController.updateInteraction);
+router.post('/deleteInteraction',TeamBoxController.deleteInteraction);
 
+router.post('/getAllInteraction',TeamBoxController.getAllFilteredInteraction);
 router.get('/interaction',TeamBoxController.getAllInteraction);
 router.get('/interaction/:InteractionId',TeamBoxController.getInteractionById);
-router.get('/filterinteraction/:filterBy/:AgentId',TeamBoxController.getFilteredInteraction);
+router.get('/filterinteraction/:filterBy/:AgentId/:AgentName',TeamBoxController.getFilteredInteraction);
 router.get('/interactionpinned/:InteractionId/:AgentId',TeamBoxController.checkInteractionPinned);
+router.post('/interactionpinned',TeamBoxController.updatePinnedStatus);
 router.get('/searchinteraction/:searchKey/:AgentId',TeamBoxController.getSearchInteraction);
 
 
@@ -47,7 +54,12 @@ router.post('/newmessage',TeamBoxController.insertMessage);
 router.post('/deletemessage',TeamBoxController.deleteMessage);
 router.post('/updatemessageread',TeamBoxController.updateMessageRead);
 router.post('/interactionmapping',TeamBoxController.updateInteractionMapping);
+router.post('/resetInteractionMapping',TeamBoxController.resetInteractionMapping);
 router.get('/interactionmapping/:InteractionId',TeamBoxController.getInteractionMapping);
+
+router.get('/getsavedMessages/:SPID',TeamBoxController.getsavedMessages);
+router.get('/getquickReply/:SPID',TeamBoxController.getquickReply);
+router.get('/getTemplates/:SPID',TeamBoxController.getTemplates);
 
 
 const multer = require('multer');
