@@ -19,7 +19,8 @@
 
 button:not(:disabled), [type=reset]:not(:disabled) {
     cursor: pointer;
-    color: #7A86A1;
+    color: #6149cd;
+    font-weight: 700;
     background-color: #ffffff;
     border: 1px solid #EBEBEB;
     border-radius: 17px;
@@ -143,6 +144,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
   .col-md-12 {
 
     max-width: 100%;
+    margin-left: 3px;
   }
 
   .collumn h6 {
@@ -322,6 +324,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 
 .col-md-12 {
 width: 100%;
+margin-left: -17px;
 
 }
 
@@ -520,6 +523,11 @@ margin-top: -12px;
 
 }
 
+.form-inline .input-group, .form-inline .custom-select {
+    max-width: 258px;
+
+}
+
 .col-9 {
     max-width: 95%;
 }
@@ -529,27 +537,73 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     font-size: 11px;
     width: 126px;
     height: 36px;
-    margin: 62px 0px 0px 357px; 
+    margin: 27px 0px 0px 466px;
 }
 
 .card {
-    width: 329px;
-    height: 249px;
+    width: 16rem;
+    height: 12rem;
     margin: 0 24px;
+    border-radius: 24px;
 }
 
+.card .id {
+   
+    font-size: 11px;
+}
+
+
+.card .card-title {
+    margin-bottom: 6px;
+    margin-top: -10px;
+    margin-left: 13px;
+    font-size: 14px;
+    letter-spacing: inherit;
+
+
+}
+
+.card p {
+  
+    font-size: 12px;
+
+}
+
+.card .text-muted {
+
+    font-size: 11px;
+    font-weight: 400;
+
+}
 .col-md-12 {
 width: 100%;
+margin-top: -36px;
+margin-left: -19px;
 
 }
+
+.card .card1 .card-text1 p {
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.card .card1 .card-text2 p {
+    font-size: 13px;
+    margin-top: 6px;
+
+}
+
+
 
 .card .card1 .card-text1 h6 {
 margin-top: -12px;
+font-size: 10px;
 
 }
 
 .card .card1 .card-text2 h6 {
 margin-top: -12px;
+font-size: 10px;
 
 }
 

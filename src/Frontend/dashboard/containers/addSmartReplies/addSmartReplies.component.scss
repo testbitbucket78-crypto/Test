@@ -603,13 +603,15 @@ input:focus {
     width: 0px;
 }
 
+
+
 /***** media queries for laptop screen *****/
 
 @media all and (max-width: 1536px) {
     .bs-stepper {
         width: 1109px !important;
         height: 100%;
-        margin: 56px 255px;
+        margin: 30px 218px;
     }
 
     .bs-stepper-label {
@@ -624,8 +626,8 @@ input:focus {
     //     position: absolute;
     // }
     .btn9 {
-        top: -94px;
-        left: 112px;
+        top: -95px;
+        left: 6px;
     }
     .heading {
         font-size: 17px;
@@ -670,6 +672,7 @@ input:focus {
 
     .box1 h5 {
         font-size: 14px;
+        margin-bottom: revert;
     }
 
     .box1 span {
@@ -687,16 +690,22 @@ input:focus {
     }
 
     .form-check-label {
-        font-size: 13px;
+        // font-size: 13px;
+        font-size: 0.9rem;
         margin: 8px;
         font-weight: 700;
+    }
+
+    .form-check-label-img {
+        margin-left: -3px;
+        height: 11px;
     }
     .ff textarea{
         margin: 25px 0px 0px 15px;
         height: 150px;
         
         color: #7A86A1;
-        padding: 15px 0 0 15px;
+        padding: 15px 12px 0 12px;
         width: 360px;
     }
     #close-btn  { 
@@ -1019,8 +1028,11 @@ input:focus {
         right: 2%;
     }
     .popup-dialog.autoreply {
-        max-width: 90%;
-        margin-top: -210px;
+        // max-width: 31%;
+        // margin-top: 0;
+        max-width: 37%;
+    max-height: 37%;
+    margin-top: 4em;
     }
     .popup-dialog.NoteOption {
         width: 100px;
@@ -1041,12 +1053,15 @@ input:focus {
         width: 100%;
         float: left;
         margin: 0px;
+        font-size: 11px;
     }
     .popup-dialog p.label {
-        font-weight: 600;
-        color: #6149cd;
-        padding: 5px 15px;
-    }
+        font-weight: 700;
+    color: #6149cd;
+    padding: 5px 15px;
+    font-size: 11px;
+}
+    
     .popup-dialog p.label:hover {
         background: #fff;
     }
@@ -1084,15 +1099,47 @@ input:focus {
         z-index: 9;
         top: 40%;
         right: 2%;
+    }   
+
+    .popup-dialog.RemoveTag {
+    max-width: 178px;
+    margin-top: -47px;
+    max-height: 272px;
+    top: 38%;
+    right: 4%;
     }
+
+   .color-dots {
+
+    width: 8px;
+    height: 8px;
+    background: blue;
+    display: block;
+    border-radius: 50%;
+    float: left;
+    margin: 4px;
+    }
+    
 }
 
 @media screen and (max-width:1366px) {
+
+    .bs-stepper {
+ 
+    margin: 30px 145px;
+}
 
     .form-check {
   
     margin: 10px 0px 30px 70px;
 }
+
+input[type=radio], input[type=checkbox] {
+   
+    margin: 9px 0px 0px -20px;
+
+}
+
 }
 
 
@@ -1102,4 +1149,54 @@ input:focus {
   
     margin: 10px 0px 30px 70px;
 }
+
+   .bs-stepper {
+ 
+    margin: 15px 70px;
+}
+
+input[type=radio], input[type=checkbox] {
+   
+    margin: 8px 0px 0px -20px;
+
+}
+
+.desc-radio-input {
+    top: 67%;
+    right: 52%;
+    width: 260px;
+    height: 133px;
+}
+
+
+// .popup-dialog p span {
+//     padding: 3px 3px!important;
+//     float: left;
+//     font-size: 11px;
+//     width: 0px;
+// }
+
+.color-dots {
+    width: 5px;
+    height: 5px;
+    background: #FC52D5;
+    display: block;
+    border-radius: 50%;
+    margin: 8px 2px 0 30px!important;
+
+}
+
+.desc-radio-input-1 {
+    position: absolute;
+    top: 67%;
+    right: 33%;
+
+}
+    .desc-radio-input-2{
+    position: absolute;
+    top: 67%;
+    right: 17%;
+
+}
+
 }

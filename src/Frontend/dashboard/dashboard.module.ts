@@ -51,6 +51,7 @@ import { DashboardComponent } from './containers';
         TablesModule,
         NgxIntlTelInputModule,
         AgGridModule.withComponents([dashboardContainers.ContactsComponent]),
+        NgMultiSelectDropDownModule.forRoot(),
         RichTextEditorModule
     ],
     providers: [...dashboardServices.services, ...dashboardGuards.guards],

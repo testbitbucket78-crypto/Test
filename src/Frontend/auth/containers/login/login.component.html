@@ -10,7 +10,7 @@
                 </div>
                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" >
                     <div class="row col-10">
-                        <div class="col-sm-6">
+                        <div class="col-sm-6" id="kop">
                             <label for="floatingInputGrid">Your Email</label>
 
                             <input type="text-right mr-3" class="form-control" [ngClass]="{'is-invalid' :submitted && loginForm.controls.email_id.errors}"
@@ -18,7 +18,7 @@
                         </div>
                         
                         
-                        <div class=" col-sm-6">
+                        <div class=" col-sm-6" id="col90">
                             <label for="floatingInputGrid">Password</label>
                             <input [type]="changetype?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && loginForm.controls.password.errors}"
                              placeholder="8 character" aria-label="State" name="password" formControlName="password" id="password">
@@ -36,7 +36,7 @@
                     <div class="col-sm-12 text-center" ><a class="small" routerLink="/forgot-password" >Forgot
                             Password?</a></div>
                     <div class="form-group d-flex align-items-center justify-content-between  col-sm-12">
-                        <button class="btn btn" type="submit">Log In</button>
+                        <button class="btn btn" id="butto" type="submit">Log In</button>
                         
                     </div>
                     

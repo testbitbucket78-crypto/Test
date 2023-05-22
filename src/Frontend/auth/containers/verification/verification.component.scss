@@ -120,7 +120,7 @@ a {
     font-size: 11px;
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
-    margin: 0 0 0 0;
+    margin: 0 0 0 35px;
 }
 
 .text-danger1 {
@@ -128,7 +128,7 @@ a {
     font-size: 11px;
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
-    margin: 0 0 0 0;
+    margin: 0 0 0 35px;
 }
 .form-control.is-invalid {
     border: 1px solid red;
@@ -156,6 +156,7 @@ a {
     font-size: 11px;
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
+    margin-left: 35px;
 }
 
 #error-message1{
@@ -163,6 +164,7 @@ a {
     font-size: 11px;
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
+    margin-left: 35px;
 }
 
 
@@ -182,25 +184,84 @@ a {
 @media screen and (max-width:1366px) {
     .form-control {
 
-    width: 95%;
+    width: 83%;
+    margin-left: 1.4rem;
 }
 
 .text1 {
-    margin: 12px 0px 0px -15px;
+   margin:  2.875rem 0px 0px -3.75rem;
+}
+// .form-control {
+
+//     width: 105%;
+//     margin-left: 1.4rem;
+// }
+
+.btn2 {
+    width: 14.125rem;
+    margin-left: 2.625rem;
+}
+
+// .text1 {
+//     margin: 0px 0px 0px -75px;
+
+//    }
+
+h6, .h6 {
+
+    margin: 4px 0px 0px 5rem;
+
+ }
+
+ .ml-1, .mx-1{
+
+    margin: 0px 0px 0px 0px;
+
+}
+
+.mt-4, .my-4 {
+    margin-top: -0.5rem!important;
+
+}
+.text {
+    margin-left: 2rem;
+}
+.font-weight-light {
+   
+    font-size: 1.4rem;
+    margin-left: 2rem;
+
+   
+}
+h5{
+    font-size: 14px;
+    font-weight: normal;
+    font-family: "Montserrat", sans-serif;
+    color: #7A86A1;
+    margin: 5px 0px 0px 1.5rem;
+    width: 18.75rem;
+}
+label {
+  
+    margin: 20px 0px 0px 1.5rem;
+    
+}
+.btn1 {
+    margin: 0.813rem -1.125rem 2px -5.8\7rem;
 }
 
 }
 
-@media screen and (max-width:1280px) {
+@media all and (max-width:1280px) {
     .form-control {
 
     width: 105%;
+    margin-left: 1.4rem;
 }
 
 .btn2 {
-   width: 250px;
-   margin-left: -1px;
-
+    width: 14.125rem;
+    margin-left: 2.625rem;
 }
 
 .text1 {
@@ -210,19 +271,45 @@ a {
 
 h6, .h6 {
 
-    margin: 5px 0px 0px 24px;
+    margin: 4px 0px 0px 5rem;
 
  }
 
  .ml-1, .mx-1{
 
-    margin: -1px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 
 }
 
 .mt-4, .my-4 {
     margin-top: -0.5rem!important;
 
+}
+.text {
+    margin-left: 2rem;
+}
+.font-weight-light {
+   
+    font-size: 1.4rem;
+    margin-left: 2rem;
+
+   
+}
+h5{
+    font-size: 14px;
+    font-weight: normal;
+    font-family: "Montserrat", sans-serif;
+    color: #7A86A1;
+    margin: 5px 0px 0px 1.5rem;
+    width: 18.75rem;
+}
+label {
+  
+    margin: 20px 0px 0px 1.5rem;
+    
+}
+.btn1 {
+    margin: 0.813rem -1.125rem 2px -5.6rem;
 }
 
 }

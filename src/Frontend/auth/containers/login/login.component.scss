@@ -140,9 +140,12 @@ input::-ms-clear {
 }
 
 
-@media screen and (max-width:1366px) {
 
-.btn:not(:disabled):not(.disabled) {
+
+
+@media all and (max-width:1366px){
+
+    .btn:not(:disabled):not(.disabled) {
   
     margin: 20px 0px 0px 102px;
 
@@ -156,9 +159,95 @@ input::-ms-clear {
     right: 39px;
 
 }
+    .mt-4, .my-4 {
+        margin-top: -2.5rem !important;
+    }
+    .mt-6 {
+        margin: 136px 0px 0px -145px;
+    }
+    .font-weight-light {
+        margin: 200px 0px 0px -35px;
+        font-size: 26px;
+        color: #000000;
+        font-family: "Montserrat", sans-serif;
+        font-weight: bold !important;
+        line-height: 40px;
+    }
+    label {
+        font-size: 14px;
+    }
+    #password{
+        width: 127%;
+    }
+    #col90{
+        right: -3rem;
+    }
+    .form-control {
+        width: 127%;
+    }
+.eyeicon {
+    right: -22px;
+}
+#kop{
+    right: 3rem;
+    margin-right: -3rem;
+}
+.custom-control-label {
+    margin: 13px 0px 0px -69px;
+}
+.small {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0px 122px 0px 0px;
+    font-family: "Montserrat", sans-serif;
+    color: #6149CD;
+    line-height: 23px;
+}
+.btn:not(:disabled):not(.disabled) {
+    margin: 20px 0px 0px 126px;
+}
 
-@media screen and (max-width:1280px) {
-    
+}
+@media all and (max-width:1280px){
+    .mt-4, .my-4 {
+        margin-top: -2.5rem !important;
+    }
+    .mt-6 {
+        margin: 90px 0px 0px -117px;
+    }
+    .font-weight-light {
+        margin: 200px 0px 0px -35px;
+        font-size: 26px;
+        color: #000000;
+        font-family: "Montserrat", sans-serif;
+        font-weight: bold !important;
+        line-height: 40px;
+    }
+    label {
+        font-size: 14px;
+    }
+    #password{
+        width: 127%;
+    }
+    #col90{
+        right: -2rem;
+    }
+    .form-control {
+        width: 127%;
+    }
+
+#kop{
+    right: 3rem;
+    margin-right: -3rem;
+}
+.custom-control-label {
+    margin: 13px 0px 0px -65px;
+}
+#butto{
+    margin: 13px 0px 0px 72px;
+}
+
+
 .btn:not(:disabled):not(.disabled) {
   
     margin: 13px 0px 0px 75px;
@@ -166,10 +255,6 @@ input::-ms-clear {
     font-size: 14px;
 
 }
-
-.custom-control-label {
-      margin: 13px 0px 0px -13px;
- }
 
  .mt-6 {
     margin: 41px 0px 0px -117px;
@@ -183,15 +268,12 @@ input::-ms-clear {
 
 .eyeicon{
 
-    right: 19px;
+   right: inherit;
 
 }
 
-small, .small {
+.small {
 
-    margin: 0px 166px 0px 35px;
-
+    margin: 0px 122px 0px -41px;
     }
-  }
-
 }

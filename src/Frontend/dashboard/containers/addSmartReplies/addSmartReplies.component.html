@@ -36,11 +36,11 @@
         <div class="box" [formGroup]="newReply">
           <h5>Title</h5>
           <input class="form-control" type="text" name="Title" id="Title" formControlName="Title"
-            placeholder="Enter title in max 20 character" />
+            placeholder="Enter title in max 20 character" maxlength="20" />
           <h5>Description</h5>
           <div class="form-floating ff">
             <textarea name="Description" id="Description" class="form-control" rows="4" cols="50"
-            placeholder="Enter description in max 80 character"  formControlName="Description" ></textarea>
+            placeholder="Enter description in max 80 character"  formControlName="Description" maxlength="80" ></textarea>
             
           </div>
         </div>
@@ -75,7 +75,7 @@
               <label class="form-check-label" for="exampleRadios1">
                 Fuzzy matching
               </label>
-              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickFuzzy($event)">
+              <img id="detail" class="form-check-label-img" src="assets/img/info.png" (click)="onClickFuzzy($event)">
             </div>
             <div class="desc-radio-input" *ngIf="showBox">
               <p id="p-title">Fuzzy Matching</p>
@@ -88,7 +88,7 @@
               <label class="form-check-label" for="">
                 Exact matching
               </label>
-              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickExact($event)">
+              <img id="detail" class="form-check-label-img" src="assets/img/info.png" (click)="onClickExact($event)">
             </div>
               <div class="desc-radio-input-1" *ngIf="showBox1">
               <p id="p-title">Exact Matching</p>
@@ -101,7 +101,7 @@
               <label class="form-check-label" for="">
                 Contains
               </label>
-              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickContains($event)">
+              <img id="detail" class="form-check-label-img" src="assets/img/info.png" (click)="onClickContains($event)">
             </div>
 
              <div class="desc-radio-input-2" *ngIf="showBox2">
@@ -132,13 +132,13 @@
             </div>
           </div>
               <div class="child-interaction-2">
-              
-            <form class="input-area" [formGroup]="newMessage">
+             
+              <form class="input-area" [formGroup]="newMessage">
               <textarea #input ngDefaultControl [(ngModel)]="message" formControlName="message_text" 
               name="message_text" id="message_text" class="text-box" placeholder="Type reply ... ">
             </textarea>
               <button type="submit" (click)="addqty(input.value)" (click)="addMessage()" [disabled]="message===''">Add</button>
-            </form>
+            </form> 
             <div class="inout_options">
               <button id="bold-txt"><img src="/assets/img/teambox/B.svg"></button>
               <button><img src="/assets/img/teambox/I.svg"></button>
@@ -161,17 +161,41 @@
 
                <div *ngIf="ShowAddAction"  class="popup-dialog AssignAction">
                  <p class="label">Add Action</p>
-                <p *ngFor="let AssignAction of assignActionList;let m = index" (click)="toggleAssignOption()">
+                <p *ngFor="let AssignAction of assignActionList;let m = index" (click)="toggleAutoReply()" (click)="toggleAssignOption()" (click)="toggleRemoveTag()">
 	
                   <span>{{AssignAction}}</span>
                  </p>
                </div>
 
-        
+               
+               <div *ngIf="ShowRemoveTag"  class="popup-dialog RemoveTag">
+                 <p class="label">Remove Tag</p>
+                
+                <p *ngFor="let RemoveTag of removeTagList;let m = index" (click)="toggleRemoveTag()">
+                        <span class="color-dots"></span>
+	               <input  [checked]="RemoveTag.status" type="checkbox" name="tags" class="form-control-checkbox ml-2" value="{{tag.name}}" (click)="addTags($event)"/> -->
+                      <span>{{RemoveTag}}</span>
+                 </p>
+               </div>
+
+               	<div *ngIf="AutoReplyOption" class="popup-dialog autoreply" (click)="toggleAutoReply()" >
+                  <p class="label">Pause Auto Replies</p>
+						
+							<p  *ngFor="let option of AutoReplyEnableOption;">
+								<span>{{option}}</span>
+							</p>
+					
+						
+						</div> 
+
              
          </div>
 
-        <!-- <div class="box7">
+          <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Save</button>
+        
+
+		  <!--
+        <div class="box7">
         
            <div class="box7child">
             <label  *ngFor="let m of messages; let i = index" for="ff" >Message
@@ -287,7 +311,7 @@
 
 
 
-        <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Save</button>
+      
       
       </div>
     </div>

@@ -176,7 +176,250 @@ a{
         font-family: 'Montserrat', sans-serif;
         font-weight: 400;
     }
+    @media all and (max-width:1366px){
+        .text1 {
+            margin: 38px 0px 0px 9px;
+        }
+        a {
+            font-family: "Montserrat", sans-serif;
+            font-size: 11px;
+            font-weight: bold;
+            color: #7A86A1;
+            margin-left: -3rem;
+        }
+        .ml-1 {
+            color: #6149CD;
+            font-family: "Montserrat", sans-serif;
+            font-size: 11px;
+            font-weight: bold;
+            margin: 2px 0px 0px 0px;
+        }
+        .form-group a {
+            margin-left: 0rem;
+        }
+        .font-weight-light {
+            font-weight: 600 !important;
+            margin: 60px 0px 0px 69px;
+            font-size: 22px;
+            font-family: "Montserrat", sans-serif;
+            color: #000000;
+            line-height: 50px;
+        }
+        label {
+            display: inline-block;
+            margin: 0px 0px 0px -7px;
+            color: #000000;
+            font-family: "Montserrat", sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .pp .iti--allow-dropdown input, .iti--allow-dropdown input, .iti--allow-dropdown input, .iti--separate-dial-code input, .iti--separate-dial-code input, .iti--separate-dial-code input {
+            padding-right: 6px;
+            padding-left: 52px;
+            margin-left: 0;
+            border-radius: 14px;
+            border: 1px solid #ced4da;
+            height: 36px;
+            color: #495057;
+            font-size: 14px;
+            margin: 0px 0px 0 -10px;
+            width: 230px;
+          }
+          .eyeicon {
+            right: 33px;
+        }
+          #phone{
+            width: 275px;
+          }
+          #email_id{
+           width: 508px;
+          }
+          #confirmPassword{
+            width: 213px;
+          }
+          .eyeicon1 {
+            position: absolute;
+            right: 44px;
+            top: 40px;
+            cursor: pointer;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -2.75rem;
+            margin-left: 2.25rem;
+        }
+        .mb-0 {
+            margin-bottom: 0 !important;
+            font-size: 12px;
+            color: #7A86A1;
+            font-family: "Montserrat", sans-serif;
+            margin: 0px 0px 0px -22px;
+        }
+        #chbo{
+            margin: 0px 0px 0px -22px;
+            
+        }
+        .btn2{
+            margin: 3px -19px;
+        }
+           
+        #col {
+            right: 0.8rem;
+        }
+        .custom ng-pristine ng-valid ng-touched{
+            width: 100px;
+        }
+        #name{
+        width: 100%;
+        }
+        #kop{
+            right: 0rem;
+        }
+        #password{
+            width: 14rem;
+        }
+        .accept1 {
+            margin: -22px 0 0 -79px;
+        }
+        #defaultCheck1{
+            margin: 2px 0px 0px -93px;
+        }
 
+        input[type=radio], input[type=checkbox]{
+  
+       margin: 2px 0px 0px -34px;
+ 
+       .accept {
+         margin: -20px 0 0 -10px;
+    }
 
+   }
+}
 
+    
+    
+    @media all and (max-width:1280px){
+        .text1 {
+            margin: 45px 0px 0px 0px;
+        }
+        a {
+            font-family: "Montserrat", sans-serif;
+            font-size: 11px;
+            font-weight: bold;
+            color: #7A86A1;
+            margin-left: -2rem;
+        }
+        .ml-1 {
+            color: #6149CD;
+            font-family: "Montserrat", sans-serif;
+            font-size: 11px;
+            font-weight: bold;
+            margin: 2px 0px 0px 0px;
+        }
+        .font-weight-light {
+            font-weight: 600 !important;
+            margin: 53px 0px 0px 4px;
+            font-size: 22px;
+            font-family: "Montserrat", sans-serif;
+            color: #000000;
+            line-height: 50px;
+        }
+        label {
+            display: inline-block;
+            margin: 0px 0px 0px -7px;
+            color: #000000;
+            font-family: "Montserrat", sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .accept {
+            margin: -20px 0 0 -8px;
+        }
+        .form-group a {
+           
+            margin-left: 0rem;
+        }
+        .pp .iti--allow-dropdown input, .iti--allow-dropdown input, .iti--allow-dropdown input, .iti--separate-dial-code input, .iti--separate-dial-code input, .iti--separate-dial-code input {
+            padding-right: 6px;
+            padding-left: 52px;
+            margin-left: 0;
+            border-radius: 14px;
+            border: 1px solid #ced4da;
+            height: 36px;
+            color: #495057;
+            font-size: 14px;
+            margin: 0px 0px 0 0px!important;
+            width: 250px!important;
+}
+          
+          #phone{
+            width: 275px;
+          }
+          #email_id{
+            width: 516px;
+          }
+          #confirmPassword{
+            width: 272px;
+            margin-left: 6px;
+          }
+          .eyeicon1 {
+            position: absolute;
+            right: -59px;
+            top: 40px;
+            cursor: pointer;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -2.75rem;
+            margin-left: -1.8rem;
+        }
+        .mb-0 {
+            margin-bottom: 0 !important;
+            font-size: 12px;
+            color: #7A86A1;
+            font-family: "Montserrat", sans-serif;
+            margin: 0px 0px 0px -22px;
+        }
+        #chbo{
+            margin: 0px 0px 0px -22px;
+            
+        }
+           
+        #col {
+            right: -3rem;
+        }
+        #name{
+            width: 137%;
+        }
+        #kop{
+            right: -3rem;
+        }
+        #password{
+            width: 16rem;
+        }
+        .accept1 {
+            margin: -22px 0 0 -79px;
+        }
+        #defaultCheck1{
+            margin: 0px 0px 0px -58px;
+        }
+        .eyeicon {
+            position: absolute;
+            right: -43px;
+            top: 40px;
+            cursor: pointer;
+        }
+
+        .label1 {
+            margin: 1px 0px 0px 40px;
+        }
+
+        .accept {
+            margin: -20px 0 0 -11px;
+        }
+    }
+
+   
 

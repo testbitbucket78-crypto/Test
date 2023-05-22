@@ -1,122 +1,123 @@
 <sb-layout-auth>
-  <div class="container col-lg-12">
-    <img src="assets/img/img-reg.png" class="float-left">
-    <div class="row">
-
-      <div class="col-lg-12 mt-4">
-            <div class="log">
-          <h3 class="font-weight-light">Create Your Account</h3>
-        </div>
-
-
-        <div class="card-body">
-          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()"  >
-            <div class="row col-10">
-              <div class="col-sm-6">
-                <label for="floatingInputGrid">Name</label>
-
-                <input type="text-right mr-3" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.name.errors  }" placeholder="Name" aria-label="City" name="name"
-                  formControlName="name" id="name">
-              </div>
-              <div class="col-sm-6  pp">
-                <label for="floatingInputGrid">Phone Number</label>    
-                <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
-									[enableAutoCountrySelect]="true" [enablePlaceholder]="false" [searchCountryFlag]="true"
-									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
-									[selectedCountryISO]="CountryISO.India" [maxLength]="15"
-									[phoneValidation]="true" [separateDialCode]="separateDialCode"
-									[numberFormat]="PhoneNumberFormat.National" name="mobile_number" formControlName="mobile_number" id="mobile_number" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }">
-								</ngx-intl-tel-input>
-                <!-- <input type="text-right " class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }" placeholder="Phone Number" aria-label="State"
-                  name="mobile_number" formControlName="mobile_number" id="mobile_number" #text> -->
-
-              </div>
-         
-            </div>
-            <div class="row col-10 mt-3">
-              <div class="col-sm-6">
-                <label for="floatingInputGrid">Your Email</label>
-
-                <input formControlName="email_id"  type="text-right mr-3" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.email_id.errors}" placeholder="Email" aria-label="City" name="email_id"
-                  formControlName="email_id" id="email_id">
-                  <!-- <div class="form-text text-danger" *ngif="Email.errors?.['required']">
-                    incorrect email id
-                  </div> -->
-              </div>
-            </div>
-            <div class="row col-10 mt-3">
-              <div class="col-sm-6">
-                <label for="floatingInputGrid">Password</label>
-
-                <input [type]="changetype?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.password.errors  }" placeholder="8 character" aria-label="City"
-                  name="password" formControlName="password" id="password">
-                  <span class="eyeicon"(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye':'fa fa-eye-slash'"></i></span>
-              </div>
-              <div class=" col-sm-6">
-                <label for="floatingInputGrid">Confirm Password</label>
-
-                <input [type]="change?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.confirmPassword.errors}" placeholder="8 character" aria-label="State"
-                  name="confirmPassword" formControlName="confirmPassword" id="confirmPassword">
-                  <span class="eyeicon1"(click)="viewpassword()"><i [ngClass]="visible1?'fa fa-eye':'fa fa-eye-slash'"></i></span>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="col-sm-1"></div>
-              <div class="form-group mt-4 mb-0 custom-control custom-checkbox">
-                <input type="checkbox" (change)="onCheckboxChange($event.target.checked)" class="checkbox1">
-                <div class="accept">
-                 I accept the <a href="#" target="_blank">Terms & Conditions</a> </div>
-                </div>
-               
-              <div class="checkbox2 mt-4 ml-5 mb-0 ">
-                <input class="checkbox2" type="checkbox" value="" id="defaultCheck1">
-                <div class="accept1">
-                <label class="label1" for="rememberPasswordCheck">Remember Me</label>
-              </div>
-          
-              </div>
-            </div>
-            <!-- <p *ngIf="!checkboxChecked"> Please check the checkbox .</p> -->
-            <div class="form row">
-              <div class="col-sm-3"></div>
-              <button class="btn btn2" [disabled]="!checkboxChecked" [style.background-color]="buttonColor" [ngStyle]="{'opacity': checkboxChecked ? 1 : 0.5}">
-                Next
-              </button>
-            </div>
-          </form>
-
-
-        </div>
-      </div>
-    </div>
-    <div *ngIf= "submitted && registerForm.controls.name.errors" class="text-danger">
-      ! Name required
-    </div>
-    <div *ngIf= "submitted && registerForm.controls.mobile_number.errors" class="text-danger">
-      ! Phone number must be 10 digits
-    </div>
-    <div *ngIf= "submitted && registerForm.controls.email_id.errors" class="text-danger">
-      ! Invalid Email Id
-    </div>
-    <!-- <div *ngIf= "submitted && registerForm.controls.password.errors" class="text-danger">
-      ! password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters
-    </div> -->
-      <div *ngIf=" registerForm.get('password').hasError('required')" class="text-danger">
-      ! Password is required
-    </div>
-    <div *ngIf=" registerForm.get('password').hasError('pattern')" class="text-danger">
-      ! Password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters.
-    </div>
-    <div *ngIf=" registerForm.get('confirmPassword').hasError('required')" class="text-danger">
-      ! Confirm Password is required
-          </div>
-    <div *ngIf=" registerForm.hasError('mismatch')" class="text-danger">
-    !  Passwords do not match
-      </div>
-    <div class=" text1"><a routerLink="/login" style="display: inline-flex">Already member?<h6 class="ml-1"> Sign In
-        </h6></a></div>
-
-  </div>
+    <div class="container col-lg-12">
+      <img src="assets/img/img-reg.png" class="float-left">
+      <div class="row">
   
-</sb-layout-auth>
-
+        <div class="col-lg-12 mt-4">
+              <div class="log">
+            <h3 class="font-weight-light">Create Your Account</h3>
+          </div>
+  
+  
+          <div class="card-body">
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()"  >
+              <div class="row col-10">
+                <div class="col-sm-6" >
+                  <label for="floatingInputGrid">Name</label>
+  
+                  <input type="text-right mr-3" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.name.errors  }" placeholder="Name" aria-label="City" name="name"
+                    formControlName="name" id="name">
+                </div>
+                <div class="col-sm-6  pp"  id="col">
+                  <label for="floatingInputGrid">Phone Number</label>    
+                  <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+                                      [enableAutoCountrySelect]="true" [enablePlaceholder]="false" [searchCountryFlag]="true"
+                                      [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
+                                      [selectedCountryISO]="CountryISO.India" [maxLength]="15"
+                                      [phoneValidation]="true" [separateDialCode]="separateDialCode"
+                                      [numberFormat]="PhoneNumberFormat.National" name="mobile_number" formControlName="mobile_number" id="mobile_number" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }">
+                                  </ngx-intl-tel-input>
+                  <!-- <input type="text-right " class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }" placeholder="Phone Number" aria-label="State"
+                    name="mobile_number" formControlName="mobile_number" id="mobile_number" #text> -->
+  
+                </div>
+           
+              </div>
+              <div class="row col-10 mt-3">
+                <div class="col-sm-6">
+                  <label for="floatingInputGrid">Your Email</label>
+  
+                  <input formControlName="email_id"  type="text-right mr-3" class="form-control" id="gem" [ngClass]="{'is-invalid' :submitted && registerForm.controls.email_id.errors}" placeholder="Email" aria-label="City" name="email_id"
+                    formControlName="email_id" id="email_id">
+                    <!-- <div class="form-text text-danger" *ngif="Email.errors?.['required']">
+                      incorrect email id
+                    </div> -->
+                </div>
+              </div>
+              <div class="row col-10 mt-3">
+                <div class="col-sm-6">
+                  <label for="floatingInputGrid">Password</label>
+  
+                  <input [type]="changetype?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.password.errors  }" placeholder="8 character" aria-label="City"
+                    name="password" formControlName="password" id="password">
+                    <span class="eyeicon"(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye':'fa fa-eye-slash'"></i></span>
+                </div>
+                <div class=" col-sm-6" id="kop">
+                  <label for="floatingInputGrid">Confirm Password</label>
+  
+                  <input [type]="change?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.confirmPassword.errors}" placeholder="8 character" aria-label="State"
+                    name="confirmPassword" formControlName="confirmPassword" id="confirmPassword">
+                    <span class="eyeicon1"(click)="viewpassword()"><i [ngClass]="visible1?'fa fa-eye':'fa fa-eye-slash'"></i></span>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-1"></div>
+                <div class="form-group mt-4 mb-0 custom-control custom-checkbox">
+                  <input type="checkbox" (change)="onCheckboxChange($event.target.checked)" class="checkbox1">
+                  <div class="accept">
+                   I accept the <a href="#" target="_blank">Terms & Conditions</a> </div>
+                  </div>
+                 
+                <div class="checkbox2 mt-4 ml-5 mb-0 " id="chbo">
+                  <input class="checkbox2" type="checkbox" value="" id="defaultCheck1">
+                  <div class="accept1">
+                  <label class="label1" for="rememberPasswordCheck">Remember Me</label>
+                </div>
+            
+                </div>
+              </div>
+              <!-- <p *ngIf="!checkboxChecked"> Please check the checkbox .</p> -->
+              <div class="form row">
+                <div class="col-sm-3"></div>
+                <button class="btn btn2" [disabled]="!checkboxChecked" [style.background-color]="buttonColor" [ngStyle]="{'opacity': checkboxChecked ? 1 : 0.5}">
+                  Next
+                </button>
+              </div>
+            </form>
+  
+  
+          </div>
+        </div>
+      </div>
+      <div *ngIf= "submitted && registerForm.controls.name.errors" class="text-danger">
+        ! Name required
+      </div>
+      <div *ngIf= "submitted && registerForm.controls.mobile_number.errors" class="text-danger">
+        ! Phone number must be 10 digits
+      </div>
+      <div *ngIf= "submitted && registerForm.controls.email_id.errors" class="text-danger">
+        ! Invalid Email Id
+      </div>
+      <!-- <div *ngIf= "submitted && registerForm.controls.password.errors" class="text-danger">
+        ! password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters
+      </div> -->
+        <div *ngIf=" registerForm.get('password').hasError('required')" class="text-danger">
+        ! Password is required
+      </div>
+      <div *ngIf=" registerForm.get('password').hasError('pattern')" class="text-danger">
+        ! Password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters.
+      </div>
+      <div *ngIf=" registerForm.get('confirmPassword').hasError('required')" class="text-danger">
+        ! Confirm Password is required
+            </div>
+      <div *ngIf=" registerForm.hasError('mismatch')" class="text-danger">
+      !  Passwords do not match
+        </div>
+      <div class=" text1"><a routerLink="/login" style="display: inline-flex">Already member?<h6 class="ml-1"> Sign In
+          </h6></a></div>
+  
+    </div>
+    
+  </sb-layout-auth>
+  
+  

@@ -113,7 +113,7 @@ export class ContactsComponent implements OnInit {
     customerData: any;
     
 	  filterForm=new FormGroup({
-    Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern('[a-zA-Z ]{3,}$'), Validators.minLength(3)])),
+      Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z ]+"), Validators.minLength(3)])),
     Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
     emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
 	})
@@ -145,7 +145,7 @@ export class ContactsComponent implements OnInit {
 			quantities: this.fb.array([]) ,  
 		  });
       this.newContact=this.fb.group({
-        Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern('[a-zA-Z ]{3,}$')])),
+        Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z ]+")])),
         Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
         emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
         age: new FormControl(''),
@@ -398,6 +398,7 @@ onSelectAll(items: any) {
       this.apiService.deletContactById(data).subscribe(response => {
         console.log(response)
         this.getContact();
+        this.onRowSelected(null);
 
       });
   
@@ -407,7 +408,7 @@ onSelectAll(items: any) {
 
   onRowSelected = (event: any) => {
     const rowChecked = this.checkedConatct.findIndex((item) => item.customerId == event.data.customerId);
-    if (rowChecked < 0) {
+    if (rowChecked < 0 ) {
      
       this.checkedConatct.push(event.data);
       
@@ -417,10 +418,10 @@ onSelectAll(items: any) {
       this.checkedConatct.splice(rowChecked , 1);
 
     }
-    console.log(this.checkedConatct.length);
+    console.log(this.checkedConatct.length );
 
 
-    if (this.checkedConatct.length > 0) {
+    if (this.checkedConatct.length > 0 && event !== null) {
   
       document.getElementById('import-btn')!.style.display = 'none';
       document.getElementById('add-contact')!.style.display = 'none';

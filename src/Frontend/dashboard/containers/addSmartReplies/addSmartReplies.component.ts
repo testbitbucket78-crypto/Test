@@ -48,25 +48,9 @@ export class AddSmartRepliesComponent implements OnInit {
 	
 	model: any;
 
-	assignConversation: string[] =
-		[
-			"James Whatson", "David Harrison", "Jane Cooper", "Charles John"
-		];
-
 	addContactTag: string[] =
 		[
 			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
-		];
-
-	removeContactTag: string[] =
-		[
-			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
-		];
-
-		triggerFlow: string[] = 
-		[
-		        "Flow New Launch","Flow Help", "Flow Buy Product", "Flow Return Product"
-			
 		];
 
 
@@ -97,7 +81,13 @@ export class AddSmartRepliesComponent implements OnInit {
 	ShowAssignOption = false;
 	assignActionList = ["Assign Conversation","Add Contact Tag","Remove Tags","Trigger Flow", "Name Update", "Resolve Conversation" ];
 	ShowAddAction = false;
-	errorMessage = '';
+	AutoReplyEnableOption: any = ['Flow New Launch', 'Flow Help', 'Flow Buy Product', 'Flow Return Product'];
+	ShowAutoReplyOption = false;
+	AutoReplyOption = false;
+	ShowRemoveTag = false;
+	ToggleRemoveTags = false;
+	removeTagList = ["Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"];
+    errorMessage = '';
 	successMessage = '';
 	warningMessage = '';
 
@@ -220,6 +210,17 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.ShowAddAction = !this.ShowAddAction;
 	}
 
+	toggleAutoReply() {
+		this.ShowAutoReplyOption= false;
+		this.AutoReplyOption = !this.AutoReplyOption;
+	}
+
+	toggleRemoveTag() {
+		this.ShowRemoveTag = false;
+		this.ToggleRemoveTags = !this.ToggleRemoveTags;
+	}
+
+
 	showToaster(message: any, type: any) {
 		if (type == 'success') {
 			this.successMessage = message;
@@ -306,23 +307,47 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	onClickFuzzy(event: MouseEvent) {
 		const target = event.target as HTMLElement;
-		if (target.classList.contains('form-check-label')) {
+		if (target.classList.contains('form-check-label-img')) {
 			this.showBox = true;
 		}
 	}
 
 	onClickExact(event: MouseEvent) {
 		const target = event.target as HTMLElement;
-		if (target.classList.contains('form-check-label')) {
+		if (target.classList.contains('form-check-label-img')) {
 			this.showBox1 = true;
 		}
 	}
 
 	onClickContains(event: MouseEvent) {
 		const target = event.target as HTMLElement;
-		if (target.classList.contains('form-check-label')) {
+		if (target.classList.contains('form-check-label-img')) {
 			this.showBox2 = true;
 		}
 	}
+
+
+	SelectReplyOption(optionValue: any, optionType: any) {
+		var LastPaused = this.selectedInteraction.paused_till
+		var PTime = optionValue.match(/(\d+)/);
+		let pausedTill = new Date();
+		if (PTime) {
+
+			if (optionType == 'Extend') {
+				var dt1 = (new Date(LastPaused)).getTime();//Unix timestamp (in milliseconds)
+				var addSec = PTime[0] * 60 * 1000
+				var dt2 = new Date(dt1 + addSec)
+				pausedTill = new Date(dt2);
+
+			} else {
+				var dt1 = (new Date()).getTime();
+				var addSec = PTime[0] * 60 * 1000
+				var dt2 = new Date(dt1 + addSec)
+				pausedTill = new Date(dt2);
+			}
+		}
+
+}
+
 
 }
