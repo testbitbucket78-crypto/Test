@@ -193,16 +193,16 @@ const resetPassword = function (req, res) {
     try {
         console.log(req.body)
         console.log("____RESET PASS______")
-       
+        
         id = req.query.uid
         console.log(id)
-        console.log("____******")
-        console.log(decodeURI(id))
-        console.log(encodeURI(id))
+        var trimedid=id.replace(/\s/g, '');
+        console.log(trimedid)
+        
         password = req.body.password
         confirmPassword = req.body.confirmPassword
         var uid="";
-        const bytes = CryptoJS.AES.decrypt(id, 'secretkey123')
+        const bytes = CryptoJS.AES.decrypt(trimedid, 'secretkey123')
         if (bytes.toString()) {
             console.log("_______crypto________")
          uid=JSON.parse(bytes.toString(CryptoJS.enc.Utf8))

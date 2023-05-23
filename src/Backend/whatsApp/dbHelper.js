@@ -90,7 +90,7 @@ function errlog(errData) {
         var issue = encodeURIComponent(errData)
         console.log("***********")
         console.log(issue)
-        excuteQuery(val.crachlogQuery, [issue])
+        excuteQuery(process.env.crachlogQuery, [issue])
     }
 }
 
