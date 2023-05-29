@@ -1,5 +1,5 @@
 
-const mysql = require('mysql2');
+const mysql = require('mysql');
 require('dotenv').config();
 
 var db = mysql.createConnection({
@@ -12,15 +12,6 @@ var db = mysql.createConnection({
 
 });
 
-// db.connect((err) => {
-//     if (!err) {
-//         console.log("Connected ");
-
-//     } else {
-//         console.log("Connection failed" + JSON.stringify(err, undefined, 2));
-//     }
-// });
-// module.exports=db;
 
 
 
@@ -90,7 +81,7 @@ function errlog(errData) {
         var issue = encodeURIComponent(errData)
         console.log("***********")
         console.log(issue)
-        excuteQuery(val.crachlogQuery, [issue])
+        excuteQuery(process.env.crachlogQuery, [issue])
     }
 }
 

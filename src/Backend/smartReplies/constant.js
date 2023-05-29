@@ -134,8 +134,12 @@ removeKeyword = `UPDATE SmartReplyKeywords set  isDeleted=1 , isDeletedOn=now() 
 updateSmartReply = `CALL updateSmartReply(?,?,?,?,?,?,?) `;
 crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
+var updateInteractionMapping="INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy) VALUES ?"
+var getInteractionMapping = "SELECT * from InteractionMapping,EndCustomer where EndCustomer.customerId=InteractionMapping.AgentId  and  is_active=1 and InteractionMapping.InteractionId=? ORDER BY MappingId DESC LIMIT 1"
+var selectTagQuery = "select tag from EndCustomer where customerId= ?";
+
 module.exports = {
     host, user, password, database, selectAll, search, sideNavKeywords, getsmartReplieswithSPID,
     alluserofAOwner, addNewReply, deleteSmartReply, deletMessage, editMessage, editAction,
-    removeKeyword, updateSmartReply,crachlogQuery
+    removeKeyword, updateSmartReply,crachlogQuery,updateInteractionMapping ,getInteractionMapping ,selectTagQuery
 }

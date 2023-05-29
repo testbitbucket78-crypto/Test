@@ -83,22 +83,22 @@ const register = async function (req, res) {
                 status: 409
             });
         }
-        else{
-        if (password !== confirmPassword) {
-            res.status(400).json({ error: 'Passwords do not match', status: 400 });
+        else {
+            if (password !== confirmPassword) {
+                res.status(400).json({ error: 'Passwords do not match', status: 400 });
+            }
+            // Hash the password before storing it in the database
+            const hash = await bcrypt.hash(password, 10);
+            var values = [name, mobile, email_id, hash]
+            var registeredUser = await db.excuteQuery(val.registerQuery, values)
+            const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
+            res.status(200).send({
+                msg: 'Registered !',
+                token,
+                user: registeredUser,
+                status: 200
+            });
         }
-        // Hash the password before storing it in the database
-        const hash = await bcrypt.hash(password, 10);
-        var values = [name, mobile, email_id, hash]
-        var registeredUser = await db.excuteQuery(val.registerQuery, values)
-        const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
-        res.status(200).send({
-            msg: 'Registered !',
-            token,
-            user: registeredUser,
-            status: 200
-        });
-    }
     }
     catch (err) {
         console.error(err);
@@ -155,13 +155,13 @@ const forgotPassword = async (req, res) => {
             var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
             console.log("_____FORGOT PASSWORD ENCRYPT___")
             console.log(cipherdata)
-           
+
             var mailOptions = {
                 from: val.email,
                 to: req.body.email_id,
                 subject: "Request for reset Password: ",
-                html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/#/reset-password?uid=' + cipherdata + '">  link  </a>to reset your password</p>'
-                //html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                 html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/#/reset-password?uid=' +cipherdata+ '">  link  </a>to reset your password</p>'
+                 //html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/#/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
 
             };
 
@@ -190,22 +190,27 @@ const forgotPassword = async (req, res) => {
 
 //resetPssword api
 const resetPassword = function (req, res) {
+
     try {
-        console.log(req.body)
-        console.log("____RESET PASS______")
-       
-        id = req.query.uid
-        console.log(id)
-        console.log("____******")
-        console.log(decodeURI(id))
-        console.log(encodeURI(id))
+        console.log("resetPassword")
+        console.log(req.query.uid)
+        var updateduid = req.query.uid;
+        if (req.query.uid.includes(' ')) {
+            var url = req.query.uid.split(' ');
+            updateduid = '';
+            url.forEach(item => {
+                updateduid = updateduid + (updateduid ? '+' : '') + item;
+            })
+
+        }
+        console.log(updateduid)
         password = req.body.password
         confirmPassword = req.body.confirmPassword
-        var uid="";
-        const bytes = CryptoJS.AES.decrypt(id, 'secretkey123')
+        var uid = "";
+        const bytes = CryptoJS.AES.decrypt(updateduid, 'secretkey123')
         if (bytes.toString()) {
             console.log("_______crypto________")
-         uid=JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
+            uid = JSON.parse(bytes.toString(CryptoJS.enc.Utf8))
             console.log(JSON.parse(bytes.toString(CryptoJS.enc.Utf8)))
 
         }
@@ -214,10 +219,27 @@ const resetPassword = function (req, res) {
             console.log(error)
         }
         else {
-            bcrypt.hash(password, 10, function (err, hash) {
+            bcrypt.hash(password, 10, async function (err, hash) {
 
-                db.runQuery(req, res, val.updatePassword, [hash, uid]);
-              
+                //db.runQuery(req, res, val.updatePassword, [hash, uid]);
+
+                var response = await db.excuteQuery(val.updatePassword, [hash, uid])
+
+                console.log(response)
+                console.log(response.affectedRows)
+                if (response.affectedRows != 0) {
+                    res.status(200).send({
+                        msg: 'Password Reset Successfully !',
+                        status: 200
+                    });
+                }
+                else {
+                    res.status(404).send({
+                        msg: 'Password in not reset',
+                        status: 404
+                    });
+                }
+
             })
         }
 

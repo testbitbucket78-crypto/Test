@@ -66,10 +66,10 @@ app.get('/', async (req, res) => {
   }
 })
 
-app.get('/Interactions', async (req, res) => {
+app.get('/Interactions:/sPid', async (req, res) => {
   // db.runQuery(req, res, val.interactionsQuery, [req.body])
   try {
-    const users = await db.excuteQuery(val.interactionsQuery, [req.body]);
+    const users = await db.excuteQuery(val.interactionsQuery, [req.query.sPid,req.query.sPid]);
     res.send(users);
   } catch (err) {
     console.error(err);

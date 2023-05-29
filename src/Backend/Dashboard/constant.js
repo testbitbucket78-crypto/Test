@@ -8,8 +8,22 @@ const database = "cip_project"
 
 
 //Query for dashboard
-interactionsQuery = `select interaction_status,count(*) count from Interaction WHERE created_at >=  NOW() - INTERVAL 30 DAY Group by (interaction_status) 
-union select 'Total Interactions',count(*) count from Interaction WHERE created_at >=  NOW() - INTERVAL 30 DAY`;
+interactionsQuery = `SELECT interaction_status, COUNT(*) AS count
+FROM Interaction
+JOIN EndCustomer ON Interaction.customerId = EndCustomer.customerId
+WHERE Interaction.created_at >= NOW() - INTERVAL 30 DAY
+AND EndCustomer.SP_ID = ? and EndCustomer.isBlocked !=1  and EndCustomer.isDeleted !=1
+GROUP BY interaction_status
+
+UNION
+
+SELECT 'Total Interactions' AS interaction_status, COUNT(*) AS count
+FROM Interaction
+JOIN EndCustomer ON Interaction.customerId = EndCustomer.customerId
+WHERE Interaction.created_at >= NOW() - INTERVAL 30 DAY
+AND EndCustomer.SP_ID = ? and EndCustomer.isBlocked !=1  and EndCustomer.isDeleted !=1`;
+
+
 campaignsQuery = ` SELECT STATUS,COUNT(*) COUNT FROM Campaign
 WHERE start_datetime >= NOW() - INTERVAL 30 DAY and sp_id=?
 GROUP BY (STATUS) `;
@@ -33,8 +47,8 @@ conversationQuery = "CALL dashboardRecentConversations(?)"
 crachlogQuery = `INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
 module.exports = {
-    host, user, password, database,
-    interactionsQuery, campaignsQuery, agentsQuery,
-    subscribersQuery, conversationQuery, crachlogQuery
+  host, user, password, database,
+  interactionsQuery, campaignsQuery, agentsQuery,
+  subscribersQuery, conversationQuery, crachlogQuery
 
 }
