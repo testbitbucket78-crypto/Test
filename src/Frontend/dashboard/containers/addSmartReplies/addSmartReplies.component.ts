@@ -3,7 +3,7 @@ import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { Router } from '@angular/router';
-import { agentMessageList, assignAddTags } from '@app/models/smart-replies/smartReplies.model';
+import { agentMessageList } from '@app/models/smart-replies/smartReplies.model';
 import Stepper from 'bs-stepper';
 import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
@@ -29,6 +29,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	@ViewChild('notesSection') notesSection: ElementRef | undefined;
 	@ViewChild('chatSection') chatSection: ElementRef | undefined;
 	@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any;
+
 
 	public selection: NodeSelection = new NodeSelection();
 	public range: Range | undefined;
@@ -96,7 +97,8 @@ export class AddSmartRepliesComponent implements OnInit {
 	successMessage = '';
 	warningMessage = '';
 	assignedAgentList: agentMessageList [] =[];
-	assignAddTag: assignAddTags [] =[];
+	assignAddTag: [] =[];
+	assignedTagList:any []=[];
 
     /**richtexteditor **/ 
 	custommesage = '<p>Your Reply...</p>'
@@ -411,7 +413,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
 	addMessage() {
-		this.assignedAgentList.push({ isMessage: true, value: this.custommesage })
+		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage })
 			// this.messages.push(this.message);
 			this.custommesage = '';
 		
@@ -427,7 +429,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	removeAction(index: number) {
 
 		this.assignedAgentList.forEach(item => {
-			if (!item.isMessage) {
+			if (!item.Message) {
 				this.assignedAgentList.splice(index, 1);
 					
 			}
@@ -438,9 +440,9 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	removeAddTag(index: number) {
 
-		this.assignAddTag.forEach(item => {
-			if (!item.isTag) {
-				this.assignAddTag.splice(index, 1);
+		this.assignedAgentList.forEach(item => {
+			if (!item.Value.includes(this.addTagList[index])) {
+				this.assignedAgentList.splice(index, 1);
 
 			}
 		})
@@ -463,6 +465,15 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	}
 
+	checkTagStatus (val:any) {
+		if(this.assignedTagList.includes(val)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
   /***  reply-action function  ***/
 
 	toggleAssignOption(index: number) {
@@ -470,11 +481,13 @@ export class AddSmartRepliesComponent implements OnInit {
     this.ShowAssignOption = !this.ShowAssignOption;
   }
   else if (this.assignActionList[index] === "Add Contact Tag") {
-	  this.ShowAddTag = !this.ShowAddTag;
+	  this.ShowRemoveTag =false;
+	  $("#addTagModal").modal('show'); 
+
   }
-  else if (this.assignActionList[index] === "Trigger Flow") {
-	  this.AutoReplyOption = !this.AutoReplyOption;
-  }
+//   else if (this.assignActionList[index] === "Trigger Flow") {
+// 	  this.AutoReplyOption = !this.AutoReplyOption;
+//   }
 	else { 
 	   this.ShowAssignOption = false;
 	  
@@ -513,36 +526,45 @@ export class AddSmartRepliesComponent implements OnInit {
 	}
 
 	toggleRemoveTag() {
-	
-		this.ShowRemoveTag = !this.ShowRemoveTag;
+		$("#addTagModal").modal('show'); 
+		this.ShowRemoveTag = true;
 	
 	}
 	assignConversation(index: number) {
 		var isExist = false;
 		this.assignedAgentList.forEach(item=> {
-			if(!item.isMessage) {
-				if(item.value == this.agentsList[index]) 
+			if(item.ActionID == 2) {
+				if(item.Value == this.agentsList[index]) 
 				isExist = true;
 			}
 		})
 		if(!isExist) {
-			this.assignedAgentList.push({isMessage:false, value: this.agentsList[index]})
+			this.assignedAgentList.push({Message:'', ActionID:2, Value: this.agentsList[index]})
 		}
 			
 	}
 
-	addTags(index: number) {
+	addTags(index: number, e:any) {
+		console.log(e,index);
 		var isExist = false;
-		this.assignAddTag.forEach(item => {
-			if (!item.isTag) {
-				if (item.value == this.addTagList[index])
-					isExist = true;
+		this.assignedAgentList.forEach(item => {
+			if (item.ActionID == 3) {
+				  isExist= true;
+				if (!item.Value.includes(this.addTagList[index])) {
+					console.log(this.addTagList[index]);
+					// item.Value.push(this.addTagList[index]);
+					this.assignedTagList.push(this.addTagList[index]);
 			}
+		}
 		})
 		if (!isExist) {
-			this.assignAddTag.push({ isTag: false, value: this.addTagList[index]})
+			this.assignedTagList = [];
+			this.assignedTagList.push(this.addTagList[index]);
+			this.assignedAgentList.push({ Message: '',ActionID: 3, Value: this.assignedTagList});
+			console.log('new value');
 		}
-
+		console.log(this.assignedAgentList);
+		console.log(this.assignedTagList);
 	}
 
 
@@ -596,13 +618,15 @@ export class AddSmartRepliesComponent implements OnInit {
 		sessionStorage.setItem('MatchingCriteria',this.model)
 	}
 
-	sendNewSmartReply(){
+	sendNewSmartReply() {
 		var data={
 			SP_ID:sessionStorage.getItem('SP_ID'),
 			Title:this.newReply.value.Title ,
 			Description:this.newReply.value.Description,
 			MatchingCriteria:this.model,
-			Keywords:this.keywords
+			Keywords:this.keywords,
+			ReplyActions:this.assignedAgentList,
+			Tags: []
 		}
 		console.log("data")
 		console.log(data)

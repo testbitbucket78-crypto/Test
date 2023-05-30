@@ -1,12 +1,9 @@
 import { Interface } from "readline";
 
 export interface agentMessageList{
-    isMessage: boolean;
-    value:any;
+    Message:string;
+    ActionID:Number;
+    Value:any;
     
 }
 
-export interface assignAddTags {
-    isTag: boolean;
-    value:any;
-}

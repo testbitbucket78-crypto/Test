@@ -112,7 +112,7 @@
 
           </div>
         </div>
-        <button type="button" (click)="next()" (click)="sendNewSmartReply()" class="btn5 btn-block col-1 mt-3 ">Next</button>
+        <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Next</button>
 
       </div>
       <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
@@ -123,31 +123,29 @@
          <div class="interactions">
             <div class="child-interaction-1">
               <div *ngFor="let message of assignedAgentList; let i = index">
-                <div class="message-box" *ngIf="message.isMessage">
+                <div class="message-box" *ngIf="message.ActionID == 1">
                 <p id="msgbox-head">Message</p>
-                <p id="msgbox-body" [contentEditable]="isEditable" (input)="onEdit($event.target.innerHTML)" [innerHTML]="message.value"></p>
+                <p id="msgbox-body" [contentEditable]="isEditable" (input)="onEdit($event.target.innerHTML)" [innerHTML]="message.Value"></p>
                 <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
                 <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
                 </div>
-                   <div class="assign-conversation" *ngIf="!message.isMessage">
+                   <div class="assign-conversation" *ngIf="message.ActionID == 2">
                 <p id="msgbox-head1">Action</p>
                 <div class="d-flex assign-container">
                 <p id="msgbox-body1"><b>Conversation Assigned:</b></p>
-                <p id="msgbox-body2" [contentEditable]="isEditable" (input)="onActionEdit($event.target.innerHTML)">{{message.value}}</p>
+                <p id="msgbox-body2" [contentEditable]="isEditable" (input)="onActionEdit($event.target.innerHTML)">{{message.Value}}</p>
                 </div>
                    <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
                    <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
               
              
               </div>
-       
-              </div>
-                 <div *ngFor="let tag of assignAddTag; let i = index" (click)="toggleAddTag()">
-                <div class="add-tag" *ngIf="!tag.isTag">
+                  <div *ngIf="message.ActionID == 3">
+                <div class="add-tag">
                 <p id="msgbox-head1">Action</p>
                 <div class="d-flex assign-container">
                 <p id="msgbox-body1"><b>Add Tags:</b></p>
-                <p id="msgbox-body2" >{{tag.value}}</p>
+                <p *ngFor="let item of message.Value" id="msgbox-body2" >{{item}}</p>
                 </div>
                    <button class="msg-edit-btn" (click)="toggleRemoveTag()"><img src="assets/img/edit.png"></button>
                    <button class="msg-del-btn" (click)="removeAddTag(i)"><img src="assets/img/delete.png"></button>
@@ -155,6 +153,9 @@
              
               </div>
               </div>
+       
+              </div>
+             
 
               <!-- <div class="update-name" *ngIf="ShowNameUpdate">
                 <p id="msgbox-head1">Action</p>
@@ -232,31 +233,37 @@
 						
 						</div> -->
 
-              <div *ngIf="ShowAddTag"  class="popup-dialog AddTag">
-                 <p class="label">Add Tag</p>
-                
-                <div class="addTag d-flex" *ngFor="let AddTag of addTagList;let i = index" (click)="addTags(i)" (click)="toggleAddTag()">
-                 <input  [checked]="AddTag.status" type="checkbox" name="tags" class="form-control-checkbox ml-2" value="{{AddTag.value}}" (change)="addTags($event)"/>
-                 <div class="color-dots"></div>   
-                 <span>{{AddTag}}</span>
-                 </div>
-               </div>
+              
 
-              <div *ngIf="ShowRemoveTag"  class="popup-dialog RemoveTag">
-                 <p class="label">Remove Tag</p>
 
+
+            <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content qr-modal">
                   
-                <div class="removeTag d-flex" *ngFor="let RemoveTag of addTagList;let m = index"> 
-                  <input  [checked]="RemoveTag.status" type="checkbox" name="tags" class="form-control-checkbox ml-2" value="{{RemoveTag.value}}" (click)="addTags($event)"/>
-                  <div class="color-dots"></div>
-                  <span>{{RemoveTag}}</span>
-                 </div>
-               </div>
+                    <div class="modal-body">
+                      <div class="popup-dialog AddTag">
+                    <p *ngIf="!ShowRemoveTag" class="label">Add Tag</p>
+                    <p *ngIf="ShowRemoveTag" class="label">Remove Tag</p>
+                        <div class="addTag d-flex" *ngFor="let AddTag of addTagList;let i = index">
+                        <input  [checked]="checkTagStatus(AddTag)" type="checkbox" name="tags" class="form-control-checkbox ml-2" (change)="addTags(i,$event.target.value)"/>
+                        <div class="color-dots"></div>   
+                        <span>{{AddTag}}</span>
+                        </div>
+                      </div>
+                            
+                   </div>
+            </div>
+        </div>
+    </div>
+
 
          </div>
 
 
-          <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Save</button>
+
+
+          <button type="button" (click)="sendNewSmartReply()" class="btn5 btn-block col-1 mt-3 ">Save</button>
       
       </div>
     </div>
