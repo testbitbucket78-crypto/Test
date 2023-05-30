@@ -19,8 +19,10 @@ export class DashboardService {
     console.log(params)
     return this.http.get('https://cip-api.sampanatechnologies.com/Subscribers:/sPid', { params: params })
   }
-  public dashboardInteractions() {
-    return this.http.get('https://cip-api.sampanatechnologies.com/Interactions');
+  public dashboardInteractions(sPid: any) {
+    const params = new HttpParams().set('sPid', sPid)
+    console.log("  dashboardSubscribers : params")
+    return this.http.get('https://cip-api.sampanatechnologies.com/Interactions:/sPid', { params: params });
 
   }
   public dashboardAgents(sPid:any) {

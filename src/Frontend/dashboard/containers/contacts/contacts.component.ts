@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -51,11 +51,11 @@ export class ContactsComponent implements OnInit {
     {
       field: 'Name', headerName: 'Name', filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }
  },
-    { field: 'Phone_number', headerName: 'Phone Number', width: 190, filter: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }, sortable: true, },
+    { field: 'Phone_number', headerName: 'Phone Number', width: 170, filter: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }, sortable: true, },
     { field: 'emailId', headerName: 'Email', filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
     { field: 'age', headerName: 'Age', width: 140, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
-    { field: 'sex', headerName: 'Gender', width: 140, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
-    { field: 'tag', headerName: 'Tag', filter: true, width:210, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } }
+    { field: 'sex', headerName: 'Gender', width: 130, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
+    { field: 'tag', headerName: 'Tag', filter: true, width:163, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } }
 ];
 
   Tag: string[] =
@@ -145,8 +145,8 @@ export class ContactsComponent implements OnInit {
 			quantities: this.fb.array([]) ,  
 		  });
       this.newContact=this.fb.group({
-        Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z ]+")])),
-        Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+        Name: new FormControl('', Validators.compose([Validators.required])),
+        Phone_number: new FormControl(''),
         emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
         age: new FormControl(''),
         tag: new FormControl([]),
@@ -407,17 +407,21 @@ onSelectAll(items: any) {
  
 
   onRowSelected = (event: any) => {
-    const rowChecked = this.checkedConatct.findIndex((item) => item.customerId == event.data.customerId);
-    if (rowChecked < 0 ) {
-     
-      this.checkedConatct.push(event.data);
-      
-    }
+       if(event === null || event === undefined) {
+      this.checkedConatct = [] }
+      else {
+      const rowChecked = this.checkedConatct.findIndex((item) => item.customerId == event.data.customerId);
+      if (rowChecked < 0) {
 
-    else {
-      this.checkedConatct.splice(rowChecked , 1);
+        this.checkedConatct.push(event.data);
 
-    }
+      }
+
+      else {
+        this.checkedConatct.splice(rowChecked, 1);
+
+       }
+      }
     console.log(this.checkedConatct.length );
 
 

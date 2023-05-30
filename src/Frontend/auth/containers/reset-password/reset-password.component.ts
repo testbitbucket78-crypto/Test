@@ -36,10 +36,21 @@ export class ResetPasswordComponent implements OnInit {
   ngOnInit() {
     this.active.queryParams
       .subscribe(params => {
-      
-        console.log(params.uid); // { uid: }
-        this.uid = params.uid
-        console.log("a to z")
+        var updateduid = params.uid;
+        if (params.uid.includes(' ')) {
+          var url = params.uid.split(' ');
+          updateduid = '';
+          url.forEach((item: any) => {
+            updateduid = updateduid + (updateduid ? '+' : '') + item;
+          })
+
+        }
+        console.log("a to z  " + updateduid)
+        this.uid = updateduid
+
+        console.log("_ENCODE UID_  " + encodeURIComponent(params.uid))
+        console.log("__ DECODE ENCODE UID_ " + decodeURIComponent(encodeURIComponent(params.uid)))
+        console.log("___DECODE__ " + decodeURIComponent(params.uid)); // { uid: }
 
       }
       );

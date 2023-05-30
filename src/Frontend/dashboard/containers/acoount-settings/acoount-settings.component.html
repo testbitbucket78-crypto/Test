@@ -1,0 +1,85 @@
+<div>
+    <div class="row">
+        <div class="col-sm-9 py-4 setting-field">
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1">Channels</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2">API Token</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3">Integration</a>
+        </div>
+    </div>
+    <div class="setting-card" *ngIf="selectedTab==1">
+        <h4>Channels</h4>
+        <div class="row">
+            <div class="col-sm-6 p-5">
+                <div class="account-card card1 mb-3">
+                    <div class="account-card-header">
+                        <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
+                        <button class="account-btn" data-toggle="modal" data-target="#connectWhatsappModal">Add</button>
+                    </div>
+                    <div>
+                        <h5>WhatsApp Web</h5>
+                        <p>WhatsApp Web automation of your WhatsApp Personal or WhatsApp Business numbers</p>
+                        <h6>Connected</h6>
+                    </div>
+                </div>
+                <div class="account-card card2 mb-3">
+                    <div class="account-card-header">
+                        <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
+                        <button class="account-btn" data-bs-toggle="modal" data-bs-target="#connectWhatsappModal">Add</button>
+                    </div>
+                    <div>
+                        <h5>WhatsApp Official</h5>
+                        <p>WWhatsApp Official API to automate and scale your business messaging requirements</p>
+                        <h6>Connected</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <h5 class="mt-5">WhatsApp Web</h5>
+                <div class="connection-card" *ngFor="let item of connection">
+                    <div class="account-card-header">
+                        <div>
+                            <div class="card-desc">Connected : <span>045924999458</span></div>
+                            <div class="d-flex">
+                                <div class="card-desc">Channel Id: <span>02</span></div>
+                                <div class="card-desc">Connected</div>
+                            </div>
+                        </div>
+                        <img src="../../../../assets/img/Setting.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+<div class="modal fade" tabindex="-1" id="connectWhatsappModal" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content account-modal">
+        <div class="modal-header">
+          <h5 class="modal-title">Connect WhatsApp Web</h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+            <img src="../../../../assets/img/teambox/icon-close.svg">
+          </button>
+        </div>
+        <div class="modal-body">
+          <div>
+              <span>Which phone do you use?</span><br>
+            <div class="d-flex">
+            <input type="radio" name="phoneRadio">
+            <span class="pl-1">Android</span>
+            <input type="radio" name="phoneRadio">
+            <span class="pl-1">iOS</span>
+
+       
+        </div>
+
+            <span>After connecting do you want to import unto 30 conversation?</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="account-btn">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

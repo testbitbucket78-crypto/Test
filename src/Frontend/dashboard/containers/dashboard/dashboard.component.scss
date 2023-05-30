@@ -62,7 +62,7 @@ height: 429px;
 
 #campaigns {
 // width: 1011px;
-width: 967px!important;
+width: 898px!important;
 height: 100%;
 left: 46px;
 }
@@ -93,8 +93,8 @@ opacity: 1;
 
 
 .card1 {
-    height: 89px;
-    width: 391px;
+    // height: 89px;
+    // width: 391px;
     border-radius: 30px;
     background-color: #e4dff5;
     opacity: 1;
@@ -102,16 +102,16 @@ opacity: 1;
     text-align: center;
 }
 .card2 {
-    height: 89px;
-    width: 391px;
+    // height: 89px;
+    // width: 391px;
     border-radius: 30px;
     background-color: #e2f4ec;
     text-align: center;
     margin-top: 25px;
 }
 .card3 {
-    height: 70px;
-    width: 391px;
+    // height: 70px;
+    // width: 391px;
     border-radius: 30px;
     margin: 20px 0px 0px 0px;
     background-color: #ebedf1;
@@ -175,11 +175,11 @@ h6,
     border-radius: 30px;
     box-shadow: 2px 13px 54px #695f9714;
     opacity: 1;
-    margin: 60px 0px 0px 50px!important;
-    width: 56%!important;
+    margin: 60px 0px 0px 50px;
+    width: 60%;
     height: 210px;
     border: none;
-    box-sizing: border-box!important;
+    box-sizing: border-box;
 }
 .rowss img {
     vertical-align: middle;
@@ -340,12 +340,14 @@ font-size: 14px;
     margin: -27px 0 0 187px;
 }
 .date h4 {
-    font-size: 13px;
-    font-weight: normal;
-    color: #7a86a1;
-    margin: -8px 0px 0px 246px;
 
-}
+        font-size: 11px;
+        font-weight: normal;
+        color: #7a86a1;
+        margin: -12px 0px 0px 232px;
+    }
+
+
 .row4 {
     margin: -57px 0px 0px 75px;
 }
@@ -465,330 +467,345 @@ font-size: 14px;
   }
 
   
-/***** media queries for low resolution laptops ****/
+/**** media queries for low resolution laptops ***/
 
 // laptop screen size 1536px
+
 @media screen and (max-width:1536px) {
 
-.col-sm-5.c1, .col-sm-5.c2  {
-width: 200px;
-height: 270px;
-margin-left: 56px;
-}
-
-.card-body{
-    // margin: 19px 22px 0px 25px!important;
-     margin:0!important;
-}
-
-.card1 {
-    margin-top: 12px;
-    width: 274px;
-    height: 56px;
-    border-radius: 26px;
-}
-
-.card2 {
-    margin-top: 12px;
-    width: 274px;
-    height: 56px;
-    border-radius: 26px;
-}
-
-.card3 {
-   margin-top: 12px;
-    width: 274px;
-    height: 56px;
-    border-radius: 26px;
-}
-
-.card-body h4 {
-    font-size: 18px;
-    margin-top: 0px;
-}
-
-.card-body.mt-0.ml-1 {
-    font-size: 17px;
-}
-
-.card-body.mt-0.ml-1 h5 {
-    font-size: 17px;
-}
-
-.card-body.mt-0.ml-1 h6 {
-    font-size: 13px;
-    margin-top: 2px;
-}
-
-.row.r1{
-    width: 63% !important;
-    margin-left: 0;
-
-}
-
-.row{
-    margin-top:37px!important;
-}
-.row.r2{
-    width: 59% !important;
-    margin-left: 0;
-
-}
-
-.btn2:not(:disabled):not(.disabled) {
-  
-    margin: 60px 0px 0px 57px;
-    width: 58%;
-  
-}
-
-
-#campaigns {
-    width: 97%;
-    height: 100%;
-    left: 50px;
-}
-
-
-.row1 .totalscheduled h5 {
-    font-size: 17px !important;
-}
-.row1 .totalscheduled h6 {
-    font-size: 12px !important;
-    margin: 0px 0 0 0;
-}
-.row9 .totalcampaign h5 {
-    font-size: 17px !important;
-    margin: 37px 0 0 -45px!important;
-}
-.row9 .totalcampaign h6 {
-    font-size: 12px !important;
-    margin: 0px 0 0 6px!important;
-}
-.line{
-    margin: 23px 0 0 40%;
-}
-.line1{
-    margin: 23px 0 0 40%;
-}
-.new {
-    margin: 80px 0 0 24pc;
-}
-
-
-
-
-#agents {
-    width: auto;
-    left: 55px;
-}
-
-#agents-body {
-   width: max-content;
-   margin: 0;
-}
-
-.card8{
-    width: 39%!important;
-    border-radius: 0px!important;
-}
-
-.card8 h2 {
-    font-size: 13px!important;
-    padding: 16px;
-}
-
-#heading {
-    font-size: 13px;
-    margin-left: 23px;
-    margin-top: 10px;
-}
-
-#heading2 {
-    width: 315px!important;
-    margin-left: 51px;
-}
-
-.card-body-right {
-    width: 400px!important;
-    border-radius: 0px!important;
-    margin-left: 97px!important;
-}
-
-#card9-h4 {
-    font-size: 16px!important;
-    margin-left: 25px!important;
-    margin-top: 19px!important;
-}
-
-// .row.d-flex {
-//     margin-left: 20px!important;
-// }
-.row2{
-    position: absolute;
-
-    margin: 82px 0px 0px 75px;
-}
-.row2 h5{
-    font-size: 12px!important;
-    margin: 0px 0 0 23px;
-}
-
-.row2 h6{
-    font-size: 12px !important;
-    margin: 0 0 0 25px;
-    width: 245px;
-    text-align: justify;
-}
-
-
-.card10  {
-    width: 303px!important;
-    height: 390px!important;
-    right: 56px!important;
-    margin-top: 85px!important;
- 
-}
-
-.card10-p {
-
-    width: 128px;
-    height: 115px;
-
-   
-}
-
-.card10-p img {
-
-  width: 99px!important;
-  height: 88px!important;
-  top: 0px!important;
-  left:105px!important;
-}
-
-
-.card10-p p {
-
-    letter-spacing: -0.93px;
-    top: 163px;
-    left: 71px;
-   
-}
-
-.card10-p .txt-1 {
-    font-size: 30px!important;
-    left: 89px!important;
-    top: 116px!important;
-    letter-spacing: -0.93px!important;
-   
-}
-
-
-.card10-p .txt-2 {
-    font-size: 12px!important;
-    left: 104px!important;
-    top: 159px!important;
-    letter-spacing: 0px;
-}
-  
-
-.card10-c {
- 
-    width: 87%!important;
-    left: 21px!important;
-    bottom: 16px!important;
-    height: 170px!important;
-}
-
-
-.card10-c .txt-1 {
-    margin-top: 27px!important;
-    font-size: 13px!important;
-}
-
-.card10-c .txt-2 {
-     margin-top: 7px!important;
-    font-size: 23px!important;
-}
-img {
-    vertical-align: middle;
-    border-style: none;
-    margin: 43px 0px 0px 25px;
-    width: 45px;
-    border-radius: 17px;
-    height: 45px;
-}
-
-.card10-c img {
-  height:100%; 
-  width:auto;
-}
-.ml-1, .mx-1 {
-    margin: 7px 0 0 11px!important;
-}
-
-#totaldraft{
-    margin: 0px 0 0 0px !important;
-}
-.mt-5, .my-5 {
-    margin-top: 3rem !important;
-}
-.row3 .mt-5.ml-4 h5 {
-    font-size: 17px !important;
-}
-.row3 .mt-5.ml-4 h6 {
-    font-size: 12px !important;
-}
-.row4 .mt-0.ml-1 h5 {
-    font-size: 17px !important;
-}
-.row4 .mt-0.ml-1 h6 {
-    font-size: 12px !important;
-}
-.row5 .mt-0.ml-1 h5 {
-    font-size: 17px !important;
-}
-.row5 .mt-0.ml-1 h6 {
-    font-size: 12px !important;
-}
-
-
-.card10-c button {
-    margin-top: -12px;
-    font-size: 12px;
-    width: 74%;
-    height: 26%;
-    border-radius: 14px;
-  
-  }
-
-  h5,
-.h5 {
-
-    margin: -10px 0px 0px 0px;
-   
-}
-
-  .new img {
-    margin: -108px 30px 0px -60px;
-  }
-  .new .image img {
-    margin: -108px 30px 0px -25px;
-  }
-
-#scheduledCampaign {
-    margin-left: 47px;
-}
-
-
-
-#active-agent {
-    margin-left:  30px;
-}
-
-
-
-}
+    .col-sm-5.c1, .col-sm-5.c2  {
+    width: 200px;
+    height: 270px;
+    margin-left: 56px;
+    }
+    
+    .card-body{
+        // margin: 19px 22px 0px 25px!important;
+         margin:0!important;
+    }
+    
+    .card1 {
+        margin-top: 12px;
+        width: 274px;
+        height: 56px;
+        border-radius: 26px;
+    }
+    
+    .card2 {
+        margin-top: 12px;
+        width: 274px;
+        height: 56px;
+        border-radius: 26px;
+        margin-left:0px;
+    }
+    
+    .card3 {
+       margin-top: 12px;
+        width: 274px;
+        height: 56px;
+        border-radius: 26px;
+    }
+    
+    .card-body h4 {
+        font-size: 18px;
+        margin-top: 0px;
+    }
+    
+    .card-body.mt-0.ml-1 {
+        font-size: 17px;
+    }
+    
+    .card-body.mt-0.ml-1 h5 {
+        font-size: 17px;
+    }
+    
+    .card-body.mt-0.ml-1 h6 {
+        font-size: 13px;
+        margin-top: 2px;
+    }
+    
+    .row.r1{
+        width: 63% !important;
+        margin-left: 0;
+    
+    }
+    
+    .row{
+        margin-top:37px!important;
+    }
+    .row.r2{
+        width: 59% !important;
+        margin-left: 0;
+    
+    }
+    
+    .btn2:not(:disabled):not(.disabled) {
+      
+        margin: 60px 0px 0px 57px;
+        width: 59%;
+      
+    }
+    
+    
+    #campaigns {
+        width: 97%;
+        height: 100%;
+        left: 50px;
+    }
+    
+    
+    .row1 .totalscheduled h5 {
+        font-size: 17px !important;
+    }
+    .row1 .totalscheduled h6 {
+        font-size: 12px !important;
+        margin: 0px 0 0 0;
+    }
+    .row9 .totalcampaign h5 {
+        font-size: 17px !important;
+        margin: 37px 0 0 0px !important;
+    }
+    .row9 .totalcampaign h6 {
+        font-size: 12px !important;
+        margin: 0px 0 0 6px!important;
+    }
+    .line{
+        margin: 23px 0 0 40%;
+    }
+    .line1{
+        margin: 23px 0 0 40%;
+    }
+    .new {
+        margin: 80px 0 0 24pc;
+    }
+    
+    
+    
+    
+    #agents {
+        width: auto;
+        left: 55px;
+    }
+    
+    #agents-body {
+       width: max-content;
+       margin: 0;
+    }
+    
+    .card8{
+        width: 39%!important;
+        border-radius: 0px!important;
+    }
+    
+    .card8 h2 {
+        font-size: 13px!important;
+        padding: 16px;
+    }
+    
+    #heading {
+        font-size: 13px;
+        margin-left: 23px;
+        margin-top: 10px;
+    }
+    
+    #heading2 {
+        width: 315px!important;
+        margin-left: 51px;
+    }
+    
+    .card-body-right {
+        width: 400px!important;
+        border-radius: 0px!important;
+        margin-left: 97px!important;
+    }
+    
+    #card9-h4 {
+        font-size: 16px!important;
+        margin-left: 25px!important;
+        margin-top: 19px!important;
+    }
+    
+    // .row.d-flex {
+    //     margin-left: 20px!important;
+    // }
+    .row2{
+        position: absolute;
+    
+        margin: 82px 0px 0px 75px;
+    }
+    .row2 h5{
+        font-size: 12px!important;
+        margin: 0px 0 0 15px;
+    }
+    
+    .date h4 {
+        font-size: 11px;
+        font-weight: normal;
+        color: #7a86a1;
+        margin: -12px 0px 0px 232px;
+    }
+    .rowss  img {
+        vertical-align: middle;
+        border-style: none;
+        margin: 75px 0px 0px 42px;
+        width: 45px;
+        border-radius: 17px;
+        height: 45px;
+    }
+    .row2 h6{
+        font-size: 10px !important;
+        margin: 0 0 0 14px;
+        width: 245px;
+        text-align: justify;
+    }
+    
+    
+    .card10  {
+        width: 303px !important;
+        height: 372px !important;
+        right: 44px !important;
+        margin-top: 11px !important;
+     
+    }
+    
+    .card10-p {
+    
+        width: 128px;
+        height: 115px;
+    
+       
+    }
+    
+    .card10-p img {
+        width: 98px !important;
+        height: 87px !important;
+        top: -23px !important;
+        left: 72px !important;
+    }
+    
+    
+    .card10-p p {
+    
+        letter-spacing: -0.93px;
+        top: 163px;
+        left: 71px;
+       
+    }
+    
+    .card10-p .txt-1 {
+        font-size: 30px !important;
+        left: 83px !important;
+        top: 127px !important;
+        letter-spacing: -0.93px !important;
+       
+    }
+    
+    
+    .card10-p .txt-2 {
+        font-size: 12px!important;
+        left: 104px!important;
+        top: 159px!important;
+        letter-spacing: 0px;
+    }
+      
+    
+    .card10-c {
+     
+        width: 88% !important;
+        left: 17px !important;
+        bottom: 16px !important;
+        height: 170px !important;
+    }
+    
+    
+    .card10-c .txt-1 {
+        margin-top: 27px!important;
+        font-size: 13px!important;
+    }
+    
+    .card10-c .txt-2 {
+         margin-top: 7px!important;
+        font-size: 23px!important;
+    }
+    img {
+        vertical-align: middle;
+        border-style: none;
+        margin: 43px 0px 0px 25px;
+        width: 45px;
+        border-radius: 17px;
+        height: 45px;
+    }
+    
+    .card10-c img {
+      height:100%; 
+      width:auto;
+    }
+    .ml-1, .mx-1 {
+        margin: 7px 0 0 11px!important;
+    }
+    
+    #totaldraft{
+        margin: 0px 0 0 0px !important;
+    }
+    .mt-5, .my-5 {
+        margin-top: 3rem !important;
+    }
+    .row3 .mt-5.ml-4 h5 {
+        font-size: 17px !important;
+    }
+    .row3 .mt-5.ml-4 h6 {
+        font-size: 12px !important;
+    }
+    .row4 .mt-0.ml-1 h5 {
+        font-size: 17px !important;
+    }
+    .row4 .mt-0.ml-1 h6 {
+        font-size: 12px !important;
+    }
+    .row5 .mt-0.ml-1 h5 {
+        font-size: 17px !important;
+    }
+    .row5 .mt-0.ml-1 h6 {
+        font-size: 12px !important;
+    }
+    
+    
+    .card10-c button {
+        margin-top: 18px;
+        font-size: 12px;
+        width: 78%;
+        height: 26%;
+        border-radius: 14px;
+      
+      }
+    
+      h5,
+    .h5 {
+    
+        margin: -10px 0px 0px 0px;
+       
+    }
+    
+      .new img {
+        margin: -108px 30px 0px -60px;
+      }
+      .new .image img {
+        margin: -108px 30px 0px -25px;
+      }
+    
+    #scheduledCampaign {
+        margin-left: 47px;
+    }
+    
+    
+    
+    #active-agent {
+        margin-left:  30px;
+    }
+    
+    
+    
+    }
 
 .imga{
     margin: 0px 0 0 9px;
@@ -799,6 +816,10 @@ img {
 
 
  // laptop screen size 1366px
+
+
+ // laptop screen size 1280px
+
 @media screen and (max-width:1366px) {
 
 .im{
@@ -828,6 +849,7 @@ margin-left: 44px;
 
 .card2 {
     margin-top: 12px;
+    margin-left: 0;
     width: 274px;
     height: 56px;
     border-radius: 26px;
@@ -878,7 +900,7 @@ line-height: 0px;
 .btn2:not(:disabled):not(.disabled) {
   
     margin: 60px 0px 0px 57px;
-    width: 58%;
+    width: 55%;
   
 }
 
@@ -899,7 +921,7 @@ line-height: 0px;
 }
 .row9 .totalcampaign h5 {
     font-size: 17px !important;
-    margin: 36px 0 0 5px;
+    margin: 36px 0 0 -46px!important;
 }
 .row9 .totalcampaign h6 {
     font-size: 12px !important;
@@ -971,20 +993,32 @@ line-height: 0px;
 }
 .row2 h5{
     font-size: 12px!important;
-    margin: 0px 0 0 23px;
+    margin: 6px 0 0 13px;
 }
 
 .row2 h6{
-    font-size: 12px!important;
-    margin: 0 0 0 25px;
+
+    font-size: 10px !important;
+    margin: 0 0 0 11px;
+
+}
+.rowss img{
+    margin: 81px 0px 0px 37px;
 }
 
 
+.date h4{
+    font-size: 10px;
+    font-weight: normal;
+    color: #7a86a1;
+    margin: -14px 0px 0px 231px;
+}
+
 .card10  {
-    width: 303px!important;
-    height: 390px!important;
-    right: 56px!important;
-    margin-top: 85px!important;
+    width: 18.5rem !important;
+    height: 22.375rem !important;
+    right: 47px !important;
+    margin-top: 0.938rem !important;
     position: relative;
 }
 
@@ -997,11 +1031,10 @@ line-height: 0px;
 }
 
 .card10-p img {
-
-  width: 99px!important;
-  height: 88px!important;
-  top: -19px!important;
-  left: 84px!important;
+    width: 92px !important;
+    height: 82px !important;
+    top: -16px !important;
+    left: 67px !important;
 }
 
 
@@ -1014,14 +1047,13 @@ line-height: 0px;
 }
 
 .card10-p .txt-1 {
-    font-size: 30px!important;
-    left: 89px!important;
-    top: 116px!important;
-    letter-spacing: -0.93px!important;
+    font-size: 30px !important;
+    left: 78px !important;
+    top: 127px !important;
+    letter-spacing: -0.93px !important;
+
    
 }
-
-
 .card10-p .txt-2 {
     font-size: 12px!important;
     left: 104px!important;
@@ -1031,11 +1063,10 @@ line-height: 0px;
   
 
 .card10-c {
- 
-    width: 87%!important;
-    left: 21px!important;
-    bottom: 16px!important;
-    height: 170px!important;
+    width: 89% !important;
+    left: 17px !important;
+    bottom: 13px !important;
+    height: 155px !important;
 }
 
 
@@ -1094,12 +1125,12 @@ img {
 
 
 .card10-c button {
-    margin-top: -12px;
+    margin-top: 10px;
     font-size: 12px;
-    width: 74%;
+    width: 70%;
     height: 26%;
     border-radius: 14px;
-  
+    margin-left: 8px;
   }
 
   h5,
@@ -1130,434 +1161,356 @@ img {
 
 
 }
-
- // laptop screen size 1280px
 @media screen and (max-width:1280px) {
 
-.im{
-    margin: 0px 0 0 4px;
-}
-
-.col-sm-5.c1, .col-sm-5.c2  {
-width: 200px;
-height: 270px;
-margin-left: 44px;
-}
-
-.card-body{
-   margin: 0px -16px 3px -19px !important;
-}
-
-.card1 {
-    margin-top: 12px;
-    width: 274px;
-    height: 56px;
-    border-radius: 26px;
-}
-
-.card2 {
-    margin-top: 12px;
-    width: 236px;
-    height: 56px;
-    border-radius: 26px;
-}
-
-.card3 {
-    margin-top: 12px;
-    width: 238px;
-    height: 56px;
-    border-radius: 26px;
-}
-
-.card-body h4 {
-    font-size: 18px;
-    margin-top: 6px;
-    margin-left: 11px;
-}
-
-.card-body.mt-0.ml-1 {
-    font-size: 17px;
-}
-
-.card-body.mt-0.ml-1 h5 {
-   font-size: 17px;
-   line-height: inherit;
-}
-
-.card-body.mt-0.ml-1 h6 {
- font-size: 13px;
-line-height: 0px;
-}
-
-.row.r1{
-    width: 63% !important;
-    margin-left: 0;
-
-}
-
-.row{
-    margin-top:37px!important;
-}
-.row.r2{
-    width: 59% !important;
-    margin-left: 0;
-
-}
-
-.btn2:not(:disabled):not(.disabled) {
-  
-    margin: 60px 0px 0px 57px;
-    width: 58%;
-  
-}
-
-
-#campaigns {
-    width: 96%!important;
-    height: 100%;
-    left: 32px;
-}
-
-
-.row1 .totalscheduled h5 {
-    font-size: 17px !important;
-}
-.row1 .totalscheduled h6 {
-    font-size: 12px !important;
-    margin: 0px 0 0 0;
-}
-.row9 .totalcampaign h5 {
-    font-size: 17px !important;
-    margin: 36px 0 0 5px;
-}
-.row9 .totalcampaign h6 {
-    font-size: 12px !important;
-    margin: 0px 0 0 6px!important;
-}
-.line{
-    margin: 23px 0 0 47%;
-}
-.line1{
-    margin: 23px 0 0 47%;
-}
-.new {
-    margin: 80px 0 0 24pc;
-}
-
-
-
-
-#agents {
-    width: auto;
-    left: 55px;
-}
-
-#agents-body {
-   width: max-content;
-   margin: 0;
-}
-
-.card8{
-    width: 39%!important;
-    border-radius: 0px!important;
-}
-
-.card8 h2 {
-    font-size: 13px!important;
-    padding: 16px;
-}
-
-#heading {
-    font-size: 13px;
-    margin-left: 23px;
-    margin-top: 10px;
-}
-
-#heading2 {
-    width: 315px!important;
-    margin-left: 51px;
-}
-
-.card-body-right {
-    width: 358px !important;
-    border-radius: 0px !important;
-    margin-left: 146px !important;
-}
-
-#card9-h4 {
-    font-size: 16px!important;
-    margin-left: 25px!important;
-    margin-top: 19px!important;
-}
-
-// .row.d-flex {
-//     margin-left: 20px!important;
-// }
-.row2{
-    position: absolute;
-
-    margin: 82px 0px 0px 75px;
-}
-.row2 h5{
-    font-size: 12px!important;
-    margin: 0px 0 0 23px;
-}
-
-.row2 h6{
-    font-size: 12px!important;
-    margin: 0 0 0 25px;
-}
-
-
-// .card10  {
-//    width: 303px !important;
-//     height: 390px !important;
-//     right: 22px !important;
-//     margin-top: 80px !important;
-//     position: relative;
-// }
-
-
-// .card10-p {
-
-//     width: 128px;
-//     height: 115px;
-
-   
-// }
-
-// .card10-p img {
-
-//   width: 99px!important;
-//   height: 88px!important;
-//   top: 0px!important;
-//   left:98px!important;
-// }
-
-
-// .card10-p p {
-
-//     letter-spacing: -0.93px;
-//     top: 163px;
-//     left: 71px;
-   
-// }
-
-// .card10-p .txt-1 {
-//     font-size: 30px!important;
-//     left: 89px!important;
-//     top: 135px!important;
-//     letter-spacing: -0.93px!important;
-   
-// }
-
-
-// .card10-p .txt-2 {
-//     font-size: 12px!important;
-//     left: 104px!important;
-//     top: 159px!important;
-//     letter-spacing: 0px;
-// }
-  
-
-// .card10-c {
- 
-//     width: 87%!important;
-//     left: 21px!important;
-//     bottom: 16px!important;
-//     height: 170px!important;
-// }
-
-
-// .card10-c .txt-1 {
-//     margin-top: 27px!important;
-//     font-size: 13px!important;
-// }
-
-// .card10-c .txt-2 {
-//      margin-top: 7px!important;
-//     font-size: 23px!important;
-// }
-// img {
-//     vertical-align: middle;
-//     border-style: none;
-//     margin: 43px 0px 0px 25px;
-//     width: 45px;
-//     border-radius: 17px;
-//     height: 45px;
-// }
-
-// .card10-c img {
-//   height:100%; 
-//   width:auto;
-// }
-
-.card10  {
-     width: 295px !important;
-    height: 404px !important;
-    right: 32px !important;
-    margin-top: 85px !important;
+    .im{
+        margin: 0px 0 0 4px;
     }
     
-    .card10-p {
-    
-        width: 128px;
-        height: 115px;
-    
-       
+    .col-sm-5.c1, .col-sm-5.c2  {
+    width: 200px;
+    height: 270px;
+    margin-left: 44px;
     }
     
-    .card10-p img {
-    
-    width: 94px !important;
-    height: 83px !important;
-    top: -22px !important;
-    left: 79px !important;
+    .card-body{
+       margin: 0px -16px 3px -19px !important;
     }
     
-    
-    .card10-p p {
-    
-        letter-spacing: -0.93px;
-        top: 163px;
-        left: 71px;
-       
+    .card1 {
+        margin-top: 12px;
+        width: 234px;
+        height: 56px;
+        border-radius: 26px;
     }
     
-    .card10-p .txt-1 {
-        font-size: 30px!important;
-        left: 89px!important;
-        top: 116px!important;
-        letter-spacing: -0.93px!important;
-       
+    .card2 {
+        margin-top: 12px;
+        margin-left: 0px;
+        width: 236px;
+        height: 56px;
+        border-radius: 26px;
     }
     
-    
-    .card10-p .txt-2 {
-        font-size: 12px!important;
-        left: 104px!important;
-        top: 159px!important;
-        letter-spacing: 0px;
+    .card3 {
+        margin-top: 12px;
+        width: 238px;
+        height: 56px;
+        border-radius: 26px;
     }
+    
+    .card-body h4 {
+        font-size: 18px;
+        margin-top: 6px;
+        margin-left: 11px;
+    }
+    
+    .card-body.mt-0.ml-1 {
+        font-size: 17px;
+    }
+    
+    .card-body.mt-0.ml-1 h5 {
+       font-size: 17px;
+       line-height: inherit;
+    }
+    
+    .card-body.mt-0.ml-1 h6 {
+     font-size: 13px;
+    line-height: 0px;
+    }
+    
+    .row.r1{
+        width: 63% !important;
+        margin-left: 0;
+    
+    }
+    
+    .row{
+        margin-top:37px!important;
+    }
+    .row.r2{
+        width: 59% !important;
+        margin-left: 0;
+    
+    }
+    
+    .btn2:not(:disabled):not(.disabled) {
       
-    
-    .card10-c {
-     
-        width: 87%!important;
-        left: 21px!important;
-        bottom: 16px!important;
-        height: 170px!important;
+      margin: 60px 0px 0px 46px;
+     width: 56%;
+      
     }
     
     
-    .card10-c .txt-1 {
-        margin-top: 27px!important;
+    #campaigns {
+        width: 96%!important;
+        height: 100%;
+        left: 32px;
+    }
+    
+    
+    .row1 .totalscheduled h5 {
+        font-size: 17px !important;
+    }
+    .row1 .totalscheduled h6 {
+        font-size: 12px !important;
+        margin: 0px 0 0 0;
+    }
+    .row9 .totalcampaign h5 {
+        font-size: 17px !important;
+        margin: 36px 0 0 5px;
+    }
+    .row9 .totalcampaign h6 {
+        font-size: 12px !important;
+        margin: 0px 0 0 6px!important;
+    }
+    .line{
+        margin: 23px 0 0 47%;
+    }
+    .line1{
+        margin: 23px 0 0 47%;
+    }
+    .new {
+        margin: 80px 0 0 24pc;
+    }
+    
+    
+    
+    
+    #agents {
+        width: auto;
+        left: 55px;
+    }
+    
+    #agents-body {
+       width: max-content;
+       margin: 0;
+    }
+    
+    .card8{
+        width: 39%!important;
+        border-radius: 0px!important;
+    }
+    
+    .card8 h2 {
         font-size: 13px!important;
+        padding: 16px;
     }
     
-    .card10-c .txt-2 {
-         margin-top: 7px!important;
-        font-size: 23px!important;
-    }
-    img {
-        vertical-align: middle;
-        border-style: none;
-        margin: 43px 0px 0px 25px;
-        width: 45px;
-        border-radius: 17px;
-        height: 45px;
+    #heading {
+        font-size: 13px;
+        margin-left: 23px;
+        margin-top: 10px;
     }
     
-    .card10-c img {
-      height:100%; 
-      width:auto;
+    #heading2 {
+        width: 315px!important;
+        margin-left: 51px;
+    }
+    
+    .card-body-right {
+        width: 358px !important;
+        border-radius: 0px !important;
+        margin-left: 146px !important;
+    }
+    
+    #card9-h4 {
+        font-size: 16px!important;
+        margin-left: 25px!important;
+        margin-top: 19px!important;
     }
 
-.ml-1, .mx-1 {
-    margin: 6px 0 0 6px!important;
-}
-
-#totaldraft{
-    margin: -1px 0px 0px -45px !important;
-    width: auto;
-}
-.mt-5, .my-5 {
-    margin-top: 3.6rem !important;
-}
-.row3 .mt-5.ml-4 h5 {
-    font-size: 17px !important;
-}
-.row3 .mt-5.ml-4 h6 {
-    font-size: 12px !important;
-}
-.row4 .mt-0.ml-1 h5 {
-    font-size: 17px !important;
-}
-.row4 .mt-0.ml-1 h6 {
-    font-size: 12px !important;
-}
-.row5 .mt-0.ml-1 h5 {
-    font-size: 17px !important;
-    margin-top: -49px;
-}
-.row5 .mt-0.ml-1 h6 {
-    font-size: 12px !important;
-}
-
-
-.row5 {
-    margin: 10px 0px 0px 76px;
-}
-
-.card10-c button {
-    margin-top: 12px;
-    font-size: 12px;
-    width: 74%;
-    height: 26%;
-    border-radius: 14px;
-  
-  }
-
-  h5,
-.h5 {
-
-    margin: -10px 0px 0px 0px;
-   
-}
-
-  .new img {
-        margin: -108px 30px 0px -135px;
-  }
-  .new .image img {
-        margin: -108px 30px 0px -97px;
-  }
-
-#scheduledCampaign {
-    margin-left: 47px;
-}
-
-
-
-#active-agent {
-    margin-left: 36px;
-    margin-top: 22px;
-}
-
-.date h4 {
-    margin: -9px 0px 0px 218px;
-}
-
-.row2 h5 {
-    margin: 0px 0 0 19px;
-}
-
-.row2 h6 {
-    margin: 0 0 0 19px;
-}
-
-.row4 {
-    margin: -46px 0px 0px 75px!important;
-}
-
-}
-
+    .row2{
+        position: absolute;
+    
+        margin: 82px 0px 0px 75px;
+    }
+    .row2 h5{
+        font-size: 12px!important;
+        margin: 0px 0 0 23px;
+    }
+    
+    .row2 h6{
+        font-size: 9px !important;
+        margin: 0 0 0 25px;
+    }
+    
+    
+    .card10  {
+        width: 283px !important;
+        height: 21.75rem !important;
+        right: 32px !important;
+        margin-top: 14px !important;
+        }
+        
+        .card10-p {
+        
+            width: 128px;
+            height: 115px;
+        
+           
+        }
+        
+        .card10-p img {
+        
+            width: 94px !important;
+            height: 83px !important;
+            top: -17px !important;
+            left: 68px !important;
+        
+        }
+        
+        
+        .card10-p p {
+        
+            letter-spacing: -0.93px;
+            top: 163px;
+            left: 71px;
+           
+        }
+        
+        .card10-p .txt-1 {
+            font-size:29px !important;
+            left: 81px !important;
+            top: 126px !important;
+            letter-spacing: -0.93px !important;
+           
+        }
+        
+        
+        .card10-p .txt-2 {
+            font-size: 12px!important;
+            left: 104px!important;
+            top: 159px!important;
+            letter-spacing: 0px;
+        }
+          
+        
+        .card10-c {
+        
+            width: 91% !important;
+            left: 13px !important;
+            bottom: 13px !important;
+            height: 147px !important;
+        
+        }
+        
+        
+        .card10-c .txt-1 {
+            margin-top: 22px!important;
+            font-size: 13px!important;
+        }
+        
+        .card10-c .txt-2 {
+            margin-top: -3px !important;
+            font-size: 21px !important;
+        }
+        img {
+            vertical-align: middle;
+            border-style: none;
+            margin: 43px 0px 0px 25px;
+            width: 45px;
+            border-radius: 17px;
+            height: 45px;
+        }
+        
+        .card10-c img {
+          height:100%; 
+          width:auto;
+        }
+    
+    .ml-1, .mx-1 {
+        margin: 6px 0 0 6px!important;
+    }
+    
+    #totaldraft{
+        margin: -1px 0px 0px -45px !important;
+        width: auto;
+    }
+    .mt-5, .my-5 {
+        margin-top: 3.6rem !important;
+    }
+    .row3 .mt-5.ml-4 h5 {
+        font-size: 17px !important;
+    }
+    .row3 .mt-5.ml-4 h6 {
+        font-size: 12px !important;
+    }
+    .row4 .mt-0.ml-1 h5 {
+        font-size: 17px !important;
+    }
+    .row4 .mt-0.ml-1 h6 {
+        font-size: 12px !important;
+    }
+    .row5 .mt-0.ml-1 h5 {
+        font-size: 17px !important;
+        margin-top: -49px;
+    }
+    .row5 .mt-0.ml-1 h6 {
+        font-size: 12px !important;
+    }
+    
+    
+    .row5 {
+        margin: 10px 0px 0px 76px;
+    }
+    
+    .card10-c button {
+        margin-top: 9px;
+        font-size: 12px;
+        width: 74%;
+        height: 26%;
+        border-radius: 13px;
+      
+      }
+    
+      h5,
+    .h5 {
+    
+        margin: -10px 0px 0px 0px;
+       
+    }
+    
+      .new img {
+            margin: -108px 30px 0px -135px;
+      }
+      .new .image img {
+            margin: -108px 30px 0px -97px;
+      }
+    
+    #scheduledCampaign {
+        margin-left: 47px;
+    }
+    
+    
+    
+    #active-agent {
+        margin-left: 36px;
+        margin-top: 22px;
+    }
+    
+    .date h4 {
+        margin: -14px 0px 0px 209px;
+    }
+    
+    .row2 h5 {
+        margin: 0px 0 0 -4px;
+    
+    }
+    
+    .row2 h6 {
+      
+            margin: 0 0 0 -5px;
+            text-align: left;
+        }
+        .rowss img {
+        
+            margin: 75px 0px 0px 25px;
+           
+        }
+    
+    .row4 {
+        margin: -46px 0px 0px 75px!important;
+    }
+    
+    }

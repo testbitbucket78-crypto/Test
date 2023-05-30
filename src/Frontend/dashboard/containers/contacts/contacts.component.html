@@ -1,63 +1,49 @@
 <sb-layout-dashboard>
 
- <ng-container *ngIf="showTopNav">
-  <sb-top-nav title="Contacts"></sb-top-nav>
-</ng-container>
-	<div class="row">
-		<div class="col-md-5 mb-4 mt-4">
-			<div class="col-md-12 mb-4">
-				<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-9"
-					[formGroup]="searchForm">
-					<div class="input-group gf ">
-
-						<input class="form-control" type="text"  placeholder="Search" aria-label="Search"
-							aria-describedby="basic-addon2" name="Name" (input)="onFilterTextBoxChange()" id="Search-Ag" formControlName="Name" />
-						<img src="assets/img/search.png">
-					</div>
-				</form>
+	<ng-container *ngIf="showTopNav">
+		<sb-top-nav title="Contacts"></sb-top-nav>
+	</ng-container>
+	<div class="contact-header">
+		<div class="">
+			<form class="d-none d-md-inline-block form-inline"
+				[formGroup]="searchForm">
+				<div class="input-group gf ">
+					<input class="form-control" type="text" placeholder="Search" aria-label="Search"
+						aria-describedby="basic-addon2" name="Name" (input)="onFilterTextBoxChange()" id="Search-Ag"
+						formControlName="Name" />
+					<img src="assets/img/search.png">
+				</div>
+			</form>
+		</div>
+		<div class="d-flex">
+			<div id="export-btn" >
+				<button class="btn-9 " [disabled]="!isButtonEnabled" (click)="open(content)"> <img
+						src="assets/img/export.png"> Export </button>
+			</div>
+			<div id="import-btn" >
+				<button class="btn  btn-block" id="import-btn" routerLink="/dashboard/import"><img
+						src="assets/img/import.png">
+					Import</button>
+			</div>
+			<div id="add-contact">
+				<button class="btn  btn-block" id="add-contact" (click)="open(contactadd)"><i
+						class="fa fa-plus"></i> Add
+					Contact</button>
+			</div>
+			<div id="delete-btn">
+				<button class="btn-delete row-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteContact"><img
+						src="assets/img/delete.png"></button>
 			</div>
 		</div>
-
-		<!-- <div class="col-xs-3 ml-1 mb-4 mt-4">
-			<button class="btn  btn-block float-right" (click)="opens(contents)"><img src="assets/img/filter.png">
-				Filter</button>
-		</div> -->
-		<!-- <div class="col-xs-3 ml-1 mb-4 mt-4">
-			<button class="btn  btn-block float-right" (click)="opencolumn(column)"><img src="assets/img/column.png">
-				Column Prefrences </button>
-		</div> -->
-
-	
-		<div id="export-btn" class="col-xs-3 ml-4 mb-4 mt-4">
-			<button  class="btn-9  float-right" [disabled]="!isButtonEnabled" (click)="open(content)">  <img src="assets/img/export.png"> Export </button>
-		</div>
-		<div id="import-btn" class="col-xs-3 ml-1 mb-4 mt-4">
-			<button class="btn  btn-block float-right" id="import-btn" routerLink="/dashboard/import"><img src="assets/img/import.png">
-				Import</button>
-		</div>
-		<div id="add-contact" class="col-xs-3 ml-1 mb-4 mt-4">
-			<button class="btn  btn-block float-right" id="add-contact"  (click)="open(contactadd)"><i class="fa fa-plus"></i> Add
-				Contact</button>
-		</div>
-		<div  id="delete-btn" class=" delete col-xs-3 ml-1 mb-4 mt-4 ">
-		<button class="btn-delete row-delete-btn"  data-bs-toggle="modal" data-bs-target="#deleteContact" ><img src="assets/img/delete.png"></button>
 	</div>
-    </div>
 
-	
+
 	<div class="box">
-		
-    <ag-grid-angular  
-	class="ag-theme-alpine"
-    [rowData]="rowData"
-    [columnDefs]="columnDefs"
-	[animateRows]="true"
-	[gridOptions]="gridOptions"
-	(gridReady)="onGridReady($event)"
-	(selectionChanged)="onSelectionChanged($event)"
-	suppressResize=true
-    [suppressRowClickSelection]="true">
-   </ag-grid-angular>
+
+		<ag-grid-angular class="ag-theme-alpine" [rowData]="rowData" [columnDefs]="columnDefs" [animateRows]="true"
+			[gridOptions]="gridOptions" (gridReady)="onGridReady($event)"
+			(selectionChanged)="onSelectionChanged($event)" suppressResize=true [suppressRowClickSelection]="true">
+		</ag-grid-angular>
 
 		<div id="sidebar" class="sidebar ">
 			<button type="button" class="btn5 btn-close" aria-label="Close" id="close-btn" (click)="('Cross click')"
@@ -102,10 +88,10 @@
 					</div>
 				</div>
 				<div class="child5">
-					
+
 					<h5> <img (click)="open(edittag)" src="assets/img/edit.png">Tag</h5>
 					<div class="child4 d-flex">
-						<h6>{{items.tag.replaceAll(',', ' | ')}}</h6>      
+						<h6>{{items.tag.replaceAll(',', ' | ')}}</h6>
 					</div>
 				</div>
 				<h4>Custom Fields</h4>
@@ -148,11 +134,12 @@
 					<h6>1998</h6>
 				</div>
 				<div class="button d-flex">
-					<button class="btn6  btn-block "  data-bs-toggle="modal" data-bs-target="#Delete" ><img src="assets/img/delete.png">
+					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete"><img
+							src="assets/img/delete.png">
 					</button>
 					<button class="btn6  btn-block " (click)="openedit(contactedit)"><img src="assets/img/edit.png">
 					</button>
-					<button class="btn6  btn-block "   data-bs-toggle="modal" data-bs-target="#Block" >Block </button>
+					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block">Block </button>
 					<button class="btn7  btn-block "><img src="assets/img/Setting.png"> </button>
 				</div>
 				<div class="bbox">
@@ -161,71 +148,75 @@
 			</div>
 		</div>
 
-		
-	</div>
-	
 
-	
-	<div  class="modal fade" id="deleteContact" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	</div>
+
+
+
+	<div class="modal fade" id="deleteContact" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
-		  <div class="modal-content">
-			
-			<div class="modal-body">
-				Do you really want to delete <br /> selected contact
+			<div class="modal-content">
+
+				<div class="modal-body">
+					Do you really want to delete <br /> selected contact
+				</div>
+				<div class="deletefile d-flex">
+					<button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="deleteRow(1)">Yes,
+						Delete</button>
+				</div>
 			</div>
-			<div class="deletefile d-flex">
-			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
-			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="deleteRow(1)">Yes, Delete</button>
-		  </div>
 		</div>
-		</div>
-	  </div>
-	
+	</div>
+
 
 	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
-		  <div class="modal-content">
-			
-			<div class="modal-body">
-				Do you really want to delete <br /> selected contact
-			</div>
-			<div class="deletefile d-flex"  *ngFor="let items of customerData ">
-			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
-			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal"  (click)="deletContactByID(items)">Yes, Delete</button>
-		  </div>
-		</div>
-		</div>
-	  </div>
+			<div class="modal-content">
 
-	  <div class="modal fade" id="Block" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-		  <div class="modal-content">
-			
-			<div class="modal-body">
-				Do you want to really want Block <br /> selected contact
-			</div>
-			<div class="deletefile d-flex" *ngFor="let items of customerData ">
-			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
-			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="blockContactByID(items)">Yes, Block</button>
-		  </div>
-		</div>
-		</div>
-	  </div>
-
-
-	  <ng-template #addcontact let-c="close" let-d="dismiss">
-	
-			<div class="modal-body">
-				<p id="contact-save">Your new contact is saved successfully!<br /> you can close this dialog box</p>
-			
-			</div>
-			<div class="modal-footer popfooter row text">
-	
-				<div class="col-md-5">
-				<button type="button" class="btn-close" aria-label="Close" id="contact-save-btn"  (click)="d('Cross click')">Close</button>
+				<div class="modal-body">
+					Do you really want to delete <br /> selected contact
+				</div>
+				<div class="deletefile d-flex" *ngFor="let items of customerData ">
+					<button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn99 btn-primary" data-bs-dismiss="modal"
+						(click)="deletContactByID(items)">Yes, Delete</button>
 				</div>
 			</div>
-		
+		</div>
+	</div>
+
+	<div class="modal fade" id="Block" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-body">
+					Do you want to really want Block <br /> selected contact
+				</div>
+				<div class="deletefile d-flex" *ngFor="let items of customerData ">
+					<button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn99 btn-primary" data-bs-dismiss="modal"
+						(click)="blockContactByID(items)">Yes, Block</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<ng-template #addcontact let-c="close" let-d="dismiss">
+
+		<div class="modal-body">
+			<p id="contact-save">Your new contact is saved successfully!<br /> you can close this dialog box</p>
+
+		</div>
+		<div class="modal-footer popfooter row text">
+
+			<div class="col-md-5">
+				<button type="button" class="btn-close" aria-label="Close" id="contact-save-btn"
+					(click)="d('Cross click')">Close</button>
+			</div>
+		</div>
+
 	</ng-template>
 
 
@@ -258,7 +249,8 @@
 	<ng-template #column let-c="close" let-d="dismiss">
 		<div class="modal-header">
 			<h4 class="modal-title" id="modal-basic-title">Column Prefrences</h4>
-			<button type="button" class="btn-close" aria-label="Close" id="close-btn"  (click)="d('Cross click')">X</button>
+			<button type="button" class="btn-close" aria-label="Close" id="close-btn"
+				(click)="d('Cross click')">X</button>
 		</div>
 		<div class="modal-body">
 			<div class="form-group mt-3 d-flex">
@@ -359,7 +351,8 @@
 	<ng-template #contents let-c="close" let-d="dismiss">
 		<div class="modal-header">
 			<h4 class="modal-title" id="modal-basic-title">Filter</h4>
-			<button type="button" class="btn-close" aria-label="Close" id="close-btn"  (click)="d('Cross click')">X</button>
+			<button type="button" class="btn-close" aria-label="Close" id="close-btn"
+				(click)="d('Cross click')">X</button>
 		</div>
 		<div class="modal-body d-flex">
 			<div class="sq">
@@ -444,22 +437,23 @@
 	<ng-template #contactadd let-c="close" let-d="dismiss">
 		<div class="modal-header">
 			<h4 class="modal-title" id="modal-basic-title">Add Contact</h4>
-			<button type="button" class="btn-cross" aria-label="Close" id="close-btn"  (click)="d('Cross click')">X</button>
+			<button type="button" class="btn-cross" aria-label="Close" id="close-btn"
+				(click)="d('Cross click')">X</button>
 		</div>
 		<div class="modal-body">
-			<form [formGroup]="newContact" >
+			<form [formGroup]="newContact">
 				<div class="row g-2">
 					<div class="col-md">
 						<label for="floatingInputGrid">Name*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text"  [(ngModel)]="inputText" (input)="onInputChange()" 
-							[ngClass]="{'is-invalid' :submitted && newContact.controls.Name.errors  }" 
-							placeholder="Enter Name" name="Name" formControlName="Name" id="Name" />
-								<div *ngIf="submitted && newContact.controls.Name.errors" class="text-danger">
-									!  Invalid Name Format
-								  </div>
-								 
-								 
+							<input pattern="[a-zA-Z ]*" minlength="3" class="form-control" type="text" [(ngModel)]="inputText" (input)="onInputChange()"
+								[ngClass]="{'is-invalid' :submitted && newContact.controls.Name.errors  }"
+								placeholder="Enter Name" name="Name" formControlName="Name" id="Name" />
+							<div *ngIf="submitted && newContact.controls.Name.errors" class="text-danger">
+								! Invalid Name Format
+							</div>
+
+
 						</div>
 					</div>
 					<div class="col-md">
@@ -467,13 +461,15 @@
 						<div class="form-floating">
 							<div class="ss">
 								<ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
-									[enableAutoCountrySelect]="true" [enablePlaceholder]="false" [searchCountryFlag]="true"
-									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
-									[selectedCountryISO]="CountryISO.India" [maxLength]="15"
-									[phoneValidation]="true" [separateDialCode]="separateDialCode"
-									[numberFormat]="PhoneNumberFormat.National" name="Phone_number" formControlName="Phone_number">
+									[enableAutoCountrySelect]="true" [enablePlaceholder]="false"
+									[searchCountryFlag]="true"
+									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+									[selectFirstCountry]="false" [selectedCountryISO]="CountryISO.India"
+									[maxLength]="15" [phoneValidation]="true" [separateDialCode]="separateDialCode"
+									[numberFormat]="PhoneNumberFormat.National" name="Phone_number"
+									formControlName="Phone_number">
 								</ngx-intl-tel-input>
-							<!-- <select class="dropdown" id="country" [(ngModel)]="selectedCountry" >
+								<!-- <select class="dropdown" id="country" [(ngModel)]="selectedCountry" >
 								<option *ngFor="let country of countries"  [ngValue]="country.code" >{{country}}</option>
 								
 							</select>
@@ -484,7 +480,7 @@
 								<div *ngIf= "submitted && newContact.controls.Phone_number.errors" class="text-danger">
 									! Phone number must be 10 digits
 								  </div> -->
-								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -492,13 +488,14 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Email Id*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text"  [(ngModel)]="inputEmail" (input)="onInputChangeEmail()" 
-							[ngClass]="{'is-invalid' :submitted && newContact.controls.emailId.errors}"
-							   placeholder="Enter Email" name="emailId" formControlName="emailId" id="emailId" />
+							<input class="form-control" type="text" [(ngModel)]="inputEmail"
+								(input)="onInputChange()"
+								[ngClass]="{'is-invalid' :submitted && newContact.controls.emailId.errors}"
+								placeholder="Enter Email" name="emailId" formControlName="emailId" id="emailId" />
 
-								<div *ngIf="submitted && newContact.controls.emailId.errors" class="text-danger">
-									!  Invalid Email Id
-								  </div>
+							<div *ngIf="submitted && newContact.controls.emailId.errors" class="text-danger">
+								! Invalid Email Id
+							</div>
 						</div>
 					</div>
 					<div class="col-md">
@@ -507,14 +504,14 @@
 							<input class="form-control" type="number" placeholder="Enter Age" name="age"
 								formControlName="age" id="age" min="18" max="100" />
 						</div>
-					</div>					
+					</div>
 				</div>
 				<div class="form-group mt-3">
 					<label class="small mb-1">Facebook Id</label>
 					<input class="form-control" type="text" placeholder="Enter Facebook Id" name="facebookId"
 						formControlName="facebookId" id="facebookId" />
 				</div>
-				
+
 				<div class="form-group">
 					<label class="small mb-1">Instagram Id</label>
 					<input class="form-control" type="text" placeholder="Enter Instagram Id " name="InstagramId"
@@ -523,15 +520,14 @@
 
 					<label for="floatingSelectGrid">Tag</label>
 					<ng-multiselect-dropdown class="multiselect" name="tag" formControlName="tag" id="tag"
-					     [settings]="dropdownSettings" [data]="tag"
-						[placeholder]="'Search'" [disabled]="disabled" 
+						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
 						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
 					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="status"
-						[placeholder]="'Search'" name="status" formControlName="status" id="status" [disabled]="disabled"
-						(onSelect)="onItemSelect($event)">
+						[placeholder]="'Search'" name="status" formControlName="status" id="status"
+						[disabled]="disabled" (onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 				</div>
 
@@ -541,7 +537,8 @@
 		<div class="modal-footer row popfooter">
 
 			<div class="col-md-6 text-right">
-				<button type="submit"(click)="openaddcontact(addcontact)"  [disabled]="isButtonDisabled" class="btn1 btn-success" (click)="c(addContact())">Save</button>
+				<button type="submit" (click)="openaddcontact(addcontact)" [disabled]="isButtonDisabled"
+					class="btn1 btn-success" (click)="c(addContact())">Save</button>
 			</div>
 		</div>
 	</ng-template>
@@ -554,7 +551,8 @@
 	<ng-template #contactedit let-c="close" let-d="dismiss">
 		<div class="modal-header">
 			<h4 class="modal-title" id="modal-basic-title">Edit Contact</h4>
-			<button type="button" class="btn-cross" aria-label="Close" id="close-btn"  (click)="d('Cross click')">X</button>
+			<button type="button" class="btn-cross" aria-label="Close" id="close-btn"
+				(click)="d('Cross click')">X</button>
 		</div>
 		<div class="modal-body">
 
@@ -573,13 +571,15 @@
 						<div class="form-floating">
 							<div class="ss">
 								<ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
-									[enableAutoCountrySelect]="true" [enablePlaceholder]="false" [searchCountryFlag]="true"
-									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
-									[selectedCountryISO]="CountryISO.India" [maxLength]="15"
-									[phoneValidation]="true" [separateDialCode]="separateDialCode"
-									[numberFormat]="PhoneNumberFormat.National" name="Phone_number" formControlName="Phone_number">
+									[enableAutoCountrySelect]="true" [enablePlaceholder]="false"
+									[searchCountryFlag]="true"
+									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+									[selectFirstCountry]="false" [selectedCountryISO]="CountryISO.India"
+									[maxLength]="15" [phoneValidation]="true" [separateDialCode]="separateDialCode"
+									[numberFormat]="PhoneNumberFormat.National" name="Phone_number"
+									formControlName="Phone_number">
 								</ngx-intl-tel-input>
-								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -612,15 +612,15 @@
 					<br>
 
 					<label for="floatingSelectGrid">Tag</label>
-					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag" [formControl]="editContact.controls['tag']"
-						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
-						(onSelect)="onItemSelect($event)">
+					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag"
+						[formControl]="editContact.controls['tag']" [settings]="dropdownSettings" [data]="tag"
+						[placeholder]="'Search'" [disabled]="disabled" (onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
-					<ng-multiselect-dropdown class="multiselect" id="status" name="status" [formControl]="editContact.controls['status']"
-						[settings]="dropdownSettings" [data]="status" [placeholder]="'Search'" [disabled]="disabled"
-						(onSelect)="onItemSelect($event)">
+					<ng-multiselect-dropdown class="multiselect" id="status" name="status"
+						[formControl]="editContact.controls['status']" [settings]="dropdownSettings" [data]="status"
+						[placeholder]="'Search'" [disabled]="disabled" (onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 				</div>
 
@@ -637,30 +637,32 @@
 
 
 	<ng-template #edittag let-c="close" let-d="dismiss">
-				<div class="edit-tag">
-            <div class="modal-header">
-			<p id="edit-tag-head">Edit Tag</p>
-			<button type="button" class="btn-cross" id="close-btn" aria-label="Close" (click)="d('Cross click')">X</button>
+		<div class="edit-tag">
+			<div class="modal-header">
+		    <p id="edit-tag-head">Edit Tag</p>
+			<button type="button" class="btn-cross" id="close-btn" aria-label="Close"
+					(click)="d('Cross click')">X</button>
 			</div>
 
-				<div class="incorrect-card-main">
+			<div class="incorrect-card-main">
 
-			 <ul class="edit-tag-dropdown">
-			  <li *ngFor="let tag of customerData; let j = index"><a class="dropdown-item" >
-				<div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-					  <label  id="edit-tag-dots" class="form-check-label" for="flexCheckDefault"> ● </label>
-                      <label  id="edit-tagnames" class="form-check-label" for="flexCheckDefault"> {{tag.value}}</label>
-				</div>
-                    </a>
-                  </li>
-			
-			</ul>
+				<ul class="edit-tag-dropdown">
+					<li *ngFor="let tag of customerData; let j = index"><a class="dropdown-item">
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+								<label id="edit-tag-dots" class="form-check-label" for="flexCheckDefault"> ● </label>
+								<label id="edit-tagnames" class="form-check-label" for="flexCheckDefault">
+									{{tag.value}}</label>
+							</div>
+						</a>
+					</li>
+
+				</ul>
 
 				<button type="button" class="btn" id="edit-btn" (click)="c('Save click')">Cancel</button>
-					<button type="button" class="btn" id="edit-btn-save" (click)="c('Save click')">Save</button>
-				</div>
-	       </div>
-	       </ng-template>
+				<button type="button" class="btn" id="edit-btn-save" (click)="c('Save click')">Save</button>
+			</div>
+		</div>
+	</ng-template>
 
 </sb-layout-dashboard>

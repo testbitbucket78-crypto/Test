@@ -51,7 +51,8 @@ export class DashboardComponent implements OnInit {
         });
     }
     getDashboardInteractions() {
-        this.apiService.dashboardInteractions().subscribe(data => {
+        var sPid = sessionStorage.getItem('SP_ID')
+        this.apiService.dashboardInteractions(sPid).subscribe(data => {
             this.interactions = data;
         });
     }
