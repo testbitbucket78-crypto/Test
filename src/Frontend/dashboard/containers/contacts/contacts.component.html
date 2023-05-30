@@ -133,6 +133,7 @@
 					<h5>Emergency Contact No.</h5>
 					<h6>1998</h6>
 				</div>
+				<div class="btn-footer py-2 mt-3">
 				<div class="button d-flex">
 					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete"><img
 							src="assets/img/delete.png">
@@ -151,7 +152,7 @@
 
 	</div>
 
-
+</div>
 
 	<div class="modal fade" id="deleteContact" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -639,8 +640,8 @@
 	<ng-template #edittag let-c="close" let-d="dismiss">
 		<div class="edit-tag">
 			<div class="modal-header">
-		    <p id="edit-tag-head">Edit Tag</p>
-			<button type="button" class="btn-cross" id="close-btn" aria-label="Close"
+				<p id="edit-tag-head">Edit Tag</p>
+				<button type="button" class="btn-cross" id="close-btn" aria-label="Close"
 					(click)="d('Cross click')">X</button>
 			</div>
 

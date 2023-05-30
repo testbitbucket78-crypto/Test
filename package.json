@@ -59,6 +59,7 @@
     "jsonwebtoken": "^9.0.0",
     "jw-angular-pagination": "^1.2.0",
     "multer": "^1.4.5-lts.1",
+    "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
     "ng-multiselect-dropdown": "^0.3.9",
     "ng2-search-filter": "^0.5.1",

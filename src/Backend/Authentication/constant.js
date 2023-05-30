@@ -30,8 +30,8 @@ insertOtp="CALL otpVerification(?,?,?)"
 verifyOtp=`SELECT  otp FROM otpVerify WHERE created_at > NOW() - INTERVAL 15 MINUTE and otpfieldvalue=?`
 crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
-var access_token='Bearer EAAiPxMFEGCYBADPTwZAXpZCv9JgfullRyIDfr9ULZB5DweHZCc1O0VcsGuZCtE9g3B09exFOPzXHq4FORZA90ZCKq1FzZA9k889oiRqTrGbUpyU6xXHgAUaAqW4K6Lzu7aY6zMgw1QIDimeygGgXEbhGxY5c6rtMsORZAOi3SymrewonbnbGWh4Eb'
-var url='https://graph.facebook.com/v16.0/108525132105860/messages'
+var access_token='Bearer EAAU0g9iuku4BACBhTZCxqtq5A8rIymreLIxUQa7HaToy7PBawzooIkG73XnY1PXAUGrtCulhniRrZCsQPWOB3YcozTpT4cpgcZC5MoNB05ptdnpwAIRLLz0FtQCaLvmXNqL8qqn8Yqmf07HxVpzs6OuZClb0XOylw5DWWaMxcMJm7jzVRZCmD'
+var url='https://graph.facebook.com/v16.0/101714466262650/messages'
 var content_type='application/json'
 
 

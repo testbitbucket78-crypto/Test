@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit {
     constructor(private apiService: DashboardService, private router: Router, private cdRef: ChangeDetectorRef) { }
     ngOnInit() {
 
-        this.routerGuard();
+        //this.routerGuard();
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
         this.getdashboardCampaigns();

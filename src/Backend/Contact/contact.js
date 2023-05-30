@@ -21,13 +21,13 @@ app.get('/', function (req, res) {
 
 
 
-app.post('/contact', function (req, res) {
+app.post('/contact', async function (req, res) {
   console.log("contact")
   try {
     console.log(req.body)
     Name = req.body.Name
     Phone_number = req.body.Phone_number.internationalNumber
-    
+
     emailId = req.body.emailId
     if (Name == '' || Phone_number == '' || emailId == '') {
       res.status(400).send({
@@ -43,28 +43,48 @@ app.post('/contact', function (req, res) {
     InstagramId = req.body.InstagramId
     SP_ID = req.body.SP_ID
     var tagList = [];
-    var tagListJoin='';
+    var tagListJoin = '';
     if (tag != undefined && tag != '') {
       for (var i = 0; i < tag.length; i++) {
         tagList.push(tag[i].item_text)
       }
 
-       tagListJoin = tagList.join();
+      tagListJoin = tagList.join();
       console.log(tagListJoin)
     }
     var statusList = [];
-    var statusListJoin=''
+    var statusListJoin = ''
     if (tag != undefined && tag != '') {
-    for (var i = 0; i < status.length; i++) {
-      statusList.push(status[i].item_text)
+      for (var i = 0; i < status.length; i++) {
+        statusList.push(status[i].item_text)
+      }
+      statusListJoin = statusList.join();
+      console.log(statusListJoin)
     }
-     statusListJoin = statusList.join();
-    console.log(statusListJoin)
-  }
 
-    var values = [[Name, Phone_number, emailId, age, tagListJoin, statusListJoin,  facebookId, InstagramId, SP_ID]];
+    var values = [[Name, Phone_number, emailId, age, tagListJoin, statusListJoin, facebookId, InstagramId, SP_ID]];
 
-    db.runQuery(req, res, val.insertContact, [values])
+    //db.runQuery(req, res, val.insertContact, [values])
+    var result = await db.excuteQuery(val.existContactWithSameSpid, [emailId,Phone_number,SP_ID])
+   
+    if (result.length > 0) {
+      // email or phone number already exist, return an error response
+
+      res.status(409).send({
+        msg: 'Email or phone number already exist !',
+        status: 409
+      });
+    }
+    else{
+     
+      var customers=await db.excuteQuery(val.insertContact, [values])
+   
+      res.status(200).send({
+        msg: 'Contact added successfully !',
+        contact:customers,
+        status: 200
+      });
+    }
   } catch (err) {
     console.log(err)
     db.errlog(err);
@@ -209,7 +229,7 @@ app.put('/editContact', (req, res) => {
 })
 
 
-app.post('/updateAndSave', (req, res) => {
+app.post('/updateAndSave', async (req, res) => {
   try {
     console.log("updateAndSave")
     //console.log(req.body)
@@ -220,7 +240,7 @@ app.post('/updateAndSave', (req, res) => {
     var identifier = result.identifier
     var purpose = result.purpose
     var SP_ID = result.SP_ID
-    console.log(result)
+    console.log(SP_ID)
 
 
     if (colMap !== undefined) {
@@ -238,41 +258,10 @@ app.post('/updateAndSave', (req, res) => {
 
     var identifierData = identifier[0]
     console.log(purpose)
-    try {
-      db.db.connect();
-    } catch (err) {
-      console.log(err)
-    }
-    if (purpose == 'Add new contact only') {
 
+    if (purpose === 'Add new contact only') {
+      try {
 
-      for (var i = 0; i < CSVdata.length; i++) {
-        var identifierValue = ''
-        if (identifierData === 'emailId') {
-          identifierValue = JSON.parse(JSON.stringify(CSVdata[i][emailid_field]))
-        }
-        if (identifierData === 'Phone_number') {
-          identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
-        }
-        var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, SP_ID]
-        var query = val.importquery + identifierData + '=? AND SP_ID' + ' and isBlocked is null and isDeleted is null)'
-        console.log(query)
-        db.db.query(query, [values, identifierValue, SP_ID], function (error, results) {
-          console.log(query)
-
-          try {
-            console.log(results);
-          }
-          catch (err) {
-            console.log(error);
-          }
-        })
-      }
-    }
-
-
-    if (purpose == 'Update Existing Contacts Only') {
-      if (fields.length == 0) {
         for (var i = 0; i < CSVdata.length; i++) {
           var identifierValue = ''
           if (identifierData === 'emailId') {
@@ -281,83 +270,83 @@ app.post('/updateAndSave', (req, res) => {
           if (identifierData === 'Phone_number') {
             identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
           }
-          var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid]
+          var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, SP_ID]
+          var query = val.importquery + identifierData + '=? AND SP_ID=?' + ' and  (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0))'
+          console.log(query)
+          var addNewUserOnly = await db.excuteQuery(query, [values, identifierValue, SP_ID])
 
-          var updateQuery = val.importUpdate + identifierData + '=? and SP_ID=?'
 
-          db.db.query(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, identifierValue, SP_ID], function (error, results, next) {
-            // if (error) {
-            //   console.log(error)
-            // } else {
-            //   console.log(results)
-            // }
-            try {
-              console.log(results);
-            }
-            catch (err) {
-              console.log(err)
-            }
-          })
+
+          res.status(200).send({
+            msg: "Contact Added Successfully",
+            data: addNewUserOnly,
+            status: 200
+          });
         }
+      } catch (err) {
+        console.log(err);
+        db.errlog(err);
+        res.status(500).send({
+          msg: err,
+          status: 500
+        });
       }
-      else {
-        for (var j = 0; j < fields.length; j++) {
+
+
+    }
+
+
+    if (purpose === 'Update Existing Contacts Only') {
+      try {
+        if (fields.length == 0) {
           for (var i = 0; i < CSVdata.length; i++) {
-            var updateData = fields[j]
-            var identifierData = identifier[0]
-            updatedValue = JSON.parse(JSON.stringify(data[i][fields[j]]));
-            identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
+            var identifierValue = ''
+            if (identifierData === 'emailId') {
+              identifierValue = JSON.parse(JSON.stringify(CSVdata[i][emailid_field]))
+            }
+            if (identifierData === 'Phone_number') {
+              identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
+            }
+            var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid]
 
-            db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?  and SP_ID=?', [updatedValue, identifierValue, SP_ID], function (error, results, next) {
-              // if (error) {
-              //   console.log(error)
-              // }
-              // else {
-              //   console.log(JSON.stringify(results.affectedRows))
+            var updateQuery = val.importUpdate + identifierData + '=? and SP_ID=?  and  (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)'
+            var upExistContOnly = await db.excuteQuery(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, identifierValue, SP_ID])
 
-              // }
-              try {
-                console.log(JSON.stringify(results.affectedRows))
-              }
-              catch (err) {
-                console.log(err)
-              }
-            })
           }
         }
+        else {
+          for (var j = 0; j < fields.length; j++) {
+            for (var i = 0; i < CSVdata.length; i++) {
+              var updateData = fields[j]
+              var identifierData = identifier[0]
+              updatedValue = JSON.parse(JSON.stringify(CSVdata[i][fields[j]]));
+              identifierValue = JSON.parse(JSON.stringify(CSVdata[i][identifier[0]]));
+              var upExistContOnlyWithFields = await db.excuteQuery('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=?  and SP_ID=?  and  (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)', [updatedValue, identifierValue, SP_ID])
+
+              console.log(JSON.stringify(upExistContOnlyWithFields.affectedRows))
+            }
+          }
+        }
+        res.status(200).send({
+          msg: "Existing Contact Updated Successfully",
+          upExistContOnly: upExistContOnly,
+          upExistContOnlyWithFields: upExistContOnlyWithFields,
+          status: 200
+        });
+      } catch (err) {
+        console.log(err);
+        db.errlog(err);
+        res.status(500).send({
+          msg: err,
+          status: 500
+        });
+
       }
     }
 
     if (purpose === 'Add and Update Contacts') {
       //********ADD NEW CONTACT********* */
-      for (var i = 0; i < CSVdata.length; i++) {
-        var identifierValue = ''
-        if (identifierData === 'emailId') {
-          identifierValue = JSON.parse(JSON.stringify(CSVdata[i][emailid_field]))
-        }
-        if (identifierData === 'Phone_number') {
-          identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
-        }
-        var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, SP_ID]
-        var query = val.importquery + identifierData + '=? and SP_ID=?' + ')'
-
-        db.db.query(query, [values, identifierValue, SP_ID], function (error, results) {
-          console.log(query)
-          // if (error) {
-          //   console.log(error);
-          // } else {
-          //   console.log(results);
-          // }
-          try {
-            console.log(results);
-          } catch (err) {
-            console.log(err)
-          }
-        })
-      }
-
-      //******************************* */
-      if (fields.length == 0) {
+      try {
         for (var i = 0; i < CSVdata.length; i++) {
           var identifierValue = ''
           if (identifierData === 'emailId') {
@@ -366,65 +355,72 @@ app.post('/updateAndSave', (req, res) => {
           if (identifierData === 'Phone_number') {
             identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
           }
-          var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid]
+          var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, SP_ID]
+          var query = val.importquery + identifierData + '=? and SP_ID=?  and  (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)' + ')'
+          var addAndUpdateCont = await db.excuteQuery(query, [values, identifierValue, SP_ID])
 
-          var updateQuery = val.importUpdate + identifierData + '=? and SP_ID=?'
 
-          db.db.query(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, identifierValue, SP_ID], function (error, results, next) {
-            // if (error) {
-            //   console.log(error)
-            // } else {
-            //   console.log(results)
-            // }
-            try {
-              console.log(results)
-            } catch (err) {
-              console.log(err)
-            }
-          })
         }
 
-
-      }
-      else {
-        for (var j = 0; j < fields.length; j++) {
+        //******************************* */
+        if (fields.length == 0) {
           for (var i = 0; i < CSVdata.length; i++) {
-            var updateData = fields[j]
-            var identifierData = identifier[0]
-            updatedValue = JSON.parse(JSON.stringify(data[i][fields[j]]));
-            identifierValue = JSON.parse(JSON.stringify(data[i][identifier[0]]));
+            var identifierValue = ''
+            if (identifierData === 'emailId') {
+              identifierValue = JSON.parse(JSON.stringify(CSVdata[i][emailid_field]))
+            }
+            if (identifierData === 'Phone_number') {
+              identifierValue = JSON.parse(JSON.stringify(CSVdata[i][mobileNo_field]))
+            }
+            var values = [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid]
 
+            var updateQuery = val.importUpdate + identifierData + '=? and SP_ID=?  and  (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)'
+            var addAndUpdateContwithoutfield = await db.excuteQuery(updateQuery, [CSVdata[i][name_field], CSVdata[i][mobileNo_field], CSVdata[i][emailid_field], CSVdata[i][status_field], CSVdata[i][gender_field], CSVdata[i].age, CSVdata[i][state_field], CSVdata[i][country_field], CSVdata[i][tag_field], CSVdata[i].address, CSVdata[i].pincode, CSVdata[i].city, CSVdata[i].OptInStatus, CSVdata[i].facebookId, CSVdata[i].InstagramId, CSVdata[i].channel, CSVdata[i].uid, identifierValue, SP_ID])
 
-            db.db.query('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=? and SP_ID=?', [updatedValue, identifierValue, SP_ID], function (error, results, next) {
-              // if (error) {
-              //   console.log(error)
-              // } else {
-              //   console.log(JSON.stringify(results.affectedRows))
-              // }
-              try {
-                console.log(JSON.stringify(results.affectedRows))
-              } catch (err) {
-                console.log(err)
-              }
-            })
           }
+
+
+        }
+        else {
+          for (var j = 0; j < fields.length; j++) {
+            for (var i = 0; i < CSVdata.length; i++) {
+              var updateData = fields[j]
+              var identifierData = identifier[0]
+              updatedValue = JSON.parse(JSON.stringify(CSVdata[i][fields[j]]));
+              identifierValue = JSON.parse(JSON.stringify(CSVdata[i][identifier[0]]));
+              var addAndUpdatewithFields = await db.excuteQuery('UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifierData + '=? and SP_ID=?  and  (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)', [updatedValue, identifierValue, SP_ID])
+
+            }
+
+          }
+
         }
 
+        res.status(200).send({
+          msg: "Add and Updated Contact Successfully",
+          addAndUpdatewithFields: addAndUpdatewithFields,
+          addAndUpdateContwithoutfield: addAndUpdateContwithoutfield,
+          addAndUpdateCont: addAndUpdateCont,
+          status: 200
+        });
+      } catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+          msg: err,
+          status: 500
+        });
       }
-
     }
   } catch (err) {
     console.error(err);
     db.errlog(err);
-    res.status(500).send({
-      msg: err,
-      status: 500
-    });
   }
-
 })
 
-app.post('/verifyData', (req, res) => {
+
+
+app.post('/verifyData', async (req, res) => {
   try {
     var resdata = req.body
     var CSVdata = resdata.importedData
@@ -436,11 +432,6 @@ app.post('/verifyData', (req, res) => {
 
     var identity = identifier[0]
 
-    try {
-      db.db.connect()
-    } catch (err) {
-      console.log(err)
-    }
     if (colMap !== undefined) {
       var emailid_field = colMap.emailId !== '' ? colMap.emailId : 'emailId';
       var phoneNo_field = colMap.Mobile_Number !== '' ? colMap.Mobile_Number : 'Phone_number';
@@ -480,55 +471,60 @@ app.post('/verifyData', (req, res) => {
     }
 
 
-    console.log("importData")
+    console.log("importData" + importData.length)
     console.log(importData)
-    if (!importData.length == '0') {
+    if (importData.length > '0') {
 
-      var verifyQuery = 'select * from EndCustomer WHERE ' + identity + ' in (?)' + 'and isBlocked is null and isDeleted is null and SP_ID=?'
+      var verifyQuery = 'select * from EndCustomer WHERE ' + identity + ' in (?)' + ' and SP_ID=?  and  (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)'
+      var result = await db.excuteQuery(verifyQuery, [queryData, SP_ID])
+      console.log("_______" + result.length)
 
-      db.db.query(verifyQuery, [queryData, SP_ID], (err, result) => {
+      try {
+        if (purpose === 'Add new contact only') {
+          res.status(200).send({
 
-        try {
-          if (purpose === 'Add new contact only') {
-            res.status(200).send({
-
-              newCon: (importData.length - result.length),
-              upCont: 0,
-              skipCont: errData.length,
-              importData: importData
-            });
-          }
-          else if (purpose === 'Update Existing Contacts Only') {
-            res.status(200).send({
-
-              newCon: 0,
-              upCont: result.length,
-              skipCont: errData.length,
-              importData: importData
-            });
-          }
-          else if (purpose === 'Add and Update Contacts') {
-            res.status(200).send({
-
-              newCon: (importData.length - result.length),
-              upCont: result.length,
-              skipCont: errData.length,
-              importData: importData
-            });
-          }
-          else {
-            res.status(200).send({
-
-              newCon: 0,
-              upCont: 0,
-              skipCont: errData.length,
-              importData: importData
-            });
-          }
-        } catch (err) {
-          console.log(err)
+            newCon: Math.abs(importData.length - result.length),
+            upCont: 0,
+            skipCont: errData.length,
+            importData: importData
+          });
         }
-      })
+        else if (purpose === 'Update Existing Contacts Only') {
+          res.status(200).send({
+
+            newCon: 0,
+            upCont: result.length,
+            skipCont: errData.length,
+            importData: importData
+          });
+        }
+        else if (purpose === 'Add and Update Contacts') {
+          res.status(200).send({
+
+            newCon: Math.abs(importData.length - result.length),
+            upCont: result.length,
+            skipCont: errData.length,
+            importData: importData
+          });
+        }
+
+      } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.status(500).send({
+          msg: err,
+          status: 500
+        });
+      }
+
+    } else {
+      res.status(200).send({
+
+        newCon: 0,
+        upCont: 0,
+        skipCont: errData.length,
+        importData: importData
+      });
     }
   } catch (err) {
     console.error(err);

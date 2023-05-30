@@ -8,20 +8,47 @@ const database = "cip_project"
 
 
 //Query for dashboard
-interactionsQuery = `select interaction_status,count(*) count from Interaction WHERE created_at >=  NOW() - INTERVAL 30 DAY Group by (interaction_status) 
-union select 'Total Interactions',count(*) count from Interaction WHERE created_at >=  NOW() - INTERVAL 30 DAY`;
+interactionsQuery = `SELECT interaction_status, COUNT(*) AS count
+FROM Interaction
+JOIN EndCustomer ON Interaction.customerId = EndCustomer.customerId
+WHERE Interaction.created_at >= NOW() - INTERVAL 30 DAY
+AND EndCustomer.SP_ID = ? and EndCustomer.isBlocked !=1  and EndCustomer.isDeleted !=1
+GROUP BY interaction_status
+
+UNION
+
+SELECT 'Total Interactions' AS interaction_status, COUNT(*) AS count
+FROM Interaction
+JOIN EndCustomer ON Interaction.customerId = EndCustomer.customerId
+WHERE Interaction.created_at >= NOW() - INTERVAL 30 DAY
+AND EndCustomer.SP_ID = ? and EndCustomer.isBlocked !=1  and EndCustomer.isDeleted !=1`;
+
+
 campaignsQuery = ` SELECT STATUS,COUNT(*) COUNT FROM Campaign
 WHERE start_datetime >= NOW() - INTERVAL 30 DAY and sp_id=?
 GROUP BY (STATUS) `;
-agentsQuery = `select Status,count(*) count from AgentDetails  WHERE timings >=  NOW() - INTERVAL 30 DAY  Group by (Status) union select 'Total Agents',
-count(*) count from AgentDetails  where  timings >= NOW() - INTERVAL 30 DAY`;
-subscribersQuery = `select OptInStatus,count(*) count from EndCustomer WHERE created_at >=  NOW() - INTERVAL 30 DAY and SP_ID=?  Group by (OptInStatus) union select  'Total Contacts',
-count(*) count from EndCustomer WHERE created_at >=  NOW() - INTERVAL 30 DAY and SP_ID=?`;
-conversationQuery = "CALL dashboardRecentConversations(?)"
-crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
-module.exports = {host,user,password,database,
-    interactionsQuery, campaignsQuery, agentsQuery,
-    subscribersQuery, conversationQuery,crachlogQuery
+agentsQuery = `SELECT Status, COUNT(*) AS count
+FROM AgentDetails
+JOIN user ON AgentDetails.uid = user.uid
+WHERE timings >= NOW() - INTERVAL 30 DAY
+  AND user.SP_ID = ?
+GROUP BY Status
+UNION
+SELECT 'Total Agents', COUNT(*) AS count
+FROM AgentDetails
+JOIN user ON AgentDetails.uid = user.uid
+WHERE timings >= NOW() - INTERVAL 30 DAY
+  AND user.SP_ID = ?;`;
+
+subscribersQuery = `select OptInStatus,count(*) count from EndCustomer WHERE created_at >=  NOW() - INTERVAL 30 DAY and SP_ID=?  Group by (OptInStatus) union select  'Total Contacts',
+count(*) count from EndCustomer WHERE created_at >=  NOW() - INTERVAL 30 DAY and SP_ID=?  and (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) `;
+conversationQuery = "CALL dashboardRecentConversations(?)"
+crachlogQuery = `INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
+
+module.exports = {
+  host, user, password, database,
+  interactionsQuery, campaignsQuery, agentsQuery,
+  subscribersQuery, conversationQuery, crachlogQuery
 
 }
