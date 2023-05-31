@@ -8,7 +8,6 @@
     </div>
     <div class="bs-stepper-header" role="tablist">
      
-      <!-- your steps here -->
       <div class="step" data-target="#logins-part">
         <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger">
           <span class="bs-stepper-circle">1</span>
@@ -36,11 +35,11 @@
         <div class="box" [formGroup]="newReply">
           <h5>Title</h5>
           <input class="form-control" type="text" name="Title" id="Title" formControlName="Title"
-            placeholder="Enter title in max 20 character" />
+            placeholder="Enter title in max 20 character" maxlength="20" />
           <h5>Description</h5>
           <div class="form-floating ff">
             <textarea name="Description" id="Description" class="form-control" rows="4" cols="50"
-            placeholder="Enter description in max 80 character"  formControlName="Description" ></textarea>
+            placeholder="Enter description in max 80 character"  formControlName="Description" maxlength="80" ></textarea>
             
           </div>
         </div>
@@ -75,7 +74,7 @@
               <label class="form-check-label" for="exampleRadios1">
                 Fuzzy matching
               </label>
-              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickFuzzy($event)">
+              <img id="detail" class="form-check-label-img" src="assets/img/info.png" (click)="onClickFuzzy($event)">
             </div>
             <div class="desc-radio-input" *ngIf="showBox">
               <p id="p-title">Fuzzy Matching</p>
@@ -88,7 +87,7 @@
               <label class="form-check-label" for="">
                 Exact matching
               </label>
-              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickExact($event)">
+              <img id="detail" class="form-check-label-img" src="assets/img/info.png" (click)="onClickExact($event)">
             </div>
               <div class="desc-radio-input-1" *ngIf="showBox1">
               <p id="p-title">Exact Matching</p>
@@ -101,7 +100,7 @@
               <label class="form-check-label" for="">
                 Contains
               </label>
-              <img id="detail" class="form-check-label" src="assets/img/info.png" (click)="onClickContains($event)">
+              <img id="detail" class="form-check-label-img" src="assets/img/info.png" (click)="onClickContains($event)">
             </div>
 
              <div class="desc-radio-input-2" *ngIf="showBox2">
@@ -113,7 +112,7 @@
 
           </div>
         </div>
-        <button type="button" (click)="next()" (click)="sendNewSmartReply()" class="btn5 btn-block col-1 mt-3 ">Next</button>
+        <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Next</button>
 
       </div>
       <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
@@ -121,173 +120,150 @@
             src="assets/img/prev.png"></button>
 
 
-
-        <div class="interactions">
-          <div class="child-interaction-1">
-               <div class="message-box"  *ngFor="let message of messages; let i = index" >
-                <p id="msgbox-head"> Message</p> 
-                <p id="msgbox-body" [contentEditable]="isEditable" (input)="onEdit($event.target.innerHTML)">{{message}}</p>
-                <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button> 
+         <div class="interactions">
+            <div class="child-interaction-1">
+              <div *ngFor="let message of assignedAgentList; let i = index">
+                <div class="message-box" *ngIf="message.ActionID == 1">
+                <p id="msgbox-head">Message</p>
+                <p id="msgbox-body" [contentEditable]="isEditable" (input)="onEdit($event.target.innerHTML)" [innerHTML]="message.Value"></p>
+                <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
                 <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
-            </div>
-          </div>
-              <div class="child-interaction-2">
+                </div>
+                   <div class="assign-conversation" *ngIf="message.ActionID == 2">
+                <p id="msgbox-head1">Action</p>
+                <div class="d-flex assign-container">
+                <p id="msgbox-body1"><b>Conversation Assigned:</b></p>
+                <p id="msgbox-body2" [contentEditable]="isEditable" (input)="onActionEdit($event.target.innerHTML)">{{message.Value}}</p>
+                </div>
+                   <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
+                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
               
-            <form class="input-area" [formGroup]="newMessage">
-              <textarea #input ngDefaultControl [(ngModel)]="message" formControlName="message_text" 
-              name="message_text" id="message_text" class="text-box" placeholder="Type reply ... ">
-            </textarea>
-              <button type="submit" (click)="addqty(input.value)" (click)="addMessage()" [disabled]="message===''">Add</button>
-            </form>
-            <div class="inout_options">
-              <button id="bold-txt"><img src="/assets/img/teambox/B.svg"></button>
-              <button><img src="/assets/img/teambox/I.svg"></button>
-              <button><img src="/assets/img/teambox/st.svg"></button>
-              <button><img src="/assets/img/teambox/emoji.svg"></button>
-              <button><img src="assets/img/teambox/attachment-icon.svg"></button>
-              <button><img src="assets/img/teambox/attributes.svg"></button>
-              <button><img src="assets/img/teambox/quick-replies.svg"></button>
-              <button><img src="assets/img/teambox/saved-message.svg"></button>
-            </div>
-              <button id="add-action-dropdown" type="button" (click)="toggleAddActions()"><img src="assets/img/teambox/add.svg">Add Action</button>
-           </div>
-          
-               <div *ngIf="ShowAssignOption"  class="popup-dialog AssignOption">
-                 <p class="label">Assign To</p>
-                <p *ngFor="let Agent of agentsList;let k = index">
-                  <span><img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />{{Agent}}</span>
-                 </p>
-               </div>
-
-               <div *ngIf="ShowAddAction"  class="popup-dialog AssignAction">
-                 <p class="label">Add Action</p>
-                <p *ngFor="let AssignAction of assignActionList;let m = index" (click)="toggleAssignOption()">
-	
-                  <span>{{AssignAction}}</span>
-                 </p>
-               </div>
-
-        
              
+              </div>
+                  <div *ngIf="message.ActionID == 3">
+                <div class="add-tag">
+                <p id="msgbox-head1">Action</p>
+                <div class="d-flex assign-container">
+                <p id="msgbox-body1"><b>Add Tags:</b></p>
+                <p *ngFor="let item of message.Value" id="msgbox-body2" >{{item}}</p>
+                </div>
+                   <button class="msg-edit-btn" (click)="toggleRemoveTag()"><img src="assets/img/edit.png"></button>
+                   <button class="msg-del-btn" (click)="removeAddTag(i)"><img src="assets/img/delete.png"></button>
+              
+             
+              </div>
+              </div>
+       
+              </div>
+             
+
+              <!-- <div class="update-name" *ngIf="ShowNameUpdate">
+                <p id="msgbox-head1">Action</p>
+                <div class="d-flex assign-container">
+                <p id="msgbox-body1"><b>Name Update</b></p>
+                </div>
+                   <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
+                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+              
+             
+              </div>
+
+               <div class="resolve-conversation" *ngIf="ShowResolveConversation">
+                <p id="msgbox-head1">Action</p>
+                <div class="d-flex assign-container">
+                <p id="msgbox-body1"><b>Communicataion Resolved</b></p>
+                </div>
+                   <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
+                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+              
+             
+              </div> -->
+            </div>
+
+            <div class="child-interaction-2">
+    
+	             	<div class="conversation_inout_area">
+			
+                  <div class="input-area">
+                  <ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' (click)="resetMessageTex()"></ejs-richtexteditor>
+                  
+                  
+                  <div *ngIf="showEmoji" class="popup-dialog" >
+                    <div class="tabs">
+                      <div [ngClass]="EmojiType=='smiley' ? 'char_block active' : 'char_block'"  (click)="showEmojiType('smiley')">😀</div>
+                      <div [ngClass]="EmojiType=='animal' ? 'char_block active' : 'char_block'"  (click)="showEmojiType('animal')">🐵</div>
+                    </div>
+                    <div *ngIf="EmojiType == 'smiley'" class="rteEmoticons" >
+                      <div (click)="onInsert($event)" *ngFor="let smiley of smileys" class='char_block' title={{smiley.title}} [innerHTML]="smiley.content"></div>
+                    </div>
+                    <div *ngIf="EmojiType == 'animal'" class="rteEmoticons">
+                      <div (click)="onInsert($event)" *ngFor="let animal of animals" class='char_block' title={{animal.title}} [innerHTML]="animal.content"></div>
+                    </div>
+                  </div>
+                  <button class="submit_btn" (click)="addMessage()" >Add</button>
+                    </div>
+                </div>
+
+              <button id="add-action-dropdown" type="button" (click)="toggleAddActions()"><img src="assets/img/teambox/add.svg">Add Action</button>
+            </div>
+
+            <div *ngIf="ShowAssignOption" class="popup-dialog AssignOption">
+              <p  class="label">Assign To</p>
+              <p  *ngFor="let agent of agentsList; let k = index" (click)="assignConversation(k)" (click)="closeAssignOption()" >
+                <span ><img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />{{agent}}</span>
+              </p>
+            </div>
+
+            <div *ngIf="ShowAddAction" class="popup-dialog AssignAction">
+              <p class="label">Add Action</p>
+              <p *ngFor="let assignAction of assignActionList; let m = index" (click)="toggleAssignOption(m)">
+                <span >{{assignAction}}</span>
+              </p>
+            </div>
+
+
+<!--             
+               	<div *ngIf="AutoReplyOption" class="popup-dialog autoreply">
+                  <p class="label">Pause Auto Replies</p>
+						
+							<p  *ngFor="let option of AutoReplyEnableOption; let n = index" (click)="toggleAutoReply()">
+								<span>{{option}}</span>
+							</p>
+					
+						
+						</div> -->
+
+              
+
+
+
+            <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content qr-modal">
+                  
+                    <div class="modal-body">
+                      <div class="popup-dialog AddTag">
+                    <p *ngIf="!ShowRemoveTag" class="label">Add Tag</p>
+                    <p *ngIf="ShowRemoveTag" class="label">Remove Tag</p>
+                        <div class="addTag d-flex" *ngFor="let AddTag of addTagList;let i = index">
+                        <input  [checked]="checkTagStatus(AddTag)" type="checkbox" name="tags" class="form-control-checkbox ml-2" (change)="addTags(i,$event.target.value)"/>
+                        <div class="color-dots"></div>   
+                        <span>{{AddTag}}</span>
+                        </div>
+                      </div>
+                            
+                   </div>
+            </div>
+        </div>
+    </div>
+
+
          </div>
 
-        <!-- <div class="box7">
-        
-           <div class="box7child">
-            <label  *ngFor="let m of messages; let i = index" for="ff" >Message
-              <p [contentEditable]="isEditable" (input)="onEdit($event.target.innerText)">{{m}}</p>
-                <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button> 
-                <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
-                </label>
-
-                <div class="action1" *ngFor="let a of addedActions; let i = index ">{{i}}  <p> Conversation Assigned: {{selectedTeam}}</p>
-                 
-                 
-              
-                 <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
-                </div>
-  
-
-                
-              
-                
-             </div>
-               <div class="action1" *ngFor="let a of addedActions; let i = index "> {{i}}  <p> Add Tag: {{selectedTag}}</p>
-                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
-                  </div>
-
-                   <div class="action1" *ngFor="let t of tf; let i = index "> {{i}}  <p> TriggerFlow: {{triggerFlows}}</p>
-                   <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
-                  </div>
-
-             
- 
-          
-        
-        <div class="reply">
-          <textarea name="content" id="replyText" class="form-control" rows="4" cols="50"
-            placeholder="Type reply.." ngDefaultControl #input [(ngModel)]="message"></textarea>
-          <button type="button" class="btn4 btn-block col-1" (click)="addqty(input.value)" (click)="addMessage()">Add</button>
-          <div class="action">
-     	<div class="inout_options">
-					<button><img src="/assets/img/teambox/B.svg"></button>
-					<button><img src="/assets/img/teambox/I.svg"></button>
-					<button><img src="/assets/img/teambox/st.svg"></button>
-					<button><img src="/assets/img/teambox/emoji.svg"></button>
-					<button><img src="assets/img/teambox/attributes.svg"></button>
-					<button><img src="assets/img/teambox/quick-replies.svg"></button>
-					<button><img src="assets/img/teambox/saved-message.svg"></button>
-				</div>
-
-            <div class="dropdown">
-              
-              <button class="btn6 btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
-               <img style="margin: 0 4px 2px;" src="assets/img/add.png" alt="error"> Add Action
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li ><a  class="dropdown-item" (click)="addedAction()">Add Action</a></li>
-                <li class="nav-item dropend">
-                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">Assign Conversation</a>
-                 
-                  <ul class="dropdown-menu submenu">
-                    <p>Assign To</p>
-                     <li  *ngFor="let t of teams" (click)="onSelectedTeams(t)" ><a class="dropdown-item1">{{t}}</a></li> 
-                  </ul>
-                </li>
-
-              <li class="nav-item dropend">
-                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">Add Contact Tag</a>
-                  <ul class="dropdown-menu submenu">
-                     <p>Add Tag</p>
-               <li *ngFor="let tags of addTag " (click)="onSelectedTag(tags)"><a class="dropdown-item" ><div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                  
-                      <label class="form-check-label" for="flexCheckDefault">{{tags}}</label></div>
-                    </a>
-                  </li>
-                  </ul>
-                </li>
-
-                <li class="nav-item dropend">
-                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">Remove Tag</a>
-                  <ul class="dropdown-menu submenu">
-                       <p>Remove Tag</p>
-               <li *ngFor="let tags of removeTag " (click)="onSelectedTag(tags)"><a class="dropdown-item" ><div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                  
-                      <label class="form-check-label" for="flexCheckDefault">{{tags}}</label></div>
-                    </a>
-                  </li>
-                  </ul>
-                </li>
-                 <li class="nav-item dropend">
-                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">Trigger Flow</a>
-                <ul class="dropdown-menu submenu">
-                   <p>Pause Auto Replies</p>
-                <li *ngFor="let trigger of triggerFlow " (click)="onTriggerFlow(trigger)"><a class="dropdown-item1">{{trigger}}</a>
-                
-                </li>
-                </ul>
-                </li>
-                <li><a class="dropdown-item">Name Update</a></li>
-                <li><a class="dropdown-item">Resolve Conversation</a></li>
-              </ul>
-            </div>
-          </div>
-
-        </div>
-     </div> -->
 
 
 
-
-
-        <button type="button" (click)="next()" class="btn5 btn-block col-1 mt-3 ">Save</button>
+          <button type="button" (click)="sendNewSmartReply()" class="btn5 btn-block col-1 mt-3 ">Save</button>
       
       </div>
     </div>

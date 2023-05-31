@@ -1,16 +1,53 @@
-.col-md-12{
-    margin: 10px 0px 0px 50px;
-    box-sizing: content-box;
-    padding: 30px 55px 20px 30px;
+// .col-md-12{
+//     margin: 10px 0px 0px 50px;
+//     box-sizing: content-box;
+//     padding: 30px 55px 20px 30px;
+// }
+// .row{
+//     margin: 20px 10px;
+//     display: flex;
+// }
+// .row .row1{
+//     margin: 20px 10px;
+// }
+// .row .row2{
+//     margin: 20px 10px;
+//     float: right;
+// }
+* {
+    font-family: "Manrope";
 }
-.row{
-    margin: 20px 10px;
-    display: flex;
+
+.setting-link-card .setting-link{
+    color: #7A86A1;
+    padding-left: 10px;
+    font-size: 15px;
+    text-decoration: none;
 }
-.row .row1{
-    margin: 20px 10px;
+
+.setting-link-card .active{
+    color: #6149CD !important;
 }
-.row .row2{
-    margin: 20px 10px;
-    float: right;
+
+.setting-field {
+ display: flex;
+}
+
+.setting-field .setting-field-link {
+    color: #7A86A1;
+    font-size: 15px;
+    padding: 10px 14px;
+    text-decoration: none;
+}
+
+.setting-field .active{
+    color: #FFFFFF !important;
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 19px;    
+}
+
+.setting-card {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px
 }

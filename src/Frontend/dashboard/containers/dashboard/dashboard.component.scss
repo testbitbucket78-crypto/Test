@@ -276,7 +276,7 @@ height: 429px;
 
 #campaigns {
 // width: 1011px;
-width: 967px!important;
+width: 898px!important;
 height: 100%;
 left: 46px;
 }
@@ -355,11 +355,11 @@ h6,
     border-radius: 30px;
     box-shadow: 2px 13px 54px #695f9714;
     opacity: 1;
-    margin: 60px 0px 0px 50px!important;
-    width: 56%!important;
+    margin: 60px 0px 0px 50px;
+    width: 60%;
     height: 210px;
     border: none;
-    box-sizing: border-box!important;
+    box-sizing: border-box;
 }
 .rowss img {
     vertical-align: middle;
@@ -491,12 +491,14 @@ font-size: 14px;
     margin: -27px 0 0 187px;
 }
 .date h4 {
-    font-size: 13px;
-    font-weight: normal;
-    color: #7a86a1;
-    margin: -8px 0px 0px 246px;
 
-}
+        font-size: 11px;
+        font-weight: normal;
+        color: #7a86a1;
+        margin: -12px 0px 0px 232px;
+    }
+
+
 .row4 {
     margin: -57px 0px 0px 75px;
 }
@@ -513,7 +515,7 @@ font-size: 14px;
 
 
   
-/***** media queries for low resolution laptops ****/
+/**** media queries for low resolution laptops ***/
 
 // laptop screen size 1536px
 // @media screen and (max-width:1536px) {

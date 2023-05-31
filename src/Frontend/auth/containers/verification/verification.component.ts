@@ -157,7 +157,7 @@ export class VerificationComponent implements OnInit {
             return
         }
 
-        if (!this.isVerified) {
+        if (this.isVerified) {
             // If not verified, show an error message or perform desired action
 
             this.values = sessionStorage.getItem('formValues')

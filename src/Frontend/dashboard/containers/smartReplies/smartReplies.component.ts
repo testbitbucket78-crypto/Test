@@ -1,10 +1,9 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, NgForm } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { Router } from '@angular/router';
 import { Cards } from './../../models';
-import { inputs } from '@syncfusion/ej2-angular-richtexteditor/src/rich-text-editor/richtexteditor.component';
 import { Title } from '@angular/platform-browser';
 declare var $: any;
 
@@ -23,6 +22,8 @@ export class SmartRepliesComponent implements OnInit {
 			this.router.navigate(['login']);
 		}
 	}
+
+
 	data: any;
 	items: any;
     actions:any[]=[];
@@ -30,6 +31,7 @@ export class SmartRepliesComponent implements OnInit {
 	mydate: any;
 	active = 1;
 	showTopNav: boolean = true;
+	showSideBar = false;
 
 	Cards: Cards[] = [
 		new Cards(1107), new Cards(1108), new Cards(1109), new Cards(1110), new Cards(1111), new Cards(1112), new Cards(1113)
@@ -39,19 +41,16 @@ export class SmartRepliesComponent implements OnInit {
 		ID: new FormControl('')
 	})
 	sidenavReplies: any;
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private cdRef:ChangeDetectorRef, private router:Router) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private router:Router) {
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
 
 	ngOnInit() {
 		this.routerGuard();
-		// this.showTopNav = true;
-		this.Cards;
 		this.getReplies();
-		this.cdRef.detectChanges();
+		// this.showTopNav = true;
 
-	
 
 	}
 
@@ -63,11 +62,16 @@ export class SmartRepliesComponent implements OnInit {
 			console.log(this.replies)
 		})
 	}
-	opensidenav(employee: any) {
-		document.getElementById("sidebar")!.style.width = "400px";
-	}
-	closesidenav(items: any) {
-		document.getElementById("sidebar")!.style.width = "0";
+	// opensidenav(employee: any) {
+	// 	document.getElementById("sidebar")!.style.width = "400px";
+	// }
+	// closesidenav(items: any) {
+	// 	document.getElementById("sidebar")!.style.width = "0";
+	// }
+
+
+	toggleSideBar() {
+		this.showSideBar = !this.showSideBar
 	}
 
 	search() {

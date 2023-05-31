@@ -1,23 +1,22 @@
 @import 'styles/variables.scss';
 
-.container{
+#con{
     background-color: white;
     height: 100vh;
 }
 
 .float-left {
     float: left !important;
-    margin: 0px 120px 0px -25px;
-    width: 570px;
+    width: 100%;
     height: 100vh;
 }
 .font-weight-light {
-    font-weight: 600 !important;
-    margin: 60px 0px 0px 25px;
+    font-weight: 700 !important;
     font-size: 30px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Manrope";
     color: #000000;
     line-height: 50px;
+    margin-left: 1.1rem;
 }
 input::-ms-reveal,
 input::-ms-clear {
@@ -25,16 +24,27 @@ input::-ms-clear {
 }
 label {
     display: inline-block;
-    margin: 0px 0px 0px -10px;
     color: #000000;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-weight: 600;
     font-size: 15px;
 }
+#mobile_number{
+    margin-top:  -0.45rem;
+    margin-left: 1rem;
+}
+#col{
+    display: flex;
+    flex-direction: column;
+    padding-left:0.6rem;
+}
+#name{
+    width: 121%;
+}
 .form-control {
     display: block;
-    width: 100%;
-    height: calc(1.5em + 0.75rem + 2px);
+    width: 112%;
+    height: calc(1.5em + 0.75rem + 7px);
     padding: 0 37px 0 10px;
     font-size: 14px;
     font-weight: 400;
@@ -45,31 +55,49 @@ label {
     border: 1px solid #ced4da;
     border-radius: 15px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    margin: 10px 0px 0px -10px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
 }
-
+#la-ph{
+    margin-left: 0.5rem;
+}
+#kop{
+    margin: 0px 0px 0px 31px;
+    padding-left: 0.78rem;
+}
+#confirmPassword{
+    width: 131%;
+}
+#email_id{
+    width: 100%;
+}
+.name-number{
+    display: flex;
+}
+.password-confirm{
+    display: flex;
+    padding-top: 1rem;
+}
 input[type=radio], input[type=checkbox] {
     box-sizing: border-box;
-    padding: 0;
-    margin: 2px 0px 0px -25px;
-    color: #7A86A1;
+    color: #7A86A1;  
+    margin-top: -1.4rem;
+    margin-left: -0.6rem;
 }
-.ml-1 {
+.mi{
     color: #6149CD;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-size: 14px;
     font-weight: bold;
-    margin: 3px 0px 0px 0px;
+    display: contents;
 }
 .form-group a{
     color: #6149CD;
-    font-family: 'Montserrat', sans-serif;
+    font-family:'Manrope';
     font-size: 12px;
     font-weight: bold;
 }
 a{
-    font-family: 'Montserrat', sans-serif;
+    font-family:'Manrope';
     font-size: 14px;
     font-weight: bold;
     color: #7A86A1;
@@ -79,32 +107,28 @@ a{
     margin-bottom: 0 !important;
     font-size: 12px;
     color: #7A86A1;
-    font-family: 'Montserrat', sans-serif;
-    margin: 0px 0px 0px -45px;
-
+    font-family:'Manrope';
 }
 .label1 {
     position: relative;
-    
-    margin: 0px 0px 0px 5px;
-    font-family: 'Montserrat', sans-serif;
+    // margin: 0px 0px 0px 5px;
+    font-family: 'Manrope';
     font-size: 13px;
     color: #7A86A1;
     font-weight: 600;
     width: 140px;
+    margin-top: 0.55rem;
 }
-// .btn:not(:disabled):not(.disabled) {
-//     cursor: pointer;
-//     margin: 0 0 0 40px;
-    
-// }
+#gem{ 
+    width: 32.1rem;
+}
 
 .btn2 {
     cursor: pointer;
     width: 230px;
     border-radius: 22px;
     background-image: linear-gradient(to right, #F9B035, #F98C4E, #F96767);
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Manrope';
     font-weight: bold;
     font-size: 16px;
     color: #000000;
@@ -112,21 +136,26 @@ a{
     opacity: 1;
     margin: 0;
 }
-
-.text1{
-    margin: 40px 0px 0px 0px;
+#phone{
+    height: 6rem;
 }
+.you-em{
+    padding-top: 1rem;
+}
+
 .eyeicon{
-        position: absolute;
-        right: 39px;
-        top: 40px;
-        cursor: pointer;
+    position: relative;
+    cursor: pointer;
+    top: -2rem;
+    left: 0.5rem;
+    float: right;
     }
     .eyeicon1{
-            position: absolute;
-            right: 38px;
-            top: 40px;
-            cursor: pointer;
+        position: relative;
+        cursor: pointer;
+        top: -2rem;
+        left: 3rem;
+        float: right;
         }
     .error{
         border: 1px solid red;
@@ -134,19 +163,22 @@ a{
     .text-danger {
         color: #dc3545 !important;
         font-size: 11px;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Manrope';
         font-weight: 600;
     }
     .form-control.is-invalid {
         border: 1px solid red;
         background: padding-box;
     }
-
+.register-cip{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
   
     .select{
         width: 54px;
         border: none;
-        margin: 41px 0px 4px -54px;
         font-size: 14px;
     }
     .phone {
@@ -156,27 +188,39 @@ a{
       .checkbox1{
         margin: 0;
       }
-      .accept{
-        margin: -20px 0 0 -5px;
-    }
- 
-    .accept1{
-        margin: -22px 0 0 -9px;
-    }
     .checkbox2{
-        margin: 0;
-        padding: 0 0 0 85px;
+        display: flex;
+        margin-left: 3.5rem;
+        margin-top: -1rem;
     }
 
 
     p {
         font-size: 11px;
         color: #dc3545;
-        margin: -14px 0 0 30px;
-        font-family: 'Montserrat', sans-serif;
+        // margin: -14px 0 0 30px;
+        font-family: 'Manrope';
         font-weight: 400;
     }
+    .accept p{
+        font-size: 13px;
+        color: #7a86a1;
 
-
-
-
+    }
+    .accept{
+        display: flex;
+        padding-left: 0.6rem;
+        margin-top: -0.4rem;
+    }
+    .accept1{
+        display: flex;
+        padding-left:0.6rem;
+    }
+    .form-group.custom-control.custom-checkbox{
+        display: flex;
+    }
+   #sigal{
+    display: flex !important;
+    justify-content: space-around;
+    margin-top: -2rem;
+   }

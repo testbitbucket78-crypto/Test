@@ -1,16 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild,ElementRef,ViewEncapsulation } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { Router } from '@angular/router';
-
+import { agentMessageList } from '@app/models/smart-replies/smartReplies.model';
 import Stepper from 'bs-stepper';
+import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
+import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 declare var $: any;
 
 @Component({
 	selector: 'sb-addSmartReplies',
 	templateUrl: './addSmartReplies.component.html',
-	styleUrls: ['./addSmartReplies.component.scss']
+	styleUrls: ['./addSmartReplies.component.scss'],
+	providers: [ToolbarService, LinkService, ImageService, HtmlEditorService],
+	// encapsulation: ViewEncapsulation.None
 })
 export class AddSmartRepliesComponent implements OnInit {
 
@@ -21,6 +25,15 @@ export class AddSmartRepliesComponent implements OnInit {
 			this.router.navigate(['login']);
 		}
 	}
+
+	@ViewChild('notesSection') notesSection: ElementRef | undefined;
+	@ViewChild('chatSection') chatSection: ElementRef | undefined;
+	@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any;
+
+
+	public selection: NodeSelection = new NodeSelection();
+	public range: Range | undefined;
+	public saveSelection: NodeSelection | any;
 
 
 	active = 1;
@@ -48,37 +61,10 @@ export class AddSmartRepliesComponent implements OnInit {
 	
 	model: any;
 
-	assignConversation: string[] =
-		[
-			"James Whatson", "David Harrison", "Jane Cooper", "Charles John"
-		];
-
-	addContactTag: string[] =
-		[
-			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
-		];
-
-	removeContactTag: string[] =
-		[
-			"Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"
-		];
-
-		triggerFlow: string[] = 
-		[
-		        "Flow New Launch","Flow Help", "Flow Buy Product", "Flow Return Product"
-			
-		];
-
-
 	newMessage!: FormGroup;
 	message = '';	
 	messages:any [] = [];
 	
-	action = '';
-	addedActions:any [] =[];
-	
-	tt = '';
-	tf: any [] = []
 
 	selectedAction:any;	
 	
@@ -86,20 +72,215 @@ export class AddSmartRepliesComponent implements OnInit {
 	keywords: string[] = [];
 	
 	editedText:string ='';
+	editedMessage: string = '';
 	isEditable: boolean = false;
 	addText:string ='';
 	showBox:boolean = false;
 	showBox1: boolean = false;
 	showBox2: boolean = false;
 	showattachmentbox = false;
-	agentsList = ["James Whatson", "David Harrison", "Jane Cooper", "Charles John"];
-	selectedInteraction: any = [];
+	agentsList = ["Rishabh Singh", "Jatin Sharma", "Raunak Kumari", "Sumit Goyal" ,"Pawan Sharma"];
 	ShowAssignOption = false;
-	assignActionList = ["Assign Conversation","Add Contact Tag","Remove Tags","Trigger Flow", "Name Update", "Resolve Conversation" ];
+	assignActionList = ["Assign Conversation", "Add Contact Tag", "Remove Tag"]; //,"Trigger Flow", "Name Update", "Resolve Conversation"
 	ShowAddAction = false;
-	errorMessage = '';
+	AutoReplyEnableOption = ['Flow New Launch', 'Flow Help', 'Flow Buy Product', 'Flow Return Product'];
+	ShowAutoReplyOption = false;
+	AutoReplyOption = false;
+	ShowAddTag = false;
+	ToggleAddTag = false;
+	ToggleAssignOption = false;
+	addTagList = ["Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"];
+	ShowRemoveTag = false;
+	ToggleRemoveTags = false;
+	ShowNameUpdate = false;
+    errorMessage = '';
 	successMessage = '';
 	warningMessage = '';
+	assignedAgentList: agentMessageList [] =[];
+	assignAddTag: [] =[];
+	assignedTagList:any []=[];
+
+    /**richtexteditor **/ 
+	custommesage = '<p>Your Reply...</p>'
+	showQuickResponse: any = false;
+	showAttributes: any = false;
+	showSavedMessage: any = false;
+	showQuickReply: any = false;
+	showInsertTemplate: any = false;
+	showAttachmenOption: any = false;
+	slideIndex = 0;
+	PauseTime: any = '';
+	confirmMessage: any;
+	showEmoji = false;
+	EmojiType: any = 'smiley';
+	showEditTemplateMedia: any = false;
+	TemplatePreview: any = false;
+	messageMeidaFile: any = '';
+	mediaType: any = '';
+	showMention: any = false;
+	editTemplate: any = false;
+
+
+	public smileys: { [key: string]: Object }[] = [
+		{ content: '&#128512;', title: 'Grinning face' },
+		{ content: '&#128513;', title: 'Grinning face with smiling eyes' },
+		{ content: '&#128514;', title: 'Face with tears of joy' },
+		{ content: '&#128515;', title: 'Smiling face with open mouth' },
+		{ content: '&#128516;', title: 'Smiling face with open mouth and smiling eyes' },
+		{ content: '&#128517;', title: 'Smiling face with open mouth and cold sweat' },
+		{ content: '&#128518;', title: 'Smiling face with open mouth and tightly-closed eyes' },
+		{ content: '&#128519;', title: 'Smiling face with halo' },
+		{ content: '&#128520;', title: 'Smiling face with horns' },
+		{ content: '&#128521;', title: 'Winking face' },
+		{ content: '&#128522;', title: 'Smiling face with smiling eyes' },
+		{ content: '&#128523;', title: 'Face savouring delicious food' },
+		{ content: '&#128524;', title: 'Relieved face' },
+		{ content: '&#128525;', title: 'Smiling face with heart-shaped eyes' },
+		{ content: '&#128526;', title: 'Smiling face with sunglasses' },
+		{ content: '&#128527;', title: 'Smirking face"' },
+		{ content: '&#128528;', title: 'Neutral face' },
+		{ content: '&#128529;', title: 'Expressionless face' },
+		{ content: '&#128530;', title: 'Unamused face' },
+		{ content: '&#128531;', title: 'Face with cold sweat' },
+		{ content: '&#128532;', title: 'Pensive face' },
+		{ content: '&#128533;', title: 'Confused face' },
+		{ content: '&#128534;', title: 'Confounded face' },
+		{ content: '&#128535;', title: 'Kissing face' },
+		{ content: '&#128536;', title: 'Face throwing a kiss' },
+		{ content: '&#128538;', title: 'Kissing face with smiling eyes' },
+		{ content: '&#128539;', title: 'Face with stuck-out tongue' },
+		{ content: '&#128540;', title: 'Face with stuck-out tongue and winking eye' },
+		{ content: '&#128541;', title: 'Face with stuck-out tongue and tightly-closed eyes' },
+		{ content: '&#128542;', title: 'Disappointed face' },
+		{ content: '&#128543;', title: 'Worried face' },
+		{ content: '&#128544;', title: 'Angry face' },
+		{ content: '&#128545;', title: 'Pouting face' },
+		{ content: '&#128546;', title: 'Crying face' },
+		{ content: '&#128547;', title: 'Persevering face' },
+		{ content: '&#128548;', title: 'Face with look of triumph' },
+		{ content: '&#128549;', title: 'Disappointed but relieved face' },
+		{ content: '&#128550;', title: 'Frowning face with open mouth' },
+		{ content: '&#128551;', title: 'Anguished face' },
+		{ content: '&#128552;', title: 'Fearful face' },
+		{ content: '&#128553;', title: 'Weary face' },
+		{ content: '&#128554;', title: 'Sleepy face' },
+		{ content: '&#128555;', title: 'Tired face' },
+		{ content: '&#128556;', title: 'Grimacing face' },
+		{ content: '&#128557;', title: 'Loudly crying face' },
+		{ content: '&#128558;', title: 'Face with open mouth' },
+		{ content: '&#128559;', title: 'Hushed face' },
+		{ content: '&#128560;', title: 'Face with open mouth and cold sweat' },
+		{ content: '&#128561;', title: 'Face screaming in fear' },
+		{ content: '&#128562;', title: 'Astonished face' },
+		{ content: '&#128563;', title: 'Flushed face' },
+		{ content: '&#128564;', title: 'Sleeping face' },
+		{ content: '&#128565;', title: 'char_block' },
+
+	];
+	public animals: { [key: string]: Object }[] = [
+		{ title: 'Monkey Face', content: '&#128053;' },
+		{ title: 'Monkey', content: '&#128018;' },
+		{ title: 'Gorilla', content: '&#129421;' },
+		{ title: 'Dog Face', content: '&#128054;' },
+		{ title: 'Dog', content: '&#128021;' },
+		{ title: 'Poodle', content: '&#128041;' },
+		{ title: 'Wolf Face', content: '&#128058;' },
+		{ title: 'Fox Face', content: '&#129418;' },
+		{ title: 'Cat Face', content: '&#128049;' },
+		{ title: 'Cat', content: '&#128008;' },
+		{ title: 'Lion Face', content: '&#129409;' },
+		{ title: 'Tiger Face', content: '&#128047;' },
+		{ title: 'Tiger', content: '&#128005;' },
+		{ title: 'Leopard', content: '&#128006;' },
+		{ title: 'Horse Face', content: '&#128052;' },
+		{ title: 'Horse', content: '&#128014;' },
+		{ title: 'Unicorn Face', content: '&#129412;' },
+		{ title: 'Deer', content: '&#129420;' },
+		{ title: 'Cow Face', content: '&#128046;' },
+		{ title: 'Ox', content: '&#128002;' },
+		{ title: 'Water Buffalo', content: '&#128003;' },
+		{ title: 'Cow', content: '&#128004;' },
+		{ title: 'Pig Face', content: '&#128055;' },
+		{ title: 'Pig', content: '&#128022;' },
+		{ title: 'Boar', content: '&#128023;' },
+		{ title: 'Pig Nose', content: '&#128061;' },
+		{ title: 'Ram', content: '&#128015;' },
+		{ title: 'Ewe', content: '&#128017;' },
+		{ title: 'Goat', content: '&#128016;' },
+		{ title: 'Camel', content: '&#128042;' },
+		{ title: 'Two-Hump Camel', content: '&#128043;' },
+		{ title: 'Elephant', content: '&#128024;' },
+		{ title: 'Rhinoceros', content: '&#129423;' },
+		{ title: 'Mouse Face', content: '&#128045;' },
+		{ title: 'Mouse', content: '&#128001;' },
+		{ title: 'Rat', content: '&#128000;' },
+		{ title: 'Hamster Face', content: '&#128057;' },
+		{ title: 'Rabbit Face', content: '&#128048;' },
+		{ title: 'Rabbit', content: '&#128007;' },
+		{ title: 'Chipmunk', content: '&#128063;' },
+		{ title: 'Bat', content: '&#129415;' },
+		{ title: 'Bear Face', content: '&#128059;' },
+		{ title: 'Koala', content: '&#128040;' },
+		{ title: 'Panda Face', content: '&#128060;' },
+		{ title: 'Paw Prints', content: '&#128062;' },
+		{ title: 'Frog Face', content: '&#128056;' },
+		{ title: 'Crocodile', content: '&#128010;' },
+		{ title: 'Turtle', content: '&#128034;' },
+		{ title: 'Lizard', content: '&#129422;' },
+		{ title: 'Snake', content: '&#128013;' },
+		{ title: 'Dragon Face', content: '&#128050;' },
+		{ title: 'Dragon', content: '&#128009;' },
+		{ title: 'Sauropod', content: '&#129429;' },
+		{ title: 'T-Rex', content: '&#129430;' },
+	];
+
+
+
+	public tools: object = {
+		items: ['Bold', 'Italic', 'StrikeThrough',
+			{
+				tooltipText: 'Emoji',
+				undo: true,
+				click: this.toggleEmoji.bind(this),
+				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
+			},
+			{
+				tooltipText: 'Attachment',
+				undo: true,
+				click: this.ToggleAttachmentBox.bind(this),
+				template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
+			},
+			{
+				tooltipText: 'Attributes',
+				undo: true,
+				click: this.ToggleAttributesOption.bind(this),
+				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+			},
+			{
+				tooltipText: 'Quick Replies',
+				undo: true,
+				click: this.ToggleQuickReplies.bind(this),
+				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
+			},
+			{
+				tooltipText: 'Saved Message',
+				undo: true,
+				click: this.ToggleSavedMessageOption.bind(this),
+				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
+			},
+			{
+				tooltipText: 'Insert Template',
+				undo: true,
+				click: this.ToggleInsertTemplateOption.bind(this),
+				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
+			}]
+	};
 
 	
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router ) {
@@ -120,15 +301,91 @@ export class AddSmartRepliesComponent implements OnInit {
 			message_text: ''
 		});
 	
-		this.routerGuard();
+		 this.routerGuard();
 	
 	
 	
 	}
 
+/*** rich text editor ***/
+
+	closeAllModal() {
+		this.showAttachmenOption = false
+		this.messageMeidaFile = false
+		this.showAttributes = false
+		this.showInsertTemplate = false
+		this.editTemplate = false
+		this.TemplatePreview = false
+		this.showSavedMessage = false
+		this.showQuickReply = false
+		this.showMention = false
+		this.showEmoji = false;
+
+	}
+
+	resetMessageTex() {
+		if (this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value == '<p>Your Reply...</p>') {
+			this.chatEditor.value = '';
+			
+		}
+
+	}
+
+	toggleEmoji() {
+		this.closeAllModal()
+		this.showEmoji = !this.showEmoji;
+		(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
+		this.range = this.selection.getRange(document);
+		this.saveSelection = this.selection.save(this.range, document);
+
+	}
+
+	ToggleAttachmentBox() {
+		this.closeAllModal()
+		this.showAttachmenOption = !this.showAttachmenOption;
+
+	}
+
+
+	ToggleAttributesOption() {
+		this.closeAllModal()
+		this.showAttributes = !this.showAttributes;
+	}
+	ToggleQuickReplies() {
+		this.closeAllModal()
+		this.showQuickReply = !this.showQuickReply;
+	}
+	ToggleSavedMessageOption() {
+		this.closeAllModal()
+		this.showSavedMessage = !this.showSavedMessage;
+
+	}
+
+	ToggleInsertTemplateOption() {
+		this.closeAllModal()
+		this.showInsertTemplate = !this.showInsertTemplate;
+	}
 
 
 
+	showEmojiType(EmojiType: any) {
+		this.EmojiType = EmojiType;
+	}
+
+	public onInsert(item: any) {
+
+		this.saveSelection.restore();
+		this.chatEditor.executeCommand('insertText', item.target.textContent);
+		this.chatEditor.formatter.saveData();
+		this.chatEditor.formatter.enableUndo(this.chatEditor);
+		this.showEmoji = !this.showEmoji;
+
+	}
+
+
+
+
+	/***add keyword and remove keyowrd method***/
 
 	addKeyword() {
 		if (this.keyword !== '') {
@@ -152,95 +409,168 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	}
 
-	// onSubDropdownSelect(event: any, selectedvalue:number) {
-	// 	this.selectedValue = event.target.innerText;
-	// 	this.selectedAction = this.addedActions.find(this.action =>this.addedActions.id === selectedvalue )
-		
-		
-	// }
-
-	addedAction() {
-		
-		 	
-			this.addedActions.push(this.action);
-			this.tf.push(this.tt);
-			this.action = '';
-		
-		
-	}
-
-	removeAction(index: number) {
-		this.addedActions.splice(index, 1);
-	}
 
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
 	addMessage() {
+		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage })
+			// this.messages.push(this.message);
+			this.custommesage = '';
 		
-			this.messages.push(this.message);
-			this.message = '';
+		    
 		}
-		
+
 	
 	removeMessage(index:number) {
-		this.messages.splice(index, 1);
+		this.assignedAgentList.splice(index, 1);
 	}
 
 
+	removeAction(index: number) {
+
+		this.assignedAgentList.forEach(item => {
+			if (!item.Message) {
+				this.assignedAgentList.splice(index, 1);
+					
+			}
+		})
+		
+	}
+
+
+	removeAddTag(index: number) {
+
+		this.assignedAgentList.forEach(item => {
+			if (!item.Value.includes(this.addTagList[index])) {
+				this.assignedAgentList.splice(index, 1);
+
+			}
+		})
+
+	}
+
+	/*** edit message and assinged conversation***/ 
 
 	toggleEditable(index: number) {
 		this.isEditable = !this.isEditable;
-	}
-	onEdit(text:string) {
-		this.editedText = text;
+		}
+
+	onEdit(msgText:string) {
+		this.editedMessage = msgText;
 		
 	}
 
-	/*** Text Formating buttons on Reply Action ***/
+	onActionEdit(Text: string) {
+		this.editedText = Text;
 
-
-    bold() {
-		(<HTMLInputElement>document.getElementById("bold-txt")).style.fontWeight = "bold";
-	}
-	itelic() {
-		(<HTMLInputElement>document.getElementById("replyText")).style.fontStyle = "italic";
 	}
 
+	checkTagStatus (val:any) {
+		if(this.assignedTagList.includes(val)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
   /***  reply-action function  ***/
-	toggleAssignOption() {
-		
-	 this.ShowAddAction = false;
-     this.ShowAssignOption = !this.ShowAssignOption;
-		
-	}
 
+	toggleAssignOption(index: number) {
+  if (this.assignActionList[index] === "Assign Conversation") {
+    this.ShowAssignOption = !this.ShowAssignOption;
+  }
+  else if (this.assignActionList[index] === "Add Contact Tag") {
+	  this.ShowRemoveTag =false;
+	  $("#addTagModal").modal('show'); 
+
+  }
+//   else if (this.assignActionList[index] === "Trigger Flow") {
+// 	  this.AutoReplyOption = !this.AutoReplyOption;
+//   }
+	else { 
+	   this.ShowAssignOption = false;
+	  
+	  this.ShowAutoReplyOption = false;
+
+  }
+ this.ShowAddAction = false;
+
+}
+
+
+
+/*** toggle Actions***/ 
 	toggleAddActions() {
 		this.ShowAssignOption = false;
 		this.ShowAddAction = !this.ShowAddAction;
 	}
 
-	showToaster(message: any, type: any) {
-		if (type == 'success') {
-			this.successMessage = message;
-		} else if (type == 'error') {
-			this.errorMessage = message;
-		} else {
-			this.warningMessage = message;
-		}
-		setTimeout(() => {
-			this.hideToaster()
-		}, 5000);
+	closeAssignOption() {
+		this.ShowAssignOption = false;
+		this.ToggleAssignOption = !this.ToggleAssignOption;
+	}
+
+	toggleAutoReply() {
+		this.ShowAutoReplyOption = false;
+		this.AutoReplyOption = !this.AutoReplyOption;
+		
+	}
+
+	toggleAddTag() {
+
+		this.ShowAddTag = false;
+		this.ToggleAddTag = !this.ToggleAddTag;
+
 
 	}
-	hideToaster() {
-		this.successMessage = '';
-		this.errorMessage = '';
-		this.warningMessage = '';
+
+	toggleRemoveTag() {
+		$("#addTagModal").modal('show'); 
+		this.ShowRemoveTag = true;
+	
 	}
+	assignConversation(index: number) {
+		var isExist = false;
+		this.assignedAgentList.forEach(item=> {
+			if(item.ActionID == 2) {
+				if(item.Value == this.agentsList[index]) 
+				isExist = true;
+			}
+		})
+		if(!isExist) {
+			this.assignedAgentList.push({Message:'', ActionID:2, Value: this.agentsList[index]})
+		}
+			
+	}
+
+	addTags(index: number, e:any) {
+		console.log(e,index);
+		var isExist = false;
+		this.assignedAgentList.forEach(item => {
+			if (item.ActionID == 3) {
+				  isExist= true;
+				if (!item.Value.includes(this.addTagList[index])) {
+					console.log(this.addTagList[index]);
+					// item.Value.push(this.addTagList[index]);
+					this.assignedTagList.push(this.addTagList[index]);
+			}
+		}
+		})
+		if (!isExist) {
+			this.assignedTagList = [];
+			this.assignedTagList.push(this.addTagList[index]);
+			this.assignedAgentList.push({ Message: '',ActionID: 3, Value: this.assignedTagList});
+			console.log('new value');
+		}
+		console.log(this.assignedAgentList);
+		console.log(this.assignedTagList);
+	}
+
 
 	next() {
 		this.stepper.next();
+		console.log(this.stepper+ 'stepper');
 	}
     previous() {
 		this.stepper.previous();
@@ -288,13 +618,15 @@ export class AddSmartRepliesComponent implements OnInit {
 		sessionStorage.setItem('MatchingCriteria',this.model)
 	}
 
-	sendNewSmartReply(){
+	sendNewSmartReply() {
 		var data={
 			SP_ID:sessionStorage.getItem('SP_ID'),
 			Title:this.newReply.value.Title ,
 			Description:this.newReply.value.Description,
 			MatchingCriteria:this.model,
-			Keywords:this.keywords
+			Keywords:this.keywords,
+			ReplyActions:this.assignedAgentList,
+			Tags: []
 		}
 		console.log("data")
 		console.log(data)
@@ -306,23 +638,25 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	onClickFuzzy(event: MouseEvent) {
 		const target = event.target as HTMLElement;
-		if (target.classList.contains('form-check-label')) {
+		if (target.classList.contains('form-check-label-img')) {
 			this.showBox = true;
 		}
 	}
 
 	onClickExact(event: MouseEvent) {
 		const target = event.target as HTMLElement;
-		if (target.classList.contains('form-check-label')) {
+		if (target.classList.contains('form-check-label-img')) {
 			this.showBox1 = true;
 		}
 	}
 
 	onClickContains(event: MouseEvent) {
 		const target = event.target as HTMLElement;
-		if (target.classList.contains('form-check-label')) {
+		if (target.classList.contains('form-check-label-img')) {
 			this.showBox2 = true;
 		}
 	}
+
+
 
 }

@@ -145,8 +145,8 @@ export class ContactsComponent implements OnInit {
 			quantities: this.fb.array([]) ,  
 		  });
       this.newContact=this.fb.group({
-        Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z ]+")])),
-        Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+        Name: new FormControl('', Validators.compose([Validators.required])),
+        Phone_number: new FormControl(''),
         emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
         age: new FormControl(''),
         tag: new FormControl([]),
@@ -407,17 +407,21 @@ onSelectAll(items: any) {
  
 
   onRowSelected = (event: any) => {
-    const rowChecked = this.checkedConatct.findIndex((item) => item.customerId == event.data.customerId);
-    if (rowChecked < 0 ) {
-     
-      this.checkedConatct.push(event.data);
-      
-    }
+       if(event === null || event === undefined) {
+      this.checkedConatct = [] }
+      else {
+      const rowChecked = this.checkedConatct.findIndex((item) => item.customerId == event.data.customerId);
+      if (rowChecked < 0) {
 
-    else {
-      this.checkedConatct.splice(rowChecked , 1);
+        this.checkedConatct.push(event.data);
 
-    }
+      }
+
+      else {
+        this.checkedConatct.splice(rowChecked, 1);
+
+       }
+      }
     console.log(this.checkedConatct.length );
 
 
