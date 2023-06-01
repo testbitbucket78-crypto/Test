@@ -125,7 +125,7 @@ SELECT sp_id,
 FROM user_paths ep;`
 
 
-addNewReply = `CALL addnewSmartReply(?,?,?,?,?,?,?)`;
+addNewReply = `CALL updatedAddnewSmartReply(?,?,?,?,?,?)`;
 deleteSmartReply = `CALL deleteSmartUpdate(?)`;
 deletMessage = `update SmartReplyAction set isDeleted='1',isDeletedOn=now() where SmartReplyID=?`;
 editMessage = `update SmartReplyAction set Message=? where SmartReplyID=?`;
