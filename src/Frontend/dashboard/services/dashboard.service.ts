@@ -136,6 +136,10 @@ export class DashboardService {
     console.log("params  "  + params)
     return this.http.get('https://smartapi.sampanatechnologies.com/search', { params: params })
   }
+   duplicatekeywordSmartReply(data:any) {
+    
+     return this.http.post('https://smartapi.sampanatechnologies.com/KeywordMatch',data)
+  }
 
   sideNav(ID: any) {
     const params = new HttpParams().set('ID', ID)

@@ -31,7 +31,7 @@
 				<h6 class="id">Id:{{ reply.ID }}</h6>
 				<h5 class="card-title">{{reply.Title}}</h5>
 
-				<p class="card-text">{{reply.Description}}
+				<p [innerHTML]="reply.Description" class="card-text">
 				</p>
 				<h6 class="card-subtitle mb-2 text-muted">{{reply.MatchingCriteria}}</h6>
 				<div class="card1 d-flex">
@@ -53,7 +53,7 @@
 
 		<div class="collumn d-flex">
 			<h6>Id:</h6>
-			<h5>{{items.ID}}.</h5>
+			<h5>{{repliesData.ID}}.</h5>
 			<div class="line"></div>
 			<h6>Created on:</h6>
 			<h5>{{items.CreatedDate | date: 'dd MMM yyyy'}}</h5>
@@ -61,14 +61,14 @@
 			<h6>Edited on:</h6>
 			<h5>{{items.ModifiedDate | date: 'dd MMM yyyy'}}</h5>
 		</div>
-		<h4 ><img id="Edit-icon" src="assets/img/Edit-icon.png">Help & Support</h4>
+		<h4 ><img id="Edit-icon" src="assets/img/Edit-icon.png" routerLink="/dashboard/setting">Help & Support</h4>
 		<div class="row d-flex">
 			<h6 class="text-justify">{{items.HelpAndSupport}}.</h6>
 		</div>
-		<h3><img id="Edit-icon" src="assets/img/Edit-icon.png">Keywords & Criteria </h3>
+		<h3 ><img id="Edit-icon" src="assets/img/Edit-icon.png" routerLink="/dashboard/addSmartReplies">Keywords & Criteria </h3>
 		<div class="row">
-			<div class="box" *ngFor="let values of data">
-				<p>{{values.Keyword}}</p>
+			<div class="box" *ngFor="let values of repliesData.Keyword">
+				<p>{{values}}</p>
 			</div>
 
 		</div>
@@ -76,18 +76,21 @@
 
 		<div class="box1 d-flex">
 			<h6>Matching Criteria:</h6>
-			<h5>{{items.MatchingCriteria}}</h5>
+			<h5>{{repliesData.MatchingCriteria}}</h5>
 		</div>
-		<h3><img id="Edit-icon" src="assets/img/Edit-icon.png">Reply Actions</h3>
+		<div *ngFor="let item of repliesData.ActionList">
+
+		</div>
+		<h3><img id="Edit-icon" src="assets/img/Edit-icon.png" routerLink="/dashboard/addSmartReplies">Reply Actions</h3>
 		<div class="box4">
 			<h3>Message</h3>
-			<p>{{items.Message}} </p>
+			<p [innerHTML]="items.Message" ></p>
 		</div>
 		<div class="box2">
 			<h3>Action</h3>
 			<div class="bb d-flex">
 				<b>{{items.Name}}</b>
-				<p>{{items.Value}}</p>
+				<p [innerHTML]="items.Value"></p>
 			</div>
 		</div>
 		<div class="footer">

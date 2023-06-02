@@ -749,6 +749,138 @@ input:focus {
     margin: 4px 0 !important;
 }
 
+
+    .title.err-msg {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    
+    #title-err-msg{
+    font-family: 'Manrope';
+    font-size: 12px;
+    font-weight: 500;    
+    margin-left: 42%;
+    color: #dc3545;
+}
+
+.keyword-err-msg {
+      display: flex;
+        justify-content: space-between;
+        align-items: center;
+}
+
+    #keyword-err-msg {
+    font-family: 'Manrope';
+    font-size: 12px;
+    font-weight: 500;    
+    margin-left: 42%;
+    color: #dc3545;
+}
+.smrply-err-msg {
+      display: flex;
+        justify-content: space-between;
+        align-items: center;
+}
+
+
+#smrply-err-msg {
+     font-family: 'Manrope';
+    font-size: 12px;
+    font-weight: 500;    
+    margin-left: 42%;
+    color: #dc3545;
+}
+
+
+.popfooter.row.text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+// .smart-reply-success {
+//         text-align: center;
+// }
+
+.smart-reply-success p {
+    text-align: center;
+    letter-spacing: 0px;
+    color: #7A86A1;
+    font-weight: 600;
+    opacity: 1
+}
+
+.dd img {
+    padding: 40px 0px 0px 44%;
+}
+.dd{
+    background-color: #FFF4F2;
+    border-radius: 20px;
+}
+.dd h4{
+    padding: 0px 0px 0px 42%;
+    font-family: 'Manrope';
+    font-weight: bold;
+    font-size: 22px;
+}
+.dd p{
+    text-align: center;
+    letter-spacing: 0px;
+    color: #7A86A1;
+    opacity: 1;
+}
+.dd .ss img{
+    padding: 0px;
+}
+.dd .text{
+    margin: -60px 0px 0px 0px;
+}
+.dd .btn{
+    width: 100px;
+    height: 38px;
+    background-color: #6149CD;
+    color: white;
+}
+.dd .btn1{
+    width: 100px;
+    height: 38px; 
+   
+}
+
+.smartreplies-failed{
+  
+    display: inline;
+    height: 135px;
+    pointer-events: auto;
+    background-color: #FFF4F2;
+    border-radius: 20px;
+    box-shadow: 4px 22px 54px #695F971A;
+    outline: 0;
+    border: none;
+ }
+
+ .btn.btn1
+{
+    width: 100px;
+    height: 38px;
+    margin-left: 40%;
+    background-color: #6149CD;
+    color: white;
+}
+
+.smart-replies-failed.para p {
+    text-align: center;
+    margin-top: 35px;
+    font-weight: 600;
+    color: #000000;
+}
+
+    // margin: -5px 0px 0px -20px;
+
+
 /***** media queries for laptop screen *****/
 
 @media all and (max-width: 1536px) {
@@ -895,7 +1027,7 @@ input:focus {
 
      input[type='radio'],
     input[type='checkbox'] {
-        margin: 0px 0px 0px -20px;
+        margin: 9px 0px 0px -20px;
     }
 
     .role {
@@ -1269,6 +1401,10 @@ input:focus {
         font-size: 11px;
     }
 
+    .addTag:hover {
+            background: #fff4f2;
+    }
+
     .popup-dialog.RemoveTag {
         max-width: 178px;
         max-height: 272px;
@@ -1283,14 +1419,28 @@ input:focus {
     }
 
     .color-dots {
-        width: 8px;
-        height: 8px;
-        background: #02104e;
-        display: block;
-        margin-top: 3px;
-        border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background: #FC52D5;
+    display: block;
+    margin-top: 12px;
+    margin-left: 4px;
+    margin-right: 4px;
+    border-radius: 50%;
     }
-}
+
+    .qr-modal{
+         top: 283px!important;
+    }
+
+    #add_tags {
+        font-weight: 600;
+        margin-top: 6px;
+
+    }
+
+    }
+
 
 @media screen and (max-width: 1366px) {
     .bs-stepper {
@@ -1371,12 +1521,13 @@ input:focus {
     }
 
     .color-dots {
-        width: 8px;
-        height: 8px;
-        background: #fc52d5;
-        display: block;
-        margin-top: 3px;
-        border-radius: 50%;
+    width: 5px;
+    height: 5px;
+    background: #fc52d5;
+    display: block;
+    margin-top: 5px;
+    margin-right: 3px;
+    border-radius: 50%;
     }
 
     .desc-radio-input-1 {
@@ -1389,4 +1540,14 @@ input:focus {
         top: 67%;
         right: 17%;
     }
+
+    .qr-modal {
+        position: relative;
+    top: 115px !important;
+}
+
+#add_tags {
+    font-weight: 600;
+    margin-top: 0px;
+}
 }

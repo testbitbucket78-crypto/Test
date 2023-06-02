@@ -91,14 +91,14 @@
 
 					<h5> <img (click)="open(edittag)" src="assets/img/edit.png">Tag</h5>
 					<div class="child4 d-flex">
-						<h6>{{items.tag.replaceAll(',', ' | ')}}</h6>
+						<h6>{{items.tag?.replaceAll(',', ' | ')}}</h6>
 					</div>
 				</div>
 				<h4>Custom Fields</h4>
 				<div class="child5">
 					<h5>Lead Status</h5>
 					<div class="child4 d-flex">
-						<h6>{{items.status.replaceAll(',' ,' | ')}}</h6>
+						<h6>{{items.status?.replaceAll(',' ,' | ')}}</h6>
 					</div>
 				</div>
 				<div class="child2">

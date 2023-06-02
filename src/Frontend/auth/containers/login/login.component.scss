@@ -8,7 +8,6 @@
     cursor: pointer;
     width: 220px;
     border-radius: 22px;
-    // margin: 20px 0px 0px 175px;
     background-image: linear-gradient(to right, #F9B035, #F98C4E, #F96767);
     font-family: 'Manrope';
     font-weight: bold;
@@ -24,8 +23,6 @@
 }
 .float-left {
     float: left !important;
-    // margin: 0px 170px 0px -25px;
-    // width: 570px;
     height: 100vh;
     margin-left: -2rem;
 }
@@ -39,7 +36,6 @@
         font-weight: 600;
     }
 .custom-control-label{
-    // margin: 13px 0px 0px -38px;
     font-family: 'Manrope';
     font-size: 14px;
     color: #7A86A1;
@@ -52,9 +48,6 @@
 }
 .form-control {
     display: block;
-    // width: 90%;
-    // height: calc(1.5em + 0.75rem + 2px);
-    // padding: 0 28px 0px 10px;
     font-size: 14px;
     line-height: 23px;
     color: #7A86A1;
@@ -63,14 +56,10 @@
     border: 1px solid #ced4da;
     border-radius: 15px;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    // margin: 10px 0px 0px 0px;
     font-family: 'Manrope';
 }
-// .log h3 .b{
-//     // margin: 20px 0px 0px 0px;
-// }
+
 .font-weight-light {
-    // margin: 200px 0px 0px 11px;
     font-size: 30px;
     color: #000000;
     font-family: 'Manrope';
@@ -80,14 +69,12 @@
 small, .small {
     font-size: 14px;
     font-weight: bold;
-    // margin: 0px 166px 0px 0px;
     font-family: 'Manrope';
     color: #6149CD;
     line-height: 23px;
 }
 .ml-1, .mx-1 {
     font-size: 14px;
-    // margin-left: 0.25rem !important;
     font-family: 'Manrope';
     font-weight: bold;
     color: #6149CD;
@@ -99,17 +86,14 @@ a {
     color: #7A86A1;
     line-height: 30px;
     text-decoration: none;
-    // margin-left: 59px;
-    // margin-top: 12rem;
-    // margin-left: -7rem;
 }
 
 #ma{
     margin-top: 12rem;
-    margin-left: -7rem;
+    margin-left: -5rem;
 }
 .mt-6{
-    // margin: 95px 0px 0px -70px;
+
     position: absolute;
 
 }
@@ -137,18 +121,12 @@ input::-ms-clear {
 #error-message{
     color: #dc3545 !important;
     font-size: 11px;
-    font-family: 'Manrope';
+    font-family: "Manrope";
     font-weight: 600;
+    margin-top: -11px;
+    margin-left: 16px;
 }
 
-// @media all and (max-width:1080px) {
-//     .float-left {
-//         float: left !important;
-//         margin: 0px 170px 0px -25px;
-//         width: 670px;
-//         height: 100vh;
-//     }
-// }
 
  @media all and (max-width:1600px){
   #ma{    margin-top: 17rem;
@@ -162,14 +140,9 @@ input::-ms-clear {
         margin-top: 13rem;
         margin-left: -7rem;
     }
-    // .container{
-    //     background-color: white;
-    //     height: 100vh;
-    }
-// .btn:not(:disabled):not(.disabled) {
-//     margin: 20px 0px 0px 144px;
-// }
-// }
+   
+}
+
 
 
  @media all and (max-width:1366px){
@@ -181,69 +154,7 @@ input::-ms-clear {
         margin-left: 0rem;
     }
  }
-//     .btn:not(:disabled):not(.disabled) {
   
-//     margin: 20px 0px 0px 102px;
-
-// }
-
-// .custom-control-label {
-//     margin: 13px 0px 0px -28px;
-//  }
-
-//  .eyeicon {
-//     right: 39px;
-
-// }
-//     .mt-4, .my-4 {
-//         margin-top: -2.5rem !important;
-//     }
-//     .mt-6 {
-//         margin: 136px 0px 0px -145px;
-//     }
-//     .font-weight-light {
-//         margin: 200px 0px 0px -35px;
-//         font-size: 26px;
-//         color: #000000;
-//         font-family: "Montserrat", sans-serif;
-//         font-weight: bold !important;
-//         line-height: 40px;
-//     }
-//     label {
-//         font-size: 14px;
-//     }
-//     #password{
-//         width: 127%;
-//     }
-//     #col90{
-//         right: -3rem;
-//     }
-//     .form-control {
-//         width: 127%;
-//     }
-// .eyeicon {
-//     right: -22px;
-// }
-// #kop{
-//     right: 3rem;
-//     margin-right: -3rem;
-// }
-// .custom-control-label {
-//     margin: 13px 0px 0px -69px;
-// }
-// .small {
-//     font-size: 14px;
-//     font-weight: bold;
-//     margin: 0px 122px 0px 0px;
-//     font-family: "Montserrat", sans-serif;
-//     color: #6149CD;
-//     line-height: 23px;
-// }
-// .btn:not(:disabled):not(.disabled) {
-//     margin: 20px 0px 0px 126px;
-// }
-
-// }
 @media all and (max-width:1280px){
     #ma{
     margin-top: 5.9rem;
@@ -251,72 +162,6 @@ input::-ms-clear {
 }
 #row1 {
     margin-left: -0rem;
-}
-//     .mt-4, .my-4 {
-//         margin-top: -2.5rem !important;
-//     }
-//     .mt-6 {
-//         margin: 90px 0px 0px -117px;
-//     }
-//     .font-weight-light {
-//         margin: 200px 0px 0px -35px;
-//         font-size: 26px;
-//         color: #000000;
-//         font-family: "Montserrat", sans-serif;
-//         font-weight: bold !important;
-//         line-height: 40px;
-//     }
-//     label {
-//         font-size: 14px;
-//     }
-//     #password{
-//         width: 127%;
-//     }
-//     #col90{
-//         right: -2rem;
-//     }
-//     .form-control {
-//         width: 127%;
-//     }
+  }
 
-// #kop{
-//     right: 3rem;
-//     margin-right: -3rem;
-// }
-// .custom-control-label {
-//     margin: 13px 0px 0px -65px;
-// }
-// #butto{
-//     margin: 13px 0px 0px 72px;
-// }
-
-
-// .btn:not(:disabled):not(.disabled) {
-  
-//     margin: 13px 0px 0px 75px;
-//     width: 180px;
-//     font-size: 14px;
-
-// }
-
-//  .mt-6 {
-//     margin: 41px 0px 0px -117px;
-//  }
-
-//  .form-control {
-
-//     width: 100%;
-
-// }
-
-// .eyeicon{
-
-//    right: inherit;
-
-// }
-
-// .small {
-
-//     margin: 0px 122px 0px -41px;
-//     }
 }

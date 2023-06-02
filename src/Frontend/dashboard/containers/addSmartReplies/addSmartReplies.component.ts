@@ -289,6 +289,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		config.keyboard = false;
 	}
 
+
 	ngOnInit() {
 
 		
@@ -439,13 +440,8 @@ export class AddSmartRepliesComponent implements OnInit {
 
 
 	removeAddTag(index: number) {
-
-		this.assignedAgentList.forEach(item => {
-			if (!item.Value.includes(this.addTagList[index])) {
-				this.assignedAgentList.splice(index, 1);
-
-			}
-		})
+		this.assignedTagList = [];
+		this.assignedAgentList.splice(index, 1);
 
 	}
 
@@ -453,6 +449,10 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	toggleEditable(index: number) {
 		this.isEditable = !this.isEditable;
+		setTimeout(() => { document.getElementById(`msgbox-body${index}`); }, 100);
+		
+		console.log(document.getElementById(`msgbox-body${index}`));
+		
 		}
 
 	onEdit(msgText:string) {
@@ -550,11 +550,21 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.assignedAgentList.forEach(item => {
 			if (item.ActionID == 3) {
 				  isExist= true;
-				if (!item.Value.includes(this.addTagList[index])) {
-					console.log(this.addTagList[index]);
-					// item.Value.push(this.addTagList[index]);
-					this.assignedTagList.push(this.addTagList[index]);
-			}
+				  if (e.target.checked) {
+					  if (!item.Value.includes(this.addTagList[index])) {
+						  console.log(this.addTagList[index]);
+						  // item.Value.push(this.addTagList[index]);
+						  this.assignedTagList.push(this.addTagList[index]);
+					  }
+				  }
+				  else {
+					var idx = this.assignedTagList.findIndex(item => item == this.addTagList[index]) 
+					console.log(idx);
+					console.log(this.assignedTagList[idx]);
+					this.assignedTagList.splice(idx,1);
+					
+				  }
+				
 		}
 		})
 		if (!isExist) {
@@ -570,11 +580,22 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	next() {
 		this.stepper.next();
-		console.log(this.stepper+ 'stepper');
+		console.log(this.stepper);
+		// const currentIndex = this.stepper ? this.stepper.currentIndex : 0;
+		// if (currentIndex > 0) {
+		// 	const previousStep = this.stepper ? this.stepper.steps[currentIndex - 1] : null;
+		// 	if (previousStep) {
+		// 		previousStep.classList.add('completed');
+		// 	}
+		// }
+		this.stepper.next();
 	}
+
     previous() {
 		this.stepper.previous();
 	}
+
+
 	openinstruction(instruction: any) {
 		this.modalService.open(instruction);
 	}
@@ -601,38 +622,109 @@ export class AddSmartRepliesComponent implements OnInit {
 
 
 	}
-	getNewSmartReplyData(){
-		
-		if(this.newReply.valid){
-			
-			sessionStorage.setItem('Title' ,this.newReply.value.Title)
-			sessionStorage.setItem('Description' ,this.newReply.value.Description)
-           
+	getNewSmartReplyData() {
+		const title = this.newReply.value.Title;
+		const description = this.newReply.value.Description;
+		const errorDiv = document.getElementById("title-err-msg");
+
+		if (title !== '' && description !== '') {
+			sessionStorage.setItem('Title', title);
+			sessionStorage.setItem('Description', description);
+			errorDiv!.style.visibility = 'hidden';
+			this.next();
+		} else {
+			const errorMessage = "! Please Fill Title & Description First";
+			errorDiv!.innerHTML = errorMessage;
 		}
-          
 	}
+
+
+	verifyKeywordForNextStep(duplicatekeyword:any) {
+
+		if (document.getElementsByClassName('keytext')[0].innerHTML !== '') {
+			this.verifyKeyword(duplicatekeyword);
+			
+
+		}
+	}
+
 
 	onSelectionChange(entry: any): void {
 		this.model = entry;
 		console.log(this.model)
 		sessionStorage.setItem('MatchingCriteria',this.model)
 	}
+	
 
-	sendNewSmartReply() {
-		var data={
-			SP_ID:sessionStorage.getItem('SP_ID'),
-			Title:this.newReply.value.Title ,
-			Description:this.newReply.value.Description,
-			MatchingCriteria:this.model,
-			Keywords:this.keywords,
-			ReplyActions:this.assignedAgentList,
-			Tags: []
+	sendNewSmartReply(smartreplysuccess: any, smartreplyfailed: any ) {
+
+			var data = {
+				SP_ID: sessionStorage.getItem('SP_ID'),
+				Title: this.newReply.value.Title,
+				Description: this.newReply.value.Description,
+				MatchingCriteria: this.model,
+				Keywords: this.keywords,
+				ReplyActions: this.assignedAgentList,
+				Tags: []
+			}
+			console.log(data)
+			this.apiService.addNewReply(data).subscribe (
+			
+			(responce:any) => {
+				console.log(responce)
+			
+				if (responce.status === 200) {
+					this.modalService.open(smartreplysuccess);
+				}
+				
+			},
+
+			(error:any) => {
+				if (error.status === 500) {
+					this.modalService.open(smartreplyfailed);
+				}
+				else {
+					const errorDiv = document.getElementById("smrply-err-msg");
+					const errorMessage = "! Internal Server Error Please try after some time";
+					errorDiv!.innerHTML = errorMessage;
+
+				}
+
+				
+	       });
+		
+		
+	}
+
+
+
+	verifyKeyword(duplicatekeyword:any) {
+
+		var data= {
+			SP_ID: sessionStorage.getItem('SP_ID'),
+			Keywords: this.keywords
 		}
-		console.log("data")
-		console.log(data)
-		this.apiService.addNewReply(data).subscribe((responce)=>{
-            console.log(responce)
-		})
+		this.apiService.duplicatekeywordSmartReply(data).subscribe(
+			
+			(responce: any) => {
+			console.log(responce)
+			if (responce.status === 200) {
+				this.next();				
+			}
+	    
+		},
+			(error: any) => {
+				if (error.status === 409) {
+					this.modalService.open(duplicatekeyword);
+				}
+				else {
+					const errorDiv = document.getElementById("keyword-err-msg");
+					const errorMessage = "! Internal Server Error Please try after some time";
+					errorDiv!.innerHTML = errorMessage;
+
+				}
+	
+			});
 	}
 	
 

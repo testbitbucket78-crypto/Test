@@ -1,20 +1,20 @@
-// // @import 'styles/variables.scss';
-// * {
-//     font-family: 'Manrope';
-// }
+//  @import 'styles/variables.scss';
+* {
+    font-family: 'Manrope';
+}
 
 .dash-card  {
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 2px 13px 54px #695F9714;
-    border-radius: 30px;
+    border-radius: 25px;
     opacity: 1;
     padding: 10px;
-    width: 94%;
+    width: 100%;
 }
 
 .card-heading {
-    font-size: 24px;
-    font-weight: 500;
+    font-size: 22px;
+    font-weight: 700;
     padding: 20px;
 }
 
@@ -26,7 +26,7 @@
 
 .item-heading{
  font-size:24px;
- font-weight: 500;
+ font-weight: 700;
 }
 
 .dash-card-items span{
@@ -34,28 +34,63 @@
 }
 
 .card1 {
-    border-radius: 25px;
+    border-radius: 20px;
     background-color: #e4dff5;
     text-align: center;
-    width: 83%;
+    // width: 83%;
 }
 .card2 {
-    border-radius: 25px;
+    border-radius: 20px;
     background-color: #e2f4ec;
     text-align: center;
-    width: 83%;
+    // width: 83%;
 }
 .card3 {
-    border-radius: 25px;
+    border-radius: 20px;
     background-color: #ebedf1;
     text-align: center;
-    width: 83%;
+    // width: 83%;
 }
 
 .card9 {
     background-color: #fbf9fe;
     width: 90%;
     float: right;
+}
+
+.recentconversation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 16px;
+}
+
+.recentconversation img {
+    margin: 0!important;
+}
+
+#item-name {
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+#item-message {
+    margin: 0;
+    padding: auto;
+    font-size: 14px;
+    font-weight: 400;
+    color: #7A86A1;
+}
+
+#item-date {
+    margin: 0;
+    padding: auto;
+    font-size: 13px;
+    font-weight: 400;
+    color: #7a86a1;
 }
 
 .item-center{
@@ -83,12 +118,7 @@
     width: 100%;
 }
 
-.agent-items {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 5px;
-}
+
 
 .card10 {
     background: transparent linear-gradient(45deg, #f9b035 0%, #f98c4e 53%, #f96767 100%) 0% 0% no-repeat padding-box;
@@ -182,18 +212,18 @@
 }
 
 #heading2 {
-    width: 45%;
+    width: 35%;
 }
 
 .card8 {
     height: 50px;
     width: 45%;
     background-color: #fff4f2;
-    box-shadow: 2px 13px 54px #695f9714;
+    box-shadow: 2px 2px 4px #695f9714;
     border-radius: 15px;
 }
 .card8 h2 {
-    font-size: 18px;
+    font-size: 16px;
     padding: 12px;
     text-align: center;
     font-weight: 600;
@@ -206,6 +236,14 @@
     width: 65px !important;
 }
 
+.campaign-card-item.draft {
+    margin-left: -3.5rem;
+}
+
+.campaign-card-item.running {
+   
+    margin-left: -2.6rem;
+}
 
 
 
