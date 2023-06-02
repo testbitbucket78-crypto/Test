@@ -127,22 +127,22 @@ h1 {
     font-family: 'Manrope';
     font-size: 1rem;
     line-height: 1.5;
-    color: #7A86A1;
+    color: #7a86a1;
     font-weight: 600;
     background-color: #ffffff;
     background-clip: padding-box;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    border: 1px solid #EBEBEB;
+    border: 1px solid #ebebeb;
     border-radius: 17px;
     opacity: 1;
     margin: 0px 0px 0px 30px;
     padding: 0 150px 0 24px;
 }
-.ff textarea{
+.ff textarea {
     margin: 25px 0px 0px 15px;
     height: 150px;
     resize: none;
-    color: #7A86A1;
+    color: #7a86a1;
     padding: 16px 0 0 6px;
     width: 383px;
 }
@@ -229,13 +229,14 @@ h1 {
     margin-bottom: 0;
     font-size: 19px;
     color: #000000;
+    font-weight: 700;
 }
 
 .form-check {
     position: relative;
     display: block;
     padding-left: 1.25rem;
-    margin: 10px 0px 0px 90px;
+    margin: 20px 0px 40px 100px;
 }
 
 input[type='radio'],
@@ -377,6 +378,10 @@ input:focus {
     border: none;
     text-decoration: none;
     background-color: #fff4f2;
+}
+
+.msg-edit-btn:active {
+    border: 2px solid #6149cd;
 }
 
 .reply {
@@ -598,9 +603,150 @@ input:focus {
     margin: 0px;
     border: none;
     background-color: #fff;
-    top: -90px;
-    left: -29px;
+    top: -100px;
+    left: 182px;
     width: 0px;
+}
+.assign-conversation,
+.update-name,
+.resolve-conversation,
+.add-tag {
+    background: #f6efff;
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    opacity: 1;
+    max-width: 50%;
+    max-height: 20%;
+    margin-left: 1.5em;
+    margin-top: 0.5em;
+}
+
+.update-name {
+    max-width: 17%;
+}
+.add-tag {
+    max-width: 35%;
+}
+
+#msgbox-head1 {
+    text-align: left;
+    font: normal normal 600 14px/20px 'Manrope';
+    letter-spacing: 0px;
+    color: #6149cd;
+    font-size: 11px;
+    margin-left: 1em;
+    margin-top: 0.5em;
+}
+
+#msgbox-body1 {
+    font-size: 11px;
+    margin-left: 1em;
+    margin-top: -1.4em;
+}
+
+#msgbox-body2 {
+    font-size: 11px;
+    margin-left: 2px;
+    margin-top: -1.4em;
+    overflow: hidden;
+}
+
+/*** richtexteditor ***/
+
+.e-content p {
+    margin: 0 !important;
+    width: auto !important;
+    display: contents !important;
+}
+.input-area .popup-dialog {
+    max-width: 100%;
+    margin-top: -150px;
+}
+.input-area .popup-dialog.mention {
+    max-width: 220px;
+    margin-top: -120px;
+    margin-left: 200px;
+}
+.input-area .popup-dialog .tabs {
+    display: flex;
+    flex-direction: row;
+    padding: 0 10px;
+}
+.input-area .popup-dialog .tabs .char_block {
+    padding: 10px;
+}
+.input-area .popup-dialog .tabs .char_block.active {
+    border-bottom: 2px solid red;
+}
+.rteEmoticons {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+.rteEmoticons .char_block {
+    margin: 5px;
+}
+.e-toolbar-wrapper {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+.e-richtexteditor.e-rte-tb-expand {
+    border: 0;
+}
+.e-richtexteditor.e-rte-tb-expand .e-rte-content {
+    height: 70px !important;
+    margin-top: 0px !important;
+    width: 366px !important;
+}
+.e-toolbar,
+.e-toolbar .e-toolbar-items,
+.e-toolbar .e-toolbar-item .e-tbar-btn {
+    background: #fff;
+    margin-top: 5px;
+}
+.e-toolbar .e-toolbar-item .e-tbar-btn {
+    border-radius: 35% !important;
+    border: 1px solid #e2e2e2 !important;
+    background: none !important;
+}
+
+.e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-icons {
+    color: #7a86a1 !important;
+    font-weight: 800 !important;
+    font-size: 10px !important;
+}
+.e-richtexteditor .e-rte-content .e-content {
+    padding: 0px;
+}
+
+.e-toolbar-wrapper {
+    height: 0px !important;
+}
+
+[contenteditable]:focus {
+    outline: 0px solid transparent;
+    overflow-y: scroll;
+}
+
+#defaultRTErte-view {
+    border: none;
+    font-family: 'Manrope';
+}
+
+.e-icons {
+    font-family: 'e-icons';
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    line-height: 1;
+    text-transform: none;
+}
+
+.e-icon-btn {
+    height: 28px !important;
+    padding: 0 1.5px !important;
+    margin: 4px 0 !important;
 }
 
 /***** media queries for laptop screen *****/
@@ -609,7 +755,7 @@ input:focus {
     .bs-stepper {
         width: 1109px !important;
         height: 100%;
-        margin: 56px 255px;
+        margin: 30px 218px;
     }
 
     .bs-stepper-label {
@@ -624,8 +770,8 @@ input:focus {
     //     position: absolute;
     // }
     .btn9 {
-        top: -94px;
-        left: 112px;
+        top: -95px;
+        left: 6px;
     }
     .heading {
         font-size: 17px;
@@ -636,7 +782,7 @@ input:focus {
     .box {
         width: 449px;
         height: 370px;
-        margin-left: 29%;
+        margin-left: 30%;
     }
 
     .box h5 {
@@ -645,8 +791,8 @@ input:focus {
     }
 
     .bs-stepper-header {
-        width: 70%;
-        margin: 8px 16%;
+        width: 65%;
+        margin: 12px 19%;
         left: 1%;
         margin-top: -20px;
         margin-bottom: 23px;
@@ -670,6 +816,7 @@ input:focus {
 
     .box1 h5 {
         font-size: 14px;
+        margin-bottom: revert;
     }
 
     .box1 span {
@@ -686,32 +833,40 @@ input:focus {
         font-size: 14px;
     }
 
+    .form-check {
+        margin: 20px 0px 40px 80px;
+    }
+
     .form-check-label {
-        font-size: 13px;
+        // font-size: 13px;
+        font-size: 0.9rem;
         margin: 8px;
         font-weight: 700;
     }
-    .ff textarea{
+
+    .form-check-label-img {
+        margin-left: -3px;
+        height: 11px;
+    }
+    .ff textarea {
         margin: 25px 0px 0px 15px;
         height: 150px;
-        
-        color: #7A86A1;
-        padding: 15px 0 0 15px;
+
+        color: #7a86a1;
+        padding: 15px 12px 0 12px;
         width: 360px;
     }
-    #close-btn  { 
-    width: 38px;
-    height: 38px;
-    background: #FFFFFF;
-    border-radius: 15px;
-    opacity: 1;
-    border: 1px solid #ebebeb;
-    font-family: "Manrope";
-    font-size: 13px;
-    margin: 26px 31px 0 0;
-
-}
-   
+    #close-btn {
+        width: 38px;
+        height: 38px;
+        background: #ffffff;
+        border-radius: 15px;
+        opacity: 1;
+        border: 1px solid #ebebeb;
+        font-family: 'Manrope';
+        font-size: 13px;
+        margin: 26px 31px 0 0;
+    }
 
     input[type='radio'] {
         width: 20px;
@@ -728,9 +883,7 @@ input:focus {
         height: 60%;
         margin: 20% auto;
         border-radius: 50%;
-      
     }
-   
 
     input[type='radio']:checked:before {
         background: #6149cd;
@@ -738,6 +891,11 @@ input:focus {
 
     input[type='radio']:checked {
         border-color: #6149cd;
+    }
+
+     input[type='radio'],
+    input[type='checkbox'] {
+        margin: 0px 0px 0px -20px;
     }
 
     .role {
@@ -851,8 +1009,8 @@ input:focus {
     .interactions {
         position: relative;
         width: 560px;
-        top: -48px;
-        left: 22%;
+        /* top: -48px; */
+        left: 26.4%;
         height: 469px;
         border-radius: 30px;
         overflow: hidden;
@@ -934,6 +1092,7 @@ input:focus {
         font-weight: 700;
         font-family: 'Manrope';
         word-wrap: break-word;
+        // overflow: auto;
     }
 
     #msgbox-head {
@@ -1002,8 +1161,6 @@ input:focus {
         font-weight: bolder;
     }
 
-
-
     .popup-dialog {
         background: #ffffff 0% 0% no-repeat padding-box;
         box-shadow: 4px 22px 54px #695f9730;
@@ -1019,8 +1176,11 @@ input:focus {
         right: 2%;
     }
     .popup-dialog.autoreply {
-        max-width: 90%;
-        margin-top: -210px;
+        // max-width: 31%;
+        // margin-top: 0;
+        max-width: 37%;
+        max-height: 37%;
+        margin-top: 4em;
     }
     .popup-dialog.NoteOption {
         width: 100px;
@@ -1041,12 +1201,15 @@ input:focus {
         width: 100%;
         float: left;
         margin: 0px;
+        font-size: 11px;
     }
     .popup-dialog p.label {
-        font-weight: 600;
+        font-weight: 700;
         color: #6149cd;
         padding: 5px 15px;
+        font-size: 11px;
     }
+
     .popup-dialog p.label:hover {
         background: #fff;
     }
@@ -1057,7 +1220,6 @@ input:focus {
         background: #fff4f2;
         background: #fff4f2 url('/assets/img/teambox/icon-selected.svg') no-repeat;
         background-size: 12px;
-  
     }
 
     .popup-dialog img {
@@ -1085,21 +1247,146 @@ input:focus {
         top: 40%;
         right: 2%;
     }
+
+    .popup-dialog.AddTag {
+        background: #ffffff 0% 0% no-repeat padding-box;
+        box-shadow: 4px 22px 54px #695f9730;
+        border-radius: 20px;
+        padding: 10px 0px;
+        position: absolute;
+        max-width: 178px;
+        margin-top: 10px;
+        max-height: 272px;
+        overflow: auto;
+        z-index: 9;
+        top: 34%;
+        right: 2%;
+    }
+
+    .addTag {
+        padding: 5px 16px;
+        width: 100%;
+        font-size: 11px;
+    }
+
+    .popup-dialog.RemoveTag {
+        max-width: 178px;
+        max-height: 272px;
+        top: 34%;
+        right: 4%;
+    }
+
+    .removeTag {
+        padding: 5px 16px;
+        width: 100%;
+        font-size: 11px;
+    }
+
+    .color-dots {
+        width: 8px;
+        height: 8px;
+        background: #02104e;
+        display: block;
+        margin-top: 3px;
+        border-radius: 50%;
+    }
 }
 
-@media screen and (max-width:1366px) {
+@media screen and (max-width: 1366px) {
+    .bs-stepper {
+        margin: 30px 145px;
+    }
 
     .form-check {
-  
-    margin: 10px 0px 30px 70px;
+        margin: 10px 0px 30px 70px;
+    }
+
+    input[type='radio'],
+    input[type='checkbox'] {
+        margin: 0px 10px 0px 0px;
+    }
+
+    .popup-dialog.RemoveTag {
+        max-width: 178px;
+        max-height: 272px;
+        top: 34%;
+        right: 4%;
+    }
+
+    .removeTag {
+        padding: 5px 16px;
+        width: 100%;
+        font-size: 11px;
+    }
+
+    .color-dots {
+        width: 8px;
+        height: 8px;
+        background: #fc52d5;
+        display: block;
+        margin-top: 3px;
+        border-radius: 50%;
+    }
 }
-}
 
-
-@media screen and (max-width:1280px) {
-
+@media screen and (max-width: 1280px) {
     .form-check {
-  
-    margin: 10px 0px 30px 70px;
-}
+        margin: 10px 0px 30px 70px;
+    }
+
+    .form-check-label {
+        font-size: 0.9rem;
+        margin: 8px;
+        margin-left: 24px;
+        margin-top: 0;
+    }
+
+    .bs-stepper {
+        margin: 65px 85px;
+    }
+
+    input[type='radio'],
+    input[type='checkbox'] {
+        margin: 3px 10px 0px 0px;
+    }
+
+    .desc-radio-input {
+        top: 67%;
+        right: 52%;
+        width: 260px;
+        height: 133px;
+    }
+
+    .popup-dialog.RemoveTag {
+        max-width: 178px;
+        max-height: 272px;
+        top: 34%;
+        right: 4%;
+    }
+
+    .removeTag {
+        padding: 5px 16px;
+        width: 100%;
+        font-size: 11px;
+    }
+
+    .color-dots {
+        width: 8px;
+        height: 8px;
+        background: #fc52d5;
+        display: block;
+        margin-top: 3px;
+        border-radius: 50%;
+    }
+
+    .desc-radio-input-1 {
+        position: absolute;
+        top: 67%;
+        right: 33%;
+    }
+    .desc-radio-input-2 {
+        position: absolute;
+        top: 67%;
+        right: 17%;
+    }
 }

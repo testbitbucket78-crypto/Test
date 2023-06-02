@@ -7,7 +7,7 @@ export const sideNavSections: SideNavSection[] = [
     },
 
     {
-        items: ['camp', 'teambox', 'Contacts', 'Funnel', 'FlowBuilder', 'SmartReplies', 'rep'],
+        items: ['Contacts', 'teambox', 'SmartReplies', 'camp', 'Funnel', 'FlowBuilder',  'rep'],
     },
 ];
 
@@ -18,10 +18,10 @@ export const sideNavItems: SideNavItems = {
         link: '/dashboard',
     },
 
-    camp: {
-        icon: 'assets/img/campaign.png',
-        text: 'Campaigns',
-        link: '/dashboard/campaigns',
+    Contacts: {
+        icon: 'assets/img/contacts.png',
+        text: 'Contacts',
+        link: '/dashboard/contacts',
     },
 
     teambox: {
@@ -29,11 +29,20 @@ export const sideNavItems: SideNavItems = {
         text: 'Teambox',
         link: '/dashboard/teambox',
     },
-    Contacts: {
-        icon: 'assets/img/contacts.png',
-        text: 'Contacts',
-        link: '/dashboard/contacts',
+
+    SmartReplies: {
+        icon: 'assets/img/Smartreplies.png',
+        text: 'Smart Replies',
+        link: '/dashboard/smartReplies',
     },
+
+    camp: {
+        icon: 'assets/img/campaign.png',
+        text: 'Campaigns',
+        link: '/dashboard/campaigns',
+    },
+
+    
     Funnel: {
 
         icon: 'assets/img/funnel.png',
@@ -47,11 +56,7 @@ export const sideNavItems: SideNavItems = {
         link: '/dashboard/flowBuilder',
     },
 
-    SmartReplies: {
-        icon: 'assets/img/Smartreplies.png',
-        text: 'Smart Replies',
-        link: '/dashboard/smartReplies',
-    },
+ 
 
     rep: {
         icon: 'assets/img/rep.png',
@@ -76,5 +81,11 @@ export const sideNavItems: SideNavItems = {
 
         ],
     },
+
+    // Setting: {
+    //     icon: 'assets/img/Flowbuilder.png',
+    //     text: 'Flow Builder',
+    //     link: '/dashboard/flowBuilder',
+    // },
 
 };

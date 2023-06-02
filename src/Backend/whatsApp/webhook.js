@@ -119,9 +119,11 @@ app.post("/webhook", async (req, res) => {
           console.log("replyStatus " + replystatus); // Output: "Auto Reply are Paused"
           console.log("new" + newId)
         }
-
-        var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId);
-        console.log("____Send SMART REPLIESS______" + response);
+        const currentTime = new Date();
+        if (replystatus != null && replystatus > currentTime && replystatus != undefined) {
+          var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId);
+          console.log("____Send SMART REPLIESS______" + response);
+        }
       }
     }
     res.status(200).send({
@@ -172,7 +174,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     console.log("_________process.env.insertMessage__________")
 
 
-    var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text]])
+    var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text],sid])
     //var autoReply = replymessage[0].Message
     //console.log(autoReply + replymessage[0].ActionID)
     console.log(replymessage)
@@ -199,7 +201,7 @@ async function iterateArray(replymessage, phone_number_id, from, sid, custid, ag
         console.log(`Performing action 1 for  Assign Conversation: ${value}`);
         is_active = 1
         var values = [[is_active, newId, agid, value]]
-        var assignCon= await db.excuteQuery(process.env.updateInteractionMapping, [values])
+        var assignCon = await db.excuteQuery(process.env.updateInteractionMapping, [values])
         console.log(assignCon)
         break;
       case 2:
@@ -212,7 +214,7 @@ async function iterateArray(replymessage, phone_number_id, from, sid, custid, ag
         var maptag = value;
         var maptagItems = maptag.split(',')
         console.log("maptag " + maptag)
-        var result = await db.excuteQuery(process.env.selectTagQuery, [req.body.customerId])
+        var result = await db.excuteQuery(process.env.selectTagQuery, [custid])
         console.log(result)
         var removetagQuery = ""
         if (result.length > 0) {
@@ -239,7 +241,7 @@ async function iterateArray(replymessage, phone_number_id, from, sid, custid, ag
 
             }
             console.log("for loop end" + itemmap)
-            removetagQuery = "UPDATE EndCustomer SET tag ='" + itemmap + "' WHERE customerId = " + req.body.customerId + "";
+            removetagQuery = "UPDATE EndCustomer SET tag ='" + itemmap + "' WHERE customerId = " +custid + "";
 
           }
         }
@@ -261,42 +263,15 @@ async function iterateArray(replymessage, phone_number_id, from, sid, custid, ag
         console.log(`Unknown action ID: ${actionId}`);
     }
 
-    //sendMessage(testMessage, phone_number_id, from);
-    handleAutoReply(testMessage, phone_number_id, from, sid, custid, agid, replystatus, newId)
+    sendMessage(testMessage, phone_number_id, from);
+    
   });
 
 }
 
 
 
-// Function to handle auto-reply
-async function handleAutoReply(testMessage, phone_number_id, from, sid, custid, agid, replystatus, newId) {
-  const autoReplyValue = replystatus;
 
-  if (autoReplyValue === 'Pause for 5 mins') {
-    console.log('Auto-reply is set to pause.');
-
-    setTimeout(sendMessage, 300000);
-  } else if (autoReplyValue === 'Pause for 10 mins') {
-    console.log('Auto-reply is set to pause for 10 minutes.');
-
-    setTimeout(sendMessage, 600000);
-  } else if (autoReplyValue === 'Pause for 15 mins') {
-    console.log('Auto-reply is set to pause for 15 minutes.');
-
-    setTimeout(sendMessage, 900000);
-  }
-  else if (autoReplyValue === 'Pause for 20 mins') {
-    console.log('Auto-reply is set to pause for 20 minutes.');
-
-    setTimeout(sendMessage, 1200000);
-  }
-  else {
-    console.log('Auto-reply is not set to pause.');
-
-    sendMessage(testMessage, phone_number_id, from, sid, custid, agid, replystatus, newId);
-  }
-}
 
 
 

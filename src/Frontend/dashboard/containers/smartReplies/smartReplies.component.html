@@ -1,13 +1,13 @@
 <sb-layout-dashboard>
-	<sb-dashboard-head title="Smart Replies" [hideBreadcrumbs]="true"></sb-dashboard-head>
-    <!-- <ng-container *ngIf="showTopNav">
+	<!-- <sb-dashboard-head title="Smart Replies" [hideBreadcrumbs]="true"></sb-dashboard-head> -->
+    <ng-container *ngIf="showTopNav">
   <sb-top-nav title="Smart Replies"></sb-top-nav>
-</ng-container> -->
-	<div class="row">
-		<div class="col-md-5 mb-4 mt-4">
-			<div class="col-md-12 mb-4">
+</ng-container>
 
-				<form class="d-none d-md-inline-block form-inline  mr-4 mr-md-3 my-1 my-md-0 col-9"
+		<div class="content-header">
+			<div class="content-head d-flex">
+				<div class="">
+				<form class="d-none d-md-inline-block form-inline"
 					[formGroup]="searchForm" (ngSubmit)="search()">
 					<div class="input-group gf ">
 
@@ -17,16 +17,17 @@
 						<img src="assets/img/search.png">
 					</div>
 				</form>
-			</div>
-		</div>
-
-
-		<div class="col-xs-3  ">
-			<button class="btn  btn-block " routerLink="/dashboard/addSmartReplies"><i class="fa fa-plus"></i> 
+				</div>
+					<div class="">
+		          	<button class="btn btn-block add-smartrep-btn" routerLink="/dashboard/addSmartReplies"><i class="fa fa-plus"></i> 
 				Add Smart Reply</button>
-		</div>
-		<div *ngFor="let reply of replies " class="card ">
-			<div class="card-body gy-2" (click)="opensidenav(reply)" (click)="getRepliesByID(reply)">
+	        	</div>
+			</div>
+			</div>
+
+		<div class="row r1">
+		<div *ngFor="let reply of replies " class="card d-flex" (click)="toggleSideBar()"  (click)="getRepliesByID(reply)">
+			<div class="card-body gy-2">
 				<h6 class="id">Id:{{ reply.ID }}</h6>
 				<h5 class="card-title">{{reply.Title}}</h5>
 
@@ -46,9 +47,9 @@
 			</div>
 		</div>
 	</div>
-	<div id="sidebar" class="sidebar " [(ngModel)]="items">
-		<button type="button" class="btn5 btn-close" aria-label="Close" (click)="('Cross click')"
-			(click)="closesidenav(items)">X</button>
+	
+	<div *ngIf="showSideBar" id="sidebar" class="sidebar">
+		<button type="button" class="btn5 btn-close" (click)="toggleSideBar()"><img src="assets/img/teambox/icon-close.svg"></button>
 
 		<div class="collumn d-flex">
 			<h6>Id:</h6>
@@ -60,11 +61,11 @@
 			<h6>Edited on:</h6>
 			<h5>{{items.ModifiedDate | date: 'dd MMM yyyy'}}</h5>
 		</div>
-		<h4>Help & Support</h4>
+		<h4 ><img id="Edit-icon" src="assets/img/Edit-icon.png">Help & Support</h4>
 		<div class="row d-flex">
 			<h6 class="text-justify">{{items.HelpAndSupport}}.</h6>
 		</div>
-		<h3>Keywords & Criteria </h3>
+		<h3><img id="Edit-icon" src="assets/img/Edit-icon.png">Keywords & Criteria </h3>
 		<div class="row">
 			<div class="box" *ngFor="let values of data">
 				<p>{{values.Keyword}}</p>
@@ -77,7 +78,7 @@
 			<h6>Matching Criteria:</h6>
 			<h5>{{items.MatchingCriteria}}</h5>
 		</div>
-		<h3>Reply Actions</h3>
+		<h3><img id="Edit-icon" src="assets/img/Edit-icon.png">Reply Actions</h3>
 		<div class="box4">
 			<h3>Message</h3>
 			<p>{{items.Message}} </p>
@@ -90,8 +91,7 @@
 			</div>
 		</div>
 		<div class="footer">
-			<button class="btn1 btn-block "  data-bs-toggle="modal" data-bs-target="#Delete" ><img src="assets/img/delete.png">
-			</button>
+			<button class="delete-btn"  data-bs-toggle="modal" data-bs-target="#Delete"><img src="assets/img/delete.png"></button>
 		</div>
 	</div>
 

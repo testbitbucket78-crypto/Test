@@ -158,17 +158,24 @@ h1 {
 }
 .box3 {
 
+
+
     background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695f971a;
     border-radius: 30px;
     opacity: 1;
     width: 22%;
-    height: 218px;
     float: right;
     margin: -218px 26em 0px 0px;
+    overflow: hidden;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
 
     
-}
+
 .box3 .box4 img {
     width: 21px;
     height: 23px;
@@ -288,13 +295,18 @@ span {
 }
 
 #upload-instructions {
-font-size: 11px;
-font-family: 'Manrope';
-font-weight: 600;
-width: 212px;
-height: 117px;
-line-height: 15px;
+
+    font-size: 11px;
+    font-family: "Manrope";
+    font-weight: 600;
+    width: 212px;
+    height: 117px;
+    line-height: 13px;
+    overflow-y: scroll;
+    padding-right: 17px;
+    box-sizing: content-box;
 }
+
 
 
 .col-md {
@@ -620,6 +632,13 @@ line-height: 15px;
     height: 40px;
 }
 
+.idp {
+    font-size: 8px;
+    font-family: 'Manrope';
+    font-weight: 600;
+}
+
+
 /******  media queries for laptop screen *****/
 
 
@@ -627,7 +646,7 @@ line-height: 15px;
     .bs-stepper {
           width: 1109px;
           height: 597px;
-          margin: 56px 255px;
+          margin: 38px 199px;
   
       }
       
@@ -744,9 +763,9 @@ line-height: 15px;
   }
   
   .btn5 {
-    top: -182px;
-    left: -229px;
-     width: 0px;
+    top: -69px;
+    left: 0px;
+  
   }
   
   .col-md {
@@ -777,8 +796,14 @@ line-height: 15px;
       font-size: 9px;
       margin-left: 31px;
       margin-top: 4px;
-      line-height: 16px;
+      line-height: 13px!important;
   
+  }
+
+  #interactions-a {
+    font-size: 12px;
+    text-decoration: none;
+    color: #6149cd;
   }
   
   .bs-stepper-label {
@@ -850,7 +875,7 @@ line-height: 15px;
   #map-span {
       font-size: 12px;
       left: 133px;
-      top: 117px;
+      top: 105px;
   }
   .hh-parent {
       height: 100%;
@@ -1127,9 +1152,9 @@ line-height: 15px;
   }
   
   .btn5 {
-      top: -8rem;
-      left: -103px;
-      width: 0px;
+    top: -69px;
+    left: 0px;
+    width: 0px;
   }
   
   .col-md {
@@ -1386,8 +1411,8 @@ line-height: 15px;
   @media all and (max-width:1280px) {
     .bs-stepper {
         width: 1109px;
-        height: 29rem;
-        margin: 1.3rem 3.8rem;
+        height: 33rem;
+        margin: 1.3rem 5.8rem;
     
       }
       
@@ -1405,9 +1430,9 @@ line-height: 15px;
       font-size: 13px;
   }
   .bs-stepper-header {
-    width: 57%;
-    margin: 8px 18%;
-    margin-top: -3rem;
+    width: 54%;
+    margin: 9px 20%;
+    margin-top: -2rem;
 }
   
   
@@ -1436,8 +1461,9 @@ line-height: 15px;
   }
   
       #import-btn {
-      top: 1rem;
+      top: 3rem;
       right: 12px;
+      border: none;
   }
   
   .box1 span {
@@ -1516,14 +1542,14 @@ line-height: 15px;
   }
   
   .btn5 {
-    top: -133px;
-    left: -54px;
+    top: -58px;
+    left: 1px;
     width: 0px;
   }
   
   .col-md {
-    max-width: 25%;
-    left: 28%;
+    max-width: 32%;
+    left: 27%;
   }
   
   label {
@@ -1533,12 +1559,12 @@ line-height: 15px;
   }
   
   .row span {
-      font-size: 11px;
+      font-size: 9px;
   }
   
   select {
     width: 69%;
-    height: 39px;
+    height: 34px;
     margin-left: -5px;
     margin-bottom: 2px;
     font-size: 10px;
@@ -1583,7 +1609,7 @@ line-height: 15px;
    
     font-size: 0.9rem;
     
-    top: -3.2rem;
+    top: 0.8rem;
 
   }
   
@@ -1643,19 +1669,20 @@ line-height: 15px;
   
   .sq .ss {
     width: 27%;
-    height: 302px;
-    margin: 6px -66px 0px 116px;
+    height: 337px;
+    margin: -8px -66px 0px 116px;
   }
   
   
   .sq .ss h5 {
     font-size: 10px;
-    margin: 15px 0px 0px 43px;
+    margin: 16px 0px 0px 43px;
+    margin-bottom: 36px;
   }
   
   .sq .ss h6 {
     font-size: 10px;
-    margin: 20px 0px 0px 43px;
+    margin: 17px 0px 0px 43px;
   }
   
   
@@ -1688,11 +1715,11 @@ line-height: 15px;
     font-size: 10px;
     font-weight: 500;
     color: #000000;
-    margin: 16px 0px 0px 3px;
+    margin: 30px 0px 0px 3px;
     padding: 0rem 1rem;
   }
   .ss1 .hh1 input {
-      margin: 22px 0px 0px 40px;
+      margin: 34px 0px 0px 40px;
   }
   .ss1 .hh1{
     height: 30px;
@@ -1702,12 +1729,12 @@ line-height: 15px;
     font-family: "manrope";
     color: #6236ff;
     font-weight: 600;
-    margin: 23px 30px;
+    margin: 35px 30px;
     width: 97px;
       
   }
   .ss1 .hh1 h6 {
-      margin: 22px 0px 0px 15px;
+      margin: 36px 0px 0px -6px;
       font-size: 10px;
       font-family: 'manrope';
       
@@ -1722,7 +1749,7 @@ line-height: 15px;
   .ss1 .hh1 .slider {
       position: absolute;
       cursor: pointer;
-      top: -10!important;
+      top: 12px;
       left: 0;
       right: 0;
       bottom: 0;
@@ -1736,8 +1763,10 @@ line-height: 15px;
       display: none;
   }
   #map-next-btn {
-      left: 140px;
-      top: -0.7rem;
+    left: 140px;
+    top: 0.3rem;
+    border: none;
+    width: inherit;
   
   }
   .ss1 .hh1 .slider:before {
@@ -1778,5 +1807,9 @@ line-height: 15px;
   
   }
   
+
+  #identifier-box {
+      margin-left: -7%;
+  }
   
   }

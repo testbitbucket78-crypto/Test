@@ -1,34 +1,56 @@
+
+.content-head.d-flex {
+    display: flex !important;
+    justify-content: space-between;
+    padding: 3% 4% 0% 4%;
+}
+
+
 .input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
     position: relative;
     border-radius: 19px;
     border: 1px solid #EBEBEB;
     background-color: #ffffff;
-    margin: 0px 0px 0px -18px;
+    // margin: 0px 0px 0px -18px;
     font-family: 'Manrope';
     font-size: 14px;
-    width: 30px;
+    min-width: 350px;
+    min-height: 45px;
+    padding: 20px 35px;
 }
 .collumn{
-    margin: 15px;
+    margin: 18% 0% 6% 6%;
 }
-@media (min-width: 576px){
-.form-inline .input-group, .form-inline .custom-select {
-    max-width: 250px;
-}
-}
+// @media (min-width: 576px){
+// .form-inline .input-group, .form-inline .custom-select {
+//     width: 70%;
+// }
+// }
+
+
+// @media (min-width:768px) {
+//     .d-md-inline-block {
+//     display: inline-block !important;
+//     width: 435px;
+//     margin-left: 3.7rem;
+// }
+// }
+
 
 button:not(:disabled), [type=reset]:not(:disabled) {
-    cursor: pointer;
-    color: #7A86A1;
+      cursor: pointer;
+    color: #6149cd;
+    font-weight: 700;
     background-color: #ffffff;
     border: 1px solid #EBEBEB;
     border-radius: 17px;
-    font-family: 'Manrope';
+    font-family: "Manrope";
     font-size: 14px;
-	width: 165px;
+    width: 165px;
     height: 36px;
-    margin: 60px 0px 0px 44pc;
+    /* margin: 60px 0px 0px 44pc; */
 }
+
 
 .btn:not(:disabled):not(.disabled):hover {
     cursor: pointer;
@@ -38,14 +60,21 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     font-weight: bolder;
 }
 
+.add-smartrep-btn{
+    min-height: 45px;
+    margin-left: -34%;
+}
+
 .card{
+    display: flex;
+    flex-direction: row;
     background-color: #FDEFEF;
     border-radius: 30px;
     opacity: 1;
     width: 343px;
     height: 265px;
     font-family: 'Manrope';
-    margin: 10px 35px;
+    margin: 0px 18px 25px;
     border: none;
 }
 .card .id{
@@ -107,18 +136,18 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 }
 .gf img {
     position: absolute;
-    margin: 11px 0px 0px -8px;
+    margin: 15px 0px 0px 13px;
     width: 15px;
     height: 15px;
 }
-.input-group > .form-control:not(:last-child), .input-group > .custom-select:not(:last-child) {
+// .input-group > .form-control:not(:last-child), .input-group > .custom-select:not(:last-child) {
    
-    margin: 0px 0px 0px -20px;
-    padding: 0px 0px 0px 34px;
-}
+//     margin: 0px 0px 0px -20px;
+//     padding: 0px 0px 0px 34px;
+// }
 .sidebar {
     height: 100%;
-    width: 0;
+    width: 400px;
     position: fixed;
     z-index: 1;
     top: 0;
@@ -132,32 +161,35 @@ button:not(:disabled), [type=reset]:not(:disabled) {
   }
   .sidebar .btn5{
     border: 1px solid #EBEBEB;
-    border-radius: 14px;
+    border-radius: 19px;
     background-color: #ffffff;
     float: right;
-    width: 33px;
-    height: 27px;
+    width: 45px;
+    height: 45px;
+    margin-top: 12px;
+    outline: none;
   }
 
 
   .col-md-12 {
 
     max-width: 100%;
+    margin-left: 3px;
   }
 
   .collumn h6 {
 
     font-size: 12px;
     color: #7A86A1;
-    font-family: Manrope;
+    font-family: 'Manrope';
 }
 
 
 .collumn h5 {
 
-    font-size: 13px;
+    font-size: 12px;
     color: #000000;
-    font-family: Manrope;
+    font-family: 'Manrope';
 }
 
 .collumn .line {
@@ -167,16 +199,21 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     margin: 0px 10px 0px 10px;
 }
 
+.row.r1 {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 3% 3% 0% 3%;
+}
 .row h6 {
 
     font-size: 14px;
     color: #7A86A1;
-    font-family: Manrope;
+    font-family: 'Manrope';
     margin: 3px 0px 0px 14px;
 }
 
 h4 {
-    font-family: Manrope;
+    font-family: 'Manrope';
     color: #000000;
     font-size: 21px;
     font-weight: bold;
@@ -185,19 +222,19 @@ h4 {
 
 h3{
         color: #6149CD;
-        font-family: Manrope;
-        font-size: 17px;
+        font-family: 'Manrope';
+        font-size: 14px;
         margin: 20px 0px 20px 20px;
         font-weight: bold;
     }
-    .box{
-        width: 120px;
-        height: 30px;
-        background-color: #ffffff;
-        border-radius: 20px;
-        border: 1px solid #EBEBEB;
-        margin: 5px -18px 0px 31px;
-    }
+    // .box{
+    //     width: 120px;
+    //     height: 30px;
+    //     background-color: #ffffff;
+    //     border-radius: 20px;
+    //     border: 1px solid #EBEBEB;
+    //     margin: 5px -34px 0px 40px;
+    // }
    
 //     .box1 h6{
 //         font-size: 15px;
@@ -219,24 +256,25 @@ h3{
 .box1 h6 {
     font-size: 15px;
     color: #7A86A1;
-    font-family: Manrope;
+    font-family: 'Manrope';
     margin: 20px 0px 10px 26px;
 }
 
 .box1 h5 {
     color: #000000;
-    font-family: Manrope;
+    font-family: 'Manrope';
     font-size: 15px;
     margin: 20px 0px 10px 5px;
+    font-weight: 800;
 }
 
 .box p {
     color: #000000;
-    font-family: Manrope;
+    font-family: 'Manrope';
     font-size: 14px;
+    font-weight: 600;
     text-align: center;
-    margin: 4px 0px 0px 0px;
-    padding: 0px 0px 0px 9px;
+    line-height: 25px;
 }
 
 .box {
@@ -245,7 +283,7 @@ h3{
     background-color: #ffffff;
     border-radius: 20px;
     border: 1px solid #EBEBEB;
-    margin: 5px -18px 0px 31px;
+    margin: 5px -36px 0px 41px;
 }
 
 .box4 {
@@ -258,18 +296,16 @@ h3{
 }
 
 .box4 h3 {
-    font-family: Manrope;
-    font-size: 16px;
+    font-family: 'Manrope';
+    font-size: 14px;
     color: #6149CD;
-    padding: 0px 0px 0px 10px;
 }
 
 .box4 p {
-    font-family: Manrope;
+    font-family: 'Manrope';
     font-size: 14px;
     color: #000000;
-    text-align: inherit;
-    padding: 0px 0px 0px 10px;
+    padding-left: 20px;
 }
 
 .mt-4 {
@@ -277,13 +313,14 @@ h3{
 }
 
 .sidebar .footer {
-    width: 473px;
-    height: 34px;
-    margin: 120px 0 0 0;
+    width: 484px;
+    height: 84px;
+    margin: 100px 0 0 0;
     position: absolute;
-    border: 1px solid #695F972E;
-    border-radius: 20px;
+    border-top: 1px solid #ebebeb;
+    background: #FBF9FE 0% 0% no-repeat padding-box;
     overflow: hidden;
+    overflow-y: scroll;
 }
 .sidebar .footer .btn1{
     margin: 22px 0 0 16pc;
@@ -296,56 +333,13 @@ width: 20px;
 height: 24px;
 }
 
-
-
-@media screen and (max-width:1536px) {
-
-    .bs-stepper {
-    width: 1109px!important;
-    height: 597px!important;
-
+#Edit-icon {
+ padding: 6px;   
 }
 
-button:not(:disabled), [type=reset]:not(:disabled) {
-
-    font-size: 11px;
-    width: 126px;
-    height: 36px;
-    margin: 62px 0px 0px 489px; 
-}
-
-.card {
-    width: 329px;
-    height: 249px;
-    margin: 0 24px;
-}
-
-.col-md-12 {
-width: 100%;
-
-}
-
-.card .card1 .card-text1 h6 {
-margin-top: -12px;
-
-}
-
-.card .card1 .card-text2 h6 {
-margin-top: -12px;
-
-}
-
-#close-btn {
-    width: 40px;
-    height: 40px;
-    background: #FFFFFF;
-    border-radius: 17px;
-    opacity: 1;
-    border: 1px solid #ebebeb;
+.bb.d-flex {
     font-family: "Manrope";
-    font-size: 13px;
-    margin: 21px 31px 0 0;
-
+    padding: 20px;
 }
 
 .modal-content {
@@ -366,240 +360,26 @@ margin-top: -12px;
 }
 
 .modal-dialog .modal-content .modal-body {
-   font-family: "Manrope";
-    font-size: 14px;
-    top: 40px;
-    font-weight: 600;
-    text-align: center;
-}
-
-.modal-dialog .modal-content .deletefile .btn9 {
-    border: 1px solid #695F9724;
-    position: absolute;
-    background-color: #ffffff;
-    color: #7A86A1;
-    margin: -58px 22px 15px 61px;
-    border-radius: 15px;
-    width: 80px;
-    cursor: pointer;
-
-}
-
-
-.modal-dialog .modal-content .deletefile .btn99 {
-    border: 1px solid #695F9724;
-    position: absolute;
-    color: #ffffff;
-    background: #F23B3B;
-    width: 93px;
-    top: 70%;
-    left: 52%;
-    border-radius: 14px;
-    cursor: pointer;
-}
-
-.form-inline .input-group, .form-inline .custom-select {
-    max-width: 340px;
-    margin-left: 17px;
-}
-
-}
-
-
-@media screen and (max-width:1366px) {
-
-    .bs-stepper.linear {
-    width: 1109px!important;
-    height: 597px!important;
-    margin: 30px 180px!important;
-
-}
-
-button:not(:disabled), [type=reset]:not(:disabled) {
-
-    font-size: 11px;
-    width: 126px;
-    height: 36px;
-    margin: 62px 0px 0px 489px; 
-}
-
-.card {
-    width: 329px;
-    height: 249px;
-    margin: 0 24px;
-}
-
-.col-md-12 {
-width: 100%;
-
-}
-
-.card .card1 .card-text1 h6 {
-margin-top: -12px;
-
-}
-
-.card .card1 .card-text2 h6 {
-margin-top: -12px;
-
-}
-
-#close-btn {
-    width: 40px;
-    height: 40px;
-    background: #FFFFFF;
-    border-radius: 17px;
-    opacity: 1;
-    border: 1px solid #ebebeb;
     font-family: "Manrope";
-    font-size: 13px;
-    margin: 21px 31px 0 0;
-
-}
-
-.modal-content {
-  
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 310px;
-    height: 196px;
-    top: 190px;
-    left: 115px;
-    pointer-events: auto;
-    background: #FFFFFF 0% 0% no-repeat padding-box;
-    box-shadow: 4px 22px 54px #695F971A;
-    border-radius: 30px;
-    outline: 0;
-    border: none;
-}
-
-.modal-dialog .modal-content .modal-body {
-   font-family: "Manrope";
     font-size: 14px;
     top: 40px;
-    font-weight: 600;
+    font-weight: 800;
     text-align: center;
 }
 
 .modal-dialog .modal-content .deletefile .btn9 {
     border: 1px solid #695F9724;
     position: absolute;
-    background-color: #ffffff;
-    color: #7A86A1;
-    margin: -58px 22px 15px 61px;
-    border-radius: 15px;
-    width: 80px;
-    cursor: pointer;
-
-}
-
-
-.modal-dialog .modal-content .deletefile .btn99 {
-    border: 1px solid #695F9724;
-    position: absolute;
-    color: #ffffff;
-    background: #F23B3B;
-    width: 93px;
-    top: 70%;
-    left: 52%;
-    border-radius: 14px;
-    cursor: pointer;
-}
-
-
-
-}
-
-@media screen and (max-width:1280px) {
-
-    .bs-stepper.linear {
-    width: 1109px!important;
-    height: 597px!important;
-    margin: 30px 180px!important;
-
-}
-
-.col-9 {
-    max-width: 95%;
-}
-
-button:not(:disabled), [type=reset]:not(:disabled) {
-
     font-size: 11px;
-    width: 126px;
-    height: 36px;
-    margin: 62px 0px 0px 357px; 
-}
-
-.card {
-    width: 329px;
-    height: 249px;
-    margin: 0 24px;
-}
-
-.col-md-12 {
-width: 100%;
-
-}
-
-.card .card1 .card-text1 h6 {
-margin-top: -12px;
-
-}
-
-.card .card1 .card-text2 h6 {
-margin-top: -12px;
-
-}
-
-#close-btn {
-    width: 40px;
-    height: 40px;
-    background: #FFFFFF;
-    border-radius: 17px;
-    opacity: 1;
-    border: 1px solid #ebebeb;
     font-family: "Manrope";
-    font-size: 13px;
-    margin: 21px 31px 0 0;
-
-}
-
-.modal-content {
-  
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 310px;
-    height: 196px;
-    top: 190px;
-    left: 115px;
-    pointer-events: auto;
-    background: #FFFFFF 0% 0% no-repeat padding-box;
-    box-shadow: 4px 22px 54px #695F971A;
-    border-radius: 30px;
-    outline: 0;
-    border: none;
-}
-
-.modal-dialog .modal-content .modal-body {
-   font-family: "Manrope";
-    font-size: 14px;
-    top: 40px;
-    font-weight: 600;
-    text-align: center;
-}
-
-.modal-dialog .modal-content .deletefile .btn9 {
-    border: 1px solid #695F9724;
-    position: absolute;
     background-color: #ffffff;
     color: #7A86A1;
     margin: -58px 22px 15px 61px;
     border-radius: 15px;
     width: 80px;
+    height: 32px;
     cursor: pointer;
+   
 
 }
 
@@ -607,13 +387,408 @@ margin-top: -12px;
 .modal-dialog .modal-content .deletefile .btn99 {
     border: 1px solid #695F9724;
     position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
     color: #ffffff;
     background: #F23B3B;
     width: 93px;
     top: 70%;
     left: 52%;
+    height: 33px;
     border-radius: 14px;
     cursor: pointer;
+ 
 }
 
+.footer .delete-btn {
+    margin: 0;
+    padding: 0;
+    width: 45px;
+    height: 45px;
+    margin-left: 185px;
+    margin-top: 18px;
+    text-decoration: none;
+    outline: none;
+    border: 1px solid #ebebeb;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 19px;
+    opacity: 1;
 }
+
+
+
+// @media screen and (max-width:1536px) {
+
+//     .bs-stepper {
+//     width: 1109px!important;
+//     height: 597px!important;
+
+// }
+
+// button:not(:disabled), [type=reset]:not(:disabled) {
+
+//     font-size: 11px;
+//     width: 126px;
+//     height: 36px;
+//     margin: 62px 0px 0px 489px; 
+// }
+
+// .card {
+//     width: 329px;
+//     height: 249px;
+//     margin: 0 18px 29px;
+// }
+
+// .col-md-12 {
+// width: 100%;
+// margin-left: -17px;
+
+// }
+
+// .card .card1 .card-text1 h6 {
+// margin-top: -12px;
+
+// }
+
+// .card .card1 .card-text2 h6 {
+// margin-top: -12px;
+
+// }
+
+// #close-btn {
+//     width: 40px;
+//     height: 40px;
+//     background: #FFFFFF;
+//     border-radius: 17px;
+//     opacity: 1;
+//     border: 1px solid #ebebeb;
+//     font-family: "Manrope";
+//     font-size: 13px;
+//     margin: 21px 31px 0 0;
+
+// }
+
+// .modal-content {
+  
+//     position: relative;
+//     display: flex;
+//     flex-direction: column;
+//     width: 310px;
+//     height: 196px;
+//     top: 190px;
+//     left: 115px;
+//     pointer-events: auto;
+//     background: #FFFFFF 0% 0% no-repeat padding-box;
+//     box-shadow: 4px 22px 54px #695F971A;
+//     border-radius: 30px;
+//     outline: 0;
+//     border: none;
+// }
+
+// .modal-dialog .modal-content .modal-body {
+//    font-family: "Manrope";
+//     font-size: 14px;
+//     top: 40px;
+//     font-weight: 800;
+//     text-align: center;
+// }
+
+// .modal-dialog .modal-content .deletefile .btn9 {
+//     border: 1px solid #695F9724;
+//     position: absolute;
+//     background-color: #ffffff;
+//     color: #7A86A1;
+//     margin: -58px 22px 15px 61px;
+//     border-radius: 15px;
+//     width: 80px;
+//     cursor: pointer;
+
+// }
+
+
+// .modal-dialog .modal-content .deletefile .btn99 {
+//     border: 1px solid #695F9724;
+//     position: absolute;
+//     color: #ffffff;
+//     background: #F23B3B;
+//     width: 93px;
+//     top: 70%;
+//     left: 52%;
+//     border-radius: 14px;
+//     cursor: pointer;
+// }
+
+// .form-inline .input-group, .form-inline .custom-select {
+//     max-width: 340px;
+//     margin-left: 17px;
+// }
+
+// }
+
+
+
+
+// @media screen and (max-width:1366px) {
+
+//     .bs-stepper.linear {
+//     width: 1109px!important;
+//     height: 597px!important;
+//     margin: 30px 180px!important;
+
+// }
+
+// button:not(:disabled), [type=reset]:not(:disabled) {
+
+//     font-size: 11px;
+//     width: 126px;
+//     height: 36px;
+//     margin: 62px 0px 0px 489px; 
+// }
+
+// .card {
+//     width: 329px;
+//     height: 249px;
+//     margin: 0 24px 24px;
+// }
+
+// .col-md-12 {
+// width: 100%;
+
+// }
+
+// .card .card1 .card-text1 h6 {
+// margin-top: -12px;
+
+// }
+
+// .card .card1 .card-text2 h6 {
+// margin-top: -12px;
+
+// }
+
+// #close-btn {
+//     width: 40px;
+//     height: 40px;
+//     background: #FFFFFF;
+//     border-radius: 17px;
+//     opacity: 1;
+//     border: 1px solid #ebebeb;
+//     font-family: "Manrope";
+//     font-size: 13px;
+//     margin: 21px 31px 0 0;
+
+// }
+
+// .modal-content {
+  
+//     position: relative;
+//     display: flex;
+//     flex-direction: column;
+//     width: 310px;
+//     height: 196px;
+//     top: 190px;
+//     left: 115px;
+//     pointer-events: auto;
+//     background: #FFFFFF 0% 0% no-repeat padding-box;
+//     box-shadow: 4px 22px 54px #695F971A;
+//     border-radius: 30px;
+//     outline: 0;
+//     border: none;
+// }
+
+// .modal-dialog .modal-content .modal-body {
+//    font-family: "Manrope";
+//     font-size: 14px;
+//     top: 40px;
+//     font-weight: 800;
+//     text-align: center;
+// }
+
+// .modal-dialog .modal-content .deletefile .btn9 {
+//     border: 1px solid #695F9724;
+//     position: absolute;
+//     background-color: #ffffff;
+//     color: #7A86A1;
+//     margin: -58px 22px 15px 61px;
+//     border-radius: 15px;
+//     width: 80px;
+//     cursor: pointer;
+
+// }
+
+
+// .modal-dialog .modal-content .deletefile .btn99 {
+//     border: 1px solid #695F9724;
+//     position: absolute;
+//     color: #ffffff;
+//     background: #F23B3B;
+//     width: 93px;
+//     top: 70%;
+//     left: 52%;
+//     border-radius: 14px;
+//     cursor: pointer;
+// }
+
+
+
+// }
+
+// @media screen and (max-width:1280px) {
+
+//     .bs-stepper.linear {
+//     width: 1109px!important;
+//     height: 597px!important;
+//     margin: 30px 180px!important;
+
+// }
+
+// .form-inline .input-group, .form-inline .custom-select {
+//     max-width: 258px;
+
+// }
+
+// .col-9 {
+//     max-width: 95%;
+// }
+
+// button:not(:disabled), [type=reset]:not(:disabled) {
+
+//     font-size: 11px;
+//     width: 126px;
+//     height: 36px;
+//     margin: 27px 0px 0px 445px;
+// }
+
+// .card {
+//      width: 16rem;
+//     height: 12rem;
+//     margin: 6px 13px 13px;
+//     border-radius: 24px;
+// }
+
+// .card .id {
+   
+//     font-size: 11px;
+// }
+
+
+// .card .card-title {
+//     margin-bottom: 6px;
+//     margin-top: -10px;
+//     margin-left: 13px;
+//     font-size: 14px;
+//     letter-spacing: inherit;
+
+
+// }
+
+// .card p {
+  
+//     font-size: 12px;
+
+// }
+
+// .card .text-muted {
+
+//     font-size: 11px;
+//     font-weight: 400;
+
+// }
+// .col-md-12 {
+// width: 100%;
+// margin-top: -36px;
+// margin-left: -19px;
+
+// }
+
+// .card .card1 .card-text1 p {
+//     font-size: 13px;
+//     margin-top: 6px;
+// }
+
+// .card .card1 .card-text2 p {
+//     font-size: 13px;
+//     margin-top: 6px;
+
+// }
+
+
+
+// .card .card1 .card-text1 h6 {
+// margin-top: -12px;
+// font-size: 10px;
+
+// }
+
+// .card .card1 .card-text2 h6 {
+// margin-top: -12px;
+// font-size: 10px;
+
+// }
+
+// #close-btn {
+//     width: 40px;
+//     height: 40px;
+//     background: #FFFFFF;
+//     border-radius: 17px;
+//     opacity: 1;
+//     border: 1px solid #ebebeb;
+//     font-family: "Manrope";
+//     font-size: 13px;
+//     margin: 21px 31px 0 0;
+
+// }
+
+// .modal-content {
+  
+//     position: relative;
+//     display: flex;
+//     flex-direction: column;
+//     width: 310px;
+//     height: 196px;
+//     top: 190px;
+//     left: 115px;
+//     pointer-events: auto;
+//     background: #FFFFFF 0% 0% no-repeat padding-box;
+//     box-shadow: 4px 22px 54px #695F971A;
+//     border-radius: 30px;
+//     outline: 0;
+//     border: none;
+// }
+
+// .modal-dialog .modal-content .modal-body {
+//    font-family: "Manrope";
+//     font-size: 14px;
+//     top: 40px;
+//     font-weight: 800;
+//     text-align: center;
+// }
+
+// .modal-dialog .modal-content .deletefile .btn9 {
+//     border: 1px solid #695F9724;
+//     position: absolute;
+//     background-color: #ffffff;
+//     color: #7A86A1;
+//     margin: -58px 22px 15px 61px;
+//     border-radius: 15px;
+//     width: 80px;
+//     cursor: pointer;
+
+// }
+
+
+// .modal-dialog .modal-content .deletefile .btn99 {
+//     border: 1px solid #695F9724;
+//     position: absolute;
+//     color: #ffffff;
+//     background: #F23B3B;
+//     width: 93px;
+//     top: 70%;
+//     left: 52%;
+//     border-radius: 14px;
+//     cursor: pointer;
+// }
+
+
+// }

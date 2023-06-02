@@ -19,13 +19,14 @@ import { ScheduleViewComponent } from './scheduleView/scheduleView.component';
 import { SettingComponent } from './setting/setting.component';
 import { GeneralsettingComponent } from './generalsetting/generalsetting.component';
 import { OrganizationComponent } from './organization/organization.component';
+import { AcoountSettingsComponent } from './acoount-settings/acoount-settings.component';
 import { AccountsettingComponent } from './accountsetting/accountsetting.component';
 import { CampaignsettingComponent } from './campaignsetting/campaignsetting.component';
 import { ContactsettingComponent } from './contactsetting/contactsetting.component';
 import { InboxsettingComponent } from './inboxsetting/inboxsetting.component';
 import { AddSmartRepliesComponent} from './addSmartReplies/addSmartReplies.component';
 
-export const containers = [DashboardComponent,ReportcampaignComponent,ReportautomationComponent,ConversationComponent,ContactsComponent,TeamboxComponent,FlowBuilderComponent,SmartRepliesComponent,ReplyMaterialComponent,ImportComponent,CampaignsComponent,ComposeComponent,AutomationComponent,ReportsComponent,MessageComponent,CampaignReportComponent,ScheduleComponent,ScheduleViewComponent,SettingComponent,GeneralsettingComponent,OrganizationComponent,AccountsettingComponent,CampaignsettingComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent];
+export const containers = [DashboardComponent, ReportcampaignComponent, ReportautomationComponent, ConversationComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ReplyMaterialComponent, ImportComponent, CampaignsComponent, ComposeComponent, AutomationComponent, ReportsComponent, MessageComponent, CampaignReportComponent, ScheduleComponent, ScheduleViewComponent, SettingComponent, GeneralsettingComponent, OrganizationComponent, AccountsettingComponent, CampaignsettingComponent,AcoountSettingsComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './addSmartReplies/addSmartReplies.component';

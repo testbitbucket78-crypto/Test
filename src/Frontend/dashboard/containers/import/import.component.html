@@ -61,7 +61,11 @@
 					</div>
 					<h5 id="upload-instructions">Upload a CSV file with the contacts and <br /> details that you would like to import. 
 						Ensure<br /> the CSV file fulfils the Following<br /> requirements:<br /> Only CSV files are accepted for import.<br /> 
-						File size must be 10 MB<br /> The file must contain at least.. <span id="read-more">READ MORE</span>
+						File size must be 10 MB<br /> The file must contain at least..
+						<p class="idp"> {{ showMore ? text : (text | slice: 1:15) }} <span *ngIf="!showMore">...</span>
+							<a id="interactions-a" href="javascript:;" *ngIf="!showMore" (click)="onShow()">Read More</a>
+							<a id="interactions-a" href="javascript:;" *ngIf="showMore" (click)="onShow()">Read Less</a>
+						  </p>
 					</h5>
 				</div>
 				<div class="row g-2">
@@ -79,7 +83,7 @@
 						</div>
 						<span>New Contacts will be added,existing will be ignored </span>
 					</div>
-					<div class="col-md">
+					<div class="col-md" id="identifier-box">
 						<label for="floatingSelectGrid">Identifier</label>
 						<div class="form-floating">
 							<select class="form-select" id="floatingSelectGrid"

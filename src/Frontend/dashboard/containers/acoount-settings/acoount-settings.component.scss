@@ -1,0 +1,111 @@
+
+.setting-card {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px;
+    padding: 20px;
+}
+
+
+.setting-field {
+    display: flex;
+   }
+   
+   .setting-field .setting-field-link {
+       color: #7A86A1;
+       font-size: 15px;
+       padding: 10px 14px;
+       text-decoration: none;
+   }
+   
+   .setting-field .active{
+       color: #FFFFFF !important;
+       background: #6149CD 0% 0% no-repeat padding-box;
+       border-radius: 19px;    
+   }
+
+   .account-card {
+    border-radius: 30px;
+    margin: 1%;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 10px 20px;
+    min-height: 190px;
+    cursor: pointer;
+   }
+
+   .account-card p {
+    font-size: 12px;
+    color: #7A86A1;
+   }
+
+   .account-card-header {
+    padding: 10px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+   }
+
+   .account-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 17px;
+    padding: 8px 22px;
+    border: 1px;    
+    color: white;
+    font-weight: 400;
+   }
+   .setting-card .card1 {
+    background: #FFF4F2 0% 0% no-repeat padding-box;
+   }
+   .setting-card .card2 {
+   border: 2px solid #F0F0F0;
+   }
+
+   .connection-card {
+    border-radius: 30px;
+    margin: 15px 10px 10px 5px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 7px 20px;
+    min-height: 85px;
+    cursor: pointer;
+    background: #FFF4F2 0% 0% no-repeat padding-box;
+    font-size: 14px;
+   }
+
+   .connection-card .card-desc {
+    background: white;
+    padding: 3px 12px;
+    border-radius: 15px;
+    margin: 3px 6px;
+   }
+
+   .connection-card img {
+    box-shadow: 1px 8px 29px #695F9724;
+    background: white;
+    padding: 12px;
+    border-radius: 40%;
+   }
+
+   .account-modal{
+    background: #FFF4F2;
+    width: 380px;
+    height: 330px;
+   }
+
+   .account-modal .btn-close {
+    background: white;
+    margin: 2px;
+    border-radius: 15px;
+    padding: 11px 15px;
+   }
+
+   .account-modal .modal-title{
+    color: #6149CD;
+    font-size: 18px;
+   }
+   
+   .account-modal .modal-footer {
+    border: none;
+   }

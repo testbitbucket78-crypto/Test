@@ -19,6 +19,10 @@ declare var $: any;
 
 export class ImportComponent implements OnInit {
 
+	showMore = false;
+	text = ` mamammamamamamm amamamamam ammaaamaam amammscwebcjkwebjkqwkllwq lkwkklwdkl  njkbjkbkbk`;
+
+
 	active = 1;
 	file: any;                                           
 	stepper: any;
@@ -69,7 +73,9 @@ export class ImportComponent implements OnInit {
 		this.stepper.next();
 	}
 
-
+	onShow() {
+		this.showMore = !this.showMore;
+	}
 
 	openinstruction(instruction: any) {
 		this.modalService.open(instruction);

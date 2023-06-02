@@ -24,7 +24,7 @@ export class DashboardComponent implements OnInit {
     constructor(private apiService: DashboardService, private router: Router, private cdRef: ChangeDetectorRef) { }
     ngOnInit() {
 
-        this.routerGuard();
+        //this.routerGuard();
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
         this.getdashboardCampaigns();
@@ -51,7 +51,8 @@ export class DashboardComponent implements OnInit {
         });
     }
     getDashboardInteractions() {
-        this.apiService.dashboardInteractions().subscribe(data => {
+        var sPid = sessionStorage.getItem('SP_ID')
+        this.apiService.dashboardInteractions(sPid).subscribe(data => {
             this.interactions = data;
         });
     }
