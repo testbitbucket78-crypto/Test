@@ -3,6 +3,7 @@ const db = require("../dbhelper");
 var app = express();
 const val = require('./constant.js');
 const bodyParser = require('body-parser');
+const mysql = require('mysql');
 const cors = require('cors');
 
 app.use(bodyParser.json());
@@ -44,24 +45,89 @@ app.get('/sideNavKeyword', (req, res) => {
   db.runQuery(req, res, val.sideNavKeywords, [req.query.ID])
 })
 
-app.post('/addNewReply', (req, res) => {
-  const list = req.body.Tags;
-  const listStr = list.join();
-  console.log("listStr" + listStr)
-  const myStringArray = req.body.Keywords;
-  const params = {
-    strings: {
+app.post('/addNewReply', async (req, res) => {
+  try {
+    const myStringArray = req.body.Keywords;
+    console.log(req.body.Keywords)
+    const params = {
+      strings: {
 
-      value: myStringArray.join(',')
+        value: myStringArray.join(',')
+      }
+    };
+    console.log("params " + params.strings.value)
+    const jsonData = JSON.stringify(req.body.ReplyActions);
+
+  
+    console.log(req.body.ReplyActions)
+
+
+    //db.runQuery(req, res, val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData])
+    var saveReply = await db.excuteQuery(val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData])
+    console.log(saveReply)
+    res.status(200).send({
+      msg: "Smart Reply added",
+      status: 200
+    });
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
+
+
+})
+
+
+app.post('/KeywordMatch', async (req, res) => {
+  try {
+    const myStringArray = req.body.Keywords;
+
+    console.log(req.body.Keywords)
+    const params = {
+      strings: {
+
+        value: myStringArray.join(',')
+      }
+    };
+    console.log("params " + params.strings.value)
+    // Add single quotes after every comma
+    const updatedString = (params.strings.value).split(',').map(value => "'" + value + "'").join(',');
+    console.log("updatedString" + updatedString.length)
+    var query = "SELECT Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + `) and Keyword IN (` + updatedString + ')';
+
+    var findKey = await db.excuteQuery(query, [])
+
+    // Check if any element from array1 is present in array2
+    const matchedElements = (req.body.Keywords).filter(element => findKey.some(obj => obj.Keyword === element));
+    console.log(findKey);
+    console.log(matchedElements)
+    if (matchedElements.length == 0) {
+      console.log("if")
+      res.status(200).send({
+        msg: 'keyword ready for add',
+        status: 200
+      });
     }
-  };
-  console.log("params " + params.strings.value)
-  const jsonData = JSON.stringify(req.body.ReplyActions);
-
-  console.log("req.body.Keywords" + jsonData);
-  console.log(req.body.ReplyActions)
-  console.log(req.body.Tags)
-  db.runQuery(req, res, val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData, listStr])
+    else {
+      console.log("else")
+      res.status(409).send({
+        msg: 'Some keywords is duplicate',
+        status: 409
+      });
+    }
+  }
+  catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
 })
 
 
@@ -137,34 +203,39 @@ app.post('/resetInteractionMapping', (req, res) => {
 
 
 app.post('/addTag', async (req, res) => {
-  var result = await db.excuteQuery(val.selectTagQuery, [req.body.customerId])
+  //var result = await db.excuteQuery(val.selectTagQuery, [req.body.customerId])
   var updateQueryQuery = "";
-  console.log(result)
-  if (result.length > 0) {
-    const tagValue = result[0].tag
-    console.log("tagValue" + tagValue)
-    if (tagValue != ' ') {
-      // Split the tag value into an array of tag items
-      const tagItems = tagValue.split(',');
-      console.log(tagItems)
-      // Get the count of tag items
-      const tagItemCount = tagItems.length;
-      console.log("tagItemCount" + tagItemCount)
+  // console.log(result.tag)
+  // if (result.length > 0) {
+  //   const tagValue = result[0].tag
+  //   console.log("tagValue" + tagValue)
+  //   if (tagValue != ' ' && tagValue != null) {
+  //     // Split the tag value into an array of tag items
+  //     const tagItems = tagValue.split(',');
+  //     console.log(tagItems)
+  //     // Get the count of tag items
+  //     const tagItemCount = tagItems.length;
+  //     console.log("tagItemCount" + tagItemCount)
 
-      updateQueryQuery = "UPDATE EndCustomer SET tag = CONCAT(tag,'," + req.body.tag + "')  WHERE customerId =" + req.body.customerId
+  //     updateQueryQuery = "UPDATE EndCustomer SET tag = CONCAT(tag,'," + req.body.tag + "')  WHERE customerId =" + req.body.customerId
 
-    } else {
-      console.log("else")
-      updateQueryQuery = "UPDATE EndCustomer SET tag = '" + req.body.tag + " '  WHERE customerId =" + req.body.customerId
-    }
+  //   }
+  //   else {
+  //     console.log("else")
+  //     updateQueryQuery = "UPDATE EndCustomer SET tag = '" + req.body.tag + " '  WHERE customerId =" + req.body.customerId
+  //   }
+  // }
+  updateQueryQuery = " UPDATE EndCustomer SET tag ='" + req.body.tag + "'  WHERE customerId =" + req.body.customerId
 
-  }
   console.log(updateQueryQuery)
   db.runQuery(req, res, updateQueryQuery, [])
 })
 
 
 app.post('/removeTag', async (req, res) => {
+  var maptag = req.body.tag;
+  var maptagItems = maptag.split(',')
+  console.log("maptag " + maptag)
   var result = await db.excuteQuery(val.selectTagQuery, [req.body.customerId])
   console.log(result)
   var removetagQuery = ""
@@ -172,29 +243,34 @@ app.post('/removeTag', async (req, res) => {
 
     const tagValue = result[0].tag
     console.log("tagValue" + tagValue)
-    if (tagValue != ' ') {
+    if (tagValue != ' ' && tagValue != null) {
       // Split the tag value into an array of tag items
       const tagItems = tagValue.split(',');
-      console.log(tagItems)
+
+      var itemmap = '';
+
+      console.log(itemmap == maptag)
       // Get the count of tag items
       const tagItemCount = tagItems.length;
       console.log("tagItemCount" + tagItemCount)
-     
+      for (var i = 0; i < tagItems.length; i++) {
 
-      if (tagItemCount > 1) {
-      
-        removetagQuery = "UPDATE EndCustomer SET tag = TRIM(BOTH ',' FROM REPLACE(CONCAT(',', tag, ','), '," + req.body.tag + ",', ',')) WHERE customerId = " + req.body.customerId + ""
+        if (!(maptagItems.includes(tagItems[i]))) {
+          var itemmap = itemmap + (itemmap ? ',' : '') + tagItems[i]
+
+        }
+
+
       }
-      else {
-        
-        removetagQuery = "UPDATE EndCustomer SET tag =REPLACE(tag, ' " + req.body.tag + " ', '') WHERE customerId = " + req.body.customerId + " "
-      }
+      console.log("for loop end" + itemmap)
+      removetagQuery = "UPDATE EndCustomer SET tag ='" + itemmap + "' WHERE customerId = " + req.body.customerId + "";
+
     }
   }
-    console.log(removetagQuery)
-    db.runQuery(req, res, removetagQuery, [])
+  console.log(removetagQuery)
+  db.runQuery(req, res, removetagQuery, [])
 
-  })
+})
 
 
 app.listen(3005, function () {
