@@ -107,7 +107,7 @@
             ! Password is required
           </div>
           <div *ngIf=" registerForm.get('password').hasError('pattern')" class="text-danger">
-            ! Password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters.
+            ! Password must contain at least eight characters,<br> at least one number and both lower and uppercase letters<br> and special characters.
           </div>
           <div *ngIf=" registerForm.get('confirmPassword').hasError('required')" class="text-danger">
             ! Confirm Password is required

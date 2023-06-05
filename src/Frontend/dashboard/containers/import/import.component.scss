@@ -996,7 +996,14 @@ span {
   .ss1 .hh1 input:checked+ .slider {
       background-color: #6149cd;
   }
-  
+  #prduc{
+    width: 12rem;
+    border: 1px solid #EBEBEB;
+    border-radius: 0.7rem;
+    opacity: 1;
+    background: #ffffff;
+    height: 2rem;
+  }
   
   .ss1 .hh1 input:checked + .slider:before {
       transform: translateX(19px);

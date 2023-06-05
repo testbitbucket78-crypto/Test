@@ -331,19 +331,23 @@ onSelectAll(items: any) {
     
     console.log(sessionStorage.getItem('id'))
     this.apiService.getContactById(sessionStorage.getItem('id'), sessionStorage.getItem('SP_ID')).subscribe((result: any) =>{
-      console.log(result[0].tag.split(',') +" "+result[0].age)
+      // console.log(result[0].tag.split(',') +" "+result[0].age)
       this.editContact=this.fb.group({
         Name: new FormControl(result[0].Name),
         Phone_number: new FormControl(result[0].Phone_number),
         emailId: new FormControl(result[0].emailId),
         age: new FormControl(result[0].age),
-        tag: new FormControl(result[0].tag.split(',')),
-        status: new FormControl(result[0].status.split(',')),
+        tag: new FormControl(result[0].tag?.split(',')),
+        status: new FormControl(result[0].status?.split(',')),
         facebookId: new FormControl(result[0].facebookId),
         InstagramId: new FormControl(result[0].InstagramId)
+       
       })
+      this.getContact();
     })
     this.modalService.open(contactedit);
+
+    
   }
 
 

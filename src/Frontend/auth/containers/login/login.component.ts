@@ -34,11 +34,15 @@ export class LoginComponent implements OnInit {
     onSubmit() {
         this.apiService.login(this.loginForm.value).subscribe(
             (result) => {
-             sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
-             sessionStorage.setItem('SP_ID', result.user.SP_ID);
-             console.log(result.user.UserType);
-             console.log("Agent")
-             this.router.navigate(['dashboard'])
+
+                if (result.status === 200) {
+                    sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
+                    sessionStorage.setItem('SP_ID', result.user.SP_ID);
+                    // console.log(result.user.UserType);
+                    // console.log("Agent")
+                    this.router.navigate(['dashboard']);
+                   }
+           
                 },
             
             (error) => {
@@ -64,7 +68,7 @@ export class LoginComponent implements OnInit {
                         }
                     }    
                 else  {
-                const errorMessage = "! Something Went Wrong.";
+                    const errorMessage = "! Internal Server Error,<br /> Please Try After Sometime.";
                     const errorDiv = document.getElementById("error-message");
                     if (errorDiv) {
                         errorDiv.innerHTML = errorMessage;
