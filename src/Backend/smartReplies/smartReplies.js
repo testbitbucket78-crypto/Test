@@ -5,6 +5,7 @@ const val = require('./constant.js');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
+var axios = require('axios');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -58,7 +59,7 @@ app.post('/addNewReply', async (req, res) => {
     console.log("params " + params.strings.value)
     const jsonData = JSON.stringify(req.body.ReplyActions);
 
-  
+
     console.log(req.body.ReplyActions)
 
 
@@ -270,6 +271,87 @@ app.post('/removeTag', async (req, res) => {
   console.log(removetagQuery)
   db.runQuery(req, res, removetagQuery, [])
 
+})
+
+//_____________ Send Button Through Meta API's _________________________//
+
+function sendMessage(data) {
+  var config = {
+    method: 'post',
+    url: val.url,
+    headers: {
+      'Authorization': val.access_token,
+      'Content-Type': val.content_type
+    },
+    data: data
+  };
+
+  return axios(config)
+}
+
+function getTextMessageInput(recipient, text) {
+  return JSON.stringify({
+
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": recipient,
+    "type": "interactive",
+    "interactive": {
+      "type": "button",
+      "body": {
+        "text": text
+      },
+      "action": {
+        "buttons": [
+          {
+            "type": "reply",
+            "reply": {
+              "id": "1",
+              "title": "Yes"
+            }
+          },
+          {
+            "type": "reply",
+            "reply": {
+              "id": "2",
+              "title": "No"
+            }
+          },
+          {
+            "type": "reply",
+            "reply": {
+              "id": "3",
+              "title": "ok"
+            }
+          }
+        ]
+      }
+    }
+
+
+  });
+}
+
+app.post('/button', (req, res) => {
+  
+  var data = getTextMessageInput(req.body.Phone_number, req.body.text);
+  var value = JSON.parse(data)
+  console.log(value)
+  sendMessage(data).then(function (response) {
+    res.status(200).send({
+      msg: 'Message sended',
+      status: 200
+    });
+    return;
+  }).catch(function (error) {
+    console.log(error);
+
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+    return;
+  });
 })
 
 
