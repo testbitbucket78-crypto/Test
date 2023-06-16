@@ -25,8 +25,12 @@ import { CampaignsettingComponent } from './campaignsetting/campaignsetting.comp
 import { ContactsettingComponent } from './contactsetting/contactsetting.component';
 import { InboxsettingComponent } from './inboxsetting/inboxsetting.component';
 import { AddSmartRepliesComponent} from './addSmartReplies/addSmartReplies.component';
+import { NotificationsComponent } from './notifications/notifications.component';
+import { MyprofileComponent } from './myprofile/myprofile.component';
+import { WalletusageComponent } from './walletusage/walletusage.component';
+import { BillinghistoryComponent } from './billinghistory/billinghistory.component';
 
-export const containers = [DashboardComponent, ReportcampaignComponent, ReportautomationComponent, ConversationComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ReplyMaterialComponent, ImportComponent, CampaignsComponent, ComposeComponent, AutomationComponent, ReportsComponent, MessageComponent, CampaignReportComponent, ScheduleComponent, ScheduleViewComponent, SettingComponent, GeneralsettingComponent, OrganizationComponent, AccountsettingComponent, CampaignsettingComponent,AcoountSettingsComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent];
+export const containers = [DashboardComponent, ReportcampaignComponent, ReportautomationComponent, ConversationComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ReplyMaterialComponent, ImportComponent, CampaignsComponent, ComposeComponent, AutomationComponent, ReportsComponent, MessageComponent, CampaignReportComponent, ScheduleComponent, ScheduleViewComponent, SettingComponent, GeneralsettingComponent, OrganizationComponent, AccountsettingComponent, CampaignsettingComponent,AcoountSettingsComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent,NotificationsComponent,MyprofileComponent,WalletusageComponent,BillinghistoryComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './addSmartReplies/addSmartReplies.component';
@@ -54,4 +58,7 @@ export * from './accountsetting/accountsetting.component';
 export * from './campaignsetting/campaignsetting.component';
 export * from './contactsetting/contactsetting.component';
 export * from './inboxsetting/inboxsetting.component';
-
+export * from './notifications/notifications.component';
+export * from './myprofile/myprofile.component';
+export * from './walletusage/walletusage.component';
+export * from './billinghistory/billinghistory.component';

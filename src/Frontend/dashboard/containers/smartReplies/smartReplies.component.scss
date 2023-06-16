@@ -19,7 +19,7 @@
     padding: 20px 35px;
 }
 .collumn{
-    margin: 18% 0% 6% 6%;
+    margin: 26% 0% 6% 6%;
 }
 // @media (min-width: 576px){
 // .form-inline .input-group, .form-inline .custom-select {
@@ -62,7 +62,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 
 .add-smartrep-btn{
     min-height: 45px;
-    margin-left: -34%;
+    margin-left: -60%;
 }
 
 .card{
@@ -166,7 +166,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     float: right;
     width: 45px;
     height: 45px;
-    margin-top: 12px;
+    margin-top: 33px;
     outline: none;
   }
 
@@ -332,7 +332,7 @@ h3{
     overflow-y: scroll;
 }
 .sidebar .footer .btn1{
-    margin: 22px 0 0 16pc;
+margin: 22px 0 0 16pc;
 background: #FFFFFF;
 box-shadow: 1px 8px 29px #695F9724;
 border: 1px solid #EBEBEB;
@@ -341,39 +341,34 @@ opacity: 1;
 width: 20px;
 height: 24px;
 }
-
 #Edit-icon {
  padding: 6px;   
 }
-
 .bb.d-flex {
     font-family: "Manrope";
     padding: 20px;
 }
-
 .modal-content {
-  
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 310px;
-    height: 196px;
-    top: 190px;
-    left: 115px;
     pointer-events: auto;
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
     outline: 0;
     border: none;
+    background: transparent;
 }
 
 .modal-dialog .modal-content .modal-body {
     font-family: "Manrope";
     font-size: 14px;
-    top: 40px;
     font-weight: 800;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 61rem;
 }
 
 .modal-dialog .modal-content .deletefile .btn9 {
@@ -388,11 +383,7 @@ height: 24px;
     width: 80px;
     height: 32px;
     cursor: pointer;
-   
-
 }
-
-
 .modal-dialog .modal-content .deletefile .btn99 {
     border: 1px solid #695F9724;
     position: absolute;
@@ -406,9 +397,7 @@ height: 24px;
     height: 33px;
     border-radius: 14px;
     cursor: pointer;
- 
 }
-
 .footer .delete-btn {
     margin: 0;
     padding: 0;
@@ -424,380 +413,92 @@ height: 24px;
     border-radius: 19px;
     opacity: 1;
 }
-
-
-
-// @media screen and (max-width:1536px) {
-
-//     .bs-stepper {
-//     width: 1109px!important;
-//     height: 597px!important;
-
-// }
+.bs-stepper {
+    width: 1109px!important;
+    height: 597px!important;
+}
 
 // button:not(:disabled), [type=reset]:not(:disabled) {
-
 //     font-size: 11px;
 //     width: 126px;
 //     height: 36px;
 //     margin: 62px 0px 0px 489px; 
 // }
-
-// .card {
-//     width: 329px;
-//     height: 249px;
-//     margin: 0 18px 29px;
-// }
-
-// .col-md-12 {
-// width: 100%;
-// margin-left: -17px;
-
-// }
-
-// .card .card1 .card-text1 h6 {
-// margin-top: -12px;
-
-// }
-
-// .card .card1 .card-text2 h6 {
-// margin-top: -12px;
-
-// }
-
-// #close-btn {
-//     width: 40px;
-//     height: 40px;
-//     background: #FFFFFF;
-//     border-radius: 17px;
-//     opacity: 1;
-//     border: 1px solid #ebebeb;
-//     font-family: "Manrope";
-//     font-size: 13px;
-//     margin: 21px 31px 0 0;
-
-// }
-
-// .modal-content {
-  
-//     position: relative;
-//     display: flex;
-//     flex-direction: column;
-//     width: 310px;
-//     height: 196px;
-//     top: 190px;
-//     left: 115px;
-//     pointer-events: auto;
-//     background: #FFFFFF 0% 0% no-repeat padding-box;
-//     box-shadow: 4px 22px 54px #695F971A;
-//     border-radius: 30px;
-//     outline: 0;
-//     border: none;
-// }
-
-// .modal-dialog .modal-content .modal-body {
-//    font-family: "Manrope";
-//     font-size: 14px;
-//     top: 40px;
-//     font-weight: 800;
-//     text-align: center;
-// }
-
-// .modal-dialog .modal-content .deletefile .btn9 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     background-color: #ffffff;
-//     color: #7A86A1;
-//     margin: -58px 22px 15px 61px;
-//     border-radius: 15px;
-//     width: 80px;
-//     cursor: pointer;
-
-// }
-
-
-// .modal-dialog .modal-content .deletefile .btn99 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     color: #ffffff;
-//     background: #F23B3B;
-//     width: 93px;
-//     top: 70%;
-//     left: 52%;
-//     border-radius: 14px;
-//     cursor: pointer;
-// }
-
-// .form-inline .input-group, .form-inline .custom-select {
-//     max-width: 340px;
-//     margin-left: 17px;
-// }
-
-// }
-
-
-
-
-// @media screen and (max-width:1366px) {
-
-//     .bs-stepper.linear {
-//     width: 1109px!important;
-//     height: 597px!important;
-//     margin: 30px 180px!important;
-
-// }
-
-// button:not(:disabled), [type=reset]:not(:disabled) {
-
-//     font-size: 11px;
-//     width: 126px;
-//     height: 36px;
-//     margin: 62px 0px 0px 489px; 
-// }
-
-// .card {
-//     width: 329px;
-//     height: 249px;
-//     margin: 0 24px 24px;
-// }
-
-// .col-md-12 {
-// width: 100%;
-
-// }
-
-// .card .card1 .card-text1 h6 {
-// margin-top: -12px;
-
-// }
-
-// .card .card1 .card-text2 h6 {
-// margin-top: -12px;
-
-// }
-
-// #close-btn {
-//     width: 40px;
-//     height: 40px;
-//     background: #FFFFFF;
-//     border-radius: 17px;
-//     opacity: 1;
-//     border: 1px solid #ebebeb;
-//     font-family: "Manrope";
-//     font-size: 13px;
-//     margin: 21px 31px 0 0;
-
-// }
-
-// .modal-content {
-  
-//     position: relative;
-//     display: flex;
-//     flex-direction: column;
-//     width: 310px;
-//     height: 196px;
-//     top: 190px;
-//     left: 115px;
-//     pointer-events: auto;
-//     background: #FFFFFF 0% 0% no-repeat padding-box;
-//     box-shadow: 4px 22px 54px #695F971A;
-//     border-radius: 30px;
-//     outline: 0;
-//     border: none;
-// }
-
-// .modal-dialog .modal-content .modal-body {
-//    font-family: "Manrope";
-//     font-size: 14px;
-//     top: 40px;
-//     font-weight: 800;
-//     text-align: center;
-// }
-
-// .modal-dialog .modal-content .deletefile .btn9 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     background-color: #ffffff;
-//     color: #7A86A1;
-//     margin: -58px 22px 15px 61px;
-//     border-radius: 15px;
-//     width: 80px;
-//     cursor: pointer;
-
-// }
-
-
-// .modal-dialog .modal-content .deletefile .btn99 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     color: #ffffff;
-//     background: #F23B3B;
-//     width: 93px;
-//     top: 70%;
-//     left: 52%;
-//     border-radius: 14px;
-//     cursor: pointer;
-// }
-
-
-
-// }
-
-// @media screen and (max-width:1280px) {
-
-//     .bs-stepper.linear {
-//     width: 1109px!important;
-//     height: 597px!important;
-//     margin: 30px 180px!important;
-
-// }
-
-// .form-inline .input-group, .form-inline .custom-select {
-//     max-width: 258px;
-
-// }
-
-// .col-9 {
-//     max-width: 95%;
-// }
-
-// button:not(:disabled), [type=reset]:not(:disabled) {
-
-//     font-size: 11px;
-//     width: 126px;
-//     height: 36px;
-//     margin: 27px 0px 0px 445px;
-// }
-
-// .card {
-//      width: 16rem;
-//     height: 12rem;
-//     margin: 6px 13px 13px;
-//     border-radius: 24px;
-// }
-
-// .card .id {
-   
-//     font-size: 11px;
-// }
-
-
-// .card .card-title {
-//     margin-bottom: 6px;
-//     margin-top: -10px;
-//     margin-left: 13px;
-//     font-size: 14px;
-//     letter-spacing: inherit;
-
-
-// }
-
-// .card p {
-  
-//     font-size: 12px;
-
-// }
-
-// .card .text-muted {
-
-//     font-size: 11px;
-//     font-weight: 400;
-
-// }
-// .col-md-12 {
-// width: 100%;
-// margin-top: -36px;
-// margin-left: -19px;
-
-// }
-
-// .card .card1 .card-text1 p {
-//     font-size: 13px;
-//     margin-top: 6px;
-// }
-
-// .card .card1 .card-text2 p {
-//     font-size: 13px;
-//     margin-top: 6px;
-
-// }
-
-
-
-// .card .card1 .card-text1 h6 {
-// margin-top: -12px;
-// font-size: 10px;
-
-// }
-
-// .card .card1 .card-text2 h6 {
-// margin-top: -12px;
-// font-size: 10px;
-
-// }
-
-// #close-btn {
-//     width: 40px;
-//     height: 40px;
-//     background: #FFFFFF;
-//     border-radius: 17px;
-//     opacity: 1;
-//     border: 1px solid #ebebeb;
-//     font-family: "Manrope";
-//     font-size: 13px;
-//     margin: 21px 31px 0 0;
-
-// }
-
-// .modal-content {
-  
-//     position: relative;
-//     display: flex;
-//     flex-direction: column;
-//     width: 310px;
-//     height: 196px;
-//     top: 190px;
-//     left: 115px;
-//     pointer-events: auto;
-//     background: #FFFFFF 0% 0% no-repeat padding-box;
-//     box-shadow: 4px 22px 54px #695F971A;
-//     border-radius: 30px;
-//     outline: 0;
-//     border: none;
-// }
-
-// .modal-dialog .modal-content .modal-body {
-//    font-family: "Manrope";
-//     font-size: 14px;
-//     top: 40px;
-//     font-weight: 800;
-//     text-align: center;
-// }
-
-// .modal-dialog .modal-content .deletefile .btn9 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     background-color: #ffffff;
-//     color: #7A86A1;
-//     margin: -58px 22px 15px 61px;
-//     border-radius: 15px;
-//     width: 80px;
-//     cursor: pointer;
-
-// }
-
-
-// .modal-dialog .modal-content .deletefile .btn99 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     color: #ffffff;
-//     background: #F23B3B;
-//     width: 93px;
-//     top: 70%;
-//     left: 52%;
-//     border-radius: 14px;
-//     cursor: pointer;
-// }
-
-
-// }
+.card {
+    width: 329px;
+    height: 249px;
+    margin: 0 18px 29px;
+}
+.col-md-12 {
+width: 100%;
+margin-left: -17px;
+}
+.card .card1 .card-text1 h6 {
+margin-top: -12px;
+}
+.card .card1 .card-text2 h6 {
+margin-top: -12px;
+}
+#close-btn {
+    width: 40px;
+    height: 40px;
+    background: #FFFFFF;
+    border-radius: 17px;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: "Manrope";
+    font-size: 13px;
+    margin: 21px 31px 0 0;
+}
+.modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695F971A;
+    border-radius: 30px;
+    outline: 0;
+    border: none;
+}
+.modal-dialog .modal-content .modal-body {
+   font-family: "Manrope";
+    font-size: 14px;
+    font-weight: 800;
+}
+#mod-da{
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+.modal-dialog .modal-content .deletefile .btn9 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    background-color: #ffffff;
+    color: #7A86A1;
+    margin: -58px 22px 15px 61px;
+    border-radius: 15px;
+    width: 80px;
+    cursor: pointer;
+}
+.modal-dialog .modal-content .deletefile .btn99 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    color: #ffffff;
+    background: #F23B3B;
+    width: 93px;
+    top: 70%;
+    left: 52%;
+    border-radius: 14px;
+    cursor: pointer;
+}
+.form-inline .input-group, .form-inline .custom-select {
+    max-width: 340px;
+    margin-left: 17px;
+}
+#delete-tok{
+    background: transparent;
+    margin: 0;
+    justify-content: center;
+    width: 65rem;
+}

@@ -5,8 +5,7 @@
 	</ng-container>
 	<div class="contact-header">
 		<div class="">
-			<form class="d-none d-md-inline-block form-inline"
-				[formGroup]="searchForm">
+			<form class="d-none d-md-inline-block form-inline" [formGroup]="searchForm">
 				<div class="input-group gf ">
 					<input class="form-control" type="text" placeholder="Search" aria-label="Search"
 						aria-describedby="basic-addon2" name="Name" (input)="onFilterTextBoxChange()" id="Search-Ag"
@@ -16,18 +15,18 @@
 			</form>
 		</div>
 		<div class="d-flex">
-			<div id="export-btn" >
-				<button class="btn-9 " [disabled]="!isButtonEnabled" (click)="open(content)"> <img
+			<div id="export-btn">
+				<button class="btn-9 " [disabled]="checkedConatct.length==0" (click)="open(content)"> <img
 						src="assets/img/export.png"> Export </button>
 			</div>
 			<div id="import-btn" >
-				<button class="btn  btn-block" id="import-btn" routerLink="/dashboard/import"><img
+				<button class="btn  btn-block" id="import-btn" data-bs-toggle="modal" data-bs-target="#importmodal" ><img
 						src="assets/img/import.png">
 					Import</button>
 			</div>
 			<div id="add-contact">
-				<button class="btn  btn-block" id="add-contact" (click)="open(contactadd)"><i
-						class="fa fa-plus"></i> Add
+				<button class="btn  btn-block" id="add-contact" (click)="open(contactadd)"><i class="fa fa-plus"></i>
+					Add
 					Contact</button>
 			</div>
 			<div id="delete-btn">
@@ -40,9 +39,15 @@
 
 	<div class="box">
 
-		<ag-grid-angular class="ag-theme-alpine" [rowData]="rowData" [columnDefs]="columnDefs" [animateRows]="true"
-			[gridOptions]="gridOptions" (gridReady)="onGridReady($event)"
-			(selectionChanged)="onSelectionChanged($event)" suppressResize=true [suppressRowClickSelection]="true">
+		<ag-grid-angular class="ag-theme-alpine" 
+		[rowData]="rowData" 
+		[columnDefs]="columnDefs" 
+		[animateRows]="true"
+		[gridOptions]="gridOptions"
+		(gridReady)="onGridReady($event)"
+		(selectionChanged)="onSelectionChanged($event)" 
+		suppressResize=true 
+		[suppressRowClickSelection]="true">
 		</ag-grid-angular>
 
 		<div id="sidebar" class="sidebar ">
@@ -134,25 +139,25 @@
 					<h6>1998</h6>
 				</div>
 				<div class="btn-footer py-2 mt-3">
-				<div class="button d-flex">
-					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete"><img
-							src="assets/img/delete.png">
-					</button>
-					<button class="btn6  btn-block " (click)="openedit(contactedit)"><img src="assets/img/edit.png">
-					</button>
-					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block">Block </button>
-					<button class="btn7  btn-block "><img src="assets/img/Setting.png"> </button>
-				</div>
-				<div class="bbox">
-					<h6>To add/edit any field according to your business from the settings</h6>
+					<div class="button d-flex">
+						<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete"><img
+								src="assets/img/delete.png">
+						</button>
+						<button class="btn6  btn-block " (click)="openedit(contactedit)"><img src="assets/img/edit.png">
+						</button>
+						<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block">Block </button>
+						<button class="btn7  btn-block "><img src="assets/img/Setting.png"> </button>
+					</div>
+					<div class="bbox">
+						<h6>To add/edit any field according to your business from the settings</h6>
+					</div>
 				</div>
 			</div>
+
+
 		</div>
 
-
 	</div>
-
-</div>
 
 	<div class="modal fade" id="deleteContact" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -220,6 +225,22 @@
 
 	</ng-template>
 
+	<ng-template #addcontacterror let-c="close" let-d="dismiss">
+
+		<div class="modal-body">
+			<p id="contact-save">Email or Phone Number already exist !<br /> Please Try Again.</p>
+
+		</div>
+		<div class="modal-footer popfooter row text">
+
+			<div class="col-md-5">
+				<button type="button" class="btn-close" aria-label="Close" id="contact-save-btn"
+					(click)="d('Cross click')">Close</button>
+			</div>
+		</div>
+
+	</ng-template>
+
 
 	<ng-template #content let-c="close" let-d="dismiss">
 		<div class="dd"><img src="assets/img/export1.png">
@@ -247,7 +268,7 @@
 		</div>
 	</ng-template>
 
-	<ng-template #column let-c="close" let-d="dismiss">
+	<!-- <ng-template #column let-c="close" let-d="dismiss">
 		<div class="modal-header">
 			<h4 class="modal-title" id="modal-basic-title">Column Prefrences</h4>
 			<button type="button" class="btn-close" aria-label="Close" id="close-btn"
@@ -346,10 +367,10 @@
 				</button>
 			</div>
 		</div>
-	</ng-template>
+	</ng-template> -->
 
 
-	<ng-template #contents let-c="close" let-d="dismiss">
+	<!-- <ng-template #contents let-c="close" let-d="dismiss">
 		<div class="modal-header">
 			<h4 class="modal-title" id="modal-basic-title">Filter</h4>
 			<button type="button" class="btn-close" aria-label="Close" id="close-btn"
@@ -433,7 +454,7 @@
 				<button type="button" class="btn1 btn-outline-dark" (click)="c('Save click')">Apply</button>
 			</div>
 		</div>
-	</ng-template>
+	</ng-template> -->
 
 	<ng-template #contactadd let-c="close" let-d="dismiss">
 		<div class="modal-header">
@@ -447,10 +468,11 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Name*</label>
 						<div class="form-floating">
-							<input pattern="[a-zA-Z ]*" minlength="3" class="form-control" type="text" [(ngModel)]="inputText" (input)="onInputChange()"
-								[ngClass]="{'is-invalid' :submitted && newContact.controls.Name.errors  }"
+							<input pattern="[a-zA-Z ]*" minlength="3" class="form-control" type="text"
+								[ngClass]="{'is-invalid':newContact.controls.Name.touched && newContact.controls.Name.errors  }"
 								placeholder="Enter Name" name="Name" formControlName="Name" id="Name" />
-							<div *ngIf="submitted && newContact.controls.Name.errors" class="text-danger">
+							<div *ngIf="newContact.controls.Name.touched && newContact.controls.Name.errors"
+								class="text-danger">
 								! Invalid Name Format
 							</div>
 
@@ -489,12 +511,12 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Email Id*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" [(ngModel)]="inputEmail"
-								(input)="onInputChange()"
-								[ngClass]="{'is-invalid' :submitted && newContact.controls.emailId.errors}"
+							<input class="form-control" type="text"
+								[ngClass]="{'is-invalid' :newContact.controls.emailId.touched && newContact.controls.emailId.errors}"
 								placeholder="Enter Email" name="emailId" formControlName="emailId" id="emailId" />
 
-							<div *ngIf="submitted && newContact.controls.emailId.errors" class="text-danger">
+							<div *ngIf="newContact.controls.emailId.touched && newContact.controls.emailId.errors"
+								class="text-danger">
 								! Invalid Email Id
 							</div>
 						</div>
@@ -538,8 +560,7 @@
 		<div class="modal-footer row popfooter">
 
 			<div class="col-md-6 text-right">
-				<button type="submit" (click)="openaddcontact(addcontact)" [disabled]="isButtonDisabled"
-					class="btn1 btn-success" (click)="c(addContact())">Save</button>
+				<button type="submit" [disabled]="newContact.invalid" [class.disabled]="newContact.invalid" class="btn1 btn-success" (click)="c(addContact(addcontact,addcontacterror))">Save</button>
 			</div>
 		</div>
 	</ng-template>
@@ -665,5 +686,19 @@
 			</div>
 		</div>
 	</ng-template>
+
+	<div class="modal fade" tabindex="-1" id="importmodal" role="dialog">
+        <div class="modal-dialog docla" id="doclaa" role="document">
+            <div class="modal-content delete-token-modal" id="model">
+                <div class="modal-body alertmessage" id="model-message">
+                <sb-import>
+
+				</sb-import>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </sb-layout-dashboard>

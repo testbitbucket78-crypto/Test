@@ -28,6 +28,7 @@
     font-family: "Manrope";
     font-size: 14px;
     height: 34px;
+    outline: none;
 }
 .gf img {
     position: absolute;
@@ -142,6 +143,7 @@ html, body {
     height: 35px;
     background-color: #ffffff;
     border: none;
+    outline: none;
     border-radius: 14px;
     cursor: pointer;
     box-shadow: 1px 2px 15px #695F974A;
@@ -478,6 +480,7 @@ opacity: 1;
     color: #7A86A1;
     border-radius: 20px;
     width: 58px;
+    outline: none;
 }
 .hd .btn9:active{
     margin: 10px 0px 0px 0px;
@@ -486,7 +489,12 @@ opacity: 1;
     color: #6149CD;
     border-radius: 20px;
     width: 58px;
+    outline: none;
 
+}
+
+#export-btn {
+    outline: none;
 }
 .tabCol{
     display: none;
@@ -785,6 +793,118 @@ outline: none;
     margin: 0;
 }
 
+//  .modal-content {
+  
+//     position: relative;
+//     display: flex;
+//     flex-direction: column;
+//     width: 310px;
+//     height: 196px;
+//     top: 190px;
+//     left: 115px;
+//     pointer-events: auto;
+//     background: #fdefef 0% 0% no-repeat padding-box;
+//     box-shadow: 4px 22px 54px #695F971A;
+//     border-radius: 30px;
+//     outline: 0;
+//     border: none;
+// }
+
+// .modal-dialog .modal-content .modal-body {
+//     font-family: "Manrope";
+//     font-size: 14px;
+//     top: 40px;
+//     font-weight: 600;
+//     text-align: center;
+// }
+
+// .modal-dialog .modal-content .deletefile .btn9 {
+//     border: 1px solid #695F9724;
+//     position: absolute;
+//     font-size: 11px;
+//     font-family: "Manrope";
+//     background-color: #ffffff;
+//     color: #7A86A1;
+//     margin: -58px 22px 15px 61px;
+//     border-radius: 15px;
+//     width: 80px;
+//     height: 32px;
+//     outline: none;
+//     border: none;
+//     cursor: pointer;
+   
+
+// }
+
+
+// .modal-dialog .modal-content .deletefile .btn99 {
+//     border: 1px solid #695F9724;
+//     position: absolute;
+//     font-size: 11px;
+//     font-family: "Manrope";
+//     color: #ffffff;
+//     background: #F23B3B;
+//     width: 93px;
+//     top: 70%;
+//     left: 52%;
+//     height: 33px;
+//     border-radius: 14px;
+//     outline: none;
+//     border: none;
+//     cursor: pointer;
+ 
+// }
+
+
+//    #contact-save {
+//     text-align: center;
+//     font-family: 'Manrope';
+//     font-weight: 600;
+//     font-size: 14px;
+//     margin-top: 38px;
+//     width: 100%;
+//   }
+
+//   #contact-save-btn {
+
+//     margin-left: -86px;
+//     opacity: 1;
+//     font-family: 'Manrope';
+//     font-size: 12px;
+//     font-weight: 500;
+//     border: 1px solid #695F9724;
+//     background-color: #F23B3B;
+//     color: #ffffff;
+//     border-radius: 15px;
+//     margin-top: -5px;
+//     width: 80px;
+//     height: 36px;
+//     cursor: pointer;
+//     text-align: center;
+//     outline: none;
+
+//   }
+
+  .btn1.btn-success.disabled {
+    background: grey;
+  }
+
+  #model{
+    background: transparent;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+}
+#model-message{
+    width: 217%;
+    padding: 0px;
+}
+#doclaa{
+    height: 0px;
+}
+
 
 /***** media queries for laptops ****/
 
@@ -844,95 +964,7 @@ outline: none;
 //     margin: -6px -1px 0 0;
 
 //  }
-//  .modal-content {
-  
-//     position: relative;
-//     display: flex;
-//     flex-direction: column;
-//     width: 310px;
-//     height: 196px;
-//     top: 190px;
-//     left: 115px;
-//     pointer-events: auto;
-//     background: #FFFFFF 0% 0% no-repeat padding-box;
-//     box-shadow: 4px 22px 54px #695F971A;
-//     border-radius: 30px;
-//     outline: 0;
-//     border: none;
-// }
 
-// .modal-dialog .modal-content .modal-body {
-//     font-family: "Manrope";
-//     font-size: 14px;
-//     top: 40px;
-//     font-weight: 600;
-//     text-align: center;
-// }
-
-// .modal-dialog .modal-content .deletefile .btn9 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     font-size: 11px;
-//     font-family: "Manrope";
-//     background-color: #ffffff;
-//     color: #7A86A1;
-//     margin: -58px 22px 15px 61px;
-//     border-radius: 15px;
-//     width: 80px;
-//     height: 32px;
-//     cursor: pointer;
-   
-
-// }
-
-
-// .modal-dialog .modal-content .deletefile .btn99 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     font-size: 11px;
-//     font-family: "Manrope";
-//     color: #ffffff;
-//     background: #F23B3B;
-//     width: 93px;
-//     top: 70%;
-//     left: 52%;
-//     height: 33px;
-//     border-radius: 14px;
-//     cursor: pointer;
- 
-// }
-
-
-//    #contact-save {
-//     text-align: center;
-//     font-family: 'Manrope';
-//     font-weight: 600;
-//     font-size: 14px;
-//     margin-top: 38px;
-//     width: 100%;
-//   }
-
-//   #contact-save-btn {
-
-//     margin-left: -86px;
-//     opacity: 1;
-//     font-family: 'Manrope';
-//     font-size: 12px;
-//     font-weight: 500;
-//     border: 1px solid #695F9724;
-//     background-color: #F23B3B;
-//     color: #ffffff;
-//     border-radius: 15px;
-//     margin-top: -5px;
-//     width: 80px;
-//     height: 36px;
-//     cursor: pointer;
-//     text-align: center;
-
-//   }
-
-
-// }
 
 
 

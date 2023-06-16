@@ -19,8 +19,8 @@
 				</form>
 				</div>
 					<div class="">
-		          	<button class="btn btn-block add-smartrep-btn" routerLink="/dashboard/addSmartReplies"><i class="fa fa-plus"></i> 
-				Add Smart Reply</button>
+						<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal" ><i class="fa fa-plus"></i> 
+						Add Smart Reply</button>
 	        	</div>
 			</div>
 			</div>
@@ -65,7 +65,7 @@
 		<div class="row d-flex">
 			<h6 class="text-justify">{{items.HelpAndSupport}}.</h6>
 		</div>
-		<h3 ><img id="Edit-icon" src="assets/img/Edit-icon.png" routerLink="/dashboard/addSmartReplies">Keywords & Criteria </h3>
+		<h3 ><img id="Edit-icon" src="assets/img/Edit-icon.png" data-bs-toggle="modal" data-bs-target="#smartrepliesModal">Keywords & Criteria </h3>
 		<div class="row">
 			<div class="box" *ngFor="let values of repliesData.Keyword">
 				<p>{{values}}</p>
@@ -81,7 +81,7 @@
 		<div *ngFor="let item of repliesData.ActionList">
 
 		</div>
-		<h3><img id="Edit-icon" src="assets/img/Edit-icon.png" routerLink="/dashboard/addSmartReplies">Reply Actions</h3>
+		<h3><img id="Edit-icon" src="assets/img/Edit-icon.png" data-bs-toggle="modal" data-bs-target="#smartrepliesModal">Reply Actions</h3>
 		<div class="box4">
 			<h3>Message</h3>
 			<p [innerHTML]="items.Message" ></p>
@@ -114,6 +114,17 @@
 		</div>
 	  </div>
 
+	  <div class="modal fade" tabindex="-1" id="smartrepliesModal" role="dialog">
+        <div class="modal-dialog" id="mod-da" role="document">
+            <div class="modal-content delete-token-modal" id="delete-tok">
+                <div class="modal-body alertmessage">
+					<sb-addSmartReplies>
+
+					</sb-addSmartReplies>
+                </div>
+				</div>
+		</div>
+    </div>
 
 
 

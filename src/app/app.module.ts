@@ -9,7 +9,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardModule } from 'Frontend/dashboard/dashboard.module';
-// import { DashboardComponent } from 'Frontend/dashboard/containers';
 
 
 @NgModule({

@@ -1,0 +1,91 @@
+* {
+    font-family: 'Manrope';
+}
+
+.back-btn img {
+    cursor: pointer;
+}
+
+.main-title h4 {
+    letter-spacing: -0.75px;
+    font-weight: 800;
+}
+
+.main-note p {
+    font-size: 0.875rem;
+    color: #7A86A1;
+}
+.main-container {
+    overflow: hidden;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.main-container-left {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px;
+    // height: 70vh;
+ }
+.col-main-left {
+    overflow-y: scroll;
+}
+.main-container-left h6 {
+    font-weight: 800;
+    letter-spacing: -0.55px;
+}
+
+.usage-insight-container {
+     padding: 0 10%;
+    //  border-bottom: 1px solid #EBEBEB;
+   
+}
+.usage-content-header .head {
+    letter-spacing: -0.45px;
+    color: #6149CD;
+    font-weight: 600;
+}
+
+
+.main-container-right {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px;
+    height: 70vh;
+}
+
+.main-container-right h6 {
+    font-weight: 800;
+    letter-spacing: -0.55px;
+}
+.drop-down-btn{
+    min-width: 85px;
+    color: #7a86a1;
+    font-size: 12px;
+    
+}
+.filterdate {
+    color: #000000;
+    font-weight: 700;
+}
+.toggle-box {
+    height: 35px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    opacity: 1;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    // margin: 0px 5px;
+    background: transparent url(/assets/img/teambox/dropdown.svg) no-repeat;
+    background-size: 10px;
+    background-position: center right 10px;
+    padding:0 15px;
+}
+.toggle-box span{
+    margin:0 15px 0px 10px
+}

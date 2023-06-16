@@ -51,7 +51,7 @@ export class SmartRepliesComponent implements OnInit {
 	ngOnInit() {
 		this.routerGuard();
 		this.getReplies();
-		// this.showTopNav = true;
+		this.showTopNav = true;
 
 
 	}

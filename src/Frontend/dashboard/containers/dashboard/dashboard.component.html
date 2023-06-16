@@ -2,13 +2,13 @@
   <sb-top-nav title="Dashboard"></sb-top-nav>
 
   <div>
-    <p id="heading">Hello {{Name}}, welcome back</p>
+    <p class="text-capitalize heading">Hello {{Name}}, welcome back</p>
   </div>
 
   <div class="row ">
-    <div class="col-sm-8 pl-4">      
-      <div id="heading2" class="card8 mb-4 ml-3">
-        <h2>"Summary for last 30 days"</h2>
+    <div class="col-sm-8 pl-4 mb-5">      
+      <div class="col-sm-4 px-3 mb-4 card8">
+        <h2 class="m-0">"Summary for last 30 days"</h2>
       </div>
       <div class="row m-0">
         <div class="col-sm-6" (click)="routeToPage()">
@@ -19,19 +19,19 @@
                 <div class="card1 d-flex mx-4 my-3 pt-1">
                   <div class="dash-card-items ">
                     <span class="item-heading">{{totalContacts}}</span>
-                      <p class="mb-1">Total Contacts</p>
+                      <p class="mb-2">Total Contacts</p>
                   </div>
                 </div>
                 <div class="card2 d-flex mx-4 my-3 pt-1">
                   <div class="dash-card-items">
                     <span class="item-heading">{{activeContacts}}</span>
-                    <p class="mb-1">Active Contacts</p>
+                    <p class="mb-2">Active Contacts</p>
                   </div>
                 </div>
                 <div class="card3 d-flex mx-4 my-3 pt-1">
                   <div class="dash-card-items">
                     <span class="item-heading">{{inactiveContacts}}</span>
-                    <p class="mb-1">Inactive Contacts</p>
+                    <p class="mb-2">Inactive Contacts</p>
                   </div>
                 </div>
               </div>
@@ -47,19 +47,19 @@
                 <div class="card1 d-flex mx-4 my-3 pt-1">
                   <div class="dash-card-items ">
                     <span class="item-heading">{{totalInteractions}}</span>
-                    <p class="mb-1">Total Interactions</p>
+                    <p class="mb-2">Total Interactions</p>
                   </div>
                 </div>
                 <div class="card2 d-flex mx-4 my-3 pt-1">
                   <div class="dash-card-items">
                     <span class="item-heading">{{openInteractions}}</span>
-                    <p class="mb-1">Open Interactions</p>
+                    <p class="mb-2">Open Interactions</p>
                   </div>
                 </div>
                 <div class="card3 d-flex mx-4 my-3 pt-1" >
                   <div class="dash-card-items">
                     <span class="item-heading">{{closedInteractions}}</span>
-                    <p class="mb-1">Closed Interactions</p>
+                    <p class="mb-2">Closed Interactions</p>
                   </div>
                 </div>
               </div>
@@ -75,14 +75,14 @@
             <div class="row w-100 justify-content-around">
               <div class="campaign-card-item">
               <img id="scheduledCampaign" class="dash-icons" src="assets/img/total.png">
-                <div class="text-justify pt-4 pl-2">
+                <div class="text-justify mt-4 ml-4">
                   <span class="item-heading">{{scheduledCampaign}}</span>
                   <p id="totalsche">Total Scheduled</p>
                 </div>
               </div>
               <div class="campaign-card-item">
                 <img id="completedCampaign" class="dash-icons" src="assets/img/camp.png">
-                  <div class="text-justify pt-4 pl-2">
+                  <div class="text-justify mt-4 ml-4">
                     <span class="item-heading">{{completedCampaign}}</span>
                     <p id="totaldraft">Total Completed</p>
                   </div>
@@ -91,14 +91,14 @@
             <div class="row w-100 justify-content-around">
               <div class="campaign-card-item running">
               <img id="scheduledCampaign" class="dash-icons" src="assets/img/deli.png">
-                <div class="text-justify pt-4 pl-2">
+                <div class="text-justify mt-4 ml-4">
                   <span class="item-heading">{{runningCampaign}}</span>
                   <p id="totalsche">Total Running</p>
                 </div>
               </div>
               <div class="campaign-card-item draft">
                   <img class="dash-icons" src="assets/img/failed.png">
-                  <div class="text-justify pt-4 pl-2">
+                  <div class="text-justify mt-4 ml-4">
                     <span class="item-heading">{{draftCampaign}}</span>
                     <p id="totaldraft">Total Draft</p>
                   </div>
@@ -115,7 +115,7 @@
               <div class="d-flex justify-content-around align-content-center">
                 <div class="d-flex">
                   <img id="active-agent" class="m-0 dash-icons" src="assets/img/430.png">
-                  <div class="ml-4 text-justify">
+                  <div class="ml-4 mt-1 text-justify">
                     <span class="item-heading">{{totalAgents}}</span>
                     <p>Total Agents</p>
                   </div>
@@ -124,14 +124,14 @@
             
                 <div class="d-flex">
                     <img class="m-0 dash-icons" src="assets/img/431.png">
-                    <div class="ml-4">
+                    <div class="ml-4 mt-1">
                       <span class="item-heading">{{activeAgents}}</span>
                       <p>Active Agents</p>
                     </div>
                 </div>
                     <div class="d-flex">
                     <img class="m-0 dash-icons" src="assets/img/432.png">
-                  <div class="ml-4">
+                  <div class="ml-4 mt-1">
                     <span class="item-heading">{{inactiveAgents}}</span>
                     <p>Inactive Agents</p>
                   </div>

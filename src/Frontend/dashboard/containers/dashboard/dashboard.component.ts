@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit,ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit,ChangeDetectionStrategy } from '@angular/core';
 import { DashboardService } from './../../services';
 import { Router } from '@angular/router';
 
@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit {
     constructor(private apiService: DashboardService, private router: Router) { }
     ngOnInit() {
 
-        this.routerGuard();
+        // this.routerGuard();
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
         this.getdashboardCampaigns();
@@ -46,11 +46,11 @@ export class DashboardComponent implements OnInit {
     }
 
     //******* Router Guard  *********//
-    routerGuard = () => {
-        if (sessionStorage.getItem('SP_ID') === null) {
-            this.router.navigate(['login']);
-        }
-    }
+    // routerGuard = () => {
+    //     if (sessionStorage.getItem('SP_ID') === null) {
+    //         this.router.navigate(['login']);
+    //     }
+    // }
 
     getDashboardSubscribers() {
         var sPid = sessionStorage.getItem('SP_ID')
