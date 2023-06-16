@@ -113,14 +113,18 @@ app.post("/webhook", async (req, res) => {
           var agid = extractedData.agid
           var replystatus = extractedData.replystatus
           var newId = extractedData.newId
-          console.log("sid " + sid);         // Output: 33
-          console.log("custid " + custid);      // Output: 490
-          console.log("agid " + agid);        // Output: 78
+        //  console.log("sid " + sid);         // Output: 33
+        //  console.log("custid " + custid);      // Output: 490
+        //  console.log("agid " + agid);        // Output: 78
           console.log("replyStatus " + replystatus); // Output: "Auto Reply are Paused"
-          console.log("new" + newId)
+        //  console.log("new" + newId)
         }
         const currentTime = new Date();
-        if (replystatus != null && replystatus > currentTime && replystatus != undefined) {
+        const replystatus1 = new Date(replystatus);
+
+        console.log(replystatus1 <= currentTime); // Example: true (if replystatus is earlier than or equal to currentTime)
+        console.log(replystatus1 >= currentTime);
+        if (replystatus != null && (replystatus1 <= currentTime) && replystatus != undefined) {
           var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId);
           console.log("____Send SMART REPLIESS______" + response);
         }
@@ -175,8 +179,8 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
 
 
     var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text],sid])
-    //var autoReply = replymessage[0].Message
-    //console.log(autoReply + replymessage[0].ActionID)
+    var autoReply = replymessage[0].Message
+    console.log(autoReply + replymessage[0].ActionID)
     console.log(replymessage)
     iterateArray(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId)
   } catch (err) {

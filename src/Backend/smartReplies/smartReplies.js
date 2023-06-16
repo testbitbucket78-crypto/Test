@@ -25,13 +25,7 @@ app.get('/getReplieswithSPID', async (req, res) => {
     res.status(500).send('Internal server error');
   }
 });
-// app.get('/getReplieswithSPID',(req,res)=>{
-//   console.log("spid")
-//   console.log(req.query.SP_ID)
-//     db.runQuery(req,res,val.getsmartReplieswithSPID,[req.query.SP_ID,req.query.SP_ID])
-//    //  console.log("result API" +result)
-//    //  res.send(result)
-// })
+
 
 app.get('/getalluserofAOwner', (req, res) => {
   db.runQuery(req, res, val.alluserofAOwner, [req.body.ParentId, req.body.SP_ID])
@@ -204,28 +198,9 @@ app.post('/resetInteractionMapping', (req, res) => {
 
 
 app.post('/addTag', async (req, res) => {
-  //var result = await db.excuteQuery(val.selectTagQuery, [req.body.customerId])
+  
   var updateQueryQuery = "";
-  // console.log(result.tag)
-  // if (result.length > 0) {
-  //   const tagValue = result[0].tag
-  //   console.log("tagValue" + tagValue)
-  //   if (tagValue != ' ' && tagValue != null) {
-  //     // Split the tag value into an array of tag items
-  //     const tagItems = tagValue.split(',');
-  //     console.log(tagItems)
-  //     // Get the count of tag items
-  //     const tagItemCount = tagItems.length;
-  //     console.log("tagItemCount" + tagItemCount)
-
-  //     updateQueryQuery = "UPDATE EndCustomer SET tag = CONCAT(tag,'," + req.body.tag + "')  WHERE customerId =" + req.body.customerId
-
-  //   }
-  //   else {
-  //     console.log("else")
-  //     updateQueryQuery = "UPDATE EndCustomer SET tag = '" + req.body.tag + " '  WHERE customerId =" + req.body.customerId
-  //   }
-  // }
+ 
   updateQueryQuery = " UPDATE EndCustomer SET tag ='" + req.body.tag + "'  WHERE customerId =" + req.body.customerId
 
   console.log(updateQueryQuery)
