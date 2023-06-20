@@ -15,7 +15,8 @@
 }
 .account-info-sidebar2 {
     background: #fbf9fe 0% 0% no-repeat padding-box;
-    height: 25vh;
+    height: 30vh;
+    column-gap: 10px;
 }
 
 .billing-card {
@@ -198,7 +199,7 @@
     height: 24px;
     width: 44px;
     background-color: #6149cd30;
-    transition: 0.4s;
+    transition: 0.3s ease-out;
     border-radius: 34px;
 }
 .active-toggle .switch input {
@@ -213,7 +214,7 @@
     left: 3px;
     bottom: 3px;
     background-color: white;
-    transition: 0.4s;
+    transition: 0.3s ease-out;
     border-radius: 50px;
     box-shadow: 0.35px 2px 7px #6149cd30;
 }
@@ -223,7 +224,7 @@
 }
 
 .active-toggle input:checked + .slider::before {
-    transform: translateX(21px);
+    transform: translateX(22px);
 }
 
 .switch-text p {
@@ -238,12 +239,13 @@
 }
 
 .billing-history-btn button {
-    font-size: 1rem;
+    font-size: 0.8rem;
     border: none;
     outline: none;
     background: transparent linear-gradient(90deg, #6149cd 0%, #a654ac 47%, #ea5f8b 100%) 0% 0% no-repeat padding-box;
     border-radius: 19px;
     color: #ffffff;
+    padding: 2% 5% 2% 5%;
 }
 
 .billing-card-head button {
@@ -320,10 +322,16 @@
     color: #6149CD;
     font-weight: 600;
 }
+
 //change password popup button
 
 .btn-text {
     cursor: pointer;
+}
+.btn-text p {
+    font-size: 12px;
+    color: #7a86a1;
+    font-weight: 700;
 }
 
 //change password popup
@@ -334,9 +342,10 @@
     color: #6149cd;
 }
 
-.modal-content {
+.modal-content.changepassowrd-popup-modal {
     box-shadow: 4px 22px 54px #695f971a;
     border-radius: 30px;
+    top: 4rem;
 }
 
 .close-box {
@@ -355,3 +364,154 @@
 .close-box img {
     width: 10px;
 }
+
+.update-pass-btn {
+    border: none;
+    // outline: none;
+    color: #FFFFFF;
+    background: #6149cd;
+    font-size: 0.8rem;
+    padding: 2% 6%;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 17px;
+}
+
+.changepassform {
+    font-size: 0.75rem;
+
+}
+
+::placeholder {
+    font-size: 0.8rem;
+    color: #7A86A1;
+    font-size: 400;
+
+}
+
+
+.inputpassowrdfield {
+    background: #FFFFFF;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    height: 45px;
+}
+
+.changepasswordbody {
+    padding: 0 17% 0 17%;
+}
+
+
+// delete popup 
+
+.delete-modal{
+    width: 355px;
+    height: 183px;
+    top: 8rem;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .cancel-btn{
+    background: #fff;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    color: #7A86A1;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+   }
+
+   .delete-btn{
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    border: 0px;
+    color: #fff;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+    background: #FF3636;
+   }
+
+   .alertmessage p{
+    font-size: 16px;
+    padding: 14% 0;
+    margin: 0;
+    font-weight: 600;
+    text-align: center;
+   }
+
+   .delete_group_button {
+    padding: 6% 11%;
+   }
+
+   .del-popup-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 10px 14px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border:none;
+    outline: none;
+   }
+
+   // change password popup
+
+   .mt-6{
+
+    position: absolute;
+
+}
+.eyeicon{
+    position: absolute;
+    right: 2rem;
+    top: 3.813rem;
+    cursor: pointer;
+}
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+
+.modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #6149CD;
+}
+
+.btn-close {
+    // border: none;
+    outline: none;
+    height: 40px;
+    width: 40px;
+    background: #FFFFFF;
+    border: 1px solid #EBEBEB;
+    border-radius: 15px;
+}
+
+// picture crop popup //
+
+// .picture-crop-button {
+//     background: #FFFFFF 0% 0% no-repeat padding-box;
+//     box-shadow: 1px 8px 29px #695F972E;
+//     border-radius: 25px;
+//     padding: 2% 3%;
+//     position: absolute;
+//     right: 9rem;
+//     top: 12rem;
+    
+
+// }
+
+// .picture-crop-button img {
+//     height: 11px;
+//     cursor: pointer;
+// }

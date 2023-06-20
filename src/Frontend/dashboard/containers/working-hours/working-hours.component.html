@@ -1,0 +1,74 @@
+<div class="row">
+    <div class="col-sm-4">
+        <div class="setting-card">
+            <span class="working-hour-heading">Working Hours</span>
+            <p class="pt-2">Define your team’s working hours during which they are available to communicate with
+                customers</p>
+
+            <div class="working-hour-img-card">
+                <img src="../../../../assets/img/settings/image.png"><br>
+                <span class="working-hour-heading">Add Working Hours</span>
+            </div>
+            <div class="text-center">
+                <button class="working-hour-btn" data-bs-toggle="modal" data-bs-target="#workingHourModal">Manage Working
+                    Hours</button>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="col-sm-9">
+
+    </div>
+
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="workingHourModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content working-hour-modal">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Working Hours</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <div class="modal-body px-5 pt-0">
+                <!-- <form [formGroup]="workingHourForm" class="mt-4"> -->
+                <div *ngFor="let item of workingData;let idx=index">
+                    <div class="billing-form-row">
+                        <label>Days</label>
+                        <ng-multiselect-dropdown class="multiselect" name="tag" [(ngModel)]="item.days" id="tag"
+                            [settings]="dropdownSettings" [data]="daysList" [placeholder]="'Add Days'" 
+                            [disabled]="disabled">
+                        </ng-multiselect-dropdown>
+                    </div>
+                    <div class="d-flex">
+                        <div class="billing-form-row">
+                            <label>Start Time</label>
+                            <input type="text" class="input-form" [(ngModel)]="item.startTime"
+                                placeholder="Select start time">
+                        </div>
+                        <div class="billing-form-row">
+                            <label>End Time</label>
+                            <input type="text" class="input-form" [(ngModel)]="item.endTime"
+                                placeholder="Select end time">
+                        </div>
+                    </div>
+                    <div class="incoming-card">
+                        <div>
+                            <a class="add-btn" (click)="addWorkingHours()" *ngIf="idx == (workingData.length-1)">+
+                                Add</a>
+                        </div>
+                        <a class="remove-btn" (click)="removeWorkingHours(idx)" *ngIf="workingData.length>1">-
+                            Remove</a>
+                    </div>
+                </div>
+                <!-- </form> -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="account-btn" (click)="saveBillingDetails()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

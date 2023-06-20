@@ -134,6 +134,7 @@
   
   
         <div class="interactions">
+          <div class="child-int-1 py-2">
           <div class="child-interaction-1">
             <div *ngFor="let message of assignedAgentList; let i = index">
               <div class="message-box" *ngIf="message.ActionID == 1">
@@ -196,6 +197,7 @@
                 
                
                 </div> -->
+          </div>
           </div>
   
           <div class="child-interaction-2">
@@ -286,7 +288,7 @@
         <ng-template #duplicatekeyword let-c="close" let-d="dismiss">
         <div class="model-content smartreplies-failed">
             <div class="smart-replies-failed para">
-            <p>Duplicate keyword found<br /> Please try again.</p>
+            <p>! Duplicate keyword found<br /> Please try again.</p>
             </div>
             <button type="button" class="btn btn1" (click)="c('Save click')">Ok, Got it</button>
         

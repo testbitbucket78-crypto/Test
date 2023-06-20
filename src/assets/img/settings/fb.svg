@@ -1,0 +1,10 @@
+<svg id="fb" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="34.547" height="34.547" viewBox="0 0 34.547 34.547">
+  <defs>
+    <linearGradient id="linear-gradient" x1="-6.934" y1="10.216" x2="-6.934" y2="10.241" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#0062e0"/>
+      <stop offset="1" stop-color="#19afff"/>
+    </linearGradient>
+  </defs>
+  <path id="Path_1975" data-name="Path 1975" d="M14.423,34.374A17.308,17.308,0,0,1,17.273,0a17.308,17.308,0,0,1,2.85,34.374l-.95-.777h-3.8Z" fill="url(#linear-gradient)"/>
+  <path id="Path_1976" data-name="Path 1976" d="M25.619,23.173l.777-4.837H21.819V14.968c0-1.382.518-2.418,2.591-2.418h2.246v-4.4a28.246,28.246,0,0,0-3.8-.345c-3.973,0-6.737,2.418-6.737,6.737v3.8H11.8v4.837h4.318V35.351a15.805,15.805,0,0,0,5.7,0V23.173Z" transform="translate(-1.609 -1.063)" fill="#fff"/>
+</svg>

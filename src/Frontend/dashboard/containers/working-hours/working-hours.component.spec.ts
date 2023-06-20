@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AcoountSettingsComponent } from './acoount-settings.component';
+import { WorkingHoursComponent } from './working-hours.component';
 
-describe('AcoountSettingsComponent', () => {
-  let component: AcoountSettingsComponent;
-  let fixture: ComponentFixture<AcoountSettingsComponent>;
+describe('WorkingHoursComponent', () => {
+  let component: WorkingHoursComponent;
+  let fixture: ComponentFixture<WorkingHoursComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AcoountSettingsComponent ]
+      declarations: [ WorkingHoursComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AcoountSettingsComponent);
+    fixture = TestBed.createComponent(WorkingHoursComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

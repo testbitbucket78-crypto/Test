@@ -12,12 +12,10 @@
                 </div>
                 <div class="col-sm-6 text-right d-flex justify-content-end pr-0">
                         <div class="search-field">
-                            <form class="d-none d-md-inline-block form-inline"
-                            [formGroup]="searchForm" (ngSubmit)="search()">
+                            <form class="d-none d-md-inline-block form-inline">
                             <div class="input-group search">
         
-                                <input class="form-control" type="text" placeholder="Search" aria-label="Search"
-                                    aria-describedby="basic-addon2" name="name" id="name" formControlName="name" />
+                                <input class="form-control" type="text" placeholder="Search" name="search" [(ngModel)]="searchText" />
         
                                 <img src="assets/img/search.png">
                             </div>
@@ -49,18 +47,22 @@
                    
                 </div>
                 </div>
-                <div *ngFor="let notification of notificationData | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" class="row justify-content-center notification-content">
-                    <div class="col-sm-11 d-flex p-2 px-3">
-                        <div class="col-sm-6 ml-4 text-left data">
-                            <h6>{{ notification.title }}</h6>
-                             <p>{{ notification.content }}</p>
-                        </div>
-
-                        <div class="col-sm-6 d-flex ml-n5 justify-content-end align-items-center date">
-                            <span id="date">{{ notification.date }}</span>
+                <div class="notification-content-parent">
+                    <div *ngFor="let notification of notificationData | searchfilter:searchText | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" 
+                      class="row justify-content-center notification-content">
+                        <div class="col-sm-11 d-flex p-2 px-3">
+                            <div class="col-sm-6 ml-4 text-left data">
+                                <h6>{{ notification.title }}</h6>
+                                 <p>{{ notification.content }}</p>
+                            </div>
+    
+                            <div class="col-sm-6 d-flex ml-n5 justify-content-end align-items-center date">
+                                <span id="date">{{ notification.date }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+          
     
 
                 <div class="col-sm-12 d-flex px-4 mt-4 mb-4 notification-footer">
@@ -69,18 +71,33 @@
                     <p class="p-0 m-0">Showing:</p>
                     <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
                         <option value="10">10</option>
+                        <option value="15">15</option>
                         <option value="20">20</option>
+                        <option value="25">25</option>
+                        <option value="30">30</option>
+                        <option value="45">35</option>
+                        <option value="40">40</option>
+                        <option value="45">45</option>
                         <option value="50">50</option>
-                        <option value="100">100</option>
                     </select>
 
                 </div>
                 <div class="col-sm-6 text-right">
                 <nav aria-label="navigation">
-                    <ul class="pagination justify-content-end m-0">
-                      <li class="page-item"><button [disabled]="currentPage==1" (click)="currentPage= currentPage-1" class="page-link"><img src="assets/img/profile/previous-g.svg"></button></li>
-                      <li *ngFor="let item of paging" class="page-item"><a (click)="currentPage=item" class="page-link">{{item}}</a></li>
-                      <li class="page-item"><button [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" class="page-link"><img src="assets/img/profile/next.svg"></button></li>
+                    <ul class="justify-content-end align-items-center m-0 pagination">
+                      <li class="btn-list">
+                        <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1">
+                            <img src="assets/img/profile/previous.svg" />
+                        </button>
+                    </li>
+                      <li *ngFor="let item of paging" class="pagination-num-container">
+                        <a  [ngClass]="{'pagination-disabled': currentPage !=item}" (click)="currentPage=item" class="pagination-num-body">{{item}}</a>
+                     </li>
+                      <li class="btn-list">
+                        <button class="pagination-btn" [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" >
+                            <img src="assets/img/profile/next.svg" />
+                        </button>
+                    </li>
                     </ul>
                   </nav>
                   </div>

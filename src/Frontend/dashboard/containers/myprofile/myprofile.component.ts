@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder } from "@angular/forms";
 
 @Component({
   selector: 'sb-myprofile',
@@ -11,9 +12,10 @@ export class MyprofileComponent implements OnInit {
   EmailId:any;
   PhoneNumber:any;
   modalReference:any;
+  visible:boolean = true;
+  changetype:boolean = true;
 
-
-  constructor(config: NgbModalConfig, private modalService: NgbModal) { }
+  constructor(config: NgbModalConfig, private modalService: NgbModal, private formbuilder:FormBuilder) { }
 
   ngOnInit(): void {
     this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
@@ -27,4 +29,11 @@ export class MyprofileComponent implements OnInit {
 		}
 		this.modalReference = this.modalService.open(changepassword);
 	}
+
+  viewpass() {
+    
+    this.visible = !this.visible;
+    this.changetype = !this.changetype;
+
+  }
 }

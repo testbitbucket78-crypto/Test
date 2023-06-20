@@ -429,6 +429,24 @@ export const ROUTES: Routes = [
         component: dashboardContainers.MyprofileComponent,
     },
     {
+        path: 'manageplan',
+        data: {
+            title: 'My Profile',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'My Profile',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ManageplanComponent,
+    },
+    {
         path: 'walletusage',
         data: {
             title: 'My Profile',

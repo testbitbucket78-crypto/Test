@@ -227,13 +227,7 @@ h4 {
     border-radius: 30px;
 }
 
-.child-interaction-1 {
-    position: absolute;
-    width: inherit;
-    height: inherit;
-    background-color: #fff4f2;
-    border-radius: 30px;
-}
+
 
 .child-interaction-2 {
     position: absolute;
@@ -467,7 +461,7 @@ input:focus {
 .box2::after {
     content: attr(data-required);
     position: absolute;
-    right: 208px;
+    right: 199px;
     top: 50%;
     font-size: 15px;
     transform: translateY(-50%);
@@ -807,7 +801,7 @@ input:focus {
     display: inline;
     height: 135px;
     pointer-events: auto;
-    background-color: #FFFFFF;
+    background-color: #FFF4F2;
     border-radius: 20px;
     box-shadow: 4px 22px 54px #695F971A;
     outline: 0;
@@ -819,7 +813,6 @@ input:focus {
     width: 100px;
     height: 38px;
     margin-left: 40%;
-    border-radius: 30px;
     background-color: #6149CD;
     color: white;
 }
@@ -1079,7 +1072,7 @@ input:focus {
     .desc-radio-input-2 {
     position: absolute;
     top: 22.7rem;
-    right: 9.8rem;
+    right: -1.2rem;
     width: 255px;
     height: 128px;
     background: #ffffff 0% 0% no-repeat padding-box;
@@ -1103,8 +1096,7 @@ input:focus {
 
     .child-interaction-1 {
         overflow-y: scroll;
-        height: 17rem;
-        border-radius: 0 0 0 0;
+        height: 16rem;
     }
 
     .child-interaction-2 {
@@ -1162,7 +1154,7 @@ input:focus {
 
     .interactions .child-interaction-1 .message-box {
         width: 310px !important;
-        margin: 17px;
+        margin: 9px 16px;
         border: 1px solid #ebebeb !important;
         background: #ffffff 0% 0% no-repeat padding-box;
         border-radius: 19px;
@@ -1170,7 +1162,7 @@ input:focus {
         font-size: 12px !important;
         color: #6149cd;
         font-weight: 700;
-        font-family: 'Manrope';
+        font-family: "Manrope";
         word-wrap: break-word;
     }
     #msgbox-head {
@@ -1384,4 +1376,7 @@ input:focus {
         font-weight: 600;
         margin-top: 6px;
 
+    }
+    .child-int-1{
+        background-color: #fff4f2;
     }

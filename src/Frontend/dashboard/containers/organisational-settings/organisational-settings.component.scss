@@ -1,0 +1,172 @@
+
+.setting-card {
+    border-radius: 30px;
+    padding: 20px;
+    background: #FFF4F2 0% 0% no-repeat padding-box;
+    width: 45%;
+    
+}
+
+.setting-field {
+    display: flex;
+   }
+   
+   .setting-field .setting-field-link {
+       color: #7A86A1;
+       font-size: 15px;
+       padding: 0.5rem 1.2rem;
+       text-decoration: none;
+   }
+   
+   .setting-field .active{
+       color: #FFFFFF !important;
+       background: #6149CD 0% 0% no-repeat padding-box;
+       border-radius: 19px;    
+   }
+
+   .profile-img{
+    width: 6rem;
+    height: 6rem;
+    background: white;
+    opacity: 1;
+    border-radius: 50%;
+    box-shadow: 4px 11px 20px #1111122b;
+   }
+
+   .account-white-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 10px 14px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px;
+    height: fit-content;
+   }
+
+   .profile-heading{
+    font-size: 20px;
+    font-weight: 600;
+   }
+
+   .profile-card{
+    width: 100%;
+    text-align: center;
+   }
+
+   .flex-row{
+    display: flex ;
+    justify-content: space-around;
+   }
+
+   .detail-card{
+    min-height: 100px;
+    background: white;
+    border-radius: 30px;
+    box-shadow: 2px 13px 54px #695F9714;
+    margin-top: 1.3rem;    
+    padding: 10px 10px 10px 20px;
+   }
+
+   .flex-header{
+    display: flex;
+    justify-content: space-between;
+   }
+
+   .left-col{
+    width: 55%;
+   }
+
+   .profile-sub-heading{
+    color: #6149CD;
+    font-size: 15px;
+    font-weight: 500;
+   }
+
+   .profile-form-row{
+    display: flex;
+    padding-top: 10px;
+   } 
+
+   .account-modal{
+    width: 580px;
+    height: 530px; 
+    border-radius: 1.5rem;
+   }
+
+  .modal-footer{
+    border: none;
+   }
+
+   .modal-content .btn-close {
+    background: white;
+    margin: 2px;
+    border-radius: 15px;
+    padding: 6px 12px;
+    border: 1px solid #EBEBEB;
+   }
+
+   .account-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 17px;
+    padding: 8px 22px;
+    border: 1px;    
+    color: white;
+    font-weight: 400;
+   }
+
+   .modal-content .btn-close img{
+    width: 12px;
+   }
+
+   .input-form {
+    width: 230px;
+    height: 40px;
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: 5px 15px;
+    margin-top: 7px;
+   }
+
+   .profile-form-left{
+    padding-right: 20px;
+   }
+   .profile-form-row span{
+    font-size: 16px;
+    font-weight: 600;
+   }
+
+   .modal-title {
+    letter-spacing: -0.45px;
+    font-weight: bold;
+   }
+
+   .billing-modal{
+    width: 620px;
+    height: 600px;
+    border-radius: 1.5rem;
+   }
+
+   .locale-modal{
+    width: 620px;
+    height: 400px;
+    border-radius: 1.5rem;
+   }
+
+   .billing-left-col{
+    width: 45%;
+    padding-top: 15px;
+    font-size: 16px;
+    font-weight: 600;
+   }
+
+   .billing-form-row{
+    display: flex;
+    margin-bottom: 6px;
+   }
+
+   .billing-form-row .input-form {
+    width: 100% !important;
+   }
+
+   .industry-txt{
+    padding: 13px 0px 0px 6px;
+   }

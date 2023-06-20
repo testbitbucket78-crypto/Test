@@ -19,7 +19,7 @@ declare var $: any;
 export class AddSmartRepliesComponent implements OnInit {
 
 
-	//******* Router Guard  *********//
+	// ******* Router Guard  *********//
 	routerGuard = () => {
 		if (sessionStorage.getItem('SP_ID') === null) {
 			this.router.navigate(['login']);
@@ -282,7 +282,7 @@ export class AddSmartRepliesComponent implements OnInit {
 			}]
 	};
 
-	
+	isSendButtonDisabled=false
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router ) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -291,8 +291,6 @@ export class AddSmartRepliesComponent implements OnInit {
 
 
 	ngOnInit() {
-
-		
 		this.stepper = new Stepper($('.bs-stepper')[0], {
 			linear: true,
 			animation: true
@@ -333,11 +331,15 @@ export class AddSmartRepliesComponent implements OnInit {
 	}
 
 	toggleEmoji() {
-		this.closeAllModal()
 		this.showEmoji = !this.showEmoji;
-		(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
+		(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus
 		this.range = this.selection.getRange(document);
 		this.saveSelection = this.selection.save(this.range, document);
+		
+		this.closeAllModal()
+		
+		
+		
 
 	}
 

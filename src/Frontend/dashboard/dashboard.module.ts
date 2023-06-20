@@ -30,6 +30,7 @@ import * as dashboardServices from './services';
 import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
 import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { DashboardComponent } from './containers';
+import { ManageplanComponent } from './containers/manageplan/manageplan.component';
 
 @NgModule({
     imports: [
@@ -49,8 +50,19 @@ import { DashboardComponent } from './containers';
         NgMultiSelectDropDownModule.forRoot(),
         RichTextEditorModule
     ],
-    providers: [...dashboardServices.services, ...dashboardGuards.guards],
-    declarations: [...dashboardContainers.containers, ...dashboardComponents.components, DashboardComponent, SearchfilterPipe,],
-    exports: [...dashboardContainers.containers, ...dashboardComponents.components, DashboardComponent],
+    providers: [...dashboardServices.services,
+                ...dashboardGuards.guards
+        ],
+    declarations:  [
+         ...dashboardContainers.containers,
+         ...dashboardComponents.components,
+            DashboardComponent,
+            SearchfilterPipe,
+            ManageplanComponent,
+        ],
+    exports: [...dashboardContainers.containers,
+              ...dashboardComponents.components,
+                 DashboardComponent
+            ],
 })
 export class DashboardModule { }
