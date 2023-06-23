@@ -32,9 +32,10 @@ import { MyprofileComponent } from './myprofile/myprofile.component';
 import { ManageplanComponent } from './manageplan/manageplan.component';
 import { WalletusageComponent } from './walletusage/walletusage.component';
 import { BillinghistoryComponent } from './billinghistory/billinghistory.component';
+import { SupportComponent } from './support/support.component';
 
 
-export const containers = [DashboardComponent, ReportcampaignComponent, ReportautomationComponent, ConversationComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ReplyMaterialComponent, ImportComponent, CampaignsComponent, ComposeComponent, AutomationComponent, ReportsComponent, MessageComponent, CampaignReportComponent, ScheduleComponent, ScheduleViewComponent, SettingComponent, GeneralsettingComponent, OrganizationComponent, AccountsettingComponent, CampaignsettingComponent,AcoountSettingsComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent,NotificationsComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent];
+export const containers = [DashboardComponent, ReportcampaignComponent, ReportautomationComponent, ConversationComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ReplyMaterialComponent, ImportComponent, CampaignsComponent, ComposeComponent, AutomationComponent, ReportsComponent, MessageComponent, CampaignReportComponent, ScheduleComponent, ScheduleViewComponent, SettingComponent, GeneralsettingComponent, OrganizationComponent, AccountsettingComponent, CampaignsettingComponent,AcoountSettingsComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent,NotificationsComponent,SupportComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './addSmartReplies/addSmartReplies.component';
@@ -69,4 +70,5 @@ export * from './myprofile/myprofile.component';
 export * from './manageplan/manageplan.component';
 export * from './walletusage/walletusage.component';
 export * from './billinghistory/billinghistory.component';
+export * from './support/support.component';
 

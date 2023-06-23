@@ -46,8 +46,37 @@ export interface localeDetailResponse{
     localDetails:localeDetail[];
 }
 
-export interface workingData{
-    days:string[];
+export interface workingFormData{
+    day:string[];
     startTime:string;
     endTime:string;
+}
+
+export interface workingDataPost{
+    day:string;
+    startTime:string;
+    endTime:string;
+}
+
+export interface workingData{
+    working_days:string;
+    start_time:string;
+    end_time:string;
+}
+
+export interface workingDataResponsePost {
+    days:workingDataPost[] 
+    SP_ID:number;
+    created_By:string;
+}
+
+export interface workingDataResponse {
+    result:workingData[] 
+
+}
+
+export interface holidayData {
+    holiday_date:string[];
+    SP_ID:number;
+    created_By:string;
 }

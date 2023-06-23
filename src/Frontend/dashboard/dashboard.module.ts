@@ -30,7 +30,6 @@ import * as dashboardServices from './services';
 import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
 import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { DashboardComponent } from './containers';
-import { ManageplanComponent } from './containers/manageplan/manageplan.component';
 
 @NgModule({
     imports: [
@@ -58,7 +57,6 @@ import { ManageplanComponent } from './containers/manageplan/manageplan.componen
          ...dashboardComponents.components,
             DashboardComponent,
             SearchfilterPipe,
-            ManageplanComponent,
         ],
     exports: [...dashboardContainers.containers,
               ...dashboardComponents.components,

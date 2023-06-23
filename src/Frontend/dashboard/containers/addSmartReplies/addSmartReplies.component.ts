@@ -335,12 +335,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus
 		this.range = this.selection.getRange(document);
 		this.saveSelection = this.selection.save(this.range, document);
-		
-		this.closeAllModal()
-		
-		
-		
-
+				
 	}
 
 	ToggleAttachmentBox() {

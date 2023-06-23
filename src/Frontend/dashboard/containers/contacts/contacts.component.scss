@@ -1,3 +1,6 @@
+::-webkit-scrollbar {
+    display: none;
+}
 .contact-header{
     display: flex;
     align-items: center;
@@ -208,16 +211,21 @@ h4, .h4 {
     margin: 2px 0px 0px 0px
 }
 
+.modal-header.px-4.align-items-center h4 {
+    font-weight: 700;
+}
+
 .popfooter .btn1{
-    width: 85px;
-    height: 35px;
     background: #6149CD 0% 0% no-repeat padding-box;
     border: 1px solid #EBEBEB;
-    border-radius: 17px;
+    border-radius: 13px;
     opacity: 1;
+    padding: 2% 15% 2% 15%;
+    font-size: 14px;
     color: #ffffff;
-    margin: 0px 0px 0px -15px;
+
 }
+
 .popfooter .btn{
     width: 90px;
     height: 35px;

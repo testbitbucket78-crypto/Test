@@ -60,6 +60,7 @@
     background-color: #fbf9fe;
     width: 90%;
     float: right;
+    height: 100%;
 }
 
 .recentconversation {
@@ -122,14 +123,11 @@
     width: 100%;
 }
 
-
-
 .card10 {
     background: transparent linear-gradient(45deg, #f9b035 0%, #f98c4e 53%, #f96767 100%) 0% 0% no-repeat padding-box;
     border-radius: 30px;
     opacity: 1;
     position: relative;
-    margin-top: 100px;  
 }
 
 .card10-p img {
@@ -185,19 +183,18 @@
 }
 
 .card10-c button {
-  text-decoration: none;
-  font-family: 'Manrope';
-  border: none;
-  background: #FFFFFF 0% 0% no-repeat padding-box;
-  box-shadow: 3px 16px 40px #695F9724;
-  border-radius: 22px;
-  opacity: 1;
-  width: 220px;
-  height: 55px;
-  color: #6149cd;
-  font-weight: bold;
-  cursor: pointer;
-  
+    text-decoration: none;
+    font-family: "Manrope";
+    border: none;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 3px 16px 40px #695F9724;
+    border-radius: 22px;
+    opacity: 1;
+    width: 100%;
+    height: 55px;
+    color: #6149cd;
+    font-weight: bold;
+    cursor: pointer;
   }
 
   .float-right{

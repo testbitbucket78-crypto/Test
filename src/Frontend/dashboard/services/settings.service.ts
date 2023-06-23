@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { billingDetail, billingDetailResponse, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData } from '../models/settings.model';
+import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost } from '../models/settings.model';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +35,19 @@ export class SettingsService {
     return this.http.post(`${this.API_URL}/localDetails`, localeData)
   }
 
-  getWorkingData(spId: number): Observable<workingData> {
-    return this.http.get<workingData>(`${this.API_URL}/workingDetails/${spId}`);
+  getWorkingData(spId: number): Observable<workingDataResponse> {
+    return this.http.get<workingDataResponse>(`${this.API_URL}/workingDetails/${spId}`);
+  }
+
+  getHolidayData(spId: number): Observable<workingDataResponse> {
+    return this.http.get<workingDataResponse>(`${this.API_URL}/holidays/${spId}`);
+  }
+
+  saveWorkingData(workingData: workingDataResponsePost): Observable<workingData> {
+    return this.http.post<workingData>(`${this.API_URL}/workingDetails`,workingData );
+  }
+
+  saveHolidayData(holidayData: holidayData): Observable<workingData> {
+    return this.http.post<workingData>(`${this.API_URL}/holidays`,holidayData );
   }
 }

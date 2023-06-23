@@ -4,6 +4,7 @@
     box-shadow: 2px 13px 54px #695F9714;
     border-radius: 30px;
     padding: 20px;
+    width: 90%;
 }
 
 
@@ -14,8 +15,10 @@
    .setting-field .setting-field-link {
        color: #7A86A1;
        font-size: 15px;
-       padding: 10px 14px;
+       padding: 8px 20px;
        text-decoration: none;
+       margin-right: 12px;
+       cursor: pointer;
    }
    
    .setting-field .active{
@@ -50,7 +53,7 @@
    .account-btn {
     background: #6149CD 0% 0% no-repeat padding-box;
     border-radius: 17px;
-    padding: 8px 22px;
+    padding: 6px 25px;
     border: 1px;    
     color: white;
     font-weight: 400;
@@ -375,4 +378,15 @@
 
    .api-confiormation-modal .modal-footer{
     border: none;
+   }
+
+   .whatsapp-connect{
+    display: flex;
+    font-size: 16px !important;
+    font-weight: 600;
+   }
+
+   .grey{
+    color: #7A86A1;
+
    }

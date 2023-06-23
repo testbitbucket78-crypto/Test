@@ -623,6 +623,7 @@ input:focus {
 .input-area .popup-dialog {
     max-width: 100%;
     margin-top: -150px;
+    cursor: pointer;
 }
 .input-area .popup-dialog.mention {
     max-width: 220px;

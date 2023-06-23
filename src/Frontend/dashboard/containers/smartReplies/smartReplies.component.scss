@@ -2,8 +2,9 @@
 .content-head.d-flex {
     display: flex !important;
     justify-content: space-between;
-    padding: 3% 4% 0% 4%;
+    padding: 3% 2% 0% 6%;
 }
+
 
 
 .input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
@@ -207,7 +208,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 .row.r1 {
     display: flex;
     flex-wrap: wrap;
-    margin: 3% 3% 0% 3%;
+    margin: 3% 3% 0% 6%;
 }
 .row h6 {
 

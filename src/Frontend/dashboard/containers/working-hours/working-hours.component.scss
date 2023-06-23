@@ -2,7 +2,10 @@
     border-radius: 30px;
     padding: 20px;
     box-shadow: 2px 13px 54px #695F9714;    
-    height: 75vh;
+    min-height: 75vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .working-hour-heading{
@@ -112,19 +115,114 @@
     font-size: 14px;
    }
 
-//    /* width */
-// ::-webkit-scrollbar {
-//     width: 20px;
-//   }
+   .flex-header{
+    display: flex;
+    justify-content: space-between;
+   }
+
+   .month-card{
+    background: #FFF4F2;
+    min-height: 170px;
+    border-radius: 20px;
+   }
+
+   .months-view{
+    display: grid;
+    gap: 0.6vw;
+    grid-template-columns: auto auto auto auto;
+    padding: 1.8rem 1.4rem 0.5rem 1.4rem;
+   }
+
+   /* width */
+::-webkit-scrollbar {
+    width: 0px;
+  }
   
-//   /* Track */
-//   ::-webkit-scrollbar-track {
-//     box-shadow: inset 0 0 5px grey;
-//     border-radius: 10px;
-//   }
+  /* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+  }
   
-//   /* Handle */
-//   ::-webkit-scrollbar-thumb {
-//     background: red;
-//     border-radius: 10px;
-//   }
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: red;
+    border-radius: 10px;
+  }
+
+  .month-date{
+    background: white;
+    height: 27px;
+    width: 27px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .dates-view{
+    display: grid;
+    gap: 0.1vw;
+    grid-template-columns: auto auto auto auto;
+  }
+
+  .holiday-calender-modal{
+    width: 500px;
+    height: 550px;
+    border-radius: 30px;
+  }
+
+  .holiday-calender-modal .modal-title{
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .month-heading{
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .working-days{
+    font-weight: 600;
+    padding-bottom: 4px;
+  }
+
+  .working-time{
+    font-weight: 600;
+    color: #6149CD;
+  }
+
+  .holiday-dropdown{
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    padding: 6px 15px;
+  }
+
+  .holiday-dropdown option{
+    color: #6149CD;
+  }
+
+  .calender .calender-day{
+    color: #7A86A1;
+    flex: 1 1;
+    font-size: 14px;
+  }
+
+  .calender{
+    padding: 20px 10px 10px 10px;
+  }
+
+  .calender .calender-date{
+    color: #7A86A1;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .calender .date-grid{
+    display: grid;
+    gap: 1vw;
+    grid-template-columns: auto auto auto auto auto auto auto;
+    padding-top: 15px;
+  }
+
+  .calender .date-grid .active{
+    color:#F23B3B
+  }

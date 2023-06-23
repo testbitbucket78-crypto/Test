@@ -16,6 +16,8 @@
        font-size: 15px;
        padding: 0.5rem 1.2rem;
        text-decoration: none;
+       margin-right: 8px;
+       cursor: pointer;
    }
    
    .setting-field .active{
@@ -31,6 +33,7 @@
     opacity: 1;
     border-radius: 50%;
     box-shadow: 4px 11px 20px #1111122b;
+    margin-left: 43%;
    }
 
    .account-white-btn {
@@ -169,4 +172,8 @@
 
    .industry-txt{
     padding: 13px 0px 0px 6px;
+   }
+
+   .w-90{
+    width: 80%;
    }

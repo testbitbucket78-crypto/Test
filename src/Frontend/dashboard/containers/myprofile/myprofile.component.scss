@@ -246,6 +246,7 @@
     border-radius: 19px;
     color: #ffffff;
     padding: 2% 5% 2% 5%;
+    height: 42px;
 }
 
 .billing-card-head button {
@@ -370,14 +371,17 @@
     // outline: none;
     color: #FFFFFF;
     background: #6149cd;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 500;
     padding: 2% 6%;
     box-shadow: 1px 8px 29px #695F9724;
-    border-radius: 17px;
+    border-radius: 15px;
 }
 
 .changepassform {
     font-size: 0.75rem;
+    color: #000000;
+    
 
 }
 
@@ -393,7 +397,8 @@
     background: #FFFFFF;
     border: 1px solid #EBEBEB;
     border-radius: 19px;
-    height: 45px;
+    height: 40px;
+    margin: 0% 0 3% 0;
 }
 
 .changepasswordbody {
@@ -442,15 +447,15 @@
    }
 
    .alertmessage p{
-    font-size: 16px;
-    padding: 14% 0;
+    font-size: 0.875rem;
+    padding: 7% 0;
     margin: 0;
     font-weight: 600;
     text-align: center;
    }
 
    .delete_group_button {
-    padding: 6% 11%;
+    padding: 12% 0%;
    }
 
    .del-popup-btn {
@@ -482,8 +487,8 @@ input::-ms-clear {
 
 
 .modal-title {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
     color: #6149CD;
 }
 
@@ -495,6 +500,11 @@ input::-ms-clear {
     background: #FFFFFF;
     border: 1px solid #EBEBEB;
     border-radius: 15px;
+}
+
+.btn-close img {
+    width: 10px;
+    height: 10px;   
 }
 
 // picture crop popup //

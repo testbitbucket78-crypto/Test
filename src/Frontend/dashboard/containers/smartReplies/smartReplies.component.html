@@ -55,16 +55,16 @@
 			<h5>{{repliesData.ID}}.</h5>
 			<div class="line"></div>
 			<h6>Created on:</h6>
-			<h5>{{items.CreatedDate | date: 'dd MMM yyyy'}}</h5>
+			<h5>{{replies.CreatedDate | date: 'dd MMM yyyy'}}</h5>
 			<div class="line"></div>
 			<h6>Edited on:</h6>
-			<h5>{{items.ModifiedDate | date: 'dd MMM yyyy'}}</h5>
+			<h5>{{replies.ModifiedDate | date: 'dd MMM yyyy'}}</h5>
 		</div>
-		<h4 ><img id="Edit-icon" src="assets/img/Edit-icon.png" routerLink="/dashboard/setting">Help & Support</h4>
+		<h4 routerLink="/dashboard/setting" ><img id="Edit-icon" src="assets/img/Edit-icon.png">Help & Support</h4>
 		<div class="row d-flex">
 			<h6 class="text-justify">{{items.HelpAndSupport}}.</h6>
 		</div>
-		<h3 ><img id="Edit-icon" src="assets/img/Edit-icon.png" data-bs-toggle="modal" data-bs-target="#smartrepliesModal">Keywords & Criteria </h3>
+		<h3 data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon" src="assets/img/Edit-icon.png" >Keywords & Criteria </h3>
 		<div class="row">
 			<div class="box" *ngFor="let values of repliesData.Keyword">
 				<p>{{values}}</p>
@@ -77,21 +77,22 @@
 			<h6>Matching Criteria:</h6>
 			<h5>{{repliesData.MatchingCriteria}}</h5>
 		</div>
-		<div *ngFor="let item of repliesData.ActionList">
 
-		</div>
-		<h3><img id="Edit-icon" src="assets/img/Edit-icon.png" data-bs-toggle="modal" data-bs-target="#smartrepliesModal">Reply Actions</h3>
-		<div class="box4">
-			<h3>Message</h3>
-			<p [innerHTML]="items.Message" ></p>
-		</div>
-		<div class="box2">
-			<h3>Action</h3>
-			<div class="bb d-flex">
-				<b>{{items.Name}}</b>
-				<p [innerHTML]="items.Value"></p>
+		<h3 data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon" src="assets/img/Edit-icon.png" >Reply Actions</h3>
+		<div *ngFor="let item of repliesData.ActionList">
+			<div class="box4">
+				<h3>Message</h3>
+				<p [innerHTML]="items.Message" ></p>
+			</div>
+			<div class="box2">
+				<h3>Action</h3>
+				<div class="bb d-flex">
+					<b>{{item.Name}}</b>
+					<p [innerHTML]="item.Value"></p>
+				</div>
 			</div>
 		</div>
+
 		<div class="footer">
 			<button class="delete-btn"  data-bs-toggle="modal" data-bs-target="#Delete"><img src="assets/img/delete.png"></button>
 		</div>

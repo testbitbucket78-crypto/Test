@@ -465,6 +465,24 @@ export const ROUTES: Routes = [
         component: dashboardContainers.WalletusageComponent,
     },
     {
+        path: 'support',
+        data: {
+            title: 'Support',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Support',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.SupportComponent,
+    },
+    {
         path: 'billinghistory',
         data: {
             title: 'My Profile',
