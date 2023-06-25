@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Input, Component, OnInit,HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Input, Component, OnInit,HostListener} from '@angular/core';
 import { NavigationService } from 'Frontend/navigation/services';
+import { AuthService } from 'Frontend/auth/services';
+import { Router } from '@angular/router';
 
 
 
@@ -21,14 +23,45 @@ export class TopNavComponent implements OnInit {
         this.showNav = scrollTop < 50;
     }
 
+    ShowNotification: boolean =false;
+    ShowProfile: boolean =false;
+    Name:any;
+    EmailId:any;
+    PhoneNumber:any;
 
-    constructor(private navigationService: NavigationService) {}
+    constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+
+        this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
+        this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
+        this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
+
+    }
 
     // toggleSideNav() {
     //     this.navigationService.toggleSideNav();
     // }
+
+
+    toggleShowNotifications() {
+		
+		this.ShowNotification = !this.ShowNotification;
+	}
    
- }
+
+    
+    toggleShowProfile() {
+		
+		this.ShowProfile = !this.ShowProfile;
+	}
+
+    logout(): void {
+        
+        this.authservice.logout();
+        console.log('logout');
+        this.router.navigate(['/login']);
+      }
+    }
+ 
 

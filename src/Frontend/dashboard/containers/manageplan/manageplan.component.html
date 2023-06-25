@@ -1,0 +1,236 @@
+<sb-layout-dashboard>
+    <sb-top-nav title="My Profile"></sb-top-nav>
+
+    <div class="row mb-4 mt-4">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8 p-0 my-2 notification-header">
+            <div class="container-fluid p-0 d-flex justify-content-around align-items-center">
+                <div class="col-sm-6 text-left d-flex">
+                    <div class="d-flex align-items-center">
+                        <div class="back-btn" routerLink="/dashboard/myprofile">
+                            <img src="assets/img/profile/previous1.svg" />
+                        </div>
+                        <div class="main-title">
+                            <h3 class="m-0 px-5">Manage Plan</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-right d-flex justify-content-end pr-0">
+                    <div class="text-center billing-history-btn">
+                        <button class="px-3"  routerLink="/dashboard/billinghistory">
+                        <span><img class="px-2 bill-img" src="../../../../assets/img/profile/bill.png"></span>
+                            View Billing History
+                        <span><img class="px-2" src="../../../../assets/img/profile/next.png"></span>
+                    </button>
+                    </div>
+                      
+                </div>
+            </div>
+        
+        </div>
+        <div class="col-sm-2"></div>
+
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8 d-flex">
+            
+         
+                <div class="col-sm-12 pl-0 d-flex cards-container">
+      
+                    <div class="col-sm-4 basic plan-cards">
+                        <div class="row">
+                            <div class="col-sm-2 mt-5"></div>
+                            <div class="col-sm-8 my-5 p-0">
+
+                                <div class="my-1 cards-heading">
+                                    <h2>Basic</h2>
+                                </div>
+                                <span class="plan-price">$20</span>
+                              
+                               
+                                    <div class="d-flex my-2 justify-content-around align-items-center toggle-button-container">
+                                        <div class="toggle-txt">  
+                                        <p>Yearly <br />Save  12%</p></div>
+                                      
+                                        <div class="switch-toggle">
+                                            <label class="m-0 switch">
+                                              <input type="checkbox" class="m-0 form-control-checkbox">
+                                              <span class="slider"></span>
+                                            </label>
+                                          </div>
+                                          <div class="toggle-txt1"><p>Monthly <br />$20</p></div>
+                                      
+                                    </div>
+
+                                    <div class="mt-4 select-choices">
+                                   
+                                        <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
+                                            <input type="checkbox" name="choice[{{i}}]" checked>
+                                            <p class="m-0 pl-4">{{choice}}</p>
+                                          </div>   
+                                    
+                                    </div>
+                                    <div  class="text-center mt-4 select-plan-btn">
+                                        <button>Select</button>
+                                    </div>
+                                  
+                           
+                          
+                       
+                            </div>
+                            <div class="col-sm-2 mt-5"></div>
+                        </div>
+             
+                    </div>
+                    <div class="col-sm-4 standard plan-cards">
+                        <div class="row">
+                            <div class="col-sm-2 mt-5"></div>
+                            <div class="col-sm-8 my-5 p-0">
+
+                                <div class="my-1 cards-heading">
+                                    <h2>Standard</h2>
+                                </div>
+                                <span class="plan-price">$35</span>
+                                <span class="px-3 discount-price">$30.8</span>
+                              
+                               
+                                    <div class="d-flex my-2 justify-content-around align-items-center toggle-button-container">
+                                        <div class="toggle-txt">  
+                                        <p>Yearly <br />Save  12%</p></div>
+                                      
+                                        <div class="switch-toggle">
+                                            <label class="m-0 switch">
+                                              <input type="checkbox" class="m-0 form-control-checkbox">
+                                              <span class="slider"></span>
+                                            </label>
+                                          </div>
+                                          <div class="toggle-txt1"><p>Monthly <br />$20</p></div>
+                                      
+                                    </div>
+
+                                    <div class="mt-4 select-choices">
+                                   
+                                        <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
+                                            <input type="checkbox" name="choice[{{i}}]" checked>
+                                            <p class="m-0 pl-4">{{choice}}</p>
+                                          </div>   
+                                    
+                                    </div>
+                                    <div  class="text-center mt-4 select-plan-btn">
+                                        <button>Select</button>
+                                    </div>
+                                  
+                            </div>
+                            <div class="col-sm-2 mt-5"></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 premiumplus plan-cards">
+                        <div class="row">
+                            <div class="col-sm-2 mt-5"></div>
+                            <div class="col-sm-8 my-5 p-0">
+
+                                <div class="my-1 cards-heading">
+                                    <h2>Premium+</h2>
+                                </div>
+                                <span class="plan-price">$50</span>
+                              
+                               
+                                    <div class="d-flex my-2 justify-content-around align-items-center toggle-button-container">
+                                        <div class="toggle-txt">  
+                                        <p>Yearly <br />Save  12%</p></div>
+                                      
+                                        <div class="switch-toggle">
+                                            <label class="m-0 switch">
+                                              <input type="checkbox" class="m-0 form-control-checkbox">
+                                              <span class="slider"></span>
+                                            </label>
+                                          </div>
+                                          <div class="toggle-txt1"><p>Monthly <br />$20</p></div>
+                                      
+                                    </div>
+
+                                    <div class="mt-4 select-choices">
+                                   
+                                        <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
+                                            <input type="checkbox" name="choice[{{i}}]" checked>
+                                            <p class="m-0 pl-4">{{choice}}</p>
+                                          </div>   
+                                    
+                                    </div>
+                                    <div class="text-center mt-4 select-plan-btn">
+                         
+                                        <button class="current-plan" (click)="selectPlans(selectplan)"> Current Plan</button>
+                                    </div>
+ 
+                            </div>
+                            <div class="col-sm-2 mt-5"></div>
+                        </div>
+                 
+                    </div>
+                </div>
+           </div>
+      
+        <div class="col-sm-2"></div>
+       
+    </div>
+    <ng-template #selectplan let-c="close" let-d="dismiss">
+        <div class="modal-content m-0 p-3 selectplan">
+            <div class="modal-header align-items-center selectplansheader">
+                <div class="modal-header-left ">
+                    <p class="m-0">Select Plan</p>
+                </div>
+                <div class="modal-header-right">
+                    <p class="m-0 close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/icon-close.svg"></p>
+                </div>
+                </div>
+            <div class="modal-body d-flex selectplanbody">
+                <div class="left-part">
+                    <h4>Review and confirm your change</h4>
+                    <span>Your text location determines the taxes that are applied to your bill.</span>
+
+                    <div class="plansummery">
+                        <h6>Plan Summary</h6>
+                        <span>Build Your Team, Inbox, Contact, Funnel up to 10 Message 25000 Free Message, 15 Free Bot, Subscribe up to 100K APIs & Webhooks, Integrations</span>
+                    </div>
+                    <div class="plansummery">
+                        <h6>Cancelation Info</h6>
+                        <span>Fees may apply if you cancel after Apr 20, 2023</span>
+                    </div>
+                    <div class="plansummery">
+                        <h6>Payment Info</h6>
+                        <span>Payment will automatic detect from the wallet</span>
+                    </div>
+                </div>
+
+                <div class="right-part">
+                    <div class="header">
+                        Standard
+                    </div>
+                    <div class="d-flex">
+                        <div class="">
+                            <span>Commitment</span>
+                            <p>Monthly Plan</p>
+                        </div>
+                        <div class="price">
+                            $30.8
+                        </div>
+                    </div>
+                </div>
+     
+         </div>
+            <div class="modal-footer d-flex justify-content-between align-items-center selectplanfooter">
+                
+                    <div class="modal-footer-left">
+                        <p class="m-0">I accept the Terms & Conditions</p>
+                    </div>
+                    <div class="modal-footer-right">
+                        <button type="button" class="submit-btn">Agree & Subscribe</button>
+                    </div>
+                    </div>
+            </div>
+     
+    </ng-template>
+
+</sb-layout-dashboard>

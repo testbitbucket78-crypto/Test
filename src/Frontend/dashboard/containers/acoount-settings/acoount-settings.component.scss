@@ -4,6 +4,7 @@
     box-shadow: 2px 13px 54px #695F9714;
     border-radius: 30px;
     padding: 20px;
+    width: 90%;
 }
 
 
@@ -14,8 +15,10 @@
    .setting-field .setting-field-link {
        color: #7A86A1;
        font-size: 15px;
-       padding: 10px 14px;
+       padding: 8px 20px;
        text-decoration: none;
+       margin-right: 12px;
+       cursor: pointer;
    }
    
    .setting-field .active{
@@ -50,7 +53,7 @@
    .account-btn {
     background: #6149CD 0% 0% no-repeat padding-box;
     border-radius: 17px;
-    padding: 8px 22px;
+    padding: 6px 25px;
     border: 1px;    
     color: white;
     font-weight: 400;
@@ -92,20 +95,298 @@
     background: #FFF4F2;
     width: 380px;
     height: 330px;
+    border-radius: 1.5rem;
    }
 
-   .account-modal .btn-close {
+   .modal-content .btn-close {
     background: white;
     margin: 2px;
     border-radius: 15px;
-    padding: 11px 15px;
+    padding: 6px 12px;
+    border: 1px solid #EBEBEB;
    }
 
-   .account-modal .modal-title{
+   .modal-content .btn-close img{
+    width: 12px;
+   }
+
+   .modal-content .modal-title{
     color: #6149CD;
     font-size: 18px;
    }
    
    .account-modal .modal-footer {
     border: none;
+   }
+
+   .radio-btn{
+    width: 18px;
+   }
+
+   .qr-modal {
+    background: #FFF4F2;
+    width: 975px;
+    height: 547px;
+    border-radius: 1.5rem;
+    left:-30%;
+   }
+
+   .scanner-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 24px;
+    padding-bottom:5px ;
+   }
+
+   .qr-card {
+    width: 40%;
+   }
+   
+   .qr-heading{
+    font-weight: bold;
+    font-size: 24px;
+   }
+
+   .websetting-card{    
+    background: #FFF4F2;
+    border-radius: 20px;
+    min-height: 200px;
+   }
+
+   .api-card{
+    width: 90%;
+   }
+
+   .account-white-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 10px 14px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px;
+   }
+
+   .account-white-btn img {
+    border-radius: 0px;
+   }
+
+   .api-card .api-card-desc{
+    font-size: 18px;
+    font-weight: 500;
+   }
+
+   .api-card .api-time{
+    color: #7A86A1;
+   }
+
+   .api-card .tokens-card {
+    width: 80%;
+   }
+   .new-token-btn{
+    color: #6149CD;
+    font-weight: 600;
+    font-size: 14px;
+    background: white;
+    border-radius: 18px;
+    padding: 8px 14px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px;
+   }
+
+   .left-col{
+    width: 33%;
+    color: #6149CD;      
+    font-size: 15px;
+   }
+
+   .mid-col{
+    width: 33%;     
+    font-size: 14px;   
+   }
+
+   .right-col{
+    width: 33%;   
+    float: right; 
+   }
+
+   .websetting-data{
+    display: flex;
+    min-height: 46px;
+   }
+
+   .websetting-btn{
+    font-weight: 600;
+    font-size: 14px;
+    background: white;
+    border-radius: 18px;
+    padding: 6px 16px;
+    border: 1px;
+    height: fit-content;
+    width: fit-content;
+   }
+
+   .whatsWebSetting-modal{
+    width: 700px;
+    min-height: 500px;
+    border-radius: 30px;
+   }
+
+   .text-voilet{
+       color:#6149CD;
+   }
+
+   .incoming-card{
+    display: flex;
+    justify-content: space-between;
+   }
+
+   .input-form{
+    width: 115px;
+    height: 30px;
+    border-radius: 11px;
+    border: 1px solid #EBEBEB;
+   }
+
+   .create-token-modal label{
+    font-size: 15px;
+    font-weight: 600;
+   }
+
+   .create-token-modal {
+    min-height: 700px;
+   }
+
+   .token-input-form {
+    width: 100%;
+    height: 40px;
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: 5px 15px;
+   }
+
+   .remove-btn {
+    color: #FF3636;
+    font-size: 14px;
+   }
+
+   .add-btn {
+    color: #6236FF;
+    font-size: 14px;
+   }
+
+   .delete-token-modal{
+    width: 320px;
+   }
+
+   .cancel-btn{
+    background: #fff;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    color: #7A86A1;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+   }
+
+   .delete-btn{
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    border: 0px;
+    color: #fff;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+    background: #FF3636;
+   }
+
+   .alertmessage p{
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+   }
+
+   .create-token-modal .modal-footer {
+    border: none;
+   }
+
+   .inegration-block{
+    display: flex;
+    justify-content: space-evenly;
+    padding-top: 1.5rem;
+   }
+
+   .inegration-block .integration-card {
+    border: 2px solid #F0F0F0;
+    width: 43%;
+    min-height: 160px;
+    border-radius: 30px;
+    padding: 1rem 1.6rem;
+   }
+
+   .integration-card img {
+    width: 35px;
+    height: 35px;
+    margin-bottom: 0.5rem;
+   }
+
+   .api-confiormation-modal .modal-header{
+    justify-content: center;
+   }
+
+   .token-heading{
+    font-size: 17px;
+    font-weight: 800;
+   }
+   .api-confiormation-modal{
+    background: #FFF4F2
+   }
+
+   .api-confiormation-modal p{
+    font-size: 14px;
+    color: #7A86A1;
+   }
+
+   .api-confiormation-modal .token-input-form{
+    width: 85%;
+    height: 35px;
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: 5px 15px;
+   }
+
+   .copy-btn{
+    position: relative;
+    width: 26px;
+    margin-left: -10%;
+   }
+
+   .checkbox{
+    width: 16px;
+    height: 16px;
+   }
+
+   .token-checkbox{
+    width: 85%;
+    justify-content: center;
+    display: flex;
+   }
+
+   .api-confiormation-modal .modal-footer{
+    border: none;
+   }
+
+   .whatsapp-connect{
+    display: flex;
+    font-size: 16px !important;
+    font-weight: 600;
+   }
+
+   .grey{
+    color: #7A86A1;
+
    }

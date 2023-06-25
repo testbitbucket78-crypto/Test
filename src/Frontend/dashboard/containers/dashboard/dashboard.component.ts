@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit,ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit,ChangeDetectionStrategy } from '@angular/core';
 import { DashboardService } from './../../services';
 import { Router } from '@angular/router';
 

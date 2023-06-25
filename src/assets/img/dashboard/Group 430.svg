@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="70" height="70" viewBox="0 0 70 70">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="your_image_here" data-name="your image here" width="70" height="70" rx="28" transform="translate(776 749)" fill="#ecdbea"/>
+    </clipPath>
+  </defs>
+  <g id="Group_430" data-name="Group 430" transform="translate(-395 -1482)">
+    <g id="project_1" data-name="project 1" transform="translate(-381 733)">
+      <g id="image">
+        <g id="your_image_here-2" data-name="your image here">
+          <rect id="your_image_here-3" data-name="your image here" width="70" height="70" rx="28" transform="translate(776 749)" fill="#ecdbea"/>
+        </g>
+      </g>
+    </g>
+    <path id="Path_142" data-name="Path 142" d="M6.931,14.313v3.709a1,1,0,1,0,2,0V14.313a.994.994,0,0,1,1.247-.971A8,8,0,0,1,15.852,19.9a1,1,0,0,1-1,1.125H1.008a1,1,0,0,1-1-1.125,8,8,0,0,1,5.674-6.555.994.994,0,0,1,1.247.971m1-2.291a6,6,0,1,1,6-6,6,6,0,0,1-6,6" transform="translate(422 1506.977)" fill="#9960db"/>
+  </g>
+</svg>

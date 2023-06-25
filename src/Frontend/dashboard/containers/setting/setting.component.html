@@ -41,11 +41,11 @@
                 <a class="setting-link" [ngClass]="linkActive==6 ? 'active' : ''" (click)="linkActive = 6">Account Settings</a>
             </div>
         </div>
-        <div class="col-sm-8">
+        <div class="col-sm-9">
             <sb-acoount-settings *ngIf="linkActive == 6"></sb-acoount-settings>
+            <sb-organisational-settings *ngIf="linkActive == 2"></sb-organisational-settings>
 
         </div>
-        <div class="col-sm-1"></div>
     </div>
 
 

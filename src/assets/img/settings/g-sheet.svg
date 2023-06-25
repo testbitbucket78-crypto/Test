@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="29.05" height="39.943" viewBox="0 0 29.05 39.943">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" y1="0.086" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#263238" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#263238" stop-opacity="0.02"/>
+    </linearGradient>
+    <radialGradient id="radial-gradient" cx="0.032" cy="0.027" r="1.612" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.102"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g id="g-sheet" transform="translate(-0.833 -0.958)">
+    <g id="Consumer-Apps-Sheets-Large-VD-R8-" transform="translate(0.833 0.958)">
+      <g id="Hero" transform="translate(0 0)">
+        <g id="Personal">
+          <g id="Sheets-icon">
+            <g id="Group">
+              <g id="Clipped">
+                <path id="Path" d="M18.156,0H2.723A2.731,2.731,0,0,0,0,2.723v34.5a2.731,2.731,0,0,0,2.723,2.723h23.6A2.731,2.731,0,0,0,29.05,37.22V10.894L22.7,6.355Z" fill="#0f9d58"/>
+              </g>
+              <g id="Clipped-2" data-name="Clipped" transform="translate(7.262 19.518)">
+                <path id="Shape" d="M11.833,31.8V44.965H26.358V31.8ZM18.188,43.15H13.649V40.88h4.539Zm0-3.631H13.649v-2.27h4.539Zm0-3.631H13.649v-2.27h4.539Zm6.355,7.262H20V40.88h4.539Zm0-3.631H20v-2.27h4.539Zm0-3.631H20v-2.27h4.539Z" transform="translate(-11.833 -31.802)" fill="#f1f1f1"/>
+              </g>
+              <g id="Clipped-3" data-name="Clipped" transform="translate(18.953 10.097)">
+                <path id="Path-2" data-name="Path" d="M30.881,16.452l10.1,10.095v-9.3Z" transform="translate(-30.881 -16.452)" fill="url(#linear-gradient)"/>
+              </g>
+              <g id="Clipped-4" data-name="Clipped" transform="translate(18.156 0)">
+                <g id="Group-2" data-name="Group" transform="translate(0)">
+                  <g id="Group_7207" data-name="Group 7207">
+                    <path id="Path-3" data-name="Path" d="M2.958,2.958v8.17a2.723,2.723,0,0,0,2.723,2.723h8.17Z" transform="translate(-2.958 -2.958)" fill="#87ceac"/>
+                  </g>
+                </g>
+              </g>
+              <g id="Clipped-5" data-name="Clipped">
+                <path id="Path-4" data-name="Path" d="M2.723,0A2.731,2.731,0,0,0,0,2.723V2.95A2.731,2.731,0,0,1,2.723.227H18.156V0Z" fill="rgba(255,255,255,0.2)"/>
+              </g>
+              <g id="Clipped-6" data-name="Clipped" transform="translate(0 36.993)">
+                <path id="Path-5" data-name="Path" d="M26.326,63H2.723A2.731,2.731,0,0,1,0,60.276V60.5a2.731,2.731,0,0,0,2.723,2.723h23.6A2.731,2.731,0,0,0,29.05,60.5v-.227A2.731,2.731,0,0,1,26.326,63Z" transform="translate(0 -60.276)" fill="rgba(38,50,56,0.2)"/>
+              </g>
+              <g id="Clipped-7" data-name="Clipped" transform="translate(18.156 8.17)">
+                <path id="Path-6" data-name="Path" d="M32.307,16.036a2.723,2.723,0,0,1-2.723-2.723v.227a2.723,2.723,0,0,0,2.723,2.723h8.17v-.227Z" transform="translate(-29.583 -13.313)" fill="rgba(38,50,56,0.1)"/>
+              </g>
+            </g>
+            <path id="Path-7" data-name="Path" d="M18.156,0H2.723A2.731,2.731,0,0,0,0,2.723v34.5a2.731,2.731,0,0,0,2.723,2.723h23.6A2.731,2.731,0,0,0,29.05,37.22V10.894Z" fill="url(#radial-gradient)"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

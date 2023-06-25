@@ -14,15 +14,10 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { AgGridModule } from 'ag-grid-angular';
 
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 
 
 / Components /
 import * as dashboardComponents from './components';
-//import * as DashboardComponent from './containers/dashboard/dashboard.component';
-
 
 / Containers /
 import * as dashboardContainers from './containers';
@@ -54,8 +49,18 @@ import { DashboardComponent } from './containers';
         NgMultiSelectDropDownModule.forRoot(),
         RichTextEditorModule
     ],
-    providers: [...dashboardServices.services, ...dashboardGuards.guards],
-    declarations: [...dashboardContainers.containers, ...dashboardComponents.components, DashboardComponent, SearchfilterPipe],
-    exports: [...dashboardContainers.containers, ...dashboardComponents.components, DashboardComponent],
+    providers: [...dashboardServices.services,
+                ...dashboardGuards.guards
+        ],
+    declarations:  [
+         ...dashboardContainers.containers,
+         ...dashboardComponents.components,
+            DashboardComponent,
+            SearchfilterPipe,
+        ],
+    exports: [...dashboardContainers.containers,
+              ...dashboardComponents.components,
+                 DashboardComponent
+            ],
 })
 export class DashboardModule { }

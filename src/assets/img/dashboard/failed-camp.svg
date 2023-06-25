@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="70" height="70" viewBox="0 0 70 70">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="your_image_here" data-name="your image here" width="70" height="70" rx="28" transform="translate(776 749)" fill="#ffd0d0"/>
+    </clipPath>
+  </defs>
+  <g id="failed-camp" transform="translate(-395 -1154)">
+    <g id="project_1" data-name="project 1" transform="translate(-381 405)">
+      <g id="image">
+        <g id="your_image_here-2" data-name="your image here">
+          <rect id="your_image_here-3" data-name="your image here" width="70" height="70" rx="28" transform="translate(776 749)" fill="#ffd0d0"/>
+        </g>
+      </g>
+    </g>
+    <g id="Info_Circle" data-name="Info Circle" transform="translate(420 1179)">
+      <path id="Info_Circle-2" data-name="Info Circle" d="M10,20a10,10,0,1,1,7.074-2.929A10.011,10.011,0,0,1,10,20Zm0-7.069a.871.871,0,0,0-.87.869.875.875,0,1,0,.87-.869Zm0-7.6a.892.892,0,0,0-.88.88v4.42a.875.875,0,0,0,1.751,0V6.21A.876.876,0,0,0,10,5.33Z" fill="#f17474"/>
+    </g>
+  </g>
+</svg>
