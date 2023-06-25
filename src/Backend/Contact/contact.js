@@ -66,7 +66,9 @@ app.post('/contact', async function (req, res) {
 
     //db.runQuery(req, res, val.insertContact, [values])
     var result = await db.excuteQuery(val.existContactWithSameSpid, [emailId,Phone_number,SP_ID])
-   
+    
+    console.log("result >>>>>>>>>>")
+    console.log(result)
     if (result.length > 0) {
       // email or phone number already exist, return an error response
 

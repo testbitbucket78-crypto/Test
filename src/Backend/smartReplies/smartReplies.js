@@ -5,6 +5,7 @@ const val = require('./constant.js');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
+var axios = require('axios');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -24,13 +25,7 @@ app.get('/getReplieswithSPID', async (req, res) => {
     res.status(500).send('Internal server error');
   }
 });
-// app.get('/getReplieswithSPID',(req,res)=>{
-//   console.log("spid")
-//   console.log(req.query.SP_ID)
-//     db.runQuery(req,res,val.getsmartReplieswithSPID,[req.query.SP_ID,req.query.SP_ID])
-//    //  console.log("result API" +result)
-//    //  res.send(result)
-// })
+
 
 app.get('/getalluserofAOwner', (req, res) => {
   db.runQuery(req, res, val.alluserofAOwner, [req.body.ParentId, req.body.SP_ID])
@@ -58,7 +53,7 @@ app.post('/addNewReply', async (req, res) => {
     console.log("params " + params.strings.value)
     const jsonData = JSON.stringify(req.body.ReplyActions);
 
-  
+
     console.log(req.body.ReplyActions)
 
 
@@ -203,28 +198,9 @@ app.post('/resetInteractionMapping', (req, res) => {
 
 
 app.post('/addTag', async (req, res) => {
-  //var result = await db.excuteQuery(val.selectTagQuery, [req.body.customerId])
+  
   var updateQueryQuery = "";
-  // console.log(result.tag)
-  // if (result.length > 0) {
-  //   const tagValue = result[0].tag
-  //   console.log("tagValue" + tagValue)
-  //   if (tagValue != ' ' && tagValue != null) {
-  //     // Split the tag value into an array of tag items
-  //     const tagItems = tagValue.split(',');
-  //     console.log(tagItems)
-  //     // Get the count of tag items
-  //     const tagItemCount = tagItems.length;
-  //     console.log("tagItemCount" + tagItemCount)
-
-  //     updateQueryQuery = "UPDATE EndCustomer SET tag = CONCAT(tag,'," + req.body.tag + "')  WHERE customerId =" + req.body.customerId
-
-  //   }
-  //   else {
-  //     console.log("else")
-  //     updateQueryQuery = "UPDATE EndCustomer SET tag = '" + req.body.tag + " '  WHERE customerId =" + req.body.customerId
-  //   }
-  // }
+ 
   updateQueryQuery = " UPDATE EndCustomer SET tag ='" + req.body.tag + "'  WHERE customerId =" + req.body.customerId
 
   console.log(updateQueryQuery)
@@ -270,6 +246,87 @@ app.post('/removeTag', async (req, res) => {
   console.log(removetagQuery)
   db.runQuery(req, res, removetagQuery, [])
 
+})
+
+//_____________ Send Button Through Meta API's _________________________//
+
+function sendMessage(data) {
+  var config = {
+    method: 'post',
+    url: val.url,
+    headers: {
+      'Authorization': val.access_token,
+      'Content-Type': val.content_type
+    },
+    data: data
+  };
+
+  return axios(config)
+}
+
+function getTextMessageInput(recipient, text) {
+  return JSON.stringify({
+
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": recipient,
+    "type": "interactive",
+    "interactive": {
+      "type": "button",
+      "body": {
+        "text": text
+      },
+      "action": {
+        "buttons": [
+          {
+            "type": "reply",
+            "reply": {
+              "id": "1",
+              "title": "Yes"
+            }
+          },
+          {
+            "type": "reply",
+            "reply": {
+              "id": "2",
+              "title": "No"
+            }
+          },
+          {
+            "type": "reply",
+            "reply": {
+              "id": "3",
+              "title": "ok"
+            }
+          }
+        ]
+      }
+    }
+
+
+  });
+}
+
+app.post('/button', (req, res) => {
+  
+  var data = getTextMessageInput(req.body.Phone_number, req.body.text);
+  var value = JSON.parse(data)
+  console.log(value)
+  sendMessage(data).then(function (response) {
+    res.status(200).send({
+      msg: 'Message sended',
+      status: 200
+    });
+    return;
+  }).catch(function (error) {
+    console.log(error);
+
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+    return;
+  });
 })
 
 
