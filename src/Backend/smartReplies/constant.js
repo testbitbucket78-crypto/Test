@@ -125,7 +125,7 @@ SELECT sp_id,
 FROM user_paths ep;`
 
 
-addNewReply = `CALL addnewSmartReply(?,?,?,?,?,?,?)`;
+addNewReply = `CALL updatedAddnewSmartReply(?,?,?,?,?,?)`;
 deleteSmartReply = `CALL deleteSmartUpdate(?)`;
 deletMessage = `update SmartReplyAction set isDeleted='1',isDeletedOn=now() where SmartReplyID=?`;
 editMessage = `update SmartReplyAction set Message=? where SmartReplyID=?`;
@@ -138,8 +138,13 @@ var updateInteractionMapping="INSERT INTO InteractionMapping (is_active,Interact
 var getInteractionMapping = "SELECT * from InteractionMapping,EndCustomer where EndCustomer.customerId=InteractionMapping.AgentId  and  is_active=1 and InteractionMapping.InteractionId=? ORDER BY MappingId DESC LIMIT 1"
 var selectTagQuery = "select tag from EndCustomer where customerId= ?";
 
+var access_token='Bearer EAAU0g9iuku4BACBhTZCxqtq5A8rIymreLIxUQa7HaToy7PBawzooIkG73XnY1PXAUGrtCulhniRrZCsQPWOB3YcozTpT4cpgcZC5MoNB05ptdnpwAIRLLz0FtQCaLvmXNqL8qqn8Yqmf07HxVpzs6OuZClb0XOylw5DWWaMxcMJm7jzVRZCmD'
+var url='https://graph.facebook.com/v16.0/101714466262650/messages'
+var content_type='application/json'
+
 module.exports = {
     host, user, password, database, selectAll, search, sideNavKeywords, getsmartReplieswithSPID,
     alluserofAOwner, addNewReply, deleteSmartReply, deletMessage, editMessage, editAction,
-    removeKeyword, updateSmartReply,crachlogQuery,updateInteractionMapping ,getInteractionMapping ,selectTagQuery
+    removeKeyword, updateSmartReply,crachlogQuery,updateInteractionMapping ,getInteractionMapping ,selectTagQuery,
+    access_token,url,content_type
 }

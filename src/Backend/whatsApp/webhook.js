@@ -93,13 +93,41 @@ app.post("/webhook", async (req, res) => {
       console.log("________________SAVEING MESSAGE___________________");
       if (message_text.length > 0) {
         var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName]);
-        var replyValue = "";
+
         if (saveMessage.length > 0) {
-          console.log("________________SAVED MESSAGE___________________" + saveMessage[0][0]["@replystatus"] + " replyValue length  " + saveMessage.length);
-          replyValue = saveMessage[0][0]["@replystatus"];
+          console.log("________________SAVED MESSAGE___________________" + saveMessage[0][0]["@replystatus"] + " replyValue length  " + JSON.stringify(saveMessage));
+
+          const data = saveMessage;
+          // Extracting the values
+          const extractedData = {
+            sid: data[0][0]['@sid'],
+            custid: data[2][0]['@custid'],
+            agid: data[1][0]['@agid'],
+            newId: data[3][0]['@newId'],
+            replystatus: data[4][0]['@replystatus']
+          };
+
+          console.log(extractedData);
+          var sid = extractedData.sid
+          var custid = extractedData.custid
+          var agid = extractedData.agid
+          var replystatus = extractedData.replystatus
+          var newId = extractedData.newId
+        //  console.log("sid " + sid);         // Output: 33
+        //  console.log("custid " + custid);      // Output: 490
+        //  console.log("agid " + agid);        // Output: 78
+          console.log("replyStatus " + replystatus); // Output: "Auto Reply are Paused"
+        //  console.log("new" + newId)
         }
-        var response = await getSmartReplies(message_text, phone_number_id, contactName, from, replyValue);
-        console.log("____Send SMART REPLIESS______" + response);
+        const currentTime = new Date();
+        const replystatus1 = new Date(replystatus);
+
+        console.log(replystatus1 <= currentTime); // Example: true (if replystatus is earlier than or equal to currentTime)
+        console.log(replystatus1 >= currentTime);
+        if (replystatus != null && (replystatus1 <= currentTime) && replystatus != undefined) {
+          var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId);
+          console.log("____Send SMART REPLIESS______" + response);
+        }
       }
     }
     res.status(200).send({
@@ -143,27 +171,27 @@ async function sendMessage(message, phone_number_id, from) {
 
 }
 
-async function getSmartReplies(message_text, phone_number_id, contactname, from, replyValue) {
+async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId) {
   try {
     console.log("in side getSmartReplies method")
     console.log(message_text)
     console.log("_________process.env.insertMessage__________")
 
 
-    var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text]])
-    //var autoReply = replymessage[0].Message
-    //console.log(autoReply + replymessage[0].ActionID)
+    var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text],sid])
+    var autoReply = replymessage[0].Message
+    console.log(autoReply + replymessage[0].ActionID)
     console.log(replymessage)
-    iterateArray(replymessage, phone_number_id, from, replyValue)
+    iterateArray(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId)
   } catch (err) {
     console.log("____getSmartReplies method err______")
     console.log(err)
   }
 }
 
-async function iterateArray(replymessage, phone_number_id, from, replyValue) {
+async function iterateArray(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId) {
   // Loop over the messages array and send each message
-  replymessage.forEach((message) => {
+  replymessage.forEach(async (message) => {
     console.log("===================================")
     console.log("***********************************")
 
@@ -175,12 +203,55 @@ async function iterateArray(replymessage, phone_number_id, from, replyValue) {
     switch (actionId) {
       case 1:
         console.log(`Performing action 1 for  Assign Conversation: ${value}`);
+        is_active = 1
+        var values = [[is_active, newId, agid, value]]
+        var assignCon = await db.excuteQuery(process.env.updateInteractionMapping, [values])
+        console.log(assignCon)
         break;
       case 2:
         console.log(`Performing action 2 for Add Contact Tag: ${value}`);
+        var addConRes = await db.excuteQuery(process.env.addTagQuery, [value, custid, sid])
+        console.log(addConRes)
         break;
       case 3:
         console.log(`Performing action 3 for Remove Contact Tag: ${value}`);
+        var maptag = value;
+        var maptagItems = maptag.split(',')
+        console.log("maptag " + maptag)
+        var result = await db.excuteQuery(process.env.selectTagQuery, [custid])
+        console.log(result)
+        var removetagQuery = ""
+        if (result.length > 0) {
+
+          const tagValue = result[0].tag
+          console.log("tagValue" + tagValue)
+          if (tagValue != ' ' && tagValue != null) {
+            // Split the tag value into an array of tag items
+            const tagItems = tagValue.split(',');
+
+            var itemmap = '';
+
+            console.log(itemmap == maptag)
+            // Get the count of tag items
+            const tagItemCount = tagItems.length;
+            console.log("tagItemCount" + tagItemCount)
+            for (var i = 0; i < tagItems.length; i++) {
+
+              if (!(maptagItems.includes(tagItems[i]))) {
+                var itemmap = itemmap + (itemmap ? ',' : '') + tagItems[i]
+
+              }
+
+
+            }
+            console.log("for loop end" + itemmap)
+            removetagQuery = "UPDATE EndCustomer SET tag ='" + itemmap + "' WHERE customerId = " +custid + "";
+
+          }
+        }
+        console.log(removetagQuery)
+        var remTagCon = await db.excuteQuery(removetagQuery, [])
+        console.log(remTagCon)
         break;
       case 4:
         console.log(`Performing action 4 for Trigger Flow: ${value}`);
@@ -196,42 +267,15 @@ async function iterateArray(replymessage, phone_number_id, from, replyValue) {
         console.log(`Unknown action ID: ${actionId}`);
     }
 
-    //sendMessage(testMessage, phone_number_id, from);
-    handleAutoReply(replyValue, testMessage, phone_number_id, from)
+    sendMessage(testMessage, phone_number_id, from);
+    
   });
 
 }
 
 
 
-// Function to handle auto-reply
-async function handleAutoReply(replyValue, testMessage, phone_number_id, from) {
-  const autoReplyValue = replyValue;
 
-  if (autoReplyValue === 'Pause for 5 mins') {
-    console.log('Auto-reply is set to pause.');
-
-    setTimeout(sendMessage, 300000);
-  } else if (autoReplyValue === 'Pause for 10 mins') {
-    console.log('Auto-reply is set to pause for 10 minutes.');
-
-    setTimeout(sendMessage, 600000);
-  } else if (autoReplyValue === 'Pause for 15 mins') {
-    console.log('Auto-reply is set to pause for 15 minutes.');
-
-    setTimeout(sendMessage, 900000);
-  }
-  else if (autoReplyValue === 'Pause for 20 mins') {
-    console.log('Auto-reply is set to pause for 20 minutes.');
-
-    setTimeout(sendMessage, 1200000);
-  }
-  else {
-    console.log('Auto-reply is not set to pause.');
-
-    sendMessage(testMessage, phone_number_id, from);
-  }
-}
 
 
 
