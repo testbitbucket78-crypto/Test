@@ -64,6 +64,7 @@ app.post("/webhook", async (req, res) => {
       let changes = body.entry[0].changes[0];
       let phone_number_id = changes.value.metadata.phone_number_id;
       let display_phone_number = changes.value.metadata.display_phone_number;
+      console.log("display_phone_number " +  display_phone_number)
       let firstMessage = changes.value.messages[0];
 
       let from = firstMessage.from; // extract the phone number from the webhook payload
