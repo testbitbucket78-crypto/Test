@@ -33,6 +33,7 @@ export class SmartRepliesComponent implements OnInit {
 	active = 1;
 	showTopNav: boolean = true;
 	showSideBar = false;
+	searchText ='';
 	repliesData!:repliesList;
 
 	Cards: Cards[] = [
@@ -51,7 +52,7 @@ export class SmartRepliesComponent implements OnInit {
 	ngOnInit() {
 		this.routerGuard();
 		this.getReplies();
-		// this.showTopNav = true;
+		this.showTopNav = true;
 
 
 	}

@@ -112,11 +112,11 @@ export class ContactsComponent implements OnInit {
     items: any;
     customerData: any;
     
-	  filterForm=new FormGroup({
-      Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z ]+"), Validators.minLength(3)])),
-    Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
-    emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-	})
+	//   filterForm=new FormGroup({
+  //   Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z ]+"), Validators.minLength(3)])),
+  //   Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+  //   emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+	// })
     orderHeader: String = '';
     isDesOrder: boolean = true;
 
@@ -155,6 +155,7 @@ export class ContactsComponent implements OnInit {
         facebookId: new FormControl(''),
         InstagramId: new FormControl(''),
          SP_ID: sessionStorage.getItem('SP_ID')
+         
       });
 	
   this.editContact = this.fb.group({
@@ -168,24 +169,10 @@ export class ContactsComponent implements OnInit {
     InstagramId: new FormControl('')
    
   })
+  
 }
 
-  onInputChange() {
 
-    if(this.newContact.valid) {
-      this.isButtonDisabled = false;
-    }
-
-    else {
-      this.isButtonDisabled = true;
-    }
-   
-
-  }
-
-  // onInputChangeEmail() {
-  //   this.isButtonDisabled = this.inputEmail.length === 0;
-  // }
 
 
 
@@ -248,7 +235,9 @@ export class ContactsComponent implements OnInit {
 } 
 
   onSelectionChanged(event: any) {
-    this.isButtonEnabled = this.checkedConatct.length > 0;
+
+     this.isButtonEnabled = this.checkedConatct.length > 0 && event !== null;
+    
   }
 
 checks=false
@@ -311,27 +300,23 @@ onSelectAll(items: any) {
      
   onSubmit() {  
     console.log(this.productForm.value);  
+    this.productForm.reset();
+
   } 
 
 
 
 	open(content:any) {
 		this.modalService.open(content);
-	}
 
-  openaddcontact(addcontact: any) {
-    this.modalService.open(addcontact);
-    this.getContact();
-  }
-
-
- 
+	} 
 
   openedit(contactedit: any) {
+
+
     
     console.log(sessionStorage.getItem('id'))
     this.apiService.getContactById(sessionStorage.getItem('id'), sessionStorage.getItem('SP_ID')).subscribe((result: any) =>{
-      // console.log(result[0].tag.split(',') +" "+result[0].age)
       this.editContact=this.fb.group({
         Name: new FormControl(result[0].Name),
         Phone_number: new FormControl(result[0].Phone_number),
@@ -411,8 +396,9 @@ onSelectAll(items: any) {
  
 
   onRowSelected = (event: any) => {
-       if(event === null || event === undefined) {
-      this.checkedConatct = [] }
+       if (event === null || event === undefined) {
+      this.checkedConatct = [] 
+      }
       else {
       const rowChecked = this.checkedConatct.findIndex((item) => item.customerId == event.data.customerId);
       if (rowChecked < 0) {
@@ -466,7 +452,6 @@ onSelectAll(items: any) {
     groupSelectsChildren: true,
     onRowClicked: this.rowClicked,
     onRowSelected: this.onRowSelected,
-    noRowsOverlay:true,
     pagination: true,
     paginationAutoPageSize: true,
     paginateChildRows:true,
@@ -477,27 +462,46 @@ onSelectAll(items: any) {
 
   
 
-  addContact() {
-    console.log("******")
-    console.log(this.newContact.value)
+  addContact(addcontact:any,addcontacterror:any) {
+  
     this.submitted = true;
-    console.log(this.selectedCountry)
-    console.log(this.code);
-    
-		this.apiService.addContact(this.newContact.value).subscribe((response:any) => {
+
+  	this.apiService.addContact(this.newContact.value).subscribe(
       
-			console.log(response);
-    
+      (response:any) => {
+      
+			if (response.status === 200) {
         this.getContact();
-     
+        this.newContact.reset();
+        this.editContact.reset();
+        this.newContact.clearValidators();
+        this.editContact.clearValidators();
+        this.newContact.get('SP_ID')?.setValue(sessionStorage.getItem('SP_ID'));
+        this.modalService.open(addcontact);
+      }
+    },
+
+      (error:any) => { 
+
+        if (error.status === 409) {
+          this.getContact();
+          this.newContact.reset();
+          this.editContact.reset();
+          this.newContact.clearValidators();
+          this.editContact.clearValidators();
+          this.newContact.get('SP_ID')?.setValue(sessionStorage.getItem('SP_ID'));
+          this.modalService.open(addcontacterror);
+        }
+
+        if (error) {
+          console.log(error.message);
+        }
          
    });
-    this.newContact.reset();
+   
+
 }
 
-// else if(this.newContact.invalid) {
-//     alert('error something went wrong!');
-//   }
 
   editContactData = () => {
     console.log("editContactData")
@@ -593,10 +597,12 @@ deletContactByID(data: any) {
     }
     this.apiService.exportCheckedContact(exContact).subscribe(response => {
       console.log(response);
-   
-
+      this.getContact();
+      this.onRowSelected(null);
+  
     });
-    this.getContact();
+    this.checkedConatct = [];
+    console.log(this.checkedConatct + " checked");
 
   };
 

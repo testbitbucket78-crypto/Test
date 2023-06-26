@@ -2,19 +2,19 @@
 //     font-family: 'Manrope';
 // }
 
-.bs-stepper {
+#bs-stee {
     position: relative;
-    width: 1467px;
-    height: 742px;
     box-shadow: 4px 22px 54px #695f971a;
     border-radius: 30px;
-    margin: 56px 81px;
+    background-color: #fff;
+    background-clip: padding-box;
+    width: 67rem;
 }
-
-.bs-stepper-header {
-    width: 57%;
-    margin: 8px 18%;
-    margin-top: -20px;
+#attach-1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 13rem;
 }
 
 #close-btn {
@@ -29,22 +29,27 @@
     border: 1px solid #ebebeb;
     font-family: "Manrope";
     font-size: 13px;
+    outline: none;
 }
-
+.nd{
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
 
 .link {
     color: skyblue;
     font-size: 16px;
 }
 h1 {
-    margin-top: 1.5rem!important;
-    font-family: 'Manrope';
+    font-family: "Manrope";
     font-weight: bold;
-    padding: 18px;
-    font-size: 22px;
+    padding-left: 26px;
+    font-size: 19px;
     color: #000000;
     letter-spacing: -0.55px;
-    margin: 0px 0px 10px 20px;
+    padding-top: 1rem;
+
 }
 .active .bs-stepper-circle {
     background: #6149cd 0% 0% no-repeat padding-box;
@@ -93,34 +98,41 @@ h1 {
     border: 1px dashed #ebebeb;
     border-radius: 30px;
     opacity: 1;
-    width: 370px;
-    height: 287px;
-    margin-left: 292px;
+    width: 30.8rem;
+    height: 15.938rem;
 }
-.box1 img {
-    margin: 45px 0px 10px 148px;
-}
+
 .box1 h5 {
     font-family: 'Manrope';
     font-size: 14px;
     font-weight: bold;
     color: #000000;
     text-align: center;
-    margin: 10px 0px 5px 0px;
+    margin-top: 1rem;
+}
+.or{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .box1 span {
     color: #7a86a1;
     opacity: 1;
-    margin-left: 175px;
     font-weight: 400;
     font-family: 'Manrope';
     font-size: 14px;
 }
+.choose{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
 .box .box1 input {
     width: 208px;
     background-color: #ffffff;
     border-radius: 16px;
-    margin: 10px 0px 0px 140px;
     color: #7a86a1;
 }
 .box1 .btn1 {
@@ -131,67 +143,77 @@ h1 {
     width: 150px;
     height: 35px;
     color: #7a86a1;
-    margin: 10px 0px 0px 140px;
+}
+.bs-stepper.line {
+    min-height: 1px;
+    background-color: rgba(0,0,0,.12);
+}
+#linee{
+    min-width: 9rem;
 }
 .btn1 img {
     margin: 0;
 }
+.d-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+}
+
 .box .btn4 {
     background: #fff4f2 0% 0% no-repeat padding-box;
     border-radius: 13px;
     opacity: 1;
-    width: 17%;
-    height: 42px;
-    margin: 0px 0px 0px 37px;
+    width: 61%;
+    height: 29px;
     border: none;
+    justify-content: space-evenly;
+    margin-left: 0.6rem;
+    margin-top: 0.3rem;
 }
 .btn4 img {
-    width: 18px;
-    height: 23px;
-    margin: 10px 20px 0px 20px;
+    margin-top: 5px;
 }
 .btn4 h6 {
     font-family: 'Manrope';
     font-size: 15px;
     color: #000000;
-    margin: 10px 0px 0px 0px;
+    margin: 4px;
+}
+#csvfile{
+    height: 8%;
+    margin-top: 1rem;
+    margin-left: 1.1rem;
 }
 .box3 {
-
-
-
     background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695f971a;
     border-radius: 30px;
     opacity: 1;
-    width: 22%;
-    float: right;
-    margin: -218px 26em 0px 0px;
     overflow: hidden;
     max-height: 100%;
-    width: 100%;
-    height: 100%;
     overflow: hidden;
+    width: 84%;
+    height: 78%;
+    margin-left: 0.5rem;
+    margin-top: 12px;
+}
+#csv-img{
+    padding-right: 0.375rem;
+    margin-top: 0.188rem;
+    height: 0.938rem;
 }
 
-    
-
-.box3 .box4 img {
-    width: 21px;
-    height: 23px;
-    margin: 20px 20px 0px 20px;
-}
 .box3 .box4 h6 {
     font-family: 'Manrope';
     font-size: 17px;
     color: #080808;
-    margin: 20px 0px 11px 0px;
 }
 .box3 h5 {
     font-family: 'Manrope';
     font-size: 15px;
     color: #7a86a1;
-    margin: 0px 0px 0px 60px;
 }
 
 #read-more{
@@ -203,9 +225,6 @@ h1 {
 .row {
     display: flex;
     flex-wrap: wrap;
-    margin-right: -0.75rem;
-    margin-left: -0.75rem;
-    width: 100%;
 }
 .row span {
     color: #7a86a1;
@@ -215,21 +234,27 @@ h1 {
 }
 select {
     word-wrap: normal;
-    width: 70%;
-    height: 45px;
-    margin-left: -5px;
-    margin-bottom: 11px;
     background: #ffffff;
     border: 1px solid #ebebeb;
     border-radius: 19px;
     opacity: 1;
-    font-family: 'Manrope';
+    font-family: "Manrope";
     font-weight: 400;
-    font-size: 14px;
+    font-size: 13px;
     padding: 10px;
     color: #000000;
+    width: 18rem;
+    height: 2.813rem;
 }
-
+#con{
+    font-size: 11px!important;
+}
+#worksa{
+    font-size: 11px!important;
+}
+#identifier-box{
+    margin-left: -13rem;
+}
 input::file-selector-button {
     font-weight: bold;
     color: #7a86a1;
@@ -243,26 +268,34 @@ input::file-selector-button {
 }
 
 .modal-content {
-    
-    width: 100%;
     border: none;
     border-radius: 30px;
     outline: 0;
     box-shadow: 4px 22px 54px #695F971A;
 }
-
-.ml-4,
-.mx-4 {
-    margin: 0px 200px 0px 0px;
+#map22{
+ background: var(--unnamed-color-fff4f2) 0% 0% no-repeat padding-box;
+background: #FFF4F2 0% 0% no-repeat padding-box;
+border-radius: 30px;
+opacity: 1;
+height: 25rem;
+width: 41rem;
 }
+#h-h5{
+    font-size: 12px;
+    padding-right: 13px;
+    padding-left: 17px;
+    font-weight: 1000;
+}
+
 label {
     display: inline-block;
-    margin-bottom: 0.5rem;
     font-family: 'Manrope';
     font-size: 15px;
-    padding-top: 20px;
     color: #000000;
 }
+
+
 .btn:not(:disabled):not(.disabled) {
     cursor: pointer;
     float: right;
@@ -270,9 +303,7 @@ label {
     box-shadow: 1px 8px 29px #695f9724;
     border-radius: 17px;
     opacity: 1;
-    left: -14px;
     color: #ffffff;
-
 }
 
 
@@ -280,13 +311,11 @@ label {
    font-size: 18px;
     font-weight: 700;
     font-family: "Manrope";
-    text-align: center;
-    margin-left: -51%;
 }
 
 #import-btn {
-    top: 61px;
-    right: 18px;
+    top: -12px;
+    right: 12px;
 }
 span {
     font-family: 'Manrope';
@@ -295,66 +324,55 @@ span {
 }
 
 #upload-instructions {
-
-    font-size: 11px;
+    font-size: 10px;
     font-family: "Manrope";
     font-weight: 600;
-    width: 212px;
-    height: 117px;
+    width: 274px;
     line-height: 13px;
     overflow-y: scroll;
     padding-right: 17px;
     box-sizing: content-box;
+    margin-top: 1rem;
+    margin-left: 2.5rem;
 }
-
-
-
-.col-md {
-
-    max-width: 28%;
-    left: 305px;
-}
-
 .sq .ss {
-    width: 48%;
-    height: 520px;
     background: #fff4f2 0% 0% no-repeat padding-box;
     border-radius: 30px;
     opacity: 1;
-    margin: -22px 0px 0px 140px;
+    margin-left: -2rem;
+}
+.body-con-2{
+    justify-content: space-between;
+}
+#r-first{
+    margin-left: -16rem;
 }
 .sq .ss h5 {
     font-family: 'Manrope';
     font-size: 15px;
     color: #000000;
     font-weight: bold;
-    margin: 40px 0px 0px 25px;
+    margin-top: 2rem;
+    margin-left: 0.7rem;
 }
 .sq .ss h6 {
     font-family: Manrope;
     font-size: 15px;
     color: #000000;
-    margin: 36px 0px 0px 25px;
 }
 .ss1 {
-    width: 135%;
-    height: 520px;
     background: #fff4f2 0% 0% no-repeat padding-box;
     border-radius: 30px;
     opacity: 1;
-    margin: -21px 0px 0px 17px;
 }
 .ss1 .hh1 h5 {
     font-family: 'Manrope';
     font-size: 15px;
     color: #000000;
     font-weight: bold;
-    margin: 38px 0px 0px 41px;
 }
  .ss1 .hh1 select {
     word-wrap: normal;
-    width: 279px;
-    height: 40px;
     background: #ffffff 0% 0% no-repeat padding-box;
     border: 1px solid #ebebeb;
     border-radius: 19px;
@@ -363,113 +381,124 @@ span {
     font-size: 14px;
     font-weight: 500;
     color: #000000;
-    margin: 14px 0px 0px 66px;
 }
-.ss1 .hh1 input {
-    margin: 30px 0px 0px 40px;
-}
+
 .ss1 .hh1 h4 {
-    margin: 32px 0px 0px 35px;
     font-size: 15px;
     font-family: 'manrope';
     color: #6236ff;
     font-weight: 600;
-    width: 132px;
 }
 .ss1 .hh1 h6 {
-    margin: 25px 0px 0px 15px;
     font-size: 14px;
     font-family: 'manrope';
 }
-.ss1 .hh1 .switch {
+
+// toggle
+
+.active-toggle .switch {
     position: relative;
     display: inline-block;
-    width: 55px;
-    height: 28px;
-    margin: 20px 0px 0px 40px;
+    width: 131px;
+    height: 0px;
 }
-.ss1 .hh1 .slider {
+.active-toggle .slider {
     position: absolute;
     cursor: pointer;
-    top: 0;
-    left: 0;
+    top: -24px;
+    left: -13px;
     right: 0;
     bottom: 0;
-    height: 26px;
-    width: 45px;
+    height: 20px;
+    width: 42px;
     background-color: #6149cd30;
     transition: 0.4s;
     border-radius: 34px;
 }
-.ss1 .hh1 .switch input {
+.over-on{
+    margin-top: -2rem;
+    margin-left: 2.3rem;
+}
+.active-toggle .switch input {
     display: none;
 }
 
-.ss1 .hh1 .slider:before {
+.active-toggle .slider:before {
     position: absolute;
-    content: '';
-    height: 18px;
-    width: 15px;
-    left: 2px;
-    bottom: 4px;
+    content: "";
+    height: 15px;
+    width: 17px;
+    left: 3px;
+    bottom: 3px;
     background-color: white;
     transition: 0.4s;
     border-radius: 50px;
     box-shadow: 0.35px 2px 7px #6149cd30;
 }
-.ss1 .hh1 input:checked+ .slider {
+
+
+.active-toggle input:checked+ .slider {
     background-color: #6149cd;
 }
 
 
-.ss1 .hh1 input:checked + .slider:before {
-    transform: translateX(27px);
+.active-toggle input:checked + .slider::before {
+    transform: translateX(21px);
 }
-
-
+// toogle
 
 
 #map-next-btn {
-    left: 168px;
-    top: -45px;
+    left: -16rem;
+    top: -1rem;
+    position: relative;
 }
-
-
-
+.l-botton{
+    position: relative;
+    width: 161%;
+}
 .ss .card {
     background-color: #fff4f2;
-    height: 365px;
-    width: 472px;
+    height: 93%;
+    width: 160%;
     border-radius: 20px;
     border: none;
-    margin: 30px 0px 0px 200px;
+    margin-left: -3rem;
+    align-items: center;
 }
+
 .ss .card h4 {
-    font-family: 'Manrope';
-    font-size: 20px;
+    font-family: "Manrope";
+    font-size: 16px;
     font-weight: bold;
     color: #000000;
-    margin: 30px 0px 0px 30px;
+    line-height: 6.5rem;
+    font-weight: 800;
+}
+.h-fie{
+    margin-left: -12.99rem;
+}
+.g-file{
+    margin-left: -3rem;
 }
 .ss .card .ggg h5 {
-    font-family: 'Manrope';
-    font-size: 16px;
-
+    font-family: "Manrope";
+    font-size: 15px;
     color: #6149cd;
-    margin: 30px 0px 0px 30px;
+    line-height: 0;
 }
 .ss .card .ggg h6 {
     font-family: 'Manrope';
-    font-size: 16px;
-
+    font-size: 14px;
     color: #000000;
-    margin: 10px 0px 0px 30px;
+    line-height: 2.5rem;
+    padding-bottom: 21px;
+    font-weight: 700;
 }
 .ss .card1 {
     background-color: #ebf9ec;
     height: 89px;
     width: 391px;
-    margin: 32px 0px 0px 45px;
     border-radius: 20px;
     opacity: 1;
 }
@@ -478,92 +507,148 @@ span {
     font-family: 'Manrope';
     font-size: 24px;
     font-weight: bold;
-    margin: 8px 0px 0px 25px;
 }
 .ss .card1 h6 {
     color: #000000;
     font-family: 'Manrope';
     font-size: 15px;
     font-weight: 400;
-    margin: 0px 0px 0px 25px;
+}
+#card-1{
+    background: #EBF9EC 0% 0% no-repeat padding-box;
+    border-radius: 30px;
+    opacity: 1;
+    width: 100%;
+    height: 5.5rem;
 }
 .card2 {
     background-color: #ECE4F5;
-    height: 89px;
-    width: 391px;
-    float: right;
-    margin: -258px 317px 0px 0px;
-    border-radius: 20px;
+    border-radius: 30px;
+    opacity: 1;
+    width: 100%;
+    height: 5.5rem;
+}
+.card-h5{
+    margin-left: 2rem;
+    margin-top: 1rem;
+}
+.card-h6{
+    margin-left: 2rem;
 }
 .card2 h5 {
     color: #000000;
     font-family: 'Manrope';
     font-size: 24px;
     font-weight: bold;
-    margin: 8px 0px 0px 25px;
 }
 .card2 h6 {
     color: #000000;
     font-family: 'Manrope';
     font-size: 15px;
     font-weight: 400;
-    margin: 0px 0px 0px 25px;
 }
 .card3 {
     background-color: #fddbdb;
-    height: 150px;
-    width: 391px;
     float: right;
-    margin: -152px 317px 0px 0px;
-    border-radius: 20px;
+    border-radius: 30px;
+    opacity: 1;
+    width: 100%;
+    height: 8.5rem;
 }
+
 .card3 h5 {
     color: #000000;
     font-family: 'Manrope';
     font-size: 24px;
     font-weight: bold;
-    margin: 8px 0px 0px 25px;
+    line-height: 1.4rem;
 }
 .card3 h6 {
     color: #000000;
     font-family: 'Manrope';
     font-size: 15px;
     font-weight: 400;
-    margin: 0px 0px 0px 25px;
 }
 .card3 .btn {
     background-color: #fff4f2;
-    width: 195px;
+    width: 175px;
     height: 30px;
     border-radius: 13px;
-    margin: 10px 0px 0px 25px;
     color: #000000;
     float: left;
     cursor: pointer;
     padding: 0px;
-    font-size: 15px;
+    font-size: 14px;
+    margin-left: 1.7rem;
+    margin-top: 1rem;
 }
-
+#r-lg{
+    height: 24rem;
+}
+#t-div{
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-left: -3rem;
+}
+#prduc{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    opacity: 1;
+}
 .btn5 {
-    margin: 0px;
     border: none;
     background-color: #fff;
-    top: -73px;
-    left: 200px;
-    width: 0px;
+    top: 71px;
+    left: 0;
+    position: absolute;
+    outline: none;
+}
+.em-con{
+    padding-left: 11px;
+}
+.email-1{
+    margin-left: -6px;
+}
+#from-cn{
+    margin-left: -1.3rem;
 }
 
+#cards{
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-right: 6.5rem;
+}
 #map-span {
     position: absolute;
-    font-size: 14px;
-    top: 117px;
-    left: 160px;
-    padding: 12px;
+    font-size: 12px;
+    top: 6.7rem;
+    left: 5rem;
 }
-
-
-#information-part {
-    width: 87%;
+.hh1{
+    margin-top: 2.2rem;
+}
+.inp-2{
+    width: 12rem;
+    margin-left: 16px;
+}
+.inp-3{
+    width: 12rem;
+    margin-left: -9px;
+}
+.inp-4{
+    width: 12rem;
+    margin-right: -12px;
+}
+#con22{
+    font-family: " Manrope";
+    letter-spacing: 0px;
+    color: #6236FF;
+    opacity: 1;
+    font-size: 16px;
+    padding-right: 7rem;
 }
 
 .incorrect-card-main {
@@ -578,8 +663,8 @@ span {
 }
 
 .incorrect-card-main p {
-    margin-top: 2rem;
     text-align: center;
+    margin-top: 4rem;
     margin-bottom: 2rem;
     font-size: 1rem;
 }
@@ -592,10 +677,11 @@ span {
     width: 110px;
     height: 40px;
 }
-
-.dd img {
-    padding: 40px 0px 0px 44%;
+.button-1{
+    float: right;
+    top: -1rem;
 }
+
 .dd{
     background-color: #FFF4F2;
     border-radius: 20px;
@@ -618,16 +704,12 @@ span {
 .dd .ss img{
     padding: 0px;
 }
-.dd .text{
-    margin: -60px 0px 0px 0px;
-}
+
 .dd .btn{
-   margin: -21px 157px 12px 0px;
     width: 140px;
     height: 40px;
 }
 .dd .btn1{
-    margin: -21px 157px 12px 0px;
     width: 140px;
     height: 40px;
 }
@@ -637,1186 +719,3 @@ span {
     font-family: 'Manrope';
     font-weight: 600;
 }
-
-
-/******  media queries for laptop screen *****/
-
-
-@media all and (max-width:1536px) {
-    .bs-stepper {
-          width: 1109px;
-          height: 597px;
-          margin: 38px 199px;
-  
-      }
-      
-  #close-btn {
-      position: absolute;
-      width: 36px;
-      height: 36px;
-      top: 13px;
-      right: 30px;
-      background: #FFFFFF;
-      border-radius: 16px;
-      opacity: 1;
-      border: 1px solid #ebebeb;
-      font-family: "Manrope";
-      font-size: 13px;
-  }
-  
-  
-  
-      h1 {
-      font-size: 18px;
-      margin: 0px 0px 10px 14px;
-      }
-  
-      .box1{
-  
-      width: 300px;
-      height: 235px;
-      margin-left: 207px;
-  
-  
-      }
-  
-      .box1 img {
-      margin: 45px 0px 10px 123px;
-      width: 57px;
-      height: 57px;
-  }
-  
-  .box1 h5 {
-      font-size: 12px;
-  }
-  
-      #import-btn {
-      top: 0;
-      right: 12px;
-  }
-  
-  .box1 span {
-      margin-left: 141px;
-      font-size: 12px;
-  }
-  
-  input::file-selector-button {
-      font-weight: bold;
-      color: #7a86a1;
-      background-color: #ffffff;
-      font-family: 'Manrope';
-      font-size: 12px;
-      cursor: pointer;
-      padding: 0.5em;
-      border: 1px solid #EBEBEB;
-      border-radius: 17px;
-  }
-  
-  
-  #upload-head-text {
-      font-size: 16px;
-  }
-  .box .box1 input {
-  
-      width: 173px;
-      background-color: #ffffff;
-      border-radius: 16px;
-      margin: 10px 0px 0px 107px;
-      color: #7a86a1;
-      font-size: 12px;
-  }
-  
-  .box .btn4 {
-      width: 17%;
-      height: 35px;
-  }
-  
-  .box3 {
-  
-      width: 22%;
-      height: 189px;
-      margin: -188px 18em 0px 54px;
-  }
-  
-  .box3 .box4 h6 {
-      font-size: 13px;
-      margin: 24px 0px 11px -18px;
-          
-  }
-  
-  .box3 .box4 img {
-      width: 18px;
-      height: 17px;
-      padding-right: 2px;
-      margin: 23px 20px 0px 12px;
-  
-  }
-  
-  .btn4 img {
-      height: 16px;
-      width: 16px;
-      margin: 10px 13px 0px 10px;
-  }
-  
-  .btn4 h6 {
-      font-size: 12px;
-  }
-  
-  .btn5 {
-    top: -69px;
-    left: 0px;
-  
-  }
-  
-  .col-md {
-      max-width: 32%;
-      left: 20%;
-  }
-  
-  label {
-      font-size: 13px;
-      padding-top: 11px;
-  }
-  
-  .row span {
-      font-size: 11px;
-  }
-  
-  select {
-  
-      width: 69%;
-      height: 39px;
-      margin-left: -5px;
-      margin-bottom: 2px;
-      font-size: 12px;
-      padding: 10px;
-  }
-  
-  #upload-instructions {
-      font-size: 9px;
-      margin-left: 31px;
-      margin-top: 4px;
-      line-height: 13px!important;
-  
-  }
-
-  #interactions-a {
-    font-size: 12px;
-    text-decoration: none;
-    color: #6149cd;
-  }
-  
-  .bs-stepper-label {
-  
-   font-size: 15px;
-  }
-  
-  .ss .card {
-      height: 20em;
-      width: 24em;
-      margin: 11px 0px 0px 166px;
-  }
-  
-  .ss .card1 {
-  
-      height: 4.5em;
-      width: 18em;
-      margin: 12px 0px 0px 36px;
-      border-radius: 27px;
-  
-  }
-  
-  
-  .card2 {
-      height: 4.5em;
-      width: 18em;
-      margin: -223px 193px 0px 0px;
-      border-radius: 27px;
-  }
-  
-  .card3 {
-      height: 8em;
-      width: 18em;
-      margin: -130px 191px 0px 0px;
-      border-radius: 25px;
-  }
-  
-  .ss .card1 h6 {
-      font-size: 12px;
-  }
-  
-  .card2 h6 {
-      font-size: 12px;
-  }
-  .card3 h6 {
-      font-size: 12px;
-  }
-  
-  .card3 .btn {
-      width: 135px;
-      height: 28px;
-      border-radius: 13px;
-      font-size: 12px;
-  }
-  
-  .ss .card h4 {
-      font-size: 17px;
-  }
-  
-  .ss .card .ggg h5 {
-      font-size: 13px;
-  }
-  
-  
-  .ss .card .ggg h6 {
-      font-size: 14px;
-  }
-  
-  #map-span {
-      font-size: 12px;
-      left: 133px;
-      top: 105px;
-  }
-  .hh-parent {
-      height: 100%;
-  }
-  
-  .sq .ss {
-      width: 26%;
-      height: 377px;
-      margin: -25px -66px 0px 108px;
-  }
-  
-  
-  .sq .ss h5 {
-    
-      font-size: 12px;
-      margin: 40px 0px 0px 43px;
-  }
-  
-  .sq .ss h6 {
-    
-      font-size: 12px;
-      margin: 22px 0px 0px 42px;
-  }
-  
-  
-  
-  .ss1 {
-  
-      width: 57%;
-      height: 63%;
-      position: absolute;
-      right: 98px;
-      top: 170px;
-  }
-  
-  .ss1 .hh1 h5 {
-      font-size: 12px;
-      margin: 36px 0px 0px 41px
-  }
-  
-  
-   .ss1 .hh1 select {
-      word-wrap: normal;
-      width: 213px;
-      height: 34px;
-      background: #ffffff 0% 0% no-repeat padding-box;
-      border: 1px solid #ebebeb;
-      border-radius: 19px;
-      opacity: 1;
-      font-family: "Manrope";
-      font-size: 10px;
-      font-weight: 500;
-      color: #000000;
-      margin: 14px 0px 0px 0px;
-  }
-  .ss1 .hh1 input {
-      margin: 22px 0px 0px 40px;
-  }
-  .ss1 .hh1{
-      height: 40px;
-  }
-  .ss1 .hh1 h4 {
-  
-      font-size: 12px;
-      font-family: "manrope";
-      color: #6236ff;
-      font-weight: 600;
-      margin: 21px 30px;
-      width: 100px;
-      
-  }
-  .ss1 .hh1 h6 {
-      margin: 22px 0px 0px 15px;
-      font-size: 10px;
-      font-family: 'manrope';
-      
-  }
-  .ss1 .hh1 .switch {
-      position: relative;
-      display: inline-block;
-      width: 55px;
-      height: 28px;
-      margin: 20px 0px 0px 35px;
-  }
-  .ss1 .hh1 .slider {
-      position: absolute;
-      cursor: pointer;
-      top: -10!important;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 20px;
-      width: 33px;
-      background-color: #6149cd30;
-      transition: 0.4s;
-      border-radius: 34px;
-  }
-  .ss1 .hh1 .switch input {
-      display: none;
-  }
-  #map-next-btn {
-      left: 140px;
-      top: 15px;
-  
-  }
-  .ss1 .hh1 .slider:before {
-    position: absolute;
-      content: "";
-      height: 15px;
-      width: 14px;
-      left: 0;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.4s;
-      border-radius: 50px;
-      box-shadow: 0.35px 2px 7px #6149cd30;
-  }
-  .ss1 .hh1 input:checked+ .slider {
-      background-color: #6149cd;
-  }
-  #prduc{
-    width: 12rem;
-    border: 1px solid #EBEBEB;
-    border-radius: 0.7rem;
-    opacity: 1;
-    background: #ffffff;
-    height: 2rem;
-  }
-  
-  .ss1 .hh1 input:checked + .slider:before {
-      transform: translateX(19px);
-  }
-  .form-control-checkbox {
-      width: 14px;
-      margin-right: 10px;
-      background: #FFFFFF 0% 0% no-repeat padding-box;
-      border: 1px solid #6149CD;
-      border-radius: 6px;
-      opacity: 1;
-      display: inline-block;
-      position: relative;
-      height: 14px;
-  
-  }
-  
-  .form-control-checkbox:checked {
-      background-color: #6149CD;
-  
-  }
-  
-  
-  }
-
-
-
-@media all and (max-width:1366px) {
-    .bs-stepper {
-        width: 1109px;
-        height: 32rem;
-        margin: 1.3rem 7.8rem;
-      }
-      
-  #close-btn {
-      position: absolute;
-      width: 36px;
-      height: 36px;
-      top: 13px;
-      right: 30px;
-      background: #FFFFFF;
-      border-radius: 16px;
-      opacity: 1;
-      border: 1px solid #ebebeb;
-      font-family: "Manrope";
-      font-size: 13px;
-  }
-  .bs-stepper-header {
-    width: 57%;
-    margin: 8px 18%;
-    margin-top: -3rem;
-}
-  
-  
-      h1 {
-      font-size: 0.9rem;
-      margin: 0px 0px 10px 14px;
-      }
-  
-      .box1{
-    width: 16.1rem;
-    height: 234px;
-    margin-left: 199px;
-  
-  
-      }
-  
-      .box1 img {
-      margin: 45px 0px 10px 99px;
-      width: 57px;
-      height: 57px;
-  }
-  
-  .box1 h5 {
-      font-size: 12px;
-  }
-  
-      #import-btn {
-        top: -0.5rem;
-      right: 12px;
-  }
-  
-  .box1 span {
-    margin-left: 117px;
-    font-size: 13px;
-  }
-  
-  input::file-selector-button {
-      font-weight: bold;
-      color: #7a86a1;
-      background-color: #ffffff;
-      font-family: 'Manrope';
-      font-size: 12px;
-      cursor: pointer;
-      padding: 0.5em;
-      border: 1px solid #EBEBEB;
-      border-radius: 17px;
-  }
-  .btn {
-    top: -2rem;
-}
-  
-  #upload-head-text {
-      font-size: 0.9rem;
-      margin-left: -36rem;
-  }
-  .box .box1 input {
-  
-      width: 173px;
-      background-color: #ffffff;
-      border-radius: 16px;
-      margin: 10px 0px 0px 49px;
-      color: #7a86a1;
-      font-size: 12px;
-  }
-  
-  .box .btn4 {
-      width: 17%;
-      height: 35px;
-  }
-  .bs-stepper-content {
-    margin: 0rem 0rem 0rem;
-}
-  .box3 {
-    width: 22%;
-    height: 177px;
-    margin: -193px 21.7em 0px 46px;
-  }
-  
-  .box3 .box4 h6 {
-    font-size: 13px;
-    margin: 13px 0px 13px 10px;
-
-          
-  }
-  
-  .box3 .box4 img {
-    width: 18px;
-    height: 17px;
-    padding-right: 2px;
-    margin: 11px 0px 0px 22px;
-  
-  }
-  
-  .btn4 img {
-      height: 16px;
-      width: 16px;
-      margin: 10px 13px 0px 10px;
-  }
-  
-  .btn4 h6 {
-      font-size: 12px;
-  }
-  
-  .btn5 {
-    top: -69px;
-    left: 0px;
-    width: 0px;
-  }
-  
-  .col-md {
-      max-width: 32%;
-      left: 20%;
-  }
-  
-  label {
-      font-size: 13px;
-      padding-top: 11px;
-  }
-  
-  .row span {
-      font-size: 11px;
-  }
-  
-  select {
-  
-      width: 69%;
-      height: 39px;
-      margin-left: -5px;
-      margin-bottom: 2px;
-      font-size: 12px;
-      padding: 10px;
-  }
-  
-  #upload-instructions {
-    font-size: 8px;
-    margin-left: 49px;
-    margin-top: -3px;
-    line-height: 16px;
-  
-  }
-  
-  .bs-stepper-label {
-  
-   font-size: 0.8rem;
-  }
-  .active .bs-stepper-circle {
-    opacity: 1;
-    width: 2.1rem;
-    height: 2.1rem;
-}
-  .ss .card {
-      height: 20em;
-      width: 24em;
-      margin: 11px 0px 0px 166px;
-  }
-  
-  .ss .card1 {
-  
-      height: 4.5em;
-      width: 18em;
-      margin: 12px 0px 0px 36px;
-      border-radius: 27px;
-  
-  }
-  
-  
-  .card2 {
-      height: 4.5em;
-      width: 18em;
-      margin: -223px 193px 0px 0px;
-      border-radius: 27px;
-  }
-  
-  .card3 {
-      height: 8em;
-      width: 18em;
-      margin: -130px 191px 0px 0px;
-      border-radius: 25px;
-  }
-  
-  .ss .card1 h6 {
-      font-size: 12px;
-  }
-  
-  .card2 h6 {
-      font-size: 12px;
-  }
-  .card3 h6 {
-      font-size: 12px;
-  }
-  
-  .card3 .btn {
-      width: 135px;
-      height: 28px;
-      border-radius: 13px;
-      font-size: 12px;
-  }
-  
-  .ss .card h4 {
-      font-size: 17px;
-  }
-  
-  .ss .card .ggg h5 {
-      font-size: 13px;
-  }
-  
-  
-  .ss .card .ggg h6 {
-      font-size: 14px;
-  }
-  
-  #map-span {
-    font-size: 12px;
-    left: 113px;
-    top: 72px;
-  }
-  .hh-parent {
-      height: 100%;
-  }
-  
-  .sq .ss {
-      width: 26%;
-      height: 377px;
-      margin: -25px -66px 0px 108px;
-  }
-  
-  
-  .sq .ss h5 {
-    
-      font-size: 12px;
-      margin: 40px 0px 0px 43px;
-  }
-  
-  .sq .ss h6 {
-    
-      font-size: 12px;
-      margin: 22px 0px 0px 42px;
-  }
-  
-  
-  
-  .ss1 {
-    width: 56%;
-    height: 73%;
-    position: absolute;
-    right: 98px;
-    top: 131px;
-  }
-  
-  .ss1 .hh1 h5 {
-      font-size: 12px;
-      margin: 23px 0px 0px 41px;
-  }
-  
-  
-   .ss1 .hh1 select {
-      word-wrap: normal;
-      width: 213px;
-      height: 34px;
-      background: #ffffff 0% 0% no-repeat padding-box;
-      border: 1px solid #ebebeb;
-      border-radius: 19px;
-      opacity: 1;
-      font-family: "Manrope";
-      font-size: 10px;
-      font-weight: 500;
-      color: #000000;
-      margin: 14px 0px 0px 0px;
-  }
-  .ss1 .hh1 input {
-      margin: 22px 0px 0px 40px;
-  }
-  .ss1 .hh1{
-    height: 39px;
-  }
-  .ss1 .hh1 h4 {
-  
-      font-size: 12px;
-      font-family: "manrope";
-      color: #6236ff;
-      font-weight: 600;
-      margin: 21px 30px;
-      width: 100px;
-      
-  }
-  .ss1 .hh1 h6 {
-      margin: 22px 0px 0px 15px;
-      font-size: 10px;
-      font-family: 'manrope';
-      
-  }
-  .ss1 .hh1 .switch {
-      position: relative;
-      display: inline-block;
-      width: 55px;
-      height: 28px;
-      margin: 20px 0px 0px 35px;
-  }
-  .ss1 .hh1 .slider {
-      position: absolute;
-      cursor: pointer;
-      top: -10!important;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 20px;
-      width: 33px;
-      background-color: #6149cd30;
-      transition: 0.4s;
-      border-radius: 34px;
-  }
-  .ss1 .hh1 .switch input {
-      display: none;
-  }
-  #map-next-btn {
-      left: 140px;
-      top: -24px;
-  
-  }
-  .ss1 .hh1 .slider:before {
-    position: absolute;
-      content: "";
-      height: 15px;
-      width: 14px;
-      left: 0;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.4s;
-      border-radius: 50px;
-      box-shadow: 0.35px 2px 7px #6149cd30;
-  }
-  .ss1 .hh1 input:checked+ .slider {
-      background-color: #6149cd;
-  }
-  
-  
-  .ss1 .hh1 input:checked + .slider:before {
-      transform: translateX(19px);
-  }
-  .form-control-checkbox {
-      width: 14px;
-      margin-right: 10px;
-      background: #FFFFFF 0% 0% no-repeat padding-box;
-      border: 1px solid #6149CD;
-      border-radius: 6px;
-      opacity: 1;
-      display: inline-block;
-      position: relative;
-      height: 14px;
-  
-  }
-  
-  .form-control-checkbox:checked {
-      background-color: #6149CD;
-  
-  }
-  
-  
-  }
-  
-  @media all and (max-width:1280px) {
-    .bs-stepper {
-        width: 1109px;
-        height: 33rem;
-        margin: 1.3rem 5.8rem;
-    
-      }
-      
-  #close-btn {
-      position: absolute;
-      width: 36px;
-      height: 36px;
-      top: 13px;
-      right: 30px;
-      background: #FFFFFF;
-      border-radius: 16px;
-      opacity: 1;
-      border: 1px solid #ebebeb;
-      font-family: "Manrope";
-      font-size: 13px;
-  }
-  .bs-stepper-header {
-    width: 54%;
-    margin: 9px 20%;
-    margin-top: -2rem;
-}
-  
-  
-      h1 {
-      font-size: 0.9rem;
-      margin: 0px 0px 10px 14px;
-      }
-  
-      .box1{
-  
-        width: 224px;
-        height: 198px;
-        // margin-left: 207px;
-        margin-left: 290px;
-  
-      }
-  
-      .box1 img {
-        margin: 16px 0px 10px 82px;
-        width: 57px;
-        height: 57px;
-  }
-  
-  .box1 h5 {
-      font-size: 10px;
-  }
-  
-      #import-btn {
-      top: 3rem;
-      right: 12px;
-      border: none;
-  }
-  
-  .box1 span {
-      margin-left: 6.5rem;
-      font-size: 12px;
-  }
-  
-  input::file-selector-button {
-      font-weight: bold;
-      color: #7a86a1;
-      background-color: #ffffff;
-      font-family: 'Manrope';
-      font-size: 12px;
-      cursor: pointer;
-      padding: 0.5em;
-      border: 1px solid #EBEBEB;
-      border-radius: 17px;
-  }
-  .btn {
-    top: -2rem;
-}
-  
-  #upload-head-text {
-      font-size: 0.9rem;
-    margin-left: -25rem;
-  }
-  .box .box1 input {
-  
-    width: 162px;
-    background-color: #ffffff;
-    border-radius: 16px;
-    margin: 10px 0px 0px 35px;
-    color: #7a86a1;
-    font-size: 10px;
-  }
-  
-  .box .btn4 {
-    width: 10.8rem;
-    // margin-left: 1rem;
-    margin-left: 3rem;
-    margin-top: 0.3rem;
-  }
-  .bs-stepper-content {
-    margin: -1rem 0rem 0rem;
-}
-  .box3 {
-    height: 145px;
-    // margin: -152px 24.3rem 4px 58px;
-    margin: -152px 17.3rem 4px 58px;
-    border-radius: 17px;
-    width: 22%;
-  }
-  
-  .box3 .box4 h6 {
-    font-size: 12px;
-    margin: 10px 0px 5px -25px;
-          
-  }
-  
-  .box3 .box4 img {
-    width: 22px;
-    height: 14px;
-    padding-right: 3px;
-    margin: 10px 33px -22px 20px;
-  
-  }
-  
-  .btn4 img {
-    height: 16px;
-    width: 16px;
-    margin: 9px 13px 0px 11px;
-  }
-  
-  .btn4 h6 {
-      font-size: 10px;
-  }
-  
-  .btn5 {
-    top: -58px;
-    left: 1px;
-    width: 0px;
-  }
-  
-  .col-md {
-    max-width: 32%;
-    left: 27%;
-  }
-  
-  label {
-    font-size: 11px;
-    padding-top: 11px;
-
-  }
-  
-  .row span {
-      font-size: 9px;
-  }
-  
-  select {
-    width: 69%;
-    height: 34px;
-    margin-left: -5px;
-    margin-bottom: 2px;
-    font-size: 10px;
-    padding: 10px;
-  }
-  
-  #upload-instructions {
-    font-size: 8px;
-    margin-left: 3.1rem;
-    margin-top: 0px;
-    line-height: 16px;
-  
-  }
-  #read-more {
-    color: #6149cd;
-    font-size: 9px;
-}
-  
-  .bs-stepper-label {
-  
-   font-size: 0.8rem;
-  }
-  .active .bs-stepper-circle {
-    opacity: 1;
-    width: 2.1rem;
-    height: 2.1rem;
-}
-  .ss .card {
-    height: 17em;
-    width: 21em;
-    margin: 5px 0px 0px 194px;
-  }
-  
-  .ss .card1 {
-    height: 3.5em;
-    width: 18em;
-    margin: 11px 0px 0px 40px;
-    border-radius: 27px;
-  
-  }
-  .btn:not(:disabled):not(.disabled) {
-   
-    font-size: 0.9rem;
-    
-    top: 0.8rem;
-
-  }
-  
-  .card2 {
-    height: 4.5em;
-    width: 18em;
-    margin: -197px 209px 0px 0px;
-    border-radius: 27px;
-  }
-  
-  .card3 {
-    height: 7em;
-    width: 18em;
-    margin: -112px 210px 0px 0px;
-    border-radius: 25px;
-  }
-  
-  .ss .card1 h6 {
-      font-size: 12px;
-  }
-  
-  .card2 h6 {
-      font-size: 12px;
-  }
-  .card3 h6 {
-      font-size: 12px;
-  }
-  
-  .card3 .btn {
-      width: 135px;
-      height: 28px;
-      border-radius: 13px;
-      font-size: 12px;
-  }
-  
-  .ss .card h4 {
-    font-size: 13px;
-  }
-  
-  .ss .card .ggg h5 {
-    font-size: 11px;
-  }
-  
-  
-  .ss .card .ggg h6 {
-    font-size: 12px;
-  }
-  
-  #map-span {
-    font-size: 11px;
-    left: 127px;
-    top: 84px;
-  }
-  .hh-parent {
-      height: 100%;
-  }
-  
-  .sq .ss {
-    width: 27%;
-    height: 337px;
-    margin: -8px -66px 0px 116px;
-  }
-  
-  
-  .sq .ss h5 {
-    font-size: 10px;
-    margin: 16px 0px 0px 43px;
-    margin-bottom: 36px;
-  }
-  
-  .sq .ss h6 {
-    font-size: 10px;
-    margin: 17px 0px 0px 43px;
-  }
-  
-  
-  
-  .ss1 {
-  
-    width: 55%;
-    height: 64%;
-    position: absolute;
-    right: 98px;
-    top: 152px;
-  }
-  
-  .ss1 .hh1 h5 {
-    font-size: 10px;
-    margin: 17px 0px 0px 41px;
-
-  }
-  
-  
-   .ss1 .hh1 select {
-    word-wrap: normal;
-    width: 210px;
-    height: 23px;
-    background: #ffffff 0% 0% no-repeat padding-box;
-    border: 1px solid #ebebeb;
-    border-radius: 19px;
-    opacity: 1;
-    font-family: "Manrope";
-    font-size: 10px;
-    font-weight: 500;
-    color: #000000;
-    margin: 30px 0px 0px 3px;
-    padding: 0rem 1rem;
-  }
-  .ss1 .hh1 input {
-      margin: 34px 0px 0px 40px;
-  }
-  .ss1 .hh1{
-    height: 30px;
-  }
-  .ss1 .hh1 h4 {
-    font-size: 10px;
-    font-family: "manrope";
-    color: #6236ff;
-    font-weight: 600;
-    margin: 35px 30px;
-    width: 97px;
-      
-  }
-  .ss1 .hh1 h6 {
-      margin: 36px 0px 0px -6px;
-      font-size: 10px;
-      font-family: 'manrope';
-      
-  }
-  .ss1 .hh1 .switch {
-      position: relative;
-      display: inline-block;
-      width: 55px;
-      height: 28px;
-      margin: 20px 0px 0px 35px;
-  }
-  .ss1 .hh1 .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 12px;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 20px;
-      width: 33px;
-      background-color: #6149cd30;
-      transition: 0.4s;
-      border-radius: 34px;
-  }
-  .ss1 .hh1 .switch input {
-      display: none;
-  }
-  #map-next-btn {
-    left: 140px;
-    top: 0.3rem;
-    border: none;
-    width: inherit;
-  
-  }
-  .ss1 .hh1 .slider:before {
-    position: absolute;
-      content: "";
-      height: 15px;
-      width: 14px;
-      left: 0;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.4s;
-      border-radius: 50px;
-      box-shadow: 0.35px 2px 7px #6149cd30;
-  }
-  .ss1 .hh1 input:checked+ .slider {
-      background-color: #6149cd;
-  }
-  
-  
-  .ss1 .hh1 input:checked + .slider:before {
-      transform: translateX(19px);
-  }
-  .form-control-checkbox {
-      width: 14px;
-      margin-right: 10px;
-      background: #FFFFFF 0% 0% no-repeat padding-box;
-      border: 1px solid #6149CD;
-      border-radius: 6px;
-      opacity: 1;
-      display: inline-block;
-      position: relative;
-      height: 14px;
-  
-  }
-  
-  .form-control-checkbox:checked {
-      background-color: #6149CD;
-  
-  }
-  
-
-  #identifier-box {
-      margin-left: -7%;
-  }
-  
-  }

@@ -14,54 +14,32 @@ h1 {
     color: #000000;
     margin: 0px 0px 10px 20px;
 }
-
 .active .bs-stepper-circle {
     background: #6149cd 0% 0% no-repeat padding-box;
     box-shadow: 2px 13px 30px #6149cd42;
     border-radius: 17px;
     opacity: 1;
-    width: 36px;
-    height: 35px;
     color: #ffffff;
     border-radius: 15px;
 }
-.bs-stepper-header {
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    align-items: center;
-    width: 65%;
-    margin: 0 257px;
-}
-
 .bs-stepper {
     box-shadow: 4px 22px 54px #695f971a;
     border-radius: 30px;
     font-family: 'Manrope';
     display: grid;
-    top: 2px;
     align-content: space-evenly;
-    width: 1467px;
-    height: 800px;
-    margin: 56px 250px;
 }
-
-.bs-stepper-header {
-    width: 57%;
-    margin: 8px 22%;
-    margin-top: -20px;
+#logins-part-trigger{
+    margin: 0;
+    padding: 0;
 }
-
 #close-btn {
-    width: 45px;
-    height: 45px;
     background: #ffffff;
     border-radius: 19px;
     opacity: 1;
     border: 1px solid #ebebeb;
     font-family: 'Manrope';
     font-size: 13px;
-    margin: -43px 31px 0 0;
 }
 
 .heading {
@@ -69,9 +47,6 @@ h1 {
     letter-spacing: -0.55px;
     font-weight: 800;
     width: 100%;
-    height: 30px;
-    margin-left: 37px;
-    margin-top: -33px;
 }
 
 .bs-stepper-circle {
@@ -82,8 +57,10 @@ h1 {
     color: #7a86a1;
     text-align: center;
     opacity: 1;
-    width: 36px;
-    height: 35px;
+}
+.overflo{
+    height: 13rem;
+    overflow-y: scroll;
 }
 
 .active .bs-stepper-label {
@@ -94,37 +71,22 @@ h1 {
     color: #6149cd;
     opacity: 1;
 }
-
-.bs-stepper-label {
-    display: inline-block;
-    margin: 0.25rem;
-    text-align: left;
-    letter-spacing: 0px;
-    color: #7a86a1;
-    opacity: 1;
-}
-
 .box {
-    width: 532px;
-    height: 410px;
     background-color: #fff4f2;
     border-radius: 30px;
     opacity: 1;
-    margin-left: 32%;
+    margin-left: 27%;
 }
-
 .box h5 {
     color: #000000;
     font-size: 20px;
     font-weight: bold;
-    padding: 35px 0px 0px 35px;
 }
-
 .form-control {
     display: block;
     width: 81%;
     height: calc(1.5em + 0.75rem + 2px);
-    font-family: 'Manrope';
+    font-family: "Manrope";
     font-size: 1rem;
     line-height: 1.5;
     color: #7a86a1;
@@ -135,8 +97,8 @@ h1 {
     border: 1px solid #ebebeb;
     border-radius: 17px;
     opacity: 1;
-    margin: 0px 0px 0px 30px;
-    padding: 0 150px 0 24px;
+    margin: 0px 0px 0px 36px;
+    padding: 0 157px  0 24px;
 }
 .ff textarea {
     margin: 25px 0px 0px 15px;
@@ -169,10 +131,8 @@ h1 {
 .box1 {
     background-color: #fff4f2;
     border-radius: 30px;
-    width: 870px;
-    height: 534px;
     opacity: 1;
-    margin-left: 21%;
+    margin-left: 17%;
     font-family: 'Manrope';
 }
 
@@ -180,20 +140,19 @@ h1 {
     color: #000000;
     font-size: 21px;
     font-weight: bold;
-    padding: 25px 0px 0px 25px;
+    padding: 17px 0px 0px 30px;
 }
 
 .box1 span {
     font-size: 16px;
     color: #7a86a1;
-    padding: 10px 0px 0px 35px;
 }
 
 .line1 {
     background-color: #ebebeb;
     width: 100%;
     height: 2px;
-    margin: 20% 0px 0px 0px;
+    margin: 0% 0px 6px 0px;
 }
 
 .keywords {
@@ -235,8 +194,6 @@ h1 {
 .form-check {
     position: relative;
     display: block;
-    padding-left: 1.25rem;
-    margin: 20px 0px 40px 100px;
 }
 
 input[type='radio'],
@@ -270,13 +227,7 @@ h4 {
     border-radius: 30px;
 }
 
-.child-interaction-1 {
-    position: absolute;
-    width: inherit;
-    height: inherit;
-    background-color: #fff4f2;
-    border-radius: 30px;
-}
+
 
 .child-interaction-2 {
     position: absolute;
@@ -301,7 +252,7 @@ h4 {
     font-size: 12px;
     width: 100%;
     resize: none;
-    -webkit-appearance: none;
+    // -webkit-appearance: none;
 }
 .input-area .text-box:focus,
 button:focus,
@@ -483,15 +434,34 @@ input:focus {
     width: 120px;
     padding: 0px 9px;
 }
+#form-box{
+    display: block;
+    width: 60%;
+    height: calc(1.5em + 0.75rem + 2px);
+    font-family: "Manrope";
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #7a86a1;
+    font-weight: 600;
+    background-color: #ffffff;
+    background-clip: padding-box;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    border: 1px solid #ebebeb;
+    border-radius: 17px;
+    opacity: 1;
+    margin: 0px 0px 0px 0px;
+}
 
 .box2 {
     position: relative;
+    justify-content: center;
+    align-items: center;
 }
 
 .box2::after {
     content: attr(data-required);
     position: absolute;
-    right: 130px;
+    right: 199px;
     top: 50%;
     font-size: 15px;
     transform: translateY(-50%);
@@ -500,13 +470,13 @@ input:focus {
 }
 
 .box2 .btn7 {
-    width: 70px;
-    height: auto;
+    width: 62px;
     background-color: #6149cd;
     border: none;
     color: #ffffff;
     border-radius: 18px;
     cursor: pointer;
+    height: 2rem;
 }
 
 .dropdown {
@@ -600,12 +570,8 @@ input:focus {
 }
 
 .btn9 {
-    margin: 0px;
     border: none;
     background-color: #fff;
-    top: -100px;
-    left: 182px;
-    width: 0px;
 }
 .assign-conversation,
 .update-name,
@@ -640,15 +606,11 @@ input:focus {
 
 #msgbox-body1 {
     font-size: 11px;
-    margin-left: 1em;
-    margin-top: -1.4em;
 }
 
 #msgbox-body2 {
     font-size: 11px;
-    margin-left: 2px;
-    margin-top: -1.4em;
-    overflow: hidden;
+    font-weight: 500;
 }
 
 /*** richtexteditor ***/
@@ -661,6 +623,7 @@ input:focus {
 .input-area .popup-dialog {
     max-width: 100%;
     margin-top: -150px;
+    cursor: pointer;
 }
 .input-area .popup-dialog.mention {
     max-width: 220px;
@@ -716,9 +679,7 @@ input:focus {
     font-weight: 800 !important;
     font-size: 10px !important;
 }
-.e-richtexteditor .e-rte-content .e-content {
-    padding: 0px;
-}
+
 
 .e-toolbar-wrapper {
     height: 0px !important;
@@ -748,15 +709,10 @@ input:focus {
     padding: 0 1.5px !important;
     margin: 4px 0 !important;
 }
-
-
     .title.err-msg {
         display: flex;
         justify-content: space-between;
-        align-items: center;
     }
-
-    
     #title-err-msg{
     font-family: 'Manrope';
     font-size: 12px;
@@ -783,8 +739,6 @@ input:focus {
         justify-content: space-between;
         align-items: center;
 }
-
-
 #smrply-err-msg {
      font-family: 'Manrope';
     font-size: 12px;
@@ -792,19 +746,12 @@ input:focus {
     margin-left: 42%;
     color: #dc3545;
 }
-
-
 .popfooter.row.text {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
 }
-
-// .smart-reply-success {
-//         text-align: center;
-// }
-
 .smart-reply-success p {
     text-align: center;
     letter-spacing: 0px;
@@ -878,56 +825,56 @@ input:focus {
     color: #000000;
 }
 
-    // margin: -5px 0px 0px -20px;
-
-
-/***** media queries for laptop screen *****/
-
-@media all and (max-width: 1536px) {
     .bs-stepper {
-        width: 1109px !important;
-        height: 100%;
-        margin: 30px 218px;
+        background: #FFFFFF 0% 0% no-repeat padding-box;
+        box-shadow: 4px 22px 54px #695F971A;
+        border-radius: 30px;
+        opacity: 1;
+        margin: 0;
     }
-
     .bs-stepper-label {
         font-size: 14px;
     }
-
-    .bs-stepper-header {
-        margin-top: 15px !important;
+    #head-add{
+        margin-top: 8px;
+        margin-left: 26px;
     }
-
-    // .heading.d-flex{
-    //     position: absolute;
-    // }
     .btn9 {
-        top: -95px;
-        left: 6px;
+        left: -26px;
+        height: 0;
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        top: 5.1rem;
     }
     .heading {
         font-size: 17px;
-        margin-left: 39px;
-        margin-top: 30px;
     }
-
+    #con-fir{
+        width: 65rem;
+        height: 0;
+    }
     .box {
         width: 449px;
-        height: 370px;
-        margin-left: 30%;
+        height: 18rem;
+    }
+    .bs-tab{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 46rem;
     }
 
     .box h5 {
         font-size: 15px;
-        padding: 39px 0px 0px 35px;
+        padding: 20px 0px 0px 30px;
     }
 
     .bs-stepper-header {
-        width: 65%;
-        margin: 12px 19%;
-        left: 1%;
-        margin-top: -20px;
-        margin-bottom: 23px;
+        width:109%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .form-control::placeholder {
@@ -940,20 +887,18 @@ input:focus {
     }
 
     .box1 {
-        width: 731px;
+        width: 75%;
         height: 100%;
-        margin-left: 18%;
-        margin-top: -46px;
     }
 
     .box1 h5 {
         font-size: 14px;
-        margin-bottom: revert;
     }
 
     .box1 span {
-        font-size: 12px;
-        padding-left: 40px;
+        font-size: 10px;
+        padding-left: 121px;
+        overflow-y: scroll;    
     }
 
     .box2::after {
@@ -963,51 +908,49 @@ input:focus {
 
     #line1-h4 {
         font-size: 14px;
+        margin: 0;
     }
 
     .form-check {
-        margin: 20px 0px 40px 80px;
+    margin: 9px 0px 25px 101px;
     }
 
     .form-check-label {
-        // font-size: 13px;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         margin: 8px;
         font-weight: 700;
     }
 
     .form-check-label-img {
-        margin-left: -3px;
         height: 11px;
+        margin-top: 0px;
     }
     .ff textarea {
-        margin: 25px 0px 0px 15px;
-        height: 150px;
-
+        margin: 9px 0px 0px 16px;
+        height: 132px;
         color: #7a86a1;
-        padding: 15px 12px 0 12px;
+        padding: 15px 12px 0 23px;
         width: 360px;
     }
     #close-btn {
-        width: 38px;
-        height: 38px;
         background: #ffffff;
         border-radius: 15px;
         opacity: 1;
         border: 1px solid #ebebeb;
-        font-family: 'Manrope';
+        font-family: "Manrope";
         font-size: 13px;
-        margin: 26px 31px 0 0;
+        margin-top: 15px;
+        margin-left: -83px;
+        width: 3%;
+        height: 90%;
     }
-
     input[type='radio'] {
-        width: 20px;
-        height: 20px;
+        width: 15px;
+        height: 16px;
         border-radius: 50%;
         outline: none;
         border: 3px solid #6149cd;
     }
-
     input[type='radio']:before {
         content: '';
         display: block;
@@ -1027,7 +970,7 @@ input:focus {
 
      input[type='radio'],
     input[type='checkbox'] {
-        margin: 9px 0px 0px -20px;
+        margin: 9px 0px 0px -14px;
     }
 
     .role {
@@ -1074,10 +1017,10 @@ input:focus {
 
     .desc-radio-input {
         position: absolute;
-        top: 70%;
-        right: 39%;
-        width: 270px;
-        height: 143px;
+        top: 22.3rem;
+        right: 28.8rem;
+        width: 255px;
+        height: 128px;
         background: #ffffff 0% 0% no-repeat padding-box;
         box-shadow: 4px 22px 54px #695f971a;
         border-radius: 30px;
@@ -1116,46 +1059,45 @@ input:focus {
     }
 
     .desc-radio-input-1 {
-        position: absolute;
-        top: 71%;
-        right: 19%;
-        width: 270px;
-        height: 143px;
-        background: #ffffff 0% 0% no-repeat padding-box;
-        box-shadow: 4px 22px 54px #695f971a;
-        border-radius: 30px;
-        opacity: 1;
+    position: absolute;
+    top: 22.7rem;
+    right: 13.8rem;
+    width: 255px;
+    height: 128px;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695f971a;
+    border-radius: 30px;
+    opacity: 1;
     }
 
     .desc-radio-input-2 {
-        position: absolute;
-        top: 71%;
-        right: 12%;
-        width: 270px;
-        height: 143px;
-        background: #ffffff 0% 0% no-repeat padding-box;
-        box-shadow: 4px 22px 54px #695f971a;
-        border-radius: 30px;
-        opacity: 1;
+    position: absolute;
+    top: 22.7rem;
+    right: -1.2rem;
+    width: 255px;
+    height: 128px;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695f971a;
+    border-radius: 30px;
+    opacity: 1;
     }
     .interactions {
         position: relative;
         width: 560px;
-        /* top: -48px; */
-        left: 26.4%;
-        height: 469px;
+        left: 22.4%;
         border-radius: 30px;
         overflow: hidden;
+        margin: 0;
+        padding: 0;
+        height: 25rem;
     }
-
     ::-webkit-scrollbar {
         display: none;
     }
 
     .child-interaction-1 {
         overflow-y: scroll;
-        height: 332px;
-        border-radius: 0 0 0 0;
+        height: 16rem;
     }
 
     .child-interaction-2 {
@@ -1175,8 +1117,8 @@ input:focus {
         background: #6149cd 0% 0% no-repeat padding-box;
         box-shadow: 2px 14px 32px #6149cd1a;
         border-radius: 17px;
-        width: 84px;
-        height: 41px;
+        width: 64px;
+        height: 44px;
         border: 0;
         top: 24px;
         margin-top: 10px;
@@ -1213,8 +1155,7 @@ input:focus {
 
     .interactions .child-interaction-1 .message-box {
         width: 310px !important;
-        height: 200px !important;
-        margin: 17px;
+        margin: 9px 16px;
         border: 1px solid #ebebeb !important;
         background: #ffffff 0% 0% no-repeat padding-box;
         border-radius: 19px;
@@ -1222,11 +1163,9 @@ input:focus {
         font-size: 12px !important;
         color: #6149cd;
         font-weight: 700;
-        font-family: 'Manrope';
+        font-family: "Manrope";
         word-wrap: break-word;
-        // overflow: auto;
     }
-
     #msgbox-head {
         font-size: 12px;
         color: #6149cd;
@@ -1240,8 +1179,9 @@ input:focus {
         font-family: 'Manrope';
         margin: 8px;
         font-size: 12px;
+        max-height: 180px;
+        overflow-y:scroll ;
     }
-
     textarea:focus,
     input:focus {
         outline: none;
@@ -1266,12 +1206,12 @@ input:focus {
 
     #add-action-dropdown {
         position: absolute;
-        top: 62%;
-        right: 14%;
+        top: 63%;
+        right: 21%;
         background: #ffffff;
         font-size: 11px;
         text-decoration: none;
-        font-family: 'Manrope';
+        font-family: "Manrope";
         font-weight: 700;
         border: 1px solid #ebebeb;
         border-radius: 15px;
@@ -1438,116 +1378,6 @@ input:focus {
         margin-top: 6px;
 
     }
-
+    .child-int-1{
+        background-color: #fff4f2;
     }
-
-
-@media screen and (max-width: 1366px) {
-    .bs-stepper {
-        margin: 30px 145px;
-    }
-
-    .form-check {
-        margin: 10px 0px 30px 70px;
-    }
-
-    input[type='radio'],
-    input[type='checkbox'] {
-        margin: 0px 10px 0px 0px;
-    }
-
-    .popup-dialog.RemoveTag {
-        max-width: 178px;
-        max-height: 272px;
-        top: 34%;
-        right: 4%;
-    }
-
-    .removeTag {
-        padding: 5px 16px;
-        width: 100%;
-        font-size: 11px;
-    }
-
-    .color-dots {
-        width: 8px;
-        height: 8px;
-        background: #fc52d5;
-        display: block;
-        margin-top: 3px;
-        border-radius: 50%;
-    }
-}
-
-@media screen and (max-width: 1280px) {
-    .form-check {
-        margin: 10px 0px 30px 70px;
-    }
-
-    .form-check-label {
-        font-size: 0.9rem;
-        margin: 8px;
-        margin-left: 24px;
-        margin-top: 0;
-    }
-
-    .bs-stepper {
-        margin: 65px 85px;
-    }
-
-    input[type='radio'],
-    input[type='checkbox'] {
-        margin: 3px 10px 0px 0px;
-    }
-
-    .desc-radio-input {
-        top: 67%;
-        right: 52%;
-        width: 260px;
-        height: 133px;
-    }
-
-    .popup-dialog.RemoveTag {
-        max-width: 178px;
-        max-height: 272px;
-        top: 34%;
-        right: 4%;
-    }
-
-    .removeTag {
-        padding: 5px 16px;
-        width: 100%;
-        font-size: 11px;
-    }
-
-    .color-dots {
-    width: 5px;
-    height: 5px;
-    background: #fc52d5;
-    display: block;
-    margin-top: 5px;
-    margin-right: 3px;
-    border-radius: 50%;
-    }
-
-    .desc-radio-input-1 {
-        position: absolute;
-        top: 67%;
-        right: 33%;
-    }
-    .desc-radio-input-2 {
-        position: absolute;
-        top: 67%;
-        right: 17%;
-    }
-
-    .qr-modal {
-        position: relative;
-    top: 115px !important;
-}
-
-#add_tags {
-    font-weight: 600;
-    margin-top: 0px;
-}
-}

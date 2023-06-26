@@ -1,0 +1,229 @@
+* {
+    font-family: 'Manrope';
+  
+}
+
+.main-title h3 {
+    font-weight: 800;
+    letter-spacing: -0.75px;
+    cursor: default;
+
+ }
+
+ .back-btn img {
+    height: 14px;
+    cursor: pointer;
+ }
+
+.plan-cards {
+    border: 1px solid #EBEBEB;
+    border-radius: 30px;
+    opacity: 1;
+}
+
+.premiumplus.plan-cards {
+    background: #FFF4F2 0% 0% no-repeat padding-box;
+    border: none;
+
+}
+
+.billing-history-btn button {
+    font-size: 0.8rem;
+    border: none;
+    outline: none;
+    background: transparent 
+    linear-gradient(90deg, #6149cd 0%, #a654ac 47%, #ea5f8b 100%) 
+    0% 0% no-repeat padding-box;
+    border-radius: 19px;
+    color: #ffffff;
+    height: 40px;
+
+}
+
+.bill-img {
+    height: 17px;
+}
+
+
+.cards-container {
+    gap: 14px;
+    // height: 720px;
+}
+
+.plan-cards h3 {
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.93px;
+   
+}
+
+.cards-heading h2 {
+    font-weight: 700;
+    letter-spacing: -0.93px;
+}
+
+.plan-price {
+    font-weight: 700;
+}
+
+.discount-price {
+    font-weight: 700;
+}
+
+.standard.plan-cards span.plan-price {
+    text-decoration: line-through;
+    color: #7A86A1;
+   
+}
+
+.toggle-txt p {
+    
+    color: #ffffff;
+    font-weight: 400;
+}
+
+.toggle-txt1 p {
+    color: #000000;
+    font-weight: 500;
+}
+
+
+
+.toggle-button-container {
+    background: transparent 
+    linear-gradient(271deg, #F9B035 0%, #F98C4E 53%, #F96767 100%)
+    0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px solid #E9E9EA;
+    border-radius: 18px;
+    height: 50px;
+}
+
+.toggle-button-container p {
+    font-size: 0.6vw;
+    font-weight: 600;
+    margin: 0;
+}
+
+
+//toggles button
+
+.switch-toggle .switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+}
+.switch-toggle .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 1px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    width: 36px;
+    background-color: #6149cd;
+    transition: 0.3s ease-out;
+    border-radius: 10px;
+}
+.switch-toggle .switch input {
+    display: none;
+}
+
+.switch-toggle .slider:before {
+    position: absolute;
+    content: '';
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    transition: 0.3s ease-out;
+    border-radius: 10px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0.35px 2px 7px #6149cd;
+}
+
+.switch-toggle input:checked + .slider {
+    background-color: #6149cd;
+ 
+}
+
+.switch-toggle input:checked + .slider::before {
+    transform: translateX(15px);
+}
+
+.select-choices {
+    margin: 10px;
+}
+
+.select-choices p {
+    color: #000000;
+    font-weight: 500;
+    font-size: 0.7vw;
+    cursor: default;
+}
+
+.select-plan-btn button {
+    padding: 5% 30% 5% 30%;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 2px 14px 32px #6149CD1A;
+    border-radius: 22px;
+    border:none;
+    //outline: none;
+    font-size: 0.8vw;
+    color: #6149cd;
+    font-weight: 700;
+    
+}
+
+.select-plan-btn button.current-plan{
+    background: transparent linear-gradient(90deg, #6149CD 0%, #A654AC 47%, #EA5F8B 100%)
+    0% 0% no-repeat padding-box;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+// checkboxes styles
+
+input[type=radio], input[type=checkbox] {
+
+    width: 1em;
+    height: 1em;
+    background-color: #E1DEE5;
+    border-radius: 50%;
+    vertical-align: middle;
+    border: 1px solid #ddd;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    cursor: pointer;
+
+}
+input[type=checkbox]:checked {
+
+    background-color: #6149CD;
+       
+    }
+
+    //popup selectplans
+
+
+.selectplan {
+//  height: 700px;
+background-color: #FFF4F2;
+
+}
+
+
+.selectplanbody {
+    padding: 5% 5% 5% 5%;
+}
+
+
+.selectplanbody .right-part {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 2px 14px 32px #6149CD1A;
+    border-radius: 22px;
+}
+

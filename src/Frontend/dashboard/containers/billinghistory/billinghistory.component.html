@@ -1,0 +1,124 @@
+<sb-layout-dashboard>
+    <sb-top-nav title="My Profile"></sb-top-nav>
+
+
+    <div class="row my-4">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8 p-0 my-2 notification-header">
+            <div class="container-fluid p-0 d-flex justify-content-around align-items-center">
+                <div class="col-sm-6 text-left d-flex pl-0">
+                    <div class="d-flex">
+                        <div class="back-btn" routerLink="/dashboard/myprofile">
+                            <img src="assets/img/profile/previous1.svg" />
+                        </div>
+                        <div class="main-title">
+                            <h4 class="m-0 px-4">Billing History</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-right d-flex justify-content-end pr-0">
+                        <div class="search-field">
+                            <form class="d-none d-md-inline-block form-inline">
+                            <div class="input-group search">
+        
+                                <input class="form-control" type="text" placeholder="Search" name="search" [(ngModel)]="searchText" />
+        
+                                <img src="assets/img/search.png">
+                            </div>
+                            </form>
+                        </div>
+                      
+                </div>
+            </div>
+        
+        </div>
+        <div class="col-sm-2"></div>
+
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8 notification-card">
+            <div class="container-fluid ">
+                <div class="row pb-3 justify-content-center">
+                <div class="col-sm-12 d-flex pt-5 pb-4 text-center notification-card-header">
+                    <div class="header-col">
+                        Invoice No.
+                    </div>
+                    <div class="header-col">
+                        Date
+                    </div>
+                    <div class="header-col">
+                        Amount
+                    </div>
+                    <div class="header-col">
+                      Payment Mode
+                    </div>
+                    <div class="header-col">
+                       Download
+                    </div>
+                    
+                </div>
+                </div>
+                <div class="notification-content-parent">
+                    <div *ngFor="let billingitem of billingHistoryData | searchfilter:searchText | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" 
+                      class="row justify-content-center  notification-content">
+                        <div class="col-sm-12 d-flex py-3 text-center">
+                          
+                            <div class="header-col">{{ billingitem.invoiceno }}</div> 
+                            <div class="header-col">{{ billingitem.date }}</div>
+                            <div class="header-col">{{ billingitem.amount }}</div>
+                            <div class="header-col">{{ billingitem.paymentmode }}</div>
+                            <div class="header-col"><img src="../../../../assets/img/profile/import.svg">{{ billingitem.download }}</div>
+    
+                     
+                        </div>
+                    </div>
+                </div>
+          
+    
+
+                <div class="col-sm-12 d-flex px-2 mt-4 mb-4 notification-footer">
+
+                <div class="col-sm-6 d-flex align-items-center text-left">
+                    <p class="p-0 m-0">Showing:</p>
+                    <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                        <option value="25">25</option>
+                        <option value="30">30</option>
+                        <option value="45">35</option>
+                        <option value="40">40</option>
+                        <option value="45">45</option>
+                        <option value="50">50</option>
+                    </select>
+
+                </div>
+                <div class="col-sm-6 text-right">
+                <nav aria-label="navigation">
+                    <ul class="justify-content-end align-items-center m-0 pagination">
+                      <li class="btn-list">
+                        <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1">
+                            <img src="assets/img/profile/previous.svg" />
+                        </button>
+                    </li>
+                      <li *ngFor="let item of paging" class="pagination-num-container">
+                        <a [ngClass]="{'pagination-disabled': currentPage !=item}" (click)="currentPage=item" class="pagination-num-body">{{item}}</a>
+                     </li>
+                      <li class="btn-list">
+                        <button class="pagination-btn" [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" >
+                            <img src="assets/img/profile/next.svg" />
+                        </button>
+                    </li>
+                    </ul>
+                  </nav>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+
+    
+</sb-layout-dashboard>

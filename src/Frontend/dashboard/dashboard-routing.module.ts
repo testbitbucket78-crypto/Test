@@ -17,7 +17,7 @@ export const ROUTES: Routes = [
     {
         path: '',
         data: {
-            title: 'Dashboard - CIP',
+            title: 'Dashboard',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
@@ -31,14 +31,14 @@ export const ROUTES: Routes = [
      {
         path: 'contacts',
         data: {
-            title: 'contacts',
+            title: 'Contacts',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'contacts',
+                    text: 'Contacts',
                     active: true,
                 },
             ],
@@ -50,14 +50,14 @@ export const ROUTES: Routes = [
      {
         path: 'teambox',
         data: {
-            title: 'teambox',
+            title: 'Teambox',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'teambox',
+                    text: 'Teambox',
                     active: true,
                 },
             ],
@@ -173,6 +173,7 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.AddSmartRepliesComponent,
     },
+
       {
         path: 'replyMaterial',
         data: {
@@ -358,14 +359,14 @@ export const ROUTES: Routes = [
      {
         path: 'setting',
         data: {
-            title: 'setting',
+            title: 'Settings',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'setting',
+                    text: 'Settings',
                     active: true,
                 },
             ],
@@ -408,6 +409,96 @@ export const ROUTES: Routes = [
         } as SBRouteData,
         canActivate: [],
         component: dashboardContainers.AccountsettingComponent,
+    },
+    {
+        path: 'myprofile',
+        data: {
+            title: 'My Profile',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'My Profile',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.MyprofileComponent,
+    },
+    {
+        path: 'manageplan',
+        data: {
+            title: 'My Profile',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'My Profile',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.ManageplanComponent,
+    },
+    {
+        path: 'walletusage',
+        data: {
+            title: 'My Profile',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'My Profile',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.WalletusageComponent,
+    },
+    {
+        path: 'support',
+        data: {
+            title: 'Support',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Support',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.SupportComponent,
+    },
+    {
+        path: 'billinghistory',
+        data: {
+            title: 'My Profile',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'My Profile',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.BillinghistoryComponent,
     },
     {
         path: 'campaignsetting',
@@ -462,6 +553,24 @@ export const ROUTES: Routes = [
         } as SBRouteData,
         canActivate: [],
         component: dashboardContainers.InboxsettingComponent,
+    },
+    {
+        path: 'notifications',
+        data: {
+            title: 'Notifications',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                {
+                    text: 'Notifications',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.NotificationsComponent,
     },
      {
         path: 'organization',

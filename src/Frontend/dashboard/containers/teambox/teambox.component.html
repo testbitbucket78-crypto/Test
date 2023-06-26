@@ -151,7 +151,7 @@
 				<div *ngFor="let messageGroup of selectedInteraction.messageList; let i = index"  id={{i}} class="conversation_list_inner_box">
 					<div class="date_seprator"><span>---</span><p>{{dateSince(messageGroup.date)}}</p><span>--</span></div>
 					
-					<div *ngFor="let message of messageGroup.items; let i = index"  id={{message.Message_id}}  [ngClass]="message.message_direction =='incomming' ? 'message_box left' : 'message_box'">
+					<div *ngFor="let message of messageGroup.items; let i = index"  id={{message.Message_id}}  [ngClass]="message.message_direction =='IN' ? 'message_box left' : 'message_box'">
 							<label *ngIf="message.message_direction !='incomming'">{{message.AgentName}}</label>
 							<div class="content" (mouseover)="markItRead(message)">
 								<div *ngIf="message.message_media" class="message_media">

@@ -1,0 +1,242 @@
+* {
+    font-family: 'Manrope';
+}
+
+.back-btn img {
+    cursor: pointer;
+    height: 15px;
+}
+
+.main-title h4 {
+    letter-spacing: -0.75px;
+    font-weight: 800;
+    cursor: default;
+}
+
+.main-note p {
+    font-size: 0.875rem;
+    color: #7A86A1;
+    cursor: default;
+}
+
+// hide scrollbar //
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.main-container-left {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px;
+ }
+
+.main-container-body-left {
+    overflow-y: scroll;
+    height: 656px;
+}
+.main-container-left h5, .main-container-left h6 {
+    font-weight: 800;
+    letter-spacing: -0.55px;
+}
+
+.line {
+    margin-left: auto;
+    margin-right: auto;
+    height: 0.9201049805px;
+    background: #EBEBEB 0% 0% no-repeat padding-box;
+}
+
+.usage-insight-container {
+    padding: 5% 10% 5%;
+    
+}
+   
+.usage-content-header .head {
+    letter-spacing: -0.45px;
+    color: #6149CD;
+    font-weight: 600;
+}
+
+
+.main-container-right {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px;
+ }
+
+.main-container-right h5 {
+    font-weight: 800;
+    letter-spacing: -0.55px;
+    cursor: default;
+}
+//main-content-riught //
+
+.notification-card-header {
+    border-bottom: 1px solid #695F971A;
+    color: #C0BDCC;
+}
+
+.notification-content-parent {
+    height: 496px;
+    overflow-y: scroll;
+}
+
+.row-header {
+    flex: 1 1;
+    font-size: 0.875rem;
+    font-weight: 400;
+    cursor: default;
+
+}
+
+.row-data {
+    flex: 1 1;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: default;
+
+}
+
+
+.drop-down-btn{
+    min-width: 85px;
+    color: #7a86a1;
+    font-size: 12px;
+    
+}
+.filterdate {
+    color: #000000;
+    font-weight: 700;
+}
+.toggle-box {
+    height: 35px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    opacity: 1;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    cursor: pointer;
+    background: transparent url(/assets/img/teambox/dropdown.svg) no-repeat;
+    background-size: 10px;
+    background-position: center right 10px;
+    padding:20px 15px;
+}
+.toggle-box span{
+    margin:0 15px 0px 10px
+}
+
+/**** filter channel popup ****/
+
+
+.modal-header-left p {
+    font-size: 0.875rem;
+    color: #6149CD;
+    font-weight: 700;
+}
+
+
+.modal-header-right {
+    background: #FFFFFF;
+    border: 1px solid #EBEBEB;
+    border-radius: 15px;
+    padding: 3% 6%;
+
+}
+
+.modal-header-right img {
+    width: 10px;
+}
+.filterchannelsfooter {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border: none;
+
+}
+.filterchannelsfooter button {
+    border: none;
+    outline: none;
+    color: #FFFFFF;
+    background: #6149CD;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 17px;
+    font-size: 0.8rem;
+    padding: 5% 14%;
+    line-height: 14px;
+    
+}
+
+.form-check {
+    font-size: 0.7rem;
+}
+
+.form-check-input {
+    position: absolute;
+    margin-top: 0.1rem;
+    margin-left: -1.25rem;
+}
+
+.close-box {
+    cursor: pointer;
+}
+
+
+//pagination styling
+
+.notification-footer p {
+    color: #7A86A1;
+}
+
+select {
+    border: none;
+    outline: none;
+    color: #7A86A1;
+    cursor: pointer;
+
+}
+
+// pagination style//
+
+.pagination-btn {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background: #ffffff;
+    width: 36px;
+    height: 36px;
+    opacity: 0.5;
+
+}
+
+.pagination-btn:enabled {
+    background: #FFFFFF;
+    box-shadow: 1px 8px 29px #695F972E;
+    border-radius: 15px;
+    opacity: 1;
+}
+
+.pagination-num-container {
+    padding: 0% 2%;
+}
+
+.pagination-num-body {
+
+    font-size: 15px;
+    font-weight: 500;
+    color: #6149CD;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.pagination-disabled {
+    color: #C0BDCC!important;
+}
+
+.btn-list {
+    padding: 0 2%;
+}
+

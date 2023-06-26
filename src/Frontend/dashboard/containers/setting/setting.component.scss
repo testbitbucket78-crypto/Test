@@ -14,15 +14,14 @@
 //     margin: 20px 10px;
 //     float: right;
 // }
-* {
-    font-family: "Manrope";
-}
+
 
 .setting-link-card .setting-link{
     color: #7A86A1;
     padding-left: 10px;
     font-size: 15px;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .setting-link-card .active{

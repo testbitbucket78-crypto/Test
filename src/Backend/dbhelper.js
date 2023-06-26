@@ -7,7 +7,7 @@ var db = mysql.createConnection({
     user: val.user,
     password: val.password,
     database: val.database,
-
+    charset: 'utf8mb4',
 
 });
 

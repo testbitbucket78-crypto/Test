@@ -18,6 +18,8 @@ import { ScheduleComponent } from './schedule/schedule.component';
 import { ScheduleViewComponent } from './scheduleView/scheduleView.component';
 import { SettingComponent } from './setting/setting.component';
 import { GeneralsettingComponent } from './generalsetting/generalsetting.component';
+import { OrganisationalSettingsComponent } from './organisational-settings/organisational-settings.component';
+import { WorkingHoursComponent } from './working-hours/working-hours.component';
 import { OrganizationComponent } from './organization/organization.component';
 import { AcoountSettingsComponent } from './acoount-settings/acoount-settings.component';
 import { AccountsettingComponent } from './accountsetting/accountsetting.component';
@@ -25,8 +27,15 @@ import { CampaignsettingComponent } from './campaignsetting/campaignsetting.comp
 import { ContactsettingComponent } from './contactsetting/contactsetting.component';
 import { InboxsettingComponent } from './inboxsetting/inboxsetting.component';
 import { AddSmartRepliesComponent} from './addSmartReplies/addSmartReplies.component';
+import { NotificationsComponent } from './notifications/notifications.component';
+import { MyprofileComponent } from './myprofile/myprofile.component';
+import { ManageplanComponent } from './manageplan/manageplan.component';
+import { WalletusageComponent } from './walletusage/walletusage.component';
+import { BillinghistoryComponent } from './billinghistory/billinghistory.component';
+import { SupportComponent } from './support/support.component';
 
-export const containers = [DashboardComponent, ReportcampaignComponent, ReportautomationComponent, ConversationComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ReplyMaterialComponent, ImportComponent, CampaignsComponent, ComposeComponent, AutomationComponent, ReportsComponent, MessageComponent, CampaignReportComponent, ScheduleComponent, ScheduleViewComponent, SettingComponent, GeneralsettingComponent, OrganizationComponent, AccountsettingComponent, CampaignsettingComponent,AcoountSettingsComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent];
+
+export const containers = [DashboardComponent, ReportcampaignComponent, ReportautomationComponent, ConversationComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ReplyMaterialComponent, ImportComponent, CampaignsComponent, ComposeComponent, AutomationComponent, ReportsComponent, MessageComponent, CampaignReportComponent, ScheduleComponent, ScheduleViewComponent, SettingComponent, GeneralsettingComponent, OrganizationComponent, AccountsettingComponent, CampaignsettingComponent,AcoountSettingsComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent,NotificationsComponent,SupportComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './addSmartReplies/addSmartReplies.component';
@@ -50,8 +59,16 @@ export * from './scheduleView/scheduleView.component';
 export * from './setting/setting.component';
 export * from './generalsetting/generalsetting.component';
 export * from './organization/organization.component';
+export * from './organisational-settings/organisational-settings.component';
+export * from './working-hours/working-hours.component';
 export * from './accountsetting/accountsetting.component';
 export * from './campaignsetting/campaignsetting.component';
 export * from './contactsetting/contactsetting.component';
 export * from './inboxsetting/inboxsetting.component';
+export * from './notifications/notifications.component';
+export * from './myprofile/myprofile.component';
+export * from './manageplan/manageplan.component';
+export * from './walletusage/walletusage.component';
+export * from './billinghistory/billinghistory.component';
+export * from './support/support.component';
 

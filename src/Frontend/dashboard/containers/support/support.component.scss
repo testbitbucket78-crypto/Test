@@ -1,0 +1,62 @@
+* {
+    font-family: 'Manrope';
+
+}
+
+.row-header h1 {
+    font-weight: 800;
+}
+
+.userguide, .apidocs, .raiseticket {
+    border: 2px solid #F0F0F0;
+    border-radius: 30px;
+}
+
+.faqs {
+    border: 2px solid #ffffff;
+    background: #FFF4F2;
+    border-radius: 30px;
+}
+
+.content {
+    padding: 10% 10% 10% 10%;
+}
+
+.content p {
+    margin: 0;
+}
+
+.content h6 { 
+    margin: 0;
+    font-size: 1.2rem;
+    padding: 8% 0 4% 0%;
+}
+
+.content p {
+    color: #7A86A1;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+span img {
+    cursor: pointer;
+
+}
+
+.title {
+    font-weight: 800;
+}
+
+.cards-common {
+    flex: 1 1;
+}
+
+.arrow-btn {
+    padding: 4% 0% 10% 0%;
+
+}
+
+.arrow-btn img{
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -1,0 +1,510 @@
+<div>
+    <div class="row">
+        <div class="col-sm-9 py-4 setting-field">
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1">Business
+                Profile</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2">Working
+                Hours</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3">Roles</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 4">Teams</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 5">Users</a>
+        </div>
+    </div>
+    <div class="setting-card" *ngIf="selectedTab==1">
+        <div class="row justify-content-center">
+            <div class="w-90">
+                <div class="profile-img">
+                    <img>
+                </div>
+            </div>
+            <button class="account-white-btn mx-1" (click)="patchCompanyForm()" data-bs-toggle="modal" data-bs-target="#companyDetailModal">
+                <img class="p-0" src="../../../../assets/img/edit.png">
+            </button>
+        </div>
+        <div class="profile-card mt-3" *ngIf="!companyData">
+            <span class="profile-heading">Add Company Details</span><br>
+            <p class="pb-0 mb-0">--</p>
+        </div>
+        <div class="profile-card mt-3" *ngIf="companyData">
+            <span class="profile-heading">{{companyData?.Company_Name}}</span><br>
+            <p class="pb-0 mb-0">{{companyData?.Country}}&nbsp;|&nbsp;{{companyData?.Phone_Number}}</p>
+        </div>
+        <div class="flex-row mx-5">
+            <div class="d-flex">
+                <img src="../../../../assets/img/settings/Path 1968.svg">
+                <p *ngIf="!companyData?.Industry" class="industry-txt">--</p>
+                <p *ngIf="companyData?.Industry" class="industry-txt">{{companyData?.Industry}}</p>
+            </div>
+            <div class="d-flex">
+                <img src="../../../../assets/img/settings/Path 1967.svg">
+                <p *ngIf="!companyData?.Company_Website" class="industry-txt">--</p>
+                <p *ngIf="companyData?.Company_Website" class="industry-txt">{{companyData?.Company_Website}}</p>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <div class="flex-header">
+                <span class="profile-heading">Add Locale Details</span>
+                <button class="account-white-btn mx-1" (click)="patchLocaleForm()" data-bs-toggle="modal" data-bs-target="#localeDetailModal">
+                    <img class="p-0" src="../../../../assets/img/edit.png">
+                </button>
+            </div>
+            <p>{{localeData?.Time_Zone ? localeData?.Time_Zone:'--'}}&nbsp;|&nbsp;{{localeData?.Currency ? localeData?.Currency:'--'}}</p>
+            <div class="d-flex">
+                <div class="left-col">
+                    <span class="profile-sub-heading">Time Format</span>
+                    <p *ngIf="!localeData?.Time_Format">--</p>
+                    <p *ngIf="localeData?.Time_Format">{{localeData?.Time_Format}}</p>
+                </div>
+                <div>
+                    <span class="profile-sub-heading">Date Format</span>
+                    <p *ngIf="!localeData?.Date_Format">--</p>
+                    <p *ngIf="localeData?.Date_Format">{{localeData?.Date_Format}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <div class="flex-header">
+                <span class="profile-heading">Add Billing Address</span>
+                <button class="account-white-btn mx-1" (click)="patchBillingForm()" data-bs-toggle="modal" data-bs-target="#billingDetailModal">
+                    <img class="p-0" src="../../../../assets/img/edit.png">
+                </button>
+            </div>
+            <p>{{localeData?.Address1 ? localeData?.Address1 + ',':'--'}}&nbsp;{{localeData?.Address2 ? localeData?.Address2:'--'}}</p>
+            <div class="d-flex">
+                <div class="left-col">
+                    <span class="profile-sub-heading">Billing Email Id</span>
+                    <p>{{billingData?.billing_email ? billingData?.billing_email:'--'}}</p>
+                </div>
+                <div>
+                    <span class="profile-sub-heading">Tax/Vat/GST ID</span>
+                    <p>{{billingData?.InvoiceId ? billingData?.InvoiceId:'--'}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="companyDetailModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content account-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Company Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="modal-body px-5 pt-0">
+                    <div class="d-flex px-3">
+                        <div class="profile-img">
+                            <img>
+                        </div>
+                        <span class="p-3">Add<br> Company logo</span>
+                    </div>
+                    <form [formGroup]="companyDetailForm" class="mt-4">
+                        <div class="profile-form-row">
+                            <div class="profile-form-left">
+                                <span>Company Name*</span>
+                                <input type="text" class="input-form" formControlName="Company_Name" placeholder="Enter company name">
+                            </div>
+                            <div>
+                                <span>Company Website</span>
+                                <input type="text" class="input-form" formControlName="Company_Website" placeholder="Enter URL">
+                            </div>
+                        </div>
+                        <div class="profile-form-row">
+                            <div class="profile-form-left">
+                                <span>Country</span>
+                                <select class="input-form" formControlName="Country" >
+                                    <option selected>Select country</option>
+                                    <option *ngFor="let item of country" [value]="item">{{item}}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span>Phone Number*</span>
+                                <input type="text" class="input-form" formControlName="Phone_Number" placeholder="Enter">
+                            </div>
+                        </div>
+                        <div class="profile-form-row">
+                            <div class="profile-form-left">
+                                <span>Industry</span>
+                                <select class="input-form" formControlName="Industry" placeholder="Select Industry">
+                                    <option selected>Select Industry</option>
+                                    <option *ngFor="let item of industry" [value]="item">{{item}}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span>No. of Employees</span>
+                                <select class="input-form" formControlName="Employees_count">
+                                    <option selected>Select no of employees</option>
+                                    <option *ngFor="let item of noOfEmployees" [value]="item">{{item}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="account-btn" (click)="saveCompanyDetails()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" tabindex="-1" id="billingDetailModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content billing-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Billing Address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="modal-body px-5 pt-0">
+                    <form [formGroup]="billingForm" class="mt-4">
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Billing Email Id</span>
+                            <input type="text" class="input-form" formControlName="billing_email" placeholder="Enter billing email id">
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Tax/VAT/GST Id</span>
+                            <input type="text" class="input-form" formControlName="InvoiceId" placeholder="Enter Tax/VAT/GST ID">
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Location</span>
+                            <select class="input-form" formControlName="Country">
+                                <option>Select country</option>
+                                <option *ngFor="let item of country" [value]="item">{{item}}</option>
+                            </select>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col"></span>
+                            <select class="input-form" formControlName="State">
+                                <option>State</option>
+                            </select>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col"></span>
+                            <select class="input-form" formControlName="City">
+                                <option>City</option>
+                            </select>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Address line 1</span>
+                            <input type="text" class="input-form" formControlName="Address1" placeholder="Your address">
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Address line 2</span>
+                            <input type="text" class="input-form" formControlName="Address2" placeholder="Your address">
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Zip code</span>
+                            <input type="text" class="input-form" formControlName="zip_code" placeholder="Your zip code">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="account-btn" (click)="saveBillingDetails()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="localeDetailModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content locale-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Locale Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="modal-body px-5 pt-0">
+                    <form [formGroup]="localeForm" class="mt-4">
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Date Format</span>
+                            <select class="input-form selectpicker" formControlName="Date_Format" >
+                                <option selected>Select date format</option>
+                                <option *ngFor="let item of dateFormates" [value]="item">{{item}}</option>
+                            </select>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Time Format</span>
+                            <select class="input-form" formControlName="Time_Format">
+                                <option >Select Time Format</option>
+                                <option [value]='12'>12 Hours</option>
+                                <option [value]='24'>24 Hours</option>
+                            </select>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Time Zone</span>                            
+                            <select name="timezone" class="input-form" formControlName="Time_Zone">
+                                <option>Select time zone</option>
+                                <option value="Etc/GMT+12">(GMT-12:00) International Date Line West</option>
+                                <option value="Pacific/Midway">(GMT-11:00) Midway Island, Samoa</option>
+                                <option value="Pacific/Honolulu">(GMT-10:00) Hawaii</option>
+                                <option value="US/Alaska">(GMT-09:00) Alaska</option>
+                                <option value="America/Los_Angeles">(GMT-08:00) Pacific Time (US & Canada)</option>
+                                <option value="America/Tijuana">(GMT-08:00) Tijuana, Baja California</option>
+                                <option value="US/Arizona">(GMT-07:00) Arizona</option>
+                                <option value="America/Chihuahua">(GMT-07:00) Chihuahua, La Paz, Mazatlan</option>
+                                <option value="US/Mountain">(GMT-07:00) Mountain Time (US & Canada)</option>
+                                <option value="America/Managua">(GMT-06:00) Central America</option>
+                                <option value="US/Central">(GMT-06:00) Central Time (US & Canada)</option>
+                                <option value="America/Mexico_City">(GMT-06:00) Guadalajara, Mexico City, Monterrey</option>
+                                <option value="Canada/Saskatchewan">(GMT-06:00) Saskatchewan</option>
+                                <option value="America/Bogota">(GMT-05:00) Bogota, Lima, Quito, Rio Branco</option>
+                                <option value="US/Eastern">(GMT-05:00) Eastern Time (US & Canada)</option>
+                                <option value="US/East-Indiana">(GMT-05:00) Indiana (East)</option>
+                                <option value="Canada/Atlantic">(GMT-04:00) Atlantic Time (Canada)</option>
+                                <option value="America/Caracas">(GMT-04:00) Caracas, La Paz</option>
+                                <option value="America/Manaus">(GMT-04:00) Manaus</option>
+                                <option value="America/Santiago">(GMT-04:00) Santiago</option>
+                                <option value="Canada/Newfoundland">(GMT-03:30) Newfoundland</option>
+                                <option value="America/Sao_Paulo">(GMT-03:00) Brasilia</option>
+                                <option value="America/Argentina/Buenos_Aires">(GMT-03:00) Buenos Aires, Georgetown</option>
+                                <option value="America/Godthab">(GMT-03:00) Greenland</option>
+                                <option value="America/Montevideo">(GMT-03:00) Montevideo</option>
+                                <option value="America/Noronha">(GMT-02:00) Mid-Atlantic</option>
+                                <option value="Atlantic/Cape_Verde">(GMT-01:00) Cape Verde Is.</option>
+                                <option value="Atlantic/Azores">(GMT-01:00) Azores</option>
+                                <option value="Africa/Casablanca">(GMT+00:00) Casablanca, Monrovia, Reykjavik</option>
+                                <option value="Etc/Greenwich">(GMT+00:00) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London</option>
+                                <option value="Europe/Amsterdam">(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>
+                                <option value="Europe/Belgrade">(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>
+                                <option value="Europe/Brussels">(GMT+01:00) Brussels, Copenhagen, Madrid, Paris</option>
+                                <option value="Europe/Sarajevo">(GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb</option>
+                                <option value="Africa/Lagos">(GMT+01:00) West Central Africa</option>
+                                <option value="Asia/Amman">(GMT+02:00) Amman</option>
+                                <option value="Europe/Athens">(GMT+02:00) Athens, Bucharest, Istanbul</option>
+                                <option value="Asia/Beirut">(GMT+02:00) Beirut</option>
+                                <option value="Africa/Cairo">(GMT+02:00) Cairo</option>
+                                <option value="Africa/Harare">(GMT+02:00) Harare, Pretoria</option>
+                                <option value="Europe/Helsinki">(GMT+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius</option>
+                                <option value="Asia/Jerusalem">(GMT+02:00) Jerusalem</option>
+                                <option value="Europe/Minsk">(GMT+02:00) Minsk</option>
+                                <option value="Africa/Windhoek">(GMT+02:00) Windhoek</option>
+                                <option value="Asia/Kuwait">(GMT+03:00) Kuwait, Riyadh, Baghdad</option>
+                                <option value="Europe/Moscow">(GMT+03:00) Moscow, St. Petersburg, Volgograd</option>
+                                <option value="Africa/Nairobi">(GMT+03:00) Nairobi</option>
+                                <option value="Asia/Tbilisi">(GMT+03:00) Tbilisi</option>
+                                <option value="Asia/Tehran">(GMT+03:30) Tehran</option>
+                                <option value="Asia/Muscat">(GMT+04:00) Abu Dhabi, Muscat</option>
+                                <option value="Asia/Baku">(GMT+04:00) Baku</option>
+                                <option value="Asia/Yerevan">(GMT+04:00) Yerevan</option>
+                                <option value="Asia/Kabul">(GMT+04:30) Kabul</option>
+                                <option value="Asia/Yekaterinburg">(GMT+05:00) Yekaterinburg</option>
+                                <option value="Asia/Karachi">(GMT+05:00) Islamabad, Karachi, Tashkent</option>
+                                <option value="Asia/Calcutta">(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
+                                <option value="Asia/Calcutta">(GMT+05:30) Sri Jayawardenapura</option>
+                                <option value="Asia/Katmandu">(GMT+05:45) Kathmandu</option>
+                                <option value="Asia/Almaty">(GMT+06:00) Almaty, Novosibirsk</option>
+                                <option value="Asia/Dhaka">(GMT+06:00) Astana, Dhaka</option>
+                                <option value="Asia/Rangoon">(GMT+06:30) Yangon (Rangoon)</option>
+                                <option value="Asia/Bangkok">(GMT+07:00) Bangkok, Hanoi, Jakarta</option>
+                                <option value="Asia/Krasnoyarsk">(GMT+07:00) Krasnoyarsk</option>
+                                <option value="Asia/Hong_Kong">(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>
+                                <option value="Asia/Kuala_Lumpur">(GMT+08:00) Kuala Lumpur, Singapore</option>
+                                <option value="Asia/Irkutsk">(GMT+08:00) Irkutsk, Ulaan Bataar</option>
+                                <option value="Australia/Perth">(GMT+08:00) Perth</option>
+                                <option value="Asia/Taipei">(GMT+08:00) Taipei</option>
+                                <option value="Asia/Tokyo">(GMT+09:00) Osaka, Sapporo, Tokyo</option>
+                                <option value="Asia/Seoul">(GMT+09:00) Seoul</option>
+                                <option value="Asia/Yakutsk">(GMT+09:00) Yakutsk</option>
+                                <option value="Australia/Adelaide">(GMT+09:30) Adelaide</option>
+                                <option value="Australia/Darwin">(GMT+09:30) Darwin</option>
+                                <option value="Australia/Brisbane">(GMT+10:00) Brisbane</option>
+                                <option value="Australia/Canberra">(GMT+10:00) Canberra, Melbourne, Sydney</option>
+                                <option value="Australia/Hobart">(GMT+10:00) Hobart</option>
+                                <option value="Pacific/Guam">(GMT+10:00) Guam, Port Moresby</option>
+                                <option value="Asia/Vladivostok">(GMT+10:00) Vladivostok</option>
+                                <option value="Asia/Magadan">(GMT+11:00) Magadan, Solomon Is., New Caledonia</option>
+                                <option value="Pacific/Auckland">(GMT+12:00) Auckland, Wellington</option>
+                                <option value="Pacific/Fiji">(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>
+                                <option value="Pacific/Tongatapu">(GMT+13:00) Nuku'alofa</option>
+                             </select>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Currency</span>
+                            <select class="input-form" id="currency" formControlName="Currency">
+                                <option>Select currency</option>
+                                <option value="AFN">Afghan Afghani</option>
+                                <option value="ALL">Albanian Lek</option>
+                                <option value="DZD">Algerian Dinar</option>
+                                <option value="AOA">Angolan Kwanza</option>
+                                <option value="ARS">Argentine Peso</option>
+                                <option value="AMD">Armenian Dram</option>
+                                <option value="AWG">Aruban Florin</option>
+                                <option value="AUD">Australian Dollar</option>
+                                <option value="AZN">Azerbaijani Manat</option>
+                                <option value="BSD">Bahamian Dollar</option>
+                                <option value="BHD">Bahraini Dinar</option>
+                                <option value="BDT">Bangladeshi Taka</option>
+                                <option value="BBD">Barbadian Dollar</option>
+                                <option value="BYR">Belarusian Ruble</option>
+                                <option value="BEF">Belgian Franc</option>
+                                <option value="BZD">Belize Dollar</option>
+                                <option value="BMD">Bermudan Dollar</option>
+                                <option value="BTN">Bhutanese Ngultrum</option>
+                                <option value="BTC">Bitcoin</option>
+                                <option value="BOB">Bolivian Boliviano</option>
+                                <option value="BAM">Bosnia-Herzegovina Convertible Mark</option>
+                                <option value="BWP">Botswanan Pula</option>
+                                <option value="BRL">Brazilian Real</option>
+                                <option value="GBP">British Pound Sterling</option>
+                                <option value="BND">Brunei Dollar</option>
+                                <option value="BGN">Bulgarian Lev</option>
+                                <option value="BIF">Burundian Franc</option>
+                                <option value="KHR">Cambodian Riel</option>
+                                <option value="CAD">Canadian Dollar</option>
+                                <option value="CVE">Cape Verdean Escudo</option>
+                                <option value="KYD">Cayman Islands Dollar</option>
+                                <option value="XOF">CFA Franc BCEAO</option>
+                                <option value="XAF">CFA Franc BEAC</option>
+                                <option value="XPF">CFP Franc</option>
+                                <option value="CLP">Chilean Peso</option>
+                                <option value="CNY">Chinese Yuan</option>
+                                <option value="COP">Colombian Peso</option>
+                                <option value="KMF">Comorian Franc</option>
+                                <option value="CDF">Congolese Franc</option>
+                                <option value="CRC">Costa Rican ColÃ³n</option>
+                                <option value="HRK">Croatian Kuna</option>
+                                <option value="CUC">Cuban Convertible Peso</option>
+                                <option value="CZK">Czech Republic Koruna</option>
+                                <option value="DKK">Danish Krone</option>
+                                <option value="DJF">Djiboutian Franc</option>
+                                <option value="DOP">Dominican Peso</option>
+                                <option value="XCD">East Caribbean Dollar</option>
+                                <option value="EGP">Egyptian Pound</option>
+                                <option value="ERN">Eritrean Nakfa</option>
+                                <option value="EEK">Estonian Kroon</option>
+                                <option value="ETB">Ethiopian Birr</option>
+                                <option value="EUR">Euro</option>
+                                <option value="FKP">Falkland Islands Pound</option>
+                                <option value="FJD">Fijian Dollar</option>
+                                <option value="GMD">Gambian Dalasi</option>
+                                <option value="GEL">Georgian Lari</option>
+                                <option value="DEM">German Mark</option>
+                                <option value="GHS">Ghanaian Cedi</option>
+                                <option value="GIP">Gibraltar Pound</option>
+                                <option value="GRD">Greek Drachma</option>
+                                <option value="GTQ">Guatemalan Quetzal</option>
+                                <option value="GNF">Guinean Franc</option>
+                                <option value="GYD">Guyanaese Dollar</option>
+                                <option value="HTG">Haitian Gourde</option>
+                                <option value="HNL">Honduran Lempira</option>
+                                <option value="HKD">Hong Kong Dollar</option>
+                                <option value="HUF">Hungarian Forint</option>
+                                <option value="ISK">Icelandic KrÃ³na</option>
+                                <option value="INR">Indian Rupee</option>
+                                <option value="IDR">Indonesian Rupiah</option>
+                                <option value="IRR">Iranian Rial</option>
+                                <option value="IQD">Iraqi Dinar</option>
+                                <option value="ILS">Israeli New Sheqel</option>
+                                <option value="ITL">Italian Lira</option>
+                                <option value="JMD">Jamaican Dollar</option>
+                                <option value="JPY">Japanese Yen</option>
+                                <option value="JOD">Jordanian Dinar</option>
+                                <option value="KZT">Kazakhstani Tenge</option>
+                                <option value="KES">Kenyan Shilling</option>
+                                <option value="KWD">Kuwaiti Dinar</option>
+                                <option value="KGS">Kyrgystani Som</option>
+                                <option value="LAK">Laotian Kip</option>
+                                <option value="LVL">Latvian Lats</option>
+                                <option value="LBP">Lebanese Pound</option>
+                                <option value="LSL">Lesotho Loti</option>
+                                <option value="LRD">Liberian Dollar</option>
+                                <option value="LYD">Libyan Dinar</option>
+                                <option value="LTL">Lithuanian Litas</option>
+                                <option value="MOP">Macanese Pataca</option>
+                                <option value="MKD">Macedonian Denar</option>
+                                <option value="MGA">Malagasy Ariary</option>
+                                <option value="MWK">Malawian Kwacha</option>
+                                <option value="MYR">Malaysian Ringgit</option>
+                                <option value="MVR">Maldivian Rufiyaa</option>
+                                <option value="MRO">Mauritanian Ouguiya</option>
+                                <option value="MUR">Mauritian Rupee</option>
+                                <option value="MXN">Mexican Peso</option>
+                                <option value="MDL">Moldovan Leu</option>
+                                <option value="MNT">Mongolian Tugrik</option>
+                                <option value="MAD">Moroccan Dirham</option>
+                                <option value="MZM">Mozambican Metical</option>
+                                <option value="MMK">Myanmar Kyat</option>
+                                <option value="NAD">Namibian Dollar</option>
+                                <option value="NPR">Nepalese Rupee</option>
+                                <option value="ANG">Netherlands Antillean Guilder</option>
+                                <option value="TWD">New Taiwan Dollar</option>
+                                <option value="NZD">New Zealand Dollar</option>
+                                <option value="NIO">Nicaraguan CÃ³rdoba</option>
+                                <option value="NGN">Nigerian Naira</option>
+                                <option value="KPW">North Korean Won</option>
+                                <option value="NOK">Norwegian Krone</option>
+                                <option value="OMR">Omani Rial</option>
+                                <option value="PKR">Pakistani Rupee</option>
+                                <option value="PAB">Panamanian Balboa</option>
+                                <option value="PGK">Papua New Guinean Kina</option>
+                                <option value="PYG">Paraguayan Guarani</option>
+                                <option value="PEN">Peruvian Nuevo Sol</option>
+                                <option value="PHP">Philippine Peso</option>
+                                <option value="PLN">Polish Zloty</option>
+                                <option value="QAR">Qatari Rial</option>
+                                <option value="RON">Romanian Leu</option>
+                                <option value="RUB">Russian Ruble</option>
+                                <option value="RWF">Rwandan Franc</option>
+                                <option value="SVC">Salvadoran ColÃ³n</option>
+                                <option value="WST">Samoan Tala</option>
+                                <option value="SAR">Saudi Riyal</option>
+                                <option value="RSD">Serbian Dinar</option>
+                                <option value="SCR">Seychellois Rupee</option>
+                                <option value="SLL">Sierra Leonean Leone</option>
+                                <option value="SGD">Singapore Dollar</option>
+                                <option value="SKK">Slovak Koruna</option>
+                                <option value="SBD">Solomon Islands Dollar</option>
+                                <option value="SOS">Somali Shilling</option>
+                                <option value="ZAR">South African Rand</option>
+                                <option value="KRW">South Korean Won</option>
+                                <option value="XDR">Special Drawing Rights</option>
+                                <option value="LKR">Sri Lankan Rupee</option>
+                                <option value="SHP">St. Helena Pound</option>
+                                <option value="SDG">Sudanese Pound</option>
+                                <option value="SRD">Surinamese Dollar</option>
+                                <option value="SZL">Swazi Lilangeni</option>
+                                <option value="SEK">Swedish Krona</option>
+                                <option value="CHF">Swiss Franc</option>
+                                <option value="SYP">Syrian Pound</option>
+                                <option value="STD">São Tomé and Príncipe Dobra</option>
+                                <option value="TJS">Tajikistani Somoni</option>
+                                <option value="TZS">Tanzanian Shilling</option>
+                                <option value="THB">Thai Baht</option>
+                                <option value="TOP">Tongan pa'anga</option>
+                                <option value="TTD">Trinidad & Tobago Dollar</option>
+                                <option value="TND">Tunisian Dinar</option>
+                                <option value="TRY">Turkish Lira</option>
+                                <option value="TMT">Turkmenistani Manat</option>
+                                <option value="UGX">Ugandan Shilling</option>
+                                <option value="UAH">Ukrainian Hryvnia</option>
+                                <option value="AED">United Arab Emirates Dirham</option>
+                                <option value="UYU">Uruguayan Peso</option>
+                                <option value="USD">US Dollar</option>
+                                <option value="UZS">Uzbekistan Som</option>
+                                <option value="VUV">Vanuatu Vatu</option>
+                                <option value="VEF">Venezuelan BolÃ­var</option>
+                                <option value="VND">Vietnamese Dong</option>
+                                <option value="YER">Yemeni Rial</option>
+                                <option value="ZMK">Zambian Kwacha</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="account-btn" (click)="saveLocaleDetails()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="selectedTab==2">
+        <sb-working-hours></sb-working-hours>
+    </div>
+
+</div>
