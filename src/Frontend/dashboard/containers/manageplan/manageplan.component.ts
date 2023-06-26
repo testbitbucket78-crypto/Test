@@ -36,6 +36,10 @@ export class ManageplanComponent implements OnInit {
       });
   }
 
+  confirmPlan(confirmplan:any) {
+    this.modalService.open(confirmplan);
+    this.modalReference.close(this.selectPlans);
+  }
 
   }    
 

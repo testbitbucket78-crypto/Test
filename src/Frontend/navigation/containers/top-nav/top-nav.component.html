@@ -6,7 +6,7 @@
    <h1 class="m-0 mx-5 px-5 main-heading">{{title}}</h1>
     <!-- Navbar-->
     <ul class="navbar-nav ml-auto ml-1 mr-1 md-0 top-icons">
-        <img routerLink="/dashboard/setting" src="../../../../assets/img/top-nav/Setting.svg" style="cursor:pointer;" text="Settings">
+        <img routerLink="/dashboard/setting" src="../../../../assets/img/top-nav/Setting.svg">
         <img routerLink="/dashboard/support" src="../../../../assets/img/top-nav/support.svg">
         <img  src="../../../../assets/img/top-nav/notifications.svg" (click)="toggleShowNotifications()">
         <img  routerLink="/dashboard/teambox" src="../../../../assets/img/top-nav/chat-icon.svg">
@@ -20,7 +20,7 @@
 
 <!-- ***Notification section*** -->
 
-<div *ngIf="ShowNotification" class="popup-notification w-25">
+<div [ngClass]="{'notification-show': ShowNotification, 'notification-hide': !ShowNotification}" *ngIf="ShowNotification" class="popup-notification w-25">
     <div class="container">
     <h3 class="heading p-3 mt-3">Latest Notifications</h3>
     <div class="toggle-btn d-flex justify-content-sm-left p-3">
@@ -77,7 +77,7 @@
 
   <!-- ***Profile Section *** -->
 
-  <div *ngIf="ShowProfile" class="popup-profile d-block w-12">
+  <div  [ngClass]="{'profile-show': ShowProfile, 'profile-hide': !ShowProfile}" *ngIf="ShowProfile" class="popup-profile d-block w-12">
     <div class="container-fluid p-0">
     <div class="profile-heading">
       <img id="profile-bg" src="assets/img/profile/bg.png">
@@ -98,7 +98,7 @@
             <p class="m-0">Manage & view wallet, plans & subscription</p>
           </div>
             <div class="col-sm-2 p-0 mx-2 text-center next-btn">
-              <img src="assets/img/profile/next.png">
+              <img src="assets/img/profile/next1.svg">
          
           </div>
         </div>
@@ -106,7 +106,7 @@
 
       <div class="profile-footer d-flex p-3 justify-content-around align-items-center">
         <div class="mx-n2 signout-btn">
-          <span><img src="assets/img/profile/icon sign out.png"></span>
+          <span><img src="../../../../assets/img/profile/icon sign out.svg"></span>
           <button id="logout-btn" (click)="logout()">Sign Out</button>
         </div>
 

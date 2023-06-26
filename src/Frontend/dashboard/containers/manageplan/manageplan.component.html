@@ -18,9 +18,9 @@
                 <div class="col-sm-6 text-right d-flex justify-content-end pr-0">
                     <div class="text-center billing-history-btn">
                         <button class="px-3"  routerLink="/dashboard/billinghistory">
-                        <span><img class="px-2 bill-img" src="../../../../assets/img/profile/bill.png"></span>
+                        <span><img class="px-2 bill-img" src="../../../../assets/img/profile/bill.svg"></span>
                             View Billing History
-                        <span><img class="px-2" src="../../../../assets/img/profile/next.png"></span>
+                        <span><img class="px-2" src="../../../../assets/img/profile/next1.svg"></span>
                     </button>
                     </div>
                       
@@ -73,7 +73,7 @@
                                     
                                     </div>
                                     <div  class="text-center mt-4 select-plan-btn">
-                                        <button>Select</button>
+                                        <button (click)="selectPlans(selectplan)">Select</button>
                                     </div>
                                   
                            
@@ -106,7 +106,7 @@
                                               <span class="slider"></span>
                                             </label>
                                           </div>
-                                          <div class="toggle-txt1"><p>Monthly <br />$20</p></div>
+                                          <div class="toggle-txt1"><p>Monthly <br />$35</p></div>
                                       
                                     </div>
 
@@ -119,7 +119,7 @@
                                     
                                     </div>
                                     <div  class="text-center mt-4 select-plan-btn">
-                                        <button>Select</button>
+                                        <button (click)="selectPlans(selectplan)">Select</button>
                                     </div>
                                   
                             </div>
@@ -147,7 +147,7 @@
                                               <span class="slider"></span>
                                             </label>
                                           </div>
-                                          <div class="toggle-txt1"><p>Monthly <br />$20</p></div>
+                                          <div class="toggle-txt1"><p>Monthly <br />$50</p></div>
                                       
                                     </div>
 
@@ -161,7 +161,7 @@
                                     </div>
                                     <div class="text-center mt-4 select-plan-btn">
                          
-                                        <button class="current-plan" (click)="selectPlans(selectplan)"> Current Plan</button>
+                                        <button class="current-plan"> Current Plan</button>
                                     </div>
  
                             </div>
@@ -205,32 +205,101 @@
                 </div>
 
                 <div class="right-part">
-                    <div class="header">
-                        Standard
-                    </div>
+                   <h3>Standard</h3>
+
+                    <span>Commitment</span>
                     <div class="d-flex">
-                        <div class="">
-                            <span>Commitment</span>
-                            <p>Monthly Plan</p>
-                        </div>
+                            <div class="planselect">
+                                Monthly Plan
+                            </div>
+                      
                         <div class="price">
                             $30.8
                         </div>
+                  
                     </div>
+                    <div class="d-flex">
+                        <div class="subtotal">
+                            Sub Total
+                        </div>
+                  
+                    <div class="price">
+                        $23.6
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="tax">
+                        Tax
+                    </div>
+              
+                <div class="price">
+                    $7.2
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="total">
+                    Total
+                </div>
+          
+            <div class="price">
+                $30.2
+            </div>
+        </div>
                 </div>
      
          </div>
             <div class="modal-footer d-flex justify-content-between align-items-center selectplanfooter">
                 
                     <div class="modal-footer-left">
-                        <p class="m-0">I accept the Terms & Conditions</p>
+                        <p class="m-0">I accept the <span>Terms & Conditions</span></p>
                     </div>
                     <div class="modal-footer-right">
-                        <button type="button" class="submit-btn">Agree & Subscribe</button>
+                        <button type="button" class="submit-btn" (click)="confirmPlan(confirmplan)">Agree & Subscribe</button>
                     </div>
                     </div>
             </div>
      
     </ng-template>
+
+    <ng-template #confirmplan let-c="close" let-d="dismiss">
+        <div class="modal-content m-0 p-3 confirmplan">
+            <div class="modal-header pt-4 justify-content-center align-items-center confirmplanheader">
+                <div class="modal-header p-0">
+                    <h5 class="m-0">Confirm your Plan Downgrade</h5>
+                </div>
+             
+                </div>
+            <div class="modal-body px-5 pt-0 confirmplanbody">
+             <p class="m-0 text-center">
+                You have chosen to downgrade your subscription plan <br /> that will give you less benefits.
+                Your new plan will be <br /> applicable from the next billing cycle. <br />
+               <span>Please confirm your selection.</span> 
+             </p>
+     
+         </div>
+            <div class="d-flex modal-footer pb-4 justify-content-center confirmplanfooter">
+            
+                    <div class="col-sm-12 d-flex justify-content-center align-items-center">
+                        <div class="col-sm-4 text-center p-0">
+                            <button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
+                        </div>
+                       
+                 
+                        <div class="col-sm-4 text-center p-0">
+                            <button type="button" class="confirm-btn" aria-label="Close" >Confirm</button>
+                        </div>
+                    
+                
+                
+                </div>
+                  </div>
+       
+        </div>
+     
+    </ng-template>
+
+    
+
+
 
 </sb-layout-dashboard>

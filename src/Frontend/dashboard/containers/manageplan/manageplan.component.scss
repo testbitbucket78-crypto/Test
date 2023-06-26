@@ -1,6 +1,6 @@
 * {
     font-family: 'Manrope';
-  
+
 }
 
 .main-title h3 {
@@ -8,12 +8,12 @@
     letter-spacing: -0.75px;
     cursor: default;
 
- }
+}
 
- .back-btn img {
+.back-btn img {
     height: 14px;
     cursor: pointer;
- }
+}
 
 .plan-cards {
     border: 1px solid #EBEBEB;
@@ -31,9 +31,7 @@
     font-size: 0.8rem;
     border: none;
     outline: none;
-    background: transparent 
-    linear-gradient(90deg, #6149cd 0%, #a654ac 47%, #ea5f8b 100%) 
-    0% 0% no-repeat padding-box;
+    background: transparent linear-gradient(90deg, #6149cd 0%, #a654ac 47%, #ea5f8b 100%) 0% 0% no-repeat padding-box;
     border-radius: 19px;
     color: #ffffff;
     height: 40px;
@@ -54,7 +52,7 @@
     font-weight: 700;
     margin: 0;
     letter-spacing: -0.93px;
-   
+
 }
 
 .cards-heading h2 {
@@ -73,11 +71,11 @@
 .standard.plan-cards span.plan-price {
     text-decoration: line-through;
     color: #7A86A1;
-   
+
 }
 
 .toggle-txt p {
-    
+
     color: #ffffff;
     font-weight: 400;
 }
@@ -90,9 +88,7 @@
 
 
 .toggle-button-container {
-    background: transparent 
-    linear-gradient(271deg, #F9B035 0%, #F98C4E 53%, #F96767 100%)
-    0% 0% no-repeat padding-box;
+    background: transparent linear-gradient(271deg, #F9B035 0%, #F98C4E 53%, #F96767 100%) 0% 0% no-repeat padding-box;
     box-shadow: 1px 8px 29px #695F9724;
     border: 1px solid #E9E9EA;
     border-radius: 18px;
@@ -114,6 +110,7 @@
     width: 36px;
     height: 20px;
 }
+
 .switch-toggle .slider {
     position: absolute;
     cursor: pointer;
@@ -127,6 +124,7 @@
     transition: 0.3s ease-out;
     border-radius: 10px;
 }
+
 .switch-toggle .switch input {
     display: none;
 }
@@ -144,12 +142,12 @@
     box-shadow: 0.35px 2px 7px #6149cd;
 }
 
-.switch-toggle input:checked + .slider {
+.switch-toggle input:checked+.slider {
     background-color: #6149cd;
- 
+
 }
 
-.switch-toggle input:checked + .slider::before {
+.switch-toggle input:checked+.slider::before {
     transform: translateX(15px);
 }
 
@@ -169,24 +167,24 @@
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 2px 14px 32px #6149CD1A;
     border-radius: 22px;
-    border:none;
+    border: none;
     //outline: none;
     font-size: 0.8vw;
     color: #6149cd;
     font-weight: 700;
-    
+
 }
 
-.select-plan-btn button.current-plan{
-    background: transparent linear-gradient(90deg, #6149CD 0%, #A654AC 47%, #EA5F8B 100%)
-    0% 0% no-repeat padding-box;
+.select-plan-btn button.current-plan {
+    background: transparent linear-gradient(90deg, #6149CD 0%, #A654AC 47%, #EA5F8B 100%) 0% 0% no-repeat padding-box;
     color: #FFFFFF;
     font-weight: 600;
 }
 
 // checkboxes styles
 
-input[type=radio], input[type=checkbox] {
+input[type=radio],
+input[type=checkbox] {
 
     width: 1em;
     height: 1em;
@@ -200,18 +198,19 @@ input[type=radio], input[type=checkbox] {
     cursor: pointer;
 
 }
+
 input[type=checkbox]:checked {
 
     background-color: #6149CD;
-       
-    }
 
-    //popup selectplans
+}
+
+//popup selectplans
 
 
 .selectplan {
-//  height: 700px;
-background-color: #FFF4F2;
+    //  height: 700px;
+    background-color: #FFF4F2;
 
 }
 
@@ -227,3 +226,54 @@ background-color: #FFF4F2;
     border-radius: 22px;
 }
 
+//confirm plan popup
+.confirmplanheader h5 {
+    font-weight: 700;
+    letter-spacing: -0.55px;
+    color: #000000;
+}
+
+.confirmplanbody p {
+    font-size: 0.875rem;
+    color: #7A86A1;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.confirmplanbody span {
+    color: #000000;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 20px;
+}
+
+.confirmplanfooter {
+    border: none;
+}
+
+.cancel-btn {
+    border: none;
+    // outline: none;
+    background: #FFFFFF;
+    box-shadow: 3px 16px 40px #695F970D;
+    border: 1px solid #EBEBEB;
+    border-radius: 17px;
+    color: #7A86A1;
+    font-weight: 700;
+    font-size: 14px;
+    width: 130px;
+    height: 40px;
+}
+
+.confirm-btn {
+    border: none;
+    // outline: none;
+    background: #F23B3B 0% 0% no-repeat padding-box;
+    box-shadow: 3px 16px 40px #695F970D;
+    border-radius: 17px;
+    color: #ffffff;
+    font-weight: 400;
+    font-size: 14px;
+    width: 130px;
+    height: 40px;
+}
