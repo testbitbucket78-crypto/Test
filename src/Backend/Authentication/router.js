@@ -105,4 +105,28 @@ router.get('/uploads/:fileName', async (req, res)=> {
 });
 
 
+
+
+/////////////////////////Campaigns API added by Raman Bhasker//////////////////////////
+const CampaignsController=require('./CampaignsController.js');
+
+router.post('/getCampaigns',CampaignsController.getCampaigns);
+router.post('/addCampaign',CampaignsController.addCampaign);
+router.get('/getCampaignDetail/:CampaignId',CampaignsController.getCampaignDetail);
+router.get('/deleteCampaign/:CampaignId',CampaignsController.deleteCampaign);
+router.post('/getFilteredCampaign',CampaignsController.getFilteredCampaign);
+router.post('/getContactList',CampaignsController.getContactList);
+router.post('/updatedContactList',CampaignsController.updatedContactList);
+router.post('/addNewContactList',CampaignsController.addNewContactList);
+router.post('/applyFilterOnEndCustomer',CampaignsController.applyFilterOnEndCustomer);
+router.get('/getAdditiionalAttributes/:SPID',CampaignsController.getAdditiionalAttributes);
+router.get('/getEndCustomerDetail/:customerId',CampaignsController.getEndCustomerDetail);
+router.get('/getContactAttributesByCustomer/:customerId',CampaignsController.getContactAttributesByCustomer);
+router.post('/sendCampinMessage',CampaignsController.sendCampinMessage);
+router.post('/saveCampaignMessages',CampaignsController.saveCampaignMessages);
+
+router.get('/getCampaignMessages/:CampaignId',CampaignsController.getCampaignMessages);
+router.get('/copyCampaign/:CampaignId',CampaignsController.copyCampaign);
+
+
 module.exports = router;

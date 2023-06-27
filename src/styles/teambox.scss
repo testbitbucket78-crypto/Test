@@ -292,3 +292,51 @@ label.container input[type="radio"]:checked + span.label {
     }
 
 
+    .applylist_content{
+      float:left;
+      width:100%;
+      background: #FFFFFF 0% 0% no-repeat padding-box;
+      box-shadow: 2px 13px 54px #695F9714;
+      border-radius: 30px;
+      padding: 20px 5%;
+      }
+      .applylist_content table{
+      float:left;
+      width:100%;
+      text-align: center;
+      }
+    
+      
+    
+      .applylist_contnet_head tr>td{
+      font-size: 12px;
+      font-weight: 600;
+      color:#6149cd;
+      text-align: left;
+      padding: 10px;
+      min-width: 10%;
+      }
+      .applylist_contnet_head tr > td img{
+        width:8px!important;
+        margin-left: 5px!important;
+        cursor: pointer!important;
+      }
+      .applylist_contnet_body tr td{
+      font-size: 12px;
+      font-weight: 300;
+      color:#000;
+      text-align: left;
+      padding:5px 10px;
+    
+      }
+      .applylist_contnet_body tr{
+      width: 100%;
+      border-radius: 10px;
+      }
+      .applylist_contnet_body tr:nth-child(odd) {
+      background-color: #FBFAFF;
+      border: 1px solid #7070700D;
+      opacity: 0.86;
+      }
+
+

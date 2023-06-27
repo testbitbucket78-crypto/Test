@@ -50,3 +50,5 @@ createInteractionQuery,updateInteractionQuery,getAllInteraction,selectInteractio
 getAllMessagesByInteractionId,insertMessageQuery,
 updateInteractionMapping,getInteractionMapping,
 savedMessagesQuery,getquickReplyQuery,getTemplatesQuery}
+
+

@@ -13,6 +13,9 @@
     max-width: 100%;
     margin-top:-150px;
 }
+.input-area .popup-dialog.emoji{
+    margin-top:-250px;
+}
 .input-area .popup-dialog.mention{
     max-width: 220px;
     margin-top:-120px;
@@ -104,7 +107,8 @@ display: flex;
 font-family: 'Manrope', sans-serif;
 position: fixed;
     width: 82%;
-    height: 70vh;
+    height: 80vh;
+    margin-top: 1.5rem;
 }
 .team-box{
 float:left;
@@ -144,9 +148,9 @@ padding-left:10px;
 padding-left:1%;
 padding-right:1%;
 background: rgba(251, 249, 254, 1) 0% 0% no-repeat padding-box;
-margin-top: -120px;
-padding-top: 120px;
-overflow: auto;
+padding-top: 20px;
+overflow-y: auto;
+overflow-x: hidden;
 }
 
 .user_info{
@@ -1032,6 +1036,7 @@ width: 20px;
         background: #FFF4F2 url("/assets/img/teambox/icon-selected.svg") no-repeat;
         background-size: 12px;
         background-position: center right 10px;
+        font-weight: 600;
     }
    
 
@@ -1644,6 +1649,10 @@ flex-wrap: nowrap;
         font-size: 12px;
         font-weight: 300;
         color:#000000
+    }
+    label span{
+        font-size: 16px;
+        margin-left: 2px;
     }
     .form_row p.form-control,.form_row .form-control{
         width: 220px;
