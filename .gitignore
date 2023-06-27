@@ -51,3 +51,4 @@ Thumbs.db
 /src/.vs
 /.vs
 src/Backend/Authentication/uploads/
+src/environments/environment.ts
