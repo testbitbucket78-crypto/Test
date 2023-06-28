@@ -7,26 +7,63 @@
 
 // custom scrollbar //
 
+// * {
+//   ::-webkit-scrollbar-track
+//   {
+//     // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+//     background-color: transparent;
+//   }
+  
+//   ::-webkit-scrollbar
+//   {
+//     width: 2px;
+//     background-color: #ffffff;
+//   }
+  
+//   ::-webkit-scrollbar-thumb
+//   {
+//     background-color: #000000;
+//     border: 1px solid #000000;
+//   }
+  
+// }
+
 * {
   ::-webkit-scrollbar-track
   {
-    // -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    background-color: transparent;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
   }
   
   ::-webkit-scrollbar
   {
-    width: 2px;
-    background-color: #ffffff;
+    width: 6px;
+    background-color: #F5F5F5;
   }
   
   ::-webkit-scrollbar-thumb
   {
-    background-color: #000000;
-    border: 1px solid #000000;
+    background-color: gray;
+    border: 1px solid grey;
   }
+
+  ::-webkit-scrollbar-track:horizontal
+  {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+  }
+::-webkit-scrollbar:horizontal{
+  height: 6px;
+  background-color: #F5F5F5;
+}
+::-webkit-scrollbar-thumb:horizontal{
+        background:  grey;
+        border: 1px solid grey;
+        
+    }
   
 }
+
 
 
 .container,

@@ -150,6 +150,10 @@ export class DashboardService {
     return this.http.post('https://smartapi.sampanatechnologies.com/addNewReply', data)
   }
 
+  deletesmartReply(ID: any) {
+    return this.http.put('https://smartapi.sampanatechnologies.com/deletSmartReply', ID)
+   
 
 
+  }
 }

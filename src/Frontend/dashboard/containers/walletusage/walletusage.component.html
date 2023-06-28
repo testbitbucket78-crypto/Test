@@ -56,12 +56,40 @@
                         </ng-template>
                         <div class="filterdaterange">
                             <div class="drop-down-btn">
-                                <div class="toggle-box d-flex">
+                                <div class="toggle-box d-flex" (click)="filterDaterange(filterdaterange)">
                                     <img src="assets/img/teambox/filter-icon.svg">
-                                    <span class="m-0 px-3 filterdate">02-Apr-2023 - 09-Apr-2023</span>
+                                    <span class="m-0 px-3 filterdate">Filter By Date Range</span>
                                 </div>
                             </div>
                         </div>
+                        <ng-template #filterdaterange let-c="close" let-d="dismiss">
+                            <div class="modal-content m-0 filterbydaterangecontent">
+
+                           
+                            <div class="modal-header filterdaterangeheader">
+                                <div class="">
+                                    <h4 class="modal-title" id="modal-basic-title">Filter By Date Range</h4>
+                                </div>
+                                <div class="">
+                                    <p class="close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/icon-close.svg"></p>
+                                </div>
+                                </div>
+                            <div class="modal-body filtedaterange">
+                          
+                                <div class="input_value_group">
+                                    <p><input class="input_value" type="date" placeholder="Start Date"></p>
+                                    <p><input class="input_value" type="date" placeholder="End Date"></p>
+                                </div>
+                                <div class="input_group_btn">
+                                <button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
+                                <button type="button" class="submit-btn" aria-label="Close" (click)="d('Cross click')">Apply</button>
+                                </div>
+                        
+                            </div>
+                                
+                            </div>
+                            
+                        </ng-template>
                     </div>
                   
     

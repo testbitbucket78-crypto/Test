@@ -240,3 +240,102 @@ select {
     padding: 0 2%;
 }
 
+// filter by date range
+
+.input_value_group{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top: 15px;
+    padding: 0% 15% 0% 15%;
+}
+  
+  .input_value_group p{
+    width:47%
+  }
+  .input_value{
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #C0BDCC;
+    color: #7A86A1;
+    font-size: 12px;
+    font-weight: 400;
+    padding:8px;
+    width:100%;
+  }
+
+  .input_group_btn {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 0% 15% 2% 15%;
+  }
+
+  .input_group_btn .submit-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    border: 0px;
+    color: #fff;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 700;
+
+}
+
+.input_group_btn .cancel-btn {
+    background: #fff;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    color: #7A86A1;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.filterbydaterangecontent {
+
+
+}
+
+.filterdaterangeheader {
+    padding: 3% 6% 0% 6%;
+}
+
+.filterdaterangeheader h4 {
+    color: #6149CD;
+    font-size: 14px;
+    height: 35px;
+    display: flex;
+    flex-wrap: nowrap;
+    align-content: flex-end;
+    justify-content: center;
+    flex-direction: column;
+    font-weight: 800;
+}
+
+.filterdaterangeheader p {
+
+		height: 35px;
+		background: #FFFFFF 0% 0% no-repeat padding-box;
+		border: 1px solid #EBEBEB;
+		border-radius: 15px;
+		opacity: 1;
+		display: flex;
+		align-content: space-around;
+		justify-content: center;
+		flex-wrap: wrap;
+		margin: 0px;
+		min-width: 35px;
+	}
+	.close-box img{
+		width: 10px;
+	}
+	.close-box img.setting_icon{
+		width: 17px;
+	}
+

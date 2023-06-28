@@ -322,23 +322,34 @@
                             <div class="modal-body changepasswordbody">
                               
                                 <form [formGroup]="changepassword">
-                              
-                                        <label class="changepassform" for="currentPassword">Current Password</label>
-                                        <input type="password" class="form-control inputpassowrdfield"
-                                        id="currentPassword" name="currentPassword" formControlName="currentPassword" 
-                                        placeholder="8 character" required>
-                                       
-
-                                        <label class="changepassform" for="newPassword">New Password</label>
-                                        <input type="password" class="form-control inputpassowrdfield" formControlName="newPassword"
-                                         placeholder="8 character"
-                                        name="newPassword" id="newPassword" required>
-                                       
-                        
-                                        <label class="changepassform" for="confirmPassword">Re-Enter New Password</label>
-                                        <input type="password" class="form-control inputpassowrdfield" formControlName="confirmPassword"  placeholder="8 character"
-                                          id="confirmPassword" name="confirmPassword" required>
+                                    <label class="changepassform" for="currentPassword">Current Password</label>
+                                    <div class="input-group">
+                                      <input [type]="currentPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" id="currentPassword"
+                                        name="currentPassword" formControlName="oldPass" placeholder="8 character" required>
+                                      <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('currentPassword')">
+                                        <i [ngClass]="currentPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                                      </span>
+                                    </div>
+                                  
+                                    <label class="changepassform" for="newPassword">New Password</label>
+                                    <div class="input-group">
+                                      <input [type]="newPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" formControlName="newPass"
+                                        placeholder="8 character" name="newPassword" id="newPassword" required>
+                                      <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('newPassword')">
+                                        <i [ngClass]="newPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                                      </span>
+                                    </div>
+                                  
+                                    <label class="changepassform" for="confirmPassword">Re-Enter New Password</label>
+                                    <div class="input-group">
+                                      <input [type]="confirmPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield"
+                                        formControlName="confirmPass" placeholder="8 character" id="confirmPassword" name="confirmPassword" required>
+                                      <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('confirmPassword')">
+                                        <i [ngClass]="confirmPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                                      </span>
+                                    </div>
                                   </form>
+                                  
                             </div>
                             <div class="modal-footer my-3 border-0">
                                 <button type="button" class="update-pass-btn" (click)="saveNewPassword()">Update</button>

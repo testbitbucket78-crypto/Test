@@ -1,5 +1,6 @@
 <sb-layout-dashboard>
     <sb-top-nav title="Support"></sb-top-nav>
+    <div *ngIf="false" class="">
     <div class="row">
         <div class="col-12"></div>
     </div>
@@ -78,4 +79,41 @@
             <div class="col-1"></div>
         </div>
     </div>
+</div>
+
+
+<div class="row my-4">
+
+    <div class="col-sm-12 my-2 faqs-header">
+        <div class="container-fluid p-0 d-flex justify-content-around align-items-center">
+            <div class="col-sm-6 text-left d-flex pl-0">
+                <div class="d-flex">
+                    <div class="back-btn" routerLink="/dashboard/myprofile">
+                        <img src="assets/img/profile/previous1.svg" />
+                    </div>
+                    <div class="main-title">
+                        <h4 class="m-0 px-4">FAQs</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 text-right d-flex justify-content-end pr-0">
+                    <div class="search-field">
+                        <form class="d-none d-md-inline-block form-inline">
+                        <div class="input-group search">
+    
+                            <input class="form-control" type="text" placeholder="Search" name="search" [(ngModel)]="searchText" />
+    
+                            <img src="assets/img/search.png">
+                        </div>
+                        </form>
+                    </div>
+                  
+            </div>
+        </div>
+    
+    </div>
+
+
+</div>
+
 </sb-layout-dashboard>

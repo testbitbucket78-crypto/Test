@@ -413,14 +413,14 @@ export const ROUTES: Routes = [
     {
         path: 'myprofile',
         data: {
-            title: 'My Profile',
+            title: 'Profile',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'My Profile',
+                    text: 'Profile',
                     active: true,
                 },
             ],
@@ -431,14 +431,14 @@ export const ROUTES: Routes = [
     {
         path: 'manageplan',
         data: {
-            title: 'My Profile',
+            title: 'Profile',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'My Profile',
+                    text: 'Profile',
                     active: true,
                 },
             ],
@@ -449,14 +449,14 @@ export const ROUTES: Routes = [
     {
         path: 'walletusage',
         data: {
-            title: 'My Profile',
+            title: 'Profile',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'My Profile',
+                    text: 'Profile',
                     active: true,
                 },
             ],
@@ -485,14 +485,14 @@ export const ROUTES: Routes = [
     {
         path: 'billinghistory',
         data: {
-            title: 'My Profile',
+            title: 'Profile',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'My Profile',
+                    text: 'Profile',
                     active: true,
                 },
             ],

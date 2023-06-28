@@ -37,13 +37,13 @@ export class SideNavComponent implements OnInit, OnDestroy {
         const sideBarToggle = document.getElementById('sidebarToggle');
         const logo = (document.getElementsByClassName('navbar-brand')) as unknown as HTMLElement[];
         const mainBody = document.getElementsByClassName('container-fluid') as unknown as HTMLElement[];
-        const caret = (document.getElementsByClassName('svg-inline--fa fa-angle-down fa-w-10')) as unknown as HTMLElement[];
+        // const caret = (document.getElementsByClassName('svg-inline--fa fa-angle-down fa-w-10')) as unknown as HTMLElement[];
 
     for (let i = 0; i < openHam.length; i++) {
         if(openHam[i] instanceof HTMLElement) {
             if (openHam[i].style.display == "block") {
                 openHam[i].style.display = "none";
-                caret[i].style.display = "none";
+                // caret[i].style.display = "none";
                 sideNavMenu!.style.width = "25%";
                 sideNavMenu!.style.border = "0";
                 mainBody[i].style.marginLeft = "-10%";
@@ -53,7 +53,7 @@ export class SideNavComponent implements OnInit, OnDestroy {
             }
             else {
                 openHam[i].style.display = "block";
-                caret[i].style.display = "block";
+                // caret[i].style.display = "block";
                 sideNavMenu!.style.borderRight = "1px solid #EBEBEB";
                 sideNavMenu!.style.width = "100%";
                 mainBody[i].style.marginLeft = "0";

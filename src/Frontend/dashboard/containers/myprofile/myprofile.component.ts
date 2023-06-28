@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder } from "@angular/forms";
+import { FormBuilder, Validators } from "@angular/forms";
+import { AuthService } from 'Frontend/auth/services';
+import { Router } from '@angular/router';
+import { error } from 'console';
 
 @Component({
   selector: 'sb-myprofile',
@@ -13,9 +16,20 @@ export class MyprofileComponent implements OnInit {
   PhoneNumber:any;
   modalReference:any;
   visible:boolean = true;
-  changetype:boolean = true;
+  uid:any;
+  currentPasswordType: boolean = true;
+  newPasswordType: boolean = true;
+  confirmPasswordType: boolean = true;
 
-  constructor(config: NgbModalConfig, private modalService: NgbModal, private formbuilder:FormBuilder) { }
+  changepassword = this.fB.group({
+      uid:[0],
+      oldPass:[''],
+      newPass:[''],
+      confirmPass:['']
+  });
+
+
+  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: AuthService,private router: Router) { }
 
   ngOnInit(): void {
     this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
@@ -23,17 +37,49 @@ export class MyprofileComponent implements OnInit {
     this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
   }
 
-  changePassword(changepassword: any) {
+  changePasswordToggle(changepassword: any) {
 		if(this.modalReference){
 		this.modalReference.close();
 		}
 		this.modalReference = this.modalService.open(changepassword);
 	}
 
-  viewpass() {
-    
-    this.visible = !this.visible;
-    this.changetype = !this.changetype;
-
+  togglePasswordVisibility(field: string) {
+    if (field === 'currentPassword') {
+      this.currentPasswordType = !this.currentPasswordType;
+    } else if (field === 'newPassword') {
+      this.newPasswordType = !this.newPasswordType;
+    } else if (field === 'confirmPassword') {
+      this.confirmPasswordType = !this.confirmPasswordType;
+    }
   }
+
+  getTeamName () {
+    
+  }
+
+  saveNewPassword() {
+    let uid: string  = sessionStorage.getItem('loginDetails')?.toString() ?? '';
+    let userid =JSON.parse(uid);
+    userid = userid.uid;
+
+    this.changepassword.controls.uid.setValue(userid);
+
+    this.apiService.changePass(this.changepassword.value).subscribe(
+      
+    (response: any) => {
+      if(response.status === 200) {
+        alert('Password changed successfully');
+      this.router.navigate(['login']);
+      }
+    },
+
+    (error: any) => {
+      if (error.status === 401) {
+          alert('Password Fields cannot be empty!');
+      } } ,
+
+    )
+  }
+
 }

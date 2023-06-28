@@ -67,7 +67,11 @@
                                     <div class="mt-4 select-choices">
                                    
                                         <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
-                                            <input type="checkbox" name="choice[{{i}}]" checked>
+                                            <div class="wrapper">
+                                                <div class="circle" [ngStyle]="{'background-color': i < 4 ? '#6149CD' : '#E1DEE5'}">
+                                                  <div class="checkMark"></div>
+                                                </div>
+                                              </div>
                                             <p class="m-0 pl-4">{{choice}}</p>
                                           </div>   
                                     
@@ -113,7 +117,11 @@
                                     <div class="mt-4 select-choices">
                                    
                                         <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
-                                            <input type="checkbox" name="choice[{{i}}]" checked>
+                                            <div class="wrapper">
+                                                <div class="circle" [ngStyle]="{'background-color': i < 6 ? '#6149CD' : '#E1DEE5'}">
+                                                  <div class="checkMark"></div>
+                                                </div>
+                                              </div>
                                             <p class="m-0 pl-4">{{choice}}</p>
                                           </div>   
                                     
@@ -154,10 +162,13 @@
                                     <div class="mt-4 select-choices">
                                    
                                         <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
-                                            <input type="checkbox" name="choice[{{i}}]" checked>
+                                            <div class="wrapper">
+                                                <div class="circle">
+                                                  <div class="checkMark"></div>
+                                                </div>
+                                              </div>
                                             <p class="m-0 pl-4">{{choice}}</p>
                                           </div>   
-                                    
                                     </div>
                                     <div class="text-center mt-4 select-plan-btn">
                          

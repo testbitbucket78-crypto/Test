@@ -24,3 +24,12 @@ export interface authSendOtp{
 export interface authVerifyOtp{
     otp:string;
 }
+
+export interface authChangePassword {
+    
+    uid:number;
+    oldPass:string;
+    newPass:string;
+    confirmPass:string;
+     
+}

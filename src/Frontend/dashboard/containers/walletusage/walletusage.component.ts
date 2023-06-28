@@ -284,6 +284,10 @@ export class WalletusageComponent implements OnInit {
         });
     }
 
+    filterDaterange(filterdaterange: any){
+        this.modalService.open(filterdaterange);
+    }
+
     getPaging() {
         this.paging = [];
         this.currentPage = 1;

@@ -24,6 +24,18 @@
 			</div>
 			</div>
 
+	<div *ngIf="replies == 0" class=" my-5 smartreplies-empty-state">
+			<div class="d-flex justify-content-center my-5 align-items-center container-empty-state">
+				<div class="text-center py-5 body-empty-state">
+					<img src="../../../../assets/img/no-sr.png" />
+					<h5>No Smart Replies</h5>
+					<p>Lorium ipsum dolor sit amet</p>
+				</div>
+			</div>
+	</div>
+
+<div *ngIf="replies != 0" class="smartreplies-filled-state">
+
 		<div class="row r1">
 		<div *ngFor="let reply of replies | searchfilter:searchText" class="card d-flex" (click)="toggleSideBar()"  (click)="getRepliesByID(reply)">
 			<div class="card-body gy-2">
@@ -97,18 +109,18 @@
 			<button class="delete-btn"  data-bs-toggle="modal" data-bs-target="#Delete"><img src="assets/img/delete.png"></button>
 		</div>
 	</div>
-
+</div>
 
 	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-		  <div class="modal-content">
+		<div class="modal-dialog deletesmartreplies-dialog">
+		  <div class="modal-content deletesmartreplies-content">
 			
-			<div class="modal-body">
+			<div class="modal-body deletesmartreplies-body">
 				Do you really want to delete<br /> this Smart Reply
 			</div>
 			<div class="deletefile d-flex" >
 			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
-			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal">Yes, Delete</button>
+			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="deleteRepliesById(data)">Yes, Delete</button>
 		  </div>
 		</div>
 		</div>

@@ -27,7 +27,7 @@
         padding-bottom: 0.75rem;
         position: relative;
         color: #7A86A1;
-        margin: 10px 0px 0px 10px;
+        margin: 0px 0px 0px 10px;
         .sb-nav-link-icon {
           font-size: 0.9rem;
         }
@@ -59,14 +59,17 @@
         .sb-nav-link-icon {
           color: #ffffff;
         }
-      
     }
       }
 
       .sb-sidenav-menu-nested {
-        margin-left: 1.5rem;
+        margin-left: 0.8rem;
+        margin-right: -0.2rem;
         flex-direction: column;
-      }
+        font-size: 14px;
+    
+    
+    }
 
       //     &.active {
       //   color: $sidenav-light-link-active-color;

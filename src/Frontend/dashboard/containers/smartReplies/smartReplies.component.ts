@@ -35,6 +35,7 @@ export class SmartRepliesComponent implements OnInit {
 	showSideBar = false;
 	searchText ='';
 	repliesData!:repliesList;
+	
 
 	Cards: Cards[] = [
 		new Cards(1107), new Cards(1108), new Cards(1109), new Cards(1110), new Cards(1111), new Cards(1112), new Cards(1113)
@@ -61,17 +62,10 @@ export class SmartRepliesComponent implements OnInit {
 		var SP_ID=sessionStorage.getItem('SP_ID')
 		this.apiService.getSmartReply(SP_ID).subscribe((data: any) => {
 			this.replies = data;
-
+			
 			console.log(this.replies)
 		})
 	}
-	// opensidenav(employee: any) {
-	// 	document.getElementById("sidebar")!.style.width = "400px";
-	// }
-	// closesidenav(items: any) {
-	// 	document.getElementById("sidebar")!.style.width = "0";
-	// }
-
 
 	toggleSideBar() {
 		this.showSideBar = !this.showSideBar
@@ -116,6 +110,26 @@ export class SmartRepliesComponent implements OnInit {
 
 	}
 
+	deleteRepliesById (data:any) {
+		console.log(data, 'component');
+		this.apiService.deletesmartReply(data[0].ID).subscribe(
+			(response:any) => {
+				console.log(response);
+				this.getReplies();
+			}
+			
+		),
 
+		(error:any) => {
+			if(error.status === 404) {
+			alert('error');
+		}
+
+
+	}
+
+
+
+}
 
 }

@@ -1,3 +1,23 @@
+.container-empty-state {
+    font-family: 'Manrope';
+}
+
+.container-empty-state {
+    height: 55vh;
+}
+
+.body-empty-state img {
+    width: 145px;
+    height: 116px;
+}
+
+.body-empty-state h5 {
+    font-weight: 700;
+}
+
+.body-empty-state p{
+    color: #7A86A1;
+}
 
 .content-head.d-flex {
     display: flex !important;
@@ -168,6 +188,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     width: 45px;
     height: 45px;
     margin-top: 33px;
+    margin-right: 20px;
     outline: none;
   }
 
@@ -349,30 +370,32 @@ height: 24px;
     font-family: "Manrope";
     padding: 20px;
 }
-.modal-content {
+.deletesmartreplies-content {
+      
     position: relative;
     display: flex;
     flex-direction: column;
+    width: 310px;
+    height: 196px;
+    top: 145px;
+    left: 115px;
     pointer-events: auto;
-    background: #FFFFFF 0% 0% no-repeat padding-box;
+    background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
     outline: 0;
     border: none;
-    background: transparent;
 }
 
-.modal-dialog .modal-content .modal-body {
+.deletesmartreplies-body {
     font-family: "Manrope";
     font-size: 14px;
-    font-weight: 800;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 61rem;
+    top: 40px;
+    font-weight: 600;
+    text-align: center;
 }
 
-.modal-dialog .modal-content .deletefile .btn9 {
+ .deletefile .btn9 {
     border: 1px solid #695F9724;
     position: absolute;
     font-size: 11px;
@@ -383,9 +406,11 @@ height: 24px;
     border-radius: 15px;
     width: 80px;
     height: 32px;
+    outline: none;
+    border: none;
     cursor: pointer;
 }
-.modal-dialog .modal-content .deletefile .btn99 {
+ .deletefile .btn99 {
     border: 1px solid #695F9724;
     position: absolute;
     font-size: 11px;
@@ -397,7 +422,10 @@ height: 24px;
     left: 52%;
     height: 33px;
     border-radius: 14px;
+    outline: none;
+    border: none;
     cursor: pointer;
+ 
 }
 .footer .delete-btn {
     margin: 0;

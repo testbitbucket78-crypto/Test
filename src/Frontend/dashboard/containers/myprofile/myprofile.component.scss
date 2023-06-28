@@ -474,17 +474,31 @@
     position: absolute;
 
 }
-.eyeicon{
+.input-group-addon.eyeicon{
     position: absolute;
-    right: 2rem;
-    top: 3.813rem;
+    right: 1.5rem;
+    top: 0.5rem;
     cursor: pointer;
+
 }
+.input-group > .form-control:not(:last-child), .input-group > .custom-select:not(:last-child) {
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    font-size: 14px;
+}
+
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
 
+ .fa.fa-eye {
+    font-family: 'FontAwesome'!important;
+}
+
+.fa.fa-eye-slash{
+    font-family: 'FontAwesome';
+}
 
 .modal-title {
     font-size: 14px;
