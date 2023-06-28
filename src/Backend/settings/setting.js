@@ -360,9 +360,9 @@ app.post('/workingDetails', async (req, res) => {
     try {
         var created_at = new Date();
         var data = req.body.days
-        var isDeleted=1;
-       var deleteWork=await db.excuteQuery(val.deleteWork,[isDeleted,created_at,req.body.SP_ID])
-       console.log("deleteWork " + deleteWork)
+        var isDeleted = 1;
+        var deleteWork = await db.excuteQuery(val.deleteWork, [isDeleted, created_at, req.body.SP_ID])
+        console.log("deleteWork " + deleteWork)
         data.forEach(async (item) => {
 
             const values = [req.body.SP_ID, item.day, item.startTime, item.endTime, created_at, req.body.created_By];
@@ -453,10 +453,10 @@ app.post('/holidays', async (req, res) => {
 
 })
 
-app.get('/holidays/:spID', async (req, res) => {
+app.get('/holidays/:spID/:dateFrom/:dateTo', async (req, res) => {
     try {
 
-        var HolidayList = await db.excuteQuery(val.selectHoliday, [req.body.dateFrom, req.body.dateTo, req.params.spID])
+        var HolidayList = await db.excuteQuery(val.selectHoliday, [req.params.dateFrom, req.params.dateTo, req.params.spID])
 
         res.status(200).send({
             msg: 'HolidayList got successfully !',
@@ -881,6 +881,157 @@ app.get('/teamsList/:spid', async (req, res) => {
 })
 
 
+
+app.post('/changePassword', async (req, res) => {
+    try {
+
+        uid = req.body.uid;
+        oldPass = req.body.oldPass
+        newPass = req.body.newPass
+        confirmPass = req.body.confirmPass
+        const date = new Date();
+        var query = `select password from user where uid=?`
+        var resQuery = await db.excuteQuery(query, [uid])
+        if (resQuery.length >= 0) {
+            const hash = await bcrypt.compare(oldPass, resQuery[0].password);
+
+            console.log(hash)
+            if (hash == false) {
+                res.status(401).send({
+                    msg: 'Old  Password is wrong !',
+                    status: 401
+                });
+            }
+            else {
+                if (newPass !== confirmPass) {
+                    res.status(400).json({ error: 'Passwords do not match', status: 400 });
+                }
+                var hasedPass = await bcrypt.hash(newPass, 10);
+                var insertQuery = `UPDATE user SET password=? ,LastModifiedDate=? WHERE uid=?`
+                var insertRes = await db.excuteQuery(insertQuery, [hasedPass, date, uid])
+                res.status(200).send({
+                    msg: 'password updated',
+                    insertRes: insertRes,
+                    status: 200
+                })
+            }
+        }
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+
+
+
+})
+
+
+app.get('/teamName/:uid', async (req, res) => {
+    try {
+        var teamID = `SELECT teamID FROM UserTeamMapping where userID=? and isDeleted !=1`;
+        var teamMap = await db.excuteQuery(teamID, [req.params.uid])
+        console.log(teamMap)
+        var teamid = teamMap[0].teamID
+        const teamIDs = teamMap.map((row) => row.teamID)
+        console.log(teamIDs)
+        var teamName = `SELECT team_name from teams where id IN (?)  and isDeleted !=1`
+        var teamRes = await db.excuteQuery(teamName, [teamIDs])
+        console.log(teamRes);
+        res.status(200).send({
+            msg: 'team name',
+            teamRes: teamRes,
+            status: 200
+        });
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+})
+
+
+app.get('/roleName/:uid', async (req, res) => {
+    try {
+        var roleIDQuery = `SELECT UserType FROM user where uid=? and isDeleted !=1`;
+        var roleMap = await db.excuteQuery(roleIDQuery, [req.params.uid])
+        var roleIDdata = roleMap[0].UserType
+        var roleNameQuery = `SELECT RoleName from roles where roleID=?  and isDeleted !=1`
+        var roleRes = await db.excuteQuery(roleNameQuery, [roleIDdata])
+        console.log(roleRes);
+        res.status(200).send({
+            msg: 'team name',
+            roleRes: roleRes,
+            status: 200
+        });
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+})
+
+
+app.post('/userActiveStatus', async (req, res) => {
+    try {
+        IsActive = req.body.IsActive;
+        LastModifiedDate = new Date()
+        var activeStatusquery = `UPDATE  user SET IsActive=?,LastModifiedDate=? WHERE uid=? `
+        var saveActiveStatus = await db.excuteQuery(activeStatusquery, [IsActive, LastModifiedDate, req.body.uid]);
+        res.status(200).send({
+            msg: 'save active status',
+            saveActiveStatus: saveActiveStatus,
+            status: 200
+        });
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+})
+
+
+app.post('/addNotification', async (req, res) => {
+    try {
+        UID = req.body.UID,
+            notificationId = req.body.notificationId,
+            PushNotificationValue = req.body.PushNotificationValue,
+            SoundNotificationValue = req.body.SoundNotificationValue,
+            isDeleted = 0,
+            created_at = new Date()
+
+
+        var addNotification = await db.excuteQuery(val.addNotification, [[[UID, notificationId, PushNotificationValue, SoundNotificationValue, isDeleted, created_at]]])
+        res.status(200).send({
+            msg: 'Notification added',
+            addNotification: addNotification,
+            status: 200
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+})
+
+app.get('/getNotification/:UID',async (req,res)=>{
+    try{
+      
+     var notify=await db.excuteQuery(val.getNotification,[req.params.UID])
+     res.status(200).send({
+        msg:'Get Notifications',
+        notify:notify,
+        status:200
+     })
+
+    }catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+    
+
+})
 
 app.listen(3004, function () {
     console.log("Node is running");

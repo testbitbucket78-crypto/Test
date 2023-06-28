@@ -76,10 +76,13 @@ JOIN UserTeamMapping AS u ON t.id = u.teamID
 JOIN user AS um ON u.userID = um.uid
 WHERE t.SP_ID = ? and t.isDeleted !=1 and u.isDeleted !=1 and um.isDeleted !=1`
 
+
+addNotification=`INSERT INTO TeamboxNotificationSettings(UID,notificationId,PushNotificationValue,SoundNotificationValue,isDeleted,created_at) VALUES ?`
+getNotification=`SELECT * FROM TeamboxNotificationSettings WHERE UID=?`
 module.exports = {
     host, user, password, database, insertCompanyDetails, insertlocalDetails, insertBillingDetails, selectCompanyDetails, selectlocalDetails, selectBillingDetails,
     updateCompanyDetails, updatelocalDetails, updateBillingDetails, insertWork, selectWork,deleteWork, insertHoliday, selectHoliday, removeHoliday, updateWork, getSubRight, getRights,
     accessKeyId,secretAccessKey,region,addRoleQuery,updateRole,getRoleQuery,getUserQuery,deleteQuery,selectAllQuery,userdeletQuery,
     updateQuery,insertQuery,selectByIdQuery,findEmail,getRole,email,appPassword,emailHost,port,
-    addteamQuery,addUserTeamMap,teamDelete,mapteamDelete,updateTeams,selectTeams
+    addteamQuery,addUserTeamMap,teamDelete,mapteamDelete,updateTeams,selectTeams,addNotification,getNotification
 }

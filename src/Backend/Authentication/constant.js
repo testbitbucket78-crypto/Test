@@ -1,8 +1,8 @@
 const db = require("../dbhelper");
 
 const host= "sdpl-staging.cdjbek5fprnn.ap-south-1.rds.amazonaws.com"
-const user= "scroot"
-const password= "amsdb1234"
+const user= "CIP"
+const password= "cip#321#"
 const database= "cip_project"
 
 
