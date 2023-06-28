@@ -105,6 +105,73 @@ export class TeamboxService {
     return this.http.get(API_URL+'/getTemplates/'+SPID);
   }
 
+  public getCampaign(bodyData: any) {
+    return this.http.post(API_URL+'/getCampaigns/',bodyData);
+  }
+  public addCampaign(bodyData: any) {
+    return this.http.post(API_URL+'/addCampaign/',bodyData);
+  }
+
+  public getCampaignDetail(CampaignID: any) {
+    return this.http.get(API_URL+'/getCampaignDetail/'+CampaignID);
+  }
+  public deleteCampaignDetail(CampaignID: any) {
+    return this.http.get(API_URL+'/deleteCampaign/'+CampaignID);
+  }
+  public copyCampaign(CampaignID: any) {
+    return this.http.get(API_URL+'/copyCampaign/'+CampaignID);
+  }
+  
+  public getFilteredCampaign(bodyData: any) {
+    return this.http.post(API_URL+'/getFilteredCampaign/',bodyData);
+  }
+
+  public getContactList(bodyData: any) {
+    return this.http.post(API_URL+'/getContactList/',bodyData);
+  }
+
+  public addNewContactList(bodyData: any) {
+    return this.http.post(API_URL+'/addNewContactList/',bodyData);
+  }
+  public updatedContactList(bodyData: any) {
+    return this.http.post(API_URL+'/updatedContactList/',bodyData);
+  }
+
+
+  public applyFilterOnEndCustomer(bodyData: any) {
+    return this.http.post(API_URL+'/applyFilterOnEndCustomer/',bodyData);
+  }
+
+  public getAdditiionalAttributes(SPID: any) {
+    return this.http.get(API_URL+'/getAdditiionalAttributes/'+SPID);
+  }
+
+  public getEndCustomerDetail(customerId: any) {
+    return this.http.get(API_URL+'/getEndCustomerDetail/'+customerId);
+  }
+  public getContactAttributesByCustomer(customerId: any) {
+    return this.http.get(API_URL+'/getContactAttributesByCustomer/'+customerId);
+  }
+
+  public getCampaignMessages(CampaignId: any) {
+    return this.http.get(API_URL+'/getCampaignMessages/'+CampaignId);
+  }
+  
+  public sendCampinMessage(bodyData: any) {
+    return this.http.post(API_URL+'/sendCampinMessage/',bodyData);
+  }
+  public saveCampaignMessages(bodyData: any) {
+    return this.http.post(API_URL+'/saveCampaignMessages/',bodyData);
+  }
+
+  
+
+  
+
+  
+
+  
+
   
   
 
