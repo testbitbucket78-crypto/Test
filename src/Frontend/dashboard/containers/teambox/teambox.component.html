@@ -1,8 +1,9 @@
 <sb-layout-dashboard>
-	<sb-dashboard-head title="Teambox" [hideBreadcrumbs]="true"></sb-dashboard-head>
+	<ng-container *ngIf="showTopNav">
+		<sb-top-nav title="Teambox"></sb-top-nav>
+	</ng-container>
 	
-	
-	<div class="team-box-page">
+	<div class="team-box-page" id="team-box-page" (click)="hideAllOpenModal($event)">
 
 		
 
@@ -51,7 +52,7 @@
 					<div class="contacts_right">
 						<div class="contacts_detail_timelog">
 							<p *ngIf="item.lastMessage" class="time">{{item.lastMessageReceved}}</p>
-							<span *ngIf="item.messageList" class="total_count green">{{item.UnreadCount}}</span>
+							<span *ngIf="item.messageList && item.UnreadCount>0" class="total_count green">{{item.UnreadCount}}</span>
 							<img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
 						</div>
 					</div>
@@ -87,9 +88,10 @@
 		<div class="custom_row">
 		<div class=" left_part">
 		   <div class="user_info">
-			<p class="user_name">{{selectedInteraction.Name}} </p>
+			<p class="user_name">{{selectedInteraction.Name}}</p>
 			<p *ngIf="selectedInteraction.channel=='WhatsApp'" class="user_from"><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg"/>WhatsApp Official</p>
-		  </div>
+			<p *ngIf="selectedInteraction.channel!='WhatsApp'" class="user_from"><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg"/>WhatsApp Web</p>
+		</div>
 		</div>
 		<div class=" right_part">
 		    <div class="time_circle">
@@ -98,7 +100,7 @@
 			</div>
 			<div class="drop-down-btn">
 		    <button *ngIf="selectedInteraction.progressbar.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72" style="margin:0 8px" [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : 'drop-down-btn red-color'" (click)="toggleConversationStatusOption()" >
-				<img *ngIf="selectedInteraction.interaction_status=='Resolved'" class="icon" src="/assets/img/teambox/checked_icon.png" /> {{selectedInteraction.interaction_status}}
+				<img *ngIf="selectedInteraction.interaction_status=='Resolved'" class="icon" src="/assets/img/teambox/checked_icon.png" />{{selectedInteraction.interaction_status}}
 			</button>
 
 			<button *ngIf="selectedInteraction.progressbar.progressbarValue >= 72" style="margin:0 8px" class="drop-down-btn green-color" (click)="toggleConversationStatusOption()" >
@@ -128,10 +130,10 @@
 		     </button>
 			<div *ngIf="ShowAssignOption" class="popup-dialog AssignOption">
 				<p class="label">Assign To</p>
-				<p *ngFor="let user of agentsList;let k = index"   (click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)">
-					<span key={k}>
+				<p *ngFor="let user of agentsList;let k = index"   [ngClass]="selectedInteraction.assignTo.name==user.name ? 'active' : ''"  (click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)">
+					<span key={k} >
 						<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" /> 
-						{{user.name}} ({{user.UserType}})
+						{{user.name}}
 					</span>
 				</p>
 			</div>
@@ -152,8 +154,8 @@
 					<div class="date_seprator"><span>---</span><p>{{dateSince(messageGroup.date)}}</p><span>--</span></div>
 					
 					<div *ngFor="let message of messageGroup.items; let i = index"  id={{message.Message_id}}  [ngClass]="message.message_direction =='IN' ? 'message_box left' : 'message_box'">
-							<label *ngIf="message.message_direction !='incomming'">{{message.AgentName}}</label>
-							<div class="content" (mouseover)="markItRead(message)">
+							<label *ngIf="message.message_direction !='IN'">{{message.AgentName}}</label>
+							<div class="content" (mouseover)="markItRead()">
 								<div *ngIf="message.message_media" class="message_media">
 									<img class="preview_icon" *ngIf="message.media_type == 'video/mp4'" src="/assets/img/teambox/video_preview.png" (click)="downloadFile(message.message_media)">
 									<img class="preview_icon" *ngIf="message.media_type == 'text/plain'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(message.message_media)">
@@ -186,8 +188,8 @@
 					<div class="date_seprator"><span>---</span><p>{{dateSince(notesGroup.date)}}</p><span>---</span></div>
 				     <div class="conversation_list_inner_box" *ngFor="let note of notesGroup.items;"  id={{note.Message_id}}>
 					
-					<div *ngIf="note.is_deleted != 1"  [ngClass]="note.message_direction =='incomming' ? 'message_box left' : 'message_box'">
-					    <label *ngIf="note.message_direction !='incomming'">{{note.AgentName}}</label>
+					<div *ngIf="note.is_deleted != 1"  [ngClass]="note.message_direction =='IN' ? 'message_box left' : 'message_box'">
+					    <label *ngIf="note.message_direction !='IN'">{{note.AgentName}}</label>
 						<div class="content-box">
 							<div *ngIf="selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId" class="content-before">
 						    <p (click)="toggleNoteOption(note)">...</p>
@@ -240,12 +242,12 @@
 			
 
 			
-         	<div class="conversation_inout_area">
+         	<div class="conversation_inout_area" id="conversation_inout_area">
 				<div class="tabs_link flex">
 					<button [ngClass]="showChatNotes=='text' ? 'flex tab_btn active ' : 'flex tab_btn'"  (click)="toggleChatNotes('text')">Chat <span *ngIf="selectedInteraction.UnreadCount>0" class="total_count red">{{selectedInteraction.UnreadCount}}</span></button>
 					<button [ngClass]="showChatNotes=='notes' ? 'tab_btn active' : 'tab_btn'"  (click)="toggleChatNotes('notes')">Notes</button>
 				</div>
-				<div *ngIf="loginAs== 'TL' || selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId" class="input-area">
+				<div  class="input-area">
 				<ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]='100' (click)="resetMessageTex()">
 			    </ejs-richtexteditor>
 				
@@ -259,10 +261,11 @@
 						</p>
 					</div>
 
-				<div *ngIf="showEmoji" class="popup-dialog" >
+				<div *ngIf="showEmoji" class="popup-dialog emoji" >
 					<div class="tabs">
 						<div [ngClass]="EmojiType=='smiley' ? 'char_block active' : 'char_block'"  (click)="showEmojiType('smiley')">😀</div>
 						<div [ngClass]="EmojiType=='animal' ? 'char_block active' : 'char_block'"  (click)="showEmojiType('animal')">🐵</div>
+						<div style="position: absolute;right:10px" (click)="closeEmoji()"><img src="assets/img/teambox/icon-close.svg"></div>
 					</div>
 					<div *ngIf="EmojiType == 'smiley'" class="rteEmoticons" >
 					  <div (click)="onInsert($event)" *ngFor="let smiley of smileys" class='char_block' title={{smiley.title}} [innerHTML]="smiley.content"></div>
@@ -593,37 +596,37 @@
 			
 			<div class="section_filter">
 				<label class="container">
-					<input checked type="checkbox" name="template_filter" value="Interactive" (click)="filterTemplate($event)">
+					<input checked type="checkbox" name="template_filter" value="Marketing" (click)="filterTemplate($event)">
 					<span class="checkmark"></span>
-					<p><span>Interactive</span></p>
+					<p><span>Marketing</span></p>
 				</label>
 				<label class="container">
-					<input checked type="checkbox" name="template_filter" value="Media" (click)="filterTemplate($event)">
+					<input checked type="checkbox" name="template_filter" value="Utility" (click)="filterTemplate($event)">
 					<span class="checkmark"></span>
-					<p><span>Media</span></p>
+					<p><span>Utility</span></p>
 				</label>
 				<label class="container">
-					<input checked type="checkbox" name="template_filter" value="Text" (click)="filterTemplate($event)">
+					<input checked type="checkbox" name="template_filter" value="Authentication" (click)="filterTemplate($event)">
 					<span class="checkmark"></span>
-					<p><span>Text</span></p>
+					<p><span>Authentication</span></p>
 				</label>
 
 			</div>
 			<div class="template_list">
 				<div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
-					<label class="container">
+					<label class="container" (click)="selectTemplate(template)">
 						<input  type="radio" name="selectedTemplate">
 						<span class="checkmark radio"></span>
-						<p>{{template.title}} {{template.is_active}}</p>
+						<p>{{template.title}}</p>
 						<p><span>{{template.created_at}}</span></p>
 					</label>
 					
 					<div class="inner_box">
-						<img *ngIf="template.image" class="template_img" src="/assets/img/campaign/{{template.image}}">
+						<img *ngIf="template.image" class="template_img" src="{{template.image}}">
 						<div *ngIf="!template.image" class="template_img_placeholder"></div>
 						<div [ngClass]="template.image ? 'template_text' : 'template_plain_text'" >
 							<p>{{template.content_heading}}</p>
-							<p [innerHTML]="template.contnet"></p>
+							<p [innerHTML]="template.content"></p>
 						</div>
 					</div>
 					<div class="template_btn">
@@ -665,17 +668,16 @@
 				<div class="template_details_section_left">
 					<div class="template_box">
 						<label class="container">
-							<p>{{selectedTemplate.name}}</p>
-
+							<p>{{selectedTemplate.title}}</p>
 						</label>
 						
 						<div class="inner_box">
-							<img class="template_img" src="/assets/img/campaign/{{selectedTemplate.img}}">
+							<img class="template_img" src="{{selectedTemplate.image}}">
 							<p class="close-box edit_media" (click)="editMedia()">
 								<img src="/assets/img/campaign/edit.svg">
 							</p>
 							<div class="template_text">
-								<p>{{selectedTemplate.heading}}</p>
+								<p>{{selectedTemplate.content_heading}}</p>
 								<p [innerHTML]="selectedTemplate.content"></p>
 							</div>
 						</div>
@@ -846,17 +848,17 @@
 
 		<div class="template_box">
 			<label class="container">
-				<p>{{selectedTemplate.name}}</p>
+				<p>{{selectedTemplate.title}}</p>
 
 			</label>
 			
 			<div class="inner_box">
-				<img class="template_img" src="/assets/img/campaign/{{selectedTemplate.img}}">
+				<img class="template_img" src="{{selectedTemplate.image}}">
 				<p class="close-box edit_media" (click)="editMedia()">
 					<img src="/assets/img/campaign/edit.svg">
 				</p>
 				<div class="template_text">
-					<p>{{selectedTemplate.heading}}</p>
+					<p>{{selectedTemplate.content_heading}}</p>
 					<p [innerHTML]="selectedTemplate.content"></p>
 				</div>
 			</div>
@@ -991,7 +993,8 @@
 	<div class="modal-body messageadd">
 		<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchContact($event)"/>
 		<div class="drop-down-btn" (click)="toggleContactOption()">
-			<button *ngIf="selectedChannel == 'WhatsApp'" class="drop-down-btn">
+			
+			 <button *ngIf="selectedChannel == 'WhatsApp'" class="drop-down-btn">
 				<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WhatsApp Official
 	         </button>
 
@@ -1048,17 +1051,17 @@
 					<img class="back-array-icon"  (click)="openaddMessage(messageadd)" src="assets/img/teambox/back-arraw.png">
 				</div>    
 				<div class="row">
-					<label for="floatingInputGrid" class="required">Name</label>
+					<label for="floatingInputGrid" class="required">Name<span>*</span></label>
 					<input class="form-control" type="text" placeholder="Enter Name" name="Name"
 							formControlName="Name" id="Name" />
 				</div>
 				<div class="row">
-					<label for="floatingSelectGrid" class="required">Phone Number</label>
+					<label for="floatingSelectGrid" class="required">Phone Number<span>*</span></label>
 					<input class="form-control" type="text" placeholder="+91 **********" name="Phone_number"
 							formControlName="Phone_number" id="Phone_number" />
 				</div>
 				<div class="row" style="flex-direction:column">
-					<label for="floatingSelectGrid" class="required">Channel</label>
+					<label for="floatingSelectGrid" class="required">Channel<span>*</span></label>
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
 						 <button (click)="toggleChannelOption()" type="button"  class="drop-down-btn" style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;">
 							 {{selectedChannel}}
@@ -1092,7 +1095,7 @@
 	</div>
 	<div class="modal-footer row popfooter">
 
-		<div class="inner_form col-md-6 text-right">
+		<div class="inner_form text-right">
 			<button type="button" class="submit-btn" (click)="createCustomer()">Start Conversation</button>
 		</div>
 	</div>
