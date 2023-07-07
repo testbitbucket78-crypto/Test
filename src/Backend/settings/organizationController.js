@@ -9,77 +9,56 @@ const fs = require("fs");
 const path = require("path");
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
+const awsHelper = require('../awsHelper');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const uploadCompanylogo = async (req, res) => {
+    try {
+        // uploadFile(filePath, bucketName, newFileNameKey)
+        // const filePath = path.join(__dirname, 'temple.jpg');
 
+        spid = req.body.spid
+        uid = req.body.uid
+        user = req.body.user
+        filePath = req.body.filePath
+        var selectImgUpload = await db.excuteQuery(val.selectCompanyDetails, [spid])
+        console.log(selectImgUpload.length != 0)
+        if (selectImgUpload.length != 0) {
+            let awsres = await awsHelper.uploadStreamToAws(spid + uid + user + '/profile.jpg', filePath)
+            let updateimgQuery = `UPDATE companyDetails set profile_img=? where SP_ID=?`
+            console.log("awsres")
+            console.log(awsres.value.Location)
+            let updateimgRes = await db.excuteQuery(updateimgQuery, [awsres.value.Location, spid])
 
-// Configure AWS credentials and region
-AWS.config.update({
-    accessKeyId: val.accessKeyId,
-    secretAccessKey: val.secretAccessKey,
-    region: val.region
-});
+            res.status(200).send({
+                msg: 'img updated successfully !',
+                updateimgRes: updateimgRes,
+                status: 200
+            });
 
-// Create S3 client
-const s3 = new AWS.S3();
-
-
-
-// Example: Upload a file to S3
-const uploadFile = (fileName, fileData) => {
-    const filePath = path.join(__dirname, 'temple.jpg');
-    const params = {
-        Bucket: 'cip-engage',
-        Key: 'company-LOGO',
-        Body: filePath
-    };
-
-    s3.upload(params, (err, data) => {
-        if (err) {
-            console.error(err);
-            // Handle error
         } else {
-            // File uploaded successfully
-            console.log("uploaded data")
-            console.log(data);
-            // Process the upload response
+            let awsres = await awsHelper.uploadStreamToAws(spid + uid + user + '/profile.jpg', filePath)
+            let insertimgQuery = `INSERT INTO companyDetails (profile_img,SP_ID) VALUES(?,?)`;
+            let insertimgRes = await db.excuteQuery(insertimgQuery, [awsres, spid])
+            res.status(200).send({
+                msg: 'img added successfully !',
+                insertimgRes: insertimgRes,
+                status: 200
+            });
+
         }
-    });
-};
-
-// Example: Download a file from S3
-const downloadFile = (fileName) => {
-    const params = {
-        Bucket: 'cip-engage',
-        Key: 'company-LOGO'
-    };
-
-    s3.getObject(params, (err, data) => {
-        if (err) {
-            console.error(err);
-            // Handle error
-        } else {
-            // File downloaded successfully
-            console.log(data);
-            // Process the file data
-        }
-    });
-
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
 
 }
 
 
-
-
-
-
-
-
-
-
-app.post('/companyDetail', async (req, res) => {
+const savecompanyDetail = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         profile_img = req.body.profile_img
@@ -122,9 +101,9 @@ app.post('/companyDetail', async (req, res) => {
         res.send(err)
     }
 
-})
+}
 
-app.post('/localDetails', async (req, res) => {
+const savelocalDetails = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         Date_Format = req.body.Date_Format
@@ -158,9 +137,9 @@ app.post('/localDetails', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
-app.post('/billingDetails', async (req, res) => {
+const savebillingDetails = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         InvoiceId = req.body.InvoiceId
@@ -200,10 +179,10 @@ app.post('/billingDetails', async (req, res) => {
         res.send(err)
     }
 
-})
+}
 
 
-app.post('/updateCompanyDetail', async (req, res) => {
+const updateCompanyDetail = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         profile_img = req.body.profile_img
@@ -229,9 +208,9 @@ app.post('/updateCompanyDetail', async (req, res) => {
         res.send(err)
     }
 
-})
+}
 
-app.post('/updateLocalDetails', async (req, res) => {
+const updateLocalDetails = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         Date_Format = req.body.Date_Format
@@ -252,9 +231,9 @@ app.post('/updateLocalDetails', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
-app.post('/updatebillingDetails', async (req, res) => {
+const updatebillingDetails = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         InvoiceId = req.body.InvoiceId
@@ -281,9 +260,9 @@ app.post('/updatebillingDetails', async (req, res) => {
         res.send(err)
     }
 
-})
+}
 
-app.get('/companyDetail/:spID', async (req, res) => {
+const getcompanyDetail = async (req, res) => {
     try {
         var resbyspid = await db.excuteQuery(val.selectCompanyDetails, [req.params.spID])
         console.log("comapany")
@@ -297,9 +276,9 @@ app.get('/companyDetail/:spID', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
-app.get('/localDetails/:spID', async (req, res) => {
+const getlocalDetails = async (req, res) => {
     try {
         var localbyspid = await db.excuteQuery(val.selectlocalDetails, [req.params.spID])
 
@@ -313,10 +292,10 @@ app.get('/localDetails/:spID', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
 
-app.get('/billingDetails/:spID', async (req, res) => {
+const getbillingDetails = async (req, res) => {
     try {
         var billingbyspid = await db.excuteQuery(val.selectBillingDetails, [req.params.spID])
 
@@ -330,33 +309,11 @@ app.get('/billingDetails/:spID', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
-
-
-
-
-
-
-app.post('/uploadlogo', (req, res) => {
-    try {
-        // uploadFile(filePath, bucketName, newFileNameKey)
-
-        res.status(200).send({
-            msg: 'img added successfully !',
-            status: 200
-        });
-    } catch (err) {
-        console.log(err)
-        db.errlog(err);
-        res.send(err)
-    }
-
-})
-
+}
 
 
 //_______________WORKING HOURS_________________________//
-app.post('/workingDetails', async (req, res) => {
+const saveworkingDetails = async (req, res) => {
     try {
         var created_at = new Date();
         var data = req.body.days
@@ -380,9 +337,9 @@ app.post('/workingDetails', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
-app.get('/workingDetails/:spID', async (req, res) => {
+const getworkingDetails = async (req, res) => {
     try {
         var result = await db.excuteQuery(val.selectWork, [req.params.spID]);
         res.status(200).send({
@@ -395,10 +352,10 @@ app.get('/workingDetails/:spID', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
 
-app.post('/updateWorkingHours', (req, res) => {
+const updateWorkingHours = (req, res) => {
 
     try {
         const updated_at = new Date();
@@ -420,12 +377,12 @@ app.post('/updateWorkingHours', (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
 
 
 
-app.post('/holidays', async (req, res) => {
+const addholidays = async (req, res) => {
 
     try {
 
@@ -451,9 +408,9 @@ app.post('/holidays', async (req, res) => {
         res.send(err)
     }
 
-})
+}
 
-app.get('/holidays/:spID/:dateFrom/:dateTo', async (req, res) => {
+const getHolidays = async (req, res) => {
     try {
 
         var HolidayList = await db.excuteQuery(val.selectHoliday, [req.params.dateFrom, req.params.dateTo, req.params.spID])
@@ -468,10 +425,10 @@ app.get('/holidays/:spID/:dateFrom/:dateTo', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
 
-app.post('/removeHolidays', async (req, res) => {
+const removeHolidays = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         holiday_date = req.body.holiday_date
@@ -497,14 +454,15 @@ app.post('/removeHolidays', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
+
 
 //__________________________Roles API's________________________________//
 
-app.get('/subrights/:rightsID', async (req, res) => {
+const subrights = async (req, res) => {
     try {
 
-        var subRightRes = await db.excuteQuery(val.getSubRight, [req.params.rightsID]);
+        var subRightRes = await db.excuteQuery(val.getSubRight);
         res.status(200).send({
             msg: 'Get subrights successfully !',
             subRightRes: subRightRes,
@@ -516,9 +474,9 @@ app.get('/subrights/:rightsID', async (req, res) => {
         res.send(err)
     }
 
-})
+}
 
-app.get('/rights', async (req, res) => {
+const rights = async (req, res) => {
     try {
 
         var Rights = await db.excuteQuery(val.getRights, []);
@@ -533,11 +491,11 @@ app.get('/rights', async (req, res) => {
         res.send(err)
     }
 
-})
+}
 
 
 
-app.post('/addRole', async (req, res) => {
+const addRole = async (req, res) => {
     try {
         const roleID = req.body.roleID
         RoleName = req.body.RoleName
@@ -548,7 +506,7 @@ app.post('/addRole', async (req, res) => {
         const created_at = new Date();
         if (roleID == 0) {
 
-            var addRoleValues = [[RoleName, Privileges, IsActive, subPrivileges, created_at, SP_ID]]
+            var addRoleValues = [[RoleName, Privileges, IsActive, subPrivileges, created_at, created_at, SP_ID]]
             var rolesRes = await db.excuteQuery(val.addRoleQuery, [addRoleValues])
             res.status(200).send({
                 msg: 'Roles added successfully',
@@ -571,9 +529,9 @@ app.post('/addRole', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
-app.get('/getRoles/:roleID/:spid', async (req, res) => {
+const getRolesbyroleIDspid = async (req, res) => {
     try {
         var getRoles = await db.excuteQuery(val.getRoleQuery, [req.params.roleID, req.params.spid])
         res.status(200).send({
@@ -586,9 +544,9 @@ app.get('/getRoles/:roleID/:spid', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
-app.get('/getUser/:spid/:userType', async (req, res) => {
+const getUserbyspiduserType = async (req, res) => {
     try {
         var getUser = await db.excuteQuery(val.getUserQuery, [req.params.spid, req.params.userType])
         res.status(200).send({
@@ -601,9 +559,9 @@ app.get('/getUser/:spid/:userType', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
-app.post('/deleteRole/:roleID/:spid', async (req, res) => {
+const deleteRoleByroleIDspid = async (req, res) => {
     try {
         var deletedData = await db.excuteQuery(val.deleteQuery, [req.params.roleID, req.params.spid])
         res.status(200).send({
@@ -616,7 +574,7 @@ app.post('/deleteRole/:roleID/:spid', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
 
 
@@ -636,7 +594,7 @@ let transporter = nodemailer.createTransport({
     host: val.emailHost
 });
 
-app.post('/addUser', async (req, res) => {
+const addUser = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         email_id = req.body.email_id
@@ -663,18 +621,51 @@ app.post('/addUser', async (req, res) => {
 
             var User = await db.excuteQuery(val.insertQuery, [values]);
 
-            var getData = await db.excuteQuery(val.selectByIdQuery, [User.insertId])
+            var getData = await db.excuteQuery(val.selectByIdQuery, [SP_ID])
 
+            if (getData.length >= 0) {
+                var Company_Name = getData[0].Company_Name
+                var logo = getData[0].profile_img
+            }
             var mailOptions = {
                 from: val.email,
                 to: req.body.email_id,
-                subject: "user details",
-                html: "<h3>User account details is </h3>" + "<h1 style='font-weight:bold;'>  Password = " + JSON.stringify(randomstring) + "</h1>" + " And Details = " + JSON.stringify(getData)
-
+                // subject: "user details",
+                // html: "<h3>User account details is </h3>" + "<h1 style='font-weight:bold;'>  Password = " + JSON.stringify(randomstring) + "</h1>" + " And Details = " + JSON.stringify(getData)
+                subject: 'Welcome to ' + Company_Name + ' ! Your Credentials Inside',
+                text:
+              `Dear ` + req.body.name + `,
+              
+              Welcome to `+ Company_Name + ` ! We're thrilled to have you on board.
+              
+              Please find your login credentials below:
+              
+              Email ID: ` + req.body.email_id +
+                    ` , Temporary Password : ` + JSON.stringify(randomstring) + `
+              
+              To access your official email account, follow these steps:
+              
+              1. Go to  https://cip.sampanatechnologies.com/#/login 
+              2. Enter your Email ID.
+              3. Use the temporary password provided above.
+              4. Set a new password when prompted.
+              
+              If you need any assistance, reach out to us.
+              
+              We're excited to see your contributions. Welcome once again!
+              
+              Best regards,
+              `+
+                    req.body.name + ` 
+              `+
+                    Company_Name + `
+              `+
+                    logo + `
+              Powered by EngageKart`
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-
+           console.log(info)
 
             });
             res.status(200).send({
@@ -689,9 +680,9 @@ app.post('/addUser', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
-app.get('/rolesList/:spid', async (req, res) => {
+const rolesListByspid = async (req, res) => {
     try {
         var getRoles = await db.excuteQuery(val.getRole, [req.params.spid])
         res.status(200).send({
@@ -704,10 +695,10 @@ app.get('/rolesList/:spid', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
 
-app.post('/deleteUser', async (req, res) => {
+const deleteUser = async (req, res) => {
     try {
         uid = req.body.uid
         var deleteUser = await db.excuteQuery(val.userdeletQuery, [uid])
@@ -722,9 +713,9 @@ app.post('/deleteUser', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
-app.post('/editUser', async (req, res) => {
+const editUser = async (req, res) => {
     try {
         uid = req.body.uid
 
@@ -748,10 +739,10 @@ app.post('/editUser', async (req, res) => {
         res.send(err)
     }
 
-})
+}
 
 
-app.get('/getUser/:spid', async (req, res) => {
+const getUserByspid = async (req, res) => {
     try {
         var getUser = await db.excuteQuery(val.selectAllQuery, [req.params.spid])
         res.status(200).send({
@@ -764,11 +755,11 @@ app.get('/getUser/:spid', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
 
 
-app.post('/addTeam', async (req, res) => {
+const addTeam = async (req, res) => {
     try {
 
         SP_ID = req.body.SP_ID
@@ -776,16 +767,17 @@ app.post('/addTeam', async (req, res) => {
         userIDs = req.body.userIDs
         // created_By = req.body.created_By
         created_at = new Date();
-        var teamVal = [[SP_ID, team_name, created_at]]
+        var teamVal = [[SP_ID, team_name, created_at,created_at]]
+       
         var teamRes = await db.excuteQuery(val.addteamQuery, [teamVal])
         console.log(teamRes.insertId)
 
         const allTeamsUser = userIDs.map(data => [teamRes.insertId, data, created_at]);
-        console.log(allTeamsUser)
+      
 
 
         var teamMapRes = await db.excuteQuery(val.addUserTeamMap, [allTeamsUser])
-        console.log(teamMapRes)
+   
 
 
 
@@ -801,10 +793,10 @@ app.post('/addTeam', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
 
-app.post('/deleteTeam', async (req, res) => {
+const deleteTeam = async (req, res) => {
     try {
         id = req.body.id;
         SP_ID = req.body.SP_ID;
@@ -824,9 +816,9 @@ app.post('/deleteTeam', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
-app.post('/editTeam', async (req, res) => {
+const editTeam = async (req, res) => {
     try {
         id = req.body.id,
             SP_ID = req.body.SP_ID
@@ -861,10 +853,10 @@ app.post('/editTeam', async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-})
+}
 
 
-app.get('/teamsList/:spid', async (req, res) => {
+const teamsListByspid = async (req, res) => {
     try {
         var listofteams = await db.excuteQuery(val.selectTeams, [req.params.spid])
         res.status(200).send({
@@ -878,162 +870,12 @@ app.get('/teamsList/:spid', async (req, res) => {
         res.send(err)
     }
 
-})
+}
 
 
-
-app.post('/changePassword', async (req, res) => {
-    try {
-
-        uid = req.body.uid;
-        oldPass = req.body.oldPass
-        newPass = req.body.newPass
-        confirmPass = req.body.confirmPass
-        const date = new Date();
-        var query = `select password from user where uid=?`
-        var resQuery = await db.excuteQuery(query, [uid])
-        if (resQuery.length >= 0) {
-            const hash = await bcrypt.compare(oldPass, resQuery[0].password);
-
-            console.log(hash)
-            if (hash == false) {
-                res.status(401).send({
-                    msg: 'Old  Password is wrong !',
-                    status: 401
-                });
-            }
-            else {
-                if (newPass !== confirmPass) {
-                    res.status(400).json({ error: 'Passwords do not match', status: 400 });
-                }
-                var hasedPass = await bcrypt.hash(newPass, 10);
-                var insertQuery = `UPDATE user SET password=? ,LastModifiedDate=? WHERE uid=?`
-                var insertRes = await db.excuteQuery(insertQuery, [hasedPass, date, uid])
-                res.status(200).send({
-                    msg: 'password updated',
-                    insertRes: insertRes,
-                    status: 200
-                })
-            }
-        }
-    } catch (err) {
-        console.log(err)
-        db.errlog(err);
-        res.send(err)
-    }
-
-
-
-})
-
-
-app.get('/teamName/:uid', async (req, res) => {
-    try {
-        var teamID = `SELECT teamID FROM UserTeamMapping where userID=? and isDeleted !=1`;
-        var teamMap = await db.excuteQuery(teamID, [req.params.uid])
-        console.log(teamMap)
-        var teamid = teamMap[0].teamID
-        const teamIDs = teamMap.map((row) => row.teamID)
-        console.log(teamIDs)
-        var teamName = `SELECT team_name from teams where id IN (?)  and isDeleted !=1`
-        var teamRes = await db.excuteQuery(teamName, [teamIDs])
-        console.log(teamRes);
-        res.status(200).send({
-            msg: 'team name',
-            teamRes: teamRes,
-            status: 200
-        });
-    } catch (err) {
-        console.log(err)
-        db.errlog(err);
-        res.send(err)
-    }
-})
-
-
-app.get('/roleName/:uid', async (req, res) => {
-    try {
-        var roleIDQuery = `SELECT UserType FROM user where uid=? and isDeleted !=1`;
-        var roleMap = await db.excuteQuery(roleIDQuery, [req.params.uid])
-        var roleIDdata = roleMap[0].UserType
-        var roleNameQuery = `SELECT RoleName from roles where roleID=?  and isDeleted !=1`
-        var roleRes = await db.excuteQuery(roleNameQuery, [roleIDdata])
-        console.log(roleRes);
-        res.status(200).send({
-            msg: 'team name',
-            roleRes: roleRes,
-            status: 200
-        });
-    } catch (err) {
-        console.log(err)
-        db.errlog(err);
-        res.send(err)
-    }
-})
-
-
-app.post('/userActiveStatus', async (req, res) => {
-    try {
-        IsActive = req.body.IsActive;
-        LastModifiedDate = new Date()
-        var activeStatusquery = `UPDATE  user SET IsActive=?,LastModifiedDate=? WHERE uid=? `
-        var saveActiveStatus = await db.excuteQuery(activeStatusquery, [IsActive, LastModifiedDate, req.body.uid]);
-        res.status(200).send({
-            msg: 'save active status',
-            saveActiveStatus: saveActiveStatus,
-            status: 200
-        });
-    } catch (err) {
-        console.log(err)
-        db.errlog(err);
-        res.send(err)
-    }
-})
-
-
-app.post('/addNotification', async (req, res) => {
-    try {
-        UID = req.body.UID,
-            notificationId = req.body.notificationId,
-            PushNotificationValue = req.body.PushNotificationValue,
-            SoundNotificationValue = req.body.SoundNotificationValue,
-            isDeleted = 0,
-            created_at = new Date()
-
-
-        var addNotification = await db.excuteQuery(val.addNotification, [[[UID, notificationId, PushNotificationValue, SoundNotificationValue, isDeleted, created_at]]])
-        res.status(200).send({
-            msg: 'Notification added',
-            addNotification: addNotification,
-            status: 200
-        })
-    } catch (err) {
-        console.log(err)
-        db.errlog(err);
-        res.send(err)
-    }
-})
-
-app.get('/getNotification/:UID',async (req,res)=>{
-    try{
-      
-     var notify=await db.excuteQuery(val.getNotification,[req.params.UID])
-     res.status(200).send({
-        msg:'Get Notifications',
-        notify:notify,
-        status:200
-     })
-
-    }catch (err) {
-        console.log(err)
-        db.errlog(err);
-        res.send(err)
-    }
-    
-
-})
-
-app.listen(3004, function () {
-    console.log("Node is running");
-
-});
+module.exports = {
+    uploadCompanylogo, savecompanyDetail, savebillingDetails, savelocalDetails, updateLocalDetails, updatebillingDetails, updateCompanyDetail,
+    getbillingDetails, getlocalDetails, getcompanyDetail, saveworkingDetails, getworkingDetails, updateWorkingHours, addholidays, getHolidays, removeHolidays
+    , subrights, rights, addRole, getRolesbyroleIDspid, getUserbyspiduserType, deleteRoleByroleIDspid, addUser, rolesListByspid,
+    deleteUser, editUser, getUserByspid, addTeam, deleteTeam, editTeam, teamsListByspid
+}

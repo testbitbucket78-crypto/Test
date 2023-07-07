@@ -111,9 +111,10 @@ const blockCustomer = (req, res) => {
 
 const createInteraction = (req, res) => {
     customerId= req.body.customerId
+    SP_ID=req.body.SP_ID
     interaction_status= "Open"
     interaction_details= " " 
-    var values = [[ customerId, interaction_status, interaction_details]]
+    var values = [[ customerId, interaction_status, interaction_details,SP_ID]]
     db.runQuery(req,res,val.createInteractionQuery, [values])
 }
 
@@ -270,7 +271,6 @@ const insertMessage = (req, res) => {
     Type = req.body.message_type
     created_at=req.body.created_at
     ExternalMessageId=''
-    
     var values = [[SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,created_at]]
     db.runQuery(req,res,messageQuery, [values])
     if(req.body.message_type =='text'){

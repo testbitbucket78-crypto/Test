@@ -25,7 +25,7 @@ where u.isDeleted !=1 and u.SP_ID=?`
 
 
 
-var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details) VALUES ?"
+var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details,SP_ID) VALUES ?"
 var updateInteractionQuery="UPDATE Interaction SET interaction_status =? WHERE InteractionId =?";
 
 var getAllInteraction = "SELECT  Interaction.AutoReplyStatus,Interaction.AutoReplyUpdatedAt,Interaction.paused_till, Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId OR Interaction.customerId=EndCustomer.Phone_number"

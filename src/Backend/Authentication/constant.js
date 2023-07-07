@@ -5,7 +5,10 @@ const user= "CIP"
 const password= "cip#321#"
 const database= "cip_project"
 
-
+const awsaccessKeyId = 'AKIAYY5FSMYVNUZHPOEH'
+const awssecretAccessKey = '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'
+const awsregion = 'ap-south-1'
+const awsbucket='cip-engage'
 //Queries for user.js
 
 var selectAllQuery = "SELECT * FROM user WHERE SP_ID=?";
@@ -63,5 +66,5 @@ module.exports = {
     updateQuery,allAgents,activeAgent, loginQuery, registerQuery, 
     email, appPassword, emailHost, port, 
      updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp,
-     access_token,url,content_type,crachlogQuery
+     access_token,url,content_type,crachlogQuery,awsaccessKeyId,awssecretAccessKey,awsregion,awsbucket
 }
