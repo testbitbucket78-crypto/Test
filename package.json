@@ -43,6 +43,7 @@
     "ag-grid-angular": "^26.2.0",
     "ag-grid-community": "^26.2.0",
     "ag-grid-enterprise": "^26.2.0",
+    "aws-sdk": "^2.1407.0",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "bootstrap": "^4.5.3",

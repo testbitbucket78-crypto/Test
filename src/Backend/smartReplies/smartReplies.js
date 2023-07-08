@@ -148,10 +148,20 @@ app.put('/removeKeyword', (req, res) => {
 })
 
 app.put('/updateSmartReply', (req, res) => {
-  const list = req.body.Tags;
-  const listStr = list.join();
-  console.log("listStr" + listStr)
+  // const list = req.body.Tags;
+  // const listStr = list.join();
+  // console.log("listStr" + listStr)
+  // const myStringArray = req.body.Keywords;
+  // const params = {
+  //   strings: {
+
+  //     value: myStringArray.join(',')
+  //   }
+  // };
+  // console.log("params " + params.strings.value)
+  // const jsonData = JSON.stringify(req.body.ReplyActions);
   const myStringArray = req.body.Keywords;
+  console.log(req.body.Keywords)
   const params = {
     strings: {
 
@@ -161,10 +171,11 @@ app.put('/updateSmartReply', (req, res) => {
   console.log("params " + params.strings.value)
   const jsonData = JSON.stringify(req.body.ReplyActions);
 
-  console.log("req.body.Keywords" + jsonData);
-  console.log(req.body.ReplyActions)
-  console.log(req.body.Tags)
-  db.runQuery(req, res, val.updateSmartReply, [req.body.ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData, listStr])
+
+  console.log(req.body.ID)
+
+ 
+  db.runQuery(req, res, val.updateSmartReply, [req.body.ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData])
 })
 
 

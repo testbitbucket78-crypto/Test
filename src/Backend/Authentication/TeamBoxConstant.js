@@ -16,12 +16,16 @@ var blockCustomerQuery="UPDATE EndCustomer SET isBlocked =? WHERE customerId =?"
 
 
 
-//var selectAllAgentsQuery = "WITH RECURSIVE user_paths AS ( SELECT SP_ID,ParentID as ParentId, uid,name, mobile_number,email_id,address,usertype,1 lvl FROM user WHERE ParentID = 0 and sp_id=? UNION ALL SELECT e.sp_id, e.ParentID, e.uid, e.name, e.mobile_number,e.email_id,e.address,e.usertype,lvl+1 FROM user e INNER JOIN user_paths ep ON ep.sp_id = e.ParentId ) SELECT sp_id, ParentId, uid,name, mobile_number, email_id, address, usertype, lvl FROM user_paths ep ";
-var selectAllAgentsQuery = "SELECT * from user where SP_ID=?";
+var selectAllAgentsQuery = `SELECT r.RoleName as UserType ,u.name as name , u.uid
+FROM roles r
+JOIN user u ON u.UserType = r.roleID
+where u.isDeleted !=1 and u.SP_ID=?`
+
+//var selectAllAgentsQuery = "SELECT * from user where SP_ID=?";
 
 
 
-var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details) VALUES ?"
+var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details,SP_ID) VALUES ?"
 var updateInteractionQuery="UPDATE Interaction SET interaction_status =? WHERE InteractionId =?";
 
 var getAllInteraction = "SELECT  Interaction.AutoReplyStatus,Interaction.AutoReplyUpdatedAt,Interaction.paused_till, Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId OR Interaction.customerId=EndCustomer.Phone_number"
