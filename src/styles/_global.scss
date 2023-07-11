@@ -167,6 +167,8 @@
   width: 20px!important;
   background-color: #ffffff;
   border-radius: 10px;
+  padding-left: 4px!important;
+  padding-right: 4px;
 }
 .multiselect-dropdown .multiselect-item-checkbox input{
   border: 0;
@@ -286,6 +288,10 @@
 }
 .ag-root-wrapper-body {
     border-radius: 33px;
+}
+
+.cropper {
+  border-radius: 50%!important;
 }
 
 

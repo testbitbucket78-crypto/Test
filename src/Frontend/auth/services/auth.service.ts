@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Auth, authRegister, authForgotPassword ,authSendOtp,authVerifyOtp ,authChangePassword} from '../models';
+import { Auth, authRegister, authForgotPassword ,authSendOtp,authVerifyOtp} from '../models';
 import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
 
 @Injectable()
@@ -31,10 +31,6 @@ export class AuthService {
         let API_URL = 'https://authapi.sampanatechnologies.com/resetPassword/:uid';
         return this.http.post(API_URL, value, { params: params })
     }
-    changePass(data: authChangePassword): Observable<any> {
-        let API_URL = 'https://settings.sampanatechnologies.com/changePassword';
-        return this.http.post(API_URL, data)
-    }
     sendOtp(data: authSendOtp) {
         let API_URL = 'https://authapi.sampanatechnologies.com/sendOtp';
         return this.http.post(API_URL, data)
@@ -50,7 +46,6 @@ export class AuthService {
 
         return this.http.post(API_URL, data)
     }
-
 
     logout(): void {
         sessionStorage.clear();

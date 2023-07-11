@@ -215,6 +215,9 @@
                       (click)="showEmojiType('smiley')">😀</div>
                     <div [ngClass]="EmojiType=='animal' ? 'char_block active' : 'char_block'"
                       (click)="showEmojiType('animal')">🐵</div>
+                      <div style="position: absolute;right:10px" (click)="closeEmoji()">
+                      <img src="assets/img/teambox/icon-close.svg">
+                    </div>
                   </div>
                   <div *ngIf="EmojiType == 'smiley'" class="rteEmoticons">
                     <div (click)="onInsert($event)" *ngFor="let smiley of smileys" class='char_block'

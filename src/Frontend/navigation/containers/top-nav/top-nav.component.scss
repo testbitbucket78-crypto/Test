@@ -7,6 +7,7 @@
     font-size: 40px;
     letter-spacing: -1.3px;
     font-weight: 800;
+    padding: 0 0% 0 5%;
 }
 
 
@@ -22,6 +23,11 @@
     border-radius: 50px;
     margin: -22px -8px -32px 1px;
     cursor: pointer;
+}
+
+.sb-topnav .navbar-brand  {
+    font-size: 25px;
+    font-weight: 800;
 }
 
 .popup-notification {
@@ -359,6 +365,12 @@
 }
 
 
+.navbar {
+    padding: 1.5rem 1rem 1rem 1rem!important;
+}
+
+
+
 // @media all and (max-width:1536px) {
 
 //     .mt-4 {
@@ -380,3 +392,36 @@
 //         margin-top: -31px!important;
 //     }
 // }
+
+
+// top-nav styling for mobile devices
+
+@media screen and (max-width:576px)   {
+
+
+    .sb-topnav .navbar-brand {
+    padding-right: 1rem;
+    margin: 0;
+    font-size: 20px;
+    width: auto;
+    height: auto;
+    padding: 0;
+    border-right: 0px!important;
+}
+  
+.top-icons img {
+    margin-left: 10px!important;
+}
+
+.main-heading {
+    font-size: 25px;
+    padding: 0 0 0 5%;
+}
+
+    .active-toggle {
+        width: 145px;
+    }
+
+}
+
+

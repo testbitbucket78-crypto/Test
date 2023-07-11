@@ -7,8 +7,8 @@
 }
 
 .body-empty-state img {
-    width: 145px;
-    height: 116px;
+    width: 123px;
+    height: 109px;
 }
 
 .body-empty-state h5 {
@@ -22,7 +22,7 @@
 .content-head.d-flex {
     display: flex !important;
     justify-content: space-between;
-    padding: 3% 2% 0% 6%;
+    padding: 3% 2% 0% 4%;
 }
 
 
@@ -229,7 +229,21 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 .row.r1 {
     display: flex;
     flex-wrap: wrap;
-    margin: 3% 3% 0% 6%;
+    margin: 3% 3% 0% 4%;
+}
+
+@media screen  and (max-width: 768px) {
+    .row.r1 {
+        justify-content: center;
+    }
+    
+}
+
+@media screen  and (max-width: 1200px) {
+    .row.r1 {
+        justify-content: center;
+    }
+    
 }
 .row h6 {
 
@@ -336,7 +350,7 @@ h3{
     font-family: 'Manrope';
     font-size: 14px;
     color: #000000;
-    padding-left: 10px;
+    padding-left: 20px;
 }
 
 .mt-4 {
@@ -530,4 +544,47 @@ margin-top: -12px;
     margin: 0;
     justify-content: center;
     width: 65rem;
+}
+
+.assign-conversation {
+    background: #f6efff;
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    opacity: 1;
+    max-width: 65%;
+    max-height: 20%;
+    margin-left: 1.5em;
+    margin-top: 0.5em;
+    font-family: 'Manrope';
+}
+
+#msgbox-head1 {
+    text-align: left;
+    letter-spacing: 0px;
+    color: #6149cd;
+    font-size: 11px;
+    margin-left: 1em;
+    margin-top: 0.5em;
+}
+
+#msgbox-body1 {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+#msgbox-body2 {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.reply-action-btn {
+    cursor: pointer;
+}
+
+.keywords-btn {
+    cursor: pointer;
+}
+
+.help-support-btn {
+    cursor: pointer;
 }

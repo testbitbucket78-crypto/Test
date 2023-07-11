@@ -149,6 +149,7 @@ export class ContactsComponent implements OnInit {
         Phone_number: new FormControl(''),
         emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
         age: new FormControl(''),
+        sex: new FormControl(''),
         tag: new FormControl([]),
       //  tagControls = tags.map(tag => new FormControl(tag));
         status:  new FormControl([]),
@@ -163,6 +164,7 @@ export class ContactsComponent implements OnInit {
     Phone_number: new FormControl(''),
     emailId: new FormControl(''),
     age: new FormControl(''),
+    sex: new FormControl(''),
     tag: new FormControl([]),
     status: new FormControl([]),
     facebookId: new FormControl(''),
@@ -322,6 +324,7 @@ onSelectAll(items: any) {
         Phone_number: new FormControl(result[0].Phone_number),
         emailId: new FormControl(result[0].emailId),
         age: new FormControl(result[0].age),
+        sex: new FormControl(result[0].sex),
         tag: new FormControl(result[0].tag?.split(',')),
         status: new FormControl(result[0].status?.split(',')),
         facebookId: new FormControl(result[0].facebookId),

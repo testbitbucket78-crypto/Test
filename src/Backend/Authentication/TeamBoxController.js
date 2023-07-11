@@ -334,13 +334,16 @@ function sendMediaOnWhatsApp(messageTo,mediaFile){
 
 function sendTextOnWhatsApp(messageTo,messateText){
 let content =messateText;
-content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-		content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-		content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-		content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-		content = content.replace('&nbsp;', '\n')
-		content = content.replace(/<br[^>]*>/g, '\n')
-		content = content.replace(/<\/?[^>]+(>|$)/g, "")
+if(content){
+    content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+    content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+    content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+    content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+    content = content.replace('&nbsp;', '\n')
+    content = content.replace(/<br[^>]*>/g, '\n')
+    content = content.replace(/<\/?[^>]+(>|$)/g, "")
+    
+}
 		
    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
         var chunks = [];

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
     selector: 'sb-walletusage',
     templateUrl: './walletusage.component.html',
@@ -10,6 +11,7 @@ export class WalletusageComponent implements OnInit {
     currentPage: number = 1;
     paging: number[] = [];
     modalReference: any;
+    @Output() selectab = new EventEmitter<string> () ;
 
     walletUsageData = [
         {
@@ -296,4 +298,9 @@ export class WalletusageComponent implements OnInit {
             this.paging.push(i);
         }
     }
+
+    previousPage() {
+        this.selectab.emit('0');
+    }
 }
+

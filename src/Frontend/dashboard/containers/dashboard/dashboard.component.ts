@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit {
     constructor(private apiService: DashboardService, private router: Router) { }
     ngOnInit() {
 
-        // this.routerGuard();
+        this.routerGuard();
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
         this.getdashboardCampaigns();
@@ -45,12 +45,12 @@ export class DashboardComponent implements OnInit {
         console.log(this.Name);
     }
 
-    //******* Router Guard  *********//
-    // routerGuard = () => {
-    //     if (sessionStorage.getItem('SP_ID') === null) {
-    //         this.router.navigate(['login']);
-    //     }
-    // }
+  // ******* Router Guard  *********//
+    routerGuard = () => {
+        if (sessionStorage.getItem('SP_ID') === null) {
+            this.router.navigate(['login']);
+        }
+    }
 
     getDashboardSubscribers() {
         var sPid = sessionStorage.getItem('SP_ID')

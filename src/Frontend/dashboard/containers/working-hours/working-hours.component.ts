@@ -29,18 +29,21 @@ workingData:workingData[]=[];
 workingFormData:workingFormData[]=[];
 workingHourForm!:FormGroup;
 selectedMonth!:number;
-selectedYear:number = 2023;
+selectedYear:number = 0;
 monthDates:any[] =[];
 selectedDates:number[] =[];
+yearList:number[] =[];
 
   constructor(private _settingsService:SettingsService) { 
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
+    this.selectedYear =new Date().getFullYear();
    }
 
   ngOnInit(): void {
     this.workingHourForm = this.prepareCompanyForm();
     this.getWorkingDetails();
     this.getHolidayDetails();
+    this.getYearData();
   }
 
   prepareCompanyForm(){
@@ -89,7 +92,7 @@ selectedDates:number[] =[];
     .subscribe(result =>{
       if(result){
         console.log(result);
-        this.getWorkingDetails();
+        this.getHolidayDetails();
         //this.workingData = result?.result;
       }
     })
@@ -160,8 +163,14 @@ selectedDates:number[] =[];
     }
    }
 
-   selectDates(idx:any){
+   selectDates(idx:number){
       this.monthDates[idx].selected = !this.monthDates[idx].selected;
+   }
+
+   getYearData(){
+    for(let i=1950;i<=2050;i++){
+      this.yearList.push(i);
+    }
    }
 
 }

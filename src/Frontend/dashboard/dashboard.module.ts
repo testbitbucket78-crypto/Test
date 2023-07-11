@@ -13,6 +13,9 @@ import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { AgGridModule } from 'ag-grid-angular';
+import { ImageCropperModule } from 'ngx-image-cropper';
+
+
 
 
 
@@ -47,7 +50,8 @@ import { DashboardComponent } from './containers';
         NgxIntlTelInputModule,
         AgGridModule.withComponents([dashboardContainers.ContactsComponent]),
         NgMultiSelectDropDownModule.forRoot(),
-        RichTextEditorModule
+        RichTextEditorModule,
+        ImageCropperModule
     ],
     providers: [...dashboardServices.services,
                 ...dashboardGuards.guards

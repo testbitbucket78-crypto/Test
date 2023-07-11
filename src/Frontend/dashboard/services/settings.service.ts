@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost } from '../models/settings.model';
+import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData } from '../models/settings.model';
 
 @Injectable({
   providedIn: 'root'
@@ -50,4 +50,25 @@ export class SettingsService {
   saveHolidayData(holidayData: holidayData): Observable<workingData> {
     return this.http.post<workingData>(`${this.API_URL}/holidays`,holidayData );
   }
+
+  getRolesList(spId: number): Observable<workingDataResponse> {
+    return this.http.get<workingDataResponse>(`${this.API_URL}/rolesList/${spId}`);
+  }
+
+  getRightsList(): Observable<rightsResponse> {
+    return this.http.get<rightsResponse>(`${this.API_URL}/rights`);
+  }
+
+  getSubRightsList(): Observable<workingDataResponse> {
+    return this.http.get<workingDataResponse>(`${this.API_URL}/subrights`);
+  }
+
+  deleteRolesData(spId: number,roleId: number): Observable<workingDataResponse> {
+    return this.http.get<workingDataResponse>(`${this.API_URL}/deleteRole/${roleId}/${spId}`);
+  }
+
+  saveRolesData(rolesData: RolesData): Observable<workingDataResponse> {
+    return this.http.post<workingDataResponse>(`${this.API_URL}/addRole`,rolesData);
+  }
+
 }

@@ -1,0 +1,91 @@
+<div class="setting-card">
+    <div class="flex-header">
+        <span class="working-hour-heading">Roles</span>
+
+        <div class="d-flex">
+            <div class="input-group gf ">
+                <input class="form-control" type="text" placeholder="Search by agent name or Id" aria-label="Search"
+                    aria-describedby="basic-addon2" name="Name" id="Search-Ag" />
+                <img src="assets/img/search.png">
+            </div>
+            <button class="new-token-btn" (click)="addRole()" data-bs-toggle="modal" data-bs-target="#rolesModal">
+                <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
+                Add Role</button>
+        </div>
+    </div>
+    <div class="p-3">
+        <ag-grid-angular class="ag-theme-alpine" [rowData]="rowData" [columnDefs]="columnDefs" [animateRows]="true"
+            [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true" (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+    </div>
+
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="rolesModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content roles-modal p-2 pl-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <div class="modal-body px-5 pt-0">
+                <div>
+                    <label>Role Name</label> <br>
+                    <input type="text" class="input-form" [(ngModel)]="roleName" placeholder="Enter role name">
+                </div>
+                <div class="">
+                    <div *ngFor="let item of totalRights">
+                        <div class="rights-name">{{item?.rightName}}</div>
+                        <div *ngFor="let subRight of item?.subRights" class="sub-rights">
+                            <input type="checkbox" [(ngModel)]="subRight.isSelected" class="checkBox">
+                            <span>&nbsp;&nbsp;{{subRight?.subRights}}</span>
+                        </div>
+                    </div>
+                    
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="account-btn" (click)="saveRolesDetails()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sideBar" *ngIf="showSideBar">
+    <div class="sidebar-close">
+    <button type="button" class="btn-close">
+        <img src="../../../../assets/img/teambox/icon-close.svg">
+    </button>
+</div>
+    <div class="sidebar-content">
+        <p class="m-0">ID:</p>
+        <span class="heading">Sales Manager</span>
+        <p>Created on: 21 Dec 22, 1:15 Pm | Last Modified: 28 Dec 22, 12:15 Pm</p>
+        <div class="sub-heading py-2">Rights(8)</div>
+        <div>
+            <span class="rights">Campaign</span>
+            <span class="rights">Campaign</span>
+            <span class="rights">Campaign</span>
+            <span class="rights">Campaign</span>
+            <span class="rights">Campaign</span>
+        </div>
+        <div class="sub-heading py-2">No. of Users Assigned (12)</div>
+        <div>
+            <div *ngFor="let item of userList" class="user-row">
+                <img>
+                <span>{{item}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="sideBar-footer">
+        <button type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#rolesModal" (click)="saveWorkingDetails()">
+            <img class="p-0" src="../../../../assets/img/edit.png"></button>
+        <button type="button" class="account-white-btn ml-2" (click)="saveWorkingDetails()">
+            <img class="p-0" src="../../../../assets/img/delete.png">
+        </button>
+    </div>
+</div>

@@ -6,8 +6,8 @@
             <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2">Working
                 Hours</a>
             <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3">Roles</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 4">Teams</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 5">Users</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==4 ? 'active' : ''" (click)="selectedTab = 4">Teams</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==5 ? 'active' : ''" (click)="selectedTab = 5">Users</a>
         </div>
     </div>
     <div class="setting-card" *ngIf="selectedTab==1">
@@ -503,8 +503,12 @@
         </div>
     </div>
 
-    <div *ngIf="selectedTab==2">
+    <div *ngIf="selectedTab==2" class="margin-left">
         <sb-working-hours></sb-working-hours>
+    </div>
+
+    <div *ngIf="selectedTab==3">
+        <sb-roles-settings></sb-roles-settings>
     </div>
 
 </div>

@@ -7,8 +7,8 @@
 }
 
 .body-empty-state img {
-    width: 145px;
-    height: 116px;
+    width: 123px;
+    height: 109px;
 }
 
 .body-empty-state h5 {
@@ -611,11 +611,11 @@ opacity: 1;
       /* width: 120px; */
     /* height: 120px; */
     margin-top: 50px;
-    margin-right: 10px;
+    margin-right: 24px;
     margin-left: 14px;
 }
 .sidebar .parent .child h4{
-    font-weight: 600;
+    font-weight: 800;
     font-size: 17px;
     margin: 64px 0px 5px 0px;
     color: #000000;
@@ -698,6 +698,7 @@ opacity: 1;
 .sidebar .child5 h5 img {
     width: 11px;
     height: 11px;
+    margin-right: 6px!important;
 }
 
 .sidebar .child5 h6{
@@ -728,19 +729,25 @@ opacity: 1;
     margin: 0;
 }
 
+.age-field.child3 h5 {
+    width: 98px;
+}
+
+
+
 .button {
     gap: 10px;
 }
 .button .btn6{
     background-color: #ffffff;
     border: 1px solid #695F9724;
-    color: red;
+    color: #F23B3B;
     margin: 0;
     height: 45px;
     width: 50px;
     font-size: 12px;
     font-weight: 600;
-    border-radius: 30px;
+    border-radius: 20px;
     outline: none;
     // margin: 10px 0px 0px 20px;
     box-shadow: 1px 8px 29px #695F9724;
@@ -754,6 +761,10 @@ opacity: 1;
     margin: 0;
     outline: none;
     // margin: 10px 0px 0px 20px;
+}
+
+#block-btn {
+    width: 75px;
 }
 .sidebar .bbox{
     background-color: #FBF9FE;
@@ -891,7 +902,7 @@ outline: none;
 }
 
   .deletefile .btn9 {
-    border: 1px solid #695F9724;
+    border: 1px solid #695F9724!important;
     position: absolute;
     font-size: 11px;
     font-family: "Manrope";
@@ -910,7 +921,7 @@ outline: none;
 
 
 .deletefile .btn99 {
-    border: 1px solid #695F9724;
+    border: 1px solid #695F9724!important;
     position: absolute;
     font-size: 11px;
     font-family: "Manrope";
@@ -968,6 +979,7 @@ outline: none;
     justify-content: center;
     align-items: center;
     margin: 0px;
+    top: 100px;
 }
 #model-message{
     width: 217%;

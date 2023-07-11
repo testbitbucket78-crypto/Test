@@ -318,11 +318,26 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	}
 
 	ngOnInit() {
+		switch(this.loginAs) {
+			case 1:
+				this.loginAs='Admin'
+				break;
+			case 2:
+				this.loginAs='Manager'
+				break;
+			case 3:
+				this.loginAs='Agent'
+				break;
+			case 4:
+				this.loginAs='Helper'
+				break;
+			default:
+				this.loginAs='Agent'
+		}
+		this.routerGuard()
 		this.getAllCampaigns()
 		this.getContactList('')
 		this.getAdditiionalAttributes()
-		
-		
 	}
 	getAdditiionalAttributes(){
 		this.apiService.getAdditiionalAttributes(this.SPID).subscribe(allAttributes =>{
@@ -1094,7 +1109,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		}
 	}
 	async ConfirmScheduleClose (action:any){
-		//this.closeAllModal()
+		this.closeAllModal();
 		/*
 		console.log(this.selectedTemplate)
 		console.log(this.newCampaignDetail)

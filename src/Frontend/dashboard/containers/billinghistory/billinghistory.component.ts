@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { ProfileService } from 'Frontend/dashboard/services/profile.service';
+
+(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
     selector: 'sb-billinghistory',
@@ -6,302 +11,33 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./billinghistory.component.scss'],
 })
 export class BillinghistoryComponent implements OnInit {
+    spId!:number;
     pageSize: number = 10;
     currentPage: number = 1;
     paging: number[] = [];
     searchText = '';
+    billingHistoryData:[] = [];
 
-    billingHistoryData = [
-        {
-            invoiceno: '#234556',
-            date: '09 Apr 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234558',
-            date: '10 Apr 2023',
-            amount: '$67',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234555',
-            date: '11 Apr 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234559',
-            date: '11 Apr 2023',
-            amount: '$50',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234554',
-            date: '12 Apr 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234552',
-            date: '14 Apr 2023',
-            amount: '$154',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234551',
-            date: '15 Apr 2023',
-            amount: '$34',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234545',
-            date: '15 May 2023',
-            amount: '$130',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234552',
-            date: '17 May 2023',
-            amount: '$30',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234538',
-            date: '19 May 2023',
-            amount: '$26',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
+    @Output() selectab = new EventEmitter<string> () ;
 
-        {
-            invoiceno: '#233456',
-            date: '01 June 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234783',
-            date: '03 June 2023',
-            amount: '$37',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234535',
-            date: '04 June 2023',
-            amount: '$50',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#244559',
-            date: '16 June 2023',
-            amount: '$50',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#244554',
-            date: '15 Apr 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#254552',
-            date: '15 Apr 2023',
-            amount: '$15',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#254551',
-            date: '15 Apr 2023',
-            amount: '$341',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#264545',
-            date: '15 Apr 2023',
-            amount: '$13',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#264552',
-            date: '15 Apr 2023',
-            amount: '$36',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#264558',
-            date: '15 Apr 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
 
-        {
-            invoiceno: '#233456',
-            date: '01 June 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234783',
-            date: '03 June 2023',
-            amount: '$37',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234535',
-            date: '04 June 2023',
-            amount: '$50',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#244559',
-            date: '16 June 2023',
-            amount: '$50',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#244554',
-            date: '15 Apr 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#254552',
-            date: '15 Apr 2023',
-            amount: '$15',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#254551',
-            date: '15 Apr 2023',
-            amount: '$341',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#264545',
-            date: '15 Apr 2023',
-            amount: '$13',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#264552',
-            date: '15 Apr 2023',
-            amount: '$36',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#264558',
-            date: '15 Apr 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-
-        {
-            invoiceno: '#233456',
-            date: '01 June 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234783',
-            date: '03 June 2023',
-            amount: '$37',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#234535',
-            date: '04 June 2023',
-            amount: '$50',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#244559',
-            date: '16 June 2023',
-            amount: '$50',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#244554',
-            date: '15 Apr 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#254552',
-            date: '15 Apr 2023',
-            amount: '$15',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#254551',
-            date: '15 Apr 2023',
-            amount: '$341',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#264545',
-            date: '15 Apr 2023',
-            amount: '$13',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#264552',
-            date: '15 Apr 2023',
-            amount: '$36',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-        {
-            invoiceno: '#264558',
-            date: '15 Apr 2023',
-            amount: '$20',
-            paymentmode: 'Wallet',
-            download: 'PDF',
-        },
-    ];
-
-    constructor() {}
+    constructor(private apiService: ProfileService) {}
 
     ngOnInit(): void {
+        this.spId = Number(sessionStorage.getItem('SP_ID'));
+        this.getBillingHistoryData();
         this.getPaging();
+        
     }
+
+    getBillingHistoryData() { 
+       this.apiService.billingDetails(this.spId).subscribe(
+           response => {
+            this.billingHistoryData = response.getbillingDetails;
+        });
+    }
+
+
     getPaging() {
         this.paging = [];
         this.currentPage = 1;
@@ -310,4 +46,20 @@ export class BillinghistoryComponent implements OnInit {
             this.paging.push(i);
         }
     }
+
+    previousPage() {
+        this.selectab.emit('0');
+    }
+
+    generatePDF() {
+        let docDefinition = {
+          content: [
+            "text: 'Sample Invoice Template', fontSize: 16, bold: true, margin: [0, 0, 0, 10] "
+            // Add more content here
+          ]
+        };
+      
+        pdfMake.createPdf(docDefinition).open();
+      }
+      
 }

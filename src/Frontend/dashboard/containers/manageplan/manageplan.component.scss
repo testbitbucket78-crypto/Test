@@ -214,11 +214,15 @@
 
 
 .selectplan {
-    //  height: 700px;
     background-color: #FFF4F2;
+    box-shadow: none;
 
 }
 
+
+.modal-header-left p {
+    font-weight: 700;
+}
 
 .selectplanbody {
     padding: 5% 5% 5% 5%;
@@ -230,6 +234,161 @@
     box-shadow: 2px 14px 32px #6149CD1A;
     border-radius: 22px;
 }
+
+.plansummery-head h4 {
+    text-align: left;
+    letter-spacing: -0.75px;
+    color: #000000;
+    font-weight: 700;
+}
+
+.plansummery-head span {
+    color: #7A86A1;
+    font-size: 13px;
+    font-weight: 300;
+}
+
+
+.plansummery h6 {
+   color: #6149CD;
+   font-size: 15px;
+   font-weight: 600;
+}
+
+.plansummery span {
+    color: #000000;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.price-container {
+    padding: 0 5% 0 5%;
+}
+
+.top.price-container {
+    margin-bottom: 120px;
+}
+
+
+.close-box {
+    height: 35px;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px solid #ebebeb;
+    border-radius: 15px;
+    opacity: 1;
+    display: flex;
+    align-content: space-around;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0px;
+    min-width: 35px;
+    cursor: pointer;
+}
+.close-box img {
+    width: 10px;
+}
+
+.right-part h3 {
+    text-align: center;
+    letter-spacing: -0.93px;
+    color: #000000;
+    opacity: 1;
+    font-weight: 700;
+    padding: 12% 45% 7% 1%;
+    }
+
+ .right-part span {
+   color: #7A86A1;
+   font-size: 0.7rem;
+   font-weight: 300;
+   padding: 0 5%;
+ }   
+
+
+.selectplanfooter {
+    border: none;
+}
+
+.modal-footer-left p {
+    color: #7A86A1;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.modal-footer-left span {
+    color: #6149CD;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.modal-footer-right.selectplan button {
+
+    border: none;
+    outline: none;
+    color: #FFFFFF;
+    background: #6149cd;
+    font-size: 0.7rem;
+    font-weight: 400;
+    width: 145px;
+    height: 35px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 14px;
+}
+
+.planselect {
+    font-size: 14px;
+}
+.price {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.45px;
+    color: #000000;
+}
+
+.bottom.price-container {
+    border-top: 1px solid #DEDEDE;
+}
+
+
+.subtotal {
+  
+    color: #000000;
+    font-size: 12px;
+    font-weight: 700;
+}
+.subtotal-price {
+    color: #000000;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: -0.45px;
+}
+
+.tax {
+    color: #7A86A1;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.tax-price {
+    color: #7A86A1;
+    font-size: 12px;
+    letter-spacing: -0.45px;
+    font-weight: 400;
+}
+
+.total {
+    color: #000000;
+    font-size: 16px;
+}
+
+.total-price {
+    letter-spacing: -0.53px;
+    color: #000000;
+    font-size: 16px;
+    font-weight: 700;
+}
+
 
 //confirm plan popup
 .confirmplanheader h5 {

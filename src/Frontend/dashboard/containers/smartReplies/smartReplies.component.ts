@@ -88,6 +88,8 @@ export class SmartRepliesComponent implements OnInit {
 			this.repliesData.Description = this.data[0].Description;
 			this.repliesData.Title = this.data[0].Title;
 			this.repliesData.ID = this.data[0].ID;
+			this.repliesData.CreatedDate = this.data[0].CreatedDate;
+			this.repliesData.ModifiedDate = this.data[0].ModifiedDate;
 			this.repliesData.MatchingCriteria = this.data[0].MatchingCriteria; 
 			this.repliesData.Keyword = [];
 			this.repliesData.ActionList = [];
@@ -112,10 +114,12 @@ export class SmartRepliesComponent implements OnInit {
 
 	deleteRepliesById (data:any) {
 		console.log(data, 'component');
-		this.apiService.deletesmartReply(data[0].ID).subscribe(
+		let deleteId = {ID:data[0].ID};
+		this.apiService.deletesmartReply(deleteId).subscribe(
 			(response:any) => {
 				console.log(response);
 				this.getReplies();
+				this.toggleSideBar();
 			}
 			
 		),

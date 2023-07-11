@@ -1,8 +1,5 @@
 <sb-layout-dashboard>
-	<!-- <sb-dashboard-head title="Smart Replies" [hideBreadcrumbs]="true"></sb-dashboard-head> -->
-    <ng-container *ngIf="showTopNav">
-  <sb-top-nav title="Smart Replies"></sb-top-nav>
-</ng-container>
+    <ng-container *ngIf="showTopNav"><sb-top-nav title="Smart Replies"></sb-top-nav></ng-container>
 
 		<div class="content-header">
 			<div class="content-head d-flex">
@@ -67,16 +64,16 @@
 			<h5>{{repliesData.ID}}.</h5>
 			<div class="line"></div>
 			<h6>Created on:</h6>
-			<h5>{{replies.CreatedDate | date: 'dd MMM yyyy'}}</h5>
+			<h5>{{repliesData.CreatedDate  | date: 'dd MMM yyyy'}}</h5>
 			<div class="line"></div>
 			<h6>Edited on:</h6>
-			<h5>{{replies.ModifiedDate | date: 'dd MMM yyyy'}}</h5>
+			<h5>{{repliesData.ModifiedDate | date: 'dd MMM yyyy'}}</h5>
 		</div>
-		<h4 routerLink="/dashboard/setting" ><img id="Edit-icon" src="assets/img/Edit-icon.png">Help & Support</h4>
+		<h4 class="help-support-btn" routerLink="/dashboard/support" ><img id="Edit-icon" src="assets/img/Edit-icon.png">Help & Support</h4>
 		<div class="row d-flex">
 			<h6 class="text-justify">{{items.HelpAndSupport}}.</h6>
 		</div>
-		<h3 data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon" src="assets/img/Edit-icon.png" >Keywords & Criteria </h3>
+		<h3 class="keywords-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon" src="assets/img/Edit-icon.png" >Keywords & Criteria </h3>
 		<div class="row">
 			<div class="box" *ngFor="let values of repliesData.Keyword">
 				<p>{{values}}</p>
@@ -90,17 +87,17 @@
 			<h5>{{repliesData.MatchingCriteria}}</h5>
 		</div>
 
-		<h3 data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon" src="assets/img/Edit-icon.png" >Reply Actions</h3>
+		<h3 class="reply-action-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon" src="assets/img/Edit-icon.png" >Reply Actions</h3>
 		<div *ngFor="let item of repliesData.ActionList">
-			<div class="box4">
+			<div class="box4" *ngIf="item.Message">
 				<h3>Message</h3>
-				<p [innerHTML]="items.Message" ></p>
+				<p [innerHTML]="item.Message"></p>
 			</div>
-			<div class="box2">
-				<h3>Action</h3>
-				<div class="bb d-flex">
-					<b>{{item.Name}}</b>
-					<p [innerHTML]="item.Value"></p>
+			<div class="assign-conversation">
+				<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
+				<div class="d-flex flex-wrap assign-container">
+					<p class="py-1 px-2 m-0" id="msgbox-body1"><b>{{item.Name}} : </b></p>
+					<p  [innerHTML]="item.Value" class="py-1 m-0" id="msgbox-body2"></p>
 				</div>
 			</div>
 		</div>

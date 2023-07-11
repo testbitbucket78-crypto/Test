@@ -1,5 +1,5 @@
-<sb-layout-dashboard>
-    <sb-top-nav title="My Profile"></sb-top-nav>
+<!-- <sb-layout-dashboard>
+    <sb-top-nav title="My Profile"></sb-top-nav> -->
 
 
     <div class="row my-4">
@@ -8,7 +8,7 @@
             <div class="container-fluid p-0 d-flex justify-content-around align-items-center">
                 <div class="col-sm-6 text-left d-flex pl-0">
                     <div class="d-flex">
-                        <div class="back-btn" routerLink="/dashboard/myprofile">
+                        <div class="back-btn" (click)="previousPage()">
                             <img src="assets/img/profile/previous1.svg" />
                         </div>
                         <div class="main-title">
@@ -42,6 +42,9 @@
             <div class="container-fluid ">
                 <div class="row pb-3 justify-content-center">
                 <div class="col-sm-12 d-flex pt-5 pb-4 text-center notification-card-header">
+                    <!-- <div class="header-col">
+                        Billing Id
+                    </div> -->
                     <div class="header-col">
                         Invoice No.
                     </div>
@@ -52,7 +55,7 @@
                         Amount
                     </div>
                     <div class="header-col">
-                      Payment Mode
+                      Purpose
                     </div>
                     <div class="header-col">
                        Download
@@ -64,12 +67,12 @@
                     <div *ngFor="let billingitem of billingHistoryData | searchfilter:searchText | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" 
                       class="row justify-content-center  notification-content">
                         <div class="col-sm-12 d-flex py-3 text-center">
-                          
-                            <div class="header-col">{{ billingitem.invoiceno }}</div> 
-                            <div class="header-col">{{ billingitem.date }}</div>
+                            <!-- <div class="header-col">{{ billingitem.billing_id }}</div>  -->
+                            <div class="header-col">{{ !billingitem.invoice_number ? 'null' : billingitem.invoice_number }}</div>
+                            <div class="header-col">{{ billingitem.billing_date | date:'dd MMMM yyyy' }}</div>
                             <div class="header-col">{{ billingitem.amount }}</div>
-                            <div class="header-col">{{ billingitem.paymentmode }}</div>
-                            <div class="header-col"><img src="../../../../assets/img/profile/import.svg">{{ billingitem.download }}</div>
+                            <div class="header-col">{{ billingitem.payment_method }}</div>
+                            <div class="pdf-text header-col"><img src="../../../../assets/img/profile/import.svg" (click)="generatePDF()">PDF</div>
     
                      
                         </div>
@@ -120,5 +123,5 @@
         <div class="col-sm-2"></div>
     </div>
 
-    
-</sb-layout-dashboard>
+<!--     
+</sb-layout-dashboard> -->
