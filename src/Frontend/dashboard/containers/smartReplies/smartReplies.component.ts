@@ -82,8 +82,8 @@ export class SmartRepliesComponent implements OnInit {
 	    console.log("getRepliesByID")
 		console.log(data)
 		console.log(data.ID)
-		this.apiService.sideNav(data.ID).subscribe((responce => {
-			this.data = responce;
+		this.apiService.sideNav(data.ID).subscribe((response => {
+			this.data = response;
 			this.repliesData = <repliesList> {} ;
 			this.repliesData.Description = this.data[0].Description;
 			this.repliesData.Title = this.data[0].Title;

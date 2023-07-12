@@ -668,10 +668,10 @@ export class AddSmartRepliesComponent implements OnInit {
 			console.log(data)
 			this.apiService.addNewReply(data).subscribe (
 			
-			(responce:any) => {
-				console.log(responce)
+			(response:any) => {
+				console.log(response)
 			
-				if (responce.status === 200) {
+				if (response.status === 200) {
 					this.modalService.open(smartreplysuccess);
 				}
 				
@@ -704,9 +704,9 @@ export class AddSmartRepliesComponent implements OnInit {
 		}
 		this.apiService.duplicatekeywordSmartReply(data).subscribe(
 			
-			(responce: any) => {
-			console.log(responce)
-			if (responce.status === 200) {
+			(response: any) => {
+			console.log(response)
+			if (response.status === 200) {
 				this.next();				
 			}
 	    

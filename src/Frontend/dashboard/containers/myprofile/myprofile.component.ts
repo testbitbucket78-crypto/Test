@@ -217,9 +217,9 @@ toggleActiveState(checked: boolean) {
       filePath:this.croppedImage
     };
     this.apiService.saveUserProfilePic(profilePicData).subscribe(
-  (responce) => {
+  (response) => {
     $("#pictureCropModal").modal('hide');
-    console.log('Image saved successfully', responce);
+    console.log('Image saved successfully', response);
    
   },
   (error) => {

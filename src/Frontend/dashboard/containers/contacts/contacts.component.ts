@@ -557,8 +557,8 @@ onSelectAll(items: any) {
 deletContactByID(data: any) {
   console.log("delete")
   console.log(data)
-  this.apiService.deletContactById(data).subscribe((responce => {
-    console.log(responce);
+  this.apiService.deletContactById(data).subscribe((response => {
+    console.log(response);
     this.getContact();
     this.closesidenav(this.items);
   }));
@@ -569,8 +569,8 @@ deletContactByID(data: any) {
 
   blockContactByID(data: any) {
     var SP_ID = sessionStorage.getItem('SP_ID')
-    this.apiService.blockContact(data, SP_ID).subscribe((responce => {
-      console.log(responce);
+    this.apiService.blockContact(data, SP_ID).subscribe((response => {
+      console.log(response);
        this.getContact();
       this.closesidenav(this.items);
 

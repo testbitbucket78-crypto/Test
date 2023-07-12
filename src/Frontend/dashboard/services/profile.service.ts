@@ -36,6 +36,18 @@ export class ProfileService {
       return this.http.get(`${this.API_URL}/getBillingDetails/${spId}`);
     }
 
+  walletUsageDetails(spId:number): Observable<any> { 
+    return this.http.get(`${this.API_URL}/usesData/spid?spid=${spId}`);
+  }
+
+  walletUsageInsight(spId:number): Observable<any> {
+    return this.http.get(`${this.API_URL}/usageInsight/spid?spid=${spId}`);
+  }
+
+  approximateCharges(spId:number): Observable<any> {
+    return this.http.get(`${this.API_URL}/ApproximateCharges/${spId})`);
+  }
+
   saveUserProfilePic(profilePicData:profilePicData): Observable<any> { 
    return this.http.post(`${this.API_URL}/userProfileImg`,profilePicData);
   }
