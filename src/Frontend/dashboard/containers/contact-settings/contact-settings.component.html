@@ -1,0 +1,24 @@
+<div>
+    <div class="row">
+        <div class="col-sm-9 py-4 setting-field">
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1">Custom Field</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2">Tags</a>
+        </div>
+    </div>
+    <div class="setting-card" *ngIf="selectedTab==2">
+        <div class="flex-header">
+            <span class="working-hour-heading">Tags</span>    
+            <div class="d-flex">
+                <div class="input-group gf ">
+                    <input class="form-control" type="text" (keyup)="searchData($event.target.value)" placeholder="Search by agent name or Id" aria-label="Search"
+                        aria-describedby="basic-addon2" name="Name" id="Search-Ag" />
+                    <img src="assets/img/search.png">
+                </div>
+                <button class="new-token-btn" (click)="addRole()" data-bs-toggle="modal" data-bs-target="#rolesModal">
+                    <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
+                    Add Tag</button>
+            </div>
+        </div>
+
+    </div>   
+</div>

@@ -52,6 +52,12 @@ export interface workingFormData{
     endTime:string;
 }
 
+export interface campaignFormData{
+    day:string[];
+    start_time:string;
+    end_time:string;
+}
+
 export interface workingDataPost{
     day:string;
     startTime:string;
@@ -67,6 +73,13 @@ export interface workingData{
 export interface workingDataResponsePost {
     days:workingDataPost[] 
     SP_ID:number;
+    created_By:string;
+}
+
+
+export interface campaignDataResponsePost {
+    days:campaignFormData[] 
+    sp_id:number;
     created_By:string;
 }
 
@@ -118,4 +131,9 @@ export interface userTeamDropDown{
     isSelected:boolean;
     name:string;
     profile_img:string;
+}
+
+export interface campaignAlertUser{
+    SP_ID:number;
+    uid:number[];
 }

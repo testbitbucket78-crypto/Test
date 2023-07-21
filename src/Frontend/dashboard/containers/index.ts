@@ -41,8 +41,10 @@ import { ManageStorageComponent } from './manage-storage/manage-storage.componen
 import { RoutingRulesComponent } from './routing-rules/routing-rules.component';
 import { TeamSettingsComponent } from './team-settings/team-settings.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
+import { CampaignSettingsComponent } from './campaign-settings/campaign-settings.component';
+import { ContactSettingsComponent } from './contact-settings/contact-settings.component';
 
-export const containers = [DashboardComponent, ReportcampaignComponent, ReportautomationComponent, ConversationComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ReplyMaterialComponent, ImportComponent, CampaignsComponent, ComposeComponent, AutomationComponent, ReportsComponent, MessageComponent, CampaignReportComponent, ScheduleComponent, ScheduleViewComponent, SettingComponent, GeneralsettingComponent, OrganizationComponent, AccountsettingComponent, CampaignsettingComponent,AcoountSettingsComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent,NotificationsComponent,SupportComponent,UserguideComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent,RolesSettingsComponent,DefaultMessageSettingsComponent,GeneralSettingsComponent,ManageStorageComponent,RoutingRulesComponent,TeamSettingsComponent,UserSettingsComponent];
+export const containers = [DashboardComponent, ReportcampaignComponent, ReportautomationComponent, ConversationComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ReplyMaterialComponent, ImportComponent, CampaignsComponent, ComposeComponent, AutomationComponent, ReportsComponent, MessageComponent, CampaignReportComponent, ScheduleComponent, ScheduleViewComponent, SettingComponent, GeneralsettingComponent, OrganizationComponent, AccountsettingComponent, CampaignsettingComponent,AcoountSettingsComponent,ContactsettingComponent,InboxsettingComponent,AddSmartRepliesComponent,NotificationsComponent,SupportComponent,UserguideComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent,RolesSettingsComponent,DefaultMessageSettingsComponent,GeneralSettingsComponent,ManageStorageComponent,RoutingRulesComponent,TeamSettingsComponent,UserSettingsComponent,CampaignSettingsComponent,ContactSettingsComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './addSmartReplies/addSmartReplies.component';
@@ -86,4 +88,5 @@ export * from './manage-storage/manage-storage.component';
 export * from './routing-rules/routing-rules.component';
 export * from './team-settings/team-settings.component';
 export * from './user-settings/user-settings.component';
-
+export * from './campaign-settings/campaign-settings.component';
+export * from './contact-settings/contact-settings.component';

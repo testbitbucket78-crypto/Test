@@ -20,13 +20,16 @@ export class UserguideComponent implements OnInit {
   constructor(private navigation:NavigationService, private apiservice:ProfileService) { }
 
   ngOnInit(): void {
-
+    this.navigation._sideNavVisible$.next(false);
     this.spId = Number(sessionStorage.getItem('SP_ID'));
-    this.navigation._sideNavVisible$.next(false) ;
     this.getUserGuideTopics();
     this.getUserGuideSubTopics();
    
 
+  }
+
+  ngOnDestroy(): void {
+    this.navigation._sideNavVisible$.next(true);
   }
   
   toggleSubTopicsDiv(index: number) {

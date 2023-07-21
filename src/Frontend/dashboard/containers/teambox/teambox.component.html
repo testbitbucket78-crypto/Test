@@ -11,7 +11,7 @@
 		</div>
 		<div class="col-12 d-flex mt-1">
 		
-		<div class="col-4 team-box">
+		<div class="col-4 pt-5 team-box">
 
 			<div class="custom_row pl-3 pt-3 ">
 				<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)" [ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
@@ -85,7 +85,7 @@
 
 		<div class="col-5 inner_section">
 
-			<div *ngIf="selectedInteraction.Name" class="col-md-12">
+			<div *ngIf="selectedInteraction.Name" class="col-md-12 pt-5 mt-3">
 				<div class="custom_row">
 					<div class=" left_part">
 						<div class="user_info">
@@ -284,9 +284,9 @@
 			</div>
 
 		</div>
-		<div class=" col-4 team">
+		<div class=" col-4 team pt-5">
 		<div class="team-box right_box">
-			<div class="profile" *ngIf="selectedInteraction.InteractionId && !showAttachedMedia">
+			<div class="profile pt-5 pl-2" *ngIf="selectedInteraction.InteractionId && !showAttachedMedia">
 				<img class="toggle_provice_view" (click)="toggleProfileView()" *ngIf="showFullProfile" src="/assets/img/teambox/search-clear.svg">
 				<div class="custom_row">
 					<div class="col-md-5 flex">

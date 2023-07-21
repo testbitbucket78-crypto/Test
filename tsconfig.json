@@ -3,7 +3,7 @@
         "enableIvy": false,
         "fullTemplateTypeCheck": true,
         "preserveWhitespaces": false,
-        "strictInjectionParameters": true
+        "strictInjectionParameters": false
     },
     "compileOnSave": false,
     "compilerOptions": {

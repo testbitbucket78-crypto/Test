@@ -20,6 +20,11 @@ export class BillinghistoryComponent implements OnInit {
     billingHistoryData:[] = [];
     pdfDetails:any = [];
     invoiceDetails:any = [];
+    invoiceDetails2:any = [];
+    bussinessName!:string;
+    invoiceNumber!:string;
+    invoiceDate:any;
+    contactName!:string;
     email!:string;
     state!:string;
     gstin!:string;
@@ -28,6 +33,12 @@ export class BillinghistoryComponent implements OnInit {
     totalAmount!:number;
     tax!:number;
     statecode!:number;
+    paymentdue!:string
+    stateCode!:number;
+    address1!:string;
+    address2!:string;
+    paymentType!:string;
+    billingPeriod!:string;
 
 
     @Output() selectab = new EventEmitter<string> () ;
@@ -39,6 +50,7 @@ export class BillinghistoryComponent implements OnInit {
         this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.getBillingHistoryData();
         this.getInvoiceDetails();
+       
         
         
     }
@@ -65,18 +77,38 @@ export class BillinghistoryComponent implements OnInit {
       this.apiService.getPDFInvoiceDetails(this.spId).subscribe(response => {
             this.pdfDetails = response.invoiceData[0];
             this.invoiceDetails = response.planqueryData[0];
+            this.invoiceDetails2  = response.billhistoryData[0];
 
+            this.contactName =this.pdfDetails.created_By;
+            this.bussinessName = this.pdfDetails.Company_Name;
+            this.invoiceNumber = this.pdfDetails.InvoiceId;
+            this.invoiceDate = this.formdateDate(this.pdfDetails.created_at);
             this.email = this.pdfDetails.billing_email;
             this.state = this.pdfDetails.State;
+            this.stateCode = this.pdfDetails.zip_code;
             this.gstin = this.pdfDetails.GSTId;
+            this.address1 = this.pdfDetails.Address1; 
+            this.address2 = this.pdfDetails.Address2;
+            this.paymentdue = this.pdfDetails.PaymentDue_date;
             this.statecode = this.pdfDetails.zip_code;
             this.plantype = this.invoiceDetails.planType;
             this.subTotal = this.invoiceDetails.subtotalAmount;
             this.tax = this.invoiceDetails.tax
             this.totalAmount = this.invoiceDetails.totalAmount;
-      
+            this.paymentType = this.invoiceDetails2.billing_type;
+            this.billingPeriod = this.formdateDate(this.invoiceDetails2.billing_date);
+ 
       });
     }
+
+    
+    formdateDate(inputDateString: string) {
+      let dateObj = new Date(inputDateString);
+      let options = { year: "numeric", month: "short", day: "numeric" };
+      return dateObj.toLocaleDateString("en-US", options);
+    }
+
+
 
     previousPage() {
         this.selectab.emit('0');
@@ -87,23 +119,25 @@ export class BillinghistoryComponent implements OnInit {
 
     generatePDF() {
 
-      // this.
-
         const docDefinition: TDocumentDefinitions = {
             content: [
                 {
                   text: 'Invoice',
                   style: 'header',
                 },
-              
+              // {
+              //   image:'../../../../assets/img/profile/bg.png',
+              //   width: 50,
+                      
+                  
+              //  fit: [100, 100],
+              // },
                 {
                   columns: [
                     {
-                      width: '50%',
-                      // image: '../../../../assets/img/profile/Richie_3.png',
+                      width:'50%',
                       text:'',
-                      // fit: [100, 100],
-                      style: 'sectionHeader',
+                       style: 'sectionHeader',
                     },
                     
                     { 
@@ -178,7 +212,7 @@ export class BillinghistoryComponent implements OnInit {
                     width: '50%',
                     text: [
                       { text: 'Email: ', style: 'invoiceInfo' },
-                      { text: this.email, style: 'values' },
+                      { text: '', style: 'values' },
                     ],
                     style:'addressInfo'
                 }
@@ -224,7 +258,7 @@ export class BillinghistoryComponent implements OnInit {
                     width: '50%',
                     text: [
                       { text: 'State: ', style:'invoiceInfo' },
-                      { text: this.state, style: 'values' },
+                      { text: '', style: 'values' },
                     ],
                     style:'addressInfo'
                 }
@@ -247,7 +281,7 @@ export class BillinghistoryComponent implements OnInit {
                     width: '50%',
                     text: [
                       { text: 'GSTIN: ', style:'invoiceInfo' },
-                      { text: this.gstin, style: 'values' },
+                      { text: '', style: 'values' },
                     ],
                     style:'addressInfo'
                 }
@@ -272,7 +306,7 @@ export class BillinghistoryComponent implements OnInit {
                     width: '50%',
                     text: [
                       { text: 'Invoice Number: ', style: 'invoiceInfo' },
-                      { text: '', style: 'values' },
+                      { text: this.invoiceNumber, style: 'values' },
                     ],
                     style: 'invoiceInfo'
                   }
@@ -285,7 +319,7 @@ export class BillinghistoryComponent implements OnInit {
                   width: '50%',
                   text: [
                     { text: 'Contact Name: ', style: 'invoiceInfo' },
-                    { text: '', style: 'values' },
+                    { text: this.contactName, style: 'values' },
                   ],
                   style: 'billedTo'
                 },
@@ -293,7 +327,7 @@ export class BillinghistoryComponent implements OnInit {
                   width: '50%',
                 text: [
                   { text: 'Invoice Date: ', style: 'invoiceInfo' },
-                  { text: '', style: 'values' },
+                  { text: this.invoiceDate, style: 'values' },
                 ],
                 style:'invoiceInfo'
               }
@@ -307,7 +341,7 @@ export class BillinghistoryComponent implements OnInit {
                 width: '50%',
                 text: [
                   { text: 'Bussiness Name: ', style: 'invoiceInfo' },
-                  { text: '', style: 'values' },
+                  { text: this.bussinessName, style: 'values' },
                 ],
                 style: 'billedTo'
               },
@@ -315,7 +349,7 @@ export class BillinghistoryComponent implements OnInit {
                   width: '50%',
                 text: [
                   { text: 'Invoice Amount: ', style: 'invoiceInfo' },
-                  { text: '', style: 'values' },
+                  { text: this.subTotal, style: 'values' },
                 ],
                 style:'invoiceInfo'
               }
@@ -326,7 +360,7 @@ export class BillinghistoryComponent implements OnInit {
               {
                 columns: [
                   {width: '50%',
-                  text:'(Company Address)',
+                  text: this.address1, 
                   style: 'billedTo'
                 },
                 { 
@@ -341,7 +375,7 @@ export class BillinghistoryComponent implements OnInit {
               {
                 columns: [
                   {width: '50%',
-                  text:'(Company Address)',
+                  text: this.address2,
                   style: 'billedTo'
                 },
                 { 
@@ -349,7 +383,7 @@ export class BillinghistoryComponent implements OnInit {
                
                 text: [
                   { text: 'Payment Type: ', style: 'invoiceInfo' },
-                  { text: '', style: 'values' },
+                  { text: this.paymentType, style: 'values' },
                 ],
                 style:'invoiceInfo'
               }
@@ -363,7 +397,7 @@ export class BillinghistoryComponent implements OnInit {
               width: '50%',
               text: [
                 { text: 'State: ', style: 'invoiceInfo' },
-                { text: '', style: 'values' },
+                { text: this.stateCode + ' ' + this.state, style: 'values' },
               ],
               
               style: 'billedTo'
@@ -372,7 +406,7 @@ export class BillinghistoryComponent implements OnInit {
                  width: '50%',
                  text: [
                   { text: 'Billing Period: ', style: 'invoiceInfo' },
-                  { text: '', style: 'values' },
+                  { text: this.billingPeriod, style: 'values' },
                 ],
                 style:'invoiceInfo'
               }
@@ -388,7 +422,7 @@ export class BillinghistoryComponent implements OnInit {
                  
                   text: [
                     { text: 'GSTIN: ', style: 'invoiceInfo' },
-                    { text: '', style: 'values' },
+                    { text: this.gstin, style: 'values' },
                   ],
                   style: 'billedTo'
                 },
@@ -398,7 +432,7 @@ export class BillinghistoryComponent implements OnInit {
 
                 text: [
                   { text: 'Next Due Date: ', style: 'invoiceInfo' },
-                  { text: '', style: 'values' },
+                  { text: this.invoiceDate + ' to ' + this.billingPeriod, style: 'values' },
                 ],
                 style:'invoiceInfo'
               }
@@ -415,22 +449,22 @@ export class BillinghistoryComponent implements OnInit {
                     [  
                       { text: 'S No.', style: 'tableHeader', margin:[10, 3, 0, 3] },
                       { text: 'Description', style: 'tableHeader', margin:[60, 3, 0, 3] },
-                      { text: 'Amount', style: 'tableHeader', margin:[15, 3, 0, 3] },
+                      { text: 'Amount', style: 'tableHeader', margin:[10, 3, 10, 3] },
                     ],
                     [
                       { text: '1', bold: true ,margin:[20, 5, 0, 0] },
                       { text: this.plantype, bold: true, margin:[60, 5, 0, 0] },
-                      { text: this.subTotal, alignment: 'right', bold: true,margin:[0, 6, 0, 0] },
+                      { text: this.subTotal, alignment: 'right', bold: true,margin:[0, 6, 16, 0] },
                     ],
                     [
                       { text: '' },
-                      { text: 'VAT@18%', bold: true, margin:[60, 40, 0, 0] },
-                      { text: this.tax, alignment: 'right', bold: true,margin:[0, 40, 5, 20] },
+                      { text: 'GST@18%', bold: true, margin:[60, 40, 0, 0] },
+                      { text: this.tax, alignment: 'right', bold: true,margin:[0, 40, 16, 20] },
                     ],
                     [
                       { text: '' },
                       { text: 'Total', bold: true, alignment: 'right', fontSize: 16 },
-                      { text: this.totalAmount, alignment: 'right', bold: true, margin:[0, 2, 0, 0] },
+                      { text: this.totalAmount, alignment: 'right', bold: true, margin:[0, 2, 16, 0] },
                     ],
                     
                   ],
