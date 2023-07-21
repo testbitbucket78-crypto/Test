@@ -37,7 +37,7 @@
                             <div class="col-sm-2 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[0]" (change)="updateNotificationId(1)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -45,7 +45,7 @@
                             <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[0]" (change)="updateNotificationId(1)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -63,7 +63,7 @@
                             <div class="col-sm-2 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[1]" (change)="updateNotificationId(2)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -71,7 +71,7 @@
                             <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[1]" (change)="updateNotificationId(2)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -89,7 +89,7 @@
                             <div class="col-sm-2 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[2]" (change)="updateNotificationId(3)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -97,7 +97,7 @@
                             <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[2]" (change)="updateNotificationId(3)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -115,7 +115,7 @@
                             <div class="col-sm-2 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[3]" (change)="updateNotificationId(4)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -123,7 +123,7 @@
                             <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[3]" (change)="updateNotificationId(4)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -199,25 +199,26 @@
                                     
 
                                          
-                                         <div class="d-flex pt-3 pb-5 justify-content-center align-items-center">
+                                         <div class="d-flex pt-3 pb-5 justify-content-end align-items-center">
                                                 
-                                              <h1 class="mx-2 ml-4 my-0">$</h1><input type="number" min="30" max="200"  name="enter-amount" id="enter-amount" [(ngModel)]="selectedAmount" />
+                                              <h1 class="mx-2 ml-4 my-0">₹ </h1><input type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)" name="enter-amount" id="enter-amount" [(ngModel)]="selectedAmount" />
+                                
                                         </div>
-                                         <p class="m-0 amount-para">You can add minimum amount of $30</p>
+                                         <p class="m-0 amount-para">You can add minimum amount of 500</p>
                                        
                                            <div class="col-sm-12 pt-5 d-flex justify-content-around align-items-center amount-body">  
-                                            <div class="sel-amount" (click)="fillAmount(30,0)" [class.sel-amount-active]="selectedDiv === 0">$30</div>
-                                           <div class="sel-amount" (click)="fillAmount(50,1)" [class.sel-amount-active]="selectedDiv === 1">$50</div>
-                                           <div class="sel-amount" (click)="fillAmount(80,2)" [class.sel-amount-active]="selectedDiv === 2" >$80</div>
+                                            <div class="sel-amount" (click)="fillAmount(500,0)" [class.sel-amount-active]="selectedDiv === 0">500</div>
+                                           <div class="sel-amount" (click)="fillAmount(1000,1)" [class.sel-amount-active]="selectedDiv === 1">1000</div>
+                                           <div class="sel-amount" (click)="fillAmount(1500,2)" [class.sel-amount-active]="selectedDiv === 2" >1500</div>
                                         </div>
                                         <div class="col-sm-12 pb-5 d-flex justify-content-around align-items-center amount-body">  
-                                          <div class="sel-amount"  (click)="fillAmount(100,3)" [class.sel-amount-active]="selectedDiv === 3">$100</div>
-                                            <div class="sel-amount" (click)="fillAmount(150,4)" [class.sel-amount-active]="selectedDiv === 4">$150</div>
-                                            <div class="sel-amount" (click)="fillAmount(200,5)" [class.sel-amount-active]="selectedDiv === 5">$200</div>
+                                          <div class="sel-amount"  (click)="fillAmount(2000,3)" [class.sel-amount-active]="selectedDiv === 3">2000</div>
+                                            <div class="sel-amount" (click)="fillAmount(2500,4)" [class.sel-amount-active]="selectedDiv === 4">2500</div>
+                                            <div class="sel-amount" (click)="fillAmount(3000,5)" [class.sel-amount-active]="selectedDiv === 5">3000</div>
                                             </div>
                                         </div>
                                         <div class="modal-footer justify-content-center my-4 border-0">
-                                            <button type="button" class="addfunds-continue-btn" (click)="openAddFundsSuccessPopup(addFundsSuccess)">Continue</button>
+                                            <button type="button" class="addfunds-continue-btn" (click)="addFunds(addFundsSuccess)">Continue</button>
                                         </div>
                                         </form>
                                     </div>
@@ -229,7 +230,7 @@
                                             <img src="../../../../assets/img/profile/wallet-icon.svg" alt="">
                                             </div>
                                         <div class="modal-body px-5 text-center addFundsSuccessbody">
-                                                <h5 class="m-0">Funds Added ${{selectedAmount}}</h5>
+                                                <h5 class="m-0">Funds Added ₹{{selectedAmount}}</h5>
 
                                                 <p class="mb-4 mt-3">New amount is successfully added in your CIP wallet <br />now you can close this dialogue box.</p>
                                                    
@@ -248,9 +249,14 @@
                                 <h6>Available Amount</h6>
                             </div>
                             <div class="text-center px-4 mx-4">
-                                <h1>${{selectedAmount}}</h1>
+                                <!-- <h1>${{selectedAmount}}</h1> -->
+                                <h1>₹{{!availableAmount ? 0 : availableAmount}}</h1>
                             </div>
-                            <div class="d-flex text-center m-3 justify-content-around align-items-center billing-history-btn">
+
+                            <div *ngIf="availableAmount <=250 " class="text-center low-balance">
+                                <p class="mb-1">Low Balance!<br /> For uninterrupted service, add funds</p>
+                            </div>
+                            <div class="d-flex text-center m-0 justify-content-around align-items-center billing-history-btn">
                                 <button class="" (click)="selectTab(1)">
                                 <span><img class="px-2" src="../../../../assets/img/profile/wallet-icon.svg"></span>
                                      Wallet Usage
@@ -317,6 +323,10 @@
                   <img id="profile-bg" src="/assets/img/profile/profile-bg.png">
                   <img id="pic-bg" src="assets/img/profile/bg image.png">
                   <img id="profile-pic" [src]="croppedImage"/>
+
+                  <div *ngIf="!croppedImage" class="image-container">
+                    <span class="initials" > {{ firstLetterFirstName }}{{ firstLetterLastName }} </span>
+                  </div>
              
     
                 </div>
@@ -411,28 +421,37 @@
                                                 <label class="changepassform" for="currentPassword">Current Password</label>
                                                 <div class="input-group">
                                                   <input [type]="currentPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" id="currentPassword"
-                                                    name="currentPassword" formControlName="oldPass" placeholder="8 character" required>
+                                                    name="currentPassword" formControlName="oldPass" placeholder="8 character" required autocomplete="currentPassword">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('currentPassword')">
                                                     <i [ngClass]="currentPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
                                                   </span>
+                                                  <div *ngIf="changepassword.get('oldPass').invalid && changepassword.get('oldPass').touched">
+                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('oldPass').hasError('minlength')">!  Password must be at least 8 characters long.</div>
+                                                  </div>
                                                 </div>
                                               
                                                 <label class="changepassform" for="newPassword">New Password</label>
                                                 <div class="input-group">
                                                   <input [type]="newPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" formControlName="newPass"
-                                                    placeholder="8 character" name="newPassword" id="newPassword" required>
+                                                    placeholder="8 character" name="newPassword" id="newPassword" required autocomplete="newPassword">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('newPassword')">
                                                     <i [ngClass]="newPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
                                                   </span>
+                                                  <div *ngIf="changepassword.get('newPass').invalid && changepassword.get('newPass').touched">
+                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('newPass').hasError('minlength')">!  Password must be at least 8 characters long.</div>
+                                                  </div>
                                                 </div>
                                               
                                                 <label class="changepassform" for="confirmPassword">Re-Enter New Password</label>
                                                 <div class="input-group">
                                                   <input [type]="confirmPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield"
-                                                    formControlName="confirmPass" placeholder="8 character" id="confirmPassword" name="confirmPassword" required>
+                                                    formControlName="confirmPass" placeholder="8 character" id="confirmPassword" name="confirmPassword" required autocomplete="confirmPassword">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('confirmPassword')">
                                                     <i [ngClass]="confirmPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
                                                   </span>
+                                                  <div *ngIf="changepassword.get('confirmPass').invalid && changepassword.get('confirmPass').touched">
+                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('confirmPass').hasError('minlength')">!  Password must be at least 8 characters long.</div>
+                                                  </div>
                                                 </div>
                                               </form>
                                               
@@ -454,7 +473,7 @@
                   
                             <div class="p-2 switch-toggle">
                               <label class="m-0 switch">
-                                <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleActiveState($event.target.checked)">
+                                <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleActiveState($event.target.checked)" checked>
                                 <span class="slider"></span>
                               </label>
                             </div>

@@ -1,0 +1,92 @@
+
+.modal-body label{
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  .user-modal{
+    width: 400px;
+    height: 500px;
+    border-radius: 26px;
+    overflow-y: scroll;
+   }
+
+   .profile-img{
+    width: 6rem;
+    height: 6rem;
+    background: white;
+    opacity: 1;
+    border-radius: 50%;
+    box-shadow: 4px 11px 20px #1111122b;
+   }
+
+   .user-status{
+    background: #E2F4EC;
+    border-radius: 12px;
+    padding: 2px 12px;
+   }
+
+   .user-id{
+    padding: 2px 12px;
+
+   }
+
+   .heading{
+    font-size: 18px;
+    font-weight: 600;
+    color: black;
+   }
+
+   .black{
+    color: black;
+   }
+
+   .flex-row{
+    display: flex;
+    justify-content: space-between;
+   }
+
+   .flex-row .w-45{
+    width: 45%;
+   }
+
+   .flex-row .w-50{
+    width: 50%;
+   }
+
+   .sideBar .sideBar-footer{   
+    border:none; 
+    position: fixed;
+    bottom: 0;    
+    padding: 15px;
+    text-align: center;
+    background-color: #FBF9FE;
+  }
+
+  .sideBar{
+    height: 100%;
+    width: 28% !important;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    right: 0;
+    background-color: #FBF9FE;
+    overflow-x: hidden;
+    transition: 0.5s;
+  }
+
+  .disable-btn{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px solid #E9E9EA;
+    border-radius: 19px;
+    padding: 7px 10px;
+  }
+
+  .disable-btn label{
+    margin: 0px;
+  }
+
+  .disable-btn span{
+    font-weight: 600;
+  }

@@ -1,0 +1,96 @@
+
+<div class="row header-part">
+ 
+            <div class="col-3 pb-5">
+                <div class="d-flex header-col-left">
+                    <div class="back-btn" (click)="previousPage()">
+                        <img src="assets/img/profile/previous1.svg" />
+                    </div>
+                    <div class="main-title">
+                        <h4 class="m-0 pl-4">User Guide</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-7 pb-5">
+       
+            </div>
+            <div class="col-2 user-guide-right-section-top"></div>
+        
+  
+       
+</div>
+
+<div class="row main-part">
+           <div class="col-md-3 user-guide-left-section">
+                <div class="text-center pr-0 pt-4 pb-5">
+                    <div class="search-field">
+                        <form class="d-none d-md-inline-block form-inline">
+                        <div class="input-group search">
+    
+                            <input class="form-control" type="text" placeholder="Search" name="search" [(ngModel)]="searchText" />
+    
+                            <img src="assets/img/search.png">
+                        </div>
+                        </form>
+                    </div>
+                  
+            </div>
+            <div class="row pb-2" *ngFor="let subTopics of UserGuideSubTopics | searchfilter:searchText ; let i = index">
+            <div class="col-2"></div>
+            <div class="col-8 py-3 px-0 subtopics-container"  [ngClass]="{ 'subtopics-container-active': isExpanded[i] }">
+                <div class="subtopics" (click)="toggleSubTopicsDiv(i)">
+                    <div class="d-flex justify-content-between align-items-center subtopics-heading" [ngClass]="{ 'subtopics-heading-active': isExpanded[i] }" >
+                       {{subTopics.subheadings}}
+                       <span *ngIf="!isExpanded[i]" class="pl-4"><img src="../../../../assets/img/support/arrow-down.svg" /></span>
+                       <span *ngIf="isExpanded[i]" class="pl-4"><img src="../../../../assets/img/support/arrow-up.svg" /></span>
+                    </div>
+                    <div class="subtopics-content" *ngIf="isExpanded[i]">
+                        <ul>
+                            <li></li>
+                          </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        
+         
+            </div>
+            <div class="col-md-7 user-guide-main-section">
+
+                <div class="row  footer-section">
+                    <div class="col-12 py-4 text-center footer-container">
+                        <p>Is this Helpful</p>
+                   
+                         <img class="px-3" src="../../../../assets/img/support/like.svg" /> <img class="px-3" src="../../../../assets/img/support/dislike.svg" />
+                   
+                    </div>
+                <div class="col-1"></div>
+                <div class="col-10 d-flex justify-content-center footer-main-card">
+                    <div class="d-flex align-items-center p-5 text-left">
+                        <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1">
+                            <img src="../../../../assets/img/profile/previous.svg" />
+                        </button>
+
+                        <p class="m-0">How to check WhatsApp Business Account (WABA) Status?</p>
+                    </div>
+                    <div class="d-flex align-items-center p-5 text-right">
+                        <p class="m-0">How to check WhatsApp Business Account (WABA) Status?</p>
+
+                        <button class="pagination-btn" [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" >
+                            <img src="../../../../assets/img/profile/next.svg" />
+                        </button>
+                       
+                    </div>
+                </div>
+                <div class="col-1"></div>
+            </div>
+            </div>
+            <div class="col-md-2 p-0 user-guide-right-section">
+                <h5>On this Page</h5>
+                <div *ngFor="let list of UserGuideTitles" class="mb-2">
+                  <h6 (click)="getSubTopicsForHeading(list.id)">{{list.headings}}:</h6>
+                </div>
+              </div>
+         </div>

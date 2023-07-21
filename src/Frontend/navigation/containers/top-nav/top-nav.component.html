@@ -28,47 +28,21 @@
     <button id="others-btn">Others</button>
 
   </div>
-  <!-- <div class="main-content">
-    <img src="assets/img/no-notifications.png" alt="error">
+  <div *ngIf="notificationData.length === 0" class="main-content">
+    <img src="assets/img/no-notifications.png" />
     <h5>No Notifications</h5>
     <p>Lorium ipsum dolor sit amet</p>
-  </div> -->
+  </div>
 
-  <div class="row ml-0 mr-0 notifications-container">
-    <div class="col-sm-10 p-4 notification-content">
-      <h3>Assigned a conversation</h3>
-      <p>Assigned a conversation with <span id="assigned-user">Fintch Hood</span></p>
-      <span id="date">Today, 2:48 pm</span>
+  <div  *ngFor="let item of notificationData" class="row ml-0 mr-0 notifications-container">
+ 
+    <div *ngIf="notificationData.length > 0" class="col-sm-10 p-4 notification-content">
+      <h3>{{item.subject}}</h3>
+      <p [innerHTML]="item.message"><span id="assigned-user">{{item.assigned_user}}</span></p>
+      <span id="date">{{item.created_at  | date: 'd MMM y, h:mm a'}}</span>
     </div>
   </div>
-  <div class="row ml-0 mr-0 notifications-container">
-    <div class="col-sm-10 p-4 notification-content">
-      <h3>Mentioned You</h3>
-      <p>Assigned a conversation with <span id="assigned-user">Fintch Hood</span></p>
-      <span id="date">Today, 11:15 Am</span>
-    </div>
-  </div>
-  <div class="row ml-0 mr-0 notifications-container">
-    <div class="col-sm-10 p-4 notification-content">
-      <h3>Mentioned You</h3>
-      <p>Mentioned you in a Comment</p>
-      <span id="date">Yesterday, 1:49 Pm</span>
-    </div>
-  </div>
-  <div class="row ml-0 mr-0 notifications-container">
-    <div class="col-sm-10 p-4 notification-content">
-      <h3>Update!</h3>
-      <p>Dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
-      <span id="date">Yesterday, 3:55 Pm</span>
-    </div>
-  </div>
-  <div class="row ml-0 mr-0 notifications-container">
-    <div class="col-sm-10 p-4 notification-content">
-      <h3>Edited Flow Builder MBG Products</h3>
-      <p>Assigned a conversation with <span id="assigned-user">Fintch Hood</span></p>
-      <span id="date">Yesterday, 3:55 Pm</span>
-    </div>
-  </div>
+
   <div class="footer d-flex align-items-center justify-content-center p-4 pb-3">
     <button id="view-notifications-btn" routerLink="/dashboard/notifications">View all Notifications</button>
   </div>
@@ -82,9 +56,13 @@
     <div class="profile-heading">
       <img id="profile-bg" src="assets/img/profile/bg.png">
       <img id="pic-bg" src="assets/img/profile/bg image.png">
-      <img id="profile-pic" src="assets/img/profile/Richie_3.png">
+      <!-- <img id="profile-pic" src="assets/img/profile/Richie_3.png"> -->
+      <div class="image-container">
+        <span class="initials"> {{ firstLetterFirstName }}{{ firstLetterLastName }} </span>
+      </div>
+      
     </div>
-      <div class="d-block mb-5 text-center  profile-content1">
+      <div class="d-block mb-5 mt-0 text-center  profile-content1">
         <h5 class="text-capitalize">{{Name}}</h5>
         <p>{{EmailId}}</p>
         <p>{{PhoneNumber}}</p>
@@ -119,7 +97,7 @@
 
           <div class="px-2 switch-toggle">
             <label class="m-0 switch">
-              <input type="checkbox" class="m-0 form-control-checkbox">
+              <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleActiveState($event.target.checked)" checked>
               <span class="slider"></span>
             </label>
           </div>

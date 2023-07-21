@@ -1,6 +1,6 @@
 /* tslint:disable: ordered-imports*/
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule,DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 / Modules /
@@ -54,7 +54,7 @@ import { DashboardComponent } from './containers';
         ImageCropperModule
     ],
     providers: [...dashboardServices.services,
-                ...dashboardGuards.guards
+                ...dashboardGuards.guards,DatePipe
         ],
     declarations:  [
          ...dashboardContainers.containers,

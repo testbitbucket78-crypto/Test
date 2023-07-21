@@ -241,3 +241,43 @@ color: #7A86A1;
   appearance: auto;
   -webkit-appearance: auto;
 }
+
+.ag-theme-alpine .ag-ltr .ag-cell{
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.user-assigned{
+  width: 20%;
+}
+
+.delete-token-modal{
+  width: 320px;
+ }
+
+ .cancel-btn{
+  background: #fff;
+  border: 1px solid #EBEBEB;
+  border-radius: 20px;
+  width: auto;
+  height: 35px;
+  color: #7A86A1;
+  padding: 0px 25px;
+  font-size: 12px;
+  font-weight: 800;
+  margin: 0 0 0 15px;
+ }
+
+ .delete-btn{
+  box-shadow: 1px 8px 29px #695F9724;
+  border-radius: 20px;
+  width: auto;
+  height: 35px;
+  border: 0px;
+  color: #fff;
+  padding: 0px 25px;
+  font-size: 12px;
+  font-weight: 800;
+  margin: 0 0 0 15px;
+  background: #FF3636;
+ }

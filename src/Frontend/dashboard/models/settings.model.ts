@@ -97,3 +97,25 @@ export interface RolesData{
   subPrivileges:string;
   SP_ID:number;
 }
+
+export interface UserData{           
+    name: string;
+    mobile_number:number;
+    uid:number;
+    UserType:number;   
+    email_id:string;
+  SP_ID:number;
+}
+
+export interface TeamData{    
+    team_name:string;
+    userIDs:number[];
+  SP_ID:number;
+}
+
+export interface userTeamDropDown{    
+    uid:number;
+    isSelected:boolean;
+    name:string;
+    profile_img:string;
+}

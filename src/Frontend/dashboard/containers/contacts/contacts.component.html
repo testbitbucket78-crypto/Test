@@ -499,7 +499,7 @@
 								placeholder="Enter Name" name="Name" formControlName="Name" id="Name" />
 							<div *ngIf="newContact.controls.Name.touched && newContact.controls.Name.errors"
 								class="text-danger">
-								! Invalid Name Format
+								! Name must contain only alphabetic characters.
 							</div>
 
 
@@ -543,25 +543,24 @@
 
 							<div *ngIf="newContact.controls.emailId.touched && newContact.controls.emailId.errors"
 								class="text-danger">
-								! Invalid Email Id
+								! Please include '@' in the email address.
 							</div>
 						</div>
 					</div>
 					<div class="col-md">
 						<label for="floatingInputGrid">Age</label>
 						<div class="form-floating">
-							<input class="form-control" type="number" placeholder="Enter Age" name="age"
-								formControlName="age" id="age" minLength="2" maxLenght="3" />
+							<input class="form-control" type="number" placeholder="Enter Age" name="age" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==2) return false;" min="18" max="99"
+								formControlName="age" id="age" />
 						</div>
-						
 					</div>
 				
 				</div>
 				<div class="p-0 col-md">
 					<label for="floatingInputGrid">Gender</label>
 					<div class="form-floating">
-						<input class="form-control" type="text" placeholder="Enter Gender" name="gender"
-							formControlName="sex" id="gender" />
+						<input class="form-control" type="text" placeholder="Enter Gender" name="gender" pattern="[a-zA-Z]+" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122)"
+							formControlName="sex" id="sex" />
 					</div>
 				</div>
 				<div class="form-group mt-3">
@@ -652,7 +651,7 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Age</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="Enter Age" name="age"
+							<input class="form-control" type="number" placeholder="Enter Age" name="age" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==2) return false;" min="18" max="99"
 								formControlName="age" id="age" />
 						</div>
 					</div>
@@ -660,7 +659,7 @@
 				<div class="p-0 col-md">
 					<label for="floatingInputGrid">Gender</label>
 					<div class="form-floating">
-						<input class="form-control" type="text" placeholder="Enter Gender" name="gender"
+						<input class="form-control" type="text" placeholder="Enter Gender" name="gender" pattern="[a-zA-Z]+" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122)"
 							formControlName="sex" id="gender" />
 					</div>
 				</div>

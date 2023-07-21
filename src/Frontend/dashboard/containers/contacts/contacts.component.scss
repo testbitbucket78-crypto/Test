@@ -395,6 +395,12 @@ option:hover{
     padding: 0px 0px 0px 34px;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .table tr {
     display: table;
     width: 95%;

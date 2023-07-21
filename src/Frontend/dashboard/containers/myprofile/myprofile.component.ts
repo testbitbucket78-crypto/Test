@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder } from "@angular/forms";
+import { FormBuilder,Validators } from "@angular/forms";
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
+import { addFundsData, profilePicData, teamboxNotifications } from 'Frontend/dashboard/models/profile.model';
+import { first } from 'rxjs/operators';
 declare var $:any;
 
 @Component({
@@ -15,6 +17,11 @@ export class MyprofileComponent implements OnInit {
   Name:any;
   EmailId:any;
   PhoneNumber:any;
+  firstLetterFirstName!:string;
+  firstLetterLastName!:string;
+  notificationId!:number;
+  pushNotificationValue= [0, 0, 0, 0];
+  soundNotificationValue=[0, 0, 0 ,0];
   modalReference:any;
   visible:boolean = true;
   uid :any;
@@ -24,11 +31,16 @@ export class MyprofileComponent implements OnInit {
   selectedAmount!:number;
   selectedDiv!: number;
   enterAmountVal!: any;
+  availableAmount: number = 0;
   selectedTab: number = 0;
-  teamName!:string;
+  teamName!: string;
   roleName!:string;
-  isActive: number = 0; 
-  profilePicData:any;
+  isActive: number = 1; 
+  profilePicData= <profilePicData> {};
+  fundsData = <addFundsData> {};
+  teamboxNotificationStateData = <teamboxNotifications> {};
+  
+
 
   imageChangedEvent: any = '';
   croppedImage: any = '';
@@ -39,9 +51,9 @@ export class MyprofileComponent implements OnInit {
 
   changepassword = this.fB.group({
       uid:[0],
-      oldPass:[''],
-      newPass:[''],
-      confirmPass:['']
+      oldPass:['', [Validators.required, Validators.minLength(8)]],
+      newPass:['', [Validators.required, Validators.minLength(8)]],
+      confirmPass:['', [Validators.required, Validators.minLength(8)]]
   });
   
 
@@ -52,14 +64,21 @@ export class MyprofileComponent implements OnInit {
     this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
     this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
     this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
-  
+    const nameParts = this.Name.split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts[1] || '';
+    
+    this.firstLetterFirstName = firstName.charAt(0) || '';
+    this.firstLetterLastName = lastName.charAt(0) || '';
 
     let uid: string  = sessionStorage.getItem('loginDetails')?.toString() ?? '';
     let userid =JSON.parse(uid);
     this.uid = userid.uid;
     this.spId = Number(sessionStorage.getItem('SP_ID'));
+    this.getTeamboxNotificaions();
     this.getTeamName();
     this.getRoleName();
+    this.getAvailableAmount();
   }
 
   ngOnDestroy() {
@@ -112,7 +131,7 @@ export class MyprofileComponent implements OnInit {
 
   getTeamName() {
     this.apiService.teamName(this.uid).subscribe((response) => {
-      this.teamName = response.teamRes[0].team_name;    
+      this.teamName = response.teamRes[0].team_name;  
       });
   }
 
@@ -121,6 +140,36 @@ export class MyprofileComponent implements OnInit {
      this.roleName = response.roleRes[0].RoleName;
     });
 }
+
+// save teambox notifications toggle on / off state
+
+saveTeamboxNotificationsState() {
+   
+  this.teamboxNotificationStateData.UID = this.uid;
+  this.teamboxNotificationStateData.notificationId = this.notificationId;
+  this.teamboxNotificationStateData.PushNotificationValue = this.pushNotificationValue[this.notificationId - 1] ? 1 : 0;
+  this.teamboxNotificationStateData.SoundNotificationValue = this.soundNotificationValue[this.notificationId - 1] ? 1 : 0;
+
+  this.apiService.saveTeamboxNotificationState(this.teamboxNotificationStateData).subscribe((response) => {
+      console.log(response + JSON.stringify(this.teamboxNotificationStateData));
+  });
+
+
+}
+
+updateNotificationId(notificationId: number) {
+  this.notificationId = notificationId;
+  this.saveTeamboxNotificationsState();
+}
+
+
+// get teamboxNotificationState
+getTeamboxNotificaions() { 
+  this.apiService.getTeamboxNotificationsState(this.uid).subscribe((response) => {
+      console.log(response);
+  });
+}
+
 
 // toggle active/inactive state of logged in user
 
@@ -135,7 +184,13 @@ toggleActiveState(checked: boolean) {
   this.apiService.userActiveState(activeStateData)
     .subscribe(
       response => {
-        console.log('response:', response);
+        if(this.isActive ===1) {
+          this.showToaster('User Active!', 'success'+ response);
+        }
+        else {
+          this.showToaster('User Inactive!', 'success'+ response);
+        }
+
       },
       error => {
         console.error('error:', error);
@@ -154,6 +209,7 @@ toggleActiveState(checked: boolean) {
     (response: any) => {
       if(response.status === 200) {
         this.showToaster('! Password changed successfully.','success');
+        this.modalReference.close();
       }
     },
 
@@ -162,8 +218,9 @@ toggleActiveState(checked: boolean) {
         this.showToaster('! Current Password does not match','error');
         
       } } ,
-
+ 
     )
+   
   }
 
   // add funds logic to fill pre defined amount in input field
@@ -208,24 +265,56 @@ toggleActiveState(checked: boolean) {
 //API call to save the cropped image
 
   saveCroppedProfilePicture() {
-
-    const profilePicData = {
-
-      spId: this.spId,
-      uid:this.uid,
-      name:this.Name,
-      filePath:this.croppedImage
-    };
-    this.apiService.saveUserProfilePic(profilePicData).subscribe(
+      this.profilePicData.spid = this.spId,
+      this.profilePicData.uid = this.uid,
+      this.profilePicData.name = this.Name,
+      this.profilePicData.filePath = this.croppedImage
+    
+    this.apiService.saveUserProfilePic(this.profilePicData).subscribe(
   (response) => {
     $("#pictureCropModal").modal('hide');
-    console.log('Image saved successfully', response);
+    this.showToaster('Image saved successfully','success' + response);
    
   },
   (error) => {
-   alert('Error saving image: ' + error.message);
+   this.showToaster('Error saving image ','error' + error.message);
   })
 
+}
+
+//post add funds data to api service
+
+addFunds(addFundsSuccess: any) {
+ 
+    this.fundsData.sp_id = this.spId;
+    this.fundsData.amount = this.selectedAmount;
+    this.fundsData.transation_type = 'Credited'
+    this.fundsData.currency = 'INR' ;
+
+    this.apiService.addFunds(this.fundsData,).subscribe(response => {
+      console.log(JSON.stringify(response)+' added');
+      if(response.status === 200) {
+        this.openAddFundsSuccessPopup(addFundsSuccess);
+        this.changepassword.reset();
+        this.changepassword.clearValidators();
+        this.getAvailableAmount();
+   
+}},
+
+      (error) => {
+        
+        if(error.status === 404) {
+        this.showToaster('"Oops! Unable to add funds to your wallet. Please try again later or contact our support team for assistance.', 'error');
+        }
+     
+    });
+  }
+
+  getAvailableAmount() {
+    this.apiService.showAvailableAmount(this.spId).subscribe(response => {
+        this.availableAmount = response.AvailableAmout;
+        console.log(this.availableAmount);
+  });
 }
 
 }

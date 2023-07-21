@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { SettingsService } from '../../services/settings.service';
 import { RolesData, rights } from '../../models/settings.model';
+declare var $:any;
 
 @Component({
   selector: 'sb-roles-settings',
@@ -9,13 +10,14 @@ import { RolesData, rights } from '../../models/settings.model';
   styleUrls: ['./roles-settings.component.scss'],
   encapsulation:ViewEncapsulation.None
 })
+
 export class RolesSettingsComponent implements OnInit {
 
-  columnDefs:ColDef [] = [{field: 'customerId', headerName: 'ID',  filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }},
-    {field: 'Name', headerName: 'Roles', filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }},
-    { field: 'Phone_number', headerName: 'Rights', filter: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }, sortable: true, },
-    { field: 'emailId', headerName: 'No. of Users', filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
-    { field: 'age', headerName: 'Last Modified',  filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } }];
+  columnDefs:ColDef [] = [{field: 'roleID', headerName: 'ID', width: 80, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }},
+    {field: 'RoleName', headerName: 'Roles', filter: true, width: 250, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }},
+    { field: 'Phone_number', headerName: 'Rights', width: 120, filter: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }, sortable: true, },
+    { field: 'users_count', headerName: 'No. of Users', width: 130, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
+    { field: 'created_at', headerName: 'Last Modified', width: 200, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } }];
 public gridapi!:GridApi;
 sp_Id:number;
 userList:number[] =[1,1,2,3,4,5,6,7];
@@ -24,6 +26,9 @@ totalRights:any[]= [];
 showSideBar:boolean=false;
 roleName!:string;
 selectedRoleId!:number;
+rolesList:any;
+rolesListinit:any;
+roleData:any;
 
 
   constructor(private _settingsService:SettingsService) {
@@ -37,6 +42,12 @@ selectedRoleId!:number;
   }
 
   rowClicked = (event: any) => {
+    console.log(event);
+    this.roleData = event.data;
+    this.showSideBar = true;
+    this.roleName = this.roleData?.RoleName;
+    this.selectedRoleId = this.roleData?.roleID;
+    this.setSelectedSubRights();
   };  
 
 gridOptions = {rowSelection: 'multiple',
@@ -61,7 +72,8 @@ getRolesList(){
   this._settingsService.getRolesList(this.sp_Id)
   .subscribe(result =>{
     if(result){
-      console.log(result);
+     this.rolesList = result?.getRoles;
+     this.rolesListinit = result?.getRoles;
       
     }
 
@@ -94,12 +106,13 @@ getSubRightsList(){
 addRole(){
   this.selectedRoleId =0;
   this.roleName='';
+  this.resetSubRights();
 }
 
 setRightsAccSubRights(){
   for(let i=0;i<this.rights.length;i++){
     this.totalRights.push({rightId:this.rights[i].id,rightName:this.rights[i].rightsName,subRights:[]});
-    this.subRightRes.forEach(item =>{
+    this.subRightRes.forEach((item:any) =>{
       if(item.rightsID == this.rights[i]?.id){
         this.totalRights[this.totalRights?.length-1].subRights.push({id: item?.id,rightsID: item?.rightsID,subRights:item?.subRights,isSelected:false});
       }
@@ -114,10 +127,21 @@ saveRolesDetails(){
   this._settingsService.saveRolesData(roleData)
   .subscribe(result =>{
     if(result){
-      console.log(result);
+      this.getRolesList();      
+      $("#rolesModal").modal('hide');
       
     }
+  })
+}
 
+deleteRole(){
+  this._settingsService.deleteRolesData(this.sp_Id,this.roleData?.roleID)
+  .subscribe(result =>{
+    if(result){
+      this.getRolesList();
+      this.showSideBar = false;
+      
+    }
   })
 }
 
@@ -129,15 +153,42 @@ copyRolesData(){
   rolesData.Privileges ='';
   let subRoles:any[]=[]
   this.totalRights.forEach(item=>{
-    item.subRights.forEach((subitem:any) =>{
+    item.subRights.forEach((subitem:any)=>{
       if(subitem?.isSelected == true){
         subRoles.push(subitem?.id);
-      }
+      }                                                                       
     })
   });
   rolesData.subPrivileges = subRoles.toString();
   return rolesData;
 
+}
+
+setSelectedSubRights(){
+  this.resetSubRights();
+  let rightsSelected:number[] = this.roleData.subPrivileges.split(',');
+  this.totalRights.forEach(item=>{
+    item.subRights.forEach((subitem:any)=>{
+      if(rightsSelected.findIndex(item => item == subitem?.id) > -1)
+        subitem.isSelected = true;                                         
+    })
+  });
+}
+
+resetSubRights(){
+  this.totalRights.forEach(item=>{
+    item.subRights.forEach((subitem:any)=>{      
+        subitem.isSelected = false;                                         
+    })
+  });
+}
+
+searchData(srchText:string){
+  this.rolesList =[];
+  this.rolesListinit.forEach((item:any) =>{
+    if(item.RoleName.includes(srchText))
+    this.rolesList.push(item);
+  })
 }
 
 

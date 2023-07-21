@@ -1,0 +1,69 @@
+<div class="d-flex">
+    <div class="setting-card storage-card">
+        <div class="default-actions-heading">Manage Storage</div>
+        <div class="pt-4">
+            <figure class="figure">
+                <ng-container *ngIf="percentage; else noValue">
+                  <svg viewBox="0 0 36 36" class="circular-chart blue" >
+                    <title>Percentage chart showing  confidence level for this appraisal at {{percentage}}%</title>
+                    <path
+                      class="circle-bg"
+                      d="M18 2.0845
+                          a 15.9155 15.9155 0 0 1 0 31.831
+                          a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      class="circle"
+                      [attr.stroke-dasharray]="formattedDashArray"
+                      d="M18 2.0845
+                          a 15.9155 15.9155 0 0 1 0 31.831
+                          a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <text x="18" y="22.35" class="percentage">{{percentage}}% </text>
+                  </svg>
+              </ng-container>
+              <ng-template #noValue>
+                No Value
+              </ng-template>
+              </figure>
+        </div>
+        <div class="text-align-center"> 
+            <span class="default-actions-heading">Storage Utilization</span>
+            <p>1.5 GB Used of 4 GB</p>
+        </div>
+    </div>
+    
+    <div class="setting-card deletion-card ml-3">
+        <div class="flex-row">
+        <div class="default-actions-heading">Auto-Deletion</div>
+        <button class="account-white-btn mx-1" data-bs-toggle="modal" data-bs-target="#localeDetailModal">
+            <img class="p-0" src="../../../../assets/img/edit.png">
+        </button>
+    </div>
+
+    <div class="d-flex pb-3 pt-3">
+        <img src="../../../../assets/img/settings/img-7.png">
+        <div class="pl-2">
+            <span class="sub-heading">Auto-Delete all messaged older than</span>
+            <div class="deletion-time">60 Days</div>
+        </div>
+    </div>
+
+    <div class="d-flex pb-3">
+        <img src="../../../../assets/img/settings/img-7.png">
+        <div class="pl-2">
+            <span class="sub-heading">Auto-Delete all Media older than</span>
+            <div class="deletion-time">125 Days</div>
+        </div>
+    </div>
+
+    <div class="d-flex pb-3">
+        <img src="../../../../assets/img/settings/img-7.png">
+        <div class="pl-2">
+            <span class="sub-heading">Auto-Delete all Contacts older than</span>
+            <div class="deletion-time">Don’t Delete</div>
+        </div>
+    </div>
+
+    </div>
+</div>

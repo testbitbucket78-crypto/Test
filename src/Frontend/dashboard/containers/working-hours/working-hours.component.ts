@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { holidayData, workingData, workingDataResponse, workingDataResponsePost, workingFormData } from '../../models/settings.model';
 import { time } from 'console';
 import { SettingsService } from '../../services/settings.service';
 import { isNullOrUndefined } from 'util';
+declare var $:any;
 
 @Component({
   selector: 'sb-working-hours',
   templateUrl: './working-hours.component.html',
-  styleUrls: ['./working-hours.component.scss']
+  styleUrls: ['./working-hours.component.scss'],
+  encapsulation:ViewEncapsulation.Emulated
 })
 export class WorkingHoursComponent implements OnInit {
   daysList=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
@@ -76,7 +78,9 @@ yearList:number[] =[];
   }
 
   getHolidayDetails(){
-    this._settingsService.getHolidayData(this.sp_Id)
+    let fromDate = new Date(this.selectedYear,0,1);
+    let toDate = new Date(this.selectedYear,12,0);
+    this._settingsService.getHolidayData(this.sp_Id,fromDate,toDate)
     .subscribe(result =>{
       if(result){
         console.log(result);
@@ -92,7 +96,7 @@ yearList:number[] =[];
     .subscribe(result =>{
       if(result){
         console.log(result);
-        this.getHolidayDetails();
+        this.getWorkingDetails();
         //this.workingData = result?.result;
       }
     })
@@ -106,8 +110,8 @@ yearList:number[] =[];
     .subscribe(result =>{
       if(result){
         console.log(result);
-        this.getWorkingDetails();
-        //this.workingData = result?.result;
+        this.getHolidayDetails();
+        $("#holidayModal").modal('hide');
       }
     })
   }
@@ -119,7 +123,6 @@ yearList:number[] =[];
     this.monthDates.forEach(item =>{
       if(item.selected)
       holidayResponse.holiday_date.push(item.completeDate);
-
     })
     return holidayResponse
   }

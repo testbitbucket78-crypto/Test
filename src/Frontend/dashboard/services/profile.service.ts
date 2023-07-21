@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { authChangePassword, roleName ,teamName, userActiveStatus ,savePlan, profilePicData } from '../models/profile.model';
+import { authChangePassword, roleName ,teamName, userActiveStatus ,savePlan, profilePicData, addFundsData, teamboxNotifications} from '../models/profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,16 +12,27 @@ export class ProfileService {
 
   constructor(private http:HttpClient) { }
 
-  changePass(data: authChangePassword): Observable<any> {
-    return this.http.post(`${this.API_URL}/changePassword`,data);
-}
+  // profle page
 
-  teamName(uid: number): Observable<teamName> {
-  return this.http.get<teamName>(`${this.API_URL}/teamName/${uid}`);
-}
+    changePass(data: authChangePassword): Observable<any> {
+      return this.http.post(`${this.API_URL}/changePassword`,data);
+  }
+
+    teamName(uid: number): Observable<teamName> {
+    return this.http.get<teamName>(`${this.API_URL}/teamName/${uid}`);
+  }
 
   roleName(uid: number): Observable<roleName> {
     return this.http.get<roleName>(`${this.API_URL}/roleName/${uid}`);
+  }
+
+  saveTeamboxNotificationState(data:any): Observable<any> {
+    return this.http.post<teamboxNotifications>(`${this.API_URL}/addNotification`,data);
+  }
+
+  getTeamboxNotificationsState(uid:Number): Observable<any>{
+    return this.http.get(`${this.API_URL}/getNotification/${uid}`);
+
   }
 
   userActiveState(activeStateData:userActiveStatus) : Observable<any> {
@@ -41,15 +52,57 @@ export class ProfileService {
   }
 
   walletUsageInsight(spId:number): Observable<any> {
-    return this.http.get(`${this.API_URL}/usageInsight/spid?spid=${spId}`);
+    return this.http.get(`${this.API_URL}/usageInsight/${spId}`);
+  }
+
+  getManagePlanData(): Observable<any> {
+    return this.http.get(`${this.API_URL}/managePlan`);
   }
 
   approximateCharges(spId:number): Observable<any> {
-    return this.http.get(`${this.API_URL}/ApproximateCharges/${spId})`);
+    return this.http.get(`${this.API_URL}/ApproximateCharges/${spId}`);
   }
 
   saveUserProfilePic(profilePicData:profilePicData): Observable<any> { 
    return this.http.post(`${this.API_URL}/userProfileImg`,profilePicData);
   }
 
-}
+  addFunds(addfundsData:addFundsData): Observable<any> {
+    return this.http.post(`${this.API_URL}/SPTransations`,addfundsData);
+  }
+
+  showAvailableAmount(spId:number): Observable<any> {
+    return this.http.get(`${this.API_URL}/getAvailableAmout/${spId}`);
+  }
+
+  getPDFInvoiceDetails(spid:number): Observable<any> { 
+    return this.http.get(`${this.API_URL}/invoiceDetails/${spid}`);
+  }
+
+  // notifications page
+
+  getNotifications(spId:number): Observable<any> {
+    return this.http.get(`${this.API_URL}/getNotifications/${spId}`);
+  }
+
+  // support page FAQS
+
+  getFaqsTitles(): Observable<any> { 
+    return this.http.get(`${this.API_URL}/FAQs`);
+  }
+
+  getSubFaqsData(spId:number): Observable<any> {
+   return this.http.get(`${this.API_URL}/subFAQS/${spId}`);
+  }
+
+  // support UserGuide API
+  
+  getUserGuideTitles(): Observable<any> { 
+    return this.http.get(`${this.API_URL}/userGuideTopics`);
+  }
+
+  getUserGuideSubTopicsData(spId:number): Observable<any> { 
+    return this.http.get(`${this.API_URL}/userGuideSubTopics/${spId}`);
+  }
+
+  }

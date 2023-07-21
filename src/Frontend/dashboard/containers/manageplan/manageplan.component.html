@@ -47,32 +47,29 @@
                                 <div class="my-1 cards-heading">
                                     <h2>Basic</h2>
                                 </div>
-                                <span class="plan-price">$20</span>
+                                <span class="plan-price">{{PlanCharges[0]?.currency}}{{ PlanCharges[0]?.Monthly }}</span>
+                                <span class="px-3 discount-price">{{PlanCharges[0]?.currency}}{{ PlanCharges[0]?.Yearly }}</span>
                               
                                
                                     <div class="d-flex my-2 justify-content-around align-items-center toggle-button-container">
                                         <div class="toggle-txt">  
-                                        <p>Yearly <br />Save  12%</p></div>
+                                        <p>Yearly <br />Save {{PlanCharges[0]?.discount}}</p></div>
                                       
                                         <div class="switch-toggle">
                                             <label class="m-0 switch">
-                                              <input type="checkbox" class="m-0 form-control-checkbox">
+                                            <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleSlider($event.target.checked)">
                                               <span class="slider"></span>
                                             </label>
                                           </div>
-                                          <div class="toggle-txt1"><p>Monthly <br />$20</p></div>
+                                          <div class="toggle-txt1"><p>Monthly <br />{{PlanCharges[0]?.currency}}{{ PlanCharges[0]?.Monthly }}</p></div>
                                       
                                     </div>
 
                                     <div class="mt-4 select-choices">
                                    
                                         <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
-                                            <div class="wrapper">
-                                                <div class="circle" [ngStyle]="{'background-color': i < 4 ? '#6149CD' : '#E1DEE5'}">
-                                                  <div class="checkMark"></div>
-                                                </div>
-                                              </div>
-                                            <p class="m-0 pl-4">{{choice}}</p>
+                                            <img class="checkboxes" src="../../../../assets/img/profile/checked.svg" [style.filter]="i >= 4 ? 'invert(52%) saturate(166%) hue-rotate(183deg) brightness(142%) contrast(137%)' : 'none'" />
+                                            <p class="m-0 pl-4">{{choice.plans}}</p>
                                           </div>   
                                     
                                     </div>
@@ -96,33 +93,29 @@
                                 <div class="my-1 cards-heading">
                                     <h2>Standard</h2>
                                 </div>
-                                <span class="plan-price">$35</span>
-                                <span class="px-3 discount-price">$30.8</span>
+                                <span class="plan-price">{{PlanCharges[1]?.currency}}{{ PlanCharges[1]?.Monthly }}</span>
+                                <span class="px-3 discount-price">{{PlanCharges[1]?.currency}}{{ PlanCharges[1]?.Yearly }}</span>
                               
                                
                                     <div class="d-flex my-2 justify-content-around align-items-center toggle-button-container">
                                         <div class="toggle-txt">  
-                                        <p>Yearly <br />Save  12%</p></div>
+                                            <p>Yearly <br />Save {{PlanCharges[1]?.discount}}</p></div>
                                       
                                         <div class="switch-toggle">
                                             <label class="m-0 switch">
-                                              <input type="checkbox" class="m-0 form-control-checkbox">
+                                              <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleSlider($event.target.checked)">
                                               <span class="slider"></span>
                                             </label>
                                           </div>
-                                          <div class="toggle-txt1"><p>Monthly <br />$35</p></div>
+                                          <div class="toggle-txt1"><p>Monthly <br />{{PlanCharges[1]?.currency}}{{ PlanCharges[1]?.Monthly }}</p></div>
                                       
                                     </div>
 
                                     <div class="mt-4 select-choices">
                                    
                                         <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
-                                            <div class="wrapper">
-                                                <div class="circle" [ngStyle]="{'background-color': i < 6 ? '#6149CD' : '#E1DEE5'}">
-                                                  <div class="checkMark"></div>
-                                                </div>
-                                              </div>
-                                            <p class="m-0 pl-4">{{choice}}</p>
+                                            <img class="checkboxes" src="../../../../assets/img/profile/checked.svg" [style.filter]="i >= 6 ? 'invert(52%) saturate(166%) hue-rotate(183deg) brightness(142%) contrast(137%)' : 'none'" />
+                                            <p class="m-0 pl-4">{{choice.plans}}</p>
                                           </div>   
                                     
                                     </div>
@@ -142,32 +135,29 @@
                                 <div class="my-1 cards-heading">
                                     <h2>Premium+</h2>
                                 </div>
-                                <span class="plan-price">$50</span>
+                                <span class="plan-price">{{PlanCharges[2]?.currency}}{{ PlanCharges[2]?.Monthly }}</span>
+                                <span class="px-3 discount-price">{{PlanCharges[2]?.currency}}{{ PlanCharges[2]?.Yearly }}</span>
                               
                                
                                     <div class="d-flex my-2 justify-content-around align-items-center toggle-button-container">
                                         <div class="toggle-txt">  
-                                        <p>Yearly <br />Save  12%</p></div>
+                                            <p>Yearly <br />Save {{PlanCharges[2]?.discount}}</p></div>
                                       
                                         <div class="switch-toggle">
                                             <label class="m-0 switch">
-                                              <input type="checkbox" class="m-0 form-control-checkbox">
+                                              <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleSlider($event.target.checked)">
                                               <span class="slider"></span>
                                             </label>
                                           </div>
-                                          <div class="toggle-txt1"><p>Monthly <br />$50</p></div>
+                                          <div class="toggle-txt1"><p>Monthly <br />{{PlanCharges[2]?.currency}}{{ PlanCharges[2]?.Monthly }}</p></div>
                                       
                                     </div>
 
                                     <div class="mt-4 select-choices">
                                    
                                         <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
-                                            <div class="wrapper">
-                                                <div class="circle">
-                                                  <div class="checkMark"></div>
-                                                </div>
-                                              </div>
-                                            <p class="m-0 pl-4">{{choice}}</p>
+                                              <img class="checkboxes" src="../../../../assets/img/profile/checked.svg" />
+                                            <p class="m-0 pl-4">{{choice.plans}}</p>
                                           </div>   
                                     </div>
                                     <div class="text-center mt-4 select-plan-btn">
@@ -201,7 +191,7 @@
                     <div class="col-7 left-part">
                         <div class="plansummery-head">
                             <h4 class="m-0">{{PlanSummary[0]}}</h4>
-                            <span >{{PlanSummary[1]}}</span>
+                            <span [innerHTML]="PlanSummary[1]" ></span>
                         </div>
     
                         <div class="plansummery-body">
@@ -224,7 +214,7 @@
     
                     <div class="col-5 right-part">
                        <!-- <h3 *ngIf="selectedplan == basic" class="m-0 choosePlan">Basic</h3> -->
-                       <h3 *ngIf="selectedplan == standard" class="m-0 choosePlan">Standard</h3>
+                       <h3 class="m-0 choosePlan">Standard</h3>
     
                         <span>Commitment</span>
                         <div class="d-flex justify-content-between align-items-center top price-container">

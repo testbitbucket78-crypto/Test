@@ -2,6 +2,11 @@
     <sb-top-nav title="My Profile"></sb-top-nav> -->
     <div class="row">
         <div class="col-md-12">
+            <div class="toaster" (click)="hideToaster()">
+                <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+                <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+            </div>
+        
 
             <div class="col-md-12 mt-4 d-flex main-header-container">
                 <div class="col-md-1">
@@ -129,7 +134,7 @@
                                     <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-header">
                                          
                                             <h6 class="m-0 head">All Conversations <span class="px-2"><img src="assets/img/profile/Info.svg" /></span></h6>
-                                            <h6 class="m-0"></h6>
+                                            <h6 class="m-0">{{allConversationCount}}</h6>
                                     </div>
                                     <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
                                      
@@ -162,17 +167,17 @@
                                     <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-header">
                                          
                                             <h6 class="m-0 head">Free Conversations <span class="px-2"><img src="assets/img/profile/Info.svg" /></span></h6>
-                                            <h6 class="m-0">1458</h6>
+                                            <h6 class="m-0"></h6>
                                     </div>
                                     <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
                                      
                                             <p class="m-0">Free Tier</p>
-                                            <h6 class="m-0">945</h6>
+                                            <h6 class="m-0">0</h6>
                                        </div>
                                        <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
                                      
                                         <p class="m-0">Free Entry Point</p>
-                                        <h6 class="m-0">822</h6>
+                                        <h6 class="m-0">0</h6>
                                    </div>
                                 </div>
                             </div>
@@ -210,40 +215,36 @@
                                 </div>
                             </div>
                               </div>
-    
+
+
                               <div class="row m-0">
                                 <div class="col-md-12 p-0">
                                     <div class="col-md-10 my-3 line"></div>
                                     <div class="usage-insight-container">
-                                    <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-header">
-                                         
+                                        <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-header">
                                             <h6 class="m-0 head">Approximate Charges <span class="px-2"><img src="assets/img/profile/Info.svg" /></span></h6>
-                                            <h6 class="m-0"></h6>
+                                            <h6 class="m-0">{{ totalCharges | number }}</h6>
+                                        </div>
+                                        <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
+                                            <p class="m-0">Business Initiated</p>
+                                            <h6 class="m-0">{{(!approximateCharges.Marketing ? 0 : approximateCharges.Marketing )| number}}</h6>
+                                        </div>
+                                        <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
+                                            <p class="m-0">Utility</p>
+                                            <h6 class="m-0">{{(!approximateCharges.Utility ? 0 : approximateCharges.Utility) | number}}</h6>
+                                        </div>
+                                        <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
+                                            <p class="m-0">Authentication</p>
+                                            <h6 class="m-0">{{(!approximateCharges.Authentication ? 0 : approximateCharges.Authentication) | number}}</h6>
+                                        </div>
+                                        <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
+                                            <p class="m-0">User Initiated</p>
+                                            <h6 class="m-0">{{(!approximateCharges.UserInitiated ? 0 : approximateCharges.UserInitiated ) | number}}</h6>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
-                                     
-                                            <p class="m-0">Bussiness Initiated</p>
-                                            <h6 class="m-0">$0</h6>
-                                       </div>
-                                       <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
-                                     
-                                        <p class="m-0">Utility</p>
-                                        <h6 class="m-0">$0</h6>
-                                   </div>
-                                   <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
-                                     
-                                    <p class="m-0">Authentication</p>
-                                    <h6 class="m-0">$0</h6>
-                               </div>
-                               <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
-                                     
-                                <p class="m-0">User Initiated</p>
-                                <h6 class="m-0">$0</h6>
-                           </div>
-                                    
                                 </div>
                             </div>
-                              </div>
+                            
     
                         </div>
                      
@@ -260,28 +261,16 @@
                 <div class="col-sm-12 notification-card">
                     <div class="container-fluid ">
                         <div class="row pb-3 justify-content-center">
-                        <div class="col-sm-12 d-flex pt-3 pb-4 text-center notification-card-header">
-                            <div class="row-header">
-                                Start Date
-                            </div>
-                            <div class="row-header">
-                                Marketing
-                            </div>
-                            <div class="row-header">
-                                Utility
-                            </div>
-                            <div class="row-header">
-                                Authentication
-                            </div>
-                            <div class="row-header">
-                                User Initiated
+                            <div class="col-sm-12 d-flex pt-3 pb-4 text-center notification-card-header">
+                                <div *ngFor="let headers of rowHeaders" class="row-header">
+                                    {{ headers }}
+                                </div>
                             </div>
                             
                         </div>
-                        </div>
             
                         <div class="notification-content-parent">
-                            <div *ngFor="let item of walletUsageData | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" class="row justify-content-center notification-content">
+                            <div *ngFor="let item of filteredData | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" class="row justify-content-center notification-content">
                               <div class="col-sm-12 d-flex py-3 text-center">
                                 <div class="row-data">{{ item.date | date:'dd MMMM yyyy' }}</div>
                                 <div class="row-data">{{ getCountByInteractionType(item.interactions, 'Marketing') }}</div>
@@ -294,22 +283,13 @@
                  
         
                         <div class="col-sm-12 d-flex px-2 mt-4 mb-4 notification-footer">
-        
-                        <div class="col-sm-6 d-flex align-items-center text-left">
-                            <p class="p-0 m-0">Showing:</p>
-                            <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
-                                <option value="10">10</option>
-                                <option value="15">15</option>
-                                <option value="20">20</option>
-                                <option value="25">25</option>
-                                <option value="30">30</option>
-                                <option value="45">35</option>
-                                <option value="40">40</option>
-                                <option value="45">45</option>
-                                <option value="50">50</option>
-                            </select>
-        
-                        </div>
+                            <div class="col-sm-6 d-flex align-items-center text-left">
+                                <p class="p-0 m-0">Showing:</p>
+                                <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
+                                    <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                                </select>
+                            </div>
+                            
                         <div class="col-sm-6 text-right">
                         <nav aria-label="navigation">
                             <ul class="justify-content-end align-items-center m-0 pagination">

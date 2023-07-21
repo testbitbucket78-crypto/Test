@@ -1,0 +1,77 @@
+<div>
+    <div class="row">
+        <div class="col-sm-9 py-4 setting-field">
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1">Default
+                Actions</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2">Default
+                Messages</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3">Routing
+                Rules</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==4 ? 'active' : ''" (click)="selectedTab = 4">Manage
+                Storage</a>
+        </div>
+    </div>
+    <div class="setting-card" *ngIf="selectedTab==1">
+        <div class="default-actions-heading pb-4">Default Actions</div>
+        <div class="pl-2 pr-5 ">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="checkbox">
+                <span class="sub-heading">Agent Inactive Timeout</span>
+            </div>
+            <div class="sub-contents">
+                <p>Configure the inactivity timeout duration for agents. If chat is assigned but no reply by agent,
+                    their status is changed to Offline.</p>
+                <div class="select-heading pt-2">Set Timeout Period</div>
+                <select class="input-form">
+                    <option></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="pl-2 pr-5 pt-3">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="checkbox">
+                <span class="sub-heading">Auto Replies Pause</span>
+            </div>
+            <div class="sub-contents">
+                <p>Configure the time for all auto replies to be paused when the chat is answered by an agent.</p>
+                <div class="select-heading pt-1">Pause Auto Replies for</div>
+                <select class="input-form">
+                    <option></option>
+                </select>
+                <div class="d-flex align-items-center w-40">
+                    <input type="checkbox" class="checkbox">
+                    <p>Disable Auto Replies completely when a chat is assigned to an agent until resolved.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="pl-2 pr-5 pt-3">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="checkbox">
+                <span class="sub-heading">Contact Auto Addition</span>
+            </div>
+            <div class="sub-contents">
+                <p>You can enable the auto addition of contacts when a user sends a message to your business for the
+                    first time or if it does not exist currently in your business’s contact database.</p>
+            </div>
+        </div>
+
+        <div class="default-footer">
+            <button type="button" class="account-btn" >Save</button>
+        </div>
+
+    </div>
+
+    <div *ngIf="selectedTab==2">
+        <sb-default-message-settings></sb-default-message-settings>
+    </div>
+
+    <div *ngIf="selectedTab==3">
+        <sb-routing-rules></sb-routing-rules>
+    </div>
+
+    <div *ngIf="selectedTab==4">
+        <sb-manage-storage></sb-manage-storage>
+    </div>
+</div>

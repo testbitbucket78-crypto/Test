@@ -25,7 +25,8 @@
                                             <p>Instructions and guidance on how to use a product or service.</p>
                                            
                                         </div>
-                                        <span class="d-flex justify-content-center arrow-btn"><img src="../../../../assets/img/support/arrow.svg" /></span>
+                                        <span class="d-flex justify-content-center arrow-btn">
+                                            <img src="../../../../assets/img/support/arrow.svg"  (click)="selectTab(1)" /></span>
                                     </div>
                                 </div>
                                 <div class="pr-3 cards-common">
@@ -38,8 +39,8 @@
                                             <p>Find answers related to a particular topic, product, or service</p>
                                           
                                         </div>
-                                        <span class="d-flex justify-content-center arrow-btn" (click)="selectTab(2)">
-                                        <img  src="../../../../assets/img/support/arrow.svg" /></span>
+                                        <span class="d-flex justify-content-center arrow-btn">
+                                        <img  src="../../../../assets/img/support/arrow.svg"  (click)="selectTab(2)" /></span>
                                     </div>
                                 </div>
                                 <div class="pr-3 cards-common">
@@ -119,69 +120,17 @@
 
     <div class="row mt-3 faqs-card-container">
         <div class="col-sm-12">
-            <div class="row">
-                <div class="col-sm-4 pb-4">
+            <div class="row" >
+                <div class="col-sm-4 pb-4" *ngFor="let list of FaqsTitle | searchfilter:searchText">
                     <div class="p-4 card"(click)="selectTab(3)" >
-                        <h5 class="pb-4">Conversations Related<span class="px-1">(25)</span></h5>
-                        <div *ngFor="let ques of sampleQues"> 
-                        <p><span class="pr-2"><img src="../../../../assets/img/support/faq-q.svg"/></span>{{ques}}</p>
+                        <h5 class="pb-4">{{list.FAQs}}<span class="px-1">(25)</span></h5>
+                        <div *ngFor="let sub of subFAQs | searchfilter:searchText" > 
+                        <p><span class="pr-2"><img src="../../../../assets/img/support/faq-q.svg"/></span>{{sub.FAQ_Ques}}</p>
                         </div>
                         <a (click)="selectTab(3)"><span>+19</span>More</a>
                     </div>
                     
                 </div>
-                <div class="col-sm-4 pb-4">
-                    <div class="p-4 card">
-                        <h5 class="pb-4">WhatsApp Template<span class="px-1">(12)</span></h5>
-                        <div *ngFor="let ques of sampleQues"> 
-                        <p><span class="pr-2"><img src="../../../../assets/img/support/faq-q.svg"/></span>{{ques}}</p>
-                        </div>
-                        <a href=""><span>+6</span>More</a>
-                    </div>
-                    
-                </div>
-                <div class="col-sm-4 pb-4">
-                    <div class="p-4 card">
-                        <h5 class="pb-4">Flow Builder<span class="px-1">(36)</span></h5>
-                        <div *ngFor="let ques of sampleQues"> 
-                        <p><span class="pr-2"><img src="../../../../assets/img/support/faq-q.svg"/></span>{{ques}}</p>
-                        </div>
-                        <a href=""><span>+30</span>More</a>
-                    </div>
-                    
-                </div>
-                <div class="col-sm-4 pb-4">
-                    <div class="p-4 card">
-                        <h5 class="pb-4">Campaign<span class="px-1">(28)</span></h5>
-                        <div *ngFor="let ques of sampleQues"> 
-                        <p><span class="pr-2"><img src="../../../../assets/img/support/faq-q.svg"/></span>{{ques}}</p>
-                        </div>
-                        <a href=""><span>+22</span>More</a>
-                    </div>
-                    
-                </div>
-                <div class="col-sm-4 pb-4">
-                    <div class="p-4 card">
-                        <h5 class="pb-4">Funnel<span class="px-1">(27)</span></h5>
-                        <div *ngFor="let ques of sampleQues"> 
-                        <p><span class="pr-2"><img src="../../../../assets/img/support/faq-q.svg"/></span>{{ques}}</p>
-                        </div>
-                        <a href=""><span>+21</span>More</a>
-                    </div>
-                    
-                </div>
-                <div class="col-sm-4 pb-4">
-                    <div class="p-4 card">
-                        <h5 class="pb-4">Plans<span class="px-1">(8)</span></h5>
-                        <div *ngFor="let ques of sampleQues"> 
-                        <p><span class="pr-2"><img src="../../../../assets/img/support/faq-q.svg"/></span>{{ques}}</p>
-                        </div>
-                        <a href=""><span>+2</span>More</a>
-                    </div>
-                    
-                </div>
-                
-        
             </div>
         </div>
     </div>
@@ -249,5 +198,9 @@
         </div>
     </div>
 
+</div>
+
+<div *ngIf="selectedTab== 1" >
+    <sb-userguide (selectab)="selectedTab=$event"></sb-userguide>
 </div>
 </sb-layout-dashboard>

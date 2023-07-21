@@ -195,6 +195,32 @@
     background-color: #ffffff;
 }
 
+.image-container {
+    width: 128px;
+    height: 127px;
+    border-radius: 50%;
+    margin-top: -7.9rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #6149CD;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 0;
+    box-shadow: 1px 8px 29px #695F9724;
+}
+
+  
+  .initials {
+    font-size: 36px;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+
+
+
 // .profile-content1 {
 //     margin-top: 2rem;
 // }
@@ -422,7 +448,6 @@
 .changepassform {
     font-size: 0.75rem;
     color: #000000;
-    
 
 }
 
@@ -444,6 +469,11 @@
 
 .changepasswordbody {
     padding: 0 17% 0 17%;
+}
+
+.change-pass-error-message {
+    color: #E02020;
+    font-size: 0.875rem;
 }
 
 
@@ -641,6 +671,7 @@ input::-webkit-inner-spin-button {
     outline: none;
     overflow: hidden;
     font-size: 35px;
+    width: 194px;
 }
 
 .amount-para {
@@ -678,6 +709,12 @@ input::-webkit-inner-spin-button {
 
 input[type="file"] {
     display: none;
+}
+
+.low-balance p {
+    color: #F23B3B;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 // addfundssucces popup styling

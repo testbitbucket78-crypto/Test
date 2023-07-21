@@ -18,6 +18,17 @@ export class BillinghistoryComponent implements OnInit {
     paging: number[] = [];
     searchText = '';
     billingHistoryData:[] = [];
+    pdfDetails:any = [];
+    invoiceDetails:any = [];
+    email!:string;
+    state!:string;
+    gstin!:string;
+    plantype!:string;
+    subTotal!:string;
+    totalAmount!:number;
+    tax!:number;
+    statecode!:number;
+
 
     @Output() selectab = new EventEmitter<string> () ;
 
@@ -27,7 +38,8 @@ export class BillinghistoryComponent implements OnInit {
     ngOnInit(): void {
         this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.getBillingHistoryData();
-        this.getPaging();
+        this.getInvoiceDetails();
+        
         
     }
 
@@ -35,6 +47,7 @@ export class BillinghistoryComponent implements OnInit {
        this.apiService.billingDetails(this.spId).subscribe(
         response => {
             this.billingHistoryData = response.getbillingDetails;
+            this.getPaging();
         });
     }
 
@@ -48,13 +61,34 @@ export class BillinghistoryComponent implements OnInit {
         }
     }
 
+    getInvoiceDetails() {
+      this.apiService.getPDFInvoiceDetails(this.spId).subscribe(response => {
+            this.pdfDetails = response.invoiceData[0];
+            this.invoiceDetails = response.planqueryData[0];
+
+            this.email = this.pdfDetails.billing_email;
+            this.state = this.pdfDetails.State;
+            this.gstin = this.pdfDetails.GSTId;
+            this.statecode = this.pdfDetails.zip_code;
+            this.plantype = this.invoiceDetails.planType;
+            this.subTotal = this.invoiceDetails.subtotalAmount;
+            this.tax = this.invoiceDetails.tax
+            this.totalAmount = this.invoiceDetails.totalAmount;
+      
+      });
+    }
+
     previousPage() {
         this.selectab.emit('0');
     }
 
+
+  
+
     generatePDF() {
 
-   
+      // this.
+
         const docDefinition: TDocumentDefinitions = {
             content: [
                 {
@@ -144,7 +178,7 @@ export class BillinghistoryComponent implements OnInit {
                     width: '50%',
                     text: [
                       { text: 'Email: ', style: 'invoiceInfo' },
-                      { text: '', style: 'values' },
+                      { text: this.email, style: 'values' },
                     ],
                     style:'addressInfo'
                 }
@@ -190,7 +224,7 @@ export class BillinghistoryComponent implements OnInit {
                     width: '50%',
                     text: [
                       { text: 'State: ', style:'invoiceInfo' },
-                      { text: '', style: 'values' },
+                      { text: this.state, style: 'values' },
                     ],
                     style:'addressInfo'
                 }
@@ -213,7 +247,7 @@ export class BillinghistoryComponent implements OnInit {
                     width: '50%',
                     text: [
                       { text: 'GSTIN: ', style:'invoiceInfo' },
-                      { text: '', style: 'values' },
+                      { text: this.gstin, style: 'values' },
                     ],
                     style:'addressInfo'
                 }
@@ -238,7 +272,7 @@ export class BillinghistoryComponent implements OnInit {
                     width: '50%',
                     text: [
                       { text: 'Invoice Number: ', style: 'invoiceInfo' },
-                      { text: '180001', style: 'values' },
+                      { text: '', style: 'values' },
                     ],
                     style: 'invoiceInfo'
                   }
@@ -251,7 +285,7 @@ export class BillinghistoryComponent implements OnInit {
                   width: '50%',
                   text: [
                     { text: 'Contact Name: ', style: 'invoiceInfo' },
-                    { text: 'Rishabh Singh', style: 'values' },
+                    { text: '', style: 'values' },
                   ],
                   style: 'billedTo'
                 },
@@ -259,7 +293,7 @@ export class BillinghistoryComponent implements OnInit {
                   width: '50%',
                 text: [
                   { text: 'Invoice Date: ', style: 'invoiceInfo' },
-                  { text: 'Mar 14,2023', style: 'values' },
+                  { text: '', style: 'values' },
                 ],
                 style:'invoiceInfo'
               }
@@ -273,7 +307,7 @@ export class BillinghistoryComponent implements OnInit {
                 width: '50%',
                 text: [
                   { text: 'Bussiness Name: ', style: 'invoiceInfo' },
-                  { text: 'Sampana Digital', style: 'values' },
+                  { text: '', style: 'values' },
                 ],
                 style: 'billedTo'
               },
@@ -281,7 +315,7 @@ export class BillinghistoryComponent implements OnInit {
                   width: '50%',
                 text: [
                   { text: 'Invoice Amount: ', style: 'invoiceInfo' },
-                  { text: 'Rs.2,900.00', style: 'values' },
+                  { text: '', style: 'values' },
                 ],
                 style:'invoiceInfo'
               }
@@ -315,7 +349,7 @@ export class BillinghistoryComponent implements OnInit {
                
                 text: [
                   { text: 'Payment Type: ', style: 'invoiceInfo' },
-                  { text: 'Subscription', style: 'values' },
+                  { text: '', style: 'values' },
                 ],
                 style:'invoiceInfo'
               }
@@ -329,7 +363,7 @@ export class BillinghistoryComponent implements OnInit {
               width: '50%',
               text: [
                 { text: 'State: ', style: 'invoiceInfo' },
-                { text: 'Punjab XXXXXX', style: 'values' },
+                { text: '', style: 'values' },
               ],
               
               style: 'billedTo'
@@ -338,7 +372,7 @@ export class BillinghistoryComponent implements OnInit {
                  width: '50%',
                  text: [
                   { text: 'Billing Period: ', style: 'invoiceInfo' },
-                  { text: 'Mar 14 to Apr 14, 2023', style: 'values' },
+                  { text: '', style: 'values' },
                 ],
                 style:'invoiceInfo'
               }
@@ -354,7 +388,7 @@ export class BillinghistoryComponent implements OnInit {
                  
                   text: [
                     { text: 'GSTIN: ', style: 'invoiceInfo' },
-                    { text: '22XXXXXXXXXXXX5', style: 'values' },
+                    { text: '', style: 'values' },
                   ],
                   style: 'billedTo'
                 },
@@ -364,7 +398,7 @@ export class BillinghistoryComponent implements OnInit {
 
                 text: [
                   { text: 'Next Due Date: ', style: 'invoiceInfo' },
-                  { text: 'Apr 14, 2023', style: 'values' },
+                  { text: '', style: 'values' },
                 ],
                 style:'invoiceInfo'
               }
@@ -385,18 +419,18 @@ export class BillinghistoryComponent implements OnInit {
                     ],
                     [
                       { text: '1', bold: true ,margin:[20, 5, 0, 0] },
-                      { text: 'Premium+', bold: true, margin:[60, 5, 0, 0] },
-                      { text: 'INR 2,900.00', alignment: 'right', bold: true,margin:[0, 6, 0, 0] },
+                      { text: this.plantype, bold: true, margin:[60, 5, 0, 0] },
+                      { text: this.subTotal, alignment: 'right', bold: true,margin:[0, 6, 0, 0] },
                     ],
                     [
                       { text: '' },
-                      { text: 'GST@18%', bold: true, margin:[60, 40, 0, 0] },
-                      { text: 'INR 522.00', alignment: 'right', bold: true,margin:[0, 40, 5, 20] },
+                      { text: 'VAT@18%', bold: true, margin:[60, 40, 0, 0] },
+                      { text: this.tax, alignment: 'right', bold: true,margin:[0, 40, 5, 20] },
                     ],
                     [
                       { text: '' },
                       { text: 'Total', bold: true, alignment: 'right', fontSize: 16 },
-                      { text: 'INR 3,422.00', alignment: 'right', bold: true, margin:[0, 2, 0, 0] },
+                      { text: this.totalAmount, alignment: 'right', bold: true, margin:[0, 2, 0, 0] },
                     ],
                     
                   ],
@@ -431,7 +465,7 @@ export class BillinghistoryComponent implements OnInit {
                
               },
               {
-                columns: [ {  text:'INR Three Thousand Four Hundred and Twenty Two Only ', bold:true, fontSize: 12, margin:[12 ,0 ,0, 0]  }, ],
+                columns: [ {  text:'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', bold:true, fontSize: 12, margin:[12 ,0 ,0, 0]  }, ],
                
               },
               {
@@ -501,13 +535,13 @@ export class BillinghistoryComponent implements OnInit {
                   fontSize: 12,
                   bold:true
                 }
-
                 
               }
              
             };
       
         pdfMake.createPdf(docDefinition).open();
+        
       }
       
 }

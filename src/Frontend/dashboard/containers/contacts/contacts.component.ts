@@ -148,22 +148,22 @@ export class ContactsComponent implements OnInit {
         Name: new FormControl('', Validators.compose([Validators.required])),
         Phone_number: new FormControl(''),
         emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        age: new FormControl(''),
-        sex: new FormControl(''),
+        age: new FormControl('',[Validators.max(100)]),
+        sex: new FormControl('',[Validators.max(6)]),
         tag: new FormControl([]),
       //  tagControls = tags.map(tag => new FormControl(tag));
         status:  new FormControl([]),
         facebookId: new FormControl(''),
         InstagramId: new FormControl(''),
-         SP_ID: sessionStorage.getItem('SP_ID')
+        SP_ID: sessionStorage.getItem('SP_ID')
          
       });
 	
   this.editContact = this.fb.group({
-    Name: new FormControl(''),
+    Name: new FormControl('', [Validators.required, Validators.pattern('^[A-Za-z\s]+$')]),
     Phone_number: new FormControl(''),
-    emailId: new FormControl(''),
-    age: new FormControl(''),
+    emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+    age: new FormControl('', [Validators.required]),
     sex: new FormControl(''),
     tag: new FormControl([]),
     status: new FormControl([]),
@@ -512,11 +512,11 @@ onSelectAll(items: any) {
     var SP_ID = sessionStorage.getItem('SP_ID')
     console.log("editdata" + customerId)
     console.log(this.editContact.value)
-    this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
-      console.log(response)
-      this.getContact();
-      this.closesidenav(this.items);
-    });
+      this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
+        console.log(response)
+        this.getContact();
+        this.closesidenav(this.items);
+      });
    
 
 

@@ -121,7 +121,7 @@ export class CampaignsComponent implements OnInit {
 	 
 	 channelOption:any=[
 			{value:1,label:'WhatsApp Official',checked:false},
-			{value:2,label:'Other',checked:false}];
+			{value:2,label:'WhatsApp Web',checked:false}];
 	 categoriesOption:any=[
 				{value:1,label:'Marketing',checked:false},
 				{value:2,label:'Utility',checked:false},
