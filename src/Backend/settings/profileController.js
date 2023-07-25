@@ -11,9 +11,12 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const awsHelper = require('../awsHelper');
 //const puppeteer = require('puppeteer');
+var pdfMake = require('pdfmake');
+const pdfFonts = require('pdfmake/build/vfs_fonts');
+
 app.use(bodyParser.json());
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "10000kb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
 
@@ -251,59 +254,617 @@ const getBillingDetails = async (req, res) => {
     }
 }
 
-// const invoicePdf = async (req, res) => {
-//     const browser = await puppeteer.launch();
-//     const page = await browser.newPage();
-//     let data = await db.excuteQuery(val.selectBillingDetails, [req.query.spid])
 
-//     // Set the dynamic data here
-//     if (data.length >= 0) {
-//         var dynamicData = {
-//             name: 'Raunak',
-//             age: 23,
-//             Address1: data[0].Address1,
-//             billing_email: data[0].billing_email,
-//             created_at: data[0].created_at
+let transporter = nodemailer.createTransport({
+    // service: 'SMTP',
+    host: val.emailHost,
+    port: val.port,
+    secure: false,
+    auth: {
+        user: val.email,
+        pass: val.appPassword
+    },
+    port: val.port,
+    host: val.emailHost
+});
+const invoicePdf = async (req, res) => {
+    // const browser = await puppeteer.launch();
+    // const page = await browser.newPage();
+    // let data = await db.excuteQuery(val.selectBillingDetails, [req.query.spid])
 
-//             // Add more properties as needed
-//         };
-//     }
-//     // Create a dynamic HTML template with the data
-//     const html = `
-//       <html>
-//         <body>
-//           <h1>Invoice</h1>
-//           <p>Name: ${dynamicData.name}</p>
-//           <p>Age: ${dynamicData.age}</p>
-//           <p>Address: ${dynamicData.Address1}</p>
-//           <p>Email: ${dynamicData.billing_email}</p>
-//           <p>created_at: ${dynamicData.created_at}</p>
-//           <!-- Add more HTML content here -->
-//         </body>
-//       </html>
-//     `;
+    // // Set the dynamic data here
+    // if (data.length >= 0) {
+    //     var dynamicData = {
+    //         name: 'Raunak',
+    //         age: 23,
+    //         Address1: data[0].Address1,
+    //         billing_email: data[0].billing_email,
+    //         created_at: data[0].created_at
 
-//     // Generate the PDF from the HTML
-//     await page.setContent(html);
-//     const pdfBuffer = await page.pdf();
+    //         // Add more properties as needed
+    //     };
+    // }
+    // // Create a dynamic HTML template with the data
+    // const html = `
+    //   <html>
+    //     <body>
+    //       <h1>Invoice</h1>
+    //       <p>Name: ${dynamicData.name}</p>
+    //       <p>Age: ${dynamicData.age}</p>
+    //       <p>Address: ${dynamicData.Address1}</p>
+    //       <p>Email: ${dynamicData.billing_email}</p>
+    //       <p>created_at: ${dynamicData.created_at}</p>
+    //       <!-- Add more HTML content here -->
+    //     </body>
+    //   </html>
+    // `;
 
-//     // Close the browser
-//     await browser.close();
+    // // Generate the PDF from the HTML
+    // await page.setContent(html);
+    // const pdfBuffer = await page.pdf();
 
-//     // Set the response headers
-//     res.setHeader('Content-Type', 'application/pdf');
-//     res.setHeader('Content-Disposition', 'attachment; filename=dynamic_pdf.pdf');
+    // // Close the browser
+    // await browser.close();
 
-//     // Send the PDF buffer as the response
-//     res.send(pdfBuffer);
-// }
+    // // Set the response headers
+    // res.setHeader('Content-Type', 'application/pdf');
+    // res.setHeader('Content-Disposition', 'attachment; filename=dynamic_pdf.pdf');
+
+    // // Send the PDF buffer as the response
+    // res.send(pdfBuffer);
+
+    let invoicePdfData = await db.excuteQuery(val.invoicePdf, [req.params.spid]);
+    console.log(invoicePdfData)
+
+    // let cNameQuery=`Select name from user where uid=?`
+    let cNameData = await db.excuteQuery(val.cNameQuery, [invoicePdfData[0].uid])
+
+    // let planquery=`select *  from PlanPricing where SP_ID=? and isDeleted !=1`
+    let planqueryData = await db.excuteQuery(val.planquery, [req.params.spid])
+
+    // let billhistoryQuery=`select *  from BillingHistory where SP_ID=?
+    // ORDER BY billing_date DESC
+    // LIMIT 1;`
+
+    let billhistoryData = await db.excuteQuery(val.billhistoryQuery, [req.params.spid])
+
+    const docDefinition = {
+        content: [
+            {
+                text: 'Invoice',
+                style: 'header',
+            },
+
+            {
+                columns: [
+                    {
+                        width: '50%',
+                        image: 'Company logo URL',
+                        text: invoicePdfData[0].profile_img,
+                        // fit: [100, 100],
+                        style: 'sectionHeader',
+                    },
+
+                    {
+                        width: '50%',
+                        text: 'Engagekart Private Limited',
+                        style: 'sectionHeader',
+                    },
+                ],
+                margin: [12, 0, 0, 10],
+            },
+
+
+            {
+                margin: [8, 0, 10, 0],
+                columns: [
+
+                    {
+                        width: '50%',
+                        text: [
+                            { text: '' },
+
+                        ],
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'SCO No. 53-54, Sector 8,' },
+
+                        ],
+                        style: 'addressInfo'
+                    }
+
+                ],
+
+            },
+            {
+                margin: [8, 0, 10, 0],
+                columns: [
+                    {
+                        width: '50%',
+                        text: [
+                            { text: '' },
+
+                        ],
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'Chandigarh 160009' },
+
+                        ],
+                        style: 'addressInfo'
+                    }
+
+                ],
+
+            },
+            {
+                margin: [8, 0, 10, 0],
+                columns: [
+                    {
+                        width: '50%',
+                        text: [
+                            { text: '' },
+
+                        ],
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'Email: ', style: 'invoiceInfo' },
+                            { text: '', style: 'values' },
+                        ],
+                        style: 'addressInfo'
+                    }
+
+                ],
+
+            },
+            {
+                margin: [8, 0, 10, 0],
+                columns: [
+                    {
+                        width: '50%',
+                        text: [
+                            { text: '' },
+
+                        ],
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'Contact NO.: ', style: 'invoiceInfo' },
+                            { text: '', style: 'values' },
+                        ],
+                        style: 'addressInfo'
+                    }
+
+                ],
+
+            },
+            {
+                margin: [8, 0, 10, 0],
+                columns: [
+                    {
+                        width: '50%',
+                        text: [
+                            { text: '' },
+
+                        ],
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'State: ', style: 'invoiceInfo' },
+                            { text: '', style: 'values' },
+                        ],
+                        style: 'addressInfo'
+                    }
+
+                ],
+
+            },
+            {
+                margin: [8, 0, 10, 0],
+                columns: [
+                    {
+                        width: '50%',
+                        text: [
+                            { text: '' },
+
+                        ],
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'GSTIN: ', style: 'invoiceInfo' },
+                            { text: '', style: 'values' },
+                        ],
+                        style: 'addressInfo'
+                    }
+
+                ],
+
+            },
+
+            {
+                margin: [0, 15, 0, 0],
+                columns: [
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'Billed To', fontSize: 14, },
+                        ],
+                        margin: [30, 0, 0, 0],
+                        bold: true,
+
+                    },
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'Invoice Number: ', style: 'invoiceInfo' },
+                            { text: '180001', style: 'values' },
+                        ],
+                        style: 'invoiceInfo'
+                    }
+                ],
+
+            },
+            {
+                columns: [
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'Contact Name: ', style: 'invoiceInfo' },
+                            { text: cNameData[0].name, style: 'values' },
+                        ],
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'Invoice Date: ', style: 'invoiceInfo' },
+                            { text: billhistoryData[0].billing_date, style: 'values' },
+                        ],
+                        style: 'invoiceInfo'
+                    }
+
+                ],
+
+            },
+            {
+                columns: [
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'Bussiness Name: ', style: 'invoiceInfo' },
+                            { text: invoicePdfData[0].Company_Name, style: 'values' },
+                        ],
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'Invoice Amount: ', style: 'invoiceInfo' },
+                            { text: planqueryData[0].subtotalAmount, style: 'values' },
+                        ],
+                        style: 'invoiceInfo'
+                    }
+
+                ],
+
+            },
+            {
+                columns: [
+                    {
+                        width: '50%',
+                        text: invoicePdfData[0].Address1,
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+                        text: '',
+                        style: 'invoiceInfo'
+                    }
+
+                ],
+
+            },
+            {
+                columns: [
+                    {
+                        width: '50%',
+                        text: '(Company Address)',
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+
+                        text: [
+                            { text: 'Payment Type: ', style: 'invoiceInfo' },
+                            { text: billhistoryData[0].billing_type, style: 'values' },
+                        ],
+                        style: 'invoiceInfo'
+                    }
+
+                ],
+
+            },
+            {
+                columns: [
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'State: ', style: 'invoiceInfo' },
+                            { text: invoicePdfData[0].State, style: 'values' },
+                        ],
+
+                        style: 'billedTo'
+                    },
+                    {
+                        width: '50%',
+                        text: [
+                            { text: 'Billing Period: ', style: 'invoiceInfo' },
+                            { text: 'Mar 14 to Apr 14, 2023', style: 'values' },
+                        ],
+                        style: 'invoiceInfo'
+                    }
+
+                ],
+
+            },
+
+            {
+                columns: [
+
+                    {
+                        width: '50%',
+
+                        text: [
+                            { text: 'GSTIN: ', style: 'invoiceInfo' },
+                            { text: invoicePdfData[0].GSTId, style: 'values' },
+                        ],
+                        style: 'billedTo'
+                    },
+
+                    {
+                        width: '50%',
+
+                        text: [
+                            { text: 'Next Due Date: ', style: 'invoiceInfo' },
+                            { text: 'Apr 14, 2023', style: 'values' },
+                        ],
+                        style: 'invoiceInfo'
+                    }
+
+                ],
+
+            },
+            // table for main content
+            {
+                margin: [0, 25, 0, 0],
+                table: {
+                    widths: ['auto', '*', 'auto'], // Adjust the widths
+                    body: [
+                        [
+                            { text: 'S No.', style: 'tableHeader', margin: [10, 3, 0, 3] },
+                            { text: 'Description', style: 'tableHeader', margin: [60, 3, 0, 3] },
+                            { text: 'Amount', style: 'tableHeader', margin: [15, 3, 0, 3] },
+                        ],
+                        [
+                            { text: '1', bold: true, margin: [20, 5, 0, 0] },
+                            { text: planqueryData[0].planType, bold: true, margin: [60, 5, 0, 0] },
+                            { text: planqueryData[0].subtotalAmount, alignment: 'right', bold: true, margin: [0, 6, 0, 0] },
+                        ],
+                        [
+                            { text: '' },
+                            { text: 'GST@18%', bold: true, margin: [60, 40, 0, 0] },
+                            { text: planqueryData[0].tax, alignment: 'right', bold: true, margin: [0, 40, 5, 20] },
+                        ],
+                        [
+                            { text: '' },
+                            { text: 'Total', bold: true, alignment: 'right', fontSize: 16 },
+                            { text: planqueryData[0].totalAmount, alignment: 'right', bold: true, margin: [0, 2, 0, 0] },
+                        ],
+
+                    ],
+
+                },
+                layout: {
+                    hLineWidth: function () {
+                        return 0;
+                    },
+                    vLineWidth: function () {
+                        return 0;
+                    },
+                },
+
+            },
+            {
+                canvas: [
+                    {
+                        type: 'line',
+                        x1: 0,
+                        y1: 10,
+                        x2: 510,
+                        y2: 10,
+                        lineWidth: 0.1,
+                        lineColor: 'black',
+                    },
+                ],
+            },
+
+            {
+                columns: [{ text: 'Amount In Words', margin: [12, 8, 0, 8] }],
+
+            },
+            {
+                columns: [{ text: 'INR Three Thousand Four Hundred and Twenty Two Only ', bold: true, fontSize: 12, margin: [12, 0, 0, 0] },],
+
+            },
+            {
+                columns: [{ text: 'This is computer generated invoice hence no signature required', bold: true, fontSize: 11, margin: [0, 140, 0, 0], alignment: 'center' }],
+
+            },
+
+            {
+                canvas: [
+                    {
+                        type: 'line',
+                        x1: 0,
+                        y1: 10,
+                        x2: 510,
+                        y2: 10,
+                        lineWidth: 1.5,
+                        lineColor: 'black',
+                    },
+                ],
+            },
+
+            {
+                columns: [{ text: 'Registered Address', fontSize: 11, margin: [0, 8, 0, 0], alignment: 'center' }],
+
+            },
+
+
+            {
+                columns: [{ text: 'SCO No. 53-54, Sector 8, Chandigarh 160009', fontSize: 12, margin: [0, 6, 0, 0], alignment: 'center' }],
+
+            },
+        ],
+
+        styles: {
+            header: {
+                fontSize: 25,
+                bold: true,
+                alignment: 'center',
+                margin: [0, 0, 0, 30]
+            },
+            sectionHeader: {
+                fontSize: 16,
+                bold: true,
+                margin: [30, 0, 0, 0]
+            },
+            tableHeader: {
+                bold: true,
+                fillColor: '#4845D9',
+                color: '#ffffff',
+            },
+            billedTo: {
+                fontSize: 11,
+                alignment: 'left',
+                margin: [30, 5, 0, 0]
+            },
+            invoiceInfo: {
+                fontSize: 11,
+                alignment: 'left',
+                margin: [38, 0, 0, 0]
+            },
+            addressInfo: {
+                fontSize: 12,
+                alignment: 'left',
+                margin: [38, 2, 0, 0]
+            },
+            values: {
+                fontSize: 12,
+                bold: true
+            }
+
+
+        }
+
+    };
+    // res.send(docDefinition)
+
+
+    pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+
+    // printer.fonts= {'Roboto' : {
+    //     normal: 'Roboto-Regular.ttf',
+    //     bold: 'Roboto-Medium.ttf',
+    //     italics: 'Roboto-Italic.ttf',
+    //     bolditalics: 'Roboto-Italic.ttf'
+    //  },
+
+    //  'OpenSans' : {
+    //     normal: 'OpenSans-Regular.ttf',
+    //     bold: 'OpenSans-Medium.ttf',
+    //     italics: 'OpenSans-Italic.ttf',
+    //     bolditalics: 'OpenSans-Italic.ttf'
+    //  }
+    // }
+    var fonts = {
+        Roboto: {
+            normal: './fonts/roboto/Roboto-Regular.ttf',
+            bold: './fonts/roboto/Roboto-Medium.ttf',
+            italics: './fonts/roboto/Roboto-Italic.ttf',
+            bolditalics: './fonts/roboto/Roboto-MediumItalic.ttf'
+        }
+    };
+    let printer = new pdfMake(fonts);
+
+
+    const pdfDoc = printer.createPdfKitDocument(docDefinition, {});
+    const stream = fs.createWriteStream('invoice.pdf')
+    pdfDoc.pipe(stream);
+    stream.on('finish', () => {
+        console.log('PDF generated and saved as invoice.pdf');
+    });
+    pdfDoc.end();
+    var mailOptions = {
+        from: val.email,
+        to: 'raunakriya816@gmail.com',
+        subject: "Request for Download",
+        html: '<p>Please find  the attachment of exported Contact_Data, kindly use  this file to see your contacts</p>',
+        attachments: [
+            {
+                filename: `invoice.pdf`,
+                path: path.join(__dirname, '/invoice.pdf'),
+            },
+        ]
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            res.send(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        res.status(200).send({ msg: "data has been sent" });
+    });
+
+
+}
 
 
 const invoiceDetails = async (req, res) => {
     try {
-        let invoiceData = await db.excuteQuery(val.invoiceData, [req.params.spid]);
+        let invoiceData = await db.excuteQuery(val.invoicePdf, [req.params.spid]);
+        //  console.log(invoicePdfData)
+
+
+        let cNameData = await db.excuteQuery(val.cNameQuery, [invoiceData[0].uid])
+
+
+        let planqueryData = await db.excuteQuery(val.planquery, [req.params.spid])
+
+
+
+        let billhistoryData = await db.excuteQuery(val.billhistoryQuery, [req.params.spid])
         res.status(200).send({
             invoiceData: invoiceData,
+            cNameData: cNameData,
+            planqueryData: planqueryData,
+            billhistoryData: billhistoryData,
             status: 200
         })
 
@@ -325,10 +886,10 @@ const userProfile = async (req, res) => {
         var nameImg = filePath
         // if (filePath = 'undefined') {
 
-        //     nameImg = path.join(__dirname, 'temple.jpg')
+        //  nameImg = path.join(__dirname, 'temple.jpg')
         // }
         console.log("  nameImg  " + nameImg)
-        let awsres = await awsHelper.uploadFileToAws(spid + "/" + uid + "/" + name + "/profile.jpg", nameImg)
+        let awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + name + "/profile.jpg", nameImg)
 
         console.log(awsres.value.Location)
         let userimgquery = `UPDATE user  set profile_img=? where uid=?`
@@ -361,10 +922,12 @@ const usesData = async (req, res) => {
 
 const UsageInsightCon = async (req, res) => {
     try {
+        let allUsageInsightCount = await db.excuteQuery(val.allusageInsiteCount, [req.params.spid])
         let UsageInsightData = await db.excuteQuery(val.usageInsiteQuery, [req.params.spid])
         res.status(200).send({
             msg: 'Uses Usage Insight',
             UsageInsightData: UsageInsightData,
+            allUsageInsightCount: allUsageInsightCount,
             status: 200
         })
     } catch (err) {
@@ -412,14 +975,14 @@ const ApproximateCharges = async (req, res) => {
                 utilityCount = conversations[i].count
             }
         }
-     
+
         const ApproxCharges = {
             Marketing: MarketingCount * marketingPrice,
             Utility: utilityPrice * utilityCount,
             Authentication: authenticationPrice * authCount,
             UserInitiated: ServicePrice * ServiceCount
         }
-  
+
         res.status(200).send({
             ApproxCharges: ApproxCharges,
             status: 200
@@ -432,24 +995,169 @@ const ApproximateCharges = async (req, res) => {
     }
 }
 
-const deletePaymentMethod=async (req,res) =>{
-try{
-    let date=new Date()
-  var  deletePayMethodQuery=`UPDATE PaymentMethodDetails SET isDeleted=1,updated_at=? where SP_ID=?`
-  let deletepay=await db.excuteQuery(deletePayMethodQuery,[date,req.params.spid])
-  res.status(200).send({
-    deletepay:deletepay,
-    status:200
-  })
+const deletePaymentMethod = async (req, res) => {
+    try {
+        let date = new Date()
+        var deletePayMethodQuery = `UPDATE PaymentMethodDetails SET isDeleted=1,updated_at=? where SP_ID=?`
+        let deletepay = await db.excuteQuery(deletePayMethodQuery, [date, req.params.spid])
+        res.status(200).send({
+            deletepay: deletepay,
+            status: 200
+        })
+    }
+    catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
 }
-catch (err) {
-    console.log(err)
-    db.errlog(err);
-    res.send(err)
+
+const addfunds = async (req, res) => {
+    try {
+        sp_id = req.body.sp_id
+        const transation_date = new Date()
+        amount = req.body.amount
+        transation_type = req.body.transation_type
+        description = req.body.description
+        interaction_id = req.body.interaction_id
+        currency = req.body.currency
+        let values = [[sp_id, transation_date, amount, transation_type, description, interaction_id, currency]]
+        let addedFund = await db.excuteQuery(val.addFunds, [values]);
+        res.status(200).send({
+            addedFund: addedFund,
+            status: 200
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
 }
+
+const getAvailableAmout = async (req, res) => {
+    try {
+        let query = `select SUM(amount) as remaningblance from SPTransations where sp_id=?`
+
+        let result = await db.excuteQuery(query, [req.params.spid])
+        //    let netAmount=result[0].amount
+        //    let usedAmount=result[0].available_blance
+
+        let AvailableAmout = result[0].remaningblance
+        //    console.log(AvailableAmout)
+
+        res.status(200).send({
+            AvailableAmout: AvailableAmout,
+            status: 200
+        })
+
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+
 }
+
+const getFAQs = async (req, res) => {
+    try {
+        let FAQs = await db.excuteQuery(val.FAQsQuery, []);
+        res.status(200).send({
+            FAQs: FAQs,
+            status: 200
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+const getSubFAQS = async (req, res) => {
+    try {
+        let subFAQs = await db.excuteQuery(val.subFAQsQuery, [req.params.id]);
+        res.status(200).send({
+            subFAQs: subFAQs,
+            status: 200
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const UserGuideTopics = async (req, res) => {
+    try {
+        let topics = await db.excuteQuery(val.UserGuideTopicsQuery, [])
+        res.status(200).send({
+            topics: topics,
+            status: 200
+        })
+    }
+    catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const UserGuideSubTopics = async (req, res) => {
+    try {
+        let subtopics = await db.excuteQuery(val.UserGuideSubTopicsQuery, [req.params.id])
+        res.status(200).send({
+            subtopics: subtopics,
+            status: 200
+        })
+    }
+    catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const addSPTransations = async (req, res) => {
+    try {
+
+        sp_id = req.body.sp_id
+        transation_date = new Date()
+        amount = req.body.amount
+        transation_type = req.body.transation_type
+        currency = req.body.currency
+
+        let values = [[sp_id, transation_date, amount, transation_type, currency]]
+        let SPTransations = await db.excuteQuery(val.insertSPTransations, [values])
+        res.status(200).send({
+            SPTransations: SPTransations,
+            status: 200
+        })
+
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const getmanagePlansandCharges = async (req, res) => {
+    try {
+      let plans=await db.excuteQuery(val.manageplans,[]);
+      let plansCharges=await db.excuteQuery(val.manageplansCharges,[])
+      res.status(200).send({
+        plans:plans,
+        plansCharges:plansCharges,
+        status:200
+      })
+
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
 
 module.exports = {
     teamName, roleName, usesData, userProfile, changePassword, userActiveStatus, addNotification, getNotificationByUid, saveManagePlan,
-    saveBillingHistory, getBillingDetails, invoiceDetails, UsageInsightCon, ApproximateCharges,deletePaymentMethod
+    saveBillingHistory, getBillingDetails, invoiceDetails, UsageInsightCon, ApproximateCharges, deletePaymentMethod, getAvailableAmout, addfunds,
+    getFAQs, getSubFAQS, UserGuideTopics, UserGuideSubTopics, invoicePdf, addSPTransations,getmanagePlansandCharges
 }

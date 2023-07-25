@@ -436,6 +436,11 @@ app.post("/webhook", async (req, res) => {
           var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId);
           console.log("____Send SMART REPLIESS______" + response);
         }
+        if(replystatus == null && replystatus == undefined){
+          console.log("replystatus == null")
+          var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId);
+          console.log("____Send SMART REPLIESS______" + response);
+        }
       }
     }
     res.status(200).send({

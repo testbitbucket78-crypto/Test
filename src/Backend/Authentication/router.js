@@ -3,6 +3,7 @@ const router=express.Router();
 const db = require("../dbhelper");
 const userController=require('./user.js');
 const indexController=require('./index.js');
+const awsHelper = require('../awsHelper');
 
 router.get('/users',userController.getUser);
 router.get('/users/:id',userController.getUserById);
@@ -56,7 +57,6 @@ router.post('/updatemessageread',TeamBoxController.updateMessageRead);
 router.post('/interactionmapping',TeamBoxController.updateInteractionMapping);
 router.post('/resetInteractionMapping',TeamBoxController.resetInteractionMapping);
 router.get('/interactionmapping/:InteractionId',TeamBoxController.getInteractionMapping);
-
 router.get('/getsavedMessages/:SPID',TeamBoxController.getsavedMessages);
 router.get('/getquickReply/:SPID',TeamBoxController.getquickReply);
 router.get('/getTemplates/:SPID',TeamBoxController.getTemplates);
@@ -88,6 +88,9 @@ res.send({message:'File no uplaoded...'})
 }
 const url = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`
 res.send({filename:url})
+// let awsres = await awsHelper.uploadStreamToAws('/teambox_img.jpg', dataFile)
+
+// console.log(awsres.value.Location)
   
 });
 

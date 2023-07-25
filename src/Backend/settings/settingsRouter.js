@@ -3,6 +3,8 @@ const router=express.Router();
 
 const organizationController=require('./organizationController');
 const profileController=require('./profileController');
+const notification=require('./NotifyClients')
+const campaignController=require('./campaignController');
 
 
 //_____________________________Organization Settings_______________________//
@@ -62,12 +64,49 @@ router.post('/savePlan',profileController.saveManagePlan)
 router.post('/saveBillingHistory',profileController.saveBillingHistory)
 router.get('/getBillingDetails/:spid',profileController.getBillingDetails)
 
-//router.get('/pdf/spid',profileController.invoicePdf)
+router.get('/pdf/:spid',profileController.invoicePdf)
 router.get('/invoiceDetails/:spid',profileController.invoiceDetails)
 
 router.get('/usesData/spid',profileController.usesData)
 router.get('/usageInsight/:spid',profileController.UsageInsightCon)
 router.get('/ApproximateCharges/:spid',profileController.ApproximateCharges)
 router.get('/deletePaymentMethod/:spid',profileController.deletePaymentMethod)
+router.get('/getAvailableAmout/:spid',profileController.getAvailableAmout)
+router.post('/addfunds',profileController.addfunds)
+router.get('/subFAQS/:id',profileController.getSubFAQS)
+router.get('/FAQs',profileController.getFAQs)
+router.get('/userGuideTopics',profileController.UserGuideTopics)
+router.get('/userGuideSubTopics/:id',profileController.UserGuideSubTopics)
+router.post('/SPTransations',profileController.addSPTransations)
+router.get('/managePlan',profileController.getmanagePlansandCharges)
+
+
+//________________________ Notification_____________________//
+
+router.get('/getNotifications/:spid',notification.notification)
+
+//_________________________Campaign Settings__________________//
+
+router.post('/addCampaignTimings',campaignController.addCampaignTimings)
+router.post('/updateCampaignTiming',campaignController.updateCampaignTimings)
+router.get('/selectCampaignTimings/:sid',campaignController.selectCampaignTimings)
+router.get('/getCampaignAlertUserList/:sid',campaignController.getUserList)
+router.post('/addAndUpdateCampaign',campaignController.addAndUpdateCampaign)
+router.get('/selectCampaignAlerts/:sid',campaignController.selectCampaignAlerts)
+router.post('/addCampaignTest',campaignController.addCampaignTest)
+router.get('/selectCampaignTest/:sid',campaignController.selectCampaignTest)
+
+//______________________Contact Settings_______________________//
+
+router.post('/addupdateTag',campaignController.addTag)
+router.get('/selectTag/:spid',campaignController.gettags)
+router.post('/deleteTag',campaignController.deleteTag)
+
+
+//_______________________TEMPLATE_________________________//
+
+router.post('/addTemplate',campaignController.addTemplate)
+router.get('/getTemplate/:spid',campaignController.getTemplate)
+router.post('/deleteTemplates',campaignController.deleteTemplates)
 
 module.exports = router;
