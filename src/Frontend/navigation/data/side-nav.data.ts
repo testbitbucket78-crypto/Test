@@ -13,31 +13,31 @@ export const sideNavSections: SideNavSection[] = [
 
 export const sideNavItems: SideNavItems = {
     dashboard: {
-        icon: 'assets/img/dashboard.png',
+        icon: 'assets/img/side-nav/dashboard.svg',
         text: 'Dashboard',
         link: '/dashboard',
     },
 
     Contacts: {
-        icon: 'assets/img/contacts.png',
+        icon: 'assets/img/side-nav/contacts.svg',
         text: 'Contacts',
         link: '/dashboard/contacts',
     },
 
     teambox: {
-        icon: 'assets/img/teambox.png',
+        icon: 'assets/img/side-nav/teambox.svg',
         text: 'Teambox',
         link: '/dashboard/teambox',
     },
 
     SmartReplies: {
-        icon: 'assets/img/Smartreplies.png',
+        icon: 'assets/img/side-nav/Smartreplies.svg',
         text: 'Smart Replies',
         link: '/dashboard/smartReplies',
     },
 
     camp: {
-        icon: 'assets/img/campaign.png',
+        icon: 'assets/img/side-nav/campaign.svg',
         text: 'Campaigns',
         link: '/dashboard/campaigns',
     },
@@ -45,13 +45,13 @@ export const sideNavItems: SideNavItems = {
     
     Funnel: {
 
-        icon: 'assets/img/funnel.png',
+        icon: 'assets/img/side-nav/funnel.svg',
         text: 'Funnel',
         link: '/dashboard/automation',
     },
 
     FlowBuilder: {
-        icon: 'assets/img/Flowbuilder.png',
+        icon: 'assets/img/side-nav/Flowbuilder.svg',
         text: 'Flow Builder',
         link: '/dashboard/flowBuilder',
     },
@@ -59,22 +59,22 @@ export const sideNavItems: SideNavItems = {
  
 
     rep: {
-        icon: 'assets/img/rep.png',
+        icon: 'assets/img/side-nav/repots.svg',
         text: 'Reports',
         submenu: [
 
             {
-                icon: 'assets/img/con-report.png',
+                icon: 'assets/img/side-nav/con-report.svg',
                 text: ' Conversational Report',
                 link: '/dashboard/conversation',
             },
             {
-                icon: 'assets/img/camp-repot.png',
+                icon: 'assets/img/side-nav/camp-repot.svg',
                 text: 'Campaign Report',
                 link: '/dashboard/reportcampaign',
             },
             {
-                icon: 'assets/img/auto-report.png',
+                icon: 'assets/img/side-nav/auto-report.svg',
                 text: 'Automation Report',
                 link: '/dashboard/reportautomation',
             },

@@ -1,279 +1,73 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ProfileService } from 'Frontend/dashboard/services/profile.service';
+
 @Component({
     selector: 'sb-walletusage',
     templateUrl: './walletusage.component.html',
     styleUrls: ['./walletusage.component.scss'],
 })
 export class WalletusageComponent implements OnInit {
+    
+    spId!:number;
     pageSize: number = 10;
-    currentPage: number = 1;
+    pageSizeOptions: number[] = [10, 15, 20, 25, 30, 35, 40, 45, 50];
+    currentPage!: number;
     paging: number[] = [];
     modalReference: any;
+    walletUsageData  = [];
+    walletUsageInsight = [];
+    approximateCharges = [];
+    allConversationCount = [];
+    totalCharges:any = 0;
+    filteredData =[];
+    marketing: number = 0;
+    userinitiated: number = 0;
+    startDate!: any;
+    endDate!: any;
 
-    walletUsageData = [
-        {
-            startdate: '15 Jan, 2023',
-            marketing: '155',
-            utility: '201',
-            auth: '982',
-            userinitiated: '312',
-        },
-        {
-            startdate: '16 Jan, 2023',
-            marketing: '210',
-            utility: '124',
-            auth: '548',
-            userinitiated: '124',
-        },
-        {
-            startdate: '17 Jan, 2023',
-            marketing: '589',
-            utility: '312',
-            auth: '786',
-            userinitiated: '312',
-        },
-        {
-            startdate: '18 Jan, 2023',
-            marketing: '216',
-            utility: '289',
-            auth: '289',
-            userinitiated: '289',
-        },
-        {
-            startdate: '19 Jan, 2023',
-            marketing: '563',
-            utility: '142',
-            auth: '142',
-            userinitiated: '458',
-        },
-        {
-            startdate: '20 Jan, 2023',
-            marketing: '454',
-            utility: '234',
-            auth: '656',
-            userinitiated: '564',
-        },
-        {
-            startdate: '21 Jan, 2023',
-            marketing: '454',
-            utility: '345',
-            auth: '234',
-            userinitiated: '442',
-        },
-        {
-            startdate: '22 Jan, 2023',
-            marketing: '678',
-            utility: '767',
-            auth: '423',
-            userinitiated: '555',
-        },
-        {
-            startdate: '23 Jan, 2023',
-            marketing: '987',
-            utility: '456',
-            auth: '567',
-            userinitiated: '565',
-        },
+    errorMessage='';
+	successMessage='';
 
-        {
-            startdate: '15 Jan, 2023',
-            marketing: '155',
-            utility: '201',
-            auth: '982',
-            userinitiated: '312',
-        },
-        {
-            startdate: '16 Jan, 2023',
-            marketing: '210',
-            utility: '124',
-            auth: '548',
-            userinitiated: '124',
-        },
-        {
-            startdate: '17 Jan, 2023',
-            marketing: '589',
-            utility: '312',
-            auth: '786',
-            userinitiated: '312',
-        },
-        {
-            startdate: '18 Jan, 2023',
-            marketing: '216',
-            utility: '289',
-            auth: '289',
-            userinitiated: '289',
-        },
-        {
-            startdate: '19 Jan, 2023',
-            marketing: '563',
-            utility: '142',
-            auth: '142',
-            userinitiated: '458',
-        },
-        {
-            startdate: '20 Jan, 2023',
-            marketing: '454',
-            utility: '234',
-            auth: '656',
-            userinitiated: '564',
-        },
-        {
-            startdate: '21 Jan, 2023',
-            marketing: '454',
-            utility: '345',
-            auth: '234',
-            userinitiated: '442',
-        },
-        {
-            startdate: '22 Jan, 2023',
-            marketing: '678',
-            utility: '767',
-            auth: '423',
-            userinitiated: '555',
-        },
-        {
-            startdate: '23 Jan, 2023',
-            marketing: '987',
-            utility: '456',
-            auth: '567',
-            userinitiated: '565',
-        },
 
-        {
-            startdate: '15 Jan, 2023',
-            marketing: '155',
-            utility: '201',
-            auth: '982',
-            userinitiated: '312',
-        },
-        {
-            startdate: '16 Jan, 2023',
-            marketing: '210',
-            utility: '124',
-            auth: '548',
-            userinitiated: '124',
-        },
-        {
-            startdate: '17 Jan, 2023',
-            marketing: '589',
-            utility: '312',
-            auth: '786',
-            userinitiated: '312',
-        },
-        {
-            startdate: '18 Jan, 2023',
-            marketing: '216',
-            utility: '289',
-            auth: '289',
-            userinitiated: '289',
-        },
-        {
-            startdate: '19 Jan, 2023',
-            marketing: '563',
-            utility: '142',
-            auth: '142',
-            userinitiated: '458',
-        },
-        {
-            startdate: '20 Jan, 2023',
-            marketing: '454',
-            utility: '234',
-            auth: '656',
-            userinitiated: '564',
-        },
-        {
-            startdate: '21 Jan, 2023',
-            marketing: '454',
-            utility: '345',
-            auth: '234',
-            userinitiated: '442',
-        },
-        {
-            startdate: '22 Jan, 2023',
-            marketing: '678',
-            utility: '767',
-            auth: '423',
-            userinitiated: '555',
-        },
-        {
-            startdate: '23 Jan, 2023',
-            marketing: '987',
-            utility: '456',
-            auth: '567',
-            userinitiated: '565',
-        },
+    @Output() selectab = new EventEmitter<string> () ;
 
-        {
-            startdate: '15 Jan, 2023',
-            marketing: '155',
-            utility: '201',
-            auth: '982',
-            userinitiated: '312',
-        },
-        {
-            startdate: '16 Jan, 2023',
-            marketing: '210',
-            utility: '124',
-            auth: '548',
-            userinitiated: '124',
-        },
-        {
-            startdate: '17 Jan, 2023',
-            marketing: '589',
-            utility: '312',
-            auth: '786',
-            userinitiated: '312',
-        },
-        {
-            startdate: '18 Jan, 2023',
-            marketing: '216',
-            utility: '289',
-            auth: '289',
-            userinitiated: '289',
-        },
-        {
-            startdate: '19 Jan, 2023',
-            marketing: '563',
-            utility: '142',
-            auth: '142',
-            userinitiated: '458',
-        },
-        {
-            startdate: '20 Jan, 2023',
-            marketing: '454',
-            utility: '234',
-            auth: '656',
-            userinitiated: '564',
-        },
-        {
-            startdate: '21 Jan, 2023',
-            marketing: '454',
-            utility: '345',
-            auth: '234',
-            userinitiated: '442',
-        },
-        {
-            startdate: '22 Jan, 2023',
-            marketing: '678',
-            utility: '767',
-            auth: '423',
-            userinitiated: '555',
-        },
-        {
-            startdate: '23 Jan, 2023',
-            marketing: '987',
-            utility: '456',
-            auth: '567',
-            userinitiated: '565',
-        },
-    ];
-
-    constructor(config: NgbModalConfig, private modalService: NgbModal) {}
+    constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: ProfileService) {}
 
     ngOnInit(): void {
-        this.getPaging();
+        this.spId = Number(sessionStorage.getItem('SP_ID'))
+        this.getWalletUsageInsight()
+        this.getApproximateCharges()
+        this.getWalletUsageData()
+  
+       
     }
+
+    showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}else if(type=='error'){
+			this.errorMessage=message;
+        }
+		setTimeout(() => {
+			this.hideToaster()
+		}, 5000);
+		
+	}
+	hideToaster(){
+		this.successMessage='';
+		this.errorMessage='';
+	}
+
+
+    rowHeaders: string[] = [
+        'Start Date',
+        'Marketing',
+        'Utility',
+        'Authentication',
+        'User Initiated'
+      ];
+
     filterChannels(filterchannels: any) {
         if (this.modalReference) {
             this.modalReference.close();
@@ -284,12 +78,125 @@ export class WalletusageComponent implements OnInit {
         });
     }
 
+      
+    getWalletUsageData() {
+        this.apiService.walletUsageDetails(this.spId).subscribe(data => {
+            this.walletUsageData = data.useData;
+            this.walletUsageData = this.transformData(this.walletUsageData);
+            this.filteredData = this.walletUsageData;
+            this.getPaging();
+            console.log(this.walletUsageData);
+        });
+
+    }
+
+        // transform the walletUsageData arrry according to table structure
+
+    transformData(walletUsageData:any) {
+        const transformedData:any = [];
+        walletUsageData.forEach((item:any) => {
+        const existingDateItem = transformedData.find((d:any) => d.date === item.interaction_date);
+        if (existingDateItem) {
+            existingDateItem.interactions.push({
+            type: item.interaction_type,
+            count: item.count
+            });
+        } else {
+            transformedData.push({
+            date: item.interaction_date,
+            interactions: [{
+                type: item.interaction_type,
+                count: item.count
+            }]
+            });
+        }
+        });
+        return transformedData;
+
+    }
+
+        getCountByInteractionType(interactions: any[], interactionType: string) {
+            const interaction = interactions.find(i => i.type === interactionType);
+            return interaction ? interaction.count : 0;
+        }
+
+        
+        applyDateFilter() {
+
+        if (!this.startDate || !this.endDate) {
+        this.showToaster('Please select dates before applying the date filter','error');
+        return;
+        }
+      
+        const start = new Date(this.startDate);
+        const end = new Date(this.endDate);
+        const maxDate = this.getMaxDate();
+        const today = new Date();
+      
+        if (end > maxDate || end > today) {
+          end.setTime(Math.min(maxDate.getTime(), today.getTime()));
+          this.endDate = end.toISOString().substring(0, 10);
+        }
+      
+        this.filteredData = this.walletUsageData.filter((item:any) => {
+          const itemDate = new Date(item.date);
+          this.modalReference.close();
+          return itemDate >= start && itemDate <= end;
+        });
+        this.getPaging();
+        this.currentPage = 1;
+      }
+      
+      getMaxDate(): Date {
+        const dates:any = this.walletUsageData.map((item:any) => new Date(item.date));
+        const maxDate = new Date(Math.max.apply(null, dates));
+        console.log(maxDate);
+        return maxDate;
+      }
+
+    getWalletUsageInsight() {
+        this.apiService.walletUsageInsight(this.spId).subscribe(response => {
+            this.walletUsageInsight = this.transformData(response.UsageInsightData);
+            this.allConversationCount = response.allUsageInsightCount[0].count;
+            console.log(this.allConversationCount);
+            console.log(this.walletUsageInsight);
+        });
+    }
+
+    getApproximateCharges() {
+        this.apiService.approximateCharges(this.spId).subscribe(response => {
+                this.approximateCharges = response.ApproxCharges;
+                let charges = Object.values(this.approximateCharges);
+                this.totalCharges = charges.reduce((sum:any, charge:any) => sum + charge, 0);
+                console.log(this.approximateCharges);
+                console.log(this.totalCharges);
+         });
+    }
+
+    openFilterDateRange(filterdaterange: any){
+        this.modalReference = this.modalService.open(filterdaterange);
+    }
+
+    clearFilter() {
+        this.startDate = null;
+        this.endDate = null;
+        this.filteredData = this.walletUsageData;
+        this.currentPage = 1;
+        this.showToaster('Filter Cleared','success');
+        this.modalReference.close();
+      }
+
     getPaging() {
         this.paging = [];
         this.currentPage = 1;
-        let totalPages = Math.ceil(this.walletUsageData.length / this.pageSize);
+        let totalPages = Math.ceil(this.filteredData.length / this.pageSize);
         for (let i = 1; i <= totalPages; i++) {
             this.paging.push(i);
         }
     }
+
+    previousPage() {
+        this.selectab.emit('0');
+    }
 }
+

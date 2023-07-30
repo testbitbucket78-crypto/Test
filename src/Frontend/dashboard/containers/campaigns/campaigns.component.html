@@ -10,7 +10,7 @@
 			<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 		</div>
 
-		<div class="campaigns_section">
+		<div class="header campaigns_section">
 	
 			<div class="campaigns_page_left">
 					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="SearchCampaign($event)"  [ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
@@ -129,9 +129,9 @@
 
 					<!--If running end-->
 					
-					<p class="sub_title_sm mb-1" ><img *ngIf="selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,2)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> Traget Audience</p>
+					<p class="sub_title_sm mb-1" ><img *ngIf="selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,2)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Traget Audience</p>
 					<p>{{selectedCampaign.AllContactsLength}} <span>( {{selectedCampaign.AudienceType}})</span></p>
-					<p class="sub_title_sm" ><img *ngIf="selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,3.1)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> Message</p>
+					<p class="sub_title_sm" ><img *ngIf="selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,3.1)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Message</p>
 					<p class="sub_title_sm blackcolor mb-1">Category</p>
 					<p>{{selectedCampaign.category_label}}</p>
 					<div class="template">
@@ -169,7 +169,7 @@
 				</div>
 				<div class="action_section">
 					<button type="button" class="btn" (click)="copyCampaign()"><img src="/assets/img/teambox/copy.svg"></button>
-					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)"><img src="/assets/img/teambox/delete.png"></button>
+					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)"><img src="/assets/img/teambox/delete.svg"></button>
 				</div>
 			</div>
 			<div *ngIf="allCampaign.length<1" class="campaigns_section_items no-campaign">

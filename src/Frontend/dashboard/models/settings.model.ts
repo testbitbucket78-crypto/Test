@@ -1,8 +1,8 @@
-import { Time } from "@angular/common";
+
 
 export interface companyDetail{
     SP_ID:number;
-    //profile_img:raunak.png",
+    //profile_img:raunak.png,
     Company_Name:string;
     Company_Website:string;
     Country:string;
@@ -52,6 +52,12 @@ export interface workingFormData{
     endTime:string;
 }
 
+export interface campaignFormData{
+    day:string[];
+    start_time:string;
+    end_time:string;
+}
+
 export interface workingDataPost{
     day:string;
     startTime:string;
@@ -70,6 +76,13 @@ export interface workingDataResponsePost {
     created_By:string;
 }
 
+
+export interface campaignDataResponsePost {
+    days:campaignFormData[] 
+    sp_id:number;
+    created_By:string;
+}
+
 export interface workingDataResponse {
     result:workingData[] 
 
@@ -79,4 +92,48 @@ export interface holidayData {
     holiday_date:string[];
     SP_ID:number;
     created_By:string;
+}
+
+export interface rights {
+    id:number;
+    rightsName:string;
+}
+
+export interface rightsResponse {
+    Rights:rights[];
+}
+
+export interface RolesData{
+  roleID:number;
+  RoleName:string;
+  Privileges:string;
+  subPrivileges:string;
+  SP_ID:number;
+}
+
+export interface UserData{           
+    name: string;
+    mobile_number:number;
+    uid:number;
+    UserType:number;   
+    email_id:string;
+  SP_ID:number;
+}
+
+export interface TeamData{    
+    team_name:string;
+    userIDs:number[];
+  SP_ID:number;
+}
+
+export interface userTeamDropDown{    
+    uid:number;
+    isSelected:boolean;
+    name:string;
+    profile_img:string;
+}
+
+export interface campaignAlertUser{
+    SP_ID:number;
+    uid:number[];
 }

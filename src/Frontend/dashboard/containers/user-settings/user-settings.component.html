@@ -1,0 +1,150 @@
+<div class="setting-card">
+    <div class="flex-header">
+        <span class="working-hour-heading">Users</span>
+
+        <div class="d-flex">
+            <div class="input-group gf ">
+                <input class="form-control" type="text" (keyup)="searchUserData($event.target.value)" placeholder="Search" aria-label="Search"
+                    aria-describedby="basic-addon2" name="Name" id="Search-Ag" />
+                <img src="assets/img/search.png">
+            </div>
+            <button class="new-token-btn" (click)="addUser()" data-bs-toggle="modal" data-bs-target="#userModal">
+                <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
+                Create User</button>
+        </div>
+    </div>
+    <div class="p-3">
+        <ag-grid-angular class="ag-theme-alpine" [rowData]="userList" [columnDefs]="columnDefs" [animateRows]="true"
+            [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true" (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+    </div>
+
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="userModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content user-modal p-2 pl-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Create User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <div class="modal-body px-5 pt-0">
+                <form [formGroup]="userDetailForm">
+                    <div>
+                        <label>User Name</label> <br>
+                        <input type="text" class="input-form" formControlName="name" placeholder="Enter user name">
+                    </div>
+                    <div class="pt-2">
+                        <label>User Email Id</label> <br>
+                        <input type="text" class="input-form" formControlName="email_id"
+                            placeholder="Enter user email Id">
+                    </div>
+                    <div class="pt-2">
+                        <label>User Phone No.</label> <br>
+                        <input type="text" class="input-form" formControlName="mobile_number"
+                            placeholder="Enter Phone Number">
+                    </div>
+                    <div class="pt-2">
+                        <label>Role</label> <br>
+                        <select class="input-form" formControlName="UserType">
+                            <option *ngFor="let item of rolesList" [value]="item.roleID">{{item?.RoleName}}</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="account-btn" (click)="saveRolesDetails()">Create and Invite</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sideBar" *ngIf="showSideBar">
+    <div class="sidebar-close">
+        <button type="button" class="btn-close" (click)="showSideBar = false">
+            <img src="../../../../assets/img/teambox/icon-close.svg">
+        </button>
+    </div>
+    <div class="sidebar-content">
+        <div class="d-flex pb-3">
+            <span class="user-status">Active</span>
+            <p class="user-id">Agent Id:</p>
+            <p class="black"> {{userData?.uid}}</p>
+        </div>
+        <div class="d-flex px-3">
+            <div class="profile-img">
+                <img>
+            </div>
+            <div class="p-3">
+                <span class="heading">{{userData?.name}}</span>
+                <div class="d-flex pt-1">
+                    <p>Date of Joining:</p>
+                    <p class="black">&nbsp;19 Oct 2021</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex-row pt-4">
+            <div class="w-50">
+                <span class="sub-heading">Last Login Time</span><br>
+                <p class="black">Last Login: 9:45 PM, 15 Oct 2023</p>
+            </div>
+            <div class="w-45">
+                <span class="sub-heading">Login IP Address</span><br>
+                <p class="black">100.525.658.25</p>
+            </div>
+        </div>
+        <div class="flex-row  pt-4">
+            <div class="w-50">
+                <span class="sub-heading">Email Id</span><br>
+                <p class="black">{{userData?.email_id}}</p>
+            </div>
+            <div class="w-45">
+                <span class="sub-heading">Phone Number</span><br>
+                <p class="black">{{userData?.mobile_number}}</p>
+            </div>
+        </div>
+        <div class="flex-row  pt-4">
+            <div class="w-50">
+                <span class="sub-heading">Roles Assigned</span><br>
+                <p class="black">{{getRoleNameById(userData?.UserType)}}</p>
+            </div>
+            <div class="w-45">
+                <span class="sub-heading">Team Associated</span><br>
+                <p class="black"></p>
+            </div>
+        </div>
+    </div>
+    <div class="sideBar-footer">
+        <button type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#userModal">
+            <img class="p-0" src="../../../../assets/img/edit.png"></button>
+        <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <img class="p-0" src="../../../../assets/img/delete.png">
+        </button>
+        <button class="disable-btn ml-2" (click)="activeDeActiveUser()">
+            <span>Disable</span>
+            <label class="switch">
+                <input type="checkbox" class="form-control-checkbox">
+                <span class="slider 1"></span>
+            </label>
+        </button>
+    </div>
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="deleteModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content delete-token-modal">
+            <div class="modal-body alertmessage">
+                <p class="label pb-2">Do you really want to delete this API Token ?</p>
+                <div class="input_group_btn">
+                    <button type="button" class="cancel-btn" aria-label="Close"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="delete-btn" aria-label="Close" data-bs-dismiss="modal" (click)="deleteUser()">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

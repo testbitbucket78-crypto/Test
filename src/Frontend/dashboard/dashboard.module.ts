@@ -1,6 +1,6 @@
 /* tslint:disable: ordered-imports*/
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule,DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 / Modules /
@@ -13,6 +13,9 @@ import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { AgGridModule } from 'ag-grid-angular';
+import { ImageCropperModule } from 'ngx-image-cropper';
+
+
 
 
 
@@ -30,6 +33,7 @@ import * as dashboardServices from './services';
 import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
 import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { DashboardComponent } from './containers';
+import { NumberToWordsPipe } from './containers/number-to-words.pipe';
 
 @NgModule({
     imports: [
@@ -47,16 +51,18 @@ import { DashboardComponent } from './containers';
         NgxIntlTelInputModule,
         AgGridModule.withComponents([dashboardContainers.ContactsComponent]),
         NgMultiSelectDropDownModule.forRoot(),
-        RichTextEditorModule
+        RichTextEditorModule,
+        ImageCropperModule
     ],
     providers: [...dashboardServices.services,
-                ...dashboardGuards.guards
+                ...dashboardGuards.guards,DatePipe
         ],
     declarations:  [
          ...dashboardContainers.containers,
          ...dashboardComponents.components,
             DashboardComponent,
             SearchfilterPipe,
+            NumberToWordsPipe,
         ],
     exports: [...dashboardContainers.containers,
               ...dashboardComponents.components,

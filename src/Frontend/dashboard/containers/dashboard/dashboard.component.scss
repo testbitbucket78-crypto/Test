@@ -38,19 +38,19 @@
 }
 
 .card1 {
-    border-radius: 20px;
+    border-radius: 28px;
     background-color: #e4dff5;
     text-align: center;
     // width: 83%;
 }
 .card2 {
-    border-radius: 20px;
+    border-radius: 28px;
     background-color: #e2f4ec;
     text-align: center;
     // width: 83%;
 }
 .card3 {
-    border-radius: 20px;
+    border-radius: 28px;
     background-color: #ebedf1;
     text-align: center;
     // width: 83%;
@@ -163,7 +163,7 @@
 
 .card10-c {
  
-    background: transparent url('/assets/img/img3.png')  0% 0% no-repeat padding-box;
+    background: transparent url('/assets/img/img3.png')  50% 18% no-repeat padding-box;
     opacity: 1;
     border-radius: 30px;
     text-align: center;
@@ -190,7 +190,7 @@
     box-shadow: 3px 16px 40px #695F9724;
     border-radius: 22px;
     opacity: 1;
-    width: 100%;
+    padding: 0 25% 0 25%;
     height: 55px;
     color: #6149cd;
     font-weight: bold;
@@ -209,7 +209,14 @@
     font-size: 16px;
     font-family: 'Manrope';
     color: #7a86a1;
+    margin-top:8px;
     margin-left: 87px;
+}
+
+.heading span { 
+    font-size: 16px;
+    font-family: 'Manrope';
+    color: #7a86a1;
 }
 
 

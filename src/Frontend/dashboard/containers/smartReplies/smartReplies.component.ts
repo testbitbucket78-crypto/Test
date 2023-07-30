@@ -35,6 +35,7 @@ export class SmartRepliesComponent implements OnInit {
 	showSideBar = false;
 	searchText ='';
 	repliesData!:repliesList;
+	
 
 	Cards: Cards[] = [
 		new Cards(1107), new Cards(1108), new Cards(1109), new Cards(1110), new Cards(1111), new Cards(1112), new Cards(1113)
@@ -61,17 +62,10 @@ export class SmartRepliesComponent implements OnInit {
 		var SP_ID=sessionStorage.getItem('SP_ID')
 		this.apiService.getSmartReply(SP_ID).subscribe((data: any) => {
 			this.replies = data;
-
+			
 			console.log(this.replies)
 		})
 	}
-	// opensidenav(employee: any) {
-	// 	document.getElementById("sidebar")!.style.width = "400px";
-	// }
-	// closesidenav(items: any) {
-	// 	document.getElementById("sidebar")!.style.width = "0";
-	// }
-
 
 	toggleSideBar() {
 		this.showSideBar = !this.showSideBar
@@ -88,12 +82,14 @@ export class SmartRepliesComponent implements OnInit {
 	    console.log("getRepliesByID")
 		console.log(data)
 		console.log(data.ID)
-		this.apiService.sideNav(data.ID).subscribe((responce => {
-			this.data = responce;
+		this.apiService.sideNav(data.ID).subscribe((response => {
+			this.data = response;
 			this.repliesData = <repliesList> {} ;
 			this.repliesData.Description = this.data[0].Description;
 			this.repliesData.Title = this.data[0].Title;
 			this.repliesData.ID = this.data[0].ID;
+			this.repliesData.CreatedDate = this.data[0].CreatedDate;
+			this.repliesData.ModifiedDate = this.data[0].ModifiedDate;
 			this.repliesData.MatchingCriteria = this.data[0].MatchingCriteria; 
 			this.repliesData.Keyword = [];
 			this.repliesData.ActionList = [];
@@ -116,6 +112,28 @@ export class SmartRepliesComponent implements OnInit {
 
 	}
 
+	deleteRepliesById (data:any) {
+		console.log(data, 'component');
+		let deleteId = {ID:data[0].ID};
+		this.apiService.deletesmartReply(deleteId).subscribe(
+			(response:any) => {
+				console.log(response);
+				this.getReplies();
+				this.toggleSideBar();
+			}
+			
+		),
 
+		(error:any) => {
+			if(error.status === 404) {
+			alert('error');
+		}
+
+
+	}
+
+
+
+}
 
 }

@@ -1,0 +1,175 @@
+<div>
+    <div class="row">
+        <div class="col-sm-9 py-4 setting-field">
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1">Schedule Alerts</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2">Test Campaign</a>
+        </div>
+    </div>
+    <div class="d-flex" *ngIf="selectedTab==1">
+        <div class="setting-card" >
+            <div class="flex-row pb-2">
+                <div class="default-actions-heading">Set Campaign Timings</div>
+                <img src="">
+            </div>
+            <div class="">
+                <p>Configure active campaign window during which campaigns can run</p>            
+            </div>
+            <div *ngIf="!workingData" class="working-hour-img-card modal-body" >
+                <img src="../../../../assets/img/settings/image.png"><br>
+                <span class="working-hour-heading">Schedule Timings</span>
+            </div>
+            <div *ngIf="workingData" class=" modal-body pt-0"> 
+                <div *ngFor="let item of workingData;let idx=index" class="pt-4">
+                    <div class="working-days">{{item?.day}}</div>
+                    <div class="working-time">{{item?.start_time}} - {{item?.end_time}}</div>
+                </div>
+            </div>
+    
+            <div class="text-center pb-3">
+                <button class="working-hour-btn" (click)="manageWorkingHour()" data-bs-toggle="modal" data-bs-target="#workingHourModal">Manage Timing</button>
+            </div>
+    
+        </div>
+    
+        <div class="setting-card ml-5" >
+            <div class="flex-row pb-2">
+                <div class="default-actions-heading">Campaign Alerts</div>
+                <img src="">
+            </div>
+            <div *ngIf="campaignAlertData?.length ==0" class="working-hour-img-card modal-body" >
+                <img src="../../../../assets/img/settings/image.png"><br>
+                <span class="working-hour-heading">Manage User</span>
+            </div>
+            <div *ngIf="campaignAlertData?.length >0"  class="users-body">
+                <div class="d-flex pb-3 pt-3 user-list" *ngFor="let item of campaignAlertData">
+                    <img src="../../../../assets/img/settings/img-7.png">
+                    <div class="pl-3">
+                        <span class="sub-heading">{{item?.name}}</span>
+                        <p>{{item.mobile_number}}</p>
+                        <p>{{item?.email_id}}</p>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="text-center pb-3">
+                <button class="working-hour-btn" (click)="manageWorkingHour()" data-bs-toggle="modal" data-bs-target="#teamsModal">Manage User</button>
+            </div>
+    
+        </div>
+    </div>
+
+    <div class="test-campaign-card ml-5" *ngIf="selectedTab==2">
+        <div class="flex-row pb-2">
+            <div class="default-actions-heading">Test Campaign</div>
+            <img src="">
+        </div>
+        <div *ngIf="!workingData" class="working-hour-img-card modal-body" >
+            <img src="../../../../assets/img/settings/image.png"><br>
+            <span class="working-hour-heading">Add User to Test Campaign</span>
+        </div>
+        <div *ngIf="campaignAlertData?.length >0" class="users-body">
+            <div class="d-flex pb-3 pt-3 user-list" *ngFor="let item of campaignAlertData">
+                <img src="../../../../assets/img/settings/img-7.png">
+                <div class="pl-3">
+                    <span class="sub-heading">{{item?.name}}</span>
+                    <p>{{item.mobile_number}}</p>
+                    <p>{{item?.email_id}}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center pb-3">
+            <button class="working-hour-btn" (click)="manageWorkingHour()" data-bs-toggle="modal" data-bs-target="#teamsModal">Manage User</button>
+        </div>
+
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="workingHourModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content working-hour-modal ">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Working Hours</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="modal-body px-5 pt-0">
+                    <!-- <form [formGroup]="workingHourForm" class="mt-4"> -->
+                    <div *ngFor="let item of workingFormData;let idx=index">
+                        <div class="billing-form-row">
+                            <label>Days</label>
+                            <ng-multiselect-dropdown class="multiselect" name="tag" [(ngModel)]="item.day" id="tag"
+                                [settings]="dropdownSettings" [data]="daysList" [placeholder]="'Add Days'" 
+                                [disabled]="disabled">
+                            </ng-multiselect-dropdown>
+                        </div>
+                        <div class="d-flex">
+                            <div class="billing-form-row">
+                                <label>Start Time</label>
+                                <input type="text" class="input-form" [(ngModel)]="item.start_time"
+                                    placeholder="Select start time">
+                            </div>
+                            <div class="billing-form-row">
+                                <label>End Time</label>
+                                <input type="text" class="input-form" [(ngModel)]="item.end_time"
+                                    placeholder="Select end time">
+                            </div>
+                        </div>
+                        <div class="incoming-card">
+                            <div>
+                                <a class="add-btn" (click)="addWorkingHours()" *ngIf="idx == (workingFormData?.length-1)">+
+                                    Add</a>
+                            </div>
+                            <a class="remove-btn" (click)="removeWorkingHours(idx)" *ngIf="workingFormData?.length>1">-
+                                Remove</a>
+                        </div>
+                    </div>
+                    <!-- </form> -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="account-btn" (click)="saveCampaignDetails()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+<div class="modal fade" tabindex="-1" id="teamsModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content Manage-User-modal p-2 pl-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <div class="modal-body px-5 pt-0">
+                <div class="input-group gf ">
+                    <input class="form-control" type="text" (keyup)="searchData($event.target.value)" placeholder="Search" aria-label="Search"
+                        aria-describedby="basic-addon2" name="Name" id="Search-Ag" />
+                    <img src="assets/img/search.png">
+                </div>
+                <div class="pt-3">
+                    <div>
+                        <div *ngFor="let item of selectedUser" class="user-dropdown pb-3">
+                            <input type="checkbox" class="user-checkbox" [(ngModel)]="item.isSelected">
+                            <img  class="user-img ml-2">
+                            <span class="ml-2">{{item.name}}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div></div>
+                    </div>
+                </div>
+                
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="account-btn" (click)="saveCampaignAlert()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>

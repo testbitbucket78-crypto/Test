@@ -148,21 +148,23 @@ export class ContactsComponent implements OnInit {
         Name: new FormControl('', Validators.compose([Validators.required])),
         Phone_number: new FormControl(''),
         emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        age: new FormControl(''),
+        age: new FormControl('',[Validators.max(100)]),
+        sex: new FormControl('',[Validators.max(6)]),
         tag: new FormControl([]),
       //  tagControls = tags.map(tag => new FormControl(tag));
         status:  new FormControl([]),
         facebookId: new FormControl(''),
         InstagramId: new FormControl(''),
-         SP_ID: sessionStorage.getItem('SP_ID')
+        SP_ID: sessionStorage.getItem('SP_ID')
          
       });
 	
   this.editContact = this.fb.group({
-    Name: new FormControl(''),
+    Name: new FormControl('', [Validators.required, Validators.pattern('^[A-Za-z\s]+$')]),
     Phone_number: new FormControl(''),
-    emailId: new FormControl(''),
-    age: new FormControl(''),
+    emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+    age: new FormControl('', [Validators.required]),
+    sex: new FormControl(''),
     tag: new FormControl([]),
     status: new FormControl([]),
     facebookId: new FormControl(''),
@@ -322,6 +324,7 @@ onSelectAll(items: any) {
         Phone_number: new FormControl(result[0].Phone_number),
         emailId: new FormControl(result[0].emailId),
         age: new FormControl(result[0].age),
+        sex: new FormControl(result[0].sex),
         tag: new FormControl(result[0].tag?.split(',')),
         status: new FormControl(result[0].status?.split(',')),
         facebookId: new FormControl(result[0].facebookId),
@@ -509,11 +512,11 @@ onSelectAll(items: any) {
     var SP_ID = sessionStorage.getItem('SP_ID')
     console.log("editdata" + customerId)
     console.log(this.editContact.value)
-    this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
-      console.log(response)
-      this.getContact();
-      this.closesidenav(this.items);
-    });
+      this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
+        console.log(response)
+        this.getContact();
+        this.closesidenav(this.items);
+      });
    
 
 
@@ -554,8 +557,8 @@ onSelectAll(items: any) {
 deletContactByID(data: any) {
   console.log("delete")
   console.log(data)
-  this.apiService.deletContactById(data).subscribe((responce => {
-    console.log(responce);
+  this.apiService.deletContactById(data).subscribe((response => {
+    console.log(response);
     this.getContact();
     this.closesidenav(this.items);
   }));
@@ -566,8 +569,8 @@ deletContactByID(data: any) {
 
   blockContactByID(data: any) {
     var SP_ID = sessionStorage.getItem('SP_ID')
-    this.apiService.blockContact(data, SP_ID).subscribe((responce => {
-      console.log(responce);
+    this.apiService.blockContact(data, SP_ID).subscribe((response => {
+      console.log(response);
        this.getContact();
       this.closesidenav(this.items);
 

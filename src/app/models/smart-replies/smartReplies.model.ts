@@ -9,6 +9,8 @@ export interface repliesList {
     Description:string;
     Title:string;
     ID:number;
+    CreatedDate:string;
+    ModifiedDate:string;
     Keyword:string [];
     MatchingCriteria:String;
     ActionList:actionData [];

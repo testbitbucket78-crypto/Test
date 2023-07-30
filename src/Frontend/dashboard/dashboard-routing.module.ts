@@ -413,14 +413,14 @@ export const ROUTES: Routes = [
     {
         path: 'myprofile',
         data: {
-            title: 'My Profile',
+            title: 'Profile',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'My Profile',
+                    text: 'Profile',
                     active: true,
                 },
             ],
@@ -428,42 +428,7 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.MyprofileComponent,
     },
-    {
-        path: 'manageplan',
-        data: {
-            title: 'My Profile',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'My Profile',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.ManageplanComponent,
-    },
-    {
-        path: 'walletusage',
-        data: {
-            title: 'My Profile',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'My Profile',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.WalletusageComponent,
-    },
+
     {
         path: 'support',
         data: {
@@ -482,24 +447,7 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.SupportComponent,
     },
-    {
-        path: 'billinghistory',
-        data: {
-            title: 'My Profile',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'My Profile',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.BillinghistoryComponent,
-    },
+
     {
         path: 'campaignsetting',
         data: {

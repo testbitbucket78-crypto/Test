@@ -1,0 +1,99 @@
+<div class="setting-card" >
+    <div class="default-actions-heading">Routing Rules</div>
+    <p>New conversations can be assigned using below routing rules</p>
+    <div class="pt-4 px-3">
+        <div class="pl-2 pr-5 pb-3">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="checkbox">
+                <span class="sub-heading">Assign to Contact Owner</span>
+            </div>
+            <div class="sub-contents">
+                <p>If this is selected, override all other rules and always assign the chat to its Contact Owner. If the Contact Owner is not defined or not available then the below routing rules will apply if enabled.</p>           
+            </div>
+        </div>
+        <div class="pl-2 pr-5 pb-3">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="checkbox">
+                <span class="sub-heading">Assign to Last Assisted Agent</span>
+            </div>
+            <div class="sub-contents">
+                <p>If this is selected, override all other rules and always assign the chat to its last assigned agent. If there is no Last Assigned Agent or unavailable then default routing rule will apply.</p>           
+            </div>
+        </div>
+        <div>
+            <span class="sub-heading">Default Assignment Rules</span>            
+            <div class="sub-contents pl-0">
+                <p>A new conversation will be assigned based on the routing rule chosen here if no other automation is applicable.</p>           
+            </div>
+        </div>
+        <div class="pl-2 pr-5 pb-3">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="checkbox">
+                <span class="checkmark"></span>
+                <span class="sub-heading">Broadcast</span>
+            </div>
+            <div class="sub-contents">
+                <p>Notify all the online agents when a new chat comes. All new chats will be placed in the unassigned tab where anyone can assign it to themselves to start chatting with the customers.</p>           
+            </div>
+        </div>
+        <div class="pl-2 pr-5 pb-3">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="checkbox">
+                <span class="sub-heading">Round Robin</span>
+            </div>
+            <div class="sub-contents">
+                <p>Assign incoming chats to all the available agents one after another ensuring chats are getting distributed equally among them.</p>           
+                <div class="select-heading py-2">Max. No. of Open Conversation Allowed</div>
+                <select class="input-form">
+                    <option></option>
+                </select>
+            </div>
+        </div>
+        <div class="pl-2 pr-5 pb-3">
+            <div class="d-flex align-items-center">
+                <input type="checkbox" class="checkbox">
+                <span class="sub-heading">Manual Assignn</span>
+            </div>
+            <div class="sub-contents">
+                <p>All the chats are first assigned to a selected user (usually manager). Further this user assigns agents or teams to each of these chats. If this selected manager is not available, then chats will be assigned according to the rules defined under “Missed Chat”.</p>           
+                <div class="select-heading py-2">Assign a User</div>
+                <select class="input-form">
+                    <option></option>
+                </select>
+            </div>
+        </div>
+        <div>
+            <span class="sub-heading">Manage Missed Chat</span>            
+            <div class="sub-contents pl-0">
+                <p>Fallback assignment rule if the chat could not be assigned as per selected rule within the allowed time as configured here.</p>           
+            </div>
+            <div class="select-heading pt-3 pb-2">
+                Chat Assign Timeout Period
+            </div>
+            <select class="input-form">
+                <option></option>
+            </select>
+            <div class="d-flex py-2">
+                <div>
+                    <input type="checkbox" class="checkbox mr-2">
+                    <span class="select-heading">Contact Owner</span>
+                </div>
+                <div class="pl-4">
+                    <input type="checkbox" class="checkbox mr-2">
+                    <span class="select-heading">Admin</span>
+                </div>
+                <div class="pl-4">
+                    <input type="checkbox" class="checkbox mr-2">
+                    <span class="select-heading">Assign a Specific User</span>
+                </div>
+            </div>
+            <div class="select-heading py-2">Assign a Specific User</div>
+            <select class="input-form">
+                <option></option>
+            </select>
+            <p>If the contact owner is not defined, chat is assigned to Admin</p>
+        </div>
+    </div>
+    
+
+</div>

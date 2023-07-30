@@ -1,5 +1,5 @@
-<sb-layout-dashboard>
-    <sb-top-nav title="My Profile"></sb-top-nav>
+<!-- <sb-layout-dashboard>
+    <sb-top-nav title="My Profile"></sb-top-nav> -->
 
     <div class="row mb-4 mt-4">
         <div class="col-sm-2"></div>
@@ -7,7 +7,7 @@
             <div class="container-fluid p-0 d-flex justify-content-around align-items-center">
                 <div class="col-sm-6 text-left d-flex">
                     <div class="d-flex align-items-center">
-                        <div class="back-btn" routerLink="/dashboard/myprofile">
+                        <div class="back-btn" (click)="previousPage()">
                             <img src="assets/img/profile/previous1.svg" />
                         </div>
                         <div class="main-title">
@@ -17,10 +17,10 @@
                 </div>
                 <div class="col-sm-6 text-right d-flex justify-content-end pr-0">
                     <div class="text-center billing-history-btn">
-                        <button class="px-3"  routerLink="/dashboard/billinghistory">
-                        <span><img class="px-2 bill-img" src="../../../../assets/img/profile/bill.png"></span>
+                        <button class="px-3" (click)="nextPage()">
+                        <span><img class="px-2 bill-img" src="../../../../assets/img/profile/bill.svg"></span>
                             View Billing History
-                        <span><img class="px-2" src="../../../../assets/img/profile/next.png"></span>
+                        <span><img class="px-2" src="../../../../assets/img/profile/next1.svg"></span>
                     </button>
                     </div>
                       
@@ -47,33 +47,34 @@
                                 <div class="my-1 cards-heading">
                                     <h2>Basic</h2>
                                 </div>
-                                <span class="plan-price">$20</span>
+                                <span class="plan-price">{{PlanCharges[0]?.currency}}{{ PlanCharges[0]?.Monthly }}</span>
+                                <span class="px-3 discount-price">{{PlanCharges[0]?.currency}}{{ PlanCharges[0]?.Yearly }}</span>
                               
                                
                                     <div class="d-flex my-2 justify-content-around align-items-center toggle-button-container">
                                         <div class="toggle-txt">  
-                                        <p>Yearly <br />Save  12%</p></div>
+                                        <p>Yearly <br />Save {{PlanCharges[0]?.discount}}</p></div>
                                       
                                         <div class="switch-toggle">
                                             <label class="m-0 switch">
-                                              <input type="checkbox" class="m-0 form-control-checkbox">
+                                            <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleSlider($event.target.checked)">
                                               <span class="slider"></span>
                                             </label>
                                           </div>
-                                          <div class="toggle-txt1"><p>Monthly <br />$20</p></div>
+                                          <div class="toggle-txt1"><p>Monthly <br />{{PlanCharges[0]?.currency}}{{ PlanCharges[0]?.Monthly }}</p></div>
                                       
                                     </div>
 
                                     <div class="mt-4 select-choices">
                                    
                                         <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
-                                            <input type="checkbox" name="choice[{{i}}]" checked>
-                                            <p class="m-0 pl-4">{{choice}}</p>
+                                            <img class="checkboxes" src="../../../../assets/img/profile/checked.svg" [style.filter]="i >= 4 ? 'invert(52%) saturate(166%) hue-rotate(183deg) brightness(142%) contrast(137%)' : 'none'" />
+                                            <p class="m-0 pl-4">{{choice.plans}}</p>
                                           </div>   
                                     
                                     </div>
                                     <div  class="text-center mt-4 select-plan-btn">
-                                        <button>Select</button>
+                                        <button (click)="selectPlans(selectplan)">Select</button>
                                     </div>
                                   
                            
@@ -92,34 +93,34 @@
                                 <div class="my-1 cards-heading">
                                     <h2>Standard</h2>
                                 </div>
-                                <span class="plan-price">$35</span>
-                                <span class="px-3 discount-price">$30.8</span>
+                                <span class="plan-price">{{PlanCharges[1]?.currency}}{{ PlanCharges[1]?.Monthly }}</span>
+                                <span class="px-3 discount-price">{{PlanCharges[1]?.currency}}{{ PlanCharges[1]?.Yearly }}</span>
                               
                                
                                     <div class="d-flex my-2 justify-content-around align-items-center toggle-button-container">
                                         <div class="toggle-txt">  
-                                        <p>Yearly <br />Save  12%</p></div>
+                                            <p>Yearly <br />Save {{PlanCharges[1]?.discount}}</p></div>
                                       
                                         <div class="switch-toggle">
                                             <label class="m-0 switch">
-                                              <input type="checkbox" class="m-0 form-control-checkbox">
+                                              <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleSlider($event.target.checked)">
                                               <span class="slider"></span>
                                             </label>
                                           </div>
-                                          <div class="toggle-txt1"><p>Monthly <br />$20</p></div>
+                                          <div class="toggle-txt1"><p>Monthly <br />{{PlanCharges[1]?.currency}}{{ PlanCharges[1]?.Monthly }}</p></div>
                                       
                                     </div>
 
                                     <div class="mt-4 select-choices">
                                    
                                         <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
-                                            <input type="checkbox" name="choice[{{i}}]" checked>
-                                            <p class="m-0 pl-4">{{choice}}</p>
+                                            <img class="checkboxes" src="../../../../assets/img/profile/checked.svg" [style.filter]="i >= 6 ? 'invert(52%) saturate(166%) hue-rotate(183deg) brightness(142%) contrast(137%)' : 'none'" />
+                                            <p class="m-0 pl-4">{{choice.plans}}</p>
                                           </div>   
                                     
                                     </div>
                                     <div  class="text-center mt-4 select-plan-btn">
-                                        <button>Select</button>
+                                        <button (click)="selectPlans(selectplan)">Select</button>
                                     </div>
                                   
                             </div>
@@ -134,34 +135,34 @@
                                 <div class="my-1 cards-heading">
                                     <h2>Premium+</h2>
                                 </div>
-                                <span class="plan-price">$50</span>
+                                <span class="plan-price">{{PlanCharges[2]?.currency}}{{ PlanCharges[2]?.Monthly }}</span>
+                                <span class="px-3 discount-price">{{PlanCharges[2]?.currency}}{{ PlanCharges[2]?.Yearly }}</span>
                               
                                
                                     <div class="d-flex my-2 justify-content-around align-items-center toggle-button-container">
                                         <div class="toggle-txt">  
-                                        <p>Yearly <br />Save  12%</p></div>
+                                            <p>Yearly <br />Save {{PlanCharges[2]?.discount}}</p></div>
                                       
                                         <div class="switch-toggle">
                                             <label class="m-0 switch">
-                                              <input type="checkbox" class="m-0 form-control-checkbox">
+                                              <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleSlider($event.target.checked)">
                                               <span class="slider"></span>
                                             </label>
                                           </div>
-                                          <div class="toggle-txt1"><p>Monthly <br />$20</p></div>
+                                          <div class="toggle-txt1"><p>Monthly <br />{{PlanCharges[2]?.currency}}{{ PlanCharges[2]?.Monthly }}</p></div>
                                       
                                     </div>
 
                                     <div class="mt-4 select-choices">
                                    
                                         <div *ngFor="let choice of AllChoices; let i = index" class="d-flex py-3 align-items-center">
-                                            <input type="checkbox" name="choice[{{i}}]" checked>
-                                            <p class="m-0 pl-4">{{choice}}</p>
+                                              <img class="checkboxes" src="../../../../assets/img/profile/checked.svg" />
+                                            <p class="m-0 pl-4">{{choice.plans}}</p>
                                           </div>   
-                                    
                                     </div>
                                     <div class="text-center mt-4 select-plan-btn">
                          
-                                        <button class="current-plan" (click)="selectPlans(selectplan)"> Current Plan</button>
+                                        <button class="current-plan"> Current Plan</button>
                                     </div>
  
                             </div>
@@ -177,7 +178,7 @@
     </div>
     <ng-template #selectplan let-c="close" let-d="dismiss">
         <div class="modal-content m-0 p-3 selectplan">
-            <div class="modal-header align-items-center selectplansheader">
+            <div class="modal-header align-items-center px-3 py-0 selectplansheader">
                 <div class="modal-header-left ">
                     <p class="m-0">Select Plan</p>
                 </div>
@@ -186,51 +187,134 @@
                 </div>
                 </div>
             <div class="modal-body d-flex selectplanbody">
-                <div class="left-part">
-                    <h4>Review and confirm your change</h4>
-                    <span>Your text location determines the taxes that are applied to your bill.</span>
-
-                    <div class="plansummery">
-                        <h6>Plan Summary</h6>
-                        <span>Build Your Team, Inbox, Contact, Funnel up to 10 Message 25000 Free Message, 15 Free Bot, Subscribe up to 100K APIs & Webhooks, Integrations</span>
+                <div class="col-12 d-flex justify-content-between">
+                    <div class="col-7 left-part">
+                        <div class="plansummery-head">
+                            <h4 class="m-0">{{PlanSummary[0]}}</h4>
+                            <span [innerHTML]="PlanSummary[1]" ></span>
+                        </div>
+    
+                        <div class="plansummery-body">
+                                   
+                        <div class="my-4 plansummery">
+                            <h6>{{PlanSummary[2]}}</h6>
+                            <span>{{PlanSummary[3]}}</span>
+                        </div>
+                        <div class="my-4 plansummery">
+                            <h6>{{PlanSummary[4]}}</h6>
+                            <span>{{PlanSummary[5]}}</span>
+                        </div>
+                        <div class="my-4 plansummery">
+                            <h6>{{PlanSummary[6]}}</h6>
+                            <span>{{PlanSummary[7]}}</span>
+                        </div>
+                        </div>
+               
                     </div>
-                    <div class="plansummery">
-                        <h6>Cancelation Info</h6>
-                        <span>Fees may apply if you cancel after Apr 20, 2023</span>
+    
+                    <div class="col-5 right-part">
+                       <!-- <h3 *ngIf="selectedplan == basic" class="m-0 choosePlan">Basic</h3> -->
+                       <h3 class="m-0 choosePlan">Standard</h3>
+    
+                        <span>Commitment</span>
+                        <div class="d-flex justify-content-between align-items-center top price-container">
+                                <div class="planselect">
+                                    Monthly Plan
+                                </div>
+                          
+                            <div class="price">
+                              $30.8
+                            </div>
+                      
+                        </div>
+                        <div class="d-flex justify-content-between my-1 pt-3 align-items-center bottom price-container">
+                            <div class="subtotal">
+                                Subtotal
+                            </div>
+                      
+                        <div class="subtotal-price">
+                            $23.6
+                        </div>
                     </div>
-                    <div class="plansummery">
-                        <h6>Payment Info</h6>
-                        <span>Payment will automatic detect from the wallet</span>
+                    <div class="d-flex justify-content-between align-items-center price-container">
+                        <div class="tax">
+                            Tax
+                        </div>
+                  
+                    <div class="tax-price">
+                        $7.2
                     </div>
                 </div>
-
-                <div class="right-part">
-                    <div class="header">
-                        Standard
+                <div class="d-flex d-flex justify-content-between my-2 align-items-center price-container">
+                    <div class="total">
+                        Total
                     </div>
-                    <div class="d-flex">
-                        <div class="">
-                            <span>Commitment</span>
-                            <p>Monthly Plan</p>
-                        </div>
-                        <div class="price">
-                            $30.8
-                        </div>
-                    </div>
+              
+                <div class="total-price">
+                    $30.8
                 </div>
-     
+            </div>
+                    </div>
+         
+                </div>
+          
          </div>
             <div class="modal-footer d-flex justify-content-between align-items-center selectplanfooter">
                 
                     <div class="modal-footer-left">
-                        <p class="m-0">I accept the Terms & Conditions</p>
+                        <div class="d-flex">
+                            <input type="checkbox">
+                            <p class="m-0 px-3">I accept the <span>Terms & Conditions</span></p>
+                        </div>
+                      
                     </div>
-                    <div class="modal-footer-right">
-                        <button type="button" class="submit-btn">Agree & Subscribe</button>
+                    <div class="modal-footer-right selectplan">
+                        <button type="button" class="submit-btn" (click)="confirmPlan(confirmplan)">Agree & Subscribe</button>
                     </div>
                     </div>
             </div>
      
     </ng-template>
 
-</sb-layout-dashboard>
+    <ng-template #confirmplan let-c="close" let-d="dismiss">
+        <div class="modal-content m-0 p-3 confirmplan">
+            <div class="modal-header pt-4 justify-content-center align-items-center confirmplanheader">
+                <div class="modal-header p-0">
+                    <h5 class="m-0">Confirm your Plan Downgrade</h5>
+                </div>
+             
+                </div>
+            <div class="modal-body px-5 pt-0 confirmplanbody">
+             <p class="m-0 text-center">
+                You have chosen to downgrade your subscription plan <br /> that will give you less benefits.
+                Your new plan will be <br /> applicable from the next billing cycle. <br />
+               <span>Please confirm your selection.</span> 
+             </p>
+     
+         </div>
+            <div class="d-flex modal-footer pb-4 justify-content-center confirmplanfooter">
+            
+                    <div class="col-sm-12 d-flex justify-content-center align-items-center">
+                        <div class="col-sm-4 text-center p-0">
+                            <button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
+                        </div>
+                       
+                 
+                        <div class="col-sm-4 text-center p-0">
+                            <button type="button" class="confirm-btn" aria-label="Close" (click)="onSavePlanData()" >Confirm</button>
+                        </div>
+                    
+                
+                
+                </div>
+                  </div>
+       
+        </div>
+     
+    </ng-template>
+
+    
+
+
+<!-- 
+</sb-layout-dashboard> -->

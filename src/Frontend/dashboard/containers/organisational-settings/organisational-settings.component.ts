@@ -11,7 +11,7 @@ declare var $:any;
 })
 export class OrganisationalSettingsComponent implements OnInit {
   
-  selectedTab:number = 2;
+  selectedTab:number = 3;
   companyDetailForm!:FormGroup;
   billingForm!:FormGroup;
   localeForm!:FormGroup;
