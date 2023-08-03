@@ -12,10 +12,14 @@
       .sb-sidenav {
         padding-top: $topnav-base-height;
         .sb-sidenav-menu {
-          overflow-y: hidden;
+          overflow-y: scroll;
           overflow-x: hidden;
         }
       }
+
+      ::-webkit-scrollbar {
+        display: none;
+    }
     }
     #layoutSidenav_content {
       padding-left: $sidenav-base-width;

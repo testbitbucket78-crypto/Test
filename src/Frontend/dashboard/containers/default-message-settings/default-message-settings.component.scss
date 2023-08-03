@@ -1,0 +1,84 @@
+
+.setting-card {
+    border-radius: 30px;
+    padding: 20px 30px 0px 30px;
+    box-shadow: 2px 13px 54px #695F9714;    
+    min-height: 75vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 93%;
+}
+
+.default-actions-heading{
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.sub-heading{
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.sub-contents{
+    padding: 6px 0px 0px 0px;
+}
+
+.sub-contents p{
+    font-size: 13px;    
+    color: #7A86A1;
+}
+
+.grid-view{
+    display: grid;
+    gap: 2vw 4vw;
+    grid-template-columns: auto auto;
+}
+
+.white-btn{
+    background: white;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 19px;
+    color: #6149CD;
+    border: none;
+    padding: 6px 15px;
+    font-weight: 600;
+}
+
+.account-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 17px;
+    padding: 7px 30px;
+    border: 1px;    
+    color: white;
+    font-weight: 400;
+   }
+
+   .default-footer{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+   }
+
+   .disable{
+    border-radius: 12px;
+    background: #EBEDF1;
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.enable{
+    border-radius: 12px;
+    background: #E2F4EC;
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.flex-row{
+    display: flex;
+    justify-content: space-between;
+}

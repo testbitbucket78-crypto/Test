@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost } from '../models/settings.model';
+import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser } from '../models/settings.model';
 
 @Injectable({
   providedIn: 'root'
@@ -39,15 +39,92 @@ export class SettingsService {
     return this.http.get<workingDataResponse>(`${this.API_URL}/workingDetails/${spId}`);
   }
 
-  getHolidayData(spId: number): Observable<workingDataResponse> {
-    return this.http.get<workingDataResponse>(`${this.API_URL}/holidays/${spId}`);
+  getHolidayData(spId: number,dateFrom:any,dateTo:any): Observable<workingDataResponse> {
+    return this.http.get<workingDataResponse>(`${this.API_URL}/holidays/${spId}/${dateFrom}/${dateTo}`);
   }
+  //https://settings.sampanatechnologies.com/holidays/:spID/:dateFrom/:dateTo
 
   saveWorkingData(workingData: workingDataResponsePost): Observable<workingData> {
     return this.http.post<workingData>(`${this.API_URL}/workingDetails`,workingData );
   }
 
+  saveCampaignTiming(campaignData: campaignDataResponsePost): Observable<workingData> {
+    return this.http.post<workingData>(`${this.API_URL}/addCampaignTimings`,campaignData );
+  }
+
   saveHolidayData(holidayData: holidayData): Observable<workingData> {
     return this.http.post<workingData>(`${this.API_URL}/holidays`,holidayData );
+  }
+
+  getRolesList(spId: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/rolesList/${spId}`);
+  }
+
+  getRightsList(): Observable<rightsResponse> {
+    return this.http.get<rightsResponse>(`${this.API_URL}/rights`);
+  }
+
+  getSubRightsList(): Observable<workingDataResponse> {
+    return this.http.get<workingDataResponse>(`${this.API_URL}/subrights`);
+  }
+
+  deleteRolesData(spId: number,roleId: number): Observable<workingDataResponse> {
+    return this.http.post<workingDataResponse>(`${this.API_URL}/deleteRole/${roleId}/${spId}`,'');
+  }
+
+  saveRolesData(rolesData: RolesData): Observable<workingDataResponse> {
+    return this.http.post<workingDataResponse>(`${this.API_URL}/addRole`,rolesData);
+  }
+
+  saveUserData(userData: UserData): Observable<workingDataResponse> {
+    return this.http.post<workingDataResponse>(`${this.API_URL}/addUser`,userData);
+  }
+
+  deleteUserData(uid: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/deleteUser`,uid);
+  }
+
+  getUserList(spId:number,userType:number =0): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getUser/${spId}`);
+  }
+
+  activeUser(activeUserData: any): Observable<workingDataResponse> {
+    return this.http.post<workingDataResponse>(`${this.API_URL}/userActiveStatus`,activeUserData);
+  }
+
+  getTeamList(spId:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/teamsList/${spId}`);
+  }
+
+  getCampaignTimingList(spId:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/selectCampaignTimings/${spId}`);
+  }
+  
+  saveTeamData(teamData: TeamData): Observable<workingDataResponse> {
+    return this.http.post<workingDataResponse>(`${this.API_URL}/addTeam`,teamData);
+  }
+
+  deleteTeamData(teamid: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/deleteTeam`,teamid);
+  }
+
+  getUserListData(spId:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getCampaignAlertUserList/${spId}`);
+  }
+
+  updateCampaignData(campaignAlertData:campaignAlertUser): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addAndUpdateCampaign`,campaignAlertData);
+  }
+
+  getCampaignData(spId:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/selectCampaignAlerts/${spId}`);
+  }
+
+  getTestCampaignData(spId:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/selectCampaignTest/${spId}`);
+  }
+
+  updateCampaignTestData(campaignAlertData:campaignAlertUser): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addCampaignTest`,campaignAlertData);
   }
 }

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Input, Component, OnInit,HostListener} from '@angular/core';
 import { NavigationService } from 'Frontend/navigation/services';
 import { AuthService } from 'Frontend/auth/services';
+import { ProfileService } from 'Frontend/dashboard/services/profile.service';
 import { Router } from '@angular/router';
 
 
@@ -27,22 +28,42 @@ export class TopNavComponent implements OnInit {
     ShowProfile: boolean =false;
     Name:any;
     EmailId:any;
+    uid :any;
+    spId!:number;
     PhoneNumber:any;
+    isActive: number = 1; 
+    firstLetterFirstName!:string;
+    firstLetterLastName!:string;
+    notificationData = [];
 
-    constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router) {}
+    constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: ProfileService) {}
 
     ngOnInit() {
-
+        
+        let uid: string  = sessionStorage.getItem('loginDetails')?.toString() ?? '';
+        let userid =JSON.parse(uid);
+        this.uid = userid.uid;
+        this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
         this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
         this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
 
+        const nameParts = this.Name.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts[1] || '';
+        
+        this.firstLetterFirstName = firstName.charAt(0) || '';
+        this.firstLetterLastName = lastName.charAt(0) || '';
+
+        this.getNotificationData();
     }
 
-    // toggleSideNav() {
-    //     this.navigationService.toggleSideNav();
-    // }
-
+    getNotificationData() {
+      this.apiService.getNotifications(this.spId).subscribe((response=> {
+          this.notificationData = response.notifications;
+          this.notificationData.reverse();
+      }));
+    }
 
     toggleShowNotifications() {
 		
@@ -56,10 +77,31 @@ export class TopNavComponent implements OnInit {
 		this.ShowProfile = !this.ShowProfile;
 	}
 
+    // toggle active/inactive state of logged-in user
+
+    toggleActiveState(checked: boolean) {
+        this.isActive = checked ? 1 : 0;
+    
+        const activeStateData = {
+        uid: this.uid,
+        isActive: this.isActive
+        };
+    
+        this.apiService.userActiveState(activeStateData)
+        .subscribe(
+            response => {
+            console.log('success',response);
+            },
+            error => {
+            console.log('error:', error);
+            }
+        );
+    }
+  
+
     logout(): void {
         
         this.authservice.logout();
-        console.log('logout');
         this.router.navigate(['/login']);
       }
     }

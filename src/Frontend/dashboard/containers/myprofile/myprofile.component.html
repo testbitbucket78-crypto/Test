@@ -1,26 +1,35 @@
 <sb-layout-dashboard>
     <sb-top-nav title="My Profile"></sb-top-nav>
 
-    <div class="row main-card">
+    <!-- ****main profile page **** -->
+
+    <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+        <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+    </div>
+
+
+    <div *ngIf="selectedTab == 0" class="row pt-4 pb-5 main-card">
         <div class="col-sm-1"></div>
-        <div class="col-sm-7 my-4 main-card-container">
-            <div class="row teambox-card">
+        <div class="col-sm-7 my-2 main-card-container">
+            <div class="row mb-4 teambox-card">
                 <div class="col-sm-12">
                     <div class="p-2 mt-3 ml-3 teambox-heading">
                         <h5 class="m-0">Teambox Notifications</h5>
                     </div>
                     <div class="d-flex mb-4 justify-content-end align-items-center toggle-headings">
-                        <div class="col-sm-2 text-center push-noti">
+                        <div class="col-sm-2 col-xs-2 text-center push-noti">
                             <p class="m-0">Push <br />Notification</p>
                         </div>
-                        <div class="col-sm-3 text-center sound-noti">
+                        <div class="col-sm-3 col-xs-3 text-center sound-noti">
                             <p class="m-0">Sound <br />Notification</p>
                         </div>
                     </div>
                     <div class="row py-2 justify-content-center">
                         <div class="col-sm-12 d-flex teambox-notificaiton-row">
                             <div class="col-sm-1"></div>
-                            <div class="col-sm-6 p-0 text-left teambox-notificaiton-content">
+                            <div class="col-sm-6 px-2 text-left teambox-notificaiton-content">
                                 <h6 class="m-0 pb-2" >New Chat Notification</h6>
                                 <p class="m-0 pb-2">When a new chat is available to be assigned</p>
                             </div>
@@ -28,7 +37,7 @@
                             <div class="col-sm-2 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[0]" (change)="updateNotificationId(1)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -36,7 +45,7 @@
                             <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[0]" (change)="updateNotificationId(1)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -46,7 +55,7 @@
                     <div class="row py-2 justify-content-center">
                         <div class="col-sm-12 d-flex teambox-notificaiton-row">
                             <div class="col-sm-1"></div>
-                            <div class="col-sm-6 p-0 text-left teambox-notificaiton-content">
+                            <div class="col-sm-6 px-2 text-left teambox-notificaiton-content">
                                 <h6 class="m-0 pb-2">New Chat Assigned to You</h6>
                                 <p class="m-0 pb-2">When a new chat is assigned to you (Fresh conversation)</p>
                             </div>
@@ -54,7 +63,7 @@
                             <div class="col-sm-2 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[1]" (change)="updateNotificationId(2)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -62,7 +71,7 @@
                             <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[1]" (change)="updateNotificationId(2)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -72,7 +81,7 @@
                     <div class="row py-2 justify-content-center">
                         <div class="col-sm-12 d-flex teambox-notificaiton-row">
                             <div class="col-sm-1"></div>
-                            <div class="col-sm-6 p-0 text-left teambox-notificaiton-content">
+                            <div class="col-sm-6 px-2 text-left teambox-notificaiton-content">
                                 <h6 class="m-0 pb-2">New Message in Your Chat</h6>
                                 <p class="m-0 pb-2">When you receive a new message in your current conversation</p>
                             </div>
@@ -80,7 +89,7 @@
                             <div class="col-sm-2 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[2]" (change)="updateNotificationId(3)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -88,7 +97,7 @@
                             <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[2]" (change)="updateNotificationId(3)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -98,7 +107,7 @@
                     <div class="row py-2 justify-content-center">
                         <div class="col-sm-12 d-flex teambox-notificaiton-row">
                             <div class="col-sm-1"></div>
-                            <div class="col-sm-6 p-0 text-left teambox-notificaiton-content">
+                            <div class="col-sm-6 px-2 text-left teambox-notificaiton-content">
                                 <h6 class="m-0 pb-2">New Chat Assigned to Team</h6>
                                 <p class="m-0 pb-2">When a new chat is assigned to your team, any team member can choose to assign the chat to himself and start a conversation</p>
                             </div>
@@ -106,7 +115,7 @@
                             <div class="col-sm-2 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[3]" (change)="updateNotificationId(4)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -114,7 +123,7 @@
                             <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[3]" (change)="updateNotificationId(4)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -136,39 +145,247 @@
                     
                     </div>
                     </div>
+              
+                    </div>
+                  
+                </div>
+                <div class="row pay-card">
+                <div class="col-sm-12 p-0 d-flex flex-wrap justify-content-between align-items-center">
+                    <div class="col-sm-6 pr-3 pl-0">
+                        <div class="billing-card">
+                            <div class="text-right p-4 billing-card-head">
+                                <!-- <img src="../../../../assets/img/profile/dots.png" /> -->
+                                <button (click)="selectTab(3)" class="px-4 py-2" >Manage Plan</button>
+                            </div>
+                            <!-- <div class="text-center p-4 billing-bg-img">
+                                <img src="assets/img/profile/img2.png">
+                            </div> -->
+                            <div class="text-center p-2 txt-head">
+                                <h2 class="m-0 p-2">Premium+</h2>
+                            </div>
+                            <div class="text-center px-4 mx-4 txt-para">
+                                <p class="m-0 p-2">Share team, Inbox, Contact, Management Broadcast Management, Template Submission, Chatbot Builder, APIs & Webhooks, Integrations</p>
+                            </div>
+                            <div class="text-center my-4 billing-history-btn">
+                                <button class="p-2"  (click)="selectTab(2)">
+                                <span><img class="px-2" src="../../../../assets/img/profile/bill.svg"></span>
+                                    View Billing History
+                                <span><img class="px-2" src="../../../../assets/img/profile/next1.svg"></span>
+                            </button>
+                            </div>
+                        </div>
+                      
+                    </div>
+                    <div class="col-sm-6 pl-3 pr-0">
+                        <div class="payment-card">
+                            <div class="text-right p-4 payment-card-btn">
+                                <button class="px-4 py-2" (click)="openAddFundsPopup()">Add Funds</button>
+                            
+                            </div>  
+        
+                            <div class="modal fade" tabindex="-1" id="AddFundsModal" role="dialog">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content px-3 addfunds-popup-modal">
+                                        <form>
+                                        <div class="modal-header align-items-center">
+                                            <h5 class="modal-title">Add Funds</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                <img src="../../../../assets/img/teambox/icon-close.svg">
+                                            </button>
+                                        </div>
+                                        <div class="modal-body text-center addfundsbody">
+                                          
+                                          <p class="head">Enter Amount</p>
+                                    
+
+                                         
+                                         <div class="d-flex pt-3 pb-5 justify-content-end align-items-center">
+                                                
+                                              <h1 class="mx-2 ml-4 my-0">₹ </h1><input type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)" name="enter-amount" id="enter-amount" [(ngModel)]="selectedAmount" />
+                                
+                                        </div>
+                                         <p class="m-0 amount-para">You can add minimum amount of 500</p>
+                                       
+                                           <div class="col-sm-12 pt-5 d-flex justify-content-around align-items-center amount-body">  
+                                            <div class="sel-amount" (click)="fillAmount(500,0)" [class.sel-amount-active]="selectedDiv === 0">500</div>
+                                           <div class="sel-amount" (click)="fillAmount(1000,1)" [class.sel-amount-active]="selectedDiv === 1">1000</div>
+                                           <div class="sel-amount" (click)="fillAmount(1500,2)" [class.sel-amount-active]="selectedDiv === 2" >1500</div>
+                                        </div>
+                                        <div class="col-sm-12 pb-5 d-flex justify-content-around align-items-center amount-body">  
+                                          <div class="sel-amount"  (click)="fillAmount(2000,3)" [class.sel-amount-active]="selectedDiv === 3">2000</div>
+                                            <div class="sel-amount" (click)="fillAmount(2500,4)" [class.sel-amount-active]="selectedDiv === 4">2500</div>
+                                            <div class="sel-amount" (click)="fillAmount(3000,5)" [class.sel-amount-active]="selectedDiv === 5">3000</div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer justify-content-center my-4 border-0">
+                                            <button type="button" class="addfunds-continue-btn" (click)="addFunds(addFundsSuccess)">Continue</button>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <ng-template #addFundsSuccess let-c="close" let-d="dismiss">
+                                    <div class="modal-content m-0 p-3 addFundsSuccess">
+                                        <div class="modal-header align-items-center addFundsSuccessheader">
+                                            <img src="../../../../assets/img/profile/wallet-icon.svg" alt="">
+                                            </div>
+                                        <div class="modal-body px-5 text-center addFundsSuccessbody">
+                                                <h5 class="m-0">Funds Added ₹{{selectedAmount}}</h5>
+
+                                                <p class="mb-4 mt-3">New amount is successfully added in your CIP wallet <br />now you can close this dialogue box.</p>
+                                                   
+                                             <!-- <div class=""><img src="../../../../assets/img/profile/bg2.png" /></div> -->
+                                
+                                    </div>
+                                        <div class="modal-footer pt-0 justify-content-center addFundsSuccessfooter">
+                                              
+                                                <button type="button" aria-label="Close" (click)="d('Cross click')">Ok, Got it</button>
+                                            
+                                        </div>
+                                    </div>
+                                
+                                </ng-template>
+                            <div class="text-center p-2">
+                                <h6>Available Amount</h6>
+                            </div>
+                            <div class="text-center px-4 mx-4">
+                                <!-- <h1>${{selectedAmount}}</h1> -->
+                                <h1>₹{{!availableAmount ? 0 : availableAmount}}</h1>
+                            </div>
+
+                            <div *ngIf="availableAmount <=250 " class="text-center low-balance">
+                                <p class="mb-1">Low Balance!<br /> For uninterrupted service, add funds</p>
+                            </div>
+                            <div class="d-flex text-center m-0 justify-content-around align-items-center billing-history-btn">
+                                <button class="" (click)="selectTab(1)">
+                                <span><img class="px-2" src="../../../../assets/img/profile/wallet-icon.svg"></span>
+                                     Wallet Usage
+                                <span><img class="px-2" src="../../../../assets/img/profile/next1.svg"></span>
+                            </button>
+                               
+                            </div>
+                            <div class="col-sm-12 p-0 pb-2">
+                                <div class="py-5 d-block payment-method">
+                         
+                                    <!-- <img src="assets/img/profile/wallet-usage-bg.png" /> -->
+                                
+                                  <h6 class="px-5 ml-2">Payment Method</h6>
+                                  <div class="px-5 d-flex justify-content-between align-items-center creditcarddetails">
+                                    <div class="card-details">
+                                        <div class=" m-2 mb-3 cardholder-name">
+                                            <p class="m-0">Tony Nguyen</p>
+                                        </div>
+                                        <div class=" m-2 cardholder-detail">
+                                            <p class="m-0 card-number">MasterCard •••• 3268</p>
+                                            <p class="m-0 expiry">Checking - Expires 12/22</p>
+                                        </div>
+                    
+                                      </div>
+                    
+                                      <div class="deleteCard-details">
+                                        <button class="del-popup-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="p-0" src="../../../../assets/img/profile/delete.svg"></button>
+                                      </div>
+                                      <div class="modal fade" tabindex="-1" id="deleteModal" role="dialog">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content delete-modal">
+                                                <div class="modal-body alertmessage">
+                                                    <p class="label pb-2">Do you really want to delete <br /> this Saved Card ?</p>
+                                                    <div class="delete_group_button d-flex">
+                                                        <button type="button" class="cancel-btn" aria-label="Close"
+                                                            data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="button" class="delete-btn" aria-label="Close">Yes, Delete</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </div>
+                               
+                                  
+                                </div>
+                            </div>
+                           
+                        </div>
+                     
+        
                     </div>
                 </div>
-            
+            </div>
 
 
         </div>
         <div class="col-sm-1 my-4"></div>
-        <div class="col-sm-3 mt-5 px-0 account-info-sidebar1">
+        <div class="col-sm-3 mt-4 px-0 account-info-sidebar1">
+
           
-                <div class="p-0">
+                <div class="p-0 profile-container">
                 <div class="profile-heading">
                   <img id="profile-bg" src="/assets/img/profile/profile-bg.png">
                   <img id="pic-bg" src="assets/img/profile/bg image.png">
-                  <img id="profile-pic" src="assets/img/profile/Richie_3.png">
-                </div>
+                  <img id="profile-pic" [src]="croppedImage"/>
+
+                  <div *ngIf="!croppedImage" class="image-container">
+                    <span class="initials" > {{ firstLetterFirstName }}{{ firstLetterLastName }} </span>
+                  </div>
              
-                    <!-- <div class="text-center picture-crop-button"><img src="../../../../assets/img/profile/Fill 4.png" /></div> -->
+    
+                </div>
+                    <div class="d-flex justify-content-center picture-crop-button-container">
+                        <div class="text-center picture-crop-button">
+                         <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" />
+                         <label for="myFileInput" class="m-0 fileLabel" ><img src="../../../../assets/img/profile/Fill 4.svg" /></label>    
+                        </div>
+                    </div>
+                  
+
+                    <div class="modal fade" tabindex="-1" id="pictureCropModal" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content px-3 pictureCropPopupModal">
+                                <form>
+                                <div class="modal-header align-items-center">
+                                    <h5 class="modal-title">Crop & Adjust</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                        <img src="../../../../assets/img/teambox/icon-close.svg"/> 
+                                    </button>
+                                </div>
+                                <div class="modal-body p-4 text-center pictureCropPopupbody">
+                                  <div class="pic-cont">
+                                           <image-cropper
+                                            [imageChangedEvent]="imageChangedEvent"
+                                            [maintainAspectRatio]="false"
+                                            [aspectRatio]="4 / 3"
+                                            format="jpg"
+                                            (imageCropped)="imageCropped($event)"
+                                            (imageLoaded)="imageLoaded()"
+                                            (cropperReady)="cropperReady()"
+                                            (loadImageFailed)="loadImageFailed()">
+                                            </image-cropper>
+                                    </div>
+                      
+                                </div>
+                                <div class="modal-footer justify-content-end my-2 border-0">
+                                    <button type="button" (click)="saveCroppedProfilePicture()" class="update-pass-btn">Save</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 
                  </div>
                   <div class="col-sm-12 d-block mb-5 text-center profile-content1">
                     <h4 class="text-capitalize mb-3">{{Name}}</h4>
                     <p>{{EmailId}}</p>
-                    <p>{{PhoneNumber}}</p>
-            
+                    <p>{{PhoneNumber}}</p>   
                   </div>
                   
-                    <div class="mx-5 sidebar-team">
+                    <div  class="mx-5 sidebar-team">
                         <div class="p-2 heading">
                            <p class="m-0">Team</p>
                         </div>
-                        <div class="d-flex align-items-center team">
+                        <div  class="d-flex align-items-center team">
                             <img class="p-2" src="assets/img/profile/team.svg">
-                            <p class="m-0 p-1">Management</p>
+                            <p *ngIf="teamName != null" class="m-0 p-1">{{teamName}}</p>
+                            <p *ngIf="teamName == null" class="m-0 p-1">No data available</p>
                         </div>
                     </div>
                     <div class="mx-5 sidebar-role">
@@ -177,205 +394,113 @@
                         </div>
                         <div class="d-flex align-items-center team">
                             <img class="p-2" src="assets/img/profile/role.svg">
-                            <p class="m-0 p-1">Head of Department</p>
+                            <p *ngIf="roleName" class="m-0 p-1">{{roleName}}</p>
+                            <p *ngIf="!roleName" class="m-0 p-1">No data available</p>
                         </div>
                     </div>
-                 </div>
-        </div>
-
-   
-
-    <div class="row mb-5 billing-pay-card">
-        <div class="col-sm-1"></div>
-        <div class="col-sm-7 p-0 d-flex justify-content-between align-items-center">
-            <div class="col-sm-6 pr-3 pl-0">
-                <div class="billing-card">
-                    <div class="text-right px-4 py-5 billing-card-head">
-                        <button routerLink="/dashboard/manageplan" class="px-4 py-2" >Manage Plan</button>
-                    </div>
-                    <!-- <div class="text-center p-4 billing-bg-img">
-                        <img src="assets/img/profile/img2.png">
-                    </div> -->
-                    <div class="text-center p-2 txt-head">
-                        <h2 class="m-0 p-2">Premium+</h2>
-                    </div>
-                    <div class="text-center px-4 mx-4 txt-para">
-                        <p class="m-0 p-2">Share team, Inbox, Contact, Management Broadcast Management, Template Submission, Chatbot Builder, APIs & Webhooks, Integrations</p>
-                    </div>
-                    <div class="text-center m-4 py-5 billing-history-btn">
-                        <button class="p-2"  routerLink="/dashboard/billinghistory">
-                        <span><img class="px-2" src="../../../../assets/img/profile/bill.png"></span>
-                            View Billing History
-                        <span><img class="px-2" src="../../../../assets/img/profile/next.png"></span>
-                    </button>
-                    </div>
-                </div>
-              
-            </div>
-            <div class="col-sm-6 pl-3 pr-0">
-                <div class="payment-card">
-                    <div class="text-right p-4 payment-card-btn">
-                        <!-- <button class="px-4 py-2"  data-bs-toggle="modal" data-bs-target="#AddFundsModal">Add Funds</button> -->
-                        <button class="px-4 py-2">Add Funds</button>
-                    </div>  
-
-                    <div class="modal fade" tabindex="-1" id="AddFundsModal" role="dialog">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content px-3 addfunds-popup-modal">
-                                <div class="modal-header align-items-center">
-                                    <h5 class="modal-title">Add Funds</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                        <img src="../../../../assets/img/teambox/icon-close.svg">
-                                    </button>
-                                </div>
-                                <div class="modal-body addfundsbody">
-                                  
-                                  
-                                      
-                                </div>
-                                <div class="modal-footer justify-content-center my-4 border-0">
-                                    <button type="button" class="addfunds-continue-btn" (click)="addFunds()">Continue</button>
-                                </div>
+                    <div class="py-5 d-flex justify-content-center account-info-sidebar2">
+                        <div class="d-flex justify-content-center align-items-center active-toggle">
+            
+                            <div class="btn-text" data-bs-toggle="modal" data-bs-target="#changePasswordModal" >
+                              <p class="m-0 p-0" >Change Password</p>
+                            
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="text-center p-2">
-                        <h6>Available Amount</h6>
-                    </div>
-                    <div class="text-center px-4 mx-4">
-                        <h1>$2.309.68</h1>
-                    </div>
-                    <div class="d-flex text-center m-3 justify-content-around align-items-center billing-history-btn">
-                        <button class="" routerLink="/dashboard/walletusage">
-                        <span><img class="px-2" src="../../../../assets/img/profile/wallet-icon.png"></span>
-                             Wallet Usage
-                        <span><img class="px-2" src="../../../../assets/img/profile/next.png"></span>
-                    </button>
-                    </div>
-                    <div class="col-sm-12 p-0 pb-2">
-                        <div class="py-5 d-block payment-method">
-                 
-                            <!-- <img src="assets/img/profile/wallet-usage-bg.png" /> -->
-                        
-                          <h6 class="px-5 ml-2">Payment Method</h6>
-                          <div class="px-5 d-flex justify-content-between align-items-center creditcarddetails">
-                            <div class="card-details">
-                                <div class=" m-2 mb-3 cardholder-name">
-                                    <p class="m-0">Tony Nguyen</p>
-                                </div>
-                                <div class=" m-2 cardholder-detail">
-                                    <p class="m-0 card-number">MasterCard •••• 3268</p>
-                                    <p class="m-0 expiry">Checking - Expires 12/22</p>
-                                </div>
-            
-                              </div>
-            
-                              <div class="deleteCard-details">
-                                <button class="del-popup-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="p-0" src="../../../../assets/img/delete.png"></button>
-                              </div>
-                              <div class="modal fade" tabindex="-1" id="deleteModal" role="dialog">
+                
+                            <div class="modal fade" tabindex="-1" id="changePasswordModal" role="dialog">
                                 <div class="modal-dialog" role="document">
-                                    <div class="modal-content delete-modal">
-                                        <div class="modal-body alertmessage">
-                                            <p class="label pb-2">Do you really want to delete <br /> this Saved Card ?</p>
-                                            <div class="delete_group_button d-flex">
-                                                <button type="button" class="cancel-btn" aria-label="Close"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <button type="button" class="delete-btn" aria-label="Close">Yes, Delete</button>
-                                            </div>
+                                    <div class="modal-content px-3 changepassowrd-popup-modal">
+                                        <div class="modal-header align-items-center">
+                                            <h5 class="modal-title">Change Password</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                <img src="../../../../assets/img/teambox/icon-close.svg">
+                                            </button>
+                                        </div>
+                                        <div class="modal-body changepasswordbody">
+                                          
+                                            <form [formGroup]="changepassword">
+                                                <label class="changepassform" for="currentPassword">Current Password</label>
+                                                <div class="input-group">
+                                                  <input [type]="currentPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" id="currentPassword"
+                                                    name="currentPassword" formControlName="oldPass" placeholder="8 character" required autocomplete="currentPassword">
+                                                  <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('currentPassword')">
+                                                    <i [ngClass]="currentPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                                                  </span>
+                                                  <div *ngIf="changepassword.get('oldPass').invalid && changepassword.get('oldPass').touched">
+                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('oldPass').hasError('minlength')">!  Password must be at least 8 characters long.</div>
+                                                  </div>
+                                                </div>
+                                              
+                                                <label class="changepassform" for="newPassword">New Password</label>
+                                                <div class="input-group">
+                                                  <input [type]="newPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" formControlName="newPass"
+                                                    placeholder="8 character" name="newPassword" id="newPassword" required autocomplete="newPassword">
+                                                  <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('newPassword')">
+                                                    <i [ngClass]="newPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                                                  </span>
+                                                  <div *ngIf="changepassword.get('newPass').invalid && changepassword.get('newPass').touched">
+                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('newPass').hasError('minlength')">!  Password must be at least 8 characters long.</div>
+                                                  </div>
+                                                </div>
+                                              
+                                                <label class="changepassform" for="confirmPassword">Re-Enter New Password</label>
+                                                <div class="input-group">
+                                                  <input [type]="confirmPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield"
+                                                    formControlName="confirmPass" placeholder="8 character" id="confirmPassword" name="confirmPassword" required autocomplete="confirmPassword">
+                                                  <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('confirmPassword')">
+                                                    <i [ngClass]="confirmPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                                                  </span>
+                                                  <div *ngIf="changepassword.get('confirmPass').invalid && changepassword.get('confirmPass').touched">
+                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('confirmPass').hasError('minlength')">!  Password must be at least 8 characters long.</div>
+                                                  </div>
+                                                </div>
+                                              </form>
+                                              
+                                        </div>
+                                        <div class="modal-footer my-3 border-0">
+                                            <button type="button" class="update-pass-btn" (click)="saveNewPassword()">Update</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+            
                           </div>
-                       
-                          
-                        </div>
-                    </div>
-                   
-                </div>
-             
-
-            </div>
-        </div>
-        <div class="col-sm-1"></div>
-        <div class="col-sm-3 p-0">
-
-        <div class="py-5 d-flex justify-content-center account-info-sidebar2">
-            <div class="d-flex justify-content-center align-items-center active-toggle">
-
-                <div class="btn-text" data-bs-toggle="modal" data-bs-target="#changePasswordModal" >
-                  <p class="m-0 p-4" >Change Password</p>
+                        <div class="d-flex justify-content-center align-items-center active-toggle" >
                 
-                </div>
-    
-                <div class="modal fade" tabindex="-1" id="changePasswordModal" role="dialog">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content px-3 changepassowrd-popup-modal">
-                            <div class="modal-header align-items-center">
-                                <h5 class="modal-title">Change Password</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                    <img src="../../../../assets/img/teambox/icon-close.svg">
-                                </button>
+                            <div class="p-2 switch-text">
+                              <p class="m-0 pl-1">Active</p>
+                            
                             </div>
-                            <div class="modal-body changepasswordbody">
-                              
-                                <form [formGroup]="changepassword">
-                              
-                                        <label class="changepassform" for="currentPassword">Current Password</label>
-                                        <input type="password" class="form-control inputpassowrdfield"
-                                        id="currentPassword" name="currentPassword" formControlName="currentPassword" 
-                                        placeholder="8 character" required>
-                                       
-
-                                        <label class="changepassform" for="newPassword">New Password</label>
-                                        <input type="password" class="form-control inputpassowrdfield" formControlName="newPassword"
-                                         placeholder="8 character"
-                                        name="newPassword" id="newPassword" required>
-                                       
-                        
-                                        <label class="changepassform" for="confirmPassword">Re-Enter New Password</label>
-                                        <input type="password" class="form-control inputpassowrdfield" formControlName="confirmPassword"  placeholder="8 character"
-                                          id="confirmPassword" name="confirmPassword" required>
-                                  </form>
+                  
+                            <div class="p-2 switch-toggle">
+                              <label class="m-0 switch">
+                                <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleActiveState($event.target.checked)" checked>
+                                <span class="slider"></span>
+                              </label>
                             </div>
-                            <div class="modal-footer my-3 border-0">
-                                <button type="button" class="update-pass-btn" (click)="saveNewPassword()">Update</button>
-                            </div>
-                        </div>
+                           
+                          </div>
                     </div>
-                </div>
+                 </div>
 
-
-
-
-
-              </div>
-            <div class="d-flex justify-content-center align-items-center active-toggle">
-    
-                <div class="p-2 switch-text">
-                  <p class="m-0 pl-1">Active</p>
-                
-                </div>
-      
-                <div class="p-2 switch-toggle">
-                  <label class="m-0 switch">
-                    <input type="checkbox" class="m-0 form-control-checkbox">
-                    <span class="slider"></span>
-                  </label>
-                </div>
-               
-              </div>
+                     
         </div>
-             
-    
-        </div>
-       
+
+
+     <!-- **** wallet usage page**** -->
+     <div *ngIf="selectedTab == 1" class="">
+
+        <sb-walletusage (selectab)="selectedTab=$event"></sb-walletusage>
+
     </div>
 
+     <!-- **** billing history  page**** -->
+     <div  *ngIf="selectedTab == 2" class="">
+        <sb-billinghistory (selectab)="selectedTab=$event"></sb-billinghistory>
+    </div>
 
-
-
+       <!-- **** manageplan page**** -->
+       <div *ngIf="selectedTab == 3"class="">
+        <sb-manageplan (selectab)="selectedTab=$event"></sb-manageplan>
+    </div>
 
 </sb-layout-dashboard>

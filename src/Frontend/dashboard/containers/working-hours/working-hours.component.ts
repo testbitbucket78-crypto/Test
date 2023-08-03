@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { holidayData, workingData, workingDataResponse, workingDataResponsePost, workingFormData } from '../../models/settings.model';
 import { time } from 'console';
 import { SettingsService } from '../../services/settings.service';
 import { isNullOrUndefined } from 'util';
+declare var $:any;
 
 @Component({
   selector: 'sb-working-hours',
   templateUrl: './working-hours.component.html',
-  styleUrls: ['./working-hours.component.scss']
+  styleUrls: ['./working-hours.component.scss'],
+  encapsulation:ViewEncapsulation.Emulated
 })
 export class WorkingHoursComponent implements OnInit {
   daysList=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
@@ -29,18 +31,21 @@ workingData:workingData[]=[];
 workingFormData:workingFormData[]=[];
 workingHourForm!:FormGroup;
 selectedMonth!:number;
-selectedYear:number = 2023;
+selectedYear:number = 0;
 monthDates:any[] =[];
 selectedDates:number[] =[];
+yearList:number[] =[];
 
   constructor(private _settingsService:SettingsService) { 
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
+    this.selectedYear =new Date().getFullYear();
    }
 
   ngOnInit(): void {
     this.workingHourForm = this.prepareCompanyForm();
     this.getWorkingDetails();
     this.getHolidayDetails();
+    this.getYearData();
   }
 
   prepareCompanyForm(){
@@ -73,7 +78,9 @@ selectedDates:number[] =[];
   }
 
   getHolidayDetails(){
-    this._settingsService.getHolidayData(this.sp_Id)
+    let fromDate = new Date(this.selectedYear,0,1);
+    let toDate = new Date(this.selectedYear,12,0);
+    this._settingsService.getHolidayData(this.sp_Id,fromDate,toDate)
     .subscribe(result =>{
       if(result){
         console.log(result);
@@ -103,8 +110,8 @@ selectedDates:number[] =[];
     .subscribe(result =>{
       if(result){
         console.log(result);
-        this.getWorkingDetails();
-        //this.workingData = result?.result;
+        this.getHolidayDetails();
+        $("#holidayModal").modal('hide');
       }
     })
   }
@@ -116,7 +123,6 @@ selectedDates:number[] =[];
     this.monthDates.forEach(item =>{
       if(item.selected)
       holidayResponse.holiday_date.push(item.completeDate);
-
     })
     return holidayResponse
   }
@@ -160,8 +166,14 @@ selectedDates:number[] =[];
     }
    }
 
-   selectDates(idx:any){
+   selectDates(idx:number){
       this.monthDates[idx].selected = !this.monthDates[idx].selected;
+   }
+
+   getYearData(){
+    for(let i=1950;i<=2050;i++){
+      this.yearList.push(i);
+    }
    }
 
 }

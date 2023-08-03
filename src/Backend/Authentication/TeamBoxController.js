@@ -371,8 +371,9 @@ function sendMediaOnWhatsApp(messageTo, mediaFile) {
 
 }
 
-function sendTextOnWhatsApp(messageTo, messateText) {
-    let content = messateText;
+function sendTextOnWhatsApp(messageTo,messateText){
+let content =messateText;
+if(content){
     content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
     content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
     content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
@@ -380,8 +381,10 @@ function sendTextOnWhatsApp(messageTo, messateText) {
     content = content.replace('&nbsp;', '\n')
     content = content.replace(/<br[^>]*>/g, '\n')
     content = content.replace(/<\/?[^>]+(>|$)/g, "")
-
-    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
+    
+}
+		
+   var reqBH = http.request(WHATSAPPOptions, (resBH) => {
         var chunks = [];
         resBH.on("data", function (chunk) {
             chunks.push(chunk);

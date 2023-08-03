@@ -6,9 +6,9 @@
     {{sideNavItem.text}}
 
     </div>
-    <div class="sb-sidenav-collapse-arrow" [ngClass]="{active: !expanded}"><fa-icon class="ml-auto" *ngIf="sideNavItem.submenu" [icon]="['fas', 'angle-down']"></fa-icon>
-    </div>
+    <!-- <div class="sb-sidenav-collapse-arrow" [ngClass]="{active: !expanded}"><fa-icon class="ml-auto" *ngIf="sideNavItem.submenu" [icon]="['fas']"></fa-icon>
+    </div> -->
    </a>
-   <nav class="sb-sidenav-menu-nested nav" *ngIf="sideNavItem.submenu &amp;&amp; expanded">
+   <nav class="sb-sidenav-menu-nested nav" >
     <sb-side-nav-item class="submenu" *ngFor="let submenuItem of sideNavItem.submenu" [sideNavItem]="submenuItem">
     </sb-side-nav-item></nav>

@@ -45,7 +45,7 @@ export class DashboardComponent implements OnInit {
         console.log(this.Name);
     }
 
-    //******* Router Guard  *********//
+  // ******* Router Guard  *********//
     routerGuard = () => {
         if (sessionStorage.getItem('SP_ID') === null) {
             this.router.navigate(['login']);

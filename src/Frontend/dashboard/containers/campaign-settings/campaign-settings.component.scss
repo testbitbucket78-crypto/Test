@@ -1,0 +1,262 @@
+.setting-field {
+    display: flex;
+   }
+   
+   .setting-field .setting-field-link {
+       color: #7A86A1;
+       font-size: 15px;
+       padding: 0.5rem 1.2rem;
+       text-decoration: none;
+       margin-right: 8px;
+       cursor: pointer;
+   }
+   
+   .setting-field .active{
+       color: #FFFFFF !important;
+       background: #6149CD 0% 0% no-repeat padding-box;
+       border-radius: 19px;    
+   }
+
+   .setting-card {
+    border-radius: 30px;
+    padding: 20px 30px 0px 30px;
+    box-shadow: 2px 13px 54px #695F9714;    
+    min-height: 70vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 35%;
+}
+
+.test-campaign-card{
+    border-radius: 30px;
+    padding: 20px 30px 0px 30px;
+    box-shadow: 2px 13px 54px #695F9714;    
+    min-height: 55vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+}
+
+.default-actions-heading{
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.55px;
+}
+
+.sub-heading{
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.flex-row{
+    display: flex;
+    justify-content: space-between;
+}
+
+.working-hour-img-card{
+    height: 30vh;
+    margin-top: 7rem;
+    text-align: center;
+}
+
+.working-hour-btn{
+    color: #FFFFFF !important;
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 19px;
+    padding: 5px 20px;
+    border: none;
+}
+
+.working-hour-heading{
+    font-size: 16px;
+    font-weight: bold;
+}
+
+p{
+    font-size: 14px;
+    color: #7A86A1;
+}
+
+
+.modal-content .btn-close {
+    background: white;
+    margin: 2px;
+    border-radius: 15px;
+    padding: 6px 12px;
+    border: 1px solid #EBEBEB;
+   }
+
+   .working-hour-modal{
+    width: 650px;
+    height: 600px;
+    border-radius: 26px;
+    overflow-y: scroll;
+   }
+
+   .modal-footer{
+    border: none;
+   }
+
+   .modal-title {
+    letter-spacing: -0.45px;
+    font-weight: bold;
+   }
+
+   .multiselect{
+    display: inline-block;
+    height: 37px;
+    border-radius: 17px;
+    border: 1px solid #EBEBEB;
+    width: 100%;
+    padding: 1px 3px;
+    font-weight: 400;
+    line-height: 1.52857143;
+    text-align: left;
+    vertical-align: middle;
+    cursor: pointer;
+    font-family: 'Manrope';
+    color: #7A86A1;
+    background-color: #ffffff;
+    margin: -2px 0px 0px 0px;
+}
+.billing-form-row{
+    margin-top: 13px;
+}
+
+.billing-form-row label{
+    margin-bottom: 7px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.account-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 17px;
+    padding: 8px 22px;
+    border: 1px;    
+    color: white;
+    font-weight: 400;
+   }
+
+   .incoming-card{
+    display: flex;
+    justify-content: space-between;
+   }
+
+   .remove-btn {
+    color: #FF3636;
+    font-size: 14px;
+   }
+
+   .add-btn {
+    color: #6236FF;
+    font-size: 14px;
+   }
+
+   .input-form {
+    height: 37px;
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: 5px 15px;
+    width: 90%;
+   }
+
+   .user-list p{
+    margin-bottom: 1px;
+    font-size: 13.5px;
+   }
+
+   .user-list img{
+    width: 45px;
+    height: 45px;
+   }
+
+   
+   .form-control {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #ffffff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    font-family: 'Manrope';
+}
+
+.input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
+    position: relative;
+    border-radius: 19px !important;
+    border: 1px solid #EBEBEB;
+    background-color: #ffffff;
+    margin: 0px 15px 0px -18px;
+    font-family: 'Manrope';
+    font-size: 14px;
+    padding-left: 35px;
+    width: 240px;
+}
+
+.input-group img{
+    position: absolute;
+    margin: 11px 0px 0px -5px;
+    width: 15px;
+    height: 15px;
+}
+
+.Manage-User-modal {
+    width: 450px;
+    height: 650px;
+    border-radius: 26px;
+    overflow-y: scroll;
+}
+.btn-close {
+    background: white;
+    margin: 2px;
+    border-radius: 15px;
+    padding: 6px 12px;
+    border: 1px solid #EBEBEB;
+   }
+
+   
+   ::-webkit-scrollbar {
+    width: 0px;
+  }
+
+  .Manage-User-modal .modal-title{
+    color: #6149CD;
+  }
+
+  .user-checkbox{
+    width: 15px;
+    height: 15px;
+  }
+
+  .user-dropdown {
+
+  }
+
+  
+  .working-days{
+    font-weight: 600;
+    padding-bottom: 4px;
+  }
+
+  .working-time{
+    font-weight: 600;
+    color: #6149CD;
+  }
+
+  .user-img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+  .users-body{
+    min-height: 56vh;
+  }

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="99" height="99" viewBox="0 0 99 99">
+  <defs>
+    <filter id="Your_image_here" x="0" y="0" width="99" height="99" filterUnits="userSpaceOnUse">
+      <feOffset dx="1.736" dy="9.848" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="9" result="blur"/>
+      <feFlood flood-color="#695f97" flood-opacity="0.29"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="menu-up" transform="translate(-2.736 -129.848)">
+    <g transform="matrix(1, 0, 0, 1, 2.74, 129.85)" filter="url(#Your_image_here)">
+      <rect id="Your_image_here-2" data-name="Your image here" width="45" height="45" rx="19" transform="translate(25.26 17.15)" fill="#6149cd"/>
+    </g>
+    <path id="Exclusion_4" data-name="Exclusion 4" d="M15425.5,13023h-17a1.5,1.5,0,0,1,0-3h17a1.5,1.5,0,1,1,0,3Zm-2.044-5.382a10.245,10.245,0,0,1-1.614-.1,4.243,4.243,0,0,1-.449-.108.78.78,0,0,1-.384-.337.823.823,0,0,1-.093-.379,2.029,2.029,0,0,1,.144-.5,9.122,9.122,0,0,1,1.7-2.454c.09-.09.2-.182.217-.2a.787.787,0,0,1,.934-.012,1.789,1.789,0,0,1,.232.2,9.216,9.216,0,0,1,1.68,2.4,2.042,2.042,0,0,1,.175.562v.023a.763.763,0,0,1-.423.67,2.531,2.531,0,0,1-.46.121l-.015,0-.019,0a.557.557,0,0,0-.067.015A11.526,11.526,0,0,1,15423.455,13017.616Zm-6.958-.615h-8a1.5,1.5,0,0,1,0-3h8a1.5,1.5,0,1,1,0,3Zm9-6h-17a1.5,1.5,0,0,1,0-3h17a1.5,1.5,0,0,1,0,3Z" transform="translate(-15366.998 -12846)" fill="#fff"/>
+  </g>
+</svg>

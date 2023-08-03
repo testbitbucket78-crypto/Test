@@ -1,0 +1,122 @@
+.setting-card {
+    border-radius: 30px;
+    padding: 20px 30px 0px 30px;
+    box-shadow: 2px 13px 54px #695F9714;  
+    position: relative;
+    display: flex;
+    flex-direction: column;
+   
+}
+
+.storage-card {
+    width: 37%;    
+    min-height: 55vh;
+}
+
+.deletion-card{
+    width: 44%;
+    min-height: 50vh;
+}
+
+.default-actions-heading{
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.sub-heading{
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.deletion-time{
+    font-size: 16px;
+    font-weight: bold;
+    color: #6149CD;
+}
+
+.account-white-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 6px 12px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px;
+    height: fit-content;
+    width: fit-content;
+   }
+
+   .account-white-btn img {
+    width: 12px;
+    height: 12px;
+   }
+   
+.flex-row{
+    display: flex;
+    justify-content: space-between;
+}
+
+.figure {
+    width: 100%;
+    padding: 0;
+    margin: 0 0 .5rem 0;
+}
+.figCaption {
+  text-align: center;
+}
+
+ .figCaption .__text {
+    font-family: 'Source Sans Pro';
+    font-size: 8px;
+    padding: 0 .5rem;
+  }
+
+.circular-chart {
+  display: block;
+  max-width: 160px;
+    max-height: 160px;
+  margin: 0 auto;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 2;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
+
+.circular-chart.orange .circle {
+  stroke: #ff9f00;
+}
+.circular-chart.blue .circle {
+    stroke: #FF89AF;
+}
+.percentage {
+  font-family: 'Source Sans Pro';
+  font-size: 8px;
+  text-anchor: middle;
+  font-weight: 600;
+}
+
+.text-align-center{
+    text-align: center;
+}
+
+.account-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 17px;
+    padding: 7px 30px;
+    border: 1px;    
+    color: white;
+    font-weight: 400;
+   }

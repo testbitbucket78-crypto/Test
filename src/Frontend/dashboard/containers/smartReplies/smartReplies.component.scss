@@ -1,8 +1,28 @@
+.container-empty-state {
+    font-family: 'Manrope';
+}
+
+.container-empty-state {
+    height: 55vh;
+}
+
+.body-empty-state img {
+    width: 123px;
+    height: 109px;
+}
+
+.body-empty-state h5 {
+    font-weight: 700;
+}
+
+.body-empty-state p{
+    color: #7A86A1;
+}
 
 .content-head.d-flex {
     display: flex !important;
     justify-content: space-between;
-    padding: 3% 2% 0% 6%;
+    padding: 3% 2% 0% 4%;
 }
 
 
@@ -168,6 +188,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     width: 45px;
     height: 45px;
     margin-top: 33px;
+    margin-right: 20px;
     outline: none;
   }
 
@@ -208,7 +229,21 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 .row.r1 {
     display: flex;
     flex-wrap: wrap;
-    margin: 3% 3% 0% 6%;
+    margin: 3% 3% 0% 4%;
+}
+
+@media screen  and (max-width: 768px) {
+    .row.r1 {
+        justify-content: center;
+    }
+    
+}
+
+@media screen  and (max-width: 1200px) {
+    .row.r1 {
+        justify-content: center;
+    }
+    
 }
 .row h6 {
 
@@ -315,7 +350,7 @@ h3{
     font-family: 'Manrope';
     font-size: 14px;
     color: #000000;
-    padding-left: 10px;
+    padding-left: 20px;
 }
 
 .mt-4 {
@@ -349,30 +384,32 @@ height: 24px;
     font-family: "Manrope";
     padding: 20px;
 }
-.modal-content {
+.deletesmartreplies-content {
+      
     position: relative;
     display: flex;
     flex-direction: column;
+    width: 310px;
+    height: 196px;
+    top: 145px;
+    left: 115px;
     pointer-events: auto;
-    background: #FFFFFF 0% 0% no-repeat padding-box;
+    background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
     outline: 0;
     border: none;
-    background: transparent;
 }
 
-.modal-dialog .modal-content .modal-body {
+.deletesmartreplies-body {
     font-family: "Manrope";
     font-size: 14px;
-    font-weight: 800;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 61rem;
+    top: 40px;
+    font-weight: 600;
+    text-align: center;
 }
 
-.modal-dialog .modal-content .deletefile .btn9 {
+ .deletefile .btn9 {
     border: 1px solid #695F9724;
     position: absolute;
     font-size: 11px;
@@ -383,9 +420,11 @@ height: 24px;
     border-radius: 15px;
     width: 80px;
     height: 32px;
+    outline: none;
+    border: none;
     cursor: pointer;
 }
-.modal-dialog .modal-content .deletefile .btn99 {
+ .deletefile .btn99 {
     border: 1px solid #695F9724;
     position: absolute;
     font-size: 11px;
@@ -397,7 +436,10 @@ height: 24px;
     left: 52%;
     height: 33px;
     border-radius: 14px;
+    outline: none;
+    border: none;
     cursor: pointer;
+ 
 }
 .footer .delete-btn {
     margin: 0;
@@ -502,4 +544,47 @@ margin-top: -12px;
     margin: 0;
     justify-content: center;
     width: 65rem;
+}
+
+.assign-conversation {
+    background: #f6efff;
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    opacity: 1;
+    max-width: 65%;
+    max-height: 20%;
+    margin-left: 1.5em;
+    margin-top: 0.5em;
+    font-family: 'Manrope';
+}
+
+#msgbox-head1 {
+    text-align: left;
+    letter-spacing: 0px;
+    color: #6149cd;
+    font-size: 11px;
+    margin-left: 1em;
+    margin-top: 0.5em;
+}
+
+#msgbox-body1 {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+#msgbox-body2 {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.reply-action-btn {
+    cursor: pointer;
+}
+
+.keywords-btn {
+    cursor: pointer;
+}
+
+.help-support-btn {
+    cursor: pointer;
 }

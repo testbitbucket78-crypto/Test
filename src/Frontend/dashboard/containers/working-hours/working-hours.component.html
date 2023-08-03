@@ -27,10 +27,8 @@
         <div class="setting-card">
             <div class="flex-header">
                 <span class="working-hour-heading">Holidays</span>
-                <select class="holiday-dropdown">
-                    <option>2023</option>
-                    <option>2024</option>
-                    <option>2025</option>
+                <select class="holiday-dropdown" [(ngModel)]="selectedYear">
+                    <option *ngFor="let item of yearList" [value]="item">{{item}}</option>
                 </select>                
             </div>
             <div class="months-view">

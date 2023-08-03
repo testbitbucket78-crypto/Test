@@ -4,6 +4,8 @@
 	import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 	import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 	import { TeamboxService } from './../../services';
+	import { WebsocketService } from '../../services/websocket.service';
+	import { WebSocketSubject } from 'rxjs/webSocket';
 
 	import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 	import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
@@ -16,6 +18,10 @@
 	})
 
 	export class TeamboxComponent implements  OnInit {
+
+		private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://65.0.219.162:3010/');
+
+		incomingMessage: string = '';
 
 		//******* Router Guard  *********//
 	routerGuard = () => {
@@ -170,42 +176,42 @@
 		public tools: object = {
 			items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
 			{
-			tooltipText: 'Emoji',
+			// tooltipText: 'Emoji',
 			undo: true,
 			click: this.toggleEmoji.bind(this),
 			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
 			},
 			{
-				tooltipText: 'Attachment',
+				// tooltipText: 'Attachment',
 				undo: true,
 				click: this.ToggleAttachmentBox.bind(this),
 				template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
 			},
 			{
-				tooltipText: 'Attributes',
+				// tooltipText: 'Attributes',
 				undo: true,
 				click: this.ToggleAttributesOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
 			},
 			{
-				tooltipText: 'Quick Replies',
+				// tooltipText: 'Quick Replies',
 				undo: true,
 				click: this.ToggleQuickReplies.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
 			},
 			{
-				tooltipText: 'Saved Message',
+				// tooltipText: 'Saved Message',
 				undo: true,
 				click: this.ToggleSavedMessageOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
 			},
 			{
-				tooltipText: 'Insert Template',
+				// tooltipText: 'Insert Template',
 				undo: true,
 				click: this.ToggleInsertTemplateOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
@@ -305,7 +311,7 @@
 		
 		
 
-		constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private router: Router) {
+		constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private router: Router,private websocketService: WebsocketService) {
 			// customize default values of modals used by this component tree
 			config.backdrop = 'static';
 			config.keyboard = false;
@@ -678,12 +684,60 @@
 		}
 
 		ngOnInit() {
+			switch(this.loginAs) {
+				case 1:
+					this.loginAs='Admin'
+					break;
+				case 2:
+					this.loginAs='Manager'
+					break;
+				case 3:
+					this.loginAs='Agent'
+					break;
+				case 4:
+					this.loginAs='Helper'
+					break;
+				default:
+					this.loginAs='Agent'
+			} 
+			this.routerGuard()
 			this.getAgents()
 			this.getAllInteraction()
 			this.getCustomers()
 			this.getsavedMessages()
 			this.getquickReply()
 			this.getTemplates()
+		
+
+		}
+
+		async subscribeToNotifications() {
+			let notificationIdentifier = {
+				"UniqueSPPhonenumber" : (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
+			}
+			this.websocketService.connect(notificationIdentifier);
+				this.websocketService.getMessage().subscribe(message => {
+					if(message != undefined )
+					{
+						console.log("Seems like some message update from webhook");
+						console.log(message)
+						try{
+							let msgjson = JSON.parse(message);
+							if(msgjson.displayPhoneNumber)
+							{
+								console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
+								if(msgjson.updateMessage)
+								{
+									this.getAllInteraction();
+								}						
+							}
+						}
+						catch(e)
+						{
+							console.log(e);
+						}
+					}
+				});
 		}
 
 		
@@ -1244,7 +1298,7 @@
 		if(this.selectedInteraction.interaction_status =='Resolved'){
 			this.showToaster('Already Resolved','warning')
 		}else{
-		if(this.loginAs =='TL' || this.selectedInteraction.interaction_status !='Resolved'){
+		if(this.loginAs =='Manager' || this.selectedInteraction.interaction_status !='Resolved'){
 			this.ShowAssignOption =!this.ShowAssignOption
 		}else{
 			this.showToaster('Opps you dont have permission','warning')
@@ -1471,7 +1525,7 @@
 		if(this.modalReference){
 			this.modalReference.close();
 		}
-		if(this.loginAs =='TL'){
+		if(this.loginAs =='Manager'){
 		this.confirmMessage= 'Are you sure want to Delete this conversations'
 		this.modalReference = this.modalService.open(openDeleteAlertmMessage,{ size:'sm', windowClass:'white-bg'});
 		}else{
@@ -1712,7 +1766,7 @@
 	sendMessage(){
 		
 		let postAllowed =false;
-		if(this.loginAs == 'TL' || this.showChatNotes == 'notes'){
+		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
 			postAllowed =true;
 		}else if(this.selectedInteraction.assignTo && this.selectedInteraction.assignTo.AgentId == this.AgentId){
 			postAllowed =true;
@@ -1730,7 +1784,7 @@
 			SPID:this.SPID,
 			AgentId: this.AgentId,
 			messageTo:this.selectedInteraction.Phone_number,
-			message_text: this.chatEditor.value,
+			message_text: this.chatEditor.value || "",
 			Message_id:this.newMessage.value.Message_id,
 			message_media: this.messageMeidaFile,
 			media_type: this.mediaType,
@@ -1806,7 +1860,12 @@
 	}
 
 	}
-
+	ngAfterViewInit() {
+		const editorElement = this.chatEditor.elementRef.nativeElement;
+		const toolbar = editorElement.querySelector('.e-toolbar');
+		toolbar.removeAttribute('data-tooltip-id');
 
 	}
+
+}
 

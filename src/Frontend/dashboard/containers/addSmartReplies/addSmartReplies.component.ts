@@ -239,42 +239,40 @@ export class AddSmartRepliesComponent implements OnInit {
 	public tools: object = {
 		items: ['Bold', 'Italic', 'StrikeThrough',
 			{
-				tooltipText: 'Emoji',
+
 				undo: true,
 				click: this.toggleEmoji.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
 			},
 			{
-				tooltipText: 'Attachment',
+
 				undo: true,
 				click: this.ToggleAttachmentBox.bind(this),
 				template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
 			},
 			{
-				tooltipText: 'Attributes',
+
 				undo: true,
 				click: this.ToggleAttributesOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
 			},
 			{
-				tooltipText: 'Quick Replies',
 				undo: true,
 				click: this.ToggleQuickReplies.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
 			},
 			{
-				tooltipText: 'Saved Message',
+	
 				undo: true,
 				click: this.ToggleSavedMessageOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
 			},
 			{
-				tooltipText: 'Insert Template',
 				undo: true,
 				click: this.ToggleInsertTemplateOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
@@ -329,8 +327,12 @@ export class AddSmartRepliesComponent implements OnInit {
 		}
 
 	}
+	closeEmoji(){
+		this.showEmoji =false;
+	}
 
 	toggleEmoji() {
+		this.closeAllModal()
 		this.showEmoji = !this.showEmoji;
 		(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus
 		this.range = this.selection.getRange(document);
@@ -376,10 +378,9 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.chatEditor.executeCommand('insertText', item.target.textContent);
 		this.chatEditor.formatter.saveData();
 		this.chatEditor.formatter.enableUndo(this.chatEditor);
-		this.showEmoji = !this.showEmoji;
+		// this.showEmoji = !this.showEmoji;
 
 	}
-
 
 
 
@@ -667,10 +668,10 @@ export class AddSmartRepliesComponent implements OnInit {
 			console.log(data)
 			this.apiService.addNewReply(data).subscribe (
 			
-			(responce:any) => {
-				console.log(responce)
+			(response:any) => {
+				console.log(response)
 			
-				if (responce.status === 200) {
+				if (response.status === 200) {
 					this.modalService.open(smartreplysuccess);
 				}
 				
@@ -703,9 +704,9 @@ export class AddSmartRepliesComponent implements OnInit {
 		}
 		this.apiService.duplicatekeywordSmartReply(data).subscribe(
 			
-			(responce: any) => {
-			console.log(responce)
-			if (responce.status === 200) {
+			(response: any) => {
+			console.log(response)
+			if (response.status === 200) {
 				this.next();				
 			}
 	    
