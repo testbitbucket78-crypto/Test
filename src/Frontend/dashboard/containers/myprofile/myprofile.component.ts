@@ -4,7 +4,6 @@ import { FormBuilder,Validators } from "@angular/forms";
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
 import { addFundsData, profilePicData, teamboxNotifications } from 'Frontend/dashboard/models/profile.model';
-import { first } from 'rxjs/operators';
 declare var $:any;
 
 @Component({
@@ -202,25 +201,27 @@ toggleActiveState(checked: boolean) {
   // change password api service
 
   saveNewPassword() {
-    this.changepassword.controls.uid.setValue(this.uid);
+    if(this.changepassword.valid) {
+      this.changepassword.controls.uid.setValue(this.uid);
 
-    this.apiService.changePass(this.changepassword.value).subscribe(
-      
-    (response: any) => {
-      if(response.status === 200) {
-        this.showToaster('! Password changed successfully.','success');
-        this.modalReference.close();
-      }
-    },
-
-    (error: any) => {
-      if (error.status === 401) {
-        this.showToaster('! Current Password does not match','error');
+      this.apiService.changePass(this.changepassword.value).subscribe(
         
-      } } ,
- 
-    )
+      (response: any) => {
+        if(response.status === 200) {
+          this.showToaster('! Password changed successfully.','success');
+          this.modalReference.close();
+        }
+      },
+  
+      (error: any) => {
+        if (error.status === 401) {
+          this.showToaster('! Current Password does not match','error');
+          
+        } } ,
    
+      )
+    }
+  
   }
 
   // add funds logic to fill pre defined amount in input field
@@ -285,19 +286,26 @@ toggleActiveState(checked: boolean) {
 //post add funds data to api service
 
 addFunds(addFundsSuccess: any) {
- 
+
+  if(this.selectedAmount < 500) {
+    this.showToaster('Please enter minimum amount of 500 or above','');
+    return;
+  
+  }
+
+  else {
     this.fundsData.sp_id = this.spId;
     this.fundsData.amount = this.selectedAmount;
     this.fundsData.transation_type = 'Credited'
     this.fundsData.currency = 'INR' ;
 
     this.apiService.addFunds(this.fundsData,).subscribe(response => {
-      console.log(JSON.stringify(response)+' added');
+      // console.log(JSON.stringify(response)+' added');
       if(response.status === 200) {
         this.openAddFundsSuccessPopup(addFundsSuccess);
-        this.changepassword.reset();
-        this.changepassword.clearValidators();
         this.getAvailableAmount();
+        this.changepassword.clearValidators();
+        this.changepassword.reset();
    
 }},
 
@@ -308,6 +316,9 @@ addFunds(addFundsSuccess: any) {
         }
      
     });
+  }
+ 
+
   }
 
   getAvailableAmount() {

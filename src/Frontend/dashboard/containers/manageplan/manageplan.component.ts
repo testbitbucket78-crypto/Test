@@ -48,6 +48,8 @@ export class ManageplanComponent implements OnInit {
       this.modalReference = this.modalService.open(selectplan, {
           size: 'lg',
           windowClass: 'white-pink',
+          backdrop: 'static',
+          keyboard: false
           
       });
   }
@@ -62,7 +64,10 @@ export class ManageplanComponent implements OnInit {
   }
 
   confirmPlan(confirmplan:any) {
-    this.modalService.open(confirmplan);
+    this.modalService.open(confirmplan,{
+      backdrop: 'static',
+      keyboard: false
+    });
     this.modalReference.close(this.selectPlans);
   }
   previousPage() {
