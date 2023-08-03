@@ -1,0 +1,6 @@
+<svg id="single-tick" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <g id="Time_Circle" data-name="Time Circle" transform="translate(0 0)">
+    <path id="Fill_1" data-name="Fill 1" d="M16,8A8,8,0,1,1,8,0a8,8,0,0,1,8,8" transform="translate(0 0)" fill="#fff"/>
+  </g>
+  <path id="Union_7" data-name="Union 7" d="M2.6,5a.639.639,0,0,1-.9,0L.187,3.5a.639.639,0,1,1,.9-.9L2.144,3.649,5.607.187a.639.639,0,0,1,.9.9Z" transform="translate(4.568 5.487)" fill="#7a86a1"/>
+</svg>

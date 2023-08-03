@@ -75,6 +75,8 @@ export class WalletusageComponent implements OnInit {
         this.modalReference = this.modalService.open(filterchannels, {
             size: 'sm',
             windowClass: 'white-pink',
+            backdrop: 'static',
+            keyboard: false,
         });
     }
 
@@ -174,7 +176,11 @@ export class WalletusageComponent implements OnInit {
     }
 
     openFilterDateRange(filterdaterange: any){
-        this.modalReference = this.modalService.open(filterdaterange);
+        this.modalReference = this.modalService.open(filterdaterange, {
+            backdrop: 'static',
+            keyboard: false,
+        });
+        
     }
 
     clearFilter() {

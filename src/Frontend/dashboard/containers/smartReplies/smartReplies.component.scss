@@ -182,14 +182,18 @@ button:not(:disabled), [type=reset]:not(:disabled) {
   }
   .sidebar .btn5{
     border: 1px solid #EBEBEB;
-    border-radius: 19px;
+    border-radius: 15px;
     background-color: #ffffff;
     float: right;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     margin-top: 33px;
     margin-right: 20px;
     outline: none;
+  }
+
+  .sidebar .btn5 img {
+    width: 11px;
   }
 
 

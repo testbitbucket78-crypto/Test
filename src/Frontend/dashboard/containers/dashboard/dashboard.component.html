@@ -151,9 +151,10 @@
             <div class="px-3">
               <div class="recentconversation" *ngFor="let items of recentConversation">
                 <img src="assets/img/user-chat-img.svg">
-                <div class="rc-body col-md-8">
+                <div class="col-md-8 rc-body">
                   <p id="item-name" [innerHTML]="items.Name"></p>
-                  <p id="item-message" [innerHTML]="items.message_text"></p>
+                  <p id="item-message" [innerHTML]="getLimitedMessageText(items.message_text)"></p>
+                  <!-- <p id="item-message">{{getLimitedMessageText(items.message_text)}}</p>
                   <!-- <p id="item-message">Lorium ipsum dolor sit met …</p> -->
                 </div>
   

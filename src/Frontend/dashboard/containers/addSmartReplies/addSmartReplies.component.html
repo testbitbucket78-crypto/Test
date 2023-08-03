@@ -3,8 +3,13 @@
     <div class="head d-flex">
       <div class="heading d-flex" id="head-add">Add Smart Reply
       </div>
+
+      <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+      </div>
   
-      <button type="button" data-bs-dismiss="modal"  class="btn-cross" aria-label="Close" id="close-btn">X</button>
+      <button type="button" data-bs-dismiss="modal"  class="btn-cross" aria-label="Close" id="close-btn"(click)="previousPage()">X</button>
   
     </div>
     <div class="bs-stepper-header" role="tablist">
@@ -57,10 +62,9 @@
         <div class="box1">
           <h5>Add Keyword</h5>
           <div class="box2 d-flex" data-required="Use enter key to add ➥">
-            <input class="form-control" id="form-box" #keyowrdtxt [(ngModel)]="keyword" type="text" placeholder="Enter Keywords"
+            <input class="form-control" id="form-box" #keyowrdtxt [(ngModel)]="keyword" type="text"  placeholder="Enter Keywords"
               maxlength="56" />
-            <button type="button" class="btn7 btn-block ml-2" (click)="addKeyword()"
-              [disabled]="keyword === ''">ADD</button>
+            <button type="button" class="btn7 btn-block ml-2" (click)="addKeyword()">ADD</button>
           </div>
           <div *ngIf="keyword.length > 56" class="text-danger mt-2"></div>
   
@@ -228,7 +232,7 @@
                       title={{animal.title}} [innerHTML]="animal.content"></div>
                   </div>
                 </div>
-                <button class="submit_btn" (click)="addMessage()"   [disabled]="isSendButtonDisabled" >Add</button>
+                <button class="submit_btn" (click)="addMessage()">Add</button>
               </div>
             </div>
   
@@ -263,6 +267,211 @@
               
               </div> -->
   
+
+              
+	<div *ngIf="showAttachmenOption" #attachmentbox class="teambox-white">
+		<div class="modal-header">
+			<div class="modal-header-left">
+				<h4 class="modal-title" id="modal-basic-title"></h4>
+			</div>
+			<div class="modal-header-right">
+				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg"></p>
+			</div>
+		</div>
+		<div class="modal-body attachmentboxbody">
+			<h4>Attach file</h4>
+			<div class="attachmentbox">
+				<div class="attachmentbox_left" ngClass="{{dragAreaClass}}">
+					<img class="icon" src="/assets/img/teambox/image-a@2x.png">
+					<p>Drag & Drop file</p>
+					<p><span>OR</span></p>
+					<label class="custom-file-upload">
+						<input type="file"
+							   #file
+                 accept="image/*" 
+							   [multiple]="false"
+							   (change)="onFileChange($event)"
+							   style="display:none" />
+						<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
+					</label>
+
+				</div>
+				<div class="attachmentbox_right">
+					<div>
+						<img class="icon" src="/assets/img/teambox/instraction@2x.png">
+					</div>
+					<div>
+						<h4>Instractions</h4>
+						<p>Upload a CSV file with the contacts and details that you would like to import. Ensure the CSV file fulfils the Following requirements: Only CSV files are accepted for import. File size must be 10 MB The file must contain at least.. the CSV file fulfils the Following requirements: Only CSV files are accepted for import. File size must be 10 MB</p>
+					</div>
+				</div>
+			</div>
+
+
+
+		</div>
+
+
+	</div>
+
+  <div *ngIf="showAttributes"  class="custom_modal bg-pink sm">
+		<div class="modal-header">
+			<div class="modal-header-left">
+				<h4 class="modal-title" id="modal-basic-title">Attributes</h4>
+			</div>
+			<div class="modal-header-right">
+				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg"></p>
+			</div>
+		</div>
+		<div class="modal-body quickResponse">
+			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchContact($event)"/>
+			<div class="items_list">
+				<div  *ngFor="let alist of attributesList" class="attribute" (click)="selectQuickReplies($event)">
+					<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
+				</div>
+			</div>
+
+			<div class="bottom_section">
+				<p class="close-box" routerLink="/dashboard/setting"  ><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></p>
+				<p class="text-box-readonly">To add/edit new attributes from the settings</p>
+			</div>
+
+		</div>
+
+	</div>
+
+  
+	<div *ngIf="showSavedMessage" class="custom_modal bg-pink sm">
+		<div class="modal-header">
+			<div class="modal-header-left">
+				<h4 class="modal-title" id="modal-basic-title">Saved Message's</h4>
+			</div>
+			<div class="modal-header-right">
+				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg"></p>
+			</div>
+		</div>
+		<div class="modal-body quickResponse">
+			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchSavedMessage($event)" />
+			<div class="items_list">
+
+				<div class="item" *ngFor="let Message of SavedMessageList" (click)="selectQuickReplies(Message)">
+					<p class="label" [innerHTML]="Message.title"></p>
+					<p [innerHTML]="Message.content"></p>
+				</div>
+			</div>
+
+			<div class="bottom_section">
+				<p class="close-box" routerLink="/dashboard/setting" ><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></p>
+				<p class="text-box-readonly">To add/edit new Saved Message from the settings</p>
+			</div>
+
+		</div>
+
+
+	</div>
+
+  
+	<div *ngIf="showQuickReply" class="custom_modal bg-pink sm">
+		<div class="modal-header">
+			<div class="modal-header-left">
+				<h4 class="modal-title" id="modal-basic-title">Quick Response</h4>
+			</div>
+			<div class="modal-header-right">
+				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg"></p>
+			</div>
+		</div>
+		<div class="modal-body quickResponse">
+			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchQuickReply($event)" />
+			<div class="items_list">
+
+				<div class="item" *ngFor="let Message of QuickReplyList" (click)="selectQuickReplies(Message)">
+					<p class="label" [innerHTML]="Message.title"></p>
+					<p [innerHTML]="Message.content"></p>
+				</div>
+			</div>
+
+			<div class="bottom_section">
+				<p class="close-box" routerLink="/dashboard/setting" ><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></p>
+				<p class="text-box-readonly">To add/edit Quick replies from the settings</p>
+			</div>
+
+		</div>
+
+
+	</div>
+
+  <div *ngIf="showInsertTemplate"  class="custom_modal bg-pink sm">
+		<div class="modal-header">
+			<div class="modal-header-left">
+				<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
+			</div>
+			<div class="modal-header-right">
+				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg"></p>
+			</div>
+		</div>
+		<div class="modal-body quickResponse">
+			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchTemplate($event)" />
+
+			<div class="section_filter">
+				<label class="container">
+					<input checked type="checkbox" name="template_filter" value="Marketing" (click)="filterTemplate($event)">
+					<span class="checkmark"></span>
+					<p><span class="checkmark-text">Marketing</span></p>
+				</label>
+				<label class="container">
+					<input checked type="checkbox" name="template_filter" value="Utility" (click)="filterTemplate($event)">
+					<span class="checkmark"></span>
+					<p><span class="checkmark-text">Utility</span></p>
+				</label>
+				<label class="container">
+					<input checked type="checkbox" name="template_filter" value="Authentication" (click)="filterTemplate($event)">
+					<span class="checkmark"></span>
+					<p><span class="checkmark-text">Authentication</span></p>
+				</label>
+
+			</div>
+			<div class="template_list">
+				<div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
+					<label class="container" (click)="selectTemplate(template)">
+						<input type="radio" name="selectedTemplate">
+						<span class="checkmark radio"></span>
+						<p>{{template.title}}</p>
+						<p><span>{{template.created_at}}</span></p>
+					</label>
+
+					<div class="inner_box">
+						<img *ngIf="template.image" class="template_img" src="{{template.image}}">
+						<div *ngIf="!template.image" class="template_img_placeholder"></div>
+						<div [ngClass]="template.image ? 'template_text' : 'template_plain_text'">
+							<p>{{template.content_heading}}</p>
+							<p [innerHTML]="template.content"></p>
+						</div>
+					</div>
+					<div class="template_btn">
+						<button type="button" class="btn">YES</button>
+						<button type="button" class="btn">NO</button>
+						<button type="button" class="btn">EXPLORE</button>
+
+					</div>
+
+				</div>
+
+			</div>
+
+
+			<div class="input_group_btn">
+				<button type="button" class="submit-btn" (click)="showeditTemplate()">Next</button>
+			</div>
+
+			<div class="bottom_section">
+				<p class="close-box" routerLink="/dashboard/setting" ><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></p>
+				<p class="text-box-readonly">To add/edit Insert Template from the settings</p>
+			</div>
+
+		</div>
+
+	</div>
+
   
           <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
             <div class="modal-dialog" role="document">
@@ -279,7 +488,6 @@
                     <span id="add_tags">{{AddTag}}</span>
                   </div>
                 </div>
-  
   
               </div>
             </div>

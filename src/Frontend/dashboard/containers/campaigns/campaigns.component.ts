@@ -114,10 +114,11 @@ export class CampaignsComponent implements OnInit {
 	 ];
 	 
 	 campaignStatusOption:any=[
-		{value:0,label:'Draft',checked:false},
+		
+		{value:0,label:'Running',checked:false},
 		{value:1,label:'Scheduled',checked:false},
-		{value:2,label:'Running',checked:false},
-		{value:3,label:'Completed',checked:false}];
+		{value:2,label:'Executed',checked:false},
+		{value:3,label:'Draft',checked:false}];
 	 
 	 channelOption:any=[
 			{value:1,label:'WhatsApp Official',checked:false},
@@ -1530,10 +1531,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.modalReference = this.modalService.open(filtercampaign,{size: 'sm', windowClass:'white-pink'});
 	}
 	mapImportantContact(mpcampaign:any){
+
+		if(!this.selecetdCSV) {
+			this.showToaster('Please Select csv file first..', 'error');
+			return;
+		}
 		this.closeAllModal()
-		this.importantContact=false;
-		this.modalReference = this.modalService.open(mpcampaign,{size: 'ml', windowClass:'pink-bg'});
-	   
+			this.importantContact=false;
+			this.modalReference = this.modalService.open(mpcampaign,{size: 'ml', windowClass:'pink-bg'});
+	
 	}
 
 
@@ -1805,7 +1811,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	}
 	
 	CreateNewList(addNewCampaign:any){
-        if(this.filteredEndCustomer.length>0){
+        if(this.filteredEndCustomer.length>0 && this.newContactListName){
 		this.closeAllModal()
 		let contactId:any =[];
 		this.filteredEndCustomer.map((user:any)=>{
@@ -1844,7 +1850,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.importedContacts=false;
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}else{
-		this.showToaster('Opps No Contacts selected...','error')
+		this.showToaster('Opps No Contacts selected... or Entered','error')
 	}
 		
 	

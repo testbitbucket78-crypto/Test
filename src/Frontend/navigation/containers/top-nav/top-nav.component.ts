@@ -1,10 +1,8 @@
-import { ChangeDetectionStrategy, Input, Component, OnInit,HostListener} from '@angular/core';
+import { ChangeDetectionStrategy, Input, ElementRef, Component, OnInit,HostListener} from '@angular/core';
 import { NavigationService } from 'Frontend/navigation/services';
 import { AuthService } from 'Frontend/auth/services';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
 import { Router } from '@angular/router';
-
-
 
 @HostListener('window:scroll', ['$event'])
 
@@ -36,8 +34,15 @@ export class TopNavComponent implements OnInit {
     firstLetterLastName!:string;
     notificationData = [];
 
-    constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: ProfileService) {}
+    constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: ProfileService,private elementRef: ElementRef) {}
 
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent): void {
+      let clickedInside = this.elementRef.nativeElement.contains(event.target);
+      if (!clickedInside) {
+        this.hideDiv();
+      }
+    }
     ngOnInit() {
         
         let uid: string  = sessionStorage.getItem('loginDetails')?.toString() ?? '';
@@ -68,13 +73,19 @@ export class TopNavComponent implements OnInit {
     toggleShowNotifications() {
 		
 		this.ShowNotification = !this.ShowNotification;
+        this.ShowProfile =false;
 	}
    
 
+    hideDiv() {
+       this.ShowNotification = false;
+       this.ShowProfile = false;
+    }
     
     toggleShowProfile() {
 		
 		this.ShowProfile = !this.ShowProfile;
+        this.ShowNotification = false;
 	}
 
     // toggle active/inactive state of logged-in user

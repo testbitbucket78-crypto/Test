@@ -183,7 +183,7 @@
                             
                             </div>  
         
-                            <div class="modal fade" tabindex="-1" id="AddFundsModal" role="dialog">
+                            <div class="modal fade" tabindex="-1" id="AddFundsModal"  data-bs-backdrop="static" role="dialog">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content px-3 addfunds-popup-modal">
                                         <form>
@@ -285,7 +285,7 @@
                                       <div class="deleteCard-details">
                                         <button class="del-popup-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="p-0" src="../../../../assets/img/profile/delete.svg"></button>
                                       </div>
-                                      <div class="modal fade" tabindex="-1" id="deleteModal" role="dialog">
+                                      <div class="modal fade" tabindex="-1" id="deleteModal"  data-bs-backdrop="static" role="dialog">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content delete-modal">
                                                 <div class="modal-body alertmessage">
@@ -332,13 +332,13 @@
                 </div>
                     <div class="d-flex justify-content-center picture-crop-button-container">
                         <div class="text-center picture-crop-button">
-                         <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" />
+                         <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
                          <label for="myFileInput" class="m-0 fileLabel" ><img src="../../../../assets/img/profile/Fill 4.svg" /></label>    
                         </div>
                     </div>
                   
 
-                    <div class="modal fade" tabindex="-1" id="pictureCropModal" role="dialog">
+                    <div class="modal fade" tabindex="-1" id="pictureCropModal" data-bs-backdrop="static" role="dialog">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content px-3 pictureCropPopupModal">
                                 <form>
@@ -406,7 +406,7 @@
                             
                             </div>
                 
-                            <div class="modal fade" tabindex="-1" id="changePasswordModal" role="dialog">
+                            <div class="modal fade" tabindex="-1" id="changePasswordModal" data-bs-backdrop="static" role="dialog">
                                 <div class="modal-dialog" role="document">
                                     <div class="modal-content px-3 changepassowrd-popup-modal">
                                         <div class="modal-header align-items-center">

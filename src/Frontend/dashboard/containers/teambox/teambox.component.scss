@@ -45,6 +45,7 @@
     display: flex;
     flex-wrap: wrap;
     padding: 10px;
+    cursor: pointer;
 }
 
 .rteEmoticons .char_block {
@@ -169,16 +170,15 @@
     text-align: left;
     padding-right: 22px;
     padding-left: 10px;
+    cursor: pointer;
 }
 
 .right_box {
     padding-left: 1%;
     padding-right: 1%;
     background: #fbf9fe 0% 0% no-repeat padding-box;
-    /* margin-top: -120px; */
-    /* padding-top: 120px; */
     overflow: auto;
-    height: 100vh;
+    height: 86vh;
 }
 
 .user_info {
@@ -223,7 +223,7 @@
     padding-left: 35px;
     color: #7A86A1;
     font-size: 12px;
-    width: 10%;
+    width: 8%;
     margin-left: 10px;
     background: transparent url("/assets/img/teambox/search-icon.svg") no-repeat 10px;
 }
@@ -235,6 +235,7 @@
 .drop-down-btn {
     width: auto;
     margin: 0 5px;
+    cursor: pointer;
 }
 
 .drop-down-btn button {
@@ -247,6 +248,7 @@
     color: #7A86A1;
     font-size: 12px;
     width: 100%;
+    cursor: pointer;
     background: transparent url("/assets/img/teambox/dropdown.svg") no-repeat;
     background-size: 12px;
     background-position: center right 8px;
@@ -354,6 +356,7 @@
 
 .edit-icon {
     margin-right: 5px;
+    cursor: pointer;
 }
 
 .big-thumbnail-sufix {
@@ -388,7 +391,7 @@
 
 
 .all_contacts {
-    height: 81vh;
+    height: 76vh;
     overflow-y: scroll;
 }
 
@@ -895,7 +898,8 @@ img.no-dp {
 
 .content-before p {
     font-size: 30px;
-    margin: 0
+    margin: 0;
+    cursor: pointer;
 }
 
 .conversation_inout_area {
@@ -992,6 +996,20 @@ button:focus, input:focus {
     justify-content: center;
 }
 
+.save_notes_btn {
+    cursor: pointer;
+    float: right;
+    background: #6149cd 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695f9724;
+    border-radius: 17px;
+    opacity: 1;
+    height: 40px;
+    color: #ffffff;
+    border: none;
+    font-size: 0.8vw;
+    padding: 0% 4% 0% 4%;
+}
+
 .small-gradient-btn {
     height: 35px;
     background: white 0% 0% no-repeat padding-box;
@@ -1014,11 +1032,11 @@ button:focus, input:focus {
     letter-spacing: 0px;
     color: #7A86A1;
     border: 1px solid #EBEBEB;
-    font-size: 9px;
+    font-size: 10px;
     background: transparent;
     box-shadow: none;
     width: 100%;
-    font-weight: 200;
+    font-weight: 400;
 }
 
 .red-color {
@@ -1073,6 +1091,7 @@ button:focus, input:focus {
 .toggle_provice_view {
     width: 20px;
     align-self: flex-end;
+    cursor: pointer;
 }
 
 .right_box p.auto-rep-time {
@@ -1133,6 +1152,17 @@ button:focus, input:focus {
     width: 100%;
     float: left;
     margin: 0px;
+
+}
+
+.popup-dialog p .deletenotes-btn {
+    color: #F23B3B;
+    font-weight: 500;
+}
+
+.popup-dialog p .editnotes-btn {
+    color: #000000;
+    font-weight: 500;
 }
 
 .popup-dialog p.label {
@@ -1150,12 +1180,16 @@ button:focus, input:focus {
 }
 
 .popup-dialog p.active {
-    background: #FFF4F2;
-    background: #FFF4F2 url("/assets/img/teambox/icon-selected.svg") no-repeat;
+    background: #000000;
+    background: url("/assets/img/teambox/icon-selected.svg") no-repeat;
     background-size: 12px;
     background-position: center right 10px;
+    font-weight: bold;
 }
 
+.row.popfooter.start-convo {
+    padding: 8% 0% 0% 0%;
+}
 
 @keyframes growProgressBar {
     0%, 33% {
@@ -1205,7 +1239,7 @@ div[role="progressbar"] {
     opacity: 1;
     color: rgba(97, 73, 205, 1);
     font-size: 12px;
-    font-weight: 400;
+    font-weight: 800;
     border: 1px solid #EBEBEB;
 }
 
@@ -1226,6 +1260,7 @@ div[role="progressbar"] {
     justify-content: center;
     flex-wrap: wrap;
     margin: 0px 8px;
+    cursor: pointer;
 }
 
 .edit_media {
@@ -1237,6 +1272,7 @@ div[role="progressbar"] {
 .close-box img {
     width: 10px;
     height: 10px;
+    cursor: pointer;
 }
 
 .form-control {
@@ -1293,6 +1329,7 @@ button {
     display: inline-block;
     position: relative;
     height: 20px;
+    cursor: pointer;
 }
 
 .submit-btn {
@@ -1314,7 +1351,7 @@ span {
 }
 
 .back-array-icon {
-    width: 25px;
+    width: 20px;
     margin-bottom: 15px;
 }
 
@@ -1348,6 +1385,7 @@ span {
     font-size: 14px;
     height: 35px;
     display: flex;
+    font-weight: 800;
     flex-wrap: nowrap;
     align-content: flex-end;
     justify-content: center;
@@ -1360,8 +1398,6 @@ span {
     width: 100%;
     margin: 0px;
 }
-
-
 
 .messageadd .search-box {
     width: 100%;
@@ -1376,6 +1412,7 @@ span {
     margin: 0px 0px 15px 0px;
     text-align: left;
     padding: 0px 15px;
+    cursor: pointer;
 }
 
 .popup-dialog.ContactOption {
@@ -1566,6 +1603,7 @@ span {
     align-items: center;
     align-content: center;
     flex-wrap: nowrap;
+    cursor: pointer;
 }
 
 .dragarea {
@@ -1577,6 +1615,10 @@ span {
 
 .custom-file-upload input[type="file"] {
     display: none;
+}
+
+img.icon {
+    margin-left: 0;
 }
 
 .custom-file-upload img.icon {
@@ -1629,11 +1671,12 @@ span {
 .quickResponse .items_list .attribute {
     background: #FFFFFF 0% 0% no-repeat padding-box;
     border-radius: 18px;
-    width: auto;
+    width: 40%;
     margin: 10px 0px;
     padding: 5px 15px;
     cursor: pointer;
-    display: inline-block;
+    display: block;
+    font-weight: 500;
 }
 
 .quickResponse .items_list .attribute p {
@@ -1793,6 +1836,8 @@ span {
 .input_group_btn {
     text-align: right;
     margin: 1rem 0;
+    display: flex;
+    justify-content: center;
 }
 
 .template_btn .btn {
@@ -2120,7 +2165,7 @@ label span {
     padding: 0px 25px;
     font-size: 12px;
     font-weight: 800;
-    margin: 0 0 0 15px;
+
 }
 
 .template_preiview {
@@ -2134,4 +2179,23 @@ label span {
 
 .template_preiview .template_box {
     width: 300px;
+}
+
+#pop-filter{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695F9730;
+    border-radius: 20px;
+    padding: 10px 0px;
+    position: absolute;
+    max-width: 135px;
+    margin-top: 10px;
+    max-height: 240px;
+    overflow: auto;
+    z-index: 9;
+    margin-left: -2rem;
+}
+
+
+.emoji-close-btn {
+    cursor: pointer;
 }

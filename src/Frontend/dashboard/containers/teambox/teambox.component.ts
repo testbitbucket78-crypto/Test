@@ -1,4 +1,4 @@
-	import { Component,AfterViewInit, OnInit,ViewChild, ElementRef,HostListener  } from '@angular/core';
+	import { Component,AfterViewInit, OnInit,Input, ViewChild, ElementRef, HostListener  } from '@angular/core';
 	import { Router } from '@angular/router';
 	import { HttpClient, HttpHeaders, HttpBackend, HttpParams } from '@angular/common/http';
 	import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -174,44 +174,46 @@
 		];
 		
 		public tools: object = {
-			items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
+			items: [
+				
+				'Bold', 'Italic', 'StrikeThrough',
 			{
-			// tooltipText: 'Emoji',
+			tooltipText: 'Emoji',
 			undo: true,
 			click: this.toggleEmoji.bind(this),
 			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
 			},
 			{
-				// tooltipText: 'Attachment',
+				tooltipText: 'Attachment',
 				undo: true,
 				click: this.ToggleAttachmentBox.bind(this),
 				template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
 			},
 			{
-				// tooltipText: 'Attributes',
+				tooltipText: 'Attributes',
 				undo: true,
 				click: this.ToggleAttributesOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
 			},
 			{
-				// tooltipText: 'Quick Replies',
+				tooltipText: 'Quick Response',
 				undo: true,
 				click: this.ToggleQuickReplies.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
 			},
 			{
-				// tooltipText: 'Saved Message',
+				tooltipText: 'Saved Message',
 				undo: true,
 				click: this.ToggleSavedMessageOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
 			},
 			{
-				// tooltipText: 'Insert Template',
+				tooltipText: 'Insert Template',
 				undo: true,
 				click: this.ToggleInsertTemplateOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
@@ -270,9 +272,10 @@
 		message_text='';
 		showEmoji=false;
 		EmojiType:any='smiley';
-		selectedChannel:any='WhatsApp';
+		selectedChannel:any='WhatsApp Offical';
 		contactSearchKey:any='';
 		ShowChannelOption:any=false;
+		selectedCountryCode: string = '';
 		
 		newContact: any;
 		editContact: any;
@@ -288,8 +291,8 @@
 		{name:'Return',status:false}]
 
 		selectedTags:any='';
-		AutoReplyEnableOption:any=['Extend Pause for 5 mins','Extend Pause for 10 mins','Extend Pause for 15 mins','Extend Pause for 20 mins','Auto Reply are Active'];
-		AutoReplyPauseOption:any=['Pause for 5 mins','Pause for 10 mins','Pause for 15 mins','Pause for 20 mins','Auto Reply are Paused','Auto Reply are Active'];
+		AutoReplyEnableOption:any=['Extend Pause for 5 mins','Extend Pause for 10 mins','Extend Pause for 15 mins','Extend Pause for 20 mins','Enable'];
+		AutoReplyPauseOption:any=['Pause for 5 mins','Pause for 10 mins','Pause for 15 mins','Pause for 20 mins','Auto Reply are Paused','Enable'];
 		AutoReply:any='';
 		AutoReplyType:any= '';
 		dragAreaClass: string='';
@@ -307,12 +310,15 @@
 		allTemplates:any=[];
 		allTemplatesMain:any=[];
 		filterTemplateOption:any='';
+		attributesList:any=['{{Name}}','{{user_name}}','{{Help}}','{{Support}}','{{email id}}','{{IP_address}}','{{New-Order}}','{{Product YN}}','{{mail_address}}','{{Hotmail}}','{{Product ZR}}'];
 		
 		
 		
 
-		constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private router: Router,private websocketService: WebsocketService) {
+		constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef, private router: Router,private websocketService: WebsocketService) {
+			
 			// customize default values of modals used by this component tree
+
 			config.backdrop = 'static';
 			config.keyboard = false;
 			config.windowClass= 'teambox-pink';
@@ -336,6 +342,21 @@
 
 		}
 
+		
+		@HostListener('document:click', ['$event'])
+		onDocumentClick(event: MouseEvent): void {
+		  const clickedInside = this.elementRef.nativeElement.contains(event.target);
+		  if (!clickedInside) {
+			this.hideDiv();
+		  }
+		}
+
+		hideDiv() {
+			// alert('clicked outside');
+		
+		}
+		
+
 		selectTemplate(template:any){
 			this.selectedTemplate =template
 		}
@@ -351,7 +372,7 @@
 			if(optionvalue == 'text'){
 				this.chatEditor.value = 'Your message...'
 				this.tools = {
-					items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
+					items: ['Bold', 'Italic','StrikeThrough',
 					{
 					tooltipText: 'Emoji',
 					undo: true,
@@ -374,19 +395,21 @@
 								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
 					},
 					{
+						tooltipText: 'Saved Message',
+						undo: true,
+						click: this.ToggleSavedMessageOption.bind(this),
+						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
+					},
+					{
 						tooltipText: 'Quick Replies',
 						undo: true,
 						click: this.ToggleQuickReplies.bind(this),
 						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
 					},
-					{
-						tooltipText: 'Saved Message',
-						undo: true,
-						click: this.ToggleSavedMessageOption.bind(this),
-						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
-					},
+
+				
 					{
 						tooltipText: 'Insert Template',
 						undo: true,
@@ -394,11 +417,12 @@
 						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
 					}]
-				}
+				};
+
 			}else{
 				this.chatEditor.value = 'Your content...'
 				this.tools = {
-					items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
+					items: ['Bold', 'Italic', 'StrikeThrough',
 					{
 					tooltipText: 'Emoji',
 					undo: true,
@@ -615,7 +639,7 @@
 		this.chatEditor.executeCommand('insertText', item.target.textContent);
 		this.chatEditor.formatter.saveData();
 		this.chatEditor.formatter.enableUndo(this.chatEditor);
-		//this.showEmoji = !this.showEmoji;
+
 
 	}
 
@@ -707,6 +731,8 @@
 			this.getsavedMessages()
 			this.getquickReply()
 			this.getTemplates()
+
+			// this.chatEditor.addEventListener('keydown', this.onEditorKeyDown.bind(this));
 		
 
 		}
@@ -861,6 +887,7 @@
 			});
 
 			this.interactionList= dataList
+			console.log(this.interactionList);
 			this.interactionListMain= dataList
 			
 			setTimeout(() => {
@@ -1133,7 +1160,7 @@
 		}
 		Interaction['selected']=true
 		this.selectedInteraction =Interaction
-		//console.log(Interaction)
+		console.log(Interaction)
 		this.getPausedTimer()
 	}
 
@@ -1201,9 +1228,13 @@
 
 	toggleChannelOption(){
 		this.ShowChannelOption =!this.ShowChannelOption;
+		this.ShowLeadStatusOption = false;
+		this.ShowGenderOption = false;
 	}
 	toggleGenderOption(){
 		this.ShowGenderOption =!this.ShowGenderOption;
+		this.ShowLeadStatusOption = false;
+		this.ShowChannelOption = false;
 	}
 	selectChannelOption(ChannelName:any){
 		this.selectedChannel = ChannelName
@@ -1223,7 +1254,11 @@
 	}
 	toggleLeadStatusOption(){
 		this.ShowLeadStatusOption=!this.ShowLeadStatusOption;
+		this.ShowChannelOption = false;
+		this.ShowGenderOption = false;
 	}
+
+
 	hangeEditContactSelect(name:any,value:any){
 		this.EditContactForm[name] = value
 		this.ShowChannelOption=false
@@ -1249,9 +1284,9 @@
 		}
 
 		if(this.EditContactForm.OptInStatusChecked){
-			bodyData['OptInStatus'] = 'Active Subscribers';
+			bodyData['OptInStatus'] = 'Yes';
 		}else{
-			bodyData['OptInStatus'] = 'Disabled';
+			bodyData['OptInStatus'] = 'No';
 		}
 		//console.log(bodyData)
 		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
@@ -1270,7 +1305,8 @@
 			if(this.modalReference){
 				this.modalReference.close();
 			}
-			this.showToaster('Contact information updated...','success')
+			this.getAllInteraction();
+			this.showToaster('Contact information updated...','success');
 		});
 	
 	}
@@ -1464,12 +1500,18 @@
 		if(this.modalReference){
 			this.modalReference.close();
 		}
+
+		this.selectedTags = ''; 
+		
 		var activeTags = this.selectedInteraction['tags'];
 		for(var i=0;i<this.tagsoptios.length;i++){
 			var tagItem = this.tagsoptios[i]
 			if(activeTags.indexOf(tagItem.name)>-1){
-				tagItem['status']=true
+				tagItem['status']=true;
 				this.selectedTags += tagItem.name+','
+			}
+			else {
+				tagItem['status'] = false;
 			}
 		}
      	this.modalReference = this.modalService.open(updatedtags,{ size:'ml', windowClass:'white-bg'});
@@ -1490,10 +1532,12 @@
 			customerId:this.selectedInteraction.customerId
 		}
 		this.apiService.updateTags(bodyData).subscribe(async response =>{
+			this.selectedInteraction['tags'] = [];
 			this.selectedInteraction['tags']=this.getTagsList(this.selectedTags)
 			if(this.modalReference){
 				this.modalReference.close();
 			}
+			this.getAllInteraction()
 			this.showToaster('Tags updated...','success')
 
 		});
@@ -1508,7 +1552,7 @@
 		this.EditContactForm['channel'] =this.selectedInteraction.channel
 		this.EditContactForm['status'] =this.selectedInteraction.status
 		this.EditContactForm['OptInStatus'] =this.selectedInteraction.OptInStatus
-		this.EditContactForm['OptInStatusChecked'] =this.selectedInteraction.OptInStatus=='Active Subscribers'?true:false
+		this.EditContactForm['OptInStatusChecked'] =this.selectedInteraction.OptInStatus=='Yes'?true:false
 		
 		this.EditContactForm['sex'] =this.selectedInteraction.sex
 		this.EditContactForm['age'] =this.selectedInteraction.age
@@ -1526,7 +1570,7 @@
 			this.modalReference.close();
 		}
 		if(this.loginAs =='Manager'){
-		this.confirmMessage= 'Are you sure want to Delete this conversations'
+		this.confirmMessage= 'Are you sure you want to Delete this conversation?'
 		this.modalReference = this.modalService.open(openDeleteAlertmMessage,{ size:'sm', windowClass:'white-bg'});
 		}else{
 		this.showToaster('Opps you dont have permission','warning')
@@ -1537,7 +1581,7 @@
 			this.modalReference.close();
 		}
 		if(this.loginAs !='Agent'){
-		this.confirmMessage= 'Are you sure want to '+BlockStatus+' this conversations'
+		this.confirmMessage= 'Are you sure you want to '+BlockStatus+' this conversation?'
 		this.modalReference = this.modalService.open(openBlockAlertmMessage,{ size:'sm', windowClass:'white-bg'});
 		
 	    }else{
@@ -1553,7 +1597,7 @@
 				if(this.modalReference){
 					this.modalReference.close();
 				}
-				this.confirmMessage= 'Are you sure want to '+status+' this conversations'
+				this.confirmMessage= 'Are you sure you want to '+status+' this conversation?'
 				this.modalReference = this.modalService.open(openStatusAlertmMessage,{ size:'sm', windowClass:'white-bg'});
 	   
 		}
@@ -1624,7 +1668,7 @@
 		var bodyData = this.newContact.value
 		console.log(bodyData)
 		if(bodyData['OptedIn']){
-			bodyData['OptedIn'] = 'Active Subscribers';
+			bodyData['OptedIn'] = 'Yes';
 		}
 		if(bodyData['Name']!='' && bodyData['Phone_number'].length>=10){
 		
@@ -1632,7 +1676,8 @@
 			var responseData:any = response
 			var insertId:any = responseData.insertId
 			if(insertId){
-				this.createInteraction(insertId)
+				this.createInteraction(insertId);
+				this.newContact.reset();
 			}
 		});
 		}else{
@@ -1763,101 +1808,117 @@
 
 	}
 
+	// onEditorKeyDown(event: KeyboardEvent) {
+	// 	// Check if the pressed key is the "Enter" key (keyCode 13)
+	// 	if (event.keyCode === 13) {
+	// 	  event.preventDefault(); // Prevent the default behavior (e.g., adding a new line)
+	// 	  this.sendMessage(); // Trigger your "Send" action here
+	// 	}
+	//   }
+
 	sendMessage(){
 		
-		let postAllowed =false;
-		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
-			postAllowed =true;
-		}else if(this.selectedInteraction.assignTo && this.selectedInteraction.assignTo.AgentId == this.AgentId){
-			postAllowed =true;
+		if (!this.chatEditor.value) {
+			this.showToaster('! Please Enter a Message First','warning');
+			return; 
 		}
-        
-		if(postAllowed){
-		if(this.SIPthreasholdMessages>0){
-		let objectDate = new Date();
-		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
-		var cDay = String(objectDate.getDate()).padStart(2, '0');
-		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
-
-		var bodyData = {
-			InteractionId: this.selectedInteraction.InteractionId,
-			SPID:this.SPID,
-			AgentId: this.AgentId,
-			messageTo:this.selectedInteraction.Phone_number,
-			message_text: this.chatEditor.value || "",
-			Message_id:this.newMessage.value.Message_id,
-			message_media: this.messageMeidaFile,
-			media_type: this.mediaType,
-			quick_reply_id: '',
-			template_id:'',
-			message_type: this.showChatNotes,
-			created_at:new Date()
-		}
-		this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
-			this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
-			//console.log(data)
-			this.messageMeidaFile='';
-			this.mediaType='';
-			var responseData:any = data
-			if(this.newMessage.value.Message_id==''){
+	
+		 {
+			let postAllowed =false;
+			if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
+				postAllowed =true;
+			}else if(this.selectedInteraction.assignTo && this.selectedInteraction.assignTo.AgentId == this.AgentId){
+				postAllowed =true;
+			}
 			
-			var insertId:any = responseData.insertId
-			if(insertId){
-				var lastMessage ={
-					"interaction_id": bodyData.InteractionId,
-					"Message_id": insertId,
-					"message_direction": "Out",
-					"Agent_id": bodyData.AgentId,
-					"message_text": bodyData.message_text,
-					"message_media": bodyData.message_media,
-					"media_type": bodyData.media_type,
-					"Message_template_id": bodyData.message_media,
-					"Quick_reply_id": bodyData.message_media,
-					"Type": bodyData.message_media,
-					"ExternalMessageId": bodyData.message_media,
-					"created_at": createdAt
-				}
+			if(postAllowed){
+			if(this.SIPthreasholdMessages>0){
+			let objectDate = new Date();
+			var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
+			var cDay = String(objectDate.getDate()).padStart(2, '0');
+			var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
+	
+			var bodyData = {
+				InteractionId: this.selectedInteraction.InteractionId,
+				SPID:this.SPID,
+				AgentId: this.AgentId,
+				messageTo:this.selectedInteraction.Phone_number,
+				message_text: this.chatEditor.value || "",
+				Message_id:this.newMessage.value.Message_id,
+				message_media: this.messageMeidaFile,
+				media_type: this.mediaType,
+				quick_reply_id: '',
+				template_id:'',
+				message_type: this.showChatNotes,
+				created_at:new Date()
+			}
+			this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
+				this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
+				//console.log(data)
+				this.messageMeidaFile='';
+				this.mediaType='';
+				var responseData:any = data
+				if(this.newMessage.value.Message_id==''){
 				
-				if(this.showChatNotes=='text'){
-					var allmessages =this.selectedInteraction.allmessages
-					this.selectedInteraction.lastMessage= lastMessage
-					allmessages.push(lastMessage)
-					this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
-					setTimeout(() => {
-						this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-					}, 500);
-
+				var insertId:any = responseData.insertId
+				if(insertId){
+					var lastMessage ={
+						"interaction_id": bodyData.InteractionId,
+						"Message_id": insertId,
+						"message_direction": "Out",
+						"Agent_id": bodyData.AgentId,
+						"message_text": bodyData.message_text,
+						"message_media": bodyData.message_media,
+						"media_type": bodyData.media_type,
+						"Message_template_id": bodyData.message_media,
+						"Quick_reply_id": bodyData.message_media,
+						"Type": bodyData.message_media,
+						"ExternalMessageId": bodyData.message_media,
+						"created_at": createdAt
+					}
+					
+					if(this.showChatNotes=='text'){
+						var allmessages =this.selectedInteraction.allmessages
+						this.selectedInteraction.lastMessage= lastMessage
+						allmessages.push(lastMessage)
+						this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
+						setTimeout(() => {
+							this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+						}, 500);
+	
+					}else{
+						var allnotes =this.selectedInteraction.allnotes
+						allnotes.push(lastMessage)
+						this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
+						setTimeout(() => {
+							this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+						}, 500);
+	
+					
+					}
+					this.chatEditor.value ='Your message...';
+				}
+	
+	
 				}else{
-					var allnotes =this.selectedInteraction.allnotes
-					allnotes.push(lastMessage)
-					this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
-					setTimeout(() => {
-						this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-					}, 500);
-
-				
+					this.selectedNote.message_text= bodyData.message_text
 				}
-				this.chatEditor.value ='Your message...';
-			}
-
-
-			}else{
-				this.selectedNote.message_text= bodyData.message_text
-			}
-			
-
-			this.newMessage.reset({
-				Message_id: ''
+				
+	
+				this.newMessage.reset({
+					Message_id: ''
+				});
+	
+	
 			});
-
-
-		});
+			}else{
+				this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
+			}
 		}else{
-			this.showToaster('Oops! SIP message limit exceed please wait for 5min...','warning')
+			this.showToaster('Oops! You are not allowed to post content','warning')
 		}
-	}else{
-		this.showToaster('Oops! You are not allowed to post contnet','warning')
-	}
+		}
+	
 
 	}
 	ngAfterViewInit() {
@@ -1866,6 +1927,10 @@
 		toolbar.removeAttribute('data-tooltip-id');
 
 	}
+
+	onPhoneNumberChange(event: any) {
+		this.selectedCountryCode = event;
+	  }
 
 }
 
