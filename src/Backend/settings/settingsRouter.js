@@ -5,7 +5,7 @@ const organizationController=require('./organizationController');
 const profileController=require('./profileController');
 const notification=require('./NotifyClients')
 const campaignController=require('./campaignController');
-
+const accountController=require('./accountController')
 
 //_____________________________Organization Settings_______________________//
 
@@ -108,5 +108,20 @@ router.post('/deleteTag',campaignController.deleteTag)
 router.post('/addTemplate',campaignController.addTemplate)
 router.get('/getTemplate/:spid',campaignController.getTemplate)
 router.post('/deleteTemplates',campaignController.deleteTemplates)
+
+//__________________ACCOUNT API'S__________________________//
+
+router.post('/addWhatsAppDetails',accountController.insertAndEditWhatsAppWeb)
+router.get('/getWhatsAppDetails/:spid',accountController.selectDetails)
+
+router.post('/addToken',accountController.addToken)
+router.post('/editToken',accountController.editToken)
+router.get('/deleteToken/:id',accountController.deleteToken)
+router.post('/isEnableToken',accountController.enableToken)
+router.get('/selectToken/:spid',accountController.selectToken)
+router.get('/createInstanceID',accountController.createInstance)
+router.post('/qrCodeData',accountController.getQRcode)
+router.post('/generateQRcode',accountController.generateQRcode)
+router.post('/testwebhook',accountController.testWebhook)
 
 module.exports = router;

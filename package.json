@@ -70,6 +70,7 @@
     "ngx-intl-tel-input": "^3.1.2",
     "ngx-order-pipe": "^2.2.0",
     "ngx-pagination": "^3.3.1",
+    "node-cron": "^3.0.2",
     "nodemailer": "^6.8.0",
     "nodemon": "^2.0.20",
     "object-hash": "2.0.3",
