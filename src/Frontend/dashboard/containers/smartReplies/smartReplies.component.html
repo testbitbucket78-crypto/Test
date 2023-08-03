@@ -1,21 +1,19 @@
 <sb-layout-dashboard>
-    <ng-container *ngIf="showTopNav"><sb-top-nav title="Smart Replies"></sb-top-nav></ng-container>
+	<sb-top-nav title="Smart Replies"></sb-top-nav>
 
 		<div class="content-header">
 			<div class="content-head d-flex">
-				<div class="">
-				<form class="d-none d-md-inline-block form-inline"
-					[formGroup]="searchForm" (ngSubmit)="search()">
+				<div class="">		
 					<div class="input-group gf ">
 
-						<input class="form-control" type="text" placeholder="Search" name="search" [(ngModel)]="searchText" />
+						<input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
 
 						<img src="assets/img/search.png">
 					</div>
-				</form>
+		
 				</div>
 					<div class="">
-						<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal" ><i class="fa fa-plus"></i> 
+						<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><i class="fa fa-plus"></i> 
 						Add Smart Reply</button>
 	        	</div>
 			</div>
@@ -34,7 +32,7 @@
 <div *ngIf="replies != 0" class="smartreplies-filled-state">
 
 		<div class="row r1">
-		<div *ngFor="let reply of replies | searchfilter:searchText" class="card d-flex" (click)="toggleSideBar()"  (click)="getRepliesByID(reply)">
+		<div *ngFor="let reply of replies  | searchfilter:searchText" class="card d-flex" (click)="toggleSideBar()"  (click)="getRepliesByID(reply)">
 			<div class="card-body gy-2">
 				<h6 class="id">Id:{{ reply.ID }}</h6>
 				<h5 class="card-title">{{reply.Title}}</h5>
@@ -67,11 +65,11 @@
 			<h5>{{repliesData.CreatedDate  | date: 'dd MMM yyyy'}}</h5>
 			<div class="line"></div>
 			<h6>Edited on:</h6>
-			<h5>{{repliesData.ModifiedDate | date: 'dd MMM yyyy'}}</h5>
+			<h5>{{repliesData.ModifiedDate | date: 'dd MMM yyyy' }}</h5>
 		</div>
 		<h4 class="help-support-btn" routerLink="/dashboard/support" ><img id="Edit-icon" src="assets/img/Edit-icon.png">Help & Support</h4>
 		<div class="row d-flex">
-			<h6 class="text-justify">{{items.HelpAndSupport}}.</h6>
+			<h6 class="text-justify">{{items.Description}}.</h6>
 		</div>
 		<h3 class="keywords-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon" src="assets/img/Edit-icon.png" >Keywords & Criteria </h3>
 		<div class="row">
@@ -108,7 +106,7 @@
 	</div>
 </div>
 
-	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
 		<div class="modal-dialog deletesmartreplies-dialog">
 		  <div class="modal-content deletesmartreplies-content">
 			
@@ -123,7 +121,11 @@
 		</div>
 	  </div>
 
-	  <div class="modal fade" tabindex="-1" id="smartrepliesModal" role="dialog">
+
+
+    
+
+	  <div class="modal fade" tabindex="-1" id="smartrepliesModal" data-bs-backdrop="static" role="dialog">
         <div class="modal-dialog" id="mod-da" role="document">
             <div class="modal-content delete-token-modal" id="delete-tok">
                 <div class="modal-body alertmessage">
@@ -134,8 +136,6 @@
 				</div>
 		</div>
     </div>
-
-
 
 
 </sb-layout-dashboard>

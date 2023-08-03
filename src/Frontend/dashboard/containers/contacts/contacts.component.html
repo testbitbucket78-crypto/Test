@@ -50,6 +50,7 @@
 	<div *ngIf="contacts != 0" class="box">
 
 		<ag-grid-angular class="ag-theme-alpine" 
+		style="height: 100%;"
 		[rowData]="rowData" 
 		[columnDefs]="columnDefs" 
 		[animateRows]="true"
@@ -66,9 +67,9 @@
 			</button>
 			<div *ngFor="let items of customerData ">
 				<div class="p-2 sidebar-head">
-					<div class="parent d-flex">
+					<div class="parent d-flex justify-content-center w-100">
 						<div class="parent-img">
-							<img src="assets/img/my.png">
+							<img src="../../../../assets/img/teambox/no-dp.svg">
 						</div>
 					
 						<div class="child">
@@ -90,7 +91,7 @@
 				</div>
 	
 				<div class="p-4 sidebar-body">
-					<div class="parent d-flex justify-content-between p-4">
+					<div class="parent d-flex justify-content-between px-4">
 						<div class="child2">
 							<h5>Email Id</h5>
 							<h6 class="mt-2">{{items.emailId}}</h6>
@@ -113,7 +114,7 @@
 					<div class="parent d-flex justify-content-between px-4 py-2">
 					<div class="child5">
 	
-						<h5> <img class="m-0" (click)="open(edittag)" src="../../../../assets/img/teambox/edit-icon.svg">Tag</h5>
+						<h5> <img class="m-0" data-bs-toggle="modal" data-bs-target="#edittag" src="../../../../assets/img/teambox/edit-icon.svg">Tag</h5>
 						<div class="child4 d-flex">
 							<h6 class="mt-2">{{items.tag?.replaceAll(',', ' | ')}}</h6>
 						</div>
@@ -185,7 +186,7 @@
 
 	</div>
 
-	<div class="modal fade" id="deleteContact" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="deleteContact" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
 		<div class="modal-dialog deletecontacts">
 			<div class="modal-content deletecontacts-content">
 
@@ -202,7 +203,7 @@
 	</div>
 
 
-	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
 		<div class="modal-dialog deletecontacts">
 			<div class="modal-content deletecontacts-content">
 
@@ -218,7 +219,7 @@
 		</div>
 	</div>
 
-	<div class="modal fade" id="Block" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal fade" id="Block" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
 		<div class="modal-dialog deletecontacts">
 			<div class="modal-content deletecontacts-content">
 
@@ -494,7 +495,7 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Name*</label>
 						<div class="form-floating">
-							<input pattern="[a-zA-Z ]*" minlength="3" class="form-control" type="text"
+							<input  onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)"  minlength="3" class="form-control" type="text"
 								[ngClass]="{'is-invalid':newContact.controls.Name.touched && newContact.controls.Name.errors  }"
 								placeholder="Enter Name" name="Name" formControlName="Name" id="Name" />
 							<div *ngIf="newContact.controls.Name.touched && newContact.controls.Name.errors"
@@ -550,7 +551,7 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Age</label>
 						<div class="form-floating">
-							<input class="form-control" type="number" placeholder="Enter Age" name="age" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==2) return false;" min="18" max="99"
+							<input class="form-control" type="number" placeholder="Enter Age" name="age"pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==2) return false; return /^[0-9]$/.test(event.key)"  min="18" max="99"
 								formControlName="age" id="age" />
 						</div>
 					</div>
@@ -618,7 +619,7 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Name*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="Enter Name" name="Name"
+							<input class="form-control" type="text"  onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)"  placeholder="Enter Name" name="Name"
 								formControlName="Name" id="Name" />
 						</div>
 					</div>
@@ -645,13 +646,13 @@
 						<label for="floatingInputGrid">Email Id*</label>
 						<div class="form-floating">
 							<input class="form-control" type="text" placeholder="Enter Email" name="emailId"
-								formControlName="emailId" id="emailId" />
+								formControlName="emailId" id="emailId" required />
 						</div>
 					</div>
 					<div class="col-md">
 						<label for="floatingInputGrid">Age</label>
 						<div class="form-floating">
-							<input class="form-control" type="number" placeholder="Enter Age" name="age" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==2) return false;" min="18" max="99"
+							<input class="form-control" type="number" placeholder="Enter Age" name="age" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==2) return false; return /^[0-9]$/.test(event.key)"  min="18" max="99"
 								formControlName="age" id="age" />
 						</div>
 					</div>
@@ -699,7 +700,7 @@
 	</ng-template>
 
 
-	<ng-template #edittag let-c="close" let-d="dismiss">
+	<!-- <ng-template #edittag let-c="close" let-d="dismiss">
 		<div class="modal-content edit-tag-content">
 		<div class="">
 			<div class="modal-header edit-tag-header">
@@ -710,27 +711,47 @@
 
 			<div class="modal-body edit-tag-body">
 
-				<ul class="edit-tag-dropdown">
-					<li *ngFor="let data of Tag; let i = index"><a class="dropdown-item">
-							<div class="form-check">
-								<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-								<label id="edit-tag-dots" class="form-check-label" for="flexCheckDefault"> ● </label>
-								<label id="edit-tagnames" class="form-check-label" for="flexCheckDefault">
-									{{data}}</label>
-							</div>
-						</a>
-					</li>
-
-				</ul>
 
 				<button type="button" class="btn" id="edit-btn" (click)="c('Save click')">Cancel</button>
 				<button type="button" class="btn" id="edit-btn-save" (click)="c('Save click')">Save</button>
 			</div>
 		</div>
 	</div>
-	</ng-template>
+	</ng-template> -->
 
-	<div class="modal fade" tabindex="-1" id="importmodal" role="dialog">
+	<div class="modal fade" tabindex="-1" id="edittag" role="dialog" data-bs-backdrop="static">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content p-2 pl-3 edittag ">
+				<div class="modal-header edit-tag-header">
+					<p id="edit-tag-head">Edit Tag</p>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"  aria-label="Close">
+						<img src="../../../../assets/img/teambox/icon-close.svg">
+					</button>
+				</div>
+				<div class="modal-body px-5 pt-0 edit-tag-body">
+			
+					<ul class="edit-tag-dropdown">
+						<li *ngFor="let tag of Tag; let i = index"><a class="dropdown-item">
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault{{i}}">
+									<label id="edit-tag-dots" class="form-check-label" for="flexCheckDefault{{i}}"> ● </label>
+									<label id="edit-tagnames" class="form-check-label" for="flexCheckDefault{{i}}">
+										{{tag}}</label>
+								</div>
+							</a>
+						</li>
+	
+					</ul>
+				</div>
+				<div class="modal-footer edittag-footer">
+					<button type="button" class="btn-close" id="edit-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+					<button type="button" class="btn-close" id="edit-btn-save">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" id="importmodal" role="dialog" data-bs-backdrop="static">
         <div class="modal-dialog docla" id="doclaa" role="document">
             <div class="modal-content delete-token-modal" id="model">
                 <div class="modal-body alertmessage" id="model-message">

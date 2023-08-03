@@ -1,19 +1,12 @@
 import { Component, OnInit, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-import {DashboardService} from './../../services';
+import { DashboardService } from './../../services';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
-declare var $: any; // declare the jQuery variable
-
 import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
 import { Router } from '@angular/router';
-import exp from 'constants';
-import { style } from '@angular/animations';
 
-
-
-
+declare var $: any;
 @Component({
   selector: 'sb-contacts',
   changeDetection: ChangeDetectionStrategy.Default,
@@ -35,28 +28,83 @@ export class ContactsComponent implements OnInit {
     }
   }
 
-
-
-  columnDefs:ColDef [] = [
-  
-    {field: '', headerCheckboxSelection: true,
-      headerCheckboxSelectionFilteredOnly: true,
-      checkboxSelection: true ,
-      width: 50,
-      cellStyle: { background: "#FBFAFF"}
-      },
-    {
-      field: 'customerId', headerName: 'ID', width: 90, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }
- },
-    {
-      field: 'Name', headerName: 'Name', filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }
- },
-    { field: 'Phone_number', headerName: 'Phone Number', width: 170, filter: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }, sortable: true, },
-    { field: 'emailId', headerName: 'Email', filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
-    { field: 'age', headerName: 'Age', width: 140, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
-    { field: 'sex', headerName: 'Gender', width: 130, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
-    { field: 'tag', headerName: 'Tag', filter: true, width:163, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } }
+columnDefs: ColDef[] = [
+  {
+    field: '',
+    headerCheckboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
+    checkboxSelection: true,
+    flex: 0.5,
+    cellStyle: { background: "#FBFAFF" },
+  },
+  {
+    field: 'customerId',
+    headerName: 'ID',
+    flex: 1,
+    resizable: true,
+    filter: true,
+    sortable: true,
+    cellStyle: { background: "#FBFAFF", opacity: 0.86 },
+  },
+  {
+    field: 'Name',
+    headerName: 'Name',
+    flex: 2,
+    filter: true,
+    resizable: true,
+    sortable: true,
+    cellStyle: { background: "#FBFAFF", opacity: 0.86 },
+  },
+  {
+    field: 'Phone_number',
+    headerName: 'Phone Number',
+    flex: 2,
+    resizable: true,
+    filter: true,
+    cellStyle: { background: "#FBFAFF", opacity: 0.86 },
+    sortable: true,
+  },
+  {
+    field: 'emailId',
+    headerName: 'Email',
+    flex: 2,
+    filter: true,
+    resizable: true,
+    sortable: true,
+    cellStyle: { background: "#FBFAFF", opacity: 0.86 },
+  },
+  {
+    field: 'age',
+    headerName: 'Age',
+    flex: 2,
+    filter: true,
+    resizable: true,
+    sortable: true,
+    cellStyle: { background: "#FBFAFF", opacity: 0.86 },
+  },
+  {
+    field: 'sex',
+    headerName: 'Gender',
+    flex: 2,
+    filter: true,
+    resizable: true,
+    sortable: true,
+    cellStyle: { background: "#FBFAFF", opacity: 0.86 },
+  },
+  {
+    field: 'tag',
+    headerName: 'Tag',
+    flex: 2,
+    filter: true,
+    resizable: true,
+    sortable: true,
+    cellStyle: { background: "#FBFAFF", opacity: 0.86 },
+  },
 ];
+
+
+
+
 
   Tag: string[] =
     [
@@ -111,6 +159,7 @@ export class ContactsComponent implements OnInit {
     dropdownSettings = {}; 
     items: any;
     customerData: any;
+    getFilterTags: [] = [];
     
 	//   filterForm=new FormGroup({
   //   Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z ]+"), Validators.minLength(3)])),
@@ -181,6 +230,7 @@ export class ContactsComponent implements OnInit {
     ngOnInit() {
 
       this.routerGuard();
+
 
       document.getElementById('delete-btn')!.style.display = 'none';
       this.showTopNav = true;
@@ -507,17 +557,24 @@ onSelectAll(items: any) {
 
 
   editContactData = () => {
-    console.log("editContactData")
-    var customerId = sessionStorage.getItem('id')
-    var SP_ID = sessionStorage.getItem('SP_ID')
-    console.log("editdata" + customerId)
-    console.log(this.editContact.value)
-      this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
-        console.log(response)
-        this.getContact();
-        this.closesidenav(this.items);
-      });
-   
+
+    if(!this.editContact.valid) {
+      return false;
+    }
+    {
+      console.log("editContactData")
+      var customerId = sessionStorage.getItem('id')
+      var SP_ID = sessionStorage.getItem('SP_ID')
+      console.log("editdata" + customerId)
+      console.log(this.editContact.value)
+        this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
+          console.log(response)
+          this.getContact();
+          this.closesidenav(this.items);
+        });
+     
+  
+    }
 
 
   }
@@ -585,7 +642,9 @@ deletContactByID(data: any) {
     var SP_ID = sessionStorage.getItem('SP_ID')
     this.apiService.getContactById(data.customerId, SP_ID).subscribe((data) => {
       this.customerData = data
+      this.getFilterTags = this.customerData.tag.split(',').map((tags: string) =>tags.trim());
       console.log(this.customerData);
+      console.log(this.getFilterTags);
       this.getContact();
     })
     
@@ -616,7 +675,14 @@ deletContactByID(data: any) {
   }
 
 
-
+  // filterTags() {
+  //   if(this.customerData.tag) {
+  //     return this.customerData.tag.split(',').map((tag: string) =>tag.trim())
+  //   }
+  //   else {
+  //     return [];
+  //   }
+  // }
 
 }
 

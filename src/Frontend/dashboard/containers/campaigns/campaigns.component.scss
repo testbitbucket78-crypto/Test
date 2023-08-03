@@ -61,6 +61,7 @@
 
 	}
 
+
 	.header.campaigns_section {
 		padding: 0 1% 0 0.8%;
 	}
@@ -315,11 +316,16 @@
 	width: auto;
 	height: 35px;
 	border: 0px;
-	color: #fff;
+	color: grey;
 	padding: 0px 25px;
 	font-size: 12px;
 	font-weight: 800;
 	margin:0 0 0 15px;
+	outline: none;
+	}
+
+	.submit-btn-active {
+		color: #ffffff;
 	}
 	.cancel-btn {
 	background: #fff;
@@ -1070,6 +1076,7 @@
 	align-items: center;
 	padding: 10px;
 	font-weight: 400;
+	cursor: default;
 	}
 
 	.audience_list{

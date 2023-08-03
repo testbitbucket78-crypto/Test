@@ -31,7 +31,7 @@
 
 
 .ag-theme-alpine {
-    height: 740px;
+    // height: 740px;
     border-radius: 30px;
     opacity: 1;
     font-family: "Manrope";
@@ -40,6 +40,7 @@
     color: #6149CD;
     left: 1px;
     margin: 2% 5% 3% 5%;
+    
 }
 
 .btn-9 {
@@ -236,6 +237,14 @@ h4, .h4 {
     font-weight: 700;
 }
 
+.edittag {
+    width: 70%;
+    left: 475px;
+    top: 240px;
+    margin: 0;
+}
+
+
 .popfooter .btn1{
     background: #6149CD 0% 0% no-repeat padding-box;
     border: 1px solid #EBEBEB;
@@ -392,7 +401,8 @@ option:hover{
 
 .input-group > .form-control:not(:last-child), .input-group > .custom-select:not(:last-child) {   
     margin: 0px;
-    padding: 0px 0px 0px 34px;
+    padding: 0px 0px 6px 34px;
+    height: 43px;
 }
 
 input::-webkit-outer-spin-button,
@@ -612,6 +622,10 @@ opacity: 1;
     background-color: #ffffff;
     float: right;
   }
+
+  .sidebar-body {
+    height: 100vh!important;
+  }
   
   .sidebar .parent img{
       /* width: 120px; */
@@ -619,6 +633,7 @@ opacity: 1;
     margin-top: 50px;
     margin-right: 24px;
     margin-left: 14px;
+    width: 113px;
 }
 .sidebar .parent .child h4{
     font-weight: 800;
@@ -705,6 +720,7 @@ opacity: 1;
     width: 11px;
     height: 11px;
     margin-right: 6px!important;
+    cursor: pointer;
 }
 
 .sidebar .child5 h6{
@@ -810,14 +826,19 @@ opacity: 1;
  
 ul.edit-tag-dropdown {
    list-style-type: none;
+   padding: 0;
+}
+
+.edit-tag-header {
+    align-items: center;
 }
 
 #edit-tag-head  {
     font-size: 16px;
     font-family: 'Manrope';
     font-weight: 700;
-    margin-left: 43px;
-    margin-top: 7px;
+    margin: 0;
+  
 
 }
 
@@ -837,11 +858,22 @@ height: 40px;
 background: #ffffff;
 border: 1px solid #ebebeb;
 border-radius: 17px;
-margin-left: 58px;
 opacity: 1;
 font-size: 14px;
 font-weight: 700;
 }
+
+.modal-content .btn-close {
+    background: white;
+    margin: 2px;
+    border-radius: 15px;
+    padding: 6px 12px;
+    border: 1px solid #EBEBEB;
+   }
+
+   .modal-content .btn-close img{
+    width: 12px;
+   }
 
 #edit-btn-save {
 width: 110px;

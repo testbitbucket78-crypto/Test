@@ -1,7 +1,8 @@
-import { Component, OnInit,ViewChild,ElementRef,ViewEncapsulation } from '@angular/core';
+import { Component, OnInit,ViewChild,ElementRef } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
+import { TeamboxService } from './../../services';
 import { Router } from '@angular/router';
 import { agentMessageList } from '@app/models/smart-replies/smartReplies.model';
 import Stepper from 'bs-stepper';
@@ -40,7 +41,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	stepper: any;
 	data: any;
 	val: any;
-	
+	SPID!:Number
 	keywordtxt: any;
 	selectedTeam: any;
 	selectedTag:any;
@@ -65,7 +66,6 @@ export class AddSmartRepliesComponent implements OnInit {
 	message = '';	
 	messages:any [] = [];
 	
-
 	selectedAction:any;	
 	
 	keyword: string = '';
@@ -95,10 +95,21 @@ export class AddSmartRepliesComponent implements OnInit {
 	ShowNameUpdate = false;
     errorMessage = '';
 	successMessage = '';
-	warningMessage = '';
 	assignedAgentList: agentMessageList [] =[];
 	assignAddTag: [] =[];
 	assignedTagList:any []=[];
+	dragAreaClass: string='';
+	selectedChannel:any='WhatsApp Offical';
+	contactList:any = [];
+	contactSearchKey:any='';
+	QuickReplyList:any=[];
+	QuickReplyListMain:any=[];
+	SavedMessageList:any=[];
+	SavedMessageListMain:any=[];
+	allTemplates:any=[];
+	allTemplatesMain:any=[];
+	filterTemplateOption:any='';
+	selectedTemplate:any  = [];
 
     /**richtexteditor **/ 
 	custommesage = '<p>Your Reply...</p>'
@@ -119,6 +130,8 @@ export class AddSmartRepliesComponent implements OnInit {
 	mediaType: any = '';
 	showMention: any = false;
 	editTemplate: any = false;
+
+	attributesList:any=['{{Name}}','{{user_name}}','{{Help}}','{{Support}}','{{email id}}','{{IP_address}}','{{New-Order}}','{{Product YN}}','{{mail_address}}','{{Hotmail}}','{{Product ZR}}'];
 
 
 	public smileys: { [key: string]: Object }[] = [
@@ -239,40 +252,41 @@ export class AddSmartRepliesComponent implements OnInit {
 	public tools: object = {
 		items: ['Bold', 'Italic', 'StrikeThrough',
 			{
-
+				tooltipText: 'Emoji',
 				undo: true,
 				click: this.toggleEmoji.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
 			},
 			{
-
+				tooltipText: 'Attachment',
 				undo: true,
 				click: this.ToggleAttachmentBox.bind(this),
 				template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
 			},
 			{
-
+				tooltipText: 'Attributes',
 				undo: true,
 				click: this.ToggleAttributesOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
 			},
 			{
+				tooltipText: 'Quick Replies',
 				undo: true,
 				click: this.ToggleQuickReplies.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
 			},
 			{
-	
+				tooltipText: 'Saved Message',
 				undo: true,
 				click: this.ToggleSavedMessageOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
 			},
-			{
+			{   tooltipText: 'Insert Template',
 				undo: true,
 				click: this.ToggleInsertTemplateOption.bind(this),
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
@@ -281,14 +295,20 @@ export class AddSmartRepliesComponent implements OnInit {
 	};
 
 	isSendButtonDisabled=false
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router ) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
 
 
+	selectTemplate(template:any){
+		this.selectedTemplate =template
+	}
 	ngOnInit() {
+
+		this.SPID = Number(sessionStorage.getItem('SP_ID'));
+
 		this.stepper = new Stepper($('.bs-stepper')[0], {
 			linear: true,
 			animation: true
@@ -317,6 +337,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.showQuickReply = false
 		this.showMention = false
 		this.showEmoji = false;
+		this.ShowAddAction = false;
 
 	}
 
@@ -342,10 +363,32 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	ToggleAttachmentBox() {
 		this.closeAllModal()
-		this.showAttachmenOption = !this.showAttachmenOption;
+		this.showAttachmenOption=!this.showAttachmenOption
+		this.dragAreaClass = "dragarea";
 
 	}
+	onFileChange(event: any) {
+		let files: FileList = event.target.files;
+		this.saveFiles(files);
+		
+	}
 
+	saveFiles(files: FileList) {
+		if(files[0]){
+		let imageFile = files[0]
+		this.mediaType = files[0].type
+		const data = new FormData();
+		data.append('dataFile',imageFile ,imageFile.name);
+		this.tS.uploadfile(data).subscribe(uploadStatus =>{
+			let responseData:any = uploadStatus
+			if(responseData.filename){
+				this.messageMeidaFile = responseData.filename
+				this.showAttachmenOption=false;
+			}
+		})
+	  }
+	
+	}
 
 	ToggleAttributesOption() {
 		this.closeAllModal()
@@ -366,11 +409,141 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.showInsertTemplate = !this.showInsertTemplate;
 	}
 
+	showeditTemplate(){
+		this.editTemplate=true
+		this.showInsertTemplate=false;
+	}
+	
+	selectQuickReplies(item:any){
+		this.closeAllModal()
+		var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.title+'</b></span><br>'+item.content+'</p>';
+		this.chatEditor.value =htmlcontent
+	}
 
+	searchSavedMessage(event:any){
+		let searchKey = event.target.value
+		if(searchKey.length>2){
+		var allList = this.SavedMessageListMain
+		let FilteredArray = [];
+		for(var i=0;i<allList.length;i++){
+			var content = allList[i].title.toLowerCase()
+				if(content.indexOf(searchKey.toLowerCase()) !== -1){
+					FilteredArray.push(allList[i])
+				}
+		}
+		this.SavedMessageList = FilteredArray
+	}else{
+		this.SavedMessageList = this.SavedMessageListMain
+	}
+	}
+	searchQuickReply(event:any){
+		let searchKey = event.target.value
+		if(searchKey.length>2){
+		var allList = this.QuickReplyListMain
+		let FilteredArray = [];
+		for(var i=0;i<allList.length;i++){
+			var content = allList[i].title.toLowerCase()
+				if(content.indexOf(searchKey.toLowerCase()) !== -1){
+					FilteredArray.push(allList[i])
+				}
+		}
+		this.QuickReplyList = FilteredArray
+	    }else{
+			this.QuickReplyList = this.QuickReplyListMain
+		}
+	}
+	searchContact(event:any){
+		this.contactSearchKey = event.target.value;
+		this.getSearchContact()
+		
+	}
+	getSearchContact(){
+		let SPID = sessionStorage.getItem('SP_ID')
+		this.tS.searchCustomer(this.selectedChannel,SPID,this.contactSearchKey).subscribe(data =>{
+			this.contactList= data
+		});
+	}
 
 	showEmojiType(EmojiType: any) {
 		this.EmojiType = EmojiType;
 	}
+
+	searchTemplate(event:any){
+		let searchKey = event.target.value
+		if(searchKey.length>2){
+		var allList = this.allTemplates
+		let FilteredArray = [];
+		for(var i=0;i<allList.length;i++){
+			var content = allList[i].title.toLowerCase()
+				if(content.indexOf(searchKey.toLowerCase()) !== -1){
+					FilteredArray.push(allList[i])
+				}
+		}
+		this.allTemplates = FilteredArray
+	    }else{
+			this.allTemplates = this.allTemplatesMain
+		}
+	}
+
+
+	filterTemplate(temType:any){
+
+		let allList  =this.allTemplatesMain;
+		if(temType.target.checked){
+		var type= temType.target.value;
+		for(var i=0;i<allList.length;i++){
+				if(allList[i]['type'] == type){
+					allList[i]['is_active']=1
+				}
+		}
+	   }else{
+		var type= temType.target.value;
+		for(var i=0;i<allList.length;i++){
+				if(allList[i]['type'] == type){
+					allList[i]['is_active']=0
+				}
+		}
+	   }
+		var newArray=[];
+	   for(var m=0;m<allList.length;m++){
+          if(allList[m]['is_active']==1){
+			newArray.push(allList[m])
+		  }
+
+	   }
+	   this.allTemplates= newArray
+
+		
+	}
+
+	
+
+	
+	async getsavedMessages(){
+		this.tS.getsavedMessages(this.SPID).subscribe(savedMessages =>{
+			this.SavedMessageListMain = savedMessages
+			this.SavedMessageList = savedMessages
+		})
+
+	}
+	async getquickReply(){
+		this.tS.getquickReply(this.SPID).subscribe(quickReply =>{
+			this.QuickReplyListMain = quickReply
+			this.QuickReplyList = quickReply
+		})
+		
+	}
+
+	async getTemplates(){
+		this.tS.getTemplates(this.SPID).subscribe(allTemplates =>{
+			console.log('////////allTemplates////////')
+			console.log(allTemplates)
+			this.allTemplatesMain = allTemplates
+			this.allTemplates = allTemplates
+		})
+		
+	}
+
 
 	public onInsert(item: any) {
 
@@ -382,19 +555,42 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	}
 
-
+	showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}else if(type=='error'){
+			this.errorMessage=message;
+		}
+		setTimeout(() => {
+			this.hideToaster()
+		}, 5000);
+		
+	}
+	hideToaster(){
+		this.successMessage='';
+		this.errorMessage='';
+	}
 
 	/***add keyword and remove keyowrd method***/
 
 	addKeyword() {
-		if (this.keyword !== '') {
-			this.keywords.push(this.keyword);
-			this.keyword = '';
+		let trimmedKeyword = this.keyword.trim();
+	
+		if (!trimmedKeyword) {
+		  this.showToaster('! Please add a keyword','error');
+		  return;
 		}
-		else {
-			alert('Type any keyword first!')
+		let isDuplicate = this.keywords.some((existingKeyword) => {
+		  return existingKeyword.toLowerCase() === trimmedKeyword.toLowerCase();
+		});
+	
+		if (isDuplicate) {
+			this.showToaster('! Keyword already added','error');
+		} else {
+		  this.keywords.push(trimmedKeyword);
+		  this.keyword = '';
 		}
-	}
+	  }
 
 	removeKeyword(keyword: string) {
 		this.keywords = this.keywords.filter(k => k !== keyword);
@@ -412,8 +608,12 @@ export class AddSmartRepliesComponent implements OnInit {
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
 	addMessage() {
+
+		if(!this.custommesage) {
+			this.showToaster('! Please enter a message first','error');
+			return;
+		}
 		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage })
-			// this.messages.push(this.message);
 			this.custommesage = '';
 		
 		    
@@ -526,6 +726,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	toggleRemoveTag() {
 		$("#addTagModal").modal('show'); 
 		this.ShowRemoveTag = true;
+	
 	
 	}
 	assignConversation(index: number) {
@@ -730,20 +931,28 @@ export class AddSmartRepliesComponent implements OnInit {
 		const target = event.target as HTMLElement;
 		if (target.classList.contains('form-check-label-img')) {
 			this.showBox = true;
+			this.showBox1 = false;
+			this.showBox2 = false;
 		}
 	}
 
 	onClickExact(event: MouseEvent) {
 		const target = event.target as HTMLElement;
 		if (target.classList.contains('form-check-label-img')) {
+			this.showBox = false;
 			this.showBox1 = true;
+			this.showBox2 = false;
+		
 		}
 	}
 
 	onClickContains(event: MouseEvent) {
 		const target = event.target as HTMLElement;
 		if (target.classList.contains('form-check-label-img')) {
+			this.showBox = false;
+			this.showBox1 = false;
 			this.showBox2 = true;
+		
 		}
 	}
 

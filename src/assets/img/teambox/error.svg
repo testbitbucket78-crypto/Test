@@ -1,0 +1,12 @@
+<svg id="error" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <g id="error-2" data-name="error">
+    <g id="Group_852" data-name="Group 852" transform="translate(0 0)">
+      <g id="Time_Circle" data-name="Time Circle" transform="translate(0 0)">
+        <path id="Fill_1" data-name="Fill 1" d="M16,8A8,8,0,1,1,8,0a8,8,0,0,1,8,8" transform="translate(0 0)" fill="#f23b3b"/>
+      </g>
+    </g>
+    <g id="Iconly_Bulk_Info_Circle" data-name="Iconly/Bulk/Info Circle" transform="translate(7.29 4.719)">
+      <path id="Exclusion_14" data-name="Exclusion 14" d="M0,.631V3.818a.674.674,0,0,0,.708.631.675.675,0,0,0,.708-.631V.631A.675.675,0,0,0,.708,0,.674.674,0,0,0,0,.631ZM0,5.853a.71.71,0,1,0,.7-.708A.712.712,0,0,0,0,5.853Z" transform="translate(0)" fill="#fff" stroke="rgba(0,0,0,0)" stroke-width="1"/>
+    </g>
+  </g>
+</svg>

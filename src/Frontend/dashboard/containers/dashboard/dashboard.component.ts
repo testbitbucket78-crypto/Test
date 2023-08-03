@@ -137,9 +137,18 @@ export class DashboardComponent implements OnInit {
 
         this.apiService.dashboardRecentConversation(SP_ID).subscribe((data: any) => {
             this.recentConversation = data[0];
-
-
+          
         })
+    }
+
+    getLimitedMessageText(message: string) {
+        let maxLength = 70;
+        if (message.length <= maxLength) {
+        return message;
+        } else {
+        return message.substring(0, maxLength) + '...';
+        }
+
     }
 
     routeToPage() {

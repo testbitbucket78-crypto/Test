@@ -343,6 +343,7 @@ span {
 }
 .body-con-2{
     justify-content: space-between;
+    align-items: center;
 }
 #r-first{
     margin-left: -16rem;
@@ -401,6 +402,7 @@ span {
     display: inline-block;
     width: 131px;
     height: 0px;
+    top: -4px;
 }
 .active-toggle .slider {
     position: absolute;
@@ -416,7 +418,7 @@ span {
     border-radius: 34px;
 }
 .over-on{
-    margin-top: -2rem;
+    margin-top: -2.2rem;
     margin-left: 2.3rem;
 }
 .active-toggle .switch input {
@@ -606,7 +608,7 @@ span {
     outline: none;
 }
 .em-con{
-    padding-left: 11px;
+    padding-left: 4px;
 }
 .email-1{
     margin-left: -6px;
@@ -643,7 +645,7 @@ span {
     margin-right: -12px;
 }
 #con22{
-    font-family: " Manrope";
+    font-family: 'Manrope';
     letter-spacing: 0px;
     color: #6236FF;
     opacity: 1;
