@@ -25,7 +25,7 @@ where u.isDeleted !=1 and u.SP_ID=?`
 
 
 
-var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details,SP_ID) VALUES ?"
+var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details,SP_ID,interaction_type) VALUES ?"
 var updateInteractionQuery="UPDATE Interaction SET interaction_status =? WHERE InteractionId =?";
 
 var getAllInteraction = "SELECT  Interaction.AutoReplyStatus,Interaction.AutoReplyUpdatedAt,Interaction.paused_till, Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId OR Interaction.customerId=EndCustomer.Phone_number"
@@ -48,11 +48,17 @@ var savedMessagesQuery = "SELECT * from savedMessages where is_active=1 and SPID
 var getquickReplyQuery = "SELECT * from quickReply where is_active=1 and SPID=?";
 var getTemplatesQuery =  "SELECT * from templates where is_active=1 and SPID=?";
 
+//_________________________________FOR SETTINGS NOTIFICATIONS  ________________________//
+var addNotification = `INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`
+var assignedNameQuery = `SELECT name,SP_ID from user where uid=?`;
+
 module.exports={host,user,password,database,
 selectAllAgentsQuery,selectAllQuery,insertCustomersQuery,filterQuery,searchQuery,selectByIdQuery,blockCustomerQuery,
 createInteractionQuery,updateInteractionQuery,getAllInteraction,selectInteractionByIdQuery,
 getAllMessagesByInteractionId,insertMessageQuery,
 updateInteractionMapping,getInteractionMapping,
-savedMessagesQuery,getquickReplyQuery,getTemplatesQuery}
+savedMessagesQuery,getquickReplyQuery,getTemplatesQuery,
+addNotification,assignedNameQuery
+}
 
 

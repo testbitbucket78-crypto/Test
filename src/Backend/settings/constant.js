@@ -13,6 +13,9 @@ const region = 'ap-south-1'
 
 //__________END_____________________//
 
+const baseURL = 'https://staging.engageflo.com/api/';
+const accessToken = '64c4bcc7c05b1';
+
 insertCompanyDetails = 'INSERT INTO companyDetails(SP_ID,profile_img,Company_Name,Company_Website,Country,Phone_Number,Industry,Employees_count,created_By,created_at) VALUES ?'
 insertlocalDetails = 'INSERT INTO localDetails(SP_ID,Date_Format,Time_Format,Time_Zone,Currency,created_By,created_at) VALUES ?'
 insertBillingDetails = 'INSERT INTO billing(SP_ID,InvoiceId,billing_email,Address1,zip_code,created_By,Address2,created_at,Country,City,State) VALUES ?'
@@ -102,10 +105,21 @@ profilebillQuery = `INSERT INTO BillingHistory (SP_ID,billing_date,billing_id,am
 //updateProfileBillingQuery=`UPDATE BillingHistory set billing_date=?,billing_id=?,amount=?,payment_status=?,payment_method=?,billing_type=? WHERE SP_ID=?`
 selectbillinghistory = `select *from BillingHistory where SP_ID=?`
 
-invoiceData = `SELECT c.Company_Name, h.*
+
+invoicePdf = `Select c.Company_Name,c.profile_img,b.*,l.Currency 
 FROM companyDetails c
-JOIN BillingHistory h ON c.SP_ID = h.SP_ID
+JOIN billing b ON c.SP_ID = b.SP_ID
+JOIN localDetails l ON c.SP_ID = l.SP_ID
 WHERE c.SP_ID = ?`
+
+billhistoryQuery = `select billing_date,billing_type  from BillingHistory where SP_ID=?
+    ORDER BY billing_date DESC
+    LIMIT 1;`
+planquery = `select *  from PlanPricing where SP_ID=? and isDeleted !=1`
+
+cNameQuery = `Select name from user where uid=?`
+
+insertSPTransations = `INSERT INTO SPTransations (sp_id,transation_date,amount,transation_type,currency) values ?`
 
 useData = `SELECT interaction_type, DATE(created_at) AS interaction_date, COUNT(*) AS count
 FROM Interaction where SP_ID=?
@@ -115,6 +129,89 @@ usageInsiteQuery = `SELECT interaction_type,  COUNT(*) AS count
 FROM Interaction where SP_ID=2
 GROUP BY interaction_type`
 
+allusageInsiteCount = `SELECT   COUNT(*) AS count FROM Interaction where SP_ID=?`
+
+addFunds = `INSERT INTO SPTransations (sp_id,transation_date,amount,transation_type,description,interaction_id,currency) VALUES ?`
+
+subFAQsQuery = `SELECT * FROM SubFAQS WHERE FAQ_id=? and isDeleted!=1 `
+FAQsQuery = `SELECT * FROM FAQS`
+UserGuideTopicsQuery = `SELECT * FROM UserGuideTopics`
+UserGuideSubTopicsQuery = `SELECT *FROM UserGuideSubTopics WHERE headings_id=?`
+
+manageplans = `select * from ManagePlan`
+manageplansCharges = `select * from ManagePlanCharges`
+
+var selectNotification = `select * from Notification where sp_id=?`
+
+
+
+//_____________________________________CAMPAIGN QUERY_____________________________________//
+
+
+var addCampaignTimingsQuery = `INSERT INTO CampaignTimings (sp_id,day,start_time,end_time,created_at) values ?`
+var deleteCampaignTimingsQuery = `UPDATE  CampaignTimings SET isDeleted=1 ,updated_at=? where sp_id=?`
+//var updateCampaignTimingsQuery=`INSERT INTO CampaignTimings (sp_id,day,start_time,end_time,created_at,updated_at) values ?`
+var selectCampaignTimingsQuery = `SELECT * FROM CampaignTimings WHERE sp_id=? and isDeleted  !=1`
+
+var campaignAlertUsersList = `SELECT r.RoleName as UserType ,u.uid,u.email_id,u.mobile_number,u.name,u.profile_img
+FROM roles r
+JOIN user u ON u.UserType = r.roleID
+where u.isDeleted !=1 and u.SP_ID=?`
+
+var addCampaignAlerts = `INSERT INTO CampaignAlerts(SP_ID,uid,created_at) VALUES ?`
+var deleteCampaignAlerts = `UPDATE  CampaignAlerts set isDeleted=1,updated_at=? where SP_ID=?`
+var selectCampaignAlerts = `select c.uid,u.* from CampaignAlerts c
+JOIN user u ON u.uid=c.uid
+ where c.SP_ID=? and c.isDeleted !=1`
+
+var addCampaignTest = `INSERT INTO CampaignTest(SP_ID,uid,created_at) VALUES ?`
+var deleteCampaignTest = `UPDATE  CampaignTest set isDeleted=1,updated_at=? where SP_ID=?`
+var selectCampaignTest = `select c.uid,u.* from CampaignTest c
+JOIN user u ON u.uid=c.uid
+ where c.SP_ID=? and c.isDeleted !=1`
+
+//_______________________________CONTACT SETTINGS________________________//
+
+var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at) values ?`
+var updatetag = `UPDATE EndCustomerTagMaster set TagName=?,TagColour=?,updated_at=? where ID=?`
+var deletetag = `UPDATE EndCustomerTagMaster set isDeleted=1,updated_at=? where ID=?`
+var selecttag = `SELECT tm.TagName,tm.TagColour, COUNT(ec.tag) AS tag_count
+ FROM EndCustomerTagMaster AS tm
+ JOIN EndCustomer AS ec 
+ ON FIND_IN_SET(tm.TagName, ec.tag) > 0  and   ec.SP_ID=tm.SP_ID where ec.SP_ID=? 
+ GROUP BY tm.TagName;`
+
+
+
+//________________________________________TEMPLATE SETTINGS__________________________//
+
+var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at) VALUES ?`
+var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1`
+var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=? where ID=?`
+var deleteTemplate = `UPDATE templateMessages set isDeleted=1 ,updated_at=? where ID=?`
+
+
+
+//______________________________________ACCOUNT SETTINGS______________________________//
+
+var insertWhatsappdetails = `insert into WhatsAppWeb( channel_id,connected_id,channel_status,is_deleted,spid,phone_type,import_conversation,QueueMessageCount,connection_date,WAVersion,InMessageStatus,OutMessageStatus,QueueLimit,delay_Time,INGrMessage,OutGrMessage,online_status,serviceMonetringTool,syncContact,DisconnAlertEmail,roboot,restart,reset) values ?`
+var updateWhatsappdetails = `UPDATE WhatsAppWeb SET channel_id=?,connected_id=?,channel_status=?,is_deleted=?,spid=?,phone_type=?,import_conversation=?,QueueMessageCount=?,connection_date=?,WAVersion=?,InMessageStatus=?,OutMessageStatus=?,QueueLimit=?,delay_Time=?,INGrMessage=?,OutGrMessage=?,online_status=?,serviceMonetringTool=?,syncContact=?,DisconnAlertEmail=?,roboot=?,restart=?,reset=?, updated_at=? WHERE id=?`
+var selectChannelCount = `SELECT  channel_id, COUNT(channel_id) AS count_of_channel_id 
+FROM WhatsAppWeb where spid=? and is_deleted !=1
+GROUP BY channel_id `
+var Whatsappdetails = `select *from WhatsAppWeb where spid=? and is_deleted !=1`
+
+var addTokenQuery=` INSERT INTO APIToken (spid,APIName,created_at) values ?`
+var updateTokenQuery=`UPDATE APIToken set spid=?,APIName=?,updated_at=? where id=?`
+var deleteTokenQuery=`UPDATE APIToken set is_Deleted=1,updated_at=? where id=?`
+var deleteIPQuery=`UPDATE APIIPAddress set is_Deleted=1,updated_at=? where token_id=?`
+var selectTokenQuery=`  SELECT t.APIName,t.id,i.IPAddress,t.isEnable,i.token_id,t.spid
+FROM APIToken AS t
+JOIN APIIPAddress AS i ON t.id = i.token_id
+WHERE t.spid = ? AND t.is_Deleted != 1 AND i.is_Deleted != 1; `
+var isEnableQuery=`UPDATE APIToken SET isEnable=? ,updated_at=? where id=?`
+var insertIPAddress=`INSERT INTO APIIPAddress (spid,token_id,IPAddress,created_at,is_Deleted) values ?`
+
 module.exports = {
     host, user, password, database, insertCompanyDetails, insertlocalDetails, insertBillingDetails, selectCompanyDetails, selectlocalDetails, selectBillingDetails,
     updateCompanyDetails, updatelocalDetails, updateBillingDetails, insertWork, selectWork, deleteWork, insertHoliday, selectHoliday, removeHoliday, updateWork, getSubRight, getRights,
@@ -122,6 +219,10 @@ module.exports = {
     updateQuery, insertQuery, selectByIdQuery, findEmail, getRole, email, appPassword, emailHost, port,
     addteamQuery, addUserTeamMap, teamDelete, mapteamDelete, updateTeams, selectTeams, teamID, teamName, roleIDQuery, roleNameQuery,
     PasswordQuery, updatePasswordQuery, activeStatusquery, addNotification, getNotification, savePlanQuery
-    , profilebillQuery, updatePlanQuery, selectbillinghistory, invoiceData, useData, selectPlan ,usageInsiteQuery
-
+    , profilebillQuery, updatePlanQuery, selectbillinghistory, useData, selectPlan, usageInsiteQuery, addFunds
+    , subFAQsQuery, FAQsQuery, UserGuideTopicsQuery, UserGuideSubTopicsQuery, allusageInsiteCount, invoicePdf, billhistoryQuery, planquery, cNameQuery, insertSPTransations
+    , manageplans, manageplansCharges, selectNotification, addCampaignTimingsQuery, deleteCampaignTimingsQuery, selectCampaignTimingsQuery, campaignAlertUsersList,
+    addCampaignAlerts, deleteCampaignAlerts, selectCampaignAlerts, addCampaignTest, deleteCampaignTest, selectCampaignTest,
+    addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
+    Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress
 }
