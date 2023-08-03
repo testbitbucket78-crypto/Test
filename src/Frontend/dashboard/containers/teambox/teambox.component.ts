@@ -755,6 +755,7 @@
 								if(msgjson.updateMessage)
 								{
 									this.getAllInteraction();
+
 								}						
 							}
 						}
@@ -791,13 +792,6 @@
 			})
 			
 		}
-
-		
-
-
-		
-
-		
 
 		focusInChatFunction(){
 			this.searchChatFocused = true

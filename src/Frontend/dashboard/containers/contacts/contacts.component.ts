@@ -557,17 +557,24 @@ onSelectAll(items: any) {
 
 
   editContactData = () => {
-    console.log("editContactData")
-    var customerId = sessionStorage.getItem('id')
-    var SP_ID = sessionStorage.getItem('SP_ID')
-    console.log("editdata" + customerId)
-    console.log(this.editContact.value)
-      this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
-        console.log(response)
-        this.getContact();
-        this.closesidenav(this.items);
-      });
-   
+
+    if(!this.editContact.valid) {
+      return false;
+    }
+    {
+      console.log("editContactData")
+      var customerId = sessionStorage.getItem('id')
+      var SP_ID = sessionStorage.getItem('SP_ID')
+      console.log("editdata" + customerId)
+      console.log(this.editContact.value)
+        this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
+          console.log(response)
+          this.getContact();
+          this.closesidenav(this.items);
+        });
+     
+  
+    }
 
 
   }

@@ -549,7 +549,10 @@
 			</div>
 
 			<div class="input_group_btn">
-				<button *ngIf="activeStep<4" type="button" class="submit-btn" (click)="nextStep()">Next</button>
+				<button *ngIf="activeStep < 4" [ngClass]="{'submit-btn-active': true, 'color-grey': true}" type="button" class="main-modal submit-btn" (click)="nextStep()">Next</button>
+
+
+
 				<button *ngIf="activeStep == 4" type="button" class="submit-btn" (click)="ConfirmCampaignSchedule(ConfirmCampaign)">Done</button>
 			</div>
 
