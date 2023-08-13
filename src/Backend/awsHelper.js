@@ -58,41 +58,39 @@ async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken) {
 async function uploadToAws(awspath, stream) {
     return new Promise((resolve, reject) => {
         // Create S3 client
-        console.log(val.awsaccessKeyId);
-        console.log(val.awssecretAccessKey);
-        console.log(val.awsregion);
-        console.log(awspath);
-        console.log(stream);
-        const s3 = new AWS.S3({ accessKeyId: val.awsaccessKeyId, secretAccessKey: val.awssecretAccessKey, region: val.awsregion });
-
-        //const readStream = new Readable().wrap(data);
-
-        const filekey = awspath;
+        // console.log(val.awsaccessKeyId);
+        // console.log(val.awssecretAccessKey);
+        // console.log(val.awsregion);
+        // console.log(awspath);
+        var buf = Buffer.from(stream.replace(/^data:image\/\w+;base64,/, ""),'base64')
+        var data = {
+            Key: awspath, 
+            Body: buf,
+            ContentEncoding: 'base64',
+            ContentType: 'image/png',
+            Bucket: val.awsbucket,
+            
+        };
         const params = {
             Bucket: val.awsbucket,
             Key: awspath,
-            Body: stream,
+            accessKeyId: val.awsaccessKeyId, 
+            secretAccessKey: val.awssecretAccessKey, 
+            region: val.awsregion
         };
 
-
-
-
-        s3.upload(params, (err, data) => {
-            // console.log(data);
+        var s3Bucket = new AWS.S3( params );
+        s3Bucket.putObject(data, function(err, data){
             if (err) {
-                console.error('Error uploading file:', err);
-            } else {
-                console.log('File uploaded successfully!');
-                console.log(data);
-                resolve({ code: 0, value: data });//SAVE DETAILS TO DB from calling function so that it can be used in future to access.
-            }
-
-        })
-
+                        console.error('Error uploading file:', err);
+                    } else {
+                        console.log('File uploaded successfully!');
+                        console.log(data);
+                        data.Location = "https://"+val.awsbucket+".s3."+val.awsregion+".amazonaws.com/"+awspath;
+                        resolve({ code: 0, value: data });//SAVE DETAILS TO DB from calling function so that it can be used in future to access.
+                    }
+        });
     })
-
-    
-
 }
 
 async function uploadWhatsAppImageToAws(spid, imageid, fileUrl, fileAccessToken) {
