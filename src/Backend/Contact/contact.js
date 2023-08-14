@@ -8,6 +8,7 @@ const cors = require('cors');
 const fs = require("fs");
 const path = require("path");
 const nodemailer = require('nodemailer');
+const awsHelper = require('../awsHelper')
 const { Key } = require("protractor");
 app.use(bodyParser.json());
 app.use(cors());
@@ -65,8 +66,8 @@ app.post('/contact', async function (req, res) {
     var values = [[Name, Phone_number, emailId, age, tagListJoin, statusListJoin, facebookId, InstagramId, SP_ID]];
 
     //db.runQuery(req, res, val.insertContact, [values])
-    var result = await db.excuteQuery(val.existContactWithSameSpid, [emailId,Phone_number,SP_ID])
-    
+    var result = await db.excuteQuery(val.existContactWithSameSpid, [emailId, Phone_number, SP_ID])
+
     console.log("result >>>>>>>>>>")
     console.log(result)
     if (result.length > 0) {
@@ -77,13 +78,13 @@ app.post('/contact', async function (req, res) {
         status: 409
       });
     }
-    else{
-     
-      var customers=await db.excuteQuery(val.insertContact, [values])
-   
+    else {
+
+      var customers = await db.excuteQuery(val.insertContact, [values])
+
       res.status(200).send({
         msg: 'Contact added successfully !',
-        contact:customers,
+        contact: customers,
         status: 200
       });
     }
@@ -603,6 +604,51 @@ let transporter = nodemailer.createTransport({
   },
 });
 
+
+app.post('/addProfileImg', async (req, res) => {
+  try {
+    customerId = req.body.customerId
+    contact_profile = req.body.contact_profile
+    SP_ID = req.body.SP_ID
+
+    let awsres = await awsHelper.uploadStreamToAws(SP_ID + "/" + customerId + "contactProfile.jpg", contact_profile)
+
+
+    let contactimgquery = `UPDATE EndCustomer  set contact_profile=? where customerId=?`
+    let result = await db.excuteQuery(contactimgquery, [awsres.value.Location, customerId]);
+    res.status(200).send({
+      msg: result,
+      status: 200
+    });
+
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
+})
+
+
+app.get('/getProfileImg/:cuid', async (req, res) => {
+  try {
+     let getProfileQuery=`SELECT contact_profile FROM EndCustomer WHERE customerId=?`;
+     let getProfile=await db.excuteQuery(getProfileQuery,[req.params.cuid]);
+     res.status(200).send({
+      msg: getProfile,
+      status: 200
+    });
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
+})
 
 app.listen(3002);
 

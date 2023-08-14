@@ -5,7 +5,7 @@ const val = require('./TeamBoxConstant')
 const app = express();
 const bcrypt = require('bcrypt');
 const http = require("https");
-
+const middleWare=require('../middleWare')
 const multer = require('multer');
 let fs = require('fs-extra');
 
@@ -281,11 +281,12 @@ const deleteMessage = (req, res) => {
 
 const insertMessage = async (req, res) => {
 
+     console.log("req.body.message_media")
      console.log(req.body)
     if (req.body.Message_id == '') {
         var messageQuery = val.insertMessageQuery
 
-
+        
         SPID = req.body.SPID
         interaction_id = req.body.InteractionId
         Agent_id = req.body.AgentId
@@ -301,10 +302,11 @@ const insertMessage = async (req, res) => {
         let agentName=await db.excuteQuery('select name from user where uid=?',[Agent_id])
         var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
         db.runQuery(req, res, messageQuery, [values])
+        if(agentName.length >=0){
          let mentionQuery=`SELECT * FROM Message WHERE '`+ message_text+`' LIKE '%@`+ agentName[0].name+`%'`;
-             
-        let mentionedNotification = await db.excuteQuery(mentionQuery, [])
         
+        var mentionedNotification = await db.excuteQuery(mentionQuery, [])
+        }
         if(mentionedNotification.length!=0){
           
            let notifyvalues = [[SPID,'Mentioned You', message_text, Agent_id, 'teambox', Agent_id, new Date()]]
@@ -314,9 +316,12 @@ const insertMessage = async (req, res) => {
         }
         if (req.body.message_type == 'text') {
             if (req.body.message_media != '') {
-                sendMediaOnWhatsApp(req.body.messageTo, message_media)
+              // sendMediaOnWhatsApp(req.body.messageTo, message_media)
+               console.log(message_media)
+              middleWare.channelssetUp('WhatsApp Official','image',req.body.messageTo, message_media)
             }
-            sendTextOnWhatsApp(req.body.messageTo, message_text)
+           // sendTextOnWhatsApp(req.body.messageTo, message_text)
+           middleWare.channelssetUp('WhatsApp Official','text',req.body.messageTo, message_text)
         }
 
     } else {
@@ -347,6 +352,7 @@ const WHATSAPPOptions = {
 };
 
 function sendMediaOnWhatsApp(messageTo, mediaFile) {
+    console.log(mediaFile)
     var reqBH = http.request(WHATSAPPOptions, (resBH) => {
         var chunks = [];
         resBH.on("data", function (chunk) {
@@ -424,9 +430,9 @@ const updateInteractionMapping = async (req, res) => {
     is_active = 1
     var values = [[is_active, InteractionId, AgentId, MappedBy]]
    
-    let name = await db.excuteQuery(val.assignedNameQuery, [AgentId])
+    let nameData = await db.excuteQuery(val.assignedNameQuery, [AgentId])
     
-    let notifyvalues = [[name[0].SP_ID,'Assigned a conversation', 'Assigned a conversation with' + name[0].name, AgentId, 'teambox', MappedBy, new Date()]]
+    let notifyvalues = [[nameData[0].SP_ID,'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, new Date()]]
     let notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues])
    
     db.runQuery(req, res, val.updateInteractionMapping, [values])
@@ -455,7 +461,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates
+    getsavedMessages, getquickReply, getTemplates,sendTextOnWhatsApp,sendMediaOnWhatsApp
 };
 
 

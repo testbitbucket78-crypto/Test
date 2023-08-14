@@ -318,13 +318,13 @@ const sendOtp = async function (req, res) {
         });
 
 
-        var data = getTextMessageInput('919971129777', otp);
+        var data = getTextMessageInput('918130818921', otp);
 
         sendMessage(data)
         var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
         console.log(storeEmailOtp)
 
-        var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, otp, 'Mobile'])
+        var storePhoneOtp = await db.excuteQuery(val.insertOtp, ['mobile_number', otp, 'Mobile'])
         console.log(storePhoneOtp)
 
 
