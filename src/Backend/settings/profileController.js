@@ -882,16 +882,20 @@ const userProfile = async (req, res) => {
         name = req.body.name
         filePath = req.body.filePath
         spid = req.body.spid
+        
+        // Remove header
+        let streamSplit = filePath.split(';base64,');
+        let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
+        let datapart = streamSplit.pop();// this is dependent on the POP above
+   
+        let imgType = datapart.split('/').pop();
+        let imageName = 'Profile.png';//Default it to png.
+        if(imgType){
+            imageName = 'Profile' + '.' + imgType;
+        }
+        
+        let awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + name + "/"+imageName, filePath)
 
-        var nameImg = filePath
-        // if (filePath = 'undefined') {
-
-        //  nameImg = path.join(__dirname, 'temple.jpg')
-        // }
-        console.log("  nameImg  " + nameImg)
-        let awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + name + "/profile.jpg", nameImg)
-
-        console.log(awsres.value.Location)
         let userimgquery = `UPDATE user  set profile_img=? where uid=?`
         let result = await db.excuteQuery(userimgquery, [awsres.value.Location, uid]);
         res.status(200).send({
