@@ -7,6 +7,7 @@ var db = mysql.createConnection({
     user: process.env.CUSTOMUSER,
     password: process.env.PASSWORD,
     database: process.env.DATABASE,
+    charset: 'utf8mb4',
     multipleStatements: true,
     insecureAuth: true
 

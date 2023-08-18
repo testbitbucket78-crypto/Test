@@ -12,6 +12,8 @@ selectAll = `select
 t.ID,
 t.Title,
 t.Description,
+t.CreatedDate,
+t.ModifiedDate,
 count(distinct s.Keyword) as KeywordCount,
 t.MatchingCriteria,
 count(distinct m.ActionID) as ActionCount
@@ -81,6 +83,8 @@ t.Title,
 t.Description,
 s.Keyword ,
 t.MatchingCriteria,
+t.CreatedDate,
+t.ModifiedDate,
 m.Message,
 m.Value ,
 n.Name 
@@ -131,7 +135,7 @@ deletMessage = `update SmartReplyAction set isDeleted='1',isDeletedOn=now() wher
 editMessage = `update SmartReplyAction set Message=? where SmartReplyID=?`;
 editAction = `update SmartReplyAction set ActionID=?,Value=? where SmartReplyID=?`;
 removeKeyword = `UPDATE SmartReplyKeywords set  isDeleted=1 , isDeletedOn=now() where SmartReplyId=? and Keyword=?`
-updateSmartReply = `CALL updateSmartReply(?,?,?,?,?,?,?) `;
+updateSmartReply = `CALL updateSmartReply(?,?,?,?,?,?) `;
 crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
 var updateInteractionMapping="INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy) VALUES ?"

@@ -1,0 +1,278 @@
+var express = require("express");
+const db = require("../dbhelper");
+var app = express();
+const val = require('./constant');
+const bodyParser = require('body-parser');
+const awsHelper = require('../awsHelper')
+const cors = require('cors')
+app.use(bodyParser.json());
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+const fs = require('fs');
+const path = require('path');
+const axios = require('axios');
+
+
+
+const insertAndEditWhatsAppWeb = async (req, res) => {
+    try {
+        id = req.body.id
+        channel_id = req.body.channel_id
+        connected_id = req.body.connected_id
+        channel_status = req.body.channel_status
+        is_deleted = 0
+        spid = req.body.spid
+        phone_type = req.body.phone_type
+        import_conversation = req.body.import_conversation
+        QueueMessageCount = req.body.QueueMessageCount
+        connection_date = req.body.connection_date
+        WAVersion = req.body.WAVersion
+        InMessageStatus = req.body.InMessageStatus
+        OutMessageStatus = req.body.OutMessageStatus
+        QueueLimit = req.body.QueueLimit
+        delay_Time = req.body.delay_Time
+        INGrMessage = req.body.INGrMessage
+        OutGrMessage = req.body.OutGrMessage
+        online_status = req.body.online_status
+        serviceMonetringTool = req.body.serviceMonetringTool
+        syncContact = req.body.syncContact
+        DisconnAlertEmail = req.body.DisconnAlertEmail
+        roboot = req.body.roboot
+        restart = req.body.restart
+        reset = req.body.reset
+
+
+        if (id == 0) {
+            let addVal = [[channel_id, connected_id, channel_status, is_deleted, spid, phone_type, import_conversation, QueueMessageCount, new Date(), WAVersion, InMessageStatus, OutMessageStatus, QueueLimit, delay_Time, INGrMessage, OutGrMessage, online_status, serviceMonetringTool, syncContact, DisconnAlertEmail, roboot, restart, reset]]
+            let insertVal = await db.excuteQuery(val.insertWhatsappdetails, [addVal]);
+            res.status(200).send({
+                insertVal: insertVal,
+                status: 200
+            })
+
+        }
+        else {
+            let updateVal = [channel_id, connected_id, channel_status, is_deleted, spid, phone_type, import_conversation, QueueMessageCount, new Date(), WAVersion, InMessageStatus, OutMessageStatus, QueueLimit, delay_Time, INGrMessage, OutGrMessage, online_status, serviceMonetringTool, syncContact, DisconnAlertEmail, roboot, restart, reset, new Date(), id]
+            let updatedRes = await db.excuteQuery(val.updateWhatsappdetails, updateVal);
+            res.status(200).send({
+                updatedRes: updatedRes,
+                status: 200
+            })
+        }
+
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const selectDetails = async (req, res) => {
+    try {
+        let channelCounts = await db.excuteQuery(val.selectChannelCount, [req.params.spid]);
+        let whatsAppDetails = await db.excuteQuery(val.Whatsappdetails, [req.params.spid]);
+        res.status(200).send({
+            channelCounts: channelCounts,
+            whatsAppDetails: whatsAppDetails,
+            status: 200
+        })
+
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const addToken = async (req, res) => {
+    try {
+        id = req.body.id
+        spid = req.body.spid
+        APIName = req.body.APIName
+        IPAddress = req.body.IPAddress
+        created_at = new Date()
+
+        let tokenVal = [[spid, APIName, created_at]];
+        let addedToken = await db.excuteQuery(val.addTokenQuery, [tokenVal])
+        var newId = addedToken.insertId
+        IPAddress.forEach(async (item) => {
+            let ipVal = [[spid, newId, item, created_at, '0']];
+            let addedIP = await db.excuteQuery(val.insertIPAddress, [ipVal])
+        })
+        res.status(200).send({
+            addedToken: "addedToken",
+            status: 200
+        })
+
+
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const editToken = async (req, res) => {
+    try {
+
+        id = req.body.id
+        spid = req.body.spid
+        APIName = req.body.APIName
+        IPAddress = req.body.IPAddress
+        updated_at = new Date();
+
+        let deleteIP = await db.excuteQuery(val.deleteIPQuery, [new Date(),id])
+      
+        let updateTokenVal = [spid, APIName, updated_at, id];
+        let updatedToken = await db.excuteQuery(val.updateTokenQuery, updateTokenVal)
+
+        IPAddress.forEach(async (item) => {
+            let ipVal = [[spid, id, item, updated_at, '0']];
+            let addedIP = await db.excuteQuery(val.insertIPAddress, [ipVal])
+        })
+        res.status(200).send({
+            updatedToken: updatedToken,
+            status: 200
+        })
+
+    } catch {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const deleteToken = async (req, res) => {
+    try {
+        
+        let deleteIPs = await db.excuteQuery(val.deleteIPQuery, [new Date(),req.params.id])
+        let deletedToken = await db.excuteQuery(val.deleteTokenQuery, [new Date(), req.params.id]);
+        res.status(200).send({
+            deletedToken: deletedToken,
+            status: 200
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+
+}
+
+const enableToken = async (req, res) => {
+    try {
+        id = req.body.id
+        isEnable = req.body.isEnable
+        let enabledVal = await db.excuteQuery(val.isEnableQuery, [isEnable, new Date(), id]);
+        res.status(200).send({
+            enabledVal: enabledVal,
+            status: 200
+        })
+    }
+    catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+
+}
+
+const selectToken = async (req, res) => {
+    try {
+        let selectedToken = await db.excuteQuery(val.selectTokenQuery, [req.params.spid])
+        res.status(200).send({
+            selectedToken: selectedToken,
+            status: 200
+        })
+    }
+    catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+
+
+
+
+
+
+async function createImageFromBase64(base64Data, outputFilePath) {
+    // Remove the data:image/png;base64 prefix to get only the base64 data
+    const base64Image = base64Data.replace(/^data:image\/png;base64,/, '');
+
+    // Convert the base64 data to binary format
+    const binaryData = Buffer.from(base64Image, 'base64');
+
+    // Write the binary data to a new image file
+    fs.writeFile(outputFilePath, binaryData, { encoding: 'binary' }, (err) => {
+        if (err) {
+            console.error('Error creating the image:', err);
+        } else {
+            console.log('Image created successfully:', outputFilePath);
+        }
+    });
+}
+
+
+
+
+
+const createInstance = async (req, res) => {
+    try {
+        const response = await axios.get(val.baseURL + `create_instance?access_token=64c4bcc7c05b1`);
+        // Extract the data you need from the response
+        const responseData = response.data;
+
+        // Send the API response as the Node.js API response
+        res.json(responseData);
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+
+}
+
+
+const getQRcode = async (req, res) => {
+    try {
+        const response = await axios.get(val.baseURL + `get_qrcode?instance_id=` + req.body.instance_id + `&access_token=64c4bcc7c05b1`);
+        // Extract the data you need from the response
+        const responseData = response.data;
+
+        // Send the API response as the Node.js API response
+        res.json(responseData);
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const generateQRcode = async (req, res) => {
+    // const base64DataFromResponse = 'data:image\/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVkAAAFZCAAAAAAXmQMHAAAGaklEQVR42u3byU7tOhAFUP7\/p3nzJzB7l0NsdJdHiCaJV47k6vj4tH5nfSAgS9YiS5asRZYsWYssWbIWWbJkLbJkyVpkb5P9+Hl99Rc\/3Om7P\/vfRb+6x1e\/sv7l9Wa+usr6bpUGWbJkyZI9KhsQfbvDQHH9gMH+0ydYv4Y1ZaVBlixZsmRvkq3O1PXfVnsNjvb+bunTB48buJMlS5Ys2T8hG+xmSBSYBPlw8L1ql2TJkiVL9m\/LDo\/nICxIU+F1KXWnDDvUIEuWLFmyl8gOW4VVOzKwSy+Q9iTXl9rWIEuWLFmyR2XTk\/nf+Orl6SOyZMmSJTuTTVd\/gge9vHSmJa0Lp+3DNBiIcciSJUuW7PuywynP3jig7Iu0D+4oeCCyZMmSJXuTbFyCnG1zfalgr6lJUMLtG47x6yJLlixZsu\/Lpl244J79odw3CKvQY\/i5GIz5kCVLlizZk7LrHabzMFW8UP0bRJUPV4XlYURAlixZsmQvke0jh+AUDnZT5arrvDStAVcp+Cv\/p0CWLFmyZD+f+E+7Kjbo23M7\/3ow5E2\/SjNtsmTJkiV7XnZtnFZv0zAjbRo+mF\/vvPl0g2TJkiVL9qhsmrUO24xpnTQ4o4MDfSfQ6SvOZMmSJUv2gGw1WRnMgG73C4MqbzoZkwYh1TQPWbJkyZK9TjYArHSCp9xpQr7x0zhzJ0uWLFmyJ2WrAZNhfpjmpWnamzYc04Jx9WhkyZIlS\/a8bDBK2ZdD+zBjTVnNZz4d6JAlS5Ys2etkg2Q3PVOrpmFfGN057tP3ndZ7yZIlS5bsTbLriCAo5qa57zMZdPqD7V9OXghZsmTJkr1Ndoet6uoFcUoaSPzKfcmSJUuW7HWy\/UhjEDk8WF79DFcQyqTNxTSKIUuWLFmyR2V3dNIjdtiYTNPtKi3va8Vb9VmyZMmSJfuCbHCnfoSkGqXsO6BVULO+ZTqtSpYsWbJkL5HtW4DbKWl6+ldV1PX1hhXYrQ4jWbJkyZJ9QfazXkHfLo01Us8+BKgy7a0PFlmyZMmSfV82rcrubDjtYqb33ZnS6beaxBpkyZIlS\/aQ7LB82eeg6xiium9VJq6uN7goWbJkyZJ9XzY9y9db6g\/b6r476XaaVQc736\/PkiVLlizZ52TTLmGaH67J0zcaRCzpZGqfc1ffI0uWLFmyR2U\/mpUipBI7j9G\/mvRXHqobkCVLlizZF2TTVC5tFVZV2Wpz1XxN\/zFJDciSJUuW7HnZYMAkKG6m7cP+eP6VMZpqb\/v1WbJkyZIl+7BsVTvdmS2pWpQ\/lEPDQZ7gB1UCPJiRIUuWLFmy78tW1dYq3wwS6r5LWNWeqwuQJUuWLNk7ZYfjMX1\/L00hh6f1Tt013dt0RoYsWbJkyf6GbDp0MpwtSU\/\/9AnWbH1ckWbfD0VdZMmSJUv2OdngJunoY9p1DM7tqsmXXj690aBgTJYsWbJk35ftT+Z+fmWnrBu89GF9Ns2HgyItWbJkyZI9JZv8cVjSDDqMVatwOIvZNyarTJssWbJkyd4k+3QN82O5hg3HAKsa1enKsGTJkiVL9iLZNEDoK6ZpsbRKRIfvLB2e6bdKlixZsmTPy2612H4eoAyePGALgpXhaM0QlSxZsmTJnpLtn204uhL0H9OEelgwDqZqgk8IWbJkyZK9SbbvEqZPWWXLfUzS56rDERyyZMmSJfsnZKs0sIoX0v5jdTzvHPLDliJZsmTJkj0vm5ZSdzYXlHB78mrcpkra04YoWbJkyZI9Khvkr\/1RnM5TDqdbqpGZauAn7TqSJUuWLNnzshVROmqSpsc7+x8m48+0S8mSJUuW7HnZKqet8AOJNIb4trKaDtQ8E\/IMKt9kyZIlS\/Yt2WG3rgop+gx1J3ZJX036BGTJkiVL9hLZ6ugMiALK6smHPcn0b7e\/R5YsWbJkT8kOU9e+LZheYFiarXqS6w9MNXNDlixZsmSPyqZFy6rk+u0J3rf2ghAl4EjvEWyGLFmyZMneJFv1GqutV+47Xcw1UV8X3u8wkiVLlizZi2Sr5+3Hcj421rBZ2W+fLFmyZMn+bdlgNDNIDdMLpJM2QXo87GeSJUuWLNk7ZaufplXPNC9NtYNUM5WtsmCyZMmSJXunbDWBmR6d1WhmNRmTtg+rMvFwGpQsWbJkyZ6StR5YZMmStciSJWuRJUvWIkuWrEWWLFmLLFmyFtmT6z8m8xMx35GA6wAAAABJRU5ErkJggg=='; // Replace this with the actual base64 data
+    const outputImagePath = path.join(__dirname, 'output.png');
+    var qrcode = await createImageFromBase64(req.body.data, outputImagePath)
+    console.log(qrcode);
+    res.send(200)
+}
+
+const testWebhook=async (req,res) =>{
+    try{
+        console.log("testWebhook");
+        res.status(200).send({
+            msg:"testwebhook ! ",
+            status: 200
+        })
+    }catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+module.exports = {
+    insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
+    createInstance, getQRcode, generateQRcode,editToken,testWebhook
+}

@@ -5,7 +5,10 @@ const user= "CIP"
 const password= "cip#321#"
 const database= "cip_project"
 
-
+const awsaccessKeyId = 'AKIAYY5FSMYVNUZHPOEH'
+const awssecretAccessKey = '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'
+const awsregion = 'ap-south-1'
+const awsbucket='cip-engage'
 //Queries for user.js
 
 var selectAllQuery = "SELECT * FROM user WHERE SP_ID=?";
@@ -19,7 +22,7 @@ var activeAgent = "select *from user where ParentId=? and UserType=? and IsActiv
 
 //Query for index.js pages
 
-var loginQuery = "SELECT * FROM user WHERE email_id =?"
+var loginQuery = "SELECT * FROM user WHERE email_id =? and isDeleted !=1"
 var registerQuery = "call signUp(?,?,?,?)";
 var uidresetEmailQuery = "select uid from user where email_id=?"
 var verifyUid = "select uid from user where uid=?"
@@ -30,7 +33,7 @@ insertOtp="CALL otpVerification(?,?,?)"
 verifyOtp=`SELECT  otp FROM otpVerify WHERE created_at > NOW() - INTERVAL 15 MINUTE and otpfieldvalue=?`
 crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
-var access_token='Bearer EAAU0g9iuku4BACBhTZCxqtq5A8rIymreLIxUQa7HaToy7PBawzooIkG73XnY1PXAUGrtCulhniRrZCsQPWOB3YcozTpT4cpgcZC5MoNB05ptdnpwAIRLLz0FtQCaLvmXNqL8qqn8Yqmf07HxVpzs6OuZClb0XOylw5DWWaMxcMJm7jzVRZCmD'
+var access_token='Bearer EAAU0g9iuku4BOzSD75ynSUzKSsYrIWv3qkEa9QPAnUNTUzPwN5aTjGxoAHxsXF4Nlrw8UxbMGqZBxqarODf2sY20MvFfTQm0umq4ZBKCpFAJdcPtbcYSZBsHMqYVwjfFPiQwFk1Rmadl4ctoncnxczMGJZALoVfZBpqoQ0lYHzOwbRb1nvImzhL4ex53c9HKVyzl2viy4EhLy9g0K'
 var url='https://graph.facebook.com/v16.0/101714466262650/messages'
 var content_type='application/json'
 
@@ -63,5 +66,5 @@ module.exports = {
     updateQuery,allAgents,activeAgent, loginQuery, registerQuery, 
     email, appPassword, emailHost, port, 
      updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp,
-     access_token,url,content_type,crachlogQuery
+     access_token,url,content_type,crachlogQuery,awsaccessKeyId,awssecretAccessKey,awsregion,awsbucket
 }
