@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const bcrypt = require('bcrypt');
 const http = require("https");
-
+const middleWare=require('../middleWare')
 
 app.use(bodyParser.json());
 
@@ -147,12 +147,18 @@ db.runQuery(req,res,Query,[]);
 
 
 const sendCampinMessage= (req, res) => {
+    console.log("sendCampinMessage")
 var TemplateData = req.body
-
+console.log(TemplateData)
 let messageData='';
 var messageTo= TemplateData.phone_number
 var messateText = TemplateData.message_content
 let content =messateText;
+let channel=TemplateData.channel_label
+console.log("channel");
+console.log(channel)
+console.log("content")
+console.log(content)
 content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
 content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
 content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
@@ -160,27 +166,28 @@ content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
 content = content.replace('&nbsp;', '\n')
 content = content.replace(/<br[^>]*>/g, '\n')
 content = content.replace(/<\/?[^>]+(>|$)/g, "")
-	   var reqBH = http.request(WHATSAPPOptions, (resBH) => {
-        var chunks = [];
-		  resBH.on("data", function (chunk) {
-			chunks.push(chunk);
-		  });
-        resBH.on("end", function () {
-			const body = Buffer.concat(chunks);
-			 return res.send(body.toString());
-		  });
-	  });
+middleWare.channelssetUp(channel,'text',messageTo,content)
+	//    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
+    //     var chunks = [];
+	// 	  resBH.on("data", function (chunk) {
+	// 		chunks.push(chunk);
+	// 	  });
+    //     resBH.on("end", function () {
+	// 		const body = Buffer.concat(chunks);
+	// 		 return res.send(body.toString());
+	// 	  });
+	//   });
       
       
-      reqBH.write(JSON.stringify({
-		"messaging_product": "whatsapp",    
-    	"recipient_type": "individual",
-		"to": messageTo,
-		"type": "text",
-        "text": { 
-			"body": content
-			}  
-	   }));
+    //   reqBH.write(JSON.stringify({
+	// 	"messaging_product": "whatsapp",    
+    // 	"recipient_type": "individual",
+	// 	"to": messageTo,
+	// 	"type": "text",
+    //     "text": { 
+	// 		"body": content
+	// 		}  
+	//    }));
 	  
 	  /* 
 	  reqBH.write(JSON.stringify({
@@ -230,7 +237,7 @@ content = content.replace(/<\/?[^>]+(>|$)/g, "")
  }));
 
 */
-	  reqBH.end();
+	  //reqBH.end();
 	
 }
 

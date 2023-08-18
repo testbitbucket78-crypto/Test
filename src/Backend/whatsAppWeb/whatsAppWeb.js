@@ -32,16 +32,16 @@ app.post('/create_webhook', async (req, res) => {
 // Create the API URL with access token as a query parameter
 const apiWithAccessToken = `${val.apiUrl}?webhook_url=${encodeURIComponent(val.webhookUrl)}&enable=true&instance_id=${val.instanceId}&access_token=${val.accessToken}`;
 
-// Make a Get request to the API endpoint using axios
+//Make a Get request to the API endpoint using axios
 
-// axios.get(apiWithAccessToken)
-//     .then(response => {
-//         console.log('Webhook registration successful:', response.data);
+axios.get(apiWithAccessToken)
+    .then(response => {
+        console.log('Webhook registration successful:', response.data);
 
-//     })
-//     .catch(error => {
-//         console.error('Error registering webhook:', error.message);
-//     });
+    })
+    .catch(error => {
+        console.error('Error registering webhook:', error.message);
+    });
 
 
 
