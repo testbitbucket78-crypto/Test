@@ -56,8 +56,9 @@
     <div class="profile-heading">
       <img id="profile-bg" src="assets/img/profile/bg.png">
       <img id="pic-bg" src="assets/img/profile/bg image.png">
-      <!-- <img id="profile-pic" src="assets/img/profile/Richie_3.png"> -->
-      <div class="image-container">
+      <img *ngIf="profilePicture" id="profile-pic" [src]="profilePicture"/>
+
+      <div *ngIf="!profilePicture" class="image-container">
         <span class="initials"> {{ firstLetterFirstName }}{{ firstLetterLastName }} </span>
       </div>
       

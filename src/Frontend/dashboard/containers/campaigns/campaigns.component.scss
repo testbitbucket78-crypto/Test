@@ -47,6 +47,7 @@
 	width: 15px;
 	margin-right: 5px;
 	margin-left: 0px;
+	cursor: pointer;
 	}
 	.campaigns_page {
 	display: flex;    
@@ -117,9 +118,13 @@
 	background-size: 10px;
 	background-position: center right 10px;
 	padding:0 15px;
+	cursor: pointer;
 	}
+
+
 	.toggle-box span{
-	margin:0 15px 0px 10px
+	margin:0 15px 0px 10px;
+
 	}
 
 	.new-message-btn {
@@ -312,20 +317,20 @@
 	.submit-btn {
 	background: #6149CD 0% 0% no-repeat padding-box;
 	box-shadow: 1px 8px 29px #695F9724;
-	border-radius: 20px;
+	border-radius: 15px;
 	width: auto;
-	height: 35px;
+	height: 32px;
+	color: #ffffff;
 	border: 0px;
-	color: grey;
 	padding: 0px 25px;
 	font-size: 12px;
 	font-weight: 800;
-	margin:0 0 0 15px;
+    padding: 0 4% 0% 4%;
 	outline: none;
 	}
 
 	.submit-btn-active {
-		color: #ffffff;
+		
 	}
 	.cancel-btn {
 	background: #fff;
@@ -399,13 +404,14 @@
 
 	.campaign_detail{
 	width: 400px;
-	min-height: 100vh;
-	position: absolute;
+	height: 95vh;
+	position: fixed;
 	right: 0;
-	top: 0px;
+	top: 54px;
 	background: #FBF9FE;
 	border-radius: 0;
 	margin: 0;
+	overflow-y: scroll;
 
 	}
 	.campaign_detail .campaigns_section_item{
@@ -419,6 +425,7 @@
 	img.icon_sm{
 	width: 10px;
 	margin-right: 5px;
+	cursor: pointer;
 	}
 	.campaign_detail .campaigns_section_item p.title{
 	font-size:16px;
@@ -704,6 +711,7 @@
 	img.icon.ml{
 	width:25px;
 	margin-bottom: 20px;
+	cursor: pointer;
 	}
 	.addeidtcampaign_step .innerbox.bg_pink{
 	background: #FFF4F2;
@@ -753,17 +761,23 @@
 	width: 100%;
 	margin: 0;
 	font-size: 12px;
+	cursor: pointer;
 	}
 	.popup-dialog p span{
 	padding: 5px 15px;
 	width: 100%;
 	float: left;
 	margin:0px;
+	cursor: pointer;
 	}
 	.popup-dialog p.label{
 	font-weight: 600;
 	color: #6149CD;
 	padding: 5px 15px;
+	cursor: pointer;
+	}
+	#channel_label {
+		cursor: pointer;
 	}
 	.popup-dialog p.label:hover{
 	background: #fff;
@@ -787,8 +801,8 @@
 	box-shadow: 4px 22px 54px #695F971A;
 	border-radius: 30px;
 	position: fixed;
-	width: 50%;
-	left: 25%;
+    width: 60%;
+    left: 20%;
 	top: 15%;
 	z-index: 9999999999;
 	}
@@ -797,7 +811,7 @@
 	    left: 35%;
 	}
 	.important_contact_modal .modal-body{
-	padding: 2rem 4rem;
+	padding: 2rem 10rem;
 	}
 	.red-bg{
 	background: red;
@@ -835,6 +849,7 @@
 	.important_contact .important_contact_left img.icon.xl{
 	width: 50px;
 	margin-bottom: 10px;
+	cursor: pointer;
 	}
 	.important_contact .important_contact_right{
 	border: 0px solid #C9C9C9;
@@ -872,6 +887,7 @@
 	.custom-file-upload img.icon{
 	width:10px;
 	margin: 0px 10px 0px 0px;
+	cursor: pointer;
 	}
 	.paper-download{
 	background: #FFFFFF 0% 0% no-repeat padding-box;
@@ -936,7 +952,7 @@
 	.important_contact_middle .radio_group{
 	display: flex;
 	flex-direction: row;
-	width: 100%;
+	width: 60%;
 	justify-content:space-between;
 	padding: 8px 0px;
 	}
@@ -1024,6 +1040,9 @@
 	width: 90%;
 	padding: 0;
 	}
+	.date.submit-btn {
+		padding: 0px 25px!important;
+	}
 
 	.modal-header-left{
 	flex-direction: row;
@@ -1031,6 +1050,7 @@
 	}
 	.modal-header-left img.icon{
 	margin-right: 1rem;
+	cursor: pointer;
 	}
 	.modal-header-right{
 	flex-direction: row;
@@ -1085,7 +1105,7 @@
 	flex-wrap: wrap;
 	margin: 1rem 0;
 	max-height: 500px;
-	overflow: auto;
+	overflow-y: scroll;
 
 	}
 	.audience_list .campaigns_section_item{
@@ -1181,6 +1201,10 @@
 	.default_avtar img{
 	width:25px;
 	margin-right:10px;
+	}
+
+	.addnewitem .addnewitem-content .addnewitem-content-left::-webkit-scrollbar {
+		display: none;
 	}
 
 	.addnewitem .addnewitem-content{
@@ -1817,7 +1841,7 @@
 	background-size: 60%;
 	}
 	.testcampaignmodal img{
-	width: 65px;
+	width: 35px;
 	margin-bottom:10px;
 	}
 	.testcampaignmodal p{
@@ -1856,5 +1880,53 @@
 	flex-direction: row;
 	justify-content: center;
 	}
+
+
+.audience_list::-webkit-scrollbar {
+    display: none;
+}
+
+.fallback-tooltip {
+	cursor: pointer;
+}
+
+.showInfoFallback::-webkit-scrollbar {
+    display: none;
+} 
+
+.showInfoFallback {
+	position: absolute;
+    top: 2.3rem;
+    right: 3.8rem;
+    width: 280px;
+    height: auto;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695f971a;
+    border-radius: 30px;
+    opacity: 1;
+    overflow: auto;
+}
+
+#p-body {
+	font-size: 12px;
+    font-weight: 500;
+    margin-top: 10%;
+    color: #7a86a1;
+    padding: 10%;
+}
+
+#radio-close-btn {
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    top: 4%;
+    right: 6%;
+    background: #ffffff;
+    border-radius: 15px;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: 'Manrope';
+    font-size: 13px;
+}
 
 

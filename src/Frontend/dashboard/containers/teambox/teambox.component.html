@@ -66,7 +66,7 @@
 								<p *ngIf="item.assignTo" class="assigned_to">Assigned To</p>
 								<div *ngIf="item.assignTo" class="assigned_to_btn">
 									<div class="inner">
-										<img *ngIf="item.assignTo.avatar" class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
+										<img *ngIf="item.assignTo.avatar"  class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
 										<img *ngIf="!item.assignTo.avatar" class="no-dp" src="/assets/img/teambox/no-dp.svg" />
 										{{item.assignTo.name}}
 									</div>
@@ -197,7 +197,7 @@
 										<div *ngIf="selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId" class="content-before">
 											<p (click)="toggleNoteOption(note)">...</p>
 											<div *ngIf="note.selected" class="popup-dialog NoteOption">
-												<p class="label" (click)="hideNoteOption()">Option</p>
+												<p class="label" (click)="hideNoteOption()">Options</p>
 												<p (click)="editNotes()">
 													<span class="editnotes-btn" >Edit</span>
 												</p>
@@ -289,207 +289,7 @@
 			</div>
 
 		</div>
-		<!-- <div class=" col-4 team pt-5">
-		<div class="team-box right_box">
-			<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && !showAttachedMedia">
-				<img class="toggle_provice_view" (click)="toggleProfileView()" *ngIf="showFullProfile" src="/assets/img/teambox/search-clear.svg">
-				<div class="custom_row">
-					<div class="col-md-5 flex">
-						<img *ngIf="selectedInteraction.avatar" class="big-thumbnail" src="/assets/img/teambox/Richie_1.png" />
-						<img *ngIf="!selectedInteraction.avatar" class="big-thumbnail" src="/assets/img/teambox/no-dp.svg" />
-						<span *ngIf="selectedInteraction.channel=='WhatsApp'" class="big-thumbnail-sufix"><img src="/assets/img/teambox/whatsapp-icon-l.svg"></span>
-					</div>
-
-					<div class="col-md-7">
-						<div class="d-flex flex-column justify-content-around align-items-start ">
-						<h1>{{selectedInteraction.Name}}</h1>
-						<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
-						<p>Created Date:<span>{{getFormatedDate(selectedInteraction.created_at)}}</span></p>
-						<p>Last Updated:<span>{{getFormatedDate(selectedInteraction.updated_at)}}</span></p>
-					</div>
-					</div>
-				</div>
-
-
-				<div class="custom_row mt-3">
-					<div class="col-md-6">
-						<label>Email Id</label>
-						<p>{{selectedInteraction.emailId}}</p>
-
-						<label>Message Opt-in</label>
-						<p>{{selectedInteraction.OptInStatus}}</p>
-					</div>
-
-					<div class="col-md-6">
-						<label>Phone Number</label>
-						<p>{{selectedInteraction.Phone_number}}</p>
-						<label>Contact Owner</label>
-						<p>{{selectedInteraction.Name}}</p>
-					</div>
-				</div>
-
-				<div class="custom_row">
-					<div class="col-md-12">
-						<label (click)="toggleTagsModal(updatedtags)"><img class="edit-icon" src="/assets/img/teambox/edit-icon.svg" />Tag</label>
-						<div class="tag_list">
-							<div *ngFor="let tagName of selectedInteraction.tags;let key= index; let last = last;">
-								<div class="tag_item" key="key">
-									<span class={{tagName}}></span>{{tagName}}<span *ngIf="!last" class="tag_item_space">|</span>
-								</div>
-
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div *ngIf="!showFullProfile">
-					<div class="custom_row mt-5">
-						<div class="col-md-12">
-							<button class="pink-link-btn" (click)="toggleProfileView()"><img class="icon" src="/assets/img/teambox/no-dp.svg" />View Full Profile</button>
-							<button class="pink-link-btn mt-3" (click)="toggleAttachedMediaView()"><img class="icon" src="/assets/img/teambox/docs-attachment.svg" />Docs & Attachment</button>
-						</div>
-					</div>
-					<div class="horizental_line mt-4">
-					</div>
-					<div class="custom_row edit-block-section">
-						<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg" (click)="triggerEditCustomer(updatecustomer)" /></button>
-
-						<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color" (click)="triggerBlockCustomer('Block',openBlockAlertmMessage)">Block</button>
-						<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn green-color" (click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
-					</div>
-
-					<div class="custom_row mt-1">
-						<div class="col-md-12">
-							<div *ngIf="AutoReplyOption" class="popup-dialog autoreply">
-								<div *ngIf="selectedInteraction.PausedTimer">
-									<p *ngFor="let option of AutoReplyEnableOption;" [ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''" (click)="SelectReplyOption(option,'Extend')">
-										<span>{{option}}</span>
-									</p>
-								</div>
-								<div *ngIf="!selectedInteraction.PausedTimer">
-									<p *ngFor="let option of AutoReplyPauseOption;let last = last;" [ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''" (click)="SelectReplyOption(option,'Paused')">
-										<span>{{option}}</span>
-									</p>
-								</div>
-
-							</div>
-							<button class="auto-rep-btn" (click)="toggleAutoReply()"><img class="icon" src="/assets/img/teambox/time-circle.svg" />{{selectedInteraction.AutoReplyStatus}} <img class="icon right-aligned" src="/assets/img/teambox/dropdown-w.svg" /></button>
-
-						</div>
-					</div>
-
-					<div class="custom_row edit-block-section mt-4">
-						<div class="col-md-12">
-							<p class="auto-rep-time">{{selectedInteraction.PausedTimer}}</p>
-							<p *ngIf="selectedInteraction.PausedTimer" class="auto-rep-text">Enable from dropdown</p>
-						</div>
-					</div>
-				</div>
-
-				<div *ngIf="showFullProfile">
-
-					<div class="custom_row">
-						<div class="col-md-6">
-							<label class="color_black">Custom Fields</label>
-						</div>
-					</div>
-					<div class="custom_row">
-						<div class="col-md-12">
-							<label>Lead Status</label>
-							<div class="tag_list">
-								<div class="tag_item">
-									{{selectedInteraction.status}}
-								</div>
-
-
-							</div>
-						</div>
-					</div>
-
-					<div *ngIf="selectedInteraction.InstagramId" class="custom_row">
-						<div class="col-md-12">
-							<label>Instagram Id</label>
-							<div class="tag_list">
-								<div class="tag_item">
-									{{selectedInteraction.InstagramId}}
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div *ngIf="selectedInteraction.facebookId" class="custom_row">
-						<div class="col-md-12">
-							<label>Facebook Id</label>
-							<div class="tag_list">
-								<div class="tag_item">
-									{{selectedInteraction.facebookId}}
-								</div>
-							</div>
-						</div>
-					</div>
-
-
-					<div class="custom_row mt-3">
-						<div class="col-md-6">
-							<label>Gender</label>
-							<p>{{selectedInteraction.sex?selectedInteraction.sex:'...'}}</p>
-
-							<label>Country</label>
-							<p>{{selectedInteraction.Country?selectedInteraction.Country:'...'}}</p>
-						</div>
-
-						<div class="col-md-6">
-							<label>Age</label>
-							<p>{{selectedInteraction.age?selectedInteraction.age: '...'}}</p>
-							<label>Default channel</label>
-							<p>{{selectedInteraction.channel?selectedInteraction.channel:'...'}}</p>
-						</div>
-					</div>
-
-					<div class="horizental_line mt-4"></div>
-					<div class="custom_row edit-block-section">
-						<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/icon-delete.svg" (click)="triggerDeleteCustomer(openDeleteAlertmMessage)" /></button>
-						<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg" (click)="triggerEditCustomer(updatecustomer)" /></button>
-
-
-						<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color" (click)="triggerBlockCustomer('Block',openBlockAlertmMessage)">Block</button>
-						<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn green-color" (click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
-
-
-						<button class="small-gradient-btn"><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></button>
-					</div>
-					<div class="custom_row">
-
-						<button class="small-gradient-btn info_button">To add/edit any field according to your business from the settings</button>
-					</div>
-
-
-
-
-				</div>
-			</div>
-
-			<div class="profile" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
-				<img class="toggle_provice_view" (click)="toggleAttachedMediaView()" src="/assets/img/teambox/search-clear.svg">
-				<div class="attached_media_list">
-					<p class="preview_media" *ngFor="let file of selectedInteraction.allmedia;let m = index">
-						<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'" src="/assets/img/teambox/video_preview.png" (click)="downloadFile(file.message_media)">
-						<img class="preview_icon" *ngIf="file.media_type == 'text/plain'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(file.message_media)">
-						<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'" src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(file.message_media)">
-
-						<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}} (click)="openaddMediaGallery(mediagallery,m)">
-						<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}} (click)="openaddMediaGallery(mediagallery,m)">
-						<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}} (click)="openaddMediaGallery(mediagallery,m)">
-						<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}} (click)="openaddMediaGallery(mediagallery,m)">
-
-					</p>
-
-				</div>
-			</div>
-
-		</div>
-		</div> -->
-
+	
 		<div class=" col-4 team pt-5">
 			<div class="team-box right_box">
 				<div class="sidenav">
@@ -1260,7 +1060,7 @@
 				<h4 class="modal-title" id="modal-basic-title">New Message</h4>
 			</div>
 			<div class="modal-header-right">
-				<button type="button" class="custom-width-btn" (click)="openadd(contactadd)"><img class="icon" src="/assets/img/teambox/add.svg" /> Create Contacts</button>
+				<button type="button" class="custom-width-btn" (click)="openadd(contactadd)"><img class="icon" src="../../../../assets/img/teambox/add-User.svg" /> Create Contacts</button>
 				<p class="close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
@@ -1268,24 +1068,25 @@
 			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchContact($event)" />
 			<div class="drop-down-btn" (click)="toggleContactOption()">
 
-				<button *ngIf="selectedChannel == 'WhatsApp'" class="drop-down-btn">
+				<button *ngIf="selectedChannel == 'WhatsApp Officail'" class="drop-down-btn">
 					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WhatsApp Official
 				</button>
 
-				<button *ngIf="selectedChannel == 'Other'" class="drop-down-btn">
-					Other
+				<button *ngIf="selectedChannel == 'WhatsApp Web'" class="drop-down-btn">
+					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WhatsApp Web
 				</button>
 			</div>
 			<div *ngIf="ShowContactOption" class="popup-dialog ContactOption">
-				<p (click)="filterContactByType('WhatsApp')">
+				<p (click)="filterContactByType('WhatsApp Offical')">
 					<span>
 						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
 						WhatsApp Official
 					</span>
 				</p>
-				<p (click)="filterContactByType('Other')">
+				<p (click)="filterContactByType('WhatsApp Web')">
 					<span>
-						Other
+						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+						WhatsApp Web
 					</span>
 				</p>
 			</div>
@@ -1348,9 +1149,9 @@
 								WhatsApp Official
 							</span>
 						</p>
-						<p (click)="selectChannelOption('Other')">
+						<p (click)="selectChannelOption('WhatsApp Web')">
 							<span>
-								Other
+								WhatsApp Web
 							</span>
 						</p>
 					</div>
@@ -1495,9 +1296,9 @@
 								WhatsApp Official
 							</span>
 						</p>
-						<p (click)="hangeEditContactSelect('channel','Other')">
+						<p (click)="hangeEditContactSelect('channel','WhatsApp Web')">
 							<span>
-								Other
+								WhatsApp Web
 							</span>
 						</p>
 					</div>

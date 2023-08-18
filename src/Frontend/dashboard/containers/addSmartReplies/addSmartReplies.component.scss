@@ -69,7 +69,7 @@ h1 {
 
 #close-btn {
     background: #ffffff;
-    border-radius: 19px;
+    border-radius: 12px;
     opacity: 1;
     border: 1px solid #ebebeb;
     font-family: 'Manrope';
@@ -378,9 +378,13 @@ input:focus {
     background-color: #fff4f2;
 }
 
-.msg-edit-btn:active {
+.editable{
     border: 2px solid #6149cd;
 }
+
+.non-editable {
+    border: none;
+  }
 
 .reply {
     width: 651px;
@@ -917,7 +921,7 @@ input:focus {
 }
 
 .btn9 {
-    left: 110px;
+    left: 95px;
     height: 0;
     position: absolute;
     margin: 0;
@@ -952,7 +956,7 @@ input:focus {
 }
 
 .bs-stepper-header {
-    width: 109%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1006,6 +1010,7 @@ input:focus {
 .form-check-label-img {
     height: 11px;
     margin-top: 0px;
+    cursor: pointer;
 }
 
 .ff textarea {
@@ -1018,7 +1023,7 @@ input:focus {
 
 #close-btn {
     background: #ffffff;
-    border-radius: 15px;
+    border-radius: 12px;
     opacity: 1;
     border: 1px solid #ebebeb;
     font-family: "Manrope";
@@ -1104,8 +1109,8 @@ input[type='checkbox'] {
 
 .desc-radio-input {
     position: absolute;
-    top: 22.3rem;
-    right: 28.8rem;
+    top: 21.3rem;
+    right: 32.8rem;
     width: 255px;
     height: 128px;
     background: #ffffff 0% 0% no-repeat padding-box;
@@ -1148,7 +1153,7 @@ input[type='checkbox'] {
 .desc-radio-input-1 {
     position: absolute;
     top: 21.7rem;
-    right: 13.8rem;
+    right: 17.8rem;
     width: 255px;
     height: 128px;
     background: #ffffff 0% 0% no-repeat padding-box;
@@ -1338,7 +1343,7 @@ input:focus {
     margin-top: 10px;
     max-height: 200px;
     overflow: auto;
-    z-index: 9;
+    z-index: 9999;
     top: 40%;
     right: 2%;
 }
@@ -1374,6 +1379,7 @@ input:focus {
     margin: 0px;
     font-size: 11px;
     font-weight: 500;
+    cursor: pointer;
 }
 
 .popup-dialog p span:hover {
@@ -1381,8 +1387,16 @@ input:focus {
     font-weight: 500;
 }
 
-.popup-dialog p.label {
+.popup-dialog.AssignOption p span:hover {
+    color: #000000;
     font-weight: 500;
+    background: url("/assets/img/teambox/icon-selected.svg") no-repeat #FFF4F2 right center padding-box;
+    background-size: 12px;
+    background-position: center right 10px;
+}
+
+.popup-dialog p.label {
+    font-weight: 600;
     color: #6149cd;
     padding: 5px 15px;
     font-size: 11px;
@@ -1426,7 +1440,7 @@ input:focus {
     max-height: 208px;
     overflow: auto;
     z-index: 9;
-    top: 50%;
+    top: 58%;
     right: 2%;
 }
 
@@ -1807,12 +1821,6 @@ input:focus {
     display: flex;
 }
 
-.template_list {
-    height: 400px;
-    overflow: auto;
-    padding: 0rem 1.5em;
-}
-
 .template_box {
     width: 100%;
     margin: 0;
@@ -2000,4 +2008,10 @@ label.container {
     .checkmark-text{
         margin-left: 8px;
         font-size: 14px;
+    }
+
+    .arrow-sign {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
     }

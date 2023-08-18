@@ -1,3 +1,19 @@
+*{
+  font-family: 'Manrope';
+}
+
+.percentage {
+  font-family: 'Manrope'!important;
+}
+
+.svg-text{
+  position: absolute;
+  top: 169px;
+  left: 206px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
 .setting-card {
     border-radius: 30px;
     padding: 20px 30px 0px 30px;
@@ -118,5 +134,15 @@
     padding: 7px 30px;
     border: 1px;    
     color: white;
+    font-weight: 400;
+   }
+
+   .del-btn {
+    color: #6149CD;
+    border-radius: 17px;
+    padding: 7px 30px;
+    border: 1px solid #EBEBEB;
+    border-radius: 17px;  
+    background: white;
     font-weight: 400;
    }

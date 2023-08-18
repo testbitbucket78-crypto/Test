@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser } from '../models/settings.model';
+import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser, TagData } from '../models/settings.model';
 
 @Injectable({
   providedIn: 'root'
@@ -126,5 +126,17 @@ export class SettingsService {
 
   updateCampaignTestData(campaignAlertData:campaignAlertUser): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/addCampaignTest`,campaignAlertData);
+  }
+
+  getTagData(spId:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/selectTag/${spId}`);
+  }
+
+  updateTagData(tagData:TagData): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addupdateTag`,tagData);
+  }
+
+  deletTagData(tagData:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/deleteTag`,tagData);
   }
 }

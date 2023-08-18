@@ -13,7 +13,7 @@
 		
 				</div>
 					<div class="">
-						<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><i class="fa fa-plus"></i> 
+						<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal" (click)="isShowSmartReplies = true" ><i class="fa fa-plus"></i> 
 						Add Smart Reply</button>
 	        	</div>
 			</div>
@@ -85,7 +85,7 @@
 			<h5>{{repliesData.MatchingCriteria}}</h5>
 		</div>
 
-		<h3 class="reply-action-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon" src="assets/img/Edit-icon.png" >Reply Actions</h3>
+		<h3 class="reply-action-btn" (click)="editSmartReply()" ><img id="Edit-icon" src="assets/img/Edit-icon.png" >Reply Actions</h3>
 		<div *ngFor="let item of repliesData.ActionList">
 			<div class="box4" *ngIf="item.Message">
 				<h3>Message</h3>
@@ -129,7 +129,7 @@
         <div class="modal-dialog" id="mod-da" role="document">
             <div class="modal-content delete-token-modal" id="delete-tok">
                 <div class="modal-body alertmessage">
-					<sb-addSmartReplies>
+					<sb-addSmartReplies *ngIf="isShowSmartReplies" [isEdit]="isEdit" [smartReplyData]="repliesData" >
 
 					</sb-addSmartReplies>
                 </div>

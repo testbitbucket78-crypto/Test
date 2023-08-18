@@ -113,7 +113,7 @@
 					<div class="running_section">
 						<div class="running_section_row">
 							<div class="icon_outer">
-								<img class="icon" src="/assets/img/teambox/quick-replies.svg" />
+								<img class="m-0 icon" src="../../../../assets/img/campaign/quick-replies.svg" />
 							</div>
 							<div>
 								<p>{{selectedCampaign.Replied}}</p>
@@ -234,7 +234,7 @@
 			</div>
 			<div class="input_group_btn">
 			<button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
-			<button type="button" class="submit-btn" aria-label="Close" (click)="applyFilterOnCampaign()">Apply</button>
+			<button type="button" class="date submit-btn" aria-label="Close" (click)="applyFilterOnCampaign()">Apply</button>
 			</div>
 	
 			
@@ -272,7 +272,7 @@
 				<div class="innerbox bg_pink">
 				<form [formGroup]="newCampaignDetail">
 					<div class="formrow">
-						<label for="name" class="required">Campaign Name <span>*</span></label>
+						<label for="name" class="required">Campaign Name <span class="text-danger">*</span></label>
 						<input class="form-control" type="text" placeholder="Enter title in max 20 character" name="title"
 								formControlName="title"  maxlength="20"  id="title" />
 					</div>
@@ -280,7 +280,7 @@
 					<div class="formrow">
 						<label for="Channel" class="required">Channel</label>
 						<input class="form-control select_box" type="text" placeholder="Select channel" name="channel_label"
-								formControlName="channel_label" id="channel_label" (click)="toggleChannelOption()" />
+								formControlName="channel_label" id="channel_label" (click)="toggleChannelOption()" readonly />
 						<div *ngIf="ShowChannelOption" class="popup-dialog">
 							<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)">
 								{{channel.label}}
@@ -540,7 +540,7 @@
 							<p class="form-control" (click)="TestCampaign(TestCampaignModal)">Test Campaign</p>
 						</div>
 						<div class="bottom_section">
-						<p class="close-box" routerLink="/dashboard/setting"  ><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></p>
+						<p class="close-box" (click)="directToSettings()"><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></p>
 						<p class="text-box-readonly">To configure no. from settings</p>
 						</div>
 					</div>
@@ -549,7 +549,7 @@
 			</div>
 
 			<div class="input_group_btn">
-				<button *ngIf="activeStep < 4" [ngClass]="{'submit-btn-active': true, 'color-grey': true}" type="button" class="main-modal submit-btn" (click)="nextStep()">Next</button>
+				<button *ngIf="activeStep < 4" type="button" class="main-modal submit-btn" (click)="nextStep()">Next</button>
 
 
 
@@ -666,7 +666,20 @@
 			    </p>
 
 				<div class="content_inner">
-					<p><span>Fallback</span><img src="../../../../assets/img/campaign/Info.svg"></p>
+					<p><span>Fallback</span><img class="px-2 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
+					
+					</p>
+					
+					<div  *ngIf="showInfo" class="showInfoFallback">
+						<p id="p-body">When the value of a variable is assigned using Attributes to personalize the message (e.g. 
+							Campaign or Funnel), there is a probability that some of the targeted users may not have any 
+							data for that specific attribute (customer contact fields). In order to manage such a situation, 
+							there is an option to assign a “Fallback” value to the selected Attribute. This default value will be 
+							used if the system is not able to find any value against the user in the Contact Custom Fields. 
+							E.g. if you have selected name attribute and few subscribers do not have the name field 
+							updated, in this case the value entered as “Fallback” will be used.</p>
+						<button id="radio-close-btn" (click)="showInfo=false">X</button>
+					  </div>
 					<input placeholder="Enter value" type="text" class="form-control" >
 				</div>
 									
@@ -800,9 +813,19 @@
 			    </p>
 
 				<div class="content_inner">
-					<p><span>Fallback</span><img src="../../../../assets/img/campaign/Info.svg"></p>
+					<p><span>Fallback</span><img class="px-2 py-1 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
 					<input placeholder="Enter value" type="text" class="form-control" (keyup)="updateFallbackAttributeValue($event)">
 				</div>
+				<div  *ngIf="showInfo" class="showInfoFallback">
+					<p id="p-body">When the value of a variable is assigned using Attributes to personalize the message (e.g. 
+						Campaign or Funnel), there is a probability that some of the targeted users may not have any 
+						data for that specific attribute (customer contact fields). In order to manage such a situation, 
+						there is an option to assign a <b>“Fallback”</b> value to the selected Attribute. This default value will be 
+						used if the system is not able to find any value against the user in the Contact Custom Fields. 
+						E.g. if you have selected name attribute and few subscribers do not have the name field 
+						updated, in this case the value entered as <b>“Fallback”</b> will be used.</p>
+					<button id="radio-close-btn" (click)="showInfo=false">X</button>
+				  </div>
 									
 			</div>
 			
@@ -857,7 +880,7 @@
 			</div>
 			<div class="modal-header-right">
 				<p class="text-box-readonly mr-2">Manage Saved Lists from settings</p>
-				<p  routerLink="/dashboard/setting" class="close-box" aria-label="Close" (click)="closeImportantContact()"><img class="setting_icon" src="assets/img/campaign/setting-g.svg"></p>
+				<p (click)="directToSettings()" class="close-box" aria-label="Close" (click)="closeImportantContact()"><img class="setting_icon" src="assets/img/campaign/setting-g.svg"></p>
 			</div>
 			
 			</div>
@@ -1222,45 +1245,45 @@
 	</ng-template>
 
 	<ng-template #ConfirmCampaign let-c="close" let-d="dismiss">
-		
-		<div class="modal-body testcampaignmodal">
-			<div *ngIf="lowBalance">
-		    <p><img src="/assets/img/campaign/low_balance.png"></p>
-			<p>Insufficient funds</p>
-			<p><span>Warning!!! The balance in your CIP wallet is insufficient to execute or schedule this campaign at the moment.</span></p>
-			<p>
-				<button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('save')">Save for Later</button>
-				<button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('updateWallet')">Update Wallet</button>
-			</p>
-			</div>
-			<div *ngIf="!lowBalance">
-				
-				<div *ngIf="scheduled==0">
-					<p><img src="/assets/img/campaign/send_campaign.png"></p>
-					<p>You are about to send</p>
-					<p><span>To send your campaign {{newCampaignDetail.value.title}}, please confirm it.</span></p>
-					<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button></p>
-				
-				</div>
 
-				<div *ngIf="scheduled==1">
-					<p><img src="/assets/img/campaign/sch-o.svg"></p>
-					<p>You are about to schedule</p>
-					<p><span>Please confirm the {{newCampaignDetail.value.title}} campaign will take place on {{selecteScheduleDate}} at {{selecteScheduleTime}}.</span></p>
-					<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
-					</p>
-				</div>
-
-				</div>
-		</div>
-		
+					<div class="modal-body testcampaignmodal">
+						<div *ngIf="lowBalance">
+						<p><img src="../../../../assets/img/campaign/low_balance.png"></p>
+						<p>Insufficient funds</p>
+						<p><span>Warning!!! The balance in your CIP wallet is insufficient to execute or schedule this campaign at the moment.</span></p>
+						<p>
+							<button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('save')">Save for Later</button>
+							<button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('updateWallet')">Update Wallet</button>
+						</p>
+						</div>
+						<div *ngIf="!lowBalance">
+							
+							<div *ngIf="scheduled==0">
+								<p><img src="../../../../assets/img/campaign/Send-o.svg"></p>
+								<p>You are about to send</p>
+								<p><span>To send your campaign {{newCampaignDetail.value.title}}, please confirm it.</span></p>
+								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Send</button></p>
+							
+							</div>
+			
+							<div *ngIf="scheduled==1">
+								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
+								<p>You are about to schedule</p>
+								<p><span>Please confirm the {{newCampaignDetail.value.title}} campaign will take place on {{selecteScheduleDate}} at {{selecteScheduleTime}}.</span></p>
+								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
+								</p>
+							</div>
+			
+							</div>
+					</div>
+	
 	</ng-template>
 
 	<ng-template #TestCampaignModal let-c="close" let-d="dismiss">
 		
 		<div class="modal-body testcampaignmodal">
 		
-			<img src="/assets/img/campaign/send_campaign.png">
+			<img src="../../../../assets/img/campaign/Send-o.svg">
 			<p>Test Campaign</p>
 			<div *ngIf="testNumbers.length>0">
 			<p><span>This Campaign message will be sent on your configured test number 9876824564 and 9922556734.</span></p>

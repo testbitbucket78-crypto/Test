@@ -3,6 +3,24 @@
     font-family: 'Manrope';
 }
 
+
+.container-empty-state {
+    height: 70vh;
+}
+
+.body-empty-state img {
+    width: 100px;
+    height: 88px;
+}
+
+.body-empty-state h5 {
+    font-weight: 700;
+}
+
+.body-empty-state p{
+    color: #7A86A1;
+}
+
 .section::-webkit-scrollbar {
     width: 20px;
   }
@@ -88,6 +106,7 @@
     font-size: 14px;
     font-weight: 400;
     color: #7A86A1;
+    word-wrap:break-word;
 }
 
 #item-date {
@@ -209,8 +228,8 @@
     font-size: 16px;
     font-family: 'Manrope';
     color: #7a86a1;
-    margin-top:8px;
-    margin-left: 87px;
+    padding-left: 5%;
+    padding-top: 0.5%;
 }
 
 .heading span { 

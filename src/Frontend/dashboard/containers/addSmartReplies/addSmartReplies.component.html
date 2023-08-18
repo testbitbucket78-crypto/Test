@@ -9,7 +9,7 @@
         <p *ngIf="successMessage" class="success">{{successMessage}}</p>
       </div>
   
-      <button type="button" data-bs-dismiss="modal"  class="btn-cross" aria-label="Close" id="close-btn"(click)="previousPage()">X</button>
+      <button type="button" data-bs-dismiss="modal"  class="btn-cross" aria-label="Close" id="close-btn">X</button>
   
     </div>
     <div class="bs-stepper-header" role="tablist">
@@ -41,11 +41,11 @@
       <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
         <div class="box" [formGroup]="newReply">
           <h5>Title</h5>
-          <input class="form-control" type="text" name="Title" id="Title" formControlName="Title"
+          <input class="form-control" type="text" name="Title" id="Title" onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)" formControlName="Title"
             placeholder="Enter title in max 20 character" maxlength="20" />
           <h5>Description</h5>
           <div class="form-floating ff">
-            <textarea name="Description" id="Description" class="form-control" rows="4" cols="50"
+            <textarea name="Description" id="Description" class="form-control" onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)" rows="4" cols="50"
               placeholder="Enter description in max 80 character" formControlName="Description" maxlength="80"></textarea>
   
           </div>
@@ -62,7 +62,7 @@
         <div class="box1">
           <h5>Add Keyword</h5>
           <div class="box2 d-flex" data-required="Use enter key to add ➥">
-            <input class="form-control" id="form-box" #keyowrdtxt [(ngModel)]="keyword" type="text"  placeholder="Enter Keywords"
+            <input class="form-control" id="form-box" #keyowrdtxt [(ngModel)]="keyword" type="text" onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)" placeholder="Enter Keywords"
               maxlength="56" />
             <button type="button" class="btn7 btn-block ml-2" (click)="addKeyword()">ADD</button>
           </div>
@@ -144,9 +144,10 @@
               <div class="message-box" *ngIf="message.ActionID == 1">
                 <p id="msgbox-head">Message</p>
                 <p id="msgbox-body{{i}}" [contentEditable]="isEditable" (input)="onEdit($event.target.innerHTML)"
-                  [innerHTML]="message.Value"></p>
+                  [innerHTML]="message.Value" 
+                 ></p>
                   <div>
-                <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
+                <button class="msg-edit-btn" [class.editable]="isEditable" [class.non-editable]="!isEditable" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
                 <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
                 </div>
               </div>
@@ -170,7 +171,7 @@
                       <p class="px-2" id="msgbox-body1"><b>Add Tags:</b></p>
                       <p *ngFor="let item of message.Value" class="px-1" id="msgbox-body2">{{item}}</p>
                   </div>
-                  <button class="msg-edit-btn" (click)="toggleRemoveTag()"><img src="assets/img/edit.png"></button>
+                  <button class="msg-edit-btn"  (click)="toggleRemoveTag()"><img src="assets/img/edit.png"></button>
                   <button class="msg-del-btn" (click)="removeAddTag(i)"><img src="assets/img/delete.png"></button>
   
   
@@ -250,9 +251,10 @@
   
           <div *ngIf="ShowAddAction" class="popup-dialog AssignAction">
             <p class="label">Add Action</p>
-            <p *ngFor="let assignAction of assignActionList; let m = index" (click)="toggleAssignOption(m)">
-              <span>{{assignAction}}</span>
+            <p class="d-flex justify-content-around" *ngFor="let assignAction of assignActionList; let m = index" (click)="toggleAssignOption(m)">
+              <span>{{assignAction}}</span><img class="pr-3 arrow-sign" src="../../../../assets/img/arrow-sign.svg" />
             </p>
+          
           </div>
   
   
@@ -522,8 +524,7 @@
           <div class="dd"><img src="assets/img/export1.png">
             
             <div class="modal-body smart-reply-success">
-              <p>Your Smart Reply is sucessfully saved,<br /> Now you will be redirect
-                to SmartReplies Page.
+              <p>Your Smart Reply is sucessfully saved,<br /> Now you can close the dialog box.
               </p>
               <div class="ss">
                 <img src="assets/img/your.png">
@@ -531,7 +532,7 @@
             </div>
             <div class="modal-footer popfooter row text">
               <div class="col-md-3">
-                <button type="button" class="btn btn-outline-dark" (click)="c('Save click')" data-bs-dismiss="modal">Ok, Got it</button>
+                <button type="button" class="btn btn-outline-dark" (click)="c('Save click')"data-bs-dismiss="modal" aria-label="Close" data-bs-target="#smartrepliesModal">Ok, Got it</button>
               </div>
             </div>
           </div>

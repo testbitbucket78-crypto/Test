@@ -29,6 +29,7 @@ export class TopNavComponent implements OnInit {
     uid :any;
     spId!:number;
     PhoneNumber:any;
+    profilePicture:any;
     isActive: number = 1; 
     firstLetterFirstName!:string;
     firstLetterLastName!:string;
@@ -52,6 +53,7 @@ export class TopNavComponent implements OnInit {
         this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
         this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
         this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
+        this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
 
         const nameParts = this.Name.split(' ');
         const firstName = nameParts[0] || '';
