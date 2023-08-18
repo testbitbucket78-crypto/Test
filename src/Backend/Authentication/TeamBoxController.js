@@ -289,6 +289,7 @@ const insertMessage = async (req, res) => {
         
         SPID = req.body.SPID
         interaction_id = req.body.InteractionId
+        customerId=req.body.customerId
         Agent_id = req.body.AgentId
         message_direction = "Out"
         message_text = req.body.message_text
@@ -300,6 +301,12 @@ const insertMessage = async (req, res) => {
         created_at = req.body.created_at
         ExternalMessageId = ''
         let agentName=await db.excuteQuery('select name from user where uid=?',[Agent_id])
+        let channelType=await db.excuteQuery('select channel from EndCustomer where customerId=?',[customerId]);
+        console.log(channelType);
+        let channel=""
+        if(channelType.length >0){
+           console.log("channel")
+        }
         var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
         db.runQuery(req, res, messageQuery, [values])
         if(agentName.length >=0){

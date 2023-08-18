@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 const db = require('./dbhelper')
-const val=require('./Authentication/constant')
+const val = require('./Authentication/constant')
 var axios = require('axios');
 var express = require("express");
 var app = express();
@@ -19,62 +19,99 @@ function isWithinTimeWindow(scheduleDatetime) {
   const currentTime = moment();
   const scheduledTime = moment(scheduleDatetime);
   const diffInMinutes = scheduledTime.diff(currentTime, 'minutes');
-    return diffInMinutes >= 0 && diffInMinutes <= 2;
-  }
+  return diffInMinutes >= 0 && diffInMinutes <= 2;
+}
 
 
 async function fetchScheduledMessages() {
-     var messagesData = await db.excuteQuery(`select * from CampaignMessages where status=0`, [])
-     console.log("messagesData")
-     for (const message of messagesData) {
-     
-        if (isWithinTimeWindow(message.schedule_datetime)) {
-          try {
-            const response = await getTextMessageInput(message.phone_number, message.message_content);
-            sendMessage(response)
-           // console.log(`Message sent to ${message.phone_number}. Response:`, response);
-          } catch (error) {
-            console.error(`Error sending message to ${message.phone_number}.`, error.message);
-          }
-       }
-      }
-   // var data = getTextMessageInput('918130818921', 'in one minute');
+  var messagesData = await db.excuteQuery(`select * from CampaignMessages where status=0`, [])
+  console.log("messagesData")
+  //if condition
+  var  CampaignTimings=await db.excuteQuery(`select * from CampaignTimings where `)
+  const currentDate = new Date();
+  // Get the current day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+  const currentDay = currentDate.getDay();
 
-    // sendMessage(data)
+  let daysResult = filterDay(currentDay);
+  for (const message of messagesData) {
+
+    if (isWithinTimeWindow(message.schedule_datetime)) {
+      try {
+        const response = await getTextMessageInput(message.phone_number, message.message_content);
+        sendMessage(response)
+        // console.log(`Message sent to ${message.phone_number}. Response:`, response);
+      } catch (error) {
+        console.error(`Error sending message to ${message.phone_number}.`, error.message);
+      }
+    }
+  }
+  // var data = getTextMessageInput('918130818921', 'in one minute');
+
+  // sendMessage(data)
 }
 
-function sendMessage(data) {
-    var config = {
-        method: 'post',
-        url: val.url,
-        headers: {
-            'Authorization': val.access_token,
-            'Content-Type': val.content_type
-        },
-        data: data
-    };
 
-    return axios(config)
+
+function sendMessage(data) {
+  var config = {
+    method: 'post',
+    url: val.url,
+    headers: {
+      'Authorization': val.access_token,
+      'Content-Type': val.content_type
+    },
+    data: data
+  };
+
+  return axios(config)
 }
 
 function getTextMessageInput(recipient, text) {
-    return JSON.stringify({
+  return JSON.stringify({
 
-        "messaging_product": "whatsapp",
-        "preview_url": false,
-        "recipient_type": "individual",
-        "to": recipient,
-        "type": "text",
-        "text": {
-            "body": "Testing of node-cron  : " + text
-        }
+    "messaging_product": "whatsapp",
+    "preview_url": false,
+    "recipient_type": "individual",
+    "to": recipient,
+    "type": "text",
+    "text": {
+      "body": "Testing of node-cron  : " + text
+    }
 
-    });
+  });
 }
 
+
+async function filterDay(daysData) {
+  if (daysData == '0') {
+    return 'Sunday'
+  }
+  else if (daysData == '1') {
+    return 'Monday'
+  }
+  else if (daysData == '2') {
+    return 'Tuesday'
+  }
+  else if (daysData == '3') {
+    return 'Wednesday'
+  }
+  else if (daysData == '4') {
+    return 'Thrusday'
+  }
+  else if (daysData == '5') {
+    return 'Friday'
+  }
+  else if (daysData == '6') {
+    return 'Saturday'
+  }
+}
+
+
+
+
 cron.schedule('*/5 * * * *', async () => {
-    console.log('Running scheduled task...');
-  
-    fetchScheduledMessages();
-   
+  console.log('Running scheduled task...');
+
+  fetchScheduledMessages();
+
 });

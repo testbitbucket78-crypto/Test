@@ -59,7 +59,7 @@ app.post("/webhook", async (req, res) => {
     }
 
     // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
-   
+
     let extractedMessage = await extractDataFromMessage(body)
 
     res.status(200).send({
@@ -117,17 +117,17 @@ async function extractDataFromMessage(body) {
     }
     console.log("________________SAVEING MESSAGE___________________");
     var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName)
-    var SavedMessageDetails = await getDetatilsOfSavedMessage(message_text, phone_number_id, contactName, from,display_phone_number, saveMessages)
+    var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages,message_text, phone_number_id, contactName, from, display_phone_number)
   }
   else if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
     body.entry[0].changes[0].value && body.entry[0].changes[0].value.statuses &&
     body.entry[0].changes[0].value.statuses.length > 0 && body.entry[0].changes[0].value.statuses[0]) {
- 
-      let messageStatus=body.entry[0].changes[0].value.statuses[0].status
-     
-      console.log("messageStatus")
-      console.log(messageStatus)
-    let updatedStatus=await saveSendedMessageStatus(messageStatus)
+
+    let messageStatus = body.entry[0].changes[0].value.statuses[0].status
+
+    console.log("messageStatus")
+    console.log(messageStatus)
+    let updatedStatus = await saveSendedMessageStatus(messageStatus)
   }
 
 }
@@ -148,16 +148,16 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   }
 
   // if (message_text.length > 0) {
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
+  var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
 
-    console.log("====SAVED MESSAGE====" +  " replyValue length  " + JSON.stringify(saveMessage));
+  console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
 
   // }
   return saveMessage;
 }
 
-async function getDetatilsOfSavedMessage(saveMessage,message_text, phone_number_id, contactName, from,display_phone_number) {
+async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
   if (saveMessage.length > 0) {
 
     notify.NotifyServer(display_phone_number);
@@ -169,32 +169,42 @@ async function getDetatilsOfSavedMessage(saveMessage,message_text, phone_number_
       agid: data[1][0]['@agid'],
       newId: data[3][0]['@newId'],
       replystatus: data[4][0]['@replystatus'],
-      msg_id:data[5][0]['@msg_id']
+      msg_id: data[5][0]['@msg_id']
     };
 
-    console.log(extractedData.msg_id);
+    console.log("getDetatilsOfSavedMessage");
     var sid = extractedData.sid
     var custid = extractedData.custid
     var agid = extractedData.agid
     var replystatus = extractedData.replystatus
     var newId = extractedData.newId
-
+    let defaultQuery='select * from defaultActions where spid=?';
+    let defaultAction=await db.excuteQuery(defaultQuery,[sid]);
+  
+    if( defaultAction.length > 0){
+    console.log(defaultAction[0].isAutoReply + " isAutoReply " +  defaultAction[0].autoReplyTime + " autoReplyTime " +defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
+    }
+    console.log("defaultAction")
+    console.log(replystatus);
     let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId)
+    
+   
   }
 
 }
 
 
 async function sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId) {
-
+  console.log("sendSReply");
+  console.log(replystatus)
   const currentTime = new Date();
   const replystatus1 = new Date(replystatus);
   if (replystatus != null && (replystatus1 <= currentTime) && replystatus != undefined) {
     var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId);
     console.log("____Send SMART REPLIESS______" + response);
   }
-  if (replystatus == null && replystatus == undefined) {
-    console.log("replystatus == null")
+  if (replystatus == null || replystatus == undefined || replystatus=="") {
+    console.log("replystatus == null" +message_text)
     var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId);
     console.log("____Send SMART REPLIESS______" + response);
   }
@@ -202,14 +212,14 @@ async function sendSmartReply(message_text, phone_number_id, contactName, from, 
 
 
 async function saveSendedMessageStatus(messageStatus) {
- 
-  let getMessageId=await db.excuteQuery(process.env.messageIdQuery,[]);
+
+  let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
   console.log(getMessageId)
-  if(getMessageId.length > 0){
-  var  message_id=getMessageId[0].Message_id;
+  if (getMessageId.length > 0) {
+    var message_id = getMessageId[0].Message_id;
   }
   console.log(message_id)
-  let saveStatus=await db.excuteQuery(process.env.updateStatusQuery,[messageStatus,new Date(),message_id])
+  let saveStatus = await db.excuteQuery(process.env.updateStatusQuery, [messageStatus, new Date(), message_id])
 }
 
 
@@ -281,25 +291,31 @@ async function sendMessage(message, phone_number_id, from) {
 }
 
 
+
 async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId) {
   try {
     console.log("in side getSmartReplies method")
+    console.log("message_text")
     console.log(message_text)
     console.log("_________process.env.insertMessage__________")
 
 
     var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text], sid])
-    var autoReply = replymessage[0].Message
-    console.log(autoReply + replymessage[0].ActionID)
+    console.log("replymessage")
     console.log(replymessage)
-    iterateArray(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId)
+    //var autoReply = replymessage[0].Message
+    //console.log(autoReply + replymessage[0].ActionID)
+    console.log(replymessage)
+    iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId)
   } catch (err) {
     console.log("____getSmartReplies method err______")
     console.log(err)
   }
 }
 
-async function iterateArray(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId) {
+
+
+async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId) {
   // Loop over the messages array and send each message
   replymessage.forEach(async (message) => {
     console.log("===================================")
@@ -309,83 +325,100 @@ async function iterateArray(replymessage, phone_number_id, from, sid, custid, ag
     var testMessage = message.Message;                  // Assuming the 'Message' property contains the message content
     var actionId = message.ActionID;                 // Assuming the 'ActionID' property contains the action ID
     console.log(testMessage + "____________" + value + "_________" + actionId)
-    // Perform actions based on the Action ID
-    switch (actionId) {
-      case 1:
-        console.log(`Performing action 1 for  Assign Conversation: ${value}`);
-        is_active = 1
-        var values = [[is_active, newId, agid, value]]
-        var assignCon = await db.excuteQuery(process.env.updateInteractionMapping, [values])
-        console.log(assignCon)
-        break;
-      case 2:
-        console.log(`Performing action 2 for Add Contact Tag: ${value}`);
-        var addConRes = await db.excuteQuery(process.env.addTagQuery, [value, custid, sid])
-        console.log(addConRes)
-        break;
-      case 3:
-        console.log(`Performing action 3 for Remove Contact Tag: ${value}`);
-        var maptag = value;
-        var maptagItems = maptag.split(',')
-        console.log("maptag " + maptag)
-        var result = await db.excuteQuery(process.env.selectTagQuery, [custid])
-        console.log(result)
-        var removetagQuery = ""
-        if (result.length > 0) {
 
-          const tagValue = result[0].tag
-          console.log("tagValue" + tagValue)
-          if (tagValue != ' ' && tagValue != null) {
-            // Split the tag value into an array of tag items
-            const tagItems = tagValue.split(',');
-
-            var itemmap = '';
-
-            console.log(itemmap == maptag)
-            // Get the count of tag items
-            const tagItemCount = tagItems.length;
-            console.log("tagItemCount" + tagItemCount)
-            for (var i = 0; i < tagItems.length; i++) {
-
-              if (!(maptagItems.includes(tagItems[i]))) {
-                var itemmap = itemmap + (itemmap ? ',' : '') + tagItems[i]
-
-              }
-
-
-            }
-            console.log("for loop end" + itemmap)
-            removetagQuery = "UPDATE EndCustomer SET tag ='" + itemmap + "' WHERE customerId = " + custid + "";
-
-          }
-        }
-        console.log(removetagQuery)
-        var remTagCon = await db.excuteQuery(removetagQuery, [])
-        console.log(remTagCon)
-        break;
-      case 4:
-        console.log(`Performing action 4 for Trigger Flow: ${value}`);
-        break;
-      case 5:
-        console.log(`Performing action 5 for Name Update: ${value}`);
-        break;
-      case 6:
-        console.log(`Performing action 6 for Resolve Conversation: ${value}`);
-        break;
-      default:
-        // Handle any other Action IDs
-        console.log(`Unknown action ID: ${actionId}`);
-    }
-
+    let PerformingActions=await PerformingSReplyActions(actionId,value,sid, custid, agid, replystatus, newId);
     sendMessage(testMessage, phone_number_id, from);
 
   });
 
 }
 
+async function PerformingSReplyActions(actionId,value,sid, custid, agid, replystatus, newId) {
+  // Perform actions based on the Action ID
+  switch (actionId) {
+    case 1:
+      let assignActionRes = await assignAction(value,agid,newId)
+      break;
+    case 2:
+      let AddTagRes = await addTag(value,sid, custid);
+      break;
+    case 3:
+      let removedTagRes = await removeTag(value,custid);
+      break;
+    case 4:
+      console.log(`Performing action 4 for Trigger Flow: ${value}`);
+      break;
+    case 5:
+      console.log(`Performing action 5 for Name Update: ${value}`);
+      break;
+    case 6:
+      console.log(`Performing action 6 for Resolve Conversation: ${value}`);
+      break;
+    default:
+      // Handle any other Action IDs
+      console.log(`Unknown action ID: ${actionId}`);
+  }
+}
 
 
 
+async function assignAction(value,agid,newId) {
+  console.log(`Performing action 1 for  Assign Conversation: ${value}`);
+  is_active = 1
+  var values = [[is_active, newId, agid, value]]
+  var assignCon = await db.excuteQuery(process.env.updateInteractionMapping, [values])
+  console.log(assignCon)
+}
+
+
+
+async function addTag(value,sid, custid) {
+  console.log(`Performing action 2 for Add Contact Tag: ${value}`);
+  var addConRes = await db.excuteQuery(process.env.addTagQuery, [value, custid, sid])
+  console.log(addConRes)
+}
+
+
+async function removeTag(value,custid) {
+  console.log(`Performing action 3 for Remove Contact Tag: ${value}`);
+  var maptag = value;
+  var maptagItems = maptag.split(',')
+  console.log("maptag " + maptag)
+  var result = await db.excuteQuery(process.env.selectTagQuery, [custid])
+  console.log(result)
+  var removetagQuery = ""
+  if (result.length > 0) {
+
+    const tagValue = result[0].tag
+    console.log("tagValue" + tagValue)
+    if (tagValue != ' ' && tagValue != null) {
+      // Split the tag value into an array of tag items
+      const tagItems = tagValue.split(',');
+
+      var itemmap = '';
+
+      console.log(itemmap == maptag)
+      // Get the count of tag items
+      const tagItemCount = tagItems.length;
+      console.log("tagItemCount" + tagItemCount)
+      for (var i = 0; i < tagItems.length; i++) {
+
+        if (!(maptagItems.includes(tagItems[i]))) {
+          var itemmap = itemmap + (itemmap ? ',' : '') + tagItems[i]
+
+        }
+
+
+      }
+      console.log("for loop end" + itemmap)
+      removetagQuery = "UPDATE EndCustomer SET tag ='" + itemmap + "' WHERE customerId = " + custid + "";
+
+    }
+  }
+  console.log(removetagQuery)
+  var remTagCon = await db.excuteQuery(removetagQuery, [])
+  console.log(remTagCon)
+}
 
 
 

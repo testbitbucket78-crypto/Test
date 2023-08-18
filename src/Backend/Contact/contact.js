@@ -10,9 +10,10 @@ const path = require("path");
 const nodemailer = require('nodemailer');
 const awsHelper = require('../awsHelper')
 const { Key } = require("protractor");
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '10mb'}));
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+
 
 
 
@@ -610,8 +611,19 @@ app.post('/addProfileImg', async (req, res) => {
     customerId = req.body.customerId
     contact_profile = req.body.contact_profile
     SP_ID = req.body.SP_ID
+    // Remove header
+    let streamSplit = contact_profile.split(';base64,');
+    let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
+    let datapart = streamSplit.pop();// this is dependent on the POP above
 
-    let awsres = await awsHelper.uploadStreamToAws(SP_ID + "/" + customerId + "contactProfile.jpg", contact_profile)
+    let imgType = datapart.split('/').pop();
+    let imageName = 'ContactProfile.png';//Default it to png.
+    if (imgType) {
+      imageName = 'ContactProfile' + '.' + imgType;
+    }
+
+
+    let awsres = await awsHelper.uploadStreamToAws(SP_ID + "/" + customerId + "/" + imageName, contact_profile)
 
 
     let contactimgquery = `UPDATE EndCustomer  set contact_profile=? where customerId=?`
@@ -634,9 +646,9 @@ app.post('/addProfileImg', async (req, res) => {
 
 app.get('/getProfileImg/:cuid', async (req, res) => {
   try {
-     let getProfileQuery=`SELECT contact_profile FROM EndCustomer WHERE customerId=?`;
-     let getProfile=await db.excuteQuery(getProfileQuery,[req.params.cuid]);
-     res.status(200).send({
+    let getProfileQuery = `SELECT contact_profile FROM EndCustomer WHERE customerId=?`;
+    let getProfile = await db.excuteQuery(getProfileQuery, [req.params.cuid]);
+    res.status(200).send({
       msg: getProfile,
       status: 200
     });
