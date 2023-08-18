@@ -10,15 +10,138 @@
             <span class="working-hour-heading">Tags</span>    
             <div class="d-flex">
                 <div class="input-group gf ">
-                    <input class="form-control" type="text" (keyup)="searchData($event.target.value)" placeholder="Search by agent name or Id" aria-label="Search"
+                    <input class="form-control" type="text" (keyup)="searchData($event.target.value)" placeholder="Search" aria-label="Search"
                         aria-describedby="basic-addon2" name="Name" id="Search-Ag" />
                     <img src="assets/img/search.png">
                 </div>
-                <button class="new-token-btn" (click)="addRole()" data-bs-toggle="modal" data-bs-target="#rolesModal">
+                <button class="new-token-btn" (click)="addTag()" data-bs-toggle="modal" data-bs-target="#tagsModal">
                     <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
                     Add Tag</button>
             </div>
         </div>
 
     </div>   
+
+    
+<div class="modal fade" tabindex="-1" id="tagsModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content user-modal p-2 pl-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Tag</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <div class="modal-body px-5 ml-2 pt-0">
+                    <div>
+                        <label>Tag Name</label> <br>
+                        <input type="text" class="input-form" [(ngModel)]="tagName" placeholder="Enter field name">
+                    </div>
+                    <div class="pt-2">
+                        <label>Tag Colour</label> <br>
+                        <input type="color" class="input-form" [(ngModel)]="tagColor" placeholder="Pick colour">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="account-btn" (click)="updateTagData()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row mb-5">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8 notification-card">
+        <div class="container-fluid ">
+            <div class="row pb-3 justify-content-center">
+            <div class="col-sm-12 d-flex pt-5 pb-4 text-center notification-card-header">
+                <!-- <div class="header-col">
+                    Billing Id
+                </div> -->
+                <div class="header-col">
+                    Invoice No.
+                </div>
+                <div class="header-col">
+                    Date
+                </div>
+                <div class="header-col">
+                    Amount
+                </div>
+                <div class="header-col">
+                  Purpose
+                </div>
+                <div class="header-col">
+                   Download
+                </div>
+                
+            </div>
+            </div>
+            <div class="notification-content-parent">
+                <div *ngFor="let billingitem of billingHistoryData | searchfilter:searchText | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" 
+                  class="row justify-content-center  notification-content">
+                    <div class="col-sm-12 d-flex py-3 text-center">
+                        <!-- <div class="header-col">{{ billingitem.billing_id }}</div>  -->
+                        <div class="header-col">#{{billingitem.invoice_number}}</div>
+                        <div class="header-col">{{ billingitem.billing_date | date:'dd MMMM yyyy' }}</div>
+                        <div class="header-col">{{ billingitem.amount }}</div>
+                        <div class="header-col">{{ billingitem.billing_type}}</div>
+                        <div class="pdf-text header-col"><img src="../../../../assets/img/profile/import.svg" (click)="generatePDF()">PDF</div>
+
+                 
+                    </div>
+                </div>
+            </div>
+      
+
+
+            <div class="col-sm-12 d-flex px-2 mt-4 mb-4 notification-footer">
+
+            <div class="col-sm-6 d-flex align-items-center text-left">
+                <p class="p-0 m-0">Showing:</p>
+                <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="45">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                </select>
+
+            </div>
+            <div class="col-sm-6 text-right">
+            <nav aria-label="navigation">
+                <ul class="justify-content-end align-items-center m-0 pagination">
+                  <li class="btn-list">
+                    <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1">
+                        <img src="assets/img/profile/previous.svg" />
+                    </button>
+                </li>
+                  <li *ngFor="let item of paging" class="pagination-num-container">
+                    <a [ngClass]="{'pagination-disabled': currentPage !=item}" (click)="currentPage=item" class="pagination-num-body">{{item}}</a>
+                 </li>
+                  <li class="btn-list">
+                    <button class="pagination-btn" [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" >
+                        <img src="assets/img/profile/next.svg" />
+                    </button>
+                </li>
+                </ul>
+              </nav>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2"></div>
+</div>
+
+
+
+
+
+
+
 </div>

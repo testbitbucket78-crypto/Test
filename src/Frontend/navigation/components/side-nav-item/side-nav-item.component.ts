@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { SBRouteData, SideNavItem } from 'Frontend/navigation/models';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'sb-side-nav-item',
@@ -15,7 +16,12 @@ export class SideNavItemComponent implements OnInit {
     routeData!: SBRouteData;
 
 
-    constructor() {}
+    constructor(private router: Router) {}
+
+    isCurrentLink(link: string): boolean {
+        return this.router.isActive(link, true);
+      }
+      
     ngOnInit() {
      
     }

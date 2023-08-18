@@ -1179,13 +1179,19 @@ button:focus, input:focus {
     background: #FFF4F2;
 }
 
+
+
 .popup-dialog p.active {
     background: #000000;
-    background: url("/assets/img/teambox/icon-selected.svg") no-repeat;
+    background: url("/assets/img/teambox/icon-selected.svg") no-repeat #FFF4F2;
     background-size: 12px;
     background-position: center right 10px;
     font-weight: bold;
 }
+
+// .popup-dialog p span.active {
+//     background: url("/assets/img/teambox/icon-selected.svg") no-repeat #FFF4F2;
+// }
 
 .row.popfooter.start-convo {
     padding: 8% 0% 0% 0%;
@@ -1244,7 +1250,7 @@ div[role="progressbar"] {
 }
 
 .custom-width-btn .icon {
-    width: 12px;
+    width: 15px;
     margin-right: 5px;
 }
 

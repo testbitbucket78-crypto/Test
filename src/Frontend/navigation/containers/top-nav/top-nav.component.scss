@@ -28,6 +28,7 @@
 .sb-topnav .navbar-brand  {
     font-size: 25px;
     font-weight: 800;
+    border-right: 1px solid #EBEBEB;
 }
 
 .popup-notification {
@@ -251,12 +252,12 @@
     margin-right: auto;
 }
 
-// #profile-pic {
-//     width: 90px;
-//     height: 90px;
-//     border-radius: 50%;
-//     margin-top: -7.1rem;
-// }
+#profile-pic {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin-top: -7.1rem;
+}
 
 .image-container {
     width: 90px;

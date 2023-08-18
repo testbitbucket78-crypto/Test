@@ -80,7 +80,7 @@ yearList:number[] =[];
   getHolidayDetails(){
     let fromDate = new Date(this.selectedYear,0,1);
     let toDate = new Date(this.selectedYear,12,0);
-    this._settingsService.getHolidayData(this.sp_Id,fromDate,toDate)
+    this._settingsService.getHolidayData(this.sp_Id,'2023-1-1','2023-12-31')
     .subscribe(result =>{
       if(result){
         console.log(result);

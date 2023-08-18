@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpBackend, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { contactsImageData } from '../models';
 const API_URL = environment.baseUrl;
 
 
@@ -117,13 +118,21 @@ export class DashboardService {
     return this.http.get('https://contactapi.sampanatechnologies.com/getContactById', { params: params })
   }
 
+  getContactImage(customerId: any) {
+    return this.http.get(`https://contactapi.sampanatechnologies.com/getProfileImg/${customerId}`);
+  }
+
+  saveContactImage(contactsImageData:contactsImageData): Observable<any> {
+    return this.http.post('https://contactapi.sampanatechnologies.com/addProfileImg',contactsImageData);
+  }
+
+
   deletContactById(data: any) {
     console.log("del API")
 
     return this.http.post('https://contactapi.sampanatechnologies.com/deletContact', data)
   }
-
-
+ 
   //******************Smart replies API's*********************//
 
 
