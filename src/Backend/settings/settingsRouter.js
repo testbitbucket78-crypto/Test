@@ -6,7 +6,7 @@ const profileController=require('./profileController');
 const notification=require('./NotifyClients')
 const campaignController=require('./campaignController');
 const accountController=require('./accountController')
-
+const generalcontroller=require('./generalcontrolller')
 //_____________________________Organization Settings_______________________//
 
 
@@ -106,7 +106,7 @@ router.post('/deleteTag',campaignController.deleteTag)
 //_______________________TEMPLATE_________________________//
 
 router.post('/addTemplate',campaignController.addTemplate)
-router.get('/getTemplate/:spid',campaignController.getTemplate)
+router.get('/getTemplate/:spid/:isTemplate',campaignController.getTemplate)
 router.post('/deleteTemplates',campaignController.deleteTemplates)
 
 //__________________ACCOUNT API'S__________________________//
@@ -123,5 +123,25 @@ router.get('/createInstanceID',accountController.createInstance)
 router.post('/qrCodeData',accountController.getQRcode)
 router.post('/generateQRcode',accountController.generateQRcode)
 router.post('/testwebhook',accountController.testWebhook)
+
+//__________________________General Settings____________________________//
+
+router.post('/defaultaction',generalcontroller.defaultaction)
+router.get('/generalcontroller/:spid',generalcontroller.getdefaultaction)
+
+router.get('/getdefaultmessages/:spid',generalcontroller.getdefaultmessages)
+router.post('/Abledisable',generalcontroller.Abledisable)
+router.post('/savedefaultmessages',generalcontroller.savedefaultmessages)
+router.post('/uploadimg',generalcontroller.uploadimg)
+router.post('/addAndUpdateDefaultMsg',generalcontroller.addAndUpdateDefaultMsg)
+router.post('/deletedefaultactions',generalcontroller.deletedefaultactions)
+
+
+router.post('/rotingsave',generalcontroller.rotingsave)
+router.get('/getroutingrules/:spid',generalcontroller.getroutingrules)
+
+router.post('/savemanagestorage',generalcontroller.savemanagestorage)
+
+router.get('/getautodeletion/:spid',generalcontroller.getautodeletion)
 
 module.exports = router;

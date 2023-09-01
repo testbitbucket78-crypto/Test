@@ -95,6 +95,7 @@ var activeStatusquery = `UPDATE  user SET IsActive=?,LastModifiedDate=? WHERE ui
 
 addNotification = `INSERT INTO TeamboxNotificationSettings(UID,notificationId,PushNotificationValue,SoundNotificationValue,isDeleted,created_at) VALUES ?`
 getNotification = `SELECT * FROM TeamboxNotificationSettings WHERE UID=?`
+updateNotification=`UPDATE TeamboxNotificationSettings SET UID=?, notificationId=?,PushNotificationValue=?,SoundNotificationValue=?,updated_at=? where ID=?`
 
 savePlanQuery = `INSERT INTO PlanPricing (SP_ID,planType,planDivision,discount,subtotalAmount,totalAmount,tax,created_at) VALUES ?`
 updatePlanQuery = `UPDATE PlanPricing SET isDeleted=1,updated_at=? where ID=?`
@@ -185,9 +186,9 @@ var selecttag = `SELECT tm.TagName,tm.TagColour, COUNT(ec.tag) AS tag_count
 
 //________________________________________TEMPLATE SETTINGS__________________________//
 
-var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at) VALUES ?`
-var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1`
-var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=? where ID=?`
+var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate) VALUES ?`
+var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
+var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=? where ID=?`
 var deleteTemplate = `UPDATE templateMessages set isDeleted=1 ,updated_at=? where ID=?`
 
 
@@ -224,5 +225,5 @@ module.exports = {
     , manageplans, manageplansCharges, selectNotification, addCampaignTimingsQuery, deleteCampaignTimingsQuery, selectCampaignTimingsQuery, campaignAlertUsersList,
     addCampaignAlerts, deleteCampaignAlerts, selectCampaignAlerts, addCampaignTest, deleteCampaignTest, selectCampaignTest,
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
-    Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress
+    Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification
 }

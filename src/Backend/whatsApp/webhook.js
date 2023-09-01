@@ -4,12 +4,12 @@ const request = require("request"),
   axios = require("axios").default,
   app = express().use(body_parser.json()); // creates express http server
 
-require('dotenv').config();
+require('dotenv').config()
 const { json } = require("body-parser");
 const db = require('./dbHelper');
 const notify = require('./PushNotifications');
 const aws = require('../awsHelper');
-
+const Routing=require('../RoutingRules')
 const token = process.env.WHATSAPP_TOKEN;
 
 const mytoken = process.env.VERIFY_TOKEN;
@@ -116,8 +116,9 @@ async function extractDataFromMessage(body) {
       console.log("status present");
     }
     console.log("________________SAVEING MESSAGE___________________");
+    // console.log(message_text)
     var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName)
-    var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages,message_text, phone_number_id, contactName, from, display_phone_number)
+    var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
   }
   else if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
     body.entry[0].changes[0].value && body.entry[0].changes[0].value.statuses &&
@@ -147,19 +148,19 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
     var media_type = 'image/jpg'
   }
 
-  // if (message_text.length > 0) {
-  var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
+  if (message_text.length > 0) {
+    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
 
-  console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
+    console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
 
-  // }
+  }
   return saveMessage;
 }
 
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
   if (saveMessage.length > 0) {
-
+    console.log(display_phone_number + " .." + message_text)
     notify.NotifyServer(display_phone_number);
     const data = saveMessage;
     // Extracting the values
@@ -169,43 +170,62 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       agid: data[1][0]['@agid'],
       newId: data[3][0]['@newId'],
       replystatus: data[4][0]['@replystatus'],
-      msg_id: data[5][0]['@msg_id']
+      msg_id: data[5][0]['@msg_id'],
+      newlyInteractionId: data[7][0]['@newlyInteractionId']
     };
 
-    console.log("getDetatilsOfSavedMessage");
+    // console.log("getDetatilsOfSavedMessage");
     var sid = extractedData.sid
     var custid = extractedData.custid
     var agid = extractedData.agid
     var replystatus = extractedData.replystatus
     var newId = extractedData.newId
-    let defaultQuery='select * from defaultActions where spid=?';
-    let defaultAction=await db.excuteQuery(defaultQuery,[sid]);
-  
-    if( defaultAction.length > 0){
-    console.log(defaultAction[0].isAutoReply + " isAutoReply " +  defaultAction[0].autoReplyTime + " autoReplyTime " +defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
-    }
-    console.log("defaultAction")
-    console.log(replystatus);
-    let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId)
-    
+    var msg_id = extractedData.msg_id
+    var newlyInteractionId = extractedData.newlyInteractionId
+
    
+
+    let defaultQuery = 'select * from defaultActions where spid=?';
+    let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
+    console.log(defaultAction.length)
+    if (defaultAction.length > 0) {
+      console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
+      var isAutoReply = defaultAction[0].isAutoReply
+      var autoReplyTime = defaultAction[0].autoReplyTime
+      var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
+
+
+    }
+    let defaultReplyAction = await autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId)
+   let RoutingRulesVaues=await Routing.AssignToContactOwner(sid, newId, agid,custid)  // CALL Default Routing Rules
   }
 
 }
 
+async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId) {
+  if (isAutoReply != 1 && isAutoReplyDisable != 1) {
+    const currentTime = new Date();
+    const autoReplyVal = new Date(autoReplyTime)
+    if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined) {
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId)
+    }
+    if (autoReplyTime == null || autoReplyTime == undefined) {
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId)
+    }
+  }
+}
 
-async function sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId) {
-  console.log("sendSReply");
-  console.log(replystatus)
+async function sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId) {
+  console.log("____Send SMART REPLIESS______" + replystatus)
   const currentTime = new Date();
   const replystatus1 = new Date(replystatus);
   if (replystatus != null && (replystatus1 <= currentTime) && replystatus != undefined) {
-    var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId);
+    var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId);
     console.log("____Send SMART REPLIESS______" + response);
   }
-  if (replystatus == null || replystatus == undefined || replystatus=="") {
-    console.log("replystatus == null" +message_text)
-    var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId);
+  if (replystatus == null || replystatus == undefined || replystatus == "") {
+    console.log("replystatus == null" + message_text)
+    var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId);
     console.log("____Send SMART REPLIESS______" + response);
   }
 }
@@ -292,21 +312,44 @@ async function sendMessage(message, phone_number_id, from) {
 
 
 
-async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId) {
+async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId) {
   try {
     console.log("in side getSmartReplies method")
-    console.log("message_text")
-    console.log(message_text)
-    console.log("_________process.env.insertMessage__________")
+    // console.log("message_text")
+    // console.log(message_text)
+    // console.log("_________process.env.insertMessage__________")
 
+    let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from);
+    var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text], sid]);
+    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, newlyInteractionId);
 
-    var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text], sid])
-    console.log("replymessage")
+    console.log("defultOutOfOfficeMsg")
+    console.log(defautWlcMsg)
     console.log(replymessage)
+    console.log(defultOutOfOfficeMsg)
     //var autoReply = replymessage[0].Message
-    //console.log(autoReply + replymessage[0].ActionID)
-    console.log(replymessage)
-    iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId)
+    console.log(replymessage.length)
+    console.log(" replymessage.length " + replymessage.length)
+    if (replymessage.length > 0) {
+      console.log("replymessage.length")
+      iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId)
+    } else if (defultOutOfOfficeMsg === false) {
+
+      console.log("getOutOfOfficeResult")
+      let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newlyInteractionId);
+      console.log(getOutOfOfficeResult)
+    }
+    else if (defautWlcMsg.length > 0 && defautWlcMsg[0].Is_disable == 1) {
+      console.log("defaut msg")
+      let messageInterval = await db.excuteQuery(process.env.msgBetweenOneHourQuery, [newId, 1])
+      if (messageInterval.length <= 0) {
+        sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
+        let updateSmsRes = await db.excuteQuery(process.env.updateSms, [1, new Date(), msg_id]);
+      }
+
+    }
+
+
   } catch (err) {
     console.log("____getSmartReplies method err______")
     console.log(err)
@@ -326,24 +369,24 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
     var actionId = message.ActionID;                 // Assuming the 'ActionID' property contains the action ID
     console.log(testMessage + "____________" + value + "_________" + actionId)
 
-    let PerformingActions=await PerformingSReplyActions(actionId,value,sid, custid, agid, replystatus, newId);
+    let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
     sendMessage(testMessage, phone_number_id, from);
 
   });
 
 }
 
-async function PerformingSReplyActions(actionId,value,sid, custid, agid, replystatus, newId) {
+async function PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId) {
   // Perform actions based on the Action ID
   switch (actionId) {
     case 1:
-      let assignActionRes = await assignAction(value,agid,newId)
+      let assignActionRes = await assignAction(value, agid, newId)
       break;
     case 2:
-      let AddTagRes = await addTag(value,sid, custid);
+      let AddTagRes = await addTag(value, sid, custid);
       break;
     case 3:
-      let removedTagRes = await removeTag(value,custid);
+      let removedTagRes = await removeTag(value, custid);
       break;
     case 4:
       console.log(`Performing action 4 for Trigger Flow: ${value}`);
@@ -362,7 +405,7 @@ async function PerformingSReplyActions(actionId,value,sid, custid, agid, replyst
 
 
 
-async function assignAction(value,agid,newId) {
+async function assignAction(value, agid, newId) {
   console.log(`Performing action 1 for  Assign Conversation: ${value}`);
   is_active = 1
   var values = [[is_active, newId, agid, value]]
@@ -372,14 +415,14 @@ async function assignAction(value,agid,newId) {
 
 
 
-async function addTag(value,sid, custid) {
+async function addTag(value, sid, custid) {
   console.log(`Performing action 2 for Add Contact Tag: ${value}`);
   var addConRes = await db.excuteQuery(process.env.addTagQuery, [value, custid, sid])
   console.log(addConRes)
 }
 
 
-async function removeTag(value,custid) {
+async function removeTag(value, custid) {
   console.log(`Performing action 3 for Remove Contact Tag: ${value}`);
   var maptag = value;
   var maptagItems = maptag.split(',')
@@ -421,4 +464,150 @@ async function removeTag(value,custid) {
 }
 
 
+
+async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from) {
+  try {
+    // let selectQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title='Welcome Greeting'`
+    var wlcMessage = await db.excuteQuery(process.env.defaultMessageQuery, [sid, 'Welcome Greeting']);
+    if (newlyInteractionId != null && newlyInteractionId != undefined && newlyInteractionId != "" && wlcMessage.length > 0 && wlcMessage[0].Is_disable == 1) {
+      // console.log("defaut msg")
+      sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
+      let updateSmsRes = await db.excuteQuery(process.env.updateSms, [1, new Date(), msg_id]);
+    }
+    // console.log(wlcMessage);
+    return wlcMessage;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+
+async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id) {
+  try {
+    // let outOfOfficeQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title='Out of Office'`
+    var outOfOfficeMessage = await db.excuteQuery(outOfOfficeQuery, [process.env.defaultMessageQuery, 'Out of Office']);
+    if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
+
+      let messageInterval = await db.excuteQuery(process.env.msgBetweenOneHourQuery, [newId, 2])
+      if (messageInterval.length <= 0) {
+        sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
+
+        let updateSmsRes = await db.excuteQuery(process.env.updateSms, [2, new Date(), msg_id]);
+      }
+    }
+
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+
+async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId) {
+  const currentTime = new Date();
+  let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
+  var workingData = await db.excuteQuery(workingHourQuery, [sid]);
+  if ((isWorkingTime(workingData, currentTime))) {
+    AllAgentsOffline(sid, phone_number_id, from, msg_id, newId);
+    console.log('It is currently  within working hours.' + msg_id);
+    return true;
+  }
+  console.log('It is currently not within working hours.');
+  return false;
+}
+
+
+function isWorkingTime(data, currentTime) {
+  console.log(data)
+  const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+  const currentTimeStr = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  console.log(currentDay)
+  const time = new Date()
+
+  for (const item of data) {
+    const workingDays = item.working_days.split(',');
+    const date = new Date().getHours();
+    const getMin = new Date().getMinutes();
+    console.log(date + " :::::::" + getMin)
+
+    const startTime = item.start_time.split(':');
+    const endTime = item.end_time.split(':');
+    console.log(startTime + " " + endTime + workingDays.includes(currentDay))
+    console.log(endTime[0] + " " + date + endTime[1] + "| " + getMin)
+    if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
+      console.log("data===========")
+      return true;
+    }
+
+
+
+  }
+
+  return false;
+}
+
+
+
+async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
+  console.log("messageData===")
+  try {
+
+    const messageData = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to: from,
+      type: typeOfmsg,
+    };
+
+    if (typeOfmsg === 'video' || typeOfmsg === 'image' || typeOfmsg === 'document') {
+      messageData[typeOfmsg] = {
+        link: link,
+        caption: caption
+      };
+    }
+    if (typeOfmsg === 'text') {
+      messageData[typeOfmsg] = {
+        "preview_url": true,
+        "body": caption
+      };
+    }
+    console.log(messageData)
+    // Send the video message using Axios
+    const response = await axios({
+      method: "POST",
+      url: `https://graph.facebook.com/v17.0/${phone_number_id}/messages?access_token=${token}`,
+      data: messageData, // Use the video message structure
+      headers: { "Content-Type": "application/json" },
+    });
+
+    console.log("****META APIS****", response.data);
+  } catch (err) {
+    console.error("______META ERR_____", err);
+  }
+
+}
+
+
+
+async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId) {
+  console.log("msg_id");
+  var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=?";
+  let activeAgent = await db.excuteQuery(activeAgentQuery, [sid]);
+
+  if (activeAgent.length <= 0) {
+
+    console.log(msg_id + " " + newId);
+    // let AgentsOfflineQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title='All Agents Offline'`
+    var AgentsOfflineMessage = await db.excuteQuery(process.env.defaultMessageQuery, [sid, 'All Agents Offline']);
+    if (AgentsOfflineMessage.length > 0 && AgentsOfflineMessage[0].Is_disable == 1) {
+      let messageInterval = await db.excuteQuery(process.env.msgBetweenOneHourQuery, [newId, 3])
+      if (messageInterval.length <= 0) {
+        sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
+
+        // let updateSms = `UPDATE Message set system_message_type_id=3 where Message_id=${msg_id}`
+        let updateSmsRes = await db.excuteQuery(process.env.updateSms, [3, new Date(), msg_id]);
+      }
+    }
+
+  }
+}
 

@@ -254,12 +254,13 @@ const addTemplate = async (req, res) => {
             spid = req.body.spid,
             created_By = req.body.created_By,
             created_at = new Date()
+            isTemplate=req.body.isTemplate
 
         let awsres = await awsHelper.uploadStreamToAws(spid +"/"+ created_By + '/template_img.jpg', Links)
 
         console.log(awsres.value.Location)
         if (ID == 0) {
-            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, awsres.value.Location, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at]]
+            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, awsres.value.Location, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at,isTemplate]]
             let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
             res.status(200).send({
                 addedtem: addedtem,
@@ -267,7 +268,7 @@ const addTemplate = async (req, res) => {
             })
         }
         else {
-            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, awsres.value.Location, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, ID]
+            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, awsres.value.Location, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at,isTemplate, ID]
             let updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
             res.status(200).send({
                 updatedTemplate: updatedTemplate,
@@ -283,7 +284,7 @@ const addTemplate = async (req, res) => {
 
 const getTemplate = async (req, res) => {
     try {
-        let templates = await db.excuteQuery(val.selectTemplate, [req.params.spid])
+        let templates = await db.excuteQuery(val.selectTemplate, [req.params.spid,req.params.isTemplate])
         res.status(200).send({
             templates: templates,
             status: 200

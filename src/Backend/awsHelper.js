@@ -124,4 +124,60 @@ async function uploadStreamToAws(destinationPath, streamdata) {
 
 }
 
-module.exports = { uploadWhatsAppImageToAws, uploadFileToAws, uploadStreamToAws, uploadimageFromUrlToAws };
+async function uploadVideoToAws(awspath, videoData) {
+    // Example usage:
+const awsConfig = {
+    awsaccessKeyId: val.awsaccessKeyId,
+    awssecretAccessKey: val.awssecretAccessKey,
+    awsregion: val.awsregion,
+    awsbucket: val.awsbucket
+};
+    return new Promise((resolve, reject) => {
+        
+
+        // Configure AWS SDK
+        AWS.config.update({
+            accessKeyId: awsConfig.awsaccessKeyId,
+            secretAccessKey: awsConfig.awssecretAccessKey,
+            region: awsConfig.awsregion
+        });
+
+        const s3 = new AWS.S3();
+
+        // Convert videoData to a Buffer
+        const videoBuffer = Buffer.from(videoData, 'base64');
+
+        // Specify the content type for your video (e.g., 'video/mp4')
+        const contentType = 'video/mp4';
+
+        const params = {
+            Bucket: awsConfig.awsbucket,
+            Key: awspath,
+            Body: videoBuffer,
+            ContentType: contentType,
+           
+        };
+
+        s3.upload(params, (err, data) => {
+            if (err) {
+                console.error('Error uploading video:', err);
+                reject(err);
+            } else {
+                console.log('Video uploaded successfully!');
+                console.log(data);
+                const videoUrl = `https://${awsConfig.awsbucket}.s3.${awsConfig.awsregion}.amazonaws.com/${awspath}`;
+                resolve({ code: 0, value: { videoUrl, metadata: data } });
+                // You can save the videoUrl to your database for future use.
+            }
+        });
+    });
+}
+
+
+
+
+
+
+
+
+module.exports = { uploadWhatsAppImageToAws, uploadFileToAws, uploadStreamToAws, uploadimageFromUrlToAws,uploadVideoToAws };
