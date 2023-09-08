@@ -8,6 +8,7 @@ const awsHelper = require('../awsHelper');
 app.use(bodyParser.json());
 app.use(cors());
 // app.use(bodyParser.urlencoded({ extended: true }));
+const moment = require('moment');
 app.use(express.json());
 app.use(bodyParser.json({ limit: "10000kb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
@@ -161,7 +162,7 @@ const uploadimg = async (req, res) => {
         let awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + imageName, link)
         console.log(awsres.value.Location)
 
-        if (uid !=0) {
+        if (uid != 0) {
             let userimgquery = `UPDATE defaultmessages set SP_ID=?, title=?, description=?, message_type=?, value=?, link=?,override=?,autoreply=?,Is_disable=?,isDeleted=?,updated_at=? where uid =?`;
             let result = await db.excuteQuery(userimgquery, [spid, title, description, message_type, value, awsres.value.Location, override, autoreply, Is_disable, '0', updated_at, uid]);
             console.log(result);
@@ -191,7 +192,7 @@ const addAndUpdateDefaultMsg = async (req, res) => {
         description = req.body.description
         value = req.body.value
         override = req.body.override,
-        autoreply = req.body.autoreply
+            autoreply = req.body.autoreply
         Is_disable = req.body.Is_disable
         spid = req.body.spid
         message_type = req.body.message_type
@@ -219,7 +220,7 @@ const addAndUpdateDefaultMsg = async (req, res) => {
             awsres = await awsHelper.uploadVideoToAws(spid + "/" + uid + "/" + imageName, link)
             console.log(awsres.value.Location)
         }
-        if (uid !=0) {
+        if (uid != 0) {
             let userimgquery = `UPDATE defaultmessages set SP_ID=?, title=?, description=?, message_type=?, value=?, link=?,override=?,autoreply=?,Is_disable=?,isDeleted=?,updated_at=? where uid =?`;
             let result = await db.excuteQuery(userimgquery, [spid, title, description, message_type, value, awsres.value.Location, override, autoreply, Is_disable, '0', updated_at, uid]);
             console.log(result);
@@ -403,11 +404,20 @@ const savemanagestorage = async (req, res) => {
 const getautodeletion = async (req, res) => {
     try {
         // console.log(req.body.spid)
+        let spid = req.params.spid
+        let storageUtilizationBytes = await awsHelper.getStorageUtilization(spid, '-1')
+        console.log(storageUtilizationBytes)
+
+        const storageUtilizationKB = (storageUtilizationBytes.totalSize) / 1024;
+        const storageUtilizationMB = storageUtilizationKB / 1024;
+        const storageUtilizationGB = (storageUtilizationMB / 1024).toFixed(2);
+
         var resbyspid = await db.excuteQuery(val.getdeletion, [req.params.spid])
         console.log("routing")
         res.status(200).send({
             msg: 'routing got successfully !',
             managestroage: resbyspid,
+            storageUtilizationGB: storageUtilizationGB,
             status: 200
         });
     } catch (err) {
@@ -417,7 +427,88 @@ const getautodeletion = async (req, res) => {
     }
 }
 
+const manualDelation = async (req, res) => {
+    try {
+
+        SPID = req.body.SPID
+        manually_deletion_days = req.body.manually_deletion_days
+        message_type = req.body.message_type
+
+
+        function subtractDaysFromNow(manually_deletion_days) {
+            return moment().subtract(manually_deletion_days, 'days').format('YYYY-MM-DD HH:mm:ss');
+        }
+
+
+
+        const result = subtractDaysFromNow(manually_deletion_days);
+
+        if (message_type == 'Text') {
+            var messageSize = await db.excuteQuery(val.deleteText, [new Date(), 2, result])
+            console.log(messageSize)
+        } else if (message_type == 'Media') {
+            // console.log(Media)
+          let deletedData=await  awsHelper.deleteObjectFromBucket(manually_deletion_days,SPID);
+          console.log(deletedData)
+        }
+
+       
+       let insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, manually_deletion_days, message_type,isDeleted,created_at) VALUES ?';
+       let addManualData=await db.excuteQuery(insertmanagestorage,[[[SPID,'','','',manually_deletion_days,message_type,1,new Date()]]]);
+       console.log(addManualData);
+       
+       res.status(200).send({
+            msg: 'messages deleted successfully !',
+            messageSize: messageSize,
+            status: 200
+        });
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const deletedDetails = async (req, res) => {
+    try {
+
+        SPID = req.body.SPID
+        manually_deletion_days = req.body.manually_deletion_days
+        message_type = req.body.message_type
+
+        function subtractDaysFromNow(manually_deletion_days) {
+            return moment().subtract(manually_deletion_days, 'days').format('YYYY-MM-DD HH:mm:ss');
+        }
+
+        const result = subtractDaysFromNow(manually_deletion_days);
+        console.log(result)
+        let  messageSize='';
+        if (message_type == 'Text') {
+             messageSize = await db.excuteQuery(val.messageSizeQuery, [SPID, result])
+            console.log(messageSize)
+        } else if (message_type == 'Media') {
+
+             messageSize = await awsHelper.getStorageUtilization(SPID, manually_deletion_days)
+            console.log(messageSize)
+        }
+
+
+        res.status(200).send({
+            msg: 'messageSize got successfully !',
+            messageSize: messageSize,
+            status: 200
+        });
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+
+}
+
+
 module.exports = {
-    defaultaction, getdefaultaction, getdefaultmessages, Abledisable, uploadimg, deletedefaultactions, savedefaultmessages, rotingsave, getroutingrules, savemanagestorage, getautodeletion, addAndUpdateDefaultMsg
+    defaultaction, getdefaultaction, getdefaultmessages, Abledisable, uploadimg, deletedefaultactions, savedefaultmessages, rotingsave, getroutingrules, savemanagestorage, getautodeletion, addAndUpdateDefaultMsg,
+    manualDelation, deletedDetails
 }
 

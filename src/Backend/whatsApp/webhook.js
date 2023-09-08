@@ -6,7 +6,7 @@ const request = require("request"),
 
 require('dotenv').config()
 const { json } = require("body-parser");
-const db = require('./dbHelper');
+const db = require('../dbhelper');
 const notify = require('./PushNotifications');
 const aws = require('../awsHelper');
 const Routing=require('../RoutingRules')

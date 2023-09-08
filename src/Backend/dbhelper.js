@@ -12,6 +12,11 @@ var db = mysql.createConnection({
 });
 
 db.connect((err) => {
+  
+    if(err){
+        console.log("db connect err");
+        console.log(err)
+    }
     if (!err) {
 
         console.log("Connected ");
@@ -52,7 +57,7 @@ async function runQuery(req, res, query, param) {
                 console.log(result)
                 res.send(result)
             } catch (err) {
-                console.error(err);
+                //console.error(err);
                 errlog(err)
                 res.send(err)
 
@@ -81,9 +86,9 @@ async function excuteQuery(query, param) {
     try {
         if (db.state === 'disconnected') {
             console.log("** if con" + "excuteQuery" + "**" + db.state)
-            db.connect();
+           db.connect()
         }
-        console.log("**" + "excuteQuery" + "**" + db.state)
+        //console.log("**" + "excuteQuery" + "**" + db.state)
         return new Promise((resolve, reject) => {
             db.query(query, param, (err, results) => {
                 if (err) return reject(err);

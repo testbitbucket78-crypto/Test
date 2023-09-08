@@ -3,7 +3,8 @@ const db = require("../dbhelper");
 var app = express();
 const val = require('./constant');
 const bodyParser = require('body-parser');
-const awsHelper=require('../awsHelper')
+const awsHelper = require('../awsHelper');
+const middleWare = require('../middleWare')
 const cors = require('cors')
 app.use(bodyParser.json());
 app.use(cors());
@@ -254,13 +255,28 @@ const addTemplate = async (req, res) => {
             spid = req.body.spid,
             created_By = req.body.created_By,
             created_at = new Date()
-            isTemplate=req.body.isTemplate
+        isTemplate = req.body.isTemplate
 
-        let awsres = await awsHelper.uploadStreamToAws(spid +"/"+ created_By + '/template_img.jpg', Links)
+        let image = ""
+        if (Links != null && Links != undefined) {
+            // Remove header
+            let streamSplit = Links.split(';base64,');
+            let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
+            let datapart = streamSplit.pop();// this is dependent on the POP above
 
-        console.log(awsres.value.Location)
+            let imgType = datapart.split('/').pop();
+            let imageName = 'template_img.png';//Default it to png.
+            if (imgType) {
+                imageName = 'template_img' + '.' + imgType;
+            }
+
+            let awsres = await awsHelper.uploadStreamToAws(spid + "/" + created_By + "/" + imageName, Links)
+
+            image = awsres.value.Location
+            console.log(awsres.value.Location)
+        }
         if (ID == 0) {
-            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, awsres.value.Location, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at,isTemplate]]
+            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate]]
             let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
             res.status(200).send({
                 addedtem: addedtem,
@@ -268,7 +284,7 @@ const addTemplate = async (req, res) => {
             })
         }
         else {
-            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, awsres.value.Location, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at,isTemplate, ID]
+            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, ID]
             let updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
             res.status(200).send({
                 updatedTemplate: updatedTemplate,
@@ -284,7 +300,7 @@ const addTemplate = async (req, res) => {
 
 const getTemplate = async (req, res) => {
     try {
-        let templates = await db.excuteQuery(val.selectTemplate, [req.params.spid,req.params.isTemplate])
+        let templates = await db.excuteQuery(val.selectTemplate, [req.params.spid, req.params.isTemplate])
         res.status(200).send({
             templates: templates,
             status: 200
@@ -314,7 +330,48 @@ const deleteTemplates = async (req, res) => {
     }
 }
 
+const testCampaign = async (req, res) => {
+    try {
+
+        console.log("sendCampinMessage")
+        var TemplateData = req.body
+        console.log(TemplateData)
+        let messageData = '';
+        var messageTo = TemplateData.phone_number
+        var messateText = TemplateData.message_content
+        let content = messateText;
+        let channel = TemplateData.channel_label
+        console.log("channel");
+        console.log(channel)
+        console.log("content")
+        console.log(content)
+        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+        content = content.replace('&nbsp;', '\n')
+        content = content.replace(/<br[^>]*>/g, '\n')
+        content = content.replace(/<\/?[^>]+(>|$)/g, "")
+        let testNo = await db.excuteQuery(val.selectCampaignTest, [TemplateData.sp_id])
+        for (let phone_number of testNo) {
+            middleWare.channelssetUp(channel, 'text', phone_number.mobile_number, content)
+        }
+
+
+    }
+    catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+
+
+
 module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
-    selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates
+    selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
+    testCampaign
+
 }

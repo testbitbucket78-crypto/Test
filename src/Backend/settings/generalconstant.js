@@ -32,7 +32,7 @@ routingdetails = 'UPDATE routingrules SET  contactowner=?,assignagent=?,broadcas
 insertRouteQuery=`INSERT INTO routingrules (SP_ID,contactowner,assignagent,broadcast,roundrobin,conversationallowed,manualassign,assignuser,timeoutperiod,isadmin,assignspecificuser,selectuser,isMissChatAssigContactOwner,created_at,manualAssignUid,SpecificUserUid) VALUES ?`
 
 // manage storage
-selectmanage = 'select * from managestorage where SP_ID=?'
+selectmanage = 'select * from managestorage where SP_ID=? AND  isDeleted !=1'
 updatemanagestorage = 'UPDATE  managestorage SET  autodeletion_message=?, autodeletion_media=?, autodeletion_contacts=?, numberof_messages=?, sizeof_messages=?,updated_at=? Where SP_ID=?'
 insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, numberof_messages, sizeof_messages,created_at) VALUES ?'
 getdeletion = 'select * from managestorage where SP_ID=? AND  isDeleted !=1'
@@ -138,9 +138,19 @@ AND InteractionId IN (
 
 checkAssignInteraction=`SELECT * FROM InteractionMapping WHERE InteractionId = ?`
 
+messageSizeQuery=`SELECT 
+count( LENGTH(message_media) + LENGTH(media_type)+LENGTH(Type)+LENGTH(message_text) ) AS message_size,
+COUNT(DISTINCT message_id) AS message_count 
+FROM 
+ Message
+WHERE 
+ SPID= ? AND is_deleted !=1
+AND   created_at < ?;`
 
+deleteText=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? AND created_at < ?`
 
 module.exports={
     defaultactiondetails,updatedefaultactionDetails,defaultinsertDetails,getenabledisable,Abledisablequery,selectdefaultquery,uploaddetails,routingrule,routingdetails,selectmanage,updatemanagestorage,insertmanagestorage,getdeletion,insertRouteQuery,
-    CustomerReplyReminder,systemMsgQuery,selectdefaultMsgQuery,noCustomerRqplyTimeOut,noAgentReply,addDefaultMsg,assignCount,checkAssignInteraction
+    CustomerReplyReminder,systemMsgQuery,selectdefaultMsgQuery,noCustomerRqplyTimeOut,noAgentReply,addDefaultMsg,assignCount,checkAssignInteraction,
+    messageSizeQuery,deleteText
 }

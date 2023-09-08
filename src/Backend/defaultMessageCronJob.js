@@ -7,7 +7,7 @@ var express = require("express");
 var app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors')
-const moment = require('moment');
+
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -21,11 +21,11 @@ var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, inte
 async function NoCustomerReplyReminder() {
   console.log("NoCustomerReplyReminder")
   let defaultMessage = await db.excuteQuery(settingVal.CustomerReplyReminder, [])
-  //console.log(defaultMessage)
+
   if (defaultMessage.length > 0) {
     for (const message of defaultMessage) {
 
-     // console.log(message)
+  
       try {
 
         let data = await db.excuteQuery(settingVal.selectdefaultMsgQuery, ['No Customer Reply Reminder',message.SP_ID])
@@ -34,7 +34,7 @@ async function NoCustomerReplyReminder() {
           let sendDefult = await sendDefultMsg(data[0].link, data[0].value, data[0].message_type, 101714466262650, message.customer_phone_number)
 
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, new Date(), message.Message_id]);
-         // console.log(updateSmsRes)
+    
          let messageValu=[[message.SPID,message.Type,"101714466262650",message.interaction_id,message.Agent_id, 'out',data[0].value,data[0].link,data[0].message_type,"","",new Date(),new Date(),5]]
          let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
         }
@@ -53,13 +53,13 @@ async function NoCustomerReplyTimeout() {
   try {
     console.log("NoCustomerReplyTimeout")
     let CustomerReplyTimeout = await db.excuteQuery(settingVal.noCustomerRqplyTimeOut, [])
-    // console.log(CustomerReplyTimeout)
+  
     if (CustomerReplyTimeout.length > 0) {
       for (const msg of CustomerReplyTimeout) {
         let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
 
         let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, new Date(), msg.Message_id]);
-       // console.log(updateSmsRes)
+    
        let messageValu=[[msg.SPID,msg.Type,"101714466262650",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",new Date(),new Date(),6]]
          let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
         let closeInteraction=await db.excuteQuery(`UPDATE Interaction SET interaction_status='' WHERE InteractionId=${msg.InteractionId}`,[]);
@@ -82,13 +82,13 @@ console.log("NoAgentReplyTimeOut")
 
       for (const msg of noAgentReplydata) {
         let isWorkingTime = await workingHoursDetails(msg.SP_ID);
-     //   console.log("isWorkingTime :: "+ isWorkingTime)
+   
         if (isWorkingTime === true) {
           let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
           let messageValu=[[msg.SPID,msg.Type,"101714466262650",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",new Date(),new Date(),4]]
           let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [4, new Date(), msg.Message_id]);
-        //  console.log(updateSmsRes)
+      
         }
       }
     }
@@ -126,7 +126,7 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
         "body": caption
       };
     }
-    //console.log(messageData)
+   
     // Send  message using Axios
     const response = await axios({
       method: "POST",
@@ -147,22 +147,19 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
 
 
 function isWorkingTime(data, currentTime) {
- // console.log(data)
+ 
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-  const currentTimeStr = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  //console.log(currentDay)
-  const time = new Date()
+
 
   for (const item of data) {
     const workingDays = item.working_days.split(',');
     const date = new Date().getHours();
     const getMin = new Date().getMinutes();
-   // console.log(date + " :::::::" + getMin)
+ 
 
     const startTime = item.start_time.split(':');
     const endTime = item.end_time.split(':');
-    // console.log(startTime + " " + endTime + workingDays.includes(currentDay))
-    // console.log(endTime[0] + " " + date + endTime[1] + "| " + getMin)
+ 
     if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
       console.log("data===========")
       return true;
@@ -197,3 +194,6 @@ cron.schedule('*/5 * * * *', async () => {
 
 });
 
+app.listen(3006, () => {
+  console.log("defaultMessage scheduler  is listening on port 3006");
+});

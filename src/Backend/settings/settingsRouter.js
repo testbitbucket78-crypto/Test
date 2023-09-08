@@ -95,6 +95,8 @@ router.post('/addAndUpdateCampaign',campaignController.addAndUpdateCampaign)
 router.get('/selectCampaignAlerts/:sid',campaignController.selectCampaignAlerts)
 router.post('/addCampaignTest',campaignController.addCampaignTest)
 router.get('/selectCampaignTest/:sid',campaignController.selectCampaignTest)
+router.post('/testCampaign',campaignController.testCampaign)
+
 
 //______________________Contact Settings_______________________//
 
@@ -143,5 +145,10 @@ router.get('/getroutingrules/:spid',generalcontroller.getroutingrules)
 router.post('/savemanagestorage',generalcontroller.savemanagestorage)
 
 router.get('/getautodeletion/:spid',generalcontroller.getautodeletion)
+
+//_______************_______________//
+router.post('/manualDelation',generalcontroller.manualDelation)
+router.post('/getmanualDelation',generalcontroller.deletedDetails)
+
 
 module.exports = router;
