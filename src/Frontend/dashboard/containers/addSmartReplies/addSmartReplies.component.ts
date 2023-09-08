@@ -1,10 +1,10 @@
-import { Component, OnInit,ViewChild,ElementRef } from '@angular/core';
+import { Component, OnInit,ViewChild,ElementRef, Input } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { TeamboxService } from './../../services';
 import { Router } from '@angular/router';
-import { agentMessageList } from '@app/models/smart-replies/smartReplies.model';
+import { agentMessageList } from 'Frontend/dashboard/models/smartReplies.model';
 import Stepper from 'bs-stepper';
 import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
@@ -36,6 +36,8 @@ export class AddSmartRepliesComponent implements OnInit {
 	public range: Range | undefined;
 	public saveSelection: NodeSelection | any;
 
+	@Input() isEdit: boolean = false;
+	@Input() smartReplyData: any;
 
 	active = 1;
 	stepper: any;
@@ -81,7 +83,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	showattachmentbox = false;
 	agentsList = ["Rishabh Singh", "Jatin Sharma", "Raunak Kumari", "Sumit Goyal" ,"Pawan Sharma"];
 	ShowAssignOption = false;
-	assignActionList = ["Assign Conversation", "Add Contact Tag", "Remove Tag"]; //,"Trigger Flow", "Name Update", "Resolve Conversation"
+	assignActionList = ["Assign Conversation", "Add Contact Tag"]; //,"Trigger Flow", "Name Update", "Resolve Conversation" "Remove Tags"
 	ShowAddAction = false;
 	AutoReplyEnableOption = ['Flow New Launch', 'Flow Help', 'Flow Buy Product', 'Flow Return Product'];
 	ShowAutoReplyOption = false;
@@ -317,6 +319,9 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.newMessage = this.fb.group({
 			message_text: ''
 		});
+
+		console.log(this.isEdit)
+		console.log(this.smartReplyData)
 	
 		 this.routerGuard();
 	
@@ -652,7 +657,6 @@ export class AddSmartRepliesComponent implements OnInit {
 		console.log(document.getElementById(`msgbox-body${index}`));
 		
 		}
-
 	onEdit(msgText:string) {
 		this.editedMessage = msgText;
 		

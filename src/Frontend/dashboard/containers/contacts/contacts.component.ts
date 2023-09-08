@@ -2,9 +2,11 @@ import { Component, OnInit, ChangeDetectionStrategy, ViewEncapsulation } from '@
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
 import { Router } from '@angular/router';
+import { contactsImageData } from 'Frontend/dashboard/models/dashboard.model';
 
 declare var $: any;
 @Component({
@@ -113,12 +115,15 @@ columnDefs: ColDef[] = [
 
   rowData = [ ];
   
+  imageChangedEvent: any = '';
+  croppedImage: any = '';
+
   searchText= "";
   separateDialCode = false;
 	SearchCountryField = SearchCountryField;
 	CountryISO = CountryISO;
   PhoneNumberFormat = PhoneNumberFormat;
-	preferredCountries: CountryISO[] = [CountryISO.India, CountryISO.UnitedStates, CountryISO.UnitedKingdom];
+	preferredCountries: CountryISO[] =[];
   phoneForm = new FormGroup({
 		phone: new FormControl(undefined, [Validators.required])
 	});
@@ -146,7 +151,10 @@ columnDefs: ColDef[] = [
    isButtonDisabled = true;
    inputText!: string;
    inputEmail!: string;
- 
+   userid = 0; 
+   profilePicture:any;
+   contactsImageData= <contactsImageData> {};
+   contactId = 0;
 
   // multiselect 
     disabled = false;
@@ -156,6 +164,8 @@ columnDefs: ColDef[] = [
     tag: any = [];
     status: any = [];
     selectedItems: any = [];
+    selectedTagItems: any[] = []; 
+    selectedStatusItems: any[] = []; 
     dropdownSettings = {}; 
     items: any;
     customerData: any;
@@ -194,11 +204,11 @@ columnDefs: ColDef[] = [
 			quantities: this.fb.array([]) ,  
 		  });
       this.newContact=this.fb.group({
-        Name: new FormControl('', Validators.compose([Validators.required])),
+        Name: new FormControl('', Validators.required),
         Phone_number: new FormControl(''),
-        emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        age: new FormControl('',[Validators.max(100)]),
-        sex: new FormControl('',[Validators.max(6)]),
+        emailId: new FormControl('', [Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
+        age: new FormControl('',[Validators.required, Validators.pattern(/^[0-9]+$/), Validators.min(18), Validators.max(99)]),
+        sex: new FormControl(''),
         tag: new FormControl([]),
       //  tagControls = tags.map(tag => new FormControl(tag));
         status:  new FormControl([]),
@@ -210,9 +220,9 @@ columnDefs: ColDef[] = [
 	
   this.editContact = this.fb.group({
     Name: new FormControl('', [Validators.required, Validators.pattern('^[A-Za-z\s]+$')]),
-    Phone_number: new FormControl(''),
-    emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-    age: new FormControl('', [Validators.required]),
+    Phone_number:  new FormControl(''),
+    emailId: new FormControl('', [Validators.required,Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$')]),
+    age: new FormControl('', [Validators.required,Validators.pattern(/^[1-9][0-9]?$/),Validators.min(18),Validators.max(99)]),
     sex: new FormControl(''),
     tag: new FormControl([]),
     status: new FormControl([]),
@@ -244,8 +254,8 @@ columnDefs: ColDef[] = [
         { item_id: 4, item_text: 'Tags' },
         { item_id: 5, item_text: 'Contact Created' },
         { item_id: 6, item_text: 'Last Conversation with' },
-        { item_id: 4, item_text: 'Conversation resolved' },
-        { item_id: 5, item_text: 'Last Message with' },
+        { item_id: 7, item_text: 'Conversation resolved' },
+        { item_id: 8, item_text: 'Last Message with' },
     ];
     this.tag = [
       { item_id: 1, item_text: 'Paid' },
@@ -254,7 +264,7 @@ columnDefs: ColDef[] = [
       { item_id: 4, item_text: 'New Customer' },
       { item_id: 5, item_text: 'Order Complete' },
       { item_id: 6, item_text: 'New Order' },
-      { item_id: 4, item_text: 'Unavailable' },
+      { item_id: 7, item_text: 'Unavailable' },
       
   ];
   this.status = [
@@ -266,7 +276,7 @@ columnDefs: ColDef[] = [
     { item_id: 4, item_text: 'Unavailable' },
     
 ];
-    // this.selectedItems = [{ item_id: 4, item_text: 'Pune' }, { item_id: 6, item_text: 'Navsari' }];
+
     this.dropdownSettings = {
         singleSelection: false,
         idField: 'item_id',
@@ -277,13 +287,8 @@ columnDefs: ColDef[] = [
         allowSearchFilter: this.ShowFilter
     };
 
-    // this.productForm = this.fb.group({
-    //     city: [this.selectedItems]
-    // });
-
-    
 		this.getContact();
-   
+  
 } 
 
   onSelectionChanged(event: any) {
@@ -299,6 +304,7 @@ bulk(e: any) {
     for (var i = 0; i < this.contacts.length; i++) {
       this.checkedcustomerId.push(this.contacts[i].customerId)
       this.checkedConatct.push(this.contacts[i]);
+      
     }
     this.checks = true;
   }
@@ -506,7 +512,8 @@ onSelectAll(items: any) {
     onRowClicked: this.rowClicked,
     onRowSelected: this.onRowSelected,
     pagination: true,
-    paginationAutoPageSize: true,
+    paginationAutoPageSize: false,
+    paginationPageSize: 10,
     paginateChildRows:true,
     overlayNoRowsTemplate: '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
     overlayLoadingTemplate:'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
@@ -551,16 +558,17 @@ onSelectAll(items: any) {
         }
          
    });
-   
-
 }
 
+  editContactData() {
 
-  editContactData = () => {
+    this.submitted = true;
 
     if(!this.editContact.valid) {
-      return false;
+     alert('Please enter valid details');
+      return ;
     }
+
     {
       console.log("editContactData")
       var customerId = sessionStorage.getItem('id')
@@ -568,15 +576,11 @@ onSelectAll(items: any) {
       console.log("editdata" + customerId)
       console.log(this.editContact.value)
         this.apiService.editContact(this.editContact.value, customerId, SP_ID).subscribe((response: any) => {
-          console.log(response)
-          this.getContact();
+          $("#contactedit").modal('hide');
           this.closesidenav(this.items);
+          this.getContact();
         });
-     
-  
     }
-
-
   }
 
 
@@ -642,11 +646,18 @@ deletContactByID(data: any) {
     var SP_ID = sessionStorage.getItem('SP_ID')
     this.apiService.getContactById(data.customerId, SP_ID).subscribe((data) => {
       this.customerData = data
+      console.log(this.customerData);
       this.getFilterTags = this.customerData.tag.split(',').map((tags: string) =>tags.trim());
       console.log(this.customerData);
       console.log(this.getFilterTags);
       this.getContact();
     })
+    this.apiService.getContactImage(data.customerId).subscribe((response: any) => {
+      this.contactId = data.customerId;
+      console.log(this.contactId);
+    this.profilePicture =  response.msg[0].contact_profile
+    console.log(this.profilePicture);
+    });
     
   }
 
@@ -670,9 +681,47 @@ deletContactByID(data: any) {
 
   onFilterTextBoxChange() {
     const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
-   this.gridapi.setQuickFilter(searchInput.value);
-
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    this.gridapi.setQuickFilter(searchTerm);
+    this.contacts = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
   }
+  
+
+//  image cropping function for popup
+
+fileChangeEvent(event: any): void {
+  $("#pictureCropModal").modal('show');
+    this.imageChangedEvent = event;
+  }
+  imageCropped(event: ImageCroppedEvent) {
+      this.croppedImage = event.base64;
+   
+ }
+
+ 
+//API call to save the cropped image
+
+saveContactsProfilePicture() {
+  let SP_ID = Number(sessionStorage.getItem('SP_ID'))
+  this.contactsImageData.SP_ID = SP_ID,
+  this.contactsImageData.customerId = this.contactId,
+  this.contactsImageData.contact_profile = this.croppedImage
+
+this.apiService.saveContactImage(this.contactsImageData).subscribe(
+(response) => {
+
+  if (response.status === 200) {
+    $("#pictureCropModal").modal('hide');
+    console.log(response+ 'image saved successfully');
+  }
+
+
+},
+(error) => {
+  console.log(error+ 'error saving contact image');
+})
+
+}
 
 
   // filterTags() {

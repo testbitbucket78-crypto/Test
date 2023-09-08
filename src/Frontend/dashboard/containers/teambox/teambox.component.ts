@@ -9,6 +9,7 @@
 
 	import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 	import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { base64ToFile } from 'ngx-image-cropper';
 
 	@Component({
 	selector: 'sb-teambox',
@@ -362,7 +363,7 @@
 		}
 
 		resetMessageTex(){
-			if(this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value =='<p>Your content...</p>'){
+			if(this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value =='<p>Type…</p>'){
 				this.chatEditor.value='';
 			}
 			
@@ -420,7 +421,7 @@
 				};
 
 			}else{
-				this.chatEditor.value = 'Your content...'
+				this.chatEditor.value = 'Type…'
 				this.tools = {
 					items: ['Bold', 'Italic', 'StrikeThrough',
 					{
@@ -707,6 +708,31 @@
 		  }
 		}
 
+		// saveFiles(files: FileList) {
+		// 	if (files[0]) {
+		// 	  const imageFile = files[0]
+		// 	  this.mediaType = files[0].type
+		  
+		// 	  const reader = new FileReader()
+		// 	  reader.onload = (event: any) => {
+		// 		const base64Data = event.target.result.split(',')[1]; // Extracting base64 data
+		// 		this.apiService.uploadfile(base64Data).subscribe(uploadStatus => {
+		// 		  let responseData: any = uploadStatus
+		// 		  if(responseData.filename){
+		// 			this.messageMeidaFile = responseData.filename
+		// 			this.showAttachmenOption=false;
+		// 		}
+		// 		});
+		// 	  };
+		  
+		// 	  reader.readAsDataURL(imageFile);
+		// 	}
+		//   }
+		  
+				
+	
+
+
 		ngOnInit() {
 			switch(this.loginAs) {
 				case 1:
@@ -821,6 +847,13 @@
 		getCustomers(){
 			this.apiService.getCustomers(this.SPID).subscribe(data =>{
 				this.contactList= data
+				console.log(this.contactList)
+				const names: string[] = this.contactList.map((contact: { Name: any; }) => contact.Name);
+				const email: string[] = this.contactList.map((contact: {emailId:any; }) => contact.emailId);
+				const phone: string[] = this.contactList.map((contact: {Phone_number: any; }) => contact.Phone_number);
+                console.log(names);
+				console.log(email);
+				console.log(phone);
 			});
 		}
 		
@@ -883,6 +916,8 @@
 			this.interactionList= dataList
 			console.log(this.interactionList);
 			this.interactionListMain= dataList
+
+			
 			
 			setTimeout(() => {
 				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
@@ -1834,6 +1869,7 @@
 	
 			var bodyData = {
 				InteractionId: this.selectedInteraction.InteractionId,
+				CustomerId: this.selectedInteraction.customerId,
 				SPID:this.SPID,
 				AgentId: this.AgentId,
 				messageTo:this.selectedInteraction.Phone_number,

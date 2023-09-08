@@ -5,6 +5,18 @@
     <p class="heading">Hello <span class="text-capitalize"> {{Name}}</span>, welcome back</p>
   </div>
 
+  <div *ngIf="totalContacts === 0" class=" my-5 dashboard-empty-state">
+		<div class="d-flex justify-content-center my-5 align-items-center container-empty-state">
+			<div class="text-center py-5 body-empty-state">
+				<img src="../../../../assets/img/dashboard-empty.png" />
+				<h5 class="mt-3">Dashboard</h5>
+				<p>Lorium ipsum dolor sit amet</p>
+			</div>
+		</div>
+</div>
+
+  <div *ngIf="totalContacts !== 0" class="dashboard-filled-state">
+
   <div class="row ">
       <div class="col-sm-8 pl-4 mb-5">
         <div class="col-sm-4 px-3 mb-4 card8">
@@ -183,5 +195,6 @@
       </div>
   
     </div>
+  </div>
 
 </sb-layout-dashboard>

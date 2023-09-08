@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit {
     runningCampaign:number = 0;
     draftCampaign:number = 0;
     Name:any;
+    SPID = 0;
    
 
     constructor(private apiService: DashboardService, private router: Router) { }
@@ -40,6 +41,7 @@ export class DashboardComponent implements OnInit {
         this.getdashboardAgents();
         this. getRecentConversation();
         this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
+        this.SPID = Number(sessionStorage.getItem('SP_ID'));
 
         console.log (sessionStorage);
         console.log(this.Name);
@@ -50,7 +52,7 @@ export class DashboardComponent implements OnInit {
         if (sessionStorage.getItem('SP_ID') === null) {
             this.router.navigate(['login']);
         }
-    }
+     }
 
     getDashboardSubscribers() {
         var sPid = sessionStorage.getItem('SP_ID')

@@ -19,10 +19,12 @@ export class SideNavComponent implements OnInit, OnDestroy {
     subscription: Subscription = new Subscription();
     routeDataSubscription!: Subscription;
 
+    showNavItem: boolean = true;
+
     constructor(public navigationService: NavigationService, public userService: UserService) {}
 
     ngOnInit() {
-        this.openHamburger();
+        // this.openHamburger();
     
     }
 
@@ -30,41 +32,29 @@ export class SideNavComponent implements OnInit, OnDestroy {
         this.subscription.unsubscribe();
     }
 
+    // openHamburger(): void {
+    //     const sideNavMenu = document.getElementById('sidenav-menu');
+    //     const sideBarToggle = document.getElementById('sidebarToggle');
+    //     const mainBody = document.getElementsByClassName('container-fluid')[0] as HTMLElement; // Get the first element
+    
+    //     if (sideNavMenu && sideBarToggle) {
+    //         if (sideNavMenu.style.width === '100%') {
+    //             sideNavMenu.style.width = '25%';
+    //             sideNavMenu.style.border = '0';
+    //             mainBody.style.marginLeft = '-10%';
+    //             sideBarToggle.style.marginLeft = '-3px';
+    //         } else {
+    //             sideNavMenu.style.width = '100%';
+    //             sideNavMenu.style.borderRight = '1px solid #EBEBEB';
+    //             mainBody.style.marginLeft = '0';
+    //             sideBarToggle.style.marginLeft = '-148px';
+    //         }
+    //     }
+    // }
 
-   openHamburger(): void {
-        const openHam = (document.getElementsByClassName('sidenav-item')) as unknown as HTMLElement[];
-        const sideNavMenu = document.getElementById('sidenav-menu');
-        const sideBarToggle = document.getElementById('sidebarToggle');
-        const logo = (document.getElementsByClassName('navbar-brand')) as unknown as HTMLElement[];
-        const mainBody = document.getElementsByClassName('container-fluid') as unknown as HTMLElement[];
-        // const caret = (document.getElementsByClassName('svg-inline--fa fa-angle-down fa-w-10')) as unknown as HTMLElement[];
-
-    for (let i = 0; i < openHam.length; i++) {
-        if(openHam[i] instanceof HTMLElement) {
-            if (openHam[i].style.display == "block") {
-                openHam[i].style.display = "none";
-                // caret[i].style.display = "none";
-                sideNavMenu!.style.width = "25%";
-                sideNavMenu!.style.border = "0";
-                mainBody[i].style.marginLeft = "-10%";
-                sideBarToggle!.style.marginLeft = "-3px";
-                logo[i].style.borderRight = '0';
-                
-            }
-            else {
-                openHam[i].style.display = "block";
-                // caret[i].style.display = "block";
-                sideNavMenu!.style.borderRight = "1px solid #EBEBEB";
-                sideNavMenu!.style.width = "100%";
-                mainBody[i].style.marginLeft = "0";
-                sideBarToggle!.style.marginLeft = "-148px";
-                
-                logo[i].style.borderRight = '1px solid #EBEBEB';
-            }
-        }
-      
-    }
-}
+    toggleNavItem() {
+        this.showNavItem = !this.showNavItem;
+      }
 
    
 

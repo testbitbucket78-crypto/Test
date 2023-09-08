@@ -26,3 +26,10 @@ export class Cards {
 	}
 
 }
+
+export interface contactsImageData {
+    SP_ID:number
+    customerId:number,
+    contact_profile:string,
+
+}

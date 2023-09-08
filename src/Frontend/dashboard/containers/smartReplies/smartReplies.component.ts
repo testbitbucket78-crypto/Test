@@ -2,7 +2,7 @@ import { Component, OnInit, } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { Router } from '@angular/router';
-import { repliesList } from '@app/models/smart-replies/smartReplies.model';
+import { repliesList } from 'Frontend/dashboard/models/smartReplies.model';
 declare var $: any;
 
 @Component({
@@ -22,6 +22,9 @@ export class SmartRepliesComponent implements OnInit {
 		}
 	}
 
+
+	isEdit: boolean = false;
+	isShowSmartReplies: boolean = false;
 
 	data: any;
 	items: any;
@@ -97,6 +100,14 @@ export class SmartRepliesComponent implements OnInit {
 			}
 			
 		)};
+
+		editSmartReply() {
+		console.log(this.repliesData);
+			this.isEdit = true;
+			this.isShowSmartReplies = true;
+			$("#smartrepliesModal").modal('show'); 
+		
+		}
 
 	}
 

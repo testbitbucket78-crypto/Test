@@ -12,6 +12,7 @@ declare var $:any;
   styleUrls: ['./myprofile.component.scss']
 })
 export class MyprofileComponent implements OnInit {
+  uid :any;
   spId!:number;
   Name:any;
   EmailId:any;
@@ -23,7 +24,6 @@ export class MyprofileComponent implements OnInit {
   soundNotificationValue=[0, 0, 0 ,0];
   modalReference:any;
   visible:boolean = true;
-  uid :any;
   currentPasswordType: boolean = true;
   newPasswordType: boolean = true;
   confirmPasswordType: boolean = true;
@@ -36,6 +36,8 @@ export class MyprofileComponent implements OnInit {
   roleName!:string;
   isActive: number = 1; 
   profilePicData= <profilePicData> {};
+  profilePicture:any;
+  userid:number = 0;
   fundsData = <addFundsData> {};
   teamboxNotificationStateData = <teamboxNotifications> {};
   
@@ -63,6 +65,8 @@ export class MyprofileComponent implements OnInit {
     this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
     this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
     this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
+    this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
+    console.log(JSON.stringify(this.profilePicture));
     const nameParts = this.Name.split(' ');
     const firstName = nameParts[0] || '';
     const lastName = nameParts[1] || '';
@@ -78,6 +82,7 @@ export class MyprofileComponent implements OnInit {
     this.getTeamName();
     this.getRoleName();
     this.getAvailableAmount();
+  
   }
 
   ngOnDestroy() {
@@ -273,8 +278,10 @@ toggleActiveState(checked: boolean) {
     
     this.apiService.saveUserProfilePic(this.profilePicData).subscribe(
   (response) => {
-    $("#pictureCropModal").modal('hide');
+
     this.showToaster('Image saved successfully','success' + response);
+    $("#pictureCropModal").modal('hide');
+    this.profilePicture;
    
   },
   (error) => {
@@ -299,8 +306,8 @@ addFunds(addFundsSuccess: any) {
     this.fundsData.transation_type = 'Credited'
     this.fundsData.currency = 'INR' ;
 
-    this.apiService.addFunds(this.fundsData,).subscribe(response => {
-      // console.log(JSON.stringify(response)+' added');
+    this.apiService.addFunds(this.fundsData).subscribe(response => {
+
       if(response.status === 200) {
         this.openAddFundsSuccessPopup(addFundsSuccess);
         this.getAvailableAmount();

@@ -22,10 +22,8 @@
 .content-head.d-flex {
     display: flex !important;
     justify-content: space-between;
-    padding: 3% 2% 0% 4%;
+    padding: 1% 2% 0% 5%;
 }
-
-
 
 .input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
     position: relative;
@@ -128,6 +126,14 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     font-weight: 600;
 }
 
+.card-text {
+    word-break: break-word;
+}
+
+h6.text-justify{
+    word-break: break-word;
+}
+
 .card .card1 .card-text1{
     display: block;
 }
@@ -139,6 +145,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     color: #000000;
     font-size: 17px;
     margin-top:13px;
+    word-break: break-word;
 }
 .card .card1 .card-text2 h6{
     color: #7A86A1;

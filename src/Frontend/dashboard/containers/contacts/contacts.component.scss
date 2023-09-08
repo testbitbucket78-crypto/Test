@@ -64,20 +64,8 @@
 
 .gf {
     width: 300px;
+
 }
-
-// .ag-theme-alpine .ag-row {
-//     font-size: 10px;
-//     border-width: none;
-//     border-color: #ffffff!important;
-//     border-bottom-style: transparent;
-//     background: black !important;
-//     border-radius: 18px !important;
-//     height: 42px !important;
-
-// }
-
-
 .btn-footer{
     border-top: 2px solid #e5e0e0;
     position: fixed;
@@ -101,25 +89,6 @@ html, body {
     font-family: 'Manrope';
 }
 
-
-
-
-
-// .ag-theme-alpine .ag-cell, .ag-theme-alpine .ag-full-width-row .ag-cell-wrapper.ag-row-group {
-//     border: 1px solid #7070700D;
-//     background: #FBF9FE;
-//     line-height: 40px;
-//     padding-left: 17px;
-//     padding-right: 17px;
-//     -webkit-font-smoothing: subpixel-antialiased;
-//     font-family: 'Manrope';
-
-// }
-
-// .ag-theme-alpine [class^=ag-], .ag-theme-alpine [class^=ag-]:focus, .ag-theme-alpine [class^=ag-]:after, .ag-theme-alpine [class^=ag-]:before {
-//     box-sizing: border-box;
-//     outline: none;
-// }
 
 .input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
     position: relative;
@@ -956,8 +925,6 @@ outline: none;
    
 
 }
-
-
 .deletefile .btn99 {
     border: 1px solid #695F9724!important;
     position: absolute;
@@ -977,34 +944,6 @@ outline: none;
 }
 
 
-//    #contact-save {
-//     text-align: center;
-//     font-family: 'Manrope';
-//     font-weight: 600;
-//     font-size: 14px;
-//     margin-top: 38px;
-//     width: 100%;
-//   }
-
-//   #contact-save-btn {
-
-//     margin-left: -86px;
-//     opacity: 1;
-//     font-family: 'Manrope';
-//     font-size: 12px;
-//     font-weight: 500;
-//     border: 1px solid #695F9724;
-//     background-color: #F23B3B;
-//     color: #ffffff;
-//     border-radius: 15px;
-//     margin-top: -5px;
-//     width: 80px;
-//     height: 36px;
-//     cursor: pointer;
-//     text-align: center;
-//     outline: none;
-
-//   }
 
   .btn1.btn-success.disabled {
     background: grey;
@@ -1028,364 +967,105 @@ outline: none;
 }
 
 
-/***** media queries for laptops ****/
+.addcontacterror {
+    background: #ffffff;
+}
 
-//  @media screen and (min-width:1536px) {
+.addcontacterrorbody p {
+    font-weight: 600;
+}
 
+.addcontacterrorfooter {
+    border: none;
+}
 
-// .bs-stepper {
-//     margin: 47px 82px;
-//     }
-
-//  .ag-theme-alpine {
-//     width: 95%;
-//     height: 590px;
-//     font-size: 12px;
-//     font-weight: 400;
-//     margin-left: 28px;
-//     margin-top: -10px;
-
-//  }
-
-//  .btn-9 {
-//       margin: 0px 0px 0px 388px;
-//       width: 94px;
-//       height: 26px;
-//       font-size: 11px;
-//  }
+#contact-save-btn {
+ background: #6149cd;
+ color: #ffffff;
+ outline: none;
+ border: none;
+ padding: 4% 14% 4% 14%!important;
+}
 
 
-//  #import-btn {
-//     width: 94px;
-//     height: 26px;
-//     font-size: 11px;
-//     padding: 0;
-//  }
+// picture crop popup //
 
-//  #add-contact {
-//     width: 96px;
-//     height: 26px;
-//     font-size: 11px;
-//     padding: 0;
-//  }
-
-//  .col-md-12 {
-   
-//     left: 26px;
-//     width: 80%;
-//  }
-
-
-//  .btn-delete { 
-//     width: 33px;
-//     height: 26px;}
-    
-// .btn-delete img {
-//     width: 12px;
-//     height: 13px;
-//     margin: -6px -1px 0 0;
-
-//  }
-
-
-
-
-// /***** media queries for 1366x768 ****/
-
-//  @media screen and (max-width:1366px) {
-
-
-// .bs-stepper {
-//     margin: 47px 82px;
-//     }
-
-//  .ag-theme-alpine {
-//     width: 95%;
-//     height: 590px;
-//     font-size: 12px;
-//     font-weight: 400;
-//     margin-left: 28px;
-//     margin-top: -10px;
-
-//  }
-
-//  .btn-9 {
-//       margin: 0px 0px 0px 292px;
-//       width: 94px;
-//       height: 26px;
-//       font-size: 11px;
-//  }
-
-
-//  #import-btn {
-//     width: 94px;
-//     height: 26px;
-//     font-size: 11px;
-//     padding: 0;
-//  }
-
-//  #add-contact {
-//     width: 96px;
-//     height: 26px;
-//     font-size: 11px;
-//     padding: 0;
-//  }
-
-//  .col-md-12 {
-   
-//     left: 26px;
-//     width: 80%;
-//  }
-
-
-//  .btn-delete { 
-//     width: 33px;
-//     height: 26px;}
-    
-// .btn-delete img {
-//     width: 12px;
-//     height: 13px;
-//     margin: -6px -1px 0 0;
-
-//  }
-//  .modal-content {
-  
-//     position: relative;
-//     display: flex;
-//     flex-direction: column;
-//     width: 310px;
-//     height: 196px;
-//     top: 190px;
-//     left: 115px;
-//     pointer-events: auto;
-//     background: #FFFFFF 0% 0% no-repeat padding-box;
-//     box-shadow: 4px 22px 54px #695F971A;
-//     border-radius: 30px;
-//     outline: 0;
-//     border: none;
-// }
-
-// .modal-dialog .modal-content .modal-body {
-//     font-family: "Manrope";
-//     font-size: 14px;
-//     top: 40px;
-//     font-weight: 600;
-//     text-align: center;
-// }
-
-// .modal-dialog .modal-content .deletefile .btn9 {
-//     border: 1px solid #695F9724;
+// .profile-container {
 //     position: absolute;
-//     font-size: 11px;
-//     font-family: "Manrope";
-//     background-color: #ffffff;
-//     color: #7A86A1;
-//     margin: -58px 22px 15px 61px;
-//     border-radius: 15px;
-//     width: 80px;
-//     height: 32px;
-//     cursor: pointer;
-   
-
 // }
 
+.picture-crop-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    right: -2.5rem;
+    top: -2rem;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695F972E;
+    border-radius: 15px;
+}
 
-// .modal-dialog .modal-content .deletefile .btn99 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     font-size: 11px;
-//     font-family: "Manrope";
-//     color: #ffffff;
-//     background: #F23B3B;
-//     width: 93px;
-//     top: 70%;
-//     left: 52%;
-//     height: 33px;
-//     border-radius: 14px;
-//     cursor: pointer;
- 
-// }
-
-
-//    #contact-save {
-//     text-align: center;
-//     font-family: 'Manrope';
-//     font-weight: 600;
-//     font-size: 14px;
-//     margin-top: 38px;
-//     width: 100%;
-//   }
-
-//   #contact-save-btn {
-
-//     margin-left: -86px;
-//     opacity: 1;
-//     font-family: 'Manrope';
-//     font-size: 12px;
-//     font-weight: 500;
-//     border: 1px solid #695F9724;
-//     background-color: #F23B3B;
-//     color: #ffffff;
-//     border-radius: 15px;
-//     margin-top: -5px;
-//     width: 80px;
-//     height: 36px;
-//     cursor: pointer;
-//     text-align: center;
-
-//   }
+.picture-crop-button img {
+    height: 11px;
+    cursor: pointer;
+}
 
 
-// }
+.pictureCropPopupModal {
+    width: 460px;
+    margin: auto;
+    min-height: 500px;
+    top: 40px;
+}
 
+.pic-cont {
+    border: 1px solid #7a86a1;
+    // width: 380px;
+    //  height: 295px;
+}
 
-// /***** media queries for 1280px ****/
+input[type="file"] {
+    display: none;
+}
 
-//  @media screen and (max-width:1280px) {
+.close-box {
+    height: 35px;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px solid #ebebeb;
+    border-radius: 15px;
+    opacity: 1;
+    display: flex;
+    align-content: space-around;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0px;
+    min-width: 35px;
+}
+.close-box img {
+    width: 10px;
+}
 
+.update-pass-btn {
+    border: none;
+    // outline: none;
+    color: #FFFFFF;
+    background: #6149cd;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 2% 8%;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 15px;
+}
 
-// .bs-stepper {
-//     margin: 47px 82px;
-//     }
+.modal-header-left h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #6149cd;
+}
 
-//  .ag-theme-alpine {
-//     width: 95%;
-//     height: 590px;
-//     font-size: 12px;
-//     font-weight: 400;
-//     margin-left: 28px;
-//     margin-top: -10px;
-
-//  }
-
-//  .btn-9 {
-//       margin: 0px 0px 0px 250px;
-//       width: 94px;
-//       height: 26px;
-//       font-size: 11px;
-//  }
-
-
-//  #import-btn {
-//     width: 94px;
-//     height: 26px;
-//     font-size: 11px;
-//     padding: 0;
-//  }
-
-//  #add-contact {
-//     width: 96px;
-//     height: 26px;
-//     font-size: 11px;
-//     padding: 0;
-//  }
-
-//  .col-md-12 {
-   
-//     left: 26px;
-//     width: 80%;
-//  }
-
-
-//  .btn-delete { 
-//     width: 33px;
-//     height: 26px;}
-    
-// .btn-delete img {
-//     width: 12px;
-//     height: 13px;
-//     margin: -6px -1px 0 0;
-
-//  }
-//  .modal-content {
-  
-//     position: relative;
-//     display: flex;
-//     flex-direction: column;
-//     width: 310px;
-//     height: 196px;
-//     top: 190px;
-//     left: 115px;
-//     pointer-events: auto;
-//     background: #FFFFFF 0% 0% no-repeat padding-box;
-//     box-shadow: 4px 22px 54px #695F971A;
-//     border-radius: 30px;
-//     outline: 0;
-//     border: none;
-// }
-
-// .modal-dialog .modal-content .modal-body {
-//     font-family: "Manrope";
-//     font-size: 14px;
-//     top: 40px;
-//     font-weight: 600;
-//     text-align: center;
-// }
-
-// .modal-dialog .modal-content .deletefile .btn9 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     font-size: 11px;
-//     font-family: "Manrope";
-//     background-color: #ffffff;
-//     color: #7A86A1;
-//     margin: -58px 22px 15px 61px;
-//     border-radius: 15px;
-//     width: 80px;
-//     height: 32px;
-//     cursor: pointer;
-   
-
-// }
-
-
-// .modal-dialog .modal-content .deletefile .btn99 {
-//     border: 1px solid #695F9724;
-//     position: absolute;
-//     font-size: 11px;
-//     font-family: "Manrope";
-//     color: #ffffff;
-//     background: #F23B3B;
-//     width: 93px;
-//     top: 70%;
-//     left: 52%;
-//     height: 33px;
-//     border-radius: 14px;
-//     cursor: pointer;
- 
-// }
-
-
-//    #contact-save {
-//     text-align: center;
-//     font-family: 'Manrope';
-//     font-weight: 600;
-//     font-size: 14px;
-//     margin-top: 38px;
-//     width: 100%;
-//   }
-
-//   #contact-save-btn {
-
-//     margin-left: -86px;
-//     opacity: 1;
-//     font-family: 'Manrope';
-//     font-size: 12px;
-//     font-weight: 500;
-//     border: 1px solid #695F9724;
-//     background-color: #F23B3B;
-//     color: #ffffff;
-//     border-radius: 15px;
-//     margin-top: -5px;
-//     width: 80px;
-//     height: 36px;
-//     cursor: pointer;
-//     text-align: center;
-
-//   }
-
-
-// }
-
-
-
+.set-profile-pic {
+    margin: 0!important;
+}

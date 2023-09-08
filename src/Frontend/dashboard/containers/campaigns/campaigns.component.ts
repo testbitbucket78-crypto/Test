@@ -34,6 +34,8 @@ export class CampaignsComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 
+
+	 showInfo:boolean = false;
 	 modalReference: any;
 	 RuningCampaigns:any;
 	 confirmMessage:any;
@@ -448,7 +450,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				if(item.channel_id==1){
 					item['channel_label'] ='WhatsApp Official'
 				}else{
-					item['channel_label'] ='Other'
+					item['channel_label'] ='WhatsApp Web'
 				}
 
 
@@ -538,8 +540,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		})
 	}
     async mapCampaignData(allCampaignList:any){
+		console.log(allCampaignList);
+
 		try{
-			allCampaignList.forEach((item:any) => {
+			allCampaignList.forEach((item:any, index:any) => {
 				
 				if(item.status==0){
 					item['status_label'] ='draft'
@@ -561,7 +565,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				if(item.channel_id==1){
 					item['channel_label'] ='WhatsApp Official'
 				}else{
-					item['channel_label'] ='Other'
+					item['channel_label'] ='WhatsApp Web'
 				}
 
 
@@ -576,6 +580,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				}else{
 					item['category_label'] =item.category
 				}
+				console.log(index);
+				if(index == 50) {
+					console.log(JSON.parse(item.csv_contacts));
+				}
 				if(item.segments_contacts){
 				item['AllContactsLength'] =item.segments_contacts?JSON.parse(item.segments_contacts).length:0
 				}else if(item.csv_contacts){
@@ -588,7 +596,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 
 			this.allCampaignMain = allCampaignList
 			this.allCampaign = allCampaignList
-		}catch(error:any){
+		}
+		catch(error:any){
 			console.log(error)
 		}
 	}
@@ -1088,7 +1097,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	TestCampaign(TestCampaignModal:any){
 		this.closeAllModal()
 		this.testNumbers=[];
-		this.modalReference = this.modalService.open(TestCampaignModal,{size: 'md', windowClass:'pink-bg-sm'});
+		this.modalReference = this.modalService.open(TestCampaignModal,{size: 'sm', windowClass:'pink-bg-sm'});
 	
 	}
 
@@ -1106,20 +1115,11 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		}else{
 		this.lowBalance=false;
 		this.closeAllModal()
-		this.modalReference = this.modalService.open(ConfirmCampaign,{size: 'md', windowClass:'pink-bg-sm'});
+		this.modalReference = this.modalService.open(ConfirmCampaign,{size: 'sm', windowClass:'pink-bg-sm'});
 		}
 	}
 	async ConfirmScheduleClose (action:any){
 		this.closeAllModal();
-		/*
-		console.log(this.selectedTemplate)
-		console.log(this.newCampaignDetail)
-		console.log(this.selecteTimeZone)
-		console.log(this.selecteScheduleDate)
-		console.log(this.selecteScheduleTime)
-		console.log(this.csvContactList)
-		console.log(this.segmentsContactList)
-		*/
 		let sratdatetime:any='';
 		if(this.selecteScheduleDate){
 		let start_datetime =this.selecteScheduleDate+' '+this.selecteScheduleTime;
@@ -1189,6 +1189,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					button_exp:this.selectedTemplate.button_exp,
 					message_media:this.selectedTemplate.image,
 					CampaignId:CampaignId,
+					channel_id:this.newCampaignDetail.value.channel_id,
+					channel_label:this.newCampaignDetail.value.channel_label,
 					schedule_datetime:BodyData.start_datetime,
 					status:this.scheduled,
 				}
@@ -1245,6 +1247,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 							button_exp:this.selectedTemplate.button_exp,
 							message_media:this.selectedTemplate.image,
 							CampaignId:CampaignId,
+							channel_id:this.newCampaignDetail.value.channel_id,
+							channel_label:this.newCampaignDetail.value.channel_label,
 							schedule_datetime:BodyData.start_datetime,
 							status:this.scheduled,
 						}
@@ -1990,8 +1994,18 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		  
 		}
 	  }
+	  directToSettings() {
+		this.closeAllModal();
+		this.router.navigate(['dashboard/setting']);
+
+	  }
 
 
-
+	  showToolTip(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (target.classList.contains('fallback-tooltip')) {
+			this.showInfo = true;
+		}
+	}
 
 }
