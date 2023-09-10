@@ -144,3 +144,121 @@ export interface TagData {
     TagName: string;
     TagColour: string;
 }
+
+export interface defaultActionData {
+    SP_ID: number;
+    isAgentActive: number;
+    agentActiveTime:string;
+    isAutoReply:number;
+    autoReplyTime:string;
+    isAutoReplyDisable:number;
+    isContactAdd:number;
+
+}
+
+export interface defaultMessagesData {
+    uid:number;
+    SP_ID:number;
+    title:string;
+    description:string;
+    message_type:string;
+    value:string
+    link:string;
+    override:number;
+    autoreply:number;
+
+}
+
+
+export interface routingRulesData {
+    SP_ID:number;
+    contactowner:number;
+    assignagent:number;
+    broadcast :number;
+    roundrobin:number,
+    conversationallowed:string;
+    manualassign:number;
+    assignuser:string;
+    timeoutperiod:string;
+    isadmin:number;
+    assignspecificuser:number;
+    selectuser:string;
+}
+
+export interface templateMessageData {
+    ID:number;
+    status:string;
+    created_at:string;
+    updated_at:string;
+    created_By:string;
+    Header:string;
+    Channel:string;
+    Category:string;
+    Language:string;
+    Links:string;
+    BodyText:string;
+    media_type:string;
+
+}
+
+export interface repliestemplateList{
+    spid:number;
+    Channel:string;
+    Header:string;
+    created_at:number;
+    updated_at:string;
+    created_By:string;
+    BodyText:string;
+    Links:string;
+    TemplateName:string;
+}
+
+export interface templateList{
+    spid:number;
+    Channel:string;
+    Header:string;
+    BodyText:string;
+    Links:string;
+    TemplateName:string;
+    isTemplate:number;
+}
+
+export interface repliesaccountList{
+    connected_id:string;
+    QueueMessageCount:number;
+    channel_status:number;
+    connection_date:number;
+    WAVersion:string;
+    channel_id:string;
+    QueueLimit:string;
+    DisconnAlertEmail:string;
+    delay_Time:string;
+}
+
+
+export interface accountmodel{
+    id:number;
+    INGrMessage:number;
+    OutGrMessage:number;
+    QueueLimit:string;
+    delay_Time:string;
+    online_status:number;
+    InMessageStatus:number;
+    OutMessageStatus:number;
+    serviceMonetringTool:number;
+    syncContact:number;
+    DisconnAlertEmail:string;
+    roboot:number;
+    restart:number;
+    reset:number;
+}
+
+export interface quickReplyButtons {
+    quickreply1:string;
+    quickreply2:string;
+    quickreply3:string;
+}
+
+
+
+

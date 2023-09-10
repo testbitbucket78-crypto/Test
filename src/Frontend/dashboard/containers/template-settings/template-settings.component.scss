@@ -1,0 +1,18 @@
+.setting-field {
+    display: flex;
+   }
+   
+   .setting-field .setting-field-link {
+       color: #7A86A1;
+       font-size: 15px;
+       padding: 0.5rem 1.2rem;
+       text-decoration: none;
+       margin-right: 8px;
+       cursor: pointer;
+   }
+   
+   .setting-field .active{
+       color: #FFFFFF !important;
+       background: #6149CD 0% 0% no-repeat padding-box;
+       border-radius: 19px;    
+   }

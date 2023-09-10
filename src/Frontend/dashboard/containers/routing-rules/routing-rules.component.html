@@ -1,10 +1,18 @@
 <div class="setting-card" >
+
+    <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+        <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+    </div>
+
+
     <div class="default-actions-heading">Routing Rules</div>
     <p>New conversations can be assigned using below routing rules</p>
     <div class="pt-4 px-3">
         <div class="pl-2 pr-5 pb-3">
             <div class="d-flex align-items-center">
-                <input type="checkbox" class="checkbox">
+                <input type="checkbox" class="checkbox" (change)="routingRulesState('contactowner', $event.target.checked)" [checked]="contactowner">
                 <span class="sub-heading">Assign to Contact Owner</span>
             </div>
             <div class="sub-contents">
@@ -13,7 +21,7 @@
         </div>
         <div class="pl-2 pr-5 pb-3">
             <div class="d-flex align-items-center">
-                <input type="checkbox" class="checkbox">
+                <input type="checkbox" class="checkbox"  (change)="routingRulesState('assignagent', $event.target.checked)" [checked]="assignagent" >
                 <span class="sub-heading">Assign to Last Assisted Agent</span>
             </div>
             <div class="sub-contents">
@@ -22,43 +30,47 @@
         </div>
         <div>
             <span class="sub-heading">Default Assignment Rules</span>            
-            <div class="sub-contents pl-0">
+            <div class="sub-contents pl-0 py-2">
                 <p>A new conversation will be assigned based on the routing rule chosen here if no other automation is applicable.</p>           
             </div>
         </div>
         <div class="pl-2 pr-5 pb-3">
-            <div class="d-flex align-items-center">
-                <input type="checkbox" class="checkbox">
-                <!-- <span class="checkmark"></span> -->
-                <span class="sub-heading">Broadcast</span>
+            <div class="d-flex align-items-center sel-type-btns">
+                <input type="radio" id="assign-rule-bc" name="assign-rule"(change)="routingRulesState('broadcast', $event.target.checked)" [checked]="broadcast"><label class="m-0" for="assign-rule-bc">Broadcast</label>
             </div>
             <div class="sub-contents">
                 <p>Notify all the online agents when a new chat comes. All new chats will be placed in the unassigned tab where anyone can assign it to themselves to start chatting with the customers.</p>           
             </div>
         </div>
         <div class="pl-2 pr-5 pb-3">
-            <div class="d-flex align-items-center">
-                <input type="checkbox" class="checkbox">
-                <span class="sub-heading">Round Robin</span>
+            <div class="d-flex align-items-center sel-type-btns">
+                <input type="radio" id="assign-rule-rr" name="assign-rule" (change)="routingRulesState('roundrobin', $event.target.checked)" [checked]="roundrobin"><label class="m-0" for="assign-rule-rr">Round Robin</label>
             </div>
             <div class="sub-contents">
                 <p>Assign incoming chats to all the available agents one after another ensuring chats are getting distributed equally among them.</p>           
                 <div class="select-heading py-2">Max. No. of Open Conversation Allowed</div>
-                <select class="input-form">
-                    <option></option>
+                <select class="input-form" [disabled]="!roundrobin" [(ngModel)]="conversationallowed" >
+                    <option [ngValue]="'1'">1</option>
+                    <option [ngValue]="'2'">2</option>
+                    <option [ngValue]="'3'">3</option>
+                    <option [ngValue]="'4'">4</option>
+                    <option [ngValue]="'5'">5</option>
+                    <option [ngValue]="'6'">6</option>
+                    <option [ngValue]="'7'">7</option>
+                    <option [ngValue]="'8'">8</option>
+                    <option [ngValue]="'9'">9</option>
                 </select>
             </div>
         </div>
         <div class="pl-2 pr-5 pb-3">
-            <div class="d-flex align-items-center">
-                <input type="checkbox" class="checkbox">
-                <span class="sub-heading">Manual Assignn</span>
+            <div class="d-flex align-items-center sel-type-btns">
+                <input type="radio" id="assign-rule-ma" name="assign-rule" (change)="routingRulesState('manualassign', $event.target.checked)" [checked]="manualassign"><label class="m-0" for="assign-rule-ma">Manual Assign</label>
             </div>
             <div class="sub-contents">
                 <p>All the chats are first assigned to a selected user (usually manager). Further this user assigns agents or teams to each of these chats. If this selected manager is not available, then chats will be assigned according to the rules defined under “Missed Chat”.</p>           
                 <div class="select-heading py-2">Assign a User</div>
-                <select class="input-form">
-                    <option></option>
+                <select class="input-form" [disabled]="!manualassign" [(ngModel)]="assignuser" >
+                    <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
                 </select>
             </div>
         </div>
@@ -70,26 +82,27 @@
             <div class="select-heading pt-3 pb-2">
                 Chat Assign Timeout Period
             </div>
-            <select class="input-form">
-                <option></option>
+            <select class="input-form" [(ngModel)]="timeoutperiod">
+                <!-- <option value="Add Minutes" selected></option> -->
+                <option [ngValue]="'5 Minutes'" >5 Min</option>
+                <option [ngValue]="'10 Minutes'" >10 Min</option>
+                <option [ngValue]="'15 Minutes'" >15 Min</option>
+                <option [ngValue]="'20 Minutes'">20 Min</option>
             </select>
             <div class="d-flex py-2">
-                <div>
-                    <input type="checkbox" class="checkbox mr-2">
-                    <span class="select-heading">Contact Owner</span>
+                <div class="sel-type-btns">
+                    <input type="radio" id="chat-assign-co" name="chat-assign" (change)="routingRulesState('contactowner ', $event.target.checked)" [checked]="contactowner"><label class="m-0" for="chat-assign-co">Contact Owner</label>
                 </div>
-                <div class="pl-4">
-                    <input type="checkbox" class="checkbox mr-2">
-                    <span class="select-heading">Admin</span>
+                <div class="pl-4 sel-type-btns">
+                    <input type="radio" id="chat-assign-admin" name="chat-assign"  (change)="routingRulesState('isadmin', $event.target.checked)" [checked]="isadmin" ><label class="m-0" for="chat-assign-admin">Admin</label>
                 </div>
-                <div class="pl-4">
-                    <input type="checkbox" class="checkbox mr-2">
-                    <span class="select-heading">Assign a Specific User</span>
+                <div class="pl-4 sel-type-btns">
+                    <input type="radio" id="chat-assign-su" name="chat-assign"  (change)="routingRulesState('assignspecificuser', $event.target.checked)" [checked]="assignspecificuser"><label class="m-0" for="chat-assign-su">Assign a Specific User</label>
                 </div>
             </div>
             <div class="select-heading py-2">Assign a Specific User</div>
-            <select class="input-form">
-                <option></option>
+            <select class="input-form" [disabled]="!assignspecificuser" [(ngModel)]="selectuser" >
+                <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
             </select>
             <p>If the contact owner is not defined, chat is assigned to Admin</p>
         </div>

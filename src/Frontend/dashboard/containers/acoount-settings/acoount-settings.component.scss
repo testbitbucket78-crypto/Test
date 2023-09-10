@@ -391,3 +391,107 @@
     color: #7A86A1;
 
    }
+
+
+
+.toggle-container {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .toggle-input {
+    display: none;
+  }
+  
+  .toggle-label {
+    display: block;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    top: 0.5rem;
+  }
+ 
+  .toggle-input:checked + .toggle-label {
+    background-color: #6149CD ;
+  }
+  
+ 
+  .toggle-label::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    left: 2px;
+    top: 1px;
+    transition: left 0.3s;
+  }
+  
+  .toggle-input:checked + .toggle-label::before {
+    left: 20px;
+  }
+  
+  .message {
+    display: none;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  /* Styles for the visible message */
+  .message.visible {
+    display: block;
+  }
+
+
+
+
+
+  .tooggle-container {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .tooggle-input {
+    display: none;
+  }
+  
+  .tooggle-label {
+    display: block;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    top: 0.5rem;
+  }
+ 
+  .tooggle-input:checked + .tooggle-label {
+    background-color: #6149CD ;
+  }
+  
+ 
+  .tooggle-label::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    left: 2px;
+    top: 1px;
+    transition: left 0.3s;
+  }
+  
+  .tooggle-input:checked + .tooggle-label::before {
+    left: 20px;
+  }

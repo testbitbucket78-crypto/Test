@@ -196,6 +196,10 @@
     
 }
 
+.filterchannels .modal-content {
+    margin-top: 12rem!important;
+}
+
 .form-check {
     font-size: 0.7rem;
 }
@@ -364,4 +368,41 @@ select {
 	.close-box img.setting_icon{
 		width: 17px;
 	}
+
+    
+  // Custom styles for radio buttons
+
+input[type="radio"] {
+    display: none;
+}
+
+.form-check label {
+    display: inline-block;
+    position: relative;
+    padding-left: 30px; 
+    margin-right: 15px;
+    cursor: pointer;
+    font-weight: 500;
+    user-select: none;
+}
+
+.form-check label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 1px solid #C0BDCC; 
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+input[type="radio"]:checked + label::before {
+    border: 3px solid #6149CD; 
+    background-color: #FFFFFF;
+}
+
 
