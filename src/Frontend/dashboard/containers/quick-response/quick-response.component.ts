@@ -4,7 +4,7 @@ import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import{ repliestemplateList } from 'Frontend/dashboard/models/settings.model';
 import{ templateList } from 'Frontend/dashboard/models/settings.model';
 import { FormControl, FormGroup } from '@angular/forms';
-
+declare var $:any;
 
 @Component({
   selector: 'sb-quick-response',
@@ -14,11 +14,12 @@ import { FormControl, FormGroup } from '@angular/forms';
 export class QuickResponseComponent implements OnInit {
 
   showCampaignDetail:boolean=false;
+  created_By:any;
   modalReference:any;
   spid!:number;
   getTemplate:any;
   // templates!:any[];
-  id: number[] = [];
+  ID:number=0;
   data: any;
   repliestemplateData!:repliestemplateList;
   templatesquickdata!:templateList;
@@ -36,12 +37,19 @@ export class QuickResponseComponent implements OnInit {
   result:any;
   Header:any;
   isTemplate:any;
+  // templatesMessageData:any;
+  ischannel='';
+  base64?: string | null;
+  Selectchannel: string | null = null;
+  
+  
   
 
   constructor(config: NgbModalConfig,private modalService: NgbModal,private apiService:SettingsService) { }
 
   ngOnInit(): void {
     this.spid = Number(sessionStorage.getItem('SP_ID'));
+    this.created_By = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
     this.Template();
     this.usertemplateForm=this.prepareUserForm();
     this.getformvalue();
@@ -82,6 +90,7 @@ export class QuickResponseComponent implements OnInit {
       console.log(this.templates);
     });    
   }
+  
   getRolesList(){
     this.apiService.getTemplateData(this.spid,0).subscribe(response =>{
       if(response){
@@ -112,9 +121,10 @@ export class QuickResponseComponent implements OnInit {
 
   saveformmtemplate(){
     let userData:templateList =<templateList>{};
-    this.isTemplate=0;
-    this.spid=userData.spid;
-    console.log(this.spid);
+    userData.isTemplate=0;
+    userData.spid=this.spid;
+    userData.ID=this.ID;
+    userData.created_By=this.created_By;
     userData.Links=this.usertemplateForm.controls.Links.value;
     userData.TemplateName=this.usertemplateForm.controls.TemplateName.value;
     userData.Channel=this.usertemplateForm.controls.Channel.value;
@@ -138,17 +148,31 @@ export class QuickResponseComponent implements OnInit {
   gettemplateByID(data:any) {
     this.repliestemplateData=data;
     console.log(this.repliestemplateData);
-    // const templatesdata=data;
-    // this.spid=templatesdata.spid;
-    // this.Links=templatesdata.Links;
-    // this.TemplateName=templatesdata.TemplateName;
-    // this.BodyText=templatesdata.BodyText;
-    // this.Channel=templatesdata.Channel;
-
     const a= this.repliestemplateData.Links;
     this.messagemedia=a;
     // console.log(templatesdata);
 }
+
+
+deleteTemplate(){
+
+  const TemplateID = {
+    ID: this.repliestemplateData?.ID
+  }
+
+  this.apiService.deleteTemplateData(TemplateID)
+  
+  .subscribe(result =>{
+    if(result){
+      $("#deleteModal").modal('hide');
+      this.showCampaignDetail = false;
+      this.Template(); 
+    }
+  });
+}
+
+
+
 showMessageType(type: string) {
   this.selectedType = type;
 }  

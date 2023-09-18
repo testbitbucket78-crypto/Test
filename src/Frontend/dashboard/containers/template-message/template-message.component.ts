@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { quickReplyButtons, templateMessageData } from 'Frontend/dashboard/models/settings.model';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormControl,FormGroup,Validators } from '@angular/forms';
+import { newTemplateFormData, quickReplyButtons, templateMessageData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 declare var $:any;
 @Component({
@@ -8,20 +8,23 @@ declare var $:any;
   templateUrl: './template-message.component.html',
   styleUrls: ['./template-message.component.scss']
 })
+
+
 export class TemplateMessageComponent implements OnInit {
 
   selectedTab:number = 0;
   spid!:number;
+  id = 0;
+  currentUser!:string;
   profilePicture!:string;
   searchText!:string;
   searchTextGallery!:string;
   selectedType: string = 'text';
-  selectedPreview:any;
+  selectedPreview:string = '';
   showCampaignDetail:boolean = false;
   showGalleryDetail:boolean = false;
   templatesData =[];
   galleryData = [];
-  url = '../../../../assets/img/ContactProfile.png';
   filteredTemplatesData:templateMessageData[] = [];
   templatesMessageData:templateMessageData = <templateMessageData>{};
   characterCounts: { [key: number]: number } = {};
@@ -92,16 +95,61 @@ export class TemplateMessageComponent implements OnInit {
     'UZ +998', 'VA +39', 'VC +1 784', 'VE +58', 'VG +1 284', 'VI +1 340', 'VN +84', 'VU +678', 'WF +681', 'WS +685',
     'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
   ];
-  
+  newTemplateForm!:FormGroup;
+
+  @ViewChild('videoPlayer') videoPlayer!: ElementRef;
+
   constructor(private apiService:SettingsService) { }
+
+  errorMessage='';
+	successMessage='';
+	warningMessage='';
+
+  showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}else if(type=='error'){
+			this.errorMessage=message;
+		}else{
+			this.warningMessage=message;
+		}
+		setTimeout(() => {
+			this.hideToaster()
+		}, 3000);
+		
+	}
+	hideToaster(){
+		this.successMessage='';
+		this.errorMessage='';
+		this.warningMessage='';
+	}
 
   ngOnInit(): void {
 
     this.spid = Number(sessionStorage.getItem('SP_ID'));
     this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
-    this.getTemplatesData();
+    this.currentUser = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
+    this.newTemplateForm = this.prepareUserForm();
     this.filteredTemplatesData = [...this.templatesData];
+    this.getTemplatesData();
   }
+
+  prepareUserForm(){
+    return new FormGroup({
+      TemplateName:new FormControl(null,[Validators.required]),
+      Channel:new FormControl(null,[Validators.required]),
+      Category:new FormControl(null,[Validators.required]),
+      Language:new FormControl(null,[Validators.required]),
+      media_type:new FormControl(null),
+      Header:new FormControl(null),
+      Links:new FormControl(null),
+      BodyText:new FormControl(null,[Validators.required]),
+      FooterText:new FormControl(null),
+      buttonType: new FormControl('')
+    });
+  }
+
+
 
   
   selectTab(tabNumber: number) {
@@ -140,20 +188,47 @@ export class TemplateMessageComponent implements OnInit {
   }
 
 
-  previewImage(event: Event) {
+  previewImageAndVideo(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     if (inputElement.files && inputElement.files[0]) {
       const file = inputElement.files[0];
       const reader = new FileReader();
   
       reader.onload = (e: any) => {
-        this.selectedPreview = e.target.result;
+
+        const fileType = file.type;
+        if(fileType.startsWith("image")) {
+          this.selectedPreview = e.target.result as string;
+        }
+        if(fileType.startsWith("video")) {
+          this.selectedPreview = e.target.result as string;
+          this.videoPlayer.nativeElement.src = this.selectedPreview;
+        }
+
+        if(fileType === 'application/pdf' || fileType === 'application/msword' || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+          this.selectedPreview = e.target.result as string;
+        }
+     
+       else {
+        console.warn("Unknown file type: " + fileType);
+       }
+       
+       
+        console.log(this.selectedPreview);
       };
-  
+
       reader.readAsDataURL(file);
     }
   }
 
+
+// remove form preview value 
+removeValue() {
+  this.newTemplateForm.get('Links')!.setValue(null);
+  this.selectedPreview = '';
+  this.videoPlayer.nativeElement.src = null;
+
+}
   
   addQuickReplyButtons() {
     if (this.quickReplyButtons.length < 3) {
@@ -205,6 +280,112 @@ export class TemplateMessageComponent implements OnInit {
       
       
     }
+
+
+    saveNewTemplate() {
+      let newTemplateFormData = this.copyNewTemplateFormData(); 
+
+      if(this.newTemplateForm.valid) {
+        this.apiService.saveNewTemplateData(newTemplateFormData,this.selectedPreview).subscribe(response => {
+        
+          if(response) {
+            this.newTemplateForm.reset();
+            $("#newTemplateMessage").modal('hide');
+            $("#confirmationModal").modal('hide');
+            this.getTemplatesData();
+          }
+      });
+      }
+      if(this.newTemplateForm.valid && this.selectedType =='video') {
+          this.apiService.saveTemplateWithVideo(newTemplateFormData,this.selectedPreview).subscribe(response => {
+            if(response) {
+              this.newTemplateForm.reset();
+              $("#newTemplateMessage").modal('hide');
+              $("#confirmationModal").modal('hide');
+              this.getTemplatesData();
+            }
+          });
+      }
+      else {
+        alert('!Please fill the required details in the form First');
+      }
+  
+  
+    }
+
+    confirmsave() {
+      if(this.newTemplateForm.valid) {
+        $("#newTemplateMessage").modal('hide');
+        $("#confirmationModal").modal('show');
+      }
+
+      else{
+        this.showToaster('!Please fill the required details in the form','warning');
+      }
+      
+    }
+
+    copyNewTemplateFormData() {
+      let newTemplateForm:newTemplateFormData = <newTemplateFormData>{};
+  
+      newTemplateForm.spid = this.spid;
+      newTemplateForm.created_By = this.currentUser;
+      newTemplateForm.ID = this.id;
+      newTemplateForm.isTemplate = 1;
+      newTemplateForm.media_type = 'image';
+      newTemplateForm.Header = this.newTemplateForm.controls.Header.value;
+      
+      newTemplateForm.Links = this.newTemplateForm.controls.Links.value;
+      newTemplateForm.Links = this.selectedPreview;
+      newTemplateForm.BodyText = this.newTemplateForm.controls.BodyText.value;
+      newTemplateForm.FooterText = this.newTemplateForm.controls.FooterText.value;
+      newTemplateForm.TemplateName = this.newTemplateForm.controls.TemplateName.value;
+      newTemplateForm.Channel = this.newTemplateForm.controls.Channel.value;
+      newTemplateForm.Category = this.newTemplateForm.controls.Category.value;
+      newTemplateForm.Language = this.newTemplateForm.controls.Language.value;
+      newTemplateForm.status = 'Draft';
+      newTemplateForm.template_id = 0;
+      newTemplateForm.template_json =[];
+      // newTemplateForm.template_json.push({
+      //   name:this.newTemplateForm.controls.TemplateName.value,
+      //   category:this.newTemplateForm.controls.Category.value,
+      //   language:this.newTemplateForm.controls.Language.value,
+      //   components:[
+      //     {
+      //       text:this.newTemplateForm.controls.BodyText.value,
+      //       type:'Body',
+      //       example:{
+      //         body_text:[
+      //           [
+      //             'Pablo','860198-230332'
+      //           ]
+      //         ]
+      //       }
+      //     },
+      //     {
+      //       type:'BUTTONS',
+      //       buttons:[
+      //         {
+      //           text:this.newTemplateForm.controls.buttonText.value,
+      //           type:'PHONE_NUMBER',
+      //           phone_number:this.newTemplateForm.controls.phone_number.value
+      //         },
+      //         {
+      //            url: this.newTemplateForm.controls.url.value,
+      //            text: this.newTemplateForm.controls.url.value,
+      //            type : "url"
+      //         }
+      //       ]
+      //     }
+      //   ]
+      // });
+  
+  
+      return newTemplateForm;
+  
+    }
+
+
 
     copyTemplatesData() {
  

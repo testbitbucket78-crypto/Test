@@ -198,10 +198,12 @@ export interface templateMessageData {
     Links:string;
     BodyText:string;
     media_type:string;
+    industry:string;
 
 }
 
 export interface repliestemplateList{
+    ID:number;
     spid:number;
     Channel:string;
     Header:string;
@@ -214,6 +216,7 @@ export interface repliestemplateList{
 }
 
 export interface templateList{
+    ID:number;
     spid:number;
     Channel:string;
     Header:string;
@@ -221,6 +224,8 @@ export interface templateList{
     Links:string;
     TemplateName:string;
     isTemplate:number;
+    created_By:string;
+    updated_at:number;
 }
 
 export interface repliesaccountList{
@@ -248,15 +253,37 @@ export interface accountmodel{
     serviceMonetringTool:number;
     syncContact:number;
     DisconnAlertEmail:string;
+    phone_type:string;
+    import_conversation:number;
     roboot:number;
     restart:number;
     reset:number;
 }
 
+
 export interface quickReplyButtons {
     quickreply1:string;
     quickreply2:string;
     quickreply3:string;
+}
+
+export interface newTemplateFormData {
+    ID:number;
+    TemplateName:string;
+    Channel: string;
+    Category: string;
+    Language: string;
+    media_type: string;
+    Header: string;
+    BodyText:string;
+    Links:string;
+    FooterText:string;
+    status:string;
+    spid:number;
+    created_By:string;
+    template_id:number;
+    template_json:any[];
+    isTemplate:number;
 }
 
 

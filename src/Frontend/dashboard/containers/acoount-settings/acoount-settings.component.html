@@ -139,6 +139,8 @@
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
+                <div class="settings-scroll">
+                    <div class="seetings2-scroll">
                  <div class="modal-body px-5">
                     <div class="p-4 websetting-card">
                         <div class="websetting-data">
@@ -169,10 +171,8 @@
                         </div>
                     </div>
                     </div>
-              
-              
-
-                    <div class="p-4">
+        
+                    <div class="tog-rebo">
                       
                         <div class="incoming-card row py-2">
                             <div class="col-sm-6">
@@ -255,10 +255,26 @@
                         </div>
                         <div>
                             <span>Disconnect Event Alert Email Id</span><br>
-                            <input class="input-form" type="input" placeholder="Enter"  [value]="DisconnAlertEmail" >
+                            <input class="inputEmail-form pl-3" type="input" placeholder="Enter">
+                        </div>
+                        <div class="reboapp pt-4 pl-4">
+                        <div class="rebo-footer">
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger" (click)="saveTemplate()"  >Reboot Server</button>
                         </div>
 
-                   
+                        <div class="rebo-footer">
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger" (click)="saveTemplate()"  >Restart App</button>
+                        </div>
+
+                        <div class="rebo-footer">
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger" (click)="saveTemplate()"  >Reset Server</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+                    <div class="save-footer mx-3">
+                        <button type="button" class="account-bttn" (click)="saveTemplate()"  >Save</button>
                     </div>
                 </div>
             </div>

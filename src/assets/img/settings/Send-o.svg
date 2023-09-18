@@ -1,0 +1,11 @@
+<svg id="Send-o" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="42.62" height="42.356" viewBox="0 0 42.62 42.356">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f9b035"/>
+      <stop offset="0.53" stop-color="#f98c4e"/>
+      <stop offset="1" stop-color="#f96767"/>
+    </linearGradient>
+  </defs>
+  <path id="Fill_1" data-name="Fill 1" d="M41.417,1.233A4.132,4.132,0,0,0,37.3.167L3,10.078A4.08,4.08,0,0,0,.052,13.3a4.765,4.765,0,0,0,2.136,4.456L12.914,24.3a2.789,2.789,0,0,0,3.43-.407L28.625,11.615a1.567,1.567,0,0,1,2.26,0,1.608,1.608,0,0,1,0,2.26l-12.3,12.282a2.793,2.793,0,0,0-.411,3.43l6.553,10.766a4.267,4.267,0,0,0,4.072,1.98,4.144,4.144,0,0,0,3.475-2.942L42.44,5.347a4.142,4.142,0,0,0-1.023-4.114" transform="translate(0 0)" fill="url(#linear-gradient)"/>
+  <path id="Combined_Shape" data-name="Combined Shape" d="M10.157,16.257a1.6,1.6,0,0,1,0-2.26l2.911-2.913a1.6,1.6,0,1,1,2.262,2.262l-2.913,2.911a1.6,1.6,0,0,1-2.26,0ZM8.486,8.181a1.6,1.6,0,0,1,0-2.26L11.4,3.008a1.6,1.6,0,1,1,2.262,2.262L10.746,8.181a1.6,1.6,0,0,1-2.26,0ZM.468,5.639a1.6,1.6,0,0,1,0-2.26L3.378.466A1.6,1.6,0,0,1,5.64,2.728L2.728,5.639a1.6,1.6,0,0,1-2.26,0Z" transform="translate(0.556 25.46)" opacity="0.4" fill="url(#linear-gradient)"/>
+</svg>

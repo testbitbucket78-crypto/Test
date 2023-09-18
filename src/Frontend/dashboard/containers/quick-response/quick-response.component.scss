@@ -493,8 +493,8 @@ img.icon_sm {
 }
 
 .action_section .btn {
-    width: 40px;
-    height: 40px;
+    width: 41px;
+    height: 41px;
     background: var(--unnamed-color-ffffff) 0% 0% no-repeat padding-box;
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 1px 8px 29px #695F9724;
@@ -844,3 +844,88 @@ input[type="radio"]:checked + label::before {
     display: flex;
     justify-content: flex-end;
 }
+.account-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 17px;
+    padding: 7px 30px;
+    border: 1px;
+    color: white;
+    font-weight: 400;
+}
+
+// delete popup common styles
+
+.delete-modal{
+    width: 355px;
+    height: 183px;
+    top: 8rem;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .cancel-btn{
+    background: #fff;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    color: #7A86A1;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+   }
+
+   .delete-btn{
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    border: 0px;
+    color: #fff;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+    background: #FF3636;
+   }
+
+   .alertmessage p{
+    font-size: 0.875rem;
+    padding: 15% 0;
+    margin: 0;
+    font-weight: 700;
+    text-align: center;
+   }
+
+   .delete_group_button {
+    padding: 10% 0%;
+   }
+
+   .del-popup-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 10px 14px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border:none;
+    outline: none;
+   }
+
+   .titleimg {
+    width: 41px;
+    height: 41px;
+    background: var(--unnamed-color-ffffff) 0% 0% no-repeat padding-box;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px solid #E9E9EA;
+    border-radius: 15px;
+    margin: 10px;
+}
+
+.titleimg  img {
+    width: 14px;
+}
+select:invalid { color: gray; }

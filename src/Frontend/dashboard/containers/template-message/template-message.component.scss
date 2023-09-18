@@ -1,4 +1,36 @@
 
+//  toaster styling
+
+.toaster{
+	float:left;
+	width:auto;
+	position: fixed;
+	right: 50px;
+	top: 65px;
+	z-index: 9999;
+	}
+	.toaster p{
+	padding:8px;
+	font-size:14px;
+    font-weight: 400;
+	color:#ffffff;
+	margin: 0;
+	min-width: 250px;
+	text-align: center;
+	border-radius: 10px;
+
+	}
+	.toaster p.error{
+	background-color: #E02020;
+	}
+	.toaster p.success{
+	background-color: #6149cd;
+	}
+	.toaster p.warning{
+	background-color: orange;
+	}
+
+
 // Template Message Section //
 
 // top-section header //  
@@ -494,17 +526,20 @@ img.icon_sm {
     border-radius: 12px 12px 0 0;
 }
 
+
 .message_data {
     width: 70%;
     background: #FFFFFF;
     border: 1px solid #EBEBEB;
-    padding: 8px 50px 20px 15px;
+    padding: 10px 10px 10px 10px;
     border-radius: 0 0 12px 12px;
     color: #030303;
     font-size: 11px;
     font-weight: 500;
+    word-wrap: break-word;
 
 }
+
 
 .contact-us {
     height: 40px;
@@ -694,6 +729,17 @@ img.icon_sm {
 }
 
 
+// new TEMPLATE POPUP FIRST FORM
+
+.newTemplateMessageFirst.modal-dialog {
+    max-width: 650px;
+    height: 95vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+
+}
 
   // New Template popup form
 
@@ -709,7 +755,10 @@ img.icon_sm {
 
  .newTemplateMessage.modal-dialog {
     max-width: 900px;
-    margin-top: 30px;
+    height: 94vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 } 
 
 .welcomGreeting .modal-container {
@@ -720,7 +769,7 @@ img.icon_sm {
 
 .welcomGreeting .modal-body {
     width: 100%;
-    height: 66vh;
+    height: 69vh;
     padding-top: 0;
     padding-right: 0;
     overflow: auto;
@@ -730,10 +779,49 @@ img.icon_sm {
     padding: 0 16px 0 88px;
 }
 
-.preview-part .message_section {
-    margin-left: 33px;
+.main-preview-type-image {
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-size: cover;
+    border-radius: 14px;
 }
 
+.main-preview-type-image span {
+    cursor: pointer;
+    float: right;
+}
+
+.main-preview-type-video {
+    position: absolute;
+    right: 6%;
+    z-index: 99999;
+    cursor: pointer;
+}
+
+.main-preview-type-doc {
+ 
+}
+
+.preview-part .message_section {
+    margin-left: 33px;
+    margin-right: 66px;
+}
+.preview {
+    border-radius: 12px 12px 12px 12px;
+}
+
+.preview-part .message_section .message_type {
+    width: 100%;
+}
+
+.preview-part .message_section .message_data {
+    width: 100%;
+}
+
+.message_data span {
+    white-space: pre-line;
+}
 
   
 .btn-close  img {
@@ -926,8 +1014,8 @@ input[type="radio"]:checked + label::before {
     cursor: pointer;
     position: absolute;
     z-index: 99999;
-    // left: 45%;
-    top: 13%;
+    left: 54%;
+    top: 16%;
 }
 
 .type_label img {
@@ -968,7 +1056,7 @@ input[type="radio"]:checked + label::before {
 
 .account-btn {
     background: #6149CD;
-    border-radius: 25px;
+    border-radius: 15px;
     padding: 9px 30px;
     border: 1px;
     color: #ffffff;
@@ -1034,7 +1122,6 @@ input[type="radio"]:checked + label::before {
     background-repeat: no-repeat;
   }
 
-
   .quick-reply-btns {
     padding: 0 24px 0 24px;
   }
@@ -1042,3 +1129,38 @@ input[type="radio"]:checked + label::before {
   .call-to-action-btns {
     padding: 0 24px 0 24px;
   }
+
+  .sel.input-form {
+    width: 100%;
+    color: #7A86A1;
+  }
+  
+  .sel.input-form option {
+    color: #000000;
+  }
+
+  .first-form.modal-body {
+    height: 100%!important;
+    padding: auto;
+  }
+
+  .first-form.modal-body .container.m-auto {
+    width: 75%;
+  }
+
+  .container.m-auto h6 {
+    font-size: 17px;
+  }
+
+  // confirmation popup modal
+
+  .confrimation-modal .modal-body {
+    background: transparent url(../../../../assets/img/your.png) no-repeat;
+    background-position-y: center;
+    background-position-x: left;
+    padding: 20px 15px;
+
+   }
+.confrimation-modal .modal-header img {
+    margin: auto;
+}

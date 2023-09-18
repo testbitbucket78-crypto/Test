@@ -196,9 +196,9 @@
     
 }
 
-.filterchannels .modal-content {
-    margin-top: 12rem!important;
-}
+// .filterchannels .modal-content {
+//     margin-top: 12rem!important;
+// }
 
 .form-check {
     font-size: 0.7rem;
@@ -401,7 +401,7 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked + label::before {
-    border: 3px solid #6149CD; 
+    border: 3.5px solid #6149CD; 
     background-color: #FFFFFF;
 }
 

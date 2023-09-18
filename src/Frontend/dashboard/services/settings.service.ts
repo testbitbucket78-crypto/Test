@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser, TagData, defaultActionData,defaultMessagesData,routingRulesData } from '../models/settings.model';
+import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser, TagData, defaultActionData,defaultMessagesData,routingRulesData,newTemplateFormData } from '../models/settings.model';
 
 @Injectable({
   providedIn: 'root'
@@ -173,10 +173,17 @@ export class SettingsService {
     return this.http.post<any>(`${this.API_URL}/addTemplate`,uid);
   }
 
+  saveNewTemplateData(newTemplateFormData:newTemplateFormData,Link:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addTemplate`,newTemplateFormData,Link);
+  }
+
   deleteTemplateData(ID: any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/deleteTemplates`,ID);
   }
   
+  saveTemplateWithVideo(newTemplateFormData:newTemplateFormData,Link:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addVedioTemplate`,newTemplateFormData,Link);
+  }
   
   getWhatsAppDetails(spId:number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getWhatsAppDetails/${spId}`);

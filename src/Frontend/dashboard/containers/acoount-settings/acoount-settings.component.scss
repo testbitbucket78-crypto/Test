@@ -1,4 +1,8 @@
-
+*{
+  ::-webkit-scrollbar {
+      display: none;
+  }
+}
 .setting-card {
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 2px 13px 54px #695F9714;
@@ -478,8 +482,7 @@
   .tooggle-input:checked + .tooggle-label {
     background-color: #6149CD ;
   }
-  
- 
+
   .tooggle-label::before {
     content: "";
     position: absolute;
@@ -495,3 +498,79 @@
   .tooggle-input:checked + .tooggle-label::before {
     left: 20px;
   }
+
+  .welcomGreeting .modal-footer {
+    border: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+}
+.reboot-btnnn{
+  background: #FFFFFF ;
+    border-radius: 14px;
+    padding: 4px 30px;
+    border: 1px;
+    color: #F96767;
+    font-weight: 400;
+    border: 1px solid #EBEBEB;
+    font-family: "Manrope";
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 4px 22px 54px #695F971A;
+    opacity: 1;
+    height: 2.3rem;
+}
+
+.account-bttn{
+  background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 14px;
+    padding: 4px 30px;
+    height: 2.2rem;
+    border: 1px;
+    color: white;
+    font-weight: 400;
+    font-family: "Manrope";
+}
+.reboapp{
+  display: flex;
+}
+
+.tog-rebo{
+display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-content: space-around;
+}
+.inputEmail-form{
+  width: 100%;
+  height: 2.5rem;
+  border-radius: 16px;
+  border: 1px solid #EBEBEB;
+}
+
+.rebo-footer{
+  display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+    border-bottom-right-radius: calc(0.3rem - 1px);
+    border-bottom-left-radius: calc(0.3rem - 1px);
+}
+
+.save-footer{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.75rem;
+  border-bottom-right-radius: calc(0.3rem - 1px);
+  border-bottom-left-radius: calc(0.3rem - 1px);
+  height: 6rem;
+}
+.settings-scroll{
+  overflow: scroll;
+  height: 32rem;
+}

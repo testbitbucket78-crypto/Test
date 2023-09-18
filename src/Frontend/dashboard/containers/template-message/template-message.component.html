@@ -1,3 +1,8 @@
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+</div>
 
 <div class="row" *ngIf="selectedTab == 0">
     <div class="col p-0">
@@ -20,7 +25,7 @@
              </div>
            </div>
 
-          <button class="mx-2 new-message-btn" data-bs-toggle="modal" data-bs-target="#newTemplateMessage"><img class="mx-1 icon" src="../../../../assets/img/teambox/add.svg" /> New Template</button>	
+          <button class="mx-2 new-message-btn" data-bs-toggle="modal" data-bs-target="#newTemplateMessageFirst"><img class="mx-1 icon" src="../../../../assets/img/teambox/add.svg" /> New Template</button>	
         </div>
         
         
@@ -105,9 +110,9 @@
                                 <iframe [src]="templatesMessageData?.Links" width="100%" height="150px"></iframe>
 
                             </div>
-                            <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
-                            <div class="message_data">
-                             {{templatesMessageData?.BodyText}}
+                            <div class="message_data" >
+                                <span class="">{{templatesMessageData?.BodyText}}</span><br /><br />
+                                <span>{{templatesMessageData?.FooterText}}</span><br />
                             </div>
                             <div class="contact-us">
                                 Contact Us
@@ -156,13 +161,18 @@
             
         </div>
 
-        <div class="pt-3 campaigns_section">
+        <div *ngIf="galleryData.length==0" class="template-empty-state">
+            <img src="../../../../assets/img/settings/template-empty.png" />
+            <h5 class="mt-3">No Gallery</h5>
+        </div>
 
+        <div class="pt-3 campaigns_section">
+            <div *ngIf="galleryData.length>0">
             <div *ngFor="let gallerydata of galleryData  | searchfilter:searchTextGallery" class="px-4 campaigns_section_item" (click)="toggleGalleryData(gallerydata)">
                 <div class="gallery_section_item_header">
                     <label [style.background]="statusColors[gallerydata.status]">{{gallerydata.status}}</label>
                 </div>
-                <p class="pb-2 title">{{gallerydata.Header}}</p>
+                <p class="py-2 title">{{gallerydata.Header}}</p>
              
                 <div class="campaigns_section_item_statics">
                     <div class="py-2"><p>{{templatesMessageData?.Language}}</p><p><span>Language</span></p></div>
@@ -171,12 +181,12 @@
                 
               
                     <div class="d-flex py-1">
-                    <p>Healthcare</p>
+                    <p>{{templatesMessageData?.industry}}</p>
                   </div>
                   <p><span>Industry</span></p>
             </div>
 
-
+            </div>
   
 </div>
 <div *ngIf="showGalleryDetail" class="campaign_detail">
@@ -235,7 +245,7 @@
 
 </div>
 
-<div class="modal fade" tabindex="-1" id="deleteModal"  data-bs-backdrop="static" role="dialog">
+<div class="modal fade" tabindex="-1" id="deleteModal" data-bs-backdrop="static" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content delete-modal">
             <div class="modal-body alertmessage">
@@ -252,8 +262,8 @@
 
 
 <div class="modal fade" tabindex="-1" id="filterTemplateModal" data-bs-backdrop="static" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content filterTemplate-modal">
+    <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+        <div class="m-0 modal-content filterTemplate-modal">
             <div class="modal-header align-items-center ">
                 <h5 class="modal-title">Filter</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
@@ -317,9 +327,63 @@
     </div>
 </div>
 
+<div class="modal fade" tabindex="-1" id="newTemplateMessageFirst" data-bs-backdrop="static" role="dialog">
+    <div class="newTemplateMessageFirst mt-4 modal-dialog" role="document">
+        <div class="mt-0 modal-content welcomGreeting">
+            <div class="d-flex justify-content-between pr-4 align-items-center modal-header">
+                <h5 class="pl-4 modal-title">New Template Message</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <form [formGroup]="newTemplateForm">
+            <div class="first-form p-3 modal-body">
+                <div class="container m-auto ">
+                <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
+                    <h6>Template Name</h6>
+                </div>
+                <div class="sel-type-text">
+                    <textarea name="text-editor" formControlName="TemplateName" maxlength="512"rows="8" placeholder="Enter template name in max 512 characters"></textarea>
+                </div>
+
+                <div class="p-1 msg-head">
+                    <h6 class="pt-1 pb-2">Channel</h6>
+                    <select class="sel input-form" formControlName="Channel">
+                        <option [disabled]="true" [selected]="true" [hidden]="true">Select channel</option>
+                        <option *ngFor="let item of filterListChannel">{{item.label}}</option>
+                
+                    </select>
+                </div>
+                <div class="p-1 msg-head">
+                    <h6 class="pt-1 pb-2">Category</h6>
+                    <select class="sel input-form" formControlName="Category">
+                        <option [disabled]="true" [selected]="true" [hidden]="true">Select category</option>
+                        <option *ngFor="let item of filterListCategory">{{item.label}}</option>
+                
+                    </select>
+                </div>
+                <div class="p-1 msg-head">
+                    <h6 class="pt-1 pb-2">Language</h6>
+                    <select class="sel input-form" formControlName="Language">
+                        <option [disabled]="true" [selected]="true" [hidden]="true">Select language</option>
+                        <option *ngFor="let item of filterListLanguage">{{item.label}}</option>
+                
+                    </select>
+                </div>
+            </div>
+        </div>
+            <div class="pr-4 modal-footer">
+                <button type="button"  data-bs-toggle="modal" data-bs-target="#newTemplateMessage" class="account-btn" >Next</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <div class="modal fade" tabindex="-1" id="newTemplateMessage" data-bs-backdrop="static" role="dialog">
     <div class="newTemplateMessage modal-dialog" role="document">
-        <div class="modal-content welcomGreeting">
+        <div class="modal-content m-0 welcomGreeting">
             <div class="d-flex justify-content-between align-items-center modal-header">
                 <h5 class="pl-2 modal-title">New Template Message</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
@@ -328,13 +392,22 @@
             </div>
             <form [formGroup]="newTemplateForm">
            <div class="modal-container">
+
+
             <div class="modal-body">
+
+
                 <div class="main-container-for-body">
                     <div class="d-flex justify-content-between align-items-center sel-type-btns">
-                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" checked><label [ngClass]="{'radio-label': selectedType === 'text'}" class="m-0" for="sel-text">Text</label>
-                        <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')"><label [ngClass]="{'radio-label': selectedType === 'image'}"  class="m-0" for="sel-image">Image</label>
-                        <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')"><label [ngClass]="{'radio-label': selectedType === 'video'}"  class="m-0" for="sel-video">Video</label>
-                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')"><label [ngClass]="{'radio-label': selectedType === 'document'}" class="m-0" for="sel-document">Document</label>
+
+                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" checked>
+                        <label [ngClass]="{'radio-label': selectedType === 'text'}" class="m-0" for="sel-text">Text</label>
+                        <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')">
+                        <label [ngClass]="{'radio-label': selectedType === 'image'}"  class="m-0" for="sel-image">Image</label>
+                        <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')">
+                        <label [ngClass]="{'radio-label': selectedType === 'video'}"  class="m-0" for="sel-video">Video</label>
+                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')">
+                        <label [ngClass]="{'radio-label': selectedType === 'document'}" class="m-0" for="sel-document">Document</label>
                     
                     </div>
 
@@ -344,25 +417,29 @@
                                 <h6>Header <span>(Optional)</span></h6><div><span class="characters-count">{{ getCharacterCount(3) }}</span><span>/60 Characters</span></div>
                             </div>
                             <div class="sel-type-text">
-                                <textarea name="text-editor" formControlName="value" maxlength="60"rows="6" placeholder="Enter" (input)="updateCharacterCount($event,3)"></textarea>
+                                <textarea name="text-editor" formControlName="Header" maxlength="60"rows="6" placeholder="Enter" (input)="updateCharacterCount($event,3)"></textarea>
                             </div>
                         </div>
 
                     </div>
             
-
-                
-
                 <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
-                        <input type="file" accept="image/jpg, image/png" formControlName="link" name="image-select" [formControl]="formControl" (change)="previewImage($event)" id="sel-type-image">
+                        <input type="file" accept="image/jpeg, image/png" formControlName="Links" (change)="previewImageAndVideo($event)" id="sel-type-image">
+                        <div *ngIf="newTemplateForm.get('Links').value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
-                        <p class="m-0">Upload or enter link of image</p>
+                        <p class="m-0">Upload or enter link of image</p></div> 
+                        <div class="main-preview-type-image" *ngIf="newTemplateForm.get('Links').value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
+                            <span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
+                        </div>
                 </div>
 
                 <div *ngIf="selectedType === 'video'" class="my-4 sel-type-video">
-                    <input type="file" accept="video/mp4"  formControlName="link" name="video-upload" (change)="handleVideoUpload($event)" id="sel-type-video">
-                    <label *ngIf="!videoSelected" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
+                    <input type="file" accept="video/mp4"  formControlName="Links" name="video-upload" (change)="previewImageAndVideo($event)" id="sel-type-video">
+                    <label *ngIf="!selectedPreview" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
                     <div class="video-player">
+                        <span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
+                          <img src="../../../../assets/img/settings/remove.svg" />
+                        </span>
                     <video controls #videoPlayer>
                         Your browser does not support the video tag.
                     </video>
@@ -372,9 +449,14 @@
                 </div>
             
                 <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image">
-                        <input type="file" accept=".doc, .docx, .pdf" formControlName="link" name="document-select" id="sel-type-document">
+                        <input type="file" accept=".doc, .docx, .pdf" formControlName="Links" name="document-select" id="sel-type-document">
+                        <div *ngIf="newTemplateForm.get('Links').value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
-                        <p class="m-0">Upload or enter link of document</p>
+                        <p class="m-0">Upload or enter link of document</p></div>
+                        <div class="main-preview-type-doc" *ngIf="newTemplateForm.get('Links').value !== null" [ngStyle]="{'background-image': 'url(/assets/img/settings/doc.svg)'}">
+                            <span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
+                        </div>
+                         
                 </div>
 
 
@@ -382,7 +464,7 @@
 
                 <div *ngIf="selectedType !== 'text'" class="flex-column sel-type-link">
                     <label for="link" id="link" >Link</label>
-                    <input type="url" id="link" formControlName="link"  placeholder="Enter">
+                    <input type="url" id="link" [disabled]="newTemplateForm.get('Links').value !== ''" formControlName="Links" placeholder="Enter">
                 </div>
 
 
@@ -390,14 +472,14 @@
                     <h6>Body Text</h6> <div><span class="characters-count">{{ getCharacterCount(4) }}</span><span>/1024 Characters</span></div>
                 </div>
                 <div class="sel-type-text">
-                    <textarea name="text-editor" formControlName="value" maxlength="1024"rows="8" placeholder="Enter" (input)="updateCharacterCount($event,4)"></textarea>
+                    <textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="8" placeholder="Enter" (input)="updateCharacterCount($event,4)"></textarea>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
                     <h6>Footer Text<span>(Optional)</span></h6><div> <span class="characters-count">{{ getCharacterCount(5) }}</span><span>/60 Characters</span></div>
                 </div>
                 <div class="sel-type-text">
-                    <textarea name="text-editor" formControlName="value" maxlength="60"rows="4" placeholder="Enter" (input)="updateCharacterCount($event,5)"></textarea>
+                    <textarea name="text-editor" formControlName="FooterText" maxlength="60"rows="4" placeholder="Enter" (input)="updateCharacterCount($event,5)"></textarea>
                 </div>
             </div>
             </div>    
@@ -407,14 +489,14 @@
                     <h6>Buttons<span>(Optional)</span></h6>
                     <span class="pb-1">Add buttons to let customers respond to your message or<br /> take action</span>
                     <br />
-                    <select class="mt-1 input-form">
+                    <select class="mt-1 input-form" formControlName="buttonType">
                         <option  [disabled]="true" [selected]="true" [hidden]="true">Select a button type</option>
                         <option>Quick Reply</option>
                         <option>Call to Action</option>
                     </select>
                 </div>
 
-                <!-- <div class="quick-reply-btns">
+                <div class="quick-reply-btns" *ngIf="newTemplateForm.get('buttonType').value === 'Quick Reply'">
                    <span>You can add upto 3 quick replies buttons</span>
 
                    <div *ngFor="let quickReply of quickReplyButtons;let idx=index">
@@ -422,7 +504,7 @@
                         <h6>Quick Reply {{ idx + 1 }}</h6><div><span class="characters-count">{{ getCharacterCount(idx) }}</span><span>/25 Characters</span></div>
                     </div>
                     <div class="flex-column sel-type-link">
-                        <input type="text" id="quickreply" [formControlName]="'quickreply' + (idx + 1)" maxlength="25" placeholder="Enter" (input)="updateCharacterCount($event, idx)">
+                        <input type="text" id="quickreply" formControlName="'quickreply' + (idx + 1)" maxlength="25" placeholder="Enter" (input)="updateCharacterCount($event, idx)">
 
                     </div>
                     <div class="d-flex justify-content-between incoming-card">
@@ -433,9 +515,9 @@
                     </div>
                    </div>
                     
-                </div> -->
+                </div>
 
-                <div class="call-to-action-btns">
+                <div class="call-to-action-btns" *ngIf="newTemplateForm.get('buttonType').value === 'Call to Action'">
                     <span>You can add upto 2 call to action buttons</span>
                     
                   <div class="container-call-to-btns">
@@ -452,15 +534,15 @@
                             <h6>Button Name</h6> <div><span class="characters-count">{{ getCharacterCount(6) }}</span><span>/25 Characters</span></div>
                           </div>
                           <div class="sel-type-link">
-                            <input type="text" id="call-phone" [formControlName]="'btn-name'" maxlength="25" placeholder="Enter" (input)="updateCharacterCount($event, 6)">
+                            <input type="text" id="call-phone" maxlength="25" placeholder="Enter" (input)="updateCharacterCount($event, 6)">
                         </div>                         
                     </div>
                   </div>
                   <div class="d-flex justify-content-between">
                     <div class="pt-3 pb-2 msg-head">
                     <h6 class="pt-1 pb-3">Country</h6>
-                    <select class="input-form">
-                        <option *ngFor="let countryCode of countryCodes" [value]="countryCode">
+                    <select class="callto input-form">
+                        <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
                           {{ countryCode }}
                         </option>
                       </select>
@@ -470,7 +552,7 @@
                         <h6>Phone No.</h6> <div><span class="characters-count">{{ getCharacterCount(7) }}</span><span>/20 Characters</span></div>
                       </div>
                       <div class="sel-type-link">
-                        <input type="text" id="call-phone" [formControlName]="'phonenumber'" maxlength="20" placeholder="Enter" (input)="updateCharacterCount($event, 7)">
+                        <input type="text" id="call-phone" maxlength="20" placeholder="Enter" (input)="updateCharacterCount($event, 7)">
                    </div>  
                    </div>
                   </div>
@@ -479,27 +561,26 @@
             
             </div>      
         </div>
-        <div class=" col-5 justify-content-center preview-part">
+        <div class="col-5 justify-content-center preview-part">
        
             <div class="message_section">
                 <h6>Preview</h6>
-                <div  *ngIf="selectedType !== 'text'" class="message_type" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}"></div>
-                <!-- <div class="message_type">
-                    <video autoplay muted loop id="video-background">
-                        <source [src]="templatesMessageData?.Links" type="video/mp4">
+                <div  *ngIf="selectedType === 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}" (click)="resetLinksValue()"></div>
+                <div *ngIf="selectedType === 'video'" class="message_type">
+                    <video autoplay muted loop>
+                        <source [src]="selectedPreview">
                         Your browser does not support HTML5 video.
                       </video>
-                </div> -->
-                <div *ngIf="templatesMessageData?.media_type == 'document'" class="message_type">
-                    <iframe [src]="templatesMessageData?.Links" width="100%" height="150px"></iframe>
+                </div>
+                <div *ngIf="selectedType === 'document'" class="message_type">
+                 
 
                 </div>
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
-                <div class="message_data">
-                    Personalized, doctor-backed treatment plans <br>
-                    We believe how you feel in Product and mind transforms how you show up in life. That’s why we’re building a future where nothing stands in the way of harnessing this power.
-                    <br>Get the latest 25%
-                    
+                <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
+                    <span class="font-weight-bolder">{{newTemplateForm.get('Header')!.value}}</span><br /><br />
+                    <span>{{newTemplateForm.get('BodyText')!.value}}</span><br /><br />
+                    <span>{{newTemplateForm.get('FooterText')!.value}}</span><br />
                 </div>
                 <!-- <div class="contact-us">
                     Contact Us
@@ -509,9 +590,27 @@
 
     </div>
             <div class="modal-footer">
-                <button type="button" class="account-btn" (click)="saveNewTemplate()">Save</button>
+                <button type="button" class="account-btn" (click)="confirmsave()" >Next</button>
             </div>
         </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="confirmationModal" data-bs-backdrop="static" role="dialog">
+    <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+        <div class="m-0 modal-content confrimation-modal">
+            <div class="modal-header">
+                <img src="../../../../assets/img/settings/Send-o.svg" />
+            </div>
+            <div class="modal-body">
+                <h2 class="m-0 text-center">You are About to Submit</h2>
+                <p class="label pb-2">Please confirm before submitting Template message {{newTemplateForm.get('TemplateName')!.value}}</p>
+                <div class="d-flex justify-content-center confirm-modal delete_group_button">
+                    <button type="button" class="cancel-btn" aria-label="Close" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="delete-btn" aria-label="Close" (click)="saveNewTemplate()">Confirm</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

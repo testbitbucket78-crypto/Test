@@ -1,231 +1,268 @@
+
+
 .setting-card {
-    border-radius: 30px;
-    padding: 20px;
-    box-shadow: 2px 13px 54px #695F9714;    
-    min-height: 75vh;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  border-radius: 30px;
+  padding: 20px;
+  box-shadow: 2px 13px 54px #695F9714;    
+  min-height: 75vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .working-hour-heading{
-    font-size: 20px;
-    font-weight: 600;
+font-size: 20px;
+font-weight: 650;
+color: #000000;
+font-family: Manrope;
 }
 
 .working-hour-img-card{
-    height: 38vh;
-    margin-top: 7rem;
-    text-align: center;
+  height: 38vh;
+  margin-top: 7rem;
+  text-align: center;
 }
 
 .setting-card p{
-    color: #7A86A1;
+  color: #7A86A1;
+  font-family: "Manrope";
 }
 
 .input-form {
-    height: 37px;
-    border-radius: 16px;
-    border: 1px solid #EBEBEB;
-    padding: 5px 15px;
-    width: 90%;
-   }
+  height: 37px;
+  border-radius: 16px;
+  border: 1px solid #EBEBEB;
+  padding: 5px 15px;
+  width: 90%;
+ }
 
 .working-hour-btn{
-    color: #FFFFFF !important;
-    background: #6149CD 0% 0% no-repeat padding-box;
-    border-radius: 19px;
-    padding: 7px 12px;
-    border: none;
+  color: #FFFFFF !important;
+  background: #6149CD 0% 0% no-repeat padding-box;
+  border-radius: 19px;
+  padding: 7px 12px;
+  border: none;
+  font-family: "Manrope";
 }
 
 
 .modal-content .btn-close {
-    background: white;
-    margin: 2px;
-    border-radius: 15px;
-    padding: 6px 12px;
-    border: 1px solid #EBEBEB;
-   }
+  background: white;
+  margin: 2px;
+  border-radius: 15px;
+  padding: 6px 12px;
+  border: 1px solid #EBEBEB;
+ }
 
-   .working-hour-modal{
-    width: 650px;
-    height: 600px;
-    border-radius: 26px;
-    overflow-y: scroll;
-   }
+ .working-hour-modal{
+  width: 650px;
+  height: 600px;
+  border-radius: 26px;
+  overflow-y: scroll;
+ }
 
-   .modal-footer{
-    border: none;
-   }
+ .modal-footer{
+  border: none;
+ }
 
-   .modal-title {
-    letter-spacing: -0.45px;
-    font-weight: bold;
-   }
+ .modal-title {
+  letter-spacing: -0.45px;
+  font-weight: bold;
+ }
 
-   .multiselect{
-    display: inline-block;
-    height: 37px;
-    border-radius: 17px;
-    border: 1px solid #EBEBEB;
-    width: 100%;
-    padding: 1px 3px;
-    font-weight: 400;
-    line-height: 1.52857143;
-    text-align: left;
-    vertical-align: middle;
-    cursor: pointer;
-    font-family: 'Manrope';
-    color: #7A86A1;
-    background-color: #ffffff;
-    margin: -2px 0px 0px 0px;
+ .multiselect{
+  display: inline-block;
+  height: 37px;
+  border-radius: 17px;
+  border: 1px solid #EBEBEB;
+  width: 100%;
+  padding: 1px 3px;
+  font-weight: 400;
+  line-height: 1.52857143;
+  text-align: left;
+  vertical-align: middle;
+  cursor: pointer;
+  font-family: 'Manrope';
+  color: #7A86A1;
+  background-color: #ffffff;
+  margin: -2px 0px 0px 0px;
 }
 .billing-form-row{
-    margin-top: 13px;
+  margin-top: 13px;
 }
 
 .billing-form-row label{
-    margin-bottom: 7px;
-    font-size: 15px;
-    font-weight: bold;
+  margin-bottom: 7px;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 .account-btn {
-    background: #6149CD 0% 0% no-repeat padding-box;
-    border-radius: 17px;
-    padding: 8px 22px;
-    border: 1px;    
-    color: white;
-    font-weight: 400;
-   }
+  background: #6149CD 0% 0% no-repeat padding-box;
+  border-radius: 17px;
+  padding: 8px 22px;
+  border: 1px;    
+  color: white;
+  font-weight: 400;
+ }
 
-   .incoming-card{
-    display: flex;
-    justify-content: space-between;
-   }
+ .incoming-card{
+  display: flex;
+  justify-content: space-between;
+ }
 
-   .remove-btn {
-    color: #FF3636;
-    font-size: 14px;
-   }
+ .remove-btn {
+  color: #FF3636;
+  font-size: 14px;
+ }
 
-   .add-btn {
-    color: #6236FF;
-    font-size: 14px;
-   }
+ .add-btn {
+  color: #6236FF;
+  font-size: 14px;
+ }
 
-   .flex-header{
-    display: flex;
-    justify-content: space-between;
-   }
+ .flex-header{
+  display: flex;
+  justify-content: space-between;
+ }
 
-   .month-card{
-    background: #FFF4F2;
-    min-height: 170px;
-    border-radius: 20px;
-   }
+ .month-card{
+  background: #FFF4F2;
+  min-height: 170px;
+  border-radius: 20px;
+ }
 
-   .months-view{
-    display: grid;
-    gap: 0.6vw;
-    grid-template-columns: auto auto auto auto;
-    padding: 1.8rem 1.4rem 0.5rem 1.4rem;
-   }
+ .months-view{
+  display: grid;
+  gap: 0.6vw;
+  grid-template-columns: auto auto auto auto;
+  padding: 1.8rem 1.4rem 0.5rem 1.4rem;
+ }
 
-   /* width */
+ /* width */
 ::-webkit-scrollbar {
-    width: 0px;
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px grey;
-    border-radius: 10px;
-  }
-  
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: red;
-    border-radius: 10px;
-  }
+  width: 0px;
+}
 
-  .month-date{
-    background: white;
-    height: 27px;
-    width: 27px;
-    border-radius: 10px;
-    text-align: center;
-  }
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
 
-  .dates-view{
-    display: grid;
-    gap: 0.1vw;
-    grid-template-columns: auto auto auto auto;
-  }
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: red;
+  border-radius: 10px;
+}
 
-  .holiday-calender-modal{
-    width: 500px;
-    height: 550px;
-    border-radius: 30px;
-  }
+.month-date{
+  background: white;
+  height: 27px;
+  width: 27px;
+  border-radius: 10px;
+  text-align: center;
+}
 
-  .holiday-calender-modal .modal-title{
-    font-size: 16px;
-    font-weight: 800;
-  }
+.dates-view{
+  display: grid;
+  gap: 0.1vw;
+  grid-template-columns: auto auto auto auto;
+}
 
-  .month-heading{
-    font-size: 20px;
-    font-weight: 800;
-  }
+.holiday-calender-modal{
+  width: 500px;
+  height: 550px;
+  border-radius: 30px;
+}
 
-  .working-days{
-    font-weight: 600;
-    padding-bottom: 4px;
-  }
+.holiday-calender-modal .modal-title{
+  font-size: 16px;
+  font-weight: 800;
+}
 
-  .working-time{
-    font-weight: 600;
-    color: #6149CD;
-  }
+.month-heading{
+  font-size: 20px;
+  font-weight: 800;
+}
 
-  .holiday-dropdown{
-    border: 1px solid #EBEBEB;
-    border-radius: 19px;
-    padding: 6px 15px;
-  }
+.working-days{
+  font-weight: 600;
+  padding-bottom: 4px;
+  font-family: "Manrope";
+}
 
-  .holiday-dropdown option{
-    color: #6149CD;
-  }
+.working-time{
+  font-weight: 600;
+  color: #6149CD;
+}
 
-  .calender .calender-day{
-    color: #7A86A1;
-    flex: 1 1;
-    font-size: 14px;
-  }
+.holiday-dropdown{
+  border: 1px solid #EBEBEB;
+  border-radius: 19px;
+  padding: 6px 15px;
+}
 
-  .calender{
-    padding: 20px 10px 10px 10px;
-  }
+.holiday-dropdown option{
+  color: #6149CD;
+}
 
-  .calender .calender-date{
-    color: #7A86A1;
-    font-size: 14px;
-    cursor: pointer;
-  }
+.calender .calender-day{
+  color: #7A86A1;
+  flex: 1 1;
+  font-size: 14px;
+}
 
-  .calender .date-grid{
-    display: grid;
-    gap: 1vw;
-    grid-template-columns: auto auto auto auto auto auto auto;
-    padding-top: 15px;
-  }
+.calender{
+  padding: 20px 10px 10px 10px;
+}
 
-  .calender .date-grid .active{
-    color:#F23B3B
-  }
+.calender .calender-date{
+  color: #7A86A1;
+  font-size: 14px;
+  cursor: pointer;
+}
 
-  
+.calender .date-grid{
+  display: grid;
+  gap: 1vw;
+  grid-template-columns: auto auto auto auto auto auto auto;
+  padding-top: 15px;
+}
+
+.calender .date-grid .active{
+  color:#F23B3B
+}
+
+
+.input-form {
+  height: 37px;
+  border-radius: 16px;
+  border: 1px solid #EBEBEB;
+  padding: 5px 13px;
+  background: #ffffff;
+  width: 158px;
+  outline: none;
+  cursor: pointer;
+  font-size: 12px;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+ }
+
+ select.input-form {
+  background-image: url('../../../../assets/img/support/arrow-down.svg');
+  background-position: calc(100% - 1.2rem), 100% 0;
+  background-size: 9px; 
+  height: 45px;
+  // width: 45%;
+  background-repeat: no-repeat;
+}
+select {
+  appearance: none;
+}
+.date-time{
+  font-family: Manrope;
+  font-weight: bold;
+}
