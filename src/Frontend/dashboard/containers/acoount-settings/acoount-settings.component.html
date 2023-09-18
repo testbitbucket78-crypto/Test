@@ -22,7 +22,7 @@
                     <div>
                         <h5>WhatsApp Web</h5>
                         <p>WhatsApp Web automation of your WhatsApp Personal or WhatsApp Business numbers</p>
-                        <div class="whatsapp-connect">
+                        <div class="whatsapp-cSonnect">
                         <span>3 Connected</span>
                         <span class="grey">&nbsp;&nbsp;&nbsp;></span>
                     </div>
@@ -46,18 +46,21 @@
             </div>
             <div class="col-sm-6">
                 <h5 class="mt-5">WhatsApp Web</h5>
-                <div class="connection-card" *ngFor="let item of connection">
-                    <div class="account-card-header">
-                        <div>
-                            <div class="card-desc">Connected : <span>045924999458</span></div>
+                <div class="" *ngIf="whatsAppDetails">
+                <div class="connection-card"  *ngFor="let detail of whatsAppDetails">
+                    <div class="account-card-header" >
+                        <div >
+                            <div class="card-desc">Connected : {{ detail.channel_id }}</div>
                             <div class="d-flex">
-                                <div class="card-desc">Channel Id: <span>02</span></div>
-                                <div class="card-desc">Connected</div>
+                                <div class="card-desc">Channel Id: {{ detail.connected_id }}</div>
+                                <div class="card-desc"> {{ detail.channel_status }}</div>
                             </div>
                         </div>
-                        <img src="../../../../assets/img/Setting.png" data-bs-toggle="modal"
-                            data-bs-target="#whatsWebSetting">
+                        <div  (click)="getaccountByID(detail)">
+                        <img src="../../../../assets/img/Setting.png" data-bs-toggle="modal" data-bs-target="#whatsWebSetting">
                     </div>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -130,101 +133,148 @@
     <div class="modal fade" tabindex="-1" id="whatsWebSetting" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content whatsWebSetting-modal">
-                <div class="modal-header">
+                <div class="modal-header" >
                     <h5 class="modal-title">WhatsApp Web Settings</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"(click)="populateModal(whatsappData)">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
-                <div class="modal-body px-5">
+                <div class="settings-scroll">
+                    <div class="seetings2-scroll">
+                 <div class="modal-body px-5">
                     <div class="p-4 websetting-card">
                         <div class="websetting-data">
                             <span class="left-col">WhatsApp No.</span>
-                            <span class="mid-col">919875632444</span>
+                            <span class="mid-col">{{repliesaccountData.connected_id}}</span>
                             <div class="right-col">
                                 <button class="right-col websetting-btn text-danger">Disconnect</button>
                             </div>
                         </div>
                         <div class="websetting-data">
                             <span class="left-col">Queued Messages</span>
-                            <span class="mid-col">919875632444</span>
+                            <span class="mid-col">{{repliesaccountData.QueueMessageCount}}</span>
                             <div class="right-col">
                                 <button class="right-col websetting-btn text-voilet">Clear Queue</button>
                             </div>
                         </div>
                         <div class="websetting-data">
                             <span class="left-col">Connected Status</span>
-                            <span class="mid-col">919875632444</span>
+                            <span class="mid-col">{{repliesaccountData.channel_status}}</span>
                         </div>
                         <div class="websetting-data">
                             <span class="left-col">Connected Date</span>
-                            <span class="mid-col">919875632444</span>
+                            <span class="mid-col">{{repliesaccountData.connection_date}}</span>
                         </div>
                         <div class="websetting-data">
                             <span class="left-col">WA Version</span>
-                            <span class="mid-col">919875632444</span>
+                            <span class="mid-col">{{repliesaccountData.WAVersion}}</span>
                         </div>
                     </div>
-                    <div class="p-4">
+                    </div>
+        
+                    <div class="tog-rebo">
+                      
                         <div class="incoming-card row py-2">
                             <div class="col-sm-6">
                                 <span>Incoming Message</span> <br>
-                                <input class="" type="checkbox" id="flexSwitchCheckChecked" checked>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input"  [(ngModel)]="InMessageStatus" (change)="updateNotificationId(1)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
+                                  
                             </div>
                             <div class="col-sm-6">
                                 <span>Outgoing Messages</span> <br>
-                                <input class="" type="checkbox" id="flexSwitchCheckChecked">
+                                <div class="tooggle-container">
+                                    <input type="checkbox" id="toggle" class="tooggle-input"  [(ngModel)]="OutMessageStatus" (change)="updateNotificationId(2)">
+                                    <label for="toggle" class="tooggle-label"></label>
+                                  </div>
                             </div>
                         </div>
 
                         <div class="incoming-card row py-2">
                             <div class="col-sm-6">
                                 <span>Queue Limit</span> <br>
-                                <input class="input-form" type="input" placeholder="Enter">
+                                <input class="input-form" type="input" placeholder="Enter"  [value]="QueueLimit">
                             </div>
                             <div class="col-sm-6">
                                 <span>Delay b/w Messages</span> <br>
-                                <input class="input-form" type="input" placeholder="Enter">
+                                <input class="input-form" type="input" placeholder="Enter" [value]="delay_Time">
                                 <span>Sec</span>
                             </div>
                         </div>
-
+                     
                         <div class="incoming-card row py-2">
                             <div class="col-sm-6">
                                 <span>Download Incoming vedio</span> <br>
-                                <input class="" type="checkbox" id="flexSwitchCheckChecked" checked>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input" >
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
                             </div>
                             <div class="col-sm-6">
                                 <span>Keep Online</span> <br>
-                                <input class="" type="checkbox" id="flexSwitchCheckChecked">
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input"  [(ngModel)]="online_status" (change)="updateNotificationId(3)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
                             </div>
                         </div>
                         <div class="incoming-card row py-2">
                             <div class="col-sm-6">
                                 <span>Group incoming message</span> <br>
-                                <input class="" type="checkbox" id="flexSwitchCheckChecked" checked>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input"  [(ngModel)]="INGrMessage" (change)="updateNotificationId(4)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
                             </div>
                             <div class="col-sm-6">
                                 <span>Group Outgoing Messages</span> <br>
-                                <input class="" type="checkbox" id="flexSwitchCheckChecked">
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input"  [(ngModel)]="OutGrMessage" (change)="updateNotificationId(5)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
                             </div>
                         </div>
                         <div class="incoming-card row py-2">
                             <div class="col-sm-6">
                                 <span>Service monitoring Tool</span> <br>
-                                <input class="" type="checkbox" id="flexSwitchCheckChecked" checked>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input" [(ngModel)]="serviceMonetringTool" (change)="updateNotificationId(6)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
                             </div>
                             <div class="col-sm-6">
                                 <span>Sync Data</span> <br>
-                                <input class="" type="checkbox" id="flexSwitchCheckChecked">
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input" [(ngModel)]="syncContact" (change)="updateNotificationId(7)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
+        
                             </div>
                         </div>
                         <div>
                             <span>Disconnect Event Alert Email Id</span><br>
-                            <input class="input-form" type="input" placeholder="Enter">
+                            <input class="inputEmail-form pl-3" type="input" placeholder="Enter">
+                        </div>
+                        <div class="reboapp pt-4 pl-4">
+                        <div class="rebo-footer">
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger" (click)="saveTemplate()"  >Reboot Server</button>
                         </div>
 
+                        <div class="rebo-footer">
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger" (click)="saveTemplate()"  >Restart App</button>
+                        </div>
 
+                        <div class="rebo-footer">
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger" (click)="saveTemplate()"  >Reset Server</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+                    <div class="save-footer mx-3">
+                        <button type="button" class="account-bttn" (click)="saveTemplate()"  >Save</button>
                     </div>
                 </div>
             </div>
@@ -365,6 +415,5 @@
                 <p>Lorium ipsum dolor sit amet lopnikumn gonia</p>                
             </div>
         </div>
-    </div>
-
+    
 </div>

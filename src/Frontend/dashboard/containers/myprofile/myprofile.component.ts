@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder,Validators } from "@angular/forms";
 import { ImageCroppedEvent } from 'ngx-image-cropper';
@@ -59,7 +59,7 @@ export class MyprofileComponent implements OnInit {
   
 
 
-  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService) { }
+  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private cdRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
@@ -170,7 +170,22 @@ updateNotificationId(notificationId: number) {
 // get teamboxNotificationState
 getTeamboxNotificaions() { 
   this.apiService.getTeamboxNotificationsState(this.uid).subscribe((response) => {
-      console.log(response);
+      const notifyArray = response.notify;
+
+    if(notifyArray.length > 0) {
+      const lastIndex = notifyArray.length - 1;
+      const data = notifyArray[lastIndex];
+      
+      this.pushNotificationValue = data.PushNotificationValue;
+      this.soundNotificationValue = data.SoundNotificationValue;
+      
+      console.log(data);
+      console.log(this.pushNotificationValue);
+      console.log(this.soundNotificationValue);
+    }
+
+
+
   });
 }
 
@@ -262,10 +277,14 @@ toggleActiveState(checked: boolean) {
   $("#pictureCropModal").modal('show');
     this.imageChangedEvent = event;
   }
-  imageCropped(event: ImageCroppedEvent) {
-      this.croppedImage = event.base64;
-   
+   imageCropped(event: ImageCroppedEvent) {
+    const newImageUrl = event.base64 + '?timestamp=' + new Date().getTime();
+    this.croppedImage = newImageUrl;
+    
+    // Trigger change detection
+    this.cdRef.detectChanges();
  }
+
  
 
 //API call to save the cropped image

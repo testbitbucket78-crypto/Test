@@ -5,13 +5,14 @@
             <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2">Tags</a>
         </div>
     </div>
-    <div class="setting-card" *ngIf="selectedTab==2">
+ <div *ngIf="tagListData.length>0">
+    <div  class="setting-card" *ngIf="selectedTab==2">
         <div class="flex-header">
             <span class="working-hour-heading">Tags</span>    
             <div class="d-flex">
                 <div class="input-group gf ">
-                    <input class="form-control" type="text" (keyup)="searchData($event.target.value)" placeholder="Search" aria-label="Search"
-                        aria-describedby="basic-addon2" name="Name" id="Search-Ag" />
+                    <input class="form-control" type="text"  [(ngModel)]="searchText"  placeholder="Search" aria-label="Search"
+                       name="Name" id="Search-Ag" />
                     <img src="assets/img/search.png">
                 </div>
                 <button class="new-token-btn" (click)="addTag()" data-bs-toggle="modal" data-bs-target="#tagsModal">
@@ -19,8 +20,7 @@
                     Add Tag</button>
             </div>
         </div>
-
-    </div>   
+ 
 
     
 <div class="modal fade" tabindex="-1" id="tagsModal" role="dialog">
@@ -52,96 +52,83 @@
 
 
 <div class="row mb-5">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-8 notification-card">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10 notification-card">
         <div class="container-fluid ">
             <div class="row pb-3 justify-content-center">
             <div class="col-sm-12 d-flex pt-5 pb-4 text-center notification-card-header">
-                <!-- <div class="header-col">
-                    Billing Id
-                </div> -->
                 <div class="header-col">
-                    Invoice No.
+                    Tag Colour
                 </div>
                 <div class="header-col">
-                    Date
+                    Tag Name
                 </div>
                 <div class="header-col">
-                    Amount
-                </div>
-                <div class="header-col">
-                  Purpose
-                </div>
-                <div class="header-col">
-                   Download
-                </div>
-                
+                    Tag<br /> Applied on
+                </div> 
             </div>
             </div>
             <div class="notification-content-parent">
-                <div *ngFor="let billingitem of billingHistoryData | searchfilter:searchText | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" 
+                <div *ngFor="let taglist of tagListData | searchfilter:searchText | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" 
                   class="row justify-content-center  notification-content">
                     <div class="col-sm-12 d-flex py-3 text-center">
-                        <!-- <div class="header-col">{{ billingitem.billing_id }}</div>  -->
-                        <div class="header-col">#{{billingitem.invoice_number}}</div>
-                        <div class="header-col">{{ billingitem.billing_date | date:'dd MMMM yyyy' }}</div>
-                        <div class="header-col">{{ billingitem.amount }}</div>
-                        <div class="header-col">{{ billingitem.billing_type}}</div>
-                        <div class="pdf-text header-col"><img src="../../../../assets/img/profile/import.svg" (click)="generatePDF()">PDF</div>
 
-                 
-                    </div>
+                        <div class="header-col text-center"><p [ngClass]="{'color-dots': true}" [style.background]="taglist.TagColour"></p></div>
+                        <div class="header-col font-weight-bolder">{{ taglist.TagName }}</div>
+                        <div class="header-col">{{ taglist.tag_count}}</div>
+                 </div>
                 </div>
             </div>
       
 
 
-            <div class="col-sm-12 d-flex px-2 mt-4 mb-4 notification-footer">
-
-            <div class="col-sm-6 d-flex align-items-center text-left">
-                <p class="p-0 m-0">Showing:</p>
-                <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                    <option value="25">25</option>
-                    <option value="30">30</option>
-                    <option value="45">35</option>
-                    <option value="40">40</option>
-                    <option value="45">45</option>
-                    <option value="50">50</option>
-                </select>
-
-            </div>
-            <div class="col-sm-6 text-right">
-            <nav aria-label="navigation">
-                <ul class="justify-content-end align-items-center m-0 pagination">
-                  <li class="btn-list">
-                    <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1">
-                        <img src="assets/img/profile/previous.svg" />
-                    </button>
-                </li>
-                  <li *ngFor="let item of paging" class="pagination-num-container">
-                    <a [ngClass]="{'pagination-disabled': currentPage !=item}" (click)="currentPage=item" class="pagination-num-body">{{item}}</a>
-                 </li>
-                  <li class="btn-list">
-                    <button class="pagination-btn" [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" >
-                        <img src="assets/img/profile/next.svg" />
-                    </button>
-                </li>
-                </ul>
-              </nav>
-              </div>
-            </div>
         </div>
     </div>
-    <div class="col-sm-2"></div>
+   
+    <div class="col-sm-12 d-flex px-2 mt-4 mb-4 notification-footer">
+
+        <div class="col-sm-6 d-flex align-items-center text-left">
+            <p class="p-0 m-0">Showing:</p>
+            <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="45">35</option>
+                <option value="40">40</option>
+                <option value="45">45</option>
+                <option value="50">50</option>
+            </select>
+
+        </div>
+        <div class="col-sm-6 text-right">
+        <nav aria-label="navigation">
+            <ul class="justify-content-end align-items-center m-0 pagination">
+              <li class="btn-list">
+                <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1">
+                    <img src="assets/img/profile/previous.svg" />
+                </button>
+            </li>
+              <li *ngFor="let item of paging" class="pagination-num-container">
+                <a [ngClass]="{'pagination-disabled': currentPage !=item}" (click)="currentPage=item" class="pagination-num-body">{{item}}</a>
+             </li>
+              <li class="btn-list">
+                <button class="pagination-btn" [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" >
+                    <img src="assets/img/profile/next.svg" />
+                </button>
+            </li>
+            </ul>
+          </nav>
+          </div>
+        </div> 
+       <div class="col-sm-1"></div>
+     </div>
+
+
+
+    </div>
 </div>
-
-
-
-
-
 
 
 </div>

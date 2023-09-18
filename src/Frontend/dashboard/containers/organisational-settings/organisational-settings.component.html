@@ -54,7 +54,7 @@
                 <div class="left-col">
                     <span class="profile-sub-heading">Time Format</span>
                     <p *ngIf="!localeData?.Time_Format">--</p>
-                    <p *ngIf="localeData?.Time_Format">{{localeData?.Time_Format}}</p>
+                    <p *ngIf="localeData?.Time_Format">{{localeData?.Time_Format}} HRS</p>
                 </div>
                 <div>
                     <span class="profile-sub-heading">Date Format</span>
@@ -71,7 +71,12 @@
                     <img class="p-0" src="../../../../assets/img/edit.png">
                 </button>
             </div>
-            <p>{{localeData?.Address1 ? localeData?.Address1 + ',':'--'}}&nbsp;{{localeData?.Address2 ? localeData?.Address2:'--'}}</p>
+            <p>
+                {{ localeData?.Address1 ? localeData.Address1 + ',' : '--' }}
+                &nbsp;
+                {{ localeData?.Address2 ? localeData.Address2 : '--' }}
+              </p>
+              
             <div class="d-flex">
                 <div class="left-col">
                     <span class="profile-sub-heading">Billing Email Id</span>
@@ -88,7 +93,8 @@
     <div class="modal fade" tabindex="-1" id="companyDetailModal" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content account-modal">
-                <div class="modal-header">
+                <div class="model-setting">
+                <div class="modal-header mt-2 ml-2">
                     <h5 class="modal-title">Edit Company Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
@@ -99,43 +105,62 @@
                         <div class="profile-img">
                             <img>
                         </div>
-                        <span class="p-3">Add<br> Company logo</span>
+                        <div class="d-flex justify-content-center picture-crop-button-container">
+                            <div class="text-center picture-crop-button">
+                             <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
+                             <label for="myFileInput" class="m-0 fileLabel" ><img src="../../../../assets/img/profile/Fill 4.svg" /></label>    
+                            </div>
+                        </div>
+                        <span class="Add-company pt-4">Add<br> Company logo</span>
                     </div>
                     <form [formGroup]="companyDetailForm" class="mt-4">
                         <div class="profile-form-row">
                             <div class="profile-form-left">
                                 <span>Company Name*</span>
-                                <input type="text" class="input-form" formControlName="Company_Name" placeholder="Enter company name">
+                                <input type="text" class="company input-form" formControlName="Company_Name" placeholder="Enter company name" maxlength="17" >
                             </div>
                             <div>
                                 <span>Company Website</span>
-                                <input type="text" class="input-form" formControlName="Company_Website" placeholder="Enter URL">
+                                <input type="text" class="company input-form" formControlName="Company_Website" placeholder="Enter URL" maxlength="30">
                             </div>
                         </div>
                         <div class="profile-form-row">
                             <div class="profile-form-left">
                                 <span>Country</span>
-                                <select class="input-form" formControlName="Country" >
-                                    <option selected>Select country</option>
-                                    <option *ngFor="let item of country" [value]="item">{{item}}</option>
-                                </select>
+                                <select class="company input-form" formControlName="Country" >
+                                    <option [value]="0" selected>Select country</option>
+                                    <option  *ngFor="let item of country" [value]="item">{{item}}</option>
+                                </select> 
+                                
                             </div>
                             <div>
                                 <span>Phone Number*</span>
-                                <input type="text" class="input-form" formControlName="Phone_Number" placeholder="Enter">
+                                <div class="numb-1 d-flex">
+                              
+                                  <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+                                  [enableAutoCountrySelect]="true" [enablePlaceholder]="false"
+                                  [searchCountryFlag]="false"
+                                  [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                  [selectFirstCountry]="false" [selectedCountryISO]="CountryISO.India"
+                                  [maxLength]="15" [phoneValidation]="true" [separateDialCode]="true"
+                                  [numberFormat]="PhoneNumberFormat.National" name="Phone_number"
+                                  formControlName="Phone_Number">
+                              </ngx-intl-tel-input>
+                                </div>
                             </div>
                         </div>
                         <div class="profile-form-row">
                             <div class="profile-form-left">
                                 <span>Industry</span>
-                                <select class="input-form" formControlName="Industry" placeholder="Select Industry">
-                                    <option selected>Select Industry</option>
+                                <select class="company input-form" formControlName="Industry" placeholder="Select Industry">
+                                    
+                                    <option [selected]="true">Select Industry</option>
                                     <option *ngFor="let item of industry" [value]="item">{{item}}</option>
                                 </select>
                             </div>
-                            <div>
+                            <div class="noemploye">
                                 <span>No. of Employees</span>
-                                <select class="input-form" formControlName="Employees_count">
+                                <select class="company input-form" formControlName="Employees_count">
                                     <option selected>Select no of employees</option>
                                     <option *ngFor="let item of noOfEmployees" [value]="item">{{item}}</option>
                                 </select>
@@ -143,10 +168,11 @@
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer mt-4">
                     <button type="button" class="account-btn" (click)="saveCompanyDetails()">Save</button>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 
@@ -154,7 +180,7 @@
     <div class="modal fade" tabindex="-1" id="billingDetailModal" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content billing-modal">
-                <div class="modal-header">
+                <div class="modal-header pt-4 pl-4">
                     <h5 class="modal-title">Add Billing Address</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
@@ -164,46 +190,60 @@
                     <form [formGroup]="billingForm" class="mt-4">
                         <div class="billing-form-row">
                             <span class="billing-left-col">Billing Email Id</span>
-                            <input type="text" class="input-form" formControlName="billing_email" placeholder="Enter billing email id">
+                            <input type="text" class="billing input-form" formControlName="billing_email" placeholder="Enter billing email id">
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Tax/VAT/GST Id</span>
-                            <input type="text" class="input-form" formControlName="InvoiceId" placeholder="Enter Tax/VAT/GST ID">
+                            <input type="text" class="billing input-form" formControlName="InvoiceId" placeholder="Enter Tax/VAT/GST ID" maxlength="15">
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Location</span>
-                            <select class="input-form" formControlName="Country">
+                            <select class="billing input-form" formControlName="Country">
                                 <option>Select country</option>
                                 <option *ngFor="let item of country" [value]="item">{{item}}</option>
                             </select>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col"></span>
-                            <select class="input-form" formControlName="State">
+                            <select class="billing input-form" formControlName="State">
                                 <option>State</option>
                             </select>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col"></span>
-                            <select class="input-form" formControlName="City">
+                            <select class="billing input-form" formControlName="City">
                                 <option>City</option>
                             </select>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Address line 1</span>
-                            <input type="text" class="input-form" formControlName="Address1" placeholder="Your address">
+                            <input type="text" class="billing input-form" formControlName="Address1" placeholder="Your address">
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Address line 2</span>
-                            <input type="text" class="input-form" formControlName="Address2" placeholder="Your address">
+                            <input type="text" class="billing input-form" formControlName="Address2" placeholder="Your address">
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Zip code</span>
-                            <input type="text" class="input-form" formControlName="zip_code" placeholder="Your zip code">
+                            <input
+                                type="text"
+                                class="billing input-form"
+                                formControlName="zip_code"
+                                placeholder="Your zip code"
+                                [pattern]="zipCodePattern"
+                                maxlength="6"
+                            >
+                            <div *ngIf="zipCodeControl.hasError('pattern') && zipCodeControl.touched">
+                                Zip code must contain only numbers.
+                            </div>
+                            <div *ngIf="zipCodeControl.hasError('maxlength') && zipCodeControl.touched">
+                                Zip code cannot exceed 6 digits.
+                            </div>
                         </div>
+                        
                     </form>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer mb-4 pr-4">
                     <button type="button" class="account-btn" (click)="saveBillingDetails()">Save</button>
                 </div>
             </div>
@@ -213,7 +253,7 @@
     <div class="modal fade" tabindex="-1" id="localeDetailModal" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content locale-modal">
-                <div class="modal-header">
+                <div class="modal-header mt-3 ml-2">
                     <h5 class="modal-title">Add Locale Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
@@ -338,7 +378,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer mb-2 mr-3">
                     <button type="button" class="account-btn" (click)="saveLocaleDetails()">Save</button>
                 </div>
             </div>

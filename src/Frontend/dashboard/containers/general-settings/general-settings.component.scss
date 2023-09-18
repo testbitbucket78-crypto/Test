@@ -56,14 +56,29 @@
     margin-right: 15px;
 }
 
+// select tag styling
+
 .input-form {
     height: 37px;
     border-radius: 16px;
     border: 1px solid #EBEBEB;
     padding: 5px 15px;
-    border: 1px solid #EBEBEB;
-    width: 35%;
+    width: 158px;
+    outline: none;
+    font-size: 14px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
    }
+
+   select.input-form {
+    background-image: url('../../../../assets/img/settings/drop-up-down.svg');
+    background-position: calc(100% - .5rem), 100% 0;
+    background-size:  1.5em 1em;
+    background-repeat: no-repeat;
+  }
 
    .select-heading{
     font-size: 14px;
@@ -86,3 +101,35 @@
     justify-content: flex-end;
     padding: 0.75rem;
    }
+
+//  toaster styling
+
+   .toaster{
+	float:left;
+	width:auto;
+	position: fixed;
+	right: 50px;
+	top: 65px;
+	z-index: 9999;
+	}
+	.toaster p{
+	padding:8px;
+	font-size:14px;
+    font-weight: 400;
+	color:#ffffff;
+	margin: 0;
+	min-width: 250px;
+	text-align: center;
+	border-radius: 10px;
+
+	}
+	.toaster p.error{
+	background-color: #E02020;
+	}
+	.toaster p.success{
+	background-color: #6149cd;
+	}
+	.toaster p.warning{
+	background-color: orange;
+	}
+

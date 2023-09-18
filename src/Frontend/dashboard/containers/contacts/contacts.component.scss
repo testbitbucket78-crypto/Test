@@ -208,8 +208,8 @@ h4, .h4 {
 
 .edittag {
     width: 70%;
-    left: 475px;
-    top: 240px;
+    top: 6em;
+    left: 11em;
     margin: 0;
 }
 
@@ -601,8 +601,9 @@ opacity: 1;
     /* height: 120px; */
     margin-top: 50px;
     margin-right: 24px;
-    margin-left: 14px;
+    margin-left: 22px;
     width: 113px;
+    border-radius: 50%;
 }
 .sidebar .parent .child h4{
     font-weight: 800;

@@ -4,7 +4,6 @@ import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { TeamboxService } from './../../services';
-import { JsonpInterceptor } from '@angular/common/http';
 
 @Component({
   selector: 'sb-campaigns',
@@ -368,8 +367,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			filter['checked']=true
 		}else{
 			filter['checked']=true
+				
 		}
 		
+	
 		
 	}
 	updateFilterDates(event:any){
@@ -542,8 +543,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
     async mapCampaignData(allCampaignList:any){
 		console.log(allCampaignList);
 
-		try{
-			allCampaignList.forEach((item:any, index:any) => {
+		// try {
+			allCampaignList.forEach((item:any) => {
 				
 				if(item.status==0){
 					item['status_label'] ='draft'
@@ -580,26 +581,26 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				}else{
 					item['category_label'] =item.category
 				}
-				console.log(index);
-				if(index == 50) {
-					console.log(JSON.parse(item.csv_contacts));
-				}
-				if(item.segments_contacts){
-				item['AllContactsLength'] =item.segments_contacts?JSON.parse(item.segments_contacts).length:0
-				}else if(item.csv_contacts){
-				item['AllContactsLength'] =item.csv_contacts?JSON.parse(item.csv_contacts).length:0
-				}else{
-					item['AllContactsLength'] =0	
-				}
+				// console.log(index);
+				// if(index == 50) {
+				// 	console.log(JSON.parse(item.csv_contacts));
+				// }
+				// if(item.segments_contacts){
+				// item['AllContactsLength'] =item.segments_contacts?JSON.parse(item.segments_contacts).length:0
+				// }else if(item.csv_contacts){
+				// item['AllContactsLength'] =item.csv_contacts?JSON.parse(item.csv_contacts).length:0
+				// }else{
+				// 	item['AllContactsLength'] =0	
+				
 				
 			})
 
 			this.allCampaignMain = allCampaignList
 			this.allCampaign = allCampaignList
-		}
-		catch(error:any){
-			console.log(error)
-		}
+		
+		// catch(error:any){
+		// 	console.log(error)
+		// }
 	}
 	
 	

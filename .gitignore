@@ -52,3 +52,5 @@ Thumbs.db
 /.vs
 src/Backend/Authentication/uploads/
 src/environments/environment.ts
+
+package-lock.json

@@ -861,6 +861,8 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	sendNewSmartReply(smartreplysuccess: any, smartreplyfailed: any ) {
 
+
+	
 			var data = {
 				SP_ID: sessionStorage.getItem('SP_ID'),
 				Title: this.newReply.value.Title,
@@ -871,30 +873,33 @@ export class AddSmartRepliesComponent implements OnInit {
 				Tags: []
 			}
 			console.log(data)
-			this.apiService.addNewReply(data).subscribe (
+			if(data){
+				this.apiService.addNewReply(data).subscribe (
 			
-			(response:any) => {
-				console.log(response)
-			
-				if (response.status === 200) {
-					this.modalService.open(smartreplysuccess);
-				}
+					(response:any) => {
+						console.log(response)
+					
+						if (response.status === 200) {
+							this.modalService.open(smartreplysuccess);
+						}
+						
+					},
+		
+					(error:any) => {
+						if (error.status === 500) {
+							this.modalService.open(smartreplyfailed);
+						}
+						else {
+							const errorDiv = document.getElementById("smrply-err-msg");
+							const errorMessage = "! Internal Server Error Please try after some time";
+							errorDiv!.innerHTML = errorMessage;
+		
+						}
+		
+						
+				   });
 				
-			},
-
-			(error:any) => {
-				if (error.status === 500) {
-					this.modalService.open(smartreplyfailed);
-				}
-				else {
-					const errorDiv = document.getElementById("smrply-err-msg");
-					const errorMessage = "! Internal Server Error Please try after some time";
-					errorDiv!.innerHTML = errorMessage;
-
-				}
-
-				
-	       });
+			}
 		
 		
 	}

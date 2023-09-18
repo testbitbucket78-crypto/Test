@@ -19,7 +19,7 @@
 			</div>
 			</div>
 
-	<div *ngIf="replies == 0" class=" my-5 smartreplies-empty-state">
+	<div *ngIf="!replies" class=" my-5 smartreplies-empty-state">
 			<div class="d-flex justify-content-center my-5 align-items-center container-empty-state">
 				<div class="text-center py-5 body-empty-state">
 					<img src="../../../../assets/img/no-sr.png" />
@@ -29,7 +29,7 @@
 			</div>
 	</div>
 
-<div *ngIf="replies != 0" class="smartreplies-filled-state">
+<div *ngIf="replies" class="smartreplies-filled-state">
 
 		<div class="row r1">
 		<div *ngFor="let reply of replies  | searchfilter:searchText" class="card d-flex" (click)="toggleSideBar()"  (click)="getRepliesByID(reply)">

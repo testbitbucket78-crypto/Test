@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -191,7 +191,7 @@ columnDefs: ColDef[] = [
  
   
   
- constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router)
+ constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router,private cdRef: ChangeDetectorRef)
  
  
  {
@@ -694,8 +694,11 @@ fileChangeEvent(event: any): void {
     this.imageChangedEvent = event;
   }
   imageCropped(event: ImageCroppedEvent) {
-      this.croppedImage = event.base64;
-   
+    const newImageUrl = event.base64 + '?timestamp=' + new Date().getTime();
+    this.croppedImage = newImageUrl;
+    
+    // Trigger change detection
+    this.cdRef.detectChanges();
  }
 
  
@@ -707,11 +710,14 @@ saveContactsProfilePicture() {
   this.contactsImageData.customerId = this.contactId,
   this.contactsImageData.contact_profile = this.croppedImage
 
+
 this.apiService.saveContactImage(this.contactsImageData).subscribe(
 (response) => {
 
   if (response.status === 200) {
     $("#pictureCropModal").modal('hide');
+    this.closesidenav(this.items);
+    this.getContact();
     console.log(response+ 'image saved successfully');
   }
 

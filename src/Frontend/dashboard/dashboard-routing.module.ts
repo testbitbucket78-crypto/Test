@@ -374,24 +374,6 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.SettingComponent,
     },
-      {
-        path: 'generalsetting',
-        data: {
-            title: 'generalsetting',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'setting',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.GeneralsettingComponent,
-    },
     {
         path: 'accountsetting',
         data: {
