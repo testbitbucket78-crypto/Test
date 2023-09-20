@@ -13,8 +13,8 @@
     <div class="setting-card" *ngIf="selectedTab==1">
         <div class="row justify-content-center">
             <div class="w-90">
-                <div class="profile-img profile-margin-left">
-                    <img>
+                <div class="profile-img profile-margin-left"[ngStyle]="{'background-image': 'url(' + companyimage + ')'}">
+                    <img class="companyimg" >
                 </div>
             </div>
             <button class="account-white-btn mx-1" (click)="patchCompanyForm()" data-bs-toggle="modal" data-bs-target="#companyDetailModal">
@@ -44,7 +44,7 @@
 
         <div class="detail-card">
             <div class="flex-header">
-                <span class="profile-heading">Add Locale Details</span>
+                <span class="profile-heading pt-2">Add Locale Details</span>
                 <button class="account-white-btn mx-1" (click)="patchLocaleForm()" data-bs-toggle="modal" data-bs-target="#localeDetailModal">
                     <img class="p-0" src="../../../../assets/img/edit.png">
                 </button>
@@ -65,19 +65,19 @@
         </div>
 
         <div class="detail-card">
-            <div class="flex-header">
+            <div class="flex-header pt-3">
                 <span class="profile-heading">Add Billing Address</span>
                 <button class="account-white-btn mx-1" (click)="patchBillingForm()" data-bs-toggle="modal" data-bs-target="#billingDetailModal">
                     <img class="p-0" src="../../../../assets/img/edit.png">
                 </button>
             </div>
-            <p>
-                {{ localeData?.Address1 ? localeData.Address1 + ',' : '--' }}
+            <div class="billy-address">
+                {{ billingData?.Address1 ? billingData.Address1 + ',' : '--' }}
                 &nbsp;
-                {{ localeData?.Address2 ? localeData.Address2 : '--' }}
-              </p>
+                {{ billingData?.Address2 ? billingData.Address2 : '--' }}
+              </div>
               
-            <div class="d-flex">
+            <div class="d-flex pt-3">
                 <div class="left-col">
                     <span class="profile-sub-heading">Billing Email Id</span>
                     <p>{{billingData?.billing_email ? billingData?.billing_email:'--'}}</p>
@@ -102,13 +102,46 @@
                 </div>
                 <div class="modal-body px-5 pt-0">
                     <div class="d-flex px-3">
-                        <div class="profile-img">
-                            <img>
+                        <div class="profile-img" [ngStyle]="{'background-image': 'url(' + companyimage + ')'}">
+                            <img class="companyimg">
                         </div>
                         <div class="d-flex justify-content-center picture-crop-button-container">
                             <div class="text-center picture-crop-button">
                              <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
                              <label for="myFileInput" class="m-0 fileLabel" ><img src="../../../../assets/img/profile/Fill 4.svg" /></label>    
+                            </div>
+                        </div>
+
+                        <div class="modal fade" tabindex="-1" id="pictureCropModal" data-bs-backdrop="static" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content px-3 pictureCropPopupModal">
+                                    <form>
+                                    <div class="modal-header align-items-center">
+                                        <h5 class="modal-title">Crop & Adjust</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <img src="../../../../assets/img/teambox/icon-close.svg"/> 
+                                        </button>
+                                    </div>
+                                    <div class="modal-body p-4 text-center pictureCropPopupbody">
+                                      <div class="pic-cont">
+                                               <image-cropper
+                                                [imageChangedEvent]="imageChangedEvent"
+                                                [maintainAspectRatio]="false"
+                                                [aspectRatio]="4 / 3"
+                                                format="jpg"
+                                                (imageCropped)="imageCropped($event)"
+                                                (imageLoaded)="imageLoaded()"
+                                                (cropperReady)="cropperReady()"
+                                                (loadImageFailed)="loadImageFailed()">
+                                                </image-cropper>
+                                        </div>
+                          
+                                    </div>
+                                    <div class="modal-footer justify-content-end my-2 border-0">
+                                        <button type="button" (click)="savesettingprofileimage()" class="update-pass-btn">Save</button>
+                                    </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                         <span class="Add-company pt-4">Add<br> Company logo</span>
@@ -130,9 +163,9 @@
                                 <select class="company input-form" formControlName="Country" >
                                     <option [value]="0" selected>Select country</option>
                                     <option  *ngFor="let item of country" [value]="item">{{item}}</option>
-                                </select> 
-                                
+                                </select>
                             </div>
+                          
                             <div>
                                 <span>Phone Number*</span>
                                 <div class="numb-1 d-flex">
@@ -142,19 +175,19 @@
                                   [searchCountryFlag]="false"
                                   [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
                                   [selectFirstCountry]="false" [selectedCountryISO]="CountryISO.India"
-                                  [maxLength]="15" [phoneValidation]="true" [separateDialCode]="true"
+                                  [maxLength]="10" [phoneValidation]="true" [separateDialCode]="true"
                                   [numberFormat]="PhoneNumberFormat.National" name="Phone_number"
                                   formControlName="Phone_Number">
-                              </ngx-intl-tel-input>
+                                  </ngx-intl-tel-input>
                                 </div>
                             </div>
                         </div>
                         <div class="profile-form-row">
                             <div class="profile-form-left">
                                 <span>Industry</span>
-                                <select class="company input-form" formControlName="Industry" placeholder="Select Industry">
+                                <select class="company input-form" formControlName="Industry"   placeholder="Select Industry">
                                     
-                                    <option [selected]="true">Select Industry</option>
+                                    <option [selected]="true" >Select Industry</option>
                                     <option *ngFor="let item of industry" [value]="item">{{item}}</option>
                                 </select>
                             </div>
@@ -194,7 +227,7 @@
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Tax/VAT/GST Id</span>
-                            <input type="text" class="billing input-form" formControlName="InvoiceId" placeholder="Enter Tax/VAT/GST ID" maxlength="15">
+                            <input type="text" class="billing input-form" formControlName="InvoiceId" placeholder="Enter Tax/VAT/GST ID" maxlength="15" type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==6) return false; return /^[0-9]$/.test(event.key)">
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Location</span>
@@ -226,19 +259,12 @@
                         <div class="billing-form-row">
                             <span class="billing-left-col">Zip code</span>
                             <input
-                                type="text"
                                 class="billing input-form"
                                 formControlName="zip_code"
                                 placeholder="Your zip code"
                                 [pattern]="zipCodePattern"
-                                maxlength="6"
+                                type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==6) return false; return /^[0-9]$/.test(event.key)"
                             >
-                            <div *ngIf="zipCodeControl.hasError('pattern') && zipCodeControl.touched">
-                                Zip code must contain only numbers.
-                            </div>
-                            <div *ngIf="zipCodeControl.hasError('maxlength') && zipCodeControl.touched">
-                                Zip code cannot exceed 6 digits.
-                            </div>
                         </div>
                         
                     </form>

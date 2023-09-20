@@ -1,4 +1,6 @@
-
+::-webkit-scrollbar {
+    display: none;
+}
 //  toaster styling
 
 .toaster{
@@ -252,6 +254,7 @@
     color: #030303;
     font-weight: 800;
     font-size: 14px;
+    word-wrap: break-word;
 }
 
 .campaigns_section_item .start_time {
@@ -398,10 +401,11 @@
 
 .campaign_detail {
     width: 400px;
-    height: 95vh;
+    height: 100%;
     position: fixed;
+    z-index: 9999;
     right: 0;
-    top: 54px;
+    top: 0;
     background: #FBF9FE;
     border-radius: 0;
     margin: 0;
@@ -412,7 +416,7 @@
 .campaign_detail .campaigns_section_item {
     width: 100%;
     background: #FBF9FE;
-    padding: 0.5rem 2rem 4rem 2rem;
+    padding: 0 2rem 4rem 2rem;
 }
 
 .campaign_detail .campaigns_section_item p {
@@ -500,6 +504,8 @@ img.icon_sm {
     font-weight: 500;
 }
 
+
+
 .category_section p {
     color: #6149cd;
     font-weight: 700;
@@ -510,10 +516,22 @@ img.icon_sm {
     flex: 1 auto;
 }
 
+.industry p {
+    color: #6149cd;
+    font-weight: 700;
+    margin: 0!important;
+}
+
+.industry span {
+    font-size: 11px;
+    font-weight: 500;
+}
+
 #message_head {
     color: #6149cd;
     font-size: 13px;
     font-weight: 700;
+    margin-top: 20px;
 }
 
 .message_type{
@@ -526,6 +544,11 @@ img.icon_sm {
     border-radius: 12px 12px 0 0;
 }
 
+.video.message_type video {
+    height: inherit;
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+}
 
 .message_data {
     width: 70%;
@@ -800,8 +823,13 @@ img.icon_sm {
 }
 
 .main-preview-type-doc {
- 
+    position: absolute;
+    right: 4%;
+    top: 9%;
+    z-index: 99999;
+    cursor: pointer;
 }
+
 
 .preview-part .message_section {
     margin-left: 33px;
@@ -996,6 +1024,19 @@ input[type="radio"]:checked + label::before {
   //   /* Your custom control styles here */
   // }
 
+  // type document
+
+  .document-selected {
+    background: #FFEAE6;
+  }
+
+  .document-preview {
+    font-size: 11px;
+    margin-top: 10px; 
+    text-align: center;
+    word-wrap: break-word;
+  }
+
   // input type file
 
   input[type="file"] {
@@ -1042,6 +1083,12 @@ input[type="radio"]:checked + label::before {
     outline: 0;
     
 }
+
+.sel-type-link input[type="url"]:disabled {
+    background: #EBEBEB;
+    color: #7A86A1;
+} 
+
 
 
 .sel-type-link input[type="text"] {

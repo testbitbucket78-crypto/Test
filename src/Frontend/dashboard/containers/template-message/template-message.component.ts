@@ -132,6 +132,7 @@ export class TemplateMessageComponent implements OnInit {
     this.newTemplateForm = this.prepareUserForm();
     this.filteredTemplatesData = [...this.templatesData];
     this.getTemplatesData();
+
   }
 
   prepareUserForm(){
@@ -145,13 +146,11 @@ export class TemplateMessageComponent implements OnInit {
       Links:new FormControl(null),
       BodyText:new FormControl(null,[Validators.required]),
       FooterText:new FormControl(null),
-      buttonType: new FormControl('')
+      buttonType: new FormControl(''),
+      phone_number:new FormControl(null)
     });
   }
 
-
-
-  
   selectTab(tabNumber: number) {
     this.selectedTab = tabNumber;
   }
@@ -258,7 +257,6 @@ removeValue() {
       this.apiService.getTemplateData(this.spid,1).subscribe(response => {
         this.templatesData = response.templates;
         this.filteredTemplatesData = this.templatesData;
-        console.log(this.templatesData);
       });   
       
       //get gallery data
@@ -285,7 +283,7 @@ removeValue() {
     saveNewTemplate() {
       let newTemplateFormData = this.copyNewTemplateFormData(); 
 
-      if(this.newTemplateForm.valid) {
+      if(this.newTemplateForm.valid && this.selectedType != 'video') {
         this.apiService.saveNewTemplateData(newTemplateFormData,this.selectedPreview).subscribe(response => {
         
           if(response) {
@@ -332,7 +330,7 @@ removeValue() {
       newTemplateForm.created_By = this.currentUser;
       newTemplateForm.ID = this.id;
       newTemplateForm.isTemplate = 1;
-      newTemplateForm.media_type = 'image';
+      newTemplateForm.media_type = 'video';
       newTemplateForm.Header = this.newTemplateForm.controls.Header.value;
       
       newTemplateForm.Links = this.newTemplateForm.controls.Links.value;
@@ -343,7 +341,7 @@ removeValue() {
       newTemplateForm.Channel = this.newTemplateForm.controls.Channel.value;
       newTemplateForm.Category = this.newTemplateForm.controls.Category.value;
       newTemplateForm.Language = this.newTemplateForm.controls.Language.value;
-      newTemplateForm.status = 'Draft';
+      newTemplateForm.status = 'Pending';
       newTemplateForm.template_id = 0;
       newTemplateForm.template_json =[];
       // newTemplateForm.template_json.push({
@@ -420,12 +418,10 @@ removeValue() {
         }
       });
     }
-  
+ 
+
+
   }
-
-
-
-
 
 
 

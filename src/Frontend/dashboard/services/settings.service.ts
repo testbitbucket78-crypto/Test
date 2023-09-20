@@ -198,5 +198,8 @@ export class SettingsService {
     return this.http.post<any>(`${this.API_URL}/addTemplate`,addtempletedata);
   }
   
+  uploadCompanylogo(tagData:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/uploadCompanylogo`,tagData);
+  }
   }
 

@@ -101,8 +101,12 @@
                         <div class="message_section">
                             <div *ngIf="templatesMessageData?.media_type == 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div>
                             <div *ngIf="templatesMessageData?.media_type == 'video'" class="message_type">
-                                <video autoplay muted loop id="video-background">
+                                <video muted id="video-background">
                                     <source [src]="templatesMessageData?.Links" type="video/mp4">
+                                    Your browser does not support HTML5 video.
+                                  </video>
+                                  <video *ngIf="selectedPreview && selectedPreview.startsWith('data:video')" autoplay muted #videoPlayer>
+                                    <source [src]="selectedPreview" type="video/mp4">
                                     Your browser does not support HTML5 video.
                                   </video>
                             </div>
@@ -110,7 +114,8 @@
                                 <iframe [src]="templatesMessageData?.Links" width="100%" height="150px"></iframe>
 
                             </div>
-                            <div class="message_data" >
+                            <div class="message_data" [ngClass]="{'preview': templatesMessageData.media_type === 'text'}">
+                                
                                 <span class="">{{templatesMessageData?.BodyText}}</span><br /><br />
                                 <span>{{templatesMessageData?.FooterText}}</span><br />
                             </div>
@@ -121,7 +126,7 @@
                      </div>
                     <div class="action_section">
                         <button type="button" class="btn" (click)=" copyTemplatesData()"><img src="../../../../assets/img/teambox/copy.svg"></button>
-                        <button type="button" class="btn"  data-bs-toggle="modal" data-bs-target="#deleteModal" ><img src="../../../../assets/img/teambox/delete.svg"></button>
+                        <button type="button" class="btn" (click)="toggleTemplatesData(null)" data-bs-toggle="modal" data-bs-target="#deleteModal" ><img src="../../../../assets/img/teambox/delete.svg"></button>
                     </div>
                 </div>
 
@@ -175,13 +180,13 @@
                 <p class="py-2 title">{{gallerydata.Header}}</p>
              
                 <div class="campaigns_section_item_statics">
-                    <div class="py-2"><p>{{templatesMessageData?.Language}}</p><p><span>Language</span></p></div>
-                    <div class="py-2"><p>{{templatesMessageData?.Category}}</p><p><span>Category</span></p></div>         
+                    <div class="py-2"><p>{{gallerydata.Language}}</p><p><span>Language</span></p></div>
+                    <div class="py-2"><p>{{gallerydata.Category}}</p><p><span>Category</span></p></div>         
                 </div>
                 
               
                     <div class="d-flex py-1">
-                    <p>{{templatesMessageData?.industry}}</p>
+                    <p>{{gallerydata.industry}}</p>
                   </div>
                   <p><span>Industry</span></p>
             </div>
@@ -217,6 +222,10 @@
             </div>
           
         </div>
+        <div class="industry">
+            <p>Industry</p>
+            <span>{{templatesMessageData?.industry}}</span>
+        </div>
         <p id="message_head"> Message </p>
         <div class="message_section">
             <div *ngIf="templatesMessageData.media_type == 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div>
@@ -230,12 +239,12 @@
                 <iframe [src]="templatesMessageData?.Links" width="100%" height="150px"></iframe>
 
             </div>
-            <div class="message_data">
+            <div class="message_data" [ngClass]="{'preview': templatesMessageData.media_type === 'text'}">
                 {{templatesMessageData?.BodyText}}
             </div>
-            <div class="contact-us">
+            <!-- <div class="contact-us">
                 Contact Us
-            </div>
+            </div> -->
         </div>
      </div>
     <div class="action_section">
@@ -448,14 +457,16 @@
                 
                 </div>
             
-                <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image">
+                <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image" [ngClass]="{'document-selected':newTemplateForm.get('Links').value !== null}">
+                    <div class="main-preview-type-doc" *ngIf="newTemplateForm.get('Links').value !== null">
+                        <span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
+                    </div>
+                    <img *ngIf="newTemplateForm.get('Links').value !== null" src="../../../../assets/img/settings/doc.svg" />
+                    <span class="document-preview" *ngIf="newTemplateForm.get('Links').value !== null" >{{ newTemplateForm.get('Links')!.value }}</span>
                         <input type="file" accept=".doc, .docx, .pdf" formControlName="Links" name="document-select" id="sel-type-document">
                         <div *ngIf="newTemplateForm.get('Links').value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of document</p></div>
-                        <div class="main-preview-type-doc" *ngIf="newTemplateForm.get('Links').value !== null" [ngStyle]="{'background-image': 'url(/assets/img/settings/doc.svg)'}">
-                            <span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
-                        </div>
                          
                 </div>
 
@@ -463,8 +474,8 @@
             <div >
 
                 <div *ngIf="selectedType !== 'text'" class="flex-column sel-type-link">
-                    <label for="link" id="link" >Link</label>
-                    <input type="url" id="link" [disabled]="newTemplateForm.get('Links').value !== ''" formControlName="Links" placeholder="Enter">
+                    <label for="link" id="Links" >Link</label>
+                    <input type="url" id="Links" [attr.disabled]="newTemplateForm.get('Links')!.value !== null ? 'disabled' : null"  formControlName="Links" placeholder="Enter">
                 </div>
 
 
@@ -541,7 +552,7 @@
                   <div class="d-flex justify-content-between">
                     <div class="pt-3 pb-2 msg-head">
                     <h6 class="pt-1 pb-3">Country</h6>
-                    <select class="callto input-form">
+                    <select class="callto input-form" formControlName="phone_number" (input)="clicksd()">
                         <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
                           {{ countryCode }}
                         </option>
@@ -552,7 +563,7 @@
                         <h6>Phone No.</h6> <div><span class="characters-count">{{ getCharacterCount(7) }}</span><span>/20 Characters</span></div>
                       </div>
                       <div class="sel-type-link">
-                        <input type="text" id="call-phone" maxlength="20" placeholder="Enter" (input)="updateCharacterCount($event, 7)">
+                        <input type="text" formControlName="phone_number" (input)="clicksd()" maxlength="20" placeholder="Enter" (input)="updateCharacterCount($event, 7)">
                    </div>  
                    </div>
                   </div>
@@ -565,16 +576,19 @@
        
             <div class="message_section">
                 <h6>Preview</h6>
-                <div  *ngIf="selectedType === 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}" (click)="resetLinksValue()"></div>
-                <div *ngIf="selectedType === 'video'" class="message_type">
-                    <video autoplay muted loop>
-                        <source [src]="selectedPreview">
+                <div *ngIf="selectedType === 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
+                </div>
+                <div *ngIf="selectedType === 'video'" class="video message_type">
+                    <video *ngIf="selectedPreview && selectedPreview.startsWith('data:video')" autoplay muted #videoPlayer>
+                        <source [src]="selectedPreview" type="video/mp4">
                         Your browser does not support HTML5 video.
                       </video>
                 </div>
-                <div *ngIf="selectedType === 'document'" class="message_type">
-                 
-
+                <div *ngIf="selectedType === 'document'" class="message_type" [ngClass]="{'document-selected':newTemplateForm.get('Links').value !== null}">
+                    <div class="d-flex flex-column">
+                        <img class="mx-auto mt-4" *ngIf="newTemplateForm.get('Links').value !== null" src="../../../../assets/img/settings/doc.svg" />
+                        <span class="document-preview" *ngIf="newTemplateForm.get('Links').value !== null" >{{ newTemplateForm.get('Links')!.value }}</span>
+                    </div>
                 </div>
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
                 <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
