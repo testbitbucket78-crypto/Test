@@ -35,6 +35,9 @@
     opacity: 1;
     border-radius: 50%;
     box-shadow: 4px 11px 20px #1111122b;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
    }
 
    .profile-margin-left{
@@ -279,4 +282,26 @@ input[type=file] {
 .industry-txt{
     padding: 13px 0px 0px 6px;
     word-wrap: anywhere;
+}
+.billy-address{
+    font-family: 'Manrope';
+    font-weight: 500;
+    line-height: 22px;
+}
+.update-pass-btn {
+    border: none;
+    color: #FFFFFF;
+    background: #6149cd;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 2% 8%;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 15px;
+}
+.companyimg{
+    width: 100%;
+    height: auto;
+}
+.select-industry{
+    color: gray;
 }

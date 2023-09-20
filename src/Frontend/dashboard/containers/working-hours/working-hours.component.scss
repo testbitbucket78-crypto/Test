@@ -13,7 +13,7 @@
 
 .working-hour-heading{
 font-size: 20px;
-font-weight: 650;
+font-weight: 800;
 color: #000000;
 font-family: Manrope;
 }
@@ -43,7 +43,8 @@ font-family: Manrope;
   border-radius: 19px;
   padding: 7px 12px;
   border: none;
-  font-family: "Manrope";
+  font-family: 'Manrope';
+  width: 15rem;
 }
 
 
@@ -105,6 +106,7 @@ font-family: Manrope;
   border: 1px;    
   color: white;
   font-weight: 400;
+  width: 7rem;
  }
 
  .incoming-card{
@@ -134,10 +136,12 @@ font-family: Manrope;
  }
 
  .months-view{
-  display: grid;
+  display: flex;
   gap: 0.6vw;
-  grid-template-columns: auto auto auto auto;
-  padding: 1.8rem 1.4rem 0.5rem 1.4rem;
+  // grid-template-columns: auto auto auto auto;
+  // padding: 1.8rem 1.4rem 0.5rem 1.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
  }
 
  /* width */
@@ -167,24 +171,26 @@ font-family: Manrope;
 
 .dates-view{
   display: grid;
-  gap: 0.1vw;
+  gap: 0.4vw;
   grid-template-columns: auto auto auto auto;
 }
 
 .holiday-calender-modal{
-  width: 500px;
-  height: 550px;
+  width: 496px;
+  height: 639px;
   border-radius: 30px;
 }
 
 .holiday-calender-modal .modal-title{
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 900;
+  font-family: 'Manrope';
 }
 
 .month-heading{
   font-size: 20px;
-  font-weight: 800;
+  font-weight: 900;
+  font-family: 'Manrope';
 }
 
 .working-days{
@@ -242,7 +248,7 @@ font-family: Manrope;
   border: 1px solid #EBEBEB;
   padding: 5px 13px;
   background: #ffffff;
-  width: 158px;
+  width: 257px;
   outline: none;
   cursor: pointer;
   font-size: 12px;
@@ -264,5 +270,8 @@ select {
 }
 .date-time{
   font-family: Manrope;
-  font-weight: bold;
+  font-weight: 800;
+}
+.calen{
+  font-family: 'Manrope';
 }

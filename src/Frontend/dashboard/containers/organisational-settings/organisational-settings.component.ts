@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators} from '@angular/forms';
 import { SettingsService } from '../../services/settings.service';
-import { billingDetail, companyDetail, localeDetail } from '../../models/settings.model';
+import { billingDetail, companyDetail, localeDetail,profilesettingPicData } from '../../models/settings.model';
 import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
+
 
 
 declare var $:any;
@@ -14,11 +15,18 @@ declare var $:any;
   styleUrls: ['./organisational-settings.component.scss']
 })
 export class OrganisationalSettingsComponent implements OnInit {
-  
-  selectedTab:number = 1;
+  uid :any;
+  spiId!:number;
+  User:any;
+  profile_img:any;
+  profilePicture:any;
+  selectedTab:number = 3;
   companyDetailForm!:FormGroup;
   billingForm!:FormGroup;
   localeForm!:FormGroup;
+  successMessage='';
+  errorMessage='';
+	warningMessage='';
   companyData:companyDetail = <companyDetail>{};
   billingData:billingDetail = <billingDetail>{};
   localeData:localeDetail = <localeDetail>{};
@@ -51,7 +59,8 @@ export class OrganisationalSettingsComponent implements OnInit {
   ];
   imageChangedEvent: any = '';
   croppedImage: any = '';
-
+  profilesettingPicData = <profilesettingPicData> {};
+  companyimage:any;
 
   form: FormGroup;
   zipCodePattern = '^[0-9]{1,6}$';
@@ -61,25 +70,28 @@ export class OrganisationalSettingsComponent implements OnInit {
 	preferredCountries: CountryISO[] =[];
 
   
-  constructor(private _settingsService:SettingsService,private fb: FormBuilder) {     
+  constructor(private _settingsService:SettingsService,private fb: FormBuilder,private apiService: SettingsService) {     
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     this.form = this.fb.group({
       zip_code: ['', [Validators.required, Validators.pattern(this.zipCodePattern)]],
     });
   }
 
-  get zipCodeControl() {
-    return this.form.get('zip_code');
-  }
-
 
   ngOnInit(): void {
+    this.User = (JSON.parse(sessionStorage.getItem('loginDetails')!)).user ;
+    this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
+    console.log(JSON.stringify(this.profilePicture));
     this.companyDetailForm = this.prepareCompanyForm();
     this.billingForm = this.preparebillingForm();
     this.localeForm = this.preparelocaleForm();
     this.getBillingDetails();
     this.getCompanyDetails();
     this.getLocaleDetails();
+    let uid: string  = sessionStorage.getItem('loginDetails')?.toString() ?? '';
+    let userid =JSON.parse(uid);
+    this.uid = userid.uid;
+    this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
   }
 
 
@@ -98,25 +110,48 @@ export class OrganisationalSettingsComponent implements OnInit {
 
  //API call to save the cropped image
 
-//  saveCroppedProfilePicture() {
-//   this.profilePicData.spid = this.spId,
-//   this.profilePicData.uid = this.uid,
-//   this.profilePicData.name = this.Name,
-//   this.profilePicData.filePath = this.croppedImage
+ savesettingprofileimage() {
+  this.profilesettingPicData.spid = this.sp_Id,
+  this.profilesettingPicData.uid = this.uid,
+  this.profilesettingPicData.user = this.User,
+  this.profilesettingPicData.filePath = this.croppedImage
 
-// this.apiService.saveUserProfilePic(this.profilePicData).subscribe(
-// (response) => {
+this.apiService.uploadCompanylogo(this.profilesettingPicData).subscribe(
+(response) => {
 
-// this.showToaster('Image saved successfully','success' + response);
-// $("#pictureCropModal").modal('hide');
-// this.profilePicture;
+this.showToaster('Image saved successfully','success' + response);
+$("#pictureCropModal").modal('hide');
+this.profilePicture;
 
-// },
-// (error) => {
-// this.showToaster('Error saving image ','error' + error.message);
-// })
+},
+(error) => {
+this.showToaster('Error saving image ','error' + error.message);
+})
 
-// }
+}
+
+
+
+showToaster(message:any,type:any){
+  if(type=='success'){
+    this.successMessage=message;
+  }else if(type=='error'){
+    this.errorMessage=message;
+  }else{
+    this.warningMessage=message;
+  }
+  setTimeout(() => {
+    this.hideToaster()
+  }, 5000);
+  
+}
+hideToaster(){
+  this.successMessage='';
+  this.errorMessage='';
+  this.warningMessage='';
+}
+
+//  image cropping function for popup
 
 
   prepareCompanyForm(){
@@ -139,7 +174,7 @@ export class OrganisationalSettingsComponent implements OnInit {
     Country:new FormControl(),
     State:new FormControl(),
     City:new FormControl(),
-    zip_code:new FormControl(),
+    zip_code: new  FormControl( ['', [Validators.required, Validators.pattern(this.zipCodePattern)]])
     });
   }
 
@@ -222,7 +257,10 @@ export class OrganisationalSettingsComponent implements OnInit {
     .subscribe(result =>{
       if(result){
         this.companyData = result?.companyDetail[0];
+        this.companyimage=result?.companyDetail[0].profile_img;
       }
+      console.log(this.companyimage);
+      console.log(this.companyData);
 
     })
   }

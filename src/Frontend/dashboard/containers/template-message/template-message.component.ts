@@ -418,57 +418,10 @@ removeValue() {
         }
       });
     }
-  
-    applyFilterOnGalleryData(){
-     
-      let channelIn:any=[]
-      let statusIn:any=[]
-      let categoryIn:any=[]
+ 
 
-      for(var i=0;i<this.filterListTopic.length;i++){
-        if(this.filterListTopic[i]['checked']){
-          statusIn.push(this.filterListTopic[i]['value'])
-        }
-      }
-      for(var i=0;i<this.filterListIndustry.length;i++){
-        if(this.filterListIndustry[i]['checked']){
-          categoryIn.push(this.filterListIndustry[i]['value'])
-        }
-      }
-      for(var i=0;i<this.filterListCategory.length;i++){
-        if(this.filterListCategory[i]['checked']){
-          channelIn.push(this.filterListCategory[i]['value'])
-        }
-      }
-  
 
-       // Now, filter this.galleryData based on the selected values
-  this.galleryData.filter((template) => {
-    // You need to replace these conditions with your actual data structure
-    const templateStatus = template?.status; // Replace with the actual property name
-    const templateCategory = template?.Category; // Replace with the actual property name
-    const templateChannel = template?.Channel; // Replace with the actual property name
-
-    // Check if the template's status is in the selected statusIn array
-    const statusFilter = statusIn.length === 0 || statusIn.includes(templateStatus);
-
-    // Check if the template's category is in the selected categoryIn array
-    const categoryFilter = categoryIn.length === 0 || categoryIn.includes(templateCategory);
-
-    // Check if the template's channel is in the selected channelIn array
-    const channelFilter = channelIn.length === 0 || channelIn.includes(templateChannel);
-
-    // Return true if all filters match, otherwise, return false
-    return statusFilter && categoryFilter && channelFilter;
-  });
-
-     
-    }
   }
-
-
-
-
 
 
 

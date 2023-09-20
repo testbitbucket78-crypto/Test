@@ -39,8 +39,7 @@ export class QuickResponseComponent implements OnInit {
   isTemplate:any;
   // templatesMessageData:any;
   ischannel='';
-  base64?: string | null;
-  Selectchannel: string | null = null;
+
   
   
   
@@ -125,6 +124,7 @@ export class QuickResponseComponent implements OnInit {
     userData.spid=this.spid;
     userData.ID=this.ID;
     userData.created_By=this.created_By;
+    console.log(this.created_By);
     userData.Links=this.usertemplateForm.controls.Links.value;
     userData.TemplateName=this.usertemplateForm.controls.TemplateName.value;
     userData.Channel=this.usertemplateForm.controls.Channel.value;

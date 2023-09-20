@@ -2,7 +2,7 @@
 
 export interface companyDetail {
     SP_ID: number;
-    //profile_img:raunak.png,
+    profile_img:string;
     Company_Name: string;
     Company_Website: string;
     Country: string;
@@ -285,6 +285,13 @@ export interface newTemplateFormData {
     template_json:any[];
     isTemplate:number;
 }
+export interface profilesettingPicData{
+    spid: number;
+    uid :number;
+    user :string;
+    filePath:string;
+}
+
 
 
 
