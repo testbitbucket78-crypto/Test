@@ -132,6 +132,7 @@ export class TemplateMessageComponent implements OnInit {
     this.newTemplateForm = this.prepareUserForm();
     this.filteredTemplatesData = [...this.templatesData];
     this.getTemplatesData();
+
   }
 
   prepareUserForm(){
@@ -145,13 +146,11 @@ export class TemplateMessageComponent implements OnInit {
       Links:new FormControl(null),
       BodyText:new FormControl(null,[Validators.required]),
       FooterText:new FormControl(null),
-      buttonType: new FormControl('')
+      buttonType: new FormControl(''),
+      phone_number:new FormControl(null)
     });
   }
 
-
-
-  
   selectTab(tabNumber: number) {
     this.selectedTab = tabNumber;
   }
@@ -258,7 +257,6 @@ removeValue() {
       this.apiService.getTemplateData(this.spid,1).subscribe(response => {
         this.templatesData = response.templates;
         this.filteredTemplatesData = this.templatesData;
-        console.log(this.templatesData);
       });   
       
       //get gallery data
@@ -285,7 +283,7 @@ removeValue() {
     saveNewTemplate() {
       let newTemplateFormData = this.copyNewTemplateFormData(); 
 
-      if(this.newTemplateForm.valid) {
+      if(this.newTemplateForm.valid && this.selectedType != 'video') {
         this.apiService.saveNewTemplateData(newTemplateFormData,this.selectedPreview).subscribe(response => {
         
           if(response) {
@@ -332,7 +330,7 @@ removeValue() {
       newTemplateForm.created_By = this.currentUser;
       newTemplateForm.ID = this.id;
       newTemplateForm.isTemplate = 1;
-      newTemplateForm.media_type = 'image';
+      newTemplateForm.media_type = 'video';
       newTemplateForm.Header = this.newTemplateForm.controls.Header.value;
       
       newTemplateForm.Links = this.newTemplateForm.controls.Links.value;
@@ -343,7 +341,7 @@ removeValue() {
       newTemplateForm.Channel = this.newTemplateForm.controls.Channel.value;
       newTemplateForm.Category = this.newTemplateForm.controls.Category.value;
       newTemplateForm.Language = this.newTemplateForm.controls.Language.value;
-      newTemplateForm.status = 'Draft';
+      newTemplateForm.status = 'Pending';
       newTemplateForm.template_id = 0;
       newTemplateForm.template_json =[];
       // newTemplateForm.template_json.push({
@@ -421,6 +419,51 @@ removeValue() {
       });
     }
   
+    applyFilterOnGalleryData(){
+     
+      let channelIn:any=[]
+      let statusIn:any=[]
+      let categoryIn:any=[]
+
+      for(var i=0;i<this.filterListTopic.length;i++){
+        if(this.filterListTopic[i]['checked']){
+          statusIn.push(this.filterListTopic[i]['value'])
+        }
+      }
+      for(var i=0;i<this.filterListIndustry.length;i++){
+        if(this.filterListIndustry[i]['checked']){
+          categoryIn.push(this.filterListIndustry[i]['value'])
+        }
+      }
+      for(var i=0;i<this.filterListCategory.length;i++){
+        if(this.filterListCategory[i]['checked']){
+          channelIn.push(this.filterListCategory[i]['value'])
+        }
+      }
+  
+
+       // Now, filter this.galleryData based on the selected values
+  this.galleryData.filter((template) => {
+    // You need to replace these conditions with your actual data structure
+    const templateStatus = template?.status; // Replace with the actual property name
+    const templateCategory = template?.Category; // Replace with the actual property name
+    const templateChannel = template?.Channel; // Replace with the actual property name
+
+    // Check if the template's status is in the selected statusIn array
+    const statusFilter = statusIn.length === 0 || statusIn.includes(templateStatus);
+
+    // Check if the template's category is in the selected categoryIn array
+    const categoryFilter = categoryIn.length === 0 || categoryIn.includes(templateCategory);
+
+    // Check if the template's channel is in the selected channelIn array
+    const channelFilter = channelIn.length === 0 || channelIn.includes(templateChannel);
+
+    // Return true if all filters match, otherwise, return false
+    return statusFilter && categoryFilter && channelFilter;
+  });
+
+     
+    }
   }
 
 
