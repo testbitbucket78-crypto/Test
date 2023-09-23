@@ -47,7 +47,7 @@ export const sideNavItems: SideNavItems = {
 
         icon: 'assets/img/side-nav/funnel.svg',
         text: 'Funnel',
-        link: '/dashboard/automation',
+        link: '/dashboard/funnel',
     },
 
     FlowBuilder: {
@@ -65,18 +65,18 @@ export const sideNavItems: SideNavItems = {
 
             {
                 icon: 'assets/img/side-nav/con-report.svg',
-                text: ' Conversational Report',
-                link: '/dashboard/conversation',
+                text: ' Conversational Reports',
+                link: '/dashboard/conversationalReports',
             },
             {
                 icon: 'assets/img/side-nav/camp-repot.svg',
-                text: 'Campaign Report',
-                link: '/dashboard/reportcampaign',
+                text: 'Campaign Reports',
+                link: '/dashboard/campaignReports',
             },
             {
                 icon: 'assets/img/side-nav/auto-report.svg',
-                text: 'Automation Report',
-                link: '/dashboard/reportautomation',
+                text: 'Automation Reports',
+                link: '/dashboard/automationReports',
             },
 
         ],

@@ -74,30 +74,18 @@
 
 }
 
+/* global styling for popup bs-modal */
+
+.modal-dialog {
+  margin: auto!important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 .modal-content {
-  margin-top: 5rem;
-}
-
-
-
-.custom_modal {
-  overflow: auto;
-  max-height: 80vh;
-}
-
-.lg-size .modal-dialog {
-  max-width: 800px;
-
-}
-
-.quickResponse .items_list .item p span {
-  font-size: 14px;
-  color: #6149CD;
-  font-weight: 800;
-}
-
-.modal-open .sb-nav-fixed #layoutSidenav #layoutSidenav_nav {
-  z-index: 0 !important;
+  margin: 0;
 }
 
 .modal-backdrop {
@@ -113,9 +101,33 @@
 
 }
 
+
+.custom_modal {
+  overflow: auto;
+  max-height: 80vh;
+}
+
+.lg-size .modal-dialog {
+  max-width: 800px;
+
+}
+
 .modal-xl {
   max-width: 950px !important;
 }
+
+.quickResponse .items_list .item p span {
+  font-size: 14px;
+  color: #6149CD;
+  font-weight: 800;
+}
+
+.modal-open .sb-nav-fixed #layoutSidenav #layoutSidenav_nav {
+  z-index: 0 !important;
+}
+
+
+
 
 .modal-header {
   display: flex;
@@ -234,6 +246,7 @@
 .modal-content {
   border: 0 !important;
   width: 68%;
+  margin: 0;
   border-radius: 3.3rem;
   box-shadow: 4px 22px 54px #695F971A;
   border-radius: 30px !important;
@@ -317,7 +330,7 @@
 .ag-theme-alpine .ag-ltr .ag-cell {
   font-weight: 400;
   color: #000000;
-  font-size: 0.75vw;
+  font-size: 0.8vw;
 }
 
 .ag-root-wrapper-body.ag-layout-normal {
@@ -330,16 +343,6 @@
 
 .cropper {
   border-radius: 50% !important;
-}
-
-
-
-@media all and (max-width:1536px) {
-  .ag-theme-alpine .ag-row {
-    font-size: 12px;
-
-  }
-
 }
 
 

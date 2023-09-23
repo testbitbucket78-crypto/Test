@@ -33,7 +33,7 @@ import * as dashboardServices from './services';
 import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
 import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { DashboardComponent } from './containers';
-import { NumberToWordsPipe } from './containers/number-to-words.pipe';
+
 
 @NgModule({
     imports: [
@@ -62,7 +62,7 @@ import { NumberToWordsPipe } from './containers/number-to-words.pipe';
          ...dashboardComponents.components,
             DashboardComponent,
             SearchfilterPipe,
-            NumberToWordsPipe,
+
         ],
     exports: [...dashboardContainers.containers,
               ...dashboardComponents.components,
