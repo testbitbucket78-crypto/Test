@@ -32,6 +32,10 @@
     background-color: green;
 }
 
+.toaster p.warn {
+    background-color: orange;
+}
+
 .link {
     color: skyblue;
     font-size: 16px;
@@ -44,6 +48,7 @@ h1 {
     color: #000000;
     margin: 0px 0px 10px 20px;
 }
+
 
 .active .bs-stepper-circle {
     background: #6149cd 0% 0% no-repeat padding-box;
@@ -69,10 +74,11 @@ h1 {
 #close-btn {
     background: #ffffff;
     border-radius: 12px;
-    opacity: 1;
     border: 1px solid #ebebeb;
     font-family: 'Manrope';
     font-size: 13px;
+    width: 3.4%;
+    height: 35px;
 }
 
 .heading {
@@ -878,7 +884,7 @@ input:focus {
 .smartreplies-failed {
 
     display: inline;
-    height: 135px;
+    height: 175px;;
     pointer-events: auto;
     background-color: #FFF4F2;
     border-radius: 20px;
@@ -913,10 +919,6 @@ input:focus {
     font-size: 14px;
 }
 
-#head-add {
-    margin-top: 8px;
-    margin-left: 26px;
-}
 
 .btn9 {
     left: 95px;
@@ -929,10 +931,6 @@ input:focus {
 
 .heading {
     font-size: 17px;
-}
-
-#con-fir {
-    width: 65rem;
 }
 
 .box {
@@ -995,7 +993,7 @@ input:focus {
 }
 
 .form-check {
-    margin: 9px 0px 25px 101px;
+    margin: 11px 0px 24px 84px;
 }
 
 .form-check-label {
@@ -1018,18 +1016,18 @@ input:focus {
     width: 360px;
 }
 
-#close-btn {
-    background: #ffffff;
-    border-radius: 12px;
-    opacity: 1;
-    border: 1px solid #ebebeb;
-    font-family: "Manrope";
-    font-size: 13px;
-    margin-top: 15px;
-    margin-left: -83px;
-    width: 3%;
-    height: 90%;
-}
+// #close-btn {
+//     background: #ffffff;
+//     border-radius: 12px;
+//     opacity: 1;
+//     border: 1px solid #ebebeb;
+//     font-family: "Manrope";
+//     font-size: 13px;
+//     margin-top: 15px;
+//     margin-left: -83px;
+//     width: 3.4%;
+//     height: 90%;
+// }
 
 input[type='radio'] {
     width: 15px;
@@ -1445,15 +1443,15 @@ input:focus {
     background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695f9730;
     border-radius: 20px;
-    padding: 10px 0px;
+    // padding: 10px 0px;
     position: absolute;
     max-width: 178px;
-    margin-top: 10px;
+    // margin-top: 10px;
     max-height: 272px;
     overflow: auto;
     z-index: 9;
-    top: 34%;
-    right: 2%;
+    // top: 34%;
+    // right: 2%;
 }
 
 .addTag {
@@ -1490,9 +1488,6 @@ input:focus {
     border-radius: 50%;
 }
 
-.qr-modal {
-    top: 283px !important;
-}
 
 #add_tags {
     font-weight: 600;

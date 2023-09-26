@@ -91,8 +91,8 @@
     </div>
 
     <div class="modal fade" tabindex="-1" id="companyDetailModal" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content account-modal">
+        <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+            <div class="m-0 modal-content account-modal">
                 <div class="model-setting">
                 <div class="modal-header mt-2 ml-2">
                     <h5 class="modal-title">Edit Company Details</h5>
@@ -160,8 +160,8 @@
                         <div class="profile-form-row">
                             <div class="profile-form-left">
                                 <span>Country</span>
-                                <select class="company input-form" formControlName="Country" >
-                                    <option [value]="0" selected>Select country</option>
+                                <select class="company input-form" formControlName="Country" required>
+                                    <option value="0" selected>Select country</option>
                                     <option  *ngFor="let item of country" [value]="item">{{item}}</option>
                                 </select>
                             </div>
@@ -185,16 +185,15 @@
                         <div class="profile-form-row">
                             <div class="profile-form-left">
                                 <span>Industry</span>
-                                <select class="company input-form" formControlName="Industry"   placeholder="Select Industry">
-                                    
-                                    <option [selected]="true" >Select Industry</option>
+                                <select class="company input-form" formControlName="Industry" required >
+                                    <option value="" selected>Select Industry</option>
                                     <option *ngFor="let item of industry" [value]="item">{{item}}</option>
-                                </select>
+                                  </select>
                             </div>
                             <div class="noemploye">
                                 <span>No. of Employees</span>
-                                <select class="company input-form" formControlName="Employees_count">
-                                    <option selected>Select no of employees</option>
+                                <select class="company input-form" formControlName="Employees_count" required >
+                                    <option  value="" selected>Select no of employees</option>
                                     <option *ngFor="let item of noOfEmployees" [value]="item">{{item}}</option>
                                 </select>
                             </div>
@@ -211,8 +210,8 @@
 
 
     <div class="modal fade" tabindex="-1" id="billingDetailModal" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content billing-modal">
+        <div class="m-auto d-flex justify-content-center align-items-center h-100  modal-dialog" role="document">
+            <div class="m-0 modal-content billing-modal">
                 <div class="modal-header pt-4 pl-4">
                     <h5 class="modal-title">Add Billing Address</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
@@ -231,21 +230,21 @@
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Location</span>
-                            <select class="billing input-form" formControlName="Country">
-                                <option>Select country</option>
+                            <select class="billing input-form" formControlName="Country" required>
+                                <option value="">Select country</option>
                                 <option *ngFor="let item of country" [value]="item">{{item}}</option>
                             </select>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col"></span>
-                            <select class="billing input-form" formControlName="State">
-                                <option>State</option>
+                            <select class="billing input-form" formControlName="State" required>
+                                <option value="">State</option>
                             </select>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col"></span>
-                            <select class="billing input-form" formControlName="City">
-                                <option>City</option>
+                            <select class="billing input-form" formControlName="City" required>
+                                <option value="">City</option>
                             </select>
                         </div>
                         <div class="billing-form-row">
@@ -277,8 +276,8 @@
     </div>
 
     <div class="modal fade" tabindex="-1" id="localeDetailModal" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content locale-modal">
+        <div class="locale-detail modal-dialog" role="document">
+            <div class="m-0 modal-content locale-modal">
                 <div class="modal-header mt-3 ml-2">
                     <h5 class="modal-title">Add Locale Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
@@ -289,23 +288,23 @@
                     <form [formGroup]="localeForm" class="mt-4">
                         <div class="billing-form-row">
                             <span class="billing-left-col">Date Format</span>
-                            <select class="input-form selectpicker" formControlName="Date_Format" >
-                                <option selected>Select date format</option>
+                            <select class="input-form selectpicker" formControlName="Date_Format" required >
+                                <option value="" selected>Select date format</option>
                                 <option *ngFor="let item of dateFormates" [value]="item">{{item}}</option>
                             </select>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Time Format</span>
-                            <select class="input-form" formControlName="Time_Format">
-                                <option >Select Time Format</option>
+                            <select class="input-form" formControlName="Time_Format" required>
+                                <option value="">Select Time Format</option>
                                 <option [value]='12'>12 Hours</option>
                                 <option [value]='24'>24 Hours</option>
                             </select>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Time Zone</span>                            
-                            <select name="timezone" class="input-form" formControlName="Time_Zone">
-                                <option>Select time zone</option>
+                            <select name="timezone" class="input-form" formControlName="Time_Zone" required>
+                                <option value="" >Select time zone</option>
                                 <option value="Etc/GMT+12">(GMT-12:00) International Date Line West</option>
                                 <option value="Pacific/Midway">(GMT-11:00) Midway Island, Samoa</option>
                                 <option value="Pacific/Honolulu">(GMT-10:00) Hawaii</option>
@@ -392,8 +391,8 @@
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Currency</span>
-                            <select class="input-form" id="currency" formControlName="Currency">
-                                <option>Select currency</option>
+                            <select class="input-form" id="currency" formControlName="Currency" required>
+                                <option value="">Select currency</option>
                                 <option value="INR">Indian Rupee</option>
                                 <option value="AUD">Australian Dollar</option>                             
                                 <option value="EUR">Euro</option>

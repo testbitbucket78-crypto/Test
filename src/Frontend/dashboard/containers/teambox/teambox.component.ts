@@ -1566,7 +1566,6 @@ import { base64ToFile } from 'ngx-image-cropper';
 			if(this.modalReference){
 				this.modalReference.close();
 			}
-			this.getAllInteraction()
 			this.showToaster('Tags updated...','success')
 
 		});

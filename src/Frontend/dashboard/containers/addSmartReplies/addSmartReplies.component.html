@@ -1,16 +1,14 @@
-<div class="container" id="con-fir">
-  <div class="bs-stepper row">
-    <div class="head d-flex">
-      <div class="heading d-flex" id="head-add">Add Smart Reply
-      </div>
+<div class="toaster" (click)="hideToaster()">
+  <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+  <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+  <p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+</div>
 
-      <div class="toaster" (click)="hideToaster()">
-        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
-        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
-      </div>
-  
-      <button type="button" data-bs-dismiss="modal"  class="btn-cross" aria-label="Close" id="close-btn">X</button>
-  
+<div class="container">
+  <div class="bs-stepper row">
+    <div class="head d-flex justify-content-between align-items-center">
+      <p class="m-0 heading">Add Smart Reply</p>  
+      <button type="button" id="close-btn" data-bs-dismiss="modal" aria-label="Close">X</button>
     </div>
     <div class="bs-stepper-header" role="tablist">
       <div class="bs-tab">
@@ -37,7 +35,7 @@
       </div>
     </div>
     </div>
-    <div class="bs-stepper-content">
+    <div class="p-0 bs-stepper-content">
       <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
         <div class="box" [formGroup]="newReply">
           <h5>Title</h5>
@@ -104,8 +102,7 @@
             </div>
             <div class="desc-radio-input-1" *ngIf="showBox1">
               <p id="p-title">Exact Matching</p>
-              <p id="p-body">As long as the message contains a <br />exact Keyword. You can also<br /> set emojis as your
-                keyword.</p>
+              <p id="p-body">Your customer’s message must 100% <br />  match the Keyword.If it’s a phrase, then the exact phrase.</p>
               <button id="radio-close-btn" (click)="showBox1=false">X</button>
             </div>
             <div class="form-check">
@@ -119,18 +116,17 @@
   
             <div class="desc-radio-input-2" *ngIf="showBox2">
               <p id="p-title">Contains</p>
-              <p id="p-body">As long as the message contains a <br />Keyword. You can also<br /> set emojis as your
-                keyword.</p>
+              <p id="p-body">If the customer's message contains the specific keyword being defined.<br> 
+                The sequence may be different but the defined keyword needs to be present.</p>
               <button id="radio-close-btn" (click)="showBox2=false">X</button>
             </div>
   
   
           </div>
         </div>
-        <div class="keyword-err-msg">
-          <span id="keyword-err-msg"></span>
+     
         <button type="button" (click)="verifyKeywordForNextStep(duplicatekeyword)" class="btn5 btn-block col-1 mt-3 ">Next</button>
-          </div>
+    
       </div>
       <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
         <button type="button" (click)="previous()" class="btn9 btn-block col-1"><img
@@ -477,7 +473,7 @@
   
           <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
             <div class="modal-dialog" role="document">
-              <div class="modal-content qr-modal">
+              <div class="modal-content">
   
   
                 <div class="popup-dialog AddTag">

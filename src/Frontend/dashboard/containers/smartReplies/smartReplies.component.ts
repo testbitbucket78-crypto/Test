@@ -106,6 +106,7 @@ export class SmartRepliesComponent implements OnInit {
 			this.isEdit = true;
 			this.isShowSmartReplies = true;
 			$("#smartrepliesModal").modal('show'); 
+			this.showSideBar= false;
 		
 		}
 

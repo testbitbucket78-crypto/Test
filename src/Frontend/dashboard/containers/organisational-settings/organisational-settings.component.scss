@@ -167,7 +167,6 @@
     width: 49rem;
     height: 28rem;
     border-radius: 1.5rem;
-    left: -8rem;
    }
 
    .billing-left-col{
@@ -305,3 +304,23 @@ input[type=file] {
 .select-industry{
     color: gray;
 }
+
+
+  
+select option {
+    color: #000000;
+  }
+  
+  select option[value="Select Industry"] {
+    color: #7A86A1;
+  }
+  
+  select:invalid,
+  select option[value=""] {
+    color: #7A86A1;
+  }
+
+  .locale-detail.modal-dialog {
+    max-width: 800px;
+  }
+  

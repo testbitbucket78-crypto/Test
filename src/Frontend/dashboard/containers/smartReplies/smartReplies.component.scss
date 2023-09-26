@@ -3,7 +3,7 @@
 }
 
 .container-empty-state {
-    height: 55vh;
+    height: 65vh;
 }
 
 .body-empty-state img {
@@ -22,7 +22,7 @@
 .content-head.d-flex {
     display: flex !important;
     justify-content: space-between;
-    padding: 1% 2% 0% 5%;
+    // padding: 1% 2% 0% 5%;
 }
 
 .input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
@@ -30,7 +30,6 @@
     border-radius: 19px;
     border: 1px solid #EBEBEB;
     background-color: #ffffff;
-    // margin: 0px 0px 0px -18px;
     font-family: 'Manrope';
     font-size: 14px;
     min-width: 350px;
@@ -40,24 +39,10 @@
 .collumn{
     margin: 26% 0% 6% 6%;
 }
-// @media (min-width: 576px){
-// .form-inline .input-group, .form-inline .custom-select {
-//     width: 70%;
-// }
-// }
-
-
-// @media (min-width:768px) {
-//     .d-md-inline-block {
-//     display: inline-block !important;
-//     width: 435px;
-//     margin-left: 3.7rem;
-// }
-// }
 
 
 button:not(:disabled), [type=reset]:not(:disabled) {
-      cursor: pointer;
+   
     color: #6149cd;
     font-weight: 700;
     background-color: #ffffff;
@@ -66,8 +51,8 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     font-family: "Manrope";
     font-size: 14px;
     width: 165px;
-    height: 36px;
-    /* margin: 60px 0px 0px 44pc; */
+    height: 45px;
+    cursor: pointer;
 }
 
 
@@ -77,11 +62,6 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     box-shadow: 1px 8px 29px #695F9724;
     opacity: 1;
     font-weight: bolder;
-}
-
-.add-smartrep-btn{
-    min-height: 45px;
-    margin-left: -60%;
 }
 
 .card{
@@ -162,6 +142,10 @@ h6.text-justify{
     font-size: 13px;
     margin-top: -12px;
 }
+
+.input-group.gf {
+    width: auto;
+}
 .gf img {
     position: absolute;
     margin: 15px 0px 0px 13px;
@@ -177,15 +161,12 @@ h6.text-justify{
     height: 100%;
     width: 400px;
     position: fixed;
-    z-index: 1;
+    z-index: 9999;
     top: 0;
     right: 0;
     background-color: #FBF9FE;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 60px;
-    max-height: 100%;
-    overflow-y: scroll;
   }
   .sidebar .btn5{
     border: 1px solid #EBEBEB;
@@ -239,23 +220,10 @@ h6.text-justify{
 
 .row.r1 {
     display: flex;
-    flex-wrap: wrap;
-    margin: 3% 3% 0% 4%;
+    flex-direction: column;
+    padding: 0% 4% 0% 4%;
 }
 
-@media screen  and (max-width: 768px) {
-    .row.r1 {
-        justify-content: center;
-    }
-    
-}
-
-@media screen  and (max-width: 1200px) {
-    .row.r1 {
-        justify-content: center;
-    }
-    
-}
 .row h6 {
 
     font-size: 14px;
@@ -402,8 +370,6 @@ height: 24px;
     flex-direction: column;
     width: 310px;
     height: 196px;
-    top: 145px;
-    left: 115px;
     pointer-events: auto;
     background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
@@ -520,10 +486,12 @@ margin-top: -12px;
     font-size: 14px;
     font-weight: 800;
 }
-#mod-da{
-    padding: 0;
+
+.addsmartreplies.modal-dialog {
     display: flex;
     justify-content: center;
+    max-width: 65rem;
+    padding: 0;
 }
 .modal-dialog .modal-content .deletefile .btn9 {
     border: 1px solid #695F9724;
