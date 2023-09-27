@@ -104,7 +104,7 @@ export class BillinghistoryComponent implements OnInit {
     
     formdateDate(inputDateString: string) {
       let dateObj = new Date(inputDateString);
-      let options = { year: "numeric", month: "short", day: "numeric" };
+      let options:any = { year: "numeric", month: "short", day: "numeric" };
       return dateObj.toLocaleDateString("en-US", options);
     }
 

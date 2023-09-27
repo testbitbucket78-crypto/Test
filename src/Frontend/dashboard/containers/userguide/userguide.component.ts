@@ -11,6 +11,7 @@ import { UserGuideSubtopic, UserGuideTitles } from 'Frontend/dashboard/models/pr
 export class UserguideComponent implements OnInit {
 
   spId:number = 0;
+  searchText:string ='';
   UserGuideTitles:UserGuideTitles[]= [];
   UserGuideSubTopics:UserGuideSubtopic[] = [];
   initUserGuideSubTopics:UserGuideSubtopic[]= [];

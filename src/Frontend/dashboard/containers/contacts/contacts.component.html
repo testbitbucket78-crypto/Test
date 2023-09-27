@@ -3,7 +3,7 @@
 		<sb-top-nav title="Contacts"></sb-top-nav>
 	<div class="contact-header">
 		<div class="">
-			<form class="d-none d-md-inline-block form-inline" [formGroup]="searchForm">
+			<form class="d-none d-md-inline-block form-inline">
 				<div class="input-group gf ">
 					<input class="form-control" type="text" placeholder="Search" aria-label="Search"
 						aria-describedby="basic-addon2" name="Name" (input)="onFilterTextBoxChange()" id="Search-Ag"
@@ -92,10 +92,7 @@
 													[maintainAspectRatio]="false"
 													[aspectRatio]="4 / 3"
 													format="jpg"
-													(imageCropped)="imageCropped($event)"
-													(imageLoaded)="imageLoaded()"
-													(cropperReady)="cropperReady()"
-													(loadImageFailed)="loadImageFailed()">
+													(imageCropped)="imageCropped($event)">
 													</image-cropper>
 											</div>
 							  
@@ -551,7 +548,7 @@
 						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
 							<div class="ss">
-								<ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+								<!-- <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
 									[enableAutoCountrySelect]="true" [enablePlaceholder]="false"
 									[searchCountryFlag]="true"
 									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
@@ -559,7 +556,7 @@
 									[maxLength]="15" [phoneValidation]="true" [separateDialCode]="true"
 									[numberFormat]="PhoneNumberFormat.National" name="Phone_number"
 									formControlName="Phone_number">
-								</ngx-intl-tel-input>
+								</ngx-intl-tel-input> -->
 								<!-- <select class="dropdown" id="country" [(ngModel)]="selectedCountry" >
 								<option *ngFor="let country of countries"  [ngValue]="country.code" >{{country}}</option>
 								
@@ -674,7 +671,7 @@
 						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
 							<div class="ss">
-								<ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+								<!-- <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
 									[enableAutoCountrySelect]="true" [enablePlaceholder]="false"
 									[searchCountryFlag]="true"
 									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
@@ -682,7 +679,7 @@
 									[maxLength]="15" [phoneValidation]="true" [separateDialCode]="true"
 									[numberFormat]="PhoneNumberFormat.National" name="Phone_number"
 									formControlName="Phone_number">
-								</ngx-intl-tel-input>
+								</ngx-intl-tel-input> -->
 							</div>
 						</div>
 					</div>

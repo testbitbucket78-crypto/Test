@@ -11,7 +11,6 @@ import { TablesModule } from 'Frontend/tables/tables.module';
 import { OrderModule } from 'ngx-order-pipe';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { AgGridModule } from 'ag-grid-angular';
 import { ImageCropperModule } from 'ngx-image-cropper';
 
@@ -48,7 +47,6 @@ import { DashboardComponent } from './containers';
         NavigationModule,
         ChartsModule,
         TablesModule,
-        NgxIntlTelInputModule,
         AgGridModule.withComponents([dashboardContainers.ContactsComponent]),
         NgMultiSelectDropDownModule.forRoot(),
         RichTextEditorModule,

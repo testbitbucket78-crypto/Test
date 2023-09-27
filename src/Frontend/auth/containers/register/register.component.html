@@ -24,13 +24,13 @@
                 <div class="col-sm-1"></div>
                 <div class="  pp"  id="col">
                   <label for="floatingInputGrid" id="la-ph">Phone Number</label>    
-                  <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+                  <!-- <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
                                       [enableAutoCountrySelect]="true" [enablePlaceholder]="false" [searchCountryFlag]="true"
                                       [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="false"
                                       [selectedCountryISO]="CountryISO.India" [maxLength]="15"
                                       [phoneValidation]="true" [separateDialCode]="separateDialCode"
                                       [numberFormat]="PhoneNumberFormat.National" name="mobile_number" formControlName="mobile_number" id="mobile_number" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }">
-                                  </ngx-intl-tel-input>
+                                  </ngx-intl-tel-input> -->
                   <!-- <input type="text-right " class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors  }" placeholder="Phone Number" aria-label="State"
                     name="mobile_number" formControlName="mobile_number" id="mobile_number" #text> -->
   
@@ -103,13 +103,13 @@
           <!-- <div *ngIf= "submitted && registerForm.controls.password.errors" class="text-danger">
             ! password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters
           </div> -->
-            <div *ngIf=" registerForm.get('password').hasError('required')" class="text-danger">
+            <div *ngIf=" registerForm.get('password')!.hasError('required')" class="text-danger">
             ! Password is required
           </div>
-          <div *ngIf=" registerForm.get('password').hasError('pattern')" class="text-danger">
+          <div *ngIf=" registerForm.get('password')!.hasError('pattern')" class="text-danger">
             ! Password must contain at least eight characters,<br> at least one number and both lower and uppercase letters<br> and special characters.
           </div>
-          <div *ngIf=" registerForm.get('confirmPassword').hasError('required')" class="text-danger">
+          <div *ngIf=" registerForm.get('confirmPassword')!.hasError('required')" class="text-danger">
             ! Confirm Password is required
                 </div>
           <div *ngIf=" registerForm.hasError('mismatch')" class="text-danger">

@@ -1,5 +1,4 @@
 <sb-layout-dashboard>
-	<!-- <sb-dashboard-head title="Teambox" [hideBreadcrumbs]="true"></sb-dashboard-head> -->
 	<sb-top-nav title="Teambox"></sb-top-nav>
 
 
@@ -98,8 +97,8 @@
 					</div>
 					<div class=" right_part">
 						<div class="time_circle">
-							<div role="progressbar" style={{selectedInteraction.progressbar.progressbarPer}}>{{selectedInteraction.progressbar.progressbarValue}}H</div>
-
+							<!-- <div role="progressbar" style={{selectedInteraction.progressbar.progressbarPer}}>{{selectedInteraction.progressbar.progressbarValue}}H</div> -->
+							<div role="progressbar">{{selectedInteraction.progressbar.progressbarValue}}H</div>
 						</div>
 						<div class="drop-down-btn">
 							<button *ngIf="selectedInteraction.progressbar.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72" style="margin:0 8px" [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : 'drop-down-btn red-color'" (click)="toggleConversationStatusOption()">
@@ -769,7 +768,7 @@
 					<p><span>To personalize your campaign for the imported audience, please select the applicable column from your CSV/Excel file to map each of the variables listed below</span></p>
 					<div class="form_row">
 						<label>[[Name]]</label>
-						<div>
+						<!-- <div>
 							<p class="form-control">
 								<input type="text" class="form-control inner" placeholder="Input value or add attribute">
 								<span class="map_attribute" (click)="openMapOption('map_name')">Map</span>
@@ -778,20 +777,20 @@
 								<p class="label">Map the column</p>
 								<p *ngFor="let map of mapNameOption ;let i = index" (click)="openMapOption('')"><span>{{map}}</span></p>
 							</div>
-						</div>
+						</div> -->
 					</div>
 					<div class="form_row">
 						<label>[[Product]]</label>
-						<p class="form-control">
+						<!-- <p class="form-control">
 							<input type="text" class="form-control inner" placeholder="Input value or add attribute">
 							<span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span>
-						</p>
+						</p> -->
 					</div>
 					<div class="form_row">
 						<label>[[25%]]</label>
 						<p class="form-control">
 							<input type="text" class="form-control inner" placeholder="Input value or add attribute">
-							<span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span>
+							<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
 						</p>
 					</div>
 
@@ -887,7 +886,7 @@
 						<label for="name">Input Value</label>
 						<p class="form-control">
 							<input type="text" class="form-control inner" placeholder="Input value or add attribute">
-							<span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span>
+							<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
 						</p>
 
 					</div>

@@ -169,5 +169,13 @@ campaignTestData:any;
       item.isSelected = true;
     });
   }
+
+  searchData(srchText:string){
+    this.alertUsers =[];
+    // this.rolesListinit.forEach((item:any) =>{
+    //   if(item.RoleName.includes(srchText))
+    //   this.rolesList.push(item);
+    // })
+  }
   
 }

@@ -199,6 +199,7 @@ export interface templateMessageData {
     BodyText:string;
     media_type:string;
     industry:string;
+    FooterText:string;
 
 }
 

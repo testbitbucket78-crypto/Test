@@ -74,6 +74,7 @@ getTeamList(){
   })
 }
 
+
 getUserList(){
   this._settingsService.getUserList(this.sp_Id)
   .subscribe((result:any) =>{
@@ -167,6 +168,18 @@ searchUserData(srchText:string){
     if(item.team_name.includes(srchText))
     this.teamList.push(item);
   })
+}
+
+searchData(srchText:string){
+  // this.rolesList =[];
+  // this.rolesListinit.forEach((item:any) =>{
+  //   if(item.RoleName.includes(srchText))
+  //   this.rolesList.push(item);
+  // })
+}
+
+addRole() {
+  
 }
 
 }

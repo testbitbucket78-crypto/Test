@@ -129,10 +129,7 @@
                                                 [maintainAspectRatio]="false"
                                                 [aspectRatio]="4 / 3"
                                                 format="jpg"
-                                                (imageCropped)="imageCropped($event)"
-                                                (imageLoaded)="imageLoaded()"
-                                                (cropperReady)="cropperReady()"
-                                                (loadImageFailed)="loadImageFailed()">
+                                                (imageCropped)="imageCropped($event)">
                                                 </image-cropper>
                                         </div>
                           
@@ -170,7 +167,7 @@
                                 <span>Phone Number*</span>
                                 <div class="numb-1 d-flex">
                               
-                                  <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+                                  <!-- <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
                                   [enableAutoCountrySelect]="true" [enablePlaceholder]="false"
                                   [searchCountryFlag]="false"
                                   [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
@@ -178,7 +175,7 @@
                                   [maxLength]="10" [phoneValidation]="true" [separateDialCode]="true"
                                   [numberFormat]="PhoneNumberFormat.National" name="Phone_number"
                                   formControlName="Phone_Number">
-                                  </ngx-intl-tel-input>
+                                  </ngx-intl-tel-input> -->
                                 </div>
                             </div>
                         </div>

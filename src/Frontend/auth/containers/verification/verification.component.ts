@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
-import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { FormControl, FormBuilder,FormGroup} from '@angular/forms';
 import { Validators } from '@angular/forms';
-import { verify } from 'crypto';
 
 
 @Component({
@@ -22,17 +21,22 @@ export class VerificationComponent implements OnInit {
     verifyButton1Clicked = false;
     verifyButton2Clicked = false;
 
-    otpForm = this.formBuilder.group({
-        otpfieldvalue: sessionStorage.getItem('otpfieldEmailvalue'),
-        otpfieldMobilevalue: sessionStorage.getItem('otpfieldMobilevalue'),
-        otp: new FormControl('', Validators.compose([Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)])),
-        otp1: new FormControl('', Validators.compose([Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)])),
-    })
 
+    otpFormValue:any;
+    otpForm:any;
     title = 'formValidation';
     submitted = false;
     values: any;
-    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) { }
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) { 
+        
+        this.otpForm = this.formBuilder.group({
+            otpfieldvalue: sessionStorage.getItem('otpfieldEmailvalue'),
+            otpfieldMobilevalue: sessionStorage.getItem('otpfieldMobilevalue'),
+            otp: new FormControl('', Validators.compose([Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)])),
+            otp1: new FormControl('', Validators.compose([Validators.required, Validators.pattern(/^-?(0|[1-9]\d*)?$/)])),
+        })
+    
+    }
 
     ngOnInit() {
         this.email_id = sessionStorage.getItem('otpfieldEmailvalue')
@@ -43,23 +47,23 @@ export class VerificationComponent implements OnInit {
 
     checkSubmitButton() {
         if (this.verifyButton1Clicked && this.verifyButton2Clicked) {
-            this.isVerified = true; // Set the flag to enable submit button
+            this.isVerified = true;
         }
     }
 
 
 
     callApi() {
-
-        this.apiService.verifyOtp(this.otpForm.value).subscribe((response: any) => {})
+        this.otpFormValue = this.otpForm.value;
+        this.apiService.verifyOtp(this.otpFormValue).subscribe((response: any) => {})
 
     }
 
 
 
     onVerify() {
-
-        this.apiService.verifyOtp(this.otpForm.value).subscribe((response: any) => {
+        this.otpFormValue = this.otpForm.value;
+        this.apiService.verifyOtp(this.otpFormValue).subscribe((response: any) => {
 
             console.log(this.otpForm.value)
 

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators} from '@angular/forms';
 import { SettingsService } from '../../services/settings.service';
 import { billingDetail, companyDetail, localeDetail,profilesettingPicData } from '../../models/settings.model';
-import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
+// import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 
@@ -64,10 +64,10 @@ export class OrganisationalSettingsComponent implements OnInit {
 
   form: FormGroup;
   zipCodePattern = '^[0-9]{1,6}$';
-  SearchCountryField = SearchCountryField;
-	CountryISO = CountryISO;
-  PhoneNumberFormat = PhoneNumberFormat;
-	preferredCountries: CountryISO[] =[];
+  // SearchCountryField = SearchCountryField;
+	// CountryISO = CountryISO;
+  // PhoneNumberFormat = PhoneNumberFormat;
+	// preferredCountries: CountryISO[] =[];
 
   
   constructor(private _settingsService:SettingsService,private fb: FormBuilder,private apiService: SettingsService) {     

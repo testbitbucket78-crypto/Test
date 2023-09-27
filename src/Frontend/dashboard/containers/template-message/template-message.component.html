@@ -436,10 +436,10 @@
             
                 <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
                         <input type="file" accept="image/jpeg, image/png" formControlName="Links" (change)="previewImageAndVideo($event)" id="sel-type-image">
-                        <div *ngIf="newTemplateForm.get('Links').value == null">
+                        <div *ngIf="newTemplateForm.get('Links')!.value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of image</p></div> 
-                        <div class="main-preview-type-image" *ngIf="newTemplateForm.get('Links').value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
+                        <div class="main-preview-type-image" *ngIf="newTemplateForm.get('Links')!.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
                             <span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                         </div>
                 </div>
@@ -459,14 +459,14 @@
                 
                 </div>
             
-                <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image" [ngClass]="{'document-selected':newTemplateForm.get('Links').value !== null}">
-                    <div class="main-preview-type-doc" *ngIf="newTemplateForm.get('Links').value !== null">
+                <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image" [ngClass]="{'document-selected':newTemplateForm.get('Links')!.value !== null}">
+                    <div class="main-preview-type-doc" *ngIf="newTemplateForm.get('Links')!.value !== null">
                         <span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                     </div>
-                    <img *ngIf="newTemplateForm.get('Links').value !== null" src="../../../../assets/img/settings/doc.svg" />
-                    <span class="document-preview" *ngIf="newTemplateForm.get('Links').value !== null" >{{ newTemplateForm.get('Links')!.value }}</span>
+                    <img *ngIf="newTemplateForm.get('Links')!.value !== null" src="../../../../assets/img/settings/doc.svg" />
+                    <span class="document-preview" *ngIf="newTemplateForm.get('Links')!.value !== null" >{{ newTemplateForm.get('Links')!.value }}</span>
                         <input type="file" accept=".doc, .docx, .pdf" formControlName="Links" name="document-select" id="sel-type-document">
-                        <div *ngIf="newTemplateForm.get('Links').value == null">
+                        <div *ngIf="newTemplateForm.get('Links')!.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of document</p></div>
                          
@@ -509,7 +509,7 @@
                     </select>
                 </div>
 
-                <div class="quick-reply-btns" *ngIf="newTemplateForm.get('buttonType').value === 'Quick Reply'">
+                <div class="quick-reply-btns" *ngIf="newTemplateForm.get('buttonType')!.value === 'Quick Reply'">
                    <span>You can add upto 3 quick replies buttons</span>
 
                    <div *ngFor="let quickReply of quickReplyButtons;let idx=index">
@@ -530,7 +530,7 @@
                     
                 </div>
 
-                <div class="call-to-action-btns" *ngIf="newTemplateForm.get('buttonType').value === 'Call to Action'">
+                <div class="call-to-action-btns" *ngIf="newTemplateForm.get('buttonType')!.value === 'Call to Action'">
                     <span>You can add upto 2 call to action buttons</span>
                     
                   <div class="container-call-to-btns">
@@ -554,7 +554,7 @@
                   <div class="d-flex justify-content-between">
                     <div class="pt-3 pb-2 msg-head">
                     <h6 class="pt-1 pb-3">Country</h6>
-                    <select class="callto input-form" formControlName="phone_number" (input)="clicksd()">
+                    <select class="callto input-form" formControlName="phone_number">
                         <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
                           {{ countryCode }}
                         </option>
@@ -565,7 +565,7 @@
                         <h6>Phone No.</h6> <div><span class="characters-count">{{ getCharacterCount(7) }}</span><span>/20 Characters</span></div>
                       </div>
                       <div class="sel-type-link">
-                        <input type="text" formControlName="phone_number" (input)="clicksd()" maxlength="20" placeholder="Enter" (input)="updateCharacterCount($event, 7)">
+                        <input type="text" formControlName="phone_number" maxlength="20" placeholder="Enter" (input)="updateCharacterCount($event, 7)">
                    </div>  
                    </div>
                   </div>
@@ -586,10 +586,10 @@
                         Your browser does not support HTML5 video.
                       </video>
                 </div>
-                <div *ngIf="selectedType === 'document'" class="message_type" [ngClass]="{'document-selected':newTemplateForm.get('Links').value !== null}">
+                <div *ngIf="selectedType === 'document'" class="message_type" [ngClass]="{'document-selected':newTemplateForm.get('Links')!.value !== null}">
                     <div class="d-flex flex-column">
-                        <img class="mx-auto mt-4" *ngIf="newTemplateForm.get('Links').value !== null" src="../../../../assets/img/settings/doc.svg" />
-                        <span class="document-preview" *ngIf="newTemplateForm.get('Links').value !== null" >{{ newTemplateForm.get('Links')!.value }}</span>
+                        <img class="mx-auto mt-4" *ngIf="newTemplateForm.get('Links')!.value !== null" src="../../../../assets/img/settings/doc.svg" />
+                        <span class="document-preview" *ngIf="newTemplateForm.get('Links')!.value !== null" >{{ newTemplateForm.get('Links')!.value }}</span>
                     </div>
                 </div>
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->

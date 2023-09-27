@@ -833,8 +833,8 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	}
 	getNewSmartReplyData() {
-		const title = this.newReply.value.Title;
-		const description = this.newReply.value.Description;
+		const title:any = this.newReply.value.Title;
+		const description:any = this.newReply.value.Description;
 
 		if (title !== '' && description !== '') {
 			sessionStorage.setItem('Title', title);

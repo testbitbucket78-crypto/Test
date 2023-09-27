@@ -190,7 +190,7 @@
         <div class="sidebar-content">
             <div class="d-flex pt-5 px-5">
                 <span *ngIf="selectedMessage.Is_disable == 0" class="enable">Enable</span>
-                <span *ngIf="message.Is_disable == 1" class="disable">Diabled</span>
+                <span *ngIf="selectedMessage.Is_disable == 1" class="disable">Diabled</span>
             </div>
            
                 <div class="p-3">
@@ -220,7 +220,7 @@
                    <img src="" />
                 </div>
                 <div class="bodydata w-45">
-                    {{Name}}
+                    {{selectedMessage.Name}}
                   {{selectedMessage.value}}
                 </div>
             </div>
@@ -231,7 +231,7 @@
             <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
                 <img class="p-0" src="../../../../assets/img/delete.png">
             </button>
-            <button class="disable-btn ml-2" (click)="activeDeActiveUser()">
+            <button class="disable-btn ml-2">
                 <span>Disable</span>
                 <label class="switch">
                     <input type="checkbox" class="form-control-checkbox">

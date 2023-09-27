@@ -18,6 +18,7 @@ export class ForgotPasswordComponent implements OnInit {
 
     title = 'formValidation';
     submitted = false;
+    submittedValue:any;
     constructor(private apiService :AuthService ,private router: Router,  private formBuilder: FormBuilder) { }
     ngOnInit() {
       
@@ -29,9 +30,10 @@ export class ForgotPasswordComponent implements OnInit {
 
     onSubmit() {
         this.submitted = true;
+        this.submittedValue = this.forgetpassword.value;
         if (this.forgetpassword.valid) {
 
-            this.apiService.forgotpassword(this.forgetpassword.value).subscribe(
+            this.apiService.forgotpassword(this.submittedValue).subscribe(
                 (result) => {
                     this.openModal();
                 if (result.status === 200) {

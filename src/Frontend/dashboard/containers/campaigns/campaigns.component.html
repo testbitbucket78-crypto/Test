@@ -13,7 +13,7 @@
 		<div class="header campaigns_section">
 	
 			<div class="campaigns_page_left">
-					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="SearchCampaign($event)"  [ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
+					<input (keyup)="SearchCampaign($event)" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
 			</div>
 			<div class="campaigns_page_right">
 				<div class="drop-down-btn">
@@ -61,7 +61,7 @@
 					<div class="modal-header-left">
 					</div>
 					<div class="modal-header-right">
-						<p  class="close-box" (click)="toggleCampaign()"><img src="assets/img/teambox/icon-close.svg"></p>
+						<!-- <p  class="close-box" (click)="toggleCampaign(campaign)"><img src="assets/img/teambox/icon-close.svg"></p> -->
 					</div>
 				</div>
 
@@ -304,7 +304,7 @@
 							</div>
 						</div>
 
-						<div [ngClass]="step2Option =='ImportContacts' ? 'innerbox active' : 'innerbox'"  (click)="selectStep2Option('ImportContacts',ImportContacts,step2Option)">
+						<div [ngClass]="step2Option =='ImportContacts' ? 'innerbox active' : 'innerbox'"  (click)="selectStep2Option('ImportContacts',importedContacts,step2Option)">
 							
 							<img class="icon ml" src="assets/img/campaign/import-contacts.svg">
 							<p>Import Contacts</p>

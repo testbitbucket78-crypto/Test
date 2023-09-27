@@ -3,6 +3,7 @@
         "enableIvy": false,
         "fullTemplateTypeCheck": true,
         "preserveWhitespaces": false,
+        "strictTemplates": false,
         "strictInjectionParameters": false
     },
     "compileOnSave": false,
@@ -14,7 +15,7 @@
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "importHelpers": true,
-        "lib": ["es2018", "dom"],
+        "lib": ["es2022", "dom"],
         "module": "esnext",
         "moduleResolution": "node",
         "noImplicitAny": true,
@@ -28,7 +29,7 @@
         "resolveJsonModule": true,
         "sourceMap": true,
         "strict": true,
-        "target": "es2015",
+        "target": "es2022",
         "typeRoots": ["node_modules/@types", "src/typings"],
         "types": ["@angular/localize"]
     }

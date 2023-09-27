@@ -1,10 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { CSVRecord } from './../../models'
 import Stepper from 'bs-stepper';
-import { Content } from '@angular/compiler/src/render3/r3_ast';
 import { Router } from '@angular/router';
 declare var $: any;
 
