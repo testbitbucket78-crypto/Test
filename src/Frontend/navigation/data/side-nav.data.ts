@@ -61,6 +61,7 @@ export const sideNavItems: SideNavItems = {
     rep: {
         icon: 'assets/img/side-nav/repots.svg',
         text: 'Reports',
+        link: '/dashboard/reports',
         submenu: [
 
             {
@@ -81,11 +82,5 @@ export const sideNavItems: SideNavItems = {
 
         ],
     },
-
-    // Setting: {
-    //     icon: 'assets/img/Flowbuilder.png',
-    //     text: 'Flow Builder',
-    //     link: '/dashboard/flowBuilder',
-    // },
 
 };

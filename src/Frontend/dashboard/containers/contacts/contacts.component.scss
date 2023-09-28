@@ -592,13 +592,12 @@ opacity: 1;
     height: 100%;
     width: 0;
     position: fixed;
-    z-index: 1;
+    z-index: 9999;
     top: 0;
     right: 0;
     background-color: #FBF9FE;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 60px;
   }
   .sidebar .btn5{
     border: 1px solid #EBEBEB;

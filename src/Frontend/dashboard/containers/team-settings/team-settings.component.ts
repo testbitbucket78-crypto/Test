@@ -170,14 +170,6 @@ searchUserData(srchText:string){
   })
 }
 
-searchData(srchText:string){
-  // this.rolesList =[];
-  // this.rolesListinit.forEach((item:any) =>{
-  //   if(item.RoleName.includes(srchText))
-  //   this.rolesList.push(item);
-  // })
-}
-
 addRole() {
   
 }

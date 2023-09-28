@@ -27,6 +27,8 @@ userList:any[] =[];
 selectedUser:any[] =[];
 alertUsers:any[] =[];
 workingFormData:campaignFormData[]=[];
+isSelected:any;
+keywords: string[] = [];
 
 campaignAlertData:any;
 campaignTestData:any;
@@ -41,6 +43,9 @@ campaignTestData:any;
     this.getCampaignAlertData();
   }
 
+  removeKeyword(index: number): void {
+    this.selectedUser.splice(index, 1);
+  }
   addWorkingHours(){
     this.workingFormData.push({day:[],start_time:'',end_time:''})
   }

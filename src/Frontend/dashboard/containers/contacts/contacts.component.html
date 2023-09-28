@@ -621,14 +621,14 @@
 
 					<label for="floatingSelectGrid">Tag</label>
 					<ng-multiselect-dropdown class="multiselect" name="tag" formControlName="tag" id="tag"
-						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
+						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'"
 						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
 					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="status"
 						[placeholder]="'Search'" name="status" formControlName="status" id="status"
-						[disabled]="disabled" (onSelect)="onItemSelect($event)">
+						 (onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 				</div>
 
@@ -731,7 +731,7 @@
 
 					<label for="floatingSelectGrid">Tag</label>
 					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag"
-						[formControl]="editContact.controls['tag']" [settings]="dropdownSettings" [data]="tag"
+						[formControl]="editContact.controls['tag']" [settings]="dropdownSettings" [(ngModel)]="customerData.Tag" [data]="tag"
 						[placeholder]="'Search'" [disabled]="disabled" (onSelect)="onItemSelect($event)">
 				
 					</ng-multiselect-dropdown>

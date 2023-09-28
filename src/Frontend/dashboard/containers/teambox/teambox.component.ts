@@ -1318,25 +1318,32 @@ import { base64ToFile } from 'ngx-image-cropper';
 			bodyData['OptInStatus'] = 'No';
 		}
 		//console.log(bodyData)
-		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
+
+		if(bodyData['Name']!='' && bodyData['Phone_number'].length>=10 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
+			this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
 			this.selectedInteraction['Name']=this.EditContactForm.Name
-		this.selectedInteraction['Phone_number']=this.EditContactForm.Phone_number
-		this.selectedInteraction['channel']=this.EditContactForm.channel
-		this.selectedInteraction['status']=this.EditContactForm.status
-		this.selectedInteraction['OptInStatus']=bodyData['OptInStatus']
-		this.selectedInteraction['sex']=this.EditContactForm.sex
-		this.selectedInteraction['age']=this.EditContactForm.age
-		this.selectedInteraction['emailId']=this.EditContactForm.emailId
-		this.selectedInteraction['Country']=this.EditContactForm.Country
-		this.selectedInteraction['facebookId']=this.EditContactForm.facebookId
-		this.selectedInteraction['InstagramId']=this.EditContactForm.InstagramId
-		
-			if(this.modalReference){
-				this.modalReference.close();
-			}
-			this.getAllInteraction();
-			this.showToaster('Contact information updated...','success');
-		});
+			this.selectedInteraction['Phone_number']=this.EditContactForm.Phone_number
+			this.selectedInteraction['channel']=this.EditContactForm.channel
+			this.selectedInteraction['status']=this.EditContactForm.status
+			this.selectedInteraction['OptInStatus']=bodyData['OptInStatus']
+			this.selectedInteraction['sex']=this.EditContactForm.sex
+			this.selectedInteraction['age']=this.EditContactForm.age
+			this.selectedInteraction['emailId']=this.EditContactForm.emailId
+			this.selectedInteraction['Country']=this.EditContactForm.Country
+			this.selectedInteraction['facebookId']=this.EditContactForm.facebookId
+			this.selectedInteraction['InstagramId']=this.EditContactForm.InstagramId
+			
+				if(this.modalReference){
+					this.modalReference.close();
+				}
+				this.showToaster('Contact information updated...','success');
+			});
+		}
+
+		else {
+			this.showToaster('Name, Phone Number, and Email ID are required.', 'error');
+		}
+
 	
 	}
 

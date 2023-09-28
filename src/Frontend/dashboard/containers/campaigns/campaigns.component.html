@@ -13,7 +13,7 @@
 		<div class="header campaigns_section">
 	
 			<div class="campaigns_page_left">
-					<input (keyup)="SearchCampaign($event)" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" />
+					<input (keyup)="SearchCampaign($event)" type="text" placeholder="Search" aria-label="Search" class="search-box" aria-describedby="basic-addon2" />
 			</div>
 			<div class="campaigns_page_right">
 				<div class="drop-down-btn">
@@ -61,7 +61,7 @@
 					<div class="modal-header-left">
 					</div>
 					<div class="modal-header-right">
-						<!-- <p  class="close-box" (click)="toggleCampaign(campaign)"><img src="assets/img/teambox/icon-close.svg"></p> -->
+						<p  class="close-box" (click)="toggleCampaign(allCampaign)"><img src="assets/img/teambox/icon-close.svg"></p>
 					</div>
 				</div>
 
@@ -671,13 +671,8 @@
 					</p>
 					
 					<div  *ngIf="showInfo" class="showInfoFallback">
-						<p id="p-body">When the value of a variable is assigned using Attributes to personalize the message (e.g. 
-							Campaign or Funnel), there is a probability that some of the targeted users may not have any 
-							data for that specific attribute (customer contact fields). In order to manage such a situation, 
-							there is an option to assign a “Fallback” value to the selected Attribute. This default value will be 
-							used if the system is not able to find any value against the user in the Contact Custom Fields. 
-							E.g. if you have selected name attribute and few subscribers do not have the name field 
-							updated, in this case the value entered as “Fallback” will be used.</p>
+						<p id="p-body">You can input variable values or choose contact attributes that will be used to send personalized messages to users, reflecting their specific contact details instead of generic variables.
+						</p>
 						<button id="radio-close-btn" (click)="showInfo=false">X</button>
 					  </div>
 					<input placeholder="Enter value" type="text" class="form-control" >
@@ -817,13 +812,8 @@
 					<input placeholder="Enter value" type="text" class="form-control" (keyup)="updateFallbackAttributeValue($event)">
 				</div>
 				<div  *ngIf="showInfo" class="showInfoFallback">
-					<p id="p-body">When the value of a variable is assigned using Attributes to personalize the message (e.g. 
-						Campaign or Funnel), there is a probability that some of the targeted users may not have any 
-						data for that specific attribute (customer contact fields). In order to manage such a situation, 
-						there is an option to assign a <b>“Fallback”</b> value to the selected Attribute. This default value will be 
-						used if the system is not able to find any value against the user in the Contact Custom Fields. 
-						E.g. if you have selected name attribute and few subscribers do not have the name field 
-						updated, in this case the value entered as <b>“Fallback”</b> will be used.</p>
+					<p id="p-body">You can input variable values or choose contact attributes that will be used to send personalized messages to users, reflecting their specific contact details instead of generic variables.
+					</p>
 					<button id="radio-close-btn" (click)="showInfo=false">X</button>
 				  </div>
 									

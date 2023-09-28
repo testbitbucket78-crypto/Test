@@ -27,6 +27,7 @@ export class MyprofileComponent implements OnInit {
   currentPasswordType: boolean = true;
   newPasswordType: boolean = true;
   confirmPasswordType: boolean = true;
+  changepassword:any
   changePasswordValue:any;
   selectedAmount!:number;
   selectedDiv!: number;
@@ -51,7 +52,15 @@ export class MyprofileComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 
-  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private cdRef: ChangeDetectorRef) { }
+  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private cdRef: ChangeDetectorRef) { 
+    this.changepassword = this.fB.group({
+      uid:[0],
+      oldPass:['', [Validators.required, Validators.minLength(8)]],
+      newPass:['', [Validators.required, Validators.minLength(8)]],
+      confirmPass:['', [Validators.required, Validators.minLength(8)]]
+    });
+    
+  }
 
   ngOnInit(): void {
     this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
@@ -80,14 +89,6 @@ export class MyprofileComponent implements OnInit {
   ngOnDestroy() {
     this.modalService.dismissAll();
 }
-
-changepassword = this.fB.group({
-  uid:[0],
-  oldPass:['', [Validators.required, Validators.minLength(8)]],
-  newPass:['', [Validators.required, Validators.minLength(8)]],
-  confirmPass:['', [Validators.required, Validators.minLength(8)]]
-});
-
 
   showToaster(message:any,type:any){
 		if(type=='success'){

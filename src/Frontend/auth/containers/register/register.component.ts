@@ -23,29 +23,31 @@ export class RegisterComponent implements OnInit {
     changetype:boolean = true;
     change:boolean = true;
     separateDialCode = false;
+    registerForm:any;
 	// SearchCountryField = SearchCountryField;
 	// CountryISO = CountryISO;
     // PhoneNumberFormat = PhoneNumberFormat;
 	// preferredCountries: CountryISO[] = [CountryISO.India, CountryISO.UnitedStates, CountryISO.UnitedKingdom];
     
-  
-    registerForm = this.formBuilder.group({
-        name: new FormControl('', [
-            Validators.required,
-            Validators.pattern('[a-zA-Z ]*')
-          ]),
-        mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
-        
-        email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
-        confirmPassword: ['', Validators.required]}, { validator: this.passwordMatchValidator });
+
     // changePreferredCountries() {
 	// 	this.preferredCountries = [CountryISO.India, CountryISO.Canada];
 	// }
     title = 'formValidation';
-        submitted = false;
+    submitted = false;
 
-    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) { }
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) {
+        this.registerForm = this.formBuilder.group({
+            name: new FormControl('', [
+                Validators.required,
+                Validators.pattern('[a-zA-Z ]*')
+              ]),
+            mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+            
+            email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+            password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
+            confirmPassword: ['', Validators.required]}, { validator: this.passwordMatchValidator });
+     }
     ngOnInit() {
      
     }

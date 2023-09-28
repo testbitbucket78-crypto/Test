@@ -62,7 +62,6 @@ export interface UserGuideSubtopic {
     subheadings_id: number;
     subheadings: string;
   }
-
   
 
 

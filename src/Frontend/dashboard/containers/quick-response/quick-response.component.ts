@@ -172,7 +172,9 @@ deleteTemplate(){
   });
 }
 
-
+copyCampaign() {
+  
+}
 
 showMessageType(type: string) {
   this.selectedType = type;
