@@ -9,6 +9,8 @@ const cors = require('cors')
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "10000kb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
 
 const addCampaignTimings = async (req, res) => {
     try {
@@ -233,7 +235,121 @@ const deleteTag = async (req, res) => {
     }
 }
 
+const addCustomField = async (req, res) => {
+    try {
+        ColumnName = req.body.ColumnName,
+            SP_ID = req.body.SP_ID,
+            Type = req.body.Type,
+            description = req.body.description,
+            created_at = new Date();
 
+
+        let count = await db.excuteQuery(val.getColCount, [SP_ID]);
+
+        CustomColumn = "column" + (count[0].columnCount + 1);
+        let values = [CustomColumn, ColumnName, SP_ID, Type, description, created_at, created_at]
+
+        let addfiled = await db.excuteQuery(val.addcolumn, [[values]]);
+
+        res.send({
+            status: 200,
+            addfiled: addfiled
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const editCustomField = async (req, res) => {
+    try {
+        ColumnName = req.body.ColumnName,
+            Type = req.body.Type,
+            description = req.body.description,
+            updated_at = new Date()
+        id = req.body.id
+        let editedField = await db.excuteQuery(val.editfield, [ColumnName, Type, description, updated_at, id])
+        res.send({
+            status: 200,
+            editedField: editedField
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const enableMandatoryfield = async (req, res) => {
+    try {
+        let mandatoryfield = await db.excuteQuery(val.enableMandatory, [req.body.Mandatory, new Date(), req.body.id])
+        res.send({
+            status: 200,
+            mandatoryfield: mandatoryfield
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const enableStatusfield = async (req, res) => {
+    try {
+
+        let enableStatus = await db.excuteQuery(val.enablestatus, [req.body.Status, new Date(), req.body.id])
+        res.send({
+            status: 200,
+            enableStatus: enableStatus
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+const getCustomField = async (req, res) => {
+    try {
+        let getfields = await db.excuteQuery(val.getcolumn, [req.params.spid]);
+        res.send({
+            status: 200,
+            getfields: getfields
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const getCustomFieldById = async (req, res) => {
+    try {
+        let getfields = await db.excuteQuery(val.getcolumnid, [req.params.id]);
+        res.send({
+            status: 200,
+            getfields: getfields
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const deleteCustomField = async (req, res) => {
+    try {
+        let deletField = await db.excuteQuery(val.deletecolumn, [new Date(), req.params.id]);
+        res.send({
+            status: 200,
+            deletField: deletField
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
 
 //_____________________________ TEMPLATE SETTINGS _________________________________//
 
@@ -256,9 +372,11 @@ const addTemplate = async (req, res) => {
             created_By = req.body.created_By,
             created_at = new Date()
         isTemplate = req.body.isTemplate
+        industry = req.body.industry
 
         let image = ""
-        if (Links != null && Links != undefined) {
+
+        if (Links != null && Links != undefined && Links != "" && Links != " ") {
             // Remove header
             let streamSplit = Links.split(';base64,');
             let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
@@ -276,7 +394,7 @@ const addTemplate = async (req, res) => {
             console.log(awsres.value.Location)
         }
         if (ID == 0) {
-            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate]]
+            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry]]
             let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
             res.status(200).send({
                 addedtem: addedtem,
@@ -284,7 +402,7 @@ const addTemplate = async (req, res) => {
             })
         }
         else {
-            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, ID]
+            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, ID]
             let updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
             res.status(200).send({
                 updatedTemplate: updatedTemplate,
@@ -372,6 +490,7 @@ const testCampaign = async (req, res) => {
 module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
-    testCampaign
+    testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
+    enableStatusfield
 
 }

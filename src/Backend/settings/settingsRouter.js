@@ -104,6 +104,13 @@ router.post('/addupdateTag',campaignController.addTag)
 router.get('/selectTag/:spid',campaignController.gettags)
 router.post('/deleteTag',campaignController.deleteTag)
 
+router.post('/addCustomField',campaignController.addCustomField)
+router.post('/editCustomField',campaignController.editCustomField)
+router.get('/getCustomField/:spid',campaignController.getCustomField)
+router.get('/getCustomFieldById/:id',campaignController.getCustomFieldById)
+router.post('/deleteCustomField/:id',campaignController.deleteCustomField)
+router.post('/enableMandatory',campaignController.enableMandatoryfield)
+router.post('/enableStatus',campaignController.enableStatusfield)
 
 //_______________________TEMPLATE_________________________//
 

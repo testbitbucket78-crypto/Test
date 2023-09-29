@@ -41,7 +41,7 @@ JOIN user ON AgentDetails.uid = user.uid
 WHERE timings >= NOW() - INTERVAL 30 DAY
   AND user.SP_ID = ?;`;
 
-subscribersQuery = `select OptInStatus,count(*) count from EndCustomer WHERE created_at >=  NOW() - INTERVAL 30 DAY and SP_ID=?  Group by (OptInStatus) union select  'Total Contacts',
+subscribersQuery = `select OptInStatus,count(*) count from EndCustomer WHERE created_at >=  NOW() - INTERVAL 30 DAY and SP_ID=? and (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)   Group by (OptInStatus) union select  'Total Contacts',
 count(*) count from EndCustomer WHERE created_at >=  NOW() - INTERVAL 30 DAY and SP_ID=?  and (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) `;
 conversationQuery = "CALL dashboardRecentConversations(?)"
 crachlogQuery = `INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`

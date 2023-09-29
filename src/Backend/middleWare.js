@@ -2,7 +2,7 @@ const teamboxController = require('./Authentication/TeamBoxController');
 const http = require("https");
 const accessToken = '64c4bcc7c05b1';
 const baseURL='https://staging.engageflo.com/api/'
-
+const Web=require('./webJS/web')
 
 function removePlusFromPhoneNumber(phoneNumber) {
     if (phoneNumber.includes("+")) {
@@ -38,7 +38,9 @@ async function channelssetUp(channelType, mediaType, messageTo, message_body) {
         //     console.log(mediaURL)
         //     const media = await axios.get(mediaURL);
         // }
-        let whatsAppWeb=await sendMessagesThroughWhatsAppWeb(phoneNumber,mediaType,message_body);
+      //  let whatsAppWeb=await sendMessagesThroughWhatsAppWeb(phoneNumber,mediaType,message_body);
+      let content = await removeTagsFromMessages(message_body);
+      Web.sendMessages(2,phoneNumber,mediaType,content,content)
     }
 }
 
@@ -54,21 +56,21 @@ async function sendMessagesThroughWhatsAppOfficial(phoneNumber,mediaType,message
 
 
 
-async function sendMessagesThroughWhatsAppWeb(phoneNumber,mediaType,message_body){
-    if (mediaType == 'text') {
-        console.log("text ........")
-      let message= await removeTagsFromMessages(message_body)
-        let textAPI = baseURL + `send?number=` + phoneNumber + `&type=text&message=` + message + `&instance_id=` + '64D1F60FA644B' + `&access_token=64c4bcc7c05b1`
-        console.log(textAPI)
-        const text = await axios.get(textAPI);
-    } else if (mediaType == 'image') {
-        console.log("image ........")
-        let mediaURL = baseURL + `send?number=` + phoneNumber + `&type=media&message=` + 'message_body_img' + `&media_url=` + message_body + `&filename=` + 'req.body.filename' + `&instance_id=` + '64D1F60FA644B' + `&access_token=64c4bcc7c05b1`
+// async function sendMessagesThroughWhatsAppWeb(phoneNumber,mediaType,message_body){
+//     if (mediaType == 'text') {
+//         console.log("text ........")
+//       let message= await removeTagsFromMessages(message_body)
+//         let textAPI = baseURL + `send?number=` + phoneNumber + `&type=text&message=` + message + `&instance_id=` + '64D1F60FA644B' + `&access_token=64c4bcc7c05b1`
+//         console.log(textAPI)
+//         const text = await axios.get(textAPI);
+//     } else if (mediaType == 'image') {
+//         console.log("image ........")
+//         let mediaURL = baseURL + `send?number=` + phoneNumber + `&type=media&message=` + 'message_body_img' + `&media_url=` + message_body + `&filename=` + 'req.body.filename' + `&instance_id=` + '64D1F60FA644B' + `&access_token=64c4bcc7c05b1`
 
-        console.log(mediaURL)
-        const media = await axios.get(mediaURL);
-    }
-}
+//         console.log(mediaURL)
+//         const media = await axios.get(mediaURL);
+//     }
+// }
 
 
 async function removeTagsFromMessages(message_body){

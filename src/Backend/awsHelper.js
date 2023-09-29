@@ -57,6 +57,7 @@ async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken) {
 }
 
 async function uploadToAws(awspath, stream) {
+    console.log("uploadToAws")
     return new Promise((resolve, reject) => {
         // Create S3 client
         // console.log(val.awsaccessKeyId);
@@ -68,7 +69,7 @@ async function uploadToAws(awspath, stream) {
             Key: awspath,
             Body: buf,
             ContentEncoding: 'base64',
-            ContentType: 'image/png',
+            ContentType:'image/png',
             Bucket: val.awsbucket,
 
         };
@@ -135,7 +136,7 @@ async function uploadVideoToAws(awspath, videoData) {
     };
     return new Promise((resolve, reject) => {
 
-
+console.log("uploadVideoToAws")
         // Configure AWS SDK
         AWS.config.update({
             accessKeyId: awsConfig.awsaccessKeyId,
@@ -150,11 +151,12 @@ async function uploadVideoToAws(awspath, videoData) {
 
         // Specify the content type for your video (e.g., 'video/mp4')
         const contentType = 'video/mp4';
-
+        
         const params = {
             Bucket: awsConfig.awsbucket,
             Key: awspath,
             Body: videoBuffer,
+            ContentEncoding: 'base64',
             ContentType: contentType,
 
         };
@@ -167,7 +169,7 @@ async function uploadVideoToAws(awspath, videoData) {
                 console.log('Video uploaded successfully!');
                 console.log(data);
                 const videoUrl = `https://${awsConfig.awsbucket}.s3.${awsConfig.awsregion}.amazonaws.com/${awspath}`;
-                resolve({ code: 0, value: { videoUrl, metadata: data } });
+                resolve({ code: 0, value: data });
                 // You can save the videoUrl to your database for future use.
             }
         });
@@ -260,9 +262,9 @@ async function getStorageUtilization(spid, days) {
 
 
 // Define a function to delete the object from the S3 bucket
-async function deleteObjectFromBucket(days,spid) {
+async function deleteObjectFromBucket(days, spid) {
     console.log("deleteObjectFromBucket ...............")
-   
+
     let deletedMedia = 0;
     const params = {
         Bucket: awsConfig.awsbucket,

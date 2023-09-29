@@ -183,12 +183,29 @@ var selecttag = `SELECT tm.TagName,tm.TagColour, COUNT(ec.tag) AS tag_count
  GROUP BY tm.TagName;`
 
 
+ var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1`
+ var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,updated_at) values ?`
+ let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as Type ,1 as Mandatory, 1 as Status
+ FROM information_schema.columns
+ WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked')
+ UNION
+ SELECT ColumnName AS displayName,CustomColumn as ActuallName ,Type as Type ,Mandatory as Mandatory,Status  as Status
+ FROM SPIDCustomContactFields  
+ WHERE SP_ID =? AND isDeleted!=1`
+ let getcolumnid = `SELECT  ColumnName AS displayName,CustomColumn as ActuallName  ,Type,Mandatory,Status
+ FROM SPIDCustomContactFields  
+ WHERE id =? AND isDeleted !=1;`
+let deletecolumn=`UPDATE SPIDCustomContactFields SET isDeleted=1 , isDeletedOn=? where id=?`
+let enableMandatory=`UPDATE SPIDCustomContactFields SET Mandatory=? , updated_at=? where id=?`
+let enablestatus=`UPDATE SPIDCustomContactFields SET Status=? , updated_at=? where id=?`
+let editfield=`UPDATE SPIDCustomContactFields SET ColumnName=?,Type=?,description=?,updated_at=? where id=?`
+
 
 //________________________________________TEMPLATE SETTINGS__________________________//
 
-var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate) VALUES ?`
+var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry) VALUES ?`
 var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
-var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=? where ID=?`
+var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=? where ID=?`
 var deleteTemplate = `UPDATE templateMessages set isDeleted=1 ,updated_at=? where ID=?`
 
 
@@ -225,5 +242,6 @@ module.exports = {
     , manageplans, manageplansCharges, selectNotification, addCampaignTimingsQuery, deleteCampaignTimingsQuery, selectCampaignTimingsQuery, campaignAlertUsersList,
     addCampaignAlerts, deleteCampaignAlerts, selectCampaignAlerts, addCampaignTest, deleteCampaignTest, selectCampaignTest,
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
-    Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification
+    Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
+    getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield
 }
