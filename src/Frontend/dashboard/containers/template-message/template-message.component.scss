@@ -205,6 +205,7 @@
     font-size: 12px;
     font-weight: 600;
     color: #000000;
+    background: #FFD0D0;
     border-radius: 20px;
     margin: 0 10px 0px 0px;
     line-height: 12px;
@@ -593,10 +594,7 @@ img.icon_sm {
 .delete-modal{
     width: 355px;
     height: 183px;
-    top: 8rem;
     display: flex;
-    margin-left: auto;
-    margin-right: auto;
     justify-content: center;
     align-items: center;
    }
@@ -756,11 +754,10 @@ img.icon_sm {
 
 .newTemplateMessageFirst.modal-dialog {
     max-width: 650px;
-    height: 95vh;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 24px;
 
 }
 
@@ -778,7 +775,7 @@ img.icon_sm {
 
  .newTemplateMessage.modal-dialog {
     max-width: 900px;
-    height: 94vh;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1107,8 +1104,14 @@ input[type="radio"]:checked + label::before {
     padding: 9px 30px;
     border: 1px;
     color: #ffffff;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 12px;
+   }
+
+   .clear.account-btn {
+    background: #ffffff!important;
+    color: #F23B3B!important;
+    font-weight: 700!important;
    }
 
    .add-buttons {
@@ -1116,6 +1119,21 @@ input[type="radio"]:checked + label::before {
     border-radius: 30px;
     margin: 10px 0 0 68px;
    }
+
+   .titleimg {
+    width: 41px;
+    height: 41px;
+    background: var(--unnamed-color-ffffff) 0% 0% no-repeat padding-box;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px solid #E9E9EA;
+    border-radius: 15px;
+    margin: 10px;
+}
+
+.titleimg  img {
+    width: 14px;
+}
    
    .message_section h6 {
     margin: 0;

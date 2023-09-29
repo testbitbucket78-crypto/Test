@@ -18,6 +18,7 @@ export class QuickResponseComponent implements OnInit {
   modalReference:any;
   spid!:number;
   getTemplate:any;
+  searchText:string='';
   // templates!:any[];
   ID:number=0;
   data: any;
@@ -171,7 +172,9 @@ deleteTemplate(){
   });
 }
 
-
+copyCampaign() {
+  
+}
 
 showMessageType(type: string) {
   this.selectedType = type;

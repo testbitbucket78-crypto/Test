@@ -25,6 +25,7 @@ export class TemplateMessageComponent implements OnInit {
   showGalleryDetail:boolean = false;
   templatesData =[];
   galleryData = [];
+  filteredGalleryData = [];
   filteredTemplatesData:templateMessageData[] = [];
   templatesMessageData:templateMessageData = <templateMessageData>{};
   characterCounts: { [key: number]: number } = {};
@@ -168,13 +169,30 @@ export class TemplateMessageComponent implements OnInit {
 
 
   applyTemplateFilter() {
-    // Filter the templatesData array based on selected categories
-    this.filteredTemplatesData.filter((item) => {
-      // return this.filterListChannel.length === 0 || this.filterListChannel.includes(item.Channel);
 
+    this.filteredGalleryData = this.galleryData.filter((template:any) => {
+
+      const isTopicMatch = this.filterListTopic.some(topic => topic.checked && topic.label === template.status);
+      const isIndustryMatch = this.filterListIndustry.some(industry => industry.checked && industry.label === template.industry);
+      const isCategoryMatch = this.filterListCategory.some(category => category.checked && category.label === template.Category);
+      const isLanguageMatch = this.filterListLanguage.some(language => language.checked && language.label === template.Language);
+      $("#filterTemplateModal").modal('hide');
+      return isTopicMatch || isIndustryMatch || isCategoryMatch || isLanguageMatch;
     });
   }
 
+  clearFilters() {
+
+    this.filterListTopic.forEach(topic => (topic.checked = false));
+    this.filterListIndustry.forEach(industry => (industry.checked = false));
+    this.filterListCategory.forEach(category => (category.checked = false));
+    this.filterListLanguage.forEach(language => (language.checked = false));
+
+    this.applyTemplateFilter();
+    this.getTemplatesData();
+    $("#filterTemplateModal").modal('hide');
+  }
+  
 // calculate the character count in input fields
 
   updateCharacterCount(event: Event, idx: number) {
@@ -262,6 +280,7 @@ removeValue() {
       //get gallery data
       this.apiService.getTemplateData(this.spid,2).subscribe(response => {
         this.galleryData = response.templates;
+        this.filteredGalleryData = this.galleryData;
       });
     }
 
@@ -330,9 +349,8 @@ removeValue() {
       newTemplateForm.created_By = this.currentUser;
       newTemplateForm.ID = this.id;
       newTemplateForm.isTemplate = 1;
-      newTemplateForm.media_type = 'video';
+      newTemplateForm.media_type = '';
       newTemplateForm.Header = this.newTemplateForm.controls.Header.value;
-      
       newTemplateForm.Links = this.newTemplateForm.controls.Links.value;
       newTemplateForm.Links = this.selectedPreview;
       newTemplateForm.BodyText = this.newTemplateForm.controls.BodyText.value;
@@ -384,23 +402,37 @@ removeValue() {
     }
 
 
+    patchFormValue(){
+      const data = this.templatesMessageData;
+      for(let prop in data){
+        let value = data[prop as keyof typeof data];
+        if(this.newTemplateForm.get(prop))
+        this.newTemplateForm.get(prop)?.setValue(value)
+      }  
+    }
+
 
     copyTemplatesData() {
+      $("#newTemplateMessageFirst").modal('show');
+      this.showGalleryDetail = false;
+      this.showCampaignDetail = false;
+      this.patchFormValue();
+      
  
-      const TemplateID = {
-        ID: this.templatesMessageData?.ID
-      }
-        this.apiService.copyTemplateData(TemplateID).subscribe(response =>{
-          if(response) {
-            this.getTemplatesData();
-            this.showCampaignDetail=false;
-          }
+      // const TemplateID = {
+      //   ID: this.templatesMessageData?.ID
+      // }
+      //   this.apiService.copyTemplateData(TemplateID).subscribe(response =>{
+      //     if(response) {
+      //       this.getTemplatesData();
+      //       this.showCampaignDetail=false;
+      //     }
         
-        });
+      //   });
       }
 
 
-    deleteTemplate(){
+    deleteTemplate() {
 
       const TemplateID = {
         ID: this.templatesMessageData?.ID
@@ -418,10 +450,31 @@ removeValue() {
         }
       });
     }
- 
 
+  
+
+//   const s3 = new AWS.S3();
+
+// const params = {
+//   Bucket: 'cip-engage',
+//   Key: 'video_file.mp4', 
+//   Body: 'path/to/your/local-video-file.mp4', // Local path to your video file
+// };
+
+// s3.upload(params, (err, data) => {
+//   if (err) {
+//     console.error('Error uploading video:', err);
+//   } else {
+//     const videoUrl = data.Location; // Store the URL in a variable
+//     console.log('Video uploaded successfully:', videoUrl);
+//   }
+// });
 
   }
+
+  
+
+  
 
 
 

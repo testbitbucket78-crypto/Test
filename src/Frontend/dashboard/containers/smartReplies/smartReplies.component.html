@@ -1,26 +1,24 @@
 <sb-layout-dashboard>
 	<sb-top-nav title="Smart Replies"></sb-top-nav>
-
-		<div class="content-header">
-			<div class="content-head d-flex">
-				<div class="">		
-					<div class="input-group gf ">
-
-						<input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
-
-						<img src="assets/img/search.png">
-					</div>
+	<div class="row r1">
+	
+			<div class="d-flex justify-content-between py-4 content-header">
+				<div class="input-group gf">
+	
+					<input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
+	
+					<img src="assets/img/search.png">
+		     	</div>
+				<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal" (click)="isShowSmartReplies = true" >
+					<i class="fa fa-plus"></i> 
+					Add Smart Reply
+				</button>
+			</div>
 		
-				</div>
-					<div class="">
-						<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal" (click)="isShowSmartReplies = true" ><i class="fa fa-plus"></i> 
-						Add Smart Reply</button>
-	        	</div>
-			</div>
-			</div>
+		
 
-	<div *ngIf="!replies" class=" my-5 smartreplies-empty-state">
-			<div class="d-flex justify-content-center my-5 align-items-center container-empty-state">
+	<div *ngIf="!replies" class="smartreplies-empty-state">
+			<div class="d-flex justify-content-center align-items-center container-empty-state">
 				<div class="text-center py-5 body-empty-state">
 					<img src="../../../../assets/img/no-sr.png" />
 					<h5>No Smart Replies</h5>
@@ -31,7 +29,8 @@
 
 <div *ngIf="replies" class="smartreplies-filled-state">
 
-		<div class="row r1">
+	
+		<div class="m-0 col-12">
 		<div *ngFor="let reply of replies  | searchfilter:searchText" class="card d-flex" (click)="toggleSideBar()"  (click)="getRepliesByID(reply)">
 			<div class="card-body gy-2">
 				<h6 class="id">Id:{{ reply.ID }}</h6>
@@ -49,9 +48,12 @@
 						<p>{{reply.ActionCount}}</p>
 						<h6>Reply Action</h6>
 					</div>
-				</div>
-			</div>
-		</div>
+				 </div>
+			  </div>
+	     	</div>
+     	</div>
+		
+	</div>
 	</div>
 	
 	<div *ngIf="showSideBar" id="sidebar" class="sidebar">
@@ -104,7 +106,7 @@
 			<button class="delete-btn"  data-bs-toggle="modal" data-bs-target="#Delete"><img src="assets/img/delete.png"></button>
 		</div>
 	</div>
-</div>
+
 
 	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
 		<div class="modal-dialog deletesmartreplies-dialog">
@@ -121,19 +123,13 @@
 		</div>
 	  </div>
 
-
-
-    
-
 	  <div class="modal fade" tabindex="-1" id="smartrepliesModal" data-bs-backdrop="static" role="dialog">
-        <div class="modal-dialog" id="mod-da" role="document">
+        <div class="addsmartreplies modal-dialog" role="document">
             <div class="modal-content delete-token-modal" id="delete-tok">
                 <div class="modal-body alertmessage">
-					<sb-addSmartReplies *ngIf="isShowSmartReplies" [isEdit]="isEdit" [smartReplyData]="repliesData" >
-
-					</sb-addSmartReplies>
+					<sb-addSmartReplies *ngIf="isShowSmartReplies" [isEdit]="isEdit" [smartReplyData]="repliesData" ></sb-addSmartReplies>
                 </div>
-				</div>
+			</div>
 		</div>
     </div>
 

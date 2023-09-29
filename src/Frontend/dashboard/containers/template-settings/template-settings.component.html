@@ -1,9 +1,4 @@
 <div>
-    <div class="toaster" (click)="hideToaster()">
-        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
-        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
-        <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
-    </div>
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">
             <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1">Template Message</a>

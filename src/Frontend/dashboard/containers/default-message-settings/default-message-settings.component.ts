@@ -18,7 +18,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
   videoSelected = false;
   defaultMessageForm!:FormGroup;
   showSideBar:boolean=false;
-  defaultMessages: [] =[];
+  defaultMessages:any [] =[];
   defaultMessagesData: any;
 
 

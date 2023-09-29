@@ -3,7 +3,7 @@
 		<sb-top-nav title="Contacts"></sb-top-nav>
 	<div class="contact-header">
 		<div class="">
-			<form class="d-none d-md-inline-block form-inline" [formGroup]="searchForm">
+			<form class="d-none d-md-inline-block form-inline">
 				<div class="input-group gf ">
 					<input class="form-control" type="text" placeholder="Search" aria-label="Search"
 						aria-describedby="basic-addon2" name="Name" (input)="onFilterTextBoxChange()" id="Search-Ag"
@@ -15,21 +15,19 @@
 		<div class="d-flex">
 			<div id="export-btn">
 				<button class="btn-9 " [disabled]="checkedConatct.length==0" (click)="open(content)"> <img
-						src="assets/img/export.png"> Export </button>
+						src="../../../../assets/img/export.svg"> Export </button>
 			</div>
 			<div id="import-btn" >
 				<button class="btn  btn-block" id="import-btn" data-bs-toggle="modal" data-bs-target="#importmodal" ><img
-						src="assets/img/import.png">
+						src="../../../../assets/img/import.svg">
 					Import</button>
 			</div>
 			<div id="add-contact">
-				<button class="btn  btn-block" id="add-contact" (click)="open(contactadd)"><i class="fa fa-plus"></i>
-					Add
-					Contact</button>
+				<button class="btn  btn-block" id="add-contact" (click)="open(contactadd)"><span><img src="../../../../assets/img/teambox/add.svg" /></span>Add Contact</button>
 			</div>
 			<div id="delete-btn">
 				<button class="btn-delete row-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteContact"><img
-						src="assets/img/delete.png"></button>
+						src="../../../../assets/img/profile/delete.svg"></button>
 			</div>
 		</div>
 	</div>
@@ -94,10 +92,7 @@
 													[maintainAspectRatio]="false"
 													[aspectRatio]="4 / 3"
 													format="jpg"
-													(imageCropped)="imageCropped($event)"
-													(imageLoaded)="imageLoaded()"
-													(cropperReady)="cropperReady()"
-													(loadImageFailed)="loadImageFailed()">
+													(imageCropped)="imageCropped($event)">
 													</image-cropper>
 											</div>
 							  
@@ -553,7 +548,7 @@
 						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
 							<div class="ss">
-								<ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+								<!-- <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
 									[enableAutoCountrySelect]="true" [enablePlaceholder]="false"
 									[searchCountryFlag]="true"
 									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
@@ -561,7 +556,7 @@
 									[maxLength]="15" [phoneValidation]="true" [separateDialCode]="true"
 									[numberFormat]="PhoneNumberFormat.National" name="Phone_number"
 									formControlName="Phone_number">
-								</ngx-intl-tel-input>
+								</ngx-intl-tel-input> -->
 								<!-- <select class="dropdown" id="country" [(ngModel)]="selectedCountry" >
 								<option *ngFor="let country of countries"  [ngValue]="country.code" >{{country}}</option>
 								
@@ -626,14 +621,14 @@
 
 					<label for="floatingSelectGrid">Tag</label>
 					<ng-multiselect-dropdown class="multiselect" name="tag" formControlName="tag" id="tag"
-						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'" [disabled]="disabled"
+						[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'"
 						(onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 					<br>
 					<label for="floatingSelectGrid ">Status</label>
 					<ng-multiselect-dropdown class="multiselect" [settings]="dropdownSettings" [data]="status"
 						[placeholder]="'Search'" name="status" formControlName="status" id="status"
-						[disabled]="disabled" (onSelect)="onItemSelect($event)">
+						 (onSelect)="onItemSelect($event)">
 					</ng-multiselect-dropdown>
 				</div>
 
@@ -676,7 +671,7 @@
 						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
 							<div class="ss">
-								<ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
+								<!-- <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
 									[enableAutoCountrySelect]="true" [enablePlaceholder]="false"
 									[searchCountryFlag]="true"
 									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
@@ -684,7 +679,7 @@
 									[maxLength]="15" [phoneValidation]="true" [separateDialCode]="true"
 									[numberFormat]="PhoneNumberFormat.National" name="Phone_number"
 									formControlName="Phone_number">
-								</ngx-intl-tel-input>
+								</ngx-intl-tel-input> -->
 							</div>
 						</div>
 					</div>
@@ -736,7 +731,7 @@
 
 					<label for="floatingSelectGrid">Tag</label>
 					<ng-multiselect-dropdown class="multiselect" id="tag" name="tag"
-						[formControl]="editContact.controls['tag']" [settings]="dropdownSettings" [data]="tag"
+						[formControl]="editContact.controls['tag']" [settings]="dropdownSettings" [(ngModel)]="customerData.Tag" [data]="tag"
 						[placeholder]="'Search'" [disabled]="disabled" (onSelect)="onItemSelect($event)">
 				
 					</ng-multiselect-dropdown>
@@ -815,7 +810,7 @@
 	</div>
 
 	<div class="modal fade" tabindex="-1" id="importmodal" role="dialog" data-bs-backdrop="static">
-        <div class="modal-dialog docla" id="doclaa" role="document">
+        <div class="modal-dialog docla" role="document">
             <div class="modal-content delete-token-modal" id="model">
                 <div class="modal-body alertmessage" id="model-message">
                 <sb-import>

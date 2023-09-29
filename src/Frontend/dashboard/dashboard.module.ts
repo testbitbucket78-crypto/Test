@@ -11,7 +11,6 @@ import { TablesModule } from 'Frontend/tables/tables.module';
 import { OrderModule } from 'ngx-order-pipe';
 import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
-import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { AgGridModule } from 'ag-grid-angular';
 import { ImageCropperModule } from 'ngx-image-cropper';
 
@@ -33,7 +32,7 @@ import * as dashboardServices from './services';
 import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
 import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { DashboardComponent } from './containers';
-import { NumberToWordsPipe } from './containers/number-to-words.pipe';
+
 
 @NgModule({
     imports: [
@@ -48,7 +47,6 @@ import { NumberToWordsPipe } from './containers/number-to-words.pipe';
         NavigationModule,
         ChartsModule,
         TablesModule,
-        NgxIntlTelInputModule,
         AgGridModule.withComponents([dashboardContainers.ContactsComponent]),
         NgMultiSelectDropDownModule.forRoot(),
         RichTextEditorModule,
@@ -62,7 +60,7 @@ import { NumberToWordsPipe } from './containers/number-to-words.pipe';
          ...dashboardComponents.components,
             DashboardComponent,
             SearchfilterPipe,
-            NumberToWordsPipe,
+
         ],
     exports: [...dashboardContainers.containers,
               ...dashboardComponents.components,

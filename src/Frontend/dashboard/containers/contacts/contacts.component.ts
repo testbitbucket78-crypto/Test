@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
-import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
+// import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
 import { Router } from '@angular/router';
 import { contactsImageData } from 'Frontend/dashboard/models/dashboard.model';
@@ -120,16 +120,16 @@ columnDefs: ColDef[] = [
 
   searchText= "";
   separateDialCode = false;
-	SearchCountryField = SearchCountryField;
-	CountryISO = CountryISO;
-  PhoneNumberFormat = PhoneNumberFormat;
-	preferredCountries: CountryISO[] =[];
+	// SearchCountryField = SearchCountryField;
+	// CountryISO = CountryISO;
+  // PhoneNumberFormat = PhoneNumberFormat;
+	// preferredCountries: CountryISO[] =[];
   phoneForm = new FormGroup({
 		phone: new FormControl(undefined, [Validators.required])
 	});
 
 	changePreferredCountries() {
-		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
+		// this.preferredCountries = [CountryISO.India, CountryISO.Canada];
 	}
 
   selectedCountry: any;
@@ -166,7 +166,8 @@ columnDefs: ColDef[] = [
     selectedItems: any = [];
     selectedTagItems: any[] = []; 
     selectedStatusItems: any[] = []; 
-    dropdownSettings = {}; 
+    dropdownSettings = {};
+
     items: any;
     customerData: any;
     getFilterTags: [] = [];
@@ -432,7 +433,7 @@ onSelectAll(items: any) {
     document.getElementById ("sidebar")!.style.width = "0";
    }
 
-  deleteRow(arr: ["id"]) {
+  deleteRow(arr:any ["id"]) {
 
    
       this.contacts.splice(arr, 1);

@@ -3,7 +3,7 @@ import { FormsModule, FormBuilder, FormControl, FormGroup, NgForm } from '@angul
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
-import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
+// import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 
 @Component({
     selector: 'sb-register',
@@ -23,30 +23,31 @@ export class RegisterComponent implements OnInit {
     changetype:boolean = true;
     change:boolean = true;
     separateDialCode = false;
-	SearchCountryField = SearchCountryField;
-	CountryISO = CountryISO;
-    PhoneNumberFormat = PhoneNumberFormat;
-	preferredCountries: CountryISO[] = [CountryISO.India, CountryISO.UnitedStates, CountryISO.UnitedKingdom];
+    registerForm:any;
+	// SearchCountryField = SearchCountryField;
+	// CountryISO = CountryISO;
+    // PhoneNumberFormat = PhoneNumberFormat;
+	// preferredCountries: CountryISO[] = [CountryISO.India, CountryISO.UnitedStates, CountryISO.UnitedKingdom];
     
-  
-    registerForm = this.formBuilder.group({
-        name: new FormControl('', [
-            Validators.required,
-            Validators.pattern('[a-zA-Z ]*')
-          ]),
-        mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
-        
-        email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-        password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
-        confirmPassword: ['', Validators.required]
-    }, { validator: this.passwordMatchValidator });
-    changePreferredCountries() {
-		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
-	}
-    title = 'formValidation';
-        submitted = false;
 
-    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) { }
+    // changePreferredCountries() {
+	// 	this.preferredCountries = [CountryISO.India, CountryISO.Canada];
+	// }
+    title = 'formValidation';
+    submitted = false;
+
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) {
+        this.registerForm = this.formBuilder.group({
+            name: new FormControl('', [
+                Validators.required,
+                Validators.pattern('[a-zA-Z ]*')
+              ]),
+            mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+            
+            email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+            password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
+            confirmPassword: ['', Validators.required]}, { validator: this.passwordMatchValidator });
+     }
     ngOnInit() {
      
     }

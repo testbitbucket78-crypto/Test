@@ -85,7 +85,7 @@
     </div>
 
     <div class="modal fade" tabindex="-1" id="workingHourModal" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="m-auto modal-dialog" role="document">
             <div class="modal-content working-hour-modal ">
                 <div class="modal-header">
                     <h5 class="modal-title">Add Working Hours</h5>
@@ -99,8 +99,7 @@
                         <div class="billing-form-row">
                             <label>Days</label>
                             <ng-multiselect-dropdown class="multiselect" name="tag" [(ngModel)]="item.day" id="tag"
-                                [settings]="dropdownSettings" [data]="daysList" [placeholder]="'Add Days'" 
-                                [disabled]="disabled">
+                                [settings]="dropdownSettings" [data]="daysList" [placeholder]="'Add Days'">
                             </ng-multiselect-dropdown>
                         </div>
                         <div class="d-flex">
@@ -120,7 +119,7 @@
                                 <a class="add-btn" (click)="addWorkingHours()" *ngIf="idx == (workingFormData?.length-1)">+
                                     Add</a>
                             </div>
-                            <a class="remove-btn" (click)="removeWorkingHours(idx)" *ngIf="workingFormData?.length>1">-
+                            <a class="remove-btn" *ngIf="workingFormData?.length>1">-
                                 Remove</a>
                         </div>
                     </div>
@@ -144,25 +143,32 @@
                 </button>
             </div>
             <div class="modal-body px-5 pt-0">
-                <div class="input-group gf ">
+                <div class="input-group gf ml-3">
                     <input class="form-control" type="text" (keyup)="searchData($event.target.value)" placeholder="Search" aria-label="Search"
                         aria-describedby="basic-addon2" name="Name" id="Search-Ag" />
-                    <img src="assets/img/search.png">
+                    <img src="../../../../assets/img/search.png">
                 </div>
-                <div class="pt-3">
-                    <div>
-                        <div *ngFor="let item of selectedUser" class="user-dropdown pb-3">
-                            <input type="checkbox" class="user-checkbox" [(ngModel)]="item.isSelected">
-                            <img  class="user-img ml-2">
+                <div class="pt-3 ">
+                    
+                        <div *ngFor="let item of selectedUser" class="user-dropdown pb-3 d-flex">
+                            <div class="col-6">
+                            <input type="checkbox" class="user-checkbox"  [(ngModel)]="item.isSelected">
+                            <img   src="../../../../assets/img/Richie_1.png" class="user-img ml-2">
                             <span class="ml-2">{{item.name}}</span>
                         </div>
-                    </div>
-                    <div>
-                        <div></div>
-                    </div>
-                </div>
-                
 
+
+                            <div class="copy col-5" *ngIf="item.isSelected == true" >
+                                <div>
+                                <img  src="../../../../assets/img/Richie_1.png"  class="user-img-2 mt-1 ">
+                                <span class="ml-1"  >{{item.name}}</span>
+                                <button type="button" class="btclose"  >
+                                    <img src="../../../../assets/img/settings/remove.svg" (click)="removeKeyword(item)" class="user-img-3 mt-1 ">
+                                </button>
+                            </div>
+                            </div>
+                        </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="account-btn" (click)="saveCampaignAlert()">Save</button>

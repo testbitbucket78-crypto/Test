@@ -135,7 +135,7 @@
             <div class="modal-content whatsWebSetting-modal">
                 <div class="modal-header" >
                     <h5 class="modal-title">WhatsApp Web Settings</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"(click)="populateModal(whatsappData)">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"(click)="populateModal()">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
@@ -259,22 +259,22 @@
                         </div>
                         <div class="reboapp pt-4 pl-4">
                         <div class="rebo-footer">
-                            <button type="button" class="reboot-btnnn websetting-btn text-danger" (click)="saveTemplate()"  >Reboot Server</button>
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger">Reboot Server</button>
                         </div>
 
                         <div class="rebo-footer">
-                            <button type="button" class="reboot-btnnn websetting-btn text-danger" (click)="saveTemplate()"  >Restart App</button>
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger">Restart App</button>
                         </div>
 
                         <div class="rebo-footer">
-                            <button type="button" class="reboot-btnnn websetting-btn text-danger" (click)="saveTemplate()"  >Reset Server</button>
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger">Reset Server</button>
                         </div>
                     </div>
                 </div>
             </div>
          </div>
                     <div class="save-footer mx-3">
-                        <button type="button" class="account-bttn" (click)="saveTemplate()"  >Save</button>
+                        <button type="button" class="account-bttn">Save</button>
                     </div>
                 </div>
             </div>
@@ -334,7 +334,7 @@
                     <div class="mt-2" *ngFor="let item of ipAddress;let idx=index">
                         <label>IP Address</label><br>
                         <input class="token-input-form" type="input" [value]="item" placeholder="Enter IP address"
-                            [(ngModel)]="item">
+                            [(ngModel)]="ipAddress[idx]">
                         <div class="incoming-card">
                             <div>
                             <a class="add-btn" (click)="addIP()" *ngIf="idx == (ipAddress.length-1)">+ Add</a>

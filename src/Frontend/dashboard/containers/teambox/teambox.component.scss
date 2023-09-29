@@ -221,7 +221,7 @@
     opacity: 1;
     height: 35px;
     padding-left: 35px;
-    color: #7A86A1;
+    color: #000000;
     font-size: 12px;
     width: 8%;
     margin-left: 10px;
@@ -429,7 +429,7 @@
 .tag_list .tag_item .Unpaid {
     width: 8px;
     height: 8px;
-    background: red;
+    background: #3830F8;
     display: block;
     border-radius: 50%;
     float: left;
@@ -439,7 +439,7 @@
 .tag_list .tag_item .Paid {
     width: 8px;
     height: 8px;
-    background: blue;
+    background: #21CE78;
     display: block;
     border-radius: 50%;
     float: left;
@@ -449,7 +449,7 @@
 .tag_list .tag_item .Return {
     width: 8px;
     height: 8px;
-    background: red;
+    background: #F21730;
     display: block;
     border-radius: 50%;
     float: left;
@@ -1047,6 +1047,10 @@ button:focus, input:focus {
     color: #2EB480 !important;
 }
 
+.blue-color {
+    color: #3830F8 !important;
+}
+
 .small-gradient-btn .icon {
     width: 12px;
 }
@@ -1289,7 +1293,7 @@ div[role="progressbar"] {
     opacity: 1;
     margin: 0px 0px 15px 0px;
     color: #000;
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
 }
 
@@ -1359,6 +1363,7 @@ span {
 .back-array-icon {
     width: 20px;
     margin-bottom: 15px;
+    cursor: pointer;
 }
 
 .form-control-checkbox:checked:after {

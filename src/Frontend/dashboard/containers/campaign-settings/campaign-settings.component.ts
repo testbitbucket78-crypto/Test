@@ -27,6 +27,8 @@ userList:any[] =[];
 selectedUser:any[] =[];
 alertUsers:any[] =[];
 workingFormData:campaignFormData[]=[];
+isSelected:any;
+keywords: string[] = [];
 
 campaignAlertData:any;
 campaignTestData:any;
@@ -41,6 +43,9 @@ campaignTestData:any;
     this.getCampaignAlertData();
   }
 
+  removeKeyword(index: number): void {
+    this.selectedUser.splice(index, 1);
+  }
   addWorkingHours(){
     this.workingFormData.push({day:[],start_time:'',end_time:''})
   }
@@ -168,6 +173,14 @@ campaignTestData:any;
       if(this.campaignAlertData.findIndex((idx:any) => idx.uid == item.uid) >-1)
       item.isSelected = true;
     });
+  }
+
+  searchData(srchText:string){
+    this.alertUsers =[];
+    // this.rolesListinit.forEach((item:any) =>{
+    //   if(item.RoleName.includes(srchText))
+    //   this.rolesList.push(item);
+    // })
   }
   
 }

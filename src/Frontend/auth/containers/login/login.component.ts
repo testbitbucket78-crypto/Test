@@ -14,7 +14,7 @@ import { Validators } from '@angular/forms';
 export class LoginComponent implements OnInit {
 
     checked = true;
-
+    loginformValue: any;
     password: any;
     loginForm = new FormGroup({
          email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
@@ -32,7 +32,8 @@ export class LoginComponent implements OnInit {
     }
 
     onSubmit() {
-        this.apiService.login(this.loginForm.value).subscribe(
+        this.loginformValue = this.loginForm.value;
+        this.apiService.login(this.loginformValue).subscribe(
             (result) => {
 
                 if (result.status === 200) {

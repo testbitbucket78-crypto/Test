@@ -136,12 +136,10 @@ font-family: Manrope;
  }
 
  .months-view{
-  display: flex;
+  display: grid;
   gap: 0.6vw;
-  // grid-template-columns: auto auto auto auto;
-  // padding: 1.8rem 1.4rem 0.5rem 1.4rem;
-  flex-wrap: wrap;
-  justify-content: center;
+  grid-template-columns: auto auto auto auto;
+  padding: 1.8rem 1.4rem 0.5rem 1.4rem;
  }
 
  /* width */

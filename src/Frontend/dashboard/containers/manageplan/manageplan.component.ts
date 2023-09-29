@@ -15,8 +15,8 @@ export class ManageplanComponent implements OnInit {
   planData!:savePlan;
   planDivision:string = 'monthly';
   discount: string = '0';
-  AllChoices = [];
-  PlanCharges = [];
+  AllChoices:any = [];
+  PlanCharges:any = [];
   plans = ['Basic', 'Standard','Premium+'] 
 
   @Output() selectab = new EventEmitter<string> () ;

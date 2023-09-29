@@ -98,7 +98,7 @@ getaccountByID(data:any) {
   console.log(fetchdata);
 }
 
-populateModal(data: any) {
+populateModal() {
   this.selectedWhatsappData = this.whatsAppDetails;
   console.log(this.selectedWhatsappData);
 }

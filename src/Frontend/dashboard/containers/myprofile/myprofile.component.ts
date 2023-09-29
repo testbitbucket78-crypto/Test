@@ -27,6 +27,8 @@ export class MyprofileComponent implements OnInit {
   currentPasswordType: boolean = true;
   newPasswordType: boolean = true;
   confirmPasswordType: boolean = true;
+  changepassword:any
+  changePasswordValue:any;
   selectedAmount!:number;
   selectedDiv!: number;
   enterAmountVal!: any;
@@ -50,16 +52,15 @@ export class MyprofileComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 
-  changepassword = this.fB.group({
+  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private cdRef: ChangeDetectorRef) { 
+    this.changepassword = this.fB.group({
       uid:[0],
       oldPass:['', [Validators.required, Validators.minLength(8)]],
       newPass:['', [Validators.required, Validators.minLength(8)]],
       confirmPass:['', [Validators.required, Validators.minLength(8)]]
-  });
-  
-
-
-  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private cdRef: ChangeDetectorRef) { }
+    });
+    
+  }
 
   ngOnInit(): void {
     this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
@@ -221,10 +222,13 @@ toggleActiveState(checked: boolean) {
   // change password api service
 
   saveNewPassword() {
+
+    this.changePasswordValue = this.changepassword.value;
     if(this.changepassword.valid) {
       this.changepassword.controls.uid.setValue(this.uid);
 
-      this.apiService.changePass(this.changepassword.value).subscribe(
+
+      this.apiService.changePass(this.changePasswordValue).subscribe(
         
       (response: any) => {
         if(response.status === 200) {
