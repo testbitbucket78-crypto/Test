@@ -1,3 +1,6 @@
+* {
+    font-family: 'Manrope';
+}
 // .col-md-12{
 //     margin: 10px 0px 0px 50px;
 //     box-sizing: content-box;
@@ -19,9 +22,10 @@
 .setting-link-card .setting-link{
     color: #7A86A1;
     padding-left: 10px;
-    font-size: 15px;
+    font-size: 14px;
     text-decoration: none;
     cursor: pointer;
+    font-weight: 500;
 }
 
 .setting-link-card .active{

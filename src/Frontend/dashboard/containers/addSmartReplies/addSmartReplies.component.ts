@@ -97,6 +97,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	ShowNameUpdate = false;
     errorMessage = '';
 	successMessage = '';
+	warnMessage = '';
 	assignedAgentList: agentMessageList [] =[];
 	assignAddTag: [] =[];
 	assignedTagList:any []=[];
@@ -563,9 +564,14 @@ export class AddSmartRepliesComponent implements OnInit {
 	showToaster(message:any,type:any){
 		if(type=='success'){
 			this.successMessage=message;
-		}else if(type=='error'){
+		}	
+		else if(type=='warn'){
+			this.warnMessage=message;
+		}
+		else if(type=='error'){
 			this.errorMessage=message;
 		}
+	
 		setTimeout(() => {
 			this.hideToaster()
 		}, 5000);
@@ -573,6 +579,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	}
 	hideToaster(){
 		this.successMessage='';
+		this.warnMessage='';
 		this.errorMessage='';
 	}
 
@@ -826,18 +833,15 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	}
 	getNewSmartReplyData() {
-		const title = this.newReply.value.Title;
-		const description = this.newReply.value.Description;
-		const errorDiv = document.getElementById("title-err-msg");
+		const title:any = this.newReply.value.Title;
+		const description:any = this.newReply.value.Description;
 
 		if (title !== '' && description !== '') {
 			sessionStorage.setItem('Title', title);
 			sessionStorage.setItem('Description', description);
-			errorDiv!.style.visibility = 'hidden';
 			this.next();
 		} else {
-			const errorMessage = "! Please Fill Title & Description First";
-			errorDiv!.innerHTML = errorMessage;
+			this.showToaster("! Title & Description Cannot be empty","error");
 		}
 	}
 
@@ -859,45 +863,45 @@ export class AddSmartRepliesComponent implements OnInit {
 	}
 	
 
-	sendNewSmartReply(smartreplysuccess: any, smartreplyfailed: any ) {
-
-			var data = {
-				SP_ID: sessionStorage.getItem('SP_ID'),
-				Title: this.newReply.value.Title,
-				Description: this.newReply.value.Description,
-				MatchingCriteria: this.model,
-				Keywords: this.keywords,
-				ReplyActions: this.assignedAgentList,
-				Tags: []
-			}
-			console.log(data)
-			this.apiService.addNewReply(data).subscribe (
-			
-			(response:any) => {
-				console.log(response)
-			
-				if (response.status === 200) {
-					this.modalService.open(smartreplysuccess);
-				}
+	sendNewSmartReply(smartreplysuccess: any, smartreplyfailed: any) {
+		var data = {
+		  SP_ID: sessionStorage.getItem('SP_ID'),
+		  Title: this.newReply.value.Title,
+		  Description: this.newReply.value.Description,
+		  MatchingCriteria: this.model,
+		  Keywords: this.keywords || [], 
+		  ReplyActions: this.assignedAgentList || [],
+		  Tags: []
+		};
+	  
+		console.log(data);
+	  
+		if (data.Keywords.length > 0 && data.ReplyActions.length > 0) {
+		  this.apiService.addNewReply(data).subscribe(
+			(response: any) => {
+			  console.log(response);
+			  if (response.status === 200) {
+				this.modalService.open(smartreplysuccess);
+				this.newReply.reset();
+				this.newReply1.reset();
+				this.newMessage.reset();
 				
+			  }
 			},
-
-			(error:any) => {
-				if (error.status === 500) {
-					this.modalService.open(smartreplyfailed);
-				}
-				else {
-					const errorDiv = document.getElementById("smrply-err-msg");
-					const errorMessage = "! Internal Server Error Please try after some time";
-					errorDiv!.innerHTML = errorMessage;
-
-				}
-
-				
-	       });
-		
-		
-	}
+			(error: any) => {
+			  if (error.status === 500) {
+				this.modalService.open(smartreplyfailed);
+			  } else {
+				this.showToaster("! Internal Server Error Please try after some time","error");
+	
+			  }
+			}
+		  );
+		} else {
+		  this.showToaster("! Add atleast one ReplyAction","warn");
+		}
+	  }
+	  
 
 
 
@@ -920,46 +924,36 @@ export class AddSmartRepliesComponent implements OnInit {
 				if (error.status === 409) {
 					this.modalService.open(duplicatekeyword);
 				}
-				else {
-					const errorDiv = document.getElementById("keyword-err-msg");
-					const errorMessage = "! Internal Server Error Please try after some time";
-					errorDiv!.innerHTML = errorMessage;
-
+				else {					
+					this.showToaster("! Internal Server Error Please try after some time","error");
+				
 				}
 	
 			});
 	}
 	
 
-	onClickFuzzy(event: MouseEvent) {
+	onToggleBox(event: MouseEvent, showBox: boolean, showBox1: boolean, showBox2: boolean) {
 		const target = event.target as HTMLElement;
 		if (target.classList.contains('form-check-label-img')) {
-			this.showBox = true;
-			this.showBox1 = false;
-			this.showBox2 = false;
+		  this.showBox = showBox;
+		  this.showBox1 = showBox1;
+		  this.showBox2 = showBox2;
 		}
-	}
+	  }
 
-	onClickExact(event: MouseEvent) {
-		const target = event.target as HTMLElement;
-		if (target.classList.contains('form-check-label-img')) {
-			this.showBox = false;
-			this.showBox1 = true;
-			this.showBox2 = false;
-		
-		}
-	}
-
-	onClickContains(event: MouseEvent) {
-		const target = event.target as HTMLElement;
-		if (target.classList.contains('form-check-label-img')) {
-			this.showBox = false;
-			this.showBox1 = false;
-			this.showBox2 = true;
-		
-		}
-	}
-
+	  onClickFuzzy(event: MouseEvent) {
+		this.onToggleBox(event, true, false, false);
+	  }
+	  
+	  onClickExact(event: MouseEvent) {
+		this.onToggleBox(event, false, true, false);
+	  }
+	  
+	  onClickContains(event: MouseEvent) {
+		this.onToggleBox(event, false, false, true);
+	  }
+	  
 
 
 }

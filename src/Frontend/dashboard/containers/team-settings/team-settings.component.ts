@@ -74,6 +74,7 @@ getTeamList(){
   })
 }
 
+
 getUserList(){
   this._settingsService.getUserList(this.sp_Id)
   .subscribe((result:any) =>{
@@ -167,6 +168,10 @@ searchUserData(srchText:string){
     if(item.team_name.includes(srchText))
     this.teamList.push(item);
   })
+}
+
+addRole() {
+  
 }
 
 }

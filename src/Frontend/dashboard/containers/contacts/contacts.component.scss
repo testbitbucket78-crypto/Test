@@ -63,7 +63,7 @@
 }
 
 .gf {
-    width: 300px;
+    width: 322px;
 
 }
 .btn-footer{
@@ -111,25 +111,40 @@ html, body {
 .btn:not(:disabled):not(.disabled) {
     cursor: pointer;
     margin: 0px 0px 0px 5px;
-    width: 122px;
+    width: 114px;
+    height: 43px;
 }
 .btn:not(:disabled):not(.disabled):hover {
     cursor: pointer;
     color: #6149CD;
-    box-shadow: 1px 8px 29px #695F9724;
+
     opacity: 1;
+}
+
+#add-contact {
+    width: 132px;
+    color: #6149cd;
+    font-weight: 700!important;
+
+    
+}
+
+#add-contact img {
+    width: 16px;
+    margin-right: 4px;
 }
 
 .btn-9 {
     cursor: pointer;
-    width: 122px;
+    width: 114px;
     color: #7A86A1;
     background-color: #ffffff;
     border: 1px solid #EBEBEB;
     border-radius: 17px;
     font-family: "Manrope";
     font-size: 14px;
-    height: 34px;
+    height: 43px;
+
 }
 
 .btn-delete {
@@ -208,8 +223,8 @@ h4, .h4 {
 
 .edittag {
     width: 70%;
-    left: 475px;
-    top: 240px;
+    top: 6em;
+    left: 11em;
     margin: 0;
 }
 
@@ -577,13 +592,12 @@ opacity: 1;
     height: 100%;
     width: 0;
     position: fixed;
-    z-index: 1;
+    z-index: 9999;
     top: 0;
     right: 0;
     background-color: #FBF9FE;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 60px;
   }
   .sidebar .btn5{
     border: 1px solid #EBEBEB;
@@ -601,8 +615,9 @@ opacity: 1;
     /* height: 120px; */
     margin-top: 50px;
     margin-right: 24px;
-    margin-left: 14px;
+    margin-left: 22px;
     width: 113px;
+    border-radius: 50%;
 }
 .sidebar .parent .child h4{
     font-weight: 800;
@@ -890,8 +905,6 @@ outline: none;
     flex-direction: column;
     width: 310px;
     height: 196px;
-    top: 145px;
-    left: 115px;
     pointer-events: auto;
     background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
@@ -956,14 +969,10 @@ outline: none;
     justify-content: center;
     align-items: center;
     margin: 0px;
-    top: 100px;
 }
 #model-message{
     width: 217%;
     padding: 0px;
-}
-#doclaa{
-    height: 0px;
 }
 
 

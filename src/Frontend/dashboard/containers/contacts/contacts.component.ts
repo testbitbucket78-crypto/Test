@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
-import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
+// import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
 import { Router } from '@angular/router';
 import { contactsImageData } from 'Frontend/dashboard/models/dashboard.model';
@@ -120,16 +120,16 @@ columnDefs: ColDef[] = [
 
   searchText= "";
   separateDialCode = false;
-	SearchCountryField = SearchCountryField;
-	CountryISO = CountryISO;
-  PhoneNumberFormat = PhoneNumberFormat;
-	preferredCountries: CountryISO[] =[];
+	// SearchCountryField = SearchCountryField;
+	// CountryISO = CountryISO;
+  // PhoneNumberFormat = PhoneNumberFormat;
+	// preferredCountries: CountryISO[] =[];
   phoneForm = new FormGroup({
 		phone: new FormControl(undefined, [Validators.required])
 	});
 
 	changePreferredCountries() {
-		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
+		// this.preferredCountries = [CountryISO.India, CountryISO.Canada];
 	}
 
   selectedCountry: any;
@@ -166,7 +166,8 @@ columnDefs: ColDef[] = [
     selectedItems: any = [];
     selectedTagItems: any[] = []; 
     selectedStatusItems: any[] = []; 
-    dropdownSettings = {}; 
+    dropdownSettings = {};
+
     items: any;
     customerData: any;
     getFilterTags: [] = [];
@@ -191,7 +192,7 @@ columnDefs: ColDef[] = [
  
   
   
- constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router)
+ constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router,private cdRef: ChangeDetectorRef)
  
  
  {
@@ -432,7 +433,7 @@ onSelectAll(items: any) {
     document.getElementById ("sidebar")!.style.width = "0";
    }
 
-  deleteRow(arr: ["id"]) {
+  deleteRow(arr:any ["id"]) {
 
    
       this.contacts.splice(arr, 1);
@@ -694,8 +695,11 @@ fileChangeEvent(event: any): void {
     this.imageChangedEvent = event;
   }
   imageCropped(event: ImageCroppedEvent) {
-      this.croppedImage = event.base64;
-   
+    const newImageUrl = event.base64 + '?timestamp=' + new Date().getTime();
+    this.croppedImage = newImageUrl;
+    
+    // Trigger change detection
+    this.cdRef.detectChanges();
  }
 
  
@@ -707,11 +711,14 @@ saveContactsProfilePicture() {
   this.contactsImageData.customerId = this.contactId,
   this.contactsImageData.contact_profile = this.croppedImage
 
+
 this.apiService.saveContactImage(this.contactsImageData).subscribe(
 (response) => {
 
   if (response.status === 200) {
     $("#pictureCropModal").modal('hide');
+    this.closesidenav(this.items);
+    this.getContact();
     console.log(response+ 'image saved successfully');
   }
 

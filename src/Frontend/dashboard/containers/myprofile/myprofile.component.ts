@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder,Validators } from "@angular/forms";
 import { ImageCroppedEvent } from 'ngx-image-cropper';
@@ -27,6 +27,8 @@ export class MyprofileComponent implements OnInit {
   currentPasswordType: boolean = true;
   newPasswordType: boolean = true;
   confirmPasswordType: boolean = true;
+  changepassword:any
+  changePasswordValue:any;
   selectedAmount!:number;
   selectedDiv!: number;
   enterAmountVal!: any;
@@ -50,16 +52,15 @@ export class MyprofileComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 
-  changepassword = this.fB.group({
+  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private cdRef: ChangeDetectorRef) { 
+    this.changepassword = this.fB.group({
       uid:[0],
       oldPass:['', [Validators.required, Validators.minLength(8)]],
       newPass:['', [Validators.required, Validators.minLength(8)]],
       confirmPass:['', [Validators.required, Validators.minLength(8)]]
-  });
-  
-
-
-  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService) { }
+    });
+    
+  }
 
   ngOnInit(): void {
     this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
@@ -170,7 +171,22 @@ updateNotificationId(notificationId: number) {
 // get teamboxNotificationState
 getTeamboxNotificaions() { 
   this.apiService.getTeamboxNotificationsState(this.uid).subscribe((response) => {
-      console.log(response);
+      const notifyArray = response.notify;
+
+    if(notifyArray.length > 0) {
+      const lastIndex = notifyArray.length - 1;
+      const data = notifyArray[lastIndex];
+      
+      this.pushNotificationValue = data.PushNotificationValue;
+      this.soundNotificationValue = data.SoundNotificationValue;
+      
+      console.log(data);
+      console.log(this.pushNotificationValue);
+      console.log(this.soundNotificationValue);
+    }
+
+
+
   });
 }
 
@@ -206,10 +222,13 @@ toggleActiveState(checked: boolean) {
   // change password api service
 
   saveNewPassword() {
+
+    this.changePasswordValue = this.changepassword.value;
     if(this.changepassword.valid) {
       this.changepassword.controls.uid.setValue(this.uid);
 
-      this.apiService.changePass(this.changepassword.value).subscribe(
+
+      this.apiService.changePass(this.changePasswordValue).subscribe(
         
       (response: any) => {
         if(response.status === 200) {
@@ -262,10 +281,14 @@ toggleActiveState(checked: boolean) {
   $("#pictureCropModal").modal('show');
     this.imageChangedEvent = event;
   }
-  imageCropped(event: ImageCroppedEvent) {
-      this.croppedImage = event.base64;
-   
+   imageCropped(event: ImageCroppedEvent) {
+    const newImageUrl = event.base64 + '?timestamp=' + new Date().getTime();
+    this.croppedImage = newImageUrl;
+    
+    // Trigger change detection
+    this.cdRef.detectChanges();
  }
+
  
 
 //API call to save the cropped image

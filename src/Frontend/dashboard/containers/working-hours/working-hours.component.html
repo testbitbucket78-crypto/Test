@@ -1,21 +1,21 @@
 <div class="row">
     <div class="col-sm-4">
         <div class="setting-card">
-            <span class="working-hour-heading">Working Hours</span>
-            <p class="pt-2">Define your team’s working hours during which they are available to communicate with
+            <span class="working-hour-heading px-2">Working Hours</span>
+            <p class="pt-2 px-2">Define your team’s working hours during which they are available to communicate with
                 customers</p>
 
             <div class="working-hour-img-card modal-body" *ngIf="!workingData">
                 <img src="../../../../assets/img/settings/image.png"><br>
                 <span class="working-hour-heading">Add Working Hours</span>
             </div>
-            <div *ngIf="workingData" class=" modal-body pt-0"> 
+            <div *ngIf="workingData" class=" modal-body pt-0 px-5"> 
                 <div *ngFor="let item of workingData;let idx=index" class="pt-4">
                     <div class="working-days">{{item?.working_days}}</div>
                     <div class="working-time">{{item?.start_time}} - {{item?.end_time}}</div>
                 </div>
             </div>
-            <div class="text-center">
+            <div class="text-center pt-3">
                 <button class="working-hour-btn" (click)="manageWorkingHour()" data-bs-toggle="modal" data-bs-target="#workingHourModal">Manage Working
                     Hours</button>
             </div>
@@ -26,17 +26,17 @@
     <div class="col-sm-8">
         <div class="setting-card">
             <div class="flex-header">
-                <span class="working-hour-heading">Holidays</span>
+                <span class="working-hour-heading pt-2">Holidays</span>
                 <select class="holiday-dropdown" [(ngModel)]="selectedYear">
                     <option *ngFor="let item of yearList" [value]="item">{{item}}</option>
                 </select>                
             </div>
             <div class="months-view">
                 <div class="month-card" *ngFor="let item of totalmonths;let idx =index" (click)="createDynamicDate(idx+1)" data-bs-toggle="modal" data-bs-target="#holidayModal">
-                    <div class="p-2 px-3">
+                    <div class=" date-time p-2 px-3">
                         <img src="../../../../assets/img/settings/Edit-icon.svg">&nbsp;{{item}}
                     </div>
-                    <div class="dates-view px-2">
+                    <div class="dates-view px-3">
                         <div class="month-date">1</div>
                         <div class="month-date">12</div>
                         <div class="month-date">5</div>
@@ -68,17 +68,16 @@
                     <div class="billing-form-row">
                         <label>Days</label>
                         <ng-multiselect-dropdown class="multiselect" name="tag" [(ngModel)]="item.day" id="tag"
-                            [settings]="dropdownSettings" [data]="daysList" [placeholder]="'Add Days'" 
-                            [disabled]="disabled">
+                            [settings]="dropdownSettings" [data]="daysList" [placeholder]="'Add Days'">
                         </ng-multiselect-dropdown>
                     </div>
                     <div class="d-flex">
-                        <div class="billing-form-row">
+                        <div class="billing-form-row d-flex flex-column  ">
                             <label>Start Time</label>
                             <input type="text" class="input-form" [(ngModel)]="item.startTime"
                                 placeholder="Select start time">
                         </div>
-                        <div class="billing-form-row">
+                        <div class="billing-form-row d-flex flex-column pl-3 ">
                             <label>End Time</label>
                             <input type="text" class="input-form" [(ngModel)]="item.endTime"
                                 placeholder="Select end time">
@@ -112,10 +111,10 @@
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
             </div>
-            <div class="modal-body px-5 ">
-                <span class="month-heading pb-2">{{totalmonths[selectedMonth-1]}}, {{selectedYear}}</span>
-                <div class="calender">
-                <div class="d-flex">
+            <div class="modal-body px-5 pt-4 ">
+                <span class="month-heading pb-2 pl-4">{{totalmonths[selectedMonth-1]}}, {{selectedYear}}</span>
+                <div class="calender pl-4">
+                <div class="calen d-flex">
                     <div class="calender-day">Mon</div>
                     <div class="calender-day">Tue</div>
                     <div class="calender-day">Wed</div>
@@ -138,3 +137,10 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+
+

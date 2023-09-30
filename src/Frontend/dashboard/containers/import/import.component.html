@@ -47,7 +47,7 @@
 							<h5>Upload a CSV file <br />to add or update contacts</h5>
 							<span class="or">Or</span>
 							<div class="choose">
-								<input type="file" (change)="onUpload($event)" />
+								<input type="file" (change)="onUpload($event)" accept=".csv" />
 							</div>
 						</div>
 
@@ -143,20 +143,20 @@
 						<span id="map-span">Select the appropriate contact field for each column in the CSV</span>
 						<div class="row" id="r-first">
 							<div class="sq d-flex col-lg-12">
-								<div *ngFor="let data of importedData" class="ss col-lg-4 mr-2">
+								<div class="ss col-lg-4 mr-2">
 									<div class="">
 										<div>
 											<h5>Sample Data from your CSV</h5>
 										</div>
 										<div class="ml-2">
-											<p class="p-1">{{data.Name}}</p>
-											<p class="p-1">{{data.emailId}}</p>
-											<p class="p-1">{{data.Phone_number}}</p>
-											<p class="p-1">{{data.sex}}</p>
-											<p class="p-1">{{data.tag}}</p>
-											<p class="p-1">{{data.status}}</p>
-											<p class="p-1">{{data.Country}}</p>
-											<p class="p-1">{{data.state}}</p>
+											<p class="p-1">{{importedData[0].Name}}</p>
+											<p class="p-1">{{importedData[0].emailId}}</p>
+											<p class="p-1">{{importedData[0].Phone_number}}</p>
+											<p class="p-1">{{importedData[0].sex}}</p>
+											<p class="p-1">{{importedData[0].tag}}</p>
+											<p class="p-1">{{importedData[0].status}}</p>
+											<p class="p-1">{{importedData[0].Country}}</p>
+											<p class="p-1">{{importedData[0].state}}</p>
 											
 										</div>
 									</div>
@@ -450,10 +450,10 @@
 														<label class="m-0 switch">
 														  <input type="checkbox" class="m-0 form-control-checkbox"
 														  (change)="getUpdateFields($event,headers[1])"
-														  [(ngModel)]="isOverrideOn8">
+														  [(ngModel)]="isOverrideOn7">
 														  <span class="slider 8"></span>
 														</label>
-														<p class="over-on">{{ isOverrideOn8 ? 'Override on' : 'Override off' }}</p>
+														<p class="over-on">{{ isOverrideOn7 ? 'Override on' : 'Override off' }}</p>
 													  </div>
 													  </div>
 											</div>

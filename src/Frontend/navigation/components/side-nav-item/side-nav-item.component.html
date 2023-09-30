@@ -1,8 +1,8 @@
-<a class="nav-link" [routerLink]="sideNavItem.link" [ngClass]="{'active': isCurrentLink(sideNavItem.link)}">
+    <a *ngIf="sideNavItem.link" class="nav-link" [routerLink]="sideNavItem.link" [ngClass]="{'active': isCurrentLink(sideNavItem.link)}">
     <div class="sb-nav-link-icon">
         <img [src]="sideNavItem.icon">
     </div>
-    <div class="sidenav-item"  >
+    <div class="sidenav-item">
     {{sideNavItem.text}}
 
     </div>

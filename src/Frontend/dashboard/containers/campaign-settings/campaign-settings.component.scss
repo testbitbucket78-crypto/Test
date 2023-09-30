@@ -9,12 +9,14 @@
        text-decoration: none;
        margin-right: 8px;
        cursor: pointer;
+       font-family: 'Manrope';
    }
    
    .setting-field .active{
        color: #FFFFFF !important;
        background: #6149CD 0% 0% no-repeat padding-box;
-       border-radius: 19px;    
+       border-radius: 19px; 
+       font-family: 'Manrope';   
    }
 
    .setting-card {
@@ -41,13 +43,16 @@
 
 .default-actions-heading{
     font-size: 21px;
-    font-weight: 600;
+    font-weight: 800;
     letter-spacing: -0.55px;
+    font-family: Manrope;
 }
 
 .sub-heading{
+
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 650;
+    font-family: 'Manrope';
 }
 
 .flex-row{
@@ -67,6 +72,8 @@
     border-radius: 19px;
     padding: 5px 20px;
     border: none;
+    font-family: 'Manrope';   
+    width: 11rem;
 }
 
 .working-hour-heading{
@@ -77,6 +84,7 @@
 p{
     font-size: 14px;
     color: #7A86A1;
+    font-family: 'Manrope';
 }
 
 
@@ -90,7 +98,7 @@ p{
 
    .working-hour-modal{
     width: 650px;
-    height: 600px;
+    height: 712px;
     border-radius: 26px;
     overflow-y: scroll;
    }
@@ -138,6 +146,7 @@ p{
     border: 1px;    
     color: white;
     font-weight: 400;
+    width: 6.8rem;
    }
 
    .incoming-card{
@@ -237,11 +246,6 @@ p{
     height: 15px;
   }
 
-  .user-dropdown {
-
-  }
-
-  
   .working-days{
     font-weight: 600;
     padding-bottom: 4px;
@@ -259,4 +263,34 @@ p{
   }
   .users-body{
     min-height: 56vh;
+  }
+  .copy{
+     border: 1px solid #6149CD;
+     background: #FFFFFF 0% 0% no-repeat padding-box;
+     border-radius: 19px;
+     opacity: 1;
+     font-size: 14px;
+     height: 2rem;
+  }
+
+  .user-img-2{
+    width: 20px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 14px;
+  }
+
+  .user-img-3{
+    width: 16px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 14px;
+  }
+
+
+  .btclose{
+    width: 10px;
+    height: 12px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: none;
   }

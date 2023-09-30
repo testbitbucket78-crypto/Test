@@ -15,19 +15,27 @@ export class ContactSettingsComponent implements OnInit {
   tagId:number=0;
   tagColor:string='';
   tagName:string='';
+  tagListData = [];
+  pageSize:number = 10;
+  currentPage:number = 1;
+  paging: number [] = [];
+  searchText = '';
   constructor(private _settingsService:SettingsService) {
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
    }
 
   ngOnInit(): void {
     this.getTagData();
+  
   }
 
   getTagData(){
     this._settingsService.getTagData(this.sp_Id)
     .subscribe(result =>{
       if(result){
-        console.log(result);
+       this.tagListData = result.taglist;
+       console.log(this.tagListData);
+       this.getPaging();
         
       }
   
@@ -78,4 +86,13 @@ export class ContactSettingsComponent implements OnInit {
     this.tagColor='';
   }
 
+
+  getPaging() {
+    this.paging = [];
+    this.currentPage = 1;
+    let totalPages = Math.ceil( this.tagListData.length/this.pageSize);
+    for (let i = 1; i <= totalPages; i++) {
+       this.paging.push(i);
+  }
+}
 }

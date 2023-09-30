@@ -101,41 +101,23 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.CampaignsComponent,
     },
-    {
-        path: 'compose',
-        data: {
-            title: 'Compose Contact',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'Compose Contact',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.ComposeComponent,
-    },
      {
-        path: 'automation',
+        path: 'funnel',
         data: {
-            title: 'Automation',
+            title: 'Funnel',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'Automation',
+                    text: 'Funnel',
                     active: true,
                 },
             ],
         } as SBRouteData,
         canActivate: [],
-        component: dashboardContainers.AutomationComponent,
+        component: dashboardContainers.FunnelComponent,
     },
       {
         path: 'smartReplies',
@@ -173,25 +155,6 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.AddSmartRepliesComponent,
     },
-
-      {
-        path: 'replyMaterial',
-        data: {
-            title: 'Reply Material',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'Reply Material',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.ReplyMaterialComponent,
-    },
       {
         path: 'flowBuilder',
         data: {
@@ -209,60 +172,6 @@ export const ROUTES: Routes = [
         } as SBRouteData,
         canActivate: [],
         component: dashboardContainers.FlowBuilderComponent,
-    },
-    {
-        path: 'reportcampaign',
-        data: {
-            title: 'Report Campaign',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'Report Campaign',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.ReportcampaignComponent,
-    },
-    {
-        path: 'reportautomation',
-        data: {
-            title: 'Report Automation',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'Report Automation',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.ReportautomationComponent,
-    },
-    {
-        path: 'conversation',
-        data: {
-            title: 'Conversation',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'Conversation',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.ConversationComponent,
     },
   {
         path: 'reports',
@@ -282,29 +191,28 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.ReportsComponent,
     },
-    
     {
-        path: 'message',
+        path: 'conversationalReports',
         data: {
-            title: 'Message',
+            title: 'Conversational Reports',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'Message',
+                    text: 'Conversational Reports',
                     active: true,
                 },
             ],
         } as SBRouteData,
         canActivate: [],
-        component: dashboardContainers.MessageComponent,
+        component: dashboardContainers.ConversationalReportsComponent,
     },
       {
-        path: 'campaignReport',
+        path: 'campaignReports',
         data: {
-            title: 'Campaign Report',
+            title: 'Campaign Reports',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
@@ -317,44 +225,25 @@ export const ROUTES: Routes = [
             ],
         } as SBRouteData,
         canActivate: [],
-        component: dashboardContainers.CampaignReportComponent,
+        component: dashboardContainers.CampaignReportsComponent,
     },
-     {
-        path: 'schedule',
+    {
+        path: 'automationReports',
         data: {
-            title: 'Schedule',
+            title: 'Automation Reports',
             breadcrumbs: [
                 {
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
                 {
-                    text: 'Schedule',
+                    text: 'Automation Reports',
                     active: true,
                 },
             ],
         } as SBRouteData,
         canActivate: [],
-        component: dashboardContainers.ScheduleComponent,
-    },
-
- {
-        path: 'scheduleView',
-        data: {
-            title: 'scheduleView',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'scheduleView',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.ScheduleViewComponent,
+        component: dashboardContainers.AutomationReportsComponent,
     },
      {
         path: 'setting',
@@ -373,42 +262,6 @@ export const ROUTES: Routes = [
         } as SBRouteData,
         canActivate: [],
         component: dashboardContainers.SettingComponent,
-    },
-      {
-        path: 'generalsetting',
-        data: {
-            title: 'generalsetting',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'setting',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.GeneralsettingComponent,
-    },
-    {
-        path: 'accountsetting',
-        data: {
-            title: 'accountsetting',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'setting',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.AccountsettingComponent,
     },
     {
         path: 'myprofile',
@@ -447,61 +300,6 @@ export const ROUTES: Routes = [
         canActivate: [],
         component: dashboardContainers.SupportComponent,
     },
-
-    {
-        path: 'campaignsetting',
-        data: {
-            title: 'campaignsetting',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'setting',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.CampaignsettingComponent,
-    },
-    {
-        path: 'contactsetting',
-        data: {
-            title: 'contactsetting',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'setting',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.ContactsettingComponent,
-    },
-    {
-        path: 'inboxsetting',
-        data: {
-            title: 'inboxsetting',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'setting',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.InboxsettingComponent,
-    },
     {
         path: 'notifications',
         data: {
@@ -519,24 +317,6 @@ export const ROUTES: Routes = [
         } as SBRouteData,
         canActivate: [],
         component: dashboardContainers.NotificationsComponent,
-    },
-     {
-        path: 'organization',
-        data: {
-            title: 'organization',
-            breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'setting',
-                    active: true,
-                },
-            ],
-        } as SBRouteData,
-        canActivate: [],
-        component: dashboardContainers.OrganizationComponent,
     },
 
 ];

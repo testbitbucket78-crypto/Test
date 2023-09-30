@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser, TagData } from '../models/settings.model';
+import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser, TagData, defaultActionData,defaultMessagesData,routingRulesData,newTemplateFormData } from '../models/settings.model';
 
 @Injectable({
   providedIn: 'root'
@@ -139,4 +139,67 @@ export class SettingsService {
   deletTagData(tagData:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/deleteTag`,tagData);
   }
+
+  getDefaultAction(spID:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/generalcontroller/${spID}`);
+  }
+
+  saveDefaultAction(defaultActionData: defaultActionData): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/defaultaction`,defaultActionData);
 }
+
+  getDefaultMessages(spID:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getdefaultmessages/${spID}`);
+  }
+
+  addDefaultMessages(defaultMessagesData: defaultMessagesData): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addAndUpdateDefaultMsg`,defaultMessagesData);
+  }
+
+  getRoutingRulesData(spID:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getroutingrules/${spID}`);
+  }
+
+
+  saveRoutingRulesData(routingRulesData: routingRulesData): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/rotingsave`,routingRulesData);
+  }
+
+  getTemplateData(spID:number,isTemplate:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getTemplate/${spID}/${isTemplate}`);
+  }
+
+  copyTemplateData(uid:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addTemplate`,uid);
+  }
+
+  saveNewTemplateData(newTemplateFormData:newTemplateFormData,Link:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addTemplate`,newTemplateFormData,Link);
+  }
+
+  deleteTemplateData(ID: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/deleteTemplates`,ID);
+  }
+  
+  saveTemplateWithVideo(newTemplateFormData:newTemplateFormData,Link:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addVedioTemplate`,newTemplateFormData,Link);
+  }
+  
+  getWhatsAppDetails(spId:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getWhatsAppDetails/${spId}`);
+  }
+  
+  addWhatsAppDetails(tagData:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addWhatsAppDetails`,tagData);
+  } 
+  
+  
+  addTemplate(addtempletedata:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addTemplate`,addtempletedata);
+  }
+  
+  uploadCompanylogo(tagData:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/uploadCompanylogo`,tagData);
+  }
+  }
+

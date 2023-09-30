@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@a
 import { UserService } from 'Frontend/auth/services';
 import { SideNavItems, SideNavSection } from 'Frontend/navigation/models';
 import { NavigationService } from 'Frontend/navigation/services';
-import { element } from 'protractor';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -20,11 +20,13 @@ export class SideNavComponent implements OnInit, OnDestroy {
     routeDataSubscription!: Subscription;
 
     showNavItem: boolean = true;
+ 
 
-    constructor(public navigationService: NavigationService, public userService: UserService) {}
+    constructor(public navigationService: NavigationService, public userService: UserService,private router:Router) {}
 
     ngOnInit() {
         // this.openHamburger();
+        this.hideHamburger();
     
     }
 
@@ -53,10 +55,19 @@ export class SideNavComponent implements OnInit, OnDestroy {
     // }
 
     toggleNavItem() {
-        this.showNavItem = !this.showNavItem;
-      }
+        this.showNavItem = !this.showNavItem;   
+    }
 
-   
+    hideHamburger() {
+        const currentRoute = this.router.url
 
+        if( currentRoute.includes("/dashboard/setting") || 
+            currentRoute.includes("/dashboard/myprofile")|| 
+            currentRoute.includes("/dashboard/support")|| 
+            currentRoute.includes("/dashboard/notifications")){
+            this.showNavItem = false;
+        }
+
+}
 
 }

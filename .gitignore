@@ -7,6 +7,9 @@
 node_modules/
 dist/
 
+# Angular Cache
+.angular/cache
+
 # Compiled Java class files
 *.class
 
@@ -52,3 +55,5 @@ Thumbs.db
 /.vs
 src/Backend/Authentication/uploads/
 src/environments/environment.ts
+
+package-lock.json

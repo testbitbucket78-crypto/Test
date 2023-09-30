@@ -22,13 +22,13 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "aot": false,
+            "aot": true,
+            "buildOptimizer": true,
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "./node_modules/intl-tel-input/build/css/intlTelInput.css",
               "src/styles/styles.scss"
             ],
             "stylePreprocessorOptions": {
@@ -36,8 +36,7 @@
                 "src",
                 "./node_modules"
               ]
-            },
-            "scripts": ["node_modules/intl-tel-input/build/js/intlTelInput.min.js"]
+            }
           },
           "configurations": {
             "production": {

@@ -3,7 +3,7 @@
 
 
 // Import Bootstrap
-@import "bootstrap/scss/bootstrap.scss";
+@import "node_modules/bootstrap/scss/bootstrap.scss";
 
 // Import Custom SCSS
 @import "global.scss";
@@ -36,15 +36,10 @@
 @import '../../node_modules/@syncfusion/ej2-navigations/styles/material.css';
 @import '../../node_modules/@syncfusion/ej2-popups/styles/material.css';
 @import '../../node_modules/@syncfusion/ej2-richtexteditor/styles/material.css';
-body,.modal-content{
-	font-family: 'Manrope';
-}
-
-
 
 
 /* Importing Bootstrap SCSS file. */
-@import "~bootstrap/scss/bootstrap";
+@import "node_modules/bootstrap/scss/bootstrap";
 
 /* Importing Datepicker SCSS file. */
-@import "~ngx-bootstrap/datepicker/bs-datepicker";
+@import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";

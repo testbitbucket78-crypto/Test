@@ -17,7 +17,7 @@ export class WalletusageComponent implements OnInit {
     modalReference: any;
     walletUsageData  = [];
     walletUsageInsight = [];
-    approximateCharges = [];
+    approximateCharges:any = [];
     allConversationCount = [];
     totalCharges:any = 0;
     filteredData =[];

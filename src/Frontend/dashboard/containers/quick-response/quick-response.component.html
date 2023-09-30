@@ -1,0 +1,249 @@
+	<div class="row">
+		<div class="col p-0">
+			<div class="col-12 d-flex px-0 pt-3 align-items-center main-header-container">
+			   <div class=" main-headiing-title">Quick Response</div>
+				<div class="col-3"></div>
+
+	
+			   <div class="input-group gf mx-3 ">
+	
+				<input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
+	
+				<img src="assets/img/search.png">
+			</div>
+	
+				<div class="drop-down-btn">
+					<div class="toggle-box" (click)="filterChannels(filterchannels)">
+						<img src="assets/img/teambox/filter-icon.svg">
+						<span>Filter</span>
+			  </div>
+			  
+			  <ng-template #filterchannels let-c="close" let-d="dismiss">
+				<div class="modal-content m-0 p-3 filterchannels">
+					<div class="modal-header align-items-center filterchannelsheader">
+						<div class="modal-header-left ">
+							<p class="m-0">Filter By Channels</p>
+						</div>
+						<div class="modal-header-right">
+							<p class="m-0 close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/icon-close.svg"></p>
+						</div>
+						</div>
+					<div class="modal-body px-5 filterchannelsbody">
+						<div class="form-check pb-4">
+							<input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" >WhatsApp Official
+							<label class="form-check-label" for="radio1"></label>
+						  </div>
+						  <div class="form-check">
+							<input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2" checked>WhatsApp Web
+							<label class="form-check-label" for="radio2"></label>
+						  </div>
+			 
+				 </div>
+					<div class="modal-footer filterchannelsfooter">
+					  
+							<button type="button" class="submit-btn" aria-label="Close">Apply</button>
+						  
+					</div>
+				</div>
+			</ng-template>
+			</div>
+		 <button class="new-message-btn mx-3" data-bs-toggle="modal" data-bs-target="#welcomGreeting">
+			<img class="icoon" src="/assets/img/teambox/add.svg"/> New Quick Response</button>
+		 
+		
+		 <div class="modal fade" tabindex="-1" id="welcomGreeting"  data-bs-backdrop="static" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content welcomGreeting p-2">
+					<div class="btnclosee">
+						
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+							<img src="../../../../assets/img/teambox/icon-close.svg">
+						</button>
+					</div>
+					<form [formGroup]="usertemplateForm">
+					<div class="modal-body px-5 pt-0">
+						<div class="d-inline-block flex-column sel-type-link pb-3">
+							<label for="link" class="linkes mb-2" >Response Name</label>
+							<input type="url" id="linkrespone" formControlName="Header" placeholder="Enter" >
+						   </div>
+						   <div class="d-inline-block flex-column sel-type-link pb-3">
+							<label for="link" class="linkch" >Channel</label>
+							
+							<select class="input-form" formControlName="Channel"  id="linken"  required >
+								<option  [disabled]="true" [selected]="true" [hidden]="true">Select channel</option>
+								<option value="0">WhatsApp Web</option>
+								<option value="1">WhatsApp Official</option>
+							</select>
+					
+					
+						   </div>
+						<div class="d-flex justify-content-between align-items-center sel-type-btns">
+							<input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" checked><label class="m-0" for="sel-text">Text</label>
+							<input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')"><label  class="m-0" for="sel-image">Image</label>
+							<input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')"><label  class="m-0" for="sel-video">Video</label>
+							<input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')"><label  class="m-0" for="sel-document">Document</label>
+						  
+						</div>
+	
+						<div class="sel-type-text-container">
+							<div *ngIf="selectedType === 'text'" class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
+								<h6>Message</h6> <span>0/1024 Characters</span>
+							 </div>
+	
+							 <div *ngIf="selectedType === 'text'" class="sel-type-text">
+								 <textarea name="text-editor" formControlName="BodyText" maxlength="1024" rows="16" placeholder="Enter"></textarea>
+							 </div>
+						</div>
+				 
+	
+					   
+	
+					   <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
+					   
+							<input type="file" accept="image/jpeg, image/png" formControlName="Links" name="image-select" id="sel-type-image">
+							<label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add.svg" /></label>
+							<p class="m-0">Upload or enter link of image</p>
+					   </div>
+	
+					   <div *ngIf="selectedType === 'video'" class="my-4 sel-type-video">
+						<!-- <input type="file" accept="video/mp4"  formControlName="Links" name="video-upload" (change)="handleVideoUpload($event)" id="sel-type-video"> -->
+						<label class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add.svg" /></label>
+						<div class="video-player">
+						  <video controls #videoPlayer>
+							Your browser does not support the video tag.
+						  </video>
+						</div>
+						<div class="custom-play-button"></div>
+					
+					</div>
+				 
+					<div *ngIf="selectedType === 'document'" class="my-4 sel-type-image">
+							<input type="file" accept=".doc, .docx, .pdf" formControlName="Links" name="document-select" id="sel-type-document">
+							<label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add.svg" /></label>
+							<p class="m-0">Upload or enter link of document</p>
+					   </div>
+	
+	
+				 <div *ngIf="selectedType !== 'text'" >
+	
+					<div class="d-inline-block flex-column sel-type-link">
+						<label for="link" id="link" >Link</label>
+						<input type="url" id="link" formControlName="Links" placeholder="Enter" >
+					   </div>
+	
+	
+					   <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
+						<h6>Body Text</h6> <span>0/1024 Characters</span>
+					 </div>
+					 <div class="sel-type-text">
+						<textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="8" placeholder="Enter"></textarea>
+					</div>
+				</div>
+				</div>
+				
+		
+	   
+					<div class="modal-footer">
+						<button type="button" class="account-btn" (click)="saveTemplate()"  >Save</button>
+					</div>
+				</form>
+				</div>
+			</div>
+		</div>
+	
+			
+			</div>
+			
+	
+	 
+				<!-- <div class="template-empty-state">
+					<img src="../../../../assets/img/settings/image.png" />
+					<h5 class="mt-3">No Quick Response Message</h5>
+				</div> -->
+				
+				
+				 <div class="campaigns_section" *ngIf="templates"> 
+
+					<div>
+						<div class="campaigns_section_item" *ngFor="let temp of templates" (click)="toggleCampaign()"   (click)="gettemplateByID(temp)">
+							<div class="campaigns_section_item_header">
+								<div>
+
+							<p class="title">{{temp.Header}}</p>
+							<p class="start_time">Created On: <span>{{temp.created_at | date:'dd MMM yy, h:mm a'}}</span></p>
+							<p class="start_time">Modified On: <span>{{temp.updated_at | date:'dd MMM yy, h:mm a'}}</span></p>
+							<p><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{temp.Channel}}</p>
+							<div class="campaigns_section_item_statics">
+								<div>
+									<div class="d-flex">
+									<img src="../../../../assets/img/teambox/Richie_1.png" /><p>{{temp.created_By}}</p></div><p><span>Created By</span></p>
+								</div>
+							</div>
+						</div>
+					</div>
+					</div>
+					</div>
+					<div class="campdetails">
+					<div *ngIf="showCampaignDetail" class="campaign_detail">
+						<div class="modal-header filtercampaignheader">
+							<div class="modal-header-left">
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" (click)="toggleCampaign()"><img src="../../../../assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+		
+						<div class="campaigns_section_item" >
+							<div class="campaigns_section_item_header">
+							<p class="start_time">Created on:<span class="mx-1">{{repliestemplateData?.created_at | date:'dd MMM yy, h:mm a'}}</span>
+								|<span class="mx-1"> Modified on:</span> <span>{{repliestemplateData?.updated_at  | date:'dd MMM yy, h:mm a'}}</span></p>
+							<div class="campaigns_section_user">
+								<div class="d-flex"> <img src="../../../../assets/img/teambox/Richie_1.png" /><p>{{repliestemplateData?.created_By}}</p></div>
+								<p><span>Created By</span></p>
+							</div>
+							<p class="title" >{{repliestemplateData.Header}}</p>
+							<p><img class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{repliestemplateData?.Channel}}</p>
+							<div class="body1">
+								<div class="Message-body">Message</div>
+								<div class="body2 mt-4">
+									<div class="message_type" [ngStyle]="{'background-image': 'url(' + messagemedia + ')'}"></div>
+								<div class="boxbody">
+									
+									<div class="descbody">
+									{{repliestemplateData.BodyText}}
+								</div>
+								</div>
+							</div>
+
+
+							</div>
+							</div>
+						</div>
+
+						<div class="action_section">
+							<button type="button" class="btn" (click)="copyCampaign()"><img src="../../../../assets/img/teambox/copy.svg"></button>
+							<button class="titleimg"  data-bs-toggle="modal" data-bs-target="#welcomGreeting"  ><img src="../../../../assets/img/edit.png"></button>
+							<button type="button" class="btn"  data-bs-toggle="modal" data-bs-target="#deleteModal" ><img src="../../../../assets/img/teambox/delete.svg">	</button>	
+						
+						</div>
+						<div class="modal fade" tabindex="-1" id="deleteModal" role="dialog">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content delete-modal">
+									<div class="modal-body alertmessage">
+										<p class="label pb-2">Do you really want to delete this Template ?</p>
+										<div class="delete_group_button d-flex justify-content-center">
+											<button type="button" class="cancel-btn" aria-label="Close"
+												data-bs-dismiss="modal">Cancel</button>
+												<button type="button" class="delete-btn" aria-label="Close" (click)="deleteTemplate()">Yes, Delete</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					</div>
+	
+	  </div> 
+		</div>
+	
+	</div>
