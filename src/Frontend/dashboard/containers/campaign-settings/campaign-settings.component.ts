@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { campaignAlertUser, campaignDataResponsePost, campaignFormData, workingData, workingDataResponsePost, workingFormData } from '../../models/settings.model';
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined } from 'is-what';
 import { SettingsService } from '../../services/settings.service';
 
 @Component({
