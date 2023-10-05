@@ -554,8 +554,8 @@
                   <div class="d-flex justify-content-between">
                     <div class="pt-3 pb-2 msg-head">
                     <h6 class="pt-1 pb-3">Country</h6>
-                    <select class="callto input-form" formControlName="phone_number">
-                        <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
+                    <select class="callto input-form" formControlName="country_code">
+                        <option [value]="countryCode.split(' ')[1]" *ngFor="let countryCode of countryCodes">
                           {{ countryCode }}
                         </option>
                       </select>
@@ -565,7 +565,7 @@
                         <h6>Phone No.</h6> <div><span class="characters-count">{{ getCharacterCount(7) }}</span><span>/20 Characters</span></div>
                       </div>
                       <div class="sel-type-link">
-                        <input type="text" formControlName="phone_number" maxlength="20" placeholder="Enter" (input)="updateCharacterCount($event, 7)">
+                        <input type="text" formControlName="phone_number" maxlength="20" placeholder="Enter" (input)="updateCharacterCount($event, 7)" (change)="formatPhoneNumber()">
                    </div>  
                    </div>
                   </div>
