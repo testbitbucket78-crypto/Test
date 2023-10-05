@@ -547,28 +547,22 @@
 					<div class="col-md">
 						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
-							<div class="ss">
-								<!-- <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
-									[enableAutoCountrySelect]="true" [enablePlaceholder]="false"
-									[searchCountryFlag]="true"
-									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-									[selectFirstCountry]="false" [selectedCountryISO]="CountryISO.India"
-									[maxLength]="15" [phoneValidation]="true" [separateDialCode]="true"
-									[numberFormat]="PhoneNumberFormat.National" name="Phone_number"
-									formControlName="Phone_number">
-								</ngx-intl-tel-input> -->
-								<!-- <select class="dropdown" id="country" [(ngModel)]="selectedCountry" >
-								<option *ngFor="let country of countries"  [ngValue]="country.code" >{{country}}</option>
-								
-							</select>
-							
-							<input class="form-control"  type="tel" [ngClass]="{'is-invalid' :submitted && newContact.controls.Phone_number.errors  }"
-							  [(ngModel)]="code" value={{data}} placeholder="+91 ****" name="Phone_number"
-								formControlName="Phone_number" id="Phone_number" />
-								<div *ngIf= "submitted && newContact.controls.Phone_number.errors" class="text-danger">
-									! Phone number must be 10 digits
-								  </div> -->
+							<div class="d-flex ss">
+							<select class="input-form" id="country_code" formControlName="country_code">
+								<option [selected]="countryCode === countryCodes[101]"  *ngFor="let countryCode of countryCodes; let i = index">
+									{{ countryCode }}
+								</option>
+								</select>
+								<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" 
+									name="Phone_number" maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$"
+									onKeyPress="return /^[0-9]$/.test(event.key)"
+									[ngClass]="{'is-invalid' :newContact.controls.Phone_number.touched && newContact.controls.Phone_number.errors }" 
+								(change)="formatPhoneNumber()"> 
 							</div>
+							<div *ngIf="newContact.controls.Phone_number.touched && newContact.controls.Phone_number.errors" 
+							class="text-danger">
+							! Phone number must be 10 digits.
+						  </div>
 						</div>
 					</div>
 				</div>
@@ -670,17 +664,22 @@
 					<div class="col-md">
 						<label for="floatingSelectGrid">Phone Number*</label>
 						<div class="form-floating">
-							<div class="ss">
-								<!-- <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
-									[enableAutoCountrySelect]="true" [enablePlaceholder]="false"
-									[searchCountryFlag]="true"
-									[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-									[selectFirstCountry]="false" [selectedCountryISO]="CountryISO.India"
-									[maxLength]="15" [phoneValidation]="true" [separateDialCode]="true"
-									[numberFormat]="PhoneNumberFormat.National" name="Phone_number"
-									formControlName="Phone_number">
-								</ngx-intl-tel-input> -->
-							</div>
+							<div class="d-flex ss">
+								<select class="input-form" id="country_code" formControlName="country_code">
+									<option [value]="countryCode.split(' ')[1]" *ngFor="let countryCode of countryCodes; let i = index">
+										{{ countryCode }}
+									</option>
+									</select>
+									<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" 
+										name="Phone_number" maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$"
+										onKeyPress="return /^[0-9]$/.test(event.key)"
+										[ngClass]="{'is-invalid' :editContact.controls.Phone_number.touched && editContact.controls.Phone_number.errors }" 
+									(change)="formatPhoneNumber()"> 
+								</div>
+								<div *ngIf="editContact.controls.Phone_number.touched && editContact.controls.Phone_number.errors" 
+								class="text-danger">
+								! Phone number must be 10 digits.
+							  </div>
 						</div>
 					</div>
 				</div>
