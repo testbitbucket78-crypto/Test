@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="custom-fields">
+        <div class="heading-container">
+            <h6>Custom Fields</h6>
+            <input type="text" formControl="search">
+            <button><span><img src="" alt="error"></span>Add Fields</button>
+        </div>
+        <span class="sub-head">Add and manage contacts fields to save additional information about your contacts</span>
+        <div class="main-part-container">
+            <div class="main-part-heading">
+                <div class="header-col">
+                    Field Id
+                </div>
+                <div class="header-col">
+                    Field Name
+                </div>
+                <div class="header-col">
+                    Type
+                </div>
+                <div class="header-col">
+                    Mandatory
+                </div>
+                <div class="header-col">
+                    Status
+                </div>
+            </div>
+    
+            <div class="body-part">
+                <div class="body-col">
+                    name
+                </div>
+                <div cdkDropList (cdkDropListDropped)="onDrop($event)">
+                    <div cdkDrag>Drag me</div>
+                    <div cdkDrag>Another draggable div</div>
+                  </div>
+                  
+
+            </div>
+    
+     
+        </div>
+    </div>
+
+</div>

@@ -16,7 +16,7 @@
         "experimentalDecorators": true,
         "importHelpers": true,
         "lib": ["es2022", "dom"],
-        "module": "esnext",
+        "module": "es2022",
         "moduleResolution": "node",
         "noImplicitAny": true,
         "outDir": "./dist/out-tsc",

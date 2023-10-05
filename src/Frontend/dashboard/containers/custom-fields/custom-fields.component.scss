@@ -1,0 +1,41 @@
+.custom-fields {
+    display: grid;
+    background: #FFFFFF;
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px;
+}
+
+.heading-container {
+    display: flex;
+    justify-content: space-between;
+    align-items:center;
+}
+
+.heading-container h6 {
+    flex-grow: 1;
+    font-weight: 600;
+    letter-spacing: -0.55px;
+    color: #000000;
+    margin: 0;
+}
+
+.sub-head {
+    letter-spacing: -0.35px;
+    color: #7A86A1;
+    text-align: left;
+    font-size: 14px;
+}
+
+.main-part-heading {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding:5% 0 2% 0;
+    border-bottom: 1px solid #EBEBEB;
+}
+
+.main-part-heading .header-col {
+    text-align: center;
+    letter-spacing: 0px;
+    color: #C0BDCC;
+}

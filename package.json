@@ -23,6 +23,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "15.2.9",
+    "@angular/cdk": "^15.2.9",
     "@angular/common": "15.2.9",
     "@angular/compiler": "15.2.9",
     "@angular/core": "15.2.9",
@@ -59,6 +60,7 @@
     "jquery": "^3.6.1",
     "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.0",
+    "libphonenumber-js": "^1.10.45",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",

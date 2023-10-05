@@ -1,9 +1,13 @@
 <div>
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">
-            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1">Custom Field</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1">Custom Fields</a>
             <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2">Tags</a>
         </div>
+    </div>
+
+    <div *ngIf="selectedTab==1">
+        <sb-custom-fields></sb-custom-fields>
     </div>
  <div *ngIf="tagListData.length>0">
     <div  class="setting-card" *ngIf="selectedTab==2">

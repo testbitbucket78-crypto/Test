@@ -11,7 +11,7 @@ declare var $:any;
 export class ContactSettingsComponent implements OnInit {
   
   sp_Id:number;
-  selectedTab:number=2;
+  selectedTab:number=1;
   tagId:number=0;
   tagColor:string='';
   tagName:string='';
