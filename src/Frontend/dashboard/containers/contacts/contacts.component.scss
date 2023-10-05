@@ -232,9 +232,9 @@ h4, .h4 {
 .popfooter .btn1{
     background: #6149CD 0% 0% no-repeat padding-box;
     border: 1px solid #EBEBEB;
-    border-radius: 13px;
+    border-radius: 17px;
     opacity: 1;
-    padding: 2% 15% 2% 15%;
+    padding: 2% 15% 3% 15%;
     font-size: 14px;
     color: #ffffff;
 
@@ -553,6 +553,7 @@ opacity: 1;
         height: 38px;
         padding: 1px 3px;
         font-weight: 400;
+        font-size: 14px;
         line-height: 1.52857143;
         text-align: left;
         vertical-align: middle;
@@ -563,6 +564,7 @@ opacity: 1;
         background-color: #ffffff;
         margin: -2px 0px 0px 0px;
     }
+
     .multiselect-dropdown .dropdown-btn.selected-item-container.selected-item {
         border: none;
         margin-right: 4px;
@@ -572,6 +574,7 @@ opacity: 1;
         color: #000000;
         border-radius: 7px;
         float: left;
+        font-size: 14px;
     }
 
 // .delete img{
@@ -1077,4 +1080,25 @@ input[type="file"] {
 
 .set-profile-pic {
     margin: 0!important;
+}
+
+// phone nummber field
+
+#country_code {
+    width: 65px;
+    border: none;
+    position: absolute;
+    left: 16px;
+    top: 41px;
+    z-index: 9999;
+    font-size: 11px;
+    cursor: pointer;
+    outline: none;
+    background:#FFFFFF;
+}
+
+#Phone_number {
+    flex: 1;
+    padding: 0 5px 0 69px;
+    border: 1px solid #ccc;
 }

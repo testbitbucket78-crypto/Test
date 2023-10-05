@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { holidayData, workingData, workingDataResponse, workingDataResponsePost, workingFormData } from '../../models/settings.model';
 import { time } from 'console';
 import { SettingsService } from '../../services/settings.service';
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined } from 'is-what';
 declare var $:any;
 
 @Component({

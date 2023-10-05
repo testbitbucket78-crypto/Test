@@ -10,12 +10,14 @@
         <img routerLink="/dashboard/support" title="Support" src="../../../../assets/img/top-nav/support.svg">
         <img  src="../../../../assets/img/top-nav/notifications.svg" title="Notifications" (click)="toggleShowNotifications()">
         <img  routerLink="/dashboard/teambox" title="Teambox" src="../../../../assets/img/top-nav/chat-icon.svg">
+        <div>
+        <img *ngIf="profilePicture" class="profilepic" [src]="profilePicture" title="Profile" (click)="toggleShowProfile()"/>
         <div class="pick">
-        <img src="../../../../assets/img/top-nav/myprofile.svg" title="Profile" (click)="toggleShowProfile()">
-    </div>
+          <img *ngIf="!profilePicture" src="../../../../assets/img/top-nav/myprofile.svg" title="Profile" (click)="toggleShowProfile()">
+        </div>
+        
+      </div>
     </ul>
-
-  
 </nav>
 
 <!-- ***Notification section*** -->
