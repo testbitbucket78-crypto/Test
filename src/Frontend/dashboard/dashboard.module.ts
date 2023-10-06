@@ -37,7 +37,6 @@ import { DashboardComponent } from './containers';
 @NgModule({
     imports: [
         CommonModule,
-        NgMultiSelectDropDownModule.forRoot(),
         OrderModule,
         FilterPipeModule,
         RouterModule,
@@ -47,7 +46,7 @@ import { DashboardComponent } from './containers';
         NavigationModule,
         ChartsModule,
         TablesModule,
-        AgGridModule.withComponents([dashboardContainers.ContactsComponent]),
+        AgGridModule,
         NgMultiSelectDropDownModule.forRoot(),
         RichTextEditorModule,
         ImageCropperModule

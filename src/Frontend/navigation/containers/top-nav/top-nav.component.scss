@@ -17,6 +17,14 @@
     cursor: pointer;
 }
 
+.profilepic {
+    width: 40px;
+    height: 40px!important;
+    border-radius: 42%;
+    margin: -38px 10px -32px 17px!important;
+    cursor: pointer;
+}
+
 .pick img {
     width: 80px;
     height: 80px;
@@ -183,8 +191,6 @@
     font-size: 12px;
     color: #6149CD;
 }
-
-
 
 .popup-profile {
     background: #FFFFFF 0% 0% no-repeat padding-box;

@@ -164,7 +164,7 @@
               <div class="recentconversation" *ngFor="let items of recentConversation">
                 <img src="assets/img/user-chat-img.svg">
                 <div class="col-md-8 rc-body">
-                  <p id="item-name" [innerHTML]="items.Name"></p>
+                  <p class="text-capitalize" id="item-name" [innerHTML]="items.Name"></p>
                   <p id="item-message" [innerHTML]="getLimitedMessageText(items.message_text)"></p>
                   <!-- <p id="item-message">{{getLimitedMessageText(items.message_text)}}</p>
                   <!-- <p id="item-message">Lorium ipsum dolor sit met …</p> -->

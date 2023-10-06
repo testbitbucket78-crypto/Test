@@ -153,17 +153,17 @@
                         <div *ngFor="let item of selectedUser" class="user-dropdown pb-3 d-flex">
                             <div class="col-6">
                             <input type="checkbox" class="user-checkbox"  [(ngModel)]="item.isSelected">
-                            <img   src="../../../../assets/img/Richie_1.png" class="user-img ml-2">
+                            <img src="../../../../assets/img/profile/Richie_3.png" class="user-img ml-2">
                             <span class="ml-2">{{item.name}}</span>
                         </div>
 
 
                             <div class="copy col-5" *ngIf="item.isSelected == true" >
                                 <div>
-                                <img  src="../../../../assets/img/Richie_1.png"  class="user-img-2 mt-1 ">
+                                <img src="../../../../assets/img/profile/Richie_3.png"  class="user-img-2 mt-1 ">
                                 <span class="ml-1"  >{{item.name}}</span>
                                 <button type="button" class="btclose"  >
-                                    <img src="../../../../assets/img/settings/remove.svg" (click)="removeKeyword(item)" class="user-img-3 mt-1 ">
+                                    <img src="../../../../assets/img/settings/remove.svg" (click)="item.isSelected == false" class="user-img-3 mt-1 ">
                                 </button>
                             </div>
                             </div>
