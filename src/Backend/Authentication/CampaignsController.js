@@ -166,7 +166,7 @@ content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
 content = content.replace('&nbsp;', '\n')
 content = content.replace(/<br[^>]*>/g, '\n')
 content = content.replace(/<\/?[^>]+(>|$)/g, "")
-middleWare.channelssetUp('WhatsApp Web','text',messageTo,content)
+middleWare.channelssetUp(channel,'text',messageTo,content)
 	//    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
     //     var chunks = [];
 	// 	  resBH.on("data", function (chunk) {
