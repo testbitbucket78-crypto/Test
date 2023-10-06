@@ -19,69 +19,82 @@ async function createClientInstance(spid) {
     console.log(spid);
     
     return new Promise(async (resolve, reject) => {
-
-        // const browser = await puppeteer.launch({
-        //     executablePath: '/usr/bin/chromium-browser'
-        //   })
-        const client = new Client({
-            authStrategy: new LocalAuth(),
-          
-            puppeteer: {
-                
-                // executablePath: "C:\Program Files\Google\Chrome\Application\chrome.exe",
-                headless: false
-            }, authStrategy: new LocalAuth({
-                clientId: spid
-            }),
-        });
-        console.log("client created");
-
-        client.on('qr', (qr) => {
-            console.log('QR RECEIVED', qr);
-            resolve({ client: client, value: qr });
-
-        });
-        client.on('ready', () => {
-            console.log('Client is ready!');
-
-        });
-        client.initialize();
-
-        client.on('message', message => {
-            console.log(message.body);
-            saveInMessages(message)
-        });
-        client.on('authenticated', (session) => {
-            console.log("client authenticated");
-            console.log("session");
-            console.log(session)
-            clientSpidMapping = {
-                [spid]: client
-            }
-            console.log(clientSpidMapping);
-            resolve({});
-        });
-        
-    })
+      try {
+          const client = new Client({
+              authStrategy: new LocalAuth(),
+              puppeteer: {
+                  headless: false
+              },
+              authStrategy: new LocalAuth({
+                  clientId: spid
+              }),
+          });
+          console.log("client created");
+  
+          client.on('qr', (qr) => {
+              console.log('QR RECEIVED', qr);
+              resolve({ client: client, value: qr });
+          });
+  
+          client.on('ready', () => {
+              console.log('Client is ready!');
+          });
+  
+          client.initialize();
+  
+          client.on('message', message => {
+              console.log(message.body);
+              saveInMessages(message);
+          });
+  
+          client.on('authenticated', (session) => {
+              console.log("client authenticated");
+              console.log("session");
+              console.log(session)
+              clientSpidMapping = {
+                  [spid]: client
+              }
+              console.log(clientSpidMapping);
+              resolve({});
+          });
+      } catch (err) {
+          console.log("client err", err);
+          reject(err); // Reject the Promise in case of an error
+      }
+  })
+  .then(result => {
+      // Handle success here
+      console.log("Promise resolved with result:", result);
+  })
+  .catch(error => {
+      // Handle errors here
+      console.error('Error createClientInstance:', error);
+  });
+  
 }
 
 
 
 async function sendMessages(spid, endCust, type, text, link) {
+  try{
     let client = clientSpidMapping[[spid]];
-    
+    console.log(spid, endCust, type, text, link)
     if (client) {
         console.log("if");
         let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link);
     } else {
         console.log("else");
         let clientResonce = await createClientInstance(spid)
-        client = clientSpidMapping[spid];
+        client = clientSpidMapping[[spid]];
         let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link);    
     }
+  }catch(err){
+console.log(err);
+  }
 }
 
 async function sendDifferentMessagesTypes(client, endCust, type, text, link) {
+  try{
     console.log("messagesTypes")
        
     if (type === 'text') {
@@ -103,7 +116,9 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link) {
     if(type === 'vcard'){
         client.sendMessage(endCust + '@c.us', contat); 
     }
-
+  }catch(err){
+    console.log(err)
+  }
 }
 
 

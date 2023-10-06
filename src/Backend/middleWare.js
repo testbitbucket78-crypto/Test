@@ -12,6 +12,7 @@ function removePlusFromPhoneNumber(phoneNumber) {
 }
 
 async function channelssetUp(channelType, mediaType, messageTo, message_body) {
+    try{
     var phoneNumber=removePlusFromPhoneNumber(messageTo)
     console.log(phoneNumber)
     if (channelType == 'WhatsApp Official') {
@@ -40,17 +41,26 @@ async function channelssetUp(channelType, mediaType, messageTo, message_body) {
         // }
       //  let whatsAppWeb=await sendMessagesThroughWhatsAppWeb(phoneNumber,mediaType,message_body);
       let content = await removeTagsFromMessages(message_body);
-      Web.sendMessages(2,phoneNumber,mediaType,content,content)
+     console.log(mediaType,content,content)
+    let messages=await  Web.sendMessages(2,phoneNumber,mediaType,content,content);
+    console.log(messages)
     }
+}catch(err){
+    console.log(err);
+}
 }
 
 async function sendMessagesThroughWhatsAppOfficial(phoneNumber,mediaType,message_body){
+    try{
     if (mediaType == 'text') {
         console.log("text______" + message_body);
         sendTextOnWhatsApp(phoneNumber, message_body);
     } else if (mediaType == 'image') {
         console.log("image______" + message_body)
         sendMediaOnWhatsApp(phoneNumber, message_body)
+    }
+}catch(err){
+        console.log(err);
     }
 }
 
