@@ -293,6 +293,11 @@ export interface profilesettingPicData{
     filePath:string;
 }
 
+export interface customFieldFormData {
+    Option1:string;
+    Option2:string;
+}
+
 
 
 

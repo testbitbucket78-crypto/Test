@@ -35,7 +35,7 @@ export class SmartRepliesComponent implements OnInit {
 	showSideBar = false;
 	searchText ='';
 	repliesData!:repliesList;
-	replies: any;
+	replies:[] =[];
 
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private router:Router) {
 		config.backdrop = 'static';

@@ -1,9 +1,13 @@
-<div class="container">
+<div class="ml-0 mt-0 container">
     <div class="custom-fields">
         <div class="heading-container">
             <h6>Custom Fields</h6>
-            <input type="text" formControl="search">
-            <button><span><img src="" alt="error"></span>Add Fields</button>
+            <div class="d-flex align-items-center px-3 searchField">
+                <span><img src="../../../../assets/img/teambox/search-icon.svg" /></span>
+                <input type="text" (keyup)="searchData($event.target.value)" placeholder="Search" aria-label="Search" />
+            </div>
+
+            <button data-bs-toggle="modal" data-bs-target="#addCustomFieldModal"><span><img src="../../../../assets/img/teambox/add.svg" alt="error" /></span>Add Field</button>
         </div>
         <span class="sub-head">Add and manage contacts fields to save additional information about your contacts</span>
         <div class="main-part-container">
@@ -23,21 +27,197 @@
                 <div class="header-col">
                     Status
                 </div>
+                <!-- <div class="header-col">
+                    Modified
+                </div> -->
             </div>
-    
-            <div class="body-part">
-                <div class="body-col">
-                    name
+
+            <div *ngIf="defaultFieldsData" class="main-part-body">
+                <div *ngFor="let df of defaultFieldsData" class="column">
+                    <div class="body-col">
+                        {{df.FieldId}}
+                    </div>
+                    <div [style.color]="defaultFields" class="font-weight-bold body-col">
+                        {{df.FieldName}}
+                    </div>
+                    <div class="body-col">
+                        {{df.Type}}
+                    </div>
+                    <div class="body-col">
+                        <div class="active-toggle">
+                            <label class="m-0 switch">
+                                <input type="checkbox" class="m-0 form-control-checkbox" [checked]="df.Mandatory"
+                                    [disabled]="true">
+                                <span [style.background]="defaultFieldsChecked" class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="body-col">
+                        <div class="active-toggle">
+                            <label class="m-0 switch">
+                                <input type="checkbox" class="m-0 form-control-checkbox" [checked]="df.Mandatory"
+                                    [disabled]="true">
+                                <span [style.background]="defaultFieldsChecked" class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- <div class="body-col">
+                        11:45 AM 4 Sep 22
+                    </div> -->
                 </div>
-                <div cdkDropList (cdkDropListDropped)="onDrop($event)">
-                    <div cdkDrag>Drag me</div>
-                    <div cdkDrag>Another draggable div</div>
-                  </div>
-                  
+
+
+                <div class="dynamicFieldContainer" cdkDropList (cdkDropListDropped)="Drop($event)">
+                    <div *ngFor="let dynamic of dynamicFieldData | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize; 
+                      let ith = index" cdkDrag class="dynamicField column" cdkDragBoundary=".dynamicFieldContainer" (click)="toggleSideBar()">
+                        <div class="body-col">
+                            <div class="drag-btn">
+                                <img cdkDragHandle class="pr-3" src="../../../../assets/img/settings/drag.svg" alt="" />
+                                <span class="m-0">{{dynamic.FieldId}}</span>
+                            </div>
+
+                        </div>
+                        <div class="font-weight-bold body-col">
+                            {{dynamic.FieldName}}
+                        </div>
+                        <div class="body-col">
+                            {{dynamic.Type}}
+                        </div>
+                        <div class="body-col">
+                            <div class="active-toggle">
+                                <label class="m-0 switch">
+                                    <input type="checkbox" class="m-0 form-control-checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="body-col">
+                            <div class="active-toggle">
+                                <label class="m-0 switch">
+                                    <input type="checkbox" class="m-0 form-control-checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="sideBar" *ngIf="showSideBar">
+                    <div class="sidebar-close">
+                    <button type="button" class="btn-close" (click)="showSideBar = false">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                    <div class="sidebar-content">
+                        <!-- <p class="m-0">ID:{{dynamicFieldData?.FieldId}}</p>
+                        <span class="heading">{{roleData?.RoleName}}</span>
+                        <p>Created on: {{roleData?.created_at}} | Last Modified: {{roleData?.updated_at}}</p>
+                        <div class="sub-heading py-2">Rights({{rights?.length}})</div>
+                        <div class="user-assigned">
+                            <div class="rights" *ngFor="let item of rights">{{item?.rightsName}}</div>
+                        </div>
+                        <div class="sub-heading py-2">No. of Users Assigned ({{roleData?.users_count}})</div>
+                        <div>
+                            <div *ngFor="let item of userList" class="user-row">
+                                <img>
+                                <span>{{item}}</span>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="sideBar-footer">
+                        <button type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#rolesModal">
+                            <img class="p-0" src="../../../../assets/img/edit.png"></button>
+                        <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <img class="p-0" src="../../../../assets/img/delete.png">
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 d-flex px-2 mt-4 mb-4 notification-footer">
+                    <div class="col-sm-6 d-flex align-items-center text-left">
+                        <p class="p-0 m-0">Showing:</p>
+                        <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
+                            <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                        </select>
+                    </div>
+                    
+                <div class="col-sm-6 text-right">
+                <nav aria-label="navigation">
+                    <ul class="justify-content-end align-items-center m-0 pagination">
+                    <li class="btn-list">
+                        <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1">
+                            <img src="assets/img/profile/previous.svg" />
+                        </button>
+                    </li>
+                    <li *ngFor="let item of paging" class="pagination-num-container">
+                        <a [ngClass]="{'pagination-disabled': currentPage !=item}" (click)="currentPage=item" class="pagination-num-body">{{item}}</a>
+                    </li>
+                    <li class="btn-list">
+                        <button class="pagination-btn" [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" >
+                            <img src="assets/img/profile/next.svg" />
+                        </button>
+                    </li>
+                    </ul>
+                </nav>
+                </div>
+                </div>
 
             </div>
-    
-     
+
+            <div class="modal fade" tabindex="-1" id="addCustomFieldModal" role="dialog">
+                <div class="m-auto modal-dialog" role="document">
+                    <div class="modal-content working-hour-modal ">
+                        <div class="px-4 modal-header align-items-center">
+                            <h5 class="modal-title">Add Field</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                <img src="../../../../assets/img/teambox/icon-close.svg">
+                            </button>
+                        </div>
+                        <div [formGroup]="customFieldForm" class="modal-body addCustomFieldBody pt-0">
+                            <!-- <div *ngFor="let item of workingFormData;let idx=index"> -->
+                                <div class="d-flex flex-column billing-form-row">                         
+                                        <label for="ColumnName" >Field Name</label>
+                                        <input type="text" name="ColumnName" id="ColumnName" formControlName="ColumnName" >                              
+                                </div>
+                              
+                                    <div class="d-flex flex-column billing-form-row">
+                                        <label for="description">Description <span>(Optional)</span></label>
+                                       <textarea name="description" id="description" formControlName="description" cols="30" rows="5"></textarea>
+                                    </div>
+                                 
+                               
+                                <div class="d-flex flex-column billing-form-row">
+                                    <label>Field Type</label>
+                                    <select name="Type" id="Type" formControlName="Type">
+                                        <option *ngFor="let type of types" [value]="type">{{type}}</option>
+                                    </select>                                                       
+                                </div>
+
+                                <div class="select-options">
+                                    <div class="d-flex flex-column" *ngFor="let item of addCustomField; let ith = index">
+                                        <div class="billing-form-row">
+                                        <label>Options {{ith + 1}}</label>
+                                        <input type="text" >
+                                               
+                                <div class="incoming-card">
+                                    <div>
+                                        <a class="add-btn" (click)="addCustomFieldsOption()">+Add</a>
+                                    </div>
+                                    <a class="remove-btn" (click)="removeCustomFieldsOption(ith)">-Remove</a>
+                                </div>
+                              </div>
+                        
+                             </div>
+                            </div>
+                            <!-- </div> -->
+                        </div>
+                        <div class="px-4 modal-footer">
+                            <button type="button" class="account-btn">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
