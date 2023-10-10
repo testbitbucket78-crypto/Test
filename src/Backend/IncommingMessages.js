@@ -1,155 +1,49 @@
-const request = require("request"),
-  express = require("express"),
-  body_parser = require("body-parser"),
-  axios = require("axios").default,
-  app = express().use(body_parser.json()); // creates express http server
-
-require('dotenv').config()
-const { json } = require("body-parser");
-const db = require('../dbhelper');
-const notify = require('./PushNotifications');
-const aws = require('../awsHelper');
-const Routing=require('../RoutingRules')
-const token = process.env.WHATSAPP_TOKEN;
-
-const mytoken = process.env.VERIFY_TOKEN;
-
-app.listen(process.env.PORT, () => {
-  console.log('Server is running on port ' + process.env.PORT);
-});
-app.get('/', (req, res) => {
-  res.send("Welcome in Whatshap webhook ");
-})
-app.get("/webhook", (req, res) => {
-
-  let mode = req.query["hub.mode"];
-  let challange = req.query["hub.challenge"];
-  let token = req.query["hub.verify_token"];
-
-  if (mode && token) {
-    if (mode === "subscribe" && token === mytoken) {
-      res.status(200).send(challange);
-    } else {
-      res.status(403);
-    }
-  }
-
-})
+var express = require("express");
+var app = express();
+const bodyParser = require('body-parser');
+const cors = require('cors')
+app.use(bodyParser.json());
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "10000kb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
+const Routing = require('./RoutingRules')
+const db = require('./dbhelper')
+const awsHelper = require('./awsHelper');
+const webJs=require('./webJS/web');
 
 
 
-// Accepts POST requests at /webhook endpoint
-app.post("/webhook", async (req, res) => {
-  // Parse the request body from the POST
-
-  try {
-    console.log("===========================##############==========================")
-    let body = req.body;
-
-    // Check the Incoming webhook message    
-    if (body != undefined) {
-      console.log(JSON.stringify(body, null, 2))
-    }
-    else {
-      res.status(404).send({
-        msg: err,
-        status: 404
-      });
-      return;
-    }
-
-    // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
-
-    let extractedMessage = await extractDataFromMessage(body)
-
-    res.status(200).send({
-      msg: "extractedMessage",
-      status: 200
-    });
-
-  } catch (err) {
-    db.errlog(err);
-    res.status(500).send({
-      msg: err,
-      status: 500
-    });
-  }
-
-});
-
-
-async function extractDataFromMessage(body) {
-
-  if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
-    body.entry[0].changes[0].value && body.entry[0].changes[0].value.messages && body.entry[0].changes[0].value.messages.length > 0
-    && body.entry[0].changes[0].value.metadata) {
-
-    let changes = body.entry[0].changes[0];
-
-    let phone_number_id = changes.value.metadata.phone_number_id;
-    let display_phone_number = changes.value.metadata.display_phone_number;
-    let firstMessage = changes.value.messages[0];
-
-    let from = firstMessage.from; // extract the phone number from the webhook payload
-
-    let contact = changes.value.contacts && changes.value.contacts.length > 0 ? changes.value.contacts[0] : null;
-
-    let contactName = contact.profile.name ? contact.profile.name : from;
-    let phoneNo = contact.wa_id;
-    let ExternalMessageId = body.entry[0].id;
-    let message_text = firstMessage.text ? firstMessage.text.body : "";  // extract the message text from the webhook payload
-    let message_media = firstMessage.type;
-
-    let Message_template_id = firstMessage.id;
-    let Type = firstMessage.type
-
-    console.log(" body.entry " + phoneNo)
-    let firstStatus = "";
-    let Quick_reply_id = "";
-    let uniqueId = "";
-
-    if (changes.value.statuses && changes.value.statuses.length > 0) {
-      firstStatus = changes.value.statuses[0];
-      Quick_reply_id = firstStatus.id;
-      uniqueId = firstStatus.recipient_id;
-      console.log(Quick_reply_id + uniqueId);
-      console.log("status present");
-    }
-    console.log("________________SAVEING MESSAGE___________________");
-    // console.log(message_text)
-    var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName)
-    var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
-  }
-  else if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
-    body.entry[0].changes[0].value && body.entry[0].changes[0].value.statuses &&
-    body.entry[0].changes[0].value.statuses.length > 0 && body.entry[0].changes[0].value.statuses[0]) {
-
-    let messageStatus = body.entry[0].changes[0].value.statuses[0].status
-
-    console.log("messageStatus")
-    console.log(messageStatus)
-    let updatedStatus = await saveSendedMessageStatus(messageStatus)
-  }
-
-}
 
 
 
 
 async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName) {
+  console.log("saveIncommingMessages")
+
   if (Type == "image") {
     console.log("lets check the image");
 
-    var imageurl = await saveImageFromReceivedMessage(from, firstMessage, phone_number_id, display_phone_number);
+    var imageurl = await saveImageFromReceivedMessage(from, message_media, phone_number_id, display_phone_number, Type);
 
     message_media = imageurl.value;
-
+    console.log(message_media)
     message_text = " "
     var media_type = 'image/jpg'
   }
+  if (Type == "video") {
+    console.log("lets check the video");
 
+    var imageurl = await saveImageFromReceivedMessage(from, message_media, phone_number_id, display_phone_number, Type);
+
+    message_media = imageurl.value;
+    console.log(message_media)
+    message_text = " "
+    var media_type = 'video/mp4'
+  }
   if (message_text.length > 0) {
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
+    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?)"
+    var saveMessage = await db.excuteQuery(query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
@@ -158,10 +52,57 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   return saveMessage;
 }
 
+
+async function saveImageFromReceivedMessage(from, message, phone_number_id, display_phone_number, type) {
+  console.log("saveImageFromReceivedMessage")
+ 
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log(from, phone_number_id, display_phone_number, type)
+
+      //TODO: NEED TO get SID from DB using Display phone number.
+      //let sid = query to get using display phone number.
+      let findSpid = 'select SP_ID from user where mobile_number=?'
+      let sid = await db.excuteQuery(findSpid, [display_phone_number])
+      let awsDetails = ""
+      console.log(type =='image')
+      console.log(2)
+      console.log(type ==='image')
+      if (type =='image') {
+        awsDetails = await awsHelper.uploadStreamToAws(sid[0].SP_ID + "/" + phone_number_id + "/" + 'whatsAppWeb.jpeg', message)
+        console.log("awsDetails image");
+        console.log(awsDetails)
+      }
+      if (type =='video') {
+        awsDetails = await awsHelper.uploadVideoToAws(from + "/" + phone_number_id + "/" + "whatsAppWeb.mp4", message)
+        console.log("awsDetails video");
+
+        console.log(awsDetails)
+      }
+      //TODO: Save the AWS url to DB in messages table using SP similar to webhook_2 SP. 
+
+      //notify.NotifyServer(display_phone_number);
+
+      resolve({ value: awsDetails.value.Location });
+
+      //console.log("****image API****" + JSON.stringify(response))
+    }
+    catch (err) {
+      console.log("______image api ERR_____" + err)
+    }
+
+  })
+}
+
+
+
+
+
+
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
   if (saveMessage.length > 0) {
     console.log(display_phone_number + " .." + message_text)
-    notify.NotifyServer(display_phone_number);
+    //notify.NotifyServer(display_phone_number);  //// we have to active this
     const data = saveMessage;
     // Extracting the values
     const extractedData = {
@@ -174,7 +115,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       newlyInteractionId: data[7][0]['@newlyInteractionId']
     };
 
-    // console.log("getDetatilsOfSavedMessage");
+    console.log("getDetatilsOfSavedMessage");
+    console.log(extractedData)
     var sid = extractedData.sid
     var custid = extractedData.custid
     var agid = extractedData.agid
@@ -183,7 +125,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData.newlyInteractionId
 
-   
+
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
@@ -197,23 +139,25 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
     }
     let defaultReplyAction = await autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId)
-   let RoutingRulesVaues=await Routing.AssignToContactOwner(sid, newId, agid,custid)  // CALL Default Routing Rules
+   // let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  // CALL Default Routing Rules
   }
 
 }
+
 
 async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId) {
-  if (isAutoReply != 1 && isAutoReplyDisable != 1) {
-    const currentTime = new Date();
-    const autoReplyVal = new Date(autoReplyTime)
-    if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined) {
+  // if (isAutoReply != 1 && isAutoReplyDisable != 1) {
+  //   const currentTime = new Date();
+  //   const autoReplyVal = new Date(autoReplyTime)
+  //   if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined) {
+  //     let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId)
+  //   }
+  //   if (autoReplyTime == null || autoReplyTime == undefined) {
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId)
-    }
-    if (autoReplyTime == null || autoReplyTime == undefined) {
-      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId)
-    }
-  }
+  //   }
+  // }
 }
+
 
 async function sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId) {
   console.log("____Send SMART REPLIESS______" + replystatus)
@@ -230,88 +174,6 @@ async function sendSmartReply(message_text, phone_number_id, contactName, from, 
   }
 }
 
-
-async function saveSendedMessageStatus(messageStatus) {
-
-  let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
-  console.log(getMessageId)
-  if (getMessageId.length > 0) {
-    var message_id = getMessageId[0].Message_id;
-  }
-  console.log(message_id)
-  let saveStatus = await db.excuteQuery(process.env.updateStatusQuery, [messageStatus, new Date(), message_id])
-}
-
-
-async function saveImageFromReceivedMessage(from, message, phone_number_id, display_phone_number) {
-  console.log("saveImageFromReceivedMessage")
-  //https://graph.facebook.com/{{Version}}/{{Media-ID}}?phone_number_id=<PHONE_NUMBER_ID>
-  return new Promise((resolve, reject) => {
-    try {
-      const response = axios({
-        method: "GET", // Required, HTTP method, a string, e.g. POST, GET
-        url:
-          "https://graph.facebook.com/v17.0/" +
-          message.image.id +
-          "?phone_number_id=" + phone_number_id,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-
-      }).then(async function (result) {
-        console.log("the result is here")
-
-        //TODO: NEED TO get SID from DB using Display phone number.
-        //let sid = query to get using display phone number.
-        let sid = await db.excuteQuery(process.env.findSpid, [display_phone_number])
-
-        let awsDetails = await aws.uploadWhatsAppImageToAws(sid[0].SP_ID, message.image.id, result.data.url, token)//spid, imageid, fileUrl, fileAccessToken
-
-        //TODO: Save the AWS url to DB in messages table using SP similar to webhook_2 SP. 
-
-        notify.NotifyServer(display_phone_number);
-
-        resolve({ value: awsDetails.value.Location });
-      })
-      //console.log("****image API****" + JSON.stringify(response))
-    }
-    catch (err) {
-      console.log("______image api ERR_____" + err)
-    }
-
-  })
-}
-
-
-async function sendMessage(message, phone_number_id, from) {
-  try {
-    const response = axios({
-      method: "POST", // Required, HTTP method, a string, e.g. POST, GET
-      url:
-        "https://graph.facebook.com/v15.0/" +
-        phone_number_id +
-        "/messages?access_token=" +
-        token,
-      data: {
-        messaging_product: "whatsapp",
-        to: from,
-        text: { body: "Reply: " + message }
-        ,
-      },
-      headers: { "Content-Type": "application/json" },
-
-    })
-    console.log("****META APIS****" + response)
-  }
-  catch (err) {
-    console.log("______META ERR_____" + err)
-  }
-
-}
-
-
-
 async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId) {
   try {
     console.log("in side getSmartReplies method")
@@ -319,35 +181,36 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     // console.log(message_text)
     // console.log("_________process.env.insertMessage__________")
 
-    let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from);
-    var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text], sid]);
-    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, newlyInteractionId);
+    //let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from);
+   // var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text], sid]);
+   // let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, newlyInteractionId);
 
     console.log("defultOutOfOfficeMsg")
-    console.log(defautWlcMsg)
-    console.log(replymessage)
-    console.log(defultOutOfOfficeMsg)
+    // console.log(defautWlcMsg)
+    // console.log(replymessage)
+    // console.log(defultOutOfOfficeMsg)
     //var autoReply = replymessage[0].Message
-    console.log(replymessage.length)
-    console.log(" replymessage.length " + replymessage.length)
-    if (replymessage.length > 0) {
+    // console.log(replymessage.length)
+    // console.log(" replymessage.length " + replymessage.length)
+    // if (replymessage.length > 0) {
       console.log("replymessage.length")
-      iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId)
-    } else if (defultOutOfOfficeMsg === false) {
+      iterateSmartReplies('replymessage', phone_number_id, from, sid, custid, agid, replystatus, newId)
+    // } else if (defultOutOfOfficeMsg === false) {
 
-      console.log("getOutOfOfficeResult")
-      let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newlyInteractionId);
-      console.log(getOutOfOfficeResult)
-    }
-    else if (defautWlcMsg.length > 0 && defautWlcMsg[0].Is_disable == 1) {
-      console.log("defaut msg")
-      let messageInterval = await db.excuteQuery(process.env.msgBetweenOneHourQuery, [newId, 1])
-      if (messageInterval.length <= 0) {
-        sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
-        let updateSmsRes = await db.excuteQuery(process.env.updateSms, [1, new Date(), msg_id]);
-      }
+    //   console.log("getOutOfOfficeResult")
+    //   let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newlyInteractionId);
+    //   console.log(getOutOfOfficeResult)
+    // }
+    // else if (defautWlcMsg.length > 0 && defautWlcMsg[0].Is_disable == 1) {
+    //   console.log("defaut msg")
+    //   let messageInterval = await db.excuteQuery(process.env.msgBetweenOneHourQuery, [newId, 1])
+    //   if (messageInterval.length <= 0) {
+    //    // sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
+    //     let sendMessages=await webJs.sendMessages(sid,from,wlcMessage[0].message_type, wlcMessage[0].value,wlcMessage[0].link);
+    //     let updateSmsRes = await db.excuteQuery(process.env.updateSms, [1, new Date(), msg_id]);
+    //   }
 
-    }
+    // }
 
 
   } catch (err) {
@@ -356,23 +219,22 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
   }
 }
 
-
-
 async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId) {
   // Loop over the messages array and send each message
-  replymessage.forEach(async (message) => {
-    console.log("===================================")
-    console.log("***********************************")
+  // replymessage.forEach(async (message) => {
+  //   console.log("===================================")
+  //   console.log("***********************************")
 
-    var value = message.Value;
-    var testMessage = message.Message;                  // Assuming the 'Message' property contains the message content
-    var actionId = message.ActionID;                 // Assuming the 'ActionID' property contains the action ID
-    console.log(testMessage + "____________" + value + "_________" + actionId)
+  //   var value = message.Value;
+  //   var testMessage = message.Message;                  // Assuming the 'Message' property contains the message content
+  //   var actionId = message.ActionID;                 // Assuming the 'ActionID' property contains the action ID
+  //   console.log(testMessage + "____________" + value + "_________" + actionId)
 
-    let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
-    sendMessage(testMessage, phone_number_id, from);
-
-  });
+   // let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
+   let sendMessages=await webJs.sendMessages(sid,from,'text','testMessage','link');
+console.log("sendMessages")
+console.log(sendMessages)
+ // });
 
 }
 
@@ -471,7 +333,8 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
     var wlcMessage = await db.excuteQuery(process.env.defaultMessageQuery, [sid, 'Welcome Greeting']);
     if (newlyInteractionId != null && newlyInteractionId != undefined && newlyInteractionId != "" && wlcMessage.length > 0 && wlcMessage[0].Is_disable == 1) {
       // console.log("defaut msg")
-      sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
+     // sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
+      let sendMessages=await webJs.sendMessages(sid,from,wlcMessage[0].message_type, wlcMessage[0].value,wlcMessage[0].link);
       let updateSmsRes = await db.excuteQuery(process.env.updateSms, [1, new Date(), msg_id]);
     }
     // console.log(wlcMessage);
@@ -490,8 +353,8 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id) {
 
       let messageInterval = await db.excuteQuery(process.env.msgBetweenOneHourQuery, [newId, 2])
       if (messageInterval.length <= 0) {
-        sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
-
+        //sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
+       let sendDefaultMessage=await webJs.sendMessages(sid,from,outOfOfficeMessage[0].message_type,outOfOfficeMessage[0].value,outOfOfficeMessage[0].link)
         let updateSmsRes = await db.excuteQuery(process.env.updateSms, [2, new Date(), msg_id]);
       }
     }
@@ -548,6 +411,7 @@ function isWorkingTime(data, currentTime) {
 
 
 async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
+  
   console.log("messageData===")
   try {
 
@@ -601,8 +465,8 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId) {
     if (AgentsOfflineMessage.length > 0 && AgentsOfflineMessage[0].Is_disable == 1) {
       let messageInterval = await db.excuteQuery(process.env.msgBetweenOneHourQuery, [newId, 3])
       if (messageInterval.length <= 0) {
-        sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
-
+       // sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
+        let sendMessages=await webJs.sendMessages(sid,from,AgentsOfflineMessage[0].message_type, AgentsOfflineMessage[0].value,AgentsOfflineMessage[0].link);
         // let updateSms = `UPDATE Message set system_message_type_id=3 where Message_id=${msg_id}`
         let updateSmsRes = await db.excuteQuery(process.env.updateSms, [3, new Date(), msg_id]);
       }
@@ -611,3 +475,4 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId) {
   }
 }
 
+module.exports = { saveIncommingMessages, getDetatilsOfSavedMessage }

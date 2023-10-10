@@ -10,11 +10,129 @@ const path = require("path");
 const nodemailer = require('nodemailer');
 const awsHelper = require('../awsHelper')
 const { Key } = require("protractor");
-app.use(bodyParser.json({limit: '10mb'}));
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
+app.get('/columns/:spid', async (req, res) => {
+  try {
 
+    let query = ` SELECT column_name as displayName,column_name as ActuallName
+    FROM information_schema.columns
+    WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked')
+    UNION
+    SELECT ColumnName AS column_name,CustomColumn as ActuallName
+    FROM SPIDCustomContactFields  
+    WHERE SP_ID =?  AND isDeleted!=1;`
+    let result = await db.excuteQuery(query, [req.params.spid]);
+
+    res.send({ sataus: 200, result: result })
+  } catch (err) {
+    console.log(err)
+  }
+})
+
+
+app.post('/addCustomContact', async (req, res) => {
+  // Construct the INSERT query dynamically
+  let data = req.body.result
+  let insertQuery = 'INSERT INTO EndCustomer (';
+  let values = [];
+  // Iterate through the data array and add column names to the query
+  data.forEach((item, index) => {
+    insertQuery += `${item.ActuallName}`;
+    if (item.ActuallName == 'Name' || item.ActuallName == 'Phone_number' || item.ActuallName == 'emailId') {
+      if (item.displayName == '') {
+        res.status(400).send({
+          message: 'Please Name ,Phone no and email id',
+          status: 400
+        })
+      }
+    }
+    if (Array.isArray(item.displayName)) {
+      console.log("if")
+      var list = item.displayName;
+      ListofArrays = [];
+
+      for (var i = 0; i < list.length; i++) {
+
+        ListofArrays.push(list[i]);
+
+      }
+      joinList = ListofArrays.join()
+      values.push(joinList);
+
+    }
+
+    else {
+      console.log("else")
+      values.push(item.displayName)
+    }
+    if (index < data.length - 1) {
+      insertQuery += ', ';
+    }
+  });
+
+  insertQuery += ' , SP_ID) VALUES (';
+
+  // Add placeholders for values in the query
+  data.forEach((item, index) => {
+    insertQuery += `?`;
+    if (index < data.length - 1) {
+      insertQuery += ', ';
+    }
+  });
+
+  insertQuery += ', ?)';
+  console.log(values)
+  console.log(insertQuery);
+  //let result=await db.excuteQuery(insertQuery,values)
+  res.send({ status: 200, result: "result" });
+})
+
+app.post('/editCustomContact', async (req, res) => {
+  try {
+    const id = req.query.customerId;
+    const spid = req.query.SP_ID;
+    let query = val.neweditContact;
+    let data = req.body.result
+    let values = [];
+    // Iterate through the data array and add column names to the query
+    data.forEach((item, index) => {
+      query += `${item.ActuallName} =?`;
+
+      if (Array.isArray(item.displayName)) {
+        console.log("if");
+        var list = item.displayName;
+        ListofArrays = [];
+
+        for (var i = 0; i < list.length; i++) {
+          ListofArrays.push(list[i]);
+        }
+        joinList = ListofArrays.join();
+        values.push(joinList);
+      } else {
+        console.log("else");
+        values.push(item.displayName);
+      }
+
+      if (index < data.length - 1) {
+        query += ', ';
+      }
+    });
+
+    query += ' WHERE customerId = ? and SP_ID=?'
+    values.push(id);
+    values.push(spid);
+    console.log(values);
+    console.log(query);
+    let result = await db.excuteQuery(query, values)
+    res.send({ status: 200, result: result })
+  } catch (err) {
+    console.log(err);
+    res.send({ status: 500 })
+  }
+})
 
 
 app.get('/', function (req, res) {
@@ -231,6 +349,177 @@ app.put('/editContact', (req, res) => {
     });
   }
 })
+
+
+app.post('/importContact', async (req, res) => {
+
+  try {
+
+    var result = req.body;
+    var fields = result.field
+    var CSVdata = result.importedData
+    var identifier = result.identifier
+    var purpose = result.purpose
+    var SP_ID = result.SP_ID
+
+    if (purpose === 'Add new contact only') {
+      try {
+
+        let addNewUserOnly = await addOnlynewContact(CSVdata, identifier,SP_ID)
+
+        res.status(200).send({
+          msg: "Contact Added Successfully",
+          data: addNewUserOnly,
+          status: 200
+        });
+
+      } catch (err) {
+        console.log(err);
+        db.errlog(err);
+        res.status(500).send({
+          msg: err,
+          status: 500
+        });
+      }
+
+
+    }
+
+
+    if (purpose === 'Update Existing Contacts Only') {
+      try {
+
+        if (fields.length == 0) {
+          var upExistContOnly = await updateContact(CSVdata, identifier,SP_ID);
+        }
+        else {
+          var upExistContOnlyWithFields = await updateSelectedField(CSVdata, identifier, fields,SP_ID);
+        }
+        res.status(200).send({
+          msg: "Existing Contact Updated Successfully",
+          upExistContOnly: upExistContOnly,
+          upExistContOnlyWithFields: upExistContOnlyWithFields,
+          status: 200
+        });
+      } catch (err) {
+        console.log(err);
+        db.errlog(err);
+        res.status(500).send({
+          msg: err,
+          status: 500
+        });
+
+      }
+    }
+
+    if (purpose === 'Add and Update Contacts') {
+      //********ADD NEW CONTACT********* */
+      try {
+
+        var addAndUpdateCont = await addOnlynewContact(CSVdata, identifier,SP_ID);
+
+        if (fields.length == 0) {
+
+          var addAndUpdateContwithoutfield = await updateContact(CSVdata, identifier,SP_ID);
+          
+        }
+        else {
+
+          var addAndUpdatewithFields = await  updateSelectedField(CSVdata, identifier, fields,SP_ID);
+
+        }
+
+        res.status(200).send({
+          msg: "Add and Updated Contact Successfully",
+          addAndUpdatewithFields: addAndUpdatewithFields,
+          addAndUpdateContwithoutfield: addAndUpdateContwithoutfield,
+          addAndUpdateCont: addAndUpdateCont,
+          status: 200
+        });
+      } catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+          msg: err,
+          status: 500
+        });
+      }
+    }
+
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+  }
+})
+
+async function addOnlynewContact(CSVdata, identifier,SP_ID) {
+  for (let i = 0; i < CSVdata.length; i++) {
+    const set = CSVdata[i];
+    const fieldNames = set.map((field) => field.FieldName).join(', ');
+
+    // Find the value of the identifier based on the FieldName
+    const identifierField = set.find((field) => field.FieldName === identifier);
+    const identifierValue = identifierField ? identifierField.FieldValue : '';
+
+    let query = `INSERT INTO EndCustomer (${fieldNames},SP_ID) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=? AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
+    const values = set.map((field) => field.FieldValue);
+    values.push(SP_ID);
+    console.log(query)
+    console.log(values);
+    var result = await db.excuteQuery(query, [values, identifierValue, SP_ID])
+    console.log(result)
+   
+  }
+  return result;
+}
+
+
+async function updateSelectedField(CSVdata, identifier, fields,SP_ID) {
+  for (var j = 0; j < fields.length; j++) {
+    for (var i = 0; i < CSVdata.length; i++) {
+      var updateData = fields[j]
+      const set = CSVdata[i];
+
+      const identifierField = set.find((field) => field.FieldName === identifier);
+      const identifierValue = identifierField ? identifierField.FieldValue : '';
+      const updatedField = set.find((field) => field.FieldName === updateData);
+      const updatedFieldValue = updatedField ? updatedField.FieldValue : '';
+
+      let query = 'UPDATE EndCustomer SET ' + updateData + '=?' + ' WHERE ' + identifier + '=?  and SP_ID=?  and  (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)'
+      console.log(query)
+      var upExistContOnlyWithFields = await db.excuteQuery(query, [updatedFieldValue, identifierValue, SP_ID])
+      console.log(upExistContOnlyWithFields)
+     
+    }
+  }
+  return upExistContOnlyWithFields;
+}
+
+
+async function updateContact(CSVdata, identifier,SP_ID) {
+  for (var i = 0; i < CSVdata.length; i++) {
+    const set = CSVdata[i];
+
+    const identifierField = set.find((field) => field.FieldName === identifier);
+    const identifierValue = identifierField ? identifierField.FieldValue : '';
+
+    // Build the SET clause for the UPDATE query
+    const setClause = set.map((field) => `${field.FieldName} = ?`).join(', ');
+
+    // Build the UPDATE query
+    let query = `UPDATE EndCustomer SET ${setClause} WHERE ${identifier} = ? and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0);`;
+    console.log(query)
+    // Add values for placeholders in the correct order
+    const values = set.map((field) => field.FieldValue);
+    values.push(identifierValue);
+    values.push(SP_ID);
+
+    var upExistContOnly = await db.excuteQuery(query, values);
+    console.log(upExistContOnly)
+   
+  }
+  return upExistContOnly;
+}
 
 
 app.post('/updateAndSave', async (req, res) => {

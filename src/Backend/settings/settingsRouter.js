@@ -6,7 +6,7 @@ const profileController=require('./profileController');
 const notification=require('./NotifyClients')
 const campaignController=require('./campaignController');
 const accountController=require('./accountController')
-
+const generalcontroller=require('./generalcontrolller')
 //_____________________________Organization Settings_______________________//
 
 
@@ -95,6 +95,8 @@ router.post('/addAndUpdateCampaign',campaignController.addAndUpdateCampaign)
 router.get('/selectCampaignAlerts/:sid',campaignController.selectCampaignAlerts)
 router.post('/addCampaignTest',campaignController.addCampaignTest)
 router.get('/selectCampaignTest/:sid',campaignController.selectCampaignTest)
+router.post('/testCampaign',campaignController.testCampaign)
+
 
 //______________________Contact Settings_______________________//
 
@@ -102,11 +104,18 @@ router.post('/addupdateTag',campaignController.addTag)
 router.get('/selectTag/:spid',campaignController.gettags)
 router.post('/deleteTag',campaignController.deleteTag)
 
+router.post('/addCustomField',campaignController.addCustomField)
+router.post('/editCustomField',campaignController.editCustomField)
+router.get('/getCustomField/:spid',campaignController.getCustomField)
+router.get('/getCustomFieldById/:id',campaignController.getCustomFieldById)
+router.post('/deleteCustomField/:id',campaignController.deleteCustomField)
+router.post('/enableMandatory',campaignController.enableMandatoryfield)
+router.post('/enableStatus',campaignController.enableStatusfield)
 
 //_______________________TEMPLATE_________________________//
 
 router.post('/addTemplate',campaignController.addTemplate)
-router.get('/getTemplate/:spid',campaignController.getTemplate)
+router.get('/getTemplate/:spid/:isTemplate',campaignController.getTemplate)
 router.post('/deleteTemplates',campaignController.deleteTemplates)
 
 //__________________ACCOUNT API'S__________________________//
@@ -123,5 +132,30 @@ router.get('/createInstanceID',accountController.createInstance)
 router.post('/qrCodeData',accountController.getQRcode)
 router.post('/generateQRcode',accountController.generateQRcode)
 router.post('/testwebhook',accountController.testWebhook)
+
+//__________________________General Settings____________________________//
+
+router.post('/defaultaction',generalcontroller.defaultaction)
+router.get('/generalcontroller/:spid',generalcontroller.getdefaultaction)
+
+router.get('/getdefaultmessages/:spid',generalcontroller.getdefaultmessages)
+router.post('/Abledisable',generalcontroller.Abledisable)
+router.post('/savedefaultmessages',generalcontroller.savedefaultmessages)
+router.post('/uploadimg',generalcontroller.uploadimg)
+router.post('/addAndUpdateDefaultMsg',generalcontroller.addAndUpdateDefaultMsg)
+router.post('/deletedefaultactions',generalcontroller.deletedefaultactions)
+
+
+router.post('/rotingsave',generalcontroller.rotingsave)
+router.get('/getroutingrules/:spid',generalcontroller.getroutingrules)
+
+router.post('/savemanagestorage',generalcontroller.savemanagestorage)
+
+router.get('/getautodeletion/:spid',generalcontroller.getautodeletion)
+
+//_______************_______________//
+router.post('/manualDelation',generalcontroller.manualDelation)
+router.post('/getmanualDelation',generalcontroller.deletedDetails)
+
 
 module.exports = router;

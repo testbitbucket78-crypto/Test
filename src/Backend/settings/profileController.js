@@ -128,6 +128,7 @@ const userActiveStatus = async (req, res) => {
 
 const addNotification = async (req, res) => {
     try {
+        ID = req.body.ID
         UID = req.body.UID,
             notificationId = req.body.notificationId,
             PushNotificationValue = req.body.PushNotificationValue,
@@ -135,13 +136,21 @@ const addNotification = async (req, res) => {
             isDeleted = 0,
             created_at = new Date()
 
-
-        var addNotification = await db.excuteQuery(val.addNotification, [[[UID, notificationId, PushNotificationValue, SoundNotificationValue, isDeleted, created_at]]])
-        res.status(200).send({
-            msg: 'Notification added',
-            addNotification: addNotification,
-            status: 200
-        })
+        if (ID == 0) {
+            var addNotification = await db.excuteQuery(val.addNotification, [[[UID, notificationId, PushNotificationValue, SoundNotificationValue, isDeleted, created_at]]])
+            res.status(200).send({
+                msg: 'Notification added',
+                addNotification: addNotification,
+                status: 200
+            })
+        }else{
+            var updateNotification=await db.excuteQuery(val.updateNotification,[UID, notificationId, PushNotificationValue, SoundNotificationValue, created_at,ID])
+            res.status(200).send({
+                msg: 'Notification updated',
+                updateNotification: updateNotification,
+                status: 200
+            })
+        }
     } catch (err) {
         console.log(err)
         db.errlog(err);
@@ -882,19 +891,19 @@ const userProfile = async (req, res) => {
         name = req.body.name
         filePath = req.body.filePath
         spid = req.body.spid
-        // Remove header
+         // Remove header
         let streamSplit = filePath.split(';base64,');
         let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
         let datapart = streamSplit.pop();// this is dependent on the POP above
-   
+
         let imgType = datapart.split('/').pop();
         let imageName = 'Profile.png';//Default it to png.
         if(imgType){
             imageName = 'Profile' + '.' + imgType;
         }
-        
-        let awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + name + "/"+imageName, filePath)
 
+        let awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + name + "/"+imageName, filePath)
+        console.log(awsres.value.Location)
         let userimgquery = `UPDATE user  set profile_img='` + awsres.value.Location + `'` + `where uid=`+ uid;
         console.log("userimgquery");
         console.log(userimgquery)
@@ -1145,13 +1154,13 @@ const addSPTransations = async (req, res) => {
 
 const getmanagePlansandCharges = async (req, res) => {
     try {
-      let plans=await db.excuteQuery(val.manageplans,[]);
-      let plansCharges=await db.excuteQuery(val.manageplansCharges,[])
-      res.status(200).send({
-        plans:plans,
-        plansCharges:plansCharges,
-        status:200
-      })
+        let plans = await db.excuteQuery(val.manageplans, []);
+        let plansCharges = await db.excuteQuery(val.manageplansCharges, [])
+        res.status(200).send({
+            plans: plans,
+            plansCharges: plansCharges,
+            status: 200
+        })
 
     } catch (err) {
         console.log(err)
@@ -1164,5 +1173,5 @@ const getmanagePlansandCharges = async (req, res) => {
 module.exports = {
     teamName, roleName, usesData, userProfile, changePassword, userActiveStatus, addNotification, getNotificationByUid, saveManagePlan,
     saveBillingHistory, getBillingDetails, invoiceDetails, UsageInsightCon, ApproximateCharges, deletePaymentMethod, getAvailableAmout, addfunds,
-    getFAQs, getSubFAQS, UserGuideTopics, UserGuideSubTopics, invoicePdf, addSPTransations,getmanagePlansandCharges
+    getFAQs, getSubFAQS, UserGuideTopics, UserGuideSubTopics, invoicePdf, addSPTransations, getmanagePlansandCharges
 }
