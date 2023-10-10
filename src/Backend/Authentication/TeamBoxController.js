@@ -280,7 +280,7 @@ const deleteMessage = (req, res) => {
 
 
 const insertMessage = async (req, res) => {
-
+try{
      console.log("req.body.message_media")
      console.log(req.body)
     if (req.body.Message_id == '') {
@@ -325,10 +325,10 @@ const insertMessage = async (req, res) => {
             if (req.body.message_media != '') {
               // sendMediaOnWhatsApp(req.body.messageTo, message_media)
                console.log(message_media)
-              middleWare.channelssetUp('WhatsApp Official','image',req.body.messageTo, message_media)
+              middleWare.channelssetUp('WhatsApp Web','image',req.body.messageTo, message_media)
             }
            // sendTextOnWhatsApp(req.body.messageTo, message_text)
-           middleWare.channelssetUp('WhatsApp Official','text',req.body.messageTo, message_text)
+           middleWare.channelssetUp('WhatsApp Web','text',req.body.messageTo, message_text)
         }
 
     } else {
@@ -338,7 +338,9 @@ const insertMessage = async (req, res) => {
         var messageQuery = "UPDATE Message SET updated_at ='" + created_at + "', message_text ='" + message_text + "' WHERE Message_id =" + Message_id;
         db.runQuery(req, res, messageQuery, [values])
     }
-
+}catch(err){
+    console.log(err);
+}
 
 
 

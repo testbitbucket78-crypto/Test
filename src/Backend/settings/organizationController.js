@@ -13,6 +13,8 @@ const awsHelper = require('../awsHelper');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "10000kb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
 
 const uploadCompanylogo = async (req, res) => {
     try {
@@ -23,10 +25,21 @@ const uploadCompanylogo = async (req, res) => {
         uid = req.body.uid
         user = req.body.user
         filePath = req.body.filePath
+          // Remove header
+          let streamSplit = filePath.split(';base64,');
+          let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
+          let datapart = streamSplit.pop();// this is dependent on the POP above
+  
+          let imgType = datapart.split('/').pop();
+          let imageName = 'CompanyProfile.png';//Default it to png.
+          if(imgType){
+              imageName = 'CompanyProfile' + '.' + imgType;
+          }
         var selectImgUpload = await db.excuteQuery(val.selectCompanyDetails, [spid])
         console.log(selectImgUpload.length != 0)
         if (selectImgUpload.length != 0) {
-            let awsres = await awsHelper.uploadStreamToAws(spid + uid + user + '/profile.jpg', filePath)
+           
+            let awsres = await awsHelper.uploadStreamToAws( spid + "/" + uid + "/" + user + "/"+imageName, filePath)
             let updateimgQuery = `UPDATE companyDetails set profile_img=? where SP_ID=?`
             console.log("awsres")
             console.log(awsres.value.Location)
@@ -39,7 +52,7 @@ const uploadCompanylogo = async (req, res) => {
             });
 
         } else {
-            let awsres = await awsHelper.uploadStreamToAws(spid + uid + user + '/profile.jpg', filePath)
+            let awsres = await awsHelper.uploadStreamToAws( spid + "/" + uid + "/" + user + "/"+imageName, filePath)
             let insertimgQuery = `INSERT INTO companyDetails (profile_img,SP_ID) VALUES(?,?)`;
             let insertimgRes = await db.excuteQuery(insertimgQuery, [awsres, spid])
             res.status(200).send({
