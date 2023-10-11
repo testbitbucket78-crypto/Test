@@ -1,12 +1,12 @@
 const express = require('express')
-const web = require('./web')
-const path = require('path');
+// const web = require('./web')
+// const path = require('path');
 //const InMessage = require('../IncommingMessages')
 var app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
-const { MessageMedia, Location, Contact } = require('whatsapp-web.js');
+// const { MessageMedia, Location, Contact } = require('whatsapp-web.js');
 
 
 app.post('/craeteQRcode', async (req, res) => {

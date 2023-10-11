@@ -155,6 +155,7 @@ var messageTo= TemplateData.phone_number
 var messateText = TemplateData.message_content
 let content =messateText;
 let channel=TemplateData.channel_label
+ let spid=TemplateData.SPID
 console.log("channel");
 console.log(channel)
 console.log("content")
@@ -166,7 +167,7 @@ content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
 content = content.replace('&nbsp;', '\n')
 content = content.replace(/<br[^>]*>/g, '\n')
 content = content.replace(/<\/?[^>]+(>|$)/g, "")
-middleWare.channelssetUp(channel,'text',messageTo,content)
+middleWare.channelssetUp(spid,channel,'text',messageTo,content)
 	//    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
     //     var chunks = [];
 	// 	  resBH.on("data", function (chunk) {

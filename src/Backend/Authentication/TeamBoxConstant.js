@@ -28,7 +28,8 @@ where u.isDeleted !=1 and u.SP_ID=?`
 var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details,SP_ID,interaction_type) VALUES ?"
 var updateInteractionQuery="UPDATE Interaction SET interaction_status =? WHERE InteractionId =?";
 
-var getAllInteraction = "SELECT  Interaction.AutoReplyStatus,Interaction.AutoReplyUpdatedAt,Interaction.paused_till, Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId OR Interaction.customerId=EndCustomer.Phone_number"
+var getAllInteraction="SELECT ic.AutoReplyStatus,ic.AutoReplyUpdatedAt,ic.paused_till, ic.interaction_status,ic.InteractionId, ec.*     FROM    Interaction ic JOIN    EndCustomer ec ON ic.customerId = ec.customerId WHERE    ic.interactionId = (        SELECT MAX(interactionId)        FROM Interaction        WHERE customerId = ic.customerId    ) order by interactionId desc;"
+//var getAllInteraction = "SELECT  Interaction.AutoReplyStatus,Interaction.AutoReplyUpdatedAt,Interaction.paused_till, Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId OR Interaction.customerId=EndCustomer.Phone_number"
 //var searchInteractionQuery="SELECT * from Interaction where Phone_number=? or Name=?"
 var selectInteractionByIdQuery="SELECT * FROM Interaction WHERE Interaction.InteractionId=?"
 
@@ -46,7 +47,8 @@ var getInteractionMapping = "SELECT * from InteractionMapping,user where user.ui
 
 var savedMessagesQuery = "SELECT * from savedMessages where is_active=1 and SPID=?";
 var getquickReplyQuery = "SELECT * from quickReply where is_active=1 and SPID=?";
-var getTemplatesQuery =  "SELECT * from templates where is_active=1 and SPID=?";
+//var getTemplatesQuery =  "SELECT * from templates where is_active=1 and SPID=?";
+var getTemplatesQuery = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=1`;
 
 //_________________________________FOR SETTINGS NOTIFICATIONS  ________________________//
 var addNotification = `INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`
