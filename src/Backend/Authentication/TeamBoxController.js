@@ -169,8 +169,8 @@ const getAllInteraction = (req, res) => {
 
 const getAllFilteredInteraction = (req, res) => {
 
-    let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId";
-
+    //let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId";
+    let queryPath = "SELECT    ic.interaction_status,ic.InteractionId, ec.*             FROM       Interaction ic    JOIN        EndCustomer ec ON ic.customerId = ec.customerId     WHERE        ic.interactionId = (            SELECT MAX(interactionId)            FROM Interaction            WHERE customerId = ic.customerId        )  and ic.is_deleted=0 order by interactionId desc";
     if (req.body.FilterBy != 'All') {
 
 
@@ -254,11 +254,12 @@ const getSearchInteraction = (req, res) => {
 
 const getAllMessageByInteractionId = (req, res) => {
     if (req.params.Type != 'media') {
-        var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
+        //var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
+        var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = "+ req.params.InteractionId +"))  and Type='" + req.params.Type + "' order by interaction_id desc";
         db.runQuery(req, res, getAllMessagesByInteractionId, [req.params.InteractionId, req.params.Type])
     } else {
-        var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
-
+        //var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
+        var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id= IN ( SELECT interactionId FROM Interaction Where customerid ( SELECT customeId FROM Interaction where interactionId = "+ req.params.InteractionId +")) ORDER BY Message_id DESC"
         db.runQuery(req, res, getAllMessagesByInteractionId, [req.params.InteractionId, req.params.Type])
 
     }
@@ -302,11 +303,8 @@ try{
         ExternalMessageId = ''
         let agentName=await db.excuteQuery('select name from user where uid=?',[Agent_id])
         let channelType=await db.excuteQuery('select channel from EndCustomer where customerId=?',[customerId]);
-        console.log(channelType);
-        let channel=""
-        if(channelType.length >0){
-           console.log("channel")
-        }
+        console.log("channelType" + channelType);
+        let channel=channelType.length >0 ? channelType : 'WhatsApp Official'
         var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
         db.runQuery(req, res, messageQuery, [values])
         if(agentName.length >=0){
@@ -325,10 +323,10 @@ try{
             if (req.body.message_media != '') {
               // sendMediaOnWhatsApp(req.body.messageTo, message_media)
                console.log(message_media)
-              middleWare.channelssetUp('WhatsApp Web','image',req.body.messageTo, message_media)
+              middleWare.channelssetUp(SPID,channel,'image',req.body.messageTo, message_media)
             }
            // sendTextOnWhatsApp(req.body.messageTo, message_text)
-           middleWare.channelssetUp('WhatsApp Web','text',req.body.messageTo, message_text)
+           middleWare.channelssetUp(SPID,channel,'text',req.body.messageTo, message_text)
         }
 
     } else {

@@ -9,7 +9,7 @@ const { json } = require("body-parser");
 const db = require('../dbhelper');
 const notify = require('./PushNotifications');
 const aws = require('../awsHelper');
-const Routing=require('../RoutingRules')
+const Routing = require('../RoutingRules')
 const token = process.env.WHATSAPP_TOKEN;
 
 const mytoken = process.env.VERIFY_TOKEN;
@@ -183,7 +183,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData.newlyInteractionId
 
-   
+
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
@@ -197,7 +197,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
     }
     let defaultReplyAction = await autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId)
-   let RoutingRulesVaues=await Routing.AssignToContactOwner(sid, newId, agid,custid)  // CALL Default Routing Rules
+    let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  // CALL Default Routing Rules
   }
 
 }
@@ -286,6 +286,15 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
 async function sendMessage(message, phone_number_id, from) {
   try {
+    let content = message ? message : 'No messages';
+    content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+    content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+    content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+    content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+    content = content.replace('&nbsp;', '\n')
+    content = content.replace(/<br[^>]*>/g, '\n')
+    content = content.replace(/<\/?[^>]+(>|$)/g, "")
+    
     const response = axios({
       method: "POST", // Required, HTTP method, a string, e.g. POST, GET
       url:
@@ -296,21 +305,71 @@ async function sendMessage(message, phone_number_id, from) {
       data: {
         messaging_product: "whatsapp",
         to: from,
-        text: { body: "Reply: " + message }
+        text: { body: content }
         ,
       },
       headers: { "Content-Type": "application/json" },
 
     })
-    console.log("****META APIS****" + response)
+    console.log("****META APIS****" )
   }
   catch (err) {
-    console.log("______META ERR_____" + err)
+    console.log("______META ERR_____")
   }
 
 }
 
+async function matchSmartReplies(message_text, sid) {
+  var allSmartReplies = await db.excuteQuery(`select * from SmartReply where SP_ID =2 and isDeleted is null`, [sid]);
+  var reply;
+  console.log("matchSmartReplies")
+  console.log(allSmartReplies)
+  for (let i = 0; i < allSmartReplies.length; i++) {
+    console.log(allSmartReplies[i])
+    const storedValue = allSmartReplies[i].MatchingCriteria;
+    console.log(storedValue)
+    // console.log(storedValue =='contains' || storedValue == 'Fuzzy Matching' || storedValue=='Exact matching')
 
+    if (storedValue == 'contains') {
+
+      console.log("contains");
+      reply = await db.excuteQuery(process.env.sreplyQuery, [[message_text], sid]);
+
+
+
+
+      break;
+
+    } else if (storedValue == 'Fuzzy Matching') {
+      console.log("Fuzzy Matching");
+      let FuzzyQuery = `SELECT t2.* 
+      FROM SmartReply t1 JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
+      JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
+      WHERE  SOUNDEX(t3.Keyword) = SOUNDEX(?)
+      AND t1.SP_ID=?`
+      reply = await db.excuteQuery(FuzzyQuery, [[message_text], sid]);
+
+
+
+      break;
+
+    } else if (storedValue == 'Exact matching') {
+      console.log("exact match")
+      let exactQuery = `SELECT t2.* 
+      FROM SmartReply t1
+     JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
+     JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
+     WHERE t3.Keyword=? AND t1.SP_ID=?`
+      reply = await db.excuteQuery(exactQuery, [[message_text], sid]);
+
+
+
+      break;
+
+    }
+  }
+  return reply;
+}
 
 async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId) {
   try {
@@ -320,7 +379,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     // console.log("_________process.env.insertMessage__________")
 
     let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from);
-    var replymessage = await db.excuteQuery(process.env.sreplyQuery, [[message_text], sid]);
+    var replymessage = await matchSmartReplies(message_text, sid)
     let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, newlyInteractionId);
 
     console.log("defultOutOfOfficeMsg")
@@ -467,7 +526,7 @@ async function removeTag(value, custid) {
 
 async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from) {
   try {
-    // let selectQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title='Welcome Greeting'`
+
     var wlcMessage = await db.excuteQuery(process.env.defaultMessageQuery, [sid, 'Welcome Greeting']);
     if (newlyInteractionId != null && newlyInteractionId != undefined && newlyInteractionId != "" && wlcMessage.length > 0 && wlcMessage[0].Is_disable == 1) {
       // console.log("defaut msg")
@@ -482,22 +541,27 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
 }
 
 
-async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id) {
+async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId) {
   try {
-    // let outOfOfficeQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title='Out of Office'`
-    var outOfOfficeMessage = await db.excuteQuery(outOfOfficeQuery, [process.env.defaultMessageQuery, 'Out of Office']);
-    if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
+    let result = '';
 
+    var outOfOfficeMessage = await db.excuteQuery(process.env.defaultMessageQuery, [sid, 'Out of Office']);
+    console.log(outOfOfficeMessage)
+    if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
+      console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(process.env.msgBetweenOneHourQuery, [newId, 2])
-      if (messageInterval.length <= 0) {
-        sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
+      console.log(messageInterval.length )
+      if (messageInterval.length < 0) {
+        console.log("messageInterval")
+        result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
 
         let updateSmsRes = await db.excuteQuery(process.env.updateSms, [2, new Date(), msg_id]);
       }
     }
-
+    return result;
   } catch (err) {
     console.log(err);
+    return err;
   }
 }
 
@@ -596,14 +660,14 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId) {
   if (activeAgent.length <= 0) {
 
     console.log(msg_id + " " + newId);
-    // let AgentsOfflineQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title='All Agents Offline'`
+
     var AgentsOfflineMessage = await db.excuteQuery(process.env.defaultMessageQuery, [sid, 'All Agents Offline']);
     if (AgentsOfflineMessage.length > 0 && AgentsOfflineMessage[0].Is_disable == 1) {
       let messageInterval = await db.excuteQuery(process.env.msgBetweenOneHourQuery, [newId, 3])
       if (messageInterval.length <= 0) {
         sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
 
-        // let updateSms = `UPDATE Message set system_message_type_id=3 where Message_id=${msg_id}`
+
         let updateSmsRes = await db.excuteQuery(process.env.updateSms, [3, new Date(), msg_id]);
       }
     }
