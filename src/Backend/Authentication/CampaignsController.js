@@ -146,7 +146,21 @@ db.runQuery(req,res,Query,[]);
 }
 
 
-const sendCampinMessage= (req, res) => {
+
+// Function to parse the message template and retrieve placeholders
+function parseMessageTemplate(template) {
+    const placeholderRegex = /{{(.*?)}}/g;
+    const placeholders = [];
+    let match;
+    while ((match = placeholderRegex.exec(template))) {
+      placeholders.push(match[1]);
+    }
+    return placeholders;
+  }
+
+
+
+const sendCampinMessage= async (req, res) => {
     console.log("sendCampinMessage")
 var TemplateData = req.body
 console.log(TemplateData)
@@ -155,9 +169,9 @@ var messageTo= TemplateData.phone_number
 var messateText = TemplateData.message_content
 let content =messateText;
 let channel=TemplateData.channel_label
- let spid=TemplateData.SPID
-console.log("channel");
-console.log(channel)
+ //let spid=TemplateData.SPID
+console.log("messageTo");
+console.log(messageTo)
 console.log("content")
 console.log(content)
 content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
@@ -167,7 +181,24 @@ content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
 content = content.replace('&nbsp;', '\n')
 content = content.replace(/<br[^>]*>/g, '\n')
 content = content.replace(/<\/?[^>]+(>|$)/g, "")
-middleWare.channelssetUp(spid,channel,'text',messageTo,content)
+// Parse the message template to get placeholders
+const placeholders = parseMessageTemplate(content);
+  
+// Construct a dynamic SQL query based on the placeholders
+const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=712`;
+let results=await db.excuteQuery(sqlQuery,[]);
+const data = results[0];
+
+
+placeholders.forEach(placeholder => {
+  content = content.replace(`{{${placeholder}}}`, data[placeholder]);
+});
+
+// Return the final message with actual values
+console.log(content);
+
+console.log(sqlQuery)
+middleWare.channelssetUp(2,channel,'text',messageTo,content)
 	//    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
     //     var chunks = [];
 	// 	  resBH.on("data", function (chunk) {

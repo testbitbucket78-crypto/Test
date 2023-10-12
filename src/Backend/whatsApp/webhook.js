@@ -550,7 +550,8 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId) {
     if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
       console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(process.env.msgBetweenOneHourQuery, [newId, 2])
-      if (messageInterval.length <= 0) {
+      console.log(messageInterval.length )
+      if (messageInterval.length < 0) {
         console.log("messageInterval")
         result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
 
