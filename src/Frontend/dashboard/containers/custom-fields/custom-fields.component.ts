@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CdkDragDrop, CdkDrag,CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
-import { customFieldFormData } from 'Frontend/dashboard/models/settings.model';
-import { FormGroup } from '@angular/forms';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { addCustomFieldsData, customFieldFormData } from 'Frontend/dashboard/models/settings.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+declare var $:any;
 
 @Component({
   selector: 'sb-custom-fields',
@@ -12,133 +14,24 @@ import { FormGroup } from '@angular/forms';
 
 
 export class CustomFieldsComponent implements OnInit {
+  spId:number = 0;
   isActive: number = 1;
   defaultFields = '#6149CD';
   defaultFieldsChecked= '#EBEBEB'; 
-  pageSize: number = 5;
-  pageSizeOptions: number[] = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+  pageSize: number = 10;
+  pageSizeOptions: number[] = [10, 15, 20, 25, 30, 35, 40, 45, 50];
   currentPage!: number;
   paging: number[] = [];
   showSideBar:boolean=false;
   addCustomField:customFieldFormData [] =[]
   customFieldForm!:FormGroup;
-  defaultFieldsData = [
-    {
-      FieldId: 'name',
-      FieldName: 'Name',
-      Type: 'Text',
-      Mandatory: true,
-      Status: 'Active',
-    },
-    {
-      FieldId: 'phone_number',
-      FieldName: 'Phone No.',
-      Type: 'Multi Number',
-      Mandatory: true,
-      Status: 'Active',
-    },
-    {
-      FieldId: 'email',
-      FieldName: 'Email',
-      Type: 'Multi text',
-      Mandatory: true,
-      Status: 'Active',
-    },
-    {
-      FieldId: 'Message-opt-in',
-      FieldName: 'Message-opt-in',
-      Type: 'Switch',
-      Mandatory: true,
-      Status: 'Active',
-    },
-    {
-      FieldId: 'contact_owner',
-      FieldName: 'Contact Owner',
-      Type: 'User',
-      Mandatory: true,
-      Status: 'Active',
-    },
-
-  ];
-
-  dynamicFieldData = [
-    {
-      FieldId: 'tags',
-      FieldName: 'Tags',
-      Type: 'Multi text',
-      Mandatory: false,
-      Status: 'Inactive',
-    },
-    {
-      FieldId: 'country',
-      FieldName: 'Country',
-      Type: 'text',
-      Mandatory: true,
-      Status: 'active',
-    },
-    {
-      FieldId: 'gender',
-      FieldName: 'Gender',
-      Type: 'text',
-      Mandatory: false,
-      Status: 'Inactive',
-    },
-    {
-      FieldId: 'status',
-      FieldName: 'Status',
-      Type: 'Select',
-      Mandatory: true,
-      Status: 'active',
-    },
-    {
-      FieldId: 'age',
-      FieldName: 'Age',
-      Type: 'Date',
-      Mandatory: false,
-      Status: 'Inactive',
-    },
-
-    {
-      FieldId: 'tags',
-      FieldName: 'Tags',
-      Type: 'Multi text',
-      Mandatory: false,
-      Status: 'Inactive',
-    },
-    {
-      FieldId: 'country',
-      FieldName: 'Country',
-      Type: 'text',
-      Mandatory: true,
-      Status: 'active',
-    },
-    {
-      FieldId: 'gender',
-      FieldName: 'Gender',
-      Type: 'text',
-      Mandatory: false,
-      Status: 'Inactive',
-    },
-    {
-      FieldId: 'status',
-      FieldName: 'Status',
-      Type: 'Select',
-      Mandatory: true,
-      Status: 'active',
-    },
-    {
-      FieldId: 'age',
-      FieldName: 'Age',
-      Type: 'Date',
-      Mandatory: false,
-      Status: 'Inactive',
-    },
-
-  ];
+  customFieldData:[] = [];
+  defaultFieldsData = [];
+  dynamicFieldData = [];
 
 
-
-  types:string[] =['Text','Multi text','Multi number','Select','Switch','Date','User' ]
+  selectedType:string = 'Text';
+  types:string[] =['Text','Multi text','Multi number','Select','Switch','Date','User' ];
 
 
   Drop(event: CdkDragDrop<string[]>) {
@@ -146,10 +39,24 @@ export class CustomFieldsComponent implements OnInit {
     } 
 
     ngOnInit(): void {
-        this.getPaging();
+        this.spId = Number(sessionStorage.getItem('SP_ID'));
+        this.getCustomFieldsData();
+      
         
     }
   
+  
+
+    constructor(private formBuilder:FormBuilder,private settingsService:SettingsService) {
+      this.addCustomField = [];
+
+      this.customFieldForm = this.formBuilder.group({
+        ColumnName: ['',Validators.required],
+        description:[''],
+        Type: ['Text',Validators.required],
+      });
+    };
+
 // toggle active/inactive state of logged in user
 
 toggleActiveState(checked: boolean) {
@@ -159,15 +66,16 @@ toggleActiveState(checked: boolean) {
 
  toggleSideBar(){
   this.showSideBar =!this.showSideBar;
+  console.log(this.dynamicFieldData);
  }
 
- searchData(srchText:string) {
-  const defaultFieldsDataInit = [...this.defaultFieldsData]
-  const searchResult = defaultFieldsDataInit.filter(item => {
-    return item?.FieldName.toLowerCase().includes(srchText.toLowerCase());
-  });
-  console.log(searchResult);
- }
+//  searchData(srchText:string) {
+//   const defaultFieldsDataInit = [...this.defaultFieldsData]
+//   const searchResult = defaultFieldsDataInit.filter(item => {
+//     return item?.ActuallName.toLowerCase().includes(srchText.toLowerCase());
+//   });
+//   console.log(searchResult);
+//  }
 
 addCustomFieldsOption(){
   this.addCustomField.push({
@@ -175,7 +83,6 @@ addCustomFieldsOption(){
     Option2: '',
   })
 }
-
 
 removeCustomFieldsOption(index:any){
   this.addCustomField.splice(index,1);
@@ -190,5 +97,108 @@ removeCustomFieldsOption(index:any){
       this.paging.push(i);
   }
 }
+
+
+
+getCustomFieldsData() {
+  this.settingsService.getNewCustomField(this.spId).subscribe(response => {
+    this.customFieldData = response.getfields;
+    this.getDefaulltFieldData();
+    this.getDynamicFieldData();
+    this.getPaging();
+  })
+}
+
+
+getDefaulltFieldData() {
+const index = [3, 0, 6, 12, 17];
+  for (const i of index) {
+    if (i >= 0 && i < this.customFieldData.length) {
+      this.defaultFieldsData.push(this.customFieldData[i]);
+    }
+  }
+}
+
+
+getDynamicFieldData() {
+  const index = [3, 0, 6, 12, 17];
+   for (let i = 0; i < this.customFieldData.length; i++) {
+    if (!index.includes(i)) {
+      this.dynamicFieldData.push(this.customFieldData[i]);
+    }
+  }
+}
+
+
+
+saveNewCustomField() {
+  let addCustomFieldData = this.getCustomFieldFormData();
+  if(this.customFieldForm.valid) {
+    this.settingsService.saveNewCustomField(addCustomFieldData)
+    .subscribe(response=>{
+      if(response.status === 200) {
+        this.customFieldForm.reset();
+        $("#addCustomFieldModal").modal('hide');
+        this.getCustomFieldsData();
+      }
+    })
+  }
+}
+
+getCustomFieldFormData() {
+  
+let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
+    CustomFieldData.SP_ID = this.spId;
+    CustomFieldData.ColumnName = this.customFieldForm.controls.ColumnName.value;
+    CustomFieldData.Type = this.customFieldForm.controls.Type.value;
+    CustomFieldData.description = this.customFieldForm.controls.description.value;
+
+    return CustomFieldData;
+}
+
+
+patchFormDataValue(){
+  const data = this.dynamicFieldData;
+  for(let prop in data){
+    let value = data[prop as keyof typeof data];
+    if(this.customFieldForm.get(prop))
+    this.customFieldForm.get(prop)?.setValue(value)
+  }  
+}
+
+editCustomField() { 
+  $("#addCustomFieldModal").modal('show');
+  this.showSideBar = false;
+  this.patchFormDataValue();
+}
+
+toggleDeletePopup() {
+  $("#deleteModal").modal('show');
+  this.showSideBar = false;
+}
+
+
+// deleteCustomField() {
+
+//   const ID = {
+//     ID: this.dynamicFieldData
+//   }
+
+//   this.settingsService.deleteCustomField()
+  
+//   .subscribe(result =>{
+//     if(result){
+//       $("#deleteModal").modal('hide');
+//       this.getCustomFieldsData();
+   
+      
+//     }
+//   });
+// }
+
+
+
+
+
 
 }

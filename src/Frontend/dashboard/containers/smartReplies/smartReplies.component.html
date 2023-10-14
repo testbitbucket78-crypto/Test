@@ -2,7 +2,7 @@
 	<sb-top-nav title="Smart Replies"></sb-top-nav>
 	<div class="row r1">
 	
-			<div class="d-flex justify-content-between py-4 content-header">
+			<div class="d-flex justify-content-between py-5 content-header">
 				<div class="input-group gf">
 	
 					<input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
@@ -10,7 +10,7 @@
 					<img src="assets/img/search.png">
 		     	</div>
 				<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal" (click)="isShowSmartReplies = true" >
-					<i class="fa fa-plus"></i> 
+					<img src="../../../../assets/img/teambox/add.svg" alt="error" />
 					Add Smart Reply
 				</button>
 			</div>
@@ -30,7 +30,7 @@
 <div *ngIf="replies" class="smartreplies-filled-state">
 
 	
-		<div class="m-0 col-12">
+		<div class="m-0 col-12 d-flex flex-wrap sm-card">
 		<div *ngFor="let reply of replies  | searchfilter:searchText" class="card d-flex" (click)="toggleSideBar()"  (click)="getRepliesByID(reply)">
 			<div class="card-body gy-2">
 				<h6 class="id">Id:{{ reply.ID }}</h6>
@@ -113,7 +113,7 @@
 		  <div class="modal-content deletesmartreplies-content">
 			
 			<div class="modal-body deletesmartreplies-body">
-				Do you really want to delete<br /> this Smart Reply
+				Do you really want to delete<br /> this Smart Reply?
 			</div>
 			<div class="deletefile d-flex" >
 			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>

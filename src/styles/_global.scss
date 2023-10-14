@@ -101,11 +101,14 @@
 
 }
 
-.fade {
-  transition: linear!important;
-  transition-duration: 0.15s!important;
-}
+// .fade {
+//   transition: linear!important;
+//   transition-duration: 0.15s!important;
+// }
 
+.fade {
+  transition: none!important;
+}
 
 .custom_modal {
   overflow: auto;

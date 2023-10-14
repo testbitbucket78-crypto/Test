@@ -125,7 +125,7 @@
           </div>
         </div>
      
-        <button type="button" (click)="verifyKeywordForNextStep(duplicatekeyword)" class="btn5 btn-block col-1 mt-3 ">Next</button>
+        <button type="button" (click)="verifyKeywordForNextStep()" class="btn5 btn-block col-1 mt-3 ">Next</button>
     
       </div>
       <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
@@ -241,7 +241,7 @@
             <p class="label">Assign To</p>
             <p *ngFor="let agent of agentsList; let k = index" (click)="assignConversation(k)"
               (click)="closeAssignOption()">
-              <span><img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />{{agent}}</span>
+              <span><img class="thumbnail" src="../../../../assets/img/top-nav/myprofile.svg" />{{agent}}</span>
             </p>
           </div>
   
@@ -324,8 +324,9 @@
 		<div class="modal-body quickResponse">
 			<input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" (keyup)="searchContact($event)"/>
 			<div class="items_list">
-				<div  *ngFor="let alist of attributesList" class="attribute" (click)="selectQuickReplies($event)">
-					<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
+				<div  *ngFor="let alist of attributesList" class="attribute" (click)="selectAttributes(alist)">
+          <p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
+
 				</div>
 			</div>
 
@@ -474,36 +475,26 @@
           <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
-  
-  
                 <div class="popup-dialog AddTag">
                   <p *ngIf="!ShowRemoveTag" class="label">Add Tag</p>
                   <p *ngIf="ShowRemoveTag" class="label">Remove Tag</p>
-                  <div class="addTag d-flex" *ngFor="let AddTag of addTagList;let i = index">
-                    <input [checked]="checkTagStatus(AddTag)" type="checkbox" name="tags"
-                      class="form-control-checkbox ml-2" (change)="addTags(i,$event)" />
-                    <div class="color-dots"></div>
-                    <span id="add_tags">{{AddTag}}</span>
+
+                  <div class="d-flex align-items-center addTag" *ngFor="let AddTag of addTagList;let i = index">
+                    <label class="container">
+                      <input [checked]="checkTagStatus(AddTag.TagName)" type="checkbox" name="tags"
+                      class="m-0" (change)="addTags(i,$event)" />
+                      <span class="checkmark"></span>
+                    </label>
+                 
+                    <div class="color-dots"[style.background]="AddTag.TagColour"></div>
+                    <span class="px-2 text-capitalize flex-grow-1 font-weight-normal">{{AddTag.TagName}}</span>
                   </div>
-                </div>
-  
+
+                </div> 
               </div>
             </div>
-          </div>
-  
-  
+          </div>  
         </div>
-  
-        <ng-template #duplicatekeyword let-c="close" let-d="dismiss">
-        <div class="model-content smartreplies-failed">
-            <div class="smart-replies-failed para">
-            <p>! Duplicate keyword found<br /> Please try again.</p>
-            </div>
-            <button type="button" class="btn btn1" (click)="c('Save click')">Ok, Got it</button>
-        
-          </div>
-  
-        </ng-template>
   
     <ng-template #smartreplyfailed let-c="close" let-d="dismiss">
         <div class="model-content smartreplies-failed">

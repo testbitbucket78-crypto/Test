@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 @Component({
     selector: 'sb-dashboard',
     templateUrl: './dashboard.component.html',
-    changeDetection:ChangeDetectionStrategy.Default,
     styleUrls: ['dashboard.component.scss'],
+    changeDetection:ChangeDetectionStrategy.Default,
 })
 export class DashboardComponent implements OnInit {
     interactions: any;
@@ -42,9 +42,6 @@ export class DashboardComponent implements OnInit {
         this. getRecentConversation();
         this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
         this.SPID = Number(sessionStorage.getItem('SP_ID'));
-
-        console.log (sessionStorage);
-        console.log(this.Name);
     }
 
   // ******* Router Guard  *********//
@@ -76,7 +73,6 @@ export class DashboardComponent implements OnInit {
         var sPid = sessionStorage.getItem('SP_ID');
         this.apiService.dashboardInteractions(sPid).subscribe(data => {
             this.interactions = data;
-            console.log(this.interactions);
             for (var i = 0; i < this.interactions.length; i++) {
                 if (this.interactions[i].interaction_status === 'Open') {
                     this.closedInteractions = this.interactions[i].count;
@@ -107,7 +103,6 @@ export class DashboardComponent implements OnInit {
                 }
                 if (this.campaigns[i].STATUS == '3') {
                     this.draftCampaign = this.campaigns[i].COUNT
-                    console.log(this.draftCampaign);
                 }
             }
 
@@ -120,13 +115,13 @@ export class DashboardComponent implements OnInit {
             
             this.agents = data;
             for (var i = 0; i < this.agents.length; i++) {
-                if (this.agents[i].Status === 'Total Agents') {
+                if (this.agents[i].IsActive === 'Total Agents') {
                     this.totalAgents = this.agents[i].count;
                 }
-                if (this.agents[i].Status === 'Active Agents') {
+                if (this.agents[i].IsActive === '1') {
                     this.activeAgents = this.agents[i].count;
                 }
-                if (this.agents[i].Status === 'Inactive Agents') {
+                if (this.agents[i].IsActive === '0') {
                     this.inactiveAgents = this.agents[i].count;
                 }
             }

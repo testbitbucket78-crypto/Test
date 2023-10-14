@@ -298,6 +298,13 @@ export interface customFieldFormData {
     Option2:string;
 }
 
+export interface addCustomFieldsData {
+    SP_ID:number;
+    ColumnName:string;
+    Type:string;
+    description:string;
+}
+
 
 
 

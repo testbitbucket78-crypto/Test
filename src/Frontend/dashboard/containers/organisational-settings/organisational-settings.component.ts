@@ -20,7 +20,7 @@ export class OrganisationalSettingsComponent implements OnInit {
   User:any;
   profile_img:any;
   profilePicture:any;
-  selectedTab:number = 3;
+  selectedTab:number = 1;
   companyDetailForm!:FormGroup;
   billingForm!:FormGroup;
   localeForm!:FormGroup;

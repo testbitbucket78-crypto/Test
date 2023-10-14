@@ -1853,8 +1853,8 @@ import { base64ToFile } from 'ngx-image-cropper';
 
 	sendMessage(){
 		
-		if (!this.chatEditor.value) {
-			this.showToaster('! Please Enter a Message First','warning');
+		if (!this.chatEditor.value || !this.custommesage || this.custommesage ==='<p>Your message...</p>') {
+			this.showToaster('! Please type your message first','error');
 			return; 
 		}
 	

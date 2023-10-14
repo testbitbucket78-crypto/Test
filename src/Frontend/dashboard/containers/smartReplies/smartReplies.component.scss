@@ -22,7 +22,7 @@
 .content-head.d-flex {
     display: flex !important;
     justify-content: space-between;
-    // padding: 1% 2% 0% 5%;
+    padding:0 3.5 0 2%;
 }
 
 .input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
@@ -38,6 +38,10 @@
 }
 .collumn{
     margin: 26% 0% 6% 6%;
+}
+
+.content-header {
+    padding: 0 2.5% 0 2%;
 }
 
 
@@ -62,6 +66,11 @@ button:not(:disabled), [type=reset]:not(:disabled) {
     box-shadow: 1px 8px 29px #695F9724;
     opacity: 1;
     font-weight: bolder;
+}
+
+.add-smartrep-btn img {
+    height: 14px;
+    margin: 4px;
 }
 
 .card{
@@ -184,6 +193,9 @@ h6.text-justify{
     width: 11px;
   }
 
+  .sidebar::-webkit-scrollbar {
+    display: none;
+  }
 
   .col-md-12 {
 

@@ -1182,6 +1182,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				if(item.Contacts_Column && item.Contacts_Column.length > 9){
 				console.log(item)
 				let MessageBodyData:any={
+					SPID:this.SPID,
 					phone_number:item.Contacts_Column,
 					button_yes:this.selectedTemplate.button_yes,
 					button_no:this.selectedTemplate.button_no,
@@ -1240,6 +1241,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					let customerDetail = customerResponseList[0]
 					if(customerDetail && customerDetail.Phone_number){
 						let MessageBodyData:any={
+							SP_ID:this.SPID,
 							phone_number:customerDetail.Phone_number,
 							button_yes:this.selectedTemplate.button_yes,
 							button_no:this.selectedTemplate.button_no,

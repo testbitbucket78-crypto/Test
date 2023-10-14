@@ -132,6 +132,11 @@ export class DashboardService {
 
     return this.http.post('https://contactapi.sampanatechnologies.com/deletContact', data)
   }
+
+  getAttributeList(SP_ID: number) {
+    return this.http.get(`https://contactapi.sampanatechnologies.com/columns/${SP_ID}`);
+}
+
  
   //******************Smart replies API's*********************//
 
