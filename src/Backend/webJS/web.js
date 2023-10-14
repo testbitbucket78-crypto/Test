@@ -2,7 +2,7 @@ const express = require('express');
 const { request } = require('http');
 const app = express();
 const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
-const puppeteer = require('puppeteer')
+//const puppeteer = require('puppeteer')
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -23,7 +23,7 @@ async function createClientInstance(spid) {
           const client = new Client({
               authStrategy: new LocalAuth(),
               puppeteer: {
-                  headless: false
+                  headless: true
               },
               authStrategy: new LocalAuth({
                   clientId: spid

@@ -1,8 +1,32 @@
 const teamboxController = require('./Authentication/TeamBoxController');
 const http = require("https");
-const accessToken = '64c4bcc7c05b1';
-const baseURL='https://staging.engageflo.com/api/'
-const Web=require('./webJS/web')
+const axios = require('axios');
+
+
+async function postDataToAPI(spid,phoneNo,type,text,link) {
+    try {
+        
+      const apiUrl = 'http://localhost:3009/sendMessage'; // Replace with your API endpoint
+      const dataToSend = {
+        spid : spid,
+        type : type,
+        link : link,
+        text : text,
+        phoneNo :phoneNo
+      };
+  console.log("dataToSend")
+  console.log("")
+  console.log(dataToSend)
+      const response = await axios.post(apiUrl, dataToSend);
+  
+   
+      console.log('Response from API:', response.data);
+    } catch (error) {
+    
+      console.error('Error:', error.message);
+    }
+  }
+
 
 function removePlusFromPhoneNumber(phoneNumber) {
     if (phoneNumber.includes("+")) {
@@ -11,38 +35,20 @@ function removePlusFromPhoneNumber(phoneNumber) {
     return phoneNumber;
 }
 
-async function channelssetUp(channelType, mediaType, messageTo, message_body) {
+async function channelssetUp(spid,channelType, mediaType, messageTo, message_body) {
     try{
     var phoneNumber=removePlusFromPhoneNumber(messageTo)
     console.log(phoneNumber)
     if (channelType == 'WhatsApp Official') {
-        // if (mediaType == 'text') {
-        //     console.log("text______" + message_body);
-        //     sendTextOnWhatsApp(phoneNumber, message_body);
-        // } else if (mediaType == 'image') {
-        //     console.log("image______" + message_body)
-        //     sendMediaOnWhatsApp(phoneNumber, message_body)
-        // }
+       
         let WhatsAppOfficialMessage=await sendMessagesThroughWhatsAppOfficial(phoneNumber,mediaType,message_body)
-
+console.log("WhatsAppOfficialMessage")
+console.log(WhatsAppOfficialMessage)
     } else if (channelType == 'WhatsApp Web') {
-        // if (mediaType == 'text') {
-        //     console.log("text ........")
-        //   let message= await removeTagsFromMessages(message_body)
-        //     let textAPI = baseURL + `send?number=` + phoneNumber + `&type=text&message=` + message + `&instance_id=` + '64D1F60FA644B' + `&access_token=64c4bcc7c05b1`
-        //     console.log(textAPI)
-        //     const text = await axios.get(textAPI);
-        // } else if (mediaType == 'image') {
-        //     console.log("image ........")
-        //     let mediaURL = baseURL + `send?number=` + phoneNumber + `&type=media&message=` + 'message_body_img' + `&media_url=` + message_body + `&filename=` + 'req.body.filename' + `&instance_id=` + '64D1F60FA644B' + `&access_token=64c4bcc7c05b1`
-
-        //     console.log(mediaURL)
-        //     const media = await axios.get(mediaURL);
-        // }
-      //  let whatsAppWeb=await sendMessagesThroughWhatsAppWeb(phoneNumber,mediaType,message_body);
+      
       let content = await removeTagsFromMessages(message_body);
-     console.log(mediaType,content,content)
-    let messages=await  Web.sendMessages(2,phoneNumber,mediaType,content,content);
+   
+    let messages=await postDataToAPI(spid,phoneNumber,mediaType,content,content) 
     console.log(messages)
     }
 }catch(err){
@@ -52,6 +58,7 @@ async function channelssetUp(channelType, mediaType, messageTo, message_body) {
 
 async function sendMessagesThroughWhatsAppOfficial(phoneNumber,mediaType,message_body){
     try{
+       
     if (mediaType == 'text') {
         console.log("text______" + message_body);
         sendTextOnWhatsApp(phoneNumber, message_body);
