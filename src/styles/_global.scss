@@ -92,7 +92,7 @@
   background: #ffffff;
   box-shadow: 4px 22px 54px #695F971A;
   border-radius: 30px;
-  z-index: 0!important;
+  z-index: 1040!important;
 }
 
 .modal-backdrop.show {
@@ -101,6 +101,14 @@
 
 }
 
+// .fade {
+//   transition: linear!important;
+//   transition-duration: 0.15s!important;
+// }
+
+.fade {
+  transition: none!important;
+}
 
 .custom_modal {
   overflow: auto;
@@ -357,3 +365,5 @@
 //   width: 194% !important;
 //   height: 2.5rem !important;
 // }
+
+

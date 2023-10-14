@@ -13,6 +13,7 @@ import { FilterPipeModule } from 'ngx-filter-pipe';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { AgGridModule } from 'ag-grid-angular';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 
 
@@ -49,7 +50,8 @@ import { DashboardComponent } from './containers';
         AgGridModule,
         NgMultiSelectDropDownModule.forRoot(),
         RichTextEditorModule,
-        ImageCropperModule
+        ImageCropperModule,
+        DragDropModule,
     ],
     providers: [...dashboardServices.services,
                 ...dashboardGuards.guards,DatePipe

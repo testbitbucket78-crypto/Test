@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser, TagData, defaultActionData,defaultMessagesData,routingRulesData,newTemplateFormData } from '../models/settings.model';
+import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser, TagData, defaultActionData,defaultMessagesData,routingRulesData,newTemplateFormData,addCustomFieldsData } from '../models/settings.model';
 
 @Injectable({
   providedIn: 'root'
@@ -201,5 +201,17 @@ export class SettingsService {
   uploadCompanylogo(tagData:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/uploadCompanylogo`,tagData);
   }
+
+  getNewCustomField(spID:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getCustomField/${spID}`);
   }
 
+  saveNewCustomField(addCustomFieldData: addCustomFieldsData): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addCustomField`,addCustomFieldData);
+  }
+
+  deleteCustomField(Id:number): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/deleteCustomField`,Id);
+  }
+
+}

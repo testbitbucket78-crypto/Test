@@ -116,10 +116,10 @@ export class CampaignsComponent implements OnInit {
 	 
 	 campaignStatusOption:any=[
 		
-		{value:0,label:'Running',checked:false},
+		{value:2,label:'Running',checked:false},
 		{value:1,label:'Scheduled',checked:false},
-		{value:2,label:'Executed',checked:false},
-		{value:3,label:'Draft',checked:false}];
+		{value:3,label:'Completed',checked:false},
+		{value:0,label:'Draft',checked:false}];
 	 
 	 channelOption:any=[
 			{value:1,label:'WhatsApp Official',checked:false},
@@ -442,8 +442,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				}else
 				if(item.status==3){
 					item['status_label'] ='completed'
-				}else{
-					item['status_label'] ='draft'
 				}
 				item['start_datetime_formated']=this.formattedDate(item.start_datetime)
 				item['created_datetime_formated']=this.formattedDate(item.created_at)
@@ -1184,6 +1182,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				if(item.Contacts_Column && item.Contacts_Column.length > 9){
 				console.log(item)
 				let MessageBodyData:any={
+					SPID:this.SPID,
 					phone_number:item.Contacts_Column,
 					button_yes:this.selectedTemplate.button_yes,
 					button_no:this.selectedTemplate.button_no,
@@ -1242,6 +1241,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					let customerDetail = customerResponseList[0]
 					if(customerDetail && customerDetail.Phone_number){
 						let MessageBodyData:any={
+							SP_ID:this.SPID,
 							phone_number:customerDetail.Phone_number,
 							button_yes:this.selectedTemplate.button_yes,
 							button_no:this.selectedTemplate.button_no,

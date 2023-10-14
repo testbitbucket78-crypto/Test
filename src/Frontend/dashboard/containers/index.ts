@@ -31,11 +31,12 @@ import { TeamSettingsComponent } from './team-settings/team-settings.component';
 import { UserSettingsComponent } from './user-settings/user-settings.component';
 import { CampaignSettingsComponent } from './campaign-settings/campaign-settings.component';
 import { ContactSettingsComponent } from './contact-settings/contact-settings.component';
+import { CustomFieldsComponent } from './custom-fields/custom-fields.component';
 import { TemplateSettingsComponent } from './template-settings/template-settings.component';
 import { TemplateMessageComponent } from './template-message/template-message.component';
 import { QuickResponseComponent } from './quick-response/quick-response.component';
 
-export const containers = [DashboardComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ImportComponent, CampaignsComponent,FunnelComponent, ReportsComponent,ConversationalReportsComponent, CampaignReportsComponent, AutomationReportsComponent, SettingComponent,AcoountSettingsComponent,AddSmartRepliesComponent,NotificationsComponent,SupportComponent,UserguideComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent,RolesSettingsComponent,DefaultMessageSettingsComponent,GeneralSettingsComponent,ManageStorageComponent,RoutingRulesComponent,TeamSettingsComponent,UserSettingsComponent,CampaignSettingsComponent,ContactSettingsComponent,TemplateSettingsComponent,TemplateMessageComponent,QuickResponseComponent];
+export const containers = [DashboardComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ImportComponent, CampaignsComponent,FunnelComponent, ReportsComponent,ConversationalReportsComponent, CampaignReportsComponent, AutomationReportsComponent, SettingComponent,AcoountSettingsComponent,AddSmartRepliesComponent,NotificationsComponent,SupportComponent,UserguideComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent,RolesSettingsComponent,DefaultMessageSettingsComponent,GeneralSettingsComponent,ManageStorageComponent,RoutingRulesComponent,TeamSettingsComponent,UserSettingsComponent,CampaignSettingsComponent,ContactSettingsComponent,CustomFieldsComponent,TemplateSettingsComponent,TemplateMessageComponent,QuickResponseComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './addSmartReplies/addSmartReplies.component';
@@ -69,6 +70,7 @@ export * from './team-settings/team-settings.component';
 export * from './user-settings/user-settings.component';
 export * from './campaign-settings/campaign-settings.component';
 export * from './contact-settings/contact-settings.component';
+export * from './custom-fields/custom-fields.component';
 export * from './template-settings/template-settings.component';
 export * from './template-message/template-message.component';
 export * from './quick-response/quick-response.component';
