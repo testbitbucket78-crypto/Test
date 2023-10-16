@@ -21,7 +21,7 @@ var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, inte
 async function NoCustomerReplyReminder() {
   console.log("NoCustomerReplyReminder")
   let defaultMessage = await db.excuteQuery(settingVal.CustomerReplyReminder, [])
-
+  console.log("NoCustomerReplyReminder" +defaultMessage.length)
   if (defaultMessage.length > 0) {
     for (const message of defaultMessage) {
 
@@ -31,8 +31,8 @@ async function NoCustomerReplyReminder() {
         let data = await db.excuteQuery(settingVal.selectdefaultMsgQuery, ['No Customer Reply Reminder',message.SP_ID])
         if (data.length > 0) {
 
-          let sendDefult = await sendDefultMsg(data[0].link, data[0].value, data[0].message_type, 101714466262650, message.customer_phone_number)
-
+          //let sendDefult = await sendDefultMsg(data[0].link, data[0].value, data[0].message_type, 101714466262650, message.customer_phone_number)
+          messageThroughselectedchannel(message.SPID,message.customer_phone_number,data.message_type,data.value,data.link,'101714466262650',msg.channel)
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, new Date(), message.Message_id]);
     
          let messageValu=[[message.SPID,message.Type,"101714466262650",message.interaction_id,message.Agent_id, 'out',data[0].value,data[0].link,data[0].message_type,"","",new Date(),new Date(),5]]
@@ -55,9 +55,11 @@ async function NoCustomerReplyTimeout() {
     let CustomerReplyTimeout = await db.excuteQuery(settingVal.noCustomerRqplyTimeOut, [])
   
     if (CustomerReplyTimeout.length > 0) {
+      
+    console.log("NoCustomerReplyTimeout" + CustomerReplyTimeout.length)
       for (const msg of CustomerReplyTimeout) {
-        let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
-
+        //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
+        messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,msg.value,msg.link,'101714466262650',msg.channel)
         let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, new Date(), msg.Message_id]);
     
        let messageValu=[[msg.SPID,msg.Type,"101714466262650",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",new Date(),new Date(),6]]
@@ -79,12 +81,14 @@ async function NoAgentReplyTimeOut() {
 console.log("NoAgentReplyTimeOut")
     let noAgentReplydata = await db.excuteQuery(settingVal.noAgentReply, [])
     if (noAgentReplydata.length > 0) {
-
+      console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
       for (const msg of noAgentReplydata) {
         let isWorkingTime = await workingHoursDetails(msg.SP_ID);
    
         if (isWorkingTime === true) {
-          let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
+          //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
+          messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,msg.value,msg.link,'101714466262650',msg.channel)
+          
           let messageValu=[[msg.SPID,msg.Type,"101714466262650",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",new Date(),new Date(),4]]
           let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [4, new Date(), msg.Message_id]);
@@ -101,49 +105,59 @@ console.log("NoAgentReplyTimeOut")
 
 
 
-
-
-async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
-  console.log("messageData===")
-  try {
-
-    const messageData = {
-      messaging_product: "whatsapp",
-      recipient_type: "individual",
-      to: from,
-      type: typeOfmsg,
-    };
-
-    if (typeOfmsg === 'video' || typeOfmsg === 'image' || typeOfmsg === 'document') {
-      messageData[typeOfmsg] = {
-        link: link,
-        caption: caption
-      };
-    }
-    if (typeOfmsg === 'text') {
-      messageData[typeOfmsg] = {
-        "preview_url": true,
-        "body": caption
-      };
-    }
-   
-    // Send  message using Axios
-    const response = await axios({
-      method: "POST",
-      url: `https://graph.facebook.com/v16.0/101714466262650/messages`,
-      data: messageData, // Use the video message structure
-      headers: {
-        'Authorization': val.access_token,
-        'Content-Type': val.content_type
-      },
-    });
-
-    console.log("****META APIS****", response.data);
-  } catch (err) {
-    console.error("______META ERR_____", err.response.data);
+async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
+  console.log("spid, from, type, text, media, phone_number_id, channelType")
+  console.log(spid, from, type, text, media, phone_number_id, channelType)
+  if (channelType == 'WhatsApp Official' || channelType == 1) {
+    console.log("WhatsApp Official")
+    middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+  } if (channelType == 'WhatsApp Web' || channelType == 2) {
+    console.log("WhatsApp Web")
+    middleWare.postDataToAPI(spid, from, type, text, media)
   }
-
 }
+
+// async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
+//   console.log("messageData===")
+//   try {
+
+//     const messageData = {
+//       messaging_product: "whatsapp",
+//       recipient_type: "individual",
+//       to: from,
+//       type: typeOfmsg,
+//     };
+
+//     if (typeOfmsg === 'video' || typeOfmsg === 'image' || typeOfmsg === 'document') {
+//       messageData[typeOfmsg] = {
+//         link: link,
+//         caption: caption
+//       };
+//     }
+//     if (typeOfmsg === 'text') {
+//       messageData[typeOfmsg] = {
+//         "preview_url": true,
+//         "body": caption
+//       };
+//     }
+   
+//     // Send  message using Axios
+//     const response = await axios({
+//       method: "POST",
+//       url: `https://graph.facebook.com/v16.0/101714466262650/messages`,
+//       data: messageData, // Use the video message structure
+//       headers: {
+//         'Authorization': val.access_token,
+//         'Content-Type': val.content_type
+//       },
+//     });
+
+//     console.log("****META APIS****", response.data);
+//   } catch (err) {
+//     console.error("______META ERR_____", err.response.data);
+//   }
+
+// }
 
 
 function isWorkingTime(data, currentTime) {

@@ -10,8 +10,7 @@ const moment = require('moment');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-
+const middleWare = require('./middleWare')
 
 
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
@@ -24,45 +23,48 @@ function isWithinTimeWindow(scheduleDatetime) {
 
 
 async function fetchScheduledMessages() {
-  var messagesData = await db.excuteQuery(`select * from Campaign where status=1 and is_deleted != 1`, [])
-  var remaingMessage = [];
+  try {
+    var messagesData = await db.excuteQuery(`select * from Campaign where status=1 and is_deleted != 1`, [])
+    var remaingMessage = [];
 
 
-  const currentDate = new Date();
- 
-  const currentDay = currentDate.getDay();
- 
+    const currentDate = new Date();
 
-  for (const message of messagesData) {
-  
-    let campaignTime = await getCampTime(message.sp_id)
-    if (isWorkingTime(campaignTime)) {
-      if (new Date(message.start_datetime) < new Date()) {
-      
-        const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
-   
-    
-      } else {
-        remaingMessage.push(message);
-      }
-    }
-  }
+    const currentDay = currentDate.getDay();
 
-  for (const message of remaingMessage) {
-   
 
-    let campaignTime = await getCampTime(message.sp_id)
-    if (isWorkingTime(campaignTime)) {
-    
-      if (isWithinTimeWindow(message.start_datetime)) {
-      
-        const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
-        
+    for (const message of messagesData) {
+
+      let campaignTime = await getCampTime(message.sp_id)
+      if (isWorkingTime(campaignTime)) {
+        if (new Date(message.start_datetime) < new Date()) {
+
+          const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
+
+
+        } else {
+          remaingMessage.push(message);
+        }
       }
     }
 
-  }
+    for (const message of remaingMessage) {
 
+
+      let campaignTime = await getCampTime(message.sp_id)
+      if (isWorkingTime(campaignTime)) {
+
+        if (isWithinTimeWindow(message.start_datetime)) {
+
+          const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
+
+        }
+      }
+
+    }
+  } catch (err) {
+    console.log(err)
+  }
 
 }
 
@@ -81,23 +83,30 @@ async function sendMessages(phoneNumber, message, id, campaign) {
       schedule_datetime: campaign.start_datetime
 
     }
-
-    const response = getTextMessageInput(phoneNumber, message);
-    sendMessage(response)
+    console.log("campaign")
+    console.log(campaign)
+    //const response = getTextMessageInput(phoneNumber, message);
+    //sendMessage(response)
+    //middleWare.sendDefultMsg(campaign.message_media,message,'text','101714466262650',phoneNumber)
+    var type = 'image';
+    if (alert.message_media == null || alert.message_media == "") {
+      type = 'text';
+    }
+    messageThroughselectedchannel(campaign.sp_id, phoneNumber,type, campaign.message_content, campaign.message_media, '101714466262650', campaign.channel_id)
     // Status Update
     let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
     let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), id])
     console.log(`Message sent to ${phoneNumber}. Response:`, response);
     MessageBodyData['status_message'] = 'Message Sent';
     MessageBodyData['status'] = 1
-   
-    saveSendedMessage(MessageBodyData)
+
+    //saveSendedMessage(MessageBodyData)
   } catch (error) {
     // console.error(`Error sending message to ${phoneNumber}.`, error.message);
     MessageBodyData['status_message'] = error.message
     MessageBodyData['status'] = 0;
- 
-    saveSendedMessage(MessageBodyData)
+
+    //saveSendedMessage(MessageBodyData)
   }
 
 }
@@ -113,7 +122,7 @@ async function mapPhoneNumberfomCSV(message) {
   console.log("mapPhoneNumberfomCSV")
   var contacts = JSON.parse(message.csv_contacts);
 
- 
+
 
   sendMessages(contacts[0].Phone_number, message.message_content, message.Id, message)
 
@@ -125,11 +134,11 @@ async function mapPhoneNumberfomList(message) {
 
   var dataArray = JSON.parse(message.segments_contacts);
   for (const number of dataArray) {
-  
+
     let Query = "SELECT * from EndCustomer  where customerId = " + number + " and isDeleted != 1"
-  
+
     let phoneNo = await db.excuteQuery(Query, []);
- 
+
     if (phoneNo.length > 0) {
       sendMessages(phoneNo[0].Phone_number, message.message_content, message.Id, message)
     }
@@ -138,38 +147,42 @@ async function mapPhoneNumberfomList(message) {
 
 async function getCampTime(spid) {
   var CampaignTimings = await db.excuteQuery(`select * from CampaignTimings where sp_id=? and isDeleted != 1`, [spid]);
-  
+
   return CampaignTimings;
 }
 
-function sendMessage(data) {
-  var config = {
-    method: 'post',
-    url: val.url,
-    headers: {
-      'Authorization': val.access_token,
-      'Content-Type': val.content_type
-    },
-    data: data
-  };
+// function sendMessage(data) {
+//   try{
+//   var config = {
+//     method: 'post',
+//     url: val.url,
+//     headers: {
+//       'Authorization': val.access_token,
+//       'Content-Type': val.content_type
+//     },
+//     data: data
+//   };
 
-  return axios(config)
-}
+//   return axios(config)
+// }catch(err){
+//   console.log(err)
+// }
+// }
 
-function getTextMessageInput(recipient, text) {
-  return JSON.stringify({
+// function getTextMessageInput(recipient, text) {
+//   return JSON.stringify({
 
-    "messaging_product": "whatsapp",
-    "preview_url": false,
-    "recipient_type": "individual",
-    "to": recipient,
-    "type": "text",
-    "text": {
-      "body": text
-    }
+//     "messaging_product": "whatsapp",
+//     "preview_url": false,
+//     "recipient_type": "individual",
+//     "to": recipient,
+//     "type": "text",
+//     "text": {
+//       "body": text
+//     }
 
-  });
-}
+//   });
+// }
 
 
 
@@ -186,14 +199,23 @@ JOIN user u ON u.uid=c.uid
 
 
     for (let alert of campaign) {
+      console.log("alert")
+     
       let user = await db.excuteQuery(alertUser, [alert.sp_id]);
       if (user.length > 0) {
         let phoneNo = user[0].mobile_number;
         let message = await msg(alert)
-     
-         const response = getTextMessageInput(phoneNo, message);
-      
-        sendMessage(response)
+
+        //const response = getTextMessageInput(phoneNo, message);
+
+        // sendMessage(response)
+        //middleWare.sendDefultMsg('message_media',message,'text','101714466262650',phoneNo)
+        //spid, from, type, text, media, phone_number_id, channelType
+        var type = 'image';
+        if (alert.message_media == null || alert.message_media == "") {
+          type = 'text';
+        }
+        messageThroughselectedchannel(alert.sp_id, phoneNo,type, alert.message_content, alert.message_media, '101714466262650', alert.channel_id)
       }
     }
 
@@ -201,12 +223,12 @@ JOIN user u ON u.uid=c.uid
   catch (err) {
 
     console.log(err)
-     db.errlog(err);
-     res.send(err)
+    db.errlog(err);
+
   }
 }
 
-async function find_message_status(alert){
+async function find_message_status(alert) {
   let Sent = 0;
   let Failed = 0;
   let msgStatusquery = `SELECT
@@ -222,8 +244,8 @@ async function find_message_status(alert){
  AND C.sp_id = ? AND C.Id=?
  GROUP BY
  CM.status;`
-   let msgStatus = await db.excuteQuery(msgStatusquery, [alert.sp_id, alert.Id]);
-   
+  let msgStatus = await db.excuteQuery(msgStatusquery, [alert.sp_id, alert.Id]);
+
   for (const item of msgStatus) {
     if (item.status === 1) {
       Sent += item.Status_Count;
@@ -241,8 +263,8 @@ async function find_message_status(alert){
 async function msg(alert) {
   let message = ''
 
- let msgStatus=await find_message_status(alert)
- 
+  let msgStatus = await find_message_status(alert)
+
 
   let audience = alert.segments_contacts.length > 0 ? alert.segments_contacts.length : alert.csv_contacts.length
 
@@ -291,11 +313,11 @@ function isWorkingTime(data, currentTime) {
     const workingDays = item.day.split(',');
     const date = new Date().getHours();
     const getMin = new Date().getMinutes();
-  
+
 
     const startTime = item.start_time.split(':');
     const endTime = item.end_time.split(':');
-  
+
     if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
       console.log("data===========")
       return true;
@@ -308,6 +330,18 @@ function isWorkingTime(data, currentTime) {
   return false;
 }
 
+
+async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
+  console.log("spid, from, type, text, media, phone_number_id, channelType")
+  console.log(spid, from, type, text, media, phone_number_id, channelType)
+  if (channelType == 'WhatsApp Official' || channelType == 1) {
+    console.log("WhatsApp Official")
+    middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+  } if (channelType == 'WhatsApp Web' || channelType == 2) {
+    console.log("WhatsApp Web")
+    middleWare.postDataToAPI(spid, from, type, text, media)
+  }
+}
 
 
 cron.schedule('*/5 * * * *', async () => {
