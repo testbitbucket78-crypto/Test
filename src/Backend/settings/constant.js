@@ -176,11 +176,16 @@ JOIN user u ON u.uid=c.uid
 var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at) values ?`
 var updatetag = `UPDATE EndCustomerTagMaster set TagName=?,TagColour=?,updated_at=? where ID=?`
 var deletetag = `UPDATE EndCustomerTagMaster set isDeleted=1,updated_at=? where ID=?`
-var selecttag = `SELECT tm.TagName,tm.TagColour, COUNT(ec.tag) AS tag_count
- FROM EndCustomerTagMaster AS tm
- JOIN EndCustomer AS ec 
- ON FIND_IN_SET(tm.TagName, ec.tag) > 0  and   ec.SP_ID=tm.SP_ID where ec.SP_ID=? 
- GROUP BY tm.TagName;`
+var selecttag = `SELECT
+tm.TagName,
+tm.TagColour,
+(SELECT COUNT(*) FROM EndCustomer AS ec
+ WHERE FIND_IN_SET(tm.TagName, ec.tag) > 0 AND ec.SP_ID = ? ) AS tag_count
+FROM
+EndCustomerTagMaster AS tm
+WHERE
+tm.SP_ID = ? 
+AND tm.isDeleted != 1;`
 
 
  var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1`

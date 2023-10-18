@@ -42,7 +42,7 @@ db.connect((err) => {
 
 
 async function runQuery(req, res, query, param) {
- console.log("add Sreply ")
+
 
     try {
         if (db.state === 'disconnected') {

@@ -5,10 +5,10 @@ const user= "CIP"
 const password= "cip#321#"
 const database= "cip_project"
 
-const awsaccessKeyId = 'AKIAYY5FSMYVNUZHPOEH'
-const awssecretAccessKey = '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'
+const awsaccessKeyId ='AKIAU2DXFI5LOZMFTY5J' //'AKIAYY5FSMYVNUZHPOEH'
+const awssecretAccessKey ='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' //'1GRtbJy2ZfwFDSNUZpESn4fOE1NtXattU1839phj'
 const awsregion = 'ap-south-1'
-const awsbucket='cip-engage'
+const awsbucket='cip-engage-o'   //'cip-engage'
 //Queries for user.js
 
 var selectAllQuery = "SELECT * FROM user WHERE SP_ID=?";
