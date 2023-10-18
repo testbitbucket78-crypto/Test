@@ -416,8 +416,8 @@ removeValue() {
 
     copyTemplatesData() {
       $("#newTemplateMessageFirst").modal('show');
-      this.showGalleryDetail = false;
-      this.showCampaignDetail = false;
+      // this.showGalleryDetail = false;
+      // this.showCampaignDetail = false;
       this.patchFormValue();
       
  
@@ -445,7 +445,6 @@ removeValue() {
       .subscribe(result =>{
         if(result){
           $("#deleteModal").modal('hide');
-          this.showCampaignDetail = false;
           this.getTemplatesData();
        
           

@@ -1,4 +1,4 @@
-import { Component, OnInit,ViewChild,ElementRef, Input } from '@angular/core';
+import { Component, OnInit,ViewChild,ElementRef, Input, HostListener } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -6,8 +6,10 @@ import { TeamboxService } from './../../services';
 import { Router } from '@angular/router';
 import { agentMessageList } from 'Frontend/dashboard/models/smartReplies.model';
 import Stepper from 'bs-stepper';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { isNullOrUndefined } from 'is-what';
 declare var $: any;
 
 @Component({
@@ -43,7 +45,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	stepper: any;
 	data: any;
 	val: any;
-	SPID!:Number
+	SPID!:any;
 	keywordtxt: any;
 	selectedTeam: any;
 	selectedTag:any;
@@ -67,7 +69,6 @@ export class AddSmartRepliesComponent implements OnInit {
 	newMessage!: FormGroup;
 	message = '';	
 	messages:any [] = [];
-	
 	selectedAction:any;	
 	
 	keyword: string = '';
@@ -81,7 +82,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	showBox1: boolean = false;
 	showBox2: boolean = false;
 	showattachmentbox = false;
-	agentsList = ["Rishabh Singh", "Jatin Sharma", "Raunak Kumari", "Sumit Goyal" ,"Pawan Sharma"];
+	agentsList!:string;
 	ShowAssignOption = false;
 	assignActionList = ["Assign Conversation", "Add Contact Tag"]; //,"Trigger Flow", "Name Update", "Resolve Conversation" "Remove Tags"
 	ShowAddAction = false;
@@ -91,7 +92,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	ShowAddTag = false;
 	ToggleAddTag = false;
 	ToggleAssignOption = false;
-	addTagList = ["Paid", "UnPaid", "Return", "New Customer", "Order Complete", "New Order", " Unavailable"];
+	addTagList!:any;
 	ShowRemoveTag = false;
 	ToggleRemoveTags = false;
 	ShowNameUpdate = false;
@@ -115,7 +116,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	selectedTemplate:any  = [];
 
     /**richtexteditor **/ 
-	custommesage = '<p>Your Reply...</p>'
+	custommesage = '<p>Type Reply...</p>'
 	showQuickResponse: any = false;
 	showAttributes: any = false;
 	showSavedMessage: any = false;
@@ -134,8 +135,10 @@ export class AddSmartRepliesComponent implements OnInit {
 	showMention: any = false;
 	editTemplate: any = false;
 
-	attributesList:any=['{{Name}}','{{user_name}}','{{Help}}','{{Support}}','{{email id}}','{{IP_address}}','{{New-Order}}','{{Product YN}}','{{mail_address}}','{{Hotmail}}','{{Product ZR}}'];
+	attributesList!:any;
 
+	userList:any;
+	userId!:number;
 
 	public smileys: { [key: string]: Object }[] = [
 		{ content: '&#128512;', title: 'Grinning face' },
@@ -298,7 +301,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	};
 
 	isSendButtonDisabled=false
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService,private elementRef: ElementRef) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -313,7 +316,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
 
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: true,
+			linear: false,
 			animation: true
 		});
 
@@ -323,7 +326,9 @@ export class AddSmartRepliesComponent implements OnInit {
 
 		console.log(this.isEdit)
 		console.log(this.smartReplyData)
-	
+	     this.getUserList();
+		 this.getTagData()
+		 this.getAttributeList();
 		 this.routerGuard();
 	
 	
@@ -344,11 +349,13 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.showMention = false
 		this.showEmoji = false;
 		this.ShowAddAction = false;
-
+		$("#attachmentbox").modal('hide');
+		$("#showAttributes").modal('hide');
+		document.getElementById('addsmartreplies')!.style.display = 'inherit';
 	}
 
 	resetMessageTex() {
-		if (this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value == '<p>Your Reply...</p>') {
+		if (this.chatEditor.value == '<p>Type Reply...</p>') {
 			this.chatEditor.value = '';
 			
 		}
@@ -369,7 +376,8 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	ToggleAttachmentBox() {
 		this.closeAllModal()
-		this.showAttachmenOption=!this.showAttachmenOption
+	    $("#attachmentbox").modal('show');
+        document.getElementById('addsmartreplies')!.style.display = 'none';
 		this.dragAreaClass = "dragarea";
 
 	}
@@ -398,7 +406,8 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	ToggleAttributesOption() {
 		this.closeAllModal()
-		this.showAttributes = !this.showAttributes;
+		$("#showAttributes").modal('show');
+        document.getElementById('addsmartreplies')!.style.display = 'none';
 	}
 	ToggleQuickReplies() {
 		this.closeAllModal()
@@ -418,6 +427,18 @@ export class AddSmartRepliesComponent implements OnInit {
 	showeditTemplate(){
 		this.editTemplate=true
 		this.showInsertTemplate=false;
+	}
+
+	selectAttributes(item:any){
+		this.closeAllModal();
+		const selectedValue = item;
+		
+		let htmlcontent = this.chatEditor.value;
+		if (isNullOrUndefined(htmlcontent)) {
+			htmlcontent = '';
+		  }
+		const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
+		this.chatEditor.value = selectedAttr; 
 	}
 	
 	selectQuickReplies(item:any){
@@ -521,9 +542,6 @@ export class AddSmartRepliesComponent implements OnInit {
 
 		
 	}
-
-	
-
 	
 	async getsavedMessages(){
 		this.tS.getsavedMessages(this.SPID).subscribe(savedMessages =>{
@@ -621,14 +639,12 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	addMessage() {
 
-		if(!this.custommesage) {
-			this.showToaster('! Please enter a message first','error');
+		if(!this.custommesage || this.custommesage ==='<p>Type Reply...</p>') {
+			this.showToaster('! Please type your message first','error');
 			return;
 		}
 		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage })
 			this.custommesage = '';
-		
-		    
 		}
 
 	
@@ -757,6 +773,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	addTags(index: number, e:any) {
 		console.log(e,index);
 		var isExist = false;
+		console.log(this.assignedTagList,' tags list');
 		this.assignedAgentList.forEach(item => {
 			if (item.ActionID == 3) {
 				  isExist= true;
@@ -764,7 +781,7 @@ export class AddSmartRepliesComponent implements OnInit {
 					  if (!item.Value.includes(this.addTagList[index])) {
 						  console.log(this.addTagList[index]);
 						  // item.Value.push(this.addTagList[index]);
-						  this.assignedTagList.push(this.addTagList[index]);
+						  this.assignedTagList.push(this.addTagList[index].TagName);
 					  }
 				  }
 				  else {
@@ -779,7 +796,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		})
 		if (!isExist) {
 			this.assignedTagList = [];
-			this.assignedTagList.push(this.addTagList[index]);
+			this.assignedTagList.push(this.addTagList[index].TagName);
 			this.assignedAgentList.push({ Message: '',ActionID: 3, Value: this.assignedTagList});
 			console.log('new value');
 		}
@@ -846,10 +863,10 @@ export class AddSmartRepliesComponent implements OnInit {
 	}
 
 
-	verifyKeywordForNextStep(duplicatekeyword:any) {
+	verifyKeywordForNextStep() {
 
 		if (document.getElementsByClassName('keytext')[0].innerHTML !== '') {
-			this.verifyKeyword(duplicatekeyword);
+			this.verifyKeyword();
 			
 
 		}
@@ -876,11 +893,12 @@ export class AddSmartRepliesComponent implements OnInit {
 	  
 		console.log(data);
 	  
-		if (data.Keywords.length > 0 && data.ReplyActions.length > 0) {
+		if (data.Keywords.length > 0 && data.ReplyActions.length > 0 && isNullOrUndefined(this.chatEditor.value)) {
 		  this.apiService.addNewReply(data).subscribe(
 			(response: any) => {
 			  console.log(response);
 			  if (response.status === 200) {
+				$("#smartrepliesModal").modal('hide'); 
 				this.modalService.open(smartreplysuccess);
 				this.newReply.reset();
 				this.newReply1.reset();
@@ -898,14 +916,14 @@ export class AddSmartRepliesComponent implements OnInit {
 			}
 		  );
 		} else {
-		  this.showToaster("! Add atleast one ReplyAction","warn");
+		  this.showToaster("! Message cannot be empty","warn");
 		}
 	  }
 	  
 
+	  /*  METHOD FOR VERIFY KEYWORD DUPLICACY  */
 
-
-	verifyKeyword(duplicatekeyword:any) {
+	verifyKeyword() {
 
 		var data= {
 			SP_ID: sessionStorage.getItem('SP_ID'),
@@ -922,7 +940,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		},
 			(error: any) => {
 				if (error.status === 409) {
-					this.modalService.open(duplicatekeyword);
+					this.showToaster('! Duplicate keyword found Please try other keyword.',"error");
 				}
 				else {					
 					this.showToaster("! Internal Server Error Please try after some time","error");
@@ -932,6 +950,8 @@ export class AddSmartRepliesComponent implements OnInit {
 			});
 	}
 	
+
+	  /*  TOGGLE FUZZY, EXACT & CONTAINS DIVs  */
 
 	onToggleBox(event: MouseEvent, showBox: boolean, showBox1: boolean, showBox2: boolean) {
 		const target = event.target as HTMLElement;
@@ -953,7 +973,50 @@ export class AddSmartRepliesComponent implements OnInit {
 	  onClickContains(event: MouseEvent) {
 		this.onToggleBox(event, false, false, true);
 	  }
-	  
 
+	  /*  GET USER LIST  */
+	  getUserList(){
+		this.settingsService.getUserList(this.SPID)
+		.subscribe((result:any) =>{
+		  if(result){
+			this.userList =result?.getUser;     
+			this.agentsList = this.userList.map((getUser:any) => getUser.name);
+	  
+		  }
+	  
+		})
+	  }
+  /*  GET TAG LIST  */
+	  getTagData(){
+		this.settingsService.getTagData(this.SPID)
+		.subscribe(result =>{
+		  if(result){
+		   let tagListData = result.taglist; 
+			this.addTagList = tagListData;
+		  }
+	  
+		})
+	  }
+  /*  GET ATTRIBUTE LIST  */
+	  getAttributeList() {
+	   this.apiService.getAttributeList(this.SPID)
+	   .subscribe((response:any) =>{
+		if(response){
+			let attributeListData = response?.result;
+			this.attributesList = attributeListData.map((attrList:any) => attrList.displayName);
+			console.log(this.attributesList);
+		}
+	  })
+  }
+
+  @HostListener('document:click', ['$event'])
+  divCloseMethod(event: MouseEvent) {
+	let clickedInside = document.getElementById('showEmoji')
+
+	clickedInside = this.elementRef.nativeElement!.contains(event.target);
+		if(!clickedInside) {
+			this.showEmoji = false;
+		}
+  }
 
 }
