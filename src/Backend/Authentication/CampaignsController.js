@@ -161,6 +161,7 @@ function parseMessageTemplate(template) {
 
 const sendCampinMessage = async (req, res) => {
     console.log("sendCampinMessage")
+    try{
     var TemplateData = req.body
     console.log(TemplateData)
     let messageData = '';
@@ -200,11 +201,8 @@ const sendCampinMessage = async (req, res) => {
         });
     }
 
-   let msgresponse=await middleWare.channelssetUp(spid, channel, type, messageTo,content,media)
-   res.send({
-    status:200,
-    msgresponse:msgresponse
-   })
+    middleWare.channelssetUp(spid, channel, type, messageTo,content,media)
+ 
     //    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
     //     var chunks = [];
     // 	  resBH.on("data", function (chunk) {
@@ -276,6 +274,9 @@ const sendCampinMessage = async (req, res) => {
 
 */
     //reqBH.end();
+}catch(err){
+    console.log(err)
+}
 
 }
 
