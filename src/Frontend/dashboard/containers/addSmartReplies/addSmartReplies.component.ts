@@ -1,4 +1,4 @@
-import { Component, OnInit,ViewChild,ElementRef, Input } from '@angular/core';
+import { Component, OnInit,ViewChild,ElementRef, Input, HostListener } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -301,7 +301,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	};
 
 	isSendButtonDisabled=false
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService,private elementRef: ElementRef) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -316,7 +316,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
 
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: true,
+			linear: false,
 			animation: true
 		});
 
@@ -349,7 +349,9 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.showMention = false
 		this.showEmoji = false;
 		this.ShowAddAction = false;
-
+		$("#attachmentbox").modal('hide');
+		$("#showAttributes").modal('hide');
+		document.getElementById('addsmartreplies')!.style.display = 'inherit';
 	}
 
 	resetMessageTex() {
@@ -374,7 +376,8 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	ToggleAttachmentBox() {
 		this.closeAllModal()
-		this.showAttachmenOption=!this.showAttachmenOption
+	    $("#attachmentbox").modal('show');
+        document.getElementById('addsmartreplies')!.style.display = 'none';
 		this.dragAreaClass = "dragarea";
 
 	}
@@ -403,7 +406,8 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	ToggleAttributesOption() {
 		this.closeAllModal()
-		this.showAttributes = !this.showAttributes;
+		$("#showAttributes").modal('show');
+        document.getElementById('addsmartreplies')!.style.display = 'none';
 	}
 	ToggleQuickReplies() {
 		this.closeAllModal()
@@ -894,6 +898,7 @@ export class AddSmartRepliesComponent implements OnInit {
 			(response: any) => {
 			  console.log(response);
 			  if (response.status === 200) {
+				$("#smartrepliesModal").modal('hide'); 
 				this.modalService.open(smartreplysuccess);
 				this.newReply.reset();
 				this.newReply1.reset();
@@ -1002,6 +1007,16 @@ export class AddSmartRepliesComponent implements OnInit {
 			console.log(this.attributesList);
 		}
 	  })
+  }
+
+  @HostListener('document:click', ['$event'])
+  divCloseMethod(event: MouseEvent) {
+	let clickedInside = document.getElementById('showEmoji')
+
+	clickedInside = this.elementRef.nativeElement!.contains(event.target);
+		if(!clickedInside) {
+			this.showEmoji = false;
+		}
   }
 
 }

@@ -1,79 +1,84 @@
 <sb-layout-dashboard>
 	<sb-top-nav title="Smart Replies"></sb-top-nav>
-	<div class="row r1">
-	
-			<div class="d-flex justify-content-between py-5 content-header">
-				<div class="input-group gf">
-	
-					<input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
-	
-					<img src="assets/img/search.png">
-		     	</div>
-				<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal" (click)="isShowSmartReplies = true" >
-					<img src="../../../../assets/img/teambox/add.svg" alt="error" />
-					Add Smart Reply
-				</button>
-			</div>
-		
-		
 
-	<div *ngIf="!replies" class="smartreplies-empty-state">
+	<div class="row r1">
+
+
+		<div class="d-flex justify-content-between py-5 content-header">
+			<div class="input-group gf">
+	
+				<input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
+	
+				<img src="assets/img/search.png">
+			</div>
+			<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"
+				(click)="isShowSmartReplies = true">
+				<img src="../../../../assets/img/teambox/add.svg" alt="error" />
+				Add Smart Reply
+			</button>
+		</div>
+	
+	
+	
+		<div *ngIf="!replies" class="smartreplies-empty-state">
 			<div class="d-flex justify-content-center align-items-center container-empty-state">
 				<div class="text-center py-5 body-empty-state">
 					<img src="../../../../assets/img/no-sr.png" />
-					<h5>No Smart Replies</h5>
-					<p>Lorium ipsum dolor sit amet</p>
+					<h5>No Smart Replies to Show!</h5>
+					<p>Click "+ Add Smart Reply" to start creating Smart Replies</p>
 				</div>
 			</div>
-	</div>
-
-<div *ngIf="replies" class="smartreplies-filled-state">
-
+		</div>
 	
-		<div class="m-0 col-12 d-flex flex-wrap sm-card">
-		<div *ngFor="let reply of replies  | searchfilter:searchText" class="card d-flex" (click)="toggleSideBar()"  (click)="getRepliesByID(reply)">
-			<div class="card-body gy-2">
-				<h6 class="id">Id:{{ reply.ID }}</h6>
-				<h5 class="card-title">{{reply.Title}}</h5>
 
-				<p [innerHTML]="reply.Description" class="card-text">
-				</p>
-				<h6 class="card-subtitle mb-2 text-muted">{{reply.MatchingCriteria}}</h6>
-				<div class="card1 d-flex">
-					<div class="card-text1">
-						<p>{{reply.KeywordCount}}</p>
-						<h6>Total Keywords</h6>
+		<div *ngIf="replies" class="smartreplies-filled-state">
+			<div class="m-0 col-12 d-flex flex-wrap sm-card">
+				<div *ngFor="let reply of replies  | searchfilter:searchText" class="card d-flex"
+					(click)="toggleSideBar()" (click)="getRepliesByID(reply)">
+					<div class="card-body gy-2">
+						<h6 class="id">Id:{{ reply.ID }}</h6>
+						<h5 class="card-title">{{reply.Title}}</h5>
+
+						<p [innerHTML]="reply.Description" class="card-text">
+						</p>
+						<h6 class="card-subtitle mb-2 text-muted">{{reply.MatchingCriteria}}</h6>
+						<div class="card1 d-flex">
+							<div class="card-text1">
+								<p>{{reply.KeywordCount}}</p>
+								<h6>Total Keywords</h6>
+							</div>
+							<div class="card-text2">
+								<p>{{reply.ActionCount}}</p>
+								<h6>Reply Action</h6>
+							</div>
+						</div>
 					</div>
-					<div class="card-text2">
-						<p>{{reply.ActionCount}}</p>
-						<h6>Reply Action</h6>
-					</div>
-				 </div>
-			  </div>
-	     	</div>
-     	</div>
-		
+				</div>
+			</div>
+		</div>
 	</div>
-	</div>
-	
+
 	<div *ngIf="showSideBar" id="sidebar" class="sidebar">
-		<button type="button" class="btn5 btn-close" (click)="toggleSideBar()"><img src="assets/img/teambox/icon-close.svg"></button>
+		<button type="button" class="btn5 btn-close" (click)="toggleSideBar()"><img
+				src="assets/img/teambox/icon-close.svg"></button>
 
 		<div class="collumn d-flex">
 			<h6>Id:</h6>
 			<h5>{{repliesData.ID}}.</h5>
 			<div class="line"></div>
 			<h6>Created on:</h6>
-			<h5>{{repliesData.CreatedDate  | date: 'dd MMM yyyy'}}</h5>
+			<h5>{{repliesData.CreatedDate | date: 'dd MMM yyyy'}}</h5>
 			<div class="line"></div>
 			<h6>Edited on:</h6>
 			<h5>{{repliesData.ModifiedDate | date: 'dd MMM yyyy' }}</h5>
 		</div>
-		<h4 class="help-support-btn" routerLink="/dashboard/support" ><img id="Edit-icon" src="assets/img/Edit-icon.png">Help & Support</h4>
+		<h4 class="help-support-btn" routerLink="/dashboard/support"><img id="Edit-icon"
+				src="assets/img/Edit-icon.png">Help & Support</h4>
 		<div class="row d-flex">
 			<h6 class="text-justify">{{items.Description}}.</h6>
 		</div>
-		<h3 class="keywords-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon" src="assets/img/Edit-icon.png" >Keywords & Criteria </h3>
+		<h3 class="keywords-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon"
+				src="assets/img/Edit-icon.png">Keywords & Criteria </h3>
 		<div class="row">
 			<div class="box" *ngFor="let values of repliesData.Keyword">
 				<p>{{values}}</p>
@@ -87,7 +92,8 @@
 			<h5>{{repliesData.MatchingCriteria}}</h5>
 		</div>
 
-		<h3 class="reply-action-btn" (click)="editSmartReply()" ><img id="Edit-icon" src="assets/img/Edit-icon.png" >Reply Actions</h3>
+		<h3 class="reply-action-btn" (click)="editSmartReply()"><img id="Edit-icon" src="assets/img/Edit-icon.png">Reply
+			Actions</h3>
 		<div *ngFor="let item of repliesData.ActionList">
 			<div class="box4" *ngIf="item.Message">
 				<h3>Message</h3>
@@ -97,41 +103,45 @@
 				<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
 				<div class="d-flex flex-wrap assign-container">
 					<p class="py-1 px-2 m-0" id="msgbox-body1"><b>{{item.Name}} : </b></p>
-					<p  [innerHTML]="item.Value" class="py-1 m-0" id="msgbox-body2"></p>
+					<p [innerHTML]="item.Value" class="py-1 m-0" id="msgbox-body2"></p>
 				</div>
 			</div>
 		</div>
 
 		<div class="footer">
-			<button class="delete-btn"  data-bs-toggle="modal" data-bs-target="#Delete"><img src="assets/img/delete.png"></button>
+			<button class="delete-btn" data-bs-toggle="modal" data-bs-target="#Delete"><img
+					src="assets/img/delete.png"></button>
 		</div>
 	</div>
 
 
-	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
+	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static"
+		aria-hidden="true">
 		<div class="modal-dialog deletesmartreplies-dialog">
-		  <div class="modal-content deletesmartreplies-content">
-			
-			<div class="modal-body deletesmartreplies-body">
-				Do you really want to delete<br /> this Smart Reply?
-			</div>
-			<div class="deletefile d-flex" >
-			  <button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
-			  <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="deleteRepliesById(data)">Yes, Delete</button>
-		  </div>
-		</div>
-		</div>
-	  </div>
+			<div class="modal-content deletesmartreplies-content">
 
-	  <div class="modal fade" tabindex="-1" id="smartrepliesModal" data-bs-backdrop="dynamic" role="dialog">
-        <div class="addsmartreplies modal-dialog" role="document">
-            <div class="modal-content delete-token-modal" id="delete-tok">
-                <div class="modal-body alertmessage">
-					<sb-addSmartReplies *ngIf="isShowSmartReplies" [isEdit]="isEdit" [smartReplyData]="repliesData" ></sb-addSmartReplies>
-                </div>
+				<div class="modal-body deletesmartreplies-body">
+					Do you really want to delete<br /> this Smart Reply?
+				</div>
+				<div class="deletefile d-flex">
+					<button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn99 btn-primary" data-bs-dismiss="modal"
+						(click)="deleteRepliesById(data)">Yes, Delete</button>
+				</div>
 			</div>
 		</div>
-    </div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" id="smartrepliesModal" data-bs-backdrop="static" role="dialog">
+		<div class="addsmartreplies modal-dialog" role="document">
+			<div class="modal-content delete-token-modal" id="delete-tok">
+				<div class="modal-body alertmessage">
+					<sb-addSmartReplies *ngIf="isShowSmartReplies" [isEdit]="isEdit"
+						[smartReplyData]="repliesData"></sb-addSmartReplies>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 </sb-layout-dashboard>

@@ -682,7 +682,7 @@ input:focus {
 
 .input-area .popup-dialog {
     max-width: 100%;
-    margin-top: -150px;
+    margin-top: -232px;
     cursor: pointer;
 }
 
@@ -921,13 +921,14 @@ input:focus {
 
 
 .btn9 {
-    left: 95px;
+    left: 7%;
     height: 0;
     position: absolute;
     margin: 0;
     padding: 0;
-    top: 5.1rem;
+    top: 13%;
 }
+
 
 .heading {
     font-size: 17px;
@@ -1547,6 +1548,10 @@ input:focus {
     padding: 1rem;
 }
 
+.custom_modal.showAttributes {
+    background: #FFF4F2;
+}
+
 .custom-file-upload {
     background: #FFFFFF 0% 0% no-repeat padding-box;
     border: 1px solid #EBEBEB;
@@ -1587,6 +1592,10 @@ input:focus {
     left: 20%;
     top: 5%;
     z-index: 9999;
+}
+
+.attachmentboxcon {
+    min-width: 890px;
 }
 
 .teambox-white .modal-content {
@@ -1931,16 +1940,16 @@ label.container {
     }
     
     /* Create a custom checkbox */
-    // .checkmark {
-    // position: absolute;
+     .checkmark {
+     position: absolute;
     // top: 0;
     // left: 0;
-    // height: 15px;
-    // width: 15px;
-    // background-color: #fff;
-    // border-radius: 5px;
-    // border: 1px solid #C0BDCC;
-    // }
+     height: 15px;
+     width: 15px;
+     background-color: #fff;
+     border-radius: 5px;
+     border: 1px solid #C0BDCC;
+    }
     .checkmark.radio{
     border-radius: 50%;
     }
