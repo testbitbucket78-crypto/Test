@@ -5,25 +5,27 @@ const token = 'EAAU0g9iuku4BOzSD75ynSUzKSsYrIWv3qkEa9QPAnUNTUzPwN5aTjGxoAHxsXF4N
 
 async function postDataToAPI(spid,phoneNo,type,text,link) {
     try {
-        
-      const apiUrl = 'https://waweb.sampanatechnologies.com/craeteQRcode'; // Replace with your API endpoint
+        var phoneNumber=removePlusFromPhoneNumber(phoneNo)
+      const apiUrl = 'https://waweb.sampanatechnologies.com/sendMessage'; // Replace with your API endpoint
       const dataToSend = {
         spid : spid,
         type : type,
         link : link,
         text : text,
-        phoneNo :phoneNo
+        phoneNo :phoneNumber
       };
-  console.log("dataToSend")
-  console.log("")
-  console.log(dataToSend)
+  //console.log("dataToSend")
+ 
+ 
       const response = await axios.post(apiUrl, dataToSend);
   
-   
+    
       console.log('Response from API:', response.data);
+      return  'Message Sent';
     } catch (error) {
     
       console.error('Error:', error.message);
+      return  error.message
     }
   }
 
@@ -47,7 +49,6 @@ console.log(WhatsAppOfficialMessage)
     } else if (channelType == 'WhatsApp Web') {
       
       let content = await removeTagsFromMessages(message_body);
-   
     let messages=await postDataToAPI(spid,phoneNumber,mediaType,content,media) 
     console.log(messages)
     }
@@ -73,7 +74,7 @@ async function sendMessagesThroughWhatsAppOfficial(phoneNumber,mediaType,message
 
 async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
     //console.log("messageData===")
-    console.log(caption)
+    //console.log(caption)
     try {
   
       const messageData = {
@@ -102,7 +103,7 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
         url: `https://graph.facebook.com/v17.0/${phone_number_id}/messages?access_token=${token}`,
         data: messageData, // Use the video message structure
         headers: { "Content-Type": "application/json" },
-      });
+      })
   
      //console.log("****META APIS****", caption);
     } catch (err) {

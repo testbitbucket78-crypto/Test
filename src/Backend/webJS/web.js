@@ -3,7 +3,7 @@ const { request } = require('http');
 const app = express();
 const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer')
-// const qrcode = require('qrcode-terminal');
+ //const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -36,7 +36,7 @@ async function createClientInstance(spid) {
   
           client.on('qr', (qr) => {
               console.log('QR RECEIVED', qr);
-             // qrcode.generate(qr, {small: true});
+          //    qrcode.generate(qr, {small: true});
               resolve({ client: client, value: qr });
           });
           client.on('ready', () => {
