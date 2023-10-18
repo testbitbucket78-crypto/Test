@@ -82,7 +82,7 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
       }
       // break;
 
-    } else if (storedValue == 'Fuzzy Matching') {
+    } else if (storedValue == 'Fuzzy matching') {
       console.log("Fuzzy Matching");
       let FuzzyQuery = `SELECT t2.* 
       FROM SmartReply t1 JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID

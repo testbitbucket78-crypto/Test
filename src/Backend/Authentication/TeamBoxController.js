@@ -301,7 +301,7 @@ const insertMessage = async (req, res) => {
             Type = req.body.message_type
             created_at = req.body.created_at
             ExternalMessageId = ''
-            let msgresponse=''
+          
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id])
             let channelType = await db.excuteQuery('select channel from EndCustomer where customerId=?', [customerId]);
             console.log("channelType" + channelType);
@@ -338,10 +338,10 @@ const insertMessage = async (req, res) => {
                 if (req.body.message_media != '') {
                     // sendMediaOnWhatsApp(req.body.messageTo, message_media)
                     console.log(message_media)
-                    msgresponse=await   middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_media)
+                       middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_media)
                 }
                 // sendTextOnWhatsApp(req.body.messageTo, message_text)
-                msgresponse=await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text)
+                middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text)
             }
 
         } else {
@@ -351,16 +351,10 @@ const insertMessage = async (req, res) => {
             var messageQuery = "UPDATE Message SET updated_at ='" + created_at + "', message_text ='" + message_text + "' WHERE Message_id =" + Message_id;
             db.runQuery(req, res, messageQuery, [values])
         }
-        res.send({
-            status: 200,
-            msgresponse:msgresponse
-        })
+      
     } catch (err) {
         console.log(err);
-        res.send({
-            status:500,
-            err:err
-        })
+    
     }
 
 
