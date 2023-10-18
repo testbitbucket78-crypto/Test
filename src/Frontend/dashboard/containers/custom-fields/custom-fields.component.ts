@@ -168,13 +168,11 @@ patchFormDataValue(){
 
 editCustomField() { 
   $("#addCustomFieldModal").modal('show');
-  this.showSideBar = false;
   this.patchFormDataValue();
 }
 
 toggleDeletePopup() {
   $("#deleteModal").modal('show');
-  this.showSideBar = false;
 }
 
 
