@@ -18,7 +18,7 @@
 
 .input-area .popup-dialog {
     max-width: 100%;
-    margin-top: -150px;
+    margin-top: -273px;
 }
 
 .input-area .popup-dialog.mention {
@@ -1134,13 +1134,12 @@ button:focus, input:focus {
     max-width: 90%;
     margin-top: -210px;
 }
-
-.popup-dialog.NoteOption {
+.popup-dialog.NoteOption{
     width: 100px;
     margin-left: 0;
     position: absolute;
-    left: -5px;
-    top: 34px;
+    left: 25rem;
+    top: -12.5rem;
 }
 
 .popup-dialog p {
@@ -1295,6 +1294,7 @@ div[role="progressbar"] {
     color: #000;
     font-weight: 500;
     font-size: 14px;
+    padding-left: 5.7rem;
 }
 
 .inner_form.large .row {
@@ -2284,3 +2284,21 @@ label span {
         width: 66%;
         margin-left: -4rem;
     }
+.autoreply.modal-dialog{
+    position: absolute;
+    width: auto;
+    margin: 0.5rem;
+    pointer-events: none;
+    top: 44rem;
+    right: 5rem;
+    width: 19rem;
+    display: block!important;
+    height: auto!important;
+}
+.input-formm{
+    position: absolute;
+    top: 2.64rem;
+    border: none;
+    right: 19rem;
+    width: 4.2rem;
+}
