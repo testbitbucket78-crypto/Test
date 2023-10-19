@@ -36,11 +36,11 @@ async function fetchScheduledMessages() {
 
     const currentDay = currentDate.getDay();
 
-    let i = 0;
+
     for (const message of messagesData) {
-      console.log("index of i ", messagesData.length, i + 1)
-      let campaignTime = await getCampTime(message.sp_id)
     
+      let campaignTime = await getCampTime(message.sp_id)
+
       if (isWorkingTime(campaignTime)) {
         console.log(" isWorkingTime messagesData loop",)
         if (new Date(message.start_datetime) < new Date()) {
@@ -68,6 +68,7 @@ async function fetchScheduledMessages() {
 
 
     }
+
   } catch (err) {
     console.log(err)
   }
@@ -78,7 +79,7 @@ async function fetchScheduledMessages() {
 async function sendMessages(phoneNumber, message, id, campaign, response) {
   try {
     var status = 0
-    if (response == 'Message Sent') {
+    if (response == 200) {
       status = 1;
     }
     let MessageBodyData = {
@@ -116,10 +117,12 @@ async function mapPhoneNumberfomCSV(message) {
   console.log("mapPhoneNumberfomCSV")
   var contacts = JSON.parse(message.csv_contacts);
   var type = 'image';
-  if (alert.message_media == null || alert.message_media == "") {
+  if (message.message_media == null || message.message_media == "") {
     type = 'text';
   }
-
+  campaignAlerts(new Date(), message.Id)    //Campaign is Running
+  let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
+  let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
   batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message)
 
 
@@ -141,8 +144,13 @@ async function mapPhoneNumberfomList(message) {
 
   let phoneNo = await db.excuteQuery(Query, [[dataArray]]);
   console.log("phoneNo.length", phoneNo.length)
-  batchofScheduledCampaign(phoneNo, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message)
 
+  campaignAlerts(message,2)    //Campaign is Running
+  let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
+  let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
+
+  batchofScheduledCampaign(phoneNo, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message)
+ 
 
 }
 
@@ -166,8 +174,8 @@ async function batchofScheduledCampaign(users, sp_id, type, message_content, mes
       }, delayBetweenBatches);
     }
   }
-
-  let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
+  campaignAlerts(message,3) // Campaign Finish 
+  let updateQuery = `UPDATE Campaign SET status=3,updated_at=? where Id=?`;
   let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
 }
 
@@ -178,16 +186,17 @@ function sendScheduledCampaign(batch, sp_id, type, message_content, message_medi
     let Phone_number = batch[i].Phone_number
 
     var response;
-    setTimeout(() => {
-      response = messageThroughselectedchannel(sp_id, Phone_number, type, message_content, message_media, phone_number_id, channel_id);
+    setTimeout(async () => {
+      response = await messageThroughselectedchannel(sp_id, Phone_number, type, message_content, message_media, phone_number_id, channel_id);
       console.log("response", response)
+      sendMessages(Phone_number, message.message_content, message.Id, message, response.status)
     }, 10)
-    sendMessages(Phone_number, message.message_content, message.Id, message, response)
+    
   }
 }
 
 
-function isWorkingTime(data, currentTime) {
+function isWorkingTime(data) {
 
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 
@@ -219,30 +228,48 @@ function isWorkingTime(data, currentTime) {
 
 
 
-async function campaignAlerts() {
+async function campaignAlerts(message,updatedStatus) {
   try {
     console.log("campaignAlerts")
-    let query = `select * from Campaign where  is_deleted != 1 limit 1`;
-    let campaign = await db.excuteQuery(query, []);
+   
+    //     let query = `select * from Campaign where  is_deleted != 1 limit 1`;
+    //     let campaign = await db.excuteQuery(query, []);
+    //     let alertUser = `select c.uid,u.* from CampaignAlerts c
+    // JOIN user u ON u.uid=c.uid
+    //  where c.SP_ID=? and c.isDeleted !=1 `;
+
+
+    //     for (let alert of campaign) {
+    //       console.log("alert")
+
+    //       let user = await db.excuteQuery(alertUser, [alert.sp_id]);
+
+    //       let message = await msg(alert)
+    //       var type = 'image';
+    //       if (alert.message_media == null || alert.message_media == "") {
+    //         type = 'text';
+    //       }
+
+    let alertmessages = await msg(message,updatedStatus)
+
     let alertUser = `select c.uid,u.* from CampaignAlerts c
 JOIN user u ON u.uid=c.uid
  where c.SP_ID=? and c.isDeleted !=1 `;
 
 
-    for (let alert of campaign) {
-      console.log("alert")
+    let user = await db.excuteQuery(alertUser, [message.sp_id]);
 
-      let user = await db.excuteQuery(alertUser, [alert.sp_id]);
-
-      let message = await msg(alert)
-      var type = 'image';
-      if (alert.message_media == null || alert.message_media == "") {
-        type = 'text';
-      }
-
-      batchofAlertUsers(user, alert.sp_id, type, message, alert.message_media, '101714466262650', alert.channel_id)
-
+    var type = 'image';
+    if (message.message_media == null || message.message_media == "") {
+      type = 'text';
     }
+
+    sendBatchMessage(user, message.sp_id, type, alertmessages, message.message_media, message.phone_number_id, message.channel_id, message.CampaignId, updatedStatus)
+
+
+    //batchofAlertUsers(user, alert.sp_id, type, message, alert.message_media, '101714466262650', alert.channel_id)
+
+
 
   }
   catch (err) {
@@ -255,19 +282,19 @@ JOIN user u ON u.uid=c.uid
 
 
 
-async function batchofAlertUsers(users, sp_id, type, message_content, message_media, phone_number_id, channel_id) {
+// async function batchofAlertUsers(users, sp_id, type, message_content, message_media, phone_number_id, channel_id) {
 
-  for (let i = 0; i < users.length; i += batchSize) {
-    const batch = users.slice(i, i + batchSize);
-    sendBatchMessage(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id)
+//   for (let i = 0; i < users.length; i += batchSize) {
+//     const batch = users.slice(i, i + batchSize);
+//     sendBatchMessage(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id)
 
-    if (i + batchSize < users.length) {
-      setTimeout(() => {
-        batchofAlertUsers(users.slice(i + batchSize), sp_id, type, message_content, message_media, phone_number_id, channel_id);
-      }, delayBetweenBatches);
-    }
-  }
-}
+//     if (i + batchSize < users.length) {
+//       setTimeout(() => {
+//         batchofAlertUsers(users.slice(i + batchSize), sp_id, type, message_content, message_media, phone_number_id, channel_id);
+//       }, delayBetweenBatches);
+//     }
+//   }
+// }
 
 
 function sendBatchMessage(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id) {
@@ -317,29 +344,29 @@ async function find_message_status(alert) {
 
 //___________________CAMPAIGN ALERT MESSAGE ON THE BASIS OF FILTERD STATUS _____________________________//
 
-async function msg(alert) {
+async function msg(alert,status) {
   let message = ''
 
   let msgStatus = await find_message_status(alert)
 
 
-  let audience = alert.segments_contacts.length > 0 ? alert.segments_contacts.length : alert.csv_contacts.length
+  //let audience = alert.segments_contacts.length > 0 ? alert.segments_contacts.length : alert.csv_contacts.length
 
 
-  if (alert.status == '1') {
+  if (status == '1') {
     message = `Hi there, your Engagekart Campaign has been Scheduled:
     Campaign Name: `+ alert.title + `
     Scheduled Time: `+ alert.start_datetime + `
     Taget Audience: `+ 'alert.title' + `
     Channel: < `+ 'WhatsApp' + `,` + alert.channel_id + `> 
     Category: `+ alert.category + ` `
-  } if (alert.status == '2') {
+  } if (status == '2') {
     message = `Hello, your Engagekart Campaign has Started:
     Campaign Name: `+ alert.title + `
     Taget Audience: <count of target base>
     Channel:< `+ 'WhatsApp' + `,` + alert.channel_id + `>
     Category:`+ alert.category + ` `
-  } if (alert.status == '3') {
+  } if (status == '3') {
     message = `Hi, here is the Summary of your finished Engagekart Campaign:
     Campaign Name: `+ alert.title + `
     Taget Audience: <count of target base>
@@ -348,7 +375,7 @@ async function msg(alert) {
     Sent: ` + msgStatus.Sent + `
     Failed: ` + msgStatus.Failed + `
     For more detailed report, please login to your Engagkart account`
-  } if (alert.status == '0') {
+  } if (status == '0') {
     message = `Engagekart Campaign Alert:
     Hi, Please note your Engagekart campaign ` + alert.title + ` has stopped/Paused. Please login to Engagkart account for more details and take further action.`
   }
@@ -370,11 +397,12 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
   if (channelType == 'WhatsApp Official' || channelType == 1) {
 
-    middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    return respose;
   } if (channelType == 'WhatsApp Web' || channelType == 2) {
 
-    let result = middleWare.postDataToAPI(spid, from, type, text, media)
-    return result;
+    let respose = await middleWare.postDataToAPI(spid, from, type, text, media)
+    return respose;
   }
 }
 
@@ -383,7 +411,7 @@ cron.schedule('*/5 * * * *', async () => {
   console.log('Running scheduled task...');
 
   fetchScheduledMessages();
-   campaignAlerts()
+  // campaignAlerts()
 
 });
 

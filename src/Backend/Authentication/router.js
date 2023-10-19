@@ -131,5 +131,6 @@ router.post('/saveCampaignMessages',CampaignsController.saveCampaignMessages);
 router.get('/getCampaignMessages/:CampaignId',CampaignsController.getCampaignMessages);
 router.get('/copyCampaign/:CampaignId',CampaignsController.copyCampaign);
 
+router.post('/alertUser',CampaignsController.campaignAlerts)
 
 module.exports = router;
