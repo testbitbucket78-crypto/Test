@@ -54,7 +54,7 @@ async function runQuery(req, res, query, param) {
 
 
             try {
-                console.log(result)
+               // console.log(result)
                 res.send(result)
             } catch (err) {
                 //console.error(err);

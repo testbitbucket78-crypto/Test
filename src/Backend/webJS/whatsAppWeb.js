@@ -36,12 +36,12 @@ app.post('/sendMessage', async (req, res) => {
         text = req.body.text
         phoneNo = req.body.phoneNo
         let response = await web.sendMessages(spid, phoneNo, type, text, link);
-        console.log(response)
-        res.send({ status: 200 })
+    
+       return res.send({ status: 200})
 
     } catch (err) {
         console.log(err);
-        res.send({ status: 500 })
+        return res.send({ status: 500})
     }
 })
 

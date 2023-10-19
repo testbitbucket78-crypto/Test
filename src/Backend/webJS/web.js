@@ -3,7 +3,7 @@ const { request } = require('http');
 const app = express();
 const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer')
- //const qrcode = require('qrcode-terminal');
+// const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -36,7 +36,7 @@ async function createClientInstance(spid) {
   
           client.on('qr', (qr) => {
               console.log('QR RECEIVED', qr);
-          //    qrcode.generate(qr, {small: true});
+            //  qrcode.generate(qr, {small: true});
               resolve({ client: client, value: qr });
           });
           client.on('ready', () => {
@@ -81,7 +81,7 @@ async function createClientInstance(spid) {
 async function sendMessages(spid, endCust, type, text, link) {
   try{
     let client = clientSpidMapping[[spid]];
-    console.log(spid, endCust, type, text, link)
+    console.log(spid, endCust, type,)
     if (client) {
         console.log("if");
         let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link);
@@ -92,7 +92,7 @@ async function sendMessages(spid, endCust, type, text, link) {
         let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link);    
     }
   }catch(err){
-console.log(err);
+console.log(err)
   }
 }
 
@@ -101,7 +101,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link) {
     console.log("messagesTypes")
        
     if (type === 'text') {
-        console.log(text)
+        //console.log(text)
         client.sendMessage(endCust + '@c.us', text);     
     }
     if (type === 'image') {
