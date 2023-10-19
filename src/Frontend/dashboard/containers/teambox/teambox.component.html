@@ -195,15 +195,6 @@
 									<div class="content-box">
 										<div *ngIf="selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId" class="content-before">
 											<p (click)="toggleNoteOption(note)">...</p>
-											<div *ngIf="note.selected" class="popup-dialog NoteOption">
-												<p class="label" (click)="hideNoteOption()">Options</p>
-												<p (click)="editNotes()">
-													<span class="editnotes-btn" >Edit</span>
-												</p>
-												<p (click)="deleteNotes()">
-													<span class="deletenotes-btn">Delete</span>
-												</p>
-											</div>
 										</div>
 
 										<div class="content">
@@ -331,6 +322,10 @@
 								<p>{{selectedInteraction.Name}}</p>
 							</div>
 						</div>
+
+						
+
+
 
 						<div class="custom_row">
 							<div class="col-md-12">
@@ -480,35 +475,24 @@
 							(click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
 					</div>
 
-					<div class="custom_row mt-1">
-						<div class="col-md-12">
-							<div *ngIf="AutoReplyOption" class="popup-dialog autoreply">
-								<div *ngIf="selectedInteraction.PausedTimer">
-									<p *ngFor="let option of AutoReplyEnableOption;"
-										[ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''"
-										(click)="SelectReplyOption(option,'Extend')">
-										<span>{{option}}</span>
-									</p>
-								</div>
-								<div *ngIf="!selectedInteraction.PausedTimer">
-									<p *ngFor="let option of AutoReplyPauseOption;let last = last;"
-										[ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''"
-										(click)="SelectReplyOption(option,'Paused')">
-										<span>{{option}}</span>
-									</p>
-								</div>
 
-							</div>
-							<div class="downnn">
-							<button class="auto-rep-btn" (click)="toggleAutoReply()"><img class="icon"
-									src="/assets/img/teambox/time-circle.svg" />{{selectedInteraction.AutoReplyStatus}}
-								<img class="icon right-aligned"
-									src="/assets/img/teambox/dropdown-w.svg" /></button>
-									</div>
+					
+	 <!-- autoreply-dropdown -->
 
-						</div>
-					</div>
 
+
+
+
+
+	 <div class="downnn">
+		<button class="auto-rep-btn" (click)="toggleAutoReply()"><img class="icon"
+				src="/assets/img/teambox/time-circle.svg" />{{selectedInteraction.AutoReplyStatus}}
+			<img class="icon right-aligned"
+				src="/assets/img/teambox/dropdown-w.svg" /></button>
+				</div>
+				
+					
+			
 					<div class="custom_row edit-block-section mt-4">
 						<div class="col-md-12">
 							<p class="auto-rep-time">{{selectedInteraction.PausedTimer}}</p>
@@ -518,7 +502,7 @@
 					</div>
 				</div>
 
-
+<!--  -->
 				<div class="profile" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
 					<img class="toggle_provice_view" (click)="toggleAttachedMediaView()"
 						src="/assets/img/teambox/search-clear.svg">
@@ -1195,8 +1179,17 @@
 				</div>
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Phone Number*</label>
-					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text"  onKeyPress="return /^[\d+]$/.test(event.key)"  name="Phone_number" value={{EditContactForm.Phone_number}} />
+						<select class="input-formm" id="country_code" formControlName="country_code">
+							<option [selected]="countryCode === countryCodes[101]"  *ngFor="let countryCode of countryCodes; let i = index">
+								{{ countryCode }}
+							</option>
+							</select>
+							<input (input)="hangeEditContactInuts($event)" class="form-control" type="text"  onKeyPress="return /^[\d+]$/.test(event.key)"  name="Phone_number" value={{EditContactForm.Phone_number}} />
+							
 				</div>
+				
+
+
 
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Email*</label>
@@ -1398,5 +1391,53 @@
 
 	</ng-template>
 
-
+	<!-- popup-autoreply -->
+	<div class="modal fade" tabindex="-1" id="addTagModal"#addTagModal data-bs-backdrop="dynamic" role="dialog">
+        <div class="autoreply modal-dialog " role="document">
+            <div class="modal-content" >
+                <div class="modal-body">
+					<div class="custom_row mt-1">
+						<div class="col-md-12" id="addteamboox">
+							<div  class="popup-dialog autoreply">
+								<div *ngIf="selectedInteraction.PausedTimer">
+									<p *ngFor="let option of AutoReplyEnableOption;"
+										[ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''"
+										(click)="SelectReplyOption(option,'Extend')">
+										<span>{{option}}</span>
+									</p>
+								</div>
+								<div *ngIf="!selectedInteraction.PausedTimer">
+									<p *ngFor="let option of AutoReplyPauseOption;let last = last;"
+										[ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''"
+										(click)="SelectReplyOption(option,'Paused')">
+										<span>{{option}}</span>
+									</p>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					</div>
+					</div>
+					</div>
+					</div>
+	
+																<!-- edit-del popup -->
+																<div class="modal fade" tabindex="-1" id="agModal"#agModal data-bs-backdrop="dynamic" role="dialog">
+																	<div class="modal-dialog" role="document">
+																		<div class="modal-content">
+																			<div class="modal-body">
+																<div  class="popup-dialog NoteOption">
+																	<p class="label" (click)="hideNoteOption()">Options</p>
+																	<p (click)="editNotes()">
+																		<span class="editnotes-btn" >Edit</span>
+																	</p>
+																	<p (click)="deleteNotes()">
+																		<span class="deletenotes-btn">Delete</span>
+																	</p>
+																</div>
+															</div>
+															</div>
+															</div>
+															</div>
 </sb-layout-dashboard>
