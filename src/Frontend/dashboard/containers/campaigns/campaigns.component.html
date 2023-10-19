@@ -22,7 +22,7 @@
 					    <span>Filter</span>
 					</div>
 				</div>
-				<button class="new-message-btn" (click)="openAddNew(addNewCampaign)"><img class="icon" src="/assets/img/teambox/add.svg" /> New Message</button>		
+				<button class="new-message-btn" (click)="openAddNew(addNewCampaign)"><img class="icon" src="/assets/img/teambox/add.svg" /> New Campaign</button>		
 					
 			</div>
 			
@@ -721,7 +721,7 @@
 				</div>
 
 				<div class="important_contact_right">
-					<button type="button" class="paper-download"><img src="assets/img/campaign/paper-download.png">Download sample file</button>
+					<button type="button" class="paper-download" (click)="download()"><img src="assets/img/campaign/paper-download.png">Download sample file</button>
 					<div class="info_box">
 						<p class="info"><img src="assets/img/campaign/info-icon.png">Instructions</p>
 						<p><span>As the message template that you will select in the next step may include variables, so please include the variable values in the CSV file against each contact to personalize your message</span></p>

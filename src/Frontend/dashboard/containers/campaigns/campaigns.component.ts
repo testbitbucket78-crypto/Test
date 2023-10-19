@@ -106,6 +106,7 @@ export class CampaignsComponent implements OnInit {
 	 selectedTemplate:any=[];
 	 templatesVariable:any=[];
 	 selecetdVariable:any=[];
+	 fileformat = 'csv';
 	 
 
 	 contactTagsOption:any=[
@@ -115,11 +116,10 @@ export class CampaignsComponent implements OnInit {
 	 ];
 	 
 	 campaignStatusOption:any=[
-		
-		{value:2,label:'Running',checked:false},
+		{value:0,label:'Draft',checked:false},
 		{value:1,label:'Scheduled',checked:false},
-		{value:3,label:'Completed',checked:false},
-		{value:0,label:'Draft',checked:false}];
+		{value:2,label:'Running',checked:false},
+		{value:3,label:'Completed',checked:false}];
 	 
 	 channelOption:any=[
 			{value:1,label:'WhatsApp Official',checked:false},
@@ -442,6 +442,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				}else
 				if(item.status==3){
 					item['status_label'] ='completed'
+				}
+				else{
+					item['status_label'] ='draft'
 				}
 				item['start_datetime_formated']=this.formattedDate(item.start_datetime)
 				item['created_datetime_formated']=this.formattedDate(item.created_at)
@@ -2008,5 +2011,24 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.showInfo = true;
 		}
 	}
+
+		//*********Download Sample file****************/
+
+		download() {
+			this.apiService.download().subscribe((data: any) => {
+				const blob = new Blob([data], { type: 'text/csv' });
+				const url = window.URL.createObjectURL(blob);
+				window.open(url);
+			})
+		}
+	
+		downloadERRfile() {
+			this.apiService.downloadErrFile().subscribe((data: any) => {
+				const blob = new Blob([data], { type: 'text/csv' });
+				const url = window.URL.createObjectURL(blob);
+				window.open(url);
+			})
+		}
+	
 
 }

@@ -295,7 +295,7 @@
             </div>
 
             <div class="bottom_section">
-              <p class="close-box" routerLink="/dashboard/setting"><img class="setting_icon"
+              <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
                   src="/assets/img/campaign/setting-g.svg"></p>
               <p class="text-box-readonly">To add/edit new Saved Message from the settings</p>
             </div>
@@ -328,7 +328,7 @@
             </div>
 
             <div class="bottom_section">
-              <p class="close-box" routerLink="/dashboard/setting"><img class="setting_icon"
+              <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
                   src="/assets/img/campaign/setting-g.svg"></p>
               <p class="text-box-readonly">To add/edit Quick replies from the settings</p>
             </div>
@@ -406,7 +406,7 @@
             </div>
 
             <div class="bottom_section">
-              <p class="close-box" routerLink="/dashboard/setting"><img class="setting_icon"
+              <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
                   src="/assets/img/campaign/setting-g.svg"></p>
               <p class="text-box-readonly">To add/edit Insert Template from the settings</p>
             </div>
@@ -529,7 +529,8 @@
           </div>
           <div class="bottom_section">
             <p class="close-box"><img class="setting_icon"
-                src="/assets/img/campaign/setting-g.svg"></p>
+                src="/assets/img/campaign/setting-g.svg"
+                (click)="routeToSettings()"></p>
             <p class="text-box-readonly">To add/edit new attributes from the settings</p>
           </div>
         </div>
