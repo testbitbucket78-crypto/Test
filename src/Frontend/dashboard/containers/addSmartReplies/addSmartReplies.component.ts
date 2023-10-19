@@ -1,4 +1,4 @@
-import { Component, OnInit,ViewChild,ElementRef, Input, HostListener } from '@angular/core';
+import { Component, OnInit,ViewChild,ElementRef, Input, HostListener, Output, EventEmitter } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -40,6 +40,7 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	@Input() isEdit: boolean = false;
 	@Input() smartReplyData: any;
+	@Output() getReplies = new EventEmitter<string> (); 
 
 	active = 1;
 	stepper: any;
@@ -52,25 +53,21 @@ export class AddSmartRepliesComponent implements OnInit {
 	triggerFlows:any;
 	selectedValue: any;
 	title = 'formValidation';
-        submitted = false;
+    submitted = false;
     newSmartReply:any;
 	newReply=new FormGroup({
 		Title: new FormControl('',Validators.required),
 		Description:new FormControl('',Validators.required)
-		
-	
 	})
 	newReply1=new FormGroup({
 		keywords: new FormControl('',([Validators.required, Validators.maxLength(50)])),
 	})
 	
 	model: any;
-
 	newMessage!: FormGroup;
 	message = '';	
 	messages:any [] = [];
 	selectedAction:any;	
-	
 	keyword: string = '';
 	keywords: string[] = [];
 	
@@ -334,6 +331,13 @@ export class AddSmartRepliesComponent implements OnInit {
 	
 	
 	}
+
+	routeToSettings() {
+		this.closeAllModal();
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
+		this.router.navigate(['dashboard/setting']);
+	  }
 
 /*** rich text editor ***/
 
@@ -888,7 +892,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		  MatchingCriteria: this.model,
 		  Keywords: this.keywords || [], 
 		  ReplyActions: this.assignedAgentList || [],
-		  Tags: []
+		  Tags: this.assignedTagList || []
 		};
 	  
 		console.log(data);
@@ -900,10 +904,10 @@ export class AddSmartRepliesComponent implements OnInit {
 			  if (response.status === 200) {
 				$("#smartrepliesModal").modal('hide'); 
 				this.modalService.open(smartreplysuccess);
+				this.getReplies.emit('');
 				this.newReply.reset();
 				this.newReply1.reset();
 				this.newMessage.reset();
-				
 			  }
 			},
 			(error: any) => {

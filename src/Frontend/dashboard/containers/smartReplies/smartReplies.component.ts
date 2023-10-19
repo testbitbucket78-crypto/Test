@@ -1,4 +1,4 @@
-import { Component, OnInit, } from '@angular/core';
+import { Component, OnInit,ChangeDetectionStrategy } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { Router } from '@angular/router';
@@ -7,9 +7,9 @@ declare var $: any;
 
 @Component({
 	selector: 'sb-smartReplies',
-	
 	templateUrl: './smartReplies.component.html',
-	styleUrls: ['./smartReplies.component.scss']
+	styleUrls: ['./smartReplies.component.scss'],
+	changeDetection:ChangeDetectionStrategy.Default
 })
 
 export class SmartRepliesComponent implements OnInit {
@@ -82,6 +82,7 @@ export class SmartRepliesComponent implements OnInit {
 					this.repliesData.ActionList.push({Message:this.data[i].Message ,Name:this.data[i].Name, Value:this.data[i].Value})
 				   }
 			}
+			
 			console.log(this.repliesData);
 			this.items = this.data[0]
             console.log(this.items)
@@ -110,5 +111,7 @@ export class SmartRepliesComponent implements OnInit {
 		
 		}
 
+	
+ 
 	}
 

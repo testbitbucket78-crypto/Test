@@ -164,19 +164,6 @@ export class TeamboxService {
     return this.http.post(API_URL+'/saveCampaignMessages/',bodyData);
   }
 
-  
-
-  
-
-  
-
-  
-
-  
-  
-
-
-
   public updateInteractionMapping(data: any) {
     return this.http.post(API_URL+'/interactionmapping/',data);
   }
@@ -188,6 +175,13 @@ export class TeamboxService {
     return this.http.get(API_URL+'/interactionmapping/'+InteractionId);
   }
 
+  public download() {
+    return this.http.get('https://contactapi.sampanatechnologies.com/download', { responseType: 'blob' })
+  }
+
+  public downloadErrFile() {
+    return this.http.get('https://contactapi.sampanatechnologies.com/downloadCSVerror', { responseType: 'blob' })
+  }
   
 }
  
