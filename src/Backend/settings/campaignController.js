@@ -207,7 +207,7 @@ const addTag = async (req, res) => {
 
 const gettags = async (req, res) => {
     try {
-        let taglist = await db.excuteQuery(val.selecttag, [req.params.spid])
+        let taglist = await db.excuteQuery(val.selecttag, [req.params.spid,req.params.spid])
         res.status(200).send({
             taglist: taglist,
             status: 200

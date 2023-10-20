@@ -10,16 +10,16 @@ const database = "cip_project"
 //Query for dashboard
 interactionsQuery = `SELECT interaction_status, COUNT(*) AS count
 FROM Interaction
-JOIN EndCustomer ON Interaction.customerId = EndCustomer.customerId
-WHERE  EndCustomer.SP_ID = ? and EndCustomer.isBlocked !=1  and EndCustomer.isDeleted !=1
+
+WHERE  SP_ID = ? 
 GROUP BY interaction_status
 
 UNION
 
 SELECT 'Total Interactions' AS interaction_status, COUNT(*) AS count
 FROM Interaction
-JOIN EndCustomer ON Interaction.customerId = EndCustomer.customerId
-WHERE  EndCustomer.SP_ID = ? and EndCustomer.isBlocked !=1  and EndCustomer.isDeleted !=1`;
+
+WHERE SP_ID = ? `;
 
 
 campaignsQuery = ` SELECT STATUS,COUNT(*) COUNT FROM Campaign

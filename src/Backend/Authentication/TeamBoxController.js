@@ -5,7 +5,7 @@ const val = require('./TeamBoxConstant')
 const app = express();
 const bcrypt = require('bcrypt');
 const http = require("https");
-const middleWare=require('../middleWare')
+const middleWare = require('../middleWare')
 const multer = require('multer');
 let fs = require('fs-extra');
 
@@ -169,8 +169,8 @@ const getAllInteraction = (req, res) => {
 
 const getAllFilteredInteraction = (req, res) => {
 
-    let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId";
-
+    //let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId";
+    let queryPath = "SELECT    ic.interaction_status,ic.InteractionId, ec.*             FROM       Interaction ic    JOIN        EndCustomer ec ON ic.customerId = ec.customerId     WHERE        ic.interactionId = (            SELECT MAX(interactionId)            FROM Interaction            WHERE customerId = ic.customerId        )  and ic.is_deleted=0 order by interactionId desc";
     if (req.body.FilterBy != 'All') {
 
 
@@ -254,11 +254,12 @@ const getSearchInteraction = (req, res) => {
 
 const getAllMessageByInteractionId = (req, res) => {
     if (req.params.Type != 'media') {
-        var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
+        //var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
+        var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + "))  and Type='" + req.params.Type + "' order by interaction_id desc";
         db.runQuery(req, res, getAllMessagesByInteractionId, [req.params.InteractionId, req.params.Type])
     } else {
-        var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
-
+        //var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
+        var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id= IN ( SELECT interactionId FROM Interaction Where customerid ( SELECT customeId FROM Interaction where interactionId = " + req.params.InteractionId + ")) ORDER BY Message_id DESC"
         db.runQuery(req, res, getAllMessagesByInteractionId, [req.params.InteractionId, req.params.Type])
 
     }
@@ -280,67 +281,81 @@ const deleteMessage = (req, res) => {
 
 
 const insertMessage = async (req, res) => {
-try{
-     console.log("req.body.message_media")
-     console.log(req.body)
-    if (req.body.Message_id == '') {
-        var messageQuery = val.insertMessageQuery
+    try {
+        console.log("req.body.message_media")
+        console.log(req.body)
+        if (req.body.Message_id == '') {
+            var messageQuery = val.insertMessageQuery
 
-        
-        SPID = req.body.SPID
-        interaction_id = req.body.InteractionId
-        customerId=req.body.customerId
-        Agent_id = req.body.AgentId
-        message_direction = "Out"
-        message_text = req.body.message_text
-        message_media = req.body.message_media
-        media_type = req.body.media_type
-        Message_template_id = req.body.template_id
-        Quick_reply_id = req.body.quick_reply_id
-        Type = req.body.message_type
-        created_at = req.body.created_at
-        ExternalMessageId = ''
-        let agentName=await db.excuteQuery('select name from user where uid=?',[Agent_id])
-        let channelType=await db.excuteQuery('select channel from EndCustomer where customerId=?',[customerId]);
-        console.log(channelType);
-        let channel=""
-        if(channelType.length >0){
-           console.log("channel")
-        }
-        var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
-        db.runQuery(req, res, messageQuery, [values])
-        if(agentName.length >=0){
-         let mentionQuery=`SELECT * FROM Message WHERE '`+ message_text+`' LIKE '%@`+ agentName[0].name+`%'`;
-        
-        var mentionedNotification = await db.excuteQuery(mentionQuery, [])
-        }
-        if(mentionedNotification.length!=0){
+
+            SPID = req.body.SPID
+            interaction_id = req.body.InteractionId
+            customerId = req.body.CustomerId
+            Agent_id = req.body.AgentId
+            message_direction = "Out"
+            message_text = req.body.message_text
+            message_media = req.body.message_media
+            media_type = req.body.media_type
+            Message_template_id = req.body.template_id
+            Quick_reply_id = req.body.quick_reply_id
+            Type = req.body.message_type
+            created_at = req.body.created_at
+            ExternalMessageId = ''
           
-           let notifyvalues = [[SPID,'Mentioned You', message_text, Agent_id, 'teambox', Agent_id, new Date()]]
-           let  mentionRes=await db.excuteQuery(val.addNotification,[notifyvalues])
-           console.log("mentionRes")
-           
-        }
-        if (req.body.message_type == 'text') {
-            if (req.body.message_media != '') {
-              // sendMediaOnWhatsApp(req.body.messageTo, message_media)
-               console.log(message_media)
-              middleWare.channelssetUp('WhatsApp Web','image',req.body.messageTo, message_media)
+            let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id])
+            let channelType = await db.excuteQuery('select channel from EndCustomer where customerId=?', [customerId]);
+            console.log("channelType" + channelType);
+            let channel = channelType.length > 0 ? channelType[0].channel : 'WhatsApp Official'
+            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
+            db.runQuery(req, res, messageQuery, [values])
+            if (agentName.length >= 0) {
+                let mentionQuery = `SELECT * FROM Message WHERE '` + message_text + `' LIKE '%@` + agentName[0].name + `%'`;
+
+                var mentionedNotification = await db.excuteQuery(mentionQuery, [])
             }
-           // sendTextOnWhatsApp(req.body.messageTo, message_text)
-           middleWare.channelssetUp('WhatsApp Web','text',req.body.messageTo, message_text)
+            if (mentionedNotification.length != 0) {
+
+                let notifyvalues = [[SPID, 'Mentioned You', message_text, Agent_id, 'teambox', Agent_id, new Date()]]
+                let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues])
+                console.log("mentionRes")
+
+            }
+            // Parse the message template to get placeholders
+            const placeholders = parseMessageTemplate(message_text);
+            console.log("placeholders.length" + placeholders.length)
+            if (placeholders.length > 0) {
+                // Construct a dynamic SQL query based on the placeholders
+                const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=${customerId}`;
+                let results = await db.excuteQuery(sqlQuery, []);
+                const data = results[0];
+
+
+                placeholders.forEach(placeholder => {
+                    message_text = message_text.replace(`{{${placeholder}}}`, data[placeholder]);
+                });
+            }
+            if (req.body.message_type == 'text') {
+                if (req.body.message_media != '') {
+                    // sendMediaOnWhatsApp(req.body.messageTo, message_media)
+                    console.log(message_media)
+                       middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_media)
+                }
+                // sendTextOnWhatsApp(req.body.messageTo, message_text)
+                middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text)
+            }
+
+        } else {
+            message_text = req.body.message_text
+            Message_id = req.body.Message_id
+            var values = [[message_text, Message_id]]
+            var messageQuery = "UPDATE Message SET updated_at ='" + created_at + "', message_text ='" + message_text + "' WHERE Message_id =" + Message_id;
+            db.runQuery(req, res, messageQuery, [values])
         }
-
-    } else {
-        message_text = req.body.message_text
-        Message_id = req.body.Message_id
-        var values = [[message_text, Message_id]]
-        var messageQuery = "UPDATE Message SET updated_at ='" + created_at + "', message_text ='" + message_text + "' WHERE Message_id =" + Message_id;
-        db.runQuery(req, res, messageQuery, [values])
+      
+    } catch (err) {
+        console.log(err);
+    
     }
-}catch(err){
-    console.log(err);
-}
 
 
 
@@ -348,6 +363,17 @@ try{
 
 }
 
+
+// Function to parse the message template and retrieve placeholders
+function parseMessageTemplate(template) {
+    const placeholderRegex = /{{(.*?)}}/g;
+    const placeholders = [];
+    let match;
+    while ((match = placeholderRegex.exec(template))) {
+        placeholders.push(match[1]);
+    }
+    return placeholders;
+}
 const WHATSAPP_TOKEN = 'Bearer EAAD3Jp4D3lIBAAXiPHzN4z4HlLOTd3Hn6nKBYfBwUk0ASNvGMCZAXBuIzZA7z07tNzfRYUheZA6XEIph79MtwvvfXZCOIjO0NKyLdh07pU5j24rktuZAazxIxnTgyPAFsEqCwq3Om3R3xTpcANJwonii87Uq1BZBx8Ckj9pj5YPho4zjZCTrZBrUhA3U98rkyAnp5V4BHdxMlAZDZD'
 const WHATSAPPOptions = {
     "method": "POST",
@@ -386,20 +412,20 @@ function sendMediaOnWhatsApp(messageTo, mediaFile) {
 
 }
 
-function sendTextOnWhatsApp(messageTo,messateText){
-let content =messateText;
-if(content){
-    content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-    content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-    content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-    content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-    content = content.replace('&nbsp;', '\n')
-    content = content.replace(/<br[^>]*>/g, '\n')
-    content = content.replace(/<\/?[^>]+(>|$)/g, "")
-    
-}
-		
-   var reqBH = http.request(WHATSAPPOptions, (resBH) => {
+function sendTextOnWhatsApp(messageTo, messateText) {
+    let content = messateText;
+    if (content) {
+        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+        content = content.replace('&nbsp;', '\n')
+        content = content.replace(/<br[^>]*>/g, '\n')
+        content = content.replace(/<\/?[^>]+(>|$)/g, "")
+
+    }
+
+    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
         var chunks = [];
         resBH.on("data", function (chunk) {
             chunks.push(chunk);
@@ -438,12 +464,12 @@ const updateInteractionMapping = async (req, res) => {
     MappedBy = req.body.MappedBy
     is_active = 1
     var values = [[is_active, InteractionId, AgentId, MappedBy]]
-   
+
     let nameData = await db.excuteQuery(val.assignedNameQuery, [AgentId])
-    
-    let notifyvalues = [[nameData[0].SP_ID,'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, new Date()]]
+
+    let notifyvalues = [[nameData[0].SP_ID, 'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, new Date()]]
     let notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues])
-   
+
     db.runQuery(req, res, val.updateInteractionMapping, [values])
 }
 
@@ -470,7 +496,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates,sendTextOnWhatsApp,sendMediaOnWhatsApp
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp
 };
 
 

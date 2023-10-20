@@ -45,6 +45,7 @@ noAgentReply=`SELECT
 ic.interaction_status,
 ic.InteractionId,
 ic.customerId,
+ec.channel,
 ec.phone_number AS customer_phone_number,
 dm.*,
 latestmsg.*
@@ -71,6 +72,7 @@ let CustomerReplyReminder = `SELECT
 ic.InteractionId,
 ic.customerId,
 m.*,
+ec.channel,
 ec.phone_number AS customer_phone_number
 FROM
 Interaction ic
@@ -104,6 +106,7 @@ noCustomerRqplyTimeOut=`SELECT
 	ic.interaction_status,
     ic.InteractionId,
     ic.customerId,
+    ec.channel,
     ec.phone_number AS customer_phone_number,
     dm.*,
     latestmsg.*

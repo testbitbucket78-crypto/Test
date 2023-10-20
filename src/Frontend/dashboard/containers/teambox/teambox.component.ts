@@ -6,11 +6,12 @@
 	import { TeamboxService } from './../../services';
 	import { WebsocketService } from '../../services/websocket.service';
 	import { WebSocketSubject } from 'rxjs/webSocket';
+	import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 	import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 	import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
-import { base64ToFile } from 'ngx-image-cropper';
-
+	import { base64ToFile } from 'ngx-image-cropper';
+	declare var $: any;
 	@Component({
 	selector: 'sb-teambox',
 	templateUrl: './teambox.component.html',
@@ -39,6 +40,7 @@ import { base64ToFile } from 'ngx-image-cropper';
 		public selection: NodeSelection = new NodeSelection();
 		public range: Range | undefined;
 		public saveSelection: NodeSelection | any;
+
 
 		public QuickRepliesList: { [key: string]: Object }[] = [
 			{ id:1,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
@@ -222,10 +224,39 @@ import { base64ToFile } from 'ngx-image-cropper';
 			}]
 		};
 
+countryCodes = [
+  'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
+  'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',
+  'BG +359', 'BH +973', 'BI +257', 'BJ +229', 'BL +590', 'BM +1 441', 'BN +673', 'BO +591', 'BQ +599', 'BR +55',
+  'BS +1242', 'BT +975', 'BW +267', 'BY +375', 'BZ +501', 'CA +1', 'CC +61', 'CD +243', 'CF +236', 'CG +242',
+  'CH +41', 'CI +225', 'CK +682', 'CL +56', 'CM +237', 'CN +86', 'CO +57', 'CR +506', 'CU +53', 'CV +238',
+  'CW +599', 'CX +61', 'CY +357', 'CZ +420', 'DE +49', 'DJ +253', 'DK +45', 'DM +1767', 'DO +1809', 'DZ +213',
+  'EC +593', 'EE +372', 'EG +20', 'EH +212', 'ER +291', 'ES +34', 'ET +251', 'FI +358', 'FJ +679', 'FK +500',
+  'FM +691', 'FO +298', 'FR +33', 'GA +241', 'GB +44', 'GD +1473', 'GE +995', 'GF +594', 'GG +44', 'GH +233',
+  'GI +350', 'GL +299', 'GM +220', 'GN +224', 'GP +590', 'GQ +240', 'GR +30', 'GS +500', 'GT +502', 'GU +1671',
+  'GW +245', 'GY +592', 'HK +852', 'HN +504', 'HR +385', 'HT +509', 'HU +36', 'ID +62', 'IE +353', 'IL +972',
+  'IM +44', 'IN +91', 'IO +246', 'IQ +964', 'IR +98', 'IS +354', 'IT +39', 'JE +44', 'JM +1876', 'JO +962',
+  'JP +81', 'KE +254', 'KG +996', 'KH +855', 'KI +686', 'KM +269', 'KN +1869', 'KP +850', 'KR +82', 'KW +965',
+  'KY +1345', 'KZ +7', 'LA +856', 'LB +961', 'LC +1758', 'LI +423', 'LK +94', 'LR +231', 'LS +266', 'LT +370',
+  'LU +352', 'LV +371', 'LY +218', 'MA +212', 'MC +377', 'MD +373', 'ME +382', 'MF +590', 'MG +261', 'MH +692',
+  'MK +389', 'ML +223', 'MM +95', 'MN +976', 'MO +853', 'MP +1 670', 'MQ +596', 'MR +222', 'MS +1 664', 'MT +356',
+  'MU +230', 'MV +960', 'MW +265', 'MX +52', 'MY +60', 'MZ +258', 'NA +264', 'NC +687', 'NE +227', 'NF +672',
+  'NG +234', 'NI +505', 'NL +31', 'NO +47', 'NP +977', 'NR +674', 'NU +683', 'NZ +64', 'OM +968', 'PA +507',
+  'PE +51', 'PF +689', 'PG +675', 'PH +63', 'PK +92', 'PL +48', 'PM +508', 'PN +872', 'PR +1 787', 'PS +970',
+  'PT +351', 'PW +680', 'PY +595', 'QA +974', 'RE +262', 'RO +40', 'RS +381', 'RU +7', 'RW +250', 'SA +966',
+  'SB +677', 'SC +248', 'SD +249', 'SE +46', 'SG +65', 'SH +290', 'SI +386', 'SJ +47', 'SK +421', 'SL +232',
+  'SM +378', 'SN +221', 'SO +252', 'SR +597', 'SS +211', 'ST +239', 'SV +503', 'SX +1721', 'SY +963', 'SZ +268',
+  'TC +1649', 'TD +235', 'TF +262', 'TG +228', 'TH +66', 'TJ +992', 'TK +690', 'TL +670', 'TM +993', 'TN +216',
+  'TO +676', 'TR +90', 'TT +1868', 'TV +688', 'TW +886', 'TZ +255', 'UA +380', 'UG +256', 'US +1', 'UY +598',
+  'UZ +998', 'VA +39', 'VC +1784', 'VE +58', 'VG +1284', 'VI +1340', 'VN +84', 'VU +678', 'WF +681', 'WS +685',
+  'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
+];
+
 		
 
 		
 		custommesage='<p>Your message...</p>'
+		customenotes='<p>Type...</p>'
 		showQuickResponse:any=false;
 		showAttributes:any=false;
 		showSavedMessage:any=false;
@@ -749,7 +780,7 @@ import { base64ToFile } from 'ngx-image-cropper';
 					break;
 				default:
 					this.loginAs='Agent'
-			} 
+			}
 			this.routerGuard()
 			this.getAgents()
 			this.getAllInteraction()
@@ -1121,9 +1152,9 @@ import { base64ToFile } from 'ngx-image-cropper';
 				interval = seconds / 3600;
 	
 				var hour =parseInt(interval)
-				if (hour < 48) {
-					var hrPer = (100*hour)/48
-					var hourLeft =48-parseInt(interval)
+				if (hour < 24) {
+					var hrPer = (100*hour)/24
+					var hourLeft =24-parseInt(interval)
 				}else{
 					var hrPer =100
 					var hourLeft =0
@@ -1153,9 +1184,9 @@ import { base64ToFile } from 'ngx-image-cropper';
 			interval = seconds / 3600;
 
 			var hour =parseInt(interval)
-			if (hour < 48) {
-				var hrPer = (100*hour)/48
-				var hourLeft =48-parseInt(interval)
+			if (hour < 24) {
+				var hrPer = (100*hour)/24
+				var hourLeft =24-parseInt(interval)
 			}else{
 				var hrPer =100
 				var hourLeft =0
@@ -1277,7 +1308,7 @@ import { base64ToFile } from 'ngx-image-cropper';
 		}else{
 			this.EditContactForm[item.target.name] = item.target.value
 		}
-		
+		this.formatPhoneNumber();
 		//this.ShowChannelOption=false
 
 	}
@@ -1429,7 +1460,11 @@ import { base64ToFile } from 'ngx-image-cropper';
 		this.warningMessage='';
 	}
 	toggleAutoReply(){
-		this.AutoReplyOption =!this.AutoReplyOption
+		// this.AutoReplyOption =!this.AutoReplyOption
+		$("#addTagModal").modal('show'); 
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
+		// document.getElementById("smartrepliesModal")!.style.display="inherit";
 	}
     
 	SelectReplyOption(optionValue:any,optionType:any){
@@ -1473,6 +1508,28 @@ import { base64ToFile } from 'ngx-image-cropper';
 		
 		
 	}
+	
+// Function to format the phone number using libphonenumber-js
+formatPhoneNumber() {
+	const phoneNumber = this.newContact.get('Phone_number')?.value;
+	const countryCode = this.newContact.get('country_code')?.value;
+  
+	if (phoneNumber && countryCode) {
+	  const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
+	  const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
+  
+	  if (formattedPhoneNumber) {
+		this.newContact.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
+		const phoneNumberValue = this.newContact.get('Phone_number')?.value;
+		console.log(phoneNumberValue);
+  
+	  }
+	}
+	}
+
+
+
+
 
 	searchContact(event:any){
 		this.contactSearchKey = event.target.value;
@@ -1604,7 +1661,7 @@ import { base64ToFile } from 'ngx-image-cropper';
 		if(this.modalReference){
 			this.modalReference.close();
 		}
-		if(this.loginAs =='Manager'){
+		if(this.loginAs!='Agent'){
 		this.confirmMessage= 'Are you sure you want to Delete this conversation?'
 		this.modalReference = this.modalService.open(openDeleteAlertmMessage,{ size:'sm', windowClass:'white-bg'});
 		}else{
@@ -1801,16 +1858,18 @@ import { base64ToFile } from 'ngx-image-cropper';
 
 	toggleNoteOption(note:any){
 		//console.log(note)
-		this.hideNoteOption()
-		if(note && this.selectedNote.Message_id != note.Message_id){
-		note.selected=true
-		this.selectedNote= note
-		}else{
-			note.selected=false
-			this.selectedNote= []
+		// this.hideNoteOption()
+		// if(note && this.selectedNote.Message_id != note.Message_id){
+		// note.selected=true
+		// this.selectedNote= note
+		// }else{
+		// 	note.selected=false
+		// 	this.selectedNote= []
 		
-		}
-		
+		// }
+		$("#agModal").modal('show'); 
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
 	}
 	hideNoteOption(){
 		this.selectedNote.selected=false
@@ -1853,7 +1912,7 @@ import { base64ToFile } from 'ngx-image-cropper';
 
 	sendMessage(){
 		
-		if (!this.chatEditor.value || !this.custommesage || this.custommesage ==='<p>Your message...</p>') {
+		if (!this.chatEditor.value || !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
 			this.showToaster('! Please type your message first','error');
 			return; 
 		}
@@ -1932,7 +1991,7 @@ import { base64ToFile } from 'ngx-image-cropper';
 	
 					
 					}
-					this.chatEditor.value ='Your message...';
+					this.chatEditor.value ='Type...';
 				}
 	
 	
