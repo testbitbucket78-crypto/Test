@@ -314,6 +314,11 @@
 	float: left;
 	width: 100%;
 	}
+
+	.input_group_btn.delete {
+		text-align: center;
+	
+	}
 	.submit-btn {
 	background: #6149CD 0% 0% no-repeat padding-box;
 	box-shadow: 1px 8px 29px #695F9724;
@@ -324,9 +329,14 @@
 	border: 0px;
 	padding: 0px 25px;
 	font-size: 12px;
+	margin-left: 8px;
 	font-weight: 800;
     padding: 0 4% 0% 4%;
 	outline: none;
+	}
+
+	.popup-dialog::-webkit-scrollbar {
+		display: none;
 	}
 
 	.submit-btn-active {
@@ -342,7 +352,6 @@
 	padding: 0px 25px;
 	font-size: 12px;
 	font-weight: 800;
-	margin:0 0 0 15px;
 	}
 	.filtercampaignheader{
 	padding:1rem 1.5rem 0 1.5rem;
@@ -1218,7 +1227,8 @@
 	flex-direction: row;
 	justify-content: space-around;
 	width: 70%;
-	margin: 1rem auto;		
+	margin: 2rem auto;
+	height: 355px;		
 	}
 	.addnewitem .addnewitem-content .addnewitem-content-left{
 	display: flex;
