@@ -544,7 +544,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
     async mapCampaignData(allCampaignList:any){
 		console.log(allCampaignList);
 
-		// try {
+		try {
 			allCampaignList.forEach((item:any) => {
 				
 				if(item.status==0){
@@ -582,26 +582,38 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				}else{
 					item['category_label'] =item.category
 				}
-				// console.log(index);
-				// if(index == 50) {
-				// 	console.log(JSON.parse(item.csv_contacts));
-				// }
-				// if(item.segments_contacts){
-				// item['AllContactsLength'] =item.segments_contacts?JSON.parse(item.segments_contacts).length:0
-				// }else if(item.csv_contacts){
-				// item['AllContactsLength'] =item.csv_contacts?JSON.parse(item.csv_contacts).length:0
-				// }else{
-				// 	item['AllContactsLength'] =0	
+				if(item.segments_contacts){
+					item['AllContactsLength'] = item.segments_contacts ? (() => {
+						try {
+							return JSON.parse(item.segments_contacts).length;
+						} catch (error) {
+							console.error(error);
+							return 0;
+						}
+					})() : 0;
+					
+				}else if(item.csv_contacts){
+					item['AllContactsLength'] = item.csv_contacts ? (() => {
+						try {
+							return JSON.parse(item.csv_contacts).length;
+						} catch (error) {
+							console.error(error);
+							return 0;
+						}
+					})() : 0;
+					
+				}else{
+					item['AllContactsLength'] =0	
 				
-				
-			})
+				}
+			});
 
 			this.allCampaignMain = allCampaignList
 			this.allCampaign = allCampaignList
-		
-		// catch(error:any){
-		// 	console.log(error)
-		// }
+		}
+		 catch(error:any){
+		 	console.log(error)
+		}
 	}
 	
 	
@@ -1174,7 +1186,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			
 		})
 		
-
+		this.getAllCampaigns()
 	}
 	
 	async runCampaign(CampaignId:any,BodyData:any){

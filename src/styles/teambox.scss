@@ -303,7 +303,16 @@ label.container input[type="radio"]:checked + span.label {
       box-shadow: 2px 13px 54px #695F9714;
       border-radius: 30px;
       padding: 20px 5%;
+      height: 465px;
+      overflow: scroll;
+  
       }
+
+      .applylist_content::-webkit-scrollbar {
+        display: none;
+      }
+
+
       .applylist_content table{
       float:left;
       width:100%;
