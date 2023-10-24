@@ -3,7 +3,7 @@ const { request } = require('http');
 const app = express();
 const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer')
-// const qrcode = require('qrcode-terminal');
+ const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -15,10 +15,10 @@ const Routing = require('../RoutingRules')
 const db = require('../dbhelper')
 const awsHelper = require('../awsHelper');
 const incommingmsg = require('../IncommingMessages')
-
+const notify=require('../whatsApp/PushNotifications')
 let clientSpidMapping = {};
-async function createClientInstance(spid) {
-    console.log(spid);
+async function createClientInstance(spid,phoneNo) {
+    console.log(spid , phoneNo);
     
     return new Promise(async (resolve, reject) => {
       try {
@@ -36,11 +36,22 @@ async function createClientInstance(spid) {
   
           client.on('qr', (qr) => {
               console.log('QR RECEIVED', qr);
-            //  qrcode.generate(qr, {small: true});
-              resolve({ client: client, value: qr });
+              qrcode.generate(qr, {small: true});
+              resolve({ status: 200, value: qr });
           });
           client.on('ready', () => {
-              console.log('Client is ready!');
+  
+            if(phoneNo != client.info.wid.user){
+              console.log("wrong Number")
+              notify.NotifyServer(phoneNo)
+            return  resolve({status:404,value:'Wrong Number'});
+              //client.destroy()
+             
+            }
+            console.log('Client is ready!');
+            notify.NotifyServer(phoneNo)
+           return resolve({status:200,value:'Client is ready!'});
+             
           });
   
           client.initialize();
@@ -57,9 +68,9 @@ async function createClientInstance(spid) {
               clientSpidMapping = {
                   [spid]: client
               }
-              console.log(clientSpidMapping);
-              resolve({});
-          });
+             // console.log(clientSpidMapping);
+             
+          });        
       } catch (err) {
           console.log("client err", err);
           reject(err); // Reject the Promise in case of an error
