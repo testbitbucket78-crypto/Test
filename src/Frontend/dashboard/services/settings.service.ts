@@ -214,4 +214,8 @@ export class SettingsService {
     return this.http.post<any>(`${this.API_URL}/deleteCustomField`,Id);
   }
 
+  craeteQRcode(spid:any): Observable<any> {
+    return this.http.post<any>('https://waweb.sampanatechnologies.com/craeteQRcode',spid);
+  }
+
 }

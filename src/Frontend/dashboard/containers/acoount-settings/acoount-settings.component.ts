@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
-import { controllers } from 'chart.js';
-import {repliesaccountList} from 'Frontend/dashboard/models/settings.model';
-import{accountmodel} from 'Frontend/dashboard/models/settings.model';
+import { repliesaccountList } from 'Frontend/dashboard/models/settings.model';
+import{ accountmodel } from 'Frontend/dashboard/models/settings.model';
 
 declare var $:any;
 
@@ -36,7 +35,8 @@ export class AcoountSettingsComponent implements OnInit {
   showMessage: boolean = false;
   channel_id!:number;
   accoountsetting=<accountmodel>{};
- 
+  qrcode:any;
+  link:any;
 
   
 INGrMessage=[0];
@@ -163,11 +163,24 @@ getDetailById(id: number) {
   generateQR(){
     $("#connectWhatsappModal").modal('hide');
     $("#qrWhatsappModal").modal('show');
+
+   let data = {
+      spid: this.spid
+    }
+    this.apiService.craeteQRcode(data).subscribe((response) => {
+      this.qrcode = response.QRcode;
+
+  });
   }
+
   removeIP(index:number){
     this.ipAddress.splice(index,1); 
   }
+
   addIP(){
     this.ipAddress.push('');
   }
+
+
+
 }
