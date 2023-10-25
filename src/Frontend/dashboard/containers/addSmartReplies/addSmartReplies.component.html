@@ -128,7 +128,7 @@
           </div>
         </div>
 
-        <button type="button" (click)="verifyKeywordForNextStep()" class="btn5 btn-block col-1 mt-3 ">Next</button>
+        <button type="button" (click)="verifyKeyword()" class="btn5 btn-block col-1 mt-3 ">Next</button>
 
       </div>
       <div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
@@ -273,185 +273,107 @@
             
               
               </div> -->
-        <div *ngIf="showSavedMessage" class="custom_modal bg-pink sm">
-          <div class="modal-header">
-            <div class="modal-header-left">
-              <h4 class="modal-title" id="modal-basic-title">Saved Message's</h4>
-            </div>
-            <div class="modal-header-right">
-              <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-                  src="assets/img/teambox/icon-close.svg"></p>
-            </div>
-          </div>
-          <div class="modal-body quickResponse">
-            <input class="search-box" type="text" placeholder="Search" aria-label="Search"
-              aria-describedby="basic-addon2" (keyup)="searchSavedMessage($event)" />
-            <div class="items_list">
-
-              <div class="item" *ngFor="let Message of SavedMessageList" (click)="selectQuickReplies(Message)">
-                <p class="label" [innerHTML]="Message.title"></p>
-                <p [innerHTML]="Message.content"></p>
+          <div *ngIf="showSavedMessage" class="custom_modal bg-pink sm">
+            <div class="modal-header">
+              <div class="modal-header-left">
+                <h4 class="modal-title" id="modal-basic-title">Saved Message's</h4>
+              </div>
+              <div class="modal-header-right">
+                <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+                    src="assets/img/teambox/icon-close.svg"></p>
               </div>
             </div>
+            <div class="modal-body quickResponse">
+              <input class="search-box" type="text" placeholder="Search" aria-label="Search"
+                aria-describedby="basic-addon2" (keyup)="searchSavedMessage($event)" />
+              <div class="items_list">
 
-            <div class="bottom_section">
-              <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
-                  src="/assets/img/campaign/setting-g.svg"></p>
-              <p class="text-box-readonly">To add/edit new Saved Message from the settings</p>
+                <div class="item" *ngFor="let Message of SavedMessageList" (click)="selectQuickReplies(Message)">
+                  <p class="label" [innerHTML]="Message.title"></p>
+                  <p [innerHTML]="Message.content"></p>
+                </div>
+              </div>
+
+              <div class="bottom_section">
+                <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
+                    src="/assets/img/campaign/setting-g.svg"></p>
+                <p class="text-box-readonly">To add/edit new Saved Message from the settings</p>
+              </div>
+
             </div>
+
 
           </div>
 
 
-        </div>
-
-
-        <div *ngIf="showQuickReply" class="custom_modal bg-pink sm">
-          <div class="modal-header">
-            <div class="modal-header-left">
-              <h4 class="modal-title" id="modal-basic-title">Quick Response</h4>
-            </div>
-            <div class="modal-header-right">
-              <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-                  src="assets/img/teambox/icon-close.svg"></p>
-            </div>
-          </div>
-          <div class="modal-body quickResponse">
-            <input class="search-box" type="text" placeholder="Search" aria-label="Search"
-              aria-describedby="basic-addon2" (keyup)="searchQuickReply($event)" />
-            <div class="items_list">
-
-              <div class="item" *ngFor="let Message of QuickReplyList" (click)="selectQuickReplies(Message)">
-                <p class="label" [innerHTML]="Message.title"></p>
-                <p [innerHTML]="Message.content"></p>
+          <div *ngIf="showQuickReply" class="custom_modal bg-pink sm">
+            <div class="modal-header">
+              <div class="modal-header-left">
+                <h4 class="modal-title" id="modal-basic-title">Quick Response</h4>
+              </div>
+              <div class="modal-header-right">
+                <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+                    src="assets/img/teambox/icon-close.svg"></p>
               </div>
             </div>
+            <div class="modal-body quickResponse">
+              <input class="search-box" type="text" placeholder="Search" aria-label="Search"
+                aria-describedby="basic-addon2" (keyup)="searchQuickReply($event)" />
+              <div class="items_list">
 
-            <div class="bottom_section">
-              <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
-                  src="/assets/img/campaign/setting-g.svg"></p>
-              <p class="text-box-readonly">To add/edit Quick replies from the settings</p>
+                <div class="item" *ngFor="let Message of QuickReplyList" (click)="selectQuickReplies(Message)">
+                  <p class="label" [innerHTML]="Message.title"></p>
+                  <p [innerHTML]="Message.content"></p>
+                </div>
+              </div>
+
+              <div class="bottom_section">
+                <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
+                    src="/assets/img/campaign/setting-g.svg"></p>
+                <p class="text-box-readonly">To add/edit Quick replies from the settings</p>
+              </div>
+
             </div>
+
 
           </div>
 
+          <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="popup-dialog AddTag">
+                  <p *ngIf="!ShowRemoveTag" class="label">Add Tag</p>
+                  <p *ngIf="ShowRemoveTag" class="label">Remove Tag</p>
 
-        </div>
+                  <div class="d-flex align-items-center addTag" *ngFor="let AddTag of addTagList;let i = index">
+                    <label class="container">
+                      <input [checked]="checkTagStatus(AddTag.TagName)" type="checkbox" name="tags" class="m-0"
+                        (change)="addTags(i,$event)" />
+                      <span class="checkmark"></span>
+                    </label>
 
-        <div *ngIf="showInsertTemplate" class="custom_modal bg-pink sm">
-          <div class="modal-header">
-            <div class="modal-header-left">
-              <h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
-            </div>
-            <div class="modal-header-right">
-              <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-                  src="assets/img/teambox/icon-close.svg"></p>
-            </div>
-          </div>
-          <div class="modal-body quickResponse">
-            <input class="search-box" type="text" placeholder="Search" aria-label="Search"
-              aria-describedby="basic-addon2" (keyup)="searchTemplate($event)" />
-
-            <div class="section_filter">
-              <label class="container">
-                <input checked type="checkbox" name="template_filter" value="Marketing"
-                  (click)="filterTemplate($event)">
-                <span class="checkmark"></span>
-                <p><span class="checkmark-text">Marketing</span></p>
-              </label>
-              <label class="container">
-                <input checked type="checkbox" name="template_filter" value="Utility" (click)="filterTemplate($event)">
-                <span class="checkmark"></span>
-                <p><span class="checkmark-text">Utility</span></p>
-              </label>
-              <label class="container">
-                <input checked type="checkbox" name="template_filter" value="Authentication"
-                  (click)="filterTemplate($event)">
-                <span class="checkmark"></span>
-                <p><span class="checkmark-text">Authentication</span></p>
-              </label>
-
-            </div>
-            <div class="template_list">
-              <div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
-                <label class="container" (click)="selectTemplate(template)">
-                  <input type="radio" name="selectedTemplate">
-                  <span class="checkmark radio"></span>
-                  <p>{{template.title}}</p>
-                  <p><span>{{template.created_at}}</span></p>
-                </label>
-
-                <div class="inner_box">
-                  <img *ngIf="template.image" class="template_img" src="{{template.image}}">
-                  <div *ngIf="!template.image" class="template_img_placeholder"></div>
-                  <div [ngClass]="template.image ? 'template_text' : 'template_plain_text'">
-                    <p>{{template.content_heading}}</p>
-                    <p [innerHTML]="template.content"></p>
+                    <div class="color-dots" [style.background]="AddTag.TagColour"></div>
+                    <span class="px-2 text-capitalize flex-grow-1 font-weight-normal">{{AddTag.TagName}}</span>
                   </div>
-                </div>
-                <div class="template_btn">
-                  <button type="button" class="btn">YES</button>
-                  <button type="button" class="btn">NO</button>
-                  <button type="button" class="btn">EXPLORE</button>
 
                 </div>
-
-              </div>
-
-            </div>
-
-
-            <div class="input_group_btn">
-              <button type="button" class="submit-btn" (click)="showeditTemplate()">Next</button>
-            </div>
-
-            <div class="bottom_section">
-              <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
-                  src="/assets/img/campaign/setting-g.svg"></p>
-              <p class="text-box-readonly">To add/edit Insert Template from the settings</p>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="popup-dialog AddTag">
-                <p *ngIf="!ShowRemoveTag" class="label">Add Tag</p>
-                <p *ngIf="ShowRemoveTag" class="label">Remove Tag</p>
-
-                <div class="d-flex align-items-center addTag" *ngFor="let AddTag of addTagList;let i = index">
-                  <label class="container">
-                    <input [checked]="checkTagStatus(AddTag.TagName)" type="checkbox" name="tags" class="m-0"
-                      (change)="addTags(i,$event)" />
-                    <span class="checkmark"></span>
-                  </label>
-
-                  <div class="color-dots" [style.background]="AddTag.TagColour"></div>
-                  <span class="px-2 text-capitalize flex-grow-1 font-weight-normal">{{AddTag.TagName}}</span>
-                </div>
-
               </div>
             </div>
           </div>
         </div>
+
+        <div class="smrply-err-msg">
+
+          <span id="smrply-err-msg"></span>
+          <button type="button" (click)="sendNewSmartReply(smartreplysuccess,smartreplyfailed)"
+            class="btn5 btn-block col-1 mt-3 ">Save</button>
+        </div>
+
+
+
       </div>
-
-      <div class="smrply-err-msg">
-
-        <span id="smrply-err-msg"></span>
-        <button type="button" (click)="sendNewSmartReply(smartreplysuccess,smartreplyfailed)"
-          class="btn5 btn-block col-1 mt-3 ">Save</button>
-      </div>
-
-
-
     </div>
   </div>
-</div>
 
 </div>
 
@@ -504,36 +426,123 @@
   </div>
 </div>
 
+<!-- insert templates in add smartReplies -->
+<div class="modal fade" tabindex="-1" id="insertTemplate" data-bs-backdrop="static" #insertTemplate role="dialog">
+  <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+    <div class="m-0 px-3 modal-content insertTemplate">
+  <div class="modal-header">
+    <div class="modal-header-left">
+      <h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
+    </div>
+    <div class="modal-header-right">
+      <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg">
+      </p>
+    </div>
+  </div>
+  <div class="modal-body quickResponse">
+    <input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2"
+      (keyup)="searchTemplate($event)" />
+
+    <div class="section_filter">
+      <label class="container">
+        <input checked type="checkbox" name="template_filter" value="Marketing" (click)="filterTemplate($event)">
+        <span class="checkmark"></span>
+        <p><span class="checkmark-text">Marketing</span></p>
+      </label>
+      <label class="container">
+        <input checked type="checkbox" name="template_filter" value="Utility" (click)="filterTemplate($event)">
+        <span class="checkmark"></span>
+        <p><span class="checkmark-text">Utility</span></p>
+      </label>
+      <label class="container">
+        <input checked type="checkbox" name="template_filter" value="Authentication" (click)="filterTemplate($event)">
+        <span class="checkmark"></span>
+        <p><span class="checkmark-text">Authentication</span></p>
+      </label>
+
+    </div>
+    <div class="template_list">
+      <div class="template_box" *ngFor='let template of templatesData;let i = index'>
+        <div class="template_box_inner d-flex align-items-start">
+          <input type="radio" name="sel-template">
+          <label class="radio-label" id="sel-template" for="sel-template"></label>
+       <div class="template_head flex-column">
+        <p class="template_name">{{template.TemplateName}}</p>
+        <p class="m-0"><span>{{ template.created_at | date:'dd-MM-yyyy' }}</span></p>
+
+        <div class="inner_box">
+          <img *ngIf="template.Links" class="template_img" src="{{template.Links}}">
+              <!-- <div *ngIf="!template.Links" class="template_img_placeholder"></div> -->
+      
+          <div class="template_text">
+            <p class="m-0 font-weight-bold">{{template.Header}}</p>
+            <p>{{template.BodyText}}</p>
+            <p>{{template.FooterText}}</p>
+          </div>
+        </div>
+       </div>
+   
+        </div>
+      
+        <div class="template_btn">
+          <!-- <button type="button" class="btn">YES</button>
+          <button type="button" class="btn">NO</button> -->
+          <!-- <button type="button" class="btn">EXPLORE</button> -->
+
+        </div>
+
+      </div>
+
+    </div>
+
+<!-- 
+    <div class="input_group_btn">
+      <button type="button" class="submit-btn" (click)="showeditTemplate()">Next</button>
+    </div> -->
+
+    <div class="bottom_section">
+      <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
+          src="/assets/img/campaign/setting-g.svg"></p>
+      <p class="text-box-readonly">To add/edit Insert Template from the settings</p>
+    </div>
+
+  </div>
+
+</div>
+</div>
+</div>
+
+
 
 <!-- insert attributes in add smartReplies -->
 <div class="modal fade" tabindex="-1" id="showAttributes" data-bs-backdrop="static" role="dialog">
   <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
     <div class="m-0 px-3 modal-content custom_modal showAttributes">
       <!-- <div class="custom_modal bg-pink sm"> -->
-        <div class="modal-header">
-          <div class="modal-header-left">
-            <h4 class="modal-title" id="modal-basic-title">Attributes</h4>
-          </div>
-          <div class="modal-header-right">
-            <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg"></p>
-          </div>
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <h4 class="modal-title" id="modal-basic-title">Attributes</h4>
         </div>
-        <div class="modal-body quickResponse">
-          <input class="search-box" type="text" placeholder="Search" aria-label="Search"
-            aria-describedby="basic-addon2" (keyup)="searchContact($event)" />
-          <div class="items_list">
-            <div *ngFor="let alist of attributesList" class="attribute" (click)="selectAttributes(alist)">
-              <p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
+        <div class="modal-header-right">
+          <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+              src="assets/img/teambox/icon-close.svg"></p>
+        </div>
+      </div>
+      <div class="modal-body quickResponse">
+        <input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2"
+          (keyup)="searchContact($event)" />
+        <div class="items_list">
+          <div *ngFor="let alist of attributesList" class="attribute" (click)="selectAttributes(alist)">
+            <p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
 
-            </div>
-          </div>
-          <div class="bottom_section">
-            <p class="close-box"><img class="setting_icon"
-                src="/assets/img/campaign/setting-g.svg"
-                (click)="routeToSettings()"></p>
-            <p class="text-box-readonly">To add/edit new attributes from the settings</p>
           </div>
         </div>
+        <div class="bottom_section">
+          <p class="close-box"><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"
+              (click)="routeToSettings()"></p>
+          <p class="text-box-readonly">To add/edit new attributes from the settings</p>
+        </div>
+      </div>
       <!-- </div> -->
     </div>
   </div>
@@ -564,7 +573,7 @@
     </div>
     <div class="modal-footer popfooter row text">
       <div class="col-md-3">
-        <button type="button" class="btn btn-outline-dark" (click)="c('Save click')" data-bs-dismiss="modal"
+        <button type="button" class="btn btn-outline-dark" (click)="smartReplySuccess()" data-bs-dismiss="modal"
           aria-label="Close" data-bs-target="#smartrepliesModal">Ok, Got it</button>
       </div>
     </div>
