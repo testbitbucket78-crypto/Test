@@ -32,8 +32,8 @@
 	
 
 		<div *ngIf="replies.length>0" class="smartreplies-filled-state">
-			<div class="m-0 col-12 d-flex flex-wrap sm-card">
-				<div *ngFor="let reply of replies  | searchfilter:searchText" class="card d-flex"
+			<div class="m-0 px-2 col-12 d-flex flex-wrap sm-card">
+				<div *ngFor="let reply of replies  | searchfilter:searchText" class="card col-3 d-flex"
 					(click)="toggleSideBar()" (click)="getRepliesByID(reply)">
 					<div class="card-body gy-2">
 						<h6 class="id">Id:{{ reply.ID }}</h6>

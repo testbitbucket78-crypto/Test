@@ -224,7 +224,7 @@ h1 {
     border: none;
     background-color: #ffffff;
     outline: none;
-    padding: 0 0 0 30px;
+    margin-left: 15px;
     color: #7a86a1;
 }
 
@@ -1816,9 +1816,9 @@ input:focus {
 
 
 .template_list {
-    height: 300px;
+    height: 400px;
     overflow: auto;
-    padding: 0rem 1.5em;
+    padding: 0.5rem 1.5em;
 }
 .section_filter {
     margin: 1rem;
@@ -1829,13 +1829,22 @@ input:focus {
     width: 100%;
     margin: 0;
     padding: 0;
+    background:#FFF4F2;
 }
 
+.insertTemplate {
+    background: #FFF4F2;
+}
+
+.template_name {
+  margin: 0;
+}
 
 .template_box {
     width: 100%;
+    min-height: 0;
     margin: 0;
-    padding: 0;
+
 }
 
 .input_group_btn {
@@ -1852,9 +1861,12 @@ input:focus {
     font-weight: 600;
 }
 
-.template_box .inner_box,
-.template_btn {
-    padding-left: 1.5rem;
+.template_box .inner_box .template_text {
+    border: none;
+}
+
+.template_box .inner_box img.template_img {
+    height: 140px;
 }
 
 .template_details_section {
@@ -2038,3 +2050,42 @@ label.container {
     background-color: #fff;
     border:2px solid #6149CD
     }
+
+      // Custom styles for radio buttons
+
+input[type="radio"] {
+    display: none;
+}
+
+.template_box_inner label {
+    display: inline-block;
+    position: relative;
+    padding: 25px 0 0 30px;
+    margin-right: 15px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.template_box_inner label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 1px solid #C0BDCC; 
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+input[type="radio"]:checked + label::before {
+    border: 3.5px solid #6149CD; 
+    background-color: #FFFFFF;
+}
+
+.radio-label {
+  font-weight: 700!important;
+  color: #000000!important;
+}
