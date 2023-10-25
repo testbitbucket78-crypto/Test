@@ -54,13 +54,13 @@ async function sendSmartReply(message_text, phone_number_id, contactName, from, 
 
 
 async function matchSmartReplies(message_text, sid) {
-  var allSmartReplies = await db.excuteQuery(`select * from SmartReply where SP_ID =2 and (isDeleted is null || isDeleted = 0 )`, [sid]);
+  var allSmartReplies = await db.excuteQuery(`select * from SmartReply where SP_ID =? and (isDeleted is null || isDeleted = 0 )`, [sid]);
   var reply;
- 
+
   for (let i = 0; i < allSmartReplies.length; i++) {
     // console.log(allSmartReplies[i])
     const storedValue = allSmartReplies[i].MatchingCriteria;
-    let id=allSmartReplies[i].ID
+    let id = allSmartReplies[i].ID
     //console.log(storedValue)
     // console.log(storedValue =='contains' || storedValue == 'Fuzzy Matching' || storedValue=='Exact matching')
 
@@ -72,8 +72,8 @@ JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
 JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
 WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.isDeleted is null  || t1.isDeleted =0)`
 
-      reply = await db.excuteQuery(sreplyQuery, [[message_text], sid,id]);
-    
+      reply = await db.excuteQuery(sreplyQuery, [[message_text], sid, id]);
+
       console.log(reply)
       if (reply.length > 0) {
         console.log(allSmartReplies.length, +"break contains i ==", i)
@@ -89,10 +89,10 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
       JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
       WHERE  SOUNDEX(t3.Keyword) = SOUNDEX(?)
       AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0)`
-      reply = await db.excuteQuery(FuzzyQuery, [[message_text], sid,id]);
+      reply = await db.excuteQuery(FuzzyQuery, [[message_text], sid, id]);
       console.log(reply)
       if (reply.length > 0) {
-      
+
         break;
       }
 
@@ -105,10 +105,10 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
      JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
      JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
      WHERE t3.Keyword=? AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0)`
-      reply = await db.excuteQuery(exactQuery, [[message_text], sid,id]);
+      reply = await db.excuteQuery(exactQuery, [[message_text], sid, id]);
       //console.log(reply)
       if (reply.length > 0) {
-   
+
         break;
       }
 
@@ -171,7 +171,10 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
 async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType) {
   //console.log(replymessage)
   try {
+    var messageToSend = [];
+
     // Loop over the messages array and send each message
+
     replymessage.forEach(async (message) => {
       // console.log("===================================")
       // console.log("***********************************")
@@ -206,9 +209,30 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       }
 
       let content = await middleWare.removeTagsFromMessages(testMessage);
-      //console.log(content)
-      messageThroughselectedchannel(sid, from, type, content, media, phone_number_id, channelType)
+      var relyMsg = {
+        "replyId":message.ID,
+        "sid": sid,
+        "from": from,
+        "type": type,
+        "content": content,
+        "media": media,
+        "phone_number_id": phone_number_id,
+        "channelType": channelType
+      }
+
+      messageToSend.push(relyMsg)
+     console.log(messageToSend)
+     
     });
+    //console.log(messageToSend)
+
+    messageToSend=messageToSend.sort((a, b) =>( a.ID - b.ID));
+
+    console.log("messageToSend" ,messageToSend)
+    messageToSend.forEach((message)=>{
+      messageThroughselectedchannel(message.sid,message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType)
+    })
+   
   } catch (err) {
     console.log(err)
   }
