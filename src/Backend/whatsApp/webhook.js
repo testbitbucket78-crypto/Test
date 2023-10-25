@@ -161,7 +161,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
   if (saveMessage.length > 0) {
     console.log(display_phone_number + " .." + message_text)
-    notify.NotifyServer(display_phone_number);
+    notify.NotifyServer(display_phone_number,'true');
     const data = saveMessage;
     // Extracting the values
     const extractedData = {
@@ -229,7 +229,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
         //TODO: Save the AWS url to DB in messages table using SP similar to webhook_2 SP. 
 
-        notify.NotifyServer(display_phone_number);
+        notify.NotifyServer(display_phone_number,true);
 
         resolve({ value: awsDetails.value.Location });
       })

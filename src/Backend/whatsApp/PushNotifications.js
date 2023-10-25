@@ -25,9 +25,16 @@ client.on('connect', function(connection) {
 
 client.connect('ws://localhost:3010/', 'echo-protocol');
 
-function NotifyServer(display_phone_number)
+function NotifyServer(display_phone_number,updatemessage,message)
 {
-    var notificationMsg = {"displayPhoneNumber":display_phone_number, "updateMessage":true};
+    var notificationMsg ={};
+    if(updatemessage == true){           //For webhhok teambox msg update
+    notificationMsg= {"displayPhoneNumber":display_phone_number, "updateMessage":true};
+    }else if(message != undefined){    // notify message
+      notificationMsg= {"displayPhoneNumber":display_phone_number, "message":message};
+    }
+
+
     if(conn == undefined)
     {
       console.log("client is undefined");
