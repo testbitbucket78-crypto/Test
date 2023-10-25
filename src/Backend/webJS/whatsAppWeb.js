@@ -3,6 +3,8 @@ const express = require('express')
 // const path = require('path');
 //const InMessage = require('../IncommingMessages')
 var app = express();
+const cors = require('cors')
+app.use(cors());
 const bodyParser = require('body-parser');
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
@@ -16,9 +18,10 @@ app.post('/craeteQRcode', async (req, res) => {
     try {
         console.log("get")
         spid = req.body.spid;
-        let response = await web.createClientInstance(spid);
+        phoneNo=req.body.phoneNo
+        let response = await web.createClientInstance(spid,phoneNo);
         res.send({
-            status: 200,
+            status: response.status,
             QRcode: response.value
         })
 

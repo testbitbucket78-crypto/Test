@@ -163,18 +163,25 @@ const sendCampinMessage = async (req, res) => {
     console.log("sendCampinMessage")
     try {
         var TemplateData = req.body
+        console.log(TemplateData)
         var messageTo = TemplateData.phone_number
         var messateText = TemplateData.message_content
         let content = messateText;
         let channel = TemplateData.channel_label
         //+++++++++++++++++ waitinh
-        let spid = TemplateData.sp_id
+        let schedule_datetime=TemplateData.schedule_datetime
+        let spid = TemplateData.SP_ID
         let media = TemplateData.message_media
         var type = 'image';
         if (media == null || media == "") {
             var type = 'text';
         }
-       
+        const inputDate = new Date(schedule_datetime);
+
+        // Get the current date and time
+        const currentDate = new Date();
+        
+      
         content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
         content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
         content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
@@ -195,10 +202,20 @@ const sendCampinMessage = async (req, res) => {
                 content = content.replace(`{{${placeholder}}}`, data[placeholder]);
             });
         }
-        let messagestatus = await middleWare.channelssetUp(spid, channel, type, messageTo, content, media)
-        //if(messagestatus =='')
-        console.log("messagestatus  " +  messagestatus)
+
+        let channelType=await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?',[spid])
+        console.log("channelType" ,channelType ,channelType[0])
+        console.log(inputDate,currentDate,inputDate <= currentDate)
+        if (inputDate <= currentDate) {
+        let messagestatus = await middleWare.channelssetUp(spid, channelType[0].connected_id, type, messageTo, content, media)
+       
+        
+          console.log('The input date is in the past.');
+              //if(messagestatus =='')
+        console.log("messagestatus  " +  JSON.stringify(messagestatus.status))
         return res.send(messagestatus);
+        } 
+    
 
         //    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
         //     var chunks = [];

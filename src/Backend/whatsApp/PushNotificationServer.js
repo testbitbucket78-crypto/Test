@@ -27,7 +27,10 @@ wss.on('connection', (ws) => {
       {
         console.log("found message for number : "+msgjson["displayPhoneNumber"]);  
         let wsclient = clients[msgjson["displayPhoneNumber"]];
-        wsclient.send(message);
+        if(wsclient != undefined){
+          wsclient.send(message);
+        }
+       
       }
       else
       {

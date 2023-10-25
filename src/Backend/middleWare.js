@@ -18,7 +18,7 @@ function postDataToAPI(spid, phoneNo, type, text, link) {
             };
 
             const response = await axios.post(apiUrl, dataToSend);
-           // console.log('Response from API:', response.data);
+            console.log('Response from API:', response.data);
 
             resolve(response.data); // Resolve with the response data
         } catch (error) {
@@ -40,7 +40,7 @@ function removePlusFromPhoneNumber(phoneNumber) {
 async function channelssetUp(spid, channelType, mediaType, messageTo, message_body, media) {
     try {
         var phoneNumber = removePlusFromPhoneNumber(messageTo)
-        //console.log(phoneNumber)
+        console.log(spid, channelType, mediaType, messageTo, message_body, media)
         if (channelType == 'WhatsApp Official' || channelType == 1) {
 
             let WhatsAppOfficialMessage = await sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body,media)

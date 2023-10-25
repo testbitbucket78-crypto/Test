@@ -120,10 +120,12 @@ async function mapPhoneNumberfomCSV(message) {
   if (message.message_media == null || message.message_media == "") {
     type = 'text';
   }
+  let channelType=await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?',[message.sp_id])
+  console.log("channelType" ,channelType ,channelType[0])
   campaignAlerts(new Date(), message.Id)    //Campaign is Running
   let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
   let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
-  batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message)
+  batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, channelType[0].connected_id, message)
 
 
 
@@ -139,7 +141,8 @@ async function mapPhoneNumberfomList(message) {
     type = 'text';
   }
 
-
+  let channelType=await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?',[message.sp_id])
+  console.log("channelType" ,channelType ,channelType[0])
   let Query = "SELECT * from EndCustomer  where customerId IN ? and isDeleted != 1"
 
   let phoneNo = await db.excuteQuery(Query, [[dataArray]]);
@@ -149,7 +152,7 @@ async function mapPhoneNumberfomList(message) {
   let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
   let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
 
-  batchofScheduledCampaign(phoneNo, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message)
+  batchofScheduledCampaign(phoneNo, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, channelType[0].connected_id, message)
  
 
 }
@@ -181,15 +184,15 @@ async function batchofScheduledCampaign(users, sp_id, type, message_content, mes
 
 
 function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message) {
-  console.log("sendScheduledCampaign")
+  console.log("sendScheduledCampaign" ,"channel_id",channel_id)
   for (var i = 0; i < batch.length; i++) {
     let Phone_number = batch[i].Phone_number
 
     var response;
     setTimeout(async () => {
       response = await messageThroughselectedchannel(sp_id, Phone_number, type, message_content, message_media, phone_number_id, channel_id);
-      console.log("response", response)
-      sendMessages(Phone_number, message.message_content, message.Id, message, response.status)
+      console.log("response",  JSON.stringify(response.status))
+      sendMessages(Phone_number, message.message_content, message.Id, message,  JSON.stringify(response.status))
     }, 10)
     
   }
