@@ -106,6 +106,7 @@ export class CampaignsComponent implements OnInit {
 	 selectedTemplate:any=[];
 	 templatesVariable:any=[];
 	 selecetdVariable:any=[];
+	 fileformat = 'csv';
 	 
 
 	 contactTagsOption:any=[
@@ -115,11 +116,10 @@ export class CampaignsComponent implements OnInit {
 	 ];
 	 
 	 campaignStatusOption:any=[
-		
-		{value:2,label:'Running',checked:false},
+		{value:0,label:'Draft',checked:false},
 		{value:1,label:'Scheduled',checked:false},
-		{value:3,label:'Completed',checked:false},
-		{value:0,label:'Draft',checked:false}];
+		{value:2,label:'Running',checked:false},
+		{value:3,label:'Completed',checked:false}];
 	 
 	 channelOption:any=[
 			{value:1,label:'WhatsApp Official',checked:false},
@@ -443,6 +443,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				if(item.status==3){
 					item['status_label'] ='completed'
 				}
+				else{
+					item['status_label'] ='draft'
+				}
 				item['start_datetime_formated']=this.formattedDate(item.start_datetime)
 				item['created_datetime_formated']=this.formattedDate(item.created_at)
 
@@ -541,7 +544,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
     async mapCampaignData(allCampaignList:any){
 		console.log(allCampaignList);
 
-		// try {
+		try {
 			allCampaignList.forEach((item:any) => {
 				
 				if(item.status==0){
@@ -579,26 +582,38 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				}else{
 					item['category_label'] =item.category
 				}
-				// console.log(index);
-				// if(index == 50) {
-				// 	console.log(JSON.parse(item.csv_contacts));
-				// }
-				// if(item.segments_contacts){
-				// item['AllContactsLength'] =item.segments_contacts?JSON.parse(item.segments_contacts).length:0
-				// }else if(item.csv_contacts){
-				// item['AllContactsLength'] =item.csv_contacts?JSON.parse(item.csv_contacts).length:0
-				// }else{
-				// 	item['AllContactsLength'] =0	
+				if(item.segments_contacts){
+					item['AllContactsLength'] = item.segments_contacts ? (() => {
+						try {
+							return JSON.parse(item.segments_contacts).length;
+						} catch (error) {
+							console.error(error);
+							return 0;
+						}
+					})() : 0;
+					
+				}else if(item.csv_contacts){
+					item['AllContactsLength'] = item.csv_contacts ? (() => {
+						try {
+							return JSON.parse(item.csv_contacts).length;
+						} catch (error) {
+							console.error(error);
+							return 0;
+						}
+					})() : 0;
+					
+				}else{
+					item['AllContactsLength'] =0	
 				
-				
-			})
+				}
+			});
 
 			this.allCampaignMain = allCampaignList
 			this.allCampaign = allCampaignList
-		
-		// catch(error:any){
-		// 	console.log(error)
-		// }
+		}
+		 catch(error:any){
+		 	console.log(error)
+		}
 	}
 	
 	
@@ -1171,7 +1186,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			
 		})
 		
-
+		this.getAllCampaigns()
 	}
 	
 	async runCampaign(CampaignId:any,BodyData:any){
@@ -2008,5 +2023,24 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.showInfo = true;
 		}
 	}
+
+		//*********Download Sample file****************/
+
+		download() {
+			this.apiService.download().subscribe((data: any) => {
+				const blob = new Blob([data], { type: 'text/csv' });
+				const url = window.URL.createObjectURL(blob);
+				window.open(url);
+			})
+		}
+	
+		downloadERRfile() {
+			this.apiService.downloadErrFile().subscribe((data: any) => {
+				const blob = new Blob([data], { type: 'text/csv' });
+				const url = window.URL.createObjectURL(blob);
+				window.open(url);
+			})
+		}
+	
 
 }

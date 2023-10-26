@@ -4,7 +4,7 @@
 	<div class="row r1">
 
 
-		<div class="d-flex justify-content-between py-5 content-header">
+		<div class="d-flex justify-content-between pt-5 pb-4 content-header">
 			<div class="input-group gf">
 	
 				<input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
@@ -20,7 +20,7 @@
 	
 	
 	
-		<div *ngIf="!replies" class="smartreplies-empty-state">
+		<div *ngIf="replies.length==0" class="smartreplies-empty-state">
 			<div class="d-flex justify-content-center align-items-center container-empty-state">
 				<div class="text-center py-5 body-empty-state">
 					<img src="../../../../assets/img/no-sr.png" />
@@ -31,9 +31,9 @@
 		</div>
 	
 
-		<div *ngIf="replies" class="smartreplies-filled-state">
-			<div class="m-0 col-12 d-flex flex-wrap sm-card">
-				<div *ngFor="let reply of replies  | searchfilter:searchText" class="card d-flex"
+		<div *ngIf="replies.length>0" class="smartreplies-filled-state">
+			<div class="m-0 px-2 col-12 d-flex flex-wrap sm-card">
+				<div *ngFor="let reply of replies  | searchfilter:searchText" class="card col-3 d-flex"
 					(click)="toggleSideBar()" (click)="getRepliesByID(reply)">
 					<div class="card-body gy-2">
 						<h6 class="id">Id:{{ reply.ID }}</h6>
@@ -137,7 +137,8 @@
 			<div class="modal-content delete-token-modal" id="delete-tok">
 				<div class="modal-body alertmessage">
 					<sb-addSmartReplies *ngIf="isShowSmartReplies" [isEdit]="isEdit"
-						[smartReplyData]="repliesData"></sb-addSmartReplies>
+						[smartReplyData]="repliesData" (getReplies)="getReplies()">
+					</sb-addSmartReplies>
 				</div>
 			</div>
 		</div>

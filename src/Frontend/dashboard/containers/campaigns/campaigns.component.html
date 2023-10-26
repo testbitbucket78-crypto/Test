@@ -22,7 +22,7 @@
 					    <span>Filter</span>
 					</div>
 				</div>
-				<button class="new-message-btn" (click)="openAddNew(addNewCampaign)"><img class="icon" src="/assets/img/teambox/add.svg" /> New Message</button>		
+				<button class="new-message-btn" (click)="openAddNew(addNewCampaign)"><img class="icon" src="/assets/img/teambox/add.svg" /> New Campaign</button>		
 					
 			</div>
 			
@@ -43,7 +43,7 @@
 					<div class="campaigns_section_item_statics">
 						<div>
 							<p>{{campaign.AllContactsLength}}</p>
-							<p><span>Traget Audience</span></p>
+							<p><span>Target Audience</span></p>
 						</div>
 						<div>
 							<p>{{campaign.category_label}} </p>
@@ -721,7 +721,7 @@
 				</div>
 
 				<div class="important_contact_right">
-					<button type="button" class="paper-download"><img src="assets/img/campaign/paper-download.png">Download sample file</button>
+					<button type="button" class="paper-download" (click)="download()"><img src="assets/img/campaign/paper-download.png">Download sample file</button>
 					<div class="info_box">
 						<p class="info"><img src="assets/img/campaign/info-icon.png">Instructions</p>
 						<p><span>As the message template that you will select in the next step may include variables, so please include the variable values in the CSV file against each contact to personalize your message</span></p>
@@ -998,7 +998,7 @@
 									<div class="addnewitem_content_inner">
 										<p><span>Value</span></p>
 										<div class="formrow">
-											<input  readonly type="text" class="form-control" value={{addedF.filterValue}} >
+											<input type="text" class="form-control" value={{addedF.filterValue}} >
 										</div>
 									</div>
 
@@ -1223,7 +1223,7 @@
 		
 		<div class="modal-body alertmessage">
 			<p class="label">{{confirmMessage}}</p>
-            <div class="input_group_btn">
+            <div class="input_group_btn delete">
 			<button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
 			<button type="button" class="submit-btn red-bg" aria-label="Close" (click)="deleteCampaignConfirmed()">Yes, Delete</button>
 			</div>

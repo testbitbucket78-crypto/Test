@@ -14,7 +14,7 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { AgGridModule } from 'ag-grid-angular';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-
+import { QRCodeModule } from 'angularx-qrcode';
 
 
 
@@ -52,6 +52,7 @@ import { DashboardComponent } from './containers';
         RichTextEditorModule,
         ImageCropperModule,
         DragDropModule,
+        QRCodeModule
     ],
     providers: [...dashboardServices.services,
                 ...dashboardGuards.guards,DatePipe

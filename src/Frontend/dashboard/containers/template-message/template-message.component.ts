@@ -304,7 +304,7 @@ removeValue() {
     saveNewTemplate() {
       let newTemplateFormData = this.copyNewTemplateFormData(); 
 
-      if(this.newTemplateForm.valid && this.selectedType != 'video') {
+      if(this.newTemplateForm.valid) {
         this.apiService.saveNewTemplateData(newTemplateFormData,this.selectedPreview).subscribe(response => {
         
           if(response) {
@@ -315,16 +315,16 @@ removeValue() {
           }
       });
       }
-      if(this.newTemplateForm.valid && this.selectedType =='video') {
-          this.apiService.saveTemplateWithVideo(newTemplateFormData,this.selectedPreview).subscribe(response => {
-            if(response) {
-              this.newTemplateForm.reset();
-              $("#newTemplateMessage").modal('hide');
-              $("#confirmationModal").modal('hide');
-              this.getTemplatesData();
-            }
-          });
-      }
+      // if(this.newTemplateForm.valid && this.selectedType =='video') {
+      //     this.apiService.saveTemplateWithVideo(newTemplateFormData,this.selectedPreview).subscribe(response => {
+      //       if(response) {
+      //         this.newTemplateForm.reset();
+      //         $("#newTemplateMessage").modal('hide');
+      //         $("#confirmationModal").modal('hide');
+      //         this.getTemplatesData();
+      //       }
+      //     });
+      // }
       else {
         alert('!Please fill the required details in the form First');
       }
@@ -351,7 +351,7 @@ removeValue() {
       newTemplateForm.created_By = this.currentUser;
       newTemplateForm.ID = this.id;
       newTemplateForm.isTemplate = 1;
-      newTemplateForm.media_type = '';
+      newTemplateForm.media_type = 'image';
       newTemplateForm.Header = this.newTemplateForm.controls.Header.value;
       newTemplateForm.Links = this.newTemplateForm.controls.Links.value;
       newTemplateForm.Links = this.selectedPreview;

@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit {
                 if (this.dashboard[i].OptInStatus === 'Active Subscribers') {
                     this.activeContacts = this.dashboard[i].count;
                 }
-                if (this.dashboard[i].OptInStatus === 'null') {
+                if (this.dashboard[i].OptInStatus === 'Inactive Subscribers') {
                     this.inactiveContacts = this.dashboard[i].count;
                 }
             }
@@ -77,7 +77,7 @@ export class DashboardComponent implements OnInit {
                 if (this.interactions[i].interaction_status === 'Open') {
                     this.closedInteractions = this.interactions[i].count;
                 }
-                if (this.interactions[i].interaction_status === 'Open Interactions') {
+                if (this.interactions[i].interaction_status === 'Resolved') {
                     this.openInteractions = this.interactions[i].count;
                 }
                 if (this.interactions[i].interaction_status === 'Total Interactions') {

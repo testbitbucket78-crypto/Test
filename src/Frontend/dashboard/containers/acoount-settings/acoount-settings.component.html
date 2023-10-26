@@ -111,9 +111,13 @@
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
-                <div class="modal-body d-flex p-5">
-                    <div class="px-3 qr-card text-center">
-                        <img class="scanner-img"><br>
+                <div class="modal-body d-flex justify-content-center p-5">
+                    <div class="px-3 qr-card text-center" >
+                        <div ><qrcode [qrdata]="qrcode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+
+                        </div>
+                      
+                        <br>
                         <span class="qr-heading">Scan the QR Code</span>
                         <p>It will take 20-30 seconds to sync your WhatsApp number with our server, so please wait till
                             the system shows you the next screen.</p>
@@ -145,29 +149,29 @@
                     <div class="p-4 websetting-card">
                         <div class="websetting-data">
                             <span class="left-col">WhatsApp No.</span>
-                            <span class="mid-col">{{repliesaccountData.connected_id}}</span>
+                            <span class="mid-col">{{repliesaccountData?.connected_id}}</span>
                             <div class="right-col">
                                 <button class="right-col websetting-btn text-danger">Disconnect</button>
                             </div>
                         </div>
                         <div class="websetting-data">
                             <span class="left-col">Queued Messages</span>
-                            <span class="mid-col">{{repliesaccountData.QueueMessageCount}}</span>
+                            <span class="mid-col">{{repliesaccountData?.QueueMessageCount}}</span>
                             <div class="right-col">
                                 <button class="right-col websetting-btn text-voilet">Clear Queue</button>
                             </div>
                         </div>
                         <div class="websetting-data">
                             <span class="left-col">Connected Status</span>
-                            <span class="mid-col">{{repliesaccountData.channel_status}}</span>
+                            <span class="mid-col">{{repliesaccountData?.channel_status}}</span>
                         </div>
                         <div class="websetting-data">
                             <span class="left-col">Connected Date</span>
-                            <span class="mid-col">{{repliesaccountData.connection_date}}</span>
+                            <span class="mid-col">{{repliesaccountData?.connection_date}}</span>
                         </div>
                         <div class="websetting-data">
                             <span class="left-col">WA Version</span>
-                            <span class="mid-col">{{repliesaccountData.WAVersion}}</span>
+                            <span class="mid-col">{{repliesaccountData?.WAVersion}}</span>
                         </div>
                     </div>
                     </div>
@@ -279,7 +283,7 @@
                 </div>
             </div>
         </div>
-    </div>
+
 
 
 
