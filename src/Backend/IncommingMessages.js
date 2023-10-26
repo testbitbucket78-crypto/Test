@@ -172,67 +172,81 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
   //console.log(replymessage)
   try {
     var messageToSend = [];
-
+    const messagePromice = [];
     // Loop over the messages array and send each message
+    new Promise((resolve, reject) => {
+      replymessage.forEach(async (message) => {
+        // console.log("===================================")
+        // console.log("***********************************")
+        var media = message.Media
+        var value = message.Value;
+        var testMessage = message.Message;                  // Assuming the 'Message' property contains the message content
+        var actionId = message.ActionID;                 // Assuming the 'ActionID' property contains the action ID
+        // console.log(testMessage + "____________" + value + "_________" + actionId)
 
-    replymessage.forEach(async (message) => {
-      // console.log("===================================")
-      // console.log("***********************************")
-      var media = message.Media
-      var value = message.Value;
-      var testMessage = message.Message;                  // Assuming the 'Message' property contains the message content
-      var actionId = message.ActionID;                 // Assuming the 'ActionID' property contains the action ID
-      // console.log(testMessage + "____________" + value + "_________" + actionId)
+        let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
 
-      let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
-
-      // Parse the message template to get placeholders
-      const placeholders = parseMessageTemplate(testMessage);
-      //console.log(placeholders.length)
-      if (placeholders.length > 0) {
-        // Construct a dynamic SQL query based on the placeholders
-        const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=${custid}`;
-        // console.log(sqlQuery)
-        let results = await db.excuteQuery(sqlQuery, []);
-        // console.log(results)
-        const data = results[0];
+        // Parse the message template to get placeholders
+        const placeholders = parseMessageTemplate(testMessage);
+        //console.log(placeholders.length)
+        if (placeholders.length > 0) {
+          // Construct a dynamic SQL query based on the placeholders
+          const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=${custid}`;
+          // console.log(sqlQuery)
+          var results = await db.excuteQuery(sqlQuery, []);
+          // console.log(results)
+          var data = results[0];
 
 
-        placeholders.forEach(placeholder => {
-          testMessage = testMessage.replace(`{{${placeholder}}}`, data[placeholder]);
-        });
-      }
+          placeholders.forEach(placeholder => {
+            testMessage = testMessage.replace(`{{${placeholder}}}`, data[placeholder]);
+          });
+        }
 
-      var type = 'image';
-      if (media == null || media == "") {
-        var type = 'text';
-      }
+        var type = 'image';
+        if (media == null || media == "") {
+          var type = 'text';
+        }
 
-      let content = await middleWare.removeTagsFromMessages(testMessage);
-      var relyMsg = {
-        "replyId":message.ID,
-        "sid": sid,
-        "from": from,
-        "type": type,
-        "content": content,
-        "media": media,
-        "phone_number_id": phone_number_id,
-        "channelType": channelType
-      }
+        var content = await middleWare.removeTagsFromMessages(testMessage);
+        var relyMsg = {
+          "replyId": message.ID,
+          "sid": sid,
+          "from": from,
+          "type": type,
+          "content": content,
+          "media": media,
+          "phone_number_id": phone_number_id,
+          "channelType": channelType
+        }
+        messagePromice.push(new Promise((resolve, reject) => {
+          messageToSend.push(relyMsg)
+          resolve();
+        }))
 
-      messageToSend.push(relyMsg)
-     console.log(messageToSend)
-     
-    });
-    //console.log(messageToSend)
 
-    messageToSend=messageToSend.sort((a, b) =>( a.ID - b.ID));
+        //console.log(messageToSend)
 
-    console.log("messageToSend" ,messageToSend)
-    messageToSend.forEach((message)=>{
-      messageThroughselectedchannel(message.sid,message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType)
+      });
+      return resolve({ messageToSend: messageToSend });
+
+
+
+
+
     })
-   
+    console.log(messageToSend)
+    setTimeout(() => {
+      Promise.all(messagePromice).then(() => {
+        messageToSend = messageToSend.sort((a, b) => (a.ID - b.ID));
+        console.log("messageToSend promice ", messageToSend)
+        messageToSend.forEach((message) => {
+          messageThroughselectedchannel(message.sid, message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType)
+        })
+      })
+      console.log("messageToSend settiwrenebw ", messageToSend)
+    }, 1000)
+    console.log("messageToSend 1000 ", messageToSend)
   } catch (err) {
     console.log(err)
   }

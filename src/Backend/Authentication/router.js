@@ -82,6 +82,7 @@ var upload = multer({ storage: storage });
 
 // handle single file upload
 router.post('/uploadfile/',upload.single('dataFile'), async (req, res)=> {
+   try{
 const file = req.file;
 if (!file) {
 res.send({message:'File no uplaoded...'})
@@ -91,7 +92,9 @@ res.send({filename:url})
 // let awsres = await awsHelper.uploadStreamToAws('/teambox_img.jpg', dataFile)
 
 // console.log(awsres.value.Location)
-  
+}catch(err){
+   console.log(err)
+}
 });
 
 router.get('/uploads/:fileName', async (req, res)=> {
