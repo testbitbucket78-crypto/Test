@@ -25,9 +25,11 @@ async function createClientInstance(spid, phoneNo) {
     try {
       const client = new Client({
         authStrategy: new LocalAuth(),
-        puppeteer: {
+        puppeteer:{
           headless: true,
-          args: ['--no-sandbox']
+         // executablePath:  "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         
+         args: ['--no-sandbox']
         },
         authStrategy: new LocalAuth({
           clientId: spid
@@ -123,6 +125,12 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link) {
       const media = await MessageMedia.fromUrl(link);
 
       client.sendMessage(endCust + '@c.us', media, { caption: text });
+    }
+    if (type === 'video') {
+      const media = await MessageMedia.fromUrl(link);
+      console.log(media.mimetype)
+      client.sendMessage(endCust + '@c.us', media, { caption: text });
+
     }
     if (type === 'attachment') {
       const media = new MessageMedia('pdf', link);
