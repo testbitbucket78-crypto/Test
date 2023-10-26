@@ -164,7 +164,7 @@ deleteInteraction = (req, res) => {
 }
 
 const getAllInteraction = (req, res) => {
-    db.runQuery(req, res, val.getAllInteraction, [req.params.id])
+    db.runQuery(req, res, val.getAllInteraction, [req.body.SPID])
 }
 
 const getAllFilteredInteraction = (req, res) => {

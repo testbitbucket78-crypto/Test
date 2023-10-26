@@ -93,7 +93,8 @@ res.send({filename:url})
 
 // console.log(awsres.value.Location)
 }catch(err){
-   console.log(err)
+   //console.log(err)
+   res.send({err:err})
 }
 });
 
