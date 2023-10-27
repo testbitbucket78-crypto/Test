@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="17.188" height="17.188" viewBox="0 0 17.188 17.188">
+  <g id="not-connected" transform="translate(233.339 -83.922)">
+    <g id="filter" transform="translate(-1269.749 -808.481)">
+      <g id="Group_820" data-name="Group 820" transform="translate(0 5)">
+        <g id="Iconly_Bulk_Info_Circle" data-name="Iconly/Bulk/Info Circle" transform="translate(1036.912 887.905)">
+          <path id="Fill_1" data-name="Fill 1" d="M16.188,8.094a8.094,8.094,0,1,0-8.094,8.094,8.093,8.093,0,0,0,8.094-8.094" transform="translate(-0.002 -0.002)" fill="#f23b3b" stroke="#f23b3b" stroke-width="1"/>
+        </g>
+      </g>
+    </g>
+    <path id="icon_close" data-name="icon close" d="M3.364,4.112.747,6.729,0,5.981,2.616,3.364,0,.748.747,0,3.364,2.617,5.98,0l.748.748L4.112,3.364,6.728,5.981l-.748.748Z" transform="translate(-228.109 89.151)" fill="#fff"/>
+  </g>
+</svg>

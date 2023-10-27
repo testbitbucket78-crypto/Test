@@ -20,7 +20,9 @@ export class VerificationComponent implements OnInit {
     phone: any;
     verifyButton1Clicked = false;
     verifyButton2Clicked = false;
-
+    errorMessage = '';
+	successMessage = '';
+	warnMessage = '';
 
     otpFormValue:any;
     otpForm:any;
@@ -38,11 +40,32 @@ export class VerificationComponent implements OnInit {
     
     }
 
+    showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}	
+		else if(type=='warn'){
+			this.warnMessage=message;
+		}
+		else if(type=='error'){
+			this.errorMessage=message;
+		}
+	
+		setTimeout(() => {
+			this.hideToaster()
+		}, 5000);
+		
+	}
+	hideToaster(){
+		this.successMessage='';
+		this.warnMessage='';
+		this.errorMessage='';
+	}
+
     ngOnInit() {
         this.email_id = sessionStorage.getItem('otpfieldEmailvalue')
         this.phone = sessionStorage.getItem('otpfieldMobilevalue')
-
-         this.callApi();
+       
     }
 
     checkSubmitButton() {
@@ -140,12 +163,14 @@ export class VerificationComponent implements OnInit {
 
     }
 
-    onVerifyButton1Click() {
-        this.verifyButton1Clicked = true;
-    }
-
-    onVerifyButton2Click() {
-        this.verifyButton2Clicked = true;
+    resendOtp() {
+        let values = {
+            "email_id":this.email_id,
+            "mobile_number":this.phone
+        }
+        this.apiService.sendOtp(values).subscribe(response => {
+            console.log(response);
+        });
     }
 
     isBothButtonsClicked() {
@@ -177,7 +202,7 @@ export class VerificationComponent implements OnInit {
                     if (successDiv) {
                         successDiv.innerHTML = successMessage;
                     }
-                    console.warn(" user registered!", response)
+                    this.showToaster('! User Registered Successfully','success');
                     this.router.navigate(['login']);
                     sessionStorage.removeItem('formValues')
                 }

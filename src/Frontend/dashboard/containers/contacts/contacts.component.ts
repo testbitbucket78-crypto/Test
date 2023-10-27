@@ -231,31 +231,30 @@ countryCodes = [
 			quantities: this.fb.array([]) ,  
 		  });
       this.newContact=this.fb.group({
+        SP_ID: sessionStorage.getItem('SP_ID'),
         Name: new FormControl('', Validators.required),
+        country_code:new FormControl('IN +91'),
         Phone_number: new FormControl('',Validators.required),
         emailId: new FormControl('', [Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
         age: new FormControl('',[Validators.pattern(/^[0-9]+$/), Validators.min(18), Validators.max(99)]),
         sex: new FormControl(''),
         tag: new FormControl([]),
         status:  new FormControl([]),
-        country_code: new FormControl(''),
         facebookId: new FormControl(''),
-        InstagramId: new FormControl(''),
-        SP_ID: sessionStorage.getItem('SP_ID')
-         
+        InstagramId: new FormControl('')
       });
 	
   this.editContact = this.fb.group({
-    Name: new FormControl('', [Validators.required, Validators.pattern('^[A-Za-z\s]+$')]),
-    country_code: new FormControl(''),
-    Phone_number:  new FormControl('',Validators.required),
-    emailId: new FormControl('', [Validators.required,Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$')]),
-    age: new FormControl('', [Validators.pattern(/^[1-9][0-9]?$/),Validators.min(18),Validators.max(99)]),
-    sex: new FormControl(''),
-    tag: new FormControl([]),
-    status: new FormControl([]),
-    facebookId: new FormControl(''),
-    InstagramId: new FormControl('')
+        Name: new FormControl('', [Validators.required, Validators.pattern('^[A-Za-z\s]+$')]),
+        country_code: new FormControl('IN +91'),
+        Phone_number:  new FormControl('',Validators.required),
+        emailId: new FormControl('', [Validators.required,Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$')]),
+        age: new FormControl('', [Validators.pattern(/^[1-9][0-9]?$/),Validators.min(18),Validators.max(99)]),
+        sex: new FormControl(''),
+        tag: new FormControl([]),
+        status: new FormControl([]),
+        facebookId: new FormControl(''),
+        InstagramId: new FormControl('')
    
   })
   
@@ -405,7 +404,8 @@ onSelectAll(items: any) {
     this.apiService.getContactById(sessionStorage.getItem('id'), sessionStorage.getItem('SP_ID')).subscribe((result: any) =>{
       this.editContact=this.fb.group({
         Name: new FormControl(result[0].Name),
-        Phone_number: new FormControl(result[0].Phone_number),
+        country_code: new FormControl(result[0].countryCode),
+        Phone_number: new FormControl(result[0].Phone_number.substring(1)),
         emailId: new FormControl(result[0].emailId),
         age: new FormControl(result[0].age),
         sex: new FormControl(result[0].sex),
@@ -615,7 +615,7 @@ onSelectAll(items: any) {
     let contactData = {
       Name:this.editContact.get('Name')?.value,
       age:this.editContact.get('age')?.value,
-      country_code:this.editContact.get('country_code')?.value,
+      countryCode:this.editContact.get('country_code')?.value,
       emailId:this.editContact.get('emailId')?.value,
       sex:this.editContact.get('sex')?.value,
       Phone_number:{
@@ -623,8 +623,8 @@ onSelectAll(items: any) {
       internationalNumber:'+' + this.editContact.get('Phone_number')?.value,
       nationalNumber: this.editContact.get('Phone_number')?.value,
       e164Number:'+' + this.editContact.get('Phone_number')?.value,
-      countryCode: this.editContact.get('country_code')?.value,
-      dialCode: this.editContact.get('country_code')?.value
+      countryCode: this.editContact.get('countryCode')?.value,
+      dialCode: this.editContact.get('countryCode')?.value
       },
       tag:this.editContact.get('tag')?.value,
       status:this.editContact.get('status')?.value,
@@ -636,7 +636,7 @@ onSelectAll(items: any) {
     this.submitted = true;
 
     if(!this.editContact.valid) {
-     alert('Please enter valid details');
+     console.log('Please enter valid details');
       return ;
     }
 
@@ -816,6 +816,23 @@ formatPhoneNumber() {
 
     }
   }
+  }
+
+  formatPhoneForEdit() {
+    const phoneNumber = this.editContact.get('Phone_number')?.value;
+    const countryCode = this.editContact.get('country_code')?.value;
+  
+    if (phoneNumber && countryCode) {
+      const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
+      const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
+  
+      if (formattedPhoneNumber) {
+        this.editContact.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
+        const phoneNumberValue = this.editContact.get('Phone_number')?.value;
+        console.log(phoneNumberValue);
+  
+      }
+    }
   }
 
 

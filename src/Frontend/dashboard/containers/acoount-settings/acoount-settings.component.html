@@ -23,7 +23,7 @@
                         <h5>WhatsApp Web</h5>
                         <p>WhatsApp Web automation of your WhatsApp Personal or WhatsApp Business numbers</p>
                         <div class="whatsapp-cSonnect">
-                        <span>3 Connected</span>
+                        <span class="font-weight-bold">{{numberCount}} Connected</span>
                         <span class="grey">&nbsp;&nbsp;&nbsp;></span>
                     </div>
                     </div>
@@ -53,7 +53,10 @@
                             <div class="card-desc">Connected : {{ detail.channel_id }}</div>
                             <div class="d-flex">
                                 <div class="card-desc">Channel Id: {{ detail.connected_id }}</div>
-                                <div class="card-desc"> {{ detail.channel_status }}</div>
+                                <div *ngIf="!detail.channel_status" class="card-desc">
+                                  <img src="../../../../assets/img/settings/not-connected.svg" alt="error" />Not connected</div>
+                                <div *ngIf="detail.channel_status" class="card-desc">
+                                  <img src="../../../../assets/img/settings/connected.svg" alt="error" />Connected</div>
                             </div>
                         </div>
                         <div  (click)="getaccountByID(detail)">
@@ -102,7 +105,7 @@
     </div>
 
 
-    <div class="modal fade" tabindex="-1" id="qrWhatsappModal" role="dialog">
+    <div class="modal fade" tabindex="-1" id="qrWhatsappModal" data-bs-backdrop="static" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content qr-modal">
                 <div class="modal-header">
