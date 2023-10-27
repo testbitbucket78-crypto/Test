@@ -147,7 +147,7 @@ app.post('/contact', async function (req, res) {
     console.log(req.body)
     Name = req.body.Name
     Phone_number = req.body.Phone_number.internationalNumber
-
+    countryCode=req.body.country_code
     emailId = req.body.emailId
     if (Name == '' || Phone_number == '' || emailId == '') {
       res.status(400).send({
@@ -156,7 +156,7 @@ app.post('/contact', async function (req, res) {
       })
     }
     age = req.body.age
-
+     
     var tag = req.body.tag
     var status = req.body.status
     facebookId = req.body.facebookId
@@ -182,7 +182,7 @@ app.post('/contact', async function (req, res) {
       console.log(statusListJoin)
     }
 
-    var values = [[Name, Phone_number, emailId, age, tagListJoin, statusListJoin, facebookId, InstagramId, SP_ID]];
+    var values = [[Name, Phone_number, emailId, age, tagListJoin, statusListJoin, facebookId, InstagramId, SP_ID,countryCode]];
 
     //db.runQuery(req, res, val.insertContact, [values])
     var result = await db.excuteQuery(val.existContactWithSameSpid, [emailId, Phone_number, SP_ID])

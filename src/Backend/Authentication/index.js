@@ -34,25 +34,25 @@ const login = async (req, res) => {
                 msg: 'Invalid User !',
                 status: 401
             });
-        }
-        var password = await bcrypt.compare(req.body.password, credentials[0]['password'])
+        } else {
+            var password = await bcrypt.compare(req.body.password, credentials[0]['password'])
 
-        if (!password) {
-            res.status(401).send({
-                msg: 'Username or password is incorrect!',
-                status: 401
-            });
+            if (!password) {
+                res.status(401).send({
+                    msg: 'Username or password is incorrect!',
+                    status: 401
+                });
+            }
+            else {
+                const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY);
+                res.status(200).send({
+                    msg: 'Logged in!',
+                    token,
+                    user: credentials[0],
+                    status: 200
+                });
+            }
         }
-        else {
-            const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY);
-            res.status(200).send({
-                msg: 'Logged in!',
-                token,
-                user: credentials[0],
-                status: 200
-            });
-        }
-
     } catch (err) {
         console.error(err);
         db.errlog(err)
@@ -73,7 +73,7 @@ const register = async function (req, res) {
     email_id = req.body.email_id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
-    var mobile = mobile_number.internationalNumber;
+    
 
     try {
         var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id])
@@ -89,7 +89,7 @@ const register = async function (req, res) {
             }
             // Hash the password before storing it in the database
             const hash = await bcrypt.hash(password, 10);
-            var values = [name, mobile, email_id, hash]
+            var values = [name, mobile_number, email_id, hash]
             var registeredUser = await db.excuteQuery(val.registerQuery, values)
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
             res.status(200).send({
@@ -160,8 +160,8 @@ const forgotPassword = async (req, res) => {
                 from: val.email,
                 to: req.body.email_id,
                 subject: "Request for reset Password: ",
-                 html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/#/reset-password?uid=' +cipherdata+ '">  link  </a>to reset your password</p>'
-                 //html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/#/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/#/reset-password?uid=' + cipherdata + '">  link  </a>to reset your password</p>'
+                //html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/#/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
 
             };
 
@@ -293,7 +293,7 @@ const sendOtp = async function (req, res) {
     try {
 
         email_id = req.body.email_id;
-        mobile_number = req.body.mobile_number.internationalNumber;
+        mobile_number = req.body.mobile_number;
 
         let otp = Math.floor(100000 + Math.random() * 900000);
 
@@ -324,7 +324,7 @@ const sendOtp = async function (req, res) {
         var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
         console.log(storeEmailOtp)
 
-        var storePhoneOtp = await db.excuteQuery(val.insertOtp, ['mobile_number', otp, 'Mobile'])
+        var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, otp, 'Mobile'])
         console.log(storePhoneOtp)
 
 

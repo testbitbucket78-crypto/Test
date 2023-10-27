@@ -35,8 +35,8 @@ SELECT 'Total Agents', COUNT(*) AS count
 FROM user
 WHERE  SP_ID = ? and isDeleted != 1`;
 
-subscribersQuery = `select OptInStatus,count(*) count from EndCustomer WHERE SP_ID=? and (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)   Group by (OptInStatus) union select  'Total Contacts',
-count(*) count from EndCustomer WHERE SP_ID=?  and (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) `;
+subscribersQuery = `select OptInStatus,count(*) count from EndCustomer WHERE SP_ID=? and (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) AND IsTemporary !=1  Group by (OptInStatus) union select  'Total Contacts',
+count(*) count from EndCustomer WHERE SP_ID=?  and (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) AND IsTemporary !=1  `;
 conversationQuery = "CALL dashboardRecentConversations(?)"
 crachlogQuery = `INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 

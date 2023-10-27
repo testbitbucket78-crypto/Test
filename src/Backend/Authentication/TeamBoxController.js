@@ -68,7 +68,8 @@ const insertCustomers = (req, res) => {
     channel = req.body.Channel
     OptInStatus = req.body.OptedIn
     SP_ID = req.body.SP_ID
-    var values = [[Name, Phone_number, channel, SP_ID, OptInStatus]]
+    countryCode=req.body.country_code
+    var values = [[Name, Phone_number, channel, SP_ID, OptInStatus,countryCode]]
     db.runQuery(req, res, val.insertCustomersQuery, [values])
 }
 
@@ -164,13 +165,13 @@ deleteInteraction = (req, res) => {
 }
 
 const getAllInteraction = (req, res) => {
-    db.runQuery(req, res, val.getAllInteraction, [req.params.id])
+    db.runQuery(req, res, val.getAllInteraction, [req.body.SPID])
 }
 
 const getAllFilteredInteraction = (req, res) => {
 
     //let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId";
-    let queryPath = "SELECT    ic.interaction_status,ic.InteractionId, ec.*             FROM       Interaction ic    JOIN        EndCustomer ec ON ic.customerId = ec.customerId     WHERE        ic.interactionId = (            SELECT MAX(interactionId)            FROM Interaction            WHERE customerId = ic.customerId        )  and ic.is_deleted=0 order by interactionId desc";
+    let queryPath = "SELECT    ic.interaction_status,ic.InteractionId, ec.*             FROM       Interaction ic    JOIN        EndCustomer ec ON ic.customerId = ec.customerId     WHERE        ic.interactionId = (            SELECT MAX(interactionId)            FROM Interaction            WHERE customerId = ic.customerId        ) and ec.SP_ID=? and ic.is_deleted=0 order by interactionId desc";
     if (req.body.FilterBy != 'All') {
 
 
@@ -193,7 +194,7 @@ const getAllFilteredInteraction = (req, res) => {
 
     }
     console.log(queryPath)
-    db.runQuery(req, res, queryPath, [])
+    db.runQuery(req, res, queryPath, [req.body.SPID])
 }
 
 const getInteractionById = (req, res) => {
@@ -305,7 +306,7 @@ const insertMessage = async (req, res) => {
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id])
             let channelType = await db.excuteQuery('select channel from EndCustomer where customerId=?', [customerId]);
             console.log("channelType" + channelType);
-            let channel = channelType.length > 0 ? channelType[0].channel : 'WhatsApp Official'
+            let channel = channelType.length > 0 ? channelType[0].channel : 'WhatsApp Web'
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
             db.runQuery(req, res, messageQuery, [values])
             if (agentName.length >= 0) {

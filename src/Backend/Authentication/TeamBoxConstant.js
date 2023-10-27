@@ -8,7 +8,7 @@ const database= "cip_project"
 
 //Query for contactPage
 var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked !=1";
-var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,SP_ID,OptInStatus) VALUES ?"
+var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,SP_ID,OptInStatus,countryCode) VALUES ?"
 var filterQuery="SELECT * from EndCustomer where Phone_number=?"
 var searchQuery="SELECT * from EndCustomer where SP_ID=? and (Phone_number like ? or Name like ?)"
 var selectByIdQuery="SELECT * FROM EndCustomer WHERE customerId=?"
@@ -28,7 +28,7 @@ where u.isDeleted !=1 and u.SP_ID=?`
 var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details,SP_ID,interaction_type) VALUES ?"
 var updateInteractionQuery="UPDATE Interaction SET interaction_status =? WHERE InteractionId =?";
 
-var getAllInteraction="SELECT ic.AutoReplyStatus,ic.AutoReplyUpdatedAt,ic.paused_till, ic.interaction_status,ic.InteractionId, ec.*     FROM    Interaction ic JOIN    EndCustomer ec ON ic.customerId = ec.customerId WHERE    ic.interactionId = (        SELECT MAX(interactionId)        FROM Interaction        WHERE customerId = ic.customerId    ) order by interactionId desc;"
+var getAllInteraction="SELECT ic.AutoReplyStatus,ic.AutoReplyUpdatedAt,ic.paused_till, ic.interaction_status,ic.InteractionId, ec.*     FROM    Interaction ic JOIN    EndCustomer ec ON ic.customerId = ec.customerId WHERE    ic.interactionId = (        SELECT MAX(interactionId)        FROM Interaction        WHERE customerId = ic.customerId    ) and ec.SP_ID=?  order by interactionId desc;"
 //var getAllInteraction = "SELECT  Interaction.AutoReplyStatus,Interaction.AutoReplyUpdatedAt,Interaction.paused_till, Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId OR Interaction.customerId=EndCustomer.Phone_number"
 //var searchInteractionQuery="SELECT * from Interaction where Phone_number=? or Name=?"
 var selectInteractionByIdQuery="SELECT * FROM Interaction WHERE Interaction.InteractionId=?"
