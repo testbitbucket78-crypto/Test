@@ -170,7 +170,7 @@ const getAllInteraction = (req, res) => {
 const getAllFilteredInteraction = (req, res) => {
 
     //let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId";
-    let queryPath = "SELECT    ic.interaction_status,ic.InteractionId, ec.*             FROM       Interaction ic    JOIN        EndCustomer ec ON ic.customerId = ec.customerId     WHERE        ic.interactionId = (            SELECT MAX(interactionId)            FROM Interaction            WHERE customerId = ic.customerId        )  and ic.is_deleted=0 order by interactionId desc";
+    let queryPath = "SELECT    ic.interaction_status,ic.InteractionId, ec.*             FROM       Interaction ic    JOIN        EndCustomer ec ON ic.customerId = ec.customerId     WHERE        ic.interactionId = (            SELECT MAX(interactionId)            FROM Interaction            WHERE customerId = ic.customerId        ) and ec.SP_ID=? and ic.is_deleted=0 order by interactionId desc";
     if (req.body.FilterBy != 'All') {
 
 
@@ -193,7 +193,7 @@ const getAllFilteredInteraction = (req, res) => {
 
     }
     console.log(queryPath)
-    db.runQuery(req, res, queryPath, [])
+    db.runQuery(req, res, queryPath, [req.body.SPID])
 }
 
 const getInteractionById = (req, res) => {
