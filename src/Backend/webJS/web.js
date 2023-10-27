@@ -39,7 +39,7 @@ async function createClientInstance(spid, phoneNo) {
 
       client.on('qr', (qr) => {
         console.log('QR RECEIVED', qr);
-//        qrcode.generate(qr, { small: true });
+     //   qrcode.generate(qr, { small: true });
         resolve({ status: 200, value: qr });
       });
       client.on('ready', () => {
@@ -164,7 +164,7 @@ async function saveInMessages(message) {
     let from = (message.from).replace(/@c\.us$/, '')   //phoneNo
     let phone_number_id = message.id.id
     let display_phone_number = (message.to).replace(/@c\.us$/, '')
-    let message_media = message.type           //Type
+    let message_media = ""           //Type
     let Type = message.type
     let contactName = message._data.notifyName      //contactName
     if (message.hasMedia) {
@@ -213,7 +213,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   }
   if (message_text.length > 0) {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?)"
-    var saveMessage = await db.excuteQuery(query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
+    var saveMessage = await db.excuteQuery(query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, Type]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 

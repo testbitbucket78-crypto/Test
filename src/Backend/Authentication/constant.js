@@ -30,7 +30,7 @@ var updatePassword = "UPDATE user SET password=? WHERE uid=?";
 
 
 insertOtp="CALL otpVerification(?,?,?)"
-verifyOtp=`SELECT  otp FROM otpVerify WHERE created_at > NOW() - INTERVAL 15 MINUTE and otpfieldvalue=?`
+verifyOtp=`SELECT  otp FROM otpVerify WHERE created_at > NOW() - INTERVAL 15 MINUTE and otpfieldvalue=? ORDER BY created_at DESC limit 1;`
 crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
 var access_token='Bearer EAAU0g9iuku4BOzSD75ynSUzKSsYrIWv3qkEa9QPAnUNTUzPwN5aTjGxoAHxsXF4Nlrw8UxbMGqZBxqarODf2sY20MvFfTQm0umq4ZBKCpFAJdcPtbcYSZBsHMqYVwjfFPiQwFk1Rmadl4ctoncnxczMGJZALoVfZBpqoQ0lYHzOwbRb1nvImzhL4ex53c9HKVyzl2viy4EhLy9g0K'

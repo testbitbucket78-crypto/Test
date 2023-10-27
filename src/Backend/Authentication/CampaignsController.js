@@ -133,7 +133,7 @@ const deleteCampaign = (req, res) => {
 }
 
 const getEndCustomerDetail = (req, res) => {
-    let Query = "SELECT * from EndCustomer  where customerId = " + req.params.customerId
+    let Query = "SELECT * from EndCustomer  where  IsTemporary !=1 AND customerId = " + req.params.customerId
 
     db.runQuery(req, res, Query, []);
 }
@@ -173,6 +173,7 @@ const sendCampinMessage = async (req, res) => {
         let spid = TemplateData.SP_ID
         let media = TemplateData.message_media
         var type = 'image';
+        var customerId=TemplateData.customerId
         if (media == null || media == "") {
             var type = 'text';
         }
@@ -193,8 +194,8 @@ const sendCampinMessage = async (req, res) => {
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
             // Construct a dynamic SQL query based on the placeholders
-            const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=712`;
-            let results = await db.excuteQuery(sqlQuery, []);
+            const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=?`;
+            let results = await db.excuteQuery(sqlQuery, [customerId]);
             const data = results[0];
 
 

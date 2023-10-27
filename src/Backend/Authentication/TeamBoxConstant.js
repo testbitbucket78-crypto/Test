@@ -8,7 +8,7 @@ const database= "cip_project"
 
 //Query for contactPage
 var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked !=1";
-var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,SP_ID,OptInStatus) VALUES ?"
+var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,SP_ID,OptInStatus,countryCode) VALUES ?"
 var filterQuery="SELECT * from EndCustomer where Phone_number=?"
 var searchQuery="SELECT * from EndCustomer where SP_ID=? and (Phone_number like ? or Name like ?)"
 var selectByIdQuery="SELECT * FROM EndCustomer WHERE customerId=?"
