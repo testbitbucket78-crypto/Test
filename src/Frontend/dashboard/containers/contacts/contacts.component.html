@@ -533,7 +533,7 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Name*</label>
 						<div class="form-floating">
-							<input  onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)"  minlength="3" class="form-control" type="text"
+							<input  onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)"  minlength="3" maxlength="50" class="form-control" type="text"
 								[ngClass]="{'is-invalid':newContact.controls.Name.touched && newContact.controls.Name.errors  }"
 								placeholder="Enter Name" name="Name" formControlName="Name" id="Name" />
 							<div *ngIf="newContact.controls.Name.touched && newContact.controls.Name.errors"
@@ -657,7 +657,7 @@
 					<div class="col-md">
 						<label for="floatingInputGrid">Name*</label>
 						<div class="form-floating">
-							<input class="form-control" type="text" onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)"  placeholder="Enter Name" name="Name"
+							<input class="form-control" type="text" onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)" minlength="3" maxlength="50" placeholder="Enter Name" name="Name"
 								formControlName="Name" id="Name" />
 						</div>
 					</div>

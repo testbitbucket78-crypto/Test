@@ -1,9 +1,10 @@
-import { Component, OnInit,ViewChild,ElementRef, Input, HostListener } from '@angular/core';
+import { Component, OnInit,ViewChild,ElementRef, Input, HostListener, Output, EventEmitter } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { TeamboxService } from './../../services';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { agentMessageList } from 'Frontend/dashboard/models/smartReplies.model';
 import Stepper from 'bs-stepper';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -40,6 +41,7 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	@Input() isEdit: boolean = false;
 	@Input() smartReplyData: any;
+	@Output() getReplies = new EventEmitter<string> (); 
 
 	active = 1;
 	stepper: any;
@@ -52,28 +54,24 @@ export class AddSmartRepliesComponent implements OnInit {
 	triggerFlows:any;
 	selectedValue: any;
 	title = 'formValidation';
-        submitted = false;
+    submitted = false;
     newSmartReply:any;
 	newReply=new FormGroup({
 		Title: new FormControl('',Validators.required),
 		Description:new FormControl('',Validators.required)
-		
-	
 	})
 	newReply1=new FormGroup({
 		keywords: new FormControl('',([Validators.required, Validators.maxLength(50)])),
 	})
 	
 	model: any;
-
 	newMessage!: FormGroup;
 	message = '';	
 	messages:any [] = [];
 	selectedAction:any;	
-	
 	keyword: string = '';
 	keywords: string[] = [];
-	
+	templatesData =[];
 	editedText:string ='';
 	editedMessage: string = '';
 	isEditable: boolean = false;
@@ -301,7 +299,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	};
 
 	isSendButtonDisabled=false
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService,private elementRef: ElementRef) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService,private elementRef: ElementRef,private location:Location) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -316,7 +314,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
 
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: false,
+			linear: true,
 			animation: true
 		});
 
@@ -329,11 +327,19 @@ export class AddSmartRepliesComponent implements OnInit {
 	     this.getUserList();
 		 this.getTagData()
 		 this.getAttributeList();
+		 this.getTemplatesList()
 		 this.routerGuard();
 	
 	
 	
 	}
+
+	routeToSettings() {
+		this.closeAllModal();
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
+		this.router.navigate(['dashboard/setting']);
+	  }
 
 /*** rich text editor ***/
 
@@ -351,6 +357,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.ShowAddAction = false;
 		$("#attachmentbox").modal('hide');
 		$("#showAttributes").modal('hide');
+		$("#insertTemplate").modal('hide');
 		document.getElementById('addsmartreplies')!.style.display = 'inherit';
 	}
 
@@ -421,7 +428,8 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	ToggleInsertTemplateOption() {
 		this.closeAllModal()
-		this.showInsertTemplate = !this.showInsertTemplate;
+		$("#insertTemplate").modal('show');
+        document.getElementById('addsmartreplies')!.style.display = 'none';
 	}
 
 	showeditTemplate(){
@@ -806,8 +814,6 @@ export class AddSmartRepliesComponent implements OnInit {
 
 
 	next() {
-		this.stepper.next();
-		console.log(this.stepper);
 		// const currentIndex = this.stepper ? this.stepper.currentIndex : 0;
 		// if (currentIndex > 0) {
 		// 	const previousStep = this.stepper ? this.stepper.steps[currentIndex - 1] : null;
@@ -862,17 +868,6 @@ export class AddSmartRepliesComponent implements OnInit {
 		}
 	}
 
-
-	verifyKeywordForNextStep() {
-
-		if (document.getElementsByClassName('keytext')[0].innerHTML !== '') {
-			this.verifyKeyword();
-			
-
-		}
-	}
-
-
 	onSelectionChange(entry: any): void {
 		this.model = entry;
 		console.log(this.model)
@@ -888,7 +883,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		  MatchingCriteria: this.model,
 		  Keywords: this.keywords || [], 
 		  ReplyActions: this.assignedAgentList || [],
-		  Tags: []
+		  Tags: this.assignedTagList || []
 		};
 	  
 		console.log(data);
@@ -900,10 +895,10 @@ export class AddSmartRepliesComponent implements OnInit {
 			  if (response.status === 200) {
 				$("#smartrepliesModal").modal('hide'); 
 				this.modalService.open(smartreplysuccess);
+				this.getReplies.emit('');
 				this.newReply.reset();
 				this.newReply1.reset();
 				this.newMessage.reset();
-				
 			  }
 			},
 			(error: any) => {
@@ -919,35 +914,47 @@ export class AddSmartRepliesComponent implements OnInit {
 		  this.showToaster("! Message cannot be empty","warn");
 		}
 	  }
+
+	  smartReplySuccess() {
+		this.location.replaceState(this.location.path());
+		window.location.reload();
+	  }
 	  
 
 	  /*  METHOD FOR VERIFY KEYWORD DUPLICACY  */
 
 	verifyKeyword() {
 
-		var data= {
-			SP_ID: sessionStorage.getItem('SP_ID'),
-			Keywords: this.keywords
+		const isEmptyKeyword = this.keywords.some(k => k.trim() !=='');
+		if (!isEmptyKeyword) {
+			this.showToaster("! Keyword and Matching Criteria required",'error');
+			return;
 		}
-		this.apiService.duplicatekeywordSmartReply(data).subscribe(
-			
-			(response: any) => {
-			console.log(response)
-			if (response.status === 200) {
-				this.next();				
+		 else {
+			var data= {
+				SP_ID: sessionStorage.getItem('SP_ID'),
+				Keywords: this.keywords
 			}
-	    
-		},
-			(error: any) => {
-				if (error.status === 409) {
-					this.showToaster('! Duplicate keyword found Please try other keyword.',"error");
+			this.apiService.duplicatekeywordSmartReply(data)
+			   .subscribe(
+				(response: any) => {
+				console.log(response)
+				if (response.status === 200) {
+					this.next();				
 				}
-				else {					
-					this.showToaster("! Internal Server Error Please try after some time","error");
-				
-				}
-	
+			
+			},
+				(error: any) => {
+					if (error.status === 409) {
+						this.showToaster('! Duplicate keyword found Please try other keyword.',"error");
+					}
+					else {					
+						this.showToaster("! Internal Server Error Please try after some time","error");
+					
+					}
 			});
+		}
+
 	}
 	
 
@@ -1009,6 +1016,14 @@ export class AddSmartRepliesComponent implements OnInit {
 	  })
   }
 
+  /*  GET TEMPLATES LIST  */
+  getTemplatesList() {
+	this.settingsService.getTemplateData(this.SPID,1).subscribe(response => {
+	  this.templatesData = response.templates;
+	}); 
+
+
+  }
   @HostListener('document:click', ['$event'])
   divCloseMethod(event: MouseEvent) {
 	let clickedInside = document.getElementById('showEmoji')
