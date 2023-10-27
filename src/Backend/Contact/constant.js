@@ -15,7 +15,7 @@ otp = otp * 1000000;
 otp = parseInt(otp);
 
 //Query for contactPage
-var selectAllContact = `SELECT * FROM EndCustomer WHERE (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) AND SP_ID = ?`
+var selectAllContact = `SELECT * FROM EndCustomer WHERE (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) AND SP_ID = ? AND IsTemporary !=1 `
 var insertContact = "INSERT INTO EndCustomer (Name,Phone_number,emailId,age,tag,status,facebookId,InstagramId,SP_ID) VALUES ?";
 var neweditContact = 'UPDATE EndCustomer SET '
 delet = "UPDATE EndCustomer set isDeleted=1 WHERE customerId IN (?) and SP_ID=?"
