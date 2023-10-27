@@ -68,7 +68,8 @@ const insertCustomers = (req, res) => {
     channel = req.body.Channel
     OptInStatus = req.body.OptedIn
     SP_ID = req.body.SP_ID
-    var values = [[Name, Phone_number, channel, SP_ID, OptInStatus]]
+    countryCode=req.body.country_code
+    var values = [[Name, Phone_number, channel, SP_ID, OptInStatus,countryCode]]
     db.runQuery(req, res, val.insertCustomersQuery, [values])
 }
 
