@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { repliesaccountList } from 'Frontend/dashboard/models/settings.model';
 import{ accountmodel } from 'Frontend/dashboard/models/settings.model';
+import { PhoneNumber } from 'libphonenumber-js';
 
 declare var $:any;
 
@@ -27,6 +28,7 @@ export class AcoountSettingsComponent implements OnInit {
   // dataaa = <dataaa>{};
   selectedWhatsappData: any;
   phone!:any;
+  phoneNumber!:number;
   repliesaccountData!:repliesaccountList;
   fetchdata:any;
   QueueLimit:any;
@@ -35,20 +37,21 @@ export class AcoountSettingsComponent implements OnInit {
   showMessage: boolean = false;
   channel_id!:number;
   accoountsetting=<accountmodel>{};
+  numberCount:number = 0;
   qrcode:any;
   link:any;
 
   
-INGrMessage=[0];
-OutGrMessage=[0];
-online_status=[0];
-InMessageStatus=[0];
-OutMessageStatus=[0];
-serviceMonetringTool=[0];
-syncContact=[0];
-roboot=[0];
-restart=[0];
-reset=[0];
+  INGrMessage=[0];
+  OutGrMessage=[0];
+  online_status=[0];
+  InMessageStatus=[0];
+  OutMessageStatus=[0];
+  serviceMonetringTool=[0];
+  syncContact=[0];
+  roboot=[0];
+  restart=[0];
+  reset=[0];
 
 
 
@@ -60,6 +63,7 @@ reset=[0];
 
   ngOnInit(): void {
     this.spid = Number(sessionStorage.getItem('SP_ID'));
+    this.phoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
     this.getwhatsapp();
   }
 
@@ -74,10 +78,11 @@ reset=[0];
 getwhatsapp() { 
   this.apiService.getWhatsAppDetails(this.spid).subscribe(response => {
     this.whatsAppDetails=response.whatsAppDetails;
-    this.whatsAppDetails.forEach(detail => {
-      // this.id.push(detail.id);
-    });
-    // console.log(this.id);
+    this.numberCount = response.channelCounts[0]?.count_of_channel_id;
+    // this.whatsAppDetails.forEach(detail => {
+    //   this.id.push(detail.id);
+    // });
+    console.log(this.id);
     
 
     // this.channel=this.whatsAppDetails[0].channel_status;

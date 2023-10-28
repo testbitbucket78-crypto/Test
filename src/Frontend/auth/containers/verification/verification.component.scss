@@ -1,5 +1,40 @@
 @import 'styles/variables.scss';
 
+.toaster {
+    float: left;
+    width: auto;
+    position: fixed;
+    right: 50px;
+    top: 65px;
+    z-index: 9999;
+}
+
+.toaster p {
+    padding: 8px;
+    font-size: 14px;
+    color: #fff;
+    margin: 0;
+    min-width: 250px;
+    text-align: center;
+    border-radius: 20px;
+    font-weight: 500;
+
+}
+
+.toaster p.error {
+    background-color: red;
+
+}
+
+.toaster p.success {
+    background-color: green;
+}
+
+.toaster p.warn {
+    background-color: orange;
+}
+
+
 .container{
     background-color: white;
     height: 100vh;
@@ -101,6 +136,10 @@ h6, .h6 {
     margin-left: 4rem;
     margin-top: 0.7rem;
 
+}
+
+.disc .ml-1 {
+    cursor: pointer;
 }
 .ml-1, .mx-1 {
     font-size :14px;

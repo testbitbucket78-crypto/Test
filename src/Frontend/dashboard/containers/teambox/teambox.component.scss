@@ -1294,7 +1294,24 @@ div[role="progressbar"] {
     color: #000;
     font-weight: 500;
     font-size: 14px;
+
+}
+
+.form-control.phone-no {
     padding-left: 5.7rem;
+}
+
+.form-control.countryCode {
+    padding-left: 5.7rem;
+    height: 45px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    opacity: 1;
+    margin: 0 0 15px;
+    color: #000;
+    font-weight: 500;
+    font-size: 14px;
 }
 
 .inner_form.large .row {
@@ -2297,8 +2314,25 @@ label span {
 }
 .input-formm{
     position: absolute;
-    top: 2.64rem;
+    top: 2.7rem;
     border: none;
     right: 19rem;
     width: 4.2rem;
+    background: #ffffff;
+    font-size: 12px;
+}
+
+.country_code{
+    position: absolute;
+    top: 10.5rem;
+    border: none;
+    right: 21rem;
+    width: 4.7rem;
+    outline: none;
+    font-size: 13px;
+    background: #ffffff;
+}
+
+.country_code option {
+    background: #ffffff;
 }
