@@ -1294,24 +1294,10 @@ div[role="progressbar"] {
     color: #000;
     font-weight: 500;
     font-size: 14px;
-
 }
 
-.form-control.phone-no {
+.form-control.phone-no{
     padding-left: 5.7rem;
-}
-
-.form-control.countryCode {
-    padding-left: 5.7rem;
-    height: 45px;
-    background: #FFFFFF 0% 0% no-repeat padding-box;
-    border: 1px solid #EBEBEB;
-    border-radius: 19px;
-    opacity: 1;
-    margin: 0 0 15px;
-    color: #000;
-    font-weight: 500;
-    font-size: 14px;
 }
 
 .inner_form.large .row {
@@ -1481,6 +1467,7 @@ span {
     margin: 0px;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
 }
 
 .contact_item img {
@@ -1509,25 +1496,23 @@ span {
 
 .teambox-white {
     background: #FFFFFF 0% 0% no-repeat padding-box;
-    box-shadow: 4px 22px 54px #695F971A;
+    box-shadow: 4px 22px 54px #695f971a;
     border-radius: 30px;
-    position: fixed;
-    width: 60%;
-    left: 20%;
-    top: 10%;
+    width: 210%;
+    margin-left: -13rem;
 }
+
 
 .custom_modal.bg-pink {
     background: #FFF4F2 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
-    position: fixed;
+    position:absolute;
 }
 
 .custom_modal.sm {
-    width: 30%;
-    left: 35%;
-    top: 10%;
+    width: 95%;
+    top: -22rem;
 }
 
 .custom_modal.lg {
@@ -1536,8 +1521,6 @@ span {
     top: 10%;
     padding: 1rem;
 }
-
-
 
 .attachmentboxbody {
     padding: 10px 100px 50px 100px;
@@ -2314,25 +2297,13 @@ label span {
 }
 .input-formm{
     position: absolute;
-    top: 2.7rem;
+    top: 2.64rem;
     border: none;
     right: 19rem;
     width: 4.2rem;
-    background: #ffffff;
-    font-size: 12px;
 }
-
-.country_code{
+.custom_modal.attributes{
+    width: 104%;
     position: absolute;
-    top: 10.5rem;
-    border: none;
-    right: 21rem;
-    width: 4.7rem;
-    outline: none;
-    font-size: 13px;
-    background: #ffffff;
-}
-
-.country_code option {
-    background: #ffffff;
+    margin-top: 4rem;
 }
