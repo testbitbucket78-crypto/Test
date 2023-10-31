@@ -168,8 +168,10 @@ export class VerificationComponent implements OnInit {
             "email_id":this.email_id,
             "mobile_number":this.phone
         }
-        this.apiService.sendOtp(values).subscribe(response => {
-            console.log(response);
+        this.apiService.sendOtp(values).subscribe((response:any) => {
+            if(response.status === 200){
+                this.showToaster('! OTP Resend Successfully','success');
+            }
         });
     }
 

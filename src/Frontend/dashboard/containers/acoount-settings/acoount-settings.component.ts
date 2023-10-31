@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { repliesaccountList } from 'Frontend/dashboard/models/settings.model';
 import{ accountmodel } from 'Frontend/dashboard/models/settings.model';
-import { PhoneNumber } from 'libphonenumber-js';
 
 declare var $:any;
 
@@ -165,17 +164,27 @@ getDetailById(id: number) {
  }
 
 
-  generateQR(){
+  generateQR() {
     $("#connectWhatsappModal").modal('hide');
     $("#qrWhatsappModal").modal('show');
 
    let data = {
-      spid: this.spid
+      spid: this.spid,
+      phoneNo: this.phoneNumber
     }
-    this.apiService.craeteQRcode(data).subscribe((response) => {
-      this.qrcode = response.QRcode;
-
-  });
+    this.apiService.craeteQRcode(data).subscribe(
+      (response) => {
+        if(response) {
+          this.qrcode = response.QRcode;
+        }
+     },
+      (error) => {
+        if(error) {
+          alert('Error Generating QR Code as Connection Timed Out, Please try again!')
+          $("#qrWhatsappModal").modal('hide');
+        }
+      }
+     );
   }
 
   removeIP(index:number){
