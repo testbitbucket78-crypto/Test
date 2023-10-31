@@ -1,5 +1,5 @@
 const express = require('express')
- const web = require('./web')
+const web = require('./web')
 // const path = require('path');
 //const InMessage = require('../IncommingMessages')
 var app = express();
@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 // const { MessageMedia, Location, Contact } = require('whatsapp-web.js');
-app.get('/get',(req,res)=>{
+app.get('/get', (req, res) => {
     res.send("webjs is working")
 })
 
@@ -18,13 +18,22 @@ app.post('/craeteQRcode', async (req, res) => {
     try {
         console.log("get")
         spid = req.body.spid;
-        phoneNo=req.body.phoneNo
-        let response = await web.createClientInstance(spid,phoneNo);
-        res.send({
-            status: response.status,
-            QRcode: response.value
-        })
+        phoneNo = req.body.phoneNo
+      
+        if (web.isActiveSpidClient(spid) === false) {
+            res.send({
+                status: 410,
+                msg: "Spid Already in Used"
+            })
+        }
+        else {
+            let response = await web.createClientInstance(spid, phoneNo);
+            res.send({
+                status: response.status,
+                QRcode: response.value
+            })
 
+        }
     } catch (err) {
         console.log(err);
 
@@ -39,12 +48,12 @@ app.post('/sendMessage', async (req, res) => {
         text = req.body.text
         phoneNo = req.body.phoneNo
         let response = await web.sendMessages(spid, phoneNo, type, text, link);
-    
-       return res.send({ status: 200})
+        console.log(response)
+        return res.send({ status: response })
 
     } catch (err) {
         console.log(err);
-        return res.send({ status: 500})
+        return res.send({ status: 500 })
     }
 })
 
