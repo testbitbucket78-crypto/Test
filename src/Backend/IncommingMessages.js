@@ -169,35 +169,27 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
 
 
 async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType) {
-  //console.log(replymessage)
   try {
     var messageToSend = [];
-    const messagePromice = [];
+
     // Loop over the messages array and send each message
-    new Promise((resolve, reject) => {
-      replymessage.forEach(async (message) => {
-        // console.log("===================================")
-        // console.log("***********************************")
+    var rm = new Promise((resolve, reject) => {      
+      replymessage.forEach(async (message,index) => {
+        
         var media = message.Media
         var value = message.Value;
         var testMessage = message.Message;                  // Assuming the 'Message' property contains the message content
         var actionId = message.ActionID;                 // Assuming the 'ActionID' property contains the action ID
-        // console.log(testMessage + "____________" + value + "_________" + actionId)
-
+        
         let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
 
         // Parse the message template to get placeholders
         const placeholders = parseMessageTemplate(testMessage);
-        //console.log(placeholders.length)
         if (placeholders.length > 0) {
           // Construct a dynamic SQL query based on the placeholders
           const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=${custid}`;
-          // console.log(sqlQuery)
-          var results = await db.excuteQuery(sqlQuery, []);
-          // console.log(results)
-          var data = results[0];
-
-
+          let results = await db.excuteQuery(sqlQuery, []);
+          const data = results[0];
           placeholders.forEach(placeholder => {
             testMessage = testMessage.replace(`{{${placeholder}}}`, data[placeholder]);
           });
@@ -208,9 +200,9 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           var type = 'text';
         }
 
-        var content = await middleWare.removeTagsFromMessages(testMessage);
+        let content = await middleWare.removeTagsFromMessages(testMessage);
         var relyMsg = {
-          "replyId": message.ID,
+          "replyId":message.ID,
           "sid": sid,
           "from": from,
           "type": type,
@@ -219,34 +211,21 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           "phone_number_id": phone_number_id,
           "channelType": channelType
         }
-        messagePromice.push(new Promise((resolve, reject) => {
-          messageToSend.push(relyMsg)
+
+        messageToSend.push(relyMsg)
+        if (index === replymessage.length-1){//once everything is iterated resolve the promois
           resolve();
-        }))
-
-
-        //console.log(messageToSend)
-
+        }
       });
-      return resolve({ messageToSend: messageToSend });
 
+  });
 
-
-
-
+  rm.then(() => {
+    messageToSend=messageToSend.sort((a, b) =>( a.ID - b.ID));
+    messageToSend.forEach((message)=>{
+      messageThroughselectedchannel(message.sid,message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType)
     })
-    console.log(messageToSend)
-    setTimeout(() => {
-      Promise.all(messagePromice).then(() => {
-        messageToSend = messageToSend.sort((a, b) => (a.ID - b.ID));
-        console.log("messageToSend promice ", messageToSend)
-        messageToSend.forEach((message) => {
-          messageThroughselectedchannel(message.sid, message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType)
-        })
-      })
-      console.log("messageToSend settiwrenebw ", messageToSend)
-    }, 1000)
-    console.log("messageToSend 1000 ", messageToSend)
+  });   
   } catch (err) {
     console.log(err)
   }
