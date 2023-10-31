@@ -21,7 +21,7 @@ providers: [ToolbarService, LinkService, ImageService, HtmlEditorService]
 
 export class TeamboxComponent implements  OnInit {
 
-	private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://65.0.219.162:3010/');
+	private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://13.126.146.43:3010/');
 
 	incomingMessage: string = '';
 
@@ -817,7 +817,9 @@ ToggleAttachmentBox(){
 							if(msgjson.updateMessage)
 							{
 								this.getAllInteraction();
-
+							}
+							else if(msgjson.message) {
+								this.showToaster("Please Scan QR code from Account Settings first than try again! : "+ msgjson.message,'error');
 							}						
 						}
 					}
@@ -1563,9 +1565,9 @@ blockCustomer(selectedInteraction:any){
 	this.apiService.blockCustomer(bodyData).subscribe(ResponseData =>{
 		this.selectedInteraction['isBlocked']=selectedInteraction.isBlocked==1?0:1
 		if(selectedInteraction.isBlocked==1){
-			this.showToaster('Conversations is Unblocked','success')
-		}else{
 			this.showToaster('Conversations is Blocked','success')
+		}else{
+			this.showToaster('Conversations is UnBlocked','success')
 		}
 		
 	});
@@ -1597,7 +1599,6 @@ handelDeleteConfirm(){
 		InteractionId:this.selectedInteraction.InteractionId
 	}
 	this.apiService.deleteInteraction(bodyData).subscribe(async response =>{
-			//console.log(response)
 			this.showToaster('Conversations deleted...','success')
 	});	
 }
