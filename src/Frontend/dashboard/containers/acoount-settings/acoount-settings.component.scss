@@ -95,6 +95,11 @@
     border-radius: 40%;
    }
 
+   .card-desc img {
+    box-shadow: none;
+    padding: 5px
+   }
+
    .account-modal{
     background: #FFF4F2;
     width: 380px;
@@ -229,7 +234,7 @@
    }
 
    .whatsWebSetting-modal{
-    width: 700px;
+    min-width: 700px;
     min-height: 500px;
     border-radius: 30px;
    }

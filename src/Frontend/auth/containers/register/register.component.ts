@@ -58,10 +58,10 @@ export class RegisterComponent implements OnInit {
 
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) {
         this.registerForm = this.formBuilder.group({
-            name: new FormControl('', [Validators.required,Validators.pattern('[a-zA-Z ]*')]),
-            mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
-            country_code: [''],
-            email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
+            name: new FormControl('', [Validators.required]),
+            mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),Validators.maxLength(15)])),
+            country_code: ['IN +91'],
+            email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1),Validators.maxLength(50)])])),
             password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
             confirmPassword: ['', Validators.required]}, { validator: this.passwordMatchValidator });
            
@@ -88,12 +88,12 @@ export class RegisterComponent implements OnInit {
 
 // Function to format the phone number using libphonenumber-js
 formatPhoneNumber() {
-  const phoneNumber = this.registerForm.get('mobile_number')?.value;
-  const countryCode = this.registerForm.get('country_code')?.value;
+  let phoneNumber = this.registerForm.get('mobile_number')?.value;
+  let countryCode = this.registerForm.get('country_code')?.value;
 
   if (phoneNumber && countryCode) {
-    const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
-    const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
+    let phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
+    let formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
 
     if (formattedPhoneNumber) {
       this.registerForm.get('mobile_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
@@ -111,14 +111,7 @@ formatPhoneNumber() {
 
         let registerData = {
             name:this.registerForm.get('name')?.value, 
-            mobile_number:{
-                number: this.registerForm.get('mobile_number')?.value,
-                internationalNumber:'+' + this.registerForm.get('mobile_number')?.value,
-                nationalNumber: this.registerForm.get('mobile_number')?.value,
-                e164Number:'+' + this.registerForm.get('mobile_number')?.value,
-                countryCode: this.registerForm.get('country_code')?.value,
-                dialCode: this.registerForm.get('country_code')?.value
-                }, 
+            mobile_number:this.registerForm.get('mobile_number')?.value, 
             country_code:this.registerForm.get('country_code')?.value, 
             email_id:this.registerForm.get('email_id')?.value, 
             password:this.registerForm.get('password')?.value, 
@@ -130,16 +123,19 @@ formatPhoneNumber() {
         if (this.registerForm.valid) {
             sessionStorage.setItem('formValues', JSON.stringify(registerData));
             sessionStorage.setItem('otpfieldEmailvalue',registerData.email_id);
-            sessionStorage.setItem('otpfieldMobilevalue',registerData.mobile_number.internationalNumber);
+            sessionStorage.setItem('otpfieldMobilevalue',registerData.mobile_number);
             
             var idfs={
                 "email_id":registerData.email_id,
                 "mobile_number":registerData.mobile_number
             }
             this.apiService.sendOtp(idfs).subscribe(response => {
-                console.warn("registerdone! ", response)
-                console.log(response);
-                this.router.navigate(['verification'])
+                if(response) {
+                    console.warn("registerdone! ", response)
+                    console.log(response);
+                    this.router.navigate(['verification'])
+                }
+             
             });
 
         }
@@ -147,8 +143,7 @@ formatPhoneNumber() {
         if (this.registerForm.invalid){
             return
         }
-        
-        // alert("Success")
+
     }
 
 

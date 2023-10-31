@@ -666,7 +666,7 @@
 						<div class="form-floating">
 							<div class="d-flex ss">
 								<select class="input-form" id="country_code" formControlName="country_code">
-									<option [value]="countryCode.split(' ')[1]" *ngFor="let countryCode of countryCodes; let i = index">
+									<option [selected]="editContact.get('countryCode')?.value" *ngFor="let countryCode of countryCodes; let i = index">
 										{{ countryCode }}
 									</option>
 									</select>
@@ -674,11 +674,11 @@
 										name="Phone_number" maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$"
 										onKeyPress="return /^[0-9]$/.test(event.key)"
 										[ngClass]="{'is-invalid' :editContact.controls.Phone_number.touched && editContact.controls.Phone_number.errors }" 
-									(change)="formatPhoneNumber()"> 
+									(change)="formatPhoneForEdit()"> 
 								</div>
 								<div *ngIf="editContact.controls.Phone_number.touched && editContact.controls.Phone_number.errors" 
 								class="text-danger">
-								! Phone number must be 10 digits.
+								! Phone number must be 6 to 15 digits.
 							  </div>
 						</div>
 					</div>
