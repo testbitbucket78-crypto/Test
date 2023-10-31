@@ -1248,9 +1248,15 @@
 				</div>
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Phone Number<span>*</span></label>
-					<input class="form-control" type="text" placeholder="Enter Number"
+					<select class="country_code" id="country_code" formControlName="country_code">
+						<option [selected]="countryCode === countryCodes[101]"
+							*ngFor="let countryCode of countryCodes; let i = index">
+							{{ countryCode }}
+						</option>
+					</select>
+					<input class="form-control countryCode" type="text" placeholder="Enter Number"
 						onKeyPress="return /^[\d+]$/.test(event.key)" name="Phone_number" formControlName="Phone_number"
-						id="Phone_number" />
+						id="Phone_number" (change)="formatPhoneNumber()" />
 				</div>
 				<div class="row" style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Channel<span>*</span></label>
@@ -1312,20 +1318,17 @@
 			<form class="inner_form large" (ngSubmit)="updateCustomer()">
 				<div class="row">
 					<label for="floatingInputGrid" class="required">Name*</label>
-					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text"
-						onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)" name="Name" value={{EditContactForm.Name}} />
+					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="Name" value={{EditContactForm.Name}} />
 				</div>
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Phone Number*</label>
 					<select class="input-formm" id="country_code" formControlName="country_code">
-						<option [selected]="countryCode === countryCodes[101]"
+						<option [selected]="editContact.get('countryCode')?.value"
 							*ngFor="let countryCode of countryCodes; let i = index">
 							{{ countryCode }}
 						</option>
 					</select>
-					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text"
-						onKeyPress="return /^[\d+]$/.test(event.key)" name="Phone_number"
-						value={{EditContactForm.Phone_number}} />
+					<input (input)="hangeEditContactInuts($event)" (change)="formatPhoneNumberEdit()" class="form-control phone-no" type="text" name="Phone_number" value={{EditContactForm.Phone_number}} />
 
 				</div>
 

@@ -13,7 +13,7 @@
   
   
           <div class="card-body">
-            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()"  >
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
               <div class="name-number">
                 <div class="" >
                   <label for="floatingInputGrid">Name</label>
@@ -71,7 +71,7 @@
                 <div class="form-group  custom-control custom-checkbox">
                   <input type="checkbox" (change)="onCheckboxChange($event.target.checked)" class="checkbox1">
                   <div class="accept">
-                   <p>I accept the</p> <a href="#" target="_blank">Terms & Conditions</a> </div>
+                   <p>I accept the</p> <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> </div>
                   </div>
                  
                 <div class="checkbox2  " id="chbo">
@@ -91,27 +91,27 @@
               </div>
             </form>
                       
-          <div *ngIf= "submitted && registerForm.controls.name.errors" class="text-danger">
+          <div *ngIf="submitted && registerForm.controls.name.errors" class="text-danger">
             ! Name required
           </div>
-          <div *ngIf= "submitted && registerForm.controls.mobile_number.errors" class="text-danger">
-            ! Phone number must be 10 digits
+          <div *ngIf="submitted && registerForm.controls.mobile_number.errors" class="text-danger">
+            ! Phone number must between 6 to 15 digits
           </div>
           <br>
-          <div *ngIf= "submitted && registerForm.controls.email_id.errors" class="text-danger">
+          <div *ngIf="submitted && registerForm.controls.email_id.errors" class="text-danger">
             ! Invalid Email Id
           </div>
           <br>
           <!-- <div *ngIf= "submitted && registerForm.controls.password.errors" class="text-danger">
             ! password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters
           </div> -->
-            <div *ngIf=" registerForm.get('password')!.hasError('required')" class="text-danger">
+            <div *ngIf="submitted && registerForm.controls.password.errors" class="text-danger">
             ! Password is required
           </div>
-          <div *ngIf=" registerForm.get('password')!.hasError('pattern')" class="text-danger">
+          <div *ngIf="submitted && registerForm.controls.password.errors" class="text-danger">
             ! Password must contain at least eight characters,<br> at least one number and both lower and uppercase letters<br> and special characters.
           </div>
-          <div *ngIf=" registerForm.get('confirmPassword')!.hasError('required')" class="text-danger">
+          <div *ngIf="submitted && registerForm.controls.confirmPassword.errors" class="text-danger">
             ! Confirm Password is required
                 </div>
           <div *ngIf=" registerForm.hasError('mismatch')" class="text-danger">
