@@ -10,7 +10,6 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
-import { base64ToFile } from 'ngx-image-cropper';
 declare var $: any;
 @Component({
 selector: 'sb-teambox',
@@ -725,48 +724,22 @@ ToggleAttachmentBox(){
 		}
 	}
 	
-	// saveFiles(files: FileList) {
-	// 	if(files[0]){
-	// 	let imageFile = files[0]
-	// 	this.mediaType = files[0].type
-	// 	const data = new FormData();
-	// 	data.append('dataFile',imageFile ,imageFile.name);
-	// 	this.apiService.uploadfile(data).subscribe(uploadStatus =>{
-	// 		let responseData:any = uploadStatus
-	// 		if(responseData.filename){
-	// 			this.messageMeidaFile = responseData.filename
-	// 			this.showAttachmenOption=false;
-	// 		}
-	// 	})
-	//   }
-	// }
-
 	saveFiles(files: FileList) {
-		if (files[0]) {
-			console.log('*******');
-		  const imageFile = files[0]
-		  this.mediaType = files[0].type
-			console.log('imageFile: ' + imageFile);
-			console.log('mediaType: ' + this.mediaType);
-		  const reader = new FileReader()
-		  reader.onload = (event: any) => {
-			const base64Data = event.target.result.split(',')[1];
-			console.log(base64Data) // Extracting base64 data
-			this.apiService.uploadfile(base64Data).subscribe(uploadStatus => {
-			  let responseData: any = uploadStatus
-			  if(responseData.filename){
+		if(files[0]){
+		let imageFile = files[0]
+		this.mediaType = files[0].type
+		const data = new FormData();
+		data.append('dataFile',imageFile ,imageFile.name);
+		this.apiService.uploadfile(data).subscribe(uploadStatus =>{
+			let responseData:any = uploadStatus
+			if(responseData.filename){
 				this.messageMeidaFile = responseData.filename
+				console.log(this.messageMeidaFile);
 				this.showAttachmenOption=false;
 			}
-			});
-		  };
-	  
-		  reader.readAsDataURL(imageFile);
-		}
+		})
 	  }
-	  
-			
-
+	}
 
 
 	ngOnInit() {
@@ -818,8 +791,8 @@ ToggleAttachmentBox(){
 							{
 								this.getAllInteraction();
 							}
-							else if(msgjson.message) {
-								this.showToaster("Please Scan QR code from Account Settings first than try again! : "+ msgjson.message,'error');
+							else if(msgjson.status === 200) {
+								this.showToaster("Please Scan QR code from Account Settings first than try again!",'error');
 							}						
 						}
 					}

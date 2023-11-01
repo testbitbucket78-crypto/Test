@@ -40,6 +40,10 @@ export class AcoountSettingsComponent implements OnInit {
   qrcode:any;
   link:any;
 
+  errorMessage = '';
+	successMessage = '';
+	warnMessage = '';
+
   
   INGrMessage=[0];
   OutGrMessage=[0];
@@ -66,7 +70,27 @@ export class AcoountSettingsComponent implements OnInit {
     this.getwhatsapp();
   }
 
-
+  showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}	
+		else if(type=='warn'){
+			this.warnMessage=message;
+		}
+		else if(type=='error'){
+			this.errorMessage=message;
+		}
+	
+		setTimeout(() => {
+			this.hideToaster()
+		}, 5000);
+		
+	}
+	hideToaster(){
+		this.successMessage='';
+		this.warnMessage='';
+		this.errorMessage='';
+	}
 
 
 
@@ -177,10 +201,19 @@ getDetailById(id: number) {
         if(response) {
           this.qrcode = response.QRcode;
         }
+
+        if (response.status === 201) {
+          this.showToaster('Clinet is ready','success');
+        }
      },
       (error) => {
+        if(error.status === 410) {
+          this.showToaster('user is already in use','error');
+          $("#qrWhatsappModal").modal('hide');
+        }
+
         if(error) {
-          alert('Error Generating QR Code as Connection Timed Out, Please try again!')
+          this.showToaster('Error Generating QR Code as Connection Timed Out, Please try again!','error');
           $("#qrWhatsappModal").modal('hide');
         }
       }
