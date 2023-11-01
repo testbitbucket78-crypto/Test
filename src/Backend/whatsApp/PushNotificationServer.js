@@ -6,6 +6,17 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 var clients = {};
+function parseJSONObject(jsonString)
+{
+  try {
+    var o = JSON.parse(jsonString);
+    if (o && typeof o === "object") {
+        return o;
+    }
+}
+catch (e) { }
+return false;
+}
 // Handle WebSocket connections
 wss.on('connection', (ws) => {
   const data = {
@@ -14,12 +25,12 @@ wss.on('connection', (ws) => {
   };
   ws.send(JSON.stringify(data));
   // Handle incoming messages from the client
-  ws.on('message', (message) => {
+  ws.on('message', (msg,isBinary) => {
     try {
-      let msgjson = JSON.parse(JSON.parse(message));
-      console.log(message);
-      console.log('-----------------------------------');
-      console.log(msgjson);
+      var message = isBinary ? msg : msg.toString();
+      let msgjson = parseJSONObject(message);
+      if(msgjson === false)
+      {msgjson =  parseJSONObject(JSON.parse(message));}
       if (msgjson["UniqueSPPhonenumber"]) {
         clients[msgjson["UniqueSPPhonenumber"]] = ws;
         // console.log("UniqueSPPhonenumber 1", clients)
@@ -34,11 +45,7 @@ wss.on('connection', (ws) => {
         // console.log("wsclient", "---", wsclient)
         // console.log(clients)
         if (wsclient != undefined) {
-          console.log("wsclient != undefined")
-          console.log(message);
           wsclient.send(JSON.stringify(message));
-          console.log('message sent');
-
         }
 
       }
