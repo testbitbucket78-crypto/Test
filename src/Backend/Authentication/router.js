@@ -4,6 +4,7 @@ const db = require("../dbhelper");
 const userController=require('./user.js');
 const indexController=require('./index.js');
 const awsHelper = require('../awsHelper');
+const path = require("path");
 
 router.get('/users',userController.getUser);
 router.get('/users/:id',userController.getUserById);
@@ -84,22 +85,30 @@ var upload = multer({ storage: storage });
 router.post('/uploadfile/',upload.single('dataFile'), async (req, res)=> {
    try{
 const file = req.file;
+
 if (!file) {
 res.send({message:'File no uplaoded...'})
 }
-const url = `${req.protocol}://${req.get('host')}/uploads/${file.filename}`
-res.send({filename:url})
-// let awsres = await awsHelper.uploadStreamToAws('/teambox_img.jpg', dataFile)
+const url =  path.join(__dirname, `/uploads/${file.filename}`)//`${req.protocol}://${req.get('host')}/uploads/${file.filename}`
 
-// console.log(awsres.value.Location)
+console.log(url)
+
+ let awsres = await awsHelper.uploadFileToAws('localtoAws/teambox_img.jpg', url)
+
+console.log("awsres")
+//console.log(awsres.value.Location)
+await fs.unlink(url);
+console.log(url)
+res.send({filename:awsres.value.Location})
+
 }catch(err){
-   //console.log(err)
+   console.log(err)
    res.send({err:err})
 }
 });
 
 router.get('/uploads/:fileName', async (req, res)=> {
-
+console.log("/uploads/:fileName")
   fs.readFile('./uploads/'+req.params.fileName, function(err, data) {
      if (!err){ 
      const file = './uploads/'+req.params.fileName

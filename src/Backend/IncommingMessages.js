@@ -221,14 +221,40 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
   });
 
   rm.then(() => {
-    messageToSend=messageToSend.sort((a, b) =>( a.ID - b.ID));
+    console.log("Before sort");
     messageToSend.forEach((message)=>{
-      messageThroughselectedchannel(message.sid,message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType)
-    })
-  });   
+      console.log(message.replyId);
+    });
+    messageToSend=messageToSend.sort((a, b) =>( a.replyId - b.replyId));
+    console.log("After sort");
+    messageToSend.forEach((message)=>{
+      console.log(message.replyId);
+    });
+
+    var i=1;
+    function myLoop(i) {
+      setTimeout(function() {
+        console.log('hello' ,i); //  your code here   
+        var message=messageToSend[i-1]  
+        messageThroughselectedchannel(message.sid,message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType);           
+       i++;
+        if (i<(messageToSend.length)-1) myLoop(i);   //  decrement i and call myLoop again if i > 0
+      }, 500)
+    };
+    myLoop(i);
+    // messageToSend.forEach((message)=>{
+     
+     
+      
+        
+     
+    // })
+  });
+
   } catch (err) {
     console.log(err)
   }
+
 
 }
 
