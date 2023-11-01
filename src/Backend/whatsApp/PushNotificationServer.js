@@ -17,23 +17,28 @@ wss.on('connection', (ws) => {
   ws.on('message', (message) => {
     try {
       let msgjson = JSON.parse(JSON.parse(message));
+      console.log(message);
+      console.log('-----------------------------------');
+      console.log(msgjson);
       if (msgjson["UniqueSPPhonenumber"]) {
-        console.log("UniqueSPPhonenumber", UniqueSPPhonenumber)
         clients[msgjson["UniqueSPPhonenumber"]] = ws;
-        console.log("UniqueSPPhonenumber 1", clients)
+        // console.log("UniqueSPPhonenumber 1", clients)
         console.log('Active clients : ' + Object.keys(clients).length);
       }
       else if (msgjson["displayPhoneNumber"]) {
 
         //console.log("displayPhoneNumber", displayPhoneNumber)
         console.log("found message for number : " + msgjson["displayPhoneNumber"]);
-        console.log(clients)
+        // console.log(clients)
         let wsclient = clients[msgjson["displayPhoneNumber"]];
-        console.log("wsclient", "---", wsclient)
-        console.log(clients)
+        // console.log("wsclient", "---", wsclient)
+        // console.log(clients)
         if (wsclient != undefined) {
-          console("wsclient != undefined")
-          wsclient.send(message);
+          console.log("wsclient != undefined")
+          console.log(message);
+          wsclient.send(JSON.stringify(message));
+          console.log('message sent');
+
         }
 
       }

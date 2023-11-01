@@ -4,7 +4,8 @@
 
 export const environment = {
     production: false,
-    baseUrl: 'https://authapi.sampanatechnologies.com'
+    // baseUrl: 'https://authapi.sampanatechnologies.com'
+    baseUrl: 'http://localhost:3003'
 };
 
 /*
