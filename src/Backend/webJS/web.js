@@ -25,11 +25,11 @@ async function createClientInstance(spid, phoneNo) {
     try {
       const client = new Client({
         authStrategy: new LocalAuth(),
-        puppeteer:{
+        puppeteer: {
           headless: true,
-         // executablePath:  "C:/Program Files/Google/Chrome/Application/chrome.exe",
-         
-         args: ['--no-sandbox']
+          executablePath: "/usr/bin/google-chrome-stable",
+
+          args: ['--no-sandbox']
         },
         authStrategy: new LocalAuth({
           clientId: spid
@@ -38,61 +38,93 @@ async function createClientInstance(spid, phoneNo) {
       console.log("client created");
 
       client.on('qr', (qr) => {
-        console.log('QR RECEIVED', qr);
-     //   qrcode.generate(qr, { small: true });
-        resolve({ status: 200, value: qr });
+        try {
+          console.log('QR RECEIVED', qr);
+          notify.NotifyServer(phoneNo, false, 'Rescan QR')
+          //         qrcode.generate(qr, { small: true });
+          resolve({ status: 200, value: qr });
+        } catch (onerr) {
+          console.log("client on err")
+        }
       });
       client.on('ready', () => {
 
-        if (phoneNo != client.info.wid.user) {
-          console.log("wrong Number")
-          notify.NotifyServer(phoneNo,false,'Wrong Number')
-          return resolve({ status: 404, value: 'Wrong Number' });
-          //client.destroy()
-
+        try {
+          console.log('Client is ready!');
+          notify.NotifyServer(phoneNo, false, 'Client is ready!')
+          return resolve({ status: 201, value: 'Client is ready!' });
+        } catch (readyerr) {
+          console.log("client ready err")
         }
-        console.log('Client is ready!');
-        notify.NotifyServer(phoneNo,false,'Client is ready!')
-        return resolve({ status: 200, value: 'Client is ready!' });
-
+        // }
       });
 
       client.initialize();
 
+
       client.on('message', async message => {
-        console.log(message.body);
-        // Get the profile of the sender of the message
-        const contact = await message.getContact();
-        console.log('Sender Name:', contact);
-        saveInMessages(message);
+        try {
+          console.log(message.body);
+          // Get the profile of the sender of the message
+          const contact = await message.getContact();
+          console.log('Sender Name:', contact);
+          saveInMessages(message);
+        } catch (messageerr) {
+          console.log("client message err")
+        }
       });
 
       client.on('authenticated', (session) => {
-        console.log("client authenticated");
-        console.log("session");
-        console.log(session)
-        clientSpidMapping = {
-          [spid]: client
+        try {
+          console.log("client authenticated");
+     
+          clientSpidMapping = {
+            [spid]: client
+          }
+          notify.NotifyServer(phoneNo, false, 'Client Authenticated')
+        
+        } catch (authenticatederr) {
+          console.log("client authenticated err")
         }
-        // console.log(clientSpidMapping);
 
       });
+      client.on('disconnected', (reason) => {
+        
+        try {
+          console.log("disconnected");
+          if (clientSpidMapping.hasOwnProperty(spid)) {
+            console.log(clientSpidMapping[[spid]])
+            delete clientSpidMapping[spid];
+
+            console.log(`Removed ${spid} from clientSpidMapping.`);
+
+          }
+          notify.NotifyServer(phoneNo, false, 'Client is disconnected!')
+         
+        } catch (error) {
+          console.log("disconnect error")
+
+        }
+      })
     } catch (err) {
-      console.log("client err", err);
-      reject(err); // Reject the Promise in case of an error
+      console.log("createClientInstance err");
+      
+      return ({ status: 500, value: err });
     }
   })
-  // .then(result => {
-  //     // Handle success here
-  //     console.log("Promise resolved with result:", result);
-  // })
-  // .catch(error => {
-  //     // Handle errors here
-  //     console.error('Error createClientInstance:', error);
-  // });
+
 
 }
 
+
+function isActiveSpidClient(spid) {
+
+  if (!clientSpidMapping[spid]) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 
 async function sendMessages(spid, endCust, type, text, link) {
@@ -102,11 +134,10 @@ async function sendMessages(spid, endCust, type, text, link) {
     if (client) {
       console.log("if");
       let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link);
+      return '200';
     } else {
       console.log("else");
-      let clientResonce = await createClientInstance(spid)
-      client = clientSpidMapping[[spid]];
-      let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link);
+      return '401'
     }
   } catch (err) {
     console.log(err)
@@ -118,7 +149,6 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link) {
     console.log("messagesTypes")
 
     if (type === 'text') {
-      //console.log(text)
       client.sendMessage(endCust + '@c.us', text);
     }
     if (type === 'image') {
@@ -152,13 +182,6 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link) {
 
 
 async function saveInMessages(message) {
-  // console.log(message)
-  // console.log(message.from); //from
-  // console.log(message.body); //firstMessage //message_text
-  // console.log(message.id.id); //phone_number_id
-  // console.log(message.to); //display_phone_number //phoneNo
-  // console.log(message.type)//message_media //Type
-  // console.log(message._data.notifyName) //contactName
   try {
     let message_text = message.body   //firstMessage
     let from = (message.from).replace(/@c\.us$/, '')   //phoneNo
@@ -172,8 +195,7 @@ async function saveInMessages(message) {
 
       message_media = media.data
     }
-    //[phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type])
-    //from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName
+   
     let saveMessage = await saveIncommingMessages(from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName);
     console.log("saveMessage")
     console.log(saveMessage)
@@ -214,7 +236,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   if (message_text.length > 0) {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?)"
     var saveMessage = await db.excuteQuery(query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, Type]);
-
+    notify.NotifyServer(display_phone_number, true);
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
 
@@ -230,8 +252,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
     try {
       console.log(from, phone_number_id, display_phone_number, type)
 
-      //TODO: NEED TO get SID from DB using Display phone number.
-      //let sid = query to get using display phone number.
+    
       let findSpid = 'select SP_ID from user where mobile_number=?'
       let sid = await db.excuteQuery(findSpid, [display_phone_number])
       let awsDetails = ""
@@ -251,7 +272,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
       }
       //TODO: Save the AWS url to DB in messages table using SP similar to webhook_2 SP. 
 
-      notify.NotifyServer(display_phone_number,true);
+      notify.NotifyServer(display_phone_number, true);
 
       resolve({ value: awsDetails.value.Location });
 
@@ -271,8 +292,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
   if (saveMessage.length > 0) {
-    console.log(display_phone_number + " .." + message_text)
-    //notify.NotifyServer(display_phone_number);  //// we have to active this
+   
     const data = saveMessage;
     // Extracting the values
     const extractedData = {
@@ -316,4 +336,4 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
 
 
-module.exports = { createClientInstance, sendMessages }
+module.exports = { createClientInstance, sendMessages, isActiveSpidClient }
