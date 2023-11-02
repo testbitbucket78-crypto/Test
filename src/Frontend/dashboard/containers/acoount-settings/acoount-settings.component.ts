@@ -101,16 +101,16 @@ export class AcoountSettingsComponent implements OnInit {
 getwhatsapp() { 
   this.apiService.getWhatsAppDetails(this.spid).subscribe(response => {
     this.whatsAppDetails=response.whatsAppDetails;
-    this.numberCount = response.channelCounts[0]?.count_of_channel_id;
+    this.numberCount = response.channelCounts[0].count_of_channel_id;
     // this.whatsAppDetails.forEach(detail => {
     //   this.id.push(detail.id);
     // });
-    console.log(this.id);
+    // console.log(this.id);
     
 
-    // this.channel=this.whatsAppDetails[0].channel_status;
-    // this.connectionn=this.whatsAppDetails[0].connection_date;
-    // this.wave=this.whatsAppDetails[0].WAVersion;
+    this.channel=this.whatsAppDetails[0].channel_status;
+    this.connectionn=this.whatsAppDetails[0].connection_date;
+    this.wave=this.whatsAppDetails[0].WAVersion;
 
    
     console.log(this.whatsAppDetails);
@@ -138,14 +138,15 @@ getDetailById(id: number) {
 
 // savedata() { 
  
-//   this.dataaa.SP_ID = this.spid;
-//   this.dataaa.phone_type = this.phone_type;
-//   this.dataaa.import_conversation = this.import_conversation;
+//   this.dataaa.spid = this.spid;
+//   this.dataaa.channel_id = this.channel_id;
+//   this.dataaa.channel_status = this.channel_status;
+//   this.dataaa.connected_id = this.connection_id;
 
 
 //   this.apiService.addWhatsAppDetails(this.dataaa).subscribe
 //   ((resopnse :any) => {
-//     if(resopnse.status ==200) {
+//     if(resopnse.status === 200) {
 //      this.showToaster('Your settings saved sucessfully','success');
 //     }
 
@@ -157,12 +158,7 @@ getDetailById(id: number) {
 //   })
 
 
-// }OutGrMessage=[0];
-// online_status=[1];
-// InMessageStatus=[1];
-// OutMessageStatus=[0];
-// serviceMonetringTool=[0];
-// syncContact=[1];
+// }
 
  saveaccountsettingState() {
    
@@ -198,23 +194,29 @@ getDetailById(id: number) {
     }
     this.apiService.craeteQRcode(data).subscribe(
       (response) => {
-        if(response) {
+        if(response.status===200) {
           this.qrcode = response.QRcode;
+          // this.savedata(); 
         }
 
         if (response.status === 201) {
-          this.showToaster('Clinet is ready','success');
-        }
-     },
-      (error) => {
-        if(error.status === 410) {
-          this.showToaster('user is already in use','error');
+          this.showToaster('! QR Code is Generated','success');
           $("#qrWhatsappModal").modal('hide');
         }
 
-        if(error) {
-          this.showToaster('Error Generating QR Code as Connection Timed Out, Please try again!','error');
+        if(response.status === 410) {
           $("#qrWhatsappModal").modal('hide');
+          this.showToaster('This user is already in use','error');
+       
+        }
+     },
+      (error) => {
+
+
+        if(error) {
+          $("#qrWhatsappModal").modal('hide');
+          this.showToaster('Error Generating QR Code as Connection Timed Out, Please try again!','error');
+          
         }
       }
      );

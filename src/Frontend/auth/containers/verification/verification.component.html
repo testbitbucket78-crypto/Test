@@ -79,7 +79,8 @@
                     <div class="form-group d-flex align-items-center justify-content-between  ">
                         <!-- <a class="btn btn2" routerLink="/login">Submit</a> -->
                         <button class="btn btn2" type="submit"
-                            (click)="onSubmitRegisterform()">Submit</button>
+                            (click)="onSubmitRegisterform()">Submit
+                        </button>
                     </div>
 
                 </form>
@@ -92,4 +93,19 @@
 
        
     </div>
+
+    <div class="modal fade" id="successRegister" tabindex="-1" aria-labelledby="exampleModalLabel" 
+    data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog deletesmartreplies-dialog">
+        <div class="modal-content deletesmartreplies-content">
+
+            <div class="modal-body deletesmartreplies-body">
+                Your Account is Successfully Created<br /> Sign In Now
+            </div>
+            <div class="deletefile d-flex">
+                <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" routerLink="">Login</button>
+            </div>
+        </div>
+    </div>
+</div>
 </sb-layout-auth>
