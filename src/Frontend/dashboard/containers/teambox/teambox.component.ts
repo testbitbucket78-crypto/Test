@@ -285,6 +285,7 @@ countryCodes = [
 		showattachmentbox=false;
 		ShowFilerOption=false;
 		ShowContactOption=false;
+		showfilter=false;
 		AutoReplyOption=false;
 		ShowConversationStatusOption=false;
 		ShowAssignOption=false;
@@ -704,11 +705,23 @@ countryCodes = [
 	ToggleAttachmentBox(){
 		this.closeAllModal()
 		$("#attachfle").modal('show'); 
+		document.getElementById('attachfle')!.style.display = 'inherit';
 		this.dragAreaClass = "dragarea";
+		
+	}
+	sendattachfile(){
+		if(this.messageMeidaFile!==''){
+			$("#sendfile").modal('show');	
+		}else{
+			$("#sendfile").modal('hide');	
+		}
 		
 	}
 		sendMediaMessage(){
 			this.sendMessage()
+			this.closeAllModal();
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
 		}
 		onFileChange(event: any) {
 			let files: FileList = event.target.files;
@@ -755,10 +768,13 @@ countryCodes = [
 				let responseData:any = uploadStatus
 				if(responseData.filename){
 					this.messageMeidaFile = responseData.filename
+					this.sendattachfile();
 					this.showAttachmenOption=false;
 				}
 			})
+			
 		  }
+		  
 		}
 
 		// saveFiles(files: FileList) {
@@ -811,6 +827,7 @@ countryCodes = [
 			this.getquickReply()
 			this.getTemplates()
 			this.getAttributeList()
+			this.sendattachfile()
 
 			// this.chatEditor.addEventListener('keydown', this.onEditorKeyDown.bind(this));
 		
@@ -1302,7 +1319,8 @@ countryCodes = [
 
 	}
 	toggleFilerOption(){
-		this.ShowFilerOption =!this.ShowFilerOption
+		$("#addfilter").modal('show');
+		// this.showfilter=!this.showfilter;
 	}
 
 	toggleContactOption(){
@@ -1935,7 +1953,7 @@ formatPhoneNumber() {
 
 	sendMessage(){
 		
-		if (!this.chatEditor.value || !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+		if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
 			this.showToaster('! Please type your message first','error');
 			return; 
 		}
@@ -2061,6 +2079,19 @@ formatPhoneNumber() {
 		}
 	  })
   }
+
+  	routeToSettings() {
+		this.closeAllModal();
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
+		this.router.navigate(['dashboard/setting']);
+	  }
+
+	  addfilters() {
+		this.closeAllModal();
+		$('body').removeClass('modal-hide');
+		$('.modal-backdrop').remove();
+	  }
 
 
 

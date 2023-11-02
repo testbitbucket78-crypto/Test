@@ -184,7 +184,5 @@ export class TeamboxService {
   }
   public getAttributeList(SP_ID: any) {
     return this.http.get(`https://contactapi.sampanatechnologies.com/columns/${SP_ID}`);
+} 
 }
-  
-}
- 
