@@ -1,5 +1,7 @@
 <sb-layout-dashboard>
 	<sb-top-nav title="Teambox"></sb-top-nav>
+
+
 	<div class="row team-box-page" id="team-box-page" (click)="hideAllOpenModal($event)">
 		<div class="toaster" (click)="hideToaster()">
 			<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
@@ -10,33 +12,33 @@
 
 			<div class="col-4 team-box">
 
-									<!-- filter-popup -->
+				<!-- filter-popup -->
 
 	 <div class="modal fade" tabindex="-1" id="addfilter" #addfilter data-bs-backdrop="dynamic" role="dialog">
 		<div class="auto-filter modal-dialog " role="document">
-			<div class="modal-content">
+						<div class="modal-content">
 				<div class="modal-body">
 					<div id="pop-filter" class="popup-dialog">
-						<p class="label">Filter</p>
+							<p class="label">Filter</p>
 
-						<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''"
-							(click)="filterInteraction('All')"><span>All</span></p>
-						<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''"
-							(click)="filterInteraction('Unassigned')"><span>Unassigned</span></p>
-						<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''"
-							(click)="filterInteraction('Mine')"><span>Mine</span></p>
-						<p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
-							(click)="filterInteraction('Open')"><span>Open</span></p>
-						<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''"
-							(click)="filterInteraction('Resolved')"><span>Resolved</span></p>
-						<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''"
-							(click)="filterInteraction('Mentioned')"><span>Mentioned</span></p>
-						<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''"
-							(click)="filterInteraction('Pinned')"><span>Pinned</span></p>
+							<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''"
+								(click)="filterInteraction('All')"><span>All</span></p>
+							<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''"
+								(click)="filterInteraction('Unassigned')"><span>Unassigned</span></p>
+							<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''"
+								(click)="filterInteraction('Mine')"><span>Mine</span></p>
+							<p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
+								(click)="filterInteraction('Open')"><span>Open</span></p>
+							<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''"
+								(click)="filterInteraction('Resolved')"><span>Resolved</span></p>
+							<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''"
+								(click)="filterInteraction('Mentioned')"><span>Mentioned</span></p>
+							<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''"
+								(click)="filterInteraction('Pinned')"><span>Pinned</span></p>
+						</div>
+
+</div>
 					</div>
-				
-						</div>
-						</div>
 						</div>
 						</div> 
 
@@ -52,9 +54,8 @@
 						<div class="toggle-box" (click)="toggleFilerOption()"><img
 								src="assets/img/teambox/filter-icon.svg"></div>
 
-								
+
 					</div>
-					
 					<button class="new-message-btn" (click)="openaddMessage(messageadd)"><img class="icon"
 							src="/assets/img/teambox/add.svg" /> New Message</button>
 				</div>
@@ -113,11 +114,16 @@
 										</div>
 
 									</div>
+
+
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+
+
+
 			</div>
 
 			<div class="col-5 inner_section">
@@ -689,52 +695,58 @@
 									</div>
 								</div>
 							</div>
-						</div>
-					</div>
-					
-				</div>
+
+</div>
 			</div>
 		</div>
-	</div>
+						</div>
 
 
-	<div    class="modal fade" tabindex="-1" id="sendfile" #sendfile data-bs-backdrop="static" role="dialog">
+					<div    class="modal fade" tabindex="-1" id="sendfile" #sendfile data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
-	<div  *ngIf="messageMeidaFile!=''"  class="message_meida_preview">
-		<div class="modal-header">
-			<div class="modal-header-left">
-			</div>
-			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-						src="assets/img/teambox/icon-close.svg"></p>
-			</div>
+					<div  *ngIf="messageMeidaFile!=''"  class="message_meida_preview">
+						<div class="modal-header">
+							<div class="modal-header-left">
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										src="assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+						<div class="modal-body message_meida_preview_body">
+							<img class="preview_icon" *ngIf="this.mediaType == 'video/mp4'"
+								src="/assets/img/teambox/video_preview.png">
+							<img class="preview_icon" *ngIf="this.mediaType == 'text/plain'"
+								src="/assets/img/teambox/doc_preview.png">
+							<img class="preview_icon" *ngIf="this.mediaType == 'application/pdf'"
+								src="/assets/img/teambox/doc_preview.png">
+
+							<img class="mediaFile" *ngIf="this.mediaType == 'image/jpeg'" src={{this.messageMeidaFile}}>
+							<img class="mediaFile" *ngIf="this.mediaType == 'image/jpg'" src={{this.messageMeidaFile}}>
+							<img class="mediaFile" *ngIf="this.mediaType == 'image/png'" src={{this.messageMeidaFile}}>
+							<img class="mediaFile" *ngIf="this.mediaType == 'image/webp'" src={{this.messageMeidaFile}}>
+						</div>
+
+
+						<div class="input_group_btn">
+							<button type="button" class="submit-btn" (click)="sendMediaMessage()">Send</button>
+						</div>
+</div>
+</div>
+					
+					
+					</div>
 		</div>
-		<div class="modal-body message_meida_preview_body">
-			<img class="preview_icon" *ngIf="this.mediaType == 'video/mp4'"
-				src="/assets/img/teambox/video_preview.png">
-			<img class="preview_icon" *ngIf="this.mediaType == 'text/plain'"
-				src="/assets/img/teambox/doc_preview.png">
-			<img class="preview_icon" *ngIf="this.mediaType == 'application/pdf'"
-				src="/assets/img/teambox/doc_preview.png">
-
-			<img class="mediaFile" *ngIf="this.mediaType == 'image/jpeg'" src={{this.messageMeidaFile}}>
-			<img class="mediaFile" *ngIf="this.mediaType == 'image/jpg'" src={{this.messageMeidaFile}}>
-			<img class="mediaFile" *ngIf="this.mediaType == 'image/png'" src={{this.messageMeidaFile}}>
-			<img class="mediaFile" *ngIf="this.mediaType == 'image/webp'" src={{this.messageMeidaFile}}>
-		</div>
+	</div>
+	</div>
+	</div>
+	
 
 
-		<div class="input_group_btn">
-			<button type="button" class="submit-btn" (click)="sendMediaMessage()">Send</button>
-		</div>
 
-	</div>
-	</div>
-	</div>
-	</div>
-	</div>
+
 
 
 	<!-- atrribute-modal -->
@@ -1669,6 +1681,6 @@
 			</div>
 		</div>
 	</div>
-	
+
 
 </sb-layout-dashboard>

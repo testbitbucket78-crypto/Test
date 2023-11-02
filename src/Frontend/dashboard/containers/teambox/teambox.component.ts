@@ -1,715 +1,715 @@
-	import { Component,AfterViewInit, OnInit,Input, ViewChild, ElementRef, HostListener  } from '@angular/core';
-	import { Router } from '@angular/router';
-	import { HttpClient, HttpHeaders, HttpBackend, HttpParams } from '@angular/common/http';
-	import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-	import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-	import { TeamboxService } from './../../services';
-	import { WebsocketService } from '../../services/websocket.service';
-	import { WebSocketSubject } from 'rxjs/webSocket';
-	import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { Component,AfterViewInit, OnInit,Input, ViewChild, ElementRef, HostListener  } from '@angular/core';
+import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders, HttpBackend, HttpParams } from '@angular/common/http';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TeamboxService } from './../../services';
+import { WebsocketService } from '../../services/websocket.service';
+import { WebSocketSubject } from 'rxjs/webSocket';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
-	import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
-	import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
+import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { base64ToFile } from 'ngx-image-cropper';
 import { isNullOrUndefined } from 'util';
 declare var $: any;
-	@Component({
-	selector: 'sb-teambox',
-	templateUrl: './teambox.component.html',
-	styleUrls: ['./teambox.component.scss'],
-	providers: [ToolbarService, LinkService, ImageService, HtmlEditorService]
-	})
+@Component({
+selector: 'sb-teambox',
+templateUrl: './teambox.component.html',
+styleUrls: ['./teambox.component.scss'],
+providers: [ToolbarService, LinkService, ImageService, HtmlEditorService]
+})
 
-	export class TeamboxComponent implements  OnInit {
+export class TeamboxComponent implements  OnInit {
 
-		private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://65.0.219.162:3010/');
+	private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://65.0.219.162:3010/');
 
-		incomingMessage: string = '';
+	incomingMessage: string = '';
 
-		//******* Router Guard  *********//
-	routerGuard = () => {
-		if (sessionStorage.getItem('SP_ID') === null) {
-			this.router.navigate(['login']);
-		}
+	//******* Router Guard  *********//
+routerGuard = () => {
+	if (sessionStorage.getItem('SP_ID') === null) {
+		this.router.navigate(['login']);
 	}
+}
 
 
-		@ViewChild('notesSection') notesSection: ElementRef |undefined; 
-		@ViewChild('chatSection') chatSection: ElementRef |undefined; 
-		@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
-		
-		public selection: NodeSelection = new NodeSelection();
-		public range: Range | undefined;
-		public saveSelection: NodeSelection | any;
+	@ViewChild('notesSection') notesSection: ElementRef |undefined; 
+	@ViewChild('chatSection') chatSection: ElementRef |undefined; 
+	@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
+	
+	public selection: NodeSelection = new NodeSelection();
+	public range: Range | undefined;
+	public saveSelection: NodeSelection | any;
 
 
-		public QuickRepliesList: { [key: string]: Object }[] = [
-			{ id:1,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:2,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:3,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:4,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:5,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:6,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		];
+	public QuickRepliesList: { [key: string]: Object }[] = [
+		{ id:1,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:2,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:3,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:4,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:5,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:6,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+	];
 
-		public TemplateList: any = [
-			{ id:1,date:'2023-05-15',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:2,date:'2023-05-17',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:3,date:'2023-05-18',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:4,date:'2023-05-20',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:5,date:'2023-05-22',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:6,date:'2023-05-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:7,date:'2023-05-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			{ id:8,date:'2023-06-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-				
-		];
-		
-		public smileys: { [key: string]: Object }[] = [
-			{ content: '&#128512;', title: 'Grinning face' },
-			{ content: '&#128513;', title: 'Grinning face with smiling eyes' },
-			{ content: '&#128514;', title: 'Face with tears of joy' },
-			{ content: '&#128515;', title: 'Smiling face with open mouth' },
-			{ content: '&#128516;', title: 'Smiling face with open mouth and smiling eyes' },
-			{ content: '&#128517;', title: 'Smiling face with open mouth and cold sweat' },
-			{ content: '&#128518;', title: 'Smiling face with open mouth and tightly-closed eyes' },
-			{ content: '&#128519;', title: 'Smiling face with halo' },
-			{ content: '&#128520;', title: 'Smiling face with horns' },
-			{ content: '&#128521;', title: 'Winking face' },
-			{ content: '&#128522;', title: 'Smiling face with smiling eyes' },
-			{ content: '&#128523;', title: 'Face savouring delicious food' },
-			{ content: '&#128524;', title: 'Relieved face' },
-			{ content: '&#128525;', title: 'Smiling face with heart-shaped eyes' },
-			{ content: '&#128526;', title: 'Smiling face with sunglasses' },
-			{ content: '&#128527;', title: 'Smirking face"' },
-			{ content: '&#128528;', title: 'Neutral face' },
-			{ content: '&#128529;', title: 'Expressionless face' },
-			{ content: '&#128530;', title: 'Unamused face' },
-			{ content: '&#128531;', title: 'Face with cold sweat' },
-			{ content: '&#128532;', title: 'Pensive face' },
-			{ content: '&#128533;', title: 'Confused face' },
-			{ content: '&#128534;', title: 'Confounded face' },
-			{ content: '&#128535;', title: 'Kissing face' },
-			{ content: '&#128536;', title: 'Face throwing a kiss' },
-			{ content: '&#128538;', title: 'Kissing face with smiling eyes' },
-			{ content: '&#128539;', title: 'Face with stuck-out tongue' },
-			{ content: '&#128540;', title: 'Face with stuck-out tongue and winking eye' },
-			{ content: '&#128541;', title: 'Face with stuck-out tongue and tightly-closed eyes' },
-			{ content: '&#128542;', title: 'Disappointed face' },
-			{ content: '&#128543;', title: 'Worried face' },
-			{ content: '&#128544;', title: 'Angry face' },
-			{ content: '&#128545;', title: 'Pouting face' },
-			{ content: '&#128546;', title: 'Crying face' },
-			{ content: '&#128547;', title: 'Persevering face' },
-			{ content: '&#128548;', title: 'Face with look of triumph' },
-			{ content: '&#128549;', title: 'Disappointed but relieved face' },
-			{ content: '&#128550;', title: 'Frowning face with open mouth' },
-			{ content: '&#128551;', title: 'Anguished face' },
-			{ content: '&#128552;', title: 'Fearful face' },
-			{ content: '&#128553;', title: 'Weary face' },
-			{ content: '&#128554;', title: 'Sleepy face' },
-			{ content: '&#128555;', title: 'Tired face' },
-			{ content: '&#128556;', title: 'Grimacing face' },
-			{ content: '&#128557;', title: 'Loudly crying face' },
-			{ content: '&#128558;', title: 'Face with open mouth' },
-			{ content: '&#128559;', title: 'Hushed face' },
-			{ content: '&#128560;', title: 'Face with open mouth and cold sweat' },
-			{ content: '&#128561;', title: 'Face screaming in fear' },
-			{ content: '&#128562;', title: 'Astonished face' },
-			{ content: '&#128563;', title: 'Flushed face' },
-			{ content: '&#128564;', title: 'Sleeping face' },
-			{ content: '&#128565;', title: 'char_block' },
+	public TemplateList: any = [
+		{ id:1,date:'2023-05-15',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:2,date:'2023-05-17',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:3,date:'2023-05-18',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:4,date:'2023-05-20',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:5,date:'2023-05-22',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:6,date:'2023-05-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:7,date:'2023-05-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+		{ id:8,date:'2023-06-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
+			
+	];
+	
+	public smileys: { [key: string]: Object }[] = [
+		{ content: '&#128512;', title: 'Grinning face' },
+		{ content: '&#128513;', title: 'Grinning face with smiling eyes' },
+		{ content: '&#128514;', title: 'Face with tears of joy' },
+		{ content: '&#128515;', title: 'Smiling face with open mouth' },
+		{ content: '&#128516;', title: 'Smiling face with open mouth and smiling eyes' },
+		{ content: '&#128517;', title: 'Smiling face with open mouth and cold sweat' },
+		{ content: '&#128518;', title: 'Smiling face with open mouth and tightly-closed eyes' },
+		{ content: '&#128519;', title: 'Smiling face with halo' },
+		{ content: '&#128520;', title: 'Smiling face with horns' },
+		{ content: '&#128521;', title: 'Winking face' },
+		{ content: '&#128522;', title: 'Smiling face with smiling eyes' },
+		{ content: '&#128523;', title: 'Face savouring delicious food' },
+		{ content: '&#128524;', title: 'Relieved face' },
+		{ content: '&#128525;', title: 'Smiling face with heart-shaped eyes' },
+		{ content: '&#128526;', title: 'Smiling face with sunglasses' },
+		{ content: '&#128527;', title: 'Smirking face"' },
+		{ content: '&#128528;', title: 'Neutral face' },
+		{ content: '&#128529;', title: 'Expressionless face' },
+		{ content: '&#128530;', title: 'Unamused face' },
+		{ content: '&#128531;', title: 'Face with cold sweat' },
+		{ content: '&#128532;', title: 'Pensive face' },
+		{ content: '&#128533;', title: 'Confused face' },
+		{ content: '&#128534;', title: 'Confounded face' },
+		{ content: '&#128535;', title: 'Kissing face' },
+		{ content: '&#128536;', title: 'Face throwing a kiss' },
+		{ content: '&#128538;', title: 'Kissing face with smiling eyes' },
+		{ content: '&#128539;', title: 'Face with stuck-out tongue' },
+		{ content: '&#128540;', title: 'Face with stuck-out tongue and winking eye' },
+		{ content: '&#128541;', title: 'Face with stuck-out tongue and tightly-closed eyes' },
+		{ content: '&#128542;', title: 'Disappointed face' },
+		{ content: '&#128543;', title: 'Worried face' },
+		{ content: '&#128544;', title: 'Angry face' },
+		{ content: '&#128545;', title: 'Pouting face' },
+		{ content: '&#128546;', title: 'Crying face' },
+		{ content: '&#128547;', title: 'Persevering face' },
+		{ content: '&#128548;', title: 'Face with look of triumph' },
+		{ content: '&#128549;', title: 'Disappointed but relieved face' },
+		{ content: '&#128550;', title: 'Frowning face with open mouth' },
+		{ content: '&#128551;', title: 'Anguished face' },
+		{ content: '&#128552;', title: 'Fearful face' },
+		{ content: '&#128553;', title: 'Weary face' },
+		{ content: '&#128554;', title: 'Sleepy face' },
+		{ content: '&#128555;', title: 'Tired face' },
+		{ content: '&#128556;', title: 'Grimacing face' },
+		{ content: '&#128557;', title: 'Loudly crying face' },
+		{ content: '&#128558;', title: 'Face with open mouth' },
+		{ content: '&#128559;', title: 'Hushed face' },
+		{ content: '&#128560;', title: 'Face with open mouth and cold sweat' },
+		{ content: '&#128561;', title: 'Face screaming in fear' },
+		{ content: '&#128562;', title: 'Astonished face' },
+		{ content: '&#128563;', title: 'Flushed face' },
+		{ content: '&#128564;', title: 'Sleeping face' },
+		{ content: '&#128565;', title: 'char_block' },
 
-		];
-		public animals: { [key: string]: Object }[] = [
-			{ title: 'Monkey Face', content: '&#128053;' },
-			{ title: 'Monkey', content: '&#128018;' },
-			{ title: 'Gorilla', content: '&#129421;' },
-			{ title: 'Dog Face', content: '&#128054;' },
-			{ title: 'Dog', content: '&#128021;' },
-			{ title: 'Poodle', content: '&#128041;' },
-			{ title: 'Wolf Face', content: '&#128058;' },
-			{ title: 'Fox Face', content: '&#129418;' },
-			{ title: 'Cat Face', content: '&#128049;' },
-			{ title: 'Cat', content: '&#128008;' },
-			{ title: 'Lion Face', content: '&#129409;' },
-			{ title: 'Tiger Face', content: '&#128047;' },
-			{ title: 'Tiger', content: '&#128005;' },
-			{ title: 'Leopard', content: '&#128006;' },
-			{ title: 'Horse Face', content: '&#128052;' },
-			{ title: 'Horse', content: '&#128014;' },
-			{ title: 'Unicorn Face', content: '&#129412;' },
-			{ title: 'Deer', content: '&#129420;' },
-			{ title: 'Cow Face', content: '&#128046;' },
-			{ title: 'Ox', content: '&#128002;' },
-			{ title: 'Water Buffalo', content: '&#128003;' },
-			{ title: 'Cow', content: '&#128004;' },
-			{ title: 'Pig Face', content: '&#128055;' },
-			{ title: 'Pig', content: '&#128022;' },
-			{ title: 'Boar', content: '&#128023;' },
-			{ title: 'Pig Nose', content: '&#128061;' },
-			{ title: 'Ram', content: '&#128015;' },
-			{ title: 'Ewe', content: '&#128017;' },
-			{ title: 'Goat', content: '&#128016;' },
-			{ title: 'Camel', content: '&#128042;' },
-			{ title: 'Two-Hump Camel', content: '&#128043;' },
-			{ title: 'Elephant', content: '&#128024;' },
-			{ title: 'Rhinoceros', content: '&#129423;' },
-			{ title: 'Mouse Face', content: '&#128045;' },
-			{ title: 'Mouse', content: '&#128001;' },
-			{ title: 'Rat', content: '&#128000;' },
-			{ title: 'Hamster Face', content: '&#128057;' },
-			{ title: 'Rabbit Face', content: '&#128048;' },
-			{ title: 'Rabbit', content: '&#128007;' },
-			{ title: 'Chipmunk', content: '&#128063;' },
-			{ title: 'Bat', content: '&#129415;' },
-			{ title: 'Bear Face', content: '&#128059;' },
-			{ title: 'Koala', content: '&#128040;' },
-			{ title: 'Panda Face', content: '&#128060;' },
-			{ title: 'Paw Prints', content: '&#128062;' },
-			{ title: 'Frog Face', content: '&#128056;' },
-			{ title: 'Crocodile', content: '&#128010;' },
-			{ title: 'Turtle', content: '&#128034;' },
-			{ title: 'Lizard', content: '&#129422;' },
-			{ title: 'Snake', content: '&#128013;' },
-			{ title: 'Dragon Face', content: '&#128050;' },
-			{ title: 'Dragon', content: '&#128009;' },
-			{ title: 'Sauropod', content: '&#129429;' },
-			{ title: 'T-Rex', content: '&#129430;' },
-		];
-		
-		public tools: object = {
-			items: [
-				
-				'Bold', 'Italic', 'StrikeThrough',
-			{
-			tooltipText: 'Emoji',
+	];
+	public animals: { [key: string]: Object }[] = [
+		{ title: 'Monkey Face', content: '&#128053;' },
+		{ title: 'Monkey', content: '&#128018;' },
+		{ title: 'Gorilla', content: '&#129421;' },
+		{ title: 'Dog Face', content: '&#128054;' },
+		{ title: 'Dog', content: '&#128021;' },
+		{ title: 'Poodle', content: '&#128041;' },
+		{ title: 'Wolf Face', content: '&#128058;' },
+		{ title: 'Fox Face', content: '&#129418;' },
+		{ title: 'Cat Face', content: '&#128049;' },
+		{ title: 'Cat', content: '&#128008;' },
+		{ title: 'Lion Face', content: '&#129409;' },
+		{ title: 'Tiger Face', content: '&#128047;' },
+		{ title: 'Tiger', content: '&#128005;' },
+		{ title: 'Leopard', content: '&#128006;' },
+		{ title: 'Horse Face', content: '&#128052;' },
+		{ title: 'Horse', content: '&#128014;' },
+		{ title: 'Unicorn Face', content: '&#129412;' },
+		{ title: 'Deer', content: '&#129420;' },
+		{ title: 'Cow Face', content: '&#128046;' },
+		{ title: 'Ox', content: '&#128002;' },
+		{ title: 'Water Buffalo', content: '&#128003;' },
+		{ title: 'Cow', content: '&#128004;' },
+		{ title: 'Pig Face', content: '&#128055;' },
+		{ title: 'Pig', content: '&#128022;' },
+		{ title: 'Boar', content: '&#128023;' },
+		{ title: 'Pig Nose', content: '&#128061;' },
+		{ title: 'Ram', content: '&#128015;' },
+		{ title: 'Ewe', content: '&#128017;' },
+		{ title: 'Goat', content: '&#128016;' },
+		{ title: 'Camel', content: '&#128042;' },
+		{ title: 'Two-Hump Camel', content: '&#128043;' },
+		{ title: 'Elephant', content: '&#128024;' },
+		{ title: 'Rhinoceros', content: '&#129423;' },
+		{ title: 'Mouse Face', content: '&#128045;' },
+		{ title: 'Mouse', content: '&#128001;' },
+		{ title: 'Rat', content: '&#128000;' },
+		{ title: 'Hamster Face', content: '&#128057;' },
+		{ title: 'Rabbit Face', content: '&#128048;' },
+		{ title: 'Rabbit', content: '&#128007;' },
+		{ title: 'Chipmunk', content: '&#128063;' },
+		{ title: 'Bat', content: '&#129415;' },
+		{ title: 'Bear Face', content: '&#128059;' },
+		{ title: 'Koala', content: '&#128040;' },
+		{ title: 'Panda Face', content: '&#128060;' },
+		{ title: 'Paw Prints', content: '&#128062;' },
+		{ title: 'Frog Face', content: '&#128056;' },
+		{ title: 'Crocodile', content: '&#128010;' },
+		{ title: 'Turtle', content: '&#128034;' },
+		{ title: 'Lizard', content: '&#129422;' },
+		{ title: 'Snake', content: '&#128013;' },
+		{ title: 'Dragon Face', content: '&#128050;' },
+		{ title: 'Dragon', content: '&#128009;' },
+		{ title: 'Sauropod', content: '&#129429;' },
+		{ title: 'T-Rex', content: '&#129430;' },
+	];
+	
+	public tools: object = {
+		items: [
+			
+			'Bold', 'Italic', 'StrikeThrough',
+		{
+		tooltipText: 'Emoji',
+		undo: true,
+		click: this.toggleEmoji.bind(this),
+		template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
+		},
+		{
+			tooltipText: 'Attachment',
 			undo: true,
-			click: this.toggleEmoji.bind(this),
-			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
-			},
-			{
-				tooltipText: 'Attachment',
-				undo: true,
-				click: this.ToggleAttachmentBox.bind(this),
-				template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
-			},
-			{
-				tooltipText: 'Attributes',
-				undo: true,
-				click: this.ToggleAttributesOption.bind(this),
-				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
-			},
-			{
-				tooltipText: 'Quick Response',
-				undo: true,
-				click: this.ToggleQuickReplies.bind(this),
-				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
-			},
-			{
-				tooltipText: 'Saved Message',
-				undo: true,
-				click: this.ToggleSavedMessageOption.bind(this),
-				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
-			},
-			{
-				tooltipText: 'Insert Template',
-				undo: true,
-				click: this.ToggleInsertTemplateOption.bind(this),
-				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
-			}]
-		};
+			click: this.ToggleAttachmentBox.bind(this),
+			template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
+		},
+		{
+			tooltipText: 'Attributes',
+			undo: true,
+			click: this.ToggleAttributesOption.bind(this),
+			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+		},
+		{
+			tooltipText: 'Quick Response',
+			undo: true,
+			click: this.ToggleQuickReplies.bind(this),
+			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
+		},
+		{
+			tooltipText: 'Saved Message',
+			undo: true,
+			click: this.ToggleSavedMessageOption.bind(this),
+			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
+		},
+		{
+			tooltipText: 'Insert Template',
+			undo: true,
+			click: this.ToggleInsertTemplateOption.bind(this),
+			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
+		}]
+	};
 
 countryCodes = [
-  'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
-  'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',
-  'BG +359', 'BH +973', 'BI +257', 'BJ +229', 'BL +590', 'BM +1 441', 'BN +673', 'BO +591', 'BQ +599', 'BR +55',
-  'BS +1242', 'BT +975', 'BW +267', 'BY +375', 'BZ +501', 'CA +1', 'CC +61', 'CD +243', 'CF +236', 'CG +242',
-  'CH +41', 'CI +225', 'CK +682', 'CL +56', 'CM +237', 'CN +86', 'CO +57', 'CR +506', 'CU +53', 'CV +238',
-  'CW +599', 'CX +61', 'CY +357', 'CZ +420', 'DE +49', 'DJ +253', 'DK +45', 'DM +1767', 'DO +1809', 'DZ +213',
-  'EC +593', 'EE +372', 'EG +20', 'EH +212', 'ER +291', 'ES +34', 'ET +251', 'FI +358', 'FJ +679', 'FK +500',
-  'FM +691', 'FO +298', 'FR +33', 'GA +241', 'GB +44', 'GD +1473', 'GE +995', 'GF +594', 'GG +44', 'GH +233',
-  'GI +350', 'GL +299', 'GM +220', 'GN +224', 'GP +590', 'GQ +240', 'GR +30', 'GS +500', 'GT +502', 'GU +1671',
-  'GW +245', 'GY +592', 'HK +852', 'HN +504', 'HR +385', 'HT +509', 'HU +36', 'ID +62', 'IE +353', 'IL +972',
-  'IM +44', 'IN +91', 'IO +246', 'IQ +964', 'IR +98', 'IS +354', 'IT +39', 'JE +44', 'JM +1876', 'JO +962',
-  'JP +81', 'KE +254', 'KG +996', 'KH +855', 'KI +686', 'KM +269', 'KN +1869', 'KP +850', 'KR +82', 'KW +965',
-  'KY +1345', 'KZ +7', 'LA +856', 'LB +961', 'LC +1758', 'LI +423', 'LK +94', 'LR +231', 'LS +266', 'LT +370',
-  'LU +352', 'LV +371', 'LY +218', 'MA +212', 'MC +377', 'MD +373', 'ME +382', 'MF +590', 'MG +261', 'MH +692',
-  'MK +389', 'ML +223', 'MM +95', 'MN +976', 'MO +853', 'MP +1 670', 'MQ +596', 'MR +222', 'MS +1 664', 'MT +356',
-  'MU +230', 'MV +960', 'MW +265', 'MX +52', 'MY +60', 'MZ +258', 'NA +264', 'NC +687', 'NE +227', 'NF +672',
-  'NG +234', 'NI +505', 'NL +31', 'NO +47', 'NP +977', 'NR +674', 'NU +683', 'NZ +64', 'OM +968', 'PA +507',
-  'PE +51', 'PF +689', 'PG +675', 'PH +63', 'PK +92', 'PL +48', 'PM +508', 'PN +872', 'PR +1 787', 'PS +970',
-  'PT +351', 'PW +680', 'PY +595', 'QA +974', 'RE +262', 'RO +40', 'RS +381', 'RU +7', 'RW +250', 'SA +966',
-  'SB +677', 'SC +248', 'SD +249', 'SE +46', 'SG +65', 'SH +290', 'SI +386', 'SJ +47', 'SK +421', 'SL +232',
-  'SM +378', 'SN +221', 'SO +252', 'SR +597', 'SS +211', 'ST +239', 'SV +503', 'SX +1721', 'SY +963', 'SZ +268',
-  'TC +1649', 'TD +235', 'TF +262', 'TG +228', 'TH +66', 'TJ +992', 'TK +690', 'TL +670', 'TM +993', 'TN +216',
-  'TO +676', 'TR +90', 'TT +1868', 'TV +688', 'TW +886', 'TZ +255', 'UA +380', 'UG +256', 'US +1', 'UY +598',
-  'UZ +998', 'VA +39', 'VC +1784', 'VE +58', 'VG +1284', 'VI +1340', 'VN +84', 'VU +678', 'WF +681', 'WS +685',
-  'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
+'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
+'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',
+'BG +359', 'BH +973', 'BI +257', 'BJ +229', 'BL +590', 'BM +1 441', 'BN +673', 'BO +591', 'BQ +599', 'BR +55',
+'BS +1242', 'BT +975', 'BW +267', 'BY +375', 'BZ +501', 'CA +1', 'CC +61', 'CD +243', 'CF +236', 'CG +242',
+'CH +41', 'CI +225', 'CK +682', 'CL +56', 'CM +237', 'CN +86', 'CO +57', 'CR +506', 'CU +53', 'CV +238',
+'CW +599', 'CX +61', 'CY +357', 'CZ +420', 'DE +49', 'DJ +253', 'DK +45', 'DM +1767', 'DO +1809', 'DZ +213',
+'EC +593', 'EE +372', 'EG +20', 'EH +212', 'ER +291', 'ES +34', 'ET +251', 'FI +358', 'FJ +679', 'FK +500',
+'FM +691', 'FO +298', 'FR +33', 'GA +241', 'GB +44', 'GD +1473', 'GE +995', 'GF +594', 'GG +44', 'GH +233',
+'GI +350', 'GL +299', 'GM +220', 'GN +224', 'GP +590', 'GQ +240', 'GR +30', 'GS +500', 'GT +502', 'GU +1671',
+'GW +245', 'GY +592', 'HK +852', 'HN +504', 'HR +385', 'HT +509', 'HU +36', 'ID +62', 'IE +353', 'IL +972',
+'IM +44', 'IN +91', 'IO +246', 'IQ +964', 'IR +98', 'IS +354', 'IT +39', 'JE +44', 'JM +1876', 'JO +962',
+'JP +81', 'KE +254', 'KG +996', 'KH +855', 'KI +686', 'KM +269', 'KN +1869', 'KP +850', 'KR +82', 'KW +965',
+'KY +1345', 'KZ +7', 'LA +856', 'LB +961', 'LC +1758', 'LI +423', 'LK +94', 'LR +231', 'LS +266', 'LT +370',
+'LU +352', 'LV +371', 'LY +218', 'MA +212', 'MC +377', 'MD +373', 'ME +382', 'MF +590', 'MG +261', 'MH +692',
+'MK +389', 'ML +223', 'MM +95', 'MN +976', 'MO +853', 'MP +1 670', 'MQ +596', 'MR +222', 'MS +1 664', 'MT +356',
+'MU +230', 'MV +960', 'MW +265', 'MX +52', 'MY +60', 'MZ +258', 'NA +264', 'NC +687', 'NE +227', 'NF +672',
+'NG +234', 'NI +505', 'NL +31', 'NO +47', 'NP +977', 'NR +674', 'NU +683', 'NZ +64', 'OM +968', 'PA +507',
+'PE +51', 'PF +689', 'PG +675', 'PH +63', 'PK +92', 'PL +48', 'PM +508', 'PN +872', 'PR +1 787', 'PS +970',
+'PT +351', 'PW +680', 'PY +595', 'QA +974', 'RE +262', 'RO +40', 'RS +381', 'RU +7', 'RW +250', 'SA +966',
+'SB +677', 'SC +248', 'SD +249', 'SE +46', 'SG +65', 'SH +290', 'SI +386', 'SJ +47', 'SK +421', 'SL +232',
+'SM +378', 'SN +221', 'SO +252', 'SR +597', 'SS +211', 'ST +239', 'SV +503', 'SX +1721', 'SY +963', 'SZ +268',
+'TC +1649', 'TD +235', 'TF +262', 'TG +228', 'TH +66', 'TJ +992', 'TK +690', 'TL +670', 'TM +993', 'TN +216',
+'TO +676', 'TR +90', 'TT +1868', 'TV +688', 'TW +886', 'TZ +255', 'UA +380', 'UG +256', 'US +1', 'UY +598',
+'UZ +998', 'VA +39', 'VC +1784', 'VE +58', 'VG +1284', 'VI +1340', 'VN +84', 'VU +678', 'WF +681', 'WS +685',
+'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
 ];
 
-		
+	
 
-		
-		custommesage='<p>Your message...</p>'
-		customenotes='<p>Type...</p>'
-		showQuickResponse:any=false;
-		showAttributes:any=false;
-		showSavedMessage:any=false;
-		showQuickReply:any=false;
-		showInsertTemplate:any=false;
-		showAttachmenOption:any=false;
-		slideIndex=0;
-		PauseTime:any='';
-		confirmMessage:any;
-		messagesAll:string[] = [];
-		messagesRead:string[] = [];
-		newMessagesNumber:number = 0;
-		active = 1;
-		showTopNav: boolean = true;
-		SPID = sessionStorage.getItem('SP_ID')
-		TeamLeadId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
-		AgentId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
-		AgentName = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name
-		loginAs = (JSON.parse(sessionStorage.getItem('loginDetails')!)).UserType
-		messageTimeLimit=10;
-		SIPmaxMessageLimt=100;
-		SIPthreasholdMessages=1;
-		showFullProfile=false;
-		showAttachedMedia=false;
-		showattachmentbox=false;
-		ShowFilerOption=false;
-		ShowContactOption=false;
-		showfilter=false;
-		AutoReplyOption=false;
-		ShowConversationStatusOption=false;
-		ShowAssignOption=false;
-		selectedInteraction:any = [];
-		selectedNote:any=[];
-		contactList:any = [];
-		interactionList:any = [];
-		interactionListMain:any=[];
-		selectedTemplate:any  = [];
-		agentsList:any = [];
-		modalReference: any;
-		OptedIn=false;
-		searchFocused=false;
-		searchChatFocused=false;
-		errorMessage='';
-		successMessage='';
-		warningMessage='';
-		showChatNotes='text';
-		message_text='';
-		showEmoji=false;
-		EmojiType:any='smiley';
-		selectedChannel:any='WhatsApp Offical';
-		contactSearchKey:any='';
-		ShowChannelOption:any=false;
-		selectedCountryCode: string = '';
-		
-		newContact: any;
-		editContact: any;
-		ShowGenderOption:any=false;
-		ShowLeadStatusOption:any=false;
+	
+	custommesage='<p>Your message...</p>'
+	customenotes='<p>Type...</p>'
+	showQuickResponse:any=false;
+	showAttributes:any=false;
+	showSavedMessage:any=false;
+	showQuickReply:any=false;
+	showInsertTemplate:any=false;
+	showAttachmenOption:any=false;
+	slideIndex=0;
+	PauseTime:any='';
+	confirmMessage:any;
+	messagesAll:string[] = [];
+	messagesRead:string[] = [];
+	newMessagesNumber:number = 0;
+	active = 1;
+	showTopNav: boolean = true;
+	SPID = sessionStorage.getItem('SP_ID')
+	TeamLeadId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
+	AgentId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
+	AgentName = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name
+	loginAs = (JSON.parse(sessionStorage.getItem('loginDetails')!)).UserType
+	messageTimeLimit=10;
+	SIPmaxMessageLimt=100;
+	SIPthreasholdMessages=1;
+	showFullProfile=false;
+	showAttachedMedia=false;
+	showattachmentbox=false;
+	ShowFilerOption=false;
+	ShowContactOption=false;
+showfilter=false;
+	AutoReplyOption=false;
+	ShowConversationStatusOption=false;
+	ShowAssignOption=false;
+	selectedInteraction:any = [];
+	selectedNote:any=[];
+	contactList:any = [];
+	interactionList:any = [];
+	interactionListMain:any=[];
+	selectedTemplate:any  = [];
+	agentsList:any = [];
+	modalReference: any;
+	OptedIn=false;
+	searchFocused=false;
+	searchChatFocused=false;
+	errorMessage='';
+	successMessage='';
+	warningMessage='';
+	showChatNotes='text';
+	message_text='';
+	showEmoji=false;
+	EmojiType:any='smiley';
+	selectedChannel:any='WhatsApp Offical';
+	contactSearchKey:any='';
+	ShowChannelOption:any=false;
+	selectedCountryCode: string = '';
+	
+	newContact: any;
+	editContact: any;
+	ShowGenderOption:any=false;
+	ShowLeadStatusOption:any=false;
 
-		newMessage:any;
-		interactionFilterBy:any='All'
-		interactionSearchKey:any=''
-		tagsoptios:any=[
-		{name:'Paid',status:false},
-		{name:'Unpaid',status:false},
-		{name:'Return',status:false}]
+	newMessage:any;
+	interactionFilterBy:any='All'
+	interactionSearchKey:any=''
+	tagsoptios:any=[
+	{name:'Paid',status:false},
+	{name:'Unpaid',status:false},
+	{name:'Return',status:false}]
 
-		selectedTags:any='';
-		AutoReplyEnableOption:any=['Extend Pause for 5 mins','Extend Pause for 10 mins','Extend Pause for 15 mins','Extend Pause for 20 mins','Enable'];
-		AutoReplyPauseOption:any=['Pause for 5 mins','Pause for 10 mins','Pause for 15 mins','Pause for 20 mins','Auto Reply are Paused','Enable'];
-		AutoReply:any='';
-		AutoReplyType:any= '';
-		dragAreaClass: string='';
-		editTemplate:any=false;
-		showEditTemplateMedia:any=false;
-		TemplatePreview:any=false;
-		messageMeidaFile:any='';
-		mediaType:any='';
-		showMention:any=false;
-		EditContactForm:any=[];
-		SavedMessageList:any=[];
-		QuickReplyList:any=[];
-		SavedMessageListMain:any=[];
-		QuickReplyListMain:any=[];
-		allTemplates:any=[];
-		allTemplatesMain:any=[];
-		filterTemplateOption:any='';
-		attributesList:any=[];
-		
-		
-		
+	selectedTags:any='';
+	AutoReplyEnableOption:any=['Extend Pause for 5 mins','Extend Pause for 10 mins','Extend Pause for 15 mins','Extend Pause for 20 mins','Enable'];
+	AutoReplyPauseOption:any=['Pause for 5 mins','Pause for 10 mins','Pause for 15 mins','Pause for 20 mins','Auto Reply are Paused','Enable'];
+	AutoReply:any='';
+	AutoReplyType:any= '';
+	dragAreaClass: string='';
+	editTemplate:any=false;
+	showEditTemplateMedia:any=false;
+	TemplatePreview:any=false;
+	messageMeidaFile:any='';
+	mediaType:any='';
+	showMention:any=false;
+	EditContactForm:any=[];
+	SavedMessageList:any=[];
+	QuickReplyList:any=[];
+	SavedMessageListMain:any=[];
+	QuickReplyListMain:any=[];
+	allTemplates:any=[];
+	allTemplatesMain:any=[];
+	filterTemplateOption:any='';
+	attributesList:any=[];
+	
+	
+	
 
-		constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef, private router: Router,private websocketService: WebsocketService) {
+	constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef, private router: Router,private websocketService: WebsocketService) {
+		
+		// customize default values of modals used by this component tree
+
+		config.backdrop = 'static';
+		config.keyboard = false;
+		config.windowClass= 'teambox-pink';
+		this.newContact= fb.group({
+			SP_ID: new FormControl('', Validators.required),
+			Name: new FormControl('', Validators.required),
+			Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(15)])),
+			Channel: new FormControl('', Validators.required),
 			
-			// customize default values of modals used by this component tree
-
-			config.backdrop = 'static';
-			config.keyboard = false;
-			config.windowClass= 'teambox-pink';
-			this.newContact= fb.group({
-				SP_ID: new FormControl('', Validators.required),
-				Name: new FormControl('', Validators.required),
-				Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(15)])),
-				Channel: new FormControl('', Validators.required),
-				
-			});
-			this.editContact=fb.group({
-				SP_ID: new FormControl('', Validators.required),
-				Name: new FormControl('', Validators.required),
-				Phone_number: new FormControl('', Validators.compose([Validators.required,Validators.minLength(6),Validators.maxLength(15)])),
-				Channel: new FormControl('', Validators.required),
-			});
-			
-			this.newMessage =fb.group({
-				Message_id:new FormControl(''),
-			});
-
-		}
-
+		});
+		this.editContact=fb.group({
+			SP_ID: new FormControl('', Validators.required),
+			Name: new FormControl('', Validators.required),
+			Phone_number: new FormControl('', Validators.compose([Validators.required,Validators.minLength(6),Validators.maxLength(15)])),
+			Channel: new FormControl('', Validators.required),
+		});
 		
-		@HostListener('document:click', ['$event'])
-		onDocumentClick(event: MouseEvent): void {
-		  const clickedInside = this.elementRef.nativeElement.contains(event.target);
-		  if (!clickedInside) {
-			this.hideDiv();
-		  }
-		}
+		this.newMessage =fb.group({
+			Message_id:new FormControl(''),
+		});
 
-		hideDiv() {
-			// alert('clicked outside');
+	}
+
+	
+	@HostListener('document:click', ['$event'])
+	onDocumentClick(event: MouseEvent): void {
+	  const clickedInside = this.elementRef.nativeElement.contains(event.target);
+	  if (!clickedInside) {
+		this.hideDiv();
+	  }
+	}
+
+	hideDiv() {
+		// alert('clicked outside');
+	
+	}
+	
+
+	selectTemplate(template:any){
+		this.selectedTemplate =template
+	}
+
+	resetMessageTex(){
+		if(this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value =='<p>Type…</p>'){
+			this.chatEditor.value='';
+		}
 		
-		}
-		
-
-		selectTemplate(template:any){
-			this.selectedTemplate =template
-		}
-
-		resetMessageTex(){
-			if(this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value =='<p>Type…</p>'){
-				this.chatEditor.value='';
-			}
-			
-		}
-		toggleChatNotes(optionvalue:any){
-			if(this.chatEditor){
-			if(optionvalue == 'text'){
-				this.chatEditor.value = 'Your message...'
-				this.tools = {
-					items: ['Bold', 'Italic','StrikeThrough',
-					{
-					tooltipText: 'Emoji',
+	}
+	toggleChatNotes(optionvalue:any){
+		if(this.chatEditor){
+		if(optionvalue == 'text'){
+			this.chatEditor.value = 'Your message...'
+			this.tools = {
+				items: ['Bold', 'Italic','StrikeThrough',
+				{
+				tooltipText: 'Emoji',
+				undo: true,
+				click: this.toggleEmoji.bind(this),
+				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
+				},
+				{
+					tooltipText: 'Attachment',
 					undo: true,
-					click: this.toggleEmoji.bind(this),
-					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
-					},
-					{
-						tooltipText: 'Attachment',
-						undo: true,
-						click: this.ToggleAttachmentBox.bind(this),
-						template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
-					},
-					{
-						tooltipText: 'Attributes',
-						undo: true,
-						click: this.ToggleAttributesOption.bind(this),
-						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
-					},
-					{
-						tooltipText: 'Saved Message',
-						undo: true,
-						click: this.ToggleSavedMessageOption.bind(this),
-						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
-					},
-					{
-						tooltipText: 'Quick Replies',
-						undo: true,
-						click: this.ToggleQuickReplies.bind(this),
-						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
-					},
-
-				
-					{
-						tooltipText: 'Insert Template',
-						undo: true,
-						click: this.ToggleInsertTemplateOption.bind(this),
-						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
-					}]
-				};
-
-			}else{
-				this.chatEditor.value = 'Type…'
-				this.tools = {
-					items: ['Bold', 'Italic', 'StrikeThrough',
-					{
-					tooltipText: 'Emoji',
+					click: this.ToggleAttachmentBox.bind(this),
+					template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
+				},
+				{
+					tooltipText: 'Attributes',
 					undo: true,
-					click: this.toggleEmoji.bind(this),
-					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
-					},
-					{
-						tooltipText: 'Attachment',
-						undo: true,
-						click: this.ToggleAttachmentBox.bind(this),
-						template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
-					},
-					{
-						tooltipText: 'Attributes',
-						undo: true,
-						click: this.ToggleAttributesOption.bind(this),
-						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-								+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
-					},
-					{
-						tooltipText: '@mentions',
-						undo: true,
-						click: this.ToggleShowMentionOption.bind(this),
-						template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-								+ '<div class="e-tbar-btn-text">@</div></button>'
-					}]
-				}
+					click: this.ToggleAttributesOption.bind(this),
+					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+				},
+				{
+					tooltipText: 'Saved Message',
+					undo: true,
+					click: this.ToggleSavedMessageOption.bind(this),
+					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
+				},
+				{
+					tooltipText: 'Quick Replies',
+					undo: true,
+					click: this.ToggleQuickReplies.bind(this),
+					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
+				},
+
+			
+				{
+					tooltipText: 'Insert Template',
+					undo: true,
+					click: this.ToggleInsertTemplateOption.bind(this),
+					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
+				}]
+			};
+
+		}else{
+			this.chatEditor.value = 'Type…'
+			this.tools = {
+				items: ['Bold', 'Italic', 'StrikeThrough',
+				{
+				tooltipText: 'Emoji',
+				undo: true,
+				click: this.toggleEmoji.bind(this),
+				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
+				},
+				{
+					tooltipText: 'Attachment',
+					undo: true,
+					click: this.ToggleAttachmentBox.bind(this),
+					template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
+				},
+				{
+					tooltipText: 'Attributes',
+					undo: true,
+					click: this.ToggleAttributesOption.bind(this),
+					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+				},
+				{
+					tooltipText: '@mentions',
+					undo: true,
+					click: this.ToggleShowMentionOption.bind(this),
+					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+							+ '<div class="e-tbar-btn-text">@</div></button>'
+				}]
 			}
 		}
-			this.showChatNotes=optionvalue
-			setTimeout(() => {
-				this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-			}, 100);
-		}
+	}
+		this.showChatNotes=optionvalue
+		setTimeout(() => {
+			this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+			this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+		}, 100);
+	}
 
-		closeAllModal(){
-			this.showAttachmenOption=false
-			this.messageMeidaFile=false
-			this.showAttributes=false
-			this.showInsertTemplate=false
-			this.editTemplate=false
-			this.TemplatePreview=false
-			this.showSavedMessage=false
-			this.showQuickReply=false
-			this.showMention=false
-			this.showEmoji =false;
-			$("#savedpopup").modal('hide');
-			$("#quikpopup").modal('hide');
-			$("#atrributemodal").modal('hide');
-			$("#insertmodal").modal('hide');
-			$("#attachfle").modal('hide');
-		}	
-		editMedia(){
-			this.closeAllModal()
-			this.showEditTemplateMedia=true;
-		}
-		cancelEditTemplateMedia(){
-			this.closeAllModal()
-			this.editTemplate=true
-		}
-		updateEditTemplateMedia(){
-			this.closeAllModal()
-			this.editTemplate=true
-		}
-		showTemplatePreview(){
-			this.closeAllModal()
-			this.TemplatePreview=true
-		}
-		insertTemplate(){
-			this.closeAllModal()
-		}
-
-	showeditTemplate(){
+	closeAllModal(){
+		this.showAttachmenOption=false
+		this.messageMeidaFile=false
+		this.showAttributes=false
+		this.showInsertTemplate=false
+		this.editTemplate=false
+		this.TemplatePreview=false
+		this.showSavedMessage=false
+		this.showQuickReply=false
+		this.showMention=false
+		this.showEmoji =false;
+		$("#savedpopup").modal('hide');
+		$("#quikpopup").modal('hide');
+		$("#atrributemodal").modal('hide');
+		$("#insertmodal").modal('hide');
+		$("#attachfle").modal('hide');
+	}	
+	editMedia(){
+		this.closeAllModal()
+		this.showEditTemplateMedia=true;
+	}
+	cancelEditTemplateMedia(){
+		this.closeAllModal()
 		this.editTemplate=true
-		this.showInsertTemplate=false;
-	}	
-	ToggleShowMentionOption(){
-		this.closeAllModal()
-		this.showMention=!this.showMention
 	}
-	public InsertMentionOption(user:any){
-		let content:any = this.chatEditor.value;
-		content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-		content = content+'<span class="mention"> @'+user.name+' </span>'
-		this.chatEditor.value = content
-		this.showMention = false;
-	}
-	ToggleSavedMessageOption(){
+	updateEditTemplateMedia(){
 		this.closeAllModal()
-		$("#savedpopup").modal('show'); 
-		
+		this.editTemplate=true
+	}
+	showTemplatePreview(){
+		this.closeAllModal()
+		this.TemplatePreview=true
+	}
+	insertTemplate(){
+		this.closeAllModal()
+	}
 
-	}
-	ToggleInsertTemplateOption(){
-		this.closeAllModal()
-		$("#insertmodal").modal('show'); 
-		}
-
-	ToggleAttributesOption(){
-		this.closeAllModal()
-		$("#atrributemodal").modal('show'); 
-	
-	}
-	selectAttributes(item:any){
-		this.closeAllModal();
-		const selectedValue = item;
-		
-		let htmlcontent = this.chatEditor.value;
-		if (isNullOrUndefined(htmlcontent)) {
-			htmlcontent = '';
-		  }
-		const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
-		this.chatEditor.value = selectedAttr; 
-	}
-	
+showeditTemplate(){
+	this.editTemplate=true
+	this.showInsertTemplate=false;
+}	
+ToggleShowMentionOption(){
+	this.closeAllModal()
+	this.showMention=!this.showMention
+}
+public InsertMentionOption(user:any){
+	let content:any = this.chatEditor.value;
+	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+	content = content+'<span class="mention"> @'+user.name+' </span>'
+	this.chatEditor.value = content
+	this.showMention = false;
+}
+ToggleSavedMessageOption(){
+	this.closeAllModal()
+	$("#savedpopup").modal('show'); 
 	
 
-	ToggleQuickReplies(){
-		this.closeAllModal()
-		$("#quikpopup").modal('show'); 
+}
+ToggleInsertTemplateOption(){
+	this.closeAllModal()
+	$("#insertmodal").modal('show'); 
 	}
 
-	selectQuickReplies(item:any){
-		this.closeAllModal()
-		var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.title+'</b></span><br>'+item.content+'</p>';
-		this.chatEditor.value =htmlcontent
+ToggleAttributesOption(){
+	this.closeAllModal()
+	$("#atrributemodal").modal('show'); 
+
+}
+selectAttributes(item:any){
+	this.closeAllModal();
+	const selectedValue = item;
+	
+	let htmlcontent = this.chatEditor.value;
+	if (isNullOrUndefined(htmlcontent)) {
+		htmlcontent = '';
+	  }
+	const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
+	this.chatEditor.value = selectedAttr; 
+}
+
+
+
+ToggleQuickReplies(){
+	this.closeAllModal()
+	$("#quikpopup").modal('show'); 
+}
+
+selectQuickReplies(item:any){
+	this.closeAllModal()
+	var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.title+'</b></span><br>'+item.content+'</p>';
+	this.chatEditor.value =htmlcontent
+}
+searchSavedMessage(event:any){
+	let searchKey = event.target.value
+	if(searchKey.length>2){
+	var allList = this.SavedMessageListMain
+	let FilteredArray = [];
+	for(var i=0;i<allList.length;i++){
+		var content = allList[i].title.toLowerCase()
+			if(content.indexOf(searchKey.toLowerCase()) !== -1){
+				FilteredArray.push(allList[i])
+			}
 	}
-	searchSavedMessage(event:any){
-		let searchKey = event.target.value
-		if(searchKey.length>2){
-		var allList = this.SavedMessageListMain
-		let FilteredArray = [];
-		for(var i=0;i<allList.length;i++){
-			var content = allList[i].title.toLowerCase()
-				if(content.indexOf(searchKey.toLowerCase()) !== -1){
-					FilteredArray.push(allList[i])
-				}
-		}
-		this.SavedMessageList = FilteredArray
+	this.SavedMessageList = FilteredArray
+}else{
+	this.SavedMessageList = this.SavedMessageListMain
+}
+}
+searchQuickReply(event:any){
+	let searchKey = event.target.value
+	if(searchKey.length>2){
+	var allList = this.QuickReplyListMain
+	let FilteredArray = [];
+	for(var i=0;i<allList.length;i++){
+		var content = allList[i].title.toLowerCase()
+			if(content.indexOf(searchKey.toLowerCase()) !== -1){
+				FilteredArray.push(allList[i])
+			}
+	}
+	this.QuickReplyList = FilteredArray
 	}else{
-		this.SavedMessageList = this.SavedMessageListMain
+		this.QuickReplyList = this.QuickReplyListMain
 	}
+}
+
+searchTemplate(event:any){
+	let searchKey = event.target.value
+	if(searchKey.length>2){
+	var allList = this.allTemplates
+	let FilteredArray = [];
+	for(var i=0;i<allList.length;i++){
+		var content = allList[i].title.toLowerCase()
+			if(content.indexOf(searchKey.toLowerCase()) !== -1){
+				FilteredArray.push(allList[i])
+			}
 	}
-	searchQuickReply(event:any){
-		let searchKey = event.target.value
-		if(searchKey.length>2){
-		var allList = this.QuickReplyListMain
-		let FilteredArray = [];
-		for(var i=0;i<allList.length;i++){
-			var content = allList[i].title.toLowerCase()
-				if(content.indexOf(searchKey.toLowerCase()) !== -1){
-					FilteredArray.push(allList[i])
-				}
-		}
-		this.QuickReplyList = FilteredArray
-	    }else{
-			this.QuickReplyList = this.QuickReplyListMain
-		}
+	this.allTemplates = FilteredArray
+	}else{
+		this.allTemplates = this.allTemplatesMain
 	}
+}
 
-	searchTemplate(event:any){
-		let searchKey = event.target.value
-		if(searchKey.length>2){
-		var allList = this.allTemplates
-		let FilteredArray = [];
-		for(var i=0;i<allList.length;i++){
-			var content = allList[i].title.toLowerCase()
-				if(content.indexOf(searchKey.toLowerCase()) !== -1){
-					FilteredArray.push(allList[i])
-				}
-		}
-		this.allTemplates = FilteredArray
-	    }else{
-			this.allTemplates = this.allTemplatesMain
-		}
+
+filterTemplate(temType:any){
+
+	let allList  =this.allTemplatesMain;
+	if(temType.target.checked){
+	var type= temType.target.value;
+	for(var i=0;i<allList.length;i++){
+			if(allList[i]['type'] == type){
+				allList[i]['is_active']=1
+			}
 	}
-
-
-	filterTemplate(temType:any){
-
-		let allList  =this.allTemplatesMain;
-		if(temType.target.checked){
-		var type= temType.target.value;
-		for(var i=0;i<allList.length;i++){
-				if(allList[i]['type'] == type){
-					allList[i]['is_active']=1
-				}
-		}
-	   }else{
-		var type= temType.target.value;
-		for(var i=0;i<allList.length;i++){
-				if(allList[i]['type'] == type){
-					allList[i]['is_active']=0
-				}
-		}
-	   }
-		var newArray=[];
-	   for(var m=0;m<allList.length;m++){
-          if(allList[m]['is_active']==1){
-			newArray.push(allList[m])
-		  }
-
-	   }
-	   this.allTemplates= newArray
-
-		
+   }else{
+	var type= temType.target.value;
+	for(var i=0;i<allList.length;i++){
+			if(allList[i]['type'] == type){
+				allList[i]['is_active']=0
+			}
 	}
+   }
+	var newArray=[];
+   for(var m=0;m<allList.length;m++){
+	  if(allList[m]['is_active']==1){
+		newArray.push(allList[m])
+	  }
 
-	hideAllOpenModal(event:any){
-		if(this.showEmoji){
-			//this.showEmoji=false
-		}
-		console.log(event.target.id)
-		//alert('hideAllOpenModal')
-		//this.closeAllModal()
-	}	
-	closeEmoji(){
-		this.showEmoji =false
+   }
+   this.allTemplates= newArray
+
+	
+}
+
+hideAllOpenModal(event:any){
+	if(this.showEmoji){
+		//this.showEmoji=false
 	}
-	toggleEmoji(){
-		this.closeAllModal()
-		this.showEmoji = !this.showEmoji;
-		(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
-		this.range = this.selection.getRange(document);
-		this.saveSelection = this.selection.save(this.range, document);
-				
-	}
-	public onInsert(item:any) {
-		
-		this.saveSelection.restore();
-		this.chatEditor.executeCommand('insertText', item.target.textContent);
-		this.chatEditor.formatter.saveData();
-		this.chatEditor.formatter.enableUndo(this.chatEditor);
+	console.log(event.target.id)
+	//alert('hideAllOpenModal')
+	//this.closeAllModal()
+}	
+closeEmoji(){
+	this.showEmoji =false
+}
+toggleEmoji(){
+	this.closeAllModal()
+	this.showEmoji = !this.showEmoji;
+	(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
+	this.range = this.selection.getRange(document);
+	this.saveSelection = this.selection.save(this.range, document);
+			
+}
+public onInsert(item:any) {
+	
+	this.saveSelection.restore();
+	this.chatEditor.executeCommand('insertText', item.target.textContent);
+	this.chatEditor.formatter.saveData();
+	this.chatEditor.formatter.enableUndo(this.chatEditor);
 
 
-	}
+}
 
 
-	showEmojiType(EmojiType:any){
-		this.EmojiType = EmojiType
-	}
-	ToggleAttachmentBox(){
-		this.closeAllModal()
-		$("#attachfle").modal('show'); 
-		document.getElementById('attachfle')!.style.display = 'inherit';
-		this.dragAreaClass = "dragarea";
-		
-	}
-	sendattachfile(){
+showEmojiType(EmojiType:any){
+	this.EmojiType = EmojiType
+}
+ToggleAttachmentBox(){
+	this.closeAllModal()
+	$("#attachfle").modal('show'); 
+document.getElementById('attachfle')!.style.display = 'inherit';
+	this.dragAreaClass = "dragarea";
+	
+}
+sendattachfile(){
 		if(this.messageMeidaFile!==''){
 			$("#sendfile").modal('show');	
 		}else{
@@ -717,502 +717,468 @@ countryCodes = [
 		}
 		
 	}
-		sendMediaMessage(){
-			this.sendMessage()
-			this.closeAllModal();
+	sendMediaMessage(){
+		this.sendMessage()
+this.closeAllModal();
 		$('body').removeClass('modal-open');
 		$('.modal-backdrop').remove();
-		}
-		onFileChange(event: any) {
-			let files: FileList = event.target.files;
-			this.saveFiles(files);
-            
-		}
-		downloadFile(fileUrl:any){
-			window.open(fileUrl,'_blank')
-		}
-
-		@HostListener("dragover", ["$event"]) onDragOver(event: any) {
-			this.dragAreaClass = "droparea";
-			event.preventDefault();
-		}
-		@HostListener("dragenter", ["$event"]) onDragEnter(event: any) {
-			this.dragAreaClass = "droparea";
-			event.preventDefault();
-		}
-		@HostListener("dragend", ["$event"]) onDragEnd(event: any) {
-			this.dragAreaClass = "dragarea";
-			event.preventDefault();
-		}
-		@HostListener("dragleave", ["$event"]) onDragLeave(event: any) {
-			this.dragAreaClass = "dragarea";
-			event.preventDefault();
-		}
-		@HostListener("drop", ["$event"]) onDrop(event: any) {
-			this.dragAreaClass = "dragarea";
-			event.preventDefault();
-			event.stopPropagation();
-			if (event.dataTransfer.files) {
-			let files: FileList = event.dataTransfer.files;
-			this.saveFiles(files);
-			}
-		}
+	}
+	onFileChange(event: any) {
+		let files: FileList = event.target.files;
+		this.saveFiles(files);
 		
-		saveFiles(files: FileList) {
-			if(files[0]){
-		    let imageFile = files[0]
-			this.mediaType = files[0].type
-			const data = new FormData();
-			data.append('dataFile',imageFile ,imageFile.name);
-			this.apiService.uploadfile(data).subscribe(uploadStatus =>{
-				let responseData:any = uploadStatus
-				if(responseData.filename){
-					this.messageMeidaFile = responseData.filename
-					this.sendattachfile();
-					this.showAttachmenOption=false;
-				}
-			})
-			
-		  }
-		  
-		}
+	}
+	downloadFile(fileUrl:any){
+		window.open(fileUrl,'_blank')
+	}
 
-		// saveFiles(files: FileList) {
-		// 	if (files[0]) {
-		// 	  const imageFile = files[0]
-		// 	  this.mediaType = files[0].type
-		  
-		// 	  const reader = new FileReader()
-		// 	  reader.onload = (event: any) => {
-		// 		const base64Data = event.target.result.split(',')[1]; // Extracting base64 data
-		// 		this.apiService.uploadfile(base64Data).subscribe(uploadStatus => {
-		// 		  let responseData: any = uploadStatus
-		// 		  if(responseData.filename){
-		// 			this.messageMeidaFile = responseData.filename
-		// 			this.showAttachmenOption=false;
-		// 		}
-		// 		});
-		// 	  };
-		  
-		// 	  reader.readAsDataURL(imageFile);
-		// 	}
-		//   }
-		  
-				
+	@HostListener("dragover", ["$event"]) onDragOver(event: any) {
+		this.dragAreaClass = "droparea";
+		event.preventDefault();
+	}
+	@HostListener("dragenter", ["$event"]) onDragEnter(event: any) {
+		this.dragAreaClass = "droparea";
+		event.preventDefault();
+	}
+	@HostListener("dragend", ["$event"]) onDragEnd(event: any) {
+		this.dragAreaClass = "dragarea";
+		event.preventDefault();
+	}
+	@HostListener("dragleave", ["$event"]) onDragLeave(event: any) {
+		this.dragAreaClass = "dragarea";
+		event.preventDefault();
+	}
+	@HostListener("drop", ["$event"]) onDrop(event: any) {
+		this.dragAreaClass = "dragarea";
+		event.preventDefault();
+		event.stopPropagation();
+		if (event.dataTransfer.files) {
+		let files: FileList = event.dataTransfer.files;
+		this.saveFiles(files);
+		}
+	}
+	
+	saveFiles(files: FileList) {
+		if(files[0]){
+		let imageFile = files[0]
+		this.mediaType = files[0].type
+		const data = new FormData();
+		data.append('dataFile',imageFile ,imageFile.name);
+		this.apiService.uploadfile(data).subscribe(uploadStatus =>{
+			let responseData:any = uploadStatus
+			if(responseData.filename){
+				this.messageMeidaFile = responseData.filename
+this.sendattachfile();
+				this.showAttachmenOption=false;
+			}
+		})
+	  }
+	}
+
+	// saveFiles(files: FileList) {
+	// 	if (files[0]) {
+	// 	  const imageFile = files[0]
+	// 	  this.mediaType = files[0].type
+	  
+	// 	  const reader = new FileReader()
+	// 	  reader.onload = (event: any) => {
+	// 		const base64Data = event.target.result.split(',')[1]; // Extracting base64 data
+	// 		this.apiService.uploadfile(base64Data).subscribe(uploadStatus => {
+	// 		  let responseData: any = uploadStatus
+	// 		  if(responseData.filename){
+	// 			this.messageMeidaFile = responseData.filename
+	// 			this.showAttachmenOption=false;
+	// 		}
+	// 		});
+	// 	  };
+	  
+	// 	  reader.readAsDataURL(imageFile);
+	// 	}
+	//   }
+	  
+			
+
+
+
+	ngOnInit() {
+		switch(this.loginAs) {
+			case 1:
+				this.loginAs='Admin'
+				break;
+			case 2:
+				this.loginAs='Manager'
+				break;
+			case 3:
+				this.loginAs='Agent'
+				break;
+			case 4:
+				this.loginAs='Helper'
+				break;
+			default:
+				this.loginAs='Admin'
+		}
+		this.routerGuard()
+		this.getAgents()
+		this.getAllInteraction()
+		this.getCustomers()
+		this.getsavedMessages()
+		this.getquickReply()
+		this.getTemplates()
+		this.getAttributeList()
+this.sendattachfile()
+
+		// this.chatEditor.addEventListener('keydown', this.onEditorKeyDown.bind(this));
 	
 
+	}
 
-		ngOnInit() {
-			switch(this.loginAs) {
-				case 1:
-					this.loginAs='Admin'
-					break;
-				case 2:
-					this.loginAs='Manager'
-					break;
-				case 3:
-					this.loginAs='Agent'
-					break;
-				case 4:
-					this.loginAs='Helper'
-					break;
-				default:
-					this.loginAs='Admin'
-			}
-			this.routerGuard()
-			this.getAgents()
-			this.getAllInteraction()
-			this.getCustomers()
-			this.getsavedMessages()
-			this.getquickReply()
-			this.getTemplates()
-			this.getAttributeList()
-			this.sendattachfile()
-
-			// this.chatEditor.addEventListener('keydown', this.onEditorKeyDown.bind(this));
-		
-
+	async subscribeToNotifications() {
+		let notificationIdentifier = {
+			"UniqueSPPhonenumber" : (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
 		}
-
-		async subscribeToNotifications() {
-			let notificationIdentifier = {
-				"UniqueSPPhonenumber" : (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
-			}
-			this.websocketService.connect(notificationIdentifier);
-				this.websocketService.getMessage().subscribe(message => {
-					if(message != undefined )
-					{
-						console.log("Seems like some message update from webhook");
-						console.log(message)
-						try{
-							let msgjson = JSON.parse(message);
-							if(msgjson.displayPhoneNumber)
-							{
-								console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
-								if(msgjson.updateMessage)
-								{
-									this.getAllInteraction();
-
-								}						
-							}
-						}
-						catch(e)
+		this.websocketService.connect(notificationIdentifier);
+			this.websocketService.getMessage().subscribe(message => {
+				if(message != undefined )
+				{
+					console.log("Seems like some message update from webhook");
+					console.log(message)
+					try{
+						let msgjson = JSON.parse(message);
+						if(msgjson.displayPhoneNumber)
 						{
-							console.log(e);
+							console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
+							if(msgjson.updateMessage)
+							{
+								this.getAllInteraction();
+
+							}						
 						}
 					}
-				});
-		}
-
-		
-		async getsavedMessages(){
-			this.apiService.getsavedMessages(this.SPID).subscribe(savedMessages =>{
-				this.SavedMessageListMain = savedMessages
-				this.SavedMessageList = savedMessages
-			})
-
-		}
-		async getquickReply(){
-			this.apiService.getquickReply(this.SPID).subscribe(quickReply =>{
-				this.QuickReplyListMain = quickReply
-				this.QuickReplyList = quickReply
-			})
-			
-		}
-
-		async getTemplates(){
-			this.apiService.getTemplates(this.SPID).subscribe(allTemplates =>{
-				console.log('////////allTemplates////////')
-				console.log(allTemplates)
-				this.allTemplatesMain = allTemplates
-				this.allTemplates = allTemplates
-			})
-			
-		}
-
-		focusInChatFunction(){
-			this.searchChatFocused = true
-		}
-
-		focusOutChatFunction(){
-			this.searchChatFocused = false
-		}
-		focusInFunction(){
-			this.searchFocused = true
-		}
-		focusOutFunction(){
-			this.searchFocused = false
-		}
-		toggleProfileView(){
-			//console.log(this.selectedInteraction)
-			this.showFullProfile = !this.showFullProfile
-		}
-		toggleAttachedMediaView(){
-			this.showAttachedMedia = !this.showAttachedMedia
-		}
-
-		updateOptedIn(event:any){
-			this.OptedIn= event.target.checked
-			this.newContact.value.OptedIn = event.target.value
-		}
-		getCustomers(){
-			this.apiService.getCustomers(this.SPID).subscribe(data =>{
-				this.contactList= data
-				console.log(this.contactList)
-				const names: string[] = this.contactList.map((contact: { Name: any; }) => contact.Name);
-				const email: string[] = this.contactList.map((contact: {emailId:any; }) => contact.emailId);
-				const phone: string[] = this.contactList.map((contact: {Phone_number: any; }) => contact.Phone_number);
-                console.log(names);
-				console.log(email);
-				console.log(phone);
-			});
-		}
-		
-		getAgents(){
-			this.apiService.getAgents(this.SPID).subscribe(data =>{
-				this.agentsList= data
-			});
-
-		}
-		async getAssicatedInteractionData(dataList:any,selectInteraction:any=true){
-
-			let threasholdMessages=0
-			dataList.forEach((item:any) => {
-			
-			item['tags'] = this.getTagsList(item.tag)
-			
-			this.apiService.getAllMessageByInteractionId(item.InteractionId,'text').subscribe(messageList =>{
-				item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
-				item['allmessages'] =messageList?messageList:[]
-
-				var lastMessage = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]:[];
-				item['lastMessage'] = lastMessage
-				item['lastMessageReceved']= this.timeSinceLastMessage(item.lastMessage)
-				item['progressbar']= this.getProgressBar(item.lastMessage)
-				item['UnreadCount']= this.getUnreadCount(item.allmessages)
-				
-				var messageSentCount:any = this.threasholdMessages(item.allmessages)
-				threasholdMessages = threasholdMessages+messageSentCount
-				this.SIPthreasholdMessages= this.SIPmaxMessageLimt-threasholdMessages
-		
-			})
-
-			this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes').subscribe(notesList =>{
-				item['notesList'] =notesList?this.groupMessageByDate(notesList):[]
-				item['allnotes'] =notesList?notesList:[]
-			})
-
-			this.apiService.getAllMessageByInteractionId(item.InteractionId,'media').subscribe(mediaList =>{
-				item['allmedia'] =mediaList?mediaList:[]
-			})
-
-
-				this.apiService.getInteractionMapping(item.InteractionId).subscribe(mappingList =>{
-					var mapping:any  = mappingList;
-					item['assignTo'] =mapping?mapping[mapping.length - 1]:'';
-			    })
-			
-			this.apiService.checkInteractionPinned(item.InteractionId,this.AgentId).subscribe(pinnedList =>{
-				var isPinnedArray:any =pinnedList
-				if(isPinnedArray.length >0){
-				item['isPinned'] = true
-				}else{
-				item['isPinned'] = false
-				}
-			})
-
-
-			});
-
-			this.interactionList= dataList
-			console.log(this.interactionList);
-			this.interactionListMain= dataList
-
-			
-			
-			setTimeout(() => {
-				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-			}, 5000);
-
-			setTimeout(() => {
-				this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-			}, 5000);
-
-			if(dataList[0] && selectInteraction){
-				this.selectInteraction(dataList[0])
-			}
-
-
-		}
-        async updatePinnedStatus(item:any){
-			
-			var bodyData = {
-				AgentId:this.AgentId,
-				isPinned:item.isPinned,
-				InteractionId:item.InteractionId
-			}
-			//console.log(bodyData)
-			this.apiService.updateInteractionPinned(bodyData).subscribe(async response =>{
-				item.isPinned=!item.isPinned;
-			})
-
-
-
-		}
-
-		async getFilteredInteraction(filterBy:any){
-			await this.apiService.getFilteredInteraction(filterBy,this.AgentId,this.AgentName).subscribe(async data =>{
-				var dataList:any = data;
-				this.getAssicatedInteractionData(dataList)
-			});
-		}
-		
-		async getAllInteraction(selectInteraction:any=true){
-			let bodyData={
-				SearchKey:this.interactionSearchKey,
-				FilterBy:this.interactionFilterBy,
-				AgentId:this.AgentId,
-				SPID:this.SPID,
-				AgentName:this.AgentName
-			}
-			
-			await this.apiService.getAllInteraction(bodyData).subscribe(async data =>{
-				var dataList:any = data;
-				this.getAssicatedInteractionData(dataList,selectInteraction)
-			});
-
-		}
-		async getSearchInteraction(event:any){
-		if(event.target.value.length>2){
-			var searchKey =event.target.value
-			this.interactionSearchKey = searchKey
-			this.getAllInteraction()
-		}else{
-			this.interactionSearchKey = ''
-			this.getAllInteraction()
-		}
-		
-		}
-
-		async seacrhInChat(event:any,selectInteraction:any=true){
-			//console.log('seacrhInChat')
-			let searchKey = event.target.value
-		  if(searchKey.length>1){
-			let FilteredArray = []
-			let allmessages=[]
-			if(this.showChatNotes=='text'){
-				 allmessages = this.selectedInteraction['allmessages']
-			}else{
-				 allmessages = this.selectedInteraction['allnotes']
-			}
-			for(var i=0;i<allmessages.length;i++){
-				let text = allmessages[i]['message_text']
-				let content = text.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-				content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-				content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-				content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-				content = content.replace('&nbsp;', '\n')
-				content = content.replace(/<br[^>]*>/g, '\n')
-				content = content.replace(/<\/?[^>]+(>|$)/g, "")
-				content = content.toLowerCase()
-
-				if(content.indexOf(searchKey.toLowerCase()) !== -1){
-					FilteredArray.push(allmessages[i])
-				}
-		    }
-			
-			if(this.showChatNotes=='text'){
-				this.selectedInteraction['messageList'] = FilteredArray.length>0?this.groupMessageByDate(FilteredArray):[{}]
-			}else{
-				this.selectedInteraction['notesList'] =   FilteredArray.length>0?this.groupMessageByDate(FilteredArray):[{}]
-			}
-
-
-		}else{
-			this.selectedInteraction['messageList'] = this.groupMessageByDate(this.selectedInteraction['allmessages'])
-			this.selectedInteraction['notesList'] =this.groupMessageByDate(this.selectedInteraction['allnotes'])
-		}
-
-		}
-	
-		
-		getFormatedDate(date:any){
-			if(date){
-				var time = new Date(new Date(date).toString());
-				var timeString = time.toLocaleString('en-US', { hour: "2-digit",minute: "2-digit" })
-				const tempDate:any = new Date(date).toString().split(' ');
-				const formattedDate:any = tempDate['2']+' '+tempDate['1']+' '+tempDate['3']+', '+timeString;
-				return formattedDate
-				}else{
-				return '';
-				}
-
-		}
-
-		getTagsList(tags:any){
-			if(tags){
-				const tagsArray = tags.split(',');
-				return tagsArray
-			}else{
-				return [];
-			}
-		}
-
-		dateSince(date:any) {
-			if(date){
-			const monthNames = ["January", "February", "March", "April", "May", "June",
-				"July", "August", "September", "October", "November", "December"
-			];		
-			var a = new Date()
-			var b = new Date(date)
-
-			const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-			var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-			var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
-			var groupDate = b.getDate()+' '+monthNames[b.getMonth()]+' '+b.getFullYear();
-			var diffDays:any = Math.floor((utc1 - utc2) / _MS_PER_DAY);
-			if(diffDays<1){
-				return 'Today';
-			}
-			if(diffDays<2){
-				return 'Yesterday';
-			}else{
-				return groupDate;
-			}
-			
-		}else{
-			return ''
-		}
-			
-		}
-
-
-		timeSince(date:any) {
-			if(date){
-			var messCreated = new Date(date)
-				var hours = messCreated.getHours() > 12 ? messCreated.getHours() - 12 : messCreated.getHours();
-				var am_pm = messCreated.getHours() >= 12 ? "PM" : "AM";
-				var hoursBH = hours < 10 ? "0" + hours : hours;
-				var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
-				var time = hoursBH + ":" + minutes  + " " + am_pm;
-				return time
-			
-		}else{
-			return ''
-		}
-			
-		}
-        threasholdMessages(allMessage:any){
-			let messageCount =0
-			if(allMessage.length>0){
-				
-				for(var i=0;i<allMessage.length;i++){
-					var fiveMinuteAgo = new Date( Date.now() - 1000 * (60 * this.messageTimeLimit) )
-					var messCreated = new Date(allMessage[i].created_at)
-					if(messCreated > fiveMinuteAgo ){
-						messageCount++
+					catch(e)
+					{
+						console.log(e);
 					}
 				}
-				
-			 }
-			 return messageCount
+			});
+	}
 
-		}
-		getProgressBar(lastMessage:any){
-            let progressbar:any=[];
-			if(lastMessage){
-				var date = lastMessage.created_at
-				var currentDate:any = new Date()
-				var messCreated:any = new Date(date)
-				var seconds = Math.floor((currentDate - messCreated) / 1000);
-				var interval:any = seconds / 31536000;
+	
+	async getsavedMessages(){
+		this.apiService.getsavedMessages(this.SPID).subscribe(savedMessages =>{
+			this.SavedMessageListMain = savedMessages
+			this.SavedMessageList = savedMessages
+		})
+
+	}
+	async getquickReply(){
+		this.apiService.getquickReply(this.SPID).subscribe(quickReply =>{
+			this.QuickReplyListMain = quickReply
+			this.QuickReplyList = quickReply
+		})
+		
+	}
+
+	async getTemplates(){
+		this.apiService.getTemplates(this.SPID).subscribe(allTemplates =>{
+			console.log('////////allTemplates////////')
+			console.log(allTemplates)
+			this.allTemplatesMain = allTemplates
+			this.allTemplates = allTemplates
+		})
+		
+	}
+
+	focusInChatFunction(){
+		this.searchChatFocused = true
+	}
+
+	focusOutChatFunction(){
+		this.searchChatFocused = false
+	}
+	focusInFunction(){
+		this.searchFocused = true
+	}
+	focusOutFunction(){
+		this.searchFocused = false
+	}
+	toggleProfileView(){
+		//console.log(this.selectedInteraction)
+		this.showFullProfile = !this.showFullProfile
+	}
+	toggleAttachedMediaView(){
+		this.showAttachedMedia = !this.showAttachedMedia
+	}
+
+	updateOptedIn(event:any){
+		this.OptedIn= event.target.checked
+		this.newContact.value.OptedIn = event.target.value
+	}
+	getCustomers(){
+		this.apiService.getCustomers(this.SPID).subscribe(data =>{
+			this.contactList= data
+			console.log(this.contactList)
+			const names: string[] = this.contactList.map((contact: { Name: any; }) => contact.Name);
+			const email: string[] = this.contactList.map((contact: {emailId:any; }) => contact.emailId);
+			const phone: string[] = this.contactList.map((contact: {Phone_number: any; }) => contact.Phone_number);
+			console.log(names);
+			console.log(email);
+			console.log(phone);
+		});
+	}
+	
+	getAgents(){
+		this.apiService.getAgents(this.SPID).subscribe(data =>{
+			this.agentsList= data
+		});
+
+	}
+	async getAssicatedInteractionData(dataList:any,selectInteraction:any=true){
+
+		let threasholdMessages=0
+		dataList.forEach((item:any) => {
+		
+		item['tags'] = this.getTagsList(item.tag)
+		
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text').subscribe(messageList =>{
+			item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
+			item['allmessages'] =messageList?messageList:[]
+
+			var lastMessage = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]:[];
+			item['lastMessage'] = lastMessage
+			item['lastMessageReceved']= this.timeSinceLastMessage(item.lastMessage)
+			item['progressbar']= this.getProgressBar(item.lastMessage)
+			item['UnreadCount']= this.getUnreadCount(item.allmessages)
 			
-				interval = seconds / 2592000;
-				interval = seconds / 86400;
-				interval = seconds / 3600;
+			var messageSentCount:any = this.threasholdMessages(item.allmessages)
+			threasholdMessages = threasholdMessages+messageSentCount
+			this.SIPthreasholdMessages= this.SIPmaxMessageLimt-threasholdMessages
 	
-				var hour =parseInt(interval)
-				if (hour < 24) {
-					var hrPer = (100*hour)/24
-					var hourLeft =24-parseInt(interval)
-				}else{
-					var hrPer =100
-					var hourLeft =0
-				}
-				progressbar['progressbarPer'] = "--value:"+hrPer;
-				progressbar['progressbarValue']= hourLeft;
-	
-				}else{
-					var hrPer =100
-					var hourLeft =0
-					progressbar['progressbarPer'] = "--value:"+hrPer;
-					progressbar['progressbarValue']= hourLeft;
-				}
-				return progressbar;
+		})
 
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes').subscribe(notesList =>{
+			item['notesList'] =notesList?this.groupMessageByDate(notesList):[]
+			item['allnotes'] =notesList?notesList:[]
+		})
+
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media').subscribe(mediaList =>{
+			item['allmedia'] =mediaList?mediaList:[]
+		})
+
+
+			this.apiService.getInteractionMapping(item.InteractionId).subscribe(mappingList =>{
+				var mapping:any  = mappingList;
+				item['assignTo'] =mapping?mapping[mapping.length - 1]:'';
+			})
+		
+		this.apiService.checkInteractionPinned(item.InteractionId,this.AgentId).subscribe(pinnedList =>{
+			var isPinnedArray:any =pinnedList
+			if(isPinnedArray.length >0){
+			item['isPinned'] = true
+			}else{
+			item['isPinned'] = false
+			}
+		})
+
+
+		});
+
+		this.interactionList= dataList
+		console.log(this.interactionList);
+		this.interactionListMain= dataList
+
+		
+		
+		setTimeout(() => {
+			this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+		}, 5000);
+
+		setTimeout(() => {
+			this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+		}, 5000);
+
+		if(dataList[0] && selectInteraction){
+			this.selectInteraction(dataList[0])
 		}
-		timeSinceLastMessage(lastMessage:any){
-			if(lastMessage){
+
+
+	}
+	async updatePinnedStatus(item:any){
+		
+		var bodyData = {
+			AgentId:this.AgentId,
+			isPinned:item.isPinned,
+			InteractionId:item.InteractionId
+		}
+		//console.log(bodyData)
+		this.apiService.updateInteractionPinned(bodyData).subscribe(async response =>{
+			item.isPinned=!item.isPinned;
+		})
+
+
+
+	}
+
+	async getFilteredInteraction(filterBy:any){
+		await this.apiService.getFilteredInteraction(filterBy,this.AgentId,this.AgentName).subscribe(async data =>{
+			var dataList:any = data;
+			this.getAssicatedInteractionData(dataList)
+		});
+	}
+	
+	async getAllInteraction(selectInteraction:any=true){
+		let bodyData={
+			SearchKey:this.interactionSearchKey,
+			FilterBy:this.interactionFilterBy,
+			AgentId:this.AgentId,
+			SPID:this.SPID,
+			AgentName:this.AgentName
+		}
+		
+		await this.apiService.getAllInteraction(bodyData).subscribe(async data =>{
+			var dataList:any = data;
+			this.getAssicatedInteractionData(dataList,selectInteraction)
+		});
+
+	}
+	async getSearchInteraction(event:any){
+	if(event.target.value.length>2){
+		var searchKey =event.target.value
+		this.interactionSearchKey = searchKey
+		this.getAllInteraction()
+	}else{
+		this.interactionSearchKey = ''
+		this.getAllInteraction()
+	}
+	
+	}
+
+	async seacrhInChat(event:any,selectInteraction:any=true){
+		//console.log('seacrhInChat')
+		let searchKey = event.target.value
+	  if(searchKey.length>1){
+		let FilteredArray = []
+		let allmessages=[]
+		if(this.showChatNotes=='text'){
+			 allmessages = this.selectedInteraction['allmessages']
+		}else{
+			 allmessages = this.selectedInteraction['allnotes']
+		}
+		for(var i=0;i<allmessages.length;i++){
+			let text = allmessages[i]['message_text']
+			let content = text.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+			content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+			content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+			content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+			content = content.replace('&nbsp;', '\n')
+			content = content.replace(/<br[^>]*>/g, '\n')
+			content = content.replace(/<\/?[^>]+(>|$)/g, "")
+			content = content.toLowerCase()
+
+			if(content.indexOf(searchKey.toLowerCase()) !== -1){
+				FilteredArray.push(allmessages[i])
+			}
+		}
+		
+		if(this.showChatNotes=='text'){
+			this.selectedInteraction['messageList'] = FilteredArray.length>0?this.groupMessageByDate(FilteredArray):[{}]
+		}else{
+			this.selectedInteraction['notesList'] =   FilteredArray.length>0?this.groupMessageByDate(FilteredArray):[{}]
+		}
+
+
+	}else{
+		this.selectedInteraction['messageList'] = this.groupMessageByDate(this.selectedInteraction['allmessages'])
+		this.selectedInteraction['notesList'] =this.groupMessageByDate(this.selectedInteraction['allnotes'])
+	}
+
+	}
+
+	
+	getFormatedDate(date:any){
+		if(date){
+			var time = new Date(new Date(date).toString());
+			var timeString = time.toLocaleString('en-US', { hour: "2-digit",minute: "2-digit" })
+			const tempDate:any = new Date(date).toString().split(' ');
+			const formattedDate:any = tempDate['2']+' '+tempDate['1']+' '+tempDate['3']+', '+timeString;
+			return formattedDate
+			}else{
+			return '';
+			}
+
+	}
+
+	getTagsList(tags:any){
+		if(tags){
+			const tagsArray = tags.split(',');
+			return tagsArray
+		}else{
+			return [];
+		}
+	}
+
+	dateSince(date:any) {
+		if(date){
+		const monthNames = ["January", "February", "March", "April", "May", "June",
+			"July", "August", "September", "October", "November", "December"
+		];		
+		var a = new Date()
+		var b = new Date(date)
+
+		const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+		var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+		var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+		var groupDate = b.getDate()+' '+monthNames[b.getMonth()]+' '+b.getFullYear();
+		var diffDays:any = Math.floor((utc1 - utc2) / _MS_PER_DAY);
+		if(diffDays<1){
+			return 'Today';
+		}
+		if(diffDays<2){
+			return 'Yesterday';
+		}else{
+			return groupDate;
+		}
+		
+	}else{
+		return ''
+	}
+		
+	}
+
+
+	timeSince(date:any) {
+		if(date){
+		var messCreated = new Date(date)
+			var hours = messCreated.getHours() > 12 ? messCreated.getHours() - 12 : messCreated.getHours();
+			var am_pm = messCreated.getHours() >= 12 ? "PM" : "AM";
+			var hoursBH = hours < 10 ? "0" + hours : hours;
+			var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
+			var time = hoursBH + ":" + minutes  + " " + am_pm;
+			return time
+		
+	}else{
+		return ''
+	}
+		
+	}
+	threasholdMessages(allMessage:any){
+		let messageCount =0
+		if(allMessage.length>0){
+			
+			for(var i=0;i<allMessage.length;i++){
+				var fiveMinuteAgo = new Date( Date.now() - 1000 * (60 * this.messageTimeLimit) )
+				var messCreated = new Date(allMessage[i].created_at)
+				if(messCreated > fiveMinuteAgo ){
+					messageCount++
+				}
+			}
+			
+		 }
+		 return messageCount
+
+	}
+	getProgressBar(lastMessage:any){
+		let progressbar:any=[];
+		if(lastMessage){
 			var date = lastMessage.created_at
 			var currentDate:any = new Date()
 			var messCreated:any = new Date(date)
@@ -1230,855 +1196,887 @@ countryCodes = [
 			}else{
 				var hrPer =100
 				var hourLeft =0
-				if(this.selectedInteraction['interaction_status']!=='Resolved'){
-					this.updateConversationStatus('Resolved')
-				}
 			}
-			
-			//if (interval > 1) {
-				var hours = messCreated.getHours() > 12 ? messCreated.getHours() - 12 : messCreated.getHours();
-				var am_pm = messCreated.getHours() >= 12 ? "PM" : "AM";
-				var hoursBH = hours < 10 ? "0" + hours : hours;
-				var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
-				var time = hoursBH + ":" + minutes  + " " + am_pm;
-				return time
-			//}
-		    }else{
+			progressbar['progressbarPer'] = "--value:"+hrPer;
+			progressbar['progressbarValue']= hourLeft;
+
+			}else{
 				var hrPer =100
 				var hourLeft =0
-				return '';
+				progressbar['progressbarPer'] = "--value:"+hrPer;
+				progressbar['progressbarValue']= hourLeft;
+			}
+			return progressbar;
+
+	}
+	timeSinceLastMessage(lastMessage:any){
+		if(lastMessage){
+		var date = lastMessage.created_at
+		var currentDate:any = new Date()
+		var messCreated:any = new Date(date)
+		var seconds = Math.floor((currentDate - messCreated) / 1000);
+		var interval:any = seconds / 31536000;
+	
+		interval = seconds / 2592000;
+		interval = seconds / 86400;
+		interval = seconds / 3600;
+
+		var hour =parseInt(interval)
+		if (hour < 24) {
+			var hrPer = (100*hour)/24
+			var hourLeft =24-parseInt(interval)
+		}else{
+			var hrPer =100
+			var hourLeft =0
+			if(this.selectedInteraction['interaction_status']!=='Resolved'){
+				this.updateConversationStatus('Resolved')
 			}
 		}
-
-	selectInteraction(Interaction:any){
-		if(this.chatEditor){
-			this.chatEditor.value = 'Your message...'
-		this.showChatNotes ='text'
-		}
-		for(var i=0;i<this.interactionList.length;i++){
-			this.interactionList[i].selected=false
-		}
-		Interaction['selected']=true
-		this.selectedInteraction =Interaction
-		console.log(Interaction)
-		this.getPausedTimer()
-	}
-
-	getPausedTimer(){
-		//console.log('getPausedTimer')
 		
-		clearInterval(this.PauseTime);
-  if(this.selectedInteraction.paused_till){
-		var countDownDate = new Date(this.selectedInteraction.paused_till).getTime();
-		let that =this;
-		this.PauseTime = setInterval(function() {
-
-			// Get today's date and time
-			var now = new Date().getTime();
-		  
-			// Find the distance between now and the count down date
-			var distance = countDownDate - now;
-		  
-			// Time calculations for days, hours, minutes and seconds
-			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-			var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-		  
-			// Display the result in the element with id="demo"
-			that.selectedInteraction['PausedTimer'] =  minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
-		  
-			// If the count down is finished, write some text
-			if (distance < 0) {
-			  clearInterval(that.PauseTime);
-			  that.selectedInteraction['PausedTimer'] = "";
-			  that.selectedInteraction['AutoReplyStatus']='Auto Reply are Paused'
-			}
-		  }, 1000);
+		//if (interval > 1) {
+			var hours = messCreated.getHours() > 12 ? messCreated.getHours() - 12 : messCreated.getHours();
+			var am_pm = messCreated.getHours() >= 12 ? "PM" : "AM";
+			var hoursBH = hours < 10 ? "0" + hours : hours;
+			var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
+			var time = hoursBH + ":" + minutes  + " " + am_pm;
+			return time
+		//}
 		}else{
-			this.selectedInteraction['PausedTimer'] = "";
-			this.selectedInteraction['AutoReplyStatus']='Auto Reply are Active'
+			var hrPer =100
+			var hourLeft =0
+			return '';
 		}
-
 	}
+
+selectInteraction(Interaction:any){
+	if(this.chatEditor){
+		this.chatEditor.value = 'Your message...'
+	this.showChatNotes ='text'
+	}
+	for(var i=0;i<this.interactionList.length;i++){
+		this.interactionList[i].selected=false
+	}
+	Interaction['selected']=true
+	this.selectedInteraction =Interaction
+	console.log(Interaction)
+	this.getPausedTimer()
+}
+
+getPausedTimer(){
+	//console.log('getPausedTimer')
 	
-	counter(i: number) {
-		return new Array(i);
-	}
+	clearInterval(this.PauseTime);
+if(this.selectedInteraction.paused_till){
+	var countDownDate = new Date(this.selectedInteraction.paused_till).getTime();
+	let that =this;
+	this.PauseTime = setInterval(function() {
 
-	filterInteraction(filterBy:any){
-		this.selectedInteraction=[]
-		/*
-		if(filterBy != 'All'){
-			this.getFilteredInteraction(filterBy)
-		}else{
-			this.getAllInteraction()
+		// Get today's date and time
+		var now = new Date().getTime();
+	  
+		// Find the distance between now and the count down date
+		var distance = countDownDate - now;
+	  
+		// Time calculations for days, hours, minutes and seconds
+		var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+	  
+		// Display the result in the element with id="demo"
+		that.selectedInteraction['PausedTimer'] =  minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0');
+	  
+		// If the count down is finished, write some text
+		if (distance < 0) {
+		  clearInterval(that.PauseTime);
+		  that.selectedInteraction['PausedTimer'] = "";
+		  that.selectedInteraction['AutoReplyStatus']='Auto Reply are Paused'
 		}
-		*/
-		this.interactionFilterBy=filterBy
-		this.getAllInteraction()
-		this.ShowFilerOption =false
-
-	}
-	toggleFilerOption(){
-		$("#addfilter").modal('show');
-		// this.showfilter=!this.showfilter;
-	}
-
-	toggleContactOption(){
-		this.ShowContactOption =!this.ShowContactOption;
-	}
-
-	toggleChannelOption(){
-		this.ShowChannelOption =!this.ShowChannelOption;
-		this.ShowLeadStatusOption = false;
-		this.ShowGenderOption = false;
-	}
-	toggleGenderOption(){
-		this.ShowGenderOption =!this.ShowGenderOption;
-		this.ShowLeadStatusOption = false;
-		this.ShowChannelOption = false;
-	}
-	selectChannelOption(ChannelName:any){
-		this.selectedChannel = ChannelName
-		this.ShowChannelOption=false
-	}
-	hangeEditContactInuts(item:any){
-		//console.log(item.target.name)
-		if(item.target.name =='OptInStatus'){
-			this.EditContactForm['OptInStatus'] = item.target.value
-			this.EditContactForm['OptInStatusChecked'] = item.target.value?true:false
-		}else{
-			this.EditContactForm[item.target.name] = item.target.value
-		}
-		this.formatPhoneNumber();
-		//this.ShowChannelOption=false
-
-	}
-	toggleLeadStatusOption(){
-		this.ShowLeadStatusOption=!this.ShowLeadStatusOption;
-		this.ShowChannelOption = false;
-		this.ShowGenderOption = false;
-	}
-
-
-	hangeEditContactSelect(name:any,value:any){
-		this.EditContactForm[name] = value
-		this.ShowChannelOption=false
-		this.ShowGenderOption=false
-		this.ShowLeadStatusOption=false;
-
-	}
-
-	updateCustomer(){
-		var bodyData = {
-		Name:this.EditContactForm.Name,
-		Phone_number:this.EditContactForm.Phone_number,
-		channel:this.EditContactForm.channel,
-		status:this.EditContactForm.status,
-		OptInStatus:this.EditContactForm.OptInStatus,
-		sex:this.EditContactForm.sex,
-		age:this.EditContactForm.age,
-		emailId:this.EditContactForm.emailId,
-		Country:this.EditContactForm.Country,
-		facebookId:this.EditContactForm.facebookId,
-		InstagramId:this.EditContactForm.InstagramId,
-		customerId:this.EditContactForm.customerId,
-		}
-
-		if(this.EditContactForm.OptInStatusChecked){
-			bodyData['OptInStatus'] = 'Yes';
-		}else{
-			bodyData['OptInStatus'] = 'No';
-		}
-		//console.log(bodyData)
-
-		if(bodyData['Name']!='' && bodyData['Phone_number'].length>=10 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
-			this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
-			this.selectedInteraction['Name']=this.EditContactForm.Name
-			this.selectedInteraction['Phone_number']=this.EditContactForm.Phone_number
-			this.selectedInteraction['channel']=this.EditContactForm.channel
-			this.selectedInteraction['status']=this.EditContactForm.status
-			this.selectedInteraction['OptInStatus']=bodyData['OptInStatus']
-			this.selectedInteraction['sex']=this.EditContactForm.sex
-			this.selectedInteraction['age']=this.EditContactForm.age
-			this.selectedInteraction['emailId']=this.EditContactForm.emailId
-			this.selectedInteraction['Country']=this.EditContactForm.Country
-			this.selectedInteraction['facebookId']=this.EditContactForm.facebookId
-			this.selectedInteraction['InstagramId']=this.EditContactForm.InstagramId
-			
-				if(this.modalReference){
-					this.modalReference.close();
-				}
-				this.showToaster('Contact information updated...','success');
-			});
-		}
-
-		else {
-			this.showToaster('Name, Phone Number, and Email ID are required.', 'error');
-		}
-
-	
-	}
-
-
-	filterContactByType(ChannelName:any){
-		this.selectedChannel = ChannelName
-		this.getSearchContact();
-		this.ShowContactOption=false
-	}
-    
-	toggleConversationStatusOption(){
-		if(this.loginAs !='Agent'){
-		this.ShowConversationStatusOption =!this.ShowConversationStatusOption
-		}else if(this.selectedInteraction.assignTo.AgentId == this.AgentId){
-			this.ShowConversationStatusOption =!this.ShowConversationStatusOption
-		}else{
-			this.showToaster('Opps you dont have permission','warning')
-		}
-		this.ShowAssignOption=false
-	}
-
-	toggleAssignOption(){
-		this.ShowConversationStatusOption=false;
-		if(this.selectedInteraction.interaction_status =='Resolved'){
-			this.showToaster('Already Resolved','warning')
-		}else{
-		if(this.loginAs =='Manager' || this.selectedInteraction.interaction_status !='Resolved'){
-			this.ShowAssignOption =!this.ShowAssignOption
-		}else{
-			this.showToaster('Opps you dont have permission','warning')
-		}
-	}
-	}
-
-	showToaster(message:any,type:any){
-	if(type=='success'){
-		this.successMessage=message;
-	}else if(type=='error'){
-		this.errorMessage=message;
+	  }, 1000);
 	}else{
-		this.warningMessage=message;
-	}
-	setTimeout(() => {
-		this.hideToaster()
-	}, 5000);
-	
-	}
-	markItRead(){
-		if(this.selectedInteraction['UnreadCount'] > 0){
-				this.selectedInteraction.messageList.map((messageGroup:any)=>{
-					messageGroup.items.map((message:any)=>{
-						if(this.selectedInteraction.assignTo && this.selectedInteraction.assignTo.AgentId == this.AgentId && message.message_direction!='Out' && message.is_read==0){
-							var bodyData = {
-								Message_id:message.Message_id
-							}
-							this.apiService.updateMessageRead(bodyData).subscribe(async data =>{
-								let selectedInteraction =this.selectedInteraction;
-								selectedInteraction['UnreadCount']=selectedInteraction['UnreadCount']>0?selectedInteraction['UnreadCount']-1:0
-								this.selectedInteraction =selectedInteraction
-								message.is_read=1;	
-							})
-				       }
-					});
-			});
+		this.selectedInteraction['PausedTimer'] = "";
+		this.selectedInteraction['AutoReplyStatus']='Auto Reply are Active'
 	}
 
+}
+
+counter(i: number) {
+	return new Array(i);
+}
+
+filterInteraction(filterBy:any){
+	this.selectedInteraction=[]
+	/*
+	if(filterBy != 'All'){
+		this.getFilteredInteraction(filterBy)
+	}else{
+		this.getAllInteraction()
 	}
+	*/
+	this.interactionFilterBy=filterBy
+	this.getAllInteraction()
+	this.ShowFilerOption =false
+
+}
+toggleFilerOption(){
+	$("#addfilter").modal('show');
+		// this.showfilter=!this.showfilter;
+}
+
+toggleContactOption(){
+	this.ShowContactOption =!this.ShowContactOption;
+}
+
+toggleChannelOption(){
+	this.ShowChannelOption =!this.ShowChannelOption;
+	this.ShowLeadStatusOption = false;
+	this.ShowGenderOption = false;
+}
+toggleGenderOption(){
+	this.ShowGenderOption =!this.ShowGenderOption;
+	this.ShowLeadStatusOption = false;
+	this.ShowChannelOption = false;
+}
+selectChannelOption(ChannelName:any){
+	this.selectedChannel = ChannelName
+	this.ShowChannelOption=false
+}
+hangeEditContactInuts(item:any){
+	//console.log(item.target.name)
+	if(item.target.name =='OptInStatus'){
+		this.EditContactForm['OptInStatus'] = item.target.value
+		this.EditContactForm['OptInStatusChecked'] = item.target.value?true:false
+	}else{
+		this.EditContactForm[item.target.name] = item.target.value
+	}
+	this.formatPhoneNumber();
+	//this.ShowChannelOption=false
+
+}
+toggleLeadStatusOption(){
+	this.ShowLeadStatusOption=!this.ShowLeadStatusOption;
+	this.ShowChannelOption = false;
+	this.ShowGenderOption = false;
+}
 
 
-	getUnreadCount(messages:any){
-		let unreadCount=0
-		for(var i=0;i<messages.length;i++){
-			if(messages[i].message_direction!='Out' && messages[i].is_read==0){
-				unreadCount=unreadCount+1
-			}
-		}
-		return unreadCount
+hangeEditContactSelect(name:any,value:any){
+	this.EditContactForm[name] = value
+	this.ShowChannelOption=false
+	this.ShowGenderOption=false
+	this.ShowLeadStatusOption=false;
+
+}
+
+updateCustomer(){
+	var bodyData = {
+	Name:this.EditContactForm.Name,
+	Phone_number:this.EditContactForm.Phone_number,
+	channel:this.EditContactForm.channel,
+	status:this.EditContactForm.status,
+	OptInStatus:this.EditContactForm.OptInStatus,
+	sex:this.EditContactForm.sex,
+	age:this.EditContactForm.age,
+	emailId:this.EditContactForm.emailId,
+	Country:this.EditContactForm.Country,
+	facebookId:this.EditContactForm.facebookId,
+	InstagramId:this.EditContactForm.InstagramId,
+	customerId:this.EditContactForm.customerId,
 	}
 
-	hideToaster(){
-		this.successMessage='';
-		this.errorMessage='';
-		this.warningMessage='';
+	if(this.EditContactForm.OptInStatusChecked){
+		bodyData['OptInStatus'] = 'Yes';
+	}else{
+		bodyData['OptInStatus'] = 'No';
 	}
-	toggleAutoReply(){
-		// this.AutoReplyOption =!this.AutoReplyOption
-		$("#addTagModal").modal('show'); 
-		$('body').removeClass('modal-open');
-		$('.modal-backdrop').remove();
-		// document.getElementById("smartrepliesModal")!.style.display="inherit";
-	}
-    
-	SelectReplyOption(optionValue:any,optionType:any){
-		var LastPaused = this.selectedInteraction.paused_till
-        var PTime = optionValue.match(/(\d+)/);
-		let pausedTill = new Date();
-		if(PTime){
+	//console.log(bodyData)
+
+	if(bodyData['Name']!='' && bodyData['Phone_number'].length>=10 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
+		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
+		this.selectedInteraction['Name']=this.EditContactForm.Name
+		this.selectedInteraction['Phone_number']=this.EditContactForm.Phone_number
+		this.selectedInteraction['channel']=this.EditContactForm.channel
+		this.selectedInteraction['status']=this.EditContactForm.status
+		this.selectedInteraction['OptInStatus']=bodyData['OptInStatus']
+		this.selectedInteraction['sex']=this.EditContactForm.sex
+		this.selectedInteraction['age']=this.EditContactForm.age
+		this.selectedInteraction['emailId']=this.EditContactForm.emailId
+		this.selectedInteraction['Country']=this.EditContactForm.Country
+		this.selectedInteraction['facebookId']=this.EditContactForm.facebookId
+		this.selectedInteraction['InstagramId']=this.EditContactForm.InstagramId
 		
-		if(optionType =='Extend'){
-		var dt1 = (new Date(LastPaused)).getTime();//Unix timestamp (in milliseconds)
-		var addSec = PTime[0]*60*1000
-		var dt2= new Date(dt1+addSec)
-		pausedTill = new Date(dt2);
-		
-		}else{
-		var dt1 = (new Date()).getTime();
-		var addSec = PTime[0]*60*1000
-		var dt2= new Date(dt1+addSec)
-		pausedTill = new Date(dt2);	
-		}	
-	 }
-	
-	
-		
-		var bodyData = {
-			AutoReply:optionValue,
-			InteractionId:this.selectedInteraction.InteractionId,
-			updated_at:new Date(),
-			paused_till:pausedTill
-		}
-		console.log(bodyData)
-		this.apiService.updateInteraction(bodyData).subscribe(async response =>{
-			this.selectedInteraction['AutoReplyStatus'] =optionValue	
-			this.AutoReplyType ='Pause are '+optionType	
-			this.AutoReplyOption=false;
-			this.selectedInteraction['paused_till'] =pausedTill;
-			this.getPausedTimer()
-			this.showToaster('Pause Applied','success')
-			console.log(this.selectedInteraction)
-		})
-		
-		
-	}
-	
-// Function to format the phone number using libphonenumber-js
-formatPhoneNumber() {
-	const phoneNumber = this.newContact.get('Phone_number')?.value;
-	const countryCode = this.newContact.get('country_code')?.value;
-  
-	if (phoneNumber && countryCode) {
-	  const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
-	  const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
-  
-	  if (formattedPhoneNumber) {
-		this.newContact.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
-		const phoneNumberValue = this.newContact.get('Phone_number')?.value;
-		console.log(phoneNumberValue);
-  
-	  }
-	}
-	}
-
-
-
-
-
-	searchContact(event:any){
-		this.contactSearchKey = event.target.value;
-		this.getSearchContact()
-		
-	}
-	getSearchContact(){
-		this.apiService.searchCustomer(this.selectedChannel,this.SPID,this.contactSearchKey).subscribe(data =>{
-			this.contactList= data
-		});
-	}
-
-	blockCustomer(selectedInteraction:any){
-		var bodyData = {
-			customerId:selectedInteraction.customerId,
-			isBlocked:selectedInteraction.isBlocked==1?0:1
-		}
-		this.apiService.blockCustomer(bodyData).subscribe(ResponseData =>{
-			this.selectedInteraction['isBlocked']=selectedInteraction.isBlocked==1?0:1
-			if(selectedInteraction.isBlocked==1){
-				this.showToaster('Conversations is Unblocked','success')
-			}else{
-				this.showToaster('Conversations is Blocked','success')
-			}
-			
-		});
-	}
-
-	handelBlockConfirm(){
-		if(this.modalReference){
-			this.modalReference.close();
-		}	
-		this.blockCustomer(this.selectedInteraction)
-	}
-	handelStatusConfirm(){
-		if(this.modalReference){
-			this.modalReference.close();
-		}	
-		if(this.selectedInteraction['interaction_status']=='Resolved'){
-			this.updateConversationStatus('Open')
-		}else{
-			this.updateConversationStatus('Resolved')
-		}
-		
-	}
-	handelDeleteConfirm(){
-		if(this.modalReference){
-			this.modalReference.close();
-		}
-		var bodyData = {
-			AgentId:this.AgentId,
-			InteractionId:this.selectedInteraction.InteractionId
-		}
-		this.apiService.deleteInteraction(bodyData).subscribe(async response =>{
-				//console.log(response)
-				this.showToaster('Conversations deleted...','success')
-		});	
-	}
-
-    toggleTagsModal(updatedtags:any){
-		if(this.modalReference){
-			this.modalReference.close();
-		}
-
-		this.selectedTags = ''; 
-		
-		var activeTags = this.selectedInteraction['tags'];
-		for(var i=0;i<this.tagsoptios.length;i++){
-			var tagItem = this.tagsoptios[i]
-			if(activeTags.indexOf(tagItem.name)>-1){
-				tagItem['status']=true;
-				this.selectedTags += tagItem.name+','
-			}
-			else {
-				tagItem['status'] = false;
-			}
-		}
-     	this.modalReference = this.modalService.open(updatedtags,{ size:'ml', windowClass:'white-bg'});
-	
-	}
-	addTags(tagName:any){
-		if(tagName.target.checked){
-			this.selectedTags += tagName.target.value+','
-		}else{
-			this.selectedTags = this.selectedTags.replace(tagName.target.value+',', "");
-		}
-		//console.log(this.selectedTags)
-	}
-	
-	updateTags(){
-		var bodyData = {
-			tag:this.selectedTags,
-			customerId:this.selectedInteraction.customerId
-		}
-		this.apiService.updateTags(bodyData).subscribe(async response =>{
-			this.selectedInteraction['tags'] = [];
-			this.selectedInteraction['tags']=this.getTagsList(this.selectedTags)
 			if(this.modalReference){
 				this.modalReference.close();
 			}
-			this.showToaster('Tags updated...','success')
-
+			this.showToaster('Contact information updated...','success');
 		});
 	}
 
-	triggerEditCustomer(updatecustomer:any){
-		if(this.modalReference){
-			this.modalReference.close();
-		}
-		this.EditContactForm['Name'] =this.selectedInteraction.Name
-		this.EditContactForm['Phone_number'] =this.selectedInteraction.Phone_number
-		this.EditContactForm['channel'] =this.selectedInteraction.channel
-		this.EditContactForm['status'] =this.selectedInteraction.status
-		this.EditContactForm['OptInStatus'] =this.selectedInteraction.OptInStatus
-		this.EditContactForm['OptInStatusChecked'] =this.selectedInteraction.OptInStatus=='Yes'?true:false
-		
-		this.EditContactForm['sex'] =this.selectedInteraction.sex
-		this.EditContactForm['age'] =this.selectedInteraction.age
-		this.EditContactForm['emailId'] =this.selectedInteraction.emailId
-		this.EditContactForm['Country'] =this.selectedInteraction.Country
-		this.EditContactForm['facebookId'] =this.selectedInteraction.facebookId
-		this.EditContactForm['InstagramId'] =this.selectedInteraction.InstagramId
-		this.EditContactForm['customerId'] =this.selectedInteraction.customerId
-		this.modalReference = this.modalService.open(updatecustomer,{ size:'lg', windowClass:'white-bg'});
+	else {
+		this.showToaster('Name, Phone Number, and Email ID are required.', 'error');
 	}
 
 
-	triggerDeleteCustomer(openDeleteAlertmMessage:any){
-		if(this.modalReference){
-			this.modalReference.close();
-		}
-		if(this.loginAs!='Agent'){
-		this.confirmMessage= 'Are you sure you want to Delete this conversation?'
-		this.modalReference = this.modalService.open(openDeleteAlertmMessage,{ size:'sm', windowClass:'white-bg'});
-		}else{
+}
+
+
+filterContactByType(ChannelName:any){
+	this.selectedChannel = ChannelName
+	this.getSearchContact();
+	this.ShowContactOption=false
+}
+
+toggleConversationStatusOption(){
+	if(this.loginAs !='Agent'){
+	this.ShowConversationStatusOption =!this.ShowConversationStatusOption
+	}else if(this.selectedInteraction.assignTo.AgentId == this.AgentId){
+		this.ShowConversationStatusOption =!this.ShowConversationStatusOption
+	}else{
 		this.showToaster('Opps you dont have permission','warning')
-	    }
 	}
-	triggerBlockCustomer(BlockStatus:any,openBlockAlertmMessage:any){
-		if(this.modalReference){
-			this.modalReference.close();
-		}
-		if(this.loginAs !='Admin'){
-		this.confirmMessage= 'Are you sure you want to '+BlockStatus+' this conversation?'
-		this.modalReference = this.modalService.open(openBlockAlertmMessage,{ size:'sm', windowClass:'white-bg'});
-		
-	    }else{
+	this.ShowAssignOption=false
+}
+
+toggleAssignOption(){
+	this.ShowConversationStatusOption=false;
+	if(this.selectedInteraction.interaction_status =='Resolved'){
+		this.showToaster('Already Resolved','warning')
+	}else{
+	if(this.loginAs =='Manager' || this.selectedInteraction.interaction_status !='Resolved'){
+		this.ShowAssignOption =!this.ShowAssignOption
+	}else{
 		this.showToaster('Opps you dont have permission','warning')
-	    }
 	}
-    triggerUpdateConversationStatus(status:any,openStatusAlertmMessage:any){
-		if(this.modalReference){
-			this.modalReference.close();
-		}
-		this.ShowConversationStatusOption=false
-		if(this.selectedInteraction['interaction_status']!=status){
-				if(this.modalReference){
-					this.modalReference.close();
-				}
-				this.confirmMessage= 'Are you sure you want to '+status+' this conversation?'
-				this.modalReference = this.modalService.open(openStatusAlertmMessage,{ size:'sm', windowClass:'white-bg'});
-	   
-		}
-	}
+}
+}
 
-	updateConversationStatus(status:any){
-		var bodyData = {
-			Status:status,
-			InteractionId:this.selectedInteraction.InteractionId
-		}
-		this.apiService.updateInteraction(bodyData).subscribe(async response =>{
-			this.ShowConversationStatusOption=false
-			this.showToaster('Conversations updated to '+status+'...','success')
-			/*
-			//////This time it can not be assign to any one
-			var responseData:any = response
-			var bodyData = {
-				InteractionId: this.selectedInteraction.InteractionId,
-				AgentId: this.AgentId,
-				MappedBy: this.AgentId
-			}
-			this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
-			this.apiService.getInteractionMapping(this.selectedInteraction.InteractionId).subscribe(mappingList =>{
-				var mapping:any  = mappingList;
-				this.selectedInteraction['assignTo'] =mapping[mapping.length - 1];
-			})
+showToaster(message:any,type:any){
+if(type=='success'){
+	this.successMessage=message;
+}else if(type=='error'){
+	this.errorMessage=message;
+}else{
+	this.warningMessage=message;
+}
+setTimeout(() => {
+	this.hideToaster()
+}, 5000);
 
-			});
-
-			*/
-			
-			this.selectedInteraction['interaction_status']=status
+}
+markItRead(){
+	if(this.selectedInteraction['UnreadCount'] > 0){
+			this.selectedInteraction.messageList.map((messageGroup:any)=>{
+				messageGroup.items.map((message:any)=>{
+					if(this.selectedInteraction.assignTo && this.selectedInteraction.assignTo.AgentId == this.AgentId && message.message_direction!='Out' && message.is_read==0){
+						var bodyData = {
+							Message_id:message.Message_id
+						}
+						this.apiService.updateMessageRead(bodyData).subscribe(async data =>{
+							let selectedInteraction =this.selectedInteraction;
+							selectedInteraction['UnreadCount']=selectedInteraction['UnreadCount']>0?selectedInteraction['UnreadCount']-1:0
+							this.selectedInteraction =selectedInteraction
+							message.is_read=1;	
+						})
+				   }
+				});
 		});
+}
 
-	}
-
-	groupMessageByDate(messageList:any){
-		const data =messageList;
-		data.sort(function(a:any, b:any) {
-			var dateA = new Date(a.Message_id);
-			var dateB = new Date(b.Message_id);
-			return dateA > dateB ? 1 : -1; 
-		});
+}
 
 
-		const groups = data.reduce((groups:any, transactions:any) => {
-			const date = transactions.created_at.split('T')[0];
-			if (!groups[date]) {
-				groups[date] = [];
-			}
-
-			groups[date].push(transactions);
-			return groups;
-		}, {});
-
-		const groupArrays = Object.keys(groups).map((date) => {
-		return {
-			date,
-			items: groups[date]
-		};
-		});
-		return groupArrays
-	}
-
-	createCustomer(){
-		this.newContact.value.SP_ID =this.SPID;
-		this.newContact.value.Channel = this.selectedChannel
-		var bodyData = this.newContact.value
-		console.log(bodyData)
-		if(bodyData['OptedIn']){
-			bodyData['OptedIn'] = 'Yes';
+getUnreadCount(messages:any){
+	let unreadCount=0
+	for(var i=0;i<messages.length;i++){
+		if(messages[i].message_direction!='Out' && messages[i].is_read==0){
+			unreadCount=unreadCount+1
 		}
-		if(bodyData['Name']!='' && bodyData['Phone_number'].length>=10){
-		
-		this.apiService.createCustomer(bodyData).subscribe(async response =>{
-			var responseData:any = response
-			var insertId:any = responseData.insertId
-			if(insertId){
-				this.createInteraction(insertId);
-				this.newContact.reset();
-			}
-		});
-		}else{
-			this.showToaster('Please enter all required (*) input','error')
-		}
-		
 	}
+	return unreadCount
+}
+
+hideToaster(){
+	this.successMessage='';
+	this.errorMessage='';
+	this.warningMessage='';
+}
+toggleAutoReply(){
+	// this.AutoReplyOption =!this.AutoReplyOption
+	$("#addTagModal").modal('show'); 
+	$('body').removeClass('modal-open');
+	$('.modal-backdrop').remove();
+	// document.getElementById("smartrepliesModal")!.style.display="inherit";
+}
+
+SelectReplyOption(optionValue:any,optionType:any){
+	var LastPaused = this.selectedInteraction.paused_till
+	var PTime = optionValue.match(/(\d+)/);
+	let pausedTill = new Date();
+	if(PTime){
+	
+	if(optionType =='Extend'){
+	var dt1 = (new Date(LastPaused)).getTime();//Unix timestamp (in milliseconds)
+	var addSec = PTime[0]*60*1000
+	var dt2= new Date(dt1+addSec)
+	pausedTill = new Date(dt2);
+	
+	}else{
+	var dt1 = (new Date()).getTime();
+	var addSec = PTime[0]*60*1000
+	var dt2= new Date(dt1+addSec)
+	pausedTill = new Date(dt2);	
+	}	
+ }
 
 
 	
-
-
-	createInteraction(customerId:any){
 	var bodyData = {
-		customerId: customerId
+		AutoReply:optionValue,
+		InteractionId:this.selectedInteraction.InteractionId,
+		updated_at:new Date(),
+		paused_till:pausedTill
 	}
-	this.apiService.createInteraction(bodyData).subscribe(async data =>{
-		var responseData:any = data
-		var insertId:any = responseData.insertId
-		if(insertId){
-			this.getAllInteraction(false)
-		}
-		if(this.modalReference){
-			this.modalReference.close();
+	console.log(bodyData)
+	this.apiService.updateInteraction(bodyData).subscribe(async response =>{
+		this.selectedInteraction['AutoReplyStatus'] =optionValue	
+		this.AutoReplyType ='Pause are '+optionType	
+		this.AutoReplyOption=false;
+		this.selectedInteraction['paused_till'] =pausedTill;
+		this.getPausedTimer()
+		this.showToaster('Pause Applied','success')
+		console.log(this.selectedInteraction)
+	})
+	
+	
+}
+
+// Function to format the phone number using libphonenumber-js
+formatPhoneNumber() {
+const phoneNumber = this.newContact.get('Phone_number')?.value;
+const countryCode = this.newContact.get('country_code')?.value;
+
+if (phoneNumber && countryCode) {
+  const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
+  const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
+
+  if (formattedPhoneNumber) {
+	this.newContact.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
+	const phoneNumberValue = this.newContact.get('Phone_number')?.value;
+	console.log(phoneNumberValue);
+
+  }
+}
+}
+
+
+
+
+
+searchContact(event:any){
+	this.contactSearchKey = event.target.value;
+	this.getSearchContact()
+	
+}
+getSearchContact(){
+	this.apiService.searchCustomer(this.selectedChannel,this.SPID,this.contactSearchKey).subscribe(data =>{
+		this.contactList= data
+	});
+}
+
+blockCustomer(selectedInteraction:any){
+	var bodyData = {
+		customerId:selectedInteraction.customerId,
+		isBlocked:selectedInteraction.isBlocked==1?0:1
+	}
+	this.apiService.blockCustomer(bodyData).subscribe(ResponseData =>{
+		this.selectedInteraction['isBlocked']=selectedInteraction.isBlocked==1?0:1
+		if(selectedInteraction.isBlocked==1){
+			this.showToaster('Conversations is Unblocked','success')
+		}else{
+			this.showToaster('Conversations is Blocked','success')
 		}
 		
 	});
+}
 
-
-	}
-
-	updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
-		this.ShowAssignOption=false;
-		var bodyData = {
-			InteractionId: InteractionId,
-			AgentId: AgentId,
-			MappedBy: MappedBy
-		}
-		this.apiService.resetInteractionMapping(bodyData).subscribe(responseData1 =>{
-			this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
-				this.apiService.getInteractionMapping(InteractionId).subscribe(mappingList =>{
-					var mapping:any  = mappingList;
-					this.selectedInteraction['assignTo'] =mapping?mapping[mapping.length - 1]:'';
-				})
-			
-			});
-	  });
-	}
-
-
-	openaddMessage(messageadd: any) {
-		if(this.modalReference){
+handelBlockConfirm(){
+	if(this.modalReference){
 		this.modalReference.close();
-		}
-		this.modalReference = this.modalService.open(messageadd,{windowClass:'teambox-pink'});
-	}
-
-	openaddMediaGallery(mediagallery:any, slideIndex:any) {
-		if(this.modalReference){
+	}	
+	this.blockCustomer(this.selectedInteraction)
+}
+handelStatusConfirm(){
+	if(this.modalReference){
 		this.modalReference.close();
-		}
-		this.slideIndex =slideIndex
-		this.modalReference = this.modalService.open(mediagallery,{windowClass:'teambox-transparent'});
+	}	
+	if(this.selectedInteraction['interaction_status']=='Resolved'){
+		this.updateConversationStatus('Open')
+	}else{
+		this.updateConversationStatus('Resolved')
+	}
+	
+}
+handelDeleteConfirm(){
+	if(this.modalReference){
+		this.modalReference.close();
+	}
+	var bodyData = {
+		AgentId:this.AgentId,
+		InteractionId:this.selectedInteraction.InteractionId
+	}
+	this.apiService.deleteInteraction(bodyData).subscribe(async response =>{
+			//console.log(response)
+			this.showToaster('Conversations deleted...','success')
+	});	
+}
+
+toggleTagsModal(updatedtags:any){
+	if(this.modalReference){
+		this.modalReference.close();
 	}
 
-	showNextSlides(n:any) {
-		let slides = document.getElementsByClassName("mySlides");
-		if(n < slides.length){
-			this.slideIndex = n+1
+	this.selectedTags = ''; 
+	
+	var activeTags = this.selectedInteraction['tags'];
+	for(var i=0;i<this.tagsoptios.length;i++){
+		var tagItem = this.tagsoptios[i]
+		if(activeTags.indexOf(tagItem.name)>-1){
+			tagItem['status']=true;
+			this.selectedTags += tagItem.name+','
 		}
-		
-	} 
-	showPrevSlides(n:any) {
-		if(n>0){
-			this.slideIndex = n-1
+		else {
+			tagItem['status'] = false;
 		}
-	} 
+	}
+	 this.modalReference = this.modalService.open(updatedtags,{ size:'ml', windowClass:'white-bg'});
 
+}
+addTags(tagName:any){
+	if(tagName.target.checked){
+		this.selectedTags += tagName.target.value+','
+	}else{
+		this.selectedTags = this.selectedTags.replace(tagName.target.value+',', "");
+	}
+	//console.log(this.selectedTags)
+}
 
-	openadd(contactadd: any) {
+updateTags(){
+	var bodyData = {
+		tag:this.selectedTags,
+		customerId:this.selectedInteraction.customerId
+	}
+	this.apiService.updateTags(bodyData).subscribe(async response =>{
+		this.selectedInteraction['tags'] = [];
+		this.selectedInteraction['tags']=this.getTagsList(this.selectedTags)
 		if(this.modalReference){
 			this.modalReference.close();
 		}
-		this.modalReference  = this.modalService.open(contactadd,{windowClass:'teambox-white'});
-	}
+		this.showToaster('Tags updated...','success')
 
-	toggleNoteOption(note:any){
-		//console.log(note)
-		// this.hideNoteOption()
-		// if(note && this.selectedNote.Message_id != note.Message_id){
-		// note.selected=true
-		// this.selectedNote= note
-		// }else{
-		// 	note.selected=false
-		// 	this.selectedNote= []
-		
-		// }
-		$("#agModal").modal('show'); 
-		$('body').removeClass('modal-open');
-		$('.modal-backdrop').remove();
+	});
+}
+
+triggerEditCustomer(updatecustomer:any){
+	if(this.modalReference){
+		this.modalReference.close();
 	}
-	hideNoteOption(){
-		this.selectedNote.selected=false
-		
-	}
-	editNotes(){
-		this.hideNoteOption()
-		this.chatEditor.value = this.selectedNote.message_text
-		this.newMessage.reset({
-			Message_id: this.selectedNote.Message_id
-		});
-		
-	}
+	this.EditContactForm['Name'] =this.selectedInteraction.Name
+	this.EditContactForm['Phone_number'] =this.selectedInteraction.Phone_number
+	this.EditContactForm['channel'] =this.selectedInteraction.channel
+	this.EditContactForm['status'] =this.selectedInteraction.status
+	this.EditContactForm['OptInStatus'] =this.selectedInteraction.OptInStatus
+	this.EditContactForm['OptInStatusChecked'] =this.selectedInteraction.OptInStatus=='Yes'?true:false
 	
-	deleteNotes(){
-		this.hideNoteOption()
+	this.EditContactForm['sex'] =this.selectedInteraction.sex
+	this.EditContactForm['age'] =this.selectedInteraction.age
+	this.EditContactForm['emailId'] =this.selectedInteraction.emailId
+	this.EditContactForm['Country'] =this.selectedInteraction.Country
+	this.EditContactForm['facebookId'] =this.selectedInteraction.facebookId
+	this.EditContactForm['InstagramId'] =this.selectedInteraction.InstagramId
+	this.EditContactForm['customerId'] =this.selectedInteraction.customerId
+	this.modalReference = this.modalService.open(updatecustomer,{ size:'lg', windowClass:'white-bg'});
+}
+
+
+triggerDeleteCustomer(openDeleteAlertmMessage:any){
+	if(this.modalReference){
+		this.modalReference.close();
+	}
+	if(this.loginAs!='Agent'){
+	this.confirmMessage= 'Are you sure you want to Delete this conversation?'
+	this.modalReference = this.modalService.open(openDeleteAlertmMessage,{ size:'sm', windowClass:'white-bg'});
+	}else{
+	this.showToaster('Opps you dont have permission','warning')
+	}
+}
+triggerBlockCustomer(BlockStatus:any,openBlockAlertmMessage:any){
+	if(this.modalReference){
+		this.modalReference.close();
+	}
+	if(this.loginAs !='Admin'){
+	this.confirmMessage= 'Are you sure you want to '+BlockStatus+' this conversation?'
+	this.modalReference = this.modalService.open(openBlockAlertmMessage,{ size:'sm', windowClass:'white-bg'});
+	
+	}else{
+	this.showToaster('Opps you dont have permission','warning')
+	}
+}
+triggerUpdateConversationStatus(status:any,openStatusAlertmMessage:any){
+	if(this.modalReference){
+		this.modalReference.close();
+	}
+	this.ShowConversationStatusOption=false
+	if(this.selectedInteraction['interaction_status']!=status){
+			if(this.modalReference){
+				this.modalReference.close();
+			}
+			this.confirmMessage= 'Are you sure you want to '+status+' this conversation?'
+			this.modalReference = this.modalService.open(openStatusAlertmMessage,{ size:'sm', windowClass:'white-bg'});
+   
+	}
+}
+
+updateConversationStatus(status:any){
+	var bodyData = {
+		Status:status,
+		InteractionId:this.selectedInteraction.InteractionId
+	}
+	this.apiService.updateInteraction(bodyData).subscribe(async response =>{
+		this.ShowConversationStatusOption=false
+		this.showToaster('Conversations updated to '+status+'...','success')
+		/*
+		//////This time it can not be assign to any one
+		var responseData:any = response
 		var bodyData = {
-			Message_id:this.selectedNote.Message_id,
-			deleted:1,
-			deleted_by:this.AgentId,
-			deleted_at:new Date()
+			InteractionId: this.selectedInteraction.InteractionId,
+			AgentId: this.AgentId,
+			MappedBy: this.AgentId
 		}
-		////console.log(bodyData)
-		this.apiService.deleteMessage(bodyData).subscribe(async data =>{
-			//console.log(data)
-			this.selectedNote.is_deleted=1
-			this.selectedNote.deleted_by=this.selectedNote.AgentName
+		this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
+		this.apiService.getInteractionMapping(this.selectedInteraction.InteractionId).subscribe(mappingList =>{
+			var mapping:any  = mappingList;
+			this.selectedInteraction['assignTo'] =mapping[mapping.length - 1];
 		})
-		
 
+		});
+
+		*/
+		
+		this.selectedInteraction['interaction_status']=status
+	});
+
+}
+
+groupMessageByDate(messageList:any){
+	const data =messageList;
+	data.sort(function(a:any, b:any) {
+		var dateA = new Date(a.Message_id);
+		var dateB = new Date(b.Message_id);
+		return dateA > dateB ? 1 : -1; 
+	});
+
+
+	const groups = data.reduce((groups:any, transactions:any) => {
+		const date = transactions.created_at.split('T')[0];
+		if (!groups[date]) {
+			groups[date] = [];
+		}
+
+		groups[date].push(transactions);
+		return groups;
+	}, {});
+
+	const groupArrays = Object.keys(groups).map((date) => {
+	return {
+		date,
+		items: groups[date]
+	};
+	});
+	return groupArrays
+}
+
+createCustomer(){
+	this.newContact.value.SP_ID =this.SPID;
+	this.newContact.value.Channel = this.selectedChannel
+	var bodyData = this.newContact.value
+	console.log(bodyData)
+	if(bodyData['OptedIn']){
+		bodyData['OptedIn'] = 'Yes';
+	}
+	if(bodyData['Name']!='' && bodyData['Phone_number'].length>=10){
+	
+	this.apiService.createCustomer(bodyData).subscribe(async response =>{
+		var responseData:any = response
+		var insertId:any = responseData.insertId
+		if(insertId){
+			this.createInteraction(insertId);
+			this.newContact.reset();
+		}
+	});
+	}else{
+		this.showToaster('Please enter all required (*) input','error')
+	}
+	
+}
+
+
+
+
+
+createInteraction(customerId:any){
+var bodyData = {
+	customerId: customerId
+}
+this.apiService.createInteraction(bodyData).subscribe(async data =>{
+	var responseData:any = data
+	var insertId:any = responseData.insertId
+	if(insertId){
+		this.getAllInteraction(false)
+	}
+	if(this.modalReference){
+		this.modalReference.close();
+	}
+	
+});
+
+
+}
+
+updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
+	this.ShowAssignOption=false;
+	var bodyData = {
+		InteractionId: InteractionId,
+		AgentId: AgentId,
+		MappedBy: MappedBy
+	}
+	this.apiService.resetInteractionMapping(bodyData).subscribe(responseData1 =>{
+		this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
+			this.apiService.getInteractionMapping(InteractionId).subscribe(mappingList =>{
+				var mapping:any  = mappingList;
+				this.selectedInteraction['assignTo'] =mapping?mapping[mapping.length - 1]:'';
+			})
+		
+		});
+  });
+}
+
+
+openaddMessage(messageadd: any) {
+	if(this.modalReference){
+	this.modalReference.close();
+	}
+	this.modalReference = this.modalService.open(messageadd,{windowClass:'teambox-pink'});
+}
+
+openaddMediaGallery(mediagallery:any, slideIndex:any) {
+	if(this.modalReference){
+	this.modalReference.close();
+	}
+	this.slideIndex =slideIndex
+	this.modalReference = this.modalService.open(mediagallery,{windowClass:'teambox-transparent'});
+}
+
+showNextSlides(n:any) {
+	let slides = document.getElementsByClassName("mySlides");
+	if(n < slides.length){
+		this.slideIndex = n+1
+	}
+	
+} 
+showPrevSlides(n:any) {
+	if(n>0){
+		this.slideIndex = n-1
+	}
+} 
+
+
+openadd(contactadd: any) {
+	if(this.modalReference){
+		this.modalReference.close();
+	}
+	this.modalReference  = this.modalService.open(contactadd,{windowClass:'teambox-white'});
+}
+
+toggleNoteOption(note:any){
+	//console.log(note)
+	// this.hideNoteOption()
+	// if(note && this.selectedNote.Message_id != note.Message_id){
+	// note.selected=true
+	// this.selectedNote= note
+	// }else{
+	// 	note.selected=false
+	// 	this.selectedNote= []
+	
+	// }
+	$("#agModal").modal('show'); 
+	$('body').removeClass('modal-open');
+	$('.modal-backdrop').remove();
+}
+hideNoteOption(){
+	this.selectedNote.selected=false
+	
+}
+editNotes(){
+	this.hideNoteOption()
+	this.chatEditor.value = this.selectedNote.message_text
+	this.newMessage.reset({
+		Message_id: this.selectedNote.Message_id
+	});
+	
+}
+
+deleteNotes(){
+	this.hideNoteOption()
+	var bodyData = {
+		Message_id:this.selectedNote.Message_id,
+		deleted:1,
+		deleted_by:this.AgentId,
+		deleted_at:new Date()
+	}
+	////console.log(bodyData)
+	this.apiService.deleteMessage(bodyData).subscribe(async data =>{
+		//console.log(data)
+		this.selectedNote.is_deleted=1
+		this.selectedNote.deleted_by=this.selectedNote.AgentName
+	})
+	
+
+}
+
+// onEditorKeyDown(event: KeyboardEvent) {
+// 	// Check if the pressed key is the "Enter" key (keyCode 13)
+// 	if (event.keyCode === 13) {
+// 	  event.preventDefault(); // Prevent the default behavior (e.g., adding a new line)
+// 	  this.sendMessage(); // Trigger your "Send" action here
+// 	}
+//   }
+
+sendMessage(){
+	
+	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+		this.showToaster('! Please type your message first','error');
+		return; 
 	}
 
-	// onEditorKeyDown(event: KeyboardEvent) {
-	// 	// Check if the pressed key is the "Enter" key (keyCode 13)
-	// 	if (event.keyCode === 13) {
-	// 	  event.preventDefault(); // Prevent the default behavior (e.g., adding a new line)
-	// 	  this.sendMessage(); // Trigger your "Send" action here
-	// 	}
-	//   }
-
-	sendMessage(){
-		
-		if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
-			this.showToaster('! Please type your message first','error');
-			return; 
+	 {
+		let postAllowed =false;
+		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
+			postAllowed =true;
+		}else if(this.selectedInteraction.assignTo && this.selectedInteraction.assignTo.AgentId == this.AgentId){
+			postAllowed =true;
 		}
-	
-		 {
-			let postAllowed =false;
-			if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
-				postAllowed =true;
-			}else if(this.selectedInteraction.assignTo && this.selectedInteraction.assignTo.AgentId == this.AgentId){
-				postAllowed =true;
+		
+		if(postAllowed){
+		if(this.SIPthreasholdMessages>0){
+		let objectDate = new Date();
+		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
+		var cDay = String(objectDate.getDate()).padStart(2, '0');
+		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
+
+		var bodyData = {
+			InteractionId: this.selectedInteraction.InteractionId,
+			CustomerId: this.selectedInteraction.customerId,
+			SPID:this.SPID,
+			AgentId: this.AgentId,
+			messageTo:this.selectedInteraction.Phone_number,
+			message_text: this.chatEditor.value || "",
+			Message_id:this.newMessage.value.Message_id,
+			message_media: this.messageMeidaFile,
+			media_type: this.mediaType,
+			quick_reply_id: '',
+			template_id:'',
+			message_type: this.showChatNotes,
+			created_at:new Date()
+		}
+		this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
+			this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
+			//console.log(data)
+			this.messageMeidaFile='';
+			this.mediaType='';
+			var responseData:any = data
+			if(this.newMessage.value.Message_id==''){
+			
+			var insertId:any = responseData.insertId
+			if(insertId){
+				var lastMessage ={
+					"interaction_id": bodyData.InteractionId,
+					"Message_id": insertId,
+					"message_direction": "Out",
+					"Agent_id": bodyData.AgentId,
+					"message_text": bodyData.message_text,
+					"message_media": bodyData.message_media,
+					"media_type": bodyData.media_type,
+					"Message_template_id": bodyData.message_media,
+					"Quick_reply_id": bodyData.message_media,
+					"Type": bodyData.message_media,
+					"ExternalMessageId": bodyData.message_media,
+					"created_at": createdAt
+				}
+				
+				if(this.showChatNotes=='text'){
+					var allmessages =this.selectedInteraction.allmessages
+					this.selectedInteraction.lastMessage= lastMessage
+					allmessages.push(lastMessage)
+					this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
+					setTimeout(() => {
+						this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+					}, 500);
+
+				}else{
+					var allnotes =this.selectedInteraction.allnotes
+					allnotes.push(lastMessage)
+					this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
+					setTimeout(() => {
+						this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+					}, 500);
+
+				
+				}
+				this.chatEditor.value ='Type...';
+			}
+
+
+			}else{
+				this.selectedNote.message_text= bodyData.message_text
 			}
 			
-			if(postAllowed){
-			if(this.SIPthreasholdMessages>0){
-			let objectDate = new Date();
-			var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
-			var cDay = String(objectDate.getDate()).padStart(2, '0');
-			var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
-	
-			var bodyData = {
-				InteractionId: this.selectedInteraction.InteractionId,
-				CustomerId: this.selectedInteraction.customerId,
-				SPID:this.SPID,
-				AgentId: this.AgentId,
-				messageTo:this.selectedInteraction.Phone_number,
-				message_text: this.chatEditor.value || "",
-				Message_id:this.newMessage.value.Message_id,
-				message_media: this.messageMeidaFile,
-				media_type: this.mediaType,
-				quick_reply_id: '',
-				template_id:'',
-				message_type: this.showChatNotes,
-				created_at:new Date()
-			}
-			this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
-				this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
-				//console.log(data)
-				this.messageMeidaFile='';
-				this.mediaType='';
-				var responseData:any = data
-				if(this.newMessage.value.Message_id==''){
-				
-				var insertId:any = responseData.insertId
-				if(insertId){
-					var lastMessage ={
-						"interaction_id": bodyData.InteractionId,
-						"Message_id": insertId,
-						"message_direction": "Out",
-						"Agent_id": bodyData.AgentId,
-						"message_text": bodyData.message_text,
-						"message_media": bodyData.message_media,
-						"media_type": bodyData.media_type,
-						"Message_template_id": bodyData.message_media,
-						"Quick_reply_id": bodyData.message_media,
-						"Type": bodyData.message_media,
-						"ExternalMessageId": bodyData.message_media,
-						"created_at": createdAt
-					}
-					
-					if(this.showChatNotes=='text'){
-						var allmessages =this.selectedInteraction.allmessages
-						this.selectedInteraction.lastMessage= lastMessage
-						allmessages.push(lastMessage)
-						this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
-						setTimeout(() => {
-							this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-						}, 500);
-	
-					}else{
-						var allnotes =this.selectedInteraction.allnotes
-						allnotes.push(lastMessage)
-						this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
-						setTimeout(() => {
-							this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-						}, 500);
-	
-					
-					}
-					this.chatEditor.value ='Type...';
-				}
-	
-	
-				}else{
-					this.selectedNote.message_text= bodyData.message_text
-				}
-				
-	
-				this.newMessage.reset({
-					Message_id: ''
-				});
-	
-	
+
+			this.newMessage.reset({
+				Message_id: ''
 			});
-			}else{
-				this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
-			}
+
+
+		});
 		}else{
-			this.showToaster('Oops! You are not allowed to post content','warning')
+			this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
 		}
-		}
-	
-
+	}else{
+		this.showToaster('Oops! You are not allowed to post content','warning')
 	}
-	ngAfterViewInit() {
-		const editorElement = this.chatEditor.elementRef.nativeElement;
-		const toolbar = editorElement.querySelector('.e-toolbar');
-		toolbar.removeAttribute('data-tooltip-id');
-
 	}
 
-	onPhoneNumberChange(event: any) {
-		this.selectedCountryCode = event;
-	  }
 
-	//   /  GET ATTRIBUTE LIST  /
-	  getAttributeList() {
-	   this.apiService.getAttributeList(this.SPID)
-	   .subscribe((response:any) =>{
-		if(response){
-			let attributeListData = response?.result;
-			this.attributesList = attributeListData.map((attrList:any) => attrList.displayName);
-			console.log(this.attributesList);
-		}
-	  })
+}
+ngAfterViewInit() {
+	const editorElement = this.chatEditor.elementRef.nativeElement;
+	const toolbar = editorElement.querySelector('.e-toolbar');
+	toolbar.removeAttribute('data-tooltip-id');
+
+}
+
+onPhoneNumberChange(event: any) {
+	this.selectedCountryCode = event;
   }
+
+//   /  GET ATTRIBUTE LIST  /
+  getAttributeList() {
+   this.apiService.getAttributeList(this.SPID)
+   .subscribe((response:any) =>{
+	if(response){
+		let attributeListData = response?.result;
+		this.attributesList = attributeListData.map((attrList:any) => attrList.displayName);
+		console.log(this.attributesList);
+	}
+  })
+}
 
   	routeToSettings() {
 		this.closeAllModal();
