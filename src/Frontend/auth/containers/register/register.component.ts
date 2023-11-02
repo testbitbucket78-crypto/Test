@@ -129,13 +129,17 @@ formatPhoneNumber() {
                 "email_id":registerData.email_id,
                 "mobile_number":registerData.mobile_number
             }
-            this.apiService.sendOtp(idfs).subscribe(response => {
+            this.apiService.sendOtp(idfs).subscribe
+            (response => {
                 if(response) {
-                    console.warn("registerdone! ", response)
                     console.log(response);
                     this.router.navigate(['verification'])
                 }
-             
+            },
+            (error) => {
+                if(error) {
+                    alert('! Internal Server Error, Please Try After Sometime');
+                }
             });
 
         }

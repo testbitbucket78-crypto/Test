@@ -10,7 +10,6 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
-import { base64ToFile } from 'ngx-image-cropper';
 declare var $: any;
 @Component({
 selector: 'sb-teambox',
@@ -725,48 +724,22 @@ ToggleAttachmentBox(){
 		}
 	}
 	
-	// saveFiles(files: FileList) {
-	// 	if(files[0]){
-	// 	let imageFile = files[0]
-	// 	this.mediaType = files[0].type
-	// 	const data = new FormData();
-	// 	data.append('dataFile',imageFile ,imageFile.name);
-	// 	this.apiService.uploadfile(data).subscribe(uploadStatus =>{
-	// 		let responseData:any = uploadStatus
-	// 		if(responseData.filename){
-	// 			this.messageMeidaFile = responseData.filename
-	// 			this.showAttachmenOption=false;
-	// 		}
-	// 	})
-	//   }
-	// }
-
 	saveFiles(files: FileList) {
-		if (files[0]) {
-			console.log('*******');
-		  const imageFile = files[0]
-		  this.mediaType = files[0].type
-			console.log('imageFile: ' + imageFile);
-			console.log('mediaType: ' + this.mediaType);
-		  const reader = new FileReader()
-		  reader.onload = (event: any) => {
-			const base64Data = event.target.result.split(',')[1];
-			console.log(base64Data) // Extracting base64 data
-			this.apiService.uploadfile(base64Data).subscribe(uploadStatus => {
-			  let responseData: any = uploadStatus
-			  if(responseData.filename){
+		if(files[0]){
+		let imageFile = files[0]
+		this.mediaType = files[0].type
+		const data = new FormData();
+		data.append('dataFile',imageFile ,imageFile.name);
+		this.apiService.uploadfile(data).subscribe(uploadStatus =>{
+			let responseData:any = uploadStatus
+			if(responseData.filename){
 				this.messageMeidaFile = responseData.filename
+				console.log(this.messageMeidaFile);
 				this.showAttachmenOption=false;
 			}
-			});
-		  };
-	  
-		  reader.readAsDataURL(imageFile);
-		}
+		})
 	  }
-	  
-			
-
+	}
 
 
 	ngOnInit() {
@@ -793,6 +766,7 @@ ToggleAttachmentBox(){
 		this.getsavedMessages()
 		this.getquickReply()
 		this.getTemplates()
+		this.subscribeToNotifications()
 
 		// this.chatEditor.addEventListener('keydown', this.onEditorKeyDown.bind(this));
 	
@@ -816,10 +790,10 @@ ToggleAttachmentBox(){
 							console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
 							if(msgjson.updateMessage)
 							{
-								this.getAllInteraction();
+								this.getAllInteraction(false);
 							}
-							else if(msgjson.message) {
-								this.showToaster("Please Scan QR code from Account Settings first than try again! : "+ msgjson.message,'error');
+							else if(message.status === 200) {
+								this.showToaster("Please Scan QR code from Account Settings first than try again!",'error');
 							}						
 						}
 					}
@@ -1148,7 +1122,7 @@ ToggleAttachmentBox(){
 	getProgressBar(lastMessage:any){
 		let progressbar:any=[];
 		if(lastMessage){
-			var date = lastMessage.created_at
+			var date = lastMessage?.created_at
 			var currentDate:any = new Date()
 			var messCreated:any = new Date(date)
 			var seconds = Math.floor((currentDate - messCreated) / 1000);
@@ -1180,7 +1154,7 @@ ToggleAttachmentBox(){
 	}
 	timeSinceLastMessage(lastMessage:any){
 		if(lastMessage){
-		var date = lastMessage.created_at
+		var date = lastMessage?.created_at
 		var currentDate:any = new Date()
 		var messCreated:any = new Date(date)
 		var seconds = Math.floor((currentDate - messCreated) / 1000);
@@ -1336,6 +1310,7 @@ hangeEditContactSelect(name:any,value:any){
 updateCustomer(){
 	var bodyData = {
 	Name:this.EditContactForm.Name,
+	countryCode:this.EditContactForm.country_code,
 	Phone_number:this.EditContactForm.Phone_number,
 	channel:this.EditContactForm.channel,
 	status:this.EditContactForm.status,
@@ -1357,6 +1332,7 @@ updateCustomer(){
 
 	this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
 		this.selectedInteraction['Name']=this.EditContactForm.Name
+		this.selectedInteraction['countryCode']=this.EditContactForm.country_code
 		this.selectedInteraction['Phone_number']=this.EditContactForm.Phone_number
 		this.selectedInteraction['channel']=this.EditContactForm.channel
 		this.selectedInteraction['status']=this.EditContactForm.status

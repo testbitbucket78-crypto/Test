@@ -6,6 +6,17 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 var clients = {};
+function parseJSONObject(jsonString)
+{
+  try {
+    var o = JSON.parse(jsonString);
+    if (o && typeof o === "object") {
+        return o;
+    }
+}
+catch (e) { }
+return false;
+}
 // Handle WebSocket connections
 wss.on('connection', (ws) => {
   const data = {
@@ -14,26 +25,27 @@ wss.on('connection', (ws) => {
   };
   ws.send(JSON.stringify(data));
   // Handle incoming messages from the client
-  ws.on('message', (message) => {
+  ws.on('message', (msg,isBinary) => {
     try {
-      let msgjson = JSON.parse(JSON.parse(message));
+      var message = isBinary ? msg : msg.toString();
+      let msgjson = parseJSONObject(message);
+      if(msgjson === false)
+      {msgjson =  parseJSONObject(JSON.parse(message));}
       if (msgjson["UniqueSPPhonenumber"]) {
-        console.log("UniqueSPPhonenumber", UniqueSPPhonenumber)
         clients[msgjson["UniqueSPPhonenumber"]] = ws;
-        console.log("UniqueSPPhonenumber 1", clients)
+        // console.log("UniqueSPPhonenumber 1", clients)
         console.log('Active clients : ' + Object.keys(clients).length);
       }
       else if (msgjson["displayPhoneNumber"]) {
 
         //console.log("displayPhoneNumber", displayPhoneNumber)
         console.log("found message for number : " + msgjson["displayPhoneNumber"]);
-        console.log(clients)
+        // console.log(clients)
         let wsclient = clients[msgjson["displayPhoneNumber"]];
-        console.log("wsclient", "---", wsclient)
-        console.log(clients)
+        // console.log("wsclient", "---", wsclient)
+        // console.log(clients)
         if (wsclient != undefined) {
-          console("wsclient != undefined")
-          wsclient.send(message);
+          wsclient.send(JSON.stringify(message));
         }
 
       }
