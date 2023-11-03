@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { repliesaccountList } from 'Frontend/dashboard/models/settings.model';
-import{ accountmodel } from 'Frontend/dashboard/models/settings.model';
+import { accountmodel } from 'Frontend/dashboard/models/settings.model';
+import { WebsocketService } from '../../services/websocket.service';
+import { WebSocketSubject } from 'rxjs/webSocket';
 
 declare var $:any;
 
@@ -56,18 +58,22 @@ export class AcoountSettingsComponent implements OnInit {
   restart=[0];
   reset=[0];
 
-
+  loadingQRCode: boolean = false;
 
   connection:number[] =[1,3,2,4];
   selectedTab:number = 1;
   public ipAddress:string[] = [''];
 
-  constructor( private apiService:SettingsService) {}
+  constructor( private apiService:SettingsService,private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
+
+  private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://localhost:3010/');
+
 
   ngOnInit(): void {
     this.spid = Number(sessionStorage.getItem('SP_ID'));
     this.phoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
     this.getwhatsapp();
+    this.subscribeToNotifications();
   }
 
   showToaster(message:any,type:any){
@@ -188,34 +194,29 @@ getDetailById(id: number) {
     $("#connectWhatsappModal").modal('hide');
     $("#qrWhatsappModal").modal('show');
 
+    this.loadingQRCode = true; // Show the loader
+
    let data = {
       spid: this.spid,
       phoneNo: this.phoneNumber
     }
     this.apiService.craeteQRcode(data).subscribe(
       (response) => {
-        if(response.status===200) {
+        if(response.status === 200) {
           this.qrcode = response.QRcode;
-          // this.savedata(); 
         }
-
-        if (response.status === 201) {
-          this.showToaster('! QR Code is Generated','success');
-          $("#qrWhatsappModal").modal('hide');
-        }
-
+        this.loadingQRCode = false;
         if(response.status === 410) {
-          $("#qrWhatsappModal").modal('hide');
           this.showToaster('This user is already in use','error');
+          $("#qrWhatsappModal").modal('hide');
        
         }
      },
       (error) => {
-
-
         if(error) {
+          this.showToaster('Internal Server Error, Please Contact System Administrator!','error');
+          this.loadingQRCode = false;
           $("#qrWhatsappModal").modal('hide');
-          this.showToaster('Error Generating QR Code as Connection Timed Out, Please try again!','error');
           
         }
       }
@@ -229,6 +230,43 @@ getDetailById(id: number) {
   addIP(){
     this.ipAddress.push('');
   }
+
+  async subscribeToNotifications() {
+		let notificationIdentifier = {
+			"UniqueSPPhonenumber" : (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
+		}
+		this.websocketService.connect(notificationIdentifier);
+			this.websocketService.getMessage().subscribe(message => {
+        
+        console.log(message)
+				if(message != undefined )
+				{
+					console.log("Seems like some message update from webhook");
+          console.log(message)
+					
+					try{
+						let msgjson = JSON.parse(message);
+						if(msgjson.displayPhoneNumber)
+						{
+              this.qrcode = msgjson.message;
+              this.changeDetector.detectChanges(); 
+              
+              if(msgjson.message == 'Client is ready!')
+              {
+                this.showToaster('Your Device Linked Successfully !','success');
+                $("#qrWhatsappModal").modal('hide');
+              }
+
+              
+						}
+					}
+					catch(e)
+					{
+						console.log(e);
+					}
+				}
+			});
+	}
 
 
 

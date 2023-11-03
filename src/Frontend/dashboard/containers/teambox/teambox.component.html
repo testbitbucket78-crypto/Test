@@ -382,7 +382,7 @@
 
 			</div>
 
-			<div class=" col-4 team pt-5">
+			<div *ngIf="selectedInteraction.messageList" class=" col-4 team pt-5">
 				<div class="team-box right_box">
 					<div class="sidenav">
 						<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && !showAttachedMedia">
