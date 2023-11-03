@@ -123,7 +123,13 @@
                 </div>
                 <div class="modal-body d-flex justify-content-center p-5">
                     <div class="px-3 qr-card text-center" >
-                        <div>
+                        <div *ngIf="loadingQRCode" class="text-center">
+                            <div class="spinner-border" role="status">
+                              <span class="sr-only">Loading...</span>
+                            </div>
+                            <p>Your QR Code is Loading...</p>
+                          </div>
+                        <div *ngIf="!loadingQRCode">
                             <qrcode [qrdata]="qrcode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
                         </div>
                       
