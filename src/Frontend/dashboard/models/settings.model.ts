@@ -261,6 +261,13 @@ export interface accountmodel{
     reset:number;
 }
 
+export interface dataaa {
+    spid:number;
+    channel_id:number;
+    connected_id:number;
+    channel_status:number;
+}
+
 
 export interface quickReplyButtons {
     quickreply1:string;

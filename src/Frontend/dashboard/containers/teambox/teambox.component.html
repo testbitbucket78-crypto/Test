@@ -41,8 +41,6 @@
 					</div>
 						</div>
 						</div> 
-
-
 				<div class="custom_row pl-3 pt-3 ">
 					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()"
 						(keyup)="getSearchInteraction($event)"
@@ -88,8 +86,7 @@
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
 											<p *ngIf="item.lastMessage" class="time">{{item.lastMessageReceved}}</p>
-											<span *ngIf="item.messageList && item.UnreadCount>0"
-												class="total_count green">{{item.UnreadCount}}</span>
+											<span *ngIf="item.messageList && item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<span class="hovertext" data-hover="WhatsApp Web"><img
 													*ngIf="item.channel=='WhatsApp'" class="icon"
@@ -695,18 +692,20 @@
 									</div>
 								</div>
 							</div>
-
-</div>
-			</div>
-		</div>
 						</div>
+					</div>
+				</div>
+			</div>
 
 
-					<div    class="modal fade" tabindex="-1" id="sendfile" #sendfile data-bs-backdrop="static" role="dialog">
+		
+	</div>
+	</div>
+	<div class="modal fade" tabindex="-1" id="sendfile" #sendfile data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
-					<div  *ngIf="messageMeidaFile!=''"  class="message_meida_preview">
+					<div *ngIf="messageMeidaFile!=''"   class="message_meida_preview">
 						<div class="modal-header">
 							<div class="modal-header-left">
 							</div>
@@ -730,7 +729,7 @@
 						</div>
 
 
-						<div class="input_group_btn">
+						<div class="input_group_btn" id="senddoc">
 							<button type="button" class="submit-btn" (click)="sendMediaMessage()">Send</button>
 						</div>
 </div>
@@ -739,8 +738,6 @@
 					
 					</div>
 		</div>
-	</div>
-	</div>
 	</div>
 	
 
@@ -1351,6 +1348,7 @@
 						</p>
 						<p (click)="selectChannelOption('WhatsApp Web')">
 							<span>
+<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
 								WhatsApp Web
 							</span>
 						</p>
@@ -1400,7 +1398,7 @@
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Phone Number*</label>
 					<select class="input-formm" id="country_code" formControlName="country_code">
-						<option [selected]="countryCode === countryCodes[101]"
+						<option [selected]="editContact.get('country_code')?.value"
 							*ngFor="let countryCode of countryCodes; let i = index">
 							{{ countryCode }}
 						</option>

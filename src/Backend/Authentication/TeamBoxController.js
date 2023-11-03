@@ -339,10 +339,10 @@ const insertMessage = async (req, res) => {
                 if (req.body.message_media != '') {
                     // sendMediaOnWhatsApp(req.body.messageTo, message_media)
                     console.log(message_media)
-                       middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_media)
+                       middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_text, message_media)
                 }
                 // sendTextOnWhatsApp(req.body.messageTo, message_text)
-                middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text)
+                middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text, message_media)
             }
 
         } else {

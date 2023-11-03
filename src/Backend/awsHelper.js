@@ -42,7 +42,7 @@ async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken) {
                         console.error('Error uploading file:', err);
                     } else {
                         console.log('File uploaded successfully!');
-                        console.log(data);
+                       // console.log(data);
                         resolve({ code: 0, value: data });
                         // return data;//SAVE DETAILS TO DB from calling function so that it can be used in future to access.
                     }
@@ -64,12 +64,20 @@ async function uploadToAws(awspath, stream) {
         // console.log(val.awssecretAccessKey);
         // console.log(val.awsregion);
         // console.log(awspath);
-        var buf = Buffer.from(stream.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+        // var buf = Buffer.from(stream.replace(/^data:image\/\w+;base64,/, ""), 'base64')
+        let buf;
+        if (typeof stream === 'string' && stream.startsWith('data:image/')){
+         
+            buf = Buffer.from(stream.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+        } else {
+          
+            buf = stream; // or any other appropriate value
+        }
         var data = {
             Key: awspath,
             Body: buf,
             ContentEncoding: 'base64',
-            ContentType:'image/png',
+            ContentType: 'image/png',
             Bucket: val.awsbucket,
 
         };
@@ -103,16 +111,30 @@ async function uploadWhatsAppImageToAws(spid, imageid, fileUrl, fileAccessToken)
     return res;
 }
 
+
+const util = require('util');
+const readFile = util.promisify(fs.readFile);
 ///use when no authentication is required and only need to upload a file present or uploaded to server
 async function uploadFileToAws(destinationPath, sourcePath) {
-    fs.readFile(sourcePath, async function (err, data) {
-        if (err) {
-            console.log(err)
-        }
-        // return uploadStreamToAws(destinationPath, data);
-        let value = await uploadStreamToAws(destinationPath, data)
+    // fs.readFile(sourcePath, async function (err, data) {
+    //     if (err) {
+    //         console.log(err)
+    //     }
+    //   //   return uploadStreamToAws(destinationPath, data);
+    //     let value = await uploadStreamToAws(destinationPath, data)
+    //   console.log(value)
+    //   return value;
+
+    // })
+    try {
+        const data = await readFile(sourcePath);
+        const value = await uploadStreamToAws(destinationPath, data);
         return value;
-    })
+    } catch (err) {
+        console.error(" uploadFileToAws err");
+        console.log(err)
+
+    }
 }
 
 async function uploadStreamToAws(destinationPath, streamdata) {
@@ -136,7 +158,7 @@ async function uploadVideoToAws(awspath, videoData) {
     };
     return new Promise((resolve, reject) => {
 
-console.log("uploadVideoToAws")
+        console.log("uploadVideoToAws")
         // Configure AWS SDK
         AWS.config.update({
             accessKeyId: awsConfig.awsaccessKeyId,
@@ -151,7 +173,7 @@ console.log("uploadVideoToAws")
 
         // Specify the content type for your video (e.g., 'video/mp4')
         const contentType = 'video/mp4';
-        
+
         const params = {
             Bucket: awsConfig.awsbucket,
             Key: awspath,

@@ -351,13 +351,13 @@ const verifyOtp = async function (req, res, err) {
 
 
         try {
-            if (result.length != 0 && req.body.otp == result[0].otp) {
+            if (result.length != 0 && req.body.otp1 == result[0].otp) {
                 return res.status(200).send({
                     msg: 'Otp Verified',
                     status: 200
                 })
             }
-            if ((result.length != 0 && req.body.otp != result[0].otp)) {
+            if ((result.length != 0 && req.body.otp1 != result[0].otp)) {
                 return res.status(401).send({
                     msg: 'Invalid otp',
                     status: 401

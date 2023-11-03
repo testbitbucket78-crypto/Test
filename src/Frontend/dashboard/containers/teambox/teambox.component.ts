@@ -7,11 +7,11 @@ import { TeamboxService } from './../../services';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-
+import { isNullOrUndefined } from 'util';
 import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { base64ToFile } from 'ngx-image-cropper';
-import { isNullOrUndefined } from 'util';
+
 declare var $: any;
 @Component({
 selector: 'sb-teambox',
@@ -22,7 +22,7 @@ providers: [ToolbarService, LinkService, ImageService, HtmlEditorService]
 
 export class TeamboxComponent implements  OnInit {
 
-	private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://65.0.219.162:3010/');
+	private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://13.126.146.43:3010/');
 
 	incomingMessage: string = '';
 
@@ -360,6 +360,7 @@ showfilter=false;
 		this.newContact= fb.group({
 			SP_ID: new FormControl('', Validators.required),
 			Name: new FormControl('', Validators.required),
+			country_code: new FormControl('IN +91'),
 			Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(15)])),
 			Channel: new FormControl('', Validators.required),
 			
@@ -367,6 +368,7 @@ showfilter=false;
 		this.editContact=fb.group({
 			SP_ID: new FormControl('', Validators.required),
 			Name: new FormControl('', Validators.required),
+			country_code: new FormControl('IN +91'),
 			Phone_number: new FormControl('', Validators.compose([Validators.required,Validators.minLength(6),Validators.maxLength(15)])),
 			Channel: new FormControl('', Validators.required),
 		});
@@ -512,6 +514,8 @@ showfilter=false;
 		$("#atrributemodal").modal('hide');
 		$("#insertmodal").modal('hide');
 		$("#attachfle").modal('hide');
+		// $("#senddoc").modal('hide');
+
 	}	
 	editMedia(){
 		this.closeAllModal()
@@ -719,7 +723,7 @@ sendattachfile(){
 	}
 	sendMediaMessage(){
 		this.sendMessage()
-this.closeAllModal();
+        this.closeAllModal();
 		$('body').removeClass('modal-open');
 		$('.modal-backdrop').remove();
 	}
@@ -768,34 +772,15 @@ this.closeAllModal();
 			let responseData:any = uploadStatus
 			if(responseData.filename){
 				this.messageMeidaFile = responseData.filename
-this.sendattachfile();
+				this.sendattachfile();
+
+				console.log(this.messageMeidaFile);
 				this.showAttachmenOption=false;
 			}
-		})
-	  }
-	}
 
-	// saveFiles(files: FileList) {
-	// 	if (files[0]) {
-	// 	  const imageFile = files[0]
-	// 	  this.mediaType = files[0].type
-	  
-	// 	  const reader = new FileReader()
-	// 	  reader.onload = (event: any) => {
-	// 		const base64Data = event.target.result.split(',')[1]; // Extracting base64 data
-	// 		this.apiService.uploadfile(base64Data).subscribe(uploadStatus => {
-	// 		  let responseData: any = uploadStatus
-	// 		  if(responseData.filename){
-	// 			this.messageMeidaFile = responseData.filename
-	// 			this.showAttachmenOption=false;
-	// 		}
-	// 		});
-	// 	  };
-	  
-	// 	  reader.readAsDataURL(imageFile);
-	// 	}
-	//   }
-	  
+			});
+		  };	
+	}
 			
 
 
@@ -824,8 +809,9 @@ this.sendattachfile();
 		this.getsavedMessages()
 		this.getquickReply()
 		this.getTemplates()
+		this.subscribeToNotifications()
 		this.getAttributeList()
-this.sendattachfile()
+        this.sendattachfile()
 
 		// this.chatEditor.addEventListener('keydown', this.onEditorKeyDown.bind(this));
 	
@@ -849,8 +835,10 @@ this.sendattachfile()
 							console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
 							if(msgjson.updateMessage)
 							{
-								this.getAllInteraction();
-
+								this.getAllInteraction(false);
+							}
+							else if(message.status === 200) {
+								this.showToaster("Please Scan QR code from Account Settings first than try again!",'error');
 							}						
 						}
 					}
@@ -1179,7 +1167,7 @@ this.sendattachfile()
 	getProgressBar(lastMessage:any){
 		let progressbar:any=[];
 		if(lastMessage){
-			var date = lastMessage.created_at
+			var date = lastMessage?.created_at
 			var currentDate:any = new Date()
 			var messCreated:any = new Date(date)
 			var seconds = Math.floor((currentDate - messCreated) / 1000);
@@ -1211,7 +1199,7 @@ this.sendattachfile()
 	}
 	timeSinceLastMessage(lastMessage:any){
 		if(lastMessage){
-		var date = lastMessage.created_at
+		var date = lastMessage?.created_at
 		var currentDate:any = new Date()
 		var messCreated:any = new Date(date)
 		var seconds = Math.floor((currentDate - messCreated) / 1000);
@@ -1260,7 +1248,13 @@ selectInteraction(Interaction:any){
 	this.selectedInteraction =Interaction
 	console.log(Interaction)
 	this.getPausedTimer()
-}
+
+	var element = document.getElementsByClassName('total_count green')[0];
+	if (this.selectedInteraction.UnreadCount!=0) {
+	  element.innerHTML = '';
+	}
+	
+	}
 
 getPausedTimer(){
 	//console.log('getPausedTimer')
@@ -1369,6 +1363,7 @@ hangeEditContactSelect(name:any,value:any){
 updateCustomer(){
 	var bodyData = {
 	Name:this.EditContactForm.Name,
+	countryCode:this.EditContactForm.country_code,
 	Phone_number:this.EditContactForm.Phone_number,
 	channel:this.EditContactForm.channel,
 	status:this.EditContactForm.status,
@@ -1392,6 +1387,7 @@ updateCustomer(){
 	if(bodyData['Name']!='' && bodyData['Phone_number'].length>=10 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
 		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
 		this.selectedInteraction['Name']=this.EditContactForm.Name
+		this.selectedInteraction['countryCode']=this.EditContactForm.country_code
 		this.selectedInteraction['Phone_number']=this.EditContactForm.Phone_number
 		this.selectedInteraction['channel']=this.EditContactForm.channel
 		this.selectedInteraction['status']=this.EditContactForm.status
@@ -1565,8 +1561,6 @@ if (phoneNumber && countryCode) {
   }
 }
 }
-
-
 
 
 
@@ -1951,10 +1945,10 @@ deleteNotes(){
 
 sendMessage(){
 	
-	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
-		this.showToaster('! Please type your message first','error');
-		return; 
-	}
+	// if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+	// 	this.showToaster('! Please type your message first','error');
+	// 	return; 
+	// }
 
 	 {
 		let postAllowed =false;
