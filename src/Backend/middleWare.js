@@ -3,7 +3,7 @@ const http = require("https");
 const axios = require('axios');
 const token = 'EAAU0g9iuku4BOzSD75ynSUzKSsYrIWv3qkEa9QPAnUNTUzPwN5aTjGxoAHxsXF4Nlrw8UxbMGqZBxqarODf2sY20MvFfTQm0umq4ZBKCpFAJdcPtbcYSZBsHMqYVwjfFPiQwFk1Rmadl4ctoncnxczMGJZALoVfZBpqoQ0lYHzOwbRb1nvImzhL4ex53c9HKVyzl2viy4EhLy9g0K';
 
-function postDataToAPI(spid, phoneNo, type, text, link) {
+function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id) {
  
     return new Promise(async (resolve, reject) => {
         try {
@@ -14,7 +14,9 @@ function postDataToAPI(spid, phoneNo, type, text, link) {
                 type: type,
                 link: link,
                 text: text,
-                phoneNo: phoneNumber
+                phoneNo: phoneNumber,
+                interaction_id:interaction_id,
+                msg_id:msg_id
             };
 
             const response = await axios.post(apiUrl, dataToSend);
@@ -37,7 +39,7 @@ function removePlusFromPhoneNumber(phoneNumber) {
     return phoneNumber;
 }
 
-async function channelssetUp(spid, channelType, mediaType, messageTo, message_body, media) {
+async function channelssetUp(spid, channelType, mediaType, messageTo, message_body, media,interaction_id,msg_id) {
     try {
         var phoneNumber = removePlusFromPhoneNumber(messageTo)
         console.log(spid, channelType, mediaType, messageTo, message_body, media)
@@ -50,7 +52,7 @@ async function channelssetUp(spid, channelType, mediaType, messageTo, message_bo
         } else if (channelType == 'WhatsApp Web' || channelType == 2) {
 
             let content = await removeTagsFromMessages(message_body);
-            let messages = await postDataToAPI(spid, phoneNumber, mediaType, content, media)
+            let messages = await postDataToAPI(spid, phoneNumber, mediaType, content, media,interaction_id,msg_id)
             // console.log(messages)
             return messages;
         }

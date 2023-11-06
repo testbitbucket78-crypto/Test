@@ -32,7 +32,7 @@ wss.on('connection', (ws) => {
         console.log("wsclient", "---", wsclient)
         console.log(clients)
         if (wsclient != undefined) {
-          console("wsclient != undefined")
+          console.log("wsclient != undefined")
           wsclient.send(message);
         }
 

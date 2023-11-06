@@ -40,8 +40,8 @@ async function createClientInstance(spid, phoneNo) {
       client.on('qr', (qr) => {
         try {
           console.log('QR RECEIVED', qr);
-          notify.NotifyServer(phoneNo, false, 'Rescan QR')
-          //         qrcode.generate(qr, { small: true });
+          notify.NotifyServer(phoneNo, false, qr)
+          //       qrcode.generate(qr, { small: true });
           resolve({ status: 200, value: qr });
         } catch (onerr) {
           console.log("client on err")
@@ -64,10 +64,10 @@ async function createClientInstance(spid, phoneNo) {
 
       client.on('message', async message => {
         try {
-          console.log(message.body);
+          console.log("message", message.body);
           // Get the profile of the sender of the message
           const contact = await message.getContact();
-          console.log('Sender Name:', contact);
+          //console.log('Sender Name:', contact);
           saveInMessages(message);
         } catch (messageerr) {
           console.log("client message err")
@@ -77,38 +77,55 @@ async function createClientInstance(spid, phoneNo) {
       client.on('authenticated', (session) => {
         try {
           console.log("client authenticated");
-     
+
           clientSpidMapping = {
             [spid]: client
           }
           notify.NotifyServer(phoneNo, false, 'Client Authenticated')
-        
+
         } catch (authenticatederr) {
           console.log("client authenticated err")
         }
 
       });
       client.on('disconnected', (reason) => {
-        
+
         try {
           console.log("disconnected");
           if (clientSpidMapping.hasOwnProperty(spid)) {
-            console.log(clientSpidMapping[[spid]])
+            // console.log(clientSpidMapping[[spid]])
             delete clientSpidMapping[spid];
 
             console.log(`Removed ${spid} from clientSpidMapping.`);
 
           }
           notify.NotifyServer(phoneNo, false, 'Client is disconnected!')
-         
+
         } catch (error) {
           console.log("disconnect error")
 
         }
       })
+      client.on('message_ack', (message, ack) => {
+
+        try {
+          if (ack == '1') {
+            console.log(`Message has been sent`);
+          } else if (ack == '2') {
+            console.log(`Message has been delivered`);
+          } else if (ack == '3') {
+            console.log(`Message has been read`);
+          }
+          let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
+        } catch (message_ackErr) {
+          console.log(message_ackErr)
+        }
+      });
+
+
     } catch (err) {
       console.log("createClientInstance err");
-      
+
       return ({ status: 500, value: err });
     }
   })
@@ -127,13 +144,40 @@ function isActiveSpidClient(spid) {
 }
 
 
-async function sendMessages(spid, endCust, type, text, link) {
+async function saveSendedMessageStatus(messageStatus, timestamp, to, id) {
+  console.log(timestamp, to, id)
+  const phoneNumber = to.replace(/@c\.us$/, "");
+  console.log("phoneNumber", phoneNumber)
+  // Create a new Date object and multiply the Unix timestamp by 1000 to convert it to milliseconds
+  const dateObject = new Date(timestamp * 1000);
+
+  // Format the date as 'YYYY-MM-DD HH:mm:ss'
+  const formattedDate = `${dateObject.getFullYear()}-${String(dateObject.getMonth() + 1).padStart(2, '0')}-${String(dateObject.getDate()).padStart(2, '0')} ${String(dateObject.getHours()).padStart(2, '0')}:${String(dateObject.getMinutes()).padStart(2, '0')}:${String(dateObject.getSeconds()).padStart(2, '0')}`;
+
+  console.log(formattedDate);
+
+  let msgIdQuery = `SELECT m.Message_id
+  FROM Message m
+  LEFT JOIN Interaction i ON m.interaction_id = i.InteractionId
+  WHERE m.updated_at = ?`
+  //AND i.customerId = (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and isDeleted !=1)`;
+
+  let getMessageId = await db.excuteQuery(msgIdQuery, [formattedDate]);
+  console.log("saveSendedMessageStatus", getMessageId)
+  if (getMessageId.length > 0) {
+    var message_id = getMessageId[0].Message_id;
+  }
+  console.log(message_id)
+  let saveStatus = await db.excuteQuery(`UPDATE Message set msg_status=? ,ExternalMessageId=? where Message_id=?`, [messageStatus, id, message_id])
+}
+
+async function sendMessages(spid, endCust, type, text, link, interaction_id, msg_id) {
   try {
     let client = clientSpidMapping[[spid]];
-    console.log(spid, endCust, type,)
+    console.log(spid, endCust, type, interaction_id, msg_id)
     if (client) {
       console.log("if");
-      let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link);
+      let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
       return '200';
     } else {
       console.log("else");
@@ -144,35 +188,41 @@ async function sendMessages(spid, endCust, type, text, link) {
   }
 }
 
-async function sendDifferentMessagesTypes(client, endCust, type, text, link) {
+async function sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id) {
   try {
-    console.log("messagesTypes")
+    console.log("messagesTypes", interaction_id, msg_id)
 
     if (type === 'text') {
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       client.sendMessage(endCust + '@c.us', text);
     }
     if (type === 'image') {
       const media = await MessageMedia.fromUrl(link);
-
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       client.sendMessage(endCust + '@c.us', media, { caption: text });
     }
     if (type === 'video') {
       const media = await MessageMedia.fromUrl(link);
-      console.log(media.mimetype)
+      // console.log(media.mimetype)
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       client.sendMessage(endCust + '@c.us', media, { caption: text });
 
     }
     if (type === 'attachment') {
       const media = new MessageMedia('pdf', link);
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       client.sendMessage(endCust + '@c.us', media);
 
     } if (type === 'location') {
       const location = new Location(37.422, -122.084, 'Sampana Digital Private limited');
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       const msg = await client.sendMessage(endCust + '@c.us', location);
     }
     if (type === 'vcard') {
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       client.sendMessage(endCust + '@c.us', contat);
     }
+
   } catch (err) {
     console.log(err)
   }
@@ -195,12 +245,16 @@ async function saveInMessages(message) {
 
       message_media = media.data
     }
-   
-    let saveMessage = await saveIncommingMessages(from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName);
-    console.log("saveMessage")
-    console.log(saveMessage)
 
-    var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number)
+    if (from != 'status@broadcast') {
+
+
+      let saveMessage = await saveIncommingMessages(from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName);
+      console.log("saveMessage")
+      console.log(saveMessage)
+
+      var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number)
+    }
   } catch (err) {
     console.log(err);
 
@@ -235,7 +289,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   }
   if (message_text.length > 0) {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?)"
-    var saveMessage = await db.excuteQuery(query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, Type]);
+    var saveMessage = await db.excuteQuery(query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
     notify.NotifyServer(display_phone_number, true);
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
@@ -252,12 +306,12 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
     try {
       console.log(from, phone_number_id, display_phone_number, type)
 
-    
+
       let findSpid = 'select SP_ID from user where mobile_number=?'
       let sid = await db.excuteQuery(findSpid, [display_phone_number])
       let awsDetails = ""
-      console.log(type == 'image')
-      console.log(2)
+      console.log("type == 'image'")
+
       console.log(type === 'image')
       if (type == 'image') {
         awsDetails = await awsHelper.uploadStreamToAws(sid[0].SP_ID + "/" + phone_number_id + "/" + 'whatsAppWeb.jpeg', message)
@@ -274,7 +328,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
       notify.NotifyServer(display_phone_number, true);
 
-      resolve({ value: awsDetails.value.Location });
+      resolve({ value: 'awsDetails.value.Location' });
 
       //console.log("****image API****" + JSON.stringify(response))
     }
@@ -292,7 +346,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
   if (saveMessage.length > 0) {
-   
+
     const data = saveMessage;
     // Extracting the values
     const extractedData = {
