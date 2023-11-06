@@ -382,7 +382,7 @@
 
 			</div>
 
-			<div class=" col-4 team pt-5">
+			<div *ngIf="selectedInteraction.messageList" class=" col-4 team pt-5">
 				<div class="team-box right_box">
 					<div class="sidenav">
 						<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && !showAttachedMedia">
@@ -1275,6 +1275,7 @@
 						</p>
 						<p (click)="selectChannelOption('WhatsApp Web')">
 							<span>
+								<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
 								WhatsApp Web
 							</span>
 						</p>
@@ -1323,7 +1324,7 @@
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Phone Number*</label>
 					<select class="input-formm" id="country_code" formControlName="country_code">
-						<option [selected]="editContact.get('countryCode')?.value"
+						<option [selected]="editContact.get('country_code')?.value"
 							*ngFor="let countryCode of countryCodes; let i = index">
 							{{ countryCode }}
 						</option>

@@ -3,7 +3,7 @@ import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { FormControl, FormBuilder,FormGroup} from '@angular/forms';
 import { Validators } from '@angular/forms';
-
+declare var $: any;
 
 @Component({
     selector: 'sb-verification-input',
@@ -196,16 +196,8 @@ export class VerificationComponent implements OnInit {
 
             this.apiService.register(this.values).subscribe((response: any) => {
 
-
-
                 if (response.status === 200) {
-                    const successMessage = "! Success.";
-                    const successDiv = document.getElementById("success-message");
-                    if (successDiv) {
-                        successDiv.innerHTML = successMessage;
-                    }
-                    this.showToaster('! User Registered Successfully','success');
-                    this.router.navigate(['login']);
+                    $("#successRegister").modal('show'); 
                     sessionStorage.removeItem('formValues')
                 }
             },

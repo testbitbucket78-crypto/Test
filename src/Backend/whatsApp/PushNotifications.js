@@ -40,7 +40,7 @@ function NotifyServer(display_phone_number,updatemessage,message)
       console.log("client is undefined");
     }
     // console.log(client.connection);
-    conn.send(JSON.stringify(JSON.stringify(notificationMsg)));
+    conn.send(JSON.stringify(notificationMsg));
 }
 
 

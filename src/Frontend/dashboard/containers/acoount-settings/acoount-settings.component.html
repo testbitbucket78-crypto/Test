@@ -1,4 +1,11 @@
 <div>
+
+    <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+        <p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+      </div>
+      
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">
             <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''"
@@ -105,7 +112,7 @@
     </div>
 
 
-    <div class="modal fade" tabindex="-1" id="qrWhatsappModal" data-bs-backdrop="static" role="dialog">
+    <div class="modal fade" tabindex="-1" id="qrWhatsappModal" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content qr-modal">
                 <div class="modal-header">
@@ -116,8 +123,14 @@
                 </div>
                 <div class="modal-body d-flex justify-content-center p-5">
                     <div class="px-3 qr-card text-center" >
-                        <div ><qrcode [qrdata]="qrcode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
-
+                        <div *ngIf="loadingQRCode" class="text-center">
+                            <div class="spinner-border" role="status">
+                              <span class="sr-only">Loading...</span>
+                            </div>
+                            <p>Your QR Code is Loading...</p>
+                          </div>
+                        <div *ngIf="!loadingQRCode">
+                            <qrcode [qrdata]="qrcode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
                         </div>
                       
                         <br>
@@ -170,7 +183,7 @@
                         </div>
                         <div class="websetting-data">
                             <span class="left-col">Connected Date</span>
-                            <span class="mid-col">{{repliesaccountData?.connection_date}}</span>
+                            <span class="mid-col">{{repliesaccountData?.connection_date | date: 'dd MMM yyyy'}}</span>
                         </div>
                         <div class="websetting-data">
                             <span class="left-col">WA Version</span>
