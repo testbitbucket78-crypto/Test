@@ -47,7 +47,9 @@ app.post('/sendMessage', async (req, res) => {
         link = req.body.link
         text = req.body.text
         phoneNo = req.body.phoneNo
-        let response = await web.sendMessages(spid, phoneNo, type, text, link);
+        interaction_id=req.body.interaction_id,
+        msg_id=req.body.msg_id
+        let response = await web.sendMessages(spid, phoneNo, type, text, link,interaction_id,msg_id);
         console.log(response)
         return res.send({ status: response })
 
