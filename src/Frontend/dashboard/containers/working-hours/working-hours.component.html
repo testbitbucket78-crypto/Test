@@ -67,9 +67,11 @@
                 <div *ngFor="let item of workingFormData;let idx=index">
                     <div class="billing-form-row">
                         <label>Days</label>
-                        <ng-multiselect-dropdown class="multiselect" name="tag" [(ngModel)]="item.day" id="tag"
+                        <ng-multiselect-dropdown class="multiselect dropdown" name="tag" [(ngModel)]="item.day" id="tag"
                             [settings]="dropdownSettings" [data]="daysList" [placeholder]="'Add Days'">
                         </ng-multiselect-dropdown>
+                       
+
                     </div>
                     <div class="d-flex">
                         <div class="billing-form-row d-flex flex-column  ">

@@ -255,6 +255,7 @@ countryCodes = [
 
 	
 
+
 	
 	custommesage='<p>Your message...</p>'
 	customenotes='<p>Type...</p>'
@@ -285,7 +286,7 @@ countryCodes = [
 	showattachmentbox=false;
 	ShowFilerOption=false;
 	ShowContactOption=false;
-showfilter=false;
+    showfilter=false;
 	AutoReplyOption=false;
 	ShowConversationStatusOption=false;
 	ShowAssignOption=false;
@@ -997,7 +998,7 @@ sendattachfile(){
 			isPinned:item.isPinned,
 			InteractionId:item.InteractionId
 		}
-		//console.log(bodyData)
+		
 		this.apiService.updateInteractionPinned(bodyData).subscribe(async response =>{
 			item.isPinned=!item.isPinned;
 		})
@@ -1221,14 +1222,14 @@ sendattachfile(){
 			}
 		}
 		
-		//if (interval > 1) {
+		
 			var hours = messCreated.getHours() > 12 ? messCreated.getHours() - 12 : messCreated.getHours();
 			var am_pm = messCreated.getHours() >= 12 ? "PM" : "AM";
 			var hoursBH = hours < 10 ? "0" + hours : hours;
 			var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
 			var time = hoursBH + ":" + minutes  + " " + am_pm;
 			return time
-		//}
+		
 		}else{
 			var hrPer =100
 			var hourLeft =0
@@ -1945,10 +1946,10 @@ deleteNotes(){
 
 sendMessage(){
 	
-	// if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
-	// 	this.showToaster('! Please type your message first','error');
-	// 	return; 
-	// }
+	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+		this.showToaster('! Please type your message first','error');
+		return; 
+	}
 
 	 {
 		let postAllowed =false;
