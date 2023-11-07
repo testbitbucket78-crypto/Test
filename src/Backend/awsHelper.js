@@ -42,7 +42,7 @@ async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken) {
                         console.error('Error uploading file:', err);
                     } else {
                         console.log('File uploaded successfully!');
-                       // console.log(data);
+                        // console.log(data);
                         resolve({ code: 0, value: data });
                         // return data;//SAVE DETAILS TO DB from calling function so that it can be used in future to access.
                     }
@@ -56,7 +56,7 @@ async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken) {
     })
 }
 
-async function uploadToAws(awspath, stream) {
+async function uploadToAws(awspath, stream, type) {
     console.log("uploadToAws")
     return new Promise((resolve, reject) => {
         // Create S3 client
@@ -66,12 +66,11 @@ async function uploadToAws(awspath, stream) {
         // console.log(awspath);
         // var buf = Buffer.from(stream.replace(/^data:image\/\w+;base64,/, ""), 'base64')
         let buf;
-        if (typeof stream === 'string' && stream.startsWith('data:image/')){
-         
-            buf = Buffer.from(stream.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+        if (type === 'file') {
+            buf = stream;
+
         } else {
-          
-            buf = stream; // or any other appropriate value
+            buf = Buffer.from(stream.replace(/^data:image\/\w+;base64,/, ''), 'base64');
         }
         var data = {
             Key: awspath,
@@ -126,9 +125,10 @@ async function uploadFileToAws(destinationPath, sourcePath) {
     //   return value;
 
     // })
+    let type = 'file'
     try {
         const data = await readFile(sourcePath);
-        const value = await uploadStreamToAws(destinationPath, data);
+        const value = await uploadStreamToAws(destinationPath, data, type);
         return value;
     } catch (err) {
         console.error(" uploadFileToAws err");
@@ -137,9 +137,9 @@ async function uploadFileToAws(destinationPath, sourcePath) {
     }
 }
 
-async function uploadStreamToAws(destinationPath, streamdata) {
-
-    let value = await uploadToAws(destinationPath, streamdata);
+async function uploadStreamToAws(destinationPath, streamdata, type) {
+  
+    let value = await uploadToAws(destinationPath, streamdata, type);
 
     console.log("value")
     console.log(value)

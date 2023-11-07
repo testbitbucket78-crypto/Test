@@ -305,10 +305,11 @@ const insertMessage = async (req, res) => {
           
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id])
             let channelType = await db.excuteQuery('select channel from EndCustomer where customerId=?', [customerId]);
-            console.log("channelType" + channelType);
+           
             let channel = channelType.length > 0 ? channelType[0].channel : 'WhatsApp Web'
+            console.log("channelType" + channel);
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
-            db.runQuery(req, res, messageQuery, [values])
+           let msg_id=await db.excuteQuery(messageQuery, [values])
             if (agentName.length >= 0) {
                 let mentionQuery = `SELECT * FROM Message WHERE '` + message_text + `' LIKE '%@` + agentName[0].name + `%'`;
 
@@ -335,15 +336,17 @@ const insertMessage = async (req, res) => {
                     message_text = message_text.replace(`{{${placeholder}}}`, data[placeholder]);
                 });
             }
+            let middlewareresult=""
             if (req.body.message_type == 'text') {
                 if (req.body.message_media != '') {
                     // sendMediaOnWhatsApp(req.body.messageTo, message_media)
                     console.log(message_media)
-                       middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_text, message_media)
+                      middlewareresult=  middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo,message_text, message_media,interaction_id,msg_id.insertId)
                 }
                 // sendTextOnWhatsApp(req.body.messageTo, message_text)
-                middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text, message_media)
+                middlewareresult=  middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text,message_media,interaction_id,msg_id.insertId)
             }
+            res.send({middlewareresult:middlewareresult,status:200})
 
         } else {
             message_text = req.body.message_text
