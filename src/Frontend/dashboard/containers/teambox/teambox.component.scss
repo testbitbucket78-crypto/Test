@@ -1299,6 +1299,19 @@ div[role="progressbar"] {
 .form-control.phone-no{
     padding-left: 5.7rem;
 }
+.form-control.countryCode {
+    padding-left: 5.7rem;
+    height: 45px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    opacity: 1;
+    margin: 0 0 15px;
+    color: #000;
+    font-weight: 500;
+    font-size: 14px;
+}
+
 
 .inner_form.large .row {
     width: 46%;
@@ -1496,23 +1509,27 @@ span {
 
 .teambox-white {
     background: #FFFFFF 0% 0% no-repeat padding-box;
-    box-shadow: 4px 22px 54px #695f971a;
+    box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
-    width: 210%;
-    margin-left: -13rem;
+    position: fixed;
+    width: 60%;
+    left: 20%;
+    top: 10%;
 }
+
 
 
 .custom_modal.bg-pink {
     background: #FFF4F2 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
-    position:absolute;
+    position:fixed;
 }
 
 .custom_modal.sm {
-    width: 95%;
-    top: -22rem;
+    width: 30%;
+    left: 35%;
+    top: 10%;
 }
 
 .custom_modal.lg {
@@ -2297,15 +2314,26 @@ label span {
 }
 .input-formm{
     position: absolute;
-    top: 2.64rem;
+    top: 2.7rem;
     border: none;
     right: 19rem;
     width: 4.2rem;
+    background: #ffffff;
+    font-size: 12px;
 }
-.custom_modal.attributes{
-    width: 104%;
+.country_code{
     position: absolute;
-    margin-top: 4rem;
+    top: 10.5rem;
+    border: none;
+    right: 21rem;
+    width: 4.7rem;
+    outline: none;
+    font-size: 13px;
+    background: #ffffff;
+}
+
+.country_code option {
+    background: #ffffff;
 }
 .auto-modal{
     left: -9.5rem;

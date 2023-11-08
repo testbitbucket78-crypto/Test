@@ -346,7 +346,7 @@ countryCodes = [
 	allTemplates:any=[];
 	allTemplatesMain:any=[];
 	filterTemplateOption:any='';
-	attributesList:any=[];
+	attributesList:any=['{{Name}}','{{user_name}}','{{Help}}','{{Support}}','{{email id}}','{{IP_address}}','{{New-Order}}','{{Product YN}}','{{mail_address}}','{{Hotmail}}','{{Product ZR}}'];
 	
 	
 	
@@ -1343,6 +1343,7 @@ hangeEditContactInuts(item:any){
 		this.EditContactForm[item.target.name] = item.target.value
 	}
 	this.formatPhoneNumber();
+	this.formatPhoneNumberEdit();
 	//this.ShowChannelOption=false
 
 }
@@ -1437,7 +1438,7 @@ toggleAssignOption(){
 	if(this.selectedInteraction.interaction_status =='Resolved'){
 		this.showToaster('Already Resolved','warning')
 	}else{
-	if(this.loginAs =='Manager' || this.selectedInteraction.interaction_status !='Resolved'){
+	if(this.loginAs =='Admin' || this.selectedInteraction.interaction_status !='Resolved'){
 		this.ShowAssignOption =!this.ShowAssignOption
 	}else{
 		this.showToaster('Opps you dont have permission','warning')
@@ -1561,7 +1562,25 @@ if (phoneNumber && countryCode) {
 
   }
 }
+
 }
+
+formatPhoneNumberEdit() {
+	const phoneNumber = this.editContact.get('Phone_number')?.value;
+	const countryCode = this.editContact.get('country_code')?.value;
+	
+	if (phoneNumber && countryCode) {
+	  const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
+	  const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
+	
+	  if (formattedPhoneNumber) {
+		this.editContact.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
+		const phoneNumberValue = this.editContact.get('Phone_number')?.value;
+		console.log(phoneNumberValue);
+	
+	  }
+	 }
+	}
 
 
 
@@ -1584,9 +1603,9 @@ blockCustomer(selectedInteraction:any){
 	this.apiService.blockCustomer(bodyData).subscribe(ResponseData =>{
 		this.selectedInteraction['isBlocked']=selectedInteraction.isBlocked==1?0:1
 		if(selectedInteraction.isBlocked==1){
-			this.showToaster('Conversations is Unblocked','success')
-		}else{
 			this.showToaster('Conversations is Blocked','success')
+		}else{
+			this.showToaster('Conversations is UnBlocked','success')
 		}
 		
 	});
@@ -1706,7 +1725,7 @@ triggerBlockCustomer(BlockStatus:any,openBlockAlertmMessage:any){
 	if(this.modalReference){
 		this.modalReference.close();
 	}
-	if(this.loginAs !='Admin'){
+	if(this.loginAs !='Agent'){
 	this.confirmMessage= 'Are you sure you want to '+BlockStatus+' this conversation?'
 	this.modalReference = this.modalService.open(openBlockAlertmMessage,{ size:'sm', windowClass:'white-bg'});
 	
