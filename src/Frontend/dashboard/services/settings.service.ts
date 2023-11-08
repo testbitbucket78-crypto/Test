@@ -215,7 +215,7 @@ export class SettingsService {
   }
 
   craeteQRcode(spid:any): Observable<any> {
-    return this.http.post<any>('https://waweb.sampanatechnologies.com/craeteQRcode',spid);
+    return this.http.post<any>('http://localhost:3009/craeteQRcode',spid);
   }
 
 }

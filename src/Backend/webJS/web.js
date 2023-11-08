@@ -3,7 +3,7 @@ const { request } = require('http');
 const app = express();
 const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer')
-//const qrcode = require('qrcode-terminal');
+const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -16,36 +16,79 @@ const db = require('../dbhelper')
 const awsHelper = require('../awsHelper');
 const incommingmsg = require('../IncommingMessages')
 const notify = require('../whatsApp/PushNotifications')
+const fs = require('fs')
 let clientSpidMapping = {};
 
 async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo);
 
+  if (isActiveSpidClient(spid)) {
+    console.log("Client found in memory map and is ready");
+    return { status: 201, value: 'Client is ready!' };
+  }
+
+  var authStr = new LocalAuth({
+    clientId: spid
+  });
+
   return new Promise(async (resolve, reject) => {
     try {
       const client = new Client({
-        authStrategy: new LocalAuth(),
         puppeteer: {
-          headless: true,
+          headless: false,
           // executablePath: "/usr/bin/google-chrome-stable",
+          executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
-          args: ['--no-sandbox']
+          args: ['--no-sandbox'],
+          takeoverOnConflict: true,
+          takeoverTimeoutMs: 10,
         },
-        authStrategy: new LocalAuth({
-          clientId: spid
-        }),
+        authStrategy: authStr,
       });
       console.log("client created");
 
-      client.on('qr', (qr) => {
+      const worker = `${authStr.dataPath}/session-${spid}/Default/Service Worker`;
+
+      if (fs.existsSync(worker)) {
+
+        console.log(worker)
         try {
-          console.log('QR RECEIVED', qr);
-          notify.NotifyServer(phoneNo, false, qr)
-          //       qrcode.generate(qr, { small: true });
-          resolve({ status: 200, value: qr });
-        } catch (onerr) {
-          console.log("client on err")
+          client.initialize();
+          // Initialization was successful.
+          clientSpidMapping[[spid]] = client;
+          //console.log(client);
+          console.log("Client found in WhatsApp Web cache");
+          resolve({ status: 201, value: 'Client is ready!' });
+        } catch (sessionerr) {
+          console.log("Error during client initialization");
+          console.error(sessionerr);
+          reject({ status: 500, err: sessionerr })
+          // Handle the error or decide what to do in case of initialization failure.
         }
+
+      }
+
+      // Handle client creation errors
+      client.on('error', (error) => {
+        console.error('Client error:', error);
+        reject({ status: 500, value: 'Client creation failed' });
+      });
+      let inc = 0;
+      client.on("qr", (qr) => {
+        // Generate and scan this code with your phone
+        console.log("QR RECEIVED", qr);
+        inc++;
+        console.log("inc: " + inc);
+        if (inc > 5) {
+          console.log("Destroying client..." + client.authStrategy.userDataDir);
+          // fs.unlink(client.authStrategy.userDataDir)
+          // fs.unlinkSync(client.authStrategy.userDataDir)
+          client.destroy();
+          notify.NotifyServer(phoneNo, false, 'QR is closed generate Again')
+          resolve({ status: 400, value: 'QR is closed' });
+        }
+        notify.NotifyServer(phoneNo, false, qr)
+        resolve({ status: 200, value: qr });
       });
       client.on('ready', () => {
 
@@ -59,7 +102,7 @@ async function createClientInstance(spid, phoneNo) {
         // }
       });
 
-      client.initialize();
+      client.initialize().catch(_ => _);
 
 
       client.on('message', async message => {
@@ -78,9 +121,7 @@ async function createClientInstance(spid, phoneNo) {
         try {
           console.log("client authenticated");
 
-          clientSpidMapping = {
-            [spid]: client
-          }
+          clientSpidMapping[[spid]] = client;
           notify.NotifyServer(phoneNo, false, 'Client Authenticated')
 
         } catch (authenticatederr) {
@@ -125,7 +166,7 @@ async function createClientInstance(spid, phoneNo) {
 
     } catch (err) {
       console.log("createClientInstance err");
-
+      console.log(err);
       return ({ status: 500, value: err });
     }
   })
@@ -133,10 +174,13 @@ async function createClientInstance(spid, phoneNo) {
 
 }
 
+function closeSession() {
+
+}
 
 function isActiveSpidClient(spid) {
 
-  if (!clientSpidMapping[spid]) {
+  if (clientSpidMapping[spid]) {
     return true;
   } else {
     return false;
@@ -178,6 +222,7 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
     if (client) {
       console.log("if");
       let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
+      console.log("return send msg status")
       return '200';
     } else {
       console.log("else");
@@ -191,7 +236,11 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
 async function sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id) {
   try {
     console.log("messagesTypes", interaction_id, msg_id)
-
+    if (client.info) {
+      console.log("client info avilable")
+    } else {
+      console.log("not avilable")
+    }
     if (type === 'text') {
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       client.sendMessage(endCust + '@c.us', text);
@@ -224,6 +273,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
     }
 
   } catch (err) {
+    console.log("++++++++++++++++++++++++++++++++++++++++++++")
     console.log(err)
   }
 }
