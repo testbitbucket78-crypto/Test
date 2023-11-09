@@ -47,10 +47,20 @@ wss.on('connection', (ws) => {
         if (wsclient != undefined) {
           wsclient.send(JSON.stringify(message));
         }
+        else{ 
+          console.log("wsClient is undefined");
+          var keys = Object.keys(clients);
+          console.log('obj contains ' + keys.length + ' keys: '+  keys);
+        }
 
       }
-      else {
-        console.log("seems like the client to forward this message is not available");
+      else if(message.trim() == "ping alive switch"){
+        console.log("ping alive switch");//TODO: remove console.log when you move to production;
+      }
+      else
+      {
+         console.log(message);
+        // console.log("seems like the client to forward this message is not available");
       }
     }
     catch (e) {

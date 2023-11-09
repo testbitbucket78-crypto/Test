@@ -20,7 +20,7 @@ providers: [ToolbarService, LinkService, ImageService, HtmlEditorService]
 
 export class TeamboxComponent implements  OnInit {
 
-	private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://13.126.146.43:3010/');
+	private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://localhost:3010/');
 
 	incomingMessage: string = '';
 

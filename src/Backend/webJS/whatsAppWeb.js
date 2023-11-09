@@ -60,6 +60,15 @@ app.post('/sendMessage', async (req, res) => {
 app.listen(3009, () => {
     console.log("Server is Running on Port : : 3009")
     console.log( path.join(__dirname, '.wwebjs_auth'))
-    //fs.unlinkSync(path.join(__dirname, '.wwebjs_auth'))
-    fs.rmdirSync( path.join(__dirname, '.wwebjs_auth\\session-10'), { recursive: true })
+    var dir = path.join(__dirname, '.wwebjs_auth');
+    try{
+        if (fs.existsSync(dir)) {
+            fs.readdirSync(dir).forEach(f => fs.rmdirSync(`${dir}/${f}`, {recursive: true}));
+        }
+    }
+    catch(err)
+    {
+        console.log("error while deleting cached sessions. Please delete manually from within " +dir+" and restart the server")
+    }
+    
 })

@@ -53,17 +53,11 @@ async function createClientInstance(spid, phoneNo) {
 
         console.log(worker)
         try {
-          client.initialize();
-          // Initialization was successful.
-          clientSpidMapping[[spid]] = client;
-          //console.log(client);
-          console.log("Client found in WhatsApp Web cache");
-          resolve({ status: 201, value: 'Client is ready!' });
+          var dir = path.join(__dirname, '.wwebjs_auth');
+          fs.rmdirSync(worker, {recursive: true});
         } catch (sessionerr) {
-          console.log("Error during client initialization");
+          console.log("Error while deleting old session");
           console.error(sessionerr);
-          reject({ status: 500, err: sessionerr })
-          // Handle the error or decide what to do in case of initialization failure.
         }
 
       }
@@ -81,11 +75,9 @@ async function createClientInstance(spid, phoneNo) {
         console.log("inc: " + inc);
         if (inc > 5) {
           console.log("Destroying client..." + client.authStrategy.userDataDir);
-          // fs.unlink(client.authStrategy.userDataDir)
-          // fs.unlinkSync(client.authStrategy.userDataDir)
           client.destroy();
-          notify.NotifyServer(phoneNo, false, 'QR is closed generate Again')
-          resolve({ status: 400, value: 'QR is closed' });
+          notify.NotifyServer(phoneNo, false, 'QR generation timed out. Plese re-open account settings and generate QR code')
+          resolve({ status: 400, value: 'QR is expired' });
         }
         notify.NotifyServer(phoneNo, false, qr)
         resolve({ status: 200, value: qr });
@@ -107,10 +99,8 @@ async function createClientInstance(spid, phoneNo) {
 
       client.on('message', async message => {
         try {
-          console.log("message", message.body);
-          // Get the profile of the sender of the message
+          console.log("inside on message");
           const contact = await message.getContact();
-          //console.log('Sender Name:', contact);
           saveInMessages(message);
         } catch (messageerr) {
           console.log("client message err")
