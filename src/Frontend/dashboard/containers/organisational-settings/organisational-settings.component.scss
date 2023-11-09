@@ -182,9 +182,6 @@
     margin-left: 3rem;
    }
 
-//    .billing-form-row .input-form {
-//     width: 100% !important;
-//    }
 
    .industry-txt{
     padding: 13px 0px 0px 6px;
@@ -324,3 +321,24 @@ select option {
     max-width: 800px;
   }
   
+  .input-formm{
+    position: absolute;
+    border: none;
+    width: 4.2rem;
+    top: 16.3rem;
+    right: 19.1rem;
+}
+.form-control.phone-no{
+    padding-left: 5.7rem;
+}
+.form-control {
+    height: 45px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    opacity: 1;
+    margin: 0px 0px 15px 0px;
+    color: #000;
+    font-weight: 500;
+    font-size: 14px;
+}

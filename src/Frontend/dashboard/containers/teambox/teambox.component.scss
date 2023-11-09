@@ -1294,13 +1294,11 @@ div[role="progressbar"] {
     color: #000;
     font-weight: 500;
     font-size: 14px;
-
 }
 
-.form-control.phone-no {
+.form-control.phone-no{
     padding-left: 5.7rem;
 }
-
 .form-control.countryCode {
     padding-left: 5.7rem;
     height: 45px;
@@ -1313,6 +1311,7 @@ div[role="progressbar"] {
     font-weight: 500;
     font-size: 14px;
 }
+
 
 .inner_form.large .row {
     width: 46%;
@@ -1481,6 +1480,7 @@ span {
     margin: 0px;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
 }
 
 .contact_item img {
@@ -1517,11 +1517,13 @@ span {
     top: 10%;
 }
 
+
+
 .custom_modal.bg-pink {
     background: #FFF4F2 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
-    position: fixed;
+    position:fixed;
 }
 
 .custom_modal.sm {
@@ -1536,8 +1538,6 @@ span {
     top: 10%;
     padding: 1rem;
 }
-
-
 
 .attachmentboxbody {
     padding: 10px 100px 50px 100px;
@@ -2321,7 +2321,6 @@ label span {
     background: #ffffff;
     font-size: 12px;
 }
-
 .country_code{
     position: absolute;
     top: 10.5rem;
@@ -2336,3 +2335,20 @@ label span {
 .country_code option {
     background: #ffffff;
 }
+.auto-modal{
+    left: -9.5rem;
+    margin-top: -33rem;
+    justify-content: center;
+    /* align-items: center; */
+    /* display: flex; */
+}
+
+
+@media (max-width:992px ) {
+    .auto-modal{
+        left: -6.5rem;
+        margin-top: -29rem;
+        justify-content: center;
+}
+    }
+  

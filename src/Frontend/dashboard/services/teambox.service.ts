@@ -182,6 +182,7 @@ export class TeamboxService {
   public downloadErrFile() {
     return this.http.get('https://contactapi.sampanatechnologies.com/downloadCSVerror', { responseType: 'blob' })
   }
-  
+  public getAttributeList(SP_ID: any) {
+    return this.http.get(`https://contactapi.sampanatechnologies.com/columns/${SP_ID}`);
+} 
 }
- 
