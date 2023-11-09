@@ -8,6 +8,8 @@ app.use(cors());
 const bodyParser = require('body-parser');
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+const fs = require('fs')
+const path = require('path');
 // const { MessageMedia, Location, Contact } = require('whatsapp-web.js');
 app.get('/get', (req, res) => {
     res.send("webjs is working")
@@ -19,21 +21,14 @@ app.post('/craeteQRcode', async (req, res) => {
         console.log("get")
         spid = req.body.spid;
         phoneNo = req.body.phoneNo
-      
-        if (web.isActiveSpidClient(spid) === false) {
-            res.send({
-                status: 410,
-                msg: "Spid Already in Used"
-            })
-        }
-        else {
+       
+   
             let response = await web.createClientInstance(spid, phoneNo);
             res.send({
                 status: response.status,
                 QRcode: response.value
             })
 
-        }
     } catch (err) {
         console.log(err);
 
@@ -62,8 +57,18 @@ app.post('/sendMessage', async (req, res) => {
 
 
 
-
 app.listen(3009, () => {
     console.log("Server is Running on Port : : 3009")
-
+    console.log( path.join(__dirname, '.wwebjs_auth'))
+    var dir = path.join(__dirname, '.wwebjs_auth');
+    try{
+        if (fs.existsSync(dir)) {
+            fs.readdirSync(dir).forEach(f => fs.rmdirSync(`${dir}/${f}`, {recursive: true}));
+        }
+    }
+    catch(err)
+    {
+        console.log("error while deleting cached sessions. Please delete manually from within " +dir+" and restart the server")
+    }
+    
 })
