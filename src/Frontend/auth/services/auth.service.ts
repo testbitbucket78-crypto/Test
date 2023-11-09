@@ -12,23 +12,23 @@ export class AuthService {
     }
 
     login(data: Auth): Observable<any> {
-        let API_URL = 'http://localhost:3003/login';
+        let API_URL = 'https://authapi.sampanatechnologies.com/login';
         return this.http.post(API_URL, data)
 
     }
     register(data: authRegister): Observable<any> {
 
-        let API_URL = 'http://localhost:3003/register';
+        let API_URL = 'https://authapi.sampanatechnologies.com/register';
         return this.http.post(API_URL, data,{headers:{'Content-Type':'application/json'}})
     }
     forgotpassword(data: authForgotPassword): Observable<any> {
-        let API_URL = 'http://localhost:3003/forgotPassword';
+        let API_URL = 'https://authapi.sampanatechnologies.com/forgotPassword';
         return this.http.post(API_URL, data)
     }
     resetPassword(value: any, uid: any) {
         console.log("" + value)
         const params = new HttpParams().set('uid', uid)
-        let API_URL = 'http://localhost:3003/resetPassword/:uid';
+        let API_URL = 'https://authapi.sampanatechnologies.com/resetPassword/:uid';
         return this.http.post(API_URL, value, { params: params })
     }
     sendOtp(data: authSendOtp) {

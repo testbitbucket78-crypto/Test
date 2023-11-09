@@ -21,9 +21,9 @@ app.post('/craeteQRcode', async (req, res) => {
         console.log("get")
         spid = req.body.spid;
         phoneNo = req.body.phoneNo
-        onevent=req.body.onevent
+       
    
-            let response = await web.createClientInstance(spid, phoneNo,onevent);
+            let response = await web.createClientInstance(spid, phoneNo);
             res.send({
                 status: response.status,
                 QRcode: response.value

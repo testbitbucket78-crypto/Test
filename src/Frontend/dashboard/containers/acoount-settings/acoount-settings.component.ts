@@ -66,7 +66,7 @@ export class AcoountSettingsComponent implements OnInit {
 
   constructor( private apiService:SettingsService,private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
 
-  private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://localhost:3010/');
+  private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.sampanatechnologies.com');
 
 
   ngOnInit(): void {

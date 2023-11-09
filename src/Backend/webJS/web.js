@@ -3,7 +3,7 @@ const { request } = require('http');
 const app = express();
 const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer')
-const qrcode = require('qrcode-terminal');
+//const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -35,9 +35,9 @@ async function createClientInstance(spid, phoneNo) {
     try {
       const client = new Client({
         puppeteer: {
-          headless: false,
-          // executablePath: "/usr/bin/google-chrome-stable",
-          executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          headless: true,
+          executablePath: "/usr/bin/google-chrome-stable",
+      //    executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: ['--no-sandbox'],
           takeoverOnConflict: true,
@@ -164,9 +164,6 @@ async function createClientInstance(spid, phoneNo) {
 
 }
 
-function closeSession() {
-
-}
 
 function isActiveSpidClient(spid) {
 

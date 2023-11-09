@@ -6,12 +6,12 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
   providedIn: 'root'
 })
 export class WebsocketService {
-  private socket$: WebSocketSubject<any> = new WebSocketSubject('ws://localhost:3010/');
+  private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.sampanatechnologies.com/');
 
   constructor() { }
 
   connect(spn: any): void {
-    this.socket$ = webSocket('ws://localhost:3010/'); // Replace with your server's URL
+    this.socket$ = webSocket('wss://notify.sampanatechnologies.com/'); // Replace with your server's URL
     this.socket$.next(JSON.stringify(spn));
     // Handle incoming messages
     this.socket$.subscribe(
