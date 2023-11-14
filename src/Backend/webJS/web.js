@@ -37,7 +37,7 @@ async function createClientInstance(spid, phoneNo) {
         puppeteer: {
           headless: true,
           executablePath: "/usr/bin/google-chrome-stable",
-      //    executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: ['--no-sandbox'],
           takeoverOnConflict: true,
@@ -53,7 +53,7 @@ async function createClientInstance(spid, phoneNo) {
 
         console.log(worker)
         try {
-          var dir = path.join(__dirname, '.wwebjs_auth');
+          //var dir = path.join(__dirname, '.wwebjs_auth');
           fs.rmdirSync(worker, {recursive: true});
         } catch (sessionerr) {
           console.log("Error while deleting old session");
@@ -67,6 +67,11 @@ async function createClientInstance(spid, phoneNo) {
         console.error('Client error:', error);
         reject({ status: 500, value: 'Client creation failed' });
       });
+
+      client.on('auth_failure', () => {
+        console.log('Client is auth_failure!');
+      });
+      
       let inc = 0;
       client.on("qr", (qr) => {
         // Generate and scan this code with your phone
@@ -120,22 +125,25 @@ async function createClientInstance(spid, phoneNo) {
 
       });
       client.on('disconnected', (reason) => {
-
-        try {
-          console.log("disconnected");
-          if (clientSpidMapping.hasOwnProperty(spid)) {
-            // console.log(clientSpidMapping[[spid]])
-            delete clientSpidMapping[spid];
-
-            console.log(`Removed ${spid} from clientSpidMapping.`);
-
+        setTimeout(async () => {
+          try {
+            console.log("disconnected");
+  
+            if (clientSpidMapping.hasOwnProperty(spid)) {
+              // console.log(clientSpidMapping[[spid]])
+              delete clientSpidMapping[spid];
+  
+              console.log(`Removed ${spid} from clientSpidMapping.`);
+  
+            }
+            notify.NotifyServer(phoneNo, false, 'Client is disconnected!')
+  
+          } catch (error) {
+            console.log("disconnect error")
+  
           }
-          notify.NotifyServer(phoneNo, false, 'Client is disconnected!')
-
-        } catch (error) {
-          console.log("disconnect error")
-
-        }
+        }, 3000);
+     
       })
       client.on('message_ack', (message, ack) => {
 
@@ -365,7 +373,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
       notify.NotifyServer(display_phone_number, true);
 
-      resolve({ value: 'awsDetails.value.Location' });
+      resolve({ value: awsDetails.value.Location });
 
       //console.log("****image API****" + JSON.stringify(response))
     }
