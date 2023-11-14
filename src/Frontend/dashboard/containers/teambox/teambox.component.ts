@@ -308,7 +308,7 @@ countryCodes = [
 	message_text='';
 	showEmoji=false;
 	EmojiType:any='smiley';
-	selectedChannel:any='WhatsApp Offical';
+	selectedChannel:any=['WhatsApp Offcial', 'WhatsApp Web'];
 	contactSearchKey:any='';
 	ShowChannelOption:any=false;
 	selectedCountryCode: string = '';
@@ -836,9 +836,28 @@ sendattachfile(){
 							console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
 							if(msgjson.updateMessage)
 							{
-								this.getAllInteraction(false);
+								let Interaction:any; 
+								this.getAllInteraction(Interaction)
+								 
+									if(this.chatEditor){
+										this.chatEditor.value = 'Your message...'
+									this.showChatNotes ='text'
+									}
+									for(var i=0;i<this.interactionList.length;i++){
+										this.interactionList[i].selected=false
+									}
+									Interaction['selected']=true
+									this.selectedInteraction =Interaction
+									console.log(Interaction)
+									this.getPausedTimer()
+								
+									var element = document.getElementsByClassName('total_count green')[0];
+									if (this.selectedInteraction.UnreadCount!=0) {
+									  element.innerHTML = '';
+									}
+									
 							}
-							else if(message.status === 200) {
+							else if(message.status === 401) {
 								this.showToaster("Please Scan QR code from Account Settings first than try again!",'error');
 							}						
 						}
@@ -1822,7 +1841,9 @@ createCustomer(){
 		var insertId:any = responseData.insertId
 		if(insertId){
 			this.createInteraction(insertId);
+			this.getAllInteraction();
 			this.newContact.reset();
+			
 		}
 	});
 	}else{
@@ -1964,7 +1985,6 @@ deleteNotes(){
 //   }
 
 sendMessage(){
-	
 	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
 		this.showToaster('! Please type your message first','error');
 		return; 
@@ -2002,11 +2022,16 @@ sendMessage(){
 		}
 		this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
 			this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
-			//console.log(data)
 			this.messageMeidaFile='';
 			this.mediaType='';
 			var responseData:any = data
-			if(this.newMessage.value.Message_id==''){
+
+			if (responseData.middlewareresult.status === '401') {
+				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+				return;
+			}
+			
+			if(this.newMessage.value.Message_id=='' && responseData.middlewareresult.status !== '401'){
 			
 			var insertId:any = responseData.insertId
 			if(insertId){
