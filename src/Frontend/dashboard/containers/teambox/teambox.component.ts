@@ -308,7 +308,7 @@ countryCodes = [
 	message_text='';
 	showEmoji=false;
 	EmojiType:any='smiley';
-	selectedChannel:any=['WhatsApp Offcial', 'WhatsApp Web'];
+	selectedChannel:any=['WhatsApp Web'];
 	contactSearchKey:any='';
 	ShowChannelOption:any=false;
 	selectedCountryCode: string = '';
@@ -346,7 +346,7 @@ countryCodes = [
 	allTemplates:any=[];
 	allTemplatesMain:any=[];
 	filterTemplateOption:any='';
-	attributesList:any=['{{Name}}','{{user_name}}','{{Help}}','{{Support}}','{{email id}}','{{IP_address}}','{{New-Order}}','{{Product YN}}','{{mail_address}}','{{Hotmail}}','{{Product ZR}}'];
+	attributesList:any=[];
 	
 	
 	
@@ -836,30 +836,9 @@ sendattachfile(){
 							console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
 							if(msgjson.updateMessage)
 							{
-								let Interaction:any; 
-								this.getAllInteraction(Interaction)
-								 
-									if(this.chatEditor){
-										this.chatEditor.value = 'Your message...'
-									this.showChatNotes ='text'
-									}
-									for(var i=0;i<this.interactionList.length;i++){
-										this.interactionList[i].selected=false
-									}
-									Interaction['selected']=true
-									this.selectedInteraction =Interaction
-									console.log(Interaction)
-									this.getPausedTimer()
+								this.getAllInteraction(false);
 								
-									var element = document.getElementsByClassName('total_count green')[0];
-									if (this.selectedInteraction.UnreadCount!=0) {
-									  element.innerHTML = '';
-									}
-									
-							}
-							else if(message.status === 401) {
-								this.showToaster("Please Scan QR code from Account Settings first than try again!",'error');
-							}						
+							}					
 						}
 					}
 					catch(e)
@@ -1655,9 +1634,9 @@ handelDeleteConfirm(){
 		AgentId:this.AgentId,
 		InteractionId:this.selectedInteraction.InteractionId
 	}
-	this.apiService.deleteInteraction(bodyData).subscribe(async response =>{
-			//console.log(response)
+	this.apiService.deleteInteraction(bodyData).subscribe(async response => {
 			this.showToaster('Conversations deleted...','success')
+			this.getAllInteraction();
 	});	
 }
 
@@ -1712,6 +1691,7 @@ triggerEditCustomer(updatecustomer:any){
 		this.modalReference.close();
 	}
 	this.EditContactForm['Name'] =this.selectedInteraction.Name
+	this.EditContactForm['country_code']=this.EditContactForm.countryCode
 	this.EditContactForm['Phone_number'] =this.selectedInteraction.Phone_number
 	this.EditContactForm['channel'] =this.selectedInteraction.channel
 	this.EditContactForm['status'] =this.selectedInteraction.status

@@ -211,8 +211,8 @@ openDiv() {
           }
           this.loadingQRCode = false;
           if (response.QRcode === 'Client is ready!') {
-            $("#qrWhatsappModal").modal({ backdrop: 'static', keyboard: false, show: false });
-            this.showToaster('This user is already in use', 'error');
+            this.showToaster('! User is already authenticated', 'success');
+            $("#qrWhatsappModal").modal('hide');
           }
         },
         (error) => {
