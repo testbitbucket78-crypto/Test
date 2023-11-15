@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
-import { FormControl, FormBuilder,FormGroup} from '@angular/forms';
+import { FormControl, FormBuilder} from '@angular/forms';
 import { Validators } from '@angular/forms';
 declare var $: any;
 
@@ -23,6 +23,8 @@ export class VerificationComponent implements OnInit {
     errorMessage = '';
 	successMessage = '';
 	warnMessage = '';
+    successDiv!: any;
+    errorDiv!: any;
 
     otpFormValue:any;
     otpForm:any;
@@ -52,7 +54,7 @@ export class VerificationComponent implements OnInit {
 		}
 	
 		setTimeout(() => {
-			this.hideToaster()
+			this.hideToaster() 
 		}, 5000);
 		
 	}
@@ -62,17 +64,22 @@ export class VerificationComponent implements OnInit {
 		this.errorMessage='';
 	}
 
+    // hideMessage() {
+    //     this.successDiv.innerHTML='';
+    //     this.errorDiv.innerHTML='';
+    // }
+
     ngOnInit() {
         this.email_id = sessionStorage.getItem('otpfieldEmailvalue')
         this.phone = sessionStorage.getItem('otpfieldMobilevalue')
        
     }
 
-    checkSubmitButton() {
-        if (this.verifyButton1Clicked && this.verifyButton2Clicked) {
-            this.isVerified = true;
-        }
-    }
+    // checkSubmitButton() {
+    //     if (this.verifyButton1Clicked && this.verifyButton2Clicked == true) {
+    //         this.isVerified = true;
+    //     }
+    // }
 
 
 
@@ -94,12 +101,16 @@ export class VerificationComponent implements OnInit {
 
             if (response.status === 200) {
                 this.verifyButton1Clicked = true;
-                const errorMessage = "! Success";
-                const errorDiv = document.getElementById("success-message");
-                if (errorDiv) {
-                    errorDiv.innerHTML = errorMessage;
+                let  successMessage = "! Success";
+                this.successDiv = document.getElementById("success-message");
+                if (this.successDiv) {
+                    this.successDiv.innerHTML = successMessage;
                 }
-                this.checkSubmitButton();
+                // this.checkSubmitButton();
+                this.otpForm.value.clear();
+                console.log(this.otpForm.value)
+                
+                
             }
         },
 
@@ -107,19 +118,27 @@ export class VerificationComponent implements OnInit {
 
 
                 if (error.status === 401) {
-                    const errorMessage = "! Invalid Otp.";
-                    const errorDiv = document.getElementById("error-message");
-                    if (errorDiv) {
-                        errorDiv.innerHTML = errorMessage;
+                    let errorMessage = "! Invalid Otp.";
+                    this.errorDiv = document.getElementById("error-message");
+                    if (this.errorDiv) {
+                        this.errorDiv.innerHTML = errorMessage;
                     }
+                    this.verifyButton1Clicked = false;
                 } else if (error.status === 410) {
-                    const errorMessage = "! Otp Expired.";
-                    const errorDiv = document.getElementById("error-message");
-                    if (errorDiv) {
-                        errorDiv.innerHTML = errorMessage;
+                    let errorMessage = "! Otp Expired.";
+                     this.errorDiv = document.getElementById("error-message");
+                    if (this.errorDiv) {
+                        this.errorDiv.innerHTML = errorMessage;
                     }
                 }
+                this.verifyButton1Clicked = false;
+                console.log(this.verifyButton1Clicked)
             });
+
+            setTimeout(() => {
+                this.successDiv.innerHTML='';
+                this.errorDiv.innerHTML='';
+            }, 3000);
 
 
     }
@@ -133,12 +152,13 @@ export class VerificationComponent implements OnInit {
     
             if (response.status === 200) {
                 this.verifyButton2Clicked = true;
-                const successMessage = "! Success.";
-                const successDiv = document.getElementById("success-message1");
-                if (successDiv) {
-                    successDiv.innerHTML = successMessage;
+                let successMessage = "! Success.";
+                this.successDiv = document.getElementById("success-message1");
+                if (this.successDiv) {
+                    this.successDiv.innerHTML = successMessage;
                 }
-                this.checkSubmitButton();
+                // this.checkSubmitButton();
+                this.otpForm.values.clear();
             }
         },
 
@@ -146,20 +166,27 @@ export class VerificationComponent implements OnInit {
 
 
                 if (error.status === 401) {
-                    const errorMessage = "! Invalid Otp.";
-                    const errorDiv = document.getElementById("error-message1");
-                    if (errorDiv) {
-                        errorDiv.innerHTML = errorMessage;
+                    let errorMessage = "! Invalid Otp.";
+                     this.errorDiv = document.getElementById("error-message1");
+                    if (this.errorDiv) {
+                        this.errorDiv.innerHTML = errorMessage;
                     }
+                    this.verifyButton2Clicked = false;
                 } else if (error.status === 410) {
-                    const errorMessage = "! Otp Expired.";
-                    const errorDiv = document.getElementById("error-message1");
-                    if (errorDiv) {
-                        errorDiv.innerHTML = errorMessage;
+                    let errorMessage = "! Otp Expired.";
+                    this.errorDiv = document.getElementById("error-message1");
+                    if (this.errorDiv) {
+                        this.errorDiv.innerHTML = errorMessage;
                     }
+                    this.verifyButton2Clicked = false;
+                    console.log(this.verifyButton2Clicked)
                 }
-            });
-
+            }
+            );
+            setTimeout(() => {
+                this.successDiv.innerHTML='';
+                this.errorDiv.innerHTML='';
+            }, 3000);
 
     }
 
@@ -169,15 +196,16 @@ export class VerificationComponent implements OnInit {
             "mobile_number":this.phone
         }
         this.apiService.sendOtp(values).subscribe((response:any) => {
-            if(response.status === 200){
+            if(response.status === 200) {
+                console.log('response is 200');
                 this.showToaster('! OTP Resend Successfully','success');
             }
         });
     }
 
-    isBothButtonsClicked() {
-        return this.verifyButton1Clicked && this.verifyButton2Clicked;
-    }
+    // isBothButtonsClicked() {
+    //     return this.verifyButton1Clicked && this.verifyButton2Clicked;
+    // }
 
 
     onSubmitRegisterform() {
@@ -187,6 +215,11 @@ export class VerificationComponent implements OnInit {
         if (this.otpForm.invalid) {
             return
         }
+
+        if (this.verifyButton1Clicked && this.verifyButton2Clicked == true) {
+            this.isVerified = true;
+        }
+        else return;
 
         if (this.isVerified) {
             // If not verified, show an error message or perform desired action
@@ -204,24 +237,27 @@ export class VerificationComponent implements OnInit {
                 (error) => {
 
                     if (error.status === 409) {
-                        const errorMessage = "! User Already Exist with this email";
-                        const errorDiv = document.getElementById("error-message");
-                        if (errorDiv) {
-                            errorDiv.innerHTML = errorMessage;
+                        let errorMessage = "! User Already Exist with this email";
+                        this.errorDiv = document.getElementById("error-message");
+                        if (this.errorDiv) {
+                            this.errorDiv.innerHTML = errorMessage;
                         }
                     }
                     else {
-                        const errorMessage = "! Wrong Otp.";
-                        const errorDiv = document.getElementById("success-message");
-                        if (errorDiv) {
-                            errorDiv.innerHTML = errorMessage;
+                        let errorMessage = "! Wrong Otp.";
+                        this.errorDiv = document.getElementById("success-message");
+                        if (this.errorDiv && this.verifyButton1Clicked && this.verifyButton2Clicked) {
+                            this.errorDiv.innerHTML = errorMessage;
                         }
                     }
                 });
         
         }
 
-
+        setTimeout(() => {
+            this.successDiv.innerHTML='';
+            this.errorDiv.innerHTML='';
+        }, 3000);
 
     }
 

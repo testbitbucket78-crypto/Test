@@ -4,6 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from './../../services';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { Validators } from '@angular/forms';
 @Component({
     selector: 'sb-login',
@@ -24,7 +25,7 @@ export class LoginComponent implements OnInit {
     title = 'formValidation';
     submitted = false;
 
-    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) {
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, private settingsService:SettingsService) {
 
     }
     ngOnInit() {
@@ -39,10 +40,21 @@ export class LoginComponent implements OnInit {
                 if (result.status === 200) {
                     sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
                     sessionStorage.setItem('SP_ID', result.user.SP_ID);
-                    // console.log(result.user.UserType);
-                    // console.log("Agent")
                     this.router.navigate(['dashboard']);
-                   }
+
+                    var spid = Number(sessionStorage.getItem('SP_ID'));
+                    var phoneNo = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
+                    let item = {
+                        spid: spid,
+                        phoneNo: phoneNo,
+                      }
+            
+                    this.settingsService.craeteQRcode(item).subscribe((response) => {
+                          if (response.status === 200) {
+                            console.log(response.data);
+                          }
+                        });
+                     }
            
                 },
             
