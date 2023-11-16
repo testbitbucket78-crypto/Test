@@ -34,6 +34,7 @@ app.get('/columns/:spid', async (req, res) => {
 
 
 app.post('/addCustomContact', async (req, res) => {
+  try{
   // Construct the INSERT query dynamically
   let data = req.body.result
   let insertQuery = 'INSERT INTO EndCustomer (';
@@ -88,6 +89,9 @@ app.post('/addCustomContact', async (req, res) => {
   console.log(insertQuery);
   //let result=await db.excuteQuery(insertQuery,values)
   res.send({ status: 200, result: "result" });
+}catch(err){
+  res.send({ status: 500, "err": err });
+}
 })
 
 app.post('/editCustomContact', async (req, res) => {

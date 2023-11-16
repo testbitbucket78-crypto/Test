@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const middleWare = require('./middleWare')
 const batchSize = 10; // Number of users to send in each batch
 const delayBetweenBatches = 1000; // 10 seconds in milliseconds
-
+const web = require('./webJS/web')
 
 
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
@@ -403,9 +403,11 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
     return respose;
   } if (channelType == 'WhatsApp Web' || channelType == 2) {
-
-    let respose = await middleWare.postDataToAPI(spid, from, type, text, media)
-    return respose;
+    if(web.isActiveSpidClient(spid)){
+      let respose = await middleWare.postDataToAPI(spid, from, type, text, media)
+      return respose;
+    }
+    return 401;
   }
 }
 
