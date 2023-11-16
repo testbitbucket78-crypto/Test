@@ -85,6 +85,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 .card-body {
     background-color: #FDEFEF;
     border-radius: 30px;
+    cursor: pointer;
 }
 .card .id{
     color: #7A86A1;
