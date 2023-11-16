@@ -12,15 +12,13 @@
 
 			<div class="col-4 team-box">
 
-				<div class="custom_row pl-3 pt-3 ">
-					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()"
-						(keyup)="getSearchInteraction($event)"
-						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
-						aria-label="Search" aria-describedby="basic-addon2" />
-					<div *ngIf="!searchFocused" class="drop-down-btn">
-						<div class="toggle-box" (click)="toggleFilerOption()"><img
-								src="assets/img/teambox/filter-icon.svg"></div>
-						<div *ngIf="ShowFilerOption" id="pop-filter" class="popup-dialog">
+				<!-- filter-popup -->
+
+	 <div class="modal fade" tabindex="-1" id="addfilter" #addfilter data-bs-backdrop="dynamic" role="dialog">
+		<div class="auto-filter modal-dialog " role="document">
+						<div class="auto-modal modal-content">
+				<div class="modal-body">
+					<div id="pop-filter" class="popup-dialog">
 							<p class="label">Filter</p>
 
 							<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''"
@@ -38,6 +36,23 @@
 							<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''"
 								(click)="filterInteraction('Pinned')"><span>Pinned</span></p>
 						</div>
+
+</div>
+					</div>
+						</div>
+						</div> 
+				<div class="custom_row pl-3 pt-3 ">
+					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()"
+						(keyup)="getSearchInteraction($event)"
+						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
+						aria-label="Search" aria-describedby="basic-addon2" />
+
+
+					<div *ngIf="!searchFocused" class="drop-down-btn" (click)="addfilters()">
+						<div class="toggle-box" (click)="toggleFilerOption()"><img
+								src="assets/img/teambox/filter-icon.svg"></div>
+
+
 					</div>
 					<button class="new-message-btn" (click)="openaddMessage(messageadd)"><img class="icon"
 							src="/assets/img/teambox/add.svg" /> New Message</button>
@@ -71,8 +86,7 @@
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
 											<p *ngIf="item.lastMessage" class="time">{{item.lastMessageReceved}}</p>
-											<span *ngIf="item.messageList && item.UnreadCount>0"
-												class="total_count green">{{item.UnreadCount}}</span>
+											<span *ngIf="item.messageList && item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<span class="hovertext" data-hover="WhatsApp Web"><img
 													*ngIf="item.channel=='WhatsApp'" class="icon"
@@ -95,18 +109,12 @@
 												{{item.assignTo.name}}
 											</div>
 										</div>
-
 									</div>
-
-
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-
-
-
 			</div>
 
 			<div class="col-5 inner_section">
@@ -116,10 +124,10 @@
 						<div class=" left_part">
 							<div class="user_info">
 								<p class="user_name">{{selectedInteraction.Name}}</p>
-								<p *ngIf="selectedInteraction.channel=='WhatsApp'" class="user_from mt-2"><img
+								<p *ngIf="selectedInteraction.channel=='WhatsApp Official'" class="user_from mt-2"><img
 										class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />WhatsApp Official
 								</p>
-								<p *ngIf="selectedInteraction.channel!='WhatsApp'" class="user_from"><img class="icon"
+								<p *ngIf="selectedInteraction.channel=='WhatsApp Web'" class="user_from"><img class="icon"
 										src="/assets/img/teambox/whatsapp-icon-l.svg" />WhatsApp Web</p>
 							</div>
 						</div>
@@ -577,12 +585,6 @@
 
 
 						<!-- autoreply-dropdown -->
-
-
-
-
-
-
 						<div class="downnn">
 							<button class="auto-rep-btn" (click)="toggleAutoReply()"><img class="icon"
 									src="/assets/img/teambox/time-circle.svg" />{{selectedInteraction.AutoReplyStatus}}
@@ -640,279 +642,327 @@
 
 	</div>
 
-	<div *ngIf="showAttachmenOption" #attachmentbox class="teambox-white">
-		<div class="modal-header">
-			<div class="modal-header-left">
-				<h4 class="modal-title" id="modal-basic-title"></h4>
-			</div>
-			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-						src="assets/img/teambox/icon-close.svg"></p>
-			</div>
-		</div>
-		<div class="modal-body attachmentboxbody">
-			<h4>Attach file</h4>
-			<div class="attachmentbox">
-				<div class="attachmentbox_left" ngClass="{{dragAreaClass}}">
-					<img class="icon" src="/assets/img/teambox/image-a@2x.png">
-					<p>Drag & Drop file</p>
-					<p><span>OR</span></p>
-					<label class="custom-file-upload">
-						<input type="file" #file accept="image/*, application/msword, application/pdf, video/*"
-							[multiple]="false" (change)="onFileChange($event)" style="display:none" />
-						<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
-					</label>
-
-				</div>
-				<div class="attachmentbox_right">
-					<div>
-						<img class="icon" src="/assets/img/teambox/instraction@2x.png">
-					</div>
-					<div>
-						<h4>Instractions</h4>
-						<p>Upload a CSV file with the contacts and details that you would like to import. Ensure the CSV
-							file fulfils the Following requirements: Only CSV files are accepted for import. File size
-							must be 10 MB The file must contain at least.. the CSV file fulfils the Following
-							requirements: Only CSV files are accepted for import. File size must be 10 MB</p>
-					</div>
-				</div>
-			</div>
-
-
-
-		</div>
-
-
-	</div>
-
-	<div *ngIf="messageMeidaFile!=''" class="message_meida_preview">
-		<div class="modal-header">
-			<div class="modal-header-left">
-			</div>
-			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-						src="assets/img/teambox/icon-close.svg"></p>
-			</div>
-		</div>
-		<div class="modal-body message_meida_preview_body">
-			<img class="preview_icon" *ngIf="this.mediaType == 'video/mp4'" src="/assets/img/teambox/video_preview.png">
-			<img class="preview_icon" *ngIf="this.mediaType == 'text/plain'" src="/assets/img/teambox/doc_preview.png">
-			<img class="preview_icon" *ngIf="this.mediaType == 'application/pdf'"
-				src="/assets/img/teambox/doc_preview.png">
-
-			<img class="mediaFile" *ngIf="this.mediaType == 'image/jpeg'" src={{this.messageMeidaFile}}>
-			<img class="mediaFile" *ngIf="this.mediaType == 'image/jpg'" src={{this.messageMeidaFile}}>
-			<img class="mediaFile" *ngIf="this.mediaType == 'image/png'" src={{this.messageMeidaFile}}>
-			<img class="mediaFile" *ngIf="this.mediaType == 'image/webp'" src={{this.messageMeidaFile}}>
-		</div>
-
-
-		<div class="input_group_btn">
-			<button type="button" class="submit-btn" (click)="sendMediaMessage()">Send</button>
-		</div>
-
-	</div>
-
-	<div *ngIf="showAttributes" class="custom_modal bg-pink sm">
-		<div class="modal-header">
-			<div class="modal-header-left">
-				<h4 class="modal-title" id="modal-basic-title">Attributes</h4>
-			</div>
-			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-						src="assets/img/teambox/icon-close.svg"></p>
-			</div>
-		</div>
-		<div class="modal-body quickResponse">
-			<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-				aria-describedby="basic-addon2" (keyup)="searchContact($event)" />
-			<div class="items_list">
-				<div *ngFor="let alist of attributesList" class="attribute" (click)="selectQuickReplies($event)">
-					<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
-				</div>
-			</div>
-
-			<div class="bottom_section">
-				<p class="close-box" routerLink="/dashboard/setting"><img class="setting_icon"
-						src="/assets/img/campaign/setting-g.svg"></p>
-				<p class="text-box-readonly">To add/edit new attributes from the settings</p>
-			</div>
-
-		</div>
-
-	</div>
-
-	<div *ngIf="showInsertTemplate" class="custom_modal bg-pink sm">
-		<div class="modal-header">
-			<div class="modal-header-left">
-				<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
-			</div>
-			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-						src="assets/img/teambox/icon-close.svg"></p>
-			</div>
-		</div>
-		<div class="modal-body quickResponse">
-			<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-				aria-describedby="basic-addon2" (keyup)="searchTemplate($event)" />
-
-			<div class="section_filter">
-				<label class="container">
-					<input checked type="checkbox" name="template_filter" value="Marketing"
-						(click)="filterTemplate($event)">
-					<span class="checkmark"></span>
-					<p><span>Marketing</span></p>
-				</label>
-				<label class="container">
-					<input checked type="checkbox" name="template_filter" value="Utility"
-						(click)="filterTemplate($event)">
-					<span class="checkmark"></span>
-					<p><span>Utility</span></p>
-				</label>
-				<label class="container">
-					<input checked type="checkbox" name="template_filter" value="Authentication"
-						(click)="filterTemplate($event)">
-					<span class="checkmark"></span>
-					<p><span>Authentication</span></p>
-				</label>
-
-			</div>
-			<div class="template_list">
-				<div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
-					<label class="container" (click)="selectTemplate(template)">
-						<input type="radio" name="selectedTemplate">
-						<span class="checkmark radio"></span>
-						<p>{{template.title}}</p>
-						<p><span>{{template.created_at}}</span></p>
-					</label>
-
-					<div class="inner_box">
-						<img *ngIf="template.image" class="template_img" src="{{template.image}}">
-						<div *ngIf="!template.image" class="template_img_placeholder"></div>
-						<div [ngClass]="template.image ? 'template_text' : 'template_plain_text'">
-							<p>{{template.content_heading}}</p>
-							<p [innerHTML]="template.content"></p>
-						</div>
-					</div>
-					<div class="template_btn">
-						<button type="button" class="btn">YES</button>
-						<button type="button" class="btn">NO</button>
-						<button type="button" class="btn">EXPLORE</button>
-
-					</div>
-
-				</div>
-
-			</div>
-
-
-			<div class="input_group_btn">
-				<button type="button" class="submit-btn" (click)="showeditTemplate()">Next</button>
-			</div>
-
-			<div class="bottom_section">
-				<p class="close-box" routerLink="/dashboard/setting"><img class="setting_icon"
-						src="/assets/img/campaign/setting-g.svg"></p>
-				<p class="text-box-readonly">To add/edit Insert Template from the settings</p>
-			</div>
-
-		</div>
-
-	</div>
-
-	<div *ngIf="editTemplate" class="custom_modal bg-pink lg">
-		<div class="modal-header">
-			<div class="modal-header-left">
-				<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
-			</div>
-			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-						src="assets/img/teambox/icon-close.svg"></p>
-			</div>
-		</div>
-		<div class="modal-body">
-			<div class="template_details_section">
-				<div class="template_details_section_left">
-					<div class="template_box">
-						<label class="container">
-							<p>{{selectedTemplate.title}}</p>
-						</label>
-
-						<div class="inner_box">
-							<img class="template_img" src="{{selectedTemplate.image}}">
-							<p class="close-box edit_media" (click)="editMedia()">
-								<img src="/assets/img/campaign/edit.svg">
-							</p>
-							<div class="template_text">
-								<p>{{selectedTemplate.content_heading}}</p>
-								<p [innerHTML]="selectedTemplate.content"></p>
+	<!-- attach file pop-up -->
+	<div *ngIf="messageMeidaFile==''" class="modal fade" tabindex="-1" id="attachfle" #attachfle data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div #attachmentbox class="teambox-white">
+						<div class="modal-header">
+							<div class="modal-header-left">
+								<h4 class="modal-title" id="modal-basic-title"></h4>
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										src="assets/img/teambox/icon-close.svg"></p>
 							</div>
 						</div>
-						<div class="template_btn">
-							<button type="button" class="btn">YES</button>
-							<button type="button" class="btn">NO</button>
-							<button type="button" class="btn">EXPLORE</button>
+						<div class="modal-body attachmentboxbody">
+							<h4>Attach file</h4>
+							<div class="attachmentbox">
+								<div class="attachmentbox_left" ngClass="{{dragAreaClass}}">
+									<img class="icon" src="/assets/img/teambox/image-a@2x.png">
+									<p>Drag & Drop file</p>
+									<p><span>OR</span></p>
+									<label class="custom-file-upload">
+										<input type="file" #file
+											accept="image/*, application/msword, application/pdf, video/*"
+											[multiple]="false" (change)="onFileChange($event)" style="display:none" />
+										<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
+									</label>
+
+								</div>
+								<div class="attachmentbox_right">
+									<div>
+										<img class="icon" src="/assets/img/teambox/instraction@2x.png">
+									</div>
+									<div>
+										<h4>Instractions</h4>
+										<p>Upload a CSV file with the contacts and details that you would like to
+											import. Ensure the CSV file fulfils the Following requirements: Only CSV
+											files are accepted for import. File size must be 10 MB The file must contain
+											at least.. the CSV file fulfils the Following requirements: Only CSV files
+											are accepted for import. File size must be 10 MB</p>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
-
 				</div>
+			</div>
 
-				<div class="template_details_section_right">
-					<p class="mt-2 mb-0">Variable value<img class="icon sm" src="/assets/img/campaign/Info.svg"></p>
-					<p><span>To personalize your campaign for the imported audience, please select the applicable column
-							from your CSV/Excel file to map each of the variables listed below</span></p>
-					<div class="form_row">
-						<label>[[Name]]</label>
-						<div>
-							<p class="form-control">
-								<input type="text" class="form-control inner"
-									placeholder="Input value or add attribute">
-								<!-- <span class="map_attribute" (click)="openMapOption('map_name')">Map</span> -->
-							</p>
-							<!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
+
+		
+	</div>
+	</div>
+	<div class="modal fade" tabindex="-1" id="sendfile" #sendfile data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div *ngIf="messageMeidaFile!=''"   class="message_meida_preview">
+						<div class="modal-header">
+							<div class="modal-header-left">
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										src="assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+						<div class="modal-body message_meida_preview_body">
+							<img class="preview_icon" *ngIf="this.mediaType == 'video/mp4'"
+								src="/assets/img/teambox/video_preview.png">
+							<img class="preview_icon" *ngIf="this.mediaType == 'text/plain'"
+								src="/assets/img/teambox/doc_preview.png">
+							<img class="preview_icon" *ngIf="this.mediaType == 'application/pdf'"
+								src="/assets/img/teambox/doc_preview.png">
+
+							<img class="mediaFile" *ngIf="this.mediaType == 'image/jpeg'" src={{this.messageMeidaFile}}>
+							<img class="mediaFile" *ngIf="this.mediaType == 'image/jpg'" src={{this.messageMeidaFile}}>
+							<img class="mediaFile" *ngIf="this.mediaType == 'image/png'" src={{this.messageMeidaFile}}>
+							<img class="mediaFile" *ngIf="this.mediaType == 'image/webp'" src={{this.messageMeidaFile}}>
+						</div>
+
+
+						<div class="input_group_btn" id="senddoc">
+							<button type="button" class="submit-btn" (click)="sendMediaMessage()">Send</button>
+						</div>
+</div>
+</div>
+	</div>
+		</div>
+	</div>
+	
+
+
+
+
+
+
+	<!-- atrribute-modal -->
+	<div class="modal fade" tabindex="-1" id="atrributemodal" #atrributemodal data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="custom_modal bg-pink sm attributes">
+						<div class="modal-header">
+							<div class="modal-header-left">
+								<h4 class="modal-title" id="modal-basic-title">Attributes</h4>
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										src="assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+						<div class="modal-body quickResponse">
+							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
+								aria-describedby="basic-addon2" (keyup)="searchContact($event)" />
+							<div class="items_list">
+								<div *ngFor="let alist of attributesList" class="attribute"
+									(click)="selectAttributes($event)">
+									<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
+								</div>
+							</div>
+
+							<div class="bottom_section">
+								<p class="close-box" (click)="routeToSettings()" routerLink="/dashboard/setting"><img class="setting_icon"
+										src="/assets/img/campaign/setting-g.svg"></p>
+								<p class="text-box-readonly">To add/edit new attributes from the settings</p>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- insert-modal -->
+	<div class="modal fade" tabindex="-1" id="insertmodal" #insertmodal data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="custom_modal bg-pink sm">
+						<div class="modal-header">
+							<div class="modal-header-left">
+								<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										src="assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+						<div class="modal-body quickResponse">
+							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
+								aria-describedby="basic-addon2" (keyup)="searchTemplate($event)" />
+
+							<div class="section_filter">
+								<label class="container">
+									<input checked type="checkbox" name="template_filter" value="Marketing"
+										(click)="filterTemplate($event)">
+									<span class="checkmark"></span>
+									<p><span>Marketing</span></p>
+								</label>
+								<label class="container">
+									<input checked type="checkbox" name="template_filter" value="Utility"
+										(click)="filterTemplate($event)">
+									<span class="checkmark"></span>
+									<p><span>Utility</span></p>
+								</label>
+								<label class="container">
+									<input checked type="checkbox" name="template_filter" value="Authentication"
+										(click)="filterTemplate($event)">
+									<span class="checkmark"></span>
+									<p><span>Authentication</span></p>
+								</label>
+
+							</div>
+							<div class="template_list">
+								<div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
+									<label class="container" (click)="selectTemplate(template)">
+										<input type="radio" name="selectedTemplate">
+										<span class="checkmark radio"></span>
+										<p>{{template.title}}</p>
+										<p><span>{{template.created_at}}</span></p>
+									</label>
+
+									<div class="inner_box">
+										<img *ngIf="template.image" class="template_img" src="{{template.image}}">
+										<div *ngIf="!template.image" class="template_img_placeholder"></div>
+										<div [ngClass]="template.image ? 'template_text' : 'template_plain_text'">
+											<p>{{template.content_heading}}</p>
+											<p [innerHTML]="template.content"></p>
+										</div>
+									</div>
+									<div class="template_btn">
+										<button type="button" class="btn">YES</button>
+										<button type="button" class="btn">NO</button>
+										<button type="button" class="btn">EXPLORE</button>
+
+									</div>
+
+								</div>
+
+							</div>
+
+
+							<div class="input_group_btn">
+								<button type="button" class="submit-btn" (click)="showeditTemplate()">Next</button>
+							</div>
+
+							<div class="bottom_section">
+								
+								<p class="close-box" (click)="routeToSettings()"  routerLink="/dashboard/setting"><img  class="setting_icon"
+										src="/assets/img/campaign/setting-g.svg"></p>
+								<p class="text-box-readonly">To add/edit Insert Template from the settings</p>
+							</div>
+
+						</div>
+
+					</div>
+
+
+					<div *ngIf="editTemplate" class="custom_modal bg-pink lg">
+						<div class="modal-header">
+							<div class="modal-header-left">
+								<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										src="assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+						<div class="modal-body">
+							<div class="template_details_section">
+								<div class="template_details_section_left">
+									<div class="template_box">
+										<label class="container">
+											<p>{{selectedTemplate.title}}</p>
+										</label>
+
+										<div class="inner_box">
+											<img class="template_img" src="{{selectedTemplate.image}}">
+											<p class="close-box edit_media" (click)="editMedia()">
+												<img src="/assets/img/campaign/edit.svg">
+											</p>
+											<div class="template_text">
+												<p>{{selectedTemplate.content_heading}}</p>
+												<p [innerHTML]="selectedTemplate.content"></p>
+											</div>
+										</div>
+										<div class="template_btn">
+											<button type="button" class="btn">YES</button>
+											<button type="button" class="btn">NO</button>
+											<button type="button" class="btn">EXPLORE</button>
+										</div>
+									</div>
+
+								</div>
+
+								<div class="template_details_section_right">
+									<p class="mt-2 mb-0">Variable value<img class="icon sm"
+											src="/assets/img/campaign/Info.svg"></p>
+									<p><span>To personalize your campaign for the imported audience, please select the
+											applicable column from your CSV/Excel file to map each of the variables
+											listed below</span></p>
+									<div class="form_row">
+										<label>[[Name]]</label>
+										<div>
+											<p class="form-control">
+												<input type="text" class="form-control inner"
+													placeholder="Input value or add attribute">
+												<!-- <span class="map_attribute" (click)="openMapOption('map_name')">Map</span> -->
+											</p>
+											<!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
 								<p class="label">Map the column</p>
 								<p *ngFor="let map of mapNameOption ;let i = index" (click)="openMapOption('')"><span>{{map}}</span></p>
 							</div> -->
-						</div>
-					</div>
-					<div class="form_row">
-						<label>[[Product]]</label>
-						<p class="form-control">
-							<input type="text" class="form-control inner" placeholder="Input value or add attribute">
-							<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
-						</p>
-					</div>
-					<div class="form_row">
-						<label>[[25%]]</label>
-						<p class="form-control">
-							<input type="text" class="form-control inner" placeholder="Input value or add attribute">
-							<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
-						</p>
-					</div>
+										</div>
+									</div>
+									<div class="form_row">
+										<label>[[Product]]</label>
+										<p class="form-control">
+											<input type="text" class="form-control inner"
+												placeholder="Input value or add attribute">
+											<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
+										</p>
+									</div>
+									<div class="form_row">
+										<label>[[25%]]</label>
+										<p class="form-control">
+											<input type="text" class="form-control inner"
+												placeholder="Input value or add attribute">
+											<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
+										</p>
+									</div>
 
-					<p class="mt-2">Button Payload <span>(Optional)</span><img class="icon sm"
-							src="/assets/img/campaign/Info.svg"></p>
-					<div class="form_row">
-						<label>Yes</label>
-						<input type="text" class="form-control" value="J45A1005">
-					</div>
-					<div class="form_row">
-						<label>No</label>
-						<input type="text" class="form-control" value="" placeholder="Input payload value">
-					</div>
-					<div class="form_row">
-						<label>Explore</label>
-						<input type="text" class="form-control" value="" placeholder="Input payload value">
+									<p class="mt-2">Button Payload <span>(Optional)</span><img class="icon sm"
+											src="/assets/img/campaign/Info.svg"></p>
+									<div class="form_row">
+										<label>Yes</label>
+										<input type="text" class="form-control" value="J45A1005">
+									</div>
+									<div class="form_row">
+										<label>No</label>
+										<input type="text" class="form-control" value=""
+											placeholder="Input payload value">
+									</div>
+									<div class="form_row">
+										<label>Explore</label>
+										<input type="text" class="form-control" value=""
+											placeholder="Input payload value">
+									</div>
+								</div>
+							</div>
+							<div class="input_group_btn mb-1">
+								<button type="button" class="submit-btn" (click)="showTemplatePreview()">Next</button>
+							</div>
+						</div>
+
 					</div>
 				</div>
 			</div>
-			<div class="input_group_btn mb-1">
-				<button type="button" class="submit-btn" (click)="showTemplatePreview()">Next</button>
-			</div>
 		</div>
-
 	</div>
-
 	<div *ngIf="showEditTemplateMedia" class="custom_modal bg-pink lg">
 		<div class="modal-header">
 			<div class="modal-header-left">
@@ -1053,69 +1103,90 @@
 	</div>
 
 
-	<div *ngIf="showSavedMessage" class="custom_modal bg-pink sm">
-		<div class="modal-header">
-			<div class="modal-header-left">
-				<h4 class="modal-title" id="modal-basic-title">Saved Message's</h4>
-			</div>
-			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-						src="assets/img/teambox/icon-close.svg"></p>
-			</div>
-		</div>
-		<div class="modal-body quickResponse">
-			<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-				aria-describedby="basic-addon2" (keyup)="searchSavedMessage($event)" />
-			<div class="items_list">
+	<!-- saved message popup -->
+	<div class="modal fade" tabindex="-1" id="savedpopup" #savedpopup data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="custom_modal bg-pink sm">
+						<div class="modal-header">
+							<div class="modal-header-left">
+								<h4 class="modal-title" id="modal-basic-title">Saved Message's</h4>
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										src="assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+						<div class="modal-body quickResponse">
+							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
+								aria-describedby="basic-addon2" (keyup)="searchSavedMessage($event)" />
+							<div class="items_list">
 
-				<div class="item" *ngFor="let Message of SavedMessageList" (click)="selectQuickReplies(Message)">
-					<p class="label" [innerHTML]="Message.title"></p>
-					<p [innerHTML]="Message.content"></p>
+								<div class="item" *ngFor="let Message of SavedMessageList"
+									(click)="selectQuickReplies(Message)">
+									<p class="label" [innerHTML]="Message.title"></p>
+									<p [innerHTML]="Message.content"></p>
+								</div>
+							</div>
+
+							<div class="bottom_section">
+								<p class="close-box"(click)="routeToSettings()" routerLink="/dashboard/setting"><img  class="setting_icon"
+										src="/assets/img/campaign/setting-g.svg"></p>
+								<p class="text-box-readonly">To add/edit new Saved Message from the settings</p>
+							</div>
+
+						</div>
+
+
+					</div>
 				</div>
 			</div>
-
-			<div class="bottom_section">
-				<p class="close-box" routerLink="/dashboard/setting"><img class="setting_icon"
-						src="/assets/img/campaign/setting-g.svg"></p>
-				<p class="text-box-readonly">To add/edit new Saved Message from the settings</p>
-			</div>
-
 		</div>
-
-
 	</div>
 
-	<div *ngIf="showQuickReply" class="custom_modal bg-pink sm">
-		<div class="modal-header">
-			<div class="modal-header-left">
-				<h4 class="modal-title" id="modal-basic-title">Quick Response</h4>
-			</div>
-			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-						src="assets/img/teambox/icon-close.svg"></p>
-			</div>
-		</div>
-		<div class="modal-body quickResponse">
-			<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-				aria-describedby="basic-addon2" (keyup)="searchQuickReply($event)" />
-			<div class="items_list">
+	<!-- quick response popup -->
+	<div class="modal fade" tabindex="-1" id="quikpopup" #quikpopup data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="custom_modal bg-pink sm">
+						<div class="modal-header">
+							<div class="modal-header-left">
+								<h4 class="modal-title" id="modal-basic-title">Quick Response</h4>
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										src="assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+						<div class="modal-body quickResponse">
+							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
+								aria-describedby="basic-addon2" (keyup)="searchQuickReply($event)" />
+							<div class="items_list">
 
-				<div class="item" *ngFor="let Message of QuickReplyList" (click)="selectQuickReplies(Message)">
-					<p class="label" [innerHTML]="Message.title"></p>
-					<p [innerHTML]="Message.content"></p>
+								<div class="item" *ngFor="let Message of QuickReplyList"
+									(click)="selectQuickReplies(Message)">
+									<p class="label" [innerHTML]="Message.title"></p>
+									<p [innerHTML]="Message.content"></p>
+								</div>
+							</div>
+
+							<div class="bottom_section">
+								<p class="close-box" (click)="routeToSettings()" routerLink="/dashboard/setting"><img class="setting_icon"
+										src="/assets/img/campaign/setting-g.svg"></p>
+								<p class="text-box-readonly">To add/edit Quick replies from the settings</p>
+							</div>
+
+						</div>
+
+
+					</div>
 				</div>
 			</div>
-
-			<div class="bottom_section">
-				<p class="close-box" routerLink="/dashboard/setting"><img class="setting_icon"
-						src="/assets/img/campaign/setting-g.svg"></p>
-				<p class="text-box-readonly">To add/edit Quick replies from the settings</p>
-			</div>
-
 		</div>
-
-
 	</div>
+
 
 
 
@@ -1254,9 +1325,8 @@
 							{{ countryCode }}
 						</option>
 					</select>
-					<input class="form-control countryCode" type="text" placeholder="Enter Number"
-						onKeyPress="return /^[\d+]$/.test(event.key)" name="Phone_number" formControlName="Phone_number"
-						id="Phone_number" (change)="formatPhoneNumber()" />
+					<input class="form-control countryCode" type="text" placeholder="Enter Number"onKeyPress="return /^[\d+]$/.test(event.key)" name="Phone_number" formControlName="Phone_number"
+					id="Phone_number" (change)="formatPhoneNumber()" />
 				</div>
 				<div class="row" style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Channel<span>*</span></label>
@@ -1330,6 +1400,7 @@
 						</option>
 					</select>
 					<input (input)="hangeEditContactInuts($event)" (change)="formatPhoneNumberEdit()" class="form-control phone-no" type="text" name="Phone_number" value={{EditContactForm.Phone_number}} />
+
 
 				</div>
 
@@ -1603,4 +1674,6 @@
 			</div>
 		</div>
 	</div>
+
+
 </sb-layout-dashboard>

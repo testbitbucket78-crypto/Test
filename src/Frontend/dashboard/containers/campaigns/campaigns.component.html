@@ -304,7 +304,7 @@
 							</div>
 						</div>
 
-						<div [ngClass]="step2Option =='ImportContacts' ? 'innerbox active' : 'innerbox'"  (click)="selectStep2Option('ImportContacts',importedContacts,step2Option)">
+						<div [ngClass]="step2Option =='ImportContacts' ? 'innerbox active' : 'innerbox'"  (click)="openImportContact('ImportContacts',importedContacts,openImportContact)">
 							
 							<img class="icon ml" src="assets/img/campaign/import-contacts.svg">
 							<p>Import Contacts</p>
@@ -691,104 +691,117 @@
 		
 	</div>
 	
-	<div *ngIf="importantContact" class="important_contact_modal">
-		<div class="modal-header importantContact">
-			<div class="modal-header-left">
-				<h4 class="modal-title" id="modal-basic-title">Import Contact</h4>
-			</div>
-			<div class="modal-header-right">
-				<p  class="close-box" aria-label="Close" (click)="closeImportantContact()"><img src="assets/img/teambox/icon-close.svg"></p>
-			</div>
-			</div>
-		<div class="modal-body">
-			<div class="important_contact">
-				<div class="important_contact_left dragAreaClass"> 
-				
-					<img class="icon xl" src="assets/img/campaign/image-a@2x.png">
-					<p>Drag & Drop files</p>
-					<p><span>or</span></p>
-					<label class="custom-file-upload">
-						<input type="file"
-							   #file
-							   [multiple]="false"
-							   (change)="onFileChange($event)"
-							   style="display:none" 
-							   accept=".xlsx, .xls, .csv"/>
-						<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
-					</label>
-					<p><span></span></p>
-					<p>{{selecetdCSV}}</p>
-				</div>
+    
+	<div class="modal fade" tabindex="-1" id="dagdropmodal" #dagdropmodal data-bs-backdrop="static" role="dialog">
+		<div class="auto-filter modal-dialog " role="document">
+						<div class="auto-modal modal-content">
+				<div class="modal-body">
 
-				<div class="important_contact_right">
-					<button type="button" class="paper-download" (click)="download()"><img src="assets/img/campaign/paper-download.png">Download sample file</button>
-					<div class="info_box">
-						<p class="info"><img src="assets/img/campaign/info-icon.png">Instructions</p>
-						<p><span>As the message template that you will select in the next step may include variables, so please include the variable values in the CSV file against each contact to personalize your message</span></p>
-					</div>
+					<div *ngIf="importantContact" class="important_contact_modal">
+						<div class="modal-header importantContact">
+							<div class="modal-header-left">
+								<h4 class="modal-title" id="modal-basic-title">Import Contact</h4>
+							</div>
+							<div class="modal-header-right">
+								<p  class="close-box" aria-label="Close" (click)="closeImportantContact()"><img src="assets/img/teambox/icon-close.svg"></p>
+							</div>
+							</div>
+						<div class="modal-body">
+							<div class="important_contact">
+								<div class="important_contact_left dragAreaClass"> 
+								
+									<img class="icon xl" src="assets/img/campaign/image-a@2x.png">
+									<p>Drag & Drop files</p>
+									<p><span>or</span></p>
+									<label class="custom-file-upload">
+										<input type="file"
+											   #file
+											   [multiple]="false"
+											   (change)="onFileChange($event)"
+											   style="display:none" 
+											   accept=".xlsx, .xls, .csv"/>
+										<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
+									</label>
+									<p><span></span></p>
+									<p>{{selecetdCSV}}</p>
+								</div>
+				
+								<div class="important_contact_right">
+									<button type="button" class="paper-download" (click)="download()"><img src="assets/img/campaign/paper-download.png">Download sample file</button>
+									<div class="info_box">
+										<p class="info"><img src="assets/img/campaign/info-icon.png">Instructions</p>
+										<p><span>As the message template that you will select in the next step may include variables, so please include the variable values in the CSV file against each contact to personalize your message</span></p>
+									</div>
+									
+								</div>
+								
+							</div>
+							<div class="important_contact_middle">
+								<div class="left_part">
+								 <p>Remove Duplicate</p>
+								 <div class="radio_group">
+									   <label class="container" (click)="updateCSVDuplicate('yes')">
+										<input type="radio" name="rm_duplicate">
+										<span class="label">Yes</span>
+										<span class="checkmark radio"></span>
+									  </label>
+									  <label class="container" (click)="updateCSVDuplicate('no')">
+										<input type="radio" name="rm_duplicate">
+										<span class="label">No</span>
+										<span class="checkmark radio"></span>
+									  </label>
+				
+									 
+								 </div>
+								</div>
+								<div class="right_part">
+									<p>Prefix</p>
+									<div class="radio_group_col">
+										<div class="radio_group_col_inner">
+										  <label class="container" (click)="updateCSVPrefix('prefix_add')">
+											<input type="radio" name="prefix">
+											<span class="label">Add</span>
+											<span class="checkmark radio"></span>
+										  </label>
+										  <input type="text" class="text-input" placeholder="Enter" name="prefix_add" (change)="updateCSVPRefix($event)">
+										</div>
+				
+										<div class="radio_group_col_inner">
+											<label class="container" (click)="updateCSVPrefix('prefix_remove')">
+											  <input type="radio" name="prefix">
+											  <span class="label">Remove</span>
+											  <span class="checkmark radio"></span>
+											</label>
+											<input type="text" class="text-input" placeholder="Enter" name="prefix_remove" (change)="updateCSVPRefix($event)">
+										  </div>
+									</div>
+								</div>
+				
+							</div>
+							<div class="important_contact">
+							<div class="input_group_btn">
+								<label class="container">
+									<input type="checkbox" name="term_cond">
+									<span class="checkmark"></span>
+									<p><span>By checking this box I declare that the contacts uploaded have been opted-in and given consent accordingly</span></p>
+									
+								  </label>
+				
+								<button type="button" class="submit-btn" aria-label="Close" (click)="mapImportantContact(mpcampaign)">Map</button>
+							</div>
+							</div>
 					
-				</div>
-				
-			</div>
-			<div class="important_contact_middle">
-				<div class="left_part">
-				 <p>Remove Duplicate</p>
-                 <div class="radio_group">
-					   <label class="container" (click)="updateCSVDuplicate('yes')">
-						<input type="radio" name="rm_duplicate">
-						<span class="label">Yes</span>
-						<span class="checkmark radio"></span>
-					  </label>
-					  <label class="container" (click)="updateCSVDuplicate('no')">
-						<input type="radio" name="rm_duplicate">
-						<span class="label">No</span>
-						<span class="checkmark radio"></span>
-					  </label>
-
-					 
-				 </div>
-				</div>
-				<div class="right_part">
-					<p>Prefix</p>
-					<div class="radio_group_col">
-						<div class="radio_group_col_inner">
-						  <label class="container" (click)="updateCSVPrefix('prefix_add')">
-							<input type="radio" name="prefix">
-							<span class="label">Add</span>
-							<span class="checkmark radio"></span>
-						  </label>
-						  <input type="text" class="text-input" placeholder="Enter" name="prefix_add" (change)="updateCSVPRefix($event)">
 						</div>
-
-						<div class="radio_group_col_inner">
-							<label class="container" (click)="updateCSVPrefix('prefix_remove')">
-							  <input type="radio" name="prefix">
-							  <span class="label">Remove</span>
-							  <span class="checkmark radio"></span>
-							</label>
-							<input type="text" class="text-input" placeholder="Enter" name="prefix_remove" (change)="updateCSVPRefix($event)">
-						  </div>
+						
 					</div>
-				</div>
 
-			</div>
-			<div class="important_contact">
-			<div class="input_group_btn">
-				<label class="container">
-					<input type="checkbox" name="term_cond">
-					<span class="checkmark"></span>
-					<p><span>By checking this box I declare that the contacts uploaded have been opted-in and given consent accordingly</span></p>
-					
-				  </label>
+					</div>
+					</div>
+					</div>
+					</div>
 
-				<button type="button" class="submit-btn" aria-label="Close" (click)="mapImportantContact(mpcampaign)">Map</button>
-			</div>
-			</div>
-	
-		</div>
-		
-	</div>
-	
+
+
 	<ng-template #AttributeOption let-c="close" let-d="dismiss">
 		<div class="modal-header">
 			<div class="modal-header-left">

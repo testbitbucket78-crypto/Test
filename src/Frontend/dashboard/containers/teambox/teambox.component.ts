@@ -7,9 +7,11 @@ import { TeamboxService } from './../../services';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-
+import { isNullOrUndefined } from 'util';
 import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { base64ToFile } from 'ngx-image-cropper';
+
 declare var $: any;
 @Component({
 selector: 'sb-teambox',
@@ -253,6 +255,7 @@ countryCodes = [
 
 	
 
+
 	
 	custommesage='<p>Your message...</p>'
 	customenotes='<p>Type...</p>'
@@ -265,8 +268,9 @@ countryCodes = [
 	slideIndex=0;
 	PauseTime:any='';
 	confirmMessage:any;
-	
-
+	messagesAll:string[] = [];
+	messagesRead:string[] = [];
+	newMessagesNumber:number = 0;
 	active = 1;
 	showTopNav: boolean = true;
 	SPID = sessionStorage.getItem('SP_ID')
@@ -282,6 +286,7 @@ countryCodes = [
 	showattachmentbox=false;
 	ShowFilerOption=false;
 	ShowContactOption=false;
+    showfilter=false;
 	AutoReplyOption=false;
 	ShowConversationStatusOption=false;
 	ShowAssignOption=false;
@@ -303,7 +308,7 @@ countryCodes = [
 	message_text='';
 	showEmoji=false;
 	EmojiType:any='smiley';
-	selectedChannel:any='WhatsApp Offical';
+	selectedChannel:any=['WhatsApp Web'];
 	contactSearchKey:any='';
 	ShowChannelOption:any=false;
 	selectedCountryCode: string = '';
@@ -341,7 +346,7 @@ countryCodes = [
 	allTemplates:any=[];
 	allTemplatesMain:any=[];
 	filterTemplateOption:any='';
-	attributesList:any=['{{Name}}','{{user_name}}','{{Help}}','{{Support}}','{{email id}}','{{IP_address}}','{{New-Order}}','{{Product YN}}','{{mail_address}}','{{Hotmail}}','{{Product ZR}}'];
+	attributesList:any=[];
 	
 	
 	
@@ -357,7 +362,7 @@ countryCodes = [
 			SP_ID: new FormControl('', Validators.required),
 			Name: new FormControl('', Validators.required),
 			country_code: new FormControl('IN +91'),
-			Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+			Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(15)])),
 			Channel: new FormControl('', Validators.required),
 			
 		});
@@ -365,7 +370,7 @@ countryCodes = [
 			SP_ID: new FormControl('', Validators.required),
 			Name: new FormControl('', Validators.required),
 			country_code: new FormControl('IN +91'),
-			Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
+			Phone_number: new FormControl('', Validators.compose([Validators.required,Validators.minLength(6),Validators.maxLength(15)])),
 			Channel: new FormControl('', Validators.required),
 		});
 		
@@ -505,6 +510,14 @@ countryCodes = [
 		this.showQuickReply=false
 		this.showMention=false
 		this.showEmoji =false;
+		$("#savedpopup").modal('hide');
+		$("#quikpopup").modal('hide');
+		$("#atrributemodal").modal('hide');
+		$("#insertmodal").modal('hide');
+		$("#attachfle").modal('hide');
+		// $("#senddoc").modal('hide');
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
 
 	}	
 	editMedia(){
@@ -544,21 +557,37 @@ public InsertMentionOption(user:any){
 }
 ToggleSavedMessageOption(){
 	this.closeAllModal()
-	this.showSavedMessage =!this.showSavedMessage
+	$("#savedpopup").modal('show'); 
+	
 
 }
 ToggleInsertTemplateOption(){
 	this.closeAllModal()
-	this.showInsertTemplate =!this.showInsertTemplate
-}
+	$("#insertmodal").modal('show'); 
+	}
 
 ToggleAttributesOption(){
 	this.closeAllModal()
-	this.showAttributes = !this.showAttributes;
-}	
+	$("#atrributemodal").modal('show'); 
+
+}
+selectAttributes(item:any){
+	this.closeAllModal();
+	const selectedValue = item;
+	
+	let htmlcontent = this.chatEditor.value;
+	if (isNullOrUndefined(htmlcontent)) {
+		htmlcontent = '';
+	  }
+	const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
+	this.chatEditor.value = selectedAttr; 
+}
+
+
+
 ToggleQuickReplies(){
 	this.closeAllModal()
-	this.showQuickReply = !this.showQuickReply;
+	$("#quikpopup").modal('show'); 
 }
 
 selectQuickReplies(item:any){
@@ -682,12 +711,26 @@ showEmojiType(EmojiType:any){
 }
 ToggleAttachmentBox(){
 	this.closeAllModal()
-	this.showAttachmenOption=!this.showAttachmenOption
+	$("#attachfle").modal('show'); 
+document.getElementById('attachfle')!.style.display = 'inherit';
 	this.dragAreaClass = "dragarea";
 	
 }
+sendattachfile(){
+		if(this.messageMeidaFile!==''){
+			$("#sendfile").modal('show');	
+		}else{
+			$("#sendfile").modal('hide');	
+		}
+	
+		
+	}
+	
 	sendMediaMessage(){
 		this.sendMessage()
+        this.closeAllModal();
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
 	}
 	onFileChange(event: any) {
 		let files: FileList = event.target.files;
@@ -734,12 +777,17 @@ ToggleAttachmentBox(){
 			let responseData:any = uploadStatus
 			if(responseData.filename){
 				this.messageMeidaFile = responseData.filename
+				this.sendattachfile();
+
 				console.log(this.messageMeidaFile);
 				this.showAttachmenOption=false;
 			}
-		})
-	  }
+
+			});
+		  };	
 	}
+			
+
 
 
 	ngOnInit() {
@@ -767,6 +815,8 @@ ToggleAttachmentBox(){
 		this.getquickReply()
 		this.getTemplates()
 		this.subscribeToNotifications()
+		this.getAttributeList()
+        this.sendattachfile()
 
 		// this.chatEditor.addEventListener('keydown', this.onEditorKeyDown.bind(this));
 	
@@ -791,10 +841,8 @@ ToggleAttachmentBox(){
 							if(msgjson.updateMessage)
 							{
 								this.getAllInteraction(false);
-							}
-							else if(message.status === 200) {
-								this.showToaster("Please Scan QR code from Account Settings first than try again!",'error');
-							}						
+								
+							}					
 						}
 					}
 					catch(e)
@@ -952,7 +1000,7 @@ ToggleAttachmentBox(){
 			isPinned:item.isPinned,
 			InteractionId:item.InteractionId
 		}
-		//console.log(bodyData)
+		
 		this.apiService.updateInteractionPinned(bodyData).subscribe(async response =>{
 			item.isPinned=!item.isPinned;
 		})
@@ -1176,14 +1224,14 @@ ToggleAttachmentBox(){
 			}
 		}
 		
-		//if (interval > 1) {
+		
 			var hours = messCreated.getHours() > 12 ? messCreated.getHours() - 12 : messCreated.getHours();
 			var am_pm = messCreated.getHours() >= 12 ? "PM" : "AM";
 			var hoursBH = hours < 10 ? "0" + hours : hours;
 			var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
 			var time = hoursBH + ":" + minutes  + " " + am_pm;
 			return time
-		//}
+		
 		}else{
 			var hrPer =100
 			var hourLeft =0
@@ -1203,7 +1251,13 @@ selectInteraction(Interaction:any){
 	this.selectedInteraction =Interaction
 	console.log(Interaction)
 	this.getPausedTimer()
-}
+
+	var element = document.getElementsByClassName('total_count green')[0];
+	if (this.selectedInteraction.UnreadCount!=0) {
+	  element.innerHTML = '';
+	}
+	
+	}
 
 getPausedTimer(){
 	//console.log('getPausedTimer')
@@ -1260,7 +1314,8 @@ filterInteraction(filterBy:any){
 
 }
 toggleFilerOption(){
-	this.ShowFilerOption =!this.ShowFilerOption
+	$("#addfilter").modal('show');
+		// this.showfilter=!this.showfilter;
 }
 
 toggleContactOption(){
@@ -1289,6 +1344,8 @@ hangeEditContactInuts(item:any){
 	}else{
 		this.EditContactForm[item.target.name] = item.target.value
 	}
+	this.formatPhoneNumber();
+	this.formatPhoneNumberEdit();
 	//this.ShowChannelOption=false
 
 }
@@ -1329,8 +1386,10 @@ updateCustomer(){
 	}else{
 		bodyData['OptInStatus'] = 'No';
 	}
+	//console.log(bodyData)
 
-	this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
+	if(bodyData['Name']!='' && bodyData['Phone_number'].length>=10 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
+		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
 		this.selectedInteraction['Name']=this.EditContactForm.Name
 		this.selectedInteraction['countryCode']=this.EditContactForm.country_code
 		this.selectedInteraction['Phone_number']=this.EditContactForm.Phone_number
@@ -1349,6 +1408,11 @@ updateCustomer(){
 			}
 			this.showToaster('Contact information updated...','success');
 		});
+	}
+
+	else {
+		this.showToaster('Name, Phone Number, and Email ID are required.', 'error');
+	}
 
 
 }
@@ -1499,7 +1563,8 @@ if (phoneNumber && countryCode) {
 	console.log(phoneNumberValue);
 
   }
- }
+}
+
 }
 
 formatPhoneNumberEdit() {
@@ -1518,7 +1583,6 @@ formatPhoneNumberEdit() {
 	  }
 	 }
 	}
-	
 
 
 
@@ -1574,8 +1638,9 @@ handelDeleteConfirm(){
 		AgentId:this.AgentId,
 		InteractionId:this.selectedInteraction.InteractionId
 	}
-	this.apiService.deleteInteraction(bodyData).subscribe(async response =>{
+	this.apiService.deleteInteraction(bodyData).subscribe(async response => {
 			this.showToaster('Conversations deleted...','success')
+			this.getAllInteraction();
 	});	
 }
 
@@ -1630,6 +1695,7 @@ triggerEditCustomer(updatecustomer:any){
 		this.modalReference.close();
 	}
 	this.EditContactForm['Name'] =this.selectedInteraction.Name
+	this.EditContactForm['country_code']=this.EditContactForm.countryCode
 	this.EditContactForm['Phone_number'] =this.selectedInteraction.Phone_number
 	this.EditContactForm['channel'] =this.selectedInteraction.channel
 	this.EditContactForm['status'] =this.selectedInteraction.status
@@ -1759,7 +1825,9 @@ createCustomer(){
 		var insertId:any = responseData.insertId
 		if(insertId){
 			this.createInteraction(insertId);
+			this.getAllInteraction();
 			this.newContact.reset();
+			
 		}
 	});
 	}else{
@@ -1901,12 +1969,11 @@ deleteNotes(){
 //   }
 
 sendMessage(){
-	
-	if (!this.chatEditor.value || !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
 		this.showToaster('! Please type your message first','error');
 		return; 
 	}
-	
+ 
 	 {
 		let postAllowed =false;
 		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
@@ -1937,15 +2004,18 @@ sendMessage(){
 			message_type: this.showChatNotes,
 			created_at:new Date()
 		}
-
-		console.log(bodyData);
 		this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
 			this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
-			//console.log(data)
 			this.messageMeidaFile='';
 			this.mediaType='';
 			var responseData:any = data
-			if(this.newMessage.value.Message_id==''){
+
+			if (responseData.middlewareresult.status === '401') {
+				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+				return;
+			}
+			
+			if(this.newMessage.value.Message_id=='' && responseData.middlewareresult.status !== '401'){
 			
 			var insertId:any = responseData.insertId
 			if(insertId){
@@ -2019,5 +2089,31 @@ onPhoneNumberChange(event: any) {
 	this.selectedCountryCode = event;
   }
 
+//   /  GET ATTRIBUTE LIST  /
+  getAttributeList() {
+   this.apiService.getAttributeList(this.SPID)
+   .subscribe((response:any) =>{
+	if(response){
+		let attributeListData = response?.result;
+		this.attributesList = attributeListData.map((attrList:any) => attrList.displayName);
+		console.log(this.attributesList);
+	}
+  })
 }
 
+  	routeToSettings() {
+		this.closeAllModal();
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
+		this.router.navigate(['dashboard/setting']);
+	  }
+
+	  addfilters() {
+		this.closeAllModal();
+		$('body').removeClass('modal-hide');
+		$('.modal-backdrop').remove();
+	  }
+
+
+
+}

@@ -47,6 +47,10 @@ export class SmartRepliesComponent implements OnInit {
 		this.getReplies();
 	}
 
+	closeallmodal(){
+		$("#smartrepliesModal").modal('hide');
+	}
+
 	getReplies() {
 		var SP_ID=sessionStorage.getItem('SP_ID')
 		this.apiService.getSmartReply(SP_ID).subscribe((data: any) => {
@@ -73,13 +77,14 @@ export class SmartRepliesComponent implements OnInit {
 			this.repliesData.MatchingCriteria = this.data[0].MatchingCriteria; 
 			this.repliesData.Keyword = [];
 			this.repliesData.ActionList = [];
+			this.repliesData.Media=this.data[0].Media;
 			var keywordTemp = this.data[0].Keyword;
 			for(let i=0;i<this.data.length;i++){
 				if(!this.repliesData.Keyword.includes(this.data[i].Keyword)) 
 					this.repliesData.Keyword.push(this.data[i].Keyword)
 
 				   if(keywordTemp==this.data[i].Keyword) {
-					this.repliesData.ActionList.push({Message:this.data[i].Message ,Name:this.data[i].Name, Value:this.data[i].Value})
+					this.repliesData.ActionList.push({Message:this.data[i].Message ,Name:this.data[i].Name, Value:this.data[i].Value,Media:this.data[i].Media})
 				   }
 			}
 			

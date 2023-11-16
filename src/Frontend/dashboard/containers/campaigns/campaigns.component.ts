@@ -4,6 +4,7 @@ import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { TeamboxService } from './../../services';
+declare var $: any;
 
 @Component({
   selector: 'sb-campaigns',
@@ -1060,11 +1061,20 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	}
 
 	
+	openImportContact(option:any,modalname:any,openImportContact:any){
+		this.closeAllModal()
+			this.openImportantContact(modalname)
+			$("#dagdropmodal").modal('show');
+	}
+
+
 	selectStep2Option(option:any,modalname:any,step2Option:any){
 		this.step2Option =option
 		if(step2Option ==option && this.step2Option ==='ImportContacts'){
 			this.closeAllModal()
 			this.openImportantContact(modalname)
+			
+	
 		}
 		if(step2Option ==option && this.step2Option ==='AddSegmentAudience'){
 			this.closeAllModal()
@@ -1397,6 +1407,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	}
 	closeImportantContact(){
 		this.importantContact=false;
+		$("#dagdropmodal").modal('hide');
+		
 	}
 	editTemplateMedia(){
 		this.showEditTemplateMedia=!this.showEditTemplateMedia;
