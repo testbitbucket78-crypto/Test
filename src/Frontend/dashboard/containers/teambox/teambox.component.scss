@@ -483,7 +483,8 @@ span.total_count.red {
 
 span.total_count.green {
     background: #6149CD;
-    margin: 5px 0px
+    margin: 5px 0px;
+    text-align: center;
 }
 
 .contacts_item {
@@ -2308,10 +2309,10 @@ label span {
 }
 .input-formm{
     position: absolute;
-    top: 2.7rem;
+    top: 2.8rem;
     border: none;
     right: 19rem;
-    width: 4.2rem;
+    width: 4.4rem;
     background: #ffffff;
     font-size: 12px;
 }

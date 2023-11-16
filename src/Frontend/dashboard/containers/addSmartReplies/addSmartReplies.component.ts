@@ -71,7 +71,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	selectedAction:any;	
 	keyword: string = '';
 	keywords: string[] = [];
-	templatesData =[];
+	templatesData:[] =[];
 	editedText:string ='';
 	editedMessage: string = '';
 	isEditable: boolean = false;
@@ -363,7 +363,9 @@ export class AddSmartRepliesComponent implements OnInit {
 		$("#attachmentbox").modal('hide');
 		$("#showAttributes").modal('hide');
 		$("#insertTemplate").modal('hide');
-		$("#showQuickReplymodal").modal('hide');
+		$("#savedMessage").modal('hide');
+		$("#showQuickReply").modal('hide');
+
 		document.getElementById('addsmartreplies')!.style.display = 'inherit';
 	
 		
@@ -448,12 +450,14 @@ export class AddSmartRepliesComponent implements OnInit {
 	}
 	ToggleQuickReplies() {
 		this.closeAllModal()
-		$("#showQuickReplymodal").modal('show');
+		$("#showQuickReply").modal('show');
+		document.getElementById('addsmartreplies')!.style.display = 'none';
 	}
 
 	ToggleSavedMessageOption() {
 		this.closeAllModal()
-		this.showSavedMessage = !this.showSavedMessage;
+		$("#savedMessage").modal('show');
+        document.getElementById('addsmartreplies')!.style.display = 'none';
 
 	}
 
@@ -538,9 +542,9 @@ export class AddSmartRepliesComponent implements OnInit {
 		let searchKey = event.target.value
 		if(searchKey.length>2){
 		var allList = this.allTemplates
-		let FilteredArray = [];
+		let FilteredArray: any[] = [];
 		for(var i=0;i<allList.length;i++){
-			var content = allList[i].title.toLowerCase()
+			var content = allList[i].TemplateName.toLowerCase()
 				if(content.indexOf(searchKey.toLowerCase()) !== -1){
 					FilteredArray.push(allList[i])
 				}

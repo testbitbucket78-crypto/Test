@@ -280,81 +280,6 @@
             
               
               </div> -->
-          <div *ngIf="showSavedMessage" class="custom_modal bg-pink sm">
-            <div class="modal-header">
-              <div class="modal-header-left">
-                <h4 class="modal-title" id="modal-basic-title">Saved Message's</h4>
-              </div>
-              <div class="modal-header-right">
-                <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-                    src="assets/img/teambox/icon-close.svg"></p>
-              </div>
-            </div>
-            <div class="modal-body quickResponse">
-              <input class="search-box" type="text" placeholder="Search" aria-label="Search"
-                aria-describedby="basic-addon2" (keyup)="searchSavedMessage($event)" />
-              <div class="items_list">
-
-                <div class="item" *ngFor="let Message of SavedMessageList" (click)="selectQuickReplies(Message)">
-                  <p class="label" [innerHTML]="Message.title"></p>
-                  <p [innerHTML]="Message.content"></p>
-                </div>
-              </div>
-
-              <div class="bottom_section">
-                <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
-                    src="/assets/img/campaign/setting-g.svg"></p>
-                <p class="text-box-readonly">To add/edit new Saved Message from the settings</p>
-              </div>
-
-            </div>
-
-
-          </div>
-
-          
-          <div class="modal fade" tabindex="-1" id="showQuickReplymodal" #showQuickReplymodal data-bs-backdrop="static" role="dialog">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-body">
-                  <div class="custom_modal bg-pink sm">
-                   <div class="modal-header">
-                    <div class="modal-header-left">
-                <h4 class="modal-title" id="modal-basic-title">Quick Response</h4>
-              </div>
-              <div class="modal-header-right">
-                <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-                    src="assets/img/teambox/icon-close.svg"></p>
-              </div>
-            </div>
-            <div class="modal-body quickResponse">
-              <input class="search-box" type="text" placeholder="Search" aria-label="Search"
-                aria-describedby="basic-addon2" (keyup)="searchQuickReply($event)" />
-              <div class="items_list">
-
-                <div class="item" *ngFor="let Message of QuickReplyList" (click)="selectQuickReplies(Message)">
-                  <p class="label" [innerHTML]="Message.title"></p>
-                  <p [innerHTML]="Message.content"></p>
-                </div>
-              </div>
-
-              <div class="bottom_section">
-                <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
-                    src="/assets/img/campaign/setting-g.svg"></p>
-                <p class="text-box-readonly">To add/edit Quick replies from the settings</p>
-              </div>
-
-            </div>
-
-
-          </div>
-          </div>
-          </div>
-          </div>
-          </div>
-
-
-
 
           <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
             <div class="modal-dialog" role="document">
@@ -580,6 +505,77 @@
 </div>
 
 
+<!-- insert Saved Message into add smartreplies -->
+
+  <div class="modal fade" tabindex="-1" id="savedMessage" data-bs-backdrop="static" #savedMessage role="dialog">
+    <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+      <div class="m-0 px-3 modal-content savedMessage">
+  <div class="modal-header">
+    <div class="modal-header-left">
+      <h4 class="modal-title" id="modal-basic-title">Saved Message's</h4>
+    </div>
+    <div class="modal-header-right">
+      <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+          src="assets/img/teambox/icon-close.svg"></p>
+    </div>
+  </div>
+  <div class="modal-body quickResponse">
+    <input class="search-box" type="text" placeholder="Search" aria-label="Search"
+      aria-describedby="basic-addon2" (keyup)="searchSavedMessage($event)" />
+    <div class="items_list">
+
+      <div class="item" *ngFor="let Message of SavedMessageList" (click)="selectQuickReplies(Message)">
+        <p class="label" [innerHTML]="Message.title"></p>
+        <p [innerHTML]="Message.content"></p>
+      </div>
+    </div>
+
+    <div class="bottom_section">
+      <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
+          src="/assets/img/campaign/setting-g.svg"></p>
+      <p class="text-box-readonly">To add/edit new Saved Message from the settings</p>
+    </div>
+
+    </div>
+  </div>
+ </div>
+</div>
+
+<!-- insert Quick Reply into add smartreplies -->
+  <div class="modal fade" tabindex="-1" id="showQuickReply" data-bs-backdrop="static" #showQuickReply role="dialog">
+    <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+      <div class="m-0 px-3 modal-content showQuickReply">
+  <div class="modal-header">
+    <div class="modal-header-left">
+      <h4 class="modal-title" id="modal-basic-title">Quick Response</h4>
+    </div>
+    <div class="modal-header-right">
+      <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+          src="assets/img/teambox/icon-close.svg"></p>
+    </div>
+  </div>
+  <div class="modal-body quickResponse">
+    <input class="search-box" type="text" placeholder="Search" aria-label="Search"
+      aria-describedby="basic-addon2" (keyup)="searchQuickReply($event)" />
+    <div class="items_list">
+
+      <div class="item" *ngFor="let Message of QuickReplyList" (click)="selectQuickReplies(Message)">
+        <p class="label" [innerHTML]="Message.title"></p>
+        <p [innerHTML]="Message.content"></p>
+      </div>
+    </div>
+
+    <div class="bottom_section">
+      <p class="close-box" (click)="routeToSettings()"><img class="setting_icon"
+          src="/assets/img/campaign/setting-g.svg"></p>
+      <p class="text-box-readonly">To add/edit Quick replies from the settings</p>
+    </div>
+
+  </div>
+
+</div>
+</div>
+</div>
 
 <!-- insert attributes in add smartReplies -->
 <div class="modal fade" tabindex="-1" id="showAttributes" data-bs-backdrop="static" role="dialog">

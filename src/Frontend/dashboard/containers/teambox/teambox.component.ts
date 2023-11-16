@@ -308,7 +308,7 @@ countryCodes = [
 	message_text='';
 	showEmoji=false;
 	EmojiType:any='smiley';
-	selectedChannel:any='WhatsApp Offical';
+	selectedChannel:any=['WhatsApp Web'];
 	contactSearchKey:any='';
 	ShowChannelOption:any=false;
 	selectedCountryCode: string = '';
@@ -346,7 +346,7 @@ countryCodes = [
 	allTemplates:any=[];
 	allTemplatesMain:any=[];
 	filterTemplateOption:any='';
-	attributesList:any=['{{Name}}','{{user_name}}','{{Help}}','{{Support}}','{{email id}}','{{IP_address}}','{{New-Order}}','{{Product YN}}','{{mail_address}}','{{Hotmail}}','{{Product ZR}}'];
+	attributesList:any=[];
 	
 	
 	
@@ -841,10 +841,8 @@ sendattachfile(){
 							if(msgjson.updateMessage)
 							{
 								this.getAllInteraction(false);
-							}
-							else if(message.status === 200) {
-								this.showToaster("Please Scan QR code from Account Settings first than try again!",'error');
-							}						
+								
+							}					
 						}
 					}
 					catch(e)
@@ -1640,9 +1638,9 @@ handelDeleteConfirm(){
 		AgentId:this.AgentId,
 		InteractionId:this.selectedInteraction.InteractionId
 	}
-	this.apiService.deleteInteraction(bodyData).subscribe(async response =>{
-			//console.log(response)
+	this.apiService.deleteInteraction(bodyData).subscribe(async response => {
 			this.showToaster('Conversations deleted...','success')
+			this.getAllInteraction();
 	});	
 }
 
@@ -1697,6 +1695,7 @@ triggerEditCustomer(updatecustomer:any){
 		this.modalReference.close();
 	}
 	this.EditContactForm['Name'] =this.selectedInteraction.Name
+	this.EditContactForm['country_code']=this.EditContactForm.countryCode
 	this.EditContactForm['Phone_number'] =this.selectedInteraction.Phone_number
 	this.EditContactForm['channel'] =this.selectedInteraction.channel
 	this.EditContactForm['status'] =this.selectedInteraction.status
@@ -1826,7 +1825,9 @@ createCustomer(){
 		var insertId:any = responseData.insertId
 		if(insertId){
 			this.createInteraction(insertId);
+			this.getAllInteraction();
 			this.newContact.reset();
+			
 		}
 	});
 	}else{
@@ -1968,8 +1969,7 @@ deleteNotes(){
 //   }
 
 sendMessage(){
-	
-	if (  this.chatEditor.value || !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
 		this.showToaster('! Please type your message first','error');
 		return; 
 	}
@@ -2006,11 +2006,16 @@ sendMessage(){
 		}
 		this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
 			this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
-			//console.log(data)
 			this.messageMeidaFile='';
 			this.mediaType='';
 			var responseData:any = data
-			if(this.newMessage.value.Message_id==''){
+
+			if (responseData.middlewareresult.status === '401') {
+				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+				return;
+			}
+			
+			if(this.newMessage.value.Message_id=='' && responseData.middlewareresult.status !== '401'){
 			
 			var insertId:any = responseData.insertId
 			if(insertId){

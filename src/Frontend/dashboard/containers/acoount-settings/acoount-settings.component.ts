@@ -189,39 +189,48 @@ getDetailById(id: number) {
   this.saveaccountsettingState();
  }
 
+openDiv() {
+    $("#qrWhatsappModal").modal('show');
+    this.generateQR();
+}
 
   generateQR() {
     $("#connectWhatsappModal").modal('hide');
-    $("#qrWhatsappModal").modal('show');
 
-    this.loadingQRCode = true; // Show the loader
+    this.loadingQRCode = true; // Show the loadeßr
 
    let data = {
       spid: this.spid,
       phoneNo: this.phoneNumber
     }
-    this.apiService.craeteQRcode(data).subscribe(
-      (response) => {
-        if(response.status === 200) {
-          this.qrcode = response.QRcode;
-        }
-        this.loadingQRCode = false;
-        if(response.status === 410) {
-          this.showToaster('This user is already in use','error');
-          $("#qrWhatsappModal").modal('hide');
-       
-        }
-       
-     },
-      (error) => {
-        if(error) {
-          this.showToaster('Internal Server Error, Please Contact System Administrator!','error');
+    try {
+      this.apiService.craeteQRcode(data).subscribe(
+        (response) => {
+          if (response.status === 200) {
+            this.qrcode = response.QRcode;
+          }
           this.loadingQRCode = false;
-          $("#qrWhatsappModal").modal('hide');
-          
+          if (response.QRcode === 'Client is ready!') {
+            this.showToaster('! User is already authenticated', 'success');
+            $("#qrWhatsappModal").modal('hide');
+          }
+        },
+        (error) => {
+          if(error.status === 400) {
+            
+          }
+          if (error) {
+            this.showToaster('Internal Server Error, Please Contact System Administrator!', 'error');
+            this.loadingQRCode = false;
+            $("#qrWhatsappModal").modal('hide');
+          }
         }
-      }
-     );
+      );
+    } catch (error) {
+      console.error('An error occurred:', error);
+      // Handle the error as needed
+    }
+    
   }
 
   removeIP(index:number){
@@ -255,6 +264,13 @@ getDetailById(id: number) {
               if(msgjson.message == 'Client is ready!')
               {
                 this.showToaster('Your Device Linked Successfully !','success');
+                $("#qrWhatsappModal").modal('hide');
+              }
+
+              if(msgjson.message == 'QR generation timed out. Plese re-open account settings and generate QR code')
+              {
+                this.showToaster('QR generation timed out. Plese re-open account settings and generate QR code','error');
+                this.loadingQRCode = false;
                 $("#qrWhatsappModal").modal('hide');
               }
 
