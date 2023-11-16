@@ -211,6 +211,7 @@ getDetailById(id: number) {
           $("#qrWhatsappModal").modal('hide');
        
         }
+       
      },
       (error) => {
         if(error) {

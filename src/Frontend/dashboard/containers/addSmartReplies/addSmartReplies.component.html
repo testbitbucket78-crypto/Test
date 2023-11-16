@@ -149,6 +149,13 @@
                     <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
                   </div>
                 </div>
+                <div class="message-box" *ngIf="Media">
+                  <p id="msgbox-head">Media</p>
+                  <p
+                      class="message-media"
+                      [ngStyle]="{'background-image': 'url(' + Media + ')'}"></p>
+                  
+                </div>
                 <div class="assign-conversation" *ngIf="message.ActionID == 2">
                   <p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
                   <div class="d-flex flex-wrap assign-container">
@@ -305,10 +312,14 @@
 
           </div>
 
-
-          <div *ngIf="showQuickReply" class="custom_modal bg-pink sm">
-            <div class="modal-header">
-              <div class="modal-header-left">
+          
+          <div class="modal fade" tabindex="-1" id="showQuickReplymodal" #showQuickReplymodal data-bs-backdrop="static" role="dialog">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-body">
+                  <div class="custom_modal bg-pink sm">
+                   <div class="modal-header">
+                    <div class="modal-header-left">
                 <h4 class="modal-title" id="modal-basic-title">Quick Response</h4>
               </div>
               <div class="modal-header-right">
@@ -337,6 +348,13 @@
 
 
           </div>
+          </div>
+          </div>
+          </div>
+          </div>
+
+
+
 
           <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
             <div class="modal-dialog" role="document">
@@ -360,6 +378,7 @@
               </div>
             </div>
           </div>
+
         </div>
 
         <div class="smrply-err-msg">
@@ -377,8 +396,9 @@
 
 </div>
 
+
 <!-- insert attachment in add smartReplies -->
-<div class="modal fade" tabindex="-1" id="attachmentbox" data-bs-backdrop="static" #attachmentbox role="dialog">
+<div  *ngIf="messageMeidaFile==''" class="modal fade" tabindex="-1" id="attachmentbox" data-bs-backdrop="static" #attachmentbox role="dialog">
   <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
     <div class="m-0 px-3 modal-content attachmentboxcon">
       <div class="">
@@ -399,8 +419,9 @@
               <p>Drag & Drop file</p>
               <p><span>OR</span></p>
               <label class="custom-file-upload">
-                <input type="file" #file accept="image/*" [multiple]="false" (change)="onFileChange($event)"
-                  style="display:none" />
+                <input type="file" #file
+                  accept="image/*, application/msword, application/pdf, video/*"
+                  [multiple]="false" (change)="onFileChange($event)" style="display:none" />
                 <img class="icon" src="/assets/img/teambox/upload.png"> Browse files
               </label>
 
@@ -425,6 +446,52 @@
     </div>
   </div>
 </div>
+
+
+
+
+
+<div class="modal fade" tabindex="-1" id="sendfile" #sendfile data-bs-backdrop="static" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div *ngIf="messageMeidaFile!=''"   class="message_meida_preview">
+          <div class="modal-header">
+            <div class="modal-header-left">
+            </div>
+            <div class="modal-header-right">
+              <p class="close-box" aria-label="Close" (click)="closeModal()"><img
+                  src="assets/img/teambox/icon-close.svg"></p>
+            </div>
+          </div>
+          <div class="modal-body message_meida_preview_body">
+            <img class="preview_icon" *ngIf="this.mediaType == 'video/mp4'"
+              src="/assets/img/teambox/video_preview.png">
+            <img class="preview_icon" *ngIf="this.mediaType == 'text/plain'"
+              src="/assets/img/teambox/doc_preview.png">
+            <img class="preview_icon" *ngIf="this.mediaType == 'application/pdf'"
+              src="/assets/img/teambox/doc_preview.png">
+
+            <img class="mediaFile" *ngIf="this.mediaType == 'image/jpeg'" src={{this.messageMeidaFile}}>
+            <img class="mediaFile" *ngIf="this.mediaType == 'image/jpg'" src={{this.messageMeidaFile}}>
+            <img class="mediaFile" *ngIf="this.mediaType == 'image/png'" src={{this.messageMeidaFile}}>
+            <img class="mediaFile" *ngIf="this.mediaType == 'image/webp'" src={{this.messageMeidaFile}}>
+          </div>
+
+
+          <div class="input_group_btn" id="senddoc">
+            <button type="button" class="submit-btn" (click)="sendMediaMessage()">Send</button>
+          </div>
+</div>
+</div>
+        
+        
+        </div>
+  </div>
+</div>
+
+
+
 
 <!-- insert templates in add smartReplies -->
 <div class="modal fade" tabindex="-1" id="insertTemplate" data-bs-backdrop="static" #insertTemplate role="dialog">

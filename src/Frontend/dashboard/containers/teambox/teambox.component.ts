@@ -516,6 +516,8 @@ countryCodes = [
 		$("#insertmodal").modal('hide');
 		$("#attachfle").modal('hide');
 		// $("#senddoc").modal('hide');
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
 
 	}	
 	editMedia(){
@@ -720,8 +722,10 @@ sendattachfile(){
 		}else{
 			$("#sendfile").modal('hide');	
 		}
+	
 		
 	}
+	
 	sendMediaMessage(){
 		this.sendMessage()
         this.closeAllModal();
@@ -1965,11 +1969,11 @@ deleteNotes(){
 
 sendMessage(){
 	
-	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+	if (  this.chatEditor.value || !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
 		this.showToaster('! Please type your message first','error');
 		return; 
 	}
-
+ 
 	 {
 		let postAllowed =false;
 		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
