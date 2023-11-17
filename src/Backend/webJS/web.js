@@ -17,7 +17,12 @@ const awsHelper = require('../awsHelper');
 const incommingmsg = require('../IncommingMessages')
 const notify = require('../whatsApp/PushNotifications')
 const fs = require('fs')
+const path = require("path");
 let clientSpidMapping = {};
+
+
+// File path
+const filePath = path.join(__dirname, 'IsActiveClient.js');
 
 async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo);
@@ -36,10 +41,15 @@ async function createClientInstance(spid, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          executablePath: "/usr/bin/google-chrome-stable",
-        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+           executablePath: "/usr/bin/google-chrome-stable",
+         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
-          args: ['--no-sandbox'],
+        
+          args: [
+            '--no-sandbox',
+            '--disable-dev-shm-usage', // <-- add this one
+          ],
+
           takeoverOnConflict: true,
           takeoverTimeoutMs: 10,
         },
@@ -54,7 +64,8 @@ async function createClientInstance(spid, phoneNo) {
         console.log(worker)
         try {
           //var dir = path.join(__dirname, '.wwebjs_auth');
-          fs.rmdirSync(worker, {recursive: true});
+          fs.rmdirSync(worker, { recursive: true })
+
         } catch (sessionerr) {
           console.log("Error while deleting old session");
           console.error(sessionerr);
@@ -65,13 +76,14 @@ async function createClientInstance(spid, phoneNo) {
       // Handle client creation errors
       client.on('error', (error) => {
         console.error('Client error:', error);
+        notify.NotifyServer(phoneNo, false, 'Client creation failed')
         reject({ status: 500, value: 'Client creation failed' });
       });
 
       client.on('auth_failure', () => {
         console.log('Client is auth_failure!');
       });
-      
+
       let inc = 0;
       client.on("qr", (qr) => {
         // Generate and scan this code with your phone
@@ -117,10 +129,13 @@ async function createClientInstance(spid, phoneNo) {
           console.log("client authenticated");
 
           clientSpidMapping[[spid]] = client;
+
+          writeClientFile(clientSpidMapping);    // Call write file function
+
           notify.NotifyServer(phoneNo, false, 'Client Authenticated')
 
         } catch (authenticatederr) {
-          console.log("client authenticated err")
+          console.log(authenticatederr)
         }
 
       });
@@ -128,22 +143,22 @@ async function createClientInstance(spid, phoneNo) {
         setTimeout(async () => {
           try {
             console.log("disconnected");
-  
+
             if (clientSpidMapping.hasOwnProperty(spid)) {
               // console.log(clientSpidMapping[[spid]])
               delete clientSpidMapping[spid];
-  
+              writeClientFile(clientSpidMapping);        // Write clean file after disconnect client
               console.log(`Removed ${spid} from clientSpidMapping.`);
-  
+
             }
             notify.NotifyServer(phoneNo, false, 'Client is disconnected!')
-  
+
           } catch (error) {
             console.log("disconnect error")
-  
+
           }
         }, 3000);
-     
+
       })
       client.on('message_ack', (message, ack) => {
 
@@ -170,6 +185,35 @@ async function createClientInstance(spid, phoneNo) {
   })
 
 
+}
+
+function getCircularReplacer() {
+  const seen = new WeakSet();
+  return (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return '[Circular]';
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+}
+
+
+function writeClientFile(clientSpidMapping) {
+  let jsonData = JSON.stringify(clientSpidMapping, getCircularReplacer(), 2);
+  jsonData = jsonData + ',';
+
+
+  // Writing to the file
+  fs.writeFile(filePath, jsonData, (err) => {
+    if (err) {
+      console.error('Error writing to the file:', err);
+    } else {
+      console.log('File has been written successfully.');
+    }
+  });
 }
 
 
