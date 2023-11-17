@@ -2,6 +2,7 @@ export interface agentMessageList{
     Message:string;
     ActionID:Number;
     Value:any;
+    Media:any;
     
 }
 
@@ -14,6 +15,8 @@ export interface repliesList {
     Keyword:string [];
     MatchingCriteria:String;
     ActionList:actionData [];
+    Media:any;
+    
   
 }
 
@@ -21,5 +24,6 @@ export interface actionData {
     Message:string;
     Name:string;
     Value:any;
+    Media:any;
 }
 
