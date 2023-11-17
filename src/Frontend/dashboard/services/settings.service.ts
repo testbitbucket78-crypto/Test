@@ -218,4 +218,8 @@ export class SettingsService {
     return this.http.post<any>('https://waweb.sampanatechnologies.com/craeteQRcode',spid);
   }
 
+  clientAuthenticated(spid:any):Observable<any> {
+    return this.http.post<any>('https://waweb.sampanatechnologies.com/IsClientReady',spid);
+  
+}
 }
