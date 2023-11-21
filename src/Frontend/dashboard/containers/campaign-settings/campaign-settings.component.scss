@@ -47,6 +47,9 @@
     letter-spacing: -0.55px;
     font-family: Manrope;
 }
+.Info-Iconn{
+  cursor: pointer;
+}
 
 .sub-heading{
 
@@ -128,7 +131,13 @@ p{
     color: #7A86A1;
     background-color: #ffffff;
     margin: -2px 0px 0px 0px;
-}
+    background-image: url('../../../../assets/img/support/arrow-down.svg');
+    background-position: calc(100% - 1.2rem), 100% 0;
+    background-size: 9px; 
+    height: 45px;
+    background-repeat: no-repeat;
+  }
+
 .billing-form-row{
     margin-top: 13px;
 }
