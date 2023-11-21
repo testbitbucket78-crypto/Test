@@ -12,35 +12,7 @@
 
 			<div class="col-4 team-box">
 
-				<!-- filter-popup -->
-
-	 <div class="modal fade" tabindex="-1" id="addfilter" #addfilter data-bs-backdrop="dynamic" role="dialog">
-		<div class="auto-filter modal-dialog " role="document">
-						<div class="auto-modal modal-content">
-				<div class="modal-body">
-					<div id="pop-filter" class="popup-dialog">
-							<p class="label">Filter</p>
-
-							<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''"
-								(click)="filterInteraction('All')"><span>All</span></p>
-							<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''"
-								(click)="filterInteraction('Unassigned')"><span>Unassigned</span></p>
-							<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''"
-								(click)="filterInteraction('Mine')"><span>Mine</span></p>
-							<p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
-								(click)="filterInteraction('Open')"><span>Open</span></p>
-							<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''"
-								(click)="filterInteraction('Resolved')"><span>Resolved</span></p>
-							<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''"
-								(click)="filterInteraction('Mentioned')"><span>Mentioned</span></p>
-							<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''"
-								(click)="filterInteraction('Pinned')"><span>Pinned</span></p>
-						</div>
-
-</div>
-					</div>
-						</div>
-						</div> 
+	<!-- filter-popup -->
 				<div class="custom_row pl-3 pt-3 ">
 					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()"
 						(keyup)="getSearchInteraction($event)"
@@ -51,7 +23,27 @@
 					<div *ngIf="!searchFocused" class="drop-down-btn" (click)="addfilters()">
 						<div class="toggle-box" (click)="toggleFilerOption()"><img
 								src="assets/img/teambox/filter-icon.svg"></div>
+								<div *ngIf="showfilter" id="pop-filter" class="popup-dialog" (click)="stopPropagation($event)">
+									<p class="label">Filter</p>
+		
+									<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''"
+										(click)="filterInteraction('All')"><span>All</span></p>
+									<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''"
+										(click)="filterInteraction('Unassigned')"><span>Unassigned</span></p>
+									<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''"
+										(click)="filterInteraction('Mine')"><span>Mine</span></p>
+									<p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
+										(click)="filterInteraction('Open')"><span>Open</span></p>
+									<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''"
+										(click)="filterInteraction('Resolved')"><span>Resolved</span></p>
+									<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''"
+										(click)="filterInteraction('Mentioned')"><span>Mentioned</span></p>
+									<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''"
+										(click)="filterInteraction('Pinned')"><span>Pinned</span></p>
+								</div>
 
+
+								<div *ngIf="showfilter" class="overlay" (click)="closeFilterOptions()"></div>
 
 					</div>
 					<button class="new-message-btn" (click)="openaddMessage(messageadd)"><img class="icon"
@@ -165,6 +157,8 @@
 											[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'">Resolved</span>
 									</p>
 								</div>
+								<div *ngIf="ShowConversationStatusOption" class="overlay" (click)="closeConversationStatusOption()"></div>
+
 							</div>
 
 
@@ -193,6 +187,7 @@
 										</span>
 									</p>
 								</div>
+								<div *ngIf="ShowAssignOption" class="overlay" (click)="closeAssignOption()"></div>
 							</div>
 							<input (focus)="focusInChatFunction()" (focusout)="focusOutChatFunction()"
 								(keyup)="seacrhInChat($event)"
@@ -341,10 +336,10 @@
 							</div>
 							<div class="input-area">
 								<ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor
-									[toolbarSettings]='tools' [height]='100' (click)="resetMessageTex()">
+									[toolbarSettings]='tools' [height]='100' (click)="resetMessageTex()" (keydown)="handleKeyPress($event)">
 								</ejs-richtexteditor>
 
-								<div *ngIf="showMention" class="popup-dialog mention">
+								<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
 									<p class="label">@mention</p>
 									<p *ngFor="let user of agentsList;let k = index"
 										(click)="InsertMentionOption(user)">
@@ -354,6 +349,8 @@
 										</span>
 									</p>
 								</div>
+
+
 
 								<div *ngIf="showEmoji" class="popup-dialog">
 									<div class="tabs">
@@ -382,6 +379,8 @@
 
 
 							</div>
+							<div *ngIf="showMention" class="overlay" (click)="closeMentionDialog()"></div>
+
 						</div>
 
 					</div>
@@ -589,7 +588,31 @@
 							<button class="auto-rep-btn" (click)="toggleAutoReply()"><img class="icon"
 									src="/assets/img/teambox/time-circle.svg" />{{selectedInteraction.AutoReplyStatus}}
 								<img class="icon right-aligned" src="/assets/img/teambox/dropdown-w.svg" /></button>
+
+
 						</div>
+						<div class="custom_row mt-1">
+							<div class="col-md-12" id="addteamboox">
+								<div *ngIf="AutoReplyOption" class="popup-dialog autoreply"  (click)="stopPropagation($event)">
+									<div *ngIf="selectedInteraction.PausedTimer">
+										<p *ngFor="let option of AutoReplyEnableOption;"
+											[ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''"
+											(click)="SelectReplyOption(option,'Extend')">
+											<span>{{option}}</span>
+										</p>
+									</div>
+									<div *ngIf="!selectedInteraction.PausedTimer">
+										<p *ngFor="let option of AutoReplyPauseOption;let last = last;"
+											[ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''"
+											(click)="SelectReplyOption(option,'Paused')">
+											<span>{{option}}</span>
+										</p>
+									</div>
+								</div>
+	
+							</div>
+						</div>
+						<div *ngIf="AutoReplyOption" class="overlay" (click)="closeAutoReplyDialog()"></div>
 
 
 
@@ -1429,24 +1452,23 @@
 							{{EditContactForm.sex}}
 						</button>
 					</div>
-					<div *ngIf="ShowGenderOption" class="popup-dialog ContactOption">
+					
+
+					<div *ngIf="ShowGenderOption" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
 						<p (click)="hangeEditContactSelect('sex','Male')">
-							<span>
-								Male
-							</span>
+						  <span>Male</span>
 						</p>
 						<p (click)="hangeEditContactSelect('sex','Female')">
-							<span>
-								Female
-							</span>
+						  <span>Female</span>
 						</p>
 						<p (click)="hangeEditContactSelect('sex','Other')">
-							<span>
-								Other
-							</span>
+						  <span>Other</span>
 						</p>
-					</div>
-
+					  </div>
+					  
+					  <!-- Add a click event on the document to close the options when clicking outside -->
+					  <div *ngIf="ShowGenderOption" class="overlay" (click)="closeGenderOption()"></div>
+					  
 
 				</div>
 
@@ -1466,23 +1488,23 @@
 							{{EditContactForm.status}}
 						</button>
 					</div>
-					<div *ngIf="ShowLeadStatusOption" class="popup-dialog ContactOption">
+					<!-- Add (click) event to the document body -->
+					<div *ngIf="ShowLeadStatusOption" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
 						<p (click)="hangeEditContactSelect('status','Premium')">
-							<span>
-								Premium
-							</span>
+						  <span>Premium</span>
 						</p>
 						<p (click)="hangeEditContactSelect('status','New Customer')">
-							<span>
-								New Customer
-							</span>
+						  <span>New Customer</span>
 						</p>
 						<p (click)="hangeEditContactSelect('status','Paid')">
-							<span>
-								Paid
-							</span>
+						  <span>Paid</span>
 						</p>
-					</div>
+					  </div>
+					  
+					  <!-- Add a click event on the document to close the div when clicking outside -->
+					  <div *ngIf="ShowLeadStatusOption" class="overlay" (click)="closeLeadStatusOption()"></div>
+					  
+  
 
 
 				</div>
@@ -1508,19 +1530,29 @@
 							{{EditContactForm.channel}}
 						</button>
 					</div>
-					<div *ngIf="ShowChannelOption" class="popup-dialog ContactOption">
+					
+
+
+
+					<div *ngIf="ShowChannelOption" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
 						<p (click)="hangeEditContactSelect('channel','WhatsApp Official')">
-							<span>
-								<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
-								WhatsApp Official
-							</span>
+						  <span>
+							<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+							WhatsApp Official
+						  </span>
 						</p>
 						<p (click)="hangeEditContactSelect('channel','WhatsApp Web')">
-							<span>
-								WhatsApp Web
-							</span>
+						  <span>
+							WhatsApp Web
+						  </span>
 						</p>
-					</div>
+					  </div>
+					  
+					  <!-- Add a click event on the document to close the options when clicking outside -->
+					  <div *ngIf="ShowChannelOption" class="overlay" (click)="closeChannelOption()"></div>
+					  
+
+
 
 
 				</div>
@@ -1626,7 +1658,7 @@
 	</ng-template>
 
 	<!-- popup-autoreply -->
-	<div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal data-bs-backdrop="dynamic" role="dialog">
+	<!-- <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal data-bs-backdrop="dynamic" role="dialog">
 		<div class="autoreply modal-dialog " role="document">
 			<div class="modal-content">
 				<div class="modal-body">
@@ -1654,7 +1686,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 
 	<!-- edit-del popup -->
 	<div class="modal fade" tabindex="-1" id="agModal" #agModal data-bs-backdrop="dynamic" role="dialog">

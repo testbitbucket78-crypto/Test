@@ -21,6 +21,7 @@ providers: [ToolbarService, LinkService, ImageService, HtmlEditorService]
 })
 
 export class TeamboxComponent implements  OnInit {
+[x: string]: any;
 
 	private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.sampanatechnologies.com/');
 
@@ -37,6 +38,7 @@ routerGuard = () => {
 	@ViewChild('notesSection') notesSection: ElementRef |undefined; 
 	@ViewChild('chatSection') chatSection: ElementRef |undefined; 
 	@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
+
 	
 	public selection: NodeSelection = new NodeSelection();
 	public range: Range | undefined;
@@ -312,11 +314,11 @@ countryCodes = [
 	contactSearchKey:any='';
 	ShowChannelOption:any=false;
 	selectedCountryCode: string = '';
-	
 	newContact: any;
 	editContact: any;
 	ShowGenderOption:any=false;
 	ShowLeadStatusOption:any=false;
+
 
 	newMessage:any;
 	interactionFilterBy:any='All'
@@ -403,8 +405,19 @@ countryCodes = [
 		if(this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value =='<p>Type…</p>'){
 			this.chatEditor.value='';
 		}
-		
 	}
+
+	handleKeyPress(event: KeyboardEvent) {
+		
+		// Check if the pressed key is "Enter"
+		if (event.key === 'Enter') {
+		  this.sendMessage();
+		}
+	  }
+
+	
+
+
 	toggleChatNotes(optionvalue:any){
 		if(this.chatEditor){
 		if(optionvalue == 'text'){
@@ -561,6 +574,9 @@ ToggleSavedMessageOption(){
 	
 
 }
+
+
+
 ToggleInsertTemplateOption(){
 	this.closeAllModal()
 	$("#insertmodal").modal('show'); 
@@ -1314,13 +1330,17 @@ filterInteraction(filterBy:any){
 
 }
 toggleFilerOption(){
-	$("#addfilter").modal('show');
-		// this.showfilter=!this.showfilter;
+	// $("#addfilter").modal('show');
+		this.showfilter=!this.showfilter;
 }
 
 toggleContactOption(){
 	this.ShowContactOption =!this.ShowContactOption;
 }
+closeFilterOptions() {
+    this.showfilter = false;
+  }
+
 
 toggleChannelOption(){
 	this.ShowChannelOption =!this.ShowChannelOption;
@@ -1352,17 +1372,40 @@ hangeEditContactInuts(item:any){
 toggleLeadStatusOption(){
 	this.ShowLeadStatusOption=!this.ShowLeadStatusOption;
 	this.ShowChannelOption = false;
-	this.ShowGenderOption = false;
+	this.ShowGenderOption =!this.ShowLeadStatusOption;
 }
 
 
 hangeEditContactSelect(name:any,value:any){
 	this.EditContactForm[name] = value
 	this.ShowChannelOption=false
-	this.ShowGenderOption=false
+	this.ShowGenderOption=false;
 	this.ShowLeadStatusOption=false;
+	
 
 }
+
+stopPropagation(event: Event) {
+    event.stopPropagation();
+  }
+  closeLeadStatusOption() {
+    this.ShowLeadStatusOption = false;
+  }
+
+  closeGenderOption() {
+    this.ShowGenderOption = false;
+  }
+
+  
+  closeChannelOption() {
+    this.ShowChannelOption = false;
+  }
+ 
+  closeMentionDialog() {
+    this.showMention = false;
+  }
+
+
 
 updateCustomer(){
 	var bodyData = {
@@ -1416,6 +1459,7 @@ updateCustomer(){
 
 
 }
+
 
 
 filterContactByType(ChannelName:any){
@@ -1499,12 +1543,17 @@ hideToaster(){
 	this.warningMessage='';
 }
 toggleAutoReply(){
-	// this.AutoReplyOption =!this.AutoReplyOption
-	$("#addTagModal").modal('show'); 
+	this.AutoReplyOption =!this.AutoReplyOption
 	$('body').removeClass('modal-open');
 	$('.modal-backdrop').remove();
 	// document.getElementById("smartrepliesModal")!.style.display="inherit";
 }
+
+
+closeAutoReplyDialog() {
+    // Close the dialog when clicking outside
+    this.AutoReplyOption = false;
+  }
 
 SelectReplyOption(optionValue:any,optionType:any){
 	var LastPaused = this.selectedInteraction.paused_till
@@ -1859,6 +1908,17 @@ this.apiService.createInteraction(bodyData).subscribe(async data =>{
 
 }
 
+closeAssignOption() {
+    // Close the assign options when clicking outside
+    this.ShowAssignOption = false;
+  }
+
+  closeConversationStatusOption() {
+    // Close the conversation status options when clicking outside
+    this.ShowConversationStatusOption = false;
+  }
+
+
 updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
 	this.ShowAssignOption=false;
 	var bodyData = {
@@ -1969,10 +2029,12 @@ deleteNotes(){
 //   }
 
 sendMessage(){
-	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
-		this.showToaster('! Please type your message first','error');
-		return; 
-	}
+
+	this.custommesage='';
+	// if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+	// 	this.showToaster('! Please type your message first','error');
+	// 	return; 
+	// }
  
 	 {
 		let postAllowed =false;

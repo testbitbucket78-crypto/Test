@@ -136,10 +136,10 @@
 
 
         <div class="interactions">
-          <div class="child-int-1 py-2">
-            <div class="child-interaction-1">
-              <div *ngFor="let message of assignedAgentList; let i = index">
-                <div class="message-box" *ngIf="message.ActionID == 1">
+          <div  class="child-int-1 py-2">
+            <div  #chatSection class="child-interaction-1">
+              <div  id="messgae-boc"  *ngFor="let message of assignedAgentList; let i = index">
+                <div  class="message-box" *ngIf="message.ActionID == 1">
                   <p id="msgbox-head">Message</p>
                   <p id="msgbox-body{{i}}" [contentEditable]="isEditable" (input)="onEdit($event.target.innerHTML)"
                     [innerHTML]="message.Value"></p>
@@ -216,11 +216,8 @@
             <div class="conversation_inout_area">
 
               <div class="input-area">
-                <ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor [toolbarSettings]='tools'
-                  [width]='0' (click)="resetMessageTex()"></ejs-richtexteditor>
-
-
-
+                <ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor  [toolbarSettings]='tools'
+                  [width]='0' (click)="resetMessageTex()"> </ejs-richtexteditor>
 
                 <div *ngIf="showEmoji" id="showEmoji" class="popup-dialog">
                   <div class="tabs">
@@ -244,7 +241,7 @@
 
 
 
-                <button class="submit_btn" (click)="addMessage()">Add</button>
+                <button class="submit_btn"  (click)="addMessage()">Add</button>
               </div>
             </div>
 
@@ -405,7 +402,7 @@
 
 
           <div class="input_group_btn" id="senddoc">
-            <button type="button" class="submit-btn" (click)="sendMediaMessage()">Send</button>
+            <button  type="button" class="submit-btn" (click)="sendMediaMessage()">Send</button>
           </div>
 </div>
 </div>
