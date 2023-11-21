@@ -43,15 +43,18 @@ export class LoginComponent implements OnInit {
                     this.router.navigate(['dashboard']);
 
                     var spid = Number(sessionStorage.getItem('SP_ID'));
-                    var phoneNo = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
-                    let item = {
-                        spid: spid,
-                        phoneNo: phoneNo,
-                      }
-            
-                    this.settingsService.craeteQRcode(item).subscribe((response) => {
+
+                    let input = {
+                        spid:spid
+                    }
+                    this.settingsService.clientAuthenticated(input).subscribe
+                    ((response) => {
                           if (response.status === 200) {
-                            console.log(response.data);
+                            console.log(response.message);
+                          }
+
+                          if(response.status === 404) {
+                            console.log(response.message);
                           }
                         });
                      }

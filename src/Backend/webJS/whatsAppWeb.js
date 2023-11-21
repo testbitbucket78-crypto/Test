@@ -21,13 +21,13 @@ app.post('/craeteQRcode', async (req, res) => {
         console.log("get")
         spid = req.body.spid;
         phoneNo = req.body.phoneNo
-       
-   
-            let response = await web.createClientInstance(spid, phoneNo);
-            res.send({
-                status: response.status,
-                QRcode: response.value
-            })
+
+
+        let response = await web.createClientInstance(spid, phoneNo);
+        res.send({
+            status: response.status,
+            QRcode: response.value
+        })
 
     } catch (err) {
         console.log(err);
@@ -42,9 +42,9 @@ app.post('/sendMessage', async (req, res) => {
         link = req.body.link
         text = req.body.text
         phoneNo = req.body.phoneNo
-        interaction_id=req.body.interaction_id,
-        msg_id=req.body.msg_id
-        let response = await web.sendMessages(spid, phoneNo, type, text, link,interaction_id,msg_id);
+        interaction_id = req.body.interaction_id,
+            msg_id = req.body.msg_id
+        let response = await web.sendMessages(spid, phoneNo, type, text, link, interaction_id, msg_id);
         console.log(response)
         return res.send({ status: response })
 
@@ -55,20 +55,34 @@ app.post('/sendMessage', async (req, res) => {
 })
 
 
+app.post('/IsClientReady', (req, res) => {
+    try {
+        spid = req.body.spid
 
+        console.log(web.isActiveSpidClient(spid))
+        if (web.isActiveSpidClient(spid)) {
+            res.send({ status: 200, message: "Client is ready !" })
+        } else {
+            res.send({ status: 404, message: "Please go to settings and Scan the QR Code !" })
+        }
+
+
+    } catch (err) {
+        res.send({ status: 500, err: err })
+    }
+})
 
 app.listen(3009, () => {
     console.log("Server is Running on Port : : 3009")
-    console.log( path.join(__dirname, '.wwebjs_auth'))
+    console.log(path.join(__dirname, '.wwebjs_auth'))
     var dir = path.join(__dirname, '.wwebjs_auth');
-    try{
+    try {
         if (fs.existsSync(dir)) {
-            fs.readdirSync(dir).forEach(f => fs.rmdirSync(`${dir}/${f}`, {recursive: true}));
+            fs.readdirSync(dir).forEach(f => fs.rmdirSync(`${dir}/${f}`, { recursive: true }));
         }
     }
-    catch(err)
-    {
-        console.log("error while deleting cached sessions. Please delete manually from within " +dir+" and restart the server")
+    catch (err) {
+        console.log("error while deleting cached sessions. Please delete manually from within " + dir + " and restart the server")
     }
-    
+
 })

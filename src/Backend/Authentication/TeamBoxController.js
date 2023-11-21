@@ -160,7 +160,8 @@ const updateInteraction = (req, res) => {
 }
 
 deleteInteraction = (req, res) => {
-    var deleteQuery = "UPDATE Interaction SET deleted_by =" + req.body.AgentId + " ,is_deletedd =1 WHERE InteractionId =" + req.body.InteractionId
+    var deleteQuery = "UPDATE Interaction SET deleted_by =" + req.body.AgentId + " ,is_deleted =1 WHERE InteractionId =" + req.body.InteractionId
+  console.log(deleteQuery)
     db.runQuery(req, res, deleteQuery, [])
 }
 
@@ -341,12 +342,14 @@ const insertMessage = async (req, res) => {
                 if (req.body.message_media != '') {
                     // sendMediaOnWhatsApp(req.body.messageTo, message_media)
                     console.log(message_media)
-                      middlewareresult=  middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo,message_text, message_media,interaction_id,msg_id.insertId)
+                      middlewareresult=await  middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo,message_text, message_media,interaction_id,msg_id.insertId)
                 }
                 // sendTextOnWhatsApp(req.body.messageTo, message_text)
-                middlewareresult=  middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text,message_media,interaction_id,msg_id.insertId)
+                middlewareresult=await  middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text,message_media,interaction_id,msg_id.insertId)
+                console.log("middlewareresult")
+                console.log(middlewareresult)
             }
-            res.send({middlewareresult:middlewareresult,status:200})
+            res.send({middlewareresult:middlewareresult,status:middlewareresult.status})
 
         } else {
             message_text = req.body.message_text

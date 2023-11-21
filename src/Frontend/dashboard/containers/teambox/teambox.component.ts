@@ -1,16 +1,15 @@
-import { Component,AfterViewInit, OnInit,Input, ViewChild, ElementRef, HostListener  } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener  } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders, HttpBackend, HttpParams } from '@angular/common/http';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TeamboxService } from './../../services';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined } from 'is-what';
 import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
-import { base64ToFile } from 'ngx-image-cropper';
 
 declare var $: any;
 @Component({
@@ -35,8 +34,8 @@ routerGuard = () => {
 }
 
 
-	@ViewChild('notesSection') notesSection: ElementRef |undefined; 
-	@ViewChild('chatSection') chatSection: ElementRef |undefined; 
+	@ViewChild('notesSection') notesSection: ElementRef | any; 
+	@ViewChild('chatSection') chatSection: ElementRef | any; 
 	@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
 
 	
@@ -353,7 +352,7 @@ countryCodes = [
 	
 	
 
-	constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef, private router: Router,private websocketService: WebsocketService) {
+	constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
 		// customize default values of modals used by this component tree
 
@@ -839,6 +838,21 @@ sendattachfile(){
 
 	}
 
+	ngAfterViewInit() {
+		if (this.chatSection) {
+		  this.scrollChatToBottom();
+		}
+	  }
+
+	scrollChatToBottom() {
+		const chatWindowElement = this.chatSection.nativeElement;
+		chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
+
+		const toolbar = chatWindowElement.querySelector('.e-toolbar');
+	    toolbar.removeAttribute('data-tooltip-id');
+	
+	  }
+
 	async subscribeToNotifications() {
 		let notificationIdentifier = {
 			"UniqueSPPhonenumber" : (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
@@ -856,8 +870,9 @@ sendattachfile(){
 							console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
 							if(msgjson.updateMessage)
 							{
-								this.getAllInteraction(false);
-								
+								this.getAllInteraction(false)	
+								this.scrollChatToBottom()
+								this.selectInteraction(this.selectedInteraction)
 							}					
 						}
 					}
@@ -1044,8 +1059,9 @@ sendattachfile(){
 		await this.apiService.getAllInteraction(bodyData).subscribe(async data =>{
 			var dataList:any = data;
 			this.getAssicatedInteractionData(dataList,selectInteraction)
+			
 		});
-
+		this.scrollChatToBottom()
 	}
 	async getSearchInteraction(event:any){
 	if(event.target.value.length>2){
@@ -1256,6 +1272,7 @@ sendattachfile(){
 	}
 
 selectInteraction(Interaction:any){
+	
 	if(this.chatEditor){
 		this.chatEditor.value = 'Your message...'
 	this.showChatNotes ='text'
@@ -1267,6 +1284,7 @@ selectInteraction(Interaction:any){
 	this.selectedInteraction =Interaction
 	console.log(Interaction)
 	this.getPausedTimer()
+	this.scrollChatToBottom()
 
 	var element = document.getElementsByClassName('total_count green')[0];
 	if (this.selectedInteraction.UnreadCount!=0) {
@@ -1317,13 +1335,11 @@ counter(i: number) {
 
 filterInteraction(filterBy:any){
 	this.selectedInteraction=[]
-	/*
 	if(filterBy != 'All'){
 		this.getFilteredInteraction(filterBy)
 	}else{
 		this.getAllInteraction()
 	}
-	*/
 	this.interactionFilterBy=filterBy
 	this.getAllInteraction()
 	this.ShowFilerOption =false
@@ -1975,16 +1991,16 @@ openadd(contactadd: any) {
 }
 
 toggleNoteOption(note:any){
-	//console.log(note)
-	// this.hideNoteOption()
-	// if(note && this.selectedNote.Message_id != note.Message_id){
-	// note.selected=true
-	// this.selectedNote= note
-	// }else{
-	// 	note.selected=false
-	// 	this.selectedNote= []
+	console.log(note)
+	this.hideNoteOption()
+	if(note && this.selectedNote.Message_id != note.Message_id){
+	note.selected=true
+	this.selectedNote= note
+	}else{
+		note.selected=false
+		this.selectedNote= []
 	
-	// }
+	}
 	$("#agModal").modal('show'); 
 	$('body').removeClass('modal-open');
 	$('.modal-backdrop').remove();
@@ -2138,12 +2154,6 @@ sendMessage(){
 	}
 	}
 
-
-}
-ngAfterViewInit() {
-	const editorElement = this.chatEditor.elementRef.nativeElement;
-	const toolbar = editorElement.querySelector('.e-toolbar');
-	toolbar.removeAttribute('data-tooltip-id');
 
 }
 
