@@ -483,7 +483,8 @@ span.total_count.red {
 
 span.total_count.green {
     background: #6149CD;
-    margin: 5px 0px
+    margin: 5px 0px;
+    text-align: center;
 }
 
 .contacts_item {
@@ -1294,13 +1295,11 @@ div[role="progressbar"] {
     color: #000;
     font-weight: 500;
     font-size: 14px;
-
 }
 
-.form-control.phone-no {
+.form-control.phone-no{
     padding-left: 5.7rem;
 }
-
 .form-control.countryCode {
     padding-left: 5.7rem;
     height: 45px;
@@ -1313,6 +1312,7 @@ div[role="progressbar"] {
     font-weight: 500;
     font-size: 14px;
 }
+
 
 .inner_form.large .row {
     width: 46%;
@@ -1481,6 +1481,7 @@ span {
     margin: 0px;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
 }
 
 .contact_item img {
@@ -1511,17 +1512,17 @@ span {
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
-    position: fixed;
-    width: 60%;
-    left: 20%;
-    top: 10%;
+    width: 174%;
+    margin-left: -8rem;
 }
+
+
 
 .custom_modal.bg-pink {
     background: #FFF4F2 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
-    position: fixed;
+    position:fixed;
 }
 
 .custom_modal.sm {
@@ -1536,8 +1537,6 @@ span {
     top: 10%;
     padding: 1rem;
 }
-
-
 
 .attachmentboxbody {
     padding: 10px 100px 50px 100px;
@@ -1598,10 +1597,6 @@ span {
     background: #fff;
     box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
-    position: fixed;
-    width: 30%;
-    left: 40%;
-    top: 10%;
 }
 
 .message_meida_preview_body {
@@ -2314,14 +2309,13 @@ label span {
 }
 .input-formm{
     position: absolute;
-    top: 2.7rem;
+    top: 2.8rem;
     border: none;
     right: 19rem;
-    width: 4.2rem;
+    width: 4.4rem;
     background: #ffffff;
     font-size: 12px;
 }
-
 .country_code{
     position: absolute;
     top: 10.5rem;
@@ -2336,3 +2330,20 @@ label span {
 .country_code option {
     background: #ffffff;
 }
+.auto-modal{
+    left: -9.5rem;
+    margin-top: -33rem;
+    justify-content: center;
+    /* align-items: center; */
+    /* display: flex; */
+}
+
+
+@media (max-width:992px ) {
+    .auto-modal{
+        left: -6.5rem;
+        margin-top: -29rem;
+        justify-content: center;
+}
+    }
+  

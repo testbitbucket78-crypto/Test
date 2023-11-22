@@ -2089,3 +2089,56 @@ input[type="radio"]:checked + label::before {
   font-weight: 700!important;
   color: #000000!important;
 }
+
+.message_meida_preview {
+    background: #fff;
+    box-shadow: 4px 22px 54px #695F971A;
+    border-radius: 30px;
+}
+
+.message_meida_preview_body {
+    padding: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.message_meida_preview img.mediaFile {
+    width: 300px;
+}
+
+.message_meida_preview .input_group_btn {
+    margin-right: 1rem;
+}
+.modal-header {
+    border: 0px !important;
+}
+
+.modal-header-right {
+    width: 60%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+.modal-header, .modal-body, .modal-footer {
+    font-family: 'Manrope', sans-serif;
+}
+.close-box {
+    height: 35px;
+    width: 35px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #EBEBEB;
+    border-radius: 12px;
+    opacity: 1;
+    display: flex;
+    align-content: space-around;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0px 8px;
+    cursor: pointer;
+}
+.message-media {
+    min-width: 364px;
+    min-height: 364px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}

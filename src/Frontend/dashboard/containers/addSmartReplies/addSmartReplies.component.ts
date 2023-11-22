@@ -71,7 +71,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	selectedAction:any;	
 	keyword: string = '';
 	keywords: string[] = [];
-	templatesData =[];
+	templatesData:[] =[];
 	editedText:string ='';
 	editedMessage: string = '';
 	isEditable: boolean = false;
@@ -112,6 +112,8 @@ export class AddSmartRepliesComponent implements OnInit {
 	allTemplatesMain:any=[];
 	filterTemplateOption:any='';
 	selectedTemplate:any  = [];
+	Media:any;
+	
 
     /**richtexteditor **/ 
 	custommesage = '<p>Type Reply...</p>'
@@ -314,7 +316,8 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
 
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: true,
+			linear: false
+			,
 			animation: true
 		});
 
@@ -329,6 +332,8 @@ export class AddSmartRepliesComponent implements OnInit {
 		 this.getAttributeList();
 		 this.getTemplatesList()
 		 this.routerGuard();
+		 this.sendattachfile()
+
 	
 	
 	
@@ -358,8 +363,17 @@ export class AddSmartRepliesComponent implements OnInit {
 		$("#attachmentbox").modal('hide');
 		$("#showAttributes").modal('hide');
 		$("#insertTemplate").modal('hide');
+		$("#savedMessage").modal('hide');
+		$("#showQuickReply").modal('hide');
+
 		document.getElementById('addsmartreplies')!.style.display = 'inherit';
+	
+		
 	}
+	closeModal(){
+		$("#sendfile").modal('hide');
+	}
+
 
 	resetMessageTex() {
 		if (this.chatEditor.value == '<p>Type Reply...</p>') {
@@ -393,6 +407,15 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.saveFiles(files);
 		
 	}
+	sendattachfile(){
+		if(this.messageMeidaFile!==''){
+			$("#sendfile").modal('show');	
+		}else{
+			$("#sendfile").modal('hide');	
+		}
+	
+		
+	}
 
 	saveFiles(files: FileList) {
 		if(files[0]){
@@ -403,14 +426,23 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.tS.uploadfile(data).subscribe(uploadStatus =>{
 			let responseData:any = uploadStatus
 			if(responseData.filename){
+				this.sendattachfile();
 				this.messageMeidaFile = responseData.filename
+				
 				this.showAttachmenOption=false;
 			}
 		})
 	  }
-	
+	 
 	}
-
+	sendMediaMessage(){
+		this.addMessage();
+		this.Media=this.messageMeidaFile;
+		console.log(this.messageMeidaFile)
+        this.closeAllModal();
+		$("#sendfile").modal('hide');
+	}
+	
 	ToggleAttributesOption() {
 		this.closeAllModal()
 		$("#showAttributes").modal('show');
@@ -418,11 +450,14 @@ export class AddSmartRepliesComponent implements OnInit {
 	}
 	ToggleQuickReplies() {
 		this.closeAllModal()
-		this.showQuickReply = !this.showQuickReply;
+		$("#showQuickReply").modal('show');
+		document.getElementById('addsmartreplies')!.style.display = 'none';
 	}
+
 	ToggleSavedMessageOption() {
 		this.closeAllModal()
-		this.showSavedMessage = !this.showSavedMessage;
+		$("#savedMessage").modal('show');
+        document.getElementById('addsmartreplies')!.style.display = 'none';
 
 	}
 
@@ -507,9 +542,9 @@ export class AddSmartRepliesComponent implements OnInit {
 		let searchKey = event.target.value
 		if(searchKey.length>2){
 		var allList = this.allTemplates
-		let FilteredArray = [];
+		let FilteredArray: any[] = [];
 		for(var i=0;i<allList.length;i++){
-			var content = allList[i].title.toLowerCase()
+			var content = allList[i].TemplateName.toLowerCase()
 				if(content.indexOf(searchKey.toLowerCase()) !== -1){
 					FilteredArray.push(allList[i])
 				}
@@ -647,12 +682,15 @@ export class AddSmartRepliesComponent implements OnInit {
 
 	addMessage() {
 
-		if(!this.custommesage || this.custommesage ==='<p>Type Reply...</p>') {
-			this.showToaster('! Please type your message first','error');
-			return;
-		}
-		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage })
+		// if(!this.custommesage || this.custommesage ==='<p>Type Reply...</p>') {
+		// 	this.showToaster('! Please type your message first','error');
+		// 	return;
+		// }
+		
+		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile) })
+		console.log(this.messageMeidaFile)
 			this.custommesage = '';
+			
 		}
 
 	
@@ -773,7 +811,7 @@ export class AddSmartRepliesComponent implements OnInit {
 			}
 		})
 		if(!isExist) {
-			this.assignedAgentList.push({Message:'', ActionID:2, Value: this.agentsList[index]})
+			this.assignedAgentList.push({Message:'', ActionID:2, Value: this.agentsList[index],Media:''})
 		}
 			
 	}
@@ -805,7 +843,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		if (!isExist) {
 			this.assignedTagList = [];
 			this.assignedTagList.push(this.addTagList[index].TagName);
-			this.assignedAgentList.push({ Message: '',ActionID: 3, Value: this.assignedTagList});
+			this.assignedAgentList.push({ Message: '',ActionID: 3, Value: this.assignedTagList,Media:''});
 			console.log('new value');
 		}
 		console.log(this.assignedAgentList);

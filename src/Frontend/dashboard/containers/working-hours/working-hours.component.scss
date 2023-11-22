@@ -73,7 +73,7 @@ font-family: Manrope;
  }
 
  .multiselect{
-  display: inline-block;
+  display: block;
   height: 37px;
   border-radius: 17px;
   border: 1px solid #EBEBEB;
@@ -201,11 +201,10 @@ font-family: Manrope;
   font-weight: 600;
   color: #6149CD;
 }
-
-.holiday-dropdown{
+.holiday-dropdown {
   border: 1px solid #EBEBEB;
   border-radius: 19px;
-  padding: 6px 15px;
+  padding: 10px 25px;
 }
 
 .holiday-dropdown option{
@@ -273,3 +272,24 @@ select {
 .calen{
   font-family: 'Manrope';
 }
+.multiselect.dropdown{
+  background-image: url('../../../../assets/img/support/arrow-down.svg');
+  background-position: calc(100% - 1.2rem), 100% 0;
+  background-size: 9px; 
+  height: 45px;
+  // width: 45%;
+  background-repeat: no-repeat;
+}
+
+.multiselect.dropdown span.dropdown-multiselect__caret {
+  display: none!important; 
+}  
+
+// .holiday-dropdown{
+//   background-image: url(arrow-down.svg);
+//   background-position: calc(100% - 0.6rem), 100% 0;
+//   background-size: 9px;
+//   height: 45px;
+//   background-repeat: no-repeat;
+//   cursor: pointer;
+// }

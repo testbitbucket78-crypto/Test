@@ -167,15 +167,19 @@
                                 <span>Phone Number*</span>
                                 <div class="numb-1 d-flex">
                               
-                                  <!-- <ngx-intl-tel-input [cssClass]="'custom'" [preferredCountries]="preferredCountries"
-                                  [enableAutoCountrySelect]="true" [enablePlaceholder]="false"
-                                  [searchCountryFlag]="false"
-                                  [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-                                  [selectFirstCountry]="false" [selectedCountryISO]="CountryISO.India"
-                                  [maxLength]="10" [phoneValidation]="true" [separateDialCode]="true"
-                                  [numberFormat]="PhoneNumberFormat.National" name="Phone_number"
-                                  formControlName="Phone_Number">
-                                  </ngx-intl-tel-input> -->
+                                    <div class="row">
+                                        <!-- <label for="floatingSelectGrid" class="required">Phone Number*</label> -->
+                                        <select class="input-formm" id="country_code" formControlName="country_code">
+                                            <option [selected]="editContact.get('country_code')?.value"
+                                                *ngFor="let countryCoode of countryCodes; let i = index">
+                                                {{ countryCoode }}
+                                            </option>
+                                        </select>
+                                        <input (input)="hangeEditContactInuts($event)" class="form-control phone-no" type="text"
+                                            onKeyPress="return /^[\d+]$/.test(event.key)" name="Phone_number"
+                                            value={{EditContactForm.Phone_number}} />
+                                         
+                                    </div>
                                 </div>
                             </div>
                         </div>
