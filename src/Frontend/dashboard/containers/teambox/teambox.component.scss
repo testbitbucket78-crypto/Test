@@ -1133,7 +1133,7 @@ button:focus, input:focus {
 
 .popup-dialog.autoreply {
     max-width: 90%;
-    margin-top: -210px;
+    margin-top: -236px;
 }
 .popup-dialog.NoteOption{
     width: 100px;
@@ -2347,3 +2347,12 @@ label span {
 }
     }
   
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
+      

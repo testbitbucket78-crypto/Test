@@ -1,4 +1,4 @@
-import { Component, OnInit,ViewChild,ElementRef, Input, HostListener, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit,ViewChild,ElementRef, Input, HostListener, Output, EventEmitter,AfterViewInit  } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -11,6 +11,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { isNullOrUndefined } from 'is-what';
+
 declare var $: any;
 
 @Component({
@@ -20,7 +21,7 @@ declare var $: any;
 	providers: [ToolbarService, LinkService, ImageService, HtmlEditorService],
 	// encapsulation: ViewEncapsulation.None
 })
-export class AddSmartRepliesComponent implements OnInit {
+export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 
 
 	// ******* Router Guard  *********//
@@ -31,7 +32,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	}
 
 	@ViewChild('notesSection') notesSection: ElementRef | undefined;
-	@ViewChild('chatSection') chatSection: ElementRef | undefined;
+	@ViewChild('chatSection') chatSection: ElementRef | any; 
 	@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any;
 
 
@@ -301,6 +302,7 @@ export class AddSmartRepliesComponent implements OnInit {
 	};
 
 	isSendButtonDisabled=false
+click: any;
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService,private elementRef: ElementRef,private location:Location) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -338,6 +340,22 @@ export class AddSmartRepliesComponent implements OnInit {
 	
 	
 	}
+
+
+	
+	ngAfterViewInit() {
+		if (this.chatSection) {
+		  this.scrollChatToBottom();
+		}
+	  }
+
+	scrollChatToBottom() {
+		const chatWindowElement: HTMLElement = this.chatSection.nativeElement;
+    chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
+	
+	  }
+
+	
 
 	routeToSettings() {
 		this.closeAllModal();
@@ -382,6 +400,11 @@ export class AddSmartRepliesComponent implements OnInit {
 		}
 
 	}
+
+
+
+
+	
 	closeEmoji(){
 		this.showEmoji =false;
 	}
@@ -394,6 +417,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		this.saveSelection = this.selection.save(this.range, document);
 				
 	}
+	
 
 	ToggleAttachmentBox() {
 		this.closeAllModal()
@@ -417,6 +441,7 @@ export class AddSmartRepliesComponent implements OnInit {
 		
 	}
 
+	
 	saveFiles(files: FileList) {
 		if(files[0]){
 		let imageFile = files[0]
@@ -442,6 +467,8 @@ export class AddSmartRepliesComponent implements OnInit {
         this.closeAllModal();
 		$("#sendfile").modal('hide');
 	}
+
+	
 	
 	ToggleAttributesOption() {
 		this.closeAllModal()
@@ -453,6 +480,8 @@ export class AddSmartRepliesComponent implements OnInit {
 		$("#showQuickReply").modal('show');
 		document.getElementById('addsmartreplies')!.style.display = 'none';
 	}
+
+	
 
 	ToggleSavedMessageOption() {
 		this.closeAllModal()
@@ -692,6 +721,30 @@ export class AddSmartRepliesComponent implements OnInit {
 			this.custommesage = '';
 			
 		}
+
+		
+
+
+
+
+		onActionBegin(args: any): void {
+			if (args.requestType === 'keydown' && args.event.which === 13) {
+			  // Enter key pressed
+			  this.yourMethod();
+			  args.cancel = true; // Prevents the default behavior
+			}
+		  }
+		
+		  yourMethod(): void {
+			// Your custom method logic goes here
+			console.log('Enter key pressed! Call your custom method.');
+		  }
+		
+
+
+
+
+
 
 	
 	removeMessage(index:number) {
@@ -1071,5 +1124,7 @@ export class AddSmartRepliesComponent implements OnInit {
 			this.showEmoji = false;
 		}
   }
+
+  
 
 }
