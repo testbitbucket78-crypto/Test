@@ -281,11 +281,12 @@
 						<label for="Channel" class="required">Channel</label>
 						<input class="form-control select_box" type="text" placeholder="Select channel" name="channel_label"
 								formControlName="channel_label" id="channel_label" (click)="toggleChannelOption()" readonly />
-						<div *ngIf="ShowChannelOption" class="popup-dialog">
+						<div *ngIf="ShowChannelOption" (click)="stopPropagation($event)" class="popup-dialog">
 							<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)">
 								{{channel.label}}
 							</p>
 						</div>
+						<div *ngIf="ShowChannelOption" class="overlay" (click)="closeAddActionDialog()"></div>
 					</div>
 				</form>
 				</div>
@@ -351,8 +352,8 @@
 							<label class="container" (click)="selectTemplate(template)">
 								<input type="radio" name="selectedTemplate">
 								<span class="checkmark radio"></span>
-								<p>{{template.title}}</p>
-								<p><span>{{template.created_at}}</span></p>
+								<p>{{template.TemplateName}}</p>
+								<p><span>{{template.created_at | date:'dd-MM-yyyy'}}</span></p>
 							</label>
 							
 							<div class="inner_box">
@@ -911,8 +912,8 @@
 				     <p (click)="selectItem(i)">
 						{{list.addedfilters?list.addedfilters.length:0}} Filter Applied<img src="/assets/img/teambox/dropdown.svg"> 
 					</p>
-					<div *ngIf="list.addedfilters" [ngClass]="slectedItem ==i ? 'applied_filter_popup active' : 'applied_filter_popup'">
-						<div class="item" *ngFor='let filter of list.addedfilters;let i = index' (click)="updatedContactList(list,i)">
+					<div *ngIf="list.addedfilters!=0" [ngClass]="slectedItem ==i ? 'applied_filter_popup active' : 'applied_filter_popup'">
+						<div class="item" *ngFor='let filter of list.addedfilters;let i = index'>
 							<span *ngIf="filter.filterOperator">{{filter.filterOperator}}</span><p >{{filter.filterPrefix}} {{filter.filterBy}} {{filter.filterValue}}</p>
 						</div>
 						

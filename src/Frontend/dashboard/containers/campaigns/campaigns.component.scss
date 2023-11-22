@@ -1176,9 +1176,6 @@
 	border-radius: 12px;
 	margin: 5px;
 	flex-wrap: nowrap;
-	background:#FFFFFF url("/assets/img/teambox/icon-close.svg") no-repeat;
-	background-size: 6px;
-	background-position: center right 8px;
 	padding-right: 15px;
 
 	}
@@ -1945,5 +1942,13 @@
     font-family: 'Manrope';
     font-size: 13px;
 }
+
+.overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+  }
 
 

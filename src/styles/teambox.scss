@@ -293,6 +293,7 @@ label.container input[type="radio"]:checked + span.label {
     .message_box.left .content .message_text p,
     .message_box.left .content .message_text p span{
         color:#000;
+        word-break: break-word;
     }
 
 
