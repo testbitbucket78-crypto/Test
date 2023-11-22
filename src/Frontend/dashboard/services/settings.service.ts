@@ -222,4 +222,7 @@ export class SettingsService {
     return this.http.post<any>('https://waweb.sampanatechnologies.com/IsClientReady',spid);
   
 }
+   getSPPhoneNumber(uid:any):Observable<any> {
+    return this.http.get<any>(`https://authapi.sampanatechnologies.com/users/${uid}`);
+   }
 }

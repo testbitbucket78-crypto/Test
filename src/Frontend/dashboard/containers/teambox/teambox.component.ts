@@ -294,6 +294,7 @@ countryCodes = [
 	selectedInteraction:any = [];
 	selectedNote:any=[];
 	contactList:any = [];
+	contactId:number = 0;
 	interactionList:any = [];
 	interactionListMain:any=[];
 	selectedTemplate:any  = [];
@@ -348,6 +349,8 @@ countryCodes = [
 	allTemplatesMain:any=[];
 	filterTemplateOption:any='';
 	attributesList:any=[];
+	showFullMessage: boolean = false;
+	maxLength: number = 150;
 	
 	
 	
@@ -846,16 +849,13 @@ sendattachfile(){
 
 	scrollChatToBottom() {
 		const chatWindowElement = this.chatSection.nativeElement;
-		chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
-
-		const toolbar = chatWindowElement.querySelector('.e-toolbar');
-	    toolbar.removeAttribute('data-tooltip-id');
-	
+		chatWindowElement.scrollTop = chatWindowElement.scrollHeight;	
 	  }
 
 	async subscribeToNotifications() {
 		let notificationIdentifier = {
-			"UniqueSPPhonenumber" : (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
+			"UniqueSPPhonenumber" : (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number,
+			"spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
 		}
 		this.websocketService.connect(notificationIdentifier);
 			this.websocketService.getMessage().subscribe(message => {
@@ -924,7 +924,7 @@ sendattachfile(){
 		this.searchFocused = false
 	}
 	toggleProfileView(){
-		//console.log(this.selectedInteraction)
+		console.log(this.selectedInteraction)
 		this.showFullProfile = !this.showFullProfile
 	}
 	toggleAttachedMediaView(){
@@ -1282,6 +1282,8 @@ selectInteraction(Interaction:any){
 	}
 	Interaction['selected']=true
 	this.selectedInteraction =Interaction
+	this.contactId = Interaction.customerId
+	console.log(this.contactId)
 	console.log(Interaction)
 	this.getPausedTimer()
 	this.scrollChatToBottom()
@@ -1690,6 +1692,11 @@ handelStatusConfirm(){
 	}	
 	if(this.selectedInteraction['interaction_status']=='Resolved'){
 		this.updateConversationStatus('Open')
+
+		var bodyData = {
+			customerId: this.contactId
+		}
+		this.createInteraction(bodyData)
 	}else{
 		this.updateConversationStatus('Resolved')
 	}
@@ -1824,7 +1831,7 @@ updateConversationStatus(status:any){
 	this.apiService.updateInteraction(bodyData).subscribe(async response =>{
 		this.ShowConversationStatusOption=false
 		this.showToaster('Conversations updated to '+status+'...','success')
-		/*
+	
 		//////This time it can not be assign to any one
 		var responseData:any = response
 		var bodyData = {
@@ -1840,7 +1847,7 @@ updateConversationStatus(status:any){
 
 		});
 
-		*/
+	
 		
 		this.selectedInteraction['interaction_status']=status
 	});
@@ -2026,9 +2033,7 @@ deleteNotes(){
 		deleted_by:this.AgentId,
 		deleted_at:new Date()
 	}
-	////console.log(bodyData)
 	this.apiService.deleteMessage(bodyData).subscribe(async data =>{
-		//console.log(data)
 		this.selectedNote.is_deleted=1
 		this.selectedNote.deleted_by=this.selectedNote.AgentName
 	})
@@ -2052,7 +2057,6 @@ sendMessage(){
 	// 	return; 
 	// }
  
-	 {
 		let postAllowed =false;
 		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
 			postAllowed =true;
@@ -2138,6 +2142,7 @@ sendMessage(){
 			}else{
 				this.selectedNote.message_text= bodyData.message_text
 			}
+
 			
 
 			this.newMessage.reset({
@@ -2152,7 +2157,7 @@ sendMessage(){
 	}else{
 		this.showToaster('Oops! You are not allowed to post content','warning')
 	}
-	}
+	
 
 
 }
@@ -2186,6 +2191,18 @@ onPhoneNumberChange(event: any) {
 		$('.modal-backdrop').remove();
 	  }
 
+	  limitCharacters(message: string) {
+        let maxLength = 50;
+        if (message.length <= maxLength) {
+        return message;
+        } else {
+		return this.showFullMessage ? message : message.substring(0,maxLength) + "...";
+        }
+    }
+
+		toggleShowFullMessage() {
+			this.showFullMessage = !this.showFullMessage;
+		}
 
 
 }

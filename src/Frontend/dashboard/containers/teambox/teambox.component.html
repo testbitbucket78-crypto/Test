@@ -72,7 +72,8 @@
 										<div class="contacts_detail">
 											<p class="name">{{item.Name}}</p>
 											<div *ngIf="item.lastMessage" class="message"
-												[innerHTML]="item.lastMessage.message_text"></div>
+												[innerHTML]="limitCharacters(item.lastMessage.message_text)">
+											</div>
 										</div>
 									</div>
 									<div class="contacts_right">
@@ -238,7 +239,9 @@
 
 
 										</div>
-										<div class="message_text" [innerHTML]="message.message_text"></div>
+										<div class="message_text" [innerHTML]="message.message_text">
+											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
+										</div>
 										<span class="message_time"
 											*ngIf="message.created_at">{{timeSince(message.created_at)}}</span>
 									</div>
@@ -624,8 +627,7 @@
 							</div>
 						</div>
 					</div>
-
-					<!--  -->
+					
 					<div class="profile" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
 						<img class="toggle_provice_view" (click)="toggleAttachedMediaView()"
 							src="/assets/img/teambox/search-clear.svg">
@@ -781,7 +783,7 @@
 								aria-describedby="basic-addon2" (keyup)="searchContact($event)" />
 							<div class="items_list">
 								<div *ngFor="let alist of attributesList" class="attribute"
-									(click)="selectAttributes($event)">
+									(click)="selectAttributes(alist)">
 									<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
 								</div>
 							</div>
