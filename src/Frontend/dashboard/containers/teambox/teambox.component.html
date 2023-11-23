@@ -339,8 +339,20 @@
 							</div>
 							<div class="input-area">
 								<ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor
-									[toolbarSettings]='tools' [height]='100' (click)="resetMessageTex()" (keydown)="handleKeyPress($event)">
-								</ejs-richtexteditor>
+  [toolbarSettings]='tools' [height]='100' (click)="resetMessageTex()" (keydown)="handleKeyPress($event)">
+</ejs-richtexteditor>
+
+<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
+  <p class="label">@mention</p>
+  <p *ngFor="let user of agentsList;let k = index" (click)="InsertMentionOption(user)">
+    <span>
+      <img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
+      {{user.name}}
+    </span>
+  </p>
+</div>
+
+
 
 								<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
 									<p class="label">@mention</p>
@@ -421,12 +433,14 @@
 							<div class="custom_row mt-3">
 								<div class="col-md-6">
 									<label>Email Id</label>
-									<p>{{selectedInteraction.emailId}}</p>
-
+									<p fxLayout="row" fxLayout.xs="column" fxLayoutAlign="start start" fxLayoutGap="10px" class="wrap-text">
+									  {{selectedInteraction.emailId}}
+									</p>
+								  
 									<label>Message Opt-in</label>
-									<p>{{selectedInteraction.OptInStatus}}</p>
-								</div>
-
+									<p class="wrap-text">{{selectedInteraction.OptInStatus}}</p>
+								  </div>
+								  
 								<div class="col-md-6">
 									<label>Phone Number</label>
 									<p>{{selectedInteraction.Phone_number}}</p>
@@ -1424,8 +1438,11 @@
 							{{ countryCode }}
 						</option>
 					</select>
-					<input (input)="hangeEditContactInuts($event)" (change)="formatPhoneNumberEdit()" class="form-control phone-no" type="text" name="Phone_number" value={{EditContactForm.Phone_number}} />
-
+					<input (input)="hangeEditContactInuts($event)"  class="form-control phone-no" type="text" name="Phone_number" value={{EditContactForm.Phone_number}} type="text"  formControlName="Phone_number" 
+				 maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$"
+					onKeyPress="return /^[0-9]$/.test(event.key)"
+					[ngClass]="{'is-invalid' :newContact.controls.Phone_number.touched && newContact.controls.Phone_number.errors }" 
+					(change)="formatPhoneNumberEdit()"> 
 
 				</div>
 

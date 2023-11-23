@@ -46,6 +46,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 
 	active = 1;
 	stepper: any;
+	contactowner = 0;
 	data: any;
 	val: any;
 	SPID!:any;
@@ -99,6 +100,9 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	successMessage = '';
 	warnMessage = '';
 	assignedAgentList: agentMessageList [] =[];
+	editableMessageIndex: number | null = null;
+	
+
 	assignAddTag: [] =[];
 	assignedTagList:any []=[];
 	dragAreaClass: string='';
@@ -114,6 +118,10 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	filterTemplateOption:any='';
 	selectedTemplate:any  = [];
 	Media:any;
+	MatchingCriteria:any;
+	matchingCriteria:any;
+	selectedcriteria:any;
+	templateStates: { [key: string]: boolean } = {};
 	
 
     /**richtexteditor **/ 
@@ -318,7 +326,7 @@ click: any;
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
 
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: false
+			linear: true
 			,
 			animation: true
 		});
@@ -519,6 +527,8 @@ click: any;
 		this.chatEditor.value =htmlcontent
 	}
 
+	
+
 	searchSavedMessage(event:any){
 		let searchKey = event.target.value
 		if(searchKey.length>2){
@@ -585,6 +595,16 @@ click: any;
 	}
 
 
+	
+	addinserttemplate(templateId: string,action: string,checked: boolean) { 
+		if (action === 'contactowner') {
+		  this.contactowner = checked ? 1 : 0;
+		  this.templateStates[templateId] = checked;
+		  console.log(`Template ${templateId} checked: ${checked}`);
+	  }
+	  
+	}
+
 	filterTemplate(temType:any){
 
 		let allList  =this.allTemplatesMain;
@@ -605,13 +625,13 @@ click: any;
 	   }
 		var newArray=[];
 	   for(var m=0;m<allList.length;m++){
-          if(allList[m]['is_active']==1){
+		  if(allList[m]['is_active']==1){
 			newArray.push(allList[m])
 		  }
-
+	
 	   }
 	   this.allTemplates= newArray
-
+	
 		
 	}
 	
@@ -640,16 +660,25 @@ click: any;
 		
 	}
 
-
 	public onInsert(item: any) {
-
-		this.saveSelection.restore();
+		// Get the current selection and store it
+		const selection = this.chatEditor.getSelection();
+		this.saveSelection.save(selection);
+	  
+	
 		this.chatEditor.executeCommand('insertText', item.target.textContent);
+	  
+	
+		this.chatEditor.focus();
+	  
+		
 		this.chatEditor.formatter.saveData();
 		this.chatEditor.formatter.enableUndo(this.chatEditor);
-		// this.showEmoji = !this.showEmoji;
-
-	}
+	  
+	  }
+	  
+	  
+	  
 
 	showToaster(message:any,type:any){
 		if(type=='success'){
@@ -716,17 +745,11 @@ click: any;
 		// 	return;
 		// }
 		
-		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile) })
+		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
 		console.log(this.messageMeidaFile)
-			this.custommesage = '';
-			
+			this.custommesage = '';	
 		}
-
-		
-
-
-
-
+	
 		onActionBegin(args: any): void {
 			if (args.requestType === 'keydown' && args.event.which === 13) {
 			  // Enter key pressed
@@ -774,6 +797,8 @@ click: any;
 
 	toggleEditable(index: number) {
 		this.isEditable = !this.isEditable;
+		this.editableMessageIndex = this.isEditable ? index : null;
+
 		setTimeout(() => { document.getElementById(`msgbox-body${index}`); }, 100);
 		
 		console.log(document.getElementById(`msgbox-body${index}`));
@@ -803,10 +828,12 @@ click: any;
 	toggleAssignOption(index: number) {
   if (this.assignActionList[index] === "Assign Conversation") {
     this.ShowAssignOption = !this.ShowAssignOption;
+	this.ShowAddAction = false;
   }
   else if (this.assignActionList[index] === "Add Contact Tag") {
 	  this.ShowRemoveTag =false;
 	  $("#addTagModal").modal('show'); 
+	  this.ShowAddAction = false;
 
   }
 //   else if (this.assignActionList[index] === "Trigger Flow") {
@@ -820,7 +847,17 @@ click: any;
   }
  this.ShowAddAction = false;
 
+
 }
+
+stopPropagation(event: Event) {
+    event.stopPropagation();
+  }
+ 
+
+  closeEditableSection() {
+    this.isEditable = false;
+  }
 
 
 
@@ -962,8 +999,18 @@ click: any;
 	onSelectionChange(entry: any): void {
 		this.model = entry;
 		console.log(this.model)
+
+
 		sessionStorage.setItem('MatchingCriteria',this.model)
+		this.selectedcriteria=this.model;
+		console.log(this.model);
 	}
+
+	closeAddActionDialog() {
+		// Close the dialog when clicking outside
+		this.ShowAddAction = false;
+	  }
+	
 	
 
 	sendNewSmartReply(smartreplysuccess: any, smartreplyfailed: any) {
@@ -1017,10 +1064,11 @@ click: any;
 	verifyKeyword() {
 
 		const isEmptyKeyword = this.keywords.some(k => k.trim() !=='');
-		if (!isEmptyKeyword) {
+		if (!isEmptyKeyword || !this.selectedcriteria){
 			this.showToaster("! Keyword and Matching Criteria required",'error');
 			return;
 		}
+		
 		 else {
 			var data= {
 				SP_ID: sessionStorage.getItem('SP_ID'),

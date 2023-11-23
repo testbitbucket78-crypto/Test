@@ -2054,9 +2054,9 @@ label.container {
 
       // Custom styles for radio buttons
 
-// input[type="radio"] {
-//     display: none;
-// }
+input[type="radio"] {
+    display: none;
+}
 
 .template_box_inner label {
     display: inline-block;
@@ -2079,6 +2079,14 @@ label.container {
     border-radius: 50%;
     background-color: #FFFFFF;
     transition: border-color 0.3s, background-color 0.3s;
+}
+
+.form-check.template_box_inner label::before{
+    left: -22px;
+}
+
+.form-check.template_box_inner label{
+    padding: 0px 0 0 1px!important;
 }
 
 input[type="radio"]:checked + label::before {
@@ -2143,3 +2151,13 @@ input[type="radio"]:checked + label::before {
     background-size: contain;
     background-repeat: no-repeat;
 }
+
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  

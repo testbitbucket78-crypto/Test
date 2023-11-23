@@ -383,6 +383,7 @@ countryCodes = [
 		});
 
 	}
+	
 
 	
 	@HostListener('document:click', ['$event'])
@@ -412,9 +413,12 @@ countryCodes = [
 	handleKeyPress(event: KeyboardEvent) {
 		
 		// Check if the pressed key is "Enter"
-		if (event.key === 'Enter') {
-		  this.sendMessage();
-		}
+		if (event.key === 'Enter' && !event.shiftKey) {
+			// Prevent sending the message when Enter is pressed without Shift
+			
+			event.preventDefault();
+			this.sendMessage(); // Call your send message function here
+		  }
 	  }
 
 	
@@ -2052,10 +2056,18 @@ deleteNotes(){
 sendMessage(){
 
 	this.custommesage='';
-	// if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+	// if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>' && this.messageMeidaFile.value =='' ) {
 	// 	this.showToaster('! Please type your message first','error');
 	// 	return; 
 	// }
+	const message = this.custommesage.trim();
+    if (message !== '') {
+      // Send the message logic here
+      console.log('Sending message:', message);
+
+      // Clear the editor after sending the message
+      this.custommesage = '';
+    }
  
 		let postAllowed =false;
 		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
