@@ -23,8 +23,8 @@
 
 .input-area .popup-dialog.mention {
     max-width: 220px;
-    margin-top: -120px;
-    margin-left: 200px;
+    margin-top: -185px;
+    margin-left: 151px;
 }
 
 .input-area .popup-dialog .tabs {
@@ -1522,13 +1522,11 @@ span {
     background: #FFF4F2 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
-    position:fixed;
 }
 
 .custom_modal.sm {
-    width: 30%;
-    left: 35%;
-    top: 10%;
+    width: 108%;
+    margin-left: -4%;
 }
 
 .custom_modal.lg {
@@ -2346,8 +2344,6 @@ label span {
         justify-content: center;
 }
     }
-  
-
     .overlay {
         position: fixed;
         top: 0;
@@ -2355,4 +2351,9 @@ label span {
         bottom: 0;
         left: 0;
       }
-      
+      /* Add this style to make the text wrap */
+.wrap-text {
+    word-wrap: break-word;
+    white-space: normal;
+  }
+  
