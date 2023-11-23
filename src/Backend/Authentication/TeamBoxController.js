@@ -307,8 +307,8 @@ const insertMessage = async (req, res) => {
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id])
             let channelType = await db.excuteQuery('select channel from EndCustomer where customerId=?', [customerId]);
            
-            let channel = channelType.length > 0 ? channelType[0].channel : 'WhatsApp Web'
-            console.log("channelType" + channel);
+            const channel = channelType.length > 1 ? channelType[0].channel : 'WhatsApp Web';
+            
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
            let msg_id=await db.excuteQuery(messageQuery, [values])
             if (agentName.length >= 0) {
