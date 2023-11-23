@@ -137,9 +137,8 @@ font-family: Manrope;
 
  .months-view{
   display: grid;
-  gap: 0.6vw;
-  grid-template-columns: auto auto auto auto;
-  padding: 1.8rem 1.4rem 0.5rem 1.4rem;
+  gap: 1.6vw;
+  grid-template-columns: repeat(auto-fill, minmax(142px, 1fr));
  }
 
  /* width */

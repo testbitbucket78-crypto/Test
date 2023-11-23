@@ -139,7 +139,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     //var autoReply = replymessage[0].Message
     //console.log(replymessage.length)
 
-    console.log(" replymessage.length " + replymessage.length)
+    //console.log(" replymessage.length " + replymessage.length)
     if (replymessage.length > 0) {
       //console.log("replymessage.length")
       iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType)

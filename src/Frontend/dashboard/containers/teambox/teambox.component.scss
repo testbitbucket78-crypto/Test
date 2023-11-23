@@ -62,9 +62,11 @@
     border: 0;
 }
 
+
 .e-richtexteditor.e-rte-tb-expand .e-rte-content {
     border-bottom: 0px;
     border-top: 0px;
+    word-break: break-word;
 }
 
 .e-toolbar, .e-toolbar .e-toolbar-items,
@@ -87,6 +89,7 @@
 .e-richtexteditor .e-rte-content .e-content {
     padding: 0px;
 }
+
 
 .flex {
     display: flex;
@@ -534,6 +537,7 @@ img.preview_icon {
 
 .contacts_left, .contacts_right {
     display: flex;
+    word-break: break-word;
 }
 
 .contacts_right {
@@ -819,6 +823,7 @@ img.no-dp {
 .message_box.left .content .message_text p,
 .message_box.left .content .message_text p span {
     color: #000;
+    word-break: break-word;
 }
 
 .message_box .content span.message_time {
@@ -876,6 +881,7 @@ img.no-dp {
     border-radius: 17px 17px 4px 17px;
     color: #fff;
     font-size: 12px;
+    word-break: break-word;
 }
 
 .conversation_list.chat .message_box.left .content {
@@ -2322,6 +2328,7 @@ label span {
     width: 4.7rem;
     outline: none;
     font-size: 13px;
+    cursor: pointer;
     background: #ffffff;
 }
 

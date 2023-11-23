@@ -1,8 +1,8 @@
-import { Component,AfterViewInit, OnInit,ViewChild, ElementRef,HostListener  } from '@angular/core';
+import { Component, OnInit,ViewChild, ElementRef,HostListener  } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from './../../services';
 declare var $: any;
 
@@ -278,7 +278,7 @@ export class CampaignsComponent implements OnInit {
 	selectedcontactFilterBy:any='';
 	
 	 
-constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: TeamboxService,private fb: FormBuilder,private router: Router) {
+constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: TeamboxService,private settingsService:SettingsService,private fb: FormBuilder,private router: Router) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -1911,9 +1911,11 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	}
 
 	async getTemplates(){
-		this.apiService.getTemplates(this.SPID).subscribe(allTemplates =>{
-			this.allTemplatesMain = allTemplates
-			this.allTemplates = allTemplates
+		let SPID = Number(this.SPID)
+		this.settingsService.getTemplateData(SPID,1).subscribe(allTemplates =>{
+			this.allTemplatesMain = allTemplates.templates
+			console.log(this.allTemplatesMain)
+			this.allTemplates = allTemplates.templates
 		})
 		
 	}
@@ -2053,6 +2055,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				window.open(url);
 			})
 		}
+
+		stopPropagation(event: Event) {
+			event.stopPropagation();
+		  }
+		  closeAddActionDialog() {
+			this.ShowChannelOption = false;
+		  }
+		}
+
+		
 	
 
-}
