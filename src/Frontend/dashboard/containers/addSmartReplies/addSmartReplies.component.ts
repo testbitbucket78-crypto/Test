@@ -320,7 +320,7 @@ click: any;
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService,private elementRef: ElementRef,private location:Location) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
-		config.keyboard = false;
+		config.keyboard = true;
 	}
 
 
