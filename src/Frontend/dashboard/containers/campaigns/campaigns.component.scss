@@ -816,8 +816,9 @@
 	background: #FFF4F2 0% 0% no-repeat padding-box;
 	box-shadow: 4px 22px 54px #695F971A;
 	border-radius: 30px;
-	width: 214%;
-    margin-left: -52%;
+    width: 180%;
+    margin-left: -37%;
+    height: 41rem;
 	}
 	.important_contact_modal.sm{
 		width: 30%;
@@ -1520,6 +1521,23 @@
 	.applylist_contnet tr td p.tag_item span.new{
 	background: green;
 	}
+	.search-box.table{
+		width: 20rem;
+		
+	}
+
+	.text-input.update{
+		color:black;
+		font-weight:500;
+	}
+	.applylist_contnet_body tr td {
+		font-size: 12px;
+		color: #000;
+		text-align: left;
+		padding: 5px 10px;
+		font-family: 'Manrope';
+		font-weight: 600;
+	}
 
 	.addeidtcampaign_step .outerbox .innerbox p.form-control.btn.rt_close{
 	background: #fff url("/assets/img/campaign/search-clear.svg") no-repeat;
@@ -1951,4 +1969,15 @@
 	left: 0;
   }
 
+
+  .modal-title.color{
+	font: var(--unnamed-font-style-normal) normal  var(--unnamed-font-size-22)/var(--unnamed-line-spacing-60) var(--unnamed-font-family-manrope-bold)!important;
+	color: var(--unnamed-color-000000)!important;
+	font-family: 'Manrope';
+	font-weight: 600;
+  }
+
+  .search-box.createlist{
+	width: 166%;
+  }
 

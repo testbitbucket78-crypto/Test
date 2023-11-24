@@ -12,6 +12,7 @@ import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncf
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { isNullOrUndefined } from 'is-what';
 
+
 declare var $: any;
 
 @Component({
@@ -76,7 +77,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	templatesData:[] =[];
 	editedText:string ='';
 	editedMessage: string = '';
-	isEditable: boolean = false;
+	isEditable: boolean[] = [];
 	addText:string ='';
 	showBox:boolean = false;
 	showBox1: boolean = false;
@@ -143,6 +144,11 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	mediaType: any = '';
 	showMention: any = false;
 	editTemplate: any = false;
+	searchText!:string;
+	Quickyreplysearch!:string;
+	savedmessagesearch!:string;
+	attributesearch!:string;
+
 
 	attributesList!:any;
 
@@ -343,6 +349,7 @@ click: any;
 		 this.getTemplatesList()
 		 this.routerGuard();
 		 this.sendattachfile()
+		 this.getQuickResponse();
 
 	
 	
@@ -360,8 +367,10 @@ click: any;
 	scrollChatToBottom() {
 		const chatWindowElement: HTMLElement = this.chatSection.nativeElement;
     chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
+	const toolbar = chatWindowElement.querySelector('.e-toolbar');
 	
 	  }
+	
 
 	
 
@@ -404,6 +413,7 @@ click: any;
 	resetMessageTex() {
 		if (this.chatEditor.value == '<p>Type Reply...</p>') {
 			this.chatEditor.value = '';
+			this.scrollChatToBottom();
 			
 		}
 
@@ -523,8 +533,10 @@ click: any;
 	
 	selectQuickReplies(item:any){
 		this.closeAllModal()
-		var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.title+'</b></span><br>'+item.content+'</p>';
+		var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'</p>';
 		this.chatEditor.value =htmlcontent
+		this.getQuickResponse();
+
 	}
 
 	
@@ -661,20 +673,31 @@ click: any;
 	}
 
 	public onInsert(item: any) {
-		// Get the current selection and store it
-		const selection = this.chatEditor.getSelection();
-		this.saveSelection.save(selection);
+		const emojiText = item.target.textContent;
 	  
-	
-		this.chatEditor.executeCommand('insertText', item.target.textContent);
+		// Insert the emoji at the current cursor position
+		this.chatEditor.executeCommand('insertText', emojiText);
 	  
-	
-		this.chatEditor.focus();
+		// Move the cursor to the end of the editor content
+		this.moveToEndOfEditor();
 	  
-		
+		// Save the changes
 		this.chatEditor.formatter.saveData();
 		this.chatEditor.formatter.enableUndo(this.chatEditor);
+	  }
 	  
+	  private moveToEndOfEditor() {
+		const editor = this.chatEditor.contentModule.getDocument();
+		const range = editor.createRange();
+	  
+		// Set the range to the end of the editor content
+		range.selectNodeContents(editor.body);
+		range.collapse(false);
+	  
+		// Update the selection with the new range
+		const selection = editor.defaultView.getSelection();
+		selection.removeAllRanges();
+		selection.addRange(range);
 	  }
 	  
 	  
@@ -744,11 +767,16 @@ click: any;
 		// 	this.showToaster('! Please type your message first','error');
 		// 	return;
 		// }
+
+
 		
 		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
 		console.log(this.messageMeidaFile)
 			this.custommesage = '';	
+			this.scrollChatToBottom();
 		}
+
+
 	
 		onActionBegin(args: any): void {
 			if (args.requestType === 'keydown' && args.event.which === 13) {
@@ -794,16 +822,32 @@ click: any;
 	}
 
 	/*** edit message and assinged conversation***/ 
-
 	toggleEditable(index: number) {
-		this.isEditable = !this.isEditable;
-		this.editableMessageIndex = this.isEditable ? index : null;
-
-		setTimeout(() => { document.getElementById(`msgbox-body${index}`); }, 100);
+		this.isEditable[index] = !this.isEditable[index];
+		this.editableMessageIndex = this.isEditable[index] ? index : null;
+	  
+		setTimeout(() => { 
+		  const element = document.getElementById(`msgbox-body${index}`);
+		  if (element) {
+			element.focus(); // Set focus to the editable element
+		  }
+		}, 100);
 		
 		console.log(document.getElementById(`msgbox-body${index}`));
-		
-		}
+	  }
+
+	  initializeEditableState() {
+		this.isEditable = this.messages.map(() => false);
+	  }
+
+	 
+	
+	  closeAddAction() {
+		// Close the dialog when clicking outside
+		this.ShowAddAction = false;
+	  }
+
+
 	onEdit(msgText:string) {
 		this.editedMessage = msgText;
 		
@@ -854,9 +898,11 @@ stopPropagation(event: Event) {
     event.stopPropagation();
   }
  
-
   closeEditableSection() {
-    this.isEditable = false;
+	// Iterate over the array and set isEditable to false for all messages
+	this.isEditable.forEach((_, index) => {
+	  this.isEditable[index] = false;
+	});
   }
 
 
@@ -1095,6 +1141,8 @@ stopPropagation(event: Event) {
 		}
 
 	}
+
+	
 	
 
 	  /*  TOGGLE FUZZY, EXACT & CONTAINS DIVs  */
@@ -1173,6 +1221,10 @@ stopPropagation(event: Event) {
 		}
   }
 
-  
-
+  getQuickResponse(){
+	this.settingsService.getTemplateData(this.SPID,0).subscribe(response => {
+	  this.QuickReplyList=response.templates;
+	  console.log(this.QuickReplyList);
+	});    
+  }	  
 }

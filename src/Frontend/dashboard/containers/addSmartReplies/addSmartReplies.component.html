@@ -141,17 +141,18 @@
         <div class="interactions">
           <div  class="child-int-1 py-2">
             <div  #chatSection class="child-interaction-1">
-              <div  id="messgae-boc"  *ngFor="let message of assignedAgentList; let i = index">
-                <div  class="message-box" *ngIf="message.ActionID == 1">
+              <div  id="messgae-boc"   *ngFor="let message of assignedAgentList; let i = index">
+                <div class="message-box" *ngIf="message.ActionID == 1">
                   <p id="msgbox-head">Message</p>
-                  <p id="msgbox-body{{i}}" [contentEditable]="isEditable" (input)="onEdit($event.target.innerHTML)"
+                  <p id="msgbox-body{{i}}" [contentEditable]="isEditable[i]" (input)="onEdit($event.target.innerHTML)"
                     [innerHTML]="message.Value"></p>
                   <div>
-                    <button class="msg-edit-btn" [class.editable]="isEditable" [class.non-editable]="!isEditable"
+                    <button class="msg-edit-btn" [class.editable]="isEditable[i]" [class.non-editable]="!isEditable[i]"
                       (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
                     <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
                   </div>
                 </div>
+                
                 <div class="message-box" *ngIf="Media">
                   <p id="msgbox-head">Media</p>
                   <p
@@ -163,16 +164,16 @@
                   <p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
                   <div class="d-flex flex-wrap assign-container">
                     <p class="py-1 px-2 m-0" id="msgbox-body1"><b>Conversation Assigned:</b></p>
-                    <p class="py-1 m-0" id="msgbox-body2" [contentEditable]="isEditable"
+                    <p class="py-1 m-0" id="msgbox-body2" [contentEditable]="isEditable[i]"
                       (input)="onActionEdit($event.target.innerHTML)">
                       {{message.Value}}</p>
                   </div>
                   <div>
-                    <button class="msg-edit-btn" (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
-                    <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+                    <button class="msg-edit-btn" [class.editable]="isEditable[i]" [class.non-editable]="!isEditable[i]"
+                    (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>                    <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
                   </div>
-
                 </div>
+                
                 <div *ngIf="message.ActionID == 3">
                   <div class="add-tag">
                     <p id="msgbox-head1">Action</p>
@@ -260,26 +261,25 @@
             </p>
           </div>
 
-          <div *ngIf="ShowAddAction" class="popup-dialog AssignAction">
+          <div *ngIf="ShowAddAction" class="popup-dialog AssignAction" (click)="stopPropagation($event)">
             <p class="label">Add Action</p>
             <p class="d-flex justify-content-around" *ngFor="let assignAction of assignActionList; let m = index"
               (click)="toggleAssignOption(m)">
               <span>{{assignAction}}</span><img class="pr-3 arrow-sign" src="../../../../assets/img/arrow-sign.svg" />
             </p>
-
           </div>
+          
+          <!-- Add a click event on the document to close the dialog when clicking outside -->
+          <div *ngIf="ShowAddAction" class="overlay" (click)="closeAddAction()"></div>
+          
 
 
-          <!--             
-                   <div *ngIf="AutoReplyOption" class="popup-dialog autoreply">
+                <!--<div *ngIf="AutoReplyOption" class="popup-dialog autoreply">
                     <p class="label">Pause Auto Replies</p>
-              
                 <p  *ngFor="let option of AutoReplyEnableOption; let n = index" (click)="toggleAutoReply()">
                   <span>{{option}}</span>
                 </p>
-            
-              
-              </div> -->
+               </div> -->
 
           <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
             <div class="modal-dialog" role="document">
@@ -433,7 +433,7 @@
   </div>
   <div class="modal-body quickResponse">
     <input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2"
-      (keyup)="searchTemplate($event)" />
+      [(ngModel)]="searchText" />
 
     <div class="section_filter">
       <label class="container">
@@ -454,7 +454,7 @@
 
     </div>
     <div class="template_list">
-      <div class="template_box" *ngFor='let template of templatesData;let i = index'>
+      <div class="template_box" *ngFor='let template of templatesData  | searchfilter:searchText ;let i = index ' >
         <div class="template_box_inner d-flex align-items-start">
           <input type="radio" name="sel-template"(change)="addinserttemplate(template.id, 'contactowner', $event.target.checked)" id="sel-template">
           <label class="radio-label" [class.checked]="templateStates[template.id]" id="sel-template" for="sel-template"></label>
@@ -521,10 +521,10 @@
   </div>
   <div class="modal-body quickResponse">
     <input class="search-box" type="text" placeholder="Search" aria-label="Search"
-      aria-describedby="basic-addon2" (keyup)="searchSavedMessage($event)" />
+      aria-describedby="basic-addon2" [(ngModel)]="savedmessagesearch"  />
     <div class="items_list">
 
-      <div class="item" *ngFor="let Message of SavedMessageList" (click)="selectQuickReplies(Message)">
+      <div class="item" *ngFor="let Message of SavedMessageList  | searchfilter:savedmessagesearch" (click)="selectQuickReplies(Message)">
         <p class="label" [innerHTML]="Message.title"></p>
         <p [innerHTML]="Message.content"></p>
       </div>
@@ -556,12 +556,12 @@
   </div>
   <div class="modal-body quickResponse">
     <input class="search-box" type="text" placeholder="Search" aria-label="Search"
-      aria-describedby="basic-addon2" (keyup)="searchQuickReply($event)" />
+      aria-describedby="basic-addon2" [(ngModel)]="Quickyreplysearch"/>
     <div class="items_list">
 
-      <div class="item" *ngFor="let Message of QuickReplyList" (click)="selectQuickReplies(Message)">
-        <p class="label" [innerHTML]="Message.title"></p>
-        <p [innerHTML]="Message.content"></p>
+      <div class="item" *ngFor="let Message of QuickReplyList  | searchfilter:Quickyreplysearch" (click)="selectQuickReplies(Message)">
+        <p class="label" [innerHTML]="Message.Header"></p>
+        <p [innerHTML]="Message.BodyText"></p>
       </div>
     </div>
 
@@ -593,9 +593,9 @@
       </div>
       <div class="modal-body quickResponse">
         <input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2"
-          (keyup)="searchContact($event)" />
+        [(ngModel)]="attributesearch"/>
         <div class="items_list">
-          <div *ngFor="let alist of attributesList" class="attribute" (click)="selectAttributes(alist)">
+          <div *ngFor="let alist of attributesList  | searchfilter:attributesearch " class="attribute" (click)="selectAttributes(alist)">
             <p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
 
           </div>
