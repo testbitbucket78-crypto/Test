@@ -1402,7 +1402,6 @@
 	.applylist_filters_outer{
 	width: 100%;
 	overflow: auto;
-	height:40px;
 	}
 	.scroll-container::-webkit-scrollbar {
 	width: 5px;
@@ -1913,6 +1912,10 @@
 	justify-content: center;
 	}
 
+	label.container input:checked ~ .checkmark.radio {
+		background-color: #fff;
+		border:3px solid #6149CD
+		}
 
 .audience_list::-webkit-scrollbar {
     display: none;

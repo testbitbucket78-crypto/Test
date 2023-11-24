@@ -1963,7 +1963,7 @@ createCustomer(){
 		var insertId:any = responseData.insertId
 		if(insertId){
 			this.createInteraction(insertId);
-			this.getAllInteraction();
+			// this.getAllInteraction();
 			this.newContact.reset();
 			
 		}
