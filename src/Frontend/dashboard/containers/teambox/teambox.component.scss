@@ -2352,7 +2352,7 @@ label span {
 }
     }
     .overlay {
-        position: fixed;
+        position: absolute;
         top: 0;
         right: 0;
         bottom: 0;
@@ -2363,4 +2363,5 @@ label span {
     word-wrap: break-word;
     white-space: normal;
   }
+  
   

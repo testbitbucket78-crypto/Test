@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TeamboxService } from './../../services';
+import {SettingsService} from 'Frontend/dashboard/services/settings.service';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
@@ -20,7 +21,6 @@ providers: [ToolbarService, LinkService, ImageService, HtmlEditorService]
 })
 
 export class TeamboxComponent implements  OnInit {
-[x: string]: any;
 
 	private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.sampanatechnologies.com/');
 
@@ -294,7 +294,7 @@ countryCodes = [
 	selectedInteraction:any = [];
 	selectedNote:any=[];
 	contactList:any = [];
-	contactId:number = 0;
+    contactId:number = 0;
 	interactionList:any = [];
 	interactionListMain:any=[];
 	selectedTemplate:any  = [];
@@ -318,6 +318,11 @@ countryCodes = [
 	editContact: any;
 	ShowGenderOption:any=false;
 	ShowLeadStatusOption:any=false;
+	attributesearch!:string;
+	quickreplysearch!:string;
+	templatesearchreply!:string;
+	header!:string;
+	
 
 
 	newMessage:any;
@@ -349,13 +354,13 @@ countryCodes = [
 	allTemplatesMain:any=[];
 	filterTemplateOption:any='';
 	attributesList:any=[];
-	showFullMessage: boolean = false;
+showFullMessage: boolean = false;
 	maxLength: number = 150;
 	
 	
 	
 
-	constructor(private http: HttpClient,private apiService: TeamboxService,config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
+	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
 		// customize default values of modals used by this component tree
 
@@ -404,11 +409,17 @@ countryCodes = [
 		this.selectedTemplate =template
 	}
 
-	resetMessageTex(){
+resetMessageTex(){
+	// Prevent the default behavior to avoid losing focus
+	
+	// Get the current content of the editor
+	const editorContent = this.chatEditor.value;
 		if(this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value =='<p>Type…</p>'){
 			this.chatEditor.value='';
 		}
 	}
+	
+
 
 	handleKeyPress(event: KeyboardEvent) {
 		
@@ -421,7 +432,6 @@ countryCodes = [
 		  }
 	  }
 
-	
 
 
 	toggleChatNotes(optionvalue:any){
@@ -583,6 +593,8 @@ ToggleSavedMessageOption(){
 
 
 
+
+
 ToggleInsertTemplateOption(){
 	this.closeAllModal()
 	$("#insertmodal").modal('show'); 
@@ -609,12 +621,14 @@ selectAttributes(item:any){
 
 ToggleQuickReplies(){
 	this.closeAllModal()
+	this.getQuickResponse();
 	$("#quikpopup").modal('show'); 
 }
 
+
 selectQuickReplies(item:any){
 	this.closeAllModal()
-	var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.title+'</b></span><br>'+item.content+'</p>';
+	var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'</p>';
 	this.chatEditor.value =htmlcontent
 }
 searchSavedMessage(event:any){
@@ -649,6 +663,8 @@ searchQuickReply(event:any){
 		this.QuickReplyList = this.QuickReplyListMain
 	}
 }
+
+
 
 searchTemplate(event:any){
 	let searchKey = event.target.value
@@ -717,16 +733,44 @@ toggleEmoji(){
 	this.saveSelection = this.selection.save(this.range, document);
 			
 }
-public onInsert(item:any) {
+// public onInsert(item:any) {
 	
-	this.saveSelection.restore();
-	this.chatEditor.executeCommand('insertText', item.target.textContent);
+// 	this.saveSelection.restore();
+// 	this.chatEditor.executeCommand('insertText', item.target.textContent);
+// 	this.chatEditor.formatter.saveData();
+// 	this.chatEditor.formatter.enableUndo(this.chatEditor);
+	
+
+
+// }
+public onInsert(item: any) {
+	const emojiText = item.target.textContent;
+  
+	// Insert the emoji at the current cursor position
+	this.chatEditor.executeCommand('insertText', emojiText);
+  
+	// Move the cursor to the end of the editor content
+	this.moveToEndOfEditor();
+  
+	// Save the changes
 	this.chatEditor.formatter.saveData();
 	this.chatEditor.formatter.enableUndo(this.chatEditor);
-
-
-}
-
+  }
+  
+  private moveToEndOfEditor() {
+	const editor = this.chatEditor.contentModule.getDocument();
+	const range = editor.createRange();
+  
+	// Set the range to the end of the editor content
+	range.selectNodeContents(editor.body);
+	range.collapse(false);
+  
+	// Update the selection with the new range
+	const selection = editor.defaultView.getSelection();
+	selection.removeAllRanges();
+	selection.addRange(range);
+  }
+  
 
 showEmojiType(EmojiType:any){
 	this.EmojiType = EmojiType
@@ -751,6 +795,7 @@ sendattachfile(){
 	sendMediaMessage(){
 		this.sendMessage()
         this.closeAllModal();
+		$("#sendfile").modal('hide');	
 		$('body').removeClass('modal-open');
 		$('.modal-backdrop').remove();
 	}
@@ -839,6 +884,7 @@ sendattachfile(){
 		this.subscribeToNotifications()
 		this.getAttributeList()
         this.sendattachfile()
+		this.getQuickResponse()
 
 		// this.chatEditor.addEventListener('keydown', this.onEditorKeyDown.bind(this));
 	
@@ -853,7 +899,11 @@ sendattachfile(){
 
 	scrollChatToBottom() {
 		const chatWindowElement = this.chatSection.nativeElement;
-		chatWindowElement.scrollTop = chatWindowElement.scrollHeight;	
+		chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
+
+		const toolbar = chatWindowElement.querySelector('.e-toolbar');
+	    toolbar.removeAttribute('data-tooltip-id');
+	
 	  }
 
 	async subscribeToNotifications() {
@@ -922,9 +972,11 @@ sendattachfile(){
 		this.searchChatFocused = false
 	}
 	focusInFunction(){
+		console.log('Focus in');
 		this.searchFocused = true
 	}
 	focusOutFunction(){
+		console.log('Focus out');
 		this.searchFocused = false
 	}
 	toggleProfileView(){
@@ -940,6 +992,7 @@ sendattachfile(){
 		this.newContact.value.OptedIn = event.target.value
 	}
 	getCustomers(){
+
 		this.apiService.getCustomers(this.SPID).subscribe(data =>{
 			this.contactList= data
 			console.log(this.contactList)
@@ -1068,6 +1121,7 @@ sendattachfile(){
 		this.scrollChatToBottom()
 	}
 	async getSearchInteraction(event:any){
+		console.log('Search keyup', event.target.value);
 	if(event.target.value.length>2){
 		var searchKey =event.target.value
 		this.interactionSearchKey = searchKey
@@ -1286,7 +1340,7 @@ selectInteraction(Interaction:any){
 	}
 	Interaction['selected']=true
 	this.selectedInteraction =Interaction
-	this.contactId = Interaction.customerId
+this.contactId = Interaction.customerId
 	console.log(this.contactId)
 	console.log(Interaction)
 	this.getPausedTimer()
@@ -1432,7 +1486,7 @@ stopPropagation(event: Event) {
 updateCustomer(){
 	var bodyData = {
 	Name:this.EditContactForm.Name,
-	countryCode:this.EditContactForm.country_code,
+	countryCode:this.EditContactForm.countryCode,
 	Phone_number:this.EditContactForm.Phone_number,
 	channel:this.EditContactForm.channel,
 	status:this.EditContactForm.status,
@@ -1640,7 +1694,7 @@ if (phoneNumber && countryCode) {
 
 formatPhoneNumberEdit() {
 	const phoneNumber = this.editContact.get('Phone_number')?.value;
-	const countryCode = this.editContact.get('country_code')?.value;
+	const countryCode = this.editContact.get('countryCode')?.value;
 	
 	if (phoneNumber && countryCode) {
 	  const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
@@ -1662,11 +1716,15 @@ searchContact(event:any){
 	this.getSearchContact()
 	
 }
+
+
 getSearchContact(){
 	this.apiService.searchCustomer(this.selectedChannel,this.SPID,this.contactSearchKey).subscribe(data =>{
 		this.contactList= data
 	});
 }
+
+
 
 blockCustomer(selectedInteraction:any){
 	var bodyData = {
@@ -1835,7 +1893,7 @@ updateConversationStatus(status:any){
 	this.apiService.updateInteraction(bodyData).subscribe(async response =>{
 		this.ShowConversationStatusOption=false
 		this.showToaster('Conversations updated to '+status+'...','success')
-	
+		/*
 		//////This time it can not be assign to any one
 		var responseData:any = response
 		var bodyData = {
@@ -1851,7 +1909,7 @@ updateConversationStatus(status:any){
 
 		});
 
-	
+		*/
 		
 		this.selectedInteraction['interaction_status']=status
 	});
@@ -2037,7 +2095,9 @@ deleteNotes(){
 		deleted_by:this.AgentId,
 		deleted_at:new Date()
 	}
+	////console.log(bodyData)
 	this.apiService.deleteMessage(bodyData).subscribe(async data =>{
+		//console.log(data)
 		this.selectedNote.is_deleted=1
 		this.selectedNote.deleted_by=this.selectedNote.AgentName
 	})
@@ -2060,15 +2120,9 @@ sendMessage(){
 	// 	this.showToaster('! Please type your message first','error');
 	// 	return; 
 	// }
-	const message = this.custommesage.trim();
-    if (message !== '') {
-      // Send the message logic here
-      console.log('Sending message:', message);
-
-      // Clear the editor after sending the message
-      this.custommesage = '';
-    }
+   
  
+	 {
 		let postAllowed =false;
 		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
 			postAllowed =true;
@@ -2154,7 +2208,6 @@ sendMessage(){
 			}else{
 				this.selectedNote.message_text= bodyData.message_text
 			}
-
 			
 
 			this.newMessage.reset({
@@ -2169,7 +2222,7 @@ sendMessage(){
 	}else{
 		this.showToaster('Oops! You are not allowed to post content','warning')
 	}
-	
+	}
 
 
 }
@@ -2203,7 +2256,7 @@ onPhoneNumberChange(event: any) {
 		$('.modal-backdrop').remove();
 	  }
 
-	  limitCharacters(message: string) {
+limitCharacters(message: string) {
         let maxLength = 50;
         if (message.length <= maxLength) {
         return message;
@@ -2217,4 +2270,14 @@ onPhoneNumberChange(event: any) {
 		}
 
 
+
+
+		getQuickResponse(){
+			this.settingService.getTemplateData(this.SPID,0).subscribe(response => {
+			  this.QuickReplyList=response.templates;
+			  console.log(this.QuickReplyList);
+			});    
+		  }	  
+
+		  
 }

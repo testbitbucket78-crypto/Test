@@ -2160,4 +2160,18 @@ input[type="radio"]:checked + label::before {
     left: 0;
   }
 
-  
+  .quickResponse.items_list.item{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border-radius: 18px;
+    width: 100%;
+    margin: 10px 0px;
+    min-height: 100px;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.modal-content.showQuickReply{
+    background: #FFF4F2 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 30px;
+}

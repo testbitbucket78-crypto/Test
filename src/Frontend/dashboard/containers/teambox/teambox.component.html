@@ -3,6 +3,8 @@
 
 
 	<div class="row team-box-page" id="team-box-page" (click)="hideAllOpenModal($event)">
+		
+
 		<div class="toaster" (click)="hideToaster()">
 			<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
 			<p *ngIf="successMessage" class="success">{{successMessage}}</p>
@@ -14,10 +16,10 @@
 
 	<!-- filter-popup -->
 				<div class="custom_row pl-3 pt-3 ">
-					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()"
-						(keyup)="getSearchInteraction($event)"
-						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
-						aria-label="Search" aria-describedby="basic-addon2" />
+					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
+  [ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
+  aria-label="Search" aria-describedby="basic-addon2" />
+
 
 
 					<div *ngIf="!searchFocused" class="drop-down-btn" (click)="addfilters()">
@@ -188,7 +190,7 @@
 										</span>
 									</p>
 								</div>
-								<div *ngIf="ShowAssignOption" class="overlay" (click)="closeAssignOption()"></div>
+							
 							</div>
 							<input (focus)="focusInChatFunction()" (focusout)="focusOutChatFunction()"
 								(keyup)="seacrhInChat($event)"
@@ -329,6 +331,7 @@
 
 
 						<div class="conversation_inout_area" id="conversation_inout_area">
+					
 							<div class="tabs_link flex">
 								<button [ngClass]="showChatNotes=='text' ? 'flex tab_btn active ' : 'flex tab_btn'"
 									(click)="toggleChatNotes('text')">Chat <span
@@ -337,20 +340,22 @@
 								<button [ngClass]="showChatNotes=='notes' ? 'tab_btn active' : 'tab_btn'"
 									(click)="toggleChatNotes('notes')">Notes</button>
 							</div>
-							<div class="input-area">
+							<div class="input-area" (click)="resetMessageTex()">
 								<ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor
-  [toolbarSettings]='tools' [height]='100' (click)="resetMessageTex()" (keydown)="handleKeyPress($event)">
-</ejs-richtexteditor>
+								  [toolbarSettings]='tools' [height]='100' (keydown)="handleKeyPress($event)">
+								</ejs-richtexteditor>
+							  
 
-<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
-  <p class="label">@mention</p>
-  <p *ngFor="let user of agentsList;let k = index" (click)="InsertMentionOption(user)">
-    <span>
-      <img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
-      {{user.name}}
-    </span>
-  </p>
-</div>
+									<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
+									<p class="label">@mention</p>
+								<p *ngFor="let user of agentsList;let k = index" (click)="InsertMentionOption(user)">
+								<span>
+					<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
+					{{user.name}}
+					</span>
+				</p>
+				</div>
+
 
 
 
@@ -387,15 +392,13 @@
 										</div>
 									</div>
 								</div>
-								<button *ngIf="showChatNotes=='text'" class="submit_btn" (click)="sendMessage()"><img
-										src="/assets/img/teambox/icon-send.svg"></button>
-								<button *ngIf="showChatNotes== 'notes'" class="save_notes_btn"
-									(click)="sendMessage()">Save</button>
+								<button *ngIf="showChatNotes=='text'" class="submit_btn" ><img
+										src="/assets/img/teambox/icon-send.svg"  (click)="sendMessage()"></button>
+								<button *ngIf="showChatNotes== 'notes'" class="save_notes_btn" (click)="sendMessage()">Save</button>
 
 
 							</div>
-							<div *ngIf="showMention" class="overlay" (click)="closeMentionDialog()"></div>
-
+						<!-- </form> -->
 						</div>
 
 					</div>
@@ -577,12 +580,7 @@
 
 						</div>
 					</div>
-
-
-
-
-
-
+				
 
 					<div *ngIf="!showFullProfile" class="footer">
 
@@ -629,8 +627,7 @@
 	
 							</div>
 						</div>
-						<div *ngIf="AutoReplyOption" class="overlay" (click)="closeAutoReplyDialog()"></div>
-
+						
 
 
 						<div class="custom_row edit-block-section mt-4">
@@ -672,14 +669,19 @@
 					</div>
 
 				</div>
+
 			</div>
-
-
-
-
+			<div *ngIf="ShowAssignOption" class="overlay" (click)="closeAssignOption()"></div>
+			<div *ngIf="ShowConversationStatusOption" class="overlay" (click)="closeConversationStatusOption()"></div>
+			<div *ngIf="showfilter" class="overlay" (click)="closeFilterOptions()"></div>
+			<div *ngIf="AutoReplyOption" class="overlay" (click)="closeAutoReplyDialog()"></div>
+			<div *ngIf="showMention" class="overlay" (click)="closeMentionDialog()"></div>
 		</div>
 
+
+
 	</div>
+
 
 	<!-- attach file pop-up -->
 	<div *ngIf="messageMeidaFile==''" class="modal fade" tabindex="-1" id="attachfle" #attachfle data-bs-backdrop="static" role="dialog">
@@ -734,6 +736,7 @@
 		
 	</div>
 	</div>
+	
 	<div class="modal fade" tabindex="-1" id="sendfile" #sendfile data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -769,9 +772,10 @@
 </div>
 	</div>
 		</div>
+		
+
 	</div>
 	
-
 
 
 
@@ -794,9 +798,9 @@
 						</div>
 						<div class="modal-body quickResponse">
 							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-								aria-describedby="basic-addon2" (keyup)="searchContact($event)" />
+								aria-describedby="basic-addon2"   [(ngModel)]="attributesearch" />
 							<div class="items_list">
-								<div *ngFor="let alist of attributesList" class="attribute"
+								<div *ngFor="let alist of attributesList  | searchfilter:attributesearch " class="attribute"
 									(click)="selectAttributes(alist)">
 									<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
 								</div>
@@ -832,7 +836,7 @@
 						</div>
 						<div class="modal-body quickResponse">
 							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-								aria-describedby="basic-addon2" (keyup)="searchTemplate($event)" />
+								aria-describedby="basic-addon2" [(ngModel)]="templatesearchreply" />
 
 							<div class="section_filter">
 								<label class="container">
@@ -856,7 +860,7 @@
 
 							</div>
 							<div class="template_list">
-								<div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
+								<div class="template_box" *ngFor='let template of allTemplates  | searchfilter:templatesearchreply ;let i = index'>
 									<label class="container" (click)="selectTemplate(template)">
 										<input type="radio" name="selectedTemplate">
 										<span class="checkmark radio"></span>
@@ -1201,13 +1205,13 @@
 						</div>
 						<div class="modal-body quickResponse">
 							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-								aria-describedby="basic-addon2" (keyup)="searchQuickReply($event)" />
+								aria-describedby="basic-addon2"  [(ngModel)]="quickreplysearch" />
 							<div class="items_list">
 
-								<div class="item" *ngFor="let Message of QuickReplyList"
+								<div class="item" *ngFor="let Message of QuickReplyList | searchfilter:quickreplysearch"
 									(click)="selectQuickReplies(Message)">
-									<p class="label" [innerHTML]="Message.title"></p>
-									<p [innerHTML]="Message.content"></p>
+									<p class="label" [innerHTML]="Message.Header"></p>
+									<p [innerHTML]="Message.BodyText"></p>
 								</div>
 							</div>
 
@@ -1288,7 +1292,7 @@
 		</div>
 		<div class="modal-body messageadd">
 			<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-				aria-describedby="basic-addon2" (keyup)="searchContact($event)" />
+				aria-describedby="basic-addon2" [(ngModel)]="header" />
 			<div class="drop-down-btn" (click)="toggleContactOption()">
 
 				<button *ngIf="selectedChannel == 'WhatsApp Officail'" class="drop-down-btn">
@@ -1316,7 +1320,7 @@
 
 			<div class="contact_list">
 
-				<div class="contact_item" *ngFor="let item of contactList; let i = index"
+				<div class="contact_item" *ngFor="let item of contactList | searchfilter:header; let i = index"
 					(click)="createInteraction(item.customerId)">
 					<div class="contact_item_left">
 						<img class="profile_icon" src="/assets/img/teambox/Richie_1.png" />
@@ -1433,17 +1437,14 @@
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Phone Number*</label>
 					<select class="input-formm" id="country_code" formControlName="country_code">
-						<option [selected]="editContact.get('country_code')?.value"
+						<option [selected]="editContact.get('countryCode')?.value"
 							*ngFor="let countryCode of countryCodes; let i = index">
 							{{ countryCode }}
 						</option>
 					</select>
 					<input (input)="hangeEditContactInuts($event)"  class="form-control phone-no" type="text" name="Phone_number" value={{EditContactForm.Phone_number}} type="text"  formControlName="Phone_number" 
 				 maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$"
-					onKeyPress="return /^[0-9]$/.test(event.key)"
-					[ngClass]="{'is-invalid' :newContact.controls.Phone_number.touched && newContact.controls.Phone_number.errors }" 
-					(change)="formatPhoneNumberEdit()"> 
-
+					onKeyPress="return /^[0-9]$/.test(event.key)"(change)="formatPhoneNumberEdit()"> 
 				</div>
 
 
@@ -1486,7 +1487,6 @@
 					  </div>
 					  
 					  <!-- Add a click event on the document to close the options when clicking outside -->
-					  <div *ngIf="ShowGenderOption" class="overlay" (click)="closeGenderOption()"></div>
 					  
 
 				</div>
@@ -1521,7 +1521,6 @@
 					  </div>
 					  
 					  <!-- Add a click event on the document to close the div when clicking outside -->
-					  <div *ngIf="ShowLeadStatusOption" class="overlay" (click)="closeLeadStatusOption()"></div>
 					  
   
 
@@ -1568,7 +1567,6 @@
 					  </div>
 					  
 					  <!-- Add a click event on the document to close the options when clicking outside -->
-					  <div *ngIf="ShowChannelOption" class="overlay" (click)="closeChannelOption()"></div>
 					  
 
 
@@ -1589,12 +1587,17 @@
 
 			</form>
 		</div>
+
 		<div class="modal-footer row popfooter">
 
 			<div class="inner_form col-md-6 text-right">
 				<button type="button" class="submit-btn" (click)="updateCustomer()">Update</button>
 			</div>
 		</div>
+		
+	<div *ngIf="ShowLeadStatusOption" class="overlay" (click)="closeLeadStatusOption()"></div>
+	<div *ngIf="ShowChannelOption" class="overlay" (click)="closeChannelOption()"></div>
+	<div *ngIf="ShowGenderOption" class="overlay" (click)="closeGenderOption()"></div>
 	</ng-template>
 
 
@@ -1725,6 +1728,11 @@
 			</div>
 		</div>
 	</div>
+
+
+
+
+
 
 
 </sb-layout-dashboard>

@@ -33,6 +33,7 @@ export class CampaignsComponent implements OnInit {
 	errorMessage='';
 	successMessage='';
 	warningMessage='';
+	checkboxChecked: boolean = false;
 
 
 	 showInfo:boolean = false;
@@ -1067,6 +1068,14 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			$("#dagdropmodal").modal('show');
 	}
 
+	openAudience(option:any,modalname:any,step2Option:any){
+		this.closeAllModal()
+			this.openSegmentAudience(modalname)
+			$("#addsegmentaudience").modal('show');
+	}
+
+	
+
 
 	selectStep2Option(option:any,modalname:any,step2Option:any){
 		this.step2Option =option
@@ -1323,6 +1332,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	openSegmentAudience(importantContact:any){
 		this.closeAllModal()
 		this.modalReference = this.modalService.open(importantContact,{size: 'xl', windowClass:'white-bg'});
+		this.step2Option=true;
 	}
 	openAddNewItem(addNewItem:any){
 		this.closeAllModal()
@@ -1339,6 +1349,22 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	    
 	}
+
+	onCheckboxChange(event: any,mpcampaign:any) {
+		if (event.target.checked) {
+			if(!this.selecetdCSV) {
+				this.showToaster('Please Scheck the box..', 'error');
+				return;
+			}
+			this.closeAllModal()
+				this.importantContact=false;
+				this.modalReference = this.modalService.open(mpcampaign,{size: 'ml', windowClass:'pink-bg'});
+	
+		}
+	  }
+	  
+	 
+	  
 
 	closeMediaAttribute(status:any,addNewCampaign:any){
 		this.closeAllModal()
@@ -1564,8 +1590,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	}
 	mapImportantContact(mpcampaign:any){
 
-		if(!this.selecetdCSV) {
-			this.showToaster('Please Select csv file first..', 'error');
+		if(!this.selecetdCSV || !this.checkboxChecked) {
+			this.showToaster('Please Select csv file and check the checkbox...', 'error');
 			return;
 		}
 		this.closeAllModal()

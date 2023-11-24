@@ -279,7 +279,7 @@ textarea::placeholder {
     position: absolute;
     z-index: 99999;
     left: 45%;
-    top: 13%;
+    top: 25%;  
 }
 
 .type_label img {
@@ -348,11 +348,13 @@ textarea::placeholder {
     font-weight: 600;
   }
 
-
-
-
-
-
-
-
-
+  #linken{
+    background: #FFFFFF;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    height: 45px;
+    width: 387px;
+    outline: 0;
+    font-family: "Manrope";
+    padding-left: 1.2rem;
+}
