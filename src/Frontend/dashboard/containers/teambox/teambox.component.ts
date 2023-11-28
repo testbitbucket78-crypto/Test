@@ -323,6 +323,7 @@ countryCodes = [
 	templatesearchreply!:string;
 	header!:string;
 	
+	
 
 
 	newMessage:any;
@@ -332,6 +333,7 @@ countryCodes = [
 	{name:'Paid',status:false},
 	{name:'Unpaid',status:false},
 	{name:'Return',status:false}]
+
 
 	selectedTags:any='';
 	AutoReplyEnableOption:any=['Extend Pause for 5 mins','Extend Pause for 10 mins','Extend Pause for 15 mins','Extend Pause for 20 mins','Enable'];
@@ -373,6 +375,8 @@ showFullMessage: boolean = false;
 			country_code: new FormControl('IN +91'),
 			Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(15)])),
 			Channel: new FormControl('', Validators.required),
+			emailId: new FormControl('', [Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
+
 			
 		});
 		this.editContact=fb.group({
@@ -381,11 +385,14 @@ showFullMessage: boolean = false;
 			country_code: new FormControl('IN +91'),
 			Phone_number: new FormControl('', Validators.compose([Validators.required,Validators.minLength(6),Validators.maxLength(15)])),
 			Channel: new FormControl('', Validators.required),
+			emailId: new FormControl('', [Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
+
 		});
 		
 		this.newMessage =fb.group({
 			Message_id:new FormControl(''),
 		});
+		
 
 	}
 	
@@ -1532,10 +1539,7 @@ updateCustomer(){
 	else {
 		this.showToaster('Name, Phone Number, and Email ID are required.', 'error');
 	}
-
-
 }
-
 
 
 filterContactByType(ChannelName:any){
@@ -2277,7 +2281,9 @@ limitCharacters(message: string) {
 			  this.QuickReplyList=response.templates;
 			  console.log(this.QuickReplyList);
 			});    
-		  }	  
+		  }	
+		  
+		  
 
 		  
 }

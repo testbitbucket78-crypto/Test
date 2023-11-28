@@ -1429,7 +1429,7 @@
 			</div>
 		</div>
 		<div class="modal-body">
-			<form class="inner_form large" (ngSubmit)="updateCustomer()">
+			<form class="inner_form large" (ngSubmit)="updateCustomer()" [formGroup]="editContact">
 				<div class="row">
 					<label for="floatingInputGrid" class="required">Name*</label>
 					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="Name" value={{EditContactForm.Name}} />
@@ -1452,11 +1452,17 @@
 
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Email*</label>
-					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="emailId"
-						value={{EditContactForm.emailId}} required />
-				</div>
+					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="emailId" formControlName="emailId" 
+					  value={{EditContactForm.emailId}} required />
+					  
 
-				<div class="row">
+					  <div *ngIf="editContact.controls.emailId.touched  && editContact.controls.emailId.errors "
+					  class="text-danger">
+					  ! Please include valid email address.
+				     </div>
+					  </div>
+					  
+				 	<div class="row">
 					<label for="floatingSelectGrid" class="required">Age</label>
 					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text"
 						pattern="^[^+\-.,?*%$eE]+$"

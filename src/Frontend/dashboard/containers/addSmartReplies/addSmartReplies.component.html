@@ -457,7 +457,9 @@
       <div class="template_box" *ngFor='let template of templatesData  | searchfilter:searchText ;let i = index ' >
         <div class="template_box_inner d-flex align-items-start">
           <input type="radio" name="sel-template"(change)="addinserttemplate(template.id, 'contactowner', $event.target.checked)" id="sel-template">
-          <label class="radio-label" [class.checked]="templateStates[template.id]" id="sel-template" for="sel-template"></label>
+          <label class="radio-label" [class.checked]="templateStates[template.id]" id="sel-template" for="sel-template"  (click)="selectTemplate(template)">
+           
+          </label>
        <div class="template_head flex-column">
         <p class="template_name">{{template.TemplateName}}</p>
         <p class="m-0"><span>{{ template.created_at | date:'dd-MM-yyyy' }}</span></p>
@@ -473,14 +475,11 @@
           </div>
         </div>
        </div>
-   
         </div>
-      
         <div class="template_btn">
           <!-- <button type="button" class="btn">YES</button>
           <button type="button" class="btn">NO</button> -->
           <!-- <button type="button" class="btn">EXPLORE</button> -->
-
         </div>
 
       </div>
