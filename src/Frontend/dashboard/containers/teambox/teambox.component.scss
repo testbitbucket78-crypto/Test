@@ -52,6 +52,10 @@
     margin: 5px;
 }
 
+.rteEmoticons .char_block:hover {
+    background:#6149CD;
+     }
+
 .e-toolbar-wrapper {
     position: absolute;
     bottom: 0;
@@ -101,7 +105,7 @@
     position: fixed;
     right: 50px;
     top: 65px;
-    z-index: 9999;
+    z-index: 9999999;
 }
 
 .toaster p {
@@ -2363,5 +2367,16 @@ label span {
     word-wrap: break-word;
     white-space: normal;
   }
+ 
+  .validation-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+  }
   
-  
+  .text-danger {
+    color: #dc3545 !important;
+    font-size: 15px;
+    position: absolute;
+    margin-top: -1rem;
+}

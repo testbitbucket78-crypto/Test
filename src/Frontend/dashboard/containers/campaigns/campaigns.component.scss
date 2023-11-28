@@ -199,7 +199,6 @@
 	flex-wrap: nowrap;
 	padding: 20px;
 	min-height: 190px;
-	cursor: pointer;
 	}
 	.campaigns_section_item.draft{
 	background: #FDEFEF;
@@ -657,7 +656,7 @@
 	}
 	.addeidtcampaign_step p span{
 	font-size: 12px;
-	font-weight: 600;
+	font-weight: 400;
 	color:#7A86A1;
 	}
 	.addeidtcampaign_step .innerbox{
@@ -1146,6 +1145,7 @@
 	display: flex;
 	flex-direction: column;
 	position: relative;
+	cursor: pointer;
 	}
 	.applied_filter p{
 	font-size: 10px;
@@ -1402,7 +1402,6 @@
 	.applylist_filters_outer{
 	width: 100%;
 	overflow: auto;
-	height:40px;
 	}
 	.scroll-container::-webkit-scrollbar {
 	width: 5px;
@@ -1913,6 +1912,10 @@
 	justify-content: center;
 	}
 
+	label.container input:checked ~ .checkmark.radio {
+		background-color: #fff;
+		border:3px solid #6149CD
+		}
 
 .audience_list::-webkit-scrollbar {
     display: none;
@@ -1971,13 +1974,11 @@
 
 
   .modal-title.color{
-	font: var(--unnamed-font-style-normal) normal  var(--unnamed-font-size-22)/var(--unnamed-line-spacing-60) var(--unnamed-font-family-manrope-bold)!important;
-	color: var(--unnamed-color-000000)!important;
+	color: #000000!important;
 	font-family: 'Manrope';
-	font-weight: 600;
+	font-weight: 900;
   }
 
   .search-box.createlist{
 	width: 166%;
   }
-

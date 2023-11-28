@@ -112,10 +112,6 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	contactSearchKey:any='';
 	QuickReplyList:any=[];
 	QuickReplyListMain:any=[];
-	SavedMessageList:any=[];
-	SavedMessageListMain:any=[];
-	allTemplates:any=[];
-	allTemplatesMain:any=[];
 	filterTemplateOption:any='';
 	selectedTemplate:any  = [];
 	Media:any;
@@ -129,7 +125,6 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	custommesage = '<p>Type Reply...</p>'
 	showQuickResponse: any = false;
 	showAttributes: any = false;
-	showSavedMessage: any = false;
 	showQuickReply: any = false;
 	showInsertTemplate: any = false;
 	showAttachmenOption: any = false;
@@ -146,12 +141,11 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	editTemplate: any = false;
 	searchText!:string;
 	Quickyreplysearch!:string;
-	savedmessagesearch!:string;
 	attributesearch!:string;
 
 
 	attributesList!:any;
-
+	allTemplates:any =[];
 	userList:any;
 	userId!:number;
 
@@ -300,13 +294,6 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
 			},
-			{
-				tooltipText: 'Saved Message',
-				undo: true,
-				click: this.ToggleSavedMessageOption.bind(this),
-				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
-			},
 			{   tooltipText: 'Insert Template',
 				undo: true,
 				click: this.ToggleInsertTemplateOption.bind(this),
@@ -370,16 +357,6 @@ click: any;
 	const toolbar = chatWindowElement.querySelector('.e-toolbar');
 	
 	  }
-	
-
-	
-
-	routeToSettings() {
-		this.closeAllModal();
-		$('body').removeClass('modal-open');
-		$('.modal-backdrop').remove();
-		this.router.navigate(['dashboard/setting']);
-	  }
 
 /*** rich text editor ***/
 
@@ -390,7 +367,6 @@ click: any;
 		this.showInsertTemplate = false
 		this.editTemplate = false
 		this.TemplatePreview = false
-		this.showSavedMessage = false
 		this.showQuickReply = false
 		this.showMention = false
 		this.showEmoji = false;
@@ -398,7 +374,6 @@ click: any;
 		$("#attachmentbox").modal('hide');
 		$("#showAttributes").modal('hide');
 		$("#insertTemplate").modal('hide');
-		$("#savedMessage").modal('hide');
 		$("#showQuickReply").modal('hide');
 
 		document.getElementById('addsmartreplies')!.style.display = 'inherit';
@@ -499,14 +474,6 @@ click: any;
 		document.getElementById('addsmartreplies')!.style.display = 'none';
 	}
 
-	
-
-	ToggleSavedMessageOption() {
-		this.closeAllModal()
-		$("#savedMessage").modal('show');
-        document.getElementById('addsmartreplies')!.style.display = 'none';
-
-	}
 
 	ToggleInsertTemplateOption() {
 		this.closeAllModal()
@@ -539,24 +506,6 @@ click: any;
 
 	}
 
-	
-
-	searchSavedMessage(event:any){
-		let searchKey = event.target.value
-		if(searchKey.length>2){
-		var allList = this.SavedMessageListMain
-		let FilteredArray = [];
-		for(var i=0;i<allList.length;i++){
-			var content = allList[i].title.toLowerCase()
-				if(content.indexOf(searchKey.toLowerCase()) !== -1){
-					FilteredArray.push(allList[i])
-				}
-		}
-		this.SavedMessageList = FilteredArray
-	}else{
-		this.SavedMessageList = this.SavedMessageListMain
-	}
-	}
 	searchQuickReply(event:any){
 		let searchKey = event.target.value
 		if(searchKey.length>2){
@@ -602,7 +551,7 @@ click: any;
 		}
 		this.allTemplates = FilteredArray
 	    }else{
-			this.allTemplates = this.allTemplatesMain
+			this.allTemplates = this.templatesData
 		}
 	}
 
@@ -619,25 +568,25 @@ click: any;
 
 	filterTemplate(temType:any){
 
-		let allList  =this.allTemplatesMain;
+		let allList  = this.allTemplates;
 		if(temType.target.checked){
 		var type= temType.target.value;
 		for(var i=0;i<allList.length;i++){
-				if(allList[i]['type'] == type){
-					allList[i]['is_active']=1
+				if(allList[i]['Category'] == type){
+					allList[i]['is_Deleted']=1
 				}
 		}
 	   }else{
 		var type= temType.target.value;
 		for(var i=0;i<allList.length;i++){
-				if(allList[i]['type'] == type){
-					allList[i]['is_active']=0
+				if(allList[i]['Category'] == type){
+					allList[i]['isDeleted']=0
 				}
 		}
 	   }
 		var newArray=[];
 	   for(var m=0;m<allList.length;m++){
-		  if(allList[m]['is_active']==1){
+		  if(allList[m]['is_Deleted']==1){
 			newArray.push(allList[m])
 		  }
 	
@@ -646,14 +595,7 @@ click: any;
 	
 		
 	}
-	
-	async getsavedMessages(){
-		this.tS.getsavedMessages(this.SPID).subscribe(savedMessages =>{
-			this.SavedMessageListMain = savedMessages
-			this.SavedMessageList = savedMessages
-		})
 
-	}
 	async getquickReply(){
 		this.tS.getquickReply(this.SPID).subscribe(quickReply =>{
 			this.QuickReplyListMain = quickReply
@@ -662,43 +604,62 @@ click: any;
 		
 	}
 
-	async getTemplates(){
-		this.tS.getTemplates(this.SPID).subscribe(allTemplates =>{
-			console.log('////////allTemplates////////')
-			console.log(allTemplates)
-			this.allTemplatesMain = allTemplates
-			this.allTemplates = allTemplates
-		})
-		
-	}
 
 	public onInsert(item: any) {
 		const emojiText = item.target.textContent;
 	  
 		// Insert the emoji at the current cursor position
+		this.chatEditor.formatter.saveData();
 		this.chatEditor.executeCommand('insertText', emojiText);
 	  
 		// Move the cursor to the end of the editor content
-		this.moveToEndOfEditor();
+		// this.moveToEndOfEditor();
 	  
 		// Save the changes
 		this.chatEditor.formatter.saveData();
 		this.chatEditor.formatter.enableUndo(this.chatEditor);
 	  }
 	  
-	  private moveToEndOfEditor() {
-		const editor = this.chatEditor.contentModule.getDocument();
-		const range = editor.createRange();
+	//   private moveToEndOfEditor() {
+	// 	const editor = this.chatEditor.contentModule.getDocument();
+	// 	const range = editor.createRange();
 	  
-		// Set the range to the end of the editor content
-		range.selectNodeContents(editor.body);
-		range.collapse(false);
+	// 	// Set the range to the end of the editor content
+	// 	range.selectNodeContents(editor.body);
+	// 	range.collapse(false);
 	  
-		// Update the selection with the new range
-		const selection = editor.defaultView.getSelection();
-		selection.removeAllRanges();
-		selection.addRange(range);
-	  }
+	// 	// Update the selection with the new range
+	// 	const selection = editor.defaultView.getSelection();
+	// 	selection.removeAllRanges();
+	// 	selection.addRange(range);
+	//   }
+
+
+
+	//   public onInsert(): void {
+    //     const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
+    //     if (activeEle) {
+    //         if (this.rteObj.formatter.getUndoRedoStack().length === 0) {
+    //             this.rteObj.formatter.saveData();
+    //         }
+    //         if (Browser.isDevice && Browser.isIos) {
+    //             this.saveSelection.restore();
+    //         }
+    //         this.rteObj.executeCommand('insertText', activeEle.textContent);
+    //         this.rteObj.formatter.saveData();
+    //         (this.rteObj as any).formatter.enableUndo(this.rteObj);
+    //     }
+    //     this.dialogOverlay();
+    // }
+
+    // public dialogOverlay(): void {
+    //     const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
+    //     if (activeEle) {
+    //         activeEle.classList.remove('e-active');
+    //     }
+    //     this.dialogObj.hide();
+    // }
+
 	  
 	  
 	  
@@ -758,15 +719,17 @@ click: any;
 
 	}
 
+	
+
 
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
 	addMessage() {
 
-		// if(!this.custommesage || this.custommesage ==='<p>Type Reply...</p>') {
-		// 	this.showToaster('! Please type your message first','error');
-		// 	return;
-		// }
+		if(!this.custommesage || this.custommesage ==='<p>Type Reply...</p>') {
+			this.showToaster('! Please type your message first','error');
+			return;
+		}
 
 
 		
@@ -1207,6 +1170,7 @@ stopPropagation(event: Event) {
   getTemplatesList() {
 	this.settingsService.getTemplateData(this.SPID,1).subscribe(response => {
 	  this.templatesData = response.templates;
+	  this.allTemplates = response.templates;
 	}); 
 
 

@@ -20,7 +20,7 @@ export class TemplateMessageComponent implements OnInit {
   profilePicture!:string;
   searchText!:string;
   searchTextGallery!:string;
-  selectedType: string = 'text';
+  selectedType: string = '';
   selectedPreview:string = '';
   showCampaignDetail:boolean = false;
   showGalleryDetail:boolean = false;
@@ -49,7 +49,7 @@ export class TemplateMessageComponent implements OnInit {
   { value: 7, label: 'Health Services', checked: false },
   { value: 8, label: 'Financial', checked: false }];
   filterListCategory = [
-    {value:0, label:'Authentication', checked:false},
+    {value:0,label:'Authentication', checked:false},
     {value:1,label:'Marketing', checked:false},
     {value:2,label:'Utility', checked:false}];
   filterListChannel = [ 
@@ -224,7 +224,8 @@ export class TemplateMessageComponent implements OnInit {
           this.videoPlayer.nativeElement.src = this.selectedPreview;
         }
 
-        if(fileType === 'application/pdf' || fileType === 'application/msword' || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        if(fileType === 'application/pdf' || fileType === 'application/msword' 
+        || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
           this.selectedPreview = e.target.result as string;
         }
      
@@ -351,7 +352,7 @@ removeValue() {
       newTemplateForm.created_By = this.currentUser;
       newTemplateForm.ID = this.id;
       newTemplateForm.isTemplate = 1;
-      newTemplateForm.media_type = 'image';
+      newTemplateForm.media_type = this.selectedType;
       newTemplateForm.Header = this.newTemplateForm.controls.Header.value;
       newTemplateForm.Links = this.newTemplateForm.controls.Links.value;
       newTemplateForm.Links = this.selectedPreview;
@@ -361,7 +362,7 @@ removeValue() {
       newTemplateForm.Channel = this.newTemplateForm.controls.Channel.value;
       newTemplateForm.Category = this.newTemplateForm.controls.Category.value;
       newTemplateForm.Language = this.newTemplateForm.controls.Language.value;
-      newTemplateForm.status = 'Pending';
+      newTemplateForm.status = 'Draft';
       newTemplateForm.template_id = 0;
       newTemplateForm.template_json =[];
       // newTemplateForm.template_json.push({
@@ -435,19 +436,13 @@ removeValue() {
 
 
     deleteTemplate() {
-
       const TemplateID = {
         ID: this.templatesMessageData?.ID
       }
-
-      this.apiService.deleteTemplateData(TemplateID)
-      
-      .subscribe(result =>{
+      this.apiService.deleteTemplateData(TemplateID).subscribe(result =>{
         if(result){
           $("#deleteModal").modal('hide');
           this.getTemplatesData();
-       
-          
         }
       });
     }
