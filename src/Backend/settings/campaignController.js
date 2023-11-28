@@ -387,11 +387,12 @@ const addTemplate = async (req, res) => {
             if (imgType) {
                 imageName = 'template_img' + '.' + imgType;
             }
-
-            let awsres = await awsHelper.uploadStreamToAws(spid + "/" + created_By + "/" + imageName, Links)
+            const timestamp = Date.now();
+            const randomNumber = Math.floor(Math.random() * 10000);
+            let awsres = await awsHelper.uploadStreamToAws(spid + "/" + timestamp + "_" + randomNumber + "/" + created_By + "/" + imageName, Links)
 
             image = awsres.value.Location
-            console.log(awsres.value.Location)
+           console.log(awsres.value.Location)
         }
         if (ID == 0) {
             let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry]]
