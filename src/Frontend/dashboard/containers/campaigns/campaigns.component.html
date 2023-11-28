@@ -326,7 +326,7 @@
 						<p><span>Select a message to create campaign</span></p>
 						</div>
 						<div class="inner right">
-							<input placeholder="Search" type="text" class="search-box" (keyup)="searchTemplate($event)">
+							<input placeholder="Search" type="text" class="search-box" (chnage)="searchTemplate($event)">
 						</div>
 					</div>
 					<div class="section_filter">
@@ -352,26 +352,30 @@
 							<label class="container" (click)="selectTemplate(template)">
 								<input type="radio" name="selectedTemplate">
 								<span class="checkmark radio"></span>
-								<p>{{template.TemplateName}}</p>
+								<div class="template_body">
+									<p>{{template.TemplateName}}</p>
 								<p><span>{{template.created_at | date:'dd-MM-yyyy'}}</span></p>
+								</div>
+								
 							</label>
 							
 							<div class="inner_box">
-								<img *ngIf="template.image" class="template_img" src="{{template.image}}">
-						        <div *ngIf="!template.image" class="template_img_placeholder"></div>
+								<img *ngIf="template.Links" class="template_img" src="{{template.Links}}">
+								<div *ngIf="!template.Links" class="template_img_placeholder"></div>
 						
 								<div class="template_text">
-									<p>{{template.content_heading}}</p>
-									<p [innerHTML]="template.content"></p>
-								</div>
+									<p class="m-0 font-weight-bold">{{template.Header}}</p>
+									<p>{{template.BodyText}}</p>
+									<p>{{template.FooterText}}</p>
+								  </div>
 							</div>
 							<div class="template_btn">
-								<button type="button" class="btn">YES</button>
+								<!-- <button type="button" class="btn">YES</button>
 								<button type="button" class="btn">NO</button>
-								<button type="button" class="btn">EXPLORE</button>
+								<button type="button" class="btn">EXPLORE</button> -->
 					
 							</div>
-							
+							 
 						</div>
 
 					</div>
@@ -379,22 +383,23 @@
 				<div *ngIf="activeStep==3.1" class="full_width_row">
 					<div class="template_details_section">
 						<div class="template_details_section_left">
-							<p>{{selectedTemplate.title}}</p>
+							<p>{{selectedTemplate.TemplateName}}</p>
 							<div class="template">
 								<div class="template_img">
-									<img *ngIf="selectedTemplate.image" class="template_img" src="{{selectedTemplate.image}}">
-						            <div *ngIf="!selectedTemplate.image" class="template_img_placeholder"></div>
+									<img *ngIf="selectedTemplate.Links" class="template_img" src="{{selectedTemplate.Links}}">
+						            <div *ngIf="!selectedTemplate.Links" class="template_img_placeholder"></div>
 								</div>
 								<div class="template_text">
-									<p class="name">{{selectedTemplate.content_heading}}</p>
-									<p class="description" [innerHTML]="selectedTemplate.content"></p>
+									<p class="name">{{selectedTemplate.Header}}</p>
+									<p class="description">{{selectedTemplate.BodyText}}</p>
+									<p class="footer">{{selectedTemplate.FooterText}}</p>
 								</div>
 		
 							</div>
 							<div class="template_btn">
-								<button type="button" class="btn">YES</button>
+								<!-- <button type="button" class="btn">YES</button>
 								<button type="button" class="btn">NO</button>
-								<button type="button" class="btn">EXPLORE</button>
+								<button type="button" class="btn">EXPLORE</button> -->
 					
 							</div>
 						</div>
@@ -441,15 +446,16 @@
 
 				<div *ngIf="activeStep==3.2" class="full_width_row">
 						<div class="template_details_section_left">
-							<p>{{selectedTemplate.title}}</p>
+							<p>{{selectedTemplate.TemplateName}}</p>
 							<div class="template">
-								<div class="template_img" *ngIf="selectedTemplate.image" >
+								<div class="template_img" *ngIf="selectedTemplate.Links" >
 									<p class="close-box" (click)="editTemplateMedia()"><img src="/assets/img/campaign/edit.svg"></p>
-									<img class="template_img" src="{{selectedTemplate.image}}">
+									<img class="template_img" src="{{selectedTemplate.Links}}">
 								</div>
 								<div class="template_text">
-									<p class="name">{{selectedTemplate.content_heading_preview}}</p>
-									<p class="description" [innerHTML]="selectedTemplate.content_preview"></p>
+									<p class="name">{{selectedTemplate.Header}}</p>
+									<p class="description">{{selectedTemplate.BodyText}}</p>
+									<p class="footer">{{selectedTemplate.FooterText}}</p>
 								</div>
 		
 							</div>

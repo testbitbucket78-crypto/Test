@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TeamboxService } from './../../services';
-import {SettingsService} from 'Frontend/dashboard/services/settings.service';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
@@ -211,13 +211,6 @@ routerGuard = () => {
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
 		},
 		{
-			tooltipText: 'Saved Message',
-			undo: true,
-			click: this.ToggleSavedMessageOption.bind(this),
-			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
-		},
-		{
 			tooltipText: 'Insert Template',
 			undo: true,
 			click: this.ToggleInsertTemplateOption.bind(this),
@@ -262,7 +255,6 @@ countryCodes = [
 	customenotes='<p>Type...</p>'
 	showQuickResponse:any=false;
 	showAttributes:any=false;
-	showSavedMessage:any=false;
 	showQuickReply:any=false;
 	showInsertTemplate:any=false;
 	showAttachmenOption:any=false;
@@ -348,15 +340,13 @@ countryCodes = [
 	mediaType:any='';
 	showMention:any=false;
 	EditContactForm:any=[];
-	SavedMessageList:any=[];
 	QuickReplyList:any=[];
-	SavedMessageListMain:any=[];
 	QuickReplyListMain:any=[];
 	allTemplates:any=[];
 	allTemplatesMain:any=[];
 	filterTemplateOption:any='';
 	attributesList:any=[];
-showFullMessage: boolean = false;
+    showFullMessage: boolean = false;
 	maxLength: number = 150;
 	
 	
@@ -469,13 +459,6 @@ resetMessageTex(){
 							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
 				},
 				{
-					tooltipText: 'Saved Message',
-					undo: true,
-					click: this.ToggleSavedMessageOption.bind(this),
-					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/saved-message.svg"></div></button>'
-				},
-				{
 					tooltipText: 'Quick Replies',
 					undo: true,
 					click: this.ToggleQuickReplies.bind(this),
@@ -542,16 +525,13 @@ resetMessageTex(){
 		this.showInsertTemplate=false
 		this.editTemplate=false
 		this.TemplatePreview=false
-		this.showSavedMessage=false
 		this.showQuickReply=false
 		this.showMention=false
 		this.showEmoji =false;
-		$("#savedpopup").modal('hide');
 		$("#quikpopup").modal('hide');
 		$("#atrributemodal").modal('hide');
 		$("#insertmodal").modal('hide');
 		$("#attachfle").modal('hide');
-		// $("#senddoc").modal('hide');
 		$('body').removeClass('modal-open');
 		$('.modal-backdrop').remove();
 
@@ -591,16 +571,6 @@ public InsertMentionOption(user:any){
 	this.chatEditor.value = content
 	this.showMention = false;
 }
-ToggleSavedMessageOption(){
-	this.closeAllModal()
-	$("#savedpopup").modal('show'); 
-	
-
-}
-
-
-
-
 
 ToggleInsertTemplateOption(){
 	this.closeAllModal()
@@ -638,22 +608,7 @@ selectQuickReplies(item:any){
 	var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'</p>';
 	this.chatEditor.value =htmlcontent
 }
-searchSavedMessage(event:any){
-	let searchKey = event.target.value
-	if(searchKey.length>2){
-	var allList = this.SavedMessageListMain
-	let FilteredArray = [];
-	for(var i=0;i<allList.length;i++){
-		var content = allList[i].title.toLowerCase()
-			if(content.indexOf(searchKey.toLowerCase()) !== -1){
-				FilteredArray.push(allList[i])
-			}
-	}
-	this.SavedMessageList = FilteredArray
-}else{
-	this.SavedMessageList = this.SavedMessageListMain
-}
-}
+
 searchQuickReply(event:any){
 	let searchKey = event.target.value
 	if(searchKey.length>2){
@@ -695,17 +650,19 @@ filterTemplate(temType:any){
 
 	let allList  =this.allTemplatesMain;
 	if(temType.target.checked){
+		alert('if')
 	var type= temType.target.value;
 	for(var i=0;i<allList.length;i++){
-			if(allList[i]['type'] == type){
-				allList[i]['is_active']=1
+			if(allList[i]['Category'] == type){
+				allList[i]['is_Deleted']=1
 			}
 	}
    }else{
+	alert('else')
 	var type= temType.target.value;
 	for(var i=0;i<allList.length;i++){
-			if(allList[i]['type'] == type){
-				allList[i]['is_active']=0
+			if(allList[i]['Category'] == type){
+				allList[i]['is_Deleted']=0
 			}
 	}
    }
@@ -725,7 +682,7 @@ hideAllOpenModal(event:any){
 	if(this.showEmoji){
 		//this.showEmoji=false
 	}
-	console.log(event.target.id)
+	// console.log(event.target.id)
 	//alert('hideAllOpenModal')
 	//this.closeAllModal()
 }	
@@ -795,8 +752,6 @@ sendattachfile(){
 		}else{
 			$("#sendfile").modal('hide');	
 		}
-	
-		
 	}
 	
 	sendMediaMessage(){
@@ -885,32 +840,21 @@ sendattachfile(){
 		this.getAgents()
 		this.getAllInteraction()
 		this.getCustomers()
-		this.getsavedMessages()
 		this.getquickReply()
 		this.getTemplates()
 		this.subscribeToNotifications()
 		this.getAttributeList()
         this.sendattachfile()
 		this.getQuickResponse()
-
-		// this.chatEditor.addEventListener('keydown', this.onEditorKeyDown.bind(this));
-	
-
 	}
 
 	ngAfterViewInit() {
-		if (this.chatSection) {
 		  this.scrollChatToBottom();
-		}
 	  }
 
 	scrollChatToBottom() {
 		const chatWindowElement = this.chatSection.nativeElement;
 		chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
-
-		const toolbar = chatWindowElement.querySelector('.e-toolbar');
-	    toolbar.removeAttribute('data-tooltip-id');
-	
 	  }
 
 	async subscribeToNotifications() {
@@ -925,15 +869,17 @@ sendattachfile(){
 					console.log("Seems like some message update from webhook");
 					console.log(message)
 					try{
-						let msgjson = JSON.parse(message);
+						let msgjson = message;
 						if(msgjson.displayPhoneNumber)
 						{
 							console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
 							if(msgjson.updateMessage)
 							{
 								this.getAllInteraction(false)	
-								this.scrollChatToBottom()
+								setTimeout(() => {
 								this.selectInteraction(this.selectedInteraction)
+								this.scrollChatToBottom()
+							}, 2000);
 							}					
 						}
 					}
@@ -945,14 +891,6 @@ sendattachfile(){
 			});
 	}
 
-	
-	async getsavedMessages(){
-		this.apiService.getsavedMessages(this.SPID).subscribe(savedMessages =>{
-			this.SavedMessageListMain = savedMessages
-			this.SavedMessageList = savedMessages
-		})
-
-	}
 	async getquickReply(){
 		this.apiService.getquickReply(this.SPID).subscribe(quickReply =>{
 			this.QuickReplyListMain = quickReply
@@ -961,12 +899,17 @@ sendattachfile(){
 		
 	}
 
+	async getQuickResponse(){
+		this.settingService.getTemplateData(this.SPID,0).subscribe(response => {
+		  this.QuickReplyList=response.templates;
+		});    
+	  }	  
+
+
 	async getTemplates(){
-		this.apiService.getTemplates(this.SPID).subscribe(allTemplates =>{
-			console.log('////////allTemplates////////')
-			console.log(allTemplates)
-			this.allTemplatesMain = allTemplates
-			this.allTemplates = allTemplates
+		this.settingService.getTemplateData(this.SPID,1).subscribe(response =>{
+			this.allTemplatesMain = response.templates;
+			this.allTemplates = response.templates;
 		})
 		
 	}
@@ -1105,7 +1048,7 @@ sendattachfile(){
 	}
 
 	async getFilteredInteraction(filterBy:any){
-		await this.apiService.getFilteredInteraction(filterBy,this.AgentId,this.AgentName).subscribe(async data =>{
+		await this.apiService.getFilteredInteraction(filterBy,this.AgentId,this.AgentName,this.SPID).subscribe(async data =>{
 			var dataList:any = data;
 			this.getAssicatedInteractionData(dataList)
 		});
@@ -1948,31 +1891,41 @@ groupMessageByDate(messageList:any){
 	return groupArrays
 }
 
-createCustomer(){
-	this.newContact.value.SP_ID =this.SPID;
-	this.newContact.value.Channel = this.selectedChannel
-	var bodyData = this.newContact.value
-	console.log(bodyData)
-	if(bodyData['OptedIn']){
-		bodyData['OptedIn'] = 'Yes';
+createCustomer() {
+	this.newContact.value.SP_ID = this.SPID;
+	this.newContact.value.Channel = this.selectedChannel;
+	var bodyData = this.newContact.value;
+	console.log(bodyData);
+  
+	if (bodyData['OptedIn']) {
+	  bodyData['OptedIn'] = 'Yes';
 	}
-	if(bodyData['Name']!='' && bodyData['Phone_number'].length>=10){
-	
-	this.apiService.createCustomer(bodyData).subscribe(async response =>{
-		var responseData:any = response
-		var insertId:any = responseData.insertId
-		if(insertId){
-			this.createInteraction(insertId);
-			// this.getAllInteraction();
-			this.newContact.reset();
-			
+  
+	if (bodyData['Name'] !== '' && bodyData['Phone_number'].length >= 15) {
+	  this.apiService.createCustomer(bodyData).subscribe(
+		async (response:any) => {
+		  if (response.status === 200) {
+			var responseData: any = response;
+			var insertId: any = responseData.insertId;
+  
+			if (insertId) {
+			  this.createInteraction(insertId);
+			  // this.getAllInteraction();
+			  this.newContact.reset();
+			}
+		  }
+		},
+		async (error) => {
+		  if (error.status === 409) {
+			this.showToaster('Phone Number already exist. Please Try another Number', 'error');
+		  }
 		}
-	});
-	}else{
-		this.showToaster('Please enter all required (*) input','error')
+	  );
+	} else {
+	  this.showToaster('Please enter all required (*) input', 'error');
 	}
-	
-}
+  }
+  
 
 
 
@@ -2246,21 +2199,13 @@ onPhoneNumberChange(event: any) {
 	}
   })
 }
-
-  	routeToSettings() {
-		this.closeAllModal();
-		$('body').removeClass('modal-open');
-		$('.modal-backdrop').remove();
-		this.router.navigate(['dashboard/setting']);
-	  }
-
 	  addfilters() {
 		this.closeAllModal();
 		$('body').removeClass('modal-hide');
 		$('.modal-backdrop').remove();
 	  }
 
-limitCharacters(message: string) {
+      limitCharacters(message: string) {
         let maxLength = 50;
         if (message.length <= maxLength) {
         return message;
@@ -2272,18 +2217,5 @@ limitCharacters(message: string) {
 		toggleShowFullMessage() {
 			this.showFullMessage = !this.showFullMessage;
 		}
-
-
-
-
-		getQuickResponse(){
-			this.settingService.getTemplateData(this.SPID,0).subscribe(response => {
-			  this.QuickReplyList=response.templates;
-			  console.log(this.QuickReplyList);
-			});    
-		  }	
-		  
-		  
-
 		  
 }
