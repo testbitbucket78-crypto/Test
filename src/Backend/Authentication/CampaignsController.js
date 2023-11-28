@@ -39,12 +39,14 @@ const addCampaign = (req, res) => {
         updateQuery += " csv_contacts='" + req.body.csv_contacts + "',";
         updateQuery += " segments_contacts='" + req.body.segments_contacts + "',";
         updateQuery += " status= " + req.body.status;
+        updateQuery += " category_id= " + req.body. category_id;
+       
         updateQuery += " WHERE Id =" + req.body.Id
 
         db.runQuery(req, res, updateQuery, []);
     } else {
-        var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts) ";
-        inserQuery += "VALUES (" + req.body.status + "," + req.body.sp_id + ",'" + req.body.title + "','" + req.body.channel_id + "','" + req.body.message_heading + "','" + req.body.message_content + "','" + req.body.message_media + "','" + req.body.message_variables + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.category + "','" + req.body.time_zone + "','" + req.body.start_datetime + "','" + req.body.end_datetime + "','" + req.body.csv_contacts + "','" + req.body.segments_contacts + "')";
+        var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id) ";
+        inserQuery += "VALUES (" + req.body.status + "," + req.body.sp_id + ",'" + req.body.title + "','" + req.body.channel_id + "','" + req.body.message_heading + "','" + req.body.message_content + "','" + req.body.message_media + "','" + req.body.message_variables + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.category + "','" + req.body.time_zone + "','" + req.body.start_datetime + "','" + req.body.end_datetime + "','" + req.body.csv_contacts + "','" + req.body.segments_contacts + "','" + req.body.category_id + "')";
 
         db.runQuery(req, res, inserQuery, []);
     }

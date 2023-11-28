@@ -45,7 +45,7 @@ router.post('/deleteInteraction',TeamBoxController.deleteInteraction);
 router.post('/getAllInteraction',TeamBoxController.getAllFilteredInteraction);
 router.get('/interaction',TeamBoxController.getAllInteraction);
 router.get('/interaction/:InteractionId',TeamBoxController.getInteractionById);
-router.get('/filterinteraction/:filterBy/:AgentId/:AgentName',TeamBoxController.getFilteredInteraction);
+router.get('/filterinteraction/:filterBy/:AgentId/:AgentName/:SPID',TeamBoxController.getFilteredInteraction);
 router.get('/interactionpinned/:InteractionId/:AgentId',TeamBoxController.checkInteractionPinned);
 router.post('/interactionpinned',TeamBoxController.updatePinnedStatus);
 router.get('/searchinteraction/:searchKey/:AgentId',TeamBoxController.getSearchInteraction);
