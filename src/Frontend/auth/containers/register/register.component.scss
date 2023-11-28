@@ -5,6 +5,31 @@
     height: 100vh;
 }
 
+#con .col-lg-5 {
+    position: relative;
+}
+
+.tag-line {
+    position: absolute;
+    left: 75px;
+    top: 100px;
+    font-size: 32px;
+    text-align: center;
+    color: #ffffff;
+    letter-spacing: -0.46px;
+    font-family: Manrope;
+    font-weight: bold;
+}
+
+.copyright-text{
+    position: absolute;
+    bottom: 60px;
+    left: 30px;
+    font-family: Manrope;
+    font-size: 14px;
+    color: #171414;
+}
+
 .float-left {
     float: left !important;
     width: 100%;

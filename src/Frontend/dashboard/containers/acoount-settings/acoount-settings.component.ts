@@ -243,8 +243,10 @@ openDiv() {
 
   async subscribeToNotifications() {
 		let notificationIdentifier = {
-			"UniqueSPPhonenumber" : (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
+			"UniqueSPPhonenumber" : (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number,
+      "spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
 		}
+    // console.log(notificationIdentifier);
 		this.websocketService.connect(notificationIdentifier);
 			this.websocketService.getMessage().subscribe(message => {
         

@@ -165,7 +165,7 @@ export class SettingsService {
     return this.http.post<any>(`${this.API_URL}/rotingsave`,routingRulesData);
   }
 
-  getTemplateData(spID:number,isTemplate:number): Observable<any> {
+  getTemplateData(spID:any,isTemplate:number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getTemplate/${spID}/${isTemplate}`);
   }
 
@@ -222,4 +222,7 @@ export class SettingsService {
     return this.http.post<any>('https://waweb.sampanatechnologies.com/IsClientReady',spid);
   
 }
+   getSPPhoneNumber(uid:any):Observable<any> {
+    return this.http.get<any>(`https://authapi.sampanatechnologies.com/users/${uid}`);
+   }
 }

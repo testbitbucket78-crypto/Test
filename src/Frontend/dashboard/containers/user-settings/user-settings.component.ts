@@ -47,6 +47,7 @@ isActive:any;
     this.userDetailForm =this.prepareUserForm();
     this.getUserList();
     this.getRolesList();
+    this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
   }
 
   rowClicked = (event: any) => {

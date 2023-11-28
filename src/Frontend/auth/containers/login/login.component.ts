@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormBuilder } from "@angular/forms";
+import { FormBuilder } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { Validators } from '@angular/forms';
+import { isNullOrUndefined } from 'is-what';
 @Component({
     selector: 'sb-login',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
     })
     title = 'formValidation';
     submitted = false;
+    parentId = 0;
 
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, private settingsService:SettingsService) {
 
@@ -35,9 +37,9 @@ export class LoginComponent implements OnInit {
     onSubmit() {
         this.loginformValue = this.loginForm.value;
         this.apiService.login(this.loginformValue).subscribe(
-            (result) => {
-
+            result => {
                 if (result.status === 200) {
+                    this.parentId = result.user.ParentId;
                     sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
                     sessionStorage.setItem('SP_ID', result.user.SP_ID);
                     this.router.navigate(['dashboard']);
@@ -45,62 +47,65 @@ export class LoginComponent implements OnInit {
                     var spid = Number(sessionStorage.getItem('SP_ID'));
 
                     let input = {
-                        spid:spid
-                    }
-                    this.settingsService.clientAuthenticated(input).subscribe
-                    ((response) => {
-                          if (response.status === 200) {
+                        spid: spid,
+                    };
+                    this.settingsService.clientAuthenticated(input).subscribe(response => {
+                        if (response.status === 200) {
                             console.log(response.message);
-                          }
-
-                          if(response.status === 404) {
-                            console.log(response.message);
-                          }
-                        });
-                     }
-           
-                },
-            
-            (error) => {
-                if (error?.status === 401) {
-                    const errorMessage = "! Incorrect Email or Password.";
-                    const errorDiv = document.getElementById("error-message");
-                    if (errorDiv) {
-                        errorDiv.innerHTML = errorMessage;
-                    }
-                    }   
-                    else if (error?.status === 502) {
-                    const errorMessage = "! Invalid Response.";
-                    const errorDiv = document.getElementById("error-message");
-                    if (errorDiv) {
-                        errorDiv.innerHTML = errorMessage;
-                    }
-                }  
-                    else if (error?.status === 500) {
-                        const errorMessage = "! Internal Server Error, Please Try After Sometime.";
-                        const errorDiv = document.getElementById("error-message");
-                        if (errorDiv) {
-                            errorDiv.innerHTML = errorMessage;
                         }
-                    }    
-                else  {
-                    const errorMessage = "! Internal Server Error,<br /> Please Try After Sometime.";
-                    const errorDiv = document.getElementById("error-message");
+
+                        if (response.status === 404) {
+                            console.log(response.message);
+                        }
+                    });
+                    
+                    this.settingsService.getSPPhoneNumber(this.parentId).subscribe(
+                        response => {
+                            if (response) {
+                                if (this.parentId == 0 || this.parentId == null) {
+                                    sessionStorage.setItem('SPPhonenumber',result.user.mobile_number);
+                                } else {
+                                    sessionStorage.setItem('SPPhonenumber',response[0].mobile_number);
+                                }
+                            }
+                        });
+                    
+                }
+            },
+
+            error => {
+                if (error?.status === 401) {
+                    const errorMessage = '! Incorrect Email or Password.';
+                    const errorDiv = document.getElementById('error-message');
                     if (errorDiv) {
                         errorDiv.innerHTML = errorMessage;
                     }
-                } 
-                  
-                  
-            });
-
-        
+                } else if (error?.status === 502) {
+                    const errorMessage = '! Invalid Response.';
+                    const errorDiv = document.getElementById('error-message');
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                } else if (error?.status === 500) {
+                    const errorMessage = '! Internal Server Error, Please Try After Sometime.';
+                    const errorDiv = document.getElementById('error-message');
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                } else {
+                    const errorMessage =
+                        '! Internal Server Error,<br /> Please Try After Sometime.';
+                    const errorDiv = document.getElementById('error-message');
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                }
+            }
+        );
     }
     onVerification() {
-        console.log(this.loginForm.value)
-        this.submitted = true
-
-    
+        console.log(this.loginForm.value);
+        this.submitted = true;
     }
 
     visible: boolean = true;
@@ -109,6 +114,5 @@ export class LoginComponent implements OnInit {
     viewpass() {
         this.visible = !this.visible;
         this.changetype = !this.changetype;
-
     }
 }

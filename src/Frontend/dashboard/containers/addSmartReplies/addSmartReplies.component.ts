@@ -12,6 +12,7 @@ import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncf
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { isNullOrUndefined } from 'is-what';
 
+
 declare var $: any;
 
 @Component({
@@ -46,6 +47,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 
 	active = 1;
 	stepper: any;
+	contactowner = 0;
 	data: any;
 	val: any;
 	SPID!:any;
@@ -75,7 +77,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	templatesData:[] =[];
 	editedText:string ='';
 	editedMessage: string = '';
-	isEditable: boolean = false;
+	isEditable: boolean[] = [];
 	addText:string ='';
 	showBox:boolean = false;
 	showBox1: boolean = false;
@@ -99,6 +101,9 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	successMessage = '';
 	warnMessage = '';
 	assignedAgentList: agentMessageList [] =[];
+	editableMessageIndex: number | null = null;
+	
+
 	assignAddTag: [] =[];
 	assignedTagList:any []=[];
 	dragAreaClass: string='';
@@ -114,6 +119,10 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	filterTemplateOption:any='';
 	selectedTemplate:any  = [];
 	Media:any;
+	MatchingCriteria:any;
+	matchingCriteria:any;
+	selectedcriteria:any;
+	templateStates: { [key: string]: boolean } = {};
 	
 
     /**richtexteditor **/ 
@@ -135,6 +144,11 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	mediaType: any = '';
 	showMention: any = false;
 	editTemplate: any = false;
+	searchText!:string;
+	Quickyreplysearch!:string;
+	savedmessagesearch!:string;
+	attributesearch!:string;
+
 
 	attributesList!:any;
 
@@ -306,7 +320,7 @@ click: any;
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService,private elementRef: ElementRef,private location:Location) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
-		config.keyboard = false;
+		config.keyboard = true;
 	}
 
 
@@ -318,7 +332,7 @@ click: any;
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
 
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: false
+			linear: true
 			,
 			animation: true
 		});
@@ -335,6 +349,7 @@ click: any;
 		 this.getTemplatesList()
 		 this.routerGuard();
 		 this.sendattachfile()
+		 this.getQuickResponse();
 
 	
 	
@@ -352,8 +367,10 @@ click: any;
 	scrollChatToBottom() {
 		const chatWindowElement: HTMLElement = this.chatSection.nativeElement;
     chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
+	const toolbar = chatWindowElement.querySelector('.e-toolbar');
 	
 	  }
+	
 
 	
 
@@ -396,6 +413,7 @@ click: any;
 	resetMessageTex() {
 		if (this.chatEditor.value == '<p>Type Reply...</p>') {
 			this.chatEditor.value = '';
+			this.scrollChatToBottom();
 			
 		}
 
@@ -515,9 +533,13 @@ click: any;
 	
 	selectQuickReplies(item:any){
 		this.closeAllModal()
-		var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.title+'</b></span><br>'+item.content+'</p>';
+		var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'</p>';
 		this.chatEditor.value =htmlcontent
+		this.getQuickResponse();
+
 	}
+
+	
 
 	searchSavedMessage(event:any){
 		let searchKey = event.target.value
@@ -585,6 +607,16 @@ click: any;
 	}
 
 
+	
+	addinserttemplate(templateId: string,action: string,checked: boolean) { 
+		if (action === 'contactowner') {
+		  this.contactowner = checked ? 1 : 0;
+		  this.templateStates[templateId] = checked;
+		  console.log(`Template ${templateId} checked: ${checked}`);
+	  }
+	  
+	}
+
 	filterTemplate(temType:any){
 
 		let allList  =this.allTemplatesMain;
@@ -605,13 +637,13 @@ click: any;
 	   }
 		var newArray=[];
 	   for(var m=0;m<allList.length;m++){
-          if(allList[m]['is_active']==1){
+		  if(allList[m]['is_active']==1){
 			newArray.push(allList[m])
 		  }
-
+	
 	   }
 	   this.allTemplates= newArray
-
+	
 		
 	}
 	
@@ -640,16 +672,36 @@ click: any;
 		
 	}
 
-
 	public onInsert(item: any) {
-
-		this.saveSelection.restore();
-		this.chatEditor.executeCommand('insertText', item.target.textContent);
+		const emojiText = item.target.textContent;
+	  
+		// Insert the emoji at the current cursor position
+		this.chatEditor.executeCommand('insertText', emojiText);
+	  
+		// Move the cursor to the end of the editor content
+		this.moveToEndOfEditor();
+	  
+		// Save the changes
 		this.chatEditor.formatter.saveData();
 		this.chatEditor.formatter.enableUndo(this.chatEditor);
-		// this.showEmoji = !this.showEmoji;
-
-	}
+	  }
+	  
+	  private moveToEndOfEditor() {
+		const editor = this.chatEditor.contentModule.getDocument();
+		const range = editor.createRange();
+	  
+		// Set the range to the end of the editor content
+		range.selectNodeContents(editor.body);
+		range.collapse(false);
+	  
+		// Update the selection with the new range
+		const selection = editor.defaultView.getSelection();
+		selection.removeAllRanges();
+		selection.addRange(range);
+	  }
+	  
+	  
+	  
 
 	showToaster(message:any,type:any){
 		if(type=='success'){
@@ -715,18 +767,17 @@ click: any;
 		// 	this.showToaster('! Please type your message first','error');
 		// 	return;
 		// }
+
+
 		
-		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile) })
+		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
 		console.log(this.messageMeidaFile)
-			this.custommesage = '';
-			
+			this.custommesage = '';	
+			this.scrollChatToBottom();
 		}
 
-		
 
-
-
-
+	
 		onActionBegin(args: any): void {
 			if (args.requestType === 'keydown' && args.event.which === 13) {
 			  // Enter key pressed
@@ -771,14 +822,32 @@ click: any;
 	}
 
 	/*** edit message and assinged conversation***/ 
-
 	toggleEditable(index: number) {
-		this.isEditable = !this.isEditable;
-		setTimeout(() => { document.getElementById(`msgbox-body${index}`); }, 100);
+		this.isEditable[index] = !this.isEditable[index];
+		this.editableMessageIndex = this.isEditable[index] ? index : null;
+	  
+		setTimeout(() => { 
+		  const element = document.getElementById(`msgbox-body${index}`);
+		  if (element) {
+			element.focus(); // Set focus to the editable element
+		  }
+		}, 100);
 		
 		console.log(document.getElementById(`msgbox-body${index}`));
-		
-		}
+	  }
+
+	  initializeEditableState() {
+		this.isEditable = this.messages.map(() => false);
+	  }
+
+	 
+	
+	  closeAddAction() {
+		// Close the dialog when clicking outside
+		this.ShowAddAction = false;
+	  }
+
+
 	onEdit(msgText:string) {
 		this.editedMessage = msgText;
 		
@@ -803,10 +872,12 @@ click: any;
 	toggleAssignOption(index: number) {
   if (this.assignActionList[index] === "Assign Conversation") {
     this.ShowAssignOption = !this.ShowAssignOption;
+	this.ShowAddAction = false;
   }
   else if (this.assignActionList[index] === "Add Contact Tag") {
 	  this.ShowRemoveTag =false;
 	  $("#addTagModal").modal('show'); 
+	  this.ShowAddAction = false;
 
   }
 //   else if (this.assignActionList[index] === "Trigger Flow") {
@@ -820,7 +891,19 @@ click: any;
   }
  this.ShowAddAction = false;
 
+
 }
+
+stopPropagation(event: Event) {
+    event.stopPropagation();
+  }
+ 
+  closeEditableSection() {
+	// Iterate over the array and set isEditable to false for all messages
+	this.isEditable.forEach((_, index) => {
+	  this.isEditable[index] = false;
+	});
+  }
 
 
 
@@ -962,8 +1045,18 @@ click: any;
 	onSelectionChange(entry: any): void {
 		this.model = entry;
 		console.log(this.model)
+
+
 		sessionStorage.setItem('MatchingCriteria',this.model)
+		this.selectedcriteria=this.model;
+		console.log(this.model);
 	}
+
+	closeAddActionDialog() {
+		// Close the dialog when clicking outside
+		this.ShowAddAction = false;
+	  }
+	
 	
 
 	sendNewSmartReply(smartreplysuccess: any, smartreplyfailed: any) {
@@ -1017,10 +1110,11 @@ click: any;
 	verifyKeyword() {
 
 		const isEmptyKeyword = this.keywords.some(k => k.trim() !=='');
-		if (!isEmptyKeyword) {
+		if (!isEmptyKeyword || !this.selectedcriteria){
 			this.showToaster("! Keyword and Matching Criteria required",'error');
 			return;
 		}
+		
 		 else {
 			var data= {
 				SP_ID: sessionStorage.getItem('SP_ID'),
@@ -1047,6 +1141,8 @@ click: any;
 		}
 
 	}
+
+	
 	
 
 	  /*  TOGGLE FUZZY, EXACT & CONTAINS DIVs  */
@@ -1125,6 +1221,10 @@ click: any;
 		}
   }
 
-  
-
+  getQuickResponse(){
+	this.settingsService.getTemplateData(this.SPID,0).subscribe(response => {
+	  this.QuickReplyList=response.templates;
+	  console.log(this.QuickReplyList);
+	});    
+  }	  
 }

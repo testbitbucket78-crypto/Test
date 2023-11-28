@@ -107,7 +107,19 @@
                 </div>
                 <form [formGroup]="defaultMessageForm">
                 <div class="modal-body px-5 pt-0">
+                    <div class="d-inline-block flex-column sel-type-link pb-3">
+                        <label for="link" class="linkch" >Agent Reply Timeout Period</label>
+                        
+                        <select class="input-form" formControlName="Select no. of minutes"  id="linken"  required >
+                            <option  [disabled]="true" [selected]="true" [hidden]="true"  value="0" selected >Select no. of minutes</option>
+                            <option></option>
+                            <option ></option>
+                        </select>
+                
+                
+                       </div>
                     <div class="d-flex justify-content-between align-items-center sel-type-btns">
+                        
                         <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" checked><label [ngClass]="{'radio-label': selectedType === 'text'}" class="m-0" for="sel-text">Text</label>
                         <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')"><label [ngClass]="{'radio-label': selectedType === 'image'}"  class="m-0" for="sel-image">Image</label>
                         <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')"><label [ngClass]="{'radio-label': selectedType === 'video'}"  class="m-0" for="sel-video">Video</label>
@@ -129,6 +141,7 @@
                    
 
                    <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
+                    
                    
                         <input type="file" accept="image/jpg, image/png" formControlName="link" name="image-select" id="sel-type-image">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>

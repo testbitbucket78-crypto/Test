@@ -737,6 +737,7 @@ input:focus {
     height: 70px !important;
     margin-top: 0px !important;
     width: 366px !important;
+
 }
 
 .e-toolbar,
@@ -2053,9 +2054,9 @@ label.container {
 
       // Custom styles for radio buttons
 
-// input[type="radio"] {
-//     display: none;
-// }
+input[type="radio"] {
+    display: none;
+}
 
 .template_box_inner label {
     display: inline-block;
@@ -2078,6 +2079,14 @@ label.container {
     border-radius: 50%;
     background-color: #FFFFFF;
     transition: border-color 0.3s, background-color 0.3s;
+}
+
+.form-check.template_box_inner label::before{
+    left: -22px;
+}
+
+.form-check.template_box_inner label{
+    padding: 0px 0 0 1px!important;
 }
 
 input[type="radio"]:checked + label::before {
@@ -2141,4 +2150,28 @@ input[type="radio"]:checked + label::before {
     min-height: 364px;
     background-size: contain;
     background-repeat: no-repeat;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
+  .quickResponse.items_list.item{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border-radius: 18px;
+    width: 100%;
+    margin: 10px 0px;
+    min-height: 100px;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.modal-content.showQuickReply{
+    background: #FFF4F2 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 30px;
 }
