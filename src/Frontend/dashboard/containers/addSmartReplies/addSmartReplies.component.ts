@@ -676,29 +676,57 @@ click: any;
 		const emojiText = item.target.textContent;
 	  
 		// Insert the emoji at the current cursor position
+		this.chatEditor.formatter.saveData();
 		this.chatEditor.executeCommand('insertText', emojiText);
 	  
 		// Move the cursor to the end of the editor content
-		this.moveToEndOfEditor();
+		// this.moveToEndOfEditor();
 	  
 		// Save the changes
 		this.chatEditor.formatter.saveData();
 		this.chatEditor.formatter.enableUndo(this.chatEditor);
 	  }
 	  
-	  private moveToEndOfEditor() {
-		const editor = this.chatEditor.contentModule.getDocument();
-		const range = editor.createRange();
+	//   private moveToEndOfEditor() {
+	// 	const editor = this.chatEditor.contentModule.getDocument();
+	// 	const range = editor.createRange();
 	  
-		// Set the range to the end of the editor content
-		range.selectNodeContents(editor.body);
-		range.collapse(false);
+	// 	// Set the range to the end of the editor content
+	// 	range.selectNodeContents(editor.body);
+	// 	range.collapse(false);
 	  
-		// Update the selection with the new range
-		const selection = editor.defaultView.getSelection();
-		selection.removeAllRanges();
-		selection.addRange(range);
-	  }
+	// 	// Update the selection with the new range
+	// 	const selection = editor.defaultView.getSelection();
+	// 	selection.removeAllRanges();
+	// 	selection.addRange(range);
+	//   }
+
+
+
+	//   public onInsert(): void {
+    //     const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
+    //     if (activeEle) {
+    //         if (this.rteObj.formatter.getUndoRedoStack().length === 0) {
+    //             this.rteObj.formatter.saveData();
+    //         }
+    //         if (Browser.isDevice && Browser.isIos) {
+    //             this.saveSelection.restore();
+    //         }
+    //         this.rteObj.executeCommand('insertText', activeEle.textContent);
+    //         this.rteObj.formatter.saveData();
+    //         (this.rteObj as any).formatter.enableUndo(this.rteObj);
+    //     }
+    //     this.dialogOverlay();
+    // }
+
+    // public dialogOverlay(): void {
+    //     const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
+    //     if (activeEle) {
+    //         activeEle.classList.remove('e-active');
+    //     }
+    //     this.dialogObj.hide();
+    // }
+
 	  
 	  
 	  
@@ -758,15 +786,17 @@ click: any;
 
 	}
 
+	
+
 
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
 	addMessage() {
 
-		// if(!this.custommesage || this.custommesage ==='<p>Type Reply...</p>') {
-		// 	this.showToaster('! Please type your message first','error');
-		// 	return;
-		// }
+		if(!this.custommesage || this.custommesage ==='<p>Type Reply...</p>') {
+			this.showToaster('! Please type your message first','error');
+			return;
+		}
 
 
 		

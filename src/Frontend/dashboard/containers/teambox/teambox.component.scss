@@ -2363,5 +2363,16 @@ label span {
     word-wrap: break-word;
     white-space: normal;
   }
+ 
+  .validation-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+  }
   
-  
+  .text-danger {
+    color: #dc3545 !important;
+    font-size: 15px;
+    position: absolute;
+    margin-top: -1rem;
+}
