@@ -62,7 +62,7 @@ const searchCustomer = (req, res) => {
     db.runQuery(req, res, sQuery, [req.params.spID, req.params.key, req.params.key]);
 }
 
-const insertCustomers = (req, res) => {
+const insertCustomers = async (req, res) => {
     Name = req.body.Name
     Phone_number = req.body.Phone_number
     channel = req.body.Channel
@@ -70,7 +70,23 @@ const insertCustomers = (req, res) => {
     SP_ID = req.body.SP_ID
     countryCode=req.body.country_code
     var values = [[Name, Phone_number, channel, SP_ID, OptInStatus,countryCode]]
+    let existContactWithSameSpid=`SELECT * FROM EndCustomer WHERE  Phone_number=? AND (isDeleted =0 AND isBlocked =0) AND SP_ID=? AND IsTemporary !=1  `
+   
+    var result = await db.excuteQuery(existContactWithSameSpid, [ Phone_number, SP_ID])
+
+    console.log("result >>>>>>>>>>")
+    console.log(result)
+    if (result.length > 0) {
+      // email or phone number already exist, return an error response
+
+      res.status(409).send({
+        msg: 'phone number already exist !',
+        status: 409
+      });
+    }
+    else {
     db.runQuery(req, res, val.insertCustomersQuery, [values])
+    }
 }
 
 const updatedCustomer = (req, res) => {
@@ -194,7 +210,7 @@ const getAllFilteredInteraction = (req, res) => {
         queryPath += " and EndCustomer.Name like '%" + req.body.SearchKey + "%'"
 
     }
-    console.log(queryPath)
+   // console.log(queryPath)
     db.runQuery(req, res, queryPath, [req.body.SPID])
 }
 
@@ -224,15 +240,15 @@ const getFilteredInteraction = (req, res) => {
     var filterBy = req.params.filterBy
     if (filterBy == 'Open' || filterBy == 'Resolved') {
         //	var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.customerId=EndCustomer.customerId and Interaction.interaction_status='"+filterBy+"' and Interaction.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId="+req.params.AgentId+")"
-        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.interaction_status='" + filterBy + "'"
+        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.interaction_status='" + filterBy + "' and EndCustomer.isDeleted =0 and Interaction.SP_ID=" + req.params.SPID
     } else if (filterBy == 'Unassigned') {
-        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping)"
+        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping) and EndCustomer.isDeleted =0 and Interaction.SP_ID=" + req.params.SPID
     } else if (filterBy == 'Mine') {
-        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.params.AgentId + " and is_active=1)"
+        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.params.AgentId + " and is_active=1) and EndCustomer.isDeleted =0  and Interaction.SP_ID=" + req.params.SPID
     } else if (filterBy == 'Mentioned') {
-        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId  IN (SELECT interaction_id FROM `Message` WHERE `message_text` LIKE '%@" + req.params.AgentName + "%')"
+        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId  IN (SELECT interaction_id FROM `Message` WHERE `message_text` LIKE '%@" + req.params.AgentName + "%') and EndCustomer.isDeleted =0  and Interaction.SP_ID=" + req.params.SPID
     } else if (filterBy == 'Pinned') {
-        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId  IN (SELECT InteractionId FROM PinnedInteraction where AgentId=" + req.params.AgentId + ")"
+        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId  IN (SELECT InteractionId FROM PinnedInteraction where AgentId=" + req.params.AgentId + ") and EndCustomer.isDeleted =0  and Interaction.SP_ID=" + req.params.SPID
     }
 
     db.runQuery(req, res, queryPath, [filterBy])
@@ -307,8 +323,8 @@ const insertMessage = async (req, res) => {
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id])
             let channelType = await db.excuteQuery('select channel from EndCustomer where customerId=?', [customerId]);
            
-            let channel = channelType.length > 0 ? channelType[0].channel : 'WhatsApp Web'
-            console.log("channelType" + channel);
+            const channel = channelType.length > 1 ? channelType[0].channel : 'WhatsApp Web';
+            
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
            let msg_id=await db.excuteQuery(messageQuery, [values])
             if (agentName.length >= 0) {
