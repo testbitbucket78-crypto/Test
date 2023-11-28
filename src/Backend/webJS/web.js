@@ -41,10 +41,10 @@ async function createClientInstance(spid, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-           executablePath: "/usr/bin/google-chrome-stable",
+          executablePath: "/usr/bin/google-chrome-stable",
          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
-        
+
           args: [
             '--no-sandbox',
             '--disable-dev-shm-usage', // <-- add this one
@@ -202,9 +202,12 @@ function getCircularReplacer() {
 
 
 function writeClientFile(clientSpidMapping) {
+  // console.log(clientSpidMapping)
+  // console.log("====================================")
   let jsonData = JSON.stringify(clientSpidMapping, getCircularReplacer(), 2);
-  jsonData = jsonData + ',';
+  // jsonData = jsonData + ',';
 
+ // console.log(jsonData)
 
   // Writing to the file
   fs.writeFile(filePath, jsonData, (err) => {
@@ -264,6 +267,27 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
       console.log("return send msg status")
       return '200';
     } else {
+      // Use the fs.readFile() method to read the contents of the file
+      fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+          console.error('Error reading the file:', err);
+          return;
+        }
+
+        // Parse the JSON data
+        try {
+          const jsonData = JSON.parse(data);
+
+          // Access the value associated with key '3'
+          const valueForKey3 = jsonData[[spid]];
+          client = jsonData[[spid]];
+          let msg = sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
+          // Now you can work with the 'valueForKey3' object
+          // console.log('Value for key spid:', JSON.stringify(valueForKey3, null, 2));
+        } catch (parseError) {
+          console.error('Error parsing JSON:', parseError);
+        }
+      });
       console.log("else");
       return '401'
     }
@@ -274,6 +298,7 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
 
 async function sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id) {
   try {
+    console.log(client)
     console.log("messagesTypes", interaction_id, msg_id)
     if (client.info) {
       console.log("client info avilable")

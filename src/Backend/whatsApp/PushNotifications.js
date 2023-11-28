@@ -21,6 +21,9 @@ client.on('connect', function(connection) {
           console.log("Received: '" + message.utf8Data + "'");
       }
   });
+//   setInterval(() => {      
+//     connection.next("ping alive switch");
+// }, 30000);
 });
 
 client.connect('ws://13.126.146.43:3010/', 'echo-protocol');
