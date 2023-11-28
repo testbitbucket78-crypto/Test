@@ -63,7 +63,6 @@ const searchCustomer = (req, res) => {
 }
 
 const insertCustomers = async (req, res) => {
-    console.log("____________________________________________")
     Name = req.body.Name
     Phone_number = req.body.Phone_number
     channel = req.body.Channel
@@ -129,7 +128,6 @@ const blockCustomer = (req, res) => {
 
 const createInteraction = async (req, res) => {
     try {
-        console.log("+++++++++++++++++++++++++++++++++++++++++++++++++")
         customerId = req.body.customerId
         SP_ID = req.body.spid
         interaction_status = "Open"
