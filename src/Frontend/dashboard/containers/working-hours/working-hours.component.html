@@ -27,7 +27,8 @@
         <div class="setting-card">
             <div class="flex-header">
                 <span class="working-hour-heading pt-2">Holidays</span>
-                <select class="holiday-dropdown" [(ngModel)]="selectedYear">
+                <!-- <img src="../../../../assets/img/settings/drag.svg" /> -->
+                <select class="holiday-dropdown multiselect" [(ngModel)]="selectedYear">
                     <option *ngFor="let item of yearList" [value]="item">{{item}}</option>
                 </select>                
             </div>

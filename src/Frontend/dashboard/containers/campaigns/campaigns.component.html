@@ -281,11 +281,12 @@
 						<label for="Channel" class="required">Channel</label>
 						<input class="form-control select_box" type="text" placeholder="Select channel" name="channel_label"
 								formControlName="channel_label" id="channel_label" (click)="toggleChannelOption()" readonly />
-						<div *ngIf="ShowChannelOption" class="popup-dialog">
+						<div *ngIf="ShowChannelOption" (click)="stopPropagation($event)" class="popup-dialog">
 							<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)">
 								{{channel.label}}
 							</p>
 						</div>
+						<div *ngIf="ShowChannelOption" class="overlay" (click)="closeAddActionDialog()"></div>
 					</div>
 				</form>
 				</div>
@@ -293,7 +294,7 @@
 			<div [ngClass]="activeStep ==2 ? 'addeidtcampaign_step active' : 'addeidtcampaign_step'">
 				<p><span>Select a method to proceed next to add an audience</span></p>
 				<div class="outerbox" >
-						<div [ngClass]="step2Option =='AddSegmentAudience' ? 'innerbox active' : 'innerbox'"  (click)="selectStep2Option('AddSegmentAudience',addsegmentaudience,step2Option)">
+						<div [ngClass]="step2Option =='AddSegmentAudience' ? 'innerbox active' : 'innerbox'"  (click)="openAudience('AddSegmentAudience',addsegmentaudience,step2Option)">
 						
 							<img class="icon ml" src="assets/img/campaign/add-segment.svg">
 							<p>Add Segment Audience</p>
@@ -351,8 +352,8 @@
 							<label class="container" (click)="selectTemplate(template)">
 								<input type="radio" name="selectedTemplate">
 								<span class="checkmark radio"></span>
-								<p>{{template.title}}</p>
-								<p><span>{{template.created_at}}</span></p>
+								<p>{{template.TemplateName}}</p>
+								<p><span>{{template.created_at | date:'dd-MM-yyyy'}}</span></p>
 							</label>
 							
 							<div class="inner_box">
@@ -700,7 +701,7 @@
 					<div *ngIf="importantContact" class="important_contact_modal">
 						<div class="modal-header importantContact">
 							<div class="modal-header-left">
-								<h4 class="modal-title" id="modal-basic-title">Import Contact</h4>
+								<h4 class="modal-title" id="modal-basic-title">Import Contacts</h4>
 							</div>
 							<div class="modal-header-right">
 								<p  class="close-box" aria-label="Close" (click)="closeImportantContact()"><img src="assets/img/teambox/icon-close.svg"></p>
@@ -763,9 +764,10 @@
 											<span class="label">Add</span>
 											<span class="checkmark radio"></span>
 										  </label>
-										  <input type="text" class="text-input" placeholder="Enter" name="prefix_add" (change)="updateCSVPRefix($event)">
+										  <input type="text" class="text-input update" placeholder="Enter" name="prefix_add" (change)="updateCSVPRefix($event)">
 										</div>
-				
+
+
 										<div class="radio_group_col_inner">
 											<label class="container" (click)="updateCSVPrefix('prefix_remove')">
 											  <input type="radio" name="prefix">
@@ -778,18 +780,23 @@
 								</div>
 				
 							</div>
+							
+
 							<div class="important_contact">
-							<div class="input_group_btn">
-								<label class="container">
-									<input type="checkbox" name="term_cond">
+								<div class="input_group_btn">
+								  <label class="container">
+									<input type="checkbox" name="term_cond" [(ngModel)]="checkboxChecked">
 									<span class="checkmark"></span>
 									<p><span>By checking this box I declare that the contacts uploaded have been opted-in and given consent accordingly</span></p>
-									
 								  </label>
-				
-								<button type="button" class="submit-btn" aria-label="Close" (click)="mapImportantContact(mpcampaign)">Map</button>
-							</div>
-							</div>
+							  
+								  <button type="button" class="submit-btn" aria-label="Close" (click)="mapImportantContact(mpcampaign)" [disabled]="!checkboxChecked">Map</button>
+								</div>
+							  </div>
+
+
+
+
 					
 						</div>
 						
@@ -879,7 +886,7 @@
 	<ng-template #addsegmentaudience let-c="close" let-d="dismiss">
 		<div class="modal-header">
 			<div class="modal-header-left">
-				<img class="icon" src="assets/img/campaign/back.svg" (click)="openAddNew(addNewCampaign)"> <h4 class="modal-title" id="modal-basic-title">Saved Lists</h4>
+				<img class="icon list" src="assets/img/campaign/back.svg" (click)="openAddNew(addNewCampaign)"> <h4 class="modal-title color" id="modal-basic-title">Saved Lists</h4>
 			</div>
 			<div class="modal-header-right">
 				<p class="text-box-readonly mr-2">Manage Saved Lists from settings</p>
@@ -890,7 +897,7 @@
 		<div class="modal-body addsegmentaudience">
 			<div class="addsegmentaudience_header">
 				<div class="addsegmentaudience_header_left">
-					<input placeholder="Search" type="text" class="search-box" (keyup)="getContactList($event)">
+					<input placeholder="Search" type="text" class="search-box createlist" (keyup)="getContactList($event)">
 				</div>
 				<div class="addsegmentaudience_header_right">
 					<button class="new-message-btn" (click)="openAddNewItem(addNewItem)"><img class="icon" src="/assets/img/teambox/add.svg" /> Create List</button>		
@@ -911,8 +918,8 @@
 				     <p (click)="selectItem(i)">
 						{{list.addedfilters?list.addedfilters.length:0}} Filter Applied<img src="/assets/img/teambox/dropdown.svg"> 
 					</p>
-					<div *ngIf="list.addedfilters" [ngClass]="slectedItem ==i ? 'applied_filter_popup active' : 'applied_filter_popup'">
-						<div class="item" *ngFor='let filter of list.addedfilters;let i = index' (click)="updatedContactList(list,i)">
+					<div *ngIf="list.addedfilters!=0" [ngClass]="slectedItem ==i ? 'applied_filter_popup active' : 'applied_filter_popup'">
+						<div class="item" *ngFor='let filter of list.addedfilters;let i = index'>
 							<span *ngIf="filter.filterOperator">{{filter.filterOperator}}</span><p >{{filter.filterPrefix}} {{filter.filterBy}} {{filter.filterValue}}</p>
 						</div>
 						
@@ -1129,7 +1136,7 @@
 		<div class="modal-header">
 			<div class="modal-header-left">
 				<img class="icon" src="assets/img/campaign/back.svg" (click)="openAddNewItem(addNewItem)"> 
-				<input placeholder="Search" type="text" class="search-box" (keyup)="searchInTable($event)">
+				<input placeholder="Search" type="text" class="search-box table" (keyup)="searchInTable($event)">
 			</div>
 			<div class="modal-header-right">
 				

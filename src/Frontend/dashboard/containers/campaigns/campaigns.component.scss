@@ -816,8 +816,9 @@
 	background: #FFF4F2 0% 0% no-repeat padding-box;
 	box-shadow: 4px 22px 54px #695F971A;
 	border-radius: 30px;
-	width: 214%;
-    margin-left: -52%;
+    width: 180%;
+    margin-left: -37%;
+    height: 41rem;
 	}
 	.important_contact_modal.sm{
 		width: 30%;
@@ -1176,9 +1177,6 @@
 	border-radius: 12px;
 	margin: 5px;
 	flex-wrap: nowrap;
-	background:#FFFFFF url("/assets/img/teambox/icon-close.svg") no-repeat;
-	background-size: 6px;
-	background-position: center right 8px;
 	padding-right: 15px;
 
 	}
@@ -1522,6 +1520,23 @@
 	}
 	.applylist_contnet tr td p.tag_item span.new{
 	background: green;
+	}
+	.search-box.table{
+		width: 20rem;
+		
+	}
+
+	.text-input.update{
+		color:black;
+		font-weight:500;
+	}
+	.applylist_contnet_body tr td {
+		font-size: 12px;
+		color: #000;
+		text-align: left;
+		padding: 5px 10px;
+		font-family: 'Manrope';
+		font-weight: 600;
 	}
 
 	.addeidtcampaign_step .outerbox .innerbox p.form-control.btn.rt_close{
@@ -1946,4 +1961,23 @@
     font-size: 13px;
 }
 
+.overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+  }
+
+
+  .modal-title.color{
+	font: var(--unnamed-font-style-normal) normal  var(--unnamed-font-size-22)/var(--unnamed-line-spacing-60) var(--unnamed-font-family-manrope-bold)!important;
+	color: var(--unnamed-color-000000)!important;
+	font-family: 'Manrope';
+	font-weight: 600;
+  }
+
+  .search-box.createlist{
+	width: 166%;
+  }
 
