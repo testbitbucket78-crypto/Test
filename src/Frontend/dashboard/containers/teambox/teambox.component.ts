@@ -870,6 +870,13 @@ sendattachfile(){
 					console.log(message)
 					try{
 						let msgjson = message;
+
+						try {
+							msgjson = JSON.parse(message);
+						}
+						catch (je) {
+	                	//console.log("it could already be a JSON");
+						}
 						if(msgjson.displayPhoneNumber)
 						{
 							console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
@@ -1019,11 +1026,11 @@ sendattachfile(){
 		
 		setTimeout(() => {
 			this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-		}, 5000);
+		}, 2000);
 
 		setTimeout(() => {
 			this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-		}, 5000);
+		}, 2000);
 
 		if(dataList[0] && selectInteraction){
 			this.selectInteraction(dataList[0])
@@ -1065,6 +1072,9 @@ sendattachfile(){
 		
 		await this.apiService.getAllInteraction(bodyData).subscribe(async data =>{
 			var dataList:any = data;
+			if(this.selectedInteraction ){
+				this.selectedInteraction = dataList.filter((item: any)=> item.InteractionId == this.selectedInteraction.InteractionId)[0];
+			}
 			this.getAssicatedInteractionData(dataList,selectInteraction)
 			
 		});
@@ -1297,7 +1307,7 @@ this.contactId = Interaction.customerId
 	this.scrollChatToBottom()
 
 	var element = document.getElementsByClassName('total_count green')[0];
-	if (this.selectedInteraction.UnreadCount!=0) {
+	if (this.selectedInteraction.UnreadCount!=0 && element) {
 	  element.innerHTML = '';
 	}
 	
@@ -1840,8 +1850,7 @@ updateConversationStatus(status:any){
 	this.apiService.updateInteraction(bodyData).subscribe(async response =>{
 		this.ShowConversationStatusOption=false
 		this.showToaster('Conversations updated to '+status+'...','success')
-		/*
-		//////This time it can not be assign to any one
+
 		var responseData:any = response
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
@@ -1855,8 +1864,6 @@ updateConversationStatus(status:any){
 		})
 
 		});
-
-		*/
 		
 		this.selectedInteraction['interaction_status']=status
 	});
@@ -1901,20 +1908,16 @@ createCustomer() {
 	  bodyData['OptedIn'] = 'Yes';
 	}
   
-	if (bodyData['Name'] !== '' && bodyData['Phone_number'].length >= 15) {
+	if (bodyData['Name'] !== '' && bodyData['Phone_number'].length >= 10) {
 	  this.apiService.createCustomer(bodyData).subscribe(
 		async (response:any) => {
-		  if (response.status === 200) {
+		 
 			var responseData: any = response;
 			var insertId: any = responseData.insertId;
-  
 			if (insertId) {
-			  this.createInteraction(insertId);
-			  // this.getAllInteraction();
-			  this.newContact.reset();
-			}
-		  }
-		},
+				this.createInteraction(insertId);
+				this.newContact.reset();
+			}},
 		async (error) => {
 		  if (error.status === 409) {
 			this.showToaster('Phone Number already exist. Please Try another Number', 'error');
@@ -1924,12 +1927,9 @@ createCustomer() {
 	} else {
 	  this.showToaster('Please enter all required (*) input', 'error');
 	}
+	this.getAllInteraction();
   }
   
-
-
-
-
 
 createInteraction(customerId:any){
 var bodyData = {
@@ -1937,16 +1937,11 @@ var bodyData = {
 }
 this.apiService.createInteraction(bodyData).subscribe(async data =>{
 	var responseData:any = data
-	var insertId:any = responseData.insertId
-	if(insertId){
-		this.getAllInteraction(false)
-	}
 	if(this.modalReference){
 		this.modalReference.close();
 	}
-	
+	this.getAllInteraction()
 });
-
 
 }
 
