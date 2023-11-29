@@ -52,6 +52,10 @@
     margin: 5px;
 }
 
+.rteEmoticons .char_block:hover {
+    background:#6149CD;
+     }
+
 .e-toolbar-wrapper {
     position: absolute;
     bottom: 0;
@@ -101,7 +105,7 @@
     position: fixed;
     right: 50px;
     top: 65px;
-    z-index: 9999;
+    z-index: 9999999;
 }
 
 .toaster p {

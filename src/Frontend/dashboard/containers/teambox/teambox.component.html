@@ -1,15 +1,16 @@
 <sb-layout-dashboard>
 	<sb-top-nav title="Teambox"></sb-top-nav>
+
 	<div class="toaster" (click)="hideToaster()">
 		<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
 		<p *ngIf="successMessage" class="success">{{successMessage}}</p>
 		<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 	</div>
-
+	
 	<div class="row team-box-page" id="team-box-page" (click)="hideAllOpenModal($event)">
 		
 
-	
+
 		<div class="col-12 d-flex mt-1">
 
 			<div class="col-4 team-box">
@@ -805,7 +806,7 @@
 
 
 
-	<!-- atrribute-modal -->
+	<!-- insert-atrribute-modal -->
 	<div class="modal fade" tabindex="-1" id="atrributemodal" #atrributemodal data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -822,7 +823,7 @@
 						</div>
 						<div class="modal-body quickResponse">
 							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-								aria-describedby="basic-addon2"   [(ngModel)]="attributesearch" />
+								aria-describedby="basic-addon2" [(ngModel)]="attributesearch" />
 							<div class="items_list">
 								<div *ngFor="let alist of attributesList  | searchfilter:attributesearch " class="attribute"
 									(click)="selectAttributes(alist)">
@@ -831,10 +832,10 @@
 							</div>
 
 							<div class="bottom_section">
-								<p class="close-box" (click)="routeToSettings()" routerLink="/dashboard/setting"><img class="setting_icon"
-										src="/assets/img/campaign/setting-g.svg"></p>
-								<p class="text-box-readonly">To add/edit new attributes from the settings</p>
+								<p class="text-box-readonly"><span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg">
+								</span>Add/edit new attributes from settings</p>
 							</div>
+							
 
 						</div>
 
@@ -843,7 +844,8 @@
 			</div>
 		</div>
 	</div>
-	<!-- insert-modal -->
+
+	<!-- insert-template-modal -->
 	<div class="modal fade" tabindex="-1" id="insertmodal" #insertmodal data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -884,32 +886,38 @@
 
 							</div>
 							<div class="template_list">
-								<div class="template_box" *ngFor='let template of allTemplates  | searchfilter:templatesearchreply ;let i = index'>
-									<label class="container" (click)="selectTemplate(template)">
-										<input type="radio" name="selectedTemplate">
-										<span class="checkmark radio"></span>
-										<p>{{template.title}}</p>
-										<p><span>{{template.created_at}}</span></p>
-									</label>
-
-									<div class="inner_box">
-										<img *ngIf="template.image" class="template_img" src="{{template.image}}">
-										<div *ngIf="!template.image" class="template_img_placeholder"></div>
-										<div [ngClass]="template.image ? 'template_text' : 'template_plain_text'">
-											<p>{{template.content_heading}}</p>
-											<p [innerHTML]="template.content"></p>
-										</div>
+								<div class="template_box" *ngFor='let template of allTemplates; let i = index' >
+								  <div class="template_box_inner d-flex align-items-start">
+									<input type="radio" name="sel-template" id="sel-template">
+									<label class="radio-label" id="sel-template" for="sel-template"></label>
+								 <div class="template_head flex-column">
+								  <p class="m-0 template_name">{{template.TemplateName}}</p>
+								  <p class="m-0"><span>{{ template.created_at | date:'dd-MM-yyyy' }}</span></p>
+						  
+								  <div class="inner_box">
+									<img *ngIf="template.Links" class="template_img" src="{{template.Links}}">
+										<div *ngIf="!template.Links" class="template_img_placeholder"></div>
+								
+									<div class="template_text">
+									  <p class="m-0 font-weight-bold">{{template.Header}}</p>
+									  <p>{{template.BodyText}}</p>
+									  <p>{{template.FooterText}}</p>
 									</div>
-									<div class="template_btn">
-										<button type="button" class="btn">YES</button>
-										<button type="button" class="btn">NO</button>
-										<button type="button" class="btn">EXPLORE</button>
-
-									</div>
-
+								  </div>
+								 </div>
+							 
+								  </div>
+								
+								  <div class="template_btn">
+									<!-- <button type="button" class="btn">YES</button>
+									<button type="button" class="btn">NO</button> -->
+									<!-- <button type="button" class="btn">EXPLORE</button> -->
+						  
+								  </div>
+						  
 								</div>
-
-							</div>
+						  
+							  </div>
 
 
 							<div class="input_group_btn">
@@ -917,10 +925,8 @@
 							</div>
 
 							<div class="bottom_section">
-								
-								<p class="close-box" (click)="routeToSettings()"  routerLink="/dashboard/setting"><img  class="setting_icon"
-										src="/assets/img/campaign/setting-g.svg"></p>
-								<p class="text-box-readonly">To add/edit Insert Template from the settings</p>
+								<p class="text-box-readonly"><span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg">
+								</span>Add/edit Insert Template from settings</p>
 							</div>
 
 						</div>
@@ -1169,49 +1175,6 @@
 
 	</div>
 
-
-	<!-- saved message popup -->
-	<div class="modal fade" tabindex="-1" id="savedpopup" #savedpopup data-bs-backdrop="static" role="dialog">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-body">
-					<div class="custom_modal bg-pink sm">
-						<div class="modal-header">
-							<div class="modal-header-left">
-								<h4 class="modal-title" id="modal-basic-title">Saved Message's</h4>
-							</div>
-							<div class="modal-header-right">
-								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-										src="assets/img/teambox/icon-close.svg"></p>
-							</div>
-						</div>
-						<div class="modal-body quickResponse">
-							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-								aria-describedby="basic-addon2" (keyup)="searchSavedMessage($event)" />
-							<div class="items_list">
-
-								<div class="item" *ngFor="let Message of SavedMessageList"
-									(click)="selectQuickReplies(Message)">
-									<p class="label" [innerHTML]="Message.title"></p>
-									<p [innerHTML]="Message.content"></p>
-								</div>
-							</div>
-
-							<div class="bottom_section">
-								<p class="close-box"(click)="routeToSettings()" routerLink="/dashboard/setting"><img  class="setting_icon"
-										src="/assets/img/campaign/setting-g.svg"></p>
-								<p class="text-box-readonly">To add/edit new Saved Message from the settings</p>
-							</div>
-
-						</div>
-
-
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
 	<!-- quick response popup -->
 	<div class="modal fade" tabindex="-1" id="quikpopup" #quikpopup data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog" role="document">
@@ -1238,13 +1201,10 @@
 									<p [innerHTML]="Message.BodyText"></p>
 								</div>
 							</div>
-
 							<div class="bottom_section">
-								<p class="close-box" (click)="routeToSettings()" routerLink="/dashboard/setting"><img class="setting_icon"
-										src="/assets/img/campaign/setting-g.svg"></p>
-								<p class="text-box-readonly">To add/edit Quick replies from the settings</p>
+								<p class="text-box-readonly"><span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg"></span>
+									Add/edit Quick replies from settings</p>
 							</div>
-
 						</div>
 
 
@@ -1595,6 +1555,7 @@
 						</p>
 						<p (click)="hangeEditContactSelect('channel','WhatsApp Web')">
 						  <span>
+							<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
 							WhatsApp Web
 						  </span>
 						</p>
