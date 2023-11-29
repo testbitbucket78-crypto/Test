@@ -118,6 +118,11 @@ const addNewContactList = (req, res) => {
     db.runQuery(req, res, inserQuery, []);
 }
 
+const deleteContactList = (req, res) => {
+    var inserQuery = "UPDATE ContactList SET is_deleted = 1 where Id= ?" 
+    db.runQuery(req, res, inserQuery, [req.body.id]);
+}
+
 const applyFilterOnEndCustomer = (req, res) => {
 
     db.runQuery(req, res, req.body.Query, []);
@@ -451,7 +456,7 @@ const copyCampaign = (req, res) => {
     db.runQuery(req, res, CopyQuery, []);
 }
 
-module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer,campaignAlerts };
+module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer,campaignAlerts ,deleteContactList };
 
 
 

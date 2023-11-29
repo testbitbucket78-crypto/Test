@@ -134,6 +134,7 @@ router.post('/getFilteredCampaign',CampaignsController.getFilteredCampaign);
 router.post('/getContactList',CampaignsController.getContactList);
 router.post('/updatedContactList',CampaignsController.updatedContactList);
 router.post('/addNewContactList',CampaignsController.addNewContactList);
+router.post('/deleteContactList',CampaignsController.deleteContactList);
 router.post('/applyFilterOnEndCustomer',CampaignsController.applyFilterOnEndCustomer);
 router.get('/getAdditiionalAttributes/:SPID',CampaignsController.getAdditiionalAttributes);
 router.get('/getEndCustomerDetail/:customerId',CampaignsController.getEndCustomerDetail);
