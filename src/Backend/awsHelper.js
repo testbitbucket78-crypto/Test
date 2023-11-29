@@ -17,9 +17,9 @@ async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken) {
         };
 
         // Create S3 client
-        console.log(val.awsaccessKeyId);
-        console.log(val.awssecretAccessKey);
-        console.log(val.awsregion);
+        // console.log(val.awsaccessKeyId);
+        // console.log(val.awssecretAccessKey);
+        // console.log(val.awsregion);
         const s3 = new AWS.S3({
             accessKeyId: val.awsaccessKeyId,
             secretAccessKey: val.awssecretAccessKey,
@@ -94,7 +94,7 @@ async function uploadToAws(awspath, stream, type) {
                 console.error('Error uploading file:', err);
             } else {
                 console.log('File uploaded successfully!');
-                console.log(data);
+               // console.log(data);
                 data.Location = "https://" + val.awsbucket + ".s3." + val.awsregion + ".amazonaws.com/" + awspath;
                 resolve({ code: 0, value: data });//SAVE DETAILS TO DB from calling function so that it can be used in future to access.
             }
@@ -104,7 +104,7 @@ async function uploadToAws(awspath, stream, type) {
 
 async function uploadWhatsAppImageToAws(spid, imageid, fileUrl, fileAccessToken) {
     let awspath = spid + "/whatsappMessage/" + imageid + ".jpg"
-    console.log(awspath)
+    //console.log(awspath)
     // return uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken);
     let res = await uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken)
     return res;
@@ -142,7 +142,7 @@ async function uploadStreamToAws(destinationPath, streamdata, type) {
     let value = await uploadToAws(destinationPath, streamdata, type);
 
     console.log("value")
-    console.log(value)
+    //console.log(value)
     return value;
 
 
