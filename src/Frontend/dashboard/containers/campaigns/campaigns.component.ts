@@ -1118,9 +1118,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.newListName=JSON.parse(this.selectedCampaign.csv_contacts).length+' unique contacts selected';
 		}
 		this.selectedTemplate = this.selectedCampaign
-		this.selectedTemplate['content_heading']=this.selectedCampaign.message_heading
-		this.selectedTemplate['content']=this.selectedCampaign.message_content
-		this.selectedTemplate['image']=this.selectedCampaign.message_media
+		this.selectedTemplate['Header']=this.selectedCampaign.message_heading
+		this.selectedTemplate['BodyText']=this.selectedCampaign.message_content
+		this.selectedTemplate['Links']=this.selectedCampaign.message_media
 
 		this.selectedTemplate['allVariables'] =this.selectedCampaign.allVariables
 		console.log(this.selectedTemplate)
@@ -1165,11 +1165,11 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		let BodyData:any={
 			Id:this.selectedTemplate.Id?this.selectedTemplate.Id:'',
 			sp_id:this.SPID,
-			title:this.newCampaignDetail.value.title,
+			title:this.newCampaignDetail.value.TemplateName,
 			channel_id:this.newCampaignDetail.value.channel_id,
-			message_heading:this.selectedTemplate.content_heading,
-			message_content:this.selectedTemplate.content,
-			message_media:this.selectedTemplate.image,
+			message_heading:this.selectedTemplate.Header,
+			message_content:this.selectedTemplate.BodyText,
+			message_media:this.selectedTemplate.Links,
 			message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
 			button_yes:this.selectedTemplate.button_yes,
 			button_no:this.selectedTemplate.button_no,
@@ -1221,7 +1221,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					button_yes:this.selectedTemplate.button_yes,
 					button_no:this.selectedTemplate.button_no,
 					button_exp:this.selectedTemplate.button_exp,
-					message_media:this.selectedTemplate.image,
+					message_media:this.selectedTemplate.Links,
 					CampaignId:CampaignId,
 					channel_id:this.newCampaignDetail.value.channel_id,
 					channel_label:this.newCampaignDetail.value.channel_label,
@@ -1229,8 +1229,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					status:this.scheduled,
 				}
 				let allVariables:any = this.selectedTemplate.allVariables
-				let message_heading =this.selectedTemplate.content_heading
-				let message_content= this.selectedTemplate.content
+				console.log('sdjf8sdy8y8dy82yd82yd82yd8y28dy28dy82d')
+				console.log(allVariables)
+				let message_heading =this.selectedTemplate.Header
+				let message_content= this.selectedTemplate.BodyText
 				await allVariables.map(async (variable:any)=>{
 
 					let varValue = variable.value
@@ -1280,7 +1282,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 							button_yes:this.selectedTemplate.button_yes,
 							button_no:this.selectedTemplate.button_no,
 							button_exp:this.selectedTemplate.button_exp,
-							message_media:this.selectedTemplate.image,
+							message_media:this.selectedTemplate.Links,
 							CampaignId:CampaignId,
 							channel_id:this.newCampaignDetail.value.channel_id,
 							channel_label:this.newCampaignDetail.value.channel_label,
@@ -1290,8 +1292,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 						
 
 						let allVariables:any = this.selectedTemplate.allVariables
-						let message_heading =this.selectedTemplate.content_heading
-						let message_content= this.selectedTemplate.content
+						let message_heading =this.selectedTemplate.Header
+						let message_content= this.selectedTemplate.BodyText
 
 						await allVariables.map(async (item:any)=>{
 							let varValue = item.value
@@ -1505,7 +1507,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		if(this.activeStep >1){
 			this.activeStep = this.activeStep-1
 		}else{
-				
+				this.activeStep
 		}
 	}
 	
@@ -1533,16 +1535,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			}
 		}else if(this.activeStep ==3){
 			
-			if(this.selectedTemplate && this.selectedTemplate.title!=''){
+			if(this.selectedTemplate && this.selectedTemplate.TemplateName!=''){
 			  this.activeStep=3.1
 			}else{
 				this.showToaster('Please Select Message Template...','error')
 			}
 		}else if(this.activeStep ==3.1){
-			let content_heading_preview:any=this.selectedTemplate.content_heading
-			let content_preview:any=this.selectedTemplate.content;
+			let content_heading_preview:any=this.selectedTemplate.Header
+			let content_preview:any=this.selectedTemplate.BodyText;
 
-			let allVariables:any = this.selectedTemplate.allVariables
+			let allVariables:any = this.selectedTemplate.message_variables
 			let errorCount =0;
 			allVariables.map((item:any)=>{
 				if(item.value==''){
@@ -1940,7 +1942,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		let SPID = Number(this.SPID)
 		this.settingsService.getTemplateData(SPID,1).subscribe(allTemplates =>{
 			this.allTemplatesMain = allTemplates.templates
-			console.log(this.allTemplatesMain)
 			this.allTemplates = allTemplates.templates
 		})
 		
@@ -1991,33 +1992,74 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 
 		
 	}
-	getVariables(sentence: string, first: string, last: string): string[] { 
-		let goodParts: string[] = [this.selectedTemplate.content_heading];
+	// getVariables(sentence: string, first: string, last: string): string[] { 
+	// 	let goodParts: string[] = [this.selectedTemplate.TemplateName];
+	// 	console.log(goodParts)
 		
+	// 	const allParts = sentence?.split(first);
+
+	// 	allParts.forEach((part: string) => {
+	// 	  if (part.indexOf(last) > -1) {
+	// 			  const goodOne = (part.split(last))[0];
+	// 		goodParts = goodParts.concat("{{"+goodOne+"}}");
+	// 	  }
+	// 	});
+		
+	// 	return goodParts;
+	//   }
+
+	// selectTemplate(template:any){
+	// 	this.selectedTemplate =template
+	// 	var str = template.content;
+	// 	const allVariables = this.getVariables(str,"{{","}}")
+    //     let allVariablesList:any =[];
+	// 	console.log(allVariablesList);
+	// 	allVariables.map((item:any)=>{
+	// 		allVariablesList.push({label:item,value:''})
+	// 	})
+	// 	this.selectedTemplate['allVariables'] = allVariablesList
+	// 	console.log('bhai yeh dekhna hai')
+	// 	console.log(this.selectedTemplate)
+
+	// }
+
+	getVariables(sentence: string, first: string, last: string): string[] {
+		let goodParts: string[] = [this.selectedTemplate.Header];
+
+		if (!sentence || sentence.trim() === '') {
+		  return goodParts;
+		}
+	  
 		const allParts = sentence.split(first);
 	  
 		allParts.forEach((part: string) => {
 		  if (part.indexOf(last) > -1) {
-				  const goodOne = (part.split(last))[0];
-			goodParts = goodParts.concat("{{"+goodOne+"}}");
+			const goodOne = part.split(last)[0];
+			goodParts = goodParts.concat("{{" + goodOne + "}}");
 		  }
 		});
-		
 		return goodParts;
 	  }
+	  
+	  selectTemplate(template: any) {
+		this.selectedTemplate = template;
+		console.log(this.selectedTemplate);
+		var str = template.BodyText;
+		if (str) {
+		  const allVariables = this.getVariables(str, "{{", "}}");
+		  let allVariablesList: any = [];
+		  console.log(allVariablesList);
+	  
+		  allVariables.map((item: any) => {
+			allVariablesList.push({ label: item, value: '' });
+		  });
+	  
+		  this.selectedTemplate['allVariables'] = allVariablesList;
+		  console.log(this.selectedTemplate);
+		}
+	  }
+	  
 
-	selectTemplate(template:any){
-		this.selectedTemplate =template
-		var str = template.content;
-		const allVariables = this.getVariables(str,"{{","}}")
-        let allVariablesList:any =[];
-		allVariables.map((item:any)=>{
-			allVariablesList.push({label:item,value:''})
-		})
-		this.selectedTemplate['allVariables'] = allVariablesList
-		console.log(this.selectedTemplate)
-
-	}
 
 
 	  @HostListener("dragover", ["$event"]) onDragOver(event: any) {

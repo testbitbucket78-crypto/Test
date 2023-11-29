@@ -60,7 +60,7 @@ isActive:any;
   };  
 
   addUser(){
-    this.uid =0;
+    this.uid;
     this.userDetailForm =this.prepareUserForm();
   }
 
