@@ -736,7 +736,12 @@ click: any;
 		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
 		console.log(this.messageMeidaFile)
 			this.custommesage = '';	
-			this.scrollChatToBottom();
+			
+			setTimeout(() => {
+				this.scrollChatToBottom();
+				this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+			}, 100);
 		}
 
 

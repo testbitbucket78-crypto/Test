@@ -304,3 +304,59 @@ p{
     background: #FFFFFF 0% 0% no-repeat padding-box;
     border: none;
   }
+  label.container input:checked ~ .checkmark {
+    background-color: #6149CD;
+}
+label.container input {
+  height: calc(1.5em + 0.75rem + 2px);
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+label.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+label.container .checkmark:after {
+  left: 5px;
+  top: 3px;
+  width: 5px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+label.container {
+  position: relative;
+  padding-left: 25px;
+  cursor: pointer;
+  font-size: 12px;
+  -webkit-user-select: none;
+  user-select: none;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 50%;
+  margin: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap!important;
+}
+.manage-user{
+  margin-left: -1rem;
+}
+.checkmark {
+  position: absolute;
+  top: 4px;
+  left: -5px;
+  height: 18px;
+  width: 18px;
+  background-color: #fff;
+  border-radius: 5px;
+}
