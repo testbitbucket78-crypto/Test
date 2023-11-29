@@ -1,15 +1,15 @@
 <sb-layout-dashboard>
 	<sb-top-nav title="Teambox"></sb-top-nav>
-
+	<div class="toaster" (click)="hideToaster()">
+		<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+		<p *ngIf="successMessage" class="success">{{successMessage}}</p>
+		<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+	</div>
 
 	<div class="row team-box-page" id="team-box-page" (click)="hideAllOpenModal($event)">
 		
 
-		<div class="toaster" (click)="hideToaster()">
-			<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
-			<p *ngIf="successMessage" class="success">{{successMessage}}</p>
-			<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
-		</div>
+	
 		<div class="col-12 d-flex mt-1">
 
 			<div class="col-4 team-box">
@@ -160,7 +160,6 @@
 											[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'">Resolved</span>
 									</p>
 								</div>
-								<div *ngIf="ShowConversationStatusOption" class="overlay" (click)="closeConversationStatusOption()"></div>
 
 							</div>
 
@@ -244,12 +243,33 @@
 										<div class="message_text" [innerHTML]="message.message_text">
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
 										</div>
+										
 										<span class="message_time"
-											*ngIf="message.created_at">{{timeSince(message.created_at)}}</span>
-									</div>
-								</div>
+											*ngIf="message.created_at">{{timeSince(message.created_at)}}
+											<div class="pl-2" *ngIf="message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out'">
+												<div class="doubleee" *ngIf="message.msg_status === '1' ">
+												  <img class="single-tick" src="../../../../assets/img/teambox/tick-gry.svg" alt="Image 1">
+												</div>
+												<div class="doubleee" *ngIf="message.msg_status === '2' ">
+												  <img src="../../../../assets/img/teambox/duble-tick-g.svg" alt="Image 2">
+												</div>
+												<div class="doubleee" *ngIf="message.msg_status === '3' ">
+												  <img src="../../../../assets/img/teambox/double-tick-green.svg" alt="Image 3">
+												</div>
+												<div class="tickerror" *ngIf="message.msg_status === null ">!</div>
+											  </div>
+										</span>
+									
+											
 
+									</div>
+								
+							  
+								</div>
+								
+								
 							</div>
+							
 						</div>
 
 						<div *ngIf="showChatNotes=='notes' &&  selectedInteraction.notesList.length <1"
@@ -400,6 +420,8 @@
 							</div>
 						<!-- </form> -->
 						</div>
+
+						
 
 					</div>
 
@@ -679,8 +701,10 @@
 		</div>
 
 
+		<div *ngIf="ShowConversationStatusOption" (click)="handleInnerClick($event)" class="overlay" (click)="closeConversationStatusOption()"></div>
 
 	</div>
+
 
 
 	<!-- attach file pop-up -->
@@ -1445,6 +1469,10 @@
 					<input (input)="hangeEditContactInuts($event)"  class="form-control phone-no" type="text" name="Phone_number" value={{EditContactForm.Phone_number}} type="text"  formControlName="Phone_number" 
 				 maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$"
 					onKeyPress="return /^[0-9]$/.test(event.key)"(change)="formatPhoneNumberEdit()"> 
+					<div *ngIf="editContact.controls.Phone_number.touched && editContact.controls.Phone_number.errors" 
+							class="text-danger">
+							! Phone number must be 6 to 15 digits.
+						  </div>
 				</div>
 
 

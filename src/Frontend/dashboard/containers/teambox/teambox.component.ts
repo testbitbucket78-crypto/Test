@@ -322,6 +322,15 @@ countryCodes = [
 	quickreplysearch!:string;
 	templatesearchreply!:string;
 	header!:string;
+	messageStatus:any;
+	Messageid:any;
+	messageStatusMap: Map<number, string> = new Map<number, string>();
+	Allmessages:any=[];
+	Messagedirection:any;
+	Interaction:any
+
+	
+
 	
 	
 
@@ -358,6 +367,8 @@ countryCodes = [
 	attributesList:any=[];
 showFullMessage: boolean = false;
 	maxLength: number = 150;
+	allmessages:any=[];
+
 	
 	
 	
@@ -405,6 +416,8 @@ showFullMessage: boolean = false;
 		this.hideDiv();
 	  }
 	}
+
+	
 
 	hideDiv() {
 		// alert('clicked outside');
@@ -1350,6 +1363,23 @@ selectInteraction(Interaction:any){
 this.contactId = Interaction.customerId
 	console.log(this.contactId)
 	console.log(Interaction)
+
+
+    this.Allmessages=this.selectedInteraction.allmessages;
+	console.log(this.Allmessages)
+
+	// for (let i = 0; i < Interaction.allmessages.length; i++) {
+	// 	const messageId = Interaction.allmessages[i]?.Message_id;
+	// 	this.messageStatus = Interaction.allmessages[i]?.msg_status;
+	// 	const messageDirection = Interaction.allmessages[i]?.message_direction;
+		
+	
+	// 	if (messageId !== undefined && this.messageStatus !== undefined && messageDirection === 'Out') {
+	// 		console.log(`Message_id: ${messageId}, msg_status: ${this.messageStatus}, message_direction: ${messageDirection}`);
+	// 		console.log(this.messageStatus)
+	// 	}
+	// }
+	
 	this.getPausedTimer()
 	this.scrollChatToBottom()
 
@@ -1357,7 +1387,6 @@ this.contactId = Interaction.customerId
 	if (this.selectedInteraction.UnreadCount!=0) {
 	  element.innerHTML = '';
 	}
-	
 	}
 
 getPausedTimer(){
@@ -1514,7 +1543,7 @@ updateCustomer(){
 	}
 	//console.log(bodyData)
 
-	if(bodyData['Name']!='' && bodyData['Phone_number'].length>=10 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
+	if(bodyData['Name']!='' && bodyData['Phone_number'].length>=6 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
 		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
 		this.selectedInteraction['Name']=this.EditContactForm.Name
 		this.selectedInteraction['countryCode']=this.EditContactForm.country_code
@@ -1752,6 +1781,11 @@ handelBlockConfirm(){
 	}	
 	this.blockCustomer(this.selectedInteraction)
 }
+handleInnerClick(event: Event): void {
+    // Stop the propagation of the click event to prevent it from reaching the outer div
+    event.stopPropagation();
+  }
+
 handelStatusConfirm(){
 	if(this.modalReference){
 		this.modalReference.close();
