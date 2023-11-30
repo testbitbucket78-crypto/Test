@@ -836,6 +836,8 @@ img.no-dp {
     font-size: 10px;
     color: #BDC3D0;
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .message_box.left .content span.message_time {
@@ -2379,4 +2381,25 @@ label span {
     font-size: 15px;
     position: absolute;
     margin-top: -1rem;
+}
+.doubleee{
+    float: right;
+    background: white;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    text-align: center;
+    
+}
+.tickerror{
+    float: right;
+    background: red;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    text-align: center;
+}
+.single-tick{
+    width: 10px;
+    height: 10px;
 }
