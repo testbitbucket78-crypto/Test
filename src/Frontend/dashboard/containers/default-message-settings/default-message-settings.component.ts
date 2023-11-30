@@ -2,6 +2,8 @@ import { Component, OnInit,  ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { defaultMessagesData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
+import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 declare var $:any;
 @Component({
   selector: 'sb-default-message-settings',
@@ -10,6 +12,12 @@ declare var $:any;
 })
 export class DefaultMessageSettingsComponent implements OnInit {
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
+  @ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
+
+  public selection: NodeSelection = new NodeSelection();
+	public range: Range | undefined;
+	public saveSelection: NodeSelection | any;
+
   
   spId:number = 0;
   selectedType: string = 'text';
@@ -20,9 +28,60 @@ export class DefaultMessageSettingsComponent implements OnInit {
   showSideBar:boolean=false;
   defaultMessages:any [] =[];
   defaultMessagesData: any;
+  custommesage='<p>Your message...</p>'
+  showEmoji=false;
+  dragAreaClass: string='';
+
+
+
+
+
+  public tools: object = {
+		items: [
+			
+			'Bold', 'Italic', 'StrikeThrough',
+		{
+		tooltipText: 'Emoji',
+		undo: true,
+		click: this.toggleEmoji.bind(this),
+		template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
+		},
+		{
+			tooltipText: 'Attachment',
+			undo: true,
+			click: this.ToggleAttachmentBox.bind(this),
+			template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
+		},
+		{
+			tooltipText: 'Attributes',
+			undo: true,
+			click: this.ToggleAttributesOption.bind(this),
+			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+		},
+		{
+			tooltipText: 'Quick Response',
+			undo: true,
+			click: this.ToggleQuickReplies.bind(this),
+			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
+		},
+		{
+			tooltipText: 'Insert Template',
+			undo: true,
+			click: this.ToggleInsertTemplateOption.bind(this),
+			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
+		}]
+	};
+
 
 
   constructor(private apiService:SettingsService) { }
+
+ 
 
   prepareUserForm(){
     return new FormGroup({
@@ -31,6 +90,51 @@ export class DefaultMessageSettingsComponent implements OnInit {
       override:new FormControl(null),
       autoreply:new FormControl(null),
     });
+  }
+
+  
+	closeAllModal(){
+		this.showEmoji =false;
+		$("#quikpopup").modal('hide');
+		$("#atrributemodal").modal('hide');
+		$("#insertmodal").modal('hide');
+		$("#attachfle").modal('hide');
+		$('body').removeClass('modal-open');
+		$('.modal-backdrop').remove();
+
+	}	
+
+  toggleEmoji(){
+    this.closeAllModal()
+    this.showEmoji = !this.showEmoji;
+    (this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
+    this.range = this.selection.getRange(document);
+    this.saveSelection = this.selection.save(this.range, document);
+        
+  }
+  
+ToggleAttributesOption(){
+	this.closeAllModal()
+	$("#atrributemodal").modal('show'); 
+
+}
+ToggleInsertTemplateOption(){
+	this.closeAllModal()
+	$("#insertmodal").modal('show'); 
+	}
+
+ToggleQuickReplies(){
+	this.closeAllModal()
+	$("#quikpopup").modal('show'); 
+}
+
+
+  ToggleAttachmentBox(){
+    this.closeAllModal()
+    $("#attachfle").modal('show'); 
+  document.getElementById('attachfle')!.style.display = 'inherit';
+    this.dragAreaClass = "dragarea";
+    
   }
 
   ngOnInit(): void {
@@ -43,6 +147,18 @@ export class DefaultMessageSettingsComponent implements OnInit {
   showMessageType(type: string) {
     this.selectedType = type;
   }
+  
+
+	handleKeyPress(event: KeyboardEvent) {
+		
+		// Check if the pressed key is "Enter"
+		if (event.key === 'Enter' && !event.shiftKey) {
+			// Prevent sending the message when Enter is pressed without Shift
+			
+			event.preventDefault();
+		 // Call your send message function here
+		  }
+	  }
 
   selectedButtonType(type: number) {
     this.selectedCategory = type;

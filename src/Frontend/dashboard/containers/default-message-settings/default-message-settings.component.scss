@@ -358,3 +358,23 @@ textarea::placeholder {
     font-family: "Manrope";
     padding-left: 1.2rem;
 }
+.e-toolbar-wrapper{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.e-toolbar, .e-toolbar .e-toolbar-items, .e-toolbar.e-toolbar-item.e-tbar-btn {
+  background: #fff;
+  margin-top: 5px;
+}
+
+.e-toolbar.e-toolbar-item.e-tbar-btn {
+  border-radius: 35% !important;
+  border: 1px solid #e2e2e2 !important;
+  background: none !important;
+}
+
+.e-toolbar, .e-toolbar.e-toolbar-items, .e-toolbar.e-toolbar-item.e-tbar-btn{
+  background: #fff;
+  margin-top: 5px;
+}

@@ -154,10 +154,15 @@
                 <div class="pt-3 ">
                     
                         <div *ngFor="let item of selectedUser" class="user-dropdown pb-3 d-flex">
-                            <div class="col-6">
-                            <input type="checkbox" class="user-checkbox"  [(ngModel)]="item.isSelected">
-                            <img src="../../../../assets/img/profile/Richie_3.png" class="user-img ml-2">
-                            <span class="ml-2">{{item.name}}</span>
+                          
+                                 
+                            <div class=" manage-user col-6">
+                                
+                                <label class="container"  let i = "index">
+                                    <img src="../../../../assets/img/profile/Richie_3.png" class="user-img ml-2">{{item.name}}                  
+                                    <input type="checkbox" name="status" class="user-checkbox"  [(ngModel)]="item.isSelected" value={{item.value}}>   
+                                      <span class="checkmark ml-2"></span>  
+                        </label>
                         </div>
 
 

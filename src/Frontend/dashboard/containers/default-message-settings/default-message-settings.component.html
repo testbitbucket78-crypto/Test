@@ -179,11 +179,16 @@
                     <h6>Body Text</h6> <span>0/1024 Characters</span>
                  </div>
                  <div class="sel-type-text">
-                    <textarea name="text-editor" formControlName="value" maxlength="1024"rows="8" placeholder="Enter"></textarea>
+                    <textarea name="text-editor" formControlName="value" maxlength="1024"rows="8" placeholder="Enter">
+                        <ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor
+            [toolbarSettings]='tools' [height]='100' (keydown)="handleKeyPress($event)">
+          </ejs-richtexteditor>
+                    </textarea>
                 </div>
+
             </div>
             </div>
-            
+        
     
    
                 <div class="modal-footer">
