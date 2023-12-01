@@ -3,7 +3,7 @@ const { request } = require('http');
 const app = express();
 const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer')
-//const qrcode = require('qrcode-terminal');
+// const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -19,10 +19,6 @@ const notify = require('../whatsApp/PushNotifications')
 const fs = require('fs')
 const path = require("path");
 let clientSpidMapping = {};
-
-
-// File path
-const filePath = path.join(__dirname, 'IsActiveClient.js');
 
 async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo);
@@ -41,8 +37,8 @@ async function createClientInstance(spid, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          executablePath: "/usr/bin/google-chrome-stable",
-         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         // executablePath: "/usr/bin/google-chrome-stable",
+          executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -57,13 +53,9 @@ async function createClientInstance(spid, phoneNo) {
       });
       console.log("client created");
 
-      const worker = `${authStr.dataPath}/session-${spid}/Default/Service Worker`;
-
+      const worker = `${authStr.dataPath}\\session-${spid}\\Default\\Service Worker`;
       if (fs.existsSync(worker)) {
-
-        console.log(worker)
         try {
-          //var dir = path.join(__dirname, '.wwebjs_auth');
           fs.rmdirSync(worker, { recursive: true })
 
         } catch (sessionerr) {
@@ -126,12 +118,9 @@ async function createClientInstance(spid, phoneNo) {
 
       client.on('authenticated', (session) => {
         try {
+
           console.log("client authenticated");
-
           clientSpidMapping[[spid]] = client;
-
-          writeClientFile(clientSpidMapping);    // Call write file function
-
           notify.NotifyServer(phoneNo, false, 'Client Authenticated')
 
         } catch (authenticatederr) {
@@ -145,9 +134,7 @@ async function createClientInstance(spid, phoneNo) {
             console.log("disconnected");
 
             if (clientSpidMapping.hasOwnProperty(spid)) {
-              // console.log(clientSpidMapping[[spid]])
               delete clientSpidMapping[spid];
-              writeClientFile(clientSpidMapping);        // Write clean file after disconnect client
               console.log(`Removed ${spid} from clientSpidMapping.`);
 
             }
@@ -165,12 +152,16 @@ async function createClientInstance(spid, phoneNo) {
         try {
           if (ack == '1') {
             console.log(`Message has been sent`);
+            let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
           } else if (ack == '2') {
             console.log(`Message has been delivered`);
+            db.excuteQuery(`UPDATE Message set msg_status=? where ExternalMessageId=?`, [ack,  message.id.id])
           } else if (ack == '3') {
             console.log(`Message has been read`);
+            db.excuteQuery(`UPDATE Message set msg_status=?, is_read =1 where ExternalMessageId=?`, [ack,  message.id.id])
           }
-          let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
+
+          notify.NotifyServer(message.from, true);
         } catch (message_ackErr) {
           console.log(message_ackErr)
         }
