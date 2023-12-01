@@ -143,31 +143,16 @@ countryCodes = [
   
   imageChangedEvent: any = '';
   croppedImage: any = '';
-
+  spid!:number;
   searchText= "";
   separateDialCode = false;
-	// SearchCountryField = SearchCountryField;
-	// CountryISO = CountryISO;
-  // PhoneNumberFormat = PhoneNumberFormat;
-	// preferredCountries: CountryISO[] =[];
-  // phoneForm = new FormGroup({
-	// 	phone: new FormControl(undefined, [Validators.required])
-	// });
-
-	// changePreferredCountries() {
-	// 	// this.preferredCountries = [CountryISO.India, CountryISO.Canada];
-	// }
-
   selectedCountry: any;
    data: any;
    code: any;
 	 contacts:any;
 	 name = 'Angular'; 
    checkedConatct: any[] = [];
-	 productForm: FormGroup;  
-  //  title = 'result-table';
-   newContact:FormGroup;
-   editContact: FormGroup;
+	 productForm!: FormGroup;  
    checkedcustomerId: any = [];
    editForm: any = [];
    pageOfItems: any;
@@ -179,8 +164,11 @@ countryCodes = [
    inputEmail!: string;
    userid = 0; 
    profilePicture:any;
+   contactsData!:{}
    contactsImageData= <contactsImageData> {};
    contactId = 0;
+   OptedIn=false;
+   addContactTitle: 'add' | 'edit' = 'add';
 
   // multiselect 
     disabled = false;
@@ -222,52 +210,14 @@ countryCodes = [
  
  
  {
-
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
-		config.keyboard = false;
-		this.productForm = this.fb.group({  
-			name: '',  
-			quantities: this.fb.array([]) ,  
-		  });
-      this.newContact=this.fb.group({
-        SP_ID: sessionStorage.getItem('SP_ID'),
-        Name: new FormControl('', Validators.required),
-        country_code:new FormControl('IN +91'),
-        Phone_number: new FormControl('',Validators.required),
-        emailId: new FormControl('', [Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
-        age: new FormControl('',[Validators.pattern(/^[0-9]+$/), Validators.min(18), Validators.max(99)]),
-        sex: new FormControl(''),
-        tag: new FormControl([]),
-        status:  new FormControl([]),
-        facebookId: new FormControl(''),
-        InstagramId: new FormControl('')
-      });
-	
-  this.editContact = this.fb.group({
-        Name: new FormControl('', [Validators.required, Validators.pattern('^[A-Za-z\s]+$')]),
-        country_code: new FormControl('IN +91'),
-        Phone_number:  new FormControl('',Validators.required),
-        emailId: new FormControl('', [Validators.required,Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$')]),
-        age: new FormControl('', [Validators.pattern(/^[1-9][0-9]?$/),Validators.min(18),Validators.max(99)]),
-        sex: new FormControl(''),
-        tag: new FormControl([]),
-        status: new FormControl([]),
-        facebookId: new FormControl(''),
-        InstagramId: new FormControl('')
-   
-  })
-  
-}
-
-
-
-
-
+		config.keyboard = false;  
+ }
     ngOnInit() {
 
       this.routerGuard();
-
+      this.spid = Number(sessionStorage.getItem('SP_ID'));
 
       document.getElementById('delete-btn')!.style.display = 'none';
       this.showTopNav = true;
@@ -314,11 +264,24 @@ countryCodes = [
         allowSearchFilter: this.ShowFilter
     };
 
+    this.productForm = this.contactForm()
+
 		this.getContact();
   
 } 
 
-  onSelectionChanged(event: any) {
+contactForm() {
+  return new FormGroup({
+    Name: new FormControl('', Validators.required),
+    Phone_number: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
+    country_code:new FormControl('IN +91'),
+    emailId: new FormControl('', [Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
+    ContactOwner: new FormControl(''),
+    tag: new FormControl([])
+  })
+}
+ 
+ onSelectionChanged(event: any) {
 
      this.isButtonEnabled = this.checkedConatct.length > 0 && event !== null;
     
@@ -389,37 +352,21 @@ onSelectAll(items: any) {
 
   } 
 
+  updateOptedIn(event:any){
+		this.OptedIn= event.target.checked
+		this.productForm.value.OptedIn = event.target.value
+	}
 
 
 	open(content:any) {
 		this.modalService.open(content);
+    this.addContactTitle = 'add';
 
 	} 
 
   openedit(contactedit: any) {
-
-
-    
-    console.log(sessionStorage.getItem('id'))
-    this.apiService.getContactById(sessionStorage.getItem('id'), sessionStorage.getItem('SP_ID')).subscribe((result: any) =>{
-      this.editContact=this.fb.group({
-        Name: new FormControl(result[0].Name),
-        country_code: new FormControl(result[0].countryCode),
-        Phone_number: new FormControl(result[0].Phone_number.substring(1)),
-        emailId: new FormControl(result[0].emailId),
-        age: new FormControl(result[0].age),
-        sex: new FormControl(result[0].sex),
-        tag: new FormControl(result[0].tag?.split(',')),
-        status: new FormControl(result[0].status?.split(',')),
-        facebookId: new FormControl(result[0].facebookId),
-        InstagramId: new FormControl(result[0].InstagramId)
-       
-      })
-      this.getContact();
-    })
+    this.patchFormValue();
     this.modalService.open(contactedit);
-
-    
   }
 
 
@@ -526,6 +473,8 @@ onSelectAll(items: any) {
    rowClicked = (event: any) => {
     this.getContactById(event.data);
     this.opensidenav(event.contact);
+    this.addContactTitle= 'edit';
+    this.patchFormValue();
   };
   
 
@@ -549,112 +498,100 @@ onSelectAll(items: any) {
   };
 
   
+  copyContactFormData() {
+    let ContactFormData = {
+        result: [
+          {
+            displayName:this.spid,
+            ActualName:"SP_ID"
+          },
+            {
+                displayName: this.productForm.controls.Name.value,
+                ActuallName: "Name"
+            },
+            {
+              displayName: this.productForm.controls.country_code.value,
+              ActuallName: "CountryCode"
+           },
+            {
+                displayName: this.productForm.controls.Phone_number.value,
+                ActuallName: "Phone_number"
+            },
+            {
+                displayName: this.productForm.controls.emailId.value,
+                ActuallName: "emailId"
+            },
+            {
+              displayName: this.productForm.controls.ContactOwner.value,
+              ActuallName: "ContactOwner"
+            },
+            {
+              displayName: this.productForm.controls.tag.value,
+              ActuallName: "tag"
+            },
+            {
+              displayName: this.OptedIn,
+              ActuallName: "OptInStatus"
+            },
+        ],
 
-  addContact(addcontact:any,addcontacterror:any) {
-
-    let contactData = {
-      SP_ID:sessionStorage.getItem('SP_ID'),
-      Name:this.newContact.get('Name')?.value,
-      age:this.newContact.get('age')?.value,
-      country_code:this.newContact.get('country_code')?.value,
-      emailId:this.newContact.get('emailId')?.value,
-      sex:this.newContact.get('sex')?.value,
-      Phone_number:{
-      number: this.newContact.get('Phone_number')?.value,
-      internationalNumber:'+' + this.newContact.get('Phone_number')?.value,
-      nationalNumber: this.newContact.get('Phone_number')?.value,
-      e164Number:'+' + this.newContact.get('Phone_number')?.value,
-      countryCode: this.newContact.get('country_code')?.value,
-      dialCode: this.newContact.get('country_code')?.value
-      },
-      tag:this.newContact.get('tag')?.value,
-      status:this.newContact.get('status')?.value,
-      facebookId:this.newContact.get('facebookId')?.value,
-      InstagramId: this.newContact.get('InstagramId')?.value
- 
     }
-  
-    this.submitted = true;
+    return ContactFormData
+}
 
-  	this.apiService.addContact(contactData).subscribe(
-      
-      (response:any) => {
-      
-			if (response.status === 200) {
+saveContact(addcontact:any,addcontacterror:any) {
+  let contactData = this.copyContactFormData()
+  this.submitted = true;
+
+  // if(!this.productForm.valid) {
+  //   console.log('Please enter valid details');
+  //    return ;
+  //  }
+
+  if(this.contactId) {
+    this.apiService.editContact(contactData, this.contactId, this.spid).subscribe(
+      (response: any) => {
+      if(response.status === 200) {
+        this.modalService.dismissAll();
+        this.closesidenav(this.items);
+        this.productForm.reset();
+        this.productForm.clearValidators();
         this.getContact();
-        this.newContact.reset();
-        this.editContact.reset();
-        this.newContact.clearValidators();
-        this.editContact.clearValidators();
-        this.newContact.get('SP_ID')?.setValue(sessionStorage.getItem('SP_ID'));
+      }
+     },
+     (error:any) =>{
+      if(error) {
+        console.log(error)
+      }
+     });
+  }
+  else {
+    this.apiService.addContact(contactData).subscribe(
+      (response:any) => {
+      if (response.status === 200) {
+        this.getContact();
+        this.productForm.reset();
+        this.productForm.clearValidators();
         this.modalService.open(addcontact);
+        console.log(this.productForm.value);
       }
     },
 
       (error:any) => { 
-
         if (error.status === 409) {
           this.getContact();
-          this.newContact.reset();
-          this.editContact.reset();
-          this.newContact.clearValidators();
-          this.editContact.clearValidators();
-          this.newContact.get('SP_ID')?.setValue(sessionStorage.getItem('SP_ID'));
+          this.productForm.reset();
+          this.productForm.clearValidators();
           this.modalService.open(addcontacterror);
         }
-
         if (error) {
           console.log(error.message);
         }
          
    });
-}
-
-  editContactData() {
-
-    let contactData = {
-      Name:this.editContact.get('Name')?.value,
-      age:this.editContact.get('age')?.value,
-      countryCode:this.editContact.get('country_code')?.value,
-      emailId:this.editContact.get('emailId')?.value,
-      sex:this.editContact.get('sex')?.value,
-      Phone_number:{
-      number: this.editContact.get('Phone_number')?.value,
-      internationalNumber:'+' + this.editContact.get('Phone_number')?.value,
-      nationalNumber: this.editContact.get('Phone_number')?.value,
-      e164Number:'+' + this.editContact.get('Phone_number')?.value,
-      countryCode: this.editContact.get('countryCode')?.value,
-      dialCode: this.editContact.get('countryCode')?.value
-      },
-      tag:this.editContact.get('tag')?.value,
-      status:this.editContact.get('status')?.value,
-      facebookId:this.editContact.get('facebookId')?.value,
-      InstagramId: this.editContact.get('InstagramId')?.value
- 
-    }
-  
-    this.submitted = true;
-
-    if(!this.editContact.valid) {
-     console.log('Please enter valid details');
-      return ;
-    }
-
-    {
-      console.log("editContactData")
-      var customerId = sessionStorage.getItem('id')
-      var SP_ID = sessionStorage.getItem('SP_ID')
-      console.log("editdata" + customerId)
-      console.log(this.editContact.value)
-        this.apiService.editContact(contactData, customerId, SP_ID).subscribe((response: any) => {
-         this.modalService.dismissAll();
-          this.closesidenav(this.items);
-          this.getContact();
-        });
-    }
   }
 
-
+}
   onSelectedTag(value: any) {
     this.selectedTag = value;
 
@@ -711,12 +648,11 @@ deletContactByID(data: any) {
   }
 
   getContactById(data: any) {
-    console.log("data")
-    console.log(data)
+    this.contactsData =data;
     sessionStorage.setItem('id', data.customerId)
     var SP_ID = sessionStorage.getItem('SP_ID')
     this.apiService.getContactById(data.customerId, SP_ID).subscribe((data) => {
-      this.customerData = data
+      this.customerData = data 
       console.log(this.customerData);
       this.getFilterTags = this.customerData.tag.split(',').map((tags: string) =>tags.trim());
       console.log(this.customerData);
@@ -732,6 +668,14 @@ deletContactByID(data: any) {
     
   }
 
+  patchFormValue(){
+    const data=this.contactsData
+    for(let prop in data){
+      let value = data[prop as keyof typeof data];
+      if(this.productForm.get(prop))
+      this.productForm.get(prop)?.setValue(value)
+    }  
+  }
 
   exportCheckedContact() {
     console.log(this.checkedConatct)
@@ -802,39 +746,21 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 
 // Function to format the phone number using libphonenumber-js
 formatPhoneNumber() {
-  const phoneNumber = this.newContact.get('Phone_number')?.value;
-  const countryCode = this.newContact.get('country_code')?.value;
+  const phoneNumber = this.productForm.get('Phone_number')?.value;
+  const countryCode = this.productForm.get('country_code')?.value;
 
   if (phoneNumber && countryCode) {
     const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
     const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
 
     if (formattedPhoneNumber) {
-      this.newContact.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
-      const phoneNumberValue = this.newContact.get('Phone_number')?.value;
+      this.productForm.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
+      const phoneNumberValue = this.productForm.get('Phone_number')?.value;
       console.log(phoneNumberValue);
 
     }
   }
   }
-
-  formatPhoneForEdit() {
-    const phoneNumber = this.editContact.get('Phone_number')?.value;
-    const countryCode = this.editContact.get('country_code')?.value;
-  
-    if (phoneNumber && countryCode) {
-      const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
-      const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
-  
-      if (formattedPhoneNumber) {
-        this.editContact.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
-        const phoneNumberValue = this.editContact.get('Phone_number')?.value;
-        console.log(phoneNumberValue);
-  
-      }
-    }
-  }
-
 
   // filterTags() {
   //   if(this.customerData.tag) {
