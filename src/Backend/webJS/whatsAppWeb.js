@@ -74,15 +74,15 @@ app.post('/IsClientReady', (req, res) => {
 
 app.listen(3009, () => {
     console.log("Server is Running on Port : : 3009")
-    console.log(path.join(__dirname, '.wwebjs_auth'))
-    var dir = path.join(__dirname, '.wwebjs_auth');
-    try {
-        if (fs.existsSync(dir)) {
-            fs.readdirSync(dir).forEach(f => fs.rmdirSync(`${dir}/${f}`, { recursive: true }));
-        }
-    }
-    catch (err) {
-        console.log("error while deleting cached sessions. Please delete manually from within " + dir + " and restart the server")
-    }
+    // console.log(path.join(__dirname, '.wwebjs_auth'))
+    // var dir = path.join(__dirname, '.wwebjs_auth');
+    // try {
+    //     if (fs.existsSync(dir)) {
+    //         fs.readdirSync(dir).forEach(f => fs.rmdirSync(`${dir}/${f}`, { recursive: true }));
+    //     }
+    // }
+    // catch (err) {
+    //     console.log("error while deleting cached sessions. Please delete manually from within " + dir + " and restart the server")
+    // }
 
 })

@@ -237,21 +237,24 @@ const updatePinnedStatus = (req, res) => {
 
 // filter interactions
 const getFilteredInteraction = (req, res) => {
-    var filterBy = req.params.filterBy
-    if (filterBy == 'Open' || filterBy == 'Resolved') {
-        //	var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.customerId=EndCustomer.customerId and Interaction.interaction_status='"+filterBy+"' and Interaction.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId="+req.params.AgentId+")"
-        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.interaction_status='" + filterBy + "' and EndCustomer.isDeleted =0 and EndCustomer.SP_ID=" + req.params.SPID
-    } else if (filterBy == 'Unassigned') {
-        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping) and EndCustomer.isDeleted =0 and EndCustomer.SP_ID=" + req.params.SPID
-    } else if (filterBy == 'Mine') {
-        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.params.AgentId + " and is_active=1) and EndCustomer.isDeleted =0  and EndCustomer.SP_ID=" + req.params.SPID
-    } else if (filterBy == 'Mentioned') {
-        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId  IN (SELECT interaction_id FROM `Message` WHERE `message_text` LIKE '%@" + req.params.AgentName + "%') and EndCustomer.isDeleted =0  and EndCustomer.SP_ID=" + req.params.SPID
-    } else if (filterBy == 'Pinned') {
-        var queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and Interaction.InteractionId  IN (SELECT InteractionId FROM PinnedInteraction where AgentId=" + req.params.AgentId + ") and EndCustomer.isDeleted =0  and EndCustomer.SP_ID=" + req.params.SPID
-    }
 
-    db.runQuery(req, res, queryPath, [filterBy])
+    let filterQuery = "SELECT    ic.interaction_status,ic.InteractionId, ec.*             FROM       Interaction ic    JOIN        EndCustomer ec ON ic.customerId = ec.customerId     WHERE        ic.interactionId = (            SELECT MAX(interactionId)            FROM Interaction            WHERE customerId = ic.customerId        ) and ec.SP_ID=?  AND ec.isDeleted !=1    and ic.is_deleted=0";
+    var filterBy = req.params.filterBy
+
+    if (filterBy == 'Open' || filterBy == 'Resolved') {
+        filterQuery += " and ic.interaction_status='" + filterBy + "'"
+    } else if (filterBy == 'Unassigned') {
+        filterQuery += " and ic.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping)"
+    } else if (filterBy == 'Mine') {
+        filterQuery += " and ic.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.params.AgentId + " and is_active=1)"
+    } else if (filterBy == 'Mentioned') {
+        filterQuery += " and ic.InteractionId  IN (SELECT interaction_id FROM `Message` WHERE `message_text` LIKE '%@" + req.params.AgentName + "%')"
+    } else if (filterBy == 'Pinned') {
+        filterQuery += " and ic.InteractionId  IN (SELECT InteractionId FROM PinnedInteraction where AgentId=" + req.params.AgentId + ")"
+    }
+    filterQuery += " order by interactionId desc"
+    
+    db.runQuery(req, res, filterQuery, [req.params.SPID])
 }
 
 const getSearchInteraction = (req, res) => {

@@ -90,7 +90,7 @@ const getFilteredCampaign = (req, res) => {
 
 
 const getContactList = (req, res) => {
-    let Query = "SELECT ContactList.* ,user.name as owner from ContactList,user  where user.uid =ContactList.created_by and  ContactList.SP_id = " + req.body.SPID
+    let Query = "SELECT ContactList.* ,user.name as owner from ContactList,user  where user.uid =ContactList.created_by and  ContactList.is_deleted !=1 and ContactList.SP_id = " + req.body.SPID
     if (req.body.key) {
         Query += " and  ContactList.list_name like '%" + req.body.key + "%'"
     }
