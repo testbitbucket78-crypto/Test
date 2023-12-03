@@ -909,11 +909,15 @@
 
 			<div class="audience_list">
 				<div *ngFor='let list of allContactList ;let i = index' class="campaigns_section_item">
-					<div class="campaigns_section_item_header">
+					<div class="d-flex justify-content-between align-items-end campaigns_section_item_header">
 						<label class="container">
 							<input [(ngModel)]="list.selected" type="checkbox" name="contact_list" value={{list.id}} (click)="selectContactList($event,list)">
 							<span class="checkmark"></span>
 						</label>
+						<button class="small-gradient-btn"><img class="m-0 del icon"
+							src="/assets/img/teambox/icon-delete.svg"
+							(click)="deleteContactList()" />
+						</button>
 					</div>
 					<p class="title">{{list.list_name}}</p>
 					<p class="start_time">Last modified on <span>{{list.updated_formated}}</span></p>

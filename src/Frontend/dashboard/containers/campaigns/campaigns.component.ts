@@ -1696,7 +1696,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.closeAllModal()
 		this.modalService.open(openModall);
 	}
-	
 	uplaodTemplateImage(event: any) {
 		let files: FileList = event.target.files;
 		this.uploadTemplateMedia(files)
@@ -1719,6 +1718,22 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		let files: FileList = event.target.files;
 		this.saveFiles(files);
 	}
+	// onFileChange(event: any) {
+    //     this.selecetdCSV = '';
+    //     let file: File|any = event.target.files[0];
+    //     let currentfileformat = file.name.split('.').pop().toLowerCase();
+    //     console.log(currentfileformat)
+    //     if (!this.isCorrectFileFormat(currentfileformat)) {
+    //         this.showToaster('Incorrect file format. Only CSV files are allowed.', 'error');
+    //         return;
+    //     }
+    //     this.saveFiles(file);
+    // }
+    // isCorrectFileFormat(currentfileformat: any): boolean {
+    //     const allowedFileFormats = ['csv']; // allowed only csv
+    //     return allowedFileFormats.includes(currentfileformat);
+    // }
+
 	updateCSVDuplicate(option:any){
 		this.CSVDuplicate =option
 	}
@@ -1805,6 +1820,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		}
 		this.apiService.getContactList(BodyData).subscribe(responseData =>{
 			var dataArray:any=responseData
+			console.log(dataArray)
 			dataArray.forEach((item:any) => {
 				item['AllContactsLength'] =item.contact_id_list?JSON.parse(item.contact_id_list).length:0
 				item['updated_formated']=this.formattedDate(item.updated_at)
@@ -1813,6 +1829,19 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			})
 			this.allContactList=dataArray
 		})
+	}
+
+	deleteContactList() {
+		let Id = {
+			id: 5
+		}
+		this.apiService.deleteContactList(Id).subscribe(
+		 result =>{
+			if(result){
+			console.log(result)
+			}
+		  });
+		  this.getContactList('');
 	}
 
 	selectContactList(event:any,listItem:any){

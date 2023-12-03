@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormsModule, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Validators } from '@angular/forms';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
@@ -20,17 +20,16 @@ export class ResetPasswordComponent implements OnInit {
   changetype: boolean = true;
   change: boolean = true;
   uid: any;
-  resetpassword = this.formBuilder.group({
-    // id: sessionStorage.getItem('uid'),
-    password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
-    confirmPassword: ['', Validators.required]
-  }, { validator: this.passwordMatchValidator });
-
+  resetpassword:any;
   title = 'formValidation';
   submitted = false;
   constructor(private formBuilder: FormBuilder, private router: Router, private apiService: AuthService, private active: ActivatedRoute) {
 
-
+    this.resetpassword = this.formBuilder.group({
+      // id: sessionStorage.getItem('uid'),
+      password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
+      confirmPassword: ['', Validators.required]
+    }, { validator: this.passwordMatchValidator });
   }
   
   ngOnInit() {

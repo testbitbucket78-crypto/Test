@@ -348,6 +348,7 @@ countryCodes = [
 	messageMeidaFile:any='';
 	mediaType:any='';
 	showMention:any=false;
+	NewContactForm:any=[];
 	EditContactForm:any=[];
 	QuickReplyList:any=[];
 	QuickReplyListMain:any=[];
@@ -859,6 +860,9 @@ sendattachfile(){
 		this.getAttributeList()
         this.sendattachfile()
 		this.getQuickResponse()
+
+		this.NewContactForm = this.newContact;
+        this.EditContactForm = this.editContact;
 	}
 
 	ngAfterViewInit() {
@@ -1429,8 +1433,6 @@ hangeEditContactInuts(item:any){
 	}else{
 		this.EditContactForm[item.target.name] = item.target.value
 	}
-	this.formatPhoneNumber();
-	this.formatPhoneNumberEdit();
 	//this.ShowChannelOption=false
 
 }
@@ -1660,42 +1662,23 @@ SelectReplyOption(optionValue:any,optionType:any){
 }
 
 // Function to format the phone number using libphonenumber-js
-formatPhoneNumber() {
-const phoneNumber = this.newContact.get('Phone_number')?.value;
-const countryCode = this.newContact.get('country_code')?.value;
-
-if (phoneNumber && countryCode) {
-  const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
-  const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
-
-  if (formattedPhoneNumber) {
-	this.newContact.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
-	const phoneNumberValue = this.newContact.get('Phone_number')?.value;
-	console.log(phoneNumberValue);
-
-  }
-}
-
-}
-
-formatPhoneNumberEdit() {
-	const phoneNumber = this.editContact.get('Phone_number')?.value;
-	const countryCode = this.editContact.get('countryCode')?.value;
-	
-	if (phoneNumber && countryCode) {
+formatPhoneNumber(contactForm: FormGroup) {
+	const phoneNumber = contactForm.get('Phone_number')?.value;
+	const countryCode = contactForm.get('country_code')?.value;
+	const phoneControl = contactForm.get('Phone_number');
+  
+	if (phoneNumber && countryCode && phoneControl) {
 	  const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
 	  const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
-	
+  
 	  if (formattedPhoneNumber) {
-		this.editContact.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
-		const phoneNumberValue = this.editContact.get('Phone_number')?.value;
-		console.log(phoneNumberValue);
-	
+		const formattedValue = formattedPhoneNumber.formatInternational().replace(/[\s+]/g, '');
+		phoneControl.setValue(formattedValue);
+		console.log(phoneControl.value);
 	  }
-	 }
 	}
-
-
+  }
+  
 
 searchContact(event:any){
 	this.contactSearchKey = event.target.value;
