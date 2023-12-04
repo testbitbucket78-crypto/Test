@@ -189,6 +189,7 @@ label.container input[type="radio"]:checked + span.label {
     flex-direction: column;
     margin-top: 10px;
     position: relative;
+    height: auto;
   }
   .template_box .inner_box img.template_img{
     width: 100%;

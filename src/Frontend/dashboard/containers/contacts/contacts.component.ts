@@ -186,11 +186,6 @@ countryCodes = [
     customerData: any;
     getFilterTags: [] = [];
     
-	//   filterForm=new FormGroup({
-  //   Name: new FormControl('', Validators.compose([Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z ]+"), Validators.minLength(3)])),
-  //   Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(10)])),
-  //   emailId: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
-	// })
     orderHeader: String = '';
     isDesOrder: boolean = true;
 
@@ -503,7 +498,7 @@ onSelectAll(items: any) {
         result: [
           {
             displayName:this.spid,
-            ActualName:"SP_ID"
+            ActuallName:"SP_ID"
           },
             {
                 displayName: this.productForm.controls.Name.value,
@@ -762,14 +757,14 @@ formatPhoneNumber() {
   }
   }
 
-  // filterTags() {
-  //   if(this.customerData.tag) {
-  //     return this.customerData.tag.split(',').map((tag: string) =>tag.trim())
-  //   }
-  //   else {
-  //     return [];
-  //   }
-  // }
+  filterTags() {
+    if(this.customerData.tag) {
+      return this.customerData.tag.split(',').map((tag: string) =>tag.trim())
+    }
+    else {
+      return [];
+    }
+  }
 
 }
 

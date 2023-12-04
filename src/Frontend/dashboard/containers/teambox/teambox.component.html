@@ -1334,7 +1334,7 @@
 			</div>
 		</div>
 		<div class="modal-body">
-			<form class="inner_form" (ngSubmit)="createCustomer()">
+			<form class="inner_form" [formGroup]="newContact" (ngSubmit)="createCustomer()">
 				<div class="row">
 					<img class="back-array-icon" (click)="openaddMessage(messageadd)"
 						src="../../../../assets/img/profile/previous1.svg">
