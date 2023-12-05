@@ -1822,8 +1822,11 @@ input:focus {
     padding: 0.5rem 1.5em;
 }
 .section_filter {
-    margin: 1rem;
     display: flex;
+    display: flex;
+    margin-top: 27px;
+    margin-left: -2px;
+    margin-bottom: 17px;
 }
 
 .template_box {
@@ -1926,6 +1929,11 @@ span {
 }
 
 
+label.container.container.arddtag{
+    width: 0%!important;
+    padding-left: 11px!important; ;
+}
+
 
 label.container {
     position: relative;
@@ -1972,14 +1980,26 @@ label.container {
     }
     .checkmark.radio{
     border-radius: 50%;
+    border-radius: 69%;
+    padding-top: 20px;
+    padding-left: 1.2rem;
+    border-radius: 3px solid #C0BDCC!important;
     }
 
     .addTag .container span {
-        width: 20%!important;
-        margin-top: -7px;
+        width: 20% !important;
+        margin-top: -6px;
         background-color: #fff;
-        border-radius: 5px;
-        border: 1px solid #C0BDCC;
+        border-radius: 4px;
+        border: 1px solid  #C0BDCC ;
+        margin-left: 1px;
+    }
+    .addTag .container span.checkmark.oops{
+        width: 56% !important;
+        margin-top: -4px!important;
+    }
+    .fix-dots{
+        margin-top: -4px;
     }
     
     /* On mouse-over, add a grey background color */
@@ -1987,11 +2007,15 @@ label.container {
     /* When the checkbox is checked, add a blue background */
     label.container input:checked ~ .checkmark {
     background-color: #6149CD;
+    border: 1px solid  blue;
     }
   
     label.container input:checked ~ .checkmark.radio {
-      background-color: #fff;
-      border:2px solid #6149CD
+        background-color: #fff;
+        border: 3.8px solid #6149CD;
+        padding-top: 13px;
+        padding-left: 12px;
+    
       }
   
     
@@ -2019,9 +2043,9 @@ label.container {
     
     /* Style the checkmark/indicator */
     label.container .checkmark:after {
-    left: 5px;
-    top: 2px;
-    width: 4px;
+        left: 4px;
+        top: 1px;
+        width: 4px;    
     height: 8px;
     border: solid white;
     border-width: 0 2px 2px 0;
@@ -2174,4 +2198,13 @@ input[type="radio"]:checked + label::before {
     background: #FFF4F2 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
     border-radius: 30px;
+}
+.checkmar{
+    position: absolute;
+    height: 21px;
+    width: 19px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 3px solid #C0BDCC;
+
 }

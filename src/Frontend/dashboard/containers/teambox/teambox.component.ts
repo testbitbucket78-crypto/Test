@@ -1306,45 +1306,71 @@ sendattachfile(){
 		}
 	}
 
-selectInteraction(Interaction:any){
-	
-	if(this.chatEditor){
-		this.chatEditor.value = 'Your message...'
-	this.showChatNotes ='text'
-	}
-	for(var i=0;i<this.interactionList.length;i++){
-		this.interactionList[i].selected=false
-	}
-	Interaction['selected']=true
-	this.selectedInteraction =Interaction
-this.contactId = Interaction.customerId
-	console.log(this.contactId)
-	console.log(Interaction)
+	selectInteraction(Interaction: any) {
+		if (this.chatEditor) {
+		  this.chatEditor.value = 'Your message...';
+		  this.showChatNotes = 'text';
+		}
+	  
+		for (let i = 0; i < this.interactionList.length; i++) {
+		  this.interactionList[i].selected = false;
+		}
+	  
+		Interaction['selected'] = true;
+		this.selectedInteraction = Interaction;
+		this.contactId = Interaction.customerId;
+		console.log(this.contactId);
+		console.log(Interaction);
+	  
+		this.Allmessages = this.selectedInteraction.allmessages;
+		console.log(this.Allmessages);
+	  
+		for (let i = 0; i < Interaction.allmessages.length; i++) {
+		  const message = Interaction.allmessages[i];
+		  const messageId = message?.Message_id;
+		  const messageDirection = message?.message_direction;
+	  
+		  if (messageId !== undefined && messageDirection === 'Out') {
+			console.log(`Message_id: ${messageId}, message_direction: ${messageDirection}`);
+			console.log(message.msg_status);
+				const tickErrorDiv = document.querySelector('.tickerror');
+				const singleTickDiv = document.querySelector('.single-tick');
+				const doubleTickDiv = document.querySelector('.doubleee');
+	  
+			// Set message status directly
+			message.msg_status = this.messageStatus;
+	  
+			// Update the corresponding div based on the message status
+			if (message.msg_status === '1') {
+				singleTickDiv?.setAttribute('src', '../../../../assets/img/teambox/tick-gry.svg');
+			} else if (message.msg_status === '2') {
+				doubleTickDiv?.setAttribute('src', '../../../../assets/img/teambox/duble-tick-g.svg');
+			} else if (message.msg_status === '3') {
+				doubleTickDiv?.setAttribute('src', '../../../../assets/img/teambox/double-tick-green.svg');
+			} else if (message.msg_status === null) {
+				
+			}
+		  }
+		}
 
 
-    this.Allmessages=this.selectedInteraction.allmessages;
-	console.log(this.Allmessages)
 
-	// for (let i = 0; i < Interaction.allmessages.length; i++) {
-	// 	const messageId = Interaction.allmessages[i]?.Message_id;
-	// 	this.messageStatus = Interaction.allmessages[i]?.msg_status;
-	// 	const messageDirection = Interaction.allmessages[i]?.message_direction;
-		
-	
-	// 	if (messageId !== undefined && this.messageStatus !== undefined && messageDirection === 'Out') {
-	// 		console.log(`Message_id: ${messageId}, msg_status: ${this.messageStatus}, message_direction: ${messageDirection}`);
-	// 		console.log(this.messageStatus)
-	// 	}
-	// }
-	
-	this.getPausedTimer()
-	this.scrollChatToBottom()
 
-	var element = document.getElementsByClassName('total_count green')[0];
-	if (this.selectedInteraction.UnreadCount!=0 && element) {
-	  element.innerHTML = '';
-	}
-	}
+
+
+
+
+
+	  
+		this.getPausedTimer();
+		this.scrollChatToBottom();
+	  
+		const element = document.getElementsByClassName('total_count green')[0];
+		if (this.selectedInteraction.UnreadCount !== 0 && element) {
+		  element.innerHTML = '';
+		}
+	  }
+	  
 
 getPausedTimer(){
 	//console.log('getPausedTimer')
@@ -1707,7 +1733,7 @@ blockCustomer(selectedInteraction:any){
 		}else{
 			this.showToaster('Conversations is UnBlocked','success')
 		}
-		
+		console.log(ResponseData);
 	});
 }
 
@@ -2084,11 +2110,10 @@ deleteNotes(){
 
 sendMessage(){
 
-	this.custommesage='';
-	// if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>' && this.messageMeidaFile.value =='' ) {
-	// 	this.showToaster('! Please type your message first','error');
-	// 	return; 
-	// }
+	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>' ||  !this.messageMeidaFile ) {
+		this.showToaster('! Please type your message first','error');
+		return; 
+	}
    
  
 	 {

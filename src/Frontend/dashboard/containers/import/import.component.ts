@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import Stepper from 'bs-stepper';
@@ -13,13 +13,12 @@ declare var $: any;
 	styleUrls: ['./import.component.scss']
 })
 
-
 export class ImportComponent implements OnInit {
 
 	showMore = false;
 	text = ` mamammamamamamm amamamamam ammaaamaam amammscwebcjkwebjkqwkllwq lkwkklwdkl  njkbjkbkbk`;
 
-
+	@Output() getContact = new EventEmitter<string> ();
 	active = 1;
 	file: any;                                           
 	stepper: any;
@@ -40,6 +39,10 @@ export class ImportComponent implements OnInit {
 	content:any;
 	isOverrideOn!: boolean; isOverrideOn1!: boolean; isOverrideOn2!: boolean; isOverrideOn3!: boolean; isOverrideOn4!: boolean; isOverrideOn5!: boolean; isOverrideOn6!: boolean; isOverrideOn7!: boolean;
 	showTopNav:boolean = true;
+	errorMessage='';
+	successMessage='';
+	warningMessage='';
+	currentfileformat:any;
 
 	
 
@@ -96,19 +99,35 @@ export class ImportComponent implements OnInit {
 	open(any: any) {
 		this.modalService.open(any);
 	}
+	showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}else if(type=='error'){
+			this.errorMessage=message;
+		}else{
+			this.warningMessage=message;
+		}
+		setTimeout(() => {
+			this.hideToaster()
+		}, 5000);
+		
+		}
 
 
-
+	hideToaster(){
+		this.successMessage='';
+		this.errorMessage='';
+		this.warningMessage='';
+	}
 
 	// //**** incorrect file format popup ****/
 	incorrectFile = (content:any) => {
+		
 		const currentfileformat = this.file.name.split(".").pop();
 		if(currentfileformat !== this.fileformat) {
-	
 			this.modalService.open(content);
 			
 		}
-
 		else {
 			this.stepper.next();
 		}
@@ -120,6 +139,9 @@ export class ImportComponent implements OnInit {
 		if (this.numberOfNewContact !== 0 && this.countUpdatedData === 0) {
 			this.updateAndSave();
 			this.modalService.open(imports);
+			$("#importmodal").modal('hide'); 
+			this.getContact.emit('');
+
 		}
 
 		else {
@@ -130,15 +152,17 @@ export class ImportComponent implements OnInit {
 
 
 
+
 //*********After upload read file *********/
 	onUpload(event: any) {
 		this.file = event.target.files[0];
 		this.fileName = this.file.name
+		
+		
 
 		let reader: FileReader = new FileReader();
 		reader.readAsText(this.file);
 		reader.onload = () => {
-
 			let csvData = reader.result;
 			let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);
 
@@ -148,11 +172,10 @@ export class ImportComponent implements OnInit {
 			this.importedData = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
 
 		}
+	
 	}
 
-
-	
-	//*********Download Sample file****************/
+//*********Download Sample file****************/
 
 	download() {
 		this.apiService.download().subscribe((data: any) => {
@@ -171,7 +194,7 @@ export class ImportComponent implements OnInit {
 	}
 
 
-	//**********Method to collect header of csv file**********/
+//**********Method to collect header of csv file**********/
 	getHeaderArray(csvRecordsArr: any) {
 		let headers = (<string>csvRecordsArr[0]).split(',');
 		let headerArray = [];
@@ -180,7 +203,8 @@ export class ImportComponent implements OnInit {
 		}
 		return headerArray;
 	}
-	//***********Collect csv file headers value******** /
+
+//***********Collect csv file headers value******** /
 	getDataRecordsArrayFromCSVFile(csvRecordsArray: any, headerLength: any) {
 		let csvArr: any = [];
 		let errorDataArray: any = [];
