@@ -557,14 +557,14 @@ click: any;
 
 
 	
-	addinserttemplate(templateId: string,action: string,checked: boolean) { 
-		if (action === 'contactowner') {
-		  this.contactowner = checked ? 1 : 0;
-		  this.templateStates[templateId] = checked;
-		  console.log(`Template ${templateId} checked: ${checked}`);
-	  }
+	// addinserttemplate(templateId: string,action: string,checked: boolean) { 
+	// 	if (action === 'contactowner') {
+	// 	  this.contactowner = checked ? 1 : 0;
+	// 	  this.templateStates[templateId] = checked;
+	// 	  console.log(`Template ${templateId} checked: ${checked}`);
+	//   }
 	  
-	}
+	// }
 
 	filterTemplate(temType:any){
 
