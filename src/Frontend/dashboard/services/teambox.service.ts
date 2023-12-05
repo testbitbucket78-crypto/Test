@@ -136,6 +136,9 @@ export class TeamboxService {
     return this.http.post(API_URL+'/updatedContactList/',bodyData);
   }
 
+  public deleteContactList(Id:any) {
+    return this.http.post(API_URL+'/deleteContactList',Id);
+  }
 
   public applyFilterOnEndCustomer(bodyData: any) {
     return this.http.post(API_URL+'/applyFilterOnEndCustomer/',bodyData);

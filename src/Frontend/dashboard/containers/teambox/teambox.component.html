@@ -1353,7 +1353,7 @@
 						</option>
 					</select>
 					<input class="form-control countryCode" type="text" placeholder="Enter Number"onKeyPress="return /^[\d+]$/.test(event.key)" name="Phone_number" formControlName="Phone_number"
-					id="Phone_number" (change)="formatPhoneNumber()" />
+					id="Phone_number" (change)="formatPhoneNumber(newContact)" />
 				</div>
 				<div class="row" style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Channel<span>*</span></label>
@@ -1413,7 +1413,7 @@
 			</div>
 		</div>
 		<div class="modal-body">
-			<form class="inner_form large" (ngSubmit)="updateCustomer()" [formGroup]="editContact">
+			<form class="inner_form large" (ngSubmit)="updateCustomer()">
 				<div class="row">
 					<label for="floatingInputGrid" class="required">Name*</label>
 					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="Name" value={{EditContactForm.Name}} />
@@ -1428,12 +1428,12 @@
 					</select>
 					<input (input)="hangeEditContactInuts($event)"  class="form-control phone-no" type="text" name="Phone_number" value={{EditContactForm.Phone_number}} type="text"  formControlName="Phone_number" 
 				 maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$"
-					onKeyPress="return /^[0-9]$/.test(event.key)"(change)="formatPhoneNumberEdit()"> 
+					onKeyPress="return /^[0-9]$/.test(event.key)"(change)="formatPhoneNumber(editContact)"> 
 					<div *ngIf="editContact.controls.Phone_number.touched && editContact.controls.Phone_number.errors" 
 							class="text-danger">
 							! Phone number must be 6 to 15 digits.
 						  </div>
-				</div>
+		      		</div>
 
 
 

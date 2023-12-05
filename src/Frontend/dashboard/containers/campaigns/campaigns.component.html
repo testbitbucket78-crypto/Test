@@ -299,9 +299,9 @@
 							<img class="icon ml" src="assets/img/campaign/add-segment.svg">
 							<p>Add Segment Audience</p>
 							<p><span>Select from the Saved Lists or create a new List by filtering existing contacts</span></p>
-							<p *ngIf="!newListName" class="sm_icon"><span><img src="assets/img/campaign/arrow-right.svg"></span></p> 	
+							<p *ngIf="!newListName" class="sm_icon"><span><img src="../../../../assets/img/support/arrow.svg"></span></p> 	
 							<div *ngIf="newListName" class="formrow">
-								<p class="form-control btn rt_close">{{newListName}}</p>
+								<p (click)="removeSegmentedAudienceList()" class="form-control btn rt_close">{{newListName}}</p>
 							</div>
 						</div>
 
@@ -310,7 +310,7 @@
 							<img class="icon ml" src="assets/img/campaign/import-contacts.svg">
 							<p>Import Contacts</p>
 							<p><span>Add audience to your campaign by importing contacts from CSV file or Excel sheet</span></p>
-							<p *ngIf="!importedContacts" class="sm_icon"><span><img src="assets/img/campaign/arrow-right.svg"></span></p> 	
+							<p *ngIf="!importedContacts" class="sm_icon"><span><img src="../../../../assets/img/support/arrow.svg"></span></p> 	
 							<div *ngIf="importedContacts" class="formrow">
 								<p class="form-control btn rt_close">{{importedContacts}}</p>
 							</div>
@@ -326,7 +326,7 @@
 						<p><span>Select a message to create campaign</span></p>
 						</div>
 						<div class="inner right">
-							<input placeholder="Search" type="text" class="search-box" (chnage)="searchTemplate($event)">
+							<input placeholder="Search" type="text" class="search-box" (change)="searchTemplate($event)">
 						</div>
 					</div>
 					<div class="section_filter">
@@ -478,14 +478,15 @@
 						<p *ngIf="csvContactList.length > 0" class="value">{{csvContactList.length}} <span>( Imported Contacts)</span></p>
 						<p class="label mt-3">Message</p>
 						<p class=" mt-3">Category</p>
-						<p class="value">{{selectedTemplate.type}}</p>
+						<p class="value">{{selectedTemplate.Category}}</p>
 						<div class="template mt-2">
 							<div class="template_img">
-								<img src="{{selectedTemplate.image}}">
+								<img src="{{selectedTemplate.Links}}">
 							</div>
 							<div class="template_text">
-								<p class="name">{{selectedTemplate.content_heading}}</p>
-								<p class="description" [innerHTML]="selectedTemplate.content"></p>
+								<p class="name">{{selectedTemplate.Header}}</p>
+								<p class="description">{{selectedTemplate.BodyText}}</p>
+								<p class="footer">{{selectedTemplate.FooterText}}</p>
 							</div>
 	
 						</div>
@@ -735,9 +736,16 @@
 				
 								<div class="important_contact_right">
 									<button type="button" class="paper-download" (click)="download()"><img src="assets/img/campaign/paper-download.png">Download sample file</button>
-									<div class="info_box">
+									<div class="import contact info_box">
 										<p class="info"><img src="assets/img/campaign/info-icon.png">Instructions</p>
-										<p><span>As the message template that you will select in the next step may include variables, so please include the variable values in the CSV file against each contact to personalize your message</span></p>
+										<p class="info">
+											<span>Upload the file that consists of contacts with the details that you would like to Import. Ensure the Imported file fulfills the following requirements:</span>
+											<span>1. Only CSV format file should be Imported.</span>
+											<span>2. File can have a maximum size of 10 MB.</span>
+											<span>3. The file must contain at least 1 column with Contact Numbers.</span>
+											<span>4. Ensure the first row contains NO data and just column headings with proper labels to help in variables mapping. Data in the first row is not imported.</span>
+											<span>5. As the message template that you will select in the next step may include variables, so please include the variable values in the CSV file against each contact to personalize your message.</span>
+										</p>
 									</div>
 									
 								</div>
@@ -909,11 +917,15 @@
 
 			<div class="audience_list">
 				<div *ngFor='let list of allContactList ;let i = index' class="campaigns_section_item">
-					<div class="campaigns_section_item_header">
+					<div class="d-flex justify-content-between align-items-end campaigns_section_item_header">
 						<label class="container">
 							<input [(ngModel)]="list.selected" type="checkbox" name="contact_list" value={{list.id}} (click)="selectContactList($event,list)">
 							<span class="checkmark"></span>
 						</label>
+						<button class="small-gradient-btn"><img class="m-0 del icon"
+							src="/assets/img/teambox/icon-delete.svg"
+							(click)="deleteContactList()" />
+						</button>
 					</div>
 					<p class="title">{{list.list_name}}</p>
 					<p class="start_time">Last modified on <span>{{list.updated_formated}}</span></p>

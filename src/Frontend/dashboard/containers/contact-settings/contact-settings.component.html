@@ -9,7 +9,7 @@
     <div *ngIf="selectedTab==1">
         <sb-custom-fields></sb-custom-fields>
     </div>
- <div *ngIf="tagListData.length>0">
+ <div>
     <div  class="setting-card" *ngIf="selectedTab==2">
         <div class="flex-header">
             <span class="working-hour-heading">Tags</span>    
@@ -55,7 +55,7 @@
 
 
 
-<div class="row mb-5">
+<div *ngIf="tagListData.length>0" class="row mb-5">
     <div class="col-sm-1"></div>
     <div class="col-sm-10 notification-card">
         <div class="container-fluid ">

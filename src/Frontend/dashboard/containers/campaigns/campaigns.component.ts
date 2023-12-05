@@ -85,16 +85,12 @@ export class CampaignsComponent implements OnInit {
 	 showScheduleTimeOption:any=false;
 	 ScheduleTimeList:any=['12:00 Am','12:15 Am','12:30 Am','12:30 Am'];
 	 selecteScheduleTime:any='';
-
 	 showTimeZoneOption:any=false;
-	 
 	 selecteTimeZone:any='GMT +5:30';
 	 timeZonesList:any=['GMT +5:30','GMT +5:30','GMT +5:30']
-
 	 mapNameOption:any=['First Name','Last Name', 'Username','Email'];
-	 attributesoption:any=['{{IP_address}}','{{user_name}}','{{Help}}','{{Support}}','{{email id}}','{{IP_address}}','{{New-Order}}','{{Product YN}}','{{mail_address}}']
-	 attributesoptionFilters:any=['{{IP_address}}','{{user_name}}','{{Help}}','{{Support}}','{{email id}}','{{IP_address}}','{{New-Order}}','{{Product YN}}','{{mail_address}}']
-	 
+	 attributesoption:any=[]
+	 attributesoptionFilters:any=[]
 	 allCampaign:any=[];
 	 allCampaignMain:any=[];
 	 selectedCampaign:any=[];
@@ -341,6 +337,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.routerGuard()
 		this.getAllCampaigns()
 		this.getContactList('')
+		this.getAttributeList()
 		this.getAdditiionalAttributes()
 	}
 	getAdditiionalAttributes(){
@@ -353,6 +350,17 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.attributesoption=attributes
 			this.attributesoptionFilters=attributes
 		})
+	}
+
+	getAttributeList() {
+		this.apiService.getAttributeList(this.SPID)
+		.subscribe((response:any) =>{
+		 if(response){
+			 let attributeListData = response?.result;
+			 this.attributesoption = attributeListData.map((attrList:any) => attrList.displayName);
+			 console.log(this.attributesoption);
+		 }
+	   })
 	}
 
 	SearchCampaign(event:any){
@@ -1163,9 +1171,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		console.log(this.selectedTemplate.allVariables)
 		console.log(this.csvContactList)
 		let BodyData:any={
-			Id:this.selectedTemplate.Id?this.selectedTemplate.Id:'',
+			Id:this.newCampaignDetail.Id?this.newCampaignDetail.Id:'',
 			sp_id:this.SPID,
-			title:this.newCampaignDetail.value.TemplateName,
+			title:this.newCampaignDetail.value.title,
 			channel_id:this.newCampaignDetail.value.channel_id,
 			message_heading:this.selectedTemplate.Header,
 			message_content:this.selectedTemplate.BodyText,
@@ -1174,7 +1182,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			button_yes:this.selectedTemplate.button_yes,
 			button_no:this.selectedTemplate.button_no,
 			button_exp:this.selectedTemplate.button_exp,
-			category:this.selectedTemplate.type,
+			category:this.selectedTemplate.Category,
 			time_zone:this.selecteTimeZone,
 			start_datetime:sratdatetime,
 			end_datetime:'',
@@ -1183,6 +1191,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		}
 		if(action=='save'){
 			BodyData['status']=0
+			this.getAllCampaigns()
 		}
 		else if(action=='updateWallet'){
 
@@ -1192,9 +1201,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			}else{
 				BodyData['status']=3
 			}
-			
+			this.getAllCampaigns()
 		}
-		let CampaignId:any=this.selectedTemplate.Id?this.selectedTemplate.Id:'';
+		let CampaignId:any=this.newCampaignDetail.Id?this.newCampaignDetail.Id:'';
 		await this.apiService.addCampaign(BodyData).subscribe(responseData =>{
 			let newCampaign:any = responseData
 			console.log(newCampaign)
@@ -1229,7 +1238,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					status:this.scheduled,
 				}
 				let allVariables:any = this.selectedTemplate.allVariables
-				console.log('sdjf8sdy8y8dy82yd82yd82yd8y28dy28dy82d')
 				console.log(allVariables)
 				let message_heading =this.selectedTemplate.Header
 				let message_content= this.selectedTemplate.BodyText
@@ -1536,32 +1544,40 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		}else if(this.activeStep ==3){
 			
 			if(this.selectedTemplate && this.selectedTemplate.TemplateName!=''){
-			  this.activeStep=3.1
-			}else{
-				this.showToaster('Please Select Message Template...','error')
-			}
-		}else if(this.activeStep ==3.1){
 			let content_heading_preview:any=this.selectedTemplate.Header
 			let content_preview:any=this.selectedTemplate.BodyText;
 
-			let allVariables:any = this.selectedTemplate.message_variables
-			let errorCount =0;
-			allVariables.map((item:any)=>{
-				if(item.value==''){
-					errorCount++
-				}
-				content_heading_preview = content_heading_preview.replaceAll(item.label,item.value)
-				content_preview = content_preview.replaceAll(item.label,item.value)
-			})
-			
 			this.selectedTemplate['content_heading_preview']=content_heading_preview
 			this.selectedTemplate['content_preview']=content_preview
-			if(errorCount==0){
-			this.activeStep=3.2
+			this.activeStep=3.1
 			}else{
-				this.showToaster('Please Enter all Variable value...','error')	
+				this.showToaster('Please Select Message Template...','error')
 			}
-		}else if(this.activeStep ==3.2){
+		}
+		//  else if(this.activeStep ==3.1){
+		// 	 let content_heading_preview:any=this.selectedTemplate.Header
+		// 	 let content_preview:any=this.selectedTemplate.BodyText;
+			 
+
+		// 	let allVariables:any = this.selectedTemplate.message_variables
+		// 	let errorCount =0;
+		// 	allVariables.map((item:any)=>{
+		// 		if(item.value==''){
+		// 			errorCount++
+		// 		}
+		// 		content_heading_preview = content_heading_preview.replaceAll(item.label,item.value)
+		// 		content_preview = content_preview.replaceAll(item.label,item.value)
+		// 	})
+			
+			//  this.selectedTemplate['content_heading_preview']=content_heading_preview
+			//  this.selectedTemplate['content_preview']=content_preview
+		// 	if(errorCount==0){
+		// 	this.activeStep=3.2
+		// 	}else{
+		// 		this.showToaster('Please Enter all Variable value...','error')	
+		// 	}
+		//}
+		else if(this.activeStep ==3.1){
 			console.log(this.selectedTemplate)
 			console.log(this.newCampaignDetail)
 
@@ -1579,12 +1595,12 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	    }
 	}
 	setStep(newStep:any){
-		/*
+		
 		this.activeStep = newStep
 		if(newStep ==3){
 			this.getTemplates()
 		}
-		*/
+		
 	}
 	filterCampaign(filtercampaign: any) {
 		this.closeAllModal()
@@ -1696,7 +1712,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.closeAllModal()
 		this.modalService.open(openModall);
 	}
-	
 	uplaodTemplateImage(event: any) {
 		let files: FileList = event.target.files;
 		this.uploadTemplateMedia(files)
@@ -1719,6 +1734,22 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		let files: FileList = event.target.files;
 		this.saveFiles(files);
 	}
+	// onFileChange(event: any) {
+    //     this.selecetdCSV = '';
+    //     let file: File|any = event.target.files[0];
+    //     let currentfileformat = file.name.split('.').pop().toLowerCase();
+    //     console.log(currentfileformat)
+    //     if (!this.isCorrectFileFormat(currentfileformat)) {
+    //         this.showToaster('Incorrect file format. Only CSV files are allowed.', 'error');
+    //         return;
+    //     }
+    //     this.saveFiles(file);
+    // }
+    // isCorrectFileFormat(currentfileformat: any): boolean {
+    //     const allowedFileFormats = ['csv']; // allowed only csv
+    //     return allowedFileFormats.includes(currentfileformat);
+    // }
+
 	updateCSVDuplicate(option:any){
 		this.CSVDuplicate =option
 	}
@@ -1805,6 +1836,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		}
 		this.apiService.getContactList(BodyData).subscribe(responseData =>{
 			var dataArray:any=responseData
+			console.log(dataArray)
 			dataArray.forEach((item:any) => {
 				item['AllContactsLength'] =item.contact_id_list?JSON.parse(item.contact_id_list).length:0
 				item['updated_formated']=this.formattedDate(item.updated_at)
@@ -1813,6 +1845,19 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			})
 			this.allContactList=dataArray
 		})
+	}
+
+	deleteContactList() {
+		let Id = {
+			id: 5
+		}
+		this.apiService.deleteContactList(Id).subscribe(
+		 result =>{
+			if(result){
+			console.log(result)
+			}
+		  });
+		  this.getContactList('');
 	}
 
 	selectContactList(event:any,listItem:any){
@@ -1949,7 +1994,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	searchTemplate(event:any){
 		let searchKey = event.target.value
 		if(searchKey.length>2){
-		var allList = this.allTemplates
+		var allList = this.allTemplatesMain
 		let FilteredArray = [];
 		for(var i=0;i<allList.length;i++){
 			var content = allList[i].title.toLowerCase()
@@ -1992,37 +2037,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 
 		
 	}
-	// getVariables(sentence: string, first: string, last: string): string[] { 
-	// 	let goodParts: string[] = [this.selectedTemplate.TemplateName];
-	// 	console.log(goodParts)
-		
-	// 	const allParts = sentence?.split(first);
-
-	// 	allParts.forEach((part: string) => {
-	// 	  if (part.indexOf(last) > -1) {
-	// 			  const goodOne = (part.split(last))[0];
-	// 		goodParts = goodParts.concat("{{"+goodOne+"}}");
-	// 	  }
-	// 	});
-		
-	// 	return goodParts;
-	//   }
-
-	// selectTemplate(template:any){
-	// 	this.selectedTemplate =template
-	// 	var str = template.content;
-	// 	const allVariables = this.getVariables(str,"{{","}}")
-    //     let allVariablesList:any =[];
-	// 	console.log(allVariablesList);
-	// 	allVariables.map((item:any)=>{
-	// 		allVariablesList.push({label:item,value:''})
-	// 	})
-	// 	this.selectedTemplate['allVariables'] = allVariablesList
-	// 	console.log('bhai yeh dekhna hai')
-	// 	console.log(this.selectedTemplate)
-
-	// }
-
 	getVariables(sentence: string, first: string, last: string): string[] {
 		let goodParts: string[] = [this.selectedTemplate.Header];
 
@@ -2095,7 +2109,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	  directToSettings() {
 		this.closeAllModal();
 		this.router.navigate(['dashboard/setting']);
+	  }
 
+	  removeSegmentedAudienceList() {
+		this.newListName=false;
 	  }
 
 

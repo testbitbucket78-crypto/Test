@@ -67,12 +67,12 @@ export class DashboardService {
 
   }
   addContact(data: any) {
-    return this.http.post('https://contactapi.sampanatechnologies.com/contact', data)
+    return this.http.post('https://contactapi.sampanatechnologies.com/addCustomContact', data)
   }
   editContact(data: any, customerId: any, SP_ID: any) {
     console.log(customerId)
     const params = new HttpParams().set('customerId', customerId).set('SP_ID', SP_ID)
-    return this.http.put('https://contactapi.sampanatechnologies.com/editContact', data, { params: params })
+    return this.http.post('https://contactapi.sampanatechnologies.com/editCustomContact', data, { params: params })
   }
 
 
