@@ -489,6 +489,7 @@
 	}
 	.template .template_img img{
 	width: 100%;
+	height: 140px;
 	border-radius: 12px 12px 0px 0px;
 
 	}
@@ -503,7 +504,7 @@
 	margin-bottom: 5px;
 	}
 	.template .template_text p.name{
-	font-weight: 400;
+	font-weight: 600;
 	}
 	.template .template_text p.heading{
 	font-weight: 600;
@@ -511,12 +512,9 @@
 	}
 	.template .template_text p.description{
 	font-weight: 400;
-	font-size: 14px;
+	font-size: 12px;
 	}
 	.template .template_text p.discount{
-	font-weight: 400;
-	}
-	.template .template_text p.name{
 	font-weight: 400;
 	}
 	p.dropdown img{
@@ -722,12 +720,11 @@
 	align-items: center;
 	justify-content: center;
 	}
+	
 	.addeidtcampaign_step .outerbox .innerbox.active p.sm_icon span{
 	background-color: #7A86A1;
 	}
 	.addeidtcampaign_step .outerbox .innerbox p.sm_icon img{
-	width: 7px;
-	transform: rotate(270deg);
 	cursor: pointer;
 	}
 
@@ -926,6 +923,17 @@
 	width: 12px;
 	margin-right: 5px;
 	}
+
+	.import.contact.info_box {
+		height: 180px;
+		overflow: auto;
+	}
+	.info span {
+        display: block;
+        margin-bottom: 10px;
+        padding-left: 20px;
+        text-indent: -20px;
+    }
 	.info_box{
 	background: #FFFFFF 0% 0% no-repeat padding-box;
 	border-radius: 13px;
@@ -1002,7 +1010,7 @@
 	border: 1px solid #EBEBEB;
 	border-radius: 19px;
 	padding: 8px 10px;
-	color: #BDC3D0;
+	color: #000000;
 	font-size: 12px;
 	font-weight: 400;
 	width: 100%;
@@ -1618,6 +1626,8 @@
 	.template_details_section{
 	display: flex;
 	flex-direction: row;
+	height: 400px;
+  	overflow: auto;
 	}
 	.template_details_section_left{
 	display: flex;
@@ -1631,6 +1641,7 @@
 	background: #FFF4F2;
 	border-radius: 24px;
 	padding: 1rem;
+	overflow: auto;
 	}
 	.template_details_section_right .form_row .popup-dialog{
 	margin-left: 25px;
@@ -1702,6 +1713,8 @@
 	width: 100%;
 	float: left;
 	padding: 1rem;
+	height: 400px;
+  	overflow: auto;
 	}
 	.variableoption .content .search-box{
 	background-color: #fff;
@@ -1792,6 +1805,8 @@
 	border-radius: 24px;
 	min-height: 250px;
 	padding: 1.5rem;
+	height: 400px;
+  	overflow: auto;
 	}
 	.campaign_preview_right{
 	display: flex;

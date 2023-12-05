@@ -442,6 +442,7 @@ removeValue() {
       this.apiService.deleteTemplateData(TemplateID).subscribe(result =>{
         if(result){
           $("#deleteModal").modal('hide');
+          this.showCampaignDetail = false;
           this.getTemplatesData();
         }
       });
