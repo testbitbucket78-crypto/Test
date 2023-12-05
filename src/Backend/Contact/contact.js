@@ -43,10 +43,10 @@ app.post('/addCustomContact', async (req, res) => {
   // Iterate through the data array and add column names to the query
   data.forEach((item, index) => {
     insertQuery += `${item.ActuallName}`;
-    if (item.ActuallName == 'Name' || item.ActuallName == 'Phone_number' || item.ActuallName == 'emailId') {
+    if (item.ActuallName == 'Name' || item.ActuallName == 'Phone_number') {
       if (item.displayName == '') {
         res.status(400).send({
-          message: 'Please Name ,Phone no and email id',
+          message: 'Please add Name and Phone no  ',
           status: 400
         })
       }
@@ -75,7 +75,7 @@ app.post('/addCustomContact', async (req, res) => {
     }
   });
 
-  insertQuery += ' , SP_ID) VALUES (';
+  insertQuery += ' ) VALUES (';
 
   // Add placeholders for values in the query
   data.forEach((item, index) => {
@@ -85,7 +85,7 @@ app.post('/addCustomContact', async (req, res) => {
     }
   });
 
-  insertQuery += ', ?)';
+  insertQuery += ')';
   console.log(values)
   console.log(insertQuery);
   let result=await db.excuteQuery(insertQuery,values)
