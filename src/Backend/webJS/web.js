@@ -147,18 +147,44 @@ async function createClientInstance(spid, phoneNo) {
         }, 3000);
 
       })
-      client.on('message_ack', (message, ack) => {
+      client.on('message_ack', async (message, ack) => {
 
         try {
           if (ack == '1') {
             console.log(`Message has been sent`);
-            let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
+            const phoneNumber = (message.to).replace(/@c\.us$/, "");
+            const smsdelupdate = `UPDATE Message
+SET msg_status = 1 
+WHERE interaction_id IN (
+SELECT InteractionId FROM Interaction 
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 ))`
+            let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
+            notify.NotifyServer(message.from, true);
+          
+          //  let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
           } else if (ack == '2') {
             console.log(`Message has been delivered`);
-            db.excuteQuery(`UPDATE Message set msg_status=? where ExternalMessageId=?`, [ack,  message.id.id])
+            const phoneNumber = (message.to).replace(/@c\.us$/, "");
+            const smsdelupdate = `UPDATE Message
+SET msg_status = 2 
+WHERE interaction_id IN (
+SELECT InteractionId FROM Interaction 
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 ))`
+            let deded = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
+            notify.NotifyServer(message.from, true);
+           
+        //    db.excuteQuery(`UPDATE Message set msg_status=? where ExternalMessageId=?`, [ack, message.id.id])
           } else if (ack == '3') {
             console.log(`Message has been read`);
-            db.excuteQuery(`UPDATE Message set msg_status=?, is_read =1 where ExternalMessageId=?`, [ack,  message.id.id])
+            const phoneNumber = (message.to).replace(/@c\.us$/, "");
+            const smsupdate = `UPDATE Message
+SET msg_status = 3 , is_read =1
+WHERE interaction_id IN (
+SELECT InteractionId FROM Interaction 
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 ))`
+            let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
+            
+        //    db.excuteQuery(`UPDATE Message set msg_status=?, is_read =1 where ExternalMessageId=?`, [ack, message.id.id])
           }
 
           notify.NotifyServer(message.from, true);
@@ -198,7 +224,7 @@ function writeClientFile(clientSpidMapping) {
   let jsonData = JSON.stringify(clientSpidMapping, getCircularReplacer(), 2);
   // jsonData = jsonData + ',';
 
- // console.log(jsonData)
+  // console.log(jsonData)
 
   // Writing to the file
   fs.writeFile(filePath, jsonData, (err) => {
@@ -289,8 +315,8 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
 
 async function sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id) {
   try {
-    console.log(client)
-    console.log("messagesTypes", interaction_id, msg_id)
+  
+  //  console.log("messagesTypes", interaction_id, msg_id)
     if (client.info) {
       console.log("client info avilable")
     } else {
