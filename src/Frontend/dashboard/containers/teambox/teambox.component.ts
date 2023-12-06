@@ -2110,7 +2110,7 @@ deleteNotes(){
 
 sendMessage(){
 
-	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>' ||  !this.messageMeidaFile ) {
+	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
 		this.showToaster('! Please type your message first','error');
 		return; 
 	}
