@@ -37,8 +37,8 @@ async function createClientInstance(spid, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          executablePath: "/usr/bin/google-chrome-stable",
-         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         executablePath: "/usr/bin/google-chrome-stable",
+        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -157,7 +157,7 @@ async function createClientInstance(spid, phoneNo) {
 SET msg_status = 1 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 ))`
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  and  msg_status is null`
             let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
             notify.NotifyServer(message.from, true);
           
@@ -169,7 +169,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 SET msg_status = 2 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 ))`
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 and (msg_status =1 or msg_status is null)`
             let deded = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
             notify.NotifyServer(message.from, true);
            
@@ -181,7 +181,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 SET msg_status = 3 , is_read =1
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 ))`
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1   and msg_status =2`
             let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
             
         //    db.excuteQuery(`UPDATE Message set msg_status=?, is_read =1 where ExternalMessageId=?`, [ack, message.id.id])
@@ -285,26 +285,26 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
       return '200';
     } else {
       // Use the fs.readFile() method to read the contents of the file
-      fs.readFile(filePath, 'utf8', (err, data) => {
-        if (err) {
-          console.error('Error reading the file:', err);
-          return;
-        }
+      // fs.readFile(filePath, 'utf8', (err, data) => {
+      //   if (err) {
+      //     console.error('Error reading the file:', err);
+      //     return;
+      //   }
 
         // Parse the JSON data
-        try {
-          const jsonData = JSON.parse(data);
+        // try {
+        //   const jsonData = JSON.parse(data);
 
-          // Access the value associated with key '3'
-          const valueForKey3 = jsonData[[spid]];
-          client = jsonData[[spid]];
-          let msg = sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
-          // Now you can work with the 'valueForKey3' object
-          // console.log('Value for key spid:', JSON.stringify(valueForKey3, null, 2));
-        } catch (parseError) {
-          console.error('Error parsing JSON:', parseError);
-        }
-      });
+        //   // Access the value associated with key '3'
+        //   const valueForKey3 = jsonData[[spid]];
+        //   client = jsonData[[spid]];
+        //   let msg = sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
+        //   // Now you can work with the 'valueForKey3' object
+        //   // console.log('Value for key spid:', JSON.stringify(valueForKey3, null, 2));
+        // } catch (parseError) {
+        //   console.error('Error parsing JSON:', parseError);
+        // }
+      //});
       console.log("else");
       return '401'
     }
