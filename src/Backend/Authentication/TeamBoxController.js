@@ -68,24 +68,24 @@ const insertCustomers = async (req, res) => {
     channel = req.body.Channel
     OptInStatus = req.body.OptedIn
     SP_ID = req.body.SP_ID
-    countryCode=req.body.country_code
-    var values = [[Name, Phone_number, channel, SP_ID, OptInStatus,countryCode]]
-    let existContactWithSameSpid=`SELECT * FROM EndCustomer WHERE  Phone_number=? AND (isDeleted =0 AND isBlocked =0) AND SP_ID=? AND IsTemporary !=1  `
-   
-    var result = await db.excuteQuery(existContactWithSameSpid, [ Phone_number, SP_ID])
+    countryCode = req.body.country_code
+    var values = [[Name, Phone_number, channel, SP_ID, OptInStatus, countryCode]]
+    let existContactWithSameSpid = `SELECT * FROM EndCustomer WHERE  Phone_number=? AND (isDeleted =0 AND isBlocked =0) AND SP_ID=? AND IsTemporary !=1  `
+
+    var result = await db.excuteQuery(existContactWithSameSpid, [Phone_number, SP_ID])
 
     console.log("result >>>>>>>>>>")
     console.log(result)
     if (result.length > 0) {
-      // email or phone number already exist, return an error response
+        // email or phone number already exist, return an error response
 
-      res.status(409).send({
-        msg: 'phone number already exist !',
-        status: 409
-      });
+        res.status(409).send({
+            msg: 'phone number already exist !',
+            status: 409
+        });
     }
     else {
-    db.runQuery(req, res, val.insertCustomersQuery, [values])
+        db.runQuery(req, res, val.insertCustomersQuery, [values])
     }
 }
 
@@ -177,7 +177,7 @@ const updateInteraction = (req, res) => {
 
 deleteInteraction = (req, res) => {
     var deleteQuery = "UPDATE Interaction SET deleted_by =" + req.body.AgentId + " ,is_deleted =1 WHERE InteractionId =" + req.body.InteractionId
-  console.log(deleteQuery)
+    console.log(deleteQuery)
     db.runQuery(req, res, deleteQuery, [])
 }
 
@@ -190,7 +190,7 @@ const getAllFilteredInteraction = (req, res) => {
     //let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId";
     let queryPath = "SELECT    ic.interaction_status,ic.InteractionId, ec.*             FROM       Interaction ic    JOIN        EndCustomer ec ON ic.customerId = ec.customerId     WHERE        ic.interactionId = (            SELECT MAX(interactionId)            FROM Interaction            WHERE customerId = ic.customerId        ) and ec.SP_ID=?  AND ec.isDeleted !=1    and ic.is_deleted=0 order by interactionId desc";
     if (req.body.FilterBy != 'All') {
- 
+
 
         var filterBy = req.body.FilterBy
         if (filterBy == 'Open' || filterBy == 'Resolved') {
@@ -210,7 +210,7 @@ const getAllFilteredInteraction = (req, res) => {
         queryPath += " and EndCustomer.Name like '%" + req.body.SearchKey + "%'"
 
     }
-   // console.log(queryPath)
+    // console.log(queryPath)
     db.runQuery(req, res, queryPath, [req.body.SPID])
 }
 
@@ -253,7 +253,7 @@ const getFilteredInteraction = (req, res) => {
         filterQuery += " and ic.InteractionId  IN (SELECT InteractionId FROM PinnedInteraction where AgentId=" + req.params.AgentId + ")"
     }
     filterQuery += " order by interactionId desc"
-    
+
     db.runQuery(req, res, filterQuery, [req.params.SPID])
 }
 
@@ -322,14 +322,14 @@ const insertMessage = async (req, res) => {
             Type = req.body.message_type
             created_at = req.body.created_at
             ExternalMessageId = ''
-          
+
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id])
-            let channelType = await db.excuteQuery('select channel from EndCustomer where customerId=?', [customerId]);
-           
+            let channelType = await db.excuteQuery('select * from EndCustomer where customerId=?', [customerId]);
+
             const channel = channelType.length > 1 ? channelType[0].channel : 'WhatsApp Web';
-            
+
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
-           let msg_id=await db.excuteQuery(messageQuery, [values])
+            let msg_id = await db.excuteQuery(messageQuery, [values])
             if (agentName.length >= 0) {
                 let mentionQuery = `SELECT * FROM Message WHERE '` + message_text + `' LIKE '%@` + agentName[0].name + `%'`;
 
@@ -356,19 +356,30 @@ const insertMessage = async (req, res) => {
                     message_text = message_text.replace(`{{${placeholder}}}`, data[placeholder]);
                 });
             }
-            let middlewareresult=""
-            if (req.body.message_type == 'text') {
-                if (req.body.message_media != '') {
-                    // sendMediaOnWhatsApp(req.body.messageTo, message_media)
-                    console.log(message_media)
-                      middlewareresult=await  middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo,message_text, message_media,interaction_id,msg_id.insertId)
+            let middlewareresult = ""
+            if (channelType[0].isBlocked != 1) {
+                if (req.body.message_type == 'text') {
+                    if (req.body.message_media != '') {
+                        // sendMediaOnWhatsApp(req.body.messageTo, message_media)
+                        console.log(message_media)
+                        middlewareresult = await middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId)
+                    }
+                    // sendTextOnWhatsApp(req.body.messageTo, message_text)
+                    middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId)
+                    console.log("middlewareresult")
+                    console.log(middlewareresult)
+
                 }
-                // sendTextOnWhatsApp(req.body.messageTo, message_text)
-                middlewareresult=await  middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text,message_media,interaction_id,msg_id.insertId)
-                console.log("middlewareresult")
-                console.log(middlewareresult)
+                if (middlewareresult.status != 200) {
+                    let deletedMessage = await db.excuteQuery('UPDATE Message set is_deleted=1 where Message_id=?', [msg_id.insertId])
+                  //  console.log(deletedMessage)
+                }
+            } else {
+                console.log(msg_id.insertId,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                let blockMessage = await db.excuteQuery('UPDATE Message set is_deleted=1  , msg_status=1 where Message_id=?', [msg_id.insertId])
+                console.log(blockMessage)
             }
-            res.send({middlewareresult:middlewareresult,status:middlewareresult.status,insertId:msg_id.insertId})
+            res.send({ middlewareresult: middlewareresult, status: middlewareresult.status, insertId: msg_id.insertId })
 
         } else {
             message_text = req.body.message_text
@@ -377,10 +388,10 @@ const insertMessage = async (req, res) => {
             var messageQuery = "UPDATE Message SET updated_at ='" + created_at + "', message_text ='" + message_text + "' WHERE Message_id =" + Message_id;
             db.runQuery(req, res, messageQuery, [values])
         }
-      
+
     } catch (err) {
         console.log(err);
-    
+
     }
 
 

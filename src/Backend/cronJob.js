@@ -40,10 +40,11 @@ async function fetchScheduledMessages() {
     for (const message of messagesData) {
     
       let campaignTime = await getCampTime(message.sp_id)
-
+      console.log("campaignTime"       ,     isWorkingTime(campaignTime))
       if (isWorkingTime(campaignTime)) {
-        console.log(" isWorkingTime messagesData loop",)
+       
         if (new Date(message.start_datetime) < new Date()) {
+          console.log(" isWorkingTime messagesData loop",)
           const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
 
         }
@@ -55,10 +56,10 @@ async function fetchScheduledMessages() {
 
     for (const message of remaingMessage) {
 
-      console.log("remaingMessage loop",)
+      console.log("remaingMessage loop",message.sp_id)
       let campaignTime = await getCampTime(message.sp_id)
       if (isWorkingTime(campaignTime)) {
-        console.log("remaingMessage  isWorkingTime loop",)
+        console.log("remaingMessage  isWorkingTime loop", isWithinTimeWindow(message.start_datetime))
         if (isWithinTimeWindow(message.start_datetime)) {
           console.log("remaingMessage  start_datetime loop",)
           const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
@@ -125,7 +126,7 @@ async function mapPhoneNumberfomCSV(message) {
   campaignAlerts(new Date(), message.Id)    //Campaign is Running
   let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
   let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
-  batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, channelType[0].connected_id, message)
+  batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message) //channelType[0].connected_id
 
 
 
@@ -152,7 +153,7 @@ async function mapPhoneNumberfomList(message) {
   let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
   let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
 
-  batchofScheduledCampaign(phoneNo, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, channelType[0].connected_id, message)
+  batchofScheduledCampaign(phoneNo, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message)
  
 
 }
@@ -192,7 +193,7 @@ function sendScheduledCampaign(batch, sp_id, type, message_content, message_medi
     setTimeout(async () => {
       response = await messageThroughselectedchannel(sp_id, Phone_number, type, message_content, message_media, phone_number_id, channel_id);
       console.log("response",  JSON.stringify(response.status))
-      sendMessages(Phone_number, message.message_content, message.Id, message,  JSON.stringify(response.status))
+      sendMessages(Phone_number, message.message_content, message.Id, message,  response.status)
     }, 10)
     
   }
@@ -397,17 +398,18 @@ async function msg(alert,status) {
 //_________________________COMMON METHOD FOR SEND MESSAGE___________________________//
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
-
+console.log("messageThroughselectedchannel"  ,spid, from, type, text, media, phone_number_id, channelType)
   if (channelType == 'WhatsApp Official' || channelType == 1) {
 
     let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
     return respose;
   } if (channelType == 'WhatsApp Web' || channelType == 2) {
-    if(web.isActiveSpidClient(spid)){
+  //  if(web.isActiveSpidClient(spid)){
+      console.log("web.isActiveSpidClient(spid)")
       let respose = await middleWare.postDataToAPI(spid, from, type, text, media)
       return respose;
-    }
-    return 401;
+   // }
+   // return "401";
   }
 }
 
