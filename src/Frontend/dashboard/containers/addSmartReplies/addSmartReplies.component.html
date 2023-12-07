@@ -284,19 +284,20 @@
           <div class="modal fade" tabindex="-1" id="addTagModal" #addTagModal role="dialog">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
-                <div class="popup-dialog AddTag">
+                <div class="row popup-dialog AddTag">
                   <p *ngIf="!ShowRemoveTag" class="label">Add Tag</p>
                   <p *ngIf="ShowRemoveTag" class="label">Remove Tag</p>
 
-                  <div class="d-flex align-items-center addTag" *ngFor="let AddTag of addTagList;let i = index">
-                    <label class="container">
+                  <div class="d-flex addTag " *ngFor="let AddTag of addTagList;let i = index">
+                    <label class="container arddtag">
                       <input [checked]="checkTagStatus(AddTag.TagName)" type="checkbox" name="tags" class="m-0"
                         (change)="addTags(i,$event)" />
-                      <span class="checkmark"></span>
+                      <span class="checkmark oops"></span>
                     </label>
-
-                    <div class="color-dots" [style.background]="AddTag.TagColour"></div>
-                    <span class="px-2 text-capitalize flex-grow-1 font-weight-normal">{{AddTag.TagName}}</span>
+                    <div class="dots d-flex  ">
+                      <div class="color-dots" [style.background]="AddTag.TagColour"></div>
+                      <span class="fix-dots px-2 text-capitalize flex-grow-1 font-weight-normal">{{AddTag.TagName}}</span>
+                    </div> 
                   </div>
 
                 </div>
@@ -456,9 +457,15 @@
     <div class="template_list">
       <div class="template_box" *ngFor='let template of templatesData  | searchfilter:searchText ;let i = index ' >
         <div class="template_box_inner d-flex align-items-start">
-          <input type="radio" name="sel-template"(change)="addinserttemplate(template.id, 'contactowner', $event.target.checked)" id="sel-template">
-          <label class="radio-label" [class.checked]="templateStates[template.id]" id="sel-template" for="sel-template"  (click)="selectTemplate(template)">
+          <!-- <input type="radio" name="sel-template" id="sel-template" >
+          <label class="radio-label" [class.checked]="templateStates[template.id]" id="sel-template" for="sel-template" (click)="selectTemplate(template)" >
            
+          </label> -->
+          <label class="container" (click)="selectTemplate(template)">
+            <input type="radio" name="selectedTemplate">
+            <span class="checkmark radio"></span>
+           
+            
           </label>
        <div class="template_head flex-column">
         <p class="template_name">{{template.TemplateName}}</p>

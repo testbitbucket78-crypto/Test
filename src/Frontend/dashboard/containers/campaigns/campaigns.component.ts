@@ -590,7 +590,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				if(item.category_id==3){
 					item['category_label'] ='Authentication'
 				}else{
-					item['category_label'] =item.category
+					item['category_label'] =item.Category
 				}
 				if(item.segments_contacts){
 					item['AllContactsLength'] = item.segments_contacts ? (() => {
