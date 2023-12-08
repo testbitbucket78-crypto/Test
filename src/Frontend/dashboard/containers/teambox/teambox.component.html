@@ -79,14 +79,15 @@
 											</div>
 										</div>
 									</div>
+									
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
 											<p *ngIf="item.lastMessage" class="time">{{item.lastMessageReceved}}</p>
 											<span *ngIf="item.messageList && item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
+											<img class="contact-whatsapp" src="/assets/img/teambox/whatsapp-icon-l.svg">
 											<span class="hovertext" data-hover="WhatsApp Web"><img
-													*ngIf="item.channel=='WhatsApp'" class="icon"
-													src="/assets/img/teambox/whatsapp-icon-l.svg" />
+													*ngIf="item.channel=='WhatsApp'" class="icon" />
 											</span>
 										</div>
 									</div>
@@ -363,7 +364,10 @@
 							</div>
 							<div class="input-area" (click)="resetMessageTex()">
 								<ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor
-								  [toolbarSettings]='tools' [height]='100' (keydown)="handleKeyPress($event)">
+								  [toolbarSettings]='tools' [height]='100' (keydown)="handleKeyPress($event)"
+								  (actionComplete)='actionCompleteHandler($event)'
+								  
+								  >
 								</ejs-richtexteditor>
 							  
 

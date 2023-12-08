@@ -98,6 +98,8 @@ export class CampaignsComponent implements OnInit {
 	 filteredEndCustomerOrigional:any=[];
 	 searchKey:any='';
 	 CampaignFilterBy:any=[{status:[],channel:[],category:[]}]
+	 file: any;                                           
+
 
 	 allTemplates:any=[];
 	 allTemplatesMain:any=[];
@@ -1607,16 +1609,32 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.modalReference = this.modalService.open(filtercampaign,{size: 'sm', windowClass:'white-pink'});
 	}
 	mapImportantContact(mpcampaign:any){
-
 		if(!this.selecetdCSV || !this.checkboxChecked) {
 			this.showToaster('Please Select csv file and check the checkbox...', 'error');
 			return;
 		}
+		
+
 		this.closeAllModal()
 			this.importantContact=false;
 			this.modalReference = this.modalService.open(mpcampaign,{size: 'ml', windowClass:'pink-bg'});
 	
 	}
+
+	incorrectfile(mpcampaign:any){
+		const currentfileformat = this.file.name.split(".").pop();
+		if(currentfileformat == this.fileformat){
+			this.showToaster('Please upload correct csv file...', 'error');
+			return;
+			
+		}
+		
+		this.closeAllModal()
+			this.importantContact=false;
+			this.modalReference = this.modalService.open(mpcampaign,{size: 'ml', windowClass:'pink-bg'});
+	}
+
+	
 
 
    opens(contents:any) {

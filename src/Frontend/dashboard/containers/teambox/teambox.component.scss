@@ -2240,8 +2240,8 @@ label span {
     opacity: 0;
     position: relative;
     z-index: 1;
-    left: 2rem;
-    bottom: -1.5rem;
+    left: 0rem;
+    bottom: -0.7rem;
 }
 .hovertext:hover:before {
     opacity: 1;
@@ -2402,4 +2402,7 @@ label span {
 .single-tick{
     width: 10px;
     height: 10px;
+}
+.contact-whatsapp{
+    width: 27%;
 }
