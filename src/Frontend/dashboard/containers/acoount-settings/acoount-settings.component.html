@@ -20,7 +20,7 @@
         <h4>Channels</h4>
         <div class="row">
             <div class="col-sm-6 p-5">
-                <div class="account-card card1 mb-3">
+                <div (click)="setChannelId('WhatsApp Web')" [ngClass]="{'card1_Wb': channel_id === 'WhatsApp Web'}" class="account-card card1 mb-3">
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
                         <button class="account-btn" data-bs-toggle="modal"
@@ -35,7 +35,7 @@
                     </div>
                     </div>
                 </div>
-                <div class="account-card card2 mb-3">
+                <div (click)="setChannelId('WhatsApp Official')" [ngClass]="{'card2_Wof': channel_id === 'WhatsApp Official'}" class="account-card card2 mb-3">
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
                         <button class="account-btn" data-bs-toggle="modal"
@@ -52,14 +52,15 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                <h5 class="mt-5">WhatsApp Web</h5>
-                <div class="" *ngIf="whatsAppDetails">
+                <h5 *ngIf="channel_id==='WhatsApp Web'" class="mt-5">WhatsApp Web</h5>
+                <h5 *ngIf="channel_id==='WhatsApp Official'" class="mt-5">WhatsApp Official</h5>
+                <div class="connected_agent_list" *ngIf="channel_id==='WhatsApp Web'">
                 <div class="connection-card"  *ngFor="let detail of whatsAppDetails">
                     <div class="account-card-header" >
                         <div >
-                            <div class="card-desc">Connected : {{ detail.channel_id }}</div>
+                            <div class="card-desc">Connected Number : {{ detail.connected_id}}</div>
                             <div class="d-flex">
-                                <div class="card-desc">Channel Id: {{ detail.connected_id }}</div>
+                                <div class="card-desc">Channel Id: {{ detail.id}}</div>
                                 <div *ngIf="!detail.channel_status" class="card-desc">
                                   <img src="../../../../assets/img/settings/not-connected.svg" alt="error" />Not connected</div>
                                 <div *ngIf="detail.channel_status" class="card-desc">
@@ -77,7 +78,7 @@
 
     </div>
 
-    <div class="modal fade" tabindex="-1" id="connectWhatsappModal" role="dialog">
+    <div class="modal fade" tabindex="-1" id="connectWhatsappModal" data-bs-backdrop="static"  role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content account-modal">
                 <div class="modal-header">
@@ -90,16 +91,16 @@
                     <div class="px-3">
                         <span>Which phone do you use?</span>
                         <div class="d-flex pt-1 pb-3">
-                            <input type="radio" class="radio-btn" name="phoneRadio">
+                            <input type="radio" class="radio-btn" name="phoneType"[(ngModel)]="phoneType" value="android">
                             <span class="pl-1 pr-5">Android</span>
-                            <input type="radio" class="radio-btn" name="phoneRadio">
+                            <input type="radio" class="radio-btn" name="phoneType" [(ngModel)]="phoneType" value="ios">
                             <span class="pl-1">iOS</span>
                         </div>
-                        <span>After connecting do you want to import unto 30 conversation?</span>
+                        <span>After connecting do you want to import<br /> upto 30 conversations?</span>
                         <div class="d-flex pt-1 pb-3">
-                            <input type="radio" class="radio-btn" name="ConversationRadio">
+                            <input type="radio" class="radio-btn" name="ConversationType" [(ngModel)]="conversationType" value="yes">
                             <span class="pl-1 pr-5">Yes</span>
-                            <input type="radio" class="radio-btn" name="ConversationRadio">
+                            <input type="radio" class="radio-btn" name="ConversationType" [(ngModel)]="conversationType" value="no">
                             <span class="pl-1">No</span>
                         </div>
                     </div>
@@ -112,11 +113,12 @@
     </div>
 
 
-    <div class="modal fade" tabindex="-1" id="qrWhatsappModal" role="dialog">
+    <div class="modal fade" tabindex="-1" id="qrWhatsappModal" data-bs-backdrop="static" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content qr-modal">
                 <div class="modal-header">
-                    <h5 class="modal-title">Connect WhatsApp Web</h5>
+                    <h5 class="modal-title" *ngIf="channel_id==='WhatsApp Web'">Connect WhatsApp Web</h5>
+                    <h5 class="modal-title" *ngIf="channel_id==='WhatsApp Official'">Connect WhatsApp Official</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
@@ -154,7 +156,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content whatsWebSetting-modal">
                 <div class="modal-header" >
-                    <h5 class="modal-title">WhatsApp Web Settings</h5>
+                    <h5 *ngIf="repliesaccountData?.channel_id==='WhatsApp Web'" class="modal-title">WhatsApp Web Settings</h5>
+                    <h5 *ngIf="repliesaccountData?.channel_id==='WhatsApp Official'" class="modal-title">WhatsApp Official Settings</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"(click)="populateModal()">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
@@ -294,7 +297,7 @@
             </div>
          </div>
                     <div class="save-footer mx-3">
-                        <button type="button" class="account-bttn">Save</button>
+                        <button type="button" (click)="this.saveWhatsappWebDetails(this.repliesaccountData?.id);" class="account-bttn">Save</button>
                     </div>
                 </div>
             </div>
