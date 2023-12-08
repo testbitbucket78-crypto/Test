@@ -115,7 +115,7 @@
 
 			<div class="col-5 inner_section">
 
-				<div *ngIf="selectedInteraction.Name" class="col-md-12 mt-3">
+				<div *ngIf="selectedInteraction?.Name" class="col-md-12 mt-3">
 					<div class="custom_row">
 						<div class=" left_part">
 							<div class="user_info">
@@ -200,16 +200,16 @@
 						</div>
 					</div>
 
-					<div *ngIf="selectedInteraction.messageList" class="chat_content_area">
+					<div *ngIf="selectedInteraction?.messageList" class="chat_content_area">
 						<div *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList.length < 1"
 							class="conversation_blank">
 							<img src="/assets/img/teambox/new-con@2x.png">
 							<p>Initiate Conversation</p>
 							<span>Let’s start a conversation through a message</span>
 						</div>
-						<div *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList.length>0"
+						<div *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList?.length>0"
 							class="conversation_list chat" #chatSection>
-							<div *ngFor="let messageGroup of selectedInteraction.messageList; let i = index" id={{i}}
+							<div *ngFor="let messageGroup of selectedInteraction?.messageList; let i = index" id={{i}}
 								class="conversation_list_inner_box">
 								<div class="date_seprator"><span>---</span>
 									<p>{{dateSince(messageGroup.date)}}</p><span>--</span>
@@ -430,7 +430,7 @@
 
 			</div>
 
-			<div *ngIf="selectedInteraction.messageList" class=" col-4 team pt-5">
+			<div *ngIf="selectedInteraction?.messageList" class=" col-4 team pt-5">
 				<div class="team-box right_box">
 					<div class="sidenav">
 						<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && !showAttachedMedia">
