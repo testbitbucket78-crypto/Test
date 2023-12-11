@@ -1354,37 +1354,7 @@ sendattachfile(){
 		  const messageId = message?.Message_id;
 		  const messageDirection = message?.message_direction;
 	  
-		  if (messageId !== undefined && messageDirection === 'Out') {
-			console.log(`Message_id: ${messageId}, message_direction: ${messageDirection}`);
-			console.log(message.msg_status);
-				const tickErrorDiv = document.querySelector('.tickerror');
-				const singleTickDiv = document.querySelector('.single-tick');
-				const doubleTickDiv = document.querySelector('.doubleee');
-	  
-			// Set message status directly
-			message.msg_status = this.messageStatus;
-	  
-			// Update the corresponding div based on the message status
-			if (message.msg_status === '1') {
-				singleTickDiv?.setAttribute('src', '../../../../assets/img/teambox/tick-gry.svg');
-			} else if (message.msg_status === '2') {
-				doubleTickDiv?.setAttribute('src', '../../../../assets/img/teambox/duble-tick-g.svg');
-			} else if (message.msg_status === '3') {
-				doubleTickDiv?.setAttribute('src', '../../../../assets/img/teambox/double-tick-green.svg');
-			} else if (message.msg_status === null) {
-				
-			}
-		  }
 		}
-
-
-
-
-
-
-
-
-
 	  
 		this.getPausedTimer();
 		this.scrollChatToBottom();

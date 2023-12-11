@@ -301,7 +301,9 @@
 							<p><span>Select from the Saved Lists or create a new List by filtering existing contacts</span></p>
 							<p *ngIf="!newListName" class="sm_icon"><span><img src="../../../../assets/img/support/arrow.svg"></span></p> 	
 							<div *ngIf="newListName" class="formrow">
-								<p (click)="removeSegmentedAudienceList()" class="form-control btn rt_close">{{newListName}}</p>
+								<p (click)="removeSegmentedAudienceList()" class="form-control btn rt_close">
+									{{newListName}}
+								</p>
 							</div>
 						</div>
 
@@ -919,9 +921,11 @@
 				<div *ngFor='let list of allContactList ;let i = index' class="campaigns_section_item">
 					<div class="d-flex justify-content-between align-items-end campaigns_section_item_header">
 						<label class="container">
-							<input [(ngModel)]="list.selected" type="checkbox" name="contact_list" value={{list.id}} (click)="selectContactList($event,list)">
+							<input #checkboxRef [(ngModel)]="list.selected" type="checkbox" name="contact_list" value="{{list.id}}" (change)="selectContactList($event, list)">
 							<span class="checkmark"></span>
 						</label>
+						
+						
 						<button class="small-gradient-btn"><img class="m-0 del icon"
 							src="/assets/img/teambox/icon-delete.svg"
 							(click)="deleteContactList()" />

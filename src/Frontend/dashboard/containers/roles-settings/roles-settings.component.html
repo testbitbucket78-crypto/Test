@@ -62,10 +62,10 @@
     </button>
 </div>
     <div class="sidebar-content">
-        <p class="m-0">ID:{{roleData?.roleID}}</p>
+        <p class="m-0">ID:<span class="team-id">{{roleData.roleID}}</span></p>
         <span class="heading">{{roleData?.RoleName}}</span>
-        <p>Created on: {{roleData?.created_at}} | Last Modified: {{roleData?.updated_at}}</p>
-        <div class="sub-heading py-2">Rights({{rights?.length}})</div>
+        <p>Created on: <span class="team-id">{{roleData?.created_at | date: 'dd MMM yyyy'}}</span> | Last Modified: <span class="team-id">{{roleData?.updated_at | date: 'dd MMM yyyy'}}</span></p>
+        <div class="sub-heading py-2">Rights<span class="team-id">({{rights?.length}})</span></div>
         <div class="user-assigned">
             <div class="rights" *ngFor="let item of rights">{{item?.rightsName}}</div>
         </div>

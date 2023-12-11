@@ -1752,21 +1752,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		let files: FileList = event.target.files;
 		this.saveFiles(files);
 	}
-	// onFileChange(event: any) {
-    //     this.selecetdCSV = '';
-    //     let file: File|any = event.target.files[0];
-    //     let currentfileformat = file.name.split('.').pop().toLowerCase();
-    //     console.log(currentfileformat)
-    //     if (!this.isCorrectFileFormat(currentfileformat)) {
-    //         this.showToaster('Incorrect file format. Only CSV files are allowed.', 'error');
-    //         return;
-    //     }
-    //     this.saveFiles(file);
-    // }
-    // isCorrectFileFormat(currentfileformat: any): boolean {
-    //     const allowedFileFormats = ['csv']; // allowed only csv
-    //     return allowedFileFormats.includes(currentfileformat);
-    // }
+
 
 	updateCSVDuplicate(option:any){
 		this.CSVDuplicate =option
@@ -1793,7 +1779,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			var FileExt:any = fileName.substring(fileName.lastIndexOf('.') + 1);
 			
         
-		if(FileExt =="csv" || FileExt=="xls" || FileExt=="xlsx") {
+		if(FileExt =="csv") {
 				let file =files[0];
 				let reader: FileReader = new FileReader();
 				reader.readAsText(file);
@@ -1836,8 +1822,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	    } else {
 			this.showToaster('Please Upload csv file only...','error')
 		}
-	
-
 		}
 	  }
 
@@ -1878,13 +1862,18 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		  this.getContactList('');
 	}
 
-	selectContactList(event:any,listItem:any){
-		if(event.target.checked){
-			listItem['selected']=true
-		}else{
-			listItem['selected']=true
-		}
-	}
+	selectContactList(event: any, listItem: any) {
+        if (event.target.checked) {
+            listItem['selected'] = true;
+        } else {
+            listItem['selected'] = false;
+        }
+
+        console.log('Checkbox state:', listItem['selected']);
+    }
+
+	
+	
 	async updatedContactList(list:any,itemIndex:any){
 		let filterlist =list.addedfilters
 		filterlist.splice(itemIndex, 1);
@@ -2131,6 +2120,13 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 
 	  removeSegmentedAudienceList() {
 		this.newListName=false;
+		this.checkboxChecked = false;
+		for (const listItem of this.allContactList) {
+            listItem['selected'] = false;
+        }
+
+        console.log('Checkbox state after cross button click:', this.checkboxChecked);
+
 	  }
 
 
@@ -2140,7 +2136,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.showInfo = true;
 		}
 	}
-
+    
 		//*********Download Sample file****************/
 
 		download() {
