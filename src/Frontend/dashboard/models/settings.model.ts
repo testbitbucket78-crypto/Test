@@ -230,6 +230,7 @@ export interface templateList{
 }
 
 export interface repliesaccountList{
+    id:number;
     connected_id:string;
     QueueMessageCount:number;
     channel_status:number;
@@ -261,11 +262,29 @@ export interface accountmodel{
     reset:number;
 }
 
-export interface dataaa {
-    spid:number;
-    channel_id:number;
-    connected_id:number;
-    channel_status:number;
+export interface whatsAppDetails {
+    id:number,
+    channel_id:string,
+    connected_id:any,
+    channel_status:number,
+    spid:number,
+    phone_type:string,
+    import_conversation:number,
+    QueueMessageCount:number,
+    WAVersion:string,
+    InMessageStatus:number,
+    OutMessageStatus:number,
+    QueueLimit:string,
+    delay_Time:string,
+    INGrMessage:number,
+    OutGrMessage:number ,
+    online_status:number,
+    serviceMonetringTool:number,
+    syncContact:number,
+    disconnalertemail:string,
+    roboot:number,
+    restart:number,
+    reset:number
 }
 
 

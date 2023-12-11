@@ -25,6 +25,7 @@ selectedTeamId!:number;
 teamList:any;
 teamListInit:any;
 teamData:any;
+profilePicture!:string;
 
 
   constructor(private _settingsService:SettingsService) {
@@ -34,6 +35,8 @@ teamData:any;
   ngOnInit(): void {
     this.getTeamList();
     this.getUserList();
+    this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
+
   }
 
   rowClicked = (event: any) => {
@@ -141,6 +144,7 @@ copyTeamsData(){
   return teamData;
 
 }
+
 
 setTeamData(){
   let teamList2:any =[];
