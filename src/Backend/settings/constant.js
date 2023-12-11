@@ -173,12 +173,15 @@ JOIN user u ON u.uid=c.uid
 
 //_______________________________CONTACT SETTINGS________________________//
 
-var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at) values ?`
+var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at,updated_at) values ?`
 var updatetag = `UPDATE EndCustomerTagMaster set TagName=?,TagColour=?,updated_at=? where ID=?`
 var deletetag = `UPDATE EndCustomerTagMaster set isDeleted=1,updated_at=? where ID=?`
 var selecttag = `SELECT
 tm.TagName,
 tm.TagColour,
+tm.ID,
+tm.created_at,
+tm.updated_at,
 (SELECT COUNT(*) FROM EndCustomer AS ec
  WHERE FIND_IN_SET(tm.TagName, ec.tag) > 0 AND ec.SP_ID = ? ) AS tag_count
 FROM
@@ -190,14 +193,14 @@ AND tm.isDeleted != 1;`
 
  var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1`
  var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,updated_at) values ?`
- let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as Type ,1 as Mandatory, 1 as Status
+ let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as Type ,1 as Mandatory, 1 as Status,0 as id
  FROM information_schema.columns
  WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked')
  UNION
- SELECT ColumnName AS displayName,CustomColumn as ActuallName ,Type as Type ,Mandatory as Mandatory,Status  as Status
+ SELECT ColumnName AS displayName,CustomColumn as ActuallName ,Type as Type ,Mandatory as Mandatory,Status  as Status ,id as id
  FROM SPIDCustomContactFields  
  WHERE SP_ID =? AND isDeleted!=1`
- let getcolumnid = `SELECT  ColumnName AS displayName,CustomColumn as ActuallName  ,Type,Mandatory,Status
+ let getcolumnid = `SELECT  ColumnName AS displayName,CustomColumn as ActuallName  ,Type,Mandatory,Status,id,created_at,updated_at,description
  FROM SPIDCustomContactFields  
  WHERE id =? AND isDeleted !=1;`
 let deletecolumn=`UPDATE SPIDCustomContactFields SET isDeleted=1 , isDeletedOn=? where id=?`
