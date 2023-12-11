@@ -123,7 +123,7 @@ async function mapPhoneNumberfomCSV(message) {
   }
   let channelType=await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?',[message.sp_id])
   console.log("channelType" ,channelType ,channelType[0])
-  campaignAlerts(new Date(), message.Id)    //Campaign is Running
+  campaignAlerts(message,2) // campaignAlerts(new Date(), message.Id)    //Campaign is Running
   let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
   let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
   batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message) //channelType[0].connected_id
@@ -333,6 +333,7 @@ async function find_message_status(alert) {
   let msgStatus = await db.excuteQuery(msgStatusquery, [alert.sp_id, alert.Id]);
 
   for (const item of msgStatus) {
+    console.log("item.status"  , item.status)
     if (item.status === 1) {
       Sent += item.Status_Count;
     } else if (item.status === 0) {
@@ -354,7 +355,7 @@ async function msg(alert,status) {
   let msgStatus = await find_message_status(alert)
 
 
-  //let audience = alert.segments_contacts.length > 0 ? alert.segments_contacts.length : alert.csv_contacts.length
+  let audience = alert.segments_contacts.length > 0 ? alert.segments_contacts.length : alert.csv_contacts.length
 
 
   if (status == '1') {
@@ -367,13 +368,13 @@ async function msg(alert,status) {
   } if (status == '2') {
     message = `Hello, your Engagekart Campaign has Started:
     Campaign Name: `+ alert.title + `
-    Taget Audience: <count of target base>
+    Taget Audience: ` + audience +`
     Channel:< `+ 'WhatsApp' + `,` + alert.channel_id + `>
     Category:`+ alert.category + ` `
   } if (status == '3') {
     message = `Hi, here is the Summary of your finished Engagekart Campaign:
     Campaign Name: `+ alert.title + `
-    Taget Audience: <count of target base>
+    Taget Audience: ` + audience + `
     Channel: <`+ 'WhatsApp' + `,` + alert.channel_id + `>
     Category: `+ alert.category + `
     Sent: ` + msgStatus.Sent + `
@@ -398,7 +399,7 @@ async function msg(alert,status) {
 //_________________________COMMON METHOD FOR SEND MESSAGE___________________________//
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
-console.log("messageThroughselectedchannel"  ,spid, from, type, text, media, phone_number_id, channelType)
+console.log("messageThroughselectedchannel"  ,spid, from, type, channelType)
   if (channelType == 'WhatsApp Official' || channelType == 1) {
 
     let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);

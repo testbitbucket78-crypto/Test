@@ -5,6 +5,12 @@ const { Readable } = require('stream');
 const path = require("path");
 const { config } = require('process');
 axios = require("axios").default
+const express = require('express');
+var app = express();
+app.use(express.json());
+const bodyParser = require('body-parser');
+app.use(bodyParser.json({ limit: "10000kb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
 
 async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken) {
     return new Promise((resolve, reject) => {
@@ -322,5 +328,34 @@ async function deleteObjectFromBucket(days, spid) {
 
 
 
+async function uploadAttachment(awspath,files,ContentType){
+    return new Promise((resolve, reject) => {
+    // Read the file
+const fileContent = fs.readFileSync(files);
 
-module.exports = { uploadWhatsAppImageToAws, uploadFileToAws, uploadStreamToAws, uploadimageFromUrlToAws, uploadVideoToAws, getStorageUtilization, deleteObjectFromBucket };
+// S3 upload parameters
+const params = {
+    Bucket: val.awsbucket,
+    Key: awspath,
+    Body: fileContent,
+    ContentType: ContentType,
+    timeout: 60000
+};
+
+// Upload the file
+s3.upload(params, (err, data) => {
+    if (err) {
+        console.error("Error uploading file to S3");
+        console.error(err);
+        reject(err);
+    } else {
+        console.log("File uploaded successfully");
+        console.log("File URL:", data.Location);
+        resolve({ code: 0, value: data });
+    }
+});
+});
+}
+
+
+module.exports = { uploadWhatsAppImageToAws, uploadFileToAws, uploadStreamToAws, uploadimageFromUrlToAws, uploadVideoToAws, getStorageUtilization, deleteObjectFromBucket,uploadAttachment };
