@@ -3,6 +3,7 @@ import { SettingsService } from '../../services/settings.service';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { UserData, rights } from '../../models/settings.model';
 import { FormControl, FormGroup } from '@angular/forms';
+declare var $: any;
 
 @Component({
   selector: 'sb-user-settings',
@@ -119,6 +120,8 @@ saveRolesDetails(){
       this.getUserList();            
     }
   })
+		$("#userModal").modal('hide'); 
+
 }
 
 copyUserData(){

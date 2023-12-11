@@ -722,17 +722,41 @@ toggleEmoji(){
 
 // }
 public onInsert(item: any) {
-	const emojiText = item.target.textContent;
-  
+	// const emojiText = item.target.textContent;
+    // this.onclickInsert();
 	// Insert the emoji at the current cursor position
-	this.chatEditor.executeCommand('insertText', emojiText);
+	
   
 	// Move the cursor to the end of the editor content
-	this.moveToEndOfEditor();
+	// this.moveToEndOfEditor();
+	// console.log(this.chatEditor.getContent());
+	this.chatEditor.setContent('abc');
+	// this.chatEditor.formatter.saveData();
+	// if (this.chatEditor.formatter.getUndoRedoStack().length === 0) {
+		
+	// 	console.log("HELLO")
+	// }
+	// this.chatEditor.executeCommand('insertText', emojiText);
   
-	// Save the changes
-	this.chatEditor.formatter.saveData();
-	this.chatEditor.formatter.enableUndo(this.chatEditor);
+	// // Save the changes
+	// this.chatEditor.formatter.saveData();
+	// this.chatEditor.formatter.enableUndo(this.chatEditor);
+  }
+
+  actionCompleteHandler(e: any): void {
+	if (e.requestType === 'SourceCode') {
+	this.chatEditor.getToolbar().querySelector('#custom_tbar').parentElement.classList.add('e-overlay');
+	} else if (e.requestType === 'Preview') {
+	this.chatEditor.getToolbar().querySelector('#custom_tbar').parentElement.classList.remove('e-overlay');
+	}
+}
+  onclickInsert(){
+	console.log(this.chatEditor.contentModule.getEditPanel() as HTMLElement);
+	(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
+            // this.dialogObj.element.style.display = '';
+            this.range = this.selection.getRange(document);
+            this.saveSelection = this.selection.save(this.range, document);
+            // this.dialogObj.show();
   }
   
   private moveToEndOfEditor() {
@@ -816,6 +840,7 @@ sendattachfile(){
 		this.mediaType = files[0].type
 		const data = new FormData();
 		data.append('dataFile',imageFile ,imageFile.name);
+		data.append('mediaType', this.mediaType);
 		this.apiService.uploadfile(data).subscribe(uploadStatus =>{
 			let responseData:any = uploadStatus
 			if(responseData.filename){
@@ -2195,7 +2220,7 @@ sendMessage(){
 
 				
 				}
-				this.chatEditor.value ='Type...';
+				this.chatEditor.value ='';
 			}
 
 
