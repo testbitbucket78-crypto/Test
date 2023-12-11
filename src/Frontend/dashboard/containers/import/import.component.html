@@ -1,4 +1,9 @@
 <div class="row">
+	<div class="toaster" (click)="hideToaster()">
+		<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+		<p *ngIf="successMessage" class="success">{{successMessage}}</p>
+		<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+	</div>
 
 	<div class="bs-stepper col-lg-12" id="bs-stee">
 
@@ -464,13 +469,10 @@
 							</div>
 						</div>
 						<ng-template #contents let-c="close" let-d="dismiss">
-
 							<div class="incorrect-card-main">
 								<p>The identifier column must be <br /> mapped before proceeding</p>
-
 								<button type="button" class="btn" (click)="c('Save click')">Ok, Got it</button>
 							</div>
-
 						</ng-template>
 						<div class="l-botton">
 							<button type="button" id="map-next-btn" (click)="open(contents)" (click)="next()"
@@ -523,7 +525,7 @@
 								</div>
 								<div class="card2">
 									<h5 class="card-h5">{{countUpdatedData}}</h5>
-									<h6 class="card-h6">10 existing contacts will updated</h6>
+									<h6 class="card-h6">Existing Contacts Will Updated</h6>
 								</div>
 								<div class="card3">
 									<h5 class="card-h5">{{skipCont}}</h5>
@@ -553,7 +555,7 @@
 							</div>
 							<div class="modal-footer popfooter row text">
 								<div class="col-md-3">
-									<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Ok, Got
+									<button type="button" class="btn btn-outline-dark"  data-bs-dismiss="modal" aria-label="Close" data-bs-target="#importmodal"  (click)="c('Save click')">Ok, Got
 										it</button>
 								</div>
 							</div>
@@ -574,7 +576,7 @@
 							</div>
 							<div class="modal-footer popfooter row text">
 								<div class="col-md-3">
-									<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Ok, Got
+									<button type="button" class="btn btn-outline-dark"  data-bs-dismiss="modal" aria-label="Close" data-bs-target="#importmodal" (click)="c('Save click')">Ok, Got
 										it</button>
 								</div>
 							</div>
