@@ -840,6 +840,7 @@ sendattachfile(){
 		this.mediaType = files[0].type
 		const data = new FormData();
 		data.append('dataFile',imageFile ,imageFile.name);
+		data.append('mediaType', this.mediaType);
 		this.apiService.uploadfile(data).subscribe(uploadStatus =>{
 			let responseData:any = uploadStatus
 			if(responseData.filename){
@@ -2189,7 +2190,7 @@ sendMessage(){
 
 				
 				}
-				this.chatEditor.value ='Type...';
+				this.chatEditor.value ='';
 			}
 
 

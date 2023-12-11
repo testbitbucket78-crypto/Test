@@ -1,4 +1,9 @@
 const express = require('express');
+var app = express();
+app.use(express.json());
+const bodyParser = require('body-parser');
+app.use(bodyParser.json({ limit: "10000kb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
 const router=express.Router();
 const db = require("../dbhelper");
 const userController=require('./user.js');
@@ -83,7 +88,7 @@ var upload = multer({ storage: storage });
 
 // handle single file upload
 router.post('/uploadfile/',upload.single('dataFile'), async (req, res)=> {
-   try{
+   try{   
 const file = req.file;
 
 if (!file) {
@@ -93,7 +98,7 @@ const url =  path.join(__dirname, `/uploads/${file.filename}`)//`${req.protocol}
 
 console.log(url)
 
- let awsres = await awsHelper.uploadFileToAws('localtoAws/teambox_img.jpg', url)
+ let awsres = await awsHelper.uploadAttachment(`localtoAws/${file.filename}`, url,file.media_type)
 
 console.log("awsres")
 //console.log(awsres.value.Location)

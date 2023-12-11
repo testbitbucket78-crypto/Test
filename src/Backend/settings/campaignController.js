@@ -189,7 +189,7 @@ const addTag = async (req, res) => {
             })
         }
         else {
-            let addValue = [[TagName, TagColour, SP_ID, created_at]];
+            let addValue = [[TagName, TagColour, SP_ID, created_at,created_at]];
             let addedTag = await db.excuteQuery(val.addtag, [addValue]);
             console.log(addedTag)
             res.status(200).send({

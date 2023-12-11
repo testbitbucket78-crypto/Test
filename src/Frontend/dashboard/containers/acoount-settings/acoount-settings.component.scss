@@ -100,10 +100,22 @@
     color: white;
     font-weight: 400;
    }
+
+   .connected_agent_list {
+    height: 440px;
+    overflow: scroll;
+   }
+
+   .card1_Wb, .card2_Wof {
+    background: #FFF4F2!important;
+    border: none!important;
+   }
    .setting-card .card1 {
-    background: #FFF4F2 0% 0% no-repeat padding-box;
+    background: #ffffff;
+    border: 2px solid #F0F0F0;
    }
    .setting-card .card2 {
+    background: #ffffff;
    border: 2px solid #F0F0F0;
    }
 
@@ -121,7 +133,7 @@
 
    .connection-card .card-desc {
     background: white;
-    padding: 3px 12px;
+    padding: 3px 5px;
     border-radius: 15px;
     margin: 3px 6px;
    }
