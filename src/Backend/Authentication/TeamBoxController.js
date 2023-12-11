@@ -70,7 +70,7 @@ const insertCustomers = async (req, res) => {
     SP_ID = req.body.SP_ID
     countryCode = req.body.country_code
     var values = [[Name, Phone_number, channel, SP_ID, OptInStatus, countryCode]]
-    let existContactWithSameSpid = `SELECT * FROM EndCustomer WHERE  Phone_number=? AND (isDeleted =0 AND isBlocked =0) AND SP_ID=? AND IsTemporary !=1  `
+    let existContactWithSameSpid = `SELECT * FROM EndCustomer WHERE  Phone_number=? AND (isDeleted =0 AND isBlocked =0) AND SP_ID=?  `
 
     var result = await db.excuteQuery(existContactWithSameSpid, [Phone_number, SP_ID])
 
@@ -365,17 +365,17 @@ const insertMessage = async (req, res) => {
                         middlewareresult = await middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId)
                     }
                     // sendTextOnWhatsApp(req.body.messageTo, message_text)
+                    else{
                     middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId)
                     console.log("middlewareresult")
                     console.log(middlewareresult)
-
+                    }
                 }
                 if (middlewareresult.status != 200) {
                     let deletedMessage = await db.excuteQuery('UPDATE Message set is_deleted=1 where Message_id=?', [msg_id.insertId])
                   //  console.log(deletedMessage)
                 }
             } else {
-                console.log(msg_id.insertId,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
                 let blockMessage = await db.excuteQuery('UPDATE Message set is_deleted=1  , msg_status=1 where Message_id=?', [msg_id.insertId])
                 console.log(blockMessage)
             }
