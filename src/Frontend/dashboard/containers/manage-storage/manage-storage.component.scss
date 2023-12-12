@@ -70,6 +70,7 @@
 .figure {
     width: 100%;
     padding: 0;
+    text-align: center;
     margin: 0 0 .5rem 0;
 }
 .figCaption {
@@ -123,27 +124,8 @@
     text-align: center;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// popup
 .account-btn {
-    background:#6149CD 0% 0% no-repeat padding-box;
+    background: #6149CD 0% 0% no-repeat padding-box;
     border-radius: 17px;
     padding: 7px 30px;
     border: 1px;    
@@ -160,197 +142,327 @@
     background: white;
     font-weight: 400;
    }
-   .modal-content .btn-close {
-    background: white;
-    margin: 2px;
-    border-radius: 15px;
-    padding: 6px 12px;
-    border: 1px solid #EBEBEB;
-   }
-   .modal-content{
-    background: #FFF4F2;
-   }
-   .modal-title {
-    letter-spacing: -0.45px;
-    font-weight: bold;
-    font-family: 'Manrope';
-    color:#6149CD;
-   }
-   .account-btn {
-    background: #6149CD 0% 0% no-repeat padding-box;
-    border-radius: 17px;
-    padding: 8px 22px;
-    border: 1px;    
-    color: white;
-    font-weight: 400;
-    width: 7rem;
-   }
-   .modal-footer{
-    border: none;
-   }
 
-  .show-btn {
-    background: #FFFFFF  0% 0% no-repeat padding-box;
-    border-radius: 17px;
-    border: 1px;
-    color: white;
-    font-weight: 400;
-    font-family: "Manrope";
-    width: 34%;
-    margin-left: -12rem;
-    height: 2.2rem;
-    background:#6149CD;
-   }
+   .modal-title {
+    color: #6149CD;
+    font-size: 17px;
+    height: 35px;
+    font-weight: 500;
+    display: flex;
+    flex-wrap: nowrap;
+    align-content: flex-end;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.close-box {
+    height: 35px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #EBEBEB;
+    border-radius: 15px;
+    opacity: 1;
+    display: flex;
+    align-content: space-around;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0px;
+    min-width: 35px;
+    cursor: pointer;
+}
+
+.close-box img {
+    width: 10px;
+}
+
+.modal-content.edit-auto-deletion {
+  padding: 15px;
+}
+
+.modal-body.edit-auto-deletion p {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.modal-footer {
+  border: none;
+}
+
+.option-1, .option-2, .option-3 {
+  padding: 0 26px 10px 26px;
+}
+
+// input styling
+.option-input  {
+  height: 37px;
+  border-radius: 16px;
+  border: 1px solid #EBEBEB;
+  padding: 5px 13px;
+  margin-right: 10px;
+  background: #ffffff;
+  width: 65px;
+  outline: none;
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+ }
+
+  // Custom styles for radio buttons
+  input[type="radio"] {
+    display: none;
+}
+
+.optionradio label {
+    display: inline-block;
+    position: relative;
+    padding-left: 30px; 
+    margin-right: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+}
+
+.optionradio label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 1px solid #C0BDCC; 
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+input[type="radio"]:checked + label::before {
+    border: 3.5px solid #6149CD; 
+    background-color: #FFFFFF;
+}
+
+
+
+// popup delete manually
+.account-btn {
+  background:#6149CD 0% 0% no-repeat padding-box;
+  border-radius: 17px;
+  padding: 7px 30px;
+  border: 1px;    
+  color: white;
+  font-weight: 400;
+ }
+
+ .del-btn {
+  color: #6149CD;
+  border-radius: 17px;
+  padding: 7px 30px;
+  border: 1px solid #EBEBEB;
+  border-radius: 17px;  
+  background: white;
+  font-weight: 400;
+ }
+ .modal-content .btn-close {
+  background: white;
+  margin: 2px;
+  border-radius: 15px;
+  padding: 6px 12px;
+  border: 1px solid #EBEBEB;
+ }
+ .modal-content.deletemodal {
+  background: #FFF4F2;
+ }
+ .modal-title.manually {
+  letter-spacing: -0.45px;
+  font-weight: 500;
+  color:#6149CD;
+ }
+ .account-button {
+  background: #6149CD 0% 0% no-repeat padding-box;
+  border-radius: 17px;
+  padding: 8px 22px;
+  border: 1px;    
+  color: white;
+  font-weight: 400;
+  width: 7rem;
+ }
+ .modal-footer{
+  border: none;
+ }
+
+.show-btn {
+  background: #FFFFFF  0% 0% no-repeat padding-box;
+  border-radius: 17px;
+  border: 1px;
+  color: white;
+  font-weight: 400;
+  font-family: "Manrope";
+  width: 34%;
+  margin-left: -12rem;
+  height: 2.2rem;
+  background:#6149CD;
+ }
 .modal-body.Allmesaages{
 padding: 0;
 margin-left: 2rem;
 
 }
- 
-  .message-input{
-      height: 32px;
-      border-radius: 16px;
-      border: 1px solid #EBEBEB;
-      padding: 5px 13px;
-      background: #ffffff;
-      width: 59px;
-      outline: none;
-      font-size: 12px;
-      box-sizing: border-box;
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      margin-top: -0.44rem;
-      margin-right: 11px;
-  }
-   .head-messages{
-    font-family: 'Manrope';
-    font-weight: 600;
-    color: black;
-    font-size: 14px;
-   }
-   .show-message{
-    height: 206px;
-    background: #FFFFFF;
-    border: 1px dashed #EBEBEB;
-    border-radius: 30px;
-    opacity: 1;
-    margin-left: -2rem;
-   }
-   .input-days{
-    display: flex;
-   }
-   .text-media{
-    font-family: "Manrope";
-    height: 17px;
-    width: 24px;
-    margin-right: 6px;
-   }
-   .check-input{
-    display: flex;
-    justify-content: space-around;
-    padding-right: 3rem;
+
+.message-input{
+    height: 32px;
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: 5px 13px;
+    background: #ffffff;
+    width: 59px;
+    outline: none;
+    font-size: 12px;
+    text-align: center;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    margin-top: -0.44rem;
+    margin-right: 11px;
 }
-.text-checkbox{
+ .head-messages{
+  font-weight: 600!important;
+  color: black;
+  font-size: 14px!important;
+ }
+ .show-message{
+  height: 206px;
+  background: #FFFFFF;
+  border: 1px dashed #EBEBEB;
+  border-radius: 30px;
+  opacity: 1;
+  margin-left: -2rem;
+ }
+ .input-days{
+  display: flex;
+ }
+ .text-media{
+  font-family: "Manrope";
+  height: 17px;
+  width: 24px;
+  margin-right: 6px;
+ }
+ .check-input{
+  display: flex;
+  justify-content: space-around;
   padding-right: 3rem;
 }
+.text-checkbox{
+padding-right: 3rem;
+}
 .modal-footer.show{
-  display: flex;
-  justify-content: center;
+display: flex;
+justify-content: center;
 }
 .number-messages{
 font-family: 'Manrope';
 }
 .show-messages{
-  display: flex;
-    flex-wrap: wrap;
-    align-content: space-around;
-    font-weight: 600;
+display: flex;
+  flex-wrap: wrap;
+  align-content: space-around;
+  font-weight: 600;
 }
 .displaymessage{
-  margin-top: 2rem;
-  margin-left: 4.3rem;
+margin-top: 2rem;
+margin-left: 3.6rem;
 }
 .modal-content.deletemodal{
-  width: 40rem;
+width: 40rem;
 }
 .alertmessage p{
-  font-size: 11px;
-  padding: 2% 0;
-  margin: 0;
-  font-weight: 700;
-  text-align: center;
- }
- .delete_group_button {
-  padding: 10% 0%;
- }
- .cancel-btn {
-  background: #fff;
-  border: 1px solid #EBEBEB;
-  border-radius: 20px;
-  width: auto;
-  height: 35px;
-  color: #7A86A1;
-  padding: 0px 25px;
-  font-size: 12px;
-  font-weight: 800;
-  margin: 0 0 0 15px;
+font-size: 11px;
+padding: 2% 0;
+margin: 0;
+font-weight: 700;
+text-align: center;
+}
+.delete_group_button {
+padding: 10% 0%;
+}
+.cancel-btn {
+background: #fff;
+border: 1px solid #EBEBEB;
+border-radius: 20px;
+width: auto;
+height: 35px;
+color: #7A86A1;
+padding: 0px 25px;
+font-size: 12px;
+font-weight: 800;
+margin: 0 0 0 15px;
 }
 .delete-btn{
-  box-shadow: 1px 8px 29px #695F9724;
-  border-radius: 20px;
-  width: auto;
-  height: 35px;
-  border: 0px;
-  color: #fff;
-  padding: 0px 25px;
-  font-size: 12px;
-  font-weight: 800;
-  margin: 0 0 0 15px;
-  background: #FF3636;
- }
- .modal-content.delete-modal{
-  background:#FFFFFF  ;
-  width: 22rem;
-    height: 12rem;
- }
- 
+box-shadow: 1px 8px 29px #695F9724;
+border-radius: 20px;
+width: auto;
+height: 35px;
+border: 0px;
+color: #fff;
+padding: 0px 25px;
+font-size: 12px;
+font-weight: 800;
+margin: 0 0 0 15px;
+background: #FF3636;
+}
+.modal-content.delete-modal{
+background:#FFFFFF  ;
+width: 22rem;
+  height: 12rem;
+}
+
 .toaster {
-  float: left;
-  width: auto;
-  position: fixed;
-  right: 50px;
-  top: 65px;
-  z-index: 9999;
+float: left;
+width: auto;
+position: fixed;
+right: 50px;
+top: 65px;
+z-index: 9999;
 }
 
 .toaster p {
-  padding: 8px;
-  font-size: 14px;
-  color: #fff;
-  margin: 0;
-  min-width: 250px;
-  text-align: center;
-  border-radius: 20px;
-  font-weight: 500;
+padding: 8px;
+font-size: 14px;
+color: #fff;
+margin: 0;
+min-width: 250px;
+text-align: center;
+border-radius: 20px;
+font-weight: 500;
 
 }
 
 .toaster p.error {
-  background-color: red;
+background-color: red;
 
 }
 
 .toaster p.success {
-  background-color: green;
+background-color: green;
 }
 
 .toaster p.warn {
-  background-color: orange;
+background-color: orange;
 }
 
 .link {
-  color: skyblue;
-  font-size: 16px;
+color: skyblue;
+font-size: 16px;
 }
+
+
+
+
+
+
+

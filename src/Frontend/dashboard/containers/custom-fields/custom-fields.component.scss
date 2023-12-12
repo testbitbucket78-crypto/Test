@@ -286,6 +286,16 @@ select {
     color: #6149CD;
       font-weight: 600;
   }
+
+  .sidebar-content .displayName {
+    color:#000000;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .sidebar-content .subtype {
+    font-size: 12px;
+  }
   
   .sidebar-content .rights{
     padding: 5px 15px;
@@ -304,6 +314,15 @@ select {
     text-align: center;
     background-color: #FBF9FE;
   }
+
+  .account-white-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 8px 13px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px;
+    height: fit-content;
+   }
 
   // addCustomField Modal
 
@@ -333,6 +352,13 @@ select {
    .modal-footer {
     border: none;
    }
+   .btn-close {
+    background: white;
+    margin: 2px;
+    border-radius: 15px;
+    padding: 6px 12px;
+    border: 1px solid #EBEBEB;
+}
 
    .btn-close img {
     height: 10px;

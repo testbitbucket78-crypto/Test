@@ -53,12 +53,12 @@ export class GeneralSettingsComponent implements OnInit {
     this.apiService.getDefaultAction(this.spId).subscribe(response =>{
       const a = response.defaultaction[0];
       
-     this.isAgentActive = a.isAgentActive;
-     this.isAutoReply = a.isAutoReply;
-     this.agentActiveTime = a.agentActiveTime;
-     this.isAutoReplyDisable = a.isAutoReplyDisable;
-     this.autoReplyTime = a.autoReplyTime;
-     this.isContactAdd = a.isContactAdd;
+     this.isAgentActive = a?.isAgentActive;
+     this.isAutoReply = a?.isAutoReply;
+     this.agentActiveTime = a?.agentActiveTime;
+     this.isAutoReplyDisable =a?.isAutoReplyDisable;
+     this.autoReplyTime = a?.autoReplyTime;
+     this.isContactAdd = a?.isContactAdd;
 
     })
   }
