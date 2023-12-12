@@ -214,6 +214,14 @@ export class SettingsService {
     return this.http.post<any>(`${this.API_URL}/deleteCustomField`,Id);
   }
 
+  getManageStorageData(spid:any):Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getautodeletion/${spid}`);
+  }
+
+  editAutoDeletion(data:any):Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/savemanagestorage/`,data);
+  }
+
   craeteQRcode(spid:any): Observable<any> {
     return this.http.post<any>('https://waweb.sampanatechnologies.com/craeteQRcode',spid);
   }

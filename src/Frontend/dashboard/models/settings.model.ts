@@ -332,6 +332,13 @@ export interface addCustomFieldsData {
     description:string;
 }
 
+export interface editAutoDeletionData {
+    spid:number;
+    autodeletion_message:string;
+    autodeletion_media:string;
+    autodeletion_contacts:string;
+}
+
 
 
 

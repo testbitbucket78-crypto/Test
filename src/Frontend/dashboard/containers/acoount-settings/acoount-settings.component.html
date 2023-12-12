@@ -30,7 +30,7 @@
                         <h5>WhatsApp Web</h5>
                         <p>WhatsApp Web automation of your WhatsApp Personal or WhatsApp Business numbers</p>
                         <div class="whatsapp-cSonnect">
-                        <span class="font-weight-bold">{{numberCount}} Connected</span>
+                            <span class="font-weight-bold">{{ numberCount !== undefined ? numberCount : 0 }} Connected</span>
                         <span class="grey">&nbsp;&nbsp;&nbsp;></span>
                     </div>
                     </div>
@@ -297,7 +297,7 @@
             </div>
          </div>
                     <div class="save-footer mx-3">
-                        <button type="button" (click)="this.saveWhatsappWebDetails(this.repliesaccountData?.id);" class="account-bttn">Save</button>
+                        <button type="button" (click)="this.saveWhatsappWebDetails(this.repliesaccountData?.id)" class="account-bttn">Save</button>
                     </div>
                 </div>
             </div>

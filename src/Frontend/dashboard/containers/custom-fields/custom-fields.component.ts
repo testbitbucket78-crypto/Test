@@ -18,7 +18,7 @@ export class CustomFieldsComponent implements OnInit {
   isActive: number = 1;
   defaultFields = '#6149CD';
   defaultFieldsChecked= '#EBEBEB'; 
-  pageSize: number = 10;
+  pageSize: number = 50;
   pageSizeOptions: number[] = [10, 15, 20, 25, 30, 35, 40, 45, 50];
   currentPage!: number;
   paging: number[] = [];
@@ -28,10 +28,11 @@ export class CustomFieldsComponent implements OnInit {
   customFieldData:[] = [];
   defaultFieldsData = [];
   dynamicFieldData = [];
+  selectedCustomField:any = [];
 
 
   selectedType:string = 'Text';
-  types:string[] =['Text','Multi text','Multi number','Select','Switch','Date','User' ];
+  types:string[] =['Text','Multi text','Multi number','Select','Switch','Date Time','User' ];
 
 
   Drop(event: CdkDragDrop<string[]>) {
@@ -41,17 +42,12 @@ export class CustomFieldsComponent implements OnInit {
     ngOnInit(): void {
         this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.getCustomFieldsData();
-      
-        
     }
-  
-  
-
     constructor(private formBuilder:FormBuilder,private settingsService:SettingsService) {
       this.addCustomField = [];
 
       this.customFieldForm = this.formBuilder.group({
-        ColumnName: ['',Validators.required],
+        displayName: ['',Validators.required],
         description:[''],
         Type: ['Text',Validators.required],
       });
@@ -64,15 +60,16 @@ toggleActiveState(checked: boolean) {
 
  }
 
- toggleSideBar(){
+ toggleSideBar(data:any){
   this.showSideBar =!this.showSideBar;
-  console.log(this.dynamicFieldData);
+  this.selectedCustomField = data
+  console.log(this.selectedCustomField);
  }
 
 //  searchData(srchText:string) {
-//   const defaultFieldsDataInit = [...this.defaultFieldsData]
-//   const searchResult = defaultFieldsDataInit.filter(item => {
-//     return item?.ActuallName.toLowerCase().includes(srchText.toLowerCase());
+//   const defaultFieldsDataInit = [...this.dynamicFieldData]
+//   const searchResult = defaultFieldsDataInit.filter((item:any) => {
+//     return item?.ActuallName.toLowerCase().includes(srchText.toLowerCase())
 //   });
 //   console.log(searchResult);
 //  }
@@ -103,30 +100,40 @@ removeCustomFieldsOption(index:any){
 getCustomFieldsData() {
   this.settingsService.getNewCustomField(this.spId).subscribe(response => {
     this.customFieldData = response.getfields;
+    console.log(this.customFieldData);  
     this.getDefaulltFieldData();
     this.getDynamicFieldData();
     this.getPaging();
   })
 }
 
+resetSelectedCustomField() {
+  this.selectedCustomField = null;
+  this.customFieldForm.reset();
+  this.showSideBar = false;
+}
 
 getDefaulltFieldData() {
-const index = [3, 0, 6, 12, 17];
+const index = [12, 14, 8, 13, 5, 19];
   for (const i of index) {
     if (i >= 0 && i < this.customFieldData.length) {
       this.defaultFieldsData.push(this.customFieldData[i]);
     }
   }
+  console.log(this.defaultFieldsData);
+  console.log('default field data')
 }
 
 
 getDynamicFieldData() {
-  const index = [3, 0, 6, 12, 17];
+  const index = [12, 14, 8, 13, 5, 19];
    for (let i = 0; i < this.customFieldData.length; i++) {
     if (!index.includes(i)) {
       this.dynamicFieldData.push(this.customFieldData[i]);
     }
   }
+     console.log(this.dynamicFieldData);
+  console.log('dynamic field data')
 }
 
 
@@ -149,7 +156,7 @@ getCustomFieldFormData() {
   
 let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
     CustomFieldData.SP_ID = this.spId;
-    CustomFieldData.ColumnName = this.customFieldForm.controls.ColumnName.value;
+    CustomFieldData.ColumnName = this.customFieldForm.controls.displayName.value;
     CustomFieldData.Type = this.customFieldForm.controls.Type.value;
     CustomFieldData.description = this.customFieldForm.controls.description.value;
 
@@ -157,8 +164,10 @@ let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
 }
 
 
-patchFormDataValue(){
-  const data = this.dynamicFieldData;
+
+patchFormDataValue() {
+  const data = this.selectedCustomField;
+  console.log(data);
   for(let prop in data){
     let value = data[prop as keyof typeof data];
     if(this.customFieldForm.get(prop))
@@ -175,28 +184,20 @@ toggleDeletePopup() {
   $("#deleteModal").modal('show');
 }
 
-
-// deleteCustomField() {
-
-//   const ID = {
-//     ID: this.dynamicFieldData
-//   }
-
-//   this.settingsService.deleteCustomField()
+deleteCustomField() {
+  let ID:any = {
+    ID: this.selectedCustomField?.id
+  }
+  this.settingsService.deleteCustomField(ID)
   
-//   .subscribe(result =>{
-//     if(result){
-//       $("#deleteModal").modal('hide');
-//       this.getCustomFieldsData();
-   
-      
-//     }
-//   });
-// }
-
-
-
-
-
+  .subscribe(result =>{
+    if(result){
+      $("#deleteModal").modal('hide');
+      this.getCustomFieldsData();
+      this.getDefaulltFieldData();
+      this.getDynamicFieldData();
+    }
+  });
+}
 
 }

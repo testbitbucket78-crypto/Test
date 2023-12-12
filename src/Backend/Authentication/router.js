@@ -2,8 +2,9 @@ const express = require('express');
 var app = express();
 app.use(express.json());
 const bodyParser = require('body-parser');
-app.use(bodyParser.json({ limit: "10000kb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
+app.use(bodyParser.json({ limit: "10mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+const {v4 : uuidv4} = require('uuid')
 const router=express.Router();
 const db = require("../dbhelper");
 const userController=require('./user.js');
@@ -98,7 +99,9 @@ const url =  path.join(__dirname, `/uploads/${file.filename}`)//`${req.protocol}
 
 console.log(url)
 
- let awsres = await awsHelper.uploadAttachment(`localtoAws/${file.filename}`, url,file.media_type)
+const uuidv = uuidv4()
+
+ let awsres = await awsHelper.uploadAttachment(`${uuidv}/${file.filename}`, url,file.media_type)
 
 console.log("awsres")
 //console.log(awsres.value.Location)
