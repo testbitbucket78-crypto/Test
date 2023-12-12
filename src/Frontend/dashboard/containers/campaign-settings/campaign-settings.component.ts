@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { campaignAlertUser, campaignDataResponsePost, campaignFormData, workingData, workingDataResponsePost, workingFormData } from '../../models/settings.model';
+import { campaignAlertUser,RolesData, campaignDataResponsePost, campaignFormData, workingData, workingDataResponsePost, workingFormData } from '../../models/settings.model';
 import { isNullOrUndefined } from 'is-what';
 import { SettingsService } from '../../services/settings.service';
 
@@ -29,6 +29,11 @@ alertUsers:any[] =[];
 workingFormData:campaignFormData[]=[];
 isSelected:any;
 keywords: string[] = [];
+roleName!:string;
+roleData:any;
+totalRights:any[]= [];
+
+
 
 campaignAlertData:any;
 campaignTestData:any;
@@ -181,6 +186,30 @@ campaignTestData:any;
     //   if(item.RoleName.includes(srchText))
     //   this.rolesList.push(item);
     // })
+  }
+
+  rowClicked = (event: any) => {
+    console.log(event);
+    this.roleData = event.data;
+    this.roleName = this.roleData?.RoleName;
+  };  
+
+  copyRolesData(){
+    let rolesData:RolesData =<RolesData>{};
+    rolesData.SP_ID = this.sp_Id;
+    rolesData.RoleName = this.roleName;
+    rolesData.Privileges ='';
+    let subRoles:any[]=[]
+    this.totalRights.forEach(item=>{
+      item.subRights.forEach((subitem:any)=>{
+        if(subitem?.isSelected == true){
+          subRoles.push(subitem?.id);
+        }                                                                       
+      })
+    });
+    rolesData.subPrivileges = subRoles.toString();
+    return rolesData;
+  
   }
   
 }

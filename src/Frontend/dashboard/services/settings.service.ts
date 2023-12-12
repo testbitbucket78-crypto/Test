@@ -225,4 +225,11 @@ export class SettingsService {
    getSPPhoneNumber(uid:any):Observable<any> {
     return this.http.get<any>(`https://authapi.sampanatechnologies.com/users/${uid}`);
    }
+
+   getmanualDelation(data:any):Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/getmanualDelation/`,data);
+  }
+  postmanualDelation(data:any):Observable<any>{
+    return this.http.post<any>(`${this.API_URL}/manualDelation/`,data)
+  }
 }
