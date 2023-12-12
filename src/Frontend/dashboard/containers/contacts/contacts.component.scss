@@ -748,7 +748,14 @@ opacity: 1;
     width: 98px;
 }
 
+.color-dots {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0;
 
+}
 
 .button {
     gap: 10px;

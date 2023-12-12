@@ -443,7 +443,7 @@
                 </div>
 
                 <div *ngIf="selectedType === 'video'" class="my-4 sel-type-video">
-                    <input type="file" accept="video/mp4"  formControlName="Links" name="video-upload" (change)="previewImageAndVideo($event)" id="sel-type-video">
+                    <input type="file" accept="video/mp4"  formControlName="Links" name="video-upload" (change)="onFileChange($event)" id="sel-type-video">
                     <label *ngIf="!selectedPreview" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
                     <div class="video-player">
                         <span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
@@ -463,7 +463,7 @@
                     </div>
                     <img *ngIf="newTemplateForm.get('Links')!.value !== null" src="../../../../assets/img/settings/doc.svg" />
                     <span class="document-preview" *ngIf="newTemplateForm.get('Links')!.value !== null" >{{ newTemplateForm.get('Links')!.value }}</span>
-                        <input type="file" accept=".doc, .docx, .pdf" formControlName="Links" name="document-select" id="sel-type-document">
+                        <input type="file" accept=".doc, .docx, .pdf" formControlName="Links" (change)="previewImageAndVideo($event)" name="document-select" id="sel-type-document">
                         <div *ngIf="newTemplateForm.get('Links')!.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of document</p></div>

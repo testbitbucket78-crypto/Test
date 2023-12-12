@@ -15,10 +15,12 @@ export class ContactSettingsComponent implements OnInit {
   tagId:number=0;
   tagColor:string='';
   tagName:string='';
-  tagListData = [];
+  tagListData:any = []
+  selectedtagListData:any = [];
   pageSize:number = 10;
   currentPage:number = 1;
   paging: number [] = [];
+  showSideBar:boolean=false;
   searchText = '';
   constructor(private _settingsService:SettingsService) {
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
@@ -44,16 +46,16 @@ export class ContactSettingsComponent implements OnInit {
 
   deleteTagData(){
     let tagData = {
-      ID:this.tagId
+      ID:this.selectedtagListData?.ID
       }
     this._settingsService.deletTagData(tagData)
     .subscribe(result =>{
       if(result){
-        console.log(result);
-        
+        this.getTagData();
+        this.showSideBar = false;
+        $("#deleteModal").modal('hide');
       }
-  
-    })
+    });
   }
 
   
@@ -68,6 +70,25 @@ export class ContactSettingsComponent implements OnInit {
       if(result){
         console.log(result);
         this.getTagData();
+        this.showSideBar = false;
+        $("#tagsModal").modal('hide');
+      }
+  
+    })
+  }
+
+  editTagData() {
+    let tagData = <TagData>{};
+    tagData.SP_ID = this.sp_Id;
+    tagData.ID = this.selectedtagListData?.ID;
+    tagData.TagColour = this.tagColor;
+    tagData.TagName = this.tagName;
+    this._settingsService.updateTagData(tagData)
+    .subscribe(result =>{
+      if(result){
+        console.log(result);
+        this.getTagData();
+        this.showSideBar = false;
         $("#tagsModal").modal('hide');
       }
   
@@ -86,6 +107,17 @@ export class ContactSettingsComponent implements OnInit {
     this.tagColor='';
   }
 
+  closeTagsModal() {
+    this.selectedtagListData = null;
+    this.getTagData();
+    this.showSideBar = false;
+  $("#tagsModal").modal('hide');
+}
+
+  toggleSideBar(data:any){
+    this.showSideBar =!this.showSideBar;
+    this.selectedtagListData = data;
+   }
 
   getPaging() {
     this.paging = [];

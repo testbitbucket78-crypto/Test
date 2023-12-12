@@ -36,7 +36,7 @@
         </div>
         <div class="text-align-center"> 
             <span class="default-actions-heading">Storage Utilization</span>
-            <p>1.5 GB Used of 4 GB</p>
+            <p>{{storageUtilization}} GB Used of {{totalStorage}} GB</p>
         </div>
         <div class="d-flex justify-content-around">
             <button type="button" class="account-btn" >Update Plan</button>
@@ -47,7 +47,7 @@
     <div class="setting-card deletion-card ml-3">
         <div class="flex-row">
         <div class="default-actions-heading">Auto-Deletion</div>
-        <button class="account-white-btn mx-1" data-bs-toggle="modal" data-bs-target="#localeDetailModal">
+        <button class="account-white-btn mx-1" data-bs-toggle="modal" data-bs-target="#edit-auto-deletion">
             <img class="p-0" src="../../../../assets/img/edit.png">
         </button>
     </div>
@@ -76,6 +76,69 @@
         </div>
     </div>
     </div>
+    <div class="modal fade" tabindex="-1" id="edit-auto-deletion" role="dialog">
+        <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+            <div class="m-0 modal-content edit-auto-deletion">
+                <div class="align-items-center modal-header">
+                    <h5 class="modal-title">Edit Auto-Deletion</h5>
+                    <button type="button" class="close-box" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <form [formGroup]="editAutoDeletionForm">
+                    <div class="px-5 pt-4 modal-body edit-auto-deletion">
+                      <div class="py-3 option-1">
+                        <p>Auto-Delete all messages older than</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <label for="option1">
+                            <input id="option1" class="option-input" type="text" name="option1" formControlName="option1"> Days
+                          </label>
+                  
+                          <div class="optionradio">
+                            <input id="optionradio1" type="radio" name="optionradio1" formControlName="optionradio1">
+                            <label class="optionradio1" for="optionradio1" value="1">Never Delete</label>
+                          </div>
+                        </div>
+                      </div>
+                  
+                      <div class="py-3 option-2">
+                        <p>Auto-Delete all Media older than</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <label for="option2">
+                            <input id="option2" class="option-input" type="text" name="option2" formControlName="option2"> Days
+                          </label>
+                  
+                          <div class="optionradio">
+                            <input id="optionradio2" type="radio" name="optionradio2" formControlName="optionradio2">
+                            <label class="optionradio2" for="optionradio2">Never Delete</label>
+                          </div>
+                        </div>
+                      </div>
+                  
+                      <div class="py-3 option-3">
+                        <p>Auto-Delete all Contacts older than</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <label for="option3">
+                            <input id="option3" class="option-input" type="text" name="option3" formControlName="option3"> Days
+                          </label>
+                          <div class="optionradio">
+                            <input id="optionradio3" type="radio" name="optionradio3" formControlName="optionradio3">
+                            <label class="optionradio3" for="optionradio3">Never Delete</label>
+                          </div>
+                         
+                        </div>
+                      </div>
+                    </div>
+                  
+                    <div class="modal-footer">
+                      <button type="button" class="account-btn" (click)="editAutoDeletion()">Save</button>
+                    </div>
+                  </form>
+                  
+            </div>
+        </div>
+    </div>
+    
 </div>
 
 
@@ -84,7 +147,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content deletemodal p-2 pl-3">
             <div class="pb-4 modal-header">
-                <h5 class="modal-title">Delete Manually</h5>
+                <h5 class="modal-title manually">Delete Manually</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
@@ -134,7 +197,7 @@
         </div>
     </div>
             <div class="modal-footer">
-                <button type="button" class="account-btn" (click)="deletemodal()" >Proceed</button>
+                <button type="button" class="account-button" (click)="deletemodal()">Proceed</button>
             </div>
            
         </div>
@@ -144,7 +207,7 @@
     <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
         <div class="m-0 modal-content delete-modal">
             <div class="modal-body alertmessage">
-             <p>You are about to delete <b>4580 messages</b>,which will free up <b>1.3 GB</b> of data for you</p>
+             <p>You are about to delete <b>{{ messageData?.message_count}} messages</b>,which will free up<br /> <b>{{ messageData?.message_size }} GB</b> of data for you</p>
                 <p class="label pb-2"><b>Please</b> confirm to <b>delete</b></p>
                 <div class="delete_group_button d-flex justify-content-center">
                     <button type="button" class="cancel-btn" aria-label="Close"

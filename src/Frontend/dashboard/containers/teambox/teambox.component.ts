@@ -1349,14 +1349,6 @@ sendattachfile(){
 	  
 		this.Allmessages = this.selectedInteraction.allmessages;
 		console.log(this.Allmessages);
-	  
-		for (let i = 0; i < Interaction.allmessages.length; i++) {
-		  const message = Interaction.allmessages[i];
-		  const messageId = message?.Message_id;
-		  const messageDirection = message?.message_direction;
-	  
-		}
-	  
 		this.getPausedTimer();
 		this.scrollChatToBottom();
 	  
