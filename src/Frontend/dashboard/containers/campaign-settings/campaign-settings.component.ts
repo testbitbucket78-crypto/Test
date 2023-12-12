@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { campaignAlertUser,RolesData, campaignDataResponsePost, campaignFormData, workingData, workingDataResponsePost, workingFormData } from '../../models/settings.model';
 import { isNullOrUndefined } from 'is-what';
 import { SettingsService } from '../../services/settings.service';
-
+import { FormControl, FormGroup } from '@angular/forms';
 @Component({
   selector: 'sb-campaign-settings',
   templateUrl: './campaign-settings.component.html',
@@ -32,6 +32,9 @@ keywords: string[] = [];
 roleName!:string;
 roleData:any;
 totalRights:any[]= [];
+rolesList:any;
+userDetailForm!:FormGroup;
+
 
 
 
@@ -210,6 +213,25 @@ campaignTestData:any;
     rolesData.subPrivileges = subRoles.toString();
     return rolesData;
   
+  }
+  getSelectedRoles(): any[] {
+    // Assuming userDetailForm.controls.UserType.value contains the selected role ID
+    const selectedRoleID = this.userDetailForm.controls.UserType.value;
+  
+    // Filter rolesList to get the selected role
+    const selectedRoles = this.rolesList.filter((item:any) => item.roleID === selectedRoleID);
+  
+    return selectedRoles;
+  }
+  getRolesList(){
+    this._settingsService.getRolesList(this.sp_Id)
+    .subscribe(result =>{
+      if(result){
+       this.rolesList = result?.getRoles;
+        
+      }
+  
+    })
   }
   
 }

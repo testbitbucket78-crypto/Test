@@ -109,31 +109,18 @@ addRole(){
   this.resetSubRights();
 }
 
-setRightsAccSubRights() {
-  for (let i = 0; i < this.rights.length; i++) {
-    const rightsCount = this.subRightRes.filter(item => item.rightsID === this.rights[i]?.id).length;
-
-    this.totalRights.push({
-      rightId: this.rights[i].id,
-      rightName: this.rights[i].rightsName,
-      subRights: [],
-      rightsCount: rightsCount
-    });
-
-    this.subRightRes.forEach((item: any) => {
-      if (item.rightsID == this.rights[i]?.id) {
-        this.totalRights[this.totalRights?.length - 1].subRights.push({
-          id: item?.id,
-          rightsID: item?.rightsID,
-          subRights: item?.subRights,
-          isSelected: false
-        });
+setRightsAccSubRights(){
+  for(let i=0;i<this.rights.length;i++){
+    this.totalRights.push({rightId:this.rights[i].id,rightName:this.rights[i].rightsName,subRights:[]});
+    this.subRightRes.forEach((item:any) =>{
+      if(item.rightsID == this.rights[i]?.id){
+        this.totalRights[this.totalRights?.length-1].subRights.push({id: item?.id,rightsID: item?.rightsID,subRights:item?.subRights,isSelected:false});
       }
-    });
+
+    })
   }
   console.log(this.totalRights);
 }
-
 
 saveRolesDetails(){
   let roleData = this.copyRolesData();

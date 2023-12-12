@@ -34,6 +34,11 @@ userList:any;
 userListInIt:any;
 userData:any;
 isActive:any;
+filteredRolesList: any[] = []; 
+isEditingUser(): boolean {
+  // Check if you are editing an existing user based on some condition (e.g., uid)
+  return this.uid !== null && this.uid !== undefined;
+}
 
 
   constructor(private _settingsService:SettingsService) {
@@ -111,18 +116,30 @@ getRolesList(){
   })
 }
 
-  
-saveRolesDetails(){
+saveRolesDetails() {
   let userData = this.copyUserData();
-  this._settingsService.saveUserData(userData)
-  .subscribe(result =>{
-    if(result){
-      this.getUserList();            
-    }
-  })
-		$("#userModal").modal('hide'); 
 
+  if (this.isEditingUser()) {
+    // Call the update service method for existing users
+    this._settingsService.editUser(userData)
+      .subscribe(result => {
+        if (result) {
+          this.getUserList();
+          $("#userModal").modal('hide');
+        }
+      });
+  } else {
+    // Call the save service method for new users
+    this._settingsService.saveUserData(userData)
+      .subscribe(result => {
+        if (result) {
+          this.getUserList();
+          $("#userModal").modal('hide');
+        }
+      });
+  }
 }
+
 
 copyUserData(){
   let userData:UserData =<UserData>{};
@@ -148,6 +165,7 @@ getRoleNameById(id:number){
 let roleData = this.rolesList.filter((item:any)=>item.roleID == id)[0];
 return roleData ? roleData.roleName : '';
 }
+
 
 deleteUser(){
   let userId = <any>{};
@@ -180,6 +198,16 @@ searchUserData(srchText:string){
     if(item.name.includes(srchText) || item.email_id.includes(srchText) || item.mobile_number.includes(srchText))
     this.userList.push(item);
   })
+}
+// Assuming this function is in your component class
+getSelectedRoles(): any[] {
+  // Assuming userDetailForm.controls.UserType.value contains the selected role ID
+  const selectedRoleID = this.userDetailForm.controls.UserType.value;
+
+  // Filter rolesList to get the selected role
+  const selectedRoles = this.rolesList.filter((item:any) => item.roleID === selectedRoleID);
+
+  return selectedRoles;
 }
 
 

@@ -124,6 +124,7 @@ export interface TeamData {
     team_name: string;
     userIDs: number[];
     SP_ID: number;
+    id:number;
 }
 
 export interface userTeamDropDown {

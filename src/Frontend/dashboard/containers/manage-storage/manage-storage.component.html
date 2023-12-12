@@ -84,7 +84,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content deletemodal p-2 pl-3">
             <div class="pb-4 modal-header">
-                <h5 class="modal-title">Delete Manually</h5>
+                <h5 class="modal-title delete">Delete Manually</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
@@ -108,10 +108,10 @@
             <div clas="input-days">
                 <div class="check-input">
                 <label for="text" class="d-flex" >
-                <input class="text-media" type="checkbox" [(ngModel)]="textChecked"(change)="updateMessageType()" value="Text" ><p class="text-checkbox">Text</p>
+                <input class="text-media" type="checkbox" [(ngModel)]="textChecked" (change)="updateMessageType()" value="Text" ><p class="text-checkbox">Text</p>
             </label>
             <label for="text" class="d-flex" >
-                <input class="text-media" type="checkbox" [(ngModel)]="mediaChecked"(change)="updateMessageType()" value="media"><p class="text-checkbox">Media</p>
+                <input class="text-media" type="checkbox" [(ngModel)]="mediaChecked" (change)="updateMessageType()" value="media"><p class="text-checkbox">Media</p>
             </label>
         </div>
             </div>
