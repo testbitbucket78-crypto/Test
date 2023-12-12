@@ -9,8 +9,8 @@ const cors = require('cors')
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({ limit: "10000kb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
+app.use(bodyParser.json({ limit: "5mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
 const Routing = require('../RoutingRules')
 const db = require('../dbhelper')
 const awsHelper = require('../awsHelper');
@@ -32,13 +32,35 @@ async function createClientInstance(spid, phoneNo) {
     clientId: spid
   });
 
+  const worker = `${authStr.dataPath}/session-${spid}/Default/Service Worker`;
+  fs.rmdir(worker, { recursive: true }, (err) => {
+    if (err) { console.log("recursive delete threw and error"); console.log(err); }
+    try {
+      console.log("inside try")
+      if (fs.existsSync(worker)) fs.unlinkSync(worker);
+      console.log("seems like it finished unlinking")
+    } catch (e) {
+      // handle error
+      console.log("inside catch")
+      return;
+    }
+  });
+
+  setTimeout(() => {
+    ClientInstance(spid, authStr, phoneNo)
+  }, 2000);
+
+
+}
+
+function ClientInstance(spid, authStr, phoneNo) {
   return new Promise(async (resolve, reject) => {
     try {
       const client = new Client({
         puppeteer: {
           headless: true,
-         executablePath: "/usr/bin/google-chrome-stable",
-        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+           executablePath: "/usr/bin/google-chrome-stable",
+         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -52,18 +74,6 @@ async function createClientInstance(spid, phoneNo) {
         authStrategy: authStr,
       });
       console.log("client created");
-
-      const worker = `${authStr.dataPath}\\session-${spid}\\Default\\Service Worker`;
-      if (fs.existsSync(worker)) {
-        try {
-          fs.rmdirSync(worker, { recursive: true })
-
-        } catch (sessionerr) {
-          console.log("Error while deleting old session");
-          console.error(sessionerr);
-        }
-
-      }
 
       // Handle client creation errors
       client.on('error', (error) => {
@@ -160,8 +170,8 @@ SELECT InteractionId FROM Interaction
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  and  msg_status is null`
             let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
             notify.NotifyServer(message.from, true);
-          
-          //  let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
+
+            //  let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
           } else if (ack == '2') {
             console.log(`Message has been delivered`);
             const phoneNumber = (message.to).replace(/@c\.us$/, "");
@@ -172,19 +182,19 @@ SELECT InteractionId FROM Interaction
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 and (msg_status =1 or msg_status is null)`
             let deded = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
             notify.NotifyServer(message.from, true);
-           
-        //    db.excuteQuery(`UPDATE Message set msg_status=? where ExternalMessageId=?`, [ack, message.id.id])
+
+            //    db.excuteQuery(`UPDATE Message set msg_status=? where ExternalMessageId=?`, [ack, message.id.id])
           } else if (ack == '3') {
             console.log(`Message has been read`);
             const phoneNumber = (message.to).replace(/@c\.us$/, "");
             const smsupdate = `UPDATE Message
-SET msg_status = 3 , is_read =1
+SET msg_status = 3 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1   and msg_status =2`
             let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
-            
-        //    db.excuteQuery(`UPDATE Message set msg_status=?, is_read =1 where ExternalMessageId=?`, [ack, message.id.id])
+
+            //    db.excuteQuery(`UPDATE Message set msg_status=?, is_read =1 where ExternalMessageId=?`, [ack, message.id.id])
           }
 
           notify.NotifyServer(message.from, true);
@@ -200,9 +210,8 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
       return ({ status: 500, value: err });
     }
   })
-
-
 }
+
 
 function getCircularReplacer() {
   const seen = new WeakSet();
@@ -291,19 +300,19 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
       //     return;
       //   }
 
-        // Parse the JSON data
-        // try {
-        //   const jsonData = JSON.parse(data);
+      // Parse the JSON data
+      // try {
+      //   const jsonData = JSON.parse(data);
 
-        //   // Access the value associated with key '3'
-        //   const valueForKey3 = jsonData[[spid]];
-        //   client = jsonData[[spid]];
-        //   let msg = sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
-        //   // Now you can work with the 'valueForKey3' object
-        //   // console.log('Value for key spid:', JSON.stringify(valueForKey3, null, 2));
-        // } catch (parseError) {
-        //   console.error('Error parsing JSON:', parseError);
-        // }
+      //   // Access the value associated with key '3'
+      //   const valueForKey3 = jsonData[[spid]];
+      //   client = jsonData[[spid]];
+      //   let msg = sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
+      //   // Now you can work with the 'valueForKey3' object
+      //   // console.log('Value for key spid:', JSON.stringify(valueForKey3, null, 2));
+      // } catch (parseError) {
+      //   console.error('Error parsing JSON:', parseError);
+      // }
       //});
       console.log("else");
       return '401'
@@ -315,8 +324,8 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
 
 async function sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id) {
   try {
-  
-  //  console.log("messagesTypes", interaction_id, msg_id)
+
+    //  console.log("messagesTypes", interaction_id, msg_id)
     if (client.info) {
       console.log("client info avilable")
     } else {
@@ -349,8 +358,22 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const msg = await client.sendMessage(endCust + '@c.us', location);
     }
     if (type === 'vcard') {
+      let firstName = 'CIP'
+      let lastName = 'TEAM'
+      let phoneNumber = '917017683064'
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
-      client.sendMessage(endCust + '@c.us', contat);
+      client.sendMessage(endCust + '@c.us',
+        'BEGIN:VCARD\n' +
+        'VERSION:3.0\n' +
+        'N:' + firstName + ';' + lastName + ';;;\n' +
+        'FN:' + firstName + lastName + '\n' +
+        'TEL;type=Mobile;waid=' + phoneNumber + ':+' + phoneNumber + '\n' +
+        'END:VCARD', {
+        parseVCards: false
+      }
+
+
+      );
     }
 
   } catch (err) {

@@ -453,8 +453,8 @@ const manualDelation = async (req, res) => {
         }
 
        
-       let insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, manually_deletion_days, message_type,isDeleted,created_at) VALUES ?';
-       let addManualData=await db.excuteQuery(insertmanagestorage,[[[SPID,'','','',manually_deletion_days,message_type,1,new Date()]]]);
+       let insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, manually_deletion_days, message_type,created_at) VALUES ?';
+       let addManualData=await db.excuteQuery(insertmanagestorage,[[[SPID,'','','',manually_deletion_days,message_type,new Date()]]]);
        console.log(addManualData);
        
        res.status(200).send({
