@@ -9,8 +9,8 @@ const express = require('express');
 var app = express();
 app.use(express.json());
 const bodyParser = require('body-parser');
-app.use(bodyParser.json({ limit: "10000kb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
+app.use(bodyParser.json({ limit: "10mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
 async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken) {
     return new Promise((resolve, reject) => {
