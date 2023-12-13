@@ -210,9 +210,15 @@ export class SettingsService {
     return this.http.post<any>(`${this.API_URL}/addCustomField`,addCustomFieldData);
   }
 
-  deleteCustomField(Id:number): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/deleteCustomField`,Id);
+  UpdateCustomField(addCustomFieldData: addCustomFieldsData): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/editCustomField`,addCustomFieldData);
   }
+
+  deleteCustomField(id: number): Observable<any> {
+    const url = `${this.API_URL}/deleteCustomField/${id}`;
+    return this.http.post<any>(url, null);
+  }
+  
 
   getManageStorageData(spid:any):Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getautodeletion/${spid}`);

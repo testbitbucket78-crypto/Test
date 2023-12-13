@@ -9,7 +9,7 @@ import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { isNullOrUndefined } from 'is-what';
-import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService,NodeSelection, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 
 declare var $: any;
@@ -17,7 +17,7 @@ declare var $: any;
 selector: 'sb-teambox',
 templateUrl: './teambox.component.html',
 styleUrls: ['./teambox.component.scss'],
-providers: [ToolbarService, LinkService, ImageService, HtmlEditorService]
+providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService]
 })
 
 export class TeamboxComponent implements  OnInit {
@@ -64,131 +64,11 @@ routerGuard = () => {
 		{ id:8,date:'2023-06-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
 			
 	];
-	
-	public smileys: { [key: string]: Object }[] = [
-		{ content: '&#128512;', title: 'Grinning face' },
-		{ content: '&#128513;', title: 'Grinning face with smiling eyes' },
-		{ content: '&#128514;', title: 'Face with tears of joy' },
-		{ content: '&#128515;', title: 'Smiling face with open mouth' },
-		{ content: '&#128516;', title: 'Smiling face with open mouth and smiling eyes' },
-		{ content: '&#128517;', title: 'Smiling face with open mouth and cold sweat' },
-		{ content: '&#128518;', title: 'Smiling face with open mouth and tightly-closed eyes' },
-		{ content: '&#128519;', title: 'Smiling face with halo' },
-		{ content: '&#128520;', title: 'Smiling face with horns' },
-		{ content: '&#128521;', title: 'Winking face' },
-		{ content: '&#128522;', title: 'Smiling face with smiling eyes' },
-		{ content: '&#128523;', title: 'Face savouring delicious food' },
-		{ content: '&#128524;', title: 'Relieved face' },
-		{ content: '&#128525;', title: 'Smiling face with heart-shaped eyes' },
-		{ content: '&#128526;', title: 'Smiling face with sunglasses' },
-		{ content: '&#128527;', title: 'Smirking face"' },
-		{ content: '&#128528;', title: 'Neutral face' },
-		{ content: '&#128529;', title: 'Expressionless face' },
-		{ content: '&#128530;', title: 'Unamused face' },
-		{ content: '&#128531;', title: 'Face with cold sweat' },
-		{ content: '&#128532;', title: 'Pensive face' },
-		{ content: '&#128533;', title: 'Confused face' },
-		{ content: '&#128534;', title: 'Confounded face' },
-		{ content: '&#128535;', title: 'Kissing face' },
-		{ content: '&#128536;', title: 'Face throwing a kiss' },
-		{ content: '&#128538;', title: 'Kissing face with smiling eyes' },
-		{ content: '&#128539;', title: 'Face with stuck-out tongue' },
-		{ content: '&#128540;', title: 'Face with stuck-out tongue and winking eye' },
-		{ content: '&#128541;', title: 'Face with stuck-out tongue and tightly-closed eyes' },
-		{ content: '&#128542;', title: 'Disappointed face' },
-		{ content: '&#128543;', title: 'Worried face' },
-		{ content: '&#128544;', title: 'Angry face' },
-		{ content: '&#128545;', title: 'Pouting face' },
-		{ content: '&#128546;', title: 'Crying face' },
-		{ content: '&#128547;', title: 'Persevering face' },
-		{ content: '&#128548;', title: 'Face with look of triumph' },
-		{ content: '&#128549;', title: 'Disappointed but relieved face' },
-		{ content: '&#128550;', title: 'Frowning face with open mouth' },
-		{ content: '&#128551;', title: 'Anguished face' },
-		{ content: '&#128552;', title: 'Fearful face' },
-		{ content: '&#128553;', title: 'Weary face' },
-		{ content: '&#128554;', title: 'Sleepy face' },
-		{ content: '&#128555;', title: 'Tired face' },
-		{ content: '&#128556;', title: 'Grimacing face' },
-		{ content: '&#128557;', title: 'Loudly crying face' },
-		{ content: '&#128558;', title: 'Face with open mouth' },
-		{ content: '&#128559;', title: 'Hushed face' },
-		{ content: '&#128560;', title: 'Face with open mouth and cold sweat' },
-		{ content: '&#128561;', title: 'Face screaming in fear' },
-		{ content: '&#128562;', title: 'Astonished face' },
-		{ content: '&#128563;', title: 'Flushed face' },
-		{ content: '&#128564;', title: 'Sleeping face' },
-		{ content: '&#128565;', title: 'char_block' },
-
-	];
-	public animals: { [key: string]: Object }[] = [
-		{ title: 'Monkey Face', content: '&#128053;' },
-		{ title: 'Monkey', content: '&#128018;' },
-		{ title: 'Gorilla', content: '&#129421;' },
-		{ title: 'Dog Face', content: '&#128054;' },
-		{ title: 'Dog', content: '&#128021;' },
-		{ title: 'Poodle', content: '&#128041;' },
-		{ title: 'Wolf Face', content: '&#128058;' },
-		{ title: 'Fox Face', content: '&#129418;' },
-		{ title: 'Cat Face', content: '&#128049;' },
-		{ title: 'Cat', content: '&#128008;' },
-		{ title: 'Lion Face', content: '&#129409;' },
-		{ title: 'Tiger Face', content: '&#128047;' },
-		{ title: 'Tiger', content: '&#128005;' },
-		{ title: 'Leopard', content: '&#128006;' },
-		{ title: 'Horse Face', content: '&#128052;' },
-		{ title: 'Horse', content: '&#128014;' },
-		{ title: 'Unicorn Face', content: '&#129412;' },
-		{ title: 'Deer', content: '&#129420;' },
-		{ title: 'Cow Face', content: '&#128046;' },
-		{ title: 'Ox', content: '&#128002;' },
-		{ title: 'Water Buffalo', content: '&#128003;' },
-		{ title: 'Cow', content: '&#128004;' },
-		{ title: 'Pig Face', content: '&#128055;' },
-		{ title: 'Pig', content: '&#128022;' },
-		{ title: 'Boar', content: '&#128023;' },
-		{ title: 'Pig Nose', content: '&#128061;' },
-		{ title: 'Ram', content: '&#128015;' },
-		{ title: 'Ewe', content: '&#128017;' },
-		{ title: 'Goat', content: '&#128016;' },
-		{ title: 'Camel', content: '&#128042;' },
-		{ title: 'Two-Hump Camel', content: '&#128043;' },
-		{ title: 'Elephant', content: '&#128024;' },
-		{ title: 'Rhinoceros', content: '&#129423;' },
-		{ title: 'Mouse Face', content: '&#128045;' },
-		{ title: 'Mouse', content: '&#128001;' },
-		{ title: 'Rat', content: '&#128000;' },
-		{ title: 'Hamster Face', content: '&#128057;' },
-		{ title: 'Rabbit Face', content: '&#128048;' },
-		{ title: 'Rabbit', content: '&#128007;' },
-		{ title: 'Chipmunk', content: '&#128063;' },
-		{ title: 'Bat', content: '&#129415;' },
-		{ title: 'Bear Face', content: '&#128059;' },
-		{ title: 'Koala', content: '&#128040;' },
-		{ title: 'Panda Face', content: '&#128060;' },
-		{ title: 'Paw Prints', content: '&#128062;' },
-		{ title: 'Frog Face', content: '&#128056;' },
-		{ title: 'Crocodile', content: '&#128010;' },
-		{ title: 'Turtle', content: '&#128034;' },
-		{ title: 'Lizard', content: '&#129422;' },
-		{ title: 'Snake', content: '&#128013;' },
-		{ title: 'Dragon Face', content: '&#128050;' },
-		{ title: 'Dragon', content: '&#128009;' },
-		{ title: 'Sauropod', content: '&#129429;' },
-		{ title: 'T-Rex', content: '&#129430;' },
-	];
-	
+		
 	public tools: object = {
 		items: [
 			
-			'Bold', 'Italic', 'StrikeThrough',
-		{
-		tooltipText: 'Emoji',
-		undo: true,
-		click: this.toggleEmoji.bind(this),
-		template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
-		},
+			'Bold', 'Italic', 'StrikeThrough','EmojiPicker',
 		{
 			tooltipText: 'Attachment',
 			undo: true,
@@ -305,7 +185,8 @@ countryCodes = [
 	selectedChannel:any=['WhatsApp Web'];
 	contactSearchKey:any='';
 	ShowChannelOption:any=false;
-	selectedCountryCode: string = '';
+	CountryCode!:any;
+	selectedCountryCode!:string;
 	newContact: any;
 	editContact: any;
 	ShowGenderOption:any=false;
@@ -371,11 +252,13 @@ countryCodes = [
 		config.backdrop = 'static';
 		config.keyboard = false;
 		config.windowClass= 'teambox-pink';
+
 		this.newContact= fb.group({
 			SP_ID: new FormControl('', Validators.required),
 			Name: new FormControl('', Validators.required),
-			country_code: new FormControl('IN +91'),
-			Phone_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(15)])),
+			country_code: new FormControl(''),
+			Phone_number: new FormControl(''),
+			displayPhoneNumber: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
 			Channel: new FormControl('', Validators.required),
 			emailId: new FormControl('', [Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
 
@@ -384,8 +267,9 @@ countryCodes = [
 		this.editContact=fb.group({
 			SP_ID: new FormControl('', Validators.required),
 			Name: new FormControl('', Validators.required),
-			country_code: new FormControl('IN +91'),
-			Phone_number: new FormControl('', Validators.compose([Validators.required,Validators.minLength(6),Validators.maxLength(15)])),
+			country_code: new FormControl(''),
+			Phone_number: new FormControl(''),
+			displayPhoneNumber: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
 			Channel: new FormControl('', Validators.required),
 			emailId: new FormControl('', [Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
 
@@ -450,14 +334,7 @@ resetMessageTex(){
 		if(optionvalue == 'text'){
 			this.chatEditor.value = 'Your message...'
 			this.tools = {
-				items: ['Bold', 'Italic','StrikeThrough',
-				{
-				tooltipText: 'Emoji',
-				undo: true,
-				click: this.toggleEmoji.bind(this),
-				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
-				},
+				items: ['Bold', 'Italic','StrikeThrough','EmojiPicker',
 				{
 					tooltipText: 'Attachment',
 					undo: true,
@@ -493,14 +370,7 @@ resetMessageTex(){
 		}else{
 			this.chatEditor.value = 'Type…'
 			this.tools = {
-				items: ['Bold', 'Italic', 'StrikeThrough',
-				{
-				tooltipText: 'Emoji',
-				undo: true,
-				click: this.toggleEmoji.bind(this),
-				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
-				},
+				items: ['Bold', 'Italic', 'StrikeThrough','EmojiPicker',
 				{
 					tooltipText: 'Attachment',
 					undo: true,
@@ -541,7 +411,6 @@ resetMessageTex(){
 		this.TemplatePreview=false
 		this.showQuickReply=false
 		this.showMention=false
-		this.showEmoji =false;
 		$("#quikpopup").modal('hide');
 		$("#atrributemodal").modal('hide');
 		$("#insertmodal").modal('hide');
@@ -692,55 +561,16 @@ filterTemplate(temType:any){
 	
 }
 
-hideAllOpenModal(event:any){
-	if(this.showEmoji){
-		//this.showEmoji=false
-	}
-	// console.log(event.target.id)
-	//alert('hideAllOpenModal')
-	//this.closeAllModal()
-}	
-closeEmoji(){
-	this.showEmoji =false
-}
-toggleEmoji(){
-	this.closeAllModal()
-	this.showEmoji = !this.showEmoji;
-	(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
-	this.range = this.selection.getRange(document);
-	this.saveSelection = this.selection.save(this.range, document);
-			
-}
-// public onInsert(item:any) {
+  public async onInsert(item: any) {
 	
-// 	this.saveSelection.restore();
-// 	this.chatEditor.executeCommand('insertText', item.target.textContent);
-// 	this.chatEditor.formatter.saveData();
-// 	this.chatEditor.formatter.enableUndo(this.chatEditor);
+	this.range = this.selection.getRange(document); 
+	this.saveSelection.restore();
+	const emojiText = item.target.textContent;
+	await this.chatEditor.executeCommand('insertHTML', emojiText);
+	this.saveSelection = this.selection.save(this.range, document); 
+	this.chatEditor.formatter.saveData();
+	this.chatEditor.formatter.enableUndo(this.chatEditor);
 	
-
-
-// }
-public onInsert(item: any) {
-	// const emojiText = item.target.textContent;
-    // this.onclickInsert();
-	// Insert the emoji at the current cursor position
-	
-  
-	// Move the cursor to the end of the editor content
-	// this.moveToEndOfEditor();
-	// console.log(this.chatEditor.getContent());
-	this.chatEditor.setContent('abc');
-	// this.chatEditor.formatter.saveData();
-	// if (this.chatEditor.formatter.getUndoRedoStack().length === 0) {
-		
-	// 	console.log("HELLO")
-	// }
-	// this.chatEditor.executeCommand('insertText', emojiText);
-  
-	// // Save the changes
-	// this.chatEditor.formatter.saveData();
-	// this.chatEditor.formatter.enableUndo(this.chatEditor);
   }
 
   actionCompleteHandler(e: any): void {
@@ -773,10 +603,6 @@ public onInsert(item: any) {
 	selection.addRange(range);
   }
   
-
-showEmojiType(EmojiType:any){
-	this.EmojiType = EmojiType
-}
 ToggleAttachmentBox(){
 	this.closeAllModal()
 	$("#attachfle").modal('show'); 
@@ -885,7 +711,7 @@ sendattachfile(){
 		this.getAttributeList()
         this.sendattachfile()
 		this.getQuickResponse()
-
+		this.CountryCode = this.countryCodes[101];
 		this.NewContactForm = this.newContact;
         this.EditContactForm = this.editContact;
 	}
@@ -895,8 +721,11 @@ sendattachfile(){
 	  }
 
 	scrollChatToBottom() {
-		const chatWindowElement = this.chatSection.nativeElement;
-		chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
+		const chatWindowElement = this.chatSection?.nativeElement;
+		if (chatWindowElement) {
+			chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
+		  }
+
 	  }
 
 	async subscribeToNotifications() {
@@ -928,7 +757,9 @@ sendattachfile(){
 								setTimeout(() => {
 								this.selectInteraction(this.selectedInteraction)
 								this.scrollChatToBottom()
+								this.tickUpdate(message)
 							}, 2000);
+
 							}					
 						}
 					}
@@ -1243,6 +1074,22 @@ sendattachfile(){
 	}
 		
 	}
+
+	tickUpdate(message: any) {
+		if (message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out') {
+		  if (message.msg_status === '1') {
+			return '../../../../assets/img/teambox/tick-gry.svg';
+		  } else if (message.msg_status === '2') {
+			return '../../../../assets/img/teambox/duble-tick-g.svg';
+		  } else if (message.msg_status === '3') {
+			return '../../../../assets/img/teambox/double-tick-green.svg';
+		  } else if (message.msg_status === null) {
+			return '../../../../assets/img/teambox/error.svg';
+		  }
+		}
+	  }
+
+	  
 	threasholdMessages(allMessage:any){
 		let messageCount =0
 		if(allMessage.length>0){
@@ -1346,6 +1193,8 @@ sendattachfile(){
 		this.contactId = Interaction.customerId;
 		console.log(this.contactId);
 		console.log(Interaction);
+		this.selectedCountryCode = Interaction.countryCode;
+		console.log(this.selectedCountryCode);
 	  
 		this.Allmessages = this.selectedInteraction.allmessages;
 		console.log(this.Allmessages);
@@ -1490,8 +1339,9 @@ stopPropagation(event: Event) {
 updateCustomer(){
 	var bodyData = {
 	Name:this.EditContactForm.Name,
-	countryCode:this.EditContactForm.countryCode,
+	countryCode:this.EditContactForm.country_code,
 	Phone_number:this.EditContactForm.Phone_number,
+	displayPhoneNumber:this.EditContactForm.displayPhoneNumber,
 	channel:this.EditContactForm.channel,
 	status:this.EditContactForm.status,
 	OptInStatus:this.EditContactForm.OptInStatus,
@@ -1516,6 +1366,7 @@ updateCustomer(){
 		this.selectedInteraction['Name']=this.EditContactForm.Name
 		this.selectedInteraction['countryCode']=this.EditContactForm.country_code
 		this.selectedInteraction['Phone_number']=this.EditContactForm.Phone_number
+		this.selectedInteraction['displayPhoneNumber']=this.EditContactForm.displayPhoneNumber
 		this.selectedInteraction['channel']=this.EditContactForm.channel
 		this.selectedInteraction['status']=this.EditContactForm.status
 		this.selectedInteraction['OptInStatus']=bodyData['OptInStatus']
@@ -1676,7 +1527,7 @@ SelectReplyOption(optionValue:any,optionType:any){
 
 // Function to format the phone number using libphonenumber-js
 formatPhoneNumber(contactForm: FormGroup) {
-	const phoneNumber = contactForm.get('Phone_number')?.value;
+	const phoneNumber = contactForm.get('displayPhoneNumber')?.value;
 	const countryCode = contactForm.get('country_code')?.value;
 	const phoneControl = contactForm.get('Phone_number');
   
@@ -1684,11 +1535,10 @@ formatPhoneNumber(contactForm: FormGroup) {
 	  const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
 	  const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
   
-	  if (formattedPhoneNumber) {
-		const formattedValue = formattedPhoneNumber.formatInternational().replace(/[\s+]/g, '');
+		const formattedValue = formattedPhoneNumber?.formatInternational().replace(/[\s+]/g, '');
 		phoneControl.setValue(formattedValue);
 		console.log(phoneControl.value);
-	  }
+	  
 	}
   }
   
@@ -1816,8 +1666,9 @@ triggerEditCustomer(updatecustomer:any){
 		this.modalReference.close();
 	}
 	this.EditContactForm['Name'] =this.selectedInteraction.Name
-	this.EditContactForm['country_code']=this.EditContactForm.countryCode
+	this.EditContactForm['country_code']=this.EditContactForm.country_code
 	this.EditContactForm['Phone_number'] =this.selectedInteraction.Phone_number
+	this.EditContactForm['displayPhoneNumber']=this.selectedInteraction.displayPhoneNumber
 	this.EditContactForm['channel'] =this.selectedInteraction.channel
 	this.EditContactForm['status'] =this.selectedInteraction.status
 	this.EditContactForm['OptInStatus'] =this.selectedInteraction.OptInStatus
@@ -1961,9 +1812,11 @@ createCustomer() {
   }
   
 
-createInteraction(customerId:any){
+createInteraction(customerId:any) {
 var bodyData = {
-	customerId: customerId
+	customerId: customerId,
+	spid:this.SPID
+
 }
 this.apiService.createInteraction(bodyData).subscribe(async data =>{
 	var responseData:any = data
@@ -1971,6 +1824,7 @@ this.apiService.createInteraction(bodyData).subscribe(async data =>{
 		this.modalReference.close();
 	}
 	this.getAllInteraction()
+	this.CountryCode = this.countryCodes[101];
 });
 
 }
@@ -2207,10 +2061,6 @@ sendMessage(){
 
 
 }
-
-onPhoneNumberChange(event: any) {
-	this.selectedCountryCode = event;
-  }
 
 //   /  GET ATTRIBUTE LIST  /
   getAttributeList() {

@@ -1616,6 +1616,15 @@
 	height: 335px;
 	margin-top: 20px;
 	overflow: scroll;
+	overflow-x: hidden;
+	}
+
+	.template_list::-webkit-scrollbar {
+		display: none;
+	}
+
+	.template_details_section::-webkit-scrollbar{
+		display: none;
 	}
 
 	.line_through{
@@ -1806,8 +1815,14 @@
 	min-height: 250px;
 	padding: 1.5rem;
 	height: 400px;
-  	overflow: auto;
+  	overflow: scroll;
 	}
+
+	.campaign_preview_left::-webkit-scrollbar {
+		display: none;
+	}
+
+
 	.campaign_preview_right{
 	display: flex;
 	flex-direction: column;
