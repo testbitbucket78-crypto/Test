@@ -27,8 +27,7 @@ teamListInit:any;
 teamData:any;
 profilePicture!:string;
   Id!: number;
-  
-
+  users_count!:number;
 
   constructor(private _settingsService:SettingsService) {
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
@@ -83,7 +82,9 @@ getUserList(){
   this._settingsService.getUserList(this.sp_Id)
   .subscribe((result:any) =>{
     if(result){
-      this.userList =result?.getUser;     
+      this.userList =result?.getUser; 
+      this.users_count= this.selectedUser?.length;
+      console.log(this.users_count);
       this.setUserList(); 
     }
 

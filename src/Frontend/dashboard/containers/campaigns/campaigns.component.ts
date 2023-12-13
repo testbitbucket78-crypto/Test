@@ -275,6 +275,7 @@ export class CampaignsComponent implements OnInit {
 	];
 	
 	selectedcontactFilterBy:any='';
+	modalRef: any;
 	
 	 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: TeamboxService,private settingsService:SettingsService,private fb: FormBuilder,private router: Router) {
@@ -2123,6 +2124,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.checkboxChecked = false;
 		for (const listItem of this.allContactList) {
             listItem['selected'] = false;
+			this.modalRef.dismiss();
+
         }
 	  }
 

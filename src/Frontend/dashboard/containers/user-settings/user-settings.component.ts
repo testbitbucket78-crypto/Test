@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SettingsService } from '../../services/settings.service';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { UserData, rights } from '../../models/settings.model';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup,Validators  } from '@angular/forms';
 declare var $: any;
 
 @Component({
@@ -92,7 +92,9 @@ isEditingUser(): boolean {
       UserType:new FormControl()
     });
   }
-  
+  yourForm = new FormGroup({
+    mobile_number: new FormControl('', [Validators.minLength(6), Validators.maxLength(15)]),
+  });
 getUserList(){
   this._settingsService.getUserList(this.sp_Id)
   .subscribe(result =>{

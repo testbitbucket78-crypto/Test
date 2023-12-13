@@ -61,7 +61,7 @@
         <button type="button" (click)="previous()" class="btn9 btn-block col-1"><img src="assets/img/prev.png"></button>
         <div class="box1">
           <h5>Add Keyword</h5>
-          <div class="box2 d-flex" data-required="Use enter key to add ➥">
+          <div class="box2 d-flex" data-required="">
             <input class="form-control" id="form-box" #keyowrdtxt [(ngModel)]="keyword" type="text"
               onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)" placeholder="Enter Keywords" maxlength="56" />
             <button type="button" class="btn7 btn-block ml-2" (click)="addKeyword()">ADD</button>
