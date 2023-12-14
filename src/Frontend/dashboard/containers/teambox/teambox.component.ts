@@ -180,8 +180,6 @@ countryCodes = [
 	warningMessage='';
 	showChatNotes='text';
 	message_text='';
-	showEmoji=false;
-	EmojiType:any='smiley';
 	selectedChannel:any=['WhatsApp Web'];
 	contactSearchKey:any='';
 	ShowChannelOption:any=false;
@@ -1206,15 +1204,16 @@ sendattachfile(){
 		console.log(Interaction);
 		this.selectedCountryCode = Interaction.countryCode;
 		console.log(this.selectedCountryCode);
-	  
 		this.Allmessages = this.selectedInteraction.allmessages;
 		console.log(this.Allmessages);
 		this.getPausedTimer();
 		this.scrollChatToBottom();
 	  
-		const element = document.getElementsByClassName('total_count green')[0];
-		if (this.selectedInteraction.UnreadCount !== 0 && element) {
-		  element.innerHTML = '';
+		let unread:any = document.getElementsByClassName('total_count green')[0];
+		let read:any = document.getElementsByClassName('total_count red')[0];
+		if (this.selectedInteraction.UnreadCount !== 0) {
+		  unread.style.display = 'none';
+		  read.style.display = 'none'
 		}
 	  }
 	  

@@ -74,10 +74,10 @@ export class DashboardComponent implements OnInit {
         this.apiService.dashboardInteractions(sPid).subscribe(data => {
             this.interactions = data;
             for (var i = 0; i < this.interactions.length; i++) {
-                if (this.interactions[i].interaction_status === 'Open') {
+                if (this.interactions[i].interaction_status === 'Resolved') {
                     this.closedInteractions = this.interactions[i].count;
                 }
-                if (this.interactions[i].interaction_status === 'Resolved') {
+                if (this.interactions[i].interaction_status === 'Open') {
                     this.openInteractions = this.interactions[i].count;
                 }
                 if (this.interactions[i].interaction_status === 'Total Interactions') {
