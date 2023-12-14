@@ -240,4 +240,11 @@ export class SettingsService {
   postmanualDelation(data:any):Observable<any>{
     return this.http.post<any>(`${this.API_URL}/manualDelation/`,data)
   }
+  editTeam(data:any):Observable<any>{
+    return this.http.post<any>(`${this.API_URL}/editTeam/`,data)
+  }
+  
+  editUser(data:any):Observable<any>{
+    return this.http.post<any>(`${this.API_URL}/editUser/`,data)
+  }
 }

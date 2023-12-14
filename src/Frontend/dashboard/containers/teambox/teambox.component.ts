@@ -320,6 +320,7 @@ countryCodes = [
 	Allmessages:any=[];
 	Messagedirection:any;
 	Interaction:any
+	items: any[] = [];
 
 	
 
@@ -430,8 +431,7 @@ resetMessageTex(){
 		}
 	}
 	
-
-
+	
 	handleKeyPress(event: KeyboardEvent) {
 		
 		// Check if the pressed key is "Enter"
@@ -840,7 +840,6 @@ sendattachfile(){
 		this.mediaType = files[0].type
 		const data = new FormData();
 		data.append('dataFile',imageFile ,imageFile.name);
-		data.append('mediaType', this.mediaType);
 		this.apiService.uploadfile(data).subscribe(uploadStatus =>{
 			let responseData:any = uploadStatus
 			if(responseData.filename){
@@ -1080,21 +1079,33 @@ sendattachfile(){
 
 
 	}
-	async updatePinnedStatus(item:any){
-		
+	async updatePinnedStatus(item: any) {
 		var bodyData = {
-			AgentId:this.AgentId,
-			isPinned:item.isPinned,
-			InteractionId:item.InteractionId
-		}
-		
-		this.apiService.updateInteractionPinned(bodyData).subscribe(async response =>{
-			item.isPinned=!item.isPinned;
-		})
+		  AgentId: this.AgentId,
+		  isPinned: item.isPinned,
+		  InteractionId: item.InteractionId
+		};
+	  
+		this.apiService.updateInteractionPinned(bodyData).subscribe(async response => {
+		  item.isPinned = !item.isPinned;
+		  this.sortItemsByPinnedStatus(); // After updating, sort the items
+		});
+	  }
 
-
-
-	}
+	  sortItemsByPinnedStatus() {
+  this.items.sort((a, b) => {
+    // Pinned items come first
+    if (a.isPinned && !b.isPinned) {
+      return -1;
+    }
+    // Unpinned items come next
+    if (!a.isPinned && b.isPinned) {
+      return 1;
+    }
+    // If both are pinned or both are unpinned, maintain their original order
+    return 0;
+  });
+}
 
 	async getFilteredInteraction(filterBy:any){
 		await this.apiService.getFilteredInteraction(filterBy,this.AgentId,this.AgentName,this.SPID).subscribe(async data =>{
@@ -2182,7 +2193,7 @@ sendMessage(){
 
 				
 				}
-				this.chatEditor.value ='';
+				this.chatEditor.value ='Type...';
 			}
 
 
