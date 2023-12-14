@@ -524,7 +524,7 @@
 <ng-template #contactadd let-c="close" let-d="dismiss">
 	<div class="modal-header px-4 pb-0 align-items-center">
 		<h4 class="modal-title" id="modal-basic-title">{{ addContactTitle === 'add' ? 'Add' : 'Edit' }} Contact</h4>
-		<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="d('Cross click')" (click)="productForm.reset()">X</button>
+		<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="d('Cross click')">X</button>
 	</div>
 	<div class="px-4 modal-body">
 		<form [formGroup]="productForm">
@@ -548,18 +548,20 @@
 					<label for="floatingSelectGrid">Phone Number*</label>
 					<div class="form-floating">
 						<div class="d-flex ss">
-						<select class="input-form" id="country_code" formControlName="country_code">
-							<option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes; let i = index">
+							
+						<select class="input-form" id="country_code" formControlName="country_code" [(ngModel)]="selectedCountryCode">
+							<option  *ngFor="let countryCode of countryCodes; let i = index" [ngValue]="countryCode">
 								{{ countryCode }}
 							</option>
 							</select>
-							<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" 
-								name="Phone_number" placeholder="Enter Phone Number" pattern="^[^+\-.,?*%$eE]+$"
+							<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" style="display: none" />
+							<input type="text" class="form-control" id="displayPhoneNumber" formControlName="displayPhoneNumber" 
+								name="displayPhoneNumber" placeholder="Enter Phone Number" pattern="^[^+\-.,?*%$eE]+$"
 								onKeyPress="return /^[0-9]$/.test(event.key)"
-								[ngClass]="{'is-invalid' :productForm.controls.Phone_number.touched && productForm.controls.Phone_number.errors }" 
+								[ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }" 
 							(change)="formatPhoneNumber()"> 
 						</div>
-						<div *ngIf="productForm.controls.Phone_number.touched && productForm.controls.Phone_number.errors" 
+						<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors" 
 						class="text-danger">
 						! Phone number must be between 6 to 15 digits.
 					  </div>
@@ -584,11 +586,14 @@
 			</div>
 			<div class="p-0 col-md">
 				<label for="floatingInputGrid">Contact Owner*</label>
-				<div class="form-floating">
-					<input class="form-control" type="text" placeholder="Select Contact Owner" name="ContactOwner"
-						formControlName="ContactOwner" id="ContactOwner" />
-				</div>
-			</div>
+					<input class="form-control" type="text" readonly placeholder="Select Contact Owner" name="ContactOwner"
+						formControlName="ContactOwner" id="ContactOwner" (click)="toggleContactOption()" />
+						<div *ngIf="ShowContactOwner" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
+							<p *ngFor="let uL of userList" (click)="selectContactOwner(uL.name)">
+							  <span>{{uL.name}}</span>
+							</p>
+					    </div>
+	                </div>
 
 				<label for="floatingSelectGrid">Tag</label>
 				<ng-multiselect-dropdown class="multiselect" name="tag" formControlName="tag" id="tag"

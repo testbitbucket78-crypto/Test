@@ -99,12 +99,15 @@ export class ContactSettingsComponent implements OnInit {
     this.tagId = 0;
     this.tagName='';
     this.tagColor='';
+    this.selectedtagListData = null;
+    $("#tagsModal").modal('show');
   }
 
   editTag(){
     this.tagId = 0;
     this.tagName='';
     this.tagColor='';
+    $("#tagsModal").modal('show');
   }
 
   closeTagsModal() {

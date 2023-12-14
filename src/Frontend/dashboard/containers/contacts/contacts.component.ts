@@ -78,8 +78,8 @@ columnDefs: ColDef[] = [
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
   {
-    field: 'age',
-    headerName: 'Age',
+    field: 'OptInStatus',
+    headerName: 'Message Opt-in',
     flex: 2,
     filter: true,
     resizable: true,
@@ -87,8 +87,8 @@ columnDefs: ColDef[] = [
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
   {
-    field: 'sex',
-    headerName: 'Gender',
+    field: 'ContactOwner',
+    headerName: 'Contact Owner',
     flex: 2,
     filter: true,
     resizable: true,
@@ -159,10 +159,12 @@ countryCodes = [
    inputEmail!: string;
    userid = 0; 
    profilePicture:any;
+   selectedCountryCode:any;
    contactsData!:{}
    contactsImageData= <contactsImageData> {};
-   contactId = 0;
-   OptedIn:boolean=false;
+   contactId:any = 0;
+   OptedIn=false;
+   ShowContactOwner:any = false;
    addContactTitle: 'add' | 'edit' = 'add';
 
   // multiselect 
@@ -173,6 +175,7 @@ countryCodes = [
     tag: any = [];
     tagListData:[] = [];
     status: any = [];
+    userList!:any;
     selectedItems: any = [];
     // selectedTagItems: any[] = []; 
     selectedStatusItems: any[] = []; 
@@ -204,12 +207,11 @@ countryCodes = [
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;  
+
+    this.productForm = this.contactForm();
  }
     ngOnInit() {
-
-      this.routerGuard();
       this.spid = Number(sessionStorage.getItem('SP_ID'));
-      this.getTagData();
       document.getElementById('delete-btn')!.style.display = 'none';
       this.showTopNav = true;
 
@@ -245,17 +247,20 @@ countryCodes = [
         allowSearchFilter: this.ShowFilter
     };
 
-    this.productForm = this.contactForm()
-
+    this.selectedCountryCode = this.countryCodes[101];
+    this.routerGuard();
 		this.getContact();
+    this.getUserList();
+    this.getTagData();
   
 } 
 
 contactForm() {
-  return new FormGroup({
+  return this.fb.group({
     Name: new FormControl('', Validators.required),
-    Phone_number: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
-    country_code:new FormControl('IN +91'),
+    Phone_number: new FormControl(''),
+    displayPhoneNumber: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
+    country_code:new FormControl(''),
     emailId: new FormControl('', [Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
     ContactOwner: new FormControl('',[Validators.required]),
     tag: new FormControl([])
@@ -350,8 +355,6 @@ onSelectAll(items: any) {
     this.modalService.open(contactedit);
   }
 
-
-  
   getContact() {
     var SP_ID = sessionStorage.getItem('SP_ID')
     console.log(SP_ID)
@@ -386,6 +389,9 @@ onSelectAll(items: any) {
 
    closesidenav(items: any){
     document.getElementById ("sidebar")!.style.width = "0";
+    this.contactId=0;
+    this.productForm.reset();
+    this.selectedCountryCode = this.countryCodes[101];
    }
 
   deleteRow(arr:any ["id"]) {
@@ -408,7 +414,17 @@ onSelectAll(items: any) {
   
   }
 
- 
+  toggleContactOption(){
+    this.ShowContactOwner =!this.ShowContactOwner;
+  }
+
+  selectContactOwner(value:any){
+    this.productForm.get('ContactOwner')?.setValue(value); 
+    this.ShowContactOwner=false;
+  }
+  stopPropagation(event: Event) {
+      event.stopPropagation();
+    }
 
   onRowSelected = (event: any) => {
        if (event === null || event === undefined) {
@@ -499,6 +515,10 @@ onSelectAll(items: any) {
                 ActuallName: "Phone_number"
             },
             {
+              displayName: this.productForm.controls.displayPhoneNumber.value,
+              ActuallName: "displayPhoneNumber"
+          },
+            {
                 displayName: this.productForm.controls.emailId.value,
                 ActuallName: "emailId"
             },
@@ -517,7 +537,7 @@ onSelectAll(items: any) {
         ],
     }
           let tagArray = this.productForm.controls.tag.value;
-          let tagString = tagArray.map((tag: any) => `${tag.item_text}`).join(', ');
+          let tagString = tagArray?.map((tag: any) => `${tag.item_text}`).join(', ');
 
           let tagField = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
           if (tagField) {
@@ -539,10 +559,10 @@ saveContact(addcontact:any,addcontacterror:any) {
     this.apiService.editContact(contactData, this.contactId, this.spid).subscribe(
       (response: any) => {
       if(response.status === 200) {
-        this.modalService.dismissAll();
-        this.closesidenav(this.items);
         this.productForm.reset();
         this.productForm.clearValidators();
+        this.modalService.dismissAll();
+        this.closesidenav(this.items);
         this.getContact();
       }
      },
@@ -556,11 +576,10 @@ saveContact(addcontact:any,addcontacterror:any) {
     this.apiService.addContact(contactData).subscribe(
       (response:any) => {
       if (response.status === 200) {
-        this.getContact();
         this.productForm.reset();
         this.productForm.clearValidators();
         this.modalService.open(addcontact);
-        console.log(this.productForm.value);
+        this.getContact();
       }
     },
 
@@ -646,7 +665,6 @@ deletContactByID(data: any) {
       this.contactId = data.customerId;
       console.log(this.contactId);
     this.profilePicture =  response.msg[0].contact_profile
-    // console.log(this.profilePicture);
     });
     
   }
@@ -665,9 +683,22 @@ deletContactByID(data: any) {
         });
 }
 
+    getUserList(){
+      this._settingsService.getUserList(this.spid)
+      .subscribe(result =>{
+        if(result){
+          this.userList =result?.getUser;      
+        }
+
+      })
+    }
+
   patchFormValue(){
     const data:any=this.contactsData
     console.log(data);
+    const displayPhoneNumber = data.displayPhoneNumber;
+    const country_code = data.countryCode;
+
 
     // set tags values in edit tag
     this.getFilterTags = data.tag?.split(',').map((tags: string) =>tags.trim());
@@ -687,6 +718,11 @@ deletContactByID(data: any) {
       if(this.productForm.get(prop))
       this.productForm.get(prop)?.setValue(value)
       this.productForm.get('tag')?.setValue(selectedTags); 
+      this.productForm.get('displayPhoneNumber')?.setValue(displayPhoneNumber);
+      this.selectedCountryCode = country_code;
+      if (this.productForm.value['OptedIn']) {
+        this.productForm.value['OptedIn'] = 'Yes';
+      }
     }  
   }
 
@@ -760,21 +796,19 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 }
 
 // Function to format the phone number using libphonenumber-js
-formatPhoneNumber() {
-  const phoneNumber = this.productForm.get('Phone_number')?.value;
-  const countryCode = this.productForm.get('country_code')?.value;
+  formatPhoneNumber() {
+    const phoneNumber = this.productForm.get('displayPhoneNumber')?.value;
+    const countryCode = this.productForm.get('country_code')?.value;
+    let formattedPhoneNumber = null;
 
-  if (phoneNumber && countryCode) {
-    const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
-    const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
-
-    if (formattedPhoneNumber) {
-      this.productForm.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
-      const phoneNumberValue = this.productForm.get('Phone_number')?.value;
-      console.log(phoneNumberValue);
-
+      if (phoneNumber && countryCode) {
+        const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
+        formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
+          this.productForm.patchValue({
+             // Set the actual value with country code
+            Phone_number: formattedPhoneNumber ? formattedPhoneNumber.formatInternational().replace(/[\s+]/g, '') : '',
+          });
     }
-  }
   }
 }
 

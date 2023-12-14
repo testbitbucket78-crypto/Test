@@ -19,7 +19,7 @@
                        name="Name" id="Search-Ag" />
                     <img src="assets/img/search.png">
                 </div>
-                <button class="new-token-btn" (click)="addTag()" data-bs-toggle="modal" data-bs-target="#tagsModal">
+                <button class="new-token-btn" (click)="addTag()">
                     <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
                     Add Tag</button>
             </div>
@@ -154,7 +154,7 @@
             </div>
         </div>
         <div class="sideBar-footer">
-            <button (click)="editTag()" type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#tagsModal">
+            <button (click)="editTag()" type="button" class="account-white-btn">
                 <img class="p-0" src="../../../../assets/img/edit.png"></button>
             <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
                 <img class="p-0" src="../../../../assets/img/delete.png">

@@ -9,7 +9,7 @@ import { agentMessageList } from 'Frontend/dashboard/models/smartReplies.model';
 import Stepper from 'bs-stepper';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
-import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { RichTextEditorComponent, HtmlEditorService,EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { isNullOrUndefined } from 'is-what';
 
 
@@ -19,7 +19,7 @@ declare var $: any;
 	selector: 'sb-addSmartReplies',
 	templateUrl: './addSmartReplies.component.html',
 	styleUrls: ['./addSmartReplies.component.scss'],
-	providers: [ToolbarService, LinkService, ImageService, HtmlEditorService],
+	providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService],
 	// encapsulation: ViewEncapsulation.None
 })
 export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
@@ -131,8 +131,6 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	slideIndex = 0;
 	PauseTime: any = '';
 	confirmMessage: any;
-	showEmoji = false;
-	EmojiType: any = 'smiley';
 	showEditTemplateMedia: any = false;
 	TemplatePreview: any = false;
 	messageMeidaFile: any = '';
@@ -149,130 +147,8 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	userList:any;
 	userId!:number;
 
-	public smileys: { [key: string]: Object }[] = [
-		{ content: '&#128512;', title: 'Grinning face' },
-		{ content: '&#128513;', title: 'Grinning face with smiling eyes' },
-		{ content: '&#128514;', title: 'Face with tears of joy' },
-		{ content: '&#128515;', title: 'Smiling face with open mouth' },
-		{ content: '&#128516;', title: 'Smiling face with open mouth and smiling eyes' },
-		{ content: '&#128517;', title: 'Smiling face with open mouth and cold sweat' },
-		{ content: '&#128518;', title: 'Smiling face with open mouth and tightly-closed eyes' },
-		{ content: '&#128519;', title: 'Smiling face with halo' },
-		{ content: '&#128520;', title: 'Smiling face with horns' },
-		{ content: '&#128521;', title: 'Winking face' },
-		{ content: '&#128522;', title: 'Smiling face with smiling eyes' },
-		{ content: '&#128523;', title: 'Face savouring delicious food' },
-		{ content: '&#128524;', title: 'Relieved face' },
-		{ content: '&#128525;', title: 'Smiling face with heart-shaped eyes' },
-		{ content: '&#128526;', title: 'Smiling face with sunglasses' },
-		{ content: '&#128527;', title: 'Smirking face"' },
-		{ content: '&#128528;', title: 'Neutral face' },
-		{ content: '&#128529;', title: 'Expressionless face' },
-		{ content: '&#128530;', title: 'Unamused face' },
-		{ content: '&#128531;', title: 'Face with cold sweat' },
-		{ content: '&#128532;', title: 'Pensive face' },
-		{ content: '&#128533;', title: 'Confused face' },
-		{ content: '&#128534;', title: 'Confounded face' },
-		{ content: '&#128535;', title: 'Kissing face' },
-		{ content: '&#128536;', title: 'Face throwing a kiss' },
-		{ content: '&#128538;', title: 'Kissing face with smiling eyes' },
-		{ content: '&#128539;', title: 'Face with stuck-out tongue' },
-		{ content: '&#128540;', title: 'Face with stuck-out tongue and winking eye' },
-		{ content: '&#128541;', title: 'Face with stuck-out tongue and tightly-closed eyes' },
-		{ content: '&#128542;', title: 'Disappointed face' },
-		{ content: '&#128543;', title: 'Worried face' },
-		{ content: '&#128544;', title: 'Angry face' },
-		{ content: '&#128545;', title: 'Pouting face' },
-		{ content: '&#128546;', title: 'Crying face' },
-		{ content: '&#128547;', title: 'Persevering face' },
-		{ content: '&#128548;', title: 'Face with look of triumph' },
-		{ content: '&#128549;', title: 'Disappointed but relieved face' },
-		{ content: '&#128550;', title: 'Frowning face with open mouth' },
-		{ content: '&#128551;', title: 'Anguished face' },
-		{ content: '&#128552;', title: 'Fearful face' },
-		{ content: '&#128553;', title: 'Weary face' },
-		{ content: '&#128554;', title: 'Sleepy face' },
-		{ content: '&#128555;', title: 'Tired face' },
-		{ content: '&#128556;', title: 'Grimacing face' },
-		{ content: '&#128557;', title: 'Loudly crying face' },
-		{ content: '&#128558;', title: 'Face with open mouth' },
-		{ content: '&#128559;', title: 'Hushed face' },
-		{ content: '&#128560;', title: 'Face with open mouth and cold sweat' },
-		{ content: '&#128561;', title: 'Face screaming in fear' },
-		{ content: '&#128562;', title: 'Astonished face' },
-		{ content: '&#128563;', title: 'Flushed face' },
-		{ content: '&#128564;', title: 'Sleeping face' },
-		{ content: '&#128565;', title: 'char_block' },
-
-	];
-	public animals: { [key: string]: Object }[] = [
-		{ title: 'Monkey Face', content: '&#128053;' },
-		{ title: 'Monkey', content: '&#128018;' },
-		{ title: 'Gorilla', content: '&#129421;' },
-		{ title: 'Dog Face', content: '&#128054;' },
-		{ title: 'Dog', content: '&#128021;' },
-		{ title: 'Poodle', content: '&#128041;' },
-		{ title: 'Wolf Face', content: '&#128058;' },
-		{ title: 'Fox Face', content: '&#129418;' },
-		{ title: 'Cat Face', content: '&#128049;' },
-		{ title: 'Cat', content: '&#128008;' },
-		{ title: 'Lion Face', content: '&#129409;' },
-		{ title: 'Tiger Face', content: '&#128047;' },
-		{ title: 'Tiger', content: '&#128005;' },
-		{ title: 'Leopard', content: '&#128006;' },
-		{ title: 'Horse Face', content: '&#128052;' },
-		{ title: 'Horse', content: '&#128014;' },
-		{ title: 'Unicorn Face', content: '&#129412;' },
-		{ title: 'Deer', content: '&#129420;' },
-		{ title: 'Cow Face', content: '&#128046;' },
-		{ title: 'Ox', content: '&#128002;' },
-		{ title: 'Water Buffalo', content: '&#128003;' },
-		{ title: 'Cow', content: '&#128004;' },
-		{ title: 'Pig Face', content: '&#128055;' },
-		{ title: 'Pig', content: '&#128022;' },
-		{ title: 'Boar', content: '&#128023;' },
-		{ title: 'Pig Nose', content: '&#128061;' },
-		{ title: 'Ram', content: '&#128015;' },
-		{ title: 'Ewe', content: '&#128017;' },
-		{ title: 'Goat', content: '&#128016;' },
-		{ title: 'Camel', content: '&#128042;' },
-		{ title: 'Two-Hump Camel', content: '&#128043;' },
-		{ title: 'Elephant', content: '&#128024;' },
-		{ title: 'Rhinoceros', content: '&#129423;' },
-		{ title: 'Mouse Face', content: '&#128045;' },
-		{ title: 'Mouse', content: '&#128001;' },
-		{ title: 'Rat', content: '&#128000;' },
-		{ title: 'Hamster Face', content: '&#128057;' },
-		{ title: 'Rabbit Face', content: '&#128048;' },
-		{ title: 'Rabbit', content: '&#128007;' },
-		{ title: 'Chipmunk', content: '&#128063;' },
-		{ title: 'Bat', content: '&#129415;' },
-		{ title: 'Bear Face', content: '&#128059;' },
-		{ title: 'Koala', content: '&#128040;' },
-		{ title: 'Panda Face', content: '&#128060;' },
-		{ title: 'Paw Prints', content: '&#128062;' },
-		{ title: 'Frog Face', content: '&#128056;' },
-		{ title: 'Crocodile', content: '&#128010;' },
-		{ title: 'Turtle', content: '&#128034;' },
-		{ title: 'Lizard', content: '&#129422;' },
-		{ title: 'Snake', content: '&#128013;' },
-		{ title: 'Dragon Face', content: '&#128050;' },
-		{ title: 'Dragon', content: '&#128009;' },
-		{ title: 'Sauropod', content: '&#129429;' },
-		{ title: 'T-Rex', content: '&#129430;' },
-	];
-
-
-
 	public tools: object = {
-		items: ['Bold', 'Italic', 'StrikeThrough',
-			{
-				tooltipText: 'Emoji',
-				undo: true,
-				click: this.toggleEmoji.bind(this),
-				template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
-			},
+		items: ['Bold', 'Italic', 'StrikeThrough','EmojiPicker',
 			{
 				tooltipText: 'Attachment',
 				undo: true,
@@ -369,7 +245,6 @@ click: any;
 		this.TemplatePreview = false
 		this.showQuickReply = false
 		this.showMention = false
-		this.showEmoji = false;
 		this.ShowAddAction = false;
 		$("#attachmentbox").modal('hide');
 		$("#showAttributes").modal('hide');
@@ -393,24 +268,6 @@ click: any;
 		}
 
 	}
-
-
-
-
-	
-	closeEmoji(){
-		this.showEmoji =false;
-	}
-
-	toggleEmoji() {
-		this.closeAllModal()
-		this.showEmoji = !this.showEmoji;
-		(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus
-		this.range = this.selection.getRange(document);
-		this.saveSelection = this.selection.save(this.range, document);
-				
-	}
-	
 
 	ToggleAttachmentBox() {
 		this.closeAllModal()
@@ -535,10 +392,6 @@ click: any;
 		});
 	}
 
-	showEmojiType(EmojiType: any) {
-		this.EmojiType = EmojiType;
-	}
-
 	searchTemplate(event:any){
 		let searchKey = event.target.value
 		if(searchKey.length>2){
@@ -606,64 +459,20 @@ click: any;
 	}
 
 
-	public onInsert(item: any) {
+	public async onInsert(item: any) {
+	
+		this.range = this.selection.getRange(document); 
+		this.saveSelection.restore();
 		const emojiText = item.target.textContent;
-	  
-		// Insert the emoji at the current cursor position
-		this.chatEditor.formatter.saveData();
-		this.chatEditor.executeCommand('insertText', emojiText);
-	  
-		// Move the cursor to the end of the editor content
-		// this.moveToEndOfEditor();
-	  
+	    
+		await this.chatEditor.executeCommand('insertHTML', emojiText);
+		this.saveSelection = this.selection.save(this.range, document); 
+		
 		// Save the changes
 		this.chatEditor.formatter.saveData();
 		this.chatEditor.formatter.enableUndo(this.chatEditor);
+		
 	  }
-	  
-	//   private moveToEndOfEditor() {
-	// 	const editor = this.chatEditor.contentModule.getDocument();
-	// 	const range = editor.createRange();
-	  
-	// 	// Set the range to the end of the editor content
-	// 	range.selectNodeContents(editor.body);
-	// 	range.collapse(false);
-	  
-	// 	// Update the selection with the new range
-	// 	const selection = editor.defaultView.getSelection();
-	// 	selection.removeAllRanges();
-	// 	selection.addRange(range);
-	//   }
-
-
-
-	//   public onInsert(): void {
-    //     const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
-    //     if (activeEle) {
-    //         if (this.rteObj.formatter.getUndoRedoStack().length === 0) {
-    //             this.rteObj.formatter.saveData();
-    //         }
-    //         if (Browser.isDevice && Browser.isIos) {
-    //             this.saveSelection.restore();
-    //         }
-    //         this.rteObj.executeCommand('insertText', activeEle.textContent);
-    //         this.rteObj.formatter.saveData();
-    //         (this.rteObj as any).formatter.enableUndo(this.rteObj);
-    //     }
-    //     this.dialogOverlay();
-    // }
-
-    // public dialogOverlay(): void {
-    //     const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
-    //     if (activeEle) {
-    //         activeEle.classList.remove('e-active');
-    //     }
-    //     this.dialogObj.hide();
-    // }
-
-	  
-	  
-	  
 
 	showToaster(message:any,type:any){
 		if(type=='success'){
@@ -1181,16 +990,6 @@ stopPropagation(event: Event) {
 
 
   }
-  @HostListener('document:click', ['$event'])
-  divCloseMethod(event: MouseEvent) {
-	let clickedInside = document.getElementById('showEmoji')
-
-	clickedInside = this.elementRef.nativeElement!.contains(event.target);
-		if(!clickedInside) {
-			this.showEmoji = false;
-		}
-  }
-
   getQuickResponse(){
 	this.settingsService.getTemplateData(this.SPID,0).subscribe(response => {
 	  this.QuickReplyList=response.templates;
