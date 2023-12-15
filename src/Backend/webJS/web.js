@@ -3,7 +3,7 @@ const { request } = require('http');
 const app = express();
 const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer')
-// const qrcode = require('qrcode-terminal');
+//const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -20,7 +20,7 @@ const fs = require('fs')
 const path = require("path");
 let clientSpidMapping = {};
 
-async function createClientInstance(spid, phoneNo) {
+async function createClientInstance(spid, phoneNo, res) {
   console.log(spid, phoneNo);
 
   if (isActiveSpidClient(spid)) {
@@ -33,34 +33,76 @@ async function createClientInstance(spid, phoneNo) {
   });
 
   const worker = `${authStr.dataPath}/session-${spid}/Default/Service Worker`;
-  fs.rmdir(worker, { recursive: true }, (err) => {
-    if (err) { console.log("recursive delete threw and error"); console.log(err); }
-    try {
-      console.log("inside try")
-      if (fs.existsSync(worker)) fs.unlinkSync(worker);
-      console.log("seems like it finished unlinking")
-    } catch (e) {
-      // handle error
-      console.log("inside catch")
-      return;
-    }
-  });
+  if (fs.existsSync(worker)) {
 
-  setTimeout(() => {
-    ClientInstance(spid, authStr, phoneNo)
-  }, 2000);
+    console.log("fs.existsSync(worker)",fs.existsSync(worker))
+    fs.rmdir(worker, { recursive: true }, async (err) => {
+      if (err) {
+        console.log("recursive delete threw and error");
+        console.log(err);
+        const response = await ClientInstance(spid, authStr, phoneNo);
+        res.send({
+          status: response.status,
+          QRcode: response.value
+        })
+      }
+
+      try {
+        console.log(fs.existsSync(worker))
+        console.log("inside try")
+        console.log(fs.existsSync(worker))
+        if (fs.existsSync(worker)) fs.unlinkSync(worker);
+        const response = await ClientInstance(spid, authStr, phoneNo);
+        res.send({
+          status: response.status,
+          QRcode: response.value
+        })
+        console.log("seems like it finished unlinking")
+      } catch (e) {
+        // handle error
+        console.log("inside catch")
+        const response = await ClientInstance(spid, authStr, phoneNo);
+        res.send({
+          status: response.status,
+          QRcode: response.value
+        })
+        return;
+      }
+    });
+  } else {
+    const response = await ClientInstance(spid, authStr, phoneNo);
+    res.send({
+      status: response.status,
+      QRcode: response.value
+    })
+  }
+
+  // return new Promise(async (resolve, reject) => {
+  //   setTimeout(async () => {
+  //     try {
+  //       const response = await ClientInstance(spid, authStr, phoneNo);
+  //       console.log("_______________________**********************")
+  //       return resolve(response);
+
+  //     } catch (error) {
+  //       console.error(error);
+  //       return reject(error)
+  //     }
+  //   }, 2000);
+  // })
 
 
 }
 
-function ClientInstance(spid, authStr, phoneNo) {
+
+async function ClientInstance(spid, authStr, phoneNo) {
   return new Promise(async (resolve, reject) => {
     try {
       const client = new Client({
         puppeteer: {
           headless: true,
-           executablePath: "/usr/bin/google-chrome-stable",
-         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          //executablePath: "/usr/bin/google-chrome-stable",
+          executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -160,9 +202,9 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on('message_ack', async (message, ack) => {
 
         try {
+          const phoneNumber = (message.to).replace(/@c\.us$/, "");
           if (ack == '1') {
             console.log(`Message has been sent`);
-            const phoneNumber = (message.to).replace(/@c\.us$/, "");
             const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
 WHERE interaction_id IN (
@@ -174,7 +216,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             //  let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
           } else if (ack == '2') {
             console.log(`Message has been delivered`);
-            const phoneNumber = (message.to).replace(/@c\.us$/, "");
+           
             const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -186,7 +228,6 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             //    db.excuteQuery(`UPDATE Message set msg_status=? where ExternalMessageId=?`, [ack, message.id.id])
           } else if (ack == '3') {
             console.log(`Message has been read`);
-            const phoneNumber = (message.to).replace(/@c\.us$/, "");
             const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
@@ -286,7 +327,7 @@ async function saveSendedMessageStatus(messageStatus, timestamp, to, id) {
 async function sendMessages(spid, endCust, type, text, link, interaction_id, msg_id) {
   try {
     let client = clientSpidMapping[[spid]];
-    console.log(spid, endCust, type, interaction_id, msg_id)
+    console.log(spid, endCust, type, text,link,interaction_id, msg_id)
     if (client) {
       console.log("if");
       let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
