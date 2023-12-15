@@ -215,9 +215,10 @@ export class SettingsService {
   }
 
   deleteCustomField(id: number): Observable<any> {
-    const url = `${this.API_URL}/deleteCustomField/${id}`;
-    return this.http.post<any>(url, null);
+    return this.http.post<any>(`${this.API_URL}/deleteCustomField/${id}`,null);
   }
+
+  // enable_disableMandatory()
   
 
   getManageStorageData(spid:any):Observable<any> {

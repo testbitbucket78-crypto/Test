@@ -16,6 +16,7 @@ export class ManageStorageComponent implements OnInit {
   editAutoDeletionForm!: FormGroup;
   spid!:number;
   storageUtilization!:number;
+  manageStorage:any=[];
   totalStorage:number = 4;
   percentage!:number;
   autodeletion_message:string ='';
@@ -73,10 +74,14 @@ export class ManageStorageComponent implements OnInit {
   getManageStorage() {
     this.apiService.getManageStorageData(this.spid).subscribe(response => {
      this.storageUtilization = response.storageUtilizationGB;
+     this.manageStorage = response.managestroage[0];
+     this.autodeletion_message=this.manageStorage.autodeletion_message;
+     this.autodeletion_media=this.manageStorage.autodeletion_media;
+     this.autodeletion_contacts = this.manageStorage.autodeletion_contacts;
+     console.log(this.manageStorage);
      this.calculatePercentage();
     });
   }
-
 
   toggleSelection(optionKey: string, radioKey: string) {
     const optionControl = this.editAutoDeletionForm.get(optionKey);
@@ -112,7 +117,7 @@ export class ManageStorageComponent implements OnInit {
       editAutoDeletion.spid = this.spid;
 
       if(formValues.optionradio1) {
-        editAutoDeletion.autodeletion_message = this.autodeletion_message;
+        editAutoDeletion.autodeletion_message = formValues.optionradio1;
       }
       else {
         editAutoDeletion.autodeletion_message = formValues.option1;
@@ -132,7 +137,11 @@ export class ManageStorageComponent implements OnInit {
  
     this.apiService.editAutoDeletion(editAutoDeletion)
     .subscribe(response => {
-      console.log(response);
+      if(response) {
+        $("#edit-auto-deletion").modal('hide');
+        this.getManageStorage();
+        // this.editAutoDeletionForm.reset();
+      }
     });
 
   }

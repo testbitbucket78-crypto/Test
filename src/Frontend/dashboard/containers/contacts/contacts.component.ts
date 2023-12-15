@@ -517,7 +517,7 @@ onSelectAll(items: any) {
             {
               displayName: this.productForm.controls.displayPhoneNumber.value,
               ActuallName: "displayPhoneNumber"
-          },
+           },
             {
                 displayName: this.productForm.controls.emailId.value,
                 ActuallName: "emailId"

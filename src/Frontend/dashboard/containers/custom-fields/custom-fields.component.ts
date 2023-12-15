@@ -19,7 +19,7 @@ export class CustomFieldsComponent implements OnInit {
   isActive: number = 1;
   defaultFields = '#6149CD';
   defaultFieldsChecked= '#EBEBEB'; 
-  pageSize: number = 50;
+  pageSize: number = 10;
   pageSizeOptions: number[] = [10, 15, 20, 25, 30, 35, 40, 45, 50];
   currentPage!: number;
   paging: number[] = [];
@@ -62,9 +62,11 @@ toggleActiveState(checked: boolean) {
  }
 
  toggleSideBar(data:any){
-  this.showSideBar =!this.showSideBar;
   this.selectedCustomField = data
-  console.log(this.selectedCustomField);
+  let id = data?.id
+    if(id!=0){
+      this.showSideBar =!this.showSideBar;
+    }
  }
 
 //  searchData(srchText:string) {
@@ -115,51 +117,42 @@ resetSelectedCustomField() {
 }
 
 getDefaulltFieldData() {
-const index = [13, 15, 9, 14, 5, 20];
-  for (const i of index) {
-    if (i >= 0 && i < this.customFieldData.length) {
-      this.defaultFieldsData.push(this.customFieldData[i]);
-    }
-  }
-  console.log(this.defaultFieldsData);
-  console.log('default field data')
+  const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+  const filteredFields:any = this.customFieldData.filter((field:any) => defaultFieldNames.includes(field.ActuallName));
+  this.defaultFieldsData = filteredFields;
 }
 
 
 getDynamicFieldData() {
-  const index = [13, 15, 9, 14, 5, 20];
-   for (let i = 0; i < this.customFieldData.length; i++) {
-    if (!index.includes(i)) {
-      this.dynamicFieldData.push(this.customFieldData[i]);
-    }
-  }
-     console.log(this.dynamicFieldData);
-  console.log('dynamic field data')
+  const defaultFieldNames =["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+  this.dynamicFieldData = this.customFieldData.filter((field:any) => !defaultFieldNames.includes(field.ActuallName));
 }
 
-
-
 saveNewCustomField() {
-  let addCustomFieldData = this.getCustomFieldFormData();
-  if(this.selectedCustomField==null) {
-    this.settingsService.saveNewCustomField(addCustomFieldData)
-    .subscribe(response=>{
-      if(response.status === 200) {
-        this.customFieldForm.reset();
-        $("#addCustomFieldModal").modal('hide');
-        this.getCustomFieldsData();
-      }
-    })
-  }
-  else {
-    this.settingsService.UpdateCustomField(addCustomFieldData)
-    .subscribe(response=>{
-      if(response.status === 200) {
-        this.customFieldForm.reset();
-        $("#addCustomFieldModal").modal('hide');
-        this.getCustomFieldsData();
-      }
-    })
+  if(this.customFieldForm.valid) {
+    let addCustomFieldData = this.getCustomFieldFormData();
+    if(this.selectedCustomField==null) {
+      this.settingsService.saveNewCustomField(addCustomFieldData)
+      .subscribe(response=>{
+        if(response.status === 200) {
+          this.customFieldForm.reset();
+          $("#addCustomFieldModal").modal('hide');
+          this.showSideBar = false;
+          this.getCustomFieldsData();
+        }
+      })
+    }
+    else {
+      this.settingsService.UpdateCustomField(addCustomFieldData)
+      .subscribe(response=>{
+        if(response.status === 200) {
+          this.customFieldForm.reset();
+          $("#addCustomFieldModal").modal('hide');
+          this.showSideBar = false;
+          this.getCustomFieldsData();
+        }
+      })
+    }
   }
 }
 
@@ -213,9 +206,8 @@ deleteCustomField() {
   .subscribe(result =>{
     if(result){
       $("#deleteModal").modal('hide');
+      this.showSideBar =false;
       this.getCustomFieldsData();
-      this.getDefaulltFieldData();
-      this.getDynamicFieldData();
     }
   });
 }
