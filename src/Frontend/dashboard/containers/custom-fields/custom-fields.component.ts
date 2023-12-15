@@ -15,6 +15,7 @@ declare var $:any;
 
 export class CustomFieldsComponent implements OnInit {
   spId:number = 0;
+  ID!:number;
   isActive: number = 1;
   defaultFields = '#6149CD';
   defaultFieldsChecked= '#EBEBEB'; 
@@ -28,10 +29,11 @@ export class CustomFieldsComponent implements OnInit {
   customFieldData:[] = [];
   defaultFieldsData = [];
   dynamicFieldData = [];
+  selectedCustomField:any = [];
 
 
   selectedType:string = 'Text';
-  types:string[] =['Text','Multi text','Multi number','Select','Switch','Date','User' ];
+  types:string[] =['Text','Multi text','Multi number','Select','Switch','Date Time','User' ];
 
 
   Drop(event: CdkDragDrop<string[]>) {
@@ -41,17 +43,12 @@ export class CustomFieldsComponent implements OnInit {
     ngOnInit(): void {
         this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.getCustomFieldsData();
-      
-        
     }
-  
-  
-
     constructor(private formBuilder:FormBuilder,private settingsService:SettingsService) {
       this.addCustomField = [];
 
       this.customFieldForm = this.formBuilder.group({
-        ColumnName: ['',Validators.required],
+        displayName: ['',Validators.required],
         description:[''],
         Type: ['Text',Validators.required],
       });
@@ -64,15 +61,18 @@ toggleActiveState(checked: boolean) {
 
  }
 
- toggleSideBar(){
-  this.showSideBar =!this.showSideBar;
-  console.log(this.dynamicFieldData);
+ toggleSideBar(data:any){
+  this.selectedCustomField = data
+  let id = data?.id
+    if(id!=0){
+      this.showSideBar =!this.showSideBar;
+    }
  }
 
 //  searchData(srchText:string) {
-//   const defaultFieldsDataInit = [...this.defaultFieldsData]
-//   const searchResult = defaultFieldsDataInit.filter(item => {
-//     return item?.ActuallName.toLowerCase().includes(srchText.toLowerCase());
+//   const defaultFieldsDataInit = [...this.dynamicFieldData]
+//   const searchResult = defaultFieldsDataInit.filter((item:any) => {
+//     return item?.ActuallName.toLowerCase().includes(srchText.toLowerCase())
 //   });
 //   console.log(searchResult);
 //  }
@@ -103,53 +103,65 @@ removeCustomFieldsOption(index:any){
 getCustomFieldsData() {
   this.settingsService.getNewCustomField(this.spId).subscribe(response => {
     this.customFieldData = response.getfields;
+    console.log(this.customFieldData);  
     this.getDefaulltFieldData();
     this.getDynamicFieldData();
     this.getPaging();
   })
 }
 
+resetSelectedCustomField() {
+  this.selectedCustomField = null;
+  this.customFieldForm.reset();
+  this.showSideBar = false;
+}
 
 getDefaulltFieldData() {
-const index = [3, 0, 6, 12, 17];
-  for (const i of index) {
-    if (i >= 0 && i < this.customFieldData.length) {
-      this.defaultFieldsData.push(this.customFieldData[i]);
-    }
-  }
+  const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+  const filteredFields:any = this.customFieldData.filter((field:any) => defaultFieldNames.includes(field.ActuallName));
+  this.defaultFieldsData = filteredFields;
 }
 
 
 getDynamicFieldData() {
-  const index = [3, 0, 6, 12, 17];
-   for (let i = 0; i < this.customFieldData.length; i++) {
-    if (!index.includes(i)) {
-      this.dynamicFieldData.push(this.customFieldData[i]);
-    }
-  }
+  const defaultFieldNames =["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+  this.dynamicFieldData = this.customFieldData.filter((field:any) => !defaultFieldNames.includes(field.ActuallName));
 }
 
-
-
 saveNewCustomField() {
-  let addCustomFieldData = this.getCustomFieldFormData();
   if(this.customFieldForm.valid) {
-    this.settingsService.saveNewCustomField(addCustomFieldData)
-    .subscribe(response=>{
-      if(response.status === 200) {
-        this.customFieldForm.reset();
-        $("#addCustomFieldModal").modal('hide');
-        this.getCustomFieldsData();
-      }
-    })
+    let addCustomFieldData = this.getCustomFieldFormData();
+    if(this.selectedCustomField==null) {
+      this.settingsService.saveNewCustomField(addCustomFieldData)
+      .subscribe(response=>{
+        if(response.status === 200) {
+          this.customFieldForm.reset();
+          $("#addCustomFieldModal").modal('hide');
+          this.showSideBar = false;
+          this.getCustomFieldsData();
+        }
+      })
+    }
+    else {
+      this.settingsService.UpdateCustomField(addCustomFieldData)
+      .subscribe(response=>{
+        if(response.status === 200) {
+          this.customFieldForm.reset();
+          $("#addCustomFieldModal").modal('hide');
+          this.showSideBar = false;
+          this.getCustomFieldsData();
+        }
+      })
+    }
   }
 }
 
 getCustomFieldFormData() {
   
 let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
+    CustomFieldData.id = this.ID;
     CustomFieldData.SP_ID = this.spId;
-    CustomFieldData.ColumnName = this.customFieldForm.controls.ColumnName.value;
+    CustomFieldData.ColumnName = this.customFieldForm.controls.displayName.value;
     CustomFieldData.Type = this.customFieldForm.controls.Type.value;
     CustomFieldData.description = this.customFieldForm.controls.description.value;
 
@@ -157,13 +169,23 @@ let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
 }
 
 
-patchFormDataValue(){
-  const data = this.dynamicFieldData;
+
+patchFormDataValue() {
+  const data = this.selectedCustomField;
+  console.log(data);
+  let id = data.id;
   for(let prop in data){
     let value = data[prop as keyof typeof data];
     if(this.customFieldForm.get(prop))
-    this.customFieldForm.get(prop)?.setValue(value)
+    this.customFieldForm.get(prop)?.setValue(value);
+    this.ID=id;
+    console.log(this.ID);
   }  
+}
+
+addCustomFields() {
+  this.selectedCustomField = null;
+  $("#addCustomFieldModal").modal('show');
 }
 
 editCustomField() { 
@@ -175,28 +197,19 @@ toggleDeletePopup() {
   $("#deleteModal").modal('show');
 }
 
+deleteCustomField() {
 
-// deleteCustomField() {
-
-//   const ID = {
-//     ID: this.dynamicFieldData
-//   }
-
-//   this.settingsService.deleteCustomField()
+  let id = this.selectedCustomField?.id;
+  console.log(id);
+  this.settingsService.deleteCustomField(id)
   
-//   .subscribe(result =>{
-//     if(result){
-//       $("#deleteModal").modal('hide');
-//       this.getCustomFieldsData();
-   
-      
-//     }
-//   });
-// }
-
-
-
-
-
+  .subscribe(result =>{
+    if(result){
+      $("#deleteModal").modal('hide');
+      this.showSideBar =false;
+      this.getCustomFieldsData();
+    }
+  });
+}
 
 }

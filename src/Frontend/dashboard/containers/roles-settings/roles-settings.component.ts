@@ -15,7 +15,7 @@ export class RolesSettingsComponent implements OnInit {
 
   columnDefs:ColDef [] = [{field: 'roleID', headerName: 'ID', width: 80, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }},
     {field: 'RoleName', headerName: 'Roles', filter: true, width: 250, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }},
-    { field: 'Phone_number', headerName: 'Rights', width: 120, filter: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }, sortable: true, },
+    { field: 'optRights', headerName: 'Rights', width: 120, filter: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 }, sortable: true, },
     { field: 'users_count', headerName: 'No. of Users', width: 130, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } },
     { field: 'created_at', headerName: 'Last Modified', width: 200, filter: true, sortable: true, cellStyle: { background: "#FBFAFF", opacity: 0.86 } }];
 public gridapi!:GridApi;
@@ -29,6 +29,7 @@ selectedRoleId!:number;
 rolesList:any;
 rolesListinit:any;
 roleData:any;
+Rights!:number;
 
 
   constructor(private _settingsService:SettingsService) {
@@ -85,6 +86,8 @@ getRightsList(){
   .subscribe(result =>{
     if(result){
       this.rights = result?.Rights;
+      this.Rights=this.rights?.length
+      console.log(this.Rights);
       this.setRightsAccSubRights();
       
     }

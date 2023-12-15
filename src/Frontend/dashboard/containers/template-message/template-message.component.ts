@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl,FormGroup,Validators } from '@angular/forms';
 import { newTemplateFormData, quickReplyButtons, templateMessageData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { TeamboxService } from 'Frontend/dashboard/services';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 declare var $:any;
 @Component({
@@ -101,7 +102,7 @@ export class TemplateMessageComponent implements OnInit {
 
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
 
-  constructor(private apiService:SettingsService) { }
+  constructor(private apiService:SettingsService,private _teamboxService:TeamboxService) { }
 
   errorMessage='';
 	successMessage='';
@@ -219,19 +220,19 @@ export class TemplateMessageComponent implements OnInit {
         if(fileType.startsWith("image")) {
           this.selectedPreview = e.target.result as string;
         }
-        if(fileType.startsWith("video")) {
-          this.selectedPreview = e.target.result as string;
-          this.videoPlayer.nativeElement.src = this.selectedPreview;
-        }
+        // if(fileType.startsWith("video")) {
+        //   this.selectedPreview = e.target.result as string;
+        //   this.videoPlayer.nativeElement.src = this.selectedPreview;
+        // }
 
-        if(fileType === 'application/pdf' || fileType === 'application/msword' 
-        || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-          this.selectedPreview = e.target.result as string;
-        }
+      //   if(fileType === 'application/pdf' || fileType === 'application/msword' 
+      //   || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      //     this.selectedPreview = e.target.result as string;
+      //   }
      
-       else {
-        console.warn("Unknown file type: " + fileType);
-       }
+      //  else {
+      //   console.warn("Unknown file type: " + fileType);
+      //  }
        
        
         console.log(this.selectedPreview);
@@ -240,6 +241,34 @@ export class TemplateMessageComponent implements OnInit {
       reader.readAsDataURL(file);
     }
   }
+
+  saveVideoAndDocument(files: FileList) {
+		if(files[0]){
+		let File = files[0]
+		this.selectedType = files[0].type
+		const data = new FormData();
+		data.append('dataFile',File ,File.name);
+		data.append('mediaType', this.selectedType);
+		this._teamboxService.uploadfile(data).subscribe(uploadStatus =>{
+			let responseData:any = uploadStatus
+			if(responseData.filename){
+				this.selectedPreview= responseData.filename
+			}
+		})
+	  }
+	}
+
+  onFileChange(event: any) {
+		let files: FileList = event.target.files;
+  
+      this.selectedPreview = event.target.files as string;
+      this.videoPlayer.nativeElement.src = this.selectedPreview;
+    
+		this.saveVideoAndDocument(files);
+		
+	}
+
+
 
 
 // remove form preview value 
@@ -316,16 +345,6 @@ removeValue() {
           }
       });
       }
-      // if(this.newTemplateForm.valid && this.selectedType =='video') {
-      //     this.apiService.saveTemplateWithVideo(newTemplateFormData,this.selectedPreview).subscribe(response => {
-      //       if(response) {
-      //         this.newTemplateForm.reset();
-      //         $("#newTemplateMessage").modal('hide');
-      //         $("#confirmationModal").modal('hide');
-      //         this.getTemplatesData();
-      //       }
-      //     });
-      // }
       else {
         alert('!Please fill the required details in the form First');
       }
@@ -362,7 +381,7 @@ removeValue() {
       newTemplateForm.Channel = this.newTemplateForm.controls.Channel.value;
       newTemplateForm.Category = this.newTemplateForm.controls.Category.value;
       newTemplateForm.Language = this.newTemplateForm.controls.Language.value;
-      newTemplateForm.status = 'Draft';
+      newTemplateForm.status = 'Completed';
       newTemplateForm.template_id = 0;
       newTemplateForm.template_json =[];
       // newTemplateForm.template_json.push({

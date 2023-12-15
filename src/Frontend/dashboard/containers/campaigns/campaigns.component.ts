@@ -275,6 +275,8 @@ export class CampaignsComponent implements OnInit {
 	];
 	
 	selectedcontactFilterBy:any='';
+	modalRef: any;
+	selectedId: any;
 	
 	 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: TeamboxService,private settingsService:SettingsService,private fb: FormBuilder,private router: Router) {
@@ -592,7 +594,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				if(item.category_id==3){
 					item['category_label'] ='Authentication'
 				}else{
-					item['category_label'] =item.category
+					item['category_label'] =item.Category
 				}
 				if(item.segments_contacts){
 					item['AllContactsLength'] = item.segments_contacts ? (() => {
@@ -1185,6 +1187,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			button_no:this.selectedTemplate.button_no,
 			button_exp:this.selectedTemplate.button_exp,
 			category:this.selectedTemplate.Category,
+			category_id:this.newCampaignDetail.value.category_id,
 			time_zone:this.selecteTimeZone,
 			start_datetime:sratdatetime,
 			end_datetime:'',
@@ -1234,6 +1237,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					button_exp:this.selectedTemplate.button_exp,
 					message_media:this.selectedTemplate.Links,
 					CampaignId:CampaignId,
+					category_id:this.newCampaignDetail.value.category_id,
 					channel_id:this.newCampaignDetail.value.channel_id,
 					channel_label:this.newCampaignDetail.value.channel_label,
 					schedule_datetime:BodyData.start_datetime,
@@ -1752,21 +1756,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		let files: FileList = event.target.files;
 		this.saveFiles(files);
 	}
-	// onFileChange(event: any) {
-    //     this.selecetdCSV = '';
-    //     let file: File|any = event.target.files[0];
-    //     let currentfileformat = file.name.split('.').pop().toLowerCase();
-    //     console.log(currentfileformat)
-    //     if (!this.isCorrectFileFormat(currentfileformat)) {
-    //         this.showToaster('Incorrect file format. Only CSV files are allowed.', 'error');
-    //         return;
-    //     }
-    //     this.saveFiles(file);
-    // }
-    // isCorrectFileFormat(currentfileformat: any): boolean {
-    //     const allowedFileFormats = ['csv']; // allowed only csv
-    //     return allowedFileFormats.includes(currentfileformat);
-    // }
+
 
 	updateCSVDuplicate(option:any){
 		this.CSVDuplicate =option
@@ -1793,7 +1783,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			var FileExt:any = fileName.substring(fileName.lastIndexOf('.') + 1);
 			
         
-		if(FileExt =="csv" || FileExt=="xls" || FileExt=="xlsx") {
+		if(FileExt =="csv") {
 				let file =files[0];
 				let reader: FileReader = new FileReader();
 				reader.readAsText(file);
@@ -1836,8 +1826,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	    } else {
 			this.showToaster('Please Upload csv file only...','error')
 		}
-	
-
 		}
 	  }
 
@@ -1866,25 +1854,25 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	}
 
 	deleteContactList() {
-		let Id = {
-			id: 5
+		let id = {
+			id: this.selectedId
 		}
-		this.apiService.deleteContactList(Id).subscribe(
+		this.apiService.deleteContactList(id).subscribe(
 		 result =>{
-			if(result){
 			console.log(result)
-			}
 		  });
 		  this.getContactList('');
 	}
 
-	selectContactList(event:any,listItem:any){
-		if(event.target.checked){
-			listItem['selected']=true
-		}else{
-			listItem['selected']=true
+	selectContactList(event: any, listItem: any) {
+		if (event.target.checked) {
+			listItem['selected'] = true;
+			this.selectedId = listItem.Id;
+		} else {
+			listItem['selected'] = false;
 		}
 	}
+
 	async updatedContactList(list:any,itemIndex:any){
 		let filterlist =list.addedfilters
 		filterlist.splice(itemIndex, 1);
@@ -2015,7 +2003,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		var allList = this.allTemplatesMain
 		let FilteredArray = [];
 		for(var i=0;i<allList.length;i++){
-			var content = allList[i].title.toLowerCase()
+			var content = allList[i].TemplateName.toLowerCase()
 				if(content.indexOf(searchKey.toLowerCase()) !== -1){
 					FilteredArray.push(allList[i])
 				}
@@ -2032,14 +2020,14 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		if(temType.target.checked){
 		var type= temType.target.value;
 		for(var i=0;i<allList.length;i++){
-				if(allList[i]['type'] == type){
+				if(allList[i]['Category'] == type){
 					allList[i]['is_active']=1
 				}
 		}
 	   }else{
 		var type= temType.target.value;
 		for(var i=0;i<allList.length;i++){
-				if(allList[i]['type'] == type){
+				if(allList[i]['Category'] == type){
 					allList[i]['is_active']=0
 				}
 		}
@@ -2131,6 +2119,12 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 
 	  removeSegmentedAudienceList() {
 		this.newListName=false;
+		this.checkboxChecked = false;
+		for (const listItem of this.allContactList) {
+            listItem['selected'] = false;
+			this.modalRef.dismiss();
+
+        }
 	  }
 
 
@@ -2140,7 +2134,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.showInfo = true;
 		}
 	}
-
+    
 		//*********Download Sample file****************/
 
 		download() {

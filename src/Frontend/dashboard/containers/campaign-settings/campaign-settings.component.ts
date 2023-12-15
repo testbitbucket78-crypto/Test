@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { campaignAlertUser, campaignDataResponsePost, campaignFormData, workingData, workingDataResponsePost, workingFormData } from '../../models/settings.model';
+import { campaignAlertUser,RolesData, campaignDataResponsePost, campaignFormData, workingData, workingDataResponsePost, workingFormData } from '../../models/settings.model';
 import { isNullOrUndefined } from 'is-what';
 import { SettingsService } from '../../services/settings.service';
-
+import { FormControl, FormGroup } from '@angular/forms';
 @Component({
   selector: 'sb-campaign-settings',
   templateUrl: './campaign-settings.component.html',
@@ -29,6 +29,14 @@ alertUsers:any[] =[];
 workingFormData:campaignFormData[]=[];
 isSelected:any;
 keywords: string[] = [];
+roleName!:string;
+roleData:any;
+totalRights:any[]= [];
+rolesList:any;
+userDetailForm!:FormGroup;
+
+
+
 
 campaignAlertData:any;
 campaignTestData:any;
@@ -181,6 +189,49 @@ campaignTestData:any;
     //   if(item.RoleName.includes(srchText))
     //   this.rolesList.push(item);
     // })
+  }
+
+  rowClicked = (event: any) => {
+    console.log(event);
+    this.roleData = event.data;
+    this.roleName = this.roleData?.RoleName;
+  };  
+
+  copyRolesData(){
+    let rolesData:RolesData =<RolesData>{};
+    rolesData.SP_ID = this.sp_Id;
+    rolesData.RoleName = this.roleName;
+    rolesData.Privileges ='';
+    let subRoles:any[]=[]
+    this.totalRights.forEach(item=>{
+      item.subRights.forEach((subitem:any)=>{
+        if(subitem?.isSelected == true){
+          subRoles.push(subitem?.id);
+        }                                                                       
+      })
+    });
+    rolesData.subPrivileges = subRoles.toString();
+    return rolesData;
+  
+  }
+  getSelectedRoles(): any[] {
+    // Assuming userDetailForm.controls.UserType.value contains the selected role ID
+    const selectedRoleID = this.userDetailForm.controls.UserType.value;
+  
+    // Filter rolesList to get the selected role
+    const selectedRoles = this.rolesList.filter((item:any) => item.roleID === selectedRoleID);
+  
+    return selectedRoles;
+  }
+  getRolesList(){
+    this._settingsService.getRolesList(this.sp_Id)
+    .subscribe(result =>{
+      if(result){
+       this.rolesList = result?.getRoles;
+        
+      }
+  
+    })
   }
   
 }

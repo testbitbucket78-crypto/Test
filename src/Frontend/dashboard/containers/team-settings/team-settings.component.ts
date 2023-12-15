@@ -26,7 +26,8 @@ teamList:any;
 teamListInit:any;
 teamData:any;
 profilePicture!:string;
-
+  Id!: number;
+  users_count!:number;
 
   constructor(private _settingsService:SettingsService) {
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
@@ -77,12 +78,13 @@ getTeamList(){
   })
 }
 
-
 getUserList(){
   this._settingsService.getUserList(this.sp_Id)
   .subscribe((result:any) =>{
     if(result){
-      this.userList =result?.getUser;     
+      this.userList =result?.getUser; 
+      this.users_count= this.selectedUser?.length;
+      console.log(this.users_count);
       this.setUserList(); 
     }
 
@@ -106,17 +108,30 @@ selectUsers(){
 
 
 
-saveTeamDetails(){
+saveTeamDetails() {
   let teamData = this.copyTeamsData();
-  this._settingsService.saveTeamData(teamData)
-  .subscribe(result =>{
-    if(result){
-      this.getTeamList();      
-      $("#teamsModal").modal('hide');
-      
-    }
-  })
+
+  if (teamData.id === 0) {
+    
+    this._settingsService.saveTeamData(teamData)
+      .subscribe(result => {
+        if (result) {
+          this.getTeamList();
+          $("#teamsModal").modal('hide');
+        }
+      });
+  } else {
+   
+    this._settingsService.editTeam(teamData)
+      .subscribe(result => {
+        if (result) {
+          this.getTeamList();
+          $("#teamsModal").modal('hide');
+        }
+      });
+  }
 }
+
 
 deleteTeam(){
   let teamId = <any>{};
@@ -131,18 +146,21 @@ deleteTeam(){
     }
   })
 }
-
-copyTeamsData(){
-  let teamData:TeamData =<TeamData>{};
+copyTeamsData() {
+  let teamData: TeamData = <TeamData>{};
   teamData.SP_ID = this.sp_Id;
   teamData.team_name = this.teamName;
   teamData.userIDs = [];
-  this.selectedUser.forEach((item:any)=>{
-    if(item.isSelected == true)
-    teamData.userIDs.push(item.uid);
-  })
-  return teamData;
 
+  // Populate userIDs based on your logic
+  this.selectedUser.forEach((item: any) => {
+    if (item.isSelected == true)
+      teamData.userIDs.push(item.uid);
+  });
+
+  teamData.id = this.teamData?.id; // Set the team ID
+
+  return teamData;
 }
 
 

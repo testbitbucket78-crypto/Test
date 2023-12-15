@@ -124,6 +124,7 @@ export interface TeamData {
     team_name: string;
     userIDs: number[];
     SP_ID: number;
+    id:number;
 }
 
 export interface userTeamDropDown {
@@ -325,10 +326,18 @@ export interface customFieldFormData {
 }
 
 export interface addCustomFieldsData {
+    id:number;
     SP_ID:number;
     ColumnName:string;
     Type:string;
     description:string;
+}
+
+export interface editAutoDeletionData {
+    spid:number;
+    autodeletion_message:string;
+    autodeletion_media:string;
+    autodeletion_contacts:string;
 }
 
 

@@ -210,8 +210,23 @@ export class SettingsService {
     return this.http.post<any>(`${this.API_URL}/addCustomField`,addCustomFieldData);
   }
 
-  deleteCustomField(Id:number): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/deleteCustomField`,Id);
+  UpdateCustomField(addCustomFieldData: addCustomFieldsData): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/editCustomField`,addCustomFieldData);
+  }
+
+  deleteCustomField(id: number): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/deleteCustomField/${id}`,null);
+  }
+
+  // enable_disableMandatory()
+  
+
+  getManageStorageData(spid:any):Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getautodeletion/${spid}`);
+  }
+
+  editAutoDeletion(data:any):Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/savemanagestorage/`,data);
   }
 
   craeteQRcode(spid:any): Observable<any> {
@@ -225,4 +240,18 @@ export class SettingsService {
    getSPPhoneNumber(uid:any):Observable<any> {
     return this.http.get<any>(`https://authapi.sampanatechnologies.com/users/${uid}`);
    }
+
+   getmanualDelation(data:any):Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/getmanualDelation/`,data);
+  }
+  postmanualDelation(data:any):Observable<any>{
+    return this.http.post<any>(`${this.API_URL}/manualDelation/`,data)
+  }
+  editTeam(data:any):Observable<any>{
+    return this.http.post<any>(`${this.API_URL}/editTeam/`,data)
+  }
+  
+  editUser(data:any):Observable<any>{
+    return this.http.post<any>(`${this.API_URL}/editUser/`,data)
+  }
 }

@@ -45,12 +45,13 @@
                     <div class="pt-2">
                         <label>User Phone No.</label> <br>
                         <input type="text" class="input-form" formControlName="mobile_number"
-                            placeholder="Enter Phone Number">
+                            placeholder="Enter Phone Number" minlength="6" maxlength="15">
                     </div>
+                    
                     <div class="pt-2">
                         <label>Role</label> <br>
                         <select class="input-form" formControlName="UserType">
-                            <option *ngFor="let item of rolesList" [value]="item.roleID">{{item?.RoleName}}</option>
+                            <option *ngFor="let item of rolesList" [value]="item.roleID" >{{item?.RoleName}}</option>
                         </select>
                     </div>
                 </form>
@@ -109,7 +110,7 @@
         <div class="flex-row  pt-4">
             <div class="w-50">
                 <span class="sub-heading">Roles Assigned</span><br>
-                <p class="black">{{getRoleNameById(userData?.UserType)}}</p>
+                <p class="black"*ngFor="let item of getSelectedRoles()">{{ item?.RoleName }}</p>
             </div>
             <div class="w-45">
                 <span class="sub-heading">Team Associated</span><br>

@@ -2208,3 +2208,10 @@ input[type="radio"]:checked + label::before {
     border: 3px solid #C0BDCC;
 
 }
+
+.e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
+    top: -510% !important;
+    left: 100%!important;
+    height: 243px;
+    overflow: scroll;
+  }

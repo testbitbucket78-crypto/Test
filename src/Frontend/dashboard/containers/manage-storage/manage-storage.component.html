@@ -1,3 +1,8 @@
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+  </div>
 <div class="d-flex">
     <div class="setting-card storage-card">
         <div class="default-actions-heading">Manage Storage</div>
@@ -31,18 +36,18 @@
         </div>
         <div class="text-align-center"> 
             <span class="default-actions-heading">Storage Utilization</span>
-            <p>1.5 GB Used of 4 GB</p>
+            <p>{{storageUtilization}} GB Used of {{totalStorage}} GB</p>
         </div>
         <div class="d-flex justify-content-around">
             <button type="button" class="account-btn" >Update Plan</button>
-            <button type="button" class="del-btn" >Delete Manually</button>
+            <button type="button" class="del-btn"  data-bs-toggle="modal" data-bs-target="#Delete-Manually"  >Delete Manually</button>
         </div>
     </div>
     
     <div class="setting-card deletion-card ml-3">
         <div class="flex-row">
         <div class="default-actions-heading">Auto-Deletion</div>
-        <button class="account-white-btn mx-1" data-bs-toggle="modal" data-bs-target="#localeDetailModal">
+        <button class="account-white-btn mx-1" data-bs-toggle="modal" data-bs-target="#edit-auto-deletion">
             <img class="p-0" src="../../../../assets/img/edit.png">
         </button>
     </div>
@@ -51,7 +56,7 @@
         <img src="../../../../assets/img/settings/img-7.png">
         <div class="pl-2">
             <span class="sub-heading">Auto-Delete all messaged older than</span>
-            <div class="deletion-time">60 Days</div>
+            <div class="deletion-time">{{autodeletion_message}} Days</div>
         </div>
     </div>
 
@@ -59,7 +64,7 @@
         <img src="../../../../assets/img/settings/img-7.png">
         <div class="pl-2">
             <span class="sub-heading">Auto-Delete all Media older than</span>
-            <div class="deletion-time">125 Days</div>
+            <div class="deletion-time">{{autodeletion_media}} Days</div>
         </div>
     </div>
 
@@ -67,8 +72,149 @@
         <img src="../../../../assets/img/settings/img-7.png">
         <div class="pl-2">
             <span class="sub-heading">Auto-Delete all Contacts older than</span>
-            <div class="deletion-time">Don’t Delete</div>
+            <div class="deletion-time">{{autodeletion_contacts}} Days</div>
         </div>
     </div>
+    </div>
+    <div class="modal fade" tabindex="-1" id="edit-auto-deletion" role="dialog">
+        <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+            <div class="m-0 modal-content edit-auto-deletion">
+                <div class="align-items-center modal-header">
+                    <h5 class="modal-title">Edit Auto-Deletion</h5>
+                    <button type="button" class="close-box" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <form [formGroup]="editAutoDeletionForm">
+                    <div class="px-5 pt-4 modal-body edit-auto-deletion">
+                      <div class="py-3 option-1">
+                        <p>Auto-Delete all messages older than</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <label for="option1">
+                            <input id="option1" class="option-input" type="text" name="option1" formControlName="option1"> Days
+                          </label>
+                  
+                          <div class="optionradio">
+                            <input id="optionradio1" type="radio" name="optionradio1" formControlName="optionradio1">
+                            <label class="optionradio1" for="optionradio1" value="1">Never Delete</label>
+                          </div>
+                        </div>
+                      </div>
+                  
+                      <div class="py-3 option-2">
+                        <p>Auto-Delete all Media older than</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <label for="option2">
+                            <input id="option2" class="option-input" type="text" name="option2" formControlName="option2"> Days
+                          </label>
+                  
+                          <div class="optionradio">
+                            <input id="optionradio2" type="radio" name="optionradio2" formControlName="optionradio2">
+                            <label class="optionradio2" for="optionradio2">Never Delete</label>
+                          </div>
+                        </div>
+                      </div>
+                  
+                      <div class="py-3 option-3">
+                        <p>Auto-Delete all Contacts older than</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <label for="option3">
+                            <input id="option3" class="option-input" type="text" name="option3" formControlName="option3"> Days
+                          </label>
+                          <div class="optionradio">
+                            <input id="optionradio3" type="radio" name="optionradio3" formControlName="optionradio3">
+                            <label class="optionradio3" for="optionradio3">Never Delete</label>
+                          </div>
+                         
+                        </div>
+                      </div>
+                    </div>
+                  
+                    <div class="modal-footer">
+                      <button type="button" class="account-btn" (click)="editAutoDeletion()">Save</button>
+                    </div>
+                  </form>
+                  
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="Delete-Manually"role="dialog">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content deletemodal p-2 pl-3">
+            <div class="pb-4 modal-header">
+                <h5 class="modal-title manually">Delete Manually</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <div class="row d-flex">
+          <div class=" col-7 pl-4 modal-body Allmesaages">
+            <div>
+            <div class="messages">
+            <div class="delte-messages">
+                <p class="head-messages" >Messages older than how many<br> days you want to delete?</p>
+            </div>
+            <div class="d-flex input-days">
+                <input class="message-input" type="text" [(ngModel)]=" manually_deletion_days" >
+                <p>Days</p>
+            </div>
+        </div>
+        <div class="messages">
+            <div class="delte-messages">
+                <p class="head-messages" >Which type of messages you<br> want to delete?</p>
+            </div>
+            <div clas="input-days">
+                <div class="check-input">
+                <label for="text" class="d-flex" >
+                <input class="text-media" type="checkbox" [(ngModel)]="textChecked" (change)="updateMessageType()" value="Text" ><p class="text-checkbox">Text</p>
+            </label>
+            <label for="text" class="d-flex" >
+                <input class="text-media" type="checkbox" [(ngModel)]="mediaChecked" (change)="updateMessageType()" value="media"><p class="text-checkbox">Media</p>
+            </label>
+        </div>
+            </div>
+        </div>
+    </div>
+        <div class="modal-footer show">
+            <button type="button" class="show-btn" (click)="getmanualDelation()">Show</button>
+        </div>
+          </div>
+          <div class="col-4 show-message"  *ngIf="showMessages" >
+            <div class="displaymessage">{{ messageData?.message_size }}</div>
+           
+            <div class="show-messages">
+                <p class="ml-3">No of Messages</p>
+            </div>
+            <div  class="displaymessage">{{ messageData?.message_count}}</div>
+            <div  class="show-messages">
+               <p class="ml-3"> Size of Message</p>
+            </div>
+        </div>
+    </div>
+            <div class="modal-footer">
+                <button type="button" class="account-button" (click)="deletemodal()">Proceed</button>
+            </div>
+           
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" id="messagedeleteModal" data-bs-backdrop="static" role="dialog">
+    <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+        <div class="m-0 modal-content delete-modal">
+            <div class="modal-body alertmessage">
+             <p>You are about to delete <b>{{ messageData?.message_count}} messages</b>,which will free up<br /> <b>{{ messageData?.message_size }} GB</b> of data for you</p>
+                <p class="label pb-2"><b>Please</b> confirm to <b>delete</b></p>
+                <div class="delete_group_button d-flex justify-content-center">
+                    <button type="button" class="cancel-btn" aria-label="Close"
+                        data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="delete-btn" aria-label="Close" (click)="postmanualDelation()">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

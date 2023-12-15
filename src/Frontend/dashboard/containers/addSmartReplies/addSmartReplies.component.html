@@ -61,7 +61,7 @@
         <button type="button" (click)="previous()" class="btn9 btn-block col-1"><img src="assets/img/prev.png"></button>
         <div class="box1">
           <h5>Add Keyword</h5>
-          <div class="box2 d-flex" data-required="Use enter key to add ➥">
+          <div class="box2 d-flex" data-required="">
             <input class="form-control" id="form-box" #keyowrdtxt [(ngModel)]="keyword" type="text"
               onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)" placeholder="Enter Keywords" maxlength="56" />
             <button type="button" class="btn7 btn-block ml-2" (click)="addKeyword()">ADD</button>
@@ -222,29 +222,6 @@
               <div class="input-area">
                 <ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor  [toolbarSettings]='tools'
                   [width]='0' (click)="resetMessageTex()"> </ejs-richtexteditor>
-
-                <div *ngIf="showEmoji" id="showEmoji" class="popup-dialog">
-                  <div class="tabs">
-                    <div [ngClass]="EmojiType=='smiley' ? 'char_block active' : 'char_block'"
-                      (click)="showEmojiType('smiley')">😀</div>
-                    <div [ngClass]="EmojiType=='animal' ? 'char_block active' : 'char_block'"
-                      (click)="showEmojiType('animal')">🐵</div>
-                    <div style="position: absolute;right:10px" (click)="closeEmoji()">
-                      <img src="assets/img/teambox/icon-close.svg">
-                    </div>
-                  </div>
-                  <div *ngIf="EmojiType == 'smiley'" class="rteEmoticons">
-                    <div (click)="onInsert($event)" *ngFor="let smiley of smileys" class='char_block'
-                      title={{smiley.title}} [innerHTML]="smiley.content"></div>
-                  </div>
-                  <div *ngIf="EmojiType == 'animal'" class="rteEmoticons">
-                    <div (click)="onInsert($event)" *ngFor="let animal of animals" class='char_block'
-                      title={{animal.title}} [innerHTML]="animal.content"></div>
-                  </div>
-                </div>
-
-
-
                 <button class="submit_btn"  (click)="addMessage()">Add</button>
               </div>
             </div>

@@ -748,7 +748,48 @@ opacity: 1;
     width: 98px;
 }
 
+.color-dots {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0;
 
+}
+.popup-dialog {
+    background: #ffffff;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1882352941);
+    border-radius: 20px;
+    padding: 28px 30px;
+    position: absolute;
+    width: 195px;
+    text-align: center;
+    margin-top: 10px;
+    height: 175px;
+    overflow: auto;
+    z-index: 9;
+}
+
+.popup-dialog.ContactOption img {
+    width: 20px;
+    margin-right: 5px;
+}
+
+#ContactOwner{
+    cursor: pointer;
+}
+
+.popup-dialog.ContactOption span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    word-break: break-word;
+    cursor: pointer;
+}
+
+.popup-dialog.ContactOption span:hover{
+    background-color: #FFF4F2;
+}
 
 .button {
     gap: 10px;
@@ -1101,7 +1142,7 @@ input[type="file"] {
     background:#FFFFFF;
 }
 
-#Phone_number {
+#displayPhoneNumber {
     flex: 1;
     padding: 0 5px 0 75px;
     border: 1px solid #ccc;

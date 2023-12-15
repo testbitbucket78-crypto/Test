@@ -524,7 +524,7 @@
 <ng-template #contactadd let-c="close" let-d="dismiss">
 	<div class="modal-header px-4 pb-0 align-items-center">
 		<h4 class="modal-title" id="modal-basic-title">{{ addContactTitle === 'add' ? 'Add' : 'Edit' }} Contact</h4>
-		<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="d('Cross click')" (click)="productForm.reset()">X</button>
+		<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="d('Cross click')">X</button>
 	</div>
 	<div class="px-4 modal-body">
 		<form [formGroup]="productForm">
@@ -534,7 +534,7 @@
 					<div class="form-floating">
 						<input minlength="3" maxlength="50" class="form-control" type="text"
 						[ngClass]="{'is-invalid':productForm.controls.Name.touched && productForm.controls.Name.errors}"
-						placeholder="Enter Name" name="Name" formControlName="Name" id="Name" />
+						placeholder="Enter Full Name" name="Name" formControlName="Name" id="Name" />
 						<div *ngIf="productForm.controls.Name.touched && productForm.controls.Name.errors"
 							class="text-danger">
 							! Name cannot be empty.
@@ -548,18 +548,20 @@
 					<label for="floatingSelectGrid">Phone Number*</label>
 					<div class="form-floating">
 						<div class="d-flex ss">
-						<select class="input-form" id="country_code" formControlName="country_code">
-							<option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes; let i = index">
+							
+						<select class="input-form" id="country_code" formControlName="country_code" [(ngModel)]="selectedCountryCode">
+							<option  *ngFor="let countryCode of countryCodes; let i = index" [ngValue]="countryCode">
 								{{ countryCode }}
 							</option>
 							</select>
-							<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" 
-								name="Phone_number" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$"
+							<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" style="display: none" />
+							<input type="text" class="form-control" id="displayPhoneNumber" formControlName="displayPhoneNumber" 
+								name="displayPhoneNumber" placeholder="Enter Phone Number" pattern="^[^+\-.,?*%$eE]+$"
 								onKeyPress="return /^[0-9]$/.test(event.key)"
-								[ngClass]="{'is-invalid' :productForm.controls.Phone_number.touched && productForm.controls.Phone_number.errors }" 
+								[ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }" 
 							(change)="formatPhoneNumber()"> 
 						</div>
-						<div *ngIf="productForm.controls.Phone_number.touched && productForm.controls.Phone_number.errors" 
+						<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors" 
 						class="text-danger">
 						! Phone number must be between 6 to 15 digits.
 					  </div>
@@ -583,24 +585,26 @@
 			
 			</div>
 			<div class="p-0 col-md">
-				<label for="floatingInputGrid">Contact Owner</label>
-				<div class="form-floating">
-					<input class="form-control" type="text" placeholder="Enter Contact Owner" name="ContactOwner"
-						formControlName="ContactOwner" id="ContactOwner" />
-				</div>
-			</div>
+				<label for="floatingInputGrid">Contact Owner*</label>
+					<input class="form-control" type="text" readonly placeholder="Select Contact Owner" name="ContactOwner"
+						formControlName="ContactOwner" id="ContactOwner" (click)="toggleContactOption()" />
+						<div *ngIf="ShowContactOwner" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
+							<p *ngFor="let uL of userList" (click)="selectContactOwner(uL.name)">
+							  <span>{{uL.name}}</span>
+							</p>
+					    </div>
+	                </div>
 
 				<label for="floatingSelectGrid">Tag</label>
 				<ng-multiselect-dropdown class="multiselect" name="tag" formControlName="tag" id="tag"
-					[settings]="dropdownSettings" [data]="tag" [placeholder]="'Search'"
-					(onSelect)="onItemSelect($event)">
+					[settings]="dropdownSettings" [data]="tag" [placeholder]="'Select Tag from dropdown'">
 				</ng-multiselect-dropdown>
 
 			<div class="row align-items-center pl-3 pt-3">
 				<div class="row_inline d-flex align-items-center">
 					<input class="form-control-checkbox" type="checkbox" id="Opted-in"
 						(click)="updateOptedIn($event)" />
-					<span>Message Opt-In</span>
+					<span>Message Opt-In*</span>
 				</div>
 			</div>
 
@@ -627,12 +631,13 @@
 				<div class="modal-body px-5 pt-0 edit-tag-body">
 			
 					<ul class="edit-tag-dropdown">
-						<li *ngFor="let tag of Tag; let i = index"><a class="dropdown-item">
+						<li *ngFor="let tag of tagListData; let i = index"><a class="dropdown-item">
 								<div class="form-check">
-									<input class="form-check-input" type="checkbox" value="" id="flexCheckDefault{{i}}">
-									<label id="edit-tag-dots" class="form-check-label" for="flexCheckDefault{{i}}"> ● </label>
+									<input class="form-check-input" type="checkbox" [checked]="getFilterTags?.includes(tag.TagName)" id="flexCheckDefault{{i}}">
+									<label id="edit-tag-dots" class="form-check-label" for="flexCheckDefault{{i}}">
+									<span [ngClass]="{'color-dots': true}" [style.background]="tag.TagColour"></span></label>
 									<label id="edit-tagnames" class="form-check-label" for="flexCheckDefault{{i}}">
-										{{tag}}</label>
+										{{tag.TagName}}</label>
 								</div>
 							</a>
 						</li>
