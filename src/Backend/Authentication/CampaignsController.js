@@ -190,13 +190,13 @@ const sendCampinMessage = async (req, res) => {
         const currentDate = new Date();
         
       
-        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-        content = content.replace('&nbsp;', '\n')
-        content = content.replace(/<br[^>]*>/g, '\n')
-        content = content.replace(/<\/?[^>]+(>|$)/g, "")
+        // content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+        // content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+        // content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+        // content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+        // content = content.replace('&nbsp;', '\n')
+        // content = content.replace(/<br[^>]*>/g, '\n')
+        // content = content.replace(/<\/?[^>]+(>|$)/g, "")
         // Parse the message template to get placeholders
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
@@ -211,11 +211,11 @@ const sendCampinMessage = async (req, res) => {
             });
         }
 
-        let channelType=await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?',[spid])
+        let channelType=await db.excuteQuery('select channel_id from WhatsAppWeb where spid=?',[spid])
         console.log("channelType" ,channelType ,channelType[0])
         console.log(inputDate,currentDate,inputDate <= currentDate)
         if (inputDate <= currentDate) {
-        let messagestatus = await middleWare.channelssetUp(spid, channelType[0].connected_id, type, messageTo, content, media)
+        let messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
        
         
           console.log('The input date is in the past.');
