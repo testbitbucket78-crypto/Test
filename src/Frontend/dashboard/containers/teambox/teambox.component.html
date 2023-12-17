@@ -1379,14 +1379,14 @@
 				</div>
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Phone Number*</label>
-					<select class="input-formm" id="country_code" formControlName="country_code" [(ngModel)]="selectedCountryCode">
+					<!-- <select class="input-formm" id="country_code" formControlName="country_code" [(ngModel)]="selectedCountryCode">
 						<option *ngFor="let countryCode of countryCodes; let i = index" [ngValue]="countryCode">
 							{{ countryCode }}
 						</option>
-					</select>
+					</select> -->
 					<input (input)="hangeEditContactInuts($event)"  class="form-control phone-no" type="text" name="Phone_number" value={{EditContactForm.Phone_number}} type="text"  formControlName="Phone_number" 
 				 maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$"
-					onKeyPress="return /^[0-9]$/.test(event.key)"(change)="formatPhoneNumber(editContact)"> 
+					onKeyPress="return /^[0-9]$/.test(event.key)"> 
 					<div *ngIf="editContact.controls.Phone_number.touched && editContact.controls.Phone_number.errors" 
 							class="text-danger">
 							! Phone number must be 6 to 15 digits.

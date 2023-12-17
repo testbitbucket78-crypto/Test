@@ -2,7 +2,7 @@ import { Component, OnInit,  ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { defaultMessagesData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
-import { ToolbarService,NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService,NodeSelection, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 declare var $:any;
 @Component({
@@ -33,51 +33,18 @@ export class DefaultMessageSettingsComponent implements OnInit {
   dragAreaClass: string='';
 
 
-
-
-
   public tools: object = {
 		items: [
 			
-			'Bold', 'Italic', 'StrikeThrough',
-		{
-		tooltipText: 'Emoji',
-		undo: true,
-		click: this.toggleEmoji.bind(this),
-		template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;"  class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/emoji.svg"></div></button>'
-		},
-		{
-			tooltipText: 'Attachment',
-			undo: true,
-			click: this.ToggleAttachmentBox.bind(this),
-			template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
-		},
+			'Bold', 'Italic', 'StrikeThrough','EmojiPicker',
 		{
 			tooltipText: 'Attributes',
 			undo: true,
 			click: this.ToggleAttributesOption.bind(this),
 			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
-		},
-		{
-			tooltipText: 'Quick Response',
-			undo: true,
-			click: this.ToggleQuickReplies.bind(this),
-			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
-		},
-		{
-			tooltipText: 'Insert Template',
-			undo: true,
-			click: this.ToggleInsertTemplateOption.bind(this),
-			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
-		}]
-	};
-
-
+		}
+  ]};
 
   constructor(private apiService:SettingsService) { }
 

@@ -136,7 +136,7 @@ export class SettingsService {
     return this.http.post<any>(`${this.API_URL}/addupdateTag`,tagData);
   }
 
-  deletTagData(tagData:any): Observable<any> {
+  deleteTagData(tagData:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/deleteTag`,tagData);
   }
 
@@ -212,6 +212,14 @@ export class SettingsService {
 
   UpdateCustomField(addCustomFieldData: addCustomFieldsData): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/editCustomField`,addCustomFieldData);
+  }
+
+  enableDisableStatus(activeCustomField: any):Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/enableStatus`,activeCustomField);
+  }
+
+  enableDisableMandatory(mandatoryCustomField: any):Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/enableMandatory`,mandatoryCustomField);
   }
 
   deleteCustomField(id: number): Observable<any> {

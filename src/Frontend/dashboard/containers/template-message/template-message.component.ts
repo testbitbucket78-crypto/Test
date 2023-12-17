@@ -4,23 +4,31 @@ import { newTemplateFormData, quickReplyButtons, templateMessageData } from 'Fro
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { ToolbarService,NodeSelection, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
+import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 declare var $:any;
 @Component({
   selector: 'sb-template-message',
   templateUrl: './template-message.component.html',
-  styleUrls: ['./template-message.component.scss']
+  styleUrls: ['./template-message.component.scss'],
+  providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService]
 })
 
 
 export class TemplateMessageComponent implements OnInit {
-  selectedCountryCode: any = ''; // Initialize with an empty string
+  selectedCountryCode:any;
   selectedTab:number = 0;
   spid!:number;
-  id = 0;
+  id:number = 0;
   currentUser!:string;
   profilePicture!:string;
   searchText!:string;
   searchTextGallery!:string;
+  Category: any;
+  category_id!:number;
+  quickreply: any;
+  status!: string;
+  BodyText:any;
   selectedType: string = '';
   selectedPreview:string = '';
   showCampaignDetail:boolean = false;
@@ -30,6 +38,9 @@ export class TemplateMessageComponent implements OnInit {
   filteredGalleryData = [];
   filteredTemplatesData:templateMessageData[] = [];
   templatesMessageData:templateMessageData = <templateMessageData>{};
+  templatesMessageDataById:any;
+  attributesList:any=[];
+  attributesearch!:string;
   characterCounts: { [key: number]: number } = {};
   filterCategory = ['Topic','Industry','Category','Language']; 
   filterListTopic = [
@@ -50,7 +61,7 @@ export class TemplateMessageComponent implements OnInit {
   { value: 7, label: 'Health Services', checked: false },
   { value: 8, label: 'Financial', checked: false }];
   filterListCategory = [
-    {value:0,label:'Authentication', checked:false},
+    {value:3,label:'Authentication', checked:false},
     {value:1,label:'Marketing', checked:false},
     {value:2,label:'Utility', checked:false}];
   filterListChannel = [ 
@@ -98,6 +109,21 @@ export class TemplateMessageComponent implements OnInit {
     'UZ +998', 'VA +39', 'VC +1784', 'VE +58', 'VG +1284', 'VI +1340', 'VN +84', 'VU +678', 'WF +681', 'WS +685',
     'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
   ];
+
+	public tools: object = {
+		items: [
+			
+			'Bold', 'Italic', 'StrikeThrough','EmojiPicker',
+		{
+			tooltipText: 'Attributes',
+			undo: true,
+			click: this.ToggleAttributesOption.bind(this),
+			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+		},
+	]
+	};
+
   newTemplateForm!:FormGroup;
 
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
@@ -127,6 +153,15 @@ export class TemplateMessageComponent implements OnInit {
 		this.warningMessage='';
 	}
 
+  ToggleAttributesOption(){
+    $("#atrributemodal").modal('show'); 
+    $("#newTemplateMessage").modal('hide');
+  }
+
+  onEditorChange(value: string | null): void {
+    this.newTemplateForm.get('BodyText')?.setValue(value);
+  }
+  
   ngOnInit(): void {
 
     this.spid = Number(sessionStorage.getItem('SP_ID'));
@@ -134,7 +169,13 @@ export class TemplateMessageComponent implements OnInit {
     this.currentUser = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
     this.newTemplateForm = this.prepareUserForm();
     this.filteredTemplatesData = [...this.templatesData];
+    this.selectedCountryCode = this.countryCodes[101];
+    this.BodyText = this.newTemplateForm.get('BodyText')?.value;
     this.getTemplatesData();
+    this.getAttributeList()
+    const idx = 0;
+    const dynamicControlName = 'quickreply' + (idx + 1);
+    this.quickreply = this.newTemplateForm.get(dynamicControlName)?.value;
 
   }
 
@@ -150,8 +191,11 @@ export class TemplateMessageComponent implements OnInit {
       BodyText:new FormControl(null,[Validators.required]),
       FooterText:new FormControl(null),
       buttonType: new FormControl(''),
+      buttonText: new FormControl(''),
+      quickreply:new FormControl(''),
       country_code: new FormControl(''),
-      phone_number:new FormControl('')
+      phone_number:new FormControl(''),
+      displayPhoneNumber:new FormControl('')
     });
   }
 
@@ -268,15 +312,14 @@ export class TemplateMessageComponent implements OnInit {
 		
 	}
 
-
-
-
 // remove form preview value 
 removeValue() {
   this.newTemplateForm.get('Links')!.setValue(null);
   this.selectedPreview = '';
-  this.videoPlayer.nativeElement.src = null;
-
+  if (this.videoPlayer && this.videoPlayer.nativeElement) {
+    this.videoPlayer.nativeElement.src = null;
+  }
+  this.id = 0;
 }
   
   addQuickReplyButtons() {
@@ -293,13 +336,27 @@ removeValue() {
 
   toggleGalleryData(data:any) {
     this.showGalleryDetail = !this.showGalleryDetail;
-    this.templatesMessageData = data;
+    if(this.showGalleryDetail) {
+      this.galleryData = data;
+    }
+    else {
+      this.galleryData==null;
+      }
   }
 
   toggleTemplatesData(data:any){
-
     this.showCampaignDetail =!this.showCampaignDetail;
-    this.templatesMessageData = data;
+    if(this.showCampaignDetail) {
+      this.templatesMessageData = data;
+      this.templatesMessageDataById = data;
+      console.log(this.templatesMessageDataById)
+    }
+    else {
+      this.templatesMessageDataById=null;
+      this.newTemplateForm.reset();
+      this.newTemplateForm.clearValidators();
+      console.log(this.templatesMessageDataById)
+      }
     }
 
     getTemplatesData() {
@@ -330,20 +387,48 @@ removeValue() {
       
     }
 
+    onCategoryChange(event: any) {
+      const selectedCategory = this.newTemplateForm.get('Category')?.value;
+      this.Category = selectedCategory.label
+      this.category_id = selectedCategory.value;
+    }
+
 
     saveNewTemplate() {
-      let newTemplateFormData = this.copyNewTemplateFormData(); 
-
       if(this.newTemplateForm.valid) {
-        this.apiService.saveNewTemplateData(newTemplateFormData,this.selectedPreview).subscribe(response => {
-        
-          if(response) {
-            this.newTemplateForm.reset();
-            $("#newTemplateMessage").modal('hide');
-            $("#confirmationModal").modal('hide');
-            this.getTemplatesData();
-          }
-      });
+        let newTemplateFormData = this.copyNewTemplateFormData(); 
+        if(this.templatesMessageDataById=null) {
+          this.apiService.saveNewTemplateData(newTemplateFormData,this.selectedPreview).subscribe(response => {
+            // add new template
+            if(response) {
+              this.newTemplateForm.reset();
+              this.newTemplateForm.clearValidators();
+              this.templatesMessageDataById=null;
+              this.showCampaignDetail = false;
+              $("#newTemplateMessage").modal('hide');
+              $("#confirmationModal").modal('hide');
+              this.getTemplatesData();
+              this.removeValue();
+            }
+        });
+        }
+        else {
+          this.apiService.saveNewTemplateData(newTemplateFormData,this.selectedPreview).subscribe(response => {
+            // edit existing template
+            if(response) {
+              this.newTemplateForm.reset();
+              this.newTemplateForm.clearValidators();
+              this.showCampaignDetail = false;
+              this.templatesMessageDataById=null;
+              $("#newTemplateMessage").modal('hide');
+              $("#confirmationModal").modal('hide');
+              this.getTemplatesData();
+              this.removeValue();
+            }
+         });
+        }
+
+       
       }
       else {
         alert('!Please fill the required details in the form First');
@@ -355,6 +440,7 @@ removeValue() {
     confirmsave() {
       if(this.newTemplateForm.valid) {
         $("#newTemplateMessage").modal('hide');
+        $("#newTemplateMessagePreview").modal('hide');
         $("#confirmationModal").modal('show');
       }
 
@@ -365,8 +451,9 @@ removeValue() {
     }
 
     copyNewTemplateFormData() {
-      let newTemplateForm:newTemplateFormData = <newTemplateFormData>{};
-  
+      
+  let newTemplateForm:newTemplateFormData = <newTemplateFormData>{};
+
       newTemplateForm.spid = this.spid;
       newTemplateForm.created_By = this.currentUser;
       newTemplateForm.ID = this.id;
@@ -379,46 +466,41 @@ removeValue() {
       newTemplateForm.FooterText = this.newTemplateForm.controls.FooterText.value;
       newTemplateForm.TemplateName = this.newTemplateForm.controls.TemplateName.value;
       newTemplateForm.Channel = this.newTemplateForm.controls.Channel.value;
-      newTemplateForm.Category = this.newTemplateForm.controls.Category.value;
+      newTemplateForm.Category = this.Category
+      newTemplateForm.category_id = this.category_id;
       newTemplateForm.Language = this.newTemplateForm.controls.Language.value;
-      newTemplateForm.status = 'Completed';
+      newTemplateForm.status = this.status;
       newTemplateForm.template_id = 0;
       newTemplateForm.template_json =[];
-      // newTemplateForm.template_json.push({
-      //   name:this.newTemplateForm.controls.TemplateName.value,
-      //   category:this.newTemplateForm.controls.Category.value,
-      //   language:this.newTemplateForm.controls.Language.value,
-      //   components:[
-      //     {
-      //       text:this.newTemplateForm.controls.BodyText.value,
-      //       type:'Body',
-      //       example:{
-      //         body_text:[
-      //           [
-      //             'Pablo','860198-230332'
-      //           ]
-      //         ]
-      //       }
-      //     },
-      //     {
-      //       type:'BUTTONS',
-      //       buttons:[
-      //         {
-      //           text:this.newTemplateForm.controls.buttonText.value,
-      //           type:'PHONE_NUMBER',
-      //           phone_number:this.newTemplateForm.controls.phone_number.value
-      //         },
-      //         {
-      //            url: this.newTemplateForm.controls.url.value,
-      //            text: this.newTemplateForm.controls.url.value,
-      //            type : "url"
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // });
-  
-  
+      newTemplateForm.template_json.push({
+        name:this.newTemplateForm.controls.TemplateName.value,
+        category:this.newTemplateForm.controls.Category.value,
+        category_id:this.category_id,
+        language:this.newTemplateForm.controls.Language.value,
+        components:[
+          {
+            type:'BODY',
+            text:this.newTemplateForm.controls.BodyText.value,
+          },
+          {
+            type:this.newTemplateForm.controls.buttonType.value,
+            buttons:[
+              {
+                type:'PHONE_NUMBER',
+                text:this.newTemplateForm.controls.buttonText.value,
+                phone_number:this.newTemplateForm.controls.phone_number.value,
+                country_code:this.newTemplateForm.controls.country_code.value,
+                displayPhoneNumber:this.newTemplateForm.controls.displayPhoneNumber.value
+              },
+              {
+                 type : "URL",
+                 text: this.newTemplateForm.controls.url?.value,
+                 url: this.newTemplateForm.controls.url?.value,
+              }
+            ]
+          }
+        ]
+      });
       return newTemplateForm;
   
     }
@@ -426,31 +508,18 @@ removeValue() {
 
     patchFormValue(){
       const data = this.templatesMessageData;
+      const databyid =this.templatesMessageDataById; 
+      let ID = databyid.ID
       for(let prop in data){
         let value = data[prop as keyof typeof data];
         if(this.newTemplateForm.get(prop))
         this.newTemplateForm.get(prop)?.setValue(value)
+        this.id = ID;
       }  
     }
-
-
     copyTemplatesData() {
       $("#newTemplateMessageFirst").modal('show');
-      // this.showGalleryDetail = false;
-      // this.showCampaignDetail = false;
       this.patchFormValue();
-      
- 
-      // const TemplateID = {
-      //   ID: this.templatesMessageData?.ID
-      // }
-      //   this.apiService.copyTemplateData(TemplateID).subscribe(response =>{
-      //     if(response) {
-      //       this.getTemplatesData();
-      //       this.showCampaignDetail=false;
-      //     }
-        
-      //   });
       }
 
 
@@ -469,48 +538,38 @@ removeValue() {
 
   // Function to format the phone number using libphonenumber-js
   formatPhoneNumber() {
-    const phoneNumber = this.newTemplateForm.get('phone_number')?.value;
+    const phoneNumber = this.newTemplateForm.get('displayPhoneNumber')?.value;
     const countryCode = this.newTemplateForm.get('country_code')?.value;
-
-    if (phoneNumber && countryCode) {
-      const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
-      const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
-
-      if (formattedPhoneNumber) {
-        this.newTemplateForm.get('phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
-        const phoneNumberValue = this.newTemplateForm.get('phone_number')?.value;
-        console.log(phoneNumberValue);
-        
-      }
+    let formattedPhoneNumber = null;
+      if (phoneNumber && countryCode) {
+        const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
+        formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
+          this.newTemplateForm.patchValue({
+            phone_number: formattedPhoneNumber ? formattedPhoneNumber.formatInternational().replace(/[\s+]/g, '') : '',
+          });
     }
-    }
-
-  
-
-//   const s3 = new AWS.S3();
-
-// const params = {
-//   Bucket: 'cip-engage',
-//   Key: 'video_file.mp4', 
-//   Body: 'path/to/your/local-video-file.mp4', // Local path to your video file
-// };
-
-// s3.upload(params, (err, data) => {
-//   if (err) {
-//     console.error('Error uploading video:', err);
-//   } else {
-//     const videoUrl = data.Location; // Store the URL in a variable
-//     console.log('Video uploaded successfully:', videoUrl);
-//   }
-// });
-
   }
+      closeAllModal() {
+        $("#newTemplateMessage").modal('show');
+        $("#atrributemodal").modal('hide');
+      }
 
-  
-
-  
-
-
-
-	
-
+      selectAttributes(item:any){
+        const selectedValue = item;
+        this.closeAllModal();
+        let htmlcontent = '';
+        const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
+        this.onEditorChange(selectedAttr)
+      }
+      
+       /* GET ATTRIBUTE LIST  */
+      getAttributeList() {
+        this._teamboxService.getAttributeList(this.spid)
+        .subscribe((response:any) =>{
+        if(response){
+        let attributeListData = response?.result;
+        this.attributesList = attributeListData.map((attrList:any) => attrList.displayName);
+      }
+      })
+    }
+}
