@@ -395,7 +395,7 @@
 			<div *ngIf="selectedInteraction?.messageList" class=" col-4 team pt-5">
 				<div class="team-box right_box">
 					<div class="sidenav">
-						<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && !showAttachedMedia">
+						<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
 							<img class="toggle_provice_view" (click)="toggleProfileView()" *ngIf="showFullProfile"
 								src="/assets/img/teambox/search-clear.svg">
 							<div class="custom_row">
@@ -470,8 +470,6 @@
 							</div>
 						</div>
 
-
-
 						<div *ngIf="showFullProfile">
 
 							<div class="custom_row">
@@ -533,7 +531,7 @@
 							</div>
 						</div>
 
-					</div>
+					
 
 					<div *ngIf="showFullProfile" class="scrolll">
 						<div>
@@ -566,7 +564,35 @@
 						</div>
 					</div>
 				
+					<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
+						<img class="toggle_provice_view" (click)="toggleAttachedMediaView()"
+							src="/assets/img/teambox/search-clear.svg">
+						<div class="attached_media_list">
+							<p class="preview_media" *ngFor="let file of selectedInteraction.allmedia;let m = index">
+								<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
+									src="/assets/img/teambox/video_preview.png"
+									(click)="downloadFile(file.message_media)">
+								<img class="preview_icon" *ngIf="file.media_type == 'text/plain'"
+									src="/assets/img/teambox/doc_preview.png"
+									(click)="downloadFile(file.message_media)">
+								<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
+									src="/assets/img/teambox/doc_preview.png"
+									(click)="downloadFile(file.message_media)">
 
+								<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}
+									(click)="openaddMediaGallery(mediagallery,m)">
+								<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}
+									(click)="openaddMediaGallery(mediagallery,m)">
+								<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}
+									(click)="openaddMediaGallery(mediagallery,m)">
+								<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}
+									(click)="openaddMediaGallery(mediagallery,m)">
+
+							</p>
+
+						</div>
+					</div>
+				</div>
 					<div *ngIf="!showFullProfile" class="footer">
 
 						<div class="horizental_line mt-4">
@@ -623,36 +649,7 @@
 							</div>
 						</div>
 					</div>
-					
-					<div class="profile" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
-						<img class="toggle_provice_view" (click)="toggleAttachedMediaView()"
-							src="/assets/img/teambox/search-clear.svg">
-						<div class="attached_media_list">
-							<p class="preview_media" *ngFor="let file of selectedInteraction.allmedia;let m = index">
-								<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
-									src="/assets/img/teambox/video_preview.png"
-									(click)="downloadFile(file.message_media)">
-								<img class="preview_icon" *ngIf="file.media_type == 'text/plain'"
-									src="/assets/img/teambox/doc_preview.png"
-									(click)="downloadFile(file.message_media)">
-								<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
-									src="/assets/img/teambox/doc_preview.png"
-									(click)="downloadFile(file.message_media)">
-
-								<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-
-							</p>
-
-						</div>
-					</div>
-
+				
 				</div>
 
 			</div>
