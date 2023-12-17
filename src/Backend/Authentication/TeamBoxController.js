@@ -280,7 +280,7 @@ const getAllMessageByInteractionId = (req, res) => {
         db.runQuery(req, res, getAllMessagesByInteractionId, [req.params.InteractionId, req.params.Type])
     } else {
         //var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
-        var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id= IN ( SELECT interactionId FROM Interaction Where customerid ( SELECT customeId FROM Interaction where interactionId = " + req.params.InteractionId + ")) ORDER BY Message_id DESC"
+        var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) ORDER BY Message_id DESC"
         db.runQuery(req, res, getAllMessagesByInteractionId, [req.params.InteractionId, req.params.Type])
 
     }
