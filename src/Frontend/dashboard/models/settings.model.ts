@@ -300,6 +300,7 @@ export interface newTemplateFormData {
     TemplateName:string;
     Channel: string;
     Category: string;
+    category_id:number;
     Language: string;
     media_type: string;
     Header: string;

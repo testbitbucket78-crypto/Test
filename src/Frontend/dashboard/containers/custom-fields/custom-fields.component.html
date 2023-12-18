@@ -4,8 +4,7 @@
             <h6>Custom Fields</h6>
             <div class="d-flex align-items-center px-3 searchField">
                 <span><img src="../../../../assets/img/teambox/search-icon.svg" /></span>
-                <input type="text" placeholder="Search" aria-label="Search">
-                <!-- (keyup)="searchData($event.target.value)"  -->
+                <input type="text" placeholder="Search" aria-label="Search" (keyup)="searchCustomField($event)" >        
             </div>
 
             <button (click)="addCustomFields()"><span><img src="../../../../assets/img/teambox/add.svg" alt="error" /></span>Add Field</button>
@@ -80,7 +79,7 @@
                             {{dynamic.Type}}
                         </div>
                         <div class="body-col">
-                            <div class="active-toggle">
+                            <div class="active-toggle" (click)="toggleMandatoryState($event.target.checked, dynamic.id)">
                                 <label class="m-0 switch">
                                     <input type="checkbox" class="m-0 form-control-checkbox" [checked]="dynamic.Mandatory">
                                     <span class="slider"></span>
@@ -88,7 +87,7 @@
                             </div>
                         </div>
                         <div class="body-col">
-                            <div class="active-toggle">
+                            <div class="active-toggle" (click)="toggleActiveState($event.target.checked, dynamic.id)" >
                                 <label class="m-0 switch">
                                     <input type="checkbox" class="m-0 form-control-checkbox" [checked]="dynamic.Status">
                                     <span class="slider"></span>
@@ -158,7 +157,7 @@
 
             </div>
 
-            <div class="modal fade" tabindex="-1" id="addCustomFieldModal" data-bs-toggle="static" role="dialog">
+            <div class="modal fade" tabindex="-1" id="addCustomFieldModal" data-bs-backdrop="static" role="dialog">
                 <div class="m-auto modal-dialog" role="document">
                     <div class="modal-content working-hour-modal ">
                         <div class="px-4 modal-header align-items-center">

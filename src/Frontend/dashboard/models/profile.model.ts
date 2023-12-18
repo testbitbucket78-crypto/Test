@@ -1,4 +1,5 @@
 export interface teamboxNotifications {
+    ID:number;
     UID:number,
     notificationId:number,
     PushNotificationValue:number,

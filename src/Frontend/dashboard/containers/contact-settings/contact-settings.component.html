@@ -50,14 +50,11 @@
                     </div>
             </div>
             <div class="modal-footer">
-                <button *ngIf="!selectedtagListData" type="button" class="account-btn" (click)="updateTagData()">Save</button>
-                <button *ngIf="selectedtagListData" type="button" class="account-btn" (click)="editTagData()">Save</button>
+                <button type="button" class="account-btn" (click)="addEditTagData()">Save</button>
             </div>
         </div>
     </div>
 </div>
-
-
 
 <div *ngIf="tagListData.length>0" class="row mb-5">
     <div class="col-sm-1"></div>
@@ -87,9 +84,6 @@
                  </div>
                 </div>
             </div>
-      
-
-
         </div>
     </div>
    
