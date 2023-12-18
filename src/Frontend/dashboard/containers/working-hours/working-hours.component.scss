@@ -315,3 +315,14 @@ select {
   background-repeat: no-repeat;
   position: sticky;
 }
+label {
+  display: block;
+  font:
+    1rem 'Fira Sans',
+    sans-serif;
+}
+
+input,
+label {
+  margin: 0.4rem 0;
+}

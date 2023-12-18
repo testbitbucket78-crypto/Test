@@ -19,7 +19,7 @@ export class CustomFieldsComponent implements OnInit {
   isActive: number = 1;
   defaultFields = '#6149CD';
   defaultFieldsChecked= '#EBEBEB'; 
-  pageSize: number = 10;
+  pageSize: number = 50;
   pageSizeOptions: number[] = [10, 15, 20, 25, 30, 35, 40, 45, 50];
   currentPage!: number;
   paging: number[] = [];
@@ -34,6 +34,7 @@ export class CustomFieldsComponent implements OnInit {
 
   selectedType:string = 'Text';
   types:string[] =['Text','Multi text','Multi number','Select','Switch','Date Time','User' ];
+
 
 
   Drop(event: CdkDragDrop<string[]>) {
@@ -53,13 +54,38 @@ export class CustomFieldsComponent implements OnInit {
         Type: ['Text',Validators.required],
       });
     };
+    
 
-// toggle active/inactive state of logged in user
-
-toggleActiveState(checked: boolean) {
-  this.isActive = checked ? 1 : 0;
-
+toggleActiveState(checked: boolean, ID:number) {
+   let isStatus = checked ? 1 : 0;
+   console.log(isStatus,'Checked!')
+   let statusData = <any>{};
+   let id = ID;
+   console.log(id ,'ID')
+   statusData.id = id;
+   statusData.Status = isStatus;
+    this.settingsService.enableDisableStatus(statusData)
+    .subscribe(result =>{
+      if(result){
+       this.getCustomFieldsData()
+      }
+    });
  }
+
+ toggleMandatoryState(checked: boolean, ID:number) {
+    let isMandatory = checked ? 1 : 0;
+    let mandatoryData = <any>{};
+    let id = ID;
+    mandatoryData.id = id;
+    mandatoryData.Mandatory = isMandatory;
+    this.settingsService.enableDisableMandatory(mandatoryData)
+    .subscribe(result =>{
+      if(result){
+        this.getCustomFieldsData()
+      }
+    });
+
+}
 
  toggleSideBar(data:any){
   this.selectedCustomField = data
@@ -69,13 +95,22 @@ toggleActiveState(checked: boolean) {
     }
  }
 
-//  searchData(srchText:string) {
-//   const defaultFieldsDataInit = [...this.dynamicFieldData]
-//   const searchResult = defaultFieldsDataInit.filter((item:any) => {
-//     return item?.ActuallName.toLowerCase().includes(srchText.toLowerCase())
-//   });
-//   console.log(searchResult);
-//  }
+searchCustomField(event:any){
+  let searchKey = event.target.value
+  if(searchKey.length>2){
+  let allList:any = this.customFieldData
+  let FilteredArray:any = [];
+  for(let i=0;i<allList.length;i++){
+    let content = allList[i].displayName.toLowerCase()
+      if(content.indexOf(searchKey.toLowerCase()) !== -1){
+        FilteredArray.push(allList[i])
+      }
+  }    this.dynamicFieldData = FilteredArray
+    } 
+      else {
+        this.dynamicFieldData = this.customFieldData 
+      }
+}
 
 addCustomFieldsOption(){
   this.addCustomField.push({
@@ -118,14 +153,16 @@ resetSelectedCustomField() {
 
 getDefaulltFieldData() {
   const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
-  const filteredFields:any = this.customFieldData.filter((field:any) => defaultFieldNames.includes(field.ActuallName));
-  this.defaultFieldsData = filteredFields;
+     const filteredFields:any = this.customFieldData.filter(
+        (field:any) => defaultFieldNames.includes(field.ActuallName));
+        this.defaultFieldsData = filteredFields;
 }
 
 
 getDynamicFieldData() {
   const defaultFieldNames =["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
-  this.dynamicFieldData = this.customFieldData.filter((field:any) => !defaultFieldNames.includes(field.ActuallName));
+       this.dynamicFieldData = this.customFieldData.filter(
+       (field:any) => !defaultFieldNames.includes(field.ActuallName));
 }
 
 saveNewCustomField() {

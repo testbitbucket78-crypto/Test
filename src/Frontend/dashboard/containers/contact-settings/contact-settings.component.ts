@@ -38,17 +38,48 @@ export class ContactSettingsComponent implements OnInit {
        this.tagListData = result.taglist;
        console.log(this.tagListData);
        this.getPaging();
-        
       }
-  
-    })
+    });
+  }
+
+  addEditTagData() {
+    let tagData = <TagData>{};
+    tagData.SP_ID = this.sp_Id;
+    if(this.selectedtagListData?.ID) {
+      tagData.ID = this.selectedtagListData?.ID;
+      tagData.TagName = this.selectedtagListData?.TagName;
+      tagData.TagColour = this.selectedtagListData?.TagColour;
+    }
+    else {
+      tagData.ID = 0;
+      tagData.TagColour = this.tagColor;
+      tagData.TagName = this.tagName;
+    }
+
+    this._settingsService.updateTagData(tagData)
+    .subscribe(result =>{
+      if(result){
+        this.closeTagsModal()
+      }
+    });
+  }
+
+  addTag(){
+    this.tagName='';
+    this.tagColor='';
+    this.selectedtagListData = null;
+    $("#tagsModal").modal('show');
+  }
+
+  editTag() {
+    $("#tagsModal").modal('show');
   }
 
   deleteTagData(){
     let tagData = {
       ID:this.selectedtagListData?.ID
       }
-    this._settingsService.deletTagData(tagData)
+    this._settingsService.deleteTagData(tagData)
     .subscribe(result =>{
       if(result){
         this.getTagData();
@@ -58,63 +89,11 @@ export class ContactSettingsComponent implements OnInit {
     });
   }
 
-  
-  updateTagData(){
-    let tagData = <TagData>{};
-    tagData.SP_ID = this.sp_Id;
-    tagData.ID = this.tagId;
-    tagData.TagColour = this.tagColor;
-    tagData.TagName = this.tagName;
-    this._settingsService.updateTagData(tagData)
-    .subscribe(result =>{
-      if(result){
-        console.log(result);
-        this.getTagData();
-        this.showSideBar = false;
-        $("#tagsModal").modal('hide');
-      }
-  
-    })
-  }
-
-  editTagData() {
-    let tagData = <TagData>{};
-    tagData.SP_ID = this.sp_Id;
-    tagData.ID = this.selectedtagListData?.ID;
-    tagData.TagColour = this.tagColor;
-    tagData.TagName = this.tagName;
-    this._settingsService.updateTagData(tagData)
-    .subscribe(result =>{
-      if(result){
-        console.log(result);
-        this.getTagData();
-        this.showSideBar = false;
-        $("#tagsModal").modal('hide');
-      }
-  
-    })
-  }
-
-  addTag(){
-    this.tagId = 0;
-    this.tagName='';
-    this.tagColor='';
-    this.selectedtagListData = null;
-    $("#tagsModal").modal('show');
-  }
-
-  editTag(){
-    this.tagId = 0;
-    this.tagName='';
-    this.tagColor='';
-    $("#tagsModal").modal('show');
-  }
-
   closeTagsModal() {
     this.selectedtagListData = null;
     this.getTagData();
     this.showSideBar = false;
-  $("#tagsModal").modal('hide');
+    $("#tagsModal").modal('hide');
 }
 
   toggleSideBar(data:any){

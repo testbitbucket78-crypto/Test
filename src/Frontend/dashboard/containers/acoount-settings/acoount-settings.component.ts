@@ -257,7 +257,7 @@ openDiv() {
           }
           if (error) {
             $("#qrWhatsappModal").modal('hide');
-            this.showToaster('Internal Server Error, Please Contact System Administrator!', 'error');
+            this.showToaster('Something Went Wrong!', 'error');
             this.loadingQRCode = false;
          
           }
@@ -303,11 +303,22 @@ async subscribeToNotifications() {
             
             this.showToaster('Your Device Linked Successfully !', 'success');
             this.channel_status = 1;
-            setTimeout(() => {
-              this.saveWhatsappWebDetails(0);
-            }, 3000);
-            $("#qrWhatsappModal").modal('hide');
+
+            if(this.repliesaccountData==null) {
+              setTimeout(() => {
+                this.saveWhatsappWebDetails(0);
+              }, 3000);
+              $("#qrWhatsappModal").modal('hide');
+            }
+            else {
+              setTimeout(() => {
+                let id = this.repliesaccountData?.id
+                this.saveWhatsappWebDetails(id);
+              }, 3000);
+              $("#qrWhatsappModal").modal('hide');
+            }
             this.getwhatsapp();
+          
           }
 
           if (msgjson.message == 'QR generation timed out. Plese re-open account settings and generate QR code') {
@@ -322,8 +333,5 @@ async subscribeToNotifications() {
       }
     }
   });
-}
-
-
-
+ }
 }

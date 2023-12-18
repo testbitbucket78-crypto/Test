@@ -295,7 +295,6 @@
 				<p><span>Select a method to proceed next to add an audience</span></p>
 				<div class="outerbox" >
 						<div [ngClass]="step2Option =='AddSegmentAudience' ? 'innerbox active' : 'innerbox'" >
-						
 							<img class="icon ml" src="assets/img/campaign/add-segment.svg">
 							<p>Add Segment Audience</p>
 							<p><span>Select from the Saved Lists or create a new List by filtering existing contacts</span></p>
@@ -306,15 +305,14 @@
 								</p>
 							</div>
 						</div>
-
-						<div [ngClass]="step2Option =='ImportContacts' ? 'innerbox active' : 'innerbox'"  (click)="openImportContact('ImportContacts',importedContacts,openImportContact)">
+						<div [ngClass]="step2Option =='ImportContacts' ? 'innerbox active' : 'innerbox'"  >
 							
-							<img class="icon ml" src="assets/img/campaign/import-contacts.svg">
+							<img class="icon ml" src="assets/img/campaign/import-contacts.svg" >
 							<p>Import Contacts</p>
 							<p><span>Add audience to your campaign by importing contacts from CSV file or Excel sheet</span></p>
-							<p *ngIf="!importedContacts" class="sm_icon"><span><img src="../../../../assets/img/support/arrow.svg"></span></p> 	
+							<p *ngIf="!importedContacts" class="sm_icon"><span (click)="openImportContact('ImportContacts',importedContacts,openImportContact)" ><img src="../../../../assets/img/support/arrow.svg"></span></p> 	
 							<div *ngIf="importedContacts" class="formrow">
-								<p class="form-control btn rt_close">{{importedContacts}}</p>
+								<p (click)="removecontact(addNewCampaign)" class="form-control btn rt_close">{{importedContacts}}</p>
 							</div>
 						</div>
 				</div>
@@ -347,7 +345,7 @@
 							<span class="checkmark"></span>
 							<p><span>Authentication</span></p>
 						</label>
-
+                    
 					</div>
 					<div class="template_list">
 						<div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
@@ -713,7 +711,7 @@
 								<h4 class="modal-title" id="modal-basic-title">Import Contacts</h4>
 							</div>
 							<div class="modal-header-right">
-								<p  class="close-box" aria-label="Close" (click)="closeImportantContact()"><img src="assets/img/teambox/icon-close.svg"></p>
+								<p  class="close-box" aria-label="Close" (click)="closeImportantContact(addNewCampaign)"><img src="assets/img/teambox/icon-close.svg"></p>
 							</div>
 							</div>
 						<div class="modal-body">
@@ -903,7 +901,7 @@
 			</div>
 			<div class="modal-header-right">
 				<p class="text-box-readonly mr-2">Manage Saved Lists from settings</p>
-				<p (click)="directToSettings()" class="close-box" aria-label="Close" (click)="closeImportantContact()"><img class="setting_icon" src="assets/img/campaign/setting-g.svg"></p>
+				<p (click)="directToSettings()" class="close-box" aria-label="Close" ><img class="setting_icon" src="assets/img/campaign/setting-g.svg"></p>
 			</div>
 			
 			</div>

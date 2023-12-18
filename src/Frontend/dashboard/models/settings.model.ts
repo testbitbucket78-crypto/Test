@@ -47,6 +47,7 @@ export interface localeDetailResponse {
 }
 
 export interface workingFormData {
+    selectedPeriod: string;
     day: string[];
     startTime: string;
     endTime: string;
@@ -65,9 +66,11 @@ export interface workingDataPost {
 }
 
 export interface workingData {
+    selectedPeriod: string;
     working_days: string;
     start_time: string;
     end_time: string;
+    
 }
 
 export interface workingDataResponsePost {
@@ -300,6 +303,7 @@ export interface newTemplateFormData {
     TemplateName:string;
     Channel: string;
     Category: string;
+    category_id:number;
     Language: string;
     media_type: string;
     Header: string;
