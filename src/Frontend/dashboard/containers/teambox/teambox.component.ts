@@ -834,7 +834,9 @@ sendattachfile(){
 		this.apiService.checkInteractionPinned(item.InteractionId,this.AgentId).subscribe(pinnedList =>{
 			var isPinnedArray:any =pinnedList
 			if(isPinnedArray.length >0){
+				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
 			item['isPinned'] = true
+
 			}else{
 			item['isPinned'] = false
 			}

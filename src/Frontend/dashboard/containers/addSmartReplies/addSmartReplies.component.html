@@ -155,9 +155,18 @@
                 
                 <div class="message-box" *ngIf="Media">
                   <p id="msgbox-head">Media</p>
-                  <p
-                      class="message-media"
-                      [ngStyle]="{'background-image': 'url(' + Media + ')'}"></p>
+                  <img class="preview_icon" *ngIf="this.mediaType == 'video/mp4'"
+                  src="/assets/img/teambox/video_preview.png">
+                <img class="preview_icon" *ngIf="this.mediaType == 'text/plain'"
+                  src="/assets/img/teambox/doc_preview.png">
+                <img class="preview_icon" *ngIf="this.mediaType == 'application/pdf'"
+                  src="/assets/img/teambox/doc_preview.png">
+    
+                <img class="mediaFile" *ngIf="this.mediaType == 'image/jpeg'" src={{this.messageMeidaFile}}>
+                <img class="mediaFile" *ngIf="this.mediaType == 'image/jpg'" src={{this.messageMeidaFile}}>
+                <img class="mediaFile" *ngIf="this.mediaType == 'image/png'" src={{this.messageMeidaFile}}>
+                <img class="mediaFile" *ngIf="this.mediaType == 'image/webp'" src={{this.messageMeidaFile}}>
+                  <p class="message-media" [ngStyle]="{'background-image': 'url(' + Media + ')'}"></p>
                   
                 </div>
                 <div class="assign-conversation" *ngIf="message.ActionID == 2">
