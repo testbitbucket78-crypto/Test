@@ -329,6 +329,7 @@ export interface customFieldFormData {
 }
 
 export interface addCustomFieldsData {
+    id:number;
     SP_ID:number;
     ColumnName:string;
     Type:string;

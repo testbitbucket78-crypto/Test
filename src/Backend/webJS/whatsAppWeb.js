@@ -23,11 +23,12 @@ app.post('/craeteQRcode', async (req, res) => {
         phoneNo = req.body.phoneNo
 
 
-        let response = await web.createClientInstance(spid, phoneNo);
-        res.send({
-            status: response.status,
-            QRcode: response.value
-        })
+        let response = await web.createClientInstance(spid, phoneNo, res);
+        // console.log("response", response)
+        // res.send({
+        //     status: response.status,
+        //     QRcode: response.value
+        // })
 
     } catch (err) {
         console.log(err);

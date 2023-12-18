@@ -7,7 +7,7 @@
 		<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 	</div>
 	
-	<div class="row team-box-page" id="team-box-page" (click)="hideAllOpenModal($event)">
+	<div class="row team-box-page" id="team-box-page">
 		
 
 
@@ -131,11 +131,11 @@
 						<div class=" right_part">
 							<div class="time_circle">
 								<!-- <div role="progressbar" style={{selectedInteraction.progressbar.progressbarPer}}>{{selectedInteraction.progressbar.progressbarValue}}H</div> -->
-								<div role="progressbar">{{selectedInteraction.progressbar.progressbarValue}}H</div>
+								<div role="progressbar">{{selectedInteraction?.progressbar?.progressbarValue}}H</div>
 							</div>
 							<div class="drop-down-btn">
 								<button
-									*ngIf="selectedInteraction.progressbar.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72"
+									*ngIf="selectedInteraction?.progressbar?.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72"
 									style="margin:0 8px"
 									[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : 'drop-down-btn red-color'"
 									(click)="toggleConversationStatusOption()">
@@ -144,7 +144,7 @@
 									{{selectedInteraction.interaction_status}}
 								</button>
 
-								<button *ngIf="selectedInteraction.progressbar.progressbarValue >= 72"
+								<button *ngIf="selectedInteraction?.progressbar?.progressbarValue >= 72"
 									style="margin:0 8px" class="drop-down-btn green-color"
 									(click)="toggleConversationStatusOption()">
 									<img class="icon" src="/assets/img/teambox/checked_icon.png" /> Resolved
@@ -249,17 +249,10 @@
 										<span class="message_time"
 											*ngIf="message.created_at">{{timeSince(message.created_at)}}
 											<div class="pl-2" *ngIf="message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out'">
-												<div class="doubleee" *ngIf="message.msg_status === '1' ">
-												  <img class="single-tick" src="../../../../assets/img/teambox/tick-gry.svg" alt="Image 1">
+												<div class="doubleee">
+												  <img [src]="tickUpdate(message)" alt="Tick Image">
 												</div>
-												<div class="doubleee" *ngIf="message.msg_status === '2' ">
-												  <img src="../../../../assets/img/teambox/duble-tick-g.svg" alt="Image 2">
-												</div>
-												<div class="doubleee" *ngIf="message.msg_status === '3' ">
-												  <img src="../../../../assets/img/teambox/double-tick-green.svg" alt="Image 3">
-												</div>
-												<div class="tickerror" *ngIf="message.msg_status === null ">!</div>
-											  </div>
+											  </div>											  
 										</span>
 									</div>
 								</div>	
@@ -372,51 +365,24 @@
 					</span>
 				</p>
 				</div>
+					<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
+						<p class="label">@mention</p>
+						<p *ngFor="let user of agentsList;let k = index"
+							(click)="InsertMentionOption(user)">
+							<span>
+								<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
+								{{user.name}}
+							</span>
+						</p>
+					</div>
+					<button *ngIf="showChatNotes=='text'" class="submit_btn" ><img
+							src="/assets/img/teambox/icon-send.svg"  (click)="sendMessage()"></button>
+					<button *ngIf="showChatNotes== 'notes'" class="save_notes_btn" (click)="sendMessage()">Save</button>
 
 
-
-
-								<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
-									<p class="label">@mention</p>
-									<p *ngFor="let user of agentsList;let k = index"
-										(click)="InsertMentionOption(user)">
-										<span>
-											<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
-											{{user.name}}
-										</span>
-									</p>
-								</div>
-
-
-
-								<div *ngIf="showEmoji" class="popup-dialog">
-									<div class="tabs">
-										<div [ngClass]="EmojiType=='smiley' ? 'char_block active' : 'char_block'"
-											(click)="showEmojiType('smiley')">😀</div>
-										<div [ngClass]="EmojiType=='animal' ? 'char_block active' : 'char_block'"
-											(click)="showEmojiType('animal')">🐵</div>
-										<div class="emoji-close-btn" style="position: absolute;right:10px"
-											(click)="closeEmoji()"><img src="assets/img/teambox/icon-close.svg"></div>
-									</div>
-									<div *ngIf="EmojiType == 'smiley'" class="rteEmoticons">
-										<div (click)="onInsert($event)" *ngFor="let smiley of smileys"
-											class='char_block' title={{smiley.title}} [innerHTML]="smiley.content">
-										</div>
-									</div>
-									<div *ngIf="EmojiType == 'animal'" class="rteEmoticons">
-										<div (click)="onInsert($event)" *ngFor="let animal of animals"
-											class='char_block' title={{animal.title}} [innerHTML]="animal.content">
-										</div>
-									</div>
-								</div>
-								<button *ngIf="showChatNotes=='text'" class="submit_btn" ><img
-										src="/assets/img/teambox/icon-send.svg"  (click)="sendMessage()"></button>
-								<button *ngIf="showChatNotes== 'notes'" class="save_notes_btn" (click)="sendMessage()">Save</button>
-
-
-							</div>
-						<!-- </form> -->
-						</div>
+				</div>
+			<!-- </form> -->
+			</div>
 
 						
 
@@ -429,7 +395,7 @@
 			<div *ngIf="selectedInteraction?.messageList" class=" col-4 team pt-5">
 				<div class="team-box right_box">
 					<div class="sidenav">
-						<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && !showAttachedMedia">
+						<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
 							<img class="toggle_provice_view" (click)="toggleProfileView()" *ngIf="showFullProfile"
 								src="/assets/img/teambox/search-clear.svg">
 							<div class="custom_row">
@@ -504,8 +470,6 @@
 							</div>
 						</div>
 
-
-
 						<div *ngIf="showFullProfile">
 
 							<div class="custom_row">
@@ -567,7 +531,7 @@
 							</div>
 						</div>
 
-					</div>
+					
 
 					<div *ngIf="showFullProfile" class="scrolll">
 						<div>
@@ -600,7 +564,35 @@
 						</div>
 					</div>
 				
+					<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
+						<img class="toggle_provice_view" (click)="toggleAttachedMediaView()"
+							src="/assets/img/teambox/search-clear.svg">
+						<div class="attached_media_list">
+							<p class="preview_media" *ngFor="let file of selectedInteraction.allmedia;let m = index">
+								<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
+									src="/assets/img/teambox/video_preview.png"
+									(click)="downloadFile(file.message_media)">
+								<img class="preview_icon" *ngIf="file.media_type == 'text/plain'"
+									src="/assets/img/teambox/doc_preview.png"
+									(click)="downloadFile(file.message_media)">
+								<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
+									src="/assets/img/teambox/doc_preview.png"
+									(click)="downloadFile(file.message_media)">
 
+								<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}
+									(click)="openaddMediaGallery(mediagallery,m)">
+								<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}
+									(click)="openaddMediaGallery(mediagallery,m)">
+								<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}
+									(click)="openaddMediaGallery(mediagallery,m)">
+								<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}
+									(click)="openaddMediaGallery(mediagallery,m)">
+
+							</p>
+
+						</div>
+					</div>
+				</div>
 					<div *ngIf="!showFullProfile" class="footer">
 
 						<div class="horizental_line mt-4">
@@ -657,36 +649,7 @@
 							</div>
 						</div>
 					</div>
-					
-					<div class="profile" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
-						<img class="toggle_provice_view" (click)="toggleAttachedMediaView()"
-							src="/assets/img/teambox/search-clear.svg">
-						<div class="attached_media_list">
-							<p class="preview_media" *ngFor="let file of selectedInteraction.allmedia;let m = index">
-								<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
-									src="/assets/img/teambox/video_preview.png"
-									(click)="downloadFile(file.message_media)">
-								<img class="preview_icon" *ngIf="file.media_type == 'text/plain'"
-									src="/assets/img/teambox/doc_preview.png"
-									(click)="downloadFile(file.message_media)">
-								<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
-									src="/assets/img/teambox/doc_preview.png"
-									(click)="downloadFile(file.message_media)">
-
-								<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-
-							</p>
-
-						</div>
-					</div>
-
+				
 				</div>
 
 			</div>
@@ -1337,19 +1300,19 @@
 				</div>
 				<div class="row">
 					<label for="floatingInputGrid" class="required">Name*</label>
-					<input class="form-control" type="text" onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)"
-						placeholder="Enter Name" name="Name*" formControlName="Name" id="Name" />
+					<input class="form-control" type="text" placeholder="Enter Name" name="Name*" formControlName="Name" id="Name" />
 				</div>
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Phone Number<span>*</span></label>
-					<select class="country_code" id="country_code" formControlName="country_code">
-						<option [selected]="countryCode === countryCodes[101]"
-							*ngFor="let countryCode of countryCodes; let i = index">
+					<select class="country_code" id="country_code" formControlName="country_code" [(ngModel)]="CountryCode">
+						<option *ngFor="let countryCode of countryCodes; let i = index" [ngValue]="countryCode">
 							{{ countryCode }}
 						</option>
 					</select>
-					<input class="form-control countryCode" type="text" placeholder="Enter Number"onKeyPress="return /^[\d+]$/.test(event.key)" name="Phone_number" formControlName="Phone_number"
-					id="Phone_number" (change)="formatPhoneNumber(newContact)" />
+					<input class="form-control" type="text" name="Phone_number" formControlName="Phone_number"
+					id="Phone_number" style="display: none" />
+					<input class="form-control countryCode" type="text" placeholder="Enter Number"onKeyPress="return /^[\d+]$/.test(event.key)" name="displayPhoneNumber" formControlName="displayPhoneNumber"
+					id="displayPhoneNumber" (change)="formatPhoneNumber(newContact)" />
 				</div>
 				<div class="row" style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Channel<span>*</span></label>
@@ -1416,9 +1379,8 @@
 				</div>
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Phone Number*</label>
-					<select class="input-formm" id="country_code" formControlName="country_code">
-						<option [selected]="editContact.get('countryCode')?.value"
-							*ngFor="let countryCode of countryCodes; let i = index">
+					<select class="input-formm" id="country_code" formControlName="country_code" [(ngModel)]="selectedCountryCode">
+						<option *ngFor="let countryCode of countryCodes; let i = index" [ngValue]="countryCode">
 							{{ countryCode }}
 						</option>
 					</select>

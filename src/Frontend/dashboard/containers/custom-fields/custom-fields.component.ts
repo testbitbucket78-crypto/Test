@@ -15,10 +15,11 @@ declare var $:any;
 
 export class CustomFieldsComponent implements OnInit {
   spId:number = 0;
+  ID!:number;
   isActive: number = 1;
   defaultFields = '#6149CD';
   defaultFieldsChecked= '#EBEBEB'; 
-  pageSize: number = 50;
+  pageSize: number = 10;
   pageSizeOptions: number[] = [10, 15, 20, 25, 30, 35, 40, 45, 50];
   currentPage!: number;
   paging: number[] = [];
@@ -61,9 +62,11 @@ toggleActiveState(checked: boolean) {
  }
 
  toggleSideBar(data:any){
-  this.showSideBar =!this.showSideBar;
   this.selectedCustomField = data
-  console.log(this.selectedCustomField);
+  let id = data?.id
+    if(id!=0){
+      this.showSideBar =!this.showSideBar;
+    }
  }
 
 //  searchData(srchText:string) {
@@ -114,47 +117,49 @@ resetSelectedCustomField() {
 }
 
 getDefaulltFieldData() {
-const index = [12, 14, 8, 13, 5, 19];
-  for (const i of index) {
-    if (i >= 0 && i < this.customFieldData.length) {
-      this.defaultFieldsData.push(this.customFieldData[i]);
-    }
-  }
-  console.log(this.defaultFieldsData);
-  console.log('default field data')
+  const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+  const filteredFields:any = this.customFieldData.filter((field:any) => defaultFieldNames.includes(field.ActuallName));
+  this.defaultFieldsData = filteredFields;
 }
 
 
 getDynamicFieldData() {
-  const index = [12, 14, 8, 13, 5, 19];
-   for (let i = 0; i < this.customFieldData.length; i++) {
-    if (!index.includes(i)) {
-      this.dynamicFieldData.push(this.customFieldData[i]);
-    }
-  }
-     console.log(this.dynamicFieldData);
-  console.log('dynamic field data')
+  const defaultFieldNames =["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+  this.dynamicFieldData = this.customFieldData.filter((field:any) => !defaultFieldNames.includes(field.ActuallName));
 }
 
-
-
 saveNewCustomField() {
-  let addCustomFieldData = this.getCustomFieldFormData();
   if(this.customFieldForm.valid) {
-    this.settingsService.saveNewCustomField(addCustomFieldData)
-    .subscribe(response=>{
-      if(response.status === 200) {
-        this.customFieldForm.reset();
-        $("#addCustomFieldModal").modal('hide');
-        this.getCustomFieldsData();
-      }
-    })
+    let addCustomFieldData = this.getCustomFieldFormData();
+    if(this.selectedCustomField==null) {
+      this.settingsService.saveNewCustomField(addCustomFieldData)
+      .subscribe(response=>{
+        if(response.status === 200) {
+          this.customFieldForm.reset();
+          $("#addCustomFieldModal").modal('hide');
+          this.showSideBar = false;
+          this.getCustomFieldsData();
+        }
+      })
+    }
+    else {
+      this.settingsService.UpdateCustomField(addCustomFieldData)
+      .subscribe(response=>{
+        if(response.status === 200) {
+          this.customFieldForm.reset();
+          $("#addCustomFieldModal").modal('hide');
+          this.showSideBar = false;
+          this.getCustomFieldsData();
+        }
+      })
+    }
   }
 }
 
 getCustomFieldFormData() {
   
 let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
+    CustomFieldData.id = this.ID;
     CustomFieldData.SP_ID = this.spId;
     CustomFieldData.ColumnName = this.customFieldForm.controls.displayName.value;
     CustomFieldData.Type = this.customFieldForm.controls.Type.value;
@@ -168,11 +173,19 @@ let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
 patchFormDataValue() {
   const data = this.selectedCustomField;
   console.log(data);
+  let id = data.id;
   for(let prop in data){
     let value = data[prop as keyof typeof data];
     if(this.customFieldForm.get(prop))
-    this.customFieldForm.get(prop)?.setValue(value)
+    this.customFieldForm.get(prop)?.setValue(value);
+    this.ID=id;
+    console.log(this.ID);
   }  
+}
+
+addCustomFields() {
+  this.selectedCustomField = null;
+  $("#addCustomFieldModal").modal('show');
 }
 
 editCustomField() { 
@@ -185,17 +198,16 @@ toggleDeletePopup() {
 }
 
 deleteCustomField() {
-  let ID:any = {
-    ID: this.selectedCustomField?.id
-  }
-  this.settingsService.deleteCustomField(ID)
+
+  let id = this.selectedCustomField?.id;
+  console.log(id);
+  this.settingsService.deleteCustomField(id)
   
   .subscribe(result =>{
     if(result){
       $("#deleteModal").modal('hide');
+      this.showSideBar =false;
       this.getCustomFieldsData();
-      this.getDefaulltFieldData();
-      this.getDynamicFieldData();
     }
   });
 }

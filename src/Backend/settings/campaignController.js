@@ -370,6 +370,7 @@ const addTemplate = async (req, res) => {
             status = req.body.status,
             spid = req.body.spid,
             created_By = req.body.created_By,
+            category_id=req.body.category_id
             created_at = new Date()
         isTemplate = req.body.isTemplate
         industry = req.body.industry
@@ -395,7 +396,7 @@ const addTemplate = async (req, res) => {
            console.log(awsres.value.Location)
         }
         if (ID == 0) {
-            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry]]
+            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry,category_id]]
             let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
             res.status(200).send({
                 addedtem: addedtem,
@@ -403,7 +404,7 @@ const addTemplate = async (req, res) => {
             })
         }
         else {
-            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, ID]
+            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry,category_id, ID]
             let updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
             res.status(200).send({
                 updatedTemplate: updatedTemplate,
@@ -464,13 +465,13 @@ const testCampaign = async (req, res) => {
         console.log(channel)
         console.log("content")
         console.log(content)
-        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-        content = content.replace('&nbsp;', '\n')
-        content = content.replace(/<br[^>]*>/g, '\n')
-        content = content.replace(/<\/?[^>]+(>|$)/g, "")
+        // content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+        // content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+        // content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+        // content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+        // content = content.replace('&nbsp;', '\n')
+        // content = content.replace(/<br[^>]*>/g, '\n')
+        // content = content.replace(/<\/?[^>]+(>|$)/g, "")
         let testNo = await db.excuteQuery(val.selectCampaignTest, [TemplateData.sp_id])
         for (let phone_number of testNo) {
             middleWare.channelssetUp(channel, 'text', phone_number.mobile_number, content)

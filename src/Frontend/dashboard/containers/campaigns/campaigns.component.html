@@ -326,7 +326,7 @@
 						<p><span>Select a message to create campaign</span></p>
 						</div>
 						<div class="inner right">
-							<input placeholder="Search" type="text" class="search-box" (change)="searchTemplate($event)">
+							<input placeholder="Search" type="text" class="search-box" (keyup)="searchTemplate($event)">
 						</div>
 					</div>
 					<div class="section_filter">
@@ -1184,8 +1184,8 @@
 								<td (click)="resortTableData('Name',true)">Name<img src="/assets/img/campaign/sort.svg"></td>
 								<td (click)="resortTableData('Phone_number',true)">Phone Number<img src="/assets/img/campaign/sort.svg"></td>
 								<td (click)="resortTableData('emailId',true)">Email<img src="/assets/img/campaign/sort.svg"></td>
-								<td (click)="resortTableData('age',true)">Age<img src="/assets/img/campaign/sort.svg"></td>
-								<td (click)="resortTableData('sex',true)">Gender<img src="/assets/img/campaign/sort.svg"></td>
+								<td (click)="resortTableData('OptInStatus',true)">Message Opt-in<img src="/assets/img/campaign/sort.svg"></td>
+								<td (click)="resortTableData('ContactOwner',true)">Contact Owner<img src="/assets/img/campaign/sort.svg"></td>
 								<td (click)="resortTableData('tag',true)">Tag<img src="/assets/img/campaign/sort.svg"></td>
 
 							</tr>
@@ -1197,8 +1197,8 @@
 								<td>{{item.Name}}</td>
 								<td>{{item.Phone_number}}</td>
 								<td>{{item.emailId}}</td>
-								<td>{{item.age}} Years</td>
-								<td>{{item.sex}}</td>
+								<td>{{item.OptInStatus}}</td>
+								<td>{{item.ContactOwner}}</td>
 								<td>
 									<p class="tag_item" *ngFor='let tag of item.tags ;let t = index'>
 										<span *ngIf="tag == 'New Customer'"class="new"></span> {{tag}}

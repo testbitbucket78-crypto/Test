@@ -231,29 +231,6 @@
               <div class="input-area">
                 <ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor  [toolbarSettings]='tools'
                   [width]='0' (click)="resetMessageTex()"> </ejs-richtexteditor>
-
-                <div *ngIf="showEmoji" id="showEmoji" class="popup-dialog">
-                  <div class="tabs">
-                    <div [ngClass]="EmojiType=='smiley' ? 'char_block active' : 'char_block'"
-                      (click)="showEmojiType('smiley')">😀</div>
-                    <div [ngClass]="EmojiType=='animal' ? 'char_block active' : 'char_block'"
-                      (click)="showEmojiType('animal')">🐵</div>
-                    <div style="position: absolute;right:10px" (click)="closeEmoji()">
-                      <img src="assets/img/teambox/icon-close.svg">
-                    </div>
-                  </div>
-                  <div *ngIf="EmojiType == 'smiley'" class="rteEmoticons">
-                    <div (click)="onInsert($event)" *ngFor="let smiley of smileys" class='char_block'
-                      title={{smiley.title}} [innerHTML]="smiley.content"></div>
-                  </div>
-                  <div *ngIf="EmojiType == 'animal'" class="rteEmoticons">
-                    <div (click)="onInsert($event)" *ngFor="let animal of animals" class='char_block'
-                      title={{animal.title}} [innerHTML]="animal.content"></div>
-                  </div>
-                </div>
-
-
-
                 <button class="submit_btn"  (click)="addMessage()">Add</button>
               </div>
             </div>

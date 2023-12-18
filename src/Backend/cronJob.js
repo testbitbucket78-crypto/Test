@@ -38,11 +38,11 @@ async function fetchScheduledMessages() {
 
 
     for (const message of messagesData) {
-    
+
       let campaignTime = await getCampTime(message.sp_id)
-      console.log("campaignTime"       ,     isWorkingTime(campaignTime))
+      console.log("campaignTime", isWorkingTime(campaignTime))
       if (isWorkingTime(campaignTime)) {
-       
+
         if (new Date(message.start_datetime) < new Date()) {
           console.log(" isWorkingTime messagesData loop",)
           const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
@@ -56,7 +56,7 @@ async function fetchScheduledMessages() {
 
     for (const message of remaingMessage) {
 
-      console.log("remaingMessage loop",message.sp_id)
+      console.log("remaingMessage loop", message.sp_id)
       let campaignTime = await getCampTime(message.sp_id)
       if (isWorkingTime(campaignTime)) {
         console.log("remaingMessage  isWorkingTime loop", isWithinTimeWindow(message.start_datetime))
@@ -114,20 +114,24 @@ async function saveSendedMessage(MessageBodyData) {
 
 
 async function mapPhoneNumberfomCSV(message) {
-  // Map the values to customer IDs
-  console.log("mapPhoneNumberfomCSV")
-  var contacts = JSON.parse(message.csv_contacts);
-  var type = 'image';
-  if (message.message_media == null || message.message_media == "") {
-    type = 'text';
+  try {
+    // Map the values to customer IDs
+    console.log("mapPhoneNumberfomCSV")
+    var contacts = JSON.parse(message.csv_contacts);
+    console.log(message.csv_contacts)
+    var type = 'image';
+    if (message.message_media == null || message.message_media == "") {
+      type = 'text';
+    }
+    let channelType = await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?', [message.sp_id])
+    console.log("channelType", channelType, channelType[0])
+    campaignAlerts(message, 2) // campaignAlerts(new Date(), message.Id)    //Campaign is Running
+    let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
+    let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
+    batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message) //channelType[0].connected_id
+  } catch (err) {
+    console.log(err)
   }
-  let channelType=await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?',[message.sp_id])
-  console.log("channelType" ,channelType ,channelType[0])
-  campaignAlerts(message,2) // campaignAlerts(new Date(), message.Id)    //Campaign is Running
-  let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
-  let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
-  batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message) //channelType[0].connected_id
-
 
 
 }
@@ -142,19 +146,20 @@ async function mapPhoneNumberfomList(message) {
     type = 'text';
   }
 
-  let channelType=await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?',[message.sp_id])
-  console.log("channelType" ,channelType ,channelType[0])
+  let channelType = await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?', [message.sp_id])
+  console.log("channelType", channelType, channelType[0])
   let Query = "SELECT * from EndCustomer  where customerId IN ? and isDeleted != 1"
 
   let phoneNo = await db.excuteQuery(Query, [[dataArray]]);
   console.log("phoneNo.length", phoneNo.length)
-
-  campaignAlerts(message,2)    //Campaign is Running
+  // if ((message.channel_id == 2 && web.isActiveSpidClient(message.sp_id)) || (message.channel_id == 1)) {
+  //   console.log("___________****" ,message.sp_id)
+  campaignAlerts(message, 2)    //Campaign is Running
   let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
   let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
 
   batchofScheduledCampaign(phoneNo, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message)
- 
+  // }
 
 }
 
@@ -178,24 +183,30 @@ async function batchofScheduledCampaign(users, sp_id, type, message_content, mes
       }, delayBetweenBatches);
     }
   }
-  campaignAlerts(message,3) // Campaign Finish 
-  let updateQuery = `UPDATE Campaign SET status=3,updated_at=? where Id=?`;
-  let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
+  setTimeout(() => {
+    campaignCompletedAlert(message)
+  }, 60000)
 }
 
+async function campaignCompletedAlert(message) {
+  let updateQuery = `UPDATE Campaign SET status=3,updated_at=? where Id=?`;
+  let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
+  campaignAlerts(message, 3) // Campaign Finish 
+
+}
 
 function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message) {
-  console.log("sendScheduledCampaign" ,"channel_id",channel_id)
+  console.log("sendScheduledCampaign", "channel_id", channel_id)
   for (var i = 0; i < batch.length; i++) {
     let Phone_number = batch[i].Phone_number
 
     var response;
     setTimeout(async () => {
       response = await messageThroughselectedchannel(sp_id, Phone_number, type, message_content, message_media, phone_number_id, channel_id);
-      console.log("response",  JSON.stringify(response.status))
-      sendMessages(Phone_number, message.message_content, message.Id, message,  response.status)
+      console.log("response", JSON.stringify(response.status))
+      sendMessages(Phone_number, message.message_content, message.Id, message, response.status)
     }, 10)
-    
+
   }
 }
 
@@ -232,10 +243,10 @@ function isWorkingTime(data) {
 
 
 
-async function campaignAlerts(message,updatedStatus) {
+async function campaignAlerts(message, updatedStatus) {
   try {
     console.log("campaignAlerts")
-   
+
     //     let query = `select * from Campaign where  is_deleted != 1 limit 1`;
     //     let campaign = await db.excuteQuery(query, []);
     //     let alertUser = `select c.uid,u.* from CampaignAlerts c
@@ -254,7 +265,7 @@ async function campaignAlerts(message,updatedStatus) {
     //         type = 'text';
     //       }
 
-    let alertmessages = await msg(message,updatedStatus)
+    let alertmessages = await msg(message, updatedStatus)
 
     let alertUser = `select c.uid,u.* from CampaignAlerts c
 JOIN user u ON u.uid=c.uid
@@ -327,13 +338,13 @@ async function find_message_status(alert) {
   Campaign AS C ON CM.CampaignId = C.Id
  WHERE
   C.is_deleted != 1 and C.status=3
- AND C.sp_id = ? AND C.Id=?
+ AND C.sp_id =${alert.sp_id} AND C.Id=${alert.Id}
  GROUP BY
  CM.status;`
-  let msgStatus = await db.excuteQuery(msgStatusquery, [alert.sp_id, alert.Id]);
 
+  let msgStatus = await db.excuteQuery(msgStatusquery, []);
   for (const item of msgStatus) {
-    console.log("item.status"  , item.status)
+    console.log("item.status", item.status)
     if (item.status === 1) {
       Sent += item.Status_Count;
     } else if (item.status === 0) {
@@ -349,13 +360,13 @@ async function find_message_status(alert) {
 
 //___________________CAMPAIGN ALERT MESSAGE ON THE BASIS OF FILTERD STATUS _____________________________//
 
-async function msg(alert,status) {
+async function msg(alert, status) {
   let message = ''
 
   let msgStatus = await find_message_status(alert)
 
 
-  let audience = alert.segments_contacts.length > 0 ? alert.segments_contacts.length : alert.csv_contacts.length
+  let audience = alert.segments_contacts.length > 0 ? JSON.parse(alert.segments_contacts).length : JSON.parse(alert.csv_contacts).length
 
 
   if (status == '1') {
@@ -368,7 +379,7 @@ async function msg(alert,status) {
   } if (status == '2') {
     message = `Hello, your Engagekart Campaign has Started:
     Campaign Name: `+ alert.title + `
-    Taget Audience: ` + audience +`
+    Taget Audience: ` + audience + `
     Channel:< `+ 'WhatsApp' + `,` + alert.channel_id + `>
     Category:`+ alert.category + ` `
   } if (status == '3') {
@@ -399,18 +410,19 @@ async function msg(alert,status) {
 //_________________________COMMON METHOD FOR SEND MESSAGE___________________________//
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
-console.log("messageThroughselectedchannel"  ,spid, from, type, channelType)
+  console.log("messageThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
   if (channelType == 'WhatsApp Official' || channelType == 1) {
 
     let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
     return respose;
   } if (channelType == 'WhatsApp Web' || channelType == 2) {
-  //  if(web.isActiveSpidClient(spid)){
-      console.log("web.isActiveSpidClient(spid)")
+   // if (web.isActiveSpidClient(spid)) {
       let respose = await middleWare.postDataToAPI(spid, from, type, text, media)
       return respose;
-   // }
-   // return "401";
+    // } else {
+    //   return ({status:401});
+    // }
+
   }
 }
 
