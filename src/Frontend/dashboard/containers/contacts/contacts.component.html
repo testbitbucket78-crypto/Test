@@ -72,39 +72,7 @@
 								 <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
 								 <label for="myFileInput" class="m-0 fileLabel" ><img class="set-profile-pic" src="../../../../assets/img/profile/Fill 4.svg" /></label>    
 								</div>
-							</div>
-						  
-		
-							<div class="modal fade" tabindex="-1" id="pictureCropModal" data-bs-backdrop="static" role="dialog">
-								<div class="modal-dialog" role="document">
-									<div class="modal-content px-3 pictureCropPopupModal">
-										<form>
-										<div class="modal-header align-items-center">
-											<h5 class="modal-title">Crop & Adjust</h5>
-											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-												<img class="m-0" src="../../../../assets/img/teambox/icon-close.svg"/> 
-											</button>
-										</div>
-										<div class="modal-body p-4 text-center pictureCropPopupbody">
-										  <div class="pic-cont">
-												   <image-cropper
-													[imageChangedEvent]="imageChangedEvent"
-													[maintainAspectRatio]="false"
-													[aspectRatio]="4 / 3"
-													format="jpg"
-													(imageCropped)="imageCropped($event)">
-													</image-cropper>
-											</div>
-							  
-										</div>
-										<div class="modal-footer justify-content-end my-2 border-0">
-											<button type="button" (click)="saveContactsProfilePicture()" class="update-pass-btn">Save</button>
-										</div>
-										</form>
-									</div>
-								</div>
-							</div>
-						
+							</div>						
 						</div>
 					
 						<div class="child">
@@ -133,7 +101,7 @@
 						</div>
 						<div class="child3">
 							<h5>Phone Number</h5>
-							<h6 class="mt-2">{{items.Phone_number}}</h6>
+							<h6 class="mt-2">{{items.countryCode}} {{items.displayPhoneNumber}}</h6>
 						</div>
 					</div>
 					<div class="parent d-flex justify-content-between px-4 py-2">
@@ -648,6 +616,36 @@
 					<button type="button" class="btn-close" id="edit-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
 					<button type="button" class="btn-close" id="edit-btn-save">Save</button>
 				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" id="pictureCropModal" data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content px-3 pictureCropPopupModal">
+				<form>
+				<div class="modal-header align-items-center">
+					<h5 class="modal-title">Crop & Adjust</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+						<img class="m-0" src="../../../../assets/img/teambox/icon-close.svg"/> 
+					</button>
+				</div>
+				<div class="modal-body p-4 text-center pictureCropPopupbody">
+				  <div class="pic-cont">
+						   <image-cropper
+							[imageChangedEvent]="imageChangedEvent"
+							[maintainAspectRatio]="false"
+							[aspectRatio]="4 / 3"
+							format="jpg"
+							(imageCropped)="imageCropped($event)">
+							</image-cropper>
+					</div>
+	  
+				</div>
+				<div class="modal-footer justify-content-end my-2 border-0">
+					<button type="button" (click)="saveContactsProfilePicture()" class="update-pass-btn">Save</button>
+				</div>
+				</form>
 			</div>
 		</div>
 	</div>

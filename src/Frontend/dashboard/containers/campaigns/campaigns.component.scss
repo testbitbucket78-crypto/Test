@@ -1643,6 +1643,10 @@
 	flex-direction: column;
 	width:250px;
 	}
+
+	.template_details_section_left p {
+		word-break: break-word;
+	}
 	.template_details_section_right{
 	display: flex;
 	flex-direction: column;
@@ -1651,6 +1655,10 @@
 	border-radius: 24px;
 	padding: 1rem;
 	overflow: auto;
+	}
+
+	.template_details_section_right::-webkit-scrollbar {
+		display: none;
 	}
 	.template_details_section_right .form_row .popup-dialog{
 	margin-left: 25px;
@@ -1666,7 +1674,8 @@
 	margin: 0;
 	font-size: 12px;
 	font-weight: 400;
-	color:#000000
+	color:#000000;
+	word-break: break-word;
 	}
 	.form_row p.form-control,.form_row .form-control{
 	width: 220px;

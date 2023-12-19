@@ -35,6 +35,7 @@ selectedYear:number = 0;
 monthDates:any[] =[];
 selectedDates:number[] =[];
 yearList:number[] =[];
+selectedPeriods: string[] = ['AM', 'PM'];
 
   constructor(private _settingsService:SettingsService) { 
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
@@ -58,7 +59,7 @@ yearList:number[] =[];
 
   addWorkingHours(){
     console.log(this.workingData);
-    this.workingFormData.push({day:[],startTime:'',endTime:''})
+    this.workingFormData.push({day:[],startTime:'',endTime:'', selectedPeriod: ''})
   }
 
   removeWorkingHours(index:any){
@@ -116,6 +117,7 @@ yearList:number[] =[];
     })
   }
 
+
   copyHolidayData(){
     let holidayResponse:holidayData =<holidayData>{};
     holidayResponse.SP_ID = this.sp_Id;
@@ -143,10 +145,9 @@ yearList:number[] =[];
     this.addWorkingHours();
     else
     this.workingData.forEach(item=>{
-      this.workingFormData.push({day:item.working_days.split(','),startTime:item.start_time,endTime:item.end_time})
+      this.workingFormData.push({day:item.working_days.split(','),startTime:item.start_time,endTime:item.end_time,selectedPeriod:item.selectedPeriod})
     })
   }
-
    createDynamicDate(month:any){
     this.monthDates =[];
     this.selectedMonth = month;

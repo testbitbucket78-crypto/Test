@@ -279,7 +279,7 @@ export class CampaignsComponent implements OnInit {
 	selectedId: any;
 	
 	 
-constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: TeamboxService,private settingsService:SettingsService,private fb: FormBuilder,private router: Router) {
+constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: TeamboxService,private settingsService:SettingsService,private fb: FormBuilder,private router: Router,private el: ElementRef) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -1085,9 +1085,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.openSegmentAudience(modalname)
 			$("#addsegmentaudience").modal('show');
 	}
-
 	
+	removecontact(addNewCampaign: any) {
+		this.mapCsvContact = false;
+		this.checkboxChecked = false;
+		$("#dagdropmodal").modal('hide');
+		this.importedContacts = false;
+		this.selecetdCSV = '';
+		this.CsvContactCol = '';
 
+	  }
 
 	selectStep2Option(option:any,modalname:any,step2Option:any){
 		this.step2Option =option
@@ -1101,7 +1108,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.closeAllModal()
 			this.openSegmentAudience(modalname)
 		}
-		
 	}
 
 	closeAllModal(){
@@ -1187,7 +1193,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			button_no:this.selectedTemplate.button_no,
 			button_exp:this.selectedTemplate.button_exp,
 			category:this.selectedTemplate.Category,
-			category_id:this.newCampaignDetail.value.category_id,
+			category_id:this.selectedTemplate.category_id,
 			time_zone:this.selecteTimeZone,
 			start_datetime:sratdatetime,
 			end_datetime:'',
@@ -1237,7 +1243,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					button_exp:this.selectedTemplate.button_exp,
 					message_media:this.selectedTemplate.Links,
 					CampaignId:CampaignId,
-					category_id:this.newCampaignDetail.value.category_id,
+					category_id:this.selectedTemplate.category_id,
 					channel_id:this.newCampaignDetail.value.channel_id,
 					channel_label:this.newCampaignDetail.value.channel_label,
 					schedule_datetime:BodyData.start_datetime,
@@ -1297,6 +1303,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 							button_no:this.selectedTemplate.button_no,
 							button_exp:this.selectedTemplate.button_exp,
 							message_media:this.selectedTemplate.Links,
+							category_id:this.selectedTemplate.category_id,
 							CampaignId:CampaignId,
 							channel_id:this.newCampaignDetail.value.channel_id,
 							channel_label:this.newCampaignDetail.value.channel_label,
@@ -1447,9 +1454,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	    
 	}
-	closeImportantContact(){
-		this.importantContact=false;
+	closeImportantContact(addNewCampaign:any){
 		$("#dagdropmodal").modal('hide');
+		this.closeAllModal();
+		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 		
 	}
 	editTemplateMedia(){
@@ -1813,23 +1821,19 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 						keyName=keyName.replaceAll(' ','')
 						let value:any= rowbh[k];
 						console.log(keyName)
-						row[keyName]=value!='\r'?value:'null'
-						
+						row[keyName]=value!='\r'?value:'null'	
 						}
 						contactsData.push(row)
 					})
 					console.log(contactsData)
 					this.csvContactList = contactsData
 					this.selecetdCSV = fileName
-					
        			}
 	    } else {
 			this.showToaster('Please Upload csv file only...','error')
 		}
 		}
 	  }
-
-
 	  getContactList(event:any){
 		console.log('getContactList')
 		let searchKey ='';

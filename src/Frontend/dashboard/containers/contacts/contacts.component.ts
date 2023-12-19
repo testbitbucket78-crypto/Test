@@ -60,11 +60,13 @@ columnDefs: ColDef[] = [
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
   {
-    field: 'Phone_number',
+    field: 'displayPhoneNumber',
     headerName: 'Phone Number',
     flex: 2,
     resizable: true,
     filter: true,
+    cellRenderer: (params: { data: { countryCode: any; displayPhoneNumber: any; };
+     }) =>`${params.data.countryCode} ${params.data.displayPhoneNumber}`,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
     sortable: true,
   },

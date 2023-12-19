@@ -166,6 +166,14 @@ label.container input[type="radio"]:checked + span.label {
 
   /*Css for Template box*/
 
+  .template_body{
+    word-break: break-word;
+  }
+
+  .template_text p{
+    word-break: break-word;
+  }
+
   .template_box{
     // min-height: 400px;
     background: #FFF4F2;
@@ -190,6 +198,7 @@ label.container input[type="radio"]:checked + span.label {
     margin-top: 10px;
     position: relative;
     height: auto;
+    width: 100%;
   }
   .template_box .inner_box img.template_img{
     width: 100%;
@@ -354,4 +363,26 @@ label.container input[type="radio"]:checked + span.label {
       opacity: 0.86;
       }
 
+// template-settings richtexteditor styles //
 
+      .richtext.BodyText p {
+        font-size: 11px!important;
+        margin: 0!important;
+      }
+
+
+      .message_data.preview p{
+        font-size: 11px;
+        margin: 0;
+      }
+
+      .message_data span p {
+        font-size: 11px;
+        margin: 0;
+      }
+
+      .e-richtexteditor .e-rte-content .e-content p, .e-richtexteditor .e-source-content .e-content p {
+        margin: 0 0 10px;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
