@@ -25,7 +25,7 @@ export class AcoountSettingsComponent implements OnInit {
   connectionn!:number;
   wave!:number;
   AppDetails!:number;
-  selectedId!: number;
+  selectedId!: any;
   connectionIds: number[] = [];
   channel_status!:number;
   selectedWhatsappData: any;
@@ -80,7 +80,6 @@ export class AcoountSettingsComponent implements OnInit {
     this.spid = Number(sessionStorage.getItem('SP_ID'));
     this.phoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
     this.email = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
-    console.log(this.email)
     this.getwhatsapp();
     this.subscribeToNotifications();
   }
@@ -107,29 +106,19 @@ export class AcoountSettingsComponent implements OnInit {
 		this.errorMessage='';
 	}
 
-
-
-
-
-
-  // getwhatsapp
+  // getwhatsappwebdetails
 getwhatsapp() { 
   this.apiService.getWhatsAppDetails(this.spid).subscribe(response => {
     this.whatsAppDetails=response.whatsAppDetails;
     this.numberCount = response.channelCounts[0]?.count_of_channel_id;
     console.log(this.numberCount);
-    // this.whatsAppDetails.forEach(detail => {
-    //   this.id.push(detail.id);
-    // });
-    // console.log(this.id);
-    
-
+    this.selectedId = [];
+    this.whatsAppDetails.forEach(detail => {
+    this.selectedId.push(detail.id);
+    });
     this.channel=this.whatsAppDetails[0]?.channel_status;
     this.connectionn=this.whatsAppDetails[0]?.connection_date;
     this.wave=this.whatsAppDetails[0]?.WAVersion;
-
-   
-    console.log(this.whatsAppDetails);
   });
 }
 
@@ -184,7 +173,9 @@ saveWhatsappWebDetails(id:number) {
   this.apiService.addWhatsAppDetails(this.whatAppDetails).subscribe
   ((resopnse :any) => {
     if(resopnse.status === 200) {
-      this.showToaster('Your Session Details Saved Succesfully','success');
+      console.log(this.whatAppDetails)
+      console.log(resopnse)
+      this.showToaster('Your Session Details Updated Succesfully','success');
     }
 
   });
@@ -230,42 +221,56 @@ openDiv() {
 
   generateQR() {
     $("#connectWhatsappModal").modal('hide');
-
     this.loadingQRCode = true; // Show the loadeßr
-
-   let data = {
+    let data = {
       spid: this.spid,
       phoneNo: this.phoneNumber
     }
+    if (this.selectedId?.length > 0) {
+      var id= this.selectedId[this.selectedId?.length - 1];
+   }
     try {
       this.apiService.craeteQRcode(data).subscribe(
+
         (response) => {
           if (response.status === 200) {
             this.qrcode = response.QRcode;
+            if(this.qrcode) {
+              this.channel_status = 1;  
+              setTimeout(()=> {
+              this.saveWhatsappWebDetails(0);
+            },15000); 
+            }
           }
           this.loadingQRCode = false;
-          if (response.QRcode === 'Client is ready!') {            
+          if (response.QRcode === 'Client is ready!') {    
+            this.channel_status = 1;      
             $("#qrWhatsappModal").modal('hide');
             this.showToaster('! User is already authenticated', 'success');   
-            this.getwhatsapp();
+            setTimeout(()=> {
+              this.saveWhatsappWebDetails(id);
+            },2000); 
           }
-       
+          this.getwhatsapp();
         },
         (error) => {
           if(error.status === 400) {
-            
+            this.showToaster('Bad Request!', 'error');
+            this.channel_status = 0;
+            this.saveWhatsappWebDetails(id);
           }
           if (error) {
-            $("#qrWhatsappModal").modal('hide');
             this.showToaster('Something Went Wrong!', 'error');
             this.loadingQRCode = false;
-         
+            $("#qrWhatsappModal").modal('hide');
+            this.channel_status = 0;
+            this.saveWhatsappWebDetails(id);
           }
+          this.getwhatsapp();
         }
       );
     } catch (error) {
       console.error('An error occurred:', error);
-      // Handle the error as needed
     }
     
   }
@@ -278,7 +283,6 @@ openDiv() {
     this.ipAddress.push('');
   }
 
-private isSaveWhatsappWebDetailsCalled = false;
 
 async subscribeToNotifications() {
   let notificationIdentifier = {
@@ -291,40 +295,20 @@ async subscribeToNotifications() {
     if (message != undefined) {
       console.log("Seems like some message update from webhook");
       console.log(message);
-
       try {
         let msgjson = JSON.parse(message);
         if (msgjson.displayPhoneNumber) {
           this.qrcode = msgjson.message;
           this.changeDetector.detectChanges();
 
-          if (msgjson.message == 'Client is ready!' && !this.isSaveWhatsappWebDetailsCalled) {
-            this.isSaveWhatsappWebDetailsCalled = true;
-            
+          if (msgjson.message == 'Client is ready!') {
             this.showToaster('Your Device Linked Successfully !', 'success');
-            this.channel_status = 1;
-
-            if(this.repliesaccountData==null) {
-              setTimeout(() => {
-                this.saveWhatsappWebDetails(0);
-              }, 3000);
-              $("#qrWhatsappModal").modal('hide');
-            }
-            else {
-              setTimeout(() => {
-                let id = this.repliesaccountData?.id
-                this.saveWhatsappWebDetails(id);
-              }, 3000);
-              $("#qrWhatsappModal").modal('hide');
-            }
-            this.getwhatsapp();
-          
+            $("#qrWhatsappModal").modal('hide');
           }
 
           if (msgjson.message == 'QR generation timed out. Plese re-open account settings and generate QR code') {
             this.showToaster('QR generation timed out. Plese re-open account settings and generate QR code', 'error');
             this.loadingQRCode = false;
-            this.channel_status = 0;
             $("#qrWhatsappModal").modal('hide');
           }
         }

@@ -706,11 +706,11 @@ sendattachfile(){
 							if(msgjson.updateMessage)
 							{
 								this.getAllInteraction(false)	
-								setTimeout(() => {
+								// setTimeout(() => {
 								this.selectInteraction(this.selectedInteraction)
 								this.scrollChatToBottom()
 								this.tickUpdate(message)
-							}, 2000);
+							// }, 100);
 
 							}					
 						}
@@ -1157,10 +1157,8 @@ sendattachfile(){
 		Interaction['selected'] = true;
 		this.selectedInteraction = Interaction;
 		this.contactId = Interaction.customerId;
-		console.log(this.contactId);
-		console.log(Interaction);
+		// console.log(Interaction);
 		this.selectedCountryCode = Interaction.countryCode;
-		console.log(this.selectedCountryCode);
 		this.Allmessages = this.selectedInteraction.allmessages;
 		console.log(this.Allmessages);
 		this.getPausedTimer();

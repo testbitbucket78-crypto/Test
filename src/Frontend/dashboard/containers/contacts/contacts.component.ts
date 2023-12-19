@@ -566,6 +566,7 @@ saveContact(addcontact:any,addcontacterror:any) {
         this.modalService.dismissAll();
         this.closesidenav(this.items);
         this.getContact();
+        this.selectedCountryCode = this.countryCodes[101];
       }
      },
      (error:any) =>{
@@ -582,6 +583,7 @@ saveContact(addcontact:any,addcontacterror:any) {
         this.productForm.clearValidators();
         this.modalService.open(addcontact);
         this.getContact();
+        this.selectedCountryCode = this.countryCodes[101];
       }
     },
 
