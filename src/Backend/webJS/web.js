@@ -46,7 +46,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
           executablePath: "/usr/bin/google-chrome-stable",
-          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         //  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -174,7 +174,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 SET msg_status = 3 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1   and msg_status =2`
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1   and (msg_status =2 OR msg_status=1)`
             let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
 
             notify.NotifyServer(phoneNo, true)
