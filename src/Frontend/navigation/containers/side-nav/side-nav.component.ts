@@ -25,49 +25,53 @@ export class SideNavComponent implements OnInit, OnDestroy {
     constructor(public navigationService: NavigationService, public userService: UserService,private router:Router) {}
 
     ngOnInit() {
-        // this.openHamburger();
-        this.hideHamburger();
+       
+        // this.hideHamburger();
     
+    }
+
+    ngViewAfterInit() {
+        this.openHamburger();
     }
 
     ngOnDestroy() {
         this.subscription.unsubscribe();
     }
 
-    // openHamburger(): void {
-    //     const sideNavMenu = document.getElementById('sidenav-menu');
-    //     const sideBarToggle = document.getElementById('sidebarToggle');
-    //     const mainBody = document.getElementsByClassName('container-fluid')[0] as HTMLElement; // Get the first element
+    openHamburger(): void {
+        const sideNavMenu = document.getElementById('sidenav-menu');
+        const sideBarToggle = document.getElementById('sidebarToggle');
+        const mainBody = document.getElementsByClassName('container-fluid')[0] as HTMLElement; // Get the first element
     
-    //     if (sideNavMenu && sideBarToggle) {
-    //         if (sideNavMenu.style.width === '100%') {
-    //             sideNavMenu.style.width = '25%';
-    //             sideNavMenu.style.border = '0';
-    //             mainBody.style.marginLeft = '-10%';
-    //             sideBarToggle.style.marginLeft = '-3px';
-    //         } else {
-    //             sideNavMenu.style.width = '100%';
-    //             sideNavMenu.style.borderRight = '1px solid #EBEBEB';
-    //             mainBody.style.marginLeft = '0';
-    //             sideBarToggle.style.marginLeft = '-148px';
-    //         }
-    //     }
-    // }
-
-    toggleNavItem() {
-        this.showNavItem = !this.showNavItem;   
+        if (sideNavMenu && sideBarToggle) {
+            if (sideNavMenu.style.width === '100%') {
+                sideNavMenu.style.width = '25%';
+                sideNavMenu.style.border = '0';
+                mainBody.style.marginLeft = '-10%';
+                sideBarToggle.style.marginLeft = '-3px';
+            } else {
+                sideNavMenu.style.width = '100%';
+                sideNavMenu.style.borderRight = '1px solid #EBEBEB';
+                mainBody.style.marginLeft = '0';
+                sideBarToggle.style.marginLeft = '-148px';
+            }
+        }
     }
 
-    hideHamburger() {
-        const currentRoute = this.router.url
+    // toggleNavItem() {
+    //     this.showNavItem = !this.showNavItem;   
+    // }
 
-        if( currentRoute.includes("/dashboard/setting") || 
-            currentRoute.includes("/dashboard/myprofile")|| 
-            currentRoute.includes("/dashboard/support")|| 
-            currentRoute.includes("/dashboard/notifications")){
-            this.showNavItem = false;
-        }
+//     hideHamburger() {
+//         const currentRoute = this.router.url
 
-}
+//         if( currentRoute.includes("/dashboard/setting") || 
+//             currentRoute.includes("/dashboard/myprofile")|| 
+//             currentRoute.includes("/dashboard/support")|| 
+//             currentRoute.includes("/dashboard/notifications")){
+//             this.showNavItem = false;
+//         }
+
+// }
 
 }
