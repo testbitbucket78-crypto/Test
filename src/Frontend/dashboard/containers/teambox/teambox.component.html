@@ -395,7 +395,7 @@
 			<div *ngIf="selectedInteraction?.messageList" class=" col-4 team pt-5">
 				<div class="team-box right_box">
 					<div class="sidenav">
-						<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
+						<div class="profile" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
 							<img class="toggle_provice_view" (click)="toggleProfileView()" *ngIf="showFullProfile"
 								src="/assets/img/teambox/search-clear.svg">
 							<div class="custom_row">
