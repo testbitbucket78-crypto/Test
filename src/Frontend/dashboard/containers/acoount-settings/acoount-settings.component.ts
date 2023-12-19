@@ -244,7 +244,7 @@ openDiv() {
           }
           this.loadingQRCode = false;
           if (response.QRcode === 'Client is ready!') {    
-            this.channel_status = 0;      
+            this.channel_status = 1;      
             $("#qrWhatsappModal").modal('hide');
             this.showToaster('! User is already authenticated', 'success');   
             setTimeout(()=> {
