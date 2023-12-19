@@ -3,7 +3,7 @@ const { request } = require('http');
 const app = express();
 const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer')
-//const qrcode = require('qrcode-terminal');
+// const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
@@ -20,7 +20,7 @@ const fs = require('fs')
 const path = require("path");
 let clientSpidMapping = {};
 
-async function createClientInstance(spid, phoneNo, res) {
+async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo);
 
   if (isActiveSpidClient(spid)) {
@@ -32,77 +32,21 @@ async function createClientInstance(spid, phoneNo, res) {
     clientId: spid
   });
 
-  const worker = `${authStr.dataPath}/session-${spid}/Default/Service Worker`;
-  if (fs.existsSync(worker)) {
-
-    console.log("fs.existsSync(worker)",fs.existsSync(worker))
-    fs.rmdir(worker, { recursive: true }, async (err) => {
-      if (err) {
-        console.log("recursive delete threw and error");
-        console.log(err);
-        const response = await ClientInstance(spid, authStr, phoneNo);
-        res.send({
-          status: response.status,
-          QRcode: response.value
-        })
-      }
-
-      try {
-        console.log(fs.existsSync(worker))
-        console.log("inside try")
-        console.log(fs.existsSync(worker))
-        if (fs.existsSync(worker)) fs.unlinkSync(worker);
-        const response = await ClientInstance(spid, authStr, phoneNo);
-        res.send({
-          status: response.status,
-          QRcode: response.value
-        })
-        console.log("seems like it finished unlinking")
-      } catch (e) {
-        // handle error
-        console.log("inside catch")
-        const response = await ClientInstance(spid, authStr, phoneNo);
-        res.send({
-          status: response.status,
-          QRcode: response.value
-        })
-        return;
-      }
-    });
-  } else {
-    const response = await ClientInstance(spid, authStr, phoneNo);
-    res.send({
-      status: response.status,
-      QRcode: response.value
-    })
-  }
-
-  // return new Promise(async (resolve, reject) => {
-  //   setTimeout(async () => {
-  //     try {
-  //       const response = await ClientInstance(spid, authStr, phoneNo);
-  //       console.log("_______________________**********************")
-  //       return resolve(response);
-
-  //     } catch (error) {
-  //       console.error(error);
-  //       return reject(error)
-  //     }
-  //   }, 2000);
-  // })
-
-
+  return await ClientInstance(spid, authStr, phoneNo);
 }
+process.on('uncaughtException', function (err) {
+  console.log("uncaught exception was trying to close this. THe expectation is that it is coming from pupeeter hence ignoring.")
+  console.log(err);
+});
 
-
-async function ClientInstance(spid, authStr, phoneNo) {
+function ClientInstance(spid, authStr, phoneNo) {
   return new Promise(async (resolve, reject) => {
     try {
       const client = new Client({
         puppeteer: {
           headless: true,
-          //executablePath: "/usr/bin/google-chrome-stable",
-          executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          executablePath: "/usr/bin/google-chrome-stable",
+          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -211,20 +155,18 @@ WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  and  msg_status is null`
             let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
-            notify.NotifyServer(message.from, true);
+            notify.NotifyServer(phoneNo, true)
 
             //  let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
           } else if (ack == '2') {
             console.log(`Message has been delivered`);
-           
             const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 and (msg_status =1 or msg_status is null)`
             let deded = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
-            notify.NotifyServer(message.from, true);
-
+            notify.NotifyServer(phoneNo, true)
             //    db.excuteQuery(`UPDATE Message set msg_status=? where ExternalMessageId=?`, [ack, message.id.id])
           } else if (ack == '3') {
             console.log(`Message has been read`);
@@ -235,10 +177,11 @@ SELECT InteractionId FROM Interaction
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1   and msg_status =2`
             let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
 
+            notify.NotifyServer(phoneNo, true)
             //    db.excuteQuery(`UPDATE Message set msg_status=?, is_read =1 where ExternalMessageId=?`, [ack, message.id.id])
           }
 
-          notify.NotifyServer(message.from, true);
+
         } catch (message_ackErr) {
           console.log(message_ackErr)
         }
@@ -327,7 +270,7 @@ async function saveSendedMessageStatus(messageStatus, timestamp, to, id) {
 async function sendMessages(spid, endCust, type, text, link, interaction_id, msg_id) {
   try {
     let client = clientSpidMapping[[spid]];
-    console.log(spid, endCust, type, text,link,interaction_id, msg_id)
+    console.log(spid, endCust, type, interaction_id, msg_id)
     if (client) {
       console.log("if");
       let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
