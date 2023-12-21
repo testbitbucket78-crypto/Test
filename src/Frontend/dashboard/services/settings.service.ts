@@ -80,6 +80,10 @@ export class SettingsService {
     return this.http.post<workingDataResponse>(`${this.API_URL}/addUser`,userData);
   }
 
+  editUserData(data:any):Observable<any>{
+    return this.http.post<any>(`${this.API_URL}/editUser/`,data)
+  }
+
   deleteUserData(uid: any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/deleteUser`,uid);
   }
@@ -224,10 +228,7 @@ export class SettingsService {
 
   deleteCustomField(id: number): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/deleteCustomField/${id}`,null);
-  }
-
-  // enable_disableMandatory()
-  
+  }  
 
   getManageStorageData(spid:any):Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getautodeletion/${spid}`);
@@ -259,7 +260,5 @@ export class SettingsService {
     return this.http.post<any>(`${this.API_URL}/editTeam/`,data)
   }
   
-  editUser(data:any):Observable<any>{
-    return this.http.post<any>(`${this.API_URL}/editUser/`,data)
-  }
+
 }
