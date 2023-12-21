@@ -29,7 +29,7 @@ export class TemplateMessageComponent implements OnInit {
   quickreply: any;
   status!: string;
   BodyText:any;
-  selectedType: string = '';
+  selectedType: string = 'text';
   selectedPreview:string = '';
   showCampaignDetail:boolean = false;
   showGalleryDetail:boolean = false;
@@ -126,7 +126,11 @@ export class TemplateMessageComponent implements OnInit {
 
   newTemplateForm!:FormGroup;
 
-  @ViewChild('videoPlayer') videoPlayer!: ElementRef;
+  // @ViewChild('videoPlayer') videoPlayer!: ElementRef;
+
+  @ViewChild('videoPlayer', { static: false })
+  videoPlayer!: ElementRef;
+
 
   constructor(private apiService:SettingsService,private _teamboxService:TeamboxService) { }
 
@@ -212,6 +216,7 @@ export class TemplateMessageComponent implements OnInit {
   // selected Message for New Template Message Form
   showMessageType(type: string) {
     this.selectedType = type;
+    console.log(this.selectedType)
   }
 
 
@@ -264,10 +269,10 @@ export class TemplateMessageComponent implements OnInit {
         if(fileType.startsWith("image")) {
           this.selectedPreview = e.target.result as string;
         }
-        // if(fileType.startsWith("video")) {
-        //   this.selectedPreview = e.target.result as string;
-        //   this.videoPlayer.nativeElement.src = this.selectedPreview;
-        // }
+      //   if(fileType.startsWith("video")) {
+      //     this.selectedPreview = e.target.result as string;
+      //     this.videoPlayer!.nativeElement.src = this.selectedPreview;
+      //   }
 
       //   if(fileType === 'application/pdf' || fileType === 'application/msword' 
       //   || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
@@ -290,27 +295,30 @@ export class TemplateMessageComponent implements OnInit {
 		if(files[0]){
 		let File = files[0]
 		this.selectedType = files[0].type
-		const data = new FormData();
-		data.append('dataFile',File ,File.name);
-		data.append('mediaType', this.selectedType);
-		this._teamboxService.uploadfile(data).subscribe(uploadStatus =>{
-			let responseData:any = uploadStatus
-			if(responseData.filename){
-				this.selectedPreview= responseData.filename
-			}
-		})
-	  }
+      const data = new FormData();
+      data.append('dataFile',File ,File.name);
+      data.append('mediaType', this.selectedType);
+      this._teamboxService.uploadfile(data).subscribe(uploadStatus =>{
+        let responseData:any = uploadStatus
+        if(responseData.filename) {
+          this.selectedPreview= responseData.filename
+          console.log(this.selectedPreview)
+         if(this.selectedType.startsWith("video")) {
+          this.videoPlayer.nativeElement.src = this.selectedPreview;
+           }
+           if(this.selectedType=== 'application/pdf' || this.selectedType=== 'application/msword' || this.selectedType=== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+              this.selectedPreview;
+           }
+        }
+      });
 	}
+ }
 
-  onFileChange(event: any) {
-		let files: FileList = event.target.files;
-  
-      this.selectedPreview = event.target.files as string;
-      this.videoPlayer.nativeElement.src = this.selectedPreview;
-    
-		this.saveVideoAndDocument(files);
-		
-	}
+ onFileChange(event: any) {
+  let files: FileList = event.target.files;
+  this.saveVideoAndDocument(files);
+}
+
 
 // remove form preview value 
 removeValue() {
