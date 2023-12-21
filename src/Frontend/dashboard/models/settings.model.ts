@@ -87,6 +87,7 @@ export interface campaignDataResponsePost {
 }
 
 export interface workingDataResponse {
+    subRightRes: any;
     result: workingData[]
 
 }
