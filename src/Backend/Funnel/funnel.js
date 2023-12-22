@@ -99,6 +99,8 @@ app.post('/addFunnel', async (req, res) => {
     try {
         let updatedfunnel;
         let addedfunnel;
+        created_at = new Date();
+
         if (req.body.Id != '') {
             var updateQuery = "UPDATE Funnel set";
             updateQuery += " title='" + req.body.title + "',";
@@ -111,26 +113,76 @@ app.post('/addFunnel', async (req, res) => {
             updateQuery += " button_no='" + req.body.button_no + "',";
             updateQuery += " button_exp='" + req.body.button_exp + "',";
             updateQuery += " category='" + req.body.category + "',";
-            updateQuery += " time_zone='" + req.body.time_zone + "',";
             updateQuery += " start_datetime='" + req.body.start_datetime + "',";
             updateQuery += " end_datetime='" + req.body.end_datetime + "',";
             updateQuery += " csv_contacts='" + req.body.csv_contacts + "',";
             updateQuery += " segments_contacts='" + req.body.segments_contacts + "',";
-            updateQuery += " status= " + req.body.status;
-            updateQuery += " WHERE Id =" + req.body.Id
+            updateQuery += " success= '" + req.body.success + "',";
+            updateQuery += " fail=' " + req.body.fail + "',";
+            updateQuery += " multipleEntry= '" + req.body.multipleEntry + "',";
+            updateQuery += " optIn= '" + req.body.optIn + "',";
+            updateQuery += " new_contact= '" + req.body.new_contact + "',";
+            updateQuery += " attribute_update= '" + req.body.attribute_update + "',";
+            updateQuery += " attribute_update=' " + req.body.category_id + "',";
+            updateQuery += " timeInterval= '" + req.body.timeInterval + "',";
+            updateQuery += " allTime= '" + req.body.allTime + "',";
+            updateQuery += " allDays=' " + req.body.allDays + "'";
 
-            updatedfunnel =await  db.excuteQuery(updateQuery, []);
+            updateQuery += " WHERE FunnelId =" + req.body.Id
+
+            updatedfunnel = await db.excuteQuery(updateQuery, []);
         } else {
-            var inserQuery = "INSERT INTO Funnel (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts) ";
-            inserQuery += "VALUES (" + req.body.status + "," + req.body.sp_id + ",'" + req.body.title + "','" + req.body.channel_id + "','" + req.body.message_heading + "','" + req.body.message_content + "','" + req.body.message_media + "','" + req.body.message_variables + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.category + "','" + req.body.time_zone + "','" + req.body.start_datetime + "','" + req.body.end_datetime + "','" + req.body.csv_contacts + "','" + req.body.segments_contacts + "')";
+            var inserQuery = "INSERT INTO Funnel (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,start_datetime,end_datetime,csv_contacts,segments_contacts,success,fail,multipleEntry,optIn,new_contact,attribute_update,category_id,timeInterval,allTime,allDays,status) ";
+            inserQuery += "VALUES (" + req.body.sp_id + ",'" + req.body.title + "','" + req.body.channel_id + "','" + req.body.message_heading + "','" + req.body.message_content + "','" + req.body.message_media + "','" + req.body.message_variables + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.category + "','" + req.body.start_datetime + "','" + req.body.end_datetime + "','" + req.body.csv_contacts + "','" + req.body.segments_contacts + "','" + req.body.success + "','" + req.body.fail + "','" + req.body.multipleEntry + "','" + req.body.optIn + "','" + req.body.new_contact + "','" + req.body.attribute_update + "','" + req.body.category_id + "','" + req.body.timeInterval + "','" + req.body.allTime + "','" + req.body.allDays + "','" + req.body.status + "')";
+            addedfunnel = await db.excuteQuery(inserQuery, [])
 
-          
-            addedfunnel=await db.excuteQuery(inserQuery, [])
+            saveMessagesAndDays(req.body.sp_id, addedfunnel.insertId, req.body.messages)
+
         }
         res.send({
             status: 200,
             updatedfunnel: updatedfunnel,
-            addedfunnel:addedfunnel
+            addedfunnel: addedfunnel
+        })
+    } catch (err) {
+        console.log(err)
+        res.send({
+            status: 500,
+            err: err
+        })
+    }
+})
+
+async function saveMessagesAndDays(sp_id, fnlId, messages) {
+    let messageId;
+    let messageResult;
+    for (const message of messages) {
+        console.log(message.days);
+
+        messageResult = await db.excuteQuery(
+            val.addMessages,
+            [[[sp_id, fnlId, message.Message, message.message_media, message.schedule_datetime, message.allTime, message.allDays, message.isEnable, message.start_time, message.end_time, new Date()]]]
+        );
+
+        messageId = messageResult.insertId;
+
+        // Insert days into the `days` table
+        for (const day of message.days) {
+            await db.excuteQuery(
+                val.addFunnelDaysQuery,
+                [[[sp_id, day, messageId, fnlId, new Date()]]]
+            );
+        }
+    }
+}
+
+app.get('/getAllFunnel/:sp_id', async (req, res) => {
+    try {
+        let result = await db.excuteQuery(val.getfunnel, [req.params.sp_id]);
+        console.log(result)
+        res.send({
+            status: 200,
+            result: result
         })
     } catch (err) {
         res.send({
@@ -139,6 +191,120 @@ app.post('/addFunnel', async (req, res) => {
         })
     }
 })
+
+app.post('/enableMessages', async (req, res) => {
+    try {
+        let enabledMsg = await db.excuteQuery(val.enableMessage, [req.body.isEnable, new Date(), req.body.Message_id]);
+        res.send({
+            status: 200,
+            enabledMsg: enabledMsg
+        })
+    } catch (err) {
+        res.send({
+            status: 500,
+            err: err
+        })
+    }
+})
+
+
+app.post('/deleteMessages', async (req, res) => {
+    try {
+        let deletedMsg = await db.excuteQuery(val.deleteMessage, [new Date(), req.body.Message_id])
+        res.send({
+            status: 200,
+            deletedMsg: deletedMsg
+        })
+    } catch (err) {
+        res.send({
+            status: 500,
+            err: err
+        })
+    }
+})
+
+
+app.post('/editMessages', async (req, res) => {
+    try {
+        let editMsg = await db.excuteQuery(val.editMessage, [req.body.message_content, req.body.message_media, req.body.schedule_datetime, req.body.allTime, req.body.allDays, req.body.isEnable, req.body.start_time, req.body.end_time, new Date(), req.body.Message_id])
+        res.send({
+            status: 200,
+            editMsg: editMsg
+        })
+    } catch (err) {
+        res.send({
+            status: 500,
+            err: err
+        })
+    }
+})
+
+app.post('/addAttributeUpdate', async (req, res) => {
+    try {
+        let updatedAttribute = await db.excuteQuery(req.body.Query, []);
+        res.status({
+            status: 200,
+            updatedAttribute: updatedAttribute
+        })
+    } catch (err) {
+        res.status({
+            status: 500,
+            err: err
+        })
+    }
+})
+
+
+
+app.post('/updateFunnelTimes', async (req, res) => {
+    try {
+        console.log(req.body)
+        sp_id = req.body.sp_id
+        days = req.body.days
+
+        created_at = new Date();
+
+        let deleteCampaignTimings = await db.excuteQuery(val.deleteFunnelDaysQuery, [created_at, sp_id])
+
+        console.log(deleteCampaignTimings)
+        console.log("deleteCampaignTimings")
+
+        days.forEach(async (item) => {
+
+            item.day.forEach(async (ele) => {
+                const values = [sp_id, ele, created_at];
+                result = await db.excuteQuery(val.addFunnelDaysQuery, [[values]])
+            })
+
+        })
+
+        res.status(200).send({
+            msg: "added successfully",
+            status: 200
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+})
+
+
+app.post('/selectFunnelDays', async (req, res) => {
+    try {
+        let seletedCampaignTimings = await db.excuteQuery(val.selectFunnelDaysQuery, [req.params.sid])
+        res.status(200).send({
+            seletedCampaignTimings: seletedCampaignTimings,
+            status: 200
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+})
+
+
 
 app.listen(3011, function () {
     console.log("Node is running");

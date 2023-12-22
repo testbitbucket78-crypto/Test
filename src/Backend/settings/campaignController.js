@@ -376,8 +376,8 @@ const addTemplate = async (req, res) => {
         industry = req.body.industry
 
         let image = ""
-
-        if (Links != null && Links != undefined && Links != "" && Links != " ") {
+        image=Links
+        if (Links != null && Links != undefined && Links != "" && Links != " " && media_type =='image') {
             // Remove header
             let streamSplit = Links.split(';base64,');
             let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
