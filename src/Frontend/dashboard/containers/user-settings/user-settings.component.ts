@@ -105,7 +105,7 @@ export class UserSettingsComponent implements OnInit {
     ngOnInit(): void {
         this.userDetailForm = this.prepareUserForm();
         this.getUserList();
-        this.getRolesList(); 
+        // this.getRolesList(); 
         console.log(this.uid);
     }
 
@@ -165,13 +165,13 @@ export class UserSettingsComponent implements OnInit {
         });
     }
 
-    getRolesList() {
-        this._settingsService.getRolesList(this.sp_Id).subscribe(result => {
-            if (result) {
-                this.rolesList = result?.getRoles;
-            }
-        });
-    }
+    // getRolesList() {
+    //     this._settingsService.getRolesList(this.sp_Id).subscribe(result => {
+    //         if (result) {
+    //             this.rolesList = result?.getRoles;
+    //         }
+    //     });
+    // }
 
     addEditUserDetails() {
         let userData = this.copyUserData();
@@ -255,15 +255,5 @@ export class UserSettingsComponent implements OnInit {
             )
                 this.userList.push(item);
         });
-    }
-    // Assuming this function is in your component class
-    getSelectedRoles(): any[] {
-        // Assuming userDetailForm.controls.UserType.value contains the selected role ID
-        const selectedRoleID = this.userDetailForm.controls.UserType.value;
-
-        // Filter rolesList to get the selected role
-        const selectedRoles = this.rolesList.filter((item: any) => item.roleID === selectedRoleID);
-
-        return selectedRoles;
     }
 }
