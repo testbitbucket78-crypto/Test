@@ -19,7 +19,7 @@ export class CustomFieldsComponent implements OnInit {
   isActive: number = 1;
   defaultFields = '#6149CD';
   defaultFieldsChecked= '#EBEBEB'; 
-  pageSize: number = 50;
+  pageSize: number = 10;
   pageSizeOptions: number[] = [10, 15, 20, 25, 30, 35, 40, 45, 50];
   currentPage!: number;
   paging: number[] = [];
@@ -127,7 +127,7 @@ removeCustomFieldsOption(index:any){
  getPaging() {
   this.paging = [];
   this.currentPage = 1;
-  let totalPages = Math.ceil(this.dynamicFieldData.length / this.pageSize);
+  let totalPages = Math.ceil(this.customFieldData.length / this.pageSize);
   for (let i = 1; i <= totalPages; i++) {
       this.paging.push(i);
   }

@@ -1678,7 +1678,7 @@ triggerUpdateConversationStatus(status:any,openStatusAlertmMessage:any){
 	}
 }
 
-updateConversationStatus(status:any){
+updateConversationStatus(status:any) {
 	var bodyData = {
 		Status:status,
 		InteractionId:this.selectedInteraction.InteractionId
@@ -1908,11 +1908,12 @@ sendMessage(){
 
 	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
 		this.showToaster('! Please type your message first','error');
-		return; 
 	}
-   
- 
-	 {
+	else if(this.selectedInteraction.interaction_status =='Resolved') {
+		this.showToaster('Already Resolved! Please Open this Chat to continue  ','warning')
+	}
+
+	 else {
 		let postAllowed =false;
 		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
 			postAllowed =true;
@@ -2009,9 +2010,9 @@ sendMessage(){
 		}else{
 			this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
 		}
-	}else{
+	}else {
 		this.showToaster('Oops! You are not allowed to post content','warning')
-	}
+	 }
 	}
 
 

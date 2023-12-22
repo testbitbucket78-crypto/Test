@@ -8,7 +8,7 @@ import { environment } from './environments/environment';
 import { registerLicense } from '@syncfusion/ej2-base';
 
 // validateLicense('ORg4AjUWIQA/Gnt2VlhiQlVPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9gSH9Rf0VgXX1ad3xVQmM=');
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIfEx0R3xbf1xzZFdMYV9bRH5PIiBoS35RdURiW31fdHZXR2RcU0R2');
+registerLicense('ORg4AjUWIQA/Gnt2VlhiQlVPd11dXmJWd1p/THNYflR1fV9DaUwxOX1dQl9gSH9Rf0VgXX1ad3xVQmM=');
 
 
 if (environment.production) {
