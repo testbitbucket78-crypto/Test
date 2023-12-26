@@ -8,7 +8,7 @@
                     aria-describedby="basic-addon2" name="Name" id="Search-Ag" />
                 <img src="assets/img/search.png">
             </div>
-            <button class="new-token-btn" (click)="addUser()" data-bs-toggle="modal" data-bs-target="#userModal">
+            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#userModal">
                 <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
                 Create User</button>
         </div>
@@ -26,7 +26,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content user-modal p-2 pl-3">
             <div class="modal-header">
-                <h5 class="modal-title">Create User</h5>
+                <h5 *ngIf="!selectedUserData" class="modal-title">Create User</h5>
+                <h5 *ngIf="selectedUserData" class="modal-title">Edit User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
@@ -57,7 +58,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="account-btn" (click)="saveRolesDetails()">Create and Invite</button>
+                <button *ngIf="!selectedUserData" type="button" class="account-btn" (click)="addEditUserDetails()">Create and Invite</button>
+                <button *ngIf="selectedUserData" type="button" class="account-btn" (click)="addEditUserDetails()">Update User Details</button>
             </div>
         </div>
     </div>
@@ -83,7 +85,7 @@
                 <span class="heading">{{userData?.name}}</span>
                 <div class="d-flex pt-1">
                     <p>Date of Joining:</p>
-                    <p class="black ">&nbsp;19 Oct 2021</p>
+                    <p class="black ">&nbsp;{{userData?.date}}</p>
                 </div>
             </div>
         </div>

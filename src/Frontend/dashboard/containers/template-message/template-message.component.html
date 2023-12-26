@@ -408,7 +408,7 @@
                 <div class="main-container-for-body">
                     <div class="d-flex justify-content-between align-items-center sel-type-btns">
 
-                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" [checked]="selectedType==='text'">
+                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')">
                         <label [ngClass]="{'radio-label': selectedType === 'text'}" class="m-0" for="sel-text">Text</label>
                         <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')">
                         <label [ngClass]="{'radio-label': selectedType === 'image'}"  class="m-0" for="sel-image">Image</label>
@@ -462,7 +462,7 @@
                     </div>
                     <img *ngIf="newTemplateForm.get('Links')!.value !== null" src="../../../../assets/img/settings/doc.svg" />
                     <span class="document-preview" *ngIf="newTemplateForm.get('Links')!.value !== null" >{{ newTemplateForm.get('Links')!.value }}</span>
-                        <input type="file" accept=".doc, .docx, .pdf" formControlName="Links" (change)="previewImageAndVideo($event)" name="document-select" id="sel-type-document">
+                        <input type="file" accept=".doc, .docx, .pdf" formControlName="Links" (change)="onFileChange($event)" name="document-select" id="sel-type-document">
                         <div *ngIf="newTemplateForm.get('Links')!.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of document</p></div>

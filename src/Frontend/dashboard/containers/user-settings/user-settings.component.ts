@@ -3,6 +3,7 @@ import { SettingsService } from '../../services/settings.service';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { UserData, rights } from '../../models/settings.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { isNullOrUndefined } from 'is-what';
 declare var $: any;
 
 @Component({
@@ -84,18 +85,15 @@ export class UserSettingsComponent implements OnInit {
     roleName!: string;
     selectedRoleId!: number;
     userDetailForm!: FormGroup;
-    uid: number = 0;
+    uid:any;
     rolesList: any;
     userList: any;
     userListInIt: any;
     userData: any;
     isActive: any;
     filteredRolesList: any[] = [];
-    isEditingUser(): boolean {
-        // Check if you are editing an existing user based on some condition (e.g., uid)
-        return this.uid !== null && this.uid !== undefined;
-    }
-
+    selectedUserData: any;
+    
     constructor(private _settingsService: SettingsService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
@@ -107,23 +105,28 @@ export class UserSettingsComponent implements OnInit {
     ngOnInit(): void {
         this.userDetailForm = this.prepareUserForm();
         this.getUserList();
-        this.getRolesList();
-        this.uid = JSON.parse(sessionStorage.getItem('loginDetails')!).uid;
+        this.getRolesList(); 
+        console.log(this.uid);
     }
 
     rowClicked = (event: any) => {
         console.log(event);
-        this.userData = event.data;
-        this.showSideBar = true;
-        this.uid = this.userData?.uid;
-        this.isActive = this.userData;
-        this.patchFormValue();
-    };
-
-    addUser() {
-        this.uid;
-        this.userDetailForm = this.prepareUserForm();
-    }
+    
+        if (this.showSideBar && this.userData && this.uid) {
+            this.userData = null;
+            this.showSideBar = false;
+            this.uid = null;
+            this.selectedUserData = null;
+            this.patchFormValue();
+        } else {
+            this.userData = event.data;
+            this.showSideBar = true;
+            this.uid = this.userData?.uid;
+            console.log(this.uid);
+            this.isActive = this.userData;
+            this.patchFormValue();
+        }
+    };    
 
     gridOptions = {
         rowSelection: 'multiple',
@@ -170,27 +173,29 @@ export class UserSettingsComponent implements OnInit {
         });
     }
 
-    saveRolesDetails() {
+    addEditUserDetails() {
         let userData = this.copyUserData();
 
-        if (this.isEditingUser()) {
-            // Call the update service method for existing users
-            this._settingsService.editUser(userData).subscribe(result => {
-                if (result) {
-                    this.getUserList();
-                    $('#userModal').modal('hide');
-                }
-            });
-        } else {
-            // Call the save service method for new users
+       if(isNullOrUndefined(this.selectedUserData)) {
             this._settingsService.saveUserData(userData).subscribe(result => {
                 if (result) {
-                    this.getUserList();
+                    this.userDetailForm.reset();
                     $('#userModal').modal('hide');
+                    this.getUserList();
+                }
+             });
+            }
+        else {
+            this._settingsService.editUserData(userData).subscribe(result => {
+                if (result) {
+                    this.userDetailForm.reset();
+                    $('#userModal').modal('hide');
+                    this.showSideBar = false;
+                    this.getUserList();
                 }
             });
-        }
-    }
+        } 
+     }
 
     copyUserData() {
         let userData: UserData = <UserData>{};
@@ -205,6 +210,8 @@ export class UserSettingsComponent implements OnInit {
 
     patchFormValue() {
         const data = this.userData;
+        this.selectedUserData =data;
+        console.log(this.searchUserData)
         for (let prop in data) {
             let value = data[prop as keyof typeof data];
             if (this.userDetailForm.get(prop)) this.userDetailForm.get(prop)?.setValue(value);
