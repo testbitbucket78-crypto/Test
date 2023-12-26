@@ -139,7 +139,7 @@
 							<img src="{{selectedCampaign.message_media}}">
 						</div>
 						<div class="template_text">
-							<p class="name">{{selectedCampaign.message_heading}}</p>
+							<p [innerHTML]="selectedCampaign.message_heading" class="name"></p>
 							<p class="description" [innerHTML]="selectedCampaign.message_content"></p>
 						</div>
 
@@ -356,19 +356,22 @@
 									<p>{{template.TemplateName}}</p>
 								<p><span>{{template.created_at | date:'dd-MM-yyyy'}}</span></p>
 								</div>
-								
 							</label>
 							
 							<div class="inner_box">
-								<img *ngIf="template.Links" class="template_img" src="{{template.Links}}">
-								<div *ngIf="!template.Links" class="template_img_placeholder"></div>
-						
+							 <div class="doc-preview"*ngIf="template.media_type=='document'" width="100%" height="150px">
+								<a [href]="template.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+								</div>
+								<video *ngIf="template.media_type=='video'" muted id="video-background" [src]="template.Links"></video>
+								<img *ngIf="template.media_type=='image'" class="template_img" src="{{template.Links}}">
+								<div *ngIf="!template.media_type" class="template_img_placeholder"></div>
 								<div class="template_text">
-									<p class="m-0 font-weight-bold">{{template.Header}}</p>
-									<p>{{template.BodyText}}</p>
-									<p>{{template.FooterText}}</p>
+									<p [innerHTML]="template.Header" class="m-0 font-weight-bold"></p>
+									<p [innerHTML]="template.BodyText"></p>
+									<p [innerHTML]="template.FooterText"></p>
 								  </div>
 							</div>
+
 							<div class="template_btn">
 								<!-- <button type="button" class="btn">YES</button>
 								<button type="button" class="btn">NO</button>
@@ -386,13 +389,17 @@
 							<p>{{selectedTemplate.TemplateName}}</p>
 							<div class="template">
 								<div class="template_img">
-									<img *ngIf="selectedTemplate.Links" class="template_img" src="{{selectedTemplate.Links}}">
-						            <div *ngIf="!selectedTemplate.Links" class="template_img_placeholder"></div>
+									<div class="doc-preview"*ngIf="selectedTemplate.media_type=='document'">
+										<a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+									  </div>
+									<video *ngIf="selectedTemplate.media_type=='video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
+									<img *ngIf="selectedTemplate.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
+						            <div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
 								</div>
 								<div class="template_text">
-									<p class="name">{{selectedTemplate.Header}}</p>
-									<p class="description">{{selectedTemplate.BodyText}}</p>
-									<p class="footer">{{selectedTemplate.FooterText}}</p>
+									<p [innerHTML]="selectedTemplate.Header" class="name"></p>
+									<p [innerHTML]="selectedTemplate.BodyText" class="description"></p>
+									<p [innerHTML]="selectedTemplate.FooterText" class="footer"></p>
 								</div>
 		
 							</div>
@@ -448,14 +455,19 @@
 						<div class="template_details_section_left">
 							<p>{{selectedTemplate.TemplateName}}</p>
 							<div class="template">
-								<div class="template_img" *ngIf="selectedTemplate.Links" >
+								<div class="template_img">
 									<p class="close-box" (click)="editTemplateMedia()"><img src="/assets/img/campaign/edit.svg"></p>
-									<img class="template_img" src="{{selectedTemplate.Links}}">
+									<img *ngIf="selectedTemplate.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
+									<video *ngIf="selectedTemplate.media_type=='video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+									<div class="doc-preview"*ngIf="selectedTemplate.media_type=='document'" width="100%" height="150px">
+										<a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+									  </div>
+						            <div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
 								</div>
 								<div class="template_text">
-									<p class="name">{{selectedTemplate.Header}}</p>
-									<p class="description">{{selectedTemplate.BodyText}}</p>
-									<p class="footer">{{selectedTemplate.FooterText}}</p>
+									<p [innerHTML]="selectedTemplate.TemplateName" class="name"></p>
+									<p [innerHTML]="selectedTemplate.BodyText" class="description"></p>
+									<p [innerHTML]="selectedTemplate.FooterText" class="footer"></p>
 								</div>
 		
 							</div>
@@ -481,12 +493,17 @@
 						<p class="value">{{selectedTemplate.Category}}</p>
 						<div class="template mt-2">
 							<div class="template_img">
-								<img src="{{selectedTemplate.Links}}">
+								<div class="doc-preview"*ngIf="selectedTemplate.media_type=='document'" width="100%" height="150px">
+									<a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+								  </div>
+								<video *ngIf="selectedTemplate.media_type=='video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+								<img *ngIf="selectedTemplate.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
+								<div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
 							</div>
 							<div class="template_text">
-								<p class="name">{{selectedTemplate.Header}}</p>
-								<p class="description">{{selectedTemplate.BodyText}}</p>
-								<p class="footer">{{selectedTemplate.FooterText}}</p>
+								<p [innerHTML]="selectedTemplate.TemplateName" class="name"></p>
+								<p [innerHTML]="selectedTemplate.BodyText" class="description"></p>
+								<p [innerHTML]="selectedTemplate.FooterText" class="footer"></p>
 							</div>
 	
 						</div>

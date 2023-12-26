@@ -63,7 +63,7 @@
             </div>
 
                 <div class="dynamicFieldContainer" cdkDropList (cdkDropListDropped)="Drop($event)">
-                    <div *ngFor="let dynamic of dynamicFieldData | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize; 
+                    <div *ngFor="let dynamic of dynamicFieldData | slice:(currentPage!=1?((pageSize*(currentPage-1))-6):0):((pageSize*(currentPage-1))+pageSize)-6; 
                       let ith = index" cdkDrag class="dynamicField column" cdkDragBoundary=".dynamicFieldContainer">
                         <div (click)="toggleSideBar(dynamic)" class="body-col">
                             <div class="drag-btn">

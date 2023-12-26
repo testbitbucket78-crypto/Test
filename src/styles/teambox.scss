@@ -172,6 +172,8 @@ label.container input[type="radio"]:checked + span.label {
 
   .template_text p{
     word-break: break-word;
+    margin: 0;
+		font-size: 12px;
   }
 
   .template_box{

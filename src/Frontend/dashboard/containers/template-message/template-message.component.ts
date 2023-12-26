@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl,FormGroup,Validators } from '@angular/forms';
 import { newTemplateFormData, quickReplyButtons, templateMessageData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -27,7 +27,7 @@ export class TemplateMessageComponent implements OnInit {
   Category: any;
   category_id!:number;
   quickreply: any;
-  status!: string;
+  status: string = 'draft';
   BodyText:any;
   selectedType: string = 'text';
   selectedPreview:string = '';
@@ -110,6 +110,8 @@ export class TemplateMessageComponent implements OnInit {
     'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
   ];
 
+  @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent; 
+
 	public tools: object = {
 		items: [
 			
@@ -125,12 +127,6 @@ export class TemplateMessageComponent implements OnInit {
 	};
 
   newTemplateForm!:FormGroup;
-
-  // @ViewChild('videoPlayer') videoPlayer!: ElementRef;
-
-  @ViewChild('videoPlayer', { static: false })
-  videoPlayer!: ElementRef;
-
 
   constructor(private apiService:SettingsService,private _teamboxService:TeamboxService) { }
 
@@ -196,7 +192,9 @@ export class TemplateMessageComponent implements OnInit {
       FooterText:new FormControl(null),
       buttonType: new FormControl(''),
       buttonText: new FormControl(''),
-      quickreply:new FormControl(''),
+      quickreply1:new FormControl(''),
+      quickreply2:new FormControl(''),
+      quickreply3:new FormControl(''),
       country_code: new FormControl(''),
       phone_number:new FormControl(''),
       displayPhoneNumber:new FormControl('')
@@ -256,6 +254,16 @@ export class TemplateMessageComponent implements OnInit {
     return this.characterCounts[idx] || 0;
   }
 
+  updateRichTextCharacterCount(event: Event, idx: number) {
+    const editorValue = this.chatEditor?.value;
+    if (editorValue) {
+      this.characterCounts[idx] = editorValue.length;
+    } else {
+      this.characterCounts[idx] = 0;
+    }
+  }
+  
+
 
   previewImageAndVideo(event: Event) {
     const inputElement = event.target as HTMLInputElement;
@@ -269,24 +277,8 @@ export class TemplateMessageComponent implements OnInit {
         if(fileType.startsWith("image")) {
           this.selectedPreview = e.target.result as string;
         }
-      //   if(fileType.startsWith("video")) {
-      //     this.selectedPreview = e.target.result as string;
-      //     this.videoPlayer!.nativeElement.src = this.selectedPreview;
-      //   }
-
-      //   if(fileType === 'application/pdf' || fileType === 'application/msword' 
-      //   || fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-      //     this.selectedPreview = e.target.result as string;
-      //   }
-     
-      //  else {
-      //   console.warn("Unknown file type: " + fileType);
-      //  }
-       
-       
         console.log(this.selectedPreview);
       };
-
       reader.readAsDataURL(file);
     }
   }
@@ -294,24 +286,18 @@ export class TemplateMessageComponent implements OnInit {
   saveVideoAndDocument(files: FileList) {
 		if(files[0]){
 		let File = files[0]
-		this.selectedType = files[0].type
+    let mediaType = files[0].type	
       const data = new FormData();
       data.append('dataFile',File ,File.name);
-      data.append('mediaType', this.selectedType);
+      data.append('mediaType', mediaType);
       this._teamboxService.uploadfile(data).subscribe(uploadStatus =>{
         let responseData:any = uploadStatus
         if(responseData.filename) {
-          this.selectedPreview= responseData.filename
+          this.selectedPreview= responseData.filename.toString();
           console.log(this.selectedPreview)
-         if(this.selectedType.startsWith("video")) {
-          this.videoPlayer.nativeElement.src = this.selectedPreview;
-           }
-           if(this.selectedType=== 'application/pdf' || this.selectedType=== 'application/msword' || this.selectedType=== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-              this.selectedPreview;
-           }
         }
       });
-	}
+	  }
  }
 
  onFileChange(event: any) {
@@ -319,16 +305,32 @@ export class TemplateMessageComponent implements OnInit {
   this.saveVideoAndDocument(files);
 }
 
-
-// remove form preview value 
+// remove form values 
 removeValue() {
-  this.newTemplateForm.get('Links')!.setValue(null);
+  this.newTemplateForm.get('TemplateName')!.setValue('');
+  this.newTemplateForm.get('Channel')!.setValue('');
+  this.newTemplateForm.get('Category')!.setValue('');
+  this.newTemplateForm.get('Language')!.setValue('');
+  this.newTemplateForm.get('media_type')!.setValue('');
+  this.newTemplateForm.get('Header')!.setValue('');
+  this.newTemplateForm.get('Links')!.setValue('');
+  this.newTemplateForm.get('BodyText')!.setValue('');
+  this.newTemplateForm.get('FooterText')!.setValue('');
+  this.newTemplateForm.get('buttonType')!.setValue('');
+  this.newTemplateForm.get('buttonText')!.setValue('');
+  this.newTemplateForm.get('quickreply1')!.setValue('');
+  this.newTemplateForm.get('quickreply2')!.setValue('');
+  this.newTemplateForm.get('quickreply3')!.setValue('');
+  this.newTemplateForm.get('country_code')!.setValue('');
+  this.newTemplateForm.get('phone_number')!.setValue('');
+  this.newTemplateForm.get('displayPhoneNumber')!.setValue('');
+
+  this.BodyText = '';
   this.selectedPreview = '';
-  if (this.videoPlayer && this.videoPlayer.nativeElement) {
-    this.videoPlayer.nativeElement.src = null;
-  }
+  this.characterCounts = {};
   this.id = 0;
 }
+
   
   addQuickReplyButtons() {
     if (this.quickReplyButtons.length < 3) {
@@ -344,12 +346,11 @@ removeValue() {
 
   toggleGalleryData(data:any) {
     this.showGalleryDetail = !this.showGalleryDetail;
-    if(this.showGalleryDetail) {
-      this.galleryData = data;
-    }
-    else {
-      this.galleryData==null;
-      }
+    // if(this.showGalleryDetail) {
+    // }
+    // else {
+    //   this.galleryData==null;
+    //   }
   }
 
   toggleTemplatesData(data:any){
@@ -391,8 +392,6 @@ removeValue() {
         filter['checked']=false
         console.log(filter.label+' :: '+event.target.value)
       }
-      
-      
     }
 
     onCategoryChange(event: any) {
@@ -435,14 +434,10 @@ removeValue() {
             }
          });
         }
-
-       
       }
       else {
         alert('!Please fill the required details in the form First');
       }
-  
-  
     }
 
     confirmsave() {

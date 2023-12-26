@@ -1857,13 +1857,13 @@
 	font-size: 10px;
 	font-weight: 400;
 	}
-	.campaign_preview p{
-	margin-bottom: 5px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	flex-wrap: nowrap;
-	}
+	// .campaign_preview p{
+	// margin-bottom: 5px;
+	// display: flex;
+	// flex-direction: row;
+	// align-items: center;
+	// flex-wrap: nowrap;
+	// }
 	.campaign_preview p.label{
 	color:#6149CD
 	}
@@ -2028,4 +2028,13 @@
 
   .search-box.createlist{
 	width: 166%;
+  }
+
+  .doc-preview{
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 145px;
+    width: 100%;
+	border: 1px solid #EBEBEB;
   }
