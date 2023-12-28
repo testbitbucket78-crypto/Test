@@ -59,9 +59,10 @@ export class RegisterComponent implements OnInit {
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) {
         this.registerForm = this.formBuilder.group({
             name: new FormControl('', [Validators.required]),
-            mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),Validators.maxLength(15)])),
+            mobile_number: new FormControl(''),
             country_code: ['IN +91'],
-            email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1),Validators.maxLength(50)])])),
+            display_mobile_number:new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),Validators.maxLength(15)])),
+            email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[a-zA-Z0-9]+\\.[a-zA-Z]{2,}$'), Validators.minLength(1),Validators.maxLength(50)])])),
             password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
             confirmPassword: ['', Validators.required]}, { validator: this.passwordMatchValidator });
            
@@ -88,7 +89,7 @@ export class RegisterComponent implements OnInit {
 
 // Function to format the phone number using libphonenumber-js
 formatPhoneNumber() {
-  let phoneNumber = this.registerForm.get('mobile_number')?.value;
+  let phoneNumber = this.registerForm.get('display_mobile_number')?.value;
   let countryCode = this.registerForm.get('country_code')?.value;
 
   if (phoneNumber && countryCode) {
@@ -112,6 +113,7 @@ formatPhoneNumber() {
         let registerData = {
             name:this.registerForm.get('name')?.value, 
             mobile_number:this.registerForm.get('mobile_number')?.value, 
+            display_mobile_number:this.registerForm.get('display_mobile_number')?.value,
             country_code:this.registerForm.get('country_code')?.value, 
             email_id:this.registerForm.get('email_id')?.value, 
             password:this.registerForm.get('password')?.value, 

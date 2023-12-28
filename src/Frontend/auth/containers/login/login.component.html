@@ -24,7 +24,7 @@
                             <label for="floatingInputGrid">Password</label>
                             <input [type]="changetype?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && loginForm.controls.password.errors}"
                              placeholder="8 character" aria-label="State" name="password" formControlName="password" id="password">
-                                  <span class="eyeicon col-xs-1 2mt-6 "(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye':'fa fa-eye-slash'"></i></span>
+                                  <span class="eyeicon col-xs-1 2mt-6 "(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye-slash':'fa fa-eye'"></i></span>
                         </div>
                     </div>
                     <div class="form-group row col-xs-6 col-md-3" id="row1">
