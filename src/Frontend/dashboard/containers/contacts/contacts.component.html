@@ -3,14 +3,11 @@
 		<sb-top-nav title="Contacts"></sb-top-nav>
 	<div class="contact-header">
 		<div class="">
-			<form class="d-none d-md-inline-block form-inline">
 				<div class="input-group gf ">
 					<input class="form-control" type="text" placeholder="Search" aria-label="Search"
-						aria-describedby="basic-addon2" name="Name" (input)="onFilterTextBoxChange()" id="Search-Ag"
-						formControlName="Name" />
+						aria-describedby="basic-addon2" name="Search" (input)="onFilterTextBoxChange()" id="Search-Ag" />
 					<img src="assets/img/search.png">
 				</div>
-			</form>
 		</div>
 		<div class="d-flex">
 			<div id="export-btn">
@@ -570,9 +567,8 @@
 
 			<div class="row align-items-center pl-3 pt-3">
 				<div class="row_inline d-flex align-items-center">
-					<input class="form-control-checkbox" type="checkbox" id="Opted-in"
-						(click)="updateOptedIn($event)" />
-					<span>Message Opt-In*</span>
+					<input class="form-control-checkbox" type="checkbox" id="Opted-in" [checked]="OptInStatus=='Yes'" (click)="updateOptedIn($event)" />
+					<span>Message Opt-In</span>
 				</div>
 			</div>
 
