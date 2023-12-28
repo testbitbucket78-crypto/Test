@@ -250,7 +250,7 @@
 											*ngIf="message.created_at">{{timeSince(message.created_at)}}
 											<div class="pl-2" *ngIf="message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out'">
 												<div class="doubleee">
-												  <img [src]="tickUpdate(message)" alt="Tick Image">
+												  <img [src]="tickUpdate(message)" alt="">
 												</div>
 											  </div>											  
 										</span>
@@ -431,7 +431,7 @@
 								  
 								<div class="col-md-6">
 									<label>Phone Number</label>
-									<p>{{selectedInteraction.Phone_number}}</p>
+									<p>{{selectedInteraction.countryCode}} {{selectedInteraction.displayPhoneNumber}}</p>
 									<label>Contact Owner</label>
 									<p>{{selectedInteraction.Name}}</p>
 								</div>
@@ -1379,33 +1379,30 @@
 				</div>
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Phone Number*</label>
-					<!-- <select class="input-formm" id="country_code" formControlName="country_code" [(ngModel)]="selectedCountryCode">
+					<select class="input-formm" name="country_code" [(ngModel)]="EditContactForm.country_code">
 						<option *ngFor="let countryCode of countryCodes; let i = index" [ngValue]="countryCode">
 							{{ countryCode }}
 						</option>
-					</select> -->
-					<input (input)="hangeEditContactInuts($event)"  class="form-control phone-no" type="text" name="Phone_number" value={{EditContactForm.Phone_number}} type="text"  formControlName="Phone_number" 
-				 maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$"
-					onKeyPress="return /^[0-9]$/.test(event.key)"> 
-					<div *ngIf="editContact.controls.Phone_number.touched && editContact.controls.Phone_number.errors" 
+					</select>
+					<input class="form-control" type="text" name="Phone_number" value="{{EditContactForm.Phone_number}}" style="display: none" />
+
+					<input (input)="hangeEditContactInuts($event)" class="phone-no form-control" type="text" name="displayPhoneNumber" 
+					type="text" value="{{EditContactForm.displayPhoneNumber}}" (change)="updatePhoneNumber()"
+				    maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="return /^[0-9]$/.test(event.key)" /> 
+					<!-- <div *ngIf="editContact.controls.Phone_number.touched && editContact.controls.Phone_number.errors" 
 							class="text-danger">
 							! Phone number must be 6 to 15 digits.
-						  </div>
+						  </div> -->
 		      		</div>
-
-
-
 
 				<div class="row">
 					<label for="floatingSelectGrid" class="required">Email*</label>
-					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="emailId" formControlName="emailId" 
+					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="emailId" 
 					  value={{EditContactForm.emailId}} required />
-					  
-
-					  <div *ngIf="editContact.controls.emailId.touched  && editContact.controls.emailId.errors "
+					  <!-- <div *ngIf="editContact.controls.emailId.touched  && editContact.controls.emailId.errors "
 					  class="text-danger">
 					  ! Please include valid email address.
-				     </div>
+				     </div> -->
 					  </div>
 					  
 				 	<div class="row">
