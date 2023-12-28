@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './side-nav.component.html',
     styleUrls: ['side-nav.component.scss'],
 })
-export class SideNavComponent implements OnInit, OnDestroy {
+export class SideNavComponent implements OnInit {
     @Input() sidenavStyle!: string;
     @Input() sideNavItems!: SideNavItems;
     @Input() sideNavSections!: SideNavSection[];
@@ -27,16 +27,13 @@ export class SideNavComponent implements OnInit, OnDestroy {
     ngOnInit() {
        
         // this.hideHamburger();
+        this.openHamburger();
     
     }
 
-    ngViewAfterInit() {
-        this.openHamburger();
-    }
-
-    ngOnDestroy() {
-        this.subscription.unsubscribe();
-    }
+    // ngOnDestroy() {
+    //     this.subscription.unsubscribe();
+    // }
 
     openHamburger(): void {
         const sideNavMenu = document.getElementById('sidenav-menu');

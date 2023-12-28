@@ -170,6 +170,7 @@ export interface defaultMessagesData {
     value:string
     link:string;
     override:number;
+    Is_disable:number;
     autoreply:number;
 
 }
