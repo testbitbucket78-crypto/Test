@@ -575,7 +575,93 @@ sendattachfile(){
 	}
 	
 	sendMediaMessage(){
-		this.sendMessage()
+
+		if(this.SIPthreasholdMessages>0){
+		let objectDate = new Date();
+		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
+		var cDay = String(objectDate.getDate()).padStart(2, '0');
+		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
+
+		var bodyData = {
+			InteractionId: this.selectedInteraction.InteractionId,
+			CustomerId: this.selectedInteraction.customerId,
+			SPID:this.SPID,
+			AgentId: this.AgentId,
+			messageTo:this.selectedInteraction.Phone_number,
+			message_text: this.chatEditor.value || "",
+			Message_id:this.newMessage.value.Message_id,
+			message_media: this.messageMeidaFile,
+			media_type: this.mediaType,
+			quick_reply_id: '',
+			template_id:'',
+			message_type: this.showChatNotes,
+			created_at:new Date()
+		}
+
+		this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
+			var responseData:any = data
+			if (responseData.middlewareresult.status === '401') {
+				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+				return;
+			}
+			{
+				if(this.newMessage.value.Message_id==''){
+			
+					var insertId:any = responseData.insertId
+					if(insertId){
+						var lastMessage ={
+							"interaction_id": bodyData.InteractionId,
+							"Message_id": insertId,
+							"message_direction": "Out",
+							"Agent_id": bodyData.AgentId,
+							"message_text": bodyData.message_text,
+							"message_media": bodyData.message_media,
+							"media_type": bodyData.media_type,
+							"Message_template_id": bodyData.message_media,
+							"Quick_reply_id": bodyData.message_media,
+							"Type": bodyData.message_media,
+							"ExternalMessageId": bodyData.message_media,
+							"created_at": createdAt
+						}
+						
+						if(this.showChatNotes=='text'){
+							var allmessages =this.selectedInteraction.allmessages
+							this.selectedInteraction.lastMessage= lastMessage
+							allmessages.push(lastMessage)
+							this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
+							setTimeout(() => {
+								this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+							}, 500);
+		
+						}else{
+							var allnotes =this.selectedInteraction.allnotes
+							allnotes.push(lastMessage)
+							this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
+							setTimeout(() => {
+								this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+							}, 500);
+		
+						
+						}
+						this.chatEditor.value ='';
+						this.messageMeidaFile='';
+						this.mediaType='';
+						this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
+					}
+		
+		
+					}else{
+						this.selectedNote.message_text= bodyData.message_text
+					}
+			}
+			this.newMessage.reset({
+				Message_id: ''
+			});
+		})
+	}else{
+		this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
+	}
+		// this.sendMessage()
         this.closeAllModal();
 		$("#sendfile").modal('hide');	
 		$('body').removeClass('modal-open');
@@ -1157,10 +1243,11 @@ sendattachfile(){
 		Interaction['selected'] = true;
 		this.selectedInteraction = Interaction;
 		this.contactId = Interaction.customerId;
-		// console.log(Interaction);
+		console.log(Interaction);
 		this.selectedCountryCode = Interaction.countryCode;
+		console.log(this.selectedCountryCode)
 		this.Allmessages = this.selectedInteraction.allmessages;
-		console.log(this.Allmessages);
+		// console.log(this.Allmessages);
 		this.getPausedTimer();
 		this.scrollChatToBottom();
 	  }
@@ -1298,7 +1385,7 @@ updateCustomer(){
 	var bodyData = {
 	Name:this.EditContactForm.Name,
 	countryCode:this.EditContactForm.country_code,
-	Phone_number:this.EditContactForm.Phone_number,
+	Phone_number:this.EditContactForm.value.Phone_number,
 	displayPhoneNumber:this.EditContactForm.displayPhoneNumber,
 	channel:this.EditContactForm.channel,
 	status:this.EditContactForm.status,
@@ -1319,11 +1406,11 @@ updateCustomer(){
 	}
 	//console.log(bodyData)
 
-	if(bodyData['Name']!='' && bodyData['Phone_number'].length>=6 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
+	if(bodyData['Name']!='' && bodyData['displayPhoneNumber'].length>=6 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
 		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
 		this.selectedInteraction['Name']=this.EditContactForm.Name
 		this.selectedInteraction['countryCode']=this.EditContactForm.country_code
-		this.selectedInteraction['Phone_number']=this.EditContactForm.Phone_number
+		this.selectedInteraction['Phone_number']=this.EditContactForm.value.Phone_number
 		this.selectedInteraction['displayPhoneNumber']=this.EditContactForm.displayPhoneNumber
 		this.selectedInteraction['channel']=this.EditContactForm.channel
 		this.selectedInteraction['status']=this.EditContactForm.status
@@ -1462,8 +1549,6 @@ SelectReplyOption(optionValue:any,optionType:any){
 	}	
  }
 
-
-	
 	var bodyData = {
 		AutoReply:optionValue,
 		InteractionId:this.selectedInteraction.InteractionId,
@@ -1480,8 +1565,6 @@ SelectReplyOption(optionValue:any,optionType:any){
 		this.showToaster('Pause Applied','success')
 		console.log(this.selectedInteraction)
 	})
-	
-	
 }
 
 // Function to format the phone number using libphonenumber-js
@@ -1496,8 +1579,26 @@ formatPhoneNumber(contactForm: FormGroup) {
   
 		const formattedValue = formattedPhoneNumber?.formatInternational().replace(/[\s+]/g, '');
 		phoneControl.setValue(formattedValue);
+		console.log(phoneNumber);
+		console.log(countryCode)
 		console.log(phoneControl.value);
 	}
+  }
+
+  updatePhoneNumber() {
+    const phoneNumber = this.EditContactForm['displayPhoneNumber'];
+    const countryCode = this.EditContactForm['country_code'];
+    let formattedPhoneNumber = null;
+      if (phoneNumber && countryCode) {
+        const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
+        formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
+          this.EditContactForm.patchValue({
+            Phone_number: formattedPhoneNumber ? formattedPhoneNumber.formatInternational().replace(/[\s+]/g, '') : '',
+          });
+		  console.log('Formatted Phone Number:', this.EditContactForm.Phone_number);
+		  console.log(phoneNumber);
+		console.log(countryCode)
+    }
   }
   
 
@@ -1621,7 +1722,7 @@ triggerEditCustomer(updatecustomer:any){
 		this.modalReference.close();
 	}
 	this.EditContactForm['Name'] =this.selectedInteraction.Name
-	this.EditContactForm['country_code']=this.EditContactForm.country_code
+	this.EditContactForm['country_code']=this.selectedInteraction.countryCode
 	this.EditContactForm['Phone_number'] =this.selectedInteraction.Phone_number
 	this.EditContactForm['displayPhoneNumber']=this.selectedInteraction.displayPhoneNumber
 	this.EditContactForm['channel'] =this.selectedInteraction.channel
@@ -1906,11 +2007,19 @@ deleteNotes(){
 
 sendMessage(){
 
-	if ( !this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
-		this.showToaster('! Please type your message first','error');
+	if (!this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+		this.showToaster('! Please enter a message before sending.','error');
 	}
 	else if(this.selectedInteraction.interaction_status =='Resolved') {
-		this.showToaster('Already Resolved! Please Open this Chat to continue  ','warning')
+
+		this.updateConversationStatus('Open');
+		var Data = {
+			customerId: this.contactId,
+			spid:this.SPID
+		}
+		this.createInteraction(Data);
+
+		this.showToaster('This interaction has been resolved already, Initiating a new interaction ','success')
 	}
 
 	 else {
@@ -1944,69 +2053,66 @@ sendMessage(){
 			created_at:new Date()
 		}
 		this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
-			this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
-			this.messageMeidaFile='';
-			this.mediaType='';
 			var responseData:any = data
-
 			if (responseData.middlewareresult.status === '401') {
 				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
 				return;
 			}
-			
-			if(this.newMessage.value.Message_id=='' && responseData.middlewareresult.status !== '401'){
-			
-			var insertId:any = responseData.insertId
-			if(insertId){
-				var lastMessage ={
-					"interaction_id": bodyData.InteractionId,
-					"Message_id": insertId,
-					"message_direction": "Out",
-					"Agent_id": bodyData.AgentId,
-					"message_text": bodyData.message_text,
-					"message_media": bodyData.message_media,
-					"media_type": bodyData.media_type,
-					"Message_template_id": bodyData.message_media,
-					"Quick_reply_id": bodyData.message_media,
-					"Type": bodyData.message_media,
-					"ExternalMessageId": bodyData.message_media,
-					"created_at": createdAt
-				}
-				
-				if(this.showChatNotes=='text'){
-					var allmessages =this.selectedInteraction.allmessages
-					this.selectedInteraction.lastMessage= lastMessage
-					allmessages.push(lastMessage)
-					this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
-					setTimeout(() => {
-						this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-					}, 500);
-
-				}else{
-					var allnotes =this.selectedInteraction.allnotes
-					allnotes.push(lastMessage)
-					this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
-					setTimeout(() => {
-						this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-					}, 500);
-
-				
-				}
-				this.chatEditor.value ='';
+			{
+				if(this.newMessage.value.Message_id==''){
+					var insertId:any = responseData.insertId
+					if(insertId){
+						var lastMessage ={
+							"interaction_id": bodyData.InteractionId,
+							"Message_id": insertId,
+							"message_direction": "Out",
+							"Agent_id": bodyData.AgentId,
+							"message_text": bodyData.message_text,
+							"message_media": bodyData.message_media,
+							"media_type": bodyData.media_type,
+							"Message_template_id": bodyData.message_media,
+							"Quick_reply_id": bodyData.message_media,
+							"Type": bodyData.message_media,
+							"ExternalMessageId": bodyData.message_media,
+							"created_at": createdAt
+						}
+						
+						if(this.showChatNotes=='text'){
+							var allmessages =this.selectedInteraction.allmessages
+							this.selectedInteraction.lastMessage= lastMessage
+							allmessages.push(lastMessage)
+							this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
+							setTimeout(() => {
+								this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+							}, 500);
+		
+						}else{
+							var allnotes =this.selectedInteraction.allnotes
+							allnotes.push(lastMessage)
+							this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
+							setTimeout(() => {
+								this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+							}, 500);
+		
+						
+						}
+						this.chatEditor.value ='';
+						this.messageMeidaFile='';
+						this.mediaType='';
+						this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
+					}
+		
+		
+					}else{
+						this.selectedNote.message_text= bodyData.message_text
+					}
+					
+		
+					this.newMessage.reset({
+						Message_id: ''
+					});
 			}
-
-
-			}else{
-				this.selectedNote.message_text= bodyData.message_text
-			}
-			
-
-			this.newMessage.reset({
-				Message_id: ''
-			});
-
-
-		});
+		})
 		}else{
 			this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
 		}

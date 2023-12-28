@@ -166,6 +166,7 @@ countryCodes = [
    contactsImageData= <contactsImageData> {};
    contactId:any = 0;
    OptedIn=false;
+   OptInStatus='No';
    ShowContactOwner:any = false;
    addContactTitle: 'add' | 'edit' = 'add';
 
@@ -341,8 +342,8 @@ onSelectAll(items: any) {
   } 
 
   updateOptedIn(event:any){
-		this.OptedIn= event.target.checked
-		this.productForm.value.OptedIn = event.target.value
+	  this.OptedIn = event.target.checked;
+    this.productForm.value.OptedIn = this.OptedIn ? 'Yes' : 'No';
 	}
 
 
@@ -394,6 +395,7 @@ onSelectAll(items: any) {
     this.contactId=0;
     this.productForm.reset();
     this.selectedCountryCode = this.countryCodes[101];
+    this.OptInStatus='No';
    }
 
   deleteRow(arr:any ["id"]) {
@@ -533,7 +535,7 @@ onSelectAll(items: any) {
               ActuallName: "tag"
             },
             {
-              displayName: this.OptedIn,
+              displayName: this.OptedIn ? 'Yes' : 'No',
               ActuallName: "OptInStatus"
             },
         ],
@@ -724,9 +726,7 @@ deletContactByID(data: any) {
       this.productForm.get('tag')?.setValue(selectedTags); 
       this.productForm.get('displayPhoneNumber')?.setValue(displayPhoneNumber);
       this.selectedCountryCode = country_code;
-      if (this.productForm.value['OptedIn']) {
-        this.productForm.value['OptedIn'] = 'Yes';
-      }
+      this.OptInStatus =data.OptInStatus
     }  
   }
 
