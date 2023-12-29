@@ -420,7 +420,7 @@
                                                   <input [type]="currentPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" id="currentPassword"
                                                     name="currentPassword" formControlName="oldPass" placeholder="8 character" required autocomplete="currentPassword">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('currentPassword')">
-                                                    <i [ngClass]="currentPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                                                    <i [ngClass]="currentPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
                                                   </span>
                                                   <div *ngIf="changepassword.get('oldPass')!.invalid && changepassword.get('oldPass')!.touched">
                                                     <div class="change-pass-error-message" *ngIf="changepassword.get('oldPass')!.hasError('minlength')">!  Password must be at least 8 characters long.</div>
@@ -432,7 +432,7 @@
                                                   <input [type]="newPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" formControlName="newPass"
                                                     placeholder="8 character" name="newPassword" id="newPassword" required autocomplete="newPassword">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('newPassword')">
-                                                    <i [ngClass]="newPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                                                    <i [ngClass]="newPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
                                                   </span>
                                                   <div *ngIf="changepassword.get('newPass')!.invalid && changepassword.get('newPass')!.touched">
                                                     <div class="change-pass-error-message" *ngIf="changepassword.get('newPass')!.hasError('minlength')">!  Password must be at least 8 characters long.</div>
@@ -444,7 +444,7 @@
                                                   <input [type]="confirmPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield"
                                                     formControlName="confirmPass" placeholder="8 character" id="confirmPassword" name="confirmPassword" required autocomplete="confirmPassword">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('confirmPassword')">
-                                                    <i [ngClass]="confirmPasswordType ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                                                    <i [ngClass]="confirmPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
                                                   </span>
                                                   <div *ngIf="changepassword.get('confirmPass')!.invalid && changepassword.get('confirmPass')!.touched">
                                                     <div class="change-pass-error-message" *ngIf="changepassword.get('confirmPass')!.hasError('minlength')">!  Password must be at least 8 characters long.</div>

@@ -252,12 +252,12 @@ a{
    // phone nummber field
 
     #country_code {
-        width: 65px;
         border: none;
         position: relative;
-        left: 12px;
+        left: 24px;
         top: 4px;
         z-index: 9999;
+        text-align: center;
         font-size: 11px;
         cursor: pointer;
         outline: none;
@@ -268,5 +268,5 @@ a{
     #mobile_number{
         margin-left: -61px;
         width: 280px;
-        padding: 0 0 0 77px;
+        padding: 0 0 0 87px;
     }
