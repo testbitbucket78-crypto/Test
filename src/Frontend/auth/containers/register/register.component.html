@@ -32,9 +32,11 @@
                     </option>
                     </select>
                     <input type="text" class="form-control" id="mobile_number" formControlName="mobile_number" 
-                      name="mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
+                    name="mobile_number" style="display: none">  
+                    <input type="text" class="form-control" id="mobile_number" formControlName="display_mobile_number" 
+                      name="display_mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
                       onKeyPress="return /^[0-9]$/.test(event.key)"
-                      [ngClass]="{'is-invalid' :submitted && registerForm.controls.mobile_number.errors }" 
+                      [ngClass]="{'is-invalid' :submitted && registerForm.controls.display_mobile_number.errors }" 
                     (change)="formatPhoneNumber()" #text>    
                   </div>
                 </div>
@@ -46,9 +48,6 @@
   
                   <input formControlName="email_id"  type="text-right mr-3" class="form-control" id="gem" [ngClass]="{'is-invalid' :submitted && registerForm.controls.email_id.errors}" placeholder="Email" aria-label="City" name="email_id"
                     formControlName="email_id" id="email_id">
-                    <!-- <div class="form-text text-danger" *ngif="Email.errors?.['required']">
-                      incorrect email id
-                    </div> -->
                 </div>
               </div>
               <div class="password-confirm">
@@ -57,14 +56,14 @@
   
                   <input [type]="changetype?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.password.errors  }" placeholder="8 character" aria-label="City"
                     name="password" formControlName="password" id="password">
-                    <span class="eyeicon"(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye':'fa fa-eye-slash'"></i></span>
+                    <span class="eyeicon"(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye-slash':'fa fa-eye'"></i></span>
                 </div>
                 <div class="" id="kop">
                   <label for="floatingInputGrid">Confirm Password</label>
   
                   <input [type]="change?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.confirmPassword.errors}" placeholder="8 character" aria-label="State"
                     name="confirmPassword" formControlName="confirmPassword" id="confirmPassword">
-                    <span class="eyeicon1"(click)="viewpassword()"><i [ngClass]="visible1?'fa fa-eye':'fa fa-eye-slash'"></i></span>
+                    <span class="eyeicon1"(click)="viewpassword()"><i [ngClass]="visible1?'fa fa-eye-slash':'fa fa-eye'"></i></span>
                 </div>
               </div>
               <div class="form-group row">
@@ -95,7 +94,7 @@
           <div *ngIf="submitted && registerForm.controls.name.errors" class="text-danger">
             ! Name required
           </div>
-          <div *ngIf="submitted && registerForm.controls.mobile_number.errors" class="text-danger">
+          <div *ngIf="submitted && registerForm.controls.display_mobile_number.errors" class="text-danger">
             ! Phone number must between 6 to 15 digits
           </div>
           <br>
@@ -103,9 +102,6 @@
             ! Invalid Email Id
           </div>
           <br>
-          <!-- <div *ngIf= "submitted && registerForm.controls.password.errors" class="text-danger">
-            ! password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters
-          </div> -->
             <div *ngIf="submitted && registerForm.controls.password.errors" class="text-danger">
             ! Password is required
           </div>

@@ -1231,7 +1231,7 @@ input[type="radio"]:checked + label::before {
     font-size: 17px;
   }
 
-  // confirmation popup modal
+  // confirmation popup modal //
 
   .confrimation-modal .modal-body {
     background: transparent url(../../../../assets/img/your.png) no-repeat;
@@ -1244,14 +1244,7 @@ input[type="radio"]:checked + label::before {
     margin: auto;
 }
 
-.e-rte-content {
-    height: 150px!important;
-}
-
-.e-toolbar-wrapper{
-    height: 44px!important;
-}
-
+    // attributes modal //
 .custom_modal.bg-pink {
     background: #FFF4F2 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695F971A;
@@ -1370,3 +1363,42 @@ input[type="radio"]:checked + label::before {
 .attrmodal.modal-content {
     box-shadow: none!important;
 }
+
+// richtexteditor styles //
+
+.e-rte-content {
+    height: 150px!important;
+}
+
+.e-toolbar-wrapper{
+    height: 44px!important;
+}
+.e-toolbar, .e-toolbar .e-toolbar-items,
+.e-toolbar .e-toolbar-item .e-tbar-btn {
+    background: #fff;
+}
+
+.e-toolbar .e-toolbar-item .e-tbar-btn {
+    border-radius: 35% !important;
+    border: 1px solid #e2e2e2 !important;
+    background: none !important;
+}
+
+.e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-icons {
+    color: #7A86A1 !important;
+    font-weight: 800 !important;
+    font-size: 10px !important;
+}
+
+#defaultRTE_toolbar {
+    text-align: center;
+}
+.e-toolbar-wrapper{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+
+  .e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
+    top: -750% !important;
+  }
