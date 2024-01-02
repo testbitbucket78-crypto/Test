@@ -2,9 +2,9 @@ const db = require("../dbhelper");
 
 const host= "sdpl-staging.cccfuev8blzt.ap-south-1.rds.amazonaws.com"
 
-const user= "CIP"
-const password= "cip#321#"
-const database= "cip_project"
+const user= "cip_preprod"
+const password= "cip_preprod@123$"
+const database= "cip_preprod"
 
 const awsaccessKeyId ='AKIAU2DXFI5LOZMFTY5J' //'AKIAYY5FSMYVNUZHPOEH'
 const awssecretAccessKey ='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' //'1GRtbJy2ZfwFDSNUZpESn4fOE1NtXattU1839phj'
