@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HttpClient, HttpHeaders, HttpBackend, HttpParams } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { contactsImageData } from '../models';
-const API_URL = environment.baseUrl;
+const API_URL ='https://cip-api.stacknize.com/';
+const API_URL1 = 'https://contactapi.stacknize.com/';
+const API_URL2 = 'https://smartapi.stacknize.com/'
 
 
 @Injectable()
@@ -18,18 +19,18 @@ export class DashboardService {
     const params = new HttpParams().set('sPid', sPid)
     console.log("  dashboardSubscribers : params")
     console.log(params)
-    return this.http.get('https://cip-api.sampanatechnologies.com/Subscribers:/sPid', { params: params })
+    return this.http.get(API_URL+'Subscribers:/sPid', { params: params })
   }
   public dashboardInteractions(sPid: any) {
     const params = new HttpParams().set('sPid', sPid)
     console.log("  dashboardSubscribers : params")
-    return this.http.get('https://cip-api.sampanatechnologies.com/Interactions:/sPid', { params: params });
+    return this.http.get(API_URL+'Interactions:/sPid', { params: params });
 
   }
   public dashboardAgents(sPid:any) {
     const params = new HttpParams().set('sPid', sPid)
     
-    return this.http.get('https://cip-api.sampanatechnologies.com/Agents:/sPid', { params: params });
+    return this.http.get(API_URL+'Agents:/sPid', { params: params });
    
 
   }
@@ -37,13 +38,13 @@ export class DashboardService {
     const params = new HttpParams().set('sPid', sPid)
 
     console.log(params)
-    return this.http.get('https://cip-api.sampanatechnologies.com/Campaigns:/sPid', { params: params });
+    return this.http.get(API_URL+'Campaigns:/sPid', { params: params });
 
   }
   public dashboardRecentConversation(spid: any) {
     const params = new HttpParams().set('spid', spid)
 
-    return this.http.get('https://cip-api.sampanatechnologies.com/recentConversation/:spid', { params: params })
+    return this.http.get(API_URL+'recentConversation/:spid', { params: params })
   }
 
   public RuningCampaign() {
@@ -63,78 +64,78 @@ export class DashboardService {
   Contact(SP_ID: any) {
     console.log("contact serveice" + SP_ID)
     const params = new HttpParams().set('SP_ID', SP_ID)
-    return this.http.get('https://contactapi.sampanatechnologies.com/', { params: params });
+    return this.http.get(API_URL1, { params: params });
 
   }
   addContact(data: any) {
-    return this.http.post('https://contactapi.sampanatechnologies.com/addCustomContact', data)
+    return this.http.post(API_URL1+'addCustomContact', data)
   }
   editContact(data: any, customerId: any, SP_ID: any) {
     console.log(customerId)
     const params = new HttpParams().set('customerId', customerId).set('SP_ID', SP_ID)
-    return this.http.post('https://contactapi.sampanatechnologies.com/editCustomContact', data, { params: params })
+    return this.http.post(API_URL1+'editCustomContact', data, { params: params })
   }
 
 
 
   exportAllContact() {
-    return this.http.get('https://contactapi.sampanatechnologies.com/exportAllContact')
+    return this.http.get(API_URL1+'exportAllContact')
   }
 
   exportCheckedContact(data: any) {
-    return this.http.post('https://contactapi.sampanatechnologies.com/exportCheckedContact', data)
+    return this.http.post(API_URL1+'exportCheckedContact', data)
   }
 
 
   download() {
 
 
-    return this.http.get('https://contactapi.sampanatechnologies.com/download', { responseType: 'blob' })
+    return this.http.get(API_URL1+'download', { responseType: 'blob' })
   }
   downloadErrFile() {
 
 
-    return this.http.get('https://contactapi.sampanatechnologies.com/downloadCSVerror', { responseType: 'blob' })
+    return this.http.get(API_URL1+'downloadCSVerror', { responseType: 'blob' })
   }
   update(data: object) {
     console.log("servise update data" + data)
-    return this.http.post('https://contactapi.sampanatechnologies.com/updateAndSave', data)
+    return this.http.post(API_URL1+'updateAndSave', data)
   }
 
 
 
   updatedDataCount(data: any) {
-    return this.http.post('https://contactapi.sampanatechnologies.com/verifyData', data)
+    return this.http.post(API_URL1+'verifyData', data)
   }
 
   blockContact(data: any, SP_ID: any) {
     const params = new HttpParams().set('SP_ID', SP_ID)
-    return this.http.post('https://contactapi.sampanatechnologies.com/blockedContact', data, { params: params })
+    return this.http.post(API_URL1+'blockedContact', data, { params: params })
   }
 
   getContactById(customerId: any, SP_ID: any) {
 
     const params = new HttpParams().set('customerId', customerId).set('SP_ID', SP_ID)
-    return this.http.get('https://contactapi.sampanatechnologies.com/getContactById', { params: params })
+    return this.http.get(API_URL1+'getContactById', { params: params })
   }
 
   getContactImage(customerId: any) {
-    return this.http.get(`https://contactapi.sampanatechnologies.com/getProfileImg/${customerId}`);
+    return this.http.get(API_URL1+`getProfileImg/${customerId}`);
   }
 
   saveContactImage(contactsImageData:contactsImageData): Observable<any> {
-    return this.http.post('https://contactapi.sampanatechnologies.com/addProfileImg',contactsImageData);
+    return this.http.post(API_URL1+'addProfileImg',contactsImageData);
   }
 
 
   deletContactById(data: any) {
     console.log("del API")
 
-    return this.http.post('https://contactapi.sampanatechnologies.com/deletContact', data)
+    return this.http.post(API_URL1+'deletContact', data)
   }
 
   getAttributeList(SP_ID: number) {
-    return this.http.get(`https://contactapi.sampanatechnologies.com/columns/${SP_ID}`);
+    return this.http.get(API_URL1+`columns/${SP_ID}`);
 }
 
  
@@ -143,31 +144,29 @@ export class DashboardService {
 
    getSmartReply(SP_ID:any) {
     const params = new HttpParams().set('SP_ID', SP_ID)
-    return this.http.get('https://smartapi.sampanatechnologies.com/getReplies',{params:params})
+    return this.http.get(API_URL2+'getReplies',{params:params})
   }
   searchSmartReply(ID: any) {
     const params = new HttpParams().set('ID', ID)
     console.log("params  "  + params)
-    return this.http.get('https://smartapi.sampanatechnologies.com/search', { params: params })
+    return this.http.get(API_URL2+'search', { params: params })
   }
    duplicatekeywordSmartReply(data:any) {
     
-     return this.http.post('https://smartapi.sampanatechnologies.com/KeywordMatch',data)
+     return this.http.post(API_URL2+'KeywordMatch',data)
   }
 
   sideNav(ID: any) {
     const params = new HttpParams().set('ID', ID)
-    return this.http.get('https://smartapi.sampanatechnologies.com/sideNavKeyword', { params: params })
+    return this.http.get(API_URL2+'sideNavKeyword', { params: params })
   }
 
   addNewReply(data: any) {
-    return this.http.post('https://smartapi.sampanatechnologies.com/addNewReply', data)
+    return this.http.post(API_URL2+'addNewReply', data)
   }
 
   deletesmartReply(ID: any) {
-    return this.http.put('https://smartapi.sampanatechnologies.com/deletSmartReply', ID)
-   
-
-
+    return this.http.put(API_URL2+'deletSmartReply', ID)
+  
   }
 }
