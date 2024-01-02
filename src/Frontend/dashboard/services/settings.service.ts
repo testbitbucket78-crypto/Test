@@ -8,7 +8,7 @@ import { billingDetail, billingDetailResponse,holidayData, companyDetail, compan
 })
 
 export class SettingsService {
-  API_URL:string='https://settings.sampanatechnologies.com';
+  API_URL:string='https://settings.stacknize.com';
   constructor(private http: HttpClient) { }
 
   getCompanyDetailData(spId: number): Observable<companyDetailResponse> {
@@ -237,19 +237,6 @@ export class SettingsService {
   editAutoDeletion(data:any):Observable<any> {
     return this.http.post<any>(`${this.API_URL}/savemanagestorage/`,data);
   }
-
-  craeteQRcode(spid:any): Observable<any> {
-    return this.http.post<any>('https://waweb.sampanatechnologies.com/craeteQRcode',spid);
-  }
-
-  clientAuthenticated(spid:any):Observable<any> {
-    return this.http.post<any>('https://waweb.sampanatechnologies.com/IsClientReady',spid);
-  
-}
-   getSPPhoneNumber(uid:any):Observable<any> {
-    return this.http.get<any>(`https://authapi.sampanatechnologies.com/users/${uid}`);
-   }
-
    getmanualDelation(data:any):Observable<any> {
     return this.http.post<any>(`${this.API_URL}/getmanualDelation/`,data);
   }
@@ -259,6 +246,17 @@ export class SettingsService {
   editTeam(data:any):Observable<any>{
     return this.http.post<any>(`${this.API_URL}/editTeam/`,data)
   }
+  craeteQRcode(spid:any): Observable<any> {
+    return this.http.post<any>('https://waweb.stacknize.com/craeteQRcode',spid);
+  }
+
+  clientAuthenticated(spid:any):Observable<any> {
+    return this.http.post<any>('https://waweb.stacknize.com/IsClientReady',spid);
+  
+}
+   getSPPhoneNumber(uid:any):Observable<any> {
+    return this.http.get<any>(`https://authapi.stacknize.com/users/${uid}`);
+   }
   
 
 }
