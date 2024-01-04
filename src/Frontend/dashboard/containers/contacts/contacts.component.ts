@@ -264,7 +264,7 @@ contactForm() {
     Phone_number: new FormControl(''),
     displayPhoneNumber: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
     country_code:new FormControl(''),
-    emailId: new FormControl('', [Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
+    emailId: new FormControl('', [Validators.pattern('^[^\\s@]+@[a-zA-Z0-9]+\\.[a-zA-Z]{2,}$'),Validators.minLength(5),Validators.maxLength(50)]),
     ContactOwner: new FormControl('',[Validators.required]),
     tag: new FormControl([])
   })
@@ -389,7 +389,16 @@ onSelectAll(items: any) {
   opensidenav(contact: any){
     document.getElementById("sidebar")!.style.width = "400px";
    }
-
+   
+   resetForm() {
+    Object.keys(this.productForm.controls).forEach(controlName => {
+      const control = this.productForm.get(controlName);
+      control?.markAsPristine();
+      control?.markAsUntouched();
+    });
+    this.ShowContactOwner=false;
+    this.modalService.dismissAll()
+  }
    closesidenav(items: any){
     document.getElementById ("sidebar")!.style.width = "0";
     this.contactId=0;
@@ -535,13 +544,19 @@ onSelectAll(items: any) {
               ActuallName: "tag"
             },
             {
+              displayName:'',
+              ActuallName:'tagColor'
+            },
+            {
               displayName: this.OptedIn ? 'Yes' : 'No',
               ActuallName: "OptInStatus"
             },
         ],
     }
           let tagArray = this.productForm.controls.tag.value;
+          console.log(tagArray)
           let tagString = tagArray?.map((tag: any) => `${tag.item_text}`).join(', ');
+          console.log(tagString)
 
           let tagField = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
           if (tagField) {
@@ -681,7 +696,8 @@ deletContactByID(data: any) {
           this.tagListData = result.taglist;
           this.tag = this.tagListData.map((tag:any, index: number) => ({
               item_id: index + 1, 
-              item_text:tag.TagName
+              item_text:tag.TagName,
+              item_color:tag.tagColor
           }));
           console.log(this.tag);
           console.log(this.tagListData);
