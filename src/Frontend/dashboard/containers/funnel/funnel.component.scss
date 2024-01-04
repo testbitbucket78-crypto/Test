@@ -423,3 +423,218 @@ opacity: 1;
     font-weight: 500;
     font-family: 'Manrope';
 }
+
+/* add new funnel modal */
+
+.modal-title{
+	color: #6149CD;
+	font-size: 14px;
+	height: 35px;
+	display: flex;
+	flex-wrap: nowrap;
+	align-content: flex-end;
+	justify-content: center;
+	flex-direction: column;
+	}
+	.close-box {
+	height: 35px;
+	background: #FFFFFF 0% 0% no-repeat padding-box;
+	border: 1px solid #EBEBEB;
+	border-radius: 15px;
+	opacity: 1;
+	display: flex;
+	align-content: space-around;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin: 0px;
+	min-width: 35px;
+	cursor: pointer;
+	}
+	.close-box img{
+	width: 10px;
+	}
+	.close-box img.setting_icon{
+	width: 17px;
+	}
+
+.addeidtcampaign_menu{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-bottom:2rem;
+	}
+	.addeidtcampaign_menu .addeidtcampaign_menu_item{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	min-width: 50px;
+	justify-content: center;
+	}
+	.addeidtcampaign_menu_item_dotted{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width:50px;
+	}
+	.addeidtcampaign_menu_item_dotted p{
+	border: 1px dashed #E1E1E1;
+	opacity: 1;
+	margin: 0;
+	width: 100%;
+	}
+	.addeidtcampaign_menu .addeidtcampaign_menu_item span{
+	background: #FFFFFF 0% 0% no-repeat padding-box;
+	border: 2px dotted #E1E1E1;
+	border-radius: 15px;
+	width: 35px;
+	height: 35px;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	flex-wrap: nowrap;
+	align-items: center;
+	font-size: 14px;
+	font-weight: 400;
+	color: #7A86A1;
+	margin-right: 1rem;
+	}
+	.addeidtcampaign_menu .addeidtcampaign_menu_item p{
+	font-size: 11px;
+	color: #7A86A1;
+	font-weight: 400;
+	margin:0px;
+	}
+	.addeidtcampaign_menu .addeidtcampaign_menu_item.active p{
+	color:#6149CD;
+	}
+	.addeidtcampaign_menu .addeidtcampaign_menu_item.active span{
+	background: #6149CD 0% 0% no-repeat padding-box;
+	box-shadow: 2px 13px 30px #6149CD42;
+	border: 1px dotted #6149CD;
+	color: #fff;
+
+	}
+
+	.addeidtcampaign_step{
+	display:none;
+	margin: 1rem;
+	}
+	.addeidtcampaign_step.active{
+	display:flex;
+	flex-direction: column;
+	align-items: center;
+	}
+	.addeidtcampaign_step p span{
+	font-size: 12px;
+	font-weight: 400;
+	color:#7A86A1;
+	}
+	.addeidtcampaign_step .innerbox{
+	padding: 1rem 1rem 2.5rem 1rem;
+	border-radius: 17px;
+	width:400px;
+	}
+	.addeidtcampaign_step .outerbox{
+	display: flex;
+	flex-direction: row;
+	}
+	.addeidtcampaign_step .outerbox .innerbox{
+	padding: 1.5rem 2rem;
+	border-radius: 17px;
+	width:330px;
+	border: 1px solid #F0F0F0;
+	border-radius: 30px;
+	margin: 10px;
+
+	}
+	.addeidtcampaign_step .outerbox .innerbox.active{
+	background-color: #FFF4F2;
+	}
+	.addeidtcampaign_step .outerbox .innerbox p{
+	font-size: 14px;
+	color: #000;
+	font-weight: 700;
+	margin-bottom: 10px;
+	line-height: normal;
+	}
+	.addeidtcampaign_step .outerbox .innerbox p span{
+	font-size: 12px;
+	color: #7A86A1;
+	font-weight: 400;
+	}
+
+	.addeidtcampaign_step .outerbox .innerbox p.sm_icon{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 0px;
+
+	}
+	.addeidtcampaign_step .outerbox .innerbox p.sm_icon span{
+	width: 15px;
+	margin-top: 2rem;
+	background-color: #EBEBEB;
+	border-radius: 50%;
+	display: flex;
+	height: 15px;
+	padding: 4px;
+	align-content: center;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: center;
+	}
+	
+	.addeidtcampaign_step .outerbox .innerbox.active p.sm_icon span{
+	background-color: #7A86A1;
+	}
+	.addeidtcampaign_step .outerbox .innerbox p.sm_icon img{
+	cursor: pointer;
+	}
+
+	img.icon.ml{
+	width:25px;
+	margin-bottom: 20px;
+	cursor: pointer;
+	}
+	.addeidtcampaign_step .innerbox.bg_pink{
+	background: #FFF4F2;
+	}
+	.formrow{
+	    padding: 0.5rem 1rem 0 1rem;
+	}
+	.formrow label{
+	color: #000000;
+	font-weight: 800;
+	font-size: 12px;
+	}
+	.formrow .form-control{
+    border: 1px solid #EBEBEB;
+	border-radius: 19px;
+	font-weight: 400;
+	font-size: 12px;
+	height: 35px;
+	display: flex;
+	align-items: center;
+	}
+	.formrow .form-control.white_bg{
+	background: #fff;
+	text-align: left;
+	}
+
+	.formrow .form-control.select_box{
+	background: #fff url("/assets/img/teambox/dropdown.svg") no-repeat;
+	background-size: 9px;
+	background-position: center right 12px;
+	}
+
+    .textarea.form-control {
+        height: 100%!important;
+        resize: none;
+    }
+
+    ::placeholder {
+        color: #BDC3D0;
+        opacity: 1;
+    }
+

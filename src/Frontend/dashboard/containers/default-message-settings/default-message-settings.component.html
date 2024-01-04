@@ -1,90 +1,19 @@
 <div class="setting-card" >
     <div class="default-actions-heading pb-4">Default Messages</div>
     <div class=" grid-view p-2 px-4" >
-        <div class=" ">
+        <div *ngFor="let data of defaultMessageData; let idx = index" (click)="populateData(data)">
             <div class="flex-row">
-                <span class="sub-heading">{{defaultMessages[0].title}}</span>
-                <span *ngIf="defaultMessages[0].Is_disable == 0" class="enable">Enable</span>
-                <span *ngIf="defaultMessages[0].Is_disable == 1" class="disable">Diabled</span>
+                <span class="sub-heading">{{data.title}} </span>
+                <span class="enable">Enable</span>
+                <!-- <span class="disable">Disable</span> -->
             </div>
             <div class="sub-contents">
-                <p>{{defaultMessages[0].description}}</p>
-                <button *ngIf="!defaultMessages[0].value" class="white-btn" (click)="selectedButtonType(1)" data-bs-toggle="modal" data-bs-target="#welcomGreeting">
-                    <img src="../../../../assets/img/teambox/add.svg" class="pr-1">Configure</button>
-                 <button (click)="getDefaultMessageById(1)" *ngIf="defaultMessages[0].value"  class="white-btn">View & Manage</button>
-    
+                <p>{{data.description}}</p>
+                <button class="white-btn" data-bs-toggle="modal" (click)="selectedButtonType(idx)" data-bs-target="#welcomGreeting">
+                 <img src="../../../../assets/img/teambox/add.svg" class="pr-1"> Configure </button>
+                 <!-- <button class="white-btn" (click)="ToggleSideBar()">View & Manage</button> -->
             </div>
-        </div>
-    
-        <div class=" ">
-            <div class="flex-row">
-                <span class="sub-heading">{{defaultMessages[1].title}}</span>
-                <span *ngIf="defaultMessages[1].Is_disable == 0" class="enable">Enable</span>
-                <span *ngIf="defaultMessages[1].Is_disable == 1" class="disable">Diabled</span>
-            </div>
-            <div class="sub-contents">
-                <p>{{defaultMessages[1].description}}</p> 
-                <button *ngIf="!defaultMessages[1].value" class="white-btn" (click)="selectedButtonType(2)" data-bs-toggle="modal" data-bs-target="#welcomGreeting">
-                    <img src="../../../../assets/img/teambox/add.svg" class="pr-1">Configure</button>
-                <button (click)="getDefaultMessageById(2)"  *ngIf="defaultMessages[1].value" class="white-btn">View & Manage</button>          
-            </div>
-        </div>
-    
-        <div class=" ">
-            <div class="flex-row">
-                <span class="sub-heading">{{defaultMessages[4].title}}</span>
-                <span *ngIf="defaultMessages[4].Is_disable == 0" class="enable">Enable</span>
-                <span *ngIf="defaultMessages[4].Is_disable == 1" class="disable">Diabled</span>
-            </div>
-            <div class="sub-contents">
-                <p>{{defaultMessages[4].description}}</p>
-                <button *ngIf="!defaultMessages[4].value" class="white-btn" (click)="selectedButtonType(3)" data-bs-toggle="modal" data-bs-target="#welcomGreeting">
-                    <img src="../../../../assets/img/teambox/add.svg" class="pr-1">Configure</button>
-                <button (click)="getDefaultMessageById(3)"  *ngIf="defaultMessages[4].value" class="white-btn">View & Manage</button>        
-            </div>
-        </div>
-        
-        <div class=" ">
-            <div class="flex-row">
-                <span class="sub-heading">{{defaultMessages[2].title}}</span>
-                <span *ngIf="defaultMessages[2].Is_disable == 0" class="enable">Enable</span>
-                <span *ngIf="defaultMessages[2].Is_disable == 1" class="disable">Diabled</span>
-            </div>
-            <div class="sub-contents">
-                <p>{{defaultMessages[2].description}}</p>
-                <button *ngIf="!defaultMessages[2].value" class="white-btn" (click)="selectedButtonType(4)" data-bs-toggle="modal" data-bs-target="#welcomGreeting">
-                    <img src="../../../../assets/img/teambox/add.svg" class="pr-1">Configure</button>
-                <button  (click)="getDefaultMessageById(4)" *ngIf="defaultMessages[2].value" class="white-btn">View & Manage</button>   
-                </div>     
-        </div>
-        
-        <div class=" ">
-            <div class="flex-row">
-                <span class="sub-heading">{{defaultMessages[5].title}}</span>
-                <span *ngIf="defaultMessages[5].Is_disable == 0" class="enable">Enable</span>
-                <span *ngIf="defaultMessages[5].Is_disable == 1" class="disable">Diabled</span>
-            </div>
-            <div class="sub-contents">
-                <p>{{defaultMessages[5].description}}</p>
-                <button *ngIf="!defaultMessages[5].value" class="white-btn" (click)="selectedButtonType(5)" data-bs-toggle="modal" data-bs-target="#welcomGreeting">
-                    <img src="../../../../assets/img/teambox/add.svg" class="pr-1">Configure</button>
-                <button  (click)="getDefaultMessageById(5)" *ngIf="defaultMessages[5].value" class="white-btn">View & Manage</button>   
-                </div>     
-        </div>
-
-        <div class=" ">
-            <div class="flex-row">
-                <span class="sub-heading">{{defaultMessages[3].title}}</span>
-                <span *ngIf="defaultMessages[3].Is_disable == 0" class="enable">Enable</span>
-                <span *ngIf="defaultMessages[3].Is_disable == 1" class="disable">Diabled</span>
-            </div>
-            <div class="sub-contents">
-                <p>{{defaultMessages[3].description}}</p>
-                <button *ngIf="!defaultMessages[3].value" class="white-btn" (click)="selectedButtonType(6)" data-bs-toggle="modal" data-bs-target="#welcomGreeting">
-                    <img src="../../../../assets/img/teambox/add.svg" class="pr-1">Configure</button>
-                <button (click)="getDefaultMessageById(6)"  *ngIf="defaultMessages[3].value" class="white-btn">View & Manage</button>   
-                </div>     
-        </div>
+          </div>
     </div>
 
     <div class="default-footer">
@@ -95,29 +24,25 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content welcomGreeting p-2">
                 <div class="d-flex justify-content-between align-items-center modal-header">
-                    <h5 *ngIf="selectedCategory == 1" class="modal-title">Add Message for Welcome Greeting</h5>
-                    <h5 *ngIf="selectedCategory == 2" class="modal-title">Add Message for No Agent Reply</h5>
-                    <h5 *ngIf="selectedCategory == 3" class="modal-title">Add Message for Out of Office</h5>
-                    <h5 *ngIf="selectedCategory == 4" class="modal-title">Add Message for No Customer Reply Reminder</h5>
-                    <h5 *ngIf="selectedCategory == 5" class="modal-title">Add Message for All Agents Offline</h5>
-                    <h5 *ngIf="selectedCategory == 6" class="modal-title">Add Message for No Customer Reply Timeout</h5>
+                    <h5 *ngIf="selectedCategory == 0" class="modal-title">Add Message for Welcome Greeting</h5>
+                    <h5 *ngIf="selectedCategory == 1" class="modal-title">Add Message for No Agent Reply</h5>
+                    <h5 *ngIf="selectedCategory == 2" class="modal-title">Add Message for Out of Office</h5>
+                    <h5 *ngIf="selectedCategory == 3" class="modal-title">Add Message for No Customer Reply Reminder</h5>
+                    <h5 *ngIf="selectedCategory == 4" class="modal-title">Add Message for All Agents Offline</h5>
+                    <h5 *ngIf="selectedCategory == 5" class="modal-title">Add Message for No Customer Reply Timeout</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
                 <form [formGroup]="defaultMessageForm">
                 <div class="modal-body px-5 pt-0">
-                    <div class="d-inline-block flex-column sel-type-link pb-3">
+                    <div *ngIf="selectedCategory==1" class="d-inline-block flex-column sel-type-link pb-3">
                         <label for="link" class="linkch" >Agent Reply Timeout Period</label>
-                        
                         <select class="input-form" formControlName="Select no. of minutes"  id="linken"  required >
                             <option  [disabled]="true" [selected]="true" [hidden]="true"  value="0" selected >Select no. of minutes</option>
                             <option></option>
-                            <option ></option>
                         </select>
-                
-                
-                       </div>
+                     </div>
                     <div class="d-flex justify-content-between align-items-center sel-type-btns">
                         
                         <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" checked><label [ngClass]="{'radio-label': selectedType === 'text'}" class="m-0" for="sel-text">Text</label>
@@ -133,16 +58,13 @@
                          </div>
 
                          <div *ngIf="selectedType === 'text'" class="sel-type-text">
-                             <textarea name="text-editor" formControlName="value" maxlength="1024" rows="22" placeholder="Enter"></textarea>
+                             <ejs-richtexteditor [(value)]="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'500px'"
+                             [maxLength]='1024' (change)="onEditorChange(chatEditor.value)"placeholder="Enter">
+                            </ejs-richtexteditor>
                          </div>
                     </div>
-             
-
-                   
 
                    <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
-                    
-                   
                         <input type="file" accept="image/jpg, image/png" formControlName="link" name="image-select" id="sel-type-image">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of image</p>
@@ -178,19 +100,13 @@
                    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
                     <h6>Body Text</h6> <span>0/1024 Characters</span>
                  </div>
-                 <div class="sel-type-text">
-                    <textarea name="text-editor" formControlName="value" maxlength="1024"rows="8" placeholder="Enter">
-                        <ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor
-            [toolbarSettings]='tools' [height]='100' (keydown)="handleKeyPress($event)">
-          </ejs-richtexteditor>
-                    </textarea>
-                </div>
-
-            </div>
-            </div>
-        
-    
-   
+                    <div class="sel-type-text">
+                        <ejs-richtexteditor [(value)]="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'200px'"
+                        [maxLength]='1024' (change)="onEditorChange(chatEditor.value)"placeholder="Enter">
+                       </ejs-richtexteditor>
+                         </div>
+                      </div>
+                   </div>
                 <div class="modal-footer">
                     <button type="button" class="account-btn" (click)="addDefaultMessageData()">Save</button>
                 </div>
@@ -259,4 +175,37 @@
         </div>
     </div>
 
+</div>
+
+<div class="modal fade" tabindex="-1" id="atrributemodal" #atrributemodal data-bs-backdrop="static" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="attrmodal modal-content">
+            <div class="modal-body">
+                <div class="custom_modal bg-pink sm attributes">
+                    <div class="modal-header">
+                        <div class="modal-header-left">
+                            <h4 class="modal-title" id="modal-basic-title">Attributes</h4>
+                        </div>
+                        <div class="modal-header-right">
+                            <p (click)="closeAtrrModal()" class="close-box" aria-label="Close"><img src="assets/img/teambox/icon-close.svg"></p>
+                        </div>
+                    </div>
+                    <div class="modal-body quickResponse">
+                        <input class="search-box" type="text" placeholder="Search" aria-label="Search"
+                            aria-describedby="basic-addon2" [(ngModel)]="attributesearch" />
+                        <div class="items_list">
+                            <div *ngFor="let alist of attributesList | searchfilter:attributesearch " class="attribute">
+                                <p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
+                            </div>
+                        </div>
+
+                        <div class="bottom_section">
+                            <p class="text-box-readonly"><span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg">
+                            </span>Add/edit new attributes from settings</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
