@@ -26,6 +26,7 @@ export class RegisterComponent implements OnInit {
     registerForm:any;
     title = 'formValidation';
     submitted = false;
+    forbiddenChars = ['!', '@', '#', '$', '&', '%'];
 
     countryCodes = [
         'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
@@ -58,7 +59,7 @@ export class RegisterComponent implements OnInit {
 
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) {
         this.registerForm = this.formBuilder.group({
-            name: new FormControl('', [Validators.required]),
+            name: new FormControl('', [Validators.required,Validators.maxLength(30),Validators.pattern(/^[a-zA-Z0-9 ]*$/),this.validateName]),
             mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),Validators.maxLength(15)])),
             country_code: ['IN +91'],
             email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1),Validators.maxLength(50)])])),
@@ -70,6 +71,17 @@ export class RegisterComponent implements OnInit {
      
     }
 
+    validateName(control: { value: any; }) {
+        const name = control.value;
+    
+        // Check if the length is less than 3 and not a single digit
+        if (name.length < 3 && !/^\d$/.test(name)) {
+          return { invalidName: true };
+        }
+    
+        return null;
+      }
+      
     passwordMatchValidator(g: FormGroup) {
         const passwordControl = g.get('password');
         const confirmPasswordControl = g.get('confirmPassword');

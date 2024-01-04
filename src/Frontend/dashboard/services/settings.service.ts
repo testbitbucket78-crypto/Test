@@ -259,6 +259,9 @@ export class SettingsService {
   editTeam(data:any):Observable<any>{
     return this.http.post<any>(`${this.API_URL}/editTeam/`,data)
   }
-  
 
+   getrolesdata(spid:any,userType:any): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getUser/${spid}/${userType}`);
+  }
+ 
 }
