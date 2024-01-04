@@ -257,6 +257,8 @@ export class SettingsService {
    getSPPhoneNumber(uid:any):Observable<any> {
     return this.http.get<any>(`https://authapi.stacknize.com/users/${uid}`);
    }
-  
+   getrolesdata(spid:any,userType:any): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getUser/${spid}/${userType}`);
+  }
 
 }
