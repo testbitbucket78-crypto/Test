@@ -31,10 +31,10 @@ var selectFunnelDaysQuery = `SELECT * FROM FunnelDays WHERE sp_id=? and FunnelId
 
 var deleteAllFunnelDaysQuery = `UPDATE  FunnelDays SET isDeleted=1 ,updated_at=? where sp_id=? and FunnelId=?`
 
-var addMessages=`INSERT INTO FunnelMessages (sp_id,FunnelId,message_content,message_media,schedule_datetime,allTime,allDays,isEnable,start_time,end_time,created_at) values ?`
+var addMessages=`INSERT INTO FunnelMessages (sp_id,FunnelId,message_content,message_media,schedule_datetime,allTime,allDays,isEnable,start_time,end_time,created_at,scheduled_min) values ?`
 var enableMessage=`UPDATE FunnelMessages SET isEnable=?,updated_at=? WHERE Message_id=? and FunnelId=?`
 var deleteMessage=`UPDATE FunnelMessages SET isDeleted=1 ,updated_at=? WHERE Message_id=? and FunnelId=?`
-var editMessage=`UPDATE FunnelMessages SET message_content=?,message_media=?,schedule_datetime=?,allTime=?,allDays=?,isEnable=?,start_time=?,end_time=?,updated_at=? where Message_id=? and FunnelId=?`
+var editMessage=`UPDATE FunnelMessages SET message_content=?,message_media=?,schedule_datetime=?,allTime=?,allDays=?,isEnable=?,start_time=?,end_time=?,updated_at=?,scheduled_min=? where Message_id=? and FunnelId=?`
 
 var deleteAllMessage=`UPDATE FunnelMessages SET isDeleted=1 ,updated_at=? WHERE FunnelId=?`
 
