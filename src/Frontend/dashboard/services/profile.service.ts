@@ -8,7 +8,7 @@ import { authChangePassword, roleName ,teamName, userActiveStatus ,savePlan, pro
 })
 export class ProfileService {
 
-  API_URL:string='https://settings.sampanatechnologies.com';
+  API_URL:string='https://settings.stacknize.com';
 
   constructor(private http:HttpClient) { }
 
