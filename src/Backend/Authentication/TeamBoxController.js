@@ -69,7 +69,8 @@ const insertCustomers = async (req, res) => {
     OptInStatus = req.body.OptedIn
     SP_ID = req.body.SP_ID
     countryCode = req.body.country_code
-    var values = [[Name, Phone_number, channel, SP_ID, OptInStatus, countryCode]]
+    displayPhoneNumber=req.body.displayPhoneNumber
+    var values = [[Name, Phone_number, channel, SP_ID, OptInStatus, countryCode,displayPhoneNumber]]
     let existContactWithSameSpid = `SELECT * FROM EndCustomer WHERE  Phone_number=? AND (isDeleted =0 AND isBlocked =0) AND SP_ID=?  `
 
     var result = await db.excuteQuery(existContactWithSameSpid, [Phone_number, SP_ID])

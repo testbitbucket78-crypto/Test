@@ -160,7 +160,7 @@ const forgotPassword = async (req, res) => {
                 from: val.email,
                 to: req.body.email_id,
                 subject: "Request for reset Password: ",
-                html: '<p>You requested for reset password, kindly use this <a href="https://cip.sampanatechnologies.com/#/reset-password?uid=' + cipherdata + '">  link  </a>to reset your password</p>'
+                html: '<p>You requested for reset password, kindly use this <a href="https://cip.stacknize.com/#/reset-password?uid=' + cipherdata + '">  link  </a>to reset your password</p>'
                 //html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/#/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
 
             };
