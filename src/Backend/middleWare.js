@@ -8,7 +8,7 @@ function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id) {
     return new Promise(async (resolve, reject) => {
         try {
             var phoneNumber = removePlusFromPhoneNumber(phoneNo)
-            const apiUrl = 'https://waweb.sampanatechnologies.com/sendMessage'; // Replace with your API endpoint
+            const apiUrl = 'https://waweb.stacknize.com/sendMessage'; // Replace with your API endpoint
             const dataToSend = {
                 spid: spid,
                 type: type,
