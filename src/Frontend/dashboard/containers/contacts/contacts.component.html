@@ -108,7 +108,7 @@
 						</div>
 						<div class="child3">
 							<h5>Contact Owner</h5>
-							<h6 class="mt-2"></h6>
+							<h6 class="mt-2">{{items.ContactOwner}}</h6>
 						</div>
 					</div>
 					<div class="parent d-flex justify-content-between px-4 py-2">
@@ -158,10 +158,6 @@
 					<div class="px-4 py-2 child2">
 						<h5>Facebook Id</h5>
 						<h6 class="mt-2">{{items.facebookId}}</h6>
-					</div>
-					<div class="px-4 py-2 child2">
-						<h5>Emergency Contact No.</h5>
-						<h6 class="mt-2">1998</h6>
 					</div>
 				</div>
 			
@@ -489,7 +485,7 @@
 <ng-template #contactadd let-c="close" let-d="dismiss">
 	<div class="modal-header px-4 pb-0 align-items-center">
 		<h4 class="modal-title" id="modal-basic-title">{{ addContactTitle === 'add' ? 'Add' : 'Edit' }} Contact</h4>
-		<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="d('Cross click')">X</button>
+		<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="resetForm()">X</button>
 	</div>
 	<div class="px-4 modal-body">
 		<form [formGroup]="productForm">
