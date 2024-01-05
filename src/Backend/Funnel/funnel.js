@@ -148,7 +148,8 @@ app.post('/editFunnel', async (req, res) => {
         updateQuery += " new_contact= '" + req.body.new_contact + "',";
         updateQuery += " attribute_update= '" + req.body.attribute_update + "',";
         updateQuery += " category_id=' " + req.body.category_id + "',";
-        updateQuery += " timeInterval= '" + req.body.timeInterval + "'";
+        updateQuery += " timeInterval= '" + req.body.timeInterval + "',";
+        updateQuery += " status= '" + req.body.status + "'";
 
         updateQuery += " WHERE FunnelId =" + req.body.FunnelId
 
@@ -555,58 +556,58 @@ async function infoOfUpdatedContact(contactList) {
     }
 }
 
-async function isScheduledTime(contactArray) {
-    try {
+// async function isScheduledTime(contactArray) {
+//     try {
 
-        let daysQuery = 'select day from FunnelDays where  FunnelId=1 and Message_id=17 and isDeleted !=1 and sp_id=3'
-        let scheduledDays = await db.excuteQuery(daysQuery, []);
-        console.log(scheduledDays)
-        // Extract values of the 'day' property and store in a new array
-        const extractedDays = scheduledDays.map(row => row.day);
+//         let daysQuery = 'select day from FunnelDays where  FunnelId=1 and Message_id=17 and isDeleted !=1 and sp_id=3'
+//         let scheduledDays = await db.excuteQuery(daysQuery, []);
+//         console.log(scheduledDays)
+//         // Extract values of the 'day' property and store in a new array
+//         const extractedDays = scheduledDays.map(row => row.day);
 
-        console.log(extractedDays);
+//         console.log(extractedDays);
 
-        console.log(areWorkingDays(extractedDays))
-        let messageQuery = 'select scheduled_min from FunnelMessages where  FunnelId=1 and Message_id=18 and isDeleted !=1 and sp_id=3';
-        let scheduledTime = await db.excuteQuery(messageQuery, []);
+//         console.log(areWorkingDays(extractedDays))
+//         let messageQuery = 'select scheduled_min from FunnelMessages where  FunnelId=1 and Message_id=18 and isDeleted !=1 and sp_id=3';
+//         let scheduledTime = await db.excuteQuery(messageQuery, []);
 
-        for (let i = 0; i < contactArray.length; i++) {
-            let query = 'Select  created_at from EndCustomer where Phone_number =? and isDeleted != 1 and SP_ID=3'
-            let createdTime = await db.excuteQuery(query, [contactArray[i]]);
+//         for (let i = 0; i < contactArray.length; i++) {
+//             let query = 'Select  created_at from EndCustomer where Phone_number =? and isDeleted != 1 and SP_ID=3'
+//             let createdTime = await db.excuteQuery(query, [contactArray[i]]);
 
 
-            // Assuming createdTime is an array with a property scheduled_min
-            const scheduledMinutes = parseInt(scheduledTime[0]?.scheduled_min, 10); // Parse the string to an integer
+//             // Assuming createdTime is an array with a property scheduled_min
+//             const scheduledMinutes = parseInt(scheduledTime[0]?.scheduled_min, 10); // Parse the string to an integer
 
-            // Assuming Message is an array with a property created_at
-            const messageCreatedAtString = createdTime[0]?.created_at;
+//             // Assuming Message is an array with a property created_at
+//             const messageCreatedAtString = createdTime[0]?.created_at;
 
-            // Convert the string to a Date object
-            const messageCreatedAt = new Date(messageCreatedAtString);
+//             // Convert the string to a Date object
+//             const messageCreatedAt = new Date(messageCreatedAtString);
 
-            // Find the next time (e.g., scheduledMinutes minutes later)
-            const nextTime = new Date(messageCreatedAt.getTime() + 1450 * 60 * 1000); // Add scheduledMinutes minutes in milliseconds
+//             // Find the next time (e.g., scheduledMinutes minutes later)
+//             const nextTime = new Date(messageCreatedAt.getTime() + 1450 * 60 * 1000); // Add scheduledMinutes minutes in milliseconds
 
-            // Get the timestamp of the next time
-            const nextTimestamp = nextTime.getTime();
+//             // Get the timestamp of the next time
+//             const nextTimestamp = nextTime.getTime();
 
-            console.log(nextTimestamp <= new Date(), i, new Date(nextTimestamp));
-        }
-    } catch (err) {
-        console.log(err);
-    }
-}
+//             console.log(nextTimestamp <= new Date(), i, new Date(nextTimestamp));
+//         }
+//     } catch (err) {
+//         console.log(err);
+//     }
+// }
 
-function areWorkingDays(days) {
-    // Assuming 'days' is an array of strings, e.g., ['Monday', 'Tuesday', 'Wednesday']
-    const workingDays = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+// function areWorkingDays(days) {
+//     // Assuming 'days' is an array of strings, e.g., ['Monday', 'Tuesday', 'Wednesday']
+//     const workingDays = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   
-    // Convert the input days to lowercase for case-insensitive comparison
-    const normalizedDays = days.map(day => day.toLowerCase());
+//     // Convert the input days to lowercase for case-insensitive comparison
+//     const normalizedDays = days.map(day => day.toLowerCase());
   
-    // Check if all normalized days are in the array of working days
-    return normalizedDays.every(day => workingDays.includes(day));
-  }
+//     // Check if all normalized days are in the array of working days
+//     return normalizedDays.every(day => workingDays.includes(day));
+//   }
 
 app.listen(3011, function () {
     console.log("Node is running");
