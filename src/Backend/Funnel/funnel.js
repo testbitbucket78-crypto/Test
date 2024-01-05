@@ -7,6 +7,7 @@ const cors = require('cors')
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+const middleware = require('./funnelMiddleWare')
 
 app.post('/createContactList', async (req, res) => {
     try {
@@ -147,7 +148,8 @@ app.post('/editFunnel', async (req, res) => {
         updateQuery += " new_contact= '" + req.body.new_contact + "',";
         updateQuery += " attribute_update= '" + req.body.attribute_update + "',";
         updateQuery += " category_id=' " + req.body.category_id + "',";
-        updateQuery += " timeInterval= '" + req.body.timeInterval + "'";
+        updateQuery += " timeInterval= '" + req.body.timeInterval + "',";
+        updateQuery += " status= '" + req.body.status + "'";
 
         updateQuery += " WHERE FunnelId =" + req.body.FunnelId
 
@@ -209,11 +211,11 @@ async function saveMessagesAndDays(sp_id, fnlId, messages) {
         let messageId;
         let messageResult;
         for (const message of messages) {
-            console.log(message.days   ,message.scheduled_min);
+            console.log(message.days, message.scheduled_min);
 
             messageResult = await db.excuteQuery(
                 val.addMessages,
-                [[[sp_id, fnlId, message.Message, message.message_media, message.schedule_datetime, message.allTime, message.allDays, message.isEnable, message.start_time, message.end_time, new Date()]]]
+                [[[sp_id, fnlId, message.Message, message.message_media, message.schedule_datetime, message.allTime, message.allDays, message.isEnable, message.start_time, message.end_time, new Date(), message.scheduled_min]]]
             );
 
             messageId = messageResult.insertId;
@@ -222,7 +224,7 @@ async function saveMessagesAndDays(sp_id, fnlId, messages) {
             for (const day of message.days) {
                 await db.excuteQuery(
                     val.addFunnelDaysQuery,
-                    [[[sp_id, day, messageId, fnlId, new Date(),message.scheduled_min]]]
+                    [[[sp_id, day, messageId, fnlId, new Date(), message.scheduled_min]]]
                 );
             }
         }
@@ -231,7 +233,7 @@ async function saveMessagesAndDays(sp_id, fnlId, messages) {
     }
 }
 
-async function editDays(sp_id, fnlId, messages, messageId,scheduled_min) {
+async function editDays(sp_id, fnlId, messages, messageId, scheduled_min) {
     try {
         console.log(sp_id, fnlId, messages, messageId)
         let deleteFunnelDays = await db.excuteQuery(val.deleteFunnelDaysQuery, [new Date(), sp_id, fnlId, messageId])
@@ -240,7 +242,7 @@ async function editDays(sp_id, fnlId, messages, messageId,scheduled_min) {
         for (const day of messages) {
             await db.excuteQuery(
                 val.addFunnelDaysQuery,
-                [[[sp_id, day, messageId, fnlId, new Date(),scheduled_min]]]
+                [[[sp_id, day, messageId, fnlId, new Date(), scheduled_min]]]
             );
         }
     } catch (err) {
@@ -260,7 +262,7 @@ async function editMessagesAndDays(sp_id, messages, fnlId) {
 
             messageResult = await db.excuteQuery(
                 val.addMessages,
-                [[[sp_id, fnlId, message.Message, message.message_media, message.schedule_datetime, message.allTime, message.allDays, message.isEnable, message.start_time, message.end_time, new Date()]]]
+                [[[sp_id, fnlId, message.Message, message.message_media, message.schedule_datetime, message.allTime, message.allDays, message.isEnable, message.start_time, message.end_time, new Date(), message.scheduled_min]]]
             );
 
             messageId = messageResult.insertId;
@@ -269,7 +271,7 @@ async function editMessagesAndDays(sp_id, messages, fnlId) {
             for (const day of message.days) {
                 await db.excuteQuery(
                     val.addFunnelDaysQuery,
-                    [[[sp_id, day, messageId, fnlId, new Date(),message.scheduled_min]]]
+                    [[[sp_id, day, messageId, fnlId, new Date(), message.scheduled_min]]]
                 );
             }
         }
@@ -280,7 +282,7 @@ async function editMessagesAndDays(sp_id, messages, fnlId) {
 
 app.get('/getAllFunnel/:sp_id', async (req, res) => {
     try {
-        let result = await db.excuteQuery(val.getfunnel, [req.params.sp_id]);     
+        let result = await db.excuteQuery(val.getfunnel, [req.params.sp_id]);
         console.log(result)
         res.send({
             status: 200,
@@ -294,24 +296,24 @@ app.get('/getAllFunnel/:sp_id', async (req, res) => {
     }
 })
 
-app.get('/getSubscriberCount/:sp_id/:id',async (req,res)=>{
+app.get('/getSubscriberCount/:sp_id/:id', async (req, res) => {
     try {
-      
-        let result = await db.excuteQuery(val.funnelById, [req.params.id,req.params.sp_id]);     
-       // console.log(result)
-        let newContact=await db.excuteQuery(result[0]?.new_contact,[])
-        
-        let subscriberCount=0
-        let  attribute_update=0;
-        if(result[0]?.attribute_update.length != 0){
-            attribute_update=  await db.excuteQuery(result[0]?.attribute_update,[])
+
+        let result = await db.excuteQuery(val.funnelById, [req.params.id, req.params.sp_id]);
+        // console.log(result)
+        let newContact = await db.excuteQuery(result[0]?.new_contact, [])
+
+        let subscriberCount = 0
+        let attribute_update = 0;
+        if (result[0]?.attribute_update.length != 0) {
+            attribute_update = await db.excuteQuery(result[0]?.attribute_update, [])
         }
-        subscriberCount+=JSON.parse(result[0]?.segments_contacts).length
-        
+        subscriberCount += JSON.parse(result[0]?.segments_contacts).length
+
         subscriberCount += newContact?.length;
-       
-        subscriberCount += attribute_update;      
-        
+
+        subscriberCount += attribute_update;
+
         res.send({
             status: 200,
             subscriberCount: subscriberCount
@@ -324,9 +326,9 @@ app.get('/getSubscriberCount/:sp_id/:id',async (req,res)=>{
     }
 })
 
-app.get('/getFunnelByID/:sp_id/:id',async (req,res)=>{
+app.get('/getFunnelByID/:sp_id/:id', async (req, res) => {
     try {
-        let result = await db.excuteQuery(val.funnelById, [req.params.id,req.params.sp_id]);
+        let result = await db.excuteQuery(val.funnelById, [req.params.id, req.params.sp_id]);
         console.log(result)
         res.send({
             status: 200,
@@ -342,19 +344,19 @@ app.get('/getFunnelByID/:sp_id/:id',async (req,res)=>{
 
 app.post('/saveMessages', async (req, res) => {
     try {
-        let message=req.body
-      let  savedMessage = await db.excuteQuery(
+        let message = req.body
+        let savedMessage = await db.excuteQuery(
             val.addMessages,
-            [[[message.sp_id, message.funnelId, message.Message, message.message_media, message.schedule_datetime, message.allTime, message.allDays, message.isEnable, message.start_time, message.end_time, new Date()]]]
+            [[[message.sp_id, message.funnelId, message.Message, message.message_media, message.schedule_datetime, message.allTime, message.allDays, message.isEnable, message.start_time, message.end_time, new Date(), message.scheduled_min]]]
         );
 
-      let  messageId = savedMessage.insertId;
+        let messageId = savedMessage.insertId;
 
         // Insert days into the `days` table
         for (const day of message.days) {
             await db.excuteQuery(
                 val.addFunnelDaysQuery,
-                [[[message.sp_id, day, messageId, message.fnlId, new Date(),message.scheduled_min]]]
+                [[[message.sp_id, day, messageId, message.fnlId, new Date(), message.scheduled_min]]]
             );
         }
         res.send({
@@ -405,8 +407,8 @@ app.post('/deleteMessages', async (req, res) => {
 
 app.post('/editMessages', async (req, res) => {
     try {
-        let editMsg = await db.excuteQuery(val.editMessage, [req.body.Message, req.body.message_media, req.body.schedule_datetime, req.body.allTime, req.body.allDays, req.body.isEnable, req.body.start_time, req.body.end_time, new Date(), req.body.Message_id, req.body.funnelId])
-        editDays(req.body.sp_id, req.body.funnelId, req.body.days, req.body.Message_id,req.body.scheduled_min)
+        let editMsg = await db.excuteQuery(val.editMessage, [req.body.Message, req.body.message_media, req.body.schedule_datetime, req.body.allTime, req.body.allDays, req.body.isEnable, req.body.start_time, req.body.end_time, new Date(), req.body.scheduled_min, req.body.Message_id, req.body.funnelId])
+        editDays(req.body.sp_id, req.body.funnelId, req.body.days, req.body.Message_id, req.body.scheduled_min)
         res.send({
             status: 200,
             editMsg: editMsg
@@ -484,19 +486,37 @@ app.post('/selectFunnelDays', async (req, res) => {
     }
 })
 
-app.post('/sendFunnel',async (req,res)=>{
+app.post('/sendFunnel', async (req, res) => {
     try {
-        let sendFunnel = await db.excuteQuery(val.funnelById, [req.body.FunnelId,req.body.sp_id])
-      
-        if(sendFunnel[0]?.segments_contacts?.length > 0){
-        let listnumber=await infoOfcontactList(sendFunnel[0].segments_contacts);
+        let sendFunnel = await db.excuteQuery(val.funnelById, [req.body.FunnelId, req.body.sp_id])
+        let csvContact = [];
+        if (sendFunnel[0]?.csv_contacts?.length > 0) {
+            const dataArray = JSON.parse(sendFunnel[0].csv_contacts);
+            const phoneNumbersArray = dataArray.map(dataObject => dataObject.Phone_number);
+            csvContact = csvContact.concat(phoneNumbersArray);
         }
-        if(sendFunnel[0]?.new_contact?.length > 0){
-         let newContactNumber=await infoOfNewContact(sendFunnel[0].new_contact);
+
+        if (sendFunnel[0]?.segments_contacts?.length > 0) {
+            let listnumber = await infoOfcontactList(sendFunnel[0].segments_contacts);
+            csvContact = csvContact.concat(listnumber.map(rowDataPacket => rowDataPacket.Phone_number));
+
         }
-        if(sendFunnel[0]?.attribute_update?.length > 0){
-         let updateContactNumber=await infoOfUpdatedContact(sendFunnel[0].attribute_update);
+
+
+        if (sendFunnel[0]?.new_contact?.length > 0) {
+            console.log("new_contact")
+            let newContactNumber = await infoOfNewContact(sendFunnel[0].new_contact);
+            csvContact = csvContact.concat(newContactNumber.map(rowDataPacket => rowDataPacket.Phone_number));
+            let uniqueArray = [...new Set(csvContact)];
+            // console.log(uniqueArray);
         }
+        if (sendFunnel[0]?.attribute_update?.length > 0) {
+            console.log("attribute_update")
+            let updateContactNumber = await infoOfUpdatedContact(sendFunnel[0].attribute_update);
+        }
+
+        let scheduledTime = await isScheduledTime([...new Set(csvContact)])
+        //  let  middlewareresult = await middleware.channelssetUp(sendFunnel[0].sp_id, sendFunnel[0].channel_id, 'text', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId)
         res.status(200).send({
             status: 200
         })
@@ -507,30 +527,88 @@ app.post('/sendFunnel',async (req,res)=>{
     }
 })
 
-async function infoOfcontactList(contactList){
-try{
-let listedPhone=await db.excuteQuery('Select Phone_number from EndCustomer where customerId IN (?)' ,[contactList]);
-  return listedPhone;
-}catch(err){
-    console.log(err);
-}
-}
-async function infoOfNewContact(contactList){
-    try{
-let newContactPhone=await db.excuteQuery(contactList,[]);
-return newContactPhone;
-    }catch(err){
+async function infoOfcontactList(contactList) {
+    try {
+        let query = 'Select Phone_number from EndCustomer where customerId IN (?)'
+
+        let listedPhone = await db.excuteQuery(query, [JSON.parse(contactList)]);
+
+        return listedPhone;
+    } catch (err) {
+        contactList
         console.log(err);
     }
 }
-async function infoOfUpdatedContact(contactList){
-    try{
-        let newContactPhone=await db.excuteQuery(contactList,[]);
+async function infoOfNewContact(contactList) {
+    try {
+        let newContactPhone = await db.excuteQuery(contactList, []);
         return newContactPhone;
-    }catch(err){
+    } catch (err) {
         console.log(err);
     }
 }
+async function infoOfUpdatedContact(contactList) {
+    try {
+        let newContactPhone = await db.excuteQuery(contactList, []);
+        return newContactPhone;
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+// async function isScheduledTime(contactArray) {
+//     try {
+
+//         let daysQuery = 'select day from FunnelDays where  FunnelId=1 and Message_id=17 and isDeleted !=1 and sp_id=3'
+//         let scheduledDays = await db.excuteQuery(daysQuery, []);
+//         console.log(scheduledDays)
+//         // Extract values of the 'day' property and store in a new array
+//         const extractedDays = scheduledDays.map(row => row.day);
+
+//         console.log(extractedDays);
+
+//         console.log(areWorkingDays(extractedDays))
+//         let messageQuery = 'select scheduled_min from FunnelMessages where  FunnelId=1 and Message_id=18 and isDeleted !=1 and sp_id=3';
+//         let scheduledTime = await db.excuteQuery(messageQuery, []);
+
+//         for (let i = 0; i < contactArray.length; i++) {
+//             let query = 'Select  created_at from EndCustomer where Phone_number =? and isDeleted != 1 and SP_ID=3'
+//             let createdTime = await db.excuteQuery(query, [contactArray[i]]);
+
+
+//             // Assuming createdTime is an array with a property scheduled_min
+//             const scheduledMinutes = parseInt(scheduledTime[0]?.scheduled_min, 10); // Parse the string to an integer
+
+//             // Assuming Message is an array with a property created_at
+//             const messageCreatedAtString = createdTime[0]?.created_at;
+
+//             // Convert the string to a Date object
+//             const messageCreatedAt = new Date(messageCreatedAtString);
+
+//             // Find the next time (e.g., scheduledMinutes minutes later)
+//             const nextTime = new Date(messageCreatedAt.getTime() + 1450 * 60 * 1000); // Add scheduledMinutes minutes in milliseconds
+
+//             // Get the timestamp of the next time
+//             const nextTimestamp = nextTime.getTime();
+
+//             console.log(nextTimestamp <= new Date(), i, new Date(nextTimestamp));
+//         }
+//     } catch (err) {
+//         console.log(err);
+//     }
+// }
+
+// function areWorkingDays(days) {
+//     // Assuming 'days' is an array of strings, e.g., ['Monday', 'Tuesday', 'Wednesday']
+//     const workingDays = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  
+//     // Convert the input days to lowercase for case-insensitive comparison
+//     const normalizedDays = days.map(day => day.toLowerCase());
+  
+//     // Check if all normalized days are in the array of working days
+//     return normalizedDays.every(day => workingDays.includes(day));
+//   }
+
 app.listen(3011, function () {
     console.log("Node is running");
 
