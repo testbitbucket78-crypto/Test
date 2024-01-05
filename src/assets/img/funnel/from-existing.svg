@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="42.083" height="30.162" viewBox="0 0 42.083 30.162">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.093" x2="0.799" y2="1.082" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f9b035"/>
+      <stop offset="0.53" stop-color="#f98c4e"/>
+      <stop offset="1" stop-color="#f96767"/>
+    </linearGradient>
+  </defs>
+  <g id="from-existing" transform="translate(0.498 0.5)">
+    <path id="Union_13" data-name="Union 13" d="M0,6.581a6.581,6.581,0,1,1,6.581,6.581A6.58,6.58,0,0,1,0,6.581ZM17.585,12.1a2.5,2.5,0,1,1,0-5h9a2.5,2.5,0,1,1,0,5Zm0-6.033a2.5,2.5,0,1,1,0-5h21a2.5,2.5,0,1,1,0,5Z" stroke="rgba(0,0,0,0)" stroke-width="1" fill="url(#linear-gradient)"/>
+    <path id="Union_14" data-name="Union 14" d="M0,6.581a6.581,6.581,0,1,1,6.581,6.581A6.58,6.58,0,0,1,0,6.581ZM17.585,12.1a2.5,2.5,0,1,1,0-5h9a2.5,2.5,0,1,1,0,5Zm0-6.033a2.5,2.5,0,1,1,0-5h21a2.5,2.5,0,1,1,0,5Z" transform="translate(0 16)" stroke="rgba(0,0,0,0)" stroke-width="1" fill="url(#linear-gradient)"/>
+  </g>
+</svg>

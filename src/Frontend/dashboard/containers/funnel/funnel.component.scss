@@ -206,18 +206,22 @@ img.icon{
     align-items: center;
     border: none;
 }
-.submit-btn {
+.main-modal.submit-btn {
     background: #6149CD 0% 0% no-repeat padding-box;
     box-shadow: 1px 8px 29px #695f9724;
     border-radius: 15px;
     width: auto;
     height: 32px;
-    color: #fff;
+    color: grey;
     border: 0px;
     padding: 1px 32px;
     font-size: 12px;
     font-weight: 800;
     outline: none;
+}
+
+.main-modal.submit-btn:hover {
+    color: white;
 }
 .new-message-btn {
     width: auto;
@@ -456,6 +460,12 @@ opacity: 1;
 	.close-box img.setting_icon{
 	width: 17px;
 	}
+    .input_group_btn{
+        text-align: right;
+        margin-top: 20px;
+        float: left;
+        width: 100%;
+        }
 
 .addeidtcampaign_menu{
 	display: flex;
@@ -637,4 +647,54 @@ opacity: 1;
         color: #BDC3D0;
         opacity: 1;
     }
+
+    .popup-dialog{
+        background: #FFFFFF 0% 0% no-repeat padding-box;
+        box-shadow: 4px 22px 54px #695F9730;
+        border-radius: 20px;
+        padding: 10px 0px;
+        position: absolute;
+        max-width: 140px;
+        margin-top: 10px;
+        max-height: 200px;
+        overflow: auto;
+        z-index: 9999999;
+        }
+
+        .popup-dialog p{
+            color:#000;
+            float:left;
+            width: 100%;
+            margin: 0;
+            font-size: 12px;
+            }
+            .popup-dialog p span{
+            padding: 5px 15px;
+            width: 100%;
+            float: left;
+            margin:0px;
+            }
+            .popup-dialog p.label{
+            font-weight: 600;
+            color: #6149CD;
+            padding: 5px 15px;
+            }
+            .popup-dialog p.label:hover{
+            background: #fff;
+            cursor: pointer;
+            }
+            .popup-dialog p:hover{
+            background: #FFF4F2;
+            }
+            .popup-dialog p.active{
+            background: #FFF4F2;
+            background: #FFF4F2 url("/assets/img/teambox/icon-selected.svg") no-repeat;
+            background-size: 12px;
+            background-position: center right 10px;
+            }
+
+            .subscriber-condition-cards .outer_box {
+                border: 2px solid #F0F0F0;
+                border-radius: 30px;
+            }
 
