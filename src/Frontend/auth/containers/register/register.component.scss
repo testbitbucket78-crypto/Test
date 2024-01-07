@@ -65,7 +65,7 @@ label {
 }
 .form-control {
     display: block;
-    width: 112%;
+    width: 106%;
     height: calc(1.5em + 0.75rem + 7px);
     // padding: 0 37px 0 10px;
     font-size: 14px;
@@ -82,12 +82,9 @@ label {
 #la-ph{
     margin-left: 0.5rem;
 }
-#kop{
-    margin: 0px 0px 0px 31px;
-    padding-left: 0.78rem;
-}
+
 #confirmPassword{
-    width: 131%;
+    width: 153%;
 }
 #email_id{
     width: 100%;
@@ -170,14 +167,14 @@ a{
     position: relative;
     cursor: pointer;
     top: -2rem;
-    left: 0.5rem;
+    left: -0.5rem;
     float: right;
     }
     .eyeicon1{
         position: relative;
         cursor: pointer;
         top: -2rem;
-        left: 3rem;
+        left: 4.7rem;
         float: right;
         }
     .error{
@@ -270,3 +267,10 @@ a{
         width: 280px;
         padding: 0 0 0 87px;
     }
+    .form-control.password{
+        padding-right: 3rem;
+    }
+    .form-control.confirm{
+        padding-right: 3rem;
+    }
+

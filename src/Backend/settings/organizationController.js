@@ -658,7 +658,7 @@ const addUser = async (req, res) => {
               
               To access your official email account, follow these steps:
               
-              1. Go to  https://cip.sampanatechnologies.com/#/login 
+              1. Go to  https://cip.stacknize.com/#/login 
               2. Enter your Email ID.
               3. Use the temporary password provided above.
               4. Set a new password when prompted.
