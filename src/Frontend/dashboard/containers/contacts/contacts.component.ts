@@ -263,7 +263,7 @@ countryCodes = [
 
 contactForm() {
   return this.fb.group({
-    Name: new FormControl('', [Validators.required,this.noSpacesAtStartEnd,Validators.minLength(3),Validators.maxLength(50)]),
+    Name: new FormControl('', [Validators.required,Validators.minLength(3),Validators.maxLength(50),Validators.pattern(/^[a-zA-Z0-9][a-zA-Z0-9\s]*[a-zA-Z0-9]$/)]),
     Phone_number: new FormControl(''),
     displayPhoneNumber: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
     country_code:new FormControl(''),
@@ -277,17 +277,6 @@ contactForm() {
 
      this.isButtonEnabled = this.checkedConatct.length > 0 && event !== null;
     
-  }
-
-  noSpacesAtStartEnd(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if ((control.value.startsWith(' ') || control.value.endsWith(' '))) {
-        return { 'noSpacesAtStartEnd': true };
-      }
-  
-      // If no spaces at the beginning or end, return null (valid)
-      return null;
-    }
   }
   
 checks=false

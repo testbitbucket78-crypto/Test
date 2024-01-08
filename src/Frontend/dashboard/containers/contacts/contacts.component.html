@@ -500,14 +500,14 @@
 							class="text-danger">
 							! Name is required.
 						</div>
-						<div *ngIf="productForm.get('Name')?.hasError('noSpacesAtStartEnd') && productForm.get('Name')?.touched"
-							class="text-danger">
-							! Name cannot have spaces at the beginning or end.
-						  </div>
 						  <div *ngIf="productForm.get('Name')?.hasError('maxlength') && productForm.get('Name')?.touched"
 						  	class="text-danger">
 							! Maximum 50 characters are allowed.
 						  </div>
+						  <div *ngIf="productForm.get('Name')?.hasError('pattern') && productForm.get('Name')?.touched"
+						  class="text-danger">
+					       ! Invalid Name. 
+					 </div>
 					</div>
 				</div>
 			</div>
