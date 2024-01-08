@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -163,6 +163,8 @@ countryCodes = [
    profilePicture:any;
    selectedCountryCode:any;
    contactsData!:{}
+   customFieldData:[] = [];
+   filteredCustomFields:any;
    contactsImageData= <contactsImageData> {};
    contactId:any = 0;
    OptedIn=false;
@@ -255,12 +257,13 @@ countryCodes = [
 		this.getContact();
     this.getUserList();
     this.getTagData();
+    this.getCustomFieldsData();
   
 } 
 
 contactForm() {
   return this.fb.group({
-    Name: new FormControl('', Validators.required),
+    Name: new FormControl('', [Validators.required,this.noSpacesAtStartEnd,Validators.minLength(3),Validators.maxLength(50)]),
     Phone_number: new FormControl(''),
     displayPhoneNumber: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
     country_code:new FormControl(''),
@@ -276,6 +279,17 @@ contactForm() {
     
   }
 
+  noSpacesAtStartEnd(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if ((control.value.startsWith(' ') || control.value.endsWith(' '))) {
+        return { 'noSpacesAtStartEnd': true };
+      }
+  
+      // If no spaces at the beginning or end, return null (valid)
+      return null;
+    }
+  }
+  
 checks=false
 bulk(e: any) {
   if (e.target.checked == true) {
@@ -829,6 +843,22 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             Phone_number: formattedPhoneNumber ? formattedPhoneNumber.formatInternational().replace(/[\s+]/g, '') : '',
           });
     }
+  }
+
+  getCustomFieldsData() {
+    this._settingsService.getNewCustomField(this.spid).subscribe(response => {
+      this.customFieldData = response.getfields;
+      console.log(this.customFieldData);  
+      this.getfilteredCustomFields();
+    })
+  }
+
+  getfilteredCustomFields() {
+    const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+       const filteredFields:any = this.customFieldData.filter(
+          (field:any) => !defaultFieldNames.includes(field.ActuallName) && field.Status===1 );
+          this.filteredCustomFields = filteredFields;
+          console.log(this.filteredCustomFields);
   }
 }
 
