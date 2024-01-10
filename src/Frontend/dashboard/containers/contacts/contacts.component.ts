@@ -684,11 +684,14 @@ deletContactByID(data: any) {
     this.apiService.getContactById(data.customerId, SP_ID).subscribe((data) => {
       this.customerData = data;
       this.getContact();
-    })
+    });
     this.apiService.getContactImage(data.customerId).subscribe((response: any) => {
       this.contactId = data.customerId;
       console.log(this.contactId);
-    this.profilePicture =  response.msg[0].contact_profile
+    this.cdRef.detectChanges();
+    this.profilePicture = response.msg[0].contact_profile
+    console.log(this.productForm)
+    this.getContact();
     });
     
   }
