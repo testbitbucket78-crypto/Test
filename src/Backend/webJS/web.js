@@ -45,8 +45,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          executablePath: "/usr/bin/google-chrome-stable",
-          //  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         // executablePath: "/usr/bin/google-chrome-stable",
+            executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -104,7 +104,6 @@ function ClientInstance(spid, authStr, phoneNo) {
 
       client.on('message', async message => {
         try {
-          console.log("inside on message");
           const contact = await message.getContact();
           saveInMessages(message);
         } catch (messageerr) {
@@ -148,35 +147,37 @@ function ClientInstance(spid, authStr, phoneNo) {
         try {
           const phoneNumber = (message.to).replace(/@c\.us$/, "");
           if (ack == '1') {
-            console.log(`Message has been sent`);
+          
             const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  and  msg_status is null`
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL OR (msg_status != 9 AND msg_status != 10)); `
             let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
+            console.log("send"  ,sended.affectedRows)
             notify.NotifyServer(phoneNo, true)
 
             //  let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
           } else if (ack == '2') {
-            console.log(`Message has been delivered`);
+          
             const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 and (msg_status =1 or msg_status is null)`
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1 OR (msg_status != 9 AND msg_status != 10)); `
             let deded = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
+            console.log("deliver"  , deded.affectedRows)
             notify.NotifyServer(phoneNo, true)
             //    db.excuteQuery(`UPDATE Message set msg_status=? where ExternalMessageId=?`, [ack, message.id.id])
           } else if (ack == '3') {
-            console.log(`Message has been read`);
+            console.log("read" )
             const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1   and (msg_status =2 OR msg_status=1)`
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1 OR (msg_status != 9 AND msg_status != 10));`
             let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
-
+            console.log("read"  ,resd.affectedRows)
             notify.NotifyServer(phoneNo, true)
             //    db.excuteQuery(`UPDATE Message set msg_status=?, is_read =1 where ExternalMessageId=?`, [ack, message.id.id])
           }
@@ -270,11 +271,9 @@ async function saveSendedMessageStatus(messageStatus, timestamp, to, id) {
 async function sendMessages(spid, endCust, type, text, link, interaction_id, msg_id) {
   try {
     let client = clientSpidMapping[[spid]];
-    console.log(spid, endCust, type, interaction_id, msg_id)
     if (client) {
-      console.log("if");
       let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
-      console.log("return send msg status")
+      
       return '200';
     } else {
       // Use the fs.readFile() method to read the contents of the file
@@ -311,7 +310,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
 
     //  console.log("messagesTypes", interaction_id, msg_id)
     if (client.info) {
-      console.log("client info avilable")
+     // console.log("client info avilable")
     } else {
       console.log("not avilable")
     }
@@ -388,8 +387,8 @@ async function saveInMessages(message) {
 
 
       let saveMessage = await saveIncommingMessages(from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName);
-      console.log("saveMessage")
-      console.log(saveMessage)
+       //console.log("saveMessage" ,)
+      // console.log(saveMessage)
 
       var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number)
     }
@@ -403,25 +402,25 @@ async function saveInMessages(message) {
 
 
 async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName) {
-  console.log("saveIncommingMessages")
+ // console.log("saveIncommingMessages")
 
   if (Type == "image") {
-    console.log("lets check the image");
+   // console.log("lets check the image");
 
     var imageurl = await saveImageFromReceivedMessage(from, message_media, phone_number_id, display_phone_number, Type);
 
     message_media = imageurl.value;
-    console.log(message_media)
+   // console.log(message_media)
     message_text = " "
     var media_type = 'image/jpg'
   }
   if (Type == "video") {
-    console.log("lets check the video");
+   // console.log("lets check the video");
 
     var imageurl = await saveImageFromReceivedMessage(from, message_media, phone_number_id, display_phone_number, Type);
 
     message_media = imageurl.value;
-    console.log(message_media)
+  //  console.log(message_media)
     message_text = " "
     var media_type = 'video/mp4'
   }
@@ -429,7 +428,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?)"
     var saveMessage = await db.excuteQuery(query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
     notify.NotifyServer(display_phone_number, true);
-    console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
+   // console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
 
   }
@@ -438,11 +437,11 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
 
 
 async function saveImageFromReceivedMessage(from, message, phone_number_id, display_phone_number, type) {
-  console.log("saveImageFromReceivedMessage")
+ // console.log("saveImageFromReceivedMessage")
 
   return new Promise(async (resolve, reject) => {
     try {
-      console.log(from, phone_number_id, display_phone_number, type)
+    //  console.log(from, phone_number_id, display_phone_number, type)
 
 
       let findSpid = 'select SP_ID from user where mobile_number=?'
@@ -453,14 +452,14 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
       console.log(type === 'image')
       if (type == 'image') {
         awsDetails = await awsHelper.uploadStreamToAws(sid[0].SP_ID + "/" + phone_number_id + "/" + 'whatsAppWeb.jpeg', message)
-        console.log("awsDetails image");
-        console.log(awsDetails)
+       // console.log("awsDetails image");
+       // console.log(awsDetails)
       }
       if (type == 'video') {
         awsDetails = await awsHelper.uploadVideoToAws(from + "/" + phone_number_id + "/" + "whatsAppWeb.mp4", message)
-        console.log("awsDetails video");
+       // console.log("awsDetails video");
 
-        console.log(awsDetails)
+       // console.log(awsDetails)
       }
       //TODO: Save the AWS url to DB in messages table using SP similar to webhook_2 SP. 
 
@@ -483,7 +482,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
 
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
-  if (saveMessage.length > 0) {
+  if (saveMessage?.length > 0) {
 
     const data = saveMessage;
     // Extracting the values
@@ -497,8 +496,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       newlyInteractionId: data[7][0]['@newlyInteractionId']
     };
 
-    console.log("getDetatilsOfSavedMessage");
-    console.log(extractedData)
+  
     var sid = extractedData.sid
     var custid = extractedData.custid
     var agid = extractedData.agid
@@ -511,9 +509,9 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
-    console.log(defaultAction.length)
+    //console.log(defaultAction.length)
     if (defaultAction.length > 0) {
-      console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
+      //console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
       var isAutoReply = defaultAction[0].isAutoReply
       var autoReplyTime = defaultAction[0].autoReplyTime
       var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable

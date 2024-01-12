@@ -43,7 +43,6 @@ app.get('/sideNavKeyword', (req, res) => {
 app.post('/addNewReply', async (req, res) => {
   try {
     const myStringArray = req.body.Keywords;
-    console.log(req.body.Keywords)
     const params = {
       strings: {
 

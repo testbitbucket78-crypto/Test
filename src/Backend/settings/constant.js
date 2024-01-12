@@ -191,15 +191,17 @@ tm.SP_ID = ?
 AND tm.isDeleted != 1;`
 
 
- var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1`
+ var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1 `
  var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,updated_at) values ?`
- let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as Type ,1 as Mandatory, 1 as Status,0 as id
+ 
+ let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as type, 0 as mandatory,0 as status,0 as id,"" as created,"" as updated ,"" as description
  FROM information_schema.columns
- WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked')
+ WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked' ,'channel','displayPhoneNumber','countryCode','IsTemporary','contact_profile','InstagramId','facebookId','Country','state','city','pincode','address','sex','status','age')
  UNION
- SELECT ColumnName AS displayName,CustomColumn as ActuallName ,Type as Type ,Mandatory as Mandatory,Status  as Status ,id as id
+ SELECT ColumnName AS column_name,CustomColumn as ActuallName ,Type as type,Mandatory as mandatory,Status as status,id as id,created_at as created,updated_at as updated ,description as description
  FROM SPIDCustomContactFields  
- WHERE SP_ID =? AND isDeleted!=1`
+ WHERE SP_ID =?  AND isDeleted !=1;`
+
  let getcolumnid = `SELECT  ColumnName AS displayName,CustomColumn as ActuallName  ,Type,Mandatory,Status,id,created_at,updated_at,description
  FROM SPIDCustomContactFields  
  WHERE id =? AND isDeleted !=1;`
@@ -213,6 +215,7 @@ let editfield=`UPDATE SPIDCustomContactFields SET ColumnName=?,Type=?,descriptio
 
 var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id) VALUES ?`
 var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
+var selectApprovedTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1  and (status='Save' OR status='Approved') and isTemplate=?`
 var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=? where ID=?`
 var deleteTemplate = `UPDATE templateMessages set isDeleted=1 ,updated_at=? where ID=?`
 
@@ -251,5 +254,5 @@ module.exports = {
     addCampaignAlerts, deleteCampaignAlerts, selectCampaignAlerts, addCampaignTest, deleteCampaignTest, selectCampaignTest,
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
-    getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield
+    getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate
 }

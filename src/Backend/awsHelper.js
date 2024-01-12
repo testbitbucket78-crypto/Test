@@ -333,6 +333,11 @@ async function uploadAttachment(awspath,files,ContentType){
     // Read the file
 const fileContent = fs.readFileSync(files);
 
+   // Get file size
+   const fileSizeInBytes = Buffer.byteLength(fileContent);
+   const FileInKB = Math.ceil(fileSizeInBytes / 1024);
+
+
 // S3 upload parameters
 const params = {
     Bucket: val.awsbucket,
@@ -351,7 +356,7 @@ s3.upload(params, (err, data) => {
     } else {
         console.log("File uploaded successfully");
         console.log("File URL:", data.Location);
-        resolve({ code: 0, value: data });
+        resolve({ code: 0, value: data ,size:FileInKB });
     }
 });
 });

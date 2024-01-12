@@ -433,6 +433,22 @@ const getTemplate = async (req, res) => {
     }
 }
 
+const getApprovedTemplate = async (req, res) => {
+    try {
+        let templates = await db.excuteQuery(val.selectApprovedTemplate, [req.params.spid, req.params.isTemplate])
+        res.status(200).send({
+            templates: templates,
+            status: 200
+        })
+    }
+    catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+
 const deleteTemplates = async (req, res) => {
     try {
         updated_at = new Date();
@@ -493,6 +509,6 @@ module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
     testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
-    enableStatusfield
+    enableStatusfield ,getApprovedTemplate
 
 }

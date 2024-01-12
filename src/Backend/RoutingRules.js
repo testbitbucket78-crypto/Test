@@ -10,7 +10,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 async function AssignToContactOwner(sid, newId, agid, custid) {
-console.log("AssignToContactOwner")
   let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=${sid}`;
 
   let RoutingRules = await db.excuteQuery(RoutingRulesQuery, []);
