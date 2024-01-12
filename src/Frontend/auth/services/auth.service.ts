@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Auth, authRegister, authForgotPassword ,authSendOtp,authVerifyOtp} from '../models';
-import { HttpClient, HttpHeaders, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { environment } from 'environments/environment.prod';
+const API_URL = environment.baseUrl;
 
 @Injectable()
 export class AuthService {
@@ -10,46 +12,31 @@ export class AuthService {
     getAuth$(): Observable<{}> {
         return of({});
     }
-
     login(data: Auth): Observable<any> {
-        let API_URL = 'https://authapi.sampanatechnologies.com/login';
-        return this.http.post(API_URL, data)
-
+        return this.http.post( API_URL+'/login', data);
     }
     register(data: authRegister): Observable<any> {
-
-        let API_URL = 'https://authapi.sampanatechnologies.com/register';
-        return this.http.post(API_URL, data,{headers:{'Content-Type':'application/json'}})
+        return this.http.post(API_URL+'/register', data,{headers:{'Content-Type':'application/json'}});
     }
     forgotpassword(data: authForgotPassword): Observable<any> {
-        let API_URL = 'https://authapi.sampanatechnologies.com/forgotPassword';
-        return this.http.post(API_URL, data)
+        return this.http.post(API_URL+'/forgotPassword', data)
     }
     resetPassword(value: any, uid: any) {
-        console.log("" + value)
         const params = new HttpParams().set('uid', uid)
-        let API_URL = 'https://authapi.sampanatechnologies.com/resetPassword/:uid';
-        return this.http.post(API_URL, value, { params: params })
+        return this.http.post(API_URL+'/resetPassword/:uid', value, { params: params })
     }
     sendOtp(data: authSendOtp) {
-        let API_URL = 'https://authapi.sampanatechnologies.com/sendOtp';
-        return this.http.post(API_URL, data)
+        return this.http.post(API_URL+'/sendOtp', data)
     }
     verifyOtp(data:authVerifyOtp){
-        let API_URL = 'https://authapi.sampanatechnologies.com/verifyOtp';
-
-        return this.http.post(API_URL, data)
+        return this.http.post(API_URL+'/verifyOtp', data)
     }
 
     verifyphoneOtp(data: any) {
-        let API_URL = 'https://authapi.sampanatechnologies.com/verifyPhoneOtp';
-
-        return this.http.post(API_URL, data)
+        return this.http.post(API_URL+'/verifyPhoneOtp', data)
     }
-
     logout(): void {
         sessionStorage.clear();
-       
-      }
+    }
    
 }

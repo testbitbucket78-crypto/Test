@@ -87,7 +87,7 @@ export class LoginComponent implements OnInit {
                         errorDiv.innerHTML = errorMessage;
                     }
                 } else if (error?.status === 500) {
-                    const errorMessage = '! Internal Server Error, Please Try After Sometime.';
+                    const errorMessage = '! Internal Server Error,<br /> Please Try After Sometime.';
                     const errorDiv = document.getElementById('error-message');
                     if (errorDiv) {
                         errorDiv.innerHTML = errorMessage;

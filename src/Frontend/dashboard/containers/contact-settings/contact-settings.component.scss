@@ -49,6 +49,10 @@
     font-family: 'Manrope';
 }
 
+.account-btn.disabled {
+    background: grey;
+  }
+
 .input-group>.form-control,
 .input-group>.form-control-plaintext,
 .input-group>.custom-select,

@@ -24,51 +24,32 @@ export class SideNavComponent implements OnInit {
 
     constructor(public navigationService: NavigationService, public userService: UserService,private router:Router) {}
 
-    ngOnInit() {
+    ngOnInit() {  
        
-        // this.hideHamburger();
-        this.openHamburger();
-    
     }
-
-    // ngOnDestroy() {
-    //     this.subscription.unsubscribe();
-    // }
-
-    openHamburger(): void {
+    
+    toggleHamburger(): void {
         const sideNavMenu = document.getElementById('sidenav-menu');
         const sideBarToggle = document.getElementById('sidebarToggle');
-        const mainBody = document.getElementsByClassName('container-fluid')[0] as HTMLElement; // Get the first element
+        const sideBarBody = document.getElementById('sidenavAccordion');
+        const layoutMainSide = document.getElementById('layoutSidenav_content');
+        const mainBody = document.getElementsByClassName('container-fluid')[0] as HTMLElement;
     
-        if (sideNavMenu && sideBarToggle) {
-            if (sideNavMenu.style.width === '100%') {
-                sideNavMenu.style.width = '25%';
-                sideNavMenu.style.border = '0';
-                mainBody.style.marginLeft = '-10%';
+        if (sideNavMenu && sideBarToggle && sideBarBody && layoutMainSide) {
+            if (sideBarBody.style.width === '100%') {
+                sideBarBody.style.width = '25%';
+                mainBody.style.marginLeft = '-4%';
+                layoutMainSide.style.paddingLeft= '155px';
                 sideBarToggle.style.marginLeft = '-3px';
             } else {
-                sideNavMenu.style.width = '100%';
+                sideBarBody.style.width = '100%';
                 sideNavMenu.style.borderRight = '1px solid #EBEBEB';
                 mainBody.style.marginLeft = '0';
+                layoutMainSide.style.paddingLeft= '225px';
                 sideBarToggle.style.marginLeft = '-148px';
             }
         }
     }
 
-    // toggleNavItem() {
-    //     this.showNavItem = !this.showNavItem;   
-    // }
-
-//     hideHamburger() {
-//         const currentRoute = this.router.url
-
-//         if( currentRoute.includes("/dashboard/setting") || 
-//             currentRoute.includes("/dashboard/myprofile")|| 
-//             currentRoute.includes("/dashboard/support")|| 
-//             currentRoute.includes("/dashboard/notifications")){
-//             this.showNavItem = false;
-//         }
-
-// }
 
 }

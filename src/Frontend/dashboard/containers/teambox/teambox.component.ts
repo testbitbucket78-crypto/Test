@@ -11,6 +11,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { isNullOrUndefined } from 'is-what';
 import { ToolbarService,NodeSelection, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { debounceTime } from 'rxjs/operators';
 
 declare var $: any;
 @Component({
@@ -772,7 +773,7 @@ sendattachfile(){
 			"spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
 		}
 		this.websocketService.connect(notificationIdentifier);
-			this.websocketService.getMessage().subscribe(message => {
+			this.websocketService.getMessage().pipe(debounceTime(120)).subscribe(message => {
 				if(message != undefined )
 				{
 					console.log("Seems like some message update from webhook");
