@@ -45,8 +45,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-         // executablePath: "/usr/bin/google-chrome-stable",
-            executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          executablePath: "/usr/bin/google-chrome-stable",
+           // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -154,7 +154,7 @@ WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL OR (msg_status != 9 AND msg_status != 10)); `
             let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
-            console.log("send"  ,sended.affectedRows)
+           // console.log("send"  ,sended.affectedRows)
             notify.NotifyServer(phoneNo, true)
 
             //  let updatedStatus = saveSendedMessageStatus(ack, message.timestamp, message.to, message.id.id)
@@ -166,7 +166,7 @@ WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1 OR (msg_status != 9 AND msg_status != 10)); `
             let deded = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
-            console.log("deliver"  , deded.affectedRows)
+            // console.log("deliver"  , deded.affectedRows)
             notify.NotifyServer(phoneNo, true)
             //    db.excuteQuery(`UPDATE Message set msg_status=? where ExternalMessageId=?`, [ack, message.id.id])
           } else if (ack == '3') {
@@ -177,7 +177,7 @@ WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1 OR (msg_status != 9 AND msg_status != 10));`
             let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
-            console.log("read"  ,resd.affectedRows)
+           // console.log("read"  ,resd.affectedRows)
             notify.NotifyServer(phoneNo, true)
             //    db.excuteQuery(`UPDATE Message set msg_status=?, is_read =1 where ExternalMessageId=?`, [ack, message.id.id])
           }
