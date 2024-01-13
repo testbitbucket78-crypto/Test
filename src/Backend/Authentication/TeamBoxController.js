@@ -58,7 +58,7 @@ const searchCustomer = (req, res) => {
     if (req.params.key) {
         sQuery = sQuery + " and (Phone_number like '%" + req.params.key + "%' or Name like '%" + req.params.key + "%')"
     }
-
+console.log(sQuery)
     db.runQuery(req, res, sQuery, [req.params.spID, req.params.key, req.params.key]);
 }
 
@@ -145,10 +145,10 @@ const createInteraction = async (req, res) => {
         let country_name = await db.excuteQuery(country_nameQuery, [SP_ID])
 
         let template_costQuery = `select Marketing from whatsappPlanPricing where Market =?;`
-        let template_cost = await db.excuteQuery(template_costQuery, [country_name[0].Country])
-        let overall_cost = (-1 * template_cost[0].Marketing);
+        let template_cost = await db.excuteQuery(template_costQuery, [country_name[0]?.Country])
+        let overall_cost =(-1 * template_cost[0]?.Marketing) ?(-1 * template_cost[0]?.Marketing)  : '0';
         let SPTransationsQuery = `INSERT INTO SPTransations (sp_id,transation_date,amount,transation_type,description,interaction_id,currency) values ?`
-        let SPTransationsvalues = [[SP_ID, time, overall_cost, 'Credited', 'Your Wallet amount is debited and credited to Marketing charges', createInteraction.insertId, currency_name[0].Currency]]
+        let SPTransationsvalues = [[SP_ID, time, overall_cost, 'Credited', 'Your Wallet amount is debited and credited to Marketing charges', createInteraction.insertId, currency_name[0]?.Currency]]
 
         let SPTransations = await db.excuteQuery(SPTransationsQuery, [SPTransationsvalues])
 
@@ -263,8 +263,8 @@ const getSearchInteraction = (req, res) => {
     let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and EndCustomer.Name like '%" + searchKey + "%'"
 
     if (req.params.AgentId && req.params.AgentId != '') {
-        //queryPath  +=" and Interaction.InteractionId IN (SELECT InteractionId FROM InteractionMapping where AgentId="+req.params.AgentId
-        //queryPath  +=" )"
+        // queryPath  +=" and Interaction.InteractionId IN (SELECT InteractionId FROM InteractionMapping where AgentId="+req.params.AgentId
+        // queryPath  +=" )"
     }
 
 
@@ -277,11 +277,13 @@ const getSearchInteraction = (req, res) => {
 const getAllMessageByInteractionId = (req, res) => {
     if (req.params.Type != 'media') {
         //var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
-        var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + "))  and Type='" + req.params.Type + "' order by interaction_id desc";
+        var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + "))  and Type='" + req.params.Type + "'  AND Message.is_deleted != 1 AND (Message.msg_status IS NULL OR Message.msg_status != 10 )  order by interaction_id desc";
+       
         db.runQuery(req, res, getAllMessagesByInteractionId, [req.params.InteractionId, req.params.Type])
     } else {
         //var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
-        var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) ORDER BY Message_id DESC"
+        var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) and is_deleted !=1 AND (msg_status IS NULL OR msg_status !=10 ) ORDER BY Message_id DESC"
+     
         db.runQuery(req, res, getAllMessagesByInteractionId, [req.params.InteractionId, req.params.Type])
 
     }
@@ -304,8 +306,6 @@ const deleteMessage = (req, res) => {
 
 const insertMessage = async (req, res) => {
     try {
-        console.log("req.body.message_media")
-        console.log(req.body)
         if (req.body.Message_id == '') {
             var messageQuery = val.insertMessageQuery
 
@@ -323,13 +323,15 @@ const insertMessage = async (req, res) => {
             Type = req.body.message_type
             created_at = req.body.created_at
             ExternalMessageId = ''
+            mediaSize=req.body.mediaSize
 
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id])
-            let channelType = await db.excuteQuery('select * from EndCustomer where customerId=?', [customerId]);
+            let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId,SPID]);
+            let spchannel=await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1',[SPID])
+            
+            const channel = channelType.length > 1 ? channelType[0].channel : spchannel[0]?.channel_id;
 
-            const channel = channelType.length > 1 ? channelType[0].channel : 'WhatsApp Web';
-
-            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at]]
+            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at,mediaSize]]
             let msg_id = await db.excuteQuery(messageQuery, [values])
             if (agentName.length >= 0) {
                 let mentionQuery = `SELECT * FROM Message WHERE '` + message_text + `' LIKE '%@` + agentName[0].name + `%'`;
@@ -345,7 +347,6 @@ const insertMessage = async (req, res) => {
             }
             // Parse the message template to get placeholders
             const placeholders = parseMessageTemplate(message_text);
-            console.log("placeholders.length" + placeholders.length)
             if (placeholders.length > 0) {
                 // Construct a dynamic SQL query based on the placeholders
                 const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=${customerId}`;
@@ -359,26 +360,27 @@ const insertMessage = async (req, res) => {
             }
             let middlewareresult = ""
             if (channelType[0].isBlocked != 1) {
+
+                console.log("channelType[0].isBlocked != 1 " ,channelType[0].isBlocked != 1 ,customerId)
                 if (req.body.message_type == 'text') {
                     if (req.body.message_media != '') {
                         // sendMediaOnWhatsApp(req.body.messageTo, message_media)
-                        console.log(message_media)
+                        
                         middlewareresult = await middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId)
                     }
                     // sendTextOnWhatsApp(req.body.messageTo, message_text)
                     else{
                     middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId)
-                    console.log("middlewareresult")
-                    console.log(middlewareresult)
+                
                     }
                 }
                 if (middlewareresult.status != 200) {
-                    let deletedMessage = await db.excuteQuery('UPDATE Message set is_deleted=1 where Message_id=?', [msg_id.insertId])
-                  //  console.log(deletedMessage)
+                    let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]) // just mark msg_status 9 for  identify
                 }
+                console.log("middlewareresult"    ,middlewareresult)
             } else {
-                let blockMessage = await db.excuteQuery('UPDATE Message set is_deleted=1  , msg_status=1 where Message_id=?', [msg_id.insertId])
-                console.log(blockMessage)
+                console.log("else _________")
+                let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=10 where Message_id=?', [msg_id.insertId]) //// just mark msg_status 10 for block identify
             }
             res.send({ middlewareresult: middlewareresult, status: middlewareresult.status, insertId: msg_id.insertId })
 

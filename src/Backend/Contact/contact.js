@@ -19,7 +19,7 @@ app.get('/columns/:spid', async (req, res) => {
 
     let query = ` SELECT column_name as displayName,column_name as ActuallName
     FROM information_schema.columns
-    WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked')
+    WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked' ,'channel','displayPhoneNumber','countryCode','IsTemporary','contact_profile','InstagramId','facebookId','Country','state','city','pincode','address','sex','status','age')
     UNION
     SELECT ColumnName AS column_name,CustomColumn as ActuallName
     FROM SPIDCustomContactFields  

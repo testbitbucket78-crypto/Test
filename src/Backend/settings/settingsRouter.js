@@ -116,6 +116,7 @@ router.post('/enableStatus',campaignController.enableStatusfield)
 
 router.post('/addTemplate',campaignController.addTemplate)
 router.get('/getTemplate/:spid/:isTemplate',campaignController.getTemplate)
+router.get('/getApprovedTemplate/:spid/:isTemplate',campaignController.getApprovedTemplate)
 router.post('/deleteTemplates',campaignController.deleteTemplates)
 
 //__________________ACCOUNT API'S__________________________//

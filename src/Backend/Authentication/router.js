@@ -103,11 +103,11 @@ const uuidv = uuidv4()
 
  let awsres = await awsHelper.uploadAttachment(`${uuidv}/${file.filename}`, url,file.media_type)
 
-console.log("awsres")
+console.log("awsres" ,awsres.size)
 //console.log(awsres.value.Location)
 await fs.unlink(url);
 console.log(url)
-res.send({filename:awsres.value.Location})
+res.send({filename:awsres.value.Location,fileSize:awsres.size})
 
 }catch(err){
    console.log(err)
