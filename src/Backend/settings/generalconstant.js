@@ -147,13 +147,14 @@ COUNT(DISTINCT message_id) AS message_count
 FROM 
  Message
 WHERE 
- SPID= ? AND is_deleted !=1
+ SPID= ? AND is_deleted !=1 and (media_type is null OR media_type="") 
 AND   created_at < ?;`
 
-deleteText=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? AND created_at < ?`
+deleteText=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and (media_type is null OR media_type="")  AND created_at < ? `
+deleteMedia=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and  ( media_type !="")   AND created_at < ? `
 
 module.exports={
     defaultactiondetails,updatedefaultactionDetails,defaultinsertDetails,getenabledisable,Abledisablequery,selectdefaultquery,uploaddetails,routingrule,routingdetails,selectmanage,updatemanagestorage,insertmanagestorage,getdeletion,insertRouteQuery,
     CustomerReplyReminder,systemMsgQuery,selectdefaultMsgQuery,noCustomerRqplyTimeOut,noAgentReply,addDefaultMsg,assignCount,checkAssignInteraction,
-    messageSizeQuery,deleteText
+    messageSizeQuery,deleteText,deleteMedia
 }
