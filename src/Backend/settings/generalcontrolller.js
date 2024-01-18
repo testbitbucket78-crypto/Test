@@ -429,7 +429,7 @@ const getautodeletion = async (req, res) => {
 
 const manualDelation = async (req, res) => {
     try {
-
+      
         SPID = req.body.SPID
         manually_deletion_days = req.body.manually_deletion_days
         message_type = req.body.message_type
@@ -438,26 +438,26 @@ const manualDelation = async (req, res) => {
         function subtractDaysFromNow(manually_deletion_days) {
             return moment().subtract(manually_deletion_days, 'days').format('YYYY-MM-DD HH:mm:ss');
         }
-
+        //UPDATE Message set is_deleted=1,updated_at=? where SPID=? AND created_at < ?`
 
 
         const result = subtractDaysFromNow(manually_deletion_days);
-
+     
         if (message_type == 'Text') {
-            var messageSize = await db.excuteQuery(val.deleteText, [new Date(), 2, result])
-            console.log(messageSize)
+            var messageSize = await db.excuteQuery(val.deleteText, [new Date(), SPID, result])
+           
         } else if (message_type == 'Media') {
             // console.log(Media)
-          let deletedData=await  awsHelper.deleteObjectFromBucket(manually_deletion_days,SPID);
-          console.log(deletedData)
+            let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
+            var messageSize = await db.excuteQuery(val.deleteMedia, [new Date(), SPID, result])
         }
 
-       
-       let insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, manually_deletion_days, message_type,created_at) VALUES ?';
-       let addManualData=await db.excuteQuery(insertmanagestorage,[[[SPID,'','','',manually_deletion_days,message_type,new Date()]]]);
-       console.log(addManualData);
-       
-       res.status(200).send({
+
+        let insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, manually_deletion_days, message_type,created_at) VALUES ?';
+        let addManualData = await db.excuteQuery(insertmanagestorage, [[[SPID, '', '', '', manually_deletion_days, message_type, new Date()]]]);
+   
+
+        res.status(200).send({
             msg: 'messages deleted successfully !',
             messageSize: messageSize,
             status: 200
@@ -471,9 +471,10 @@ const manualDelation = async (req, res) => {
 
 const deletedDetails = async (req, res) => {
     try {
-
+      
+      
         SPID = req.body.SPID
-        manually_deletion_days = req.body.manually_deletion_days
+        manually_deletion_days = req.body.Manually_deletion_days
         message_type = req.body.message_type
 
         function subtractDaysFromNow(manually_deletion_days) {
@@ -481,15 +482,15 @@ const deletedDetails = async (req, res) => {
         }
 
         const result = subtractDaysFromNow(manually_deletion_days);
-        console.log(result)
-        let  messageSize='';
+     
+        let messageSize = '';
         if (message_type == 'Text') {
-             messageSize = await db.excuteQuery(val.messageSizeQuery, [SPID, result])
-            console.log(messageSize)
+            messageSize = await db.excuteQuery(val.messageSizeQuery, [SPID, result])
+         
         } else if (message_type == 'Media') {
-
-             messageSize = await awsHelper.getStorageUtilization(SPID, manually_deletion_days)
-            console.log(messageSize)
+            
+            messageSize = await awsHelper.getStorageUtilization(SPID, manually_deletion_days)
+          
         }
 
 

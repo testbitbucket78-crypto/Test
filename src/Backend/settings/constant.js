@@ -54,7 +54,7 @@ selectAllQuery = "SELECT * FROM user WHERE SP_ID=? AND IsDeleted != 1";
 selectByIdQuery = `select Company_Name,profile_img from companyDetails where SP_ID=?`
 userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
 updateQuery = "UPDATE user SET  email_id=?, name=?, mobile_number=?, LastModifiedDate=?, UserType=? WHERE uid=?";
-insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive) VALUES ?";
+insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP) VALUES ?";
 findEmail = "SELECT * FROM user WHERE email_id=? and isDeleted !=1"
 getRole = `SELECT * from roles where SP_ID=? and isDeleted !=1`
 
@@ -213,12 +213,13 @@ let editfield=`UPDATE SPIDCustomContactFields SET ColumnName=?,Type=?,descriptio
 
 //________________________________________TEMPLATE SETTINGS__________________________//
 
-var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id) VALUES ?`
+var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,updated_at) VALUES ?`
 var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
 var selectApprovedTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1  and (status='Save' OR status='Approved') and isTemplate=?`
 var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=? where ID=?`
 var deleteTemplate = `UPDATE templateMessages set isDeleted=1 ,updated_at=? where ID=?`
-
+var addGallery = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,updated_at,topic) VALUES ?`
+var getGallery = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
 
 
 //______________________________________ACCOUNT SETTINGS______________________________//
@@ -254,5 +255,5 @@ module.exports = {
     addCampaignAlerts, deleteCampaignAlerts, selectCampaignAlerts, addCampaignTest, deleteCampaignTest, selectCampaignTest,
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
-    getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate
+    getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery
 }

@@ -109,10 +109,12 @@ const changePassword = async (req, res) => {
 
 const userActiveStatus = async (req, res) => {
     try {
-        IsActive = req.body.IsActive;
+   
+        IsActive = req.body.isActive;
         LastModifiedDate = new Date()
 
         var saveActiveStatus = await db.excuteQuery(val.activeStatusquery, [IsActive, LastModifiedDate, req.body.uid]);
+
         res.status(200).send({
             msg: 'save active status',
             saveActiveStatus: saveActiveStatus,
@@ -143,8 +145,8 @@ const addNotification = async (req, res) => {
                 addNotification: addNotification,
                 status: 200
             })
-        }else{
-            var updateNotification=await db.excuteQuery(val.updateNotification,[UID, notificationId, PushNotificationValue, SoundNotificationValue, created_at,ID])
+        } else {
+            var updateNotification = await db.excuteQuery(val.updateNotification, [UID, notificationId, PushNotificationValue, SoundNotificationValue, created_at, ID])
             res.status(200).send({
                 msg: 'Notification updated',
                 updateNotification: updateNotification,
@@ -891,20 +893,20 @@ const userProfile = async (req, res) => {
         name = req.body.name
         filePath = req.body.filePath
         spid = req.body.spid
-         // Remove header
+        // Remove header
         let streamSplit = filePath.split(';base64,');
         let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
         let datapart = streamSplit.pop();// this is dependent on the POP above
 
         let imgType = datapart.split('/').pop();
         let imageName = 'Profile.png';//Default it to png.
-        if(imgType){
+        if (imgType) {
             imageName = 'Profile' + '.' + imgType;
         }
 
-        let awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + name + "/"+imageName, filePath)
+        let awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + name + "/" + imageName, filePath)
         console.log(awsres.value.Location)
-        let userimgquery = `UPDATE user  set profile_img='` + awsres.value.Location + `'` + `where uid=`+ uid;
+        let userimgquery = `UPDATE user  set profile_img='` + awsres.value.Location + `'` + `where uid=` + uid;
         console.log("userimgquery");
         console.log(userimgquery)
         let result = await db.excuteQuery(userimgquery, []);

@@ -254,11 +254,12 @@ async function getStorageUtilization(spid, days) {
         const data = await s3.listObjectsV2(params).promise();
 
         for (const item of data.Contents) {
-            //   console.log(item.Key)
-            totalSize += await getObjectSize(item.Key);
-            console.log(item.LastModified < cutoffDate);
-            console.log(cutoffDate)
+            //    console.log(item.Key)
+           
+          //  console.log(item.LastModified < cutoffDate);
+           
             if (item.LastModified < cutoffDate && days != '-1') {
+                totalSize += await getObjectSize(item.Key);
                 mediaCount = mediaCount + 1;
             }
         }
