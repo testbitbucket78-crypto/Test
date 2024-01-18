@@ -89,10 +89,11 @@ toggleActiveState(checked: boolean, ID:number) {
 
  toggleSideBar(data:any){
   this.selectedCustomField = data
-  let id = data?.id
-    if(id!=0){
-      this.showSideBar =!this.showSideBar;
-    }
+  this.showSideBar =!this.showSideBar;
+  // let id = data?.id
+  //   if(id!=0){
+  //     this.showSideBar =!this.showSideBar;
+  //   }
  }
 
 searchCustomField(event:any){

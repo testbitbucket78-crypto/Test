@@ -16,12 +16,23 @@
           <div class="card-body">
             <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
               <div class="name-number">
-                <div class="" >
+                <div [ngClass]="{'invalid-input': registerForm.controls.name.invalid && (registerForm.controls.name.dirty || registerForm.controls.name.touched)}"
+                class="">
                   <label for="floatingInputGrid">Name</label>
-  
-                  <input type="text-right" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.name.errors  }" placeholder="Name" aria-label="City" name="name"
-                    formControlName="name" id="name">
-                </div>
+                
+                  <input type="text-right" 
+                         class="form-control" 
+                         [ngClass]="{'is-invalid' : submitted && registerForm.controls.name.errors }" 
+                         placeholder="Name" 
+                         aria-label="City" 
+                         name="name" 
+                         formControlName="name" 
+                         id="name" 
+                         maxlength="30"
+                         >
+                        
+                      
+              </div>
                 <div class="col-sm-1"></div>
                 <div class="pp"  id="col">
                   <label for="floatingInputGrid" id="la-ph">Phone Number</label> 
@@ -51,17 +62,18 @@
                 </div>
               </div>
               <div class="password-confirm">
-                <div class="">
+                <div class="col-5 pl-0 pr-3">
                   <label for="floatingInputGrid">Password</label>
   
-                  <input [type]="changetype?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.password.errors  }" placeholder="8 character" aria-label="City"
+                  <input [type]="changetype?'password':'text'" class="form-control password" [ngClass]="{'is-invalid' :submitted && registerForm.controls.password.errors  }" placeholder="8 character" aria-label="City"
                     name="password" formControlName="password" id="password">
                     <span class="eyeicon"(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye-slash':'fa fa-eye'"></i></span>
                 </div>
-                <div class="" id="kop">
+                <div class=""></div>
+                <div class="col-5 pl-3" id="kop">
                   <label for="floatingInputGrid">Confirm Password</label>
   
-                  <input [type]="change?'password':'text'" class="form-control" [ngClass]="{'is-invalid' :submitted && registerForm.controls.confirmPassword.errors}" placeholder="8 character" aria-label="State"
+                  <input [type]="change?'password':'text'" class="form-control confirm" [ngClass]="{'is-invalid' :submitted && registerForm.controls.confirmPassword.errors}" placeholder="8 character" aria-label="State"
                     name="confirmPassword" formControlName="confirmPassword" id="confirmPassword">
                     <span class="eyeicon1"(click)="viewpassword()"><i [ngClass]="visible1?'fa fa-eye-slash':'fa fa-eye'"></i></span>
                 </div>
@@ -90,9 +102,13 @@
                 </button>
               </div>
             </form>
-                      
+            <!-- <div  class="invalid-feedback" >
+              <div *ngIf="registerForm.controls.name.errors.invalidName">
+                Name must be at least 3 characters or not a single digit.
+              </div>
+            </div>        -->
           <div *ngIf="submitted && registerForm.controls.name.errors" class="text-danger">
-            ! Name required
+            ! Name must be at least 3 characters or not a single digit.
           </div>
           <div *ngIf="submitted && registerForm.controls.display_mobile_number.errors" class="text-danger">
             ! Phone number must between 6 to 15 digits

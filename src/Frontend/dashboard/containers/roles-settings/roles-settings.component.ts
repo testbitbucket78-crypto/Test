@@ -72,6 +72,9 @@ export class RolesSettingsComponent implements OnInit {
     subRightRes:[]=[];
     roleData: any;
     Rights!: number;
+    spid!:number;
+    rolesData: RolesData = <RolesData>{};
+    
 
     constructor(private _settingsService: SettingsService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
@@ -81,6 +84,7 @@ export class RolesSettingsComponent implements OnInit {
         this.getRolesList();
         this.getRightsList();
         this.getSubRightsList();
+        this.userType();
     }
 
     rowClicked = (event: any) => {
@@ -124,6 +128,7 @@ export class RolesSettingsComponent implements OnInit {
             if (result) {
                 this.rolesList = result?.getRoles;
                 this.rolesListinit = result?.getRoles;
+                
             }
         });
     }
@@ -147,6 +152,14 @@ export class RolesSettingsComponent implements OnInit {
             }
         });
     }
+    userType() {
+        this._settingsService.getrolesdata(this.spid,this.userType).subscribe(result => {
+            if (result) {
+                console.log(this.subRightRes);
+            }
+        });
+    }
+  
 
     addRole() {
         this.selectedRoleId = 0;

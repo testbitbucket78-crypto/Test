@@ -942,7 +942,7 @@ outline: none;
 
 .text-danger {
     color: #dc3545 !important;
-    font-size: 15px;
+    font-size: 13px;
 }
 .form-control .option{
     margin: 0;
@@ -1139,6 +1139,7 @@ input[type="file"] {
     font-size: 11px;
     cursor: pointer;
     outline: none;
+    text-align: center;
     background:#FFFFFF;
 }
 

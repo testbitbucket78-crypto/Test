@@ -54,7 +54,7 @@ export class MyprofileComponent implements OnInit {
 
   constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private cdRef: ChangeDetectorRef) { 
     this.changepassword = this.fB.group({
-      uid:[0],
+      uid: this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid,
       oldPass:['', [Validators.required, Validators.minLength(8)]],
       newPass:['', [Validators.required, Validators.minLength(8)]],
       confirmPass:['', [Validators.required, Validators.minLength(8)]]
@@ -67,17 +67,13 @@ export class MyprofileComponent implements OnInit {
     this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
     this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
     this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
-    console.log(JSON.stringify(this.profilePicture));
+    this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
     const nameParts = this.Name.split(' ');
     const firstName = nameParts[0] || '';
     const lastName = nameParts[1] || '';
     
     this.firstLetterFirstName = firstName.charAt(0) || '';
     this.firstLetterLastName = lastName.charAt(0) || '';
-
-    let uid: string  = sessionStorage.getItem('loginDetails')?.toString() ?? '';
-    let userid =JSON.parse(uid);
-    this.uid = userid.uid;
     this.spId = Number(sessionStorage.getItem('SP_ID'));
     this.getTeamboxNotificaions();
     this.getTeamName();
@@ -224,8 +220,9 @@ toggleActiveState(checked: boolean) {
   saveNewPassword() {
 
     this.changePasswordValue = this.changepassword.value;
+    console.log(this.changePasswordValue);
     if(this.changepassword.valid) {
-      this.changepassword.controls.uid.setValue(this.uid);
+      // this.changepassword.controls.uid.setValue(this.uid);
 
 
       this.apiService.changePass(this.changePasswordValue).subscribe(
@@ -233,14 +230,13 @@ toggleActiveState(checked: boolean) {
       (response: any) => {
         if(response.status === 200) {
           this.showToaster('! Password changed successfully.','success');
-          this.modalReference.close();
+          $("#changePasswordModal").modal('hide');
         }
       },
   
       (error: any) => {
         if (error.status === 401) {
           this.showToaster('! Current Password does not match','error');
-          
         } } ,
    
       )
@@ -263,6 +259,7 @@ toggleActiveState(checked: boolean) {
   openAddFundsPopup() {
     $("#AddFundsModal").modal('show');
     // this.selectedAmount === null;
+   
   }
 
 
