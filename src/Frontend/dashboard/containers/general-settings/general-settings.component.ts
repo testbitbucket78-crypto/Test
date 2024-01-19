@@ -16,13 +16,16 @@ export class GeneralSettingsComponent implements OnInit {
   isAutoReplyDisable= 0;
   autoReplyTime ='';
   agentActiveTime='';
+  currentTime!: Date;
 
 
   errorMessage='';
 	successMessage='';
 	warningMessage='';
 
-  constructor(private apiService:SettingsService) { }
+  constructor(private apiService:SettingsService) {
+    this.currentTime = new Date();
+   }
 
   showToaster(message:any,type:any){
 		if(type=='success'){
@@ -75,6 +78,11 @@ export class GeneralSettingsComponent implements OnInit {
       this.isContactAdd = checked ? 1 : 0;
     }
 
+  }
+
+  calculateTime(additionalMinutes: number) {
+    const calcTime = new Date(this.currentTime.getTime() + additionalMinutes * 60000);
+     return calcTime.toISOString().slice(0, 19).replace("T", " ");
   }
 
   saveDefaultAction() { 

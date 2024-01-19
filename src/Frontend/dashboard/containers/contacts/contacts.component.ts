@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -154,23 +154,23 @@ countryCodes = [
     editForm: any = [];
     pageOfItems: any;
     selectedTag: any;
-   showTopNav: boolean = false;
-   isButtonEnabled = false;
-   isButtonDisabled = true;
-   inputText!: string;
-   inputEmail!: string;
-   userid = 0; 
-   profilePicture:any;
-   selectedCountryCode:any;
-   contactsData!:{}
-   customFieldData:[] = [];
-   filteredCustomFields:any;
-   contactsImageData= <contactsImageData> {};
-   contactId:any = 0;
-   OptedIn=false;
-   OptInStatus='No';
-   ShowContactOwner:any = false;
-   addContactTitle: 'add' | 'edit' = 'add';
+    showTopNav: boolean = false;
+    isButtonEnabled = false;
+    isButtonDisabled = true;
+    inputText!: string;
+    inputEmail!: string;
+    userid = 0; 
+    profilePicture:any;
+    selectedCountryCode:any;
+    contactsData!:{}
+    customFieldData:[] = [];
+    filteredCustomFields:any;
+    contactsImageData= <contactsImageData> {};
+    contactId:any = 0;
+    OptedIn=false;
+    OptInStatus='No';
+    ShowContactOwner:any = false;
+    addContactTitle: 'add' | 'edit' = 'add';
 
   // multiselect 
     disabled = false;
@@ -545,10 +545,6 @@ onSelectAll(items: any) {
             {
               displayName: '',
               ActuallName: "tag"
-            },
-            {
-              displayName:'',
-              ActuallName:'tagColor'
             },
             {
               displayName: this.OptedIn ? 'Yes' : 'No',

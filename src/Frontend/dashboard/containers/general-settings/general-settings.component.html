@@ -30,10 +30,10 @@
                     their status is changed to Offline.</p>
                 <div class="select-heading pt-4 pb-2">Set Timeout Period</div>
                 <select class="input-form" [disabled]="!isAgentActive" [(ngModel)]="agentActiveTime">
-                    <option [ngValue]="'5 Minutes'">5 Minutes</option>
-                    <option [ngValue]="'10 Minutes'">10 Minutes</option>
-                    <option [ngValue]="'15 Minutes'">15 Minutes</option>
-                    <option [ngValue]="'20 Minutes'">20 Minutes</option>
+                    <option [ngValue]="calculateTime(5)">5 Minutes</option>
+                    <option [ngValue]="calculateTime(10)">10 Minutes</option>
+                    <option [ngValue]="calculateTime(15)">15 Minutes</option>
+                    <option [ngValue]="calculateTime(20)">20 Minutes</option>
                 </select>
             </div>
         </div>
@@ -47,10 +47,10 @@
                 <p>Configure the time for all auto replies to be paused when the chat is answered by an agent.</p>
                 <div class="select-heading pt-4 pb-2">Pause Auto Replies for</div>
                 <select class="input-form" [disabled]="!isAutoReply" [(ngModel)]="autoReplyTime"  >
-                    <option [ngValue]="'5 Minutes'">5 Minutes</option>
-                    <option [ngValue]="'10 Minutes'">10 Minutes</option>
-                    <option [ngValue]="'15 Minutes'">15 Minutes</option>
-                    <option [ngValue]="'20 Minutes'">20 Minutes</option>
+                    <option [ngValue]="calculateTime(5)">5 Minutes</option>
+                    <option [ngValue]="calculateTime(10)">10 Minutes</option>
+                    <option [ngValue]="calculateTime(15)">15 Minutes</option>
+                    <option [ngValue]="calculateTime(20)">20 Minutes</option>
                 </select>
                 <div class="d-flex align-items-center w-40 py-3">
                     <input type="checkbox" class="checkbox"(change)="defaultActionState('autoReplyDisable', $event.target.checked)" [checked]="isAutoReplyDisable" >

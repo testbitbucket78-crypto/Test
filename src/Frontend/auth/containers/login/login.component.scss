@@ -4,6 +4,11 @@
     height: 100vh;
 }
 
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #6149CD;
+    border: none;
+}
+
 .btn:not(:disabled):not(.disabled) {
     cursor: pointer;
     width: 220px;

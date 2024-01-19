@@ -307,6 +307,14 @@ export class TemplateMessageComponent implements OnInit {
 
 // remove form values 
 removeValue() {
+  this.selectedPreview = '';
+  this.newTemplateForm.get('Links')?.setValue(null);
+}
+
+removeFormValues() {
+  this.id = 0;
+  this.selectedPreview = '';
+  this.characterCounts = {};
   this.newTemplateForm.get('TemplateName')!.setValue('');
   this.newTemplateForm.get('Channel')!.setValue('');
   this.newTemplateForm.get('Category')!.setValue('');
@@ -315,6 +323,7 @@ removeValue() {
   this.newTemplateForm.get('Header')!.setValue('');
   this.newTemplateForm.get('Links')!.setValue('');
   this.newTemplateForm.get('BodyText')!.setValue('');
+  this.BodyText = '';
   this.newTemplateForm.get('FooterText')!.setValue('');
   this.newTemplateForm.get('buttonType')!.setValue('');
   this.newTemplateForm.get('buttonText')!.setValue('');
@@ -324,11 +333,6 @@ removeValue() {
   this.newTemplateForm.get('country_code')!.setValue('');
   this.newTemplateForm.get('phone_number')!.setValue('');
   this.newTemplateForm.get('displayPhoneNumber')!.setValue('');
-
-  this.BodyText = '';
-  this.selectedPreview = '';
-  this.characterCounts = {};
-  this.id = 0;
 }
 
   
@@ -415,7 +419,7 @@ removeValue() {
               $("#newTemplateMessage").modal('hide');
               $("#confirmationModal").modal('hide');
               this.getTemplatesData();
-              this.removeValue();
+              this.removeFormValues();
             }
         });
         }
@@ -430,7 +434,7 @@ removeValue() {
               $("#newTemplateMessage").modal('hide');
               $("#confirmationModal").modal('hide');
               this.getTemplatesData();
-              this.removeValue();
+              this.removeFormValues();
             }
          });
         }
