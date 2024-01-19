@@ -1,6 +1,6 @@
 export interface agentMessageList{
     Message:string;
-    ActionID:Number;
+    ActionID?:Number;
     Value:any;
     Media:any;
     

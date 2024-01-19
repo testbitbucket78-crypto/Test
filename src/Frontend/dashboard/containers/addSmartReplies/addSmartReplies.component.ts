@@ -44,6 +44,8 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	@Input() isEdit: boolean = false;
 	@Input() smartReplyData: any;
 	@Output() getReplies = new EventEmitter<string> (); 
+	AgentName = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name
+
 
 	active = 1;
 	stepper: any;
@@ -102,6 +104,10 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	warnMessage = '';
 	assignedAgentList: agentMessageList [] =[];
 	editableMessageIndex: number | null = null;
+	csvContactColmuns:any=[];
+	csvContactList:any=[];
+
+
 	
 
 	assignAddTag: [] =[];
@@ -180,6 +186,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 
 	isSendButtonDisabled=false
 click: any;
+	selecetdpdf: any='';
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService,private elementRef: ElementRef,private location:Location) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -250,6 +257,10 @@ click: any;
 		$("#showAttributes").modal('hide');
 		$("#insertTemplate").modal('hide');
 		$("#showQuickReply").modal('hide');
+		$("#sendfile").modal('hide');
+		$("#attachmentbox").modal('hide');
+		
+
 
 		document.getElementById('addsmartreplies')!.style.display = 'inherit';
 	
@@ -257,6 +268,7 @@ click: any;
 	}
 	closeModal(){
 		$("#sendfile").modal('hide');
+		
 	}
 
 
@@ -293,26 +305,81 @@ click: any;
 
 	
 	saveFiles(files: FileList) {
-		if(files[0]){
-		let imageFile = files[0]
-		this.mediaType = files[0].type
-		const data = new FormData();
-		data.append('dataFile',imageFile ,imageFile.name);
-		data.append('mediaType', this.mediaType);
-		this.tS.uploadfile(data).subscribe(uploadStatus =>{
-			let responseData:any = uploadStatus
-			if(responseData.filename){
+		if (files.length > 0) {
+		  let fileName: any = files[0].name;
+		  let fileExt: string = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+	  
+		  if (['pdf', 'jpg', 'jpeg', 'png', 'mp4'].includes(fileExt)) {
+			let mediaType = files[0].type;
+	  
+			const data = new FormData();
+			data.append('dataFile', files[0], fileName);
+			data.append('mediaType', mediaType);
+	  
+			this.tS.uploadfile(data).subscribe(uploadStatus => {
+			  let responseData: any = uploadStatus;
+			  if (responseData.filename) {
 				this.sendattachfile();
-				this.messageMeidaFile = responseData.filename
-				
-				this.showAttachmenOption=false;
+				this.messageMeidaFile = responseData.filename;
+				this.mediaType = mediaType; // Set mediaType here
+				this.showAttachmenOption = false;
+				console.log('Media Type:', this.mediaType);
+				console.log('Message Media File:', this.messageMeidaFile);
+			  }
+			});
+	  
+			if (['pdf', 'jpg', 'jpeg', 'png'].includes(fileExt)) {
+			  let reader: FileReader = new FileReader();
+			  reader.readAsText(files[0]);
+	  
+			  let tabalHeader: any[] = [];
+			  let tabalRows: any[] = [];
+	  
+			  reader.onload = (e) => {
+				let content: string = reader.result as string;
+				const results = content.split("\n");
+				let i = 0;
+				results.map((row: any) => {
+				  if (row) {
+					const rowCol = row.split(",");
+					if (i == 0) {
+					  tabalHeader = rowCol;
+					} else {
+					  tabalRows.push(rowCol);
+					}
+					i++;
+				  }
+				});
+	  
+				this.csvContactColmuns = tabalHeader;
+				let contactsData: any[] = [];
+				tabalRows.map((rowbh: any) => {
+				  let row: any = {};
+				  for (var k = 0; k < tabalHeader.length; k++) {
+					let keyName: any = tabalHeader[k].replace('\r', '');
+					keyName = keyName.replaceAll(' ', '');
+					let value: any = rowbh[k];
+					console.log(keyName);
+					row[keyName] = value != '\r' ? value : 'null';
+				  }
+				  contactsData.push(row);
+				});
+	  
+				console.log('Contacts Data:', contactsData);
+				this.csvContactList = contactsData;
+				this.selecetdpdf = fileName;
+			  }
 			}
-		})
+		  } else {
+			this.showToaster('Please upload a PDF, image, or video (mp4) file only...', 'error');
+		  }
+		}
 	  }
-	 
-	}
+	  
+	  
+
 	sendMediaMessage(){
-		this.addMessage();
+		this.saveMessage();
 		this.Media=this.messageMeidaFile;
 		console.log(this.messageMeidaFile)
         this.closeAllModal();
@@ -543,9 +610,9 @@ click: any;
 
 
 		
-		this.assignedAgentList.push({ Message:this.custommesage, ActionID:1, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
+		this.assignedAgentList.push({ Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
 		console.log(this.messageMeidaFile)
-			this.custommesage = '';	
+			this.custommesage = '';
 			
 			setTimeout(() => {
 				this.scrollChatToBottom();
@@ -553,6 +620,18 @@ click: any;
 				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
 			}, 100);
 		}
+		saveMessage() {
+
+			this.assignedAgentList.push({ Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
+			console.log(this.messageMeidaFile)
+				this.custommesage = '';	
+				
+				setTimeout(() => {
+					this.scrollChatToBottom();
+					this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+					this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+				}, 100);
+			}
 
 
 	
@@ -735,7 +814,7 @@ stopPropagation(event: Event) {
 		var isExist = false;
 		console.log(this.assignedTagList,' tags list');
 		this.assignedAgentList.forEach(item => {
-			if (item.ActionID == 3) {
+			if (item.ActionID == 1) {
 				  isExist= true;
 				  if (e.target.checked) {
 					  if (!item.Value.includes(this.addTagList[index])) {
@@ -757,7 +836,7 @@ stopPropagation(event: Event) {
 		if (!isExist) {
 			this.assignedTagList = [];
 			this.assignedTagList.push(this.addTagList[index].TagName);
-			this.assignedAgentList.push({ Message: '',ActionID: 3, Value: this.assignedTagList,Media:''});
+			this.assignedAgentList.push({ Message: '',ActionID: 1, Value: this.assignedTagList,Media:''});
 			console.log('new value');
 		}
 		console.log(this.assignedAgentList);

@@ -2412,3 +2412,19 @@ label span {
 .e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
     top: -750% !important;
   }
+  .message-box {
+    position: relative;
+    display: inline-block;
+}
+
+.tick-icon {
+    display: none;
+    position: absolute;
+    top: 48%;
+    left: 86%;
+    transform: translate(-50%, -50%);
+}
+
+.message-box:hover .tick-icon {
+    display: inline-block;
+}
