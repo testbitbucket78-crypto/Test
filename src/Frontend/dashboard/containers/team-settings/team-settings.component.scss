@@ -27,3 +27,7 @@
 .length-user{
     color: black!important;
 }
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #6149CD;
+    border: none;
+}

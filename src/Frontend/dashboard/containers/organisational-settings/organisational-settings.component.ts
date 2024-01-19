@@ -210,20 +210,18 @@ hideToaster(){
     Industry:new FormControl(),
     });
   }
-
-  preparebillingForm(){
-    return new FormGroup({
-      billing_email: new FormControl(),
-      Address1:new FormControl(),
-      InvoiceId:new FormControl(),
-      Address2:new FormControl(),
-    Country:new FormControl(),
-    State:new FormControl(),
-    City:new FormControl(),
-    zip_code: new  FormControl( ['', [Validators.required, Validators.pattern(this.zipCodePattern)]])
+  preparebillingForm() {
+    return this.fb.group({
+      billing_email: ['', [Validators.required, Validators.email]],
+      Address1: new FormControl(),
+      InvoiceId: new FormControl(),
+      Address2: new FormControl(),
+      Country: new FormControl(),
+      State: new FormControl(),
+      City: new FormControl(),
+      zip_code: new FormControl('', [Validators.required, Validators.pattern(this.zipCodePattern)])
     });
   }
-
   preparelocaleForm(){
     return new FormGroup({
       Date_Format: new FormControl(),
@@ -342,16 +340,23 @@ hideToaster(){
     })
   }
 
-  saveBillingDetails(){
-    this.copyBillingFormData();
-    this._settingsService.saveBillingDetail(this.billingData)
-    .subscribe(result =>{
-      if(result){
-        if(result?.status == 200)
-        $("#billingDetailModal").modal('hide');
+  saveBillingDetails() {
+    const emailControl = this.billingForm.get('billing_email'); 
+  
+    if (this.billingForm.valid) {
+      this.copyBillingFormData();
+      this._settingsService.saveBillingDetail(this.billingData)
+        .subscribe(result => {
+          if (result && result.status === 200) {
+            $("#billingDetailModal").modal('hide');
+            this.showToaster('Billing details saved successfully!', 'Success');
+          }
+        });
+    } else {
+      if (emailControl && emailControl.invalid) {
+        this.showToaster('Please enter a valid email address.', 'Error');
       }
-
-    })
+    }
   }
 
   saveLocaleDetails(){

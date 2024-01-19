@@ -17,11 +17,10 @@
 
 	<!-- filter-popup -->
 				<div class="custom_row pl-3 pt-3 ">
-					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
-  [ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
-  aria-label="Search" aria-describedby="basic-addon2" />
-
-
+					<input
+					[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
+					aria-label="Search" aria-describedby="basic-addon2"
+					[(ngModel)]="SearchKey"/>
 
 					<div *ngIf="!searchFocused" class="drop-down-btn" (click)="addfilters()">
 						<div class="toggle-box" (click)="toggleFilerOption()"><img
@@ -58,7 +57,7 @@
 				</div>
 				<div>
 					<div class="all_contacts pl-2">
-						<div *ngFor="let item of interactionList; let i = index" id={{i}}
+						<div *ngFor="let item of interactionList | searchfilter:SearchKey  let i = index" id={{i}}
 							(click)="selectInteraction(item)"
 							[ngClass]="item.selected ? 'contacts_row active' : 'contacts_row'">
 							<div class="contacts_item">
@@ -86,9 +85,10 @@
 											<span *ngIf="item.messageList && item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<img class="contact-whatsapp" src="/assets/img/teambox/whatsapp-icon-l.svg">
-											<span class="hovertext" data-hover="WhatsApp Web"><img
-													*ngIf="item.channel=='WhatsApp'" class="icon" />
+											<span *ngIf="item.channel=='WhatsApp Web'" class="icon" class="hovertext" data-hover="WhatsApp Web">
 											</span>
+											<span *ngIf="item.channel=='WhatsApp Official'" class="icon" class="hovertext" data-hover="WhatsApp Official">
+										</span>
 										</div>
 									</div>
 
@@ -132,6 +132,7 @@
 							<div class="time_circle">
 								<!-- <div role="progressbar" style={{selectedInteraction.progressbar.progressbarPer}}>{{selectedInteraction.progressbar.progressbarValue}}H</div> -->
 								<div role="progressbar">{{selectedInteraction?.progressbar?.progressbarValue}}H</div>
+								  
 							</div>
 							<div class="drop-down-btn">
 								<button
@@ -185,10 +186,12 @@
 									<p class="label">Assign To</p>
 									<p *ngFor="let user of agentsList;let k = index"
 										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)">
-										<span key={k}>
+										<span key={k} class="message-box">
 											<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
 											{{user.name}}
+											<img class="tick-icon" src="../../../../assets/img/icon-selected.png">
 										</span>
+										
 									</p>
 								</div>
 							
@@ -230,6 +233,7 @@
 											<img class="preview_icon" *ngIf="message.media_type == 'application/pdf'"
 												src="/assets/img/teambox/doc_preview.png"
 												(click)="downloadFile(message.message_media)">
+												
 
 											<img *ngIf="message.media_type == 'image/jpeg'"
 												src={{message.message_media}}>
@@ -239,8 +243,6 @@
 												src={{message.message_media}}>
 											<img *ngIf="message.media_type == 'image/webp'"
 												src={{message.message_media}}>
-
-
 										</div>
 										<div class="message_text" [innerHTML]="message.message_text">
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
@@ -703,11 +705,11 @@
 									</div>
 									<div>
 										<h4>Instractions</h4>
-										<p>Upload a CSV file with the contacts and details that you would like to
-											import. Ensure the CSV file fulfils the Following requirements: Only CSV
-											files are accepted for import. File size must be 10 MB The file must contain
-											at least.. the CSV file fulfils the Following requirements: Only CSV files
-											are accepted for import. File size must be 10 MB</p>
+										<p>Upload the Image, Video or Document you want to attach here. Ensure the Imported media file fulfills the following requirements:<br>
+											1) The Image format should be JPEG, JPG, PNG with minimum of xxKB maximum size of xxMB
+											Attachment.<br>
+											2) The Video format should be MP4, 3gpp with maximum size of xxMB<br>
+											3) The Document format should be PDF with maximum size of xxMB</p>
 									</div>
 								</div>
 							</div>
@@ -845,7 +847,7 @@
 
 							</div>
 							<div class="template_list">
-								<div class="template_box" *ngFor='let template of allTemplates; let i = index' >
+								<div class="template_box" *ngFor='let template of allTemplates  | searchfilter:templatesearchreply   ; let i = index' (click)="selectAttributes(template)">
 								  <div class="template_box_inner d-flex align-items-start">
 									<input type="radio" name="sel-template" id="sel-template">
 									<label class="radio-label" id="sel-template" for="sel-template"></label>
@@ -868,10 +870,6 @@
 								  </div>
 								
 								  <div class="template_btn">
-									<!-- <button type="button" class="btn">YES</button>
-									<button type="button" class="btn">NO</button> -->
-									<!-- <button type="button" class="btn">EXPLORE</button> -->
-						  
 								  </div>
 						  
 								</div>
@@ -1265,6 +1263,7 @@
 
 				<div class="contact_item" *ngFor="let item of contactList | searchfilter:header; let i = index"
 					(click)="createInteraction(item.customerId)">
+					
 					<div class="contact_item_left">
 						<img class="profile_icon" src="/assets/img/teambox/Richie_1.png" />
 						<div>

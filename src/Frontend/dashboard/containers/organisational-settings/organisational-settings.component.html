@@ -1,3 +1,8 @@
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+</div>
 <div>
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">
@@ -227,7 +232,7 @@
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Tax/VAT/GST Id</span>
-                            <input type="text" class="billing input-form" formControlName="InvoiceId" placeholder="Enter Tax/VAT/GST ID" maxlength="15" type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==6) return false; return /^[0-9]$/.test(event.key)">
+                            <input type="text" class="billing input-form" formControlName="InvoiceId" placeholder="Enter Tax/VAT/GST ID" maxlength="15" type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==15) return false; return /^[0-9]$/.test(event.key)">
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Location</span>

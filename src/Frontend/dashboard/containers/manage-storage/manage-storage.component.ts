@@ -173,14 +173,17 @@ export class ManageStorageComponent implements OnInit {
   		$("#Delete-Manually").modal('show');
 
   }
-  deletemodal(){
-    if(this.manually_deletion_days && this.textChecked || this.mediaChecked ){
+  deletemodal() {
+    if (this.manually_deletion_days && this.textChecked) {
       $("#messagedeleteModal").modal('show');
       $("#Delete-Manually").modal('hide');
-    }else{
-			this.showToaster("Please fill input and check the checkbox", "error");
+    } else if (this.manually_deletion_days && this.mediaChecked) {
+      $("#messagedeleteModal").modal('show');
+      $("#Delete-Manually").modal('hide');    } else {
+      this.showToaster("Please fill input and check the checkbox", "error");
     }
   }
+  
   postmanualDelation(){
     let manualdeletedata={
       SPID:this.spid,
@@ -212,3 +215,7 @@ export class ManageStorageComponent implements OnInit {
   }
 
 }
+function elseif() {
+  throw new Error('Function not implemented.');
+}
+

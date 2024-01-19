@@ -9,8 +9,13 @@
         <div class="setting-card" >
             <div class="flex-row pb-2">
                 <div class="default-actions-heading">Set Campaign Timings</div>
-                <div class="Info-Iconn"><img src="../../../../assets/img/info.png">
+                <div class="Info-Iconn"><img src="../../../../assets/img/info.png" (click)="timinginfo()">
                 </div>
+                <div class="specific" *ngIf="timming" (click)="stopPropagation($event)">
+                    <p class="p-body">
+                        You can set specific timings for your campaigns to run, ensuring that they do not exceed the designated time frame.</p>
+                </div>
+
             </div>
             <div class="">
                 <p>Configure active campaign window during which campaigns can run</p>            
@@ -35,8 +40,13 @@
         <div class="setting-card ml-5" >
             <div class="flex-row pb-2">
                 <div class="default-actions-heading">Campaign Alerts</div>
-                <div><img src="../../../../assets/img/info.png">
+                <div><img src="../../../../assets/img/info.png"(click)="campaignalerts()">
                 </div>
+                <div class="specific" *ngIf="alertscamp" (click)="stopPropagation($event)">
+                    <p class="p-body">
+                        Enable alerts to stay updated about status of broadcast campaigns. You can add a maximum of 5 users for campaign alerts.                    </p>
+                </div>
+
             </div>
             <div *ngIf="campaignAlertData?.length ==0" class="working-hour-img-card modal-body" >
                 <img src="../../../../assets/img/settings/image.png"><br>
@@ -64,7 +74,12 @@
     <div class="test-campaign-card ml-5" *ngIf="selectedTab==2">
         <div class="flex-row pb-2">
             <div class="default-actions-heading">Test Campaign</div>
-            <img src="">
+            <div><img src="../../../../assets/img/info-icon.png"(click)="testcamp()">
+            </div>
+        </div>
+        <div class="specific" *ngIf="Testcampaign" (click)="stopPropagation($event)">
+            <p class="p-body">
+                Configure up to 2 test users/numbers for campaign testing. Adding users is optional. Test users receive all test campaign messages. You can Remove or replace users as needed. Admin is by default a test user but can be replaced..</p>
         </div>
         <div *ngIf="!workingData" class="working-hour-img-card modal-body" >
             <img src="../../../../assets/img/settings/image.png"><br>
@@ -87,7 +102,7 @@
 
     </div>
 
-    <div class="modal fade" tabindex="-1" id="workingHourModal" role="dialog">
+    <div class="modal fade" tabindex="-1" id="workingHourModal" data-bs-backdrop="static" role="dialog">
         <div class="m-auto modal-dialog" role="document">
             <div class="modal-content working-hour-modal ">
                 <div class="modal-header">
@@ -136,7 +151,12 @@
         </div>
     </div>
 
+    <div *ngIf="timming" class="overlay" (click)="closeUtility()"></div>
+    <div *ngIf="Testcampaign" class="overlay" (click)="closeUtility()"></div>
+    <div *ngIf="alertscamp" class="overlay" (click)="closeUtility()"></div>
+
     
+
 <div class="modal fade" tabindex="-1" id="teamsModal" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content Manage-User-modal p-2 pl-3">
@@ -184,5 +204,6 @@
             </div>
         </div>
     </div>
+    
   </div>
 </div>

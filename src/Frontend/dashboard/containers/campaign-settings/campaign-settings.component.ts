@@ -40,6 +40,9 @@ userDetailForm!:FormGroup;
 
 campaignAlertData:any;
 campaignTestData:any;
+  timming!: boolean;
+  Testcampaign!: boolean;
+  alertscamp!: boolean;
 
   constructor(private _settingsService:SettingsService) {
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
@@ -57,8 +60,23 @@ campaignTestData:any;
   addWorkingHours(){
     this.workingFormData.push({day:[],start_time:'',end_time:''})
   }
-
-
+  campaignalerts(){
+    this.alertscamp=!this.alertscamp;
+  }
+  closeUtility(){
+    this.timming=false;
+    this.Testcampaign=false;
+    this.alertscamp=false;
+  }
+  testcamp(){
+    this.Testcampaign=!this.Testcampaign;
+  }
+	stopPropagation(event: Event) {
+    event.stopPropagation();
+    }
+  timinginfo(){
+    this.timming=!this.timming;
+  }
   manageWorkingHour(){
     this.workingFormData =[];
     if(isNullOrUndefined(this.workingData) || this.workingData.length==0)
