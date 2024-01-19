@@ -42,7 +42,25 @@ export class ContactSettingsComponent implements OnInit {
     });
   }
 
+  isSaveButtonDisabled(): boolean {
+    if (!this.selectedtagListData) {
+      return !(this.tagName && this.tagName.trim() !== '' && this.tagName.match(/^[a-zA-Z0-9][a-zA-Z0-9\s]*[a-zA-Z0-9]$/)
+             && this.tagColor && this.tagColor.trim()!== '');
+    } else {
+      return !(
+        this.selectedtagListData.TagName &&
+        this.selectedtagListData.TagName.trim() !== '' &&
+        this.selectedtagListData.TagName.match(/^[a-zA-Z0-9][a-zA-Z0-9\s]*[a-zA-Z0-9]$/) &&
+        this.selectedtagListData.TagColour &&
+        this.selectedtagListData.TagColour.trim() !== ''
+      );
+    }
+  }
+
+  
+
   addEditTagData() {
+    
     let tagData = <TagData>{};
     tagData.SP_ID = this.sp_Id;
     if(this.selectedtagListData?.ID) {

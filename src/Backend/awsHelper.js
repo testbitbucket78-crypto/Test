@@ -254,11 +254,12 @@ async function getStorageUtilization(spid, days) {
         const data = await s3.listObjectsV2(params).promise();
 
         for (const item of data.Contents) {
-            //   console.log(item.Key)
-            totalSize += await getObjectSize(item.Key);
-            console.log(item.LastModified < cutoffDate);
-            console.log(cutoffDate)
+            //    console.log(item.Key)
+           
+          //  console.log(item.LastModified < cutoffDate);
+           
             if (item.LastModified < cutoffDate && days != '-1') {
+                totalSize += await getObjectSize(item.Key);
                 mediaCount = mediaCount + 1;
             }
         }
@@ -333,6 +334,11 @@ async function uploadAttachment(awspath,files,ContentType){
     // Read the file
 const fileContent = fs.readFileSync(files);
 
+   // Get file size
+   const fileSizeInBytes = Buffer.byteLength(fileContent);
+   const FileInKB = Math.ceil(fileSizeInBytes / 1024);
+
+
 // S3 upload parameters
 const params = {
     Bucket: val.awsbucket,
@@ -351,7 +357,7 @@ s3.upload(params, (err, data) => {
     } else {
         console.log("File uploaded successfully");
         console.log("File URL:", data.Location);
-        resolve({ code: 0, value: data });
+        resolve({ code: 0, value: data ,size:FileInKB });
     }
 });
 });

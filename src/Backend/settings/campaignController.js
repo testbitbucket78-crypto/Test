@@ -5,7 +5,7 @@ const val = require('./constant');
 const bodyParser = require('body-parser');
 const awsHelper = require('../awsHelper');
 const middleWare = require('../middleWare')
-const cors = require('cors')
+const cors = require('cors');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -189,13 +189,21 @@ const addTag = async (req, res) => {
             })
         }
         else {
-            let addValue = [[TagName, TagColour, SP_ID, created_at,created_at]];
-            let addedTag = await db.excuteQuery(val.addtag, [addValue]);
-            console.log(addedTag)
-            res.status(200).send({
-                msg: 'tag added',
-                status: 200
-            })
+            let selectTag = await db.excuteQuery('Select * from EndCustomerTagMaster where SP_ID=? and TagName=?', [SP_ID, TagName])
+            if (selectTag?.length == 0) {
+                let addValue = [[TagName, TagColour, SP_ID, created_at, created_at]];
+                let addedTag = await db.excuteQuery(val.addtag, [addValue]);
+                console.log(addedTag)
+                res.status(200).send({
+                    msg: 'tag added',
+                    status: 200
+                })
+            } else {
+                res.status(409).send({
+                    msg: 'Tag name already exist',
+                    status: 409
+                })
+            }
 
         }
     } catch (err) {
@@ -207,7 +215,7 @@ const addTag = async (req, res) => {
 
 const gettags = async (req, res) => {
     try {
-        let taglist = await db.excuteQuery(val.selecttag, [req.params.spid,req.params.spid])
+        let taglist = await db.excuteQuery(val.selecttag, [req.params.spid, req.params.spid])
         res.status(200).send({
             taglist: taglist,
             status: 200
@@ -370,14 +378,14 @@ const addTemplate = async (req, res) => {
             status = req.body.status,
             spid = req.body.spid,
             created_By = req.body.created_By,
-            category_id=req.body.category_id
-            created_at = new Date()
+            category_id = req.body.category_id
+        created_at = new Date()
         isTemplate = req.body.isTemplate
         industry = req.body.industry
 
         let image = ""
-        image=Links
-        if (Links != null && Links != undefined && Links != "" && Links != " " && media_type =='image') {
+        image = Links
+        if (Links != null && Links != undefined && Links != "" && Links != " " && media_type == 'image') {
             // Remove header
             let streamSplit = Links.split(';base64,');
             let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
@@ -393,18 +401,26 @@ const addTemplate = async (req, res) => {
             let awsres = await awsHelper.uploadStreamToAws(spid + "/" + timestamp + "_" + randomNumber + "/" + created_By + "/" + imageName, Links)
 
             image = awsres.value.Location
-           console.log(awsres.value.Location)
+            console.log(awsres.value.Location)
         }
         if (ID == 0) {
-            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry,category_id]]
-            let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
-            res.status(200).send({
-                addedtem: addedtem,
-                status: 200
-            })
+            let selectTemplate = await db.excuteQuery('SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=? and TemplateName=?', [spid, isTemplate, TemplateName]);
+            if (selectTemplate?.length == 0) {
+                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, created_at]]
+                let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
+                res.status(200).send({
+                    addedtem: addedtem,
+                    status: 200
+                })
+            } else {
+                res.status(409).send({
+                    msg: 'Template name already exist',
+                    status: 409
+                })
+            }
         }
         else {
-            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry,category_id, ID]
+            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
             let updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
             res.status(200).send({
                 updatedTemplate: updatedTemplate,
@@ -432,6 +448,111 @@ const getTemplate = async (req, res) => {
         res.send(err)
     }
 }
+
+const addGallery = async (req, res) => {
+    try {
+        console.log(req.body)
+        ID = req.body.ID
+        TemplateName = req.body.TemplateName,
+            Channel = req.body.Channel,
+            Category = req.body.Category,
+            Language = req.body.Language,
+            media_type = req.body.media_type,
+            Header = req.body.Header,
+            BodyText = req.body.BodyText,
+            Links = req.body.Links,
+            FooterText = req.body.FooterText,
+            template_json = req.body.template_json,
+            status = req.body.status,
+            spid = req.body.spid,
+            created_By = req.body.created_By,
+            category_id = req.body.category_id
+        created_at = new Date()
+        isTemplate = req.body.isTemplate
+        industry = req.body.industry
+        topic =req.body.topic
+        let image = ""
+        image = Links
+        if (Links != null && Links != undefined && Links != "" && Links != " " && media_type == 'image') {
+            // Remove header
+            let streamSplit = Links.split(';base64,');
+            let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
+            let datapart = streamSplit.pop();// this is dependent on the POP above
+
+            let imgType = datapart.split('/').pop();
+            let imageName = 'template_img.png';//Default it to png.
+            if (imgType) {
+                imageName = 'template_img' + '.' + imgType;
+            }
+            const timestamp = Date.now();
+            const randomNumber = Math.floor(Math.random() * 10000);
+            let awsres = await awsHelper.uploadStreamToAws(spid + "/" + timestamp + "_" + randomNumber + "/" + created_By + "/" + imageName, Links)
+
+            image = awsres.value.Location
+            console.log(awsres.value.Location)
+        }
+        if (ID == 0) {
+            let selectTemplate = await db.excuteQuery('SELECT * FROM templateMessages WHERE spid=0 and isDeleted !=1 and isTemplate=2 and TemplateName=?', [spid, isTemplate, TemplateName]);
+            if (selectTemplate?.length == 0) {
+                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, 0, created_By, created_at, '2', industry, category_id, created_at, topic]]
+                let addedtem = await db.excuteQuery(val.addGallery, [temValues])
+                res.status(200).send({
+                    addedtem: addedtem,
+                    status: 200
+                })
+            } else {
+                res.status(409).send({
+                    msg: 'Gallery name already exist',
+                    status: 409
+                })
+            }
+        }
+        else {
+            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, topic, ID]
+            let updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
+            res.status(200).send({
+                updatedTemplate: updatedTemplate,
+                status: 200
+            })
+        }
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const getGallery = async (req, res) => {
+    try {
+        let templates = await db.excuteQuery(val.getGallery, [req.params.spid, req.params.isTemplate])
+        res.status(200).send({
+            templates: templates,
+            status: 200
+        })
+    }
+    catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+
+const getApprovedTemplate = async (req, res) => {
+    try {
+        let templates = await db.excuteQuery(val.selectApprovedTemplate, [req.params.spid, req.params.isTemplate])
+        res.status(200).send({
+            templates: templates,
+            status: 200
+        })
+    }
+    catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
 
 const deleteTemplates = async (req, res) => {
     try {
@@ -493,6 +614,6 @@ module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
     testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
-    enableStatusfield
+    enableStatusfield, getApprovedTemplate, addGallery, getGallery
 
 }

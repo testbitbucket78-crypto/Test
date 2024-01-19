@@ -114,9 +114,12 @@ router.post('/enableStatus',campaignController.enableStatusfield)
 
 //_______________________TEMPLATE_________________________//
 
-router.post('/addTemplate',campaignController.addTemplate)
+router.post('/addTemplate',campaignController.addTemplate)  //  isTemplate  value 0 for quick response , 1 for template ,(2 for gallary and spid =0 )
 router.get('/getTemplate/:spid/:isTemplate',campaignController.getTemplate)
+router.get('/getApprovedTemplate/:spid/:isTemplate',campaignController.getApprovedTemplate)
 router.post('/deleteTemplates',campaignController.deleteTemplates)
+router.post('/addGallery',campaignController.addGallery)
+router.get('/getGallery/:spid/:isTemplate',campaignController.getGallery)  // pass spid=0,isTemplate=2
 
 //__________________ACCOUNT API'S__________________________//
 

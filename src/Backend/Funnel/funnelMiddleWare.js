@@ -1,4 +1,3 @@
-const teamboxController = require('./Authentication/TeamBoxController');
 const http = require("https");
 const axios = require('axios');
 const token = 'EAAU0g9iuku4BOzSD75ynSUzKSsYrIWv3qkEa9QPAnUNTUzPwN5aTjGxoAHxsXF4Nlrw8UxbMGqZBxqarODf2sY20MvFfTQm0umq4ZBKCpFAJdcPtbcYSZBsHMqYVwjfFPiQwFk1Rmadl4ctoncnxczMGJZALoVfZBpqoQ0lYHzOwbRb1nvImzhL4ex53c9HKVyzl2viy4EhLy9g0K';
@@ -8,7 +7,7 @@ function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id) {
     return new Promise(async (resolve, reject) => {
         try {
             var phoneNumber = removePlusFromPhoneNumber(phoneNo)
-            const apiUrl = 'https://waweb.stacknize.com/sendMessage'; // Replace with your API endpoint
+            const apiUrl = 'http://localhost:3009/sendMessage'; // Replace with your API endpoint
             const dataToSend = {
                 spid: spid,
                 type: type,
@@ -20,6 +19,7 @@ function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id) {
             };
 
             const response = await axios.post(apiUrl, dataToSend);
+            console.log('Response from API:', response.data);
 
             resolve(response.data); // Resolve with the response data
         } catch (error) {
@@ -166,28 +166,7 @@ async function sendTextOnWhatsApp(messageTo, messateText) {
 
 
 async function sendMediaOnWhatsApp(messageTo, mediaFile,media) {
-    // var reqBH = http.request(WHATSAPPOptions, (resBH) => {
-    //     var chunks = [];
-    //     resBH.on("data", function (chunk) {
-    //         chunks.push(chunk);
-    //     });
-    //     resBH.on("end", function () {
-    //         const body = Buffer.concat(chunks);
 
-    //     });
-    // });
-
-    // reqBH.write(JSON.stringify({
-    //     "messaging_product": "whatsapp",
-    //     "recipient_type": "individual",
-    //     "to": messageTo,
-    //     "type": "image",
-    //     "image": {
-    //         "link": mediaFile
-    //     }
-    // }));
-    // reqBH.end();
-  
       return new Promise((resolve, reject) => {
         const reqBH = http.request(WHATSAPPOptions, (resBH) => {
           let chunks = [];

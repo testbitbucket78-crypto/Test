@@ -15,40 +15,66 @@ const getCampaigns = (req, res) => {
     if (req.body.key) {
         Query += sQuery + " and  Campaign.title like '%" + req.body.key + "%'"
     }
-  //  console.log(Query)
+    //  console.log(Query)
     db.runQuery(req, res, Query, []);
 }
 
 
-const addCampaign = (req, res) => {
-    if (req.body.Id != '') {
-        var updateQuery = "UPDATE Campaign set";
-        updateQuery += " title='" + req.body.title + "',";
-        updateQuery += " channel_id='" + req.body.channel_id + "',";
-        updateQuery += " message_heading='" + req.body.message_heading + "',";
-        updateQuery += " message_content='" + req.body.message_content + "',";
-        updateQuery += " message_media='" + req.body.message_media + "',";
-        updateQuery += " message_variables='" + req.body.message_variables + "',";
-        updateQuery += " button_yes='" + req.body.button_yes + "',";
-        updateQuery += " button_no='" + req.body.button_no + "',";
-        updateQuery += " button_exp='" + req.body.button_exp + "',";
-        updateQuery += " category='" + req.body.category + "',";
-        updateQuery += " time_zone='" + req.body.time_zone + "',";
-        updateQuery += " start_datetime='" + req.body.start_datetime + "',";
-        updateQuery += " end_datetime='" + req.body.end_datetime + "',";
-        updateQuery += " csv_contacts='" + req.body.csv_contacts + "',";
-        updateQuery += " segments_contacts='" + req.body.segments_contacts + "',";
-        updateQuery += " status= " + req.body.status;
-        updateQuery += " category_id= " + req.body. category_id;
-       
-        updateQuery += " WHERE Id =" + req.body.Id
+const addCampaign = async (req, res) => {
+    try {
+        if (req.body.Id != '') {
+            var updateQuery = "UPDATE Campaign set";
+            updateQuery += " title='" + req.body.title + "',";
+            updateQuery += " channel_id='" + req.body.channel_id + "',";
+            updateQuery += " message_heading='" + req.body.message_heading + "',";
+            updateQuery += " message_content='" + req.body.message_content + "',";
+            updateQuery += " message_media='" + req.body.message_media + "',";
+            updateQuery += " message_variables='" + req.body.message_variables + "',";
+            updateQuery += " button_yes='" + req.body.button_yes + "',";
+            updateQuery += " button_no='" + req.body.button_no + "',";
+            updateQuery += " button_exp='" + req.body.button_exp + "',";
+            updateQuery += " category='" + req.body.category + "',";
+            updateQuery += " time_zone='" + req.body.time_zone + "',";
+            updateQuery += " start_datetime='" + req.body.start_datetime + "',";
+            updateQuery += " end_datetime='" + req.body.end_datetime + "',";
+            updateQuery += " csv_contacts='" + req.body.csv_contacts + "',";
+            updateQuery += " segments_contacts='" + req.body.segments_contacts + "',";
+            updateQuery += " status= " + req.body.status + "',";
+            updateQuery += " category_id= " + req.body.category_id + "',";
+            updateQuery += " OptInStatus= " + req.body?.OptInStatus;
 
-        db.runQuery(req, res, updateQuery, []);
-    } else {
-        var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id) ";
-        inserQuery += "VALUES (" + req.body.status + "," + req.body.sp_id + ",'" + req.body.title + "','" + req.body.channel_id + "','" + req.body.message_heading + "','" + req.body.message_content + "','" + req.body.message_media + "','" + req.body.message_variables + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.category + "','" + req.body.time_zone + "','" + req.body.start_datetime + "','" + req.body.end_datetime + "','" + req.body.csv_contacts + "','" + req.body.segments_contacts + "','" + req.body.category_id + "')";
+            updateQuery += " WHERE Id =" + req.body.Id
 
-        db.runQuery(req, res, inserQuery, []);
+            db.runQuery(req, res, updateQuery, []);
+        } else {
+
+
+            let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", [req.body.title, req.body.sp_id])
+
+            if (campaignTitle?.length == 0) {
+
+                var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus) ";
+                inserQuery += "VALUES (" + req.body.status + "," + req.body.sp_id + ",'" + req.body.title + "','" + req.body.channel_id + "','" + req.body.message_heading + "','" + req.body.message_content + "','" + req.body.message_media + "','" + req.body.message_variables + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.category + "','" + req.body.time_zone + "','" + req.body.start_datetime + "','" + req.body.end_datetime + "','" + req.body.csv_contacts + "','" + req.body.segments_contacts + "','" + req.body.category_id + "',' " + req.body?.OptInStatus +"')";
+
+                let addcampaign = await db.excuteQuery(inserQuery, []);
+                console.log(addcampaign)
+                res.send({
+                    "status": 200,
+                    "message": "Campaign added",
+                    "addcampaign": addcampaign
+                })
+            } else {
+                res.send({
+                    "status": 409,
+                    "message": "Campaign Name already exist"
+                })
+            }
+        }
+    } catch (err) {
+        res.send({
+            "status": 500,
+            "message": err
+        })
     }
 }
 
@@ -95,7 +121,6 @@ const getContactList = (req, res) => {
         Query += " and  ContactList.list_name like '%" + req.body.key + "%'"
     }
 
-   // console.log(Query)
     db.runQuery(req, res, Query, []);
 }
 
@@ -119,7 +144,7 @@ const addNewContactList = (req, res) => {
 }
 
 const deleteContactList = (req, res) => {
-    var inserQuery = "UPDATE ContactList SET is_deleted = 1 where Id= ?" 
+    var inserQuery = "UPDATE ContactList SET is_deleted = 1 where Id= ?"
     db.runQuery(req, res, inserQuery, [req.body.id]);
 }
 
@@ -170,17 +195,18 @@ const sendCampinMessage = async (req, res) => {
     console.log("sendCampinMessage")
     try {
         var TemplateData = req.body
-        console.log(TemplateData)
+          console.log(TemplateData)
         var messageTo = TemplateData.phone_number
         var messateText = TemplateData.message_content
         let content = messateText;
         let channel = TemplateData.channel_label
         //+++++++++++++++++ waitinh
-        let schedule_datetime=TemplateData.schedule_datetime
+        let schedule_datetime = TemplateData.schedule_datetime
         let spid = TemplateData.SP_ID
         let media = TemplateData.message_media
+        let optInStatus = TemplateData.optInStatus
         var type = 'image';
-        var customerId=TemplateData.customerId
+        var customerId = TemplateData.customerId
         if (media == null || media == "") {
             var type = 'text';
         }
@@ -188,15 +214,15 @@ const sendCampinMessage = async (req, res) => {
 
         // Get the current date and time
         const currentDate = new Date();
-        
-      
-        // content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-        // content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-        // content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-        // content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-        // content = content.replace('&nbsp;', '\n')
-        // content = content.replace(/<br[^>]*>/g, '\n')
-        // content = content.replace(/<\/?[^>]+(>|$)/g, "")
+
+
+        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+        content = content.replace('&nbsp;', '\n')
+        content = content.replace(/<br[^>]*>/g, '\n')
+        content = content.replace(/<\/?[^>]+(>|$)/g, "")
         // Parse the message template to get placeholders
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
@@ -210,20 +236,31 @@ const sendCampinMessage = async (req, res) => {
                 content = content.replace(`{{${placeholder}}}`, data[placeholder]);
             });
         }
-
-        let channelType=await db.excuteQuery('select channel_id from WhatsAppWeb where spid=?',[spid])
-        console.log("channelType" ,channelType ,channelType[0])
-        console.log(inputDate,currentDate,inputDate <= currentDate)
-        if (inputDate <= currentDate) {
-        let messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+         
+     
+        //let channelType = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [spid])
        
-        
-          console.log('The input date is in the past.');
-              //if(messagestatus =='')
-        console.log("messagestatus  " +  JSON.stringify(messagestatus.status))
-        return res.send(messagestatus);
-        } 
-    
+        console.log(inputDate, currentDate, inputDate <= currentDate)
+        if (inputDate <= currentDate) {
+            let messagestatus;
+            if(optInStatus == 'Yes'){
+                const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and isDeleted !=1`;
+                let results = await db.excuteQuery(sqlQuery, [customerId]);
+                if(results?.length>0){
+                 messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+                }
+            }else{
+                 messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+            }
+           
+
+
+            console.log('The input date is in the past.');
+            //if(messagestatus =='')
+            console.log("messagestatus  " + JSON.stringify(messagestatus.status))
+            return res.send(messagestatus);
+        }
+
 
         //    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
         //     var chunks = [];
@@ -306,13 +343,13 @@ const campaignAlerts = async (req, res) => {
     var TemplateData = req.body
     console.log("campaignAlerts ")
     //console.log(req.body)
-    sp_id=TemplateData.sp_id
-    message_content=TemplateData.message_content
-    message_media=TemplateData.message_media
-    channel_id=TemplateData.channel_id
-    phone_number_id=''
-    updatedStatus=req.body.status
-    let alertmessages=await msg(TemplateData) 
+    sp_id = TemplateData.sp_id
+    message_content = TemplateData.message_content
+    message_media = TemplateData.message_media
+    channel_id = TemplateData.channel_id
+    phone_number_id = ''
+    updatedStatus = req.body.status
+    let alertmessages = await msg(TemplateData)
 
     let alertUser = `select c.uid,u.* from CampaignAlerts c
     JOIN user u ON u.uid=c.uid
@@ -323,30 +360,30 @@ const campaignAlerts = async (req, res) => {
 
     var type = 'image';
     if (TemplateData.message_media == null || TemplateData.message_media == "") {
-      type = 'text';
+        type = 'text';
     }
-  
-    sendBatchMessage(user, sp_id, type, alertmessages, message_media, phone_number_id, channel_id,TemplateData.CampaignId,updatedStatus)
+
+    sendBatchMessage(user, sp_id, type, alertmessages, message_media, phone_number_id, channel_id, TemplateData.CampaignId, updatedStatus)
 
 }
 
-async function sendBatchMessage(user, sp_id, type, message_content, message_media, phone_number_id, channel_id,Id,updatedStatus) {
+async function sendBatchMessage(user, sp_id, type, message_content, message_media, phone_number_id, channel_id, Id, updatedStatus) {
     for (var i = 0; i < user.length; i++) {
         let mobile_number = user[i].mobile_number
 
         setTimeout(() => {
-          //  messageThroughselectedchannel(sp_id, mobile_number, type, message_content, message_media, phone_number_id, channel_id)
-         middleWare.channelssetUp(sp_id, channel_id, type, mobile_number, message_content, message_media)
+            //  messageThroughselectedchannel(sp_id, mobile_number, type, message_content, message_media, phone_number_id, channel_id)
+            middleWare.channelssetUp(sp_id, channel_id, type, mobile_number, message_content, message_media)
         }, 10)
     }
     let updateQuery = `UPDATE Campaign SET status=?,updated_at=? where Id=?`;
     console.log(Id)
-    let updated = await db.excuteQuery(updateQuery, [updatedStatus,new Date(), Id])
+    let updated = await db.excuteQuery(updateQuery, [updatedStatus, new Date(), Id])
     console.log("updated")
     console.log(updated)
 }
 
-async function find_message_status(sp_id,Id) {
+async function find_message_status(sp_id, Id) {
     let Sent = 0;
     let Failed = 0;
     let msgStatusquery = `SELECT
@@ -362,46 +399,46 @@ async function find_message_status(sp_id,Id) {
    AND C.sp_id = ? AND C.Id=?
    GROUP BY
    CM.status;`   //status 2 for running campaign
-    let msgStatus = await db.excuteQuery(msgStatusquery, [sp_id,Id]);
-  
-    for (const item of msgStatus) {
-      if (item.status === 1) {
-        Sent += item.Status_Count;
-      } else if (item.status === 0) {
-        Failed += item.Status_Count;
-      }
-    }
-  
-    return {
-      Sent: Sent,
-      Failed: Failed,
-    };
-  }
+    let msgStatus = await db.excuteQuery(msgStatusquery, [sp_id, Id]);
 
-  async function msg(alert) {
+    for (const item of msgStatus) {
+        if (item.status === 1) {
+            Sent += item.Status_Count;
+        } else if (item.status === 0) {
+            Failed += item.Status_Count;
+        }
+    }
+
+    return {
+        Sent: Sent,
+        Failed: Failed,
+    };
+}
+
+async function msg(alert) {
     let message = ''
-  
-    let msgStatus = await find_message_status(alert.sp_id,alert.Id)
-  
-  
-   // let audience = alert.segments_contacts.length > 0 ? alert.segments_contacts.length : alert.csv_contacts.length
-  
-  
+
+    let msgStatus = await find_message_status(alert.sp_id, alert.Id)
+
+
+    // let audience = alert.segments_contacts.length > 0 ? alert.segments_contacts.length : alert.csv_contacts.length
+
+
     if (alert.status == '1') {
-      message = `Hi there, your Engagekart Campaign has been Scheduled:
+        message = `Hi there, your Engagekart Campaign has been Scheduled:
       Campaign Name: `+ alert.title + `
       Scheduled Time: `+ alert.start_datetime + `
       Taget Audience: `+ 'alert.title' + `
       Channel: < `+ 'WhatsApp' + `,` + alert.channel_id + `> 
       Category: `+ alert.category + ` `
     } if (alert.status == '2') {
-      message = `Hello, your Engagekart Campaign has Started:
+        message = `Hello, your Engagekart Campaign has Started:
       Campaign Name: `+ alert.title + `
       Taget Audience: <count of target base>
       Channel:< `+ 'WhatsApp' + `,` + alert.channel_id + `>
       Category:`+ alert.category + ` `
     } if (alert.status == '3') {
-      message = `Hi, here is the Summary of your finished Engagekart Campaign:
+        message = `Hi, here is the Summary of your finished Engagekart Campaign:
       Campaign Name: `+ alert.title + `
       Taget Audience: <count of target base>
       Channel: <`+ 'WhatsApp' + `,` + alert.channel_id + `>
@@ -410,12 +447,12 @@ async function find_message_status(sp_id,Id) {
       Failed: ` + msgStatus.Failed + `
       For more detailed report, please login to your Engagkart account`
     } if (alert.status == '0') {
-      message = `Engagekart Campaign Alert:
+        message = `Engagekart Campaign Alert:
       Hi, Please note your Engagekart campaign ` + alert.title + ` has stopped/Paused. Please login to Engagkart account for more details and take further action.`
     }
-  
+
     return message;
-  }
+}
 
 
 
@@ -452,11 +489,11 @@ const copyCampaign = (req, res) => {
 
     let CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts) SELECT sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts FROM Campaign WHERE Id = " + req.params.CampaignId
 
-  //  console.log(CopyQuery)
+    //  console.log(CopyQuery)
     db.runQuery(req, res, CopyQuery, []);
 }
 
-module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer,campaignAlerts ,deleteContactList };
+module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList };
 
 
 

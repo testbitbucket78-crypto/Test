@@ -418,7 +418,8 @@
                                                 <label class="changepassform" for="currentPassword">Current Password</label>
                                                 <div class="input-group">
                                                   <input [type]="currentPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" id="currentPassword"
-                                                    name="currentPassword" formControlName="oldPass" placeholder="8 character" required autocomplete="currentPassword">
+                                                    name="currentPassword" formControlName="oldPass" placeholder="8 character" required autocomplete="currentPassword"
+                                                    [ngClass]="{'is-invalid':changepassword.get('oldPass')!.hasError('minlength') && changepassword.get('oldPass')!.touched}">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('currentPassword')">
                                                     <i [ngClass]="currentPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
                                                   </span>
@@ -430,7 +431,8 @@
                                                 <label class="changepassform" for="newPassword">New Password</label>
                                                 <div class="input-group">
                                                   <input [type]="newPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" formControlName="newPass"
-                                                    placeholder="8 character" name="newPassword" id="newPassword" required autocomplete="newPassword">
+                                                    placeholder="8 character" name="newPassword" id="newPassword" required autocomplete="newPassword"
+                                                    [ngClass]="{'is-invalid':changepassword.get('newPass')!.hasError('minlength') && changepassword.get('newPass')!.touched}">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('newPassword')">
                                                     <i [ngClass]="newPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
                                                   </span>
@@ -442,7 +444,8 @@
                                                 <label class="changepassform" for="confirmPassword">Re-Enter New Password</label>
                                                 <div class="input-group">
                                                   <input [type]="confirmPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield"
-                                                    formControlName="confirmPass" placeholder="8 character" id="confirmPassword" name="confirmPassword" required autocomplete="confirmPassword">
+                                                    formControlName="confirmPass" placeholder="8 character" id="confirmPassword" name="confirmPassword" required autocomplete="confirmPassword"
+                                                    [ngClass]="{'is-invalid':changepassword.get('confirmPass')!.hasError('minlength') && changepassword.get('confirmPass')!.touched}">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('confirmPassword')">
                                                     <i [ngClass]="confirmPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
                                                   </span>

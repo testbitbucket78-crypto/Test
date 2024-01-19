@@ -15,6 +15,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { QRCodeModule } from 'angularx-qrcode';
+import { ReadMoreComponent } from 'Frontend/utility/containers/read-more/read-more.component';
 
 
 
@@ -52,16 +53,17 @@ import { DashboardComponent } from './containers';
         RichTextEditorModule,
         ImageCropperModule,
         DragDropModule,
-        QRCodeModule
+        QRCodeModule,
     ],
     providers: [...dashboardServices.services,
-                ...dashboardGuards.guards,DatePipe
+                ...dashboardGuards.guards,DatePipe,
         ],
     declarations:  [
          ...dashboardContainers.containers,
          ...dashboardComponents.components,
             DashboardComponent,
             SearchfilterPipe,
+            ReadMoreComponent
 
         ],
     exports: [...dashboardContainers.containers,

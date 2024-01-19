@@ -54,7 +54,7 @@ const uploadCompanylogo = async (req, res) => {
         } else {
             let awsres = await awsHelper.uploadStreamToAws( spid + "/" + uid + "/" + user + "/"+imageName, filePath)
             let insertimgQuery = `INSERT INTO companyDetails (profile_img,SP_ID) VALUES(?,?)`;
-            let insertimgRes = await db.excuteQuery(insertimgQuery, [awsres, spid])
+            let insertimgRes = await db.excuteQuery(insertimgQuery, [awsres.value.Location, spid])
             res.status(200).send({
                 msg: 'img added successfully !',
                 insertimgRes: insertimgRes,
@@ -613,7 +613,7 @@ const addUser = async (req, res) => {
         email_id = req.body.email_id
         name = req.body.name
         mobile_number = req.body.mobile_number
-
+        LoginIP=req.body.LoginIP
         const CreatedDate = new Date()
         ParentId = req.body.uid
         UserType = req.body.UserType
@@ -630,7 +630,7 @@ const addUser = async (req, res) => {
             var randomstring = Math.random().toString(36).slice(-8);
             console.log(randomstring)
             const hash = await bcrypt.hash(randomstring, 10);
-            var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive]]
+            var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive,CreatedDate,LoginIP]]
 
             var User = await db.excuteQuery(val.insertQuery, [values]);
 
@@ -658,7 +658,7 @@ const addUser = async (req, res) => {
               
               To access your official email account, follow these steps:
               
-              1. Go to  https://cip.sampanatechnologies.com/#/login 
+              1. Go to  https://cip.stacknize.com/#/login 
               2. Enter your Email ID.
               3. Use the temporary password provided above.
               4. Set a new password when prompted.

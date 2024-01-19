@@ -8,7 +8,7 @@ const database= "cip_project"
 
 //Query for contactPage
 var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked !=1";
-var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,SP_ID,OptInStatus,countryCode) VALUES ?"
+var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,SP_ID,OptInStatus,countryCode,displayPhoneNumber) VALUES ?"
 var filterQuery="SELECT * from EndCustomer where Phone_number=?"
 var searchQuery="SELECT * from EndCustomer where SP_ID=? and (Phone_number like ? or Name like ?)"
 var selectByIdQuery="SELECT * FROM EndCustomer WHERE customerId=?"
@@ -38,7 +38,7 @@ var selectInteractionByIdQuery="SELECT * FROM Interaction WHERE Interaction.Inte
 var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=? and Type=?"
 
 
-var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at) VALUES ?"
+var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,mediaSize) VALUES ?"
 
 
 

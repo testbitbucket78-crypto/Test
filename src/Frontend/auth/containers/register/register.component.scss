@@ -1,5 +1,19 @@
 @import 'styles/variables.scss';
 
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #6149CD;
+    border: none;
+}
+
+.custom-control {
+    padding-left: 2.4rem;
+}
+
+.custom-control-label {
+    font-weight: 400;
+    font-size: 13px;
+}
+
 #con{
     background-color: white;
     height: 100vh;
@@ -211,8 +225,7 @@ a{
       }
     .checkbox2{
         display: flex;
-        margin-left: 3.5rem;
-        margin-top: -1rem;
+        margin-left: 0.2rem;
     }
 
 

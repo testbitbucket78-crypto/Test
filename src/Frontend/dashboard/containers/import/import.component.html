@@ -1,540 +1,302 @@
+<div class="toaster" (click)="hideToaster()">
+	<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+	<p *ngIf="successMessage" class="success">{{successMessage}}</p>
+	<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+</div>
+<!-- Rewritten by rishabhsingh@stacknize.com -->
+
 <div class="row">
-	<div class="toaster" (click)="hideToaster()">
-		<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
-		<p *ngIf="successMessage" class="success">{{successMessage}}</p>
-		<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
-	</div>
-
-	<div class="bs-stepper col-lg-12" id="bs-stee">
-
-		<h1>Import Contacts</h1>
-		<button class="btn-cross" aria-label="Close"   data-bs-dismiss="modal"   id="close-btn">X</button>
-		<div class="col-sm-12 nd">
-			<div class="bs-stepper-header" id="secon-div" role="tablist">
-				<!-- your steps here -->
+	<div class="bs-stepper col-lg-12">
+		<div class="d-flex justify-content-between align-items-center bs_stepper_header">
+			<h1>Import Contacts</h1>
+			<button class="btn-cross" aria-label="Close" data-bs-dismiss="modal">X</button>
+		</div>
+		<div class="d-flex justify-content-center col-sm-12">
+			<button *ngIf="stepper._currentIndex>0" type="button" (click)="previous()" class="previous-btn">
+				<img src="../../../../assets/img/profile/previous.svg" />
+			</button>
+			<div class="bs-stepper-header" role="tablist">
 				<div class="step" data-target="#logins-part">
-					<button type="button" class="step-trigger" role="tab" aria-controls="logins-part"
+					<button [ngClass]="{'trigger-active': stepper._currentIndex>0}" type="button" class="step-trigger" role="tab" aria-controls="logins-part"
 						id="logins-part-trigger">
-						<span class="bs-stepper-circle">1</span>
-						<span class="bs-stepper-label">Upload</span>
+						<span [ngClass]="{'currentStep': stepper._currentIndex>=0}" class="bs-stepper-circle">1</span>
+						<span [ngClass]="{'currentLabel': stepper._currentIndex>=0}" class="bs-stepper-label">Upload</span>
 					</button>
 				</div>
-				<div class="col-sm-1 line" id="linee"></div>
+				<div class="col-sm-1 bs-stepper-line"></div>
 				<div class="step" data-target="#information-part">
-					<button type="button" class="step-trigger" role="tab" aria-controls="information-part"
+					<button [ngClass]="{'trigger-active': stepper._currentIndex>=1}" type="button" class="step-trigger" role="tab" aria-controls="information-part"
 						id="information-part-trigger">
-						<span class="bs-stepper-circle">2</span>
-						<span class="bs-stepper-label">Map</span>
+						<span [ngClass]="{'currentStep': stepper._currentIndex>=1}" class="bs-stepper-circle">2</span>
+						<span [ngClass]="{'currentLabel': stepper._currentIndex>=1}" class="bs-stepper-label">Map</span>
 					</button>
 				</div>
-				<div class="col-sm-1 line" id="linee"></div>
+				<div class="col-sm-1 bs-stepper-line"></div>
 				<div class="step" data-target="#review-part">
-					<button type="button" class="step-trigger" role="tab" aria-controls="review-part"
+					<button [ngClass]="{'trigger-active': stepper._currentIndex==2}" type="button" class="step-trigger" role="tab" aria-controls="review-part"
 						id="review-part-trigger">
-						<span class="bs-stepper-circle">3</span>
+						<span [ngClass]="{'currentStep': stepper._currentIndex==2}" class="bs-stepper-circle">3</span>
 						<span class="bs-stepper-label">Review</span>
 					</button>
 				</div>
 			</div>
 		</div>
 		<div>
-			<div class="bs-stepper" id="attach-1">
-				<!-- your steps content here -->
+			<div class="bs-stepper">
+				<!-- upload csv step 1 -->
 				<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
 
-					<h4 id="upload-head-text">Attach files</h4>
-
-					<div class="box d-flex">
-						<div class="col-sm-5 box1">
-							<div class="d-img">
-								<img src="assets/img/im.png">
+						<div class="col-lg-12 py-3 upload-part-container">
+							<div class="head">
+								<h4>Attach files</h4>
 							</div>
-							<h5>Upload a CSV file <br />to add or update contacts</h5>
-							<span class="or">Or</span>
-							<div class="choose">
-								<input type="file" (change)="onUpload($event)" accept=".csv" />
-							</div>
-						</div>
 
-						<div class="col-sm-5 download">
+							<div class="d-flex upload-part">
 
-							<button class="btn4 btn-block d-flex " (click)="download()">
-								<img src="assets/img/download.png">
-								<h6>Download sample file</h6>
-							</button>
-
-							<div class="box3">
-								<div class="box4 d-flex" id="csvfile">
-									<img src="assets/img/instraction.png" id="csv-img">
-									<h6>Instructions</h6>
+								<div class="box1">
+									<div class="d-img">
+										<img src="assets/img/im.png">
+									</div>
+									<h5 *ngIf="!this.file">Upload a CSV file</h5>
+									<h5 *ngIf="!this.file">to add or update contacts</h5>
+									<h5 *ngIf="this.file">Your file attached</h5>
+									<h5 *ngIf="this.file">successfully</h5>
+									<span *ngIf="!this.file" class="or">or</span>
+										<button *ngIf="!this.file" class="mt-2 mb-4 uploadFile-btn">
+											<img class="px-2" src="../../../../assets/img/profile/upload.svg"/>
+											<label class="m-0 uploadFile" for="uploadFile">
+												<input type="file" (change)="onUpload($event)" id="uploadFile" accept=".csv" />
+												  Browse files
+											   </label>
+										</button>
+										<button *ngIf="this.file" class="mt-4 mb-4 uploadFile-btn">
+											{{this.fileName}}
+											<img class="ml-4 remove-file" src="../../../../assets/img/profile/icon-close.svg"
+											      (click)="removeFile()" />
+										</button>
 								</div>
-								<h5 id="upload-instructions">Upload a CSV file with the contacts and <br /> details that
-									you would like
-									to import.
-									Ensure<br /> the CSV file fulfils the Following<br /> requirements:<br /> Only CSV
-									files are
-									accepted for import.<br />
-									File size must be 10 MB<br /> The file must contain at least..
-									<p class="idp"> {{ showMore ? text : (text | slice: 1:15) }} <span
-											*ngIf="!showMore">...</span>
-										<a id="interactions-a" href="javascript:;" *ngIf="!showMore"
-											(click)="onShow()">Read More</a>
-										<a id="interactions-a" href="javascript:;" *ngIf="showMore"
-											(click)="onShow()">Read Less</a>
-									</p>
-								</h5>
+						
+
+								<div class="download">
+									<button class="my-2 btn" (click)="download()">
+										<img src="../../../../assets/img/profile/download-file.svg" />
+										Download sample file
+									</button>
+		
+									<div class="box3">
+										<div class="box4 d-flex">
+											<img class="mr-2" src="../../../../assets/img/support/instraction.svg" />
+											<h6 class="m-0">Instructions</h6>
+										</div>
+										<p><sb-read-more *ngFor="let t of text" [content]="t" [limit]="245" [completeWords]="true">
+											</sb-read-more></p>
+										
+									</div>
+								</div>
+							</div>
+
+						</div>
+				
+					
+				
+					<div class="col-lg-12 purpose-identifier-container">
+
+						<div class="d-flex purpose-identifier">
+							<div class="mr-4">
+								<label for="floatingInputGrid">Purpose</label>
+								<div class="form-floating">
+									<select class="form-select" id="floatingSelectGrid"
+										aria-label="Floating label select example" #pure
+										(change)="onSelectPurpose(pure.value)">
+										<option value="Add new contact only">Add new contact only</option>
+										<option value="Update Existing Contacts Only">Update Existing Contacts Only</option>
+										<option value="Add and Update Contacts">Add and Update Contacts</option>
+									</select>
+								</div>
+								<span *ngIf="pure.value==='Add new contact only'" id="con">
+									Adds only new contacts from the
+									CSV file.<br />
+									Existing contacts will not be affected.</span>
+								<span *ngIf="pure.value==='Update Existing Contacts Only'" id="con">
+									Update only existing
+									contacts with the 
+									values from<br /> the CSV file. New contacts will not be added.</span>
+								<span *ngIf="pure.value==='Add and Update Contacts'" id="con">
+									Update existing contacts with
+									the values from<br />the
+									CSV file, and add new contacts from the CSV file.</span>
+							</div>
+							<div class="ml-4">
+								<label for="floatingSelectGrid">Identifier</label>
+								<div class="form-floating">
+									<select class="form-select" id="floatingSelectGrid"
+										aria-label="Floating label select example" #identifier
+										(change)="onSelected(identifier.value)">
+										<option value="Phone_number">Phone Number</option>
+										<option value="customerId">Contact ID</option>
+									</select>
+								</div>
+								<span *ngIf="Identifier==='Phone_number'" id="worksa">Phone Number works as identifier</span>
+								<span *ngIf="Identifier==='customerId'" id="worksa">Contact ID works as identifier</span>
 							</div>
 						</div>
+					
 					</div>
-					<div class="row g-2">
-						<div class="col-md">
-							<label for="floatingInputGrid">Purpose</label>
-							<div class="form-floating">
-								<select class="form-select" id="floatingSelectGrid"
-									aria-label="Floating label select example" #pure
-									(change)="onSelectPurpose(pure.value)">
-									<option value="Add new contact only">Add new contact only</option>
-									<option value="Update Existing Contacts Only">Update Existing Contacts Only</option>
-									<option value="Add and Update Contacts">Add and Update Contacts</option>
-
-								</select>
-
-							</div>
-							<span id="con">New Contacts will be added,existing will be ignored </span>
-						</div>
-						<div class="col-md" id="identifier-box">
-							<label for="floatingSelectGrid">Identifier</label>
-							<div class="form-floating">
-								<select class="form-select" id="floatingSelectGrid"
-									aria-label="Floating label select example" #identifier
-									(change)="onSelected(identifier.value)">
-									<option value="Email">Email</option>
-									<option value="Phone_number">Phone_number</option>
-
-								</select>
-
-							</div>
-							<span id="worksa">{{identifier.value}} works as identifier</span>
-
-						</div>
-
-					</div>
-					<div class="button-1 col-sm-2">
-						<button type="button" class="btn btn-block" (click)="incorrectFile(content)"
-							(click)="onUpload($event)">Next</button>
-
+					<div class="col-sm-12 pb-3 d-flex justify-content-end next_button_container">
+						<button type="button" (click)="incorrectFile(content)" class="next-button">Next</button>
 					</div>
 				</div>
 
 				<ng-template #content let-c="close" let-d="dismiss">
 
 					<div class="incorrect-card-main">
-
-
-						<p>File is incorrectly formed & cannot <br /> be read. Please try again
+						<p>File is incorrectly formed & cannot <br /> be read. Please try again.
 						</p>
-
-						<button type="button" class="btn" (click)="c('Save click')">Close</button>
+						<button type="button" class="btn" (click)="closeErrorModal()">Close</button>
 					</div>
 				</ng-template>
 
-				<div class="row">
+				<!--column mapping step 2-->
 
-					<div id="information-part" class="content" role="tabpanel"
-						aria-labelledby="information-part-trigger">
-						<button type="button" (click)="previous()" class="btn5 btn-block col-1"><img
-								src="assets/img/prev.png"></button>
+				<div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
 
-						<span id="map-span">Select the appropriate contact field for each column in the CSV</span>
-						<div class="row" id="r-first">
-							<div class="sq d-flex col-lg-12">
-								<div class="ss col-lg-4 mr-2">
-									<div class="">
-										<div>
-											<h5>Sample Data from your CSV</h5>
-										</div>
-										<div class="ml-2">
-											<p class="p-1">{{importedData[0]?.Name}}</p>
-											<p class="p-1">{{importedData[0]?.emailId}}</p>
-											<p class="p-1">{{importedData[0]?.Phone_number}}</p>
-											<p class="p-1">{{importedData[0]?.sex}}</p>
-											<p class="p-1">{{importedData[0]?.tag}}</p>
-											<p class="p-1">{{importedData[0]?.status}}</p>
-											<p class="p-1">{{importedData[0]?.Country}}</p>
-											<p class="p-1">{{importedData[0]?.state}}</p>
-											
-										</div>
-									</div>
-								</div>
+					<span class="mapping-head">Select the appropriate contact field for each column in the CSV</span>
+					<div class="col-12 pt-4 pb-2 d-flex container-mapping">
+						<div class="col-1"></div>
 
-
-								<div class=" col-lg-8 container" id="map22">
-									<div class="hh1 d-flex">
-										<div class="">
-										<h5 id="h-h5" >Select the columns to import</h5>
-										</div>
-										<div class="">
-										<h5 id="h-h5">Map to Contact Fields</h5>
-										</div>
-									</div>
-									<div  class="" >
-									<div class="row map-content2 p-1">
-										<div class="col-sm-12 map-con-2 ">
-											<div class="d-flex body-con-2 ">
-												<input type="checkbox" class="form-control-checkbox" name="">
-												<h6 class="m-0" id="con22">Name</h6>
-												<div class="produc">
-													<div>
-													<input type="text" class="inp-1" name="product" list="productName" id="prduc" />
-													</div>
-													<datalist id="productName" class="product">
-														<option selected>{{headers[0]}}</option>
-														<option>{{headers[1]}}</option>
-														<option>{{headers[2]}}</option>
-														<option>{{headers[3]}}</option>
-														<option>{{headers[4]}}</option>
-														<option>{{headers[5]}}</option>
-														<option>{{headers[6]}}</option>
-														<option>{{headers[7]}}</option>
-													</datalist>
-												</div>
-												<div class="active-toggle">
-												<div class="p-2 switch">
-													<label class="m-0 switch">
-													  <input type="checkbox" class="m-0 form-control-checkbox"
-													  (change)="getUpdateFields($event,headers[1])"
-													  [(ngModel)]="isOverrideOn1">
-													  <span class="slider 1"></span>
-													</label>
-													<p class="over-on">{{ isOverrideOn1 ? 'Override on' : 'Override off' }}</p>
-												  </div>
-												  </div>
-												
-											</div>
-										</div>
-									</div>
-									<div class="row map-content2 p-1">
-										<div class="col-sm-12 map-con-2">
-											<div class=" d-flex body-con-2">
-												<div class="">
-												<input type="checkbox" class="form-control-checkbox" name="">
-												</div>
-												<div>
-												<h6 class="m-0 em-con" id="con22">Email id</h6>
-												</div>
-												<div class="produc">
-													<div>
-												<input type="text" class=" email-1 mr-2 ml-n-0" name="product" list="productName" id="prduc"/>
-											</div>
-												<datalist id="productName" class="product">
-													<option>{{headers[0]}}</option>
-													<option selected>{{headers[1]}}</option>
-													<option>{{headers[2]}}</option>
-													<option>{{headers[3]}}</option>
-													<option>{{headers[4]}}</option>
-													<option>{{headers[5]}}</option>
-													<option>{{headers[6]}}</option>
-													<option>{{headers[7]}}</option>
-												</datalist>
-												</div>
-												<div class="active-toggle">
-													<div class="p-2 switch">
-														<label class="m-0 switch">
-														  <input type="checkbox" class="m-0 form-control-checkbox"
-														  (change)="getUpdateFields($event,headers[1])"
-														  [(ngModel)]="isOverrideOn2">
-														  <span class="slider 2"></span>
-														</label>
-														<p class="over-on">{{ isOverrideOn2 ? 'Override on' : 'Override off' }}</p>
-													  </div>
-													  </div>
-											</div>
-										</div>
-									</div>
-									<div class="row map-content2 p-1">
-										<div class="col-sm-12 map-con-2">
-											<div class=" d-flex body-con-2">
-												<div>
-												<input type="checkbox" class="form-control-checkbox " name="">
-												</div>
-												<h6 class="m-0" id="con22">Mobile</h6>
-												<div class="produc">
-													<div>
-												<input type="text" name="product" list="productName" id="prduc"/>
-											</div>
-												<datalist id="productName" class="product">
-													<option>{{headers[0]}}</option>
-													<option>{{headers[1]}}</option>
-													<option selected>{{headers[2]}}</option>
-													<option>{{headers[3]}}</option>
-													<option>{{headers[4]}}</option>
-													<option>{{headers[5]}}</option>
-													<option>{{headers[6]}}</option>
-													<option>{{headers[7]}}</option>
-												</datalist>
-												</div>
-												<div class="active-toggle">
-													<div class="p-2 switch">
-														<label class="m-0 switch">
-														  <input type="checkbox" class="m-0 form-control-checkbox"
-														  (change)="getUpdateFields($event,headers[1])"
-														  [(ngModel)]="isOverrideOn3">
-														  <span class="slider 3"></span>
-														</label>
-														<p class="over-on">{{ isOverrideOn3 ? 'Override on' : 'Override off' }}</p>
-													  </div>
-													  </div>
-											</div>
-
-										</div>
-
-									</div>
-									<div class="row  map-content2 p-1">
-										<div class="col-sm-12 map-con-2">
-											<div class="d-flex body-con-2" >
-												<input type="checkbox" class="form-control-checkbox" name="">
-												<h6 class="m-0" id="con22">Gender</h6>
-												<div class="produc">
-												<div>
-												<input type="text" name="product" list="productName" id="prduc"/>
-												</div>
-												<datalist id="productName" class="product">
-													<option>{{headers[0]}}</option>
-													<option>{{headers[1]}}</option>
-													<option>{{headers[2]}}</option>
-													<option selected>{{headers[3]}}</option>
-													<option>{{headers[4]}}</option>
-													<option>{{headers[5]}}</option>
-													<option>{{headers[6]}}</option>
-													<option>{{headers[7]}}</option>
-												</datalist>
-												</div>
-												<div class="active-toggle">
-													<div class="p-2 switch">
-														<label class="m-0 switch">
-														  <input type="checkbox" class="m-0 form-control-checkbox"
-														  (change)="getUpdateFields($event,headers[1])"
-														  [(ngModel)]="isOverrideOn4">
-														  <span class="slider 4"></span>
-														</label>
-														<p class="over-on">{{ isOverrideOn4 ? 'Override on' : 'Override off' }}</p>
-													  </div>
-													  </div>
-											</div>
-										</div>
-									</div>
-									<div class="row  map-content2 p-1">
-										<div class="col-sm-12 map-con-2">
-											<div class="d-flex body-con-2">
-												<div>
-												<input type="checkbox" class="form-control-checkbox"class="form-control-checkbox" name="">
-												</div>
-												<h6 class="m-0" id="con22">Tags</h6>
-												<div class="produc">
-													<div>
-												<input type="text" class="inp-2" name="product" list="productName" id="prduc" />
-												</div>
-												<datalist id="productName" class="product">
-													<option>{{headers[0]}}</option>
-													<option>{{headers[1]}}</option>
-													<option>{{headers[2]}}</option>
-													<option>{{headers[3]}}</option>
-													<option selected>{{headers[4]}}</option>
-													<option>{{headers[5]}}</option>
-													<option>{{headers[6]}}</option>
-													<option>{{headers[7]}}</option>
-												</datalist>
-												</div>
-												<div class="active-toggle">
-													<div class="p-2 switch">
-														<label class="m-0 switch">
-														  <input type="checkbox" class="m-0 form-control-checkbox"
-														  (change)="getUpdateFields($event,headers[1])"
-														  [(ngModel)]="isOverrideOn5">
-														  <span class="slider 5"></span>
-														</label>
-														<p class="over-on">{{ isOverrideOn5 ? 'Override on' : 'Override off' }}</p>
-													  </div>
-													  </div>
-											</div>
-										</div>
-									</div>
-
-									<div class="row  map-content2 p-1">
-										<div class="col-sm-12 map-con-2">
-											<div class="d-flex body-con-2">
-												<input type="checkbox" class="form-control-checkbox" name="">
-												<h6 class="m-0" id="con22">Status</h6>
-												<div class="produc">
-													<div>
-												<input type="text" name="product" list="productName" id="prduc" />
-												</div>
-												<datalist id="productName" class="product">
-													<option>{{headers[0]}}</option>
-													<option>{{headers[1]}}</option>
-													<option>{{headers[2]}}</option>
-													<option>{{headers[3]}}</option>
-													<option>{{headers[4]}}</option>
-													<option selected>{{headers[5]}}</option>
-													<option>{{headers[6]}}</option>
-													<option>{{headers[7]}}</option>
-												</datalist>
-												</div>
-												<div class="active-toggle">
-													<div class="p-2 switch">
-														<label class="m-0 switch">
-														  <input type="checkbox" class="m-0 form-control-checkbox"
-														  (change)="getUpdateFields($event,headers[1])"
-														  [(ngModel)]="isOverrideOn6">
-														  <span class="slider 6"></span>
-														</label>
-														<p class="over-on">{{ isOverrideOn6 ? 'Override on' : 'Override off' }}</p>
-													  </div>
-													  </div>
-											</div>
-										</div>
-									</div>
-									<div class="row  map-content2 p-1">
-										<div class="col-sm-12 map-con-2">
-											<div class="d-flex body-con-2">
-												<input type="checkbox" class="form-control-checkbox" name="">
-												<h6 class="m-0" id="con22">Country</h6>
-												<div class="produc">
-													<div>
-												<input type="text" class="inp-3" name="product" list="productName" id="prduc" />
-												</div>
-												<datalist id="productName" class="product">
-													<option>{{headers[0]}}</option>
-													<option>{{headers[1]}}</option>
-													<option>{{headers[2]}}</option>
-													<option>{{headers[3]}}</option>
-													<option>{{headers[4]}}</option>
-													<option>{{headers[5]}}</option>
-													<option selected>{{headers[6]}}</option>
-													<option>{{headers[7]}}</option>
-												</datalist>
-												</div>
-												<div class="active-toggle">
-													<div class="p-2 switch">
-														<label class="m-0 switch">
-														  <input type="checkbox" class="m-0 form-control-checkbox"
-														  (change)="getUpdateFields($event,headers[1])"
-														  [(ngModel)]="isOverrideOn7">
-														  <span class="slider 7"></span>
-														</label>
-														<p class="over-on">{{ isOverrideOn7 ? 'Override on' : 'Override off' }}</p>
-													  </div>
-													  </div>
-											</div>
-										</div>
-									</div>
-									<div class="row  map-content2 p-1">
-										<div class="col-sm-12 map-con-2">
-											<div class="d-flex body-con-2">
-												<input type="checkbox" class="form-control-checkbox" name="">
-												<h6 class="m-0" id="con22">State</h6>
-												<div class="aaa">
-													<div class="col-lg-1">
-														<input type="text" class="inp-4" name="product" list="productName"
-															id="prduc"/>
-													</div>
-													<datalist id="productName" class="product">
-														<option>{{headers[0]}}</option>
-														<option>{{headers[1]}}</option>
-														<option>{{headers[2]}}</option>
-														<option>{{headers[3]}}</option>
-														<option>{{headers[4]}}</option>
-														<option>{{headers[5]}}</option>
-														<option>{{headers[6]}}</option>
-														<option selected>{{headers[7]}}</option>
-													</datalist>
-
-												</div>
-												<div class="active-toggle">
-													<div class="p-2 switch">
-														<label class="m-0 switch">
-														  <input type="checkbox" class="m-0 form-control-checkbox"
-														  (change)="getUpdateFields($event,headers[1])"
-														  [(ngModel)]="isOverrideOn7">
-														  <span class="slider 8"></span>
-														</label>
-														<p class="over-on">{{ isOverrideOn7 ? 'Override on' : 'Override off' }}</p>
-													  </div>
-													  </div>
-											</div>
-										</div>
-									</div>
-									</div>
+						<div class="col-3 pr-0 mr-1 left-part">
+							<div class="pt-5 pb-2 pl-5 head-section">
+								<span class="pb-2">Sample Data from your CSV</span>
+								<div class="m-0 sample_csv_data">
+									<p [ngClass]="{'NA':values==null}" *ngFor="let values of csvfieldValues">
+										 {{ values !== null ? values : 'NA' }}</p>
 								</div>
 							</div>
 						</div>
-						<ng-template #contents let-c="close" let-d="dismiss">
-							<div class="incorrect-card-main">
-								<p>The identifier column must be <br /> mapped before proceeding</p>
-								<button type="button" class="btn" (click)="c('Save click')">Ok, Got it</button>
-							</div>
-						</ng-template>
-						<div class="l-botton">
-							<button type="button" id="map-next-btn" (click)="open(contents)" (click)="next()"
-								(click)="updatedDataCount()" class="btn btn-primary btn-block col-1">Next</button>
+
+						<div class="col-7 pl-0 ml-1 d-flex right-part">
+							<div class="col-sm-12 px-0">
+								<div class="pt-5 pb-2 head-section">
+									<span class="heading">Select the columns to import</span>
+									<span class="pl-4 heading">Map to Contact Fields</span>
 								</div>
+								<div class="body-section">
+									<div *ngFor="let fields of csvfieldHeaders; let ith = index"
+									      class="row py-1 justify-content-between align-items-center">
+										<div class="col-auto">
+											
+											<div class="form-check">
+												<label class="form-check-label" for="displayNameInput{{ith}}" >
+													<input type="checkbox" id="displayNameInput{{ith}}" 
+													class="form-check-input" 
+													[(ngModel)]="displayNameChecked[ith]">
+													<span class="checkmark"></span>
+													{{fields}}
+												</label>
+											</div>
+										</div>
+
+										<div class="col-auto d-flex column_mapping_field ">
+											<div class="">
+
+												<select class="form-select input-form" aria-label="Select column or attribute" [ngClass]="{'select-placeholder':!selectedValue}">
+													<option [disabled]="true" [selected]="true" [hidden]="true">Select column or attribute</option>
+													<option *ngFor="let fieldData of customFieldData;let i = index" [ngValue]="fieldData.Value"
+													 (change)="onSelect(fieldData.Value)">{{fieldData.ActuallName}}</option>
+												  </select>
+												  
+
+
+												<!-- <input type="text" class="form-control" name="column-mapping"
+													placeholder="Select column or attribute" [value]="fields+ith"> -->
+													<!-- <div *ngIf="false" class="popup-dialog ContactOption">
+														<p *ngFor="let fieldData of customFieldData" 
+														   (click)="selectColumnMapping(fieldData.ActuallName)">
+														  {{fieldData.ActuallName}}
+														</p>
+													</div> -->
+											</div>
+											<div class="col-auto d-flex align-items-center active-toggle">
+												<label for="toggle-switch{{ith}}" class="m-0 switch">
+													<input type="checkbox" class="form-check-input" id="toggle-switch{{ith}}"
+														[disabled]="purpose==='Add new contact only' || !displayNameChecked[ith]"
+														[(ngModel)]="toggleOverride[ith]">
+													<span [ngClass]="{'toggle-disabled-slider':purpose==='Add new contact only'
+													       || !displayNameChecked[ith]}" class="slider" >
+													</span>
+												</label>
+												<p [ngClass]="{'toggle-disabled':purpose==='Add new contact only'|| !displayNameChecked[ith]}" 
+												   class="m-0 ml-2">{{ toggleOverride[ith] ? 'Override on' : 'Override off' }}</p>
+											</div>
+										</div>
+									</div>
+							
+										
+						
+								</div>
+							</div>
+						</div>
+						<div class="col-1"></div>
 					</div>
+
+					<div class="col-sm-12 pb-3 d-flex justify-content-end next_button_container">
+						<button type="button" (click)="open(contents)" class="next-button">Next</button>
+					</div>
+					<ng-template #contents let-c="close" let-d="dismiss">
+						<div class="incorrect-card-main">
+							<p>The identifier column must be <br /> mapped before proceeding</p>
+							<button type="button" class="btn" (click)="closeErrorModal()">Ok, Got it</button>
+						</div>
+					</ng-template>
 				</div>
 
-
-
-
-
-
-
-
-				<div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">
-					<button type="button" (click)="previous()" class="btn5 btn-block col-1"><img
-							src="assets/img/prev.png"></button>
-
-					<div class="row" id="r-lg">
-						<div class="col-lg-12" id="t-div">
-							<div class=" col-lg-4 ss">
+				<!-- review upload step 3 -->
+				<div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">				
+					<div class="py-4 row">
+						<div class="col-lg-12 py-5 d-flex">
+							<div class="col-sm-2"></div>
+							<div class=" col-sm-4 review-left-part">
 								<div class="card">
-									<div class="h-fie">
 										<h4>Imported File Details</h4>
-									</div>
-									<div class="g-file">
-										<div class="ggg">
+										<div class="sub-card">
 											<h5>File Name</h5>
 											<h6>{{fileName}}</h6>
 										</div>
-										<div class="ggg">
+										<div class="sub-card">
 											<h5>Purpose</h5>
 											<h6>{{purpose}}</h6>
 
 										</div>
-										<div class="ggg">
+										<div class="sub-card">
 											<h5>Identifier</h5>
 											<h6>{{Identifier}}</h6>
-										</div>
-									</div>
-								</div>
-
-							</div>
-							<div class="col-lg-5" id="cards">
-								<div class="card1" id="card-1">
-									<h5 class="card-h5">{{numberOfNewContact}}</h5>
-									<h6 class="card-h6">New Contact will added</h6>
-
-								</div>
-								<div class="card2">
-									<h5 class="card-h5">{{countUpdatedData}}</h5>
-									<h6 class="card-h6">Existing Contacts Will Updated</h6>
-								</div>
-								<div class="card3">
-									<h5 class="card-h5">{{skipCont}}</h5>
-									<h6 class="card-h6">Contact skipped due to error</h6>
-									<button class="btn  btn-block" (click)="downloadERRfile()"><img
-											src="assets/img/download.png"> Download
-										error file</button>
+										</div>							
 								</div>
 							</div>
+							<div class="col-sm-4 review-right-part">
+								<div class="mb-3 review-right-part-sub1">
+									<h5 class="m-0">{{numberOfNewContact}}</h5>
+									<h6 class="m-0">New contact will added</h6>
+
+								</div>
+								<div class="mb-3 review-right-part-sub2">
+									<h5 class="m-0">{{countUpdatedData}}</h5>
+									<h6 class="m-0">existing contacts will updated</h6>
+								</div>
+								<div class="mb-3 review-right-part-sub3">
+									<h5 class="m-0">{{skipCont}}</h5>
+									<h6 class="mb-3">Contact skipped due to error</h6>
+
+									<button class="mb-1 btn" (click)="downloadERRfile()">
+									<img src="../../../../assets/img/profile/download-file.svg" /> 
+									  Download error file
+								   </button>
+								</div>
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+						  <div class="col-sm-12 pb-3 d-flex justify-content-end next_button_container">
+							<button type="button" (click)="importStrated(imports,importfailed)" class="next-button">Import</button>
 						</div>
 					</div>
 					<ng-template #imports let-c="close" let-d="dismiss">
@@ -545,9 +307,8 @@
 
 							</div>
 							<div class="modal-body">
-								<p>We will notify you by email once the job has been <br /> completed. Now you can close
-									this
-									dialog box.
+								<p>We will notify you by email once the job has been <br /> 
+									completed. Now you can close this dialog box.
 								</p>
 								<div class="ss">
 									<img src="assets/img/your.png">
@@ -555,8 +316,8 @@
 							</div>
 							<div class="modal-footer popfooter row text">
 								<div class="col-md-3">
-									<button type="button" class="btn btn-outline-dark"  data-bs-dismiss="modal" aria-label="Close" data-bs-target="#importmodal"  (click)="c('Save click')">Ok, Got
-										it</button>
+									<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal"
+										aria-label="Close" data-bs-target="#importmodal" (click)="c('Save click')">Ok,Got it</button>
 								</div>
 							</div>
 						</div>
@@ -576,19 +337,17 @@
 							</div>
 							<div class="modal-footer popfooter row text">
 								<div class="col-md-3">
-									<button type="button" class="btn btn-outline-dark"  data-bs-dismiss="modal" aria-label="Close" data-bs-target="#importmodal" (click)="c('Save click')">Ok, Got
-										it</button>
+									<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal"
+										aria-label="Close" data-bs-target="#importmodal" (click)="c('Save click')">Ok, Got it</button>
 								</div>
 							</div>
 						</div>
 					</ng-template>
-
-					<button type="button" id="import-btn" (click)="importStrated(imports,importfailed)"
-						class="btn btn-primary btn-block col-2">Import</button>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 	<ng-template #instruction let-c="close" let-d="dismiss">
 		<div class="modal-header text-right">
 			<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
@@ -601,6 +360,3 @@
 		</div>
 
 	</ng-template>
-
-	<!--  <div class="card-body"><sb-ng-bootstrap-table [pageSize]="6"></sb-ng-bootstrap-table></div>
- -->

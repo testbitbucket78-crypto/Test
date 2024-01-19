@@ -377,8 +377,9 @@
 							</span>
 						</p>
 					</div>
-					<button *ngIf="showChatNotes=='text'" class="submit_btn" ><img
-							src="/assets/img/teambox/icon-send.svg"  (click)="sendMessage()"></button>
+					<button *ngIf="showChatNotes=='text'" class="submit_btn">
+						<img src="/assets/img/teambox/icon-send.svg" (click)="sendMessage()">
+					</button>
 					<button *ngIf="showChatNotes== 'notes'" class="save_notes_btn" (click)="sendMessage()">Save</button>
 
 
