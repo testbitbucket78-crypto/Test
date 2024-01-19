@@ -425,10 +425,10 @@
             
                 <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
                         <input type="file" accept="image/jpeg, image/png" formControlName="Links" (change)="previewImageAndVideo($event)" id="sel-type-image">
-                        <div *ngIf="newTemplateForm.get('Links')!.value == null">
+                        <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of image</p></div> 
-                        <div class="main-preview-type-image" *ngIf="newTemplateForm.get('Links')!.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
+                        <div class="main-preview-type-image" *ngIf="newTemplateForm.get('Links')?.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
                             <span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                         </div>
                 </div>
@@ -446,16 +446,17 @@
                 
                 </div>
             
-                <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image" [ngClass]="{'document-selected':newTemplateForm.get('Links')!.value !== null}">
-                    <div class="main-preview-type-doc" *ngIf="newTemplateForm.get('Links')!.value !== null">
+                <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image" [ngClass]="{'document-selected':newTemplateForm.get('Links')?.value !== null}">
+                    <div class="main-preview-type-doc" *ngIf="newTemplateForm.get('Links')?.value !== null">
                         <span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                     </div>
-                    <img *ngIf="newTemplateForm.get('Links')!.value !== null" src="../../../../assets/img/settings/doc.svg" />
-                    <span class="document-preview" *ngIf="newTemplateForm.get('Links')!.value !== null" >{{ newTemplateForm.get('Links')!.value }}</span>
+                    <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
+                    <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null" >{{ newTemplateForm.get('Links')?.value }}</span>
                         <input type="file" accept=".doc, .docx, .pdf" formControlName="Links" (change)="onFileChange($event)" name="document-select" id="sel-type-document">
-                        <div *ngIf="newTemplateForm.get('Links')!.value == null">
+                        <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
-                        <p class="m-0">Upload or enter link of document</p></div>
+                        <p class="m-0">Upload or enter link of document</p>
+                       </div>
                          
                 </div>
 
@@ -464,7 +465,7 @@
 
                 <div *ngIf="selectedType !== 'text'" class="flex-column sel-type-link">
                     <label for="link" id="Links" >Link</label>
-                    <input type="url" id="Links" [attr.disabled]="newTemplateForm.get('Links')!.value !== null ? 'disabled' : null"  formControlName="Links" placeholder="Enter">
+                    <input type="url" id="Links" [attr.disabled]="newTemplateForm.get('Links')?.value !== null ? 'disabled' : null"  formControlName="Links" placeholder="Enter">
                 </div>
 
 

@@ -600,21 +600,21 @@
 						<img src="../../../../assets/img/teambox/icon-close.svg">
 					</button>
 				</div>
-				<div class="modal-body px-5 pt-0 edit-tag-body">
-			
-					<ul class="edit-tag-dropdown">
-						<li *ngFor="let tag of tagListData; let i = index"><a class="dropdown-item">
-								<div class="form-check">
-									<input class="form-check-input" type="checkbox" [checked]="getFilterTags?.includes(tag.TagName)" id="flexCheckDefault{{i}}">
-									<label id="edit-tag-dots" class="form-check-label" for="flexCheckDefault{{i}}">
-									<span [ngClass]="{'color-dots': true}" [style.background]="tag.TagColour"></span></label>
-									<label id="edit-tagnames" class="form-check-label" for="flexCheckDefault{{i}}">
-										{{tag.TagName}}</label>
+				<div class="modal-body edit-tag-body">
+					<div class="edit-tag-dropdown">
+						<div *ngFor="let tag of tagListData; let i = index">
+								<div class="py-2 px-0 form-check">
+									<label class="m-0 form-check-label" for="flexCheckDefault{{i}}">
+									<input class="form-check-input" type="checkbox" 
+									       [checked]="getFilterTags?.includes(tag.TagName)"
+									       id="flexCheckDefault{{i}}">
+										   <span class="checkmark"></span>
+									<span [ngClass]="{'color-dots': true}" [style.background]="tag.TagColour"></span>
+									 {{tag.TagName}}
+							    	</label>
 								</div>
-							</a>
-						</li>
-	
-					</ul>
+						</div>
+					</div>
 				</div>
 				<div class="modal-footer edittag-footer">
 					<button type="button" class="btn-close" id="edit-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
@@ -655,8 +655,8 @@
 	</div>
 
 	<div class="modal fade" tabindex="-1" id="importmodal" role="dialog" data-bs-backdrop="static">
-        <div class="modal-dialog docla" role="document">
-            <div class="modal-content delete-token-modal" id="model">
+        <div class="modal-dialog importsModal" role="document">
+            <div class="modal-content" id="model">
                 <div class="modal-body alertmessage" id="model-message">
                 <sb-import (getContact)="getContact()" >					
 				</sb-import>
