@@ -68,6 +68,8 @@ export class MyprofileComponent implements OnInit {
     this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
     this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
     this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
+    this.isActive = (JSON.parse(sessionStorage.getItem('loginDetails')!)).isActive;
+    console.log(this.isActive)
     const nameParts = this.Name.split(' ');
     const firstName = nameParts[0] || '';
     const lastName = nameParts[1] || '';
@@ -194,7 +196,7 @@ toggleActiveState(checked: boolean) {
 
   const activeStateData = {
     uid: this.uid,
-    isActive: this.isActive
+    IsActive: this.isActive
   };
 
   this.apiService.userActiveState(activeStateData)

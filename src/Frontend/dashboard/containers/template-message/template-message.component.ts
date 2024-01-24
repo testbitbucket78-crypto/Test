@@ -289,11 +289,12 @@ export class TemplateMessageComponent implements OnInit {
     saveVideoAndDocument(files: FileList) {
         if (files[0]) {
             let File = files[0];
+            let spid = this.spid
             let mediaType = files[0].type;
             const data = new FormData();
             data.append('dataFile', File, File.name);
             data.append('mediaType', mediaType);
-            this._teamboxService.uploadfile(data).subscribe(uploadStatus => {
+            this._teamboxService.uploadfile(data,spid).subscribe(uploadStatus => {
                 let responseData: any = uploadStatus;
                 if (responseData.filename) {
                     this.selectedPreview = responseData.filename.toString();

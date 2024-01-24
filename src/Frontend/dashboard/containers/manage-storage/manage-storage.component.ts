@@ -33,7 +33,8 @@ export class ManageStorageComponent implements OnInit {
   sizeOfMessage: string = '';
   message_size:any;
   message_count:any;
-  messageData: any = null;
+  messageData:any;
+  mediaData:any;
 
   errorMessage = '';
 	successMessage = '';
@@ -60,6 +61,10 @@ export class ManageStorageComponent implements OnInit {
     this.toggleSelection('option2', 'optionradio2');
     this.toggleSelection('option3', 'optionradio3');
 
+  }
+
+  resetForm() {
+    this.editAutoDeletionForm.reset();
   }
   
 
@@ -208,14 +213,13 @@ export class ManageStorageComponent implements OnInit {
     this.apiService.getmanualDelation(showdeletedata).subscribe(response => {
       this.showMessages = true; // Show the messages section
       this.messageData = response.messageSize[0];
+      this.mediaData = response.messageSize;
+      console.log(this.mediaData)
     })
   }
   updateMessageType() {
     this.message_type = (this.textChecked ? 'Text' : '') || (this.mediaChecked ? 'Media' : '');
   }
 
-}
-function elseif() {
-  throw new Error('Function not implemented.');
 }
 
