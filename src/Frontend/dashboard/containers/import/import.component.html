@@ -202,7 +202,8 @@
 												<select class="form-select input-form" aria-label="Select column or attribute" [ngClass]="{'select-placeholder':!selectedValue}">
 													<option [disabled]="true" [selected]="true" [hidden]="true">Select column or attribute</option>
 													<option *ngFor="let fieldData of customFieldData;let i = index" [ngValue]="fieldData.Value"
-													 (change)="onSelect(fieldData.Value)">{{fieldData.ActuallName}}</option>
+													 (change)="onSelect(fieldData.Value)">{{fieldData.displayName}}
+													</option>
 												  </select>
 												  
 
