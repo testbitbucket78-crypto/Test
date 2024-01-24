@@ -9,8 +9,8 @@ const API_URL = environment.baseUrl;
 export class TeamboxService {
   constructor(private http: HttpClient) { }
 
-  public uploadfile(FileData:any) {
-      return this.http.post(API_URL+'/uploadfile/',FileData);
+  public uploadfile(FileData:any, spid:any) {
+      return this.http.post(`${API_URL}/uploadfile/${spid}`,FileData);
   }
 
   public getAgents(SPID:any) {

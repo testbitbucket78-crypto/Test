@@ -97,7 +97,7 @@ export class TopNavComponent implements OnInit {
     
         const activeStateData = {
         uid: this.uid,
-        isActive: this.isActive
+        IsActive: this.isActive
         };
     
         this.apiService.userActiveState(activeStateData)

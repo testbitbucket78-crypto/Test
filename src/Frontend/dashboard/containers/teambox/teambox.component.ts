@@ -720,10 +720,11 @@ sendattachfile(){
 	saveFiles(files: FileList) {
 		if(files[0]){
 		let imageFile = files[0]
+		let spid = this.SPID
 		this.mediaType = files[0].type
 		const data = new FormData();
 		data.append('dataFile',imageFile ,imageFile.name);
-		this.apiService.uploadfile(data).subscribe(uploadStatus =>{
+		this.apiService.uploadfile(data,spid).subscribe(uploadStatus =>{
 			let responseData:any = uploadStatus
 			if(responseData.filename){
 				this.messageMeidaFile = responseData.filename

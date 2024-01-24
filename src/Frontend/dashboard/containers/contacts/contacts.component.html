@@ -17,7 +17,8 @@
 			<div id="import-btn" >
 				<button class="btn  btn-block" id="import-btn" data-bs-toggle="modal" data-bs-target="#importmodal" ><img
 						src="../../../../assets/img/import.svg">
-					Import</button>
+					Import
+				</button>
 			</div>
 			<div id="add-contact">
 				<button class="btn  btn-block" id="add-contact" (click)="open(contactadd)"><span><img src="../../../../assets/img/teambox/add.svg" /></span>Add Contact</button>
@@ -168,7 +169,7 @@
 						</button>
 						<button class="btn6  btn-block " (click)="openedit(contactadd)"><img src="../../../../assets/img/teambox/Edit.svg">
 						</button>
-						<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn">Block </button>
+						<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn">{{this.isBlocked==1 ? 'Blocked' : 'Block'}}</button>
 						<button class="btn7  btn-block "><img src="../../../../assets/img/settings.svg"> </button>
 					</div>
 					<div class="bbox">
@@ -220,12 +221,12 @@
 			<div class="modal-content deletecontacts-content">
 
 				<div class="modal-body deletecontacts-body">
-					Do you want to really want Block <br /> selected contact
+					Do you really want to {{this.isBlocked==1 ? 'unblock':'block'}} <br /> selected contact
 				</div>
 				<div class="deletefile d-flex" *ngFor="let items of customerData ">
 					<button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
 					<button type="button" class="btn99 btn-primary" data-bs-dismiss="modal"
-						(click)="blockContactByID(items)">Yes, Block</button>
+						(click)="blockContactByID(items)">Yes, {{this.isBlocked==1 ? 'Unblock':'Block'}}</button>
 				</div>
 			</div>
 		</div>
@@ -577,6 +578,9 @@
 				<div class="row_inline d-flex align-items-center">
 					<input class="form-control-checkbox" type="checkbox" id="Opted-in" [checked]="OptInStatus=='Yes'" (click)="updateOptedIn($event)" />
 					<span>Message Opt-In</span>
+					      <span class="px-2 opt-In-Info"><img src="../../../../assets/img/info-icon.png" (click)="toggleInfoIcon()">
+							<p *ngIf="showInfoIcon">Opt-In/Opt-Out indicates if your contacts want <br>to receive promotional messages or not.</p>
+					      </span>
 				</div>
 			</div>
 

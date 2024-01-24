@@ -76,12 +76,12 @@
         </div>
     </div>
     </div>
-    <div class="modal fade" tabindex="-1" id="edit-auto-deletion" role="dialog">
+    <div class="modal fade" tabindex="-1" id="edit-auto-deletion" data-bs-backdrop="static" role="dialog">
         <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
             <div class="m-0 modal-content edit-auto-deletion">
                 <div class="align-items-center modal-header">
                     <h5 class="modal-title">Edit Auto-Deletion</h5>
-                    <button type="button" class="close-box" data-bs-dismiss="modal" aria-label="Close">
+                    <button (click)="resetForm()" type="button" class="close-box" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
@@ -161,7 +161,7 @@
             </div>
             <div class="d-flex input-days">
               <input class="message-input" type="text" [(ngModel)]="manually_deletion_days" 
-                     pattern="\d{1,2}" maxlength="2" inputmode="numeric">
+                   maxlength="2">
               <p>Days</p>
             </div>
         </div>
@@ -191,14 +191,17 @@
         </div>
           </div>
           <div class="col-4 show-message"  *ngIf="showMessages" >
-            <div class="displaymessage">{{ messageData?.message_size }}</div>
-           
+            <div *ngIf="!message_type" class="displaymessage">- -</div>
+            <div *ngIf="message_type == 'Text'" class="displaymessage">{{ messageData?.message_count }}</div>
+            <div *ngIf="message_type == 'Media'"  class="displaymessage">{{ mediaData?.mediaCount }}</div>
             <div class="show-messages">
-                <p class="ml-3">No of Messages</p>
+                <p>No of Messages</p>
             </div>
-            <div  class="displaymessage">{{ messageData?.message_count}}</div>
+            <div *ngIf="!message_type" class="displaymessage">- -</div>
+            <div *ngIf="message_type == 'Text'" class="displaymessage">{{ messageData?.message_size }}</div>
+            <div *ngIf="message_type == 'Media'" class="displaymessage">{{ mediaData?.totalSize }} KB</div>
             <div  class="show-messages">
-               <p class="ml-3"> Size of Message</p>
+               <p> Size of Message</p>
             </div>
         </div>
     </div>
@@ -213,7 +216,7 @@
     <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
         <div class="m-0 modal-content delete-modal">
             <div class="modal-body alertmessage">
-             <p>You are about to delete <b>{{ messageData?.message_count}} messages</b>,which will free up<br /> <b>{{ messageData?.message_size }} GB</b> of data for you</p>
+             <p>You are about to delete <b>{{ messageData?.message_count}} messages</b>,which will free up<br /> <b>{{ messageData?.message_size }} KB</b> of data for you</p>
                 <p class="label pb-2"><b>Please</b> confirm to <b>delete</b></p>
                 <div class="delete_group_button d-flex justify-content-center">
                     <button type="button" class="cancel-btn" aria-label="Close"
