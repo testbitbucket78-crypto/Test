@@ -169,6 +169,8 @@ countryCodes = [
     contactId:any = 0;
     OptedIn=false;
     OptInStatus='No';
+    isBlocked:number = 0;
+    showInfoIcon:boolean = false;
     ShowContactOwner:any = false;
     addContactTitle: 'add' | 'edit' = 'add';
 
@@ -579,6 +581,7 @@ saveContact(addcontact:any,addcontacterror:any) {
       if(response.status === 200) {
         this.productForm.reset();
         this.productForm.clearValidators();
+        this.resetForm();
         this.modalService.dismissAll();
         this.closesidenav(this.items);
         this.getContact();
@@ -597,6 +600,7 @@ saveContact(addcontact:any,addcontacterror:any) {
       if (response.status === 200) {
         this.productForm.reset();
         this.productForm.clearValidators();
+        this.resetForm();
         this.modalService.open(addcontact);
         this.getContact();
         this.selectedCountryCode = this.countryCodes[101];
@@ -607,6 +611,7 @@ saveContact(addcontact:any,addcontacterror:any) {
         if (error.status === 409) {
           this.getContact();
           this.productForm.reset();
+          this.resetForm();
           this.productForm.clearValidators();
           this.modalService.open(addcontacterror);
         }
@@ -745,6 +750,8 @@ deletContactByID(data: any) {
       this.productForm.get('displayPhoneNumber')?.setValue(displayPhoneNumber);
       this.selectedCountryCode = country_code;
       this.OptInStatus =data.OptInStatus
+      this.isBlocked=data.isBlocked
+      console.log(this.isBlocked)
     }  
   }
 
@@ -848,5 +855,11 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
           this.filteredCustomFields = filteredFields;
           console.log(this.filteredCustomFields);
   }
+
+  toggleInfoIcon() {
+    this.showInfoIcon = !this.showInfoIcon;
+  }
 }
+
+
 

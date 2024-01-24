@@ -59,10 +59,10 @@ export class DashboardComponent implements OnInit {
                 if (this.dashboard[i].OptInStatus === 'Total Contacts') {
                     this.totalContacts = this.dashboard[i].count;
                 }
-                if (this.dashboard[i].OptInStatus === 'Active Subscribers') {
+                if (this.dashboard[i].OptInStatus === 'Yes') {
                     this.activeContacts = this.dashboard[i].count;
                 }
-                if (this.dashboard[i].OptInStatus === 'Inactive Subscribers') {
+                if (this.dashboard[i].OptInStatus === 'No') {
                     this.inactiveContacts = this.dashboard[i].count;
                 }
             }
@@ -92,16 +92,16 @@ export class DashboardComponent implements OnInit {
 
             this.campaigns = data;
             for (var i = 0; i < this.campaigns.length; i++) {
-                if (this.campaigns[i].STATUS == '0') {
+                if (this.campaigns[i].STATUS == '1') {
                     this.scheduledCampaign = this.campaigns[i].COUNT
                 }
-                if (this.campaigns[i].STATUS == '1') {
+                if (this.campaigns[i].STATUS == '3') {
                     this.completedCampaign = this.campaigns[i].COUNT
                 }
                 if (this.campaigns[i].STATUS == '2') {
                     this.runningCampaign = this.campaigns[i].COUNT
                 }
-                if (this.campaigns[i].STATUS == '3') {
+                if (this.campaigns[i].STATUS == '0') {
                     this.draftCampaign = this.campaigns[i].COUNT
                 }
             }

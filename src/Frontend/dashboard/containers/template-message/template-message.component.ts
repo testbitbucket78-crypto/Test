@@ -25,7 +25,7 @@ export class TemplateMessageComponent implements OnInit {
     Category: any;
     category_id!: number;
     quickreply: any;
-    status: string = 'saved';
+    status: string = 'Draft';
     BodyText: any;
     selectedType: string = 'text';
     selectedPreview: string = '';
@@ -78,12 +78,12 @@ export class TemplateMessageComponent implements OnInit {
         { quickreply1: 'Reply 1', quickreply2: 'Reply 2', quickreply3: 'Reply 3' },
     ];
 
-    statusColors: any = {
+    statusColors:any = {
         Draft: '#E4DFF5',
         Approved: '#E2F4EC',
         Pending: '#EBEDF1',
         Rejected: '#FFD0D0',
-        Available: '#E2F4EC',
+        Saved: '#E2F4EC',
     };
     countryCodes = [
       'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
@@ -318,24 +318,10 @@ export class TemplateMessageComponent implements OnInit {
         this.id = 0;
         this.selectedPreview = '';
         this.characterCounts = {};
-        this.newTemplateForm.get('TemplateName')!.setValue('');
-        this.newTemplateForm.get('Channel')!.setValue('');
-        this.newTemplateForm.get('Category')!.setValue('');
-        this.newTemplateForm.get('Language')!.setValue('');
-        this.newTemplateForm.get('media_type')!.setValue('');
-        this.newTemplateForm.get('Header')!.setValue('');
-        this.newTemplateForm.get('Links')!.setValue('');
-        this.newTemplateForm.get('BodyText')!.setValue('');
         this.BodyText = '';
-        this.newTemplateForm.get('FooterText')!.setValue('');
-        this.newTemplateForm.get('buttonType')!.setValue('');
-        this.newTemplateForm.get('buttonText')!.setValue('');
-        this.newTemplateForm.get('quickreply1')!.setValue('');
-        this.newTemplateForm.get('quickreply2')!.setValue('');
-        this.newTemplateForm.get('quickreply3')!.setValue('');
-        this.newTemplateForm.get('country_code')!.setValue('');
-        this.newTemplateForm.get('phone_number')!.setValue('');
-        this.newTemplateForm.get('displayPhoneNumber')!.setValue('');
+        this.newTemplateForm.reset();
+        this.newTemplateForm.markAsPristine();
+        this.newTemplateForm.markAsUntouched();
     }
 
     addQuickReplyButtons() {
@@ -361,10 +347,18 @@ export class TemplateMessageComponent implements OnInit {
         this.showCampaignDetail = !this.showCampaignDetail;
         if (this.showCampaignDetail) {
             this.templatesMessageData = data;
+            this.status = this.templatesMessageData.status;
+            this.BodyText = this.templatesMessageData.BodyText;
+            this.selectedType= this.templatesMessageData.media_type;
+            this.selectedPreview = this.templatesMessageData.Links;
             this.templatesMessageDataById = data;
             console.log(this.templatesMessageDataById);
         } else {
             this.templatesMessageDataById = null;
+            this.status= 'Saved';
+            this.BodyText='';
+            this.selectedType ='text';
+            this.selectedPreview='';
             this.newTemplateForm.reset();
             this.newTemplateForm.clearValidators();
             console.log(this.templatesMessageDataById);
@@ -379,8 +373,9 @@ export class TemplateMessageComponent implements OnInit {
         });
 
         //get gallery data
-        this.apiService.getTemplateData(this.spid, 2).subscribe(response => {
+        this.apiService.getTemplateData(0, 2).subscribe(response => {
             this.galleryData = response.templates;
+            console.log(this.galleryData)
             this.filteredGalleryData = this.galleryData;
         });
     }
@@ -397,8 +392,32 @@ export class TemplateMessageComponent implements OnInit {
 
     onCategoryChange(event: any) {
         const selectedCategory = this.newTemplateForm.get('Category')?.value;
-        this.Category = selectedCategory.label;
-        this.category_id = selectedCategory.value;
+        this.Category = selectedCategory;
+        if(selectedCategory=='Authentication') {
+            this.category_id = 3
+        }
+        else if(selectedCategory=='Marketing') {
+            this.category_id = 1
+        }
+        else if(selectedCategory=='Utility') {
+            this.category_id = 2
+        }
+    }
+
+    saveTemplateNextStep() {
+      const TemplateName = this.newTemplateForm.get('TemplateName')?.value;
+      const Channel =  this.newTemplateForm.get('Channel')?.value;
+      const Category =  this.newTemplateForm.get('Category')?.value;
+      const Language = this.newTemplateForm.get('Language')?.value;
+
+    if(TemplateName && Channel && Category && Language) {
+        $('#newTemplateMessage').modal('show');
+        $('#newTemplateMessageFirst').modal('hide');
+        
+     }
+     else {
+        this.showToaster('! Please fill in all the values before proceeding','error');
+     }
     }
 
     saveNewTemplate() {
@@ -416,6 +435,7 @@ export class TemplateMessageComponent implements OnInit {
                             this.showCampaignDetail = false;
                             $('#newTemplateMessage').modal('hide');
                             $('#confirmationModal').modal('hide');
+                            $('#newTemplateMessagePreview').modal('hide');
                             this.getTemplatesData();
                             this.removeFormValues();
                         }
@@ -432,6 +452,7 @@ export class TemplateMessageComponent implements OnInit {
                             this.templatesMessageDataById = null;
                             $('#newTemplateMessage').modal('hide');
                             $('#confirmationModal').modal('hide');
+                            $('#newTemplateMessagePreview').modal('hide');
                             this.getTemplatesData();
                             this.removeFormValues();
                         }
