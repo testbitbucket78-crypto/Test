@@ -603,7 +603,7 @@ sendattachfile(){
 			messageTo:this.selectedInteraction.Phone_number,
 			message_text: this.chatEditor.value || "",
 			Message_id:this.newMessage.value.Message_id,
-			mediaSize:this.messageMeidaFile,
+			mediaSize:this.mediaSize,
 			message_media: this.messageMeidaFile,
 			media_type: this.mediaType,
 			quick_reply_id: '',
@@ -727,9 +727,9 @@ sendattachfile(){
 			let responseData:any = uploadStatus
 			if(responseData.filename){
 				this.messageMeidaFile = responseData.filename
-				this.mediaSize=responseData.mediaSize
+				this.mediaSize=responseData.fileSize
+				console.log(this.mediaSize);
 				this.sendattachfile();
-
 				console.log(this.messageMeidaFile);
 				this.showAttachmenOption=false;
 			}
