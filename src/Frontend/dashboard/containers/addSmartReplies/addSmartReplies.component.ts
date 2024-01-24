@@ -308,7 +308,7 @@ click: any;
 		if (files.length > 0) {
 		  let fileName: any = files[0].name;
 		  let fileExt: string = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
-	  
+		  let spid = this.SPID
 		  if (['pdf', 'jpg', 'jpeg', 'png', 'mp4'].includes(fileExt)) {
 			let mediaType = files[0].type;
 	  
@@ -316,7 +316,7 @@ click: any;
 			data.append('dataFile', files[0], fileName);
 			data.append('mediaType', mediaType);
 	  
-			this.tS.uploadfile(data).subscribe(uploadStatus => {
+			this.tS.uploadfile(data,spid).subscribe(uploadStatus => {
 			  let responseData: any = uploadStatus;
 			  if (responseData.filename) {
 				this.sendattachfile();

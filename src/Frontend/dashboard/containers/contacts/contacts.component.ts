@@ -663,17 +663,24 @@ deletContactByID(data: any) {
     this.closesidenav(this.items);
   }));
 
-
-
 }
 
   blockContactByID(data: any) {
+    if(data.isBlocked==1) {
+      this.isBlocked = 0;
+    }
+    else {
+      this.isBlocked = 1;
+    }
+   let Body =  {
+      customerId:data.customerId,
+      isBlocked:this.isBlocked
+    }
     var SP_ID = sessionStorage.getItem('SP_ID')
-    this.apiService.blockContact(data, SP_ID).subscribe((response => {
+    this.apiService.blockContact(Body, SP_ID).subscribe((response => {
       console.log(response);
-       this.getContact();
+      this.getContact();
       this.closesidenav(this.items);
-
     }));
     
   }
