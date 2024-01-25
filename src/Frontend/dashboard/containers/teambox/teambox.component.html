@@ -248,8 +248,9 @@
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
 										</div>
 										
-										<span class="message_time"
-											*ngIf="message.created_at">{{timeSince(message.created_at)}}
+										<span class="message_time" *ngIf="message.created_at">
+											<p *ngIf="message.media_type" >{{message.mediaSize}}KB</p>
+											{{timeSince(message.created_at)}}
 											<div class="pl-2" *ngIf="message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out'">
 												<div class="doubleee">
 												  <img [src]="tickUpdate(message)" alt="">

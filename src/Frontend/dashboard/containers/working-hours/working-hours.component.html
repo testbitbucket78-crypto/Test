@@ -9,14 +9,18 @@
                 <img src="../../../../assets/img/settings/image.png"><br>
                 <span class="working-hour-heading">Add Working Hours</span>
             </div>
-            <div *ngIf="workingData" class=" modal-body pt-0 px-5"> 
-                <div *ngFor="let item of workingData;let idx=index" class="pt-4">
-                    <div class="working-days">required>{{item?.working_days}}</div>
-                    <div class="working-time">{{item?.start_time}} - {{item?.end_time}}</div>
+            <div *ngIf="workingData" class="modal-body pt-0 px-5">
+                <div class="row pt-4">
+                    <div *ngFor="let item of workingData; let idx=index" class="">
+                        <div class="working-days col-4">{{ item?.working_days }}</div>
+                        <div class="working-time">{{ item?.start_time }} - {{ item?.end_time }}</div>
+                    </div>
                 </div>
             </div>
+
             <div class="text-center pt-3">
-                <button class="working-hour-btn" (click)="manageWorkingHour()" data-bs-toggle="modal" data-bs-target="#workingHourModal">Manage Working
+                <button class="working-hour-btn" (click)="manageWorkingHour()" data-bs-toggle="modal"
+                    data-bs-target="#workingHourModal">Manage Working
                     Hours</button>
             </div>
 
@@ -30,10 +34,11 @@
                 <!-- <img src="../../../../assets/img/settings/drag.svg" /> -->
                 <select class="holiday-dropdown multiselect" [(ngModel)]="selectedYear">
                     <option *ngFor="let item of yearList" [value]="item">{{item}}</option>
-                </select>                
+                </select>
             </div>
             <div class="months-view">
-                <div class="month-card" *ngFor="let item of totalmonths;let idx =index" (click)="createDynamicDate(idx+1)" data-bs-toggle="modal" data-bs-target="#holidayModal">
+                <div class="month-card" *ngFor="let item of totalmonths;let idx =index"
+                    (click)="createDynamicDate(idx+1)" data-bs-toggle="modal" data-bs-target="#holidayModal">
                     <div class=" date-time p-2 px-3">
                         <img src="../../../../assets/img/settings/Edit-icon.svg">&nbsp;{{item}}
                     </div>
@@ -46,7 +51,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
 
     </div>
@@ -71,20 +76,20 @@
                         <ng-multiselect-dropdown class="multiselect dropdown" name="tag" [(ngModel)]="item.day" id="tag"
                             [settings]="dropdownSettings" [data]="daysList" [placeholder]="'Add Days'">
                         </ng-multiselect-dropdown>
-                       
+
 
                     </div>
                     <div class="d-flex">
                         <div class="billing-form-row d-flex flex-column  ">
                             <label for="appt">Start Time</label>
-                            <input type="text" class="input-form" type="time" id="appt" name="appt" min="09:00"   [(ngModel)]="item.startTime"
-                                placeholder="Select start time">
-                               
+                            <input type="text" class="input-form" type="time" id="appt" name="appt" min="09:00"
+                                [(ngModel)]="item.startTime" placeholder="Select start time">
+
                         </div>
                         <div class="billing-form-row d-flex flex-column pl-3 ">
                             <label for="appt">End Time</label>
-                            <input type="text" class="input-form"  type="time" id="appt" name="appt" max="18:00" [(ngModel)]="item.endTime"
-                                placeholder="Select end time">
+                            <input type="text" class="input-form" type="time" id="appt" name="appt" max="18:00"
+                                [(ngModel)]="item.endTime" placeholder="Select end time">
                         </div>
                     </div>
                     <div class="incoming-card">
@@ -118,21 +123,23 @@
             <div class="modal-body px-5 pt-4 ">
                 <span class="month-heading pb-2 pl-4">{{totalmonths[selectedMonth-1]}}, {{selectedYear}}</span>
                 <div class="calender pl-4">
-                <div class="calen d-flex">
-                    <div class="calender-day">Mon</div>
-                    <div class="calender-day">Tue</div>
-                    <div class="calender-day">Wed</div>
-                    <div class="calender-day">Thu</div>
-                    <div class="calender-day">Fri</div>
-                    <div class="calender-day">Sat</div>
-                    <div class="calender-day">Sun</div>
-                </div>
-                <div class="date-grid">
-                    <div *ngFor="let item of monthDates;let idx = index">
-                        <span *ngIf="item?.onlyDate !=0" class="calender-date" [ngClass]="item?.selected ? 'active' : ''" (click)="selectDates(idx)">{{item?.onlyDate}}</span>
+                    <div class="calen d-flex">
+                        <div class="calender-day">Mon</div>
+                        <div class="calender-day">Tue</div>
+                        <div class="calender-day">Wed</div>
+                        <div class="calender-day">Thu</div>
+                        <div class="calender-day">Fri</div>
+                        <div class="calender-day">Sat</div>
+                        <div class="calender-day">Sun</div>
+                    </div>
+                    <div class="date-grid">
+                        <div *ngFor="let item of monthDates;let idx = index">
+                            <span *ngIf="item?.onlyDate !=0" class="calender-date"
+                                [ngClass]="item?.selected ? 'active' : ''"
+                                (click)="selectDates(idx)">{{item?.onlyDate}}</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
             </div>
             <div class="modal-footer">
