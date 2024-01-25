@@ -7,7 +7,7 @@ const cors = require('cors')
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-const middleware = require('./funnelMiddleWare')
+const sendFunnel = require('./sendFunnel')
 
 app.post('/createContactList', async (req, res) => {
     try {
@@ -101,13 +101,13 @@ app.post('/addFunnel', async (req, res) => {
 
 
         created_at = new Date();
-
+console.log(" req.body.segments_contacts" , req.body.segments_contacts)
 
         var inserQuery = "INSERT INTO Funnel (sp_id,title,description,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,start_datetime,end_datetime,csv_contacts,segments_contacts,success,fail,multipleEntry,optIn,new_contact,attribute_update,category_id,timeInterval,allTime,allDays,status) ";
         inserQuery += "VALUES (" + req.body.sp_id + ",'" + req.body.title + "','" + req.body.description + "','" + req.body.channel_id + "','" + req.body.message_heading + "','" + req.body.message_content + "','" + req.body.message_media + "','" + req.body.message_variables + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.category + "','" + req.body.start_datetime + "','" + req.body.end_datetime + "','" + req.body.csv_contacts + "','" + req.body.segments_contacts + "','" + req.body.success + "','" + req.body.fail + "','" + req.body.multipleEntry + "','" + req.body.optIn + "','" + req.body.new_contact + "','" + req.body.attribute_update + "','" + req.body.category_id + "','" + req.body.timeInterval + "','" + req.body.allTime + "','" + req.body.allDays + "','" + req.body.status + "')";
         let addedfunnel = await db.excuteQuery(inserQuery, [])
 
-        saveMessagesAndDays(req.body.sp_id, addedfunnel.insertId, req.body.messages)
+        saveMessagesAndDays(req.body.sp_id, addedfunnel.insertId, req.body.messages, req.body.segments_contacts, req.body.csv_contacts)
 
 
         res.send({
@@ -206,7 +206,7 @@ app.post('/enableFunnel', async (req, res) => {
     }
 })
 
-async function saveMessagesAndDays(sp_id, fnlId, messages) {
+async function saveMessagesAndDays(sp_id, fnlId, messages, segments_contacts, csv_contacts) {
     try {
         let messageId;
         let messageResult;
@@ -227,9 +227,65 @@ async function saveMessagesAndDays(sp_id, fnlId, messages) {
                     [[[sp_id, day, messageId, fnlId, new Date(), message.scheduled_min]]]
                 );
             }
+console.log("++++++++++++++++++++++++++++++++")
+           
         }
+        console.log(segments_contacts,"________________________")
+        let response = await extractPhoneNo(sp_id, segments_contacts, csv_contacts)
     } catch (err) {
         console.log(err)
+    }
+}
+
+
+async function extractPhoneNo(sp_id, segments_contacts, csv_contacts) {
+    if (segments_contacts && segments_contacts.length > 0) {
+        try {
+           
+            // Assuming that db.executeQuery returns a promise
+            let customerInfo = await db.excuteQuery(
+                `SELECT customerId, Phone_number, OptInStatus FROM EndCustomer WHERE customerId IN (${JSON.parse(segments_contacts)})`,
+                []
+            );
+            console.log(`SELECT customerId, Phone_number, OptInStatus FROM EndCustomer WHERE customerId IN (${JSON.parse(segments_contacts)})`)
+            console.log(customerInfo)
+            // Extract information from the result
+            for (let i = 0; i < customerInfo.length; i++) {
+                sendFunnel.ScheduledFunnels(
+                    sp_id,
+                    customerInfo[i].Phone_number,
+                    customerInfo[i].OptInStatus,
+                    new Date(),
+                    new Date(),
+                    1,
+                );
+            }
+
+            // Assuming you have some variables like sp_id, etc.
+
+        } catch (error) {
+            // Handle database query error
+            console.error('Error querying database:', error);
+        }
+    } else if (csv_contacts && csv_contacts.length > 0) {
+    
+let data = JSON.parse(csv_contacts)
+console.log(data.length)
+        if (Array.isArray(data)) {
+
+            // Using forEach method
+            data.forEach(item => {
+                // Access individual properties of each object here
+                sendFunnel.ScheduledFunnels(
+                    sp_id,
+                    item.Contacts_Column,
+                    item.OptInStatus,
+                    new Date(),
+                    new Date(),
+                    1,
+                );
+            });
+        }
     }
 }
 
@@ -556,58 +612,7 @@ async function infoOfUpdatedContact(contactList) {
     }
 }
 
-// async function isScheduledTime(contactArray) {
-//     try {
 
-//         let daysQuery = 'select day from FunnelDays where  FunnelId=1 and Message_id=17 and isDeleted !=1 and sp_id=3'
-//         let scheduledDays = await db.excuteQuery(daysQuery, []);
-//         console.log(scheduledDays)
-//         // Extract values of the 'day' property and store in a new array
-//         const extractedDays = scheduledDays.map(row => row.day);
-
-//         console.log(extractedDays);
-
-//         console.log(areWorkingDays(extractedDays))
-//         let messageQuery = 'select scheduled_min from FunnelMessages where  FunnelId=1 and Message_id=18 and isDeleted !=1 and sp_id=3';
-//         let scheduledTime = await db.excuteQuery(messageQuery, []);
-
-//         for (let i = 0; i < contactArray.length; i++) {
-//             let query = 'Select  created_at from EndCustomer where Phone_number =? and isDeleted != 1 and SP_ID=3'
-//             let createdTime = await db.excuteQuery(query, [contactArray[i]]);
-
-
-//             // Assuming createdTime is an array with a property scheduled_min
-//             const scheduledMinutes = parseInt(scheduledTime[0]?.scheduled_min, 10); // Parse the string to an integer
-
-//             // Assuming Message is an array with a property created_at
-//             const messageCreatedAtString = createdTime[0]?.created_at;
-
-//             // Convert the string to a Date object
-//             const messageCreatedAt = new Date(messageCreatedAtString);
-
-//             // Find the next time (e.g., scheduledMinutes minutes later)
-//             const nextTime = new Date(messageCreatedAt.getTime() + 1450 * 60 * 1000); // Add scheduledMinutes minutes in milliseconds
-
-//             // Get the timestamp of the next time
-//             const nextTimestamp = nextTime.getTime();
-
-//             console.log(nextTimestamp <= new Date(), i, new Date(nextTimestamp));
-//         }
-//     } catch (err) {
-//         console.log(err);
-//     }
-// }
-
-// function areWorkingDays(days) {
-//     // Assuming 'days' is an array of strings, e.g., ['Monday', 'Tuesday', 'Wednesday']
-//     const workingDays = ['Sunday','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-  
-//     // Convert the input days to lowercase for case-insensitive comparison
-//     const normalizedDays = days.map(day => day.toLowerCase());
-  
-//     // Check if all normalized days are in the array of working days
-//     return normalizedDays.every(day => workingDays.includes(day));
-//   }
 
 app.listen(3011, function () {
     console.log("Node is running");

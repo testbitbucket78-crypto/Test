@@ -13,6 +13,7 @@ const { Key } = require("protractor");
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+const funnel = require('../Funnel/sendFunnel.js')
 
 app.get('/columns/:spid', async (req, res) => {
   try {
@@ -40,6 +41,9 @@ app.post('/addCustomContact', async (req, res) => {
   console.log(data)
   let insertQuery = 'INSERT INTO EndCustomer (';
   let values = [];
+  let spid;
+  let phoneNo;
+  let OptInStatus;
   // Iterate through the data array and add column names to the query
   data.forEach((item, index) => {
     insertQuery += `${item.ActuallName}`;
@@ -65,7 +69,6 @@ app.post('/addCustomContact', async (req, res) => {
       values.push(joinList);
 
     }
-
     else {
       console.log("else")
       values.push(item.displayName)
@@ -73,6 +76,17 @@ app.post('/addCustomContact', async (req, res) => {
     if (index < data.length - 1) {
       insertQuery += ', ';
     }
+  
+    if (item.ActuallName == 'Phone_number'){
+      phoneNo = item.displayName;
+    }
+    if (item.ActuallName == 'OptInStatus'){
+      OptInStatus = item.displayName;
+    }
+    if (item.ActuallName == 'SP_ID'){
+      spid = item.displayName;
+    }
+    
   });
 
   insertQuery += ' ) VALUES (';
@@ -89,6 +103,7 @@ app.post('/addCustomContact', async (req, res) => {
   console.log(values)
   console.log(insertQuery);
   let result=await db.excuteQuery(insertQuery,values)
+ let funnelsave=await funnel.ScheduledFunnels(spid, phoneNo, OptInStatus, new Date(), new Date(),0);
   res.send({ status: 200, result: result});
 }catch(err){
   res.send({ status: 500, "err": err });
@@ -102,6 +117,8 @@ app.post('/editCustomContact', async (req, res) => {
     let query = val.neweditContact;
     let data = req.body.result
     let values = [];
+    let phoneNo;
+    let OptInStatus;
     // Iterate through the data array and add column names to the query
     data.forEach((item, index) => {
       query += `${item.ActuallName} =?`;
@@ -124,6 +141,13 @@ app.post('/editCustomContact', async (req, res) => {
       if (index < data.length - 1) {
         query += ', ';
       }
+
+      if (item.ActuallName == 'Phone_number'){
+        phoneNo = item.displayName;
+      }
+      if (item.ActuallName == 'OptInStatus'){
+        OptInStatus = item.displayName;
+      }
     });
 
     query += ' WHERE customerId = ? and SP_ID=?'
@@ -132,6 +156,7 @@ app.post('/editCustomContact', async (req, res) => {
     console.log(values);
     console.log(query);
     let result = await db.excuteQuery(query, values)
+    funnel.ScheduledFunnels(spid, phoneNo, OptInStatus, new Date(), new Date(),0);
     res.send({ status: 200, result: result })
   } catch (err) {
     console.log(err);
