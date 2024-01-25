@@ -88,7 +88,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 // handle single file upload
-router.post('/uploadfile/',upload.single('dataFile'), async (req, res)=> {
+router.post('/uploadfile/:spid',upload.single('dataFile'), async (req, res)=> {
    try{   
 const file = req.file;
 
@@ -101,7 +101,8 @@ console.log(url)
 
 const uuidv = uuidv4()
 
- let awsres = await awsHelper.uploadAttachment(`${req.body.spid}/${uuidv}/${file.filename}`, url,file.media_type)  
+let awsres = await awsHelper.uploadAttachment(`${req.params.spid}/${uuidv}/${file.filename}`, url,file.media_type)
+ 
 
 console.log("awsres" ,awsres.size)
 //console.log(awsres.value.Location)

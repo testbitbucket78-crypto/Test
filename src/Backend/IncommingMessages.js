@@ -64,9 +64,9 @@ async function matchSmartReplies(message_text, sid) {
     let id = allSmartReplies[i].ID
     //console.log(storedValue)
     // console.log(storedValue =='contains' || storedValue == 'Fuzzy Matching' || storedValue=='Exact matching')
-   
+
     if (storedValue == 'contains') {
-    
+
       sreplyQuery = `SELECT DISTINCT  t2.* 
  FROM SmartReply t1
 JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
@@ -75,7 +75,7 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
 
       reply = await db.excuteQuery(sreplyQuery, [[message_text], sid, id]);
 
-    
+
       if (reply.length > 0) {
         // console.log(allSmartReplies.length, "break contains i ==", i)
         // console.log(" reply abc")
@@ -84,14 +84,14 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
       // break;
 
     } else if (storedValue == 'Fuzzy matching') {
-    //  console.log("Fuzzy Matching");
+      //  console.log("Fuzzy Matching");
       let FuzzyQuery = `SELECT t2.* 
       FROM SmartReply t1 JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
       JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
       WHERE  SOUNDEX(t3.Keyword) = SOUNDEX(?)
       AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0)`
       reply = await db.excuteQuery(FuzzyQuery, [[message_text], sid, id]);
-     // console.log(reply)
+      // console.log(reply)
       if (reply.length > 0) {
 
         break;
@@ -100,7 +100,7 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
       //break;
 
     } else if (storedValue == 'Exact matching') {
-    //  console.log("exact match")
+      //  console.log("exact match")
       let exactQuery = `SELECT t2.* 
       FROM SmartReply t1
      JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
@@ -181,15 +181,15 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         var value = message.Value;
         var testMessage = message.Message;                  // Assuming the 'Message' property contains the message content
         var actionId = message.ActionID;                 // Assuming the 'ActionID' property contains the action ID
-       // console.log("actionId", actionId)
+        // console.log("actionId", actionId)
         let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
 
         // Parse the message template to get placeholders
         const placeholders = parseMessageTemplate(testMessage);
         if (placeholders.length > 0) {
-         // Construct a dynamic SQL query based on the placeholders
+          // Construct a dynamic SQL query based on the placeholders
           const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=${custid}`;
-           let results = await db.excuteQuery(sqlQuery, []);
+          let results = await db.excuteQuery(sqlQuery, []);
           const data = results[0];
           placeholders.forEach(placeholder => {
             testMessage = testMessage.replace(`{{${placeholder}}}`, data[placeholder]);
@@ -242,7 +242,9 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         setTimeout(function () {
           // console.log(message.content ,i); //  your code here 
           var message = messageToSend[i - 1]
-          messageThroughselectedchannel(message.sid, message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType, message.agentId, message.interactionId);
+          if (message.content?.length) {
+            messageThroughselectedchannel(message.sid, message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType, message.agentId, message.interactionId);
+          }
           i++;
           if (i <= (messageToSend.length)) {
             myLoop(i);   //  decrement i and call myLoop again if i > 0
@@ -319,14 +321,14 @@ async function assignAction(value, agid, newId) {
 
 
 async function addTag(value, sid, custid) {
-//  console.log(`Performing action 2 for Add Contact Tag: ${value}`);
+  //  console.log(`Performing action 2 for Add Contact Tag: ${value}`);
   var addConRes = await db.excuteQuery(addTagQuery, [value, custid, sid])
   // console.log(addConRes)
 }
 
 
 async function removeTag(value, custid) {
-//  console.log(`Performing action 3 for Remove Contact Tag: ${value}`);
+  //  console.log(`Performing action 3 for Remove Contact Tag: ${value}`);
   var maptag = value;
   var maptagItems = maptag.split(',')
   // console.log("maptag " + maptag)
@@ -336,7 +338,7 @@ async function removeTag(value, custid) {
   if (result.length > 0) {
 
     const tagValue = result[0].tag
-   // console.log("tagValue" + tagValue)
+    // console.log("tagValue" + tagValue)
     if (tagValue != ' ' && tagValue != null) {
       // Split the tag value into an array of tag items
       const tagItems = tagValue.split(',');
@@ -391,13 +393,13 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
     let result = '';
 
     var outOfOfficeMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Out of Office']);
-   // console.log(outOfOfficeMessage)
+    // console.log(outOfOfficeMessage)
     if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
-     // console.log("outOfOfficeMessage Is_disable")
+      // console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 2])
-    //  console.log(messageInterval.length)
+      //  console.log(messageInterval.length)
       if (messageInterval.length <= 0) {
-       // console.log("messageInterval")
+        // console.log("messageInterval")
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
         result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType)
         let updateSmsRes = await db.excuteQuery(updateSms, [2, new Date(), msg_id]);
@@ -417,10 +419,10 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
   var workingData = await db.excuteQuery(workingHourQuery, [sid]);
   if ((isWorkingTime(workingData, currentTime))) {
     AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType);
-   // console.log('It is currently  within working hours.' + msg_id);
+    // console.log('It is currently  within working hours.' + msg_id);
     return true;
   }
- // console.log('It is currently not within working hours.');
+  // console.log('It is currently not within working hours.');
   return false;
 }
 
@@ -429,21 +431,21 @@ function isWorkingTime(data, currentTime) {
   //console.log(data)
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   const currentTimeStr = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
- // console.log(currentDay)
+  // console.log(currentDay)
   const time = new Date()
 
   for (const item of data) {
     const workingDays = item.working_days.split(',');
     const date = new Date().getHours();
     const getMin = new Date().getMinutes();
-   // console.log(date + " :::::::" + getMin)
+    // console.log(date + " :::::::" + getMin)
 
     const startTime = item.start_time.split(':');
     const endTime = item.end_time.split(':');
-   // console.log(startTime + " " + endTime + workingDays.includes(currentDay))
-   // console.log(endTime[0] + " " + date + endTime[1] + "| " + getMin)
+    // console.log(startTime + " " + endTime + workingDays.includes(currentDay))
+    // console.log(endTime[0] + " " + date + endTime[1] + "| " + getMin)
     if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
-     // console.log("data===========")
+      // console.log("data===========")
       return true;
     }
 

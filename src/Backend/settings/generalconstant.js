@@ -17,7 +17,7 @@ const region = 'ap-south-1'
 
 defaultactiondetails = 'select * from defaultActions where spid=?'
 updatedefaultactionDetails = 'UPDATE defaultActions SET isAgentActive=?,agentActiveTime=?,isAutoReply=?,autoReplyTime=?,isAutoReplyDisable=?,isContactAdd=?,pausedTill=?,updated_at=? Where spid=?'
-defaultinsertDetails = 'INSERT INTO defaultActions(spid, isAgentActive,agentActiveTime,isAutoReply,autoReplyTime,isAutoReplyDisable,isContactAdd,pausedTill=?,created_at) VALUES ?'
+defaultinsertDetails = 'INSERT INTO defaultActions(spid, isAgentActive,agentActiveTime,isAutoReply,autoReplyTime,isAutoReplyDisable,isContactAdd,pausedTill,created_at) VALUES ?'
 
 // default messages
 getenabledisable = 'select * from defaultmessages where SP_ID=?'

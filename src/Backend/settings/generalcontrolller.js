@@ -198,38 +198,46 @@ const addAndUpdateDefaultMsg = async (req, res) => {
         message_type = req.body.message_type
         link = req.body.link
         updated_at = new Date()
+        let image = "";
+        image = link
+        if (link != null && link != undefined && link != "" && link != " " && message_type == 'image') {
+            // Remove header
+            let streamSplit = link.split(';base64,');
+            let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
+            let datapart = streamSplit.pop();// this is dependent on the POP above
 
-        // Remove header
-        let streamSplit = link.split(';base64,');
-        let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
-        let datapart = streamSplit.pop();// this is dependent on the POP above
+            let imgType = datapart.split('/').pop();
+            let imageName = 'DefaultMessage.png';//Default it to png.
+            if (imgType) {
+                imageName = 'DefaultMessage' + '.' + imgType;
+            }
+            let awsres = "";
+            const timestamp = Date.now();
+            const randomNumber = Math.floor(Math.random() * 10000);
+            if (message_type == 'image') {
+                console.log("image")
+                awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + timestamp + "_" + randomNumber + "/" + imageName, link)
+                image = awsres.value.Location
+                console.log(awsres.value.Location)
+            }
+            if (message_type == 'video') {
+                console.log("video")
+                awsres = await awsHelper.uploadVideoToAws(spid + "/" + uid + "/" + timestamp + "_" + randomNumber + "/" + imageName, link)
+                image = awsres.value.Location
+                console.log(awsres.value.Location)
 
-        let imgType = datapart.split('/').pop();
-        let imageName = 'DefaultMessage.png';//Default it to png.
-        if (imgType) {
-            imageName = 'DefaultMessage' + '.' + imgType;
-        }
-        let awsres = "";
-        if (message_type == 'image') {
-            console.log("image")
-            awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + imageName, link)
-            console.log(awsres.value.Location)
-        }
-        if (message_type == 'video') {
-            console.log("video")
-            awsres = await awsHelper.uploadVideoToAws(spid + "/" + uid + "/" + imageName, link)
-            console.log(awsres.value.Location)
+            }
         }
         if (uid != 0) {
             let userimgquery = `UPDATE defaultmessages set SP_ID=?, title=?, description=?, message_type=?, value=?, link=?,override=?,autoreply=?,Is_disable=?,isDeleted=?,updated_at=? where uid =?`;
-            let result = await db.excuteQuery(userimgquery, [spid, title, description, message_type, value, awsres.value.Location, override, autoreply, Is_disable, '0', updated_at, uid]);
+            let result = await db.excuteQuery(userimgquery, [spid, title, description, message_type, value, image, override, autoreply, Is_disable, '0', updated_at, uid]);
             console.log(result);
             res.status(200).send({
                 status: 200,
                 msg: 'Message Updated'
             })
         } else {
-            let addMsgValues = [[spid, title, description, message_type, value, awsres.value.Location, override, autoreply, Is_disable, '0', updated_at]]
+            let addMsgValues = [[spid, title, description, message_type, value, image, override, autoreply, Is_disable, '0', updated_at]]
             let addMessage = await db.excuteQuery(val.addDefaultMsg, [addMsgValues])
             res.status(200).send({
                 status: 200,
@@ -429,7 +437,7 @@ const getautodeletion = async (req, res) => {
 
 const manualDelation = async (req, res) => {
     try {
-      
+
         SPID = req.body.SPID
         manually_deletion_days = req.body.manually_deletion_days
         message_type = req.body.message_type
@@ -442,10 +450,10 @@ const manualDelation = async (req, res) => {
 
 
         const result = subtractDaysFromNow(manually_deletion_days);
-     
+
         if (message_type == 'Text') {
             var messageSize = await db.excuteQuery(val.deleteText, [new Date(), SPID, result])
-           
+
         } else if (message_type == 'Media') {
             // console.log(Media)
             let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
@@ -455,7 +463,7 @@ const manualDelation = async (req, res) => {
 
         let insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, manually_deletion_days, message_type,created_at) VALUES ?';
         let addManualData = await db.excuteQuery(insertmanagestorage, [[[SPID, '', '', '', manually_deletion_days, message_type, new Date()]]]);
-   
+
 
         res.status(200).send({
             msg: 'messages deleted successfully !',
@@ -471,8 +479,8 @@ const manualDelation = async (req, res) => {
 
 const deletedDetails = async (req, res) => {
     try {
-      
-      
+
+
         SPID = req.body.SPID
         manually_deletion_days = req.body.Manually_deletion_days
         message_type = req.body.message_type
@@ -482,15 +490,15 @@ const deletedDetails = async (req, res) => {
         }
 
         const result = subtractDaysFromNow(manually_deletion_days);
-     
+
         let messageSize = '';
         if (message_type == 'Text') {
             messageSize = await db.excuteQuery(val.messageSizeQuery, [SPID, result])
-         
+
         } else if (message_type == 'Media') {
-            
+
             messageSize = await awsHelper.getStorageUtilization(SPID, manually_deletion_days)
-          
+
         }
 
 
