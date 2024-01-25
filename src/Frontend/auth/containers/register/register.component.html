@@ -80,17 +80,19 @@
               </div>
               <div class="form-group row">
                 <div class=""></div>
-                <div class="form-group  custom-control custom-checkbox">
-                  <input type="checkbox" (change)="onCheckboxChange($event.target.checked)" class="checkbox1">
-                  <div class="accept">
-                   <p>I accept the</p> <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> </div>
+                <div class="custom-control custom-checkbox">
+                  <input class="custom-control-input" type="checkbox" id="custom-control-input1" (change)="onCheckboxChange($event.target.checked)">
+                  <label class="custom-control-label" for="custom-control-input1">
+                   I accept the <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> 
+                  </label>
                   </div>
                  
-                <div class="checkbox2  " id="chbo">
-                  <input class="checkbox2" type="checkbox" value="" id="defaultCheck1">
-                  <div class="accept1">
-                  <label class="label1" for="rememberPasswordCheck">Remember Me</label>
+                <div class="checkbox2" id="chbo">
+                  <div class="custom-control custom-checkbox">
+                  <input class="custom-control-input" type="checkbox" id="custom-control-input2">
+                  <label class="custom-control-label" for="custom-control-input2">Remember Me</label>
                 </div>
+              
             
                 </div>
               </div>

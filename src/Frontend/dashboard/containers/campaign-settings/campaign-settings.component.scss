@@ -101,7 +101,7 @@ p{
 
    .working-hour-modal{
     width: 650px;
-    height: 712px;
+    height: 644px;
     border-radius: 26px;
     overflow-y: scroll;
    }
@@ -366,3 +366,31 @@ label.container {
   font-family: 'Manrope';
   font-weight: 600;
 }
+.specific{
+	position: absolute;
+  top: -7.7rem;
+  right: -11.2rem;
+    width: 280px;
+    height: auto;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 30px;
+    opacity: 1;
+    overflow: auto;
+    cursor: pointer;
+}
+.p-body{
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 10%;
+  color: #7a86a1;
+  padding: 10%;
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+  }

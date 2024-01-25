@@ -33,7 +33,8 @@ export class ManageStorageComponent implements OnInit {
   sizeOfMessage: string = '';
   message_size:any;
   message_count:any;
-  messageData: any = null;
+  messageData:any;
+  mediaData:any;
 
   errorMessage = '';
 	successMessage = '';
@@ -60,6 +61,10 @@ export class ManageStorageComponent implements OnInit {
     this.toggleSelection('option2', 'optionradio2');
     this.toggleSelection('option3', 'optionradio3');
 
+  }
+
+  resetForm() {
+    this.editAutoDeletionForm.reset();
   }
   
 
@@ -173,14 +178,17 @@ export class ManageStorageComponent implements OnInit {
   		$("#Delete-Manually").modal('show');
 
   }
-  deletemodal(){
-    if(this.manually_deletion_days && this.textChecked || this.mediaChecked ){
+  deletemodal() {
+    if (this.manually_deletion_days && this.textChecked) {
       $("#messagedeleteModal").modal('show');
       $("#Delete-Manually").modal('hide');
-    }else{
-			this.showToaster("Please fill input and check the checkbox", "error");
+    } else if (this.manually_deletion_days && this.mediaChecked) {
+      $("#messagedeleteModal").modal('show');
+      $("#Delete-Manually").modal('hide');    } else {
+      this.showToaster("Please fill input and check the checkbox", "error");
     }
   }
+  
   postmanualDelation(){
     let manualdeletedata={
       SPID:this.spid,
@@ -205,6 +213,8 @@ export class ManageStorageComponent implements OnInit {
     this.apiService.getmanualDelation(showdeletedata).subscribe(response => {
       this.showMessages = true; // Show the messages section
       this.messageData = response.messageSize[0];
+      this.mediaData = response.messageSize;
+      console.log(this.mediaData)
     })
   }
   updateMessageType() {
@@ -212,3 +222,4 @@ export class ManageStorageComponent implements OnInit {
   }
 
 }
+

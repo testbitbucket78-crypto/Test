@@ -8,7 +8,9 @@
 			<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
 			<p *ngIf="successMessage" class="success">{{successMessage}}</p>
 			<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+			<p *ngIf="showErrorMessage" class="error">Please select a future date</p>
 		</div>
+	
 
 		<div class="header campaigns_section">
 	
@@ -30,12 +32,18 @@
 		</div>
 
 		<div class="campaigns_section">
-			<p class="campaigns_content_heading"><img src="assets/img/teambox/instraction@2x.png"> <span>Messaging limit:</span> 1000 messages/24 hours</p>
+			<p class="campaigns_content_heading"><img src="../../../../assets/img/info-icon.png" (click)=" toggleContactOption()">
+				
+				</p>
+				 <div *ngIf="ShowContactOwner" class=" ContactOption" (click)="stopPropagation($event)">
+				<p><span>Messaging limit:</span>WhatsApp enforces a policy limiting business to 1,000 messages per 24-hour period to prevent spam and maintain a quality user experience. However there is no cap on receiving messages from users.</p>
+				</div>
 			<div *ngIf="allCampaign.length>0" class="campaigns_section_items" >
 				<div *ngFor="let campaign of allCampaign ;let i = index" class="campaigns_section_item {{campaign.status_label}}" (click)="toggleCampaign(campaign)">
 					<div class="campaigns_section_item_header">
 						<label>{{campaign.status_label}}</label>
 						<span>id: {{campaign.Id}}</span>
+						
 					</div>
 					<p class="title">{{campaign.title}}</p>
 					<p class="start_time">Start time <span>{{campaign.start_datetime_formated}}</span></p>
@@ -51,6 +59,7 @@
 						</div>
 					</div>
 				</div>
+			
 
 				
 				
@@ -129,9 +138,9 @@
 
 					<!--If running end-->
 					
-					<p class="sub_title_sm mb-1" ><img *ngIf="selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,2)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Traget Audience</p>
+					<p class="sub_title_sm mb-1" ><img *ngIf="selectedCampaign.status==1" (click)="editCampaign(addNewCampaign,2)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Traget Audience</p>
 					<p>{{selectedCampaign.AllContactsLength}} <span>( {{selectedCampaign.AudienceType}})</span></p>
-					<p class="sub_title_sm" ><img *ngIf="selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,3.1)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Message</p>
+					<p class="sub_title_sm" ><img *ngIf="selectedCampaign.status==1" (click)="editCampaign(addNewCampaign,3.1)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Message</p>
 					<p class="sub_title_sm blackcolor mb-1">Category</p>
 					<p>{{selectedCampaign.category_label}}</p>
 					<div class="template">
@@ -157,12 +166,12 @@
 						<div class="btn_group" *ngFor='let variable of selectedCampaign.allVariables ;let i = index' >
 							<input type="text" value={{variable.label}} /> {{variable.value}}
 						</div>
-
+<!-- 
 						<p class="sub_title_sm blackcolor mt-2 mb-2">Button Payload</p>
 						
 						<div class="btn_group"><input type="text" value="YES" /> {{selectedCampaign.button_yes}}</div>
 						<div class="btn_group"><input type="text" value="No" /> {{selectedCampaign.button_no}}</div>
-						<div class="btn_group"><input type="text" value="EXPLORE" /> {{selectedCampaign.button_exp}}</div>
+						<div class="btn_group"><input type="text" value="EXPLORE" /> {{selectedCampaign.button_exp}}</div> -->
 					</div>
 					
 					
@@ -292,7 +301,7 @@
 				</div>
 			</div>
 			<div [ngClass]="activeStep ==2 ? 'addeidtcampaign_step active' : 'addeidtcampaign_step'">
-				<p><span>Select a method to proceed next to add an audience</span></p>
+				<p><span>You have the option to add a contact attribute (If used Segment Audience)<br> or map a column (If uploaded CSV) that consists of images corresponding to each contact. <br> This allows personalized images to be sent to users.</span></p>
 				<div class="outerbox" >
 						<div [ngClass]="step2Option =='AddSegmentAudience' ? 'innerbox active' : 'innerbox'" >
 							<img class="icon ml" src="assets/img/campaign/add-segment.svg">
@@ -330,21 +339,50 @@
 						</div>
 					</div>
 					<div class="section_filter">
-						<label class="container">
+						<label class="container market">
 							<input checked type="checkbox" name="template_filter" value="Marketing" (click)="filterTemplate($event)">
 							<span class="checkmark"></span>
-							<p><span>Marketing</span></p>
+
 						</label>
-						<label class="container">
+						<p><span>Marketing </span></p> 
+						<div class="Info-Tooltip"><img class="filter-M" src="../../../../assets/img/info-icon.png"(click)="Marketinginfo()"></div>
+						
+						<div  *ngIf="Marketing" class="marketInfo">
+							<p id="p-body">
+								Marketing templates are used to send promotional offers, product announcements, and other messages that are designed to increase awareness and engagement.
+							</p>
+							<button id="radio-close-btn" (click)="Marketing=false">X</button>
+						  </div>
+						  <div *ngIf="Marketing" class="overlay" (click)="closeUtility()"  (click)="stopPropagation($event)"></div>
+						<label class="container market">
 							<input checked type="checkbox" name="template_filter" value="Utility" (click)="filterTemplate($event)">
 							<span class="checkmark"></span>
-							<p><span>Utility</span></p>
 						</label>
-						<label class="container">
+							<p><span>Utility</span></p> 
+							<div class="Info-Tooltip"><img  class="filter-M" src="../../../../assets/img/info-icon.png"(click)="Utilityinfo()"></div>
+							
+							<div  *ngIf="Utility" class="utilityInfo" (click)="stopPropagation($event)">
+								<p id="p-body">
+									Utility templates are used to share important information related to a specific, agreed-upon transaction, such as confirming a purchase, suspending a subscription, or changing a delivery address, etc.
+								</p>
+								<button id="radio-close-btn" (click)="Utility=false">X</button>
+							  </div>
+							  <div *ngIf="Utility" class="overlay" (click)="closeUtility()"></div>
+						
+						<label class="container market">
 							<input checked type="checkbox" name="template_filter" value="Authentication" (click)="filterTemplate($event)">
-							<span class="checkmark"></span>
-							<p><span>Authentication</span></p>
+							<span class="checkmark"></span>							
 						</label>
+						<p><span>Authentication  </span></p>
+						<div class="Info-Tooltip"><img  class="filter-M" src="../../../../assets/img/info-icon.png"(click)="Authenticationinfo()"></div>
+						
+							<div  *ngIf="Authentication" class="AuthInfo"  (click)="stopPropagation($event)">
+								<p id="p-body">
+									Authentication templates are used to send one-time passcodes (OTPs) or other codes that allow users to securely access their accounts.
+								</p>
+								<button id="radio-close-btn" (click)="Authentication=false">X</button>
+							  </div>
+							  <div *ngIf="Authentication" class="overlay" (click)="closeUtility()"></div>
                     
 					</div>
 					<div class="template_list">
@@ -412,17 +450,22 @@
 						</div>
 						
 						<div class="template_details_section_right">
-							<p class="mt-2">Variable value<img class="icon sm" src="/assets/img/campaign/Info.svg"> </p>
+							<p class="mt-2">Variable value<img class="icon sm" src="/assets/img/campaign/Info.svg" (click)="tip()"> </p>
+							<div  *ngIf="vartip" class="showInfoFallback">
+								<p id="p-body">You can input variable values or choose contact attributes that will be used to send personalized messages to users, reflecting their specific contact details instead of generic variables.
+								</p>
+								<button id="radio-close-btn" (click)="tip">X</button>
+							  </div>
 							
 							<div class="form_row" *ngFor='let variable of selectedTemplate.allVariables ;let i = index' >
 								<label>{{variable.label}} </label>
 								<div>
 									<p class="form-control" *ngIf="segmentsContactList.length>0">
-										<input type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or add attribute">
+										<input type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or map">
 										<span  class="toggle_attribute" (click)="openAttributeOption(variable,AttributeOption)"></span>
 									</p>
 									<p class="form-control" *ngIf="csvContactList.length>0" >
-										<input type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or add attribute">
+										<input type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or map">
 										<span class="map_attribute" (click)="openMapOption(variable)">Map</span>
 									</p>
 
@@ -550,10 +593,13 @@
 									</div>
 								</div>
 								
-								<div class="formrow">
+							
+								  
+								  <div class="formrow">
 									<p>Schedule Date</p>
 									<input (change)="selectScheduleDate($event)" type="date" class="form-control btn white_bg" value={{selecteScheduleDate}}>
-								</div>
+								  </div>
+								  
 
 								<div class="formrow">
 									<p>Schedule Time</p>
@@ -563,7 +609,18 @@
 						</div>
 						<div class="bottom_section">
 							<p class="form-control" (click)="TestCampaign(TestCampaignModal)">Test Campaign</p>
+							<div>
+							<img src="../../../../assets/img/info-icon.png" (click)="testinfo()">
 						</div>
+						</div>
+						<div  *ngIf="campagininfo" class="campaign-info" (click)="stopPropagation($event)">
+							<p id="p-body">Configure up to 2 test users in settings to try out campaigns before launching. Adding users is optional. Test users will receive all test campaign messages if testing before campaign is triggered.
+							</p>
+							<button id="radio-close-btn" (click)="campagininfo=false">X</button>
+						  </div>
+						 
+						  <div *ngIf="campagininfo" class="overlay" (click)="closecampaigninfo()"></div>
+
 						<div class="bottom_section">
 						<p class="close-box" (click)="directToSettings()"><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></p>
 						<p class="text-box-readonly">To configure no. from settings</p>
@@ -696,7 +753,7 @@
 					</p>
 					
 					<div  *ngIf="showInfo" class="showInfoFallback">
-						<p id="p-body">You can input variable values or choose contact attributes that will be used to send personalized messages to users, reflecting their specific contact details instead of generic variables.
+						<p id="p-body">A default value that will be used for personalization if the system cannot find any value for the selected attribute in the user's contact fields.
 						</p>
 						<button id="radio-close-btn" (click)="showInfo=false">X</button>
 					  </div>
@@ -787,7 +844,12 @@
 								 </div>
 								</div>
 								<div class="right_part">
-									<p>Prefix</p>
+									<p>Prefix <img src="../../../../assets/img/campaign/Info.svg"(click)="prefix()"></p>
+									<div  *ngIf="prefixInfo" class="prefixInfo">
+										<p id="p-body">You have the option to input a prefix value and choose whether to add or remove that prefix from mapped phone numbers.
+										</p>
+										<button id="radio-close-btn" (click)="prefixInfo=false">X</button>
+									  </div>
 									<div class="radio_group_col">
 										<div class="radio_group_col_inner">
 										  <label class="container" (click)="updateCSVPrefix('prefix_add')">
@@ -893,7 +955,7 @@
 			</div>
 			</div>
 		<div class="modal-body mpcampaign">
-			<p><span>To map please select contacts column from your CSV/Excel file.</span></p>
+			<p><span>Here have to select the column from the CSV which contains the phone numbers you wish to use for broadcasting campaigns.</span></p>
 			
 			<div class="formrow">
 				<input (click)="toggleMapCsvContact()" type="text" class="form-control select_box" value={{CsvContactCol}} placeholder='Type or select column'>
@@ -904,9 +966,6 @@
 			<div class="input_group_btn">
 			<button *ngIf="CsvContactCol!=''" type="button" class="submit-btn" aria-label="Close" (click)="ImportMapping(addNewCampaign)">Import</button>
 			</div>
-	
-			
-			
 		</div>
 		
 	</ng-template>
@@ -965,7 +1024,8 @@
 							<p><span>No. of Audience</span></p>
 						</div>
 						<div>
-							<p *ngIf="list.owner" class="default_avtar"><img  src="/assets/img/campaign/default-avtar.png">{{list.owner}}</p>
+							<p *ngIf="list.owner" class="default_avtar">  <img [src]="profilePicture"/>{{list.owner}}</p>
+							
 							<p><span>Created By</span></p>
 						</div>
 					</div>
@@ -1313,7 +1373,7 @@
 							<div *ngIf="scheduled==1">
 								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
 								<p>You are about to schedule</p>
-								<p><span>Please confirm the {{newCampaignDetail.value.title}} campaign will take place on {{selecteScheduleDate}} at {{selecteScheduleTime}}.</span></p>
+								<p><span>Please confirm the <b class="title-value">{{newCampaignDetail.value.title}}</b> campaign will take place on <b  class="title-value">{{selecteScheduleDate}} at {{selecteScheduleTime}}.</b></span></p>
 								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
 								</p>
 							</div>

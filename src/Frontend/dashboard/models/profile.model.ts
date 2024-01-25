@@ -23,7 +23,7 @@ export interface teamName {
 
 export interface userActiveStatus {
     uid:number;
-    isActive:number;
+    IsActive:number;
 }
 
 export interface savePlan {
