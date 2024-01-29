@@ -7,25 +7,28 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
   styleUrls: ['./general-settings.component.scss']
 })
 export class GeneralSettingsComponent implements OnInit {
-  spId:number = 0;
-  selectedTab:number = 1;
+  spId = 0;
+  selectedTab = 1;
   defaultActionData = <defaultActionData>{};
   isAgentActive = 0;
   isAutoReply = 0;
   isContactAdd = 0;
   isAutoReplyDisable= 0;
   autoReplyTime ='';
+  pauseAutoReplyTime = 0;
+  pauseAgentActiveTime = 0;
   agentActiveTime='';
-  currentTime!: Date;
+  pausedTill='';
+  date!:Date;
 
 
   errorMessage='';
 	successMessage='';
 	warningMessage='';
 
-  constructor(private apiService:SettingsService) {
-    this.currentTime = new Date();
-   }
+  constructor(private apiService:SettingsService) { 
+    this.date = new Date();
+  }
 
   showToaster(message:any,type:any){
 		if(type=='success'){
@@ -54,14 +57,17 @@ export class GeneralSettingsComponent implements OnInit {
 
   getDefaultAction() { 
     this.apiService.getDefaultAction(this.spId).subscribe(response =>{
-      const a = response.defaultaction[0];
+      const a:defaultActionData = response.defaultaction[0];
       
-     this.isAgentActive = a?.isAgentActive;
-     this.isAutoReply = a?.isAutoReply;
-     this.agentActiveTime = a?.agentActiveTime;
-     this.isAutoReplyDisable =a?.isAutoReplyDisable;
-     this.autoReplyTime = a?.autoReplyTime;
-     this.isContactAdd = a?.isContactAdd;
+     this.isAgentActive = a.isAgentActive;
+     this.isAutoReply = a.isAutoReply;
+     this.agentActiveTime = a.agentActiveTime;
+     this.isAutoReplyDisable =a.isAutoReplyDisable;
+     this.autoReplyTime = a.autoReplyTime;
+     this.isContactAdd = a.isContactAdd;
+     this.pausedTill = a.pausedTill;
+
+     console.log(a);
 
     })
   }
@@ -80,9 +86,33 @@ export class GeneralSettingsComponent implements OnInit {
 
   }
 
-  calculateTime(additionalMinutes: number) {
-    const calcTime = new Date(this.currentTime.getTime() + additionalMinutes * 60000);
-     return calcTime.toISOString().slice(0, 19).replace("T", " ");
+  calculateTime(pauseDuration:number,inactiveTime:number) {
+    if(this.isAutoReply == 1) {
+      this.autoReplyTime = this.date.toString();
+      let calcTime = new Date(this.date.getTime() + pauseDuration * 60000);
+      this.pausedTill = calcTime.toString();
+     return calcTime;
+    }
+    else {
+      this.autoReplyTime = '';
+      this.pausedTill= '';
+    }
+
+    if(this.isAgentActive == 1) {
+      alert('worked 1')
+      let calcTime = new Date(this.date.getTime() + inactiveTime * 60000);
+      this.agentActiveTime = calcTime.toString();
+      console.log(this.agentActiveTime)
+    }
+    else if (this.isAgentActive == 0) {
+      alert('worked 0')
+      this.agentActiveTime = '';
+      this.pauseAgentActiveTime = 0;
+    }
+  }
+
+  agentInactiveTime(inactiveTime:number) {
+   
   }
 
   saveDefaultAction() { 
@@ -94,6 +124,9 @@ export class GeneralSettingsComponent implements OnInit {
     this.defaultActionData.isAutoReply = this.isAutoReply;
     this.defaultActionData.isAutoReplyDisable = this.isAutoReplyDisable;
     this.defaultActionData.isContactAdd = this.isContactAdd;
+    this.defaultActionData.pausedTill = this.pausedTill;
+
+    console.log(this.defaultActionData)
 
     this.apiService.saveDefaultAction(this.defaultActionData).subscribe
     ((resopnse :any) => {

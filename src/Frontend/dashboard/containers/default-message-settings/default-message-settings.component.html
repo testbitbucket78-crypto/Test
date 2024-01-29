@@ -1,7 +1,7 @@
 <div class="setting-card" >
     <div class="default-actions-heading pb-4">Default Messages</div>
     <div class=" grid-view p-2 px-4" >
-        <div *ngFor="let data of defaultMessageData; let idx = index" (click)="populateData(data)">
+        <div *ngFor="let data of defaultMessageData; let idx = index" (click)="getDefaultMessageById(data)">
             <div class="flex-row">
                 <span class="sub-heading">{{data.title}} </span>
                 <span class="enable">Enable</span>
@@ -11,7 +11,7 @@
                 <p>{{data.description}}</p>
                 <button class="white-btn" data-bs-toggle="modal" (click)="selectedButtonType(idx)" data-bs-target="#welcomGreeting">
                  <img src="../../../../assets/img/teambox/add.svg" class="pr-1"> Configure </button>
-                 <!-- <button class="white-btn" (click)="ToggleSideBar()">View & Manage</button> -->
+                 <button class="white-btn" (click)="ToggleSideBar()">View & Manage</button>
             </div>
           </div>
     </div>
@@ -38,7 +38,7 @@
                 <div class="modal-body px-5 pt-0">
                     <div *ngIf="selectedCategory==1" class="d-inline-block flex-column sel-type-link pb-3">
                         <label for="link" class="linkch" >Agent Reply Timeout Period</label>
-                        <select class="input-form" formControlName="Select no. of minutes"  id="linken"  required >
+                        <select class="input-form" formControlName="autoreply"  id="linken"  required >
                             <option  [disabled]="true" [selected]="true" [hidden]="true"  value="0" selected >Select no. of minutes</option>
                             <option></option>
                         </select>
@@ -54,55 +54,71 @@
 
                     <div class="sel-type-text-container">
                         <div *ngIf="selectedType === 'text'" class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-                            <h6>Message</h6> <span>0/1024 Characters</span>
+                            <h6>Message</h6> <span>Characters</span>
                          </div>
 
                          <div *ngIf="selectedType === 'text'" class="sel-type-text">
                              <ejs-richtexteditor [(value)]="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'500px'"
-                             [maxLength]='1024' (change)="onEditorChange(chatEditor.value)"placeholder="Enter">
+                             [maxLength]='1024' (change)="onEditorChange(chatEditor.value)" [showCharCount]='true' placeholder="Enter">
                             </ejs-richtexteditor>
                          </div>
                     </div>
 
                    <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
-                        <input type="file" accept="image/jpg, image/png" formControlName="link" name="image-select" id="sel-type-image">
+                      <input type="file" accept="image/jpeg, image/png" formControlName="link" (change)="previewImageAndVideo($event)" id="sel-type-image">
+
+                        <div *ngIf="defaultMessageForm.get('link')?.value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of image</p>
-                   </div>
+                       </div> 
+                        <div class="main-preview-type-image" *ngIf="defaultMessageForm.get('link')?.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
+                            <span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
+                        </div>
+                    </div>
 
                    <div *ngIf="selectedType === 'video'" class="my-4 sel-type-video">
-                    <input type="file" accept="video/mp4"  formControlName="link" name="video-upload" (change)="handleVideoUpload($event)" id="sel-type-video">
-                    <label *ngIf="!videoSelected" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
+                    <input type="file" accept="video/mp4"  formControlName="link" name="video-upload" (change)="onFileChange($event)" id="sel-type-video">
+                    <label *ngIf="!selectedPreview" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
+
                     <div class="video-player">
-                      <video controls #videoPlayer>
-                        Your browser does not support the video tag.
-                      </video>
+                        <span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
+                          <img src="../../../../assets/img/settings/remove.svg" />
+                        </span>
+                      <video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video>
+                    </div>       
+                  </div>
+
+                   <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image" [ngClass]="{'document-selected':defaultMessageForm.get('link')?.value !== null}">
+                    <div class="main-preview-type-doc" *ngIf="defaultMessageForm.get('link')?.value !== null">
+                        <span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                     </div>
-                    <div class="custom-play-button"></div>
-                
-                </div>
-             
-                <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image">
-                        <input type="file" accept=".doc, .docx, .pdf" formControlName="link" name="document-select" id="sel-type-document">
+                    <img *ngIf="defaultMessageForm.get('link')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
+                    <span class="document-preview" *ngIf="defaultMessageForm.get('link')?.value !== null" >{{ this.fileName }}</span>
+                    <span class="document-preview" *ngIf="defaultMessageForm.get('link')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
+                        <input type="file" accept=".doc, .docx, .pdf" formControlName="link" (change)="onFileChange($event)" name="document-select" id="sel-type-document">
+                        <div *ngIf="defaultMessageForm.get('link')?.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of document</p>
-                   </div>
+                       </div>
+                         
+                </div>
 
 
              <div *ngIf="selectedType !== 'text'" >
 
                 <div class="d-inline-block flex-column sel-type-link">
                     <label for="link" id="link" >Link</label>
-                    <input type="url" id="link" formControlName="link" placeholder="Enter" >
+                    <input type="url" id="link" formControlName="link" [attr.disabled]="defaultMessageForm.get('link')?.value !== null ? 'disabled' : null"
+                       (change)="uploadThroughLink()" placeholder="Enter">
                    </div>
 
 
                    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-                    <h6>Body Text</h6> <span>0/1024 Characters</span>
+                    <h6>Body Text</h6> <span>Characters</span>
                  </div>
                     <div class="sel-type-text">
                         <ejs-richtexteditor [(value)]="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'200px'"
-                        [maxLength]='1024' (change)="onEditorChange(chatEditor.value)"placeholder="Enter">
+                        [maxLength]='1024' (change)="onEditorChange(chatEditor.value)" [showCharCount]='true' placeholder="Enter">
                        </ejs-richtexteditor>
                          </div>
                       </div>
@@ -115,7 +131,7 @@
         </div>
     </div>
 
-    <div class="sideBar" *ngIf="showSideBar">
+    <!-- <div class="sideBar" *ngIf="showSideBar" >
         <div class="sidebar-close">
             <button type="button" class="btn-close" (click)="showSideBar = false">
                 <img src="../../../../assets/img/teambox/icon-close.svg">
@@ -173,7 +189,7 @@
                 </label>
             </button>
         </div>
-    </div>
+    </div> -->
 
 </div>
 
