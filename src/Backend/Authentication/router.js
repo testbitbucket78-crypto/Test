@@ -154,6 +154,6 @@ router.post('/saveCampaignMessages',CampaignsController.saveCampaignMessages);
 router.get('/getCampaignMessages/:CampaignId',CampaignsController.getCampaignMessages);
 router.get('/copyCampaign/:CampaignId',CampaignsController.copyCampaign);
 
-router.post('/alertUser',CampaignsController.campaignAlerts)
-
+router.post('/alertUser',CampaignsController.campaignAlerts);
+router.get('/exitCampaign/:title/:spid',CampaignsController.isExistCampaign);
 module.exports = router;

@@ -1916,7 +1916,7 @@ createCustomer() {
 
 createInteraction(customerId:any) {
 var bodyData = {
-	customerId: customerId,
+	customerId: customerId.customerId	,
 	spid:this.SPID
 
 }
