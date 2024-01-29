@@ -8,7 +8,7 @@ const http = require("https");
 const middleWare = require('../middleWare')
 const multer = require('multer');
 let fs = require('fs-extra');
-
+const funnel = require('../Funnel/sendFunnel.js')
 
 app.use(bodyParser.json());
 
@@ -85,6 +85,7 @@ const insertCustomers = async (req, res) => {
         });
     }
     else {
+        funnel.ScheduledFunnels(SP_ID, Phone_number, OptInStatus, new Date(), new Date(),0);
         db.runQuery(req, res, val.insertCustomersQuery, [values])
     }
 }
@@ -106,6 +107,7 @@ const updatedCustomer = (req, res) => {
     updateQueryQuery += " WHERE customerId =" + req.body.customerId
 
     console.log(updateQueryQuery)
+    funnel.ScheduledFunnels(req.body.spid, req.body.Phone_number, req.body.OptInStatus, new Date(), new Date(),0);
     db.runQuery(req, res, updateQueryQuery, [])
 
 
