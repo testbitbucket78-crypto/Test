@@ -34,6 +34,8 @@ export class CampaignsComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 	checkboxChecked: boolean = false;
+	profilePicture!:string;
+
 
 
 	 showInfo:boolean = false;
@@ -277,6 +279,14 @@ export class CampaignsComponent implements OnInit {
 	selectedcontactFilterBy:any='';
 	modalRef: any;
 	selectedId: any;
+	ShowContactOwner!: boolean;
+	vartip: any;
+	prefixInfo!: boolean;
+	Marketing!: boolean;
+	Utility!: boolean;
+	Authentication!: boolean;
+	campagininfo!: boolean;
+	showErrorMessage: boolean = false;
 	
 	 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: TeamboxService,private settingsService:SettingsService,private fb: FormBuilder,private router: Router,private el: ElementRef) {
@@ -338,6 +348,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			default:
 				this.loginAs='Agent'
 		}
+		this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
 		this.routerGuard()
 		this.getAllCampaigns()
 		this.getContactList('')
@@ -443,6 +454,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 
     async getCampaignDetail(CampaignID:any){
         await this.apiService.getCampaignDetail(CampaignID).subscribe(campaign =>{
+			console.log(campaign)
 			let campaigns:any=campaign
 				let item = campaigns[0]
 				if(item.status==0){
@@ -501,7 +513,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				item['reportSeenLength'] =item.report_seen?JSON.parse(item.report_seen).length:0
 				item['reportRepliedLength'] =item.report_replied?JSON.parse(item.report_replied).length:0
 				console.log(item)
+
 				this.selectedCampaign = item
+				console.log("item**")
 				if(item.status>1){
 					this.getCampaignMessages(item.Id)
 				}
@@ -1041,9 +1055,21 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	  }
 
 	  
-	  selectScheduleDate(event:any){
-		this.selecteScheduleDate= event.target.value
+	  selectScheduleDate(event: any) {
+		const selectedDate = new Date(event.target.value);
+		const currentDate = new Date();
+	  
+		if (selectedDate < currentDate) {
+		  this.showErrorMessage = true;
+	  
+		  this.selecteScheduleDate = currentDate.toISOString().split('T')[0];
+		} else {
+		  this.showErrorMessage = false;
+	  
+		  this.selecteScheduleDate = event.target.value;
+		}
 	  }
+	  
 
 	 selectScheduleTime(event:any){
 		this.selecteScheduleTime= event.target.value
@@ -1507,7 +1533,14 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		}
 		
 	}
-
+closeUtility(){
+	this.Utility=false;
+	this.Marketing=false;
+	this.Authentication=false;
+}
+testinfo(){
+	this.campagininfo=!this.campagininfo;
+}
 	
 
 	deleteCampaign(openalertmessage:any){
@@ -1749,9 +1782,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
     uploadTemplateMedia(files: FileList){
 		if(files[0]){
 		    let imageFile = files[0]
+			let spid = this.SPID
 			const data = new FormData();
 			data.append('dataFile',imageFile ,imageFile.name);
-			this.apiService.uploadfile(data).subscribe(uploadStatus =>{
+			this.apiService.uploadfile(data,spid).subscribe(uploadStatus =>{
 				let responseData:any = uploadStatus
 				if(responseData.filename){
 					this.selectedTemplate['tempimage'] = responseData.filename
@@ -1789,8 +1823,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			let fileName:any = files[0].name
 			
 			var FileExt:any = fileName.substring(fileName.lastIndexOf('.') + 1);
-			
-        
+
 		if(FileExt =="csv") {
 				let file =files[0];
 				let reader: FileReader = new FileReader();
@@ -1833,6 +1866,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.showToaster('Please Upload csv file only...','error')
 		}
 		}
+	  }
+	
+	  toggleContactOption(){
+		this.ShowContactOwner =!this.ShowContactOwner;
 	  }
 	  getContactList(event:any){
 		console.log('getContactList')
@@ -1921,6 +1958,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		})
 	}
     
+	closecampaigninfo(){
+		this.campagininfo=false;
+	}
 	updateListName(event:any){
 		this.newContactListName = event.target.value
 	}
@@ -2138,6 +2178,22 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.showInfo = true;
 		}
 	}
+	tip(){
+		this.vartip=!this.vartip;
+	}
+	prefix(){
+		this.prefixInfo=!this.prefixInfo;
+	}
+	Marketinginfo(){
+		this.Marketing=!this.Marketing;
+	}
+	Utilityinfo(){
+		this.Utility=!this.Utility;
+	}
+	Authenticationinfo(){
+		this.Authentication=!this.Authentication;
+	}
+
     
 		//*********Download Sample file****************/
 

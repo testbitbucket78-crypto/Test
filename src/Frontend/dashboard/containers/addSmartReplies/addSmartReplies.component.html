@@ -69,7 +69,7 @@
           <div *ngIf="keyword.length > 56" class="text-danger mt-2"></div>
 
 
-          <span>Please choose a unique keyword which is not already added in other smart replies </span>
+          <span>Here you can add multiple keywords that will be matched and triggered by the customer's message.</span>
           <div class="overflo">
             <span class="row">
               <div *ngFor="let k of keywords" class="keywords" style="font-weight: bolder; color: black;">
@@ -93,8 +93,7 @@
             </div>
             <div class="desc-radio-input" *ngIf="showBox">
               <p id="p-title">Fuzzy Matching</p>
-              <p id="p-body">As long as the message contains a <br />certain % of the Keyword. You can also<br /> set
-                emojis as your keyword.</p>
+              <p id="p-body">As long as the message contains a certain % of the Keyword defined.</p>
               <button id="radio-close-btn" (click)="showBox=false">X</button>
             </div>
             <div class="form-check template_box_inner">
@@ -142,8 +141,8 @@
           <div  class="child-int-1 py-2">
             <div  #chatSection class="child-interaction-1">
               <div  id="messgae-boc"   *ngFor="let message of assignedAgentList; let i = index">
-                <div class="message-box" *ngIf="message.ActionID == 1">
-                  <p id="msgbox-head">Message</p>
+                <div class="message-box" *ngIf="message.Message">
+                  <p id="msgbox-head">Message {{Media}}</p>
                   <p id="msgbox-body{{i}}" [contentEditable]="isEditable[i]" (input)="onEdit($event.target.innerHTML)"
                     [innerHTML]="message.Value"></p>
                   <div>
@@ -152,7 +151,10 @@
                     <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
                   </div>
                 </div>
+
                 
+                <!-- media -->
+
                 <div class="message-box" *ngIf="Media">
                   <p id="msgbox-head">Media</p>
                   <img class="preview_icon" *ngIf="this.mediaType == 'video/mp4'"
@@ -166,9 +168,9 @@
                 <img class="mediaFile" *ngIf="this.mediaType == 'image/jpg'" src={{this.messageMeidaFile}}>
                 <img class="mediaFile" *ngIf="this.mediaType == 'image/png'" src={{this.messageMeidaFile}}>
                 <img class="mediaFile" *ngIf="this.mediaType == 'image/webp'" src={{this.messageMeidaFile}}>
-                  <p class="message-media" [ngStyle]="{'background-image': 'url(' + Media + ')'}"></p>
-                  
+                  <p class="message-media" [ngStyle]="{'background-image': 'url(' + Media + ')'}"></p>   
                 </div>
+
                 <div class="assign-conversation" *ngIf="message.ActionID == 2">
                   <p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
                   <div class="d-flex flex-wrap assign-container">
@@ -179,11 +181,12 @@
                   </div>
                   <div>
                     <button class="msg-edit-btn" [class.editable]="isEditable[i]" [class.non-editable]="!isEditable[i]"
-                    (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>                    <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+                    (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
+                    <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
                   </div>
                 </div>
                 
-                <div *ngIf="message.ActionID == 3">
+                <div *ngIf="message.ActionID == 1">
                   <div class="add-tag">
                     <p id="msgbox-head1">Action</p>
                     <div class="d-flex flex-wrap assign-container">
@@ -196,6 +199,8 @@
 
                   </div>
                 </div>
+                
+          
 
               </div>
 
@@ -372,7 +377,7 @@
             <div class="modal-header-left">
             </div>
             <div class="modal-header-right">
-              <p class="close-box" aria-label="Close" (click)="closeModal()"><img
+              <p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
                   src="assets/img/teambox/icon-close.svg"></p>
             </div>
           </div>

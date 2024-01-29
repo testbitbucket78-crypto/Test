@@ -36,12 +36,12 @@
                     <label>Team Name</label> <br>
                     <input type="text" class="input-form" [(ngModel)]="teamName" placeholder="Enter role name">
                 </div>
-                <div class="pt-3">
-                    <label class="pb-2">Select Users</label> <br>
-                    <div *ngFor="let item of selectedUser" class="user-dropdown">
-                        <input type="checkbox" class="user-checkbox" [(ngModel)]="item.isSelected">
-                        <img  class="user-img ml-2">
-                        <span class="ml-2">{{item.name}}</span>
+                <div class="custom-control custom-checkbox pt-3">
+                    <label class= "pb-2">Select Users</label> <br>
+                    <div *ngFor="let item of selectedUser; let i = index" class="user-dropdown">
+                        <input type="checkbox" class="custom-control-input user-checkbox"  id="custom-control-input{{i}}" [(ngModel)]="item.isSelected">
+                        <label class="custom-control-label ml-2" for="custom-control-input{{i}}">{{item.name}}</label>
+                        <img  class="user-img ml-2" [src]="profilePicture">
                     </div>
                 </div>
 

@@ -24,6 +24,7 @@ export class CustomFieldsComponent implements OnInit {
   currentPage!: number;
   paging: number[] = [];
   showSideBar:boolean=false;
+  searchCustomField = '';
   addCustomField:customFieldFormData [] =[]
   customFieldForm!:FormGroup;
   customFieldData:[] = [];
@@ -51,7 +52,7 @@ export class CustomFieldsComponent implements OnInit {
       this.customFieldForm = this.formBuilder.group({
         displayName: ['',Validators.required],
         description:[''],
-        Type: ['Text',Validators.required],
+        type: ['',Validators.required],
       });
     };
     
@@ -96,22 +97,22 @@ toggleActiveState(checked: boolean, ID:number) {
   //   }
  }
 
-searchCustomField(event:any){
-  let searchKey = event.target.value
-  if(searchKey.length>2){
-  let allList:any = this.customFieldData
-  let FilteredArray:any = [];
-  for(let i=0;i<allList.length;i++){
-    let content = allList[i].displayName.toLowerCase()
-      if(content.indexOf(searchKey.toLowerCase()) !== -1){
-        FilteredArray.push(allList[i])
-      }
-  }    this.dynamicFieldData = FilteredArray
-    } 
-      else {
-        this.dynamicFieldData = this.customFieldData 
-      }
-}
+// searchCustomField(event:any){
+//   let searchKey = event.target.value
+//   if(searchKey.length>2){
+//   let allList:any = this.customFieldData
+//   let FilteredArray:any = [];
+//   for(let i=0;i<allList.length;i++){
+//     let content = allList[i].displayName.toLowerCase()
+//       if(content.indexOf(searchKey.toLowerCase()) !== -1){
+//         FilteredArray.push(allList[i])
+//       }
+//   }    this.dynamicFieldData = FilteredArray
+//     } 
+//       else {
+//         this.dynamicFieldData = this.customFieldData
+//       }
+// }
 
 addCustomFieldsOption(){
   this.addCustomField.push({
@@ -150,6 +151,7 @@ resetSelectedCustomField() {
   this.selectedCustomField = null;
   this.customFieldForm.reset();
   this.showSideBar = false;
+
 }
 
 getDefaulltFieldData() {
@@ -157,6 +159,7 @@ getDefaulltFieldData() {
      const filteredFields:any = this.customFieldData.filter(
         (field:any) => defaultFieldNames.includes(field.ActuallName));
         this.defaultFieldsData = filteredFields;
+        console.log(this.defaultFieldsData)
 }
 
 
@@ -164,6 +167,7 @@ getDynamicFieldData() {
   const defaultFieldNames =["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
        this.dynamicFieldData = this.customFieldData.filter(
        (field:any) => !defaultFieldNames.includes(field.ActuallName));
+       console.log(this.dynamicFieldData)
 }
 
 saveNewCustomField() {
@@ -200,7 +204,7 @@ let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
     CustomFieldData.id = this.ID;
     CustomFieldData.SP_ID = this.spId;
     CustomFieldData.ColumnName = this.customFieldForm.controls.displayName.value;
-    CustomFieldData.Type = this.customFieldForm.controls.Type.value;
+    CustomFieldData.Type = this.customFieldForm.controls.type.value;
     CustomFieldData.description = this.customFieldForm.controls.description.value;
 
     return CustomFieldData;
@@ -216,6 +220,7 @@ patchFormDataValue() {
     let value = data[prop as keyof typeof data];
     if(this.customFieldForm.get(prop))
     this.customFieldForm.get(prop)?.setValue(value);
+    console.log(this.customFieldForm.get('type')?.value)
     this.ID=id;
     console.log(this.ID);
   }  

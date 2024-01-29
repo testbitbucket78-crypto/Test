@@ -4,7 +4,8 @@
             <h6>Custom Fields</h6>
             <div class="d-flex align-items-center px-3 searchField">
                 <span><img src="../../../../assets/img/teambox/search-icon.svg" /></span>
-                <input type="text" placeholder="Search" aria-label="Search" (keyup)="searchCustomField($event)" >        
+                <!-- (keyup)="searchCustomField($event)" -->
+                <input type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchCustomField" >        
             </div>
 
             <button (click)="addCustomFields()"><span><img src="../../../../assets/img/teambox/add.svg" alt="error" /></span>Add Field</button>
@@ -31,7 +32,7 @@
 
             <div *ngIf="customFieldData" class="main-part-body">
                 <div *ngIf="currentPage==1">
-                <div *ngFor="let df of defaultFieldsData" class="column">
+                <div *ngFor="let df of defaultFieldsData  | searchfilter:searchCustomField" class="column">
                     <div class="body-col">
                      {{df.ActuallName}}   
                     </div>
@@ -39,12 +40,12 @@
                     {{df.displayName}}
                     </div>
                     <div class="body-col">
-                        {{df.Type}}
+                        {{df.type}}
                     </div>
                     <div class="body-col">
                         <div class="active-toggle">
                             <label class="m-0 switch">
-                                <input type="checkbox" class="m-0 form-control-checkbox" [checked]="df.Mandatory"
+                                <input type="checkbox" class="m-0 form-control-checkbox" [checked]="df.mandatory"
                                     [disabled]="true">
                                 <span [style.background]="defaultFieldsChecked" class="slider"></span>
                             </label>
@@ -53,7 +54,7 @@
                     <div class="body-col">
                         <div class="active-toggle">
                             <label class="m-0 switch">
-                                <input type="checkbox" class="m-0 form-control-checkbox" [checked]="df.Status"
+                                <input type="checkbox" class="m-0 form-control-checkbox" [checked]="df.status"
                                     [disabled]="true">
                                 <span [style.background]="defaultFieldsChecked" class="slider"></span>
                             </label>
@@ -63,8 +64,8 @@
             </div>
 
                 <div class="dynamicFieldContainer" cdkDropList (cdkDropListDropped)="Drop($event)">
-                    <div *ngFor="let dynamic of dynamicFieldData | slice:(currentPage!=1?((pageSize*(currentPage-1))-6):0):((pageSize*(currentPage-1))+pageSize)-6; 
-                      let ith = index" cdkDrag class="dynamicField column" cdkDragBoundary=".dynamicFieldContainer">
+                    <div *ngFor="let dynamic of dynamicFieldData | slice:(currentPage!=1?((pageSize*(currentPage-1))-6):0):((pageSize*(currentPage-1))+pageSize)-6
+                     | searchfilter:searchCustomField let ith = index" cdkDrag class="dynamicField column" cdkDragBoundary=".dynamicFieldContainer" >
                         <div (click)="toggleSideBar(dynamic)" class="body-col">
                             <div class="drag-btn">
                                 <img cdkDragHandle class="pr-3" src="../../../../assets/img/settings/drag.svg" alt="" />
@@ -76,12 +77,12 @@
                             {{dynamic.displayName}}
                         </div>
                         <div class="body-col">
-                            {{dynamic.Type}}
+                            {{dynamic.type}}
                         </div>
                         <div class="body-col">
                             <div class="active-toggle" (click)="toggleMandatoryState($event.target.checked, dynamic.id)">
                                 <label class="m-0 switch">
-                                    <input type="checkbox" class="m-0 form-control-checkbox" [checked]="dynamic.Mandatory">
+                                    <input type="checkbox" class="m-0 form-control-checkbox" [checked]="dynamic.mandatory">
                                     <span class="slider"></span>
                                 </label>
                             </div>
@@ -89,7 +90,7 @@
                         <div class="body-col">
                             <div class="active-toggle" (click)="toggleActiveState($event.target.checked, dynamic.id)" >
                                 <label class="m-0 switch">
-                                    <input type="checkbox" class="m-0 form-control-checkbox" [checked]="dynamic.Status">
+                                    <input type="checkbox" class="m-0 form-control-checkbox" [checked]="dynamic.status">
                                     <span class="slider"></span>
                                 </label>
                             </div>
@@ -106,15 +107,15 @@
                 </div>
                     <div class="sidebar-content">
                         <p class="m-0 py-1">Field Id:<span>{{selectedCustomField?.id}}</span></p>
-                        <p class="m-0 py-1">Created on: <span>{{selectedCustomField?.created_at }}</span> </p>
-                        <p class="m-0 py-1">Last Modified: <span>{{selectedCustomField?.updated_at}}</span></p>
+                        <p class="m-0 py-1">Created on: <span>{{selectedCustomField?.created | date:'h:mm a, dd MMM yyyy'}}</span> </p>
+                        <p class="m-0 py-1">Last Modified: <span>{{selectedCustomField?.updated | date:'h:mm a, dd MMM yyyy'}}</span></p>
                         <div class="text-capitalize py-2 displayName">{{selectedCustomField?.displayName}}</div>
                         <div class="description">
                             <p>{{selectedCustomField?.description}}</p>
                         </div>
                         <div class="py-3 type">
                             <p class="sub-heading">Type</p>
-                            <span class="py-2 subtype">{{selectedCustomField?.Type}}</span>
+                            <span class="py-2 subtype">{{selectedCustomField?.type}}</span>
                         </div>
                     </div>
                     <div class="sideBar-footer">
@@ -171,7 +172,7 @@
                             <!-- <div *ngFor="let item of workingFormData;let idx=index"> -->
                                 <div class="d-flex flex-column billing-form-row">                         
                                         <label for="displayName" >Field Name</label>
-                                        <input type="text" name="displayName" id="displayName" formControlName="displayName">                              
+                                        <input type="text" name="displayName" id="displayName" maxlength="50" formControlName="displayName">                              
                                 </div>
                                     <div class="d-flex flex-column billing-form-row">
                                         <label for="description">Description <span>(Optional)</span></label>
@@ -181,15 +182,15 @@
                                
                                 <div class="d-flex flex-column billing-form-row">
                                     <label>Field Type</label>
-                                    <select name="Type" id="Type" formControlName="Type">
-                                        <option *ngFor="let type of types" [value]="type">{{type}}</option>
+                                    <select name="type" id="type" formControlName="type">
+                                        <option *ngFor="let type of types">{{type}}</option>
                                     </select>                                                       
                                 </div>
-                                <div *ngIf="customFieldForm.get('Type')?.value == 'Select'" class="select-options">
+                                <div *ngIf="customFieldForm.get('type')?.value == 'Select'" class="select-options">
                                     <div  *ngFor="let option of addCustomField; let ith = index" class="d-flex flex-column">
                                         <div class="billing-form-row">
-                                        <label>Options {{ith+1}}</label>
-                                        <input type="text" [name]="'option' + (ith + 1)" [id]="'option' + (ith + 1)">
+                                        <label for="option{{ith}}" >Options {{ith + 1}}</label>
+                                        <input type="text" name="option{{ith}}" id="option{{ith}}">
                                                
                                   <div class="incoming-card">
                                     <div>

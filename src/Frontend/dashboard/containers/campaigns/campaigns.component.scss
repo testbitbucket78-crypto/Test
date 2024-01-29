@@ -294,6 +294,7 @@
 	align-content: flex-end;
 	justify-content: center;
 	flex-direction: column;
+	font-weight: 700;
 	}
 	.close-box {
 	height: 35px;
@@ -1608,6 +1609,7 @@
 	}
 	.section_filter label.container{
 	width: auto;
+	
 	}
 	.template_list{
 	display: flex;
@@ -1839,6 +1841,7 @@
 	background: #FFF4F2 0% 0% no-repeat padding-box;
 	border-radius: 24px;
 	padding: 1.5rem;
+	overflow: scroll;
 	}
 	.container_row{
 	display: flex;
@@ -1893,10 +1896,10 @@
 	font-weight: 400;
 	}
 	.campaign_preview_right .bottom_section{
-	display: flex;
-	flex-direction: row;
-	justify-content: space-around;
-	margin-top: 10px;
+		display: flex;
+		justify-content: space-around;
+		position: relative;
+		bottom: -184px;
 	}
 	.campaign_preview_right .bottom_section .close-box,
 	.campaign_preview_right .bottom_section .text-box-readonly{
@@ -1907,8 +1910,10 @@
 	box-shadow: 1px 8px 29px #695F9724;
 	color: #6149CD;
 	font-size: 10px;
-	font-weight: 400;
+	font-weight: 600;
 	justify-content: center;
+	display: flex;
+	cursor: pointer;
 	}
 	.testcampaignmodal{
 	display: flex;
@@ -2038,3 +2043,128 @@
     width: 100%;
 	border: 1px solid #EBEBEB;
   }
+
+
+  .ContactOption {
+    position: absolute;
+    text-align: center;
+    height: 175px;
+    overflow: auto;
+    z-index: 9;
+    margin-left: 2.3rem;
+	margin-top: 1px;
+}
+
+.popup-dialog.ContactOption img {
+    width: 20px;
+    margin-right: 5px;
+}
+
+#ContactOwner{
+    cursor: pointer;
+}
+
+.popup-dialog.ContactOption span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    word-break: break-word;
+    cursor: pointer;
+}
+
+.popup-dialog.ContactOption span:hover{
+    background-color: #FFF4F2;
+}
+.title-value{
+	color: black;
+}
+.prefixInfo{
+	position: absolute;
+    top: 8.3rem;
+    right: 10.8rem;
+    width: 280px;
+    height: auto;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 30px;
+    opacity: 1;
+    overflow: auto;
+	cursor: pointer;
+}
+.filter-M{
+height: 0.8rem;
+width: 0.8rem;
+}
+.container.market{
+position: relative;
+    padding-left: 7px; 
+    cursor: pointer;
+    font-size: 12px;
+    -webkit-user-select: none;
+    user-select: none;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 50%;
+    margin: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    align-content: center;
+}
+.marketInfo{
+position: absolute;
+    top: -3.7rem;
+    right: 34.8rem;
+    width: 280px;
+    height: auto;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 30px;
+    opacity: 1;
+    overflow: auto;
+    cursor: pointer;
+}
+.utilityInfo{
+	position: absolute;
+    top: -1.7rem;
+    right: 22.8rem;
+    width: 280px;
+    height: auto;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 30px;
+    opacity: 1;
+    overflow: auto;
+    cursor: pointer;
+}
+.AuthInfo{
+	position: absolute;
+    top: -4.7rem;
+    right: 29.8rem;
+    width: 280px;
+    height: auto;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 30px;
+    opacity: 1;
+    overflow: auto;
+    cursor: pointer;
+}
+.Info-Tooltip{
+	margin-top: -8px;
+    padding-right: 6px;
+    padding-left: 3px;
+}
+.campaign-info{
+	position: absolute;
+    top: 12.3rem;
+    right: -3.2rem;
+    width: 280px;
+    height: auto;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 30px;
+    opacity: 1;
+    overflow: auto;
+}

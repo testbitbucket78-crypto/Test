@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -154,23 +154,25 @@ countryCodes = [
     editForm: any = [];
     pageOfItems: any;
     selectedTag: any;
-   showTopNav: boolean = false;
-   isButtonEnabled = false;
-   isButtonDisabled = true;
-   inputText!: string;
-   inputEmail!: string;
-   userid = 0; 
-   profilePicture:any;
-   selectedCountryCode:any;
-   contactsData!:{}
-   customFieldData:[] = [];
-   filteredCustomFields:any;
-   contactsImageData= <contactsImageData> {};
-   contactId:any = 0;
-   OptedIn=false;
-   OptInStatus='No';
-   ShowContactOwner:any = false;
-   addContactTitle: 'add' | 'edit' = 'add';
+    showTopNav: boolean = false;
+    isButtonEnabled = false;
+    isButtonDisabled = true;
+    inputText!: string;
+    inputEmail!: string;
+    userid = 0; 
+    profilePicture:any;
+    selectedCountryCode:any;
+    contactsData!:{}
+    customFieldData:[] = [];
+    filteredCustomFields:any;
+    contactsImageData= <contactsImageData> {};
+    contactId:any = 0;
+    OptedIn=false;
+    OptInStatus='No';
+    isBlocked:number = 0;
+    showInfoIcon:boolean = false;
+    ShowContactOwner:any = false;
+    addContactTitle: 'add' | 'edit' = 'add';
 
   // multiselect 
     disabled = false;
@@ -547,10 +549,6 @@ onSelectAll(items: any) {
               ActuallName: "tag"
             },
             {
-              displayName:'',
-              ActuallName:'tagColor'
-            },
-            {
               displayName: this.OptedIn ? 'Yes' : 'No',
               ActuallName: "OptInStatus"
             },
@@ -583,6 +581,7 @@ saveContact(addcontact:any,addcontacterror:any) {
       if(response.status === 200) {
         this.productForm.reset();
         this.productForm.clearValidators();
+        this.resetForm();
         this.modalService.dismissAll();
         this.closesidenav(this.items);
         this.getContact();
@@ -601,6 +600,7 @@ saveContact(addcontact:any,addcontacterror:any) {
       if (response.status === 200) {
         this.productForm.reset();
         this.productForm.clearValidators();
+        this.resetForm();
         this.modalService.open(addcontact);
         this.getContact();
         this.selectedCountryCode = this.countryCodes[101];
@@ -611,6 +611,7 @@ saveContact(addcontact:any,addcontacterror:any) {
         if (error.status === 409) {
           this.getContact();
           this.productForm.reset();
+          this.resetForm();
           this.productForm.clearValidators();
           this.modalService.open(addcontacterror);
         }
@@ -662,17 +663,24 @@ deletContactByID(data: any) {
     this.closesidenav(this.items);
   }));
 
-
-
 }
 
   blockContactByID(data: any) {
+    if(data.isBlocked==1) {
+      this.isBlocked = 0;
+    }
+    else {
+      this.isBlocked = 1;
+    }
+   let Body =  {
+      customerId:data.customerId,
+      isBlocked:this.isBlocked
+    }
     var SP_ID = sessionStorage.getItem('SP_ID')
-    this.apiService.blockContact(data, SP_ID).subscribe((response => {
+    this.apiService.blockContact(Body, SP_ID).subscribe((response => {
       console.log(response);
-       this.getContact();
+      this.getContact();
       this.closesidenav(this.items);
-
     }));
     
   }
@@ -749,6 +757,8 @@ deletContactByID(data: any) {
       this.productForm.get('displayPhoneNumber')?.setValue(displayPhoneNumber);
       this.selectedCountryCode = country_code;
       this.OptInStatus =data.OptInStatus
+      this.isBlocked=data.isBlocked
+      console.log(this.isBlocked)
     }  
   }
 
@@ -852,5 +862,11 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
           this.filteredCustomFields = filteredFields;
           console.log(this.filteredCustomFields);
   }
+
+  toggleInfoIcon() {
+    this.showInfoIcon = !this.showInfoIcon;
+  }
 }
+
+
 

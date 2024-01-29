@@ -421,3 +421,16 @@ span.plan-price {
     width: 130px;
     height: 40px;
 }
+
+.custom-control-label {
+    font-size: 12px;
+}
+
+.custom-control-label a {
+    text-decoration: none;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #6149CD;
+    border: none;
+}

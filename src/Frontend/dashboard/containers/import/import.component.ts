@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import Stepper from 'bs-stepper';
 import { Router } from '@angular/router';
 declare var $: any;
@@ -15,10 +16,12 @@ declare var $: any;
 
 export class ImportComponent implements OnInit {
 
+
 	showMore = false;
-	text = ` mamammamamamamm amamamamam ammaaamaam amammscwebcjkwebjkqwkllwq lkwkklwdkl  njkbjkbkbk`;
+	text = [`Upload a CSV file with the contacts and details that you would like to import. Ensure the CSV file fulfills the Following requirements:  Only CSV files are accepted for import. File size must be 10 MB The file must contain at least column with Contact Numbers. Ensure the first row contains NO data and just column headings with proper labels to help in variables mapping. Data in the first row is not imported. The file must contain atleast 2 columns. One of them should contain Contact Numbers and the other Name of the Contacts If your import purpose is Update Existing Contacts Only, you can also select Contact ID as an identifier.`];
 
 	@Output() getContact = new EventEmitter<string> ();
+	spid!:number;
 	active = 1;
 	file: any;                                           
 	stepper: any;
@@ -27,46 +30,45 @@ export class ImportComponent implements OnInit {
 	public headers: any[] = [];                         
 	records: any[] = [];
 	selectedIdentifier: any[] = [];
-	Identifier: any;
-	purpose: any;
+	Identifier ='Phone_number';
+	purpose ='Add new contact only';
 	fields: any[] = [];                                                       
 	countUpdatedData: any;                        
-	importCSVdata: any[] = [];
 	skipCont: any;
 	columnMapping: any;
 	importedData: any[] = [];
+	csvfieldHeaders:any;
+	csvfieldValues:any;
 	fileformat = 'csv';
 	content:any;
-	isOverrideOn!: boolean; isOverrideOn1!: boolean; isOverrideOn2!: boolean; isOverrideOn3!: boolean; isOverrideOn4!: boolean; isOverrideOn5!: boolean; isOverrideOn6!: boolean; isOverrideOn7!: boolean;
+	isOverrideOn!: boolean;
 	showTopNav:boolean = true;
 	errorMessage='';
 	successMessage='';
 	warningMessage='';
 	currentfileformat:any;
-
+	customFieldData:[] = [];
+	importCSVdata = []=[];
+	toggleOverride!: boolean[];
+	displayNameChecked!: boolean[]
+	selectedColumnMapping:any;
+	selectedValue: any;
 	
 
-
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService , private router:Router) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService,private _settingsService:SettingsService,private router:Router) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
 	ngOnInit() {
-
-		
-		this.routerGuard();
+		this.spid = Number(sessionStorage.getItem('SP_ID'));
+		// this.routerGuard();
 		this.showTopNav = false;
 		this.stepper = new Stepper($('.bs-stepper')[0], {
 			linear: true,
 			animation: true
-		
-		})
-		this.Identifier = "Email id"
-		this.purpose = "Add new contact only"
-		this.selectedIdentifier.push('emailId')
-		console.log(this.selectedIdentifier)
-
+		});
+		this.getCustomFieldsData();
 	}
 
 	next() {
@@ -87,6 +89,11 @@ export class ImportComponent implements OnInit {
 			this.router.navigate(['login']);
 		}
 	}
+//********remove csv file*********
+	removeFile() {
+		this.file = null;
+	}
+
 
 	//********csv file upload  *********
 	onChange(event: any) {
@@ -97,22 +104,32 @@ export class ImportComponent implements OnInit {
 
     //********open error dialog boxes *********/
 	open(any: any) {
-		this.modalService.open(any);
+		this.updatedDataCount();
+		if(!this.importedData) {
+			this.next();
+		}
+		else {
+			$("#importmodal").modal('hide'); 
+			this.modalService.open(any);
+		}
+	}
+
+	closeErrorModal(){
+		$("#importmodal").modal('show'); 
+		this.modalService.dismissAll()
 	}
 	showToaster(message:any,type:any){
 		if(type=='success'){
 			this.successMessage=message;
 		}else if(type=='error'){
 			this.errorMessage=message;
-		}else{
+		}else if(type='warning'){
 			this.warningMessage=message;
 		}
 		setTimeout(() => {
 			this.hideToaster()
-		}, 5000);
-		
-		}
-
+		}, 3000);		
+	}
 
 	hideToaster(){
 		this.successMessage='';
@@ -120,17 +137,22 @@ export class ImportComponent implements OnInit {
 		this.warningMessage='';
 	}
 
-	// //**** incorrect file format popup ****/
-	incorrectFile = (content:any) => {
-		
-		const currentfileformat = this.file.name.split(".").pop();
-		if(currentfileformat !== this.fileformat) {
-			this.modalService.open(content);
-			
+	 //**** incorrect file format popup ****//
+	incorrectFile = (content:any) => {	
+		const currentfileformat = this.file?.name.split(".").pop();
+		if(currentfileformat) {
+			if(currentfileformat !== this.fileformat && currentfileformat!=='CSV') {
+				$("#importmodal").modal('hide');
+				this.modalService.open(content);
+			}
+			else {
+				this.stepper.next();
+			}
 		}
-		else {
-			this.stepper.next();
+		else{
+			this.showToaster('Please upload a CSV file before proceeding', 'error');
 		}
+	
 	}
 
 	/***** import started in background popup and function ****/
@@ -141,38 +163,43 @@ export class ImportComponent implements OnInit {
 			this.modalService.open(imports);
 			$("#importmodal").modal('hide'); 
 			this.getContact.emit('');
-
 		}
-
 		else {
 			this.modalService.open(importfailed);
 		}
-
 	}
-
-
-
 
 //*********After upload read file *********/
 	onUpload(event: any) {
 		this.file = event.target.files[0];
-		this.fileName = this.file.name
-		
-		
-
+		this.fileName = this.truncateFileName(this.file.name, 25);
 		let reader: FileReader = new FileReader();
 		reader.readAsText(this.file);
 		reader.onload = () => {
 			let csvData = reader.result;
 			let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);
-
-
 			let headersRow = this.getHeaderArray(csvRecordsArray);
 			this.headers = headersRow;
 			this.importedData = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
 
+			this.importedData.forEach((data) => {
+				this.csvfieldHeaders = Object.keys(data);
+				this.csvfieldValues = Object.values(data);
+				this.toggleOverride = Array(this.csvfieldHeaders.length).fill(false);
+				this.displayNameChecked= Array(this.csvfieldHeaders.length).fill(false);
+				console.log(this.csvfieldHeaders);
+				console.log(this.csvfieldValues);
+			  });
 		}
-	
+	}
+
+//*********Truncate fileName *********//
+
+	truncateFileName(fileName: string, maxLength: number): string {
+		if (fileName.length > maxLength) {
+			return fileName.substring(0, maxLength) + '...';
+		}
+		return fileName;
 	}
 
 //*********Download Sample file****************/
@@ -201,6 +228,7 @@ export class ImportComponent implements OnInit {
 		for (let j = 0; j < headers.length; j++) {
 			headerArray.push(headers[j]);
 		}
+		console.log(headerArray)
 		return headerArray;
 	}
 
@@ -226,6 +254,7 @@ export class ImportComponent implements OnInit {
 			}
 			csvArr.push(obj)
 		}
+		console.log(csvArr)
 
 		return csvArr;
 	}
@@ -285,14 +314,7 @@ export class ImportComponent implements OnInit {
 		console.log("update count" + this.records.length)
 		console.log(this.importedData)
 		this.columnMapping = {
-			"Name": '',
-			"emailId": '',
-			"Mobile_Number": '',
-			"Gender": '',
-			"Tags": '',
-			"Status": '',
-			"Country": '',
-			"State": ''
+	
 		}
 		var csvdata = {
 			"field": this.fields,
@@ -313,6 +335,22 @@ export class ImportComponent implements OnInit {
 
 	}
 
+	//*************************Get Custom Fields Data Columns*************************** /
+	getCustomFieldsData() {
+		this._settingsService.getNewCustomField(this.spid).subscribe(response => {
+		  this.customFieldData = response.getfields
+		  console.log(this.customFieldData);  
+		})
+	  }
 
 
+	  selectColumnMapping(value:any) {
+		this.selectedColumnMapping = value;
+	  }
+
+
+	  onSelect(event: any): void {
+		this.selectedValue = event.target.value;
+		console.log('Selected Value:', this.selectedValue);
+	  }
 }

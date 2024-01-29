@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { contactsImageData } from '../models';
 const API_URL ='https://cip-api.stacknize.com/';
 const API_URL1 = 'https://contactapi.stacknize.com/';
-const API_URL2 = 'https://smartapi.stacknize.com/'
+const API_URL2 = 'https://smartapi.stacknize.com/';
 
 
 @Injectable()
@@ -53,7 +53,6 @@ export class DashboardService {
   }
   public Automation() {
     return this.http.get('http://localhost:3004');
-
   }
 
 
@@ -101,8 +100,6 @@ export class DashboardService {
     console.log("servise update data" + data)
     return this.http.post(API_URL1+'updateAndSave', data)
   }
-
-
 
   updatedDataCount(data: any) {
     return this.http.post(API_URL1+'verifyData', data)
