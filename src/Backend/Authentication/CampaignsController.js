@@ -48,27 +48,16 @@ const addCampaign = async (req, res) => {
             db.runQuery(req, res, updateQuery, []);
         } else {
 
+            var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus) ";
+            inserQuery += "VALUES (" + req.body.status + "," + req.body.sp_id + ",'" + req.body.title + "','" + req.body.channel_id + "','" + req.body.message_heading + "','" + req.body.message_content + "','" + req.body.message_media + "','" + req.body.message_variables + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.category + "','" + req.body.time_zone + "','" + req.body.start_datetime + "','" + req.body.end_datetime + "','" + req.body.csv_contacts + "','" + req.body.segments_contacts + "','" + req.body.category_id + "',' " + req.body?.OptInStatus + "')";
 
-            let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", [req.body.title, req.body.sp_id])
-
-            if (campaignTitle?.length == 0) {
-
-                var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus) ";
-                inserQuery += "VALUES (" + req.body.status + "," + req.body.sp_id + ",'" + req.body.title + "','" + req.body.channel_id + "','" + req.body.message_heading + "','" + req.body.message_content + "','" + req.body.message_media + "','" + req.body.message_variables + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.category + "','" + req.body.time_zone + "','" + req.body.start_datetime + "','" + req.body.end_datetime + "','" + req.body.csv_contacts + "','" + req.body.segments_contacts + "','" + req.body.category_id + "',' " + req.body?.OptInStatus +"')";
-
-                let addcampaign = await db.excuteQuery(inserQuery, []);
-                console.log(addcampaign)
-                res.send({
-                    "status": 200,
-                    "message": "Campaign added",
-                    "addcampaign": addcampaign
-                })
-            } else {
-                res.send({
-                    "status": 409,
-                    "message": "Campaign Name already exist"
-                })
-            }
+            let addcampaign = await db.excuteQuery(inserQuery, []);
+            console.log(addcampaign)
+            res.send({
+                "status": 200,
+                "message": "Campaign added",
+                "addcampaign": addcampaign
+            })
         }
     } catch (err) {
         res.send({
@@ -78,6 +67,30 @@ const addCampaign = async (req, res) => {
     }
 }
 
+const isExistCampaign = async (req, res) => {
+    try {
+
+        let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", [req.params.title, req.params.spid])
+
+        if (campaignTitle?.length == 0) {
+
+            res.send({
+                "status": 200,
+                "message": "Campaign ready to add",
+            })
+        } else {
+            res.send({
+                "status": 409,
+                "message": "Campaign Name already exist"
+            })
+        }
+    } catch (err) {
+        res.send({
+            "status": 500,
+            "message": err
+        })
+    }
+}
 
 const getCampaignDetail = (req, res) => {
     let Query = "SELECT * from Campaign  where  Campaign.Id=" + req.params.CampaignId
@@ -195,7 +208,7 @@ const sendCampinMessage = async (req, res) => {
     console.log("sendCampinMessage")
     try {
         var TemplateData = req.body
-          console.log(TemplateData)
+        console.log(TemplateData)
         var messageTo = TemplateData.phone_number
         var messateText = TemplateData.message_content
         let content = messateText;
@@ -236,23 +249,23 @@ const sendCampinMessage = async (req, res) => {
                 content = content.replace(`{{${placeholder}}}`, data[placeholder]);
             });
         }
-         
-     
+
+
         //let channelType = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [spid])
-       
+
         console.log(inputDate, currentDate, inputDate <= currentDate)
         if (inputDate <= currentDate) {
             let messagestatus;
-            if(optInStatus == 'Yes'){
+            if (optInStatus == 'Yes') {
                 const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and isDeleted !=1`;
                 let results = await db.excuteQuery(sqlQuery, [customerId]);
-                if(results?.length>0){
-                 messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+                if (results?.length > 0) {
+                    messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
                 }
-            }else{
-                 messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+            } else {
+                messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
             }
-           
+
 
 
             console.log('The input date is in the past.');
@@ -493,7 +506,7 @@ const copyCampaign = (req, res) => {
     db.runQuery(req, res, CopyQuery, []);
 }
 
-module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList };
+module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList, isExistCampaign };
 
 
 
