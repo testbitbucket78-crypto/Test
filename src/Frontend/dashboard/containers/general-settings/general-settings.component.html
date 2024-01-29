@@ -21,48 +21,80 @@
     <div class="setting-card" *ngIf="selectedTab==1">
         <div class="default-actions-heading pb-4">Default Actions</div>
         <div class="pl-2 pr-5 ">
-            <div class="d-flex align-items-center input-checkbox">
-                <input type="checkbox" class="checkbox" (change)="defaultActionState('agentActiveTime', $event.target.checked)" [checked]="isAgentActive" >
-                <span class="sub-heading">Agent Inactive Timeout</span>
+            <div class="d-flex align-items-center custom-control custom-checkbox">
+                <input class="custom-control-input" type="checkbox" id="agentActiveTime" 
+                   (change)="defaultActionState('agentActiveTime', $event.target.checked)" 
+                    [(ngModel)]="isAgentActive">
+                <label class="custom-control-label" for="agentActiveTime">
+                    <span class="sub-heading">Agent Inactive Timeout</span></label>
             </div>
             <div class="sub-contents">
                 <p>Configure the inactivity timeout duration for agents. If chat is assigned but no reply by agent,
                     their status is changed to Offline.</p>
-                <div class="select-heading pt-4 pb-2">Set Timeout Period</div>
-                <select class="input-form" [disabled]="!isAgentActive" [(ngModel)]="agentActiveTime">
-                    <option [ngValue]="calculateTime(5)">5 Minutes</option>
-                    <option [ngValue]="calculateTime(10)">10 Minutes</option>
-                    <option [ngValue]="calculateTime(15)">15 Minutes</option>
-                    <option [ngValue]="calculateTime(20)">20 Minutes</option>
-                </select>
+                <div class="select-heading pt-4 pb-2">
+                    <label class="form-label" for="agentActiveTime">Set Timeout Period</label>
+                </div>
+                <div class="d-flex align-items-baseline">
+                    <input class="form-control" id="agentActiveTime" type="text" pattern="^[^+\-.,?*%$eE]+$"
+                    onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"   
+                    [disabled]="!isAgentActive"
+                     [(ngModel)]="pauseAgentActiveTime">
+                     <label class="px-2" for="agentActiveTime">Minutes</label>
+                </div>
+                
+                <!-- <select class="input-form" [disabled]="!isAgentActive" [(ngModel)]="agentActiveTime"> -->
+                    <!-- <option [ngValue]="calculateTime()">5 Minutes</option>
+                    <option [ngValue]="calculateTime()">10 Minutes</option>
+                    <option [ngValue]="calculateTime()">15 Minutes</option>
+                    <option [ngValue]="calculateTime()">20 Minutes</option> -->
+                <!-- </select> -->
             </div>
         </div>
 
         <div class="pl-2 pr-5 pt-3">
-            <div class="d-flex align-items-center">
-                <input type="checkbox" class="checkbox" (change)="defaultActionState('autoReplyTime', $event.target.checked)" [checked]="isAutoReply">
-                <span class="sub-heading">Auto Replies Pause</span>
+            <div class="d-flex align-items-center custom-control custom-checkbox">
+                <input class="custom-control-input" type="checkbox" id="isAutoReply" 
+                  (change)="defaultActionState('autoReplyTime', $event.target.checked)" 
+                   [(ngModel)]="isAutoReply" >
+                <label class="custom-control-label" for="isAutoReply">
+                    <span class="sub-heading">Auto Replies Pause</span></label>
             </div>
             <div class="sub-contents">
                 <p>Configure the time for all auto replies to be paused when the chat is answered by an agent.</p>
-                <div class="select-heading pt-4 pb-2">Pause Auto Replies for</div>
-                <select class="input-form" [disabled]="!isAutoReply" [(ngModel)]="autoReplyTime"  >
-                    <option [ngValue]="calculateTime(5)">5 Minutes</option>
-                    <option [ngValue]="calculateTime(10)">10 Minutes</option>
-                    <option [ngValue]="calculateTime(15)">15 Minutes</option>
-                    <option [ngValue]="calculateTime(20)">20 Minutes</option>
-                </select>
-                <div class="d-flex align-items-center w-40 py-3">
-                    <input type="checkbox" class="checkbox"(change)="defaultActionState('autoReplyDisable', $event.target.checked)" [checked]="isAutoReplyDisable" >
+                <div class="select-heading pt-4 pb-2">
+                 <label class="form-label" for="autoReplyTime">Pause Auto Replies for</label>
+                </div>
+                <div class="d-flex align-items-baseline">
+                    <input class="form-control" id="autoReplyTime" type="text" pattern="^[^+\-.,?*%$eE]+$"
+                     onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"   
+                     [disabled]="!isAutoReply"
+                     [(ngModel)]="pauseAutoReplyTime">
+                     <label class="px-2" for="autoReplyTime">Minutes</label>
+                </div>
+       
+                <!-- <select class="input-form" [disabled]="!isAutoReply" [(ngModel)]="autoReplyTime"> -->
+                    <!-- <option [ngValue]="calculateTime()">5 Minutes</option>
+                    <option [ngValue]="calculateTime()">10 Minutes</option>
+                    <option [ngValue]="calculateTime()">15 Minutes</option>
+                    <option [ngValue]="calculateTime()">20 Minutes</option> -->
+                <!-- </select> -->
+                <div class="d-flex align-items-center w-40 py-3 custom-control custom-checkbox">
+                    <input class="custom-control-input" type="checkbox" id="isAutoReplyDisable"
+                      (change)="defaultActionState('autoReplyDisable',$event.target.checked)"
+                       [(ngModel)]="isAutoReplyDisable" >
+                   <label class="custom-control-label" for="isAutoReplyDisable">
                     <p>Disable Auto Replies completely when a chat is assigned to an agent until resolved.</p>
+                   </label> 
                 </div>
             </div>
         </div>
 
         <div class="pl-2 pr-5 pt-3">
-            <div class="d-flex align-items-center">
-                <input type="checkbox" class="checkbox" (change)="defaultActionState('contactAdd', $event.target.checked)" [checked]="isContactAdd" >
-                <span class="sub-heading">Contact Auto Addition</span>
+            <div class="d-flex align-items-center custom-control custom-checkbox">
+                <input class="custom-control-input" type="checkbox" id="isContactAdd"
+                  (change)="defaultActionState('contactAdd',$event.target.checked)"
+                   [(ngModel)]="isContactAdd" >
+                <label class="custom-control-label" for="isContactAdd"><span class="sub-heading">Contact Auto Addition</span></label>
             </div>
             <div class="sub-contents">
                 <p>You can enable the auto addition of contacts when a user sends a message to your business for the

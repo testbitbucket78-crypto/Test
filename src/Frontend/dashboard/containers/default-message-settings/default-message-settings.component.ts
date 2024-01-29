@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { defaultMessagesData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
-import { ToolbarService, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 
 declare var $:any;
@@ -11,7 +11,7 @@ declare var $:any;
   selector: 'sb-default-message-settings',
   templateUrl: './default-message-settings.component.html',
   styleUrls: ['./default-message-settings.component.scss'],
-  providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService]
+  providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService,CountService]
 })
 export class DefaultMessageSettingsComponent implements OnInit {
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
@@ -22,9 +22,11 @@ export class DefaultMessageSettingsComponent implements OnInit {
   selectedCategory!: number;
   selectedMessage: any;
   value:any;
+  fileName: any; 
+  characterCount: number = 0;
   selectedTitle:string='';
   selectedDescription:string='';
-  videoSelected = false;
+  selectedPreview: string = '';
   defaultMessageForm!:FormGroup;
   showSideBar:boolean=false;
   defaultMessages:any [] =[];
@@ -96,9 +98,10 @@ export class DefaultMessageSettingsComponent implements OnInit {
 
   }
 
-  onEditorChange(value: string | null): void {
+  onEditorChange(value: any) {
     this.defaultMessageForm.get('value')?.setValue(value);
   }
+
 	closeAllModal(){
 		$('body').removeClass('modal-open');
 		$('.modal-backdrop').remove();
@@ -144,14 +147,67 @@ getAttributeList() {
     this.selectedCategory = type;
   }
 
-  handleVideoUpload(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const objectURL = URL.createObjectURL(file);
-      this.videoPlayer.nativeElement.src = objectURL;
-      this.videoSelected = true;
+  previewImageAndVideo(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement.files && inputElement.files[0]) {
+        const file = inputElement.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (e: any) => {
+            const fileType = file.type;
+            if (fileType.startsWith('image')) {
+                this.selectedPreview = e.target.result as string;
+            }
+            console.log(this.selectedPreview);
+        };
+        reader.readAsDataURL(file);
     }
+}
+
+  saveVideoAndDocument(files: FileList) {
+    if (files[0]) {
+        let File = files[0];
+        this.fileName = this.truncateFileName(File.name, 25);
+        let spid = this.spId
+        let mediaType = files[0].type;
+        const data = new FormData();
+        data.append('dataFile', File, File.name);
+        data.append('mediaType', mediaType);
+        this._teamboxService.uploadfile(data,spid).subscribe(uploadStatus => {
+            let responseData: any = uploadStatus;
+            if (responseData.filename) {
+                this.selectedPreview = responseData.filename.toString();
+                console.log(this.selectedPreview);
+            }
+        });
+    }
+}
+
+uploadThroughLink() {
+  let value = this.defaultMessageForm.get('link')?.value;
+  this.selectedPreview = value;
+}
+
+onFileChange(event: any) {
+    let files: FileList = event.target.files;
+    this.saveVideoAndDocument(files);
+}
+
+truncateFileName(fileName: string, maxLength: number): string {
+  if (fileName.length > maxLength) {
+    return fileName.substring(0, maxLength) + '...';
   }
+  return fileName;
+}
+
+  // remove form values
+  removeValue() {
+    this.selectedPreview = '';
+    this.fileName='';
+    this.defaultMessageForm.get('link')?.setValue(null);
+}
+
+
 
   getDefaultMessages() {
     this.apiService.getDefaultMessages(this.spId).subscribe(response => {
@@ -160,25 +216,27 @@ getAttributeList() {
     })
   }
 
-  getDefaultMessageById(uid: number) {
-    this.selectedMessage = this.defaultMessages.find((message:any) =>message.uid === uid);
-    this.showSideBar = true;
+  getDefaultMessageById(title: string) {
+    this.selectedMessage = this.defaultMessages.find((message:any) =>message.title === title);
+    console.log(this.selectedMessage)
+    // this.showSideBar = true;
   }
 
   addDefaultMessageData() {
     let defaultMessagesData = this.copyDefaultMesssageData();
-    this.apiService.addDefaultMessages(defaultMessagesData).subscribe(response => {
-        if(response.status === 200) {
-          this.defaultMessageForm.reset();
-          $("#welcomGreeting").modal('hide');
+    // this.apiService.addDefaultMessages(defaultMessagesData).subscribe(response => {
+    //     if(response.status === 200) {
+    //       this.defaultMessageForm.reset();
+    //       $("#welcomGreeting").modal('hide');
 
-        }
-    });
+    //     }
+    // });
   }
 
   populateData(data:any) {
-    this.defaultMessagesData = data
+    // this.defaultMessagesData = data
     let selectedData = data;
+    console.log(selectedData)
     this.selectedTitle = selectedData.title;
     this.selectedDescription = selectedData.description;
   }
@@ -186,26 +244,26 @@ getAttributeList() {
   copyDefaultMesssageData() {
     let defaultMessagesData:defaultMessagesData = <defaultMessagesData>{};
 
-    defaultMessagesData.SP_ID = this.spId;
+    defaultMessagesData.spid = this.spId;
     defaultMessagesData.uid = 0;
     defaultMessagesData.title = this.selectedTitle;
     defaultMessagesData.description = this.selectedDescription;
     defaultMessagesData.message_type = this.selectedType;
     defaultMessagesData.value = this.defaultMessageForm.controls.value.value;
-    defaultMessagesData.link = this.defaultMessageForm.controls.link.value;
+    defaultMessagesData.link = this.selectedPreview;
     defaultMessagesData.override = this.defaultMessageForm.controls.override.value;
     defaultMessagesData.autoreply = this.defaultMessageForm.controls.autoreply.value;
     console.log(defaultMessagesData);
     return defaultMessagesData;
   }
 
-  patchFormValue(){
-    const data = this.defaultMessagesData;
-    for(let prop in data){
-      let value = data[prop as keyof typeof data];
-      if(this.defaultMessageForm.get(prop))
-      this.defaultMessageForm.get(prop)?.setValue(value)
-    }  
-  }
+  // patchFormValue(){
+  //   const data = this.defaultMessagesData;
+  //   for(let prop in data){
+  //     let value = data[prop as keyof typeof data];
+  //     if(this.defaultMessageForm.get(prop))
+  //     this.defaultMessageForm.get(prop)?.setValue(value)
+  //   }  
+  // }
 
 }

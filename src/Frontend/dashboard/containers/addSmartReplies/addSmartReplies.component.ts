@@ -610,7 +610,7 @@ click: any;
 
 
 		
-		this.assignedAgentList.push({ Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
+		this.assignedAgentList.push({ActionID:0, Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
 		console.log(this.messageMeidaFile)
 			this.custommesage = '';
 			
@@ -622,7 +622,7 @@ click: any;
 		}
 		saveMessage() {
 
-			this.assignedAgentList.push({ Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
+			this.assignedAgentList.push({ActionID:0, Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
 			console.log(this.messageMeidaFile)
 				this.custommesage = '';	
 				

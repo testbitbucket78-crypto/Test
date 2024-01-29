@@ -526,19 +526,24 @@
 							</select>
 							<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" style="display: none" />
 							<input type="text" class="form-control" id="displayPhoneNumber" formControlName="displayPhoneNumber" 
-								name="displayPhoneNumber" placeholder="Enter Phone Number" pattern="^[^+\-.,?*%$eE]+$"
-								onKeyPress="return /^[0-9]$/.test(event.key)"
+								name="displayPhoneNumber" placeholder="Enter Phone Number"
 								[ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }" 
 							(change)="formatPhoneNumber()"> 
 						</div>
-						<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('minlength') 
-						    || productForm.controls.displayPhoneNumber.hasError('maxlength')" class="text-danger">
+						<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.valid && 
+						      productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength')"
+							 class="text-danger">
 						! Phone number must consist of 6 to 15 digits.
 					  </div>
 					  <div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('required')"
 					  class="text-danger">
 					  ! Phone Number is required.
 				  </div>
+				  <div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('pattern')"
+				  class="text-danger">
+				  ! Invalid Phone Number.
+			  </div>
+
 					</div>
 				</div>
 			</div>
