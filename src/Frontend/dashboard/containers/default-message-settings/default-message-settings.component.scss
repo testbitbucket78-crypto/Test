@@ -53,6 +53,10 @@
     font-weight: 400;
    }
 
+   .account-btn.disabled {
+    background:grey;
+   }
+
    .default-footer{
     display: flex;
     flex-wrap: wrap;
@@ -173,12 +177,11 @@ input[type="radio"]:checked + label::before {
   font-weight: 700!important;
   color: #000000!important;
 }
-
 // type image
 
 .sel-type-image {
     width: 100%;
-    height: 170px;
+    height: 160px;
     background: #FFFFFF;
     border: 1px solid #EBEBEB;
     border-radius: 19px;
@@ -224,7 +227,7 @@ textarea::placeholder {
 
 .video-player video {
     width: 100%;
-    height: auto;
+    height: 208px;
     display: block;
     outline: none;
     border: 1px solid #EBEBEB;
@@ -374,6 +377,25 @@ textarea::placeholder {
     outline: 0;
     font-family: "Manrope";
     padding-left: 1.2rem;
+}
+
+.checkBox{
+  border-radius: 10px !important;
+  width: 1.3em;
+  height: 1.3em;
+  background-color: white;
+  vertical-align: middle;
+  border: 1px solid #ebebeb;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  cursor: pointer;
+ }
+
+ .checkBox:checked {
+  background-color: gray;
+  appearance: auto;
+  -webkit-appearance: auto;
 }
 
 
@@ -597,6 +619,65 @@ textarea::placeholder {
 #defaultRTE_toolbar {
     text-align: center;
 }
+
+#defaultRTEText {
+  height: 425px!important;
+}
 .e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
   top: -750% !important;
 }
+
+
+// sideBar //
+.message_data {
+  width: 70%;
+  background: #FFFFFF;
+  border: 1px solid #EBEBEB;
+  padding: 10px 10px 10px 10px;
+  border-radius: 0 0 12px 12px;
+  color: #030303;
+  font-size: 11px;
+  font-weight: 500;
+  word-wrap: break-word;
+  // overflow: scroll;
+  // overflow-x: hidden;
+  // height: 200px;
+}
+
+.message_data.preview {
+  border-radius: 12px 12px 12px 12px;
+}
+
+.message_type{
+  width: 70%;
+  height: 150px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  border: 1px solid #EBEBEB;
+  border-radius: 12px 12px 0 0;
+}
+
+.message_type.vid {
+  height: auto;
+}
+
+.video.message_type video {
+  height: 100%;
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+}
+#video-background {
+  width: 100%;
+  border-radius: 12px 12px 0px 0px;
+}
+
+.account-white-btn {
+  background: white;
+  border-radius: 18px;
+  padding: 8px 13px;
+  box-shadow: 1px 8px 29px #695F9724;
+  border: 1px;
+  height: fit-content;
+ }
+

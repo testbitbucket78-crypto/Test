@@ -858,7 +858,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   getfilteredCustomFields() {
     const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
        const filteredFields:any = this.customFieldData.filter(
-          (field:any) => !defaultFieldNames.includes(field.ActuallName) && field.Status===1 );
+          (field:any) => !defaultFieldNames.includes(field.ActuallName) && field.status===1 );
           this.filteredCustomFields = filteredFields;
           console.log(this.filteredCustomFields);
   }

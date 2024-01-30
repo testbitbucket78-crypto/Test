@@ -1,17 +1,17 @@
 <div class="setting-card" >
     <div class="default-actions-heading pb-4">Default Messages</div>
     <div class=" grid-view p-2 px-4" >
-        <div *ngFor="let data of defaultMessageData; let idx = index" (click)="getDefaultMessageById(data)">
+        <div *ngFor="let data of defaultMessageDataInit; let idx = index" (click)="populateData(data)">
             <div class="flex-row">
                 <span class="sub-heading">{{data.title}} </span>
-                <span class="enable">Enable</span>
-                <!-- <span class="disable">Disable</span> -->
+                <span *ngIf="data.Is_disable==0" class="enable">Enable</span>
+                <span *ngIf="data.Is_disable==1 || data.Is_disable==null" class="disable">Disabled</span>
             </div>
             <div class="sub-contents">
                 <p>{{data.description}}</p>
-                <button class="white-btn" data-bs-toggle="modal" (click)="selectedButtonType(idx)" data-bs-target="#welcomGreeting">
+                <button *ngIf="!data.uid"  class="white-btn" data-bs-toggle="modal" (click)="selectedButtonType(idx)" data-bs-target="#welcomGreeting">
                  <img src="../../../../assets/img/teambox/add.svg" class="pr-1"> Configure </button>
-                 <button class="white-btn" (click)="ToggleSideBar()">View & Manage</button>
+                 <button *ngIf="data.uid" class="white-btn" (click)="ToggleSideBar()">View & Manage</button>
             </div>
           </div>
     </div>
@@ -34,7 +34,7 @@
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
-                <form [formGroup]="defaultMessageForm">
+                <form [formGroup]="defaultMessageForm" (ngSubmit)="addDefaultMessageData()">
                 <div class="modal-body px-5 pt-0">
                     <div *ngIf="selectedCategory==1" class="d-inline-block flex-column sel-type-link pb-3">
                         <label for="link" class="linkch" >Agent Reply Timeout Period</label>
@@ -58,7 +58,7 @@
                          </div>
 
                          <div *ngIf="selectedType === 'text'" class="sel-type-text">
-                             <ejs-richtexteditor [(value)]="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'500px'"
+                             <ejs-richtexteditor [(value)]="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools'
                              [maxLength]='1024' (change)="onEditorChange(chatEditor.value)" [showCharCount]='true' placeholder="Enter">
                             </ejs-richtexteditor>
                          </div>
@@ -76,7 +76,7 @@
                         </div>
                     </div>
 
-                   <div *ngIf="selectedType === 'video'" class="my-4 sel-type-video">
+                   <div *ngIf="selectedType === 'video'" class=" mt-2 mb-1 sel-type-video">
                     <input type="file" accept="video/mp4"  formControlName="link" name="video-upload" (change)="onFileChange($event)" id="sel-type-video">
                     <label *ngIf="!selectedPreview" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
 
@@ -117,21 +117,21 @@
                     <h6>Body Text</h6> <span>Characters</span>
                  </div>
                     <div class="sel-type-text">
-                        <ejs-richtexteditor [(value)]="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'200px'"
+                        <ejs-richtexteditor [(value)]="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'150px'"
                         [maxLength]='1024' (change)="onEditorChange(chatEditor.value)" [showCharCount]='true' placeholder="Enter">
                        </ejs-richtexteditor>
                          </div>
                       </div>
                    </div>
                 <div class="modal-footer">
-                    <button type="button" class="account-btn" (click)="addDefaultMessageData()">Save</button>
+                    <button type="submit" [disabled]="defaultMessageForm.invalid" [class.disabled]="defaultMessageForm.invalid" class="account-btn">Save</button>
                 </div>
             </form>
             </div>
         </div>
     </div>
 
-    <!-- <div class="sideBar" *ngIf="showSideBar" >
+    <div class="sideBar" *ngIf="showSideBar" >
         <div class="sidebar-close">
             <button type="button" class="btn-close" (click)="showSideBar = false">
                 <img src="../../../../assets/img/teambox/icon-close.svg">
@@ -139,30 +139,31 @@
         </div>
         <div class="sidebar-content">
             <div class="d-flex pt-5 px-5">
-                <span *ngIf="selectedMessage.Is_disable == 0" class="enable">Enable</span>
-                <span *ngIf="selectedMessage.Is_disable == 1" class="disable">Diabled</span>
+                <span *ngIf="selectedMessageData.Is_disable == 0" class="enable">Enable</span>
+                <span *ngIf="selectedMessageData.Is_disable == 1 || selectedMessageData.Is_disable == null" 
+                       class="disable">Disabled</span>
             </div>
            
                 <div class="p-3">
-                  {{selectedMessage.Created_at}}
+                   Created On: {{selectedMessageData.Created_at | date:'h:mm a, dd MMM yyyy'}}
                     <div class="pt-1">
-                       {{selectedMessage.updated_at}}
+                   Modified On: {{selectedMessageData.updated_at | date:'h:mm a, dd MMM yyyy'}}
                     </div>
                 </div>    
             <div class="flex-column pt-4">
                 <div class="heading w-50">
-                  {{selectedMessage.title}}
+                  {{selectedMessageData.title}}
                 </div>
                 <div class="description">
-                  <p>{{selectedMessage.description}}</p>
+                  <p>{{selectedMessageData.description}}</p>
                 </div>
             </div>
-            <div class="flex-row  pt-4">
+            <div *ngIf="selectedMessageData.override==null" class="flex-row  pt-4">
                 <div class="condition">
                  <img src="../../../../assets/img/settings/checked.svg" />
                 </div>
                 <div class="">
-                    <p>Override keyword match and always send this ‘Out of Office’ message</p>
+                    <p>Override keyword match and always send this ‘{{selectedMessageData.title}}’ message</p>
                 </div>
             </div>
             <div class="flex-column  pt-4">
@@ -170,8 +171,21 @@
                    <img src="" />
                 </div>
                 <div class="bodydata w-45">
-                    {{selectedMessage.Name}}
-                  {{selectedMessage.value}}
+                    <div *ngIf="selectedMessageData.message_type == 'image'" class="message_type" 
+                           [ngStyle]="{'background-image': 'url(' + selectedMessageData.link + ')'}">
+                    </div> 
+                    <div *ngIf="selectedMessageData.message_type == 'video'" class="message_type" [ngClass]="{'vid':selectedMessageData.message_type=='video'}">
+                        <video controls id="video-background" [src]="selectedMessageData.link" type="video/mp4"></video>
+                    </div>
+                    <div *ngIf="selectedMessageData.message_type == 'document'" class="message_type">
+                        <div class="doc-preview" *ngIf="selectedMessageData.link" width="100%" height="150px">
+                          <a [href]="selectedMessageData.link"><img src="../../../../assets/img/settings/doc.svg" />
+                        </a>
+                        </div>
+                    </div>
+                  <div class="message_data" [innerHTML]=" selectedMessageData.value" 
+                      [ngClass]="{'preview': selectedMessageData.message_type === 'text'}">
+                </div>
                 </div>
             </div>
         </div>
@@ -182,14 +196,14 @@
                 <img class="p-0" src="../../../../assets/img/delete.png">
             </button>
             <button class="disable-btn ml-2">
-                <span>Disable</span>
+                <span>Enable</span>
                 <label class="switch">
                     <input type="checkbox" class="form-control-checkbox">
                     <span class="slider 1"></span>
                 </label>
             </button>
         </div>
-    </div> -->
+    </div>
 
 </div>
 

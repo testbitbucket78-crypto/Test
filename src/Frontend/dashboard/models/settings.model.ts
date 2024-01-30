@@ -164,6 +164,8 @@ export interface defaultActionData {
 
 export interface defaultMessagesData {
     uid:number;
+    Created_at:string;
+    updated_at:string;
     spid:number;
     title:string;
     description:string;

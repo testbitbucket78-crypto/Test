@@ -94,6 +94,10 @@
     font-weight: 400;
    }
 
+   .account-btn.disabled {
+    background: grey;
+   }
+
    .default-footer{
     display: flex;
     flex-wrap: wrap;
