@@ -120,7 +120,7 @@ router.get('/getApprovedTemplate/:spid/:isTemplate',campaignController.getApprov
 router.post('/deleteTemplates',campaignController.deleteTemplates)
 router.post('/addGallery',campaignController.addGallery)
 router.get('/getGallery/:spid/:isTemplate',campaignController.getGallery)  // pass spid=0,isTemplate=2
-
+router.get('/exitTemplate/:spid/:isTemplate/:name',campaignController.isExistTemplate);  // istemplate=1
 //__________________ACCOUNT API'S__________________________//
 
 router.post('/addWhatsAppDetails',accountController.insertAndEditWhatsAppWeb)

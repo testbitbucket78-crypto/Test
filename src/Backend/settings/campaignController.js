@@ -404,20 +404,14 @@ const addTemplate = async (req, res) => {
             console.log(awsres.value.Location)
         }
         if (ID == 0) {
-            let selectTemplate = await db.excuteQuery('SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=? and TemplateName=?', [spid, isTemplate, TemplateName]);
-            if (selectTemplate?.length == 0) {
-                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, created_at]]
-                let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
-                res.status(200).send({
-                    addedtem: addedtem,
-                    status: 200
-                })
-            } else {
-                res.status(409).send({
-                    msg: 'Template name already exist',
-                    status: 409
-                })
-            }
+
+            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, created_at]]
+            let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
+            res.status(200).send({
+                addedtem: addedtem,
+                status: 200
+            })
+
         }
         else {
             let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
@@ -431,6 +425,30 @@ const addTemplate = async (req, res) => {
         console.log(err)
         db.errlog(err);
         res.send(err)
+    }
+}
+
+const isExistTemplate = async (req, res) => {
+    try {
+
+        let selectTemplate = await db.excuteQuery('SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=? and TemplateName=?', [req.params.spid, req.params.isTemplate, req.params.name]);
+        if (selectTemplate?.length == 0) {
+
+            res.send({
+                "status": 200,
+                "message": "Template ready to add",
+            })
+        } else {
+            res.send({
+                "status": 409,
+                "message": "Template Name already exist"
+            })
+        }
+    } catch (err) {
+        res.send({
+            "status": 500,
+            "message": err
+        })
     }
 }
 
@@ -470,7 +488,7 @@ const addGallery = async (req, res) => {
         created_at = new Date()
         isTemplate = req.body.isTemplate
         industry = req.body.industry
-        topic =req.body.topic
+        topic = req.body.topic
         let image = ""
         image = Links
         if (Links != null && Links != undefined && Links != "" && Links != " " && media_type == 'image') {
@@ -614,6 +632,6 @@ module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
     testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
-    enableStatusfield, getApprovedTemplate, addGallery, getGallery
+    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate
 
 }
