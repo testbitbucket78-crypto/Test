@@ -1,5 +1,5 @@
 import { Component, OnInit,  ViewChild, ElementRef } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { defaultMessagesData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
@@ -20,7 +20,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
   spId:number = 0;
   selectedType: string = 'text';
   selectedCategory!: number;
-  selectedMessage: any;
+  selectedMessageData=<defaultMessagesData>{};
   value:any;
   fileName: any; 
   characterCount: number = 0;
@@ -30,6 +30,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
   defaultMessageForm!:FormGroup;
   showSideBar:boolean=false;
   defaultMessages:any [] =[];
+  defaultMessageDataInit:any []=[];
   defaultMessagesData: any;
   attributesList:any=[];
   attributesearch!:string;
@@ -80,13 +81,13 @@ export class DefaultMessageSettingsComponent implements OnInit {
 		}
   ]};
 
-  constructor(private apiService:SettingsService,private _teamboxService:TeamboxService) { }
+  constructor(private apiService:SettingsService,private _teamboxService:TeamboxService,private fb: FormBuilder) { }
   prepareUserForm(){
-    return new FormGroup({
-      value:new FormControl(null),
-      link:new FormControl(null),
-      override:new FormControl(null),
-      autoreply:new FormControl(null),
+    return this.fb.group ({
+      value:[null,[Validators.required]],
+      link:[null],
+      override:[null],
+      autoreply:[null]
     });
   }
   ngOnInit(): void {
@@ -141,6 +142,12 @@ getAttributeList() {
 }
   showMessageType(type: string) {
     this.selectedType = type;
+    if (this.selectedType === 'video' || this.selectedType === 'document' || this.selectedType === 'image') {
+       this.defaultMessageForm.get('link')?.setValidators([Validators.required]);
+    } else {
+      this.defaultMessageForm.get('link')?.clearValidators();
+    }
+    this.defaultMessageForm.get('link')?.updateValueAndValidity();
   }
   
   selectedButtonType(type: number) {
@@ -213,32 +220,39 @@ truncateFileName(fileName: string, maxLength: number): string {
     this.apiService.getDefaultMessages(this.spId).subscribe(response => {
         this.defaultMessages = response.defaultaction
         console.log(response.defaultaction);
+        
+        // combine data cominig from api into defaultMessageData array //
+        this.defaultMessageDataInit = this.defaultMessageData.map(defaultMessage => {
+          const matchedData = this.defaultMessages.find(Item => Item.title === defaultMessage.title);
+          if (matchedData) {
+            return { ...defaultMessage, ...matchedData };
+          } else {
+            return defaultMessage;
+          }
+        });
+        console.log(this.defaultMessageDataInit);
     })
-  }
-
-  getDefaultMessageById(title: string) {
-    this.selectedMessage = this.defaultMessages.find((message:any) =>message.title === title);
-    console.log(this.selectedMessage)
-    // this.showSideBar = true;
   }
 
   addDefaultMessageData() {
     let defaultMessagesData = this.copyDefaultMesssageData();
-    // this.apiService.addDefaultMessages(defaultMessagesData).subscribe(response => {
-    //     if(response.status === 200) {
-    //       this.defaultMessageForm.reset();
-    //       $("#welcomGreeting").modal('hide');
+    this.apiService.addDefaultMessages(defaultMessagesData).subscribe(response => {
+        if(response.status === 200) {
+          this.defaultMessageForm.reset();
+          this.getDefaultMessages();
+          this.removeValue();
+          $("#welcomGreeting").modal('hide');
 
-    //     }
-    // });
+        }
+    });
   }
 
   populateData(data:any) {
-    // this.defaultMessagesData = data
-    let selectedData = data;
-    console.log(selectedData)
-    this.selectedTitle = selectedData.title;
-    this.selectedDescription = selectedData.description;
+    this.defaultMessagesData = data
+    this.selectedMessageData = data;
+    console.log(this.selectedMessageData)
+    this.selectedTitle = data.title;
+    this.selectedDescription = data.description;
   }
 
   copyDefaultMesssageData() {
@@ -257,13 +271,13 @@ truncateFileName(fileName: string, maxLength: number): string {
     return defaultMessagesData;
   }
 
-  // patchFormValue(){
-  //   const data = this.defaultMessagesData;
-  //   for(let prop in data){
-  //     let value = data[prop as keyof typeof data];
-  //     if(this.defaultMessageForm.get(prop))
-  //     this.defaultMessageForm.get(prop)?.setValue(value)
-  //   }  
-  // }
+  patchFormValue(){
+    const data = this.defaultMessagesData;
+    for(let prop in data){
+      let value = data[prop as keyof typeof data];
+      if(this.defaultMessageForm.get(prop))
+      this.defaultMessageForm.get(prop)?.setValue(value)
+    }  
+  }
 
 }

@@ -87,32 +87,25 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   calculateTime(pauseDuration:number,inactiveTime:number) {
-    if(this.isAutoReply == 1) {
+    if(this.isAutoReply=1) {
       this.autoReplyTime = this.date.toString();
       let calcTime = new Date(this.date.getTime() + pauseDuration * 60000);
       this.pausedTill = calcTime.toString();
-     return calcTime;
     }
     else {
       this.autoReplyTime = '';
       this.pausedTill= '';
+      this.pauseAutoReplyTime=0;
     }
 
-    if(this.isAgentActive == 1) {
-      alert('worked 1')
+    if(this.isAgentActive=1) {
       let calcTime = new Date(this.date.getTime() + inactiveTime * 60000);
       this.agentActiveTime = calcTime.toString();
-      console.log(this.agentActiveTime)
     }
-    else if (this.isAgentActive == 0) {
-      alert('worked 0')
+    else{
       this.agentActiveTime = '';
       this.pauseAgentActiveTime = 0;
     }
-  }
-
-  agentInactiveTime(inactiveTime:number) {
-   
   }
 
   saveDefaultAction() { 
