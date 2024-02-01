@@ -33,7 +33,7 @@ const defaultaction = async (req, res) => {
         console.log(select)
         if (select.length != 0) {
 
-            var defaultValues = [req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at, req.body.SP_ID,]
+            var defaultValues = [req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at, req.body.SP_ID,select[0]?.id]
             var updateddefaultData = await db.excuteQuery(val.updatedefaultactionDetails, defaultValues)
 
             res.status(200).send({
@@ -42,7 +42,7 @@ const defaultaction = async (req, res) => {
                 status: 200
             });
         } else {
-            var defaultinsert = [req.body.SP_ID, req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at]
+            var defaultinsert = [req.body.SP_ID, req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at,req.body.pauseAgentActiveTime,req.body.pauseAutoReplyTime]
             var defaultaction = await db.excuteQuery(val.defaultinsertDetails, [[defaultinsert]])
 
             res.status(200).send({
@@ -280,8 +280,8 @@ const deletedefaultactions = async (req, res) => {
         updated_at = new Date()
 
 
-        var deletedefaultQuery = `UPDATE defaultmessages SET isDeleted=1,updated_at=? where SP_ID=?`
-        let deletepay = await db.excuteQuery(deletedefaultQuery, [date, req.params.spid])
+        var deletedefaultQuery = `UPDATE defaultmessages SET isDeleted=1,updated_at=? where SP_ID=? and uid=?`
+        let deletepay = await db.excuteQuery(deletedefaultQuery, [updated_at, req.body.spid ,req.body.uid])
         res.status(200).send({
             deletepay: deletepay,
             status: 200

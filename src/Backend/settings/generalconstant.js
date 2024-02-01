@@ -16,13 +16,13 @@ const region = 'ap-south-1'
 // default actions
 
 defaultactiondetails = 'select * from defaultActions where spid=?'
-updatedefaultactionDetails = 'UPDATE defaultActions SET isAgentActive=?,agentActiveTime=?,isAutoReply=?,autoReplyTime=?,isAutoReplyDisable=?,isContactAdd=?,pausedTill=?,updated_at=? Where spid=?'
-defaultinsertDetails = 'INSERT INTO defaultActions(spid, isAgentActive,agentActiveTime,isAutoReply,autoReplyTime,isAutoReplyDisable,isContactAdd,pausedTill,created_at) VALUES ?'
+updatedefaultactionDetails = 'UPDATE defaultActions SET isAgentActive=?,agentActiveTime=?,isAutoReply=?,autoReplyTime=?,isAutoReplyDisable=?,isContactAdd=?,pausedTill=?,updated_at=? Where spid=? and id=?'
+defaultinsertDetails = 'INSERT INTO defaultActions(spid, isAgentActive,agentActiveTime,isAutoReply,autoReplyTime,isAutoReplyDisable,isContactAdd,pausedTill,created_at,pauseAgentActiveTime,pauseAutoReplyTime) VALUES ?'
 
 // default messages
-getenabledisable = 'select * from defaultmessages where SP_ID=?'
+getenabledisable = 'select * from defaultmessages where SP_ID=? and isDeleted !=1'
 var Abledisablequery='UPDATE defaultmessages SET Is_disable=?,updated_at=? WHERE uid=? '
-selectdefaultquery = `select *from defaultmessages where SP_ID=?`
+selectdefaultquery = `select *from defaultmessages where SP_ID=? and isDeleted !=1`
 uploaddetails = 'select * from companyDetails where SP_ID=? and isDeleted !=1'
 addDefaultMsg='INSERT INTO defaultmessages (SP_ID,title,description,message_type,value,link,override,autoreply,Is_disable,isDeleted,created_at) values ?'
 

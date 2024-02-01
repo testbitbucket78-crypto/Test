@@ -405,7 +405,7 @@ const addTemplate = async (req, res) => {
         }
         if (ID == 0) {
 
-            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, created_at]]
+            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
             let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
             res.status(200).send({
                 addedtem: addedtem,

@@ -26,7 +26,8 @@ LIMIT 1`;
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id) VALUES ?";
 
 async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType) {
-  if (isAutoReply != 1 && isAutoReplyDisable != 1) {
+  if (isAutoReplyDisable != 1) {
+
     const currentTime = new Date();
     const autoReplyVal = new Date(autoReplyTime)
     if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined) {
@@ -39,15 +40,15 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
 }
 
 async function sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType) {
-  // console.log("____Send SMART REPLIESS______" + replystatus)
+//   console.log("____Send SMART REPLIESS______" + replystatus)
   const currentTime = new Date();
   const replystatus1 = new Date(replystatus);
   if (replystatus != null && (replystatus1 <= currentTime) && replystatus != undefined) {
     var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType);
-    // console.log("____Send SMART REPLIESS______" + response);
+  //   console.log("____Send SMART REPLIESS______NOT  NULLL" + response);
   }
   if (replystatus == null || replystatus == undefined || replystatus == "") {
-    // console.log("replystatus == null" + message_text)
+  //   console.log("replystatus == null" + message_text)
     var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType);
     // console.log("____Send SMART REPLIESS______" + response);
   }
