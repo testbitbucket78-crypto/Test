@@ -80,17 +80,21 @@
                             {{dynamic.type}}
                         </div>
                         <div class="body-col">
-                            <div class="active-toggle" (click)="toggleMandatoryState($event.target.checked, dynamic.id)">
+                            <div class="active-toggle">
                                 <label class="m-0 switch">
-                                    <input type="checkbox" class="m-0 form-control-checkbox" [checked]="dynamic.mandatory">
+                                    <input type="checkbox" class="m-0 form-control-checkbox"
+                                    (click)="toggleMandatoryState($event.target.checked, dynamic.id)"                                        
+                                    [(ngModel)]="dynamic.mandatory">
                                     <span class="slider"></span>
                                 </label>
                             </div>
                         </div>
                         <div class="body-col">
-                            <div class="active-toggle" (click)="toggleActiveState($event.target.checked, dynamic.id)" >
+                            <div class="active-toggle"  >
                                 <label class="m-0 switch">
-                                    <input type="checkbox" class="m-0 form-control-checkbox" [checked]="dynamic.status">
+                                    <input type="checkbox" class="m-0 form-control-checkbox"
+                                    (click)="toggleActiveState($event.target.checked, dynamic.id)"
+                                    [(ngModel)]="dynamic.status">
                                     <span class="slider"></span>
                                 </label>
                             </div>

@@ -287,7 +287,8 @@ export class TemplateMessageComponent implements OnInit {
             const data = new FormData();
             data.append('dataFile', File, File.name);
             data.append('mediaType', mediaType);
-            this._teamboxService.uploadfile(data,spid).subscribe(uploadStatus => {
+            let name='template-message'
+            this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
                 let responseData: any = uploadStatus;
                 if (responseData.filename) {
                     this.selectedPreview = responseData.filename.toString();

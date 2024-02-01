@@ -316,7 +316,8 @@ click: any;
 			data.append('dataFile', files[0], fileName);
 			data.append('mediaType', mediaType);
 	  
-			this.tS.uploadfile(data,spid).subscribe(uploadStatus => {
+			let name='smartReply'
+			this.tS.uploadfile(data,spid,name).subscribe(uploadStatus => {
 			  let responseData: any = uploadStatus;
 			  if (responseData.filename) {
 				this.sendattachfile();

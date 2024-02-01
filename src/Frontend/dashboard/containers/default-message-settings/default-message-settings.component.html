@@ -1,17 +1,17 @@
 <div class="setting-card" >
     <div class="default-actions-heading pb-4">Default Messages</div>
     <div class=" grid-view p-2 px-4" >
-        <div *ngFor="let data of defaultMessageDataInit; let idx = index">
+        <div *ngFor="let data of defaultMessageDataInit; let idx = index" (click)="populateData(data)">
             <div class="flex-row">
                 <span class="sub-heading">{{data.title}} </span>
-                <span *ngIf="data.Is_disable==0" class="enable">Enable</span>
-                <span *ngIf="data.Is_disable==1 || data.Is_disable==null" class="disable">Disabled</span>
+                <span *ngIf="data.Is_disable==0" class="disable">Disabled</span>
+                <span *ngIf="data.Is_disable==1 || data.Is_disable==null" class="enable">Enable</span>
             </div>
             <div class="sub-contents">
                 <p>{{data.description}}</p>
                 <button *ngIf="!data.uid"  class="white-btn" data-bs-toggle="modal" (click)="selectedButtonType(idx)" data-bs-target="#welcomGreeting">
                  <img src="../../../../assets/img/teambox/add.svg" class="pr-1"> Configure </button>
-                 <button *ngIf="data.uid" class="white-btn" (click)="populateData(data)">View & Manage</button>
+                 <button *ngIf="data.uid" class="white-btn" (click)="toggleSideBar(data)">View & Manage</button>
             </div>
           </div>
     </div>
@@ -153,9 +153,9 @@
         </div>
         <div class="sidebar-content">
             <div class="d-flex pt-5 px-5">
-                <span *ngIf="selectedMessageData.Is_disable == 0" class="enable">Enable</span>
+                <span *ngIf="selectedMessageData.Is_disable == 0" class="disable">Disabled</span>
                 <span *ngIf="selectedMessageData.Is_disable == 1 || selectedMessageData.Is_disable == null" 
-                       class="disable">Disabled</span>
+                       class="enable">Enable</span>
             </div>
            
                 <div class="p-3">
@@ -218,7 +218,9 @@
                     </div>
                     <div class="px-2 switch-toggle">
                       <label class="m-0 switch">
-                        <input type="checkbox" class="m-0 form-control-checkbox">
+                        <input type="checkbox" class="m-0 form-control-checkbox" 
+                          [(ngModel)]="selectedMessageData.Is_disable" 
+                           (click)="enableDisable($event)">
                         <span class="slider"></span>
                       </label>
                     </div>

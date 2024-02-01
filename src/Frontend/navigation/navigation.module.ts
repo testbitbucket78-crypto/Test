@@ -2,6 +2,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 /* Modules */
 import { AppCommonModule } from '../app-common/app-common.module';
@@ -22,7 +23,7 @@ import * as navigationGuards from './guards';
 import * as navigationServices from './services';
 
 @NgModule({
-    imports: [CommonModule, RouterModule, AppCommonModule],
+    imports: [CommonModule, RouterModule, AppCommonModule,FormsModule],
     providers: [...navigationServices.services, ...navigationGuards.guards],
     declarations: [
         ...navigationContainers.containers,

@@ -3,7 +3,9 @@ import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder,Validators } from "@angular/forms";
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { addFundsData, profilePicData, teamboxNotifications } from 'Frontend/dashboard/models/profile.model';
+import { isNullOrUndefined } from 'is-what';
 declare var $:any;
 
 @Component({
@@ -36,10 +38,12 @@ export class MyprofileComponent implements OnInit {
   selectedTab: number = 0;
   teamName!: string;
   roleName!:string;
-  isActive: number = 1; 
+  isActive: number = 0; 
   profilePicData= <profilePicData> {};
   profilePicture:any;
   userid:number = 0;
+  userList:any;
+  currentUserDetails:any;
   fundsData = <addFundsData> {};
   teamboxNotificationStateData = <teamboxNotifications> {};
   
@@ -52,7 +56,7 @@ export class MyprofileComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 
-  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private cdRef: ChangeDetectorRef) { 
+  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private _settingsService:SettingsService,private cdRef: ChangeDetectorRef) { 
     this.changepassword = this.fB.group({
       uid: this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid,
       oldPass:['', [Validators.required, Validators.minLength(8)]],
@@ -68,8 +72,6 @@ export class MyprofileComponent implements OnInit {
     this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
     this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
     this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
-    this.isActive = (JSON.parse(sessionStorage.getItem('loginDetails')!)).isActive;
-    console.log(this.isActive)
     const nameParts = this.Name.split(' ');
     const firstName = nameParts[0] || '';
     const lastName = nameParts[1] || '';
@@ -80,6 +82,7 @@ export class MyprofileComponent implements OnInit {
     this.getTeamboxNotificaions();
     this.getTeamName();
     this.getRoleName();
+    this.getUserList();
     this.getAvailableAmount();
   
   }
@@ -147,21 +150,26 @@ export class MyprofileComponent implements OnInit {
 // save teambox notifications toggle on / off state
 
 saveTeamboxNotificationsState() {
-   
+  this.teamboxNotificationStateData.ID = 0
   this.teamboxNotificationStateData.UID = this.uid;
   this.teamboxNotificationStateData.notificationId = this.notificationId;
   this.teamboxNotificationStateData.PushNotificationValue = this.pushNotificationValue[this.notificationId - 1] ? 1 : 0;
   this.teamboxNotificationStateData.SoundNotificationValue = this.soundNotificationValue[this.notificationId - 1] ? 1 : 0;
 
   this.apiService.saveTeamboxNotificationState(this.teamboxNotificationStateData).subscribe((response) => {
-      console.log(response + JSON.stringify(this.teamboxNotificationStateData));
+    if(isNullOrUndefined(response)) {
+      console.log(JSON.stringify(this.teamboxNotificationStateData));
+    }
   });
-
-
 }
+
+
+
+
 
 updateNotificationId(notificationId: number) {
   this.notificationId = notificationId;
+  console.log(this.notificationId)
   this.saveTeamboxNotificationsState();
 }
 
@@ -170,6 +178,7 @@ updateNotificationId(notificationId: number) {
 getTeamboxNotificaions() { 
   this.apiService.getTeamboxNotificationsState(this.uid).subscribe((response) => {
       const notifyArray = response.notify;
+      console.log(notifyArray)
 
     if(notifyArray.length > 0) {
       const lastIndex = notifyArray.length - 1;
@@ -182,9 +191,22 @@ getTeamboxNotificaions() {
       console.log(this.pushNotificationValue);
       console.log(this.soundNotificationValue);
     }
+  });
+}
 
+// get current user active/inactive state 
 
-
+getUserList() {
+  this._settingsService.getUserList(this.spId).subscribe((result:any) =>{
+    if(result) {
+      this.userList =result?.getUser;     
+        for (let i = 0; i<this.userList.length;i++) {
+          if(this.userList[i].uid === this.uid) {
+            this.currentUserDetails = this.userList[i];
+            this.isActive = this.currentUserDetails.IsActive;
+          }
+        }      
+      }
   });
 }
 
@@ -196,7 +218,7 @@ toggleActiveState(checked: boolean) {
 
   const activeStateData = {
     uid: this.uid,
-    IsActive: this.isActive
+    isActive: this.isActive
   };
 
   this.apiService.userActiveState(activeStateData)
@@ -208,7 +230,7 @@ toggleActiveState(checked: boolean) {
         else {
           this.showToaster('User Inactive!', 'success'+ response);
         }
-
+        this.getUserList();
       },
       error => {
         console.error('error:', error);

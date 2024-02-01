@@ -160,7 +160,11 @@ export class SettingsService {
     return this.http.post<any>(`${this.API_URL}/addAndUpdateDefaultMsg`,defaultMessagesData);
   }
 
-  deleteDefaultMessage(data:any): Observable<any> {
+  enableDisableDefaultMessage(data:{}):Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/Abledisable`,data)
+  }
+
+  deleteDefaultMessage(data:{}): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/deletedefaultactions/`,data);
   }
 

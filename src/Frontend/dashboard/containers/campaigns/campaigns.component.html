@@ -451,10 +451,11 @@
 						
 						<div class="template_details_section_right">
 							<p class="mt-2">Variable value<img class="icon sm" src="/assets/img/campaign/Info.svg" (click)="tip()"> </p>
-							<div  *ngIf="vartip" class="showInfoFallback">
+							<div  *ngIf="vartip" class="showInfoFallback" (click)="stopPropagation($event)">
 								<p id="p-body">You can input variable values or choose contact attributes that will be used to send personalized messages to users, reflecting their specific contact details instead of generic variables.
 								</p>
-								<button id="radio-close-btn" (click)="tip">X</button>
+								<button id="radio-close-btn" (click)="vartip=false">X</button>
+								<div *ngIf="vartip" class="overlay" (click)="closeUtility()"></div>
 							  </div>
 							
 							<div class="form_row" *ngFor='let variable of selectedTemplate.allVariables ;let i = index' >
@@ -610,7 +611,7 @@
 						<div class="bottom_section">
 							<p class="form-control" (click)="TestCampaign(TestCampaignModal)">Test Campaign</p>
 							<div>
-							<img src="../../../../assets/img/info-icon.png" (click)="testinfo()">
+							<img class="icon sm" src="../../../../assets/img/info-icon.png" (click)="testinfo()">
 						</div>
 						</div>
 						<div  *ngIf="campagininfo" class="campaign-info" (click)="stopPropagation($event)">
@@ -1036,7 +1037,7 @@
 				<div class="input_group_btn">
 				  <div class="custom_col">
 					<label class="container">
-					<input type="checkbox" name="term_cond">
+					<input type="checkbox" name="term_cond" (click)="messageOptIn($event)" [ngModel]="optInStatus">
 					<span class="checkmark"></span>
 					<p><span>Message Opt in</span></p>
 				  </label>
