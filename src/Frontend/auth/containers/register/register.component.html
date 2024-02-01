@@ -14,12 +14,11 @@
   
   
           <div class="card-body">
-            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <form [formGroup]="registerForm" autocomplete="none" (ngSubmit)="onSubmit()">
               <div class="name-number">
                 <div [ngClass]="{'invalid-input': registerForm.controls.name.invalid && (registerForm.controls.name.dirty || registerForm.controls.name.touched)}"
                 class="">
                   <label for="floatingInputGrid">Name</label>
-                
                   <input type="text-right" 
                          class="form-control" 
                          [ngClass]="{'is-invalid' : submitted && registerForm.controls.name.errors }" 
@@ -28,11 +27,8 @@
                          name="name" 
                          formControlName="name" 
                          id="name" 
-                         maxlength="30"
-                         >
-                        
-                      
-              </div>
+                         maxlength="30">
+                 </div>
                 <div class="col-sm-1"></div>
                 <div class="pp"  id="col">
                   <label for="floatingInputGrid" id="la-ph">Phone Number</label> 
@@ -44,7 +40,7 @@
                     </select>
                     <input type="text" class="form-control" id="mobile_number" formControlName="mobile_number" 
                     name="mobile_number" style="display: none">  
-                    <input type="text" class="form-control" id="mobile_number" formControlName="display_mobile_number" 
+                    <input type="text" class="form-control" id="mobile_number"  autocomplete="none" formControlName="display_mobile_number" 
                       name="display_mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
                       onKeyPress="return /^[0-9]$/.test(event.key)"
                       [ngClass]="{'is-invalid' :submitted && registerForm.controls.display_mobile_number.errors }" 

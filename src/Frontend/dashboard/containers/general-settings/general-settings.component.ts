@@ -20,6 +20,7 @@ export class GeneralSettingsComponent implements OnInit {
   agentActiveTime='';
   pausedTill='';
   date!:Date;
+  agentActiveTimePattern = /^(?:[1-9]\d{0,2}|[1-4]\d{2}|500)$/;
 
 
   errorMessage='';

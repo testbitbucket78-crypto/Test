@@ -5,6 +5,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { ToolbarService, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { isNullOrUndefined } from 'is-what';
 
 declare var $:any;
 @Component({
@@ -119,10 +120,6 @@ ToggleAttributesOption(){
   $("#atrributemodal").modal('show');
 }
 
-ToggleSideBar() {
-  this.showSideBar = !this.showSideBar;
-}
-
 selectAttributes(item:any){
   const selectedValue = item;
   this.closeAllModal();
@@ -140,7 +137,7 @@ getAttributeList() {
 }
 })
 }
-  showMessageType(type: string) {
+  showMessageType(type: string) {   
     this.selectedType = type;
     if (this.selectedType === 'video' || this.selectedType === 'document' || this.selectedType === 'image') {
        this.defaultMessageForm.get('link')?.setValidators([Validators.required]);
@@ -207,11 +204,22 @@ truncateFileName(fileName: string, maxLength: number): string {
   return fileName;
 }
 
+removeMedia() {
+  this.selectedPreview = '';
+  this.fileName='';
+  this.defaultMessageForm.get('link')?.setValue(null);
+}
+
   // remove form values
   removeValue() {
     this.selectedPreview = '';
     this.fileName='';
+    this.value = null;
+    this.selectedCategory=0;
+    this.selectedType='text';
     this.defaultMessageForm.get('link')?.setValue(null);
+    this.defaultMessageForm.reset();
+    this.defaultMessageForm.removeValidators;
 }
 
 
@@ -221,7 +229,7 @@ truncateFileName(fileName: string, maxLength: number): string {
         this.defaultMessages = response.defaultaction
         console.log(response.defaultaction);
         
-        // combine data cominig from api into defaultMessageData array //
+        // combine data coming from api into defaultMessageData array //
         this.defaultMessageDataInit = this.defaultMessageData.map(defaultMessage => {
           const matchedData = this.defaultMessages.find(Item => Item.title === defaultMessage.title);
           if (matchedData) {
@@ -234,32 +242,48 @@ truncateFileName(fileName: string, maxLength: number): string {
     })
   }
 
-  addDefaultMessageData() {
+  addEditDefaultMessageData() {
     let defaultMessagesData = this.copyDefaultMesssageData();
-    this.apiService.addDefaultMessages(defaultMessagesData).subscribe(response => {
+      this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe(response => {
         if(response.status === 200) {
           this.defaultMessageForm.reset();
           this.getDefaultMessages();
           this.removeValue();
           $("#welcomGreeting").modal('hide');
-
+          this.showSideBar = false;
         }
-    });
+    })
+  }
+
+  editDefaultMessages() { 
+    $("#welcomGreeting").modal('show');
+    this.selectedType = this.selectedMessageData.message_type;
+    this.selectedTitle = this.selectedMessageData.title;
+    this.selectedDescription = this.selectedMessageData.description;
+    this.selectedPreview = this.selectedMessageData.link;
+    this.value = this.selectedMessageData.value;
   }
 
   populateData(data:any) {
+    this.showSideBar = !this.showSideBar;
     this.defaultMessagesData = data
     this.selectedMessageData = data;
     console.log(this.selectedMessageData)
     this.selectedTitle = data.title;
     this.selectedDescription = data.description;
+    this.patchFormValue();
   }
 
   copyDefaultMesssageData() {
     let defaultMessagesData:defaultMessagesData = <defaultMessagesData>{};
 
     defaultMessagesData.spid = this.spId;
-    defaultMessagesData.uid = 0;
+    if (isNullOrUndefined(this.selectedMessageData.uid)) {
+      defaultMessagesData.uid = 0;
+    }
+    else {
+      defaultMessagesData.uid = this.selectedMessageData.uid;
+    }
     defaultMessagesData.title = this.selectedTitle;
     defaultMessagesData.description = this.selectedDescription;
     defaultMessagesData.message_type = this.selectedType;
@@ -272,12 +296,30 @@ truncateFileName(fileName: string, maxLength: number): string {
   }
 
   patchFormValue(){
-    const data = this.defaultMessagesData;
+    const data = this.selectedMessageData;
     for(let prop in data){
       let value = data[prop as keyof typeof data];
       if(this.defaultMessageForm.get(prop))
       this.defaultMessageForm.get(prop)?.setValue(value)
     }  
+  }
+
+  toggleDeletePopup() {
+    $("#deleteModal").modal('show');
+  }
+  
+  deleteDefaultMessage() {
+    let deleteBody = {
+      spid:this.spId,
+      uid:this.selectedMessageData.uid
+    }
+    this.apiService.deleteDefaultMessage(deleteBody).subscribe(response=>{
+      if(isNullOrUndefined(response)) {
+        $("#deleteModal").modal('hide');
+        this.showSideBar =false;
+        this.getDefaultMessages();
+      }
+    })
   }
 
 }
