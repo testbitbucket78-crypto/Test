@@ -156,8 +156,12 @@ export class SettingsService {
     return this.http.get<any>(`${this.API_URL}/getdefaultmessages/${spID}`);
   }
 
-  addDefaultMessages(defaultMessagesData: defaultMessagesData): Observable<any> {
+  addEditDefaultMessages(defaultMessagesData: defaultMessagesData): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/addAndUpdateDefaultMsg`,defaultMessagesData);
+  }
+
+  deleteDefaultMessage(data:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/deletedefaultactions/`,data);
   }
 
   getRoutingRulesData(spID:number): Observable<any> {

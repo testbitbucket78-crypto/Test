@@ -168,10 +168,11 @@ input[type="radio"] {
     transition: border-color 0.3s, background-color 0.3s;
 }
 
-input[type="radio"]:checked + label::before {
+ input[type="radio"]:checked + label::before {
     border: 3.5px solid #6149CD; 
     background-color: #FFFFFF;
 }
+
 
 .radio-label {
   font-weight: 700!important;
@@ -290,7 +291,6 @@ textarea::placeholder {
 }
 
 .type_label {
-  // background: #6149CD;
   box-shadow: 1px 8px 29px #695F9724;
   border-radius: 19px;
   opacity: 1;
@@ -302,7 +302,6 @@ textarea::placeholder {
   position: absolute;
   z-index: 99999;
   left: 46%;
-  top: 16%;
 }
 
 .type_label img {
@@ -344,7 +343,7 @@ textarea::placeholder {
     height: 100%;
     width: 28% !important;
     position: fixed;
-    z-index: 9999;
+    z-index: 1030;
     top: 0;
     right: 0;
     background-color: #FBF9FE;
@@ -568,7 +567,7 @@ textarea::placeholder {
 
 .e-toolbar, .e-toolbar .e-toolbar-items, .e-toolbar.e-toolbar-item.e-tbar-btn {
   background: #fff;
-  margin-top: 5px;
+  margin-top: 1px!important;
 }
 .e-richtexteditor .e-rte-character-count {
   color: #000;
@@ -680,4 +679,135 @@ textarea::placeholder {
   border: 1px;
   height: fit-content;
  }
+
+ // input field autoreply 
+
+ .sel-type-link.autoreply .form-control {
+  border: 1px solid #EBEBEB;
+  border-radius: 19px;
+  height: 40px;
+ }
+
+ .sel-type-link.autoreply .form-control::placeholder {
+  color: #7A86A1;
+  font-weight: 350;
+ }
+
+ // delete popup
+
+.delete-modal{
+  width: 355px;
+  height: 183px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ }
+
+ .cancel-btn{
+  background: #fff;
+  border: 1px solid #EBEBEB;
+  border-radius: 20px;
+  width: auto;
+  height: 35px;
+  color: #7A86A1;
+  padding: 0px 25px;
+  font-size: 12px;
+  font-weight: 800;
+  margin: 0 0 0 15px;
+ }
+
+ .delete-btn{
+  box-shadow: 1px 8px 29px #695F9724;
+  border-radius: 20px;
+  width: auto;
+  height: 35px;
+  border: 0px;
+  color: #fff;
+  padding: 0px 25px;
+  font-size: 12px;
+  font-weight: 800;
+  margin: 0 0 0 15px;
+  background: #FF3636;
+ }
+
+ .alertmessage p{
+  font-size: 0.875rem;
+  padding: 15% 0;
+  margin: 0;
+  font-weight: 700;
+  text-align: center;
+ }
+
+ .delete_group_button {
+  padding: 10% 0%;
+ }
+
+ .del-popup-btn {
+  background: white;
+  border-radius: 18px;
+  padding: 10px 14px;
+  box-shadow: 1px 8px 29px #695F9724;
+  border:none;
+  outline: none;
+ }
+
+ .active-toggle {
+  height: 45px;
+  width: 185px;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 1px 8px 29px #695F9724;
+  border: 1px solid #E9E9EA;
+  border-radius: 19px;
+}
+
+.active-toggle .switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+}
+.active-toggle .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 3px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 20px;
+  width: 36px;
+  background-color: #6149cd30;
+  transition: 0.3s ease-out;
+  border-radius: 10px;
+}
+.active-toggle .switch input {
+  display: none;
+}
+
+.active-toggle .slider:before {
+  position: absolute;
+  content: '';
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 2px;
+  transition: 0.3s ease-out;
+  border-radius: 10px;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 0.35px 2px 7px #6149CD30;
+}
+
+.active-toggle input:checked+ .slider {
+  background-color: #6149cd;
+}
+
+
+.active-toggle input:checked + .slider::before {
+  transform: translateX(15px);
+}
+
+.switch-text p {
+  font-weight: 600;
+  font-weight: 0.875rem;
+}
+
 

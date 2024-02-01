@@ -35,8 +35,8 @@
                     <label class="form-label" for="agentActiveTime">Set Timeout Period</label>
                 </div>
                 <div class="d-flex align-items-baseline">
-                    <input class="form-control" id="agentActiveTime" name="agentActiveTime" type="text" pattern="^[^+\-.,?*%$eE]+$"
-                    onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"   
+                    <input class="form-control" id="agentActiveTime" name="agentActiveTime" type="text" [pattern]="agentActiveTimePattern"
+                    onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"
                     [disabled]="!isAgentActive"
                     (change)="calculateTime(pauseAutoReplyTime,pauseAgentActiveTime)"
                      [(ngModel)]="pauseAgentActiveTime">
@@ -66,8 +66,8 @@
                  <label class="form-label" for="autoReplyTime">Pause Auto Replies for</label>
                 </div>
                 <div class="d-flex align-items-baseline">
-                    <input class="form-control" id="autoReplyTime" name="autoReplyTime" type="text" pattern="^[^+\-.,?*%$eE]+$"
-                     onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"   
+                    <input class="form-control" id="autoReplyTime" name="autoReplyTime" type="text" [pattern]="agentActiveTimePattern"
+                    onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"  
                      [disabled]="!isAutoReply"
                      (change)="calculateTime(pauseAutoReplyTime,pauseAgentActiveTime)"
                      [(ngModel)]="pauseAutoReplyTime">

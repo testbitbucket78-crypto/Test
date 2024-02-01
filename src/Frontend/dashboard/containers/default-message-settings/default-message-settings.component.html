@@ -1,7 +1,7 @@
 <div class="setting-card" >
     <div class="default-actions-heading pb-4">Default Messages</div>
     <div class=" grid-view p-2 px-4" >
-        <div *ngFor="let data of defaultMessageDataInit; let idx = index" (click)="populateData(data)">
+        <div *ngFor="let data of defaultMessageDataInit; let idx = index">
             <div class="flex-row">
                 <span class="sub-heading">{{data.title}} </span>
                 <span *ngIf="data.Is_disable==0" class="enable">Enable</span>
@@ -11,13 +11,9 @@
                 <p>{{data.description}}</p>
                 <button *ngIf="!data.uid"  class="white-btn" data-bs-toggle="modal" (click)="selectedButtonType(idx)" data-bs-target="#welcomGreeting">
                  <img src="../../../../assets/img/teambox/add.svg" class="pr-1"> Configure </button>
-                 <button *ngIf="data.uid" class="white-btn" (click)="ToggleSideBar()">View & Manage</button>
+                 <button *ngIf="data.uid" class="white-btn" (click)="populateData(data)">View & Manage</button>
             </div>
           </div>
-    </div>
-
-    <div class="default-footer">
-        <button type="button" class="account-btn" >Save</button>
     </div>
 
     <div class="modal fade" tabindex="-1" id="welcomGreeting" data-bs-backdrop="static" role="dialog">
@@ -30,25 +26,43 @@
                     <h5 *ngIf="selectedCategory == 3" class="modal-title">Add Message for No Customer Reply Reminder</h5>
                     <h5 *ngIf="selectedCategory == 4" class="modal-title">Add Message for All Agents Offline</h5>
                     <h5 *ngIf="selectedCategory == 5" class="modal-title">Add Message for No Customer Reply Timeout</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button (click)="removeValue()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
-                <form [formGroup]="defaultMessageForm" (ngSubmit)="addDefaultMessageData()">
+                <form [formGroup]="defaultMessageForm" autocomplete="none" (ngSubmit)="addEditDefaultMessageData()">
+
                 <div class="modal-body px-5 pt-0">
-                    <div *ngIf="selectedCategory==1" class="d-inline-block flex-column sel-type-link pb-3">
-                        <label for="link" class="linkch" >Agent Reply Timeout Period</label>
-                        <select class="input-form" formControlName="autoreply"  id="linken"  required >
-                            <option  [disabled]="true" [selected]="true" [hidden]="true"  value="0" selected >Select no. of minutes</option>
-                            <option></option>
-                        </select>
-                     </div>
+                     <div *ngIf="selectedCategory==1 || selectedCategory==5" class="sel-type-link autoreply pt-2 pb-3">
+                        <label *ngIf="selectedCategory==1" class="pb-2 form-label" for="autoreply">Agent Reply Timeout Period
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input  *ngIf="selectedCategory==1" class="form-control" id="autoreply" name="autoreply" 
+                            type="text" pattern="^(?:[1-9]|[1-9]\d|1[0-1]\d|120)$"
+                            onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"
+                            formControlName="autoreply"
+                            required="true"
+                            [ngClass]="{'is-invalid':defaultMessageForm.controls.autoreply.touched && defaultMessageForm.controls.autoreply.errors}"
+                            placeholder="Enter reply timeout (1-120 minutes)">
+
+                        <label *ngIf="selectedCategory==5" class="pb-2 form-label" for="autoreply">No Customer Reply Timeout 
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input *ngIf="selectedCategory==5" class="form-control" id="autoreply" name="autoreply" 
+                            type="text" pattern="^(?:[1-9]\d{0,2}|1[0-3]\d{2}|1440)$"
+                            onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"
+                            formControlName="autoreply"
+                            required="true"
+                            [ngClass]="{'is-invalid':defaultMessageForm.controls.autoreply.touched && defaultMessageForm.controls.autoreply.errors}"
+                            placeholder="Enter reply timeout (1-1440 minutes)">
+                    </div>
+                        
                     <div class="d-flex justify-content-between align-items-center sel-type-btns">
                         
-                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" checked><label [ngClass]="{'radio-label': selectedType === 'text'}" class="m-0" for="sel-text">Text</label>
-                        <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')"><label [ngClass]="{'radio-label': selectedType === 'image'}"  class="m-0" for="sel-image">Image</label>
-                        <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')"><label [ngClass]="{'radio-label': selectedType === 'video'}"  class="m-0" for="sel-video">Video</label>
-                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')"><label [ngClass]="{'radio-label': selectedType === 'document'}" class="m-0" for="sel-document">Document</label>
+                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" checked><label [ngClass]="{'radio-label': selectedType == 'text'}" class="m-0" for="sel-text">Text</label>
+                        <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')"><label [ngClass]="{'radio-label': selectedType == 'image'}"  class="m-0" for="sel-image">Image</label>
+                        <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')"><label [ngClass]="{'radio-label': selectedType == 'video'}"  class="m-0" for="sel-video">Video</label>
+                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')"><label [ngClass]="{'radio-label': selectedType == 'document'}" class="m-0" for="sel-document">Document</label>
                       
                     </div>
 
@@ -72,7 +86,7 @@
                         <p class="m-0">Upload or enter link of image</p>
                        </div> 
                         <div class="main-preview-type-image" *ngIf="defaultMessageForm.get('link')?.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
-                            <span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
+                            <span class="p-2 text-right" (click)="removeMedia()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                         </div>
                     </div>
 
@@ -81,7 +95,7 @@
                     <label *ngIf="!selectedPreview" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
 
                     <div class="video-player">
-                        <span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
+                        <span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeMedia()">
                           <img src="../../../../assets/img/settings/remove.svg" />
                         </span>
                       <video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video>
@@ -90,7 +104,7 @@
 
                    <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image" [ngClass]="{'document-selected':defaultMessageForm.get('link')?.value !== null}">
                     <div class="main-preview-type-doc" *ngIf="defaultMessageForm.get('link')?.value !== null">
-                        <span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
+                        <span class="p-2" (click)="removeMedia()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                     </div>
                     <img *ngIf="defaultMessageForm.get('link')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
                     <span class="document-preview" *ngIf="defaultMessageForm.get('link')?.value !== null" >{{ this.fileName }}</span>
@@ -189,19 +203,27 @@
                 </div>
             </div>
         </div>
-        <div class="sideBar-footer">
-            <button type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#userModal">
-                <img class="p-0" src="../../../../assets/img/edit.png"></button>
-            <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                <img class="p-0" src="../../../../assets/img/delete.png">
-            </button>
-            <button class="disable-btn ml-2">
-                <span>Enable</span>
-                <label class="switch">
-                    <input type="checkbox" class="form-control-checkbox">
-                    <span class="slider 1"></span>
-                </label>
-            </button>
+        <div class="d-flex sideBar-footer">
+            <div class="">
+                <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <img class="p-0" src="../../../../assets/img/delete.png">
+                </button>
+                <button (click)="editDefaultMessages()" type="button" class="account-white-btn">
+                    <img class="p-0" src="../../../../assets/img/edit.png"></button>
+            </div>
+          
+                <div class="col-sm-5 d-flex justify-content-center align-items-center active-toggle">
+                    <div class="px-2 switch-text">
+                      <p class="m-0">Enable</p>
+                    </div>
+                    <div class="px-2 switch-toggle">
+                      <label class="m-0 switch">
+                        <input type="checkbox" class="m-0 form-control-checkbox">
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+   
         </div>
     </div>
 
@@ -234,6 +256,21 @@
                             </span>Add/edit new attributes from settings</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="deleteModal" role="dialog">
+    <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+        <div class="m-0 modal-content delete-modal">
+            <div class="modal-body alertmessage">
+                <p class="label pb-2">Do you really want to delete<br /> this message ?</p>
+                <div class="delete_group_button d-flex justify-content-center">
+                    <button type="button" class="cancel-btn" aria-label="Close"
+                        data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="delete-btn" aria-label="Close" (click)="deleteDefaultMessage()">Yes, Delete</button>
                 </div>
             </div>
         </div>
