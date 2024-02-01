@@ -875,7 +875,7 @@ app.get('/download', (req, res) => {
 app.post('/blockedContact', (req, res) => {
   try {
     console.log(req.body.customerId)
-    db.runQuery(req, res, val.isBlockedQuery, [req.body.customerId, req.query.SP_ID])
+    db.runQuery(req, res, val.isBlockedQuery, [req.body.isBlocked,req.body.customerId, req.query.SP_ID])
   } catch (err) {
     console.error(err);
     db.errlog(err);

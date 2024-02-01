@@ -20,7 +20,7 @@ var insertContact = "INSERT INTO EndCustomer (Name,Phone_number,emailId,age,tag,
 var neweditContact = 'UPDATE EndCustomer SET '
 delet = "UPDATE EndCustomer set isDeleted=1 WHERE customerId IN (?) and SP_ID=?"
 selectbyid = "select * from EndCustomer where customerId=? and SP_ID=?"
-isBlockedQuery = "UPDATE EndCustomer set  isBlocked=1,isBlockedOn=now() where customerId=? and SP_ID=?"
+isBlockedQuery = "UPDATE EndCustomer set  isBlocked=?,isBlockedOn=now() where customerId=? and SP_ID=?"
 existContactWithSameSpid=`SELECT * FROM EndCustomer WHERE (emailId = ? or Phone_number=?) AND (isDeleted =0 ) AND SP_ID=? AND IsTemporary !=1  `
 
 

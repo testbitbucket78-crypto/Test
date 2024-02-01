@@ -48,6 +48,7 @@ const uploadCompanylogo = async (req, res) => {
             res.status(200).send({
                 msg: 'img updated successfully !',
                 updateimgRes: updateimgRes,
+                awsres:awsres,
                 status: 200
             });
 
@@ -58,6 +59,7 @@ const uploadCompanylogo = async (req, res) => {
             res.status(200).send({
                 msg: 'img added successfully !',
                 insertimgRes: insertimgRes,
+                awsres:awsres,
                 status: 200
             });
 
