@@ -180,16 +180,15 @@
                         <div class="payment-card">
                             <div class="text-right p-4 payment-card-btn">
                                 <button class="px-4 py-2" (click)="openAddFundsPopup()">Add Funds</button>
-                            
                             </div>  
         
                             <div class="modal fade" tabindex="-1" id="AddFundsModal"  data-bs-backdrop="static" role="dialog">
                                 <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
                                     <div class="modal-content m-0 px-3 addfunds-popup-modal">
-                                        <form>
+                                        <form #addFundsForm="ngForm" (ngSubmit)="addFunds(addFundsSuccess)">
                                         <div class="modal-header align-items-center">
                                             <h5 class="modal-title">Add Funds</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <button (click)="this.selectedAmount=0" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                 <img src="../../../../assets/img/teambox/icon-close.svg">
                                             </button>
                                         </div>
@@ -197,11 +196,14 @@
                                           
                                           <p class="head">Enter Amount</p>
                                     
-
-                                         
                                          <div class="d-flex pt-3 pb-5 justify-content-end align-items-center">
                                                 
-                                              <h1 class="mx-2 ml-4 my-0">₹ </h1><input type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)" name="enter-amount" id="enter-amount" [(ngModel)]="selectedAmount" />
+                                              <h1 class="mx-2 ml-4 my-0">₹ </h1>
+                                              <input type="text" pattern="^[^+\-.,?*%$eE]+$" 
+                                              onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)" 
+                                              name="enter-amount" id="enter-amount"
+                                              [required]="true"
+                                              [(ngModel)]="selectedAmount" />
                                 
                                         </div>
                                          <p class="m-0 amount-para">You can add minimum amount of 500</p>
@@ -218,7 +220,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer justify-content-center my-4 border-0">
-                                            <button type="button" class="addfunds-continue-btn" (click)="addFunds(addFundsSuccess)">Continue</button>
+                                            <button type="submit" [disabled]="addFundsForm.invalid" [class.disabled]="addFundsForm.invalid" class="addfunds-continue-btn">Continue</button>
                                         </div>
                                         </form>
                                     </div>
@@ -408,57 +410,62 @@
                                     <div class="modal-content m-0 px-3 changepassowrd-popup-modal">
                                         <div class="modal-header align-items-center">
                                             <h5 class="modal-title">Change Password</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <button (click)="this.changepassword.reset()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                 <img src="../../../../assets/img/teambox/icon-close.svg">
                                             </button>
                                         </div>
-                                        <div class="modal-body changepasswordbody">
-                                          
-                                            <form [formGroup]="changepassword">
+                                            <form [formGroup]="changepassword" (ngSubmit)="saveNewPassword()">
+                                                <div class="modal-body changepasswordbody">
                                                 <label class="changepassform" for="currentPassword">Current Password</label>
                                                 <div class="input-group">
                                                   <input [type]="currentPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" id="currentPassword"
-                                                    name="currentPassword" formControlName="oldPass" placeholder="8 character" required autocomplete="currentPassword"
-                                                    [ngClass]="{'is-invalid':changepassword.get('oldPass')!.hasError('minlength') && changepassword.get('oldPass')!.touched}">
+                                                    name="currentPassword" formControlName="oldPass" placeholder="8 character" autocomplete="currentPassword"
+                                                    [ngClass]="{'is-invalid':changepassword.get('oldPass')!.hasError('pattern') && changepassword.get('oldPass')!.touched}">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('currentPassword')">
                                                     <i [ngClass]="currentPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
                                                   </span>
                                                   <div *ngIf="changepassword.get('oldPass')!.invalid && changepassword.get('oldPass')!.touched">
-                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('oldPass')!.hasError('minlength')">!  Password must be at least 8 characters long.</div>
+                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('oldPass')!.hasError('pattern')">
+                                                        ! Password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters.
+                                                    </div>
                                                   </div>
                                                 </div>
                                               
                                                 <label class="changepassform" for="newPassword">New Password</label>
                                                 <div class="input-group">
                                                   <input [type]="newPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" formControlName="newPass"
-                                                    placeholder="8 character" name="newPassword" id="newPassword" required autocomplete="newPassword"
-                                                    [ngClass]="{'is-invalid':changepassword.get('newPass')!.hasError('minlength') && changepassword.get('newPass')!.touched}">
+                                                    placeholder="8 character" name="newPassword" id="newPassword" autocomplete="newPassword"
+                                                    [ngClass]="{'is-invalid':changepassword.get('newPass')!.hasError('pattern') && changepassword.get('newPass')!.touched}">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('newPassword')">
                                                     <i [ngClass]="newPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
                                                   </span>
                                                   <div *ngIf="changepassword.get('newPass')!.invalid && changepassword.get('newPass')!.touched">
-                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('newPass')!.hasError('minlength')">!  Password must be at least 8 characters long.</div>
+                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('newPass')!.hasError('pattern')">
+                                                        ! Password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters.
+                                                    </div>
                                                   </div>
                                                 </div>
                                               
                                                 <label class="changepassform" for="confirmPassword">Re-Enter New Password</label>
                                                 <div class="input-group">
                                                   <input [type]="confirmPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield"
-                                                    formControlName="confirmPass" placeholder="8 character" id="confirmPassword" name="confirmPassword" required autocomplete="confirmPassword"
-                                                    [ngClass]="{'is-invalid':changepassword.get('confirmPass')!.hasError('minlength') && changepassword.get('confirmPass')!.touched}">
+                                                    formControlName="confirmPass" placeholder="8 character" id="confirmPassword" name="confirmPassword" autocomplete="confirmPassword"
+                                                    [ngClass]="{'is-invalid':changepassword.get('confirmPass')!.hasError('mismatch') && changepassword.get('confirmPass')!.touched}">
                                                   <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('confirmPassword')">
                                                     <i [ngClass]="confirmPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
                                                   </span>
                                                   <div *ngIf="changepassword.get('confirmPass')!.invalid && changepassword.get('confirmPass')!.touched">
-                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('confirmPass')!.hasError('minlength')">!  Password must be at least 8 characters long.</div>
+                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('confirmPass')!.hasError('mismatch')">
+                                                        ! Passwords do not match please type again carefully.
+                                                    </div>
                                                   </div>
                                                 </div>
-                                              </form>
-                                              
-                                        </div>
-                                        <div class="modal-footer my-3 border-0">
-                                            <button type="button" class="update-pass-btn" (click)="saveNewPassword()">Update</button>
-                                        </div>
+                                                
+                                            </div>
+                                                <div class="modal-footer my-3 border-0">
+                                                    <button type="submit" [disabled]="changepassword.invalid" [class.disabled]="changepassword.invalid" class="update-pass-btn">Update</button>
+                                                </div>
+                                            </form>
                                     </div>
                                 </div>
                             </div>

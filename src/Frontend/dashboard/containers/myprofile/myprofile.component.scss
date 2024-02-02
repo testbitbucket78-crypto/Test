@@ -445,6 +445,10 @@
     border-radius: 15px;
 }
 
+.update-pass-btn.disabled {
+    background: grey;
+  }
+
 .changepassform {
     font-size: 0.75rem;
     color: #000000;
@@ -547,6 +551,7 @@
     position: absolute;
     right: 1.5rem;
     top: 0.5rem;
+    z-index: 1030;
     cursor: pointer;
 
 }
@@ -647,6 +652,10 @@ input::-ms-clear {
     padding: 1% 14% 1% 14%;
     font-size: 0.75rem;
     height: 35px;
+}
+
+.addfunds-continue-btn.disabled {
+    background: grey;
 }
 
 .addfundsbody h1 {

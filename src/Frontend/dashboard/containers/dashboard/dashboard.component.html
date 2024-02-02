@@ -158,7 +158,7 @@
               <span class="card-heading ">Recent conversations</span>
             </div>
             <div class="px-3">
-              <div class="recentconversation" *ngFor="let items of recentConversation">
+              <div class="recentconversation" *ngFor="let items of recentConversation" (click)="routeToPage1()">
                 <img src="assets/img/user-chat-img.svg">
                 <div class="col-md-8 rc-body">
                   <p class="text-capitalize" id="item-name" [innerHTML]="items.Name"></p>

@@ -1,6 +1,6 @@
 import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder,Validators } from "@angular/forms";
+import { FormBuilder,FormGroup,Validators } from "@angular/forms";
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -29,7 +29,7 @@ export class MyprofileComponent implements OnInit {
   currentPasswordType: boolean = true;
   newPasswordType: boolean = true;
   confirmPasswordType: boolean = true;
-  changepassword:any
+  changepassword:FormGroup;
   changePasswordValue:any;
   selectedAmount!:number;
   selectedDiv!: number;
@@ -46,9 +46,6 @@ export class MyprofileComponent implements OnInit {
   currentUserDetails:any;
   fundsData = <addFundsData> {};
   teamboxNotificationStateData = <teamboxNotifications> {};
-  
-
-
   imageChangedEvent: any = '';
   croppedImage: any = '';
   
@@ -59,9 +56,10 @@ export class MyprofileComponent implements OnInit {
   constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private _settingsService:SettingsService,private cdRef: ChangeDetectorRef) { 
     this.changepassword = this.fB.group({
       uid: this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid,
-      oldPass:['', [Validators.required, Validators.minLength(8)]],
-      newPass:['', [Validators.required, Validators.minLength(8)]],
-      confirmPass:['', [Validators.required, Validators.minLength(8)]]
+      oldPass:['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
+      newPass:['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
+      confirmPass: ['', [Validators.required, this.passwordMatchValidator.bind(this)]]
+
     });
     
   }
@@ -132,6 +130,21 @@ export class MyprofileComponent implements OnInit {
       this.confirmPasswordType = !this.confirmPasswordType;
     }
   }
+
+  passwordMatchValidator() {
+    const passwordControl = this.changepassword?.get('newPass');
+    const confirmPasswordControl = this.changepassword?.get('confirmPass');
+
+    if (passwordControl && confirmPasswordControl) {
+        const password = passwordControl.value;
+        const confirmPassword = confirmPasswordControl.value;
+
+        if (password !== confirmPassword && password !== '') {
+            return { 'mismatch': true };
+        }
+    }
+    return null;
+}
 
   // get teamname and rolename from api response
 
@@ -244,15 +257,12 @@ toggleActiveState(checked: boolean) {
   saveNewPassword() {
 
     this.changePasswordValue = this.changepassword.value;
-    console.log(this.changePasswordValue);
     if(this.changepassword.valid) {
-      // this.changepassword.controls.uid.setValue(this.uid);
-
-
       this.apiService.changePass(this.changePasswordValue).subscribe(
         
       (response: any) => {
         if(response.status === 200) {
+          this.changepassword.reset();
           this.showToaster('! Password changed successfully.','success');
           $("#changePasswordModal").modal('hide');
         }
