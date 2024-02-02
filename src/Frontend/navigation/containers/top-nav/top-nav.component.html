@@ -100,7 +100,9 @@
 
           <div class="px-2 switch-toggle">
             <label class="m-0 switch">
-              <input type="checkbox" class="m-0 form-control-checkbox" (change)="toggleActiveState($event.target.checked)" checked>
+              <input type="checkbox" class="m-0 form-control-checkbox" 
+                (change)="toggleActiveState($event.target.checked)" 
+                [(ngModel)]="isActive">
               <span class="slider"></span>
             </label>
           </div>

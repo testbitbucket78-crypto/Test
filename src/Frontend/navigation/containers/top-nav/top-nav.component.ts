@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Input, ElementRef, Component, OnInit,HostListe
 import { NavigationService } from 'Frontend/navigation/services';
 import { AuthService } from 'Frontend/auth/services';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { Router } from '@angular/router';
 
 @HostListener('window:scroll', ['$event'])
@@ -28,14 +29,17 @@ export class TopNavComponent implements OnInit {
     EmailId:any;
     uid :any;
     spId!:number;
+    userList:any;
     PhoneNumber:any;
     profilePicture:any;
-    isActive: number = 1; 
+    isActive: number = 0; 
     firstLetterFirstName!:string;
     firstLetterLastName!:string;
     notificationData = [];
+    currentUserDetails:any;
 
-    constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: ProfileService,private elementRef: ElementRef) {}
+    constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: 
+        ProfileService,private elementRef: ElementRef,private _settingsService:SettingsService) {}
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
@@ -45,11 +49,8 @@ export class TopNavComponent implements OnInit {
       }
     }
     ngOnInit() {
-        
-        let uid: string  = sessionStorage.getItem('loginDetails')?.toString() ?? '';
-        let userid =JSON.parse(uid);
-        this.uid = userid.uid;
         this.spId = Number(sessionStorage.getItem('SP_ID'));
+        this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
         this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
         this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
         this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
@@ -63,6 +64,7 @@ export class TopNavComponent implements OnInit {
         this.firstLetterLastName = lastName.charAt(0) || '';
 
         this.getNotificationData();
+        this.getUserList();
     }
 
     getNotificationData() {
@@ -90,33 +92,42 @@ export class TopNavComponent implements OnInit {
         this.ShowNotification = false;
 	}
 
+
+  getUserList() {
+    this._settingsService.getUserList(this.spId).subscribe((result:any) =>{
+      if(result) {
+        this.userList =result?.getUser;     
+          for (let i = 0; i<this.userList.length;i++) {
+            if(this.userList[i].uid === this.uid) {
+              this.currentUserDetails = this.userList[i];
+              this.isActive = this.currentUserDetails.IsActive;
+            }
+          }      
+        }
+    });
+  }
+
     // toggle active/inactive state of logged-in user
 
     toggleActiveState(checked: boolean) {
         this.isActive = checked ? 1 : 0;
     
-        const activeStateData = {
+        let  activeStateData = {
         uid: this.uid,
-        IsActive: this.isActive
+        isActive: this.isActive
         };
-    
-        this.apiService.userActiveState(activeStateData)
-        .subscribe(
-            response => {
-            console.log('success',response);
-            },
-            error => {
-            console.log('error:', error);
-            }
-        );
+        this.apiService.userActiveState(activeStateData).subscribe(response => {
+          if(response) {
+            this.getUserList();
+          }
+        });
     }
   
-
     logout(): void {
-        
         this.authservice.logout();
         this.router.navigate(['/login']);
       }
+
     }
  
 

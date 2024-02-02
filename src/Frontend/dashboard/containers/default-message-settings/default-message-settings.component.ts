@@ -23,7 +23,8 @@ export class DefaultMessageSettingsComponent implements OnInit {
   selectedCategory!: number;
   selectedMessageData=<defaultMessagesData>{};
   value:any;
-  fileName: any; 
+  fileName: any;
+  Isdisable = 0;
   characterCount: number = 0;
   selectedTitle:string='';
   selectedDescription:string='';
@@ -95,6 +96,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
     this.spId = Number(sessionStorage.getItem('SP_ID'));
     this.defaultMessageForm =this.prepareUserForm();
     this.value = this.defaultMessageForm.get('value')?.value;
+    console.log(this.selectedMessageData)
     this.getAttributeList();
     this.getDefaultMessages();
 
@@ -177,7 +179,8 @@ getAttributeList() {
         const data = new FormData();
         data.append('dataFile', File, File.name);
         data.append('mediaType', mediaType);
-        this._teamboxService.uploadfile(data,spid).subscribe(uploadStatus => {
+        let name='defaultmessages'
+        this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
             let responseData: any = uploadStatus;
             if (responseData.filename) {
                 this.selectedPreview = responseData.filename.toString();
@@ -222,8 +225,6 @@ removeMedia() {
     this.defaultMessageForm.removeValidators;
 }
 
-
-
   getDefaultMessages() {
     this.apiService.getDefaultMessages(this.spId).subscribe(response => {
         this.defaultMessages = response.defaultaction
@@ -264,25 +265,37 @@ removeMedia() {
     this.value = this.selectedMessageData.value;
   }
 
+  toggleSideBar(data:any) {
+    if(this.showSideBar = !this.showSideBar) {
+      this.selectedMessageData = data;
+      console.log(this.selectedMessageData)
+      this.selectedTitle = data.title;
+      this.selectedDescription = data.description;
+      this.patchFormValue();
+    }
+    else {
+      this.defaultMessagesData = data;
+      this.selectedTitle = data.title;
+      this.selectedDescription = data.description;
+      this.removeValue()
+    }
+  }
+
   populateData(data:any) {
-    this.showSideBar = !this.showSideBar;
-    this.defaultMessagesData = data
-    this.selectedMessageData = data;
-    console.log(this.selectedMessageData)
+    this.defaultMessagesData = data;
     this.selectedTitle = data.title;
     this.selectedDescription = data.description;
-    this.patchFormValue();
   }
 
   copyDefaultMesssageData() {
     let defaultMessagesData:defaultMessagesData = <defaultMessagesData>{};
 
     defaultMessagesData.spid = this.spId;
-    if (isNullOrUndefined(this.selectedMessageData.uid)) {
-      defaultMessagesData.uid = 0;
+    if (this.selectedMessageData.uid!=null) {
+      defaultMessagesData.uid = this.selectedMessageData.uid;
     }
     else {
-      defaultMessagesData.uid = this.selectedMessageData.uid;
+      defaultMessagesData.uid = 0;
     }
     defaultMessagesData.title = this.selectedTitle;
     defaultMessagesData.description = this.selectedDescription;
@@ -291,6 +304,7 @@ removeMedia() {
     defaultMessagesData.link = this.selectedPreview;
     defaultMessagesData.override = this.defaultMessageForm.controls.override.value;
     defaultMessagesData.autoreply = this.defaultMessageForm.controls.autoreply.value;
+    defaultMessagesData.Is_disable = this.Isdisable;
     console.log(defaultMessagesData);
     return defaultMessagesData;
   }
@@ -319,7 +333,21 @@ removeMedia() {
         this.showSideBar =false;
         this.getDefaultMessages();
       }
-    })
+    });
   }
 
+
+  enableDisable(event:any) {
+	  this.Isdisable = event.target.checked;
+    let isDisable = this.Isdisable ? 1 : 0;
+    let body = {
+      uid : this.selectedMessageData.uid,
+      Is_disable : isDisable
+    }
+    this.apiService.enableDisableDefaultMessage(body).subscribe(response=>{
+      if(isNullOrUndefined(response)){
+        this.getDefaultMessages();
+      }
+    });
+	}
 }
