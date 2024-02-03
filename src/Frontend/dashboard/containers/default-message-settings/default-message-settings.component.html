@@ -30,7 +30,7 @@
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
-                <form [formGroup]="defaultMessageForm" autocomplete="none" (ngSubmit)="addEditDefaultMessageData()">
+                <form [formGroup]="defaultMessageForm" autocomplete="off" (ngSubmit)="addEditDefaultMessageData()">
 
                 <div class="modal-body px-5 pt-0">
                      <div *ngIf="selectedCategory==1 || selectedCategory==5" class="sel-type-link autoreply pt-2 pb-3">

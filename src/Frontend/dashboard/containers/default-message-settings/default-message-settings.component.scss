@@ -693,6 +693,12 @@ textarea::placeholder {
   font-weight: 350;
  }
 
+ .sel-type-link input[type="url"]:disabled {
+  background: #EBEBEB;
+  color: #7A86A1;
+} 
+
+
  // delete popup
 
 .delete-modal{

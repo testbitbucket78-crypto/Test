@@ -5,7 +5,6 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { ToolbarService, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
-import { isNullOrUndefined } from 'is-what';
 
 declare var $:any;
 @Component({
@@ -218,7 +217,6 @@ removeMedia() {
     this.selectedPreview = '';
     this.fileName='';
     this.value = null;
-    this.selectedCategory=0;
     this.selectedType='text';
     this.defaultMessageForm.get('link')?.setValue(null);
     this.defaultMessageForm.reset();
@@ -328,7 +326,7 @@ removeMedia() {
       uid:this.selectedMessageData.uid
     }
     this.apiService.deleteDefaultMessage(deleteBody).subscribe(response=>{
-      if(isNullOrUndefined(response)) {
+      if(response) {
         $("#deleteModal").modal('hide');
         this.showSideBar =false;
         this.getDefaultMessages();
@@ -345,7 +343,7 @@ removeMedia() {
       Is_disable : isDisable
     }
     this.apiService.enableDisableDefaultMessage(body).subscribe(response=>{
-      if(isNullOrUndefined(response)){
+      if(response) {
         this.getDefaultMessages();
       }
     });
