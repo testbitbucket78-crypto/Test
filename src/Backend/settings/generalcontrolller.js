@@ -198,37 +198,9 @@ const addAndUpdateDefaultMsg = async (req, res) => {
         message_type = req.body.message_type
         link = req.body.link
         updated_at = new Date()
-        let image = "";
-        image = link
-        if (link != null && link != undefined && link != "" && link != " " && message_type == 'image') {
-            console.log("link",link)
-            // Remove header
-            let streamSplit = link.split(';base64,');
-            let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
-            let datapart = streamSplit.pop();// this is dependent on the POP above
-
-            let imgType = datapart.split('/').pop();
-            let imageName = 'DefaultMessage.png';//Default it to png.
-            if (imgType) {
-                imageName = 'DefaultMessage' + '.' + imgType;
-            }
-            let awsres = "";
-            const timestamp = Date.now();
-            const randomNumber = Math.floor(Math.random() * 10000);
-            if (message_type == 'image') {
-                console.log("image")
-                awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + timestamp + "_" + randomNumber + "/" + imageName, link)
-                image = awsres.value.Location
-                console.log(awsres.value.Location)
-            }
-            if (message_type == 'video') {
-                console.log("video")
-                awsres = await awsHelper.uploadVideoToAws(spid + "/" + uid + "/" + timestamp + "_" + randomNumber + "/" + imageName, link)
-                image = awsres.value.Location
-                console.log(awsres.value.Location)
-
-            }
-        }
+       
+        let image = link
+       
         if (uid != 0) {
             let userimgquery = `UPDATE defaultmessages set SP_ID=?, title=?, description=?, message_type=?, value=?, link=?,override=?,autoreply=?,Is_disable=?,isDeleted=?,updated_at=? where uid =?`;
             let result = await db.excuteQuery(userimgquery, [spid, title, description, message_type, value, image, override, autoreply, Is_disable, '0', updated_at, uid]);
