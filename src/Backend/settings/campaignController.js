@@ -276,6 +276,7 @@ const editCustomField = async (req, res) => {
             Type = req.body.Type,
             description = req.body.description,
             updated_at = new Date()
+            console.log(new Date() ,req.body.id)
         id = req.body.id
         let editedField = await db.excuteQuery(val.editfield, [ColumnName, Type, description, updated_at, id])
         res.send({

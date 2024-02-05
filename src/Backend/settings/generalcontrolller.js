@@ -201,6 +201,7 @@ const addAndUpdateDefaultMsg = async (req, res) => {
         let image = "";
         image = link
         if (link != null && link != undefined && link != "" && link != " " && message_type == 'image') {
+            console.log("link",link)
             // Remove header
             let streamSplit = link.split(';base64,');
             let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
