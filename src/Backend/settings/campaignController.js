@@ -275,7 +275,9 @@ const editCustomField = async (req, res) => {
         ColumnName = req.body.ColumnName,
             Type = req.body.Type,
             description = req.body.description,
-            updated_at = new Date()
+            
+            updated_at = new Date().toUTCString();
+
         id = req.body.id
         let editedField = await db.excuteQuery(val.editfield, [ColumnName, Type, description, updated_at, id])
         res.send({
@@ -383,26 +385,8 @@ const addTemplate = async (req, res) => {
         isTemplate = req.body.isTemplate
         industry = req.body.industry
 
-        let image = ""
-        image = Links
-        if (Links != null && Links != undefined && Links != "" && Links != " " && media_type == 'image') {
-            // Remove header
-            let streamSplit = Links.split(';base64,');
-            let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
-            let datapart = streamSplit.pop();// this is dependent on the POP above
-
-            let imgType = datapart.split('/').pop();
-            let imageName = 'template_img.png';//Default it to png.
-            if (imgType) {
-                imageName = 'template_img' + '.' + imgType;
-            }
-            const timestamp = Date.now();
-            const randomNumber = Math.floor(Math.random() * 10000);
-            let awsres = await awsHelper.uploadStreamToAws(spid + "/" + timestamp + "_" + randomNumber + "/" + created_By + "/" + imageName, Links)
-
-            image = awsres.value.Location
-            console.log(awsres.value.Location)
-        }
+        let image = Links
+  
         if (ID == 0) {
 
             let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]

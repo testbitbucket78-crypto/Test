@@ -451,12 +451,12 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
       console.log(type === 'image')
       if (type == 'image') {
-        awsDetails = await awsHelper.uploadStreamToAws(sid[0].SP_ID + "/" + phone_number_id + "/" + 'whatsAppWeb.jpeg', message)
+        awsDetails = await awsHelper.uploadStreamToAws(sid[0]?.SP_ID + "/teambox/" + phone_number_id + "/" + 'whatsAppWeb.jpeg', message)
        // console.log("awsDetails image");
        // console.log(awsDetails)
       }
       if (type == 'video') {
-        awsDetails = await awsHelper.uploadVideoToAws(from + "/" + phone_number_id + "/" + "whatsAppWeb.mp4", message)
+        awsDetails = await awsHelper.uploadVideoToAws(sid[0]?.SP_ID  + "/teambox/" + phone_number_id + "/" + "whatsAppWeb.mp4", message)
        // console.log("awsDetails video");
 
        // console.log(awsDetails)
