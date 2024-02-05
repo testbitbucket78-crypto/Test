@@ -724,7 +724,8 @@ sendattachfile(){
 		this.mediaType = files[0].type
 		const data = new FormData();
 		data.append('dataFile',imageFile ,imageFile.name);
-		this.apiService.uploadfile(data,spid).subscribe(uploadStatus =>{
+		let name='teambox'
+			this.apiService.uploadfile(data,spid,name).subscribe(uploadStatus => {
 			let responseData:any = uploadStatus
 			if(responseData.filename){
 				this.messageMeidaFile = responseData.filename

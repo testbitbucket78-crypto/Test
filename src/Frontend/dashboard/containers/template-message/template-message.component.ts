@@ -4,14 +4,14 @@ import { newTemplateFormData, quickReplyButtons, templateMessageData,} from 'Fro
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService,} from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 declare var $: any;
 @Component({
     selector: 'sb-template-message',
     templateUrl: './template-message.component.html',
     styleUrls: ['./template-message.component.scss'],
-    providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService],
+    providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService,CountService]
 })
 export class TemplateMessageComponent implements OnInit {
     selectedCountryCode: any;
@@ -27,6 +27,7 @@ export class TemplateMessageComponent implements OnInit {
     quickreply: any;
     status: string = 'Draft';
     BodyText: any;
+    fileName: any; 
     selectedType: string = 'text';
     selectedPreview: string = '';
     showCampaignDetail: boolean = false;
@@ -260,15 +261,6 @@ export class TemplateMessageComponent implements OnInit {
         return this.characterCounts[idx] || 0;
     }
 
-    updateRichTextCharacterCount(event: Event, idx: number) {
-        const editorValue = this.chatEditor?.value;
-        if (editorValue) {
-            this.characterCounts[idx] = editorValue.length;
-        } else {
-            this.characterCounts[idx] = 0;
-        }
-    }
-
     previewImageAndVideo(event: Event) {
         const inputElement = event.target as HTMLInputElement;
         if (inputElement.files && inputElement.files[0]) {
@@ -289,12 +281,14 @@ export class TemplateMessageComponent implements OnInit {
     saveVideoAndDocument(files: FileList) {
         if (files[0]) {
             let File = files[0];
+            this.fileName = this.truncateFileName(File.name, 25);
             let spid = this.spid
             let mediaType = files[0].type;
             const data = new FormData();
             data.append('dataFile', File, File.name);
             data.append('mediaType', mediaType);
-            this._teamboxService.uploadfile(data,spid).subscribe(uploadStatus => {
+            let name='template-message'
+            this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
                 let responseData: any = uploadStatus;
                 if (responseData.filename) {
                     this.selectedPreview = responseData.filename.toString();
@@ -309,9 +303,22 @@ export class TemplateMessageComponent implements OnInit {
         this.saveVideoAndDocument(files);
     }
 
+    uploadThroughLink() {
+        let value = this.newTemplateForm.get('Links')?.value;
+        this.selectedPreview = value;
+      }
+
+      truncateFileName(fileName: string, maxLength: number): string {
+        if (fileName.length > maxLength) {
+          return fileName.substring(0, maxLength) + '...';
+        }
+        return fileName;
+      }
+
     // remove form values
     removeValue() {
         this.selectedPreview = '';
+        this.fileName='';
         this.newTemplateForm.get('Links')?.setValue(null);
     }
 

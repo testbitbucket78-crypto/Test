@@ -448,7 +448,8 @@
                         <span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                     </div>
                     <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
-                    <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null" >{{ newTemplateForm.get('Links')?.value }}</span>
+                    <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null" >{{ this.fileName }}</span>
+                    <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
                         <input type="file" accept=".doc, .docx, .pdf" formControlName="Links" (change)="onFileChange($event)" name="document-select" id="sel-type-document">
                         <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
@@ -458,16 +459,16 @@
                 </div>
 
 
-            <div >
+            <div>
 
                 <div *ngIf="selectedType !== 'text'" class="flex-column sel-type-link">
                     <label for="link" id="Links" >Link</label>
-                    <input type="url" id="Links" [attr.disabled]="newTemplateForm.get('Links')?.value !== null ? 'disabled' : null"  formControlName="Links" placeholder="Enter">
+                    <input type="url" id="Links" [attr.disabled]="newTemplateForm.get('Links')?.value !== null ? 'disabled' : null"  (change)="uploadThroughLink()" formControlName="Links" placeholder="Enter">
                 </div>
 
 
                 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-                    <h6>Body Text</h6> <div><span class="characters-count">{{ getCharacterCount(4) }}</span><span>/1024 Characters</span></div>
+                    <h6>Body Text</h6> <div><span class="characters-count"></span><span>Characters</span></div>
                 </div>
                 <div class="sel-type-text">
                     <!-- <textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="8" placeholder="Enter" (input)="updateCharacterCount($event,4)"></textarea> -->
@@ -478,7 +479,7 @@
                     [toolbarSettings]='tools'
                     [height]="'200px'"
                     [maxLength]='1024'
-                    (change)="updateRichTextCharacterCount($event,4)"
+                    [showCharCount]='true'
                     (change)="onEditorChange(chatEditor.value)"
                      placeholder="Enter"
                     >

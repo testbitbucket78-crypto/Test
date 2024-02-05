@@ -316,7 +316,8 @@ click: any;
 			data.append('dataFile', files[0], fileName);
 			data.append('mediaType', mediaType);
 	  
-			this.tS.uploadfile(data,spid).subscribe(uploadStatus => {
+			let name='smartReply'
+			this.tS.uploadfile(data,spid,name).subscribe(uploadStatus => {
 			  let responseData: any = uploadStatus;
 			  if (responseData.filename) {
 				this.sendattachfile();
@@ -610,7 +611,7 @@ click: any;
 
 
 		
-		this.assignedAgentList.push({ Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
+		this.assignedAgentList.push({ActionID:0, Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
 		console.log(this.messageMeidaFile)
 			this.custommesage = '';
 			
@@ -622,7 +623,7 @@ click: any;
 		}
 		saveMessage() {
 
-			this.assignedAgentList.push({ Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
+			this.assignedAgentList.push({ActionID:0, Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
 			console.log(this.messageMeidaFile)
 				this.custommesage = '';	
 				

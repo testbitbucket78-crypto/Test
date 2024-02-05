@@ -1,9 +1,9 @@
 import { Component, OnInit,  ViewChild, ElementRef } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { defaultMessagesData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
-import { ToolbarService, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 
 declare var $:any;
@@ -11,7 +11,7 @@ declare var $:any;
   selector: 'sb-default-message-settings',
   templateUrl: './default-message-settings.component.html',
   styleUrls: ['./default-message-settings.component.scss'],
-  providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService]
+  providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService,CountService]
 })
 export class DefaultMessageSettingsComponent implements OnInit {
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
@@ -20,14 +20,18 @@ export class DefaultMessageSettingsComponent implements OnInit {
   spId:number = 0;
   selectedType: string = 'text';
   selectedCategory!: number;
-  selectedMessage: any;
+  selectedMessageData=<defaultMessagesData>{};
   value:any;
+  fileName: any;
+  Isdisable = 0;
+  characterCount: number = 0;
   selectedTitle:string='';
   selectedDescription:string='';
-  videoSelected = false;
+  selectedPreview: string = '';
   defaultMessageForm!:FormGroup;
   showSideBar:boolean=false;
   defaultMessages:any [] =[];
+  defaultMessageDataInit:any []=[];
   defaultMessagesData: any;
   attributesList:any=[];
   attributesearch!:string;
@@ -78,27 +82,29 @@ export class DefaultMessageSettingsComponent implements OnInit {
 		}
   ]};
 
-  constructor(private apiService:SettingsService,private _teamboxService:TeamboxService) { }
+  constructor(private apiService:SettingsService,private _teamboxService:TeamboxService,private fb: FormBuilder) { }
   prepareUserForm(){
-    return new FormGroup({
-      value:new FormControl(null),
-      link:new FormControl(null),
-      override:new FormControl(null),
-      autoreply:new FormControl(null),
+    return this.fb.group ({
+      value:[null,[Validators.required]],
+      link:[null],
+      override:[null],
+      autoreply:[null]
     });
   }
   ngOnInit(): void {
     this.spId = Number(sessionStorage.getItem('SP_ID'));
     this.defaultMessageForm =this.prepareUserForm();
     this.value = this.defaultMessageForm.get('value')?.value;
+    console.log(this.selectedMessageData)
     this.getAttributeList();
     this.getDefaultMessages();
 
   }
 
-  onEditorChange(value: string | null): void {
+  onEditorChange(value: any) {
     this.defaultMessageForm.get('value')?.setValue(value);
   }
+
 	closeAllModal(){
 		$('body').removeClass('modal-open');
 		$('.modal-backdrop').remove();
@@ -113,10 +119,6 @@ ToggleAttributesOption(){
 	this.closeAllModal()
 	$("#welcomGreeting").modal('hide');
   $("#atrributemodal").modal('show');
-}
-
-ToggleSideBar() {
-  this.showSideBar = !this.showSideBar;
 }
 
 selectAttributes(item:any){
@@ -136,71 +138,177 @@ getAttributeList() {
 }
 })
 }
-  showMessageType(type: string) {
+  showMessageType(type: string) {   
     this.selectedType = type;
+    if (this.selectedType === 'video' || this.selectedType === 'document' || this.selectedType === 'image') {
+       this.defaultMessageForm.get('link')?.setValidators([Validators.required]);
+    } else {
+      this.defaultMessageForm.get('link')?.clearValidators();
+    }
+    this.defaultMessageForm.get('link')?.updateValueAndValidity();
   }
   
   selectedButtonType(type: number) {
     this.selectedCategory = type;
   }
 
-  handleVideoUpload(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      const objectURL = URL.createObjectURL(file);
-      this.videoPlayer.nativeElement.src = objectURL;
-      this.videoSelected = true;
+  previewImageAndVideo(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement.files && inputElement.files[0]) {
+        const file = inputElement.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (e: any) => {
+            const fileType = file.type;
+            if (fileType.startsWith('image')) {
+                this.selectedPreview = e.target.result as string;
+            }
+            console.log(this.selectedPreview);
+        };
+        reader.readAsDataURL(file);
     }
+}
+
+  saveVideoAndDocument(files: FileList) {
+    if (files[0]) {
+        let File = files[0];
+        this.fileName = this.truncateFileName(File.name, 25);
+        let spid = this.spId
+        let mediaType = files[0].type;
+        const data = new FormData();
+        data.append('dataFile', File, File.name);
+        data.append('mediaType', mediaType);
+        let name='defaultmessages'
+        this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
+            let responseData: any = uploadStatus;
+            if (responseData.filename) {
+                this.selectedPreview = responseData.filename.toString();
+                console.log(this.selectedPreview);
+            }
+        });
+    }
+}
+
+uploadThroughLink() {
+  let value = this.defaultMessageForm.get('link')?.value;
+  this.selectedPreview = value;
+}
+
+onFileChange(event: any) {
+    let files: FileList = event.target.files;
+    this.saveVideoAndDocument(files);
+}
+
+truncateFileName(fileName: string, maxLength: number): string {
+  if (fileName.length > maxLength) {
+    return fileName.substring(0, maxLength) + '...';
   }
+  return fileName;
+}
+
+removeMedia() {
+  this.selectedPreview = '';
+  this.fileName='';
+  this.defaultMessageForm.get('link')?.setValue(null);
+}
+
+  // remove form values
+  removeValue() {
+    this.selectedPreview = '';
+    this.fileName='';
+    this.value = null;
+    this.selectedType='text';
+    this.defaultMessageForm.get('link')?.setValue(null);
+    this.defaultMessageForm.reset();
+    this.defaultMessageForm.removeValidators;
+}
 
   getDefaultMessages() {
     this.apiService.getDefaultMessages(this.spId).subscribe(response => {
         this.defaultMessages = response.defaultaction
         console.log(response.defaultaction);
+        
+        // combine data coming from api into defaultMessageData array //
+        this.defaultMessageDataInit = this.defaultMessageData.map(defaultMessage => {
+          const matchedData = this.defaultMessages.find(Item => Item.title === defaultMessage.title);
+          if (matchedData) {
+            return { ...defaultMessage, ...matchedData };
+          } else {
+            return defaultMessage;
+          }
+        });
+        console.log(this.defaultMessageDataInit);
     })
   }
 
-  getDefaultMessageById(uid: number) {
-    this.selectedMessage = this.defaultMessages.find((message:any) =>message.uid === uid);
-    this.showSideBar = true;
-  }
-
-  addDefaultMessageData() {
+  addEditDefaultMessageData() {
     let defaultMessagesData = this.copyDefaultMesssageData();
-    this.apiService.addDefaultMessages(defaultMessagesData).subscribe(response => {
+      this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe(response => {
         if(response.status === 200) {
           this.defaultMessageForm.reset();
+          this.getDefaultMessages();
+          this.removeValue();
           $("#welcomGreeting").modal('hide');
-
+          this.showSideBar = false;
         }
-    });
+    })
+  }
+
+  editDefaultMessages() { 
+    $("#welcomGreeting").modal('show');
+    this.selectedType = this.selectedMessageData.message_type;
+    this.selectedTitle = this.selectedMessageData.title;
+    this.selectedDescription = this.selectedMessageData.description;
+    this.selectedPreview = this.selectedMessageData.link;
+    this.value = this.selectedMessageData.value;
+  }
+
+  toggleSideBar(data:any) {
+    if(this.showSideBar = !this.showSideBar) {
+      this.selectedMessageData = data;
+      console.log(this.selectedMessageData)
+      this.selectedTitle = data.title;
+      this.selectedDescription = data.description;
+      this.patchFormValue();
+    }
+    else {
+      this.defaultMessagesData = data;
+      this.selectedTitle = data.title;
+      this.selectedDescription = data.description;
+      this.removeValue()
+    }
   }
 
   populateData(data:any) {
-    this.defaultMessagesData = data
-    let selectedData = data;
-    this.selectedTitle = selectedData.title;
-    this.selectedDescription = selectedData.description;
+    this.defaultMessagesData = data;
+    this.selectedTitle = data.title;
+    this.selectedDescription = data.description;
   }
 
   copyDefaultMesssageData() {
     let defaultMessagesData:defaultMessagesData = <defaultMessagesData>{};
 
-    defaultMessagesData.SP_ID = this.spId;
-    defaultMessagesData.uid = 0;
+    defaultMessagesData.spid = this.spId;
+    if (this.selectedMessageData.uid!=null) {
+      defaultMessagesData.uid = this.selectedMessageData.uid;
+    }
+    else {
+      defaultMessagesData.uid = 0;
+    }
     defaultMessagesData.title = this.selectedTitle;
     defaultMessagesData.description = this.selectedDescription;
     defaultMessagesData.message_type = this.selectedType;
     defaultMessagesData.value = this.defaultMessageForm.controls.value.value;
-    defaultMessagesData.link = this.defaultMessageForm.controls.link.value;
+    defaultMessagesData.link = this.selectedPreview;
     defaultMessagesData.override = this.defaultMessageForm.controls.override.value;
     defaultMessagesData.autoreply = this.defaultMessageForm.controls.autoreply.value;
+    defaultMessagesData.Is_disable = this.Isdisable;
     console.log(defaultMessagesData);
     return defaultMessagesData;
   }
 
   patchFormValue(){
-    const data = this.defaultMessagesData;
+    const data = this.selectedMessageData;
     for(let prop in data){
       let value = data[prop as keyof typeof data];
       if(this.defaultMessageForm.get(prop))
@@ -208,4 +316,36 @@ getAttributeList() {
     }  
   }
 
+  toggleDeletePopup() {
+    $("#deleteModal").modal('show');
+  }
+  
+  deleteDefaultMessage() {
+    let deleteBody = {
+      spid:this.spId,
+      uid:this.selectedMessageData.uid
+    }
+    this.apiService.deleteDefaultMessage(deleteBody).subscribe(response=>{
+      if(response) {
+        $("#deleteModal").modal('hide');
+        this.showSideBar =false;
+        this.getDefaultMessages();
+      }
+    });
+  }
+
+
+  enableDisable(event:any) {
+	  this.Isdisable = event.target.checked;
+    let isDisable = this.Isdisable ? 1 : 0;
+    let body = {
+      uid : this.selectedMessageData.uid,
+      Is_disable : isDisable
+    }
+    this.apiService.enableDisableDefaultMessage(body).subscribe(response=>{
+      if(response) {
+        this.getDefaultMessages();
+      }
+    });
+	}
 }

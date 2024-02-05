@@ -69,6 +69,7 @@ export class CampaignsComponent implements OnInit {
 	 pagesize:any=5;
 	 page:any=1;
 	 totalpages:any=1;
+	 optInStatus=false;
 	 
 	 applyListModal:any;
 	 applylistFiltersWidth:any='900px';
@@ -1263,6 +1264,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 				console.log(item)
 				let MessageBodyData:any={
 					SPID:this.SPID,
+					optInStatus:this.optInStatus,
+					customerId:this.AgentId,
 					phone_number:item.Contacts_Column,
 					button_yes:this.selectedTemplate.button_yes,
 					button_no:this.selectedTemplate.button_no,
@@ -1324,6 +1327,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					if(customerDetail && customerDetail.Phone_number){
 						let MessageBodyData:any={
 							SP_ID:this.SPID,
+							optInStatus:this.optInStatus,
+							customerId:this.AgentId,
 							phone_number:customerDetail.Phone_number,
 							button_yes:this.selectedTemplate.button_yes,
 							button_no:this.selectedTemplate.button_no,
@@ -1537,6 +1542,7 @@ closeUtility(){
 	this.Utility=false;
 	this.Marketing=false;
 	this.Authentication=false;
+	this.vartip = false;
 }
 testinfo(){
 	this.campagininfo=!this.campagininfo;
@@ -1785,7 +1791,8 @@ testinfo(){
 			let spid = this.SPID
 			const data = new FormData();
 			data.append('dataFile',imageFile ,imageFile.name);
-			this.apiService.uploadfile(data,spid).subscribe(uploadStatus =>{
+			let name='campaign'
+			this.apiService.uploadfile(data,spid,name).subscribe(uploadStatus =>{
 				let responseData:any = uploadStatus
 				if(responseData.filename){
 					this.selectedTemplate['tempimage'] = responseData.filename
@@ -2219,8 +2226,22 @@ testinfo(){
 		  closeAddActionDialog() {
 			this.ShowChannelOption = false;
 		  }
+		
+		messageOptIn(event:any) {
+		this.optInStatus = event.target.checked;
+		  let optInStatus = this.optInStatus ?'Yes' : 'No';
+		  console.log(optInStatus)
+		  }
+		
+		CampaignNameAlreadyExist() {
+			let spid = this.SPID;
+			let title = this.selectedCampaign.title;
+			this.apiService.isCampaignExists(title,spid).subscribe((response =>{
+				if(response) {
+					this.showToaster('Campaign Already Exist with this name !','error');
+				}
+			}));
 		}
 
-		
-	
+}
 

@@ -1,9 +1,11 @@
 import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder,Validators } from "@angular/forms";
+import { FormBuilder,FormGroup,Validators } from "@angular/forms";
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { addFundsData, profilePicData, teamboxNotifications } from 'Frontend/dashboard/models/profile.model';
+import { isNullOrUndefined } from 'is-what';
 declare var $:any;
 
 @Component({
@@ -27,7 +29,7 @@ export class MyprofileComponent implements OnInit {
   currentPasswordType: boolean = true;
   newPasswordType: boolean = true;
   confirmPasswordType: boolean = true;
-  changepassword:any
+  changepassword:FormGroup;
   changePasswordValue:any;
   selectedAmount!:number;
   selectedDiv!: number;
@@ -36,15 +38,14 @@ export class MyprofileComponent implements OnInit {
   selectedTab: number = 0;
   teamName!: string;
   roleName!:string;
-  isActive: number = 1; 
+  isActive: number = 0; 
   profilePicData= <profilePicData> {};
   profilePicture:any;
   userid:number = 0;
+  userList:any;
+  currentUserDetails:any;
   fundsData = <addFundsData> {};
   teamboxNotificationStateData = <teamboxNotifications> {};
-  
-
-
   imageChangedEvent: any = '';
   croppedImage: any = '';
   
@@ -52,12 +53,13 @@ export class MyprofileComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 
-  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private cdRef: ChangeDetectorRef) { 
+  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private _settingsService:SettingsService,private cdRef: ChangeDetectorRef) { 
     this.changepassword = this.fB.group({
       uid: this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid,
-      oldPass:['', [Validators.required, Validators.minLength(8)]],
-      newPass:['', [Validators.required, Validators.minLength(8)]],
-      confirmPass:['', [Validators.required, Validators.minLength(8)]]
+      oldPass:['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
+      newPass:['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
+      confirmPass: ['', [Validators.required, this.passwordMatchValidator.bind(this)]]
+
     });
     
   }
@@ -68,8 +70,6 @@ export class MyprofileComponent implements OnInit {
     this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
     this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
     this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
-    this.isActive = (JSON.parse(sessionStorage.getItem('loginDetails')!)).isActive;
-    console.log(this.isActive)
     const nameParts = this.Name.split(' ');
     const firstName = nameParts[0] || '';
     const lastName = nameParts[1] || '';
@@ -80,6 +80,7 @@ export class MyprofileComponent implements OnInit {
     this.getTeamboxNotificaions();
     this.getTeamName();
     this.getRoleName();
+    this.getUserList();
     this.getAvailableAmount();
   
   }
@@ -130,6 +131,21 @@ export class MyprofileComponent implements OnInit {
     }
   }
 
+  passwordMatchValidator() {
+    const passwordControl = this.changepassword?.get('newPass');
+    const confirmPasswordControl = this.changepassword?.get('confirmPass');
+
+    if (passwordControl && confirmPasswordControl) {
+        const password = passwordControl.value;
+        const confirmPassword = confirmPasswordControl.value;
+
+        if (password !== confirmPassword && password !== '') {
+            return { 'mismatch': true };
+        }
+    }
+    return null;
+}
+
   // get teamname and rolename from api response
 
   getTeamName() {
@@ -147,21 +163,26 @@ export class MyprofileComponent implements OnInit {
 // save teambox notifications toggle on / off state
 
 saveTeamboxNotificationsState() {
-   
+  this.teamboxNotificationStateData.ID = 0
   this.teamboxNotificationStateData.UID = this.uid;
   this.teamboxNotificationStateData.notificationId = this.notificationId;
   this.teamboxNotificationStateData.PushNotificationValue = this.pushNotificationValue[this.notificationId - 1] ? 1 : 0;
   this.teamboxNotificationStateData.SoundNotificationValue = this.soundNotificationValue[this.notificationId - 1] ? 1 : 0;
 
   this.apiService.saveTeamboxNotificationState(this.teamboxNotificationStateData).subscribe((response) => {
-      console.log(response + JSON.stringify(this.teamboxNotificationStateData));
+    if(isNullOrUndefined(response)) {
+      console.log(JSON.stringify(this.teamboxNotificationStateData));
+    }
   });
-
-
 }
+
+
+
+
 
 updateNotificationId(notificationId: number) {
   this.notificationId = notificationId;
+  console.log(this.notificationId)
   this.saveTeamboxNotificationsState();
 }
 
@@ -170,6 +191,7 @@ updateNotificationId(notificationId: number) {
 getTeamboxNotificaions() { 
   this.apiService.getTeamboxNotificationsState(this.uid).subscribe((response) => {
       const notifyArray = response.notify;
+      console.log(notifyArray)
 
     if(notifyArray.length > 0) {
       const lastIndex = notifyArray.length - 1;
@@ -182,9 +204,22 @@ getTeamboxNotificaions() {
       console.log(this.pushNotificationValue);
       console.log(this.soundNotificationValue);
     }
+  });
+}
 
+// get current user active/inactive state 
 
-
+getUserList() {
+  this._settingsService.getUserList(this.spId).subscribe((result:any) =>{
+    if(result) {
+      this.userList =result?.getUser;     
+        for (let i = 0; i<this.userList.length;i++) {
+          if(this.userList[i].uid === this.uid) {
+            this.currentUserDetails = this.userList[i];
+            this.isActive = this.currentUserDetails.IsActive;
+          }
+        }      
+      }
   });
 }
 
@@ -196,7 +231,7 @@ toggleActiveState(checked: boolean) {
 
   const activeStateData = {
     uid: this.uid,
-    IsActive: this.isActive
+    isActive: this.isActive
   };
 
   this.apiService.userActiveState(activeStateData)
@@ -208,7 +243,7 @@ toggleActiveState(checked: boolean) {
         else {
           this.showToaster('User Inactive!', 'success'+ response);
         }
-
+        this.getUserList();
       },
       error => {
         console.error('error:', error);
@@ -222,15 +257,12 @@ toggleActiveState(checked: boolean) {
   saveNewPassword() {
 
     this.changePasswordValue = this.changepassword.value;
-    console.log(this.changePasswordValue);
     if(this.changepassword.valid) {
-      // this.changepassword.controls.uid.setValue(this.uid);
-
-
       this.apiService.changePass(this.changePasswordValue).subscribe(
         
       (response: any) => {
         if(response.status === 200) {
+          this.changepassword.reset();
           this.showToaster('! Password changed successfully.','success');
           $("#changePasswordModal").modal('hide');
         }

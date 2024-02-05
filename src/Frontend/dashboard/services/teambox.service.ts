@@ -9,9 +9,9 @@ const API_URL = environment.baseUrl;
 export class TeamboxService {
   constructor(private http: HttpClient) { }
 
-  public uploadfile(FileData:any, spid:any) {
-      return this.http.post(`${API_URL}/uploadfile/${spid}`,FileData);
-  }
+  public uploadfile(FileData:any, spid:any,name:any) {
+    return this.http.post(`${API_URL}/uploadfile/${spid}/${name}`,FileData);
+}
 
   public getAgents(SPID:any) {
     return this.http.get(API_URL+'/agents/'+SPID);
@@ -185,5 +185,10 @@ export class TeamboxService {
   }
   public getAttributeList(SP_ID: any) {
     return this.http.get(`https://contactapi.stacknize.com/columns/${SP_ID}`);
-} 
+  } 
+
+  public isCampaignExists(title: any, spid: any) {
+    return this.http.post(`${API_URL}/exitCampaign/${title}/${spid}`, null);
+  }
+
 }

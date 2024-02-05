@@ -158,12 +158,15 @@ export interface defaultActionData {
     autoReplyTime:string;
     isAutoReplyDisable:number;
     isContactAdd:number;
+    pausedTill:string;
 
 }
 
 export interface defaultMessagesData {
     uid:number;
-    SP_ID:number;
+    Created_at:string;
+    updated_at:string;
+    spid:number;
     title:string;
     description:string;
     message_type:string;

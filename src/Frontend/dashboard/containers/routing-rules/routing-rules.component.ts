@@ -12,7 +12,7 @@ export class RoutingRulesComponent implements OnInit {
   spId = 0;
   contactowner = 0;
   assignagent = 0;
-  broadcast = 0;
+  broadcast = 1;
   roundrobin = 0;
   conversationallowed = "";
   manualassign = 0;
@@ -84,7 +84,7 @@ export class RoutingRulesComponent implements OnInit {
 
   }
 
-  getUserList(){
+  getUserList() {
     this.apiService.getUserList(this.spId).subscribe((result:any) =>{
       if(result){
         this.userList =result?.getUser;     

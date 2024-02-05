@@ -1376,6 +1376,8 @@ input[type="radio"]:checked + label::before {
 .e-toolbar-wrapper{
     height: 44px!important;
 }
+
+
 .e-toolbar, .e-toolbar .e-toolbar-items,
 .e-toolbar .e-toolbar-item .e-tbar-btn {
     background: #fff;
@@ -1393,8 +1395,31 @@ input[type="radio"]:checked + label::before {
     font-size: 10px !important;
 }
 
+.e-richtexteditor .e-rte-character-count {
+  color: #000;
+  font-size: 12px;
+  opacity: 1;
+  padding: 0;
+  position: absolute;
+  right: 63px;
+  z-index: 100;
+  height: fit-content;
+  top: -28.5px;
+  font-family: 'Manrope';
+  margin: 0;
+}
+
+.e-richtexteditor .e-rte-content .e-content, 
+.e-richtexteditor .e-source-content .e-content {
+    word-break: break-all;
+  }
+
 #defaultRTE_toolbar {
     text-align: center;
+    height: 49px!important;
+}
+#defaultRTE_toolbar_wrapper {
+    height: 43px !important;
 }
 .e-toolbar-wrapper{
     position: absolute;

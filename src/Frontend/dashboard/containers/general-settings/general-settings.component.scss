@@ -42,48 +42,48 @@
     padding: 5px 0px 0px 30px;
 }
 
+.sub-contents input.form-control {
+    width: 55px;
+    height: 37px;
+    border: 1px solid #EBEBEB;
+    border-radius: 16px;
+    text-align: center;
+}
+
 .sub-contents p{
     font-size: 13px;
     margin: 0;
     color: #7A86A1;
 }
 
-.checkbox{
-    width: 15px;
-    height: 15px;
-    border: 1px solid #C0BDCC !important;
-    border-radius: 6px;
-    margin-right: 15px;
-}
-
 // select tag styling
 
-.input-form {
-    height: 37px;
-    border-radius: 16px;
-    border: 1px solid #EBEBEB;
-    padding: 5px 15px;
-    width: 158px;
-    outline: none;
-    font-size: 14px;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-   }
+// .input-form {
+//     height: 37px;
+//     border-radius: 16px;
+//     border: 1px solid #EBEBEB;
+//     padding: 5px 15px;
+//     width: 158px;
+//     outline: none;
+//     font-size: 14px;
+//     box-sizing: border-box;
+//     -webkit-box-sizing: border-box;
+//     -moz-box-sizing: border-box;
+//     -webkit-appearance: none;
+//     -moz-appearance: none;
+//    }
 
-   select.input-form {
-    background-image: url('../../../../assets/img/settings/drop-up-down.svg');
-    background-position: calc(100% - .5rem), 100% 0;
-    background-size:  1.5em 1em;
-    background-repeat: no-repeat;
-  }
+//    select.input-form {
+//     background-image: url('../../../../assets/img/settings/drop-up-down.svg');
+//     background-position: calc(100% - .5rem), 100% 0;
+//     background-size:  1.5em 1em;
+//     background-repeat: no-repeat;
+//   }
 
-   .select-heading{
-    font-size: 14px;
-    font-weight: 600;
-   }
+//    .select-heading{
+//     font-size: 14px;
+//     font-weight: 600;
+//    }
 
    .account-btn {
     background: #6149CD 0% 0% no-repeat padding-box;
@@ -94,12 +94,21 @@
     font-weight: 400;
    }
 
+   .account-btn.disabled {
+    background: grey;
+   }
+
    .default-footer{
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
     padding: 0.75rem;
+   }
+
+   .custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #6149CD;
+    border: none;
    }
 
 //  toaster styling
