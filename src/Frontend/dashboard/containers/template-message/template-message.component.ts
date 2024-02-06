@@ -25,7 +25,7 @@ export class TemplateMessageComponent implements OnInit {
     Category: any;
     category_id!: number;
     quickreply: any;
-    status: string = 'Draft';
+    status: string = 'saved';
     BodyText: any;
     fileName: any; 
     selectedType: string = 'text';
@@ -37,6 +37,7 @@ export class TemplateMessageComponent implements OnInit {
     filteredGalleryData = [];
     filteredTemplatesData: templateMessageData[] = [];
     templatesMessageData: templateMessageData = <templateMessageData>{};
+    galleryMessageData:templateMessageData= <templateMessageData>{};
     templatesMessageDataById: any;
     attributesList: any = [];
     attributesearch!: string;
@@ -80,11 +81,11 @@ export class TemplateMessageComponent implements OnInit {
     ];
 
     statusColors:any = {
-        Draft: '#E4DFF5',
-        Approved: '#E2F4EC',
-        Pending: '#EBEDF1',
-        Rejected: '#FFD0D0',
-        Saved: '#E2F4EC',
+        draft: '#FFD0D0',
+        approved: '#E2F4EC',
+        pending: '#EBEDF1',
+        rejected: '#E4DFF5',
+        saved: '#E2F4EC',
     };
     countryCodes = [
       'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
@@ -173,6 +174,7 @@ export class TemplateMessageComponent implements OnInit {
         this.currentUser = JSON.parse(sessionStorage.getItem('loginDetails')!).name;
         this.newTemplateForm = this.prepareUserForm();
         this.filteredTemplatesData = [...this.templatesData];
+        this.filteredGalleryData = [...this.galleryData];
         this.selectedCountryCode = this.countryCodes[101];
         this.BodyText = this.newTemplateForm.get('BodyText')?.value;
         this.getTemplatesData();
@@ -206,6 +208,7 @@ export class TemplateMessageComponent implements OnInit {
 
     selectTab(tabNumber: number) {
         this.selectedTab = tabNumber;
+        this.showGalleryDetail = false;
     }
 
     // selected category for filterTemplate
@@ -223,7 +226,7 @@ export class TemplateMessageComponent implements OnInit {
     applyTemplateFilter() {
         this.filteredGalleryData = this.galleryData.filter((template: any) => {
             const isTopicMatch = this.filterListTopic.some(
-                topic => topic.checked && topic.label === template.status
+                topic => topic.checked && topic.label === template.topic
             );
             const isIndustryMatch = this.filterListIndustry.some(
                 industry => industry.checked && industry.label === template.industry
@@ -260,24 +263,7 @@ export class TemplateMessageComponent implements OnInit {
     getCharacterCount(idx: number) {
         return this.characterCounts[idx] || 0;
     }
-
-    previewImageAndVideo(event: Event) {
-        const inputElement = event.target as HTMLInputElement;
-        if (inputElement.files && inputElement.files[0]) {
-            const file = inputElement.files[0];
-            const reader = new FileReader();
-
-            reader.onload = (e: any) => {
-                const fileType = file.type;
-                if (fileType.startsWith('image')) {
-                    this.selectedPreview = e.target.result as string;
-                }
-                console.log(this.selectedPreview);
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
+    
     saveVideoAndDocument(files: FileList) {
         if (files[0]) {
             let File = files[0];
@@ -328,8 +314,6 @@ export class TemplateMessageComponent implements OnInit {
         this.characterCounts = {};
         this.BodyText = '';
         this.newTemplateForm.reset();
-        this.newTemplateForm.markAsPristine();
-        this.newTemplateForm.markAsUntouched();
     }
 
     addQuickReplyButtons() {
@@ -344,11 +328,22 @@ export class TemplateMessageComponent implements OnInit {
 
     toggleGalleryData(data: any) {
         this.showGalleryDetail = !this.showGalleryDetail;
-        // if(this.showGalleryDetail) {
-        // }
-        // else {
-        //   this.galleryData==null;
-        //   }
+        if(this.showGalleryDetail) {
+            this.galleryMessageData = data;
+            this.status= 'saved';
+            this.BodyText = this.galleryMessageData.BodyText;
+            this.selectedType = this.galleryMessageData.media_type;
+            this.selectedPreview = this.galleryMessageData.Links;
+            this.galleryMessageData.ID = 0;
+        }
+        else {
+          this.galleryMessageData==null;
+          this.BodyText='';
+          this.selectedType ='text';
+          this.selectedPreview='';
+          this.newTemplateForm.reset();
+          this.newTemplateForm.clearValidators();
+          }
     }
 
     toggleTemplatesData(data: any) {
@@ -363,7 +358,7 @@ export class TemplateMessageComponent implements OnInit {
             console.log(this.templatesMessageDataById);
         } else {
             this.templatesMessageDataById = null;
-            this.status= 'Saved';
+            this.status= 'saved';
             this.BodyText='';
             this.selectedType ='text';
             this.selectedPreview='';
@@ -401,6 +396,7 @@ export class TemplateMessageComponent implements OnInit {
     onCategoryChange(event: any) {
         const selectedCategory = this.newTemplateForm.get('Category')?.value;
         this.Category = selectedCategory;
+        console.log(this.Category)
         if(selectedCategory=='Authentication') {
             this.category_id = 3
         }
@@ -430,7 +426,7 @@ export class TemplateMessageComponent implements OnInit {
 
     saveNewTemplate() {
         if (this.newTemplateForm.valid) {
-            let newTemplateFormData = this.copyNewTemplateFormData();
+            let newTemplateFormData = this.createNewTemplateFormData();
             if ((this.templatesMessageDataById = null)) {
                 this.apiService
                     .saveNewTemplateData(newTemplateFormData, this.selectedPreview)
@@ -441,6 +437,7 @@ export class TemplateMessageComponent implements OnInit {
                             this.newTemplateForm.clearValidators();
                             this.templatesMessageDataById = null;
                             this.showCampaignDetail = false;
+                            this.showGalleryDetail = false;
                             $('#newTemplateMessage').modal('hide');
                             $('#confirmationModal').modal('hide');
                             $('#newTemplateMessagePreview').modal('hide');
@@ -481,7 +478,45 @@ export class TemplateMessageComponent implements OnInit {
         }
     }
 
-    copyNewTemplateFormData() {
+    copyTemplate() {
+        let copyTemplateForm: newTemplateFormData = <newTemplateFormData>{};
+        copyTemplateForm.ID = 0;
+        copyTemplateForm.spid = this.templatesMessageDataById.spid;
+        copyTemplateForm.created_By = this.templatesMessageDataById.created_By;
+        copyTemplateForm.isTemplate = this.templatesMessageDataById.isTemplate;
+        copyTemplateForm.media_type = this.templatesMessageDataById.media_type;
+        copyTemplateForm.Header = this.templatesMessageDataById.Header;
+        copyTemplateForm.Links = this.templatesMessageDataById.Links;
+        copyTemplateForm.BodyText = this.templatesMessageDataById.BodyText;
+        copyTemplateForm.FooterText = this.templatesMessageDataById.FooterText;
+        copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName;
+        copyTemplateForm.Channel = this.templatesMessageDataById.Channel;
+        copyTemplateForm.Category = this.templatesMessageDataById.Category;
+        copyTemplateForm.category_id = this.templatesMessageDataById.category_id;
+        copyTemplateForm.Language = this.templatesMessageDataById.Language;
+        copyTemplateForm.status = 'draft';
+        copyTemplateForm.template_id = this.templatesMessageDataById.template_id;
+        if(this.templatesMessageDataById.Category=='WhatsApp Official') {
+            copyTemplateForm.template_json = this.templatesMessageDataById.template_json;
+
+        }
+        else {
+            copyTemplateForm.template_json = [];
+        }
+       
+            this.apiService.saveNewTemplateData(copyTemplateForm, this.selectedPreview)
+            .subscribe(response => {
+                // copy existing template
+                if (response) {
+                    this.showCampaignDetail=false;
+                    this.getTemplatesData();
+                    console.log('Template saved successfully', response);
+                }
+            });
+         }
+
+      
+    createNewTemplateFormData() {
         let newTemplateForm: newTemplateFormData = <newTemplateFormData>{};
 
         newTemplateForm.spid = this.spid;
@@ -502,39 +537,41 @@ export class TemplateMessageComponent implements OnInit {
         newTemplateForm.status = this.status;
         newTemplateForm.template_id = 0;
         newTemplateForm.template_json = [];
-        newTemplateForm.template_json.push({
-            name: this.newTemplateForm.controls.TemplateName.value,
-            category: this.newTemplateForm.controls.Category.value,
-            category_id: this.category_id,
-            language: this.newTemplateForm.controls.Language.value,
-            components: [
-                {
-                    type: 'BODY',
-                    text: this.newTemplateForm.controls.BodyText.value,
-                },
-                {
-                    type: this.newTemplateForm.controls.buttonType.value,
-                    buttons: [
-                        {
-                            type: 'PHONE_NUMBER',
-                            text: this.newTemplateForm.controls.buttonText.value,
-                            phone_number: this.newTemplateForm.controls.phone_number.value,
-                            country_code: this.newTemplateForm.controls.country_code.value,
-                            displayPhoneNumber: this.newTemplateForm.controls.displayPhoneNumber
-                                .value,
-                        },
-                        {
-                            type: 'URL',
-                            text: this.newTemplateForm.controls.url?.value,
-                            url: this.newTemplateForm.controls.url?.value,
-                        },
-                    ],
-                },
-            ],
-        });
+        if(this.newTemplateForm.controls.Channel.value=='WhatsApp Official') {
+            newTemplateForm.template_json.push({
+                name: this.newTemplateForm.controls.TemplateName.value,
+                category: this.newTemplateForm.controls.Category.value,
+                category_id: this.category_id,
+                language: this.newTemplateForm.controls.Language.value,
+                components: [
+                    {
+                        type: 'BODY',
+                        text: this.newTemplateForm.controls.BodyText.value,
+                    },
+                    {
+                        type: this.newTemplateForm.controls.buttonType.value,
+                        buttons: [
+                            {
+                                type: 'PHONE_NUMBER',
+                                text: this.newTemplateForm.controls.buttonText.value,
+                                phone_number: this.newTemplateForm.controls.phone_number.value,
+                                country_code: this.newTemplateForm.controls.country_code.value,
+                                displayPhoneNumber: this.newTemplateForm.controls.displayPhoneNumber
+                                    .value,
+                            },
+                            {
+                                type: 'URL',
+                                text: this.newTemplateForm.controls.url?.value,
+                                url: this.newTemplateForm.controls.url?.value,
+                            },
+                        ],
+                    },
+                ],
+            });
+        }   
         return newTemplateForm;
     }
-
+    // for template form
     patchFormValue() {
         const data = this.templatesMessageData;
         const databyid = this.templatesMessageDataById;
@@ -545,9 +582,25 @@ export class TemplateMessageComponent implements OnInit {
             this.id = ID;
         }
     }
+    // for gallery form
+    patchGalleryFormValue() {
+        const galleryData = this.galleryMessageData;
+        let ID = this.galleryMessageData.ID;
+        for (let prop in galleryData) {
+            let value = galleryData[prop as keyof typeof galleryData];
+            if (this.newTemplateForm.get(prop)) this.newTemplateForm.get(prop)?.setValue(value);
+            this.id = ID;
+        }
+
+    }
+
     copyTemplatesData() {
         $('#newTemplateMessageFirst').modal('show');
         this.patchFormValue();
+    }
+    copyGalleryData() {
+        $('#newTemplateMessageFirst').modal('show');
+        this.patchGalleryFormValue();
     }
 
     deleteTemplate() {
