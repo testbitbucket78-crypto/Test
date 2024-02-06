@@ -292,12 +292,12 @@ async function getStorageUtilization(spid, days) {
 
 // Define a function to delete the object from the S3 bucket
 async function deleteObjectFromBucket(days, spid) {
-    console.log("deleteObjectFromBucket ...............")
+    console.log("deleteObjectFromBucket ..............." ,days, spid)
 
     let deletedMedia = 0;
     const params = {
         Bucket: awsConfig.awsbucket,
-        Prefix: spid.toString()+'/teambox', //: spid,
+        Prefix: spid?.toString()+'/teambox', //: spid,
     };
 
 

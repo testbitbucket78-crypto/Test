@@ -393,12 +393,13 @@ const getautodeletion = async (req, res) => {
         const storageUtilizationMB = storageUtilizationKB / 1024;
         const storageUtilizationGB = (storageUtilizationMB / 1024).toFixed(2);
 
-        var resbyspid = await db.excuteQuery(val.getdeletion, [req.params.spid])
-        console.log("routing")
+       // var resbyspid = await db.excuteQuery(val.getdeletion, [req.params.spid])
+        var resbyspid = await db.excuteQuery(val.messageSizeQuery, [req.params.spid,new Date()])
+        console.log("routing" ,resbyspid)
         res.status(200).send({
             msg: 'routing got successfully !',
-            managestroage: resbyspid,
-            storageUtilizationGB: storageUtilizationGB,
+            managestroage: resbyspid[0]?.message_size,
+            storageUtilization: storageUtilizationBytes?.totalSize + resbyspid[0]?.message_size,    // data in bytes
             status: 200
         });
     } catch (err) {
@@ -434,8 +435,8 @@ const manualDelation = async (req, res) => {
         }
 
 
-        let insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, manually_deletion_days, message_type,created_at) VALUES ?';
-        let addManualData = await db.excuteQuery(insertmanagestorage, [[[SPID, '', '', '', manually_deletion_days, message_type, new Date()]]]);
+        let insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, manually_deletion_days, message_type,created_at,isDeleted) VALUES ?';
+        let addManualData = await db.excuteQuery(insertmanagestorage, [[[SPID, '', '', '', manually_deletion_days, message_type, new Date(),'1']]]);
 
 
         res.status(200).send({
