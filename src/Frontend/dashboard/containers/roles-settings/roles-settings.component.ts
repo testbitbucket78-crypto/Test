@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { SettingsService } from '../../services/settings.service';
 import { RolesData, rights } from '../../models/settings.model';
+import * as agGrid from 'ag-grid-community';
 declare var $:any;
 
 @Component({
@@ -71,6 +72,7 @@ export class RolesSettingsComponent implements OnInit {
     rolesListinit: any;
     subRightRes:[]=[];
     roleData: any;
+    subPrivileges: any;
     Rights!: number;
     spid!:number;
     rolesData: RolesData = <RolesData>{};
@@ -90,13 +92,14 @@ export class RolesSettingsComponent implements OnInit {
     rowClicked = (event: any) => {
         console.log(event);
         this.roleData = event.data;
+        this.subPrivileges = this.roleData.subPrivileges.split(',');
         this.showSideBar = true;
         this.roleName = this.roleData?.RoleName;
         this.selectedRoleId = this.roleData?.roleID;
         this.setSelectedSubRights();
     };
 
-    gridOptions = {
+    gridOptions: any = {
         rowSelection: 'multiple',
         rowHeight: 48,
         headerHeight: 50,
@@ -247,10 +250,23 @@ export class RolesSettingsComponent implements OnInit {
     }
 
     searchData(srchText: string) {
-        this.rolesList = [];
-        this.rolesListinit.forEach((item: any) => {
-            if (item.RoleName.includes(srchText)) this.rolesList.push(item);
-        });
+        this.gridOptions.api.setQuickFilter(srchText);
+        // this.rolesList = [];
+        // console.log(srchText)
+        // if(srchText !=''){
+        //     this.rolesListinit.forEach((item: any) => {
+        //         if (item.RoleName.includes(srchText)){
+        //             this.rolesList.push(item);
+        //         } 
+        //     });
+        // } else{
+        //     this.rolesList = this.rolesListinit;
+        // }
+        
     }
+
+    // checkPrivillage(i){
+    //     this.subPrivileges
+    // }
 
 }
