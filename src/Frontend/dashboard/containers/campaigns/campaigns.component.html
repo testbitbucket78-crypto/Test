@@ -144,7 +144,7 @@
 					<p class="sub_title_sm blackcolor mb-1">Category</p>
 					<p>{{selectedCampaign.category_label}}</p>
 					<div class="template">
-						<div class="template_img">
+						<div *ngIf="selectedCampaign.message_media" class="template_img">
 							<img src="{{selectedCampaign.message_media}}">
 						</div>
 						<div class="template_text">
@@ -1037,7 +1037,7 @@
 				<div class="input_group_btn">
 				  <div class="custom_col">
 					<label class="container">
-					<input type="checkbox" name="term_cond" (click)="messageOptIn($event)" [ngModel]="optInStatus">
+					<input type="checkbox" name="term_cond" (click)="messageOptIn($event)" [ngModel]="optInStatus==='Yes'">
 					<span class="checkmark"></span>
 					<p><span>Message Opt in</span></p>
 				  </label>

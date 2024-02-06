@@ -159,7 +159,8 @@ export interface defaultActionData {
     isAutoReplyDisable:number;
     isContactAdd:number;
     pausedTill:string;
-
+    pauseAgentActiveTime: string;
+    pauseAutoReplyTime: string;
 }
 
 export interface defaultMessagesData {
