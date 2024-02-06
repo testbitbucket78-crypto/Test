@@ -67,7 +67,9 @@
         <p>Created on: <span class="team-id">{{roleData?.created_at | date: 'dd MMM yyyy'}}</span> | Last Modified: <span class="team-id">{{roleData?.updated_at | date: 'dd MMM yyyy'}}</span></p>
         <div class="sub-heading py-2">Rights<span class="team-id">({{rights?.length}})</span></div>
         <div class="user-assigned">
-            <div class="rights" *ngFor="let item of rights">{{item?.rightsName}}</div>
+            <div class="rights" *ngFor="let item of rights">
+                <div >{{item?.rightsName}}</div></div>
+                <!-- *ngIf="checkPrivillage(item)" -->
         </div>
         <div class="sub-heading py-2">No. of Users Assigned ({{roleData?.users_count}})</div>
         <div>
