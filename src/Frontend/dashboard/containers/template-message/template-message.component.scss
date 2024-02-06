@@ -328,6 +328,14 @@
     min-width: 35px;
     cursor: pointer;
 }
+.previous-btn {
+    position: absolute;
+    left: 25px;
+    top: -4px;
+    border: none;
+    background: none;
+    outline: none;
+  }
 
 .close-box img {
     width: 10px;
@@ -955,6 +963,11 @@ input[type="radio"]:checked + label::before {
     border: 3.5px solid #6149CD; 
     background-color: #FFFFFF;
 }
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #6149CD;
+    border: none;
+   }
 
 .radio-label {
   font-weight: 700!important;
