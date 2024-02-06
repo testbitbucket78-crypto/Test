@@ -8,9 +8,9 @@
         <div class="default-actions-heading">Manage Storage</div>
         <div class="pt-4">
             <figure class="figure">
-                <ng-container *ngIf="percentage; else noValue">
+                <ng-container>
                   <svg viewBox="0 0 36 36" class="circular-chart blue" >
-                    <title>Percentage chart showing  confidence level for this appraisal at {{percentage}}%</title>
+                    <title>Percentage of Total Storage Utilized by User {{percentage}}%</title>
                     <path
                       class="circle-bg"
                       d="M18 2.0845
@@ -25,13 +25,9 @@
                           a 15.9155 15.9155 0 0 1 0 -31.831"
                     />
                     <text x="18" y="22.35" class="percentage">{{percentage}}%</text>
-                    
                   </svg>
                   <!-- <span class="svg-text" >Used</span> -->
               </ng-container>
-              <ng-template #noValue>
-                No Value
-              </ng-template>
               </figure>
         </div>
         <div class="text-align-center"> 

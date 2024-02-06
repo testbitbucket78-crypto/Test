@@ -181,6 +181,10 @@ export class SettingsService {
     return this.http.get<any>(`${this.API_URL}/getTemplate/${spID}/${isTemplate}`);
   }
 
+  getApprovedTemplate(spid:any,isTemplate:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getApprovedTemplate/${spid}/${isTemplate}`);
+  }
+
   copyTemplateData(uid:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/addTemplate`,uid);
   }

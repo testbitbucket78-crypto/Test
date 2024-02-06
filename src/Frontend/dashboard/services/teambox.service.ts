@@ -188,7 +188,7 @@ export class TeamboxService {
   } 
 
   public isCampaignExists(title: any, spid: any) {
-    return this.http.post(`${API_URL}/exitCampaign/${title}/${spid}`, null);
+    return this.http.get(`${API_URL}/exitCampaign/${title}/${spid}`);
   }
 
 }

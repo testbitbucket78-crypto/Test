@@ -85,7 +85,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
   constructor(private apiService:SettingsService,private _teamboxService:TeamboxService,private fb: FormBuilder) { }
   prepareUserForm(){
     return this.fb.group ({
-      value:[null,[Validators.required]],
+      value:[null],
       link:[null],
       override:[null],
       autoreply:[null]
@@ -140,12 +140,18 @@ getAttributeList() {
 }
   showMessageType(type: string) {   
     this.selectedType = type;
+    if (this.selectedType === 'text') {
+      this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
+    }
     if (this.selectedType === 'video' || this.selectedType === 'document' || this.selectedType === 'image') {
        this.defaultMessageForm.get('link')?.setValidators([Validators.required]);
-    } else {
+    }
+    else {
       this.defaultMessageForm.get('link')?.clearValidators();
+      this.defaultMessageForm.get('value')?.clearValidators();
     }
     this.defaultMessageForm.get('link')?.updateValueAndValidity();
+    this.defaultMessageForm.get('value')?.updateValueAndValidity();
   }
   
   selectedButtonType(type: number) {
