@@ -9,7 +9,7 @@
                     id="Search-Ag" />
                 <img src="assets/img/search.png">
             </div>
-            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#userModal">
+            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#userModal" (click)="createUser()">
                 <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
                 Create User</button>
         </div>
@@ -39,23 +39,63 @@
                     <div>
                         <label>User Name</label> <br>
                         <input type="text" class="input-form" formControlName="name" placeholder="Enter user name">
+                        <div *ngIf="userDetailForm.get('name')?.invalid && (userDetailForm.get('name')?.touched || userDetailForm.get('name')?.dirty)
+                      " class="invalid-feedback">
+                      <div *ngIf="userDetailForm.get('name')?.hasError('required')">
+                        User Name is required.
+                      </div>
+                      <div *ngIf="userDetailForm.get('name')?.hasError('pattern')">
+                        User Name should contain only alphabetic characters.
+                      </div>
+                      <div *ngIf="userDetailForm.get('name')?.hasError('minlength')">
+                        User Name should be at least 2 characters long.
+                      </div>
+                    </div>
                     </div>
                     <div class="pt-2">
                         <label>User Email Id</label> <br>
                         <input type="text" class="input-form" formControlName="email_id"
                             placeholder="Enter user email Id">
+                        <div *ngIf="userDetailForm.get('email_id')?.invalid && (userDetailForm.get('email_id')?.touched || userDetailForm.get('email_id')?.dirty)
+                      " class="invalid-feedback">
+                      <div *ngIf="userDetailForm.get('email_id')?.hasError('required')">
+                        Email is required.
+                      </div>
+                      <div *ngIf="userDetailForm.get('email_id')?.hasError('email')">
+                        Invalid email format.
+                      </div>
+                    </div>
                     </div>
                     <div class="pt-2">
                         <label>User Phone No.</label> <br>
                         <input type="text" class="input-form" formControlName="mobile_number"
                             placeholder="Enter Phone Number" minlength="6" maxlength="15">
+                         <div *ngIf="userDetailForm.get('mobile_number')?.invalid && (userDetailForm.get('mobile_number')?.touched || userDetailForm.get('mobile_number')?.dirty)
+                        " class="invalid-feedback">
+                        <div *ngIf="userDetailForm.get('mobile_number')?.hasError('required')">
+                          Phone number is required.
+                        </div>
+                        <div *ngIf="userDetailForm.get('mobile_number')?.hasError('pattern')">
+                          Phone number should contain only digits.
+                        </div>
+                        <div *ngIf="userDetailForm.get('mobile_number')?.hasError('maxlength')">
+                          Phone number should be 10 digits long.
+                        </div>
+                      </div>
                     </div>
 
                     <div class="pt-2">
                         <label>Role</label> <br>
                         <select class="input-form" formControlName="UserType">
+                            <option selected>Select Role</option>
                             <option *ngFor="let item of rolesList" [value]="item.roleID">{{item?.RoleName}}</option>
                         </select>
+                        <div *ngIf="userDetailForm.get('UserType')?.invalid && (userDetailForm.get('UserType')?.touched || userDetailForm.get('UserType')?.dirty)
+                        " class="invalid-feedback">
+                        <div *ngIf="userDetailForm.get('UserType')?.hasError('required')">
+                            Role is required.
+                        </div>
+                      </div>
                     </div>
                 </form>
             </div>
@@ -83,7 +123,7 @@
         </div>
         <div class="d-flex px-3">
             <div class="profile-img">
-                <img>
+                <img [src]="userData?.profile_img">
             </div>
             <div class="p-3">
                 <span class="heading">{{userData?.name}}</span>
@@ -130,13 +170,35 @@
         <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
             <img class="p-0" src="../../../../assets/img/delete.png">
         </button>
-        <button class="disable-btn ml-2" (click)="activeDeActiveUser()">
+        <button class="disable-btn ml-2 " (click)="activeDeActiveUser()">
+            <div class="active-toggle">
             <span>Disable</span>
-            <label class="switch">
-                <input type="checkbox" class="form-control-checkbox">
-                <span class="slider 1"></span>
-            </label>
+            <div class="px-2 switch-toggle">
+                <label class="m-0 switch">
+                  <input type="checkbox" class="m-0 form-control-checkbox" 
+                    [(ngModel)]="isActive">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
         </button>
+        <!-- <div class="col-sm-5 d-flex justify-content-center align-items-center active-toggle">
+
+            <div class="px-2 switch-text">
+              <p class="m-0">Active</p>
+            
+            </div>
+  
+            <div class="px-2 switch-toggle">
+              <label class="m-0 switch">
+                <input type="checkbox" class="m-0 form-control-checkbox" 
+                  (change)="toggleActiveState($event.target.checked)" 
+                  [(ngModel)]="isActive">
+                <span class="slider"></span>
+              </label>
+            </div>
+           
+          </div> -->
     </div>
 </div>
 

@@ -62,7 +62,7 @@ export class RolesSettingsComponent implements OnInit {
     ];
     public gridapi!: GridApi;
     sp_Id: number;
-    userList: number[] = [1, 1, 2, 3, 4, 5, 6, 7];
+    userList: number[] = [];
     rights!: rights[];
     totalRights: any[] = [];
     showSideBar: boolean = false;
@@ -84,9 +84,8 @@ export class RolesSettingsComponent implements OnInit {
 
     ngOnInit(): void {
         this.getRolesList();
-        this.getRightsList();
         this.getSubRightsList();
-        this.userType();
+        this.getRightsList();
     }
 
     rowClicked = (event: any) => {
@@ -97,6 +96,7 @@ export class RolesSettingsComponent implements OnInit {
         this.roleName = this.roleData?.RoleName;
         this.selectedRoleId = this.roleData?.roleID;
         this.setSelectedSubRights();
+        this.userType();
     };
 
     gridOptions: any = {
@@ -108,7 +108,7 @@ export class RolesSettingsComponent implements OnInit {
         onRowClicked: this.rowClicked,
         noRowsOverlay: true,
         pagination: true,
-        paginationAutoPageSize: true,
+        paginationPageSize: 15,
         paginateChildRows: true,
         overlayNoRowsTemplate:
             '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
@@ -142,7 +142,8 @@ export class RolesSettingsComponent implements OnInit {
                 this.rights = result?.Rights;
                 this.Rights = this.rights?.length;
                 console.log(this.Rights);
-                this.setRightsAccSubRights();
+                setTimeout(()=>{this.setRightsAccSubRights();},30)
+                
             }
         });
     }
@@ -156,9 +157,10 @@ export class RolesSettingsComponent implements OnInit {
         });
     }
     userType() {
-        this._settingsService.getrolesdata(this.spid,this.userType).subscribe(result => {
+        this._settingsService.getrolesdata(this.sp_Id,this.selectedRoleId).subscribe(result => {
             if (result) {
-                console.log(this.subRightRes);
+                this.userList = result.getUser;
+                
             }
         });
     }
@@ -201,6 +203,11 @@ export class RolesSettingsComponent implements OnInit {
         });
     }
 
+    editRolesDetails(){
+        $('#rolesModal').modal('show');
+
+    }
+
     deleteRole() {
         this._settingsService
             .deleteRolesData(this.sp_Id, this.roleData?.roleID)
@@ -208,6 +215,7 @@ export class RolesSettingsComponent implements OnInit {
                 if (result) {
                     this.getRolesList();
                     this.showSideBar = false;
+                    $('#deleteModal').modal('hide');
                 }
             });
     }
@@ -265,8 +273,9 @@ export class RolesSettingsComponent implements OnInit {
         
     }
 
-    // checkPrivillage(i){
-    //     this.subPrivileges
-    // }
+    checkPrivillage(i:any){
+     //   this.subRightRes
+        console.log(i)
+    }
 
 }

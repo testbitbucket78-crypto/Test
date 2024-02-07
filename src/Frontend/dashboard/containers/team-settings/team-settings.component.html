@@ -8,7 +8,7 @@
                     aria-describedby="basic-addon2" name="Name" id="Search-Ag" />
                 <img src="assets/img/search.png">
             </div>
-            <button class="new-token-btn" (click)="addRole()" data-bs-toggle="modal" data-bs-target="#teamsModal">
+            <button class="new-token-btn" (click)="addTeam()" data-bs-toggle="modal" data-bs-target="#teamsModal">
                 <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
                 Add Team</button>
         </div>
@@ -34,7 +34,7 @@
             <div class="modal-body px-5 pt-0">
                 <div>
                     <label>Team Name</label> <br>
-                    <input type="text" class="input-form" [(ngModel)]="teamName" placeholder="Enter role name">
+                    <input type="text" class="input-form" [(ngModel)]="teamName" placeholder="Enter team name">
                 </div>
                 <div class="custom-control custom-checkbox pt-3 pl-0">
                     <label class= "pb-2">Select Users</label> <br>
