@@ -80,15 +80,17 @@
     border: 1px dashed #ebebeb;
     border-radius: 25px;
     opacity: 1;
-    width: 1030px;
+    width: 855px;
     text-align: center;
 }
 
 .download {
     display: flex;
     flex-direction: column;
-    padding-left: 36px;
-}
+    padding-left: 32px;
+    width: 845px;
+  }
+
 
 .box1 h5 {
     font-family: 'Manrope';
@@ -154,8 +156,9 @@
     box-shadow: 4px 22px 54px #695f971a;
     border-radius: 30px;
     opacity: 1;
-    padding: 17px;
-    width: 265px;
+    padding: 18px 23px 24px 18px;
+    // padding: 17px;
+    // width: 265px;
 }
 
 .box3 p {
@@ -947,5 +950,13 @@ span {
     margin-left: 5px;
     vertical-align: sub;
   }
+
+  .info span {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    text-indent: -20px;
+}
 
 

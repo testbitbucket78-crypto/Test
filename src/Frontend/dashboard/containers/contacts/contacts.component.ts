@@ -269,7 +269,7 @@ contactForm() {
     Phone_number: new FormControl(''),
     displayPhoneNumber: new FormControl('',[Validators.pattern('^[0-9]+$'),Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
     country_code:new FormControl(''),
-    emailId: new FormControl('', [Validators.pattern('^[^\\s@]+@[a-zA-Z0-9]+\\.[a-zA-Z]{2,}$'),Validators.minLength(5),Validators.maxLength(50)]),
+    emailId: new FormControl('', [Validators.pattern('^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$'),Validators.minLength(5),Validators.maxLength(50)]),
     ContactOwner: new FormControl('',[Validators.required]),
     tag: new FormControl([])
   })
@@ -407,6 +407,7 @@ onSelectAll(items: any) {
    closesidenav(items: any){
     document.getElementById ("sidebar")!.style.width = "0";
     this.contactId=0;
+    this.customerData = null;
     this.productForm.reset();
     this.selectedCountryCode = this.countryCodes[101];
     this.OptInStatus='No';
@@ -487,6 +488,7 @@ onSelectAll(items: any) {
 
    rowClicked = (event: any) => {
     this.getContactById(event.data);
+    this.getImageById(event.data);
     this.opensidenav(event.contact);
     this.addContactTitle= 'edit';
     this.patchFormValue();
@@ -686,22 +688,24 @@ deletContactByID(data: any) {
   }
 
   getContactById(data: any) {
-    this.contactsData =data;
+    this.contactsData = data;
     sessionStorage.setItem('id', data.customerId)
     var SP_ID = sessionStorage.getItem('SP_ID')
     this.apiService.getContactById(data.customerId, SP_ID).subscribe((data) => {
       this.customerData = data;
       this.getContact();
-    });
+    });    
+  }
+
+  getImageById(data:any) {
     this.apiService.getContactImage(data.customerId).subscribe((response: any) => {
       this.contactId = data.customerId;
       console.log(this.contactId);
-    this.cdRef.detectChanges();
-    this.profilePicture = response.msg[0].contact_profile
-    console.log(this.productForm)
-    this.getContact();
+      setTimeout(() => {
+        this.profilePicture = response.msg[0].contact_profile
+      }, 500);
+      
     });
-    
   }
 
   getTagData() {
@@ -819,11 +823,12 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   if (response.status === 200) {
     $("#pictureCropModal").modal('hide');
     this.closesidenav(this.items);
-    this.getContact();
     console.log(response+ 'image saved successfully');
+    setTimeout(() => {
+      this.getContact();
+      this.profilePicture;
+   }, 300); 
   }
-
-
 },
 (error) => {
   console.log(error+ 'error saving contact image');

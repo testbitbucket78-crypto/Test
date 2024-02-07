@@ -1593,7 +1593,7 @@ testinfo(){
 				setTimeout(() => {
 				if (!this.isCampaignAlreadyExist) {
 					this.activeStep = this.activeStep + 1;
-				} }, 50);
+				} }, 500);
 			} else {
 				this.showToaster('Please enter Campaign Name', 'error');
 			}
@@ -2252,7 +2252,7 @@ testinfo(){
 						this.isCampaignAlreadyExist = true;
 						this.showToaster('Campaign Already Exist with this name !', 'error');
 					} else {
-						this.isCampaignAlreadyExist = false; // Ensure it's false if the campaign doesn't exist
+						this.isCampaignAlreadyExist = false;
 					}
 				}
 			);
