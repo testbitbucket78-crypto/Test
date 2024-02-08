@@ -8,7 +8,7 @@
 
   .user-modal{
     width: 400px;
-    height: 500px;
+    min-height: 500px;
     border-radius: 26px;
    }
 
@@ -19,6 +19,12 @@
     opacity: 1;
     border-radius: 50%;
     box-shadow: 4px 11px 20px #1111122b;
+   }
+
+   .profile-img img{
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
    }
 
    .user-status{
@@ -93,4 +99,14 @@
   .disable-btn span{
     font-weight: 600;
     font-family: 'Manrope';
+  }
+
+  .active-toggle {
+    /* height: 45px; */
+    /* background: #FFFFFF 0% 0% no-repeat padding-box; */
+    /* box-shadow: 1px 8px 29px rgba(105, 95, 151, 0.1411764706); */
+    /* border: 1px solid #E9E9EA; */
+    border-radius: 19px;
+    width: 100%;
+    display: flex;
   }

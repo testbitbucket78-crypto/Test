@@ -12,7 +12,7 @@ declare var $: any;
     styleUrls: ['./user-settings.component.scss'],
 })
 export class UserSettingsComponent implements OnInit {
-    columnDefs: ColDef[] = [
+    columnDefs: ColDef[] | any = [
         {
             field: 'uid',
             headerName: 'User Id',
@@ -66,6 +66,9 @@ export class UserSettingsComponent implements OnInit {
             filter: true,
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+            valueFormatter: (value:any) => {
+                  return value.value == 1 ? 'Active' : 'In Active';
+              },
         },
         {
             field: 'age',
@@ -90,7 +93,7 @@ export class UserSettingsComponent implements OnInit {
     userList: any;
     userListInIt: any;
     userData: any;
-    isActive: any;
+    isActive: boolean = false;
     filteredRolesList: any[] = [];
     selectedUserData: any;
     
@@ -105,7 +108,7 @@ export class UserSettingsComponent implements OnInit {
     ngOnInit(): void {
         this.userDetailForm = this.prepareUserForm();
         this.getUserList();
-        // this.getRolesList(); 
+        this.getRolesList(); 
         console.log(this.uid);
     }
 
@@ -123,12 +126,12 @@ export class UserSettingsComponent implements OnInit {
             this.showSideBar = true;
             this.uid = this.userData?.uid;
             console.log(this.uid);
-            this.isActive = this.userData;
+            this.isActive = this.userData.IsActive == 1 ? false : true ;
             this.patchFormValue();
         }
     };    
 
-    gridOptions = {
+    gridOptions:any = {
         rowSelection: 'multiple',
         rowHeight: 48,
         headerHeight: 50,
@@ -137,7 +140,7 @@ export class UserSettingsComponent implements OnInit {
         onRowClicked: this.rowClicked,
         noRowsOverlay: true,
         pagination: true,
-        paginationAutoPageSize: true,
+        paginationPageSize: 15,
         paginateChildRows: true,
         overlayNoRowsTemplate:
             '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
@@ -147,15 +150,16 @@ export class UserSettingsComponent implements OnInit {
 
     prepareUserForm() {
         return new FormGroup({
-            email_id: new FormControl(),
-            name: new FormControl(),
-            mobile_number: new FormControl(),
-            UserType: new FormControl(),
+            email_id: new FormControl('', [Validators.required, Validators.email]),
+            name: new FormControl('',[
+                Validators.required,
+                Validators.pattern(/^[a-zA-Z.-]+(?:\s+[a-zA-Z.-]+)*$/),
+                Validators.minLength(2),
+              ]),
+            mobile_number: new FormControl(null,[Validators.required]),
+            UserType: new FormControl([Validators.required]),
         });
     }
-    yourForm = new FormGroup({
-        mobile_number: new FormControl('', [Validators.minLength(6), Validators.maxLength(15)]),
-    });
     getUserList() {
         this._settingsService.getUserList(this.sp_Id).subscribe(result => {
             if (result) {
@@ -165,15 +169,16 @@ export class UserSettingsComponent implements OnInit {
         });
     }
 
-    // getRolesList() {
-    //     this._settingsService.getRolesList(this.sp_Id).subscribe(result => {
-    //         if (result) {
-    //             this.rolesList = result?.getRoles;
-    //         }
-    //     });
-    // }
+    getRolesList() {
+        this._settingsService.getRolesList(this.sp_Id).subscribe(result => {
+            if (result) {
+                this.rolesList = result?.getRoles;
+            }
+        });
+    }
 
     addEditUserDetails() {
+        if(this.userDetailForm.valid){
         let userData = this.copyUserData();
 
        if(isNullOrUndefined(this.selectedUserData)) {
@@ -195,6 +200,9 @@ export class UserSettingsComponent implements OnInit {
                 }
             });
         } 
+    }else{
+        this.userDetailForm.markAllAsTouched();
+    }
      }
 
     copyUserData() {
@@ -237,7 +245,7 @@ export class UserSettingsComponent implements OnInit {
     activeDeActiveUser() {
         let userData = <any>{};
         userData.uid = this.uid;
-        userData.IsActive = this.isActive;
+        userData.isActive = this.isActive? 1 : 0;
         this._settingsService.activeUser(userData).subscribe(result => {
             if (result) {
                 this.getUserList();
@@ -245,15 +253,13 @@ export class UserSettingsComponent implements OnInit {
         });
     }
 
-    searchUserData(srchText: string) {
-        this.userList = [];
-        this.userListInIt.forEach((item: any) => {
-            if (
-                item.name.includes(srchText) ||
-                item.email_id.includes(srchText) ||
-                item.mobile_number.includes(srchText)
-            )
-                this.userList.push(item);
-        });
+    searchUserData(srchText: string) {        
+        this.gridOptions.api.setQuickFilter(srchText);
+    }
+
+    createUser(){
+        this.userDetailForm = this.prepareUserForm();
+        this.uid = 0;
+        this.selectedUserData = null;
     }
 }
