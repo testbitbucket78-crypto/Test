@@ -621,7 +621,7 @@ const addUser = async (req, res) => {
         UserType = req.body.UserType
         IsDeleted = 0
         IsActive = 1
-
+        countryCode=req.body.countryCode
         var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id])
         if (credentials.length > 0) {
             res.status(409).send({
@@ -632,7 +632,7 @@ const addUser = async (req, res) => {
             var randomstring = Math.random().toString(36).slice(-8);
             console.log(randomstring)
             const hash = await bcrypt.hash(randomstring, 10);
-            var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive,CreatedDate,LoginIP]]
+            var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive,CreatedDate,LoginIP,countryCode]]
 
             var User = await db.excuteQuery(val.insertQuery, [values]);
 
@@ -737,12 +737,12 @@ const editUser = async (req, res) => {
         email_id = req.body.email_id
         name = req.body.name
         mobile_number = req.body.mobile_number
-
+        countryCode=req.body.countryCode
         const LastModifiedDate = new Date()
 
         UserType = req.body.UserType
 
-        var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType, uid])
+        var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType,countryCode, uid])
         res.status(200).send({
             msg: 'User Updated successfully !',
             editUserData: editUserData,
@@ -782,7 +782,7 @@ const addTeam = async (req, res) => {
         userIDs = req.body.userIDs
         // created_By = req.body.created_By
         created_at = new Date();
-        var teamVal = [[SP_ID, team_name, created_at,created_at]]
+        var teamVal = [[SP_ID, team_name, created_at,created_at,userIDs]]
        
         var teamRes = await db.excuteQuery(val.addteamQuery, [teamVal])
         console.log(teamRes.insertId)

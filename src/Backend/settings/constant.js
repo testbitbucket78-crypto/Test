@@ -49,12 +49,18 @@ getUserQuery = `SELECT * from user where SP_ID=? AND UserType=? AND IsDeleted !=
 deleteQuery = `UPDATE roles set IsDeleted=1 where roleID=? and SP_ID=?`
 
 
-selectAllQuery = "SELECT * FROM user WHERE SP_ID=? AND IsDeleted != 1";
+selectAllQuery = `SELECT DISTINCT u.uid, r.RoleName, t.team_name, u.*
+FROM user u
+JOIN roles r ON u.UserType = r.roleID
+LEFT JOIN UserTeamMapping utm ON u.uid = utm.userID
+LEFT JOIN teams t ON utm.teamID = t.id
+WHERE u.SP_ID =? AND u.isDeleted != 1;`//"SELECT * FROM user WHERE SP_ID=? AND IsDeleted != 1";
 //selectByIdQuery = "SELECT * FROM user WHERE uid=? and isDeleted !=1"
+
 selectByIdQuery = `select Company_Name,profile_img from companyDetails where SP_ID=?`
 userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
-updateQuery = "UPDATE user SET  email_id=?, name=?, mobile_number=?, LastModifiedDate=?, UserType=? WHERE uid=?";
-insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP) VALUES ?";
+updateQuery = "UPDATE user SET  email_id=?, name=?, mobile_number=?, LastModifiedDate=?, UserType=?,countryCode=? WHERE uid=?";
+insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP,countryCode) VALUES ?";
 findEmail = "SELECT * FROM user WHERE email_id=? and isDeleted !=1"
 getRole = `SELECT * from roles where SP_ID=? and isDeleted !=1`
 
@@ -67,7 +73,7 @@ const emailHost = "us2.smtp.mailhostbox.com"
 const port = "587"
 
 
-addteamQuery = `INSERT INTO teams(SP_ID,team_name,created_at,updated_at) VALUES ?`
+addteamQuery = `INSERT INTO teams(SP_ID,team_name,created_at,updated_at,userIDs) VALUES ?`
 addUserTeamMap = `INSERT INTO UserTeamMapping(teamID,userID,created_at) VALUES ?`
 
 teamDelete = `UPDATE teams set isDeleted=? ,isDeletedOn=? where id=? and SP_ID=? `
@@ -194,7 +200,7 @@ AND tm.isDeleted != 1;`
  var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1 `
  var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,updated_at) values ?`
  
- let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as type, 0 as mandatory,0 as status,0 as id,"" as created,"" as updated ,"" as description
+ let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as type, 1 as mandatory,1 as status,0 as id,"" as created,"" as updated ,"" as description
  FROM information_schema.columns
  WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked' ,'channel','displayPhoneNumber','countryCode','IsTemporary','contact_profile','InstagramId','facebookId','Country','state','city','pincode','address','sex','status','age')
  UNION
