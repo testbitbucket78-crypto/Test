@@ -295,23 +295,23 @@ select {
 
 .holiday-dropdown.multiselect {
   display: inline-block;
-  height: 37px;
+  /* height: 37px; */
   border-radius: 17px;
   border: 1px solid #EBEBEB;
-  width: 13%;
+  width: 80px;
   padding: 2px 11px;
   font-weight: 400;
   line-height: 1.52857143;
   text-align: left;
   vertical-align: middle;
   cursor: pointer;
-  font-family: "Manrope";
-  color: #7A86A1;
-  background-color: #ffffff;
-  margin: -2px 0px 7px 0px;
+  font-family: Manrope;
+  color: #6149cd!important;
+  background-color: #fff;
+  margin: -2px 0 7px;
   background-image: url('../../../../assets/img/support/arrow-down.svg');
-  background-position: calc(100% - 0.8rem) calc(100% - 1.2rem);
-  height: 45px;
+  background-position: calc(100% - 0.8rem) calc(100% - 0.9rem);
+  height: 37px;
   background-repeat: no-repeat;
   position: sticky;
 }

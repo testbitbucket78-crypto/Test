@@ -69,7 +69,8 @@ export class CampaignsComponent implements OnInit {
 	 pagesize:any=5;
 	 page:any=1;
 	 totalpages:any=1;
-	 optInStatus=false;
+	 optInStatus:string='';
+	 isCampaignAlreadyExist!:boolean;
 	 
 	 applyListModal:any;
 	 applylistFiltersWidth:any='900px';
@@ -1057,19 +1058,19 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 
 	  
 	  selectScheduleDate(event: any) {
-		const selectedDate = new Date(event.target.value);
-		const currentDate = new Date();
+	// 	const selectedDate = new Date(event.target.value);
+	// 	const currentDate = new Date();
 	  
-		if (selectedDate < currentDate) {
-		  this.showErrorMessage = true;
+	// 	// if (selectedDate < currentDate) {
+	// 	//   this.showErrorMessage = true;
 	  
-		  this.selecteScheduleDate = currentDate.toISOString().split('T')[0];
-		} else {
-		  this.showErrorMessage = false;
+	// 	//   this.selecteScheduleDate = currentDate.toISOString().split('T')[0];
+	// 	// } else {
+	// 	//   this.showErrorMessage = false;
 	  
-		  this.selecteScheduleDate = event.target.value;
-		}
-	  }
+		   this.selecteScheduleDate = event.target.value;
+		 }
+	//   }
 	  
 
 	 selectScheduleTime(event:any){
@@ -1210,6 +1211,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		let BodyData:any={
 			Id:this.newCampaignDetail.Id?this.newCampaignDetail.Id:'',
 			sp_id:this.SPID,
+			optInStatus:this.optInStatus,
 			title:this.newCampaignDetail.value.title,
 			channel_id:this.newCampaignDetail.value.channel_id,
 			message_heading:this.selectedTemplate.Header,
@@ -1271,6 +1273,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					button_no:this.selectedTemplate.button_no,
 					button_exp:this.selectedTemplate.button_exp,
 					message_media:this.selectedTemplate.Links,
+					message_content:this.selectedTemplate.BodyText,
 					CampaignId:CampaignId,
 					category_id:this.selectedTemplate.category_id,
 					channel_id:this.newCampaignDetail.value.channel_id,
@@ -1334,6 +1337,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 							button_no:this.selectedTemplate.button_no,
 							button_exp:this.selectedTemplate.button_exp,
 							message_media:this.selectedTemplate.Links,
+							message_content:this.selectedTemplate.BodyText,
 							category_id:this.selectedTemplate.category_id,
 							CampaignId:CampaignId,
 							channel_id:this.newCampaignDetail.value.channel_id,
@@ -1567,15 +1571,17 @@ testinfo(){
 	prevStep(){
 		if(this.activeStep >1){
 			this.activeStep = this.activeStep-1
+			
 		}else{
-				this.activeStep
+			this.activeStep
 		}
 	}
 	
 	
 	nextStep(){
 		
-		
+		this.CampaignNameAlreadyExist();
+
 		if(this.activeStep < 3){
 			this.selectedTemplate=''
 		}
@@ -1583,11 +1589,16 @@ testinfo(){
 			this.getTemplates()
 		}
 		if(this.activeStep == 1){
-			if(this.newCampaignDetail.value.title!=''){
-				this.activeStep = this.activeStep+1
-			}else{
-				this.showToaster('Please enter Campaign Name','error')
+			if (this.newCampaignDetail.value.title !== '') {
+				setTimeout(() => {
+				if (!this.isCampaignAlreadyExist) {
+					this.activeStep = this.activeStep + 1;
+				} }, 500);
+			} else {
+				this.showToaster('Please enter Campaign Name', 'error');
 			}
+		
+		
 		}else if(this.activeStep == 2){
 			if(this.segmentsContactList.length>0 || this.csvContactList.length>0){
 				this.activeStep = this.activeStep+1
@@ -2041,14 +2052,14 @@ testinfo(){
 	}
 
 	async getTemplates(){
-		let SPID = Number(this.SPID)
-		this.settingsService.getTemplateData(SPID,1).subscribe(allTemplates =>{
+		let spid = Number(this.SPID)
+		this.settingsService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
 			this.allTemplatesMain = allTemplates.templates
 			this.allTemplates = allTemplates.templates
 		})
 		
 	}
-	searchTemplate(event:any){
+ 	searchTemplate(event:any){
 		let searchKey = event.target.value
 		if(searchKey.length>2){
 		var allList = this.allTemplatesMain
@@ -2228,19 +2239,23 @@ testinfo(){
 		  }
 		
 		messageOptIn(event:any) {
-		this.optInStatus = event.target.checked;
-		  let optInStatus = this.optInStatus ?'Yes' : 'No';
-		  console.log(optInStatus)
+		this.optInStatus = event.target.checked ? 'Yes' : 'No'
+		  console.log(this.optInStatus)
 		  }
 		
-		CampaignNameAlreadyExist() {
+		  CampaignNameAlreadyExist() {
 			let spid = this.SPID;
-			let title = this.selectedCampaign.title;
-			this.apiService.isCampaignExists(title,spid).subscribe((response =>{
-				if(response) {
-					this.showToaster('Campaign Already Exist with this name !','error');
+			let title = this.newCampaignDetail.get('title')?.value;
+			this.apiService.isCampaignExists(title, spid).subscribe(
+				(response: any) => {
+					if (response.status === 409) {
+						this.isCampaignAlreadyExist = true;
+						this.showToaster('Campaign Already Exist with this name !', 'error');
+					} else {
+						this.isCampaignAlreadyExist = false;
+					}
 				}
-			}));
+			);
 		}
 
 }

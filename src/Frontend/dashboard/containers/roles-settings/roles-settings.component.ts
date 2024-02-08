@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { SettingsService } from '../../services/settings.service';
 import { RolesData, rights } from '../../models/settings.model';
+import * as agGrid from 'ag-grid-community';
 declare var $:any;
 
 @Component({
@@ -61,7 +62,7 @@ export class RolesSettingsComponent implements OnInit {
     ];
     public gridapi!: GridApi;
     sp_Id: number;
-    userList: number[] = [1, 1, 2, 3, 4, 5, 6, 7];
+    userList: number[] = [];
     rights!: rights[];
     totalRights: any[] = [];
     showSideBar: boolean = false;
@@ -71,6 +72,7 @@ export class RolesSettingsComponent implements OnInit {
     rolesListinit: any;
     subRightRes:[]=[];
     roleData: any;
+    subPrivileges: any;
     Rights!: number;
     spid!:number;
     rolesData: RolesData = <RolesData>{};
@@ -82,21 +84,22 @@ export class RolesSettingsComponent implements OnInit {
 
     ngOnInit(): void {
         this.getRolesList();
-        this.getRightsList();
         this.getSubRightsList();
-        this.userType();
+        this.getRightsList();
     }
 
     rowClicked = (event: any) => {
         console.log(event);
         this.roleData = event.data;
+        this.subPrivileges = this.roleData.subPrivileges.split(',');
         this.showSideBar = true;
         this.roleName = this.roleData?.RoleName;
         this.selectedRoleId = this.roleData?.roleID;
         this.setSelectedSubRights();
+        this.userType();
     };
 
-    gridOptions = {
+    gridOptions: any = {
         rowSelection: 'multiple',
         rowHeight: 48,
         headerHeight: 50,
@@ -105,7 +108,7 @@ export class RolesSettingsComponent implements OnInit {
         onRowClicked: this.rowClicked,
         noRowsOverlay: true,
         pagination: true,
-        paginationAutoPageSize: true,
+        paginationPageSize: 15,
         paginateChildRows: true,
         overlayNoRowsTemplate:
             '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
@@ -139,7 +142,8 @@ export class RolesSettingsComponent implements OnInit {
                 this.rights = result?.Rights;
                 this.Rights = this.rights?.length;
                 console.log(this.Rights);
-                this.setRightsAccSubRights();
+                setTimeout(()=>{this.setRightsAccSubRights();},30)
+                
             }
         });
     }
@@ -153,9 +157,10 @@ export class RolesSettingsComponent implements OnInit {
         });
     }
     userType() {
-        this._settingsService.getrolesdata(this.spid,this.userType).subscribe(result => {
+        this._settingsService.getrolesdata(this.sp_Id,this.selectedRoleId).subscribe(result => {
             if (result) {
-                console.log(this.subRightRes);
+                this.userList = result.getUser;
+                
             }
         });
     }
@@ -198,6 +203,11 @@ export class RolesSettingsComponent implements OnInit {
         });
     }
 
+    editRolesDetails(){
+        $('#rolesModal').modal('show');
+
+    }
+
     deleteRole() {
         this._settingsService
             .deleteRolesData(this.sp_Id, this.roleData?.roleID)
@@ -205,6 +215,7 @@ export class RolesSettingsComponent implements OnInit {
                 if (result) {
                     this.getRolesList();
                     this.showSideBar = false;
+                    $('#deleteModal').modal('hide');
                 }
             });
     }
@@ -247,10 +258,24 @@ export class RolesSettingsComponent implements OnInit {
     }
 
     searchData(srchText: string) {
-        this.rolesList = [];
-        this.rolesListinit.forEach((item: any) => {
-            if (item.RoleName.includes(srchText)) this.rolesList.push(item);
-        });
+        this.gridOptions.api.setQuickFilter(srchText);
+        // this.rolesList = [];
+        // console.log(srchText)
+        // if(srchText !=''){
+        //     this.rolesListinit.forEach((item: any) => {
+        //         if (item.RoleName.includes(srchText)){
+        //             this.rolesList.push(item);
+        //         } 
+        //     });
+        // } else{
+        //     this.rolesList = this.rolesListinit;
+        // }
+        
+    }
+
+    checkPrivillage(i:any){
+     //   this.subRightRes
+        console.log(i)
     }
 
 }

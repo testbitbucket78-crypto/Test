@@ -109,16 +109,17 @@
                                 </div>
                             </div>
                             <div class="message_data" [ngClass]="{'preview': templatesMessageData.media_type === 'text'}">
+                                <span [innerHTML]="templatesMessageData?.Header"></span><br /><br />
                                 <span [innerHTML]="templatesMessageData?.BodyText"></span><br /><br />
                                 <span [innerHTML]="templatesMessageData?.FooterText"></span><br />
                             </div>
-                            <div class="contact-us">
+                            <!-- <div class="contact-us">
                                 Contact Us
-                            </div>
+                            </div> -->
                         </div>
                      </div>
                     <div class="action_section">
-                        <button *ngIf="status!=='draft'" type="button" class="btn"><img src="../../../../assets/img/teambox/copy.svg"></button>
+                        <button *ngIf="status!=='draft'" type="button" class="btn" (click)="copyTemplate()"><img src="../../../../assets/img/teambox/copy.svg"></button>
                         <button *ngIf="status=='draft'" class="titleimg" (click)="copyTemplatesData()" ><img src="../../../../assets/img/edit.png"></button>
                         <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deleteModal" ><img src="../../../../assets/img/teambox/delete.svg"></button>
                     </div>
@@ -169,9 +170,9 @@
             <div *ngIf="galleryData.length>0">
             <div *ngFor="let gallerydata of filteredGalleryData  | searchfilter:searchTextGallery" class="px-4 campaigns_section_item" (click)="toggleGalleryData(gallerydata)">
                 <div class="gallery_section_item_header">
-                    <label [style.background]="statusColors[gallerydata.status]">{{gallerydata.status}}</label>
+                    <label>{{gallerydata.topic}}</label>
                 </div>
-                <p class="py-2 title">{{gallerydata.TemplateName}}</p>
+                <p class="py-2 text-capitalize title">{{gallerydata.TemplateName}}</p>
              
                 <div class="campaigns_section_item_statics">
                     <div class="py-2"><p>{{gallerydata.Language}}</p><p><span>Language</span></p></div>
@@ -199,38 +200,42 @@
 
     <div class="campaigns_section_item">
         <div class="campaigns_section_item_header">
-            <label [style.background]="statusColors[templatesMessageData?.status]">{{templatesMessageData?.status}}</label>
+            <label>{{galleryMessageData?.topic}}</label>
         
         </div>
 
-        <p class="title" >{{templatesMessageData?.Header}}</p>
+        <p class="text-capitalize title" >{{galleryMessageData?.TemplateName}}</p>
         <!-- <p><img class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{templatesMessageData?.Channel}}</p> -->
         <div class="d-flex w-100 pb-4 category_section">
             <div>
                 <p>Category</p>
-                <span>{{templatesMessageData?.Category}}</span>
+                <span>{{galleryMessageData?.Category}}</span>
             </div>
             <div>
                 <p>Language</p>
-                <span>{{templatesMessageData?.Language}}</span>
+                <span>{{galleryMessageData?.Language}}</span>
             </div>
           
         </div>
         <div class="industry">
             <p>Industry</p>
-            <span>{{templatesMessageData?.industry}}</span>
+            <span>{{galleryMessageData?.industry}}</span>
         </div>
         <p id="message_head"> Message </p>
         <div class="message_section">
-            <div *ngIf="templatesMessageData.media_type == 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div>
-            <div *ngIf="templatesMessageData.media_type == 'video'" class="message_type">
-                <video autoplay loop muted id="video-background" [src]="templatesMessageData?.Links" type="video/mp4"></video>
+            <div *ngIf="galleryMessageData.media_type == 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + galleryMessageData?.Links + ')'}"></div>
+            <div *ngIf="galleryMessageData.media_type == 'video'" class="message_type">
+                <video autoplay loop id="video-background" [src]="galleryMessageData?.Links" type="video/mp4"></video>
             </div>
-            <div *ngIf="templatesMessageData?.media_type == 'document'" class="message_type">
-                <iframe [src]="templatesMessageData?.Links" width="100%" height="150px"></iframe>
-
+            <div *ngIf="galleryMessageData?.media_type == 'document'" class="message_type">
+                <div class="doc-preview" *ngIf="galleryMessageData?.Links" width="100%" height="150px">
+                  <a [href]="galleryMessageData?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+                </div>
             </div>
-            <div class="message_data" [innerHTML]="templatesMessageData?.BodyText" [ngClass]="{'preview': templatesMessageData.media_type === 'text'}">
+            <div class="message_data" [ngClass]="{'preview': galleryMessageData.media_type === 'text'}">
+                <span [innerHTML]="galleryMessageData?.Header"></span><br /><br />
+                <span [innerHTML]="galleryMessageData?.BodyText"></span><br /><br />
+                <span [innerHTML]="galleryMessageData?.FooterText"></span><br />
             </div>
             <!-- <div class="contact-us">
                 Contact Us
@@ -238,7 +243,7 @@
         </div>
      </div>
     <div class="action_section">
-        <button type="button" class="btn" (click)=" copyTemplatesData()"><img src="../../../../assets/img/teambox/copy.svg"></button>
+        <button type="button" class="btn" (click)=" copyGalleryData()"><img src="../../../../assets/img/teambox/copy.svg"></button>
     </div>
 </div>
 
@@ -288,31 +293,36 @@
                     <label *ngIf="selectedCategory == 3" class="pb-2">Filter by {{filterCategory[selectedCategory]}}</label><br>
                   
                     <div *ngIf="selectedCategory == 0">
-                      <div *ngFor="let Topic of filterListTopic; let i = index" class="py-2 user-dropdown">
-                        <input type="checkbox" [(ngModel)]="Topic.checked" class="user-checkbox" value={{Topic.value}} (click)="updateFilter($event,Topic)" >
+                      <div *ngFor="let Topic of filterListTopic; let i = index" class="py-2 custom-control custom-checkbox user-dropdown">
+                        <input type="checkbox" [(ngModel)]="Topic.checked" class="custom-control-input" value={{Topic.value}} (click)="updateFilter($event,Topic)"
+                          id="Topic{{i}}" >
                         <img class="user-img ml-2">
-                        <span class="ml-2">{{Topic.label}}</span>
+                        <label class="custom-control-label" for="Topic{{i}}"> <span class="ml-2">{{Topic.label}}</span></label>
+                       
                       </div>
                     </div>
                     <div *ngIf="selectedCategory == 1">
-                      <div *ngFor="let Industry of filterListIndustry; let i = index" class="py-2 user-dropdown">
-                        <input type="checkbox" [(ngModel)]="Industry.checked" class="user-checkbox" value={{Industry.value}} (click)="updateFilter($event,Industry)">
+                      <div *ngFor="let Industry of filterListIndustry; let i = index" class="py-2 custom-control custom-checkbox user-dropdown">
+                        <input type="checkbox" [(ngModel)]="Industry.checked" class="custom-control-input" value={{Industry.value}} (click)="updateFilter($event,Industry)"
+                        id="Industry{{i}}">
                         <img class="user-img ml-2">
-                        <span class="ml-2">{{Industry.label}}</span>
+                       <label class="custom-control-label" for="Industry{{i}}"><span class="ml-2">{{Industry.label}}</span></label> 
                       </div>
                     </div>
                     <div *ngIf="selectedCategory == 2">
-                      <div *ngFor="let Category of filterListCategory; let i = index" class="py-2 user-dropdown">
-                        <input type="checkbox" class="user-checkbox"  [(ngModel)]="Category.checked" value="{{Category.value}}" (click)="updateFilter($event,Category)" >
+                      <div *ngFor="let Category of filterListCategory; let i = index" class="py-2 user-dropdown custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" [(ngModel)]="Category.checked" value="{{Category.value}}" (click)="updateFilter($event,Category)"
+                        id="Category{{i}}" >
                         <img class="user-img ml-2">
-                        <span class="ml-2">{{Category.label}}</span>
+                        <label class="custom-control-label" for="Category{{i}}"><span class="ml-2">{{Category.label}}</span></label>
                       </div>
                     </div>
                     <div *ngIf="selectedCategory == 3">
-                      <div *ngFor="let Language of filterListLanguage; let i = index" class="py-2 user-dropdown">
-                        <input type="checkbox" class="user-checkbox" [(ngModel)]="Language.checked" value="{{Language.value}}" (click)="updateFilter($event,Language)">
+                      <div *ngFor="let Language of filterListLanguage; let i = index" class="py-2 user-dropdownn custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" [(ngModel)]="Language.checked" value="{{Language.value}}" (click)="updateFilter($event,Language)"
+                        id="Language{{i}}">
                         <img class="user-img ml-2">
-                        <span class="ml-2">{{Language.label}}</span>
+                        <label class="custom-control-label" for="Language{{i}}"><span class="ml-2">{{Language.label}}</span></label>
                       </div>
                     </div>
                   </div>
@@ -340,28 +350,28 @@
             <div class="first-form p-3 modal-body">
                 <div class="container m-auto ">
                 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-                    <h6>Template Name</h6>
+                    <h6>Template Name <span class="text-danger font-weight-bold">*</span></h6>
                 </div>
                 <div class="sel-type-text">
                     <textarea name="text-editor" formControlName="TemplateName" maxlength="512"rows="8" placeholder="Enter template name in max 512 characters"></textarea>
                 </div>
 
                 <div class="p-1 msg-head">
-                    <h6 class="pt-1 pb-2">Channel</h6>
+                    <h6 class="pt-1 pb-2">Channel <span class="text-danger font-weight-bold">*</span></h6>
                     <select class="sel input-form" formControlName="Channel">
                         <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select channel</option>
                         <option *ngFor="let item of filterListChannel">{{item.label}}</option>
                     </select>
                 </div>
                 <div class="p-1 msg-head">
-                    <h6 class="pt-1 pb-2">Category</h6>
+                    <h6 class="pt-1 pb-2">Category <span class="text-danger font-weight-bold">*</span></h6>
                     <select class="sel input-form" formControlName="Category" (change)="onCategoryChange($event)">
                         <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select category</option>
                         <option *ngFor="let item of filterListCategory">{{item.label}}</option>
                     </select>
                 </div>
                 <div class="p-1 msg-head">
-                    <h6 class="pt-1 pb-2">Language</h6>
+                    <h6 class="pt-1 pb-2">Language <span class="text-danger font-weight-bold">*</span></h6>
                     <select class="sel input-form" formControlName="Language">
                         <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select language</option>
                         <option *ngFor="let item of filterListLanguage">{{item.label}}</option>     
@@ -383,7 +393,7 @@
         <div class="m-0 modal-content welcomGreeting">
             <div class="d-flex justify-content-between align-items-center modal-header">
                 <h5 class="pl-2 modal-title">New Template Message</h5>
-                <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-target="#newTemplateMessageFirst" aria-label="Close">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
             </div>
@@ -395,15 +405,22 @@
 
 
                 <div class="main-container-for-body">
+                    <button type="button" class="previous-btn" type="button" data-bs-toggle="modal" data-bs-target="#newTemplateMessageFirst">
+                        <img src="../../../../assets/img/profile/previous.svg" />
+                    </button>
                     <div class="d-flex justify-content-between align-items-center sel-type-btns">
 
-                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')">
+                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" 
+                           [checked]="templatesMessageData.media_type=='text' || galleryMessageData.media_type=='text'">
                         <label [ngClass]="{'radio-label': selectedType === 'text'}" class="m-0" for="sel-text">Text</label>
-                        <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')">
+                        <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')"
+                        [checked]="templatesMessageData.media_type=='image' || galleryMessageData.media_type=='image'">
                         <label [ngClass]="{'radio-label': selectedType === 'image'}"  class="m-0" for="sel-image">Image</label>
-                        <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')">
+                        <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')"
+                        [checked]="templatesMessageData.media_type=='video' || galleryMessageData.media_type=='video'">
                         <label [ngClass]="{'radio-label': selectedType === 'video'}"  class="m-0" for="sel-video">Video</label>
-                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')">
+                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')"
+                        [checked]="templatesMessageData.media_type=='document' || galleryMessageData.media_type=='document'">
                         <label [ngClass]="{'radio-label': selectedType === 'document'}" class="m-0" for="sel-document">Document</label>
                     
                     </div>
@@ -421,7 +438,7 @@
                     </div>
             
                 <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
-                        <input type="file" accept="image/jpeg, image/png" formControlName="Links" (change)="previewImageAndVideo($event)" id="sel-type-image">
+                        <input type="file" accept="image/jpeg, image/png" formControlName="Links" (change)="onFileChange($event)" id="sel-type-image">
                         <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of image</p></div> 
@@ -613,7 +630,7 @@
         <div class="m-0 modal-content welcomGreeting">
             <div class="d-flex justify-content-between align-items-center modal-header">
                 <h5 class="pl-2 modal-title">New Template Message</h5>
-                <button type="button" class="btn-close" data-bs-toggle="modal" data-bs-target="#newTemplateMessage" aria-label="Close">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
             </div>
@@ -623,14 +640,15 @@
 
             <div class="modal-body">
 
-
+                <button type="button" class="previous-btn" type="button" data-bs-toggle="modal" data-bs-target="#newTemplateMessage">
+                    <img src="../../../../assets/img/profile/previous.svg" />
+                </button>
                 <div class="main-container-for-body">
          
             </div>    
                
         </div>
         <div class="col-5 justify-content-center preview-part">
-       
             <div class="message_section">
                 <h6>Preview</h6>
                 <div *ngIf="selectedType === 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">

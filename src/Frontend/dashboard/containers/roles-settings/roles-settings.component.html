@@ -26,7 +26,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content roles-modal p-2 pl-3">
             <div class="modal-header">
-                <h5 class="modal-title">Add Role</h5>
+                <h5 class="modal-title">{{selectedRoleId ==0 ?'Add Role' : 'Edit Role'}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
@@ -49,7 +49,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="account-btn" (click)="saveRolesDetails()">Save</button>
+                <button type="button" class="account-btn" (click)="saveRolesDetails()">{{selectedRoleId ==0 ?'Save' : 'Update'}}</button>
             </div>
         </div>
     </div>
@@ -67,18 +67,20 @@
         <p>Created on: <span class="team-id">{{roleData?.created_at | date: 'dd MMM yyyy'}}</span> | Last Modified: <span class="team-id">{{roleData?.updated_at | date: 'dd MMM yyyy'}}</span></p>
         <div class="sub-heading py-2">Rights<span class="team-id">({{rights?.length}})</span></div>
         <div class="user-assigned">
-            <div class="rights" *ngFor="let item of rights">{{item?.rightsName}}</div>
+            <div class="rights" *ngFor="let item of rights">
+                <div *ngIf="checkPrivillage(item)">{{item?.rightsName}}</div></div>
+                <!-- *ngIf="checkPrivillage(item)" -->
         </div>
-        <div class="sub-heading py-2">No. of Users Assigned ({{roleData?.users_count}})</div>
+        <div class="sub-heading py-2">No. of Users Assigned ({{userList.length}})</div>
         <div>
             <div *ngFor="let item of userList" class="user-row">
-                <img>
-                <span>{{item}}</span>
+                <img [src]="item.profile_img">
+                <span>{{item.name}}</span>
             </div>
         </div>
     </div>
     <div class="sideBar-footer">
-        <button type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#rolesModal" (click)="saveRolesDetails()">
+        <button type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#rolesModal" (click)="editRolesDetails()">
             <img class="p-0" src="../../../../assets/img/edit.png"></button>
         <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
             <img class="p-0" src="../../../../assets/img/delete.png">

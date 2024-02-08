@@ -88,9 +88,19 @@
 											<img class="mr-2" src="../../../../assets/img/support/instraction.svg" />
 											<h6 class="m-0">Instructions</h6>
 										</div>
-										<p><sb-read-more *ngFor="let t of text" [content]="t" [limit]="245" [completeWords]="true">
-											</sb-read-more></p>
-										
+										<!-- <p><sb-read-more *ngFor="let t of text" [content]="t" [limit]="245" [completeWords]="true">
+											</sb-read-more></p> -->
+											<div class="import contact info_box">
+												<p class="info">
+													<span>Upload the file that consists of contacts with the details that you would like to Import. Ensure the Imported file fulfills the following requirements:</span>
+													<span>1. Only CSV format file should be Imported.</span>
+													<span>2. File can have a maximum size of 10 MB.</span>
+													<span>3. Each row in the file represents a contact and each column represents a contact field (attribute).</span>
+													<span>4. Ensure first row contains NO data and just column headings with proper labels to help in attributes mapping. Data in first row is not imported.</span>
+													<span>5. The file must contain atleast 2 columns. One of them should contain Contact Numbers and the other Name of the Contacts.</span>
+													<span>6. If your import purpose is Update Existing Contacts Only, you can also select Contact ID as an identifier.</span>
+												</p>
+											</div>
 									</div>
 								</div>
 							</div>

@@ -188,7 +188,7 @@
                                         <form #addFundsForm="ngForm" (ngSubmit)="addFunds(addFundsSuccess)">
                                         <div class="modal-header align-items-center">
                                             <h5 class="modal-title">Add Funds</h5>
-                                            <button (click)="this.selectedAmount=0" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <button (click)="this.addFundsForm.reset()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                 <img src="../../../../assets/img/teambox/icon-close.svg">
                                             </button>
                                         </div>

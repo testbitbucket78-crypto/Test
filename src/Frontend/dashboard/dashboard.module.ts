@@ -1,6 +1,6 @@
 /* tslint:disable: ordered-imports*/
 import { NgModule } from '@angular/core';
-import { CommonModule,DatePipe } from '@angular/common';
+import { CommonModule,DatePipe,NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 / Modules /
@@ -56,7 +56,7 @@ import { DashboardComponent } from './containers';
         QRCodeModule,
     ],
     providers: [...dashboardServices.services,
-                ...dashboardGuards.guards,DatePipe,
+                ...dashboardGuards.guards,DatePipe,NgOptimizedImage
         ],
     declarations:  [
          ...dashboardContainers.containers,

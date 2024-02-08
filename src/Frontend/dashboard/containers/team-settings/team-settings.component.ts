@@ -54,7 +54,7 @@ export class TeamSettingsComponent implements OnInit {
     selectedUser: userTeamDropDown[] = [];
     showSideBar: boolean = false;
     teamName!: string;
-    selectedTeamId!: number;
+    selectedTeamId: number = 0;
     teamList: any;
     teamListInit: any;
     teamData: any;
@@ -81,7 +81,7 @@ export class TeamSettingsComponent implements OnInit {
         this.selectUsers();
     };
 
-    gridOptions = {
+    gridOptions:any = {
         rowSelection: 'multiple',
         rowHeight: 48,
         headerHeight: 50,
@@ -90,7 +90,7 @@ export class TeamSettingsComponent implements OnInit {
         onRowClicked: this.rowClicked,
         noRowsOverlay: true,
         pagination: true,
-        paginationAutoPageSize: true,
+        paginationPageSize: 15,
         paginateChildRows: true,
         overlayNoRowsTemplate:
             '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
@@ -144,7 +144,7 @@ export class TeamSettingsComponent implements OnInit {
     saveTeamDetails() {
         let teamData = this.copyTeamsData();
 
-        if (teamData.id === 0) {
+        if (this.selectedTeamId == 0) {
             this._settingsService.saveTeamData(teamData).subscribe(result => {
                 if (result) {
                     this.getTeamList();
@@ -163,7 +163,7 @@ export class TeamSettingsComponent implements OnInit {
 
     deleteTeam() {
         let teamId = <any>{};
-        teamId.id = this.teamData?.id;
+        teamId.id = this.selectedTeamId;
         teamId.SP_ID = this.sp_Id;
         this._settingsService.deleteTeamData(teamId).subscribe(result => {
             if (result) {
@@ -178,13 +178,15 @@ export class TeamSettingsComponent implements OnInit {
         teamData.SP_ID = this.sp_Id;
         teamData.team_name = this.teamName;
         teamData.userIDs = [];
+        teamData.id = this.selectedTeamId; // Set the team ID
+
 
         // Populate userIDs based on your logic
         this.selectedUser.forEach((item: any) => {
-            if (item.isSelected == true) teamData.userIDs.push(item.uid);
+            if (item.isSelected == true){
+                teamData.userIDs.push(item.uid);
+            } 
         });
-
-        teamData.id = this.teamData?.id; // Set the team ID
 
         return teamData;
     }
@@ -208,12 +210,15 @@ export class TeamSettingsComponent implements OnInit {
         this.teamListInit = JSON.parse(JSON.stringify(teamList2));
     }
 
-    searchUserData(srchText: string) {
-        this.teamList = [];
-        this.teamListInit.forEach((item: any) => {
-            if (item.team_name.includes(srchText)) this.teamList.push(item);
-        });
+    searchUserData(srchText: string) {        
+        this.gridOptions.api.setQuickFilter(srchText);
     }
 
-    addRole() {}
+    addTeam() {
+        this.selectedTeamId = 0;
+        this.teamName ='';
+        this.selectedUser.forEach((item: any) => {
+            item.isSelected == false;
+        })
+    }
 }

@@ -68,8 +68,8 @@ export class SettingsService {
     return this.http.get<workingDataResponse>(`${this.API_URL}/subrights`);
   }
 
-  deleteRolesData(spId: number,roleId: number): Observable<workingDataResponse> {
-    return this.http.post<workingDataResponse>(`${this.API_URL}/deleteRole/${roleId}/${spId}`,'');
+  deleteRolesData(spId: number,roleId: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/deleteRole/${roleId}/${spId}`);
   }
 
   saveRolesData(rolesData: RolesData): Observable<workingDataResponse> {
@@ -179,6 +179,10 @@ export class SettingsService {
 
   getTemplateData(spID:any,isTemplate:number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getTemplate/${spID}/${isTemplate}`);
+  }
+
+  getApprovedTemplate(spid:any,isTemplate:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getApprovedTemplate/${spid}/${isTemplate}`);
   }
 
   copyTemplateData(uid:any): Observable<any> {

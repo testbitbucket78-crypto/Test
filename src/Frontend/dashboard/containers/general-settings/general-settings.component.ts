@@ -67,6 +67,8 @@ export class GeneralSettingsComponent implements OnInit {
      this.autoReplyTime = a.autoReplyTime;
      this.isContactAdd = a.isContactAdd;
      this.pausedTill = a.pausedTill;
+     this.pauseAgentActiveTime = Number(a.pauseAgentActiveTime);
+     this.pauseAutoReplyTime = Number(a.pauseAutoReplyTime);
 
      console.log(a);
 
@@ -119,6 +121,8 @@ export class GeneralSettingsComponent implements OnInit {
     this.defaultActionData.isAutoReplyDisable = this.isAutoReplyDisable;
     this.defaultActionData.isContactAdd = this.isContactAdd;
     this.defaultActionData.pausedTill = this.pausedTill;
+    this.defaultActionData.pauseAgentActiveTime = String(this.pauseAgentActiveTime);
+    this.defaultActionData.pauseAutoReplyTime = String(this.pauseAutoReplyTime);
 
     console.log(this.defaultActionData)
 
