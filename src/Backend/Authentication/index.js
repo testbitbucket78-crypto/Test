@@ -76,7 +76,8 @@ const register = async function (req, res) {
     email_id = req.body.email_id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
-    LoginIP=req.body.LoginIP  
+    LoginIP = req.body.LoginIP  
+    countryCode = req.body.country_code
 
     try {
         var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id])
@@ -92,7 +93,7 @@ const register = async function (req, res) {
             }
             // Hash the password before storing it in the database
             const hash = await bcrypt.hash(password, 10);
-            var values = [name, mobile_number, email_id, hash,LoginIP]
+            var values = [name, mobile_number, email_id, hash,LoginIP,countryCode]  // pending add countryCode in stored procedure
             var registeredUser = await db.excuteQuery(val.registerQuery, values)   //need to change LoginIP in signup stored procedure
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
             res.status(200).send({
