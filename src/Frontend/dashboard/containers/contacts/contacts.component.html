@@ -575,7 +575,7 @@
 	                </div>
 
 				<label for="floatingSelectGrid">Tag</label>
-				<ng-multiselect-dropdown class="multiselect" name="tag" formControlName="tag" id="tag"
+				<ng-multiselect-dropdown (click)="this.ShowContactOwner=false" class="multiselect" name="tag" formControlName="tag" id="tag"
 					[settings]="dropdownSettings" [data]="tag" [placeholder]="'Select Tag from dropdown'">
 				</ng-multiselect-dropdown>
 
