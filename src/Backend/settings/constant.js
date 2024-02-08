@@ -62,7 +62,7 @@ userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
 updateQuery = "UPDATE user SET  email_id=?, name=?, mobile_number=?, LastModifiedDate=?, UserType=?,countryCode=? WHERE uid=?";
 insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP,countryCode) VALUES ?";
 findEmail = "SELECT * FROM user WHERE email_id=? and isDeleted !=1"
-getRole = `SELECT * from roles where SP_ID=? and isDeleted !=1`
+getRole = `SELECT * from roles where (SP_ID=? OR SP_ID = 0) and isDeleted !=1`
 
 
 
