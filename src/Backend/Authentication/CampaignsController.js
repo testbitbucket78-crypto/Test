@@ -223,10 +223,11 @@ const sendCampinMessage = async (req, res) => {
         if (media == null || media == "") {
             var type = 'text';
         }
-        const inputDate = new Date(schedule_datetime);
+        const inputDate = new Date(schedule_datetime).toISOString().slice(0, 19).replace('T', ' ');
 
         // Get the current date and time
-        const currentDate = new Date();
+        const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ')
+       
 
 
         content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');

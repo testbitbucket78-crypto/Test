@@ -10,30 +10,37 @@ const database = "cip_project"
 //Query for dashboard
 interactionsQuery = `SELECT interaction_status, COUNT(*) AS count
 FROM Interaction
-
-WHERE  SP_ID = ? 
+WHERE SP_ID = ?
+AND created_at >= now() - INTERVAL 30 DAY
 GROUP BY interaction_status
 
 UNION
 
 SELECT 'Total Interactions' AS interaction_status, COUNT(*) AS count
 FROM Interaction
-
-WHERE SP_ID = ? `;
+WHERE SP_ID = ?
+AND created_at >= now()  - INTERVAL 30 DAY; `;
 
 
 campaignsQuery = ` SELECT STATUS,COUNT(*) COUNT FROM Campaign
 WHERE  sp_id=? and is_deleted != 1
 GROUP BY (STATUS) `;
 
-agentsQuery = `SELECT IsActive, COUNT(*) AS count
+agentsQuery = `SELECT '1' AS IsActive, COUNT(*) AS count
 FROM user
-WHERE  SP_ID = ? and isDeleted != 1
-GROUP BY IsActive
-UNION
-SELECT 'Total Agents', COUNT(*) AS count
+WHERE SP_ID =? AND IsActive = 1 AND isDeleted != 1
+
+UNION ALL
+
+SELECT '0' AS InActive, COUNT(*) AS count
 FROM user
-WHERE  SP_ID = ? and isDeleted != 1`;
+WHERE SP_ID =? AND IsActive <> 1 AND isDeleted != 1
+
+UNION ALL
+
+SELECT 'Total Agents' AS Total, COUNT(*) AS count
+FROM user
+WHERE SP_ID =? AND isDeleted != 1;`;
 
 subscribersQuery = `select OptInStatus,count(*) count from EndCustomer WHERE SP_ID=? and (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) AND IsTemporary !=1  Group by (OptInStatus) union select  'Total Contacts',
 count(*) count from EndCustomer WHERE SP_ID=?  and (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) AND IsTemporary !=1  `;

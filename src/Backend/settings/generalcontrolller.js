@@ -33,7 +33,7 @@ const defaultaction = async (req, res) => {
         console.log(select)
         if (select.length != 0) {
 
-            var defaultValues = [req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at, req.body.SP_ID,select[0]?.id]
+            var defaultValues = [req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at, req.body.SP_ID, select[0]?.id]
             var updateddefaultData = await db.excuteQuery(val.updatedefaultactionDetails, defaultValues)
 
             res.status(200).send({
@@ -42,7 +42,7 @@ const defaultaction = async (req, res) => {
                 status: 200
             });
         } else {
-            var defaultinsert = [req.body.SP_ID, req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at,req.body.pauseAgentActiveTime,req.body.pauseAutoReplyTime]
+            var defaultinsert = [req.body.SP_ID, req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at, req.body.pauseAgentActiveTime, req.body.pauseAutoReplyTime]
             var defaultaction = await db.excuteQuery(val.defaultinsertDetails, [[defaultinsert]])
 
             res.status(200).send({
@@ -198,9 +198,9 @@ const addAndUpdateDefaultMsg = async (req, res) => {
         message_type = req.body.message_type
         link = req.body.link
         updated_at = new Date()
-       
+
         let image = link
-       
+
         if (uid != 0) {
             let userimgquery = `UPDATE defaultmessages set SP_ID=?, title=?, description=?, message_type=?, value=?, link=?,override=?,autoreply=?,Is_disable=?,isDeleted=?,updated_at=? where uid =?`;
             let result = await db.excuteQuery(userimgquery, [spid, title, description, message_type, value, image, override, autoreply, Is_disable, '0', updated_at, uid]);
@@ -254,7 +254,7 @@ const deletedefaultactions = async (req, res) => {
 
 
         var deletedefaultQuery = `UPDATE defaultmessages SET isDeleted=1,updated_at=? where SP_ID=? and uid=?`
-        let deletepay = await db.excuteQuery(deletedefaultQuery, [updated_at, req.body.spid ,req.body.uid])
+        let deletepay = await db.excuteQuery(deletedefaultQuery, [updated_at, req.body.spid, req.body.uid])
         res.status(200).send({
             deletepay: deletepay,
             status: 200
@@ -393,9 +393,9 @@ const getautodeletion = async (req, res) => {
         const storageUtilizationMB = storageUtilizationKB / 1024;
         const storageUtilizationGB = (storageUtilizationMB / 1024).toFixed(2);
 
-       // var resbyspid = await db.excuteQuery(val.getdeletion, [req.params.spid])
-        var resbyspid = await db.excuteQuery(val.messageSizeQuery, [req.params.spid,new Date()])
-        console.log("routing" ,resbyspid)
+        // var resbyspid = await db.excuteQuery(val.getdeletion, [req.params.spid])
+        var resbyspid = await db.excuteQuery(val.messageSizeQuery, [req.params.spid, new Date()])
+        console.log("routing", resbyspid)
         res.status(200).send({
             msg: 'routing got successfully !',
             managestroage: resbyspid[0]?.message_size,
@@ -424,24 +424,32 @@ const manualDelation = async (req, res) => {
 
 
         const result = subtractDaysFromNow(manually_deletion_days);
-
+        let mediaDeleted = '';
+        let textDeleted = '';
         if (message_type == 'Text') {
-            var messageSize = await db.excuteQuery(val.deleteText, [new Date(), SPID, result])
+            textDeleted = await db.excuteQuery(val.deleteText, [new Date(), SPID, result])
 
         } else if (message_type == 'Media') {
             // console.log(Media)
             let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
-            var messageSize = await db.excuteQuery(val.deleteMedia, [new Date(), SPID, result])
+            mediaDeleted = await db.excuteQuery(val.deleteMedia, [new Date(), SPID, result])
+        }
+        else if (message_type == 'Both') {
+            textDeleted = await db.excuteQuery(val.deleteText, [new Date(), SPID, result])
+            let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
+            mediaDeleted = await db.excuteQuery(val.deleteMedia, [new Date(), SPID, result])
+
         }
 
 
         let insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, manually_deletion_days, message_type,created_at,isDeleted) VALUES ?';
-        let addManualData = await db.excuteQuery(insertmanagestorage, [[[SPID, '', '', '', manually_deletion_days, message_type, new Date(),'1']]]);
+        let addManualData = await db.excuteQuery(insertmanagestorage, [[[SPID, '', '', '', manually_deletion_days, message_type, new Date(), '1']]]);
 
 
         res.status(200).send({
             msg: 'messages deleted successfully !',
-            messageSize: messageSize,
+            mediaDeleted: mediaDeleted,
+            textDeleted: textDeleted,
             status: 200
         });
     } catch (err) {
@@ -464,21 +472,26 @@ const deletedDetails = async (req, res) => {
         }
 
         const result = subtractDaysFromNow(manually_deletion_days);
-
-        let messageSize = '';
+        console.log("manually_deletion_days", result)
+        let mediaSize = '';
+        let textSize = '';
         if (message_type == 'Text') {
-            messageSize = await db.excuteQuery(val.messageSizeQuery, [SPID, result])
+            textSize = await db.excuteQuery(val.messageSizeQuery, [SPID, result])
 
         } else if (message_type == 'Media') {
 
-            messageSize = await awsHelper.getStorageUtilization(SPID, manually_deletion_days)
+            mediaSize = await awsHelper.getStorageUtilization(SPID, manually_deletion_days)
 
+        } else if (message_type == 'Both') {
+            textSize = await db.excuteQuery(val.messageSizeQuery, [SPID, result])
+            mediaSize = await awsHelper.getStorageUtilization(SPID, manually_deletion_days)
         }
 
 
         res.status(200).send({
             msg: 'messageSize got successfully !',
-            messageSize: messageSize,
+            textSize: textSize,
+            mediaSize: mediaSize,
             status: 200
         });
     } catch (err) {
