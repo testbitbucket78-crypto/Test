@@ -9,11 +9,17 @@
                 <img src="../../../../assets/img/settings/image.png"><br>
                 <span class="working-hour-heading">Add Working Hours</span>
             </div>
-            <div *ngIf="workingData" class="modal-body pt-0 px-5">
-                <div class="row pt-4">
-                    <div *ngFor="let item of workingData; let idx=index" class="">
-                        <div class="working-days col-4">{{ item?.working_days }}</div>
+            <div *ngIf="workingData" class="modal-body pt-0">
+                <div class="row pt-4" *ngIf="workingData.length > 0">
+                    <div *ngFor="let item of workingData; let idx=index" class="w-100">
+                        <div class="working-days ">{{ item?.working_days }}</div>
                         <div class="working-time">{{ item?.start_time }} - {{ item?.end_time }}</div>
+                    </div>
+                </div>
+                <div *ngIf="workingData.length ==0" class="empty-working-time">
+                    <div class="w-100">
+                        <img src="../../../../assets/img/settings/image.png">
+                        <div class="pt-2 text-bold">Add Working Hours</div>
                     </div>
                 </div>
             </div>

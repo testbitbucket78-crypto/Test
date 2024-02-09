@@ -9,7 +9,7 @@
         <div class="setting-card" >
             <div class="flex-row pb-2">
                 <div class="default-actions-heading">Set Campaign Timings</div>
-                <div class="Info-Iconn"><img src="../../../../assets/img/info.png" (click)="timinginfo()">
+                <div class="Info-Iconn"><img src="../../../../assets/img/settings/Info-icons.svg" (click)="timinginfo()">
                 </div>
                 <div class="specific" *ngIf="timming" (click)="stopPropagation($event)">
                     <p class="p-body">
@@ -29,6 +29,13 @@
                     <div class="working-days">{{item?.day}}</div>
                     <div class="working-time">{{item?.start_time}} - {{item?.end_time}}</div>
                 </div>
+                
+                <div *ngIf="workingData.length ==0" class="empty-working-time">
+                    <div class="w-100">
+                        <img src="../../../../assets/img/settings/image.png">
+                        <div class="pt-2 text-bold">Schedule Timings</div>
+                    </div>
+                </div>
             </div>
     
             <div class="text-center pb-3">
@@ -40,7 +47,7 @@
         <div class="setting-card ml-5" >
             <div class="flex-row pb-2">
                 <div class="default-actions-heading">Campaign Alerts</div>
-                <div><img src="../../../../assets/img/info.png"(click)="campaignalerts()">
+                <div><img src="../../../../assets/img/settings/Info-icons.svg" (click)="campaignalerts()">
                 </div>
                 <div class="specific" *ngIf="alertscamp" (click)="stopPropagation($event)">
                     <p class="p-body">
@@ -74,7 +81,7 @@
     <div class="test-campaign-card ml-5" *ngIf="selectedTab==2">
         <div class="flex-row pb-2">
             <div class="default-actions-heading">Test Campaign</div>
-            <div><img src="../../../../assets/img/info-icon.png"(click)="testcamp()">
+            <div><img src="../../../../assets/img/settings/Info-icons.svg"(click)="testcamp()">
             </div>
         </div>
         <div class="specific" *ngIf="Testcampaign" (click)="stopPropagation($event)">
@@ -124,12 +131,12 @@
                         <div class="d-flex">
                             <div class="billing-form-row">
                                 <label>Start Time</label>
-                                <input type="text" class="input-form" [(ngModel)]="item.start_time"
+                                <input type="time" class="input-form" [(ngModel)]="item.start_time"
                                     placeholder="Select start time">
                             </div>
                             <div class="billing-form-row">
                                 <label>End Time</label>
-                                <input type="text" class="input-form" [(ngModel)]="item.end_time"
+                                <input type="time" class="input-form" [(ngModel)]="item.end_time"
                                     placeholder="Select end time">
                             </div>
                         </div>
@@ -175,26 +182,21 @@
                 <div class="pt-3 ">
                     
                         <div *ngFor="let item of selectedUser" class="user-dropdown pb-3 d-flex">
-                          
-                                 
                             <div class=" manage-user col-6">
-                                
                                 <label class="container"  let i = "index">
-                                    <img src="../../../../assets/img/profile/Richie_3.png" class="user-img ml-2">{{item.name}}                  
+                                    <img src="../../../../assets/img/profile/Richie_3.png" class="user-img mx-2">{{item.name}}                  
                                     <input type="checkbox" name="status" class="user-checkbox"  [(ngModel)]="item.isSelected" value={{item.value}}>   
                                       <span class="checkmark ml-2"></span>  
-                        </label>
-                        </div>
-
-
-                            <div class="copy col-6" *ngIf="item.isSelected == true" >
-                                <div>
-                                <img src="../../../../assets/img/profile/Richie_3.png"  class="user-img-2 mt-1 ">
-                                <span class="ml-1"  >{{item.name}}</span>
-                                <button type="button" class="btclose"  >
-                                    <img src="../../../../assets/img/settings/remove.svg" (click)="item.isSelected == false" class="user-img-3 mt-1 ">
-                                </button>
+                                </label>
                             </div>
+                            <div class="copy col-6" *ngIf="item.isSelected == true" >
+                                <div class="d-flex align-item-center">
+                                <img src="../../../../assets/img/profile/Richie_3.png"  class="user-img-2 ">
+                                <span class="ml-2"  >{{item.name}}</span>
+                            </div>
+                            <button type="button" class="btclose"  >
+                                <img src="../../../../assets/img/settings/remove.svg" (click)="item.isSelected == false" >
+                            </button>
                             </div>
                         </div>
                 </div>

@@ -192,19 +192,31 @@ font-family: Manrope;
 
 .working-days{
   font-weight: 600;
-  padding-bottom: 4px;
-  font-family: "Manrope";
+    padding-bottom: 4px;
+    font-family: "Manrope";
+    width: 100%;
+    text-align: center;
+    word-wrap: break-word;
 }
 
 .working-time{
   font-weight: 600;
   color: #6149CD;
+  text-align: center;
 }
 .holiday-dropdown {
   border: 1px solid #EBEBEB;
   border-radius: 19px;
   padding: 10px 25px;
 }
+
+.empty-working-time{
+  text-align: center;
+  height: 45vh;
+  align-items: center;
+  display: flex;
+}
+
 
 .holiday-dropdown option{
   color: #6149CD;

@@ -100,11 +100,12 @@ p{
    }
 
    .working-hour-modal{
-    width: 650px;
-    height: 644px;
+    min-width: 650px;
+    height: 600px;
     border-radius: 26px;
     overflow-y: scroll;
    }
+  
 
    .modal-footer{
     border: none;
@@ -282,6 +283,9 @@ p{
      opacity: 1;
      font-size: 14px;
      height: 2rem;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
   }
 
   .user-img-2{
@@ -301,9 +305,9 @@ p{
 
   .btclose{
     width: 10px;
-    height: 12px;
     background: #FFFFFF 0% 0% no-repeat padding-box;
     border: none;
+    margin-right: 8px;
   }
   label.container input:checked ~ .checkmark {
     background-color: #6149CD;
@@ -394,3 +398,11 @@ label.container {
 	bottom: 0;
 	left: 0;
   }
+
+  
+.empty-working-time{
+  text-align: center;
+  height: 45vh;
+  align-items: center;
+  display: flex;
+}
