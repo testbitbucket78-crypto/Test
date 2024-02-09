@@ -98,6 +98,7 @@ selectedPeriods: string[] = ['AM', 'PM'];
       if(result){
         console.log(result);
         this.getWorkingDetails();
+        $("#workingHourModal").modal('hide');
         //this.workingData = result?.result;
       }
     })
@@ -134,7 +135,9 @@ selectedPeriods: string[] = ['AM', 'PM'];
     workingResponse.SP_ID = this.sp_Id;
     workingResponse.days = [];
     this.workingFormData.forEach(item=>{
+      if(item.day?.length >0){
       workingResponse.days.push({day:item.day.toString(),startTime:item?.startTime,endTime:item?.endTime})
+      }
     });
     return workingResponse;
   }
@@ -145,7 +148,7 @@ selectedPeriods: string[] = ['AM', 'PM'];
     this.addWorkingHours();
     else
     this.workingData.forEach(item=>{
-      this.workingFormData.push({day:item.working_days.split(','),startTime:item.start_time,endTime:item.end_time,selectedPeriod:item.selectedPeriod})
+      this.workingFormData.push({day:item.working_days != '' ? item.working_days.split(',') : [],startTime:item.start_time,endTime:item.end_time,selectedPeriod:item.selectedPeriod})
     })
   }
    createDynamicDate(month:any){

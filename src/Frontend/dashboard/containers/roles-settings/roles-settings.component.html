@@ -33,8 +33,15 @@
             </div>
             <div class="modal-body px-5 pt-0">
                 <div>
-                    <label>Role Name</label> <br>
-                    <input type="text" class="input-form" [(ngModel)]="roleName" placeholder="Enter role name">
+                    <form #myForm="ngForm">
+                        <div>
+                            <label>Role Name</label> <br>
+                            <input type="text" class="input-form" [(ngModel)]="roleName" placeholder="Enter role name" [ngModelOptions]="{standalone: true}" required>
+                          <div *ngIf="(myForm.controls['roleName']?.dirty || myForm.controls['roleName']?.touched)">
+                            <div *ngIf="myForm.controls['roleName']?.errors?.required">Role Name is required.</div>
+                          </div>
+                        </div>
+                      </form>
                 </div>
                 <div class="">
                     <div *ngFor="let item of totalRights">

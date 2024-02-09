@@ -3,6 +3,7 @@ import { campaignAlertUser,RolesData, campaignDataResponsePost, campaignFormData
 import { isNullOrUndefined } from 'is-what';
 import { SettingsService } from '../../services/settings.service';
 import { FormControl, FormGroup } from '@angular/forms';
+declare var $:any;
 @Component({
   selector: 'sb-campaign-settings',
   templateUrl: './campaign-settings.component.html',
@@ -151,6 +152,7 @@ campaignTestData:any;
       if(result){
         console.log(result);
         this.getCampaignTimingList();
+        $("#workingHourModal").modal('hide');
         //this.workingData = result?.result;
       }
     })
@@ -181,8 +183,15 @@ campaignTestData:any;
 
   copyCampaignTimingFormValues(){
     let campaignResponse:campaignDataResponsePost = <campaignDataResponsePost>{};
-    campaignResponse.sp_id = this.sp_Id;
-    campaignResponse.days = this.workingFormData;    
+    campaignResponse.sp_id = this.sp_Id; 
+    campaignResponse.days = this.workingFormData;  
+    console.log(this.workingFormData);
+    // campaignResponse.days = [];
+    // this.workingFormData.forEach(item=>{
+    //   if(item.day?.length >0){
+    //     campaignResponse.days.push({day:item.day.toString(),startTime:item?.start_time,endTime:item?.endTime})
+    //   }
+    // });
     return campaignResponse;
   }
 
