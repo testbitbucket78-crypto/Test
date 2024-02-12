@@ -78,7 +78,7 @@
                         <div *ngIf="userDetailForm.get('mobile_number')?.hasError('pattern')">
                           Phone number should contain only digits.
                         </div>
-                        <div *ngIf="userDetailForm.get('mobile_number')?.hasError('maxlength')">
+                        <div *ngIf="userDetailForm.get('mobile_number')?.hasError('minlength')">
                           Phone number should be 10 digits long.
                         </div>
                       </div>
@@ -136,17 +136,17 @@
         <div class="flex-row pt-4">
             <div class="w-50">
                 <span class="sub-heading">Last Login Time</span><br>
-                <p class="black">Last Login: 9:45 PM, 15 Oct 2023</p>
+                <p class="black">Last Login: {{userData?.LastLogIn}}</p>
             </div>
             <div class="w-45">
                 <span class="sub-heading">Login IP Address</span><br>
-                <p class="black">100.525.658.25</p>
+                <p class="black">{{userData?.LoginIP}}</p>
             </div>
         </div>
         <div class="flex-row  pt-4">
             <div class="w-50">
                 <span class="sub-heading">Email Id</span><br>
-                <p class="black">{{userData?.email_id}}</p>
+                <p class="black">{{userData?.LoginIP}}</p>
             </div>
             <div class="w-45">
                 <span class="sub-heading">Phone Number</span><br>
@@ -156,11 +156,11 @@
         <div class="flex-row  pt-4">
             <div class="w-50">
                 <span class="sub-heading">Roles Assigned</span><br>
-                <p class="black">{{ userData?.roleName }}</p>
+                <p class="black">{{ userData?.RoleName }}</p>
             </div>
             <div class="w-45">
                 <span class="sub-heading">Team Associated</span><br>
-                <p class="black"></p>
+                <p class="black">{{ userData?.team_name }}</p>
             </div>
         </div>
     </div>

@@ -65,8 +65,11 @@
 
 .working-hour-img-card{
     height: 30vh;
-    margin-top: 7rem;
+//    margin-top: 7rem;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .working-hour-btn{
@@ -306,7 +309,8 @@ p{
   .btclose{
     width: 10px;
     background: #FFFFFF 0% 0% no-repeat padding-box;
-    border: none;
+    border: none !important;
+    outline: none !important;
     margin-right: 8px;
   }
   label.container input:checked ~ .checkmark {

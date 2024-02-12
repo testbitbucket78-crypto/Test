@@ -72,10 +72,11 @@
         <p class="m-0">ID:<span class="team-id">{{roleData.roleID}}</span></p>
         <span class="heading">{{roleData?.RoleName}}</span>
         <p>Created on: <span class="team-id">{{roleData?.created_at | date: 'dd MMM yyyy'}}</span> | Last Modified: <span class="team-id">{{roleData?.updated_at | date: 'dd MMM yyyy'}}</span></p>
-        <div class="sub-heading py-2">Rights<span class="team-id">({{rights?.length}})</span></div>
+        <div class="sub-heading py-2">Sub Rights<span class="team-id">({{selectedSubRights?.length}})</span></div>
         <div class="user-assigned">
-            <div class="rights" *ngFor="let item of rights">
-                <div *ngIf="checkPrivillage(item)">{{item?.rightsName}}</div></div>
+            <div class="rights" *ngFor="let item of selectedSubRights">
+                <div >{{item?.subRights}}</div>
+            </div>
                 <!-- *ngIf="checkPrivillage(item)" -->
         </div>
         <div class="sub-heading py-2">No. of Users Assigned ({{userList.length}})</div>

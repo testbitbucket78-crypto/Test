@@ -214,7 +214,7 @@ hideToaster(){
     return this.fb.group({
       billing_email: ['', [Validators.required, Validators.email]],
       Address1: new FormControl(),
-      InvoiceId: new FormControl(),
+      InvoiceId: new FormControl('',[Validators.required, Validators.minLength(15),]),
       Address2: new FormControl(),
       Country: new FormControl(),
       State: new FormControl(),
@@ -371,6 +371,7 @@ hideToaster(){
   }
   hangeEditContactInuts(item:any){
     //console.log(item.target.name)
+    this.companyDetailForm.controls.Phone_Number.setValue(item.target.value)
     if(item.target.name =='OptInStatus'){
       this.EditContactForm['OptInStatus'] = item.target.value
       this.EditContactForm['OptInStatusChecked'] = item.target.value?true:false

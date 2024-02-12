@@ -228,41 +228,74 @@
                     <form [formGroup]="billingForm" class="mt-4">
                         <div class="billing-form-row">
                             <span class="billing-left-col">Billing Email Id</span>
+                            <div class="billing-right-col">
                             <input type="text" class="billing input-form" formControlName="billing_email" placeholder="Enter billing email id">
+                            <div *ngIf="billingForm.get('billing_email')?.invalid && (billingForm.get('billing_email')?.touched || billingForm.get('billing_email')?.dirty)
+                            " class="invalid-feedback">
+                            <div *ngIf="billingForm.get('billing_email')?.hasError('required')">
+                              Email is required.
+                            </div>
+                            <div *ngIf="billingForm.get('billing_email')?.hasError('email')">
+                              Invalid email format.
+                            </div>
+                          </div>
+                        </div>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Tax/VAT/GST Id</span>
+                            <div class="billing-right-col">
                             <input type="text" class="billing input-form" formControlName="InvoiceId" placeholder="Enter Tax/VAT/GST ID" maxlength="15" type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==15) return false; return /^[0-9]$/.test(event.key)">
+                            <div *ngIf="billingForm.get('InvoiceId')?.invalid && (billingForm.get('InvoiceId')?.touched || billingForm.get('InvoiceId')?.dirty)
+                            " class="invalid-feedback">
+                            <div *ngIf="billingForm.get('InvoiceId')?.hasError('required')">
+                                Tax/VAT/GST Id is required.
+                            </div>
+                            <div *ngIf="billingForm.get('InvoiceId')?.hasError('minlength')">
+                                Tax/VAT/GST Id should be 15 digits long.
+                            </div>
+                          </div>
+                        </div>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Location</span>
+                            <div class="billing-right-col">
                             <select class="billing input-form" formControlName="Country" required>
                                 <option value="">Select country</option>
                                 <option *ngFor="let item of country" [value]="item">{{item}}</option>
                             </select>
                         </div>
+                        </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col"></span>
+                            <div class="billing-right-col">
                             <select class="billing input-form" formControlName="State" required>
                                 <option value="">State</option>
                             </select>
                         </div>
+                        </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col"></span>
+                            <div class="billing-right-col">
                             <select class="billing input-form" formControlName="City" required>
                                 <option value="">City</option>
                             </select>
                         </div>
+                        </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Address line 1</span>
+                            <div class="billing-right-col">
                             <input type="text" class="billing input-form" formControlName="Address1" placeholder="Your address">
+                        </div>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Address line 2</span>
+                            <div class="billing-right-col">
                             <input type="text" class="billing input-form" formControlName="Address2" placeholder="Your address">
+                        </div>
                         </div>
                         <div class="billing-form-row">
                             <span class="billing-left-col">Zip code</span>
+                            <div class="billing-right-col">
                             <input
                                 class="billing input-form"
                                 formControlName="zip_code"
@@ -270,6 +303,7 @@
                                 [pattern]="zipCodePattern"
                                 type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==6) return false; return /^[0-9]$/.test(event.key)"
                             >
+                        </div>
                         </div>
                         
                     </form>
