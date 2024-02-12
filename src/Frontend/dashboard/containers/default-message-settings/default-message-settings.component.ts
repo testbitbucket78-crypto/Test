@@ -22,6 +22,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
   selectedCategory!: number;
   selectedMessageData=<defaultMessagesData>{};
   value:any;
+  isOverride = 0;
   fileName: any;
   Isdisable = 0;
   characterCount: number = 0;
@@ -87,7 +88,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
     return this.fb.group ({
       value:[null],
       link:[null],
-      override:[null],
+      override:[0],
       autoreply:[null]
     });
   }
@@ -98,6 +99,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
     console.log(this.selectedMessageData)
     this.getAttributeList();
     this.getDefaultMessages();
+    console.log(this.defaultMessageForm.get('override')?.value)
 
   }
 
@@ -111,6 +113,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
 	}	
 
   closeAtrrModal() {
+    this.attributesearch ='';
     $("#welcomGreeting").modal('show');
     $("#atrributemodal").modal('hide');
   }
@@ -123,10 +126,12 @@ ToggleAttributesOption(){
 
 selectAttributes(item:any){
   const selectedValue = item;
-  this.closeAllModal();
   let htmlcontent = '';
   const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
   this.onEditorChange(selectedAttr)
+  $("#welcomGreeting").modal('show');
+  $("#atrributemodal").modal('hide');
+
 }
 
 getAttributeList() {
@@ -138,44 +143,30 @@ getAttributeList() {
 }
 })
 }
-  showMessageType(type: string) {   
-    this.selectedType = type;
-    if (this.selectedType === 'text') {
-      this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
-    }
-    if (this.selectedType === 'video' || this.selectedType === 'document' || this.selectedType === 'image') {
-       this.defaultMessageForm.get('link')?.setValidators([Validators.required]);
-    }
-    else {
-      this.defaultMessageForm.get('link')?.clearValidators();
-      this.defaultMessageForm.get('value')?.clearValidators();
-    }
-    this.defaultMessageForm.get('link')?.updateValueAndValidity();
-    this.defaultMessageForm.get('value')?.updateValueAndValidity();
+showMessageType(type: string) {   
+  this.selectedType = type;
+  if (this.selectedType === 'text') {
+    this.defaultMessageForm.get('value')?.setValidators([Validators.required,Validators.pattern(/[\S]/g)]);
+    this.defaultMessageForm.get('link')?.clearValidators();
   }
+  else if (this.selectedType === 'video' || this.selectedType === 'document' || this.selectedType === 'image') {
+    this.defaultMessageForm.get('link')?.setValidators([Validators.required]);
+    this.defaultMessageForm.get('value')?.clearValidators();
+  }
+  else {
+    this.defaultMessageForm.get('link')?.clearValidators();
+    this.defaultMessageForm.get('value')?.clearValidators();
+  }
+  this.defaultMessageForm.get('link')?.updateValueAndValidity();
+  this.defaultMessageForm.get('value')?.updateValueAndValidity();
+}
+
   
   selectedButtonType(type: number) {
     this.selectedCategory = type;
   }
 
-  previewImageAndVideo(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    if (inputElement.files && inputElement.files[0]) {
-        const file = inputElement.files[0];
-        const reader = new FileReader();
-
-        reader.onload = (e: any) => {
-            const fileType = file.type;
-            if (fileType.startsWith('image')) {
-                this.selectedPreview = e.target.result as string;
-            }
-            console.log(this.selectedPreview);
-        };
-        reader.readAsDataURL(file);
-    }
-}
-
-  saveVideoAndDocument(files: FileList) {
+  uploadMessageMedia(files: FileList) {
     if (files[0]) {
         let File = files[0];
         this.fileName = this.truncateFileName(File.name, 25);
@@ -202,7 +193,7 @@ uploadThroughLink() {
 
 onFileChange(event: any) {
     let files: FileList = event.target.files;
-    this.saveVideoAndDocument(files);
+    this.uploadMessageMedia(files);
 }
 
 truncateFileName(fileName: string, maxLength: number): string {
@@ -226,7 +217,6 @@ removeMedia() {
     this.selectedType='text';
     this.defaultMessageForm.get('link')?.setValue(null);
     this.defaultMessageForm.reset();
-    this.defaultMessageForm.removeValidators;
 }
 
   getDefaultMessages() {
@@ -248,7 +238,8 @@ removeMedia() {
   }
 
   addEditDefaultMessageData() {
-    let defaultMessagesData = this.copyDefaultMesssageData();
+    if (this.defaultMessageForm.valid) {
+      let defaultMessagesData = this.copyDefaultMesssageData();
       this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe(response => {
         if(response.status === 200) {
           this.defaultMessageForm.reset();
@@ -257,7 +248,8 @@ removeMedia() {
           $("#welcomGreeting").modal('hide');
           this.showSideBar = false;
         }
-    })
+    });
+    }
   }
 
   editDefaultMessages() { 
@@ -269,18 +261,14 @@ removeMedia() {
     this.value = this.selectedMessageData.value;
   }
 
-  toggleSideBar(data:any) {
+  toggleSideBar(data:any,type: number) {
     if(this.showSideBar = !this.showSideBar) {
       this.selectedMessageData = data;
-      console.log(this.selectedMessageData)
-      this.selectedTitle = data.title;
-      this.selectedDescription = data.description;
+      this.selectedCategory = type;
       this.patchFormValue();
+      console.log(data);
     }
     else {
-      this.defaultMessagesData = data;
-      this.selectedTitle = data.title;
-      this.selectedDescription = data.description;
       this.removeValue()
     }
   }
@@ -354,4 +342,11 @@ removeMedia() {
       }
     });
 	}
+
+  IsOverride(event:any) {
+    this.isOverride = event.target.checked;
+    let override = this.isOverride ? 1 : 0;
+    this.defaultMessageForm.patchValue({ override: override });
+}
+
 }

@@ -11,7 +11,7 @@
                 <p>{{data.description}}</p>
                 <button *ngIf="!data.uid"  class="white-btn" data-bs-toggle="modal" (click)="selectedButtonType(idx)" data-bs-target="#welcomGreeting">
                  <img src="../../../../assets/img/teambox/add.svg" class="pr-1"> Configure </button>
-                 <button *ngIf="data.uid" class="white-btn" (click)="toggleSideBar(data)">View & Manage</button>
+                 <button *ngIf="data.uid" class="white-btn" (click)="toggleSideBar(data,idx)">View & Manage</button>
             </div>
           </div>
     </div>
@@ -56,13 +56,30 @@
                             [ngClass]="{'is-invalid':defaultMessageForm.controls.autoreply.touched && defaultMessageForm.controls.autoreply.errors}"
                             placeholder="Enter reply timeout (1-1440 minutes)">
                     </div>
+
+                    <div *ngIf="selectedCategory==2">
+                        <div class="pb-3 custom-control custom-checkbox override-container">
+                            <input class="custom-control-input" type="checkbox" id="override" 
+                              formControlName="override"
+                              (change)="IsOverride($event)">
+                            <label class="pl-1 custom-control-label" for="override">
+                                Override keyword match and always send<br/> this ‘Out of Office’ message
+                            </label>
+                        </div>
+                    </div>
+
+
                         
                     <div class="d-flex justify-content-between align-items-center sel-type-btns">
                         
-                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" checked><label [ngClass]="{'radio-label': selectedType == 'text'}" class="m-0" for="sel-text">Text</label>
-                        <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')"><label [ngClass]="{'radio-label': selectedType == 'image'}"  class="m-0" for="sel-image">Image</label>
-                        <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')"><label [ngClass]="{'radio-label': selectedType == 'video'}"  class="m-0" for="sel-video">Video</label>
-                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')"><label [ngClass]="{'radio-label': selectedType == 'document'}" class="m-0" for="sel-document">Document</label>
+                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" [checked]="selectedType=='text'" >
+                        <label [ngClass]="{'radio-label': selectedType == 'text'}" class="m-0" for="sel-text">Text</label>
+                        <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')" [checked]="selectedType=='image'">
+                        <label [ngClass]="{'radio-label': selectedType == 'image'}"  class="m-0" for="sel-image">Image</label>
+                        <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')" [checked]="selectedType=='video'">
+                        <label [ngClass]="{'radio-label': selectedType == 'video'}"  class="m-0" for="sel-video">Video</label>
+                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')" [checked]="selectedType=='document'">
+                        <label [ngClass]="{'radio-label': selectedType == 'document'}" class="m-0" for="sel-document">Document</label>
                       
                     </div>
 
@@ -72,14 +89,14 @@
                          </div>
 
                          <div *ngIf="selectedType === 'text'" class="sel-type-text">
-                             <ejs-richtexteditor [(value)]="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools'
+                             <ejs-richtexteditor formControlName="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'450px'"
                              [maxLength]='1024' (change)="onEditorChange(chatEditor.value)" [showCharCount]='true' placeholder="Enter">
                             </ejs-richtexteditor>
                          </div>
                     </div>
 
                    <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
-                      <input type="file" accept="image/jpeg, image/png" formControlName="link" (change)="previewImageAndVideo($event)" id="sel-type-image">
+                      <input type="file" accept="image/jpeg, image/png" formControlName="link" (change)="onFileChange($event)" id="sel-type-image">
 
                         <div *ngIf="defaultMessageForm.get('link')?.value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
@@ -131,8 +148,8 @@
                     <h6>Body Text</h6> <span>Characters</span>
                  </div>
                     <div class="sel-type-text">
-                        <ejs-richtexteditor [(value)]="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'150px'"
-                        [maxLength]='1024' (change)="onEditorChange(chatEditor.value)" [showCharCount]='true' placeholder="Enter">
+                        <ejs-richtexteditor formControlName="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'150px'"
+                        (change)="onEditorChange(chatEditor.value)" [maxLength]='1024'[showCharCount]='true' placeholder="Enter">
                        </ejs-richtexteditor>
                          </div>
                       </div>
@@ -172,12 +189,16 @@
                   <p>{{selectedMessageData.description}}</p>
                 </div>
             </div>
+            <div *ngIf="selectedMessageData.autoreply">
+                <div>Agent Reply Timeout Period</div>
+                <div>{{selectedMessageData.autoreply}} Minutes</div>
+            </div>
             <div *ngIf="selectedMessageData.override==1" class="flex-row  pt-4">
                 <div class="condition">
                  <img src="../../../../assets/img/settings/checked.svg" />
                 </div>
-                <div class="">
-                    <p>Override keyword match and always send this ‘{{selectedMessageData.title}}’ message</p>
+                <div class="px-2">
+                    <p>Override keyword match and always send this ‘Out of Office’ message</p>
                 </div>
             </div>
             <div class="flex-column  pt-4">
@@ -185,31 +206,34 @@
                    <img src="" />
                 </div>
                 <div class="bodydata w-45">
-                    <div *ngIf="selectedMessageData.message_type == 'image'" class="message_type" 
+                    <div *ngIf="selectedMessageData.message_type == 'image'" class="message_type"
+                            [ngClass]="{'message_type_box':!selectedMessageData.value}" 
                            [ngStyle]="{'background-image': 'url(' + selectedMessageData.link + ')'}">
                     </div> 
                     <div *ngIf="selectedMessageData.message_type == 'video'" class="message_type" [ngClass]="{'vid':selectedMessageData.message_type=='video'}">
-                        <video controls id="video-background" [src]="selectedMessageData.link" type="video/mp4"></video>
+                        <video controls id="video-background" [ngClass]="{'message_type_box':!selectedMessageData.value}"
+                           [src]="selectedMessageData.link" type="video/mp4"></video>
                     </div>
-                    <div *ngIf="selectedMessageData.message_type == 'document'" class="message_type">
+                    <div *ngIf="selectedMessageData.message_type == 'document'" class="message_type"  [ngClass]="{'message_type_box':!selectedMessageData.value}" >
                         <div class="doc-preview" *ngIf="selectedMessageData.link" width="100%" height="150px">
                           <a [href]="selectedMessageData.link"><img src="../../../../assets/img/settings/doc.svg" />
                         </a>
                         </div>
                     </div>
-                  <div class="message_data" [innerHTML]=" selectedMessageData.value" 
+                  <div *ngIf="selectedMessageData.value" class="message_data" [innerHTML]=" selectedMessageData.value" 
                       [ngClass]="{'preview': selectedMessageData.message_type === 'text'}">
                 </div>
                 </div>
             </div>
         </div>
-        <div class="d-flex sideBar-footer">
-            <div class="">
+        <div class="d-flex justify-content-center sideBar-footer">
+            <div class="px-2">
                 <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
                     <img class="p-0" src="../../../../assets/img/delete.png">
                 </button>
-                <button (click)="editDefaultMessages()" type="button" class="account-white-btn">
-                    <img class="p-0" src="../../../../assets/img/edit.png"></button>
+                <button (click)="editDefaultMessages()" type="button" class="ml-2 account-white-btn">
+                    <img class="p-0" src="../../../../assets/img/edit.png">
+                </button>
             </div>
           
                 <div class="col-sm-5 d-flex justify-content-center align-items-center active-toggle">
@@ -240,15 +264,15 @@
                         <div class="modal-header-left">
                             <h4 class="modal-title" id="modal-basic-title">Attributes</h4>
                         </div>
-                        <div class="modal-header-right">
-                            <p (click)="closeAtrrModal()" class="close-box" aria-label="Close"><img src="assets/img/teambox/icon-close.svg"></p>
+                        <div (click)="closeAtrrModal()" class="modal-header-right">
+                            <p class="close-box" aria-label="Close"><img src="assets/img/teambox/icon-close.svg"></p>
                         </div>
                     </div>
                     <div class="modal-body quickResponse">
                         <input class="search-box" type="text" placeholder="Search" aria-label="Search"
                             aria-describedby="basic-addon2" [(ngModel)]="attributesearch" />
                         <div class="items_list">
-                            <div *ngFor="let alist of attributesList | searchfilter:attributesearch " class="attribute">
+                            <div (click)="selectAttributes(alist)" *ngFor="let alist of attributesList | searchfilter:attributesearch " class="attribute">
                                 <p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
                             </div>
                         </div>

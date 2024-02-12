@@ -41,6 +41,10 @@ p{
     margin-right: 15px;
 }
 
+.custom-control-label {
+    cursor: pointer;
+}
+
 .input-form {
     height: 37px;
     border-radius: 16px;
@@ -54,6 +58,19 @@ p{
     font-size: 14px;
     font-weight: 600;
    }
+
+   .select-content input.form-control {
+    width: 250px;
+    height: 37px;
+    border: 1px solid #EBEBEB;
+    border-radius: 16px;
+   }
+
+   .select-content input.form-control::placeholder {
+    color: #7A86A1;
+    font-size: 12px;
+    font-weight: 350;
+}
 
      // Custom styles for radio buttons
 
@@ -95,6 +112,11 @@ input[type="radio"]:checked + label::before {
     color: #000000;
     font-size: 14px;
 }
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #6149CD;
+    border: none;
+   }
 
 //  toaster styling
 

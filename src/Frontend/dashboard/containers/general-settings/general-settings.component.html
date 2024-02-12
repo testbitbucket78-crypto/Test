@@ -1,4 +1,4 @@
-<div>
+   <div>
     <div class="toaster" (click)="hideToaster()">
         <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
         <p *ngIf="successMessage" class="success">{{successMessage}}</p>
@@ -18,7 +18,7 @@
         </div>
     </div>
     <div class="setting-card" *ngIf="selectedTab==1">
-        <form #defaultActionForm="ngForm" (ngSubmit)="saveDefaultAction()">
+      <form #defaultActionForm="ngForm" (ngSubmit)="saveDefaultAction()">
         <div class="default-actions-heading pb-4">Default Actions</div>
         <div class="pl-2 pr-5 ">
             <div class="d-flex align-items-center custom-control custom-checkbox">
@@ -35,20 +35,16 @@
                     <label class="form-label" for="agentActiveTime">Set Timeout Period</label>
                 </div>
                 <div class="d-flex align-items-baseline">
-                    <input class="form-control" id="agentActiveTime" name="agentActiveTime" type="text" [pattern]="agentActiveTimePattern"
-                    onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"
+                    <input class="form-control" name="pauseAgentActiveTime" type="text" 
+                    [pattern]="agentInactivePattern"
+                     onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"
                     [disabled]="!isAgentActive"
-                    (change)="calculateTime(pauseAutoReplyTime,pauseAgentActiveTime)"
-                     [(ngModel)]="pauseAgentActiveTime">
-                     <label class="px-2" for="agentActiveTime">Minutes</label>
+                    (change)="agentInactiveTill(pauseAgentActiveTime)"
+                    [(ngModel)]="pauseAgentActiveTime"
+                    placeholder="Enter set timeout (1-500 minutes)"
+                    [ngClass]="{'is-invalid':defaultActionForm.controls['pauseAgentActiveTime']?.dirty &&
+                       defaultActionForm.controls['pauseAgentActiveTime']?.hasError('pattern')}">
                 </div>
-                <!--  time will be fill manually inside input box (1min to 500 min limits) [change by client]  -->
-                <!-- <select class="input-form" [disabled]="!isAgentActive" [(ngModel)]="agentActiveTime"> -->
-                    <!-- <option [ngValue]="calculateTime()">5 Minutes</option>
-                    <option [ngValue]="calculateTime()">10 Minutes</option>
-                    <option [ngValue]="calculateTime()">15 Minutes</option>
-                    <option [ngValue]="calculateTime()">20 Minutes</option> -->
-                <!-- </select> -->
             </div>
         </div>
 
@@ -66,20 +62,16 @@
                  <label class="form-label" for="autoReplyTime">Pause Auto Replies for</label>
                 </div>
                 <div class="d-flex align-items-baseline">
-                    <input class="form-control" id="autoReplyTime" name="autoReplyTime" type="text" [pattern]="agentActiveTimePattern"
-                    onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"  
+                    <input class="form-control" name="pauseAutoReplyTime" type="text" 
+                    [pattern]="pauseAutoTimePattern"
+                     onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"  
                      [disabled]="!isAutoReply"
-                     (change)="calculateTime(pauseAutoReplyTime,pauseAgentActiveTime)"
-                     [(ngModel)]="pauseAutoReplyTime">
-                     <label class="px-2" for="autoReplyTime">Minutes</label>
+                     placeholder="Enter autoreply timeout (1-1440 minutes)"
+                     (change)="autoRepliesPausedTill(pauseAutoReplyTime)"
+                     [(ngModel)]="pauseAutoReplyTime"
+                     [ngClass]="{'is-invalid':defaultActionForm.controls['pauseAutoReplyTime']?.dirty &&
+                       defaultActionForm.controls['pauseAutoReplyTime']?.hasError('pattern')}">
                 </div>
-                 <!--  time will be fill manually inside input box (1min to 500 min limits) [change by client]  -->
-                <!-- <select class="input-form" [disabled]="!isAutoReply" [(ngModel)]="autoReplyTime"> -->
-                    <!-- <option [ngValue]="calculateTime()">5 Minutes</option>
-                    <option [ngValue]="calculateTime()">10 Minutes</option>
-                    <option [ngValue]="calculateTime()">15 Minutes</option>
-                    <option [ngValue]="calculateTime()">20 Minutes</option> -->
-                <!-- </select> -->
                 <div class="d-flex align-items-center w-40 py-3 custom-control custom-checkbox">
                     <input class="custom-control-input" type="checkbox" name="isAutoReplyDisable" id="isAutoReplyDisable"
                       (change)="defaultActionState('autoReplyDisable',$event.target.checked)"
@@ -93,7 +85,7 @@
 
         <div class="pl-2 pr-5 pt-3">
             <div class="d-flex align-items-center custom-control custom-checkbox">
-                <input class="custom-control-input" type="checkbox" name="is" id="isContactAdd"
+                <input class="custom-control-input" type="checkbox" name="isContactAdd" id="isContactAdd"
                   (change)="defaultActionState('contactAdd',$event.target.checked)"
                    [(ngModel)]="isContactAdd" >
                 <label class="custom-control-label" for="isContactAdd"><span class="sub-heading">Contact Auto Addition</span></label>
@@ -107,7 +99,7 @@
         <div class="default-footer">
             <button type="submit" [disabled]="defaultActionForm.invalid" [class.disabled]="defaultActionForm.invalid" class="account-btn">Save</button>
         </div>
-    </form>
+     </form>
     </div>
 
     <div *ngIf="selectedTab==2">
