@@ -18,15 +18,17 @@ export class RoutingRulesComponent implements OnInit {
   manualassign = 0;
   assignuser= "";
   timeoutperiod= "";
+  defaultAssignRule='';
+  missedChatOption = '';
   isadmin= 0;
   selectuser="";
+  isMissChatAssigContactOwner=0;
   assignspecificuser= 0;
   usernames!:string;
   userId!:number;
-
   userList:any;
-
   routingRulesData = <routingRulesData>{};
+  chatAssignTimeoutPattern:RegExp = /^(?:[1-9]\d{0,2}|1[0-3]\d{2}|1440)$/;
 
 
   errorMessage='';
@@ -39,7 +41,6 @@ export class RoutingRulesComponent implements OnInit {
     this.spId = Number(sessionStorage.getItem('SP_ID'));
     this.getRoutingRules();
     this.getUserList();
-    // this.saveRoutingRules();
   }
 
 
@@ -64,25 +65,45 @@ export class RoutingRulesComponent implements OnInit {
 
 
   routingRulesState(action: string,checked: boolean) { 
-
     if (action === 'contactowner') {
       this.contactowner = checked ? 1 : 0;
     } if (action === 'assignagent') {
       this.assignagent = checked ? 1 : 0;
-    }if (action === 'broadcast') {
-      this.broadcast = checked ? 1 : 0;
-    }if (action === 'roundrobin') {
-      this.roundrobin = checked ? 1 : 0;
-    } if (action === 'manualassign') {
-      this.manualassign = checked ? 1 : 0;
-    } if (action === 'isadmin') {
-      this.isadmin = checked ? 1 : 0;
-    } if (action === 'assignspecificuser') {
-      this.assignspecificuser = checked ? 1 : 0;
-      console.log('assignspecificuser:', this.assignspecificuser);
-    } 
-
+     } 
+     this.saveRoutingRules();
   }
+
+  defaultAssignmentRules(option:string) {
+    if(option==='broadcast') {
+      this.defaultAssignRule = 'broadcast';
+    } else if(option==='roundrobin') {
+      this.defaultAssignRule = 'roundrobin';
+    } else if (option ==='manualassign') {
+      this.defaultAssignRule = 'manualassign';
+    }
+    this.assignuser = '';
+    this.conversationallowed = '';
+    setTimeout(() => {
+      this.saveRoutingRules();
+    }, 2000);
+  }
+
+  missedChatOptionsChange(option: string) {
+    if (option === 'isMissChatAssigContactOwner') {
+      this.missedChatOption = 'isMissChatAssigContactOwner';
+    } else if (option === 'isadmin') {
+      this.missedChatOption = 'isadmin';
+    } else if (option === 'assignspecificuser') {
+      this.missedChatOption = 'assignspecificuser';
+    }
+    this.selectuser = '';
+    setTimeout(() => {
+      this.saveRoutingRules();
+    }, 2000);
+  }
+
+
+
 
   getUserList() {
     this.apiService.getUserList(this.spId).subscribe((result:any) =>{
@@ -100,11 +121,30 @@ export class RoutingRulesComponent implements OnInit {
     })
   }
 
+  saveNoOfConv() {
+    if(this.roundrobin==1) {
+      this.defaultAssignRule = 'roundrobin';
+      this.saveRoutingRules();
+    }
+  }
 
+  saveAssignUser() {
+    if(this.manualassign==1) {
+      this.defaultAssignRule = 'manualassign';
+      this.saveRoutingRules();
+    }
+  }
+
+  saveSpecificUser() {
+    if(this.assignspecificuser==1) {
+      this.missedChatOption = 'assignspecificuser';
+      this.saveRoutingRules();
+    }
+  }
 
   getRoutingRules() {
     this.apiService.getRoutingRulesData(this.spId).subscribe(response =>{
-          const data = response.autoaddition[0];
+          const data:routingRulesData = response.autoaddition[0];
           console.log(data);
 
           this.contactowner = data.contactowner;
@@ -115,36 +155,66 @@ export class RoutingRulesComponent implements OnInit {
           this.manualassign = data.manualassign;
           this.assignuser = data.assignuser;
           this.timeoutperiod = data.timeoutperiod;
+          this.isMissChatAssigContactOwner = data.isMissChatAssigContactOwner;
           this.isadmin = data.isadmin;
           this.assignspecificuser = data.assignspecificuser;
           this.selectuser = data.selectuser;
+    
+          if(this.broadcast==1) {
+            this.defaultAssignRule = 'broadcast';
+          };
+          if(this.roundrobin==1) {
+            this.defaultAssignRule = 'roundrobin';
+          };
+          if(this.manualassign==1) {
+            this.defaultAssignRule = 'manualassign';
+          };
+          if(this.isMissChatAssigContactOwner==1) {
+            this.missedChatOption = 'isMissChatAssigContactOwner';
+          };
+          if(this.isadmin==1) {
+            this.missedChatOption = 'isadmin';
+          };
+          if(this.assignspecificuser==1) {
+            this.missedChatOption = 'assignspecificuser';
+          }
 
-          
     });
-
+console.log(this.defaultAssignRule)
   }
 
   saveRoutingRules() {
     this.routingRulesData.SP_ID = this.spId;
     this.routingRulesData.contactowner  = this.contactowner;
     this.routingRulesData.assignagent = this.assignagent;
-    this.routingRulesData.broadcast = this.broadcast;
-    this.routingRulesData.roundrobin = this.roundrobin;
-    this.routingRulesData.conversationallowed = this.conversationallowed;
-    this.routingRulesData.manualassign = this.manualassign;
-    this.routingRulesData.assignuser = this.assignuser;
+    if(this.defaultAssignRule) {
+      this.routingRulesData.broadcast = Number(this.defaultAssignRule === 'broadcast' ? '1' : '0');
+      this.routingRulesData.roundrobin = Number(this.defaultAssignRule === 'roundrobin' ? '1' : '0');
+      this.routingRulesData.conversationallowed = this.conversationallowed;
+      this.routingRulesData.manualassign =  Number(this.defaultAssignRule === 'manualassign' ? '1' : '0');
+      this.routingRulesData.assignuser = this.assignuser;
+    }
+
     this.routingRulesData.timeoutperiod = this.timeoutperiod;
-    this.routingRulesData.isadmin = this.isadmin;
-    this.routingRulesData.assignspecificuser = this.assignspecificuser;
-    this.routingRulesData.selectuser = this.selectuser;
+    if(this.missedChatOption) {
+      this.routingRulesData.isMissChatAssigContactOwner = Number(this.missedChatOption === 'isMissChatAssigContactOwner' ? '1' : '0');
+      this.routingRulesData.isadmin = Number(this.missedChatOption === 'isadmin' ? '1' : '0');
+      this.routingRulesData.assignspecificuser = Number(this.missedChatOption === 'assignspecificuser' ? '1' : '0');
+      this.routingRulesData.selectuser = this.selectuser;
+    }
+   
 
 
     this.apiService.saveRoutingRulesData(this.routingRulesData).subscribe(response=>{
       if(response.status === 200) {
-        this.showToaster("Routing Rules Updated Successfully", "Success");
-        this.getRoutingRules();
+        this.showToaster("Routing Rules Updated Successfully", "success");
+        setTimeout(() => {
+          this.getRoutingRules();
+        }, 500);
+
       }
-    })
+    });
+    return this.routingRulesData;
 
   }
 

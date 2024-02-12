@@ -20,7 +20,9 @@ export class GeneralSettingsComponent implements OnInit {
   agentActiveTime='';
   pausedTill='';
   date!:Date;
-  agentActiveTimePattern = /^(?:[1-9]\d{0,2}|[1-4]\d{2}|500)$/;
+  agentInactivePattern:RegExp = /^(?:[1-9]\d{0,1}|[1-4]\d{2}|500)$/;
+  pauseAutoTimePattern:RegExp = /^(?:[1-9]\d{0,2}|1[0-3]\d{2}|1440)$/;
+
 
 
   errorMessage='';
@@ -60,17 +62,16 @@ export class GeneralSettingsComponent implements OnInit {
     this.apiService.getDefaultAction(this.spId).subscribe(response =>{
       const a:defaultActionData = response.defaultaction[0];
       
-     this.isAgentActive = a.isAgentActive;
-     this.isAutoReply = a.isAutoReply;
-     this.agentActiveTime = a.agentActiveTime;
-     this.isAutoReplyDisable =a.isAutoReplyDisable;
-     this.autoReplyTime = a.autoReplyTime;
-     this.isContactAdd = a.isContactAdd;
-     this.pausedTill = a.pausedTill;
-     this.pauseAgentActiveTime = Number(a.pauseAgentActiveTime);
-     this.pauseAutoReplyTime = Number(a.pauseAutoReplyTime);
-
-     console.log(a);
+     this.isAgentActive = a?.isAgentActive;
+     this.isAutoReply = a?.isAutoReply;
+     this.agentActiveTime = a?.agentActiveTime;
+     this.isAutoReplyDisable =a?.isAutoReplyDisable;
+     this.autoReplyTime = a?.autoReplyTime;
+     this.isContactAdd = a?.isContactAdd;
+     this.pausedTill = a?.pausedTill;
+     this.pauseAgentActiveTime = a?.pauseAgentActiveTime;
+     this.pauseAutoReplyTime = a?.pauseAutoReplyTime;
+    //  console.log(a);
 
     })
   }
@@ -79,17 +80,26 @@ export class GeneralSettingsComponent implements OnInit {
 
     if (action === 'agentActiveTime') {
       this.isAgentActive = checked ? 1 : 0;
-    } if (action === 'autoReplyTime') {
+      if(this.isAgentActive==0) {
+        this.pauseAgentActiveTime = 0;
+        this.agentActiveTime ='';
+      }
+    }; if (action === 'autoReplyTime') {
       this.isAutoReply = checked ? 1 : 0;
-    } if (action === 'autoReplyDisable') {
+        if(this.isAutoReply==0) {
+          this.autoReplyTime ='';
+          this.pauseAutoReplyTime = 0;
+          this.pausedTill ='';
+        }
+    }; if (action === 'autoReplyDisable') {
       this.isAutoReplyDisable = checked ? 1 : 0;
-    } if (action === 'contactAdd') {
+    }; if (action === 'contactAdd') {
       this.isContactAdd = checked ? 1 : 0;
     }
 
   }
 
-  calculateTime(pauseDuration:number,inactiveTime:number) {
+  autoRepliesPausedTill(pauseDuration:number) {
     if(this.isAutoReply=1) {
       this.autoReplyTime = this.date.toString();
       let calcTime = new Date(this.date.getTime() + pauseDuration * 60000);
@@ -99,8 +109,10 @@ export class GeneralSettingsComponent implements OnInit {
       this.autoReplyTime = '';
       this.pausedTill= '';
       this.pauseAutoReplyTime=0;
-    }
+    };
+  }
 
+  agentInactiveTill(inactiveTime:number) {
     if(this.isAgentActive=1) {
       let calcTime = new Date(this.date.getTime() + inactiveTime * 60000);
       this.agentActiveTime = calcTime.toString();
@@ -121,16 +133,17 @@ export class GeneralSettingsComponent implements OnInit {
     this.defaultActionData.isAutoReplyDisable = this.isAutoReplyDisable;
     this.defaultActionData.isContactAdd = this.isContactAdd;
     this.defaultActionData.pausedTill = this.pausedTill;
-    this.defaultActionData.pauseAgentActiveTime = String(this.pauseAgentActiveTime);
-    this.defaultActionData.pauseAutoReplyTime = String(this.pauseAutoReplyTime);
-
-    console.log(this.defaultActionData)
+    this.defaultActionData.pauseAgentActiveTime = this.pauseAgentActiveTime;
+    this.defaultActionData.pauseAutoReplyTime = this.pauseAutoReplyTime;
+    // console.log(this.defaultActionData)
 
     this.apiService.saveDefaultAction(this.defaultActionData).subscribe
     ((resopnse :any) => {
-      if(resopnse.status ==200) {
+      if(resopnse.status == 200) {
        this.showToaster('Your settings saved sucessfully','success');
-       this.getDefaultAction();
+       setTimeout(() => {
+        this.getDefaultAction();
+       }, 500);
       }
 
     });

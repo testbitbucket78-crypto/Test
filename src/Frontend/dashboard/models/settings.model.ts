@@ -159,8 +159,8 @@ export interface defaultActionData {
     isAutoReplyDisable:number;
     isContactAdd:number;
     pausedTill:string;
-    pauseAgentActiveTime: string;
-    pauseAutoReplyTime: string;
+    pauseAgentActiveTime: number;
+    pauseAutoReplyTime: number;
 }
 
 export interface defaultMessagesData {
@@ -190,6 +190,7 @@ export interface routingRulesData {
     manualassign:number;
     assignuser:string;
     timeoutperiod:string;
+    isMissChatAssigContactOwner:number;
     isadmin:number;
     assignspecificuser:number;
     selectuser:string;

@@ -402,6 +402,7 @@ onSelectAll(items: any) {
       control?.markAsUntouched();
     });
     this.ShowContactOwner=false;
+    this.showInfoIcon=false;
     this.modalService.dismissAll()
   }
    closesidenav(items: any){

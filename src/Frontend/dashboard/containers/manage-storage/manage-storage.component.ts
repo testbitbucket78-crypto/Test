@@ -18,7 +18,7 @@ export class ManageStorageComponent implements OnInit {
   storageUtilization!:number;
   manageStorage:any=[];
   totalStorage:number = 4;
-  percentage!:number;
+  percentage:number=0;
   autodeletion_message:string ='';
   autodeletion_media:string ='';
   autodeletion_contacts:string ='';
@@ -78,12 +78,11 @@ export class ManageStorageComponent implements OnInit {
 
   getManageStorage() {
     this.apiService.getManageStorageData(this.spid).subscribe(response => {
-     this.storageUtilization = response.storageUtilizationGB;
-     this.manageStorage = response.managestroage[0];
+     this.storageUtilization = response.storageUtilization;
+     this.manageStorage = response.managestroage;
      this.autodeletion_message=this.manageStorage?.autodeletion_message;
      this.autodeletion_media=this.manageStorage?.autodeletion_media;
      this.autodeletion_contacts = this.manageStorage?.autodeletion_contacts;
-     console.log(this.manageStorage);
      this.calculatePercentage();
     });
   }

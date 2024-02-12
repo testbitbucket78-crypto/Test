@@ -178,6 +178,18 @@ input[type="radio"] {
   font-weight: 700!important;
   color: #000000!important;
 }
+
+.override-container .custom-control-label {
+  color: #7A86A1;
+  font-weight: 300;
+  font-size: 13px;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  background-color: #6149CD;
+  border: none;
+ }
+
 // type image
 
 .sel-type-image {
@@ -657,9 +669,13 @@ textarea::placeholder {
   border-radius: 12px 12px 0 0;
 }
 
-.message_type.vid {
-  height: auto;
+.message_type_box {
+  border-radius: 12px!important;
 }
+
+// .message_type.vid {
+//   height: auto;
+// }
 
 .video.message_type video {
   height: 100%;
