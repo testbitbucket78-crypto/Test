@@ -120,6 +120,9 @@ campaignTestData:any;
     })
   }
 
+  removeWorkingHours(index:any){
+    this.workingFormData.splice(index,1);
+  }
   getCampaignTimingList(){
     this._settingsService.getCampaignTimingList(this.sp_Id)
     .subscribe((result:any) =>{
@@ -165,6 +168,7 @@ campaignTestData:any;
       if(result){
         console.log(result);
         this.getCampaignAlertData();
+        $("#teamsModal").modal('hide');
         //this.workingData = result?.result;
       }
     })

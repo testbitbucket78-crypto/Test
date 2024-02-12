@@ -73,6 +73,7 @@ export class RolesSettingsComponent implements OnInit {
     subRightRes:[]=[];
     roleData: any;
     subPrivileges: any;
+    selectedSubRights =[];
     Rights!: number;
     spid!:number;
     rolesData: RolesData = <RolesData>{};
@@ -96,6 +97,7 @@ export class RolesSettingsComponent implements OnInit {
         this.roleName = this.roleData?.RoleName;
         this.selectedRoleId = this.roleData?.roleID;
         this.setSelectedSubRights();
+        this.getSubRights();
         this.userType();
     };
 
@@ -273,9 +275,16 @@ export class RolesSettingsComponent implements OnInit {
         
     }
 
-    checkPrivillage(i:any){
+    getSubRights(){
      //   this.subRightRes
-        console.log(i)
+     this.selectedSubRights = [];
+        this.subPrivileges.forEach((idx:any)=>{
+           let val = this.subRightRes.filter((item:any)=> item.id == Number(idx));
+           console.log(val);
+           if(val)
+           this.selectedSubRights.push(val[0]);
+        });
+        console.log(this.selectedSubRights);
     }
 
 }

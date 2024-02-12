@@ -62,11 +62,11 @@
 					</div>
 					<form [formGroup]="usertemplateForm">
 					<div class="modal-body px-5 pt-0">
-						<div class="d-inline-block flex-column sel-type-link pb-3">
+						<div class="d-inline-block flex-column sel-type-link pb-2">
 							<label for="link" class="linkes mb-2" >Response Name</label>
 							<input type="url" id="linkrespone" formControlName="Header" placeholder="Enter" >
 						   </div>
-						   <div class="d-inline-block flex-column sel-type-link pb-3">
+						   <div class="d-inline-block flex-column sel-type-link pb-2">
 							<label for="link" class="linkch" >Channel</label>
 							
 							<select class="input-form" formControlName="Channel"  id="linken"  required >
@@ -91,21 +91,18 @@
 							 </div>
 	
 							 <div *ngIf="selectedType === 'text'" class="sel-type-text">
-								 <textarea name="text-editor" formControlName="BodyText" maxlength="1024" rows="16" placeholder="Enter"></textarea>
+								 <textarea name="text-editor" formControlName="BodyText" maxlength="1024" rows="6" placeholder="Enter"></textarea>
 							 </div>
 						</div>
 				 
 	
-					   
-	
-					   <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
-					   
+					   <div *ngIf="selectedType === 'image'" class="my-2 sel-type-image">
 							<input type="file" accept="image/jpeg, image/png" formControlName="Links" name="image-select" id="sel-type-image">
 							<label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add.svg" /></label>
 							<p class="m-0">Upload or enter link of image</p>
 					   </div>
 	
-					   <div *ngIf="selectedType === 'video'" class="my-4 sel-type-video">
+					   <div *ngIf="selectedType === 'video'" class="my-2 sel-type-video">
 						<!-- <input type="file" accept="video/mp4"  formControlName="Links" name="video-upload" (change)="handleVideoUpload($event)" id="sel-type-video"> -->
 						<label class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add.svg" /></label>
 						<div class="video-player">
@@ -117,7 +114,7 @@
 					
 					</div>
 				 
-					<div *ngIf="selectedType === 'document'" class="my-4 sel-type-image">
+					<div *ngIf="selectedType === 'document'" class="my-2 sel-type-image">
 							<input type="file" accept=".doc, .docx, .pdf" formControlName="Links" name="document-select" id="sel-type-document">
 							<label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add.svg" /></label>
 							<p class="m-0">Upload or enter link of document</p>
@@ -136,7 +133,7 @@
 						<h6>Body Text</h6> <span>0/1024 Characters</span>
 					 </div>
 					 <div class="sel-type-text">
-						<textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="8" placeholder="Enter"></textarea>
+						<textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="6" placeholder="Enter"></textarea>
 					</div>
 				</div>
 				</div>
