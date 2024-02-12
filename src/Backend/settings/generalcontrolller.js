@@ -399,7 +399,7 @@ const getautodeletion = async (req, res) => {
         res.status(200).send({
             msg: 'routing got successfully !',
             managestroage: resbyspid[0]?.message_size,
-            storageUtilization: storageUtilizationBytes?.totalSize + resbyspid[0]?.message_size,    // data in bytes
+            storageUtilization: storageUtilizationBytes?.totalSize,    // data in bytes
             status: 200
         });
     } catch (err) {
