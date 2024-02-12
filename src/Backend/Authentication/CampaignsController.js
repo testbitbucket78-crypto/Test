@@ -202,6 +202,28 @@ function parseMessageTemplate(template) {
     return placeholders;
 }
 
+function getTimeZoneTimes(serverDateTime ,time_zone){
+  
+    var inputString = time_zone;//time zone value from database
+
+    // Extract hours and minutes from the input string
+    var parts = inputString.split(' ');
+    var timeParts = parts[1].split(':');
+    var hours = parseInt(timeParts[0]);
+    var minutes = parseInt(timeParts[1]);
+
+    // Convert to decimal representation
+    var decimalRepresentation = hours + (minutes / 60);
+
+    //get the timezone offset from local time in minutes
+    var tzDifference = decimalRepresentation * 60;
+
+    //convert the date time to the timezone so that we can directly compare campaign date time with it.
+    var timeToCompareWith = new Date(serverDateTime.getTime() + tzDifference  *60  *1000);
+
+    return timeToCompareWith;
+}
+
 
 
 const sendCampinMessage = async (req, res) => {
@@ -218,18 +240,15 @@ const sendCampinMessage = async (req, res) => {
         let spid = TemplateData.SP_ID
         let media = TemplateData.message_media
         let optInStatus = TemplateData.optInStatus
+        let time_zone = TemplateData && TemplateData.time_zone ? TemplateData.time_zone : 'GMT +5:30';
+ 
         var type = 'image';
         var customerId = TemplateData.customerId
         if (media == null || media == "") {
             var type = 'text';
         }
-        const inputDate = new Date(schedule_datetime).toISOString().slice(0, 19).replace('T', ' ');
-
-        // Get the current date and time
-        const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ')
-       
-
-
+      
+    
         content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
         content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
         content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
@@ -251,11 +270,13 @@ const sendCampinMessage = async (req, res) => {
             });
         }
 
-
+        let serverDateTime = new Date(new Date().toUTCString());
         //let channelType = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [spid])
+       let formattedTime = getTimeZoneTimes(serverDateTime , time_zone)
+       let inputDate = getTimeZoneTimes( new Date(schedule_datetime),time_zone)
 
-        console.log(inputDate, currentDate, inputDate <= currentDate)
-        if (inputDate <= currentDate) {
+        console.log(inputDate, formattedTime, inputDate <= formattedTime)
+        if (inputDate <= formattedTime) {
             let messagestatus;
             if (optInStatus == 'Yes') {
                 const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and isDeleted !=1`;

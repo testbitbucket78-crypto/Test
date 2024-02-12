@@ -122,8 +122,12 @@ const updateTags = (req, res) => {
 const blockCustomer = (req, res) => {
     customerId = req.body.customerId
     isBlocked = req.body.isBlocked
+    let blockedQuery =  val.blockCustomerQuery
+    if(req.body.isBlocked == 1){
+        blockedQuery = `UPDATE EndCustomer SET isBlocked =? ,OptInStatus='No' WHERE customerId =?`
+    }
     var values = [[customerId, isBlocked]]
-    db.runQuery(req, res, val.blockCustomerQuery, [isBlocked, customerId])
+    db.runQuery(req, res, blockedQuery, [isBlocked, customerId])
 }
 
 
