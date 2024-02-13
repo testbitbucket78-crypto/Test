@@ -254,7 +254,6 @@ countryCodes = [
         allowSearchFilter: this.ShowFilter
     };
 
-    this.selectedCountryCode = this.countryCodes[101];
     this.routerGuard();
 		this.getContact();
     this.getUserList();
@@ -268,7 +267,7 @@ contactForm() {
     Name: new FormControl('', [Validators.required,Validators.minLength(3),Validators.maxLength(50),Validators.pattern('^(?:[a-zA-Z.0-9]+|(?:a to z))(?: [a-zA-Z0-9]+)*$')]),
     Phone_number: new FormControl(''),
     displayPhoneNumber: new FormControl('',[Validators.pattern('^[0-9]+$'),Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
-    country_code:new FormControl(''),
+    countryCode:new FormControl('IN +91'),
     emailId: new FormControl('', [Validators.pattern('^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$'),Validators.minLength(5),Validators.maxLength(50)]),
     ContactOwner: new FormControl('',[Validators.required]),
     tag: new FormControl([])
@@ -407,10 +406,10 @@ onSelectAll(items: any) {
   }
    closesidenav(items: any){
     document.getElementById ("sidebar")!.style.width = "0";
+    this.productForm.reset();
+    this.productForm.get('countryCode')?.setValue('IN +91');
     this.contactId=0;
     this.customerData = null;
-    this.productForm.reset();
-    this.selectedCountryCode = this.countryCodes[101];
     this.OptInStatus='No';
    }
 
@@ -444,6 +443,7 @@ onSelectAll(items: any) {
   }
   stopPropagation(event: Event) {
       event.stopPropagation();
+      this.ShowContactOwner = false;
     }
 
   onRowSelected = (event: any) => {
@@ -528,7 +528,7 @@ onSelectAll(items: any) {
                 ActuallName: "Name"
             },
             {
-              displayName: this.productForm.controls.country_code.value,
+              displayName: this.productForm.controls.countryCode.value,
               ActuallName: "CountryCode"
            },
             {
@@ -588,7 +588,6 @@ saveContact(addcontact:any,addcontacterror:any) {
         this.modalService.dismissAll();
         this.closesidenav(this.items);
         this.getContact();
-        this.selectedCountryCode = this.countryCodes[101];
       }
      },
      (error:any) =>{
@@ -606,7 +605,6 @@ saveContact(addcontact:any,addcontacterror:any) {
         this.resetForm();
         this.modalService.open(addcontact);
         this.getContact();
-        this.selectedCountryCode = this.countryCodes[101];
       }
     },
 
@@ -737,9 +735,6 @@ deletContactByID(data: any) {
   patchFormValue(){
     const data:any=this.contactsData
     console.log(data);
-    const displayPhoneNumber = data.displayPhoneNumber;
-    const country_code = data.countryCode;
-
 
     // set tags values in edit tag
     this.getFilterTags = data.tag?.split(',').map((tags: string) =>tags.trim());
@@ -759,11 +754,8 @@ deletContactByID(data: any) {
       if(this.productForm.get(prop))
       this.productForm.get(prop)?.setValue(value)
       this.productForm.get('tag')?.setValue(selectedTags); 
-      this.productForm.get('displayPhoneNumber')?.setValue(displayPhoneNumber);
-      this.selectedCountryCode = country_code;
       this.OptInStatus =data.OptInStatus
       this.isBlocked=data.isBlocked
-      console.log(this.isBlocked)
     }  
   }
 
@@ -840,7 +832,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 // Function to format the phone number using libphonenumber-js
   formatPhoneNumber() {
     const phoneNumber = this.productForm.get('displayPhoneNumber')?.value;
-    const countryCode = this.productForm.get('country_code')?.value;
+    const countryCode = this.productForm.get('countryCode')?.value;
     let formattedPhoneNumber = null;
 
       if (phoneNumber && countryCode) {
