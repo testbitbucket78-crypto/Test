@@ -33,3 +33,9 @@ export interface contactsImageData {
     contact_profile:string,
 
 }
+
+export interface ColumnMapping {
+	displayName: any;
+	ActuallName: any;
+  }
+  
