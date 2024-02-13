@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { ColumnMapping } from 'Frontend/dashboard/models';
 import Stepper from 'bs-stepper';
 import { Router } from '@angular/router';
 declare var $: any;
@@ -53,6 +54,9 @@ export class ImportComponent implements OnInit {
 	displayNameChecked!: boolean[]
 	selectedColumnMapping:any;
 	selectedValue: any;
+	mappedFields:ColumnMapping[][] = [];
+	ContactFormData:any;
+	identifierColumn :any;
 	
 
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService,private _settingsService:SettingsService,private router:Router) {
@@ -137,6 +141,17 @@ export class ImportComponent implements OnInit {
 		this.warningMessage='';
 	}
 
+
+	isIdentifierColumn(content:any){
+		if(this.identifierColumn) {
+			this.stepper.next();
+		}
+		else {
+			$("#importmodal").modal('hide');
+			this.modalService.open(content);
+		}
+	}
+
 	 //**** incorrect file format popup ****//
 	incorrectFile = (content:any) => {	
 		const currentfileformat = this.file?.name.split(".").pop();
@@ -165,6 +180,7 @@ export class ImportComponent implements OnInit {
 			this.getContact.emit('');
 		}
 		else {
+			$("#importmodal").modal('hide'); 
 			this.modalService.open(importfailed);
 		}
 	}
@@ -192,6 +208,90 @@ export class ImportComponent implements OnInit {
 			  });
 		}
 	}
+
+	/****Written by Rishabh Singh  *****/
+
+   /******************* Method to capture mapping selections********************/
+
+	  onSelectMapping(selectedField: string, index: number) {
+		for (let i = 0; i < this.importedData.length; i++) {
+		  const mappedField:ColumnMapping = {
+			displayName: this.importedData[i][this.csvfieldHeaders[index]], // CSV value for current row and selected column
+			ActuallName: selectedField // Selected field from dropdown
+		  };
+		  if (!this.mappedFields[i]) {
+			this.mappedFields[i] = []; // initialised the mappingFields
+		  }
+		  this.mappedFields[i][index] = mappedField;
+		  console.log(mappedField);
+		}
+		if(selectedField == "Phone_number") {
+			this.identifierColumn = selectedField; // set phone number as a identifier column 
+		}
+
+	  }
+	
+	  constructContactFormData() {
+		this.ContactFormData = {
+		  result: []
+		};
+	  
+		// Iterate over each row of mappedFields
+		for (let i = 0; i < this.mappedFields.length; i++) {
+		  const row = this.mappedFields[i];
+		  const rowData = [];
+
+		  // Add SPID to each rowData
+		const SPID = {
+			displayName: this.spid,
+			ActuallName: "SP_ID"
+		  };
+		  rowData.push(SPID);
+	  
+		  // Iterate over each field in the row
+		  for (let j = 0; j < row.length; j++) {
+			const mapping = row[j];
+			const formData = {
+			  displayName: mapping?.displayName,
+			  ActuallName: mapping?.ActuallName
+			};
+			rowData.push(formData);
+		  }
+	  
+		  // Push rowData to result
+		  this.ContactFormData.result.push(rowData);
+		}
+	  
+		return this.ContactFormData;
+	  }
+	  
+	  
+	//******************Add Imported Contacts******************** /
+
+	onImportContacts(modal:any) {
+		const formData = this.constructContactFormData();
+		console.log(formData);
+
+		// api call to add contacts in a bulk manner
+		this.apiService.addContact(formData).subscribe(
+		(response:any) => {
+		if (response.status === 200) {
+			this.modalService.open(modal);
+			$("#importmodal").modal('hide'); 
+			this.file=null;
+			this.stepper.reset()
+			this.getContact.emit('');
+		}
+	},
+		(error)=>{
+			if(error) {
+				console.log(error);
+			}
+		});
+
+}
+
+	/****Written by Rishabh Singh  *****/
 
 //*********Truncate fileName *********//
 
@@ -278,7 +378,7 @@ export class ImportComponent implements OnInit {
 			"field": this.fields,
 			"identifier": this.selectedIdentifier,
 			"purpose": this.purpose,
-			"mapping": this.columnMapping,
+			"mapping": this.ContactFormData,
 			"importedData": this.importCSVdata,
 			"SP_ID":sessionStorage.getItem('SP_ID')
 		}
@@ -313,14 +413,11 @@ export class ImportComponent implements OnInit {
 	updatedDataCount() {
 		console.log("update count" + this.records.length)
 		console.log(this.importedData)
-		this.columnMapping = {
-	
-		}
 		var csvdata = {
 			"field": this.fields,
 			"identifier": this.selectedIdentifier,
 			"purpose": this.purpose,
-			"mapping": this.columnMapping,
+			"mapping": this.ContactFormData,
 			"importedData": this.importedData,
 			"SP_ID": sessionStorage.getItem('SP_ID')
 
@@ -349,9 +446,4 @@ export class ImportComponent implements OnInit {
 		this.selectedColumnMapping = value;
 	  }
 
-
-	  onSelect(event: any): void {
-		this.selectedValue = event.target.value;
-		console.log('Selected Value:', this.selectedValue);
-	  }
 }

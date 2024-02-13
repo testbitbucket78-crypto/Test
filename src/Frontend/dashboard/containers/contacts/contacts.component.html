@@ -488,11 +488,12 @@
 		<h4 class="modal-title" id="modal-basic-title">{{ addContactTitle === 'add' ? 'Add' : 'Edit' }} Contact</h4>
 		<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="resetForm()">X</button>
 	</div>
+	<form [formGroup]="productForm" autocomplete="off" (ngSubmit)="saveContact(addcontact,addcontacterror)">
 	<div class="px-4 modal-body">
-		<form [formGroup]="productForm">
+		
 			<div class="row g-2">
 				<div class="col-md">
-					<label for="floatingInputGrid">Name*</label>
+					<label for="Name">Name*</label>
 					<div class="form-floating">
 						<input class="form-control" type="text"
 						[ngClass]="{'is-invalid':productForm.controls.Name.touched && productForm.controls.Name.errors}"
@@ -515,20 +516,19 @@
 
 			<div class="row g-2 mt-3 mb-2">
 				<div class="col-md">
-					<label for="floatingSelectGrid">Phone Number*</label>
+					<label for="displayPhoneNumber">Phone Number*</label>
 					<div class="form-floating">
 						<div class="d-flex ss">
 							
-						<select class="input-form" id="country_code" formControlName="country_code" [(ngModel)]="selectedCountryCode">
-							<option  *ngFor="let countryCode of countryCodes; let i = index" [ngValue]="countryCode">
+						<select class="input-form" id="countryCode" formControlName="countryCode">
+							<option  *ngFor="let countryCode of countryCodes" [ngValue]="countryCode">
 								{{ countryCode }}
 							</option>
-							</select>
+						</select>
 							<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" style="display: none" />
 							<input type="text" class="form-control" id="displayPhoneNumber" formControlName="displayPhoneNumber" 
-								name="displayPhoneNumber" placeholder="Enter Phone Number"
-								[ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }" 
-							(change)="formatPhoneNumber()"> 
+								name="displayPhoneNumber" placeholder="Enter Phone Number" (change)="formatPhoneNumber()"
+								[ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }" > 
 						</div>
 						<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.valid && 
 						      productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength')"
@@ -549,7 +549,7 @@
 			</div>
 			<div class="row g-2 mt-3 mb-2">
 				<div class="col-md">
-					<label for="floatingInputGrid">Email Id</label>
+					<label for="emailId">Email Id</label>
 					<div class="form-floating">
 						<input class="form-control" type="text"
 							[ngClass]="{'is-invalid' :productForm.controls.emailId.touched && productForm.controls.emailId.errors}"
@@ -564,7 +564,7 @@
 			
 			</div>
 			<div class="p-0 col-md">
-				<label for="floatingInputGrid">Contact Owner*</label>
+				<label for="ContactOwner">Contact Owner*</label>
 					<input class="form-control" type="text" readonly placeholder="Select Contact Owner" name="ContactOwner"
 						formControlName="ContactOwner" id="ContactOwner" (click)="toggleContactOption()" />
 						<div *ngIf="ShowContactOwner" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
@@ -572,9 +572,10 @@
 							  <span>{{uL.name}}</span>
 							</p>
 					    </div>
-	                </div>
+				<div *ngIf="ShowContactOwner" class="overlay" (click)="this.ShowContactOwner=false"></div>
+	        </div>
 
-				<label for="floatingSelectGrid">Tag</label>
+				<label for="tag">Tag</label>
 				<ng-multiselect-dropdown (click)="this.ShowContactOwner=false" class="multiselect" name="tag" formControlName="tag" id="tag"
 					[settings]="dropdownSettings" [data]="tag" [placeholder]="'Select Tag from dropdown'">
 				</ng-multiselect-dropdown>
@@ -585,19 +586,20 @@
 					<span>Message Opt-In</span>
 					      <span class="px-2 opt-In-Info"><img src="../../../../assets/img/info-icon.png" (click)="toggleInfoIcon()">
 							<p *ngIf="showInfoIcon">Opt-In/Opt-Out indicates if your contacts want <br>to receive promotional messages or not.</p>
-					      </span>
+					</span>
 				</div>
 			</div>
 
-			</form>
+		
 		</div>
 
 		<div class="modal-footer px-4 row popfooter">
 
 			<div class="col-md-6 text-right">
-				<button type="submit" [disabled]="productForm.invalid" [class.disabled]="productForm.invalid" class="btn1 btn-success" (click)="c(saveContact(addcontact,addcontacterror))">Save</button>
+				<button type="submit" [disabled]="productForm.invalid" [class.disabled]="productForm.invalid" class="btn1 btn-success">Save</button>
 			</div>
 		</div>
+	 </form>
 	</ng-template>
 	
 	<div class="modal fade" tabindex="-1" id="edittag" role="dialog" data-bs-backdrop="static">

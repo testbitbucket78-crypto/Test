@@ -79,13 +79,16 @@
             <div class="select-heading pt-3 pb-2">
                 Chat Assign Timeout Period
             </div>
+            <form #myForm="ngForm">
             <div class="d-flex align-items-baseline select-content">
-                <input class="form-control" id="chatAssignTimeout" name="chatAssignTimeout" type="text" 
+                <input class="form-control" name="chatAssignTimeout" type="text" 
                     onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"
                     [pattern]="chatAssignTimeoutPattern"
                     [(ngModel)]="timeoutperiod"
-                    placeholder="Enter chat timeout (1-1440 minutes)">
+                    placeholder="Enter chat timeout (1-1440 minutes)"
+                    [ngClass]="{'is-invalid':myForm.controls['chatAssignTimeout']?.dirty && myForm.controls['chatAssignTimeout']?.hasError('pattern')}">
             </div>
+            </form>
             <div class="d-flex py-2">
                 <div class="sel-type-btns">
                     <input type="radio" id="chat-assign-co" name="chat-assign" [checked]="isMissChatAssigContactOwner" (change)="missedChatOptionsChange('isMissChatAssigContactOwner')" [value]="isMissChatAssigContactOwner">
