@@ -772,7 +772,23 @@ const getUserByspid = async (req, res) => {
     }
 }
 
-
+const getUserByuid = async (req,res) =>{
+    try{
+        console.log("req.params.spid,req.params.uid")
+        console.log(req.params.spid,req.params.uid)
+       
+        var getUser = await db.excuteQuery(val.selectUserByIdQuery, [req.params.spid,req.params.uid])
+        res.status(200).send({
+            msg: 'Get user',
+            getUser: getUser,
+            status: 200
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
 
 const addTeam = async (req, res) => {
     try {
@@ -892,5 +908,5 @@ module.exports = {
     uploadCompanylogo, savecompanyDetail, savebillingDetails, savelocalDetails, updateLocalDetails, updatebillingDetails, updateCompanyDetail,
     getbillingDetails, getlocalDetails, getcompanyDetail, saveworkingDetails, getworkingDetails, updateWorkingHours, addholidays, getHolidays, removeHolidays
     , subrights, rights, addRole, getRolesbyroleIDspid, getUserbyspiduserType, deleteRoleByroleIDspid, addUser, rolesListByspid,
-    deleteUser, editUser, getUserByspid, addTeam, deleteTeam, editTeam, teamsListByspid
+    deleteUser, editUser, getUserByspid, addTeam, deleteTeam, editTeam, teamsListByspid ,getUserByuid
 }

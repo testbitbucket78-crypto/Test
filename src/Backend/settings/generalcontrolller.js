@@ -393,11 +393,12 @@ const getautodeletion = async (req, res) => {
         const storageUtilizationMB = storageUtilizationKB / 1024;
         const storageUtilizationGB = (storageUtilizationMB / 1024).toFixed(2);
 
-        // var resbyspid = await db.excuteQuery(val.getdeletion, [req.params.spid])
+         var resultbyspid = await db.excuteQuery(val.getdeletion, [req.params.spid])
         var resbyspid = await db.excuteQuery(val.messageSizeQuery, [req.params.spid, new Date()])
         console.log("routing", resbyspid)
         res.status(200).send({
             msg: 'routing got successfully !',
+            resultbyspid:resultbyspid,
             managestroage: resbyspid[0]?.message_size,
             storageUtilization: storageUtilizationBytes?.totalSize,    // data in bytes
             status: 200

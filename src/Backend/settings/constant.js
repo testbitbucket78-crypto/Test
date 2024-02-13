@@ -49,13 +49,17 @@ getUserQuery = `SELECT * from user where SP_ID=? AND UserType=? AND IsDeleted !=
 deleteQuery = `UPDATE roles set IsDeleted=1 where roleID=? and SP_ID=?`
 
 
-selectAllQuery = `SELECT DISTINCT u.uid, r.RoleName, t.team_name, u.*
+selectAllQuery = `SELECT   r.RoleName,  u.*
+FROM user u
+JOIN roles r ON u.UserType = r.roleID
+WHERE u.SP_ID =? AND u.isDeleted != 1 ;
+`//"SELECT * FROM user WHERE SP_ID=? AND IsDeleted != 1";
+selectUserByIdQuery = `SELECT DISTINCT u.uid, r.RoleName, t.team_name, u.*
 FROM user u
 JOIN roles r ON u.UserType = r.roleID
 LEFT JOIN UserTeamMapping utm ON u.uid = utm.userID
 LEFT JOIN teams t ON utm.teamID = t.id
-WHERE u.SP_ID =? AND u.isDeleted != 1;`//"SELECT * FROM user WHERE SP_ID=? AND IsDeleted != 1";
-//selectByIdQuery = "SELECT * FROM user WHERE uid=? and isDeleted !=1"
+WHERE u.SP_ID =? AND u.isDeleted != 1 and u.uid=?`
 
 selectByIdQuery = `select Company_Name,profile_img from companyDetails where SP_ID=?`
 userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
@@ -261,5 +265,5 @@ module.exports = {
     addCampaignAlerts, deleteCampaignAlerts, selectCampaignAlerts, addCampaignTest, deleteCampaignTest, selectCampaignTest,
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
-    getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery
+    getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery
 }
