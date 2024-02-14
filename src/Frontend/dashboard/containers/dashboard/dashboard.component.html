@@ -160,13 +160,14 @@
             </div>
             <div class="px-3">
               <div class="recentconversation" *ngFor="let items of recentConversation" (click)="routeToPage1()">
-                <img src="assets/img/user-chat-img.svg">
+                <div class="text-capitalize initials"> {{ items.nameInitials }} </div>
+                <!-- <img src="assets/img/user-chat-img.svg"> -->
                 <div class="col-md-8 rc-body">
                   <p class="text-capitalize" id="item-name" [innerHTML]="items.Name"></p>
                   <p id="item-message" [innerHTML]="getLimitedMessageText(items.message_text)"></p>
                 </div>
   
-                <p id="item-date">{{items.interaction_date | date:'h:mm a'}}</p>
+                <p id="item-date"><span *ngIf="items.isread == 0"><div class="red-dot"></div></span>{{items.interaction_date | date:'h:mm a'}}</p>
               </div>
             </div>
   
