@@ -209,14 +209,15 @@ removeMedia() {
   this.defaultMessageForm.get('link')?.setValue(null);
 }
 
-  // remove form values
+  // remove values //
   removeValue() {
+    this.showSideBar=false;
+    this.defaultMessageForm.reset();
     this.selectedPreview = '';
     this.fileName='';
     this.value = null;
     this.selectedType='text';
-    this.defaultMessageForm.get('link')?.setValue(null);
-    this.defaultMessageForm.reset();
+    this.selectedMessageData=<defaultMessagesData>{}
 }
 
   getDefaultMessages() {
@@ -261,16 +262,12 @@ removeMedia() {
     this.value = this.selectedMessageData.value;
   }
 
-  toggleSideBar(data:any,type: number) {
-    if(this.showSideBar = !this.showSideBar) {
+  isShowSideBar(data:any,type: number) {
+      this.showSideBar = true;
       this.selectedMessageData = data;
       this.selectedCategory = type;
       this.patchFormValue();
       console.log(data);
-    }
-    else {
-      this.removeValue()
-    }
   }
 
   populateData(data:any) {

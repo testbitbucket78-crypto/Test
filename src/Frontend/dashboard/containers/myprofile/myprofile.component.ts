@@ -48,7 +48,7 @@ export class MyprofileComponent implements OnInit {
   teamboxNotificationStateData = <teamboxNotifications> {};
   imageChangedEvent: any = '';
   croppedImage: any = '';
-  
+  randomNumber:number = 0;
   errorMessage='';
 	successMessage='';
 	warningMessage='';
@@ -68,7 +68,6 @@ export class MyprofileComponent implements OnInit {
     this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
     this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
     this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
-    this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
     this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
     const nameParts = this.Name.split(' ');
     const firstName = nameParts[0] || '';
@@ -217,6 +216,7 @@ getUserList() {
           if(this.userList[i].uid === this.uid) {
             this.currentUserDetails = this.userList[i];
             this.isActive = this.currentUserDetails.IsActive;
+            this.profilePicture = this.currentUserDetails.profile_img;
           }
         }      
       }
@@ -335,7 +335,8 @@ toggleActiveState(checked: boolean) {
 
     this.showToaster('Image saved successfully','success' + response);
     $("#pictureCropModal").modal('hide');
-    this.profilePicture;
+    this.randomNumber = Math.random();
+    this.getUserList()
    
   },
   (error) => {
