@@ -42,6 +42,7 @@ router.get('/rolesList/:spid',organizationController.rolesListByspid)
 router.post('/deleteUser',organizationController.deleteUser)
 router.post('/editUser',organizationController.editUser)
 router.get('/getUser/:spid',organizationController.getUserByspid)
+router.get('/getUserByuid/:spid/:uid' ,organizationController.getUserByuid)
 
 router.post('/addTeam',organizationController.addTeam)
 router.post('/deleteTeam',organizationController.deleteTeam)

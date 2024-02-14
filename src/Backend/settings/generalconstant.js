@@ -33,7 +33,7 @@ insertRouteQuery=`INSERT INTO routingrules (SP_ID,contactowner,assignagent,broad
 
 // manage storage
 selectmanage = 'select * from managestorage where SP_ID=? AND  isDeleted !=1'
-updatemanagestorage = 'UPDATE  managestorage SET  autodeletion_message=?, autodeletion_media=?, autodeletion_contacts=?, numberof_messages=?, sizeof_messages=?,updated_at=? Where SP_ID=?'
+updatemanagestorage = 'UPDATE  managestorage SET  autodeletion_message=?, autodeletion_media=?, autodeletion_contacts=?, numberof_messages=?, sizeof_messages=?,updated_at=? Where SP_ID=? and isDeleted !=1'
 insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, numberof_messages, sizeof_messages,created_at) VALUES ?'
 getdeletion = 'select * from managestorage where SP_ID=? AND  isDeleted !=1'
 
