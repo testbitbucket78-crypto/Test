@@ -221,6 +221,9 @@ export class ManageStorageComponent implements OnInit {
     this.apiService.postmanualDelation(manualdeletedata).subscribe(response => {
       
       console.log(response);
+      this.deleteManuallyForm.resetForm();
+      this.message_type = '';
+      this.getManageStorage();
     })
     $("#messagedeleteModal").modal('hide');
   }

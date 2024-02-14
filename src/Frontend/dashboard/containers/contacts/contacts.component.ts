@@ -169,6 +169,8 @@ countryCodes = [
     contactId:any = 0;
     OptedIn=false;
     OptInStatus='No';
+    isShowSidebar:boolean=false;
+    randomNumber:number = 0;
     isBlocked:number = 0;
     showInfoIcon:boolean = false;
     ShowContactOwner:any = false;
@@ -189,7 +191,7 @@ countryCodes = [
     dropdownSettings = {};
 
     items: any;
-    customerData: any;
+    customerData:[]=[];
     getFilterTags: [] = [];
     
     orderHeader: String = '';
@@ -389,11 +391,7 @@ onSelectAll(items: any) {
       // console.log(column)
     }
   }
-  
-  opensidenav(contact: any){
-    document.getElementById("sidebar")!.style.width = "400px";
-   }
-   
+     
    resetForm() {
     Object.keys(this.productForm.controls).forEach(controlName => {
       const control = this.productForm.get(controlName);
@@ -405,12 +403,12 @@ onSelectAll(items: any) {
     this.modalService.dismissAll()
   }
    closesidenav(items: any){
-    document.getElementById ("sidebar")!.style.width = "0";
     this.productForm.reset();
     this.productForm.get('countryCode')?.setValue('IN +91');
     this.contactId=0;
-    this.customerData = null;
+    this.customerData = [];
     this.OptInStatus='No';
+    this.isShowSidebar = false;
    }
 
   deleteRow(arr:any ["id"]) {
@@ -488,9 +486,8 @@ onSelectAll(items: any) {
 
 
    rowClicked = (event: any) => {
+    this.isShowSidebar=true; 
     this.getContactById(event.data);
-    this.getImageById(event.data);
-    this.opensidenav(event.contact);
     this.addContactTitle= 'edit';
     this.patchFormValue();
   };
@@ -688,23 +685,14 @@ deletContactByID(data: any) {
 
   getContactById(data: any) {
     this.contactsData = data;
+    this.contactId = data.customerId;
     sessionStorage.setItem('id', data.customerId)
     var SP_ID = sessionStorage.getItem('SP_ID')
-    this.apiService.getContactById(data.customerId, SP_ID).subscribe((data) => {
+    this.apiService.getContactById(data.customerId, SP_ID).subscribe((data:any) => {
+      this.randomNumber = Math.random();
       this.customerData = data;
       this.getContact();
     });    
-  }
-
-  getImageById(data:any) {
-    this.apiService.getContactImage(data.customerId).subscribe((response: any) => {
-      this.contactId = data.customerId;
-      console.log(this.contactId);
-      setTimeout(() => {
-        this.profilePicture = response.msg[0].contact_profile
-      }, 500);
-      
-    });
   }
 
   getTagData() {
@@ -817,10 +805,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     $("#pictureCropModal").modal('hide');
     this.closesidenav(this.items);
     console.log(response+ 'image saved successfully');
-    setTimeout(() => {
-      this.getContact();
-      this.profilePicture;
-   }, 300); 
+    this.getContact();
   }
 },
 (error) => {
