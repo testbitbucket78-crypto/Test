@@ -245,7 +245,7 @@ export class UserSettingsComponent implements OnInit {
     activeDeActiveUser() {
         let userData = <any>{};
         userData.uid = this.uid;
-        userData.isActive = this.isActive? 1 : 0;
+        userData.isActive = this.isActive? 2 : 0;
         this._settingsService.activeUser(userData).subscribe(result => {
             if (result) {
                 this.getUserList();
