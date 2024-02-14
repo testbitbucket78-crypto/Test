@@ -115,13 +115,48 @@
     stroke: #FF89AF;
 }
 .percentage {
-  font-size: 8px;
+  font-size: 6px;
   text-anchor: middle;
-  font-weight: 600;
+  font-weight: 400;
+}
+
+.storage-number {
+  color: #6149CD;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .text-align-center{
     text-align: center;
+}
+
+.auto-deletion-img {
+  width: 70px;
+  height: 65px;
+  border-radius: 27px;
+  background: #FFF4F2;
+  position: relative;
+  overflow: hidden;
+}
+.auto-deletion-img.image1 {
+  background: #F6EFFF;
+}
+
+.auto-deletion-img .img0 {
+  position: absolute;
+  left: 19px;
+  top: 15px;
+}
+
+.auto-deletion-img .img1 {
+  position: absolute;
+  bottom: -8px;
+  right: -10px;
+}
+
+.auto-deletion-img .img2 {
+  position: absolute;
+  bottom: -12px;
 }
 
 .account-btn {
@@ -131,6 +166,10 @@
     border: 1px;    
     color: white;
     font-weight: 400;
+   }
+
+   .account-btn.disabled {
+    background: grey;
    }
 
    .del-btn {
@@ -444,12 +483,12 @@ font-weight: 500;
 }
 
 .toaster p.error {
-background-color: red;
+background-color: #FF3636;
 
 }
 
 .toaster p.success {
-background-color: green;
+background-color: #6149CD;
 }
 
 .toaster p.warn {
