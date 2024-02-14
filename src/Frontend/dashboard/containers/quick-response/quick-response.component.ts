@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {SettingsService} from 'Frontend/dashboard/services/settings.service';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import{ repliestemplateList } from 'Frontend/dashboard/models/settings.model';
 import{ templateList } from 'Frontend/dashboard/models/settings.model';
 import { FormControl, FormGroup } from '@angular/forms';
+import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
+import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 declare var $:any;
 
 @Component({
@@ -42,10 +44,29 @@ export class QuickResponseComponent implements OnInit {
   ischannel='';
 
   
-  
+  fileName: any; 
+  selectedPreview: string = '';
+  @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent;
+
+  public tools: object = {
+      items: [
+          'Bold',
+          'Italic',
+          'StrikeThrough',
+          'EmojiPicker',
+          {
+              tooltipText: 'Attributes',
+              undo: true,
+              click: this.ToggleAttributesOption.bind(this),
+              template:
+                  '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >' +
+                  '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>',
+          },
+      ],
+  };
   
 
-  constructor(config: NgbModalConfig,private modalService: NgbModal,private apiService:SettingsService) { }
+  constructor(config: NgbModalConfig,private modalService: NgbModal,private apiService:SettingsService, private _teamboxService: TeamboxService) { }
 
   ngOnInit(): void {
     this.spid = Number(sessionStorage.getItem('SP_ID'));
@@ -82,6 +103,14 @@ export class QuickResponseComponent implements OnInit {
     });
   }
   
+  ToggleAttributesOption() {
+    $('#atrributemodal').modal('show');
+    $('#newTemplateMessage').modal('hide');
+}
+
+onEditorChange(value: string | null): void {
+    this.usertemplateForm.get('BodyText')?.setValue(value);
+}
 
 
   Template(){
@@ -179,4 +208,44 @@ copyCampaign() {
 showMessageType(type: string) {
   this.selectedType = type;
 }  
+
+removeValue() {
+  this.selectedPreview = '';
+  this.fileName='';
+  this.usertemplateForm.get('Links')?.setValue(null);
+}
+
+
+onFileChange(event: any) {
+  let files: FileList = event.target.files;
+  this.saveVideoAndDocument(files);
+}
+
+ 
+saveVideoAndDocument(files: FileList) {
+  if (files[0]) {
+      let File = files[0];
+      this.fileName = this.truncateFileName(File.name, 25);
+      let spid = this.spid
+      let mediaType = files[0].type;
+      const data = new FormData();
+      data.append('dataFile', File, File.name);
+      data.append('mediaType', mediaType);
+      let name='template-message'
+      this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
+          let responseData: any = uploadStatus;
+          if (responseData.filename) {
+              this.selectedPreview = responseData.filename.toString();
+              console.log(this.selectedPreview);
+          }
+      });
+  }
+}
+
+truncateFileName(fileName: string, maxLength: number): string {
+  if (fileName.length > maxLength) {
+    return fileName.substring(0, maxLength) + '...';
+  }
+  return fileName;
+}
 }
