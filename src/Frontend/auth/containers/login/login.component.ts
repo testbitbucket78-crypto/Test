@@ -36,6 +36,14 @@ export class LoginComponent implements OnInit {
 
     onSubmit() {
         this.loginformValue = this.loginForm.value;
+        this.apiService.ip()
+        .subscribe(result => {
+        this.loginformValue.LoginIP = result?.IPv4;
+        this.login();
+        })
+    }
+
+    login(){
         this.apiService.login(this.loginformValue).subscribe(
             result => {
                 if (result.status === 200) {
