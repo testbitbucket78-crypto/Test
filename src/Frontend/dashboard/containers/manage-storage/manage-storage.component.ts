@@ -234,21 +234,29 @@ export class ManageStorageComponent implements OnInit {
       Manually_deletion_days:this.manually_deletion_days,
       message_type:this.message_type,
      }
-    this.apiService.getmanualDelation(showdeletedata).subscribe(response => {
-      this.showMessages = true;
-      // text message data //
-      this.messageData = response.textSize[0];
-      this.message_count = this.messageData?.message_count;
-      let message_size = this.messageData?.message_size;
-      this.message_size = parseFloat((message_size / (1024 * 1024)).toFixed(2));
-    
 
-      // media message data //
-      this.mediaData = response.mediaSize;
-      this.mediaCount = this.mediaData?.mediaCount;
-      let totalSize = this.mediaData?.totalSize;
-      this.totalSize = parseFloat((totalSize / (1024 * 1024)).toFixed(2));
-    })
+     if(this.manually_deletion_days==0) {
+      this.showToaster('Please enter a valid number of days starting from 1.','error');
+      return;
+     }
+     else {
+      this.apiService.getmanualDelation(showdeletedata).subscribe(response => {
+        this.showMessages = true;
+        // text message data //
+        this.messageData = response.textSize[0];
+        this.message_count = this.messageData?.message_count;
+        let message_size = this.messageData?.message_size;
+        this.message_size = parseFloat((message_size / (1024 * 1024)).toFixed(2));
+      
+  
+        // media message data //
+        this.mediaData = response.mediaSize;
+        this.mediaCount = this.mediaData?.mediaCount;
+        let totalSize = this.mediaData?.totalSize;
+        this.totalSize = parseFloat((totalSize / (1024 * 1024)).toFixed(2));
+      });
+     }
+
   }
  updateMessageType() {
     if (this.textChecked && this.mediaChecked) {

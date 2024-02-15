@@ -461,40 +461,6 @@ width: 22rem;
   height: 12rem;
 }
 
-.toaster {
-float: left;
-width: auto;
-position: fixed;
-right: 50px;
-top: 65px;
-z-index: 9999;
-}
-
-.toaster p {
-padding: 8px;
-font-size: 14px;
-color: #fff;
-margin: 0;
-min-width: 250px;
-text-align: center;
-border-radius: 20px;
-font-weight: 500;
-
-}
-
-.toaster p.error {
-background-color: #FF3636;
-
-}
-
-.toaster p.success {
-background-color: #6149CD;
-}
-
-.toaster p.warn {
-background-color: orange;
-}
-
 .link {
 color: skyblue;
 font-size: 16px;

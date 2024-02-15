@@ -90,12 +90,30 @@
     padding: 16px;
 }
 
+.recentconversation .initials {
+    height: 45px;
+    width: 45px;
+    background: #F6EFFF;
+    text-align: center;
+    line-height: 45px;
+    border-radius: 18px;
+    font-weight: 500;
+}
+
 .rc-body {
     cursor: pointer;
 }
 
 .recentconversation img {
     margin: 0!important;
+}
+
+span .red-dot {
+    background-color: #E02020;
+    border-radius: 50%;
+    width: 6px;
+    height: 6px;
+    margin: 0 8px 0 0;
 }
 
 #item-name {
@@ -115,6 +133,8 @@
 }
 
 #item-date {
+    display: flex;
+    align-items: center;
     margin: 0;
     padding: auto;
     font-size: 13px;

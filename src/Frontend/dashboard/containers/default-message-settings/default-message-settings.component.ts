@@ -320,6 +320,7 @@ removeMedia() {
       if(response) {
         $("#deleteModal").modal('hide');
         this.showSideBar =false;
+        this.removeValue();
         this.getDefaultMessages();
       }
     });
