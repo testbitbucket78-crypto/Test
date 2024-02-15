@@ -478,9 +478,9 @@
 
             <div>
 
-                <div *ngIf="selectedType !== 'text'" class="flex-column sel-type-link">
+                <div *ngIf="selectedType !== 'text' && newTemplateForm.get('Channel')?.value == 'WhatsApp Web'" class="flex-column sel-type-link">
                     <label for="link" id="Links" >Link</label>
-                    <input type="url" id="Links" [attr.disabled]="newTemplateForm.get('Links')?.value !== null ? 'disabled' : null"  (change)="uploadThroughLink()" formControlName="Links" placeholder="Enter">
+                    <input type="url" id="Links" [attr.disabled]="newTemplateForm.get('Links')?.value !== null ? 'disabled' : null"  (change)="uploadThroughLink()" formControlName="Links" placeholder="Paste only a direct link of the media file, No embedded links.">
                 </div>
 
 

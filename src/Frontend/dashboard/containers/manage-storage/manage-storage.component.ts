@@ -37,6 +37,8 @@ export class ManageStorageComponent implements OnInit {
   mediaData:any;
   totalSize:any;
   mediaCount:any;
+  combinedCount:any;
+  combinedSize:any;
 
   errorMessage = '';
 	successMessage = '';
@@ -71,6 +73,10 @@ export class ManageStorageComponent implements OnInit {
     if (this.deleteManuallyForm) {
       this.deleteManuallyForm.resetForm();
       this.message_type = '';
+      this.mediaData=null;
+      this.messageData=null;
+      this.combinedCount=0;
+      this.combinedSize=0;
     }
   }
 
@@ -204,7 +210,8 @@ export class ManageStorageComponent implements OnInit {
       $("#Delete-Manually").modal('hide');
     } else if (this.manually_deletion_days && this.mediaChecked) {
       $("#messagedeleteModal").modal('show');
-      $("#Delete-Manually").modal('hide');    } 
+      $("#Delete-Manually").modal('hide');
+    } 
       else {
       this.showToaster("Please fill input and check the checkbox", "error");
     }
@@ -243,17 +250,32 @@ export class ManageStorageComponent implements OnInit {
       this.apiService.getmanualDelation(showdeletedata).subscribe(response => {
         this.showMessages = true;
         // text message data //
-        this.messageData = response.textSize[0];
-        this.message_count = this.messageData?.message_count;
-        let message_size = this.messageData?.message_size;
-        this.message_size = parseFloat((message_size / (1024 * 1024)).toFixed(2));
+
+        if(this.manually_deletion_days && this.textChecked) {
+          this.messageData = response.textSize[0];
+          this.message_count = this.messageData?.message_count;
+          let message_size = this.messageData?.message_size;
+          this.message_size = parseFloat((message_size / (1024 * 1024)).toFixed(2));
+        };
+        
       
   
         // media message data //
-        this.mediaData = response.mediaSize;
-        this.mediaCount = this.mediaData?.mediaCount;
-        let totalSize = this.mediaData?.totalSize;
-        this.totalSize = parseFloat((totalSize / (1024 * 1024)).toFixed(2));
+
+        if(this.manually_deletion_days && this.mediaChecked) {
+          this.mediaData = response.mediaSize;
+          this.mediaCount = this.mediaData?.mediaCount;
+          let totalSize = this.mediaData?.totalSize;
+          this.totalSize = parseFloat((totalSize / (1024 * 1024)).toFixed(2));
+        };
+       
+
+        // combined data //
+        if(this.message_type == 'Both') {
+          this.combinedSize = Number(this.message_size + this.totalSize);
+          this.combinedCount = Number(this.message_count + this.mediaCount);
+        }
+       
       });
      }
 
