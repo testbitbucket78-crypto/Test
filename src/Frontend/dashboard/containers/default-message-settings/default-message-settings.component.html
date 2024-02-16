@@ -143,7 +143,7 @@
                 <div class="d-inline-block flex-column sel-type-link">
                     <label for="link" id="link" >Link</label>
                     <input type="url" id="link" formControlName="link" [attr.disabled]="defaultMessageForm.get('link')?.value !== null ? 'disabled' : null"
-                       (change)="uploadThroughLink()" placeholder="Enter">
+                       (change)="uploadThroughLink()" placeholder="Paste only a direct link of the media file, No embedded links.">
                    </div>
 
 

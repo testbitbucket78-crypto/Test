@@ -16,14 +16,15 @@ declare var $:any;
 export class MyprofileComponent implements OnInit {
   uid :any;
   spId!:number;
+  ID!:number;
   Name:any;
   EmailId:any;
   PhoneNumber:any;
   firstLetterFirstName!:string;
   firstLetterLastName!:string;
   notificationId!:number;
-  pushNotificationValue= [0, 0, 0, 0];
-  soundNotificationValue=[0, 0, 0 ,0];
+  PushNotificationValue=0;
+  SoundNotificationValue= 0;
   modalReference:any;
   visible:boolean = true;
   currentPasswordType: boolean = true;
@@ -52,6 +53,26 @@ export class MyprofileComponent implements OnInit {
   errorMessage='';
 	successMessage='';
 	warningMessage='';
+  NotificationDataInit:any;
+
+  NotificationData = [
+    { id:1,
+      title:"New Chat Notification",
+      description:"When a new chat is available to be assigned"
+    },
+    { id:2,
+      title:"New Chat Assigned to You",
+      description:"When a new chat is assigned to you (Fresh conversation)"
+    },
+    { id:3,
+      title:"New Message in Your Chat",
+      description:"When you receive a new message in your current conversation"
+    },
+    { id:4,
+      title:"New Chat Assigned to Team",
+      description:"When a new chat is assigned to your team, any team member can choose to assign the chat to himself and start a conversation"
+    }
+  ];
 
   constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private _settingsService:SettingsService,private cdRef: ChangeDetectorRef) { 
     this.changepassword = this.fB.group({
@@ -161,47 +182,73 @@ export class MyprofileComponent implements OnInit {
 
 // save teambox notifications toggle on / off state
 
-saveTeamboxNotificationsState() {
-  this.teamboxNotificationStateData.ID = 0
-  this.teamboxNotificationStateData.UID = this.uid;
-  this.teamboxNotificationStateData.notificationId = this.notificationId;
-  this.teamboxNotificationStateData.PushNotificationValue = this.pushNotificationValue[this.notificationId - 1] ? 1 : 0;
-  this.teamboxNotificationStateData.SoundNotificationValue = this.soundNotificationValue[this.notificationId - 1] ? 1 : 0;
 
-  this.apiService.saveTeamboxNotificationState(this.teamboxNotificationStateData).subscribe((response) => {
-    if(isNullOrUndefined(response)) {
-      console.log(JSON.stringify(this.teamboxNotificationStateData));
+saveTeamboxNotificationsState(data:any) {
+  this.apiService.saveTeamboxNotificationState(data).subscribe((response) => {
+    if((response)) {
+      this.getTeamboxNotificaions();
     }
   });
 }
 
+togglePushNotification(checked:boolean,notificationId: number,ID: number,idx:number) {
+  if(isNullOrUndefined(ID && notificationId)) {
+    this.ID = 0;
+    notificationId = idx+1
+  }
+  else {
+    this.ID = ID;
+  }
+  this.PushNotificationValue = checked ? 1 : 0;
 
+  let PushNotificationData = {
+    ID:this.ID,
+    UID:this.uid,
+    notificationId:notificationId,
+    PushNotificationValue:this.PushNotificationValue,
+    SoundNotificationValue:this.SoundNotificationValue
+  }
+  this.saveTeamboxNotificationsState(PushNotificationData);
+}
 
+toggleSoundNotification(checked:boolean,notificationId: number,ID: number,idx:number) {
+  if(isNullOrUndefined(ID && notificationId)) {
+    this.ID = 0;
+    notificationId = idx+1
+  }
+  else {
+    this.ID = ID;
+  }
+  this.SoundNotificationValue = checked ? 1 : 0;
 
-
-updateNotificationId(notificationId: number) {
-  this.notificationId = notificationId;
-  console.log(this.notificationId)
-  this.saveTeamboxNotificationsState();
+  let SoundNotificationData = {
+    ID:this.ID,
+    UID:this.uid,
+    notificationId:notificationId,
+    PushNotificationValue:this.PushNotificationValue,
+    SoundNotificationValue:this.SoundNotificationValue
+  }
+  this.saveTeamboxNotificationsState(SoundNotificationData);
+  
 }
 
 
 // get teamboxNotificationState
 getTeamboxNotificaions() { 
   this.apiService.getTeamboxNotificationsState(this.uid).subscribe((response) => {
-      const notifyArray = response.notify;
-      console.log(notifyArray)
+    const notifyArray = response.notify;
 
-    if(notifyArray.length > 0) {
-      const lastIndex = notifyArray.length - 1;
-      const data = notifyArray[lastIndex];
-      
-      this.pushNotificationValue = data.PushNotificationValue;
-      this.soundNotificationValue = data.SoundNotificationValue;
-      
-      console.log(data);
-      console.log(this.pushNotificationValue);
-      console.log(this.soundNotificationValue);
+    if (Array.isArray(notifyArray)) {
+
+        this.NotificationDataInit = this.NotificationData.map((notifyData) => {
+            const matchedData = notifyArray.find((item: any) => item.notificationId === notifyData.id);
+            if (matchedData) {
+                return { ...notifyData, ...matchedData };
+            } else {
+                return notifyData;
+            }
+        });
+        console.log(this.NotificationDataInit);
     }
   });
 }
@@ -216,6 +263,7 @@ getUserList() {
           if(this.userList[i].uid === this.uid) {
             this.currentUserDetails = this.userList[i];
             this.isActive = this.currentUserDetails.IsActive;
+            this.randomNumber = Math.random();
             this.profilePicture = this.currentUserDetails.profile_img;
           }
         }      
@@ -335,7 +383,6 @@ toggleActiveState(checked: boolean) {
 
     this.showToaster('Image saved successfully','success' + response);
     $("#pictureCropModal").modal('hide');
-    this.randomNumber = Math.random();
     this.getUserList()
    
   },
@@ -385,8 +432,8 @@ addFunds(addFundsSuccess: any) {
 
   getAvailableAmount() {
     this.apiService.showAvailableAmount(this.spId).subscribe(response => {
-        this.availableAmount = response.AvailableAmout;
-        console.log(this.availableAmount);
+        let amountAvilable = response.AvailableAmout;
+        this.availableAmount = amountAvilable.toFixed(0);
   });
 }
 

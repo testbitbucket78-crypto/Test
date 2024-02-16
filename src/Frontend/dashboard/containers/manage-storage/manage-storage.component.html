@@ -203,12 +203,14 @@
             <div *ngIf="!message_type" class="displaymessage">- -</div>
             <div *ngIf="message_type == 'Text'" class="displaymessage">{{ message_count }}</div>
             <div *ngIf="message_type == 'Media'"  class="displaymessage">{{ mediaCount }}</div>
+            <div *ngIf="message_type == 'Both'"  class="displaymessage">{{ combinedCount }}</div>
             <div class="show-messages">
                 <p>No of Messages</p>
             </div>
             <div *ngIf="!message_type" class="displaymessage">- -</div>
             <div *ngIf="message_type == 'Text'" class="displaymessage">{{ message_size }} MB</div>
             <div *ngIf="message_type == 'Media'" class="displaymessage">{{ totalSize }} MB</div>
+            <div *ngIf="message_type == 'Both'"  class="displaymessage">{{ combinedSize }} MB</div>
             <div  class="show-messages">
                <p> Size of Message</p>
             </div>
@@ -227,6 +229,7 @@
             <div class="modal-body alertmessage">
              <p *ngIf="message_type == 'Text'">You are about to delete <b>{{ message_count}} messages</b>,which will free up<br /> <b>{{ message_size }} MB</b> of data for you</p>
              <p *ngIf="message_type == 'Media'">You are about to delete <b>{{ mediaCount}} messages</b>,which will free up<br /> <b>{{ totalSize }} MB</b> of data for you</p>
+             <p *ngIf="message_type == 'Both'">You are about to delete <b>{{ combinedCount}} messages</b>,which will free up<br /> <b>{{ combinedSize }} MB</b> of data for you</p>
                 <p class="label pb-2"><b>Please</b> confirm to <b>delete</b></p>
                 <div class="delete_group_button d-flex justify-content-center">
                     <button type="button" class="cancel-btn" aria-label="Close" (click)="resetForm()"
