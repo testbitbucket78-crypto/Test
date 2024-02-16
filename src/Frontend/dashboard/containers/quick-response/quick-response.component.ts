@@ -5,13 +5,15 @@ import{ repliestemplateList } from 'Frontend/dashboard/models/settings.model';
 import{ templateList } from 'Frontend/dashboard/models/settings.model';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
-import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
+import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 declare var $:any;
 
 @Component({
   selector: 'sb-quick-response',
   templateUrl: './quick-response.component.html',
-  styleUrls: ['./quick-response.component.scss']
+  styleUrls: ['./quick-response.component.scss'],
+  providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService,CountService]
 })
 export class QuickResponseComponent implements OnInit {
 
@@ -29,6 +31,7 @@ export class QuickResponseComponent implements OnInit {
   usertemplateForm!:FormGroup;
   items: any;
   templates!:any[];
+  initTemplates!:any[];
   messagemedia:any;
   selectedType: string = 'text';
   rolesList:any;
@@ -112,10 +115,15 @@ onEditorChange(value: string | null): void {
     this.usertemplateForm.get('BodyText')?.setValue(value);
 }
 
+filterQuickRes(val:any){
+   this.templates = this.initTemplates.filter(item=> item.Channel == val)
+}
+
 
   Template(){
     this.apiService.getTemplateData(this.spid,0).subscribe(response => {
       this.templates=response.templates;
+      this.initTemplates=response.templates;
       console.log(this.templates);
     });    
   }
@@ -135,14 +143,9 @@ onEditorChange(value: string | null): void {
     let userData=this.saveformmtemplate();
     this.apiService.addTemplate(userData).subscribe(response=>{
       if(response){
-        this.Template();            
+        this.Template();          
+      $("#deleteModal").modal('hide');          
       }
-    console.log(this.TemplateName);
-    console.log(this.Channel);
-    console.log(this.Header);
-    console.log(this.Links);
-    console.log(response);
-
     });
   }
 
@@ -156,10 +159,12 @@ onEditorChange(value: string | null): void {
     userData.created_By=this.created_By;
     console.log(this.created_By);
     userData.Links=this.usertemplateForm.controls.Links.value;
+    userData.Links = this.selectedPreview;
     userData.TemplateName=this.usertemplateForm.controls.TemplateName.value;
     userData.Channel=this.usertemplateForm.controls.Channel.value;
     userData.Header=this.usertemplateForm.controls.Header.value;
     userData.BodyText=this.usertemplateForm.controls.BodyText.value;
+    userData.media_type = this.selectedType;
     return userData;
 
   };
@@ -189,6 +194,7 @@ deleteTemplate(){
   const TemplateID = {
     ID: this.repliestemplateData?.ID
   }
+  
 
   this.apiService.deleteTemplateData(TemplateID)
   
@@ -202,7 +208,14 @@ deleteTemplate(){
 }
 
 copyCampaign() {
-  
+  this.editQuickResponse();
+  this.ID = 0;
+  $("#welcomGreeting").modal('show');
+}
+
+newQuickResponse(){
+  this.usertemplateForm = this.prepareUserForm();
+  this.ID = 0;
 }
 
 showMessageType(type: string) {
@@ -247,5 +260,17 @@ truncateFileName(fileName: string, maxLength: number): string {
     return fileName.substring(0, maxLength) + '...';
   }
   return fileName;
+}
+
+editQuickResponse(){
+  console.log(this.repliestemplateData);
+ this.ID = this.repliestemplateData.ID;
+ this.usertemplateForm.controls.Links.setValue(this.repliestemplateData.Links);
+ this.usertemplateForm.controls.TemplateName.setValue(this.repliestemplateData.TemplateName);
+ this.usertemplateForm.controls.Channel.setValue(this.repliestemplateData.Channel);
+ this.usertemplateForm.controls.Header.setValue(this.repliestemplateData.Header);
+ this.usertemplateForm.controls.BodyText.setValue(this.repliestemplateData.BodyText);
+ this.selectedType = this.repliestemplateData?.media_type;
+ console.log(this.usertemplateForm);
 }
 }

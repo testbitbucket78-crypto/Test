@@ -15,6 +15,9 @@ export class AuthService {
     login(data: Auth): Observable<any> {
         return this.http.post( API_URL+'/login', data);
     }
+    ip(): Observable<any> {
+        return this.http.get( 'https://geolocation-db.com/json/');
+    }
     register(data: authRegister): Observable<any> {
         return this.http.post(API_URL+'/register', data,{headers:{'Content-Type':'application/json'}});
     }

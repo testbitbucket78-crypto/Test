@@ -30,13 +30,12 @@
 						</div>
 					<div class="modal-body px-3 filterchannelsbody">
 						<div class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
-							<input type="radio" class="custom-control-input" id="radio1" name="optradio" value="option1" checked>
+							<input type="radio" class="custom-control-input" id="radio1" name="optradio" (change)="filterQuickRes('WhatsApp Official')" value="option1" checked>
 							<img class="user-img ml-2">
 							<label class="custom-control-label" for="radio1"><span class="ml-2">WhatsApp Official</span></label>
-							
 						  </div>
 						  <div class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
-							<input type="radio" class="custom-control-input" id="radio2" name="optradio" value="option2" >
+							<input type="radio" class="custom-control-input" id="radio2" name="optradio" (change)="filterQuickRes('WhatsApp Web')"  value="option2" >
 							<img class="user-img ml-2">
 							<label class="custom-control-label" for="radio2"><span class="ml-2">WhatsApp Web</span></label>
 							
@@ -51,7 +50,7 @@
 				</div>
 			</ng-template>
 			</div>
-		 <button class="new-message-btn mx-3" data-bs-toggle="modal" data-bs-target="#welcomGreeting">
+		 <button class="new-message-btn mx-3" data-bs-toggle="modal" data-bs-target="#welcomGreeting" (click)="newQuickResponse()">
 			<img class="icoon" src="/assets/img/teambox/add.svg"/> New Quick Response</button>
 		 
 		
@@ -75,18 +74,17 @@
 							
 							<select class="input-form" formControlName="Channel"  id="linken"  required >
 								<option  [disabled]="true" [selected]="true" [hidden]="true">Select channel</option>
-								<option value="0">WhatsApp Web</option>
-								<option value="1">WhatsApp Official</option>
+								<option value="WhatsApp Web">WhatsApp Web</option>
+								<option value="WhatsApp Official">WhatsApp Official</option>
 							</select>
 					
 					
 						   </div>
 						<div class="d-flex justify-content-between align-items-center sel-type-btns">
-							<input type="radio" id="sel-text" class="d-none" name="sel-type" (change)="showMessageType('text')" checked><label class="m-0" for="sel-text">Text</label>
-							<input type="radio" id="sel-image" name="sel-type" class="d-none" (change)="showMessageType('image')"><label  class="m-0" for="sel-image">Image</label>
-							<input type="radio" id="sel-video" name="sel-type" class="d-none" (change)="showMessageType('video')"><label  class="m-0" for="sel-video">Video</label>
-							<input type="radio" id="sel-document" name="sel-type" class="d-none"(change)="showMessageType('document')"><label  class="m-0" for="sel-document">Document</label>
-						  
+							<input type="radio" id="sel-text" class="d-none" name="sel-type" (change)="showMessageType('text')" [checked]="selectedType=='text'"><label class="m-0" for="sel-text">Text</label>
+							<input type="radio" id="sel-image" name="sel-type" class="d-none" (change)="showMessageType('image')" [checked]="selectedType=='image'"><label  class="m-0" for="sel-image">Image</label>
+							<input type="radio" id="sel-video" name="sel-type" class="d-none" (change)="showMessageType('video')" [checked]="selectedType=='video'"><label  class="m-0" for="sel-video">Video</label>
+							<input type="radio" id="sel-document" name="sel-type" class="d-none" (change)="showMessageType('document')" [checked]="selectedType=='document'"><label  class="m-0" for="sel-document">Document</label>
 						</div>
 	
 						<div class="sel-type-text-container">
@@ -113,7 +111,7 @@
 	
 					<div *ngIf="selectedType === 'video'" class="my-4 sel-type-video text-center">
 						<input type="file" accept="video/mp4"  formControlName="Links" name="video-upload" (change)="onFileChange($event)" id="sel-type-video">
-						<label *ngIf="!selectedPreview" class="type_label " for="sel-type-video"><img src="../../../../assets/img/teambox/add.svg" /></label> 
+						<label *ngIf="!selectedPreview" class="type_labels " for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
 						<div class="video-player">
 							<span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
 							  <img src="../../../../assets/img/settings/remove.svg" />
@@ -176,7 +174,7 @@
 	
 	
 					   <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-						<h6>Body Text</h6> <span>0/1024 Characters</span>
+						<h6>Body Text</h6> <span> Characters</span>
 					 </div>
 					 <div class="sel-type-text">
 						<!-- <textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="8" placeholder="Enter" (input)="updateCharacterCount($event,4)"></textarea> -->
@@ -280,7 +278,7 @@
 
 						<div class="action_section">
 							<button type="button" class="btn" (click)="copyCampaign()"><img src="../../../../assets/img/teambox/copy.svg"></button>
-							<button class="titleimg"  data-bs-toggle="modal" data-bs-target="#welcomGreeting"  ><img src="../../../../assets/img/edit.png"></button>
+							<button class="titleimg"  data-bs-toggle="modal" data-bs-target="#welcomGreeting" (click)="editQuickResponse()" ><img src="../../../../assets/img/edit.png"></button>
 							<button type="button" class="btn"  data-bs-toggle="modal" data-bs-target="#deleteModal" ><img src="../../../../assets/img/teambox/delete.svg">	</button>	
 						
 						</div>
@@ -289,7 +287,7 @@
 	
 	  </div> 
 	  
-	  <div *ngIf="templates.length == 0">		
+	  <div *ngIf="templates?.length == 0">		
 		<div  class="template-empty-state">
 			<img src="../../../../assets/img/settings/template-empty.png" />
 			<h5 class="mt-3">No Template</h5>

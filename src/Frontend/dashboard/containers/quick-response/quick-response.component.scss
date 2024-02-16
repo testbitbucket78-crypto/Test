@@ -92,9 +92,22 @@
 
 .gf img {
     position: absolute;
-    margin: 15px 0px 0px 13px;
+    margin: 15px 0px 0px -4px;
     width: 15px;
     height: 15px;
+}
+
+.type_labels{
+    box-shadow: 1px 8px 29px rgba(105, 95, 151, 0.1411764706);
+    border-radius: 19px;
+    opacity: 1;
+    width: 45px;
+    height: 45px;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    z-index: 99999;
+    background: #6149cd;
 }
 
 .new-message-btn {
@@ -871,7 +884,6 @@ input[type="radio"]:checked + label::before {
 .delete-modal{
     width: 355px;
     height: 183px;
-    top: 8rem;
     display: flex;
     margin-left: auto;
     margin-right: auto;
