@@ -55,7 +55,7 @@
 		[suppressRowClickSelection]="true">
 		</ag-grid-angular>
 
-		<div id="sidebar" class="sidebar ">
+		<div *ngIf="isShowSidebar" id="sidebar" class="sidebar ">
 			<button type="button" class=" mt-3 mx-2 btn5 btn-close" aria-label="Close" id="close-btn" (click)="('Cross click')"
 				(click)="closesidenav(items)">X
 			</button>
@@ -63,8 +63,8 @@
 				<div class="p-2 sidebar-head">
 					<div class="parent d-flex justify-content-center w-100">
 						<div class="parent-img">
-							<img *ngIf="!profilePicture" src="../../../../assets/img/teambox/no-dp.svg">
-							<img *ngIf="profilePicture" id="profile-pic" [src]="profilePicture"/>
+							<img *ngIf="!items.contact_profile" src="../../../../assets/img/teambox/no-dp.svg">
+							<img *ngIf="items.contact_profile" id="profile-pic" src="{{items.contact_profile}}?{{randomNumber}}"/>
 							<div class="d-flex justify-content-center picture-crop-button-container">
 								<div class="text-center picture-crop-button">
 								 <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
@@ -649,8 +649,7 @@
 				  <div class="pic-cont">
 						   <image-cropper
 							[imageChangedEvent]="imageChangedEvent"
-							[maintainAspectRatio]="false"
-							[aspectRatio]="4 / 3"
+							[maintainAspectRatio]="true"
 							format="jpg"
 							(imageCropped)="imageCropped($event)">
 							</image-cropper>

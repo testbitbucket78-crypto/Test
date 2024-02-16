@@ -26,18 +26,20 @@
                             <p class="m-0">Sound <br />Notification</p>
                         </div>
                     </div>
-                    <div class="row py-2 justify-content-center">
+                    <div *ngFor="let notifyData of NotificationDataInit; let ith = index" class="row py-2 justify-content-center">
                         <div class="col-sm-12 d-flex teambox-notificaiton-row">
                             <div class="col-sm-1"></div>
                             <div class="col-sm-6 px-2 text-left teambox-notificaiton-content">
-                                <h6 class="m-0 pb-2" >New Chat Notification</h6>
-                                <p class="m-0 pb-2">When a new chat is available to be assigned</p>
+                                <h6 class="m-0 pb-2" >{{notifyData.title}}</h6>
+                                <p class="m-0 pb-2">{{notifyData.description}}</p>
                             </div>
-    
+                            
                             <div class="col-sm-2 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[0]" (change)="updateNotificationId(1)">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" 
+                                      [(ngModel)]="notifyData.PushNotificationValue" 
+                                      (change)="togglePushNotification($event.target.checked,notifyData.notificationId,notifyData.ID,ith)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -45,85 +47,9 @@
                             <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[0]" (change)="updateNotificationId(1)">
-                                      <span class="slider"></span>
-                                    </label>
-                                  </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row py-2 justify-content-center">
-                        <div class="col-sm-12 d-flex teambox-notificaiton-row">
-                            <div class="col-sm-1"></div>
-                            <div class="col-sm-6 px-2 text-left teambox-notificaiton-content">
-                                <h6 class="m-0 pb-2">New Chat Assigned to You</h6>
-                                <p class="m-0 pb-2">When a new chat is assigned to you (Fresh conversation)</p>
-                            </div>
-    
-                            <div class="col-sm-2 d-flex justify-content-center align-items-center">
-                                <div class="p-2 switch-toggle">
-                                    <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[1]" (change)="updateNotificationId(2)">
-                                      <span class="slider"></span>
-                                    </label>
-                                  </div>
-                            </div>
-                            <div class="col-sm-3 d-flex justify-content-center align-items-center">
-                                <div class="p-2 switch-toggle">
-                                    <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[1]" (change)="updateNotificationId(2)">
-                                      <span class="slider"></span>
-                                    </label>
-                                  </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row py-2 justify-content-center">
-                        <div class="col-sm-12 d-flex teambox-notificaiton-row">
-                            <div class="col-sm-1"></div>
-                            <div class="col-sm-6 px-2 text-left teambox-notificaiton-content">
-                                <h6 class="m-0 pb-2">New Message in Your Chat</h6>
-                                <p class="m-0 pb-2">When you receive a new message in your current conversation</p>
-                            </div>
-    
-                            <div class="col-sm-2 d-flex justify-content-center align-items-center">
-                                <div class="p-2 switch-toggle">
-                                    <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[2]" (change)="updateNotificationId(3)">
-                                      <span class="slider"></span>
-                                    </label>
-                                  </div>
-                            </div>
-                            <div class="col-sm-3 d-flex justify-content-center align-items-center">
-                                <div class="p-2 switch-toggle">
-                                    <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[2]" (change)="updateNotificationId(3)">
-                                      <span class="slider"></span>
-                                    </label>
-                                  </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row py-2 justify-content-center">
-                        <div class="col-sm-12 d-flex teambox-notificaiton-row">
-                            <div class="col-sm-1"></div>
-                            <div class="col-sm-6 px-2 text-left teambox-notificaiton-content">
-                                <h6 class="m-0 pb-2">New Chat Assigned to Team</h6>
-                                <p class="m-0 pb-2">When a new chat is assigned to your team, any team member can choose to assign the chat to himself and start a conversation</p>
-                            </div>
-    
-                            <div class="col-sm-2 d-flex justify-content-center align-items-center">
-                                <div class="p-2 switch-toggle">
-                                    <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="pushNotificationValue[3]" (change)="updateNotificationId(4)">
-                                      <span class="slider"></span>
-                                    </label>
-                                  </div>
-                            </div>
-                            <div class="col-sm-3 d-flex justify-content-center align-items-center">
-                                <div class="p-2 switch-toggle">
-                                    <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="soundNotificationValue[3]" (change)="updateNotificationId(4)">
+                                      <input type="checkbox" class="m-0 form-control-checkbox" 
+                                      [(ngModel)]="notifyData.SoundNotificationValue" 
+                                      (change)="toggleSoundNotification($event.target.checked,notifyData.notificationId,notifyData.ID,ith)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -324,7 +250,7 @@
                 <div class="profile-heading">
                   <img id="profile-bg" src="/assets/img/profile/profile-bg.png">
                   <img id="pic-bg" src="assets/img/profile/bg image.png">
-                  <img *ngIf="profilePicture" id="profile-pic" [src]="profilePicture"/>
+                  <img *ngIf="profilePicture" id="profile-pic" src="{{profilePicture}}?{{randomNumber}}"/>
 
                   <div *ngIf="!profilePicture" class="image-container">
                     <span class="initials" > {{ firstLetterFirstName }}{{ firstLetterLastName }} </span>
@@ -354,8 +280,7 @@
                                   <div class="pic-cont">
                                            <image-cropper
                                             [imageChangedEvent]="imageChangedEvent"
-                                            [maintainAspectRatio]="false"
-                                            [aspectRatio]="4 / 3"
+                                            [maintainAspectRatio]="true"
                                             format="jpg"
                                             (imageCropped)="imageCropped($event)">
                                             </image-cropper>

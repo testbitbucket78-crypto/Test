@@ -11,7 +11,7 @@
                 <p>{{data.description}}</p>
                 <button *ngIf="!data.uid"  class="white-btn" data-bs-toggle="modal" (click)="selectedButtonType(idx)" data-bs-target="#welcomGreeting">
                  <img src="../../../../assets/img/teambox/add.svg" class="pr-1"> Configure </button>
-                 <button *ngIf="data.uid" class="white-btn" (click)="toggleSideBar(data,idx)">View & Manage</button>
+                 <button *ngIf="data.uid" class="white-btn" (click)="isShowSideBar(data,idx)">View & Manage</button>
             </div>
           </div>
     </div>
@@ -26,7 +26,10 @@
                     <h5 *ngIf="selectedCategory == 3" class="modal-title">Add Message for No Customer Reply Reminder</h5>
                     <h5 *ngIf="selectedCategory == 4" class="modal-title">Add Message for All Agents Offline</h5>
                     <h5 *ngIf="selectedCategory == 5" class="modal-title">Add Message for No Customer Reply Timeout</h5>
-                    <button (click)="removeValue()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button *ngIf="this.selectedMessageData.value || this.selectedMessageData.link" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                    <button (click)="removeValue()" *ngIf="!this.selectedMessageData.value && !this.selectedMessageData.link" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
@@ -140,7 +143,7 @@
                 <div class="d-inline-block flex-column sel-type-link">
                     <label for="link" id="link" >Link</label>
                     <input type="url" id="link" formControlName="link" [attr.disabled]="defaultMessageForm.get('link')?.value !== null ? 'disabled' : null"
-                       (change)="uploadThroughLink()" placeholder="Enter">
+                       (change)="uploadThroughLink()" placeholder="Paste only a direct link of the media file, No embedded links.">
                    </div>
 
 
@@ -164,7 +167,7 @@
 
     <div class="sideBar" *ngIf="showSideBar" >
         <div class="sidebar-close">
-            <button type="button" class="btn-close" (click)="showSideBar = false">
+            <button type="button" class="btn-close" (click)="removeValue()">
                 <img src="../../../../assets/img/teambox/icon-close.svg">
             </button>
         </div>

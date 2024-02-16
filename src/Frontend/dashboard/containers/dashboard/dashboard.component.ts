@@ -29,6 +29,7 @@ export class DashboardComponent implements OnInit {
     draftCampaign:number = 0;
     Name:any;
     SPID = 0;
+    nameInitials: string[] = [];
    
 
     constructor(private apiService: DashboardService, private router: Router) { }
@@ -134,9 +135,22 @@ export class DashboardComponent implements OnInit {
 
         this.apiService.dashboardRecentConversation(SP_ID).subscribe((data: any) => {
             this.recentConversation = data[0];
-          
-        })
+        
+            this.recentConversation.forEach((item: { Name: string; nameInitials: string; }) => {
+                const nameParts = item.Name.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts[1] || '';
+                const nameInitials = firstName.charAt(0) + lastName.charAt(0);
+    
+                item.nameInitials = nameInitials;
+            });
+        
+            console.log(this.recentConversation);
+        });
+        
+    
     }
+    
 
     getLimitedMessageText(message: string) {
         let maxLength = 70;

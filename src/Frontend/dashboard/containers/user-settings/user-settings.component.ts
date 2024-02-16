@@ -67,7 +67,7 @@ export class UserSettingsComponent implements OnInit {
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
             valueFormatter: (value:any) => {
-                  return value.value == 1 ? 'Active' : 'In Active';
+                  return value.value == 1 ? 'Active'  : value.value == 2 ? 'Disabled' : 'In Active';
               },
         },
         {
@@ -126,7 +126,7 @@ export class UserSettingsComponent implements OnInit {
             this.showSideBar = true;
             this.uid = this.userData?.uid;
             console.log(this.uid);
-            this.isActive = this.userData.IsActive == 1 ? false : true ;
+            this.isActive = this.userData.IsActive == 2 ? true : false ;
             this.patchFormValue();
         }
     };    
@@ -245,7 +245,7 @@ export class UserSettingsComponent implements OnInit {
     activeDeActiveUser() {
         let userData = <any>{};
         userData.uid = this.uid;
-        userData.isActive = this.isActive? 1 : 0;
+        userData.isActive = this.isActive? 2 : this.userData?.IsActive;
         this._settingsService.activeUser(userData).subscribe(result => {
             if (result) {
                 this.getUserList();

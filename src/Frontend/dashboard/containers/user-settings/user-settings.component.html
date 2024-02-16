@@ -129,24 +129,24 @@
                 <span class="heading">{{userData?.name}}</span>
                 <div class="d-flex pt-1">
                     <p>Date of Joining:</p>
-                    <p class="black ">&nbsp;{{userData?.date}}</p>
+                    <p class="black ">&nbsp;{{userData?.CreatedDate ? (userData?.CreatedDate | date : 'dd/mm/yyyy') : 'N/A'}}</p>
                 </div>
             </div>
         </div>
         <div class="flex-row pt-4">
             <div class="w-50">
                 <span class="sub-heading">Last Login Time</span><br>
-                <p class="black">Last Login: {{userData?.LastLogIn}}</p>
+                <p class="black">Last Login: {{userData?.LastLogIn ? (userData?.LastLogIn | date : 'dd/mm/yyyy hh:mm a') : 'N/A' }}</p>
             </div>
             <div class="w-45">
                 <span class="sub-heading">Login IP Address</span><br>
-                <p class="black">{{userData?.LoginIP}}</p>
+                <p class="black">{{userData?.LoginIP ? userData?.LoginIP :'N/A'}}</p>
             </div>
         </div>
         <div class="flex-row  pt-4">
             <div class="w-50">
                 <span class="sub-heading">Email Id</span><br>
-                <p class="black">{{userData?.LoginIP}}</p>
+                <p class="black">{{userData?.email_id}}</p>
             </div>
             <div class="w-45">
                 <span class="sub-heading">Phone Number</span><br>

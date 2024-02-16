@@ -92,7 +92,7 @@ export class RolesSettingsComponent implements OnInit {
     rowClicked = (event: any) => {
         console.log(event);
         this.roleData = event.data;
-        this.subPrivileges = this.roleData.subPrivileges.split(',');
+        this.subPrivileges = this.roleData?.subPrivileges?.split(',');
         this.showSideBar = true;
         this.roleName = this.roleData?.RoleName;
         this.selectedRoleId = this.roleData?.roleID;
