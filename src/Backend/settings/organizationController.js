@@ -798,8 +798,10 @@ const addTeam = async (req, res) => {
         userIDs = req.body.userIDs
         // created_By = req.body.created_By
         created_at = new Date();
-        var teamVal = [[SP_ID, team_name, created_at,created_at,userIDs]]
-       
+        console.log(userIDs)
+        const userIDsString = userIDs.join(', ');
+        const teamVal = [[SP_ID, team_name, created_at,created_at,userIDsString]];
+       console.log(teamVal)
         var teamRes = await db.excuteQuery(val.addteamQuery, [teamVal])
         console.log(teamRes.insertId)
 

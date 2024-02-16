@@ -255,7 +255,7 @@ const addCustomField = async (req, res) => {
         let count = await db.excuteQuery(val.getColCount, [SP_ID]);
 
         CustomColumn = "column" + (count[0].columnCount + 1);
-        let values = [CustomColumn, ColumnName, SP_ID, Type, description, created_at, created_at]
+        let values = [CustomColumn, ColumnName, SP_ID, Type, description, created_at]
 
         let addfiled = await db.excuteQuery(val.addcolumn, [[values]]);
 

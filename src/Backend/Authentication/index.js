@@ -47,7 +47,7 @@ const login = async (req, res) => {
                 const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY);
                 let utcTimestamp = new Date().toISOString();
                 
-                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=? where email_id=?' ,[utcTimestamp,req.body.email_id])
+                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=? where email_id=?' ,[utcTimestamp,req.body.email_id,req.body?.LoginIP])
                 res.status(200).send({
                     msg: 'Logged in!',
                     token,
