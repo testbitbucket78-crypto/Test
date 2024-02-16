@@ -64,7 +64,7 @@
                                     <p class="m-0 p-1">Trigger browser notification request to receive notifications about Teambox<br /> alerts as per your preference above</p>
                                 </div>
                                 <div class="enable-notification-btn">
-                                    <button>Enable Notifications</button>
+                                    <button (click)="requestPermission()">Enable Notifications</button>
                                 </div>
                             </div>
                           
@@ -80,12 +80,9 @@
                     <div class="col-sm-6 pr-3 pl-0">
                         <div class="billing-card">
                             <div class="text-right p-4 billing-card-head">
-                                <!-- <img src="../../../../assets/img/profile/dots.png" /> -->
+                                <img class="dotted-pic" src="../../../../assets/img/profile/dots.png" />
                                 <button (click)="selectTab(3)" class="px-4 py-2" >Manage Plan</button>
                             </div>
-                            <!-- <div class="text-center p-4 billing-bg-img">
-                                <img src="assets/img/profile/img2.png">
-                            </div> -->
                             <div class="text-center p-2 txt-head">
                                 <h2 class="m-0 p-2">Premium+</h2>
                             </div>
@@ -115,7 +112,7 @@
                                         <div class="modal-header align-items-center">
                                             <h5 class="modal-title">Add Funds</h5>
                                             <button (click)="this.addFundsForm.reset()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                                <img src="../../../../assets/img/teambox/icon-close.svg">
+                                                <img (click)="selectedDiv=6" src="../../../../assets/img/teambox/icon-close.svg">
                                             </button>
                                         </div>
                                         <div class="modal-body text-center addfundsbody">
@@ -136,13 +133,13 @@
                                        
                                            <div class="col-sm-12 pt-5 d-flex justify-content-around align-items-center amount-body">  
                                             <div class="sel-amount" (click)="fillAmount(500,0)" [class.sel-amount-active]="selectedDiv === 0">500</div>
-                                           <div class="sel-amount" (click)="fillAmount(1000,1)" [class.sel-amount-active]="selectedDiv === 1">1000</div>
-                                           <div class="sel-amount" (click)="fillAmount(1500,2)" [class.sel-amount-active]="selectedDiv === 2" >1500</div>
+                                           <div class="sel-amount" (click)="fillAmount(750,1)" [class.sel-amount-active]="selectedDiv === 1">750</div>
+                                           <div class="sel-amount" (click)="fillAmount(1000,2)" [class.sel-amount-active]="selectedDiv === 2" >1000</div>
                                         </div>
                                         <div class="col-sm-12 pb-5 d-flex justify-content-around align-items-center amount-body">  
                                           <div class="sel-amount"  (click)="fillAmount(2000,3)" [class.sel-amount-active]="selectedDiv === 3">2000</div>
-                                            <div class="sel-amount" (click)="fillAmount(2500,4)" [class.sel-amount-active]="selectedDiv === 4">2500</div>
-                                            <div class="sel-amount" (click)="fillAmount(3000,5)" [class.sel-amount-active]="selectedDiv === 5">3000</div>
+                                            <div class="sel-amount" (click)="fillAmount(3000,4)" [class.sel-amount-active]="selectedDiv === 4">3000</div>
+                                            <div class="sel-amount" (click)="fillAmount(5000,5)" [class.sel-amount-active]="selectedDiv === 5">5000</div>
                                             </div>
                                         </div>
                                         <div class="modal-footer justify-content-center my-4 border-0">
@@ -167,7 +164,7 @@
                                     </div>
                                         <div class="modal-footer pt-0 justify-content-center addFundsSuccessfooter">
                                               
-                                                <button type="button" aria-label="Close" (click)="d('Cross click')">Ok, Got it</button>
+                                                <button type="button" aria-label="Close" (click)="closeModal()">Ok, Got it</button>
                                             
                                         </div>
                                     </div>
@@ -205,7 +202,7 @@
                                         </div>
                                         <div class=" m-2 cardholder-detail">
                                             <p class="m-0 card-number">MasterCard •••• 3268</p>
-                                            <p class="m-0 expiry">Checking - Expires 12/22</p>
+                                            <p class="m-0 expiry">Checking - Expires 12/25</p>
                                         </div>
                     
                                       </div>

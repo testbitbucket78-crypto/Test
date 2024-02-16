@@ -4,6 +4,7 @@ import { FormBuilder,FormGroup,Validators } from "@angular/forms";
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { NotificationService } from 'Frontend/dashboard/services/notification.service';
 import { addFundsData, profilePicData, teamboxNotifications } from 'Frontend/dashboard/models/profile.model';
 import { isNullOrUndefined } from 'is-what';
 declare var $:any;
@@ -74,7 +75,7 @@ export class MyprofileComponent implements OnInit {
     }
   ];
 
-  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private _settingsService:SettingsService,private cdRef: ChangeDetectorRef) { 
+  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private _settingsService:SettingsService,private notificationService: NotificationService,private cdRef: ChangeDetectorRef) { 
     this.changepassword = this.fB.group({
       uid: this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid,
       oldPass:['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
@@ -353,6 +354,10 @@ toggleActiveState(checked: boolean) {
 
 }
 
+closeModal() {
+  this.modalService.dismissAll();
+}
+
 
 //  image cropping function for popup
 
@@ -431,9 +436,23 @@ addFunds(addFundsSuccess: any) {
   }
 
   getAvailableAmount() {
+    
     this.apiService.showAvailableAmount(this.spId).subscribe(response => {
         let amountAvilable = response.AvailableAmout;
-        this.availableAmount = amountAvilable.toFixed(0);
+        this.availableAmount = amountAvilable.toFixed(2);
+  });
+}
+
+// enable browser notifications
+requestPermission(): void {
+  this.notificationService.requestPermission().then(permission => {
+    if (permission === 'granted') {
+      
+      this.notificationService.showNotification('Teambox Notifications Enabled!');
+    } else {
+     
+      console.error('Notification permission denied.');
+    }
   });
 }
 

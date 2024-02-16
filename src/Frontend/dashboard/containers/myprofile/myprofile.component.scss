@@ -301,6 +301,14 @@
 .billing-card-head {
     background: url(/assets/img/profile/img2.png) center no-repeat;
     min-height: 145px;
+    position: relative;
+    overflow: hidden;
+}
+
+.dotted-pic {
+    position: absolute;
+    top: -139px;
+    right: -72px;
 }
 
 .billing-history-btn button {
@@ -321,6 +329,8 @@
     background: #6149CD 0% 0% no-repeat padding-box;
     font-size: 0.7rem;
     border-radius: 12px;
+    z-index: 1040;
+    position: inherit;
 
 }
 

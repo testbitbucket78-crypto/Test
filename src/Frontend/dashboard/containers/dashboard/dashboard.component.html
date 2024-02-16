@@ -176,14 +176,14 @@
                
                 <img src="assets/img/img2.png" class="pb-3" alt="error">
                 <p class="txt-1">Premium+</p>
-                <p class="txt-2">$0.5 per message</p>
+                <p class="txt-2">₹0.50 per message</p>
               </div>
   
               <div class="card10-c mx-3 py-4">
                 <p class="txt-1" style="margin-top:30px">Your available balance</p>
-                <p class="txt-2" style=" font-size: 27px;"><b>$7.309.68</b></p>
+                <p class="txt-2" style=" font-size: 27px;"><b>₹{{availableAmount}}</b></p>
                 <div class="col-sm-12">
-                  <button>Add Funds</button>
+                  <button [routerLink]="['/dashboard/myprofile']">Add Funds</button>
                 </div>
               </div>
             </div>
