@@ -38,7 +38,6 @@ routerGuard = () => {
 	@ViewChild('notesSection') notesSection: ElementRef | any; 
 	@ViewChild('chatSection') chatSection: ElementRef | any; 
 	@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
-	
 
 	
 	public selection: NodeSelection = new NodeSelection();
@@ -129,10 +128,7 @@ routerGuard = () => {
 			'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
 			];
 
-		
 	custommesage='<p>Your message...</p>'
-	
-	SearchKey!:string;
 	customenotes='<p>Type...</p>'
 	showQuickResponse:any=false;
 	showAttributes:any=false;
@@ -243,13 +239,7 @@ routerGuard = () => {
 
 		this.newContact= fb.group({
 			SP_ID: new FormControl('', Validators.required),
-			Name: new FormControl('',[
-				Validators.required,
-				Validators.minLength(3),
-				Validators.maxLength(50),
-				Validators.pattern(/^[^!@#$%]+$/), // Exclude special characters
-				Validators.pattern(/^\D+$/) // Allow only non-digit characters
-			  ]),
+			Name: new FormControl('', Validators.required),
 			country_code: new FormControl(''),
 			Phone_number: new FormControl(''),
 			displayPhoneNumber: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
@@ -528,7 +518,6 @@ filterTemplate(temType:any){
 
 	
 }
-
 
   public async onInsert(item: any) {
 	
@@ -814,7 +803,6 @@ sendattachfile(){
 								this.selectInteraction(this.selectedInteraction)
 								this.scrollChatToBottom()
 								this.tickUpdate(message)
-								this.createInteraction
 							// }, 100);
 
 							}					
@@ -1029,10 +1017,10 @@ sendattachfile(){
 	if(event.target.value.length>2){
 		var searchKey =event.target.value
 		this.interactionSearchKey = searchKey
-		// this.getAllInteraction()
+		this.getAllInteraction()
 	}else{
 		this.interactionSearchKey = ''
-		// this.getAllInteraction()
+		this.getAllInteraction()
 	}
 	
 	}
@@ -1417,11 +1405,7 @@ updateCustomer(){
 	InstagramId:this.EditContactForm.InstagramId,
 	customerId:this.EditContactForm.customerId,
 	}
-	const nameRegex = /^[^!@#$%\d]{3,50}$/;
-  if (!nameRegex.test(bodyData['Name'])) {
-    this.showToaster('Name should have 3 to 50 characters and not contain special characters or single digits.', 'error');
-    return;
-  }
+
 	if(this.EditContactForm.OptInStatusChecked){
 		bodyData['OptInStatus'] = 'Yes';
 	}else{
@@ -1429,7 +1413,7 @@ updateCustomer(){
 	}
 	//console.log(bodyData)
 
-	if(bodyData['Name']!='' && (bodyData['displayPhoneNumber'] && bodyData['displayPhoneNumber'].length < 6) ||  bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
+	if(bodyData['Name']!='' && bodyData['displayPhoneNumber'].length>=6 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
 		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
 		this.selectedInteraction['Name']=this.EditContactForm.Name
 		this.selectedInteraction['countryCode']=this.EditContactForm.country_code
@@ -1450,9 +1434,10 @@ updateCustomer(){
 			}
 			this.showToaster('Contact information updated...','success');
 		});
-	}else {
+	}
+
+	else {
 		this.showToaster('Name, Phone Number, and Email ID are required.', 'error');
-    return;
 	}
 }
 
@@ -1861,29 +1846,7 @@ createCustomer() {
 	this.newContact.value.SP_ID = this.SPID;
 	this.newContact.value.Channel = this.selectedChannel;
 	var bodyData = this.newContact.value;
-  
-	// Validation for Name
-	if (bodyData['Name'].length > 50 || !/^[a-zA-Z ]+$/.test(bodyData['Name'])) {
-	  this.showToaster('Name should have a maximum of 50 characters and should only contain letters and spaces.', 'error');
-	  return;
-	}
-  
-	// Validation for Special characters in Name
-	if (/[@!#$%^&*(),.?":{}|<>]/.test(bodyData['Name'])) {
-	  this.showToaster('Special characters like !@#$%^&*(),.?":{}|<> are not allowed in the Name field.', 'error');
-	  return;
-	}
-
-	if (bodyData['Phone_number'].length < 6 || bodyData['Phone_number'].length > 15) {
-        this.showToaster('Phone number should be between 6 and 15 characters.', 'error');
-        return;
-    }
-  
-	// Validation for Single digit not allowed
-	if (/^[0-9]$/.test(bodyData['Name']) || bodyData['Name'].length < 3) {
-	  this.showToaster('Name should have a minimum of 3 characters and should not be a single digit.', 'error');
-	  return;
-	}
+	console.log(bodyData);
   
 	if (bodyData['OptedIn']) {
 	  bodyData['OptedIn'] = 'Yes';
@@ -1891,18 +1854,17 @@ createCustomer() {
   
 	if (bodyData['Name'] !== '' && bodyData['Phone_number'].length >= 10) {
 	  this.apiService.createCustomer(bodyData).subscribe(
-		async (response: any) => {
-		  var responseData: any = response;
-		  var insertId: any = responseData.insertId;
-		  if (insertId) {
-			this.createInteraction(insertId);
-			this.newContact.reset();
-			this.getAllInteraction();
-		  }
-		},
+		async (response:any) => {
+		 
+			var responseData: any = response;
+			var insertId: any = responseData.insertId;
+			if (insertId) {
+				this.createInteraction(insertId);
+				this.newContact.reset();
+			}},
 		async (error) => {
 		  if (error.status === 409) {
-			this.showToaster('Phone Number already exists. Please try another Number.', 'error');
+			this.showToaster('Phone Number already exist. Please Try another Number', 'error');
 		  }
 		}
 	  );
@@ -1912,12 +1874,10 @@ createCustomer() {
 	this.getAllInteraction();
   }
   
-  
-
 
 createInteraction(customerId:any) {
 var bodyData = {
-	customerId: customerId.customerId	,
+	customerId: customerId,
 	spid:this.SPID
 
 }

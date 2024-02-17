@@ -17,10 +17,11 @@
 
 	<!-- filter-popup -->
 				<div class="custom_row pl-3 pt-3 ">
-					<input
-					[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
-					aria-label="Search" aria-describedby="basic-addon2"
-					[(ngModel)]="SearchKey"/>
+					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
+						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
+						aria-label="Search" aria-describedby="basic-addon2" />
+
+
 
 					<div *ngIf="!searchFocused" class="drop-down-btn" (click)="addfilters()">
 						<div class="toggle-box" (click)="toggleFilerOption()"><img
@@ -57,7 +58,7 @@
 				</div>
 				<div>
 					<div class="all_contacts pl-2">
-						<div *ngFor="let item of interactionList | searchfilter:SearchKey  let i = index" id={{i}}
+						<div *ngFor="let item of interactionList; let i = index" id={{i}}
 							(click)="selectInteraction(item)"
 							[ngClass]="item.selected ? 'contacts_row active' : 'contacts_row'">
 							<div class="contacts_item">
@@ -132,7 +133,6 @@
 							<div class="time_circle">
 								<!-- <div role="progressbar" style={{selectedInteraction.progressbar.progressbarPer}}>{{selectedInteraction.progressbar.progressbarValue}}H</div> -->
 								<div role="progressbar">{{selectedInteraction?.progressbar?.progressbarValue}}H</div>
-								  
 							</div>
 							<div class="drop-down-btn">
 								<button
@@ -186,12 +186,10 @@
 									<p class="label">Assign To</p>
 									<p *ngFor="let user of agentsList;let k = index"
 										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)">
-										<span key={k} class="message-box">
+										<span key={k}>
 											<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
 											{{user.name}}
-											<img class="tick-icon" src="../../../../assets/img/icon-selected.png">
 										</span>
-										
 									</p>
 								</div>
 							
@@ -233,7 +231,6 @@
 											<img class="preview_icon" *ngIf="message.media_type == 'application/pdf'"
 												src="/assets/img/teambox/doc_preview.png"
 												(click)="downloadFile(message.message_media)">
-												
 
 											<img *ngIf="message.media_type == 'image/jpeg'"
 												src={{message.message_media}}>
@@ -243,14 +240,15 @@
 												src={{message.message_media}}>
 											<img *ngIf="message.media_type == 'image/webp'"
 												src={{message.message_media}}>
+
+
 										</div>
 										<div class="message_text" [innerHTML]="message.message_text">
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
 										</div>
 										
-										<span class="message_time" *ngIf="message.created_at">
-											<p *ngIf="message.media_type" >{{message.mediaSize}}KB</p>
-											{{timeSince(message.created_at)}}
+										<span class="message_time"
+											*ngIf="message.created_at">{{timeSince(message.created_at)}}
 											<div class="pl-2" *ngIf="message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out'">
 												<div class="doubleee">
 												  <img [src]="tickUpdate(message)" alt="">
@@ -849,7 +847,7 @@
 
 							</div>
 							<div class="template_list">
-								<div class="template_box" *ngFor='let template of allTemplates  | searchfilter:templatesearchreply   ; let i = index' (click)="selectAttributes(template)">
+								<div class="template_box" *ngFor='let template of allTemplates; let i = index' >
 								  <div class="template_box_inner d-flex align-items-start">
 									<input type="radio" name="sel-template" id="sel-template">
 									<label class="radio-label" id="sel-template" for="sel-template"></label>
@@ -872,6 +870,10 @@
 								  </div>
 								
 								  <div class="template_btn">
+									<!-- <button type="button" class="btn">YES</button>
+									<button type="button" class="btn">NO</button> -->
+									<!-- <button type="button" class="btn">EXPLORE</button> -->
+						  
 								  </div>
 						  
 								</div>
@@ -1265,7 +1267,6 @@
 
 				<div class="contact_item" *ngFor="let item of contactList | searchfilter:header; let i = index"
 					(click)="createInteraction(item.customerId)">
-					
 					<div class="contact_item_left">
 						<img class="profile_icon" src="/assets/img/teambox/Richie_1.png" />
 						<div>
