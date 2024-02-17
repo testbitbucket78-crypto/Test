@@ -9,7 +9,6 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
 const getCampaigns = (req, res) => {
     let Query = "SELECT * from Campaign  where  Campaign.is_deleted =0 and Campaign.sp_id=" + req.body.SPID
     if (req.body.key) {
@@ -203,7 +202,7 @@ function parseMessageTemplate(template) {
 }
 
 function getTimeZoneTimes(serverDateTime ,time_zone){
-  
+  //console.log(serverDateTime ,time_zone)
     var inputString = time_zone;//time zone value from database
 
     // Extract hours and minutes from the input string
@@ -211,7 +210,6 @@ function getTimeZoneTimes(serverDateTime ,time_zone){
     var timeParts = parts[1].split(':');
     var hours = parseInt(timeParts[0]);
     var minutes = parseInt(timeParts[1]);
-
     // Convert to decimal representation
     var decimalRepresentation = hours + (minutes / 60);
 
@@ -219,11 +217,9 @@ function getTimeZoneTimes(serverDateTime ,time_zone){
     var tzDifference = decimalRepresentation * 60;
 
     //convert the date time to the timezone so that we can directly compare campaign date time with it.
-    var timeToCompareWith = new Date(serverDateTime.getTime() + tzDifference  *60  *1000);
-
+    var timeToCompareWith = new Date(serverDateTime.getTime() + tzDifference  *60  *1000)
     return timeToCompareWith;
 }
-
 
 
 const sendCampinMessage = async (req, res) => {
@@ -270,17 +266,18 @@ const sendCampinMessage = async (req, res) => {
             });
         }
 
-        let serverDateTime = new Date(new Date().toUTCString());
-        //let channelType = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [spid])
-       let formattedTime = getTimeZoneTimes(serverDateTime , time_zone)
-       let inputDate = getTimeZoneTimes( new Date(schedule_datetime),time_zone)
+         let serverDateTime = new Date();
+         let formattedTime = getTimeZoneTimes(serverDateTime , time_zone)
 
-        console.log(inputDate, formattedTime, inputDate <= formattedTime)
-        if (inputDate <= formattedTime) {
+        //let channelType = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [spid] 
+       let inputDate = new Date(schedule_datetime);
+   
+        if (new Date(inputDate) <= new Date(formattedTime)) {
             let messagestatus;
             if (optInStatus == 'Yes') {
                 const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and isDeleted !=1`;
                 let results = await db.excuteQuery(sqlQuery, [customerId]);
+                console.log(results ,"****" ,customerId)
                 if (results?.length > 0) {
                     messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
                 }
