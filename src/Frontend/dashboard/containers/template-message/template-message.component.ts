@@ -278,6 +278,7 @@ export class TemplateMessageComponent implements OnInit {
                 let responseData: any = uploadStatus;
                 if (responseData.filename) {
                     this.selectedPreview = responseData.filename.toString();
+                    this.newTemplateForm.get('Links')?.setValue(this.selectedPreview);
                     console.log(this.selectedPreview);
                 }
             });
