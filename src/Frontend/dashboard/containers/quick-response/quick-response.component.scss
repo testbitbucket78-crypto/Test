@@ -1073,7 +1073,7 @@ select:invalid { color: gray; }
 
   .quick-response-modal .modal-dialog{
     height: 94vh;
-    margin-top: 2vh;
+    margin-top: 3vh !important;
   }
 
 .quick-response-modal .form-height{
@@ -1094,4 +1094,11 @@ select:invalid { color: gray; }
     display: flex;
     align-items: center;
     padding-left: 15px;
+    font-weight: bold;
   }
+
+//   #welcomGreeting{
+//     display: flex !important;
+//     /* display: block; */
+//     align-items: center !important;
+//   }
