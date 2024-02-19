@@ -3,7 +3,7 @@ import {SettingsService} from 'Frontend/dashboard/services/settings.service';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import{ repliestemplateList } from 'Frontend/dashboard/models/settings.model';
 import{ templateList } from 'Frontend/dashboard/models/settings.model';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
 import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
@@ -100,9 +100,13 @@ export class QuickResponseComponent implements OnInit {
     return new FormGroup({
       Links:new FormControl(),
       TemplateName:new FormControl(),
-      Header:new FormControl(),
+      Header:new FormControl('',[
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z.-]+(?:\s+[a-zA-Z.-]+)*$/),
+        Validators.minLength(2),
+      ]),
       BodyText:new FormControl(),
-      Channel:new FormControl(),
+      Channel:new FormControl('',[Validators.required]),
     });
   }
   
@@ -140,13 +144,18 @@ filterQuickRes(val:any){
 
 
   saveTemplate(){
+    if(this.usertemplateForm.valid){
     let userData=this.saveformmtemplate();
     this.apiService.addTemplate(userData).subscribe(response=>{
       if(response){
         this.Template();          
+      $("#welcomGreeting").modal('hide');          
       $("#deleteModal").modal('hide');          
       }
     });
+  }else{
+    this.usertemplateForm.markAllAsTouched();
+  }
   }
 
 

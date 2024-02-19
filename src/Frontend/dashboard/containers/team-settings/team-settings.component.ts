@@ -218,7 +218,8 @@ export class TeamSettingsComponent implements OnInit {
         this.selectedTeamId = 0;
         this.teamName ='';
         this.selectedUser.forEach((item: any) => {
-            item.isSelected == false;
+            item.isSelected = false;
         })
+        console.log(this.selectedUser);
     }
 }

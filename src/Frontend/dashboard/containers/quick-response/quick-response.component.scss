@@ -868,7 +868,7 @@ input[type="radio"]:checked + label::before {
 }
 .btnclosee{
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
 }
 .account-btn {
     background: #6149CD 0% 0% no-repeat padding-box;
@@ -1087,4 +1087,11 @@ select:invalid { color: gray; }
   .quick-response-modal .modal-body{
     height: 100%;
     overflow-y: scroll;
+  }
+
+  .quick-heading{
+    color: #6149CD;
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
   }

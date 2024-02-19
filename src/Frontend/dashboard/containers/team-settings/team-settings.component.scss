@@ -31,3 +31,8 @@
     background-color: #6149CD;
     border: none;
 }
+
+#teamsModal .modal-body{
+    height: 100%;
+    overflow-y: scroll;
+}
