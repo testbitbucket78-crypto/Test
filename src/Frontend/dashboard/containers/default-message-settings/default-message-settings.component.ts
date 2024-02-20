@@ -180,6 +180,7 @@ showMessageType(type: string) {
             let responseData: any = uploadStatus;
             if (responseData.filename) {
                 this.selectedPreview = responseData.filename.toString();
+                this.defaultMessageForm.get('link')?.setValue(this.selectedPreview);
                 console.log(this.selectedPreview);
             }
         });
@@ -241,13 +242,19 @@ removeMedia() {
   addEditDefaultMessageData() {
     if (this.defaultMessageForm.valid) {
       let defaultMessagesData = this.copyDefaultMesssageData();
-      this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe(response => {
+      this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe
+      (response => {
         if(response.status === 200) {
           this.defaultMessageForm.reset();
           this.getDefaultMessages();
           this.removeValue();
           $("#welcomGreeting").modal('hide');
           this.showSideBar = false;
+        }
+    },
+       (error) => {
+        if(error.status === 413) {
+          console.log('Media file size is too large, Maximum of 10mb size is allowed!')
         }
     });
     }

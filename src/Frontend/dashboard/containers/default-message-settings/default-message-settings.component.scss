@@ -98,6 +98,14 @@
     font-weight: 700;
   }
 
+  .modal-body.welcomGreeting {
+    height: 65vh;
+    overflow: scroll;
+  }
+
+  .modal-body.welcomGreeting::-webkit-scrollbar {
+    display: none;
+}
   
 .btn-close  img {
     width: 10px;
@@ -262,7 +270,7 @@ textarea::placeholder {
 
 .main-preview-type-video {
   position: absolute;
-  right: 13%;
+  right: 4%;
   z-index: 99999;
   cursor: pointer;
 }
@@ -322,8 +330,13 @@ textarea::placeholder {
   margin-top: 14px;
 }
 
+.sel-type-video {
+  position: relative;
+}
+
 .sel-type-video label {
-  top: 25%;
+  position: absolute;
+  top: 35%;
   left: 45%;
 }
  

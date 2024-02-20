@@ -131,7 +131,6 @@
 						</div>
 						<div class=" right_part">
 							<div class="time_circle">
-								<!-- <div role="progressbar" style={{selectedInteraction.progressbar.progressbarPer}}>{{selectedInteraction.progressbar.progressbarValue}}H</div> -->
 								<div role="progressbar">{{selectedInteraction?.progressbar?.progressbarValue}}H</div>
 							</div>
 							<div class="drop-down-btn">
@@ -348,11 +347,11 @@
 								<button [ngClass]="showChatNotes=='notes' ? 'tab_btn active' : 'tab_btn'"
 									(click)="toggleChatNotes('notes')">Notes</button>
 							</div>
-							<div class="input-area" (click)="resetMessageTex()">
-								<ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor
+							<div class="input-area">
+								<ejs-richtexteditor id='defaultRTE' #chatEditor
 								  [toolbarSettings]='tools' [height]='100' (keydown)="handleKeyPress($event)"
 								  (actionComplete)='actionCompleteHandler($event)'
-								  
+								  placeholder="Enter Message"
 								  >
 								</ejs-richtexteditor>
 							  

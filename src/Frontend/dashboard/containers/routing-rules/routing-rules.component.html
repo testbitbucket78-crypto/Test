@@ -85,6 +85,7 @@
                     onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"
                     [pattern]="chatAssignTimeoutPattern"
                     [(ngModel)]="timeoutperiod"
+                    (change)="saveRoutingRules()"
                     placeholder="Enter chat timeout (1-1440 minutes)"
                     [ngClass]="{'is-invalid':myForm.controls['chatAssignTimeout']?.dirty && myForm.controls['chatAssignTimeout']?.hasError('pattern')}">
             </div>
