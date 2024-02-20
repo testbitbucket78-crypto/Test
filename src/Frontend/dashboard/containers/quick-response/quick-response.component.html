@@ -58,7 +58,7 @@
 			<div class="modal-dialog" role="document">
 				<div class="modal-content welcomGreeting p-2">
 					<div class="btnclosee">
-						
+						<div class="quick-heading">New Quick Response</div>						
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
 							<img src="../../../../assets/img/teambox/icon-close.svg">
 						</button>
@@ -66,19 +66,35 @@
 					<form [formGroup]="usertemplateForm" class="form-height">
 					<div class="modal-body px-5 pt-0">
 						<div class="d-inline-block flex-column sel-type-link pb-2">
-							<label for="link" class="linkes mb-2" >Response Name</label>
+							<label for="link" class="linkes mb-2" >Response Name<span class="text-danger font-weight-bold">*</span></label>
 							<input type="url" id="linkrespone" formControlName="Header" placeholder="Enter" >
+							<div *ngIf="usertemplateForm.get('Header')?.invalid && (usertemplateForm.get('Header')?.touched || usertemplateForm.get('Header')?.dirty)
+							" class="invalid-feedback">
+							<div *ngIf="usertemplateForm.get('Header')?.hasError('required')">
+								Response Name is required.
+							</div>
+							<div *ngIf="usertemplateForm.get('Header')?.hasError('pattern')">
+								Response Name should contain only alphabetic characters.
+							</div>
+							<div *ngIf="usertemplateForm.get('Header')?.hasError('minlength')">
+								Response Name should be at least 2 characters long.
+							</div>
+						  </div>
 						   </div>
 						   <div class="d-inline-block flex-column sel-type-link pb-2">
-							<label for="link" class="linkch" >Channel</label>
+							<label for="link" class="linkch" >Channel<span class="text-danger font-weight-bold">*</span></label>
 							
-							<select class="input-form" formControlName="Channel"  id="linken"  required >
-								<option  [disabled]="true" [selected]="true" [hidden]="true">Select channel</option>
+							<select class="input-form" formControlName="Channel"  id="linken"   >
+								<option value=""  [disabled]="true" [selected]="true" [hidden]="true">Select channel</option>
 								<option value="WhatsApp Web">WhatsApp Web</option>
 								<option value="WhatsApp Official">WhatsApp Official</option>
 							</select>
-					
-					
+							<div *ngIf="usertemplateForm.get('Channel')?.invalid && (usertemplateForm.get('Channel')?.touched || usertemplateForm.get('Channel')?.dirty)
+                        " class="invalid-feedback">
+                        <div *ngIf="usertemplateForm.get('Channel')?.hasError('required')">
+                            Channel is required.
+                        </div>
+                      </div>
 						   </div>
 						<div class="d-flex justify-content-between align-items-center sel-type-btns">
 							<input type="radio" id="sel-text" class="d-none" name="sel-type" (change)="showMessageType('text')" [checked]="selectedType=='text'"><label class="m-0" for="sel-text">Text</label>
@@ -93,7 +109,7 @@
 							 </div>
 	
 							 <div *ngIf="selectedType === 'text'" class="sel-type-text">
-								 <textarea name="text-editor" formControlName="BodyText" maxlength="1024" rows="8" placeholder="Enter"></textarea>
+								 <textarea name="text-editor" formControlName="BodyText" maxlength="1024" rows="14" placeholder="Enter"></textarea>
 							 </div>
 						</div>
 				 
@@ -119,13 +135,13 @@
 						<video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video>
 						</div>
 						<div class="custom-play-button"></div>
-					
 					</div>
 				
 					<div *ngIf="selectedType === 'document'" class="my-4 sel-type-image" [ngClass]="{'document-selected':usertemplateForm.get('Links')?.value !== null}">
 						<div class="main-preview-type-doc" *ngIf="usertemplateForm.get('Links')?.value !== null">
 							<span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
 						</div>
+						<div class="align-item-center">
 						<img *ngIf="usertemplateForm.get('Links')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
 						<span class="document-preview" *ngIf="usertemplateForm.get('Links')?.value !== null" >{{ this.fileName }}</span>
 						<span class="document-preview" *ngIf="usertemplateForm.get('Links')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
@@ -134,7 +150,7 @@
 							<label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add.svg" /></label>
 							<p class="m-0">Upload or enter link of document</p>
 						   </div>
-							 
+						</div>
 					</div>
 <!-- 	
 					   <div *ngIf="selectedType === 'image'" class="my-2 sel-type-image">
@@ -166,13 +182,10 @@
 	
 	
 				 <div *ngIf="selectedType !== 'text'" >
-	
 					<div class="d-inline-block flex-column sel-type-link">
 						<label for="link" id="link" >Link</label>
 						<input type="url" id="link" formControlName="Links" placeholder="Enter" >
 					   </div>
-	
-	
 					   <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
 						<h6>Body Text</h6> <span> Characters</span>
 					 </div>
@@ -196,9 +209,6 @@
 					</div> -->
 				</div>
 				</div>
-				
-		
-	   
 					<div class="modal-footer">
 						<button type="button" class="account-btn" (click)="saveTemplate()"  >Save</button>
 					</div>
@@ -290,7 +300,7 @@
 	  <div *ngIf="templates?.length == 0">		
 		<div  class="template-empty-state">
 			<img src="../../../../assets/img/settings/template-empty.png" />
-			<h5 class="mt-3">No Template</h5>
+			<h5 class="mt-3">No Quick Response Message</h5>
 		</div>
 	  </div>
 		</div>
@@ -302,7 +312,7 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content delete-modal">
 				<div class="modal-body alertmessage">
-					<p class="label pb-2">Do you really want to delete this Template ?</p>
+					<p class="label pb-2">Do you really want to delete this Quick Response ?</p>
 					<div class="delete_group_button d-flex justify-content-center">
 						<button type="button" class="cancel-btn" aria-label="Close"
 							data-bs-dismiss="modal">Cancel</button>

@@ -199,7 +199,7 @@ color: #7A86A1;
  }
 
  .checkBox{
-  border-radius: 10px !important;
+  border-radius: 4px !important;
   width: 1.3em;
   height: 1.3em;
   background-color: white;
@@ -257,3 +257,8 @@ color: #7A86A1;
   color: #000000;
   font-weight: 500;
  }
+
+ .modal-body{
+  height: 100%;
+  overflow-y: scroll;
+}
