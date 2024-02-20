@@ -628,3 +628,32 @@ display: flex;
   overflow: scroll;
   height: 32rem;
 }
+
+input[type="radio"]:checked + label::before {
+  border: 3.5px solid #6149CD; 
+  background-color: #FFFFFF;
+}
+
+
+.sel-type-btns label {
+  display: inline-block;
+  position: relative;
+  padding-left: 30px; 
+  margin-right: 15px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sel-type-btns label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 1px solid #C0BDCC; 
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  transition: border-color 0.3s, background-color 0.3s;
+}

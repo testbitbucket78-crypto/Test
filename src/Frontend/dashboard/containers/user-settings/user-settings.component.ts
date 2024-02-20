@@ -5,6 +5,7 @@ import { UserData, rights } from '../../models/settings.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { isNullOrUndefined } from 'is-what';
 import { DatePipe } from '@angular/common';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 declare var $: any;
 
 @Component({
@@ -107,9 +108,11 @@ export class UserSettingsComponent implements OnInit {
     isActive: boolean = false;
     filteredRolesList: any[] = [];
     selectedUserData: any;
+    countryCodes:string[] =[];
     
     constructor(private _settingsService: SettingsService,private datepipe: DatePipe,) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
+        this.countryCodes = this._settingsService.countryCodes;
     }
 
     onGridReady(params: GridReadyEvent) {
@@ -133,12 +136,11 @@ export class UserSettingsComponent implements OnInit {
             this.selectedUserData = null;
             this.patchFormValue();
         } else {
-            this.userData = event.data;
             this.showSideBar = true;
-            this.uid = this.userData?.uid;
+            this.uid = event.data?.uid;
             console.log(this.uid);
-            this.isActive = this.userData.IsActive == 2 ? true : false ;
-            this.patchFormValue();
+            this.isActive = event.data.IsActive == 2 ? true : false ;
+            this.getUserById();
         }
     };    
 
@@ -168,7 +170,9 @@ export class UserSettingsComponent implements OnInit {
                 Validators.minLength(2),
               ]),
             mobile_number: new FormControl(null,[Validators.required]),
-            UserType: new FormControl([Validators.required]),
+            country_code: new FormControl(['IN +91']),
+            display_mobile_number:new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),Validators.maxLength(15)])),
+            UserType: new FormControl('',[Validators.required]),
         });
     }
     getUserList() {
@@ -176,6 +180,15 @@ export class UserSettingsComponent implements OnInit {
             if (result) {
                 this.userList = result?.getUser;
                 this.userListInIt = result?.getUser;
+            }
+        });
+    }
+
+    getUserById() {
+        this._settingsService.userById(this.sp_Id,this.uid).subscribe(result => {
+            if (result) {
+                this.userData = result?.getUser[0];
+                this.patchFormValue();
             }
         });
     }
@@ -222,6 +235,8 @@ export class UserSettingsComponent implements OnInit {
         userData.UserType = this.userDetailForm.controls.UserType.value;
         userData.email_id = this.userDetailForm.controls.email_id.value;
         userData.mobile_number = this.userDetailForm.controls.mobile_number.value;
+        userData.display_mobile_number = this.userDetailForm.controls.display_mobile_number.value;
+        userData.country_code = this.userDetailForm.controls.country_code.value;
         userData.name = this.userDetailForm.controls.name.value;
         userData.uid = this.uid;
         return userData;
@@ -230,7 +245,7 @@ export class UserSettingsComponent implements OnInit {
     patchFormValue() {
         const data = this.userData;
         this.selectedUserData =data;
-        console.log(this.searchUserData)
+        console.log(this.userData)
         for (let prop in data) {
             let value = data[prop as keyof typeof data];
             if (this.userDetailForm.get(prop)) this.userDetailForm.get(prop)?.setValue(value);
@@ -273,4 +288,18 @@ export class UserSettingsComponent implements OnInit {
         this.uid = 0;
         this.selectedUserData = null;
     }
+
+    formatPhoneNumber() {
+        let phoneNumber = this.userDetailForm.get('display_mobile_number')?.value;
+        let countryCode = this.userDetailForm.get('country_code')?.value;
+      
+        if (phoneNumber && countryCode) {
+          let phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
+          let formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
+      
+          if (formattedPhoneNumber) {
+            this.userDetailForm.get('mobile_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
+          }
+        }
+        }
 }
