@@ -19,6 +19,37 @@
     margin: 0 0 0 1.2%;
 }
 
+.opt-In-Info-div {
+    position: absolute;
+    top: 80px;
+    left: 134px;
+    width: 280px;
+    z-index: 1040;
+    height: auto;
+    background: #ffffff;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 28px;
+    opacity: 1;
+    overflow: auto;
+    cursor: pointer;
+}
+
+.opt-In-Info img{
+    cursor: pointer;
+    width: 12px;
+    height: 12px;
+  }
+
+  .opt-In-Info p {
+    cursor: default;
+    margin: 0;
+    padding: 44px 30px 33px 30px;
+    letter-spacing: 0;
+    font-size: 12px;
+    font-weight: 400;
+    color: #7a86a1;
+  }
+
 .gallery-btn {
     font-size: 15px;
     padding: 0.5rem 1.2rem;
@@ -616,6 +647,17 @@ img.icon_sm {
     padding: 10% 0%;
    }
 
+   .confirm-modal.delete_group_button .cancel-btn {
+    padding: 0 34px 0 33px;
+    margin: 0 6px 0 -17px;
+   }
+
+   .confirm-modal.delete_group_button .delete-btn {
+    padding: 0px 29px;
+    background: #6149cd;
+   }
+
+
    .del-popup-btn {
     background: white;
     border-radius: 18px;
@@ -1101,6 +1143,10 @@ input[type="radio"]:checked + label::before {
     font-size: 12px;
    }
 
+   .account-btn.disabled {
+    background: grey;
+   }
+
    .account-btn.draft{
     background: #FFFFFF;
     color: #6149CD;
@@ -1218,6 +1264,12 @@ input[type="radio"]:checked + label::before {
 
   // confirmation popup modal //
 
+  .confrimation-modal {
+    background-color: #FFF4F2!important;
+    text-align: center;
+    width: 90%;
+  }
+
   .confrimation-modal .modal-body {
     background: transparent url(../../../../assets/img/your.png) no-repeat;
     background-position-y: center;
@@ -1225,9 +1277,28 @@ input[type="radio"]:checked + label::before {
     padding: 20px 15px;
 
    }
-.confrimation-modal .modal-header img {
-    margin: auto;
-}
+   .confrimation-modal .modal-body h2 {
+    font-size: 22px;
+    letter-spacing: -0.55px;
+    font-weight: 600;
+   }
+
+   .confrimation-modal p {
+    line-height: 20px;
+    margin-top: 10px;
+    color:#7A86A1;
+    font-weight: 350;
+   }
+
+   .confrimation-modal p span {
+    font-size: 14px;
+    color: #000000;
+    font-weight: 350;
+   }
+
+    .confrimation-modal .modal-header img {
+        margin: auto;
+    }
 
     // attributes modal //
 .custom_modal.bg-pink {
@@ -1411,4 +1482,32 @@ input[type="radio"]:checked + label::before {
 
   .e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
     top: -750% !important;
+  }
+
+
+  // variable values //
+
+  .message_section span.variables-head {
+    color: #7A86A1;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 0;
+  }
+
+  .variable-values input[type=text] {
+    background: #FFFFFF;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    width: 220px;
+    height: 42px;
+    font-size: 12px;
+  }
+
+  .variable-values label {
+    font-size: 14px;
+  }
+
+  .variable-values input[type=text]::placeholder {
+    font-size: 12px;
+    color: #7A86A1;
   }

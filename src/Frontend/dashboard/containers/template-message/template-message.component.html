@@ -9,9 +9,9 @@
         <div class="d-flex pb-2 pt-4 main-header-container">
            <div class=" main-headiing-title">Template Message</div>
 
-              <a class="mx-2 gallery-btn" (click)="selectedTab = 1">Gallery</a>
+              <a class="mr-3 gallery-btn" (click)="selectedTab = 1">Gallery</a>
 
-             <div class="mx-2 input-group gf ">
+             <div class="ml-2 input-group gf ">
 
               <input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
 
@@ -43,7 +43,7 @@
                         </div>
                         <p class="pb-2 title">{{item.TemplateName}}</p>
                         <p class="start_time">Created On: <span>{{item.created_at | date:'dd MMM yy, h:mm a'}}</span></p>
-                        <p class="start_time">Modified On: <span>{{item.updated_at | date:'dd MMM yy, h:mm a'}}</span></p>
+                        <p class="start_time">Modified On: <span>{{ item.updated_at ? (item.updated_at | date:'dd MMM yy, h:mm a') : 'NA' }}</span></p>
                         <p class="pt-2"><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{item.Channel}}</p>
                         <div class="campaigns_section_item_statics">
                             <div><p>{{item.Category}}</p><p><span>Category</span></p></div>
@@ -76,7 +76,7 @@
                             <span>id: {{templatesMessageData?.ID}}</span>
                         </div>
                         <p class="start_time">Created on: <span>{{templatesMessageData?.created_at | date:'dd MMM yy, h:mm a'}}</span> 
-                                              Modified On: <span>{{templatesMessageData?.updated_at | date:'dd MMM yy, h:mm a'}}</span></p>
+                                              Modified On: <span>{{templatesMessageData?.updated_at ?(templatesMessageData?.updated_at | date:'dd MMM yy, h:mm a'): 'NA'}}</span></p>
                         <div class="campaigns_section_user">
                             <div class="d-flex align-items-center"> <img [src]="profilePicture" />
                             <p class="m-0">{{templatesMessageData?.created_By}}</p></div>
@@ -141,7 +141,17 @@
                         <img src="../../../../assets/img/profile/previous1.svg" />
                     </div>
                     <div class="main-title">
-                        <h4 class="m-0 px-4">Gallery</h4>
+                        <h4 class="m-0 px-4">
+                            Gallery
+                            <span class="px-2 opt-In-Info"><img src="../../../../assets/img/info-icon.png" (click)="toggleInfoIcon()">
+                             <div *ngIf="showInfoIcon" class="opt-In-Info-div">
+                                <button type="button" class="m-2 btn-close" (click)="showInfoIcon=false">
+                                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                                </button>
+                                <p id="p-body">The gallery offers sample templates that serve as blueprints for creating your own custom templates.</p>
+                            </div>
+				        	</span>
+                        </h4>
                     </div>
                 </div>
     
@@ -485,13 +495,13 @@
 
 
                 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-                    <h6>Body Text</h6> <div><span class="characters-count"></span><span>Characters</span></div>
+                    <h6>Body Text<span class="text-danger font-weight-bold"> *</span></h6> <div><span class="characters-count"></span><span>Characters</span></div>
                 </div>
                 <div class="sel-type-text">
                     <!-- <textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="8" placeholder="Enter" (input)="updateCharacterCount($event,4)"></textarea> -->
-                    <ejs-richtexteditor
-                    [(value)]="BodyText"
-                    id='defaultRTE'
+                    <ejs-richtexteditor 
+                    formControlName="BodyText" 
+                    id='defaultRTE' 
                     #chatEditor
                     [toolbarSettings]='tools'
                     [height]="'200px'"
@@ -618,7 +628,7 @@
 
     </div>
             <div class="modal-footer">
-                <button type="button" class="account-btn"  data-bs-toggle="modal" data-bs-target="#newTemplateMessagePreview">Next</button>
+                <button type="button" class="account-btn" [disabled]="newTemplateForm.get('BodyText')?.value==null" [class.disabled]="newTemplateForm.invalid"  data-bs-toggle="modal" data-bs-target="#newTemplateMessagePreview">Next</button>
             </div>
         </form>
         </div>
@@ -643,8 +653,27 @@
                 <button type="button" class="previous-btn" type="button" data-bs-toggle="modal" data-bs-target="#newTemplateMessage">
                     <img src="../../../../assets/img/profile/previous.svg" />
                 </button>
-                <div class="main-container-for-body">
-         
+                <div class="main-container-for-body message_section">
+                    <h6>Sample content for variables</h6>
+                    <span class="variables-head" >Provide sample content for all the variables in the message.<br/>Do not include any customer information
+                    </span>
+
+                    <div class="my-2 variable-values">
+                        <div class="d-flex justify-content-between align-items-center form-group">
+                            <label class="form-label" for="variableValuesSet1">name</label>
+                            <input type="text" class="form-control" id="variableValuesSet1" placeholder="Enter Value">
+                        </div>
+                      
+                        <div class="d-flex justify-content-between align-items-center form-group">
+                            <label class="form-label" for="variableValuesSet2">product</label>
+                            <input type="text" class="form-control" id="variableValuesSet2" placeholder="Enter Value">
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center form-group">
+                            <label class="form-label" for="variableValuesSet2">discount</label>
+                            <input type="text" class="form-control" id="variableValuesSet3" placeholder="Enter Value">
+                        </div>
+                    </div>
             </div>    
                
         </div>
@@ -676,7 +705,7 @@
 
     </div>
             <div class="modal-footer">
-                <button type="button" class="account-btn draft">Save as draft</button>
+                <button type="button" class="account-btn draft" (click)="saveAsDraft()" >Save as draft</button>
                 <button type="button" class="account-btn" (click)="confirmsave()" >Submit</button>
             </div>
         </form>
@@ -688,12 +717,12 @@
 <div class="modal fade" tabindex="-1" id="confirmationModal" data-bs-backdrop="static" role="dialog">
     <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
         <div class="m-0 modal-content confrimation-modal">
-            <div class="modal-header">
+            <div class="mt-3 modal-header">
                 <img src="../../../../assets/img/settings/Send-o.svg" />
             </div>
             <div class="modal-body">
-                <h2 class="m-0 text-center">You are About to Submit</h2>
-                <p class="label pb-2">Please confirm before submitting Template message <strong>{{newTemplateForm.get('TemplateName')?.value}}</strong></p>
+                <h2>You are About to Submit</h2>
+                <p>Please confirm before submitting<br/> Template message<span class="px-1">{{getLimitedMessageText(this.TemplateName)}}</span></p>
                 <div class="d-flex justify-content-center confirm-modal delete_group_button">
                     <button type="button" class="cancel-btn" aria-label="Close" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="delete-btn" aria-label="Close" (click)="saveNewTemplate()">Confirm</button>
@@ -713,8 +742,8 @@
 							<div class="modal-header-left">
 								<h4 class="modal-title" id="modal-basic-title">Attributes</h4>
 							</div>
-							<div class="modal-header-right">
-								<p (click)="closeAllModal()" class="close-box" aria-label="Close"><img
+							<div (click)="closeAtrrModal()" class="modal-header-right">
+								<p class="close-box" aria-label="Close"><img
 										src="assets/img/teambox/icon-close.svg"></p>
 							</div>
 						</div>
@@ -722,7 +751,7 @@
 							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
 								aria-describedby="basic-addon2" [(ngModel)]="attributesearch" />
 							<div class="items_list">
-								<div *ngFor="let alist of attributesList  | searchfilter:attributesearch " class="attribute">
+								<div (click)="selectAttributes(alist)" *ngFor="let alist of attributesList  | searchfilter:attributesearch " class="attribute">
 									<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
 								</div>
 							</div>

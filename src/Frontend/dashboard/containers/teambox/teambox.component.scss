@@ -2412,3 +2412,12 @@ label span {
 .e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
     top: -750% !important;
   }
+
+  #defaultRTE_toolbar {
+    border: none;
+  }
+
+  .rte-placeholder.e-rte-placeholder.null {
+    font-size: 11px!important;
+    padding:0;
+  }

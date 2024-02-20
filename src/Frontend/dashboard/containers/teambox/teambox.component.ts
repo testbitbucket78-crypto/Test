@@ -128,8 +128,8 @@ routerGuard = () => {
 			'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
 			];
 
-	custommesage='<p>Your message...</p>'
-	customenotes='<p>Type...</p>'
+	// custommesage='<p>Your message...</p>'
+	// customenotes='<p>Type...</p>'
 	showQuickResponse:any=false;
 	showAttributes:any=false;
 	showQuickReply:any=false;
@@ -269,15 +269,15 @@ routerGuard = () => {
 		this.selectedTemplate =template
 	}
 
-	resetMessageTex(){
-		// Prevent the default behavior to avoid losing focus
+	// resetMessageTex(){
+	// 	// Prevent the default behavior to avoid losing focus
 		
-		// Get the current content of the editor
-		const editorContent = this.chatEditor.value;
-			if(this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value =='<p>Type…</p>'){
-				this.chatEditor.value='';
-			}
-		}
+	// 	// Get the current content of the editor
+	// 	const editorContent = this.chatEditor.value;
+	// 		if(this.chatEditor.value == '<p>Your message...</p>' || this.chatEditor.value =='<p>Type…</p>'){
+	// 			this.chatEditor.value='';
+	// 		}
+	// 	}
 	
 	
 	handleKeyPress(event: KeyboardEvent) {
@@ -294,7 +294,7 @@ routerGuard = () => {
 	toggleChatNotes(optionvalue:any){
 		if(this.chatEditor){
 		if(optionvalue == 'text'){
-			this.chatEditor.value = 'Your message...'
+			// this.chatEditor.value = 'Your message...'
 			this.tools = {
 				items: ['Bold', 'Italic','StrikeThrough','EmojiPicker',
 				{
@@ -330,7 +330,7 @@ routerGuard = () => {
 			};
 
 		}else{
-			this.chatEditor.value = 'Type…'
+			// this.chatEditor.value = 'Type…'
 			this.tools = {
 				items: ['Bold', 'Italic', 'StrikeThrough','EmojiPicker',
 				{
@@ -409,12 +409,13 @@ ToggleShowMentionOption(){
 	this.closeAllModal()
 	this.showMention=!this.showMention
 }
-public InsertMentionOption(user:any){
-	let content:any = this.chatEditor.value;
+InsertMentionOption(user:any){
+	let content:any = this.chatEditor.value || '';
 	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
 	content = content+'<span class="mention"> @'+user.name+' </span>'
-	this.chatEditor.value = content
+	this.chatEditor.value = content;
 	this.showMention = false;
+	this.selectInteraction(this.selectedInteraction)
 }
 
 ToggleInsertTemplateOption(){
@@ -744,7 +745,7 @@ sendattachfile(){
 				this.loginAs='Helper'
 				break;
 			default:
-				this.loginAs='Admin'
+				this.loginAs='Agent'
 		}
 		this.routerGuard()
 		this.getAgents()
@@ -847,15 +848,13 @@ sendattachfile(){
 		this.searchChatFocused = false
 	}
 	focusInFunction(){
-		console.log('Focus in');
 		this.searchFocused = true
 	}
 	focusOutFunction(){
-		console.log('Focus out');
 		this.searchFocused = false
 	}
 	toggleProfileView(){
-		console.log(this.selectedInteraction)
+		// console.log(this.selectedInteraction)
 		this.showFullProfile = !this.showFullProfile
 	}
 	toggleAttachedMediaView(){
@@ -939,7 +938,6 @@ sendattachfile(){
 		});
 
 		this.interactionList= dataList
-		console.log(this.interactionList);
 		this.interactionListMain= dataList
 
 		
@@ -967,24 +965,24 @@ sendattachfile(){
 	  
 		this.apiService.updateInteractionPinned(bodyData).subscribe(async response => {
 		  item.isPinned = !item.isPinned;
-		  this.sortItemsByPinnedStatus(); // After updating, sort the items
+		//   this.sortItemsByPinnedStatus(); // After updating, sort the items
 		});
 	  }
 
-	  sortItemsByPinnedStatus() {
-  this.items.sort((a, b) => {
-    // Pinned items come first
-    if (a.isPinned && !b.isPinned) {
-      return -1;
-    }
-    // Unpinned items come next
-    if (!a.isPinned && b.isPinned) {
-      return 1;
-    }
-    // If both are pinned or both are unpinned, maintain their original order
-    return 0;
-  });
-}
+// 	  sortItemsByPinnedStatus() {
+//   this.items.sort((a, b) => {
+//     // Pinned items come first
+//     if (a.isPinned && !b.isPinned) {
+//       return -1;
+//     }
+//     // Unpinned items come next
+//     if (!a.isPinned && b.isPinned) {
+//       return 1;
+//     }
+//     // If both are pinned or both are unpinned, maintain their original order
+//     return 0;
+//   });
+// }
 
 	async getFilteredInteraction(filterBy:any){
 		await this.apiService.getFilteredInteraction(filterBy,this.AgentId,this.AgentName,this.SPID).subscribe(async data =>{
@@ -1238,10 +1236,10 @@ sendattachfile(){
 	}
 
 	selectInteraction(Interaction: any) {
-		if (this.chatEditor) {
-		  this.chatEditor.value = 'Your message...';
-		  this.showChatNotes = 'text';
-		}
+		// if (this.chatEditor) {
+		//   this.chatEditor.value = 'Your message...';
+		//   this.showChatNotes = 'text';
+		// }
 	  
 		for (let i = 0; i < this.interactionList.length; i++) {
 		  this.interactionList[i].selected = false;
@@ -1313,8 +1311,7 @@ filterInteraction(filterBy:any){
 
 }
 toggleFilerOption(){
-	// $("#addfilter").modal('show');
-		this.showfilter=!this.showfilter;
+	this.showfilter=!this.showfilter;
 }
 
 toggleContactOption(){
@@ -1323,7 +1320,6 @@ toggleContactOption(){
 closeFilterOptions() {
     this.showfilter = false;
   }
-
 
 toggleChannelOption(){
 	this.ShowChannelOption =!this.ShowChannelOption;
@@ -1464,7 +1460,7 @@ toggleAssignOption(){
 	if(this.selectedInteraction.interaction_status =='Resolved'){
 		this.showToaster('Already Resolved','warning')
 	}else{
-	if(this.loginAs =='Admin' || this.selectedInteraction.interaction_status !='Resolved'){
+	if(this.loginAs =='Agent' || this.selectedInteraction.interaction_status !='Resolved'){
 		this.ShowAssignOption =!this.ShowAssignOption
 	}else{
 		this.showToaster('Opps you dont have permission','warning')
@@ -1793,21 +1789,21 @@ updateConversationStatus(status:any) {
 	}
 	this.apiService.updateInteraction(bodyData).subscribe(async response =>{
 		this.ShowConversationStatusOption=false
-		this.showToaster('Conversations updated to '+status+'...','success')
+		// this.showToaster('Conversations updated to '+status+'...','success')
 
-		var responseData:any = response
-		var bodyData = {
-			InteractionId: this.selectedInteraction.InteractionId,
-			AgentId: this.AgentId,
-			MappedBy: this.AgentId
-		}
-		this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
-		this.apiService.getInteractionMapping(this.selectedInteraction.InteractionId).subscribe(mappingList =>{
-			var mapping:any  = mappingList;
-			this.selectedInteraction['assignTo'] =mapping[mapping.length - 1];
-		})
+		// var responseData:any = response
+		// var bodyData = {
+		// 	InteractionId: this.selectedInteraction.InteractionId,
+		// 	AgentId: this.AgentId,
+		// 	MappedBy: this.AgentId
+		// }
+		// this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
+		// this.apiService.getInteractionMapping(this.selectedInteraction.InteractionId).subscribe(mappingList =>{
+		// 	var mapping:any  = mappingList;
+		// 	this.selectedInteraction['assignTo'] =mapping[mapping.length - 1];
+		// })
 
-		});
+		// });
 		
 		this.selectedInteraction['interaction_status']=status
 	});
@@ -1882,7 +1878,6 @@ var bodyData = {
 
 }
 this.apiService.createInteraction(bodyData).subscribe(async data =>{
-	var responseData:any = data
 	if(this.modalReference){
 		this.modalReference.close();
 	}
@@ -2014,19 +2009,24 @@ deleteNotes(){
 
 sendMessage(){
 
-	if (!this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+	// if (!this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
+	// 	this.showToaster('! Please enter a message before sending.','error');
+	// }
+	// else if(this.selectedInteraction.interaction_status =='Resolved') {
+
+	// 	this.updateConversationStatus('Open');
+	// 	var Data = {
+	// 		customerId: this.contactId,
+	// 		spid:this.SPID
+	// 	}
+	// 	this.createInteraction(Data);
+
+	// 	this.showToaster('This interaction has been resolved already, Initiating a new interaction ','success')
+	// }
+
+	if (this.chatEditor.value == null) {
 		this.showToaster('! Please enter a message before sending.','error');
-	}
-	else if(this.selectedInteraction.interaction_status =='Resolved') {
-
-		this.updateConversationStatus('Open');
-		var Data = {
-			customerId: this.contactId,
-			spid:this.SPID
-		}
-		this.createInteraction(Data);
-
-		this.showToaster('This interaction has been resolved already, Initiating a new interaction ','success')
+		return;
 	}
 
 	 else {
@@ -2065,8 +2065,8 @@ sendMessage(){
 			if (responseData.middlewareresult.status === '401') {
 				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
 				return;
-			}
-			{
+			};
+			if(responseData.middlewareresult.status === '200') {
 				if(this.newMessage.value.Message_id==''){
 					var insertId:any = responseData.insertId
 					if(insertId){
