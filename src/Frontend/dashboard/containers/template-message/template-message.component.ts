@@ -6,6 +6,7 @@ import { TeamboxService } from 'Frontend/dashboard/services';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { isNullOrUndefined } from 'is-what';
 declare var $: any;
 @Component({
     selector: 'sb-template-message',
@@ -116,7 +117,7 @@ export class TemplateMessageComponent implements OnInit {
       'UZ +998', 'VA +39', 'VC +1784', 'VE +58', 'VG +1284', 'VI +1340', 'VN +84', 'VU +678', 'WF +681', 'WS +685',
       'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
     ];
-    @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent;
+    @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent | any;
 
     public tools: object = {
         items: [
@@ -643,12 +644,16 @@ export class TemplateMessageComponent implements OnInit {
         $('#atrributemodal').modal('hide');
     }
 
-    selectAttributes(item: any) {
-        const selectedValue = item;
+    selectAttributes(item:any){
         this.closeAtrrModal();
-        let htmlcontent = '';
+        const selectedValue = item;
+        
+        let htmlcontent = this.chatEditor.value;
+        if (isNullOrUndefined(htmlcontent)) {
+            htmlcontent = '';
+          }
         const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
-        this.onEditorChange(selectedAttr);
+        this.chatEditor.value = selectedAttr; 
     }
 
     /* GET ATTRIBUTE LIST  */

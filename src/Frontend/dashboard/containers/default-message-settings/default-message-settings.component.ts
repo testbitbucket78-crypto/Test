@@ -5,6 +5,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { ToolbarService, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { isNullOrUndefined } from 'is-what';
 
 declare var $:any;
 @Component({
@@ -15,7 +16,7 @@ declare var $:any;
 })
 export class DefaultMessageSettingsComponent implements OnInit {
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
-  @ViewChild('chatEditor') chatEditor!: RichTextEditorComponent
+  @ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
   
   spId:number = 0;
   selectedType: string = 'text';
@@ -99,8 +100,6 @@ export class DefaultMessageSettingsComponent implements OnInit {
     console.log(this.selectedMessageData)
     this.getAttributeList();
     this.getDefaultMessages();
-    console.log(this.defaultMessageForm.get('override')?.value)
-
   }
 
   onEditorChange(value: any) {
@@ -124,11 +123,11 @@ ToggleAttributesOption(){
   $("#atrributemodal").modal('show');
 }
 
-selectAttributes(item:any){
+selectAttributes(item:any) {
+  this.closeAtrrModal();
   const selectedValue = item;
-  let htmlcontent = '';
-  const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
-  this.onEditorChange(selectedAttr)
+  let selectedAttr = `{{${selectedValue}}}`;
+  this.chatEditor.value = this.chatEditor.value + selectedAttr; 
   $("#welcomGreeting").modal('show');
   $("#atrributemodal").modal('hide');
 
@@ -240,24 +239,37 @@ removeMedia() {
   }
 
   addEditDefaultMessageData() {
-    if (this.defaultMessageForm.valid) {
-      let defaultMessagesData = this.copyDefaultMesssageData();
-      this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe
-      (response => {
-        if(response.status === 200) {
-          this.defaultMessageForm.reset();
-          this.getDefaultMessages();
-          this.removeValue();
-          $("#welcomGreeting").modal('hide');
-          this.showSideBar = false;
-        }
-    },
-       (error) => {
-        if(error.status === 413) {
-          console.log('Media file size is too large, Maximum of 10mb size is allowed!')
-        }
-    });
-    }
+    var tempDivElement = document.createElement("div");   
+
+	   tempDivElement.innerHTML = this.chatEditor.value;
+     let val = tempDivElement.textContent || tempDivElement.innerText || "";
+
+     if(val.trim()=='') {
+      this.defaultMessageForm.invalid;
+      return;
+     }
+
+     else {
+      if (this.defaultMessageForm.valid) {
+        let defaultMessagesData = this.copyDefaultMesssageData();
+        this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe
+        (response => {
+          if(response.status === 200) {
+            this.defaultMessageForm.reset();
+            this.getDefaultMessages();
+            this.removeValue();
+            $("#welcomGreeting").modal('hide');
+            this.showSideBar = false;
+          }
+      },
+         (error) => {
+          if(error.status === 413) {
+            console.log('Media file size is too large, Maximum of 10mb size is allowed!')
+          }
+      });
+      }
+     }
+
   }
 
   editDefaultMessages() { 
