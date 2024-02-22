@@ -5,6 +5,7 @@ import { UserData, rights } from '../../models/settings.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { isNullOrUndefined } from 'is-what';
 import { DatePipe } from '@angular/common';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 declare var $: any;
 
 @Component({
@@ -272,5 +273,28 @@ export class UserSettingsComponent implements OnInit {
         this.userDetailForm = this.prepareUserForm();
         this.uid = 0;
         this.selectedUserData = null;
+    }
+
+    formatPhoneNumber() {
+        let phoneNumber = this.userDetailForm.get('display_mobile_number')?.value;
+        let countryCode = this.userDetailForm.get('country_code')?.value;
+      
+        if (phoneNumber && countryCode) {
+          let phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
+          let formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
+      
+          if (formattedPhoneNumber) {
+            this.userDetailForm.get('mobile_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
+          }
+        }
+        }
+
+    getFirstName(name:any){
+        const nameParts = name.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts[1] || '';
+        let firstLetterFirstName = firstName.charAt(0) || '';
+        let firstLetterLastName = lastName.charAt(0) || '';
+        return firstLetterFirstName + firstLetterLastName;
     }
 }

@@ -30,22 +30,20 @@
 						</div>
 					<div class="modal-body px-3 filterchannelsbody">
 						<div class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
-							<input type="radio" class="custom-control-input" id="radio1" name="optradio" (change)="filterQuickRes('WhatsApp Official')" value="option1" checked>
+							<input type="checkbox" class="custom-control-input" [(ngModel)]="isWhatsappOfficial" id="radio1" name="optradio"  value="option1" checked>
 							<img class="user-img ml-2">
 							<label class="custom-control-label" for="radio1"><span class="ml-2">WhatsApp Official</span></label>
 						  </div>
 						  <div class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
-							<input type="radio" class="custom-control-input" id="radio2" name="optradio" (change)="filterQuickRes('WhatsApp Web')"  value="option2" >
+							<input type="checkbox" class="custom-control-input" id="radio2" [(ngModel)]="isWhatsappWeb"  name="optradio"  value="option2" >
 							<img class="user-img ml-2">
 							<label class="custom-control-label" for="radio2"><span class="ml-2">WhatsApp Web</span></label>
 							
 						  </div>
 			 
 				 </div>
-					<div class="modal-footer filterchannelsfooter">
-					  
-							<button type="button" class="submit-btn" aria-label="Close">Apply</button>
-						  
+					<div class="modal-footer filterchannelsfooter">					  
+							<button type="button" class="submit-btn" aria-label="Close" (click)="filterQuickRes(); d('Cross click')">Apply</button>						  
 					</div>
 				</div>
 			</ng-template>
@@ -127,7 +125,9 @@
 	
 					<div *ngIf="selectedType === 'video'" class="my-4 sel-type-video text-center">
 						<input type="file" accept="video/mp4"  formControlName="Links" name="video-upload" (change)="onFileChange($event)" id="sel-type-video">
-						<label *ngIf="!selectedPreview" class="type_labels " for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
+						<div class="vedio-add-btn">
+							<label *ngIf="!selectedPreview" class="type_labels " for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
+						</div>
 						<div class="video-player">
 							<span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
 							  <img src="../../../../assets/img/settings/remove.svg" />
@@ -272,12 +272,23 @@
 							<div class="body1">
 								<div class="Message-body">Message</div>
 								<div class="body2 mt-4">
-									<div class="message_type" [ngStyle]="{'background-image': 'url(' + messagemedia + ')'}"></div>
-								<div class="boxbody">
-									
-									<div class="descbody">
-									{{repliestemplateData.BodyText}}
-								</div>
+									<!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + messagemedia + ')'}"></div> -->
+									<div *ngIf="repliestemplateData.media_type == 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + repliestemplateData?.Links + ')'}"></div>
+            						<div *ngIf="repliestemplateData.media_type == 'video'" class="message_type">
+                						<video autoplay loop id="video-background" [src]="repliestemplateData?.Links" type="video/mp4"></video>
+           							</div>
+           							<div *ngIf="repliestemplateData?.media_type == 'document'" class="message_type">
+                						<div class="doc-preview" *ngIf="repliestemplateData?.Links" width="100%" height="150px">
+                  							<a [href]="repliestemplateData?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+                						</div>
+            						</div>
+            						<!-- <div class="message_data" [ngClass]="{'preview': repliestemplateData.media_type === 'text'}">
+                						<span [innerHTML]="galleryMessageData?.Header"></span><br /><br />
+                						<span [innerHTML]="galleryMessageData?.BodyText"></span><br /><br />
+                						<span [innerHTML]="galleryMessageData?.FooterText"></span><br />
+            						</div> -->
+								<div class="boxbody">									
+									<div class="descbody" [innerHTML]="repliestemplateData.BodyText"></div>
 								</div>
 							</div>
 

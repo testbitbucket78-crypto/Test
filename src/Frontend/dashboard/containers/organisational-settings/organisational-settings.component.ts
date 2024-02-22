@@ -135,6 +135,7 @@ countryCodes = [
     this.getBillingDetails();
     this.getCompanyDetails();
     this.getLocaleDetails();
+    this.getCountryList();
     let uid: string  = sessionStorage.getItem('loginDetails')?.toString() ?? '';
     let userid =JSON.parse(uid);
     this.uid = userid.uid;
@@ -352,6 +353,26 @@ hideToaster(){
 
   getBillingDetails(){
     this._settingsService.getBillingData(this.sp_Id)
+    .subscribe(result =>{
+      if(result){
+        this.billingData = result?.billingDetails[0];
+      }
+
+    })
+  }
+
+  getCountryList(){
+    this._settingsService.getCountry()
+    .subscribe(result =>{
+      if(result){
+        console.log(result)
+      }
+
+    })
+  }
+
+  getStateList(countryCode:any){
+    this._settingsService.getState(countryCode)
     .subscribe(result =>{
       if(result){
         this.billingData = result?.billingDetails[0];

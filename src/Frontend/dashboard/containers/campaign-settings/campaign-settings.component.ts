@@ -127,6 +127,7 @@ campaignTestData:any;
     this._settingsService.getCampaignTimingList(this.sp_Id)
     .subscribe((result:any) =>{
       if(result){
+        this.workingData = [];
         let timingData =result?.seletedCampaignTimings;  
         timingData.forEach((data:any)=>{
           let flag = false;
