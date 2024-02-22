@@ -67,8 +67,8 @@
                                   <img src="../../../../assets/img/settings/connected.svg" alt="error" />Connected</div>
                             </div>
                         </div>
-                        <div  (click)="getaccountByID(detail)">
-                        <img src="../../../../assets/img/Setting.png" data-bs-toggle="modal" data-bs-target="#whatsWebSetting">
+                        <div  >
+                        <img src="../../../../assets/img/Setting.png" >
                     </div>
                     </div>
                 </div>
@@ -90,18 +90,23 @@
                 <div class="modal-body pt-0">
                     <div class="px-3">
                         <span>Which phone do you use?</span>
-                        <div class="d-flex pt-1 pb-3">
-                            <input type="radio" class="radio-btn" name="phoneType"[(ngModel)]="phoneType" value="android">
-                            <span class="pl-1 pr-5">Android</span>
-                            <input type="radio" class="radio-btn" name="phoneType" [(ngModel)]="phoneType" value="ios">
-                            <span class="pl-1">iOS</span>
+                        <div class="d-flex pt-1 pb-3 sel-type-btns">
+                            <!-- <input type="radio" class="radio-btn" name="phoneType"[(ngModel)]="phoneType" value="android">
+                            <label class="pl-1 pr-5">Android</label> -->
+                            
+							<input type="radio" id="sel-Android" class="d-none" name="phoneType" [(ngModel)]="phoneType" value="android"><label  for="sel-Android">Android</label>
+							<input type="radio" id="sel-iOS" class="d-none" name="phoneType" [(ngModel)]="phoneType" value="ios"><label class="ml-2" for="sel-iOS">iOS</label>
+                            <!-- <input type="radio" class="radio-btn" name="phoneType" [(ngModel)]="phoneType" value="ios">
+                            <span class="pl-1">iOS</span> -->
                         </div>
                         <span>After connecting do you want to import<br /> upto 30 conversations?</span>
-                        <div class="d-flex pt-1 pb-3">
-                            <input type="radio" class="radio-btn" name="ConversationType" [(ngModel)]="conversationType" value="yes">
+                        <div class="d-flex pt-1 pb-3 sel-type-btns">
+							<input type="radio" id="sel-texts-yes" class="d-none" name="ConversationType" [(ngModel)]="conversationType" value="yes"><label  for="sel-texts-yes">Yes</label>
+							<input type="radio" id="sel-texts-no" class="d-none" name="ConversationType" [(ngModel)]="conversationType" value="no"><label class="ml-2" for="sel-texts-no">No</label>
+                            <!-- <input type="radio" class="radio-btn" name="ConversationType" [(ngModel)]="conversationType" value="yes">
                             <span class="pl-1 pr-5">Yes</span>
                             <input type="radio" class="radio-btn" name="ConversationType" [(ngModel)]="conversationType" value="no">
-                            <span class="pl-1">No</span>
+                            <span class="pl-1">No</span> -->
                         </div>
                     </div>
                 </div>

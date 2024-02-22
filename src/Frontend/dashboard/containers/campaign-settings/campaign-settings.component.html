@@ -74,7 +74,7 @@
             </div>
     
             <div class="text-center pb-3">
-                <button class="working-hour-btn" (click)="manageWorkingHour()" data-bs-toggle="modal" data-bs-target="#teamsModal">Manage User</button>
+                <button class="working-hour-btn" (click)="editCampaignAlertUser()" data-bs-toggle="modal" data-bs-target="#teamsModal">Manage User</button>
             </div>
     
         </div>
@@ -90,14 +90,14 @@
             <p class="p-body">
                 Configure up to 2 test users/numbers for campaign testing. Adding users is optional. Test users receive all test campaign messages. You can Remove or replace users as needed. Admin is by default a test user but can be replaced..</p>
         </div>
-        <div *ngIf="campaignAlertData?.length ==0" class="working-hour-img-card modal-body" >
+        <div *ngIf="campaignTestData?.length ==0" class="working-hour-img-card modal-body" >
             <div>
                 <img src="../../../../assets/img/settings/image.png"><br>
                 <span class="working-hour-heading">Add User to Test Campaign</span>
             </div>
         </div>
-        <div *ngIf="campaignAlertData?.length >0" class="users-body">
-            <div class="d-flex pb-3 pt-3 user-list" *ngFor="let item of campaignAlertData">
+        <div *ngIf="campaignTestData?.length >0" class="users-body">
+            <div class="d-flex pb-3 pt-3 user-list" *ngFor="let item of campaignTestData">
                 <img src="../../../../assets/img/settings/img-7.png">
                 <div class="pl-3">
                     <span class="sub-heading">{{item?.name}}</span>
@@ -108,7 +108,7 @@
         </div>
         
         <div class="text-center pb-3">
-            <button class="working-hour-btn" (click)="manageWorkingHour()" data-bs-toggle="modal" data-bs-target="#teamsModal">Manage User</button>
+            <button class="working-hour-btn" (click)="editCampaignTestUser()" data-bs-toggle="modal" data-bs-target="#teamsModal">Manage User</button>
         </div>
 
     </div>
@@ -189,13 +189,15 @@
                             <div class=" manage-user col-6">
                                 <label class="container"  let i = "index">
                                     <img src="../../../../assets/img/profile/Richie_3.png" class="user-img mx-2">{{item.name}}                  
-                                    <input type="checkbox" name="status" class="user-checkbox"  [(ngModel)]="item.isSelected" value={{item.value}}>   
+                                    <input type="checkbox" name="status" class="user-checkbox" [disabled]="getCheckedCount() && !item.isSelected"  [(ngModel)]="item.isSelected" value={{item.value}}>   
                                       <span class="checkmark ml-2"></span>  
                                 </label>
                             </div>
                             <div class="copy col-6" *ngIf="item.isSelected == true" >
                                 <div class="d-flex align-item-center">
+                                    <div class="align-items-center d-flex">
                                 <img src="../../../../assets/img/profile/Richie_3.png"  class="user-img-2 ">
+                            </div>
                                 <span class="ml-2"  >{{item.name}}</span>
                             </div>
                             <button type="button" class="btclose"  (click)="item.isSelected = false" >
@@ -206,7 +208,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="account-btn" (click)="saveCampaignAlert()">Save</button>
+                <button type="button" class="account-btn" (click)="isAlertUser ? saveCampaignAlert() : saveCampaignTest()">Save</button>
             </div>
         </div>
     </div>

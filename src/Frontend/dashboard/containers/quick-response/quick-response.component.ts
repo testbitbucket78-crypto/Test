@@ -34,6 +34,7 @@ export class QuickResponseComponent implements OnInit {
   initTemplates!:any[];
   messagemedia:any;
   selectedType: string = 'text';
+  numberCount: number = 0;
   rolesList:any;
   // templatesdata:any;
   Links:any;
@@ -199,7 +200,6 @@ filterQuickRes(val:any){
 
 
 deleteTemplate(){
-
   const TemplateID = {
     ID: this.repliestemplateData?.ID
   }
@@ -281,5 +281,9 @@ editQuickResponse(){
  this.usertemplateForm.controls.BodyText.setValue(this.repliestemplateData.BodyText);
  this.selectedType = this.repliestemplateData?.media_type;
  console.log(this.usertemplateForm);
+}
+
+getCharacterCount(val:string) {
+ this.numberCount = val.length;
 }
 }

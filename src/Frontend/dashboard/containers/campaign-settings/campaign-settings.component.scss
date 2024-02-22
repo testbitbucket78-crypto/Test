@@ -285,7 +285,7 @@ p{
      border-radius: 19px;
      opacity: 1;
      font-size: 14px;
-     height: 2rem;
+     min-height: 2rem;
      display: flex;
      justify-content: space-between;
      align-items: center;
@@ -409,4 +409,8 @@ label.container {
   height: 45vh;
   align-items: center;
   display: flex;
+}
+
+.user-dropdown{
+  justify-content: space-between;
 }

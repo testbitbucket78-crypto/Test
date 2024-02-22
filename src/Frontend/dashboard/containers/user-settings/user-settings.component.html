@@ -68,7 +68,25 @@
                     </div>
                     <div class="pt-2">
                         <label>User Phone No.</label> <br>
-                        <input type="text" class="input-form" formControlName="mobile_number"
+
+                            <div class="ss d-flex justify-content-start">
+                            <select class="input-form" id="country_code" formControlName="country_code">
+                              <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
+                                {{ countryCode }}
+                              </option>
+                              </select>
+                              <input type="text" class="form-control" id="mobile_number" formControlName="mobile_number" 
+                              name="mobile_number" style="display: none">  
+                              <input type="text" class="form-control" id="mobile_number"  autocomplete="none" formControlName="display_mobile_number" 
+                                name="display_mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
+                                onKeyPress="return /^[0-9]$/.test(event.key)"
+                                [ngClass]="{'is-invalid' : userDetailForm.controls.display_mobile_number.errors }" 
+                              (change)="formatPhoneNumber()" #text>    
+                            </div>
+
+
+
+                        <!-- <input type="text" class="input-form" formControlName="mobile_number"
                             placeholder="Enter Phone Number" minlength="6" maxlength="15">
                          <div *ngIf="userDetailForm.get('mobile_number')?.invalid && (userDetailForm.get('mobile_number')?.touched || userDetailForm.get('mobile_number')?.dirty)
                         " class="invalid-feedback">
@@ -81,13 +99,13 @@
                         <div *ngIf="userDetailForm.get('mobile_number')?.hasError('minlength')">
                             Phone number must consist of 6 to 15 digits.
                         </div>
-                      </div>
+                      </div> -->
                     </div>
 
                     <div class="pt-2">
                         <label>Role</label> <br>
                         <select class="input-form" formControlName="UserType">
-                            <option selected>Select Role</option>
+                            <option selected value="">Select Role</option>
                             <option *ngFor="let item of rolesList" [value]="item.roleID">{{item?.RoleName}}</option>
                         </select>
                         <div *ngIf="userDetailForm.get('UserType')?.invalid && (userDetailForm.get('UserType')?.touched || userDetailForm.get('UserType')?.dirty)
