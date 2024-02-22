@@ -22,6 +22,11 @@ export class ContactSettingsComponent implements OnInit {
   paging: number [] = [];
   showSideBar:boolean=false;
   searchText = '';
+
+  errorMessage='';
+	successMessage='';
+	warningMessage='';
+
   constructor(private _settingsService:SettingsService) {
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
    }
@@ -30,6 +35,25 @@ export class ContactSettingsComponent implements OnInit {
     this.getTagData();
   
   }
+
+  showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}else if(type=='error'){
+			this.errorMessage=message;
+		}else{
+			this.warningMessage=message;
+		}
+		setTimeout(() => {
+			this.hideToaster()
+		}, 3000);
+		
+	}
+	hideToaster(){
+		this.successMessage='';
+		this.errorMessage='';
+		this.warningMessage='';
+	}
 
   getTagData(){
     this._settingsService.getTagData(this.sp_Id)
@@ -76,8 +100,12 @@ export class ContactSettingsComponent implements OnInit {
 
     this._settingsService.updateTagData(tagData)
     .subscribe(result =>{
-      if(result){
+      if(result.status==200){
         this.closeTagsModal()
+      }
+    }, (error)=>{
+      if(error.status==409) {
+        this.showToaster('Tag with this name is already exist, Please choose another name!','error');
       }
     });
   }

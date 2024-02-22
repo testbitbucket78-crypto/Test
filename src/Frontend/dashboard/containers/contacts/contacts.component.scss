@@ -57,7 +57,7 @@
 }
 .gf img {
     position: absolute;
-    margin: 11px 0px 0px 12px;
+    margin: 11px 0px 0px 12px!important;
     width: 15px;
     height: 15px;
 }
@@ -593,7 +593,7 @@ opacity: 1;
 .sidebar {
     font-family: 'Manrope';
     height: 100%;
-    width: 0;
+    width: 400px;
     position: fixed;
     z-index: 1040;
     top: 0;

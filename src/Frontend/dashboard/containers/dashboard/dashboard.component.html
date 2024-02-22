@@ -34,13 +34,13 @@
                   <div class="card2 d-flex mx-4 my-3 pt-1">
                     <div class="dash-card-items mt-1">
                       <span class="item-heading">{{activeContacts}}</span>
-                      <p class="mb-2 pb-2">Active Contacts</p>
+                      <p class="mb-2 pb-2">Opt-In Contacts</p>
                     </div>
                   </div>
                   <div class="card3 d-flex mx-4 my-3 pt-1">
                     <div class="dash-card-items mt-1">
                       <span class="item-heading">{{inactiveContacts}}</span>
-                      <p class="mb-2 pb-2">Inactive Contacts</p>
+                      <p class="mb-2 pb-2">Opt-Out Contacts</p>
                     </div>
                   </div>
                 </div>
@@ -51,6 +51,7 @@
           <div class="col-sm-6" (click)="routeToPage1()">
             <div class="dash-card float-right">
               <span class="card-heading">Interactions</span>
+              <!-- <span>Interactions of Last 30 days</span> -->
               <div class="p-2">
                 <div>
                   <div class="card1 d-flex mx-4 my-3 pt-1">
@@ -159,13 +160,14 @@
             </div>
             <div class="px-3">
               <div class="recentconversation" *ngFor="let items of recentConversation" (click)="routeToPage1()">
-                <img src="assets/img/user-chat-img.svg">
+                <div class="text-capitalize initials"> {{ items.nameInitials }} </div>
+                <!-- <img src="assets/img/user-chat-img.svg"> -->
                 <div class="col-md-8 rc-body">
                   <p class="text-capitalize" id="item-name" [innerHTML]="items.Name"></p>
                   <p id="item-message" [innerHTML]="getLimitedMessageText(items.message_text)"></p>
                 </div>
   
-                <p id="item-date">{{items.interaction_date | date:'h:mm a'}}</p>
+                <p id="item-date"><span *ngIf="items.isread == 0"><div class="red-dot"></div></span>{{items.interaction_date | date:'h:mm a'}}</p>
               </div>
             </div>
   
@@ -174,14 +176,14 @@
                
                 <img src="assets/img/img2.png" class="pb-3" alt="error">
                 <p class="txt-1">Premium+</p>
-                <p class="txt-2">$0.5 per message</p>
+                <p class="txt-2">₹0.50 per message</p>
               </div>
   
               <div class="card10-c mx-3 py-4">
                 <p class="txt-1" style="margin-top:30px">Your available balance</p>
-                <p class="txt-2" style=" font-size: 27px;"><b>$7.309.68</b></p>
+                <p class="txt-2" style=" font-size: 27px;"><b>₹{{availableAmount}}</b></p>
                 <div class="col-sm-12">
-                  <button>Add Funds</button>
+                  <button [routerLink]="['/dashboard/myprofile']">Add Funds</button>
                 </div>
               </div>
             </div>

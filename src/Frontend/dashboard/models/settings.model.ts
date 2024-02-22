@@ -221,6 +221,7 @@ export interface repliestemplateList{
     spid:number;
     Channel:string;
     Header:string;
+    media_type:string;
     created_at:number;
     updated_at:string;
     created_By:string;
@@ -237,6 +238,7 @@ export interface templateList{
     BodyText:string;
     Links:string;
     TemplateName:string;
+    media_type:string;
     isTemplate:number;
     created_By:string;
     updated_at:number;

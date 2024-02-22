@@ -180,6 +180,7 @@ showMessageType(type: string) {
             let responseData: any = uploadStatus;
             if (responseData.filename) {
                 this.selectedPreview = responseData.filename.toString();
+                this.defaultMessageForm.get('link')?.setValue(this.selectedPreview);
                 console.log(this.selectedPreview);
             }
         });
@@ -209,14 +210,15 @@ removeMedia() {
   this.defaultMessageForm.get('link')?.setValue(null);
 }
 
-  // remove form values
+  // remove values //
   removeValue() {
+    this.showSideBar=false;
+    this.defaultMessageForm.reset();
     this.selectedPreview = '';
     this.fileName='';
     this.value = null;
     this.selectedType='text';
-    this.defaultMessageForm.get('link')?.setValue(null);
-    this.defaultMessageForm.reset();
+    this.selectedMessageData=<defaultMessagesData>{}
 }
 
   getDefaultMessages() {
@@ -240,13 +242,19 @@ removeMedia() {
   addEditDefaultMessageData() {
     if (this.defaultMessageForm.valid) {
       let defaultMessagesData = this.copyDefaultMesssageData();
-      this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe(response => {
+      this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe
+      (response => {
         if(response.status === 200) {
           this.defaultMessageForm.reset();
           this.getDefaultMessages();
           this.removeValue();
           $("#welcomGreeting").modal('hide');
           this.showSideBar = false;
+        }
+    },
+       (error) => {
+        if(error.status === 413) {
+          console.log('Media file size is too large, Maximum of 10mb size is allowed!')
         }
     });
     }
@@ -261,16 +269,12 @@ removeMedia() {
     this.value = this.selectedMessageData.value;
   }
 
-  toggleSideBar(data:any,type: number) {
-    if(this.showSideBar = !this.showSideBar) {
+  isShowSideBar(data:any,type: number) {
+      this.showSideBar = true;
       this.selectedMessageData = data;
       this.selectedCategory = type;
       this.patchFormValue();
       console.log(data);
-    }
-    else {
-      this.removeValue()
-    }
   }
 
   populateData(data:any) {
@@ -323,6 +327,7 @@ removeMedia() {
       if(response) {
         $("#deleteModal").modal('hide');
         this.showSideBar =false;
+        this.removeValue();
         this.getDefaultMessages();
       }
     });

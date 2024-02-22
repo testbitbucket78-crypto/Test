@@ -188,14 +188,14 @@ campaignTestData:any;
   copyCampaignTimingFormValues(){
     let campaignResponse:campaignDataResponsePost = <campaignDataResponsePost>{};
     campaignResponse.sp_id = this.sp_Id; 
-    campaignResponse.days = this.workingFormData;  
-    console.log(this.workingFormData);
-    // campaignResponse.days = [];
-    // this.workingFormData.forEach(item=>{
-    //   if(item.day?.length >0){
-    //     campaignResponse.days.push({day:item.day.toString(),startTime:item?.start_time,endTime:item?.endTime})
-    //   }
-    // });
+    // campaignResponse.days = this.workingFormData;  
+    // console.log(this.workingFormData);
+    campaignResponse.days = [];
+    this.workingFormData.forEach(item=>{
+      if(item.day?.length >0){
+        campaignResponse.days.push(item);
+      }
+    });
     return campaignResponse;
   }
 

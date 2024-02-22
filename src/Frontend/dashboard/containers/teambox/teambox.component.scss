@@ -833,8 +833,6 @@ img.no-dp {
 .message_box .content span.message_time {
     margin: 0;
     padding: 0;
-    font-size: 11px;
-    padding-right: 6rem;
     font-size: 10px;
     color: #BDC3D0;
     text-align: right;
@@ -2324,7 +2322,7 @@ label span {
     top: 2.8rem;
     border: none;
     right: 19rem;
-    width: 4.4rem;
+    width: 5rem;
     background: #ffffff;
     font-size: 12px;
     cursor: pointer;
@@ -2414,19 +2412,12 @@ label span {
 .e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
     top: -750% !important;
   }
-  .message-box {
-    position: relative;
-    display: inline-block;
-}
 
-.tick-icon {
-    display: none;
-    position: absolute;
-    top: 48%;
-    left: 86%;
-    transform: translate(-50%, -50%);
-}
+  #defaultRTE_toolbar {
+    border: none;
+  }
 
-.message-box:hover .tick-icon {
-    display: inline-block;
-}
+  .rte-placeholder.e-rte-placeholder.null {
+    font-size: 11px!important;
+    padding:0;
+  }

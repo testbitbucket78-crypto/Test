@@ -24,7 +24,7 @@
 </div>
 
 
-<div class="modal fade" tabindex="-1" id="userModal" role="dialog">
+<div class="modal fade" tabindex="-1" id="userModal" data-bs-backdrop="static" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content user-modal p-2 pl-3">
             <div class="modal-header">
@@ -79,7 +79,7 @@
                           Phone number should contain only digits.
                         </div>
                         <div *ngIf="userDetailForm.get('mobile_number')?.hasError('minlength')">
-                          Phone number should be 10 digits long.
+                            Phone number must consist of 6 to 15 digits.
                         </div>
                       </div>
                     </div>
@@ -117,7 +117,7 @@
     </div>
     <div class="sidebar-content">
         <div class="d-flex pb-3">
-            <span class="user-status">Active</span>
+            <span class="user-status">{{userData.isActive ==1 ?'Active' : userData.isActive == 0 ? 'In Active' : 'Disabled'}}</span>
             <p class="user-id">Agent Id:</p>
             <p class="black mt-1"> {{userData?.uid}}</p>
         </div>
@@ -129,24 +129,24 @@
                 <span class="heading">{{userData?.name}}</span>
                 <div class="d-flex pt-1">
                     <p>Date of Joining:</p>
-                    <p class="black ">&nbsp;{{userData?.date}}</p>
+                    <p class="black ">&nbsp;{{userData?.CreatedDate ? (userData?.CreatedDate | date : 'dd/mm/yyyy') : 'N/A'}}</p>
                 </div>
             </div>
         </div>
         <div class="flex-row pt-4">
             <div class="w-50">
                 <span class="sub-heading">Last Login Time</span><br>
-                <p class="black">Last Login: {{userData?.LastLogIn}}</p>
+                <p class="black">Last Login: {{userData?.LastLogIn ? (userData?.LastLogIn | date : 'dd/mm/yyyy hh:mm a') : 'N/A' }}</p>
             </div>
             <div class="w-45">
                 <span class="sub-heading">Login IP Address</span><br>
-                <p class="black">{{userData?.LoginIP}}</p>
+                <p class="black">{{userData?.LoginIP ? userData?.LoginIP :'N/A'}}</p>
             </div>
         </div>
         <div class="flex-row  pt-4">
             <div class="w-50">
                 <span class="sub-heading">Email Id</span><br>
-                <p class="black">{{userData?.LoginIP}}</p>
+                <p class="black">{{userData?.email_id}}</p>
             </div>
             <div class="w-45">
                 <span class="sub-heading">Phone Number</span><br>
@@ -170,13 +170,12 @@
         <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
             <img class="p-0" src="../../../../assets/img/delete.png">
         </button>
-        <button class="disable-btn ml-2 " (click)="activeDeActiveUser()">
+        <button class="disable-btn ml-2 " >
             <div class="active-toggle">
             <span>Disable</span>
             <div class="px-2 switch-toggle">
                 <label class="m-0 switch">
-                  <input type="checkbox" class="m-0 form-control-checkbox" 
-                    [(ngModel)]="isActive">
+                  <input type="checkbox" class="m-0 form-control-checkbox" (click)="activeDeActiveUser()" [(ngModel)]="isActive">
                   <span class="slider"></span>
                 </label>
               </div>
@@ -203,7 +202,7 @@
 </div>
 
 
-<div class="modal fade" tabindex="-1" id="deleteModal" role="dialog">
+<div class="modal fade" tabindex="-1" id="deleteModal" data-bs-backdrop="static" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content delete-token-modal">
             <div class="modal-body alertmessage">

@@ -25,6 +25,7 @@ export class OrganisationalSettingsComponent implements OnInit {
   profile_img:any;
   profilePicture:any;
   selectedTab:number = 1;
+  randomNumber:number = 0;
   companyDetailForm!:FormGroup;
   billingForm!:FormGroup;
   localeForm!:FormGroup;
@@ -168,7 +169,7 @@ this.apiService.uploadCompanylogo(this.profilesettingPicData).subscribe(
 this.showToaster('Image saved successfully','success' + response);
 $("#pictureCropModal").modal('hide');
 this.profilePicture;
-
+this.randomNumber = Math.random();
 },
 (error) => {
 this.showToaster('Error saving image ','error' + error.message);
@@ -176,6 +177,46 @@ this.showToaster('Error saving image ','error' + error.message);
 
 }
 
+// fileChangeEvent(event: any): void {
+//   $("#pictureCropModal").modal('show');
+//     this.imageChangedEvent = event;
+//   }
+//   imageCropped(event: ImageCroppedEvent) {
+//     const newImageUrl = event.base64 + '?timestamp=' + new Date().getTime();
+//     this.croppedImage = newImageUrl;
+    
+//     // Trigger change detection
+//     this.cdRef.detectChanges();
+//  }
+
+ 
+// //API call to save the cropped image
+
+// saveContactsProfilePicture() {
+//   let SP_ID = Number(sessionStorage.getItem('SP_ID'))
+//   this.contactsImageData.SP_ID = SP_ID,
+//   this.contactsImageData.customerId = this.contactId,
+//   this.contactsImageData.contact_profile = this.croppedImage
+
+
+// this.apiService.saveContactImage(this.contactsImageData).subscribe(
+// (response) => {
+
+//   if (response.status === 200) {
+//     $("#pictureCropModal").modal('hide');
+//     this.closesidenav(this.items);
+//     console.log(response+ 'image saved successfully');
+//     setTimeout(() => {
+//       this.getContact();
+//       this.profilePicture;
+//    }, 300); 
+//   }
+// },
+// (error) => {
+//   console.log(error+ 'error saving contact image');
+// })
+
+// }
 
 
 showToaster(message:any,type:any){

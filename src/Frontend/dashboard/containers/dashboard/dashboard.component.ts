@@ -1,5 +1,6 @@
 import { Component, OnInit,ChangeDetectionStrategy } from '@angular/core';
 import { DashboardService } from './../../services';
+import { ProfileService } from 'Frontend/dashboard/services/profile.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -29,9 +30,11 @@ export class DashboardComponent implements OnInit {
     draftCampaign:number = 0;
     Name:any;
     SPID = 0;
+    nameInitials: string[] = [];
+    availableAmount=0;
    
 
-    constructor(private apiService: DashboardService, private router: Router) { }
+    constructor(private apiService: DashboardService, private router: Router,private profileService:ProfileService) { }
     ngOnInit() {
 
         this.routerGuard();
@@ -39,7 +42,8 @@ export class DashboardComponent implements OnInit {
         this.getDashboardInteractions();
         this.getdashboardCampaigns();
         this.getdashboardAgents();
-        this. getRecentConversation();
+        this.getRecentConversation();
+        this.getAvailableAmount();
         this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
         this.SPID = Number(sessionStorage.getItem('SP_ID'));
     }
@@ -134,9 +138,22 @@ export class DashboardComponent implements OnInit {
 
         this.apiService.dashboardRecentConversation(SP_ID).subscribe((data: any) => {
             this.recentConversation = data[0];
-          
-        })
+        
+            this.recentConversation.forEach((item: { Name: string; nameInitials: string; }) => {
+                const nameParts = item.Name.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts[1] || '';
+                const nameInitials = firstName.charAt(0) + lastName.charAt(0);
+    
+                item.nameInitials = nameInitials;
+            });
+        
+            console.log(this.recentConversation);
+        });
+        
+    
     }
+    
 
     getLimitedMessageText(message: string) {
         let maxLength = 70;
@@ -146,6 +163,15 @@ export class DashboardComponent implements OnInit {
         return message.substring(0, maxLength) + '...';
         }
 
+    }
+
+    getAvailableAmount() {
+        const spid = Number(sessionStorage.getItem('SP_ID'));
+        this.profileService.showAvailableAmount(spid).subscribe(response => {
+            let amountAvilable = response.AvailableAmout;
+            this.availableAmount = amountAvilable.toFixed(2);
+            console.log(this.availableAmount)
+      });
     }
 
     routeToPage() {

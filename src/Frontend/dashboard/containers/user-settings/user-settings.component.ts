@@ -4,6 +4,7 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { UserData, rights } from '../../models/settings.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { isNullOrUndefined } from 'is-what';
+import { DatePipe } from '@angular/common';
 declare var $: any;
 
 @Component({
@@ -67,17 +68,27 @@ export class UserSettingsComponent implements OnInit {
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
             valueFormatter: (value:any) => {
-                  return value.value == 1 ? 'Active' : 'In Active';
+                  return value.value == 1 ? 'Active'  : value.value == 2 ? 'Disabled' : 'In Active';
               },
         },
         {
-            field: 'age',
+            field: 'LastLogIn',
             headerName: 'Last Active',
             flex: 1,
             resizable: true,
             filter: true,
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+            valueFormatter: (value:any) => {
+                if (value.value) {
+                    const date = new Date(value.value);
+          
+                    return this.datepipe.transform(date, "dd-MMM-yyyy hh:mm a");
+                  }
+                  else {
+                    return 'N/A';
+                  }
+              },
         },
     ];
     public gridapi!: GridApi;
@@ -97,7 +108,7 @@ export class UserSettingsComponent implements OnInit {
     filteredRolesList: any[] = [];
     selectedUserData: any;
     
-    constructor(private _settingsService: SettingsService) {
+    constructor(private _settingsService: SettingsService,private datepipe: DatePipe,) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
 
@@ -126,7 +137,7 @@ export class UserSettingsComponent implements OnInit {
             this.showSideBar = true;
             this.uid = this.userData?.uid;
             console.log(this.uid);
-            this.isActive = this.userData.IsActive == 1 ? false : true ;
+            this.isActive = this.userData.IsActive == 2 ? true : false ;
             this.patchFormValue();
         }
     };    
@@ -245,7 +256,7 @@ export class UserSettingsComponent implements OnInit {
     activeDeActiveUser() {
         let userData = <any>{};
         userData.uid = this.uid;
-        userData.isActive = this.isActive? 1 : 0;
+        userData.isActive = !this.isActive? 2 : 1;
         this._settingsService.activeUser(userData).subscribe(result => {
             if (result) {
                 this.getUserList();

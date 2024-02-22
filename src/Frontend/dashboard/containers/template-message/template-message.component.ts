@@ -28,10 +28,12 @@ export class TemplateMessageComponent implements OnInit {
     status: string = 'saved';
     BodyText: any;
     fileName: any; 
+    TemplateName = '';
     selectedType: string = 'text';
     selectedPreview: string = '';
     showCampaignDetail: boolean = false;
     showGalleryDetail: boolean = false;
+    showInfoIcon:boolean = false;
     templatesData = [];
     galleryData = [];
     filteredGalleryData = [];
@@ -164,7 +166,7 @@ export class TemplateMessageComponent implements OnInit {
         $('#newTemplateMessage').modal('hide');
     }
 
-    onEditorChange(value: string | null): void {
+    onEditorChange(value:any) {
         this.newTemplateForm.get('BodyText')?.setValue(value);
     }
 
@@ -278,6 +280,7 @@ export class TemplateMessageComponent implements OnInit {
                 let responseData: any = uploadStatus;
                 if (responseData.filename) {
                     this.selectedPreview = responseData.filename.toString();
+                    this.newTemplateForm.get('Links')?.setValue(this.selectedPreview);
                     console.log(this.selectedPreview);
                 }
             });
@@ -409,12 +412,12 @@ export class TemplateMessageComponent implements OnInit {
     }
 
     saveTemplateNextStep() {
-      const TemplateName = this.newTemplateForm.get('TemplateName')?.value;
+      this.TemplateName = this.newTemplateForm.get('TemplateName')?.value;
       const Channel =  this.newTemplateForm.get('Channel')?.value;
       const Category =  this.newTemplateForm.get('Category')?.value;
       const Language = this.newTemplateForm.get('Language')?.value;
 
-    if(TemplateName && Channel && Category && Language) {
+    if(this.TemplateName && Channel && Category && Language) {
         $('#newTemplateMessage').modal('show');
         $('#newTemplateMessageFirst').modal('hide');
         
@@ -469,13 +472,16 @@ export class TemplateMessageComponent implements OnInit {
     }
 
     confirmsave() {
-        if (this.newTemplateForm.valid) {
+        this.status = 'saved';
             $('#newTemplateMessage').modal('hide');
             $('#newTemplateMessagePreview').modal('hide');
             $('#confirmationModal').modal('show');
-        } else {
-            this.showToaster('!Please fill the required details in the form', 'warning');
-        }
+            this.showCampaignDetail =false;
+    }
+
+    saveAsDraft() {
+        this.status = 'draft';
+        this.saveNewTemplate();
     }
 
     copyTemplate() {
@@ -631,14 +637,15 @@ export class TemplateMessageComponent implements OnInit {
             });
         }
     }
-    closeAllModal() {
+    closeAtrrModal() {
+        this.attributesearch ='';
         $('#newTemplateMessage').modal('show');
         $('#atrributemodal').modal('hide');
     }
 
     selectAttributes(item: any) {
         const selectedValue = item;
-        this.closeAllModal();
+        this.closeAtrrModal();
         let htmlcontent = '';
         const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
         this.onEditorChange(selectedAttr);
@@ -654,5 +661,21 @@ export class TemplateMessageComponent implements OnInit {
                 );
             }
         });
+    }
+
+    toggleInfoIcon() {
+        this.showInfoIcon = !this.showInfoIcon;
+      }
+
+      getLimitedMessageText(message: string) {
+        let maxLength = 50;
+        if(message) {
+            if (message.length <= maxLength) {
+                return message;
+                } 
+            else {
+                return message.substring(0, maxLength) + '...';
+                }
+        }
     }
 }

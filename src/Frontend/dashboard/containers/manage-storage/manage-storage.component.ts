@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { editAutoDeletionData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 
@@ -16,7 +16,7 @@ export class ManageStorageComponent implements OnInit {
   editAutoDeletionForm!: FormGroup;
   spid!:number;
   storageUtilization!:number;
-  manageStorage:any=[];
+  autoDeletionData:any=[];
   totalStorage:number = 4;
   percentage:number=0;
   autodeletion_message:string ='';
@@ -35,10 +35,16 @@ export class ManageStorageComponent implements OnInit {
   message_count:any;
   messageData:any;
   mediaData:any;
+  totalSize:any;
+  mediaCount:any;
+  combinedCount:any;
+  combinedSize:any;
 
   errorMessage = '';
 	successMessage = '';
 	warnMessage = '';
+
+  @ViewChild('deleteManually', { static: false }) deleteManuallyForm!: NgForm;
 
   constructor(private apiService:SettingsService,private fb: FormBuilder) { }
 
@@ -49,24 +55,30 @@ export class ManageStorageComponent implements OnInit {
     this.getmanualDelation();
 
     this.editAutoDeletionForm = this.fb.group({
-      option1: [''],
-      option2: [''],
-      option3: [''],
+      autodeletion_message: [''],
+      autodeletion_media: [''],
+      autodeletion_contacts: [''],
       optionradio1: [''],
       optionradio2: [''],
       optionradio3: [''],
       
     });
-    this.toggleSelection('option1', 'optionradio1');
-    this.toggleSelection('option2', 'optionradio2');
-    this.toggleSelection('option3', 'optionradio3');
+    this.toggleSelection('autodeletion_message', 'optionradio1');
+    this.toggleSelection('autodeletion_media', 'optionradio2');
+    this.toggleSelection('autodeletion_contacts', 'optionradio3');
 
   }
 
   resetForm() {
-    this.editAutoDeletionForm.reset();
+    if (this.deleteManuallyForm) {
+      this.deleteManuallyForm.resetForm();
+      this.message_type = '';
+      this.mediaData=null;
+      this.messageData=null;
+      this.combinedCount=0;
+      this.combinedSize=0;
+    }
   }
-  
 
   get formattedDashArray() {
     return this.percentage + ', 100';
@@ -78,11 +90,15 @@ export class ManageStorageComponent implements OnInit {
 
   getManageStorage() {
     this.apiService.getManageStorageData(this.spid).subscribe(response => {
-     this.storageUtilization = response.storageUtilization;
-     this.manageStorage = response.managestroage;
-     this.autodeletion_message=this.manageStorage?.autodeletion_message;
-     this.autodeletion_media=this.manageStorage?.autodeletion_media;
-     this.autodeletion_contacts = this.manageStorage?.autodeletion_contacts;
+
+     let storageInBytes = response.storageUtilization + response.managestroage;
+     this.storageUtilization = parseFloat((storageInBytes / (1024 * 1024 * 1024)).toFixed(2));
+
+     this.autoDeletionData = response.resultbyspid[0];
+
+     this.autodeletion_message=this.autoDeletionData?.autodeletion_message;
+     this.autodeletion_media=this.autoDeletionData?.autodeletion_media;
+     this.autodeletion_contacts = this.autoDeletionData?.autodeletion_contacts;
      this.calculatePercentage();
     });
   }
@@ -121,33 +137,44 @@ export class ManageStorageComponent implements OnInit {
       editAutoDeletion.spid = this.spid;
 
       if(formValues.optionradio1) {
-        editAutoDeletion.autodeletion_message = formValues.optionradio1;
+        editAutoDeletion.autodeletion_message  = formValues.optionradio1;
       }
       else {
-        editAutoDeletion.autodeletion_message = formValues.option1;
+        editAutoDeletion.autodeletion_message = formValues.autodeletion_message;
       }
       if(formValues.optionradio2) {
-        editAutoDeletion.autodeletion_media  = "never delete";
+        editAutoDeletion.autodeletion_media  = formValues.optionradio2;
       }
       else {
-        editAutoDeletion.autodeletion_media = formValues.option2;
+        editAutoDeletion.autodeletion_media = formValues.autodeletion_media;
       }
       if(formValues.optionradio3) {
-        editAutoDeletion.autodeletion_contacts= "never delete";
+        editAutoDeletion.autodeletion_contacts= formValues.optionradio3;
       }
       else {
-        editAutoDeletion.autodeletion_contacts = formValues.option3;
+        editAutoDeletion.autodeletion_contacts = formValues.autodeletion_contacts;
       }
  
     this.apiService.editAutoDeletion(editAutoDeletion)
     .subscribe(response => {
       if(response) {
         $("#edit-auto-deletion").modal('hide');
+        this.showToaster('Auto Deletion Updated Succsfully','success')
+        this.editAutoDeletionForm.reset();
         this.getManageStorage();
-        // this.editAutoDeletionForm.reset();
+       
       }
     });
 
+  }
+
+  patchFormValue() {
+    const data = this.autoDeletionData;
+    for(let prop in data){
+      let value = data[prop as keyof typeof data];
+      if(this.editAutoDeletionForm.get(prop))
+      this.editAutoDeletionForm.get(prop)?.setValue(value)
+    }  
   }
 
   showToaster(message:any,type:any){
@@ -163,7 +190,7 @@ export class ManageStorageComponent implements OnInit {
 	
 		setTimeout(() => {
 			this.hideToaster()
-		}, 5000);
+		}, 3000);
 		
 	}
 	hideToaster(){
@@ -183,12 +210,14 @@ export class ManageStorageComponent implements OnInit {
       $("#Delete-Manually").modal('hide');
     } else if (this.manually_deletion_days && this.mediaChecked) {
       $("#messagedeleteModal").modal('show');
-      $("#Delete-Manually").modal('hide');    } else {
+      $("#Delete-Manually").modal('hide');
+    } 
+      else {
       this.showToaster("Please fill input and check the checkbox", "error");
     }
   }
   
-  postmanualDelation(){
+  postmanualDelation() {
     let manualdeletedata={
       SPID:this.spid,
       manually_deletion_days:this.manually_deletion_days,
@@ -199,26 +228,66 @@ export class ManageStorageComponent implements OnInit {
     this.apiService.postmanualDelation(manualdeletedata).subscribe(response => {
       
       console.log(response);
+      this.deleteManuallyForm.resetForm();
+      this.message_type = '';
+      this.getManageStorage();
     })
     $("#messagedeleteModal").modal('hide');
   }
-// Show the 
+
   getmanualDelation(){
     let showdeletedata={
       SPID:this.spid,
       Manually_deletion_days:this.manually_deletion_days,
       message_type:this.message_type,
      }
-    this.apiService.getmanualDelation(showdeletedata).subscribe(response => {
-      this.showMessages = true; // Show the messages section
-      this.messageData = response.messageSize[0];
-      this.mediaData = response.messageSize;
-      console.log(this.mediaData)
-    })
+
+     if(this.manually_deletion_days==0) {
+      this.showToaster('Please enter a valid number of days starting from 1.','error');
+      return;
+     }
+     else {
+      this.apiService.getmanualDelation(showdeletedata).subscribe(response => {
+        this.showMessages = true;
+        // text message data //
+
+        if(this.manually_deletion_days && this.textChecked) {
+          this.messageData = response.textSize[0];
+          this.message_count = this.messageData?.message_count;
+          let message_size = this.messageData?.message_size;
+          this.message_size = parseFloat((message_size / (1024 * 1024)).toFixed(2));
+        };
+        
+      
+  
+        // media message data //
+
+        if(this.manually_deletion_days && this.mediaChecked) {
+          this.mediaData = response.mediaSize;
+          this.mediaCount = this.mediaData?.mediaCount;
+          let totalSize = this.mediaData?.totalSize;
+          this.totalSize = parseFloat((totalSize / (1024 * 1024)).toFixed(2));
+        };
+       
+
+        // combined data //
+        if(this.message_type == 'Both') {
+          this.combinedSize = Number(this.message_size + this.totalSize);
+          this.combinedCount = Number(this.message_count + this.mediaCount);
+        }
+       
+      });
+     }
+
   }
-  updateMessageType() {
-    this.message_type = (this.textChecked ? 'Text' : '') || (this.mediaChecked ? 'Media' : '');
-  }
+ updateMessageType() {
+    if (this.textChecked && this.mediaChecked) {
+        this.message_type = 'Both';
+    } else {
+        this.message_type = (this.textChecked ? 'Text' : '') || (this.mediaChecked ? 'Media' : '');
+    }
+}
+
 
 }
 
