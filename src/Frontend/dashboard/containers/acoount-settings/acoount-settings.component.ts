@@ -227,7 +227,7 @@ openDiv() {
       phoneNo: this.phoneNumber
     }
     if (this.selectedId?.length > 0) {
-      var id= this.selectedId[this.selectedId?.length - 1];
+      var id= this.selectedId[this.selectedId?.length - 1] ? this.selectedId[this.selectedId?.length - 1] :0;
    }
     try {
       this.apiService.craeteQRcode(data).subscribe(
@@ -238,7 +238,7 @@ openDiv() {
             if(this.qrcode) {
               this.channel_status = 1;  
               setTimeout(()=> {
-              this.saveWhatsappWebDetails(0);
+              this.saveWhatsappWebDetails(id);
             },15000); 
             }
           }

@@ -118,7 +118,9 @@ export interface RolesData {
 export interface UserData {
     name: string;
     mobile_number: number;
+    display_mobile_number: number;
     uid: number;
+    country_code:string;
     UserType: number;
     email_id: string;
     SP_ID: number;

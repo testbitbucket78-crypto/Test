@@ -93,16 +93,14 @@ const insertCustomers = async (req, res) => {
 const updatedCustomer = (req, res) => {
 
     var updateQueryQuery = "UPDATE EndCustomer SET Name ='" + req.body.Name + "',";
+    updateQueryQuery += " OptInStatus ='" + req.body.OptInStatus + "',"
     updateQueryQuery += " Phone_number ='" + req.body.Phone_number + "',"
     updateQueryQuery += " channel ='" + req.body.channel + "',"
-    updateQueryQuery += " status ='" + req.body.status + "',"
-    updateQueryQuery += " OptInStatus ='" + req.body.OptInStatus + "',"
-    updateQueryQuery += " sex ='" + req.body.sex + "',"
-    updateQueryQuery += " age ='" + req.body.age + "',"
+    updateQueryQuery += " countryCode ='" + req.body.countryCode + "',"
+    updateQueryQuery += " displayPhoneNumber ='" + req.body.displayPhoneNumber + "',"
     updateQueryQuery += " emailId ='" + req.body.emailId + "',"
-    updateQueryQuery += " Country ='" + req.body.Country + "',"
-    updateQueryQuery += " facebookId ='" + req.body.facebookId + "',"
-    updateQueryQuery += " InstagramId ='" + req.body.InstagramId + "'"
+    updateQueryQuery += " ContactOwner ='" + req.body.ContactOwner + "'"
+  
 
     updateQueryQuery += " WHERE customerId =" + req.body.customerId
 

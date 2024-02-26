@@ -90,9 +90,23 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on('ready', () => {
 
         try {
+          if (phoneNo != client.info.wid.user) {
+            console.log("wrong Number")
+            notify.NotifyServer(phoneNo,false,'Wrong Number')
+            client.destroy();
+            if (clientSpidMapping.hasOwnProperty(spid)) {
+              delete clientSpidMapping[spid];
+              console.log(`destroy wrong no. ${spid} from clientSpidMapping.`);
+
+            }
+            return resolve({ status: 404, value: 'Wrong Number ,Please use logged in User Phone Number !' });
+            
+  
+          }else{
           console.log('Client is ready!');
           notify.NotifyServer(phoneNo, false, 'Client is ready!')
           return resolve({ status: 201, value: 'Client is ready!' });
+          }
         } catch (readyerr) {
           console.log("client ready err")
         }

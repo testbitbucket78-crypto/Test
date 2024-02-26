@@ -99,13 +99,13 @@
                         <div *ngIf="userDetailForm.get('mobile_number')?.hasError('minlength')">
                             Phone number must consist of 6 to 15 digits.
                         </div>
-                      </div>
+                      </div> -->
                     </div>
 
                     <div class="pt-2">
                         <label>Role</label> <br>
                         <select class="input-form" formControlName="UserType">
-                            <option selected>Select Role</option>
+                            <option selected value="">Select Role</option>
                             <option *ngFor="let item of rolesList" [value]="item.roleID">{{item?.RoleName}}</option>
                         </select>
                         <div *ngIf="userDetailForm.get('UserType')?.invalid && (userDetailForm.get('UserType')?.touched || userDetailForm.get('UserType')?.dirty)

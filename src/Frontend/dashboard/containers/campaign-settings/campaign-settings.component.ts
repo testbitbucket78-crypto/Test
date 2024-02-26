@@ -26,6 +26,7 @@ workingData:campaignFormData[]=[];
 sp_Id:number;
 userList:any[] =[];
 selectedUser:any[] =[];
+isAlertUser:boolean= false;
 alertUsers:any[] =[];
 workingFormData:campaignFormData[]=[];
 isSelected:any;
@@ -53,6 +54,7 @@ campaignTestData:any;
     this.getUserList();
     this.getCampaignTimingList();
     this.getCampaignAlertData();
+    this.getCampaignTestData();
   }
 
   removeKeyword(index: number): void {
@@ -100,8 +102,7 @@ campaignTestData:any;
     this._settingsService.getCampaignData(this.sp_Id)
     .subscribe((result:any) =>{
       if(result){
-        this.campaignAlertData = result?.getCampaignAlerts;        
-        this.selectUsers();
+        this.campaignAlertData = result?.getCampaignAlerts;  
         console.log(result);
       }
   
@@ -112,8 +113,7 @@ campaignTestData:any;
     this._settingsService.getTestCampaignData(this.sp_Id)
     .subscribe((result:any) =>{
       if(result){
-        this.campaignTestData = result?.getCampaignAlerts;        
-        this.selectUsers();
+        this.campaignTestData = result?.getCampaignTest; 
         console.log(result);
       }
   
@@ -169,6 +169,21 @@ campaignTestData:any;
       if(result){
         console.log(result);
         this.getCampaignAlertData();
+        this.selectedUser = [];
+        $("#teamsModal").modal('hide');
+        //this.workingData = result?.result;
+      }
+    })
+  }
+
+  saveCampaignTest(){
+    let campaignAlertData= this.copyAlertUserValue();
+    this._settingsService.updateCampaignTestData(campaignAlertData)
+    .subscribe(result =>{
+      if(result){
+        console.log(result);
+        this.getCampaignTestData();
+        this.selectedUser = [];
         $("#teamsModal").modal('hide');
         //this.workingData = result?.result;
       }
@@ -207,10 +222,10 @@ campaignTestData:any;
     })
   }
 
-  selectUsers(){
+  selectUsers(data:[]){
     this.setUserList();
     this.selectedUser.forEach((item:any)=>{
-      if(this.campaignAlertData.findIndex((idx:any) => idx.uid == item.uid) >-1)
+      if(data.findIndex((idx:any) => idx.uid == item.uid) >-1)
       item.isSelected = true;
     });
   }
@@ -265,5 +280,24 @@ campaignTestData:any;
   
     })
   }
+
+  getCheckedCount(){
+    let val =  this.selectedUser.filter(item => item.isSelected == true);
+    let length = this.isAlertUser ? 5 : 2;
+    if(val.length == length)
+    return true;
+    else
+    return false;
+  }
   
+  editCampaignAlertUser(){      
+    this.isAlertUser = true;
+    this.selectUsers(this.campaignAlertData);
+  }
+
+  
+  editCampaignTestUser(){   
+    this.isAlertUser = false;          
+    this.selectUsers(this.campaignTestData);
+  }
 }
