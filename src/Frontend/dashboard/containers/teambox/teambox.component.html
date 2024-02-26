@@ -1301,7 +1301,7 @@
 				<div class="row">
 					<label for="floatingInputGrid">Name</label>
 					<input class="form-control" type="text" placeholder="Enter Name" formControlName="Name" id="Name"
-					[ngClass]="{'is-invalid':newContact.controls.Name.touched && newContact.controls.Name.errors}">
+					[ngClass]="{'is-invalid':newContact.get('Name')?.touched && newContact.get('Name')?.errors}">
 				</div>
 				<div *ngIf="newContact.get('Name')?.invalid && (newContact.get('Name')?.touched || newContact.get('Name')?.dirty)" 
 				     class="invalid-feedback">
@@ -1404,7 +1404,7 @@
 			<form [formGroup]="editContact" class="p-0 inner_form large" (ngSubmit)="updateCustomer()">
 				
 				<div class="row" style="flex-direction:column">
-					<label for="floatingInputGrid" class="required">Name</label>
+					<label for="floatingInputGrid" class="required">Name<span class="text-danger">*</span></label>
 					<input class="form-control" (input)="hangeEditContactInuts($event)" type="text" formControlName="Name" 
 					[ngClass]="{'is-invalid':editContact.get('Name')?.touched && editContact.get('Name')?.errors}"
 					 placeholder="Enter Full Name">
@@ -1429,7 +1429,7 @@
 	
 
 				<div class="phoneFieldEdit row" style="flex-direction:column">
-					<label for="floatingSelectGrid" class="required">Phone Number</label>
+					<label for="floatingSelectGrid" class="required">Phone Number<span class="text-danger">*</span></label>
 					<select class="input-formm" name="country_code" (change)="hangeEditContactInuts($event)" formControlName="country_code">
 						<option *ngFor="let country_code of countryCodes" [ngValue]="country_code">
 							{{ country_code }}
@@ -1469,7 +1469,7 @@
 				</div>
 					  
 				<div class="row" style="flex-direction:column">
-					<label for="floatingSelectGrid" class="required">Contact Owner</label>
+					<label for="floatingSelectGrid" class="required">Contact Owner<span class="text-danger">*</span></label>
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
 						<input class="form-control" type="text" readonly placeholder="Select Contact Owner"
 						   style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;"
@@ -1518,7 +1518,7 @@
 
 				<div class="row" class="m-0 d-flex flex-row-reverse">
 					<div class="m-0 modal-footer row popfooter">
-						<div class="inner_form col-md-6 text-right">
+						<div class="inner_form col-md-6 p-0 text-right">
 							<button type="submit" class="submit-btn">Update</button>
 						</div>
 					</div>

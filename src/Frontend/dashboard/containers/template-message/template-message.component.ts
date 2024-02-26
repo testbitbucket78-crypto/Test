@@ -430,7 +430,7 @@ export class TemplateMessageComponent implements OnInit {
 
     saveNewTemplate() {
         if (this.newTemplateForm.valid) {
-            let newTemplateFormData = this.createNewTemplateFormData();
+            const newTemplateFormData = this.createNewTemplateFormData();
             if ((this.templatesMessageDataById = null)) {
                 this.apiService
                     .saveNewTemplateData(newTemplateFormData, this.selectedPreview)
@@ -486,7 +486,7 @@ export class TemplateMessageComponent implements OnInit {
     }
 
     copyTemplate() {
-        let copyTemplateForm: newTemplateFormData = <newTemplateFormData>{};
+        const copyTemplateForm: newTemplateFormData = <newTemplateFormData>{};
         copyTemplateForm.ID = 0;
         copyTemplateForm.spid = this.templatesMessageDataById.spid;
         copyTemplateForm.created_By = this.templatesMessageDataById.created_By;
@@ -524,7 +524,7 @@ export class TemplateMessageComponent implements OnInit {
 
       
     createNewTemplateFormData() {
-        let newTemplateForm: newTemplateFormData = <newTemplateFormData>{};
+        const newTemplateForm: newTemplateFormData = <newTemplateFormData>{};
 
         newTemplateForm.spid = this.spid;
         newTemplateForm.created_By = this.currentUser;
@@ -673,7 +673,7 @@ export class TemplateMessageComponent implements OnInit {
       }
 
       getLimitedMessageText(message: string) {
-        let maxLength = 50;
+        let maxLength = 30;
         if(message) {
             if (message.length <= maxLength) {
                 return message;
