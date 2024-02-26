@@ -247,15 +247,15 @@ routerGuard = () => {
 			displayPhoneNumber: new FormControl('',[Validators.pattern('^[0-9]+$'),Validators.required,Validators.minLength(6),Validators.maxLength(15)])
 		});
 		this.editContact=fb.group({
-			SP_ID: new FormControl(this.SPID, Validators.required),
+			customerId: new FormControl(''),
 			Name: new FormControl('', [Validators.required,Validators.minLength(3),Validators.maxLength(50),Validators.pattern('^(?:[a-zA-Z.0-9]+|(?:a to z))(?: [a-zA-Z0-9]+)*$')]),
 			country_code: new FormControl(''),
-			Phone_number: new FormControl(''),
-			ContactOwner : new FormControl('',Validators.required),
 			displayPhoneNumber: new FormControl('',[Validators.pattern('^[0-9]+$'),Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
+			Phone_number: new FormControl(''),
+			emailId: new FormControl('', [Validators.pattern('^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$'),Validators.minLength(5),Validators.maxLength(50)]),
+			ContactOwner : new FormControl('',Validators.required),
 			channel: new FormControl(''),
-			emailId: new FormControl('', [Validators.pattern('^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$'),Validators.minLength(5),Validators.maxLength(50)])
-
+			OptInStatus: new FormControl('')
 		});
 		
 		this.newMessage =fb.group({
@@ -1339,15 +1339,11 @@ selectChannelOption(ChannelName:any){
 	this.ShowChannelOption=false
 }
 hangeEditContactInuts(item:any){
-	// console.log(item.target.name)
 	if(item.target.name =='OptInStatus'){
-		this.EditContactForm['OptInStatus'] = item.target.value
-		this.EditContactForm['OptInStatusChecked'] = item.target.value ? 'Yes':'No'
+		this.EditContactForm['OptInStatus'] = item.target.checked ? 'Yes': 'No';
 	}else{
 		this.EditContactForm[item.target.name] = item.target.value
 	}
-	//this.ShowChannelOption=false
-
 }
 toggleLeadStatusOption(){
 	this.ShowLeadStatusOption=!this.ShowLeadStatusOption;
@@ -1397,40 +1393,31 @@ updateCustomer(){
 	channel: this.EditContactForm.get('channel')?.value,
 	OptInStatus: this.EditContactForm.get('OptInStatus')?.value,
 	emailId: this.EditContactForm.get('emailId')?.value,
+	ContactOwner: this.EditContactForm.get('ContactOwner')?.value,
 	customerId: this.AgentId,
 	};
-	
-
-	if(this.EditContactForm.OptInStatusChecked){
-		bodyData['OptInStatus'] = 'Yes';
-	}else{
-		bodyData['OptInStatus'] = 'No';
-	}
 	console.log(bodyData)
-
-	
 		
 	 if(this.EditContactForm.valid) {
 		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
-		// this.selectedInteraction['Name']=this.EditContactForm.Name
-		// this.selectedInteraction['countryCode']=this.EditContactForm.country_code
-		// this.selectedInteraction['Phone_number']=this.EditContactForm.value.Phone_number
-		// this.selectedInteraction['displayPhoneNumber']=this.EditContactForm.displayPhoneNumber
-		// this.selectedInteraction['channel']=this.EditContactForm.channel
-		// this.selectedInteraction['status']=this.EditContactForm.status
-		// this.selectedInteraction['OptInStatus']=bodyData['OptInStatus']
-		// this.selectedInteraction['sex']=this.EditContactForm.sex
-		// this.selectedInteraction['age']=this.EditContactForm.age
-		// this.selectedInteraction['emailId']=this.EditContactForm.emailId
-		// this.selectedInteraction['Country']=this.EditContactForm.Country
-		// this.selectedInteraction['facebookId']=this.EditContactForm.facebookId
-		// this.selectedInteraction['InstagramId']=this.EditContactForm.InstagramId
-		
+		this.selectedInteraction['Name']=this.EditContactForm.Name
+		this.selectedInteraction['countryCode']=this.EditContactForm.country_code
+		this.selectedInteraction['Phone_number']=this.EditContactForm.value.Phone_number
+		this.selectedInteraction['displayPhoneNumber']=this.EditContactForm.displayPhoneNumber
+		this.selectedInteraction['channel']=this.EditContactForm.channel
+		this.selectedInteraction['status']=this.EditContactForm.status
+		this.selectedInteraction['OptInStatus']=this.EditContactForm.OptInStatus
+		this.selectedInteraction['emailId']=this.EditContactForm.emailId
+		this.selectedInteraction['ContactOwner']=this.EditContactForm.ContactOwner
+	
 			if(this.modalReference){
 				this.modalReference.close();
 			}
 			this.showToaster('Contact information updated...','success');
 		});
+	}
+	else {
+		this.EditContactForm.markAllAsTouched();
 	} 
 }
 
@@ -1712,11 +1699,6 @@ updateTags(){
 	});
 }
 
-isFormInvalid(controlName: string) {
-	const control = this.editContact.get(controlName);
-	return control?.invalid && (control?.touched || control?.dirty);
- }
-
 triggerEditCustomer(updatecustomer:any){
 	if(this.modalReference){
 		this.modalReference.close();
@@ -1727,7 +1709,6 @@ triggerEditCustomer(updatecustomer:any){
 	this.EditContactForm.get('displayPhoneNumber')?.setValue(this.selectedInteraction.displayPhoneNumber)
 	this.EditContactForm.get('channel')?.setValue(this.selectedInteraction.channel)
 	this.EditContactForm.get('OptInStatus')?.setValue(this.selectedInteraction.OptInStatus)
-	this.EditContactForm.get('OptInStatusChecked')?.setValue(this.selectedInteraction.OptInStatus=='Yes'? 'Yes' : 'No')
 	this.EditContactForm.get('emailId')?.setValue(this.selectedInteraction.emailId)
 	this.EditContactForm.get('ContactOwner')?.setValue(this.selectedInteraction.ContactOwner)
 	this.EditContactForm.get('channel')?.setValue(this.selectedInteraction.channel)
@@ -1852,6 +1833,9 @@ createCustomer() {
 				  }
 				}
 			  );
+		}
+		else {
+			this.newContact.markAllAsTouched();
 		}
 
   }

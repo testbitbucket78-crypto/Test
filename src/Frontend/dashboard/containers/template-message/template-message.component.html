@@ -41,7 +41,7 @@
                             <label [style.background]="statusColors[item.status]">{{item.status}}</label>
                             <span>id: {{item.ID}}</span>
                         </div>
-                        <p class="pb-2 title">{{item.TemplateName}}</p>
+                        <p class="pb-2 title">{{getLimitedMessageText(item.TemplateName)}}</p>
                         <p class="start_time">Created On: <span>{{item.created_at | date:'dd MMM yy, h:mm a'}}</span></p>
                         <p class="start_time">Modified On: <span>{{ item.updated_at ? (item.updated_at | date:'dd MMM yy, h:mm a') : 'NA' }}</span></p>
                         <p class="pt-2"><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{item.Channel}}</p>
@@ -351,7 +351,8 @@
     <div class="m-auto newTemplateMessageFirst modal-dialog" role="document">
         <div class="mt-0 modal-content welcomGreeting">
             <div class="d-flex justify-content-between pr-4 align-items-center modal-header">
-                <h5 class="pl-4 modal-title">New Template Message</h5>
+                <h5 *ngIf="this.templatesMessageDataById==null" class="pl-4 modal-title">New Template Message</h5>
+                <h5 *ngIf="this.templatesMessageDataById" class="pl-4 modal-title">Edit Template Message</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="removeFormValues()">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
@@ -402,7 +403,8 @@
     <div class="m-auto newTemplateMessage modal-dialog" role="document">
         <div class="m-0 modal-content welcomGreeting">
             <div class="d-flex justify-content-between align-items-center modal-header">
-                <h5 class="pl-2 modal-title">New Template Message</h5>
+                <h5 *ngIf="this.templatesMessageDataById==null" class="pl-4 modal-title">New Template Message</h5>
+                <h5 *ngIf="this.templatesMessageDataById" class="pl-4 modal-title">Edit Template Message</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
@@ -629,7 +631,8 @@
     <div class="m-auto newTemplateMessage modal-dialog" role="document">
         <div class="m-0 modal-content welcomGreeting">
             <div class="d-flex justify-content-between align-items-center modal-header">
-                <h5 class="pl-2 modal-title">New Template Message</h5>
+                <h5 *ngIf="this.templatesMessageDataById==null" class="pl-4 modal-title">New Template Message</h5>
+                <h5 *ngIf="this.templatesMessageDataById" class="pl-4 modal-title">Edit Template Message</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>

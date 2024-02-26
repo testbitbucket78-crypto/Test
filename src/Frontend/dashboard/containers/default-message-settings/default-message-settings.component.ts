@@ -5,7 +5,6 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { ToolbarService, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
-import { isNullOrUndefined } from 'is-what';
 
 declare var $:any;
 @Component({
@@ -16,29 +15,29 @@ declare var $:any;
 })
 export class DefaultMessageSettingsComponent implements OnInit {
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
-  @ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
+  @ViewChild('chatEditor') chatEditor!: RichTextEditorComponent; 
   
   spId:number = 0;
-  selectedType: string = 'text';
-  selectedCategory!: number;
+  selectedType:string = 'text';
+  selectedCategory:number = 0;
   selectedMessageData=<defaultMessagesData>{};
   value:any;
   isOverride = 0;
   fileName: any;
   Isdisable = 0;
-  characterCount: number = 0;
+  characterCount:number = 0;
   selectedTitle:string='';
   selectedDescription:string='';
   selectedPreview: string = '';
   defaultMessageForm!:FormGroup;
-  showSideBar:boolean=false;
-  defaultMessages:any [] =[];
-  defaultMessageDataInit:any []=[];
-  defaultMessagesData: any;
+  showSideBar:boolean = false;
+  defaultMessages:any[]=[];
+  defaultMessageDataInit:any[]=[];
+  defaultMessagesData:any[]=[];
   attributesList:any=[];
-  attributesearch!:string;
+  attributesearch:string='';
 
-  defaultMessageData = [
+  public defaultMessageData = [
     {
     id:0,
     title:'Welcome Greeting',
@@ -87,10 +86,10 @@ export class DefaultMessageSettingsComponent implements OnInit {
   constructor(private apiService:SettingsService,private _teamboxService:TeamboxService,private fb: FormBuilder) { }
   prepareUserForm(){
     return this.fb.group ({
-      value:[null],
-      link:[null],
-      override:[0],
-      autoreply:[null]
+      value: [null],
+      link: [null],
+      override: [0],
+      autoreply: [null]
     });
   }
   ngOnInit(): void {
@@ -102,9 +101,9 @@ export class DefaultMessageSettingsComponent implements OnInit {
     this.getDefaultMessages();
   }
 
-  onEditorChange(value: any) {
-    this.defaultMessageForm.get('value')?.setValue(value);
-  }
+  // onEditorChange(value: any) {
+  //   this.defaultMessageForm.get('value')?.setValue(value);
+  // }
 
 	closeAllModal(){
 		$('body').removeClass('modal-open');
@@ -126,10 +125,9 @@ ToggleAttributesOption(){
 selectAttributes(item:any) {
   this.closeAtrrModal();
   const selectedValue = item;
-  let selectedAttr = `{{${selectedValue}}}`;
-  this.chatEditor.value = this.chatEditor.value + selectedAttr; 
-  $("#welcomGreeting").modal('show');
-  $("#atrributemodal").modal('hide');
+  this.chatEditor.value = this.chatEditor.value + `{{${selectedValue}}}`; 
+    $("#welcomGreeting").modal('show');
+    $("#atrributemodal").modal('hide');
 
 }
 
@@ -139,13 +137,14 @@ getAttributeList() {
   if(response){
   let attributeListData = response?.result;
   this.attributesList = attributeListData.map((attrList:any) => attrList.displayName);
+   }
+ });
 }
-})
-}
+
 showMessageType(type: string) {   
   this.selectedType = type;
   if (this.selectedType === 'text') {
-    this.defaultMessageForm.get('value')?.setValidators([Validators.required,Validators.pattern(/[\S]/g)]);
+    this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
     this.defaultMessageForm.get('link')?.clearValidators();
   }
   else if (this.selectedType === 'video' || this.selectedType === 'document' || this.selectedType === 'image') {
@@ -212,12 +211,15 @@ removeMedia() {
   // remove values //
   removeValue() {
     this.showSideBar=false;
-    this.defaultMessageForm.reset();
     this.selectedPreview = '';
     this.fileName='';
     this.value = null;
     this.selectedType='text';
-    this.selectedMessageData=<defaultMessagesData>{}
+    this.selectedMessageData=<defaultMessagesData>{};
+    this.defaultMessageForm.get('autoreply')?.clearValidators();
+    this.defaultMessageForm.clearAsyncValidators();
+    this.defaultMessageForm.clearValidators();
+    this.defaultMessageForm.reset();
 }
 
   getDefaultMessages() {
@@ -239,19 +241,19 @@ removeMedia() {
   }
 
   addEditDefaultMessageData() {
-    var tempDivElement = document.createElement("div");   
+    // var tempDivElement = document.createElement("div");   
 
-	   tempDivElement.innerHTML = this.chatEditor.value;
-     let val = tempDivElement.textContent || tempDivElement.innerText || "";
+	  //  tempDivElement.innerHTML = this.chatEditor.value;
+    //  let val = tempDivElement.textContent || tempDivElement.innerText || "";
 
-     if(val.trim()=='') {
-      this.defaultMessageForm.invalid;
-      return;
-     }
+    //  if(val.trim()=='') {
+    //   this.defaultMessageForm.invalid;
+    //   return;
+    //  }
 
-     else {
+    //  else {
       if (this.defaultMessageForm.valid) {
-        let defaultMessagesData = this.copyDefaultMesssageData();
+        const defaultMessagesData = this.copyDefaultMesssageData();
         this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe
         (response => {
           if(response.status === 200) {
@@ -268,7 +270,7 @@ removeMedia() {
           }
       });
       }
-     }
+    //  }
 
   }
 
@@ -279,6 +281,7 @@ removeMedia() {
     this.selectedDescription = this.selectedMessageData.description;
     this.selectedPreview = this.selectedMessageData.link;
     this.value = this.selectedMessageData.value;
+    this.defaultMessageForm.clearAsyncValidators();
   }
 
   isShowSideBar(data:any,type: number) {
@@ -296,7 +299,7 @@ removeMedia() {
   }
 
   copyDefaultMesssageData() {
-    let defaultMessagesData:defaultMessagesData = <defaultMessagesData>{};
+    const defaultMessagesData:defaultMessagesData = <defaultMessagesData>{};
 
     defaultMessagesData.spid = this.spId;
     if (this.selectedMessageData.uid!=null) {
@@ -331,17 +334,22 @@ removeMedia() {
   }
   
   deleteDefaultMessage() {
-    let deleteBody = {
-      spid:this.spId,
-      uid:this.selectedMessageData.uid
+    const deleteBody = {
+      spid: this.spId,
+      uid: this.selectedMessageData.uid
     }
-    this.apiService.deleteDefaultMessage(deleteBody).subscribe(response=>{
-      if(response) {
-        $("#deleteModal").modal('hide');
-        this.showSideBar =false;
-        this.removeValue();
-        this.getDefaultMessages();
+    this.apiService.deleteDefaultMessage(deleteBody).subscribe(response => {
+      try {
+        if(response) {
+          $("#deleteModal").modal('hide');
+          this.showSideBar =false;
+          this.removeValue();
+          this.getDefaultMessages();
+        }
+      } catch (error) {
+        console.error('An error occurred while deleting the message.',error)
       }
+    
     });
   }
 
@@ -349,9 +357,9 @@ removeMedia() {
   enableDisable(event:any) {
 	  this.Isdisable = event.target.checked;
     let isDisable = this.Isdisable ? 1 : 0;
-    let body = {
-      uid : this.selectedMessageData.uid,
-      Is_disable : isDisable
+    const body = {
+      uid: this.selectedMessageData.uid,
+      Is_disable: isDisable
     }
     this.apiService.enableDisableDefaultMessage(body).subscribe(response=>{
       if(response) {
