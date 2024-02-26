@@ -169,7 +169,7 @@ routerGuard = () => {
 	selectedTemplate:any  = [];
 	agentsList:any = [];
 	modalReference: any;
-	OptedIn=false;
+	OptedIn='No';
 	searchFocused=false;
 	searchChatFocused=false;
 	errorMessage='';
@@ -182,8 +182,8 @@ routerGuard = () => {
 	ShowChannelOption:any=false;
 	CountryCode!:any;
 	selectedCountryCode!:string;
-	newContact: any;
-	editContact: any;
+	newContact: FormGroup;
+	editContact: FormGroup;
 	ShowGenderOption:any=false;
 	ShowLeadStatusOption:any=false;
 	attributesearch!:string;
@@ -228,6 +228,8 @@ routerGuard = () => {
 	maxLength: number = 150;
 	allmessages:any=[];
 	mediaSize: any;
+	hourLeft:number = 0;
+	userList:any;
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
@@ -238,25 +240,22 @@ routerGuard = () => {
 		config.windowClass= 'teambox-pink';
 
 		this.newContact= fb.group({
-			SP_ID: new FormControl('', Validators.required),
-			Name: new FormControl('', Validators.required),
-			country_code: new FormControl(''),
+			SP_ID: new FormControl(''),
+			Name: new FormControl('', [Validators.required,Validators.minLength(3),Validators.maxLength(50),Validators.pattern('^(?:[a-zA-Z.0-9]+|(?:a to z))(?: [a-zA-Z0-9]+)*$')]),
+			country_code:new FormControl('IN +91',{ nonNullable: true }),
 			Phone_number: new FormControl(''),
-			displayPhoneNumber: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
-			Channel: new FormControl('', Validators.required),
-			emailId: new FormControl('', [Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
-
-			
+			displayPhoneNumber: new FormControl('',[Validators.pattern('^[0-9]+$'),Validators.required,Validators.minLength(6),Validators.maxLength(15)])
 		});
 		this.editContact=fb.group({
-			SP_ID: new FormControl('', Validators.required),
-			Name: new FormControl('', Validators.required),
+			customerId: new FormControl(''),
+			Name: new FormControl('', [Validators.required,Validators.minLength(3),Validators.maxLength(50),Validators.pattern('^(?:[a-zA-Z.0-9]+|(?:a to z))(?: [a-zA-Z0-9]+)*$')]),
 			country_code: new FormControl(''),
+			displayPhoneNumber: new FormControl('',[Validators.pattern('^[0-9]+$'),Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
 			Phone_number: new FormControl(''),
-			displayPhoneNumber: new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
-			Channel: new FormControl('', Validators.required),
-			emailId: new FormControl('', [Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$')]),
-
+			emailId: new FormControl('', [Validators.pattern('^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$'),Validators.minLength(5),Validators.maxLength(50)]),
+			ContactOwner : new FormControl('',Validators.required),
+			channel: new FormControl(''),
+			OptInStatus: new FormControl('')
 		});
 		
 		this.newMessage =fb.group({
@@ -280,21 +279,21 @@ routerGuard = () => {
 	// 	}
 	
 	
-	handleKeyPress(event: KeyboardEvent) {
+	// handleKeyPress(event: KeyboardEvent) {
 		
-		// Check if the pressed key is "Enter"
-		if (event.key === 'Enter' && !event.shiftKey) {
-			// Prevent sending the message when Enter is pressed without Shift
+	// 	// Check if the pressed key is "Enter"
+	// 	if (event.key === 'Enter' && !event.shiftKey) {
+	// 		// Prevent sending the message when Enter is pressed without Shift
 			
-			event.preventDefault();
-			this.sendMessage(); // Call your send message function here
-		  }
-	  }
+	// 		event.preventDefault();
+	// 		this.sendMessage(); // Call your send message function here
+	// 	  }
+	//   }
 
 	toggleChatNotes(optionvalue:any){
 		if(this.chatEditor){
 		if(optionvalue == 'text'){
-			// this.chatEditor.value = 'Your message...'
+			this.chatEditor.value = '';
 			this.tools = {
 				items: ['Bold', 'Italic','StrikeThrough','EmojiPicker',
 				{
@@ -330,7 +329,7 @@ routerGuard = () => {
 			};
 
 		}else{
-			// this.chatEditor.value = 'Type…'
+			 this.chatEditor.value = '';
 			this.tools = {
 				items: ['Bold', 'Italic', 'StrikeThrough','EmojiPicker',
 				{
@@ -365,6 +364,7 @@ routerGuard = () => {
 	}
 
 	closeAllModal(){
+		this.modalReference?.close();
 		this.showAttachmenOption=false
 		this.messageMeidaFile=false
 		this.showAttributes=false
@@ -373,6 +373,9 @@ routerGuard = () => {
 		this.TemplatePreview=false
 		this.showQuickReply=false
 		this.showMention=false
+		this.attributesearch ='';
+		this.header ='';
+		this.quickreplysearch='';
 		$("#quikpopup").modal('hide');
 		$("#atrributemodal").modal('hide');
 		$("#insertmodal").modal('hide');
@@ -577,7 +580,7 @@ sendattachfile(){
 		}
 	}
 	
-	sendMediaMessage(){
+	sendMediaMessage() {
 
 		if(this.SIPthreasholdMessages>0){
 		let objectDate = new Date();
@@ -757,7 +760,7 @@ sendattachfile(){
 		this.getAttributeList()
         this.sendattachfile()
 		this.getQuickResponse()
-		this.CountryCode = this.countryCodes[101];
+		this.getUserList()
 		this.NewContactForm = this.newContact;
         this.EditContactForm = this.editContact;
 	}
@@ -780,7 +783,7 @@ sendattachfile(){
 			"spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
 		}
 		this.websocketService.connect(notificationIdentifier);
-			this.websocketService.getMessage().pipe(debounceTime(120)).subscribe(message => {
+			this.websocketService.getMessage().pipe(debounceTime(200)).subscribe(message => {
 				if(message != undefined )
 				{
 					console.log("Seems like some message update from webhook");
@@ -862,8 +865,7 @@ sendattachfile(){
 	}
 
 	updateOptedIn(event:any){
-		this.OptedIn= event.target.checked
-		this.newContact.value.OptedIn = event.target.value
+		this.OptedIn = event.target.checked ? 'Yes': 'No';
 	}
 	getCustomers(){
 
@@ -1214,9 +1216,9 @@ sendattachfile(){
 			var hourLeft =24-parseInt(interval)
 		}else{
 			var hrPer =100
-			var hourLeft =0
+			this.hourLeft =0
 			if(this.selectedInteraction['interaction_status']!=='Resolved'){
-				this.updateConversationStatus('Resolved')
+				// this.updateConversationStatus('Resolved')
 			}
 		}
 		
@@ -1230,7 +1232,7 @@ sendattachfile(){
 		
 		}else{
 			var hrPer =100
-			var hourLeft =0
+			this.hourLeft =0
 			return '';
 		}
 	}
@@ -1250,11 +1252,12 @@ sendattachfile(){
 		this.contactId = Interaction.customerId;
 		console.log(Interaction);
 		this.selectedCountryCode = Interaction.countryCode;
-		console.log(this.selectedCountryCode)
+
 		this.Allmessages = this.selectedInteraction.allmessages;
-		// console.log(this.Allmessages);
 		this.getPausedTimer();
-		this.scrollChatToBottom();
+		setTimeout(() => {
+			this.scrollChatToBottom();
+		}, 1000);
 	  }
 	  
 
@@ -1289,7 +1292,7 @@ if(this.selectedInteraction.paused_till){
 	  }, 1000);
 	}else{
 		this.selectedInteraction['PausedTimer'] = "";
-		this.selectedInteraction['AutoReplyStatus']='Auto Reply are Active'
+		this.selectedInteraction['AutoReplyStatus']='Enable'
 	}
 
 }
@@ -1336,15 +1339,11 @@ selectChannelOption(ChannelName:any){
 	this.ShowChannelOption=false
 }
 hangeEditContactInuts(item:any){
-	//console.log(item.target.name)
 	if(item.target.name =='OptInStatus'){
-		this.EditContactForm['OptInStatus'] = item.target.value
-		this.EditContactForm['OptInStatusChecked'] = item.target.value?true:false
+		this.EditContactForm['OptInStatus'] = item.target.checked ? 'Yes': 'No';
 	}else{
 		this.EditContactForm[item.target.name] = item.target.value
 	}
-	//this.ShowChannelOption=false
-
 }
 toggleLeadStatusOption(){
 	this.ShowLeadStatusOption=!this.ShowLeadStatusOption;
@@ -1354,7 +1353,8 @@ toggleLeadStatusOption(){
 
 
 hangeEditContactSelect(name:any,value:any){
-	this.EditContactForm[name] = value
+	this.EditContactForm.get(name)?.setValue(value);
+	console.log(this.editContact)
 	this.ShowChannelOption=false
 	this.ShowGenderOption=false;
 	this.ShowLeadStatusOption=false;
@@ -1386,30 +1386,19 @@ stopPropagation(event: Event) {
 
 updateCustomer(){
 	var bodyData = {
-	Name:this.EditContactForm.Name,
-	countryCode:this.EditContactForm.country_code,
-	Phone_number:this.EditContactForm.value.Phone_number,
-	displayPhoneNumber:this.EditContactForm.displayPhoneNumber,
-	channel:this.EditContactForm.channel,
-	status:this.EditContactForm.status,
-	OptInStatus:this.EditContactForm.OptInStatus,
-	sex:this.EditContactForm.sex,
-	age:this.EditContactForm.age,
-	emailId:this.EditContactForm.emailId,
-	Country:this.EditContactForm.Country,
-	facebookId:this.EditContactForm.facebookId,
-	InstagramId:this.EditContactForm.InstagramId,
-	customerId:this.EditContactForm.customerId,
-	}
-
-	if(this.EditContactForm.OptInStatusChecked){
-		bodyData['OptInStatus'] = 'Yes';
-	}else{
-		bodyData['OptInStatus'] = 'No';
-	}
-	//console.log(bodyData)
-
-	if(bodyData['Name']!='' && bodyData['displayPhoneNumber'].length>=6 && bodyData['emailId']!='' && bodyData['emailId'].includes('@') && bodyData['emailId'].includes('.com')) {
+	Name: this.EditContactForm.get('Name')?.value,
+	countryCode: this.EditContactForm.get('country_code')?.value,
+	Phone_number: this.EditContactForm.get('Phone_number')?.value,
+	displayPhoneNumber: this.EditContactForm.get('displayPhoneNumber')?.value,
+	channel: this.EditContactForm.get('channel')?.value,
+	OptInStatus: this.EditContactForm.get('OptInStatus')?.value,
+	emailId: this.EditContactForm.get('emailId')?.value,
+	ContactOwner: this.EditContactForm.get('ContactOwner')?.value,
+	customerId: this.AgentId,
+	};
+	console.log(bodyData)
+		
+	 if(this.EditContactForm.valid) {
 		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
 		this.selectedInteraction['Name']=this.EditContactForm.Name
 		this.selectedInteraction['countryCode']=this.EditContactForm.country_code
@@ -1417,24 +1406,19 @@ updateCustomer(){
 		this.selectedInteraction['displayPhoneNumber']=this.EditContactForm.displayPhoneNumber
 		this.selectedInteraction['channel']=this.EditContactForm.channel
 		this.selectedInteraction['status']=this.EditContactForm.status
-		this.selectedInteraction['OptInStatus']=bodyData['OptInStatus']
-		this.selectedInteraction['sex']=this.EditContactForm.sex
-		this.selectedInteraction['age']=this.EditContactForm.age
+		this.selectedInteraction['OptInStatus']=this.EditContactForm.OptInStatus
 		this.selectedInteraction['emailId']=this.EditContactForm.emailId
-		this.selectedInteraction['Country']=this.EditContactForm.Country
-		this.selectedInteraction['facebookId']=this.EditContactForm.facebookId
-		this.selectedInteraction['InstagramId']=this.EditContactForm.InstagramId
-		
+		this.selectedInteraction['ContactOwner']=this.EditContactForm.ContactOwner
+	
 			if(this.modalReference){
 				this.modalReference.close();
 			}
 			this.showToaster('Contact information updated...','success');
 		});
 	}
-
 	else {
-		this.showToaster('Name, Phone Number, and Email ID are required.', 'error');
-	}
+		this.EditContactForm.markAllAsTouched();
+	} 
 }
 
 
@@ -1582,9 +1566,6 @@ formatPhoneNumber(contactForm: FormGroup) {
   
 		const formattedValue = formattedPhoneNumber?.formatInternational().replace(/[\s+]/g, '');
 		phoneControl.setValue(formattedValue);
-		console.log(phoneNumber);
-		console.log(countryCode)
-		console.log(phoneControl.value);
 	}
   }
 
@@ -1647,17 +1628,15 @@ handleInnerClick(event: Event): void {
 handelStatusConfirm(){
 	if(this.modalReference){
 		this.modalReference.close();
-	}	
-	if(this.selectedInteraction['interaction_status']=='Resolved'){
-		this.updateConversationStatus('Open')
-
-		var bodyData = {
-			customerId: this.contactId
-		}
-		this.createInteraction(bodyData)
-	}else{
-		this.updateConversationStatus('Resolved')
 	}
+	if (this.selectedInteraction['interaction_status'] === 'Resolved' && this.hourLeft === 0) {
+        this.hourLeft = 24;
+		this.updateConversationStatus('Open');
+    }
+    
+  else {
+        this.updateConversationStatus('Resolved');
+    }
 	
 }
 handelDeleteConfirm(){
@@ -1724,23 +1703,17 @@ triggerEditCustomer(updatecustomer:any){
 	if(this.modalReference){
 		this.modalReference.close();
 	}
-	this.EditContactForm['Name'] =this.selectedInteraction.Name
-	this.EditContactForm['country_code']=this.selectedInteraction.countryCode
-	this.EditContactForm['Phone_number'] =this.selectedInteraction.Phone_number
-	this.EditContactForm['displayPhoneNumber']=this.selectedInteraction.displayPhoneNumber
-	this.EditContactForm['channel'] =this.selectedInteraction.channel
-	this.EditContactForm['status'] =this.selectedInteraction.status
-	this.EditContactForm['OptInStatus'] =this.selectedInteraction.OptInStatus
-	this.EditContactForm['OptInStatusChecked'] =this.selectedInteraction.OptInStatus=='Yes'?true:false
-	
-	this.EditContactForm['sex'] =this.selectedInteraction.sex
-	this.EditContactForm['age'] =this.selectedInteraction.age
-	this.EditContactForm['emailId'] =this.selectedInteraction.emailId
-	this.EditContactForm['Country'] =this.selectedInteraction.Country
-	this.EditContactForm['facebookId'] =this.selectedInteraction.facebookId
-	this.EditContactForm['InstagramId'] =this.selectedInteraction.InstagramId
-	this.EditContactForm['customerId'] =this.selectedInteraction.customerId
-	this.modalReference = this.modalService.open(updatecustomer,{ size:'lg', windowClass:'white-bg'});
+	this.EditContactForm.get('Name')?.setValue(this.selectedInteraction.Name)
+	this.EditContactForm.get('country_code')?.setValue(this.selectedInteraction.countryCode)
+	this.EditContactForm.get('Phone_number')?.setValue(this.selectedInteraction.Phone_number)
+	this.EditContactForm.get('displayPhoneNumber')?.setValue(this.selectedInteraction.displayPhoneNumber)
+	this.EditContactForm.get('channel')?.setValue(this.selectedInteraction.channel)
+	this.EditContactForm.get('OptInStatus')?.setValue(this.selectedInteraction.OptInStatus)
+	this.EditContactForm.get('emailId')?.setValue(this.selectedInteraction.emailId)
+	this.EditContactForm.get('ContactOwner')?.setValue(this.selectedInteraction.ContactOwner)
+	this.EditContactForm.get('channel')?.setValue(this.selectedInteraction.channel)
+	this.EditContactForm.get('customerId')?.setValue(this.selectedInteraction.customerId)
+	this.modalReference = this.modalService.open(updatecustomer,{ size:'md', windowClass:'white-bg'});
 }
 
 
@@ -1841,33 +1814,30 @@ groupMessageByDate(messageList:any){
 createCustomer() {
 	this.newContact.value.SP_ID = this.SPID;
 	this.newContact.value.Channel = this.selectedChannel;
+	this.newContact.value.OptedIn = this.OptedIn;
 	var bodyData = this.newContact.value;
 	console.log(bodyData);
-  
-	if (bodyData['OptedIn']) {
-	  bodyData['OptedIn'] = 'Yes';
-	}
-  
-	if (bodyData['Name'] !== '' && bodyData['Phone_number'].length >= 10) {
-	  this.apiService.createCustomer(bodyData).subscribe(
-		async (response:any) => {
-		 
-			var responseData: any = response;
-			var insertId: any = responseData.insertId;
-			if (insertId) {
-				this.createInteraction(insertId);
-				this.newContact.reset();
-			}},
-		async (error) => {
-		  if (error.status === 409) {
-			this.showToaster('Phone Number already exist. Please Try another Number', 'error');
-		  }
+		if(this.newContact.valid) {
+			this.apiService.createCustomer(bodyData).subscribe(
+				async (response:any) => {
+					var responseData: any = response;
+					var insertId: any = responseData.insertId;
+					if (insertId) {
+						this.createInteraction(insertId);
+						this.newContact.reset();
+						this.getAllInteraction();
+					}},
+				async (error) => {
+				  if (error.status === 409) {
+					this.showToaster('Phone Number already exist. Please Try another Number', 'error');
+				  }
+				}
+			  );
 		}
-	  );
-	} else {
-	  this.showToaster('Please enter all required (*) input', 'error');
-	}
-	this.getAllInteraction();
+		else {
+			this.newContact.markAllAsTouched();
+		}
+
   }
   
 
@@ -1882,7 +1852,6 @@ this.apiService.createInteraction(bodyData).subscribe(async data =>{
 		this.modalReference.close();
 	}
 	this.getAllInteraction()
-	this.CountryCode = this.countryCodes[101];
 });
 
 }
@@ -1996,35 +1965,15 @@ deleteNotes(){
 		this.selectedNote.deleted_by=this.selectedNote.AgentName
 	})
 	
-
 }
 
-// onEditorKeyDown(event: KeyboardEvent) {
-// 	// Check if the pressed key is the "Enter" key (keyCode 13)
-// 	if (event.keyCode === 13) {
-// 	  event.preventDefault(); // Prevent the default behavior (e.g., adding a new line)
-// 	  this.sendMessage(); // Trigger your "Send" action here
-// 	}
-//   }
-
 sendMessage(){
+	var tempDivElement = document.createElement("div");   
 
-	// if (!this.custommesage || this.custommesage ==='<p>Your message...</p>'|| this.chatEditor.value =='<p>Type…</p>') {
-	// 	this.showToaster('! Please enter a message before sending.','error');
-	// }
-	// else if(this.selectedInteraction.interaction_status =='Resolved') {
+	tempDivElement.innerHTML = this.chatEditor.value;
 
-	// 	this.updateConversationStatus('Open');
-	// 	var Data = {
-	// 		customerId: this.contactId,
-	// 		spid:this.SPID
-	// 	}
-	// 	this.createInteraction(Data);
-
-	// 	this.showToaster('This interaction has been resolved already, Initiating a new interaction ','success')
-	// }
-
-	if (this.chatEditor.value == null) {
+    let val = tempDivElement.textContent || tempDivElement.innerText || "";
+	if (this.chatEditor.value == null || val.trim()=='') {
 		this.showToaster('! Please enter a message before sending.','error');
 		return;
 	}
@@ -2162,5 +2111,16 @@ sendMessage(){
 		toggleShowFullMessage() {
 			this.showFullMessage = !this.showFullMessage;
 		}
+
+		getUserList() {
+		let spid = Number(this.SPID)
+			this.settingService.getUserList(spid)
+			.subscribe(result =>{
+			  if(result){
+				this.userList =result?.getUser;      
+			  }
+	  
+			});
+		  }
 		  
 }

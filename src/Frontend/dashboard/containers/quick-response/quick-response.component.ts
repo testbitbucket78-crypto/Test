@@ -34,6 +34,7 @@ export class QuickResponseComponent implements OnInit {
   initTemplates!:any[];
   messagemedia:any;
   selectedType: string = 'text';
+  numberCount: number = 0;
   rolesList:any;
   // templatesdata:any;
   Links:any;
@@ -45,6 +46,8 @@ export class QuickResponseComponent implements OnInit {
   isTemplate:any;
   // templatesMessageData:any;
   ischannel='';
+  isWhatsappWeb:boolean = true;
+  isWhatsappOfficial:boolean = true;
 
   
   fileName: any; 
@@ -119,8 +122,16 @@ onEditorChange(value: string | null): void {
     this.usertemplateForm.get('BodyText')?.setValue(value);
 }
 
-filterQuickRes(val:any){
-   this.templates = this.initTemplates.filter(item=> item.Channel == val)
+filterQuickRes(){
+  if(this.isWhatsappWeb && this.isWhatsappOfficial)
+    this.templates = this.initTemplates
+  else if(!this.isWhatsappWeb && this.isWhatsappOfficial)
+    this.templates = this.initTemplates.filter(item=> item.Channel == 'WhatsApp Official')
+  else if(this.isWhatsappWeb && !this.isWhatsappOfficial)
+    this.templates = this.initTemplates.filter(item=> item.Channel == 'WhatsApp Web')
+  else
+    this.templates = this.initTemplates;
+
 }
 
 
@@ -199,7 +210,6 @@ filterQuickRes(val:any){
 
 
 deleteTemplate(){
-
   const TemplateID = {
     ID: this.repliestemplateData?.ID
   }
@@ -281,5 +291,9 @@ editQuickResponse(){
  this.usertemplateForm.controls.BodyText.setValue(this.repliestemplateData.BodyText);
  this.selectedType = this.repliestemplateData?.media_type;
  console.log(this.usertemplateForm);
+}
+
+getCharacterCount(val:string) {
+ this.numberCount = val.length;
 }
 }

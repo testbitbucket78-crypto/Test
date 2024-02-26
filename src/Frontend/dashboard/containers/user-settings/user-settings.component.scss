@@ -110,3 +110,33 @@
     width: 100%;
     display: flex;
   }
+
+  .code-selector{
+    width: 96px;
+    padding: 0px 0px 0px 5px;
+    border-radius: 16px 0px 0px 16px;
+  }
+
+  .phone-input{
+    border-radius: 0px 0.25rem 0.25rem 0px;
+  }
+
+  .image-container {
+    box-shadow: 1px 8px 29px #695F9724;
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    background-color: #6149CD;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 0;
+}
+
+  
+  .initials {
+    font-size: 36px;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+  }

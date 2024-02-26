@@ -186,7 +186,7 @@
 									<p *ngFor="let user of agentsList;let k = index"
 										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)">
 										<span key={k}>
-											<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
+											<img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp">
 											{{user.name}}
 										</span>
 									</p>
@@ -348,11 +348,8 @@
 									(click)="toggleChatNotes('notes')">Notes</button>
 							</div>
 							<div class="input-area">
-								<ejs-richtexteditor id='defaultRTE' #chatEditor
-								  [toolbarSettings]='tools' [height]='100' (keydown)="handleKeyPress($event)"
-								  (actionComplete)='actionCompleteHandler($event)'
-								  placeholder="Enter Message"
-								  >
+								<ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]='100'
+								  (actionComplete)='actionCompleteHandler($event)'placeholder="Enter Message">
 								</ejs-richtexteditor>
 							  
 
@@ -551,14 +548,14 @@
 									(click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
 
 
-								<button class="small-gradient-btn"><img class="setting_icon"
-										src="/assets/img/campaign/setting-g.svg"></button>
+								<!-- <button class="small-gradient-btn"><img class="setting_icon"
+										src="/assets/img/campaign/setting-g.svg"></button> -->
 
 							</div>
 							<div class="custom_row">
 
-								<button class="small-gradient-btn info_button">To add/edit any field according
-									to your business from the settings</button>
+								<button class="small-gradient-btn info_button"><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg">
+									To add/edit any field according to your business from the settings</button>
 							</div>
 
 
@@ -1230,7 +1227,7 @@
 			<div class="modal-header-right">
 				<button type="button" class="custom-width-btn" (click)="openadd(contactadd)"><img class="icon"
 						src="../../../../assets/img/teambox/add-User.svg" /> Create Contacts</button>
-				<p class="close-box" aria-label="Close" (click)="d('Cross click')"><img
+				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
@@ -1239,7 +1236,7 @@
 				aria-describedby="basic-addon2" [(ngModel)]="header" />
 			<div class="drop-down-btn" (click)="toggleContactOption()">
 
-				<button *ngIf="selectedChannel == 'WhatsApp Officail'" class="drop-down-btn">
+				<button *ngIf="selectedChannel == 'WhatsApp Official'" class="drop-down-btn">
 					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WhatsApp Official
 				</button>
 
@@ -1248,7 +1245,7 @@
 				</button>
 			</div>
 			<div *ngIf="ShowContactOption" class="popup-dialog ContactOption">
-				<p (click)="filterContactByType('WhatsApp Offical')">
+				<p (click)="filterContactByType('WhatsApp Official')">
 					<span>
 						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
 						WhatsApp Official
@@ -1284,39 +1281,72 @@
 
 
 	<ng-template #contactadd let-c="close" let-d="dismiss">
+	
 		<div class="modal-header">
 			<div class="modal-header-left">
 				<h4 class="modal-title" id="modal-basic-title">Add New Contact</h4>
 			</div>
 			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="d('Cross click')"><img
+				<p (click)="this.newContact.reset()" class="close-box" aria-label="Close" (click)="d('Cross click')"><img
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
+		<form [formGroup]="newContact" autocomplete="off" class="inner_form" (ngSubmit)="createCustomer()">
 		<div class="modal-body">
-			<form class="inner_form" [formGroup]="newContact" (ngSubmit)="createCustomer()">
+			
 				<div class="row">
 					<img class="back-array-icon" (click)="openaddMessage(messageadd)"
 						src="../../../../assets/img/profile/previous1.svg">
 				</div>
 				<div class="row">
-					<label for="floatingInputGrid" class="required">Name*</label>
-					<input class="form-control" type="text" placeholder="Enter Name" name="Name*" formControlName="Name" id="Name" />
+					<label for="floatingInputGrid">Name</label>
+					<input class="form-control" type="text" placeholder="Enter Name" formControlName="Name" id="Name"
+					[ngClass]="{'is-invalid':newContact.get('Name')?.touched && newContact.get('Name')?.errors}">
 				</div>
-				<div class="row">
-					<label for="floatingSelectGrid" class="required">Phone Number<span>*</span></label>
-					<select class="country_code" id="country_code" formControlName="country_code" [(ngModel)]="CountryCode">
-						<option *ngFor="let countryCode of countryCodes; let i = index" [ngValue]="countryCode">
-							{{ countryCode }}
+				<div *ngIf="newContact.get('Name')?.invalid && (newContact.get('Name')?.touched || newContact.get('Name')?.dirty)" 
+				     class="invalid-feedback">
+						<div *ngIf="newContact.get('Name')?.hasError('required')"
+						class="text-danger">
+						! Name is required.
+					</div>
+					<div *ngIf="newContact.get('Name')?.hasError('maxlength')"
+						class="text-danger">
+						! Maximum 50 characters are allowed.
+					</div>
+					<div *ngIf="newContact.get('Name')?.hasError('pattern')"
+					class="text-danger">
+					! Invalid Name. 
+				</div>
+
+				</div>
+				<div class="phonefield row">
+					<label for="floatingSelectGrid">Phone Number</label>
+					<select class="country_code" formControlName="country_code" id="country_code">
+						<option *ngFor="let country_code of countryCodes" [ngValue]="country_code">
+							{{ country_code }}
 						</option>
 					</select>
-					<input class="form-control" type="text" name="Phone_number" formControlName="Phone_number"
-					id="Phone_number" style="display: none" />
-					<input class="form-control countryCode" type="text" placeholder="Enter Number"onKeyPress="return /^[\d+]$/.test(event.key)" name="displayPhoneNumber" formControlName="displayPhoneNumber"
-					id="displayPhoneNumber" (change)="formatPhoneNumber(newContact)" />
+					<input class="form-control" type="text" formControlName="Phone_number"
+					   id="Phone_number" style="display: none" />
+					<input class="form-control countryCode" type="text" placeholder="Enter Number" formControlName="displayPhoneNumber"
+					id="displayPhoneNumber" (change)="formatPhoneNumber(newContact)"
+					[ngClass]="{'is-invalid' :newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.errors }">
 				</div>
+				<div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.invalid && 
+					newContact.controls.displayPhoneNumber.hasError('minlength') || newContact.controls.displayPhoneNumber.hasError('maxlength')"
+			     	class="text-danger">
+		         	! Phone number must consist of 6 to 15 digits.
+					</div>
+					<div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.hasError('required')"
+					class="text-danger">
+					! Phone Number is required.
+				</div>
+				<div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.hasError('pattern')"
+				class="text-danger">
+				! Invalid Phone Number.
+			</div>
 				<div class="row" style="flex-direction:column">
-					<label for="floatingSelectGrid" class="required">Channel<span>*</span></label>
+					<label for="floatingSelectGrid" class="required">Channel</label>
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
 						<button (click)="toggleChannelOption()" type="button" class="drop-down-btn"
 							style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;">
@@ -1347,16 +1377,14 @@
 						<span>Contact has opted-in to receive communication from us</span>
 					</div>
 				</div>
-
-
-			</form>
 		</div>
 		<div class="modal-footer row popfooter start-convo">
 
 			<div class="inner_form text-right">
-				<button type="button" class="submit-btn" (click)="createCustomer()">Start Conversation</button>
+				<button type="submit" class="submit-btn">Start Conversation</button>
 			</div>
 		</div>
+	 </form>
 	</ng-template>
 
 
@@ -1373,134 +1401,95 @@
 			</div>
 		</div>
 		<div class="modal-body">
-			<form class="inner_form large" (ngSubmit)="updateCustomer()">
-				<div class="row">
-					<label for="floatingInputGrid" class="required">Name*</label>
-					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="Name" value={{EditContactForm.Name}} />
+			<form [formGroup]="editContact" class="p-0 inner_form large" (ngSubmit)="updateCustomer()">
+				
+				<div class="row" style="flex-direction:column">
+					<label for="floatingInputGrid" class="required">Name<span class="text-danger">*</span></label>
+					<input class="form-control" (input)="hangeEditContactInuts($event)" type="text" formControlName="Name" 
+					[ngClass]="{'is-invalid':editContact.get('Name')?.touched && editContact.get('Name')?.errors}"
+					 placeholder="Enter Full Name">
+					
+					<div *ngIf="editContact.get('Name')?.invalid && (editContact.get('Name')?.touched || editContact.get('Name')?.dirty)" 
+					class="invalid-feedback">
+					   <div *ngIf="editContact.get('Name')?.hasError('required')"
+					   class="text-danger">
+					   ! Name is required.
+				   </div>
+				   <div *ngIf="editContact.get('Name')?.hasError('maxlength')"
+					   class="text-danger">
+					   ! Maximum 50 characters are allowed.
+				   </div>
+				   <div *ngIf="editContact.get('Name')?.hasError('pattern')"
+				   class="text-danger">
+				   ! Invalid Name. 
+			      </div>
+	
+			      </div>
 				</div>
-				<div class="row">
-					<label for="floatingSelectGrid" class="required">Phone Number*</label>
-					<select class="input-formm" name="country_code" [(ngModel)]="EditContactForm.country_code">
-						<option *ngFor="let countryCode of countryCodes; let i = index" [ngValue]="countryCode">
-							{{ countryCode }}
+	
+
+				<div class="phoneFieldEdit row" style="flex-direction:column">
+					<label for="floatingSelectGrid" class="required">Phone Number<span class="text-danger">*</span></label>
+					<select class="input-formm" name="country_code" (change)="hangeEditContactInuts($event)" formControlName="country_code">
+						<option *ngFor="let country_code of countryCodes" [ngValue]="country_code">
+							{{ country_code }}
 						</option>
 					</select>
-					<input class="form-control" type="text" name="Phone_number" value="{{EditContactForm.Phone_number}}" style="display: none" />
+					<input class="form-control" type="text" formControlName="Phone_number" style="display: none" />
 
-					<input (input)="hangeEditContactInuts($event)" class="phone-no form-control" type="text" name="displayPhoneNumber" 
-					type="text" value="{{EditContactForm.displayPhoneNumber}}" (change)="updatePhoneNumber()"
-				    maxlength="15" placeholder="Enter Phone" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="return /^[0-9]$/.test(event.key)" /> 
-					<!-- <div *ngIf="editContact.controls.Phone_number.touched && editContact.controls.Phone_number.errors" 
+					<input class="phone-no form-control" type="text" formControlName="displayPhoneNumber" 
+						type="text" (input)="hangeEditContactInuts($event)" (change)="updatePhoneNumber()" placeholder="Enter Phone" 	
+					    [ngClass]="{'is-invalid' :editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.errors }"> 
+						
+						<div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.invalid && 
+							editContact.controls.displayPhoneNumber.hasError('minlength') || editContact.controls.displayPhoneNumber.hasError('maxlength')"
 							class="text-danger">
-							! Phone number must be 6 to 15 digits.
-						  </div> -->
+							! Phone number must consist of 6 to 15 digits.
+						</div>
+							<div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.hasError('required')"
+							class="text-danger">
+							! Phone Number is required.
+						</div>
+						<div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.hasError('pattern')"
+						class="text-danger">
+						! Invalid Phone Number.
+					   </div>
 		      		</div>
+			
 
-				<div class="row">
-					<label for="floatingSelectGrid" class="required">Email*</label>
-					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="emailId" 
-					  value={{EditContactForm.emailId}} required />
-					  <!-- <div *ngIf="editContact.controls.emailId.touched  && editContact.controls.emailId.errors "
+				<div class="row" style="flex-direction:column">
+					<label for="floatingSelectGrid" class="required">Email</label>
+					<input class="form-control" type="text" formControlName="emailId" (input)="hangeEditContactInuts($event)" 
+					  [ngClass]="{'is-invalid' :editContact.controls.emailId.touched && editContact.controls.emailId.errors}"
+					  placeholder="Enter Email">
+					  <div *ngIf="editContact.controls.emailId.touched && editContact.controls.emailId.errors"
 					  class="text-danger">
-					  ! Please include valid email address.
-				     </div> -->
-					  </div>
-					  
-				 	<div class="row">
-					<label for="floatingSelectGrid" class="required">Age</label>
-					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text"
-						pattern="^[^+\-.,?*%$eE]+$"
-						onKeyPress="if(this.value.length==2) return false; return /^[0-9]$/.test(event.key)" name="age"
-						value={{EditContactForm.age}} />
+					  ! Please enter a valid email address.
+				     </div>
 				</div>
-
+					  
 				<div class="row" style="flex-direction:column">
-					<label for="floatingSelectGrid" class="required">Gender</label>
+					<label for="floatingSelectGrid" class="required">Contact Owner<span class="text-danger">*</span></label>
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
-						<button (click)="toggleGenderOption()" type="button" class="drop-down-btn"
-							style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;">
-							{{EditContactForm.sex}}
-						</button>
+						<input class="form-control" type="text" readonly placeholder="Select Contact Owner"
+						   style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;"
+						   formControlName="ContactOwner" id="ContactOwner" (click)="toggleLeadStatusOption()">
 					</div>
-					
 
-					<div *ngIf="ShowGenderOption" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
-						<p (click)="hangeEditContactSelect('sex','Male')">
-						  <span>Male</span>
-						</p>
-						<p (click)="hangeEditContactSelect('sex','Female')">
-						  <span>Female</span>
-						</p>
-						<p (click)="hangeEditContactSelect('sex','Other')">
-						  <span>Other</span>
-						</p>
-					  </div>
-					  
-					  <!-- Add a click event on the document to close the options when clicking outside -->
-					  
-
-				</div>
-
-
-				<div class="row">
-					<label for="floatingSelectGrid" class="required">Country</label>
-					<input (input)="hangeEditContactInuts($event)" onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)"
-						maxlength="25" class="form-control" type="text" name="Country"
-						value={{EditContactForm.Country}} />
-				</div>
-
-				<div class="row" style="flex-direction:column">
-					<label for="floatingSelectGrid" class="required">Lead Status</label>
-					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
-						<button (click)="toggleLeadStatusOption()" type="button" class="drop-down-btn"
-							style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;">
-							{{EditContactForm.status}}
-						</button>
-					</div>
-					<!-- Add (click) event to the document body -->
 					<div *ngIf="ShowLeadStatusOption" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
-						<p (click)="hangeEditContactSelect('status','Premium')">
-						  <span>Premium</span>
-						</p>
-						<p (click)="hangeEditContactSelect('status','New Customer')">
-						  <span>New Customer</span>
-						</p>
-						<p (click)="hangeEditContactSelect('status','Paid')">
-						  <span>Paid</span>
-						</p>
+						<p *ngFor="let item of userList" (click)="hangeEditContactSelect('ContactOwner',item.name)">
+							<span>{{item.name}}</span>
+						  </p>
 					  </div>
-					  
-					  <!-- Add a click event on the document to close the div when clicking outside -->
-					  
-  
-
-
-				</div>
-
-
-				<div class="row">
-					<label for="floatingSelectGrid" class="required">Instagram Id</label>
-					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="InstagramId"
-						value={{EditContactForm.InstagramId}} />
-				</div>
-
-				<div class="row">
-					<label for="floatingSelectGrid" class="required">Facebook ID</label>
-					<input (input)="hangeEditContactInuts($event)" class="form-control" type="text" name="facebookId"
-						value={{EditContactForm.facebookId}} />
 				</div>
 
 				<div class="row" style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Channel</label>
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
-						<button (click)="toggleChannelOption()" type="button" class="drop-down-btn"
-							style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;">
-							{{EditContactForm.channel}}
-						</button>
+						<input class="form-control" type="text" readonly placeholder="Select Channel"
+						  style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;"
+						formControlName="channel" id="channel" (click)="toggleChannelOption()" >
 					</div>
-					
-
-
 
 					<div *ngIf="ShowChannelOption" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
 						<p (click)="hangeEditContactSelect('channel','WhatsApp Official')">
@@ -1516,35 +1505,27 @@
 						  </span>
 						</p>
 					  </div>
-					  
-					  <!-- Add a click event on the document to close the options when clicking outside -->
-					  
-
-
-
-
 				</div>
 
-				<div class="row">
+				<div class="row" style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">
 						Opt-in Status
-						<input [(ngModel)]="EditContactForm.OptInStatusChecked" type="checkbox"
+						<input [checked]="selectedInteraction.OptInStatus=='Yes'" type="checkbox"
 							class="form-control-checkbox ml-2" name="OptInStatus"
 							(click)="hangeEditContactInuts($event)" />
 					</label>
 				</div>
 
-
-
+				<div class="row" class="m-0 d-flex flex-row-reverse">
+					<div class="m-0 modal-footer row popfooter">
+						<div class="inner_form col-md-6 p-0 text-right">
+							<button type="submit" class="submit-btn">Update</button>
+						</div>
+					</div>
+				</div>
 			</form>
 		</div>
 
-		<div class="modal-footer row popfooter">
-
-			<div class="inner_form col-md-6 text-right">
-				<button type="button" class="submit-btn" (click)="updateCustomer()">Update</button>
-			</div>
-		</div>
 		
 	<div *ngIf="ShowLeadStatusOption" class="overlay" (click)="closeLeadStatusOption()"></div>
 	<div *ngIf="ShowChannelOption" class="overlay" (click)="closeChannelOption()"></div>

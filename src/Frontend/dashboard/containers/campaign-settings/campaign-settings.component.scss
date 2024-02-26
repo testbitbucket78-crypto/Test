@@ -106,6 +106,10 @@ p{
     min-width: 650px;
     height: 600px;
     border-radius: 26px;
+   }
+
+   .working-hour-modal .modal-body{
+    height: 100%;
     overflow-y: scroll;
    }
   
@@ -250,6 +254,9 @@ p{
     width: 0px;
   }
 
+  ::-webkit-scrollbar-track{
+    display: none;
+  }
   .Manage-User-modal .modal-title{
     color: #6149CD;
   }
@@ -285,7 +292,7 @@ p{
      border-radius: 19px;
      opacity: 1;
      font-size: 14px;
-     height: 2rem;
+     min-height: 2rem;
      display: flex;
      justify-content: space-between;
      align-items: center;
@@ -409,4 +416,8 @@ label.container {
   height: 45vh;
   align-items: center;
   display: flex;
+}
+
+.user-dropdown{
+  justify-content: space-between;
 }

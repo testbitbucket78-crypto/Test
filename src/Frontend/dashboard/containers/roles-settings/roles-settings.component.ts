@@ -3,6 +3,7 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { SettingsService } from '../../services/settings.service';
 import { RolesData, rights } from '../../models/settings.model';
 import * as agGrid from 'ag-grid-community';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 declare var $:any;
 
 @Component({
@@ -77,9 +78,10 @@ export class RolesSettingsComponent implements OnInit {
     Rights!: number;
     spid!:number;
     rolesData: RolesData = <RolesData>{};
+    myForm!: FormGroup;
     
 
-    constructor(private _settingsService: SettingsService) {
+    constructor(private _settingsService: SettingsService,private fb: FormBuilder) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
 
@@ -87,6 +89,9 @@ export class RolesSettingsComponent implements OnInit {
         this.getRolesList();
         this.getSubRightsList();
         this.getRightsList();
+        this.myForm = this.fb.group({
+            roleName: ['', Validators.required],
+          });
     }
 
     rowClicked = (event: any) => {
@@ -94,7 +99,7 @@ export class RolesSettingsComponent implements OnInit {
         this.roleData = event.data;
         this.subPrivileges = this.roleData?.subPrivileges?.split(',');
         this.showSideBar = true;
-        this.roleName = this.roleData?.RoleName;
+        this.myForm.controls.roleName.setValue(this.roleData?.RoleName);
         this.selectedRoleId = this.roleData?.roleID;
         this.setSelectedSubRights();
         this.getSubRights();
@@ -170,7 +175,7 @@ export class RolesSettingsComponent implements OnInit {
 
     addRole() {
         this.selectedRoleId = 0;
-        this.roleName = '';
+        this.myForm.controls.roleName.setValue('');
         this.resetSubRights();
     }
 
@@ -196,6 +201,8 @@ export class RolesSettingsComponent implements OnInit {
     }
 
     saveRolesDetails() {
+        if(this.myForm.valid){
+            
         let roleData = this.copyRolesData();
         this._settingsService.saveRolesData(roleData).subscribe(result => {
             if (result) {
@@ -203,6 +210,9 @@ export class RolesSettingsComponent implements OnInit {
                 $('#rolesModal').modal('hide');
             }
         });
+    } else{
+        this.myForm.markAllAsTouched();
+    }
     }
 
     editRolesDetails(){
@@ -225,7 +235,7 @@ export class RolesSettingsComponent implements OnInit {
     copyRolesData() {
         let rolesData: RolesData = <RolesData>{};
         rolesData.SP_ID = this.sp_Id;
-        rolesData.RoleName = this.roleName;
+        rolesData.RoleName = this.myForm.controls.roleName.value;
         rolesData.roleID = this.selectedRoleId;
         rolesData.Privileges = '';
         let subRoles: any[] = [];

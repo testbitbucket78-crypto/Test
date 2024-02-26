@@ -19,9 +19,9 @@ export class ImportComponent implements OnInit {
 
 
 	showMore = false;
-	// text = [`Upload a CSV file with the contacts and details that you would like to import. Ensure the CSV file fulfills the Following requirements:  Only CSV files are accepted for import. File size must be 10 MB The file must contain at least column with Contact Numbers. Ensure the first row contains NO data and just column headings with proper labels to help in variables mapping. Data in the first row is not imported. The file must contain atleast 2 columns. One of them should contain Contact Numbers and the other Name of the Contacts If your import purpose is Update Existing Contacts Only, you can also select Contact ID as an identifier.`];
-
+	
 	@Output() getContact = new EventEmitter<string> ();
+
 	spid!:number;
 	active = 1;
 	file: any;                                           
@@ -145,6 +145,7 @@ export class ImportComponent implements OnInit {
 	isIdentifierColumn(content:any){
 		if(this.identifierColumn) {
 			this.stepper.next();
+			this.verifyImportedData();
 		}
 		else {
 			$("#importmodal").modal('hide');
@@ -290,6 +291,17 @@ export class ImportComponent implements OnInit {
 		});
 
 }
+
+
+	verifyImportedData() {
+		var Data = {
+			importedData: this.importedData,
+		    identifier : this.identifierColumn,
+			purpose:this.purpose,
+			SP_ID: this.spid
+		}
+		console.log(Data, ': VERIFY DATA');
+	}
 
 	/****Written by Rishabh Singh  *****/
 

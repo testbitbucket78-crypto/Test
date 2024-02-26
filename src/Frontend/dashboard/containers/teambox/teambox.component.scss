@@ -568,6 +568,12 @@ img.preview_icon {
     border: 1px solid #EDEDED;
 }
 
+.popup-dialog.AssignOption span img {
+    margin: 0px;
+    height: 30px;
+    padding: 8px 8px;
+}
+
 .contacts_detail {
     display: flex;
     flex-direction: column;
@@ -1325,12 +1331,14 @@ div[role="progressbar"] {
     font-size: 14px;
 }
 
-
+.phoneFieldEdit.row {
+    position: relative;
+}
 .inner_form.large .row {
-    width: 46%;
+    // width: 46%;
     display: block;
-    float: left;
-    margin: 0 2%;
+    // float: left;;
+    margin: 0 15%;
 }
 
 .inner_form.large .row label {
@@ -2257,7 +2265,7 @@ label span {
 
     .sidenav{
         overflow-y: scroll;
-        height: 62vh;
+        height: 65vh;
     }
 
     .profile {
@@ -2321,7 +2329,7 @@ label span {
     position: absolute;
     top: 2.8rem;
     border: none;
-    right: 19rem;
+    left: 0.5rem;
     width: 5rem;
     background: #ffffff;
     font-size: 12px;
@@ -2330,18 +2338,23 @@ label span {
 }
 .country_code{
     position: absolute;
-    top: 10.5rem;
+    top: 2.8rem;
     border: none;
-    right: 21rem;
+    right: 19rem;
     width: 4.7rem;
     outline: none;
     font-size: 13px;
     cursor: pointer;
     background: #ffffff;
+    text-align: center;
 }
 
 .country_code option {
     background: #ffffff;
+}
+
+.phonefield.row {
+    position: relative;
 }
 .auto-modal{
     left: -9.5rem;
@@ -2379,10 +2392,8 @@ label span {
   }
   
   .text-danger {
-    color: #dc3545 !important;
-    font-size: 15px;
-    position: absolute;
-    margin-top: -1rem;
+    color: #dc3545;
+    font-size: 12px;
 }
 .doubleee{
     float: right;

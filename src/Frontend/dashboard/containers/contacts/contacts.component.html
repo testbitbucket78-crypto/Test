@@ -493,7 +493,7 @@
 		
 			<div class="row g-2">
 				<div class="col-md">
-					<label for="Name">Name*</label>
+					<label for="Name">Name<span class="text-danger">*</span></label>
 					<div class="form-floating">
 						<input class="form-control" type="text"
 						[ngClass]="{'is-invalid':productForm.controls.Name.touched && productForm.controls.Name.errors}"
@@ -516,7 +516,7 @@
 
 			<div class="row g-2 mt-3 mb-2">
 				<div class="col-md">
-					<label for="displayPhoneNumber">Phone Number*</label>
+					<label for="displayPhoneNumber">Phone Number<span class="text-danger">*</span></label>
 					<div class="form-floating">
 						<div class="d-flex ss">
 							
@@ -564,7 +564,7 @@
 			
 			</div>
 			<div class="p-0 col-md">
-				<label for="ContactOwner">Contact Owner*</label>
+				<label for="ContactOwner">Contact Owner<span class="text-danger">*</span></label>
 					<input class="form-control" type="text" readonly placeholder="Select Contact Owner" name="ContactOwner"
 						formControlName="ContactOwner" id="ContactOwner" (click)="toggleContactOption()" />
 						<div *ngIf="ShowContactOwner" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
