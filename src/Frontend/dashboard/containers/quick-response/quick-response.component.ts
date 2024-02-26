@@ -46,6 +46,8 @@ export class QuickResponseComponent implements OnInit {
   isTemplate:any;
   // templatesMessageData:any;
   ischannel='';
+  isWhatsappWeb:boolean = true;
+  isWhatsappOfficial:boolean = true;
 
   
   fileName: any; 
@@ -120,8 +122,16 @@ onEditorChange(value: string | null): void {
     this.usertemplateForm.get('BodyText')?.setValue(value);
 }
 
-filterQuickRes(val:any){
-   this.templates = this.initTemplates.filter(item=> item.Channel == val)
+filterQuickRes(){
+  if(this.isWhatsappWeb && this.isWhatsappOfficial)
+    this.templates = this.initTemplates
+  else if(!this.isWhatsappWeb && this.isWhatsappOfficial)
+    this.templates = this.initTemplates.filter(item=> item.Channel == 'WhatsApp Official')
+  else if(this.isWhatsappWeb && !this.isWhatsappOfficial)
+    this.templates = this.initTemplates.filter(item=> item.Channel == 'WhatsApp Web')
+  else
+    this.templates = this.initTemplates;
+
 }
 
 

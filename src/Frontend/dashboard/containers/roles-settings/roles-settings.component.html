@@ -33,11 +33,11 @@
             </div>
             <div class="modal-body px-5 pt-0">
                 <div>
-                    <form #myForm="ngForm">
+                    <form  [formGroup]="myForm"> 
                         <div>
                             <label>Role Name</label> <br>
-                            <input type="text" class="input-form" [(ngModel)]="roleName" placeholder="Enter role name" [ngModelOptions]="{standalone: true}" required>
-                          <div *ngIf="(myForm.controls['roleName']?.dirty || myForm.controls['roleName']?.touched)">
+                            <input type="text" class="input-form" formControlName="roleName"  placeholder="Enter role name" >
+                          <div *ngIf="(myForm.controls['roleName']?.dirty || myForm.controls['roleName']?.touched)" class="invalid-feedback">
                             <div *ngIf="myForm.controls['roleName']?.errors?.required">Role Name is required.</div>
                           </div>
                         </div>

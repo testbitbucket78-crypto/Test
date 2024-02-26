@@ -47,6 +47,14 @@ export class SettingsService {
     return this.http.get<billingDetailResponse>(`${this.API_URL}/billingDetails/${spId}`)
   }
 
+  getCountry(): Observable<any> {
+    return this.http.get<any>('https://api.countrystatecity.in/v1/countries')
+  }
+  
+  getState(countryCode:any): Observable<any> {
+    return this.http.get<any>(`https://api.countrystatecity.in/v1/countries/${countryCode}/states`)
+  }
+
   getLocaleData(spId: number): Observable<localeDetailResponse> {
     return this.http.get<localeDetailResponse>(`${this.API_URL}/localDetails/${spId}`);
   }

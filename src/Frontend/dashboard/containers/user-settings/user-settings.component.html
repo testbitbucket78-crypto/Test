@@ -70,17 +70,17 @@
                         <label>User Phone No.</label> <br>
 
                             <div class="ss d-flex justify-content-start">
-                            <select class="input-form" id="country_code" formControlName="country_code">
+                            <select class="input-form code-selector" id="country_code" formControlName="country_code">
                               <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
                                 {{ countryCode }}
                               </option>
                               </select>
                               <input type="text" class="form-control" id="mobile_number" formControlName="mobile_number" 
                               name="mobile_number" style="display: none">  
-                              <input type="text" class="form-control" id="mobile_number"  autocomplete="none" formControlName="display_mobile_number" 
+                              <input type="text" class="form-control phone-input" id="mobile_number"  autocomplete="none" formControlName="display_mobile_number" 
                                 name="display_mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
                                 onKeyPress="return /^[0-9]$/.test(event.key)"
-                                [ngClass]="{'is-invalid' : userDetailForm.controls.display_mobile_number.errors }" 
+                                [ngClass]="{'is-invalid' : userDetailForm.controls.display_mobile_number.errors && (userDetailForm.get('display_mobile_number')?.touched || userDetailForm.get('display_mobile_number')?.dirty) }" 
                               (change)="formatPhoneNumber()" #text>    
                             </div>
 
@@ -140,9 +140,12 @@
             <p class="black mt-1"> {{userData?.uid}}</p>
         </div>
         <div class="d-flex px-3">
-            <div class="profile-img">
-                <img [src]="userData?.profile_img">
+            <div *ngIf="userData?.profile_img" class="profile-img">
+                <img  [src]="userData?.profile_img">                
             </div>
+            <div *ngIf="!userData?.profile_img" class="image-container">
+                <span class="initials" > {{getFirstName(userData?.name) }}</span>
+              </div>
             <div class="p-3">
                 <span class="heading">{{userData?.name}}</span>
                 <div class="d-flex pt-1">

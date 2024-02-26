@@ -1139,3 +1139,55 @@ select.input-form {
     -webkit-appearance: none;
     -moz-appearance: none;
    }
+   
+   .vedio-add-btn{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    max-width: 390px;
+    max-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+   }
+
+   
+   .vedio-add-btn .type_labels{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.message_type{
+    width: 100%;
+    height: 150px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    border: 1px solid #EBEBEB;
+    border-radius: 12px 12px 0 0;
+}
+
+.video.message_type video {
+    height: inherit;
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+}
+   
+.doc-preview{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: inherit;
+  }
+
+  .preview-part .message_section .message_type {
+    width: 100%;
+}
+
+#video-background {
+    width: 100%;
+    height: 100%;
+  }

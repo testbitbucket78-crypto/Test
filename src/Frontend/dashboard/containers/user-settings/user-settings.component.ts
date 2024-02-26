@@ -302,4 +302,13 @@ export class UserSettingsComponent implements OnInit {
           }
         }
         }
+
+    getFirstName(name:any){
+        const nameParts = name.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts[1] || '';
+        let firstLetterFirstName = firstName.charAt(0) || '';
+        let firstLetterLastName = lastName.charAt(0) || '';
+        return firstLetterFirstName + firstLetterLastName;
+    }
 }
