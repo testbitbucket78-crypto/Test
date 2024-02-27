@@ -5,6 +5,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { ToolbarService, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { isNullOrUndefined } from 'is-what';
 
 declare var $:any;
 @Component({
@@ -15,7 +16,7 @@ declare var $:any;
 })
 export class DefaultMessageSettingsComponent implements OnInit {
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
-  @ViewChild('chatEditor') chatEditor!: RichTextEditorComponent; 
+  @ViewChild('chatEditor') chatEditor!: RichTextEditorComponent | any; 
   
   spId:number = 0;
   selectedType:string = 'text';
@@ -96,7 +97,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
     this.spId = Number(sessionStorage.getItem('SP_ID'));
     this.defaultMessageForm =this.prepareUserForm();
     this.value = this.defaultMessageForm.get('value')?.value;
-    console.log(this.selectedMessageData)
+    // console.log(this.selectedMessageData)
     this.getAttributeList();
     this.getDefaultMessages();
   }
@@ -122,14 +123,34 @@ ToggleAttributesOption(){
   $("#atrributemodal").modal('show');
 }
 
-selectAttributes(item:any) {
+// selectAttributes(item:any) {
+//   this.closeAtrrModal();
+//   const selectedValue = item;
+// 	  //  tempDivElement.innerHTML = this.chatEditor.value;
+//     //  let val = tempDivElement.textContent || tempDivElement.innerText || "";
+
+//   console.log(this.chatEditor,'chateditor');
+//   console.log(this.chatEditor.value,'chateditor value');
+//   console.log(this.defaultMessageForm.get('value')?.value,'value in texteditor');
+//   this.chatEditor.value = this.chatEditor?.value + `{{${selectedValue}}}`;
+//     $("#welcomGreeting").modal('show');
+//     $("#atrributemodal").modal('hide');
+
+// }
+
+selectAttributes(item:any){
   this.closeAtrrModal();
   const selectedValue = item;
-  this.chatEditor.value = this.chatEditor.value + `{{${selectedValue}}}`; 
-    $("#welcomGreeting").modal('show');
-    $("#atrributemodal").modal('hide');
-
+  
+  let htmlcontent = this.chatEditor.value;
+  if (isNullOrUndefined(htmlcontent)) {
+      htmlcontent = '';
+    }
+  const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
+  this.chatEditor.value = selectedAttr; 
 }
+
+
 
 getAttributeList() {
   this._teamboxService.getAttributeList(this.spId)
@@ -179,7 +200,7 @@ showMessageType(type: string) {
             if (responseData.filename) {
                 this.selectedPreview = responseData.filename.toString();
                 this.defaultMessageForm.get('link')?.setValue(this.selectedPreview);
-                console.log(this.selectedPreview);
+                // console.log(this.selectedPreview);
             }
         });
     }
@@ -225,7 +246,7 @@ removeMedia() {
   getDefaultMessages() {
     this.apiService.getDefaultMessages(this.spId).subscribe(response => {
         this.defaultMessages = response.defaultaction
-        console.log(response.defaultaction);
+        // console.log(response.defaultaction);
         
         // combine data coming from api into defaultMessageData array //
         this.defaultMessageDataInit = this.defaultMessageData.map(defaultMessage => {
@@ -236,22 +257,22 @@ removeMedia() {
             return defaultMessage;
           }
         });
-        console.log(this.defaultMessageDataInit);
+        // console.log(this.defaultMessageDataInit);
     })
   }
 
   addEditDefaultMessageData() {
-    // var tempDivElement = document.createElement("div");   
+    var tempDivElement = document.createElement("div");   
 
-	  //  tempDivElement.innerHTML = this.chatEditor.value;
-    //  let val = tempDivElement.textContent || tempDivElement.innerText || "";
+	   tempDivElement.innerHTML = this.chatEditor.value;
+     let val = tempDivElement.textContent || tempDivElement.innerText || "";
 
-    //  if(val.trim()=='') {
-    //   this.defaultMessageForm.invalid;
-    //   return;
-    //  }
+     if(val.trim()=='' && this.selectedType==='text') {
+      this.defaultMessageForm.invalid;
+      return;
+     }
 
-    //  else {
+     else {
       if (this.defaultMessageForm.valid) {
         const defaultMessagesData = this.copyDefaultMesssageData();
         this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe
@@ -270,7 +291,7 @@ removeMedia() {
           }
       });
       }
-    //  }
+     }
 
   }
 
@@ -280,7 +301,6 @@ removeMedia() {
     this.selectedTitle = this.selectedMessageData.title;
     this.selectedDescription = this.selectedMessageData.description;
     this.selectedPreview = this.selectedMessageData.link;
-    this.value = this.selectedMessageData.value;
     this.defaultMessageForm.clearAsyncValidators();
   }
 
@@ -316,7 +336,7 @@ removeMedia() {
     defaultMessagesData.override = this.defaultMessageForm.controls.override.value;
     defaultMessagesData.autoreply = this.defaultMessageForm.controls.autoreply.value;
     defaultMessagesData.Is_disable = this.Isdisable;
-    console.log(defaultMessagesData);
+    // console.log(defaultMessagesData);
     return defaultMessagesData;
   }
 

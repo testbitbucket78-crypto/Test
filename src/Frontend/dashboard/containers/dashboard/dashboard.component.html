@@ -20,7 +20,7 @@
   <div class="row ">
       <div class="col-sm-8 pl-4 mt-5">
         <div class="row m-0">
-          <div class="col-sm-6" (click)="routeToPage()">
+          <div class="col-sm-6" (click)="routeToPage('/dashboard/contacts')">
             <div class="dash-card float-left">
               <span class="card-heading">Contacts</span>
               <div class="p-2">
@@ -48,7 +48,7 @@
             </div>
           </div>
   
-          <div class="col-sm-6" (click)="routeToPage1()">
+          <div class="col-sm-6" (click)="routeToPage('/dashboard/teambox')">
             <div class="dash-card float-right">
               <span class="card-heading">Interactions</span>
               <!-- <span>Interactions of Last 30 days</span> -->
@@ -79,7 +79,7 @@
         </div>
   
         <div class="row m-0 mt-5">
-          <div class="campaign-card d-flex justify-content-between align-items-center" (click)="routeToPage3()">
+          <div class="campaign-card d-flex justify-content-between align-items-center" (click)="routeToPage('/dashboard/campaigns')">
             <div class="p-3 w-100">
               <span class="card-heading ">Campaigns</span>
               <div class="row w-100 justify-content-around">
@@ -119,7 +119,7 @@
         </div>
   
         <div class="w-100 dash-card  mt-5">
-          <div class="" (click)="routeToPage2()">
+          <div class="" (click)="routeToPage('/dashboard/setting')">
             <span class="card-heading ">Agents</span>
             <div class="agent-items m-4">
               <div class="d-flex justify-content-around align-content-center">
@@ -159,7 +159,7 @@
               <span class="card-heading ">Recent conversations</span>
             </div>
             <div class="px-3">
-              <div class="recentconversation" *ngFor="let items of recentConversation" (click)="routeToPage1()">
+              <div class="recentconversation" *ngFor="let items of recentConversation" (click)="routeToPage('/dashboard/teambox')">
                 <div class="text-capitalize initials"> {{ items.nameInitials }} </div>
                 <!-- <img src="assets/img/user-chat-img.svg"> -->
                 <div class="col-md-8 rc-body">

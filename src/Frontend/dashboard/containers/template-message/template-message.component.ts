@@ -46,6 +46,7 @@ export class TemplateMessageComponent implements OnInit {
     attributesearch!: string;
     characterCounts: { [key: number]: number } = {};
     filterCategory = ['Topic', 'Industry', 'Category', 'Language'];
+    filterTemplateCategory = ['Status', 'Channel','Category', 'Language'];
     filterListTopic = [
         { value: 0, label: 'Lead Gen', checked: false },
         { value: 1, label: 'Order Confirm', checked: false },
@@ -76,6 +77,13 @@ export class TemplateMessageComponent implements OnInit {
     filterListLanguage = [
         { value: 0, label: 'English', checked: false },
         { value: 1, label: 'Other', checked: false },
+    ];
+    filterListStatus = [
+        { value: 0, label: 'draft', checked: false },
+        { value: 1, label: 'approved', checked: false },
+        { value: 2, label: 'pending', checked: false },
+        { value: 3, label: 'rejected', checked: false },
+        { value: 4, label: 'saved', checked: false },
     ];
     selectedCategory = 1;
     selectedCategories: string[] = [];
@@ -226,31 +234,53 @@ export class TemplateMessageComponent implements OnInit {
         console.log(this.selectedType);
     }
 
-    applyTemplateFilter() {
+    applyGalleryFilter() {
         this.filteredGalleryData = this.galleryData.filter((template: any) => {
-            const isTopicMatch = this.filterListTopic.some(
-                topic => topic.checked && topic.label === template.topic
+            const isTopicMatch = this.filterListTopic.every(
+                topic => !topic.checked || topic.label === template.topic
             );
-            const isIndustryMatch = this.filterListIndustry.some(
-                industry => industry.checked && industry.label === template.industry
+            const isIndustryMatch = this.filterListIndustry.every(
+                industry => !industry.checked || industry.label === template.industry
             );
-            const isCategoryMatch = this.filterListCategory.some(
-                category => category.checked && category.label === template.Category
+            const isCategoryMatch = this.filterListCategory.every(
+                category => !category.checked || category.label === template.Category
             );
-            const isLanguageMatch = this.filterListLanguage.some(
-                language => language.checked && language.label === template.Language
+            const isLanguageMatch = this.filterListLanguage.every(
+                language => !language.checked || language.label === template.Language
             );
             $('#filterTemplateModal').modal('hide');
-            return isTopicMatch || isIndustryMatch || isCategoryMatch || isLanguageMatch;
+            return isTopicMatch && isIndustryMatch && isCategoryMatch && isLanguageMatch;
+        });
+    }
+
+    applyTemplateFilter() {
+        this.filteredTemplatesData = this.templatesData.filter((template: any) => {
+            const isStatusMatch = this.filterListStatus.every(
+                status => !status.checked || status.label === template.status
+            );
+            const isChannelMatch = this.filterListChannel.every(
+                channel => !channel.checked || channel.label === template.Channel
+            );
+            const isCategoryMatch = this.filterListCategory.every(
+                category => !category.checked || category.label === template.Category
+            );
+            const isLanguageMatch = this.filterListLanguage.every(
+                language => !language.checked || language.label === template.Language
+            );
+            $('#filterTemplateModal').modal('hide');
+            return isStatusMatch && isChannelMatch && isCategoryMatch && isLanguageMatch;
         });
     }
 
     clearFilters() {
         this.filterListTopic.forEach(topic => (topic.checked = false));
+        this.filterListStatus.forEach(status => (status.checked = false));
+        this.filterListChannel.forEach(channel => (channel.checked = false));
         this.filterListIndustry.forEach(industry => (industry.checked = false));
         this.filterListCategory.forEach(category => (category.checked = false));
         this.filterListLanguage.forEach(language => (language.checked = false));
 
+        this.applyGalleryFilter();
         this.applyTemplateFilter();
         this.getTemplatesData();
         $('#filterTemplateModal').modal('hide');
@@ -338,10 +368,10 @@ export class TemplateMessageComponent implements OnInit {
             this.BodyText = this.galleryMessageData.BodyText;
             this.selectedType = this.galleryMessageData.media_type;
             this.selectedPreview = this.galleryMessageData.Links;
-            this.galleryMessageData.ID = 0;
+            // this.galleryMessageData.ID = 0;
         }
         else {
-          this.galleryMessageData==null;
+          this.galleryMessageData=<templateMessageData>{};
           this.BodyText='';
           this.selectedType ='text';
           this.selectedPreview='';
@@ -390,6 +420,8 @@ export class TemplateMessageComponent implements OnInit {
     updateFilter(event: any, filter: any) {
         if (event.target.checked) {
             filter['checked'] = true;
+            let isChecked = filter.label
+            console.log(isChecked,'Currently Checked!')
             console.log(filter.label + ' :: ' + event.target.value);
         } else {
             filter['checked'] = false;
