@@ -101,7 +101,7 @@ app.get('/Campaigns:/sPid', async (req, res) => {
 app.get('/Agents:/sPid', async (req, res) => {
   // db.runQuery(req, res, val.agentsQuery, [req.body])
   try {
-    const users = await db.excuteQuery(val.agentsQuery, [req.query.sPid,req.query.sPid]);
+    const users = await db.excuteQuery(val.agentsQuery, [req.query.sPid,req.query.sPid,req.query.sPid]);
     res.send(users);
   } catch (err) {
     console.error(err);

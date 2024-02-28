@@ -348,7 +348,7 @@ app.post('/importContact', async (req, res) => {
       //********ADD NEW CONTACT********* */
       try {
 
-        var addAndUpdateCont = await addOnlynewContact(CSVdata, identifier, SP_ID);
+        var addAndUpdateCont = await addOnlynewContact(CSVdata, identifier);
 
         if (fields.length == 0) {
 
