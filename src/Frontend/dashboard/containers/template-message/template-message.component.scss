@@ -769,6 +769,10 @@ img.icon_sm {
     font-size: 13px;
 }
 
+.custom-control-label {
+    cursor: pointer;
+   }
+
 
 // new TEMPLATE POPUP FIRST FORM
 
@@ -978,6 +982,10 @@ input[type="radio"]:checked + label::before {
 .custom-control-input:checked ~ .custom-control-label::before {
     background-color: #6149CD;
     border: none;
+   }
+
+.custom-control.custom-checkbox{
+    cursor: pointer;
    }
 
 .radio-label {

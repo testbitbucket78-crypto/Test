@@ -167,10 +167,23 @@ showMessageType(type: string) {
   if (this.selectedType === 'text') {
     this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
     this.defaultMessageForm.get('link')?.clearValidators();
+
+    if(this.selectedCategory === 3 || this.selectedCategory === 5) {
+      this.defaultMessageForm.get('autoreply')?.setValidators([Validators.required]);
+    }
+    else {
+      this.defaultMessageForm.get('autoreply')?.clearValidators();
+    }
   }
   else if (this.selectedType === 'video' || this.selectedType === 'document' || this.selectedType === 'image') {
     this.defaultMessageForm.get('link')?.setValidators([Validators.required]);
     this.defaultMessageForm.get('value')?.clearValidators();
+    if(this.selectedCategory === 3 || this.selectedCategory === 5) {
+      this.defaultMessageForm.get('autoreply')?.setValidators([Validators.required]);
+    }
+    else {
+      this.defaultMessageForm.get('autoreply')?.clearValidators();
+    }
   }
   else {
     this.defaultMessageForm.get('link')?.clearValidators();
@@ -237,9 +250,8 @@ removeMedia() {
     this.value = null;
     this.selectedType='text';
     this.selectedMessageData=<defaultMessagesData>{};
-    this.defaultMessageForm.get('autoreply')?.clearValidators();
     this.defaultMessageForm.clearAsyncValidators();
-    this.defaultMessageForm.clearValidators();
+    // this.defaultMessageForm.clearValidators();
     this.defaultMessageForm.reset();
 }
 

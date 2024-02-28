@@ -197,6 +197,10 @@ input[type="radio"] {
   background-color: #6149CD;
   border: none;
  }
+ 
+ .custom-control-label {
+  cursor: pointer;
+ }
 
 // type image
 
@@ -357,6 +361,10 @@ textarea::placeholder {
     width: 387px;
     outline: 0;
     
+}
+
+.text-danger {
+  font-size: 12px;
 }
 
 // sidebar 

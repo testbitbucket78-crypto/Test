@@ -37,6 +37,7 @@ export class TemplateMessageComponent implements OnInit {
     showInfoIcon:boolean = false;
     templatesData = [];
     galleryData = [];
+    allVariablesList:string[] =[];
     filteredGalleryData = [];
     filteredTemplatesData: templateMessageData[] = [];
     templatesMessageData: templateMessageData = <templateMessageData>{};
@@ -284,6 +285,11 @@ export class TemplateMessageComponent implements OnInit {
         this.applyTemplateFilter();
         this.getTemplatesData();
         $('#filterTemplateModal').modal('hide');
+    }
+
+    goToGallery() {
+        this.selectedTab = 1;
+        this.clearFilters();
     }
 
     // calculate the character count in input fields
@@ -686,6 +692,41 @@ export class TemplateMessageComponent implements OnInit {
           }
         const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
         this.chatEditor.value = selectedAttr; 
+    }
+
+     /* GET VARIABLE VALUES */
+    getVariables(sentence: string, first: string, last: string) {
+        let goodParts: string[] = [];
+    
+        if (!sentence || sentence.trim() === '') {
+            return goodParts;
+        }
+    
+        const allParts = sentence.split(first);
+    
+        allParts.forEach((part: string, index: number) => {
+            if (index !== 0) {
+                const closingIndex = part.indexOf(last);
+                if (closingIndex !== -1) {
+                    const goodOne = part.substring(0, closingIndex);
+                    goodParts.push("{{" + goodOne + "}}");
+                }
+            }
+        });
+        return goodParts;
+    }
+    
+
+    previewTemplate() {
+        let isVariableValue:string = this.newTemplateForm.controls.BodyText.value + this.newTemplateForm.controls.Header.value;
+
+		if (isVariableValue) {
+		  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
+		  console.log(this.allVariablesList);
+          $('#newTemplateMessage').modal('hide');
+          $('#newTemplateMessagePreview').modal('show');
+      };
+
     }
 
     /* GET ATTRIBUTE LIST  */
