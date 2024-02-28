@@ -7,11 +7,11 @@ const database= "cip_project"
 
 
 //Query for contactPage
-var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked !=1";
+var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked !=1 and isDeleted !=1";
 var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,SP_ID,OptInStatus,countryCode,displayPhoneNumber) VALUES ?"
-var filterQuery="SELECT * from EndCustomer where Phone_number=?"
+var filterQuery="SELECT * from EndCustomer where Phone_number=? and isDeleted !=1"
 var searchQuery="SELECT * from EndCustomer where SP_ID=? and (Phone_number like ? or Name like ?)"
-var selectByIdQuery="SELECT * FROM EndCustomer WHERE customerId=?"
+var selectByIdQuery="SELECT * FROM EndCustomer WHERE customerId=? and isDeleted !=1"
 var blockCustomerQuery="UPDATE EndCustomer SET isBlocked =? WHERE customerId =?";
 
 
