@@ -44,7 +44,6 @@
                             type="text" pattern="^(?:[1-9]|[1-9]\d|1[0-1]\d|120)$"
                             onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"
                             formControlName="autoreply"
-                            required="true"
                             [ngClass]="{'is-invalid':defaultMessageForm.controls.autoreply.touched && defaultMessageForm.controls.autoreply.errors}"
                             placeholder="Enter reply timeout (1-120 minutes)">
 
@@ -55,9 +54,17 @@
                             type="text" pattern="^(?:[1-9]\d{0,2}|1[0-3]\d{2}|1440)$"
                             onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"
                             formControlName="autoreply"
-                            required="true"
                             [ngClass]="{'is-invalid':defaultMessageForm.controls.autoreply.touched && defaultMessageForm.controls.autoreply.errors}"
                             placeholder="Enter reply timeout (1-1440 minutes)">
+
+                            <div *ngIf="defaultMessageForm.controls.autoreply.touched && defaultMessageForm.controls.autoreply.hasError('required')"
+							class="text-danger">
+							  ! Reply Timeout is Required.
+						   </div>
+                           <div *ngIf="defaultMessageForm.controls.autoreply.touched && defaultMessageForm.controls.autoreply.dirty && defaultMessageForm.controls.autoreply.hasError('pattern')"
+                           class="text-danger">
+                             ! Invalid Value.
+                          </div>
                     </div>
 
                     <div *ngIf="selectedCategory==2">
@@ -223,7 +230,7 @@
                         </a>
                         </div>
                     </div>
-                  <div *ngIf="selectedMessageData.value" class="message_data" [innerHTML]=" selectedMessageData.value" 
+                  <div *ngIf="selectedMessageData.value" class="message_data" [innerHTML]="selectedMessageData.value" 
                       [ngClass]="{'preview': selectedMessageData.message_type === 'text'}">
                 </div>
                 </div>

@@ -9,7 +9,7 @@
         <div class="d-flex pb-2 pt-4 main-header-container">
            <div class=" main-headiing-title">Template Message</div>
 
-              <a class="mr-3 gallery-btn" (click)="selectedTab = 1">Gallery</a>
+              <a class="mr-3 gallery-btn" (click)="goToGallery()">Gallery</a>
 
              <div class="ml-2 input-group gf ">
 
@@ -288,7 +288,7 @@
                 <div class="container d-flex flex-row">
 
                 
-                <div class="d-flex flex-column filter-cateegory" >
+                <div *ngIf="selectedTab==1" class="d-flex flex-column filter-cateegory" >
                     <div class="d-flex justify-content-around" *ngFor="let f of filterCategory let i = index" 
                     [ngClass]="{'selected-category': i === selectedCategory}" (click)="setSelectedCategory(i)">
                       <span>{{f}}</span> 
@@ -296,13 +296,25 @@
                     </span>
                     </div>
                 </div>
+                <div *ngIf="selectedTab==0" class="d-flex flex-column filter-cateegory" >
+                    <div class="d-flex justify-content-around" *ngFor="let k of filterTemplateCategory let i = index" 
+                    [ngClass]="{'selected-category': i === selectedCategory}" (click)="setSelectedCategory(i)">
+                      <span>{{k}}</span> 
+                      <span><img class="" src="../../../../assets/img/profile/next1.svg"/>
+                    </span>
+                    </div>
+                </div>
                 <div class="px-5 flex-grow-1 filter-list">
-                    <label *ngIf="selectedCategory == 0" class="pb-2">Filter by {{filterCategory[selectedCategory]}}</label>
-                    <label *ngIf="selectedCategory == 1" class="pb-2">Filter by {{filterCategory[selectedCategory]}}</label>
+                    <label *ngIf="selectedCategory == 0 && selectedTab == 1" class="pb-2">Filter by {{filterCategory[selectedCategory]}}</label>
+                    <label *ngIf="selectedCategory == 1 && selectedTab == 1" class="pb-2">Filter by {{filterCategory[selectedCategory]}}</label>
+
+                    <label *ngIf="selectedCategory == 0 && selectedTab == 0" class="pb-2">Filter by {{filterTemplateCategory[selectedCategory]}}</label>
+                    <label *ngIf="selectedCategory == 1 && selectedTab == 0" class="pb-2">Filter by {{filterTemplateCategory[selectedCategory]}}</label>
+
                     <label *ngIf="selectedCategory == 2" class="pb-2">Filter by {{filterCategory[selectedCategory]}}</label>
                     <label *ngIf="selectedCategory == 3" class="pb-2">Filter by {{filterCategory[selectedCategory]}}</label><br>
                   
-                    <div *ngIf="selectedCategory == 0">
+                    <div *ngIf="selectedCategory == 0 && selectedTab == 1">
                       <div *ngFor="let Topic of filterListTopic; let i = index" class="py-2 custom-control custom-checkbox user-dropdown">
                         <input type="checkbox" [(ngModel)]="Topic.checked" class="custom-control-input" value={{Topic.value}} (click)="updateFilter($event,Topic)"
                           id="Topic{{i}}" >
@@ -311,7 +323,16 @@
                        
                       </div>
                     </div>
-                    <div *ngIf="selectedCategory == 1">
+                    <div *ngIf="selectedCategory == 0 && selectedTab == 0">
+                        <div *ngFor="let Status of filterListStatus let i = index" class="py-2 custom-control custom-checkbox user-dropdown">
+                          <input type="checkbox" [(ngModel)]="Status.checked" class="custom-control-input" value={{Status.value}} (click)="updateFilter($event,Status)"
+                            id="Status{{i}}" >
+                          <img class="user-img ml-2">
+                          <label class="custom-control-label" for="Status{{i}}"> <span class="ml-2">{{Status.label}}</span></label>
+                         
+                        </div>
+                      </div>
+                    <div *ngIf="selectedCategory == 1 && selectedTab == 1">
                       <div *ngFor="let Industry of filterListIndustry; let i = index" class="py-2 custom-control custom-checkbox user-dropdown">
                         <input type="checkbox" [(ngModel)]="Industry.checked" class="custom-control-input" value={{Industry.value}} (click)="updateFilter($event,Industry)"
                         id="Industry{{i}}">
@@ -319,8 +340,16 @@
                        <label class="custom-control-label" for="Industry{{i}}"><span class="ml-2">{{Industry.label}}</span></label> 
                       </div>
                     </div>
+                    <div *ngIf="selectedCategory == 1 && selectedTab == 0">
+                        <div *ngFor="let Channel of filterListChannel; let i = index" class="py-2 custom-control custom-checkbox user-dropdown">
+                          <input type="checkbox" [(ngModel)]="Channel.checked" class="custom-control-input" value={{Channel.value}} (click)="updateFilter($event,Channel)"
+                          id="Channel{{i}}">
+                          <img class="user-img ml-2">
+                         <label class="custom-control-label" for="Channel{{i}}"><span class="ml-2">{{Channel.label}}</span></label> 
+                        </div>
+                      </div>
                     <div *ngIf="selectedCategory == 2">
-                      <div *ngFor="let Category of filterListCategory; let i = index" class="py-2 user-dropdown custom-control custom-checkbox">
+                      <div *ngFor="let Category of filterListCategory; let i = index" class="py-2 custom-control custom-checkbox user-dropdown">
                         <input type="checkbox" class="custom-control-input" [(ngModel)]="Category.checked" value="{{Category.value}}" (click)="updateFilter($event,Category)"
                         id="Category{{i}}" >
                         <img class="user-img ml-2">
@@ -328,7 +357,7 @@
                       </div>
                     </div>
                     <div *ngIf="selectedCategory == 3">
-                      <div *ngFor="let Language of filterListLanguage; let i = index" class="py-2 user-dropdownn custom-control custom-checkbox">
+                      <div *ngFor="let Language of filterListLanguage; let i = index" class="py-2 custom-control custom-checkbox user-dropdown">
                         <input type="checkbox" class="custom-control-input" [(ngModel)]="Language.checked" value="{{Language.value}}" (click)="updateFilter($event,Language)"
                         id="Language{{i}}">
                         <img class="user-img ml-2">
@@ -341,7 +370,9 @@
               </div>
             <div class="modal-footer">
                 <button type="button" class="clear account-btn" (click)="clearFilters()">Clear All</button>
-                <button type="button" class="account-btn" (click)="applyTemplateFilter()">Apply</button>
+                <button *ngIf="selectedTab==1" type="button" class="account-btn" (click)="applyGalleryFilter()">Apply</button>
+
+                <button *ngIf="selectedTab==0" type="button" class="account-btn" (click)="applyTemplateFilter()">Apply</button>
             </div>
         </div>
     </div>
@@ -351,8 +382,8 @@
     <div class="m-auto newTemplateMessageFirst modal-dialog" role="document">
         <div class="mt-0 modal-content welcomGreeting">
             <div class="d-flex justify-content-between pr-4 align-items-center modal-header">
-                <h5 *ngIf="this.templatesMessageDataById==null" class="pl-4 modal-title">New Template Message</h5>
-                <h5 *ngIf="this.templatesMessageDataById" class="pl-4 modal-title">Edit Template Message</h5>
+                <h5 *ngIf="!templatesMessageDataById && selectedTab==0" class="pl-4 modal-title">New Template Message</h5>
+                <h5 *ngIf="templatesMessageDataById || galleryMessageData.ID" class="pl-4 modal-title">Edit Template Message</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="removeFormValues()">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
@@ -403,8 +434,8 @@
     <div class="m-auto newTemplateMessage modal-dialog" role="document">
         <div class="m-0 modal-content welcomGreeting">
             <div class="d-flex justify-content-between align-items-center modal-header">
-                <h5 *ngIf="this.templatesMessageDataById==null" class="pl-4 modal-title">New Template Message</h5>
-                <h5 *ngIf="this.templatesMessageDataById" class="pl-4 modal-title">Edit Template Message</h5>
+                <h5 *ngIf="!templatesMessageDataById && selectedTab==0" class="pl-4 modal-title">New Template Message</h5>
+                <h5 *ngIf="templatesMessageDataById || galleryMessageData.ID" class="pl-4 modal-title">Edit Template Message</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
@@ -603,7 +634,8 @@
                 <div *ngIf="selectedType === 'document'" class="message_type" [ngClass]="{'document-selected':newTemplateForm.get('Links')!.value !== null}">
                     <div class="d-flex flex-column">
                         <img class="mx-auto mt-4" *ngIf="newTemplateForm.get('Links')!.value !== null" src="../../../../assets/img/settings/doc.svg" />
-                        <span class="document-preview" *ngIf="newTemplateForm.get('Links')!.value !== null" >{{ newTemplateForm.get('Links')!.value }}</span>
+                        <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null" >{{ this.fileName }}</span>
+                        <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
                     </div>
                 </div>
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
@@ -620,7 +652,7 @@
 
     </div>
             <div class="modal-footer">
-                <button type="button" class="account-btn" [disabled]="newTemplateForm.get('BodyText')?.value==null" [class.disabled]="newTemplateForm.invalid"  data-bs-toggle="modal" data-bs-target="#newTemplateMessagePreview">Next</button>
+                <button type="button" class="account-btn" [disabled]="newTemplateForm.get('BodyText')?.value==null" [class.disabled]="newTemplateForm.invalid" (click)="previewTemplate()">Next</button>
             </div>
         </form>
         </div>
@@ -631,8 +663,8 @@
     <div class="m-auto newTemplateMessage modal-dialog" role="document">
         <div class="m-0 modal-content welcomGreeting">
             <div class="d-flex justify-content-between align-items-center modal-header">
-                <h5 *ngIf="this.templatesMessageDataById==null" class="pl-4 modal-title">New Template Message</h5>
-                <h5 *ngIf="this.templatesMessageDataById" class="pl-4 modal-title">Edit Template Message</h5>
+                <h5 *ngIf="!templatesMessageDataById && selectedTab==0" class="pl-4 modal-title">New Template Message</h5>
+                <h5 *ngIf="templatesMessageDataById || galleryMessageData.ID" class="pl-4 modal-title">Edit Template Message</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
@@ -651,20 +683,10 @@
                     <span class="variables-head" >Provide sample content for all the variables in the message.<br/>Do not include any customer information
                     </span>
 
-                    <div class="my-2 variable-values">
-                        <div class="d-flex justify-content-between align-items-center form-group">
-                            <label class="form-label" for="variableValuesSet1">name</label>
-                            <input type="text" class="form-control" id="variableValuesSet1" placeholder="Enter Value">
-                        </div>
-                      
-                        <div class="d-flex justify-content-between align-items-center form-group">
-                            <label class="form-label" for="variableValuesSet2">product</label>
-                            <input type="text" class="form-control" id="variableValuesSet2" placeholder="Enter Value">
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center form-group">
-                            <label class="form-label" for="variableValuesSet2">discount</label>
-                            <input type="text" class="form-control" id="variableValuesSet3" placeholder="Enter Value">
+                    <div class="my-2 variable-values">         
+                        <div *ngFor="let item of allVariablesList; let ith = index" class="d-flex justify-content-between align-items-center form-group">
+                            <label class="form-label" for="variableValue{{ith}}">{{item}}</label>
+                            <input type="text" class="form-control" id="variableValue{{ith}}" placeholder="Enter Value">
                         </div>
                     </div>
             </div>    

@@ -143,7 +143,7 @@ export class DashboardComponent implements OnInit {
                 const nameParts = item.Name.split(' ');
                 const firstName = nameParts[0] || '';
                 const lastName = nameParts[1] || '';
-                const nameInitials = firstName.charAt(0) + lastName.charAt(0);
+                const nameInitials = firstName.charAt(0)+ ' ' +lastName.charAt(0);
     
                 item.nameInitials = nameInitials;
             });
@@ -174,18 +174,8 @@ export class DashboardComponent implements OnInit {
       });
     }
 
-    routeToPage() {
-        this.router.navigate(['/dashboard/contacts']);
+    routeToPage(link:string) {
+        this.router.navigate([link]);
     }
-
-    routeToPage1() {
-        this.router.navigate(['/dashboard/teambox']);
-    }
-    routeToPage2() {
-        this.router.navigate(['/dashboard/automation']);
-    }
-    routeToPage3() {
-        this.router.navigate(['/dashboard/campaigns']);
-    } 
   
 }

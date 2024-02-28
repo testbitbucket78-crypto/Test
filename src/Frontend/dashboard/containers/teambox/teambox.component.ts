@@ -2009,68 +2009,84 @@ sendMessage(){
 			created_at:new Date(),
 			mediaSize:this.mediaSize
 		}
-		this.apiService.sendNewMessage(bodyData).subscribe(async data =>{
-			var responseData:any = data
-			if (responseData.middlewareresult.status === '401') {
+
+		let input = {
+			spid: this.SPID,
+		};
+		this.settingService.clientAuthenticated(input).subscribe(response => {
+
+			if (response.status === 404) {
 				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
 				return;
-			};
-			if(responseData.middlewareresult.status === '200') {
-				if(this.newMessage.value.Message_id==''){
-					var insertId:any = responseData.insertId
-					if(insertId){
-						var lastMessage ={
-							"interaction_id": bodyData.InteractionId,
-							"Message_id": insertId,
-							"message_direction": "Out",
-							"Agent_id": bodyData.AgentId,
-							"message_text": bodyData.message_text,
-							"message_media": bodyData.message_media,
-							"media_type": bodyData.media_type,
-							"Message_template_id": bodyData.message_media,
-							"Quick_reply_id": bodyData.message_media,
-							"Type": bodyData.message_media,
-							"ExternalMessageId": bodyData.message_media,
-							"created_at": createdAt,
-							"mediaSize":bodyData.mediaSize
-						}
-						
-						if(this.showChatNotes=='text'){
-							var allmessages =this.selectedInteraction.allmessages
-							this.selectedInteraction.lastMessage= lastMessage
-							allmessages.push(lastMessage)
-							this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
-							setTimeout(() => {
-								this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-							}, 500);
-		
-						}else{
-							var allnotes =this.selectedInteraction.allnotes
-							allnotes.push(lastMessage)
-							this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
-							setTimeout(() => {
-								this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-							}, 500);
-		
-						
-						}
-						this.chatEditor.value ='';
-						this.messageMeidaFile='';
-						this.mediaType='';
-						this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
-					}
-		
-		
-					}else{
-						this.selectedNote.message_text= bodyData.message_text
-					}
-					
-		
-					this.newMessage.reset({
-						Message_id: ''
-					});
 			}
-		})
+
+			if (response.status === 200 && response.message === 'Client is ready !') {
+				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
+					var responseData:any = data
+					// if (responseData.middlewareresult.status === '401') {
+					// 	this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+					// 	return;
+					// };
+					// if(responseData.middlewareresult.status === '200') {
+						if(this.newMessage.value.Message_id==''){
+							var insertId:any = responseData.insertId
+							if(insertId){
+								var lastMessage ={
+									"interaction_id": bodyData.InteractionId,
+									"Message_id": insertId,
+									"message_direction": "Out",
+									"Agent_id": bodyData.AgentId,
+									"message_text": bodyData.message_text,
+									"message_media": bodyData.message_media,
+									"media_type": bodyData.media_type,
+									"Message_template_id": bodyData.message_media,
+									"Quick_reply_id": bodyData.message_media,
+									"Type": bodyData.message_media,
+									"ExternalMessageId": bodyData.message_media,
+									"created_at": createdAt,
+									"mediaSize":bodyData.mediaSize
+								}
+								
+								if(this.showChatNotes=='text'){
+									var allmessages =this.selectedInteraction.allmessages
+									this.selectedInteraction.lastMessage= lastMessage
+									allmessages.push(lastMessage)
+									this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
+									setTimeout(() => {
+										this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+									}, 500);
+				
+								}else{
+									var allnotes =this.selectedInteraction.allnotes
+									allnotes.push(lastMessage)
+									this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
+									setTimeout(() => {
+										this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+									}, 500);
+				
+								
+								}
+								this.chatEditor.value ='';
+								this.messageMeidaFile='';
+								this.mediaType='';
+								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
+							}
+				
+				
+							}else{
+								this.selectedNote.message_text= bodyData.message_text
+							}
+							
+				
+							this.newMessage.reset({
+								Message_id: ''
+							});
+					// }
+				});
+			}
+		});
+
+
 		}else{
 			this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
 		}
