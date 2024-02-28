@@ -33,7 +33,7 @@ const defaultaction = async (req, res) => {
         console.log(select)
         if (select.length != 0) {
 
-            var defaultValues = [req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at, req.body.SP_ID, select[0]?.id]
+            var defaultValues = [req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at,req.body.pauseAgentActiveTime, req.body.pauseAutoReplyTime, req.body.SP_ID, select[0]?.id]
             var updateddefaultData = await db.excuteQuery(val.updatedefaultactionDetails, defaultValues)
 
             res.status(200).send({
@@ -290,11 +290,12 @@ const rotingsave = async (req, res) => {
 
 
         var select = await db.excuteQuery(val.routingrule, [SP_ID])
-        console.log(select)
+       // console.log("select")
         if (select.length != 0) {
+           // console.log(req.body.SpecificUserUid ," select.length != 0 "    ,req.body.manualAssignUid)
 
             var routingValues = [req.body.contactowner, req.body.assignagent, req.body.broadcast, req.body.roundrobin, req.body.conversationallowed, req.body.manualassign, req.body.assignuser, req.body.timeoutperiod, req.body.isadmin, req.body.assignspecificuser, req.body.selectuser, req.body.isMissChatAssigContactOwner, created_at, manualAssignUid, SpecificUserUid, req.body.SP_ID,]
-            console.log(routingValues)
+            //console.log(routingValues)
 
             var updatedroutingtData = await db.excuteQuery(val.routingdetails, routingValues)
 
@@ -346,7 +347,7 @@ const getroutingrules = async (req, res) => {
 // manage storage//
 const savemanagestorage = async (req, res) => {
     try {
-        console.log(req.body.spid)
+        console.log(req.body)
         spid = req.body.spid
         autodeletion_message = req.body.autodeletion_message
         autodeletion_media = req.body.autodeletion_media
@@ -387,7 +388,7 @@ const getautodeletion = async (req, res) => {
         // console.log(req.body.spid)
         let spid = req.params.spid
         let storageUtilizationBytes = await awsHelper.getStorageUtilization(spid, '-1')
-        console.log(storageUtilizationBytes)
+        console.log("storageUtilizationBytes"  ,storageUtilizationBytes)
 
         const storageUtilizationKB = (storageUtilizationBytes.totalSize) / 1024;
         const storageUtilizationMB = storageUtilizationKB / 1024;
@@ -395,7 +396,7 @@ const getautodeletion = async (req, res) => {
 
          var resultbyspid = await db.excuteQuery(val.getdeletion, [req.params.spid])
         var resbyspid = await db.excuteQuery(val.messageSizeQuery, [req.params.spid, new Date()])
-        console.log("routing", resbyspid)
+        console.log("routing" ,resbyspid[0]?.message_size ,storageUtilizationBytes?.totalSize)
         res.status(200).send({
             msg: 'routing got successfully !',
             resultbyspid:resultbyspid,

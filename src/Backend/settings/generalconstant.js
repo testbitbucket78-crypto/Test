@@ -16,7 +16,7 @@ const region = 'ap-south-1'
 // default actions
 
 defaultactiondetails = 'select * from defaultActions where spid=?'
-updatedefaultactionDetails = 'UPDATE defaultActions SET isAgentActive=?,agentActiveTime=?,isAutoReply=?,autoReplyTime=?,isAutoReplyDisable=?,isContactAdd=?,pausedTill=?,updated_at=? Where spid=? and id=?'
+updatedefaultactionDetails = 'UPDATE defaultActions SET isAgentActive=?,agentActiveTime=?,isAutoReply=?,autoReplyTime=?,isAutoReplyDisable=?,isContactAdd=?,pausedTill=?,updated_at=?,pauseAgentActiveTime=?,pauseAutoReplyTime=? Where spid=? and id=?'
 defaultinsertDetails = 'INSERT INTO defaultActions(spid, isAgentActive,agentActiveTime,isAutoReply,autoReplyTime,isAutoReplyDisable,isContactAdd,pausedTill,created_at,pauseAgentActiveTime,pauseAutoReplyTime) VALUES ?'
 
 // default messages
@@ -142,7 +142,7 @@ AND InteractionId IN (
 checkAssignInteraction=`SELECT * FROM InteractionMapping WHERE InteractionId = ?`
 
 messageSizeQuery=`SELECT 
-count( LENGTH(message_media) + LENGTH(media_type)+LENGTH(Type)+LENGTH(message_text) ) AS message_size,
+count( LENGTH(message_media) + LENGTH(Type) + LENGTH(message_text) ) AS message_size,
 COUNT(DISTINCT message_id) AS message_count 
 FROM 
  Message
