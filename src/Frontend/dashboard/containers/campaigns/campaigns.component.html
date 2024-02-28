@@ -74,14 +74,14 @@
 					</div>
 				</div>
 
-				<div class="campaigns_section_item {{selectedCampaign.status_label}}">
+				<div class="campaigns_section_item campaign_scroll {{selectedCampaign.status_label}}">
 					<div class="campaigns_section_item_header">
 						<label>{{selectedCampaign.status_label}}</label>
 						<span>id: {{selectedCampaign.Id}}</span>
 					</div>
 					<p class="start_time">Created on <span>{{selectedCampaign.created_datetime_formated}}</span> Start time <span>{{selectedCampaign.start_datetime_formated}}</span></p>
 					<p class="title" ><img *ngIf="selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,1)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> {{selectedCampaign.title}}</p>
-					<p><img *ngIf="selectedCampaign.channel_id==1"  class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedCampaign.channel_label}}</p>
+					<p><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedCampaign.channel_label}}</p>
 					<!--If running start-->
 					<div *ngIf="selectedCampaign.status>1">
 					<p class="sub_title_sm blackcolor mb-1">Reports</p>
@@ -178,12 +178,18 @@
 				</div>
 				<div class="action_section">
 					<button type="button" class="btn" (click)="copyCampaign()"><img src="/assets/img/teambox/copy.svg"></button>
+					<button type="button" *ngIf="selectedCampaign.status == 0 || selectedCampaign.status == 1" class="btn" (click)="editCampaign(addNewCampaign,1)"><img src="../../../../assets/img/teambox/Edit.svg"></button>
 					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)"><img src="/assets/img/teambox/delete.svg"></button>
 				</div>
 			</div>
-			<div *ngIf="allCampaign.length<1" class="campaigns_section_items no-campaign">
+			<div *ngIf="allCampaign.length<1 && searchKey == ''" class="campaigns_section_items no-campaign">
 				<img src="assets/img/teambox/no-campaign@2x.png">
 				<p>No Campaigns to Show!</p>
+				<p><span>Click "+ New Campaign" to start creating Campaigns</span></p>
+			</div>
+			<div *ngIf="allCampaign.length<1 && searchKey != ''" class="campaigns_section_items no-campaign">
+				<img src="assets/img/teambox/no-campaign@2x.png">
+				<p>No Matching Campaigns to Show!</p>
 				<p><span>Click "+ New Campaign" to start creating Campaigns</span></p>
 			</div>
 		</div>
@@ -340,7 +346,7 @@
 					</div>
 					<div class="section_filter">
 						<label class="container market">
-							<input checked type="checkbox" name="template_filter" value="Marketing" (click)="filterTemplate($event)">
+							<input checked type="checkbox" name="template_filter"[(ngModel)]="isMarketing" value="Marketing" (click)="filterTemplate($event)">
 							<span class="checkmark"></span>
 
 						</label>
@@ -355,7 +361,7 @@
 						  </div>
 						  <div *ngIf="Marketing" class="overlay" (click)="closeUtility()"  (click)="stopPropagation($event)"></div>
 						<label class="container market">
-							<input checked type="checkbox" name="template_filter" value="Utility" (click)="filterTemplate($event)">
+							<input checked type="checkbox" name="template_filter" value="Utility" [(ngModel)]="isUtility" (click)="filterTemplate($event)">
 							<span class="checkmark"></span>
 						</label>
 							<p><span>Utility</span></p> 
@@ -370,7 +376,7 @@
 							  <div *ngIf="Utility" class="overlay" (click)="closeUtility()"></div>
 						
 						<label class="container market">
-							<input checked type="checkbox" name="template_filter" value="Authentication" (click)="filterTemplate($event)">
+							<input checked type="checkbox" name="template_filter" value="Authentication" [(ngModel)]="isAuthentication" (click)="filterTemplate($event)">
 							<span class="checkmark"></span>							
 						</label>
 						<p><span>Authentication  </span></p>
@@ -477,6 +483,7 @@
 							</div>
 							</div>
 							
+							<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1">
 							
 							<p class="mt-2">Button Payload <span>(Optional)</span><img class="icon sm" src="/assets/img/campaign/Info.svg"></p>
 							<div class="form_row" >
@@ -491,6 +498,7 @@
 								<label>Explore</label>
 								<input type="text" class="form-control" value={{selectedTemplate.button_exp}} (keyup)="updateButtonsValue($event,'button_exp')" placeholder="Input payload value">
 							</div>
+						</div>
 						</div>
 					</div>
 				</div>
@@ -528,7 +536,7 @@
 					<div class="campaign_preview_left">
 						<p class="label">Summery</p>
 						<p class="heading">{{newCampaignDetail.value.title}}</p>
-						<p><img *ngIf="newCampaignDetail.value.channel_id ==1" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{newCampaignDetail.value.channel_label}}</p>
+						<p><img  class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{newCampaignDetail.value.channel_label}}</p>
 						<p class="label mt-3">Traget Audience</p>
 						<p *ngIf="segmentsContactList.length > 0" class="value">{{segmentsContactList.length}} <span>( Segment Audience)</span></p>
 						<p *ngIf="csvContactList.length > 0" class="value">{{csvContactList.length}} <span>( Imported Contacts)</span></p>
@@ -599,6 +607,7 @@
 								  <div class="formrow">
 									<p>Schedule Date</p>
 									<input (change)="selectScheduleDate($event)" type="date" class="form-control btn white_bg" value={{selecteScheduleDate}}>
+									<div *ngIf="selScheduleDate < currDate" class="invalid-feedback">Schedule time should not be in past</div>
 								  </div>
 								  
 
@@ -623,7 +632,7 @@
 						  <div *ngIf="campagininfo" class="overlay" (click)="closecampaigninfo()"></div>
 
 						<div class="bottom_section">
-						<p class="close-box" (click)="directToSettings()"><img class="setting_icon" src="/assets/img/campaign/setting-g.svg"></p>
+						<!-- <p class="close-box" (click)="directToSettings()"></p> -->
 						<p class="text-box-readonly">To configure no. from settings</p>
 						</div>
 					</div>
@@ -996,14 +1005,14 @@
 				<div *ngFor='let list of allContactList ;let i = index' class="campaigns_section_item">
 					<div class="d-flex justify-content-between align-items-end campaigns_section_item_header">
 						<label class="container">
-							<input #checkboxRef [(ngModel)]="list.selected" type="checkbox" name="contact_list" value="{{list.id}}" (change)="selectContactList($event, list)">
+							<input #checkboxRef [(ngModel)]="list.selected" type="checkbox" name="contact_list" value="{{list.Id}}" (change)="selectContactList($event, list)">
 							<span class="checkmark"></span>
 						</label>
 						
 						
 						<button class="small-gradient-btn"><img class="m-0 del icon"
 							src="/assets/img/teambox/icon-delete.svg"
-							(click)="deleteContactList()" />
+							(click)="deleteContactList(list.Id)" />
 						</button>
 					</div>
 					<p class="title">{{list.list_name}}</p>
@@ -1366,7 +1375,7 @@
 							<div *ngIf="scheduled==0">
 								<p><img src="../../../../assets/img/campaign/Send-o.svg"></p>
 								<p>You are about to send</p>
-								<p><span>To send your campaign {{newCampaignDetail.value.title}}, please confirm it.</span></p>
+								<p><span>To send your campaign</span> <span class="camp-heading">{{newCampaignDetail.value.title}}</span><span>, please confirm it.</span></p>
 								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Send</button></p>
 							
 							</div>
@@ -1374,7 +1383,7 @@
 							<div *ngIf="scheduled==1">
 								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
 								<p>You are about to schedule</p>
-								<p><span>Please confirm the <b class="title-value">{{newCampaignDetail.value.title}}</b> campaign will take place on <b  class="title-value">{{selecteScheduleDate}} at {{selecteScheduleTime}}.</b></span></p>
+								<p><span>Please confirm the <b class="title-value camp-heading">{{newCampaignDetail.value.title}}</b> campaign will take place on <b  class="title-value camp-heading">{{selecteScheduleDate}} at {{selecteScheduleTime}}.</b></span></p>
 								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
 								</p>
 							</div>
