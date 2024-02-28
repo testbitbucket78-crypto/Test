@@ -162,9 +162,9 @@
                         <div class="profile-form-row">
                             <div class="profile-form-left">
                                 <span>Country</span>
-                                <select class="company input-form" formControlName="Country" required>
+                                <select class="company input-form" formControlName="Country" required (change)="getStateList($event)">
                                     <option value="0" selected>Select country</option>
-                                    <option  *ngFor="let item of country" [value]="item">{{item}}</option>
+                                    <option  *ngFor="let item of country" [value]="item.name">{{item.name}}</option>
                                 </select>
                             </div>
                           
@@ -181,10 +181,19 @@
                                             </option>
                                         </select>
                                         <input (input)="hangeEditContactInuts($event)" class="form-control phone-no" type="text"
-                                            onKeyPress="return /^[\d+]$/.test(event.key)" name="Phone_number"
-                                            value={{EditContactForm.Phone_number}} />
+                                            onKeyPress="return /^[\d+]$/.test(event.key)" name="Phone_number" formControlName="Phone_Number"
+                                            value={{EditContactForm.Phone_number}} minlength="6" maxlength="15" />                                       
                                          
+                                    </div> 
+                                     <div *ngIf="(companyDetailForm.get('Phone_Number')?.touched || companyDetailForm.get('Phone_Number')?.dirty)
+                                    " class="invalid-feedback">
+                                    <div *ngIf="companyDetailForm.get('Phone_Number')?.hasError('required')">
+                                        Phone number is required.
                                     </div>
+                                    <div *ngIf="companyDetailForm.get('Phone_Number')?.hasError('minlength') || companyDetailForm.get('Phone_Number')?.hasError('maxlength')">
+                                        Phone number must consist of 6 to 15 digits.
+                                    </div>
+                                  </div>
                                 </div>
                             </div>
                         </div>
@@ -259,9 +268,9 @@
                         <div class="billing-form-row">
                             <span class="billing-left-col">Location</span>
                             <div class="billing-right-col">
-                            <select class="billing input-form" formControlName="Country" required>
+                            <select class="billing input-form" formControlName="Country" required (change)="getStateList($event.target.value)">
                                 <option value="">Select country</option>
-                                <option *ngFor="let item of country" [value]="item">{{item}}</option>
+                                <option *ngFor="let item of country" [value]="item.name">{{item.name}}</option>
                             </select>
                         </div>
                         </div>
@@ -270,17 +279,18 @@
                             <div class="billing-right-col">
                             <select class="billing input-form" formControlName="State" required>
                                 <option value="">State</option>
+                                <option *ngFor="let item of state" [value]="item.name">{{item.name}}</option>
                             </select>
                         </div>
                         </div>
-                        <div class="billing-form-row">
+                        <!-- <div class="billing-form-row">
                             <span class="billing-left-col"></span>
                             <div class="billing-right-col">
                             <select class="billing input-form" formControlName="City" required>
                                 <option value="">City</option>
                             </select>
                         </div>
-                        </div>
+                        </div> -->
                         <div class="billing-form-row">
                             <span class="billing-left-col">Address line 1</span>
                             <div class="billing-right-col">

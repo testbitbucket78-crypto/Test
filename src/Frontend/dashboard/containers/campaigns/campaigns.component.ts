@@ -22,7 +22,7 @@ export class CampaignsComponent implements OnInit {
 
 
 	@ViewChild('filterby') filterby: ElementRef |undefined; 
-
+   currDate = new Date();
 	SPID = sessionStorage.getItem('SP_ID')
 	showTopNav: boolean = true;
 	TeamLeadId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
@@ -86,6 +86,7 @@ export class CampaignsComponent implements OnInit {
 	 showScheduleDateOption:any=false;
 	 ScheduleDateList:any=['15 Dec 2022','16 Dec 2022','17 Dec 2022','18 Dec 2022'];
 	 selecteScheduleDate:any= '';
+	 selScheduleDate!:Date;
 	 showScheduleTimeOption:any=false;
 	 ScheduleTimeList:any=['12:00 Am','12:15 Am','12:30 Am','12:30 Am'];
 	 selecteScheduleTime:any='';
@@ -111,6 +112,10 @@ export class CampaignsComponent implements OnInit {
 	 templatesVariable:any=[];
 	 selecetdVariable:any=[];
 	 fileformat = 'csv';
+
+	 isUtility:boolean = true;
+	 isMarketing:boolean = true;
+	 isAuthentication:boolean = true;
 	 
 
 	 contactTagsOption:any=[
@@ -295,7 +300,14 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
-		this.newCampaignDetail= fb.group({
+		this.newCampaignDetail= this.prepareCampaingForm();
+
+		  
+
+	}
+
+	prepareCampaingForm(){
+		return this.fb.group({
 			title: new FormControl('', Validators.required),
 			channel_id: new FormControl('1', Validators.required),
 			channel_label: new FormControl('WhatsApp Official', Validators.required),
@@ -309,9 +321,6 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			message_template_id: new FormControl('', Validators.required),
 			message_template_label: new FormControl('', Validators.required),
 		});
-
-		  
-
 	}
 
 	showToaster(message:any,type:any){
@@ -1069,6 +1078,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	// 	//   this.showErrorMessage = false;
 	  
 		   this.selecteScheduleDate = event.target.value;
+		   this.selScheduleDate = new Date(this.selecteScheduleDate);
+		   console.log(this.selecteScheduleDate)
 		 }
 	//   }
 	  
@@ -1098,7 +1109,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.newCampaignDetail.get('channel_id').setValue(channel.value);
 		this.newCampaignDetail.get('channel_label').setValue(channel.label);
 		this.ShowChannelOption=false
-		console.log(this.newCampaignDetail)
+		console.log(this.allTemplates)
+		this.allTemplates = this.allTemplatesMain.filter((item:any) => item.Channel == channel.label);
 	}
 
 	
@@ -1144,6 +1156,12 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	    }
 	}
 	openAddNew(addNewCampaign:any){
+		this.activeStep=1;
+		this.newCampaignDetail= this.prepareCampaingForm();
+		this.step2Option='';
+		this.selectedTemplate =[];
+		this.segmentsContactList =[];
+		this.newListName = false;
 		this.closeAllModal()
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
@@ -1912,9 +1930,10 @@ testinfo(){
 		})
 	}
 
-	deleteContactList() {
+	deleteContactList(contactId:any) {
+		console.log(contactId)
 		let id = {
-			id: this.selectedId
+			id: contactId
 		}
 		this.apiService.deleteContactList(id).subscribe(
 		 result =>{
@@ -2054,8 +2073,9 @@ testinfo(){
 	async getTemplates(){
 		let spid = Number(this.SPID)
 		this.settingsService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
-			this.allTemplatesMain = allTemplates.templates
-			this.allTemplates = allTemplates.templates
+			this.allTemplatesMain = allTemplates.templates;
+			this.allTemplates = allTemplates.templates;
+			this.allTemplates = this.allTemplatesMain.filter((item:any) => item.Channel == this.newCampaignDetail.get('channel_label').value);
 		})
 		
 	}
@@ -2077,30 +2097,47 @@ testinfo(){
 	}
 
 	filterTemplate(temType:any){
-
+console.log(this.allTemplatesMain);
 		let allList  =this.allTemplatesMain;
-		if(temType.target.checked){
-		var type= temType.target.value;
-		for(var i=0;i<allList.length;i++){
-				if(allList[i]['Category'] == type){
-					allList[i]['is_active']=1
-				}
-		}
-	   }else{
-		var type= temType.target.value;
-		for(var i=0;i<allList.length;i++){
-				if(allList[i]['Category'] == type){
-					allList[i]['is_active']=0
-				}
-		}
-	   }
-		var newArray=[];
-	   for(var m=0;m<allList.length;m++){
-          if(allList[m]['is_active']==1){
-			newArray.push(allList[m])
-		  }
+		 	var newArray=[];
+		// isUtility:boolean = true;
+		// isMarketing:boolean = true;
+		// isAuthentication:boolean = true;
+	// 	if(temType.target.checked){
+	// 	var type= temType.target.value;
+	// 	for(var i=0;i<allList.length;i++){
+	// 			if(allList[i]['Category'] == type){
+	// 				allList[i]['is_active']=1
+	// 			}
+	// 	}
+	//    }else{
+	// 	var type= temType.target.value;
+	// 	for(var i=0;i<allList.length;i++){
+	// 			if(allList[i]['Category'] == type){
+	// 				allList[i]['is_active']=0
+	// 			}
+	// 	}
+	//    }
+	// 	var newArray=[];
+	//    for(var m=0;m<allList.length;m++){
+    //       if(allList[m]['is_active']==1){
+	// 		newArray.push(allList[m])
+	// 	  }
 
-	   }
+	//    }
+	console.log(this.isMarketing, 'Marketing')
+	console.log(this.isUtility, 'Utility')
+	console.log(this.isAuthentication, 'Authentication')
+	   newArray = allList.filter((item:any)=>{
+		if(item.Category == 'Marketing' && this.isMarketing)
+		return true;
+		else if(item.Category == 'Utility' && this.isUtility)
+		return true;
+		else if(item.Category == 'Authentication' && this.isAuthentication)
+		return true;
+		else
+		return false
+	   })
 	   this.allTemplates= newArray
 
 		

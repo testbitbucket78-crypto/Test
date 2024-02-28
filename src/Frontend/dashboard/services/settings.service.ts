@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser, TagData, defaultActionData,defaultMessagesData,routingRulesData,newTemplateFormData,addCustomFieldsData } from '../models/settings.model';
@@ -9,6 +9,7 @@ import { billingDetail, billingDetailResponse,holidayData, companyDetail, compan
 
 export class SettingsService {
   API_URL:string='https://settings.stacknize.com';
+  token = 'cXlkZE04VzM3MTVaSkNwWlhINVlDNEY3eEJGV1V0S21FMGROaTJFWg==';
 
   countryCodes = [
     'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
@@ -48,11 +49,27 @@ export class SettingsService {
   }
 
   getCountry(): Observable<any> {
-    return this.http.get<any>('https://api.countrystatecity.in/v1/countries')
+//     var headers = new Headers();
+// headers.append("X-CSCAPI-KEY", this.token);
+
+// var requestOptions = {
+//   method: 'GET',
+//   headers: headers,
+//   redirect: 'follow'
+// };
+const headers = new HttpHeaders({
+  "Accept": "application/json",
+  "X-CSCAPI-KEY": this.token
+});
+    return this.http.get<any>('https://api.countrystatecity.in/v1/countries',{headers})
   }
   
   getState(countryCode:any): Observable<any> {
-    return this.http.get<any>(`https://api.countrystatecity.in/v1/countries/${countryCode}/states`)
+    const headers = new HttpHeaders({
+      "Accept": "application/json",
+      "X-CSCAPI-KEY": this.token
+    });
+    return this.http.get<any>(`https://api.countrystatecity.in/v1/countries/${countryCode}/states`,{headers})
   }
 
   getLocaleData(spId: number): Observable<localeDetailResponse> {
