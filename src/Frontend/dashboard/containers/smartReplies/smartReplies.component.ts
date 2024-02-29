@@ -98,6 +98,16 @@ export class SmartRepliesComponent implements OnInit {
 
 	}
 
+	parseTags(tagsString: string): string[] {
+		let tagsArray: string[] = [];
+		try {
+		  tagsArray = JSON.parse(tagsString.replace(/'/g,'"'));
+		} catch (error) {
+		  console.error('Error parsing tags:', error);
+		}
+		return tagsArray;
+	  }
+
 	deleteRepliesById (data:any) {
 		let deleteId = {ID:data[0].ID};
 		this.apiService.deletesmartReply(deleteId).subscribe((response) => {
