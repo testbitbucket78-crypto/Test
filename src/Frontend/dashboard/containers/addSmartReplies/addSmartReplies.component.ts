@@ -76,7 +76,8 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	selectedAction:any;	
 	keyword: string = '';
 	keywords: string[] = [];
-	templatesData:[] =[];
+	allTemplatesMain:any =[];
+	allTemplates:any =[];
 	editedText:string ='';
 	editedMessage: string = '';
 	isEditable: boolean[] = [];
@@ -107,14 +108,6 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	csvContactColmuns:any=[];
 	csvContactList:any=[];
 	media_Type:string='';
-	currentValue: any;
-	isUtility:boolean = true;
-	isMarketing:boolean = true;
-	isAuthentication:boolean = true;
-
-
-	
-
 	assignAddTag: [] =[];
 	assignedTagList:any []=[];
 	dragAreaClass: string='';
@@ -148,13 +141,12 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	mediaType: any = '';
 	showMention: any = false;
 	editTemplate: any = false;
-	searchText!:string;
+	searchKey:string='';
 	Quickyreplysearch!:string;
 	attributesearch!:string;
 
 
 	attributesList!:any;
-	allTemplates:any =[];
 	userList:any;
 	userId!:number;
 
@@ -210,7 +202,7 @@ click: any;
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
 
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: true
+			linear: false
 			,
 			animation: true
 		});
@@ -262,7 +254,7 @@ click: any;
 		this.showMention = false
 		this.ShowAddAction = false;
 		this.attributesearch = '';
-		this.searchText = '';
+		this.searchKey = '';
 		this.Quickyreplysearch = '';
 		$("#attachmentbox").modal('hide');
 		$("#showAttributes").modal('hide');
@@ -472,19 +464,19 @@ click: any;
 	}
 
 	searchTemplate(event:any){
-		let searchKey = event.target.value
-		if(searchKey.length>2){
-		var allList = this.allTemplates
+		this.searchKey = event.target.value
+		if(this.searchKey.length>2){
+		var allList = this.allTemplatesMain
 		let FilteredArray: any[] = [];
 		for(var i=0;i<allList.length;i++){
 			var content = allList[i].TemplateName.toLowerCase()
-				if(content.indexOf(searchKey.toLowerCase()) !== -1){
+				if(content.indexOf(this.searchKey.toLowerCase()) !== -1){
 					FilteredArray.push(allList[i])
 				}
 		}
 		this.allTemplates = FilteredArray
 	    }else{
-			this.allTemplates = this.templatesData
+			this.allTemplates = this.allTemplatesMain
 		}
 	}
 
@@ -501,52 +493,31 @@ click: any;
 
 	filterTemplate(temType:any){
 
-		let allList  = this.allTemplates;
-	// 	if(temType.target.checked){
-	// 	var type= temType.target.value;
-	// 	this.currentValue = type;
-	// 	for(var i=0;i<allList.length;i++){
-	// 			if(allList[i]['Category'] == type){
-	// 				allList[i]['is_Deleted']=1
-	// 			}
-	// 	}
-	//    }else{
-	// 	var type= temType.target.value;
-	// 	for(var i=0;i<allList.length;i++){
-	// 			if(allList[i]['Category'] == type){
-	// 				allList[i]['isDeleted']=0
-	// 			}
-	// 	}
-	//    }
-	// 	var newArray=[];
-	//    for(var m=0;m<allList.length;m++){
-	// 	  if(allList[m]['is_Deleted']==1){
-	// 		newArray.push(allList[m])
-	// 	  }
+		let allList  = this.allTemplatesMain;
+		if(temType.target.checked){
+		var type= temType.target.value;
+		for(var i=0;i<allList.length;i++){
+				if(allList[i]['Category'] == type){
+					allList[i]['isDeleted']=1
+				}
+		}
+	   }else{
+		var type= temType.target.value;
+		for(var i=0;i<allList.length;i++){
+				if(allList[i]['Category'] == type){
+					allList[i]['isDeleted']=0
+				}
+		}
+	   }
+		var newArray=[];
+	   for(var m=0;m<allList.length;m++){
+		  if(allList[m]['isDeleted']==1){
+			newArray.push(allList[m])
+		  }
 	
-	//    }
-
-	var newArray=[];
-	console.log(this.isMarketing, 'Marketing')
-
-	console.log(this.isUtility, 'Utility')
-
-	console.log(this.isAuthentication, 'Authentication')
-
-	   newArray = allList.filter((item:any)=>{
-
-		if(item.Category == 'Marketing' && this.isMarketing)
-		return true;
-		else if(item.Category == 'Utility' && this.isUtility)
-		return true;
-		else if(item.Category == 'Authentication' && this.isAuthentication)
-		return true;
-		else
-		return false
-
-	   })
+	   }
 	   this.allTemplates= newArray
-	
+
 		
 	}
 
@@ -1097,10 +1068,10 @@ stopPropagation(event: Event) {
   getTemplatesList() {
 	let spid = Number(this.SPID)
 	this.settingsService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
-		this.templatesData = allTemplates.templates
-		console.log(this.templatesData)
+		this.allTemplatesMain = allTemplates.templates
+		console.log(this.allTemplatesMain)
 		this.allTemplates = allTemplates.templates
-		this.allTemplates = this.allTemplates.filter((item:any) => item.Channel == this.currentValue);
+
 	})
 	
 }

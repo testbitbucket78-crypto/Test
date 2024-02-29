@@ -1142,7 +1142,7 @@ sendattachfile(){
 			return '../../../../assets/img/teambox/duble-tick-g.svg';
 		  } else if (message.msg_status === '3') {
 			return '../../../../assets/img/teambox/double-tick-green.svg';
-		  } else if (message.msg_status === null) {
+		  } else if (message.msg_status === null || message.msg_status === '9') {
 			return '../../../../assets/img/teambox/error.svg';
 		  }
 		}

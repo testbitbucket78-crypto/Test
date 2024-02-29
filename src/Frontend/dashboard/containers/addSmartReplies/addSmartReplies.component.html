@@ -424,8 +424,7 @@
     </div>
   </div>
   <div class="modal-body quickResponse">
-    <input class="search-box" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2"
-      [(ngModel)]="searchText" />
+    <input class="search-box" type="text" placeholder="Search" (keyup)="searchTemplate($event)" />
 
     <div class="section_filter">
       <div class="custom-control custom-checkbox">
@@ -442,7 +441,7 @@
     </div>
     </div>
     <div class="template_list">
-      <div class="template_box" *ngFor="let template of templatesData | searchfilter:searchText ;let i = index">
+      <div class="template_box" *ngFor="let template of allTemplates ;let i = index">
         <div class="px-4 template_box_inner d-flex align-items-start">
           <div class="d-flex align-items-center template_box_inner">
           <input type="radio" id="selectedTemplate{{i}}" name="selectedTemplate" (click)="selectTemplate(template)">
