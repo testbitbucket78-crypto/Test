@@ -1,5 +1,5 @@
 <div class="setting-card" >
-    <div class="default-actions-heading pb-4">Default Messages {{selectedType}}</div>
+    <div class="default-actions-heading pb-4">Default Messages</div>
     <div class=" grid-view p-2 px-4" >
         <div *ngFor="let data of defaultMessageDataInit; let idx = index" (click)="populateData(data)">
             <div class="flex-row">
@@ -19,7 +19,6 @@
     <div class="modal fade" tabindex="-1" id="welcomGreeting" data-bs-backdrop="static" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content welcomGreeting p-2">
-                {{selectedCategory}}
                 <div class="d-flex justify-content-between align-items-center modal-header">
                     <h5 *ngIf="selectedCategory == 0" class="modal-title">Add Message for Welcome Greeting</h5>
                     <h5 *ngIf="selectedCategory == 1" class="modal-title">Add Message for No Agent Reply</h5>
