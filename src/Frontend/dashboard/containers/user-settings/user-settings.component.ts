@@ -18,7 +18,8 @@ export class UserSettingsComponent implements OnInit {
         {
             field: 'uid',
             headerName: 'User Id',
-            flex: 1,
+            width:100,
+            suppressSizeToFit: false,
             resizable: true,
             filter: true,
             sortable: true,
@@ -27,7 +28,8 @@ export class UserSettingsComponent implements OnInit {
         {
             field: 'name',
             headerName: 'User Name',
-            flex: 1,
+            width:200,
+            suppressSizeToFit: false,
             resizable: true,
             filter: true,
             sortable: true,
@@ -36,7 +38,8 @@ export class UserSettingsComponent implements OnInit {
         {
             field: 'email_id',
             headerName: 'Email Id',
-            flex: 2,
+            width:200,
+            suppressSizeToFit: false,
             resizable: true,
             filter: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
@@ -45,7 +48,8 @@ export class UserSettingsComponent implements OnInit {
         {
             field: 'mobile_number',
             headerName: 'Phone No.',
-            flex: 2,
+            width:150,
+            suppressSizeToFit: false,
             resizable: true,
             filter: true,
             sortable: true,
@@ -54,7 +58,8 @@ export class UserSettingsComponent implements OnInit {
         {
             field: 'UserType',
             headerName: 'Roles Assigned',
-            flex: 1,
+            width:100,
+            suppressSizeToFit: false,
             resizable: true,
             filter: true,
             sortable: true,
@@ -63,7 +68,8 @@ export class UserSettingsComponent implements OnInit {
         {
             field: 'IsActive',
             headerName: 'Current Status',
-            flex: 1,
+            width:100,
+            suppressSizeToFit: false,
             resizable: true,
             filter: true,
             sortable: true,
@@ -75,8 +81,9 @@ export class UserSettingsComponent implements OnInit {
         {
             field: 'LastLogIn',
             headerName: 'Last Active',
-            flex: 1,
-            resizable: true,
+            width:200,
+            suppressSizeToFit: false,
+            resizable: false,
             filter: true,
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
@@ -151,6 +158,7 @@ export class UserSettingsComponent implements OnInit {
         suppressRowClickSelection: true,
         groupSelectsChildren: true,
         onRowClicked: this.rowClicked,
+        suppressDragLeaveHidesColumns: true,
         noRowsOverlay: true,
         pagination: true,
         paginationPageSize: 15,
@@ -180,6 +188,7 @@ export class UserSettingsComponent implements OnInit {
             if (result) {
                 this.userList = result?.getUser;
                 this.userListInIt = result?.getUser;
+                this.gridOptions.api.sizeColumnsToFit();
             }
         });
     }

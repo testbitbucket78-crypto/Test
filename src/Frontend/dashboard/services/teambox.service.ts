@@ -110,6 +110,10 @@ export class TeamboxService {
     return this.http.post(API_URL+'/addCampaign/',bodyData);
   }
 
+  public testCampaign(bodyData: any) {
+    return this.http.post(API_URL+'/testCampaign/',bodyData);
+  }
+
   public getCampaignDetail(CampaignID: any) {
     return this.http.get(API_URL+'/getCampaignDetail/'+CampaignID);
   }

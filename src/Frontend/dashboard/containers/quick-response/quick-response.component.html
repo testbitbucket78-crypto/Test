@@ -32,12 +32,12 @@
 						<div class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
 							<input type="checkbox" class="custom-control-input" [(ngModel)]="isWhatsappOfficial" id="radio1" name="optradio"  value="option1" checked>
 							<img class="user-img ml-2">
-							<label class="custom-control-label" for="radio1"><span class="ml-2">WhatsApp Official</span></label>
+							<label class="custom-control-label" for="radio1"><span class="ml-2" [ngClass]="isWhatsappOfficial ? 'filter-selected':'filter-Unselected'" >WhatsApp Official</span></label>
 						  </div>
 						  <div class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
 							<input type="checkbox" class="custom-control-input" id="radio2" [(ngModel)]="isWhatsappWeb"  name="optradio"  value="option2" >
 							<img class="user-img ml-2">
-							<label class="custom-control-label" for="radio2"><span class="ml-2">WhatsApp Web</span></label>
+							<label class="custom-control-label" for="radio2"><span class="ml-2" [ngClass]="isWhatsappWeb ? 'filter-selected':'filter-Unselected'" >WhatsApp Web</span></label>
 							
 						  </div>
 			 

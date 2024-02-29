@@ -17,7 +17,8 @@ export class RolesSettingsComponent implements OnInit {
         {
             field: 'roleID',
             headerName: 'ID',
-            flex: 1,
+            width:100,
+            suppressSizeToFit: false,
             resizable: true,
             filter: true,
             sortable: true,
@@ -27,7 +28,8 @@ export class RolesSettingsComponent implements OnInit {
             field: 'RoleName',
             headerName: 'Roles',
             filter: true,
-            flex: 1,
+            width:200,
+            suppressSizeToFit: false,
             resizable: true,
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
@@ -35,7 +37,8 @@ export class RolesSettingsComponent implements OnInit {
         {
             field: 'optRights',
             headerName: 'Rights',
-            flex: 1,
+            width:200,
+            suppressSizeToFit: false,
             resizable: true,
             filter: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
@@ -44,7 +47,8 @@ export class RolesSettingsComponent implements OnInit {
         {
             field: 'users_count',
             headerName: 'No. of Users',
-            flex: 1,
+            width:100,
+            suppressSizeToFit: false,
             resizable: true,
             filter: true,
             sortable: true,
@@ -53,7 +57,8 @@ export class RolesSettingsComponent implements OnInit {
         {
             field: 'created_at',
             headerName: 'Last Modified',
-            flex: 1,
+            width:200,
+            suppressSizeToFit: false,
             resizable: true,
             filter: true,
             sortable: true,
@@ -112,6 +117,7 @@ export class RolesSettingsComponent implements OnInit {
         headerHeight: 50,
         suppressRowClickSelection: true,
         groupSelectsChildren: true,
+        suppressDragLeaveHidesColumns: true,
         onRowClicked: this.rowClicked,
         noRowsOverlay: true,
         pagination: true,
@@ -138,6 +144,7 @@ export class RolesSettingsComponent implements OnInit {
             if (result) {
                 this.rolesList = result?.getRoles;
                 this.rolesListinit = result?.getRoles;
+                this.gridOptions.api.sizeColumnsToFit();
                 
             }
         });

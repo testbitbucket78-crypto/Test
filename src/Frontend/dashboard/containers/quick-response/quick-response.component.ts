@@ -46,8 +46,8 @@ export class QuickResponseComponent implements OnInit {
   isTemplate:any;
   // templatesMessageData:any;
   ischannel='';
-  isWhatsappWeb:boolean = true;
-  isWhatsappOfficial:boolean = true;
+  isWhatsappWeb:boolean = false;
+  isWhatsappOfficial:boolean = false;
 
   
   fileName: any; 

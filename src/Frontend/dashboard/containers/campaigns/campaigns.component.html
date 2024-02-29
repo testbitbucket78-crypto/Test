@@ -35,9 +35,14 @@
 			<p class="campaigns_content_heading"><img src="../../../../assets/img/info-icon.png" (click)=" toggleContactOption()">
 				
 				</p>
-				 <div *ngIf="ShowContactOwner" class=" ContactOption" (click)="stopPropagation($event)">
+				<div  *ngIf="ShowContactOwner" class="showInfoFallback">
+					<p id="p-body">You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
+					</p>
+					<button id="radio-close-btn" (click)="stopPropagation($event)">X</button>
+				  </div>
+				 <!-- <div *ngIf="ShowContactOwner" class=" ContactOption" (click)="stopPropagation($event)">
 				<p><span>Messaging limit:</span>WhatsApp enforces a policy limiting business to 1,000 messages per 24-hour period to prevent spam and maintain a quality user experience. However there is no cap on receiving messages from users.</p>
-				</div>
+				</div> -->
 			<div *ngIf="allCampaign.length>0" class="campaigns_section_items" >
 				<div *ngFor="let campaign of allCampaign ;let i = index" class="campaigns_section_item {{campaign.status_label}}" (click)="toggleCampaign(campaign)">
 					<div class="campaigns_section_item_header">
@@ -482,6 +487,7 @@
 									</div>
 							</div>
 							</div>
+							<div *ngIf="selectedTemplate.allVariables?.length ==0">No variable available in this message</div>
 							
 							<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1">
 							
@@ -932,7 +938,7 @@
 					<input placeholder="Enter value" type="text" class="form-control" (keyup)="updateFallbackAttributeValue($event)">
 				</div>
 				<div  *ngIf="showInfo" class="showInfoFallback">
-					<p id="p-body">You can input variable values or choose contact attributes that will be used to send personalized messages to users, reflecting their specific contact details instead of generic variables.
+					<p id="p-body">You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
 					</p>
 					<button id="radio-close-btn" (click)="showInfo=false">X</button>
 				  </div>
