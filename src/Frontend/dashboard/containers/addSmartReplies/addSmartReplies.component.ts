@@ -106,6 +106,11 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	editableMessageIndex: number | null = null;
 	csvContactColmuns:any=[];
 	csvContactList:any=[];
+	media_Type:string='';
+	currentValue: any;
+	isUtility:boolean = true;
+	isMarketing:boolean = true;
+	isAuthentication:boolean = true;
 
 
 	
@@ -187,6 +192,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	isSendButtonDisabled=false
 click: any;
 	selecetdpdf: any='';
+
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService,private elementRef: ElementRef,private location:Location) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -196,6 +202,8 @@ click: any;
 
 	selectTemplate(template:any){
 		this.selectedTemplate =template
+		let media_type = this.selectedTemplate.media_type;
+		console.log(media_type)
 	}
 	ngOnInit() {
 
@@ -253,6 +261,9 @@ click: any;
 		this.showQuickReply = false
 		this.showMention = false
 		this.ShowAddAction = false;
+		this.attributesearch = '';
+		this.searchText = '';
+		this.Quickyreplysearch = '';
 		$("#attachmentbox").modal('hide');
 		$("#showAttributes").modal('hide');
 		$("#insertTemplate").modal('hide');
@@ -491,28 +502,49 @@ click: any;
 	filterTemplate(temType:any){
 
 		let allList  = this.allTemplates;
-		if(temType.target.checked){
-		var type= temType.target.value;
-		for(var i=0;i<allList.length;i++){
-				if(allList[i]['Category'] == type){
-					allList[i]['is_Deleted']=1
-				}
-		}
-	   }else{
-		var type= temType.target.value;
-		for(var i=0;i<allList.length;i++){
-				if(allList[i]['Category'] == type){
-					allList[i]['isDeleted']=0
-				}
-		}
-	   }
-		var newArray=[];
-	   for(var m=0;m<allList.length;m++){
-		  if(allList[m]['is_Deleted']==1){
-			newArray.push(allList[m])
-		  }
+	// 	if(temType.target.checked){
+	// 	var type= temType.target.value;
+	// 	this.currentValue = type;
+	// 	for(var i=0;i<allList.length;i++){
+	// 			if(allList[i]['Category'] == type){
+	// 				allList[i]['is_Deleted']=1
+	// 			}
+	// 	}
+	//    }else{
+	// 	var type= temType.target.value;
+	// 	for(var i=0;i<allList.length;i++){
+	// 			if(allList[i]['Category'] == type){
+	// 				allList[i]['isDeleted']=0
+	// 			}
+	// 	}
+	//    }
+	// 	var newArray=[];
+	//    for(var m=0;m<allList.length;m++){
+	// 	  if(allList[m]['is_Deleted']==1){
+	// 		newArray.push(allList[m])
+	// 	  }
 	
-	   }
+	//    }
+
+	var newArray=[];
+	console.log(this.isMarketing, 'Marketing')
+
+	console.log(this.isUtility, 'Utility')
+
+	console.log(this.isAuthentication, 'Authentication')
+
+	   newArray = allList.filter((item:any)=>{
+
+		if(item.Category == 'Marketing' && this.isMarketing)
+		return true;
+		else if(item.Category == 'Utility' && this.isUtility)
+		return true;
+		else if(item.Category == 'Authentication' && this.isAuthentication)
+		return true;
+		else
+		return false
+
+	   })
 	   this.allTemplates= newArray
 	
 		
@@ -1063,13 +1095,15 @@ stopPropagation(event: Event) {
 
   /*  GET TEMPLATES LIST  */
   getTemplatesList() {
-	this.settingsService.getTemplateData(this.SPID,1).subscribe(response => {
-	  this.templatesData = response.templates;
-	  this.allTemplates = response.templates;
-	}); 
-
-
-  }
+	let spid = Number(this.SPID)
+	this.settingsService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
+		this.templatesData = allTemplates.templates
+		console.log(this.templatesData)
+		this.allTemplates = allTemplates.templates
+		this.allTemplates = this.allTemplates.filter((item:any) => item.Channel == this.currentValue);
+	})
+	
+}
   getQuickResponse(){
 	this.settingsService.getTemplateData(this.SPID,0).subscribe(response => {
 	  this.QuickReplyList=response.templates;

@@ -428,48 +428,41 @@
       [(ngModel)]="searchText" />
 
     <div class="section_filter">
-      <label class="container">
-        <input checked type="checkbox" name="template_filter" value="Marketing" (click)="filterTemplate($event)">
-        <span class="checkmark"></span>
-        <p><span class="checkmark-text">Marketing</span></p>
-      </label>
-      <label class="container">
-        <input checked type="checkbox" name="template_filter" value="Utility" (click)="filterTemplate($event)">
-        <span class="checkmark"></span>
-        <p><span class="checkmark-text">Utility</span></p>
-      </label>
-      <label class="container">
-        <input checked type="checkbox" name="template_filter" value="Authentication" (click)="filterTemplate($event)">
-        <span class="checkmark"></span>
-        <p><span class="checkmark-text">Authentication</span></p>
-      </label>
-
+      <div class="custom-control custom-checkbox">
+        <input class="custom-control-input" id="Marketing" type="checkbox" value="Marketing" (click)="filterTemplate($event)" />
+        <label class="custom-control-label" for="Marketing">Marketing</label>
+    </div>
+    <div class="custom-control custom-checkbox">
+      <input class="custom-control-input" id="Utility" type="checkbox" value="Utility" (click)="filterTemplate($event)" />
+      <label class="custom-control-label" for="Utility">Utility</label>
+    </div>
+      <div class="custom-control custom-checkbox">
+        <input class="custom-control-input" id="Authentication" type="checkbox" value="Authentication" (click)="filterTemplate($event)" />
+        <label class="custom-control-label" for="Authentication">Authentication</label>
+    </div>
     </div>
     <div class="template_list">
-      <div class="template_box" *ngFor='let template of templatesData  | searchfilter:searchText ;let i = index ' >
-        <div class="template_box_inner d-flex align-items-start">
-          <!-- <input type="radio" name="sel-template" id="sel-template" >
-          <label class="radio-label" [class.checked]="templateStates[template.id]" id="sel-template" for="sel-template" (click)="selectTemplate(template)" >
-           
-          </label> -->
-          <label class="container" (click)="selectTemplate(template)">
-            <input type="radio" name="selectedTemplate">
-            <span class="checkmark radio"></span>
-           
-            
-          </label>
+      <div class="template_box" *ngFor="let template of templatesData | searchfilter:searchText ;let i = index">
+        <div class="px-4 template_box_inner d-flex align-items-start">
+          <div class="d-flex align-items-center template_box_inner">
+          <input type="radio" id="selectedTemplate{{i}}" name="selectedTemplate" (click)="selectTemplate(template)">
+          <label class="m-0" for="selectedTemplate{{i}}"></label>
+          </div>
        <div class="template_head flex-column">
         <p class="template_name">{{template.TemplateName}}</p>
         <p class="m-0"><span>{{ template.created_at | date:'dd-MM-yyyy' }}</span></p>
 
         <div class="inner_box">
-          <img *ngIf="template.Links" class="template_img" src="{{template.Links}}">
-              <!-- <div *ngIf="!template.Links" class="template_img_placeholder"></div> -->
-      
-          <div class="template_text">
-            <p class="m-0 font-weight-bold">{{template.Header}}</p>
-            <p>{{template.BodyText}}</p>
-            <p>{{template.FooterText}}</p>
+          <img *ngIf="template.media_type === 'image'" class="template_img" src="{{template.Links}}">
+          <video *ngIf="template.media_type === 'video'" autoplay loop muted id="video-background" [src]="template.Links"></video>
+          <div class="doc-preview"*ngIf="template.media_type === 'document'">
+            <a [href]="template.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+            </div>
+            <!-- <embed *ngIf="template.media_type === 'document'" [src]="template.Links" type="application/pdf" width="100%" height="400px"> -->
+          <div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
+            <p [innerHTML]="template.Header" class="m-0 font-weight-bold"></p>
+            <p [innerHTML]="template.BodyText"></p>
+            <p [innerHTML]="template.FooterText"></p>
           </div>
         </div>
        </div>

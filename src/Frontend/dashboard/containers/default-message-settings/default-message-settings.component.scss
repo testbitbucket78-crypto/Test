@@ -368,6 +368,15 @@ textarea::placeholder {
 }
 
 // sidebar 
+
+
+.sidebar-content {
+  height: 900px;
+  overflow: scroll;
+  width: 100%;
+}
+
+
 .sideBar .sideBar-footer{   
     border:none; 
     position: fixed;
@@ -699,9 +708,9 @@ textarea::placeholder {
   border-radius: 12px!important;
 }
 
-// .message_type.vid {
-//   height: auto;
-// }
+.message_type.vid {
+  height: 100%;
+}
 
 .video.message_type video {
   height: 100%;

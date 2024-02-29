@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { routingRulesData } from 'Frontend/dashboard/models/settings.model';
+
 
 @Component({
   selector: 'sb-routing-rules',
@@ -8,6 +10,8 @@ import { routingRulesData } from 'Frontend/dashboard/models/settings.model';
   styleUrls: ['./routing-rules.component.scss']
 })
 export class RoutingRulesComponent implements OnInit {
+
+  @ViewChild('myForm') myForm!: NgForm;
 
   spId = 0;
   contactowner = 0;
@@ -160,24 +164,30 @@ export class RoutingRulesComponent implements OnInit {
           this.assignspecificuser = data.assignspecificuser;
           this.selectuser = data.selectuser;
     
-          if(this.broadcast==1) {
-            this.defaultAssignRule = 'broadcast';
-          };
-          if(this.roundrobin==1) {
-            this.defaultAssignRule = 'roundrobin';
-          };
-          if(this.manualassign==1) {
-            this.defaultAssignRule = 'manualassign';
-          };
-          if(this.isMissChatAssigContactOwner==1) {
-            this.missedChatOption = 'isMissChatAssigContactOwner';
-          };
-          if(this.isadmin==1) {
-            this.missedChatOption = 'isadmin';
-          };
-          if(this.assignspecificuser==1) {
-            this.missedChatOption = 'assignspecificuser';
+          switch (true) {
+            case this.broadcast == 1:
+              this.defaultAssignRule = 'broadcast';
+              break;
+            case this.roundrobin == 1:
+              this.defaultAssignRule = 'roundrobin';
+              break;
+            case this.manualassign == 1:
+              this.defaultAssignRule = 'manualassign';
+              break;
+            case this.isMissChatAssigContactOwner == 1:
+              this.missedChatOption = 'isMissChatAssigContactOwner';
+              break;
+            case this.isadmin == 1:
+              this.missedChatOption = 'isadmin';
+              break;
+            case this.assignspecificuser == 1:
+              this.missedChatOption = 'assignspecificuser';
+              break;
+            default:
+              this.defaultAssignRule = 'broadcast'; // Default value
+              break;
           }
+          
 
     });
 console.log(this.defaultAssignRule)
@@ -193,7 +203,7 @@ console.log(this.defaultAssignRule)
       this.routingRulesData.conversationallowed = this.conversationallowed;
       this.routingRulesData.manualassign =  Number(this.defaultAssignRule === 'manualassign' ? '1' : '0');
       this.routingRulesData.assignuser = this.assignuser;
-    }
+    };
 
     this.routingRulesData.timeoutperiod = this.timeoutperiod;
     if(this.missedChatOption) {
@@ -201,19 +211,24 @@ console.log(this.defaultAssignRule)
       this.routingRulesData.isadmin = Number(this.missedChatOption === 'isadmin' ? '1' : '0');
       this.routingRulesData.assignspecificuser = Number(this.missedChatOption === 'assignspecificuser' ? '1' : '0');
       this.routingRulesData.selectuser = this.selectuser;
-    }
+    };
    
 
+    if(this.myForm.valid) {
+      this.apiService.saveRoutingRulesData(this.routingRulesData).subscribe(response=>{
+        if(response.status === 200) {
+          this.showToaster("Routing Rules Updated Successfully", "success");
+          setTimeout(() => {
+            this.getRoutingRules();
+          }, 800);
+  
+        }
+      });
+    }
+    else {
+      this.showToaster('Invalid Chat Assign Timeout Period','error');
+    }
 
-    this.apiService.saveRoutingRulesData(this.routingRulesData).subscribe(response=>{
-      if(response.status === 200) {
-        this.showToaster("Routing Rules Updated Successfully", "success");
-        setTimeout(() => {
-          this.getRoutingRules();
-        }, 500);
-
-      }
-    });
     return this.routingRulesData;
 
   }
