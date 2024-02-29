@@ -239,6 +239,7 @@ async function getStorageUtilization(spid, days) {
     if (days != '-1') {
         console.log("-0")
         cutoffDate.setDate(cutoffDate.getDate() - days);
+        cutoffDate.setHours(0, 0, 0, 0); // Set time to midnight (start of the day)
     }
 
     const getObjectSize = async (key) => {
@@ -254,11 +255,12 @@ async function getStorageUtilization(spid, days) {
         const data = await s3.listObjectsV2(params).promise();
 
         for (const item of data.Contents) {
-              //console.log(item.Key)
-           
-           // console.log(item.LastModified ,item.LastModified < cutoffDate ,cutoffDate  );
-           
-            if (item.LastModified < cutoffDate) {
+             // console.log(item.Key)
+             
+           // Adjusting item.LastModified to compare only dates
+           const itemLastModified = new Date(item.LastModified);
+           itemLastModified.setHours(0, 0, 0, 0); // Set time to midnight (start of the day)
+            if (itemLastModified <= cutoffDate) {
                 totalSize += await getObjectSize(item.Key);
                 mediaCount = mediaCount + 1;
             }
@@ -303,16 +305,20 @@ async function deleteObjectFromBucket(days, spid) {
 
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
+    cutoffDate.setHours(0, 0, 0, 0); // Set time to midnight (start of the day)
+
     try {
 
         const listObjectsResponse = await s3.listObjectsV2(params).promise();
 
         for (const object of listObjectsResponse.Contents) {
-            const objectLastModified = object.LastModified;
-
-            if (objectLastModified < cutoffDate) {
-                await s3.deleteObject({ Bucket: awsConfig.awsbucket, Key: object.Key }).promise();
-                deletedMedia = deletedMedia + 1;
+            const objectLastModified = new Date(object.LastModified);
+            objectLastModified.setHours(0, 0, 0, 0); // Set time to midnight (start of the day)
+          // console.log(objectLastModified , objectLastModified <= cutoffDate, cutoffDate)
+ 
+            if (objectLastModified <= cutoffDate) {
+                 await s3.deleteObject({ Bucket: awsConfig.awsbucket, Key: object.Key }).promise();
+                 deletedMedia = deletedMedia + 1;
                 console.log(`Deleted object: ${object.Key}`);
 
             }

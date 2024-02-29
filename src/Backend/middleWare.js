@@ -41,7 +41,7 @@ function removePlusFromPhoneNumber(phoneNumber) {
 async function channelssetUp(spid, channelType, mediaType, messageTo, message_body, media,interaction_id,msg_id) {
     try {
         var phoneNumber = removePlusFromPhoneNumber(messageTo)
-        console.log(spid, channelType, mediaType, messageTo, message_body, media)
+       // console.log(spid, channelType, mediaType, messageTo, message_body, media)
         if (channelType == 'WhatsApp Official' || channelType == 1) {
 
             let WhatsAppOfficialMessage = await sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body,media)
