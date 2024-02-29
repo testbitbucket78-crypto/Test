@@ -244,7 +244,8 @@ const sendCampinMessage = async (req, res) => {
             var type = 'text';
         }
       
-    
+    //console.log(content)
+    //console.log("************************************")
         content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
         content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
         content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
@@ -252,6 +253,8 @@ const sendCampinMessage = async (req, res) => {
         content = content.replace('&nbsp;', '\n')
         content = content.replace(/<br[^>]*>/g, '\n')
         content = content.replace(/<\/?[^>]+(>|$)/g, "")
+
+      //  console.log(content)
         // Parse the message template to get placeholders
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
