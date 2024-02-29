@@ -170,7 +170,7 @@
                           
                             <div>
                                 <span>Phone Number*</span>
-                                <div class="numb-1 d-flex">
+                                <div class="numb-1">
                               
                                     <div class="row">
                                         <!-- <label for="floatingSelectGrid" class="required">Phone Number*</label> -->
@@ -186,7 +186,7 @@
                                          
                                     </div> 
                                      <div *ngIf="(companyDetailForm.get('Phone_Number')?.touched || companyDetailForm.get('Phone_Number')?.dirty)
-                                    " class="invalid-feedback">
+                                    " class="invalid-feedback validation-margin">
                                     <div *ngIf="companyDetailForm.get('Phone_Number')?.hasError('required')">
                                         Phone number is required.
                                     </div>

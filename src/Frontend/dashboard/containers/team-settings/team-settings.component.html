@@ -13,8 +13,8 @@
                 Add Team</button>
         </div>
     </div>
-    <div class="p-3">
-        <ag-grid-angular class="ag-theme-alpine" [rowData]="teamList" [columnDefs]="columnDefs" [animateRows]="true"
+    <div class="p-3 w-100">
+        <ag-grid-angular style="height: calc(70vh - 50px);" class="ag-theme-alpine" #agGrid [rowData]="teamList" [columnDefs]="columnDefs" [animateRows]="true"
             [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true" (gridReady)="onGridReady($event)">
         </ag-grid-angular>
     </div>
@@ -64,7 +64,7 @@
         <p class="mb-2"> Team id:<span class="team-id">{{teamData?.id}}</span></p>
         <span class="heading">{{teamData?.team_name}}</span>
         <p class="mt-2 date-time" >Created on: <span class="created-at">{{teamData?.created_at | date: 'dd MMM yyyy'}}</span> | Last Modified: <span class="updated-at">{{teamData?.updated_at | date: 'dd MMM yyyy'}}</span></p>
-        <div class="mt-3 sub-heading py-2">No. of Users Assigned <span class="length-user">({{selectedUser?.length}})</span></div>
+        <div class="mt-3 sub-heading py-2">No. of Users Assigned <span class="length-user">({{users_count}})</span></div>
         <div *ngFor="let item of selectedUser">
             <div class="user-row" *ngIf="item.isSelected">
                 <img [src]="profilePicture"/>

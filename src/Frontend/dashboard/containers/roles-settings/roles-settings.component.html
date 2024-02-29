@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="p-3">
-        <ag-grid-angular class="ag-theme-alpine" [rowData]="rolesList" [columnDefs]="columnDefs" [animateRows]="true"
+        <ag-grid-angular style="height: calc(70vh - 50px);" class="ag-theme-alpine" [rowData]="rolesList" [columnDefs]="columnDefs" [animateRows]="true"
             [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true" (gridReady)="onGridReady($event)">
         </ag-grid-angular>
     </div>
@@ -36,7 +36,7 @@
                     <form  [formGroup]="myForm"> 
                         <div>
                             <label>Role Name</label> <br>
-                            <input type="text" class="input-form" formControlName="roleName"  placeholder="Enter role name" >
+                            <input type="text" class="input-form" formControlName="roleName"  placeholder="Enter role name" maxlength="30">
                           <div *ngIf="(myForm.controls['roleName']?.dirty || myForm.controls['roleName']?.touched)" class="invalid-feedback">
                             <div *ngIf="myForm.controls['roleName']?.errors?.required">Role Name is required.</div>
                           </div>

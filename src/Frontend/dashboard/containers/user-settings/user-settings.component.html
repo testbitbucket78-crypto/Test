@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="p-3">
-        <ag-grid-angular class="ag-theme-alpine" [rowData]="userList" [columnDefs]="columnDefs" [animateRows]="true"
+        <ag-grid-angular style="height: calc(70vh - 50px);" class="ag-theme-alpine" [rowData]="userList" [columnDefs]="columnDefs" [animateRows]="true"
             [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true"
             (gridReady)="onGridReady($event)">
         </ag-grid-angular>
@@ -38,7 +38,7 @@
                 <form [formGroup]="userDetailForm">
                     <div>
                         <label>User Name</label> <br>
-                        <input type="text" class="input-form" formControlName="name" placeholder="Enter user name">
+                        <input type="text" class="input-form" formControlName="name" placeholder="Enter user name" maxlength="30">
                         <div *ngIf="userDetailForm.get('name')?.invalid && (userDetailForm.get('name')?.touched || userDetailForm.get('name')?.dirty)
                       " class="invalid-feedback">
                       <div *ngIf="userDetailForm.get('name')?.hasError('required')">

@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { SettingsService } from '../../services/settings.service';
 import { TeamData, userTeamDropDown } from '../../models/settings.model';
+import { DatePipe } from '@angular/common';
+import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+import * as agGrid from 'ag-grid-community';
 declare var $:any;
 
 @Component({
@@ -10,42 +13,59 @@ declare var $:any;
     styleUrls: ['./team-settings.component.scss'],
 })
 export class TeamSettingsComponent implements OnInit {
-    columnDefs: ColDef[] = [
+    columnDefs: ColDef[] | any = [
         {
             field: 'id',
             headerName: 'Id',
-            flex: 1,
             resizable: true,
             filter: true,
             sortable: true,
+            editable: false,
+            width:100,
+            suppressSizeToFit: false,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
         },
         {
             field: 'team_name',
             headerName: 'Team Name',
-            flex: 1,
             resizable: true,
             filter: true,
             sortable: true,
+            editable: false,
+            width:200,
+            suppressSizeToFit: false,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
         },
         {
             field: 'users_count',
             headerName: 'No. of Users',
-            flex: 1,
             resizable: true,
             filter: true,
+            editable: false,
+            width:100,
+            suppressSizeToFit: false,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
             sortable: true,
         },
         {
             field: 'updated_at',
             headerName: 'Last Modified',
-            flex: 1,
-            resizable: true,
+            resizable: false,
             filter: true,
             sortable: true,
+            editable: false,
+            width:150,
+            suppressSizeToFit: false,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+            valueFormatter: (value:any ) => {
+                if (value.value) {
+                    const date = new Date(value.value);          
+                    return this.datepipe.transform(date, "dd/MM/yyyy hh:mm a");
+                  }
+                  else {
+                    return 'N/A';
+                  }
+              },
         },
     ];
     public gridapi!: GridApi;
@@ -61,8 +81,9 @@ export class TeamSettingsComponent implements OnInit {
     profilePicture!: string;
     Id!: number;
     users_count!: number;
+    @ViewChild('agGrid') agGrid: AgGridAngular | any;
 
-    constructor(private _settingsService: SettingsService) {
+    constructor(private _settingsService: SettingsService,private datepipe: DatePipe) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
 
@@ -81,14 +102,15 @@ export class TeamSettingsComponent implements OnInit {
         this.selectUsers();
     };
 
-    gridOptions:any = {
+    gridOptions:agGrid.GridOptions | any = {
         rowSelection: 'multiple',
         rowHeight: 48,
         headerHeight: 50,
         suppressRowClickSelection: true,
         groupSelectsChildren: true,
         onRowClicked: this.rowClicked,
-        noRowsOverlay: true,
+        suppressDragLeaveHidesColumns: true,
+       // noRowsOverlay: true,
         pagination: true,
         paginationPageSize: 15,
         paginateChildRows: true,
@@ -100,7 +122,18 @@ export class TeamSettingsComponent implements OnInit {
 
     onGridReady(params: GridReadyEvent) {
         this.gridapi = params.api;
+        
     }
+    
+    ngAfterViewInit() {
+        if (this.agGrid) {
+          this.agGrid.gridReady.subscribe(() => {
+            if (this.gridOptions.api) {
+              this.gridOptions.api.sizeColumnsToFit();
+            }
+          });
+        }
+      }
 
     getTeamList() {
         this._settingsService.getTeamList(this.sp_Id).subscribe((result: any) => {
@@ -136,9 +169,14 @@ export class TeamSettingsComponent implements OnInit {
 
     selectUsers() {
         this.setUserList();
+        this.users_count =0;
         this.selectedUser.forEach((item: any) => {
-            if (this.teamData.uid.includes(item.uid)) item.isSelected = true;
+            if (this.teamData.uid.includes(item.uid)){
+                item.isSelected = true;
+                this.users_count++;
+            } 
         });
+        //this.users_count = this.teamData.uid.length;
     }
 
     saveTeamDetails() {
@@ -211,7 +249,7 @@ export class TeamSettingsComponent implements OnInit {
     }
 
     searchUserData(srchText: string) {        
-        this.gridOptions.api.setQuickFilter(srchText);
+        this.gridOptions?.api.setQuickFilter(srchText);
     }
 
     addTeam() {

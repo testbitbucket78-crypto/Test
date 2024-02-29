@@ -1192,9 +1192,33 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
 	TestCampaign(TestCampaignModal:any){
-		this.closeAllModal()
-		this.testNumbers=[];
-		this.modalReference = this.modalService.open(TestCampaignModal,{size: 'sm', windowClass:'pink-bg-sm'});
+		let BodyData:any={
+			Id:this.newCampaignDetail.Id?this.newCampaignDetail.Id:'',
+			sp_id:this.SPID,
+			optInStatus:this.optInStatus,
+			title:this.newCampaignDetail.value.title,
+			channel_id:this.newCampaignDetail.value.channel_id,
+			message_heading:this.selectedTemplate.Header,
+			message_content:this.selectedTemplate.BodyText,
+			message_media:this.selectedTemplate.Links,
+			message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
+			button_yes:this.selectedTemplate.button_yes,
+			button_no:this.selectedTemplate.button_no,
+			button_exp:this.selectedTemplate.button_exp,
+			category:this.selectedTemplate.Category,
+			category_id:this.selectedTemplate.category_id,
+			time_zone:this.selecteTimeZone,
+			end_datetime:'',
+			csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
+			segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
+		}
+		this.apiService.testCampaign(BodyData).subscribe(responseData =>{
+			console.log(responseData);
+			//this.closeAllModal()
+			this.testNumbers=[];
+			this.showToaster('Test campaign Sent','success')
+			//this.modalReference = this.modalService.open(TestCampaignModal,{size: 'sm', windowClass:'pink-bg-sm'});
+		})
 	
 	}
 
@@ -1278,7 +1302,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	async runCampaign(CampaignId:any,BodyData:any){
 
 		if(this.csvContactList.length>0){
-			console.log(this.csvContactList)
+			console.log(this.csvContactList,'---csvContactList');
 			await this.csvContactList.map(async (item:any)=>{
 				if(item.Contacts_Column && item.Contacts_Column.length > 9){
 				console.log(item)
@@ -1286,6 +1310,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 					SPID:this.SPID,
 					optInStatus:this.optInStatus,
 					customerId:this.AgentId,
+					//contactId
+					//phone Number
 					phone_number:item.Contacts_Column,
 					button_yes:this.selectedTemplate.button_yes,
 					button_no:this.selectedTemplate.button_no,
@@ -1349,7 +1375,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 						let MessageBodyData:any={
 							SP_ID:this.SPID,
 							optInStatus:this.optInStatus,
-							customerId:this.AgentId,
+							customerId:customerDetail.customerId,
 							phone_number:customerDetail.Phone_number,
 							button_yes:this.selectedTemplate.button_yes,
 							button_no:this.selectedTemplate.button_no,
@@ -2162,7 +2188,7 @@ console.log(this.allTemplatesMain);
 	  
 	  selectTemplate(template: any) {
 		this.selectedTemplate = template;
-		console.log(this.selectedTemplate);
+		console.log(template, '----template');
 		var str = template.BodyText;
 		if (str) {
 		  const allVariables = this.getVariables(str, "{{", "}}");
@@ -2170,11 +2196,13 @@ console.log(this.allTemplatesMain);
 		  console.log(allVariablesList);
 	  
 		  allVariables.map((item: any) => {
+			if(item){
 			allVariablesList.push({ label: item, value: '' });
+			}
 		  });
 	  
 		  this.selectedTemplate['allVariables'] = allVariablesList;
-		  console.log(this.selectedTemplate);
+		  console.log(this.selectedTemplate, '-----selectedTemplate');
 		}
 	  }
 	  
