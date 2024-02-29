@@ -16,7 +16,7 @@ declare var $:any;
 })
 export class DefaultMessageSettingsComponent implements OnInit {
   @ViewChild('videoPlayer') videoPlayer!: ElementRef;
-  @ViewChild('chatEditor') chatEditor!: RichTextEditorComponent | any; 
+  @ViewChild('chatEditor') chatEditor!: RichTextEditorComponent; 
   
   spId:number = 0;
   selectedType:string = 'text';
@@ -118,7 +118,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
   }
 
 ToggleAttributesOption(){
-	this.closeAllModal()
+	// this.closeAllModal()
 	$("#welcomGreeting").modal('hide');
   $("#atrributemodal").modal('show');
 }
@@ -167,23 +167,10 @@ showMessageType(type: string) {
   if (this.selectedType === 'text') {
     this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
     this.defaultMessageForm.get('link')?.clearValidators();
-
-    if(this.selectedCategory === 3 || this.selectedCategory === 5) {
-      this.defaultMessageForm.get('autoreply')?.setValidators([Validators.required]);
-    }
-    else {
-      this.defaultMessageForm.get('autoreply')?.clearValidators();
-    }
   }
   else if (this.selectedType === 'video' || this.selectedType === 'document' || this.selectedType === 'image') {
     this.defaultMessageForm.get('link')?.setValidators([Validators.required]);
     this.defaultMessageForm.get('value')?.clearValidators();
-    if(this.selectedCategory === 3 || this.selectedCategory === 5) {
-      this.defaultMessageForm.get('autoreply')?.setValidators([Validators.required]);
-    }
-    else {
-      this.defaultMessageForm.get('autoreply')?.clearValidators();
-    }
   }
   else {
     this.defaultMessageForm.get('link')?.clearValidators();
@@ -191,6 +178,20 @@ showMessageType(type: string) {
   }
   this.defaultMessageForm.get('link')?.updateValueAndValidity();
   this.defaultMessageForm.get('value')?.updateValueAndValidity();
+
+
+  // validator for autoreply timeout //
+  if(this.selectedCategory === 1) {
+    this.defaultMessageForm.get('autoreply')?.setValidators([Validators.required,Validators.pattern('^(?:[1-9]|[1-9][0-9]|1[01][0-9]|120)$')]);
+  }
+
+  else if (this.selectedCategory === 5) {
+    this.defaultMessageForm.get('autoreply')?.setValidators([Validators.required,Validators.pattern('^(?:[1-9]|[1-9][0-9]{0,2}|1[0-3][0-9]{2}|1440)$')]);
+  }
+  else {
+    this.defaultMessageForm.get('autoreply')?.clearValidators();
+    this.defaultMessageForm.get('autoreply')?.updateValueAndValidity();
+  }
 }
 
   
