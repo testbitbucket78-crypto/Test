@@ -160,9 +160,16 @@ const deleteContactList = (req, res) => {
     db.runQuery(req, res, inserQuery, [req.body.id]);
 }
 
-const applyFilterOnEndCustomer = (req, res) => {
+const applyFilterOnEndCustomer = async (req, res) => {
+    try {
+        let Query = req.body.Query + " and isDeleted !=1  AND IsTemporary !=1"
+        let contactList = await db.excuteQuery(Query, []);
+        res.send(contactList)
+    } catch (err) {
+        console.log(err);
+        res.send(err)
+    }
 
-    db.runQuery(req, res, req.body.Query, []);
 }
 
 const getAdditiionalAttributes = (req, res) => {
@@ -201,8 +208,8 @@ function parseMessageTemplate(template) {
     return placeholders;
 }
 
-function getTimeZoneTimes(serverDateTime ,time_zone){
-  //console.log(serverDateTime ,time_zone)
+function getTimeZoneTimes(serverDateTime, time_zone) {
+    //console.log(serverDateTime ,time_zone)
     var inputString = time_zone;//time zone value from database
 
     // Extract hours and minutes from the input string
@@ -217,7 +224,7 @@ function getTimeZoneTimes(serverDateTime ,time_zone){
     var tzDifference = decimalRepresentation * 60;
 
     //convert the date time to the timezone so that we can directly compare campaign date time with it.
-    var timeToCompareWith = new Date(serverDateTime.getTime() + tzDifference  *60  *1000)
+    var timeToCompareWith = new Date(serverDateTime.getTime() + tzDifference * 60 * 1000)
     return timeToCompareWith;
 }
 
@@ -237,15 +244,15 @@ const sendCampinMessage = async (req, res) => {
         let media = TemplateData.message_media
         let optInStatus = TemplateData.optInStatus
         let time_zone = TemplateData && TemplateData.time_zone ? TemplateData.time_zone : 'GMT +5:30';
- 
+
         var type = 'image';
         var customerId = TemplateData.customerId
         if (media == null || media == "") {
             var type = 'text';
         }
-      
-    //console.log(content)
-    //console.log("************************************")
+
+        //console.log(content)
+        //console.log("************************************")
         content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
         content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
         content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
@@ -254,7 +261,7 @@ const sendCampinMessage = async (req, res) => {
         content = content.replace(/<br[^>]*>/g, '\n')
         content = content.replace(/<\/?[^>]+(>|$)/g, "")
 
-      //  console.log(content)
+        //  console.log(content)
         // Parse the message template to get placeholders
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
@@ -269,18 +276,18 @@ const sendCampinMessage = async (req, res) => {
             });
         }
 
-         let serverDateTime = new Date();
-         let formattedTime = getTimeZoneTimes(serverDateTime , time_zone)
+        let serverDateTime = new Date();
+        let formattedTime = getTimeZoneTimes(serverDateTime, time_zone)
 
         //let channelType = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [spid] 
-       let inputDate = new Date(schedule_datetime);
-   
+        let inputDate = new Date(schedule_datetime);
+
         if (new Date(inputDate) <= new Date(formattedTime)) {
             let messagestatus;
             if (optInStatus == 'Yes') {
                 const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and isDeleted !=1`;
                 let results = await db.excuteQuery(sqlQuery, [customerId]);
-                console.log(results ,"****" ,customerId)
+                console.log(results, "****", customerId)
                 if (results?.length > 0) {
                     messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
                 }

@@ -420,7 +420,7 @@ const manualDelation = async (req, res) => {
 
 
         function subtractDaysFromNow(manually_deletion_days) {
-            return moment().subtract(manually_deletion_days, 'days').format('YYYY-MM-DD HH:mm:ss');
+            return moment().subtract(manually_deletion_days, 'days').format('YYYY-MM-DD');
         }
         //UPDATE Message set is_deleted=1,updated_at=? where SPID=? AND created_at < ?`
 
@@ -470,7 +470,7 @@ const deletedDetails = async (req, res) => {
         message_type = req.body.message_type
 
         function subtractDaysFromNow(manually_deletion_days) {
-            return moment().subtract(manually_deletion_days, 'days').format('YYYY-MM-DD HH:mm:ss');
+            return moment().subtract(manually_deletion_days, 'days').format('YYYY-MM-DD');
         }
 
         const result = subtractDaysFromNow(manually_deletion_days);
@@ -486,6 +486,7 @@ const deletedDetails = async (req, res) => {
 
         } else if (message_type == 'Both') {
             textSize = await db.excuteQuery(val.messageSizeQuery, [SPID, result])
+            console.log(SPID, result ,textSize)
             mediaSize = await awsHelper.getStorageUtilization(SPID, manually_deletion_days)
         }
 

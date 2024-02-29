@@ -275,7 +275,7 @@ const editCustomField = async (req, res) => {
         ColumnName = req.body.ColumnName,
             Type = req.body.Type,
             description = req.body.description,
-            
+
             updated_at = new Date().toUTCString();
 
         id = req.body.id
@@ -386,7 +386,7 @@ const addTemplate = async (req, res) => {
         industry = req.body.industry
 
         let image = Links
-  
+
         if (ID == 0) {
 
             let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
@@ -579,28 +579,55 @@ const testCampaign = async (req, res) => {
         console.log("sendCampinMessage")
         var TemplateData = req.body
         console.log(TemplateData)
-        let messageData = '';
-        var messageTo = TemplateData.phone_number
         var messateText = TemplateData.message_content
         let content = messateText;
         let channel = TemplateData.channel_label
+        let media = TemplateData.message_media
         console.log("channel");
         console.log(channel)
         console.log("content")
         console.log(content)
-        // content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-        // content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-        // content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-        // content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-        // content = content.replace('&nbsp;', '\n')
-        // content = content.replace(/<br[^>]*>/g, '\n')
-        // content = content.replace(/<\/?[^>]+(>|$)/g, "")
-        let testNo = await db.excuteQuery(val.selectCampaignTest, [TemplateData.sp_id])
-        for (let phone_number of testNo) {
-            middleWare.channelssetUp(channel, 'text', phone_number.mobile_number, content)
+        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+        content = content.replace('&nbsp;', '\n')
+        content = content.replace(/<br[^>]*>/g, '\n')
+        content = content.replace(/<\/?[^>]+(>|$)/g, "")
+        let testNo = await db.excuteQuery(val.selectCampaignTest, [TemplateData.SP_ID]);
+        //console.log(testNo)
+
+
+
+        var type = 'image';
+        if (media == null || media == "") {
+            var type = 'text';
         }
 
+        for (let phone_number of testNo) {
 
+            // Parse the message template to get placeholders
+            const placeholders = parseMessageTemplate(content);
+            if (placeholders.length > 0) {
+                // Construct a dynamic SQL query based on the placeholders
+                const sqlQuery = `SELECT ${placeholders.join(', ')} FROM user WHERE uid=? and isDeleted !=1`;
+                let results = await db.excuteQuery(sqlQuery, [phone_number.uid]);
+                const data = results[0];
+
+
+                placeholders.forEach(placeholder => {
+                    content = content.replace(`{{${placeholder}}}`, data[placeholder]);
+                });
+            }
+
+
+            middleWare.channelssetUp(TemplateData.SP_ID, channel, type, phone_number.mobile_number, content, media)
+            content = messateText; // update content
+        }
+
+      res.send({
+        status:200
+      })
     }
     catch (err) {
         console.log(err)
@@ -610,7 +637,16 @@ const testCampaign = async (req, res) => {
 }
 
 
-
+// Function to parse the message template and retrieve placeholders
+function parseMessageTemplate(template) {
+    const placeholderRegex = /{{(.*?)}}/g;
+    const placeholders = [];
+    let match;
+    while ((match = placeholderRegex.exec(template))) {
+        placeholders.push(match[1]);
+    }
+    return placeholders;
+}
 
 module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
