@@ -584,9 +584,14 @@
 				<div class="row_inline d-flex align-items-center">
 					<input class="form-control-checkbox" type="checkbox" id="Opted-in" [checked]="OptInStatus=='Yes'" (click)="updateOptedIn($event)" />
 					<span>Message Opt-In</span>
-					      <span class="px-2 opt-In-Info"><img src="../../../../assets/img/info-icon.png" (click)="toggleInfoIcon()">
-							<p *ngIf="showInfoIcon">Opt-In/Opt-Out indicates if your contacts want <br>to receive promotional messages or not.</p>
-					</span>
+					<span class="px-2 opt-In-Info"><img src="../../../../assets/img/info-icon.png" (click)="toggleInfoIcon()">
+						<div *ngIf="showInfoIcon" class="opt-In-Info-div">
+						   <button type="button" class="m-2 btn-close" (click)="showInfoIcon=false">
+							   <img src="../../../../assets/img/teambox/icon-close.svg">
+						   </button>
+						   <p id="p-body">Opt-In/Opt-Out indicates if your contacts want to receive promotional messages or not.</p>
+					   </div>
+					   </span>
 				</div>
 			</div>
 

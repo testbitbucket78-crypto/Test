@@ -15,6 +15,7 @@ declare var $: any;
     providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService,CountService]
 })
 export class TemplateMessageComponent implements OnInit {
+    loadingVideo: boolean = false;
     selectedCountryCode: any;
     selectedTab: number = 0;
     spid!: number;
@@ -237,42 +238,43 @@ export class TemplateMessageComponent implements OnInit {
 
     applyGalleryFilter() {
         this.filteredGalleryData = this.galleryData.filter((template: any) => {
-            const isTopicMatch = this.filterListTopic.every(
-                topic => !topic.checked || topic.label === template.topic
-            );
-            const isIndustryMatch = this.filterListIndustry.every(
-                industry => !industry.checked || industry.label === template.industry
-            );
-            const isCategoryMatch = this.filterListCategory.every(
-                category => !category.checked || category.label === template.Category
-            );
-            const isLanguageMatch = this.filterListLanguage.every(
-                language => !language.checked || language.label === template.Language
-            );
+            const selectedTopics = this.filterListTopic.filter(topic => topic.checked).map(topic => topic.label);
+            const selectedIndustries = this.filterListIndustry.filter(industry => industry.checked).map(industry => industry.label);
+            const selectedCategories = this.filterListCategory.filter(category => category.checked).map(category => category.label);
+            const selectedLanguages = this.filterListLanguage.filter(language => language.checked).map(language => language.label);
+    
+            const isTopicMatch = selectedTopics.length === 0 || selectedTopics.includes(template.topic);
+            const isIndustryMatch = selectedIndustries.length === 0 || selectedIndustries.includes(template.industry);
+            const isCategoryMatch = selectedCategories.length === 0 || selectedCategories.includes(template.Category);
+            const isLanguageMatch = selectedLanguages.length === 0 || selectedLanguages.includes(template.Language);
+    
+            const isAllCriteriaMatch = isTopicMatch && isIndustryMatch && isCategoryMatch && isLanguageMatch;
+    
             $('#filterTemplateModal').modal('hide');
-            return isTopicMatch && isIndustryMatch && isCategoryMatch && isLanguageMatch;
+            return isAllCriteriaMatch;
         });
     }
+    
 
     applyTemplateFilter() {
         this.filteredTemplatesData = this.templatesData.filter((template: any) => {
-            const isStatusMatch = this.filterListStatus.every(
-                status => !status.checked || status.label === template.status
-            );
-            const isChannelMatch = this.filterListChannel.every(
-                channel => !channel.checked || channel.label === template.Channel
-            );
-            const isCategoryMatch = this.filterListCategory.every(
-                category => !category.checked || category.label === template.Category
-            );
-            const isLanguageMatch = this.filterListLanguage.every(
-                language => !language.checked || language.label === template.Language
-            );
+            const selectedStatus = this.filterListStatus.filter(status => status.checked).map(status => status.label);
+            const selectedChannels = this.filterListChannel.filter(channel => channel.checked).map(channel => channel.label);
+            const selectedCategories = this.filterListCategory.filter(category => category.checked).map(category => category.label);
+            const selectedLanguages = this.filterListLanguage.filter(language => language.checked).map(language => language.label);
+    
+            const isStatusMatch = selectedStatus.length === 0 || selectedStatus.includes(template.status);
+            const isChannelMatch = selectedChannels.length === 0 || selectedChannels.includes(template.Channel);
+            const isCategoryMatch = selectedCategories.length === 0 || selectedCategories.includes(template.Category);
+            const isLanguageMatch = selectedLanguages.length === 0 || selectedLanguages.includes(template.Language);
+    
+            const isAllCriteriaMatch = isStatusMatch && isChannelMatch && isCategoryMatch && isLanguageMatch;
+    
             $('#filterTemplateModal').modal('hide');
-            return isStatusMatch && isChannelMatch && isCategoryMatch && isLanguageMatch;
+            return isAllCriteriaMatch;
         });
     }
-
+    
     clearFilters() {
         this.filterListTopic.forEach(topic => (topic.checked = false));
         this.filterListStatus.forEach(status => (status.checked = false));
@@ -286,6 +288,28 @@ export class TemplateMessageComponent implements OnInit {
         this.getTemplatesData();
         $('#filterTemplateModal').modal('hide');
     }
+
+    isFilterApplied(filter: string): boolean {
+        if (filter === 'Status') {
+            return this.filterListStatus.some(status => status.checked);
+        } else if (filter === 'Channel') {
+            return this.filterListChannel.some(channel => channel.checked);
+        }
+        else if (filter === 'Topic') {
+            return this.filterListTopic.some(topic => topic.checked);
+        }
+        else if (filter === 'Industry') {
+            return this.filterListIndustry.some(industry => industry.checked);
+        }
+        else if (filter === 'Category') {
+            return this.filterListCategory.some(category => category.checked);
+        }
+        else if (filter === 'Language') {
+            return this.filterListLanguage.some(language => language.checked);
+        }
+        return false;
+    }
+    
 
     goToGallery() {
         this.selectedTab = 1;
@@ -313,15 +337,23 @@ export class TemplateMessageComponent implements OnInit {
             data.append('dataFile', File, File.name);
             data.append('mediaType', mediaType);
             let name='template-message'
-            this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
+            this.loadingVideo = true;
+
+            this._teamboxService.uploadfile(data,spid,name).subscribe
+            (uploadStatus => {
                 let responseData: any = uploadStatus;
                 if (responseData.filename) {
                     this.selectedPreview = responseData.filename.toString();
                     this.newTemplateForm.get('Links')?.setValue(this.selectedPreview);
                     console.log(this.selectedPreview);
                 }
-            });
-        }
+                this.loadingVideo = false;
+        },
+            (error) => {
+                    this.loadingVideo = false;
+                    this.showToaster("Video File Size is Too Large, Max 10MB size is Allowed!", 'error');
+             });
+      }
     }
 
     onFileChange(event: any) {

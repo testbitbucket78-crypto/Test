@@ -38,4 +38,12 @@ export interface ColumnMapping {
 	displayName: any;
 	ActuallName: any;
   }
+
+export interface importCSVData {
+	field: [],  //override fields
+	identifier: string,
+	purpose: string,
+	SP_ID:number,
+	importedData: []
+}
   

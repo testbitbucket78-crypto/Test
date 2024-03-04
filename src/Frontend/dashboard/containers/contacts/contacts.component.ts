@@ -699,12 +699,12 @@ deletContactByID(data: any) {
     this._settingsService.getTagData(this.spid).subscribe(result => {
       if (result) {
           this.tagListData = result.taglist;
-          this.tag = this.tagListData.map((tag:any, index: number) => ({
-              item_id: index + 1, 
+          this.tag = this.tagListData.map((tag:any) => ({
+              item_id: tag.ID, 
               item_text:tag.TagName,
-              item_color:tag.tagColor
+              item_color:tag.TagColour
           }));
-          console.log(this.tag);
+          console.log(this.tag,'tag list array');
           console.log(this.tagListData);
             }
         });

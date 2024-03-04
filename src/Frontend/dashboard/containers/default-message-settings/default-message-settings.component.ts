@@ -37,6 +37,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
   defaultMessagesData:any[]=[];
   attributesList:any=[];
   attributesearch:string='';
+  loadingVideo: boolean = false;
 
   public defaultMessageData = [
     {
@@ -209,6 +210,7 @@ showMessageType(type: string) {
         data.append('dataFile', File, File.name);
         data.append('mediaType', mediaType);
         let name='defaultmessages'
+        this.loadingVideo = true;
         this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
             let responseData: any = uploadStatus;
             if (responseData.filename) {
@@ -216,7 +218,12 @@ showMessageType(type: string) {
                 this.defaultMessageForm.get('link')?.setValue(this.selectedPreview);
                 // console.log(this.selectedPreview);
             }
-        });
+            this.loadingVideo = false;
+        },
+            (error) => {
+                    this.loadingVideo = false;
+                    console.log("Video File Size is Too Large, Max 10MB size is Allowed!", 'error');
+             });
     }
 }
 

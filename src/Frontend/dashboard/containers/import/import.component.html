@@ -98,7 +98,7 @@
 													<span>3. Each row in the file represents a contact and each column represents a contact field (attribute).</span>
 													<span>4. Ensure first row contains NO data and just column headings with proper labels to help in attributes mapping. Data in first row is not imported.</span>
 													<span>5. The file must contain atleast 2 columns. One of them should contain Contact Numbers and the other Name of the Contacts.</span>
-													<span>6. If your import purpose is Update Existing Contacts Only, you can also select Contact ID as an identifier.</span>
+													<span>6. If your import purpose is Update Existing Contacts Only, you can also select Email ID as an identifier.</span>
 												</p>
 											</div>
 									</div>
@@ -143,11 +143,11 @@
 										aria-label="Floating label select example" #identifier
 										(change)="onSelected(identifier.value)">
 										<option value="Phone_number">Phone Number</option>
-										<option value="customerId">Contact ID</option>
+										<option value="emailId">Email ID</option>
 									</select>
 								</div>
 								<span *ngIf="Identifier==='Phone_number'" id="worksa">Phone Number works as identifier</span>
-								<span *ngIf="Identifier==='customerId'" id="worksa">Contact ID works as identifier</span>
+								<span *ngIf="Identifier==='emailId'" id="worksa">Email ID works as identifier</span>
 							</div>
 						</div>
 					

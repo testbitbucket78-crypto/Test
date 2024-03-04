@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { contactsImageData } from '../models';
+import { contactsImageData, importCSVData } from '../models';
 const API_URL ='https://cip-api.stacknize.com/';
 const API_URL1 = 'https://contactapi.stacknize.com/';
 const API_URL2 = 'https://smartapi.stacknize.com/';
@@ -75,7 +75,9 @@ export class DashboardService {
     return this.http.post(API_URL1+'editCustomContact', data, { params: params })
   }
 
-
+  importContact(data: importCSVData): Observable<any> {
+    return this.http.post<any>(API_URL1+'importContact', data)
+  }
 
   exportAllContact() {
     return this.http.get(API_URL1+'exportAllContact')
@@ -85,17 +87,15 @@ export class DashboardService {
     return this.http.post(API_URL1+'exportCheckedContact', data)
   }
 
-
   download() {
-
-
     return this.http.get(API_URL1+'download', { responseType: 'blob' })
   }
+
   downloadErrFile() {
-
-
     return this.http.get(API_URL1+'downloadCSVerror', { responseType: 'blob' })
   }
+
+
   update(data: object) {
     console.log("servise update data" + data)
     return this.http.post(API_URL1+'updateAndSave', data)
