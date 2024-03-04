@@ -664,11 +664,13 @@ textarea::placeholder {
 
 #defaultRTE_toolbar {
     text-align: center;
+    top: 0;
 }
 
-#defaultRTEText {
-  height: 425px!important;
+#defaultRTErte-view {
+  height: 450px!important;
 }
+
 .e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
   top: -750% !important;
 }
@@ -720,6 +722,16 @@ textarea::placeholder {
 #video-background {
   width: 100%;
   border-radius: 12px 12px 0px 0px;
+}
+
+.spinner-border {
+  top: 70px;
+  left: 165px;
+  position: absolute;
+  z-index: 99999;
+  width: 4rem;
+  height: 4rem;
+  color: azure;
 }
 
 .account-white-btn {

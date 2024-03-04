@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
-import { ColumnMapping } from 'Frontend/dashboard/models';
+import { ColumnMapping, importCSVData } from 'Frontend/dashboard/models';
 import Stepper from 'bs-stepper';
 import { Router } from '@angular/router';
 declare var $: any;
@@ -270,37 +270,68 @@ export class ImportComponent implements OnInit {
 	//******************Add Imported Contacts******************** /
 
 	onImportContacts(modal:any) {
-		const formData = this.constructContactFormData();
-		console.log(formData);
 
-		// api call to add contacts in a bulk manner
-		this.apiService.addContact(formData).subscribe(
-		(response:any) => {
-		if (response.status === 200) {
-			this.modalService.open(modal);
-			$("#importmodal").modal('hide'); 
-			this.file=null;
-			this.stepper.reset()
-			this.getContact.emit('');
+		const bodyData:importCSVData = {
+			field: [], //override fields
+			identifier: this.Identifier,
+			purpose: this.purpose,
+			SP_ID: this.spid,
+			importedData: this.importCSVdata
 		}
-	},
-		(error)=>{
-			if(error) {
-				console.log(error);
-			}
-		});
+		console.log(this.importCSVdata,'filtered csv data', this.skipCont)
+		// api call to add contacts in a bulk manner
+
+		if(this.skipCont==0) {
+			this.apiService.importContact(bodyData).subscribe(
+				(response:any) => {
+				if (response.status === 200) {
+					this.modalService.open(modal);
+					$("#importmodal").modal('hide'); 
+					this.file=null;
+					this.stepper.reset()
+					this.getContact.emit('');
+				}
+			},
+				(error)=> {
+					if(error) {
+						console.log(error,'error importing Contacts from csv.');
+					}
+				});
+		}
+
+		else {
+			console.log('errors in csv')
+		}
+
 
 }
 
 
 	verifyImportedData() {
-		var Data = {
-			importedData: this.importedData,
-		    identifier : this.identifierColumn,
-			purpose:this.purpose,
+		const importedData = this.constructContactFormData();
+		const csvData = {
+			importedData: importedData.result,
+		    identifier: this.identifierColumn,
+			purpose: this.purpose,
 			SP_ID: this.spid
 		}
-		console.log(Data, ': VERIFY DATA');
+		console.log(csvData, ': VERIFY DATA');
+
+		this.apiService.updatedDataCount(csvData).subscribe(
+		   (data: any)=> {
+			if(data) {
+				this.countUpdatedData = data.upCont
+				this.numberOfNewContact = data.newCon
+				this.skipCont = data.skipCont
+				this.importCSVdata = data.importData
+			}
+	
+		}, (error)=> {
+			if(error) {
+				console.log(error,'error while verifying Data.')
+			}
+		});
+
 	}
 
 	/****Written by Rishabh Singh  *****/

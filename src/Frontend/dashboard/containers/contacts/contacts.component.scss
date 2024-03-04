@@ -1251,12 +1251,22 @@ input[type="radio"], input[type="checkbox"] {
     -ms-transform: rotate(47deg);
   }
 
-  .opt-In-Info{
-    display: flex;
-    align-items: center;
-  }
+  .opt-In-Info-div {
+    position: absolute;
+    bottom: 0;
+    left: 205px;
+    width: 280px;
+    z-index: 1040;
+    height: auto;
+    background: #ffffff;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 28px;
+    opacity: 1;
+    overflow: auto;
+    cursor: pointer;
+}
 
-  .opt-In-Info img{
+.opt-In-Info img{
     cursor: pointer;
     width: 12px;
     height: 12px;
@@ -1265,7 +1275,20 @@ input[type="radio"], input[type="checkbox"] {
   .opt-In-Info p {
     cursor: default;
     margin: 0;
-    padding: 0 8px 0 8px;
+    padding: 44px 30px 33px 30px;
+    letter-spacing: 0;
     font-size: 12px;
+    font-weight: 400;
+    color: #7a86a1;
   }
+
+  .btn-close {
+    background: #ffffff;
+    margin: 2px;
+    outline: none;
+    border-radius: 16px;
+    padding: 6px 13px;
+    border: 1px solid #ebebeb;
+    float: right;
+   }
 
