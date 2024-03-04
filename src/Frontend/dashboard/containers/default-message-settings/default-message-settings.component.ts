@@ -107,10 +107,10 @@ export class DefaultMessageSettingsComponent implements OnInit {
   //   this.defaultMessageForm.get('value')?.setValue(value);
   // }
 
-	closeAllModal(){
-		$('body').removeClass('modal-open');
-		$('.modal-backdrop').remove();
-	}	
+	// closeAllModal(){
+	// 	$('body').removeClass('modal-open');
+	// 	$('.modal-backdrop').remove();
+	// }	
 
   closeAtrrModal() {
     this.attributesearch ='';
@@ -143,12 +143,12 @@ selectAttributes(item:any){
   this.closeAtrrModal();
   const selectedValue = item;
   
-  let htmlcontent = this.chatEditor.value;
+  let htmlcontent = this.defaultMessageForm.get('value')?.value;
   if (isNullOrUndefined(htmlcontent)) {
       htmlcontent = '';
     }
   const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
-  this.chatEditor.value = selectedAttr; 
+  this.defaultMessageForm.get('value')?.setValue(selectedAttr); 
 }
 
 

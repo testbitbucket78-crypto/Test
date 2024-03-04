@@ -566,7 +566,7 @@ export class TemplateMessageComponent implements OnInit {
         copyTemplateForm.Links = this.templatesMessageDataById.Links;
         copyTemplateForm.BodyText = this.templatesMessageDataById.BodyText;
         copyTemplateForm.FooterText = this.templatesMessageDataById.FooterText;
-        copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName;
+        copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +' copy';
         copyTemplateForm.Channel = this.templatesMessageDataById.Channel;
         copyTemplateForm.Category = this.templatesMessageDataById.Category;
         copyTemplateForm.category_id = this.templatesMessageDataById.category_id;
@@ -714,16 +714,19 @@ export class TemplateMessageComponent implements OnInit {
         $('#atrributemodal').modal('hide');
     }
 
-    selectAttributes(item:any){
+    selectAttributes(item:any) {
         this.closeAtrrModal();
         const selectedValue = item;
         
         let htmlcontent = this.chatEditor.value;
+        // let htmlcontent = this.newTemplateForm.get('Header')?.value
         if (isNullOrUndefined(htmlcontent)) {
             htmlcontent = '';
           }
         const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
         this.chatEditor.value = selectedAttr; 
+        
+        // this.newTemplateForm.get('Header')?.setValue(selectedAttr); 
     }
 
      /* GET VARIABLE VALUES */

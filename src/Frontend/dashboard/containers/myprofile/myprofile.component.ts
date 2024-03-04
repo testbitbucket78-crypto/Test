@@ -1,4 +1,4 @@
-import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef, OnDestroy  } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder,FormGroup,Validators } from "@angular/forms";
 import { ImageCroppedEvent } from 'ngx-image-cropper';
@@ -7,6 +7,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { NotificationService } from 'Frontend/dashboard/services/notification.service';
 import { addFundsData, profilePicData, teamboxNotifications } from 'Frontend/dashboard/models/profile.model';
 import { isNullOrUndefined } from 'is-what';
+import { interval } from 'rxjs';
 declare var $:any;
 
 @Component({
@@ -14,7 +15,7 @@ declare var $:any;
   templateUrl: './myprofile.component.html',
   styleUrls: ['./myprofile.component.scss']
 })
-export class MyprofileComponent implements OnInit {
+export class MyprofileComponent implements OnInit,OnDestroy {
   uid :any;
   spId!:number;
   ID!:number;
@@ -55,6 +56,10 @@ export class MyprofileComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
   NotificationDataInit:any;
+  notificationData:any = [];
+  notification:any;
+
+  private notificationIntervalSubscription: any;
 
   NotificationData = [
     { id:1,
@@ -83,7 +88,6 @@ export class MyprofileComponent implements OnInit {
       confirmPass: ['', [Validators.required, this.passwordMatchValidator.bind(this)]]
 
     });
-    
   }
 
   ngOnInit(): void {
@@ -103,11 +107,12 @@ export class MyprofileComponent implements OnInit {
     this.getRoleName();
     this.getUserList();
     this.getAvailableAmount();
-  
+    this.startNotificationInterval();
   }
 
   ngOnDestroy() {
     this.modalService.dismissAll();
+    this.stopNotificationInterval();
 }
 
   showToaster(message:any,type:any){
@@ -345,7 +350,6 @@ toggleActiveState(checked: boolean) {
    
   }
 
-
   openAddFundsSuccessPopup(addFundsSuccess: any){
     if(this.selectedAmount) {
       this.modalService.open(addFundsSuccess);
@@ -357,7 +361,6 @@ toggleActiveState(checked: boolean) {
 closeModal() {
   this.modalService.dismissAll();
 }
-
 
 //  image cropping function for popup
 
@@ -443,17 +446,52 @@ addFunds(addFundsSuccess: any) {
   });
 }
 
+// get teambox notification data
+getNotificationData() {
+  this.apiService.getNotifications(this.spId).subscribe((response=> {
+    this.notificationData = response.notifications;
+    this.notificationData.reverse();
+
+      let latestNotification = this.notificationData[0]?.subject + this.extractMessage(this.notificationData[0]?.message);
+
+       if (latestNotification !== this.notification) {
+        this.notification = latestNotification;
+        this.showBrowserNotification(this.notification);
+      }
+
+  }));
+}
+
+extractMessage(htmlString: string): string {
+  const tempElement = document.createElement('div');
+  tempElement.innerHTML = htmlString;
+  
+  return tempElement.textContent || tempElement.innerText || '';
+}
+
 // enable browser notifications
-requestPermission(): void {
+showBrowserNotification(message: string): void {
   this.notificationService.requestPermission().then(permission => {
     if (permission === 'granted') {
-      
-      this.notificationService.showNotification('Teambox Notifications Enabled!');
+      this.notificationService.showNotification(message);
     } else {
-     
       console.error('Notification permission denied.');
     }
   });
+}
+
+startNotificationInterval(): void {
+  this.getNotificationData();
+
+  this.notificationIntervalSubscription = interval(60000).subscribe(() => {
+    this.getNotificationData();
+  });
+}
+
+stopNotificationInterval(): void {
+  if (this.notificationIntervalSubscription) {
+    this.notificationIntervalSubscription.unsubscribe();
+  }
 }
 
 }
