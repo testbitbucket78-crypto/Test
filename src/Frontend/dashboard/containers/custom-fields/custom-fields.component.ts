@@ -52,7 +52,7 @@ export class CustomFieldsComponent implements OnInit {
       this.customFieldForm = this.formBuilder.group({
         displayName: ['',Validators.required],
         description:[''],
-        type: ['',Validators.required],
+        type: ['Text',Validators.required],
       });
     };
     

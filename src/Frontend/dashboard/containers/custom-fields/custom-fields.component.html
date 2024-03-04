@@ -176,18 +176,19 @@
                             <!-- <div *ngFor="let item of workingFormData;let idx=index"> -->
                                 <div class="d-flex flex-column billing-form-row">                         
                                         <label for="displayName" >Field Name</label>
-                                        <input type="text" name="displayName" id="displayName" maxlength="50" formControlName="displayName">                              
+                                        <input type="text" name="displayName" id="displayName" placeholder="Enter Name in max 50 Character" maxlength="50" formControlName="displayName">                              
                                 </div>
                                     <div class="d-flex flex-column billing-form-row">
                                         <label for="description">Description <span>(Optional)</span></label>
-                                       <textarea name="description" id="description" maxlength="500" formControlName="description" cols="30" rows="5"></textarea>
+                                       <textarea name="description" id="description" maxlength="80" placeholder="Enter description in max 80 character" formControlName="description" cols="30" rows="5"></textarea>
                                     </div>
                                  
                                
                                 <div class="d-flex flex-column billing-form-row">
                                     <label>Field Type</label>
                                     <select name="type" id="type" formControlName="type">
-                                        <option *ngFor="let type of types">{{type}}</option>
+                                        <option *ngFor="let type of types" [ngValue]="type">
+                                            {{type}}</option>
                                     </select>                                                       
                                 </div>
                                 <div *ngIf="customFieldForm.get('type')?.value == 'Select'" class="select-options">
