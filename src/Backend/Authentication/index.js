@@ -44,7 +44,7 @@ const login = async (req, res) => {
                 });
             }
             else {
-                const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY);
+                const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY,{ expiresIn: '24h' });
                 let utcTimestamp = new Date().toISOString();
                 
                 let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=? where email_id=?' ,[utcTimestamp,req.body.email_id,req.body?.LoginIP])

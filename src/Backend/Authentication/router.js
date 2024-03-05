@@ -11,6 +11,7 @@ const userController=require('./user.js');
 const indexController=require('./index.js');
 const awsHelper = require('../awsHelper');
 const path = require("path");
+const authenticateToken = require('../Authorize');
 
 router.get('/users',userController.getUser);
 router.get('/users/:id',userController.getUserById);
@@ -33,40 +34,40 @@ router.post('/verifyPhoneOtp',indexController.verifyPhoneOtp)
 
 const TeamBoxController=require('./TeamBoxController.js');
 
-router.get('/agents/:spID',TeamBoxController.getAllAgents);
-router.get('/customers/:spID',TeamBoxController.getAllCustomer);
-router.get('/searchcustomers/:Channel/:spID',TeamBoxController.searchCustomer);
-router.get('/searchcustomers/:Channel/:spID/:key',TeamBoxController.searchCustomer);
-router.post('/addcustomers',TeamBoxController.insertCustomers);
-router.post('/updatedCustomer',TeamBoxController.updatedCustomer);
-router.post('/updateTags',TeamBoxController.updateTags);
+router.get('/agents/:spID',authenticateToken,TeamBoxController.getAllAgents);
+router.get('/customers/:spID',authenticateToken,TeamBoxController.getAllCustomer);
+router.get('/searchcustomers/:Channel/:spID',authenticateToken,TeamBoxController.searchCustomer);
+router.get('/searchcustomers/:Channel/:spID/:key',authenticateToken,TeamBoxController.searchCustomer);
+router.post('/addcustomers',authenticateToken,TeamBoxController.insertCustomers);
+router.post('/updatedCustomer',authenticateToken,TeamBoxController.updatedCustomer);
+router.post('/updateTags',authenticateToken,TeamBoxController.updateTags);
 
 
-router.post('/blockcustomer',TeamBoxController.blockCustomer);
+router.post('/blockcustomer',authenticateToken,TeamBoxController.blockCustomer);
 
-router.post('/interaction',TeamBoxController.createInteraction);
-router.post('/updateinteraction',TeamBoxController.updateInteraction);
-router.post('/deleteInteraction',TeamBoxController.deleteInteraction);
+router.post('/interaction',authenticateToken,TeamBoxController.createInteraction);
+router.post('/updateinteraction',authenticateToken,TeamBoxController.updateInteraction);
+router.post('/deleteInteraction',authenticateToken,TeamBoxController.deleteInteraction);
 
-router.post('/getAllInteraction',TeamBoxController.getAllFilteredInteraction);
-router.get('/interaction',TeamBoxController.getAllInteraction);
-router.get('/interaction/:InteractionId',TeamBoxController.getInteractionById);
-router.get('/filterinteraction/:filterBy/:AgentId/:AgentName/:SPID',TeamBoxController.getFilteredInteraction);
-router.get('/interactionpinned/:InteractionId/:AgentId',TeamBoxController.checkInteractionPinned);
-router.post('/interactionpinned',TeamBoxController.updatePinnedStatus);
-router.get('/searchinteraction/:searchKey/:AgentId',TeamBoxController.getSearchInteraction);
+router.post('/getAllInteraction',authenticateToken,TeamBoxController.getAllFilteredInteraction);
+router.get('/interaction',authenticateToken,TeamBoxController.getAllInteraction);
+router.get('/interaction/:InteractionId',authenticateToken,TeamBoxController.getInteractionById);
+router.get('/filterinteraction/:filterBy/:AgentId/:AgentName/:SPID',authenticateToken,TeamBoxController.getFilteredInteraction);
+router.get('/interactionpinned/:InteractionId/:AgentId',authenticateToken,TeamBoxController.checkInteractionPinned);
+router.post('/interactionpinned',authenticateToken,TeamBoxController.updatePinnedStatus);
+router.get('/searchinteraction/:searchKey/:AgentId',authenticateToken,TeamBoxController.getSearchInteraction);
 
 
-router.get('/messages/:InteractionId/:Type',TeamBoxController.getAllMessageByInteractionId);
-router.post('/newmessage',TeamBoxController.insertMessage);
-router.post('/deletemessage',TeamBoxController.deleteMessage);
-router.post('/updatemessageread',TeamBoxController.updateMessageRead);
-router.post('/interactionmapping',TeamBoxController.updateInteractionMapping);
-router.post('/resetInteractionMapping',TeamBoxController.resetInteractionMapping);
-router.get('/interactionmapping/:InteractionId',TeamBoxController.getInteractionMapping);
-router.get('/getsavedMessages/:SPID',TeamBoxController.getsavedMessages);
-router.get('/getquickReply/:SPID',TeamBoxController.getquickReply);
-router.get('/getTemplates/:SPID',TeamBoxController.getTemplates);
+router.get('/messages/:InteractionId/:Type',authenticateToken,TeamBoxController.getAllMessageByInteractionId);
+router.post('/newmessage',authenticateToken,TeamBoxController.insertMessage);
+router.post('/deletemessage',authenticateToken,TeamBoxController.deleteMessage);
+router.post('/updatemessageread',authenticateToken,TeamBoxController.updateMessageRead);
+router.post('/interactionmapping',authenticateToken,TeamBoxController.updateInteractionMapping);
+router.post('/resetInteractionMapping',authenticateToken,TeamBoxController.resetInteractionMapping);
+router.get('/interactionmapping/:InteractionId',authenticateToken,TeamBoxController.getInteractionMapping);
+router.get('/getsavedMessages/:SPID',authenticateToken,TeamBoxController.getsavedMessages);
+router.get('/getquickReply/:SPID',authenticateToken,TeamBoxController.getquickReply);
+router.get('/getTemplates/:SPID',authenticateToken,TeamBoxController.getTemplates);
 
 
 const multer = require('multer');
@@ -88,7 +89,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 // handle single file upload
-router.post('/uploadfile/:spid/:name',upload.single('dataFile'), async (req, res)=> {
+router.post('/uploadfile/:spid/:name',upload.single('dataFile'),authenticateToken, async (req, res)=> {
    try{   
 const file = req.file;
 
@@ -116,7 +117,7 @@ res.send({filename:awsres.value.Location,fileSize:awsres.size})
 }
 });
 
-router.get('/uploads/:fileName', async (req, res)=> {
+router.get('/uploads/:fileName',authenticateToken, async (req, res)=> {
 console.log("/uploads/:fileName")
   fs.readFile('./uploads/'+req.params.fileName, function(err, data) {
      if (!err){ 

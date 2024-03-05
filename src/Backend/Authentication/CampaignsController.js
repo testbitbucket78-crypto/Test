@@ -163,7 +163,9 @@ const deleteContactList = (req, res) => {
 const applyFilterOnEndCustomer = async (req, res) => {
     try {
         let Query = req.body.Query + " and isDeleted !=1  AND IsTemporary !=1"
+        console.log(Query)
         let contactList = await db.excuteQuery(Query, []);
+        console.log(contactList)
         res.send(contactList)
     } catch (err) {
         console.log(err);
@@ -266,7 +268,7 @@ const sendCampinMessage = async (req, res) => {
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
             // Construct a dynamic SQL query based on the placeholders
-            const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=?`;
+            const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1`;
             let results = await db.excuteQuery(sqlQuery, [customerId]);
             const data = results[0];
 
@@ -376,7 +378,11 @@ const sendCampinMessage = async (req, res) => {
     */
         //reqBH.end();
     } catch (err) {
-        console.log(err)
+        console.log(err);
+        res.send({
+            status:500,
+            msg:err
+        })
     }
 
 }
@@ -497,14 +503,116 @@ async function msg(alert) {
 }
 
 
+async function insertInteractionAndRetrieveId(custid, sid) {
+    try {
+        console.log(custid, sid)
+      // Check if Interaction exists for the customerId
+      let rows = await db.excuteQuery(
+        'SELECT InteractionId FROM Interaction WHERE customerId = ? limit 1',
+        [custid]
+      );
+
+      if (rows.length == 0) {
+       
+        // If no existing interaction found, insert a new one
+        await db.excuteQuery(
+          'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
+          [custid, 'Open', sid, 'User Initiated']
+        );
+      } else {
+  
+        // Check for the maximum created_at date of Message
+        let  maxdate = await db.excuteQuery(
+            'SELECT MAX(created_at) AS maxdate FROM Interaction WHERE customerId = ?',
+            [custid]
+          );
+          
+       
+        // If maxdate is older than 24 hours, insert a new interaction
+        if (!maxdate || new Date(maxdate) <= new Date(Date.now() - 24 * 60 * 60 * 1000)) {
+            console.log("______________________")
+          await db.excuteQuery(
+            'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
+            [custid, 'Open', sid, 'User Initiated']
+          );
+        }
+      }
+  
+      // Retrieve the newly inserted or existing Interaction ID
+      let InteractionId = await db.excuteQuery(
+        'SELECT InteractionId FROM Interaction WHERE customerId = ? ORDER BY created_at DESC LIMIT 1',
+        [custid]
+      );
+  
+      console.log('Newly inserted or existing Interaction ID:', InteractionId);
+  
+      return InteractionId;
+    } catch (error) {
+      console.error('Error:', error);
+      return error;
+    }
+  }
+  
+  
+  
 
 
-const saveCampaignMessages = (req, res) => {
+const saveCampaignMessages = async (req, res) => {
+    try {
+        console.log(req.body)
+        let media = req.body.message_media
+        var type = 'image/jpeg';
+        let content =  req.body.message_content
+        if (media == null || media == "") {
+            var type = 'text';
+        }
+ 
+        let InteractionId = await insertInteractionAndRetrieveId(req.body.customerId, req.body.SP_ID);
+        console.log(InteractionId,"InteractionId InteractionId")
+        let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id) values ?`
+        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId,'Out',req.body.message_content,req.body.message_media,'text',req.body.SP_ID,type,199]]]);
 
-    var inserQuery = "INSERT INTO CampaignMessages (status_message,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,phone_number,status,schedule_datetime)";
-    inserQuery += " VALUES ('" + req.body.status_message + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.message_media + "','" + req.body.message_content + "','" + req.body.message_heading + "'," + req.body.CampaignId + ",'" + req.body.phone_number + "'," + req.body.status + ",'" + req.body.schedule_datetime + "')";
-    db.runQuery(req, res, inserQuery, []);
 
+        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
+        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
+        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
+        content = content.replace('&nbsp;', '\n')
+        content = content.replace(/<br[^>]*>/g, '\n')
+        content = content.replace(/<\/?[^>]+(>|$)/g, "")
+
+    
+        // Parse the message template to get placeholders
+        const placeholders = parseMessageTemplate(content);
+        if (placeholders.length > 0) {
+            // Construct a dynamic SQL query based on the placeholders
+            const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1`;
+            let results = await db.excuteQuery(sqlQuery, [req.body.customerId]);
+            const data = results[0];
+
+
+            placeholders.forEach(placeholder => {
+                content = content.replace(`{{${placeholder}}}`, data[placeholder]);
+            });
+        }
+
+
+        var inserQuery = "INSERT INTO CampaignMessages (status_message,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,phone_number,status,schedule_datetime,SP_ID)";
+        inserQuery += " VALUES ('" + req.body.status_message + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.message_media + "','" + content + "','" + req.body.message_heading + "'," + req.body.CampaignId + ",'" + req.body.phone_number + "'," + req.body.status + ",'" + req.body.schedule_datetime + "'," + req.body.SP_ID + ")";
+        let CampaignMessage = await db.excuteQuery(inserQuery, []);
+
+
+        res.send({
+            status: 200,
+            savedMessage: CampaignMessage
+        })
+    } catch (err) {
+        console.log(err)
+        res.send({
+            status: 500,
+            err: err
+        })
+    }
 }
 
 
@@ -519,10 +627,27 @@ const WHATSAPPOptions = {
     }
 };
 
-const getCampaignMessages = (req, res) => {
-    let Query = "SELECT * from CampaignMessages  where CampaignId = " + req.params.CampaignId
-
-    db.runQuery(req, res, Query, []);
+const getCampaignMessages = async (req, res) => {
+    try{
+        let Query = "SELECT * from CampaignMessages  where CampaignId = " + req.params.CampaignId
+        let MessageStatusQuery = `SELECT CampaignId, status, COUNT(*) AS status_count
+        FROM CampaignMessages
+        WHERE CampaignId = ${req.params.CampaignId}
+        GROUP BY CampaignId, status;`
+        let report = await db.excuteQuery(MessageStatusQuery,[])
+        let campaignMsg = await  db.excuteQuery(Query, []);
+        res.send({
+            status : 200,
+            report : report,
+            campaignMsg : campaignMsg
+        })
+    }catch(err){
+        res.send({
+            status:500,
+            err:err
+        })
+    }
+  
 }
 
 
