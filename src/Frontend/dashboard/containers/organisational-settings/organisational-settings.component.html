@@ -6,16 +6,16 @@
 <div>
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">
-            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1">Business
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1" *ngIf="!settingsService.checkRoleExist('39')">Business
                 Profile</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2">Working
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('39')">Working
                 Hours</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3">Roles</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==4 ? 'active' : ''" (click)="selectedTab = 4">Teams</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==5 ? 'active' : ''" (click)="selectedTab = 5">Users</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3" *ngIf="!settingsService.checkRoleExist('40')">Roles</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==4 ? 'active' : ''" (click)="selectedTab = 4" *ngIf="!settingsService.checkRoleExist('40')">Teams</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==5 ? 'active' : ''" (click)="selectedTab = 5" *ngIf="!settingsService.checkRoleExist('40')">Users</a>
         </div>
     </div>
-    <div class="setting-card" *ngIf="selectedTab==1">
+    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('39')">
         <div class="row justify-content-center">
             <div class="w-90">
                 <div class="profile-img profile-margin-left"[ngStyle]="{'background-image': 'url(' + companyimage + '?' + randomNumber + ')'}">
@@ -460,19 +460,19 @@
         </div>
     </div>
 
-    <div *ngIf="selectedTab==2" class="margin-left">
+    <div *ngIf="selectedTab==2 && !settingsService.checkRoleExist('39')" class="margin-left">
         <sb-working-hours></sb-working-hours>
     </div>
 
-    <div *ngIf="selectedTab==3">
+    <div *ngIf="selectedTab==3 && !settingsService.checkRoleExist('40')">
         <sb-roles-settings></sb-roles-settings>
     </div>
 
-    <div *ngIf="selectedTab==5">
+    <div *ngIf="selectedTab==5 && !settingsService.checkRoleExist('40')">
         <sb-user-settings></sb-user-settings>
     </div>
 
-    <div *ngIf="selectedTab==4">
+    <div *ngIf="selectedTab==4 && !settingsService.checkRoleExist('40')">
         <sb-team-settings></sb-team-settings>
     </div>
 

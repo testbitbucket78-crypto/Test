@@ -29,7 +29,7 @@ export class GeneralSettingsComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 
-  constructor(private apiService:SettingsService) { 
+  constructor(private apiService:SettingsService,public settingsService:SettingsService) { 
     this.date = new Date();
   }
 

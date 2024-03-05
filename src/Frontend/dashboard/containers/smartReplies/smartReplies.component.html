@@ -12,7 +12,7 @@
 				<img src="assets/img/search.png">
 			</div>
 			<button class="btn btn-block add-smartrep-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"
-				(click)="isShowSmartReplies = true">
+				(click)="isShowSmartReplies = true" [disabled]="settingsService.checkRoleExist('32')">
 				<img src="../../../../assets/img/teambox/add.svg" alt="error" />
 				Add Smart Reply
 			</button>
@@ -117,7 +117,7 @@
 		</div>
 
 		<div class="footer">
-			<button class="delete-btn" data-bs-toggle="modal" data-bs-target="#Delete"><img
+			<button class="delete-btn" data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('32')"><img
 					src="assets/img/delete.png"></button>
 		</div>
 	</div>

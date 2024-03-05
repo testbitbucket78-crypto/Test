@@ -10,6 +10,7 @@ import { billingDetail, billingDetailResponse,holidayData, companyDetail, compan
 export class SettingsService {
   API_URL:string='https://settings.stacknize.com';
   token = 'cXlkZE04VzM3MTVaSkNwWlhINVlDNEY3eEJGV1V0S21FMGROaTJFWg==';
+  subprivilages!:any;
 
   countryCodes = [
     'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
@@ -38,7 +39,18 @@ export class SettingsService {
     'UZ +998', 'VA +39', 'VC +1784', 'VE +58', 'VG +1284', 'VI +1340', 'VN +84', 'VU +678', 'WF +681', 'WS +685',
     'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
   ];
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+
+    this.subprivilages = sessionStorage.getItem('subPrivileges')?.split(',');
+   }
+
+  checkRoleExist(id:any){
+    if(this.subprivilages.includes(id)){
+      return false;
+    }else {
+      return true;
+    }
+  }
 
   getCompanyDetailData(spId: number): Observable<companyDetailResponse> {
     return this.http.get<companyDetailResponse>(`${this.API_URL}/companyDetail/${spId}`);
@@ -326,6 +338,12 @@ const headers = new HttpHeaders({
    getSPPhoneNumber(uid:any):Observable<any> {
     return this.http.get<any>(`https://authapi.stacknize.com/users/${uid}`);
    }
+
+   
+   getRolesData(spid:any,roleID:any):Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getRoles/${roleID}/${spid}`);
+   }
+
    getrolesdata(spid:any,userType:any): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getUser/${spid}/${userType}`);
   }

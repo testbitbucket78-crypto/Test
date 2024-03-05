@@ -58,18 +58,18 @@
                 </div>
               </div>
               <div class="password-confirm">
-                <div class="col-5 pl-0 pr-3">
+                <div class="col-6 pl-0 pr-3">
                   <label for="floatingInputGrid">Password</label>
   
-                  <input [type]="changetype?'password':'text'" class="form-control password" [ngClass]="{'is-invalid' :submitted && registerForm.controls.password.errors  }" placeholder="8 character" aria-label="City"
+                  <input [type]="changetype?'password':'text'" class="form-control password pass-contol" [ngClass]="{'is-invalid' :submitted && registerForm.controls.password.errors  }" placeholder="8 character" aria-label="City"
                     name="password" formControlName="password" id="password">
                     <span class="eyeicon"(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye-slash':'fa fa-eye'"></i></span>
                 </div>
                 <div class=""></div>
-                <div class="col-5 pl-3" id="kop">
+                <div class="col-6 pl-0" id="kop">
                   <label for="floatingInputGrid">Confirm Password</label>
   
-                  <input [type]="change?'password':'text'" class="form-control confirm" [ngClass]="{'is-invalid' :submitted && registerForm.controls.confirmPassword.errors}" placeholder="8 character" aria-label="State"
+                  <input [type]="change?'password':'text'" class="form-control confirm pass-contol" [ngClass]="{'is-invalid' :submitted && registerForm.controls.confirmPassword.errors}" placeholder="8 character" aria-label="State"
                     name="confirmPassword" formControlName="confirmPassword" id="confirmPassword">
                     <span class="eyeicon1"(click)="viewpassword()"><i [ngClass]="visible1?'fa fa-eye-slash':'fa fa-eye'"></i></span>
                 </div>

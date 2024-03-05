@@ -81,7 +81,7 @@
                         <div class="billing-card">
                             <div class="text-right p-4 billing-card-head">
                                 <img class="dotted-pic" src="../../../../assets/img/profile/dots.png" />
-                                <button (click)="selectTab(3)" class="px-4 py-2" >Manage Plan</button>
+                                <button (click)="selectTab(3)" class="px-4 py-2" [disabled]="settingsService.checkRoleExist('51')">Manage Plan</button>
                             </div>
                             <div class="text-center p-2 txt-head">
                                 <h2 class="m-0 p-2">Premium+</h2>
@@ -90,7 +90,7 @@
                                 <p class="m-0 p-2">Share team, Inbox, Contact, Management Broadcast Management, Template Submission, Chatbot Builder, APIs & Webhooks, Integrations</p>
                             </div>
                             <div class="text-center my-4 billing-history-btn">
-                                <button class="p-2"  (click)="selectTab(2)">
+                                <button class="p-2"  (click)="selectTab(2)" [disabled]="settingsService.checkRoleExist('51')">
                                 <span><img class="px-2" src="../../../../assets/img/profile/bill.svg"></span>
                                     View Billing History
                                 <span><img class="px-2" src="../../../../assets/img/profile/next1.svg"></span>
@@ -102,7 +102,7 @@
                     <div class="col-sm-6 pl-3 pr-0">
                         <div class="payment-card">
                             <div class="text-right p-4 payment-card-btn">
-                                <button class="px-4 py-2" (click)="openAddFundsPopup()">Add Funds</button>
+                                <button class="px-4 py-2" (click)="openAddFundsPopup()" [disabled]="settingsService.checkRoleExist('51')">Add Funds</button>
                             </div>  
         
                             <div class="modal fade" tabindex="-1" id="AddFundsModal"  data-bs-backdrop="static" role="dialog">
@@ -182,7 +182,7 @@
                                 <p class="mb-1">Low Balance!<br /> For uninterrupted service, add funds</p>
                             </div>
                             <div class="d-flex text-center m-0 justify-content-around align-items-center billing-history-btn">
-                                <button class="" (click)="selectTab(1)">
+                                <button class="" (click)="selectTab(1)" [disabled]="settingsService.checkRoleExist('51')">
                                 <span><img class="px-2" src="../../../../assets/img/profile/wallet-icon.svg"></span>
                                      Wallet Usage
                                 <span><img class="px-2" src="../../../../assets/img/profile/next1.svg"></span>
@@ -208,7 +208,7 @@
                                       </div>
                     
                                       <div class="deleteCard-details">
-                                        <button class="del-popup-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="p-0" src="../../../../assets/img/profile/delete.svg"></button>
+                                        <button class="del-popup-btn" [disabled]="settingsService.checkRoleExist('51')" data-bs-toggle="modal" data-bs-target="#deleteModal"><img class="p-0" src="../../../../assets/img/profile/delete.svg"></button>
                                       </div>
                                       <div class="modal fade" tabindex="-1" id="deleteModal"  data-bs-backdrop="static" role="dialog">
                                         <div class="modal-dialog" role="document">
@@ -322,7 +322,7 @@
                     <div class="py-5 d-flex justify-content-center account-info-sidebar2">
                         <div class="d-flex justify-content-center align-items-center active-toggle">
             
-                            <div class="btn-text" data-bs-toggle="modal" data-bs-target="#changePasswordModal" >
+                            <div class="btn-text" data-bs-toggle="modal" data-bs-target="#changePasswordModal" *ngIf="!settingsService.checkRoleExist('50')">
                               <p class="m-0 p-0" >Change Password</p>
                             
                             </div>
@@ -402,7 +402,7 @@
                   
                             <div class="p-2 switch-toggle">
                               <label class="m-0 switch">
-                                <input type="checkbox" class="m-0 form-control-checkbox" 
+                                <input type="checkbox" class="m-0 form-control-checkbox"  [disabled]="settingsService.checkRoleExist('50')"
                                   (change)="toggleActiveState($event.target.checked)"
                                   [(ngModel)]="isActive"
                                   >

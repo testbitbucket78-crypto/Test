@@ -27,7 +27,7 @@ export class ContactSettingsComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 
-  constructor(private _settingsService:SettingsService) {
+  constructor(private _settingsService:SettingsService,public settingsService:SettingsService) {
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
    }
 

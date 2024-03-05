@@ -181,15 +181,15 @@ a{
     position: relative;
     cursor: pointer;
     top: -2rem;
-    left: -0.5rem;
+    left: -1rem;
     float: right;
     }
     .eyeicon1{
         position: relative;
-        cursor: pointer;
-        top: -2rem;
-        left: 4.7rem;
-        float: right;
+    cursor: pointer;
+    top: -2rem;
+    left: -1rem;
+    float: right;
         }
     .error{
         border: 1px solid red;
@@ -287,3 +287,6 @@ a{
         padding-right: 3rem;
     }
 
+    .pass-contol{
+        width: 100% !important;
+    }
