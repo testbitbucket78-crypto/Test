@@ -1862,6 +1862,7 @@ img.icon {
 .section_filter {
     margin: 1rem;
     display: flex;
+    gap: 20px;
 }
 
 .template_list {
@@ -1874,6 +1875,57 @@ img.icon {
     width: 100%;
     margin: 0;
     padding: 0;
+}
+
+// Custom styles for radio buttons
+
+input[type="radio"] {
+    display: none;
+}
+
+.template_box_inner label {
+    display: inline-block;
+    position: relative;
+    padding: 25px 0 0 30px;
+    margin-right: 15px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.template_box_inner label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    border: 1px solid #C0BDCC; 
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.form-check.template_box_inner label::before{
+    left: -22px;
+}
+
+.form-check.template_box_inner label{
+    padding: 0px 0 0 1px!important;
+}
+
+input[type="radio"]:checked + label::before {
+    border: 3.3px solid #6149CD; 
+    background-color: #FFFFFF;
+}
+
+.radio-label {
+  font-weight: 700!important;
+  color: #000000!important;
+}
+
+.template_text.templateText{
+    border-radius: 15px;
 }
 
 .input_group_btn {
@@ -2446,6 +2498,31 @@ label span {
     font-weight: 500;
   
 }
+#video-background {
+    width: 100%;
+    border-radius: 15px 15px 0 0;
+  }
+  .doc-preview{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 145px;
+      width: 225px;
+      border: 1px solid #EBEBEB;
+      border-radius: 15px 15px 0 0;
+    }
+
+    .custom-control-label {
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+    }
+    
+    
+    .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #6149CD;
+        border: none;
+       }
 
 .e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
     top: -750% !important;

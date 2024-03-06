@@ -22,7 +22,7 @@ export class RoutingRulesComponent implements OnInit {
   manualassign = 0;
   assignuser= "";
   timeoutperiod= "";
-  defaultAssignRule='';
+  defaultAssignRule='broadcast';
   missedChatOption = '';
   isadmin= 0;
   selectuser="";
@@ -74,7 +74,6 @@ export class RoutingRulesComponent implements OnInit {
     } if (action === 'assignagent') {
       this.assignagent = checked ? 1 : 0;
      } 
-     this.saveRoutingRules();
   }
 
   defaultAssignmentRules(option:string) {
@@ -87,9 +86,6 @@ export class RoutingRulesComponent implements OnInit {
     }
     this.assignuser = '';
     this.conversationallowed = '';
-    setTimeout(() => {
-      this.saveRoutingRules();
-    }, 2000);
   }
 
   missedChatOptionsChange(option: string) {
@@ -101,9 +97,6 @@ export class RoutingRulesComponent implements OnInit {
       this.missedChatOption = 'assignspecificuser';
     }
     this.selectuser = '';
-    setTimeout(() => {
-      this.saveRoutingRules();
-    }, 2000);
   }
 
 
@@ -125,26 +118,6 @@ export class RoutingRulesComponent implements OnInit {
     })
   }
 
-  saveNoOfConv() {
-    if(this.roundrobin==1) {
-      this.defaultAssignRule = 'roundrobin';
-      this.saveRoutingRules();
-    }
-  }
-
-  saveAssignUser() {
-    if(this.manualassign==1) {
-      this.defaultAssignRule = 'manualassign';
-      this.saveRoutingRules();
-    }
-  }
-
-  saveSpecificUser() {
-    if(this.assignspecificuser==1) {
-      this.missedChatOption = 'assignspecificuser';
-      this.saveRoutingRules();
-    }
-  }
 
   getRoutingRules() {
     this.apiService.getRoutingRulesData(this.spId).subscribe(response =>{
@@ -164,31 +137,24 @@ export class RoutingRulesComponent implements OnInit {
           this.assignspecificuser = data.assignspecificuser;
           this.selectuser = data.selectuser;
     
-          switch (true) {
-            case this.broadcast == 1:
-              this.defaultAssignRule = 'broadcast';
-              break;
-            case this.roundrobin == 1:
-              this.defaultAssignRule = 'roundrobin';
-              break;
-            case this.manualassign == 1:
-              this.defaultAssignRule = 'manualassign';
-              break;
-            case this.isMissChatAssigContactOwner == 1:
-              this.missedChatOption = 'isMissChatAssigContactOwner';
-              break;
-            case this.isadmin == 1:
-              this.missedChatOption = 'isadmin';
-              break;
-            case this.assignspecificuser == 1:
-              this.missedChatOption = 'assignspecificuser';
-              break;
-            default:
-              this.defaultAssignRule = 'broadcast'; // Default value
-              break;
+          if(this.broadcast==1) {
+            this.defaultAssignRule = 'broadcast';
+          };
+          if(this.roundrobin==1) {
+            this.defaultAssignRule = 'roundrobin';
+          };
+          if(this.manualassign==1) {
+            this.defaultAssignRule = 'manualassign';
+          };
+          if(this.isMissChatAssigContactOwner==1) {
+            this.missedChatOption = 'isMissChatAssigContactOwner';
+          };
+          if(this.isadmin==1) {
+            this.missedChatOption = 'isadmin';
+          };
+          if(this.assignspecificuser==1) {
+            this.missedChatOption = 'assignspecificuser';
           }
-          
-
     });
 console.log(this.defaultAssignRule)
   }
