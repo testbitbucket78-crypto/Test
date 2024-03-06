@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { defaultMessagesData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
-import { ToolbarService, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { isNullOrUndefined } from 'is-what';
 
@@ -38,6 +38,10 @@ export class DefaultMessageSettingsComponent implements OnInit {
   attributesList:any=[];
   attributesearch:string='';
   loadingVideo: boolean = false;
+
+  errorMessage='';
+	successMessage='';
+	warningMessage='';
 
   public defaultMessageData = [
     {
@@ -88,10 +92,10 @@ export class DefaultMessageSettingsComponent implements OnInit {
   constructor(private apiService:SettingsService,private _teamboxService:TeamboxService,private fb: FormBuilder) { }
   prepareUserForm(){
     return this.fb.group ({
-      value: [null],
-      link: [null],
+      value: ['',Validators.maxLength(1024)],
+      link: [''],
       override: [0],
-      autoreply: [null]
+      autoreply: ['']
     });
   }
   ngOnInit(): void {
@@ -102,6 +106,25 @@ export class DefaultMessageSettingsComponent implements OnInit {
     this.getAttributeList();
     this.getDefaultMessages();
   }
+
+  showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}else if(type=='error'){
+			this.errorMessage=message;
+		}else{
+			this.warningMessage=message;
+		}
+		setTimeout(() => {
+			this.hideToaster()
+		}, 3000);
+		
+	}
+	hideToaster(){
+		this.successMessage='';
+		this.errorMessage='';
+		this.warningMessage='';
+	}
 
   // onEditorChange(value: any) {
   //   this.defaultMessageForm.get('value')?.setValue(value);
@@ -222,7 +245,7 @@ showMessageType(type: string) {
         },
             (error) => {
                     this.loadingVideo = false;
-                    console.log("Video File Size is Too Large, Max 10MB size is Allowed!", 'error');
+                  this.showToaster("Video File Size is Too Large, Max 10MB size is Allowed!", 'error');
              });
     }
 }
@@ -307,7 +330,7 @@ removeMedia() {
       },
          (error) => {
           if(error.status === 413) {
-            console.log('Media file size is too large, Maximum of 10mb size is allowed!')
+            this.showToaster('Media file size is too large, Maximum of 10mb size is allowed!','error')
           }
       });
       }

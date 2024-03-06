@@ -898,6 +898,15 @@ sendattachfile(){
 	getAgents(){
 		this.apiService.getAgents(this.SPID).subscribe(data =>{
 			this.agentsList= data
+			this.agentsList.forEach((item: { name: string; nameInitials: string; }) => {
+                const nameParts = item.name.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts[1] || '';
+                const nameInitials = firstName.charAt(0)+ ' ' +lastName.charAt(0);
+    
+                item.nameInitials = nameInitials;
+            });
+			console.log(this.agentsList,'agentlist')
 		});
 
 	}
@@ -1018,6 +1027,7 @@ sendattachfile(){
 		
 		await this.apiService.getAllInteraction(bodyData).subscribe(async data =>{
 			var dataList:any = data;
+			console.log(dataList,'DataList *****')
 			if(this.selectedInteraction ){
 				this.selectedInteraction = dataList.filter((item: any)=> item.InteractionId == this.selectedInteraction.InteractionId)[0];
 			}

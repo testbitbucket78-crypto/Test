@@ -183,12 +183,11 @@
 								</button>
 								<div *ngIf="ShowAssignOption" class="popup-dialog AssignOption">
 									<p class="label">Assign To</p>
-									<p *ngFor="let user of agentsList;let k = index"
+									<p class="d-flex align-items-center px-2 py-1" *ngFor="let user of agentsList;let k = index"
 										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)">
+										<span class="text-capitalize initials"> {{ user.nameInitials }} </span>
 										<span key={k}>
-											<img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp">
-											{{user.name}}
-										</span>
+											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->{{user.name}}</span>
 									</p>
 								</div>
 							
@@ -245,15 +244,19 @@
 										<div class="message_text" [innerHTML]="message.message_text">
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
 										</div>
+										<div [ngClass]="{'message_box_container':message.media_type}">
+											<span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span>
 										
-										<span class="message_time"
-											*ngIf="message.created_at">{{timeSince(message.created_at)}}
-											<div class="pl-2" *ngIf="message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out'">
-												<div class="doubleee">
-												  <img [src]="tickUpdate(message)" alt="">
-												</div>
-											  </div>											  
-										</span>
+											<span class="message_time"
+												*ngIf="message.created_at">{{timeSince(message.created_at)}}
+												<div class="pl-2" *ngIf="message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out'">
+													<div class="doubleee">
+													  <img [src]="tickUpdate(message)" alt="">
+													</div>
+												  </div>											  
+											</span>
+										</div>
+								
 									</div>
 								</div>	
 							</div>	
@@ -1303,7 +1306,7 @@
 					<input class="form-control" type="text" placeholder="Enter Name" formControlName="Name" id="Name"
 					[ngClass]="{'is-invalid':newContact.get('Name')?.touched && newContact.get('Name')?.errors}">
 				</div>
-				<div *ngIf="newContact.get('Name')?.invalid && (newContact.get('Name')?.touched || newContact.get('Name')?.dirty)" 
+				<div *ngIf="newContact.get('Name')?.invalid && newContact.get('Name')?.dirty" 
 				     class="invalid-feedback">
 						<div *ngIf="newContact.get('Name')?.hasError('required')"
 						class="text-danger">
@@ -1396,7 +1399,7 @@
 				<h4 class="modal-title" id="modal-basic-title">Update Contact</h4>
 			</div>
 			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="d('Cross click')"><img
+				<p (click)="editContact.reset()" class="close-box" aria-label="Close" (click)="d('Cross click')"><img
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
@@ -1473,8 +1476,14 @@
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
 						<input class="form-control" type="text" readonly placeholder="Select Contact Owner"
 						   style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;"
-						   formControlName="ContactOwner" id="ContactOwner" (click)="toggleLeadStatusOption()">
+						   formControlName="ContactOwner" id="ContactOwner" (click)="toggleLeadStatusOption()"
+						   [ngClass]="{'is-invalid' :editContact.controls.ContactOwner.touched && editContact.controls.ContactOwner.errors}">
 					</div>
+					<div *ngIf="editContact.controls.ContactOwner.touched && editContact.controls.ContactOwner.hasError('required')"
+					   class="text-danger">
+					   ! Contact Owner is required.
+			     	</div>
+	
 
 					<div *ngIf="ShowLeadStatusOption" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
 						<p *ngFor="let item of userList" (click)="hangeEditContactSelect('ContactOwner',item.name)">

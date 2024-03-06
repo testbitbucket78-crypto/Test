@@ -63,12 +63,14 @@
                 </div>
             </div>
 
-                <div class="dynamicFieldContainer" cdkDropList (cdkDropListDropped)="Drop($event)">
+                <!-- <div class="dynamicFieldContainer" cdkDropList (cdkDropListDropped)="Drop($event)"> -->
+                    <div class="dynamicFieldContainer">
                     <div *ngFor="let dynamic of dynamicFieldData | slice:(currentPage!=1?((pageSize*(currentPage-1))-6):0):((pageSize*(currentPage-1))+pageSize)-6
-                     | searchfilter:searchCustomField let ith = index" cdkDrag class="dynamicField column" cdkDragBoundary=".dynamicFieldContainer" >
+                     | searchfilter:searchCustomField let ith = index" class="dynamicField column" >
+                      <!-- | searchfilter:searchCustomField let ith = index" cdkDrag class="dynamicField column" cdkDragBoundary=".dynamicFieldContainer" > -->
                         <div (click)="toggleSideBar(dynamic)" class="body-col">
                             <div class="drag-btn">
-                                <img cdkDragHandle class="pr-3" src="../../../../assets/img/settings/drag.svg" alt="" />
+                                <!-- <img cdkDragHandle class="pr-3" src="../../../../assets/img/settings/drag.svg" alt="" /> -->
                                 <span class="m-0"> {{dynamic.ActuallName}}</span>
                             </div>
 
@@ -112,7 +114,7 @@
                     <div class="sidebar-content">
                         <p class="m-0 py-1">Field Id:<span>{{selectedCustomField?.id}}</span></p>
                         <p class="m-0 py-1">Created on: <span>{{selectedCustomField?.created | date:'h:mm a, dd MMM yyyy'}}</span> </p>
-                        <p class="m-0 py-1">Last Modified: <span>{{selectedCustomField?.updated | date:'h:mm a, dd MMM yyyy'}}</span></p>
+                        <p class="m-0 py-1">Last Modified: <span>{{selectedCustomField?.updated ? (selectedCustomField?.updated | date:'h:mm a, dd MMM yyyy'): 'NA'}}</span></p>
                         <div class="text-capitalize py-2 displayName">{{selectedCustomField?.displayName}}</div>
                         <div class="description">
                             <p>{{selectedCustomField?.description}}</p>
