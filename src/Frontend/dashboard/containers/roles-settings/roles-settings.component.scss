@@ -262,3 +262,13 @@ color: #7A86A1;
   height: 100%;
   overflow-y: scroll;
 }
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  background-color: #6149CD;
+  border: none;
+ }
+
+.custom-control-label{
+  font-size: 13px;
+    color: #7A86A1;
+}

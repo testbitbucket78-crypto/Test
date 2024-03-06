@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 
 @Component({
   selector: 'sb-template-settings',
@@ -9,7 +10,7 @@ export class TemplateSettingsComponent implements OnInit {
 
   selectedTab:number = 1;
   
-  constructor() { }
+  constructor(public settingsService:SettingsService,) { }
 
   ngOnInit(): void {
   }

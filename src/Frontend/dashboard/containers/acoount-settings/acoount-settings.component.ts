@@ -70,7 +70,7 @@ export class AcoountSettingsComponent implements OnInit {
   selectedTab:number = 1;
   public ipAddress:string[] = [''];
 
-  constructor( private apiService:SettingsService,private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
+  constructor( private apiService:SettingsService,public settingsService:SettingsService,private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
 
   private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com');
 
@@ -304,6 +304,8 @@ async subscribeToNotifications() {
           if (msgjson.message == 'Client is ready!') {
             this.showToaster('Your Device Linked Successfully !', 'success');
             $("#qrWhatsappModal").modal('hide');
+          }else{
+            this.showToaster('Wrong Number, Please use logged in number!', 'error');
           }
 
           if (msgjson.message == 'QR generation timed out. Plese re-open account settings and generate QR code') {

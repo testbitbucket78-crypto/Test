@@ -47,8 +47,10 @@
                     <div *ngFor="let item of totalRights">
                         <div class="rights-name">{{item?.rightName}}</div>
                         <div *ngFor="let subRight of item?.subRights" class="sub-rights">
-                            <input type="checkbox" [(ngModel)]="subRight.isSelected" class="checkBox">
-                            <span>&nbsp;&nbsp;{{subRight?.subRights}}</span>
+                            <input type="checkbox" [(ngModel)]="subRight.isSelected" name="isAgentActive" class="checkBox">
+                            <label class="custom-control-label" for="isAgentActive">
+                            <span >&nbsp;&nbsp;{{subRight?.subRights}}</span>
+                        </label>
                         </div>
                     </div>
                     

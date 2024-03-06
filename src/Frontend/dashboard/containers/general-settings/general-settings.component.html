@@ -7,17 +7,17 @@
 
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">
-            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1">Default
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" *ngIf="!settingsService.checkRoleExist('36')" (click)="selectedTab = 1">Default
                 Actions</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2">Default
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''"  *ngIf="!settingsService.checkRoleExist('36')" (click)="selectedTab = 2">Default
                 Messages</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3">Routing
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3" *ngIf="!settingsService.checkRoleExist('46')">Routing
                 Rules</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==4 ? 'active' : ''" (click)="selectedTab = 4">Manage
+            <a class="setting-field-link" [ngClass]="selectedTab==4 ? 'active' : ''"  *ngIf="!settingsService.checkRoleExist('38')" (click)="selectedTab = 4">Manage
                 Storage</a>
         </div>
     </div>
-    <div class="setting-card" *ngIf="selectedTab==1">
+    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('36')">
       <form #defaultActionForm="ngForm" (ngSubmit)="saveDefaultAction()">
         <div class="default-actions-heading pb-4">Default Actions</div>
         <div class="pl-2 pr-5 ">
@@ -102,15 +102,15 @@
      </form>
     </div>
 
-    <div *ngIf="selectedTab==2">
+    <div *ngIf="selectedTab==2 && !settingsService.checkRoleExist('36')">
         <sb-default-message-settings></sb-default-message-settings>
     </div>
 
-    <div *ngIf="selectedTab==3">
+    <div *ngIf="selectedTab==3 && !settingsService.checkRoleExist('46')">
         <sb-routing-rules></sb-routing-rules>
     </div>
 
-    <div *ngIf="selectedTab==4">
+    <div *ngIf="selectedTab==4 && !settingsService.checkRoleExist('38')">
         <sb-manage-storage></sb-manage-storage>
     </div>
 </div>

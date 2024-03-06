@@ -24,7 +24,7 @@
 					    <span>Filter</span>
 					</div>
 				</div>
-				<button class="new-message-btn" (click)="openAddNew(addNewCampaign)"><img class="icon" src="/assets/img/teambox/add.svg" /> New Campaign</button>		
+				<button class="new-message-btn" (click)="openAddNew(addNewCampaign)" [disabled]="settingsService.checkRoleExist('26')"><img class="icon" src="/assets/img/teambox/add.svg" /> New Campaign</button>		
 					
 			</div>
 			
@@ -182,9 +182,9 @@
 					
 				</div>
 				<div class="action_section">
-					<button type="button" class="btn" (click)="copyCampaign()"><img src="/assets/img/teambox/copy.svg"></button>
-					<button type="button" *ngIf="selectedCampaign.status == 0 || selectedCampaign.status == 1" class="btn" (click)="editCampaign(addNewCampaign,1)"><img src="../../../../assets/img/teambox/Edit.svg"></button>
-					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)"><img src="/assets/img/teambox/delete.svg"></button>
+					<button type="button" class="btn" (click)="copyCampaign()" [disabled]="settingsService.checkRoleExist('26')"><img src="/assets/img/teambox/copy.svg" ></button>
+					<button type="button" *ngIf="selectedCampaign.status == 0 || selectedCampaign.status == 1" class="btn" (click)="editCampaign(addNewCampaign,1)"  [disabled]="settingsService.checkRoleExist('26')"><img src="../../../../assets/img/teambox/Edit.svg"></button>
+					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)" [disabled]="settingsService.checkRoleExist('26')"><img src="/assets/img/teambox/delete.svg"></button>
 				</div>
 			</div>
 			<div *ngIf="allCampaign.length<1 && searchKey == ''" class="campaigns_section_items no-campaign">
@@ -1364,8 +1364,16 @@
 		
 	</ng-template>
 
-	<ng-template #ConfirmCampaign let-c="close" let-d="dismiss">
-
+	<ng-template #ConfirmCampaign let-c="close" let-d="dismiss" class="background-blur">
+		<div class="modal-header">
+			<div class="modal-header-left">
+				<!-- <h4 class="modal-title" id="modal-basic-title">Save List</h4> -->
+			</div>
+			<div class="modal-header-right">
+				<p  class="close-box" aria-label="Close" (click)="closeConfirmModal()"><img src="assets/img/teambox/icon-close.svg"></p>
+			</div>
+		</div>
+		
 					<div class="modal-body testcampaignmodal">
 						<div *ngIf="lowBalance">
 						<p><img src="../../../../assets/img/campaign/low_balance.png"></p>

@@ -209,7 +209,8 @@ countryCodes = [
  
   
   
- constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService,private _settingsService:SettingsService, private fb: FormBuilder, private router:Router,private cdRef: ChangeDetectorRef)
+ constructor(config: NgbModalConfig, private modalService: NgbModal,
+  public settingsService:SettingsService, private apiService: DashboardService,private _settingsService:SettingsService, private fb: FormBuilder, private router:Router,private cdRef: ChangeDetectorRef)
  
  
  {

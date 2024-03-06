@@ -119,7 +119,8 @@ countryCodes = [
 
 
   
-  constructor(private _settingsService:SettingsService,private fb: FormBuilder,private apiService: SettingsService) {     
+  constructor(private _settingsService:SettingsService,
+    public settingsService:SettingsService,private fb: FormBuilder,private apiService: SettingsService) {     
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     this.form = this.fb.group({
       zip_code: ['', [Validators.required, Validators.pattern(this.zipCodePattern)]],

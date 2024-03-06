@@ -4,6 +4,7 @@ import { SideNavItems, SideNavSection } from 'Frontend/navigation/models';
 import { NavigationService } from 'Frontend/navigation/services';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 
 @Component({
     selector: 'sb-side-nav',
@@ -14,18 +15,45 @@ import { Subscription } from 'rxjs';
 export class SideNavComponent implements OnInit {
     @Input() sidenavStyle!: string;
     @Input() sideNavItems!: SideNavItems;
-    @Input() sideNavSections!: SideNavSection[];
+    @Input() sideNavSections!: any[];
 
     subscription: Subscription = new Subscription();
     routeDataSubscription!: Subscription;
 
     showNavItem: boolean = true;
+    items=[
+        {id:1,name:'dashboard'},
+        {id:2,name:'Contacts'},
+        {id:11,name:'teambox'},
+        {id:1,name:'SmartReplies'},
+        {id:25,name:'camp'},
+        {id:27,name:'Funnel'},
+        {id:31,name:'FlowBuilder'},
+        {id:1,name:'rep'},
+    ]
  
 
-    constructor(public navigationService: NavigationService, public userService: UserService,private router:Router) {}
+    constructor(public navigationService: NavigationService, public userService: UserService,private router:Router, private settingsService:SettingsService) {}
 
     ngOnInit() {  
-       
+       console.log(this.sideNavSections);
+       this.sideNavSections.forEach((item:any)=>{
+        let data =item?.items;
+        for(let i=0;i<data?.length;i++){
+            let idx = this.items.filter((it:any)=> it.name == data[i])[0].id;
+            console.log(idx);
+            if(this.settingsService.checkRoleExist(idx.toString())){
+                console.log('remove',data[i]);                
+                data.splice(i);
+            i--;
+        }
+        }
+        // item.forEach(element => {
+        //     let idx = this.items.filter((it:any)=> it.name == element)[0].id;
+
+        // });
+       })
+       console.log(this.sideNavSections,'jhk');
     }
     
     toggleHamburger(): void {

@@ -40,6 +40,7 @@ export class CampaignsComponent implements OnInit {
 
 	 showInfo:boolean = false;
 	 modalReference: any;
+	 modalReference2: any;
 	 RuningCampaigns:any;
 	 confirmMessage:any;
 	 step2Option:any='';
@@ -296,7 +297,7 @@ export class CampaignsComponent implements OnInit {
 	showErrorMessage: boolean = false;
 	
 	 
-constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: TeamboxService,private settingsService:SettingsService,private fb: FormBuilder,private router: Router,private el: ElementRef) {
+constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: TeamboxService,public settingsService:SettingsService,private fb: FormBuilder,private router: Router,private el: ElementRef) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -1235,12 +1236,18 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 			this.showToaster('Please select schedule date...','error')
 		}else{
 		this.lowBalance=false;
-		this.closeAllModal()
-		this.modalReference = this.modalService.open(ConfirmCampaign,{size: 'sm', windowClass:'pink-bg-sm'});
+		//this.closeAllModal()
+		this.modalReference2 = this.modalService.open(ConfirmCampaign,{size: 'sm', windowClass:'pink-bg-sm background-blur'});
 		}
+	}
+
+	closeConfirmModal(){
+		this.modalReference2.close();
 	}
 	async ConfirmScheduleClose (action:any){
 		this.closeAllModal();
+		this.modalReference2.close();
+		//this.modalReference.close('addNewCampaign');
 		let sratdatetime:any='';
 		if(this.selecteScheduleDate){
 		let start_datetime =this.selecteScheduleDate+' '+this.selecteScheduleTime;

@@ -80,7 +80,8 @@ export class MyprofileComponent implements OnInit,OnDestroy {
     }
   ];
 
-  constructor(config: NgbModalConfig, private modalService: NgbModal, private fB:FormBuilder,private apiService: ProfileService,private _settingsService:SettingsService,private notificationService: NotificationService,private cdRef: ChangeDetectorRef) { 
+  constructor(config: NgbModalConfig, private modalService: NgbModal,
+    public settingsService:SettingsService, private fB:FormBuilder,private apiService: ProfileService,private _settingsService:SettingsService,private notificationService: NotificationService,private cdRef: ChangeDetectorRef) { 
     this.changepassword = this.fB.group({
       uid: this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid,
       oldPass:['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],

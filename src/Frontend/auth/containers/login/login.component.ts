@@ -66,6 +66,17 @@ export class LoginComponent implements OnInit {
                             console.log(response.message);
                         }
                     });
+                    this.settingsService.getRolesData(spid,result.user?.UserType).subscribe(response => {
+                        if (response.status === 200) {
+                            sessionStorage.setItem('subPrivileges', response.getRoles[0]?.subPrivileges);
+                           // this.settingsService.subprivilages = response.subPrivileges.split(',');
+                            console.log(response.getRoles[0]?.subPrivileges);
+                        }
+
+                        if (response.status === 404) {
+                            console.log(response.message);
+                        }
+                    });
                     
                     this.settingsService.getSPPhoneNumber(this.parentId).subscribe(
                         response => {

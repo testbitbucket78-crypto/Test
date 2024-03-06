@@ -3,6 +3,7 @@ import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { Router } from '@angular/router';
 import { repliesList } from 'Frontend/dashboard/models/smartReplies.model';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 declare var $: any;
 
 @Component({
@@ -37,7 +38,7 @@ export class SmartRepliesComponent implements OnInit {
 	repliesData!:repliesList;
 	replies:[] =[];
 
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private router:Router) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal,public settingsService:SettingsService, private apiService: DashboardService, private router:Router) {
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}

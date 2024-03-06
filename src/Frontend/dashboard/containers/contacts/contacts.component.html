@@ -11,20 +11,20 @@
 		</div>
 		<div class="d-flex">
 			<div id="export-btn">
-				<button class="btn-9 " [disabled]="checkedConatct.length==0" (click)="open(content)"> <img
+				<button class="btn-9 " [disabled]="checkedConatct.length==0" (click)="open(content)" [disabled]="settingsService.checkRoleExist('9')"> <img
 						src="../../../../assets/img/export.svg"> Export </button>
 			</div>
 			<div id="import-btn" >
-				<button class="btn  btn-block" id="import-btn" data-bs-toggle="modal" data-bs-target="#importmodal" ><img
+				<button class="btn  btn-block" id="import-btn" data-bs-toggle="modal" data-bs-target="#importmodal" [disabled]="settingsService.checkRoleExist('9')"><img
 						src="../../../../assets/img/import.svg">
 					Import
 				</button>
 			</div>
 			<div id="add-contact">
-				<button class="btn  btn-block" id="add-contact" (click)="open(contactadd)"><span><img src="../../../../assets/img/teambox/add.svg" /></span>Add Contact</button>
+				<button class="btn  btn-block" id="add-contact" (click)="open(contactadd)" [disabled]="settingsService.checkRoleExist('4')"><span><img src="../../../../assets/img/teambox/add.svg" /></span>Add Contact</button>
 			</div>
 			<div id="delete-btn">
-				<button class="btn-delete row-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteContact"><img
+				<button class="btn-delete row-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteContact" [disabled]="settingsService.checkRoleExist('9')"><img
 						src="../../../../assets/img/profile/delete.svg"></button>
 			</div>
 		</div>
@@ -164,10 +164,10 @@
 			
 				<div class="btn-footer py-2 mt-3">
 					<div class="button my-4 d-flex justify-content-center align-items-center">
-						<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete"><img
+						<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('5')"><img
 								src="../../../../assets/img/profile/delete.svg">
 						</button>
-						<button class="btn6  btn-block " (click)="openedit(contactadd)"><img src="../../../../assets/img/teambox/Edit.svg">
+						<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="settingsService.checkRoleExist('5')"><img src="../../../../assets/img/teambox/Edit.svg">
 						</button>
 						<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn">{{this.isBlocked==1 ? 'Blocked' : 'Block'}}</button>
 						<button class="btn7  btn-block "><img src="../../../../assets/img/settings.svg"> </button>
@@ -565,7 +565,7 @@
 			</div>
 			<div class="p-0 col-md">
 				<label for="ContactOwner">Contact Owner<span class="text-danger">*</span></label>
-					<input class="form-control" type="text" readonly placeholder="Select Contact Owner" name="ContactOwner"
+					<input class="form-control" type="text" readonly placeholder="Select Contact Owner" name="ContactOwner" [disabled]="settingsService.checkRoleExist('7')"
 						formControlName="ContactOwner" id="ContactOwner" (click)="toggleContactOption()" />
 						<div *ngIf="ShowContactOwner" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
 							<p *ngFor="let uL of userList" (click)="selectContactOwner(uL.name)">
