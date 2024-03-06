@@ -1,3 +1,9 @@
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+</div>
+
 <div class="setting-card" >
     <div class="default-actions-heading pb-4">Default Messages</div>
     <div class=" grid-view p-2 px-4" >
@@ -33,7 +39,7 @@
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
-                <form [formGroup]="defaultMessageForm" autocomplete="off" (ngSubmit)="addEditDefaultMessageData()">
+                <form [formGroup]="defaultMessageForm" autocomplete="off">
 
                 <div class="modal-body welcomGreeting px-5 pt-0">
                      <div *ngIf="selectedCategory==1 || selectedCategory==5" class="sel-type-link autoreply pt-2 pb-3">
@@ -167,7 +173,7 @@
                              </div> -->
                    </div>
                 <div class="modal-footer">
-                    <button type="submit" [disabled]="defaultMessageForm.invalid" [class.disabled]="defaultMessageForm.invalid" class="account-btn">Save</button>
+                    <button type="button" (click)="addEditDefaultMessageData()" [disabled]="defaultMessageForm.invalid" [class.disabled]="defaultMessageForm.invalid" class="account-btn">Save</button>
                 </div>
             </form>
             </div>
@@ -190,7 +196,7 @@
                 <div class="p-3">
                    Created On: {{selectedMessageData.Created_at | date:'h:mm a, dd MMM yyyy'}}
                     <div class="pt-1">
-                   Modified On: {{selectedMessageData.updated_at | date:'h:mm a, dd MMM yyyy'}}
+                   Modified On: {{selectedMessageData.updated_at ? (selectedMessageData.updated_at | date:'h:mm a, dd MMM yyyy'):'NA'}}
                     </div>
                 </div>    
             <div class="flex-column pt-4">

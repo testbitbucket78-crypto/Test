@@ -453,7 +453,7 @@
 
         <div class="inner_box">
           <img *ngIf="template.media_type === 'image'" class="template_img" src="{{template.Links}}">
-          <video *ngIf="template.media_type === 'video'" autoplay loop muted id="video-background" [src]="template.Links"></video>
+          <video *ngIf="template.media_type === 'video'" muted id="video-background" [src]="template.Links"></video>
           <div class="doc-preview"*ngIf="template.media_type === 'document'">
             <a [href]="template.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
             </div>

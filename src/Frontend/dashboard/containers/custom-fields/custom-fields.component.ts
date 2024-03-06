@@ -38,9 +38,9 @@ export class CustomFieldsComponent implements OnInit {
 
 
 
-  Drop(event: CdkDragDrop<string[]>) {
-      moveItemInArray(this.dynamicFieldData, event.previousIndex, event.currentIndex);
-    } 
+  // Drop(event: CdkDragDrop<string[]>) {
+  //     moveItemInArray(this.dynamicFieldData, event.previousIndex, event.currentIndex);
+  //   } 
 
     ngOnInit(): void {
         this.spId = Number(sessionStorage.getItem('SP_ID'));
