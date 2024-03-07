@@ -1237,6 +1237,8 @@
 	.default_avtar img{
 	width:25px;
 	margin-right:10px;
+	height: 25px;
+	border-radius: 50% !important;
 	}
 
 	.addnewitem .addnewitem-content .addnewitem-content-left::-webkit-scrollbar {
@@ -1843,13 +1845,14 @@
 
 
 	.campaign_preview_right{
-	display: flex;
-	flex-direction: column;
-	width: 38%;
-	background: #FFF4F2 0% 0% no-repeat padding-box;
-	border-radius: 24px;
-	padding: 1.5rem;
-	overflow: scroll;
+		display: flex;
+		flex-direction: column;
+		width: 38%;
+		background: #FFF4F2 0% 0% no-repeat padding-box;
+		border-radius: 24px;
+		padding: 1.5rem 1.5rem 0rem 1.5rem;
+		overflow: scroll;
+		height: 400px;
 	}
 	.container_row{
 	display: flex;
@@ -1893,7 +1896,7 @@
 	border-radius: 20px 20px 0 0 ;
 	}
 	.campaign_preview_right .middel_section_outer{
-	min-height:50px
+	flex-grow: 1;
 	}
 	.campaign_preview_right .middel_section .formrow{
 	padding: 10px 0px 0px ;
@@ -1906,8 +1909,16 @@
 	.campaign_preview_right .bottom_section{
 		display: flex;
 		justify-content: space-around;
-		position: relative;
-		bottom: -184px;
+	}
+	.campaign_preview_right .bottom_section p{
+    color: #7a86a1;
+    font-size: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-weight: 400;
+    cursor: default;
 	}
 	.campaign_preview_right .bottom_section .close-box,
 	.campaign_preview_right .bottom_section .text-box-readonly{

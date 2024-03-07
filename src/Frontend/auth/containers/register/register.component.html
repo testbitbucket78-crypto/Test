@@ -28,6 +28,7 @@
                          formControlName="name" 
                          id="name" 
                          maxlength="30">
+                         
                  </div>
                 <div class="col-sm-1"></div>
                 <div class="pp"  id="col">
@@ -105,9 +106,13 @@
                 Name must be at least 3 characters or not a single digit.
               </div>
             </div>        -->
+            <div *ngIf="submitted && registerForm.get('name').hasError('pattern')"  class="text-danger">
+              Name should contain only alphabetic characters.
+            </div>
           <div *ngIf="submitted && registerForm.controls.name.errors" class="text-danger">
             ! Name must be at least 3 characters or not a single digit.
           </div>
+                    
           <div *ngIf="submitted && registerForm.controls.display_mobile_number.errors" class="text-danger">
             ! Phone number must between 6 to 15 digits
           </div>
