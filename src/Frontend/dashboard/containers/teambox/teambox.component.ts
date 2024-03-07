@@ -431,7 +431,7 @@ ToggleAttributesOption(){
 	$("#atrributemodal").modal('show'); 
 
 }
-selectAttributes(item:any){
+selectAttributes(item:any) {
 	this.closeAllModal();
 	const selectedValue = item;
 	
@@ -439,7 +439,7 @@ selectAttributes(item:any){
 	if (isNullOrUndefined(htmlcontent)) {
 		htmlcontent = '';
 	  }
-	const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
+	const selectedAttr = `${htmlcontent} <span>{{${selectedValue}}}</span>`;
 	this.chatEditor.value = selectedAttr; 
 }
 
@@ -476,10 +476,10 @@ searchQuickReply(event:any){
 searchTemplate(event:any){
 	let searchKey = event.target.value
 	if(searchKey.length>2){
-	var allList = this.allTemplates
-	let FilteredArray = [];
+	var allList = this.allTemplatesMain
+	let FilteredArray: any[] = [];
 	for(var i=0;i<allList.length;i++){
-		var content = allList[i].title.toLowerCase()
+		var content = allList[i].TemplateName.toLowerCase()
 			if(content.indexOf(searchKey.toLowerCase()) !== -1){
 				FilteredArray.push(allList[i])
 			}
@@ -495,25 +495,23 @@ filterTemplate(temType:any){
 
 	let allList  =this.allTemplatesMain;
 	if(temType.target.checked){
-		alert('if')
 	var type= temType.target.value;
 	for(var i=0;i<allList.length;i++){
 			if(allList[i]['Category'] == type){
-				allList[i]['is_Deleted']=1
+				allList[i]['isDeleted']=1
 			}
 	}
    }else{
-	alert('else')
 	var type= temType.target.value;
 	for(var i=0;i<allList.length;i++){
 			if(allList[i]['Category'] == type){
-				allList[i]['is_Deleted']=0
+				allList[i]['isDeleted']=0
 			}
 	}
    }
 	var newArray=[];
    for(var m=0;m<allList.length;m++){
-	  if(allList[m]['is_active']==1){
+	  if(allList[m]['isDeleted']==1){
 		newArray.push(allList[m])
 	  }
 
@@ -850,9 +848,12 @@ sendattachfile(){
 
 
 	async getTemplates(){
-		this.settingService.getTemplateData(this.SPID,1).subscribe(response =>{
-			this.allTemplatesMain = response.templates;
-			this.allTemplates = response.templates;
+		let spid = Number(this.SPID)
+		this.settingService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
+			this.allTemplatesMain = allTemplates.templates
+			console.log(this.allTemplatesMain)
+			this.allTemplates = allTemplates.templates
+	
 		})
 		
 	}
@@ -1418,7 +1419,7 @@ updateCustomer(){
 	OptInStatus: this.EditContactForm.get('OptInStatus')?.value,
 	emailId: this.EditContactForm.get('emailId')?.value,
 	ContactOwner: this.EditContactForm.get('ContactOwner')?.value,
-	customerId: this.AgentId,
+	customerId: this.EditContactForm.get('customerId')?.value
 	};
 	console.log(bodyData)
 		
@@ -1433,16 +1434,20 @@ updateCustomer(){
 		this.selectedInteraction['OptInStatus']=this.EditContactForm.OptInStatus
 		this.selectedInteraction['emailId']=this.EditContactForm.emailId
 		this.selectedInteraction['ContactOwner']=this.EditContactForm.ContactOwner
+		this.selectedInteraction['CustomerId']=this.EditContactForm.customerId
 	
 			if(this.modalReference){
 				this.modalReference.close();
 			}
 			this.showToaster('Contact information updated...','success');
+			this.getAllInteraction();
 		});
 	}
 	else {
 		this.EditContactForm.markAllAsTouched();
 	} 
+
+
 }
 
 
@@ -1875,7 +1880,8 @@ this.apiService.createInteraction(bodyData).subscribe(async data =>{
 	if(this.modalReference){
 		this.modalReference.close();
 	}
-	this.getAllInteraction()
+	this.getAllInteraction();
+	this.getCustomers();
 });
 
 }
@@ -1995,7 +2001,7 @@ sendMessage(){
 	var tempDivElement = document.createElement("div");   
 
 	tempDivElement.innerHTML = this.chatEditor.value;
-
+	let value =this.chatEditor.value?.replaceAll('&nbsp;',' ')?.replaceAll(/ <\/em>/g, '_ ')?.replaceAll(/ <\/span>/g, '~ ')?.replaceAll(/ <\/strong>/g, '* ')?.replaceAll(/<\/strong> /g, '*');
     let val = tempDivElement.textContent || tempDivElement.innerText || "";
 	if (this.chatEditor.value == null || val.trim()=='') {
 		this.showToaster('! Please enter a message before sending.','error');
@@ -2023,7 +2029,7 @@ sendMessage(){
 			SPID:this.SPID,
 			AgentId: this.AgentId,
 			messageTo:this.selectedInteraction.Phone_number,
-			message_text: this.chatEditor.value || "",
+			message_text: value || "",
 			Message_id:this.newMessage.value.Message_id,
 			message_media: this.messageMeidaFile,
 			media_type: this.mediaType,
@@ -2033,7 +2039,7 @@ sendMessage(){
 			created_at:new Date(),
 			mediaSize:this.mediaSize
 		}
-
+		console.log(bodyData,'Bodydata')
 		let input = {
 			spid: this.SPID,
 		};

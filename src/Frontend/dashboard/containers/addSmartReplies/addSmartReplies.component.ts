@@ -202,7 +202,7 @@ click: any;
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
 
 		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: false
+			linear: true
 			,
 			animation: true
 		});

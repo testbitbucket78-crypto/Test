@@ -26,7 +26,7 @@
             </div>
         </div>
         <div>
-            <span class="sub-heading">Default Assignment Rules</span>            
+            <span class="sub-heading">Default Assignment Rules</span>    
             <div class="sub-contents pl-0 py-2">
                 <p>A new conversation will be assigned based on the routing rule chosen here if no other automation is applicable.</p>           
             </div>
@@ -46,7 +46,7 @@
             <div class="sub-contents">
                 <p>Assign incoming chats to all the available agents one after another ensuring chats are getting distributed equally among them.</p>           
                 <div class="select-heading py-2">Max. No. of Open Conversation Allowed</div>
-                <select (change)="saveNoOfConv()" class="input-form" [disabled]="this.defaultAssignRule!=='roundrobin'" [(ngModel)]="conversationallowed" >
+                <select class="input-form" [disabled]="defaultAssignRule!=='roundrobin'" [(ngModel)]="conversationallowed" >
                     <option [ngValue]="'1'">1</option>
                     <option [ngValue]="'2'">2</option>
                     <option [ngValue]="'3'">3</option>
@@ -66,7 +66,7 @@
             <div class="sub-contents">
                 <p>All the chats are first assigned to a selected user (usually manager). Further this user assigns agents or teams to each of these chats. If this selected manager is not available, then chats will be assigned according to the rules defined under “Missed Chat”.</p>           
                 <div class="select-heading py-2">Assign a User</div>
-                <select (change)="saveAssignUser()" class="input-form" [disabled]="this.defaultAssignRule!=='manualassign'" [(ngModel)]="assignuser" >
+                <select class="input-form" [disabled]="defaultAssignRule!=='manualassign'" [(ngModel)]="assignuser" >
                     <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
                 </select>
             </div>
@@ -85,7 +85,6 @@
                     onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"
                     [pattern]="chatAssignTimeoutPattern"
                     [(ngModel)]="timeoutperiod"
-                    (change)="saveRoutingRules()"
                     placeholder="Enter chat timeout (1-1440 minutes)"
                     [ngClass]="{'is-invalid':myForm.controls['chatAssignTimeout']?.dirty && myForm.controls['chatAssignTimeout']?.hasError('pattern')}">
             </div>
@@ -105,11 +104,14 @@
                 </div>
             </div>
             <div class="select-heading py-2">Assign a Specific User</div>
-            <select (change)="saveSpecificUser()" [disabled]="missedChatOption !== 'assignspecificuser'" class="input-form" [(ngModel)]="selectuser" >
+            <select [disabled]="missedChatOption!=='assignspecificuser'" class="input-form" [(ngModel)]="selectuser" >
                 <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
             </select>
             <p>If the contact owner is not defined, chat is assigned to Admin</p>
         </div>
+    </div>
+    <div class="d-flex justify-content-end pb-4 default-footer">
+        <button (click)="saveRoutingRules()" type="button" class="account-btn">Save</button>
     </div>
     
 
