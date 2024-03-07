@@ -39,15 +39,19 @@ export class SideNavComponent implements OnInit {
        console.log(this.sideNavSections);
        this.sideNavSections.forEach((item:any)=>{
         let data =item?.items;
+        let tempArr =[];
         for(let i=0;i<data?.length;i++){
             let idx = this.items.filter((it:any)=> it.name == data[i])[0].id;
             console.log(idx);
             if(this.settingsService.checkRoleExist(idx.toString())){
                 console.log('remove',data[i]);                
-                data.splice(i);
-            i--;
+            //     data.splice(i);
+            // i--;
+        }else{
+            tempArr.push(data[i]);
         }
         }
+        item.items = tempArr;
         // item.forEach(element => {
         //     let idx = this.items.filter((it:any)=> it.name == element)[0].id;
 

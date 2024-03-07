@@ -1695,8 +1695,15 @@ testinfo(){
 		else if(this.activeStep ==3.1){
 			console.log(this.selectedTemplate)
 			console.log(this.newCampaignDetail)
+			console.log('checkVariableValue',this.checkVariableValue())
+			if(this.checkVariableValue()){
+				this.activeStep=4;
+				console.log('if run')
+			}else{
+				console.log('else run')
+				this.showToaster('Variable value should not be empty','error')
+			}
 
-			this.activeStep=4
 		}else{
 		
 		console.log(this.selectedTemplate)
@@ -1783,6 +1790,17 @@ testinfo(){
 	updateAttributeValue(event:any,variable:any){
 		variable['value']=event.target.value
 		console.log(this.selectedTemplate)
+	}
+	checkVariableValue(){
+		console.log(this.selectedTemplate.allVariables);
+		let flag = true;
+		this.selectedTemplate.allVariables.forEach((item:any)=>{
+		if(item.value=='' || item.value==null)	{
+			console.log('false');
+			flag = false;
+		}
+		});
+		return flag;
 	}
 	updateFallbackAttributeValue(event:any){
 		this.selecetdVariable['value']=event.target.value
