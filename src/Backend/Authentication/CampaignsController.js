@@ -122,7 +122,7 @@ const getFilteredCampaign = (req, res) => {
         filterQuery += " and  title like '%" + req.body.key + "%'"
     }
 
-    //console.log(filterQuery)
+    console.log(filterQuery)
     db.runQuery(req, res, filterQuery, []);
 }
 

@@ -13,20 +13,20 @@ const awsHelper = require('../awsHelper');
 const path = require("path");
 const authenticateToken = require('../Authorize');
 
-router.get('/users',userController.getUser);
-router.get('/users/:id',userController.getUserById);
-router.delete('/users/:id',userController.deletUserById);
-router.post('/users',userController.insertUser);
-router.put('/users/:id',userController.updateUser);
-router.get('/getAllRegisteredUser',indexController.allregisterdUser);
+router.get('/users',authenticateToken,userController.getUser);
+router.get('/users/:id',authenticateToken,userController.getUserById);
+router.delete('/users/:id',authenticateToken,authenticateToken,userController.deletUserById);
+router.post('/users',authenticateToken,userController.insertUser);
+router.put('/users/:id',authenticateToken,userController.updateUser);
+router.get('/getAllRegisteredUser',authenticateToken,indexController.allregisterdUser);
 router.post('/register',indexController.register);
 router.post('/login',indexController.login);
-router.post('/forgotPassword',indexController.forgotPassword);
+router.post('/forgotPassword',authenticateToken,indexController.forgotPassword);
 router.post('/sendOtp',indexController.sendOtp)
 router.post('/verifyOtp',indexController.verifyOtp)
-router.post('/resetPassword/:uid',indexController.resetPassword)
-router.post('/allAgents',userController.getAllAgents)
-router.post('/isActiveAgents',userController.getisActiveAgents)
+router.post('/resetPassword/:uid',authenticateToken,indexController.resetPassword)
+router.post('/allAgents',authenticateToken,userController.getAllAgents)
+router.post('/isActiveAgents',authenticateToken,userController.getisActiveAgents)
 router.post('/verifyPhoneOtp',indexController.verifyPhoneOtp)
 
 
@@ -136,25 +136,25 @@ console.log("/uploads/:fileName")
 /////////////////////////Campaigns API added by Raman Bhasker//////////////////////////
 const CampaignsController=require('./CampaignsController.js');
 
-router.post('/getCampaigns',CampaignsController.getCampaigns);
-router.post('/addCampaign',CampaignsController.addCampaign);
-router.get('/getCampaignDetail/:CampaignId',CampaignsController.getCampaignDetail);
-router.get('/deleteCampaign/:CampaignId',CampaignsController.deleteCampaign);
-router.post('/getFilteredCampaign',CampaignsController.getFilteredCampaign);
-router.post('/getContactList',CampaignsController.getContactList);
-router.post('/updatedContactList',CampaignsController.updatedContactList);
-router.post('/addNewContactList',CampaignsController.addNewContactList);
-router.post('/deleteContactList',CampaignsController.deleteContactList);
-router.post('/applyFilterOnEndCustomer',CampaignsController.applyFilterOnEndCustomer);
-router.get('/getAdditiionalAttributes/:SPID',CampaignsController.getAdditiionalAttributes);
-router.get('/getEndCustomerDetail/:customerId',CampaignsController.getEndCustomerDetail);
-router.get('/getContactAttributesByCustomer/:customerId',CampaignsController.getContactAttributesByCustomer);
-router.post('/sendCampinMessage',CampaignsController.sendCampinMessage);
-router.post('/saveCampaignMessages',CampaignsController.saveCampaignMessages);
+router.post('/getCampaigns',authenticateToken,CampaignsController.getCampaigns);
+router.post('/addCampaign',authenticateToken,CampaignsController.addCampaign);
+router.get('/getCampaignDetail/:CampaignId',authenticateToken,CampaignsController.getCampaignDetail);
+router.get('/deleteCampaign/:CampaignId',authenticateToken,CampaignsController.deleteCampaign);
+router.post('/getFilteredCampaign',authenticateToken,CampaignsController.getFilteredCampaign);
+router.post('/getContactList',authenticateToken,CampaignsController.getContactList);
+router.post('/updatedContactList',authenticateToken,CampaignsController.updatedContactList);
+router.post('/addNewContactList',authenticateToken,CampaignsController.addNewContactList);
+router.post('/deleteContactList',authenticateToken,CampaignsController.deleteContactList);
+router.post('/applyFilterOnEndCustomer',authenticateToken,CampaignsController.applyFilterOnEndCustomer);
+router.get('/getAdditiionalAttributes/:SPID',authenticateToken,CampaignsController.getAdditiionalAttributes);
+router.get('/getEndCustomerDetail/:customerId',authenticateToken,CampaignsController.getEndCustomerDetail);
+router.get('/getContactAttributesByCustomer/:customerId',authenticateToken,authenticateToken,CampaignsController.getContactAttributesByCustomer);
+router.post('/sendCampinMessage',authenticateToken,CampaignsController.sendCampinMessage);
+router.post('/saveCampaignMessages',authenticateToken,CampaignsController.saveCampaignMessages);
 
-router.get('/getCampaignMessages/:CampaignId',CampaignsController.getCampaignMessages);
-router.get('/copyCampaign/:CampaignId',CampaignsController.copyCampaign);
+router.get('/getCampaignMessages/:CampaignId',authenticateToken,CampaignsController.getCampaignMessages);
+router.get('/copyCampaign/:CampaignId',authenticateToken,CampaignsController.copyCampaign);
 
-router.post('/alertUser',CampaignsController.campaignAlerts);
-router.get('/exitCampaign/:title/:spid',CampaignsController.isExistCampaign);
+router.post('/alertUser',authenticateToken,CampaignsController.campaignAlerts);
+router.get('/exitCampaign/:title/:spid',authenticateToken,CampaignsController.isExistCampaign);
 module.exports = router;

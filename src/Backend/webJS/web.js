@@ -46,7 +46,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
          executablePath: "/usr/bin/google-chrome-stable",
-       //    executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+           //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -187,9 +187,10 @@ function ClientInstance(spid, authStr, phoneNo) {
 SET msg_status = 1 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL OR (msg_status != 9 AND msg_status != 10)); `
-            let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
-           //  console.log("send"  ,sended.affectedRows)
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL); `
+     console.log(smsdelupdate)       
+let sended = await db.excuteQuery(smsdelupdate, [])
+             console.log("send"  ,sended.affectedRows)
             notify.NotifyServer(phoneNo, true)
 
            
@@ -200,9 +201,10 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 SET msg_status = 2 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1 OR (msg_status != 9 AND msg_status != 10)); `
-            let deded = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
-         //    console.log("deliver"  , deded.affectedRows)
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1); `
+     console.log(smsdelupdate)      
+let deded = await db.excuteQuery(smsdelupdate, [])
+            console.log("deliver"  , deded.affectedRows)
             notify.NotifyServer(phoneNo, true)
            
           } else if (ack == '3') {
@@ -213,9 +215,10 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 SET msg_status = 3 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1 OR (msg_status != 9 AND msg_status != 10));`
-            let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
-           //  console.log("read"  ,resd.affectedRows)
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1);`
+            console.log(smsupdate)
+let resd = await db.excuteQuery(smsupdate, [])
+             console.log("read"  ,resd.affectedRows)
             notify.NotifyServer(phoneNo, true)
           }
 
@@ -408,6 +411,14 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
 async function saveInMessages(message) {
   try {
     let message_text = message.body   //firstMessage
+    if (message_text) {
+      message_text = message_text.replace(/\*/g, '<strong>').replace(/\*/g, '</strong>');
+      message_text = message_text.replace(/_/g, '<em>').replace(/_/g, '</em>');
+      message_text = message_text.replace(/~/g, '<span>').replace(/~/g, '</span>');
+      message_text = message_text.replace(/~/g, '<del>').replace(/~/g, '</del>');
+      message_text = message_text.replace(/\n/g, '<br>');
+  }
+  
     let from = (message.from).replace(/@c\.us$/, '')   //phoneNo
     let phone_number_id = message.id.id
     let display_phone_number = (message.to).replace(/@c\.us$/, '')
