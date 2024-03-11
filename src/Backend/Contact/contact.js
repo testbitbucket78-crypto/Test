@@ -13,8 +13,9 @@ const { Key } = require("protractor");
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+const authenticateToken = require('../Authorize');
 
-app.get('/columns/:spid', async (req, res) => {
+app.get('/columns/:spid',authenticateToken, async (req, res) => {
   try {
 
     let query = ` SELECT column_name as displayName,column_name as ActuallName
@@ -33,74 +34,81 @@ app.get('/columns/:spid', async (req, res) => {
 })
 
 
-app.post('/addCustomContact', async (req, res) => {
+app.post('/addCustomContact', authenticateToken, async (req, res) => {
   try {
-    // Construct the INSERT query dynamically
-    let data = req.body.result
-    console.log(data)
-  
-    // Iterate through the data array and add column names to the query
-    
-      let insertQuery = 'INSERT INTO EndCustomer (';
-      let values = [];
-  
-      data.forEach((item, index) => {
-        insertQuery += `${item.ActuallName}`;
-        if (item.ActuallName == 'Name' || item.ActuallName == 'Phone_number') {
-          if (item.displayName == '') {
-            res.status(400).send({
-              message: 'Please add Name and Phone no  ',
-              status: 400
-            })
-          }
-        }
-        if (Array.isArray(item.displayName)) {
-          console.log("if")
-          var list = item.displayName;
-          ListofArrays = [];
+    let data = req.body.result;
 
-          for (var i = 0; i < list.length; i++) {
-
-            ListofArrays.push(list[i]);
-
-          }
-          joinList = ListofArrays.join()
-          values.push(joinList);
-
-        }
-
-        else {
-          console.log("else")
-          values.push(item.displayName)
-        }
-        if (index < data.length - 1) {
-          insertQuery += ', ';
-        }
+    // Check if data is an array
+    if (!Array.isArray(data)) {
+      return res.status(400).json({
+        message: 'Data should be an array',
+        status: 400
       });
+    }
 
-    insertQuery += ' ) VALUES (';
+    // Construct the INSERT query dynamically
+    let insertQuery = 'INSERT INTO EndCustomer (';
+    let values = [];
 
-    // Add placeholders for values in the query
-    data.forEach((item, index) => {
-      insertQuery += `?`;
-      if (index < data.length - 1) {
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
+
+      // Add column names to the query
+      insertQuery += `${item.ActuallName}`;
+      if (i < data.length - 1) {
         insertQuery += ', ';
       }
-    });
+
+      // Add values to the values array
+      if (item.ActuallName === 'Name' || item.ActuallName === 'Phone_number') {
+        if (!item.displayName) {
+          return res.status(400).json({
+            message: 'Please add Name and Phone number',
+            status: 400
+          });
+        } else if (item.ActuallName === 'Phone_number') {
+          let existQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 AND SP_ID = ?`;
+          let existingContact = await db.excuteQuery(existQuery, [item.displayName, req.body.SP_ID]);
+          if (existingContact.length > 0) {
+            return res.status(409).json({
+              message: 'Phone number already exists',
+              status: 409
+            });
+          }
+        }
+      }
+
+      // Handle arrays and non-arrays uniformly
+      if (Array.isArray(item.displayName)) {
+        values.push(item.displayName.join());
+      } else {
+        values.push(item.displayName);
+      }
+    }
+
+    insertQuery += ') VALUES (';
+
+    // Add placeholders for values in the query
+    for (let i = 0; i < data.length; i++) {
+      insertQuery += '?';
+      if (i < data.length - 1) {
+        insertQuery += ', ';
+      }
+    }
 
     insertQuery += ')';
-    console.log(values)
+    console.log(values);
     console.log(insertQuery);
-    let result = await db.excuteQuery(insertQuery, values)
-  
-  res.send({ status: 200, result: 'result' });
-}catch (err) {
-  console.log(err)
-  res.send({ status: 500, "err": err });
-}
-})
+    let result = await db.excuteQuery(insertQuery, values);
+    res.status(200).json({ status: 200, result });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ status: 500, err });
+  }
+});
 
-app.post('/editCustomContact', async (req, res) => {
+
+app.post('/editCustomContact',authenticateToken, async (req, res) => {
   try {
     const id = req.query.customerId;
     const spid = req.query.SP_ID;
@@ -145,12 +153,12 @@ app.post('/editCustomContact', async (req, res) => {
 })
 
 
-app.get('/', function (req, res) {
+app.get('/',authenticateToken, function (req, res) {
   db.runQuery(req, res, val.selectAllContact, [req.query.SP_ID]);
 });
 
 
-app.post('/exportCheckedContact', (req, res) => {
+app.post('/exportCheckedContact',authenticateToken, (req, res) => {
   try {
     console.log(req.body)
     var data = req.body.data
@@ -197,7 +205,7 @@ app.post('/exportCheckedContact', (req, res) => {
 })
 
 
-app.post('/deletContact', (req, res) => {
+app.post('/deletContact',authenticateToken, (req, res) => {
   try {
 
     var Ids = req.body.customerId;
@@ -213,7 +221,7 @@ app.post('/deletContact', (req, res) => {
   }
 })
 
-app.get('/getContactById', (req, res) => {
+app.get('/getContactById',authenticateToken, (req, res) => {
   try {
     console.log(req.query)
     db.runQuery(req, res, val.selectbyid, [req.query.customerId, req.query.SP_ID])
@@ -227,7 +235,7 @@ app.get('/getContactById', (req, res) => {
   }
 })
 
-app.put('/editContact', (req, res) => {
+app.put('/editContact', authenticateToken,(req, res) => {
   try {
     console.log("editContact")
     const id = req.query.customerId;
@@ -283,7 +291,7 @@ app.put('/editContact', (req, res) => {
 })
 
 
-app.post('/importContact', async (req, res) => {
+app.post('/importContact',authenticateToken, async (req, res) => {
 
   try {
 
@@ -385,35 +393,35 @@ app.post('/importContact', async (req, res) => {
 })
 
 async function addOnlynewContact(CSVdata, identifier) {
-  
+
   try {
     let result;
     for (let i = 0; i < CSVdata.length; i++) {
       const set = CSVdata[i];
       const fieldNames = set.map((field) => field.ActuallName).join(', ');
-  
+
       // Find the value of the identifier based on the FieldName
       const identifierField = set.find((field) => field.ActuallName === identifier);
       const identifierValue = identifierField ? identifierField.displayName : '';
-  
+
       let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=?  AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
       const values = set.map((field) => field.displayName);
       // values.push(SP_ID);
-  
+
       console.log(query);
       console.log(values);
-  
+
       // Ensure db.executeQuery returns a promise
-       result = await db.excuteQuery(query, [values, identifierValue]);
-     
-     
+      result = await db.excuteQuery(query, [values, identifierValue]);
+
+
     }
-    return result; 
-   // Ensure to handle the returned result outside the loop if needed
+    return result;
+    // Ensure to handle the returned result outside the loop if needed
   } catch (err) {
     return err;
   }
-  
+
 }
 
 
@@ -422,21 +430,21 @@ async function updateSelectedField(CSVdata, identifier, fields, SP_ID) {
     // Iterate over each field in the 'fields' array
     for (var j = 0; j < fields.length; j++) {
       const updateData = fields[j];
-  
+
       // Iterate over each set of CSV data
       for (var i = 0; i < CSVdata.length; i++) {
         const set = CSVdata[i];
-  
+
         // Find identifier value and updated field value
         const identifierField = set.find((field) => field.ActuallName === identifier);
         const identifierValue = identifierField ? identifierField.displayName : '';
         const updatedField = set.find((field) => field.ActuallName === updateData);
         const updatedFieldValue = updatedField ? updatedField.displayName : '';
-  
+
         // Construct the update query
         let query = 'UPDATE EndCustomer SET ' + updateData + '=? WHERE ' + identifier + '=? AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0)';
-       
-  
+
+
         // Execute the update query
         var upExistContOnlyWithFields = await db.excuteQuery(query, [updatedFieldValue, identifierValue, SP_ID]);
         console.log(upExistContOnlyWithFields);
@@ -453,23 +461,23 @@ async function updateContact(CSVdata, identifier, SP_ID) {
   try {
     for (var i = 0; i < CSVdata.length; i++) {
       const set = CSVdata[i];
-  
+
       // Find the identifier field
       const identifierField = set.find((field) => field.ActuallName === identifier);
       const identifierValue = identifierField ? identifierField.displayName : '';
-  
+
       // Build the SET clause for the UPDATE query
       const setClause = set.map((field) => `${field.ActuallName} = ?`).join(', ');
-  
+
       // Build the UPDATE query
       let query = `UPDATE EndCustomer SET ${setClause} WHERE ${identifier} = ? AND SP_ID = ? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0);`;
       console.log(query);
-  
+
       // Add values for placeholders in the correct order
       const values = set.map((field) => field.displayName); // Using displayName as FieldValue
       values.push(identifierValue);
       values.push(SP_ID);
-  
+
       var upExistContOnly = await db.excuteQuery(query, values);
       console.log(upExistContOnly);
     }
@@ -477,13 +485,13 @@ async function updateContact(CSVdata, identifier, SP_ID) {
   } catch (err) {
     return err;
   }
-  
+
 }
 
 
-app.post('/verifyData', async (req, res) => {
+app.post('/verifyData',authenticateToken, async (req, res) => {
   try {
-    
+
     var resdata = req.body;
     var CSVdata = resdata.importedData;
     var identifier = resdata.identifier;
@@ -499,117 +507,117 @@ app.post('/verifyData', async (req, res) => {
     console.log(CSVdata.length);
 
     for (var j = 0; j < CSVdata.length; j++) {
-        var currentData = CSVdata[j];
+      var currentData = CSVdata[j];
 
-        var email, phone; // Initialize email and phone variables here
+      var email, phone; // Initialize email and phone variables here
 
-        for (let i = 0; i < currentData.length; i++) {
-            var currentEntry = currentData[i];
-            console.log(currentEntry, i);
+      for (let i = 0; i < currentData.length; i++) {
+        var currentEntry = currentData[i];
+        console.log(currentEntry, i);
 
-            if (currentEntry.ActuallName === 'emailId') {
-                email = currentEntry.displayName; // Assign to email variable
-            }
-            if (currentEntry.ActuallName === 'Phone_number') {
-                phone = currentEntry.displayName; // Assign to phone variable
-            }
+        if (currentEntry.ActuallName === 'emailId') {
+          email = currentEntry.displayName; // Assign to email variable
         }
-
-        var emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-        var phoneno = /^[0-9]{6,15}$/;
-
-
-        if ((!email || !email.match(emailFormat)) || (!phone || !phone.match(phoneno))) {
-            errData.push(currentData);
-        } else {
-            queryData.push(currentData.find(entry => entry.ActuallName === identifier).displayName);
-            importData.push(currentData);
+        if (currentEntry.ActuallName === 'Phone_number') {
+          phone = currentEntry.displayName; // Assign to phone variable
         }
+      }
+
+      var emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+      var phoneno = /^[0-9]{6,15}$/;
+
+
+      if ((!email || !email.match(emailFormat)) || (!phone || !phone.match(phoneno))) {
+        errData.push(currentData);
+      } else {
+        queryData.push(currentData.find(entry => entry.ActuallName === identifier).displayName);
+        importData.push(currentData);
+      }
     }
 
     if (errData.length !== 0) {
-    
-        // Restructure errData to have ActuallName as header
-        var formattedErrData = errData.map(data => {
-            var formattedEntry = {};
-            data.forEach(entry => {
-                formattedEntry[entry.ActuallName] = entry.displayName;
-            });
-            return formattedEntry;
+
+      // Restructure errData to have ActuallName as header
+      var formattedErrData = errData.map(data => {
+        var formattedEntry = {};
+        data.forEach(entry => {
+          formattedEntry[entry.ActuallName] = entry.displayName;
         });
-    
-        // Write error data to CSV file
-        const json2csvParser = new Parser({ fields: Object.keys(formattedErrData[0]) });
-        const csv = json2csvParser.parse(formattedErrData);
-        fs.writeFile("CSVerr.csv", csv, function (err) {
-            if (err) {
-                res.send(err);
-            }
-            console.log('File Saved');
-        });
-        res.attachment("CSVerr.csv");
-    
-    
+        return formattedEntry;
+      });
+
+      // Write error data to CSV file
+      const json2csvParser = new Parser({ fields: Object.keys(formattedErrData[0]) });
+      const csv = json2csvParser.parse(formattedErrData);
+      fs.writeFile("CSVerr.csv", csv, function (err) {
+        if (err) {
+          res.send(err);
+        }
+        console.log('File Saved');
+      });
+      res.attachment("CSVerr.csv");
+
+
     }
 
     if (importData.length > 0) {
-        // Execute query and handle purpose
-        var verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)';
-        var result = await db.excuteQuery(verifyQuery, [queryData, SP_ID]);
-     
+      // Execute query and handle purpose
+      var verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)';
+      var result = await db.excuteQuery(verifyQuery, [queryData, SP_ID]);
 
-        try {
-            if (purpose === 'Add new contact only') {
-                res.status(200).send({
-                    newCon: Math.abs(importData.length - result.length),
-                    upCont: 0,
-                    skipCont: errData.length,
-                    importData: importData
-                });
-            } else if (purpose === 'Update Existing Contacts Only') {
-                res.status(200).send({
-                    newCon: 0,
-                    upCont: result.length,
-                    skipCont: errData.length,
-                    importData: importData
-                });
-            } else if (purpose === 'Add and Update Contacts') {
-                res.status(200).send({
-                    newCon: Math.abs(importData.length - result.length),
-                    upCont: result.length,
-                    skipCont: errData.length,
-                    importData: importData
-                });
-            }
-        } catch (err) {
-            console.log(err);
-            db.errlog(err);
-            res.status(500).send({
-                msg: err,
-                status: 500
-            });
-        }
-    } else {
-        // Send response with no new contacts
-        res.status(200).send({
-            newCon: 0,
+
+      try {
+        if (purpose === 'Add new contact only') {
+          res.status(200).send({
+            newCon: Math.abs(importData.length - result.length),
             upCont: 0,
             skipCont: errData.length,
             importData: importData
+          });
+        } else if (purpose === 'Update Existing Contacts Only') {
+          res.status(200).send({
+            newCon: 0,
+            upCont: result.length,
+            skipCont: errData.length,
+            importData: importData
+          });
+        } else if (purpose === 'Add and Update Contacts') {
+          res.status(200).send({
+            newCon: Math.abs(importData.length - result.length),
+            upCont: result.length,
+            skipCont: errData.length,
+            importData: importData
+          });
+        }
+      } catch (err) {
+        console.log(err);
+        db.errlog(err);
+        res.status(500).send({
+          msg: err,
+          status: 500
         });
+      }
+    } else {
+      // Send response with no new contacts
+      res.status(200).send({
+        newCon: 0,
+        upCont: 0,
+        skipCont: errData.length,
+        importData: importData
+      });
     }
-} catch (err) {
+  } catch (err) {
     console.error(err);
     db.errlog(err);
     res.status(500).send({
-        msg: err,
-        status: 500
+      msg: err,
+      status: 500
     });
-}
+  }
 
 })
 
-app.get('/downloadCSVerror', (req, res) => {
+app.get('/downloadCSVerror',authenticateToken, (req, res) => {
   try {
     console.log("downloadCSVerror")
     var file = path.join(__dirname, '/CSVerr.csv')
@@ -629,7 +637,7 @@ app.get('/downloadCSVerror', (req, res) => {
 
 
 
-app.get('/download', (req, res) => {
+app.get('/download',authenticateToken, (req, res) => {
   try {
     var file = path.join(__dirname, '/sample_file.csv')
 
@@ -646,7 +654,7 @@ app.get('/download', (req, res) => {
 })
 
 
-app.post('/blockedContact', (req, res) => {
+app.post('/blockedContact',authenticateToken, (req, res) => {
   try {
     let blockedQuery = val.isBlockedQuery
     console.log(req.body.isBlocked, "req.body.isBlocked == 1", req.body.isBlocked == 1)
@@ -678,7 +686,7 @@ let transporter = nodemailer.createTransport({
 });
 
 
-app.post('/addProfileImg', async (req, res) => {
+app.post('/addProfileImg',authenticateToken, async (req, res) => {
   try {
     customerId = req.body.customerId
     contact_profile = req.body.contact_profile
@@ -716,7 +724,7 @@ app.post('/addProfileImg', async (req, res) => {
 })
 
 
-app.get('/getProfileImg/:cuid', async (req, res) => {
+app.get('/getProfileImg/:cuid',authenticateToken, async (req, res) => {
   try {
     let getProfileQuery = `SELECT contact_profile FROM EndCustomer WHERE customerId=?`;
     let getProfile = await db.excuteQuery(getProfileQuery, [req.params.cuid]);
@@ -735,18 +743,18 @@ app.get('/getProfileImg/:cuid', async (req, res) => {
 })
 
 
-app.post('/addflow', async (req, res) => {
+app.post('/addflow',authenticateToken, async (req, res) => {
   try {
     // let getProfileQuery = `SELECT contact_profile FROM EndCustomer WHERE customerId=?`;
     // let getProfile = await db.excuteQuery(getProfileQuery, [req.params.cuid]);
     console.log(req.body)
     res.status(200).send({
-   
+
       status: 200
     });
   } catch (err) {
     console.error(err);
-  
+
     res.status(500).send({
       msg: err,
       status: 500

@@ -10,7 +10,7 @@ const database = "cip_project"
 //Query for dashboard
 interactionsQuery = `SELECT interaction_status, COUNT(*) AS count
 FROM Interaction
-WHERE SP_ID = ?
+WHERE SP_ID = ?  AND is_deleted !=1
 AND created_at >= now() - INTERVAL 30 DAY
 GROUP BY interaction_status
 
@@ -18,7 +18,7 @@ UNION
 
 SELECT 'Total Interactions' AS interaction_status, COUNT(*) AS count
 FROM Interaction
-WHERE SP_ID = ?
+WHERE SP_ID = ? AND  is_deleted !=1
 AND created_at >= now()  - INTERVAL 30 DAY; `;
 
 

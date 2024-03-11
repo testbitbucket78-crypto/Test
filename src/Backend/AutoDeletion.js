@@ -13,7 +13,7 @@ async function autoDeletion(){
     if(storageData?.length > 0){
         for(let data of storageData){
           
-            if(data.autodeletion_media != '-1'){
+            if(data.autodeletion_media != '-1' || data.autodeletion_media !=''){
             let deletemedia=await  awsHelper.deleteObjectFromBucket(data.autodeletion_media,data.SP_ID);
             }
             
@@ -23,7 +23,7 @@ async function autoDeletion(){
             }
     
             // delete messages
-            if(data.autodeletion_message != '-1'){
+            if(data.autodeletion_message != '-1' || data.autodeletion_message != ''){
             let deleteMessageQuery=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? AND created_at < ?`;
             const daysOfmessage = subtractDaysFromNow(data.autodeletion_message);
             let deletedMessage=await db.excuteQuery(deleteMessageQuery,[new Date(),data.SP_ID,daysOfmessage]);
@@ -31,11 +31,12 @@ async function autoDeletion(){
             }
            // delete contacts
 
-           if(data.autodeletion_contacts != '-1'){
+           if(data.autodeletion_contacts != '-1' || data.autodeletion_contacts !=''){
             let deleteContactQuery=`UPDATE EndCustomer set isDeleted=1,updated_at=? where SP_ID=? AND created_at < ?`
-
+          
             const daysOfcontact = subtractDaysFromNow(data.autodeletion_contacts);
            let deletedcontact=await db.excuteQuery(deleteContactQuery,[new Date(),data.SP_ID,daysOfcontact]);
+           let interactionDeletion = db.excuteQuery(`update Interaction SET is_deleted =1,updated_at=?  WHERE SP_ID=? AND created_at < ` ,[new Date(),data.SP_ID,daysOfcontact])
            }
         }
     }

@@ -90,8 +90,8 @@ const insertCustomers = async (req, res) => {
     }
 }
 
-const updatedCustomer = (req, res) => {
-
+const updatedCustomer = async (req, res) => {
+try{
     var updateQueryQuery = "UPDATE EndCustomer SET Name ='" + req.body.Name + "',";
     updateQueryQuery += " OptInStatus ='" + req.body.OptInStatus + "',"
     updateQueryQuery += " Phone_number ='" + req.body.Phone_number + "',"
@@ -104,8 +104,20 @@ const updatedCustomer = (req, res) => {
 
     updateQueryQuery += " WHERE customerId =" + req.body.customerId
 
-    console.log(updateQueryQuery)
-    db.runQuery(req, res, updateQueryQuery, [])
+    //console.log(updateQueryQuery)
+   let updateCustomer = await db.excuteQuery( updateQueryQuery, [])
+    res.send({
+        status:200,
+        updateCustomer:updateCustomer
+     })
+}catch(err){
+ console.log(err);
+ res.send({
+    status:500,
+    err:err
+ })
+}
+  
 
 
 }

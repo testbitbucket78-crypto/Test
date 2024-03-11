@@ -1,5 +1,6 @@
 const express = require('express');
 const router=express.Router();
+const authenticateToken = require('../Authorize');
 
 const organizationController=require('./organizationController');
 const profileController=require('./profileController');
@@ -10,156 +11,156 @@ const generalcontroller=require('./generalcontrolller')
 //_____________________________Organization Settings_______________________//
 
 
-router.post('/uploadCompanylogo',organizationController.uploadCompanylogo)
-router.post('/companyDetail',organizationController.savecompanyDetail)
-router.post('/localDetails',organizationController.savelocalDetails)
-router.post('/billingDetails',organizationController.savebillingDetails)
-router.post('/updateCompanyDetail',organizationController.updateCompanyDetail)
-router.post('/updateLocalDetails',organizationController.updateLocalDetails)
-router.post('/updatebillingDetails',organizationController.updatebillingDetails)
-router.get('/companyDetail/:spID',organizationController.getcompanyDetail)
-router.get('/localDetails/:spID',organizationController.getlocalDetails)
-router.get('/billingDetails/:spID',organizationController.getbillingDetails)
+router.post('/uploadCompanylogo',authenticateToken,organizationController.uploadCompanylogo)
+router.post('/companyDetail',authenticateToken,organizationController.savecompanyDetail)
+router.post('/localDetails',authenticateToken,organizationController.savelocalDetails)
+router.post('/billingDetails',authenticateToken,organizationController.savebillingDetails)
+router.post('/updateCompanyDetail',authenticateToken,organizationController.updateCompanyDetail)
+router.post('/updateLocalDetails',authenticateToken,organizationController.updateLocalDetails)
+router.post('/updatebillingDetails',authenticateToken,organizationController.updatebillingDetails)
+router.get('/companyDetail/:spID',authenticateToken,organizationController.getcompanyDetail)
+router.get('/localDetails/:spID',authenticateToken,organizationController.getlocalDetails)
+router.get('/billingDetails/:spID',authenticateToken,organizationController.getbillingDetails)
 
-router.post('/workingDetails',organizationController.saveworkingDetails)
-router.get('/workingDetails/:spID',organizationController.getworkingDetails)
-router.post('/updateWorkingHours',organizationController.updateWorkingHours)
+router.post('/workingDetails',authenticateToken,organizationController.saveworkingDetails)
+router.get('/workingDetails/:spID',authenticateToken,organizationController.getworkingDetails)
+router.post('/updateWorkingHours',authenticateToken,organizationController.updateWorkingHours)
 
-router.post('/holidays',organizationController.addholidays)
-router.get('/holidays/:spID/:dateFrom/:dateTo',organizationController.getHolidays)
-router.post('/removeHolidays',organizationController.removeHolidays)
+router.post('/holidays',authenticateToken,organizationController.addholidays)
+router.get('/holidays/:spID/:dateFrom/:dateTo',authenticateToken,organizationController.getHolidays)
+router.post('/removeHolidays',authenticateToken,organizationController.removeHolidays)
 
-router.get('/subrights',organizationController.subrights)
-router.get('/rights',organizationController.rights)
+router.get('/subrights',authenticateToken,organizationController.subrights)
+router.get('/rights',authenticateToken,organizationController.rights)
 
-router.post('/addRole',organizationController.addRole)
-router.get('/getRoles/:roleID/:spid',organizationController.getRolesbyroleIDspid)
-router.get('/getUser/:spid/:userType',organizationController.getUserbyspiduserType)
-router.get('/deleteRole/:roleID/:spid',organizationController.deleteRoleByroleIDspid)
+router.post('/addRole',authenticateToken,organizationController.addRole)
+router.get('/getRoles/:roleID/:spid',authenticateToken,organizationController.getRolesbyroleIDspid)
+router.get('/getUser/:spid/:userType',authenticateToken,organizationController.getUserbyspiduserType)
+router.get('/deleteRole/:roleID/:spid',authenticateToken,organizationController.deleteRoleByroleIDspid)
 
-router.post('/addUser',organizationController.addUser)
-router.get('/rolesList/:spid',organizationController.rolesListByspid)
-router.post('/deleteUser',organizationController.deleteUser)
-router.post('/editUser',organizationController.editUser)
-router.get('/getUser/:spid',organizationController.getUserByspid)
-router.get('/getUserByuid/:spid/:uid' ,organizationController.getUserByuid)
+router.post('/addUser',authenticateToken,organizationController.addUser)
+router.get('/rolesList/:spid',authenticateToken,organizationController.rolesListByspid)
+router.post('/deleteUser',authenticateToken,organizationController.deleteUser)
+router.post('/editUser',authenticateToken,organizationController.editUser)
+router.get('/getUser/:spid',authenticateToken,organizationController.getUserByspid)
+router.get('/getUserByuid/:spid/:uid',authenticateToken,organizationController.getUserByuid)
 
-router.post('/addTeam',organizationController.addTeam)
-router.post('/deleteTeam',organizationController.deleteTeam)
-router.post('/editTeam',organizationController.editTeam)
-router.get('/teamsList/:spid',organizationController.teamsListByspid)
+router.post('/addTeam',authenticateToken,organizationController.addTeam)
+router.post('/deleteTeam',authenticateToken,organizationController.deleteTeam)
+router.post('/editTeam',authenticateToken,organizationController.editTeam)
+router.get('/teamsList/:spid',authenticateToken,organizationController.teamsListByspid)
 
 
 //____________________________Profile Sttings_____________________________________//
 
-router.get('/teamName/:uid',profileController.teamName)
-router.get('/roleName/:uid',profileController.roleName)
-router.post('/userProfileImg',profileController.userProfile)
-router.post('/changePassword',profileController.changePassword)
-router.post('/userActiveStatus',profileController.userActiveStatus)
+router.get('/teamName/:uid',authenticateToken,profileController.teamName)
+router.get('/roleName/:uid',authenticateToken,profileController.roleName)
+router.post('/userProfileImg',authenticateToken,profileController.userProfile)
+router.post('/changePassword',authenticateToken,profileController.changePassword)
+router.post('/userActiveStatus',authenticateToken,profileController.userActiveStatus)
 
-router.post('/addNotification',profileController.addNotification)
-router.get('/getNotification/:UID',profileController.getNotificationByUid)
+router.post('/addNotification',authenticateToken,profileController.addNotification)
+router.get('/getNotification/:UID',authenticateToken,profileController.getNotificationByUid)
 
-router.post('/savePlan',profileController.saveManagePlan)
-router.post('/saveBillingHistory',profileController.saveBillingHistory)
-router.get('/getBillingDetails/:spid',profileController.getBillingDetails)
+router.post('/savePlan',authenticateToken,profileController.saveManagePlan)
+router.post('/saveBillingHistory',authenticateToken,profileController.saveBillingHistory)
+router.get('/getBillingDetails/:spid',authenticateToken,profileController.getBillingDetails)
 
-router.get('/pdf/:spid',profileController.invoicePdf)
-router.get('/invoiceDetails/:spid',profileController.invoiceDetails)
+router.get('/pdf/:spid',authenticateToken,profileController.invoicePdf)
+router.get('/invoiceDetails/:spid',authenticateToken,profileController.invoiceDetails)
 
-router.get('/usesData/spid',profileController.usesData)
-router.get('/usageInsight/:spid',profileController.UsageInsightCon)
-router.get('/ApproximateCharges/:spid',profileController.ApproximateCharges)
-router.get('/deletePaymentMethod/:spid',profileController.deletePaymentMethod)
-router.get('/getAvailableAmout/:spid',profileController.getAvailableAmout)
-router.post('/addfunds',profileController.addfunds)
-router.get('/subFAQS/:id',profileController.getSubFAQS)
-router.get('/FAQs',profileController.getFAQs)
-router.get('/userGuideTopics',profileController.UserGuideTopics)
-router.get('/userGuideSubTopics/:id',profileController.UserGuideSubTopics)
-router.post('/SPTransations',profileController.addSPTransations)
-router.get('/managePlan',profileController.getmanagePlansandCharges)
+router.get('/usesData/spid',authenticateToken,profileController.usesData)
+router.get('/usageInsight/:spid',authenticateToken,profileController.UsageInsightCon)
+router.get('/ApproximateCharges/:spid',authenticateToken,profileController.ApproximateCharges)
+router.get('/deletePaymentMethod/:spid',authenticateToken,profileController.deletePaymentMethod)
+router.get('/getAvailableAmout/:spid',authenticateToken,profileController.getAvailableAmout)
+router.post('/addfunds',authenticateToken,profileController.addfunds)
+router.get('/subFAQS/:id',authenticateToken,profileController.getSubFAQS)
+router.get('/FAQs',authenticateToken,profileController.getFAQs)
+router.get('/userGuideTopics',authenticateToken,profileController.UserGuideTopics)
+router.get('/userGuideSubTopics/:id',authenticateToken,profileController.UserGuideSubTopics)
+router.post('/SPTransations',authenticateToken,profileController.addSPTransations)
+router.get('/managePlan',authenticateToken,profileController.getmanagePlansandCharges)
 
 
 //________________________ Notification_____________________//
 
-router.get('/getNotifications/:spid',notification.notification)
+router.get('/getNotifications/:spid',authenticateToken,notification.notification)
 
 //_________________________Campaign Settings__________________//
 
-router.post('/addCampaignTimings',campaignController.addCampaignTimings)
-router.post('/updateCampaignTiming',campaignController.updateCampaignTimings)
-router.get('/selectCampaignTimings/:sid',campaignController.selectCampaignTimings)
-router.get('/getCampaignAlertUserList/:sid',campaignController.getUserList)
-router.post('/addAndUpdateCampaign',campaignController.addAndUpdateCampaign)
-router.get('/selectCampaignAlerts/:sid',campaignController.selectCampaignAlerts)
-router.post('/addCampaignTest',campaignController.addCampaignTest)
-router.get('/selectCampaignTest/:sid',campaignController.selectCampaignTest)
-router.post('/testCampaign',campaignController.testCampaign)
+router.post('/addCampaignTimings',authenticateToken,campaignController.addCampaignTimings)
+router.post('/updateCampaignTiming',authenticateToken,campaignController.updateCampaignTimings)
+router.get('/selectCampaignTimings/:sid',authenticateToken,campaignController.selectCampaignTimings)
+router.get('/getCampaignAlertUserList/:sid',authenticateToken,campaignController.getUserList)
+router.post('/addAndUpdateCampaign',authenticateToken,campaignController.addAndUpdateCampaign)
+router.get('/selectCampaignAlerts/:sid',authenticateToken,campaignController.selectCampaignAlerts)
+router.post('/addCampaignTest',authenticateToken,campaignController.addCampaignTest)
+router.get('/selectCampaignTest/:sid',authenticateToken,campaignController.selectCampaignTest)
+router.post('/testCampaign',authenticateToken,campaignController.testCampaign)
 
 
 //______________________Contact Settings_______________________//
 
-router.post('/addupdateTag',campaignController.addTag)
-router.get('/selectTag/:spid',campaignController.gettags)
-router.post('/deleteTag',campaignController.deleteTag)
+router.post('/addupdateTag',authenticateToken,campaignController.addTag)
+router.get('/selectTag/:spid',authenticateToken,campaignController.gettags)
+router.post('/deleteTag',authenticateToken,campaignController.deleteTag)
 
-router.post('/addCustomField',campaignController.addCustomField)
-router.post('/editCustomField',campaignController.editCustomField)
-router.get('/getCustomField/:spid',campaignController.getCustomField)
-router.get('/getCustomFieldById/:id',campaignController.getCustomFieldById)
-router.post('/deleteCustomField/:id',campaignController.deleteCustomField)
-router.post('/enableMandatory',campaignController.enableMandatoryfield)
-router.post('/enableStatus',campaignController.enableStatusfield)
+router.post('/addCustomField',authenticateToken,campaignController.addCustomField)
+router.post('/editCustomField',authenticateToken,campaignController.editCustomField)
+router.get('/getCustomField/:spid',authenticateToken,campaignController.getCustomField)
+router.get('/getCustomFieldById/:id',authenticateToken,campaignController.getCustomFieldById)
+router.post('/deleteCustomField/:id',authenticateToken,campaignController.deleteCustomField)
+router.post('/enableMandatory',authenticateToken,campaignController.enableMandatoryfield)
+router.post('/enableStatus',authenticateToken,campaignController.enableStatusfield)
 
 //_______________________TEMPLATE_________________________//
 
-router.post('/addTemplate',campaignController.addTemplate)  //  isTemplate  value 0 for quick response , 1 for template ,(2 for gallary and spid =0 )
-router.get('/getTemplate/:spid/:isTemplate',campaignController.getTemplate)
-router.get('/getApprovedTemplate/:spid/:isTemplate',campaignController.getApprovedTemplate)
-router.post('/deleteTemplates',campaignController.deleteTemplates)
-router.post('/addGallery',campaignController.addGallery)
-router.get('/getGallery/:spid/:isTemplate',campaignController.getGallery)  // pass spid=0,isTemplate=2
-router.get('/exitTemplate/:spid/:isTemplate/:name',campaignController.isExistTemplate);  // istemplate=1
+router.post('/addTemplate',authenticateToken,campaignController.addTemplate)  //  isTemplate  value 0 for quick response , 1 for template ,(2 for gallary and spid =0 )
+router.get('/getTemplate/:spid/:isTemplate',authenticateToken,campaignController.getTemplate)
+router.get('/getApprovedTemplate/:spid/:isTemplate',authenticateToken,campaignController.getApprovedTemplate)
+router.post('/deleteTemplates',authenticateToken,campaignController.deleteTemplates)
+router.post('/addGallery',authenticateToken,campaignController.addGallery)
+router.get('/getGallery/:spid/:isTemplate',authenticateToken,campaignController.getGallery)  // pass spid=0,isTemplate=2
+router.get('/exitTemplate/:spid/:isTemplate/:name',authenticateToken,campaignController.isExistTemplate);  // istemplate=1
 //__________________ACCOUNT API'S__________________________//
 
-router.post('/addWhatsAppDetails',accountController.insertAndEditWhatsAppWeb)
-router.get('/getWhatsAppDetails/:spid',accountController.selectDetails)
+router.post('/addWhatsAppDetails',authenticateToken,accountController.insertAndEditWhatsAppWeb)
+router.get('/getWhatsAppDetails/:spid',authenticateToken,accountController.selectDetails)
 
-router.post('/addToken',accountController.addToken)
-router.post('/editToken',accountController.editToken)
-router.get('/deleteToken/:id',accountController.deleteToken)
-router.post('/isEnableToken',accountController.enableToken)
-router.get('/selectToken/:spid',accountController.selectToken)
-router.get('/createInstanceID',accountController.createInstance)
-router.post('/qrCodeData',accountController.getQRcode)
-router.post('/generateQRcode',accountController.generateQRcode)
-router.post('/testwebhook',accountController.testWebhook)
+router.post('/addToken',authenticateToken,accountController.addToken)
+router.post('/editToken',authenticateToken,accountController.editToken)
+router.get('/deleteToken/:id',authenticateToken,accountController.deleteToken)
+router.post('/isEnableToken',authenticateToken,accountController.enableToken)
+router.get('/selectToken/:spid',authenticateToken,accountController.selectToken)
+router.get('/createInstanceID',authenticateToken,accountController.createInstance)
+router.post('/qrCodeData',authenticateToken,accountController.getQRcode)
+router.post('/generateQRcode',authenticateToken,accountController.generateQRcode)
+router.post('/testwebhook',authenticateToken,accountController.testWebhook)
 
 //__________________________General Settings____________________________//
 
-router.post('/defaultaction',generalcontroller.defaultaction)
-router.get('/generalcontroller/:spid',generalcontroller.getdefaultaction)
+router.post('/defaultaction',authenticateToken,generalcontroller.defaultaction)
+router.get('/generalcontroller/:spid',authenticateToken,generalcontroller.getdefaultaction)
 
-router.get('/getdefaultmessages/:spid',generalcontroller.getdefaultmessages)
-router.post('/Abledisable',generalcontroller.Abledisable)
-router.post('/savedefaultmessages',generalcontroller.savedefaultmessages)
-router.post('/uploadimg',generalcontroller.uploadimg)
-router.post('/addAndUpdateDefaultMsg',generalcontroller.addAndUpdateDefaultMsg)
-router.post('/deletedefaultactions',generalcontroller.deletedefaultactions)
+router.get('/getdefaultmessages/:spid',authenticateToken,generalcontroller.getdefaultmessages)
+router.post('/Abledisable',authenticateToken,generalcontroller.Abledisable)
+router.post('/savedefaultmessages',authenticateToken,generalcontroller.savedefaultmessages)
+router.post('/uploadimg',authenticateToken,generalcontroller.uploadimg)
+router.post('/addAndUpdateDefaultMsg',authenticateToken,generalcontroller.addAndUpdateDefaultMsg)
+router.post('/deletedefaultactions',authenticateToken,generalcontroller.deletedefaultactions)
 
 
-router.post('/rotingsave',generalcontroller.rotingsave)
-router.get('/getroutingrules/:spid',generalcontroller.getroutingrules)
+router.post('/rotingsave',authenticateToken,generalcontroller.rotingsave)
+router.get('/getroutingrules/:spid',authenticateToken,generalcontroller.getroutingrules)
 
-router.post('/savemanagestorage',generalcontroller.savemanagestorage)
+router.post('/savemanagestorage',authenticateToken,generalcontroller.savemanagestorage)
 
-router.get('/getautodeletion/:spid',generalcontroller.getautodeletion)
+router.get('/getautodeletion/:spid',authenticateToken,generalcontroller.getautodeletion)
 
 //_______************_______________//
-router.post('/manualDelation',generalcontroller.manualDelation)
-router.post('/getmanualDelation',generalcontroller.deletedDetails)
+router.post('/manualDelation',authenticateToken,generalcontroller.manualDelation)
+router.post('/getmanualDelation',authenticateToken,generalcontroller.deletedDetails)
 
 
 module.exports = router;
