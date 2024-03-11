@@ -252,15 +252,19 @@ export class ImportComponent implements OnInit {
 		  // Iterate over each field in the row
 		  for (let j = 0; j < row.length; j++) {
 			const mapping = row[j];
+			if (mapping?.ActuallName !== undefined) {
 			const formData = {
 			  displayName: mapping?.displayName,
 			  ActuallName: mapping?.ActuallName
 			};
 			rowData.push(formData);
 		  }
-	  
-		  // Push rowData to result
-		  this.ContactFormData.result.push(rowData);
+		}
+
+		  // Check if rowData has any valid fields before pushing
+		  if (rowData.length > 1) {
+			this.ContactFormData.result.push(rowData);
+		  }
 		}
 	  
 		return this.ContactFormData;
@@ -281,26 +285,27 @@ export class ImportComponent implements OnInit {
 		console.log(this.importCSVdata,'filtered csv data', this.skipCont)
 		// api call to add contacts in a bulk manner
 
-		if(this.skipCont==0) {
+		if(this.numberOfNewContact !== 0) {
 			this.apiService.importContact(bodyData).subscribe(
 				(response:any) => {
 				if (response.status === 200) {
 					this.modalService.open(modal);
 					$("#importmodal").modal('hide'); 
 					this.file=null;
+					this.displayNameChecked = [];
 					this.stepper.reset()
 					this.getContact.emit('');
 				}
 			},
 				(error)=> {
 					if(error) {
-						console.log(error,'error importing Contacts from csv.');
+						this.showToaster('Error importing contacts from CSV file.','error');
 					}
 				});
 		}
 
 		else {
-			console.log('errors in csv')
+			this.showToaster('Errors in your CSV File, Please Resolve them first than try again!','error')
 		}
 
 
@@ -392,6 +397,14 @@ export class ImportComponent implements OnInit {
 				if (val === '') {
 					val = null;
 				}
+				  // Handle special case for the "tag" column
+				  if (propertyName === 'Tag') {
+					// Trim whitespace and remove extra double quotes
+					val = val.trim().replace(/^"(.*)"$/, '$1');
+					// Split by comma and remove surrounding double quotes
+					val = val.split(',').map((tag: string) => tag.trim().replace(/^"(.*)"$/, '$1'));
+				  }
+			
 				obj[propertyName] = val;
 
 			}

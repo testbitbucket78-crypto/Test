@@ -723,10 +723,12 @@ span {
   .select-placeholder {
     font-size: 11px;
     font-weight: 300;
-    // color: #7A86A1;
-    color: #000000;
+    color: #000;
   }
 
+  .column_mapping_field select::placeholder {
+    color: #7A86A1!important;
+  }
 
 
 // custom styling for checkbox and label //
