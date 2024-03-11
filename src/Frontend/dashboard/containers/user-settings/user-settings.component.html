@@ -135,7 +135,7 @@
     </div>
     <div class="sidebar-content">
         <div class="d-flex pb-3">
-            <span class="user-status">{{userData.isActive ==1 ?'Active' : userData.isActive == 0 ? 'In Active' : 'Disabled'}} </span>
+            <span class="user-status">{{userData?.IsActive ==1 ?'Active' : userData?.IsActive == 0 ? 'In Active' : 'Disabled'}} </span>
             <p class="user-id">Agent Id:</p>
             <p class="black mt-1"> {{userData?.uid}}</p>
         </div>

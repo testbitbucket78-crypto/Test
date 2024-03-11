@@ -215,6 +215,7 @@ export class RolesSettingsComponent implements OnInit {
             if (result) {
                 this.getRolesList();
                 $('#rolesModal').modal('hide');
+                this.showSideBar = false;
             }
         });
     } else{
@@ -298,7 +299,7 @@ export class RolesSettingsComponent implements OnInit {
         this.subPrivileges.forEach((idx:any)=>{
            let val = this.subRightRes.filter((item:any)=> item.id == Number(idx));
            console.log(val);
-           if(val)
+           if(val[0])
            this.selectedSubRights.push(val[0]);
         });
         console.log(this.selectedSubRights);

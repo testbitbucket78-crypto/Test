@@ -208,14 +208,8 @@ saveWhatsappWebDetails(id:number) {
  }
 
 openDiv() {
-
-  if(this.phoneType && this.conversationType) {
     $("#qrWhatsappModal").modal('show');
     this.generateQR();
-  }
-  else {
-    this.showToaster('! Please select your phone type and choose whether to import conversations or not.','error');
-  }
   
 }
 
@@ -226,8 +220,9 @@ openDiv() {
       spid: this.spid,
       phoneNo: this.phoneNumber
     }
+    var id =0;
     if (this.selectedId?.length > 0) {
-      var id= this.selectedId[this.selectedId?.length - 1] ? this.selectedId[this.selectedId?.length - 1] :0;
+      id= this.selectedId[this.selectedId?.length - 1] ? this.selectedId[this.selectedId?.length - 1] :0;
    }
     try {
       this.apiService.craeteQRcode(data).subscribe(

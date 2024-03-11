@@ -48,6 +48,9 @@ export class QuickResponseComponent implements OnInit {
   ischannel='';
   isWhatsappWeb:boolean = false;
   isWhatsappOfficial:boolean = false;
+  errorMessage = '';
+	successMessage = '';
+	warnMessage = '';
 
   
   fileName: any; 
@@ -155,6 +158,11 @@ filterQuickRes(){
 
 
   saveTemplate(){
+    let val = this.usertemplateForm.controls.Header.value;
+    let temp = this.templates.filter(item => item.Header == val)[0];
+    if(temp)
+    this.showToaster('Quick response already exist with this name !','error');
+    else{
     if(this.usertemplateForm.valid){
     let userData=this.saveformmtemplate();
     this.apiService.addTemplate(userData).subscribe(response=>{
@@ -162,11 +170,13 @@ filterQuickRes(){
         this.Template();          
       $("#welcomGreeting").modal('hide');          
       $("#deleteModal").modal('hide');          
+      this.showCampaignDetail = false;          
       }
     });
   }else{
     this.usertemplateForm.markAllAsTouched();
   }
+}
   }
 
 
@@ -295,5 +305,36 @@ editQuickResponse(){
 
 getCharacterCount(val:string) {
  this.numberCount = val.length;
+}
+
+checkQuickResponseName(e:any){
+let val = e.target.value;
+let temp = this.templates.filter(item => item.Header == val)[0];
+if(temp)
+this.showToaster('Quick response already exist with this name !','error');
+
+}
+
+
+showToaster(message:any,type:any){
+  if(type=='success'){
+    this.successMessage=message;
+  }	
+  else if(type=='warn'){
+    this.warnMessage=message;
+  }
+  else if(type=='error'){
+    this.errorMessage=message;
+  }
+
+  setTimeout(() => {
+    this.hideToaster()
+  }, 5000);
+  
+}
+hideToaster(){
+  this.successMessage='';
+  this.warnMessage='';
+  this.errorMessage='';
 }
 }

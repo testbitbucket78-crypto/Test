@@ -4,6 +4,7 @@ import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from './../../services';
+import { DatePipe } from '@angular/common';
 declare var $: any;
 
 @Component({
@@ -91,6 +92,7 @@ export class CampaignsComponent implements OnInit {
 	 showScheduleTimeOption:any=false;
 	 ScheduleTimeList:any=['12:00 Am','12:15 Am','12:30 Am','12:30 Am'];
 	 selecteScheduleTime:any='';
+	 selectedScheduleTime:any='';
 	 showTimeZoneOption:any=false;
 	 selecteTimeZone:any='GMT +5:30';
 	 timeZonesList:any=['GMT +5:30','GMT +5:30','GMT +5:30']
@@ -297,7 +299,9 @@ export class CampaignsComponent implements OnInit {
 	showErrorMessage: boolean = false;
 	
 	 
-constructor(config: NgbModalConfig, private modalService: NgbModal,private apiService: TeamboxService,public settingsService:SettingsService,private fb: FormBuilder,private router: Router,private el: ElementRef) {
+constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,
+	private apiService: TeamboxService,public settingsService:SettingsService,
+	private fb: FormBuilder,private router: Router,private el: ElementRef) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -1086,7 +1090,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private apiSe
 	  
 
 	 selectScheduleTime(event:any){
-		this.selecteScheduleTime= event.target.value
+		this.selecteScheduleTime= event.target.value;
+		this.selectedScheduleTime= new Date(event.target.valueAsDate).toLocaleTimeString()
 	  }
 
     
