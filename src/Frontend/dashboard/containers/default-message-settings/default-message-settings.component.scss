@@ -202,6 +202,10 @@ input[type="radio"] {
   cursor: pointer;
  }
 
+ .sb-nav-fixed {
+  color: #000!important;
+ }
+
 // type image
 
 .sel-type-image {
@@ -610,6 +614,7 @@ textarea::placeholder {
 .e-richtexteditor .e-rte-toolbar.e-rte-tb-float, 
 .e-richtexteditor .e-rte-toolbar.e-toolbar.e-extended-toolbar.e-rte-tb-float {
   position: absolute;
+  top: -2px!important;
 }
 
 .e-richtexteditor .e-rte-content .e-content, .e-richtexteditor .e-source-content .e-content {
@@ -669,6 +674,7 @@ textarea::placeholder {
 #defaultRTE_toolbar {
     text-align: center;
     top: 0;
+    width: 386px!important;
 }
 
 #defaultRTErte-view {
@@ -691,9 +697,9 @@ textarea::placeholder {
   font-size: 11px;
   font-weight: 500;
   word-wrap: break-word;
-  // overflow: scroll;
-  // overflow-x: hidden;
-  // height: 200px;
+  overflow: scroll;
+  overflow-x: hidden;
+  height: 50vh;
 }
 
 .message_data.preview {
@@ -881,6 +887,10 @@ textarea::placeholder {
 .switch-text p {
   font-weight: 600;
   font-weight: 0.875rem;
+}
+
+p span {
+  color: #000000!important;
 }
 
 
