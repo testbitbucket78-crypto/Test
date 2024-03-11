@@ -281,6 +281,7 @@ export class UserSettingsComponent implements OnInit {
         let userData = <any>{};
         userData.uid = this.uid;
         userData.isActive = !this.isActive? 2 : 1;
+        this.userData.IsActive = !this.isActive? 2 : 1;        
         this._settingsService.activeUser(userData).subscribe(result => {
             if (result) {
                 this.getUserList();
@@ -313,7 +314,7 @@ export class UserSettingsComponent implements OnInit {
         }
 
     getFirstName(name:any){
-        const nameParts = name.split(' ');
+        const nameParts = name?.split(' ');
         const firstName = nameParts[0] || '';
         const lastName = nameParts[1] || '';
         let firstLetterFirstName = firstName.charAt(0) || '';

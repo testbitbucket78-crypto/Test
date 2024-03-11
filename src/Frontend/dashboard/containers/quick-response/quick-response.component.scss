@@ -818,6 +818,7 @@ input[type="radio"]:checked + label::before {
     height: 45px;
     text-align: center;
     cursor: pointer;
+    background: #6149cd;
 }
 
 .type_label img {

@@ -37,6 +37,9 @@ totalRights:any[]= [];
 rolesList:any;
 userDetailForm!:FormGroup;
 
+errorMessage = '';
+successMessage = '';
+warnMessage = '';
 
 
 
@@ -300,4 +303,33 @@ campaignTestData:any;
     this.isAlertUser = false;          
     this.selectUsers(this.campaignTestData);
   }
+
+  showCountWarning(){
+    if(!this.getCheckedCount()){
+      this.showToaster(`! Only users ${this.isAlertUser ? '5' : '2'} can be selected`, 'error');   
+    }
+  }
+
+  showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}	
+		else if(type=='warn'){
+			this.warnMessage=message;
+		}
+		else if(type=='error'){
+			this.errorMessage=message;
+		}
+	
+		setTimeout(() => {
+			this.hideToaster()
+		}, 5000);
+		
+	}
+	hideToaster(){
+		this.successMessage='';
+		this.warnMessage='';
+		this.errorMessage='';
+	}
+
 }

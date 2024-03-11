@@ -50,6 +50,9 @@ export class LoginComponent implements OnInit {
                     this.parentId = result.user.ParentId;
                     sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
                     sessionStorage.setItem('SP_ID', result.user.SP_ID);
+                    localStorage.setItem('bearerToken',result.token);
+                    console.log(result, '-------token');
+                    console.log(localStorage.getItem('bearerToken'));
                     this.router.navigate(['dashboard']);
 
                     var spid = Number(sessionStorage.getItem('SP_ID'));

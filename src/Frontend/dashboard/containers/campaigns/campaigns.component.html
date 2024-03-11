@@ -35,10 +35,10 @@
 			<p class="campaigns_content_heading"><img src="../../../../assets/img/info-icon.png" (click)=" toggleContactOption()">
 				
 				</p>
-				<div  *ngIf="ShowContactOwner" class="showInfoFallback">
+				<div  *ngIf="ShowContactOwner" class="showInfoFallback1">
 					<p id="p-body">You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
 					</p>
-					<button id="radio-close-btn" (click)="stopPropagation($event)">X</button>
+					<button id="radio-close-btn" (click)="ShowContactOwner = false">X</button>
 				  </div>
 				 <!-- <div *ngIf="ShowContactOwner" class=" ContactOption" (click)="stopPropagation($event)">
 				<p><span>Messaging limit:</span>WhatsApp enforces a policy limiting business to 1,000 messages per 24-hour period to prevent spam and maintain a quality user experience. However there is no cap on receiving messages from users.</p>
@@ -1397,7 +1397,7 @@
 							<div *ngIf="scheduled==1">
 								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
 								<p>You are about to schedule</p>
-								<p><span>Please confirm the <b class="title-value camp-heading">{{newCampaignDetail.value.title}}</b> campaign will take place on <b  class="title-value camp-heading">{{selecteScheduleDate}} at {{selecteScheduleTime}}.</b></span></p>
+								<p><span>Please confirm the <b class="title-value camp-heading">{{newCampaignDetail.value.title}}</b> campaign will take place on <b  class="title-value camp-heading">{{selecteScheduleDate}} at {{selectedScheduleTime}}.</b></span></p>
 								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
 								</p>
 							</div>

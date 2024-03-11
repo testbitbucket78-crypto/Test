@@ -189,7 +189,7 @@
                             <div class=" manage-user col-6">
                                 <label class="container"  let i = "index">
                                     <img src="../../../../assets/img/profile/Richie_3.png" class="user-img mx-2">{{item.name}}                  
-                                    <input type="checkbox" name="status" class="user-checkbox" [disabled]="getCheckedCount() && !item.isSelected"  [(ngModel)]="item.isSelected" value={{item.value}}>   
+                                    <input type="checkbox" name="status" class="user-checkbox" (click)="showCountWarning()" [disabled]="getCheckedCount() && !item.isSelected"  [(ngModel)]="item.isSelected" value={{item.value}}>   
                                       <span class="checkmark ml-2"></span>  
                                 </label>
                             </div>
@@ -215,3 +215,10 @@
     
   </div>
 </div>
+
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+  </div>
+
