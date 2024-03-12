@@ -52,6 +52,7 @@ export class CampaignsComponent implements OnInit {
 	 showAdvance:any=false;
 	 ShowChannelOption:any=false;
 	 activeStep:any=1;
+	 isEditCampaign:any=false;
 	 newCampaignDetail: any;
 	 TemplateMediaSource:any=0;
 	 importantContact:any=false;
@@ -110,6 +111,7 @@ export class CampaignsComponent implements OnInit {
 
 
 	 allTemplates:any=[];
+	 initallTemplates:any=[];
 	 allTemplatesMain:any=[];
 	 selectedTemplate:any=[];
 	 templatesVariable:any=[];
@@ -488,7 +490,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				else{
 					item['status_label'] ='draft'
 				}
-				item['start_datetime_formated']=this.formattedDate(item.start_datetime)
+				item['start_datetime_formated']=this.formateDate(item.start_datetime)
 				item['created_datetime_formated']=this.formattedDate(item.created_at)
 
 				if(item.channel_id==1){
@@ -605,8 +607,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				}else{
 					item['status_label'] ='draft'
 				}
-				item['start_datetime_formated']=this.formattedDate(item.start_datetime)
-				item['created_datetime_formated']=this.formattedDate(item.created_at)
+				item['start_datetime_formated']=this.formateDate(item.start_datetime)
+				item['created_datetime_formated']=this.formateDate(item.created_at)
 
 				if(item.channel_id==1){
 					item['channel_label'] ='WhatsApp Official'
@@ -678,7 +680,14 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		
 	}
 
-
+formateDate(dateTime:string){
+	let date = dateTime.split('Z').join('').trim();
+	if(new Date(date) && new Date(date).toString() != 'Invalid Date'){
+	return this.datepipe.transform(new Date(date), 'dd MMMM YY, HH:mm a') ;
+	}else{
+		return 'N/A';
+	}
+}
 
 	formattedDate(dateTime:any){
 		var date = dateTime
@@ -1091,7 +1100,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 	 selectScheduleTime(event:any){
 		this.selecteScheduleTime= event.target.value;
-		this.selectedScheduleTime= new Date(event.target.valueAsDate).toLocaleTimeString()
+		//this.selectedScheduleTime= new Date(event.target.valueAsDate).toLocaleTimeString()
+		this.selectedScheduleTime = new Date(new Date(new Date().setHours(event.target.value.split(':')[0],event.target.value.split(':')[1])).setSeconds(0)).toLocaleTimeString();
 	  }
 
     
@@ -1117,6 +1127,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.ShowChannelOption=false
 		console.log(this.allTemplates)
 		this.allTemplates = this.allTemplatesMain.filter((item:any) => item.Channel == channel.label);
+		this.initallTemplates =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item.Channel == channel.label)));
 	}
 
 	
@@ -1162,6 +1173,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	    }
 	}
 	openAddNew(addNewCampaign:any){
+		this.isEditCampaign = false;
 		this.activeStep=1;
 		this.newCampaignDetail= this.prepareCampaingForm();
 		this.step2Option='';
@@ -1172,6 +1184,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
 	editCampaign(addNewCampaign:any,step:any){
+		this.isEditCampaign = true;
 		console.log(this.selectedCampaign)
 		this.activeStep=step
 		this.newCampaignDetail.get('channel_id').setValue(this.selectedCampaign.channel_id);
@@ -1617,9 +1630,10 @@ testinfo(){
 	copyCampaign(){
 		let CampaignID = this.selectedCampaign.Id
 		this.apiService.copyCampaign(CampaignID).subscribe(campaignDelete =>{
-			this.getAllCampaigns()
-			this.selectedCampaign=[]
-			this.showCampaignDetail=false
+			this.getAllCampaigns();
+			this.showToaster('Campaign Copied', 'success');
+			this.selectedCampaign=[];
+			this.showCampaignDetail=false;
 		})
 
 	}
@@ -2132,6 +2146,7 @@ testinfo(){
 			this.allTemplatesMain = allTemplates.templates;
 			this.allTemplates = allTemplates.templates;
 			this.allTemplates = this.allTemplatesMain.filter((item:any) => item.Channel == this.newCampaignDetail.get('channel_label').value);
+			this.initallTemplates =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item.Channel == this.newCampaignDetail.get('channel_label').value)));
 		})
 		
 	}
@@ -2152,9 +2167,11 @@ testinfo(){
 		}
 	}
 
-	filterTemplate(temType:any){
+	filterTemplate(value:any,type:string){
 console.log(this.allTemplatesMain);
-		let allList  =this.allTemplatesMain;
+		let allList  =JSON.parse(JSON.stringify(this.initallTemplates));
+		let val = value.target.checked;
+		type =='Marketing' ? this.isMarketing = val : type =='Utility' ? this.isUtility = val: this.isAuthentication = val;
 		 	var newArray=[];
 		// isUtility:boolean = true;
 		// isMarketing:boolean = true;
@@ -2199,7 +2216,7 @@ console.log(this.allTemplatesMain);
 		
 	}
 	getVariables(sentence: string, first: string, last: string): string[] {
-		let goodParts: string[] = [this.selectedTemplate.Header];
+		let goodParts: string[] = [];
 
 		if (!sentence || sentence.trim() === '') {
 		  return goodParts;
@@ -2233,6 +2250,7 @@ console.log(this.allTemplatesMain);
 	  
 		  this.selectedTemplate['allVariables'] = allVariablesList;
 		  console.log(this.selectedTemplate, '-----selectedTemplate');
+		  console.log(JSON.parse(this.selectedTemplate?.template_json), '-----selectedTemplatexddsfg');
 		}
 	  }
 	  

@@ -239,7 +239,8 @@ deleteTemplate(){
 copyCampaign() {
   this.editQuickResponse();
   this.ID = 0;
-  $("#welcomGreeting").modal('show');
+  this.usertemplateForm.controls.Header.setValue('Copied ' + this.repliestemplateData.Header);
+  this.saveTemplate();
 }
 
 newQuickResponse(){

@@ -4,6 +4,7 @@ import { holidayData, workingData, workingDataResponse, workingDataResponsePost,
 import { time } from 'console';
 import { SettingsService } from '../../services/settings.service';
 import { isNullOrUndefined } from 'is-what';
+import { DatePipe } from '@angular/common';
 declare var $:any;
 
 @Component({
@@ -37,7 +38,7 @@ selectedDates:number[] =[];
 yearList:number[] =[];
 selectedPeriods: string[] = ['AM', 'PM'];
 
-  constructor(private _settingsService:SettingsService) { 
+  constructor(private _settingsService:SettingsService,private datepipe: DatePipe) { 
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     this.selectedYear =new Date().getFullYear();
    }
@@ -136,7 +137,9 @@ selectedPeriods: string[] = ['AM', 'PM'];
     workingResponse.days = [];
     this.workingFormData.forEach(item=>{
       if(item.day?.length >0){
-      workingResponse.days.push({day:item.day.toString(),startTime:item?.startTime,endTime:item?.endTime})
+        let st = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.startTime.split(':')[0]),Number(item?.startTime.split(':')[1])))),'HH:mm a');
+        let et = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.endTime.split(':')[0]),Number(item?.endTime.split(':')[1])))),'HH:mm a');
+      workingResponse.days.push({day:item.day.toString(),startTime:st ? st :'',endTime:et ? et :''});
       }
     });
     return workingResponse;

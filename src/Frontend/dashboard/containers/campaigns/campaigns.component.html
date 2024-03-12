@@ -158,7 +158,7 @@
 						</div>
 
 					</div>
-					<div class="template_btn">
+					<div class="template_btn" *ngIf="selectedCampaign.channel_label == 'WhatsApp Official'">
 						<button type="button" class="btn">YES</button>
 						<button type="button" class="btn">NO</button>
 						<button type="button" class="btn">EXPLORE</button>
@@ -212,34 +212,28 @@
 			</div>
 		<div class="modal-body filtercampaign">
 			<p class="label">Campaign Type</p>
-            <div class="input_group">
-				  
+            <div class="input_group">				  
 				  <label class="container" *ngFor="let status of campaignStatusOption ;let i = index">
 					{{status.label}}
 					<input [(ngModel)]="status.checked" type="checkbox" name="status" value={{status.value}} (click)="updateFilter($event,status)">
 					<span class="checkmark"></span>
-				  </label>
-			
+				  </label>			
 				</div>
 			<p class="label">By Channels</p>
-			<div class="input_group">
-				  
+			<div class="input_group">			  
 				  <label class="container" *ngFor="let channel of channelOption ;let i = index">
 					{{channel.label}}
 					<input [(ngModel)]="channel.checked" type="checkbox" name="channel" value={{channel.value}} (click)="updateFilter($event,channel)">
 					<span class="checkmark"></span>
 				  </label>
-
 			</div>
 			<p class="label">By Categories</p>
-			<div class="input_group">
-				  
+			<div class="input_group">				  
 				  <label class="container" *ngFor="let category of categoriesOption ;let i = index">
 					{{category.label}}
 					<input [(ngModel)]="category.checked" type="checkbox" name="category" value={{category.value}} (click)="updateFilter($event,category)">
 					<span class="checkmark"></span>
 				  </label>
-
 			</div>
 			<p class="label">By Date range</p>
 			<div class="input_value_group mt-0">
@@ -266,7 +260,7 @@
 	<ng-template #addNewCampaign let-c="close" let-d="dismiss">
 		<div class="modal-header">
 			<div class="modal-header-left">
-				<h4 class="modal-title" id="modal-basic-title">New Campaign</h4>
+				<h4 class="modal-title" id="modal-basic-title">{{isEditCampaign ? 'Edit Campaign' :'New Campaign'}}</h4>
 			</div>
 			<div class="modal-header-right">
 				<p class="close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/icon-close.svg"></p>
@@ -351,7 +345,7 @@
 					</div>
 					<div class="section_filter">
 						<label class="container market">
-							<input checked type="checkbox" name="template_filter"[(ngModel)]="isMarketing" value="Marketing" (click)="filterTemplate($event)">
+							<input checked type="checkbox" name="template_filter"[(ngModel)]="isMarketing" value="Marketing" (click)="filterTemplate($event,'Marketing')">
 							<span class="checkmark"></span>
 
 						</label>
@@ -366,7 +360,7 @@
 						  </div>
 						  <div *ngIf="Marketing" class="overlay" (click)="closeUtility()"  (click)="stopPropagation($event)"></div>
 						<label class="container market">
-							<input checked type="checkbox" name="template_filter" value="Utility" [(ngModel)]="isUtility" (click)="filterTemplate($event)">
+							<input checked type="checkbox" name="template_filter" value="Utility" [(ngModel)]="isUtility" (click)="filterTemplate($event,'Utility')">
 							<span class="checkmark"></span>
 						</label>
 							<p><span>Utility</span></p> 
@@ -381,7 +375,7 @@
 							  <div *ngIf="Utility" class="overlay" (click)="closeUtility()"></div>
 						
 						<label class="container market">
-							<input checked type="checkbox" name="template_filter" value="Authentication" [(ngModel)]="isAuthentication" (click)="filterTemplate($event)">
+							<input checked type="checkbox" name="template_filter" value="Authentication" [(ngModel)]="isAuthentication" (click)="filterTemplate($event,'Authentication')">
 							<span class="checkmark"></span>							
 						</label>
 						<p><span>Authentication  </span></p>
@@ -470,10 +464,11 @@
 							  </div>
 							
 							<div class="form_row" *ngFor='let variable of selectedTemplate.allVariables ;let i = index' >
-								<label>{{variable.label}} </label>
+								<label>{{variable.label}}</label>
 								<div>
 									<p class="form-control" *ngIf="segmentsContactList.length>0">
-										<input type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or map">
+										<input *ngIf="variable.label == '{{Phone_number}}'" type="number" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or add attribute">
+										<input *ngIf="variable.label != '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or add attribute">
 										<span  class="toggle_attribute" (click)="openAttributeOption(variable,AttributeOption)"></span>
 									</p>
 									<p class="form-control" *ngIf="csvContactList.length>0" >
@@ -576,10 +571,12 @@
 							<div class="btn_group" *ngFor='let variable of selectedTemplate.allVariables ;let i = index' >
 								<input type="text" value={{variable.label}} /> {{variable.value}}
 							</div>
+							<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1">
 							<p class="sub_title_sm blackcolor mt-2 mb-2">Button Payload</p>
 							<div class="btn_group"><input type="text" value="YES" /> {{selectedTemplate.button_yes}}</div>
 							<div class="btn_group"><input type="text" value="No" /> {{selectedTemplate.button_no}}</div>
 							<div class="btn_group"><input type="text" value="EXPLORE" /> {{selectedTemplate.button_exp}}</div>
+						</div>
 							</div>
 
 					</div>
@@ -1096,9 +1093,12 @@
 					</div>
 
 					<div class="applied_filter_popup">
-					    <div class="item" *ngFor="let filter of selectedcontactFilterBy.addeFilter; let i=index;let last = last;" (click)="removeFilter(i)" title="Click to remove">
+					    <div class="item" *ngFor="let filter of selectedcontactFilterBy.addeFilter; let i=index;let last = last;" title="Click to remove">
+							<div>
 							<span *ngIf="filter.filterOperator">{{filter.filterOperator}}</span>
 							<p>{{filter.filterPrefix}} {{filter.filterBy}} {{filter.filterValue}}</p>
+						</div>
+							<div  (click)="removeFilter(i)"><img src="../../../../assets/img/settings/remove.svg" /></div>
 						</div>
 					</div>	
 
@@ -1214,19 +1214,11 @@
 								<button *ngIf="last" type="button" class="btn add-btn" (click)="addNewFilter()">+ Add</button>
 							</div>
 					
-					</div>
-
-					
-					 
+					</div>					 
 				    <div  class="addnewitem_content_inner">
 					  <div class="input_group_btn">
 						<button type="button" class="submit-btn" (click)="addFilter()">Update</button>
 				    </div>
-
-					
-				 
-				
-				
 					</div>
 
 				</div>
@@ -1389,7 +1381,7 @@
 							<div *ngIf="scheduled==0">
 								<p><img src="../../../../assets/img/campaign/Send-o.svg"></p>
 								<p>You are about to send</p>
-								<p><span>To send your campaign</span> <span class="camp-heading">{{newCampaignDetail.value.title}}</span><span>, please confirm it.</span></p>
+								<p><span>To send your campaign </span> <span class="camp-heading">{{newCampaignDetail.value.title}}</span><span>, please confirm it.</span></p>
 								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Send</button></p>
 							
 							</div>

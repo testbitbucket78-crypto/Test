@@ -49,14 +49,14 @@
 			</ng-template>
 			</div>
 		 <button class="new-message-btn mx-3" data-bs-toggle="modal" data-bs-target="#welcomGreeting" (click)="newQuickResponse()">
-			<img class="icoon" src="/assets/img/teambox/add.svg"/> New Quick Response</button>
+			<img class="icoon" src="/assets/img/teambox/add.svg"/>New Quick Response</button>
 		 
 		
 		 <div class="modal quick-response-modal fade" tabindex="-1" id="welcomGreeting"  data-bs-backdrop="static" role="dialog">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content welcomGreeting p-2">
 					<div class="btnclosee">
-						<div class="quick-heading">New Quick Response</div>						
+						<div class="quick-heading">{{ID == 0 ? 'New Quick Response' : 'Edit Quick Response'}}</div>						
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
 							<img src="../../../../assets/img/teambox/icon-close.svg">
 						</button>
@@ -106,9 +106,9 @@
 								<h6>Message</h6> <span>{{numberCount}}/1024 Characters</span>
 							 </div>
 	
-							 <div *ngIf="selectedType === 'text'" class="sel-type-text">
+							 <!-- <div *ngIf="selectedType === 'text'" class="sel-type-text">
 								 <textarea name="text-editor" (keyup)="getCharacterCount($event.target.value)" formControlName="BodyText" maxlength="1024" rows="14" placeholder="Enter"></textarea>
-							 </div>
+							 </div> -->
 						</div>
 				 
 						
@@ -184,7 +184,7 @@
 					   </div> -->
 	
 	
-				 <div *ngIf="selectedType !== 'text'" >
+				 <div  >
 					<!-- <div class="d-inline-block flex-column sel-type-link">
 						<label for="link" id="link" >Link</label>
 						<input type="url" id="link" formControlName="Links" placeholder="Enter" >
@@ -213,7 +213,7 @@
 				</div>
 				</div>
 					<div class="modal-footer">
-						<button type="button" class="account-btn" (click)="saveTemplate()"  >Save</button>
+						<button type="button" class="account-btn" (click)="saveTemplate()"  >{{ID== 0 ? 'Save' : 'Update'}}</button>
 					</div>
 				</form>
 				</div>
