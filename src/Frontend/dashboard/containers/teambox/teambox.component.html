@@ -135,7 +135,7 @@
 							</div>
 							<div class="drop-down-btn">
 								<button
-									*ngIf="selectedInteraction?.progressbar?.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72"
+									*ngIf="selectedInteraction?.progressbar?.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 24"
 									style="margin:0 8px"
 									[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : 'drop-down-btn red-color'"
 									(click)="toggleConversationStatusOption()">
@@ -144,7 +144,7 @@
 									{{selectedInteraction.interaction_status}}
 								</button>
 
-								<button *ngIf="selectedInteraction?.progressbar?.progressbarValue >= 72"
+								<button *ngIf="selectedInteraction?.progressbar?.progressbarValue >= 24"
 									style="margin:0 8px" class="drop-down-btn green-color"
 									(click)="toggleConversationStatusOption()">
 									<img class="icon" src="/assets/img/teambox/checked_icon.png" /> Resolved
@@ -250,8 +250,8 @@
 											<span class="message_time"
 												*ngIf="message.created_at">{{timeSince(message.created_at)}}
 												<div class="pl-2" *ngIf="message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out'">
-													<div class="doubleee">
-													  <img [src]="tickUpdate(message)" alt="">
+													<div [ngStyle]="{'background':message.msg_status === '1'? '#ffffff':'none'}" class="doubleee">
+													  <img [ngStyle]="{'height': message.msg_status === '1'? '6px':'auto'}" [src]="tickUpdate(message)" alt="">
 													</div>
 												  </div>											  
 											</span>
@@ -434,7 +434,7 @@
 									<label>Phone Number</label>
 									<p>{{selectedInteraction.countryCode}} {{selectedInteraction.displayPhoneNumber}}</p>
 									<label>Contact Owner</label>
-									<p>{{selectedInteraction.Name}}</p>
+									<p>{{selectedInteraction.ContactOwner}}</p>
 								</div>
 							</div>
 
@@ -782,8 +782,7 @@
 							</div>
 						</div>
 						<div class="modal-body quickResponse">
-							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-								aria-describedby="basic-addon2" [(ngModel)]="attributesearch" />
+							<input class="search-box" type="search" placeholder="Search" [(ngModel)]="attributesearch" />
 							<div class="items_list">
 								<div *ngFor="let alist of attributesList  | searchfilter:attributesearch " class="attribute"
 									(click)="selectAttributes(alist)">
@@ -810,7 +809,7 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
-					<div class="custom_modal bg-pink sm">
+					<div *ngIf="showInsertTemplate" class="custom_modal bg-pink sm">
 						<div class="modal-header">
 							<div class="modal-header-left">
 								<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
@@ -821,7 +820,7 @@
 							</div>
 						</div>
 						<div class="modal-body quickResponse">
-							<input class="search-box" type="text" placeholder="Search" (keyup)="searchTemplate($event)" />
+							<input class="search-box" type="search" placeholder="Search" (keyup)="searchTemplate($event)" />
 						
 							<div class="section_filter">
 							  <div class="custom-control custom-checkbox">
@@ -863,10 +862,10 @@
 								</div>
 							   </div>
 								</div>
-								<div class="template_btn">
-								  <!-- <button type="button" class="btn">YES</button>
-								  <button type="button" class="btn">NO</button> -->
-								  <!-- <button type="button" class="btn">EXPLORE</button> -->
+								<div *ngIf="template.Channel === 'WhatsApp Official'" class="template_btn">
+								  <button type="button" class="btn">Button 1</button>
+								  <button type="button" class="btn">Button 2</button> 
+								  <button type="button" class="btn">Button 3</button>
 								</div>
 						
 							  </div>
@@ -884,203 +883,236 @@
 							</div>
 						
 						  </div>
-
 					</div>
-
-
-					<div *ngIf="editTemplate" class="custom_modal bg-pink lg">
-						<div class="modal-header">
-							<div class="modal-header-left">
-								<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
-							</div>
-							<div class="modal-header-right">
-								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-										src="assets/img/teambox/icon-close.svg"></p>
-							</div>
-						</div>
-						<div class="modal-body">
-							<div class="template_details_section">
-								<div class="template_details_section_left">
-									<div class="template_box">
-										<label class="container">
-											<p>{{selectedTemplate.title}}</p>
-										</label>
-
-										<div class="inner_box">
-											<img class="template_img" src="{{selectedTemplate.image}}">
-											<p class="close-box edit_media" (click)="editMedia()">
-												<img src="/assets/img/campaign/edit.svg">
-											</p>
-											<div class="template_text">
-												<p>{{selectedTemplate.content_heading}}</p>
-												<p [innerHTML]="selectedTemplate.content"></p>
-											</div>
-										</div>
-										<div class="template_btn">
-											<button type="button" class="btn">YES</button>
-											<button type="button" class="btn">NO</button>
-											<button type="button" class="btn">EXPLORE</button>
-										</div>
-									</div>
-
-								</div>
-
-								<div class="template_details_section_right">
-									<p class="mt-2 mb-0">Variable value<img class="icon sm"
-											src="/assets/img/campaign/Info.svg"></p>
-									<p><span>To personalize your campaign for the imported audience, please select the
-											applicable column from your CSV/Excel file to map each of the variables
-											listed below</span></p>
-									<div class="form_row">
-										<label>[[Name]]</label>
-										<div>
-											<p class="form-control">
-												<input type="text" class="form-control inner"
-													placeholder="Input value or add attribute">
-												<!-- <span class="map_attribute" (click)="openMapOption('map_name')">Map</span> -->
-											</p>
-											<!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
-								<p class="label">Map the column</p>
-								<p *ngFor="let map of mapNameOption ;let i = index" (click)="openMapOption('')"><span>{{map}}</span></p>
-							</div> -->
-										</div>
-									</div>
-									<div class="form_row">
-										<label>[[Product]]</label>
-										<p class="form-control">
-											<input type="text" class="form-control inner"
-												placeholder="Input value or add attribute">
-											<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
-										</p>
-									</div>
-									<div class="form_row">
-										<label>[[25%]]</label>
-										<p class="form-control">
-											<input type="text" class="form-control inner"
-												placeholder="Input value or add attribute">
-											<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
-										</p>
-									</div>
-
-									<p class="mt-2">Button Payload <span>(Optional)</span><img class="icon sm"
-											src="/assets/img/campaign/Info.svg"></p>
-									<div class="form_row">
-										<label>Yes</label>
-										<input type="text" class="form-control" value="J45A1005">
-									</div>
-									<div class="form_row">
-										<label>No</label>
-										<input type="text" class="form-control" value=""
-											placeholder="Input payload value">
-									</div>
-									<div class="form_row">
-										<label>Explore</label>
-										<input type="text" class="form-control" value=""
-											placeholder="Input payload value">
-									</div>
-								</div>
-							</div>
-							<div class="input_group_btn mb-1">
-								<button type="button" class="submit-btn" (click)="showTemplatePreview()">Next</button>
-							</div>
-						</div>
-
-					</div>
+     			 </div>
 				</div>
+			</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" id="editTemplate" #editTemplate data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog editTemplate" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+				<!-- <div class=""> -->
+					<div class="modal-header">
+						<div class="modal-header-left">
+							<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
+						</div>
+						<div class="modal-header-right">
+							<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+									src="assets/img/teambox/icon-close.svg"></p>
+						</div>
+					</div>
+					<div class="modal-body">
+						<div class="template_details_section">
+							<div class="template_details_section_left">
+								<div class="template_box">
+									<label class="py-2 container">
+										<p><b>{{selectedTemplate.TemplateName}}</b></p>
+									</label>
+
+									<div class="px-2 inner_box">
+										<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
+										<video *ngIf="selectedTemplate.media_type === 'video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+										<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
+										  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+										  </div>
+										  <p class="close-box edit_media" (click)="editMedia()">
+											<img src="/assets/img/campaign/edit.svg">
+										</p>
+										 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
+											<p [innerHTML]="selectedTemplate.Header" class="m-0 font-weight-bold"></p>
+											<p [innerHTML]="selectedTemplate.BodyText"></p>
+											<p [innerHTML]="selectedTemplate.FooterText"></p>
+										  </div>
+									</div>
+									<div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" class="px-2 template_btn">
+										<button type="button" class="btn">Button 1</button>
+										<button type="button" class="btn">Button 2</button>
+										<button type="button" class="btn">Button 3</button>
+									</div>
+								</div>
+
+							</div>
+
+							<div class="template_details_section_right">
+								<p class="mt-2 mb-0">Variable value<img class="px-2 icon sm"
+										src="/assets/img/campaign/Info.svg"></p>
+								<p><span>To personalize your campaign for the imported audience, please select the
+										applicable column from your CSV/Excel file to map each of the variables
+										listed below</span></p>
+								<!-- <div class="form_row">
+									<label>[[Name]]</label>
+									<div>
+										<p class="form-control">
+											<input type="text" class="form-control inner"
+												placeholder="Input value or add attribute"> -->
+											<!-- <span class="map_attribute" (click)="openMapOption('map_name')">Map</span> -->
+										<!-- </p> -->
+										<!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
+							<p class="label">Map the column</p>
+							<p *ngFor="let map of mapNameOption ;let i = index" (click)="openMapOption('')"><span>{{map}}</span></p>
+						</div> -->
+									<!-- </div>
+								</div>
+								<div class="form_row">
+									<label>[[Product]]</label>
+									<p class="form-control">
+										<input type="text" class="form-control inner"
+											placeholder="Input value or add attribute"> -->
+										<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
+									<!-- </p>
+								</div>
+								<div class="form_row">
+									<label>[[25%]]</label>
+									<p class="form-control">
+										<input type="text" class="form-control inner"
+											placeholder="Input value or add attribute"> -->
+										<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
+									<!-- </p> -->
+								<!-- </div> -->
+								<div *ngFor="let item of allVariablesList; let ith = index" class="form_row">
+									<label for="variableValue{{ith}}">{{item}}</label>
+									<p class="form-control">
+										<input type="text" id="variableValue{{ith}}" class="form-control inner"
+										placeholder="Input value or add attribute">
+										<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
+									</p>
+									
+								</div>
+
+								<div *ngIf="!allVariablesList" class="form_row">
+									<p class="form-control">
+										No variable available in this message
+									</p>
+								</div>
+
+								<div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" >
+								<p class="mt-2">Button Payload <span>(Optional)</span><img class="px-2 icon sm"
+										src="/assets/img/campaign/Info.svg"></p>
+								<div class="form_row">
+									<label>Button 1</label>
+									<input type="text" class="form-control" value=""
+										placeholder="Input payload value">
+								</div>
+								<div class="form_row">
+									<label>Button 2</label>
+									<input type="text" class="form-control" value=""
+										placeholder="Input payload value">
+								</div>
+								<div class="form_row">
+									<label>Button 3</label>
+									<input type="text" class="form-control" value=""
+										placeholder="Input payload value">
+								</div>
+							</div>
+							</div>
+						</div>
+						<div class="input_group_btn mb-1">
+							<button type="button" class="submit-btn" (click)="showTemplatePreview()">Next</button>
+						</div>
+					</div>
+
+				<!-- </div> -->
 			</div>
 		</div>
 	</div>
-	<div *ngIf="showEditTemplateMedia" class="custom_modal bg-pink lg">
-		<div class="modal-header">
-			<div class="modal-header-left">
-				<h4 class="modal-title" id="modal-basic-title">Replace Media</h4>
-			</div>
-			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-						src="assets/img/teambox/icon-close.svg"></p>
-			</div>
-		</div>
+  </div>
 
-
-
-		<div class="modal-body">
-			<label class="container mb-2">
-				<input type="radio" name="media_source">
-				<span class="label">By Uploading file</span>
-				<span class="checkmark radio"></span>
-			</label>
-
-			<div class="important_contact">
-
-				<div class="important_contact_left dragAreaClass">
-
-					<img class="icon xl" src="assets/img/campaign/image-a@2x.png">
-					<p>Drag & Drop files</p>
-					<p><span>or</span></p>
-					<label class="custom-file-upload">
-						<input type="file" #file [multiple]="false" (change)="onFileChange($event)"
-							style="display:none" />
-						<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
-					</label>
+  <div class="modal fade" tabindex="-1" id="editTemplateMedia" #editTemplateMedia data-bs-backdrop="static" role="dialog">
+	<div class="modal-dialog editTemplateMedia" role="document">
+		<div class="modal-content editTemplateMedia">
+			<div class="modal-header">
+				<div class="modal-header-left">
+					<h4 class="modal-title" id="modal-basic-title">Replace Media</h4>
 				</div>
-
-				<div class="important_contact_right mt-0">
-					<div class="info_box mt-0">
-						<p class="info"><img src="assets/img/campaign/info-icon.png">Instructions</p>
-						<p><span>Upload a CSV file with the contacts and details that you would like to import. Ensure
-								the CSV file fulfils the Following requirements: Only CSV files are accepted for import.
-								File size must be 10 MB The file must contain at least.. the CSV file fulfils the
-								Following requirements: Only CSV files are accepted for import. File size must be 10
-								MB</span></p>
+				<div class="modal-header-right">
+					<p class="close-box" aria-label="Close" (click)="closeEditMedia()"><img
+							src="assets/img/teambox/icon-close.svg"></p>
+				</div>
 					</div>
-
-				</div>
-
-			</div>
-			<div class="important_contact_middle edit_template">
-
-				<div class="left_part">
-					<label class="container">
-						<input type="radio" name="media_source">
-						<span class="label">By URL</span>
-						<span class="checkmark radio"></span>
-					</label>
-					<div class="formrow">
-						<label for="name">URL</label>
-						<input class="form-control" type="text" placeholder="Enter title in max 20 character"
-							name="Name" formControlName="Name" id="name" />
+			<div class="modal-body">
+				<label class="container mb-2">
+					<input type="radio" name="media_source">
+					<span class="label">By Uploading file</span>
+					<span class="checkmark radio"></span>
+				</label>
+		
+				<div class="important_contact">
+		
+					<div class="important_contact_left dragAreaClass">
+		
+						<img class="icon xl" src="assets/img/campaign/image-a@2x.png">
+						<p>Drag & Drop files</p>
+						<p><span>or</span></p>
+						<label class="custom-file-upload">
+							<input type="file" #file [multiple]="false" (change)="onFileChange($event)"
+								style="display:none" />
+							<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
+						</label>
 					</div>
-
-				</div>
-				<div class="right_part">
-					<label class="container">
-						<input type="radio" name="media_source">
-						<span class="label">Use custom media header</span>
-						<span class="checkmark radio"></span>
-					</label>
-					<div class="formrow ">
-						<label for="name">Input Value</label>
-						<p class="form-control">
-							<input type="text" class="form-control inner" placeholder="Input value or add attribute">
-							<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
-						</p>
-
+		
+					<div class="important_contact_right mt-0">
+						<div class="info_box mt-0">
+							<p class="info"><img src="assets/img/campaign/info-icon.png">Instructions</p>
+							<p><span>Upload a CSV file with the contacts and details that you would like to import. Ensure
+									the CSV file fulfils the Following requirements: Only CSV files are accepted for import.
+									File size must be 10 MB The file must contain at least.. the CSV file fulfils the
+									Following requirements: Only CSV files are accepted for import. File size must be 10
+									MB</span></p>
+						</div>
+		
 					</div>
-
+		
 				</div>
-
+				<div class="important_contact_middle edit_template">
+		
+					<div class="left_part">
+						<label class="container">
+							<input type="radio" name="media_source">
+							<span class="label">By URL</span>
+							<span class="checkmark radio"></span>
+						</label>
+						<div class="formrow">
+							<label for="name">URL</label>
+							<input class="form-control" type="text" placeholder="Enter title in max 20 character"
+								name="Name" formControlName="Name" id="name" />
+						</div>
+		
+					</div>
+					<div class="right_part">
+						<label class="container">
+							<input type="radio" name="media_source">
+							<span class="label">Use custom media header</span>
+							<span class="checkmark radio"></span>
+						</label>
+						<div class="formrow ">
+							<label for="name">Input Value</label>
+							<p class="form-control">
+								<input type="text" class="form-control inner" placeholder="Input value or add attribute">
+								<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
+							</p>
+		
+						</div>
+		
+					</div>
+		
+				</div>
+		
+				<div class="input_group_btn mb-4">
+					<button type="button" class="cancel-btn" (click)="cancelEditTemplateMedia()">Cancel</button>
+					<button type="button" class="submit-btn" (click)="updateEditTemplateMedia()">Done</button>
+				</div>
+		
 			</div>
-
-			<div class="input_group_btn mb-4">
-				<button type="button" class="cancel-btn" (click)="cancelEditTemplateMedia()">Cancel</button>
-				<button type="button" class="submit-btn" (click)="updateEditTemplateMedia()">Done</button>
-			</div>
-
-		</div>
-
+	      </div>
+     	</div>
 	</div>
 
-	<div *ngIf="TemplatePreview" class="custom_modal bg-pink lg">
+<div class="modal fade" tabindex="-1" id="templatePreview" #templatePreview data-bs-backdrop="static" role="dialog">
+	<div class="modal-dialog templatePreview" role="document">
+		<div class="modal-content">
+	   <!-- <div *ngIf="TemplatePreview" class="custom_modal bg-pink lg"> -->
 		<div class="modal-header">
 			<div class="modal-header-left">
 				<h4 class="modal-title" id="modal-basic-title">Preview</h4>
@@ -1090,44 +1122,49 @@
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
-
-
-
 		<div class="modal-body">
 			<div class="template_preiview">
 
 				<div class="template_box">
-					<label class="container">
-						<p>{{selectedTemplate.title}}</p>
+					<label class="py-2 container">
+						<p><b>{{selectedTemplate.TemplateName}}</b></p>
 
 					</label>
 
-					<div class="inner_box">
-						<img class="template_img" src="{{selectedTemplate.image}}">
-						<p class="close-box edit_media" (click)="editMedia()">
+					<div class="px-2 inner_box">
+						<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
+						<video *ngIf="selectedTemplate.media_type === 'video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+						<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
+						  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+						  </div>
+						  <p class="close-box edit_media" (click)="editMedia()">
 							<img src="/assets/img/campaign/edit.svg">
 						</p>
-						<div class="template_text">
-							<p>{{selectedTemplate.content_heading}}</p>
-							<p [innerHTML]="selectedTemplate.content"></p>
-						</div>
+						 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
+							<p [innerHTML]="selectedTemplate.Header" class="m-0 font-weight-bold"></p>
+							<p [innerHTML]="selectedTemplate.BodyText"></p>
+							<p [innerHTML]="selectedTemplate.FooterText"></p>
+						  </div>
 					</div>
-					<div class="template_btn">
-						<button type="button" class="btn">YES</button>
-						<button type="button" class="btn">NO</button>
-						<button type="button" class="btn">EXPLORE</button>
+					<div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" class="px-2 template_btn">
+						<button type="button" class="btn">Button 1</button>
+						<button type="button" class="btn">Button 2</button>
+						<button type="button" class="btn">Button 3</button>
 					</div>
 				</div>
 
 			</div>
 
 			<div class="input_group_btn mb-4">
-				<button type="button" class="submit-btn" (click)="insertTemplate()">Done</button>
+				<button type="button" class="submit-btn" (click)="insertTemplate(selectedTemplate)">Done</button>
 			</div>
 
 		</div>
 
+	<!-- </div> -->
+	 </div>
 	</div>
+</div>
 
 	<!-- quick response popup -->
 	<div class="modal fade" tabindex="-1" id="quikpopup" #quikpopup data-bs-backdrop="static" role="dialog">

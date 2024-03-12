@@ -133,7 +133,7 @@ routerGuard = () => {
 	showQuickResponse:any=false;
 	showAttributes:any=false;
 	showQuickReply:any=false;
-	showInsertTemplate:any=false;
+	showInsertTemplate:any=true;
 	showAttachmenOption:any=false;
 	slideIndex=0;
 	PauseTime:any='';
@@ -230,6 +230,7 @@ routerGuard = () => {
 	mediaSize: any;
 	hourLeft:number = 0;
 	userList:any;
+	allVariablesList:string[] =[];
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
@@ -265,7 +266,7 @@ routerGuard = () => {
 
 	}
 	selectTemplate(template:any){
-		this.selectedTemplate =template
+		this.selectedTemplate = template
 	}
 
 	// resetMessageTex(){
@@ -368,7 +369,6 @@ routerGuard = () => {
 		this.showAttachmenOption=false
 		this.messageMeidaFile=false
 		this.showAttributes=false
-		this.showInsertTemplate=false
 		this.editTemplate=false
 		this.TemplatePreview=false
 		this.showQuickReply=false
@@ -376,37 +376,63 @@ routerGuard = () => {
 		this.attributesearch ='';
 		this.header ='';
 		this.quickreplysearch='';
+		$("#editTemplateMedia").modal('hide');
+		$("#templatePreview").modal('hide');
 		$("#quikpopup").modal('hide');
 		$("#atrributemodal").modal('hide');
 		$("#insertmodal").modal('hide');
+		$("#editTemplate").modal('hide');
 		$("#attachfle").modal('hide');
 		$('body').removeClass('modal-open');
 		$('.modal-backdrop').remove();
 
 	}	
 	editMedia(){
-		this.closeAllModal()
-		this.showEditTemplateMedia=true;
+		$("#editTemplate").modal('hide');
+		$("#templatePreview").modal('hide');  
+		$("#editTemplateMedia").modal('show'); 
+	}
+	closeEditMedia() {
+		$("#editTemplate").modal('show'); 
+		$("#editTemplateMedia").modal('hide'); 
 	}
 	cancelEditTemplateMedia(){
 		this.closeAllModal()
-		this.editTemplate=true
 	}
 	updateEditTemplateMedia(){
-		this.closeAllModal()
-		this.editTemplate=true
+		$("#editTemplate").modal('show'); 
+		$("#editTemplateMedia").modal('hide'); 
 	}
 	showTemplatePreview(){
-		this.closeAllModal()
-		this.TemplatePreview=true
+		$("#editTemplate").modal('hide'); 
+		$("#templatePreview").modal('show'); 
 	}
-	insertTemplate(){
+	insertTemplate(item:any){
 		this.closeAllModal()
+		let mediaContent
+		if(item.media_type === 'image') {
+		  mediaContent ='<p><img style="width:50%; height:50%" src="'+item.Links+'"></p>'
+		}
+		else if(item.media_type === 'video') {
+			mediaContent ='<p><video style="width:50%; height:50%" src="'+item.Links+'"></video></p>'
+		}
+		else {
+			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+		}
+		var htmlcontent = mediaContent +'<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
+		this.chatEditor.value =htmlcontent
 	}
 
 showeditTemplate(){
-	this.editTemplate=true
-	this.showInsertTemplate=false;
+	if(this.selectedTemplate.BodyText !== '' ) {
+		$("#editTemplate").modal('show'); 
+		$("#insertmodal").modal('hide'); 
+		this.previewTemplate();
+	}
+	else {
+		this.showToaster('! Please Select Any Template To Proceed','error');
+	}
+
 }	
 ToggleShowMentionOption(){
 	this.closeAllModal()
@@ -422,7 +448,6 @@ InsertMentionOption(user:any){
 }
 
 ToggleInsertTemplateOption(){
-	this.closeAllModal()
 	$("#insertmodal").modal('show'); 
 	}
 
@@ -434,13 +459,10 @@ ToggleAttributesOption(){
 selectAttributes(item:any) {
 	this.closeAllModal();
 	const selectedValue = item;
-	
-	let htmlcontent = this.chatEditor.value;
-	if (isNullOrUndefined(htmlcontent)) {
-		htmlcontent = '';
-	  }
-	const selectedAttr = `${htmlcontent} <span>{{${selectedValue}}}</span>`;
-	this.chatEditor.value = selectedAttr; 
+	let content:any = this.chatEditor.value || '';
+	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+	content = content+'<span style="color:#000">{{'+selectedValue+'}}</span>'
+	this.chatEditor.value = content;
 }
 
 ToggleQuickReplies(){
@@ -1441,6 +1463,7 @@ updateCustomer(){
 			}
 			this.showToaster('Contact information updated...','success');
 			this.getAllInteraction();
+			this.getCustomers();
 		});
 	}
 	else {
@@ -1855,6 +1878,7 @@ createCustomer() {
 						this.createInteraction(insertId);
 						this.newContact.reset();
 						this.getAllInteraction();
+						this.getCustomers();
 					}},
 				async (error) => {
 				  if (error.status === 409) {
@@ -2168,5 +2192,37 @@ sendMessage(){
 	  
 			});
 		  }
+
+		/* GET VARIABLE VALUES */
+		getVariables(sentence: string, first: string, last: string) {
+		let goodParts: string[] = [];
+	
+		if (!sentence || sentence.trim() === '') {
+			return goodParts;
+		}
+	
+		const allParts = sentence.split(first);
+	
+		allParts.forEach((part: string, index: number) => {
+			if (index !== 0) {
+				const closingIndex = part.indexOf(last);
+				if (closingIndex !== -1) {
+					const goodOne = part.substring(0, closingIndex);
+					goodParts.push("{{" + goodOne + "}}");
+				}
+			}
+		});
+		return goodParts;
+	}
+			
+		
+			previewTemplate() {
+				let isVariableValue:string = this.selectedTemplate.BodyText + this.selectedTemplate.Header;
+		
+				if (isVariableValue) {
+				  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
+			  };
+		
+			}
 		  
 }

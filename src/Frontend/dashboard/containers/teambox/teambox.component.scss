@@ -1558,6 +1558,14 @@ span {
     padding: 1rem;
 }
 
+.modal-dialog.editTemplate, .modal-dialog.editTemplateMedia, .modal-dialog.TemplatePreview {
+    max-width: 800px;
+}
+
+.modal-content.editTemplateMedia {
+    background: #FFF4F2;
+}
+
 .attachmentboxbody {
     padding: 10px 100px 50px 100px;
 }
@@ -1942,10 +1950,10 @@ input[type="radio"]:checked + label::before {
     font-weight: 600;
 }
 
-.template_box .inner_box,
-.template_btn {
-    padding-left: 1.5rem;
-}
+// .template_box .inner_box,
+// .template_btn {
+//     padding-left: 1.5rem;
+// }
 
 .template_details_section {
     display: flex;

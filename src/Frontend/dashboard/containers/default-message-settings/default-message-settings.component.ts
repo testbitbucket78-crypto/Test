@@ -147,31 +147,13 @@ ToggleAttributesOption(){
   $("#atrributemodal").modal('show');
 }
 
-// selectAttributes(item:any) {
-//   this.closeAtrrModal();
-//   const selectedValue = item;
-// 	  //  tempDivElement.innerHTML = this.chatEditor.value;
-//     //  let val = tempDivElement.textContent || tempDivElement.innerText || "";
-
-//   console.log(this.chatEditor,'chateditor');
-//   console.log(this.chatEditor.value,'chateditor value');
-//   console.log(this.defaultMessageForm.get('value')?.value,'value in texteditor');
-//   this.chatEditor.value = this.chatEditor?.value + `{{${selectedValue}}}`;
-//     $("#welcomGreeting").modal('show');
-//     $("#atrributemodal").modal('hide');
-
-// }
-
 selectAttributes(item:any){
   this.closeAtrrModal();
   const selectedValue = item;
-  
-  let htmlcontent = this.defaultMessageForm.get('value')?.value;
-  if (isNullOrUndefined(htmlcontent)) {
-      htmlcontent = '';
-    }
-  const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
-  this.defaultMessageForm.get('value')?.setValue(selectedAttr); 
+  let content:any = this.chatEditor.value || '';
+  content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+  content = content+ '<span style="color:#000">{{'+selectedValue+'}}</span>'
+  this.chatEditor.value = content;
 }
 
 

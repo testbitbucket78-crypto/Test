@@ -717,16 +717,10 @@ export class TemplateMessageComponent implements OnInit {
     selectAttributes(item:any) {
         this.closeAtrrModal();
         const selectedValue = item;
-        
-        let htmlcontent = this.chatEditor.value;
-        // let htmlcontent = this.newTemplateForm.get('Header')?.value
-        if (isNullOrUndefined(htmlcontent)) {
-            htmlcontent = '';
-          }
-        const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
-        this.chatEditor.value = selectedAttr; 
-        
-        // this.newTemplateForm.get('Header')?.setValue(selectedAttr); 
+        let content:any = this.chatEditor.value || '';
+        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+        content = content+ '<span style="color:#000">{{'+selectedValue+'}}</span>'
+        this.chatEditor.value = content;
     }
 
      /* GET VARIABLE VALUES */
