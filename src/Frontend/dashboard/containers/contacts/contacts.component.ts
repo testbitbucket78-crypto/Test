@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { TeamboxService } from './../../services';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
@@ -210,7 +211,7 @@ countryCodes = [
   
   
  constructor(config: NgbModalConfig, private modalService: NgbModal,
-  public settingsService:SettingsService, private apiService: DashboardService,private _settingsService:SettingsService, private fb: FormBuilder, private router:Router,private cdRef: ChangeDetectorRef)
+  public settingsService:SettingsService, private apiService: DashboardService,private _settingsService:SettingsService,private teamboxService:TeamboxService, private fb: FormBuilder, private router:Router,private cdRef: ChangeDetectorRef)
  
  
  {
@@ -371,6 +372,7 @@ onSelectAll(items: any) {
     this.apiService.Contact(SP_ID).subscribe((data) => {
       this.contacts = data;
       this.rowData = this.contacts;
+      this.productForm.get('countryCode')?.setValue('IN +91');
       console.log(this.contacts);
     });
   }
@@ -748,7 +750,17 @@ deletContactByID(data: any) {
     }  
   }
 
-
+  updateTags(){
+    var bodyData = {
+      tag:this.getFilterTags,
+      customerId:this.contactId
+    }
+    this.teamboxService.updateTags(bodyData).subscribe(async response =>{
+      if (response) {
+        console.log('Tags updated...','success')
+      }  
+    });
+  }
 
   exportCheckedContact() {
     console.log(this.checkedConatct)
