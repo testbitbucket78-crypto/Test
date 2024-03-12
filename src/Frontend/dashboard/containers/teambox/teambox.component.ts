@@ -8,7 +8,6 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { isNullOrUndefined } from 'is-what';
 import { ToolbarService,NodeSelection, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { debounceTime } from 'rxjs/operators';
@@ -148,6 +147,7 @@ routerGuard = () => {
 	AgentId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
 	AgentName = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name
 	loginAs = (JSON.parse(sessionStorage.getItem('loginDetails')!)).UserType
+	spNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
 	messageTimeLimit=10;
 	SIPmaxMessageLimt=100;
 	SIPthreasholdMessages=1;
@@ -200,10 +200,7 @@ routerGuard = () => {
 	newMessage:any;
 	interactionFilterBy:any='All'
 	interactionSearchKey:any=''
-	tagsoptios:any=[
-	{name:'Paid',status:false},
-	{name:'Unpaid',status:false},
-	{name:'Return',status:false}]
+	tagsoptios:any=[];
 	selectedTags:any='';
 	AutoReplyEnableOption:any=['Extend Pause for 5 mins','Extend Pause for 10 mins','Extend Pause for 15 mins','Extend Pause for 20 mins','Enable'];
 	AutoReplyPauseOption:any=['Pause for 5 mins','Pause for 10 mins','Pause for 15 mins','Pause for 20 mins','Auto Reply are Paused','Enable'];
@@ -231,6 +228,7 @@ routerGuard = () => {
 	hourLeft:number = 0;
 	userList:any;
 	allVariablesList:string[] =[];
+	selected:boolean=false;
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
@@ -474,8 +472,19 @@ ToggleQuickReplies(){
 
 selectQuickReplies(item:any){
 	this.closeAllModal()
-	var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'</p>';
+	let mediaContent
+	if(item.media_type === 'image') {
+	  mediaContent ='<p><img style="width:50%; height:50%" src="'+item.Links+'"></p>'
+	}
+	else if(item.media_type === 'video') {
+		mediaContent ='<p><video style="width:50%; height:50%" src="'+item.Links+'"></video></p>'
+	}
+	else {
+		mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+	}
+	var htmlcontent = mediaContent +'<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
 	this.chatEditor.value =htmlcontent
+
 }
 
 searchQuickReply(event:any){
@@ -795,6 +804,7 @@ sendattachfile(){
         this.sendattachfile()
 		this.getQuickResponse()
 		this.getUserList()
+		this.getTagData()
 		this.NewContactForm = this.newContact;
         this.EditContactForm = this.editContact;
 	}
@@ -1297,6 +1307,7 @@ sendattachfile(){
 		Interaction['selected'] = true;
 		this.selectedInteraction = Interaction;
 		this.contactId = Interaction.customerId;
+		this.selected=Interaction.selected;
 		console.log(Interaction);
 		this.selectedCountryCode = Interaction.countryCode;
 
@@ -1462,7 +1473,7 @@ updateCustomer(){
 				this.modalReference.close();
 			}
 			this.showToaster('Contact information updated...','success');
-			this.getAllInteraction();
+			this.getAllInteraction(false);
 			this.getCustomers();
 		});
 	}
@@ -2061,7 +2072,8 @@ sendMessage(){
 			template_id:'',
 			message_type: this.showChatNotes,
 			created_at:new Date(),
-			mediaSize:this.mediaSize
+			mediaSize:this.mediaSize,
+			spNumber:this.spNumber
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
@@ -2223,6 +2235,22 @@ sendMessage(){
 				  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
 			  };
 		
+			}
+
+			getTagData() {
+				let spid = Number(this.SPID)
+				this.settingService.getTagData(spid).subscribe(result => {
+				  if (result) {
+					  let tagList = result.taglist;
+					  this.tagsoptios = tagList.map((tag:any) => ({
+					      id:tag.ID,			
+						  name:tag.TagName,
+						  color:tag.TagColour,
+						  status:false
+					  }));
+					  console.log(this.tagsoptios);
+						}
+					});
 			}
 		  
 }

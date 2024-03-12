@@ -1188,8 +1188,14 @@
 
 								<div class="item" *ngFor="let Message of QuickReplyList | searchfilter:quickreplysearch"
 									(click)="selectQuickReplies(Message)">
+									<img style="height: 50%; width: 100%;" *ngIf="Message.media_type === 'image'" class="template_img" src="{{Message.Links}}">
+									<video style="height: 50%; width: 100%;"  *ngIf="Message.media_type === 'video'" muted id="video-background" [src]="Message.Links"></video>
+									<div class="doc-preview"*ngIf="Message.media_type === 'document'">
+									<a [href]="Message.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+									</div>
 									<p class="label" [innerHTML]="Message.Header"></p>
 									<p [innerHTML]="Message.BodyText"></p>
+									<p [innerHTML]="Message.FooterText"></p>
 								</div>
 							</div>
 							<div class="bottom_section">
