@@ -260,4 +260,8 @@ export class TeamSettingsComponent implements OnInit {
         })
         console.log(this.selectedUser);
     }
+
+    editTeam(){
+        this.showSideBar = false;
+    }
 }

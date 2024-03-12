@@ -1203,6 +1203,8 @@
 	margin: 5px;
 	flex-wrap: nowrap;
 	padding-right: 15px;
+	background: white !important;
+	justify-content: space-between !important;
 
 	}
 	.applied_filter_popup .item p{
@@ -2203,8 +2205,8 @@ position: absolute;
 }
 
 .camp-heading{
-	color: black;
-	font-weight: bold;
+	color: black !important;
+	font-weight: bold !important;
 }
 
 .background-blur{

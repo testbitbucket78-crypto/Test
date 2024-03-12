@@ -197,6 +197,11 @@ export class UserSettingsComponent implements OnInit {
         this._settingsService.userById(this.sp_Id,this.uid).subscribe(result => {
             if (result) {
                 this.userData = result?.getUser[0];
+                if(result?.getUser.length>1){
+                    for(let i =1;i<result?.getUser.length; i++){
+                        this.userData.team_name = this.userData.team_name +', ' + result?.getUser[i]?.team_name;
+                    }
+                }
                 this.patchFormValue();
             }
         });
