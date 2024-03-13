@@ -1,12 +1,12 @@
-import { Component, OnInit,ViewChild,ElementRef, Input, HostListener, Output, EventEmitter,AfterViewInit  } from '@angular/core';
+import { Component, OnInit,ViewChild,ElementRef, Input, Output, EventEmitter,AfterViewInit  } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
+import Stepper from 'bs-stepper';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { TeamboxService } from './../../services';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { agentMessageList } from 'Frontend/dashboard/models/smartReplies.model';
-import Stepper from 'bs-stepper';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService,EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
@@ -32,10 +32,9 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		}
 	}
 
-	@ViewChild('notesSection') notesSection: ElementRef | undefined;
-	@ViewChild('chatSection') chatSection: ElementRef | any; 
-	@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any;
-
+	@ViewChild('notesSection') notesSection!: ElementRef;
+	@ViewChild('chatSection') chatSection!: ElementRef; 
+	@ViewChild('chatEditor') chatEditor!: RichTextEditorComponent;
 
 	public selection: NodeSelection = new NodeSelection();
 	public range: Range | undefined;
@@ -130,7 +129,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	showQuickResponse: any = false;
 	showAttributes: any = false;
 	showQuickReply: any = false;
-	showInsertTemplate: any = false;
+	showInsertTemplate: any = true;
 	showAttachmenOption: any = false;
 	slideIndex = 0;
 	PauseTime: any = '';
@@ -142,8 +141,8 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	showMention: any = false;
 	editTemplate: any = false;
 	searchKey:string='';
-	Quickyreplysearch!:string;
 	attributesearch!:string;
+	allVariablesList:string[] =[];
 
 
 	attributesList!:any;
@@ -182,7 +181,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	};
 
 	isSendButtonDisabled=false
-click: any;
+    click: any;
 	selecetdpdf: any='';
 
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,private settingsService:SettingsService,private elementRef: ElementRef,private location:Location) {
@@ -194,8 +193,6 @@ click: any;
 
 	selectTemplate(template:any){
 		this.selectedTemplate =template
-		let media_type = this.selectedTemplate.media_type;
-		console.log(media_type)
 	}
 	ngOnInit() {
 
@@ -218,16 +215,10 @@ click: any;
 		 this.getAttributeList();
 		 this.getTemplatesList()
 		 this.routerGuard();
-		 this.sendattachfile()
 		 this.getQuickResponse();
 
-	
-	
-	
 	}
 
-
-	
 	ngAfterViewInit() {
 		if (this.chatSection) {
 		  this.scrollChatToBottom();
@@ -236,16 +227,16 @@ click: any;
 
 	scrollChatToBottom() {
 		const chatWindowElement: HTMLElement = this.chatSection.nativeElement;
-    chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
-	const toolbar = chatWindowElement.querySelector('.e-toolbar');
+        chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
+	    const toolbar = chatWindowElement.querySelector('.e-toolbar');
 	
 	  }
 
 /*** rich text editor ***/
 
 	closeAllModal() {
-		this.showAttachmenOption = false
-		this.messageMeidaFile = false
+		// this.showAttachmenOption = false
+		// this.messageMeidaPopup = false
 		this.showAttributes = false
 		this.showInsertTemplate = false
 		this.editTemplate = false
@@ -255,13 +246,14 @@ click: any;
 		this.ShowAddAction = false;
 		this.attributesearch = '';
 		this.searchKey = '';
-		this.Quickyreplysearch = '';
 		$("#attachmentbox").modal('hide');
 		$("#showAttributes").modal('hide');
 		$("#insertTemplate").modal('hide');
+		$("#templatePreview").modal('hide');
+		$("#editTemplate").modal('hide');
 		$("#showQuickReply").modal('hide');
 		$("#sendfile").modal('hide');
-		$("#attachmentbox").modal('hide');
+
 		
 
 
@@ -269,23 +261,36 @@ click: any;
 	
 		
 	}
-	closeModal(){
-		$("#sendfile").modal('hide');
-		
-	}
 
+	removeModalBackdrop() {
+		$('.modal-backdrop').remove();
+	}
 
 	resetMessageTex() {
 		if (this.chatEditor.value == '<p>Type Reply...</p>') {
 			this.chatEditor.value = '';
 			this.scrollChatToBottom();
-			
 		}
+	}
 
+	editMedia(){
+		$("#editTemplate").modal('hide');
+		$("#templatePreview").modal('hide');  
+		$("#editTemplateMedia").modal('show'); 
+	}
+
+	showTemplatePreview(){
+		$("#editTemplate").modal('hide'); 
+		$("#templatePreview").modal('show'); 
+	}
+
+	closeEditMedia() {
+		$("#editTemplate").modal('show'); 
+		$("#editTemplateMedia").modal('hide'); 
 	}
 
 	ToggleAttachmentBox() {
-		this.closeAllModal()
+		// this.closeAllModal()
 	    $("#attachmentbox").modal('show');
         document.getElementById('addsmartreplies')!.style.display = 'none';
 		this.dragAreaClass = "dragarea";
@@ -300,13 +305,21 @@ click: any;
 		if(this.messageMeidaFile!==''){
 			$("#sendfile").modal('show');	
 		}else{
-			$("#sendfile").modal('hide');	
-		}
-	
-		
+			this.showToaster('! Error Uploading Media Please Try Again','error');
+			this.closeAllModal();
+		}	
 	}
 
-	
+	cancelEditTemplateMedia(){
+		$("#editTemplate").modal('show'); 
+		$("#editTemplateMedia").modal('hide'); 
+	}
+
+	updateEditTemplateMedia(){
+		$("#editTemplate").modal('show'); 
+		$("#editTemplateMedia").modal('hide'); 
+	}
+
 	saveFiles(files: FileList) {
 		if (files.length > 0) {
 		  let fileName: any = files[0].name;
@@ -323,12 +336,12 @@ click: any;
 			this.tS.uploadfile(data,spid,name).subscribe(uploadStatus => {
 			  let responseData: any = uploadStatus;
 			  if (responseData.filename) {
-				this.sendattachfile();
 				this.messageMeidaFile = responseData.filename;
 				this.mediaType = mediaType; // Set mediaType here
 				this.showAttachmenOption = false;
 				console.log('Media Type:', this.mediaType);
 				console.log('Message Media File:', this.messageMeidaFile);
+				this.sendattachfile();
 			  }
 			});
 	  
@@ -380,14 +393,28 @@ click: any;
 		}
 	  }
 	  
-	  
-
 	sendMediaMessage(){
-		this.saveMessage();
-		this.Media=this.messageMeidaFile;
+		// this.saveMessage();
+		// this.Media=this.messageMeidaFile;
+		this.closeAllModal()
+		console.log(this.mediaType)
 		console.log(this.messageMeidaFile)
-        this.closeAllModal();
-		$("#sendfile").modal('hide');
+		let mediaContent:any;
+		if(this.mediaType == 'image/jpeg' || this.mediaType == 'image/jpg' || this.mediaType == 'image/png' || this.mediaType == 'image/webp') {
+			mediaContent ='<p><img style="width:50%; height:50%" src="'+this.messageMeidaFile+'"></p>'
+		  }
+		  else if(this.mediaType == 'video/mp4') {
+			  mediaContent ='<p><video style="width:50%; height:50%" src="'+this.messageMeidaFile+'"></video></p>'
+		  }
+		  else if(this.mediaType == 'application/pdf') {
+			  mediaContent ='<p><a href="'+this.messageMeidaFile+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+		  }
+
+		  else if (this.mediaType == 'text/plain') {
+			mediaContent = ''
+		  }
+
+		this.chatEditor.value = mediaContent;
 	}
 
 	
@@ -411,28 +438,44 @@ click: any;
 	}
 
 	showeditTemplate(){
-		this.editTemplate=true
-		this.showInsertTemplate=false;
+	if(this.selectedTemplate.BodyText !== '' ) {
+		$("#editTemplate").modal('show'); 
+		$("#insertTemplate").modal('hide'); 
+		this.previewTemplate();
+	}
+	else {
+		this.showToaster('! Please Select Any Template To Proceed','error');
 	}
 
-	selectAttributes(item:any){
+}
+
+	selectAttributes(item:any) {
 		this.closeAllModal();
 		const selectedValue = item;
-		
-		let htmlcontent = this.chatEditor.value;
-		if (isNullOrUndefined(htmlcontent)) {
-			htmlcontent = '';
-		  }
-		const selectedAttr = `${htmlcontent} {{${selectedValue}}}`;
-		this.chatEditor.value = selectedAttr; 
+		let content:any = this.chatEditor.value || '';
+		content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+		content = content+'<span style="color:#000">{{'+selectedValue+'}}</span>'
+		this.chatEditor.value = content;
 	}
 	
 	selectQuickReplies(item:any){
 		this.closeAllModal()
-		var htmlcontent = '<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'</p>';
-		this.chatEditor.value =htmlcontent
-		this.getQuickResponse();
-
+		let mediaContent
+		if(item.media_type === 'image') {
+		  mediaContent ='<p><img style="width:50%; height:50%" src="'+item.Links+'"></p>'
+		}
+		else if(item.media_type === 'video') {
+			mediaContent ='<p><video style="width:50%; height:50%" src="'+item.Links+'"></video></p>'
+		}
+		else if(item.media_type === 'document') {
+			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+		}
+		else {
+			mediaContent=''
+		}
+		var htmlcontent = mediaContent +'<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
+		this.chatEditor.value = htmlcontent
+	
 	}
 
 	searchQuickReply(event:any){
@@ -441,7 +484,7 @@ click: any;
 		var allList = this.QuickReplyListMain
 		let FilteredArray = [];
 		for(var i=0;i<allList.length;i++){
-			var content = allList[i].title.toLowerCase()
+			var content = allList[i].Header.toLowerCase()
 				if(content.indexOf(searchKey.toLowerCase()) !== -1){
 					FilteredArray.push(allList[i])
 				}
@@ -463,6 +506,25 @@ click: any;
 		});
 	}
 
+	insertTemplate(item:any){
+		$("#templatePreview").modal('hide');
+		let mediaContent
+		if(item.media_type === 'image') {
+		  mediaContent ='<p><img style="width:50%; height:50%" src="'+item.Links+'"></p>'
+		}
+		else if(item.media_type === 'video') {
+			mediaContent ='<p><video style="width:50%; height:50%" src="'+item.Links+'"></video></p>'
+		}
+		else if(item.media_type === 'document') {
+			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+		}
+		else {
+			mediaContent=''
+		}
+		var htmlcontent = mediaContent +'<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
+		this.chatEditor.value =htmlcontent
+	}
+
 	searchTemplate(event:any){
 		this.searchKey = event.target.value
 		if(this.searchKey.length>2){
@@ -479,17 +541,6 @@ click: any;
 			this.allTemplates = this.allTemplatesMain
 		}
 	}
-
-
-	
-	// addinserttemplate(templateId: string,action: string,checked: boolean) { 
-	// 	if (action === 'contactowner') {
-	// 	  this.contactowner = checked ? 1 : 0;
-	// 	  this.templateStates[templateId] = checked;
-	// 	  console.log(`Template ${templateId} checked: ${checked}`);
-	//   }
-	  
-	// }
 
 	filterTemplate(temType:any){
 
@@ -528,22 +579,6 @@ click: any;
 		})
 		
 	}
-
-
-	public async onInsert(item: any) {
-	
-		this.range = this.selection.getRange(document); 
-		this.saveSelection.restore();
-		const emojiText = item.target.textContent;
-	    
-		await this.chatEditor.executeCommand('insertHTML', emojiText);
-		this.saveSelection = this.selection.save(this.range, document); 
-		
-		// Save the changes
-		this.chatEditor.formatter.saveData();
-		this.chatEditor.formatter.enableUndo(this.chatEditor);
-		
-	  }
 
 	showToaster(message:any,type:any){
 		if(type=='success'){
@@ -600,9 +635,6 @@ click: any;
 
 	}
 
-	
-
-
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
 	addMessage() {
@@ -624,41 +656,19 @@ click: any;
 				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
 			}, 100);
 		}
-		saveMessage() {
+		// saveMessage() {
 
-			this.assignedAgentList.push({ActionID:0, Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
-			console.log(this.messageMeidaFile)
-				this.custommesage = '';	
+		// 	this.assignedAgentList.push({ActionID:0, Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
+		// 	console.log(this.messageMeidaFile)
+		// 		this.custommesage = '';	
 				
-				setTimeout(() => {
-					this.scrollChatToBottom();
-					this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-					this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-				}, 100);
-			}
+		// 		setTimeout(() => {
+		// 			this.scrollChatToBottom();
+		// 			this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+		// 			this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+		// 		}, 100);
+		// 	}
 
-
-	
-		onActionBegin(args: any): void {
-			if (args.requestType === 'keydown' && args.event.which === 13) {
-			  // Enter key pressed
-			  this.yourMethod();
-			  args.cancel = true; // Prevents the default behavior
-			}
-		  }
-		
-		  yourMethod(): void {
-			// Your custom method logic goes here
-			console.log('Enter key pressed! Call your custom method.');
-		  }
-		
-
-
-
-
-
-
-	
 	removeMessage(index:number) {
 		this.assignedAgentList.splice(index, 1);
 	}
@@ -1075,10 +1085,43 @@ stopPropagation(event: Event) {
 	})
 	
 }
+  /*  Get Quick Response List  */
   getQuickResponse(){
 	this.settingsService.getTemplateData(this.SPID,0).subscribe(response => {
+	  this.QuickReplyListMain=response.templates;
 	  this.QuickReplyList=response.templates;
-	  console.log(this.QuickReplyList);
+	  console.log(this.QuickReplyList, 'QUICK REPLIES LIST');
 	});    
-  }	  
+  }
+  
+  	/* GET VARIABLE VALUES */
+	  getVariables(sentence: string, first: string, last: string) {
+		let goodParts: string[] = [];
+	
+		if (!sentence || sentence.trim() === '') {
+			return goodParts;
+		}
+	
+		const allParts = sentence.split(first);
+	
+		allParts.forEach((part: string, index: number) => {
+			if (index !== 0) {
+				const closingIndex = part.indexOf(last);
+				if (closingIndex !== -1) {
+					const goodOne = part.substring(0, closingIndex);
+					goodParts.push("{{" + goodOne + "}}");
+				}
+			}
+		});
+		return goodParts;
+	}
+		
+		previewTemplate() {
+				let isVariableValue:string = this.selectedTemplate.BodyText + this.selectedTemplate.Header;
+		
+				if (isVariableValue) {
+				  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
+			  };
+		
+			}
 }

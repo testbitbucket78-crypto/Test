@@ -188,13 +188,13 @@ export class TemplateMessageComponent implements OnInit {
         this.newTemplateForm = this.prepareUserForm();
         this.filteredTemplatesData = [...this.templatesData];
         this.filteredGalleryData = [...this.galleryData];
-        this.selectedCountryCode = this.countryCodes[101];
         this.BodyText = this.newTemplateForm.get('BodyText')?.value;
-        this.getTemplatesData();
-        this.getAttributeList();
         const idx = 0;
         const dynamicControlName = 'quickreply' + (idx + 1);
         this.quickreply = this.newTemplateForm.get(dynamicControlName)?.value;
+        this.getTemplatesData();
+        this.getAttributeList();
+     
     }
 
     prepareUserForm() {
@@ -213,7 +213,7 @@ export class TemplateMessageComponent implements OnInit {
             quickreply1: new FormControl(''),
             quickreply2: new FormControl(''),
             quickreply3: new FormControl(''),
-            country_code: new FormControl(''),
+            country_code: new FormControl('IN +91'),
             phone_number: new FormControl(''),
             displayPhoneNumber: new FormControl(''),
         });
@@ -614,7 +614,7 @@ export class TemplateMessageComponent implements OnInit {
         newTemplateForm.status = this.status;
         newTemplateForm.template_id = 0;
         newTemplateForm.template_json = [];
-        if(this.newTemplateForm.controls.Channel.value=='WhatsApp Official') {
+        if(this.newTemplateForm.controls.Channel.value == 'WhatsApp Official') {
             newTemplateForm.template_json.push({
                 name: this.newTemplateForm.controls.TemplateName.value,
                 category: this.newTemplateForm.controls.Category.value,
@@ -625,21 +625,30 @@ export class TemplateMessageComponent implements OnInit {
                         type: 'BODY',
                         text: this.newTemplateForm.controls.BodyText.value,
                     },
+                    
                     {
                         type: this.newTemplateForm.controls.buttonType.value,
+                       
                         buttons: [
                             {
                                 type: 'PHONE_NUMBER',
                                 text: this.newTemplateForm.controls.buttonText.value,
                                 phone_number: this.newTemplateForm.controls.phone_number.value,
-                                country_code: this.newTemplateForm.controls.country_code.value,
-                                displayPhoneNumber: this.newTemplateForm.controls.displayPhoneNumber
-                                    .value,
+                                countryCode: this.newTemplateForm.controls.country_code.value,
+                                displayPhoneNumber: this.newTemplateForm.controls.displayPhoneNumber.value,
                             },
                             {
                                 type: 'URL',
                                 text: this.newTemplateForm.controls.url?.value,
                                 url: this.newTemplateForm.controls.url?.value,
+                            },
+                        ],
+                        button: [
+                            {
+                                name1: this.newTemplateForm.controls.quickreply1.value,
+                                name2: this.newTemplateForm.controls.quickreply2.value,
+                                name3: this.newTemplateForm.controls.quickreply3.value,
+                               
                             },
                         ],
                     },

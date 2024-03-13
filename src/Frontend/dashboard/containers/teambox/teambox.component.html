@@ -824,15 +824,15 @@
 						
 							<div class="section_filter">
 							  <div class="custom-control custom-checkbox">
-								<input class="custom-control-input" id="Marketing" type="checkbox" value="Marketing" (click)="filterTemplate($event)" />
+								<input class="custom-control-input" [checked]="true" id="Marketing" type="checkbox" value="Marketing" (click)="filterTemplate($event)" />
 								<label class="custom-control-label" for="Marketing">Marketing</label>
 							</div>
 							<div class="custom-control custom-checkbox">
-							  <input class="custom-control-input" id="Utility" type="checkbox" value="Utility" (click)="filterTemplate($event)" />
+							  <input class="custom-control-input" [checked]="true" id="Utility" type="checkbox" value="Utility" (click)="filterTemplate($event)" />
 							  <label class="custom-control-label" for="Utility">Utility</label>
 							</div>
 							  <div class="custom-control custom-checkbox">
-								<input class="custom-control-input" id="Authentication" type="checkbox" value="Authentication" (click)="filterTemplate($event)" />
+								<input class="custom-control-input" [checked]="true" id="Authentication" type="checkbox" value="Authentication" (click)="filterTemplate($event)" />
 								<label class="custom-control-label" for="Authentication">Authentication</label>
 							</div>
 							</div>
@@ -1075,7 +1075,7 @@
 						</label>
 						<div class="formrow">
 							<label for="name">URL</label>
-							<input class="form-control" type="text" placeholder="Enter title in max 20 character"
+							<input class="form-control" maxlength="20" type="text" placeholder="Enter title in max 20 character"
 								name="Name" formControlName="Name" id="name" />
 						</div>
 		
@@ -1089,7 +1089,7 @@
 						<div class="formrow ">
 							<label for="name">Input Value</label>
 							<p class="form-control">
-								<input type="text" class="form-control inner" placeholder="Input value or add attribute">
+								<input type="text" id="attribute_input" class="form-control inner" placeholder="Input value or add attribute">
 								<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
 							</p>
 		

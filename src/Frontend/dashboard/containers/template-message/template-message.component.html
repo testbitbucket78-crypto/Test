@@ -607,7 +607,7 @@
                   <div class="d-flex justify-content-between">
                     <div class="pt-3 pb-2 msg-head">
                     <h6 class="pt-1 pb-3">Country</h6>
-                    <select class="callto input-form" formControlName="country_code" [(ngModel)]="selectedCountryCode">
+                    <select class="callto input-form" formControlName="country_code">
                         <option *ngFor="let countryCode of countryCodes let i = index" [ngValue]="countryCode">
                           {{ countryCode }}
                         </option>

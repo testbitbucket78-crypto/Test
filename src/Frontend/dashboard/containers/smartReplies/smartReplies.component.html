@@ -59,62 +59,65 @@
 	</div>
 
 	<div *ngIf="showSideBar" id="sidebar" class="sidebar">
-		<button type="button" class="btn5 btn-close" (click)="toggleSideBar()"><img
-				src="assets/img/teambox/icon-close.svg"></button>
-
-		<div class="collumn d-flex">
-			<h6>Id:</h6>
-			<h5>{{repliesData?.ID}}.</h5>
-			<div class="line"></div>
-			<h6>Created on:</h6>
-			<h5>{{repliesData?.CreatedDate | date: 'dd MMM yyyy'}}</h5>
-			<div class="line"></div>
-			<h6>Edited on:</h6>
-			<h5>{{repliesData?.ModifiedDate | date: 'dd MMM yyyy' }}</h5>
+		<div class="sideBar-header">
+			<button type="button" class="btn5 btn-close" (click)="toggleSideBar()"><img src="assets/img/teambox/icon-close.svg"></button>
 		</div>
-		<h4 class="help-support-btn" routerLink="/dashboard/support"><img id="Edit-icon"
-				src="assets/img/Edit-icon.png">Help & Support</h4>
-		<div class="row d-flex">
-			<h6 class="text-justify">{{items?.Description}}.</h6>
-		</div>
-		<h3 class="keywords-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon"
-				src="assets/img/Edit-icon.png">Keywords & Criteria </h3>
-		<div class="row">
-			<div class="box" *ngFor="let values of repliesData?.Keyword">
-				<p>{{values}}</p>
+		<div class="sideBar-body">
+			<div class="collumn d-flex">
+				<h6>Id:</h6>
+				<h5>{{repliesData?.ID}}.</h5>
+				<div class="line"></div>
+				<h6>Created on:</h6>
+				<h5>{{repliesData?.CreatedDate | date: 'dd MMM yyyy'}}</h5>
+				<div class="line"></div>
+				<h6>Edited on:</h6>
+				<h5>{{repliesData?.ModifiedDate | date: 'dd MMM yyyy' }}</h5>
 			</div>
-
-		</div>
-
-
-		<div class="box1 d-flex">
-			<h6>Matching Criteria:</h6>
-			<h5>{{repliesData?.MatchingCriteria}}</h5>
-		</div>
-
-		<h3 class="reply-action-btn" (click)="editSmartReply()"><img id="Edit-icon" src="assets/img/Edit-icon.png">Reply
-			Actions</h3>
-		<div *ngFor="let item of repliesData?.ActionList">
-			<div class="box4" *ngIf="item.Message">
-				<h3>Message</h3>
-				<p [innerHTML]="item.Message"></p>
+			<h4 class="help-support-btn" routerLink="/dashboard/support"><img id="Edit-icon"
+					src="assets/img/Edit-icon.png">Help & Support</h4>
+			<div class="row d-flex">
+				<h6 class="text-justify">{{items?.Description}}.</h6>
 			</div>
-			<div *ngIf="item.Name =='Assign Conversation' && item.Name !==''" class="assign-conversation">
-				<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
-				<div class="d-flex flex-wrap assign-container">
-					<p class="py-1 px-2 m-0" id="msgbox-body1"><b>Conversation Assigned:</b> {{item.Value}}</p>
+			<h3 class="keywords-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon"
+					src="assets/img/Edit-icon.png">Keywords & Criteria </h3>
+			<div class="row">
+				<div class="box" *ngFor="let values of repliesData?.Keyword">
+					<p>{{values}}</p>
 				</div>
+	
 			</div>
-			<div *ngIf="item.Name =='Add Contact Tag' && item.Name !==''" class="assign-conversation">
-				<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
-				<div class="d-flex flex-wrap assign-container">
-					<p class="py-1 pl-2 m-0" id="msgbox-body1"><b>Add Tags:</b></p>
-					<div *ngFor="let tag of parseTags(item.Value)">
-						<p class="py-1 px-2 m-0" id="msgbox-body1">{{ tag }}</p>
+	
+	
+			<div class="box1 d-flex">
+				<h6>Matching Criteria:</h6>
+				<h5>{{repliesData?.MatchingCriteria}}</h5>
+			</div>
+	
+			<h3 class="reply-action-btn" (click)="editSmartReply()"><img id="Edit-icon" src="assets/img/Edit-icon.png">Reply
+				Actions</h3>
+			<div *ngFor="let item of repliesData?.ActionList">
+				<div class="box4" *ngIf="item.Message">
+					<h3>Message</h3>
+					<p [innerHTML]="item.Message"></p>
+				</div>
+				<div *ngIf="item.Name =='Assign Conversation' && item.Name !==''" class="assign-conversation">
+					<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
+					<div class="d-flex flex-wrap assign-container">
+						<p class="py-1 px-2 m-0" id="msgbox-body1"><b>Conversation Assigned:</b> {{item.Value}}</p>
+					</div>
+				</div>
+				<div *ngIf="item.Name =='Add Contact Tag' && item.Name !==''" class="assign-conversation">
+					<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
+					<div class="d-flex flex-wrap assign-container">
+						<p class="py-1 pl-2 m-0" id="msgbox-body1"><b>Add Tags:</b></p>
+						<div *ngFor="let tag of parseTags(item.Value)">
+							<p class="py-1 px-2 m-0" id="msgbox-body1">{{ tag }}</p>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+	
 
 		<div class="footer">
 			<button class="delete-btn" data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('32')"><img
