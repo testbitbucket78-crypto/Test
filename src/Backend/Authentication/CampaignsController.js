@@ -21,6 +21,29 @@ const getCampaigns = (req, res) => {
 
 const addCampaign = async (req, res) => {
     try {
+        //console.log(req.body)
+        let status = req.body.status
+        let sp_id = req.body.sp_id
+        let title = req.body.title
+        let channel_id = req.body.channel_id
+        let message_heading = req.body.message_heading
+        let message_content = req.body.message_content
+        let message_media = req.body.message_media
+        let message_variables = req.body.message_variables
+        let button_yes = req.body.button_yes
+        let button_no = req.body.button_no
+        let button_exp = req.body.button_exp
+        let category = req.body.category
+        let time_zone = req.body.time_zone
+        let start_datetime = req.body.start_datetime
+        let end_datetime = req.body.end_datetime
+        let csv_contacts = req.body.csv_contacts
+        let segments_contacts = req.body.segments_contacts
+        let category_id = req.body.category_id
+        let OptInStatus = req.body.OptInStatus
+        message_variables = (message_variables?.length <= 0) ? '' : message_variables;
+        csv_contacts = (csv_contacts?.length <= 0) ? '' : csv_contacts;
+        segments_contacts = (segments_contacts?.length <= 0) ? '' : segments_contacts;
         if (req.body.Id != '') {
             var updateQuery = "UPDATE Campaign set";
             updateQuery += " title='" + req.body.title + "',";
@@ -47,10 +70,10 @@ const addCampaign = async (req, res) => {
             db.runQuery(req, res, updateQuery, []);
         } else {
 
-            var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus) ";
-            inserQuery += "VALUES (" + req.body.status + "," + req.body.sp_id + ",'" + req.body.title + "','" + req.body.channel_id + "','" + req.body.message_heading + "','" + req.body.message_content + "','" + req.body.message_media + "','" + req.body.message_variables + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.category + "','" + req.body.time_zone + "','" + req.body.start_datetime + "','" + req.body.end_datetime + "','" + req.body.csv_contacts + "','" + req.body.segments_contacts + "','" + req.body.category_id + "',' " + req.body?.OptInStatus + "')";
+            var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus) values ? ";
+            let addCampaignValue = [[status, sp_id, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime, '[]', segments_contacts, category_id, OptInStatus]]
 
-            let addcampaign = await db.excuteQuery(inserQuery, []);
+            let addcampaign = await db.excuteQuery(inserQuery, [addCampaignValue]);
             console.log(addcampaign)
             res.send({
                 "status": 200,
@@ -235,7 +258,7 @@ const sendCampinMessage = async (req, res) => {
     console.log("sendCampinMessage")
     try {
         var TemplateData = req.body
-        console.log(TemplateData)
+        // console.log(TemplateData)
         var messageTo = TemplateData.phone_number
         var messateText = TemplateData.message_content
         let content = messateText;
@@ -263,7 +286,6 @@ const sendCampinMessage = async (req, res) => {
         content = content.replace(/<br[^>]*>/g, '\n')
         content = content.replace(/<\/?[^>]+(>|$)/g, "")
 
-        //  console.log(content)
         // Parse the message template to get placeholders
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
@@ -301,7 +323,7 @@ const sendCampinMessage = async (req, res) => {
 
             console.log('The input date is in the past.');
             //if(messagestatus =='')
-            console.log("messagestatus  " + JSON.stringify(messagestatus.status))
+            console.log("messagestatus  " + JSON.stringify(messagestatus?.status))
             return res.send(messagestatus);
         }
 
@@ -380,8 +402,8 @@ const sendCampinMessage = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.send({
-            status:500,
-            msg:err
+            status: 500,
+            msg: err
         })
     }
 
@@ -506,71 +528,87 @@ async function msg(alert) {
 async function insertInteractionAndRetrieveId(custid, sid) {
     try {
         console.log(custid, sid)
-      // Check if Interaction exists for the customerId
-      let rows = await db.excuteQuery(
-        'SELECT InteractionId FROM Interaction WHERE customerId = ? limit 1',
-        [custid]
-      );
-
-      if (rows.length == 0) {
-       
-        // If no existing interaction found, insert a new one
-        await db.excuteQuery(
-          'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
-          [custid, 'Open', sid, 'User Initiated']
-        );
-      } else {
-  
-        // Check for the maximum created_at date of Message
-        let  maxdate = await db.excuteQuery(
-            'SELECT MAX(created_at) AS maxdate FROM Interaction WHERE customerId = ?',
+        // Check if Interaction exists for the customerId
+        let rows = await db.excuteQuery(
+            'SELECT InteractionId FROM Interaction WHERE customerId = ? limit 1',
             [custid]
-          );
-          
-       
-        // If maxdate is older than 24 hours, insert a new interaction
-        if (!maxdate || new Date(maxdate) <= new Date(Date.now() - 24 * 60 * 60 * 1000)) {
-            console.log("______________________")
-          await db.excuteQuery(
-            'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
-            [custid, 'Open', sid, 'User Initiated']
-          );
+        );
+
+        if (rows.length == 0) {
+
+            // If no existing interaction found, insert a new one
+            await db.excuteQuery(
+                'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
+                [custid, 'Open', sid, 'User Initiated']
+            );
+        } else {
+
+            // Check for the maximum created_at date of Message
+            let maxdate = await db.excuteQuery(
+                'SELECT MAX(created_at) AS maxdate FROM Interaction WHERE customerId = ?',
+                [custid]
+            );
+
+
+            // If maxdate is older than 24 hours, insert a new interaction
+            if (!maxdate || new Date(maxdate) <= new Date(Date.now() - 24 * 60 * 60 * 1000)) {
+                console.log("______________________")
+                await db.excuteQuery(
+                    'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
+                    [custid, 'Open', sid, 'User Initiated']
+                );
+            }
         }
-      }
-  
-      // Retrieve the newly inserted or existing Interaction ID
-      let InteractionId = await db.excuteQuery(
-        'SELECT InteractionId FROM Interaction WHERE customerId = ? ORDER BY created_at DESC LIMIT 1',
-        [custid]
-      );
-  
-      console.log('Newly inserted or existing Interaction ID:', InteractionId);
-  
-      return InteractionId;
+
+        // Retrieve the newly inserted or existing Interaction ID
+        let InteractionId = await db.excuteQuery(
+            'SELECT InteractionId FROM Interaction WHERE customerId = ? ORDER BY created_at DESC LIMIT 1',
+            [custid]
+        );
+
+        console.log('Newly inserted or existing Interaction ID:', InteractionId);
+
+        return InteractionId;
     } catch (error) {
-      console.error('Error:', error);
-      return error;
+        console.error('Error:', error);
+        return error;
     }
-  }
-  
-  
-  
+}
+
+
+
 
 
 const saveCampaignMessages = async (req, res) => {
     try {
         console.log(req.body)
         let media = req.body.message_media
+        let status_message = req.body.status_message
+        let button_yes = req.body.button_yes
+        let button_no = req.body.button_no
+        let button_exp = req.body.button_exp
+        let message_heading = req.body.message_heading
+        let CampaignId = req.body.CampaignId
+        let phone_number = req.body.phone_number
+        let status = req.body.status
+        let schedule_datetime = req.body.schedule_datetime
+        let SP_ID = req.body.SP_ID
+
+        button_yes = (button_yes === null || button_yes === undefined) ? '' : button_yes;
+        button_no = (button_no === null || button_no === undefined) ? '' : button_no;
+        button_exp = (button_exp === null || button_exp === undefined) ? '' : button_exp;
+        message_heading = (message_heading === null || message_heading === undefined) ? '' : message_heading;
+
         var type = 'image/jpeg';
-        let content =  req.body.message_content
+        let content = req.body.message_content
         if (media == null || media == "") {
             var type = 'text';
         }
- 
+
         let InteractionId = await insertInteractionAndRetrieveId(req.body.customerId, req.body.SP_ID);
-        console.log(InteractionId,"InteractionId InteractionId")
+        console.log(InteractionId, "InteractionId InteractionId")
         let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id) values ?`
-        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId,'Out',req.body.message_content,req.body.message_media,'text',req.body.SP_ID,type,199]]]);
+        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, 'text', req.body.SP_ID, type, '']]]);
 
 
         content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
@@ -580,8 +618,10 @@ const saveCampaignMessages = async (req, res) => {
         content = content.replace('&nbsp;', '\n')
         content = content.replace(/<br[^>]*>/g, '\n')
         content = content.replace(/<\/?[^>]+(>|$)/g, "")
+        // content = content.replace(/'/g, "''");
 
-    
+
+
         // Parse the message template to get placeholders
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
@@ -595,12 +635,11 @@ const saveCampaignMessages = async (req, res) => {
                 content = content.replace(`{{${placeholder}}}`, data[placeholder]);
             });
         }
+        console.log("++", content)
+        var inserQuery = "INSERT INTO CampaignMessages (status_message,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,phone_number,status,schedule_datetime,SP_ID) values ?";
 
-
-        var inserQuery = "INSERT INTO CampaignMessages (status_message,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,phone_number,status,schedule_datetime,SP_ID)";
-        inserQuery += " VALUES ('" + req.body.status_message + "','" + req.body.button_yes + "','" + req.body.button_no + "','" + req.body.button_exp + "','" + req.body.message_media + "','" + content + "','" + req.body.message_heading + "'," + req.body.CampaignId + ",'" + req.body.phone_number + "'," + req.body.status + ",'" + req.body.schedule_datetime + "'," + req.body.SP_ID + ")";
-        let CampaignMessage = await db.excuteQuery(inserQuery, []);
-
+        let campaignMessagesValue = [[status_message, button_yes, button_no, button_exp, media, content, message_heading, CampaignId, phone_number, status, schedule_datetime, SP_ID]]
+        let CampaignMessage = await db.excuteQuery(inserQuery, [campaignMessagesValue]);
 
         res.send({
             status: 200,
@@ -628,26 +667,26 @@ const WHATSAPPOptions = {
 };
 
 const getCampaignMessages = async (req, res) => {
-    try{
+    try {
         let Query = "SELECT * from CampaignMessages  where CampaignId = " + req.params.CampaignId
         let MessageStatusQuery = `SELECT CampaignId, status, COUNT(*) AS status_count
         FROM CampaignMessages
         WHERE CampaignId = ${req.params.CampaignId}
         GROUP BY CampaignId, status;`
-        let report = await db.excuteQuery(MessageStatusQuery,[])
-        let campaignMsg = await  db.excuteQuery(Query, []);
+        let report = await db.excuteQuery(MessageStatusQuery, [])
+        let campaignMsg = await db.excuteQuery(Query, []);
         res.send({
-            status : 200,
-            report : report,
-            campaignMsg : campaignMsg
+            status: 200,
+            report: report,
+            campaignMsg: campaignMsg
         })
-    }catch(err){
+    } catch (err) {
         res.send({
-            status:500,
-            err:err
+            status: 500,
+            err: err
         })
     }
-  
+
 }
 
 

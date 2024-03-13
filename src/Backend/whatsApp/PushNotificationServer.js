@@ -17,6 +17,20 @@ function parseJSONObject(jsonString) {
   catch (e) { }
   return false;
 }
+
+// Periodically send ping messages to all clients
+const pingInterval = 30000; // Interval in milliseconds (30 seconds)
+
+// Function to send a ping message to all connected clients
+function sendPing() {
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send('ping');
+    }
+  });
+}
+const pingIntervalId = setInterval(sendPing, pingInterval);
+
 // Handle WebSocket connections
 wss.on('connection', (ws) => {
   const data = {

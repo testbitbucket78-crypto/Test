@@ -22,11 +22,11 @@ client.on('connect', function(connection) {
       }
   });
 //   setInterval(() => {      
-//     connection.next("ping alive switch");
+//     connection.send("ping alive switch from backend");
 // }, 30000);
 });
 
-client.connect('ws://52.66.172.213:3010/', 'echo-protocol');
+client.connect('ws://localhost:3010/', 'echo-protocol');
 
 function NotifyServer(display_phone_number,updatemessage,message)
 {

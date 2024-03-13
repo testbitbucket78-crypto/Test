@@ -46,7 +46,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
          executablePath: "/usr/bin/google-chrome-stable",
-           //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         //  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -115,6 +115,22 @@ function ClientInstance(spid, authStr, phoneNo) {
 
       client.initialize().catch(_ => _);
 
+
+        // Fetch messages event
+        client.on('fetch_messages', async (chat, limit) => {
+          try {
+            console.log("fetch_messages")
+            const messages = await chat.fetchMessages({ limit: 50 });
+            console.log(messages)
+            // Process fetched messages...
+            messages.forEach(async (message) => {
+              // Your message processing logic here...
+              console.log(message)
+            });
+          } catch (error) {
+            console.error('Error fetching messages:', error);
+          }
+        });
 
       client.on('message', async message => {
         try {
@@ -190,7 +206,7 @@ SELECT InteractionId FROM Interaction
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL); `
      console.log(smsdelupdate)       
 let sended = await db.excuteQuery(smsdelupdate, [])
-             console.log("send"  ,sended.affectedRows)
+             console.log("send"  ,sended?.affectedRows)
             notify.NotifyServer(phoneNo, true)
 
            
@@ -204,7 +220,7 @@ SELECT InteractionId FROM Interaction
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1); `
      console.log(smsdelupdate)      
 let deded = await db.excuteQuery(smsdelupdate, [])
-            console.log("deliver"  , deded.affectedRows)
+            console.log("deliver"  , deded?.affectedRows)
             notify.NotifyServer(phoneNo, true)
            
           } else if (ack == '3') {
@@ -218,7 +234,7 @@ SELECT InteractionId FROM Interaction
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1);`
             console.log(smsupdate)
 let resd = await db.excuteQuery(smsupdate, [])
-             console.log("read"  ,resd.affectedRows)
+             console.log("read"  ,resd?.affectedRows)
             notify.NotifyServer(phoneNo, true)
           }
 
@@ -308,11 +324,11 @@ async function saveSendedMessageStatus(messageStatus, timestamp, to, id) {
   let saveStatus = await db.excuteQuery(`UPDATE Message set msg_status=? ,ExternalMessageId=? where Message_id=?`, [messageStatus, id, message_id])
 }
 
-async function sendMessages(spid, endCust, type, text, link, interaction_id, msg_id) {
+async function sendMessages(spid, endCust, type, text, link, interaction_id, msg_id,spNumber) {
   try {
     let client = clientSpidMapping[[spid]];
     if (client) {
-      let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
+      let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id,spNumber);
 
       return '200';
     } else {
@@ -345,7 +361,7 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
   }
 }
 
-async function sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id) {
+async function sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id,spNumber) {
   try {
 
     //  console.log("messagesTypes", interaction_id, msg_id)
@@ -357,6 +373,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
     if (type === 'text') {
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       client.sendMessage(endCust + '@c.us', text);
+      notify.NotifyServer(spNumber, false,interaction_id)
     }
     if (type === 'image') {
       const media = await MessageMedia.fromUrl(link);
@@ -552,8 +569,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var newId = extractedData.newId
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData.newlyInteractionId
-
-
+console.log("in messages"  ,from, false,newId,display_phone_number)
+    notify.NotifyServer(display_phone_number, false,newId)
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);

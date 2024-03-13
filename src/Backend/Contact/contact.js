@@ -10,9 +10,9 @@ const path = require("path");
 const nodemailer = require('nodemailer');
 const awsHelper = require('../awsHelper')
 const { Key } = require("protractor");
-app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.json({ limit: '100mb' }));
 app.use(cors());
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 const authenticateToken = require('../Authorize');
 
 app.get('/columns/:spid',authenticateToken, async (req, res) => {
@@ -305,7 +305,7 @@ app.post('/importContact',authenticateToken, async (req, res) => {
     if (purpose === 'Add new contact only') {
       try {
 
-        let addNewUserOnly = await addOnlynewContact(CSVdata, identifier)
+        let addNewUserOnly = await addOnlynewContact(CSVdata, identifier,SP_ID)
 
         res.status(200).send({
           msg: "Contact Added Successfully",
@@ -392,7 +392,7 @@ app.post('/importContact',authenticateToken, async (req, res) => {
   }
 })
 
-async function addOnlynewContact(CSVdata, identifier) {
+async function addOnlynewContact(CSVdata, identifier,SP_ID) {
 
   try {
     let result;
@@ -404,15 +404,15 @@ async function addOnlynewContact(CSVdata, identifier) {
       const identifierField = set.find((field) => field.ActuallName === identifier);
       const identifierValue = identifierField ? identifierField.displayName : '';
 
-      let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=?  AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
+      let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=?  and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
       const values = set.map((field) => field.displayName);
       // values.push(SP_ID);
 
-      console.log(query);
-      console.log(values);
+     // console.log(query);
+      //console.log(values);
 
       // Ensure db.executeQuery returns a promise
-      result = await db.excuteQuery(query, [values, identifierValue]);
+      result = await db.excuteQuery(query, [values, identifierValue,SP_ID]);
 
 
     }
@@ -447,7 +447,7 @@ async function updateSelectedField(CSVdata, identifier, fields, SP_ID) {
 
         // Execute the update query
         var upExistContOnlyWithFields = await db.excuteQuery(query, [updatedFieldValue, identifierValue, SP_ID]);
-        console.log(upExistContOnlyWithFields);
+        //console.log(upExistContOnlyWithFields);
       }
     }
     return upExistContOnlyWithFields;
@@ -471,7 +471,7 @@ async function updateContact(CSVdata, identifier, SP_ID) {
 
       // Build the UPDATE query
       let query = `UPDATE EndCustomer SET ${setClause} WHERE ${identifier} = ? AND SP_ID = ? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0);`;
-      console.log(query);
+     // console.log(query);
 
       // Add values for placeholders in the correct order
       const values = set.map((field) => field.displayName); // Using displayName as FieldValue
@@ -479,7 +479,7 @@ async function updateContact(CSVdata, identifier, SP_ID) {
       values.push(SP_ID);
 
       var upExistContOnly = await db.excuteQuery(query, values);
-      console.log(upExistContOnly);
+     // console.log(upExistContOnly);
     }
     return upExistContOnly;
   } catch (err) {
@@ -513,7 +513,7 @@ app.post('/verifyData',authenticateToken, async (req, res) => {
 
       for (let i = 0; i < currentData.length; i++) {
         var currentEntry = currentData[i];
-        console.log(currentEntry, i);
+       // console.log(currentEntry, i);
 
         if (currentEntry.ActuallName === 'emailId') {
           email = currentEntry.displayName; // Assign to email variable
@@ -526,7 +526,7 @@ app.post('/verifyData',authenticateToken, async (req, res) => {
       var emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
       var phoneno = /^[0-9]{6,15}$/;
 
-
+      //console.log(email , !email.match(emailFormat)  ,phone ,!phone.match(phoneno))
       if ((!email || !email.match(emailFormat)) || (!phone || !phone.match(phoneno))) {
         errData.push(currentData);
       } else {
@@ -561,11 +561,12 @@ app.post('/verifyData',authenticateToken, async (req, res) => {
     }
 
     if (importData.length > 0) {
+      console.log(importData)
       // Execute query and handle purpose
       var verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)';
       var result = await db.excuteQuery(verifyQuery, [queryData, SP_ID]);
 
-
+console.log(result)
       try {
         if (purpose === 'Add new contact only') {
           res.status(200).send({

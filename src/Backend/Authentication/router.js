@@ -98,6 +98,14 @@ res.send({message:'File no uplaoded...'})
 }
 const url =  path.join(__dirname, `/uploads/${file.filename}`)//`${req.protocol}://${req.get('host')}/uploads/${file.filename}`
 
+// Get file stats to obtain file size
+const stats = await fs.stat(url);
+
+const fileSizeInBytes = stats?.size;
+const fileSizeInKilobytes = fileSizeInBytes / 1024;
+const fileSizeInMegabytes = fileSizeInKilobytes / 1024;
+if(fileSizeInMegabytes <= 10){
+
 console.log(url)
 
 const uuidv = uuidv4()
@@ -108,12 +116,20 @@ let awsres = await awsHelper.uploadAttachment(`${req.params.spid}/${req.params.n
 console.log("awsres" ,awsres.size)
 //console.log(awsres.value.Location)
 await fs.unlink(url);
-console.log(url)
-res.send({filename:awsres.value.Location,fileSize:awsres.size})
 
+res.send({status:200,filename:awsres.value.Location,fileSize:awsres.size})
+}else{
+  
+  try {
+   await fs.unlink(url); 
+} catch (unlinkErr) {
+   console.error("Error occurred while unlinking file:", unlinkErr);
+}
+res.status(413).send({ message: 'File size limit exceeds 10MB' });
+}
 }catch(err){
    console.log(err)
-   res.send({err:err})
+   res.send({status:500,err:err})
 }
 });
 

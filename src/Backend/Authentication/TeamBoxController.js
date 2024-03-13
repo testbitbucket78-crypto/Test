@@ -338,6 +338,7 @@ const insertMessage = async (req, res) => {
             created_at = req.body.created_at
             ExternalMessageId = ''
             mediaSize=req.body.mediaSize
+            spNumber=req.body?.spNumber
 
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id])
             let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId,SPID]);
@@ -348,9 +349,12 @@ const insertMessage = async (req, res) => {
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at,mediaSize]]
             let msg_id = await db.excuteQuery(messageQuery, [values])
             if (agentName.length >= 0) {
-                let mentionQuery = `SELECT * FROM Message WHERE '` + message_text + `' LIKE '%@` + agentName[0].name + `%'`;
-
-                var mentionedNotification = await db.excuteQuery(mentionQuery, [])
+                let mentionQuery = "SELECT * FROM Message WHERE ? LIKE ?";
+                let messageTextParameter = `%${message_text}%`; // assuming message_text is the text you want to search
+                let agentNameParameter = `@${agentName[0].name}`; // assuming agentName is an array and you want to search for the first agent's name
+                
+                var mentionedNotification = await db.excuteQuery(mentionQuery, [messageTextParameter, agentNameParameter]);
+                
             }
             if (mentionedNotification.length != 0) {
 
@@ -380,11 +384,11 @@ const insertMessage = async (req, res) => {
                     if (req.body.message_media != '') {
                         // sendMediaOnWhatsApp(req.body.messageTo, message_media)
                         
-                        middlewareresult = await middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId)
+                        middlewareresult = await middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId,spNumber)
                     }
                     // sendTextOnWhatsApp(req.body.messageTo, message_text)
                     else{
-                    middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId)
+                    middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId,spNumber)
                 
                     }
                 }
