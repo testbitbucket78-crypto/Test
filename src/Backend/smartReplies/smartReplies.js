@@ -91,7 +91,7 @@ app.post('/KeywordMatch', async (req, res) => {
     // Add single quotes after every comma
     const updatedString = (params.strings.value).split(',').map(value => "'" + value + "'").join(',');
     console.log("updatedString" + updatedString.length)
-    var query = "SELECT Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + `) and Keyword IN (` + updatedString + ')';
+    var query = "SELECT Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + ` and isDeleted !=1) and Keyword IN (` + updatedString + ') and isDeleted !=1';
 
     var findKey = await db.excuteQuery(query, [])
 
