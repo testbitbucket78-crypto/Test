@@ -160,7 +160,7 @@ filterQuickRes(){
   saveTemplate(){
     let val = this.usertemplateForm.controls.Header.value;
     let temp = this.templates.filter(item => item.Header == val)[0];
-    if(temp)
+    if(temp && this.ID != temp?.ID)
     this.showToaster('Quick response already exist with this name !','error');
     else{
     if(this.usertemplateForm.valid){
@@ -223,10 +223,7 @@ deleteTemplate(){
   const TemplateID = {
     ID: this.repliestemplateData?.ID
   }
-  
-
-  this.apiService.deleteTemplateData(TemplateID)
-  
+  this.apiService.deleteTemplateData(TemplateID)  
   .subscribe(result =>{
     if(result){
       $("#deleteModal").modal('hide');
@@ -311,7 +308,8 @@ getCharacterCount(val:string) {
 checkQuickResponseName(e:any){
 let val = e.target.value;
 let temp = this.templates.filter(item => item.Header == val)[0];
-if(temp)
+console.log(temp)
+if(temp && this.ID != temp.ID)
 this.showToaster('Quick response already exist with this name !','error');
 
 }

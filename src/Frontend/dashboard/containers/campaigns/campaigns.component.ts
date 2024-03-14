@@ -371,7 +371,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.getAllCampaigns()
 		this.getContactList('')
 		this.getAttributeList()
-		this.getAdditiionalAttributes()
+		this.getAdditiionalAttributes();
+		this.processData();
 	}
 	getAdditiionalAttributes(){
 		this.apiService.getAdditiionalAttributes(this.SPID).subscribe(allAttributes =>{
@@ -544,30 +545,47 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 
 	async getCampaignMessages(CampaignId:any){
-		await this.apiService.getCampaignMessages(CampaignId).subscribe(responseData =>{
+		await this.apiService.getCampaignMessages(CampaignId).subscribe((responseData:any )=>{
 			let allMessage:any= responseData
 			let Sent:any=0
 			let Failed:any=0
 			let Delivered:any=0
 			let Seen:any=0
 			let Replied:any=0
-			allMessage.map((item:any)=>{
+			// allMessage.map((item:any)=>{
+			// 	if(item.status==0){
+			// 		Failed=Failed+1
+			// 	}
+			// 	if(item.status==1){
+			// 		Sent=Sent+1
+			// 	}
+			// 	if(item.status==2){
+			// 		Delivered=Delivered+1
+			// 	}
+			// 	if(item.status==3){
+			// 		Seen=Seen+1
+			// 	}
+			// 	if(item.status==4){
+			// 		Replied=Replied+1
+			// 	}
+				
+			// })
+			responseData?.report.forEach((item:any)=>{
 				if(item.status==0){
-					Failed=Failed+1
+					Failed=item?.status_count;
 				}
 				if(item.status==1){
-					Sent=Sent+1
+					Sent=item?.status_count;
 				}
 				if(item.status==2){
-					Delivered=Delivered+1
+					Delivered=item?.status_count;
 				}
 				if(item.status==3){
-					Seen=Seen+1
+					Seen=item?.status_count;
 				}
 				if(item.status==4){
-					Replied=Replied+1
+					Replied=item?.status_count;
 				}
-				
 			})
 			this.selectedCampaign['Replied'] =Replied;
 			this.selectedCampaign['Seen'] =Seen;
@@ -1284,6 +1302,7 @@ formateDate(dateTime:string){
 			message_heading:this.selectedTemplate.Header,
 			message_content:this.selectedTemplate.BodyText,
 			message_media:this.selectedTemplate.Links,
+			message_type:this.selectedTemplate.media_type,
 			message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
 			button_yes:this.selectedTemplate.button_yes,
 			button_no:this.selectedTemplate.button_no,
@@ -1315,7 +1334,7 @@ formateDate(dateTime:string){
 			let newCampaign:any = responseData
 			console.log(newCampaign)
 			if(newCampaign.insertId > 0){
-				CampaignId= newCampaign.insertId
+				CampaignId= newCampaign.insertId;
 			}
 			this.runCampaign(CampaignId,BodyData)
 			
@@ -1327,12 +1346,15 @@ formateDate(dateTime:string){
 	async runCampaign(CampaignId:any,BodyData:any){
 
 		if(this.csvContactList.length>0){
+			let ix =0;
 			console.log(this.csvContactList,'---csvContactList');
-			await this.csvContactList.map(async (item:any)=>{
+			//await this.csvContactList.map(async (item:any)=>{
+				for (const item of this.csvContactList) {
 				if(item.Contacts_Column && item.Contacts_Column.length > 9){
 				console.log(item)
+				ix = ix+1;
 				let MessageBodyData:any={
-					SPID:this.SPID,
+					SP_ID:this.SPID,
 					optInStatus:this.optInStatus,
 					customerId:this.AgentId,
 					//contactId
@@ -1342,8 +1364,10 @@ formateDate(dateTime:string){
 					button_no:this.selectedTemplate.button_no,
 					button_exp:this.selectedTemplate.button_exp,
 					message_media:this.selectedTemplate.Links,
+					message_type:this.selectedTemplate.media_type,
 					message_content:this.selectedTemplate.BodyText,
 					CampaignId:CampaignId,
+					isFinished:ix == this.csvContactList.length ? true :false,
 					category_id:this.selectedTemplate.category_id,
 					channel_id:this.newCampaignDetail.value.channel_id,
 					channel_label:this.newCampaignDetail.value.channel_label,
@@ -1355,19 +1379,18 @@ formateDate(dateTime:string){
 				let message_heading =this.selectedTemplate.Header
 				let message_content= this.selectedTemplate.BodyText
 				await allVariables.map(async (variable:any)=>{
-
 					let varValue = variable.value
 					varValue = item[varValue]?item[varValue]:varValue;
 					message_heading = message_heading.replaceAll(variable.label,varValue)
 					message_content = message_content.replaceAll(variable.label,varValue)
-					MessageBodyData['message_heading']=message_heading
-					MessageBodyData['message_content']=message_content
-					
+					MessageBodyData['message_heading']=message_heading;
+					MessageBodyData['message_content']=message_content;					
 				})
 				await this.apiService.sendCampinMessage(MessageBodyData).subscribe(async(responseData) =>{
-					let messageStatus:any = responseData
-					if(messageStatus.error){
-					MessageBodyData['status_message']=messageStatus.error.error_data.details
+					let messageStatus:any = responseData;
+					console.log(responseData);
+					if(messageStatus?.status == 401 || messageStatus?.error){
+						MessageBodyData['status_message']=messageStatus?.error ? messageStatus?.error?.error_data.details: '';
 					MessageBodyData['status']=0
 					}else{
 					MessageBodyData['status_message']='Message Sent';
@@ -1380,19 +1403,25 @@ formateDate(dateTime:string){
 					})
 					
 				})
+				
+				await this.delay(2000);
 			}
 
-			})
+			//})
+		}
 
 		}
 		if(this.segmentsContactList.length>0){
-			await this.segmentsContactList.map(async (customerId:any)=>{
+			
+			let idx =0;
+			for (const customerId of this.segmentsContactList) {
+			//await this.segmentsContactList.map(async (customerId:any)=>{
 				let SIPattribute:any=[]
 				await this.apiService.getContactAttributesByCustomer(customerId).subscribe(response =>{
-					let attributes:any = response
-					SIPattribute=attributes[0]
+					let attributes:any = response;
+					SIPattribute=attributes[0];
 				})
-
+				idx = idx+1;
 				await this.apiService.getEndCustomerDetail(customerId).subscribe(async (customerResponse) =>{
 					let customerResponseList:any=customerResponse
 					let customerDetail = customerResponseList[0]
@@ -1408,7 +1437,9 @@ formateDate(dateTime:string){
 							message_media:this.selectedTemplate.Links,
 							message_content:this.selectedTemplate.BodyText,
 							category_id:this.selectedTemplate.category_id,
+							message_type:this.selectedTemplate.media_type,
 							CampaignId:CampaignId,
+							isFinished:idx == this.segmentsContactList.length ? true :false,
 							channel_id:this.newCampaignDetail.value.channel_id,
 							channel_label:this.newCampaignDetail.value.channel_label,
 							schedule_datetime:BodyData.start_datetime,
@@ -1435,8 +1466,9 @@ formateDate(dateTime:string){
 						})
 						await this.apiService.sendCampinMessage(MessageBodyData).subscribe(async(responseData) =>{
 							let messageStatus:any = responseData
-							if(messageStatus.error){
-							MessageBodyData['status_message']=messageStatus.error.error_data.details
+							console.log(responseData);
+							if(messageStatus?.status == 401  || messageStatus?.error){
+							MessageBodyData['status_message']=messageStatus?.error ? messageStatus?.error?.error_data.details: '';
 							MessageBodyData['status']=0
 							}else{
 							MessageBodyData['status_message']='Message Sent';
@@ -1445,7 +1477,7 @@ formateDate(dateTime:string){
 
 							await this.apiService.saveCampaignMessages(MessageBodyData).subscribe(responseData =>{
 								this.closeAllModal()
-								this.getAllCampaigns()
+								this.getAllCampaigns();
 							})
 							
 						})
@@ -1453,8 +1485,25 @@ formateDate(dateTime:string){
 					}
 					
 				})
-			})
+				await this.delay(2000);
+				console.log('100000');
+			//})
+			}
 		}
+	}
+
+	async  processData() {
+		const data = [1, 2, 3, 4, 5]; // Example data array
+	
+		for (const item of data) {
+			console.log(item); // Process each item
+	
+			await this.delay(10000); // 1 second delay
+		}
+	}
+
+	delay(ms: number) {
+		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 	openSegmentAudience(importantContact:any){
 		this.closeAllModal()
@@ -2247,7 +2296,19 @@ console.log(this.allTemplatesMain);
 			allVariablesList.push({ label: item, value: '' });
 			}
 		  });
-	  
+		  console.log(JSON.parse(this.selectedTemplate?.template_json), '-----selectedTemplatexddsfg');
+		  let template_json = JSON.parse(this.selectedTemplate?.template_json)[0];
+		  let buttons = [];
+		  //template.components[1]?.button.forEach((item)=>{
+			if(template_json && template_json?.components){
+			for(let item of template_json?.components[1]?.button){
+			if(item){
+				buttons.push({name:item,value:''});
+			}
+		}
+		 // })
+		}
+		this.selectedTemplate['buttons'] = buttons;	  
 		  this.selectedTemplate['allVariables'] = allVariablesList;
 		  console.log(this.selectedTemplate, '-----selectedTemplate');
 		  console.log(JSON.parse(this.selectedTemplate?.template_json), '-----selectedTemplatexddsfg');
