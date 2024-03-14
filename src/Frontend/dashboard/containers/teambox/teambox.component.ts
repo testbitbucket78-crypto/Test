@@ -761,9 +761,25 @@ sendattachfile(){
 		let imageFile = files[0]
 		let spid = this.SPID
 		this.mediaType = files[0].type
+		let fileSize = files[0].size;
+
+		const fileSizeInMB: number = parseFloat((fileSize / (1024 * 1024)).toFixed(2));
+		const imageSizeInMB: number = parseFloat((5 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+		const docVideoSizeInMB: number = parseFloat((10 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+
 		const data = new FormData();
 		data.append('dataFile',imageFile ,imageFile.name);
-		let name='teambox'
+
+		if((this.mediaType == 'video/mp4' || this.mediaType == 'application/pdf') && fileSizeInMB > docVideoSizeInMB) {
+			this.showToaster('Video / Document File size exceeds 10MB limit','error');
+		}
+
+		else if ((this.mediaType == 'image/jpg' || this.mediaType == 'image/jpeg' || this.mediaType == 'image/png' || this.mediaType == 'image/webp') && fileSizeInMB > imageSizeInMB) {
+			this.showToaster('Image File size exceeds 5MB limit','error');
+		}
+
+		else {
+			let name='teambox'
 			this.apiService.uploadfile(data,spid,name).subscribe(uploadStatus => {
 			let responseData:any = uploadStatus
 			if(responseData.filename){
@@ -776,6 +792,8 @@ sendattachfile(){
 			}
 
 			});
+		}
+
 		  };	
 	}
 			

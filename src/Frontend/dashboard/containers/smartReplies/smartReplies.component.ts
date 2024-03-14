@@ -55,6 +55,7 @@ export class SmartRepliesComponent implements OnInit {
 	getReplies() {
 		var SP_ID=sessionStorage.getItem('SP_ID')
 		this.apiService.getSmartReply(SP_ID).subscribe((data: any) => {
+			console.log(data,'replies data')
 			this.replies = data;
 		})
 	}
