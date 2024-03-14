@@ -414,8 +414,11 @@ routerGuard = () => {
 		else if(item.media_type === 'video') {
 			mediaContent ='<p><video style="width:50%; height:50%" src="'+item.Links+'"></video></p>'
 		}
-		else {
+		else if(item.media_type === 'document') {
 			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+		}
+		else {
+			mediaContent=''
 		}
 		var htmlcontent = mediaContent +'<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
 		this.chatEditor.value =htmlcontent

@@ -106,6 +106,7 @@ export class SmartRepliesComponent implements OnInit {
 		} catch (error) {
 		  console.error('Error parsing tags:', error);
 		}
+		
 		return tagsArray;
 	  }
 
