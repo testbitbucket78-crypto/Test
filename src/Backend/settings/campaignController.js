@@ -249,7 +249,7 @@ const addCustomField = async (req, res) => {
             SP_ID = req.body.SP_ID,
             Type = req.body.Type,
             description = req.body.description,
-            created_at = new Date();
+            created_at = new Date().toUTCString();
 
 
         let count = await db.excuteQuery(val.getColCount, [SP_ID]);
