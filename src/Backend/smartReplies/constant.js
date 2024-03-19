@@ -16,12 +16,12 @@ t.CreatedDate,
 t.ModifiedDate,
 count(distinct s.Keyword) as KeywordCount,
 t.MatchingCriteria,
-count(distinct m.ActionID) as ActionCount
+count(m.ActionID) as ActionCount
 from
 SmartReply t
 left join SmartReplyAction m ON m.SmartReplyID = t.ID
 left join SmartReplyKeywords s ON s.SmartReplyID = t.ID
-where t.isDeleted is null and  m.isDeleted is null and  s.isDeleted is null  and t.SP_ID=?
+where t.isDeleted !=1 and  m.isDeleted !=1 and  s.isDeleted !=1  and t.SP_ID=?
 group by
 t.ID,
 t.Title,
@@ -53,7 +53,7 @@ t.MatchingCriteria
 from
 SmartReply t
 right join SmartReplyKeywords s ON s.SmartReplyID = t.ID
-where t.isDeleted is null and t.SP_ID=?) as b on a.SRID=b.SRID `
+where t.isDeleted !=1 and t.SP_ID=?) as b on a.SRID=b.SRID `
 
 search = `   select
 t.ID,
@@ -93,7 +93,7 @@ SmartReply t
 left join SmartReplyAction m ON m.SmartReplyID = t.ID
 left join SRActionMaster n ON n.ID=m.ActionID
 left join SmartReplyKeywords s ON s.SmartReplyID = t.ID
-where t.ID=?  and t.isDeleted is null and  m.isDeleted is null   and s.isDeleted is null`
+where t.ID=?  and t.isDeleted !=1 and  m.isDeleted !=1   and s.isDeleted !=1`
 
 alluserofAOwner = `WITH RECURSIVE user_paths AS
 ( SELECT SP_ID,

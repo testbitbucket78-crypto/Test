@@ -21,7 +21,7 @@ const getCampaigns = (req, res) => {
 
 const addCampaign = async (req, res) => {
     try {
-        //console.log(req.body)
+     //   console.log("req.body.status",req.body.status)
         let status = req.body.status
         let sp_id = req.body.sp_id
         let title = req.body.title
@@ -74,7 +74,8 @@ const addCampaign = async (req, res) => {
             let addCampaignValue = [[status, sp_id, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime, '[]', segments_contacts, category_id, OptInStatus]]
 
             let addcampaign = await db.excuteQuery(inserQuery, [addCampaignValue]);
-            console.log(addcampaign)
+           // console.log(addcampaign)
+           // campaignAlerts(req.body)
             res.send({
                 "status": 200,
                 "message": "Campaign added",
@@ -311,7 +312,7 @@ const sendCampinMessage = async (req, res) => {
             if (optInStatus == 'Yes') {
                 const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and isDeleted !=1`;
                 let results = await db.excuteQuery(sqlQuery, [customerId]);
-                console.log(results, "****", customerId)
+               // console.log(results, "****", customerId)
                 if (results?.length > 0) {
                     messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
                 }
@@ -321,7 +322,7 @@ const sendCampinMessage = async (req, res) => {
 
 
 
-            console.log('The input date is in the past.');
+            //console.log('The input date is in the past.');
             //if(messagestatus =='')
             console.log("messagestatus  " + JSON.stringify(messagestatus?.status))
             return res.send(messagestatus);
@@ -409,16 +410,18 @@ const sendCampinMessage = async (req, res) => {
 
 }
 
-const campaignAlerts = async (req, res) => {
-    var TemplateData = req.body
-    console.log("campaignAlerts ")
-    //console.log(req.body)
-    sp_id = TemplateData.sp_id
+// const campaignAlerts = async (req, res) => {
+//     var TemplateData = req.body
+//     console.log("campaignAlerts ")
+//     //console.log(req.body)
+
+async function campaignAlerts(TemplateData){
+    console.log("campaignAlerts ***************")
     message_content = TemplateData.message_content
     message_media = TemplateData.message_media
     channel_id = TemplateData.channel_id
     phone_number_id = ''
-    updatedStatus = req.body.status
+    updatedStatus = TemplateData.status
     let alertmessages = await msg(TemplateData)
 
     let alertUser = `select c.uid,u.* from CampaignAlerts c
@@ -426,24 +429,22 @@ const campaignAlerts = async (req, res) => {
      where c.SP_ID=? and c.isDeleted !=1 `;
 
 
-    let user = await db.excuteQuery(alertUser, [req.body.sp_id]);
+    let user = await db.excuteQuery(alertUser, [TemplateData.sp_id]);
 
-    var type = 'image';
-    if (TemplateData.message_media == null || TemplateData.message_media == "") {
-        type = 'text';
-    }
+    var type = TemplateData.message_type;
 
-    sendBatchMessage(user, sp_id, type, alertmessages, message_media, phone_number_id, channel_id, TemplateData.CampaignId, updatedStatus)
+    sendBatchMessage(user, TemplateData.sp_id, 'text', alertmessages, message_media, phone_number_id, channel_id, TemplateData.CampaignId, updatedStatus)
 
 }
 
 async function sendBatchMessage(user, sp_id, type, message_content, message_media, phone_number_id, channel_id, Id, updatedStatus) {
     for (var i = 0; i < user.length; i++) {
         let mobile_number = user[i].mobile_number
-
-        setTimeout(() => {
+//console.log("sendBatchMessage" ,sp_id, channel_id, type, mobile_number, message_content, message_media)
+        setTimeout(async () => {
             //  messageThroughselectedchannel(sp_id, mobile_number, type, message_content, message_media, phone_number_id, channel_id)
-            middleWare.channelssetUp(sp_id, channel_id, type, mobile_number, message_content, message_media)
+         let batchresponse = await   middleWare.channelssetUp(sp_id, channel_id, type, mobile_number, message_content, message_media);
+         console.log(batchresponse)
         }, 10)
     }
     let updateQuery = `UPDATE Campaign SET status=?,updated_at=? where Id=?`;
@@ -566,7 +567,7 @@ async function insertInteractionAndRetrieveId(custid, sid) {
             [custid]
         );
 
-        console.log('Newly inserted or existing Interaction ID:', InteractionId);
+       // console.log('Newly inserted or existing Interaction ID:', InteractionId);
 
         return InteractionId;
     } catch (error) {
@@ -581,7 +582,7 @@ async function insertInteractionAndRetrieveId(custid, sid) {
 
 const saveCampaignMessages = async (req, res) => {
     try {
-        console.log(req.body)
+       // console.log(req.body)
         let media = req.body.message_media
         let status_message = req.body.status_message
         let button_yes = req.body.button_yes
@@ -593,20 +594,16 @@ const saveCampaignMessages = async (req, res) => {
         let status = req.body.status
         let schedule_datetime = req.body.schedule_datetime
         let SP_ID = req.body.SP_ID
-
+        let type = req.body.message_type
+        let content = req.body.message_content
         button_yes = (button_yes === null || button_yes === undefined) ? '' : button_yes;
         button_no = (button_no === null || button_no === undefined) ? '' : button_no;
         button_exp = (button_exp === null || button_exp === undefined) ? '' : button_exp;
         message_heading = (message_heading === null || message_heading === undefined) ? '' : message_heading;
-
-        var type = 'image/jpeg';
-        let content = req.body.message_content
-        if (media == null || media == "") {
-            var type = 'text';
-        }
+  
 
         let InteractionId = await insertInteractionAndRetrieveId(req.body.customerId, req.body.SP_ID);
-        console.log(InteractionId, "InteractionId InteractionId")
+       // console.log(InteractionId, "InteractionId InteractionId")
         let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id) values ?`
         let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, 'text', req.body.SP_ID, type, '']]]);
 

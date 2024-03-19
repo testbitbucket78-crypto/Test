@@ -3,7 +3,7 @@ const http = require("https");
 const axios = require('axios');
 const token = 'EAAU0g9iuku4BOzSD75ynSUzKSsYrIWv3qkEa9QPAnUNTUzPwN5aTjGxoAHxsXF4Nlrw8UxbMGqZBxqarODf2sY20MvFfTQm0umq4ZBKCpFAJdcPtbcYSZBsHMqYVwjfFPiQwFk1Rmadl4ctoncnxczMGJZALoVfZBpqoQ0lYHzOwbRb1nvImzhL4ex53c9HKVyzl2viy4EhLy9g0K';
 
-function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id) {
+function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id,spNumber) {
  
     return new Promise(async (resolve, reject) => {
         try {
@@ -16,11 +16,12 @@ function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id) {
                 text: text,
                 phoneNo: phoneNumber,
                 interaction_id:interaction_id,
-                msg_id:msg_id
+                msg_id:msg_id,
+                spNumber:spNumber
             };
 
             const response = await axios.post(apiUrl, dataToSend);
-
+//console.log(response)
             resolve(response.data); // Resolve with the response data
         } catch (error) {
             console.error('Error:', error.message);
@@ -51,8 +52,8 @@ async function channelssetUp(spid, channelType, mediaType, messageTo, message_bo
         } else if (channelType == 'WhatsApp Web' || channelType == 2) {
 
             let content = await removeTagsFromMessages(message_body);
-            let messages = await postDataToAPI(spid, phoneNumber, mediaType, content, media,interaction_id,msg_id)
-            // console.log(messages)
+            let messages = await postDataToAPI(spid, phoneNumber, mediaType, content, media,interaction_id,msg_id,spNumber)
+             console.log(messages)
             return messages;
         }
     } catch (err) {

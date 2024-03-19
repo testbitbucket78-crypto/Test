@@ -232,16 +232,17 @@ async function getStorageUtilization(spid, days) {
 
     const params = {
         Bucket: awsConfig.awsbucket,
-        Prefix: spid.toString()+'/teambox', // Objects that start with "2" //  here Prefix is SP_ID
+        Prefix: spid.toString(), // Objects that start with "2" //  here Prefix is SP_ID
     };
-    const cutoffDate = new Date();
-
+    let cutoffDate = new Date();
+   
     if (days != '-1') {
         console.log("-0")
         cutoffDate.setDate(cutoffDate.getDate() - days);
-        cutoffDate.setHours(0, 0, 0, 0); // Set time to midnight (start of the day)
+        cutoffDate = cutoffDate.toISOString().split('T')[0];
+       
     }
-
+console.log("cutoffDate" ,cutoffDate)
     const getObjectSize = async (key) => {
         const objectParams = {
             Bucket: awsConfig.awsbucket,
@@ -258,8 +259,9 @@ async function getStorageUtilization(spid, days) {
              // console.log(item.Key)
              
            // Adjusting item.LastModified to compare only dates
-           const itemLastModified = new Date(item.LastModified);
-           itemLastModified.setHours(0, 0, 0, 0); // Set time to midnight (start of the day)
+           const itemLastModified = new Date(item.LastModified).toISOString().split('T')[0];
+           //itemLastModified.setHours(0, 0, 0, 0); // Set time to midnight (start of the day)
+           console.log(itemLastModified ,itemLastModified <= cutoffDate)
             if (itemLastModified <= cutoffDate) {
                 totalSize += await getObjectSize(item.Key);
                 mediaCount = mediaCount + 1;
@@ -299,21 +301,21 @@ async function deleteObjectFromBucket(days, spid) {
     let deletedMedia = 0;
     const params = {
         Bucket: awsConfig.awsbucket,
-        Prefix: spid?.toString()+'/teambox', //: spid,
+        Prefix: spid?.toString()   // Remove teambox from delete whole data *'/teambox'*, //: spid,
     };
 
 
-    const cutoffDate = new Date();
+    let cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
-    cutoffDate.setHours(0, 0, 0, 0); // Set time to midnight (start of the day)
+    cutoffDate = cutoffDate.toISOString().split('T')[0];
 
     try {
 
         const listObjectsResponse = await s3.listObjectsV2(params).promise();
 
         for (const object of listObjectsResponse.Contents) {
-            const objectLastModified = new Date(object.LastModified);
-            objectLastModified.setHours(0, 0, 0, 0); // Set time to midnight (start of the day)
+            const objectLastModified = new Date(object.LastModified).toISOString().split('T')[0];
+           
           // console.log(objectLastModified , objectLastModified <= cutoffDate, cutoffDate)
  
             if (objectLastModified <= cutoffDate) {

@@ -57,9 +57,9 @@ WHERE u.SP_ID =? AND u.isDeleted != 1 ;
 selectUserByIdQuery = `SELECT DISTINCT u.uid, r.RoleName, t.team_name, u.*
 FROM user u
 JOIN roles r ON u.UserType = r.roleID
-LEFT JOIN UserTeamMapping utm ON u.uid = utm.userID
-LEFT JOIN teams t ON utm.teamID = t.id
-WHERE u.SP_ID =? AND u.isDeleted != 1 and u.uid=?`
+LEFT JOIN UserTeamMapping utm ON u.uid = utm.userID AND utm.isDeleted != 1
+LEFT JOIN teams t ON utm.teamID = t.id AND t.isDeleted != 1
+WHERE u.SP_ID =? AND u.isDeleted != 1  AND u.uid = ?`
 
 selectByIdQuery = `select Company_Name,profile_img from companyDetails where SP_ID=?`
 userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
