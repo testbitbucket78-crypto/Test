@@ -3,8 +3,9 @@ import { FormGroup, FormControl, FormBuilder, Validators} from '@angular/forms';
 import { SettingsService } from '../../services/settings.service';
 import { billingDetail, companyDetail, localeDetail,profilesettingPicData } from '../../models/settings.model';
 // import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
-import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { ImageCroppedEvent, base64ToFile  } from 'ngx-image-cropper';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
 
 
 
@@ -104,23 +105,11 @@ countryCodes = [
   'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
   ];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  fileName: any; 
+  selectedPreview: string = '';
   
   constructor(private _settingsService:SettingsService,
-    public settingsService:SettingsService,private fb: FormBuilder,private apiService: SettingsService) {     
+    public settingsService:SettingsService,private fb: FormBuilder,private apiService: SettingsService, private _teamboxService: TeamboxService) {     
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     this.form = this.fb.group({
       zip_code: ['', [Validators.required, Validators.pattern(this.zipCodePattern)]],
@@ -152,8 +141,12 @@ countryCodes = [
  fileChangeEvent(event: any): void {
   $("#pictureCropModal").modal('show');
     this.imageChangedEvent = event;
+    let files: FileList = event.target.files;
+    let File = files[0];
+    this.fileName = this.truncateFileName(File.name, 25);
   }
   imageCropped(event: ImageCroppedEvent) {
+    console.log(event);
       this.croppedImage = event.base64;
    
  }
@@ -181,46 +174,44 @@ this.showToaster('Error saving image ','error' + error.message);
 
 }
 
-// fileChangeEvent(event: any): void {
-//   $("#pictureCropModal").modal('show');
-//     this.imageChangedEvent = event;
-//   }
-//   imageCropped(event: ImageCroppedEvent) {
-//     const newImageUrl = event.base64 + '?timestamp=' + new Date().getTime();
-//     this.croppedImage = newImageUrl;
-    
-//     // Trigger change detection
-//     this.cdRef.detectChanges();
-//  }
+  
+// onFileChange(event: any) {
+//   let files: FileList = event.target.files;
+//   this.saveVideoAndDocument();
+// }
 
  
-// //API call to save the cropped image
+saveVideoAndDocument() {
+  if (this.croppedImage) {
+      let File = base64ToFile(this.croppedImage);
+      console.log(File);
+      let spid = this.sp_Id;
+      let mediaType = 'image';
+      const data = new FormData();
+      data.append('dataFile', File, this.fileName);
+      data.append('mediaType', mediaType);
+      let name='template-message'
+      this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
+          let responseData: any = uploadStatus;
+          if (responseData.filename) {
+              this.companyimage = responseData.filename.toString();
+              console.log(this.companyimage);
+              this.showToaster('Image saved successfully','success');
+            $("#pictureCropModal").modal('hide');
+            this.profilePicture;
+            this.randomNumber = Math.random();
+          }
+      });
+  }
+}
 
-// saveContactsProfilePicture() {
-//   let SP_ID = Number(sessionStorage.getItem('SP_ID'))
-//   this.contactsImageData.SP_ID = SP_ID,
-//   this.contactsImageData.customerId = this.contactId,
-//   this.contactsImageData.contact_profile = this.croppedImage
 
-
-// this.apiService.saveContactImage(this.contactsImageData).subscribe(
-// (response) => {
-
-//   if (response.status === 200) {
-//     $("#pictureCropModal").modal('hide');
-//     this.closesidenav(this.items);
-//     console.log(response+ 'image saved successfully');
-//     setTimeout(() => {
-//       this.getContact();
-//       this.profilePicture;
-//    }, 300); 
-//   }
-// },
-// (error) => {
-//   console.log(error+ 'error saving contact image');
-// })
-
-// }
+truncateFileName(fileName: string, maxLength: number): string {
+  if (fileName.length > maxLength) {
+    return fileName.substring(0, maxLength) + '...';
+  }
+  return fileName;
+}
 
 
 showToaster(message:any,type:any){
@@ -468,5 +459,6 @@ formatPhoneNumber() {
     }
   }
   }
+
 
 }

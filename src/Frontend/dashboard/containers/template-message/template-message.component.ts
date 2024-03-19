@@ -643,14 +643,19 @@ export class TemplateMessageComponent implements OnInit {
                                 url: this.newTemplateForm.controls.url?.value,
                             },
                         ],
-                        button: [
-                            {
-                                name1: this.newTemplateForm.controls.quickreply1.value,
-                                name2: this.newTemplateForm.controls.quickreply2.value,
-                                name3: this.newTemplateForm.controls.quickreply3.value,
+                        // button: [
+                        //     {
+                        //         name1: this.newTemplateForm.controls.quickreply1.value,
+                        //         name2: this.newTemplateForm.controls.quickreply2.value,
+                        //         name3: this.newTemplateForm.controls.quickreply3.value,
                                
-                            },
-                        ],
+                        //     },
+                        // ],
+                        button:[
+                            this.newTemplateForm.controls.quickreply1.value,
+                            this.newTemplateForm.controls.quickreply2.value,
+                           this.newTemplateForm.controls.quickreply3.value,
+                        ]
                     },
                 ],
             });
