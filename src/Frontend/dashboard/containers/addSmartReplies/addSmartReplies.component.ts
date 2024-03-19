@@ -85,7 +85,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	showBox1: boolean = false;
 	showBox2: boolean = false;
 	showattachmentbox = false;
-	agentsList!:string;
+	agentsList:any;
 	ShowAssignOption = false;
 	assignActionList = ["Assign Conversation", "Add Contact Tag"]; //,"Trigger Flow", "Name Update", "Resolve Conversation" "Remove Tags"
 	ShowAddAction = false;
@@ -122,7 +122,8 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	matchingCriteria:any;
 	selectedcriteria:any;
 	templateStates: { [key: string]: boolean } = {};
-	
+
+	templateChecked: boolean = false;
 
     /**richtexteditor **/ 
 	custommesage = '<p>Type Reply...</p>'
@@ -192,6 +193,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 
 
 	selectTemplate(template:any){
+		this.templateChecked = true;
 		this.selectedTemplate =template
 	}
 	ngOnInit() {
@@ -237,6 +239,8 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	closeAllModal() {
 		// this.showAttachmenOption = false
 		// this.messageMeidaPopup = false
+		this.selectedTemplate = [];
+		this.templateChecked = false;
 		this.showAttributes = false
 		this.showInsertTemplate = false
 		this.editTemplate = false
@@ -303,10 +307,12 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	}
 	sendattachfile(){
 		if(this.messageMeidaFile!==''){
-			$("#sendfile").modal('show');	
+			$("#sendfile").modal('show');
+			$("#attachmentbox").modal('hide');
+				
 		}else{
 			this.showToaster('! Error Uploading Media Please Try Again','error');
-			this.closeAllModal();
+			// this.closeAllModal();
 		}	
 	}
 
@@ -454,7 +460,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	}
 
 	showeditTemplate(){
-	if(this.selectedTemplate.BodyText !== '' ) {
+	if(this.selectedTemplate.length!==0 ) {
 		$("#editTemplate").modal('show'); 
 		$("#insertTemplate").modal('hide'); 
 		this.previewTemplate();
@@ -522,8 +528,9 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	insertTemplate(item:any){
-		$("#templatePreview").modal('hide');
+	insertTemplateInChat(item:any){
+		// $("#templatePreview").modal('hide');
+		this.closeAllModal();
 		let mediaContent
 		if(item.media_type === 'image') {
 		  mediaContent ='<p><img style="width:50%; height:50%" src="'+item.Links+'"></p>'
@@ -829,12 +836,12 @@ stopPropagation(event: Event) {
 		var isExist = false;
 		this.assignedAgentList.forEach(item=> {
 			if(item.ActionID == 2) {
-				if(item.Value == this.agentsList[index]) 
+				if(item.Value == this.agentsList[index].name) 
 				isExist = true;
 			}
 		})
 		if(!isExist) {
-			this.assignedAgentList.push({Message:'', ActionID:2, Value: this.agentsList[index],Media:''})
+			this.assignedAgentList.push({Message:'', ActionID:2, Value: this.agentsList[index].name,Media:''})
 		}
 			
 	}
@@ -1060,12 +1067,25 @@ stopPropagation(event: Event) {
 		this.settingsService.getUserList(this.SPID)
 		.subscribe((result:any) =>{
 		  if(result){
-			this.userList =result?.getUser;     
-			this.agentsList = this.userList.map((getUser:any) => getUser.name);
-	  
+			this.userList =result?.getUser;  
+			this.userList.forEach((item: { name: string; nameInitials: string; }) => {
+                const nameParts = item.name.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts[1] || '';
+                const nameInitials = firstName.charAt(0)+ ' ' +lastName.charAt(0);
+    
+                item.nameInitials = nameInitials;
+            });
+			this.agentsList = []
+			for(let i =0 ; i<this.userList.length; i++) {
+				this.agentsList.push({
+					name: this.userList[i].name,
+					nameInitials: this.userList[i].nameInitials
+				})
+			}
 		  }
 	  
-		})
+		});
 	  }
   /*  GET TAG LIST  */
 	  getTagData(){
@@ -1140,4 +1160,8 @@ stopPropagation(event: Event) {
 			  };
 		
 			}
+
+	populateValues(item:any) {
+
+	}
 }

@@ -59,7 +59,7 @@
 	</div>
 
 	<div *ngIf="showSideBar" id="sidebar" class="sidebar">
-		<div class="sideBar-header">
+		<div class="sideBar-header mt-4">
 			<button type="button" class="btn5 btn-close" (click)="toggleSideBar()"><img src="assets/img/teambox/icon-close.svg"></button>
 		</div>
 		<div class="sideBar-body">
@@ -119,7 +119,7 @@
 		</div>
 	
 
-		<div class="footer">
+		<div class="d-flex justify-content-center align-items-center footer">
 			<button class="delete-btn" data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('32')"><img
 					src="assets/img/delete.png"></button>
 		</div>
