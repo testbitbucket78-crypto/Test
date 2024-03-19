@@ -70,7 +70,7 @@
 				
 
 			</div>
-			<div *ngIf="showCampaignDetail" class="campaign_detail">
+			<div *ngIf="showCampaignDetail" class="campaign_detail" id="sidePanel">
 				<div class="modal-header filtercampaignheader">
 					<div class="modal-header-left">
 					</div>
@@ -79,7 +79,7 @@
 					</div>
 				</div>
 
-				<div class="campaigns_section_item campaign_scroll {{selectedCampaign.status_label}}">
+				<div class="campaigns_section_item campaign_scroll {{selectedCampaign.status_label}}"  >
 					<div class="campaigns_section_item_header">
 						<label>{{selectedCampaign.status_label}}</label>
 						<span>id: {{selectedCampaign.Id}}</span>
@@ -300,6 +300,7 @@
 								{{channel.label}}
 							</p>
 						</div>
+						<div *ngIf="newCampaignDetail.controls.channel_label.value == 'Select Channel' && (newCampaignDetail.controls.channel_label.touched || newCampaignDetail.controls.channel_label.dirty)" class="invalid-feedback f-11">Please select Channel</div>
 						<div *ngIf="ShowChannelOption" class="overlay" (click)="closeAddActionDialog()"></div>
 					</div>
 				</form>
@@ -604,16 +605,11 @@
 										<p *ngFor='let timezone of timeZonesList ;let i = index' (click)="selectTimeZone(timezone)"><span>{{timezone}}</span></p>
 									</div>
 								</div>
-								
-							
-								  
 								  <div class="formrow">
 									<p>Schedule Date</p>
 									<input (change)="selectScheduleDate($event)" type="date" class="form-control btn white_bg" value={{selecteScheduleDate}}>
-									<div *ngIf="selScheduleDate < currDate" class="invalid-feedback">Schedule time should not be in past</div>
+									<div *ngIf="selScheduleDate < currDate" class="invalid-feedback f-11">Schedule time should not be in past</div>
 								  </div>
-								  
-
 								<div class="formrow">
 									<p>Schedule Time</p>
 									<input (change)="selectScheduleTime($event)" type="time" class="form-control btn white_bg" value={{selecteScheduleTime}}>
@@ -621,7 +617,7 @@
 							</div>
 						</div>
 						<div class="bottom_section">
-							<p class="form-control" (click)="TestCampaign(TestCampaignModal)">Test Campaign</p>
+							<p class="form-control m-0" (click)="TestCampaign(TestCampaignModal)">Test Campaign</p>
 							<div>
 							<img class="icon sm" src="../../../../assets/img/info-icon.png" (click)="testinfo()">
 						</div>
@@ -636,7 +632,7 @@
 
 						<div class="bottom_section">
 						<!-- <p class="close-box" (click)="directToSettings()"></p> -->
-						<p class="">To configure no. from settings</p>
+						<p class="m-0">To configure no. from settings</p>
 						</div>
 					</div>
 				
@@ -1094,7 +1090,7 @@
 
 					<div class="applied_filter_popup">
 					    <div class="item" *ngFor="let filter of selectedcontactFilterBy.addeFilter; let i=index;let last = last;" title="Click to remove">
-							<div>
+							<div class="d-flex">
 							<span *ngIf="filter.filterOperator">{{filter.filterOperator}}</span>
 							<p>{{filter.filterPrefix}} {{filter.filterBy}} {{filter.filterValue}}</p>
 						</div>
@@ -1378,7 +1374,7 @@
 						</div>
 						<div *ngIf="!lowBalance">
 							
-							<div *ngIf="scheduled==0">
+							<div *ngIf="scheduled==0 && !isCampaignTiming">
 								<p><img src="../../../../assets/img/campaign/Send-o.svg"></p>
 								<p>You are about to send</p>
 								<p><span>To send your campaign </span> <span class="camp-heading">{{newCampaignDetail.value.title}}</span><span>, please confirm it.</span></p>
@@ -1386,7 +1382,7 @@
 							
 							</div>
 			
-							<div *ngIf="scheduled==1">
+							<div *ngIf="scheduled==1 && !isCampaignTiming">
 								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
 								<p>You are about to schedule</p>
 								<p><span>Please confirm the <b class="title-value camp-heading">{{newCampaignDetail.value.title}}</b> campaign will take place on <b  class="title-value camp-heading">{{selecteScheduleDate}} at {{selectedScheduleTime}}.</b></span></p>
@@ -1394,6 +1390,20 @@
 								</p>
 							</div>
 			
+							</div>
+							<div *ngIf="scheduled==1 && isCampaignTiming">
+								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
+								<!-- <p>You are about to schedule</p> -->
+								<p><span>Sorry, this campaign cannot be scheduled at the selected time as this is outside the active campaign window configured under global campaign settings. To check the current allowed campaign timings, go to<b class="title-value camp-heading"> Settings >> Campaign Settings >> Set Campaign Timings.</b> </span></p>
+								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
+								</p>
+							</div>
+							<div *ngIf="scheduled==0 && isCampaignTiming">
+								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
+								<!-- <p>You are about to schedule</p> -->
+								<p><span>Sorry, this campaign cannot be sent right now as this is outside the active campaign window configured under global campaign settings. To check the current allowed campaign timings, go to<b class="title-value camp-heading"> Settings >> Campaign Settings >> Set Campaign Timings.</b> </span></p>
+								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
+								</p>
 							</div>
 					</div>
 	

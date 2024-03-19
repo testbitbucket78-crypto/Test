@@ -1899,6 +1899,7 @@
 	}
 	.campaign_preview_right .middel_section_outer{
 	flex-grow: 1;
+	padding-bottom: 10px;
 	}
 	.campaign_preview_right .middel_section .formrow{
 	padding: 10px 0px 0px ;
@@ -2212,4 +2213,8 @@ position: absolute;
 
 .background-blur{
 	background: rgb(255 255 255 / 80%) !important;
+}
+
+.f-11{
+	font-size: 11px !important;
 }

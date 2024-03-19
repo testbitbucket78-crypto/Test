@@ -24,7 +24,7 @@ export class CampaignsComponent implements OnInit {
 
 	@ViewChild('filterby') filterby: ElementRef |undefined; 
    currDate = new Date();
-	SPID = sessionStorage.getItem('SP_ID')
+	SPID = sessionStorage.getItem('SP_ID');
 	showTopNav: boolean = true;
 	TeamLeadId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
 	AgentId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
@@ -253,25 +253,7 @@ export class CampaignsComponent implements OnInit {
 		option:[
 		{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
 		{label:'Is not',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']}
-	    ]},
-		{value:'facebookId',label:'Facebook Id',checked:false,addeFilter:[],
-		option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
-		{value:'InstagramId',label:'Instagram Id',checked:false,addeFilter:[],
-		option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
+	    ]},		
 		{value:'isBlocked',label:'Blocked',checked:false,addeFilter:[],
 		option:[
 			{label:'Is',checked:false,type:'select',options:['true','false']},
@@ -299,10 +281,12 @@ export class CampaignsComponent implements OnInit {
 	Authentication!: boolean;
 	campagininfo!: boolean;
 	showErrorMessage: boolean = false;
+	isCampaignTiming: boolean = false;
+	workingData:any =[];
 	
 	 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,
-	private apiService: TeamboxService,public settingsService:SettingsService,
+	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
 	private fb: FormBuilder,private router: Router,private el: ElementRef) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -313,11 +297,22 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 	}
 
+	@HostListener('document:scroll', ['$event'])
+	onDocumentScroll(event: Event): void {
+	  const sidePanel = document.getElementById('sidePanel');
+	  const target = event.target as HTMLElement;
+  
+	  // Check if the scroll event originated from the side panel
+	  if (!target.contains(sidePanel)) {
+		event.preventDefault(); // Prevent default scrolling behavior
+	  }
+	}
+
 	prepareCampaingForm(){
 		return this.fb.group({
 			title: new FormControl('', Validators.required),
 			channel_id: new FormControl('1', Validators.required),
-			channel_label: new FormControl('WhatsApp Official', Validators.required),
+			channel_label: new FormControl('Select Channel', Validators.required),
 			start_datetime: new FormControl('', Validators.required),
 			end_datetime: new FormControl('', Validators.required),
 			category_id: new FormControl('', Validators.required),
@@ -350,6 +345,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 
 	ngOnInit() {
+		this.getCampaignTimingList();
 		switch(this.loginAs) {
 			case 1:
 				this.loginAs='Admin'
@@ -381,8 +377,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			allAttributesList.map((attribute:any)=>{
 				attributes.push('{{'+attribute.attribute_name+'}}')
 			})
-			this.attributesoption=attributes
-			this.attributesoptionFilters=attributes
+			this.attributesoption=attributes;
+			this.attributesoptionFilters=attributes;
 		})
 	}
 
@@ -1272,7 +1268,8 @@ formateDate(dateTime:string){
 			this.showToaster('Please select schedule date...','error')
 		}else{
 		this.lowBalance=false;
-		//this.closeAllModal()
+		//this.closeAllModal()		
+		this.checkCampignTiming();
 		this.modalReference2 = this.modalService.open(ConfirmCampaign,{size: 'sm', windowClass:'pink-bg-sm background-blur'});
 		}
 	}
@@ -1323,9 +1320,9 @@ formateDate(dateTime:string){
 
 		}else{
 			if(this.scheduled ==1){
-				BodyData['status']=1
+				BodyData['status']=1;
 			}else{
-				BodyData['status']=3
+				BodyData['status']=3;
 			}
 			this.getAllCampaigns()
 		}
@@ -1709,10 +1706,14 @@ testinfo(){
 		}
 		if(this.activeStep == 1){
 			if (this.newCampaignDetail.value.title !== '') {
+				if(this.newCampaignDetail.value.channel_label != 'Select Channel'){
 				setTimeout(() => {
 				if (!this.isCampaignAlreadyExist) {
 					this.activeStep = this.activeStep + 1;
 				} }, 500);
+			}else{
+				this.newCampaignDetail.controls.channel_label.markAsTouched();
+			}
 			} else {
 				this.showToaster('Please enter Campaign Name', 'error');
 			}
@@ -1833,7 +1834,7 @@ testinfo(){
 
 		let searchKey = event.target.value
 		if(searchKey.length>2){
-		var allList = this.attributesoption
+		var allList = this.attributesoption;
 		let FilteredArray = [];
 		for(var i=0;i<allList.length;i++){
 			var content = allList[i].toLowerCase()
@@ -1841,15 +1842,15 @@ testinfo(){
 					FilteredArray.push(allList[i])
 				}
 		}
-		this.attributesoptionFilters = FilteredArray
+		this.attributesoptionFilters = FilteredArray;
 	    }else{
-			this.attributesoptionFilters = this.attributesoption
+			this.attributesoptionFilters = this.attributesoption;
 		}
 
 
 	}
 	openAttributeOption(variable:any,AttributeOption:any){
-		    this.attributesoptionFilters = this.attributesoption
+		    this.attributesoptionFilters = this.attributesoption;
 		    this.selecetdVariable = variable
 		    console.log(variable)
 			this.closeAllModal()
@@ -2196,6 +2197,9 @@ testinfo(){
 			this.allTemplates = allTemplates.templates;
 			this.allTemplates = this.allTemplatesMain.filter((item:any) => item.Channel == this.newCampaignDetail.get('channel_label').value);
 			this.initallTemplates =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item.Channel == this.newCampaignDetail.get('channel_label').value)));
+			this.isAuthentication = true;
+			this.isMarketing = true;
+			this.isUtility = true;
 		})
 		
 	}
@@ -2301,11 +2305,13 @@ console.log(this.allTemplatesMain);
 		  let buttons = [];
 		  //template.components[1]?.button.forEach((item)=>{
 			if(template_json && template_json?.components){
+				if(template_json?.components[1]?.button){
 			for(let item of template_json?.components[1]?.button){
 			if(item){
 				buttons.push({name:item,value:''});
 			}
 		}
+	}
 		 // })
 		}
 		this.selectedTemplate['buttons'] = buttons;	  
@@ -2431,6 +2437,58 @@ console.log(this.allTemplatesMain);
 				}
 			);
 		}
+	
+		getCampaignTimingList(){
+			this._settingsService.getCampaignTimingList(Number(this.SPID))
+			.subscribe((result:any) =>{
+			  if(result){
+				this.workingData = [];
+				let timingData =result?.seletedCampaignTimings;  
+				timingData.forEach((data:any)=>{
+				  let flag = false;
+				  this.workingData.forEach((item:any)=>{
+					if(data.start_time ==item.start_time && data.end_time ==item.end_time){
+					  item.day.push(data.day);
+					  flag =  true;
+					}
+				  })
+				  if(flag == false){
+					let dayArr:string[] =[];
+					dayArr.push(data.day);
+					this.workingData.push({day:dayArr,start_time:data.start_time,end_time:data.end_time});
+				  }
+				});
+				console.log(this.workingData);
+			  }
+		  
+			})
+		  }
+
+	checkCampignTiming(){
+		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+		console.log(this.selecteScheduleTime);
+		let sratdatetime:any;
+		if(this.selecteScheduleDate){
+			let start_datetime =this.selecteScheduleDate+' '+this.selecteScheduleTime;
+			 sratdatetime = (new Date ((new Date((new Date(new Date(start_datetime))).toISOString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
+			}else{
+				sratdatetime = (new Date ((new Date((new Date(new Date())).toISOString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
+			}
+			let day =  daysList[new Date(sratdatetime).getDay()];
+			let flag:boolean = false;
+			this.workingData.forEach((item:any)=>{
+				if(item.day.includes(day)){
+					if((item.start_time.split(':')[0] < new Date(sratdatetime).getHours()) && (item.end_time.split(':')[0] > new Date(sratdatetime).getHours())){
+						flag = true;
+					}else if((item.end_time.split(':')[0] == new Date(sratdatetime).getHours()) && (item.end_time.split(':')[1] > new Date(sratdatetime).getMinutes())){
+						flag = true;
+					}else if((item.start_time.split(':')[0] == new Date(sratdatetime).getHours()) && (item.start_time.split(':')[1] < new Date(sratdatetime).getMinutes())){
+						flag = true;
+					}
+				}
+			})
+			this.isCampaignTiming = !flag;
+	}
 
 }
 
