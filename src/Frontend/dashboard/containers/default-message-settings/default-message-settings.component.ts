@@ -5,7 +5,6 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
-import { isNullOrUndefined } from 'is-what';
 
 declare var $:any;
 @Component({
@@ -211,25 +210,43 @@ showMessageType(type: string) {
         this.fileName = this.truncateFileName(File.name, 25);
         let spid = this.spId
         let mediaType = files[0].type;
+        let fileSize = files[0].size;
+
+        const fileSizeInMB: number = parseFloat((fileSize / (1024 * 1024)).toFixed(2));
+        const imageSizeInMB: number = parseFloat((5 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+        const docVideoSizeInMB: number = parseFloat((10 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+
         const data = new FormData();
         data.append('dataFile', File, File.name);
         data.append('mediaType', mediaType);
-        let name='defaultmessages'
-        this.loadingVideo = true;
-        this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
-            let responseData: any = uploadStatus;
-            if (responseData.filename) {
-                this.selectedPreview = responseData.filename.toString();
-                this.defaultMessageForm.get('link')?.setValue(this.selectedPreview);
-                // console.log(this.selectedPreview);
-            }
-            this.loadingVideo = false;
-        },
-            (error) => {
-                    this.loadingVideo = false;
-                  this.showToaster("Video File Size is Too Large, Max 10MB size is Allowed!", 'error');
-             });
-    }
+
+        if((mediaType == 'video/mp4' || mediaType == 'application/pdf') && fileSizeInMB > docVideoSizeInMB) {
+          this.showToaster('Video / Document File size exceeds 10MB limit','error');
+        }
+  
+        else if ((mediaType == 'image/jpg' || mediaType == 'image/jpeg' || mediaType == 'image/png' || mediaType == 'image/webp') && fileSizeInMB > imageSizeInMB) {
+          this.showToaster('Image File size exceeds 5MB limit','error');
+        }
+
+        else {
+          let name='defaultmessages'
+          this.loadingVideo = true;
+          this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
+              let responseData: any = uploadStatus;
+              if (responseData.filename) {
+                  this.selectedPreview = responseData.filename.toString();
+                  this.defaultMessageForm.get('link')?.setValue(this.selectedPreview);
+                  // console.log(this.selectedPreview);
+              }
+              this.loadingVideo = false;
+          },
+              (error) => {
+                      this.loadingVideo = false;
+                    this.showToaster("Video File Size is Too Large, Max 10MB size is Allowed!", 'error');
+               });
+      }
+        }
+    
 }
 
 uploadThroughLink() {

@@ -327,23 +327,39 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		  let spid = this.SPID
 		  if (['pdf', 'jpg', 'jpeg', 'png', 'mp4'].includes(fileExt)) {
 			let mediaType = files[0].type;
+			let fileSize = files[0].size;
+
+			const fileSizeInMB: number = parseFloat((fileSize / (1024 * 1024)).toFixed(2));
+			const imageSizeInMB: number = parseFloat((5 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+			const docVideoSizeInMB: number = parseFloat((10 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
 	  
 			const data = new FormData();
 			data.append('dataFile', files[0], fileName);
 			data.append('mediaType', mediaType);
 	  
-			let name='smartReply'
-			this.tS.uploadfile(data,spid,name).subscribe(uploadStatus => {
-			  let responseData: any = uploadStatus;
-			  if (responseData.filename) {
-				this.messageMeidaFile = responseData.filename;
-				this.mediaType = mediaType; // Set mediaType here
-				this.showAttachmenOption = false;
-				console.log('Media Type:', this.mediaType);
-				console.log('Message Media File:', this.messageMeidaFile);
-				this.sendattachfile();
-			  }
-			});
+			if((mediaType == 'video/mp4' || mediaType == 'application/pdf') && fileSizeInMB > docVideoSizeInMB) {
+				this.showToaster('Video / Document File size exceeds 10MB limit','error');
+			}
+
+			else if ((mediaType == 'image/jpg' || mediaType == 'image/jpeg' || mediaType == 'image/png' || mediaType == 'image/webp') && fileSizeInMB > imageSizeInMB) {
+				this.showToaster('Image File size exceeds 5MB limit','error');
+			}
+
+			else {
+				let name='smartReply'
+				this.tS.uploadfile(data,spid,name).subscribe(uploadStatus => {
+				  let responseData: any = uploadStatus;
+				  if (responseData.filename) {
+					this.messageMeidaFile = responseData.filename;
+					this.mediaType = mediaType; // Set mediaType here
+					this.showAttachmenOption = false;
+					console.log('Media Type:', this.mediaType);
+					console.log('Message Media File:', this.messageMeidaFile);
+					this.sendattachfile();
+				  }
+				});
+			}
+		
 	  
 			if (['pdf', 'jpg', 'jpeg', 'png'].includes(fileExt)) {
 			  let reader: FileReader = new FileReader();
