@@ -1394,10 +1394,10 @@ input:focus {
 }
 
 .popup-dialog p span {
-    padding: 5px 15px;
+    padding: 4px 5px;
     width: 100%;
-    float: left;
-    margin: 0px;
+    // float: left;
+    margin: 10px 0px 0px 10px;
     font-size: 11px;
     font-weight: 500;
     cursor: pointer;
@@ -1408,12 +1408,19 @@ input:focus {
     font-weight: 500;
 }
 
-.popup-dialog.AssignOption p span:hover {
-    color: #000000;
-    font-weight: 500;
-    background: url("/assets/img/teambox/icon-selected.svg") no-repeat #FFF4F2 right center padding-box;
-    background-size: 12px;
-    background-position: center right 10px;
+// .popup-dialog.AssignOption p .agentName:hover {
+//     color: #000000;
+//     font-weight: 500;
+//     background: url("/assets/img/teambox/icon-selected.svg") no-repeat #FFF4F2 right center padding-box;
+//     background-size: 12px;
+//     background-position: right 60%;
+// }
+
+.initials {
+    background: #F6EFFF;
+    text-align: center;
+    color: #000;
+    border-radius: 50%;
 }
 
 .popup-dialog p.label {
@@ -1876,6 +1883,8 @@ input:focus {
 }
 
 .insertTemplate {
+    height: 650px;
+    overflow: scroll;
     background: #FFF4F2;
 }
 
@@ -1914,6 +1923,10 @@ input:focus {
 
 .template_box .inner_box img.template_img {
     height: 140px;
+}
+
+.template_box .inner_box {
+    margin-bottom: 10px;
 }
 
 .template_box label.container {
