@@ -222,3 +222,17 @@
     <p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
   </div>
 
+  <div class="modal fade" tabindex="-1" id="confirmModal" data-bs-backdrop="static" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content delete-token-modal">
+            <div class="modal-body alertmessage">
+                <p class="label pb-2">Kindly note, the campaign timings set now shall be applicable only for future campaigns and it will not impact any of the currently running and scheduled campaigns.</p>   
+                <div class="input_group_btn">
+                    <button type="button" class="cancel-btn" aria-label="Close"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="delete-btn" aria-label="Close" (click)="saveCampaignDetails()">Confirm</button>
+                </div>             
+            </div>
+        </div>
+    </div>
+</div>

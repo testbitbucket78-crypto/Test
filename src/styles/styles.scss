@@ -46,3 +46,8 @@
 
 /* Importing Datepicker SCSS file. */
 @import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
+
+
+.background-blur{
+	background: rgb(255 255 255 / 80%) !important;
+}
