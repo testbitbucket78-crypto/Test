@@ -1,5 +1,5 @@
 import { Component, OnInit,ViewChild,ElementRef, Input, Output, EventEmitter,AfterViewInit  } from '@angular/core';
-import { FormGroup,FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormGroup,FormBuilder, FormControl, Validators, NgForm } from '@angular/forms';
 import Stepper from 'bs-stepper';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -20,7 +20,6 @@ declare var $: any;
 	templateUrl: './addSmartReplies.component.html',
 	styleUrls: ['./addSmartReplies.component.scss'],
 	providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService],
-	// encapsulation: ViewEncapsulation.None
 })
 export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 
@@ -35,6 +34,8 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	@ViewChild('notesSection') notesSection!: ElementRef;
 	@ViewChild('chatSection') chatSection!: ElementRef; 
 	@ViewChild('chatEditor') chatEditor!: RichTextEditorComponent;
+
+	@ViewChild('variableValue', { static: false }) variableValueForm!: NgForm;
 
 	public selection: NodeSelection = new NodeSelection();
 	public range: Range | undefined;
@@ -125,8 +126,15 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 
 	templateChecked: boolean = false;
 
+	isFilterTemplate:any = {
+		Marketing: true,
+		Utility: true,
+		Authentication: true
+	  };
+
+	showInfoIcon:boolean = false;
+
     /**richtexteditor **/ 
-	custommesage = '<p>Type Reply...</p>'
 	showQuickResponse: any = false;
 	showAttributes: any = false;
 	showQuickReply: any = false;
@@ -143,7 +151,8 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	editTemplate: any = false;
 	searchKey:string='';
 	attributesearch!:string;
-	allVariablesList:string[] =[];
+	allVariablesList:string[]=[];
+	variableValues:string[]=[];
 
 
 	attributesList!:any;
@@ -210,8 +219,6 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 			message_text: ''
 		});
 
-		console.log(this.isEdit)
-		console.log(this.smartReplyData)
 	     this.getUserList();
 		 this.getTagData()
 		 this.getAttributeList();
@@ -239,7 +246,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	closeAllModal() {
 		// this.showAttachmenOption = false
 		// this.messageMeidaPopup = false
-		this.selectedTemplate = [];
+		this.getTemplatesList()
 		this.templateChecked = false;
 		this.showAttributes = false
 		this.showInsertTemplate = false
@@ -248,8 +255,11 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		this.showQuickReply = false
 		this.showMention = false
 		this.ShowAddAction = false;
+		this.selectedTemplate = [];
+		this.variableValues=[];
 		this.attributesearch = '';
 		this.searchKey = '';
+		this.variableValueForm.reset();
 		$("#attachmentbox").modal('hide');
 		$("#showAttributes").modal('hide');
 		$("#insertTemplate").modal('hide');
@@ -257,24 +267,11 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		$("#editTemplate").modal('hide');
 		$("#showQuickReply").modal('hide');
 		$("#sendfile").modal('hide');
-
-		
-
-
 		document.getElementById('addsmartreplies')!.style.display = 'inherit';
-	
-		
 	}
 
 	removeModalBackdrop() {
 		$('.modal-backdrop').remove();
-	}
-
-	resetMessageTex() {
-		if (this.chatEditor.value == '<p>Type Reply...</p>') {
-			this.chatEditor.value = '';
-			this.scrollChatToBottom();
-		}
 	}
 
 	editMedia(){
@@ -283,9 +280,22 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		$("#editTemplateMedia").modal('show'); 
 	}
 
-	showTemplatePreview(){
-		$("#editTemplate").modal('hide'); 
-		$("#templatePreview").modal('show'); 
+	showTemplatePreview() {
+		console.log(this.variableValues,'VARIBALE VALUES');
+		if(this.variableValues.length!==0 && this.allVariablesList.length!==0) {
+			this.replaceVariableInTemplate();
+			$("#editTemplate").modal('hide'); 
+			$("#templatePreview").modal('show'); 
+		}
+
+		else if (this.allVariablesList.length==0) {
+			$("#editTemplate").modal('hide'); 
+			$("#templatePreview").modal('show'); 
+		}
+		else {
+			this.showToaster('Variable value should not be empty','error')
+		}
+
 	}
 
 	closeEditMedia() {
@@ -528,6 +538,10 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		});
 	}
 
+	toggleInfoIcon() {
+		this.showInfoIcon = !this.showInfoIcon;
+	  }
+	  
 	insertTemplateInChat(item:any){
 		// $("#templatePreview").modal('hide');
 		this.closeAllModal();
@@ -565,33 +579,37 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		}
 	}
 
-	filterTemplate(temType:any){
+filterTemplate(temType:any){
 
-		let allList  = this.allTemplatesMain;
-		if(temType.target.checked){
+
+	// 	if(temType.target.checked){
 		var type= temType.target.value;
-		for(var i=0;i<allList.length;i++){
-				if(allList[i]['Category'] == type){
-					allList[i]['isDeleted']=1
-				}
-		}
-	   }else{
-		var type= temType.target.value;
-		for(var i=0;i<allList.length;i++){
-				if(allList[i]['Category'] == type){
-					allList[i]['isDeleted']=0
-				}
-		}
-	   }
-		var newArray=[];
-	   for(var m=0;m<allList.length;m++){
-		  if(allList[m]['isDeleted']==1){
-			newArray.push(allList[m])
-		  }
+		this.isFilterTemplate[type] = !this.isFilterTemplate[type];
 	
-	   }
-	   this.allTemplates= newArray
+		let allList  =this.allTemplatesMain;
+	// 	for(var i=0;i<allList.length;i++){
+	// 			if(allList[i]['Category'] == type){
+	// 				allList[i]['isDeleted']=1
+	// 			}
+	// 	}
+	//    }else{
+	// 	var type= temType.target.value;
+	// 	for(var i=0;i<allList.length;i++){
+	// 			if(allList[i]['Category'] == type){
+	// 				allList[i]['isDeleted']=0
+	// 			}
+	// 	}
+	//    }
+		var newArray=[];
+		for(var m=0;m<allList.length;m++){
+		var category = allList[m]['Category'];
+			if(this.isFilterTemplate[category]){
+			newArray.push(allList[m])
+			}
 
+		}
+		this.allTemplates= newArray
+	
 		
 	}
 
@@ -661,37 +679,33 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
 	addMessage() {
+		// var tempDivElement = document.createElement("div");   
+		// tempDivElement.innerHTML = this.chatEditor.value;
+		// let val = tempDivElement.textContent || tempDivElement.innerText || "";
 
-		if(!this.custommesage || this.custommesage ==='<p>Type Reply...</p>') {
+		if (!this.chatEditor.value) {
 			this.showToaster('! Please type your message first','error');
 			return;
 		}
 
+		this.assignedAgentList.push({
+			ActionID: 0, 
+			Message: this.chatEditor.value, 
+			Value: this.chatEditor.value, 
+			Media: JSON.stringify(this.messageMeidaFile)
+		})
 
-		
-		this.assignedAgentList.push({ActionID:0, Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
-		console.log(this.messageMeidaFile)
-			this.custommesage = '';
-			
+		console.log(this.assignedAgentList,'ADDED MESSAGE DATA')
+
+			this.chatEditor.value = '';
+
 			setTimeout(() => {
 				this.scrollChatToBottom();
 				this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
 				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
 			}, 100);
 		}
-		// saveMessage() {
-
-		// 	this.assignedAgentList.push({ActionID:0, Message:this.custommesage, Value: this.custommesage , Media:JSON.stringify(this.messageMeidaFile)})
-		// 	console.log(this.messageMeidaFile)
-		// 		this.custommesage = '';	
-				
-		// 		setTimeout(() => {
-		// 			this.scrollChatToBottom();
-		// 			this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-		// 			this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
-		// 		}, 100);
-		// 	}
-
+	
 	removeMessage(index:number) {
 		this.assignedAgentList.splice(index, 1);
 	}
@@ -719,33 +733,26 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	toggleEditable(index: number) {
 		this.isEditable[index] = !this.isEditable[index];
 		this.editableMessageIndex = this.isEditable[index] ? index : null;
-	  
+	    const element = document.getElementById(`msgbox-body${index}`);
 		setTimeout(() => { 
-		  const element = document.getElementById(`msgbox-body${index}`);
+		
 		  if (element) {
-			element.focus(); // Set focus to the editable element
+			element.focus();
+			let currentValue = element.innerHTML + element.innerText
+			this.chatEditor.value = currentValue;
+			console.log(element);
 		  }
+
+		
+
 		}, 100);
 		
-		console.log(document.getElementById(`msgbox-body${index}`));
 	  }
-
-	  initializeEditableState() {
-		this.isEditable = this.messages.map(() => false);
-	  }
-
-	 
 	
 	  closeAddAction() {
 		// Close the dialog when clicking outside
 		this.ShowAddAction = false;
 	  }
-
-
-	onEdit(msgText:string) {
-		this.editedMessage = msgText;
-		
-	}
 
 	onActionEdit(Text: string) {
 		this.editedText = Text;
@@ -882,13 +889,6 @@ stopPropagation(event: Event) {
 
 
 	next() {
-		// const currentIndex = this.stepper ? this.stepper.currentIndex : 0;
-		// if (currentIndex > 0) {
-		// 	const previousStep = this.stepper ? this.stepper.steps[currentIndex - 1] : null;
-		// 	if (previousStep) {
-		// 		previousStep.classList.add('completed');
-		// 	}
-		// }
 		this.stepper.next();
 	}
 
@@ -1077,11 +1077,12 @@ stopPropagation(event: Event) {
                 item.nameInitials = nameInitials;
             });
 			this.agentsList = []
-			for(let i =0 ; i<this.userList.length; i++) {
+			for(let i=0 ; i<this.userList.length; i++) {
 				this.agentsList.push({
 					name: this.userList[i].name,
-					nameInitials: this.userList[i].nameInitials
-				})
+					nameInitials: this.userList[i].nameInitials,
+					profileImg: this.userList[i].profile_img
+				});
 			}
 		  }
 	  
@@ -1154,14 +1155,21 @@ stopPropagation(event: Event) {
 		
 		previewTemplate() {
 				let isVariableValue:string = this.selectedTemplate.BodyText + this.selectedTemplate.Header;
-		
 				if (isVariableValue) {
 				  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
-			  };
-		
+			  }
 			}
 
-	populateValues(item:any) {
+		replaceVariableInTemplate() {
+			this.allVariablesList.forEach((placeholder, index) => {
+				const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+				this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
+			});
+		}
+	
+		populateValues(item:any) {
 
-	}
+		}
+
 }
