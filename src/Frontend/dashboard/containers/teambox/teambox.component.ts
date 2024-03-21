@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener  } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder,FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder,FormGroup, FormControl, Validators, NgForm } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TeamboxService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -37,6 +37,8 @@ routerGuard = () => {
 	@ViewChild('notesSection') notesSection: ElementRef | any; 
 	@ViewChild('chatSection') chatSection: ElementRef | any; 
 	@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
+
+	@ViewChild('variableValue', { static: false }) variableValueForm!: NgForm;
 
 	
 	public selection: NodeSelection = new NodeSelection();
@@ -129,6 +131,8 @@ routerGuard = () => {
 
 	// custommesage='<p>Your message...</p>'
 	// customenotes='<p>Type...</p>'
+	templateChecked: boolean = false;
+	showInfoIcon:boolean = false;
 	showQuickResponse:any=false;
 	showAttributes:any=false;
 	showQuickReply:any=false;
@@ -167,6 +171,7 @@ routerGuard = () => {
 	interactionList:any = [];
 	interactionListMain:any=[];
 	selectedTemplate:any  = [];
+	variableValues:string[]=[];
 	agentsList:any = [];
 	modalReference: any;
 	OptedIn='No';
@@ -229,6 +234,11 @@ routerGuard = () => {
 	userList:any;
 	allVariablesList:string[] =[];
 	selected:boolean=false;
+	isFilterTemplate:any = {
+		Marketing: true,
+		Utility: true,
+		Authentication: true
+	  };
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
@@ -264,6 +274,7 @@ routerGuard = () => {
 
 	}
 	selectTemplate(template:any){
+		this.templateChecked = true;
 		this.selectedTemplate = template
 	}
 
@@ -364,6 +375,8 @@ routerGuard = () => {
 
 	closeAllModal(){
 		this.modalReference?.close();
+		this.selectedTemplate = [];
+		this.templateChecked = false;
 		this.showAttachmenOption=false
 		this.messageMeidaFile=false
 		this.showAttributes=false
@@ -374,6 +387,9 @@ routerGuard = () => {
 		this.attributesearch ='';
 		this.header ='';
 		this.quickreplysearch='';
+		this.variableValueForm.reset();
+		this.variableValues=[];
+		this.getTemplates();
 		$("#editTemplateMedia").modal('hide');
 		$("#templatePreview").modal('hide');
 		$("#quikpopup").modal('hide');
@@ -401,9 +417,31 @@ routerGuard = () => {
 		$("#editTemplate").modal('show'); 
 		$("#editTemplateMedia").modal('hide'); 
 	}
-	showTemplatePreview(){
-		$("#editTemplate").modal('hide'); 
-		$("#templatePreview").modal('show'); 
+	showTemplatePreview() {
+		console.log(this.variableValues,'VARIBALE VALUES');
+		if(this.variableValues.length!==0 && this.allVariablesList.length!==0) {
+			this.replaceVariableInTemplate();
+			$("#editTemplate").modal('hide'); 
+			$("#templatePreview").modal('show'); 
+		}
+
+		else if (this.allVariablesList.length==0) {
+			$("#editTemplate").modal('hide'); 
+			$("#templatePreview").modal('show'); 
+		}
+		else {
+			this.showToaster('Variable value should not be empty','error')
+			this.variableValueForm.reset();
+		}
+
+	}
+
+	replaceVariableInTemplate() {
+		this.allVariablesList.forEach((placeholder, index) => {
+			const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+			this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
+		});
 	}
 	insertTemplate(item:any){
 		this.closeAllModal()
@@ -425,7 +463,7 @@ routerGuard = () => {
 	}
 
 showeditTemplate(){
-	if(this.selectedTemplate.BodyText !== '' ) {
+	if(this.selectedTemplate.length!==0) {
 		$("#editTemplate").modal('show'); 
 		$("#insertmodal").modal('hide'); 
 		this.previewTemplate();
@@ -527,25 +565,29 @@ searchTemplate(event:any){
 
 filterTemplate(temType:any){
 
+	
+// 	if(temType.target.checked){
+	var type= temType.target.value;
+	this.isFilterTemplate[type] = !this.isFilterTemplate[type];
+
 	let allList  =this.allTemplatesMain;
-	if(temType.target.checked){
-	var type= temType.target.value;
-	for(var i=0;i<allList.length;i++){
-			if(allList[i]['Category'] == type){
-				allList[i]['isDeleted']=1
-			}
-	}
-   }else{
-	var type= temType.target.value;
-	for(var i=0;i<allList.length;i++){
-			if(allList[i]['Category'] == type){
-				allList[i]['isDeleted']=0
-			}
-	}
-   }
-	var newArray=[];
+// 	for(var i=0;i<allList.length;i++){
+// 			if(allList[i]['Category'] == type){
+// 				allList[i]['isDeleted']=1
+// 			}
+// 	}
+//    }else{
+// 	var type= temType.target.value;
+// 	for(var i=0;i<allList.length;i++){
+// 			if(allList[i]['Category'] == type){
+// 				allList[i]['isDeleted']=0
+// 			}
+// 	}
+//    }
+   var newArray=[];
    for(var m=0;m<allList.length;m++){
-	  if(allList[m]['isDeleted']==1){
+	var category = allList[m]['Category'];
+	  if(this.isFilterTemplate[category]){
 		newArray.push(allList[m])
 	  }
 
@@ -2273,5 +2315,9 @@ sendMessage(){
 						}
 					});
 			}
+
+			toggleInfoIcon() {
+				this.showInfoIcon = !this.showInfoIcon;
+			  }
 		  
 }

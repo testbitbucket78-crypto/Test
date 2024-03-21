@@ -362,10 +362,6 @@ input:focus {
 }
 
 .msg-del-btn {
-    right: 29%;
-    top: 53%;
-    float: right;
-    margin: -55px -84px 0 0px;
     cursor: pointer;
     border: none;
     text-decoration: none;
@@ -373,10 +369,6 @@ input:focus {
 }
 
 .msg-edit-btn {
-    right: 33%;
-    top: 53%;
-    float: right;
-    margin: -54px -51px 0 13px;
     cursor: pointer;
     border: none;
     text-decoration: none;
@@ -655,11 +647,9 @@ input:focus {
 
 #msgbox-head1 {
     text-align: left;
-    font: normal normal 600 14px/20px 'Manrope';
     letter-spacing: 0px;
     color: #6149cd;
     font-size: 11px;
-    margin-left: 1em;
     margin-top: 0.5em;
 }
 
@@ -1264,8 +1254,14 @@ input[type='checkbox'] {
     text-align: center;
 }
 
+.interactions .child-interaction-1 .message-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
 .interactions .child-interaction-1 .message-box {
-    width: 310px !important;
     margin: 9px 16px;
     border: 1px solid #ebebeb !important;
     background: #ffffff 0% 0% no-repeat padding-box;
@@ -1310,13 +1306,6 @@ input:focus {
     height: 13px;
 }
 
-.msg-del-btn {
-    margin: -55px -64px 0 0px;
-}
-
-.msg-edit-btn {
-    margin: -54px -36px 0 13px;
-}
 
 #add-action-dropdown {
     position: absolute;
@@ -1408,13 +1397,13 @@ input:focus {
     font-weight: 500;
 }
 
-// .popup-dialog.AssignOption p .agentName:hover {
-//     color: #000000;
-//     font-weight: 500;
-//     background: url("/assets/img/teambox/icon-selected.svg") no-repeat #FFF4F2 right center padding-box;
-//     background-size: 12px;
-//     background-position: right 60%;
-// }
+.popup-dialog.AssignOption p .agentName:hover {
+    color: #000000;
+    font-weight: 500;
+    background: url("/assets/img/teambox/icon-selected.svg") no-repeat #FFF4F2 right center padding-box;
+    background-size: 12px;
+    background-position: right 60%;
+}
 
 .initials {
     background: #F6EFFF;
@@ -1446,6 +1435,7 @@ input:focus {
 
 .popup-dialog img {
     margin-right: 5px;
+    margin-top: 15px;
 }
 
 .popup-dialog .icon {
@@ -1847,7 +1837,7 @@ input:focus {
 
 
 .template_list {
-    height: 400px;
+    height: 340px;
     overflow: auto;
     padding: 0.5rem 1.5em;
 }
@@ -1884,7 +1874,6 @@ input:focus {
 
 .insertTemplate {
     height: 650px;
-    overflow: scroll;
     background: #FFF4F2;
 }
 
@@ -2604,12 +2593,45 @@ input[type="radio"]:checked + label::before {
     box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
     border-radius: 30px;
 }
-.checkmar{
-    position: absolute;
-    height: 21px;
-    width: 19px;
-    background-color: #fff;
-    border-radius: 5px;
-    border: 3px solid #C0BDCC;
 
+.opt-In-Info-div {
+    position: absolute;
+    right: 65px;
+    top: 20px;
+    width: 280px;
+    z-index: 1040;
+    height: 135px;
+    background: #ffffff;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 28px;
+    opacity: 1;
+    overflow: auto;
+    cursor: pointer;
 }
+
+.opt-In-Info img{
+    cursor: pointer;
+    width: 9px;
+    height: 12px;
+  }
+
+  .opt-In-Info p {
+    cursor: default;
+    margin: 0;
+    padding: 33px 27px 0 25px!important;
+    letter-spacing: 0;
+    font-size: 12px;
+    font-weight: 400;
+    color: #7a86a1;
+  }
+
+  .btn-close {
+    background: #ffffff;
+    margin: 2px;
+    outline: none;
+    border-radius: 16px;
+    padding: 6px 13px;
+    border: 1px solid #ebebeb;
+    float: right;
+   }
+
