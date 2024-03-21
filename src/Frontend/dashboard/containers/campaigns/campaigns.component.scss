@@ -1143,7 +1143,7 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 	margin: 1rem 0;
-	max-height: 500px;
+	max-height: 400px;
 	overflow-y: scroll;
 
 	}
@@ -2217,4 +2217,22 @@ position: absolute;
 
 .f-11{
 	font-size: 11px !important;
+}
+
+.d-block{
+	display: block !important;
+}
+
+.modal-center{
+	align-items: center;
+    display: flex !important;
+}
+
+.addsegmentaudience-modal .modal-dialog{
+	height: 90vh;
+    margin-top: 5vh !important;
+}
+
+.addsegmentaudience-modal .modal-content{
+	height: 100% !important
 }

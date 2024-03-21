@@ -117,7 +117,7 @@
 							<input type="file" accept="image/jpeg, image/png" formControlName="Links" (change)="onFileChange($event)" id="sel-type-image">
 							<div *ngIf="usertemplateForm.get('Links')?.value == null" class="text-center">
 							<label class="type_label text-center" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
-							<p class="m-0">Upload or enter link of image</p></div> 
+							<p class="m-0">Upload image</p></div> 
 							<div class="main-preview-type-image" *ngIf="usertemplateForm.get('Links')?.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
 								<span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
 							</div>
@@ -150,7 +150,7 @@
 							<input type="file" accept=".doc, .docx, .pdf" formControlName="Links" (change)="onFileChange($event)" name="document-select" id="sel-type-document">
 							<div *ngIf="usertemplateForm.get('Links')?.value == null" class="text-center">
 							<label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
-							<p class="m-0">Upload or enter link of document</p>
+							<p class="m-0">Upload document</p>
 						   </div>
 						</div>
 					</div>
