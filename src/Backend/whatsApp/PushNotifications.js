@@ -2,6 +2,16 @@ const { fromEvent } = require("rxjs");
 var WebSocketClient = require('websocket').client;
   var client = new WebSocketClient();
 
+
+  // Assuming connection is an object with a send method
+const dataToSend = {
+  "Ping": {
+    message : "Ping alive from Backend"
+  }
+};
+
+const jsonData = JSON.stringify(dataToSend);
+
 var conn;
 client.on('connectFailed', function(error) {
   console.log('Connect Error: ' + error.toString());
@@ -21,9 +31,9 @@ client.on('connect', function(connection) {
           console.log("Received: '" + message.utf8Data + "'");
       }
   });
-//   setInterval(() => {      
-//     connection.send("ping alive switch from backend");
-// }, 30000);
+  setInterval(() => {      
+    connection.send(jsonData)
+     }, 30000);
 });
 
 client.connect('ws://localhost:3010/', 'echo-protocol');

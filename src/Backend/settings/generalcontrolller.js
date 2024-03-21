@@ -477,17 +477,28 @@ const deletedDetails = async (req, res) => {
         console.log("manually_deletion_days", result)
         let mediaSize = '';
         let textSize = '';
+        let dbMedia = '';
         if (message_type == 'Text') {
             textSize = await db.excuteQuery(val.messageSizeQuery, [SPID, result])
 
         } else if (message_type == 'Media') {
-
+            dbMedia = await db.excuteQuery(val.mediaSizeQuery, [SPID, result])
+           
             mediaSize = await awsHelper.getStorageUtilization(SPID, manually_deletion_days)
+            dbMedia.forEach(item => {
+                mediaSize.totalSize += item.message_size;
+                mediaSize.mediaCount = item.message_count;
+            });
 
         } else if (message_type == 'Both') {
             textSize = await db.excuteQuery(val.messageSizeQuery, [SPID, result])
             console.log(SPID, result ,textSize)
+            dbMedia = await db.excuteQuery(val.mediaSizeQuery, [SPID, result])
             mediaSize = await awsHelper.getStorageUtilization(SPID, manually_deletion_days)
+            dbMedia.forEach(item => {
+                mediaSize.totalSize += item.message_size;
+                mediaSize.mediaCount = item.message_count;
+            });
         }
 
 
