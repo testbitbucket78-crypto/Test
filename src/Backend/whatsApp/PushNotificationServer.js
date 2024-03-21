@@ -21,15 +21,22 @@ function parseJSONObject(jsonString) {
 // Periodically send ping messages to all clients
 const pingInterval = 30000; // Interval in milliseconds (30 seconds)
 
+  // Assuming connection is an object with a send method
+  const dataToSend = {
+    "Ping": {
+      message : "Ping alive from Noify server Backend"
+    }
+  };
+  const jsonData = JSON.stringify(dataToSend);
 // Function to send a ping message to all connected clients
 function sendPing() {
   wss.clients.forEach(function each(client) {
     if (client.readyState === WebSocket.OPEN) {
-      client.send('ping');
+      client.send(jsonData);
     }
   });
 }
-const pingIntervalId = setInterval(sendPing, pingInterval);
+//const pingIntervalId = setInterval(sendPing, pingInterval);
 
 // Handle WebSocket connections
 wss.on('connection', (ws) => {

@@ -39,7 +39,7 @@ function removePlusFromPhoneNumber(phoneNumber) {
     return phoneNumber;
 }
 
-async function channelssetUp(spid, channelType, mediaType, messageTo, message_body, media,interaction_id,msg_id) {
+async function channelssetUp(spid, channelType, mediaType, messageTo, message_body, media,interaction_id,msg_id,spNumber) {
     try {
         var phoneNumber = removePlusFromPhoneNumber(messageTo)
        // console.log(spid, channelType, mediaType, messageTo, message_body, media)

@@ -232,7 +232,7 @@ async function getStorageUtilization(spid, days) {
 
     const params = {
         Bucket: awsConfig.awsbucket,
-        Prefix: spid.toString(), // Objects that start with "2" //  here Prefix is SP_ID
+        Prefix: spid.toString()+'/teambox', // Objects that start with "2" //  here Prefix is SP_ID
     };
     let cutoffDate = new Date();
    
@@ -301,7 +301,7 @@ async function deleteObjectFromBucket(days, spid) {
     let deletedMedia = 0;
     const params = {
         Bucket: awsConfig.awsbucket,
-        Prefix: spid?.toString()   // Remove teambox from delete whole data *'/teambox'*, //: spid,
+        Prefix: spid?.toString()+'/teambox'   // Remove teambox from delete whole data *'/teambox'*, //: spid,
     };
 
 

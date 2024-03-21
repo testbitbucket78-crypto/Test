@@ -19,7 +19,7 @@ const notify = require('../whatsApp/PushNotifications')
 const fs = require('fs')
 const path = require("path");
 let clientSpidMapping = {};
-
+let clientPidMapping = {};
 async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo);
 
@@ -45,8 +45,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-           executablePath: "/usr/bin/google-chrome-stable",
-          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          executablePath: "/usr/bin/google-chrome-stable",
+         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -87,7 +87,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         notify.NotifyServer(phoneNo, false, qr)
         resolve({ status: 200, value: qr });
       });
-      client.on('ready', () => {
+      client.on('ready', async () => {
 
         try {
           if (phoneNo != client.info.wid.user) {
@@ -96,6 +96,12 @@ function ClientInstance(spid, authStr, phoneNo) {
             client.destroy();
             if (clientSpidMapping.hasOwnProperty(spid)) {
               delete clientSpidMapping[spid];
+              try {
+                delete clientPidMapping[spid];
+              } catch (err) {
+                console.log("Delete clientPidMapping issues in wrong scan")
+              }
+
               console.log(`destroy wrong no. ${spid} from clientSpidMapping.`);
 
             }
@@ -105,32 +111,29 @@ function ClientInstance(spid, authStr, phoneNo) {
           } else {
             console.log('Client is ready!');
             notify.NotifyServer(phoneNo, false, 'Client is ready!')
+            let chat_activos = await client.getChats();
+          
+            for (const chat of chat_activos) {
+              if(!chat.isGroup){
+              let mensajes_verificar = await chat.fetchMessages({ limit: 10});
+
+              for (const n_chat_mensaje of mensajes_verificar) {
+
+                  let getmessages = savelostChats(n_chat_mensaje, phoneNo,spid)
+                
+              }
+            }
+            }
+            
             return resolve({ status: 201, value: 'Client is ready!' });
           }
         } catch (readyerr) {
-          console.log("client ready err")
+          console.log("client ready err", readyerr)
         }
         // }
       });
 
       client.initialize().catch(_ => _);
-
-
-        // Fetch messages event
-        client.on('fetch_messages', async (chat, limit) => {
-          try {
-            console.log("fetch_messages")
-            const messages = await chat.fetchMessages({ limit: 50 });
-            console.log(messages)
-            // Process fetched messages...
-            messages.forEach(async (message) => {
-              // Your message processing logic here...
-              console.log(message)
-            });
-          } catch (error) {
-            console.error('Error fetching messages:', error);
-          }
-        });
 
       client.on('message', async message => {
         try {
@@ -141,15 +144,15 @@ function ClientInstance(spid, authStr, phoneNo) {
           if (message.hasQuotedMsg) {
             // Check if the replied message is sent by your application
             const repliedMessage = await message.getQuotedMessage();
-        
+
             if (repliedMessage && repliedMessage.fromMe) {
               // Notify about the reply
               const repliedNumber = (message.from).replace(/@c\.us$/, "");
               console.log("reply ___________________")
               let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND message_content = '${repliedMessage._data.caption}'`
-              
+
               let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
-              console.log("campaignReplied*******" ,campaignReplied)
+              console.log("campaignReplied*******", campaignReplied)
             }
           }
 
@@ -165,6 +168,13 @@ function ClientInstance(spid, authStr, phoneNo) {
 
           console.log("client authenticated");
           clientSpidMapping[[spid]] = client;
+
+          try {
+            clientPidMapping[[spid]] = client.pupBrowser.process().pid;
+          }
+          catch (err) {
+            console.log("Set clientPidMapping issues in Authentication")
+          }
           notify.NotifyServer(phoneNo, false, 'Client Authenticated')
 
         } catch (authenticatederr) {
@@ -178,7 +188,14 @@ function ClientInstance(spid, authStr, phoneNo) {
             console.log("disconnected");
 
             if (clientSpidMapping.hasOwnProperty(spid)) {
-              delete clientSpidMapping[spid];
+              try {
+                delete clientSpidMapping[spid];
+                let updateConnection = await db.excuteQuery('update WhatsAppWeb set updated_at = ? where connected_id =? and spid=? and is_deleted !=1', [new Date(), phoneNo, spid])
+
+                delete clientPidMapping[spid];
+              } catch (err) {
+                console.log("Delete clientPidMapping issues in disconnected")
+              }
               console.log(`Removed ${spid} from clientSpidMapping.`);
 
             }
@@ -196,20 +213,17 @@ function ClientInstance(spid, authStr, phoneNo) {
         try {
           const phoneNumber = (message.to).replace(/@c\.us$/, "");
           if (ack == '1') {
-            // let campaignSendQuery = 'UPDATE CampaignMessages set status=1 where phone_number =? and status < 1'
-            // let campaignSend = await db.excuteQuery(campaignSendQuery, [phoneNumber])
-            // console.log(" send campaignSend" ,campaignSend.affectedRows)
             const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL); `
-     console.log(smsdelupdate)       
-let sended = await db.excuteQuery(smsdelupdate, [])
-             console.log("send"  ,sended?.affectedRows)
+            console.log(smsdelupdate)
+            let sended = await db.excuteQuery(smsdelupdate, [])
+            console.log("send", sended?.affectedRows)
             notify.NotifyServer(phoneNo, true)
 
-           
+
           } else if (ack == '2') {
             let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1'
             let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [phoneNumber])
@@ -218,11 +232,11 @@ SET msg_status = 2
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1); `
-     console.log(smsdelupdate)      
-let deded = await db.excuteQuery(smsdelupdate, [])
-            console.log("deliver"  , deded?.affectedRows)
+            console.log(smsdelupdate)
+            let deded = await db.excuteQuery(smsdelupdate, [])
+            console.log("deliver", deded?.affectedRows)
             notify.NotifyServer(phoneNo, true)
-           
+
           } else if (ack == '3') {
             console.log("read")
             let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2';
@@ -233,8 +247,8 @@ WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1);`
             console.log(smsupdate)
-let resd = await db.excuteQuery(smsupdate, [])
-             console.log("read"  ,resd?.affectedRows)
+            let resd = await db.excuteQuery(smsupdate, [])
+            console.log("read", resd?.affectedRows)
             notify.NotifyServer(phoneNo, true)
           }
 
@@ -267,24 +281,6 @@ function getCircularReplacer() {
   };
 }
 
-
-function writeClientFile(clientSpidMapping) {
-  // console.log(clientSpidMapping)
-  // console.log("====================================")
-  let jsonData = JSON.stringify(clientSpidMapping, getCircularReplacer(), 2);
-  // jsonData = jsonData + ',';
-
-  // console.log(jsonData)
-
-  // Writing to the file
-  fs.writeFile(filePath, jsonData, (err) => {
-    if (err) {
-      console.error('Error writing to the file:', err);
-    } else {
-      console.log('File has been written successfully.');
-    }
-  });
-}
 
 
 function isActiveSpidClient(spid) {
@@ -324,35 +320,14 @@ async function saveSendedMessageStatus(messageStatus, timestamp, to, id) {
   let saveStatus = await db.excuteQuery(`UPDATE Message set msg_status=? ,ExternalMessageId=? where Message_id=?`, [messageStatus, id, message_id])
 }
 
-async function sendMessages(spid, endCust, type, text, link, interaction_id, msg_id,spNumber) {
+async function sendMessages(spid, endCust, type, text, link, interaction_id, msg_id, spNumber) {
   try {
     let client = clientSpidMapping[[spid]];
     if (client) {
-      let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id,spNumber);
+      let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id, spNumber);
 
       return '200';
     } else {
-      // Use the fs.readFile() method to read the contents of the file
-      // fs.readFile(filePath, 'utf8', (err, data) => {
-      //   if (err) {
-      //     console.error('Error reading the file:', err);
-      //     return;
-      //   }
-
-      // Parse the JSON data
-      // try {
-      //   const jsonData = JSON.parse(data);
-
-      //   // Access the value associated with key '3'
-      //   const valueForKey3 = jsonData[[spid]];
-      //   client = jsonData[[spid]];
-      //   let msg = sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id);
-      //   // Now you can work with the 'valueForKey3' object
-      //   // console.log('Value for key spid:', JSON.stringify(valueForKey3, null, 2));
-      // } catch (parseError) {
-      //   console.error('Error parsing JSON:', parseError);
-      // }
-      //});
       console.log("else");
       return '401'
     }
@@ -361,7 +336,7 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
   }
 }
 
-async function sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id,spNumber) {
+async function sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id, spNumber) {
   try {
 
     //  console.log("messagesTypes", interaction_id, msg_id)
@@ -373,7 +348,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
     if (type === 'text') {
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       client.sendMessage(endCust + '@c.us', text);
-      notify.NotifyServer(spNumber, false,interaction_id)
+      notify.NotifyServer(spNumber, false, interaction_id)
     }
     if (type === 'image') {
       const media = await MessageMedia.fromUrl(link);
@@ -434,8 +409,8 @@ async function saveInMessages(message) {
       message_text = message_text.replace(/~/g, '<span>').replace(/~/g, '</span>');
       message_text = message_text.replace(/~/g, '<del>').replace(/~/g, '</del>');
       message_text = message_text.replace(/\n/g, '<br>');
-  }
-  
+    }
+    let message_direction = 'IN'
     let from = (message.from).replace(/@c\.us$/, '')   //phoneNo
     let phone_number_id = message.id.id
     let display_phone_number = (message.to).replace(/@c\.us$/, '')
@@ -451,7 +426,7 @@ async function saveInMessages(message) {
     if (from != 'status@broadcast') {
 
 
-      let saveMessage = await saveIncommingMessages(from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName);
+      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName);
       //console.log("saveMessage" ,)
       // console.log(saveMessage)
 
@@ -463,10 +438,85 @@ async function saveInMessages(message) {
   }
 }
 
+let messageQuery=`SELECT 
+ec.customerId,
+i.InteractionId,
+MAX(i.created_at) AS latest_interaction_date,
+MAX(m.created_at) AS latest_message_created_date
+FROM 
+EndCustomer ec
+JOIN 
+Interaction i ON ec.customerId = i.customerId
+LEFT JOIN
+Message m ON i.interactionId = m.interaction_id
+WHERE 
+ec.Phone_number = ?
+AND ec.isDeleted != 1 
+AND ec.SP_ID = ? 
+GROUP BY 
+ec.customerId;`
+
+async function savelostChats(message, spPhone,spid){
+  try {
+    let message_text = message.body   //firstMessage
+    console.log(message.from ,message.to)
+    if (message_text) {
+      message_text = message_text.replace(/\*/g, '<strong>').replace(/\*/g, '</strong>');
+      message_text = message_text.replace(/_/g, '<em>').replace(/_/g, '</em>');
+      message_text = message_text.replace(/~/g, '<span>').replace(/~/g, '</span>');
+      message_text = message_text.replace(/~/g, '<del>').replace(/~/g, '</del>');
+      message_text = message_text.replace(/\n/g, '<br>');
+    }
+
+    let from = (message.from).replace(/@c\.us$/, '')   //phoneNo
+    let phone_number_id = message.id.id
+    let display_phone_number =(message.to).replace(/@c\.us$/, '')
+    let message_direction = 'IN'
+    let endCustomer =(message.from).replace(/@c\.us$/, '')  ;  // for handle out messages of a chat
+    if (from == spPhone) {
+      message_direction = 'Out'
+      endCustomer = (message.to).replace(/@c\.us$/, '')
+    }
+    let getLastScannedTime = await db.excuteQuery(messageQuery,[endCustomer,spid]);
+    console.log(getLastScannedTime)
+    var d = new Date(message.timestamp*1000);
+   // console.log(d,new Date( getLastScannedTime[0]?.latest_message_created_date) < new Date(d) , getLastScannedTime[0]?.latest_message_created_date)
+    if((d > getLastScannedTime[0]?.latest_message_created_date &&  d < new Date()) ||(getLastScannedTime?.length ==0)){
+    
+
+
+    let message_media = ""           //Type
+    let Type = message.type
+    let contactName = message._data.notifyName      //contactName
+    if (message.hasMedia) {
+      const media = await message.downloadMedia();
+
+      message_media = media?.data
+    }
 
 
 
-async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName) {
+
+
+    if (from != 'status@broadcast') {
+
+
+      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName);
+      //console.log("saveMessage" ,)
+      // console.log(saveMessage)
+
+      var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, endCustomer, display_phone_number)
+    }
+  }
+  } catch (err) {
+    console.log(err);
+
+  }
+}
+
+
+
+async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName) {
   // console.log("saveIncommingMessages")
 
   if (Type == "image") {
@@ -491,7 +541,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   }
   if (message_text.length > 0) {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?)"
-    var saveMessage = await db.excuteQuery(query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
+    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type]);
     notify.NotifyServer(display_phone_number, true);
     // console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
@@ -569,8 +619,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var newId = extractedData.newId
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData.newlyInteractionId
-console.log("in messages"  ,from, false,newId,display_phone_number)
-    notify.NotifyServer(display_phone_number, false,newId)
+    console.log("in messages", from, false, newId, display_phone_number)
+    notify.NotifyServer(display_phone_number, false, newId)
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);

@@ -173,4 +173,5 @@ router.get('/copyCampaign/:CampaignId',authenticateToken,CampaignsController.cop
 
 router.post('/alertUser',authenticateToken,CampaignsController.campaignAlerts);
 router.get('/exitCampaign/:title/:spid',authenticateToken,CampaignsController.isExistCampaign);
+router.post('/processQuery',authenticateToken,CampaignsController.processContactQueries)
 module.exports = router;
