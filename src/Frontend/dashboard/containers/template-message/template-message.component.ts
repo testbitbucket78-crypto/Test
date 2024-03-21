@@ -333,26 +333,44 @@ export class TemplateMessageComponent implements OnInit {
             this.fileName = this.truncateFileName(File.name, 25);
             let spid = this.spid
             let mediaType = files[0].type;
+            let fileSize = files[0].size;
+
+            const fileSizeInMB: number = parseFloat((fileSize / (1024 * 1024)).toFixed(2));
+			const imageSizeInMB: number = parseFloat((5 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+			const docVideoSizeInMB: number = parseFloat((10 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+
             const data = new FormData();
             data.append('dataFile', File, File.name);
             data.append('mediaType', mediaType);
-            let name='template-message'
-            this.loadingVideo = true;
 
-            this._teamboxService.uploadfile(data,spid,name).subscribe
-            (uploadStatus => {
-                let responseData: any = uploadStatus;
-                if (responseData.filename) {
-                    this.selectedPreview = responseData.filename.toString();
-                    this.newTemplateForm.get('Links')?.setValue(this.selectedPreview);
-                    console.log(this.selectedPreview);
-                }
-                this.loadingVideo = false;
-        },
-            (error) => {
+            if((mediaType == 'video/mp4' || mediaType == 'application/pdf') && fileSizeInMB > docVideoSizeInMB) {
+				this.showToaster('Video / Document File size exceeds 10MB limit','error');
+			}
+
+			else if ((mediaType == 'image/jpg' || mediaType == 'image/jpeg' || mediaType == 'image/png' || mediaType == 'image/webp') && fileSizeInMB > imageSizeInMB) {
+				this.showToaster('Image File size exceeds 5MB limit','error');
+			}
+
+            else {
+                let name='template-message'
+                this.loadingVideo = true;
+    
+                this._teamboxService.uploadfile(data,spid,name).subscribe
+                (uploadStatus => {
+                    let responseData: any = uploadStatus;
+                    if (responseData.filename) {
+                        this.selectedPreview = responseData.filename.toString();
+                        this.newTemplateForm.get('Links')?.setValue(this.selectedPreview);
+                        console.log(this.selectedPreview);
+                    }
                     this.loadingVideo = false;
-                    this.showToaster("Video File Size is Too Large, Max 10MB size is Allowed!", 'error');
-             });
+            },
+                (error) => {
+                        this.loadingVideo = false;
+                        this.showToaster("Video File Size is Too Large, Max 10MB size is Allowed!", 'error');
+                 });
+            }
+ 
       }
     }
 
@@ -643,14 +661,19 @@ export class TemplateMessageComponent implements OnInit {
                                 url: this.newTemplateForm.controls.url?.value,
                             },
                         ],
-                        button: [
-                            {
-                                name1: this.newTemplateForm.controls.quickreply1.value,
-                                name2: this.newTemplateForm.controls.quickreply2.value,
-                                name3: this.newTemplateForm.controls.quickreply3.value,
+                        // button: [
+                        //     {
+                        //         name1: this.newTemplateForm.controls.quickreply1.value,
+                        //         name2: this.newTemplateForm.controls.quickreply2.value,
+                        //         name3: this.newTemplateForm.controls.quickreply3.value,
                                
-                            },
-                        ],
+                        //     },
+                        // ],
+                        button:[
+                            this.newTemplateForm.controls.quickreply1.value,
+                            this.newTemplateForm.controls.quickreply2.value,
+                           this.newTemplateForm.controls.quickreply3.value,
+                        ]
                     },
                 ],
             });

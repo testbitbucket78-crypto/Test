@@ -7,6 +7,7 @@ const API_URL = environment.baseUrl;
 
 @Injectable()
 export class TeamboxService {
+  Setting_API_URL:string='https://settings.stacknize.com';
   constructor(private http: HttpClient) { }
 
   public uploadfile(FileData:any, spid:any,name:any) {
@@ -111,7 +112,7 @@ export class TeamboxService {
   }
 
   public testCampaign(bodyData: any) {
-    return this.http.post(API_URL+'/testCampaign/',bodyData);
+    return this.http.post(this.Setting_API_URL+'/testCampaign',bodyData);
   }
 
   public getCampaignDetail(CampaignID: any) {

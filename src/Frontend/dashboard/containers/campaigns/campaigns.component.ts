@@ -24,7 +24,7 @@ export class CampaignsComponent implements OnInit {
 
 	@ViewChild('filterby') filterby: ElementRef |undefined; 
    currDate = new Date();
-	SPID = sessionStorage.getItem('SP_ID')
+	SPID = sessionStorage.getItem('SP_ID');
 	showTopNav: boolean = true;
 	TeamLeadId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
 	AgentId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
@@ -253,25 +253,7 @@ export class CampaignsComponent implements OnInit {
 		option:[
 		{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
 		{label:'Is not',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']}
-	    ]},
-		{value:'facebookId',label:'Facebook Id',checked:false,addeFilter:[],
-		option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
-		{value:'InstagramId',label:'Instagram Id',checked:false,addeFilter:[],
-		option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
+	    ]},		
 		{value:'isBlocked',label:'Blocked',checked:false,addeFilter:[],
 		option:[
 			{label:'Is',checked:false,type:'select',options:['true','false']},
@@ -299,10 +281,12 @@ export class CampaignsComponent implements OnInit {
 	Authentication!: boolean;
 	campagininfo!: boolean;
 	showErrorMessage: boolean = false;
+	isCampaignTiming: boolean = false;
+	workingData:any =[];
 	
 	 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,
-	private apiService: TeamboxService,public settingsService:SettingsService,
+	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
 	private fb: FormBuilder,private router: Router,private el: ElementRef) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
@@ -313,11 +297,22 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 	}
 
+	@HostListener('document:scroll', ['$event'])
+	onDocumentScroll(event: Event): void {
+	  const sidePanel = document.getElementById('sidePanel');
+	  const target = event.target as HTMLElement;
+  
+	  // Check if the scroll event originated from the side panel
+	  if (!target.contains(sidePanel)) {
+		event.preventDefault(); // Prevent default scrolling behavior
+	  }
+	}
+
 	prepareCampaingForm(){
 		return this.fb.group({
 			title: new FormControl('', Validators.required),
 			channel_id: new FormControl('1', Validators.required),
-			channel_label: new FormControl('WhatsApp Official', Validators.required),
+			channel_label: new FormControl('Select Channel', Validators.required),
 			start_datetime: new FormControl('', Validators.required),
 			end_datetime: new FormControl('', Validators.required),
 			category_id: new FormControl('', Validators.required),
@@ -350,6 +345,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 
 	ngOnInit() {
+		this.getCampaignTimingList();
 		switch(this.loginAs) {
 			case 1:
 				this.loginAs='Admin'
@@ -371,7 +367,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.getAllCampaigns()
 		this.getContactList('')
 		this.getAttributeList()
-		this.getAdditiionalAttributes()
+		this.getAdditiionalAttributes();
+		this.processData();
 	}
 	getAdditiionalAttributes(){
 		this.apiService.getAdditiionalAttributes(this.SPID).subscribe(allAttributes =>{
@@ -380,8 +377,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			allAttributesList.map((attribute:any)=>{
 				attributes.push('{{'+attribute.attribute_name+'}}')
 			})
-			this.attributesoption=attributes
-			this.attributesoptionFilters=attributes
+			this.attributesoption=attributes;
+			this.attributesoptionFilters=attributes;
 		})
 	}
 
@@ -544,30 +541,47 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 
 	async getCampaignMessages(CampaignId:any){
-		await this.apiService.getCampaignMessages(CampaignId).subscribe(responseData =>{
+		await this.apiService.getCampaignMessages(CampaignId).subscribe((responseData:any )=>{
 			let allMessage:any= responseData
 			let Sent:any=0
 			let Failed:any=0
 			let Delivered:any=0
 			let Seen:any=0
 			let Replied:any=0
-			allMessage.map((item:any)=>{
+			// allMessage.map((item:any)=>{
+			// 	if(item.status==0){
+			// 		Failed=Failed+1
+			// 	}
+			// 	if(item.status==1){
+			// 		Sent=Sent+1
+			// 	}
+			// 	if(item.status==2){
+			// 		Delivered=Delivered+1
+			// 	}
+			// 	if(item.status==3){
+			// 		Seen=Seen+1
+			// 	}
+			// 	if(item.status==4){
+			// 		Replied=Replied+1
+			// 	}
+				
+			// })
+			responseData?.report.forEach((item:any)=>{
 				if(item.status==0){
-					Failed=Failed+1
+					Failed=item?.status_count;
 				}
 				if(item.status==1){
-					Sent=Sent+1
+					Sent=item?.status_count;
 				}
 				if(item.status==2){
-					Delivered=Delivered+1
+					Delivered=item?.status_count;
 				}
 				if(item.status==3){
-					Seen=Seen+1
+					Seen=item?.status_count;
 				}
 				if(item.status==4){
-					Replied=Replied+1
+					Replied=item?.status_count;
 				}
-				
 			})
 			this.selectedCampaign['Replied'] =Replied;
 			this.selectedCampaign['Seen'] =Seen;
@@ -1254,7 +1268,8 @@ formateDate(dateTime:string){
 			this.showToaster('Please select schedule date...','error')
 		}else{
 		this.lowBalance=false;
-		//this.closeAllModal()
+		//this.closeAllModal()		
+		this.checkCampignTiming();
 		this.modalReference2 = this.modalService.open(ConfirmCampaign,{size: 'sm', windowClass:'pink-bg-sm background-blur'});
 		}
 	}
@@ -1284,6 +1299,7 @@ formateDate(dateTime:string){
 			message_heading:this.selectedTemplate.Header,
 			message_content:this.selectedTemplate.BodyText,
 			message_media:this.selectedTemplate.Links,
+			message_type:this.selectedTemplate.media_type,
 			message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
 			button_yes:this.selectedTemplate.button_yes,
 			button_no:this.selectedTemplate.button_no,
@@ -1304,9 +1320,9 @@ formateDate(dateTime:string){
 
 		}else{
 			if(this.scheduled ==1){
-				BodyData['status']=1
+				BodyData['status']=1;
 			}else{
-				BodyData['status']=3
+				BodyData['status']=3;
 			}
 			this.getAllCampaigns()
 		}
@@ -1315,7 +1331,7 @@ formateDate(dateTime:string){
 			let newCampaign:any = responseData
 			console.log(newCampaign)
 			if(newCampaign.insertId > 0){
-				CampaignId= newCampaign.insertId
+				CampaignId= newCampaign.insertId;
 			}
 			this.runCampaign(CampaignId,BodyData)
 			
@@ -1327,12 +1343,15 @@ formateDate(dateTime:string){
 	async runCampaign(CampaignId:any,BodyData:any){
 
 		if(this.csvContactList.length>0){
+			let ix =0;
 			console.log(this.csvContactList,'---csvContactList');
-			await this.csvContactList.map(async (item:any)=>{
+			//await this.csvContactList.map(async (item:any)=>{
+				for (const item of this.csvContactList) {
 				if(item.Contacts_Column && item.Contacts_Column.length > 9){
 				console.log(item)
+				ix = ix+1;
 				let MessageBodyData:any={
-					SPID:this.SPID,
+					SP_ID:this.SPID,
 					optInStatus:this.optInStatus,
 					customerId:this.AgentId,
 					//contactId
@@ -1342,8 +1361,10 @@ formateDate(dateTime:string){
 					button_no:this.selectedTemplate.button_no,
 					button_exp:this.selectedTemplate.button_exp,
 					message_media:this.selectedTemplate.Links,
+					message_type:this.selectedTemplate.media_type,
 					message_content:this.selectedTemplate.BodyText,
 					CampaignId:CampaignId,
+					isFinished:ix == this.csvContactList.length ? true :false,
 					category_id:this.selectedTemplate.category_id,
 					channel_id:this.newCampaignDetail.value.channel_id,
 					channel_label:this.newCampaignDetail.value.channel_label,
@@ -1355,19 +1376,18 @@ formateDate(dateTime:string){
 				let message_heading =this.selectedTemplate.Header
 				let message_content= this.selectedTemplate.BodyText
 				await allVariables.map(async (variable:any)=>{
-
 					let varValue = variable.value
 					varValue = item[varValue]?item[varValue]:varValue;
 					message_heading = message_heading.replaceAll(variable.label,varValue)
 					message_content = message_content.replaceAll(variable.label,varValue)
-					MessageBodyData['message_heading']=message_heading
-					MessageBodyData['message_content']=message_content
-					
+					MessageBodyData['message_heading']=message_heading;
+					MessageBodyData['message_content']=message_content;					
 				})
 				await this.apiService.sendCampinMessage(MessageBodyData).subscribe(async(responseData) =>{
-					let messageStatus:any = responseData
-					if(messageStatus.error){
-					MessageBodyData['status_message']=messageStatus.error.error_data.details
+					let messageStatus:any = responseData;
+					console.log(responseData);
+					if(messageStatus?.status == 401 || messageStatus?.error){
+						MessageBodyData['status_message']=messageStatus?.error ? messageStatus?.error?.error_data.details: '';
 					MessageBodyData['status']=0
 					}else{
 					MessageBodyData['status_message']='Message Sent';
@@ -1380,19 +1400,25 @@ formateDate(dateTime:string){
 					})
 					
 				})
+				
+				await this.delay(2000);
 			}
 
-			})
+			//})
+		}
 
 		}
 		if(this.segmentsContactList.length>0){
-			await this.segmentsContactList.map(async (customerId:any)=>{
+			
+			let idx =0;
+			for (const customerId of this.segmentsContactList) {
+			//await this.segmentsContactList.map(async (customerId:any)=>{
 				let SIPattribute:any=[]
 				await this.apiService.getContactAttributesByCustomer(customerId).subscribe(response =>{
-					let attributes:any = response
-					SIPattribute=attributes[0]
+					let attributes:any = response;
+					SIPattribute=attributes[0];
 				})
-
+				idx = idx+1;
 				await this.apiService.getEndCustomerDetail(customerId).subscribe(async (customerResponse) =>{
 					let customerResponseList:any=customerResponse
 					let customerDetail = customerResponseList[0]
@@ -1408,7 +1434,9 @@ formateDate(dateTime:string){
 							message_media:this.selectedTemplate.Links,
 							message_content:this.selectedTemplate.BodyText,
 							category_id:this.selectedTemplate.category_id,
+							message_type:this.selectedTemplate.media_type,
 							CampaignId:CampaignId,
+							isFinished:idx == this.segmentsContactList.length ? true :false,
 							channel_id:this.newCampaignDetail.value.channel_id,
 							channel_label:this.newCampaignDetail.value.channel_label,
 							schedule_datetime:BodyData.start_datetime,
@@ -1435,8 +1463,9 @@ formateDate(dateTime:string){
 						})
 						await this.apiService.sendCampinMessage(MessageBodyData).subscribe(async(responseData) =>{
 							let messageStatus:any = responseData
-							if(messageStatus.error){
-							MessageBodyData['status_message']=messageStatus.error.error_data.details
+							console.log(responseData);
+							if(messageStatus?.status == 401  || messageStatus?.error){
+							MessageBodyData['status_message']=messageStatus?.error ? messageStatus?.error?.error_data.details: '';
 							MessageBodyData['status']=0
 							}else{
 							MessageBodyData['status_message']='Message Sent';
@@ -1445,7 +1474,7 @@ formateDate(dateTime:string){
 
 							await this.apiService.saveCampaignMessages(MessageBodyData).subscribe(responseData =>{
 								this.closeAllModal()
-								this.getAllCampaigns()
+								this.getAllCampaigns();
 							})
 							
 						})
@@ -1453,8 +1482,25 @@ formateDate(dateTime:string){
 					}
 					
 				})
-			})
+				await this.delay(2000);
+				console.log('100000');
+			//})
+			}
 		}
+	}
+
+	async  processData() {
+		const data = [1, 2, 3, 4, 5]; // Example data array
+	
+		for (const item of data) {
+			console.log(item); // Process each item
+	
+			await this.delay(10000); // 1 second delay
+		}
+	}
+
+	delay(ms: number) {
+		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 	openSegmentAudience(importantContact:any){
 		this.closeAllModal()
@@ -1660,10 +1706,14 @@ testinfo(){
 		}
 		if(this.activeStep == 1){
 			if (this.newCampaignDetail.value.title !== '') {
+				if(this.newCampaignDetail.value.channel_label != 'Select Channel'){
 				setTimeout(() => {
 				if (!this.isCampaignAlreadyExist) {
 					this.activeStep = this.activeStep + 1;
 				} }, 500);
+			}else{
+				this.newCampaignDetail.controls.channel_label.markAsTouched();
+			}
 			} else {
 				this.showToaster('Please enter Campaign Name', 'error');
 			}
@@ -1784,7 +1834,7 @@ testinfo(){
 
 		let searchKey = event.target.value
 		if(searchKey.length>2){
-		var allList = this.attributesoption
+		var allList = this.attributesoption;
 		let FilteredArray = [];
 		for(var i=0;i<allList.length;i++){
 			var content = allList[i].toLowerCase()
@@ -1792,15 +1842,15 @@ testinfo(){
 					FilteredArray.push(allList[i])
 				}
 		}
-		this.attributesoptionFilters = FilteredArray
+		this.attributesoptionFilters = FilteredArray;
 	    }else{
-			this.attributesoptionFilters = this.attributesoption
+			this.attributesoptionFilters = this.attributesoption;
 		}
 
 
 	}
 	openAttributeOption(variable:any,AttributeOption:any){
-		    this.attributesoptionFilters = this.attributesoption
+		    this.attributesoptionFilters = this.attributesoption;
 		    this.selecetdVariable = variable
 		    console.log(variable)
 			this.closeAllModal()
@@ -2147,6 +2197,9 @@ testinfo(){
 			this.allTemplates = allTemplates.templates;
 			this.allTemplates = this.allTemplatesMain.filter((item:any) => item.Channel == this.newCampaignDetail.get('channel_label').value);
 			this.initallTemplates =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item.Channel == this.newCampaignDetail.get('channel_label').value)));
+			this.isAuthentication = true;
+			this.isMarketing = true;
+			this.isUtility = true;
 		})
 		
 	}
@@ -2247,7 +2300,21 @@ console.log(this.allTemplatesMain);
 			allVariablesList.push({ label: item, value: '' });
 			}
 		  });
-	  
+		  console.log(JSON.parse(this.selectedTemplate?.template_json), '-----selectedTemplatexddsfg');
+		  let template_json = JSON.parse(this.selectedTemplate?.template_json)[0];
+		  let buttons = [];
+		  //template.components[1]?.button.forEach((item)=>{
+			if(template_json && template_json?.components){
+				if(template_json?.components[1]?.button){
+			for(let item of template_json?.components[1]?.button){
+			if(item){
+				buttons.push({name:item,value:''});
+			}
+		}
+	}
+		 // })
+		}
+		this.selectedTemplate['buttons'] = buttons;	  
 		  this.selectedTemplate['allVariables'] = allVariablesList;
 		  console.log(this.selectedTemplate, '-----selectedTemplate');
 		  console.log(JSON.parse(this.selectedTemplate?.template_json), '-----selectedTemplatexddsfg');
@@ -2370,6 +2437,58 @@ console.log(this.allTemplatesMain);
 				}
 			);
 		}
+	
+		getCampaignTimingList(){
+			this._settingsService.getCampaignTimingList(Number(this.SPID))
+			.subscribe((result:any) =>{
+			  if(result){
+				this.workingData = [];
+				let timingData =result?.seletedCampaignTimings;  
+				timingData.forEach((data:any)=>{
+				  let flag = false;
+				  this.workingData.forEach((item:any)=>{
+					if(data.start_time ==item.start_time && data.end_time ==item.end_time){
+					  item.day.push(data.day);
+					  flag =  true;
+					}
+				  })
+				  if(flag == false){
+					let dayArr:string[] =[];
+					dayArr.push(data.day);
+					this.workingData.push({day:dayArr,start_time:data.start_time,end_time:data.end_time});
+				  }
+				});
+				console.log(this.workingData);
+			  }
+		  
+			})
+		  }
+
+	checkCampignTiming(){
+		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+		console.log(this.selecteScheduleTime);
+		let sratdatetime:any;
+		if(this.selecteScheduleDate){
+			let start_datetime =this.selecteScheduleDate+' '+this.selecteScheduleTime;
+			 sratdatetime = (new Date ((new Date((new Date(new Date(start_datetime))).toISOString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
+			}else{
+				sratdatetime = (new Date ((new Date((new Date(new Date())).toISOString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
+			}
+			let day =  daysList[new Date(sratdatetime).getDay()];
+			let flag:boolean = false;
+			this.workingData.forEach((item:any)=>{
+				if(item.day.includes(day)){
+					if((item.start_time.split(':')[0] < new Date(sratdatetime).getHours()) && (item.end_time.split(':')[0] > new Date(sratdatetime).getHours())){
+						flag = true;
+					}else if((item.end_time.split(':')[0] == new Date(sratdatetime).getHours()) && (item.end_time.split(':')[1] > new Date(sratdatetime).getMinutes())){
+						flag = true;
+					}else if((item.start_time.split(':')[0] == new Date(sratdatetime).getHours()) && (item.start_time.split(':')[1] < new Date(sratdatetime).getMinutes())){
+						flag = true;
+					}
+				}
+			})
+			this.isCampaignTiming = !flag;
+	}
 
 }
 

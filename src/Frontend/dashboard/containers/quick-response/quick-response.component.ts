@@ -160,7 +160,7 @@ filterQuickRes(){
   saveTemplate(){
     let val = this.usertemplateForm.controls.Header.value;
     let temp = this.templates.filter(item => item.Header == val)[0];
-    if(temp)
+    if(temp && this.ID != temp?.ID)
     this.showToaster('Quick response already exist with this name !','error');
     else{
     if(this.usertemplateForm.valid){
@@ -223,10 +223,7 @@ deleteTemplate(){
   const TemplateID = {
     ID: this.repliestemplateData?.ID
   }
-  
-
-  this.apiService.deleteTemplateData(TemplateID)
-  
+  this.apiService.deleteTemplateData(TemplateID)  
   .subscribe(result =>{
     if(result){
       $("#deleteModal").modal('hide');
@@ -271,17 +268,36 @@ saveVideoAndDocument(files: FileList) {
       this.fileName = this.truncateFileName(File.name, 25);
       let spid = this.spid
       let mediaType = files[0].type;
+      let fileSize = files[0].size;
+
+      const fileSizeInMB: number = parseFloat((fileSize / (1024 * 1024)).toFixed(2));
+			const imageSizeInMB: number = parseFloat((5 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+			const docVideoSizeInMB: number = parseFloat((10 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+
       const data = new FormData();
       data.append('dataFile', File, File.name);
       data.append('mediaType', mediaType);
-      let name='template-message'
-      this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
-          let responseData: any = uploadStatus;
-          if (responseData.filename) {
-              this.selectedPreview = responseData.filename.toString();
-              console.log(this.selectedPreview);
-          }
-      });
+
+      if((mediaType == 'video/mp4' || mediaType == 'application/pdf') && fileSizeInMB > docVideoSizeInMB) {
+				this.showToaster('Video / Document File size exceeds 10MB limit','error');
+			}
+
+			else if ((mediaType == 'image/jpg' || mediaType == 'image/jpeg' || mediaType == 'image/png' || mediaType == 'image/webp') && fileSizeInMB > imageSizeInMB) {
+				this.showToaster('Image File size exceeds 5MB limit','error');
+			}
+
+      else {
+        let name='template-message'
+        this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
+            let responseData: any = uploadStatus;
+            if (responseData.filename) {
+                this.selectedPreview = responseData.filename.toString();
+                console.log(this.selectedPreview);
+            }
+        });
+      }
+
+   
   }
 }
 
@@ -311,7 +327,8 @@ getCharacterCount(val:string) {
 checkQuickResponseName(e:any){
 let val = e.target.value;
 let temp = this.templates.filter(item => item.Header == val)[0];
-if(temp)
+console.log(temp)
+if(temp && this.ID != temp.ID)
 this.showToaster('Quick response already exist with this name !','error');
 
 }

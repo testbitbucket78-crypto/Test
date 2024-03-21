@@ -165,6 +165,7 @@
 	.campaigns_content_heading img{
 	width:15px;
 	margin-right: 5px;
+	cursor: pointer !important;
 	}
 	.campaigns_content_heading span{
 	color: #7A86A1;
@@ -1898,6 +1899,7 @@
 	}
 	.campaign_preview_right .middel_section_outer{
 	flex-grow: 1;
+	padding-bottom: 10px;
 	}
 	.campaign_preview_right .middel_section .formrow{
 	padding: 10px 0px 0px ;
@@ -2019,7 +2021,7 @@
 
 .showInfoFallback1 {
 	position: absolute;
-    top: 2.3rem;
+    top: 7rem;
     width: 280px;
     height: auto;
     background: #ffffff 0% 0% no-repeat padding-box;
@@ -2211,4 +2213,8 @@ position: absolute;
 
 .background-blur{
 	background: rgb(255 255 255 / 80%) !important;
+}
+
+.f-11{
+	font-size: 11px !important;
 }
