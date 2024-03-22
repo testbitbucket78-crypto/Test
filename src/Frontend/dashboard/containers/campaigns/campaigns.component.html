@@ -85,7 +85,7 @@
 						<span>id: {{selectedCampaign.Id}}</span>
 					</div>
 					<p class="start_time">Created on <span>{{selectedCampaign.created_datetime_formated}}</span> Start time <span>{{selectedCampaign.start_datetime_formated}}</span></p>
-					<p class="title" ><img *ngIf="selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,1)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> {{selectedCampaign.title}}</p>
+					<p class="title" ><img *ngIf="selectedCampaign.status==0 || selectedCampaign.status==1" (click)="editCampaign(addNewCampaign,1)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> {{selectedCampaign.title}}</p>
 					<p><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedCampaign.channel_label}}</p>
 					<!--If running start-->
 					<div *ngIf="selectedCampaign.status>1">
@@ -143,9 +143,9 @@
 
 					<!--If running end-->
 					
-					<p class="sub_title_sm mb-1" ><img *ngIf="selectedCampaign.status==1" (click)="editCampaign(addNewCampaign,2)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Traget Audience</p>
+					<p class="sub_title_sm mb-1" ><img *ngIf="selectedCampaign.status==1 || selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,2)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Traget Audience</p>
 					<p>{{selectedCampaign.AllContactsLength}} <span>( {{selectedCampaign.AudienceType}})</span></p>
-					<p class="sub_title_sm" ><img *ngIf="selectedCampaign.status==1" (click)="editCampaign(addNewCampaign,3.1)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Message</p>
+					<p class="sub_title_sm" ><img *ngIf="selectedCampaign.status==1 || selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,3.1)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Message</p>
 					<p class="sub_title_sm blackcolor mb-1">Category</p>
 					<p>{{selectedCampaign.category_label}}</p>
 					<div class="template">
@@ -158,12 +158,12 @@
 						</div>
 
 					</div>
-					<div class="template_btn" *ngIf="selectedCampaign.channel_label == 'WhatsApp Official'">
+					<!-- <div class="template_btn" *ngIf="selectedCampaign.channel_label == 'WhatsApp Official'">
 						<button type="button" class="btn">YES</button>
 						<button type="button" class="btn">NO</button>
 						<button type="button" class="btn">EXPLORE</button>
 			
-					</div>
+					</div> -->
 					
 					<p class="sub_title_lg blackcolor dropdown" (click)="toggleshowAdvance()">Advance Options<img *ngIf="!showAdvance" class="icon" src="/assets/img/teambox/down-aarow.svg"><img *ngIf="showAdvance" class="icon" src="/assets/img/teambox/up-aarow.svg"></p>
 					<div *ngIf="showAdvance">
@@ -606,13 +606,14 @@
 									</div>
 								</div>
 								  <div class="formrow">
-									<p>Schedule Date</p>
-									<input (change)="selectScheduleDate($event)" type="date" class="form-control btn white_bg" value={{selecteScheduleDate}}>
-									<div *ngIf="selScheduleDate < currDate" class="invalid-feedback f-11">Schedule time should not be in past</div>
+									<p class="mb-2">Schedule Date</p>
+									<input (change)="selectScheduleDate($event)" type="date" class="form-control btn white_bg d-block" value={{selecteScheduleDate}}>
+									<div *ngIf="selScheduleDate < currDate" class="invalid-feedback f-11">Schedule date should not be in past</div>
 								  </div>
 								<div class="formrow">
-									<p>Schedule Time</p>
-									<input (change)="selectScheduleTime($event)" type="time" class="form-control btn white_bg" value={{selecteScheduleTime}}>
+									<p class="mb-2">Schedule Time</p>
+									<input (change)="selectScheduleTime($event)" type="time" class="form-control btn white_bg d-block" value={{selecteScheduleTime}}>
+									<div *ngIf="!(selScheduleDate < currDate || selScheduleDate > currDate) && isTimingPast" class="invalid-feedback f-11">Schedule time should not be in past</div>
 								</div>
 							</div>
 						</div>
@@ -922,7 +923,7 @@
 		<div class="modal-body variableoption">
 			<div class="content">
 				<input placeholder="Search" type="text" class="search-box" (keyup)="searchAttribute($event)">
-				<p *ngFor='let attribute of attributesoptionFilters ;let i = index' class="form-control" (click)="updatedAttributeOption(attribute,addNewCampaign)">
+				<p *ngFor='let attribute of attributesoption ;let i = index' class="form-control" (click)="updatedAttributeOption(attribute,addNewCampaign)">
 					{{attribute}}
 			    </p>
 
@@ -979,7 +980,7 @@
 		
 	</ng-template>
 
-	<ng-template #addsegmentaudience let-c="close" let-d="dismiss">
+	<ng-template #addsegmentaudience let-c="close" let-d="dismiss" class="segment-modal">
 		<div class="modal-header">
 			<div class="modal-header-left">
 				<img class="icon list" src="assets/img/campaign/back.svg" (click)="openAddNew(addNewCampaign)"> <h4 class="modal-title color" id="modal-basic-title">Saved Lists</h4>
@@ -1395,15 +1396,15 @@
 								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
 								<!-- <p>You are about to schedule</p> -->
 								<p><span>Sorry, this campaign cannot be scheduled at the selected time as this is outside the active campaign window configured under global campaign settings. To check the current allowed campaign timings, go to<b class="title-value camp-heading"> Settings >> Campaign Settings >> Set Campaign Timings.</b> </span></p>
-								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
-								</p>
+								<!-- <p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
+								</p> -->
 							</div>
 							<div *ngIf="scheduled==0 && isCampaignTiming">
 								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
 								<!-- <p>You are about to schedule</p> -->
 								<p><span>Sorry, this campaign cannot be sent right now as this is outside the active campaign window configured under global campaign settings. To check the current allowed campaign timings, go to<b class="title-value camp-heading"> Settings >> Campaign Settings >> Set Campaign Timings.</b> </span></p>
-								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
-								</p>
+								<!-- <p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
+								</p> -->
 							</div>
 					</div>
 	

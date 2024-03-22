@@ -305,7 +305,7 @@ campaignTestData:any;
   }
 
   showCountWarning(){
-    if(!this.getCheckedCount()){
+    if(this.getCheckedCount()){
       this.showToaster(`! Only users ${this.isAlertUser ? '5' : '2'} can be selected`, 'error');   
     }
   }

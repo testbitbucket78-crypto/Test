@@ -264,7 +264,8 @@ a{
     #country_code {
         border: none;
         position: relative;
-        left: 24px;
+        margin-right: -24px;
+        width: 83px;
         top: 4px;
         z-index: 9999;
         text-align: center;
@@ -273,11 +274,12 @@ a{
         outline: none;
         background: #FFFFFF;
         height: 30px;
+        padding: 5px 8px;
     }
 
     #mobile_number{
         margin-left: -61px;
-        width: 280px;
+        width: 240px;
         padding: 0 0 0 87px;
     }
     .form-control.password{
