@@ -21,7 +21,6 @@ const getCampaigns = (req, res) => {
 
 const addCampaign = async (req, res) => {
     try {
-     //   console.log("req.body.status",req.body.status)
         let status = req.body.status
         let sp_id = req.body.sp_id
         let title = req.body.title
@@ -41,6 +40,8 @@ const addCampaign = async (req, res) => {
         let segments_contacts = req.body.segments_contacts
         let category_id = req.body.category_id
         let OptInStatus = req.body.OptInStatus
+        let start_time = req.body?.start_time
+        let end_time = req.body?.end_time
         message_variables = (message_variables?.length <= 0) ? '' : message_variables;
         csv_contacts = (csv_contacts?.length <= 0) ? '' : csv_contacts;
         segments_contacts = (segments_contacts?.length <= 0) ? '' : segments_contacts;
@@ -63,6 +64,8 @@ const addCampaign = async (req, res) => {
             updateQuery += " segments_contacts='" + req.body.segments_contacts + "',";
             updateQuery += " status= " + req.body.status + "',";
             updateQuery += " category_id= " + req.body.category_id + "',";
+            updateQuery += " start_time= " + req.body?.start_time + "',";
+            updateQuery += " end_time= " + req.body?.end_time + "',";
             updateQuery += " OptInStatus= " + req.body?.OptInStatus;
 
             updateQuery += " WHERE Id =" + req.body.Id
@@ -70,12 +73,17 @@ const addCampaign = async (req, res) => {
             db.runQuery(req, res, updateQuery, []);
         } else {
 
-            var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus) values ? ";
-            let addCampaignValue = [[status, sp_id, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime, '[]', segments_contacts, category_id, OptInStatus]]
+            var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time) values ? ";
+            let addCampaignValue = [[status, sp_id, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime,csv_contacts , segments_contacts, category_id, OptInStatus,start_time,end_time]]
 
             let addcampaign = await db.excuteQuery(inserQuery, [addCampaignValue]);
            // console.log(addcampaign)
-           campaignAlerts(req.body,addcampaign.insertId)
+          let statusToUpdate = 1;  //For scheduled campaign status
+           if(status == '-1'){
+            console.log("((((((((((((((((((((((((((")
+            statusToUpdate = 2;
+           }
+           campaignAlerts(req.body,addcampaign.insertId,statusToUpdate)
             res.send({
                 "status": 200,
                 "message": "Campaign added",
@@ -123,13 +131,19 @@ const getCampaignDetail = (req, res) => {
 
 const getFilteredCampaign = (req, res) => {
     let filterQuery = "SELECT * from Campaign  where Campaign.is_deleted =0 and Campaign.sp_id=" + req.body.SPID
-    if (req.body.start_date) {
-        filterQuery += " and  Date(start_datetime) >= '" + req.body.start_date + "'"
-    }
+    // if (req.body.start_date) {
+    //     filterQuery += " and  Date(start_datetime) >= '" + req.body.start_date + "'"
+    // }
 
-    if (req.body.end_date) {
-        filterQuery += " and  Date(end_datetime) <= '" + req.body.end_date + "'"
-    }
+    // if (req.body.end_date) {
+    //     filterQuery += " and  Date(end_datetime) <= '" + req.body.end_date + "'"
+    // }
+    
+if (req.body.start_date && req.body.end_date) {
+    filterQuery += " AND ((DATE(start_datetime) >= '" + req.body.start_date + "' AND DATE(end_datetime) <= '" + req.body.end_date + "' AND DATE(end_datetime) != '0000-00-00') OR (DATE(start_datetime) >= '" + req.body.start_date + "' AND DATE(start_datetime) <= '" + req.body.end_date + "' AND DATE(end_datetime) = '0000-00-00'))";
+} else if (req.body.start_date) {
+    filterQuery += " AND DATE(start_datetime) >= '" + req.body.start_date + "'";
+}
     if (req.body.channelIn.length > 0) {
         filterQuery += " and  channel_id IN (" + req.body.channelIn + ")"
     }
@@ -293,7 +307,7 @@ const sendCampinMessage = async (req, res) => {
     console.log("sendCampinMessage")
     try {
         var TemplateData = req.body
-        // console.log(TemplateData)
+        console.log(TemplateData)
         var messageTo = TemplateData.phone_number
         var messateText = TemplateData.message_content
         let content = messateText;
@@ -304,12 +318,10 @@ const sendCampinMessage = async (req, res) => {
         let media = TemplateData.message_media
         let optInStatus = TemplateData.optInStatus
         let time_zone = TemplateData && TemplateData.time_zone ? TemplateData.time_zone : 'GMT +5:30';
-
-        var type = 'image';
+        let isFinished = req.body.isFinished;
+        let type = req.body.message_type;
         var customerId = TemplateData.customerId
-        if (media == null || media == "") {
-            var type = 'text';
-        }
+     
 
         //console.log(content)
         //console.log("************************************")
@@ -353,8 +365,10 @@ const sendCampinMessage = async (req, res) => {
             } else {
                 messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
             }
-
-
+console.log("isFinished " ,isFinished)
+ if(isFinished == true){
+    campaignAlerts(TemplateData,TemplateData.CampaignId,3)
+ }
 
             //console.log('The input date is in the past.');
             //if(messagestatus =='')
@@ -449,7 +463,7 @@ const sendCampinMessage = async (req, res) => {
 //     console.log("campaignAlerts ")
 //     //console.log(req.body)
 
-async function campaignAlerts(TemplateData,insertId){
+async function campaignAlerts(TemplateData,insertId,statusToUpdate){
     console.log(insertId,"campaignAlerts ***************" ,TemplateData.channel_id)
     message_content = TemplateData.message_content
     message_media = TemplateData.message_media
@@ -467,12 +481,12 @@ async function campaignAlerts(TemplateData,insertId){
 
     var type = TemplateData.message_type;
 
-    sendBatchMessage(user, TemplateData.sp_id, 'text', alertmessages, message_media, phone_number_id, channel_id, insertId, updatedStatus)
+    sendBatchMessage(user, TemplateData.sp_id, 'text', alertmessages, message_media, phone_number_id, channel_id, insertId, statusToUpdate)
 
 }
 
 async function sendBatchMessage(user, sp_id, type, message_content, message_media, phone_number_id, channel_id, Id, updatedStatus) {
-    console.log("channel_id, Id" ,channel_id, Id)
+    //console.log("channel_id, Id" ,channel_id, Id)
     for (var i = 0; i < user.length; i++) {
         let mobile_number = user[i].mobile_number
 //console.log("sendBatchMessage" ,sp_id, channel_id, type, mobile_number, message_content, message_media)
@@ -482,10 +496,10 @@ async function sendBatchMessage(user, sp_id, type, message_content, message_medi
          console.log(batchresponse)
         }, 10)
     }
-    let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
-    let updated = await db.excuteQuery(updateQuery, [new Date(), Id])
+    let updateQuery = `UPDATE Campaign SET status=?,updated_at=? where Id=?`;
+    let updated = await db.excuteQuery(updateQuery, [updatedStatus,new Date(), Id])
     console.log("updated")
-    console.log(updated)
+    //console.log(updated)
 }
 
 async function find_message_status(sp_id, Id) {
@@ -521,12 +535,13 @@ async function find_message_status(sp_id, Id) {
 }
 
 async function msg(alert) {
+    try{
     let message = ''
 
     let msgStatus = await find_message_status(alert.sp_id, alert.Id)
-console.log("alert.channel_id",alert.channel_id)
+console.log("alert.channel_id",alert.channel_id ,alert.status)
 
-    let audience = alert.segments_contacts.length > 0 ? JSON.parse(alert.segments_contacts).length : JSON.parse(alert.csv_contacts).length
+    let audience = alert.segments_contacts?.length > 0 ? JSON.parse(alert.segments_contacts)?.length : JSON.parse(alert.csv_contacts)?.length
 
 
     if (alert.status == '1') {
@@ -557,6 +572,9 @@ console.log("alert.channel_id",alert.channel_id)
     }
 
     return message;
+}catch(err){
+    console.log(err)
+}
 }
 
 

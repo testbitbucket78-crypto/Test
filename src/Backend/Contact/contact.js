@@ -153,8 +153,21 @@ app.post('/editCustomContact',authenticateToken, async (req, res) => {
 })
 
 
-app.get('/',authenticateToken, function (req, res) {
-  db.runQuery(req, res, val.selectAllContact, [req.query.SP_ID]);
+app.get('/', async function (req, res) {
+  try{
+    let contacts = await db.excuteQuery(val.selectAllContact, [req.query.SP_ID]);
+
+    res.status(200).send({
+      result: contacts,
+      status: 200
+    });
+} catch (err) {
+  db.errlog(err);
+  res.status(500).send({
+    msg: err,
+    status: 500
+  });
+}
 });
 
 

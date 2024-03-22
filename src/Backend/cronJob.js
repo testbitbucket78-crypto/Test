@@ -39,9 +39,9 @@ async function fetchScheduledMessages() {
 
     for (const message of messagesData) {
 
-      let campaignTime = await getCampTime(message.sp_id)
+    //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
     // console.log("campaignTime", isWorkingTime(campaignTime))
-      if (isWorkingTime(campaignTime)) {
+      if (isWorkingTime(message)) {
 
         if (new Date(message.start_datetime) < new Date()) {
           console.log(" isWorkingTime messagesData loop",)
@@ -57,8 +57,8 @@ async function fetchScheduledMessages() {
     for (const message of remaingMessage) {
 
     //  console.log("remaingMessage loop", message.sp_id)
-      let campaignTime = await getCampTime(message.sp_id)
-      if (isWorkingTime(campaignTime)) {
+      //let campaignTime = await getCampTime(message.sp_id)  //comment for get time from campaign instead of campaign timing settings
+      if (isWorkingTime(message)) {
       //  console.log("remaingMessage  isWorkingTime loop", isWithinTimeWindow(message.start_datetime))
         if (isWithinTimeWindow(message.start_datetime)) {
         //  console.log("remaingMessage  start_datetime loop",)
@@ -116,19 +116,20 @@ async function saveSendedMessage(MessageBodyData) {
 async function mapPhoneNumberfomCSV(message) {
   try {
     // Map the values to customer IDs
-    console.log("mapPhoneNumberfomCSV")
+
     var contacts = JSON.parse(message.csv_contacts);
-    console.log(message.csv_contacts)
+    
     var type = 'image';
     if (message.message_media == null || message.message_media == "") {
       type = 'text';
     }
     let channelType = await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?', [message.sp_id])
-    console.log("channelType", channelType, channelType[0])
+    //console.log("channelType", channelType, channelType[0])
     campaignAlerts(message, 2) // campaignAlerts(new Date(), message.Id)    //Campaign is Running
     let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
     let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
-    batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message) //channelType[0].connected_id
+    let content = await removeTagsFromMessages(message.message_content);
+    batchofScheduledCampaign(contacts, message.sp_id, type, content, message.message_media, message.phone_number_id, message.channel_id, message,'csv') //channelType[0].connected_id
   } catch (err) {
     console.log(err)
   }
@@ -158,7 +159,7 @@ async function mapPhoneNumberfomList(message) {
   let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
   let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
   let content = await removeTagsFromMessages(message.message_content);
-  batchofScheduledCampaign(phoneNo, message.sp_id, type,content, message.message_media, message.phone_number_id, message.channel_id, message)
+  batchofScheduledCampaign(phoneNo, message.sp_id, type,content, message.message_media, message.phone_number_id, message.channel_id, message,'List')
   // }
 
 }
@@ -186,16 +187,16 @@ async function getCampTime(spid) {
 }
 
 
-async function batchofScheduledCampaign(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message) {
+async function batchofScheduledCampaign(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message,list) {
 //console.log("batchofScheduledCampaign" ,message_content)
   for (let i = 0; i < users.length; i += batchSize) {
     const batch = users.slice(i, i + batchSize);
     console.log("batch i", i, batch.length)
-    sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message)
+    sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message,list)
 
     if (i + batchSize < users.length) {
       setTimeout(() => {
-        batchofScheduledCampaign(users.slice(i + batchSize), sp_id, type, message_content, message_media, phone_number_id, channel_id, message);
+        batchofScheduledCampaign(users.slice(i + batchSize), sp_id, type, message_content, message_media, phone_number_id, channel_id, message,list);
       }, delayBetweenBatches);
     }
   }
@@ -211,10 +212,14 @@ async function campaignCompletedAlert(message) {
 
 }
 
-function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message) {
+function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message,list) {
 //  console.log("sendScheduledCampaign", "channel_id", batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message)
   for (var i = 0; i < batch.length; i++) {
     let Phone_number = batch[i].Phone_number
+    if(list == 'csv'){
+      Phone_number = batch[i].Contacts_Column
+    }
+   
 
     var response;
     setTimeout(async () => {
@@ -227,12 +232,12 @@ function sendScheduledCampaign(batch, sp_id, type, message_content, message_medi
 }
 
 
-function isWorkingTime(data) {
+function isWorkingTime(item) {
 
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 
-  for (const item of data) {
-    const workingDays = item.day.split(',');
+  // for (const item of data) {
+  //   const workingDays = item.day.split(',');
     const date = new Date().getHours();
     const getMin = new Date().getMinutes();
 
@@ -240,14 +245,13 @@ function isWorkingTime(data) {
     const startTime = item.start_time.split(':');
     const endTime = item.end_time.split(':');
 
-    if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
-      console.log("data===========")
+    if ((((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
       return true;
     }
 
 
 
-  }
+  // }
 
   return false;
 }
