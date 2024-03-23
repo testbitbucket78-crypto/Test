@@ -576,17 +576,14 @@ const deleteTemplates = async (req, res) => {
 const testCampaign = async (req, res) => {
     try {
 
-        console.log("sendCampinMessage")
+   
         var TemplateData = req.body
-        console.log(TemplateData)
+   
         var messateText = TemplateData.message_content
         let content = messateText;
-        let channel = TemplateData.channel_label
+        let channel = TemplateData.channel_id
         let media = TemplateData.message_media
-        console.log("channel");
-        console.log(channel)
-        console.log("content")
-        console.log(content)
+    
         content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
         content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
         content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
@@ -594,11 +591,11 @@ const testCampaign = async (req, res) => {
         content = content.replace('&nbsp;', '\n')
         content = content.replace(/<br[^>]*>/g, '\n')
         content = content.replace(/<\/?[^>]+(>|$)/g, "")
-        let testNo = await db.excuteQuery(val.selectCampaignTest, [TemplateData.SP_ID]);
-        //console.log(testNo)
+        let testNo = await db.excuteQuery(val.selectCampaignTest, [TemplateData.sp_id]);
+     
 
 
-
+        let message_status='';
         var type = 'image';
         if (media == null || media == "") {
             var type = 'text';
@@ -621,12 +618,14 @@ const testCampaign = async (req, res) => {
             }
 
 
-            middleWare.channelssetUp(TemplateData.SP_ID, channel, type, phone_number.mobile_number, content, media)
-            content = messateText; // update content
+           message_status = await middleWare.channelssetUp(TemplateData.sp_id, channel, type, phone_number.mobile_number, content, media)
+          console.log(message_status)
+          content = messateText; // update content
         }
 
       res.send({
-        status:200
+        status :200,
+        message_status:  message_status?.status
       })
     }
     catch (err) {
