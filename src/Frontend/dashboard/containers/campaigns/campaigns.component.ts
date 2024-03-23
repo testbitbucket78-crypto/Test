@@ -94,9 +94,10 @@ export class CampaignsComponent implements OnInit {
 	 ScheduleTimeList:any=['12:00 Am','12:15 Am','12:30 Am','12:30 Am'];
 	 selecteScheduleTime:any='';
 	 selectedScheduleTime:any='';
+	 isTimingPast:boolean = false;
 	 showTimeZoneOption:any=false;
 	 selecteTimeZone:any='GMT +5:30';
-	 timeZonesList:any=['GMT +5:30','GMT +5:30','GMT +5:30']
+	 timeZonesList:any=['GMT-12:00','GMT-11:00','GMT-10:00','GMT-09:00','GMT-08:00','GMT-08:00','GMT-07:00','GMT-07:00','GMT-07:00','GMT-06:00','GMT-06:00','GMT-06:00','GMT-06:00','GMT-05:00','GMT-05:00','GMT-05:00','GMT-04:00','GMT-04:00','GMT-04:00','GMT-04:00','GMT-03:30','GMT-03:00','GMT-03:00','GMT-03:00','GMT-03:00','GMT-02:00','GMT-01:00','GMT-01:00','GMT+00:00','GMT+00:00','GMT+01:00','GMT+01:00','GMT+01:00','GMT+01:00','GMT+01:00','GMT+02:00','GMT+02:00','GMT+02:00','GMT+02:00','GMT+02:00','GMT+02:00','GMT+02:00','GMT+02:00','GMT+02:00','GMT+03:00','GMT+03:00','GMT+03:00','GMT+03:00','GMT+03:30','GMT+04:00','GMT+04:00','GMT+04:00','GMT+04:30','GMT+05:00','GMT+05:00','GMT+05:30','GMT+05:30','GMT+05:45','GMT+06:00','GMT+06:00','GMT+06:30','GMT+07:00','GMT+07:00','GMT+08:00','GMT+08:00','GMT+08:00','GMT+08:00','GMT+08:00','GMT+09:00','GMT+09:00','GMT+09:00','GMT+09:30','GMT+09:30','GMT+10:00','GMT+10:00','GMT+10:00','GMT+10:00','GMT+10:00','GMT+11:00','GMT+12:00','GMT+12:00','GMT+13:00',]
 	 mapNameOption:any=['First Name','Last Name', 'Username','Email'];
 	 attributesoption:any=[]
 	 attributesoptionFilters:any=[]
@@ -697,7 +698,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 formateDate(dateTime:string){
 	let date = dateTime.split('Z').join('').trim();
 	if(new Date(date) && new Date(date).toString() != 'Invalid Date'){
-	return this.datepipe.transform(new Date(date), 'dd MMMM YY, HH:mm a') ;
+	return this.datepipe.transform(new Date(date), 'dd MMMM YY, hh:mm a') ;
 	}else{
 		return 'N/A';
 	}
@@ -1106,7 +1107,8 @@ formateDate(dateTime:string){
 	// 	//   this.showErrorMessage = false;
 	  
 		   this.selecteScheduleDate = event.target.value;
-		   this.selScheduleDate = new Date(this.selecteScheduleDate);
+		   this.selScheduleDate = new Date(new Date(this.selecteScheduleDate).toDateString());
+		   this.currDate = new Date(new Date().toDateString());
 		   console.log(this.selecteScheduleDate)
 		 }
 	//   }
@@ -1116,7 +1118,21 @@ formateDate(dateTime:string){
 		this.selecteScheduleTime= event.target.value;
 		//this.selectedScheduleTime= new Date(event.target.valueAsDate).toLocaleTimeString()
 		this.selectedScheduleTime = new Date(new Date(new Date().setHours(event.target.value.split(':')[0],event.target.value.split(':')[1])).setSeconds(0)).toLocaleTimeString();
+		this.checkScheduleTiming(event.target.value);
 	  }
+
+	checkScheduleTiming(e:any){
+		console.log(this.selectedScheduleTime);
+		let hr =  new Date().getHours();
+		let min =  new Date().getMinutes();
+		if(Number(e.split(':')[0])<hr ||(Number(e.split(':')[0])==hr && Number(e.split(':')[1]) < min)){
+			this.isTimingPast = true;
+		}else{
+			this.isTimingPast = false
+		}
+		console.log(this.selScheduleDate)
+		console.log(this.currDate)
+	}
 
     
 
@@ -1198,6 +1214,7 @@ formateDate(dateTime:string){
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
 	editCampaign(addNewCampaign:any,step:any){
+		this.newCampaignDetail.Id = this.selectedCampaign.Id;
 		this.isEditCampaign = true;
 		console.log(this.selectedCampaign)
 		this.activeStep=step
@@ -1282,7 +1299,7 @@ formateDate(dateTime:string){
 		this.modalReference2.close();
 		//this.modalReference.close('addNewCampaign');
 		let sratdatetime:any='';
-		if(this.selecteScheduleDate){
+		if(this.scheduled==1){
 		let start_datetime =this.selecteScheduleDate+' '+this.selecteScheduleTime;
 		 sratdatetime = (new Date ((new Date((new Date(new Date(start_datetime))).toISOString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
 		}else{
@@ -1333,7 +1350,9 @@ formateDate(dateTime:string){
 			if(newCampaign.insertId > 0){
 				CampaignId= newCampaign.insertId;
 			}
-			this.runCampaign(CampaignId,BodyData)
+			if(this.scheduled !=1){
+				this.runCampaign(CampaignId,BodyData)
+			}
 			
 		})
 		
@@ -1504,7 +1523,7 @@ formateDate(dateTime:string){
 	}
 	openSegmentAudience(importantContact:any){
 		this.closeAllModal()
-		this.modalReference = this.modalService.open(importantContact,{size: 'xl', windowClass:'white-bg'});
+		this.modalReference = this.modalService.open(importantContact,{size: 'xl', windowClass:'white-bg addsegmentaudience-modal'});
 		this.step2Option=true;
 	}
 	openAddNewItem(addNewItem:any){
@@ -2468,7 +2487,7 @@ console.log(this.allTemplatesMain);
 		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 		console.log(this.selecteScheduleTime);
 		let sratdatetime:any;
-		if(this.selecteScheduleDate){
+		if(this.scheduled==1){
 			let start_datetime =this.selecteScheduleDate+' '+this.selecteScheduleTime;
 			 sratdatetime = (new Date ((new Date((new Date(new Date(start_datetime))).toISOString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
 			}else{

@@ -188,9 +188,11 @@
                         <div *ngFor="let item of selectedUser" class="user-dropdown pb-3 d-flex">
                             <div class=" manage-user col-6">
                                 <label class="container"  let i = "index">
-                                    <img src="../../../../assets/img/profile/Richie_3.png" class="user-img mx-2">{{item.name}}                  
-                                    <input type="checkbox" name="status" class="user-checkbox" (click)="showCountWarning()" [disabled]="getCheckedCount() && !item.isSelected"  [(ngModel)]="item.isSelected" value={{item.value}}>   
-                                      <span class="checkmark ml-2"></span>  
+                                    <img src="../../../../assets/img/profile/Richie_3.png" class="user-img mx-2">{{item.name}}        
+                                    <div (click)="showCountWarning()" >          
+                                    <input type="checkbox" name="status" class="user-checkbox" [disabled]="getCheckedCount() && !item.isSelected"  [(ngModel)]="item.isSelected" value={{item.value}}>   
+                                      <span class="checkmark ml-2"></span>
+                                    </div>  
                                 </label>
                             </div>
                             <div class="copy col-6" *ngIf="item.isSelected == true" >

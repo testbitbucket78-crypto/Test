@@ -48,8 +48,10 @@ export class SmartRepliesComponent implements OnInit {
 		this.getReplies();
 	}
 
-	closeallmodal(){
-		$("#smartrepliesModal").modal('hide');
+	editKeyword() {
+		this.isEdit = true;
+		this.isShowSmartReplies = true;
+		$("#smartrepliesModal").modal('show');
 	}
 
 	getReplies() {
@@ -125,7 +127,6 @@ export class SmartRepliesComponent implements OnInit {
 			this.isEdit = true;
 			this.isShowSmartReplies = true;
 			$("#smartrepliesModal").modal('show'); 
-			this.showSideBar= false;
 
 			this.repliesData = <repliesList> {} ;
 			this.repliesData.Description = this.data[0].Description;

@@ -249,11 +249,11 @@ hideToaster(){
   preparebillingForm() {
     return this.fb.group({
       billing_email: ['', [Validators.required, Validators.email]],
-      Address1: new FormControl(),
-      InvoiceId: new FormControl('',[Validators.required, Validators.minLength(15),]),
+      Address1: new FormControl('',[Validators.required]),
+      InvoiceId: new FormControl(''),
       Address2: new FormControl(),
-      Country: new FormControl(),
-      State: new FormControl(),
+      Country: new FormControl('',[Validators.required]),
+      State: new FormControl('',[Validators.required]),
       City: new FormControl(),
       zip_code: new FormControl('', [Validators.required, Validators.pattern(this.zipCodePattern)])
     });
@@ -387,6 +387,7 @@ hideToaster(){
   }  
 
   saveCompanyDetails(){
+    if(this.companyDetailForm.valid){
     this.copyCompanyFormData();
     this._settingsService.saveCompanyDetail(this.companyData)
     .subscribe(result =>{
@@ -397,10 +398,11 @@ hideToaster(){
 
     })
   }
+  }
 
   saveBillingDetails() {
     const emailControl = this.billingForm.get('billing_email'); 
-  
+    this.billingForm.markAllAsTouched();
     if (this.billingForm.valid) {
       this.copyBillingFormData();
       this._settingsService.saveBillingDetail(this.billingData)

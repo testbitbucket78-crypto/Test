@@ -82,7 +82,7 @@
                 <!-- *ngIf="checkPrivillage(item)" -->
         </div>
         <div class="sub-heading py-2">No. of Users Assigned ({{userList.length}})</div>
-        <div>
+        <div class="h-100">
             <div *ngFor="let item of userList" class="user-row">
                 <img [src]="item.profile_img">
                 <span>{{item.name}}</span>

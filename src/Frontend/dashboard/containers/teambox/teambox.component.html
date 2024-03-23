@@ -809,7 +809,7 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
-					<div *ngIf="showInsertTemplate" class="custom_modal bg-pink sm">
+					<div *ngIf="showInsertTemplate" class="custom_modal bg-pink sm" style="max-height: 100vh; overflow: unset;">
 						<div class="modal-header">
 							<div class="modal-header-left">
 								<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
@@ -824,15 +824,15 @@
 						
 							<div class="section_filter">
 							  <div class="custom-control custom-checkbox">
-								<input class="custom-control-input" [checked]="true" id="Marketing" type="checkbox" value="Marketing" (click)="filterTemplate($event)" />
+								<input class="custom-control-input" [checked]="isFilterTemplate.Marketing" id="Marketing" type="checkbox" value="Marketing" (click)="filterTemplate($event)" />
 								<label class="custom-control-label" for="Marketing">Marketing</label>
 							</div>
 							<div class="custom-control custom-checkbox">
-							  <input class="custom-control-input" [checked]="true" id="Utility" type="checkbox" value="Utility" (click)="filterTemplate($event)" />
+							  <input class="custom-control-input" [checked]="isFilterTemplate.Utility" id="Utility" type="checkbox" value="Utility" (click)="filterTemplate($event)" />
 							  <label class="custom-control-label" for="Utility">Utility</label>
 							</div>
 							  <div class="custom-control custom-checkbox">
-								<input class="custom-control-input" [checked]="true" id="Authentication" type="checkbox" value="Authentication" (click)="filterTemplate($event)" />
+								<input class="custom-control-input" [checked]="isFilterTemplate.Authentication" id="Authentication" type="checkbox" value="Authentication" (click)="filterTemplate($event)" />
 								<label class="custom-control-label" for="Authentication">Authentication</label>
 							</div>
 							</div>
@@ -840,7 +840,7 @@
 							  <div class="template_box" *ngFor="let template of allTemplates ;let i = index">
 								<div class="px-4 template_box_inner d-flex align-items-start">
 								  <div class="d-flex align-items-center template_box_inner">
-								  <input type="radio" id="selectedTemplate{{i}}" name="selectedTemplate" (click)="selectTemplate(template)">
+								  <input type="radio" id="selectedTemplate{{i}}" name="selectedTemplate" [checked]="templateChecked" (click)="selectTemplate(template)">
 								  <label class="m-0" for="selectedTemplate{{i}}"></label>
 								  </div>
 							   <div class="template_head flex-column">
@@ -903,7 +903,7 @@
 									src="assets/img/teambox/icon-close.svg"></p>
 						</div>
 					</div>
-					<div class="modal-body">
+					<div class="modal-body" style="height: 500px;overflow: scroll;">
 						<div class="template_details_section">
 							<div class="template_details_section_left">
 								<div class="template_box">
@@ -936,11 +936,24 @@
 							</div>
 
 							<div class="template_details_section_right">
-								<p class="mt-2 mb-0">Variable value<img class="px-2 icon sm"
-										src="/assets/img/campaign/Info.svg"></p>
-								<p><span>To personalize your campaign for the imported audience, please select the
-										applicable column from your CSV/Excel file to map each of the variables
-										listed below</span></p>
+								<p class="mt-2 mb-0">Variable value<img class="px-2 icon sm" (click)="toggleInfoIcon()" src="/assets/img/campaign/Info.svg"></p>
+
+									<span *ngIf="showInfoIcon" class="px-2 opt-In-Info">
+										<div class="opt-In-Info-div">
+											<button type="button" class="m-2 opt-In-Info-close" (click)="showInfoIcon=false">
+												<img src="../../../../assets/img/teambox/icon-close.svg">
+											</button>
+											<p id="p-body">You can input variable values or choose contact attributes (fields)
+												that will be used to send personalized messages to users, 
+												reflecting their specific contact details instead of generic values.
+										    </p>
+										</div>
+									</span>
+
+							   <p class="h5" *ngIf="allVariablesList.length==0">
+								No variable available in this message
+							  </p>
+
 								<!-- <div class="form_row">
 									<label>[[Name]]</label>
 									<div>
@@ -971,21 +984,20 @@
 										<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
 									<!-- </p> -->
 								<!-- </div> -->
-								<div *ngFor="let item of allVariablesList; let ith = index" class="form_row">
-									<label for="variableValue{{ith}}">{{item}}</label>
-									<p class="form-control">
-										<input type="text" id="variableValue{{ith}}" class="form-control inner"
+								<form #variableValue="ngForm">
+									<div *ngFor="let item of allVariablesList; let ith = index" class="form_row">
+									  <label for="variableValue{{ith}}">{{item}}</label>
+									  <p class="form-control">
+										<input type="text" id="variableValue{{ith}}" name="variableValue{{ith}}" [(ngModel)]="variableValues[ith]" class="form-control inner"
 										placeholder="Input value or add attribute">
-										<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
-									</p>
-									
-								</div>
-
-								<div *ngIf="!allVariablesList" class="form_row">
-									<p class="form-control">
-										No variable available in this message
-									</p>
-								</div>
+										<span class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
+									  </p>
+								  <!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
+										  <p class="label">Map the column</p>
+										  <p *ngFor="let map of mapNameOption ;let i = index" (click)="openMapOption('')"><span>{{map}}</span></p>
+										</div> -->
+									</div>
+								  </form>
 
 								<div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" >
 								<p class="mt-2">Button Payload <span>(Optional)</span><img class="px-2 icon sm"
@@ -1008,7 +1020,10 @@
 							</div>
 							</div>
 						</div>
-						<div class="input_group_btn mb-1">
+					
+					</div>
+					<div class="modal-footer" style="border: none;">
+						<div class="input_group_btn justify-content-end mb-1">
 							<button type="button" class="submit-btn" (click)="showTemplatePreview()">Next</button>
 						</div>
 					</div>
@@ -1122,7 +1137,7 @@
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
-		<div class="modal-body">
+		<div class="modal-body" style="height: 365px; overflow: scroll;">
 			<div class="template_preiview">
 
 				<div class="template_box">
@@ -1154,13 +1169,13 @@
 				</div>
 
 			</div>
-
-			<div class="input_group_btn mb-4">
-				<button type="button" class="submit-btn" (click)="insertTemplate(selectedTemplate)">Done</button>
-			</div>
-
 		</div>
 
+		<div class="modal-footer" style="border: none;">
+			<div class="input_group_btn justify-content-center mb-4" style="width: 100%;">
+			  <button type="button" class="submit-btn" (click)="insertTemplate(selectedTemplate)">Done</button>
+			</div>
+		  </div>
 	<!-- </div> -->
 	 </div>
 	</div>
