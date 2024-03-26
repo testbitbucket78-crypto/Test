@@ -770,6 +770,14 @@ opacity: 1;
     z-index: 9;
 }
 
+.popup-dialog.ContactOption {
+    padding: 17px 0 17px 0;
+}
+
+.popup-dialog.ContactOption::-webkit-scrollbar {
+    display: none;
+}
+
 .popup-dialog.ContactOption img {
     width: 20px;
     margin-right: 5px;
@@ -779,16 +787,29 @@ opacity: 1;
     cursor: pointer;
 }
 
+.popup-dialog.ContactOption p {
+    padding: 2px 0 2px 0;
+    margin: 0;
+}
+
 .popup-dialog.ContactOption span {
     display: flex;
     flex-direction: row;
     align-items: center;
     word-break: break-word;
     cursor: pointer;
+    padding: 10px 12px 10px 20px;
 }
 
 .popup-dialog.ContactOption span:hover{
-    background-color: #FFF4F2;
+    color: #000000;
+}
+
+.popup-dialog.ContactOption p:hover{
+    background: url("../../../..//assets/img/teambox/icon-selected.svg") no-repeat #FFF4F2 right;
+    background-size: 12px;
+    background-position-x: 95%;
+    z-index: 1040;
 }
 
 .button {

@@ -239,6 +239,7 @@ routerGuard = () => {
 		Utility: true,
 		Authentication: true
 	  };
+	// template_json:any;
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
@@ -276,6 +277,20 @@ routerGuard = () => {
 	selectTemplate(template:any){
 		this.templateChecked = true;
 		this.selectedTemplate = template
+
+		let template_json = JSON.parse(this.selectedTemplate?.template_json)[0];
+		let buttons = [];
+		if(template_json && template_json?.components){
+			if(template_json?.components[1]?.button){
+		for(let item of template_json?.components[1]?.button){
+		if(item){
+			buttons.push({name:item});
+		  }
+		  }
+	    }
+		this.selectedTemplate['buttons'] = buttons;
+		console.log(this.selectedTemplate,'selected temp;ate')
+	  }
 	}
 
 	// resetMessageTex(){
@@ -431,7 +446,7 @@ routerGuard = () => {
 		}
 		else {
 			this.showToaster('Variable value should not be empty','error')
-			this.variableValueForm.reset();
+			// this.variableValueForm.reset();
 		}
 
 	}
@@ -447,10 +462,10 @@ routerGuard = () => {
 		this.closeAllModal()
 		let mediaContent
 		if(item.media_type === 'image') {
-		  mediaContent ='<p><img style="width:50%; height:50%" src="'+item.Links+'"></p>'
+		  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
 		}
 		else if(item.media_type === 'video') {
-			mediaContent ='<p><video style="width:50%; height:50%" src="'+item.Links+'"></video></p>'
+			mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
 		}
 		else if(item.media_type === 'document') {
 			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
@@ -458,7 +473,7 @@ routerGuard = () => {
 		else {
 			mediaContent=''
 		}
-		var htmlcontent = mediaContent +'<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
+		var htmlcontent = mediaContent +'<p><span><b>'+item.Header+'</b></span><br>'+item.BodyText+item.FooterText+'</p>';
 		this.chatEditor.value =htmlcontent
 	}
 
@@ -515,15 +530,15 @@ selectQuickReplies(item:any){
 	this.closeAllModal()
 	let mediaContent
 	if(item.media_type === 'image') {
-	  mediaContent ='<p><img style="width:50%; height:50%" src="'+item.Links+'"></p>'
+	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
 	}
 	else if(item.media_type === 'video') {
-		mediaContent ='<p><video style="width:50%; height:50%" src="'+item.Links+'"></video></p>'
+		mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
 	}
 	else {
-		mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
 	}
-	var htmlcontent = mediaContent +'<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
+	var htmlcontent = mediaContent +'<p><span style="color:#fff"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
 	this.chatEditor.value =htmlcontent
 
 }
@@ -692,11 +707,6 @@ sendattachfile(){
 			if (response.status === 200 && response.message === 'Client is ready !') {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
-					// if (responseData.middlewareresult.status === '401') {
-					// 	this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
-					// 	return;
-					// };
-					// if(responseData.middlewareresult.status === '200') {
 						if(this.newMessage.value.Message_id==''){
 							var insertId:any = responseData.insertId
 							if(insertId){
@@ -750,8 +760,12 @@ sendattachfile(){
 							this.newMessage.reset({
 								Message_id: ''
 							});
-					// }
 				});
+			}
+		},
+		(error)=> {
+			if(error) {
+				this.showToaster('Internal Server Error Please Contact System Adminstrator','error');
 			}
 		});
 	}else{
@@ -2152,11 +2166,6 @@ sendMessage(){
 			if (response.status === 200 && response.message === 'Client is ready !') {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
-					// if (responseData.middlewareresult.status === '401') {
-					// 	this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
-					// 	return;
-					// };
-					// if(responseData.middlewareresult.status === '200') {
 						if(this.newMessage.value.Message_id==''){
 							var insertId:any = responseData.insertId
 							if(insertId){
@@ -2210,8 +2219,15 @@ sendMessage(){
 							this.newMessage.reset({
 								Message_id: ''
 							});
-					// }
 				});
+			}
+		},
+		(error)=> {
+			if(error.status === 500) {
+				this.showToaster('! Internal Server Error Please Contact System Adminstrator','error');
+			}
+			else {
+				this.showToaster(error.message,'error');
 			}
 		});
 

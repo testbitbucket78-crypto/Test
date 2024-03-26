@@ -53,11 +53,11 @@
 
 							<div class="d-flex upload-part">
 
-								<div class="box1">
+								<div class="box1" ngClass="{{dragAreaClass}}">
 									<div class="d-img">
 										<img src="assets/img/im.png">
 									</div>
-									<h5 *ngIf="!this.file">Upload a CSV file</h5>
+									<h5 *ngIf="!this.file">Drag & Drop a CSV file</h5>
 									<h5 *ngIf="!this.file">to add or update contacts</h5>
 									<h5 *ngIf="this.file">Your file attached</h5>
 									<h5 *ngIf="this.file">successfully</h5>

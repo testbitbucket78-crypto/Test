@@ -51,9 +51,10 @@
 .sideBar-body {
     // margin-top: 75px;
     // margin-bottom: 20px;
-    overflow: scroll;
-    height: 90%;
+    overflow-y: scroll;
+    height: 80%;
     width: 400px;
+    margin: 70px 0 10px 0;
   }
     
 .content-header {
@@ -100,7 +101,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 
 .card-body {
     background-color: #FDEFEF;
-    border-radius: 30px;
+    border-radius: 25px;
     cursor: pointer;
 }
 .card .id{
@@ -112,7 +113,7 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 .card .card-title {
     margin-bottom: 0.75rem;
     margin-left: 11px;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 15px;
     font-family: 'Manrope';
     letter-spacing: -0.5px;
@@ -128,9 +129,9 @@ button:not(:disabled), [type=reset]:not(:disabled) {
 }
 .card .text-muted {
     color: #000000!important;
-    font-size: 13px;
+    font-size: 11px;
     font-family: 'Manrope';
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .card-text {
@@ -156,7 +157,7 @@ h6.text-justify{
 }
 .card .card1 .card-text2 h6{
     color: #7A86A1;
-    font-size: 13px;
+    font-size: 10px;
     margin-top: -12px;
 }
 .card .card1 .card-text1 p{
@@ -166,7 +167,7 @@ h6.text-justify{
 }
 .card .card1 .card-text1 h6{
     color: #7A86A1;
-    font-size: 13px;
+    font-size: 10px;
     margin-top: -12px;
 }
 
@@ -203,7 +204,7 @@ h6.text-justify{
     width: inherit;
     height: inherit;
     // margin-top: 33px;
-    // margin-right: 20px;
+    margin-right: 15px;
     outline: none;
   }
 
@@ -341,12 +342,11 @@ h3{
 
 
 .box4 {
-    width: 90%;
-    height: 210px;
+    // width: 90%;
     background-color: #ffffff;
     border-radius: 20px;
     border: 1px solid #EBEBEB;
-    margin: 10px 0px 0px 20px;
+    margin: 10px 80px 0px 20px;
 }
 
 .box4 h3 {
@@ -359,7 +359,7 @@ h3{
     font-family: 'Manrope';
     font-size: 14px;
     color: #000000;
-    padding-left: 20px;
+    padding: 0 20px 0 20px;
 }
 
 .mt-4 {
@@ -367,10 +367,10 @@ h3{
 }
 
 .sidebar .footer {
-    position: relative;
-    margin-top: -46px;
+    // position: relative;
+    // margin-top: -46px;
     z-index: 1040;
-    border-top: 1px solid #ebebeb;
+    // border-top: 1px solid #ebebeb;
     background: #FBF9FE 0% 0% no-repeat padding-box;
 
 }
