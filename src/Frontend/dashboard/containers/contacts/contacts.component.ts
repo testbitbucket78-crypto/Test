@@ -198,6 +198,9 @@ countryCodes = [
     orderHeader: String = '';
     isDesOrder: boolean = true;
 
+    errorMessage = '';
+    successMessage = '';
+    warnMessage = '';
 
    sort(headerName:String){
     this.isDesOrder = !this.isDesOrder;
@@ -302,6 +305,28 @@ bulk(e: any) {
   }
   console.log("this.customerId")
   console.log(this.checkedcustomerId)
+}
+
+showToaster(message:any,type:any){
+  if(type=='success'){
+    this.successMessage=message;
+  }	
+  else if(type=='warn'){
+    this.warnMessage=message;
+  }
+  else if(type=='error'){
+    this.errorMessage=message;
+  }
+
+  setTimeout(() => {
+    this.hideToaster()
+  }, 5000);
+  
+}
+hideToaster(){
+  this.successMessage='';
+  this.warnMessage='';
+  this.errorMessage='';
 }
 
 addqty(code: any) {
@@ -592,7 +617,7 @@ saveContact(addcontact:any,addcontacterror:any) {
      },
      (error:any) =>{
       if(error) {
-        console.log(error)
+        this.showToaster(error.message,'error');
       }
      });
   }
@@ -617,7 +642,7 @@ saveContact(addcontact:any,addcontacterror:any) {
           this.modalService.open(addcontacterror);
         }
         if (error) {
-          console.log(error.message);
+          this.showToaster(error.message,'error');
         }
          
    });
@@ -757,7 +782,7 @@ deletContactByID(data: any) {
     }
     this.teamboxService.updateTags(bodyData).subscribe(async response =>{
       if (response) {
-        console.log('Tags updated...','success')
+        this.showToaster('Tags updated...','success')
       }  
     });
   }
@@ -817,12 +842,12 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   if (response.status === 200) {
     $("#pictureCropModal").modal('hide');
     this.closesidenav(this.items);
-    console.log(response+ 'image saved successfully');
+    this.showToaster('image saved successfully','success');
     this.getContact();
   }
 },
 (error) => {
-  console.log(error+ 'error saving contact image');
+  this.showToaster('error saving contact image','error');
 })
 
 }
