@@ -151,6 +151,9 @@ campaignTestData:any;
   
     })
   }
+  confirmTimiming(){
+    $("#confirmModal").modal('show');
+  }
 
   saveCampaignDetails(){
     let campaignResponse = this.copyCampaignTimingFormValues();

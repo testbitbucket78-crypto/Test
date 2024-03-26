@@ -55,6 +55,7 @@ export class QuickResponseComponent implements OnInit {
   
   fileName: any; 
   selectedPreview: string = '';
+  loadingVideo:boolean = false;
   @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent;
 
   public tools: object = {
@@ -123,6 +124,10 @@ export class QuickResponseComponent implements OnInit {
 
 onEditorChange(value: string | null): void {
     this.usertemplateForm.get('BodyText')?.setValue(value);
+}
+
+onValueChange(val:any){
+console.log(val);
 }
 
 filterQuickRes(){
@@ -287,6 +292,7 @@ saveVideoAndDocument(files: FileList) {
 			}
 
       else {
+        this.loadingVideo = true;
         let name='template-message'
         this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
             let responseData: any = uploadStatus;
@@ -294,7 +300,12 @@ saveVideoAndDocument(files: FileList) {
                 this.selectedPreview = responseData.filename.toString();
                 console.log(this.selectedPreview);
             }
-        });
+            this.loadingVideo = false;
+        },
+        (error) => {
+          this.loadingVideo = false;
+          this.showToaster("Video File Size is Too Large, Max 10MB size is Allowed!", 'error');
+   });
       }
 
    
