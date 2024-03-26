@@ -30,7 +30,7 @@ async function fetchScheduledMessages() {
 
     var messagesData = await db.excuteQuery(`select * from Campaign where status=1 and is_deleted != 1`, [])
     var remaingMessage = [];
-
+console.log(messagesData)
 
     const currentDate = new Date();
 
@@ -40,7 +40,7 @@ async function fetchScheduledMessages() {
     for (const message of messagesData) {
 
     //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
-    // console.log("campaignTime", isWorkingTime(campaignTime))
+     console.log("campaignTime", isWorkingTime(message))
       if (isWorkingTime(message)) {
 
         if (new Date(message.start_datetime) < new Date()) {
@@ -108,8 +108,8 @@ async function sendMessages(phoneNumber, message, id, campaign, response) {
 
 
 async function saveSendedMessage(MessageBodyData) {
-  var inserQuery = "INSERT INTO CampaignMessages (phone_number,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,schedule_datetime,status_message,status) values ?";
-  let saveMessage = await db.excuteQuery(inserQuery, [[[MessageBodyData.phone_number, '', '', '', MessageBodyData.message_media, MessageBodyData.message_content,'', MessageBodyData.CampaignId, MessageBodyData.schedule_datetime, MessageBodyData.status_message, MessageBodyData.status]]])
+  var inserQuery = "INSERT INTO CampaignMessages (phone_number,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,schedule_datetime,status_message,status,SP_ID) values ?";
+  let saveMessage = await db.excuteQuery(inserQuery, [[[MessageBodyData.phone_number, '', '', '', MessageBodyData.message_media, MessageBodyData.message_content,'', MessageBodyData.CampaignId, MessageBodyData.schedule_datetime, MessageBodyData.status_message, MessageBodyData.status,MessageBodyData.sp_id]]])
 }
 
 
@@ -233,7 +233,7 @@ function sendScheduledCampaign(batch, sp_id, type, message_content, message_medi
 
 
 function isWorkingTime(item) {
-
+try{
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
 
   // for (const item of data) {
@@ -254,6 +254,10 @@ function isWorkingTime(item) {
   // }
 
   return false;
+}
+catch(err){
+  console.log(err)
+}
 }
 
 

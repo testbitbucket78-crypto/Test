@@ -481,7 +481,7 @@ async function campaignAlerts(TemplateData,insertId,statusToUpdate){
 
     var type = TemplateData.message_type;
 
-    sendBatchMessage(user, TemplateData.sp_id, 'text', alertmessages, message_media, phone_number_id, channel_id, insertId, statusToUpdate)
+    sendBatchMessage(user, TemplateData.sp_id, TemplateData.message_type, alertmessages, message_media, phone_number_id, channel_id, insertId, statusToUpdate)
 
 }
 
