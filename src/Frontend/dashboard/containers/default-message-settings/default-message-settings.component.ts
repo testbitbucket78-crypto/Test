@@ -86,13 +86,14 @@ export class DefaultMessageSettingsComponent implements OnInit {
 			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
 		}
-  ]};
+  ]};  
+  lastCursorPosition: Range | null = null;
 
   constructor(private apiService:SettingsService,private _teamboxService:TeamboxService,private fb: FormBuilder) { }
   prepareUserForm(){
     return this.fb.group ({
       value: ['',Validators.maxLength(1024)],
-      link: [''],
+      link: [null],
       override: [0],
       autoreply: ['']
     });
@@ -104,6 +105,8 @@ export class DefaultMessageSettingsComponent implements OnInit {
     // console.log(this.selectedMessageData)
     this.getAttributeList();
     this.getDefaultMessages();
+    this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
+    this.defaultMessageForm.get('link')?.clearValidators();
   }
 
   showToaster(message:any,type:any){
@@ -142,6 +145,8 @@ export class DefaultMessageSettingsComponent implements OnInit {
 
 ToggleAttributesOption(){
 	// this.closeAllModal()
+  const selection = window.getSelection();
+  this.lastCursorPosition = selection?.getRangeAt(0) || null;
 	$("#welcomGreeting").modal('hide');
   $("#atrributemodal").modal('show');
 }
@@ -150,9 +155,18 @@ selectAttributes(item:any){
   this.closeAtrrModal();
   const selectedValue = item;
   let content:any = this.chatEditor.value || '';
-  content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-  content = content+ '<span style="color:#000">{{'+selectedValue+'}}</span>'
-  this.chatEditor.value = content;
+  //content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+  //content = content+ '<span style="color:#000">{{'+selectedValue+'}}</span>'
+  //this.chatEditor.value = content;
+  this.insertAtCursor(selectedValue)
+}
+
+insertAtCursor(selectedValue:any) {
+  const editorElement = this.chatEditor.element.querySelector('.e-content');
+  const newNode = document.createElement('span');
+  newNode.innerHTML = '{{'+selectedValue+'}}';
+  newNode.style.color = '#000';
+  this.lastCursorPosition?.insertNode(newNode);
 }
 
 

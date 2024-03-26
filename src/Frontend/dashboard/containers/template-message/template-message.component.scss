@@ -1559,3 +1559,7 @@ input[type="radio"]:checked + label::before {
     font-size: 12px;
     color: #7A86A1;
   }
+
+  .preview-part .message_section .message_data::-webkit-scrollbar {
+    display: block !important;
+}

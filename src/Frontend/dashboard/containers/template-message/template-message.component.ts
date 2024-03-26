@@ -36,6 +36,7 @@ export class TemplateMessageComponent implements OnInit {
     showCampaignDetail: boolean = false;
     showGalleryDetail: boolean = false;
     showInfoIcon:boolean = false;
+    isHeaderAttribute:boolean = false;
     templatesData = [];
     galleryData = [];
     allVariablesList:string[] =[];
@@ -128,6 +129,7 @@ export class TemplateMessageComponent implements OnInit {
       'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
     ];
     @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent | any;
+    lastCursorPosition: Range | null = null;
 
     public tools: object = {
         items: [
@@ -172,10 +174,14 @@ export class TemplateMessageComponent implements OnInit {
         this.warningMessage = '';
     }
 
-    ToggleAttributesOption() {
+    ToggleAttributesOption() {   
+        const selection = window.getSelection();
+        this.lastCursorPosition = selection?.getRangeAt(0) || null;
         $('#atrributemodal').modal('show');
+        //this.insertAtCursor();
         $('#newTemplateMessage').modal('hide');
     }
+
 
     onEditorChange(value:any) {
         this.newTemplateForm.get('BodyText')?.setValue(value);
@@ -690,6 +696,7 @@ export class TemplateMessageComponent implements OnInit {
             if (this.newTemplateForm.get(prop)) this.newTemplateForm.get(prop)?.setValue(value);
             this.id = ID;
         }
+        this.onCategoryChange('');
     }
     // for gallery form
     patchGalleryFormValue() {
@@ -744,17 +751,39 @@ export class TemplateMessageComponent implements OnInit {
         this.attributesearch ='';
         $('#newTemplateMessage').modal('show');
         $('#atrributemodal').modal('hide');
+        this.isHeaderAttribute = false;
     }
 
     selectAttributes(item:any) {
-        this.closeAtrrModal();
         const selectedValue = item;
-        let content:any = this.chatEditor.value || '';
-        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-        content = content+ '<span style="color:#000">{{'+selectedValue+'}}</span>'
-        this.chatEditor.value = content;
+        let content:any ='';
+        if(this.isHeaderAttribute){
+            content = this.newTemplateForm.controls.Header.value || '';
+        }else{
+            content = this.chatEditor.value || '';
+        }
+
+        //content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+        if(this.isHeaderAttribute){
+            content = content+ '{{'+selectedValue+'}}'
+            this.newTemplateForm.controls.Header.setValue(content);
+        }else{
+            // content = content+ '<span style="color:#000">{{'+selectedValue+'}}</span>'
+            // this.chatEditor.value = content;
+            this.insertAtCursor(selectedValue);
+        }
+        this.closeAtrrModal();
+        
     }
 
+    
+    insertAtCursor(selectedValue:any) {
+        const editorElement = this.chatEditor.element.querySelector('.e-content');
+        const newNode = document.createElement('span');
+        newNode.innerHTML = '{{'+selectedValue+'}}';
+        newNode.style.color = '#000';
+        this.lastCursorPosition?.insertNode(newNode);
+      }
      /* GET VARIABLE VALUES */
     getVariables(sentence: string, first: string, last: string) {
         let goodParts: string[] = [];
@@ -817,4 +846,31 @@ export class TemplateMessageComponent implements OnInit {
                 }
         }
     }
+
+    onContentChange(event: any) {
+        // Count characters considering emojis
+        const text = this.chatEditor.value;
+        const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; // Regular expression for emojis
+        const characterCount = text.replace(emojiRegex, '_').length; // Replace emojis with placeholder and count characters
+        if (characterCount > 1024) {
+          // Trim the content if it exceeds the character limit
+          const trimmedContent = this.trimContent(text, characterCount);
+          this.chatEditor.value = trimmedContent;
+        } else {
+            this.chatEditor.value = text;
+        }
+      }
+    
+      trimContent(text: string, characterCount: number): string {
+        // Logic to trim content while keeping space for one emoji
+        const emojisToAdd = 1; // Allow one emoji even if the limit is reached
+        const extraCharacters = characterCount - 1024 + emojisToAdd;
+        let trimmedText = text.substr(0, text.length - extraCharacters);
+        // Ensure the last character is not a part of a broken emoji
+        const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/;
+        if (emojiRegex.test(trimmedText)) {
+          trimmedText = trimmedText.slice(0, -2); // Remove the broken emoji
+        }
+        return trimmedText;
+      }
 }

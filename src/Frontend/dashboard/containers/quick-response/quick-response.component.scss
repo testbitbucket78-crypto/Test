@@ -1200,3 +1200,17 @@ select.input-form {
 .filter-Unselected{
     color: grey !important;
 }
+
+.spinner-border {
+    z-index: 99999;
+    width: 4rem;
+    height: 4rem;
+    color: azure;
+}
+
+.spinner-main-div{
+    position: absolute;
+    top: 270px;
+    left: 210px;
+    z-index: 99999;
+}
