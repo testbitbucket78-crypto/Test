@@ -316,6 +316,8 @@ editQuickResponse(){
  this.usertemplateForm.controls.Channel.setValue(this.repliestemplateData.Channel);
  this.usertemplateForm.controls.Header.setValue(this.repliestemplateData.Header);
  this.usertemplateForm.controls.BodyText.setValue(this.repliestemplateData.BodyText);
+ this.BodyText = this.repliestemplateData.BodyText;
+ this.selectedPreview = this.repliestemplateData.Links;
  this.selectedType = this.repliestemplateData?.media_type;
  console.log(this.usertemplateForm);
 }

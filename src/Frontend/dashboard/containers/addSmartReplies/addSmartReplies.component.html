@@ -138,18 +138,24 @@
         <div class="interactions">
           <div  class="child-int-1 py-2">
             <div  #chatSection class="child-interaction-1">
-              <div  id="messgae-boc"   *ngFor="let message of assignedAgentList; let i = index">
-                <div class="message-box" *ngIf="message.Message">
-                  <p id="msgbox-head">Message {{Media}}</p>
-                  <p id="msgbox-body{{i}}" [contentEditable]="isEditable[i]" (input)="onEdit($event.target.innerHTML)"
-                    [innerHTML]="message.Value"></p>
-                  <div>
-                    <button class="msg-edit-btn" [class.editable]="isEditable[i]" [class.non-editable]="!isEditable[i]"
-                      (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
-                    <button class="msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png"></button>
-                  </div>
-                </div>
+              <div *ngFor="let message of assignedAgentList; let i = index">
 
+                <div class="message-container" *ngIf="message.ActionID == 0">
+
+                  <div class="col-6 message-box" *ngIf="message.Message">
+                    <p id="msgbox-head">Message</p>
+                    <p id="msgbox-body{{i}}" [innerHTML]="message.Value"></p>
+                  </div>
+
+                  <div class="col-6 message-buttons">
+                    <button class="px-2 msg-edit-btn" [class.editable]="isEditable[i]" [class.non-editable]="!isEditable[i]"
+                    (click)="toggleEditable(i)"><img src="assets/img/edit.png">
+                   </button>
+                   <button class="px-1 msg-del-btn" (click)="removeMessage(i)"><img src="assets/img/delete.png">
+                   </button>
+                   </div>
+                 </div> 
+        
                 
                 <!-- media -->
 
@@ -169,37 +175,41 @@
                   <p class="message-media" [ngStyle]="{'background-image': 'url(' + Media + ')'}"></p>   
                 </div>
 
-                <div class="assign-conversation" *ngIf="message.ActionID == 2">
-                  <p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
-                  <div class="d-flex flex-wrap assign-container">
-                    <p class="py-1 px-2 m-0" id="msgbox-body1"><b>Conversation Assigned:</b></p>
-                    <p class="py-1 m-0" id="msgbox-body2" [contentEditable]="isEditable[i]"
-                      (input)="onActionEdit($event.target.innerHTML)">
-                      {{message.Value}}</p>
+                
+                <div class="d-flex justify-content-between align-items-center" *ngIf="message.ActionID == 2">
+                  <div class="col-6 assign-conversation">
+                      <p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
+                      <div class="d-flex flex-wrap assign-container">
+                       
+                        <p class="py-1 px-2 m-0" id="msgbox-body1"><b>Conversation Assigned:</b></p>
+                        <p class="py-1 m-0" id="msgbox-body2" [contentEditable]="isEditable[i]"
+                          (input)="onActionEdit($event.target.innerHTML)">
+                          {{message.Value}}</p>
+                      </div>
                   </div>
-                  <div>
-                    <button class="msg-edit-btn" [class.editable]="isEditable[i]" [class.non-editable]="!isEditable[i]"
+  
+                  <div class="col-6 assign-buttons">
+                    <button class="px-2 msg-edit-btn" [class.editable]="isEditable[i]" [class.non-editable]="!isEditable[i]"
                     (click)="toggleEditable(i)"><img src="assets/img/edit.png"></button>
-                    <button class="msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
+                    <button class="px-1 msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
                   </div>
                 </div>
+     
                 
-                <div *ngIf="message.ActionID == 1">
-                  <div class="add-tag">
+                <div class="d-flex justify-content-between align-items-center" *ngIf="message.ActionID == 1">
+                  <div class="col-6 add-tag">
                     <p id="msgbox-head1">Action</p>
                     <div class="d-flex flex-wrap assign-container">
                       <p class="px-2" id="msgbox-body1"><b>Add Tags:</b></p>
                       <p *ngFor="let item of message.Value" class="px-1" id="msgbox-body2">{{item}}</p>
                     </div>
-                    <button class="msg-edit-btn" (click)="toggleRemoveTag()"><img src="assets/img/edit.png"></button>
-                    <button class="msg-del-btn" (click)="removeAddTag(i)"><img src="assets/img/delete.png"></button>
-
-
                   </div>
+                    <div class="col-6 assign-buttons">
+                      <button class="px-2 msg-edit-btn" (click)="toggleRemoveTag()"><img src="assets/img/edit.png"></button>
+                      <button class="px-1 msg-del-btn" (click)="removeAddTag(i)"><img src="assets/img/delete.png"></button>
+                    </div>
                 </div>
                 
-          
-
               </div>
 
 
@@ -232,8 +242,7 @@
             <div class="conversation_inout_area">
 
               <div class="input-area">
-                <ejs-richtexteditor [(value)]="custommesage" id='defaultRTE' #chatEditor  [toolbarSettings]='tools'
-                  [width]='0' (click)="resetMessageTex()"> </ejs-richtexteditor>
+                <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply..."> </ejs-richtexteditor>
                 <button class="submit_btn" (click)="addMessage()">Add</button>
               </div>
             </div>
@@ -244,10 +253,11 @@
 
           <div *ngIf="ShowAssignOption" class="popup-dialog AssignOption">
             <p class="label">Assign To</p>
-            <p *ngFor="let agent of agentsList; let k = index" (click)="assignConversation(k)"
+            <p class="d-flex align-items-center px-2 py-1" *ngFor="let agent of agentsList; let k = index" (click)="assignConversation(k)"
               (click)="closeAssignOption()">
-              <span class="text-capitalize initials"> {{ agent.nameInitials }} </span> 
-              <span class="agentName">{{agent.name}}</span>
+              <span *ngIf="!agent.profileImg" class="text-capitalize initials w-25"> {{ agent.nameInitials }} </span>
+              <img *ngIf="agent.profileImg" class="rounded-circle" style="width: 40px; height: 25px; margin-left: 11px;" src="{{agent.profileImg}}" />
+              <span key={k} class="agentName w-75">{{agent.name}}</span>
             </p>
           </div>
 
@@ -363,15 +373,9 @@
   </div>
 </div>
 
-
-
-
-
 <div class="modal fade" tabindex="-1" id="sendfile" #sendfile data-bs-backdrop="static" role="dialog">
   <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <div class="message_meida_preview">
+    <div class="modal-content message_meida_preview">
           <div class="modal-header">
             <div class="modal-header-left">
             </div>
@@ -388,25 +392,18 @@
 
             <video style="width: 354px; height: 190px;" controls muted id="video-background"  *ngIf="this.mediaType == 'video/mp4'" [src]="messageMeidaFile"></video>
             
-            <div class="doc-preview" *ngIf="this.mediaType == 'application/pdf'">
-                <a [href]="messageMeidaFile"><img src="../../../../assets/img/settings/doc.svg" /></a>
-            </div>
+              <div class="doc-preview" *ngIf="this.mediaType == 'application/pdf'">
+                  <a [href]="messageMeidaFile"><img src="../../../../assets/img/settings/doc.svg" /></a>
+              </div>
           </div>
 
 
           <div class="input_group_btn" id="senddoc">
             <button  type="button" class="submit-btn" (click)="sendMediaMessage()">Add Attachment</button>
           </div>
-</div>
-</div>
-        
-        
-        </div>
+    </div>
   </div>
 </div>
-
-
-
 
 <!-- insert templates in add smartReplies -->
 <div class="modal fade" tabindex="-1" id="insertTemplate" data-bs-backdrop="static" #insertTemplate role="dialog">
@@ -426,15 +423,15 @@
 
     <div class="section_filter">
       <div class="custom-control custom-checkbox">
-        <input class="custom-control-input" [checked]="true" id="Marketing" type="checkbox" value="Marketing" (click)="filterTemplate($event)" />
+        <input class="custom-control-input" [checked]="isFilterTemplate.Marketing" id="Marketing" type="checkbox" value="Marketing" (click)="filterTemplate($event)" />
         <label class="custom-control-label" for="Marketing">Marketing</label>
     </div>
     <div class="custom-control custom-checkbox">
-      <input class="custom-control-input" [checked]="true" id="Utility" type="checkbox" value="Utility" (click)="filterTemplate($event)" />
+      <input class="custom-control-input" [checked]="isFilterTemplate.Utility" id="Utility" type="checkbox" value="Utility" (click)="filterTemplate($event)" />
       <label class="custom-control-label" for="Utility">Utility</label>
     </div>
       <div class="custom-control custom-checkbox">
-        <input class="custom-control-input" [checked]="true" id="Authentication" type="checkbox" value="Authentication" (click)="filterTemplate($event)" />
+        <input class="custom-control-input" [checked]="isFilterTemplate.Authentication" id="Authentication" type="checkbox" value="Authentication" (click)="filterTemplate($event)" />
         <label class="custom-control-label" for="Authentication">Authentication</label>
     </div>
     </div>
@@ -536,14 +533,19 @@
             </div>
 
             <div class="template_details_section_right">
-              <p class="mt-2 mb-0">Variable value<img class="px-2 icon sm"
-                  src="/assets/img/campaign/Info.svg"></p>
-              <p *ngIf="allVariablesList.length!==0"><span>
-                  To personalize your campaign for the imported audience, please select the
-                  applicable column from your CSV/Excel file to map each of the variables
-                  listed below
-                </span>
-              </p>
+              <p class="mt-2 mb-0">Variable value<img class="px-2 icon sm" (click)="toggleInfoIcon()" src="/assets/img/campaign/Info.svg"></p>
+
+                <span *ngIf="showInfoIcon" class="px-2 opt-In-Info">
+                  <div class="opt-In-Info-div">
+                     <button type="button" class="m-2 btn-close" (click)="showInfoIcon=false">
+                       <img src="../../../../assets/img/teambox/icon-close.svg">
+                     </button>
+                     <p id="p-body">You can input variable values or choose contact attributes (fields)
+                        that will be used to send personalized messages to users, 
+                        reflecting their specific contact details instead of generic values.
+                      </p>
+                   </div>
+                   </span>
 
                 <p class="h5" *ngIf="allVariablesList.length==0">
                   No variable available in this message
@@ -579,17 +581,21 @@
                   <!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
                 <!-- </p> -->
               <!-- </div> -->
+              <form #variableValue="ngForm">
               <div *ngFor="let item of allVariablesList; let ith = index" class="form_row">
                 <label for="variableValue{{ith}}">{{item}}</label>
                 <p class="form-control">
-                  <input type="text" id="variableValue{{ith}}" class="form-control inner"
+                  <input type="text" id="variableValue{{ith}}" name="variableValue{{ith}}" [(ngModel)]="variableValues[ith]" class="form-control inner"
                   placeholder="Input value or add attribute">
-                  <!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
+                  <span class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
                 </p>
-                
+            <!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
+                    <p class="label">Map the column</p>
+                    <p *ngFor="let map of mapNameOption ;let i = index" (click)="openMapOption('')"><span>{{map}}</span></p>
+                  </div> -->
               </div>
-
-              <div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" >
+            </form>
+            <div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" >
               <p class="mt-2">Button Payload <span>(Optional)</span><img class="px-2 icon sm"
                   src="/assets/img/campaign/Info.svg"></p>
               <div class="form_row">
@@ -610,6 +616,9 @@
             </div>
             </div>
           </div>
+       
+        </div>
+        <div class="modal-footer" style="border: none;">
           <div class="input_group_btn mb-1" style="float: right;">
             <button type="button" class="submit-btn" (click)="showTemplatePreview()">Next</button>
           </div>
@@ -724,7 +733,7 @@
           src="assets/img/teambox/icon-close.svg"></p>
     </div>
   </div>
-  <div class="modal-body" style="height: 500px; overflow: scroll;">
+  <div class="modal-body" style="height: 365px; overflow: scroll;">
     <div class="template_preiview">
 
       <div class="template_box">
@@ -756,11 +765,12 @@
       </div>
 
     </div>
+  </div>
 
-    <div class="input_group_btn mb-4">
+  <div class="modal-footer" style="border: none;">
+    <div class="input_group_btn justify-content-center mb-4" style="width: 100%;">
       <button type="button" class="submit-btn" (click)="insertTemplateInChat(selectedTemplate)">Done</button>
     </div>
-
   </div>
 
 <!-- </div> -->

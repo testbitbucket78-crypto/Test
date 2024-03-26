@@ -78,8 +78,7 @@
 			<div class="row d-flex">
 				<h6 class="text-justify">{{items?.Description}}.</h6>
 			</div>
-			<h3 class="keywords-btn" data-bs-toggle="modal" data-bs-target="#smartrepliesModal"><img id="Edit-icon"
-					src="assets/img/Edit-icon.png">Keywords & Criteria </h3>
+			<h3 class="keywords-btn"><img id="Edit-icon" (click)="editKeyword()" src="assets/img/Edit-icon.png">Keywords & Criteria </h3>
 			<div class="row">
 				<div class="box" *ngFor="let values of repliesData?.Keyword">
 					<p>{{values}}</p>
