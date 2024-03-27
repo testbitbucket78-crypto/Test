@@ -376,6 +376,7 @@
     font-size: 20px;
     font-weight: 600;
     color: #000;
+    word-break: break-word;
 }
 
 .right_box p {
@@ -2586,3 +2587,79 @@ label span {
     border: 1px solid #ebebeb;
     float: right;
    }
+
+   .modal-body.showvariableoption {
+    background-color:#FFF4F2 ;
+    border-radius: 30px;
+ }
+    .variableoption .content{
+    width: 100%;
+    float: left;
+    padding: 1rem;
+    height: 400px;
+    overflow: auto;
+    }
+    .variableoption .content .search-box{
+    background-color: #fff;
+    min-width:100%
+    }
+
+    .variableoption .content p.form-control{
+    background: #fff url("/assets/img/campaign/attribute-b.svg") no-repeat;
+    background-size: 12px;
+    background-position: center left 10px;
+    border: 1px solid #EBEBEB;
+    border-radius: 15px;
+    padding: 10px 10px 10px 25px;
+    font-size: 10px !important;
+    width: max-content;
+    margin: 1rem;
+    display: flex;
+    align-items: center;
+    }
+    .variableoption .content .content_inner{
+    margin: 1rem;
+    }
+    .variableoption .content .content_inner .form-control{
+    border-radius: 15px;
+    cursor: pointer;
+    }
+    img.icon.sm{
+    width: 10px;
+    margin-left: 5px;
+    }
+
+    .showInfoFallback {
+        position: absolute;
+        top: 9.3rem;
+        right: 5.8rem;
+        width: 280px;
+        height: auto;
+        background: #ffffff 0% 0% no-repeat padding-box;
+        box-shadow: 4px 22px 54px #695f971a;
+        border-radius: 30px;
+        opacity: 1;
+        overflow: auto;
+    }
+
+    #p-body {
+        font-size: 12px;
+        font-weight: 500;
+        margin-top: 10%;
+        color: #7a86a1;
+        padding: 10%;
+    }
+    
+    #radio-close-btn {
+        width: 36px;
+        height: 36px;
+        position: absolute;
+        top: 4%;
+        right: 6%;
+        background: #ffffff;
+        border-radius: 15px;
+        opacity: 1;
+        border: 1px solid #ebebeb;
+        font-family: 'Manrope';
+        font-size: 13px;
+    }

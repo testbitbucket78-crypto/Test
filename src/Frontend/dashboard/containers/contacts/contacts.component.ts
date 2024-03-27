@@ -394,8 +394,8 @@ onSelectAll(items: any) {
   getContact() {
     var SP_ID = sessionStorage.getItem('SP_ID')
     console.log(SP_ID)
-    this.apiService.Contact(SP_ID).subscribe((data) => {
-      this.contacts = data;
+    this.apiService.Contact(SP_ID).subscribe((data:any) => {
+      this.contacts = data.result;
       this.rowData = this.contacts;
       this.productForm.get('countryCode')?.setValue('IN +91');
       console.log(this.contacts);
