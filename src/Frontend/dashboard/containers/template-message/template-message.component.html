@@ -538,7 +538,7 @@
                 </div>
                 <div class="sel-type-text">
                     <ejs-richtexteditor formControlName="BodyText" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'200px'"
-                    [maxLength]='1024' [showCharCount]='true' placeholder="Enter" >
+                    [maxLength]='1024' [showCharCount]='true' placeholder="Enter" (change)="onContentChange()">
                    </ejs-richtexteditor>
                    <!-- (change)="onContentChange($event)" -->
                 </div>

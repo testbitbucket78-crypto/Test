@@ -2526,7 +2526,7 @@ console.log(this.allTemplatesMain);
 	}
 
 
-	getUpdatedContactList(){
+	getUpdatedContactList(addNewCampaign:any){
 		console.log(this.allContactList);
 		let list =[];
 		for(var i=0;i<this.allContactList.length;i++){
@@ -2536,10 +2536,23 @@ console.log(this.allTemplatesMain);
 		}
 		let bodyData ={Query:list};
 		console.log(list);
-		this.apiService.processQuery(bodyData).subscribe(allCustomer =>{
-
+		this.segmentsContactList =[];
+		this.apiService.processQuery(bodyData).subscribe((result:any) =>{
+			if(result){
+				let contactList = result?.uniqueResults;
+				contactList.forEach((item:any)=>{
+					this.segmentsContactList.push(item?.customerId)
+				})
+				
+			}
+			if(this.segmentsContactList.length>0){
+				this.closeAllModal()
+				this.newListName=this.segmentsContactList.length+' unique contacts selected';
+				this.importedContacts=false;
+				this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
+				}else{
+					this.showToaster('Opps No Contacts selected...','error')
+				}
 		})
 	}
-
 }
-

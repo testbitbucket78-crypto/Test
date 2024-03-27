@@ -56,7 +56,7 @@ export class QuickResponseComponent implements OnInit {
   fileName: any; 
   selectedPreview: string = '';
   loadingVideo:boolean = false;
-  @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent;
+  @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent | any;
 
   public tools: object = {
       items: [
@@ -368,4 +368,30 @@ hideToaster(){
   this.warnMessage='';
   this.errorMessage='';
 }
+
+
+onContentChange() {
+  //const text = this.chatEditor?.value;
+  const container = document.createElement('div');
+  container.innerHTML = this.chatEditor?.value;
+  const text = container.innerText;
+  const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; 
+  const characterCount = text?.replace(emojiRegex, '__').length || 0; 
+  if (characterCount > 1024) {
+    const trimmedContent = this.trimContent(text, characterCount);
+    this.chatEditor.value = trimmedContent;
+  } 
+}
+
+trimContent(text: string, characterCount: number): string {
+  const emojisToAdd = 1; 
+  const extraCharacters = characterCount - 1024 + emojisToAdd;
+  let trimmedText = text.substr(0, text.length - extraCharacters);
+  const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/;
+  if (emojiRegex.test(trimmedText)) {
+    trimmedText = trimmedText.slice(0, -2);
+  }
+  return trimmedText;
+}
+
 }
