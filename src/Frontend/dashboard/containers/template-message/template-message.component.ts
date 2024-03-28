@@ -847,30 +847,28 @@ export class TemplateMessageComponent implements OnInit {
         }
     }
 
-    onContentChange(event: any) {
-        // Count characters considering emojis
-        const text = this.chatEditor.value;
-        const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; // Regular expression for emojis
-        const characterCount = text.replace(emojiRegex, '_').length; // Replace emojis with placeholder and count characters
-        if (characterCount > 1024) {
-          // Trim the content if it exceeds the character limit
-          const trimmedContent = this.trimContent(text, characterCount);
-          this.chatEditor.value = trimmedContent;
-        } else {
-            this.chatEditor.value = text;
-        }
-      }
     
-      trimContent(text: string, characterCount: number): string {
-        // Logic to trim content while keeping space for one emoji
-        const emojisToAdd = 1; // Allow one emoji even if the limit is reached
-        const extraCharacters = characterCount - 1024 + emojisToAdd;
-        let trimmedText = text.substr(0, text.length - extraCharacters);
-        // Ensure the last character is not a part of a broken emoji
-        const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/;
-        if (emojiRegex.test(trimmedText)) {
-          trimmedText = trimmedText.slice(0, -2); // Remove the broken emoji
-        }
-        return trimmedText;
-      }
+onContentChange() {
+    //const text = this.chatEditor?.value;
+    const container = document.createElement('div');
+    container.innerHTML = this.chatEditor?.value;
+    const text = container.innerText;
+    const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; 
+    const characterCount = text?.replace(emojiRegex, '__').length || 0; 
+    if (characterCount > 1024) {
+      const trimmedContent = this.trimContent(text, characterCount);
+      this.chatEditor.value = trimmedContent;
+    } 
+  }
+  
+  trimContent(text: string, characterCount: number): string {
+    const emojisToAdd = 1; 
+    const extraCharacters = characterCount - 1024 + emojisToAdd;
+    let trimmedText = text.substr(0, text.length - extraCharacters);
+    const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/;
+    if (emojiRegex.test(trimmedText)) {
+      trimmedText = trimmedText.slice(0, -2);
+    }
+    return trimmedText;
+  }
 }
