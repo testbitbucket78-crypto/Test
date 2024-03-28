@@ -217,6 +217,8 @@ routerGuard = () => {
 	TemplatePreview:any=false;
 	messageMeidaFile:any='';
 	mediaType:any='';
+	attachmentMedia:any='';
+	isAttachmentMedia:boolean=false;
 	showMention:any=false;
 	NewContactForm:any=[];
 	EditContactForm:any=[];
@@ -233,6 +235,7 @@ routerGuard = () => {
 	hourLeft:number = 0;
 	userList:any;
 	allVariablesList:string[] =[];
+	showInfo:boolean = false;
 	selected:boolean=false;
 	isFilterTemplate:any = {
 		Marketing: true,
@@ -416,13 +419,20 @@ routerGuard = () => {
 		$('.modal-backdrop').remove();
 
 	}	
-	editMedia(){
+	// editMedia(){
+	// 	$("#editTemplate").modal('hide');
+	// 	$("#templatePreview").modal('hide');  
+	// 	$("#editTemplateMedia").modal('show'); 
+	// }
+
+	editMedia() {
 		$("#editTemplate").modal('hide');
-		$("#templatePreview").modal('hide');  
-		$("#editTemplateMedia").modal('show'); 
+		$("#attachfle").modal('show');
+
 	}
 	closeEditMedia() {
 		$("#editTemplate").modal('show'); 
+		$("#attachfle").modal('hide');
 		$("#editTemplateMedia").modal('hide'); 
 	}
 	cancelEditTemplateMedia(){
@@ -431,6 +441,19 @@ routerGuard = () => {
 	updateEditTemplateMedia(){
 		$("#editTemplate").modal('show'); 
 		$("#editTemplateMedia").modal('hide'); 
+	}
+	openVariableOption() {
+		$("#showvariableoption").modal('show'); 
+		$("#editTemplate").modal('hide'); 
+	}
+	closeVariableOption() {
+		this.attributesearch=''; 
+		$("#showvariableoption").modal('hide');
+		$("#editTemplate").modal('show'); 
+	}
+	SaveVariableOption(){
+		$("#showvariableoption").modal('hide'); 
+		$("#editTemplate").modal('show'); 
 	}
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
@@ -446,19 +469,28 @@ routerGuard = () => {
 		}
 		else {
 			this.showToaster('Variable value should not be empty','error')
-			// this.variableValueForm.reset();
 		}
 
+	}
+
+	addAttributeInVariables(item: any) {
+	if (!this.variableValues.includes(item)) {
+		item = '{{'+item+'}}'
+		this.variableValues.push(item);
+		this.closeVariableOption();
+	  }
 	}
 
 	replaceVariableInTemplate() {
 		this.allVariablesList.forEach((placeholder, index) => {
 			const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-			this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+			if(this.selectedTemplate.media_type == 'text') {
+				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+			}
 			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
 		});
 	}
-	insertTemplate(item:any){
+	insertTemplate(item:any) {
 		this.closeAllModal()
 		let mediaContent
 		if(item.media_type === 'image') {
@@ -470,17 +502,29 @@ routerGuard = () => {
 		else if(item.media_type === 'document') {
 			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
 		}
-		else {
-			mediaContent=''
+		
+		let htmlcontent = '';
+		if (item.Header && item.media_type == 'text') {
+			htmlcontent += '<p><strong>'+item.Header+'</strong></p><br>';
 		}
-		var htmlcontent = mediaContent +'<p><span><b>'+item.Header+'</b></span><br>'+item.BodyText+item.FooterText+'</p>';
+
+		if(mediaContent && item.media_type!== 'text') {
+			htmlcontent += mediaContent
+		}
+	
+		htmlcontent +='<p>'+ item.BodyText+'</p>'+'<br>';
+		if (item.FooterText) {
+			htmlcontent+='<p>'+item.FooterText+'</p>';
+		}
 		this.chatEditor.value =htmlcontent
+		this.isAttachmentMedia = false
 	}
 
 showeditTemplate(){
 	if(this.selectedTemplate.length!==0) {
 		$("#editTemplate").modal('show'); 
 		$("#insertmodal").modal('hide'); 
+		this.isAttachmentMedia = true;
 		this.previewTemplate();
 	}
 	else {
@@ -510,12 +554,19 @@ ToggleAttributesOption(){
 	$("#atrributemodal").modal('show'); 
 
 }
+
+showToolTip(event: MouseEvent) {
+	const target = event.target as HTMLElement;
+	if (target.classList.contains('fallback-tooltip')) {
+		this.showInfo = true;
+	}
+}
 selectAttributes(item:any) {
 	this.closeAllModal();
 	const selectedValue = item;
 	let content:any = this.chatEditor.value || '';
 	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-	content = content+'<span style="color:#000">{{'+selectedValue+'}}</span>'
+	content = content+'<span>{{'+selectedValue+'}}</span>'
 	this.chatEditor.value = content;
 }
 
@@ -538,7 +589,7 @@ selectQuickReplies(item:any){
 	else {
 		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
 	}
-	var htmlcontent = mediaContent +'<p><span style="color:#fff"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
+	var htmlcontent = mediaContent+'<p>'+item.BodyText+'</p>';
 	this.chatEditor.value =htmlcontent
 
 }
@@ -657,17 +708,41 @@ filterTemplate(temType:any){
 ToggleAttachmentBox(){
 	this.closeAllModal()
 	$("#attachfle").modal('show'); 
-document.getElementById('attachfle')!.style.display = 'inherit';
+	document.getElementById('attachfle')!.style.display = 'inherit';
 	this.dragAreaClass = "dragarea";
 	
 }
-sendattachfile(){
-		if(this.messageMeidaFile!==''){
-			$("#sendfile").modal('show');	
-		}else{
-			$("#sendfile").modal('hide');	
-		}
-	}
+sendattachfile() {
+    if (this.isAttachmentMedia === false) {
+        if (this.messageMeidaFile !== '') {
+            $("#sendfile").modal('show');
+        } else {
+            $("#sendfile").modal('hide');
+        }
+    } else {
+        let mediaCategory;
+        if (this.mediaType.startsWith('image/')) {
+            mediaCategory = 'image';
+        } else if (this.mediaType.startsWith('video/')) {
+            mediaCategory = 'video';
+        } else if (this.mediaType === 'application/') {
+            mediaCategory = 'document';
+        }
+
+        if (this.selectedTemplate.media_type === mediaCategory) {
+            this.selectedTemplate.Links = this.attachmentMedia;
+            $("#attachfle").modal('hide');
+            $("#editTemplate").modal('show');
+			this.messageMeidaFile='';
+        } else {
+            this.showToaster('! Please only upload media that matches selected template', 'error');
+            $("#attachfle").modal('hide');
+            $("#editTemplate").modal('show');
+			this.messageMeidaFile='';
+        }
+    }
+}
+
 	
 	sendMediaMessage() {
 
@@ -840,6 +915,7 @@ sendattachfile(){
 			let responseData:any = uploadStatus
 			if(responseData.filename){
 				this.messageMeidaFile = responseData.filename
+				this.attachmentMedia = responseData.filename
 				this.mediaSize=responseData.fileSize
 				console.log(this.mediaSize);
 				this.sendattachfile();
@@ -1958,22 +2034,31 @@ createCustomer() {
 	var bodyData = this.newContact.value;
 	console.log(bodyData);
 		if(this.newContact.valid) {
-			this.apiService.createCustomer(bodyData).subscribe(
-				async (response:any) => {
-					var responseData: any = response;
-					var insertId: any = responseData.insertId;
-					if (insertId) {
-						this.createInteraction(insertId);
-						this.newContact.reset();
-						this.getAllInteraction();
-						this.getCustomers();
-					}},
-				async (error) => {
-				  if (error.status === 409) {
-					this.showToaster('Phone Number already exist. Please Try another Number', 'error');
-				  }
-				}
-			  );
+			if(this.OptedIn == 'Yes') {
+				this.apiService.createCustomer(bodyData).subscribe(
+					async (response:any) => {
+						var responseData: any = response;
+						var insertId: any = responseData.insertId;
+						if (insertId) {
+							this.createInteraction(insertId);
+							this.newContact.reset();
+							this.getAllInteraction();
+							this.getCustomers();
+							this.OptedIn = 'No';
+						}},
+					async (error) => {
+					  if (error.status === 409) {
+						this.showToaster('Phone Number already exist. Please Try another Number', 'error');
+						this.OptedIn = 'No';
+					  }
+					}
+				  );
+				
+			}
+			else {
+				this.showToaster('! Contact Opt In is required ', 'error');
+			}
+	
 		}
 		else {
 			this.newContact.markAllAsTouched();
@@ -2308,7 +2393,13 @@ sendMessage(){
 			
 		
 			previewTemplate() {
-				let isVariableValue:string = this.selectedTemplate.BodyText + this.selectedTemplate.Header;
+				let isVariableValue='';
+				if(this.selectedTemplate.media_type == 'text') {
+					isVariableValue = this.selectedTemplate.Header + this.selectedTemplate.BodyText;
+				}
+				else {
+					isVariableValue = this.selectedTemplate.BodyText;
+				};
 		
 				if (isVariableValue) {
 				  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");

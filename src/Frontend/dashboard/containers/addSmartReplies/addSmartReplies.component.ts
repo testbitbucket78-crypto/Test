@@ -120,6 +120,8 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	Media:any;
 	fileName!:string;
 	fileSize!:number;
+	attachmentMedia:any='';
+	isAttachmentMedia:boolean=false;
 	MatchingCriteria:any;
 	matchingCriteria:any;
 	selectedcriteria:any;
@@ -132,7 +134,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		Utility: true,
 		Authentication: true
 	  };
-
+	showInfo:boolean = false;
 	showInfoIcon:boolean = false;
 
     /**richtexteditor **/ 
@@ -275,10 +277,15 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		$('.modal-backdrop').remove();
 	}
 
-	editMedia(){
+	// editMedia(){
+	// 	$("#editTemplate").modal('hide');
+	// 	$("#templatePreview").modal('hide');  
+	// 	$("#editTemplateMedia").modal('show'); 
+	// }
+
+	editMedia() {
 		$("#editTemplate").modal('hide');
-		$("#templatePreview").modal('hide');  
-		$("#editTemplateMedia").modal('show'); 
+		$("#attachmentbox").modal('show');
 	}
 
 	showTemplatePreview() {
@@ -299,8 +306,18 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 
 	}
 
+	addAttributeInVariables(item: any) {
+		if (!this.variableValues.includes(item)) {
+			item = '{{'+item+'}}'
+			this.variableValues.push(item);
+			this.closeVariableOption();
+		  }
+		}
+
+
 	closeEditMedia() {
 		$("#editTemplate").modal('show'); 
+		$("#attachmentbox").modal('hide');
 		$("#editTemplateMedia").modal('hide'); 
 	}
 
@@ -317,14 +334,35 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		
 	}
 	sendattachfile(){
-		if(this.messageMeidaFile!==''){
-			$("#sendfile").modal('show');
-			$("#attachmentbox").modal('hide');
-				
-		}else{
-			this.showToaster('! Error Uploading Media Please Try Again','error');
-			// this.closeAllModal();
-		}	
+		if (this.isAttachmentMedia === false) {
+			if (this.messageMeidaFile !== '') {
+				$("#sendfile").modal('show');
+				$("#attachmentbox").modal('hide');
+			}
+		}
+		
+		else {
+			let mediaCategory;
+			if (this.mediaType.startsWith('image/')) {
+				mediaCategory = 'image';
+			} else if (this.mediaType.startsWith('video/')) {
+				mediaCategory = 'video';
+			} else if (this.mediaType === 'application/') {
+				mediaCategory = 'document';
+			}
+	
+			if (this.selectedTemplate.media_type === mediaCategory) {
+				this.selectedTemplate.Links = this.attachmentMedia;
+				$("#attachmentbox").modal('hide');
+				$("#editTemplate").modal('show');
+				this.messageMeidaFile='';
+			} else {
+				this.showToaster('! Please only upload media that matches selected template', 'error');
+				$("#attachmentbox").modal('hide');
+				$("#editTemplate").modal('show');
+				this.messageMeidaFile='';
+			}
+		}
 	}
 
 	cancelEditTemplateMedia(){
@@ -368,6 +406,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 				  let responseData: any = uploadStatus;
 				  if (responseData.filename) {
 					this.messageMeidaFile = responseData.filename;
+					this.attachmentMedia = responseData.filename;
 					this.mediaType = mediaType;
 					this.fileName = fileName;
 					this.fileSize = fileSizeInMB;
@@ -496,6 +535,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	if(this.selectedTemplate.length!==0 ) {
 		$("#editTemplate").modal('show'); 
 		$("#insertTemplate").modal('hide'); 
+		this.isAttachmentMedia = true;
 		this.previewTemplate();
 	}
 	else {
@@ -504,11 +544,18 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 
    }
 
-	openVariableOption() {
-		this.showvariableoption=!this.showvariableoption
+   openVariableOption() {
+	$("#showvariableoption").modal('show'); 
+	$("#editTemplate").modal('hide'); 
+	}
+	closeVariableOption() {
+		this.attributesearch=''; 
+		$("#showvariableoption").modal('hide');
+		$("#editTemplate").modal('show'); 
 	}
 	SaveVariableOption(){
-		this.showvariableoption=false
+		$("#showvariableoption").modal('hide'); 
+		$("#editTemplate").modal('show'); 
 	}
 
 	selectAttributes(item:any) {
@@ -535,7 +582,7 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		else {
 			mediaContent=''
 		}
-		var htmlcontent = mediaContent +'<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span>'+item.BodyText+item.FooterText+'</p>';
+		var htmlcontent = mediaContent+item.BodyText;
 		this.chatEditor.value = htmlcontent
 	
 	}
@@ -571,6 +618,13 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 	toggleInfoIcon() {
 		this.showInfoIcon = !this.showInfoIcon;
 	  }
+
+	  showToolTip(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (target.classList.contains('fallback-tooltip')) {
+			this.showInfo = true;
+		}
+	}
 	  
 	insertTemplateInChat(item:any){
 		// $("#templatePreview").modal('hide');
@@ -585,11 +639,21 @@ export class AddSmartRepliesComponent implements OnInit, AfterViewInit {
 		else if(item.media_type == 'document') {
 			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
 		}
-		else {
-			mediaContent=''
+		let htmlcontent = '';
+		if (item.Header && item.media_type == 'text') {
+			htmlcontent += '<p><strong>'+item.Header+'</strong></p>';
 		}
-		var htmlcontent = mediaContent +'<p><span style="color:#000"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
+
+		if(mediaContent && item.media_type!== 'text') {
+			htmlcontent += mediaContent
+		}
+	
+		htmlcontent +='<p>'+ item.BodyText+'</p>';
+		if (item.FooterText) {
+			htmlcontent+='<p>'+item.FooterText+'</p>';
+		}
 		this.chatEditor.value =htmlcontent
+		this.isAttachmentMedia = false
 	}
 
 	searchTemplate(event:any){
@@ -1180,7 +1244,13 @@ stopPropagation(event: Event) {
 	}
 		
 		previewTemplate() {
-				let isVariableValue:string = this.selectedTemplate.BodyText + this.selectedTemplate.Header;
+			let isVariableValue='';
+			if(this.selectedTemplate.media_type == 'text') {
+				isVariableValue = this.selectedTemplate.Header + this.selectedTemplate.BodyText;
+			}
+			else {
+				isVariableValue = this.selectedTemplate.BodyText;
+			};
 				if (isVariableValue) {
 				  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
 			  }
@@ -1189,7 +1259,9 @@ stopPropagation(event: Event) {
 		replaceVariableInTemplate() {
 			this.allVariablesList.forEach((placeholder, index) => {
 				const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+				if(this.selectedTemplate.media_type == 'text') {
+					this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+				}
 				this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
 			});
 		}
