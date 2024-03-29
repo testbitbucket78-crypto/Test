@@ -75,6 +75,7 @@
         <span class="heading">{{roleData?.RoleName}}</span>
         <p>Created on: <span class="team-id">{{roleData?.created_at | date: 'dd MMM yyyy'}}</span> | Last Modified: <span class="team-id">{{roleData?.updated_at | date: 'dd MMM yyyy'}}</span></p>
         <div class="sub-heading py-2">Sub Rights<span class="team-id">({{selectedSubRights?.length}})</span></div>
+        <div class="h-100">
         <div class="user-assigned">
             <div class="rights" *ngFor="let item of selectedSubRights">
                 <div >{{item?.subRights}}</div>
@@ -82,12 +83,13 @@
                 <!-- *ngIf="checkPrivillage(item)" -->
         </div>
         <div class="sub-heading py-2">No. of Users Assigned ({{userList.length}})</div>
-        <div class="h-100">
+        <div >
             <div *ngFor="let item of userList" class="user-row">
                 <img [src]="item.profile_img">
                 <span>{{item.name}}</span>
             </div>
         </div>
+    </div>
     </div>
     <div class="sideBar-footer">
         <button type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#rolesModal" (click)="editRolesDetails()">

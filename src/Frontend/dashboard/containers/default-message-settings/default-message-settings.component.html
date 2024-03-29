@@ -98,7 +98,7 @@
               
 
                    <div *ngIf="selectedType === 'image'" class="mt-5 mb-4 sel-type-image">
-                      <input type="file" accept="image/jpeg, image/png" (change)="onFileChange($event)" id="sel-type-image">
+                      <input type="file" accept="image/jpeg, image/png" (change)="onFileChange($event)" id="sel-type-image" (click)="$event.target.value=null">
 
                         <div *ngIf="defaultMessageForm.get('link')?.value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
@@ -110,7 +110,7 @@
                     </div>
 
                    <div *ngIf="selectedType === 'video'" class=" mt-5 mb-1 sel-type-video">
-                    <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video">
+                    <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video" (click)="$event.target.value=null">
                     <label *ngIf="!selectedPreview || loadingVideo" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
 
                     <div class="video-player">
@@ -133,7 +133,7 @@
                     <img *ngIf="defaultMessageForm.get('link')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
                     <span class="document-preview" *ngIf="defaultMessageForm.get('link')?.value !== null" >{{ this.fileName }}</span>
                     <span class="document-preview" *ngIf="defaultMessageForm.get('link')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
-                        <input type="file" accept=".doc, .docx, .pdf" (change)="onFileChange($event)" name="document-select" id="sel-type-document">
+                        <input type="file" accept=".doc, .docx, .pdf" (change)="onFileChange($event)" name="document-select" id="sel-type-document" (click)="$event.target.value=null">
                         <div *ngIf="defaultMessageForm.get('link')?.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of document</p>
@@ -158,7 +158,7 @@
 
                          <div class="sel-type-text">
                              <ejs-richtexteditor formControlName="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools'
-                             [maxLength]='1024' [showCharCount]='true' placeholder="Enter">
+                             [maxLength]='1024' [showCharCount]='true' placeholder="Enter"  (change)="onContentChange()">
                             </ejs-richtexteditor>
                          </div>
                     </div>

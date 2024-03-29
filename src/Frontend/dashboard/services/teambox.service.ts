@@ -148,6 +148,10 @@ export class TeamboxService {
     return this.http.post(API_URL+'/applyFilterOnEndCustomer/',bodyData);
   }
 
+  public processQuery(bodyData: any) {
+    return this.http.post(API_URL+'/processQuery/',bodyData);
+  }
+
   public getAdditiionalAttributes(SPID: any) {
     return this.http.get(API_URL+'/getAdditiionalAttributes/'+SPID);
   }

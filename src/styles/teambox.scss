@@ -245,7 +245,7 @@ label.container input[type="radio"]:checked + span.label {
   .template_box .inner_box .template_text p span{
     font-size: 14px;
     font-weight: 300;
-    color: #030303;
+    // color: #030303;
   }
   .template_box .template_btn{
     max-width: 100%;
@@ -295,7 +295,7 @@ label.container input[type="radio"]:checked + span.label {
       margin-left:5px;
     }
     .message_text p,.message_text p span{
-      color:#fff;
+      color:#fff!important;
       font-size: 12px;
     }
     .notes .message_text p,.notes .message_text p span{

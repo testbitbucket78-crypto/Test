@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -57,6 +57,7 @@ export class ImportComponent implements OnInit {
 	mappedFields:ColumnMapping[][] = [];
 	ContactFormData:any;
 	identifierColumn :any;
+	dragAreaClass: string='';
 	
 
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService,private _settingsService:SettingsService,private router:Router) {
@@ -73,6 +74,7 @@ export class ImportComponent implements OnInit {
 			animation: true
 		});
 		this.getCustomFieldsData();
+		this.dragAreaClass = "dragarea";
 	}
 
 	next() {
@@ -333,7 +335,7 @@ export class ImportComponent implements OnInit {
 	
 		}, (error)=> {
 			if(error) {
-				console.log(error,'error while verifying Data.')
+				this.showToaster('Error while verifying Data.','error');
 			}
 		});
 
@@ -419,6 +421,34 @@ export class ImportComponent implements OnInit {
 		this.fields.push(data);
 
 
+	}
+
+	// drag and drop csv method //
+
+	@HostListener("dragover", ["$event"]) onDragOver(event: any) {
+		this.dragAreaClass = "droparea";
+		event.preventDefault();
+	}
+	@HostListener("dragenter", ["$event"]) onDragEnter(event: any) {
+		this.dragAreaClass = "droparea";
+		event.preventDefault();
+	}
+	@HostListener("dragend", ["$event"]) onDragEnd(event: any) {
+		this.dragAreaClass = "dragarea";
+		event.preventDefault();
+	}
+	@HostListener("dragleave", ["$event"]) onDragLeave(event: any) {
+		this.dragAreaClass = "dragarea";
+		event.preventDefault();
+	}
+	@HostListener("drop", ["$event"]) onDrop(event: any) {
+		this.dragAreaClass = "dragarea";
+		event.preventDefault();
+		event.stopPropagation();
+		if (event.dataTransfer.files) {
+		let files: FileList = event.dataTransfer.files;
+		this.onUpload({ target: { files: files } });
+		}
 	}
 
 	//********************For move next page************************ */

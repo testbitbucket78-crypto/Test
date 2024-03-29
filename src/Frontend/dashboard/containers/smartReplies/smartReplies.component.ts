@@ -67,11 +67,12 @@ export class SmartRepliesComponent implements OnInit {
 	}
 
 	getRepliesByID(data:any) {
-	    console.log("getRepliesByID")
-		console.log(data)
-		console.log(data.ID)
+	    // console.log("getRepliesByID")
+		// console.log(data)
+		// console.log(data.ID)
 		this.apiService.sideNav(data.ID).subscribe((response => {
 			this.data = response;
+			console.log(this.data,'responce from side namv')
 			this.repliesData = <repliesList> {} ;
 			this.repliesData.Description = this.data[0].Description;
 			this.repliesData.Title = this.data[0].Title;
@@ -88,7 +89,13 @@ export class SmartRepliesComponent implements OnInit {
 					this.repliesData.Keyword.push(this.data[i].Keyword)
 
 				   if(keywordTemp==this.data[i].Keyword) {
-					this.repliesData.ActionList.push({Message:this.data[i].Message ,Name:this.data[i].Name, Value:this.data[i].Value,Media:this.data[i].Media})
+					this.repliesData.ActionList.push(
+						{
+							Message:this.data[i].Message ,
+							Name:this.data[i].Name, 
+							Value:this.data[i].Value,
+							Media:this.data[i].Media
+						})
 				   }
 			}
 			
@@ -103,14 +110,9 @@ export class SmartRepliesComponent implements OnInit {
 	}
 
 	parseTags(tagsString: string): string[] {
-		let tagsArray: string[] = [];
-		try {
-		  tagsArray = JSON.parse(tagsString.replace(/'/g,'"'));
-		} catch (error) {
-		  console.error('Error parsing tags:', error);
-		}
-		
-		return tagsArray;
+		let tags;
+		  tags = JSON.parse(tagsString);	
+		return tags;
 	  }
 
 	deleteRepliesById (data:any) {

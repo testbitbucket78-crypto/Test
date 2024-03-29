@@ -65,13 +65,13 @@
 
                 <!-- <div class="dynamicFieldContainer" cdkDropList (cdkDropListDropped)="Drop($event)"> -->
                     <div class="dynamicFieldContainer">
-                    <div *ngFor="let dynamic of dynamicFieldData | slice:(currentPage!=1?((pageSize*(currentPage-1))-6):0):((pageSize*(currentPage-1))+pageSize)-6
-                     | searchfilter:searchCustomField let ith = index" class="dynamicField column" >
+                    <div *ngFor="let dynamic of dynamicFieldData | searchfilter:searchCustomField | slice:(currentPage!=1?((pageSize*(currentPage-1))-6):0):((pageSize*(currentPage-1))+pageSize)-6; let ith = index"
+                     class="dynamicField column" >
                       <!-- | searchfilter:searchCustomField let ith = index" cdkDrag class="dynamicField column" cdkDragBoundary=".dynamicFieldContainer" > -->
                         <div (click)="toggleSideBar(dynamic)" class="body-col">
                             <div class="drag-btn">
                                 <!-- <img cdkDragHandle class="pr-3" src="../../../../assets/img/settings/drag.svg" alt="" /> -->
-                                <span class="m-0"> {{dynamic.ActuallName}}</span>
+                                <span class="m-0"> {{dynamic.ActuallName}}dynamic</span>
                             </div>
 
                         </div>

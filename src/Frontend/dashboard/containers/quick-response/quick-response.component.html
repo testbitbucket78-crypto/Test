@@ -49,7 +49,7 @@
 			</ng-template>
 			</div>
 		 <button class="new-message-btn mx-3" data-bs-toggle="modal" data-bs-target="#welcomGreeting" (click)="newQuickResponse()">
-			<img class="icoon" src="/assets/img/teambox/add.svg"/>New Quick Response</button>
+			<img class="icoon" src="/assets/img/teambox/add.svg"/>&nbsp;New Quick Response</button>
 		 
 		
 		 <div class="modal quick-response-modal fade" tabindex="-1" id="welcomGreeting"  data-bs-backdrop="static" role="dialog">
@@ -125,13 +125,18 @@
 	
 					<div *ngIf="selectedType === 'video'" class="my-4 sel-type-video text-center">
 						<input type="file" accept="video/mp4"  formControlName="Links" name="video-upload" (change)="onFileChange($event)" id="sel-type-video">
-						<div class="vedio-add-btn">
-							<label *ngIf="!selectedPreview" class="type_labels " for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
+						<div class="vedio-add-btn" *ngIf="!selectedPreview">
+							<label  class="type_labels " for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
 						</div>
 						<div class="video-player">
 							<span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
 							  <img src="../../../../assets/img/settings/remove.svg" />
 							</span>
+							<div *ngIf="loadingVideo" class="spinner-main-div">
+								<div class="spinner-border" role="status">
+								  <span class="sr-only">Loading...</span>
+								</div>
+							  </div>
 						<video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video>
 						</div>
 						<div class="custom-play-button"></div>
@@ -203,6 +208,7 @@
 						[maxLength]='1024'
 						[showCharCount]='true'
 						(change)="onEditorChange(chatEditor.value)"
+						(blur)="onValueChange($event)"
 						 placeholder="Enter"
 						>
 					  </ejs-richtexteditor>
