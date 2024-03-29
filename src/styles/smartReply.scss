@@ -62,7 +62,7 @@
 }
 
 
-button:not(:disabled), [type=reset]:not(:disabled) {
+.add-smartrep-btn {
    
     color: #6149cd;
     font-weight: 700;
@@ -353,13 +353,14 @@ h3{
     font-family: 'Manrope';
     font-size: 14px;
     color: #6149CD;
+    margin: 20px 0px 20px 12px!important;
 }
 
 .box4 p {
     font-family: 'Manrope';
     font-size: 14px;
     color: #000000;
-    padding: 0 20px 0 20px;
+    padding: 0 6px 0 6px;
 }
 
 .mt-4 {

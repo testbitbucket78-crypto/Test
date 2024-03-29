@@ -15,6 +15,17 @@
 // Import Custom TeamBoxAnd Campaign SCSS
 @import "./settings.scss";
 
+
+//Import addsmartreplies styles
+.modal-add-smart-reply-open {
+	@import "addsmartreply.scss";
+  }
+//Import Smartreply styles
+.modal-smart-reply-open {
+    @import "smartReply.scss";
+  }
+
+
 // Layout
 @import "layout/authentication.scss";
 @import "layout/dashboard-default.scss";
