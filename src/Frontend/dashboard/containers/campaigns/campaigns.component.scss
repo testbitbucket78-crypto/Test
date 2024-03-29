@@ -1755,17 +1755,18 @@
 	}
 
 	.variableoption .content p.form-control{
-	background: #fff url("/assets/img/campaign/attribute-b.svg") no-repeat;
-	background-size: 12px;
-	background-position: center left 10px;
-	border: 1px solid #EBEBEB;
-	border-radius: 15px;
-	padding: 10px 10px 10px 25px;
-	font-size: 10px !important;
-	width: max-content;
-	margin: 1rem;
-	display: flex;
-	align-items: center;
+		background: #fff url(/assets/img/campaign/attribute-b.svg) no-repeat;
+		background-size: 12px;
+		background-position: center left 10px;
+		border: 1px solid #EBEBEB;
+		border-radius: 15px;
+		padding: 10px 10px 10px 29px;
+		font-size: 12px !important;
+		width: max-content;
+		margin: 1rem;
+		display: flex;
+		align-items: center;
+		width: 160px;
 	}
 	.variableoption .content .content_inner{
 	margin: 1rem;

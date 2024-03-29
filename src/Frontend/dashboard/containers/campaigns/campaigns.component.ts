@@ -369,7 +369,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.getAllCampaigns()
 		this.getContactList('')
 		this.getAttributeList()
-		this.getAdditiionalAttributes();
+		//this.getAdditiionalAttributes();
 		this.processData();
 	}
 	getAdditiionalAttributes(){
@@ -1328,7 +1328,7 @@ formateDate(dateTime:string){
 			message_heading:this.selectedTemplate.Header,
 			message_content:this.selectedTemplate.BodyText,
 			message_media:this.selectedTemplate.Links,
-			message_type:this.selectedTemplate.media_type,
+			media_type:this.selectedTemplate.media_type,
 			message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
 			button_yes:this.selectedTemplate.button_yes,
 			button_no:this.selectedTemplate.button_no,
@@ -1395,7 +1395,7 @@ formateDate(dateTime:string){
 					button_no:this.selectedTemplate.button_no,
 					button_exp:this.selectedTemplate.button_exp,
 					message_media:this.selectedTemplate.Links,
-					message_type:this.selectedTemplate.media_type,
+					media_type:this.selectedTemplate.media_type,
 					message_content:this.selectedTemplate.BodyText,
 					CampaignId:CampaignId,
 					isFinished:ix == this.csvContactList.length ? true :false,
@@ -1468,7 +1468,7 @@ formateDate(dateTime:string){
 							message_media:this.selectedTemplate.Links,
 							message_content:this.selectedTemplate.BodyText,
 							category_id:this.selectedTemplate.category_id,
-							message_type:this.selectedTemplate.media_type,
+							media_type:this.selectedTemplate.media_type,
 							CampaignId:CampaignId,
 							isFinished:idx == this.segmentsContactList.length ? true :false,
 							channel_id:this.newCampaignDetail.value.channel_id,
@@ -1720,8 +1720,12 @@ testinfo(){
 
 	prevStep(){
 		if(this.activeStep >1){
-			this.activeStep = this.activeStep-1
-			
+			if(this.activeStep ==3.1){
+				this.activeStep = 3;
+				this.setStep(3);
+			}else{
+				this.activeStep = this.activeStep-1
+			}			
 		}else{
 			this.activeStep
 		}

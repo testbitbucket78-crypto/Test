@@ -393,7 +393,8 @@
                     <h6>Template Name <span class="text-danger font-weight-bold">*</span></h6>
                 </div>
                 <div class="sel-type-text">
-                    <textarea name="text-editor" formControlName="TemplateName" maxlength="512"rows="8" placeholder="Enter template name in max 512 characters"></textarea>
+                    <textarea name="text-editor" formControlName="TemplateName" maxlength="512"rows="8"
+                    (change)="checkTemplateName($event)" placeholder="Enter template name in max 512 characters"></textarea>
                 </div>
 
                 <div class="p-1 msg-head">

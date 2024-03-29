@@ -72,7 +72,8 @@ export class LoginComponent implements OnInit {
                     this.settingsService.getRolesData(spid,result.user?.UserType).subscribe(response => {
                         if (response.status === 200) {
                             sessionStorage.setItem('subPrivileges', response.getRoles[0]?.subPrivileges);
-                           // this.settingsService.subprivilages = response.subPrivileges.split(',');
+
+                            this.settingsService.subprivilages = response.getRoles[0]?.subPrivileges?.split(',');
                             console.log(response.getRoles[0]?.subPrivileges);
                         }
 

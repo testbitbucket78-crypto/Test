@@ -507,6 +507,12 @@ export class TemplateMessageComponent implements OnInit {
     }
 
     saveTemplateNextStep() {
+        let val = this.newTemplateForm.get('TemplateName')?.value;
+    let temp:any = this.templatesData.filter((item:any) => item.TemplateName == val)[0];
+    console.log(temp)
+    if(temp && this.id != temp?.ID){
+    this.showToaster('Template already exist with this name !','error');
+    }else{
       this.TemplateName = this.newTemplateForm.get('TemplateName')?.value;
       const Channel =  this.newTemplateForm.get('Channel')?.value;
       const Category =  this.newTemplateForm.get('Category')?.value;
@@ -520,6 +526,17 @@ export class TemplateMessageComponent implements OnInit {
      else {
         this.showToaster('! Please fill in all the values before proceeding','error');
      }
+    }
+    }
+
+    
+checkTemplateName(e:any){
+    let val = e.target.value;
+    let temp:any = this.templatesData.filter((item:any) => item.TemplateName == val)[0];
+    console.log(temp)
+    if(temp && this.id != temp?.ID)
+    this.showToaster('Template already exist with this name !','error');
+    
     }
 
     saveNewTemplate() {

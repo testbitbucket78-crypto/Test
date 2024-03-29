@@ -110,7 +110,7 @@
               Name should contain only alphabetic characters.
             </div>
           <div *ngIf="submitted && registerForm.controls.name.errors" class="text-danger">
-            ! Name must be at least 3 characters or not a single digit.
+            ! Name should have at least 2 characters.
           </div>
                     
           <div *ngIf="submitted && registerForm.controls.display_mobile_number.errors" class="text-danger">
