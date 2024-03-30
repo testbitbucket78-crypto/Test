@@ -7,7 +7,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "10000kb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
-
+const removeTags = require('./removeTagsFromRichTextEditor')
 const db = require('./dbhelper')
 const axios = require('axios');
 const middleWare = require('./middleWare')
@@ -30,10 +30,11 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
 
     const currentTime = new Date();
     const autoReplyVal = new Date(autoReplyTime)
-    if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined) {
+    console.log(autoReplyVal ,autoReplyTime)
+    if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined) { 
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
     }
-    if (autoReplyTime == null || autoReplyTime == undefined) {
+    if (autoReplyTime == null || autoReplyTime == undefined || autoReplyTime =='') { 
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
     }
   }
@@ -55,7 +56,7 @@ async function sendSmartReply(message_text, phone_number_id, contactName, from, 
 }
 
 
-async function matchSmartReplies(message_text, sid) {
+async function matchSmartReplies(message_text, sid,channelType) {
   var allSmartReplies = await db.excuteQuery(`select * from SmartReply where SP_ID =? and (isDeleted is null || isDeleted = 0 )`, [sid]);
   var reply;
 
@@ -72,9 +73,9 @@ async function matchSmartReplies(message_text, sid) {
  FROM SmartReply t1
 JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
 JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
-WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.isDeleted is null  || t1.isDeleted =0)`
+WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
 
-      reply = await db.excuteQuery(sreplyQuery, [[message_text], sid, id]);
+      reply = await db.excuteQuery(sreplyQuery, [[message_text], sid, id,channelType]);
 
 
       if (reply.length > 0) {
@@ -90,8 +91,8 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
       FROM SmartReply t1 JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
       JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
       WHERE  SOUNDEX(t3.Keyword) = SOUNDEX(?)
-      AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0)`
-      reply = await db.excuteQuery(FuzzyQuery, [[message_text], sid, id]);
+      AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
+      reply = await db.excuteQuery(FuzzyQuery, [[message_text], sid, id,channelType]);
       // console.log(reply)
       if (reply.length > 0) {
 
@@ -106,8 +107,8 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
       FROM SmartReply t1
      JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
      JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
-     WHERE t3.Keyword=? AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0)`
-      reply = await db.excuteQuery(exactQuery, [[message_text], sid, id]);
+     WHERE t3.Keyword=? AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
+      reply = await db.excuteQuery(exactQuery, [[message_text], sid, id,channelType]);
       //console.log(reply)
       if (reply.length > 0) {
 
@@ -131,7 +132,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     // console.log("_________process.env.insertMessage__________")
 
     let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from, channelType,agid);
-    var replymessage = await matchSmartReplies(message_text, sid)
+    var replymessage = await matchSmartReplies(message_text, sid,channelType)
     let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, newlyInteractionId, channelType,agid);
 
     //console.log("defultOutOfOfficeMsg")
@@ -203,7 +204,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           var type = 'text';
         }
 
-        let content = await middleWare.removeTagsFromMessages(testMessage);
+        let content = await removeTags.removeTagsFromMessages(testMessage);
         var relyMsg = {
           "replyId": message.ID,
           "sid": sid,

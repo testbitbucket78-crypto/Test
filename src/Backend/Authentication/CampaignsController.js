@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const http = require("https");
 const middleWare = require('../middleWare')
-
+const removeTags = require('../removeTagsFromRichTextEditor') 
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,7 +33,7 @@ const addCampaign = async (req, res) => {
         let button_no = req.body.button_no
         let button_exp = req.body.button_exp
         let category = req.body.category
-        let time_zone = req.body.time_zone
+        let time_zone = req.body?.time_zone
         let start_datetime = req.body.start_datetime
         let end_datetime = req.body.end_datetime
         let csv_contacts = req.body.csv_contacts
@@ -45,6 +45,9 @@ const addCampaign = async (req, res) => {
         message_variables = (message_variables?.length <= 0) ? '' : message_variables;
         csv_contacts = (csv_contacts?.length <= 0) ? '' : csv_contacts;
         segments_contacts = (segments_contacts?.length <= 0) ? '' : segments_contacts;
+
+        let media_type = req.body?.media_type;
+
         if (req.body.Id != '') {
             var updateQuery = "UPDATE Campaign set";
             updateQuery += " title='" + req.body.title + "',";
@@ -57,7 +60,7 @@ const addCampaign = async (req, res) => {
             updateQuery += " button_no='" + req.body.button_no + "',";
             updateQuery += " button_exp='" + req.body.button_exp + "',";
             updateQuery += " category='" + req.body.category + "',";
-            updateQuery += " time_zone='" + req.body.time_zone + "',";
+            updateQuery += " time_zone='" + req.body?.time_zone + "',";
             updateQuery += " start_datetime='" + req.body.start_datetime + "',";
             updateQuery += " end_datetime='" + req.body.end_datetime + "',";
             updateQuery += " csv_contacts='" + req.body.csv_contacts + "',";
@@ -66,6 +69,7 @@ const addCampaign = async (req, res) => {
             updateQuery += " category_id= " + req.body.category_id + "',";
             updateQuery += " start_time= " + req.body?.start_time + "',";
             updateQuery += " end_time= " + req.body?.end_time + "',";
+            updateQuery += " media_type= " + req.body?.media_type + "',";
             updateQuery += " OptInStatus= " + req.body?.OptInStatus;
 
             updateQuery += " WHERE Id =" + req.body.Id
@@ -73,8 +77,8 @@ const addCampaign = async (req, res) => {
             db.runQuery(req, res, updateQuery, []);
         } else {
 
-            var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time) values ? ";
-            let addCampaignValue = [[status, sp_id, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime,csv_contacts , segments_contacts, category_id, OptInStatus,start_time,end_time]]
+            var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time,media_type) values ? ";
+            let addCampaignValue = [[status, sp_id, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime,csv_contacts , segments_contacts, category_id, OptInStatus,start_time,end_time,media_type]]
 
             let addcampaign = await db.excuteQuery(inserQuery, [addCampaignValue]);
            // console.log(addcampaign)
@@ -229,9 +233,10 @@ const processContactQueries = async (req,res) =>{
         const queryResult = await db.excuteQuery(query);
         results = results.concat(queryResult);
       }
-  
+    
       // Remove duplicates from the combined results
-      const uniqueResults = results.filter((value, index, self) => self.findIndex(v => v.id === value.id) === index);
+      const uniqueResults = results.filter((value, index, self) =>  self.findIndex(v => v.Phone_number === value.Phone_number) === index );
+  
   
       res.send({
         status:200,
@@ -310,7 +315,7 @@ const sendCampinMessage = async (req, res) => {
         console.log(TemplateData)
         var messageTo = TemplateData.phone_number
         var messateText = TemplateData.message_content
-        let content = messateText;
+        
         let channel = TemplateData.channel_label
         //+++++++++++++++++ waitinh
         let schedule_datetime = TemplateData.schedule_datetime
@@ -319,19 +324,11 @@ const sendCampinMessage = async (req, res) => {
         let optInStatus = TemplateData.optInStatus
         let time_zone = TemplateData && TemplateData.time_zone ? TemplateData.time_zone : 'GMT +5:30';
         let isFinished = req.body.isFinished;
-        let type = req.body.message_type;
+        let type = req.body?.media_type;
         var customerId = TemplateData.customerId
      
 
-        //console.log(content)
-        //console.log("************************************")
-        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-        content = content.replace('&nbsp;', '\n')
-        content = content.replace(/<br[^>]*>/g, '\n')
-        content = content.replace(/<\/?[^>]+(>|$)/g, "")
+       let  content = await removeTags.removeTagsFromMessages(messateText);
 
         // Parse the message template to get placeholders
         const placeholders = parseMessageTemplate(content);
@@ -347,13 +344,13 @@ const sendCampinMessage = async (req, res) => {
             });
         }
 
-        let serverDateTime = new Date();
-        let formattedTime = getTimeZoneTimes(serverDateTime, time_zone)
+       // let serverDateTime = new Date();
+       // let formattedTime = getTimeZoneTimes(serverDateTime, time_zone)
 
         //let channelType = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [spid] 
         let inputDate = new Date(schedule_datetime);
 
-        if (new Date(inputDate) <= new Date(formattedTime)) {
+        if (new Date(inputDate) <= new Date()) {
             let messagestatus;
             if (optInStatus == 'Yes') {
                 const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and isDeleted !=1`;
@@ -479,9 +476,9 @@ async function campaignAlerts(TemplateData,insertId,statusToUpdate){
 
     let user = await db.excuteQuery(alertUser, [TemplateData.sp_id]);
 
-    var type = TemplateData.message_type;
+    var type = TemplateData.media_type;
 
-    sendBatchMessage(user, TemplateData.sp_id, TemplateData.message_type, alertmessages, message_media, phone_number_id, channel_id, insertId, statusToUpdate)
+    sendBatchMessage(user, TemplateData.sp_id, TemplateData.media_type, alertmessages, message_media, phone_number_id, channel_id, insertId, statusToUpdate)
 
 }
 
@@ -646,8 +643,8 @@ const saveCampaignMessages = async (req, res) => {
         let status = req.body.status
         let schedule_datetime = req.body.schedule_datetime
         let SP_ID = req.body.SP_ID
-        let type = req.body.message_type
-        let content = req.body.message_content
+        let type = req.body.media_type
+        // let content = req.body.message_content
         button_yes = (button_yes === null || button_yes === undefined) ? '' : button_yes;
         button_no = (button_no === null || button_no === undefined) ? '' : button_no;
         button_exp = (button_exp === null || button_exp === undefined) ? '' : button_exp;
@@ -655,20 +652,13 @@ const saveCampaignMessages = async (req, res) => {
   
 
         let InteractionId = await insertInteractionAndRetrieveId(req.body.customerId, req.body.SP_ID);
-       // console.log(InteractionId, "InteractionId InteractionId")
+        console.log(req.body.message_content, "InteractionId InteractionId")
+
         let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id) values ?`
-        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, 'text', req.body.SP_ID, type, '']]]);
+        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, type, req.body.SP_ID, type, '']]]);
 
 
-        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-        content = content.replace('&nbsp;', '\n')
-        content = content.replace(/<br[^>]*>/g, '\n')
-        content = content.replace(/<\/?[^>]+(>|$)/g, "")
-        // content = content.replace(/'/g, "''");
-
+        let  content = await removeTags.removeTagsFromMessages(req.body.message_content);
 
 
         // Parse the message template to get placeholders

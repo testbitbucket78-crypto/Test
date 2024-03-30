@@ -34,9 +34,15 @@ async function createClientInstance(spid, phoneNo) {
 
   return await ClientInstance(spid, authStr, phoneNo);
 }
+
 process.on('uncaughtException', function (err) {
-  console.log("uncaught exception was trying to close this. THe expectation is that it is coming from pupeeter hence ignoring.")
-  console.log(err);
+  try{
+    console.log("uncaught exception was trying to close this. THe expectation is that it is coming from pupeeter hence ignoring.")
+    //Need spid in this process for delete client from mapping
+  }catch(err){
+    
+    console.log(err);
+  }
 });
 
 function ClientInstance(spid, authStr, phoneNo) {
@@ -46,7 +52,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
           executablePath: "/usr/bin/google-chrome-stable",
-         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+        //  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -211,15 +217,15 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on('message_ack', async (message, ack) => {
 
         try {
-          const phoneNumber = (message.to).replace(/@c\.us$/, "");
+          let phoneNumber = (message.to).replace(/@c\.us$/, "");
           if (ack == '1') {
             const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL); `
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL); `
             console.log(smsdelupdate)
-            let sended = await db.excuteQuery(smsdelupdate, [])
+            let sended = await db.excuteQuery(smsdelupdate, [phoneNumber,spid])
             console.log("send", sended?.affectedRows)
             notify.NotifyServer(phoneNo, true)
 
@@ -231,9 +237,9 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ${p
 SET msg_status = 2 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1); `
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1); `
             console.log(smsdelupdate)
-            let deded = await db.excuteQuery(smsdelupdate, [])
+            let deded = await db.excuteQuery(smsdelupdate, [phoneNumber,spid])
             console.log("deliver", deded?.affectedRows)
             notify.NotifyServer(phoneNo, true)
 
@@ -245,9 +251,9 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ${p
 SET msg_status = 3 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
-WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =${phoneNumber} and SP_ID=${spid} and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1);`
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1);`
             console.log(smsupdate)
-            let resd = await db.excuteQuery(smsupdate, [])
+            let resd = await db.excuteQuery(smsupdate, [phoneNumber,spid])
             console.log("read", resd?.affectedRows)
             notify.NotifyServer(phoneNo, true)
           }
@@ -502,10 +508,7 @@ async function savelostChats(message, spPhone,spid){
 
 
       let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName);
-      //console.log("saveMessage" ,)
-      // console.log(saveMessage)
-
-      var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, endCustomer, display_phone_number)
+      
     }
   }
   } catch (err) {
@@ -624,7 +627,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
-    //console.log(defaultAction.length)
+    console.log(defaultAction)
     if (defaultAction.length > 0) {
       //console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
       var isAutoReply = defaultAction[0].isAutoReply

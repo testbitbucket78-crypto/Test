@@ -1,4 +1,5 @@
 const teamboxController = require('./Authentication/TeamBoxController');
+const removeTags = require('./removeTagsFromRichTextEditor')
 const http = require("https");
 const axios = require('axios');
 const token = 'EAAU0g9iuku4BOzSD75ynSUzKSsYrIWv3qkEa9QPAnUNTUzPwN5aTjGxoAHxsXF4Nlrw8UxbMGqZBxqarODf2sY20MvFfTQm0umq4ZBKCpFAJdcPtbcYSZBsHMqYVwjfFPiQwFk1Rmadl4ctoncnxczMGJZALoVfZBpqoQ0lYHzOwbRb1nvImzhL4ex53c9HKVyzl2viy4EhLy9g0K';
@@ -51,7 +52,7 @@ async function channelssetUp(spid, channelType, mediaType, messageTo, message_bo
             return WhatsAppOfficialMessage;
         } else if (channelType == 'WhatsApp Web' || channelType == 2) {
 
-            let content = await removeTagsFromMessages(message_body);
+            let content = await removeTags.removeTagsFromMessages(message_body);
             let messages = await postDataToAPI(spid, phoneNumber, mediaType, content, media,interaction_id,msg_id,spNumber)
              console.log(messages)
             return messages;
@@ -123,23 +124,9 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
 
 
 
-async function removeTagsFromMessages(message_body) {
-    let content = message_body;
-    if (content) {
-        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-        content = content.replace('&nbsp;', '\n')
-        content = content.replace(/<br[^>]*>/g, '\n')
-        content = content.replace(/<\/?[^>]+(>|$)/g, "")
-
-    }
-    return content;
-}
 
 async function sendTextOnWhatsApp(messageTo, messateText) {
-    let content = await removeTagsFromMessages(messateText);
+    let content = await removeTags.removeTagsFromMessages(messateText);
 
 
     var reqBH = http.request(WHATSAPPOptions, (resBH) => {
@@ -240,4 +227,4 @@ const WHATSAPPOptions = {
 
 
 
-module.exports = { channelssetUp, postDataToAPI, removeTagsFromMessages, sendDefultMsg }
+module.exports = { channelssetUp, postDataToAPI, sendDefultMsg }

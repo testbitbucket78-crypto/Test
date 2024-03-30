@@ -5,6 +5,7 @@ const val = require('./constant');
 const bodyParser = require('body-parser');
 const awsHelper = require('../awsHelper');
 const middleWare = require('../middleWare')
+const removeTags = require('../removeTagsFromRichTextEditor') 
 const cors = require('cors');
 app.use(bodyParser.json());
 app.use(cors());
@@ -580,17 +581,12 @@ const testCampaign = async (req, res) => {
         var TemplateData = req.body
    
         var messateText = TemplateData.message_content
-        let content = messateText;
+       
         let channel = TemplateData.channel_id
         let media = TemplateData.message_media
     
-        content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-        content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-        content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-        content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-        content = content.replace('&nbsp;', '\n')
-        content = content.replace(/<br[^>]*>/g, '\n')
-        content = content.replace(/<\/?[^>]+(>|$)/g, "")
+    
+      let  content = await removeTags.removeTagsFromMessages(messateText)
         let testNo = await db.excuteQuery(val.selectCampaignTest, [TemplateData.sp_id]);
      
 

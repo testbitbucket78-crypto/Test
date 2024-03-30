@@ -43,6 +43,7 @@ app.get('/sideNavKeyword', (req, res) => {
 app.post('/addNewReply', async (req, res) => {
   try {
     const myStringArray = req.body.Keywords;
+    let channel = req.body?.Channel
     const params = {
       strings: {
 
@@ -57,7 +58,7 @@ app.post('/addNewReply', async (req, res) => {
 
 
     //db.runQuery(req, res, val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData])
-    var saveReply = await db.excuteQuery(val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData])
+    var saveReply = await db.excuteQuery(val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData,channel])
     console.log(saveReply)
     res.status(200).send({
       msg: "Smart Reply added",
@@ -146,7 +147,7 @@ app.put('/removeKeyword', (req, res) => {
   db.runQuery(req, res, val.removeKeyword, [req.body.SmartReplyId, req.body.Keyword])
 })
 
-app.put('/updateSmartReply', (req, res) => {
+app.put('/updateSmartReply', async (req, res) => {
   // const list = req.body.Tags;
   // const listStr = list.join();
   // console.log("listStr" + listStr)
@@ -159,6 +160,8 @@ app.put('/updateSmartReply', (req, res) => {
   // };
   // console.log("params " + params.strings.value)
   // const jsonData = JSON.stringify(req.body.ReplyActions);
+  try{
+
   const myStringArray = req.body.Keywords;
   console.log(req.body.Keywords)
   const params = {
@@ -171,10 +174,22 @@ app.put('/updateSmartReply', (req, res) => {
   const jsonData = JSON.stringify(req.body.ReplyActions);
 
 
-  console.log(req.body.ID)
+  console.log(req.body.ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData)
 
  
-  db.runQuery(req, res, val.updateSmartReply, [req.body.ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData])
+ let response = await db.excuteQuery( val.updateSmartReply, [req.body.ID, req.body.Title, req.body.Description, req.body.MatchingCriteria,req.body?.Channel, params.strings.value, jsonData])
+ res.send({
+  status:200,
+  response:response
+ })
+
+}catch(err){
+    console.log(err)
+    res.send({
+      status:500,
+      err:err
+     })
+  }
 })
 
 
