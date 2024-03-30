@@ -434,6 +434,7 @@ routerGuard = () => {
 		$("#editTemplate").modal('show'); 
 		$("#attachfle").modal('hide');
 		$("#editTemplateMedia").modal('hide'); 
+		this.isAttachmentMedia = false;
 	}
 	cancelEditTemplateMedia(){
 		this.closeAllModal()

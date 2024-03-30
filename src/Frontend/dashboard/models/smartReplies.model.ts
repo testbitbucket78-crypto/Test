@@ -7,6 +7,7 @@ export interface agentMessageList{
 }
 
 export interface repliesList {
+    Channel:string;
     Description:string;
     Title:string;
     ID:number;

@@ -162,6 +162,10 @@ export class DashboardService {
     return this.http.post(API_URL2+'addNewReply', data)
   }
 
+  updateSmartReply(data:any) {
+    return this.http.put(API_URL2+'updateSmartReply', data)
+  }
+
   deletesmartReply(ID: any) {
     return this.http.put(API_URL2+'deletSmartReply', ID)
   
