@@ -2199,7 +2199,7 @@ sendMessage(){
 	var tempDivElement = document.createElement("div");   
 
 	tempDivElement.innerHTML = this.chatEditor.value;
-	let value =this.chatEditor.value?.replaceAll('&nbsp;',' ')?.replaceAll(/ <\/em>/g, '_ ')?.replaceAll(/ <\/span>/g, '~ ')?.replaceAll(/ <\/strong>/g, '* ')?.replaceAll(/<\/strong> /g, '*');
+	let value =this.chatEditor.value;
     let val = tempDivElement.textContent || tempDivElement.innerText || "";
 	if (this.chatEditor.value == null || val.trim()=='') {
 		this.showToaster('! Please enter a message before sending.','error');

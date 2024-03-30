@@ -151,7 +151,7 @@
 .sidebar-content{
   padding-left:20px;
   overflow-y: scroll;
-  height: 100%;
+  height: calc(100% - 180px) !important;
 }
 
 .sidebar-content p{

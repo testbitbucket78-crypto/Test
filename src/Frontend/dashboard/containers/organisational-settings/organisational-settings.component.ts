@@ -238,10 +238,10 @@ hideToaster(){
 
   prepareCompanyForm(){
     return new FormGroup({
-    Company_Name:new FormControl(),
+    Company_Name:new FormControl([Validators.required]),
     Company_Website:new FormControl(),
     Country:new FormControl(),
-    Phone_Number:new FormControl(Validators.minLength(6),Validators.maxLength(15)),
+    Phone_Number:new FormControl([Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
     Employees_count:new FormControl(),
     Industry:new FormControl(),
     });

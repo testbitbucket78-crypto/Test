@@ -76,7 +76,7 @@ export class RegisterComponent implements OnInit {
         const name = control.value;
     
         // Check if the length is less than 3 and not a single digit
-        if (name.length < 3 && !/^\d$/.test(name)) {
+        if (name.trim().length < 3 && !/^\d$/.test(name)) {
           return { invalidName: true };
         }
     

@@ -597,14 +597,14 @@
 						</div>
 						<div class="middel_section_outer">
 							<div *ngIf="scheduled==1" class="middel_section">
-								<div class="formrow">
+								<!-- <div class="formrow">
 									<p>Time Zone</p>
 									<p (click)="toggleTimeZone()" class="form-control select_box btn">{{selecteTimeZone}}</p>
 									<div *ngIf="showTimeZoneOption" class="popup-dialog">
 										<p class="label">Zone</p>
 										<p *ngFor='let timezone of timeZonesList ;let i = index' (click)="selectTimeZone(timezone)"><span>{{timezone}}</span></p>
 									</div>
-								</div>
+								</div> -->
 								  <div class="formrow">
 									<p class="mb-2">Schedule Date</p>
 									<input (change)="selectScheduleDate($event)" type="date" class="form-control btn white_bg d-block" value={{selecteScheduleDate}}>
@@ -1432,6 +1432,56 @@
 		</div>
 		
 	</ng-template>
+
+	<!-- <div class="modal fade" tabindex="-1" id="attachmentbox" data-bs-backdrop="static" #attachmentbox role="dialog">
+		<div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+		  <div class="m-0 px-3 modal-content attachmentboxcon">
+			<div class="">
+			  <div class="modal-header">
+				<div class="modal-header-left">
+				  <h4 class="modal-title" id="modal-basic-title"></h4>
+				</div>
+				<div class="modal-header-right">
+				  <p  class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+					src="assets/img/teambox/icon-close.svg">
+				</p>
+				</div>
+			  </div>
+			  <div class="modal-body attachmentboxbody">
+				<h4>Attach file</h4>
+				<div class="attachmentbox">
+				  <div class="attachmentbox_left" ngClass="{{dragAreaClass}}">
+					<img class="icon" src="/assets/img/teambox/image-a@2x.png">
+					<p>Drag & Drop file</p>
+					<p><span>OR</span></p>
+					<label class="custom-file-upload">
+					  <input type="file" #file
+						accept="image/*, application/msword, application/pdf, video/*"
+						[multiple]="false" (change)="onFileChange($event)" style="display:none" />
+					  <img class="icon" src="/assets/img/teambox/upload.png"> Browse files
+					</label>
+	  
+				  </div>
+				  <div class="attachmentbox_right">
+					<div>
+					  <img class="icon" src="/assets/img/teambox/instraction@2x.png">
+					</div>
+					<div>
+					  <h4>Instructions</h4>
+					  <p>Upload the Image, Video or Document you want to attach here. Ensure the Imported media file fulfills
+						the following requirements:<br>
+						<br>1. The Image format should be JPEG, JPG, PNG with maximum size of 5 MB<br>
+						<br>2. The Video format should be MP4 with maximum size of 10MB<br>
+						<br>3. The Document format should be PDF with maximum size of 10MB
+					  </p>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	  </div> -->
 
 
 
