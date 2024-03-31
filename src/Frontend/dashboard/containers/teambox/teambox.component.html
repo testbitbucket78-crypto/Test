@@ -8,15 +8,13 @@
 	</div>
 	
 	<div class="row team-box-page" id="team-box-page">
-		
+	
+		<div class="d-flex justify-content-center w-100">
 
-
-		<div class="col-12 d-flex mt-1">
-
-			<div class="col-4 team-box">
+			<div class="col-sm-3 team-box">
 
 	<!-- filter-popup -->
-				<div class="custom_row pl-3 pt-3 ">
+				<div class="custom_row pt-3">
 					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
 						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
 						aria-label="Search" aria-describedby="basic-addon2" />
@@ -52,12 +50,12 @@
 					<button class="new-message-btn" (click)="openaddMessage(messageadd)"><img class="icon"
 							src="/assets/img/teambox/add.svg" /> New Message</button>
 				</div>
-				<div class="custom_row mt-3 pl-4">
+				<div class="custom_row mt-3">
 					<p *ngIf="interactionList" class="conversaction_status">{{interactionFilterBy}}<span
 							class="total_count red">{{interactionList.length}}</span></p>
 				</div>
 				<div>
-					<div class="all_contacts pl-2">
+					<div class="all_contacts">
 						<div *ngFor="let item of interactionList; let i = index" id={{i}}
 							(click)="selectInteraction(item)"
 							[ngClass]="item.selected ? 'contacts_row active' : 'contacts_row'">
@@ -96,7 +94,7 @@
 								</div>
 
 								<div class="contacts_list mt-2">
-									<div class="contacts_left ml-22">
+									<div class="contacts_left">
 										<p *ngIf="item.assignTo" class="assigned_to">Assigned To</p>
 										<div *ngIf="item.assignTo" class="assigned_to_btn">
 											<div class="inner">
@@ -115,7 +113,7 @@
 				</div>
 			</div>
 
-			<div class="col-5 inner_section">
+			<div class="col-sm-5 inner_section">
 
 				<div *ngIf="selectedInteraction?.Name" class="col-md-12 mt-3">
 					<div class="custom_row">
@@ -393,14 +391,18 @@
 
 			</div>
 
-			<div *ngIf="selectedInteraction?.messageList" class=" col-4 team pt-5">
+			<div *ngIf="selectedInteraction?.messageList" class=" col-sm-4 team py-2" style="background: #fbf9fe;">
 				<div class="team-box right_box">
 					<div class="sidenav">
-						<div class="profile" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
-							<img class="toggle_provice_view" (click)="toggleProfileView()" *ngIf="showFullProfile"
-								src="/assets/img/teambox/search-clear.svg">
+						<div class="mt-3 sideBar-btn d-flex justify-content-end">
+							<button type="button" class="btn5 btn-close" (click)="toggleProfileView()" *ngIf="showFullProfile">
+								<img src="assets/img/teambox/icon-close.svg">
+							</button>
+						</div>
+						<div class="profile" style="padding: 0 45px 0 45px;" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
+						
 							<div class="custom_row">
-								<div class="col-md-5 flex">
+								<div class="col-md-4 flex">
 									<img *ngIf="selectedInteraction.avatar" class="big-thumbnail"
 										src="/assets/img/teambox/Richie_1.png" />
 									<img *ngIf="!selectedInteraction.avatar" class="big-thumbnail"
@@ -410,7 +412,7 @@
 											src="/assets/img/teambox/whatsapp-icon-l.svg"></span>
 								</div>
 
-								<div class="col-md-7 no-padding">
+								<div class="col-md-8 align-content-center no-padding">
 									<h1>{{selectedInteraction.Name}}</h1>
 									<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
 									<p>Created Date:<span>{{getFormatedDate(selectedInteraction.created_at)}}</span></p>
@@ -471,7 +473,7 @@
 							</div>
 						</div>
 
-						<div *ngIf="showFullProfile">
+						<div *ngIf="showFullProfile" style="padding: 0 45px 0 45px">
 
 							<div class="custom_row">
 								<div class="col-md-6">
@@ -557,8 +559,10 @@
 							</div>
 							<div class="custom_row">
 
-								<button class="small-gradient-btn info_button"><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg">
-									To add/edit any field according to your business from the settings</button>
+								<button class="small-gradient-btn info_button">
+									<span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg" />
+										To add/edit any field according to your business from the settings</span>
+									</button>
 							</div>
 
 
@@ -566,8 +570,11 @@
 					</div>
 				
 					<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
-						<img class="toggle_provice_view" (click)="toggleAttachedMediaView()"
-							src="/assets/img/teambox/search-clear.svg">
+							<div class="mt-3 sideBar-btn d-flex justify-content-end">
+								<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()">
+									<img src="assets/img/teambox/icon-close.svg">
+								</button>
+							</div>
 						<div class="attached_media_list">
 							<p class="preview_media" *ngFor="let file of selectedInteraction.allmedia;let m = index">
 								<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
@@ -594,7 +601,7 @@
 						</div>
 					</div>
 				</div>
-					<div *ngIf="!showFullProfile" class="footer">
+					<div *ngIf="!showFullProfile" style="padding: 0 45px 0 45px;" class="footer">
 
 						<div class="horizental_line mt-4">
 						</div>
@@ -611,7 +618,7 @@
 
 
 						<!-- autoreply-dropdown -->
-						<div class="downnn">
+						<div class="mt-3">
 							<button class="auto-rep-btn" (click)="toggleAutoReply()"><img class="icon"
 									src="/assets/img/teambox/time-circle.svg" />{{selectedInteraction.AutoReplyStatus}}
 								<img class="icon right-aligned" src="/assets/img/teambox/dropdown-w.svg" /></button>
