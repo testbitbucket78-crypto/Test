@@ -8,22 +8,36 @@ const database = "cip_project"
 
 
 // smartReplies Queries
-selectAll = `select
+selectAll = `SELECT
 t.ID,
 t.Title,
 t.Description,
 t.CreatedDate,
 t.ModifiedDate,
-t.channel,
-count(distinct s.Keyword) as KeywordCount,
+COUNT(DISTINCT s.Keyword) AS KeywordCount,
 t.MatchingCriteria,
-count(distinct m.ActionID) as ActionCount
-from
+COALESCE(action_counts.ActionCount, 0) AS ActionCount
+FROM
 SmartReply t
-left join SmartReplyAction m ON m.SmartReplyID = t.ID
-left join SmartReplyKeywords s ON s.SmartReplyID = t.ID
-where t.isDeleted !=1 and  m.isDeleted !=1 and  s.isDeleted !=1  and t.SP_ID=?
-group by
+LEFT JOIN
+SmartReplyKeywords s ON s.SmartReplyID = t.ID
+LEFT JOIN
+(
+    SELECT 
+        SmartReplyID,
+        COUNT(ActionID) AS ActionCount
+    FROM 
+        SmartReplyAction
+    WHERE 
+        isDeleted != 1 
+    GROUP BY 
+        SmartReplyID
+) AS action_counts ON action_counts.SmartReplyID = t.ID
+WHERE
+t.isDeleted != 1
+AND s.isDeleted != 1
+AND t.SP_ID = 27
+GROUP BY
 t.ID,
 t.Title,
 t.Description,
