@@ -40,6 +40,11 @@
 
 						<p [innerHTML]="reply.Description" class="card-text">
 						</p>
+						<p class="text-dark mb-1" style="font-size: 11px;">
+						  <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg" class="channel-selected"/>
+							{{reply.Channel}}
+						</p>
+						
 						<h6 class="card-subtitle mb-2 text-muted">{{reply.MatchingCriteria}}</h6>
 						<div class="card1 d-flex">
 							<div class="card-text1">
@@ -511,7 +516,7 @@
 									<label class="custom-file-upload">
 									  <input type="file" #file
 										accept="image/*, application/msword, application/pdf, video/*"
-										[multiple]="false" (change)="onFileChange($event)" style="display:none" />
+										[multiple]="false" (change)="onFileChange($event)" (click)="$event.target.value=null" style="display:none" />
 									  <img class="icon" src="/assets/img/teambox/upload.png"> Browse files
 									</label>
 					  
@@ -869,7 +874,7 @@
 								<p>Drag & Drop files</p>
 								<p><span>or</span></p>
 								<label class="custom-file-upload">
-								  <input type="file" #file [multiple]="false" (change)="onFileChange($event)"
+								  <input type="file" #file [multiple]="false" (change)="onFileChange($event)" (click)="$event.target.value=null"
 									style="display:none" />
 								  <img class="icon" src="/assets/img/teambox/upload.png"> Browse files
 								</label>

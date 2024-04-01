@@ -46,26 +46,9 @@ routerGuard = () => {
 	public saveSelection: NodeSelection | any;
 
 
-	public QuickRepliesList: { [key: string]: Object }[] = [
-		{ id:1,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:2,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:3,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:4,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:5,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:6,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-	];
+	public QuickRepliesList: { [key: string]: Object }[] = []
 
-	public TemplateList: any = [
-		{ id:1,date:'2023-05-15',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:2,date:'2023-05-17',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:3,date:'2023-05-18',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:4,date:'2023-05-20',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:5,date:'2023-05-22',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:6,date:'2023-05-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:7,date:'2023-05-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:8,date:'2023-06-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			
-	];
+	public TemplateList: any = [];
 		
 	public tools: object = {
 		items: [
@@ -392,12 +375,14 @@ routerGuard = () => {
 	}
 
 	closeAllModal(){
+		this.OptedIn='No';
 		this.modalReference?.close();
 		this.selectedTemplate = [];
 		this.templateChecked = false;
 		this.showAttachmenOption=false
 		this.messageMeidaFile=false
 		this.showAttributes=false
+		this.newContact.reset()
 		this.editTemplate=false
 		this.TemplatePreview=false
 		this.showQuickReply=false
@@ -407,7 +392,8 @@ routerGuard = () => {
 		this.quickreplysearch='';
 		this.variableValueForm.reset();
 		this.variableValues=[];
-		this.getTemplates();
+		// this.getTemplates();
+
 		$("#editTemplateMedia").modal('hide');
 		$("#templatePreview").modal('hide');
 		$("#quikpopup").modal('hide');
@@ -952,7 +938,7 @@ sendattachfile() {
 		this.getAllInteraction()
 		this.getCustomers()
 		this.getquickReply()
-		this.getTemplates()
+		// this.getTemplates()
 		this.subscribeToNotifications()
 		this.getAttributeList()
         this.sendattachfile()
@@ -1033,12 +1019,15 @@ sendattachfile() {
 	  }	  
 
 
-	async getTemplates(){
+	async getTemplates(channel:any) {
 		let spid = Number(this.SPID)
 		this.settingService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
 			this.allTemplatesMain = allTemplates.templates
 			console.log(this.allTemplatesMain)
 			this.allTemplates = allTemplates.templates
+
+			this.allTemplates = this.allTemplates.filter((item:any) => item.Channel == channel);
+			this.allTemplatesMain =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item.Channel == channel)));
 	
 		})
 		
@@ -1449,23 +1438,24 @@ sendattachfile() {
 	}
 
 	selectInteraction(Interaction: any) {
-		// if (this.chatEditor) {
-		//   this.chatEditor.value = 'Your message...';
-		//   this.showChatNotes = 'text';
-		// }
-	  
-		for (let i = 0; i < this.interactionList.length; i++) {
-		  this.interactionList[i].selected = false;
-		}
-	  
-		Interaction['selected'] = true;
-		this.selectedInteraction = Interaction;
-		this.contactId = Interaction.customerId;
-		this.selected=Interaction.selected;
 		console.log(Interaction);
-		this.selectedCountryCode = Interaction.countryCode;
 
-		this.Allmessages = this.selectedInteraction.allmessages;
+		for(const item of this.interactionList) {
+			item['selected'] = false;
+		}	  
+		Interaction['selected'] = true;
+		this.contactId = Interaction.customerId;	
+
+		let channel = Interaction['channel'];
+		this.getTemplates(channel);
+
+		this.selectedCountryCode = Interaction['countryCode'];
+
+		this.Allmessages = Interaction['allmessages'];
+
+		this.selectedInteraction = Interaction;
+	
+
 		this.getPausedTimer();
 		setTimeout(() => {
 			this.scrollChatToBottom();

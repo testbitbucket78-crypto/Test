@@ -1390,7 +1390,7 @@ stopPropagation(event: Event) {
 	parseTags(tagsString: string): string[] {
 		let tags;
 		  tags = JSON.parse(tagsString);	
-		return tags;
+		return tags.join(', ');
 	  }
 
 	deleteRepliesById (data:any) {
