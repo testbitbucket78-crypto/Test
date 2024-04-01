@@ -55,7 +55,8 @@ export class QuickResponseComponent implements OnInit {
   
   fileName: any; 
   selectedPreview: string = '';
-  @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent;
+  loadingVideo:boolean = false;
+  @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent | any;
 
   public tools: object = {
       items: [
@@ -123,6 +124,10 @@ export class QuickResponseComponent implements OnInit {
 
 onEditorChange(value: string | null): void {
     this.usertemplateForm.get('BodyText')?.setValue(value);
+}
+
+onValueChange(val:any){
+console.log(val);
 }
 
 filterQuickRes(){
@@ -287,6 +292,7 @@ saveVideoAndDocument(files: FileList) {
 			}
 
       else {
+        this.loadingVideo = true;
         let name='template-message'
         this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
             let responseData: any = uploadStatus;
@@ -294,7 +300,12 @@ saveVideoAndDocument(files: FileList) {
                 this.selectedPreview = responseData.filename.toString();
                 console.log(this.selectedPreview);
             }
-        });
+            this.loadingVideo = false;
+        },
+        (error) => {
+          this.loadingVideo = false;
+          this.showToaster("Video File Size is Too Large, Max 10MB size is Allowed!", 'error');
+   });
       }
 
    
@@ -357,4 +368,30 @@ hideToaster(){
   this.warnMessage='';
   this.errorMessage='';
 }
+
+
+onContentChange() {
+  //const text = this.chatEditor?.value;
+  const container = document.createElement('div');
+  container.innerHTML = this.chatEditor?.value;
+  const text = container.innerText;
+  const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; 
+  const characterCount = text?.replace(emojiRegex, '__').length || 0; 
+  if (characterCount > 1024) {
+    const trimmedContent = this.trimContent(text, characterCount);
+    this.chatEditor.value = trimmedContent;
+  } 
+}
+
+trimContent(text: string, characterCount: number): string {
+  const emojisToAdd = 1; 
+  const extraCharacters = characterCount - 1024 + emojisToAdd;
+  let trimmedText = text.substr(0, text.length - extraCharacters);
+  const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]$/;
+  if (emojiRegex.test(trimmedText)) {
+    trimmedText = trimmedText.slice(0, -2);
+  }
+  return trimmedText;
+}
+
 }

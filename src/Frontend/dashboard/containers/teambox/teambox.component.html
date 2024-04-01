@@ -8,15 +8,13 @@
 	</div>
 	
 	<div class="row team-box-page" id="team-box-page">
-		
+	
+		<div class="d-flex justify-content-center w-100">
 
-
-		<div class="col-12 d-flex mt-1">
-
-			<div class="col-4 team-box">
+			<div class="col-sm-3 team-box">
 
 	<!-- filter-popup -->
-				<div class="custom_row pl-3 pt-3 ">
+				<div class="custom_row pt-3">
 					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
 						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
 						aria-label="Search" aria-describedby="basic-addon2" />
@@ -52,12 +50,12 @@
 					<button class="new-message-btn" (click)="openaddMessage(messageadd)"><img class="icon"
 							src="/assets/img/teambox/add.svg" /> New Message</button>
 				</div>
-				<div class="custom_row mt-3 pl-4">
+				<div class="custom_row mt-3">
 					<p *ngIf="interactionList" class="conversaction_status">{{interactionFilterBy}}<span
 							class="total_count red">{{interactionList.length}}</span></p>
 				</div>
 				<div>
-					<div class="all_contacts pl-2">
+					<div class="all_contacts">
 						<div *ngFor="let item of interactionList; let i = index" id={{i}}
 							(click)="selectInteraction(item)"
 							[ngClass]="item.selected ? 'contacts_row active' : 'contacts_row'">
@@ -75,7 +73,7 @@
 										<div class="contacts_detail">
 											<p class="name">{{item.Name}}</p>
 											<div *ngIf="item.lastMessage" class="message"
-												[innerHTML]="limitCharacters(item.lastMessage.message_text)">
+												[innerHTML]="limitCharacters(item.lastMessage.message_text) | sanitizeHtml">
 											</div>
 										</div>
 									</div>
@@ -96,7 +94,7 @@
 								</div>
 
 								<div class="contacts_list mt-2">
-									<div class="contacts_left ml-22">
+									<div class="contacts_left">
 										<p *ngIf="item.assignTo" class="assigned_to">Assigned To</p>
 										<div *ngIf="item.assignTo" class="assigned_to_btn">
 											<div class="inner">
@@ -115,13 +113,13 @@
 				</div>
 			</div>
 
-			<div class="col-5 inner_section">
+			<div class="col-sm-5 inner_section">
 
 				<div *ngIf="selectedInteraction?.Name" class="col-md-12 mt-3">
 					<div class="custom_row">
 						<div class=" left_part">
 							<div class="user_info">
-								<p class="user_name">{{selectedInteraction.Name}}</p>
+								<p class="user_name">{{selectedInteraction.Name.substring(0 ,15)}}</p>
 								<p *ngIf="selectedInteraction.channel=='WhatsApp Official'" class="user_from mt-2"><img
 										class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />WhatsApp Official
 								</p>
@@ -135,7 +133,7 @@
 							</div>
 							<div class="drop-down-btn">
 								<button
-									*ngIf="selectedInteraction?.progressbar?.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 24"
+									*ngIf="selectedInteraction?.progressbar?.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72"
 									style="margin:0 8px"
 									[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : 'drop-down-btn red-color'"
 									(click)="toggleConversationStatusOption()">
@@ -144,7 +142,7 @@
 									{{selectedInteraction.interaction_status}}
 								</button>
 
-								<button *ngIf="selectedInteraction?.progressbar?.progressbarValue >= 24"
+								<button *ngIf="selectedInteraction?.progressbar?.progressbarValue >= 72"
 									style="margin:0 8px" class="drop-down-btn green-color"
 									(click)="toggleConversationStatusOption()">
 									<img class="icon" src="/assets/img/teambox/checked_icon.png" /> Resolved
@@ -241,7 +239,7 @@
 
 
 										</div>
-										<div class="message_text" [innerHTML]="message.message_text">
+										<div class="message_text" [innerHTML]="message.message_text | sanitizeHtml">
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
 										</div>
 										<div [ngClass]="{'message_box_container':message.media_type}">
@@ -312,7 +310,7 @@
 
 
 												</div>
-												<div class="message_text" [innerHTML]="note.message_text"></div>
+												<div class="message_text" [innerHTML]="note.message_text | sanitizeHtml"></div>
 												<span class="message_time"
 													*ngIf="note.created_at">{{timeSince(note.created_at)}}</span>
 											</div>
@@ -393,14 +391,18 @@
 
 			</div>
 
-			<div *ngIf="selectedInteraction?.messageList" class=" col-4 team pt-5">
+			<div *ngIf="selectedInteraction?.messageList" class=" col-sm-4 team py-2" style="background: #fbf9fe;">
 				<div class="team-box right_box">
 					<div class="sidenav">
-						<div class="profile" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
-							<img class="toggle_provice_view" (click)="toggleProfileView()" *ngIf="showFullProfile"
-								src="/assets/img/teambox/search-clear.svg">
-							<div class="custom_row">
-								<div class="col-md-5 flex">
+						<div class="mt-3 sideBar-btn d-flex justify-content-end">
+							<button type="button" class="btn5 btn-close" (click)="toggleProfileView()" *ngIf="showFullProfile">
+								<img src="assets/img/teambox/icon-close.svg">
+							</button>
+						</div>
+						<div class="profile" style="padding: 0 45px 0 45px;" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
+						
+							<div class="custom_row no-padding">
+								<div class="col-md-4 flex">
 									<img *ngIf="selectedInteraction.avatar" class="big-thumbnail"
 										src="/assets/img/teambox/Richie_1.png" />
 									<img *ngIf="!selectedInteraction.avatar" class="big-thumbnail"
@@ -410,7 +412,7 @@
 											src="/assets/img/teambox/whatsapp-icon-l.svg"></span>
 								</div>
 
-								<div class="col-md-7 no-padding">
+								<div class="col-md-8 align-content-center no-padding">
 									<h1>{{selectedInteraction.Name}}</h1>
 									<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
 									<p>Created Date:<span>{{getFormatedDate(selectedInteraction.created_at)}}</span></p>
@@ -471,7 +473,7 @@
 							</div>
 						</div>
 
-						<div *ngIf="showFullProfile">
+						<div *ngIf="showFullProfile" style="padding: 0 45px 0 45px">
 
 							<div class="custom_row">
 								<div class="col-md-6">
@@ -557,44 +559,51 @@
 							</div>
 							<div class="custom_row">
 
-								<button class="small-gradient-btn info_button"><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg">
-									To add/edit any field according to your business from the settings</button>
+								<button class="small-gradient-btn info_button">
+									<span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg" />
+										To add/edit any field according to your business from the settings</span>
+									</button>
 							</div>
 
 
 						</div>
 					</div>
+					<div *ngIf="selectedInteraction.InteractionId && showAttachedMedia" class="mt-3 sideBar-btn d-flex justify-content-end">
+						<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()">
+							<img src="assets/img/teambox/icon-close.svg">
+						</button>
+					</div>
 				
-					<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
-						<img class="toggle_provice_view" (click)="toggleAttachedMediaView()"
-							src="/assets/img/teambox/search-clear.svg">
-						<div class="attached_media_list">
-							<p class="preview_media" *ngFor="let file of selectedInteraction.allmedia;let m = index">
-								<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
-									src="/assets/img/teambox/video_preview.png"
-									(click)="downloadFile(file.message_media)">
-								<img class="preview_icon" *ngIf="file.media_type == 'text/plain'"
-									src="/assets/img/teambox/doc_preview.png"
-									(click)="downloadFile(file.message_media)">
-								<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
-									src="/assets/img/teambox/doc_preview.png"
-									(click)="downloadFile(file.message_media)">
-
-								<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-
+					<div class="profile pl-2 flex-row" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
+						
+						<div class="attached_media_list" *ngFor="let file of selectedInteraction.allmedia;let m = index">
+				
+							<p *ngIf="file.message_media!=='0'" class="preview_media">				
+									<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
+										src="/assets/img/teambox/video_preview.png"
+										(click)="downloadFile(file.message_media)">
+									<img class="preview_icon" *ngIf="file.media_type == 'text/plain'"
+										src="/assets/img/teambox/doc_preview.png"
+										(click)="downloadFile(file.message_media)">
+									<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
+										src="/assets/img/teambox/doc_preview.png"
+										(click)="downloadFile(file.message_media)">
+	
+									<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}
+										(click)="openaddMediaGallery(mediagallery,m)">
+									<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}
+										(click)="openaddMediaGallery(mediagallery,m)">
+									<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}
+										(click)="openaddMediaGallery(mediagallery,m)">
+									<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}
+										(click)="openaddMediaGallery(mediagallery,m)">
+							
 							</p>
 
 						</div>
 					</div>
 				</div>
-					<div *ngIf="!showFullProfile" class="footer">
+					<div *ngIf="!showFullProfile" style="padding: 0 45px 0 45px;" class="footer">
 
 						<div class="horizental_line mt-4">
 						</div>
@@ -611,7 +620,7 @@
 
 
 						<!-- autoreply-dropdown -->
-						<div class="downnn">
+						<div class="mt-3">
 							<button class="auto-rep-btn" (click)="toggleAutoReply()"><img class="icon"
 									src="/assets/img/teambox/time-circle.svg" />{{selectedInteraction.AutoReplyStatus}}
 								<img class="icon right-aligned" src="/assets/img/teambox/dropdown-w.svg" /></button>
@@ -679,12 +688,17 @@
 								<h4 class="modal-title" id="modal-basic-title"></h4>
 							</div>
 							<div class="modal-header-right">
-								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-										src="assets/img/teambox/icon-close.svg"></p>
+								<p *ngIf="this.isAttachmentMedia==false" class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										src="assets/img/teambox/icon-close.svg">
+								</p>
+								<p *ngIf="this.isAttachmentMedia==true" class="close-box" aria-label="Close" (click)="closeEditMedia()"><img
+									src="assets/img/teambox/icon-close.svg">
+							</p>
+							
 							</div>
 						</div>
 						<div class="modal-body attachmentboxbody">
-							<h4>Attach file</h4>
+							<h4>{{isAttachmentMedia==true?'Replace Media' : 'Attachfile'}}</h4>
 							<div class="attachmentbox">
 								<div class="attachmentbox_left" ngClass="{{dragAreaClass}}">
 									<img class="icon" src="/assets/img/teambox/image-a@2x.png">
@@ -693,7 +707,7 @@
 									<label class="custom-file-upload">
 										<input type="file" #file
 											accept="image/*, application/msword, application/pdf, video/*"
-											[multiple]="false" (change)="onFileChange($event)" style="display:none" />
+											[multiple]="false" (change)="onFileChange($event)" (click)="$event.target.value=null" style="display:none" />
 										<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
 									</label>
 
@@ -726,7 +740,7 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
-					<div *ngIf="messageMeidaFile!=''"   class="message_meida_preview">
+					<div *ngIf="messageMeidaFile!=''" class="message_meida_preview">
 						<div class="modal-header">
 							<div class="modal-header-left">
 							</div>
@@ -815,7 +829,7 @@
 								<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
 							</div>
 							<div class="modal-header-right">
-								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img (click)="isAttachmentMedia = false;"
 										src="assets/img/teambox/icon-close.svg"></p>
 							</div>
 						</div>
@@ -837,14 +851,14 @@
 							</div>
 							</div>
 							<div class="template_list">
-							  <div class="template_box" *ngFor="let template of allTemplates ;let i = index">
+							  <div class="mb-4 template_box" *ngFor="let template of allTemplates ;let i = index">
 								<div class="px-4 template_box_inner d-flex align-items-start">
 								  <div class="d-flex align-items-center template_box_inner">
 								  <input type="radio" id="selectedTemplate{{i}}" name="selectedTemplate" [checked]="templateChecked" (click)="selectTemplate(template)">
 								  <label class="m-0" for="selectedTemplate{{i}}"></label>
 								  </div>
 							   <div class="template_head flex-column">
-								<p class="template_name">{{template.TemplateName}}</p>
+								<p class="m-0 template_name">{{template.TemplateName}}</p>
 								<p class="m-0"><span>{{ template.created_at | date:'dd-MM-yyyy' }}</span></p>
 						
 								<div class="inner_box">
@@ -855,18 +869,19 @@
 									</div>
 									<!-- <embed *ngIf="template.media_type === 'document'" [src]="template.Links" type="application/pdf" width="100%" height="400px"> -->
 								  <div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
-									<p [innerHTML]="template.Header" class="m-0 font-weight-bold"></p>
-									<p [innerHTML]="template.BodyText"></p>
-									<p [innerHTML]="template.FooterText"></p>
+									<p *ngIf="template.media_type ==='text'"  [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+									<p [innerHTML]="template.BodyText| sanitizeHtml"></p>
+									<p [innerHTML]="template.FooterText | sanitizeHtml"></p>
 								  </div>
+								<!--  <div *ngIf="template.Channel === 'WhatsApp Official'" class="template_btn">
+									<button type="button" class="btn">Button 1</button>
+									<button type="button" class="btn">Button 2</button> 
+									<button type="button" class="btn">Button 3</button>
+								</div> -->
 								</div>
-							   </div>
+							    </div>
 								</div>
-								<div *ngIf="template.Channel === 'WhatsApp Official'" class="template_btn">
-								  <button type="button" class="btn">Button 1</button>
-								  <button type="button" class="btn">Button 2</button> 
-								  <button type="button" class="btn">Button 3</button>
-								</div>
+							
 						
 							  </div>
 						
@@ -900,6 +915,7 @@
 						</div>
 						<div class="modal-header-right">
 							<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+								    (click)="isAttachmentMedia = false"
 									src="assets/img/teambox/icon-close.svg"></p>
 						</div>
 					</div>
@@ -913,23 +929,23 @@
 
 									<div class="px-2 inner_box">
 										<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
-										<video *ngIf="selectedTemplate.media_type === 'video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+										<video *ngIf="selectedTemplate.media_type === 'video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
 										<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
 										  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 										  </div>
-										  <p class="close-box edit_media" (click)="editMedia()">
+										  <p *ngIf="selectedTemplate.media_type !== 'text'" class="close-box edit_media" (click)="editMedia()">
 											<img src="/assets/img/campaign/edit.svg">
 										</p>
 										 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-											<p [innerHTML]="selectedTemplate.Header" class="m-0 font-weight-bold"></p>
-											<p [innerHTML]="selectedTemplate.BodyText"></p>
-											<p [innerHTML]="selectedTemplate.FooterText"></p>
+											<p *ngIf="selectedTemplate.media_type ==='text'"  [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+											<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
+											<p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 										  </div>
 									</div>
 									<div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" class="px-2 template_btn">
-										<button type="button" class="btn">Button 1</button>
-										<button type="button" class="btn">Button 2</button>
-										<button type="button" class="btn">Button 3</button>
+										<div *ngFor="let button of selectedTemplate.buttons">
+											<button type="button" class="btn">{{button.name}}</button>
+										</div>
 									</div>
 								</div>
 
@@ -990,7 +1006,7 @@
 									  <p class="form-control">
 										<input type="text" id="variableValue{{ith}}" name="variableValue{{ith}}" [(ngModel)]="variableValues[ith]" class="form-control inner"
 										placeholder="Input value or add attribute">
-										<span class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
+										<span style="cursor: pointer;" (click)="openVariableOption()" class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
 									  </p>
 								  <!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
 										  <p class="label">Map the column</p>
@@ -1002,20 +1018,12 @@
 								<div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" >
 								<p class="mt-2">Button Payload <span>(Optional)</span><img class="px-2 icon sm"
 										src="/assets/img/campaign/Info.svg"></p>
-								<div class="form_row">
-									<label>Button 1</label>
-									<input type="text" class="form-control" value=""
-										placeholder="Input payload value">
-								</div>
-								<div class="form_row">
-									<label>Button 2</label>
-									<input type="text" class="form-control" value=""
-										placeholder="Input payload value">
-								</div>
-								<div class="form_row">
-									<label>Button 3</label>
-									<input type="text" class="form-control" value=""
-										placeholder="Input payload value">
+								<div *ngFor="let button of selectedTemplate.buttons; let ith = index">
+									<div class="form_row">
+										<label>{{button.name}}</label>
+										<input type="text" class="form-control" value=""
+											placeholder="Input payload value">
+									</div>
 								</div>
 							</div>
 							</div>
@@ -1033,6 +1041,53 @@
 		</div>
 	</div>
   </div>
+
+  <div class="modal fade" tabindex="-1" id="showvariableoption" #showvariableoption data-bs-backdrop="static" role="dialog">
+	<div class="modal-dialog showvariableoption" role="document">
+	<div class="modal-content">
+		<div class="modal-body showvariableoption">
+			<div class="modal-header">
+				<div class="modal-header-left">
+					<h4 class="modal-title" id="modal-basic-title">Attributes</h4>
+				</div>
+				<div class="modal-header-right">
+					<p  class="close-box" aria-label="Close" (click)="closeVariableOption()"><img src="assets/img/teambox/icon-close.svg"></p>
+				</div>
+			</div>
+	
+	
+				<div class="modal-body variableoption">
+						<div class="content">
+							<input class="search-box" type="search" placeholder="Search" [(ngModel)]="attributesearch" />
+							<p *ngFor='let alist of attributesList | searchfilter:attributesearch  ;let i = index' class="form-control" 
+							    (click)="addAttributeInVariables(alist)" style="cursor: pointer;">
+								{{alist}}
+							</p>
+
+							<div class="content_inner">
+								<p><span>Fallback</span><img class="px-2 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
+								</p>
+								
+								<div *ngIf="showInfo" class="showInfoFallback">
+									<p id="p-body">A default value that will be used for personalization if the system cannot find any value for the selected attribute in the user's contact fields.
+									</p>
+									<button id="radio-close-btn" (click)="showInfo=false">X</button>
+								</div>
+								<input style="cursor:text;" placeholder="Enter value" type="text" class="form-control" >
+							</div>
+														
+								</div>
+							</div>
+							<div class="modal-footer" style="border: none;">
+								<div class="input_group_btn">
+									<button type="button" class="cancel-btn" aria-label="Close" (click)="closeVariableOption()">Cancel</button>
+									<button type="button" class="submit-btn" aria-label="Close" (click)="SaveVariableOption()">Done</button>
+								</div>
+							</div>
+						</div>
+			      </div>
+		      </div>
+          </div>
 
   <div class="modal fade" tabindex="-1" id="editTemplateMedia" #editTemplateMedia data-bs-backdrop="static" role="dialog">
 	<div class="modal-dialog editTemplateMedia" role="document">
@@ -1062,6 +1117,7 @@
 						<p><span>or</span></p>
 						<label class="custom-file-upload">
 							<input type="file" #file [multiple]="false" (change)="onFileChange($event)"
+							(click)="$event.target.value=null"
 								style="display:none" />
 							<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
 						</label>
@@ -1134,6 +1190,7 @@
 			</div>
 			<div class="modal-header-right">
 				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+					(click)="isAttachmentMedia = false"
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
@@ -1148,23 +1205,23 @@
 
 					<div class="px-2 inner_box">
 						<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
-						<video *ngIf="selectedTemplate.media_type === 'video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+						<video *ngIf="selectedTemplate.media_type === 'video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
 						<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
 						  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 						  </div>
-						  <p class="close-box edit_media" (click)="editMedia()">
+						  <!-- <p class="close-box edit_media" (click)="editMedia()">
 							<img src="/assets/img/campaign/edit.svg">
-						</p>
+						</p> -->
 						 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-							<p [innerHTML]="selectedTemplate.Header" class="m-0 font-weight-bold"></p>
-							<p [innerHTML]="selectedTemplate.BodyText"></p>
-							<p [innerHTML]="selectedTemplate.FooterText"></p>
+							<p *ngIf="selectedTemplate.media_type ==='text'" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+							<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
+							<p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 						  </div>
 					</div>
 					<div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" class="px-2 template_btn">
-						<button type="button" class="btn">Button 1</button>
-						<button type="button" class="btn">Button 2</button>
-						<button type="button" class="btn">Button 3</button>
+						<div *ngFor="let button of selectedTemplate.buttons">
+							<button type="button" class="btn">{{button.name}}</button>
+						</div>
 					</div>
 				</div>
 
@@ -1208,9 +1265,7 @@
 									<div class="doc-preview"*ngIf="Message.media_type === 'document'">
 									<a [href]="Message.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									</div>
-									<p class="label" [innerHTML]="Message.Header"></p>
-									<p [innerHTML]="Message.BodyText"></p>
-									<p [innerHTML]="Message.FooterText"></p>
+									<p [innerHTML]="Message.BodyText | sanitizeHtml"></p>
 								</div>
 							</div>
 							<div class="bottom_section">
@@ -1248,6 +1303,7 @@
 
 					<div *ngFor="let file of selectedInteraction.allmedia;let k = index" class="mySlides"
 						[ngClass]="slideIndex==k ? 'mySlides active' : 'mySlides'">
+						<div *ngIf="file.message_media!=='0'">
 
 						<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
 							src="/assets/img/teambox/video_preview.png" (click)="downloadFile(file.message_media)">
@@ -1260,7 +1316,7 @@
 						<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}>
 						<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}>
 						<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}>
-
+					</div>
 
 					</div>
 
@@ -1342,7 +1398,7 @@
 				<h4 class="modal-title" id="modal-basic-title">Add New Contact</h4>
 			</div>
 			<div class="modal-header-right">
-				<p (click)="this.newContact.reset()" class="close-box" aria-label="Close" (click)="d('Cross click')"><img
+				<p  class="close-box" (click)="closeAllModal()"><img
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>

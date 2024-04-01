@@ -273,6 +273,12 @@
                                 <option value="">Select country</option>
                                 <option *ngFor="let item of country" [value]="item.name">{{item.name}}</option>
                             </select>
+                            <div *ngIf="billingForm.get('Country')?.invalid && (billingForm.get('Country')?.touched || billingForm.get('Country')?.dirty)
+                            " class="invalid-feedback">
+                            <div *ngIf="billingForm.get('Country')?.hasError('required')">
+                                Country is required.
+                            </div>
+                          </div>
                         </div>
                         </div>
                         <div class="billing-form-row">
@@ -282,6 +288,12 @@
                                 <option value="">State</option>
                                 <option *ngFor="let item of state" [value]="item.name">{{item.name}}</option>
                             </select>
+                            <div *ngIf="billingForm.get('State')?.invalid && (billingForm.get('State')?.touched || billingForm.get('State')?.dirty)
+                            " class="invalid-feedback">
+                            <div *ngIf="billingForm.get('State')?.hasError('required')">
+                                State is required.
+                            </div>
+                          </div>
                         </div>
                         </div>
                         <!-- <div class="billing-form-row">

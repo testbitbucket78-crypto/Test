@@ -156,7 +156,7 @@
                     <!-- </form> -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="account-btn" (click)="saveCampaignDetails()">Save</button>
+                    <button type="button" class="account-btn" (click)="confirmTimiming()">Save</button>
                 </div>
             </div>
         </div>
@@ -189,7 +189,7 @@
                             <div class=" manage-user col-6">
                                 <label class="container"  let i = "index">
                                     <img src="../../../../assets/img/profile/Richie_3.png" class="user-img mx-2">{{item.name}}        
-                                    <div (click)="showCountWarning()" >          
+                                    <div (click)="showCountWarning(!item.isSelected)" >          
                                     <input type="checkbox" name="status" class="user-checkbox" [disabled]="getCheckedCount() && !item.isSelected"  [(ngModel)]="item.isSelected" value={{item.value}}>   
                                       <span class="checkmark ml-2"></span>
                                     </div>  

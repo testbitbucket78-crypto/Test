@@ -54,6 +54,7 @@ export class CampaignsComponent implements OnInit {
 	 activeStep:any=1;
 	 isEditCampaign:any=false;
 	 newCampaignDetail: any;
+	 isNextClicked:boolean = false;
 	 TemplateMediaSource:any=0;
 	 importantContact:any=false;
 	 segmentsContactList:any=[];
@@ -175,81 +176,81 @@ export class CampaignsComponent implements OnInit {
 		{label:'Is',checked:false,type:'select',options:['Empty']},
 		{label:'Is not',checked:false,type:'select',options:['Empty']},
 	    ]},
-		{value:'status',label:'status',checked:false,addeFilter:[],
-		option:[
-		{label:'Is',checked:false,type:'select',options:['Premium','Other']},
-		{label:'Is not',checked:false,type:'select',options:['Premium','Other']},
-		]},
-		{value:'channel',label:'channel',checked:false,addeFilter:[],
-		option:[
-		{label:'Is',checked:false,type:'select',options:['WhatsApp','Other']},
-		{label:'Is not',checked:false,type:'select',options:['WhatsApp','Other']},
-		]},
+		// {value:'status',label:'status',checked:false,addeFilter:[],
+		// option:[
+		// {label:'Is',checked:false,type:'select',options:['Premium','Other']},
+		// {label:'Is not',checked:false,type:'select',options:['Premium','Other']},
+		// ]},
+		// {value:'channel',label:'channel',checked:false,addeFilter:[],
+		// option:[
+		// {label:'Is',checked:false,type:'select',options:['WhatsApp','Other']},
+		// {label:'Is not',checked:false,type:'select',options:['WhatsApp','Other']},
+		// ]},
 		{value:'tag',label:'Tag',checked:false,addeFilter:[],
 		option:[
 		{label:'Is',checked:false,type:'select',options:['Paid','Un-Paid','New Customer']},
 		{label:'Is not',checked:false,type:'select',options:['Paid','Un-Paid','New Customer']},
 		]},
 		
-		{value:'sex',label:'sex',checked:false,addeFilter:[],
-		option:[
-		{label:'Is',checked:false,type:'select',options:['Male','Female','Transgender']},
-		{label:'Is not',checked:false,type:'select',options:['Male','Female','Transgender']}
-	    ]},
-		{value:'age',label:'age',checked:false,addeFilter:[],
-		option:[
-		{label:'Is',checked:false,type:'number'},
-		{label:'Is not',checked:false,type:'number'},
-		{label:'Less Then',checked:false,type:'number'},
-		{label:'Greater Then',checked:false,type:'number'}
-	    ]},
-		{value:'address',label:'address',checked:false,addeFilter:[],
-		option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
+		// {value:'sex',label:'sex',checked:false,addeFilter:[],
+		// option:[
+		// {label:'Is',checked:false,type:'select',options:['Male','Female','Transgender']},
+		// {label:'Is not',checked:false,type:'select',options:['Male','Female','Transgender']}
+	    // ]},
+		// {value:'age',label:'age',checked:false,addeFilter:[],
+		// option:[
+		// {label:'Is',checked:false,type:'number'},
+		// {label:'Is not',checked:false,type:'number'},
+		// {label:'Less Then',checked:false,type:'number'},
+		// {label:'Greater Then',checked:false,type:'number'}
+	    // ]},
+		// {value:'address',label:'address',checked:false,addeFilter:[],
+		// option:[
+		// 	{label:'Contains',checked:false,type:'text'},
+		// 	{label:'Does Not Contain',checked:false,type:'text'},
+		// 	{label:'Starts with',checked:false,type:'text'},
+		// 	{label:'End with',checked:false,type:'text'},
+		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
+		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
 			
-	    ]},
+	    // ]},
 		
-		{value:'city',label:'city',checked:false,addeFilter:[],
-		option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
-		{value:'state',label:'state',checked:false,addeFilter:[],
-		option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
-		{value:'pincode',label:'Pincode',checked:false,addeFilter:[],
-		option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
-		{value:'country',label:'country',checked:false,addeFilter:[],
-		option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
+		// {value:'city',label:'city',checked:false,addeFilter:[],
+		// option:[
+		// 	{label:'Contains',checked:false,type:'text'},
+		// 	{label:'Does Not Contain',checked:false,type:'text'},
+		// 	{label:'Starts with',checked:false,type:'text'},
+		// 	{label:'End with',checked:false,type:'text'},
+		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
+		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
+	    // ]},
+		// {value:'state',label:'state',checked:false,addeFilter:[],
+		// option:[
+		// 	{label:'Contains',checked:false,type:'text'},
+		// 	{label:'Does Not Contain',checked:false,type:'text'},
+		// 	{label:'Starts with',checked:false,type:'text'},
+		// 	{label:'End with',checked:false,type:'text'},
+		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
+		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
+	    // ]},
+		// {value:'pincode',label:'Pincode',checked:false,addeFilter:[],
+		// option:[
+		// 	{label:'Contains',checked:false,type:'text'},
+		// 	{label:'Does Not Contain',checked:false,type:'text'},
+		// 	{label:'Starts with',checked:false,type:'text'},
+		// 	{label:'End with',checked:false,type:'text'},
+		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
+		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
+	    // ]},
+		// {value:'country',label:'country',checked:false,addeFilter:[],
+		// option:[
+		// 	{label:'Contains',checked:false,type:'text'},
+		// 	{label:'Does Not Contain',checked:false,type:'text'},
+		// 	{label:'Starts with',checked:false,type:'text'},
+		// 	{label:'End with',checked:false,type:'text'},
+		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
+		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
+	    // ]},
 		{value:'OptInStatus',label:'OptInStatus',checked:false,addeFilter:[],
 		option:[
 		{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
@@ -368,7 +369,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.getAllCampaigns()
 		this.getContactList('')
 		this.getAttributeList()
-		this.getAdditiionalAttributes();
+		//this.getAdditiionalAttributes();
 		this.processData();
 	}
 	getAdditiionalAttributes(){
@@ -801,6 +802,7 @@ formateDate(dateTime:string){
 	  removeFilter(itemIndex:any){
 		this.ContactListNewFilters.splice(itemIndex, 1);
 		this.ContactListNewFilters[0]['filterOperator']='';
+		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters
 	  }
 	  addFilter(){
 		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters
@@ -1304,9 +1306,19 @@ formateDate(dateTime:string){
 		 sratdatetime = (new Date ((new Date((new Date(new Date(start_datetime))).toISOString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
 		}else{
 			sratdatetime = (new Date ((new Date((new Date(new Date())).toISOString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
-		}
+		}		
+		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+		let day =  daysList[new Date(sratdatetime).getDay()];
 		console.log(this.selectedTemplate.allVariables)
 		console.log(this.csvContactList)
+		let start_Time = '';
+		let end_Time = '';
+			this.workingData.forEach((item:any)=>{
+				if(item.day.includes(day)){
+					start_Time = item.start_time;
+					end_Time = item.end_time;
+				}
+			});
 		let BodyData:any={
 			Id:this.newCampaignDetail.Id?this.newCampaignDetail.Id:'',
 			sp_id:this.SPID,
@@ -1316,7 +1328,7 @@ formateDate(dateTime:string){
 			message_heading:this.selectedTemplate.Header,
 			message_content:this.selectedTemplate.BodyText,
 			message_media:this.selectedTemplate.Links,
-			message_type:this.selectedTemplate.media_type,
+			media_type:this.selectedTemplate.media_type,
 			message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
 			button_yes:this.selectedTemplate.button_yes,
 			button_no:this.selectedTemplate.button_no,
@@ -1326,6 +1338,9 @@ formateDate(dateTime:string){
 			time_zone:this.selecteTimeZone,
 			start_datetime:sratdatetime,
 			end_datetime:'',
+			start_time: start_Time,
+			end_time: end_Time,
+			day: day,
 			csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
 			segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
 		}
@@ -1339,7 +1354,7 @@ formateDate(dateTime:string){
 			if(this.scheduled ==1){
 				BodyData['status']=1;
 			}else{
-				BodyData['status']=3;
+				BodyData['status']=-1;
 			}
 			this.getAllCampaigns()
 		}
@@ -1380,7 +1395,7 @@ formateDate(dateTime:string){
 					button_no:this.selectedTemplate.button_no,
 					button_exp:this.selectedTemplate.button_exp,
 					message_media:this.selectedTemplate.Links,
-					message_type:this.selectedTemplate.media_type,
+					media_type:this.selectedTemplate.media_type,
 					message_content:this.selectedTemplate.BodyText,
 					CampaignId:CampaignId,
 					isFinished:ix == this.csvContactList.length ? true :false,
@@ -1388,7 +1403,7 @@ formateDate(dateTime:string){
 					channel_id:this.newCampaignDetail.value.channel_id,
 					channel_label:this.newCampaignDetail.value.channel_label,
 					schedule_datetime:BodyData.start_datetime,
-					status:this.scheduled,
+					status:ix == this.csvContactList.length ? 3 :this.scheduled,
 				}
 				let allVariables:any = this.selectedTemplate.allVariables
 				console.log(allVariables)
@@ -1407,10 +1422,10 @@ formateDate(dateTime:string){
 					console.log(responseData);
 					if(messageStatus?.status == 401 || messageStatus?.error){
 						MessageBodyData['status_message']=messageStatus?.error ? messageStatus?.error?.error_data.details: '';
-					MessageBodyData['status']=0
+					MessageBodyData['status']=0;
 					}else{
 					MessageBodyData['status_message']='Message Sent';
-					MessageBodyData['status']=1
+					MessageBodyData['status']=1;
 					}
 
 					await this.apiService.saveCampaignMessages(MessageBodyData).subscribe(responseData =>{
@@ -1453,13 +1468,13 @@ formateDate(dateTime:string){
 							message_media:this.selectedTemplate.Links,
 							message_content:this.selectedTemplate.BodyText,
 							category_id:this.selectedTemplate.category_id,
-							message_type:this.selectedTemplate.media_type,
+							media_type:this.selectedTemplate.media_type,
 							CampaignId:CampaignId,
 							isFinished:idx == this.segmentsContactList.length ? true :false,
 							channel_id:this.newCampaignDetail.value.channel_id,
 							channel_label:this.newCampaignDetail.value.channel_label,
 							schedule_datetime:BodyData.start_datetime,
-							status:this.scheduled,
+							status:idx == this.csvContactList.length ? 3 :this.scheduled,
 						}
 						
 
@@ -1705,8 +1720,12 @@ testinfo(){
 
 	prevStep(){
 		if(this.activeStep >1){
-			this.activeStep = this.activeStep-1
-			
+			if(this.activeStep ==3.1){
+				this.activeStep = 3;
+				this.setStep(3);
+			}else{
+				this.activeStep = this.activeStep-1
+			}			
 		}else{
 			this.activeStep
 		}
@@ -1732,6 +1751,7 @@ testinfo(){
 				} }, 500);
 			}else{
 				this.newCampaignDetail.controls.channel_label.markAsTouched();
+				this.isNextClicked = true;
 			}
 			} else {
 				this.showToaster('Please enter Campaign Name', 'error');
@@ -2509,5 +2529,34 @@ console.log(this.allTemplatesMain);
 			this.isCampaignTiming = !flag;
 	}
 
-}
 
+	getUpdatedContactList(addNewCampaign:any){
+		console.log(this.allContactList);
+		let list =[];
+		for(var i=0;i<this.allContactList.length;i++){
+			if(this.allContactList[i]['selected']){
+				list.push(this.getContactFilterQuery(JSON.parse(this.allContactList[i].filters)));
+			}
+		}
+		let bodyData ={Query:list};
+		console.log(list);
+		this.segmentsContactList =[];
+		this.apiService.processQuery(bodyData).subscribe((result:any) =>{
+			if(result){
+				let contactList = result?.uniqueResults;
+				contactList.forEach((item:any)=>{
+					this.segmentsContactList.push(item?.customerId)
+				})
+				
+			}
+			if(this.segmentsContactList.length>0){
+				this.closeAllModal()
+				this.newListName=this.segmentsContactList.length+' unique contacts selected';
+				this.importedContacts=false;
+				this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
+				}else{
+					this.showToaster('Opps No Contacts selected...','error')
+				}
+		})
+	}
+}

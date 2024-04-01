@@ -393,7 +393,8 @@
                     <h6>Template Name <span class="text-danger font-weight-bold">*</span></h6>
                 </div>
                 <div class="sel-type-text">
-                    <textarea name="text-editor" formControlName="TemplateName" maxlength="512"rows="8" placeholder="Enter template name in max 512 characters"></textarea>
+                    <textarea name="text-editor" formControlName="TemplateName" maxlength="512"rows="8"
+                    (change)="checkTemplateName($event)" placeholder="Enter template name in max 512 characters"></textarea>
                 </div>
 
                 <div class="p-1 msg-head">
@@ -473,7 +474,7 @@
                             </div>
                             <div class="sel-type-text">
                                 <textarea name="text-editor" formControlName="Header" maxlength="60"rows="6" placeholder="Enter" (input)="updateCharacterCount($event,3)"></textarea>
-                                <button (click)="ToggleAttributesOption()" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="attibutes-btn">
+                                <button (click)="isHeaderAttribute = true;ToggleAttributesOption();" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="attibutes-btn">
                                     <div><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div>
                                 </button>
                             </div>
@@ -482,7 +483,7 @@
                     </div>
             
                 <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
-                        <input type="file" accept="image/jpeg, image/png" (change)="onFileChange($event)" id="sel-type-image">
+                        <input type="file" accept="image/jpeg, image/png" (change)="onFileChange($event)" id="sel-type-image" (click)="$event.target.value=null">
                         <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload image</p></div> 
@@ -492,7 +493,7 @@
                 </div>
 
                 <div *ngIf="selectedType === 'video'" class="my-4 sel-type-video">
-                    <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video">
+                    <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video" (click)="$event.target.value=null">
                     <label *ngIf="!selectedPreview || loadingVideo" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
                     <div class="video-player">
                         <span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
@@ -516,7 +517,7 @@
                     <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
                     <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null" >{{ this.fileName }}</span>
                     <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
-                        <input type="file" accept=".doc, .docx, .pdf" (change)="onFileChange($event)" name="document-select" id="sel-type-document">
+                        <input type="file" accept=".doc, .docx, .pdf" (change)="onFileChange($event)" name="document-select" id="sel-type-document" (click)="$event.target.value=null">
                         <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload document</p>
@@ -538,8 +539,9 @@
                 </div>
                 <div class="sel-type-text">
                     <ejs-richtexteditor formControlName="BodyText" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'200px'"
-                    [maxLength]='1024' [showCharCount]='true' placeholder="Enter">
+                    [maxLength]='1024' [showCharCount]='true' placeholder="Enter" (change)="onContentChange()">
                    </ejs-richtexteditor>
+                   <!-- (change)="onContentChange($event)" -->
                 </div>
               
                 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">

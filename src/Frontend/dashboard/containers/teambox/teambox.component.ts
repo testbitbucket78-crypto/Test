@@ -46,26 +46,9 @@ routerGuard = () => {
 	public saveSelection: NodeSelection | any;
 
 
-	public QuickRepliesList: { [key: string]: Object }[] = [
-		{ id:1,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:2,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:3,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:4,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:5,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:6,content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-	];
+	public QuickRepliesList: { [key: string]: Object }[] = []
 
-	public TemplateList: any = [
-		{ id:1,date:'2023-05-15',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:2,date:'2023-05-17',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:3,date:'2023-05-18',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:4,date:'2023-05-20',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:5,date:'2023-05-22',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:6,date:'2023-05-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:7,date:'2023-05-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-		{ id:8,date:'2023-06-23',name:'Healthkart-Offers',img: 'template-img.png',heading:'Vitamins, Minerals & Supplements',content: '<span style="color: #6149CD;"><b>Adipiscing elit, sed do Adipiscing elit, sed do</b></span><br>Fonsectetur adipiscing elit, sed do eiusmod tempor<br><b>sit amet, consectetur adipiscing elit,</b><br>sed doeiusmod tempor incididunt ut labore et'},
-			
-	];
+	public TemplateList: any = [];
 		
 	public tools: object = {
 		items: [
@@ -217,6 +200,8 @@ routerGuard = () => {
 	TemplatePreview:any=false;
 	messageMeidaFile:any='';
 	mediaType:any='';
+	attachmentMedia:any='';
+	isAttachmentMedia:boolean=false;
 	showMention:any=false;
 	NewContactForm:any=[];
 	EditContactForm:any=[];
@@ -233,12 +218,14 @@ routerGuard = () => {
 	hourLeft:number = 0;
 	userList:any;
 	allVariablesList:string[] =[];
+	showInfo:boolean = false;
 	selected:boolean=false;
 	isFilterTemplate:any = {
 		Marketing: true,
 		Utility: true,
 		Authentication: true
 	  };
+	// template_json:any;
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
@@ -276,6 +263,20 @@ routerGuard = () => {
 	selectTemplate(template:any){
 		this.templateChecked = true;
 		this.selectedTemplate = template
+
+		let template_json = JSON.parse(this.selectedTemplate?.template_json)[0];
+		let buttons = [];
+		if(template_json && template_json?.components){
+			if(template_json?.components[1]?.button){
+		for(let item of template_json?.components[1]?.button){
+		if(item){
+			buttons.push({name:item});
+		  }
+		  }
+	    }
+		this.selectedTemplate['buttons'] = buttons;
+		console.log(this.selectedTemplate,'selected temp;ate')
+	  }
 	}
 
 	// resetMessageTex(){
@@ -374,12 +375,14 @@ routerGuard = () => {
 	}
 
 	closeAllModal(){
+		this.OptedIn='No';
 		this.modalReference?.close();
 		this.selectedTemplate = [];
 		this.templateChecked = false;
 		this.showAttachmenOption=false
 		this.messageMeidaFile=false
 		this.showAttributes=false
+		this.newContact.reset()
 		this.editTemplate=false
 		this.TemplatePreview=false
 		this.showQuickReply=false
@@ -389,7 +392,8 @@ routerGuard = () => {
 		this.quickreplysearch='';
 		this.variableValueForm.reset();
 		this.variableValues=[];
-		this.getTemplates();
+		// this.getTemplates();
+
 		$("#editTemplateMedia").modal('hide');
 		$("#templatePreview").modal('hide');
 		$("#quikpopup").modal('hide');
@@ -401,14 +405,22 @@ routerGuard = () => {
 		$('.modal-backdrop').remove();
 
 	}	
-	editMedia(){
+	// editMedia(){
+	// 	$("#editTemplate").modal('hide');
+	// 	$("#templatePreview").modal('hide');  
+	// 	$("#editTemplateMedia").modal('show'); 
+	// }
+
+	editMedia() {
 		$("#editTemplate").modal('hide');
-		$("#templatePreview").modal('hide');  
-		$("#editTemplateMedia").modal('show'); 
+		$("#attachfle").modal('show');
+
 	}
 	closeEditMedia() {
 		$("#editTemplate").modal('show'); 
+		$("#attachfle").modal('hide');
 		$("#editTemplateMedia").modal('hide'); 
+		this.isAttachmentMedia = false;
 	}
 	cancelEditTemplateMedia(){
 		this.closeAllModal()
@@ -416,6 +428,19 @@ routerGuard = () => {
 	updateEditTemplateMedia(){
 		$("#editTemplate").modal('show'); 
 		$("#editTemplateMedia").modal('hide'); 
+	}
+	openVariableOption() {
+		$("#showvariableoption").modal('show'); 
+		$("#editTemplate").modal('hide'); 
+	}
+	closeVariableOption() {
+		this.attributesearch=''; 
+		$("#showvariableoption").modal('hide');
+		$("#editTemplate").modal('show'); 
+	}
+	SaveVariableOption(){
+		$("#showvariableoption").modal('hide'); 
+		$("#editTemplate").modal('show'); 
 	}
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
@@ -431,41 +456,62 @@ routerGuard = () => {
 		}
 		else {
 			this.showToaster('Variable value should not be empty','error')
-			this.variableValueForm.reset();
 		}
 
+	}
+
+	addAttributeInVariables(item: any) {
+	if (!this.variableValues.includes(item)) {
+		item = '{{'+item+'}}'
+		this.variableValues.push(item);
+		this.closeVariableOption();
+	  }
 	}
 
 	replaceVariableInTemplate() {
 		this.allVariablesList.forEach((placeholder, index) => {
 			const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-			this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+			if(this.selectedTemplate.media_type == 'text') {
+				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+			}
 			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
 		});
 	}
-	insertTemplate(item:any){
+	insertTemplate(item:any) {
 		this.closeAllModal()
 		let mediaContent
 		if(item.media_type === 'image') {
-		  mediaContent ='<p><img style="width:50%; height:50%" src="'+item.Links+'"></p>'
+		  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
 		}
 		else if(item.media_type === 'video') {
-			mediaContent ='<p><video style="width:50%; height:50%" src="'+item.Links+'"></video></p>'
+			mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
 		}
 		else if(item.media_type === 'document') {
 			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
 		}
-		else {
-			mediaContent=''
+		
+		let htmlcontent = '';
+		if (item.Header && item.media_type == 'text') {
+			htmlcontent += '<p><strong>'+item.Header+'</strong></p><br>';
 		}
-		var htmlcontent = mediaContent +'<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
+
+		if(mediaContent && item.media_type!== 'text') {
+			htmlcontent += mediaContent
+		}
+	
+		htmlcontent +='<p>'+ item.BodyText+'</p>'+'<br>';
+		if (item.FooterText) {
+			htmlcontent+='<p>'+item.FooterText+'</p>';
+		}
 		this.chatEditor.value =htmlcontent
+		this.isAttachmentMedia = false
 	}
 
 showeditTemplate(){
 	if(this.selectedTemplate.length!==0) {
 		$("#editTemplate").modal('show'); 
 		$("#insertmodal").modal('hide'); 
+		this.isAttachmentMedia = true;
 		this.previewTemplate();
 	}
 	else {
@@ -495,12 +541,19 @@ ToggleAttributesOption(){
 	$("#atrributemodal").modal('show'); 
 
 }
+
+showToolTip(event: MouseEvent) {
+	const target = event.target as HTMLElement;
+	if (target.classList.contains('fallback-tooltip')) {
+		this.showInfo = true;
+	}
+}
 selectAttributes(item:any) {
 	this.closeAllModal();
 	const selectedValue = item;
 	let content:any = this.chatEditor.value || '';
 	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-	content = content+'<span style="color:#000">{{'+selectedValue+'}}</span>'
+	content = content+'<span>{{'+selectedValue+'}}</span>'
 	this.chatEditor.value = content;
 }
 
@@ -515,15 +568,15 @@ selectQuickReplies(item:any){
 	this.closeAllModal()
 	let mediaContent
 	if(item.media_type === 'image') {
-	  mediaContent ='<p><img style="width:50%; height:50%" src="'+item.Links+'"></p>'
+	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
 	}
 	else if(item.media_type === 'video') {
-		mediaContent ='<p><video style="width:50%; height:50%" src="'+item.Links+'"></video></p>'
+		mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
 	}
 	else {
-		mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
 	}
-	var htmlcontent = mediaContent +'<p><span style="color: #6149CD;"><b>'+item.Header+'</b></span><br>'+item.BodyText+'<br>'+item.FooterText+'<br></p>';
+	var htmlcontent = mediaContent+'<p>'+item.BodyText+'</p>';
 	this.chatEditor.value =htmlcontent
 
 }
@@ -642,17 +695,41 @@ filterTemplate(temType:any){
 ToggleAttachmentBox(){
 	this.closeAllModal()
 	$("#attachfle").modal('show'); 
-document.getElementById('attachfle')!.style.display = 'inherit';
+	document.getElementById('attachfle')!.style.display = 'inherit';
 	this.dragAreaClass = "dragarea";
 	
 }
-sendattachfile(){
-		if(this.messageMeidaFile!==''){
-			$("#sendfile").modal('show');	
-		}else{
-			$("#sendfile").modal('hide');	
-		}
-	}
+sendattachfile() {
+    if (this.isAttachmentMedia === false) {
+        if (this.messageMeidaFile !== '') {
+            $("#sendfile").modal('show');
+        } else {
+            $("#sendfile").modal('hide');
+        }
+    } else {
+        let mediaCategory;
+        if (this.mediaType.startsWith('image/')) {
+            mediaCategory = 'image';
+        } else if (this.mediaType.startsWith('video/')) {
+            mediaCategory = 'video';
+        } else if (this.mediaType === 'application/') {
+            mediaCategory = 'document';
+        }
+
+        if (this.selectedTemplate.media_type === mediaCategory) {
+            this.selectedTemplate.Links = this.attachmentMedia;
+            $("#attachfle").modal('hide');
+            $("#editTemplate").modal('show');
+			this.messageMeidaFile='';
+        } else {
+            this.showToaster('! Please only upload media that matches selected template', 'error');
+            $("#attachfle").modal('hide');
+            $("#editTemplate").modal('show');
+			this.messageMeidaFile='';
+        }
+    }
+}
+
 	
 	sendMediaMessage() {
 
@@ -692,11 +769,6 @@ sendattachfile(){
 			if (response.status === 200 && response.message === 'Client is ready !') {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
-					// if (responseData.middlewareresult.status === '401') {
-					// 	this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
-					// 	return;
-					// };
-					// if(responseData.middlewareresult.status === '200') {
 						if(this.newMessage.value.Message_id==''){
 							var insertId:any = responseData.insertId
 							if(insertId){
@@ -750,8 +822,12 @@ sendattachfile(){
 							this.newMessage.reset({
 								Message_id: ''
 							});
-					// }
 				});
+			}
+		},
+		(error)=> {
+			if(error) {
+				this.showToaster('Internal Server Error Please Contact System Adminstrator','error');
 			}
 		});
 	}else{
@@ -826,6 +902,7 @@ sendattachfile(){
 			let responseData:any = uploadStatus
 			if(responseData.filename){
 				this.messageMeidaFile = responseData.filename
+				this.attachmentMedia = responseData.filename
 				this.mediaSize=responseData.fileSize
 				console.log(this.mediaSize);
 				this.sendattachfile();
@@ -861,7 +938,7 @@ sendattachfile(){
 		this.getAllInteraction()
 		this.getCustomers()
 		this.getquickReply()
-		this.getTemplates()
+		// this.getTemplates()
 		this.subscribeToNotifications()
 		this.getAttributeList()
         this.sendattachfile()
@@ -942,12 +1019,15 @@ sendattachfile(){
 	  }	  
 
 
-	async getTemplates(){
+	async getTemplates(channel:any) {
 		let spid = Number(this.SPID)
 		this.settingService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
 			this.allTemplatesMain = allTemplates.templates
 			console.log(this.allTemplatesMain)
 			this.allTemplates = allTemplates.templates
+
+			this.allTemplates = this.allTemplates.filter((item:any) => item.Channel == channel);
+			this.allTemplatesMain =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item.Channel == channel)));
 	
 		})
 		
@@ -1358,23 +1438,24 @@ sendattachfile(){
 	}
 
 	selectInteraction(Interaction: any) {
-		// if (this.chatEditor) {
-		//   this.chatEditor.value = 'Your message...';
-		//   this.showChatNotes = 'text';
-		// }
-	  
-		for (let i = 0; i < this.interactionList.length; i++) {
-		  this.interactionList[i].selected = false;
-		}
-	  
-		Interaction['selected'] = true;
-		this.selectedInteraction = Interaction;
-		this.contactId = Interaction.customerId;
-		this.selected=Interaction.selected;
 		console.log(Interaction);
-		this.selectedCountryCode = Interaction.countryCode;
 
-		this.Allmessages = this.selectedInteraction.allmessages;
+		for(const item of this.interactionList) {
+			item['selected'] = false;
+		}	  
+		Interaction['selected'] = true;
+		this.contactId = Interaction.customerId;	
+
+		let channel = Interaction['channel'];
+		this.getTemplates(channel);
+
+		this.selectedCountryCode = Interaction['countryCode'];
+
+		this.Allmessages = Interaction['allmessages'];
+
+		this.selectedInteraction = Interaction;
+	
+
 		this.getPausedTimer();
 		setTimeout(() => {
 			this.scrollChatToBottom();
@@ -1944,22 +2025,31 @@ createCustomer() {
 	var bodyData = this.newContact.value;
 	console.log(bodyData);
 		if(this.newContact.valid) {
-			this.apiService.createCustomer(bodyData).subscribe(
-				async (response:any) => {
-					var responseData: any = response;
-					var insertId: any = responseData.insertId;
-					if (insertId) {
-						this.createInteraction(insertId);
-						this.newContact.reset();
-						this.getAllInteraction();
-						this.getCustomers();
-					}},
-				async (error) => {
-				  if (error.status === 409) {
-					this.showToaster('Phone Number already exist. Please Try another Number', 'error');
-				  }
-				}
-			  );
+			if(this.OptedIn == 'Yes') {
+				this.apiService.createCustomer(bodyData).subscribe(
+					async (response:any) => {
+						var responseData: any = response;
+						var insertId: any = responseData.insertId;
+						if (insertId) {
+							this.createInteraction(insertId);
+							this.newContact.reset();
+							this.getAllInteraction();
+							this.getCustomers();
+							this.OptedIn = 'No';
+						}},
+					async (error) => {
+					  if (error.status === 409) {
+						this.showToaster('Phone Number already exist. Please Try another Number', 'error');
+						this.OptedIn = 'No';
+					  }
+					}
+				  );
+				
+			}
+			else {
+				this.showToaster('! Contact Opt In is required ', 'error');
+			}
+	
 		}
 		else {
 			this.newContact.markAllAsTouched();
@@ -2099,7 +2189,7 @@ sendMessage(){
 	var tempDivElement = document.createElement("div");   
 
 	tempDivElement.innerHTML = this.chatEditor.value;
-	let value =this.chatEditor.value?.replaceAll('&nbsp;',' ')?.replaceAll(/ <\/em>/g, '_ ')?.replaceAll(/ <\/span>/g, '~ ')?.replaceAll(/ <\/strong>/g, '* ')?.replaceAll(/<\/strong> /g, '*');
+	let value =this.chatEditor.value;
     let val = tempDivElement.textContent || tempDivElement.innerText || "";
 	if (this.chatEditor.value == null || val.trim()=='') {
 		this.showToaster('! Please enter a message before sending.','error');
@@ -2152,11 +2242,6 @@ sendMessage(){
 			if (response.status === 200 && response.message === 'Client is ready !') {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
-					// if (responseData.middlewareresult.status === '401') {
-					// 	this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
-					// 	return;
-					// };
-					// if(responseData.middlewareresult.status === '200') {
 						if(this.newMessage.value.Message_id==''){
 							var insertId:any = responseData.insertId
 							if(insertId){
@@ -2210,8 +2295,15 @@ sendMessage(){
 							this.newMessage.reset({
 								Message_id: ''
 							});
-					// }
 				});
+			}
+		},
+		(error)=> {
+			if(error.status === 500) {
+				this.showToaster('! Internal Server Error Please Contact System Adminstrator','error');
+			}
+			else {
+				this.showToaster(error.message,'error');
 			}
 		});
 
@@ -2292,7 +2384,13 @@ sendMessage(){
 			
 		
 			previewTemplate() {
-				let isVariableValue:string = this.selectedTemplate.BodyText + this.selectedTemplate.Header;
+				let isVariableValue='';
+				if(this.selectedTemplate.media_type == 'text') {
+					isVariableValue = this.selectedTemplate.Header + this.selectedTemplate.BodyText;
+				}
+				else {
+					isVariableValue = this.selectedTemplate.BodyText;
+				};
 		
 				if (isVariableValue) {
 				  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");

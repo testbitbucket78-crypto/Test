@@ -257,7 +257,7 @@
                 </div>
                     <div class="d-flex justify-content-center picture-crop-button-container">
                         <div class="text-center picture-crop-button">
-                         <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
+                         <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" (click)="$event.target.value=null" accept="image/jpeg, image/png" />
                          <label for="myFileInput" class="m-0 fileLabel" ><img src="../../../../assets/img/profile/Fill 4.svg" /></label>    
                         </div>
                     </div>

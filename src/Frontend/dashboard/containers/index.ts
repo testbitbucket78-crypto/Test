@@ -15,7 +15,6 @@ import { RolesSettingsComponent } from './roles-settings/roles-settings.componen
 import { OrganisationalSettingsComponent } from './organisational-settings/organisational-settings.component';
 import { WorkingHoursComponent } from './working-hours/working-hours.component';
 import { AcoountSettingsComponent } from './acoount-settings/acoount-settings.component';
-import { AddSmartRepliesComponent} from './addSmartReplies/addSmartReplies.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { MyprofileComponent } from './myprofile/myprofile.component';
 import { ManageplanComponent } from './manageplan/manageplan.component';
@@ -36,10 +35,9 @@ import { TemplateSettingsComponent } from './template-settings/template-settings
 import { TemplateMessageComponent } from './template-message/template-message.component';
 import { QuickResponseComponent } from './quick-response/quick-response.component';
 
-export const containers = [DashboardComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ImportComponent, CampaignsComponent,FunnelComponent, ReportsComponent,ConversationalReportsComponent, CampaignReportsComponent, AutomationReportsComponent, SettingComponent,AcoountSettingsComponent,AddSmartRepliesComponent,NotificationsComponent,SupportComponent,UserguideComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent,RolesSettingsComponent,DefaultMessageSettingsComponent,GeneralSettingsComponent,ManageStorageComponent,RoutingRulesComponent,TeamSettingsComponent,UserSettingsComponent,CampaignSettingsComponent,ContactSettingsComponent,CustomFieldsComponent,TemplateSettingsComponent,TemplateMessageComponent,QuickResponseComponent];
+export const containers = [DashboardComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ImportComponent, CampaignsComponent,FunnelComponent, ReportsComponent,ConversationalReportsComponent, CampaignReportsComponent, AutomationReportsComponent, SettingComponent,AcoountSettingsComponent,NotificationsComponent,SupportComponent,UserguideComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent,RolesSettingsComponent,DefaultMessageSettingsComponent,GeneralSettingsComponent,ManageStorageComponent,RoutingRulesComponent,TeamSettingsComponent,UserSettingsComponent,CampaignSettingsComponent,ContactSettingsComponent,CustomFieldsComponent,TemplateSettingsComponent,TemplateMessageComponent,QuickResponseComponent];
 
 export * from './dashboard/dashboard.component';
-export * from './addSmartReplies/addSmartReplies.component';
 export * from './contacts/contacts.component';
 export * from './teambox/teambox.component';
 export * from './import/import.component';
