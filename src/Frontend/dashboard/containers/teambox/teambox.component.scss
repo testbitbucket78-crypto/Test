@@ -136,7 +136,7 @@
     font-family: 'Manrope';
     // position: fixed;
     // width: 100%;
-//     height: 70vh;
+    height: 90vh;
 }
 
 // .team-box {
@@ -152,7 +152,7 @@
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
-    height: 95vh;
+    height: 90vh;
 }
 
 .inner_section .custom_row {
@@ -186,8 +186,8 @@
     padding-left: 1%;
     padding-right: 1%;
     background: #fbf9fe 0% 0% no-repeat padding-box;
-    // overflow: auto;
-    // height: 86vh;
+    overflow: scroll;
+    height: 90vh;
 }
 
 .user_info {
@@ -409,6 +409,7 @@
     display: flex;
     margin-bottom: 10px;
     padding: 15px;
+    cursor: pointer;
 }
 
 .contacts_row:hover, .contacts_row.active {
@@ -545,11 +546,12 @@ img.preview_icon {
 
 .contacts_left, .contacts_right {
     display: flex;
-    word-break: break-word;
+    // word-break: break-word;
 }
 
 .contacts_right {
     flex-direction: column;
+    word-break: break-word;
     min-width: 70px;
 }
 
@@ -587,6 +589,7 @@ img.preview_icon {
     margin: 0px;
     font-size: 14px;
     color: #6149CD;
+    word-break: break-word;
 }
 
 .contacts_detail .message {
@@ -2614,11 +2617,13 @@ label span {
     border: 1px solid #EBEBEB;
     border-radius: 15px;
     padding: 10px 10px 10px 25px;
-    font-size: 10px !important;
-    width: max-content;
+    font-size: 12px !important;
+    width: 175px;
     margin: 1rem;
     display: flex;
     align-items: center;
+    height: 30px;
+  
     }
     .variableoption .content .content_inner{
     margin: 1rem;

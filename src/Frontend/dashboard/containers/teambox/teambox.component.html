@@ -401,7 +401,7 @@
 						</div>
 						<div class="profile" style="padding: 0 45px 0 45px;" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
 						
-							<div class="custom_row">
+							<div class="custom_row no-padding">
 								<div class="col-md-4 flex">
 									<img *ngIf="selectedInteraction.avatar" class="big-thumbnail"
 										src="/assets/img/teambox/Richie_1.png" />
@@ -568,34 +568,36 @@
 
 						</div>
 					</div>
+					<div *ngIf="selectedInteraction.InteractionId && showAttachedMedia" class="mt-3 sideBar-btn d-flex justify-content-end">
+						<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()">
+							<img src="assets/img/teambox/icon-close.svg">
+						</button>
+					</div>
 				
-					<div class="profile pl-2" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
-							<div class="mt-3 sideBar-btn d-flex justify-content-end">
-								<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()">
-									<img src="assets/img/teambox/icon-close.svg">
-								</button>
-							</div>
-						<div class="attached_media_list">
-							<p class="preview_media" *ngFor="let file of selectedInteraction.allmedia;let m = index">
-								<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
-									src="/assets/img/teambox/video_preview.png"
-									(click)="downloadFile(file.message_media)">
-								<img class="preview_icon" *ngIf="file.media_type == 'text/plain'"
-									src="/assets/img/teambox/doc_preview.png"
-									(click)="downloadFile(file.message_media)">
-								<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
-									src="/assets/img/teambox/doc_preview.png"
-									(click)="downloadFile(file.message_media)">
-
-								<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-								<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}
-									(click)="openaddMediaGallery(mediagallery,m)">
-
+					<div class="profile pl-2 flex-row" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
+						
+						<div class="attached_media_list" *ngFor="let file of selectedInteraction.allmedia;let m = index">
+				
+							<p *ngIf="file.message_media!=='0'" class="preview_media">				
+									<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
+										src="/assets/img/teambox/video_preview.png"
+										(click)="downloadFile(file.message_media)">
+									<img class="preview_icon" *ngIf="file.media_type == 'text/plain'"
+										src="/assets/img/teambox/doc_preview.png"
+										(click)="downloadFile(file.message_media)">
+									<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
+										src="/assets/img/teambox/doc_preview.png"
+										(click)="downloadFile(file.message_media)">
+	
+									<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}
+										(click)="openaddMediaGallery(mediagallery,m)">
+									<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}
+										(click)="openaddMediaGallery(mediagallery,m)">
+									<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}
+										(click)="openaddMediaGallery(mediagallery,m)">
+									<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}
+										(click)="openaddMediaGallery(mediagallery,m)">
+							
 							</p>
 
 						</div>
@@ -705,7 +707,7 @@
 									<label class="custom-file-upload">
 										<input type="file" #file
 											accept="image/*, application/msword, application/pdf, video/*"
-											[multiple]="false" (change)="onFileChange($event)" style="display:none" />
+											[multiple]="false" (change)="onFileChange($event)" (click)="$event.target.value=null" style="display:none" />
 										<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
 									</label>
 
@@ -1115,6 +1117,7 @@
 						<p><span>or</span></p>
 						<label class="custom-file-upload">
 							<input type="file" #file [multiple]="false" (change)="onFileChange($event)"
+							(click)="$event.target.value=null"
 								style="display:none" />
 							<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
 						</label>
@@ -1300,6 +1303,7 @@
 
 					<div *ngFor="let file of selectedInteraction.allmedia;let k = index" class="mySlides"
 						[ngClass]="slideIndex==k ? 'mySlides active' : 'mySlides'">
+						<div *ngIf="file.message_media!=='0'">
 
 						<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
 							src="/assets/img/teambox/video_preview.png" (click)="downloadFile(file.message_media)">
@@ -1312,7 +1316,7 @@
 						<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}>
 						<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}>
 						<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}>
-
+					</div>
 
 					</div>
 
@@ -1394,7 +1398,7 @@
 				<h4 class="modal-title" id="modal-basic-title">Add New Contact</h4>
 			</div>
 			<div class="modal-header-right">
-				<p (click)="this.newContact.reset()" class="close-box" aria-label="Close" (click)="d('Cross click')"><img
+				<p  class="close-box" (click)="closeAllModal()"><img
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
