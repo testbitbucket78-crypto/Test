@@ -158,7 +158,10 @@ selectAttributes(item:any){
   //content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
   //content = content+ '<span style="color:#000">{{'+selectedValue+'}}</span>'
   //this.chatEditor.value = content;
-  this.insertAtCursor(selectedValue)
+  this.insertAtCursor(selectedValue);
+  setTimeout(() => {
+    this.onContentChange();
+  }, 50); 
 }
 
 insertAtCursor(selectedValue:any) {
@@ -346,6 +349,8 @@ removeMedia() {
             this.showToaster('Media file size is too large, Maximum of 10mb size is allowed!','error')
           }
       });
+      } else{
+        this.showToaster(`Please upload ${this.selectedType} !`,'error');
       }
      }
 
@@ -453,6 +458,7 @@ removeMedia() {
     
 onContentChange() {
   //const text = this.chatEditor?.value;
+  console.log('test');
   const container = document.createElement('div');
   container.innerHTML = this.chatEditor?.value;
   const text = container.innerText;

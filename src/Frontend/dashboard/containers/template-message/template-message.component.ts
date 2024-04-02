@@ -782,15 +782,22 @@ checkTemplateName(e:any){
 
         //content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
         if(this.isHeaderAttribute){
-            content = content+ '{{'+selectedValue+'}}'
-            this.newTemplateForm.controls.Header.setValue(content);
+            const regex = /\{\{[^{}]+\}\}/;
+            if(regex.test(content)){
+                this.showToaster('! Cannot add more then 1 attribute in header ','error');
+            }else{
+                content = content+ '{{'+selectedValue+'}}'
+                this.newTemplateForm.controls.Header.setValue(content);
+            }
         }else{
             // content = content+ '<span style="color:#000">{{'+selectedValue+'}}</span>'
             // this.chatEditor.value = content;
             this.insertAtCursor(selectedValue);
+            setTimeout(() => {
+                this.onContentChange();
+            }, 50); 
         }
         this.closeAtrrModal();
-        
     }
 
     
