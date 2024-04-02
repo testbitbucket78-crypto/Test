@@ -792,10 +792,19 @@ checkTemplateName(e:any){
         }else{
             // content = content+ '<span style="color:#000">{{'+selectedValue+'}}</span>'
             // this.chatEditor.value = content;
+            const container = document.createElement('div');
+            container.innerHTML = this.chatEditor?.value;
+            const text = container.innerText;
+            const attLenght = selectedValue.length;
+            if((text.length + attLenght +4) > 1024 ){
+              this.showToaster("text length should not exceed 1024 limit!", 'error');
+            }else{
             this.insertAtCursor(selectedValue);
-            setTimeout(() => {
-                this.onContentChange();
-            }, 50); 
+            }
+            // this.insertAtCursor(selectedValue);
+            // setTimeout(() => {
+            //     this.onContentChange();
+            // }, 50); 
         }
         this.closeAtrrModal();
     }
