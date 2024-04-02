@@ -314,6 +314,11 @@
 	.close-box img{
 	width: 10px;
 	}
+
+	.close-box .replace-img{
+		height: 10px !important;
+
+	}
 	.close-box img.setting_icon{
 	width: 17px;
 	}
@@ -2236,4 +2241,76 @@ position: absolute;
 
 .addsegmentaudience-modal .modal-content{
 	height: 100% !important
+}
+
+
+.attachmentboxcon {
+    min-width: 890px;
+}
+
+.attachmentboxcon {
+    min-width: 890px;
+}
+#attachmentbox{
+	z-index: 99999999 !important;
+}
+.teambox-white .modal-content {
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.attachmentboxbody {
+    padding: 10px 100px 50px 100px;
+}
+
+.attachmentboxbody h4 {
+    color: #000;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.attachmentbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.attachmentbox_left {
+    background-color: #FFF4F2 !important;
+    border-radius: 20px !important;
+    padding: 20px;
+    width: 48%;
+    border: 2px dashed #EBEBEB;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: space-around;
+    align-items: center;
+}
+
+.attachmentbox_left img.icon {
+    max-width: 80px;
+    margin-bottom: 1rem;
+}
+
+.attachmentbox_left p {
+    font-weight: 800;
+    color: #000;
+    font-size: 14px;
+}
+
+.attachmentbox_left p span {
+    font-weight: 600;
+    color: #7A86A1;
+    font-size: 12px;
+}
+
+.attachmentbox_right {
+    background-color: #ffffff !important;
+    border-radius: 20px !important;
+    padding: 20px;
+    width: 48%;
+    box-shadow: 4px 22px 54px #695F971A;
+    display: flex;
 }

@@ -149,9 +149,14 @@
 					<p class="sub_title_sm blackcolor mb-1">Category</p>
 					<p>{{selectedCampaign.category_label}}</p>
 					<div class="template">
-						<div *ngIf="selectedCampaign.message_media" class="template_img">
+						<div class="doc-preview"*ngIf="selectedCampaign.media_type=='document'" width="100%" height="150px">
+							<a [href]="selectedCampaign.message_media"><img src="../../../../assets/img/settings/doc.svg" /></a>
+							</div>
+							<video *ngIf="selectedCampaign.media_type=='video'" muted id="video-background" [src]="selectedCampaign.message_media"></video>
+							<img *ngIf="selectedCampaign.media_type=='image'" class="template_img" src="{{selectedCampaign.message_media}}">
+						<!-- <div *ngIf="selectedCampaign.message_media" class="template_img">
 							<img src="{{selectedCampaign.message_media}}">
-						</div>
+						</div> -->
 						<div class="template_text">
 							<p [innerHTML]="selectedCampaign.message_heading" class="name"></p>
 							<p class="description" [innerHTML]="selectedCampaign.message_content"></p>
@@ -432,7 +437,8 @@
 						<div class="template_details_section_left">
 							<p>{{selectedTemplate.TemplateName}}</p>
 							<div class="template">
-								<div class="template_img">
+								<div class="template_img">									
+									<p class="close-box" (click)="editTemplateMedia()"><img class="replace-img" height="10px" src="/assets/img/campaign/edit.svg"></p>
 									<div class="doc-preview"*ngIf="selectedTemplate.media_type=='document'">
 										<a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									  </div>
@@ -518,6 +524,7 @@
 									  </div>
 						            <div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
 								</div>
+								<!-- <div><img src="/assets/img/teambox/edit-icon.svg"></div> -->
 								<div class="template_text">
 									<p [innerHTML]="selectedTemplate.TemplateName" class="name"></p>
 									<p [innerHTML]="selectedTemplate.BodyText" class="description"></p>
@@ -1433,7 +1440,7 @@
 		
 	</ng-template>
 
-	<!-- <div class="modal fade" tabindex="-1" id="attachmentbox" data-bs-backdrop="static" #attachmentbox role="dialog">
+	<div class="modal fade" tabindex="-1" id="attachmentbox" data-bs-backdrop="static" #attachmentbox role="dialog">
 		<div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
 		  <div class="m-0 px-3 modal-content attachmentboxcon">
 			<div class="">
@@ -1457,7 +1464,7 @@
 					<label class="custom-file-upload">
 					  <input type="file" #file
 						accept="image/*, application/msword, application/pdf, video/*"
-						[multiple]="false" (change)="onFileChange($event)" style="display:none" />
+						[multiple]="false" (change)="onReplaceFileChange($event)" style="display:none" />
 					  <img class="icon" src="/assets/img/teambox/upload.png"> Browse files
 					</label>
 	  
@@ -1481,9 +1488,7 @@
 			</div>
 		  </div>
 		</div>
-	  </div> -->
-
-
+	  </div>
 
 
 </sb-layout-dashboard>
