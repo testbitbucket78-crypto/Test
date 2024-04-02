@@ -104,13 +104,13 @@
 					<p [innerHTML]="item.Media | sanitizeHtml" *ngIf="item.Media"></p>
 					<p [innerHTML]="item.Message | sanitizeHtml"></p>
 				</div>
-				<div *ngIf="item.Name =='Assign Conversation' && item.Name !==''" class="assign-conversation">
+				<div *ngIf="item.Name =='Assign Conversation' && item.Name" class="assign-conversation">
 					<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
 					<div class="d-flex flex-wrap assign-container">
 						<p class="py-1 px-2 m-0" id="msgbox-body1"><b>Conversation Assigned:</b> {{item.Value}}</p>
 					</div>
 				</div>
-				<div *ngIf="item.Name =='Add Contact Tag' && item.Name !==''" class="assign-conversation">
+				<div *ngIf="item.Name =='Add Contact Tag' && item.Name" class="assign-conversation">
 					<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
 					<div class="d-flex pl-1 assign-container">
 						<p class="p-1 m-0" id="msgbox-body1"><b>Add Tags: </b><span style="color: #000;" id="msgbox-body1">{{parseTags(item.Value)}}</span>

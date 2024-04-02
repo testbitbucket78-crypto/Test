@@ -1460,7 +1460,7 @@ stopPropagation(event: Event) {
 			   this.apiService.updateSmartReply(BodyData)
 			.subscribe(
 			   (response: any) => {
-				if (response.affectedRows == 1) {
+				if (response.status == 200) {
 					$("#smartrepliesModal").modal('hide'); 
 					this.modalService.open(smartreplysuccess);
 				   }

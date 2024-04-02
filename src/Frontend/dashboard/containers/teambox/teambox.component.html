@@ -350,7 +350,7 @@
 							</div>
 							<div class="input-area">
 								<ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]='100'
-								  (actionComplete)='actionCompleteHandler($event)'placeholder="Enter Message">
+								  placeholder="Enter Message">
 								</ejs-richtexteditor>
 							  
 
@@ -402,7 +402,7 @@
 						<div class="profile" style="padding: 0 45px 0 45px;" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
 						
 							<div class="custom_row no-padding">
-								<div class="col-md-4 flex">
+								<div class="col-md-4 flex no-padding">
 									<img *ngIf="selectedInteraction.avatar" class="big-thumbnail"
 										src="/assets/img/teambox/Richie_1.png" />
 									<img *ngIf="!selectedInteraction.avatar" class="big-thumbnail"
@@ -1347,11 +1347,15 @@
 				aria-describedby="basic-addon2" [(ngModel)]="header" />
 			<div class="drop-down-btn" (click)="toggleContactOption()">
 
-				<button *ngIf="selectedChannel == 'WhatsApp Official'" class="drop-down-btn">
+				<button *ngIf="filterChannel == ''" class="drop-down-btn">
+					 Select Channel
+				</button>
+
+				<button *ngIf="filterChannel == 'WhatsApp Official'" class="drop-down-btn">
 					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WhatsApp Official
 				</button>
 
-				<button *ngIf="selectedChannel == 'WhatsApp Web'" class="drop-down-btn">
+				<button *ngIf="filterChannel == 'WhatsApp Web'" class="drop-down-btn">
 					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WhatsApp Web
 				</button>
 			</div>
@@ -1381,7 +1385,7 @@
 							<p class="phone">{{item.Phone_number}}</p>
 						</div>
 					</div>
-					<img *ngIf="item.channel=='WhatsApp'" class="icon" src="../../../../assets/img/teambox/Chat.svg" />
+					<img class="icon" src="../../../../assets/img/teambox/Chat.svg" />
 				</div>
 			</div>
 
