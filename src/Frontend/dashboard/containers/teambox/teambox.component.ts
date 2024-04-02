@@ -36,7 +36,7 @@ routerGuard = () => {
 
 	@ViewChild('notesSection') notesSection: ElementRef | any; 
 	@ViewChild('chatSection') chatSection: ElementRef | any; 
-	@ViewChild('chatEditor') chatEditor: RichTextEditorComponent | any; 
+	@ViewChild('chatEditor') chatEditor!: RichTextEditorComponent; 
 
 	@ViewChild('variableValue', { static: false }) variableValueForm!: NgForm;
 
@@ -133,7 +133,7 @@ routerGuard = () => {
 	TeamLeadId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
 	AgentId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
 	AgentName = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name
-	loginAs = (JSON.parse(sessionStorage.getItem('loginDetails')!)).UserType
+	loginAs:any;
 	spNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
 	messageTimeLimit=10;
 	SIPmaxMessageLimt=100;
@@ -150,6 +150,7 @@ routerGuard = () => {
 	selectedInteraction:any = [];
 	selectedNote:any=[];
 	contactList:any = [];
+	contactListInit:any = [];
     contactId:number = 0;
 	interactionList:any = [];
 	interactionListMain:any=[];
@@ -220,11 +221,14 @@ routerGuard = () => {
 	allVariablesList:string[] =[];
 	showInfo:boolean = false;
 	selected:boolean=false;
+	filterChannel:string = '';
 	isFilterTemplate:any = {
 		Marketing: true,
 		Utility: true,
 		Authentication: true
 	  };
+	// isNewInteraction:boolean=false;
+	// Interaction_ID:number = 0;
 	// template_json:any;
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
@@ -378,6 +382,7 @@ routerGuard = () => {
 		this.OptedIn='No';
 		this.modalReference?.close();
 		this.selectedTemplate = [];
+		this.filterChannel='';
 		this.templateChecked = false;
 		this.showAttachmenOption=false
 		this.messageMeidaFile=false
@@ -392,6 +397,7 @@ routerGuard = () => {
 		this.quickreplysearch='';
 		this.variableValueForm.reset();
 		this.variableValues=[];
+		this.getCustomers()
 		// this.getTemplates();
 
 		$("#editTemplateMedia").modal('hide');
@@ -618,25 +624,11 @@ searchTemplate(event:any){
 
 filterTemplate(temType:any){
 
-	
-// 	if(temType.target.checked){
 	var type= temType.target.value;
 	this.isFilterTemplate[type] = !this.isFilterTemplate[type];
 
 	let allList  =this.allTemplatesMain;
-// 	for(var i=0;i<allList.length;i++){
-// 			if(allList[i]['Category'] == type){
-// 				allList[i]['isDeleted']=1
-// 			}
-// 	}
-//    }else{
-// 	var type= temType.target.value;
-// 	for(var i=0;i<allList.length;i++){
-// 			if(allList[i]['Category'] == type){
-// 				allList[i]['isDeleted']=0
-// 			}
-// 	}
-//    }
+
    var newArray=[];
    for(var m=0;m<allList.length;m++){
 	var category = allList[m]['Category'];
@@ -647,50 +639,7 @@ filterTemplate(temType:any){
    }
    this.allTemplates= newArray
 
-	
 }
-
-  public async onInsert(item: any) {
-	
-	this.range = this.selection.getRange(document); 
-	this.saveSelection.restore();
-	const emojiText = item.target.textContent;
-	await this.chatEditor.executeCommand('insertHTML', emojiText);
-	this.saveSelection = this.selection.save(this.range, document); 
-	this.chatEditor.formatter.saveData();
-	this.chatEditor.formatter.enableUndo(this.chatEditor);
-	
-  }
-
-  actionCompleteHandler(e: any): void {
-	if (e.requestType === 'SourceCode') {
-	this.chatEditor.getToolbar().querySelector('#custom_tbar').parentElement.classList.add('e-overlay');
-	} else if (e.requestType === 'Preview') {
-	this.chatEditor.getToolbar().querySelector('#custom_tbar').parentElement.classList.remove('e-overlay');
-	}
-}
-  onclickInsert(){
-	console.log(this.chatEditor.contentModule.getEditPanel() as HTMLElement);
-	(this.chatEditor.contentModule.getEditPanel() as HTMLElement).focus();
-            // this.dialogObj.element.style.display = '';
-            this.range = this.selection.getRange(document);
-            this.saveSelection = this.selection.save(this.range, document);
-            // this.dialogObj.show();
-  }
-  
-  private moveToEndOfEditor() {
-	const editor = this.chatEditor.contentModule.getDocument();
-	const range = editor.createRange();
-  
-	// Set the range to the end of the editor content
-	range.selectNodeContents(editor.body);
-	range.collapse(false);
-  
-	// Update the selection with the new range
-	const selection = editor.defaultView.getSelection();
-	selection.removeAllRanges();
-	selection.addRange(range);
-  }
   
 ToggleAttachmentBox(){
 	this.closeAllModal()
@@ -935,6 +884,7 @@ sendattachfile() {
 		}
 		this.routerGuard()
 		this.getAgents()
+		this.getUserList()
 		this.getAllInteraction()
 		this.getCustomers()
 		this.getquickReply()
@@ -943,7 +893,6 @@ sendattachfile() {
 		this.getAttributeList()
         this.sendattachfile()
 		this.getQuickResponse()
-		this.getUserList()
 		this.getTagData()
 		this.NewContactForm = this.newContact;
         this.EditContactForm = this.editContact;
@@ -1058,16 +1007,10 @@ sendattachfile() {
 		this.OptedIn = event.target.checked ? 'Yes': 'No';
 	}
 	getCustomers(){
-
 		this.apiService.getCustomers(this.SPID).subscribe(data =>{
 			this.contactList= data
-			console.log(this.contactList)
-			const names: string[] = this.contactList.map((contact: { Name: any; }) => contact.Name);
-			const email: string[] = this.contactList.map((contact: {emailId:any; }) => contact.emailId);
-			const phone: string[] = this.contactList.map((contact: {Phone_number: any; }) => contact.Phone_number);
-			console.log(names);
-			console.log(email);
-			console.log(phone);
+			this.contactListInit = data
+			console.log(this.contactList,'contact list')
 		});
 	}
 	
@@ -1089,7 +1032,7 @@ sendattachfile() {
 	async getAssicatedInteractionData(dataList:any,selectInteraction:any=true){
 
 		let threasholdMessages=0
-		dataList.forEach((item:any) => {
+		dataList.forEach((item:any,idx:number) => {
 		
 		item['tags'] = this.getTagsList(item.tag)
 		
@@ -1103,10 +1046,14 @@ sendattachfile() {
 			item['progressbar']= this.getProgressBar(item.lastMessage)
 			item['UnreadCount']= this.getUnreadCount(item.allmessages)
 			
+
 			var messageSentCount:any = this.threasholdMessages(item.allmessages)
 			threasholdMessages = threasholdMessages+messageSentCount
 			this.SIPthreasholdMessages= this.SIPmaxMessageLimt-threasholdMessages
-	
+			// if(idx==(dataList.length-1) && !this.isNewInteraction) {
+			// 	this.getUpdatedList(dataList);
+			// 	this.isNewInteraction = false;
+			// } 
 		})
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes').subscribe(notesList =>{
@@ -1137,7 +1084,7 @@ sendattachfile() {
 
 
 		});
-
+		// console.log(dataList,'Data LIST')
 		this.interactionList= dataList
 		this.interactionListMain= dataList
 
@@ -1156,6 +1103,19 @@ sendattachfile() {
 		}
 
 
+	}
+
+	getUpdatedList(dataList:any) {
+		console.log(dataList,'Data LIST')
+		this.interactionList= []
+		this.interactionListMain= []
+
+		dataList.forEach((item:any)=>{
+			if(item?.allmessages?.length>0){
+				this.interactionList.push(item)
+				this.interactionListMain.push(item)
+			}
+		})
 	}
 	async updatePinnedStatus(item: any) {
 		var bodyData = {
@@ -1619,6 +1579,7 @@ updateCustomer(){
 			this.showToaster('Contact information updated...','success');
 			this.getAllInteraction(false);
 			this.getCustomers();
+			this.filterChannel='';
 		});
 	}
 	else {
@@ -1629,10 +1590,16 @@ updateCustomer(){
 }
 
 
-filterContactByType(ChannelName:any){
-	this.selectedChannel = ChannelName
-	this.getSearchContact();
-	this.ShowContactOption=false
+filterContactByType(ChannelName:string){
+    this.selectedChannel = ChannelName;
+	this.filterChannel = ChannelName;
+
+    const filteredList = this.contactListInit.filter(
+		(item: any) => item.channel === this.selectedChannel);
+    
+    this.contactList = filteredList;
+    this.getSearchContact();
+    this.ShowContactOption = false;
 }
 
 toggleConversationStatusOption(){
@@ -2036,6 +2003,7 @@ createCustomer() {
 							this.getAllInteraction();
 							this.getCustomers();
 							this.OptedIn = 'No';
+							this.filterChannel='';
 						}},
 					async (error) => {
 					  if (error.status === 409) {
@@ -2068,10 +2036,13 @@ this.apiService.createInteraction(bodyData).subscribe(async data =>{
 	if(this.modalReference){
 		this.modalReference.close();
 	}
+	// this.isNewInteraction=true;
 	this.getAllInteraction();
 	this.getCustomers();
-});
+	this.filterChannel='';
 
+});
+	
 }
 
 closeAssignOption() {
@@ -2354,9 +2325,14 @@ sendMessage(){
 			this.settingService.getUserList(spid)
 			.subscribe(result =>{
 			  if(result){
-				this.userList =result?.getUser;      
+				this.userList =result?.getUser;
+				for (const user of this.userList) {
+					if(this.AgentId == user.uid) {
+						this.loginAs = user.RoleName;
+						console.log(this.loginAs,'Current Role')
+					}
+				}    
 			  }
-	  
 			});
 		  }
 
