@@ -43,7 +43,7 @@ app.get('/sideNavKeyword', (req, res) => {
 app.post('/addNewReply', async (req, res) => {
   try {
     const myStringArray = req.body.Keywords;
-    let channel = req.body?.Channel
+    let Channel = req.body?.Channel
     const params = {
       strings: {
 
@@ -58,7 +58,7 @@ app.post('/addNewReply', async (req, res) => {
 
 
     //db.runQuery(req, res, val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData])
-    var saveReply = await db.excuteQuery(val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData,channel])
+    var saveReply = await db.excuteQuery(val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData,Channel])
     console.log(saveReply)
     res.status(200).send({
       msg: "Smart Reply added",

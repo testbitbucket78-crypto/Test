@@ -30,17 +30,18 @@ async function fetchScheduledMessages() {
 
     var messagesData = await db.excuteQuery(`select * from Campaign where status=1 and is_deleted != 1`, [])
     var remaingMessage = [];
-console.log(messagesData)
+//console.log(messagesData)
 
     const currentDate = new Date();
 
     const currentDay = currentDate.getDay();
 
-
+  //   let currentDateTime= new Date().toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+  //  console.log(currentDateTime)
     for (const message of messagesData) {
 
     //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
-     console.log("campaignTime", isWorkingTime(message))
+     console.log(message.sp_id,"campaignTime", isWorkingTime(message) ,new Date(message.start_datetime) < new Date() ,new Date(message.start_datetime) , new Date())
       if (isWorkingTime(message)) {
 
         if (new Date(message.start_datetime) < new Date()) {
@@ -148,7 +149,7 @@ async function mapPhoneNumberfomList(message) {
   }
 
   let channelType = await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?', [message.sp_id])
-  console.log("channelType",dataArray, channelType, channelType[0])
+  //console.log("channelType",dataArray, channelType, channelType[0])
   let Query = "SELECT * from EndCustomer  where customerId IN ? and isDeleted != 1"
 
   let phoneNo = await db.excuteQuery(Query, [[dataArray]]);
@@ -234,17 +235,25 @@ function sendScheduledCampaign(batch, sp_id, type, message_content, message_medi
 
 function isWorkingTime(item) {
 try{
-  const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+  const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });  // for finding current date
+  let datetime= new Date().toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+  
 
   // for (const item of data) {
   //   const workingDays = item.day.split(',');
-    const date = new Date().getHours();
-    const getMin = new Date().getMinutes();
+    const date = new Date(datetime).getHours();
+    const getMin = new Date(datetime).getMinutes();
 
 
+    
     const startTime = item.start_time.split(':');
     const endTime = item.end_time.split(':');
-
+   console.log(item.sp_id,"startTime[0]",startTime[0] ,"startTime[1]",startTime[1] ,"endTime[0]",endTime[0] ,"endTime[1]",endTime[1],"date",date,"getMin",getMin  )
+  
+//     console.log("(date === startTime[0] && startTime[1] <= getMin)" ,(date === startTime[0] && startTime[1] <= getMin))
+//     console.log((startTime[0] < date) ,"(startTime[0] < date)")
+// console.log((endTime[0] > date) ,"(endTime[0] > date)" )
+// console.log((endTime[1] === getMin) && (endTime[1] >= getMin),"(endTime[1] === getMin) && (endTime[1] >= getMin)")
     if ((((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
       return true;
     }
@@ -259,10 +268,6 @@ catch(err){
   console.log(err)
 }
 }
-
-
-
-
 
 
 
