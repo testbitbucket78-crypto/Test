@@ -1646,6 +1646,7 @@ formateDate(dateTime:string){
 	}
 	editTemplateMedia(){
 		this.showEditTemplateMedia=!this.showEditTemplateMedia;
+		$("#attachmentbox").modal('show');
 	}
 	selectMediaSource(source:any){
 		this.TemplateMediaSource =source
@@ -2559,4 +2560,180 @@ console.log(this.allTemplatesMain);
 				}
 		})
 	}
+
+	onReplaceFileChange(e:any){
+		console.log(e);
+		let files: FileList = e.target.files;
+		this.saveReplaceFiles(files)
+		if(false){
+			
+			if(this.TemplateMediaSource==0){
+				if(this.selectedTemplate.tempimage && this.selectedTemplate.tempimage !=''){
+					this.selectedTemplate.image =this.selectedTemplate.tempimage
+					this.selectedTemplate['tempimage']='';
+					this.showEditTemplateMedia=false
+				}else{
+					this.showToaster('Please Uplaod Image file...','error')
+				}
+			}else if(this.TemplateMediaSource==1){
+				if(this.selectedTemplate.tempimageurl && this.selectedTemplate.tempimageurl !=''){
+					this.selectedTemplate.image =this.selectedTemplate.tempimageurl
+					this.selectedTemplate['tempimageurl']='';
+					this.showEditTemplateMedia=false
+				}else{
+					this.showToaster('Please Uplaod Image file...','error')
+				}
+			}else if(this.TemplateMediaSource==2){
+				if(this.selectedTemplate.tempimageurl && this.selectedTemplate.tempimageurl !=''){
+					this.selectedTemplate.image =this.selectedTemplate.tempimageurl
+					this.selectedTemplate['tempimageurl']='';
+					this.showEditTemplateMedia=false
+				}else{
+					this.showToaster('Please Uplaod Image file...','error')
+				}
+			}
+		}else{
+			this.showEditTemplateMedia=false
+		}
+	}
+
+	saveReplaceFiles(files: FileList) {
+		if (files.length > 0) {
+		  let fileName: any = files[0].name;
+		  let fileExt: string = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+		  let spid = this.SPID
+		  if (['pdf', 'jpg', 'jpeg', 'png', 'mp4'].includes(fileExt)) {
+			let mediaType = files[0].type;
+			let fileSize = files[0].size;
+
+			const fileSizeInMB: number = parseFloat((fileSize / (1024 * 1024)).toFixed(2));
+			const imageSizeInMB: number = parseFloat((5 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+			const docVideoSizeInMB: number = parseFloat((10 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+	  
+			const data = new FormData();
+			data.append('dataFile', files[0], fileName);
+			data.append('mediaType', mediaType);
+	  
+			if((mediaType == 'video/mp4' || mediaType == 'application/pdf') && fileSizeInMB > docVideoSizeInMB) {
+				this.showToaster('Video / Document File size exceeds 10MB limit','error');
+			}
+
+			else if ((mediaType == 'image/jpg' || mediaType == 'image/jpeg' || mediaType == 'image/png' || mediaType == 'image/webp') && fileSizeInMB > imageSizeInMB) {
+				this.showToaster('Image File size exceeds 5MB limit','error');
+			}
+
+			else {
+				let name='smartReply'
+				this.apiService.uploadfile(data,spid,name).subscribe(uploadStatus => {
+				  let responseData: any = uploadStatus;
+				  console.log(uploadStatus);
+				  if (responseData.filename) {
+					//this.mediaType = mediaType;
+					// this.fileName = fileName;
+					// this.fileSize = fileSizeInMB;
+					// this.showAttachmenOption = false;
+						let mediaCategory;
+						if (mediaType.startsWith('image/')) {
+							mediaCategory = 'image';
+						} else if (mediaType.startsWith('video/')) {
+							mediaCategory = 'video';
+						} else if (mediaType === 'application/') {
+							mediaCategory = 'document';
+						}
+				
+						if (this.selectedTemplate.media_type === mediaCategory) {
+							this.selectedTemplate.Links = responseData.filename;
+							$("#attachmentbox").modal('hide');
+							$("#editTemplate").modal('show');
+							//this.messageMeidaFile='';
+						} else {
+							this.showToaster('! Please only upload media that matches selected template', 'error');
+							$("#attachmentbox").modal('hide');
+							$("#editTemplate").modal('show');
+							//this.messageMeidaFile='';
+						}
+					}
+				});
+			}
+		
+	  
+			// if (['pdf', 'jpg', 'jpeg', 'png'].includes(fileExt)) {
+			//   let reader: FileReader = new FileReader();
+			//   reader.readAsText(files[0]);
+	  
+			//   let tabalHeader: any[] = [];
+			//   let tabalRows: any[] = [];
+	  
+			//   reader.onload = (e) => {
+			// 	let content: string = reader.result as string;
+			// 	const results = content.split("\n");
+			// 	let i = 0;
+			// 	results.map((row: any) => {
+			// 	  if (row) {
+			// 		const rowCol = row.split(",");
+			// 		if (i == 0) {
+			// 		  tabalHeader = rowCol;
+			// 		} else {
+			// 		  tabalRows.push(rowCol);
+			// 		}
+			// 		i++;
+			// 	  }
+			// 	});
+	  
+			// 	this.csvContactColmuns = tabalHeader;
+			// 	let contactsData: any[] = [];
+			// 	tabalRows.map((rowbh: any) => {
+			// 	  let row: any = {};
+			// 	  for (var k = 0; k < tabalHeader.length; k++) {
+			// 		let keyName: any = tabalHeader[k].replace('\r', '');
+			// 		keyName = keyName.replaceAll(' ', '');
+			// 		let value: any = rowbh[k];
+			// 		console.log(keyName);
+			// 		row[keyName] = value != '\r' ? value : 'null';
+			// 	  }
+			// 	  contactsData.push(row);
+			// 	});
+	  
+			// 	console.log('Contacts Data:', contactsData);
+			// 	this.csvContactList = contactsData;
+			// 	this.selecetdpdf = fileName;
+			//   }
+			// }
+		  } else {
+			this.showToaster('Please upload a PDF, image, or video (mp4) file only...', 'error');
+		  }
+		}
+	  }
+
+	//   sendattachfile(){
+	// 	if (this.isAttachmentMedia === false) {
+	// 		if (this.messageMeidaFile !== '') {
+	// 			$("#sendfile").modal('show');
+	// 			$("#attachmentbox").modal('hide');
+	// 		}
+	// 	}
+		
+	// 	else {
+	// 		let mediaCategory;
+	// 		if (this.mediaType.startsWith('image/')) {
+	// 			mediaCategory = 'image';
+	// 		} else if (this.mediaType.startsWith('video/')) {
+	// 			mediaCategory = 'video';
+	// 		} else if (this.mediaType === 'application/') {
+	// 			mediaCategory = 'document';
+	// 		}
+	
+	// 		if (this.selectedTemplate.media_type === mediaCategory) {
+	// 			this.selectedTemplate.Links = this.attachmentMedia;
+	// 			$("#attachmentbox").modal('hide');
+	// 			$("#editTemplate").modal('show');
+	// 			this.messageMeidaFile='';
+	// 		} else {
+	// 			this.showToaster('! Please only upload media that matches selected template', 'error');
+	// 			$("#attachmentbox").modal('hide');
+	// 			$("#editTemplate").modal('show');
+	// 			this.messageMeidaFile='';
+	// 		}
+	// 	}
+	// }
 }

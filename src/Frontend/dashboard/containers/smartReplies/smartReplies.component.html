@@ -77,21 +77,21 @@
 				<h6>Edited on:</h6>
 				<h5>{{repliesData?.ModifiedDate | date: 'dd MMM yyyy' }}</h5>
 			</div>
-			<h4 class="help-support-btn" routerLink="/dashboard/support"><img id="Edit-icon"
+			<h4 class="help-support-btn p-0" routerLink="/dashboard/support"><img id="Edit-icon"
 					src="assets/img/Edit-icon.png">Help & Support</h4>
 			<div class="row d-flex">
 				<h6 class="text-justify">{{items?.Description}}.</h6>
 			</div>
 			<h3 class="keywords-btn"><img id="Edit-icon" (click)="editSmartReply(2)" src="assets/img/Edit-icon.png">Keywords & Criteria </h3>
 			<div class="row">
-				<div class="box" *ngFor="let values of repliesData?.Keyword">
+				<div class="sidebar_box" *ngFor="let values of repliesData?.Keyword">
 					<p>{{values}}</p>
 				</div>
 	
 			</div>
 	
 	
-			<div class="box1 d-flex">
+			<div class="sidebar_box1 d-flex">
 				<h6>Matching Criteria:</h6>
 				<h5>{{repliesData?.MatchingCriteria}}</h5>
 			</div>
@@ -104,16 +104,16 @@
 					<p [innerHTML]="item.Media | sanitizeHtml" *ngIf="item.Media"></p>
 					<p [innerHTML]="item.Message | sanitizeHtml"></p>
 				</div>
-				<div *ngIf="item.Name =='Assign Conversation' && item.Name !==''" class="assign-conversation">
+				<div *ngIf="item.Name =='Assign Conversation' && item.Name" class="sidebar-assign-conversation">
 					<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
 					<div class="d-flex flex-wrap assign-container">
-						<p class="py-1 px-2 m-0" id="msgbox-body1"><b>Conversation Assigned:</b> {{item.Value}}</p>
+						<p class="py-1 px-2 m-0" id="sidebar-msgbox-body1"><b>Conversation Assigned:</b> {{item.Value}}</p>
 					</div>
 				</div>
-				<div *ngIf="item.Name =='Add Contact Tag' && item.Name !==''" class="assign-conversation">
-					<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
+				<div *ngIf="item.Name =='Add Contact Tag' && item.Name" class="sidebar-assign-conversation">
+					<p class="m-0 py-1 px-2" id="sidebar-msgbox-head1">Action</p>
 					<div class="d-flex pl-1 assign-container">
-						<p class="p-1 m-0" id="msgbox-body1"><b>Add Tags: </b><span style="color: #000;" id="msgbox-body1">{{parseTags(item.Value)}}</span>
+						<p class="p-1 m-0" id="sidebar-msgbox-body1"><b>Add Tags: </b><span style="color: #000;" id="msgbox-body1">{{parseTags(item.Value)}}</span>
 						</p>
 					</div>
 				</div>
@@ -201,14 +201,15 @@
 								  </textarea>
 								</div>
 								<h5>Channel<span class="text-danger"> * </span></h5>
-								<input class="form-control bg-white" type="text" name="Channel" id="Channel" formControlName="Channel"
+								<input class="form-control bg-white select_box" type="text" name="Channel" id="Channel" formControlName="Channel"
 									(click)="toggleChannelOption()" style="cursor: pointer;" readonly placeholder="Select Channel" />
 								  <div *ngIf="ShowChannelOption" (click)="stopPropagation($event)" class="popup-dialog channelSelection">
 									<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)" style="cursor: pointer;">
 										{{channel.label}}
 									</p>
+									<div *ngIf="ShowChannelOption" class="overlay" (click)="ShowChannelOption=false"></div>
 								</div>
-								<div *ngIf="ShowChannelOption" class="overlay" (click)="ShowChannelOption=false"></div>
+								
 							  </div>
 							  <div class="title err-msg">
 								<span id="title-err-msg"></span>

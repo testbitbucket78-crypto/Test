@@ -16,7 +16,7 @@ declare var $: any;
 @Component({
 	selector: 'sb-smartReplies',
 	templateUrl: './smartReplies.component.html',
-	// styleUrls: ['./smartReplies.component.scss'],
+	styleUrls: ['./smartReplies.component.scss'],
 	providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService],
 })
 
@@ -273,7 +273,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 
 showAddSmartRepliesModal() {
 	$("#smartrepliesModal").modal('show');
-	$('body').addClass('modal-add-smart-reply-open');
+	// $('body').addClass('modal-add-smart-reply-open');
 	$('body').removeClass('modal-smart-reply-open');
 	this.isShowSmartReplies = true
 }
@@ -308,7 +308,7 @@ showAddSmartRepliesModal() {
 
 	removeModalBackdrop() {
 		$('.modal-backdrop').remove();
-		$('body').removeClass('modal-add-smart-reply-open');
+		// $('body').removeClass('modal-add-smart-reply-open');
 		$('body').addClass('modal-smart-reply-open');
 		this.goToStep(1);
 		this.clearSmartreplyModalData();
@@ -326,6 +326,7 @@ showAddSmartRepliesModal() {
 		this.assignedTagList = []
 		this.assignActionList = []
 		this.getTemplatesList()
+		this.ShowChannelOption = false
 		
 	}
 
@@ -1460,7 +1461,7 @@ stopPropagation(event: Event) {
 			   this.apiService.updateSmartReply(BodyData)
 			.subscribe(
 			   (response: any) => {
-				if (response.affectedRows == 1) {
+				if (response.status == 200) {
 					$("#smartrepliesModal").modal('hide'); 
 					this.modalService.open(smartreplysuccess);
 				   }
