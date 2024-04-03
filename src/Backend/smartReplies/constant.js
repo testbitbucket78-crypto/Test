@@ -14,6 +14,7 @@ t.Title,
 t.Description,
 t.CreatedDate,
 t.ModifiedDate,
+t.Channel,
 COUNT(DISTINCT s.Keyword) AS KeywordCount,
 t.MatchingCriteria,
 COALESCE(action_counts.ActionCount, 0) AS ActionCount
@@ -36,7 +37,7 @@ LEFT JOIN
 WHERE
 t.isDeleted != 1
 AND s.isDeleted != 1
-AND t.SP_ID = 27
+AND t.SP_ID = ?
 GROUP BY
 t.ID,
 t.Title,
@@ -62,7 +63,7 @@ SmartReply t
 t.ID AS SRID,
 t.Title,
 t.Description,
-t.channel,
+t.Channel,
 GROUP_CONCAT(s.Keyword) as Keywords,
 count(distinct s.Keyword) as KeywordsCount,
 t.MatchingCriteria
@@ -101,7 +102,7 @@ s.Keyword ,
 t.MatchingCriteria,
 t.CreatedDate,
 t.ModifiedDate,
-t.channel,
+t.Channel,
 m.Message,
 m.Value ,
 n.Name 
@@ -146,13 +147,13 @@ SELECT sp_id,
 FROM user_paths ep;`
 
 
-addNewReply = `CALL updatedAddnewSmartReply(?,?,?,?,?,?)`;
+addNewReply = `CALL updatedAddnewSmartReply(?,?,?,?,?,?,?)`;
 deleteSmartReply = `CALL deleteSmartUpdate(?)`;
 deletMessage = `update SmartReplyAction set isDeleted='1',isDeletedOn=now() where SmartReplyID=?`;
 editMessage = `update SmartReplyAction set Message=? where SmartReplyID=?`;
 editAction = `update SmartReplyAction set ActionID=?,Value=? where SmartReplyID=?`;
 removeKeyword = `UPDATE SmartReplyKeywords set  isDeleted=1 , isDeletedOn=now() where SmartReplyId=? and Keyword=?`
-updateSmartReply = `CALL UpdateAndDeleteSReply(?,?,?,?,?,?) `   //`CALL updateSmartReply(?,?,?,?,?,?) `;
+updateSmartReply = `CALL UpdateAndDeleteSReply(?,?,?,?,?,?,?) `   //`CALL updateSmartReply(?,?,?,?,?,?) `;
 crachlogQuery=`INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
 var updateInteractionMapping="INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy) VALUES ?"

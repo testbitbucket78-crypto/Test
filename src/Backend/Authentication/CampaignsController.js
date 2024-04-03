@@ -22,7 +22,7 @@ const getCampaigns = (req, res) => {
 const addCampaign = async (req, res) => {
     try {
         let status = req.body.status
-        let sp_id = req.body.sp_id
+        let SP_ID = req.body.SP_ID
         let title = req.body.title
         let channel_id = req.body.channel_id
         let message_heading = req.body.message_heading
@@ -78,13 +78,12 @@ const addCampaign = async (req, res) => {
         } else {
 
             var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time,media_type) values ? ";
-            let addCampaignValue = [[status, sp_id, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime,csv_contacts , segments_contacts, category_id, OptInStatus,start_time,end_time,media_type]]
+            let addCampaignValue = [[status, SP_ID, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime,csv_contacts , segments_contacts, category_id, OptInStatus,start_time,end_time,media_type]]
 
             let addcampaign = await db.excuteQuery(inserQuery, [addCampaignValue]);
-           // console.log(addcampaign)
+          
           let statusToUpdate = 1;  //For scheduled campaign status
            if(status == '-1'){
-            console.log("((((((((((((((((((((((((((")
             statusToUpdate = 2;
            }
            campaignAlerts(req.body,addcampaign.insertId,statusToUpdate)
@@ -230,7 +229,7 @@ const processContactQueries = async (req,res) =>{
     try {
       // Execute each query sequentially
       for (const query of queries) {
-        const queryResult = await db.excuteQuery(query);
+        const queryResult = await db.excuteQuery(query + " and isDeleted !=1  AND IsTemporary !=1");
         results = results.concat(queryResult);
       }
     
@@ -309,13 +308,12 @@ function getTimeZoneTimes(serverDateTime, time_zone) {
 
 
 const sendCampinMessage = async (req, res) => {
-    console.log("sendCampinMessage")
+   
     try {
         var TemplateData = req.body
-        console.log(TemplateData)
         var messageTo = TemplateData.phone_number
         var messateText = TemplateData.message_content
-        
+        console.log(TemplateData)
         let channel = TemplateData.channel_label
         //+++++++++++++++++ waitinh
         let schedule_datetime = TemplateData.schedule_datetime
@@ -362,7 +360,7 @@ const sendCampinMessage = async (req, res) => {
             } else {
                 messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
             }
-console.log("isFinished " ,isFinished)
+console.log("isFinished " ,isFinished,TemplateData.status)
  if(isFinished == true){
     campaignAlerts(TemplateData,TemplateData.CampaignId,3)
  }
@@ -461,7 +459,7 @@ console.log("isFinished " ,isFinished)
 //     //console.log(req.body)
 
 async function campaignAlerts(TemplateData,insertId,statusToUpdate){
-    console.log(insertId,"campaignAlerts ***************" ,TemplateData.channel_id)
+    console.log(insertId,"campaignAlerts ***************" ,TemplateData.channel_id,statusToUpdate)
     message_content = TemplateData.message_content
     message_media = TemplateData.message_media
     channel_id = TemplateData.channel_id
@@ -474,23 +472,23 @@ async function campaignAlerts(TemplateData,insertId,statusToUpdate){
      where c.SP_ID=? and c.isDeleted !=1 `;
 
 
-    let user = await db.excuteQuery(alertUser, [TemplateData.sp_id]);
+    let user = await db.excuteQuery(alertUser, [TemplateData.SP_ID]);
 
     var type = TemplateData.media_type;
 
-    sendBatchMessage(user, TemplateData.sp_id, TemplateData.media_type, alertmessages, message_media, phone_number_id, channel_id, insertId, statusToUpdate)
+    sendBatchMessage(user, TemplateData.SP_ID, TemplateData.media_type, alertmessages, message_media, phone_number_id, channel_id, insertId, statusToUpdate)
 
 }
 
 async function sendBatchMessage(user, sp_id, type, message_content, message_media, phone_number_id, channel_id, Id, updatedStatus) {
     //console.log("channel_id, Id" ,channel_id, Id)
     for (var i = 0; i < user.length; i++) {
-        let mobile_number = user[i].mobile_number
+        let mobile_number = user[i]?.mobile_number
 //console.log("sendBatchMessage" ,sp_id, channel_id, type, mobile_number, message_content, message_media)
         setTimeout(async () => {
             //  messageThroughselectedchannel(sp_id, mobile_number, type, message_content, message_media, phone_number_id, channel_id)
          let batchresponse = await   middleWare.channelssetUp(sp_id, channel_id, type, mobile_number, message_content, message_media);
-         console.log(batchresponse)
+         console.log(batchresponse ,"batchresponse")
         }, 10)
     }
     let updateQuery = `UPDATE Campaign SET status=?,updated_at=? where Id=?`;
@@ -535,10 +533,10 @@ async function msg(alert) {
     try{
     let message = ''
 
-    let msgStatus = await find_message_status(alert.sp_id, alert.Id)
+    let msgStatus = await find_message_status(alert.SP_ID, alert?.CampaignId)
 console.log("alert.channel_id",alert.channel_id ,alert.status)
 
-    let audience = alert.segments_contacts?.length > 0 ? JSON.parse(alert.segments_contacts)?.length : JSON.parse(alert.csv_contacts)?.length
+    var audience = alert.segments_contacts?.length > 0 ? JSON.parse(alert?.segments_contacts)?.length : JSON.parse(alert?.csv_contacts)?.length
 
 
     if (alert.status == '1') {
@@ -557,7 +555,7 @@ console.log("alert.channel_id",alert.channel_id ,alert.status)
     } if (alert.status == '3') {
         message = `Hi, here is the Summary of your finished Engagekart Campaign:
       Campaign Name: `+ alert.title + `
-      Taget Audience: <count of target base>
+      Taget Audience:  `+ audience + `
       Channel: <`+ 'WhatsApp' + `,` + alert.channel_id + `>
       Category: `+ alert.category + `
       Sent: ` + msgStatus.Sent + `
@@ -652,7 +650,7 @@ const saveCampaignMessages = async (req, res) => {
   
 
         let InteractionId = await insertInteractionAndRetrieveId(req.body.customerId, req.body.SP_ID);
-        console.log(req.body.message_content, "InteractionId InteractionId")
+        // console.log(req.body.message_content, "InteractionId InteractionId")
 
         let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id) values ?`
         let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, type, req.body.SP_ID, type, '']]]);
@@ -674,12 +672,12 @@ const saveCampaignMessages = async (req, res) => {
                 content = content.replace(`{{${placeholder}}}`, data[placeholder]);
             });
         }
-        console.log("++", content)
+        // console.log("++", content)
         var inserQuery = "INSERT INTO CampaignMessages (status_message,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,phone_number,status,schedule_datetime,SP_ID) values ?";
 
         let campaignMessagesValue = [[status_message, button_yes, button_no, button_exp, media, content, message_heading, CampaignId, phone_number, status, schedule_datetime, SP_ID]]
         let CampaignMessage = await db.excuteQuery(inserQuery, [campaignMessagesValue]);
-
+//console.log("CampaignMessage"  ,CampaignMessage)
         res.send({
             status: 200,
             savedMessage: CampaignMessage
@@ -732,7 +730,7 @@ const getCampaignMessages = async (req, res) => {
 const copyCampaign = (req, res) => {
     let Query = "SELECT * from CampaignMessages  where CampaignId = " + req.params.CampaignId
 
-    let CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts) SELECT sp_id, CONCAT('copied ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts FROM Campaign WHERE Id = " + req.params.CampaignId
+    let CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('copied ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = " + req.params.CampaignId
 
     //  console.log(CopyQuery)
     db.runQuery(req, res, CopyQuery, []);
