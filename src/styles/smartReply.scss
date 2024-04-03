@@ -48,7 +48,7 @@
 // }
 
 .channel-selected {
-    margin: 0 6px 0 0;
+    margin: 0 3px 0 0;
     width: 14px;
     height: 14px;
 }
@@ -308,14 +308,14 @@ h3{
     margin: 7px 0px 7px 0px;
 }
 
-.box1 h6 {
+.sidebar_box1 h6 {
     font-size: 15px;
     color: #7A86A1;
     font-family: 'Manrope';
     margin: 20px 0px 10px 26px;
 }
 
-.box1 h5 {
+.sidebar_box1 h5 {
     color: #000000;
     font-family: 'Manrope';
     font-size: 15px;
@@ -323,7 +323,7 @@ h3{
     font-weight: 800;
 }
 
-.box p {
+.sidebar_box p {
     color: #000000;
     font-family: 'Manrope';
     font-size: 14px;
@@ -332,9 +332,10 @@ h3{
     line-height: 25px;
 }
 
-.box {
+.sidebar_box {
     max-width: fit-content;
     height: 30px;
+    line-height: 30px;
     padding-left: 10px;
     padding-right: 10px;
     background-color: #ffffff;
@@ -553,7 +554,7 @@ margin-top: -12px;
     width: 65rem;
 }
 
-.assign-conversation {
+.sidebar-assign-conversation {
     background: #f6efff;
     border: 1px solid #ebebeb;
     border-radius: 12px;
@@ -565,7 +566,7 @@ margin-top: -12px;
     font-family: 'Manrope';
 }
 
-#msgbox-head1 {
+#sidebar-msgbox-head1 {
     text-align: left;
     letter-spacing: 0px;
     color: #6149cd;
@@ -574,11 +575,11 @@ margin-top: -12px;
     margin-top: 0.5em;
 }
 
-#msgbox-body1 {
+#sidebar-msgbox-body1 {
     font-size: 12px;
 }
 
-#msgbox-body2 {
+#sidebar-msgbox-body2 {
     font-size: 11px;
     font-weight: 500;
 }
