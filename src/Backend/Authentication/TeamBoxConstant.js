@@ -54,13 +54,67 @@ var getTemplatesQuery = `SELECT * FROM templateMessages WHERE spid=? and isDelet
 var addNotification = `INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`
 var assignedNameQuery = `SELECT name,SP_ID from user where uid=?`;
 
+
+// interaction with messages
+
+var  interactions =`SELECT 
+ic.interaction_status, 
+ic.InteractionId, 
+ec.*,
+last_message.LastMessageId,
+COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
+m.*
+FROM 
+Interaction ic
+JOIN 
+EndCustomer ec ON ic.customerId = ec.customerId
+JOIN (
+SELECT 
+    ic.InteractionId,
+    MAX(m.Message_id) AS LastMessageId
+FROM 
+    Interaction ic
+JOIN 
+    Message m ON ic.InteractionId = m.interaction_id
+GROUP BY 
+    ic.InteractionId
+) AS last_message ON ic.InteractionId = last_message.InteractionId
+LEFT JOIN (
+SELECT 
+    ic.InteractionId,
+    COUNT(*) AS UnreadCount
+FROM 
+    Interaction ic
+JOIN 
+    Message m ON ic.InteractionId = m.interaction_id
+WHERE
+    m.is_read = 0
+    AND m.message_direction ='IN' 
+GROUP BY 
+    ic.InteractionId
+) AS unread_count ON ic.InteractionId = unread_count.InteractionId
+LEFT JOIN Message m ON ic.InteractionId = m.interaction_id AND m.Message_id = last_message.LastMessageId
+WHERE 
+ic.interactionId IN (
+    SELECT MAX(interactionId)
+    FROM Interaction
+    WHERE customerId = ic.customerId
+    GROUP BY customerId
+) 
+AND ec.SP_ID = ?
+AND ec.isDeleted != 1
+AND ic.is_deleted = 0
+ORDER BY 
+ic.interactionId DESC
+LIMIT ?,?`
+
 module.exports={host,user,password,database,
 selectAllAgentsQuery,selectAllQuery,insertCustomersQuery,filterQuery,searchQuery,selectByIdQuery,blockCustomerQuery,
 createInteractionQuery,updateInteractionQuery,getAllInteraction,selectInteractionByIdQuery,
 getAllMessagesByInteractionId,insertMessageQuery,
 updateInteractionMapping,getInteractionMapping,
 savedMessagesQuery,getquickReplyQuery,getTemplatesQuery,
-addNotification,assignedNameQuery
+addNotification,assignedNameQuery,interactions
 }
 
 
