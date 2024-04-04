@@ -137,7 +137,7 @@
 					Do you really want to delete<br /> this Smart Reply?
 				</div>
 				<div class="deletefile d-flex">
-					<button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn9 btn-secondary" style="margin: 112px 22px 0px 44px;" data-bs-dismiss="modal">Cancel</button>
 					<button type="button" class="btn99 btn-primary" data-bs-dismiss="modal"
 						(click)="deleteRepliesById(data)">Yes, Delete</button>
 				</div>
@@ -161,7 +161,8 @@
 						<div class="bs-stepper row">
 						  <div class="head d-flex justify-content-between align-items-center">
 							<p class="m-0 heading">{{isEdit==true ? 'Edit Smart Reply' :'Add Smart Reply'}}</p>
-							<button (click)="removeModalBackdrop()" type="button" id="close-btn" data-bs-dismiss="modal" aria-label="Close">X</button>
+							<button (click)="removeModalBackdrop()" type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal" aria-label="Close">
+								<img style="width: 10px;" src="assets/img/teambox/icon-close.svg"></button>
 						  </div>
 						  <div class="bs-stepper-header" role="tablist">
 							<div class="bs-tab">

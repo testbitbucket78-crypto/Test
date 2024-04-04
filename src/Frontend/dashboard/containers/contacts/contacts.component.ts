@@ -176,6 +176,8 @@ countryCodes = [
     showInfoIcon:boolean = false;
     ShowContactOwner:any = false;
     addContactTitle: 'add' | 'edit' = 'add';
+    checkedTags: string[] = [];
+    isEditTag:boolean = false;
 
   // multiselect 
     disabled = false;
@@ -582,15 +584,24 @@ onSelectAll(items: any) {
             },
         ],
     }
-          let tagArray = this.productForm.controls.tag.value;
-          console.log(tagArray)
-          let tagString = tagArray?.map((tag: any) => `${tag.item_text}`).join(', ');
-          console.log(tagString)
-
-          let tagField = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
-          if (tagField) {
-              tagField.displayName = tagString;
+    if (this.isEditTag) {
+      let tag = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
+          if (tag) {
+              tag.displayName = this.getCheckedTags();
     }
+  };
+    if (!this.isEditTag) {
+      let tagArray = this.productForm.controls.tag.value;
+      console.log(tagArray)
+      let tagString = tagArray?.map((tag: any) => `${tag.item_text}`).join(', ');
+      console.log(tagString)
+
+      let tagField = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
+      if (tagField) {
+          tagField.displayName = tagString;
+  }
+       
+  };
     return ContactFormData
 }
 
@@ -612,6 +623,7 @@ saveContact(addcontact:any,addcontacterror:any) {
         this.resetForm();
         this.modalService.dismissAll();
         this.closesidenav(this.items);
+        this.closeEditTag();
         this.getContact();
       }
      },
@@ -622,6 +634,7 @@ saveContact(addcontact:any,addcontacterror:any) {
      });
   }
   else {
+    this.isEditTag = false;
     this.apiService.addContact(contactData).subscribe(
       (response:any) => {
       if (response.status === 200) {
@@ -723,14 +736,19 @@ deletContactByID(data: any) {
     });    
   }
 
+  closeEditTag() {
+    $("#edittag").modal('hide');
+    this.isEditTag = false;
+  }
+
   getTagData() {
     this._settingsService.getTagData(this.spid).subscribe(result => {
       if (result) {
           this.tagListData = result.taglist;
-          this.tag = this.tagListData.map((tag:any) => ({
-              item_id: tag.ID, 
-              item_text:tag.TagName,
-              item_color:tag.TagColour
+          this.tag = this.tagListData.map((tag:any,index:number) => ({
+              item_id: index + 1, 
+              item_text: tag.TagName,
+              item_color: tag.TagColour
           }));
           console.log(this.tag,'tag list array');
           console.log(this.tagListData);
@@ -754,10 +772,8 @@ deletContactByID(data: any) {
 
     // set tags values in edit tag
     this.getFilterTags = data.tag?.split(',').map((tags: string) =>tags.trim());
-      console.log(this.customerData);
-      console.log(this.getFilterTags);
 
-    const selectedTag = data.tag?.split(',').map((tagName: string) => tagName.trim()) || [];
+    const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim()) || [];
     //set the selectedTag in multiselect-dropdown format
     const selectedTags = selectedTag.map((tagName: any, index: number) => ({
         item_id: index + 1,
@@ -775,22 +791,37 @@ deletContactByID(data: any) {
     }  
   }
 
-  updateTags(){
-    var bodyData = {
-      tag:this.getFilterTags,
-      customerId:this.contactId
+  updateTags(tagName: string, isChecked: boolean) {
+    this.isEditTag = true;
+    if (isChecked) {
+      this.checkedTags.push(tagName);
+    } else {
+      const index = this.checkedTags.indexOf(tagName);
+      if (index !== -1) {
+        this.checkedTags.splice(index, 1);
+      }
     }
-    this.teamboxService.updateTags(bodyData).subscribe(async response =>{
-      if (response) {
-        this.showToaster('Tags updated...','success')
-      }  
-    });
+    this.getCheckedTags()
   }
 
+  getCheckedTags() {
+    return this.checkedTags.join(', ');
+  }
+
+  
   exportCheckedContact() {
-    console.log(this.checkedConatct)
+    const defaultFieldNames =["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+
+    const exportContact = this.checkedConatct.map(obj => defaultFieldNames.reduce((acc:any, key) => {
+        if (obj.hasOwnProperty(key)) {
+          acc[key] = obj[key];
+         }
+        return acc;
+      }, {})
+    );
+    // console.log(exportContact,'export contact')
     var exContact = {
-      data: this.checkedConatct,
+      data: exportContact,
       loginData: (JSON.parse(sessionStorage.loginDetails)).email_id
     }
     this.apiService.exportCheckedContact(exContact).subscribe(response => {
@@ -802,7 +833,7 @@ deletContactByID(data: any) {
     this.checkedConatct = [];
     console.log(this.checkedConatct + " checked");
 
-  };
+  }
 
   onFilterTextBoxChange() {
     const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
