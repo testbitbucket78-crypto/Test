@@ -575,7 +575,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
     var media_type = 'video/mp4'
   }
   if (message_text.length > 0) {
-    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?)"
+    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?)"
     var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type,ackStatus,'WhatsApp Web']);
     notify.NotifyServer(display_phone_number, true);
    // console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
