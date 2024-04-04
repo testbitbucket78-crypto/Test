@@ -838,12 +838,22 @@ showAddSmartRepliesModal() {
 			return;
 		}
 
-		this.assignedAgentList.push({
-			ActionID: 0, 
-			Message: this.chatEditor.value, 
-			Value: '', 
-			Media: this.messageMeidaFile
-		})
+		if (this.editableMessageIndex !== null && this.editableMessageIndex >= 0 && this.editableMessageIndex < this.assignedAgentList.length) {
+
+			this.assignedAgentList[this.editableMessageIndex].Message = this.chatEditor.value;
+			this.assignedAgentList[this.editableMessageIndex].Media = this.messageMeidaFile;
+	
+			this.editableMessageIndex = null;
+			this.isEditable = [];
+		} else {
+	
+			this.assignedAgentList.push({
+				ActionID: 0, 
+				Message: this.chatEditor.value, 
+				Value: '', 
+				Media: this.messageMeidaFile
+			});
+		}
 
 		console.log(this.assignedAgentList,'ADDED MESSAGE DATA')
 
@@ -884,15 +894,13 @@ showAddSmartRepliesModal() {
 		this.isEditable[index] = !this.isEditable[index];
 		this.editableMessageIndex = this.isEditable[index] ? index : null;
 	    const element = document.getElementById(`msgbox-body${index}`);
-		// setTimeout(() => { 
 		
 		  if (element) {
-			element.focus();
+			// element.focus();
 			let currentValue = element.innerHTML
 			this.chatEditor.value = currentValue;
 			console.log(element);
 		  }
-		// }, 100);
 		
 	  }
 	
