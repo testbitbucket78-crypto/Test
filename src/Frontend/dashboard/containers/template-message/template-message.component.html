@@ -109,9 +109,9 @@
                                 </div>
                             </div>
                             <div class="message_data" [ngClass]="{'preview': templatesMessageData.media_type === 'text'}">
-                                <span [innerHTML]="templatesMessageData?.Header"></span><br /><br />
-                                <span [innerHTML]="templatesMessageData?.BodyText"></span><br /><br />
-                                <span [innerHTML]="templatesMessageData?.FooterText"></span><br />
+                                <span [innerHTML]="templatesMessageData?.Header | sanitizeHtml"></span><br /><br />
+                                <span [innerHTML]="templatesMessageData?.BodyText | sanitizeHtml"></span><br /><br />
+                                <span [innerHTML]="templatesMessageData?.FooterText | sanitizeHtml"></span><br />
                             </div>
                             <!-- <div class="contact-us">
                                 Contact Us
@@ -243,9 +243,9 @@
                 </div>
             </div>
             <div class="message_data" [ngClass]="{'preview': galleryMessageData.media_type === 'text'}">
-                <span [innerHTML]="galleryMessageData?.Header"></span><br /><br />
-                <span [innerHTML]="galleryMessageData?.BodyText"></span><br /><br />
-                <span [innerHTML]="galleryMessageData?.FooterText"></span><br />
+                <span [innerHTML]="galleryMessageData?.Header | sanitizeHtml"></span><br /><br />
+                <span [innerHTML]="galleryMessageData?.BodyText | sanitizeHtml"></span><br /><br />
+                <span [innerHTML]="galleryMessageData?.FooterText | sanitizeHtml"></span><br />
             </div>
             <!-- <div class="contact-us">
                 Contact Us
@@ -649,7 +649,7 @@
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
                 <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
                     <span class="font-weight-bolder">{{newTemplateForm.get('Header')!.value}}</span><br /><br />
-                    <span class="richtext BodyText" [innerHTML]="newTemplateForm.get('BodyText')?.value"></span><br /><br />
+                    <span class="richtext BodyText" [innerHTML]="newTemplateForm.get('BodyText')?.value | sanitizeHtml"></span><br /><br />
                     <span>{{newTemplateForm.get('FooterText')?.value}}</span><br />
                 </div>
                 <!-- <div class="contact-us">
@@ -717,9 +717,9 @@
                 </div>
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
                 <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
-                    <span class="font-weight-bolder" [innerHTML]="newTemplateForm.get('Header')?.value"></span><br /><br />
-                    <span [innerHTML]="newTemplateForm.get('BodyText')?.value" ></span><br /><br />
-                    <span [innerHTML]="newTemplateForm.get('FooterText')?.value"></span><br />
+                    <span class="font-weight-bolder" [innerHTML]="newTemplateForm.get('Header')?.value | sanitizeHtml"></span><br /><br />
+                    <span [innerHTML]="newTemplateForm.get('BodyText')?.value | sanitizeHtml" ></span><br /><br />
+                    <span [innerHTML]="newTemplateForm.get('FooterText')?.value | sanitizeHtml"></span><br />
                 </div>
                 <!-- <div class="contact-us">
                     Contact Us
