@@ -1346,16 +1346,12 @@
 			<input class="search-box" type="text" placeholder="Search" aria-label="Search"
 				aria-describedby="basic-addon2" [(ngModel)]="header" />
 			<div class="drop-down-btn" (click)="toggleContactOption()">
-
-				<button *ngIf="filterChannel == ''" class="drop-down-btn">
-					 Select Channel
-				</button>
-
-				<button *ngIf="filterChannel == 'WhatsApp Official'" class="drop-down-btn">
+				
+				<button *ngIf="selectedChannel == 'WhatsApp Official'" class="drop-down-btn">
 					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WhatsApp Official
 				</button>
 
-				<button *ngIf="filterChannel == 'WhatsApp Web'" class="drop-down-btn">
+				<button *ngIf="selectedChannel == 'WhatsApp Web'" class="drop-down-btn">
 					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WhatsApp Web
 				</button>
 			</div>
@@ -1667,20 +1663,13 @@
 		<div class="modal-body">
 			<form class="inner_form large" (ngSubmit)="updateTags()">
 				<div class="row" *ngFor="let tag of tagsoptios;">
-
-
 					<label for="floatingSelectGrid" class="required">
 						<input [checked]="tag.status" type="checkbox" name="tags" class="form-control-checkbox ml-2"
 							value="{{tag.name}}" (click)="addTags($event)" />
+							<span [ngClass]="{'color-dots': true}" [style.background]="tag.color"></span>
 						{{tag.name}}
 					</label>
-
-
-
 				</div>
-
-
-
 			</form>
 		</div>
 		<div class="modal-footer row popfooter">
