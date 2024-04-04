@@ -51,6 +51,8 @@ export class QuickResponseComponent implements OnInit {
   errorMessage = '';
 	successMessage = '';
 	warnMessage = '';
+  attributesearch:string='';
+  attributesList:any=[];
 
   
   fileName: any; 
@@ -74,7 +76,8 @@ export class QuickResponseComponent implements OnInit {
           },
       ],
   };
-  
+
+  lastCursorPosition: Range | null = null;
 
   constructor(config: NgbModalConfig,private modalService: NgbModal,private apiService:SettingsService, private _teamboxService: TeamboxService) { }
 
@@ -84,6 +87,7 @@ export class QuickResponseComponent implements OnInit {
     this.Template();
     this.usertemplateForm=this.prepareUserForm();
     this.getformvalue();
+    this.getAttributeList();
   }
   
 
@@ -117,10 +121,57 @@ export class QuickResponseComponent implements OnInit {
     });
   }
   
-  ToggleAttributesOption() {
-    $('#atrributemodal').modal('show');
-    $('#newTemplateMessage').modal('hide');
+
+closeAtrrModal() {
+  this.attributesearch ='';
+  $('#atrributemodal').modal('hide');
+  $('#welcomGreeting').modal('show');
 }
+
+ToggleAttributesOption(){
+const selection = window.getSelection();
+this.lastCursorPosition = selection?.getRangeAt(0) || null;
+$('#atrributemodal').modal('show');
+$('#welcomGreeting').modal('hide');
+}
+
+  selectAttributes(item:any){
+  this.closeAtrrModal();
+  const selectedValue = item;
+  let content:any = this.chatEditor.value || '';
+
+  const container = document.createElement('div');
+  container.innerHTML = this.chatEditor?.value;
+  const text = container.innerText;
+  const attLenght = selectedValue.length;
+  if((text.length + attLenght +4) > 1024 ){
+    this.showToaster("text length should not exceed 1024 limit!", 'error');
+  }else{
+  this.insertAtCursor(selectedValue);
+  }
+
+  }
+
+  insertAtCursor(selectedValue:any) {
+  const editorElement = this.chatEditor.element.querySelector('.e-content');
+  const newNode = document.createElement('span');
+  newNode.innerHTML = '{{'+selectedValue+'}}';
+  newNode.style.color = '#000';
+  this.lastCursorPosition?.insertNode(newNode);
+  }
+
+
+
+  getAttributeList() {
+    let spId = this.spid
+  this._teamboxService.getAttributeList(spId)
+  .subscribe((response:any) =>{
+  if(response){
+  let attributeListData = response?.result;
+  this.attributesList = attributeListData.map((attrList:any) => attrList.displayName);
+  }
+  });
+  }
 
 onEditorChange(value: string | null): void {
     this.usertemplateForm.get('BodyText')?.setValue(value);
