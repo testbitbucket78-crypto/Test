@@ -623,7 +623,7 @@
 			<div class="modal-content p-2 pl-3 edittag ">
 				<div class="modal-header edit-tag-header">
 					<p id="edit-tag-head">Edit Tag</p>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"  aria-label="Close">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" (click)="isEditTag=false" aria-label="Close">
 						<img src="../../../../assets/img/teambox/icon-close.svg">
 					</button>
 				</div>
@@ -634,7 +634,9 @@
 									<label class="m-0 form-check-label" for="flexCheckDefault{{i}}">
 									<input class="form-check-input" type="checkbox" 
 									       [checked]="getFilterTags?.includes(tag.TagName)"
-									       id="flexCheckDefault{{i}}">
+									       id="flexCheckDefault{{i}}"
+										   [ngModel]="checkedTags.includes(tag.TagName)"
+            							   (ngModelChange)="updateTags(tag.TagName, $event)">
 										   <span class="checkmark"></span>
 									<span [ngClass]="{'color-dots': true}" [style.background]="tag.TagColour"></span>
 									 {{tag.TagName}}
@@ -645,7 +647,7 @@
 				</div>
 				<div class="modal-footer edittag-footer">
 					<button type="button" class="btn-close" id="edit-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-					<button type="button" class="btn-close" id="edit-btn-save" (click)=" updateTags()">Save</button>
+					<button type="button" class="btn-close" id="edit-btn-save" (click)="saveContact(addcontact,addcontacterror)">Save</button>
 				</div>
 			</div>
 		</div>

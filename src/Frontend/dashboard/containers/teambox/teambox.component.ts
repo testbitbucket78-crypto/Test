@@ -1589,15 +1589,13 @@ updateCustomer(){
 
 }
 
-
 filterContactByType(ChannelName:string){
     this.selectedChannel = ChannelName;
-	this.filterChannel = ChannelName;
 
-    const filteredList = this.contactListInit.filter(
-		(item: any) => item.channel === this.selectedChannel);
-    
-    this.contactList = filteredList;
+	this.contactList.forEach((item: any) => {
+		item.channel = this.selectedChannel;
+	});
+	console.log(this.contactList)
     this.getSearchContact();
     this.ShowContactOption = false;
 }
@@ -2379,8 +2377,8 @@ sendMessage(){
 				this.settingService.getTagData(spid).subscribe(result => {
 				  if (result) {
 					  let tagList = result.taglist;
-					  this.tagsoptios = tagList.map((tag:any) => ({
-					      id:tag.ID,			
+					  this.tagsoptios = tagList.map((tag:any,index:number) => ({
+					      id:index + 1,			
 						  name:tag.TagName,
 						  color:tag.TagColour,
 						  status:false
