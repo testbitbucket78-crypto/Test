@@ -2671,6 +2671,17 @@ label span {
         font-family: 'Manrope';
         font-size: 13px;
     }
+
+    .older-message{
+        font-size: 12px;
+        color: gray;
+        background: gainsboro;
+        padding: 5px 15px;
+        border-radius: 10px;
+        box-shadow: 2px 6px 5px 0px #00000052;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
     .color-dots {
         display: inline-block;
         width: 10px;
