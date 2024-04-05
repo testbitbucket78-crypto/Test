@@ -1,7 +1,7 @@
 <sb-layout-dashboard>
 	<sb-top-nav title="Smart Replies"></sb-top-nav>
 
-	<div class="row r1">
+	<div [ngStyle]="isShowSmartReplies ? {'position': 'fixed'} : {}" class="row r1">
 
 
 		<div class="d-flex justify-content-between pt-3 pb-4 content-header">

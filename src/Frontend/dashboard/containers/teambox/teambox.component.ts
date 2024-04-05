@@ -1378,7 +1378,7 @@ sendattachfile() {
 			var hrPer =100
 			this.hourLeft =0
 			if(this.selectedInteraction['interaction_status']!=='Resolved'){
-				// this.updateConversationStatus('Resolved')
+				this.updateConversationStatus('Resolved')
 			}
 		}
 		
