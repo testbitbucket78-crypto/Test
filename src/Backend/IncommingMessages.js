@@ -71,8 +71,8 @@ async function matchSmartReplies(message_text, sid,channelType) {
 
       sreplyQuery = `SELECT DISTINCT  t2.* 
  FROM SmartReply t1
-JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
-JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
+JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID and t2.isDeleted !=1
+JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId and t3.isDeleted !=1
 WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
 
       reply = await db.excuteQuery(sreplyQuery, [[message_text], sid, id,channelType]);
@@ -88,8 +88,8 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
     } else if (storedValue == 'Fuzzy matching') {
       //  console.log("Fuzzy Matching");
       let FuzzyQuery = `SELECT t2.* 
-      FROM SmartReply t1 JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
-      JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
+      FROM SmartReply t1 JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID and t2.isDeleted !=1
+      JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId and t3.isDeleted !=1
       WHERE  SOUNDEX(t3.Keyword) = SOUNDEX(?)
       AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
       reply = await db.excuteQuery(FuzzyQuery, [[message_text], sid, id,channelType]);
@@ -105,8 +105,8 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
       //  console.log("exact match")
       let exactQuery = `SELECT t2.* 
       FROM SmartReply t1
-     JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID
-     JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId
+     JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID and t2.isDeleted !=1
+     JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId and t3.isDeleted !=1
      WHERE t3.Keyword=? AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
       reply = await db.excuteQuery(exactQuery, [[message_text], sid, id,channelType]);
       //console.log(reply)

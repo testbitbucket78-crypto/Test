@@ -58,7 +58,7 @@ router.post('/interactionpinned',authenticateToken,TeamBoxController.updatePinne
 router.get('/searchinteraction/:searchKey/:AgentId',authenticateToken,TeamBoxController.getSearchInteraction);
 
 
-router.get('/messages/:InteractionId/:Type',authenticateToken,TeamBoxController.getAllMessageByInteractionId);
+router.get('/messages/:InteractionId/:Type/:RangeStart/:RangeEnd',TeamBoxController.getAllMessageByInteractionId);
 router.post('/newmessage',authenticateToken,TeamBoxController.insertMessage);
 router.post('/deletemessage',authenticateToken,TeamBoxController.deleteMessage);
 router.post('/updatemessageread',authenticateToken,TeamBoxController.updateMessageRead);
