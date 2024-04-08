@@ -595,3 +595,8 @@ margin-top: -12px;
 .help-support-btn {
     cursor: pointer;
 }
+
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+}

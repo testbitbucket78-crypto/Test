@@ -297,7 +297,7 @@
                 						<span [innerHTML]="galleryMessageData?.FooterText"></span><br />
             						</div> -->
 								<div class="boxbody">									
-									<div class="descbody" [innerHTML]="repliestemplateData.BodyText"></div>
+									<div class="descbody" [innerHTML]="repliestemplateData?.BodyText | sanitizeHtml"></div>
 								</div>
 							</div>
 
@@ -325,6 +325,39 @@
 	  </div>
 		</div>
 	
+	</div>
+
+	<div class="modal fade" tabindex="-1" id="atrributemodal" #atrributemodal data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="attrmodal modal-content">
+				<div class="modal-body">
+					<div class="custom_modal bg-pink sm attributes">
+						<div class="modal-header">
+							<div class="modal-header-left">
+								<h4 class="modal-title" id="modal-basic-title">Attributes</h4>
+							</div>
+							<div (click)="closeAtrrModal()" class="modal-header-right">
+								<p class="close-box" aria-label="Close"><img src="assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+						<div class="modal-body quickResponse">
+							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
+								aria-describedby="basic-addon2" [(ngModel)]="attributesearch" />
+							<div class="items_list">
+								<div (click)="selectAttributes(alist)" *ngFor="let alist of attributesList | searchfilter:attributesearch " class="attribute">
+									<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
+								</div>
+							</div>
+	
+							<div class="bottom_section">
+								<p class="text-box-readonly"><span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg">
+								</span>Add/edit new attributes from settings</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	

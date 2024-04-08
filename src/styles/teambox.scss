@@ -388,3 +388,7 @@ label.container input[type="radio"]:checked + span.label {
         font-size: 12px;
         margin-bottom: 10px;
     }
+
+    .e-rte-image.e-imginline, .e-rte-audio.e-audio-inline, .e-rte-video.e-video-inline {
+      max-width: 100%;
+    }

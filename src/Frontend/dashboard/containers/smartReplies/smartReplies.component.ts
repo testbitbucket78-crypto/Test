@@ -291,6 +291,7 @@ showAddSmartRepliesModal() {
 		this.showQuickReply = false
 		this.showMention = false
 		this.ShowAddAction = false;
+		this.showSideBar = false
 		this.selectedTemplate = [];
 		this.variableValues=[];
 		this.attributesearch = '';
@@ -327,6 +328,7 @@ showAddSmartRepliesModal() {
 		this.assignActionList = []
 		this.getTemplatesList()
 		this.ShowChannelOption = false
+		this.isShowSmartReplies = false
 		
 	}
 
@@ -373,6 +375,7 @@ showAddSmartRepliesModal() {
 		$("#attachmentbox").modal('hide');
 		$("#editTemplateMedia").modal('hide'); 
 		this.isAttachmentMedia = false;
+		this.showSideBar = false;
 	}
 
 	ToggleAttachmentBox() {
@@ -415,8 +418,10 @@ showAddSmartRepliesModal() {
 				$("#attachmentbox").modal('hide');
 				$("#editTemplate").modal('show');
 				this.messageMeidaFile='';
+				
 			}
 		}
+		this.showSideBar = false
 	}
 
 	cancelEditTemplateMedia(){
@@ -1174,7 +1179,7 @@ stopPropagation(event: Event) {
 				Keywords: this.keywords
 			}
 
-			// if(this.isEdit == false) {
+			if(this.isEdit == false) {
 				this.apiService.duplicatekeywordSmartReply(data)
 				.subscribe(
 				 (response: any) => {
@@ -1193,10 +1198,10 @@ stopPropagation(event: Event) {
 					 
 					 }
 			 });
-			// }
-			// else {
-			// 	this.next();
-			// }
+			}
+			else {
+				this.next();
+			}
 
 		}
 
