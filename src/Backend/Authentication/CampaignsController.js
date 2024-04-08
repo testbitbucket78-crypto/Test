@@ -342,13 +342,13 @@ const sendCampinMessage = async (req, res) => {
             });
         }
 
-       // let serverDateTime = new Date();
-       // let formattedTime = getTimeZoneTimes(serverDateTime, time_zone)
+       let serverDateTime = new Date();
+        let formattedTime = getTimeZoneTimes(serverDateTime, time_zone)
 
         //let channelType = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [spid] 
         let inputDate = new Date(schedule_datetime);
-
-        if (new Date(inputDate) <= new Date()) {
+console.log(formattedTime  , inputDate ,new Date(formattedTime) , new Date(inputDate) ,new Date(inputDate) <= new Date(formattedTime))
+        if (new Date(inputDate) <= new Date(formattedTime)) {
             let messagestatus;
             if (optInStatus == 'Yes') {
                 const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and isDeleted !=1`;
@@ -516,7 +516,7 @@ async function find_message_status(sp_id, Id) {
     let msgStatus = await db.excuteQuery(msgStatusquery, [sp_id, Id]);
 
     for (const item of msgStatus) {
-        if (item.status === 1) {
+        if (item.status !== 1) {
             Sent += item.Status_Count;
         } else if (item.status === 0) {
             Failed += item.Status_Count;
@@ -544,19 +544,19 @@ console.log("alert.channel_id",alert.channel_id ,alert.status)
       Campaign Name: `+ alert.title + `
       Scheduled Time: `+ alert.start_datetime + `
       Taget Audience: `+ audience + `
-      Channel: < `+ 'WhatsApp' + `,` + alert.channel_id + `> 
+      Channel: `+ 'WhatsApp' + `,` + alert.channel_id + `
       Category: `+ alert.category + ` `
     } if (alert.status == '-1') {
         message = `Hello, your Engagekart Campaign has Started:
       Campaign Name: `+ alert.title + `
       Taget Audience:  `+ audience + `
-      Channel: WhatsApp  ` +  alert.channel_id + `
+      Channel: `+ 'WhatsApp' + `,` + alert.channel_id + `
       Category:`+ alert.category + ` `
     } if (alert.status == '3') {
         message = `Hi, here is the Summary of your finished Engagekart Campaign:
       Campaign Name: `+ alert.title + `
       Taget Audience:  `+ audience + `
-      Channel: <`+ 'WhatsApp' + `,` + alert.channel_id + `>
+      Channel: `+ 'WhatsApp' + `,` + alert.channel_id + `
       Category: `+ alert.category + `
       Sent: ` + msgStatus.Sent + `
       Failed: ` + msgStatus.Failed + `
