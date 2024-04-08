@@ -660,7 +660,7 @@
 
     </div>
             <div class="modal-footer">
-                <button type="button" class="account-btn" [disabled]="newTemplateForm.get('BodyText')?.value==null" [class.disabled]="newTemplateForm.invalid" (click)="previewTemplate()">Next</button>
+                <button type="button" class="account-btn" [disabled]="newTemplateForm.get('BodyText')?.value==''" [class.disabled]="newTemplateForm.invalid" (click)="previewTemplate()">Next</button>
             </div>
         </form>
         </div>

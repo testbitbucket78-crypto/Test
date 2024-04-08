@@ -7,10 +7,11 @@ import { TeamboxService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
+import { BehaviorSubject, forkJoin, fromEvent, Observable } from "rxjs";
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ToolbarService,NodeSelection, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, map } from 'rxjs/operators';
 
 declare var $: any;
 @Component({
@@ -230,6 +231,12 @@ routerGuard = () => {
 	// isNewInteraction:boolean=false;
 	// Interaction_ID:number = 0;
 	// template_json:any;
+	currentPage:number= 0;
+	pageSize:number= 10;
+	messageRangeStart:number= 0;
+	messageRangeEnd:number= 30;
+	selectedInteractionList:any[] =[];
+	isCompleted:boolean = false;
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
@@ -886,6 +893,7 @@ sendattachfile() {
 		this.getAgents()
 		this.getUserList()
 		this.getAllInteraction()
+		this.getInteractionsOnScroll()
 		this.getCustomers()
 		this.getquickReply()
 		// this.getTemplates()
@@ -1099,10 +1107,94 @@ sendattachfile() {
 		}, 2000);
 
 		if(dataList[0] && selectInteraction){
-			this.selectInteraction(dataList[0])
+			this.selectInteraction(0)
 		}
 
 
+	}
+
+	async getInteractionDataById(idx:number){
+		let item:any ={};
+		item = this.interactionList[idx];
+		let threasholdMessages=0;
+		item['tags'] = this.getTagsList(item?.tag);
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text').subscribe((res:any) =>{
+			let messageList = res.result;
+			item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
+			item['allmessages'] =messageList?messageList:[]
+
+			var lastMessage = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]:[];
+			item['lastMessage'] = lastMessage
+			item['lastMessageReceved']= this.timeSinceLastMessage(item.lastMessage)
+			item['progressbar']= this.getProgressBar(item.lastMessage)
+			item['UnreadCount']= this.getUnreadCount(item.allmessages)
+			
+			var messageSentCount:any = this.threasholdMessages(item.allmessages)
+			threasholdMessages = threasholdMessages+messageSentCount
+			this.SIPthreasholdMessages= this.SIPmaxMessageLimt-threasholdMessages
+	
+		})
+
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes').subscribe((res1:any) =>{
+			let notesList = res1.result;
+			item['notesList'] =notesList?this.groupMessageByDate(notesList):[]
+			item['allnotes'] =notesList?notesList:[]
+		})
+
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media').subscribe((res2:any) =>{
+			let mediaList = res2.result;
+			item['allmedia'] =mediaList?mediaList:[]
+		})
+
+
+			this.apiService.getInteractionMapping(item.InteractionId).subscribe(mappingList =>{
+				var mapping:any  = mappingList;
+				item['assignTo'] =mapping?mapping[mapping.length - 1]:'';
+			})
+		
+		this.apiService.checkInteractionPinned(item.InteractionId,this.AgentId).subscribe(pinnedList =>{
+			var isPinnedArray:any =pinnedList
+			if(isPinnedArray.length >0){
+				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+			item['isPinned'] = true
+
+			}else{
+			item['isPinned'] = false
+			}
+		})
+
+		this.interactionList[idx] = item;
+		this.interactionListMain[idx] = item;
+
+		// if(this.interactionList[idx]){
+		// 	this.selectInteraction(idx)
+		// }
+	}
+
+	getMessageData(selectedInteraction:any){
+		let item:any ={};
+		item = selectedInteraction;
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',this.messageRangeStart,this.messageRangeEnd).subscribe((res:any) =>{
+			let messageList = res.result;
+			let val = messageList?this.groupMessageByDate(messageList):[];
+			let val1 = messageList?messageList:[];
+			item['messageList'] = [...val, ...item['messageList']];
+			item['allmessages'] = [...val1, ...item['allmessages']];	
+		})
+
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.messageRangeStart,this.messageRangeEnd).subscribe((res1:any) =>{
+			let notesList = res1.result;
+			let val = notesList?this.groupMessageByDate(notesList):[];
+			let val1 = notesList?notesList:[];
+			item['notesList'] =[...val, ...item['notesList']];
+			item['allnotes'] =[...val1, ...item['allnotes']];
+		})
+
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',this.messageRangeStart,this.messageRangeEnd).subscribe((res2:any) =>{
+			let mediaList = res2.result;
+			let val = mediaList?mediaList:[];
+			item['allmedia'] = [...val, ...item['allmedia']];
+		})
 	}
 
 	getUpdatedList(dataList:any) {
@@ -1158,16 +1250,23 @@ sendattachfile() {
 			FilterBy:this.interactionFilterBy,
 			AgentId:this.AgentId,
 			SPID:this.SPID,
-			AgentName:this.AgentName
+			AgentName:this.AgentName,
+			RangeStart:this.currentPage,
+    		RangeEnd:this.currentPage + this.pageSize
 		}
 		
-		await this.apiService.getAllInteraction(bodyData).subscribe(async data =>{
-			var dataList:any = data;
+		await this.apiService.getAllInteraction(bodyData).subscribe(async (data:any) =>{
+			var dataList:any = data?.conversations;
+			this.isCompleted = data?.isCompleted
 			console.log(dataList,'DataList *****')
-			if(this.selectedInteraction ){
+			if(this.selectedInteraction && selectInteraction ){
 				this.selectedInteraction = dataList.filter((item: any)=> item.InteractionId == this.selectedInteraction.InteractionId)[0];
 			}
-			this.getAssicatedInteractionData(dataList,selectInteraction)
+			//this.getAssicatedInteractionData(dataList,selectInteraction)
+		this.interactionList.push(...dataList);
+		this.interactionListMain.push(...dataList);
+		if(selectInteraction)
+			this.selectInteraction(0);
 			
 		});
 		this.scrollChatToBottom()
@@ -1397,8 +1496,13 @@ sendattachfile() {
 		}
 	}
 
-	selectInteraction(Interaction: any) {
-		console.log(Interaction);
+	async selectInteraction(idx:number) {
+
+		let Interaction = this.interactionList[idx];
+		if(this.selectedInteractionList.findIndex(i => i == idx) == -1){
+			this.selectedInteractionList.push(idx) 
+			await this.getInteractionDataById(idx);
+		}
 
 		for(const item of this.interactionList) {
 			item['selected'] = false;
@@ -2391,5 +2495,31 @@ sendMessage(){
 			toggleInfoIcon() {
 				this.showInfoIcon = !this.showInfoIcon;
 			  }
+
+
+	getInteractionsOnScroll(){
+		const content = document.querySelector('.all_contacts');
+    	const scroll$ = fromEvent(content!, 'scroll').pipe(map(() => { return content!.scrollTop; }));
+ 
+    scroll$.subscribe((scrollPos) => {
+      let limit = content!.scrollHeight - content!.clientHeight;
+	  console.log(scrollPos);
+	  console.log(limit);
+      if (Math.ceil(scrollPos) >= limit && !this.isCompleted) {
+        this.currentPage += this.pageSize;
+        // forkJoin([this.items$.pipe(take(1)), this.appService.getData(this.currentPage, this.pageSize)]).subscribe((data: Array<Array<any>>) => {
+        //   const newArr = [...data[0], ...data[1]];
+        //   this.obsArray.next(newArr);
+        // });
+		this.getAllInteraction(false);
+      }
+    });
+	}
+
+	getOlderMessages(selectedInteraction:any){
+		this.messageRangeStart = this.messageRangeEnd
+		this.messageRangeEnd = this.messageRangeEnd +30;
+		this.getMessageData(selectedInteraction)
+	}
 		  
 }

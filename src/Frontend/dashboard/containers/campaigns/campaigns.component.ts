@@ -1359,8 +1359,8 @@ formateDate(dateTime:string){
 			this.getAllCampaigns()
 		}
 		let CampaignId:any=this.newCampaignDetail.Id?this.newCampaignDetail.Id:'';
-		await this.apiService.addCampaign(BodyData).subscribe(responseData =>{
-			let newCampaign:any = responseData
+		await this.apiService.addCampaign(BodyData).subscribe((responseData:any) =>{
+			let newCampaign:any = responseData?.addcampaign;
 			console.log(newCampaign)
 			if(newCampaign.insertId > 0){
 				CampaignId= newCampaign.insertId;
@@ -1404,6 +1404,8 @@ formateDate(dateTime:string){
 					channel_label:this.newCampaignDetail.value.channel_label,
 					schedule_datetime:BodyData.start_datetime,
 					status:ix == this.csvContactList.length ? 3 :this.scheduled,
+					csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
+					segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
 				}
 				let allVariables:any = this.selectedTemplate.allVariables
 				console.log(allVariables)
@@ -1474,7 +1476,9 @@ formateDate(dateTime:string){
 							channel_id:this.newCampaignDetail.value.channel_id,
 							channel_label:this.newCampaignDetail.value.channel_label,
 							schedule_datetime:BodyData.start_datetime,
-							status:idx == this.csvContactList.length ? 3 :this.scheduled,
+							status:idx == this.segmentsContactList.length ? 3 :this.scheduled,
+							csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
+							segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
 						}
 						
 

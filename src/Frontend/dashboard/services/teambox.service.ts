@@ -80,8 +80,8 @@ export class TeamboxService {
   }
 
 
-  public getAllMessageByInteractionId(InteractionId:any,Type:any) {
-    return this.http.get(API_URL+'/messages/'+InteractionId+'/'+Type);
+  public getAllMessageByInteractionId(InteractionId:any,Type:any,RangeStart:number=0,RangeEnd:number=30) {
+    return this.http.get(API_URL+'/messages/'+InteractionId+'/'+Type+'/'+RangeStart+'/'+RangeEnd);
   }
   public sendNewMessage(data: any) {
     return this.http.post(API_URL+'/newmessage/',data);

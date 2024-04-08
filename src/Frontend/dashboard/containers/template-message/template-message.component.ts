@@ -212,7 +212,7 @@ export class TemplateMessageComponent implements OnInit {
             media_type: new FormControl(null),
             Header: new FormControl(null),
             Links: new FormControl(null),
-            BodyText: new FormControl(null, [Validators.required]),
+            BodyText: new FormControl('', [Validators.required]),
             FooterText: new FormControl(null),
             buttonType: new FormControl(''),
             buttonText: new FormControl(''),
@@ -240,6 +240,9 @@ export class TemplateMessageComponent implements OnInit {
     showMessageType(type: string) {
         this.selectedType = type;
         console.log(this.selectedType);
+        this.newTemplateForm.get('Links')?.setValue(null);
+        this.newTemplateForm.get('Header')?.setValue('');
+        this.selectedPreview = '';
     }
 
     applyGalleryFilter() {
