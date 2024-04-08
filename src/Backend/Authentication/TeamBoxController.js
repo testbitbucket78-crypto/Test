@@ -234,7 +234,7 @@ const getAllFilteredInteraction = async (req, res) => {
         let conversations = await db.excuteQuery(queryPath, [req.body.SPID, RangeStart, RangeEnd]);
 
         let isCompleted = false;
-        if (conversations?.length == 0) {
+        if (conversations?.length == 0 || conversations?.length <RangeEnd) {
             isCompleted = true;
         }
 
@@ -316,6 +316,7 @@ const getAllMessageByInteractionId = async (req, res) => {
     try {
        
         let result;
+        let isCompleted = false
         let endRange = (req.params.RangeEnd - req.params.RangeStart)
         if (req.params.Type != 'media') {
             //var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
@@ -334,9 +335,12 @@ const getAllMessageByInteractionId = async (req, res) => {
            
 
         }
-
+if(result?.length == '0' || result?.length <endRange){
+    isCompleted = true;
+}
         res.send({
             result: result,
+            isCompleted :isCompleted,
             status: 200
         })
 
