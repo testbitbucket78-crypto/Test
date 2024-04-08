@@ -745,7 +745,6 @@ formateDate(dateTime:string){
 		newFilter['filterOperator']='AND';
 		}
 		this.ContactListNewFilters.push(newFilter)
-		
 		console.log(this.ContactListNewFilters)
 
 
@@ -818,7 +817,7 @@ formateDate(dateTime:string){
      	
 	}
 	getContactFilterQuery(addeFilter:any){
-		console.log('///////////getContactFilterQuery')
+		console.log('///////////getContactFilterQuery',addeFilter)
 		const groups = addeFilter.reduce((groups:any, filter:any) => {
 			
 			if (!groups[filter.filterPrefix]) {
@@ -1321,7 +1320,7 @@ formateDate(dateTime:string){
 			});
 		let BodyData:any={
 			Id:this.newCampaignDetail.Id?this.newCampaignDetail.Id:'',
-			sp_id:this.SPID,
+			SP_ID:this.SPID,
 			optInStatus:this.optInStatus,
 			title:this.newCampaignDetail.value.title,
 			channel_id:this.newCampaignDetail.value.channel_id,
