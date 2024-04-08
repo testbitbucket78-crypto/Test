@@ -41,7 +41,7 @@ async function fetchScheduledMessages() {
     for (const message of messagesData) {
 
     //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
-     console.log(message.sp_id,"campaignTime", isWorkingTime(message) ,new Date(message.start_datetime) < new Date() ,new Date(message.start_datetime) , new Date())
+     console.log(message.SP_ID,"campaignTime", isWorkingTime(message) ,new Date(message.start_datetime) < new Date() ,new Date(message.start_datetime) , new Date())
       if (isWorkingTime(message)) {
 
         if (new Date(message.start_datetime) < new Date()) {
@@ -124,13 +124,13 @@ async function mapPhoneNumberfomCSV(message) {
     if (message.message_media == null || message.message_media == "") {
       type = 'text';
     }
-    let channelType = await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?', [message.sp_id])
+    let channelType = await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?', [message.SP_ID])
     //console.log("channelType", channelType, channelType[0])
     campaignAlerts(message, 2) // campaignAlerts(new Date(), message.Id)    //Campaign is Running
     let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
     let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
     let content = await removeTagsFromMessages(message.message_content);
-    batchofScheduledCampaign(contacts, message.sp_id, type, content, message.message_media, message.phone_number_id, message.channel_id, message,'csv') //channelType[0].connected_id
+    batchofScheduledCampaign(contacts, message.SP_ID, type, content, message.message_media, message.phone_number_id, message.channel_id, message,'csv') //channelType[0].connected_id
   } catch (err) {
     console.log(err)
   }
@@ -148,7 +148,7 @@ async function mapPhoneNumberfomList(message) {
     type = 'text';
   }
 
-  let channelType = await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?', [message.sp_id])
+  let channelType = await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?', [message.SP_ID])
   //console.log("channelType",dataArray, channelType, channelType[0])
   let Query = "SELECT * from EndCustomer  where customerId IN ? and isDeleted != 1"
 
@@ -160,7 +160,7 @@ async function mapPhoneNumberfomList(message) {
   let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
   let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
   let content = await removeTagsFromMessages(message.message_content);
-  batchofScheduledCampaign(phoneNo, message.sp_id, type,content, message.message_media, message.phone_number_id, message.channel_id, message,'List')
+  batchofScheduledCampaign(phoneNo, message.SP_ID, type,content, message.message_media, message.phone_number_id, message.channel_id, message,'List')
   // }
 
 }

@@ -730,7 +730,7 @@ const getCampaignMessages = async (req, res) => {
 const copyCampaign = (req, res) => {
     let Query = "SELECT * from CampaignMessages  where CampaignId = " + req.params.CampaignId
 
-    let CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('copied ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = " + req.params.CampaignId
+    let CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('Copy of ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = " + req.params.CampaignId
 
     //  console.log(CopyQuery)
     db.runQuery(req, res, CopyQuery, []);

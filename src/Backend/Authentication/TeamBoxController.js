@@ -234,14 +234,14 @@ const getAllFilteredInteraction = async (req, res) => {
         let conversations = await db.excuteQuery(queryPath, [req.body.SPID, RangeStart, RangeEnd]);
 
         let isCompleted = false;
-        if (conversations?.length == 0) {
+        if (conversations?.length == 0 || conversations?.length <RangeEnd) {
             isCompleted = true;
         }
 
         res.send({
             status: 200,
-            conversations : conversations,
-            isCompleted : isCompleted
+            conversations: conversations,
+            isCompleted: isCompleted
         })
     } catch (err) {
         db.errlog(err);
@@ -312,18 +312,43 @@ const getSearchInteraction = (req, res) => {
 
 
 
-const getAllMessageByInteractionId = (req, res) => {
-    if (req.params.Type != 'media') {
-        //var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
-        var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + "))  and Type='" + req.params.Type + "'  AND Message.is_deleted != 1 AND (Message.msg_status IS NULL OR Message.msg_status != 10 )  order by interaction_id desc";
+const getAllMessageByInteractionId = async (req, res) => {
+    try {
+       
+        let result;
+        let isCompleted = false
+        let endRange = (req.params.RangeEnd - req.params.RangeStart)
+        if (req.params.Type != 'media') {
+            //var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
+            var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + "))  and Type='" + req.params.Type + "'  AND Message.is_deleted != 1 AND (Message.msg_status IS NULL OR Message.msg_status != 10 )  order by interaction_id desc , Message.created_at DESC LIMIT " + req.params.RangeStart + "," + endRange;
 
-        db.runQuery(req, res, getAllMessagesByInteractionId, [req.params.InteractionId, req.params.Type])
-    } else {
-        //var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
-        var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) and is_deleted !=1 AND (msg_status IS NULL OR msg_status !=10 ) ORDER BY Message_id DESC"
+            result = await db.excuteQuery(getAllMessagesByInteractionId, [])
 
-        db.runQuery(req, res, getAllMessagesByInteractionId, [req.params.InteractionId, req.params.Type])
+          
+        } else {
+            //var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
+            var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) and is_deleted !=1 AND (msg_status IS NULL OR msg_status !=10 ) ORDER BY Message_id DESC LIMIT " + req.params.RangeStart + "," + endRange ;
 
+
+            result = await db.excuteQuery(getAllMessagesByInteractionId, [req.params.RangeStart, endRange])
+
+           
+
+        }
+if(result?.length == '0' || result?.length <endRange){
+    isCompleted = true;
+}
+        res.send({
+            result: result,
+            isCompleted :isCompleted,
+            status: 200
+        })
+
+    } catch (err) {
+        res.send({
+            err: err,
+            status: 500
+        })
     }
 
 }
