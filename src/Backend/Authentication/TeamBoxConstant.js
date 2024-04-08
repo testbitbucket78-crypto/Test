@@ -66,9 +66,9 @@ COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
 m.*
 FROM 
 Interaction ic
-JOIN 
+LEFT JOIN 
 EndCustomer ec ON ic.customerId = ec.customerId
-JOIN (
+LEFT JOIN (
 SELECT 
     ic.InteractionId,
     MAX(m.Message_id) AS LastMessageId
@@ -101,9 +101,9 @@ ic.interactionId IN (
     WHERE customerId = ic.customerId
     GROUP BY customerId
 ) 
-AND ec.SP_ID = ?
-AND ec.isDeleted != 1
-AND ic.is_deleted = 0
+AND ec.SP_ID = ?  
+AND ec.isDeleted != 1  
+AND ic.is_deleted =0
 ORDER BY 
 ic.interactionId DESC
 LIMIT ?,?`
