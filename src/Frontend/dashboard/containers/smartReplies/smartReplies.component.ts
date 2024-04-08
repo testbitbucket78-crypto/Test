@@ -1419,6 +1419,7 @@ stopPropagation(event: Event) {
 	editSmartReply(step:number) {
 		console.log(this.repliesData);
 		this.isEdit = true;
+		this.showSideBar = false;
 		this.showAddSmartRepliesModal();
 		this.goToStep(step);
 		this.newReply.get('Title')?.setValue(this.repliesData.Title)
