@@ -69,10 +69,15 @@ export class ImportComponent implements OnInit {
 		this.spid = Number(sessionStorage.getItem('SP_ID'));
 		// this.routerGuard();
 		this.showTopNav = false;
-		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: true,
-			animation: true
+
+
+		setTimeout(() => {
+			this.stepper = new Stepper($('.bs-stepper')[0], {
+				linear: true,
+				animation: true
+			});
 		});
+
 		this.getCustomFieldsData();
 		this.dragAreaClass = "dragarea";
 	}
