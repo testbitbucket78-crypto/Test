@@ -207,7 +207,7 @@
 						</div>
 						<div *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList?.length>0"
 							class="conversation_list chat" #chatSection>
-							<div class="older-message" (click)="getOlderMessages(selectedInteraction)">Click here to get older messages</div>
+							<div class="older-message" (click)="getOlderMessages(selectedInteraction)" *ngIf="!(isMessageCompletedMedia && isMessageCompletedNotes && isMessageCompletedText)">Click here to get older messages</div>
 							<div *ngFor="let messageGroup of selectedInteraction?.messageList; let i = index" id={{i}}
 								class="conversation_list_inner_box">
 								<div class="date_seprator"><span>---</span>
