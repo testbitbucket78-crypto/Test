@@ -303,6 +303,8 @@ newQuickResponse(){
 
 showMessageType(type: string) {
   this.selectedType = type;
+  this.usertemplateForm.get('Links')?.setValue(null);
+  this.selectedPreview = '';
 }  
 
 removeValue() {

@@ -754,7 +754,7 @@ img.no-dp {
     align-items: center;
     padding: 2% 5%;
     height: 80%;
-    overflow: scroll;
+    overflow-y: scroll !important;
     margin-top: 2%;
 }
 
@@ -2690,3 +2690,12 @@ label span {
         margin: 0 6px 0 4px;
     
     }
+
+    
+	.all_contacts::-webkit-scrollbar {
+		display: block !important;
+	}
+
+	.conversation_list::-webkit-scrollbar {
+		display: block !important;
+	}

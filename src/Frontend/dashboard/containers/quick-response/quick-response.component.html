@@ -101,15 +101,15 @@
 							<input type="radio" id="sel-document" name="sel-type" class="d-none" (change)="showMessageType('document')" [checked]="selectedType=='document'"><label  class="m-0" for="sel-document">Document</label>
 						</div>
 	
-						<div class="sel-type-text-container">
+						<!-- <div class="sel-type-text-container">
 							<div *ngIf="selectedType === 'text'" class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
 								<h6>Message</h6> <span>{{numberCount}}/1024 Characters</span>
 							 </div>
 	
-							 <!-- <div *ngIf="selectedType === 'text'" class="sel-type-text">
+							  <div *ngIf="selectedType === 'text'" class="sel-type-text">
 								 <textarea name="text-editor" (keyup)="getCharacterCount($event.target.value)" formControlName="BodyText" maxlength="1024" rows="14" placeholder="Enter"></textarea>
-							 </div> -->
-						</div>
+							 </div> 
+						</div> -->
 				 
 						
             

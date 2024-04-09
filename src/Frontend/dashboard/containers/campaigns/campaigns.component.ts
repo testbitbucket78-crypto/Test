@@ -2336,7 +2336,8 @@ console.log(this.allTemplatesMain);
 	  selectTemplate(template: any) {
 		this.selectedTemplate = template;
 		console.log(template, '----template');
-		var str = template.BodyText;
+		let header = template?.Header ? template?.Header : '';
+		var str = header + template.BodyText;
 		if (str) {
 		  const allVariables = this.getVariables(str, "{{", "}}");
 		  let allVariablesList: any = [];

@@ -237,6 +237,9 @@ routerGuard = () => {
 	messageRangeEnd:number= 30;
 	selectedInteractionList:any[] =[];
 	isCompleted:boolean = false;
+	isMessageCompletedNotes:boolean = false;
+	isMessageCompletedMedia:boolean = false;
+	isMessageCompletedText:boolean = false;
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
@@ -1119,6 +1122,7 @@ sendattachfile() {
 		let threasholdMessages=0;
 		item['tags'] = this.getTagsList(item?.tag);
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text').subscribe((res:any) =>{
+			this.isMessageCompletedText = res.isCompleted;
 			let messageList = res.result;
 			item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
 			item['allmessages'] =messageList?messageList:[]
@@ -1136,12 +1140,14 @@ sendattachfile() {
 		})
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes').subscribe((res1:any) =>{
+			this.isMessageCompletedNotes = res1.isCompleted;
 			let notesList = res1.result;
 			item['notesList'] =notesList?this.groupMessageByDate(notesList):[]
 			item['allnotes'] =notesList?notesList:[]
 		})
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media').subscribe((res2:any) =>{
+			this.isMessageCompletedMedia = res2.isCompleted;
 			let mediaList = res2.result;
 			item['allmedia'] =mediaList?mediaList:[]
 		})
@@ -1176,8 +1182,9 @@ sendattachfile() {
 		item = selectedInteraction;
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',this.messageRangeStart,this.messageRangeEnd).subscribe((res:any) =>{
 			let messageList = res.result;
-			let val = messageList?this.groupMessageByDate(messageList):[];
+			let val = messageList ? this.groupMessageByDate(messageList):[];
 			let val1 = messageList?messageList:[];
+			this.isMessageCompletedText = res.isCompleted;
 			item['messageList'] = [...val, ...item['messageList']];
 			item['allmessages'] = [...val1, ...item['allmessages']];	
 		})
@@ -1185,6 +1192,7 @@ sendattachfile() {
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.messageRangeStart,this.messageRangeEnd).subscribe((res1:any) =>{
 			let notesList = res1.result;
 			let val = notesList?this.groupMessageByDate(notesList):[];
+			this.isMessageCompletedNotes = res1.isCompleted;
 			let val1 = notesList?notesList:[];
 			item['notesList'] =[...val, ...item['notesList']];
 			item['allnotes'] =[...val1, ...item['allnotes']];
@@ -1193,8 +1201,10 @@ sendattachfile() {
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',this.messageRangeStart,this.messageRangeEnd).subscribe((res2:any) =>{
 			let mediaList = res2.result;
 			let val = mediaList?mediaList:[];
+			this.isMessageCompletedMedia = res2.isCompleted;
 			item['allmedia'] = [...val, ...item['allmedia']];
 		})
+		console.log(this.isMessageCompletedMedia,this.isMessageCompletedNotes,this.isMessageCompletedText)
 	}
 
 	getUpdatedList(dataList:any) {
@@ -1266,6 +1276,7 @@ sendattachfile() {
 		this.interactionList.push(...dataList);
 		this.interactionListMain.push(...dataList);
 		if(selectInteraction)
+		//this.selectedInteractionList =
 			this.selectInteraction(0);
 			
 		});
@@ -2139,12 +2150,23 @@ this.apiService.createInteraction(bodyData).subscribe(async data =>{
 		this.modalReference.close();
 	}
 	// this.isNewInteraction=true;
-	this.getAllInteraction();
+	this.getInteractionsFromStart();
 	this.getCustomers();
 	this.filterChannel='';
 
 });
 	
+}
+
+getInteractionsFromStart(){
+	this.interactionList = [];
+	this.interactionListMain = [];
+	this.selectedInteractionList = [];
+	this.currentPage = 0;
+	this.pageSize = 10;
+	this.selectedInteraction =[];
+	this.getAllInteraction();
+
 }
 
 closeAssignOption() {
