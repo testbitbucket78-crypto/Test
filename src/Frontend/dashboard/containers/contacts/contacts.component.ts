@@ -773,11 +773,13 @@ deletContactByID(data: any) {
     // set tags values in edit tag
     this.getFilterTags = data.tag?.split(',').map((tags: string) =>tags.trim());
 
-    const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim()) || [];
+    const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim());
     //set the selectedTag in multiselect-dropdown format
-    const selectedTags = selectedTag.map((tagName: any, index: number) => ({
-        item_id: index + 1,
-        item_text: tagName
+    const selectedTags = this.tagListData.map((tag: any, index: number) => ({ idx: index, ...tag }))
+    .filter(tag => selectedTag?.includes(tag.TagName))
+    .map((tag: any) => ({
+        item_id: tag.idx + 1,
+        item_text: tag.TagName,
     }));
     // this.selectedTag = data.tag
 

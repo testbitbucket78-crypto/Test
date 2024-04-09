@@ -1947,10 +1947,10 @@ toggleTagsModal(updatedtags:any){
 
 	this.selectedTags = ''; 
 	
-	var activeTags = this.selectedInteraction['tags'];
+	var activeTags = this.selectedInteraction['tag'];
 	for(var i=0;i<this.tagsoptios.length;i++){
 		var tagItem = this.tagsoptios[i]
-		if(activeTags.indexOf(tagItem.name)>-1){
+		if(activeTags?.includes(tagItem.name)){
 			tagItem['status']=true;
 			this.selectedTags += tagItem.name+','
 		}
