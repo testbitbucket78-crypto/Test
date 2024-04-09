@@ -420,7 +420,7 @@ hideToaster(){
   this.errorMessage='';
 }
 
-
+    
 onContentChange() {
   //const text = this.chatEditor?.value;
   const container = document.createElement('div');

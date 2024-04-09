@@ -226,7 +226,11 @@ showMessageType(type: string) {
 
   
   selectedButtonType(type: number) {
-    this.selectedCategory = type;
+    this.selectedCategory = type;    
+    this.defaultMessageForm =this.prepareUserForm();
+    this.value = this.defaultMessageForm.get('value')?.value;
+    this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
+    this.defaultMessageForm.get('link')?.clearValidators();
   }
 
   uploadMessageMedia(files: FileList) {
@@ -341,6 +345,7 @@ removeMedia() {
 
      else {
       if (this.defaultMessageForm.valid) {
+        if(this.defaultMessageForm.controls.autoreply.value ||(this.selectedCategory != 5 && this.selectedCategory != 1 )){
         const defaultMessagesData = this.copyDefaultMesssageData();
         this.apiService.addEditDefaultMessages(defaultMessagesData).subscribe
         (response => {
@@ -357,6 +362,9 @@ removeMedia() {
             this.showToaster('Media file size is too large, Maximum of 10mb size is allowed!','error')
           }
       });
+    } else{
+      this.showToaster(`Please enter reply timeout period !`,'error');
+    }
       } else{
         this.showToaster(`Please upload ${this.selectedType} !`,'error');
       }
@@ -377,6 +385,10 @@ removeMedia() {
       this.showSideBar = true;
       this.selectedMessageData = data;
       this.selectedCategory = type;
+      this.defaultMessageForm =this.prepareUserForm();
+      this.value = this.defaultMessageForm.get('value')?.value;
+      this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
+      this.defaultMessageForm.get('link')?.clearValidators();
       this.patchFormValue();
       console.log(data);
   }

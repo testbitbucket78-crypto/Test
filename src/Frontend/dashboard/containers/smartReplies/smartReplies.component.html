@@ -430,10 +430,9 @@
 									(click)="toggleAssignOption(m)">
 									<span>{{assignAction}}</span><img class="pr-3 arrow-sign" src="../../../../assets/img/arrow-sign.svg" />
 								  </p>
+								  <div *ngIf="ShowAddAction" class="overlay" (click)="closeAddAction()"></div>
 								</div>
-								
-								<!-- Add a click event on the document to close the dialog when clicking outside -->
-								<div *ngIf="ShowAddAction" class="overlay" (click)="closeAddAction()"></div>
+
 								
 					  
 					  

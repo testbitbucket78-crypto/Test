@@ -1300,7 +1300,7 @@ input[type='checkbox'] {
     font-family: 'Manrope';
     margin: 8px;
     font-size: 12px;
-    max-height: 180px;
+    // max-height: 180px;
     overflow-y: scroll;
 }
 
@@ -2303,7 +2303,7 @@ label span {
     border: 1px solid #6149CD;
     border-radius: 6px;
     opacity: 1;
-    -webkit-appearance: none;
+    appearance: none;
     display: inline-block;
     position: relative;
     height: 20px;

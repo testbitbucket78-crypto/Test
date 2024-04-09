@@ -1440,7 +1440,7 @@
 		
 	</ng-template>
 
-	<div class="modal fade" tabindex="-1" id="attachmentbox" data-bs-backdrop="static" #attachmentbox role="dialog">
+	<div class="modal fade background-blur" tabindex="-1" id="attachmentbox" data-bs-backdrop="static" #attachmentbox role="dialog">
 		<div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
 		  <div class="m-0 px-3 modal-content attachmentboxcon">
 			<div class="">
@@ -1449,16 +1449,17 @@
 				  <h4 class="modal-title" id="modal-basic-title"></h4>
 				</div>
 				<div class="modal-header-right">
-				  <p  class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+				  <p  class="close-box"  aria-label="Close"
+				  data-bs-dismiss="modal"><img
 					src="assets/img/teambox/icon-close.svg">
 				</p>
 				</div>
 			  </div>
 			  <div class="modal-body attachmentboxbody">
-				<h4>Attach file</h4>
+				<h4>Replace Media</h4>
 				<div class="attachmentbox">
 				  <div class="attachmentbox_left" ngClass="{{dragAreaClass}}">
-					<img class="icon" src="/assets/img/teambox/image-a@2x.png">
+					<img class="icon1" src="/assets/img/teambox/image-a@2x.png">
 					<p>Drag & Drop file</p>
 					<p><span>OR</span></p>
 					<label class="custom-file-upload">
