@@ -1459,6 +1459,8 @@
 	}
 	.applylist_filters{
 		float:left;
+		display: flex;
+    flex-wrap: wrap;
 	}
 	.applylist_filters .submit-btn{
 	float:left;

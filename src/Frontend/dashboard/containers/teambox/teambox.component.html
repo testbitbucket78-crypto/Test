@@ -72,8 +72,8 @@
 											src="/assets/img/teambox/no-dp.svg" />
 										<div class="contacts_detail">
 											<p class="name">{{item.Name}}</p>
-											<div *ngIf="item.lastMessage" class="message"
-												[innerHTML]="limitCharacters(item.lastMessage.message_text) | sanitizeHtml">
+											<div *ngIf="item.message_text" class="message"
+												[innerHTML]="limitCharacters(item.message_text) | sanitizeHtml">
 											</div>
 										</div>
 									</div>
@@ -81,7 +81,7 @@
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
 											<p *ngIf="item.lastMessage" class="time">{{item.lastMessageReceved}}</p>
-											<span *ngIf="item.messageList && item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
+											<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<img class="contact-whatsapp" src="/assets/img/teambox/whatsapp-icon-l.svg">
 											<span *ngIf="item.channel=='WhatsApp Web'" class="icon" class="hovertext" data-hover="WhatsApp Web">
