@@ -37,6 +37,8 @@ export class TopNavComponent implements OnInit {
     firstLetterLastName!:string;
     notificationData = [];
     currentUserDetails:any;
+    randomNumber:number=0;
+
 
     constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: 
         ProfileService,private elementRef: ElementRef,private _settingsService:SettingsService) {}
@@ -54,7 +56,15 @@ export class TopNavComponent implements OnInit {
         this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
         this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
         this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
-        this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
+        // this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
+
+        this.profilePicture = this.apiService.getProfilePicture();
+
+        this.apiService.profilePicture$.subscribe((pictureUrl) => {
+          this.randomNumber = Math.random();
+          this.profilePicture = pictureUrl;
+        });
+      
 
         const nameParts = this.Name.split(' ');
         const firstName = nameParts[0] || '';

@@ -109,6 +109,12 @@ export class MyprofileComponent implements OnInit,OnDestroy {
     this.getUserList();
     this.getAvailableAmount();
     this.startNotificationInterval();
+
+    this.profilePicture = this.apiService.getProfilePicture();
+
+    this.apiService.profilePicture$.subscribe((pictureUrl) => {
+      this.profilePicture = pictureUrl;
+    });
   }
 
   ngOnDestroy() {
@@ -272,6 +278,7 @@ getUserList() {
             this.isActive = this.currentUserDetails.IsActive;
             this.randomNumber = Math.random();
             this.profilePicture = this.currentUserDetails.profile_img;
+            this.apiService.setProfilePicture(this.profilePicture);
           }
         }      
       }

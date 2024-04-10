@@ -54,7 +54,8 @@
         </div>
         <div class="pl-3">
             <span class="sub-heading">Auto-Delete all messaged older than</span>
-            <div class="deletion-time">{{autodeletion_message}} Days</div>
+            <div *ngIf="autodeletion_message !== '-1'" class="deletion-time">{{autodeletion_message}} Days</div>
+            <div *ngIf="autodeletion_message == '-1'" class="deletion-time">Don't Delete</div>
         </div>
     </div>
 
@@ -64,7 +65,8 @@
         </div>
         <div class="pl-3">
             <span class="sub-heading">Auto-Delete all Media older than</span>
-            <div class="deletion-time">{{autodeletion_media}} Days</div>
+            <div *ngIf="autodeletion_media !== '-1'" class="deletion-time">{{autodeletion_media}} Days</div>
+            <div *ngIf="autodeletion_media == '-1'" class="deletion-time">Don't Delete</div>
         </div>
     </div>
 
@@ -74,7 +76,8 @@
         </div>
         <div class="pl-3">
             <span class="sub-heading">Auto-Delete all Contacts older than</span>
-            <div class="deletion-time">{{autodeletion_contacts}} Days</div>
+            <div *ngIf="autodeletion_contacts !== '-1'" class="deletion-time">{{autodeletion_contacts}} Days</div>
+            <div *ngIf="autodeletion_contacts == '-1'" class="deletion-time">Don't Delete</div>
         </div>
     </div>
     </div>
@@ -83,7 +86,7 @@
             <div class="m-0 modal-content edit-auto-deletion">
                 <div class="align-items-center modal-header">
                     <h5 class="modal-title">Edit Auto-Deletion</h5>
-                    <button (click)="editAutoDeletionForm.reset()" type="button" class="close-box" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close-box" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
@@ -99,8 +102,8 @@
                           </label>
                   
                           <div class="optionradio">
-                            <input id="optionradio1" type="radio" name="optionradio1" formControlName="optionradio1">
-                            <label class="optionradio1" for="optionradio1" value="1">Never Delete</label>
+                            <input id="optionradio1" type="radio" name="optionradio1"  value="1" [checked]="autodeletion_message == '-1'" formControlName="optionradio1">
+                            <label class="optionradio1" for="optionradio1">Never Delete</label>
                           </div>
                         </div>
                       </div>
@@ -115,8 +118,8 @@
                           </label>
                   
                           <div class="optionradio">
-                            <input id="optionradio2" type="radio" name="optionradio2" formControlName="optionradio2">
-                            <label class="optionradio2" for="optionradio2">Never Delete</label>
+                            <input id="optionradio2" type="radio" name="optionradio2" value="1" [checked]="autodeletion_media == '-1'" formControlName="optionradio2">
+                            <label class="optionradio2" for="optionradio2" >Never Delete</label>
                           </div>
                         </div>
                       </div>
@@ -130,8 +133,8 @@
                                    formControlName="autodeletion_contacts"> Days
                           </label>
                           <div class="optionradio">
-                            <input id="optionradio3" type="radio" name="optionradio3" formControlName="optionradio3">
-                            <label class="optionradio3" for="optionradio3">Never Delete</label>
+                            <input id="optionradio3" type="radio" name="optionradio3" value="1" [checked]="autodeletion_contacts == '-1'" formControlName="optionradio3">
+                            <label class="optionradio3" for="optionradio3" >Never Delete</label>
                           </div>
                          
                         </div>
