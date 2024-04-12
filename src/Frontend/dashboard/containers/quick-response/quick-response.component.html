@@ -251,7 +251,7 @@
 							<div class="campaigns_section_item_statics">
 								<div>
 									<div class="d-flex">
-									<img src="../../../../assets/img/teambox/Richie_1.png" /><p>{{temp.created_By}}</p></div><p><span>Created By</span></p>
+									<img [src]="profilePicture" /><p>{{temp.created_By}}</p></div><p><span>Created By</span></p>
 								</div>
 							</div>
 						</div>
@@ -273,7 +273,7 @@
 							<p class="start_time">Created on:<span class="mx-1">{{repliestemplateData?.created_at | date:'dd MMM yy, h:mm a'}}</span>
 								|<span class="mx-1" *ngIf="repliestemplateData?.updated_at"> Modified on:</span> <span>{{repliestemplateData?.updated_at  | date:'dd MMM yy, h:mm a'}}</span></p>
 							<div class="campaigns_section_user">
-								<div class="d-flex"> <img src="../../../../assets/img/teambox/Richie_1.png" /><p>{{repliestemplateData?.created_By}}</p></div>
+								<div class="d-flex"> <img [src]="profilePicture" /><p>{{repliestemplateData?.created_By}}</p></div>
 								<p><span>Created By</span></p>
 							</div>
 							<p class="title" >{{repliestemplateData?.Header}}</p>

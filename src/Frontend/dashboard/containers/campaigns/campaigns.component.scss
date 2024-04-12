@@ -1461,6 +1461,7 @@
 		float:left;
 		display: flex;
     flex-wrap: wrap;
+	width: 100% !important;
 	}
 	.applylist_filters .submit-btn{
 	float:left;
@@ -2293,7 +2294,6 @@ position: absolute;
 
 .attachmentbox_left img.icon {
     max-width: 80px;
-    margin-bottom: 1rem;
 }
 
 .attachmentbox_left img.icon1 {
