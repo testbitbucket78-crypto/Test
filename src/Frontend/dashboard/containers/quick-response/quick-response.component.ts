@@ -53,6 +53,7 @@ export class QuickResponseComponent implements OnInit {
 	warnMessage = '';
   attributesearch:string='';
   attributesList:any=[];
+  profilePicture!: string;
 
   
   fileName: any; 
@@ -84,6 +85,7 @@ export class QuickResponseComponent implements OnInit {
   ngOnInit(): void {
     this.spid = Number(sessionStorage.getItem('SP_ID'));
     this.created_By = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
+    this.profilePicture = JSON.parse(sessionStorage.getItem('loginDetails')!).profile_img;
     this.Template();
     this.usertemplateForm=this.prepareUserForm();
     this.getformvalue();

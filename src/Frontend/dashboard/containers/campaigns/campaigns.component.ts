@@ -285,7 +285,7 @@ export class CampaignsComponent implements OnInit {
 	showErrorMessage: boolean = false;
 	isCampaignTiming: boolean = false;
 	workingData:any =[];
-	
+	csvText:string ='';
 	 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
@@ -1576,9 +1576,6 @@ formateDate(dateTime:string){
 	
 		}
 	  }
-	  
-	 
-	  
 
 	closeMediaAttribute(status:any,addNewCampaign:any){
 		this.closeAllModal()
@@ -1596,6 +1593,7 @@ formateDate(dateTime:string){
 		this.mapCsvContact= !this.mapCsvContact
 	}
 	async selectCsvContactCol(item:any){
+		if(this.validateCsv(item)){
 		this.csvContactList.forEach((obj:any) => {
 				obj.Contacts_Column = obj[item];
 				//delete obj[item];
@@ -1603,8 +1601,32 @@ formateDate(dateTime:string){
 
 	   this.CsvContactCol = item  
 	   this.mapCsvContact= false
+	}else{
+		this.showToaster('Column should only have numeric values','error');
+	}
 			
 	}
+	validateCsv(e:string): boolean {
+		// Split the text into lines
+		const lines = this.csvText.split('\n');
+		console.log(lines);
+		console.log(this.csvText);
+		let val = lines[0].split(',');
+		let columnIndex = val.findIndex((id)=>id == e);
+		let i =0;
+		for (const line of lines) {
+		  if(i!=0){
+		  const columns = line.split(',');
+		  if(columns[columnIndex]){
+		  if (isNaN(Number(columns[columnIndex]))) {
+			return false; // Non-numeric value found
+		  }
+		}
+		}
+		i++;
+		}
+		return true; // All values in Column A are numbers
+	  }
 
 	ImportMapping(addNewCampaign:any){
 		this.selecetdCSV =''
@@ -2035,6 +2057,7 @@ testinfo(){
 				let tabalRows:any=[]
 				reader.onload = (e) => {
 					let csv: string = reader.result as string;
+					this.csvText = csv;
 					const results = csv.split("\n");
 					let i=0;
 					results.map((row:any)=>{
