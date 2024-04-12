@@ -121,8 +121,4 @@ export class ProfileService {
     return this.http.get(`${this.API_URL}/userGuideSubTopics/${spId}`);
   }
 
-  updateProfilePicture() {
-
-  }
-
   }

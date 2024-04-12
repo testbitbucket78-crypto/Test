@@ -1110,7 +1110,8 @@ button:focus, input:focus {
 
 .profile {
     display: flex;
-    flex-direction: column;
+
+    // flex-direction: column;
     // margin-bottom: 20px;
     // width: 43vh;
     // padding-left: 1.5rem;
@@ -2340,7 +2341,8 @@ label span {
 
     .profile {
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
+        // flex-direction: column;
         // margin-bottom: 20px;
         // width: 43vh;
         // padding-left: 1.5rem;
@@ -2693,9 +2695,9 @@ label span {
 
     
 	.all_contacts::-webkit-scrollbar {
-		display: block !important;
+		display: none;
 	}
 
 	.conversation_list::-webkit-scrollbar {
-		display: block !important;
+		display: none;
 	}
