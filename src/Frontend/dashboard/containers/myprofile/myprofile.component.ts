@@ -279,6 +279,9 @@ getUserList() {
             this.randomNumber = Math.random();
             this.profilePicture = this.currentUserDetails.profile_img;
             this.apiService.setProfilePicture(this.profilePicture);
+            let val:any = JSON.parse(sessionStorage.getItem('loginDetails')!);
+            val.profile_img = this.profilePicture + '?' + this.randomNumber;
+            sessionStorage.setItem('loginDetails',JSON.stringify(val));
           }
         }      
       }
@@ -400,6 +403,7 @@ closeModal() {
     this.showToaster('Image saved successfully','success' + response);
     $("#pictureCropModal").modal('hide');
     this.getUserList()
+
    
   },
   (error) => {
