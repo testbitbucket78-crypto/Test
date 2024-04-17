@@ -127,7 +127,7 @@
 						</div>
 					</div>
 					</div>
-					<div class="parent d-block justify-content-between px-4 py-2">
+					<!-- <div class="parent d-block justify-content-between px-4 py-2">
 					<h4 class="m-0">Custom Fields</h4>
 					<div class="pt-4 pb-2 child5">
 						<h5>Lead Status</h5>
@@ -135,14 +135,14 @@
 							<h6 class="mt-2">{{items.status?.replaceAll(',' ,' | ')}}</h6>
 						</div>
 					</div>
-				</div>
+				</div> -->
 				<div class=" justify-content-between px-4 py-2 parent d-flex">
-					<div class="child2">
-						<h5>Instagram Id</h5>
-						<h6 class="mt-2">{{items.InstagramId}}</h6>
+					<div class="child2" *ngFor="let it of filteredCustomFields">
+						<h5>{{it?.displayName}}</h5>
+						<h6 class="mt-2">{{items[it?.ActuallName]}}</h6>
 					</div>
 					</div>
-					<div class="justify-content-between px-4 py-2 parent d-flex">
+					<!-- <div class="justify-content-between px-4 py-2 parent d-flex">
 						<div class="child2">
 							<h5>Gender</h5>
 							<h6 class="mt-2">{{items.sex}}</h6>
@@ -165,7 +165,7 @@
 					<div class="px-4 py-2 child2">
 						<h5>Facebook Id</h5>
 						<h6 class="mt-2">{{items.facebookId}}</h6>
-					</div>
+					</div> -->
 				</div>
 			
 				<div class="btn-footer py-2 mt-3">

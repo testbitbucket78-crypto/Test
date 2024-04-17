@@ -1267,7 +1267,7 @@
 	width:47%;
 	background: #FFF4F2 0% 0% no-repeat padding-box;
 	border-radius: 30px;
-	padding: 2rem;
+	padding: 2rem 1rem;
 	max-height: 350px;
 	overflow: auto;
 	}
@@ -2321,4 +2321,7 @@ position: absolute;
     width: 48%;
     box-shadow: 4px 22px 54px #695F971A;
     display: flex;
+}
+.w-100{
+	width: 100% !important;
 }
