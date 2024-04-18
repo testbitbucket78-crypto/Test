@@ -66,7 +66,7 @@ userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
 updateQuery = "UPDATE user SET  email_id=?, name=?, mobile_number=?, LastModifiedDate=?, UserType=?,countryCode=? WHERE uid=?";
 insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP,countryCode) VALUES ?";
 findEmail = "SELECT * FROM user WHERE email_id=? and isDeleted !=1"
-getRole = `SELECT * from roles where (SP_ID=? OR SP_ID = 0) and isDeleted !=1`
+getRole = `SELECT * from roles where SP_ID=?  and isDeleted !=1`
 
 
 
@@ -202,7 +202,7 @@ AND tm.isDeleted != 1;`
 
 
  var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1 `
- var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at) values ?`
+ var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,dataTypeValues) values ?`
  
  let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as type, 1 as mandatory,1 as status,0 as id,"" as created,"" as updated ,"" as description
  FROM information_schema.columns

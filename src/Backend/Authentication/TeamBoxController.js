@@ -8,7 +8,7 @@ const http = require("https");
 const middleWare = require('../middleWare')
 const multer = require('multer');
 let fs = require('fs-extra');
-
+const removeTags = require('../removeTagsFromRichTextEditor') 
 
 app.use(bodyParser.json());
 
@@ -369,6 +369,7 @@ const deleteMessage = (req, res) => {
 
 const insertMessage = async (req, res) => {
     try {
+        console.log(req.body)
         if (req.body.Message_id == '') {
             var messageQuery = val.insertMessageQuery
 
@@ -412,32 +413,35 @@ const insertMessage = async (req, res) => {
                 console.log("mentionRes")
 
             }
+            let content = await removeTags.removeTagsFromMessages(message_text);
             // Parse the message template to get placeholders
-            const placeholders = parseMessageTemplate(message_text);
+            const placeholders = parseMessageTemplate(content);
             if (placeholders.length > 0) {
                 // Construct a dynamic SQL query based on the placeholders
-                const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=${customerId}`;
-                let results = await db.excuteQuery(sqlQuery, []);
+                const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1`;
+                let results = await db.excuteQuery(sqlQuery, [customerId]);
                 const data = results[0];
-
-
+    
+    
                 placeholders.forEach(placeholder => {
-                    message_text = message_text.replace(`{{${placeholder}}}`, data[placeholder]);
+                    content = content.replace(`{{${placeholder}}}`, data[placeholder]);
                 });
             }
+    
             let middlewareresult = ""
             if (channelType[0].isBlocked != 1) {
 
                 console.log("channelType[0].isBlocked != 1 ", channelType[0].isBlocked != 1, customerId)
+                //let content = await removeTags.removeTagsFromMessages(message_text);
                 if (req.body.message_type == 'text') {
                     if (req.body.message_media != '') {
                         // sendMediaOnWhatsApp(req.body.messageTo, message_media)
 
-                        middlewareresult = await middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId, spNumber)
+                        middlewareresult = await middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber)
                     }
                     // sendTextOnWhatsApp(req.body.messageTo, message_text)
                     else {
-                        middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, message_text, message_media, interaction_id, msg_id.insertId, spNumber)
+                        middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber)
 
                     }
                 }

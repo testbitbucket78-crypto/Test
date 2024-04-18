@@ -22,7 +22,6 @@ function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id,sp
             };
 
             const response = await axios.post(apiUrl, dataToSend);
-//console.log(response)
             resolve(response.data); // Resolve with the response data
         } catch (error) {
             console.error('Error:', error.message);
@@ -52,8 +51,10 @@ async function channelssetUp(spid, channelType, mediaType, messageTo, message_bo
             return WhatsAppOfficialMessage;
         } else if (channelType == 'WhatsApp Web' || channelType == 2) {
 
-            let content = await removeTags.removeTagsFromMessages(message_body);
-            let messages = await postDataToAPI(spid, phoneNumber, mediaType, content, media,interaction_id,msg_id,spNumber)
+           // let content = await removeTags.removeTagsFromMessages(message_body);
+
+           // console.log("content middleware" ,content ,"-00098")
+            let messages = await postDataToAPI(spid, phoneNumber, mediaType, message_body, media,interaction_id,msg_id,spNumber)
              console.log(messages)
             return messages;
         }

@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const http = require("https");
 const middleWare = require('../middleWare')
-const removeTags = require('../removeTagsFromRichTextEditor') 
+const removeTags = require('../removeTagsFromRichTextEditor')
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -78,15 +78,15 @@ const addCampaign = async (req, res) => {
         } else {
 
             var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time,media_type) values ? ";
-            let addCampaignValue = [[status, SP_ID, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime,csv_contacts , segments_contacts, category_id, OptInStatus,start_time,end_time,media_type]]
+            let addCampaignValue = [[status, SP_ID, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime, csv_contacts, segments_contacts, category_id, OptInStatus, start_time, end_time, media_type]]
 
             let addcampaign = await db.excuteQuery(inserQuery, [addCampaignValue]);
-          
-          let statusToUpdate = 1;  //For scheduled campaign status
-           if(status == '-1'){
-            statusToUpdate = 2;
-           }
-           campaignAlerts(req.body,addcampaign.insertId,statusToUpdate)
+
+            let statusToUpdate = 1;  //For scheduled campaign status
+            if (status == '-1') {
+                statusToUpdate = 2;
+            }
+            campaignAlerts(req.body, addcampaign.insertId, statusToUpdate)
             res.send({
                 "status": 200,
                 "message": "Campaign added",
@@ -141,12 +141,12 @@ const getFilteredCampaign = (req, res) => {
     // if (req.body.end_date) {
     //     filterQuery += " and  Date(end_datetime) <= '" + req.body.end_date + "'"
     // }
-    
-if (req.body.start_date && req.body.end_date) {
-    filterQuery += " AND ((DATE(start_datetime) >= '" + req.body.start_date + "' AND DATE(end_datetime) <= '" + req.body.end_date + "' AND DATE(end_datetime) != '0000-00-00') OR (DATE(start_datetime) >= '" + req.body.start_date + "' AND DATE(start_datetime) <= '" + req.body.end_date + "' AND DATE(end_datetime) = '0000-00-00'))";
-} else if (req.body.start_date) {
-    filterQuery += " AND DATE(start_datetime) >= '" + req.body.start_date + "'";
-}
+
+    if (req.body.start_date && req.body.end_date) {
+        filterQuery += " AND ((DATE(start_datetime) >= '" + req.body.start_date + "' AND DATE(end_datetime) <= '" + req.body.end_date + "' AND DATE(end_datetime) != '0000-00-00') OR (DATE(start_datetime) >= '" + req.body.start_date + "' AND DATE(start_datetime) <= '" + req.body.end_date + "' AND DATE(end_datetime) = '0000-00-00'))";
+    } else if (req.body.start_date) {
+        filterQuery += " AND DATE(start_datetime) >= '" + req.body.start_date + "'";
+    }
     if (req.body.channelIn.length > 0) {
         filterQuery += " and  channel_id IN (" + req.body.channelIn + ")"
     }
@@ -214,38 +214,38 @@ const applyFilterOnEndCustomer = async (req, res) => {
     }
 
 }
-const processContactQueries = async (req,res) =>{
+const processContactQueries = async (req, res) => {
     const queries = req.body.Query;
 
     if (!queries || !Array.isArray(queries) || queries.length === 0) {
-      res.send({
-        status:400,
-        error: 'Invalid queries provided'
-      });
+        res.send({
+            status: 400,
+            error: 'Invalid queries provided'
+        });
     }
-  
+
     let results = [];
-  
+
     try {
-      // Execute each query sequentially
-      for (const query of queries) {
-        const queryResult = await db.excuteQuery(query + " and isDeleted !=1  AND IsTemporary !=1");
-        results = results.concat(queryResult);
-      }
-    
-      // Remove duplicates from the combined results
-      const uniqueResults = results.filter((value, index, self) =>  self.findIndex(v => v.Phone_number === value.Phone_number) === index );
-  
-  
-      res.send({
-        status:200,
-        uniqueResults:uniqueResults
-      });
+        // Execute each query sequentially
+        for (const query of queries) {
+            const queryResult = await db.excuteQuery(query + " and isDeleted !=1  AND IsTemporary !=1");
+            results = results.concat(queryResult);
+        }
+
+        // Remove duplicates from the combined results
+        const uniqueResults = results.filter((value, index, self) => self.findIndex(v => v.Phone_number === value.Phone_number) === index);
+
+
+        res.send({
+            status: 200,
+            uniqueResults: uniqueResults
+        });
     } catch (error) {
-      res.send({
-        status:500,
-        error: 'Error processing queries'
-      });
+        res.send({
+            status: 500,
+            error: 'Error processing queries'
+        });
     }
 }
 
@@ -308,7 +308,7 @@ function getTimeZoneTimes(serverDateTime, time_zone) {
 
 
 const sendCampinMessage = async (req, res) => {
-   
+
     try {
         var TemplateData = req.body
         var messageTo = TemplateData.phone_number
@@ -324,16 +324,30 @@ const sendCampinMessage = async (req, res) => {
         let isFinished = req.body.isFinished;
         let type = req.body?.media_type;
         var customerId = TemplateData.customerId
-     
 
-       let  content = await removeTags.removeTagsFromMessages(messateText);
 
-        // Parse the message template to get placeholders
+        let content = await removeTags.removeTagsFromMessages(messateText);
+
+ 
+         // Get VALUES from the message_variables whose labels  are within {{}} 
+         const message_variables = req.body.message_variables ? JSON.parse(req.body.message_variables) : undefined;
+
+
+//         // Replace placeholders in the content with values from message_variables
+        message_variables.forEach(variable => {
+            const label = variable.label;
+            const value = variable.value;
+            content = content.replace(new RegExp(label, 'g'), value);
+        });
+
+
+
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
+            console.log("++++++++++++++++++++++")
             // Construct a dynamic SQL query based on the placeholders
-            const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1`;
-            let results = await db.excuteQuery(sqlQuery, [customerId]);
+            const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
+            let results = await db.excuteQuery(sqlQuery, [customerId, spid]);
             const data = results[0];
 
 
@@ -342,28 +356,31 @@ const sendCampinMessage = async (req, res) => {
             });
         }
 
-       let serverDateTime = new Date();
+        let serverDateTime = new Date();
         let formattedTime = getTimeZoneTimes(serverDateTime, time_zone)
 
         //let channelType = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [spid] 
         let inputDate = new Date(schedule_datetime);
-console.log(formattedTime  , inputDate ,new Date(formattedTime) , new Date(inputDate) ,new Date(inputDate) <= new Date(formattedTime))
+        console.log(formattedTime, inputDate, new Date(formattedTime), new Date(inputDate), new Date(inputDate) <= new Date(formattedTime))
         if (new Date(inputDate) <= new Date(formattedTime)) {
             let messagestatus;
             if (optInStatus == 'Yes') {
-                const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and isDeleted !=1`;
-                let results = await db.excuteQuery(sqlQuery, [customerId]);
-               // console.log(results, "****", customerId)
+                const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and SP_ID=? and isDeleted !=1`;
+                let results = await db.excuteQuery(sqlQuery, [customerId,spid]);
+                 console.log(spid, req.body.channel_id, type, messageTo, "****", customerId)
                 if (results?.length > 0) {
                     messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
                 }
             } else {
+                console.log(spid, req.body.channel_id, type, messageTo, "+++++++" ,customerId)
                 messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
             }
-console.log("isFinished " ,isFinished,TemplateData.status)
- if(isFinished == true){
-    campaignAlerts(TemplateData,TemplateData.CampaignId,3)
- }
+            console.log("isFinished ", isFinished, TemplateData.status)
+            if (isFinished == true) {
+                setTimeout(() => {
+                    campaignAlerts(TemplateData, TemplateData.CampaignId, 3);
+                }, 2000); // 2 seconds delay
+            }
 
             //console.log('The input date is in the past.');
             //if(messagestatus =='')
@@ -458,8 +475,8 @@ console.log("isFinished " ,isFinished,TemplateData.status)
 //     console.log("campaignAlerts ")
 //     //console.log(req.body)
 
-async function campaignAlerts(TemplateData,insertId,statusToUpdate){
-    console.log(insertId,"campaignAlerts ***************" ,TemplateData.channel_id,statusToUpdate)
+async function campaignAlerts(TemplateData, insertId, statusToUpdate) {
+    console.log(insertId, "campaignAlerts ***************", TemplateData.channel_id, statusToUpdate)
     message_content = TemplateData.message_content
     message_media = TemplateData.message_media
     channel_id = TemplateData.channel_id
@@ -484,20 +501,21 @@ async function sendBatchMessage(user, sp_id, type, message_content, message_medi
     //console.log("channel_id, Id" ,channel_id, Id)
     for (var i = 0; i < user.length; i++) {
         let mobile_number = user[i]?.mobile_number
-//console.log("sendBatchMessage" ,sp_id, channel_id, type, mobile_number, message_content, message_media)
+        //console.log("sendBatchMessage" ,sp_id, channel_id, type, mobile_number, message_content, message_media)
         setTimeout(async () => {
             //  messageThroughselectedchannel(sp_id, mobile_number, type, message_content, message_media, phone_number_id, channel_id)
-         let batchresponse = await   middleWare.channelssetUp(sp_id, channel_id, type, mobile_number, message_content, message_media);
-         console.log(batchresponse ,"batchresponse")
+            let batchresponse = await middleWare.channelssetUp(sp_id, channel_id, type, mobile_number, message_content, message_media);
+            console.log(batchresponse, "batchresponse", type)
         }, 10)
     }
     let updateQuery = `UPDATE Campaign SET status=?,updated_at=? where Id=?`;
-    let updated = await db.excuteQuery(updateQuery, [updatedStatus,new Date(), Id])
+    let updated = await db.excuteQuery(updateQuery, [updatedStatus, new Date(), Id])
     console.log("updated")
     //console.log(updated)
 }
 
 async function find_message_status(sp_id, Id) {
+    console.log("gottttttttt", sp_id, Id)
     let Sent = 0;
     let Failed = 0;
     let msgStatusquery = `SELECT
@@ -509,14 +527,15 @@ async function find_message_status(sp_id, Id) {
    JOIN
     Campaign AS C ON CM.CampaignId = C.Id
    WHERE
-    C.is_deleted != 1 and C.status=2   
+    C.is_deleted != 1 and C.status>=1   
    AND C.sp_id = ? AND C.Id=?
    GROUP BY
    CM.status;`   //status 2 for running campaign
     let msgStatus = await db.excuteQuery(msgStatusquery, [sp_id, Id]);
-
+    console.log("(((((((((((((((((((((((((((", msgStatus)
     for (const item of msgStatus) {
-        if (item.status !== 1) {
+        console.log(item.status)
+        if (item.status != 0) {
             Sent += item.Status_Count;
         } else if (item.status === 0) {
             Failed += item.Status_Count;
@@ -530,30 +549,30 @@ async function find_message_status(sp_id, Id) {
 }
 
 async function msg(alert) {
-    try{
-    let message = ''
+    try {
+        let message = ''
+        console.log("findmessages", alert.SP_ID, alert?.CampaignId)
+        let msgStatus = await find_message_status(alert.SP_ID, alert?.CampaignId)
+        console.log("alert.channel_id", alert.channel_id, alert.status)
 
-    let msgStatus = await find_message_status(alert.SP_ID, alert?.CampaignId)
-console.log("alert.channel_id",alert.channel_id ,alert.status)
-
-    var audience = alert.segments_contacts?.length > 0 ? JSON.parse(alert?.segments_contacts)?.length : JSON.parse(alert?.csv_contacts)?.length
+        var audience = alert.segments_contacts?.length > 0 ? JSON.parse(alert?.segments_contacts)?.length : JSON.parse(alert?.csv_contacts)?.length
 
 
-    if (alert.status == '1') {
-        message = `Hi there, your Engagekart Campaign has been Scheduled:
+        if (alert.status == '1') {
+            message = `Hi there, your Engagekart Campaign has been Scheduled:
       Campaign Name: `+ alert.title + `
       Scheduled Time: `+ alert.start_datetime + `
       Taget Audience: `+ audience + `
       Channel: `+ 'WhatsApp' + `,` + alert.channel_id + `
       Category: `+ alert.category + ` `
-    } if (alert.status == '-1') {
-        message = `Hello, your Engagekart Campaign has Started:
+        } if (alert.status == '-1') {
+            message = `Hello, your Engagekart Campaign has Started:
       Campaign Name: `+ alert.title + `
       Taget Audience:  `+ audience + `
       Channel: `+ 'WhatsApp' + `,` + alert.channel_id + `
       Category:`+ alert.category + ` `
-    } if (alert.status == '3') {
-        message = `Hi, here is the Summary of your finished Engagekart Campaign:
+        } if (alert.status == '3') {
+            message = `Hi, here is the Summary of your finished Engagekart Campaign:
       Campaign Name: `+ alert.title + `
       Taget Audience:  `+ audience + `
       Channel: `+ 'WhatsApp' + `,` + alert.channel_id + `
@@ -561,15 +580,15 @@ console.log("alert.channel_id",alert.channel_id ,alert.status)
       Sent: ` + msgStatus.Sent + `
       Failed: ` + msgStatus.Failed + `
       For more detailed report, please login to your Engagkart account`
-    } if (alert.status == '0') {
-        message = `Engagekart Campaign Alert:
+        } if (alert.status == '0') {
+            message = `Engagekart Campaign Alert:
       Hi, Please note your Engagekart campaign ` + alert.title + ` has stopped/Paused. Please login to Engagkart account for more details and take further action.`
-    }
+        }
 
-    return message;
-}catch(err){
-    console.log(err)
-}
+        return message;
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 
@@ -614,7 +633,7 @@ async function insertInteractionAndRetrieveId(custid, sid) {
             [custid]
         );
 
-       // console.log('Newly inserted or existing Interaction ID:', InteractionId);
+        // console.log('Newly inserted or existing Interaction ID:', InteractionId);
 
         return InteractionId;
     } catch (error) {
@@ -629,7 +648,7 @@ async function insertInteractionAndRetrieveId(custid, sid) {
 
 const saveCampaignMessages = async (req, res) => {
     try {
-       // console.log(req.body)
+        // console.log(req.body)
         let media = req.body.message_media
         let status_message = req.body.status_message
         let button_yes = req.body.button_yes
@@ -647,7 +666,7 @@ const saveCampaignMessages = async (req, res) => {
         button_no = (button_no === null || button_no === undefined) ? '' : button_no;
         button_exp = (button_exp === null || button_exp === undefined) ? '' : button_exp;
         message_heading = (message_heading === null || message_heading === undefined) ? '' : message_heading;
-  
+
 
         let InteractionId = await insertInteractionAndRetrieveId(req.body.customerId, req.body.SP_ID);
         // console.log(req.body.message_content, "InteractionId InteractionId")
@@ -656,15 +675,15 @@ const saveCampaignMessages = async (req, res) => {
         let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, type, req.body.SP_ID, type, '']]]);
 
 
-        let  content = await removeTags.removeTagsFromMessages(req.body.message_content);
+        let content = await removeTags.removeTagsFromMessages(req.body.message_content);
 
 
         // Parse the message template to get placeholders
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
             // Construct a dynamic SQL query based on the placeholders
-            const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1`;
-            let results = await db.excuteQuery(sqlQuery, [req.body.customerId]);
+            const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
+            let results = await db.excuteQuery(sqlQuery, [req.body.customerId, SP_ID]);
             const data = results[0];
 
 
@@ -677,7 +696,7 @@ const saveCampaignMessages = async (req, res) => {
 
         let campaignMessagesValue = [[status_message, button_yes, button_no, button_exp, media, content, message_heading, CampaignId, phone_number, status, schedule_datetime, SP_ID]]
         let CampaignMessage = await db.excuteQuery(inserQuery, [campaignMessagesValue]);
-//console.log("CampaignMessage"  ,CampaignMessage)
+        //console.log("CampaignMessage"  ,CampaignMessage)
         res.send({
             status: 200,
             savedMessage: CampaignMessage
@@ -736,7 +755,7 @@ const copyCampaign = (req, res) => {
     db.runQuery(req, res, CopyQuery, []);
 }
 
-module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList, isExistCampaign ,processContactQueries};
+module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList, isExistCampaign, processContactQueries };
 
 
 

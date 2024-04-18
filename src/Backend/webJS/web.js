@@ -21,7 +21,7 @@ const path = require("path");
 let clientSpidMapping = {};
 let clientPidMapping = {};
 async function createClientInstance(spid, phoneNo) {
-  console.log(spid, phoneNo);
+  console.log(spid, phoneNo ,new Date());
   console.log(clientPidMapping.hasOwnProperty(spid))
   if (isActiveSpidClient(spid)) {
     console.log("Client found in memory map and is ready");
@@ -35,7 +35,7 @@ async function createClientInstance(spid, phoneNo) {
       // kill the cycle with pid and sign = 'SIGINT' 
      // process.kill(clientPidMapping[spid], 'SIGINT');
      process.kill(clientPidMapping[spid])
-  
+  console.log("process killed" ,new Date())
       delete clientPidMapping[spid];
     } catch (err) {
       console.log("Delete clientPidMapping issues in wrong scan" ,err)
@@ -46,6 +46,7 @@ async function createClientInstance(spid, phoneNo) {
     clientId: spid
   });
 
+  console.log("client created call after verify" ,new Date())
   return await ClientInstance(spid, authStr, phoneNo);
 }
 
@@ -91,7 +92,7 @@ function ClientInstance(spid, authStr, phoneNo) {
           remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2410.1.html',
           }
       });
-      console.log("client created");
+      console.log("client created" ,new Date());
 
       // Handle client creation errors
       client.on('error', (error) => {
@@ -107,6 +108,7 @@ function ClientInstance(spid, authStr, phoneNo) {
       let inc = 0;
       client.on("qr", (qr) => {
         // Generate and scan this code with your phone
+        console.log("QR CODE top" ,new Date())
         console.log("QR RECEIVED", qr);
         inc++;
         console.log("inc: " + inc);
@@ -116,12 +118,15 @@ function ClientInstance(spid, authStr, phoneNo) {
           notify.NotifyServer(phoneNo, false, 'QR generation timed out. Plese re-open account settings and generate QR code')
           resolve({ status: 400, value: 'QR is expired' });
         }
+        console.log("Above notify of QR" ,new Date())
         notify.NotifyServer(phoneNo, false, qr)
+        console.log("Below notifyof QR" ,new Date())
         resolve({ status: 200, value: qr });
       });
       client.on('ready', async () => {
 
         try {
+          console.log("Above client ready" ,new Date())
           if (phoneNo != client.info.wid.user) {
             console.log("wrong Number")
             notify.NotifyServer(phoneNo, false, 'Wrong Number')
@@ -158,7 +163,7 @@ function ClientInstance(spid, authStr, phoneNo) {
                 }
               }
             }
-
+console.log("resolve client ready" ,new Date())
             return resolve({ status: 201, value: 'Client is ready!' });
           }
         } catch (readyerr) {
@@ -200,7 +205,7 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on('authenticated', (session) => {
         try {
 
-          console.log("client authenticated");
+          console.log("client authenticated" ,new Date());
           clientSpidMapping[[spid]] = client;
 
           try {
@@ -220,7 +225,7 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on('disconnected', (reason) => {
         setTimeout(async () => {
           try {
-            console.log("disconnected");
+            console.log("disconnected" ,new Date());
 
             if (clientSpidMapping.hasOwnProperty(spid)) {
               try {
@@ -385,7 +390,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
     if (type === 'text') {
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       client.sendMessage(endCust + '@c.us', text);
-      notify.NotifyServer(spNumber, false, interaction_id)
+     // notify.NotifyServer(spNumber, false, interaction_id)
     }
     if (type === 'image') {
       const media = await MessageMedia.fromUrl(link);
@@ -399,7 +404,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       client.sendMessage(endCust + '@c.us', media, { caption: text });
 
     }
-    if (type === 'attachment') {
+    if (type === 'attachment' || type === 'document') {
       const media = new MessageMedia('pdf', link);
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
       client.sendMessage(endCust + '@c.us', media);
@@ -463,7 +468,7 @@ async function saveInMessages(message) {
     if (from != 'status@broadcast') {
 
 
-      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName,'null');
+      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName,'null',new Date());
       //console.log("saveMessage" ,)
       // console.log(saveMessage)
 
@@ -496,7 +501,7 @@ ec.customerId;`
 async function savelostChats(message, spPhone, spid) {
   try {
     let message_text = message.body   //firstMessage
-     console.log(message.from, message.to, message.ack)
+     
     if (message_text) {
       message_text = message_text.replace(/\*/g, '<strong>').replace(/\*/g, '</strong>');
       message_text = message_text.replace(/_/g, '<em>').replace(/_/g, '</em>');
@@ -539,7 +544,7 @@ async function savelostChats(message, spPhone, spid) {
       if (from != 'status@broadcast') {
        
 
-        let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName,ackStatus);
+        let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName,ackStatus,d);
 
       }
     } 
@@ -551,7 +556,7 @@ async function savelostChats(message, spPhone, spid) {
 
 
 
-async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName,ackStatus) {
+async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName,ackStatus,timestramp) {
   // console.log("saveIncommingMessages")
 
   if (Type == "image") {
@@ -575,8 +580,8 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
     var media_type = 'video/mp4'
   }
   if (message_text.length > 0) {
-    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type,ackStatus,'WhatsApp Web']);
+    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type,ackStatus,'WhatsApp Web',timestramp]);
     notify.NotifyServer(display_phone_number, true);
    // console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
 
@@ -597,9 +602,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
       let findSpid = 'select SP_ID from user where mobile_number=?'
       let sid = await db.excuteQuery(findSpid, [display_phone_number])
       let awsDetails = ""
-      console.log("type == 'image'")
-
-      console.log(type === 'image')
+   
       if (type == 'image') {
         awsDetails = await awsHelper.uploadStreamToAws(sid[0]?.SP_ID + "/teambox/" + phone_number_id + "/" + 'whatsAppWeb.jpeg', message)
         // console.log("awsDetails image");

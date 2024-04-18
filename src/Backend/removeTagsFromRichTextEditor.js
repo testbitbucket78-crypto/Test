@@ -1,25 +1,30 @@
-async function removeTagsFromMessages(message_body) {
-    let content = message_body;
-    if (content) {
-     
-	     content =content?.replaceAll('&nbsp;',' ')?.replaceAll(/ <\/em>/g, '_ ')?.replaceAll(/ <\/strong>/g, '* ')?.replaceAll(/<\/strong> /g, '*');
-         content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-         content = content.replace(/<strong[^>]*>/g, '*').replace(/<\/strong>/g, '*');
-         content = content.replace(/<em[^>]*>/g, '_').replace(/<\/em>/g, '_');
-       
-       // content = content.replace(/<span*[^>]*>/g, '~').replace(/<\/span>/g, '~');
-        content = content.replace(/<span\s+[^>]*style="[^"]*\btext-decoration:\s*line-through;[^"]*"[^>]*>(.*?)<\/span>/g, '~$1~');
-        content = content.replace('&nbsp;', '\n')
-        content = content.replace(/<br[^>]*>/g, '\n')
-        content = content.replace(/<\/?[^>]+(>|$)/g, "")
-        content = content.replace(/_\s*/g, '_').replace(/~\s*/g, '~').replace(/\*\s*/g, '*');
-        content = content.replace(/\s*_/g, '_').replace(/\s*~/g, '~').replace(/\s*\*/g, '*');
+// fixes by saurabh sir
+ async function removeTagsFromMessages(message_content) {
+  // Replace <p> and <br> tags with newline characters
+  let result = message_content.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
+  //console.log(result);
+  // Replace <strong> tags with asterisks
+  result = result.replace(/<em>\s+(.*?)/g, ' <em>$1');
+  result = result.replace(/(.*?)\s+<\/em>/g, '$1</em> ');
+  result = result.replace(/<strong>\s+(.*?)/g, ' <strong>$1');
+  result = result.replace(/(.*?)\s+<\/strong>/g, '$1</strong> ');
 
-        // content = content.replace(/\*\s*/g, '*');
-        // content = content.replace(/\s*\*/g, '*');
+ // console.log(result);
+  result = result.replace(/<strong>(.*?)<\/strong>/g, '*$1*');
+  //console.log(result);
 
-    }
-    return content;
-}
+  // Replace <em> tags with underscores
+
+  result = result.replace(/<em>(.*?)<\/em>/g, '_$1_');
+  // Replace <span> tags with strikethrough
+  //result = result.replace(/<span.*?>\s*(.*?)\s*<\/span>/g, '~$1~ ');
+  result = result.replace(/<span\s+[^>]*style="[^"]*\btext-decoration:\s*line-through;[^"]*"[^>]*>(.*?)<\/span>/g, '~$1~'); // Add this because span is also attribute tag
+  // Remove any remaining HTML tags
+  result = result.replace(/<[^>]*>/g, '');
+
+  result = result.replace(/&nbsp;/g, ' ');
+
+  return result;
+ }
 
 module.exports = { removeTagsFromMessages }
