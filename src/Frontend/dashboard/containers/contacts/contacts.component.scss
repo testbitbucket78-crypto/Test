@@ -565,6 +565,11 @@ opacity: 1;
         margin: -2px 0px 0px 0px;
     }
 
+    .multiselect .dropdown-list{
+        border-radius: 15px !important;
+
+    }
+
     .multiselect-dropdown .dropdown-btn.selected-item-container.selected-item {
         border: none;
         margin-right: 4px;
@@ -599,7 +604,7 @@ opacity: 1;
     top: 0;
     right: 0;
     background-color: #FBF9FE;
-    overflow-x: hidden;
+    overflow: hidden;
     transition: 0.5s;
   }
   .sidebar .btn5{
@@ -610,7 +615,7 @@ opacity: 1;
   }
 
   .sidebar-body {
-    height: 100vh!important;
+    height: calc(100% - 200px)!important;
   }
   
   .sidebar .parent img{
@@ -659,6 +664,27 @@ opacity: 1;
     font-weight: 600;
 }
 .sidebar .parent .child2 h6{
+    color: #000000;
+    font-size: 11px;
+    margin: 0;
+    font-weight: 500;
+}
+.sidebar .parent .child23{
+    display: block;
+    flex: 1 1 50%;
+    margin-bottom: 9px;
+}
+.parent-flex{
+    display: flex;
+    flex-wrap: wrap;
+}
+.sidebar .parent .child23 h5{
+    color: #6149CD;
+    font-size: 13px;
+    margin: 0;
+    font-weight: 600;
+}
+.sidebar .parent .child23 h6{
     color: #000000;
     font-size: 11px;
     margin: 0;
@@ -1311,5 +1337,11 @@ input[type="radio"], input[type="checkbox"] {
     padding: 6px 13px;
     border: 1px solid #ebebeb;
     float: right;
+   }
+
+   .scroll-height{
+    overflow-y: scroll;
+    width: 100%;
+    height: 100%;
    }
 

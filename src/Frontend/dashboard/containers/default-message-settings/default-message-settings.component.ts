@@ -346,8 +346,8 @@ removeMedia() {
      }
 
      else {      
-    // this.defaultMessageForm.get('autoreply')?.clearValidators();
-    // this.defaultMessageForm.get('autoreply')?.setErrors({'firstError': null});
+    this.defaultMessageForm.get('autoreply')?.clearValidators();
+    this.defaultMessageForm.get('autoreply')?.setErrors({'firstError': null});
     this.defaultMessageForm.get('autoreply')?.updateValueAndValidity();
       if (this.defaultMessageForm.valid) {
         if(this.defaultMessageForm.controls.autoreply.value ||(this.selectedCategory != 5 && this.selectedCategory != 1 )){

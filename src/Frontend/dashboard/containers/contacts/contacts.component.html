@@ -65,7 +65,7 @@
 			<button type="button" class=" mt-3 mx-2 btn5 btn-close" aria-label="Close" id="close-btn" (click)="('Cross click')"
 				(click)="closesidenav(items)">X
 			</button>
-			<div *ngFor="let items of customerData ">
+			<div *ngFor="let items of customerData " class="scroll-height">
 				<div class="p-2 sidebar-head">
 					<div class="parent d-flex justify-content-center w-100">
 						<div class="parent-img">
@@ -128,21 +128,15 @@
 					</div>
 					</div>
 					<div class="parent d-block justify-content-between px-4 py-2">
-					<h4 class="m-0">Custom Fields</h4>
-					<div class="pt-4 pb-2 child5">
-						<h5>Lead Status</h5>
-						<div class="child4 d-flex">
-							<h6 class="mt-2">{{items.status?.replaceAll(',' ,' | ')}}</h6>
-						</div>
+						<h4 class="m-0">Custom Fields</h4>
 					</div>
-				</div>
-				<div class=" justify-content-between px-4 py-2 parent d-flex">
-					<div class="child2">
-						<h5>Instagram Id</h5>
-						<h6 class="mt-2">{{items.InstagramId}}</h6>
+				<div class="parent-flex px-4 py-2 parent d-flex">
+					<div class="child23" *ngFor="let it of filteredCustomFields">
+						<h5>{{it?.displayName}}</h5>
+						<h6 class="mt-2">{{items[it?.ActuallName]}}</h6>
 					</div>
 					</div>
-					<div class="justify-content-between px-4 py-2 parent d-flex">
+					<!-- <div class="justify-content-between px-4 py-2 parent d-flex">
 						<div class="child2">
 							<h5>Gender</h5>
 							<h6 class="mt-2">{{items.sex}}</h6>
@@ -165,7 +159,7 @@
 					<div class="px-4 py-2 child2">
 						<h5>Facebook Id</h5>
 						<h6 class="mt-2">{{items.facebookId}}</h6>
-					</div>
+					</div> -->
 				</div>
 			
 				<div class="btn-footer py-2 mt-3">
@@ -499,7 +493,7 @@
 		
 			<div class="row g-2">
 				<div class="col-md">
-					<label for="Name">Name<span class="text-danger">*</span></label>
+					<label for="Name">Name <span class="text-danger">*</span></label>
 					<div class="form-floating">
 						<input class="form-control" type="text"
 						[ngClass]="{'is-invalid':productForm.controls.Name.touched && productForm.controls.Name.errors}"
@@ -516,6 +510,10 @@
 						  class="text-danger">
 					       ! Invalid Name. 
 					 </div>
+					 <div *ngIf="productForm.get('Name')?.hasError('minlength') && productForm.get('Name')?.touched"
+					 class="text-danger">
+					  ! Minimum 3 characters required. 
+				</div>
 					</div>
 				</div>
 			</div>
@@ -590,6 +588,20 @@
 				<ng-multiselect-dropdown (click)="this.ShowContactOwner=false" class="multiselect" name="tag" formControlName="tag" id="tag"
 					[settings]="dropdownSettings" [data]="tag" [placeholder]="'Select Tag from dropdown'">
 				</ng-multiselect-dropdown>
+
+			<div>
+				<div *ngFor="let item of filteredCustomFields">
+					<label for="tag">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
+					<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
+					<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'">
+					<input type="datetime" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
+					<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
+					<input type="date" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
+					<select *ngIf="item.type == 'Select'" [formControlName]="item.ActuallName">
+						<option ></option>
+					</select>
+				</div>
+			</div>
 
 			<div class="row align-items-center pl-3 pt-3">
 				<div class="row_inline d-flex align-items-center">

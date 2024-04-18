@@ -442,8 +442,6 @@ onSelectAll(items: any) {
    }
 
   deleteRow(arr:any ["id"]) {
-
-   
       this.contacts.splice(arr, 1);
       var deleteList = this.checkedConatct.map(x => x.customerId);
       var data = {
@@ -524,7 +522,7 @@ onSelectAll(items: any) {
   
 
 
-  gridOptions = {
+  gridOptions:any = {
 
     rowSelection: 'multiple',
     rowHeight: 48,
@@ -583,6 +581,13 @@ onSelectAll(items: any) {
               ActuallName: "OptInStatus"
             },
         ],
+        SP_ID:this.spid
+    }
+
+    if(this.filteredCustomFields.length >0){
+      this.filteredCustomFields.forEach((item:any)=>{
+        ContactFormData.result.push({displayName:this.productForm.get(item.ActuallName)?.value,ActuallName:item.ActuallName})
+      })
     }
     if (this.isEditTag) {
       let tag = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
@@ -915,6 +920,29 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
           (field:any) => !defaultFieldNames.includes(field.ActuallName) && field.status===1 );
           this.filteredCustomFields = filteredFields;
           console.log(this.filteredCustomFields);
+          this.contacts =false;
+          this.filteredCustomFields.forEach((item:any)=>{
+            this.columnDefs.push({
+              field: item.ActuallName,
+            headerName: item.displayName,
+            flex: 2,
+            filter: true,
+            resizable: true,
+            sortable: true,
+            cellStyle: { background: "#FBFAFF", opacity: 0.86 },
+            });
+            const control = new FormControl('');
+            this.productForm.addControl(item.ActuallName,control);
+          })
+          console.log(this.productForm);
+          setTimeout(()=>{
+            if (this.gridOptions?.api) {
+              this.gridOptions?.api.sizeColumnsToFit();
+            }
+            this.contacts =true;
+          },50);
+          
+
   }
 
   toggleInfoIcon() {
