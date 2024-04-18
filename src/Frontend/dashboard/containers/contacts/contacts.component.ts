@@ -581,6 +581,13 @@ onSelectAll(items: any) {
               ActuallName: "OptInStatus"
             },
         ],
+        SP_ID:this.spid
+    }
+
+    if(this.filteredCustomFields.length >0){
+      this.filteredCustomFields.forEach((item:any)=>{
+        ContactFormData.result.push({displayName:this.productForm.get(item.ActuallName)?.value,ActuallName:item.ActuallName})
+      })
     }
     if (this.isEditTag) {
       let tag = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
@@ -924,7 +931,10 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             sortable: true,
             cellStyle: { background: "#FBFAFF", opacity: 0.86 },
             });
+            const control = new FormControl('');
+            this.productForm.addControl(item.ActuallName,control);
           })
+          console.log(this.productForm);
           setTimeout(()=>{
             if (this.gridOptions?.api) {
               this.gridOptions?.api.sizeColumnsToFit();

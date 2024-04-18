@@ -34,7 +34,7 @@ export class CustomFieldsComponent implements OnInit {
 
 
   selectedType:string = 'Text';
-  types:string[] =['Text','Multi text','Multi number','Select','Switch','Date Time','User' ];
+  types:string[] =['Text','Number','Select','Switch','Date Time','Date','Time','Multi Select' ];
 
 
 

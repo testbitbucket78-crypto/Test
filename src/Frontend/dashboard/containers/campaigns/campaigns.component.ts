@@ -523,6 +523,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 					item['AudienceType']=''
 					item['AllContactsLength'] =0	
 				}
+				item.report_sent = item.report_sent + item.report_delivered + item.report_seen + item.report_replied;
+				item.report_delivered = item.report_delivered + item.report_seen + item.report_replied;
+				item.report_seen = item.report_seen + item.report_replied;
 				item['allVariables']=item.message_variables?JSON.parse(item.message_variables):[]
 				item['reportSentLength'] =item.report_sent?JSON.parse(item.report_sent).length:0
 				item['reportFailedLength'] =item.report_failed?JSON.parse(item.report_failed).length:0
