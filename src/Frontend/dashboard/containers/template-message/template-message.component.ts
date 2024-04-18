@@ -213,7 +213,7 @@ export class TemplateMessageComponent implements OnInit {
             Header: new FormControl(null),
             Links: new FormControl(null),
             BodyText: new FormControl('', [Validators.required]),
-            FooterText: new FormControl(null),
+            FooterText: new FormControl(''),
             buttonType: new FormControl(''),
             buttonText: new FormControl(''),
             quickreply1: new FormControl(''),

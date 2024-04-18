@@ -292,6 +292,7 @@ async subscribeToNotifications() {
       console.log(message);
       try {
         let msgjson = JSON.parse(message);
+        console.log(msgjson);
         if (msgjson.displayPhoneNumber) {
           this.qrcode = msgjson.message;
           this.changeDetector.detectChanges();
@@ -299,7 +300,8 @@ async subscribeToNotifications() {
           if (msgjson.message == 'Client is ready!') {
             this.showToaster('Your Device Linked Successfully !', 'success');
             $("#qrWhatsappModal").modal('hide');
-          }else{
+          }
+          if(msgjson.message == 'Wrong Number'){
             this.showToaster('Wrong Number, Please use logged in number!', 'error');
           }
 

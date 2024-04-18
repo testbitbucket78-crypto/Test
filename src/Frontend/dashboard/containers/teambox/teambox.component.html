@@ -72,8 +72,8 @@
 											src="/assets/img/teambox/no-dp.svg" />
 										<div class="contacts_detail">
 											<p class="name">{{item.Name}}</p>
-											<div *ngIf="item.lastMessage" class="message"
-												[innerHTML]="limitCharacters(item.lastMessage.message_text) | sanitizeHtml">
+											<div *ngIf="item.message_text" class="message"
+												[innerHTML]="limitCharacters(item.message_text) | sanitizeHtml">
 											</div>
 										</div>
 									</div>
@@ -81,7 +81,7 @@
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
 											<p *ngIf="item.lastMessage" class="time">{{item.lastMessageReceved}}</p>
-											<span *ngIf="item.messageList && item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
+											<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<img class="contact-whatsapp" src="/assets/img/teambox/whatsapp-icon-l.svg">
 											<span *ngIf="item.channel=='WhatsApp Web'" class="icon" class="hovertext" data-hover="WhatsApp Web">
@@ -207,7 +207,7 @@
 						</div>
 						<div *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList?.length>0"
 							class="conversation_list chat" #chatSection>
-							<div class="older-message" (click)="getOlderMessages(selectedInteraction)">Click here to get older messages</div>
+							<div class="older-message" (click)="getOlderMessages(selectedInteraction)" *ngIf="!(isMessageCompletedMedia && isMessageCompletedNotes && isMessageCompletedText)">Click here to get older messages</div>
 							<div *ngFor="let messageGroup of selectedInteraction?.messageList; let i = index" id={{i}}
 								class="conversation_list_inner_box">
 								<div class="date_seprator"><span>---</span>
@@ -393,17 +393,18 @@
 			</div>
 
 			<div  class=" col-sm-4 team py-2" style="background: #fbf9fe;">
+				<div class="mt-3 sideBar-btn d-flex justify-content-end">
+					<button type="button" class="btn5 btn-close" (click)="toggleProfileView()" *ngIf="showFullProfile">
+						<img src="assets/img/teambox/icon-close.svg">
+					</button>
+				</div>
 				<div class="team-box right_box" *ngIf="selectedInteraction?.messageList">
 					<div class="sidenav">
-						<div class="mt-3 sideBar-btn d-flex justify-content-end">
-							<button type="button" class="btn5 btn-close" (click)="toggleProfileView()" *ngIf="showFullProfile">
-								<img src="assets/img/teambox/icon-close.svg">
-							</button>
-						</div>
+				
 						<div class="profile" style="padding: 0 45px 0 45px;" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
 						
-							<div class="custom_row no-padding">
-								<div class="col-md-4 flex no-padding">
+							<div class="custom_row">
+								<div class="col-md-4 flex">
 									<img *ngIf="selectedInteraction.avatar" class="big-thumbnail"
 										src="/assets/img/teambox/Richie_1.png" />
 									<img *ngIf="!selectedInteraction.avatar" class="big-thumbnail"
@@ -413,7 +414,7 @@
 											src="/assets/img/teambox/whatsapp-icon-l.svg"></span>
 								</div>
 
-								<div class="col-md-8 align-content-center no-padding">
+								<div class="col-md-8 align-content-center">
 									<h1>{{selectedInteraction.Name}}</h1>
 									<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
 									<p>Created Date:<span>{{getFormatedDate(selectedInteraction.created_at)}}</span></p>
@@ -465,10 +466,13 @@
 								<div class="custom_row mt-5">
 									<div class="col-md-12">
 										<button class="pink-link-btn" (click)="toggleProfileView()"><img class="icon"
-												src="/assets/img/teambox/no-dp.svg" />View Full Profile</button>
+												src="/assets/img/teambox/no-dp.svg" />
+												View Full Profile
+										</button>
 										<button class="pink-link-btn mt-3" (click)="toggleAttachedMediaView()"><img
-												class="icon" src="/assets/img/teambox/docs-attachment.svg" />Docs &
-											Attachment</button>
+												class="icon" src="/assets/img/teambox/docs-attachment.svg" />
+												Docs & Attachment
+										</button>
 									</div>
 								</div>
 							</div>
@@ -600,7 +604,11 @@
 										(click)="openaddMediaGallery(mediagallery,m)">
 							
 							</p>
-
+						</div>
+						<div class="text-center w-100 font-weight-bolder">
+							<p *ngIf="selectedInteraction.allmedia.length==0" >
+								No Documents Available!
+							</p>
 						</div>
 					</div>
 				</div>

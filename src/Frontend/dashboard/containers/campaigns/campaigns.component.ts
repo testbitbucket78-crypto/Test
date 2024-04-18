@@ -285,7 +285,7 @@ export class CampaignsComponent implements OnInit {
 	showErrorMessage: boolean = false;
 	isCampaignTiming: boolean = false;
 	workingData:any =[];
-	
+	csvText:string ='';
 	 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
@@ -523,6 +523,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 					item['AudienceType']=''
 					item['AllContactsLength'] =0	
 				}
+				item.report_sent = item.report_sent + item.report_delivered + item.report_seen + item.report_replied;
+				item.report_delivered = item.report_delivered + item.report_seen + item.report_replied;
+				item.report_seen = item.report_seen + item.report_replied;
 				item['allVariables']=item.message_variables?JSON.parse(item.message_variables):[]
 				item['reportSentLength'] =item.report_sent?JSON.parse(item.report_sent).length:0
 				item['reportFailedLength'] =item.report_failed?JSON.parse(item.report_failed).length:0
@@ -724,32 +727,48 @@ formateDate(dateTime:string){
 	  toggleContactFilter(){
 		this.showContactFilter=!this.showContactFilter
 	  }
-	  selectContactFilter(filter:any){
-		this.ContactListNewFilters=[]
-		let addeFilter = filter.addeFilter
-		this.selectedcontactFilterBy = filter
+	  selectContactFilter(index:any,filter:any){
+		// this.ContactListNewFilters=[]
+		// let addeFilter = filter.addeFilter
+		this.selectedcontactFilterBy = filter;
 		this.showContactFilter=false;
-		if(addeFilter.length>0){
-		for(var i=0;i<addeFilter.length;i++){
-			this.ContactListNewFilters.push(addeFilter[i])
-		}
-		}
-			
-		let newFilter:any=[];
-		newFilter['filterBy'] = filter['option']['0'].label
-		newFilter['filterType'] = filter['option']['0'].type
-		newFilter['selectedOptions'] = filter['option']['0'].options
-		newFilter['filterPrefix'] = filter.label
-		newFilter['filterValue']='';
-		if(addeFilter.length>0){
-		newFilter['filterOperator']='AND';
-		}
-		this.ContactListNewFilters.push(newFilter)
+		// if(addeFilter.length>0){
+		// for(var i=0;i<addeFilter.length;i++){
+		// 	this.ContactListNewFilters.push(addeFilter[i])
+		// }
+		// }
+		this.ContactListNewFilters[index]['filterPrefix'] = filter.label;
+		// let newFilter:any=[];
+		// newFilter['filterBy'] = filter['option']['0'].label
+		// newFilter['filterType'] = filter['option']['0'].type
+		// newFilter['selectedOptions'] = filter['option']['0'].options
+		// newFilter['filterPrefix'] = filter.label
+		// newFilter['filterValue']='';
+		// if(addeFilter.length>0){
+		// newFilter['filterOperator']='AND';
+		// }
+		// this.ContactListNewFilters.push(newFilter)
 		console.log(this.ContactListNewFilters)
 
 
 	  }
 
+	addNewFilters(filter:any){
+		console.log(filter);
+		this.ContactListNewFilters=[];
+		this.selectedcontactFilterBy = filter[0];
+		filter.forEach((item:any)=>{
+		let addeFilter = item.addeFilter;
+		this.showContactFilter=false;
+		if(addeFilter.length>0){
+		for(var i=0;i<addeFilter.length;i++){
+			this.selectedcontactFilterBy = item;
+			this.ContactListNewFilters.push(addeFilter[i])
+		}
+		}
+	})
+		this.addNewFilter();
+	}
 
 	  toggleFilterByOption(){
 		this.showFilterByOption=!this.showFilterByOption
@@ -1396,6 +1415,7 @@ formateDate(dateTime:string){
 					message_media:this.selectedTemplate.Links,
 					media_type:this.selectedTemplate.media_type,
 					message_content:this.selectedTemplate.BodyText,
+					message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
 					CampaignId:CampaignId,
 					isFinished:ix == this.csvContactList.length ? true :false,
 					category_id:this.selectedTemplate.category_id,
@@ -1470,6 +1490,7 @@ formateDate(dateTime:string){
 							button_exp:this.selectedTemplate.button_exp,
 							message_media:this.selectedTemplate.Links,
 							message_content:this.selectedTemplate.BodyText,
+							message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
 							category_id:this.selectedTemplate.category_id,
 							media_type:this.selectedTemplate.media_type,
 							CampaignId:CampaignId,
@@ -1549,8 +1570,9 @@ formateDate(dateTime:string){
 		this.step2Option=true;
 	}
 	openAddNewItem(addNewItem:any){
-		this.closeAllModal()
-		this.selectContactFilter(this.contactFilterBy[0])
+		this.closeAllModal();
+		console.log(this.contactFilterBy)
+		this.addNewFilters(this.contactFilterBy);
 		this.modalReference = this.modalService.open(addNewItem,{size: 'xl', windowClass:'white-bg'});
 	}
 	openImportantContact(mpcampaign:any){
@@ -1576,9 +1598,6 @@ formateDate(dateTime:string){
 	
 		}
 	  }
-	  
-	 
-	  
 
 	closeMediaAttribute(status:any,addNewCampaign:any){
 		this.closeAllModal()
@@ -1596,6 +1615,7 @@ formateDate(dateTime:string){
 		this.mapCsvContact= !this.mapCsvContact
 	}
 	async selectCsvContactCol(item:any){
+		if(this.validateCsv(item)){
 		this.csvContactList.forEach((obj:any) => {
 				obj.Contacts_Column = obj[item];
 				//delete obj[item];
@@ -1603,8 +1623,32 @@ formateDate(dateTime:string){
 
 	   this.CsvContactCol = item  
 	   this.mapCsvContact= false
+	}else{
+		this.showToaster('Column should only have numeric values','error');
+	}
 			
 	}
+	validateCsv(e:string): boolean {
+		// Split the text into lines
+		const lines = this.csvText.split('\n');
+		console.log(lines);
+		console.log(this.csvText);
+		let val = lines[0].split(',');
+		let columnIndex = val.findIndex((id)=>id == e);
+		let i =0;
+		for (const line of lines) {
+		  if(i!=0){
+		  const columns = line.split(',');
+		  if(columns[columnIndex]){
+		  if (isNaN(Number(columns[columnIndex]))) {
+			return false; // Non-numeric value found
+		  }
+		}
+		}
+		i++;
+		}
+		return true; // All values in Column A are numbers
+	  }
 
 	ImportMapping(addNewCampaign:any){
 		this.selecetdCSV =''
@@ -2035,6 +2079,7 @@ testinfo(){
 				let tabalRows:any=[]
 				reader.onload = (e) => {
 					let csv: string = reader.result as string;
+					this.csvText = csv;
 					const results = csv.split("\n");
 					let i=0;
 					results.map((row:any)=>{
@@ -2336,7 +2381,8 @@ console.log(this.allTemplatesMain);
 	  selectTemplate(template: any) {
 		this.selectedTemplate = template;
 		console.log(template, '----template');
-		var str = template.BodyText;
+		let header = template?.Header ? template?.Header : '';
+		var str = header + template.BodyText;
 		if (str) {
 		  const allVariables = this.getVariables(str, "{{", "}}");
 		  let allVariablesList: any = [];
@@ -2711,6 +2757,12 @@ console.log(this.allTemplatesMain);
 		  }
 		}
 	  }
+
+	  checkNumber(event: any) {
+		const inputValue = event.target.value;
+		let value = inputValue.replace(/[^0-9]+/g, ''); 
+		event.target.value = value;
+	}
 
 	//   sendattachfile(){
 	// 	if (this.isAttachmentMedia === false) {

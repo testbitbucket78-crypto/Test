@@ -222,6 +222,8 @@ showMessageType(type: string) {
     this.defaultMessageForm.get('autoreply')?.clearValidators();
     this.defaultMessageForm.get('autoreply')?.updateValueAndValidity();
   }
+  this.defaultMessageForm.get('link')?.setValue(null);
+  this.selectedPreview = '';
 }
 
   
@@ -343,7 +345,10 @@ removeMedia() {
       return;
      }
 
-     else {
+     else {      
+    this.defaultMessageForm.get('autoreply')?.clearValidators();
+    this.defaultMessageForm.get('autoreply')?.setErrors({'firstError': null});
+    this.defaultMessageForm.get('autoreply')?.updateValueAndValidity();
       if (this.defaultMessageForm.valid) {
         if(this.defaultMessageForm.controls.autoreply.value ||(this.selectedCategory != 5 && this.selectedCategory != 1 )){
         const defaultMessagesData = this.copyDefaultMesssageData();

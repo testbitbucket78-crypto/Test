@@ -237,6 +237,9 @@ routerGuard = () => {
 	messageRangeEnd:number= 30;
 	selectedInteractionList:any[] =[];
 	isCompleted:boolean = false;
+	isMessageCompletedNotes:boolean = false;
+	isMessageCompletedMedia:boolean = false;
+	isMessageCompletedText:boolean = false;
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
@@ -925,6 +928,7 @@ sendattachfile() {
 		}
 		this.websocketService.connect(notificationIdentifier);
 			this.websocketService.getMessage().pipe(debounceTime(200)).subscribe(message => {
+				console.log(message);
 				if(message != undefined )
 				{
 					console.log("Seems like some message update from webhook");
@@ -940,12 +944,18 @@ sendattachfile() {
 						}
 						if(msgjson.displayPhoneNumber)
 						{
+							console.log(this.selectedInteraction);
 							console.log("Got notification to update messages : "+ msgjson.displayPhoneNumber);  
-							if(msgjson.updateMessage)
+							if(msgjson.message)
 							{
-								this.getAllInteraction(false)	
+								if(msgjson.message == this.selectedInteraction?.InteractionId){
+									this.updateMessages();
+								}else{
+									this.updateInteraction(msgjson.message);
+								}
+								//this.getAllInteraction(false)	
 								// setTimeout(() => {
-								this.selectInteraction(this.selectedInteraction)
+								//this.selectInteraction(this.selectedInteraction)
 								this.scrollChatToBottom()
 								this.tickUpdate(message)
 							// }, 100);
@@ -968,6 +978,29 @@ sendattachfile() {
 		})
 		
 	}
+
+	updateMessages(){
+		this.getMessageData(this.selectedInteraction,true);
+	}
+
+	async updateInteraction(id:any){		
+		let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == id);
+		if(idx >-1){
+			await this.getMessageData(this.interactionList[idx],true);
+			setTimeout(()=>{
+			let item = this.interactionList[idx];
+			let count =0;
+			this.interactionList[idx]['message_text'] = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]['message_text']:[];
+			item['allmessages'].forEach((it:any) =>{
+				if(it.is_read == 0)
+				count++;
+			})
+			this.interactionList[idx]['UnreadCount'] = count;
+		},400)
+			console.log(this.interactionList[idx]);
+		}
+	}
+
 
 	async getQuickResponse(){
 		this.settingService.getTemplateData(this.SPID,0).subscribe(response => {
@@ -1119,6 +1152,7 @@ sendattachfile() {
 		let threasholdMessages=0;
 		item['tags'] = this.getTagsList(item?.tag);
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text').subscribe((res:any) =>{
+			this.isMessageCompletedText = res.isCompleted;
 			let messageList = res.result;
 			item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
 			item['allmessages'] =messageList?messageList:[]
@@ -1136,12 +1170,14 @@ sendattachfile() {
 		})
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes').subscribe((res1:any) =>{
+			this.isMessageCompletedNotes = res1.isCompleted;
 			let notesList = res1.result;
 			item['notesList'] =notesList?this.groupMessageByDate(notesList):[]
 			item['allnotes'] =notesList?notesList:[]
 		})
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media').subscribe((res2:any) =>{
+			this.isMessageCompletedMedia = res2.isCompleted;
 			let mediaList = res2.result;
 			item['allmedia'] =mediaList?mediaList:[]
 		})
@@ -1171,30 +1207,58 @@ sendattachfile() {
 		// }
 	}
 
-	getMessageData(selectedInteraction:any){
+	async getMessageData(selectedInteraction:any,isNewMessage:boolean = false){
 		let item:any ={};
+		let rangeStart = isNewMessage ? 0 : this.messageRangeStart;
+		let rangeEnd = isNewMessage ? 1 : this.messageRangeEnd;
 		item = selectedInteraction;
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',this.messageRangeStart,this.messageRangeEnd).subscribe((res:any) =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',rangeStart,rangeEnd).subscribe((res:any) =>{
 			let messageList = res.result;
-			let val = messageList?this.groupMessageByDate(messageList):[];
+			let val = messageList ? this.groupMessageByDate(messageList):[];
 			let val1 = messageList?messageList:[];
+			if(isNewMessage){
+				val.forEach(childObj => {
+					const parentObjIndex = item['messageList'].findIndex((parentObj:any) => parentObj.date === childObj.date);
+					if (parentObjIndex !== -1) {
+					  item['messageList'][parentObjIndex].items = [...item['messageList'][parentObjIndex].items, ...childObj.items];
+					} else {
+					  item['messageList'].push(childObj);
+					}
+				})
+				item['allmessages'].push(...val1);
+			}else{
+			this.isMessageCompletedText = res.isCompleted;
 			item['messageList'] = [...val, ...item['messageList']];
-			item['allmessages'] = [...val1, ...item['allmessages']];	
+			item['allmessages'] = [...val1, ...item['allmessages']];
+			}	
 		})
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.messageRangeStart,this.messageRangeEnd).subscribe((res1:any) =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',rangeStart,rangeEnd).subscribe((res1:any) =>{
 			let notesList = res1.result;
 			let val = notesList?this.groupMessageByDate(notesList):[];
+			this.isMessageCompletedNotes = res1.isCompleted;
 			let val1 = notesList?notesList:[];
+			if(isNewMessage){
+				item['notesList'].push(...val);
+				item['allnotes'].push(...val1);
+			}else{
+			this.isMessageCompletedNotes = res1.isCompleted;
 			item['notesList'] =[...val, ...item['notesList']];
 			item['allnotes'] =[...val1, ...item['allnotes']];
+			}
 		})
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',this.messageRangeStart,this.messageRangeEnd).subscribe((res2:any) =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',rangeStart,rangeEnd).subscribe((res2:any) =>{
 			let mediaList = res2.result;
 			let val = mediaList?mediaList:[];
+			if(isNewMessage){
+				item['allmedia'].push(...val);
+			}else{
+			this.isMessageCompletedMedia = res2.isCompleted;
 			item['allmedia'] = [...val, ...item['allmedia']];
+			}
 		})
+		console.log(this.isMessageCompletedMedia,this.isMessageCompletedNotes,this.isMessageCompletedText)
 	}
 
 	getUpdatedList(dataList:any) {
@@ -1266,6 +1330,7 @@ sendattachfile() {
 		this.interactionList.push(...dataList);
 		this.interactionListMain.push(...dataList);
 		if(selectInteraction)
+		//this.selectedInteractionList =
 			this.selectInteraction(0);
 			
 		});
@@ -1499,10 +1564,10 @@ sendattachfile() {
 	async selectInteraction(idx:number) {
 
 		let Interaction = this.interactionList[idx];
-		if(this.selectedInteractionList.findIndex(i => i == idx) == -1){
-			this.selectedInteractionList.push(idx) 
+		//if(this.selectedInteractionList.findIndex(i => i == idx) == -1){
+			//this.selectedInteractionList.push(idx) 
 			await this.getInteractionDataById(idx);
-		}
+		//}
 
 		for(const item of this.interactionList) {
 			item['selected'] = false;
@@ -1936,10 +2001,10 @@ toggleTagsModal(updatedtags:any){
 
 	this.selectedTags = ''; 
 	
-	var activeTags = this.selectedInteraction['tags'];
+	var activeTags = this.selectedInteraction['tag'];
 	for(var i=0;i<this.tagsoptios.length;i++){
 		var tagItem = this.tagsoptios[i]
-		if(activeTags.indexOf(tagItem.name)>-1){
+		if(activeTags?.includes(tagItem.name)){
 			tagItem['status']=true;
 			this.selectedTags += tagItem.name+','
 		}
@@ -2139,12 +2204,23 @@ this.apiService.createInteraction(bodyData).subscribe(async data =>{
 		this.modalReference.close();
 	}
 	// this.isNewInteraction=true;
-	this.getAllInteraction();
+	this.getInteractionsFromStart();
 	this.getCustomers();
 	this.filterChannel='';
 
 });
 	
+}
+
+getInteractionsFromStart(){
+	this.interactionList = [];
+	this.interactionListMain = [];
+	this.selectedInteractionList = [];
+	this.currentPage = 0;
+	this.pageSize = 10;
+	this.selectedInteraction =[];
+	this.getAllInteraction();
+
 }
 
 closeAssignOption() {
@@ -2502,7 +2578,7 @@ sendMessage(){
     	const scroll$ = fromEvent(content!, 'scroll').pipe(map(() => { return content!.scrollTop; }));
  
     scroll$.subscribe((scrollPos) => {
-      let limit = content!.scrollHeight - content!.clientHeight;
+      let limit = content!.scrollHeight - content!.clientHeight -1;
 	  console.log(scrollPos);
 	  console.log(limit);
       if (Math.ceil(scrollPos) >= limit && !this.isCompleted) {

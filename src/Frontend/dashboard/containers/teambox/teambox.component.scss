@@ -754,7 +754,7 @@ img.no-dp {
     align-items: center;
     padding: 2% 5%;
     height: 80%;
-    overflow: scroll;
+    overflow-y: scroll !important;
     margin-top: 2%;
 }
 
@@ -1110,7 +1110,8 @@ button:focus, input:focus {
 
 .profile {
     display: flex;
-    flex-direction: column;
+
+    // flex-direction: column;
     // margin-bottom: 20px;
     // width: 43vh;
     // padding-left: 1.5rem;
@@ -2340,7 +2341,8 @@ label span {
 
     .profile {
         display: flex;
-        flex-direction: column;
+        flex-wrap: wrap;
+        // flex-direction: column;
         // margin-bottom: 20px;
         // width: 43vh;
         // padding-left: 1.5rem;
@@ -2690,3 +2692,12 @@ label span {
         margin: 0 6px 0 4px;
     
     }
+
+    
+	.all_contacts::-webkit-scrollbar {
+		display: none;
+	}
+
+	.conversation_list::-webkit-scrollbar {
+		display: none;
+	}

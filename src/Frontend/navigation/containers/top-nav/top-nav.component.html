@@ -11,7 +11,7 @@
         <img  src="../../../../assets/img/top-nav/notifications.svg" title="Notifications" (click)="toggleShowNotifications()">
         <img  routerLink="/dashboard/teambox" title="Teambox" src="../../../../assets/img/top-nav/chat-icon.svg">
         <div>
-        <img *ngIf="profilePicture" class="profilepic" [src]="profilePicture" title="Profile" (click)="toggleShowProfile()"/>
+        <img *ngIf="profilePicture" class="profilepic" src="{{profilePicture}}?{{randomNumber}}" title="Profile" (click)="toggleShowProfile()"/>
         <div class="pick">
           <img *ngIf="!profilePicture" src="../../../../assets/img/top-nav/myprofile.svg" title="Profile" (click)="toggleShowProfile()">
         </div>
@@ -58,7 +58,7 @@
     <div class="profile-heading">
       <img id="profile-bg" src="assets/img/profile/bg.png">
       <img id="pic-bg" src="assets/img/profile/bg image.png">
-      <img *ngIf="profilePicture" id="profile-pic" [src]="profilePicture"/>
+      <img *ngIf="profilePicture" id="profile-pic" src="{{profilePicture}}?{{randomNumber}}"/>
 
       <div *ngIf="!profilePicture" class="image-container">
         <span class="initials"> {{ firstLetterFirstName }}{{ firstLetterLastName }} </span>

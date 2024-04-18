@@ -228,9 +228,12 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
 
-		this.stepper = new Stepper($('.bs-stepper')[0], {
-			linear: true,
-			animation: true
+	// used settimeout to properly initalize bs-stepper after DOM load
+		setTimeout(() => {
+			this.stepper = new Stepper($('.bs-stepper')[0], {
+				linear: true,
+				animation: true
+			});
 		});
 
 		this.newMessage = this.fb.group({
@@ -254,6 +257,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 
 	ngOnDestroy() {
 		$('body').removeClass('modal-smart-reply-open');
+
 	}
 
 	goToStep(step:number) {
@@ -1449,6 +1453,7 @@ stopPropagation(event: Event) {
 					Media: this.data[i].Media
 				});
 		}
+		console.log(this.assignedAgentList,'MESSAGE DATA')
 	 }
 
 	 updateSmartReplies(smartreplysuccess: any, smartreplyfailed: any) {

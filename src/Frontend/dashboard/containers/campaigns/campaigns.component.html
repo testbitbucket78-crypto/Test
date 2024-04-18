@@ -399,7 +399,7 @@
 					<div class="template_list">
 						<div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
 							<label class="container" (click)="selectTemplate(template)">
-								<input type="radio" name="selectedTemplate">
+								<input type="radio" name="selectedTemplate" [checked]="template.BodyText == selectedCampaign.message_content">
 								<span class="checkmark radio"></span>
 								<div class="template_body">
 									<p>{{template.TemplateName}}</p>
@@ -474,7 +474,7 @@
 								<label>{{variable.label}}</label>
 								<div>
 									<p class="form-control" *ngIf="segmentsContactList.length>0">
-										<input *ngIf="variable.label == '{{Phone_number}}'" type="number" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or add attribute">
+										<input *ngIf="variable.label == '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="checkNumber($event);updateAttributeValue($event,variable)" placeholder="Input value or add attribute">
 										<input *ngIf="variable.label != '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or add attribute">
 										<span  class="toggle_attribute" (click)="openAttributeOption(variable,AttributeOption)"></span>
 									</p>
@@ -1082,32 +1082,6 @@
 		<div class="modal-body addnewitem">
 			
 			<div class="addnewitem-content">
-				<div class="addnewitem-content-left">
-					<p>Filter</p>
-					<div class="formrow">
-						<p (click)="toggleContactFilter()"  class="form-control select_box btn">
-							{{selectedcontactFilterBy.label}}
-						</p>
-						<div *ngIf="showContactFilter" class="popup-dialog">
-							<p class="label">Select Column</p>
-							<p *ngFor="let filterItem of contactFilterBy" (click)="selectContactFilter(filterItem)">
-								<span>{{filterItem.label}}</span>
-							</p>
-						</div>
-
-					</div>
-
-					<div class="applied_filter_popup">
-					    <div class="item" *ngFor="let filter of selectedcontactFilterBy.addeFilter; let i=index;let last = last;" title="Click to remove">
-							<div class="d-flex">
-							<span *ngIf="filter.filterOperator">{{filter.filterOperator}}</span>
-							<p>{{filter.filterPrefix}} {{filter.filterBy}} {{filter.filterValue}}</p>
-						</div>
-							<div  (click)="removeFilter(i)"><img src="../../../../assets/img/settings/remove.svg" /></div>
-						</div>
-					</div>	
-
-				</div>
 				<div class="addnewitem-content-left filterby">
 					<div *ngIf="selectedcontactFilterBy">
 					
@@ -1117,18 +1091,24 @@
 					<div *ngFor="let addedF of ContactListNewFilters; let i=index;let last = last;">
 							<div *ngIf="i<ContactListNewFilters.length-1">
 							
-									<div *ngIf="addedF.filterOperator" class="addnewitem_content_inner">
+									<div *ngIf="addedF.filterOperator && i != 0" class="addnewitem_content_inner">
 										<div class="switchbtn">
-											<p [ngClass]="addedF.filterOperator=='AND' ? 'left active' : 'left'">AND</p>
+											<p [ngClass]="addedF.filterOperator=='AND' ? 'left active' : 'left'">AND{{i}}</p>
 											<p [ngClass]="addedF.filterOperator=='OR' ? 'right active' : 'right'">Or</p>
 										</div>
 									</div>
-
-									<div class="formrow">
+									<div class="d-flex">
+									<div class="formrow w-100">
+										<p class="form-control">
+											{{addedF.filterPrefix}}
+										</p>
+									</div>
+									<div class="formrow w-100">
 										<p class="form-control">
 											{{addedF.filterBy}}
 										</p>
 									</div>
+								</div>
 
 									<div class="addnewitem_content_inner">
 										<p><span>Value</span></p>
@@ -1141,14 +1121,28 @@
 
 							<div *ngIf="i==ContactListNewFilters.length-1">
 							
-								<div *ngIf="ContactListNewFilters.length>1" class="addnewitem_content_inner">
+								<div *ngIf="ContactListNewFilters.length>1 " class="addnewitem_content_inner">
 									<div class="switchbtn">
 										<p [ngClass]="addedF.filterOperator=='AND' ? 'left active' : 'left'" (click)="selectFilterOperator(i,'AND')">AND</p>
 										<p [ngClass]="addedF.filterOperator=='OR' ? 'right active' : 'right'"  (click)="selectFilterOperator(i,'OR')">Or</p>
 									</div>
 								</div>
+								<div class="d-flex">
+								<div class="formrow w-100">
+									<p (click)="toggleContactFilter()"  class="form-control select_box btn">
+										{{selectedcontactFilterBy.label}}
+									</p>
+									<!-- *ngIf="showContactFilter"  -->
+									<div *ngIf="showContactFilter" class="popup-dialog">
+										<p class="label">Select Column</p>
+										<p *ngFor="let filterItem of contactFilterBy" (click)="selectContactFilter(i,filterItem)">
+											<span>{{filterItem.label}}</span>
+										</p>
+									</div>
+			
+								</div>
 
-								<div class="formrow">
+								<div class="formrow w-100">
 									<p (click)="toggleFilterByOption()"  class="form-control select_box btn">
 										{{addedF.filterBy}}
 									</p>
@@ -1159,6 +1153,7 @@
 									</div>
 
 								</div>
+							</div>
 
 								<div class="addnewitem_content_inner">
 									<p><span>Value</span></p>
@@ -1230,6 +1225,21 @@
 
 				</div>
 
+				<div class="addnewitem-content-left">
+					<p>Filter</p>
+					
+
+					<div class="applied_filter_popup">
+					    <div class="item" *ngFor="let filter of selectedcontactFilterBy.addeFilter; let i=index;let last = last;" title="Click to remove">
+							<div class="d-flex">
+							<span *ngIf="filter.filterOperator">{{filter.filterOperator}}</span>
+							<p>{{filter.filterPrefix}} {{filter.filterBy}} {{filter.filterValue}}</p>
+						</div>
+							<div  (click)="removeFilter(i)"><img src="../../../../assets/img/settings/remove.svg" /></div>
+						</div>
+					</div>	
+
+				</div>
 			</div>
 			<div class="input_group_btn">
 				  <button type="button" class="submit-btn" aria-label="Close" (click)="createListFromFilters(applyList)">Apply</button>

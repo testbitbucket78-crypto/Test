@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { authChangePassword, roleName ,teamName, userActiveStatus ,savePlan, profilePicData, addFundsData, teamboxNotifications} from '../models/profile.model';
 
 @Injectable({
@@ -9,8 +9,24 @@ import { authChangePassword, roleName ,teamName, userActiveStatus ,savePlan, pro
 export class ProfileService {
 
   API_URL:string='https://settings.stacknize.com';
+  private profilePictureSubject: BehaviorSubject<string>;
+  public profilePicture$: Observable<string>;
 
-  constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient) {
+    this.profilePictureSubject = new BehaviorSubject<string>('');
+    this.profilePicture$ = this.profilePictureSubject.asObservable();
+   }
+
+  //  update Profile Picture globally
+
+   setProfilePicture(pictureUrl: string): void {
+    this.profilePictureSubject.next(pictureUrl);
+    sessionStorage.setItem('profilePicture', pictureUrl);
+  }
+
+    getProfilePicture(): string {
+      return this.profilePictureSubject.getValue();
+    }
 
   // profle page
 

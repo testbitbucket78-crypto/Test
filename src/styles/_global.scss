@@ -397,7 +397,25 @@
 
 
 .dropdown-multiselect__caret{
-  
   display: none!important;
- 
+}
+
+.multiselect .dropdown-list{
+  border-radius: 15px !important;
+}
+
+.multiselect-item-checkbox input[type=checkbox]+div:before {
+  border-radius: 5px !important;
+  border: 2px solid #C0BDCC !important;
+}
+
+.multiselect-item-checkbox input[type=checkbox]:checked+div:before{
+  -webkit-animation: none !important;
+  animation: none !important;
+  background: #6149CD !important;
+  border: 2px solid #6149CD !important;
+}
+
+.multiselect-item-checkbox input[type=checkbox]:checked+div:after{
+  transform: rotate(-45deg) scale(0.8) !important;
 }

@@ -129,54 +129,57 @@ export class ManageStorageComponent implements OnInit {
   }
 
 
-  editAutoDeletion() {
+   editAutoDeletion() {
+    let editAutoDeletion: editAutoDeletionData = {} as editAutoDeletionData;
+  
+    const formValues = this.editAutoDeletionForm.value;
+    editAutoDeletion.spid = this.spid;
+  
+    if (formValues.optionradio1 == '1') {
+      editAutoDeletion.autodeletion_message = '-1';
+    } else {
+      editAutoDeletion.autodeletion_message = formValues.autodeletion_message;
+    }
+  
+    if (formValues.optionradio2 == '1') {
+      editAutoDeletion.autodeletion_media = '-1';
+    } else {
+      editAutoDeletion.autodeletion_media = formValues.autodeletion_media;
+    }
+  
+    if (formValues.optionradio3 == '1') {
+      editAutoDeletion.autodeletion_contacts = '-1'; 
+    } else {
+      editAutoDeletion.autodeletion_contacts = formValues.autodeletion_contacts;
+    }
 
-      let editAutoDeletion:editAutoDeletionData= <editAutoDeletionData>{};
-
-      const formValues = this.editAutoDeletionForm.value;
-      editAutoDeletion.spid = this.spid;
-
-      if(formValues.optionradio1) {
-        editAutoDeletion.autodeletion_message  = formValues.optionradio1;
-      }
-      else {
-        editAutoDeletion.autodeletion_message = formValues.autodeletion_message;
-      }
-      if(formValues.optionradio2) {
-        editAutoDeletion.autodeletion_media  = formValues.optionradio2;
-      }
-      else {
-        editAutoDeletion.autodeletion_media = formValues.autodeletion_media;
-      }
-      if(formValues.optionradio3) {
-        editAutoDeletion.autodeletion_contacts= formValues.optionradio3;
-      }
-      else {
-        editAutoDeletion.autodeletion_contacts = formValues.autodeletion_contacts;
-      }
- 
+    console.log(editAutoDeletion,'AUTO DELETEION')
+  
     this.apiService.editAutoDeletion(editAutoDeletion)
-    .subscribe(response => {
-      if(response) {
-        $("#edit-auto-deletion").modal('hide');
-        this.showToaster('Auto Deletion Updated Succsfully','success')
-        this.editAutoDeletionForm.reset();
-        this.getManageStorage();
-       
-      }
-    });
-
+      .subscribe(response => {
+        if (response) {
+          $("#edit-auto-deletion").modal('hide');
+          this.showToaster('Auto Deletion Updated Successfully', 'success')
+          this.editAutoDeletionForm.reset();
+          this.getManageStorage();
+        }
+      });
   }
-
+  
   patchFormValue() {
     const data = this.autoDeletionData;
-    for(let prop in data){
+    for (let prop in data) {
       let value = data[prop as keyof typeof data];
-      if(this.editAutoDeletionForm.get(prop))
-      this.editAutoDeletionForm.get(prop)?.setValue(value)
-    }  
+      if (this.editAutoDeletionForm.get(prop)) {
+        if (value == "-1") {
+          this.editAutoDeletionForm.get(prop)?.setValue('');
+        } else {
+          this.editAutoDeletionForm.get(prop)?.setValue(value);
+        }
+      }
+    }
   }
-
+  
   showToaster(message:any,type:any){
 		if(type=='success'){
 			this.successMessage=message;

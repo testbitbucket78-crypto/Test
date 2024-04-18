@@ -101,15 +101,15 @@
 							<input type="radio" id="sel-document" name="sel-type" class="d-none" (change)="showMessageType('document')" [checked]="selectedType=='document'"><label  class="m-0" for="sel-document">Document</label>
 						</div>
 	
-						<div class="sel-type-text-container">
+						<!-- <div class="sel-type-text-container">
 							<div *ngIf="selectedType === 'text'" class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
 								<h6>Message</h6> <span>{{numberCount}}/1024 Characters</span>
 							 </div>
 	
-							 <!-- <div *ngIf="selectedType === 'text'" class="sel-type-text">
+							  <div *ngIf="selectedType === 'text'" class="sel-type-text">
 								 <textarea name="text-editor" (keyup)="getCharacterCount($event.target.value)" formControlName="BodyText" maxlength="1024" rows="14" placeholder="Enter"></textarea>
-							 </div> -->
-						</div>
+							 </div> 
+						</div> -->
 				 
 						
             
@@ -251,7 +251,7 @@
 							<div class="campaigns_section_item_statics">
 								<div>
 									<div class="d-flex">
-									<img src="../../../../assets/img/teambox/Richie_1.png" /><p>{{temp.created_By}}</p></div><p><span>Created By</span></p>
+									<img [src]="profilePicture" /><p>{{temp.created_By}}</p></div><p><span>Created By</span></p>
 								</div>
 							</div>
 						</div>
@@ -273,7 +273,7 @@
 							<p class="start_time">Created on:<span class="mx-1">{{repliestemplateData?.created_at | date:'dd MMM yy, h:mm a'}}</span>
 								|<span class="mx-1" *ngIf="repliestemplateData?.updated_at"> Modified on:</span> <span>{{repliestemplateData?.updated_at  | date:'dd MMM yy, h:mm a'}}</span></p>
 							<div class="campaigns_section_user">
-								<div class="d-flex"> <img src="../../../../assets/img/teambox/Richie_1.png" /><p>{{repliestemplateData?.created_By}}</p></div>
+								<div class="d-flex"> <img [src]="profilePicture" /><p>{{repliestemplateData?.created_By}}</p></div>
 								<p><span>Created By</span></p>
 							</div>
 							<p class="title" >{{repliestemplateData?.Header}}</p>
