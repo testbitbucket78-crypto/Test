@@ -5,7 +5,7 @@ const val = require('./constant');
 const bodyParser = require('body-parser');
 const awsHelper = require('../awsHelper');
 const middleWare = require('../middleWare')
-const removeTags = require('../removeTagsFromRichTextEditor') 
+const removeTags = require('../removeTagsFromRichTextEditor')
 const cors = require('cors');
 app.use(bodyParser.json());
 app.use(cors());
@@ -246,30 +246,76 @@ const deleteTag = async (req, res) => {
 
 const addCustomField = async (req, res) => {
     try {
-        ColumnName = req.body.ColumnName,
-            SP_ID = req.body.SP_ID,
-            Type = req.body.Type,
-            description = req.body.description,
-            created_at = new Date().toUTCString();
+        const ColumnName = req.body.ColumnName;
+        const SP_ID = req.body.SP_ID;
+        const Type = req.body.Type;
+        const description = req.body.description;
+        const created_at = new Date().toUTCString();
+        let values = JSON.parse(req.body.values);
+      
+       
+
+        // Check if the ColumnName already exists for the given SP_ID
+        const checkExistenceQuery = `SELECT * FROM SPIDCustomContactFields WHERE SP_ID=? AND ColumnName=? AND isDeleted!=1`;
+        const countResult = await db.excuteQuery(checkExistenceQuery, [SP_ID, ColumnName]);
+
+       
+
+        // If the count is greater than 0, it means the ColumnName already exists
+        if (countResult?.length > 0) {
+            res.status(409).send({
+                status: 409,
+                message: 'Column already exists for the given SP_ID'
+            });
+
+        } else {
 
 
-        let count = await db.excuteQuery(val.getColCount, [SP_ID]);
+            // Fetch all data for the given SP_ID
+            const allData = await db.excuteQuery(val.getColCount, [SP_ID]);
 
-        CustomColumn = "column" + (count[0].columnCount + 1);
-        let values = [CustomColumn, ColumnName, SP_ID, Type, description, created_at]
 
-        let addfiled = await db.excuteQuery(val.addcolumn, [[values]]);
+            // Generate the custom column name
+            const CustomColumn = "column" + (allData[0].columnCount + 1);
 
-        res.send({
-            status: 200,
-            addfiled: addfiled
-        })
+            // Prepare values for insertion
+            const insertionValues = [CustomColumn, ColumnName, SP_ID, Type, description, created_at, JSON.stringify(values)];
+
+            // Insert the new custom field
+            const addFieldResult = await db.excuteQuery(val.addcolumn, [[insertionValues]]);
+
+            // Return 500 if insertion failed
+            if (!addFieldResult.insertId) {
+                res.status(500).send({
+                    status: 500,
+                    message: 'Failed to insert custom field'
+                });
+                return;
+            } else {
+                 // Check if the Type is 'select', format the values accordingly and update id with addfiled inserted id
+        if (Type === 'select') {
+            values = values.map(option => ({
+                id: addFieldResult.insertId + '_' + option.id,
+                optionName: option.optionName
+            }));
+            let updateRes = await db.excuteQuery('UPDATE  SPIDCustomContactFields SET dataTypeValues=? WHERE id =?',[JSON.stringify(values),addFieldResult.insertId])
+        }
+    
+        // Return success response
+                res.status(200).send({
+                    status: 200,
+                    addfiled: addFieldResult
+                });
+            }
+        }
+
     } catch (err) {
-        console.log(err)
+        console.log(err);
         db.errlog(err);
-        res.send(err)
+        res.status(500).send(err);
     }
-}
+};
+
 
 const editCustomField = async (req, res) => {
     try {
@@ -577,34 +623,27 @@ const deleteTemplates = async (req, res) => {
 const testCampaign = async (req, res) => {
     try {
 
-   
+
         var TemplateData = req.body
-   
+        let customerID = "";
+
+        let message_variables = JSON.parse(TemplateData.message_variables);
         var messateText = TemplateData.message_content
-       
+
         let channel = TemplateData.channel_id
         let media = TemplateData.message_media
-    
-    
-      let  content = await removeTags.removeTagsFromMessages(messateText)
-        let testNo = await db.excuteQuery(val.selectCampaignTest, [TemplateData.sp_id]);
-     
 
 
-        let message_status='';
-        var type = 'image';
-        if (media == null || media == "") {
-            var type = 'text';
-        }
+        let content = await removeTags.removeTagsFromMessages(messateText)
+        if (TemplateData.segments_contacts?.length) {
 
-        for (let phone_number of testNo) {
-
+            customerID = JSON.parse(TemplateData.segments_contacts)[0];
             // Parse the message template to get placeholders
             const placeholders = parseMessageTemplate(content);
             if (placeholders.length > 0) {
                 // Construct a dynamic SQL query based on the placeholders
-                const sqlQuery = `SELECT ${placeholders.join(', ')} FROM user WHERE uid=? and isDeleted !=1`;
-                let results = await db.excuteQuery(sqlQuery, [phone_number.uid]);
+                const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
+                let results = await db.excuteQuery(sqlQuery, [customerID, TemplateData.sp_id]);
                 const data = results[0];
 
 
@@ -613,16 +652,44 @@ const testCampaign = async (req, res) => {
                 });
             }
 
+        } else if (TemplateData.csv_contacts?.length) {
+            let contact = JSON.parse(TemplateData.csv_contacts)[0];
+            console.log(contact)
+            // Replace placeholders in the content with values from message_variables
+            message_variables.forEach(variable => {
+                const label = variable.label;
+                const value = variable.value;
+                content = content.replace(new RegExp(label, 'g'), value);
+            });
 
-           message_status = await middleWare.channelssetUp(TemplateData.sp_id, channel, type, phone_number.mobile_number, content, media)
-          console.log(message_status)
-          content = messateText; // update content
+            // Replace any remaining placeholders in the content with values from the contact object
+            Object.keys(contact).forEach(key => {
+                const value = contact[key];
+                content = content.replace(new RegExp(`{{${key}}}`, 'g'), value);
+            });
         }
 
-      res.send({
-        status :200,
-        message_status:  message_status?.status
-      })
+
+        let testNo = await db.excuteQuery(val.selectCampaignTest, [TemplateData.sp_id]);
+
+
+
+        let message_status = '';
+        var type = 'image';
+        if (media == null || media == "") {
+            var type = 'text';
+        }
+
+        for (let phone_number of testNo) {
+            message_status = await middleWare.channelssetUp(TemplateData.sp_id, channel, type, phone_number.mobile_number, content, media)
+            console.log(message_status)
+
+        }
+
+        res.send({
+            status: 200,
+            message_status: message_status?.status
+        })
     }
     catch (err) {
         console.log(err)

@@ -61,14 +61,18 @@ app.post('/addCustomContact', authenticateToken, async (req, res) => {
 
       // Add values to the values array
       if (item.ActuallName === 'Name' || item.ActuallName === 'Phone_number') {
+        console.log("==========================")
         if (!item.displayName) {
+          console.log("++++++++++++++++++++++++")
           return res.status(400).json({
             message: 'Please add Name and Phone number',
             status: 400
           });
         } else if (item.ActuallName === 'Phone_number') {
+          console.log("********************************")
           let existQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 AND SP_ID = ?`;
           let existingContact = await db.excuteQuery(existQuery, [item.displayName, req.body.SP_ID]);
+       
           if (existingContact.length > 0) {
             return res.status(409).json({
               message: 'Phone number already exists',
@@ -237,7 +241,7 @@ app.post('/deletContact',authenticateToken, (req, res) => {
 app.get('/getContactById',authenticateToken, (req, res) => {
   try {
     console.log(req.query)
-    db.runQuery(req, res, val.selectbyid, [req.query.customerId, req.query.SP_ID])
+    db.runQuery(req, res, val.selectbyid, [ req.query.SP_ID, req.query.SP_ID,req.query.customerId])
   } catch (err) {
     console.error(err);
     db.errlog(err);

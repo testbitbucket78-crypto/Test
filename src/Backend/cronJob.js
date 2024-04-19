@@ -36,19 +36,19 @@ async function fetchScheduledMessages() {
 
     const currentDay = currentDate.getDay();
 
-  //   let currentDateTime= new Date().toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
-  //  console.log(currentDateTime)
+     let currentDateTime= new Date().toLocaleString(undefined, {timeZone: 'Asia/Kolkata'});
+    console.log(currentDateTime)
     for (const message of messagesData) {
 
     //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
-     console.log(message.SP_ID,"campaignTime", isWorkingTime(message) ,new Date(message.start_datetime) < new Date() ,new Date(message.start_datetime) , new Date())
+     console.log(message.sp_id,"campaignTime", isWorkingTime(message) ,new Date(message.start_datetime) < new Date(currentDateTime) ,new Date(message.start_datetime) , new Date() ,new Date(currentDateTime))
       if (isWorkingTime(message)) {
 
-        if (new Date(message.start_datetime) < new Date()) {
+       if (new Date(message.start_datetime) < new Date(currentDateTime)) {
           console.log(" isWorkingTime messagesData loop",)
           const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
 
-        }
+       }
       } else {
         remaingMessage.push(message);
       }
@@ -77,6 +77,60 @@ async function fetchScheduledMessages() {
 
 }
 
+async function parseMessage(content,customerId,spid,message_variables) {
+  
+   // Replace placeholders in the content with values from message_variables
+   message_variables.forEach(variable => {
+       const label = variable.label;
+       const value = variable.value;
+       content = content.replace(new RegExp(label, 'g'), value);
+   });
+
+  const placeholders = parseMessageTemplate(content);
+  if (placeholders.length > 0) {
+      // Construct a dynamic SQL query based on the placeholders
+      const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? AND SP_ID=? and isDeleted !=1`;
+      let results = await db.excuteQuery(sqlQuery, [customerId,spid]);
+      const data = results[0];
+
+
+      placeholders.forEach(placeholder => {
+          content = content.replace(`{{${placeholder}}}`, data[placeholder]);
+      });
+  }
+  return content;
+}
+
+async function parseMessageForCSV(content, contact, message_variables) {
+  // Replace placeholders in the content with values from message_variables
+  message_variables.forEach(variable => {
+      const label = variable.label;
+      const value = variable.value;
+      content = content.replace(new RegExp(label, 'g'), value);
+  });
+
+  // Replace any remaining placeholders in the content with values from the contact object
+  Object.keys(contact).forEach(key => {
+      const value = contact[key];
+      content = content.replace(new RegExp(`{{${key}}}`, 'g'), value);
+  });
+
+  return content;
+}
+
+
+
+
+// Function to parse the message template and retrieve placeholders
+function parseMessageTemplate(template) {
+  const placeholderRegex = /{{(.*?)}}/g;
+  const placeholders = [];
+  let match;
+  while ((match = placeholderRegex.exec(template))) {
+      placeholders.push(match[1]);
+  }
+  return placeholders;
+}
 
 async function sendMessages(phoneNumber, message, id, campaign, response) {
   try {
@@ -124,13 +178,11 @@ async function mapPhoneNumberfomCSV(message) {
     if (message.message_media == null || message.message_media == "") {
       type = 'text';
     }
-    let channelType = await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?', [message.SP_ID])
-    //console.log("channelType", channelType, channelType[0])
     campaignAlerts(message, 2) // campaignAlerts(new Date(), message.Id)    //Campaign is Running
     let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
     let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
     let content = await removeTagsFromMessages(message.message_content);
-    batchofScheduledCampaign(contacts, message.SP_ID, type, content, message.message_media, message.phone_number_id, message.channel_id, message,'csv') //channelType[0].connected_id
+    batchofScheduledCampaign(contacts, message.sp_id, type, content, message.message_media, message.phone_number_id, message.channel_id, message,'csv') //channelType[0].connected_id
   } catch (err) {
     console.log(err)
   }
@@ -140,19 +192,22 @@ async function mapPhoneNumberfomCSV(message) {
 
 async function mapPhoneNumberfomList(message) {
   // Map the values to customer IDs
-
-
+console.log("mapPhoneNumberfomList" ,message)
   var dataArray = JSON.parse(message.segments_contacts);
   var type = 'image';
   if (message.message_media == null || message.message_media == "") {
     type = 'text';
   }
 
-  let channelType = await db.excuteQuery('select connected_id from WhatsAppWeb where spid=?', [message.SP_ID])
-  //console.log("channelType",dataArray, channelType, channelType[0])
-  let Query = "SELECT * from EndCustomer  where customerId IN ? and isDeleted != 1"
 
-  let phoneNo = await db.excuteQuery(Query, [[dataArray]]);
+
+  let Query = "SELECT * from EndCustomer  where customerId IN ? and isDeleted != 1";
+  if (message.OptInStatus == 'Yes') {
+     Query = `SELECT * FROM EndCustomer WHERE customerId IN ? and (OptInStatus='Yes' OR OptInStatus=1) AND SP_ID=? and isDeleted !=1`;
+  }
+  
+
+  let phoneNo = await db.excuteQuery(Query, [[dataArray],message.sp_id]);
   console.log("phoneNo.length", phoneNo.length)
   // if ((message.channel_id == 2 && web.isActiveSpidClient(message.sp_id)) || (message.channel_id == 1)) {
   //   console.log("___________****" ,message.sp_id)
@@ -160,7 +215,7 @@ async function mapPhoneNumberfomList(message) {
   let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
   let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
   let content = await removeTagsFromMessages(message.message_content);
-  batchofScheduledCampaign(phoneNo, message.SP_ID, type,content, message.message_media, message.phone_number_id, message.channel_id, message,'List')
+  batchofScheduledCampaign(phoneNo, message.sp_id, type,content, message.message_media, message.phone_number_id, message.channel_id, message,'List')
   // }
 
 }
@@ -213,18 +268,24 @@ async function campaignCompletedAlert(message) {
 
 }
 
-function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message,list) {
+async function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message,list) {
 //  console.log("sendScheduledCampaign", "channel_id", batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message)
   for (var i = 0; i < batch.length; i++) {
     let Phone_number = batch[i].Phone_number
+    //Attributes for contact_list
+    let textMessage = await parseMessage(message_content,batch[i].customerId,batch[i].SP_ID,message.message_variables)
+
     if(list == 'csv'){
       Phone_number = batch[i].Contacts_Column
+      //Attributes for segment contacts
+      textMessage = await parseMessageForCSV(message_content,batch[i],message.message_variables)
+      
     }
    
 
     var response;
     setTimeout(async () => {
-      response = await messageThroughselectedchannel(sp_id, Phone_number, type, message_content, message_media, phone_number_id, channel_id);
+      response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id);
       console.log("response", JSON.stringify(response.status))
       sendMessages(Phone_number, message.message_content, message.Id, message, response.status)
     }, 10)
@@ -248,12 +309,7 @@ try{
     
     const startTime = item.start_time.split(':');
     const endTime = item.end_time.split(':');
-   console.log(item.sp_id,"startTime[0]",startTime[0] ,"startTime[1]",startTime[1] ,"endTime[0]",endTime[0] ,"endTime[1]",endTime[1],"date",date,"getMin",getMin  )
-  
-//     console.log("(date === startTime[0] && startTime[1] <= getMin)" ,(date === startTime[0] && startTime[1] <= getMin))
-//     console.log((startTime[0] < date) ,"(startTime[0] < date)")
-// console.log((endTime[0] > date) ,"(endTime[0] > date)" )
-// console.log((endTime[1] === getMin) && (endTime[1] >= getMin),"(endTime[1] === getMin) && (endTime[1] >= getMin)")
+ 
     if ((((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
       return true;
     }
@@ -403,19 +459,19 @@ async function msg(alert, status) {
     Campaign Name: `+ alert.title + `
     Scheduled Time: `+ alert.start_datetime + `
     Taget Audience: `+ 'alert.title' + `
-    Channel: < `+ 'WhatsApp' + `,` + alert.channel_id + `> 
+    Channel: `+ 'WhatsApp' + `,` + alert.channel_id + `
     Category: `+ alert.category + ` `
   } if (status == '2') {
     message = `Hello, your Engagekart Campaign has Started:
     Campaign Name: `+ alert.title + `
     Taget Audience: ` + audience + `
-    Channel:< `+ 'WhatsApp' + `,` + alert.channel_id + `>
+    Channel:`+ 'WhatsApp' + `,` + alert.channel_id + `
     Category:`+ alert.category + ` `
   } if (status == '3') {
     message = `Hi, here is the Summary of your finished Engagekart Campaign:
     Campaign Name: `+ alert.title + `
     Taget Audience: ` + audience + `
-    Channel: <`+ 'WhatsApp' + `,` + alert.channel_id + `>
+    Channel: `+ 'WhatsApp' + `,` + alert.channel_id + `
     Category: `+ alert.category + `
     Sent: ` + msgStatus.Sent + `
     Failed: ` + msgStatus.Failed + `
@@ -430,7 +486,28 @@ async function msg(alert, status) {
 
 
 
+async function isClientActive(spid) {
 
+  return new Promise(async (resolve, reject) => {
+      try {
+
+          const apiUrl = 'https://waweb.sampanatechnologies.com/IsClientReady'; // Replace with your API endpoint
+          const dataToSend = {
+              spid: spid
+          };
+
+          const response = await axios.post(apiUrl, dataToSend);
+          console.log('Response from API:', response.data);
+
+          resolve(response.data); // Resolve with the response data
+      } catch (error) {
+          console.error('Error:', error.message);
+          reject(error.message); // Reject with the error
+      }
+  });
+
+
+}
 
 
 
@@ -446,17 +523,28 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     return respose;
   } if (channelType == 'WhatsApp Web' || channelType == 2) {
    // if (web.isActiveSpidClient(spid)) {
-      let respose = await middleWare.postDataToAPI(spid, from, type, text, media)
-      return respose;
+     // let respose = await middleWare.postDataToAPI(spid, from, type, text, media)
+      //return respose;
     // } else {
     //   return ({status:401});
     // }
+    let clientReady = await isClientActive(spid);
+    if (clientReady.status) {
+        let response = await middleWare.postDataToAPI(spid, from, type, text, media);
+        console.log("response", JSON.stringify(response.status));
+        return response;
+    }
+
+    else {
+        console.log("isActiveSpidClient returned false for WhatsApp Web");
+        return { status: 404 };
+    }
 
   }
 }
 
 
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/2 * * * *', async () => {
   console.log('Running scheduled task...');
 
   fetchScheduledMessages();
