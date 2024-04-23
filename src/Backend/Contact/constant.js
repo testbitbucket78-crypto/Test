@@ -17,7 +17,7 @@ otp = parseInt(otp);
 //Query for contactPage
 var selectAllContact = `SELECT
 EC.*,
-GROUP_CONCAT(ECTM.TagName) AS tag_names
+IFNULL(GROUP_CONCAT(ECTM.TagName), '') AS tag_names
 FROM
 EndCustomer AS EC
 LEFT JOIN
@@ -26,9 +26,7 @@ WHERE
 EC.isDeleted != 1
 AND EC.SP_ID = ?
 AND EC.IsTemporary != 1
-AND ECTM.SP_ID=?
-AND ECTM.isDeleted != 1 -- Filter out deleted tags
-
+AND ((EC.tag IS NULL OR EC.tag='') OR (ECTM.SP_ID =? AND ECTM.isDeleted != 1))
 GROUP BY
 EC.customerId`
 var insertContact = "INSERT INTO EndCustomer (Name,Phone_number,emailId,age,tag,status,facebookId,InstagramId,SP_ID,countryCode) VALUES ?";
@@ -46,8 +44,7 @@ WHERE
 EC.isDeleted != 1
 AND EC.SP_ID = ?
 AND EC.IsTemporary != 1
-AND ECTM.SP_ID=?
-AND ECTM.isDeleted != 1 -- Filter out deleted tags
+AND ((EC.tag IS NULL OR EC.tag='') OR (ECTM.SP_ID =? AND ECTM.isDeleted != 1))
 AND     EC.customerId=?`
 isBlockedQuery = "UPDATE EndCustomer set  isBlocked=?,isBlockedOn=now() where customerId=? and SP_ID=?"
 existContactWithSameSpid=`SELECT * FROM EndCustomer WHERE (emailId = ? or Phone_number=?) AND (isDeleted =0 ) AND SP_ID=? AND IsTemporary !=1  `

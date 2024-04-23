@@ -1,3 +1,5 @@
-"SP_ID","Name","emailId","Phone_number"
-15,"testname1","abc1ghdg.com","9878767676"
-15,"testname2","abc@gmail2.com","98787"
+"SP_ID","Name","Phone_number","OptInStatus","reason"
+39,"Raunak","8130818921","Yes","Duplicate phone number"
+39,"Rishabh","8130818921","Yes","This contact not already exist"
+39,"vijay","9876473632","No","This contact not already exist"
+39,"Pawan sharma","7618157986","yes","This contact not already exist"

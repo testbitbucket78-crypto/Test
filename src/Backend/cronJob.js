@@ -78,14 +78,14 @@ async function fetchScheduledMessages() {
 }
 
 async function parseMessage(content,customerId,spid,message_variables) {
-  
    // Replace placeholders in the content with values from message_variables
+   if (message_variables && Array.isArray(message_variables) && message_variables.length > 0) {
    message_variables.forEach(variable => {
        const label = variable.label;
        const value = variable.value;
        content = content.replace(new RegExp(label, 'g'), value);
    });
-
+  }
   const placeholders = parseMessageTemplate(content);
   if (placeholders.length > 0) {
       // Construct a dynamic SQL query based on the placeholders
@@ -103,12 +103,13 @@ async function parseMessage(content,customerId,spid,message_variables) {
 
 async function parseMessageForCSV(content, contact, message_variables) {
   // Replace placeholders in the content with values from message_variables
+  if (message_variables && Array.isArray(message_variables) && message_variables.length > 0) {
   message_variables.forEach(variable => {
       const label = variable.label;
       const value = variable.value;
       content = content.replace(new RegExp(label, 'g'), value);
   });
-
+  }
   // Replace any remaining placeholders in the content with values from the contact object
   Object.keys(contact).forEach(key => {
       const value = contact[key];
@@ -491,7 +492,7 @@ async function isClientActive(spid) {
   return new Promise(async (resolve, reject) => {
       try {
 
-          const apiUrl = 'https://waweb.sampanatechnologies.com/IsClientReady'; // Replace with your API endpoint
+          const apiUrl = 'https://waweb.stacknize.com/IsClientReady'; // Replace with your API endpoint
           const dataToSend = {
               spid: spid
           };
@@ -544,7 +545,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 }
 
 
-cron.schedule('*/2 * * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
   console.log('Running scheduled task...');
 
   fetchScheduledMessages();
