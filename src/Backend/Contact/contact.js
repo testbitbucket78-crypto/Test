@@ -15,7 +15,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 const authenticateToken = require('../Authorize');
 
-app.get('/columns/:spid',authenticateToken, async (req, res) => {
+app.get('/columns/:spid', authenticateToken, async (req, res) => {
   try {
 
     let query = ` SELECT column_name as displayName,column_name as ActuallName
@@ -72,7 +72,7 @@ app.post('/addCustomContact', authenticateToken, async (req, res) => {
           console.log("********************************")
           let existQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 AND SP_ID = ?`;
           let existingContact = await db.excuteQuery(existQuery, [item.displayName, req.body.SP_ID]);
-       
+
           if (existingContact.length > 0) {
             return res.status(409).json({
               message: 'Phone number already exists',
@@ -112,7 +112,7 @@ app.post('/addCustomContact', authenticateToken, async (req, res) => {
 });
 
 
-app.post('/editCustomContact',authenticateToken, async (req, res) => {
+app.post('/editCustomContact', authenticateToken, async (req, res) => {
   try {
     const id = req.query.customerId;
     const spid = req.query.SP_ID;
@@ -158,24 +158,24 @@ app.post('/editCustomContact',authenticateToken, async (req, res) => {
 
 
 app.get('/', async function (req, res) {
-  try{
-    let contacts = await db.excuteQuery(val.selectAllContact, [req.query.SP_ID]);
+  try {
+    let contacts = await db.excuteQuery(val.selectAllContact, [req.query.SP_ID, req.query.SP_ID]);
 
     res.status(200).send({
       result: contacts,
       status: 200
     });
-} catch (err) {
-  db.errlog(err);
-  res.status(500).send({
-    msg: err,
-    status: 500
-  });
-}
+  } catch (err) {
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
 });
 
 
-app.post('/exportCheckedContact',authenticateToken, (req, res) => {
+app.post('/exportCheckedContact', authenticateToken, (req, res) => {
   try {
     console.log(req.body)
     var data = req.body.data
@@ -222,7 +222,7 @@ app.post('/exportCheckedContact',authenticateToken, (req, res) => {
 })
 
 
-app.post('/deletContact',authenticateToken, (req, res) => {
+app.post('/deletContact', authenticateToken, (req, res) => {
   try {
 
     var Ids = req.body.customerId;
@@ -238,10 +238,10 @@ app.post('/deletContact',authenticateToken, (req, res) => {
   }
 })
 
-app.get('/getContactById',authenticateToken, (req, res) => {
+app.get('/getContactById', authenticateToken, (req, res) => {
   try {
     console.log(req.query)
-    db.runQuery(req, res, val.selectbyid, [ req.query.SP_ID, req.query.SP_ID,req.query.customerId])
+    db.runQuery(req, res, val.selectbyid, [req.query.SP_ID, req.query.SP_ID, req.query.customerId])
   } catch (err) {
     console.error(err);
     db.errlog(err);
@@ -252,7 +252,7 @@ app.get('/getContactById',authenticateToken, (req, res) => {
   }
 })
 
-app.put('/editContact', authenticateToken,(req, res) => {
+app.put('/editContact', authenticateToken, (req, res) => {
   try {
     console.log("editContact")
     const id = req.query.customerId;
@@ -308,7 +308,7 @@ app.put('/editContact', authenticateToken,(req, res) => {
 })
 
 
-app.post('/importContact',authenticateToken, async (req, res) => {
+app.post('/importContact', authenticateToken, async (req, res) => {
 
   try {
 
@@ -322,7 +322,7 @@ app.post('/importContact',authenticateToken, async (req, res) => {
     if (purpose === 'Add new contact only') {
       try {
 
-        let addNewUserOnly = await addOnlynewContact(CSVdata, identifier,SP_ID)
+        let addNewUserOnly = await addOnlynewContact(CSVdata, identifier, SP_ID)
 
         res.status(200).send({
           msg: "Contact Added Successfully",
@@ -373,7 +373,7 @@ app.post('/importContact',authenticateToken, async (req, res) => {
       //********ADD NEW CONTACT********* */
       try {
 
-        var addAndUpdateCont = await addOnlynewContact(CSVdata, identifier);
+        var addAndUpdateCont = await addOnlynewContact(CSVdata, identifier, SP_ID);
 
         if (fields.length == 0) {
 
@@ -409,7 +409,7 @@ app.post('/importContact',authenticateToken, async (req, res) => {
   }
 })
 
-async function addOnlynewContact(CSVdata, identifier,SP_ID) {
+async function addOnlynewContact(CSVdata, identifier, SP_ID) {
 
   try {
     let result;
@@ -425,11 +425,9 @@ async function addOnlynewContact(CSVdata, identifier,SP_ID) {
       const values = set.map((field) => field.displayName);
       // values.push(SP_ID);
 
-     // console.log(query);
-      //console.log(values);
 
       // Ensure db.executeQuery returns a promise
-      result = await db.excuteQuery(query, [values, identifierValue,SP_ID]);
+      result = await db.excuteQuery(query, [values, identifierValue, SP_ID]);
 
 
     }
@@ -488,7 +486,7 @@ async function updateContact(CSVdata, identifier, SP_ID) {
 
       // Build the UPDATE query
       let query = `UPDATE EndCustomer SET ${setClause} WHERE ${identifier} = ? AND SP_ID = ? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0);`;
-     // console.log(query);
+      // console.log(query);
 
       // Add values for placeholders in the correct order
       const values = set.map((field) => field.displayName); // Using displayName as FieldValue
@@ -496,7 +494,7 @@ async function updateContact(CSVdata, identifier, SP_ID) {
       values.push(SP_ID);
 
       var upExistContOnly = await db.excuteQuery(query, values);
-     // console.log(upExistContOnly);
+      // console.log(upExistContOnly);
     }
     return upExistContOnly;
   } catch (err) {
@@ -506,121 +504,93 @@ async function updateContact(CSVdata, identifier, SP_ID) {
 }
 
 
-app.post('/verifyData',authenticateToken, async (req, res) => {
+app.post('/verifyData', authenticateToken, async (req, res) => {
   try {
+    const { importedData, identifier, purpose, SP_ID } = req.body;
 
-    var resdata = req.body;
-    var CSVdata = resdata.importedData;
-    var identifier = resdata.identifier;
-    var purpose = resdata.purpose;
-    var SP_ID = resdata.SP_ID;
+    const identity = identifier;
+    const emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    const phoneFormat = /^[0-9]{6,15}$/;
 
-    var identity = identifier;
+    let errData = [];
+    let importData = [];
+    let queryData = [];
+    let seenPhoneNumbers = new Set();
 
-    errData = [];
-    importData = [];
-    queryData = [];
-
-    console.log(CSVdata.length);
-
-    for (var j = 0; j < CSVdata.length; j++) {
-      var currentData = CSVdata[j];
-
-      var email, phone; // Initialize email and phone variables here
+    for (let j = 0; j < importedData.length; j++) {
+      const currentData = importedData[j];
+      let email, phone, optin;
 
       for (let i = 0; i < currentData.length; i++) {
-        var currentEntry = currentData[i];
-       // console.log(currentEntry, i);
-
-        if (currentEntry.ActuallName === 'emailId') {
-          email = currentEntry.displayName; // Assign to email variable
-        }
-        if (currentEntry.ActuallName === 'Phone_number') {
-          phone = currentEntry.displayName; // Assign to phone variable
-        }
+        const { ActuallName, displayName } = currentData[i];
+        if (ActuallName === 'emailId') {
+          email = displayName;
+        } else if (ActuallName === 'Phone_number') {
+          phone = displayName;
+        } 
       }
 
-      var emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-      var phoneno = /^[0-9]{6,15}$/;
-
-      //console.log(email , !email.match(emailFormat)  ,phone ,!phone.match(phoneno))
-      if ((!email || !email.match(emailFormat)) || (!phone || !phone.match(phoneno))) {
-        errData.push(currentData);
+      if (!phone || !phone.match(phoneFormat)) {
+        errData.push({ data: currentData, reason: "Invalid phone number" });
+      } else if (email && !email.match(emailFormat)) {
+        errData.push({ data: currentData, reason: "Invalid email" });
       } else {
-        queryData.push(currentData.find(entry => entry.ActuallName === identifier).displayName);
-        importData.push(currentData);
-      }
-    }
-
-    if (errData.length !== 0) {
-
-      // Restructure errData to have ActuallName as header
-      var formattedErrData = errData.map(data => {
-        var formattedEntry = {};
-        data.forEach(entry => {
-          formattedEntry[entry.ActuallName] = entry.displayName;
-        });
-        return formattedEntry;
-      });
-
-      // Write error data to CSV file
-      const json2csvParser = new Parser({ fields: Object.keys(formattedErrData[0]) });
-      const csv = json2csvParser.parse(formattedErrData);
-      fs.writeFile("CSVerr.csv", csv, function (err) {
-        if (err) {
-          res.send(err);
+        if (seenPhoneNumbers.has(phone)) {
+          errData.push({ data: currentData, reason: "Duplicate phone number" });
+        } else {
+          seenPhoneNumbers.add(phone);
+          queryData.push(phone);
+          importData.push(currentData);
         }
-        console.log('File Saved');
-      });
-      res.attachment("CSVerr.csv");
-
-
+      }
     }
 
     if (importData.length > 0) {
-      console.log(importData)
-      // Execute query and handle purpose
-      var verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)';
-      var result = await db.excuteQuery(verifyQuery, [queryData, SP_ID]);
+      const verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)';
+      const result = await db.excuteQuery(verifyQuery, [queryData, SP_ID]);
 
-console.log(result)
-      try {
-        if (purpose === 'Add new contact only') {
-          res.status(200).send({
-            newCon: Math.abs(importData.length - result.length),
-            upCont: 0,
-            skipCont: errData.length,
-            importData: importData
-          });
-        } else if (purpose === 'Update Existing Contacts Only') {
-          res.status(200).send({
-            newCon: 0,
-            upCont: result.length,
-            skipCont: errData.length,
-            importData: importData
-          });
-        } else if (purpose === 'Add and Update Contacts') {
-          res.status(200).send({
-            newCon: Math.abs(importData.length - result.length),
-            upCont: result.length,
-            skipCont: errData.length,
-            importData: importData
-          });
+      let newCon = 0;
+      let upCont = 0;
+
+     
+      const newContacts = Math.abs(importData.length - result.length);
+      if (purpose === 'Add new contact only') {
+        newCon = newContacts;
+        console.log("newCon.length,newCon?.length == 0")
+        console.log(newCon,newCon == 0)
+        if (newCon == 0)  {
+          for (let j = 0; j < importData.length; j++) {
+            const currentData = importData[j];
+            errData.push({ data: currentData, reason: "This contact already exist" });
+          }
         }
-      } catch (err) {
-        console.log(err);
-        db.errlog(err);
-        res.status(500).send({
-          msg: err,
-          status: 500
-        });
+      } else if (purpose === 'Update Existing Contacts Only') {
+        upCont = result.length;
+        if (upCont == 0) {
+          for (let j = 0; j < importData.length; j++) {
+            const currentData = importData[j];
+            errData.push({ data: currentData, reason: "This contact not already exist" });
+          }
+        
+      } else if (purpose === 'Add and Update Contacts') {
+        newCon = newContacts;
+        upCont = result.length;
       }
+     
+  }
+    let skipedContact = await  writeErrFile(errData, res)
+      res.status(200).send({
+        newCon: newCon,
+        upCont: upCont,
+        skipCont: skipedContact?.length,
+        importData: importData
+      });
     } else {
-      // Send response with no new contacts
+      let skipedContact = await  writeErrFile(errData, res)
       res.status(200).send({
         newCon: 0,
         upCont: 0,
-        skipCont: errData.length,
+        skipCont: skipedContact?.length,
         importData: importData
       });
     }
@@ -632,10 +602,48 @@ console.log(result)
       status: 500
     });
   }
+});
 
-})
+async function writeErrFile(errData, res) {
+  try {
+    if (errData.length !== 0) {
+      const uniqueErrData = errData.filter((obj, index, self) =>
+        index === self.findIndex((t) => (
+          t.data[0]?.displayName === obj.data[0]?.displayName &&
+          t.data[1]?.displayName === obj.data[1]?.displayName &&
+          t.data[2]?.displayName === obj.data[2]?.displayName
+        ))
+      );
 
-app.get('/downloadCSVerror',authenticateToken, (req, res) => {
+      const formattedErrData = uniqueErrData.map(error => {
+        const formattedEntry = {};
+        error.data.forEach(entry => {
+          formattedEntry[entry.ActuallName] = entry.displayName;
+        });
+        formattedEntry.reason = error.reason;
+        return formattedEntry;
+      });
+
+      const json2csvParser = new Parser({ fields: [...Object.keys(formattedErrData[0])] });
+      const csv = json2csvParser.parse(formattedErrData);
+
+      fs.writeFile("CSVerr.csv", csv, function (err) {
+        if (err) {
+          res.send(err);
+        }
+        console.log('Error file saved');
+      });
+      res.attachment("CSVerr.csv");
+      return uniqueErrData;
+    }
+
+  } catch (err) {
+    console.log("writeErrFile");
+    console.log(err)
+  }
+}
+
+app.get('/downloadCSVerror', authenticateToken, (req, res) => {
   try {
     console.log("downloadCSVerror")
     var file = path.join(__dirname, '/CSVerr.csv')
@@ -655,7 +663,7 @@ app.get('/downloadCSVerror',authenticateToken, (req, res) => {
 
 
 
-app.get('/download',authenticateToken, (req, res) => {
+app.get('/download', authenticateToken, (req, res) => {
   try {
     var file = path.join(__dirname, '/sample_file.csv')
 
@@ -672,7 +680,7 @@ app.get('/download',authenticateToken, (req, res) => {
 })
 
 
-app.post('/blockedContact',authenticateToken, (req, res) => {
+app.post('/blockedContact', authenticateToken, (req, res) => {
   try {
     let blockedQuery = val.isBlockedQuery
     console.log(req.body.isBlocked, "req.body.isBlocked == 1", req.body.isBlocked == 1)
@@ -704,7 +712,7 @@ let transporter = nodemailer.createTransport({
 });
 
 
-app.post('/addProfileImg',authenticateToken, async (req, res) => {
+app.post('/addProfileImg', authenticateToken, async (req, res) => {
   try {
     customerId = req.body.customerId
     contact_profile = req.body.contact_profile
@@ -742,7 +750,7 @@ app.post('/addProfileImg',authenticateToken, async (req, res) => {
 })
 
 
-app.get('/getProfileImg/:cuid',authenticateToken, async (req, res) => {
+app.get('/getProfileImg/:cuid', authenticateToken, async (req, res) => {
   try {
     let getProfileQuery = `SELECT contact_profile FROM EndCustomer WHERE customerId=?`;
     let getProfile = await db.excuteQuery(getProfileQuery, [req.params.cuid]);
@@ -761,7 +769,7 @@ app.get('/getProfileImg/:cuid',authenticateToken, async (req, res) => {
 })
 
 
-app.post('/addflow',authenticateToken, async (req, res) => {
+app.post('/addflow', authenticateToken, async (req, res) => {
   try {
     // let getProfileQuery = `SELECT contact_profile FROM EndCustomer WHERE customerId=?`;
     // let getProfile = await db.excuteQuery(getProfileQuery, [req.params.cuid]);

@@ -252,14 +252,14 @@ const addCustomField = async (req, res) => {
         const description = req.body.description;
         const created_at = new Date().toUTCString();
         let values = JSON.parse(req.body.values);
-      
-       
+
+
 
         // Check if the ColumnName already exists for the given SP_ID
         const checkExistenceQuery = `SELECT * FROM SPIDCustomContactFields WHERE SP_ID=? AND ColumnName=? AND isDeleted!=1`;
         const countResult = await db.excuteQuery(checkExistenceQuery, [SP_ID, ColumnName]);
 
-       
+
 
         // If the count is greater than 0, it means the ColumnName already exists
         if (countResult?.length > 0) {
@@ -292,16 +292,16 @@ const addCustomField = async (req, res) => {
                 });
                 return;
             } else {
-                 // Check if the Type is 'select', format the values accordingly and update id with addfiled inserted id
-        if (Type === 'select') {
-            values = values.map(option => ({
-                id: addFieldResult.insertId + '_' + option.id,
-                optionName: option.optionName
-            }));
-            let updateRes = await db.excuteQuery('UPDATE  SPIDCustomContactFields SET dataTypeValues=? WHERE id =?',[JSON.stringify(values),addFieldResult.insertId])
-        }
-    
-        // Return success response
+                // Check if the Type is 'select', format the values accordingly and update id with addfiled inserted id
+                if (Type === 'select') {
+                    values = values.map(option => ({
+                        id: addFieldResult.insertId + '_' + option.id,
+                        optionName: option.optionName
+                    }));
+                    let updateRes = await db.excuteQuery('UPDATE  SPIDCustomContactFields SET dataTypeValues=? WHERE id =?', [JSON.stringify(values), addFieldResult.insertId])
+                }
+
+                // Return success response
                 res.status(200).send({
                     status: 200,
                     addfiled: addFieldResult
@@ -368,17 +368,54 @@ const enableStatusfield = async (req, res) => {
 }
 const getCustomField = async (req, res) => {
     try {
-        let getfields = await db.excuteQuery(val.getcolumn, [req.params.spid]);
-        res.send({
-            status: 200,
-            getfields: getfields
-        })
+      let getfields = await db.excuteQuery(val.getcolumn, [req.params.spid]);
+      console.log("getfields************")
+      console.log(getfields)
+      // Update fields based on ActuallName
+      const updatedFields = getfields.map(field => {
+        switch (field.ActuallName) {
+          case 'Name':
+            field.type = 'Text';
+            field.mandatory = 1;
+            break;
+          case 'Phone_number':
+            field.type = 'Number';
+            field.mandatory = 1;
+            break;
+          case 'emailId':
+            field.type = 'Text';
+            field.mandatory = 0;
+            break;
+          case 'OptInStatus':
+            field.type = 'Switch';
+            field.mandatory = 0;
+            break;
+          case 'tag':
+            field.type = 'Multi Select';
+            field.mandatory = 0;
+            break;
+          case 'ContactOwner':
+            field.type = 'User';
+            field.mandatory = 1;
+            break;
+          default:
+            // No changes required for other ActuallName values
+            break;
+        }
+        return field; // Return the updated field object
+      });
+
+      res.send({
+        status: 200,
+        getfields: updatedFields
+      });
     } catch (err) {
-        console.log(err)
-        db.errlog(err);
-        res.send(err)
+      console.log(err)
+      db.errlog(err);
+      res.send(err)
     }
-}
+  }
+  
 
 const getCustomFieldById = async (req, res) => {
     try {
