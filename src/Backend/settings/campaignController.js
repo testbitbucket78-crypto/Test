@@ -663,8 +663,7 @@ const testCampaign = async (req, res) => {
 
         var TemplateData = req.body
         let customerID = "";
-
-        let message_variables = JSON.parse(TemplateData.message_variables);
+     
         var messateText = TemplateData.message_content
 
         let channel = TemplateData.channel_id
@@ -672,33 +671,35 @@ const testCampaign = async (req, res) => {
 
 
         let content = await removeTags.removeTagsFromMessages(messateText)
+        let message_variables = req.body.message_variables && req.body.message_variables.length > 0 ? JSON.parse(req.body.message_variables) : undefined;
+      
+        if (message_variables) {
+            message_variables.forEach(variable => {
+                const label = variable.label;
+                const value = variable.value;
+                content = content.replace(new RegExp(label, 'g'), value);
+            });
+        }
+
         if (TemplateData.segments_contacts?.length) {
 
             customerID = JSON.parse(TemplateData.segments_contacts)[0];
             // Parse the message template to get placeholders
             const placeholders = parseMessageTemplate(content);
             if (placeholders.length > 0) {
-                // Construct a dynamic SQL query based on the placeholders
-                const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
-                let results = await db.excuteQuery(sqlQuery, [customerID, TemplateData.sp_id]);
-                const data = results[0];
-
-
+                console.log(placeholders)
+                const results = await removeTags.getDefaultAttribue(placeholders,TemplateData.sp_id,customerID);
+                console.log("results", results)
+               
                 placeholders.forEach(placeholder => {
-                    content = content.replace(`{{${placeholder}}}`, data[placeholder]);
+                    const result = results.find(result => result.hasOwnProperty(placeholder));
+                    const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+                    content = content.replace(`{{${placeholder}}}`, replacement);
                 });
             }
 
         } else if (TemplateData.csv_contacts?.length) {
             let contact = JSON.parse(TemplateData.csv_contacts)[0];
-            console.log(contact)
-            // Replace placeholders in the content with values from message_variables
-            message_variables.forEach(variable => {
-                const label = variable.label;
-                const value = variable.value;
-                content = content.replace(new RegExp(label, 'g'), value);
-            });
-
             // Replace any remaining placeholders in the content with values from the contact object
             Object.keys(contact).forEach(key => {
                 const value = contact[key];

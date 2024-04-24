@@ -190,11 +190,14 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         const placeholders = parseMessageTemplate(testMessage);
         if (placeholders.length > 0) {
           // Construct a dynamic SQL query based on the placeholders
-          const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=${custid}`;
-          let results = await db.excuteQuery(sqlQuery, []);
-          const data = results[0];
+      
+          const results = await removeTags.getDefaultAttribue(placeholders, spid, customerId);
+          console.log("results", results)
+
           placeholders.forEach(placeholder => {
-            testMessage = testMessage.replace(`{{${placeholder}}}`, data[placeholder]);
+              const result = results.find(result => result.hasOwnProperty(placeholder));
+              const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+              content = content.replace(`{{${placeholder}}}`, replacement);
           });
 
         }
