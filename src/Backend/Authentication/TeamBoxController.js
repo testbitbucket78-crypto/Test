@@ -8,7 +8,7 @@ const http = require("https");
 const middleWare = require('../middleWare')
 const multer = require('multer');
 let fs = require('fs-extra');
-const removeTags = require('../removeTagsFromRichTextEditor') 
+const removeTags = require('../removeTagsFromRichTextEditor')
 
 app.use(bodyParser.json());
 
@@ -234,7 +234,7 @@ const getAllFilteredInteraction = async (req, res) => {
         let conversations = await db.excuteQuery(queryPath, [req.body.SPID, RangeStart, RangeEnd]);
 
         let isCompleted = false;
-        if (conversations?.length == 0 || conversations?.length <RangeEnd) {
+        if (conversations?.length == 0 || conversations?.length < RangeEnd) {
             isCompleted = true;
         }
 
@@ -314,7 +314,7 @@ const getSearchInteraction = (req, res) => {
 
 const getAllMessageByInteractionId = async (req, res) => {
     try {
-       
+
         let result;
         let isCompleted = false
         let endRange = (req.params.RangeEnd - req.params.RangeStart)
@@ -324,23 +324,23 @@ const getAllMessageByInteractionId = async (req, res) => {
 
             result = await db.excuteQuery(getAllMessagesByInteractionId, [])
 
-          
+
         } else {
             //var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
-            var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) and is_deleted !=1 AND (msg_status IS NULL OR msg_status !=10 ) ORDER BY Message_id DESC LIMIT " + req.params.RangeStart + "," + endRange ;
+            var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) and is_deleted !=1 AND (msg_status IS NULL OR msg_status !=10 ) ORDER BY Message_id DESC LIMIT " + req.params.RangeStart + "," + endRange;
 
 
             result = await db.excuteQuery(getAllMessagesByInteractionId, [req.params.RangeStart, endRange])
 
-           
+
 
         }
-if(result?.length == '0' || result?.length <endRange){
-    isCompleted = true;
-}
+        if (result?.length == '0' || result?.length < endRange) {
+            isCompleted = true;
+        }
         res.send({
             result: result,
-            isCompleted :isCompleted,
+            isCompleted: isCompleted,
             status: 200
         })
 
@@ -369,7 +369,7 @@ const deleteMessage = (req, res) => {
 
 const insertMessage = async (req, res) => {
     try {
-        console.log(req.body)
+        console.log(req.body.message_text)
         if (req.body.Message_id == '') {
             var messageQuery = val.insertMessageQuery
 
@@ -418,16 +418,17 @@ const insertMessage = async (req, res) => {
             const placeholders = parseMessageTemplate(content);
             if (placeholders.length > 0) {
                 // Construct a dynamic SQL query based on the placeholders
-                const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1`;
-                let results = await db.excuteQuery(sqlQuery, [customerId]);
-                const data = results[0];
-    
-    
+                console.log(placeholders)
+                const results = await removeTags.getDefaultAttribue(placeholders, SPID, customerId);
+                console.log("results", results)
+               
                 placeholders.forEach(placeholder => {
-                    content = content.replace(`{{${placeholder}}}`, data[placeholder]);
+                    const result = results.find(result => result.hasOwnProperty(placeholder));
+                    const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+                    content = content.replace(`{{${placeholder}}}`, replacement);
                 });
             }
-    
+
             let middlewareresult = ""
             if (channelType[0].isBlocked != 1) {
 

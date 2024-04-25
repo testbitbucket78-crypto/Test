@@ -328,31 +328,31 @@ const sendCampinMessage = async (req, res) => {
 
         let content = await removeTags.removeTagsFromMessages(messateText);
 
- 
-         // Get VALUES from the message_variables whose labels  are within {{}} 
-         const message_variables = req.body.message_variables ? JSON.parse(req.body.message_variables) : undefined;
 
+        // Get VALUES from the message_variables whose labels  are within {{}} 
+        const message_variables = req.body.message_variables && req.body.message_variables.length > 0 ? JSON.parse(req.body.message_variables) : undefined;
 
-//         // Replace placeholders in the content with values from message_variables
-        message_variables.forEach(variable => {
-            const label = variable.label;
-            const value = variable.value;
-            content = content.replace(new RegExp(label, 'g'), value);
-        });
-
+        console.log(content, "___________message_variables ____________", message_variables)
+        //         // Replace placeholders in the content with values from message_variables
+        if (message_variables) {
+            message_variables.forEach(variable => {
+                const label = variable.label;
+                const value = variable.value;
+                content = content.replace(new RegExp(label, 'g'), value);
+            });
+        }
 
 
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
-            console.log("++++++++++++++++++++++")
-            // Construct a dynamic SQL query based on the placeholders
-            const sqlQuery = `SELECT ${placeholders.join(', ')} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
-            let results = await db.excuteQuery(sqlQuery, [customerId, spid]);
-            const data = results[0];
-
+         
+            const results = await removeTags.getDefaultAttribue(placeholders, spid, customerId);
+            console.log("results", results)
 
             placeholders.forEach(placeholder => {
-                content = content.replace(`{{${placeholder}}}`, data[placeholder]);
+                const result = results.find(result => result.hasOwnProperty(placeholder));
+                const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+                content = content.replace(`{{${placeholder}}}`, replacement);
             });
         }
 
@@ -366,13 +366,13 @@ const sendCampinMessage = async (req, res) => {
             let messagestatus;
             if (optInStatus == 'Yes') {
                 const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and SP_ID=? and isDeleted !=1`;
-                let results = await db.excuteQuery(sqlQuery, [customerId,spid]);
-                 console.log(spid, req.body.channel_id, type, messageTo, "****", customerId)
+                let results = await db.excuteQuery(sqlQuery, [customerId, spid]);
+                console.log(spid, req.body.channel_id, type, messageTo, "****", customerId)
                 if (results?.length > 0) {
                     messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
                 }
             } else {
-                console.log(spid, req.body.channel_id, type, messageTo, "+++++++" ,customerId)
+                console.log(spid, req.body.channel_id, type, messageTo, "+++++++", customerId)
                 messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
             }
             console.log("isFinished ", isFinished, TemplateData.status)
