@@ -9,6 +9,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
 import { Router } from '@angular/router';
 import { contactsImageData } from 'Frontend/dashboard/models/dashboard.model';
+import { AnyLengthString } from 'aws-sdk/clients/comprehend';
 
 declare var $: any;
 @Component({
@@ -32,13 +33,15 @@ export class ContactsComponent implements OnInit {
       this.router.navigate(['login']);
     }
   }
-
+  arrHideColumn:any[] =[];
+  isShowColumn:boolean = false;
 columnDefs: ColDef[] = [
   {
     field: '',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     checkboxSelection: true,
+    hide:false,
     flex: 0.5,
     cellStyle: { background: "#FBFAFF" },
   },
@@ -48,6 +51,7 @@ columnDefs: ColDef[] = [
     flex: 1,
     resizable: true,
     filter: true,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -57,6 +61,7 @@ columnDefs: ColDef[] = [
     flex: 2,
     filter: true,
     resizable: true,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -65,6 +70,7 @@ columnDefs: ColDef[] = [
     headerName: 'Phone Number',
     flex: 2,
     resizable: true,
+    hide:false,
     filter: true,
     cellRenderer: (params: { data: { countryCode: any; displayPhoneNumber: any; };
      }) =>`${params.data.countryCode} ${params.data.displayPhoneNumber}`,
@@ -77,6 +83,7 @@ columnDefs: ColDef[] = [
     flex: 2,
     filter: true,
     resizable: true,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -86,6 +93,7 @@ columnDefs: ColDef[] = [
     flex: 2,
     filter: true,
     resizable: true,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -95,6 +103,7 @@ columnDefs: ColDef[] = [
     flex: 2,
     filter: true,
     resizable: true,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -104,6 +113,7 @@ columnDefs: ColDef[] = [
     flex: 2,
     filter: true,
     resizable: true,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -262,6 +272,16 @@ countryCodes = [
         itemsShowLimit: 3,
         allowSearchFilter: this.ShowFilter
     };
+
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'item_id',
+      textField: 'item_text',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 3,
+      allowSearchFilter: this.ShowFilter
+  };
 
     this.routerGuard();
 		this.getContact();
@@ -926,6 +946,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
               field: item.ActuallName,
             headerName: item.displayName,
             flex: 2,
+            hide:false,
             filter: true,
             resizable: true,
             sortable: true,
@@ -933,6 +954,10 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             });
             const control = new FormControl('');
             this.productForm.addControl(item.ActuallName,control);
+          })
+          this.columnDefs.forEach((item:any)=>{
+            if(item?.headerName)
+              this.arrHideColumn.push({field:item?.field,headerName:item?.headerName,hide:true});
           })
           console.log(this.productForm);
           setTimeout(()=>{
@@ -947,6 +972,29 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 
   toggleInfoIcon() {
     this.showInfoIcon = !this.showInfoIcon;
+  }
+
+  
+  showHideColumns(fieldName:any, e:any) {
+    let value = e.target.checked;
+    let obj:any = this.columnDefs.find(o => o.field === fieldName);
+    obj.hide = !value;
+    let hiddenColumns = this.columnDefs.filter(o => o.hide === false);
+    let actionColumn:any = this.columnDefs.find(o => o.headerName === 'Actions');
+    // if (hiddenColumns?.length > 11) {
+    //   actionColumn.width = 300;
+    // } else {
+    //   actionColumn.width = 150;
+    //   setTimeout(() => {
+    //     this.gridOptions.api.sizeColumnsToFit();
+    //   }, 10)
+    //   console.log('hjghj')
+    // }
+    this.gridapi.setColumnDefs(this.columnDefs);
+  }
+  checkHideFields() {
+    let hiddenColumns = this.columnDefs.filter(item => item.hide == false && item.headerName);
+    return hiddenColumns.length > 1 ? false : true;
   }
 }
 

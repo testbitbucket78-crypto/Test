@@ -45,6 +45,7 @@ export class CustomFieldsComponent implements OnInit {
     ngOnInit(): void {
         this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.getCustomFieldsData();
+        this.addCustomFieldsOption();
     }
     constructor(private formBuilder:FormBuilder,private settingsService:SettingsService) {
       this.addCustomField = [];
@@ -116,8 +117,8 @@ toggleActiveState(checked: boolean, ID:number) {
 
 addCustomFieldsOption(){
   this.addCustomField.push({
-    Option1: '',
-    Option2: '',
+    id: '',
+    Option: '',
   })
 }
 
@@ -206,7 +207,10 @@ let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
     CustomFieldData.ColumnName = this.customFieldForm.controls.displayName.value;
     CustomFieldData.Type = this.customFieldForm.controls.type.value;
     CustomFieldData.description = this.customFieldForm.controls.description.value;
-
+    CustomFieldData.values = [];
+    this.addCustomField.forEach((item:any,idx)=>{
+      CustomFieldData.values.push({id:idx,optionName:item?.Option});
+    })
     return CustomFieldData;
 }
 
