@@ -197,13 +197,13 @@
                                     <div  *ngFor="let option of addCustomField; let ith = index" class="d-flex flex-column">
                                         <div class="billing-form-row">
                                         <label for="option{{ith}}" >Options {{ith + 1}}</label>
-                                        <input type="text" name="option{{ith}}" id="option{{ith}}">
+                                        <input type="text" name="option{{ith}}" [(ngModel)]="addCustomField[ith].Option" [ngModelOptions]="{standalone: true}" id="option{{ith}}">
                                                
                                   <div class="incoming-card">
                                     <div>
                                         <a class="add-btn" (click)="addCustomFieldsOption()">+Add</a>
                                     </div>
-                                    <a class="remove-btn" (click)="removeCustomFieldsOption(ith)">-Remove</a>
+                                    <a class="remove-btn" (click)="removeCustomFieldsOption(ith)" *ngIf="ith>0">-Remove</a>
                                 </div>
                               </div>
                         
