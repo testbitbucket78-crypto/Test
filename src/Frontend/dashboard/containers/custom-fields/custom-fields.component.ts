@@ -35,6 +35,7 @@ export class CustomFieldsComponent implements OnInit {
 
   selectedType:string = 'Text';
   types:string[] =['Text','Number','Select','Switch','Date Time','Date','Time','Multi Select' ];
+  isFormChanged:boolean = false;
 
 
 
@@ -66,6 +67,8 @@ toggleActiveState(checked: boolean, ID:number) {
    console.log(id ,'ID')
    statusData.id = id;
    statusData.Status = isStatus;
+   if(!checked)
+   this.toggleMandatoryState(checked, ID)
     this.settingsService.enableDisableStatus(statusData)
     .subscribe(result =>{
       if(result){
@@ -257,6 +260,10 @@ deleteCustomField() {
       this.getCustomFieldsData();
     }
   });
+}
+
+onInputChange(){
+  this.isFormChanged = true;
 }
 
 }
