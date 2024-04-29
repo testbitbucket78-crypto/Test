@@ -308,7 +308,7 @@ app.put('/editContact', authenticateToken, (req, res) => {
 })
 
 
-app.post('/importContact', authenticateToken, async (req, res) => {
+app.post('/importContact', async (req, res) => {
 
   try {
 
@@ -323,7 +323,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
       try {
 
         let addNewUserOnly = await addOnlynewContact(CSVdata, identifier, SP_ID)
-
+       // sendMailAfterImport(emailId)
         res.status(200).send({
           msg: "Contact Added Successfully",
           data: addNewUserOnly,
@@ -352,6 +352,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
         else {
           var upExistContOnlyWithFields = await updateSelectedField(CSVdata, identifier, fields, SP_ID);
         }
+       // sendMailAfterImport(emailId)
         res.status(200).send({
           msg: "Existing Contact Updated Successfully",
           upExistContOnly: upExistContOnly,
@@ -385,7 +386,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
           var addAndUpdatewithFields = await updateSelectedField(CSVdata, identifier, fields, SP_ID);
 
         }
-
+      //  sendMailAfterImport(emailId)
         res.status(200).send({
           msg: "Add and Updated Contact Successfully",
           addAndUpdatewithFields: addAndUpdatewithFields,
@@ -408,6 +409,29 @@ app.post('/importContact', authenticateToken, async (req, res) => {
     db.errlog(err);
   }
 })
+
+function sendMailAfterImport(emailId) {
+  try {
+    var mailOptions = {
+      from: val.email,
+      to: emailId,
+      subject: "Conformation of upload csv file: ",
+      html: '<p>Your contact is added or updated successfully .Please verify.</p>',
+
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(err)
+      }
+      console.log('Message sent: %s');
+
+
+    });
+  } catch (err) {
+    console.log("sendMailAfterImport", err)
+  }
+}
 
 async function addOnlynewContact(CSVdata, identifier, SP_ID) {
 
@@ -527,7 +551,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
           email = displayName;
         } else if (ActuallName === 'Phone_number') {
           phone = displayName;
-        } 
+        }
       }
 
       if (!phone || !phone.match(phoneFormat)) {
@@ -552,13 +576,13 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
       let newCon = 0;
       let upCont = 0;
 
-     
+
       const newContacts = Math.abs(importData.length - result.length);
       if (purpose === 'Add new contact only') {
         newCon = newContacts;
         console.log("newCon.length,newCon?.length == 0")
-        console.log(newCon,newCon == 0)
-        if (newCon == 0)  {
+        console.log(newCon, newCon == 0)
+        if (newCon == 0) {
           for (let j = 0; j < importData.length; j++) {
             const currentData = importData[j];
             errData.push({ data: currentData, reason: "This contact already exist" });
@@ -571,14 +595,14 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
             const currentData = importData[j];
             errData.push({ data: currentData, reason: "This contact not already exist" });
           }
-        
-      } else if (purpose === 'Add and Update Contacts') {
-        newCon = newContacts;
-        upCont = result.length;
+
+        } else if (purpose === 'Add and Update Contacts') {
+          newCon = newContacts;
+          upCont = result.length;
+        }
+
       }
-     
-  }
-    let skipedContact = await  writeErrFile(errData, res)
+      let skipedContact = await writeErrFile(errData, res)
       res.status(200).send({
         newCon: newCon,
         upCont: upCont,
@@ -586,7 +610,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
         importData: importData
       });
     } else {
-      let skipedContact = await  writeErrFile(errData, res)
+      let skipedContact = await writeErrFile(errData, res)
       res.status(200).send({
         newCon: 0,
         upCont: 0,

@@ -168,7 +168,7 @@ console.log("AssignMissedToContactOwner")
       let updateInteractionMapQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES ?`
       let values = [[newId, agid, '-1', 1]] // 2ng agid is MappedBy  values in teambox uid is used here also
       let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values])
-    } else if (RoutingRules[0].assignagent == '1') {
+    } else if (RoutingRules[0].assignagent == '1') {   // Here I have to add condition if contact owner not the find from defaultaction tables default admin and assign to him
       assignToLastAssistedAgent(newId, custid)
     }
   }
