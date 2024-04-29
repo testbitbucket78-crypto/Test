@@ -17,6 +17,8 @@
 		</div>
 		<div class="d-flex">
 			<div id="export-btn">
+				<button class="btn-9 " (click)="clearFilters()" [disabled]="settingsService.checkRoleExist('9')"> <img
+						src="../../../../assets/img/export.svg"> Clear Filters</button>
 				<button class="btn-9 " [disabled]="checkedConatct.length==0" (click)="isShowColumn = true" [disabled]="settingsService.checkRoleExist('9')"> <img
 						src="../../../../assets/img/export.svg"> Column Prefrences</button>
 			</div>
@@ -601,11 +603,11 @@
 					<input type="datetime" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
 					<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
 					<input type="date" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
-					<select *ngIf="item.type == 'Select'" [formControlName]="item.ActuallName">
-						<option ></option>
+					<select *ngIf="item.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
+						<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
 					</select>
-					<ng-multiselect-dropdown *ngIf="item.type == 'multiSelect'" class="multiselect"  [formControlName]="item.ActuallName" 
-					[settings]="dropdownSettings" [data]="tag" >
+					<ng-multiselect-dropdown *ngIf="item.type == 'Multi Select'" class="multiselect"  [formControlName]="item.ActuallName" 
+					[settings]="dropdownSettings" [data]="item?.options" >
 				</ng-multiselect-dropdown>
 				</div>
 			</div>

@@ -50,6 +50,7 @@ columnDefs: ColDef[] = [
     headerName: 'ID',
     flex: 1,
     resizable: true,
+    minWidth: 50,
     filter: true,
     hide:false,
     sortable: true,
@@ -59,8 +60,9 @@ columnDefs: ColDef[] = [
     field: 'Name',
     headerName: 'Name',
     flex: 2,
-    filter: true,
+    filter: "agTextColumnFilter",
     resizable: true,
+    minWidth: 100,
     hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
@@ -70,8 +72,9 @@ columnDefs: ColDef[] = [
     headerName: 'Phone Number',
     flex: 2,
     resizable: true,
+    minWidth: 100,
     hide:false,
-    filter: true,
+    filter: "agNumberColumnFilter",
     cellRenderer: (params: { data: { countryCode: any; displayPhoneNumber: any; };
      }) =>`${params.data.countryCode} ${params.data.displayPhoneNumber}`,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
@@ -81,7 +84,8 @@ columnDefs: ColDef[] = [
     field: 'emailId',
     headerName: 'Email',
     flex: 2,
-    filter: true,
+    filter: "agTextColumnFilter",
+    minWidth: 100,
     resizable: true,
     hide:false,
     sortable: true,
@@ -93,6 +97,7 @@ columnDefs: ColDef[] = [
     flex: 2,
     filter: true,
     resizable: true,
+    minWidth: 100,
     hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
@@ -101,7 +106,8 @@ columnDefs: ColDef[] = [
     field: 'ContactOwner',
     headerName: 'Contact Owner',
     flex: 2,
-    filter: true,
+    filter: "agTextColumnFilter",
+    minWidth: 100,
     resizable: true,
     hide:false,
     sortable: true,
@@ -111,7 +117,8 @@ columnDefs: ColDef[] = [
     field: 'tag',
     headerName: 'Tag',
     flex: 2,
-    filter: true,
+    filter: "agTextColumnFilter",
+    minWidth: 100,
     resizable: true,
     hide:false,
     sortable: true,
@@ -202,6 +209,7 @@ countryCodes = [
     // selectedTagItems: any[] = []; 
     selectedStatusItems: any[] = []; 
     dropdownSettings = {};
+    dynamicDropdownSettings = {};
 
     items: any;
     customerData:[]=[];
@@ -273,10 +281,11 @@ countryCodes = [
         allowSearchFilter: this.ShowFilter
     };
 
-    this.dropdownSettings = {
+ 
+    this.dynamicDropdownSettings = {
       singleSelection: false,
-      idField: 'item_id',
-      textField: 'item_text',
+      idField: 'id',
+      textField: 'optionName',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
       itemsShowLimit: 3,
@@ -945,15 +954,19 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             this.columnDefs.push({
               field: item.ActuallName,
             headerName: item.displayName,
-            flex: 2,
+            flex: 2, 
             hide:false,
-            filter: true,
+            filter: item.type == 'Number' ? 'agNumberColumnFilter': item.type == 'Date Time' ? 'agDateColumnFilter' :'agTextColumnFilter',
             resizable: true,
+            minWidth: 100,
             sortable: true,
             cellStyle: { background: "#FBFAFF", opacity: 0.86 },
             });
             const control = new FormControl('');
             this.productForm.addControl(item.ActuallName,control);
+            if(item?.dataTypeValues && item?.type=='Select'){
+              item.options = JSON.parse(item?.dataTypeValues);
+            }
           })
           this.columnDefs.forEach((item:any)=>{
             if(item?.headerName)
@@ -974,8 +987,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     this.showInfoIcon = !this.showInfoIcon;
   }
 
-  
-  showHideColumns(fieldName:any, e:any) {
+    showHideColumns(fieldName:any, e:any) {
     let value = e.target.checked;
     let obj:any = this.columnDefs.find(o => o.field === fieldName);
     obj.hide = !value;
@@ -995,6 +1007,10 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   checkHideFields() {
     let hiddenColumns = this.columnDefs.filter(item => item.hide == false && item.headerName);
     return hiddenColumns.length > 1 ? false : true;
+  }
+
+  clearFilters() {
+    this.gridapi!.setFilterModel(null);
   }
 }
 

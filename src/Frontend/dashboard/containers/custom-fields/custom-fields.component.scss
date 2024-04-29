@@ -149,6 +149,10 @@
     background-color: #6149CD;
 }
 
+.active-toggle input:disabled + .slider {
+  cursor: initial !important;
+}
+
 .active-toggle input:checked + .slider::before {
     transform: translateX(16px) translateY(0.1px);
 }
@@ -535,4 +539,13 @@ select {
 
    .sidebar-content span {
     color: #000000;
+   }
+
+   .scroll-custom{
+    height: 48vh;
+    overflow-y: scroll;
+   }
+
+   .account-btn:disabled{
+    background: gray !important;
    }

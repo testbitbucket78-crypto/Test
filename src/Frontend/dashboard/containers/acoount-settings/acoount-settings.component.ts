@@ -284,7 +284,6 @@ async subscribeToNotifications() {
     "UniqueSPPhonenumber": (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number,
     "spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
   };
-
   this.websocketService.connect(notificationIdentifier);
   this.websocketService.getMessage().subscribe(message => {
     if (message != undefined) {
@@ -316,5 +315,14 @@ async subscribeToNotifications() {
       }
     }
   });
+ }
+
+ close(){
+  let notificationIdentifier = {
+    "UniqueSPPhonenumber": (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number,
+    "spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!),
+    "isClose":true
+  };
+  this.websocketService.connect(notificationIdentifier);
  }
 }
