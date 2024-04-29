@@ -35,6 +35,7 @@ export class CustomFieldsComponent implements OnInit {
 
   selectedType:string = 'Text';
   types:string[] =['Text','Number','Select','Switch','Date Time','Date','Time','Multi Select' ];
+  isFormChanged:boolean = false;
 
 
 
@@ -45,6 +46,7 @@ export class CustomFieldsComponent implements OnInit {
     ngOnInit(): void {
         this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.getCustomFieldsData();
+        this.addCustomFieldsOption();
     }
     constructor(private formBuilder:FormBuilder,private settingsService:SettingsService) {
       this.addCustomField = [];
@@ -65,6 +67,8 @@ toggleActiveState(checked: boolean, ID:number) {
    console.log(id ,'ID')
    statusData.id = id;
    statusData.Status = isStatus;
+   if(!checked)
+   this.toggleMandatoryState(checked, ID)
     this.settingsService.enableDisableStatus(statusData)
     .subscribe(result =>{
       if(result){
@@ -116,8 +120,8 @@ toggleActiveState(checked: boolean, ID:number) {
 
 addCustomFieldsOption(){
   this.addCustomField.push({
-    Option1: '',
-    Option2: '',
+    id: '',
+    Option: '',
   })
 }
 
@@ -206,7 +210,10 @@ let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
     CustomFieldData.ColumnName = this.customFieldForm.controls.displayName.value;
     CustomFieldData.Type = this.customFieldForm.controls.type.value;
     CustomFieldData.description = this.customFieldForm.controls.description.value;
-
+    CustomFieldData.values = [];
+    this.addCustomField.forEach((item:any,idx)=>{
+      CustomFieldData.values.push({id:idx,optionName:item?.Option});
+    })
     return CustomFieldData;
 }
 
@@ -253,6 +260,10 @@ deleteCustomField() {
       this.getCustomFieldsData();
     }
   });
+}
+
+onInputChange(){
+  this.isFormChanged = true;
 }
 
 }

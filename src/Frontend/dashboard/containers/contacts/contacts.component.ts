@@ -9,6 +9,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
 import { Router } from '@angular/router';
 import { contactsImageData } from 'Frontend/dashboard/models/dashboard.model';
+import { AnyLengthString } from 'aws-sdk/clients/comprehend';
 
 declare var $: any;
 @Component({
@@ -32,13 +33,15 @@ export class ContactsComponent implements OnInit {
       this.router.navigate(['login']);
     }
   }
-
+  arrHideColumn:any[] =[];
+  isShowColumn:boolean = false;
 columnDefs: ColDef[] = [
   {
     field: '',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     checkboxSelection: true,
+    hide:false,
     flex: 0.5,
     cellStyle: { background: "#FBFAFF" },
   },
@@ -47,7 +50,9 @@ columnDefs: ColDef[] = [
     headerName: 'ID',
     flex: 1,
     resizable: true,
+    minWidth: 50,
     filter: true,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -55,8 +60,10 @@ columnDefs: ColDef[] = [
     field: 'Name',
     headerName: 'Name',
     flex: 2,
-    filter: true,
+    filter: "agTextColumnFilter",
     resizable: true,
+    minWidth: 100,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -65,7 +72,9 @@ columnDefs: ColDef[] = [
     headerName: 'Phone Number',
     flex: 2,
     resizable: true,
-    filter: true,
+    minWidth: 100,
+    hide:false,
+    filter: "agNumberColumnFilter",
     cellRenderer: (params: { data: { countryCode: any; displayPhoneNumber: any; };
      }) =>`${params.data.countryCode} ${params.data.displayPhoneNumber}`,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
@@ -75,8 +84,10 @@ columnDefs: ColDef[] = [
     field: 'emailId',
     headerName: 'Email',
     flex: 2,
-    filter: true,
+    filter: "agTextColumnFilter",
+    minWidth: 100,
     resizable: true,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -86,6 +97,8 @@ columnDefs: ColDef[] = [
     flex: 2,
     filter: true,
     resizable: true,
+    minWidth: 100,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -93,8 +106,10 @@ columnDefs: ColDef[] = [
     field: 'ContactOwner',
     headerName: 'Contact Owner',
     flex: 2,
-    filter: true,
+    filter: "agTextColumnFilter",
+    minWidth: 100,
     resizable: true,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -102,8 +117,10 @@ columnDefs: ColDef[] = [
     field: 'tag',
     headerName: 'Tag',
     flex: 2,
-    filter: true,
+    filter: "agTextColumnFilter",
+    minWidth: 100,
     resizable: true,
+    hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
@@ -192,6 +209,7 @@ countryCodes = [
     // selectedTagItems: any[] = []; 
     selectedStatusItems: any[] = []; 
     dropdownSettings = {};
+    dynamicDropdownSettings = {};
 
     items: any;
     customerData:[]=[];
@@ -262,6 +280,17 @@ countryCodes = [
         itemsShowLimit: 3,
         allowSearchFilter: this.ShowFilter
     };
+
+ 
+    this.dynamicDropdownSettings = {
+      singleSelection: false,
+      idField: 'id',
+      textField: 'optionName',
+      selectAllText: 'Select All',
+      unSelectAllText: 'UnSelect All',
+      itemsShowLimit: 3,
+      allowSearchFilter: this.ShowFilter
+  };
 
     this.routerGuard();
 		this.getContact();
@@ -925,14 +954,23 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             this.columnDefs.push({
               field: item.ActuallName,
             headerName: item.displayName,
-            flex: 2,
-            filter: true,
+            flex: 2, 
+            hide:false,
+            filter: item.type == 'Number' ? 'agNumberColumnFilter': item.type == 'Date Time' ? 'agDateColumnFilter' :'agTextColumnFilter',
             resizable: true,
+            minWidth: 100,
             sortable: true,
             cellStyle: { background: "#FBFAFF", opacity: 0.86 },
             });
             const control = new FormControl('');
             this.productForm.addControl(item.ActuallName,control);
+            if(item?.dataTypeValues && item?.type=='Select'){
+              item.options = JSON.parse(item?.dataTypeValues);
+            }
+          })
+          this.columnDefs.forEach((item:any)=>{
+            if(item?.headerName)
+              this.arrHideColumn.push({field:item?.field,headerName:item?.headerName,hide:true});
           })
           console.log(this.productForm);
           setTimeout(()=>{
@@ -947,6 +985,32 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 
   toggleInfoIcon() {
     this.showInfoIcon = !this.showInfoIcon;
+  }
+
+    showHideColumns(fieldName:any, e:any) {
+    let value = e.target.checked;
+    let obj:any = this.columnDefs.find(o => o.field === fieldName);
+    obj.hide = !value;
+    let hiddenColumns = this.columnDefs.filter(o => o.hide === false);
+    let actionColumn:any = this.columnDefs.find(o => o.headerName === 'Actions');
+    // if (hiddenColumns?.length > 11) {
+    //   actionColumn.width = 300;
+    // } else {
+    //   actionColumn.width = 150;
+    //   setTimeout(() => {
+    //     this.gridOptions.api.sizeColumnsToFit();
+    //   }, 10)
+    //   console.log('hjghj')
+    // }
+    this.gridapi.setColumnDefs(this.columnDefs);
+  }
+  checkHideFields() {
+    let hiddenColumns = this.columnDefs.filter(item => item.hide == false && item.headerName);
+    return hiddenColumns.length > 1 ? false : true;
+  }
+
+  clearFilters() {
+    this.gridapi!.setFilterModel(null);
   }
 }
 

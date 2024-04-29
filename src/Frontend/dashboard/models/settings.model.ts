@@ -338,8 +338,8 @@ export interface profilesettingPicData{
 }
 
 export interface customFieldFormData {
-    Option1:string;
-    Option2:string;
+    id:string;
+    Option:string;
 }
 
 export interface addCustomFieldsData {
@@ -348,6 +348,7 @@ export interface addCustomFieldsData {
     ColumnName:string;
     Type:string;
     description:string;
+    values:any;
 }
 
 export interface editAutoDeletionData {
