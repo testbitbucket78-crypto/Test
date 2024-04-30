@@ -48,7 +48,7 @@ export class ImportComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 	currentfileformat:any;
-	customFieldData:[] = [];
+	customFieldData:any[] = [];
 	importCSVdata = []=[];
 	toggleOverride!: boolean[];
 	displayNameChecked!: boolean[]
@@ -206,9 +206,10 @@ export class ImportComponent implements OnInit {
 			this.headers = headersRow;
 			this.importedData = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
 
-			this.importedData.forEach((data) => {
+			this.importedData.forEach((data,idx) => {
 				this.csvfieldHeaders = Object.keys(data);
-				this.csvfieldValues = Object.values(data);
+				if(idx==0)
+					this.csvfieldValues = Object.values(data);
 				this.toggleOverride = Array(this.csvfieldHeaders.length).fill(false);
 				this.displayNameChecked= Array(this.csvfieldHeaders.length).fill(false);
 				console.log(this.csvfieldHeaders);
@@ -222,6 +223,10 @@ export class ImportComponent implements OnInit {
    /******************* Method to capture mapping selections********************/
 
 	  onSelectMapping(selectedField: string, index: number) {
+		let idx = this.customFieldData.findIndex((item:any)=> item.ActuallName == selectedField);
+		if(idx> -1){
+			this.customFieldData[idx].isSelected =  true;
+		}
 		for (let i = 0; i < this.importedData.length; i++) {
 		  const mappedField:ColumnMapping = {
 			displayName: this.importedData[i][this.csvfieldHeaders[index]], // CSV value for current row and selected column
@@ -525,10 +530,16 @@ export class ImportComponent implements OnInit {
 
 	//*************************Get Custom Fields Data Columns*************************** /
 	getCustomFieldsData() {
-		this._settingsService.getNewCustomField(this.spid).subscribe(response => {
+		this._settingsService.getNewCustomField(this.spid).subscribe((response:any) => {
 		  let customFieldData = response.getfields
 		  this.customFieldData = customFieldData.filter((field:any) => field.status === 1);
+		  this.customFieldData.forEach((item:any)=>{
+			item.isSelected= false;
+		  })
 		  console.log(this.customFieldData);  
+		//   for(let i=0;i<this.customFieldData.length;i++){
+		// 	this.customFieldData[i][isSelected] = false;
+		//   }
 		});	  
 	  }
 

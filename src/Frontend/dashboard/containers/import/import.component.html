@@ -143,7 +143,6 @@
 										aria-label="Floating label select example" #identifier
 										(change)="onSelected(identifier.value)">
 										<option value="Phone_number">Phone Number</option>
-										<option value="emailId">Email ID</option>
 									</select>
 								</div>
 								<span *ngIf="Identifier==='Phone_number'" id="worksa">Phone Number works as identifier</span>
@@ -211,7 +210,7 @@
 												<select class="form-select input-form" aria-label="Select column or attribute" [ngClass]="{'select-placeholder':!selectedValue}"
 												    (change)="onSelectMapping($event.target.value, ith)">
 													<option [disabled]="true" [selected]="true" [hidden]="true">Select column or attribute</option>
-													<option [disabled]="!displayNameChecked[ith]" *ngFor="let fieldData of customFieldData;let i = index" [ngValue]="fieldData.ActuallName">{{fieldData.displayName}}
+													<option *ngFor="let fieldData of customFieldData;let i = index" [disabled]="!displayNameChecked[ith] || fieldData?.isSelected == true" [ngValue]="fieldData.ActuallName">{{fieldData.displayName}}
 													</option>
 												  </select>
 												  
