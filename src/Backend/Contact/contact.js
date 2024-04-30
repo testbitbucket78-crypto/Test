@@ -308,7 +308,7 @@ app.put('/editContact', authenticateToken, (req, res) => {
 })
 
 
-app.post('/importContact', async (req, res) => {
+app.post('/importContact',authenticateToken, async (req, res) => {
 
   try {
 

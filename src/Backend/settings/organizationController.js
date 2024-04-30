@@ -740,12 +740,14 @@ const editUser = async (req, res) => {
         email_id = req.body.email_id
         name = req.body.name
         mobile_number = req.body.mobile_number
-        countryCode=req.body.countryCode
+        countryCode=req.body.country_code
+        displayPhoneNumber = req.body?.display_mobile_number
+
         const LastModifiedDate = new Date()
 
         UserType = req.body.UserType
 
-        var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType,countryCode, uid])
+        var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType,countryCode,displayPhoneNumber, uid])
         res.status(200).send({
             msg: 'User Updated successfully !',
             editUserData: editUserData,
