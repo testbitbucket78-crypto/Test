@@ -63,9 +63,9 @@ WHERE u.SP_ID =? AND u.isDeleted != 1  AND u.uid = ?`
 
 selectByIdQuery = `select Company_Name,profile_img from companyDetails where SP_ID=?`
 userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
-updateQuery = "UPDATE user SET  email_id=?, name=?, mobile_number=?, LastModifiedDate=?, UserType=?,countryCode=? WHERE uid=?";
-insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP,countryCode) VALUES ?";
-findEmail = "SELECT * FROM user WHERE email_id=? and isDeleted !=1"
+updateQuery = "UPDATE user SET  email_id=?, name=?, mobile_number=?, LastModifiedDate=?, UserType=?,country_code=? ,display_mobile_number=? WHERE uid=?";
+insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP,country_code,display_mobile_number) VALUES ?";
+findEmail = "SELECT * FROM user WHERE (email_id=? OR mobile_number=?) and isDeleted !=1"
 getRole = `SELECT * from roles where SP_ID=?  and isDeleted !=1`
 
 
@@ -202,17 +202,17 @@ AND tm.isDeleted != 1;`
 
 
  var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1 `
- var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,TypeValues) values ?`
+ var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,dataTypeValues) values ?`
  
- let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as type, 1 as mandatory,1 as status,0 as id,"" as created,"" as updated ,"" as description
+ let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as type, 1 as mandatory,1 as status,0 as id,"" as created,"" as updated ,"" as description ,"" as dataTypeValues
  FROM information_schema.columns
  WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked' ,'channel','displayPhoneNumber','countryCode','IsTemporary','contact_profile','InstagramId','facebookId','Country','state','city','pincode','address','sex','status','age')
  UNION
- SELECT ColumnName AS column_name,CustomColumn as ActuallName ,Type as type,Mandatory as mandatory,Status as status,id as id,created_at as created,updated_at as updated ,description as description
+ SELECT ColumnName AS column_name,CustomColumn as ActuallName ,Type as type,Mandatory as mandatory,Status as status,id as id,created_at as created,updated_at as updated ,description as description ,dataTypeValues as dataTypeValues
  FROM SPIDCustomContactFields  
  WHERE SP_ID =?  AND isDeleted !=1;`
 
- let getcolumnid = `SELECT  ColumnName AS displayName,CustomColumn as ActuallName  ,Type,Mandatory,Status,id,created_at,updated_at,description
+ let getcolumnid = `SELECT  ColumnName AS displayName,CustomColumn as ActuallName  ,Type,Mandatory,Status,id,created_at,updated_at,description,dataTypeValues
  FROM SPIDCustomContactFields  
  WHERE id =? AND isDeleted !=1;`
 let deletecolumn=`UPDATE SPIDCustomContactFields SET isDeleted=1 , isDeletedOn=? where id=?`

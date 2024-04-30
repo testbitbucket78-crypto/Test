@@ -191,7 +191,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         if (placeholders.length > 0) {
           // Construct a dynamic SQL query based on the placeholders
       
-          const results = await removeTags.getDefaultAttribue(placeholders, spid, customerId);
+          const results = await removeTags.getDefaultAttribue(placeholders, spid, custid);
           console.log("results", results)
 
           placeholders.forEach(placeholder => {

@@ -611,6 +611,7 @@ let transporter = nodemailer.createTransport({
 
 const addUser = async (req, res) => {
     try {
+        console.log(req.body)
         SP_ID = req.body.SP_ID
         email_id = req.body.email_id
         name = req.body.name
@@ -621,18 +622,20 @@ const addUser = async (req, res) => {
         UserType = req.body.UserType
         IsDeleted = 0
         IsActive = 1
-        countryCode=req.body.countryCode
-        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id])
+        countryCode=req.body.country_code
+        displayPhoneNumber = req.body?.display_mobile_number
+
+        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id,req.body.mobile_number])
         if (credentials.length > 0) {
             res.status(409).send({
-                msg: 'User Already Exist with this email !',
+                msg: 'User Already Exist with this Email OR Phone Number !',
                 status: 409
             });
         } else {
             var randomstring = Math.random().toString(36).slice(-8);
             console.log(randomstring)
             const hash = await bcrypt.hash(randomstring, 10);
-            var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive,CreatedDate,LoginIP,countryCode]]
+            var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive,CreatedDate,LoginIP,countryCode,displayPhoneNumber]]
 
             var User = await db.excuteQuery(val.insertQuery, [values]);
 
@@ -680,7 +683,7 @@ const addUser = async (req, res) => {
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-           console.log(info)
+          // console.log(info)
 
             });
             res.status(200).send({
@@ -737,12 +740,14 @@ const editUser = async (req, res) => {
         email_id = req.body.email_id
         name = req.body.name
         mobile_number = req.body.mobile_number
-        countryCode=req.body.countryCode
+        countryCode=req.body.country_code
+        displayPhoneNumber = req.body?.display_mobile_number
+
         const LastModifiedDate = new Date()
 
         UserType = req.body.UserType
 
-        var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType,countryCode, uid])
+        var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType,countryCode,displayPhoneNumber, uid])
         res.status(200).send({
             msg: 'User Updated successfully !',
             editUserData: editUserData,

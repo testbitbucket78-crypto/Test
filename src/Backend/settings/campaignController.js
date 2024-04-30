@@ -251,7 +251,7 @@ const addCustomField = async (req, res) => {
         const Type = req.body.Type;
         const description = req.body.description;
         const created_at = new Date().toUTCString();
-        let values = JSON.parse(req.body.values);
+        let values = (req.body.values);
 
 
 
@@ -293,7 +293,7 @@ const addCustomField = async (req, res) => {
                 return;
             } else {
                 // Check if the Type is 'select', format the values accordingly and update id with addfiled inserted id
-                if (Type === 'select') {
+                if (Type === 'Select') {
                     values = values.map(option => ({
                         id: addFieldResult.insertId + '_' + option.id,
                         optionName: option.optionName
@@ -369,34 +369,40 @@ const enableStatusfield = async (req, res) => {
 const getCustomField = async (req, res) => {
     try {
       let getfields = await db.excuteQuery(val.getcolumn, [req.params.spid]);
-      console.log("getfields************")
-      console.log(getfields)
+     
+  
       // Update fields based on ActuallName
       const updatedFields = getfields.map(field => {
         switch (field.ActuallName) {
           case 'Name':
             field.type = 'Text';
             field.mandatory = 1;
+            field.displayName='Name'
             break;
           case 'Phone_number':
             field.type = 'Number';
             field.mandatory = 1;
+            field.displayName='Phone Number'
             break;
           case 'emailId':
             field.type = 'Text';
             field.mandatory = 0;
+            field.displayName='Email'
             break;
           case 'OptInStatus':
             field.type = 'Switch';
             field.mandatory = 0;
+            field.displayName='Message Opt-in'
             break;
           case 'tag':
             field.type = 'Multi Select';
             field.mandatory = 0;
+            field.displayName='Tag'
             break;
           case 'ContactOwner':
             field.type = 'User';
             field.mandatory = 1;
+            field.displayName='Contact Owner'
             break;
           default:
             // No changes required for other ActuallName values
