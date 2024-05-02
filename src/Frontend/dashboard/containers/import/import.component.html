@@ -7,9 +7,9 @@
 
 <div class="row">
 	<div class="bs-stepper col-lg-12">
-		<div class="d-flex justify-content-between align-items-center bs_stepper_header">
+		<div class="d-flex justify-content-between align-items-center pb-0 bs_stepper_header">
 			<h1>Import Contacts</h1>
-			<button class="btn-cross" aria-label="Close" data-bs-dismiss="modal">X</button>
+			<button class="btn-cross" aria-label="Close" data-bs-dismiss="modal" (click)="closePopup()">X</button>
 		</div>
 		<div class="d-flex justify-content-center col-sm-12">
 			<button *ngIf="stepper._currentIndex>0" type="button" (click)="previous()" class="previous-btn">
@@ -41,12 +41,12 @@
 				</div>
 			</div>
 		</div>
-		<div>
+		<div class="import-body">
 			<div class="bs-stepper">
 				<!-- upload csv step 1 -->
 				<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
 
-						<div class="col-lg-12 py-3 upload-part-container">
+						<div class="col-lg-12 py-2 pt-1 upload-part-container">
 							<div class="head">
 								<h4>Attach files</h4>
 							</div>
@@ -111,7 +111,7 @@
 				
 					<div class="col-lg-12 purpose-identifier-container">
 
-						<div class="d-flex purpose-identifier">
+						<div class="d-flex purpose-identifier pb-0">
 							<div class="mr-4">
 								<label for="floatingInputGrid">Purpose</label>
 								<div class="form-floating">
@@ -210,7 +210,7 @@
 												<select class="form-select input-form" aria-label="Select column or attribute" [ngClass]="{'select-placeholder':!selectedValue}"
 												    (change)="onSelectMapping($event.target.value, ith)">
 													<option [disabled]="true" [selected]="true" [hidden]="true">Select column or attribute</option>
-													<option *ngFor="let fieldData of customFieldData;let i = index" [disabled]="!displayNameChecked[ith] || fieldData?.isSelected == true" [ngValue]="fieldData.ActuallName">{{fieldData.displayName}}
+													<option *ngFor="let fieldData of customFieldData;let i = index" [disabled]="!displayNameChecked[ith] || fieldData?.isSelected == true" [value]="fieldData.ActuallName">{{fieldData.displayName}}
 													</option>
 												  </select>
 												  

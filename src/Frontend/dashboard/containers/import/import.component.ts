@@ -21,6 +21,7 @@ export class ImportComponent implements OnInit {
 	showMore = false;
 	
 	@Output() getContact = new EventEmitter<string> ();
+	@Output() closeImportPopup = new EventEmitter<string> ();
 
 	spid!:number;
 	active = 1;
@@ -49,6 +50,7 @@ export class ImportComponent implements OnInit {
 	warningMessage='';
 	currentfileformat:any;
 	customFieldData:any[] = [];
+	selectedCustomFields:any[] = [];
 	importCSVdata = []=[];
 	toggleOverride!: boolean[];
 	displayNameChecked!: boolean[]
@@ -208,6 +210,7 @@ export class ImportComponent implements OnInit {
 
 			this.importedData.forEach((data,idx) => {
 				this.csvfieldHeaders = Object.keys(data);
+				this.selectedCustomFields.push('');
 				if(idx==0)
 					this.csvfieldValues = Object.values(data);
 				this.toggleOverride = Array(this.csvfieldHeaders.length).fill(false);
@@ -223,10 +226,16 @@ export class ImportComponent implements OnInit {
    /******************* Method to capture mapping selections********************/
 
 	  onSelectMapping(selectedField: string, index: number) {
-		let idx = this.customFieldData.findIndex((item:any)=> item.ActuallName == selectedField);
-		if(idx> -1){
-			this.customFieldData[idx].isSelected =  true;
-		}
+		// let idx = this.customFieldData.findIndex((item:any)=> item.ActuallName == selectedField);
+		// let ith = this.selectedCustomFields.findIndex((item:any)=> item.ActuallName == selectedField);
+		this.selectedCustomFields[index] =selectedField;
+		console.log(this.selectedCustomFields);
+		this.customFieldData.forEach((item)=>{
+			if(this.selectedCustomFields.findIndex((items:any)=> items == item.ActuallName) > -1)
+				item.isSelected =  true;
+			else
+				item.isSelected =  false;
+		})
 		for (let i = 0; i < this.importedData.length; i++) {
 		  const mappedField:ColumnMapping = {
 			displayName: this.importedData[i][this.csvfieldHeaders[index]], // CSV value for current row and selected column
@@ -297,7 +306,7 @@ export class ImportComponent implements OnInit {
 		console.log(this.importCSVdata,'filtered csv data', this.skipCont)
 		// api call to add contacts in a bulk manner
 
-		if(this.numberOfNewContact !== 0) {
+		if(this.numberOfNewContact !== 0 || this.countUpdatedData !==0) {
 			this.apiService.importContact(bodyData).subscribe(
 				(response:any) => {
 				if (response.status === 200) {
@@ -531,12 +540,13 @@ export class ImportComponent implements OnInit {
 	//*************************Get Custom Fields Data Columns*************************** /
 	getCustomFieldsData() {
 		this._settingsService.getNewCustomField(this.spid).subscribe((response:any) => {
+			
 		  let customFieldData = response.getfields
 		  this.customFieldData = customFieldData.filter((field:any) => field.status === 1);
 		  this.customFieldData.forEach((item:any)=>{
 			item.isSelected= false;
 		  })
-		  console.log(this.customFieldData);  
+		  console.log(this.customFieldData,'custom data');  
 		//   for(let i=0;i<this.customFieldData.length;i++){
 		// 	this.customFieldData[i][isSelected] = false;
 		//   }
@@ -546,6 +556,10 @@ export class ImportComponent implements OnInit {
 
 	  selectColumnMapping(value:any) {
 		this.selectedColumnMapping = value;
+	  }
+
+	  closePopup(){
+		this.closeImportPopup.emit('');
 	  }
 
 }
