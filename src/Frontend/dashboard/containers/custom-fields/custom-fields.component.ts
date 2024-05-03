@@ -36,6 +36,7 @@ export class CustomFieldsComponent implements OnInit {
   selectedType:string = 'Text';
   types:string[] =['Text','Number','Select','Switch','Date Time','Date','Time','Multi Select' ];
   isFormChanged:boolean = false;
+  errorMessage = '';
 
 
 
@@ -47,6 +48,7 @@ export class CustomFieldsComponent implements OnInit {
         this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.getCustomFieldsData();
         this.addCustomFieldsOption();
+        setTimeout(()=>{this.getPaging()},2000);
     }
     constructor(private formBuilder:FormBuilder,private settingsService:SettingsService) {
       this.addCustomField = [];
@@ -147,7 +149,7 @@ getCustomFieldsData() {
     console.log(this.customFieldData);  
     this.getDefaulltFieldData();
     this.getDynamicFieldData();
-    this.getPaging();
+    //this.getPaging();
   })
 }
 
@@ -185,8 +187,17 @@ saveNewCustomField() {
           $("#addCustomFieldModal").modal('hide');
           this.showSideBar = false;
           this.getCustomFieldsData();
-        }
-      })
+        } 
+      },
+      (error:any) =>{
+       if(error) { 
+         if(error.status == 409){
+          console.log('Custom name already exist');
+         this.showToaster('Custom name already exist !','error');
+         }else
+         this.showToaster(error.message,'error');
+       }
+      });
     }
     else {
       this.settingsService.UpdateCustomField(addCustomFieldData)
@@ -196,8 +207,16 @@ saveNewCustomField() {
           $("#addCustomFieldModal").modal('hide');
           this.showSideBar = false;
           this.getCustomFieldsData();
-        }
-      })
+        } 
+      },
+      (error:any) =>{
+       if(error) { 
+         if(error.status == 409)
+         this.showToaster('Custom name already exist !','error');
+         else
+         this.showToaster(error.message,'error');
+       }
+      });
     }
   }
 }
@@ -235,11 +254,14 @@ patchFormDataValue() {
 
 addCustomFields() {
   this.selectedCustomField = null;
+  this.addCustomField =[];
+  this.isFormChanged = false;
   $("#addCustomFieldModal").modal('show');
 }
 
 editCustomField() { 
   $("#addCustomFieldModal").modal('show');
+  this.isFormChanged = false;
   this.patchFormDataValue();
 }
 
@@ -266,4 +288,16 @@ onInputChange(){
   this.isFormChanged = true;
 }
 
+showToaster(message:any,type:any){
+  if(type=='error'){
+    this.errorMessage=message;
+  }
+  setTimeout(() => {
+    this.hideToaster()
+  }, 5000);
+  
+}
+hideToaster(){
+  this.errorMessage='';
+}
 }

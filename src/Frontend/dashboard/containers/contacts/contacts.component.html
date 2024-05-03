@@ -23,7 +23,7 @@
 						src="../../../../assets/img/export.svg"> Column Prefrences</button>
 			</div>
 			<div id="export-btn">
-				<button class="btn-9 " [disabled]="checkedConatct.length==0" (click)="open(content)" [disabled]="settingsService.checkRoleExist('9')"> <img
+				<button class="btn-9 "  (click)="openExport(content)" [disabled]="settingsService.checkRoleExist('9')"> <img
 						src="../../../../assets/img/export.svg"> Export </button>
 			</div>
 			<div id="import-btn" >
