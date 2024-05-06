@@ -23,7 +23,7 @@
 						src="../../../../assets/img/export.svg"> Column Prefrences</button>
 			</div>
 			<div id="export-btn">
-				<button class="btn-9 " [disabled]="checkedConatct.length==0" (click)="open(content)" [disabled]="settingsService.checkRoleExist('9')"> <img
+				<button class="btn-9 "  (click)="openExport(content)" [disabled]="settingsService.checkRoleExist('9')"> <img
 						src="../../../../assets/img/export.svg"> Export </button>
 			</div>
 			<div id="import-btn" >
@@ -56,7 +56,7 @@
 	<div *ngIf="contacts" class="box">
 
 		<ag-grid-angular class="ag-theme-alpine" 
-		style="height: 100%;"
+		style="height: 67vh;"
 		[rowData]="rowData" 
 		[columnDefs]="columnDefs" 
 		[animateRows]="true"
@@ -166,21 +166,20 @@
 						<h5>Facebook Id</h5>
 						<h6 class="mt-2">{{items.facebookId}}</h6>
 					</div> -->
+				</div>			
+			</div>
+			<div class="btn-footer py-2 mt-3">
+				<div class="button my-4 d-flex justify-content-center align-items-center">
+					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('5')"><img
+							src="../../../../assets/img/profile/delete.svg">
+					</button>
+					<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="settingsService.checkRoleExist('5')"><img src="../../../../assets/img/teambox/Edit.svg">
+					</button>
+					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn">{{this.isBlocked==1 ? 'Blocked' : 'Block'}}</button>
+					<button class="btn7  btn-block "><img src="../../../../assets/img/settings.svg"> </button>
 				</div>
-			
-				<div class="btn-footer py-2 mt-3">
-					<div class="button my-4 d-flex justify-content-center align-items-center">
-						<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('5')"><img
-								src="../../../../assets/img/profile/delete.svg">
-						</button>
-						<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="settingsService.checkRoleExist('5')"><img src="../../../../assets/img/teambox/Edit.svg">
-						</button>
-						<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn">{{this.isBlocked==1 ? 'Blocked' : 'Block'}}</button>
-						<button class="btn7  btn-block "><img src="../../../../assets/img/settings.svg"> </button>
-					</div>
-					<div class="bbox">
-						<h6>To add/edit any field according to your business from the settings</h6>
-					</div>
+				<div class="bbox">
+					<h6>To add/edit any field according to your business from the settings</h6>
 				</div>
 			</div>
 
@@ -494,7 +493,7 @@
 		<h4 class="modal-title" id="modal-basic-title">{{ addContactTitle === 'add' ? 'Add' : 'Edit' }} Contact</h4>
 		<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="resetForm()">X</button>
 	</div>
-	<form [formGroup]="productForm" autocomplete="off" (ngSubmit)="saveContact(addcontact,addcontacterror)">
+	<form [formGroup]="productForm" autocomplete="off" class="contact-scroll" (ngSubmit)="saveContact(addcontact,addcontacterror)">
 	<div class="px-4 modal-body">
 		
 			<div class="row g-2">
@@ -654,10 +653,10 @@
 								<div class="py-2 px-0 form-check">
 									<label class="m-0 form-check-label" for="flexCheckDefault{{i}}">
 									<input class="form-check-input" type="checkbox" 
-									       [checked]="getFilterTags?.includes(tag.TagName)"
+									       [checked]="getFilterTags?.includes(tag.ID)"
 									       id="flexCheckDefault{{i}}"
-										   [ngModel]="checkedTags.includes(tag.TagName)"
-            							   (ngModelChange)="updateTags(tag.TagName, $event)">
+										   [ngModel]="checkedTags.includes(tag.ID)"
+            							   (ngModelChange)="updateTags(tag.ID, $event)">
 										   <span class="checkmark"></span>
 									<span [ngClass]="{'color-dots': true}" [style.background]="tag.TagColour"></span>
 									 {{tag.TagName}}
@@ -707,7 +706,7 @@
         <div class="modal-dialog importsModal" role="document">
             <div class="modal-content" id="model">
                 <div class="modal-body alertmessage" id="model-message">
-                <sb-import (getContact)="getContact()" >					
+                <sb-import (getContact)="getContact()" (closeImportPopup)="closeImport()">					
 				</sb-import>
                 </div>
             </div>
@@ -720,7 +719,7 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 <div class="modal-dialog" style="width:415px;height: 85vh;" >
   <div class="modal-content " style="border-radius: 15px 15px 19px 19px; cursor: default !important;">
 	<div class="modal-header"
-	  style="font-size: 17px;border-radius: 15px 15px 0px 0px; cursor: grab !important; font-weight: bolder;color: white;background-color: #6149cd;">
+	  style="font-size: 17px;border-radius: 15px 15px 0px 0px; cursor: grab !important; font-weight: bolder;color: black;background-color:white;">
 	  <span class="modal-title" id="staticBackdropLabel">Column Preferences</span>
 	  <div (click)="isShowColumn = false" class="closestPopup">
 		<!-- <img height="18px" width="18px" style="margin: 2px;" src="/../../assets/images/icons8-cross-50.png" alt="" /> -->
@@ -729,10 +728,19 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 	</div>
 	<div class="modal-body" style=" margin: 0px 0px 0px 10px; overflow-y: scroll;max-height: 500px;">
 	  <div class=" pt-2 column-school-container column-container" style="margin-right: 10px;margin-left: 10px;">		
-		<div class="clm-prf" *ngFor="let item of arrHideColumn">
-		  <span class="clm_name">{{item?.headerName}}</span>
+		<div class="clm-prf forms-check" *ngFor="let item of arrHideColumn; let ith = index">
+			<label class="form-check-label" for="displayNameInput{{ith}}" >
+				<input type="checkbox" id="displayNameInput{{ith}}" 
+				class="form-check-input" [(ngModel)]="item.hide"
+				[disabled]="checkHideFields() && item.hide"  (change)="showHideColumns(item.field,$event)">
+				<span class="checkmark"></span>
+			</label>
+			<!-- <div>
 		  <input type="checkbox" class="clm_input" [disabled]="checkHideFields() && item.hide"  (change)="showHideColumns(item.field,$event)"
 			 [(ngModel)]="item.hide">
+			 <span class="checkmark ml-2"></span>
+			</div> -->
+			<div class="clm_name">{{item?.headerName}}</div>
 			 <!-- [disabled]="checkHideFields() && !item.hide" -->
 		</div>
 	  </div>

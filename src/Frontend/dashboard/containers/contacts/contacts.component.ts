@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -18,9 +18,9 @@ declare var $: any;
   templateUrl: './contacts.component.html',
   styleUrls: ['./contacts.component.scss']
 })
-export class ContactsComponent implements OnInit {
+export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
 
-  public gridapi!:GridApi;
+  public gridapi!:GridApi | any;
 
 
   onGridReady(params: GridReadyEvent) {
@@ -114,7 +114,7 @@ columnDefs: ColDef[] = [
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
   },
   {
-    field: 'tag',
+    field: 'tag_names',
     headerName: 'Tag',
     flex: 2,
     filter: "agTextColumnFilter",
@@ -315,6 +315,7 @@ contactForm() {
  onSelectionChanged(event: any) {
 
      this.isButtonEnabled = this.checkedConatct.length > 0 && event !== null;
+     this.isShowSidebar = false;
     
   }
   
@@ -412,14 +413,25 @@ onSelectAll(items: any) {
 
 
 	open(content:any) {
-		this.modalService.open(content);
+		this.modalService.open(content,{windowClass:'contact-modal'});
     this.addContactTitle = 'add';
 
 	} 
 
+  openExport(content:any){
+    console.log(this.gridapi.getSelectedNodes())
+   // this.gridapi.api.getSelectedNodes()
+    if(this.gridapi.getSelectedNodes().length == 0)
+      this.showToaster('Please select the Contacts you want to export first !','error');    
+    else{
+      this.modalService.open(content);
+      this.addContactTitle = 'add';
+    }
+  }
+
   openedit(contactedit: any) {
     this.patchFormValue();
-    this.modalService.open(contactedit);
+    this.modalService.open(contactedit,{windowClass:'contact-modal'});
   }
 
   getContact() {
@@ -627,7 +639,7 @@ onSelectAll(items: any) {
     if (!this.isEditTag) {
       let tagArray = this.productForm.controls.tag.value;
       console.log(tagArray)
-      let tagString = tagArray?.map((tag: any) => `${tag.item_text}`).join(', ');
+      let tagString = tagArray?.map((tag: any) => `${tag.item_id}`).join(', ');
       console.log(tagString)
 
       let tagField = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
@@ -663,6 +675,10 @@ saveContact(addcontact:any,addcontacterror:any) {
      },
      (error:any) =>{
       if(error) {
+
+        if(error.status == 409)
+        this.showToaster('Phone Number already exist !','error');
+        else
         this.showToaster(error.message,'error');
       }
      });
@@ -688,7 +704,7 @@ saveContact(addcontact:any,addcontacterror:any) {
           this.productForm.clearValidators();
           this.modalService.open(addcontacterror);
         }
-        if (error) {
+        else if (error) {
           this.showToaster(error.message,'error');
         }
          
@@ -780,7 +796,7 @@ deletContactByID(data: any) {
       if (result) {
           this.tagListData = result.taglist;
           this.tag = this.tagListData.map((tag:any,index:number) => ({
-              item_id: index + 1, 
+              item_id: tag.ID, 
               item_text: tag.TagName,
               item_color: tag.TagColour
           }));
@@ -806,15 +822,16 @@ deletContactByID(data: any) {
 
     // set tags values in edit tag
     this.getFilterTags = data.tag?.split(',').map((tags: string) =>tags.trim());
-
+    console.log(this.getFilterTags);
     const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim());
     //set the selectedTag in multiselect-dropdown format
     const selectedTags = this.tagListData.map((tag: any, index: number) => ({ idx: index, ...tag }))
-    .filter(tag => selectedTag?.includes(tag.TagName))
+    .filter(tag => selectedTag?.includes((tag.ID).toString()))
     .map((tag: any) => ({
-        item_id: tag.idx + 1,
+        item_id: tag.ID,
         item_text: tag.TagName,
     }));
+    console.log(selectedTags);
     // this.selectedTag = data.tag
 
     for(let prop in data){
@@ -945,7 +962,8 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 
   getfilteredCustomFields() {
     const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
-       const filteredFields:any = this.customFieldData.filter(
+    if(this.customFieldData){
+       const filteredFields:any = this.customFieldData?.filter(
           (field:any) => !defaultFieldNames.includes(field.ActuallName) && field.status===1 );
           this.filteredCustomFields = filteredFields;
           console.log(this.filteredCustomFields);
@@ -968,6 +986,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
               item.options = JSON.parse(item?.dataTypeValues);
             }
           })
+        }
           this.columnDefs.forEach((item:any)=>{
             if(item?.headerName)
               this.arrHideColumn.push({field:item?.field,headerName:item?.headerName,hide:true});
@@ -1012,6 +1031,32 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   clearFilters() {
     this.gridapi!.setFilterModel(null);
   }
+
+  closeImport(){    
+    $("#importmodal").modal('hide');
+  }
+
+  ngOnDestroy(){
+    localStorage.setItem('gridOption',JSON.stringify(this.gridapi.getColumnDefs()));
+    console.log(this.gridapi.getColumnDefs());
+  }
+
+  ngAfterViewInit(){
+    setTimeout(()=>{
+    let options = JSON.parse(localStorage.getItem('gridOption')!);
+    if(options){
+    let column = options.filter((objB:any) => this.columnDefs.some(objA => objA.field === objB.field));
+    this.columnDefs.forEach((objA:any) => {
+      if (!column.some((objB:any) => objB.field === objA.field)) {
+          column.push(objA);
+      }
+  });
+  this.gridapi.setColumnDefs(column);
+  console.log(this.gridapi?.getColumnDefs());
+}    
+  },2000);
+  }
+  
 }
 
 

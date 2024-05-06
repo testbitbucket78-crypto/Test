@@ -514,7 +514,7 @@ span {
 }
 
 .sample_csv_data {
-    height: 350px;
+    height: 305px;
     overflow: scroll;
     overflow-x: hidden;
 }
@@ -539,7 +539,7 @@ span {
 .container-mapping .left-part, .container-mapping .right-part {
     background: #fff4f2;
     border-radius: 25px;
-    height: 450px;
+    height: 405px;
 }
 
 .head-section span.heading {
@@ -658,7 +658,7 @@ span {
 // input styling
 
 .body-section {
-    height: 350px;
+    height: 305px;
     overflow: scroll;
     overflow-x: hidden;
 }
@@ -929,4 +929,8 @@ span {
     text-indent: -20px;
 }
 
+.import-body{
+    height: calc(100% - 140px);
+    overflow-y: scroll;
+}
 

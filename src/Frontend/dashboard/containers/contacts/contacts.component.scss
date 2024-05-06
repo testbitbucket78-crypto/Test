@@ -614,9 +614,9 @@ opacity: 1;
     float: right;
   }
 
-  .sidebar-body {
-    height: calc(100% - 200px)!important;
-  }
+//   .sidebar-body {
+//    // height: calc(100% - 200px)!important;
+//   }
   
   .sidebar .parent img{
       /* width: 120px; */
@@ -1342,14 +1342,86 @@ input[type="radio"], input[type="checkbox"] {
    .scroll-height{
     overflow-y: scroll;
     width: 100%;
-    height: 100%;
+    height: Calc(100% - 200px);
    }
-
-
 
    .clm-prf{
     display: flex;
-    width: 70%;
-    justify-content: space-between;
+    margin-bottom: 8px;
    }
 
+  #importmodal .modal-content{
+    height: 90vh;
+  }
+
+  .clm_name{
+    padding: 2px 2px 3px 18px;
+    background: #FFF4F2;
+    border-radius: 15px;
+    width: 86%;
+    margin-left: 15px;
+  }
+
+  .form-check .form-check-label {
+    font-size: 11px;
+    color: #6236FF;
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+// Hide the browser's default checkbox //
+.form-check .form-check-label input {
+    position: absolute;
+    cursor: pointer;
+    opacity: 0;
+    height: 0;
+    width: 0;
+  }
+
+  .forms-check .form-check-label .checkmark {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    background-color: #ffffff;
+    display: block;
+    margin-left: -21px;
+    }
+  
+    .forms-check .form-check-label:hover input ~ .checkmark {
+      background-color: #ccc;
+    }
+    
+    .forms-check .form-check-label input:checked ~ .checkmark {
+      background-color: #6149CD;
+    }
+  
+    .forms-check .form-check-label .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+    
+    .forms-check .form-check-label input:checked ~ .checkmark:after {
+      display: block;
+    }
+  
+    .forms-check .form-check-label .checkmark:after {
+      left: 7px;
+      top: 5px;
+      width: 4px;
+      border-radius: 1px;
+      height: 7px;
+      border: solid white;
+      border-width: 0px 1.5px 1.5px 0px;
+      transform: rotate(47deg);
+      -webkit-transform: rotate(47deg);
+      -ms-transform: rotate(47deg);
+    }

@@ -63,3 +63,13 @@
 .background-blur{
 	background: rgb(255 255 255 / 80%) !important;
 }
+
+.contact-modal .modal-content{
+  height: 90vh;
+ }
+
+ .contact-modal .contact-scroll{
+  height: calc(100% - 25px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+ }
