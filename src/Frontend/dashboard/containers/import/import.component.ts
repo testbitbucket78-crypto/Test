@@ -24,6 +24,7 @@ export class ImportComponent implements OnInit {
 	@Output() closeImportPopup = new EventEmitter<string> ();
 
 	spid!:number;
+	user!:any;
 	active = 1;
 	file: any;                                           
 	stepper: any;
@@ -69,6 +70,8 @@ export class ImportComponent implements OnInit {
 	}
 	ngOnInit() {
 		this.spid = Number(sessionStorage.getItem('SP_ID'));
+		this.user =  JSON.parse(sessionStorage.getItem('loginDetails')!);
+		console.log(this.user);
 		// this.routerGuard();
 		this.showTopNav = false;
 
@@ -105,6 +108,10 @@ export class ImportComponent implements OnInit {
 //********remove csv file*********
 	removeFile() {
 		this.file = null;
+		this.importedData =[];
+		this.selectedCustomFields =[];
+		this.selectedIdentifier =[];
+		this.importCSVdata =[];
 	}
 
 
@@ -259,6 +266,7 @@ export class ImportComponent implements OnInit {
 		};
 	  
 		// Iterate over each row of mappedFields
+		console.log(this.mappedFields);
 		for (let i = 0; i < this.mappedFields.length; i++) {
 		  const row = this.mappedFields[i];
 		  const rowData = [];
@@ -279,6 +287,13 @@ export class ImportComponent implements OnInit {
 			  ActuallName: mapping?.ActuallName
 			};
 			rowData.push(formData);
+			if(mapping?.ActuallName== 'Phone_number'){
+				const formDatas = {
+					displayName: mapping?.displayName,
+					ActuallName: 'displayPhoneNumber'
+				  };
+				rowData.push(formDatas);
+			}
 		  }
 		}
 
@@ -287,7 +302,7 @@ export class ImportComponent implements OnInit {
 			this.ContactFormData.result.push(rowData);
 		  }
 		}
-	  
+		//this.ContactFormData.result.push({displayName: ,ActuallName: });	  
 		return this.ContactFormData;
 	  }
 	  
@@ -301,7 +316,9 @@ export class ImportComponent implements OnInit {
 			identifier: this.Identifier,
 			purpose: this.purpose,
 			SP_ID: this.spid,
-			importedData: this.importCSVdata
+			importedData: this.importCSVdata,
+			user:this.user.name,
+			emailId:this.user.email_id
 		}
 		console.log(this.importCSVdata,'filtered csv data', this.skipCont)
 		// api call to add contacts in a bulk manner

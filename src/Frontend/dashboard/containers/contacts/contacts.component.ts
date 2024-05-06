@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -18,9 +18,9 @@ declare var $: any;
   templateUrl: './contacts.component.html',
   styleUrls: ['./contacts.component.scss']
 })
-export class ContactsComponent implements OnInit {
+export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
 
-  public gridapi!:GridApi;
+  public gridapi!:GridApi | any;
 
 
   onGridReady(params: GridReadyEvent) {
@@ -417,6 +417,17 @@ onSelectAll(items: any) {
     this.addContactTitle = 'add';
 
 	} 
+
+  openExport(content:any){
+    console.log(this.gridapi.getSelectedNodes())
+   // this.gridapi.api.getSelectedNodes()
+    if(this.gridapi.getSelectedNodes().length == 0)
+      this.showToaster('Please select the Contacts you want to export first !','error');    
+    else{
+      this.modalService.open(content);
+      this.addContactTitle = 'add';
+    }
+  }
 
   openedit(contactedit: any) {
     this.patchFormValue();
@@ -1024,6 +1035,28 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   closeImport(){    
     $("#importmodal").modal('hide');
   }
+
+  ngOnDestroy(){
+    localStorage.setItem('gridOption',JSON.stringify(this.gridapi.getColumnDefs()));
+    console.log(this.gridapi.getColumnDefs());
+  }
+
+  ngAfterViewInit(){
+    setTimeout(()=>{
+    let options = JSON.parse(localStorage.getItem('gridOption')!);
+    if(options){
+    let column = options.filter((objB:any) => this.columnDefs.some(objA => objA.field === objB.field));
+    this.columnDefs.forEach((objA:any) => {
+      if (!column.some((objB:any) => objB.field === objA.field)) {
+          column.push(objA);
+      }
+  });
+  this.gridapi.setColumnDefs(column);
+  console.log(this.gridapi?.getColumnDefs());
+}    
+  },2000);
+  }
+  
 }
 
 

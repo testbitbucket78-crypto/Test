@@ -44,6 +44,8 @@ export interface importCSVData {
 	identifier: string,
 	purpose: string,
 	SP_ID:number,
+	user:string,
+	emailId:string,
 	importedData: []
 }
   
