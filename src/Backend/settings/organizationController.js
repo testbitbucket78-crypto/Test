@@ -625,7 +625,7 @@ const addUser = async (req, res) => {
         countryCode=req.body.country_code
         displayPhoneNumber = req.body?.display_mobile_number
 
-        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id,req.body.mobile_number])
+        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id,req.body.mobile_number,SP_ID])
         if (credentials.length > 0) {
             res.status(409).send({
                 msg: 'User Already Exist with this Email OR Phone Number !',

@@ -18,14 +18,7 @@ const authenticateToken = require('../Authorize');
 app.get('/columns/:spid', authenticateToken, async (req, res) => {
   try {
 
-    let query = ` SELECT column_name as displayName,column_name as ActuallName
-    FROM information_schema.columns
-    WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked' ,'channel','displayPhoneNumber','countryCode','IsTemporary','contact_profile','InstagramId','facebookId','Country','state','city','pincode','address','sex','status','age')
-    UNION
-    SELECT ColumnName AS column_name,CustomColumn as ActuallName
-    FROM SPIDCustomContactFields  
-    WHERE SP_ID =?  AND isDeleted!=1;`
-    let result = await db.excuteQuery(query, [req.params.spid]);
+    let result = await db.excuteQuery(val.getColumnsQuery, [req.params.spid]);
 
     res.send({ sataus: 200, result: result })
   } catch (err) {
@@ -308,7 +301,7 @@ app.put('/editContact', authenticateToken, (req, res) => {
 })
 
 
-app.post('/importContact',authenticateToken, async (req, res) => {
+app.post('/importContact', authenticateToken, async (req, res) => {
 
   try {
 
@@ -318,12 +311,14 @@ app.post('/importContact',authenticateToken, async (req, res) => {
     var identifier = result.identifier
     var purpose = result.purpose
     var SP_ID = result.SP_ID
+    let emailId = result?.emailId
+    let user = result?.user
 
     if (purpose === 'Add new contact only') {
       try {
 
         let addNewUserOnly = await addOnlynewContact(CSVdata, identifier, SP_ID)
-       // sendMailAfterImport(emailId)
+        // sendMailAfterImport(emailId,user,addNewUserOnly?.length)
         res.status(200).send({
           msg: "Contact Added Successfully",
           data: addNewUserOnly,
@@ -352,7 +347,7 @@ app.post('/importContact',authenticateToken, async (req, res) => {
         else {
           var upExistContOnlyWithFields = await updateSelectedField(CSVdata, identifier, fields, SP_ID);
         }
-       // sendMailAfterImport(emailId)
+        // sendMailAfterImport(emailId,user,0)
         res.status(200).send({
           msg: "Existing Contact Updated Successfully",
           upExistContOnly: upExistContOnly,
@@ -386,7 +381,7 @@ app.post('/importContact',authenticateToken, async (req, res) => {
           var addAndUpdatewithFields = await updateSelectedField(CSVdata, identifier, fields, SP_ID);
 
         }
-      //  sendMailAfterImport(emailId)
+        //  sendMailAfterImport(emailId,user,addAndUpdateCont?.length)
         res.status(200).send({
           msg: "Add and Updated Contact Successfully",
           addAndUpdatewithFields: addAndUpdatewithFields,
@@ -410,13 +405,19 @@ app.post('/importContact',authenticateToken, async (req, res) => {
   }
 })
 
-function sendMailAfterImport(emailId) {
+function sendMailAfterImport(emailId, user, noOfContact) {
   try {
+
+    let text = `<p>Hi` + user + `, your contact import is complete! `
+      + noOfContact + `new contacts have been added to your Engagekart account.
+    Start connecting now!</p>
+    - Team Engagekart`
+
     var mailOptions = {
       from: val.email,
       to: emailId,
       subject: "Conformation of upload csv file: ",
-      html: '<p>Your contact is added or updated successfully .Please verify.</p>',
+      html: text,
 
     };
 
@@ -533,44 +534,58 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
     const { importedData, identifier, purpose, SP_ID } = req.body;
 
     const identity = identifier;
-    const emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-    const phoneFormat = /^[0-9]{6,15}$/;
+
 
     let errData = [];
     let importData = [];
     let queryData = [];
     let seenPhoneNumbers = new Set();
 
+    let allColumnsData = await mergeColumnData(SP_ID);
+    let userList = await getUserList(SP_ID)
+    let multiSelectValues = await getMultiSelectValues(SP_ID)
+
+
     for (let j = 0; j < importedData.length; j++) {
       const currentData = importedData[j];
-      let email, phone, optin;
-
+      let phone;
+      let reasons = [];
       for (let i = 0; i < currentData.length; i++) {
         const { ActuallName, displayName } = currentData[i];
-        if (ActuallName === 'emailId') {
-          email = displayName;
-        } else if (ActuallName === 'Phone_number') {
+        if (allColumnsData.get(ActuallName) != undefined) {
+          let dataTypeVerification = await isDataInCorrectFormat(allColumnsData.get(ActuallName), ActuallName, displayName, userList, multiSelectValues);
+
+          if (dataTypeVerification?.isError) {
+            reasons.push(dataTypeVerification.reason);
+          }
+
+        }
+        if (ActuallName === 'Phone_number') {
           phone = displayName;
         }
       }
 
-      if (!phone || !phone.match(phoneFormat)) {
-        errData.push({ data: currentData, reason: "Invalid phone number" });
-      } else if (email && !email.match(emailFormat)) {
-        errData.push({ data: currentData, reason: "Invalid email" });
-      } else {
+      if (reasons.length == 0) {
         if (seenPhoneNumbers.has(phone)) {
-          errData.push({ data: currentData, reason: "Duplicate phone number" });
+          console.log("seerm", phone)
+          reasons.push("Duplicate phone number")
         } else {
           seenPhoneNumbers.add(phone);
           queryData.push(phone);
           importData.push(currentData);
         }
       }
+
+
+      if (reasons.length > 0) {
+        errData.push({ data: currentData, reason: reasons });
+      }
+
     }
 
     if (importData.length > 0) {
       const verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)';
+
       const result = await db.excuteQuery(verifyQuery, [queryData, SP_ID]);
 
       let newCon = 0;
@@ -578,30 +593,51 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
 
 
       const newContacts = Math.abs(importData.length - result.length);
+
       if (purpose === 'Add new contact only') {
         newCon = newContacts;
-        console.log("newCon.length,newCon?.length == 0")
-        console.log(newCon, newCon == 0)
-        if (newCon == 0) {
-          for (let j = 0; j < importData.length; j++) {
-            const currentData = importData[j];
+
+
+        // Extract Phone_number values from importData
+        const resultPhoneNumbers = result.map(obj => obj.Phone_number);
+
+        // Filter out result based on Phone_number
+        const filteredResult = importData.filter(arr =>
+          resultPhoneNumbers.includes(arr.find(item => item.ActuallName === 'Phone_number').displayName)
+        );
+
+        if (newCon == 0 || (importData.length > newCon)) {
+          for (let j = 0; j < filteredResult.length; j++) {
+            const currentData = filteredResult[j];
             errData.push({ data: currentData, reason: "This contact already exist" });
           }
         }
       } else if (purpose === 'Update Existing Contacts Only') {
         upCont = result.length;
-        if (upCont == 0) {
-          for (let j = 0; j < importData.length; j++) {
-            const currentData = importData[j];
+
+        // Extract Phone_number values from importData
+        const resultPhoneNumbers = result.map(obj => obj.Phone_number);
+
+        // Filter out result based on Phone_number
+        const filteredResult = importData.filter(arr =>
+          !resultPhoneNumbers.includes(arr.find(item => item.ActuallName === 'Phone_number').displayName)
+        );
+
+        if (upCont == 0 || (importData.length > upCont)) {
+          for (let j = 0; j < filteredResult.length; j++) {
+            const currentData = filteredResult[j];
             errData.push({ data: currentData, reason: "This contact not already exist" });
           }
 
-        } else if (purpose === 'Add and Update Contacts') {
-          newCon = newContacts;
-          upCont = result.length;
         }
+      } else if (purpose === 'Add and Update Contacts') {
+        newCon = newContacts;
+        upCont = result.length;
 
+        console.log("add and updatew", newContacts, upCont)
       }
+
+
       let skipedContact = await writeErrFile(errData, res)
       res.status(200).send({
         newCon: newCon,
@@ -631,24 +667,34 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
 async function writeErrFile(errData, res) {
   try {
     if (errData.length !== 0) {
-      const uniqueErrData = errData.filter((obj, index, self) =>
-        index === self.findIndex((t) => (
-          t.data[0]?.displayName === obj.data[0]?.displayName &&
-          t.data[1]?.displayName === obj.data[1]?.displayName &&
-          t.data[2]?.displayName === obj.data[2]?.displayName
-        ))
-      );
-
-      const formattedErrData = uniqueErrData.map(error => {
+      let maxReasonCount = 0;
+      const formattedErrData = errData.map(error => {
         const formattedEntry = {};
         error.data.forEach(entry => {
-          formattedEntry[entry.ActuallName] = entry.displayName;
+          formattedEntry[`${entry.ActuallName}`] = entry.displayName;
         });
-        formattedEntry.reason = error.reason;
+        if (Array.isArray(error.reason)) {
+          error.reason.forEach((reason, index) => {
+            formattedEntry[`reason_${index + 1}`] = reason;
+            maxReasonCount = Math.max(maxReasonCount, index + 1);
+          });
+        } else {
+          formattedEntry['reason_1'] = error.reason;
+          maxReasonCount = Math.max(maxReasonCount, 1);
+        }
         return formattedEntry;
       });
 
-      const json2csvParser = new Parser({ fields: [...Object.keys(formattedErrData[0])] });
+      const reasonColumns = Array.from({ length: maxReasonCount }, (_, i) => `reason_${i + 1}`);
+
+      const fields = [];
+      errData[0].data.forEach(entry => {
+        fields.push(entry.ActuallName);
+      });
+      fields.push(...reasonColumns);
+
+
+      const json2csvParser = new Parser({ fields });
       const csv = json2csvParser.parse(formattedErrData);
 
       fs.writeFile("CSVerr.csv", csv, function (err) {
@@ -658,14 +704,189 @@ async function writeErrFile(errData, res) {
         console.log('Error file saved');
       });
       res.attachment("CSVerr.csv");
-      return uniqueErrData;
+      return errData;
     }
-
   } catch (err) {
     console.log("writeErrFile");
     console.log(err)
   }
 }
+
+
+
+async function mergeColumnData(SP_ID) {
+  try {
+    // Fetch all column names and data types from EndCustomer table
+    const endCustomerColumns = [
+      {
+        "displayName": "Contact Owner",
+        "ActualName": "ContactOwner",
+        "type": "User"
+      },
+      {
+        "displayName": "Email",
+        "ActualName": "emailId",
+        "type": "Text"
+      },
+      {
+        "displayName": "Name",
+        "ActualName": "Name",
+        "type": "Text"
+      },
+      {
+        "displayName": "Message Opt-in",
+        "ActualName": "OptInStatus",
+        "type": "Switch"
+      },
+      {
+        "displayName": "Phone Number",
+        "ActualName": "Phone_number",
+        "type": "Number",
+      },
+      {
+        "displayName": "Tag",
+        "ActualName": "tag",
+        "type": "Select",
+      }
+    ];
+
+    // Fetch all column names and data types from SPIDCustomContactFields table
+    const spidCustomColumnsQuery = `SELECT ColumnName, CustomColumn,  type FROM SPIDCustomContactFields WHERE SP_ID=? AND isDeleted != 1`;
+    const spidCustomColumns = await db.excuteQuery(spidCustomColumnsQuery, [SP_ID]);
+
+
+
+    // Combine the data from both sources into a single array
+    const allColumns = [...endCustomerColumns, ...spidCustomColumns.map(row => ({ displayName: row.ColumnName, ActualName: row.CustomColumn, type: row.type }))];
+
+    // Store the ActualName and type properties in a Map for easy access
+    const columnMap = new Map(allColumns
+      .filter(column => column.type !== undefined)
+      .map(column => [column.ActualName, column.type]));
+
+
+    // Return the Map
+    return columnMap;
+  } catch (error) {
+    console.error("Error in mergeColumnData:", error);
+    return error;
+  }
+}
+
+
+async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, userList, multiSelectValues) {
+  try {
+    if (!columnDataType) return { isError: false, reason: `${ActuallName} Unknown column data type` };
+    const emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    const phoneFormat = /^[0-9]{6,15}$/;
+    // Convert display name to appropriate data type
+    let convertedValue;
+    switch (columnDataType) {
+      case 'Number':
+        if (ActuallName === 'Phone_number' && !displayName.match(phoneFormat)) {
+
+          return { isError: true, reason: `${ActuallName} is not a valid` };
+
+        } else {
+          if (!/^\d+$/.test(displayName)) {
+            return { isError: true, reason: `${ActuallName} is not a valid number` };
+          }
+          convertedValue = parseInt(displayName);
+        }
+        break;
+
+      case 'Text':
+        if (ActuallName === 'emailId') {
+          if (displayName && !displayName.match(emailFormat)) {
+            return { isError: true, reason: `${ActuallName} is not a valid email address` };
+          } else {
+            convertedValue = displayName ? displayName.toString() : '';
+          }
+        } else {
+          if (ActuallName === 'Name' && displayName && !/^[a-zA-Z ]*$/.test(displayName)) {
+            return { isError: true, reason: `${ActuallName} contains non-alphabetic characters` };
+          } else {
+            convertedValue = displayName ? displayName.toString() : '';
+          }
+        }
+
+        break;
+      case 'User':
+        if (displayName) {
+          convertedValue = userList.includes(displayName);
+          console.log("convertedValue" ,convertedValue)
+          return { isError: !convertedValue, reason: `${ActuallName} is invalid contact owner` };
+        }
+        break;
+      case 'Select':
+        if (displayName) {
+          convertedValue = multiSelectValues.includes(displayName);
+          return { isError: !convertedValue, reason: `${ActuallName} is not exist in list` };
+        }
+        break;
+      case 'DateTime':
+        if (displayName) {
+          convertedValue = !isNaN(date.getTime());
+          return { isError: !convertedValue, reason: `${ActuallName} is invalid` };
+        }
+        break;
+      case 'Switch':
+        if (displayName) {
+          convertedValue = ['yes', 'no'].includes(displayName.toLowerCase()) ? displayName.toLowerCase() : false;
+          if (!convertedValue) {
+            return { isError: true, reason: `${ActuallName} is not a valid switch value` };
+          }
+        }
+        break;
+      default:
+        convertedValue = displayName;
+        break;
+    }
+
+    // If the converted data type matches the column data type, return true, else return false
+    switch (columnDataType) {
+      case 'Number':
+        return { isError: isNaN(convertedValue), reason: !isNaN(convertedValue) ? "" : `${ActuallName} is not a valid number` };
+      case 'Text':
+        return { isError: typeof convertedValue != 'string', reason: typeof convertedValue === 'string' ? "" : `${ActuallName} is not a valid text` };
+      case 'Switch':
+        return { isError: typeof convertedValue != 'string', reason: typeof convertedValue === 'string' ? "" : `${ActuallName}  is not a valid switch` };
+      default:
+        return { isError: false, reason: `${ActuallName} Unknown column data type` };
+    }
+  } catch (error) {
+    console.error("Error in isDataInCorrectFormat:", error);
+    return { isError: true, reason: error.message };
+  }
+}
+
+
+async function getUserList(SP_ID) {
+  try {
+    const users = await db.excuteQuery('SELECT name FROM user WHERE SP_ID=? AND IsDeleted != 1', [SP_ID]);
+    return users.map(row => row.name).flat();
+  } catch (error) {
+    console.error("Error in getUserList:", error);
+    return error;
+  }
+}
+
+async function getMultiSelectValues(SP_ID) {
+  try {
+    const selectedVal = await db.excuteQuery('SELECT dataTypeValues FROM SPIDCustomContactFields WHERE SP_ID=? AND Type = ? AND isDeleted != 1 AND dataTypeValues IS NOT NULL', [SP_ID, 'Select']);
+    const options = selectedVal.map(row => JSON.parse(row.dataTypeValues).map(item => item.optionName));
+    return options.flat();
+  } catch (error) {
+    console.error("Error in getMultiSelectValues:", error);
+    return error;
+  }
+}
+
+
+
+
+
+
 
 app.get('/downloadCSVerror', authenticateToken, (req, res) => {
   try {

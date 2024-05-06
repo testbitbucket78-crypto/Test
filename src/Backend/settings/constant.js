@@ -65,7 +65,7 @@ selectByIdQuery = `select Company_Name,profile_img from companyDetails where SP_
 userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
 updateQuery = "UPDATE user SET  email_id=?, name=?, mobile_number=?, LastModifiedDate=?, UserType=?,country_code=? ,display_mobile_number=? WHERE uid=?";
 insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP,country_code,display_mobile_number) VALUES ?";
-findEmail = "SELECT * FROM user WHERE (email_id=? OR mobile_number=?) and isDeleted !=1"
+findEmail = "SELECT * FROM user WHERE (email_id=? OR mobile_number=?) and isDeleted !=1 and SP_ID=?"
 getRole = `SELECT * from roles where SP_ID=?  and isDeleted !=1`
 
 
@@ -193,7 +193,8 @@ tm.ID,
 tm.created_at,
 tm.updated_at,
 (SELECT COUNT(*) FROM EndCustomer AS ec
- WHERE FIND_IN_SET(tm.TagName, ec.tag) > 0 AND ec.SP_ID = ? ) AS tag_count
+ WHERE FIND_IN_SET(tm.ID,REPLACE(ec.tag, ' ', '')) > 0 AND ec.SP_ID = ? and
+ec.isDeleted != 1  ) AS tag_count
 FROM
 EndCustomerTagMaster AS tm
 WHERE
@@ -204,13 +205,158 @@ AND tm.isDeleted != 1;`
  var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1 `
  var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,dataTypeValues) values ?`
  
- let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as type, 1 as mandatory,1 as status,0 as id,"" as created,"" as updated ,"" as description ,"" as dataTypeValues
- FROM information_schema.columns
- WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked' ,'channel','displayPhoneNumber','countryCode','IsTemporary','contact_profile','InstagramId','facebookId','Country','state','city','pincode','address','sex','status','age')
- UNION
- SELECT ColumnName AS column_name,CustomColumn as ActuallName ,Type as type,Mandatory as mandatory,Status as status,id as id,created_at as created,updated_at as updated ,description as description ,dataTypeValues as dataTypeValues
- FROM SPIDCustomContactFields  
- WHERE SP_ID =?  AND isDeleted !=1;`
+//  let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as type, 1 as mandatory,1 as status,0 as id,"" as created,"" as updated ,"" as description ,"" as dataTypeValues
+//  FROM information_schema.columns
+//  WHERE table_name = 'EndCustomer' and column_name not like '%column%' and column_name not in ('created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at','isBlockedOn','isBlocked' ,'channel','displayPhoneNumber','countryCode','IsTemporary','contact_profile','InstagramId','facebookId','Country','state','city','pincode','address','sex','status','age')
+//  UNION
+//  SELECT ColumnName AS column_name,CustomColumn as ActuallName ,Type as type,Mandatory as mandatory,Status as status,id as id,created_at as created,updated_at as updated ,description as description ,dataTypeValues as dataTypeValues
+//  FROM SPIDCustomContactFields  
+//  WHERE SP_ID =?  AND isDeleted !=1;`
+
+let getcolumn = `SELECT 
+displayName,
+ActuallName,
+type,
+mandatory,
+status,
+id,
+created,
+updated,
+description,
+dataTypeValues
+FROM 
+(SELECT 
+    'Name' AS displayName,
+    'Name' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    1 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    'Phone_number' AS displayName,
+    'Phone_number' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    2 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    'emailId' AS displayName,
+    'emailId' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    3 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    'OptInStatus' AS displayName,
+    'OptInStatus' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    4 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    'ContactOwner' AS displayName,
+    'ContactOwner' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    5 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    'tag' AS displayName,
+    'tag' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    6 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    column_name AS displayName,
+    column_name AS ActuallName,
+    data_type AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    7 AS sort_order,
+    0 AS custom_order
+FROM 
+    information_schema.columns
+WHERE 
+    table_name = 'EndCustomer' 
+    AND column_name NOT LIKE '%column%' 
+    AND column_name NOT IN (
+        'created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at',
+        'isBlockedOn', 'isBlocked', 'channel', 'displayPhoneNumber', 'countryCode',
+        'IsTemporary', 'contact_profile', 'InstagramId', 'facebookId', 'Country',
+        'state', 'city', 'pincode', 'address', 'sex', 'status', 'age'
+    )
+UNION ALL
+SELECT 
+    ColumnName AS displayName,
+    CustomColumn AS ActuallName,
+    Type AS type,
+    Mandatory AS mandatory,
+    Status AS status,
+    id AS id,
+    created_at AS created,
+    updated_at AS updated,
+    description AS description,
+    dataTypeValues AS dataTypeValues,
+    8 AS sort_order,
+    id AS custom_order
+FROM 
+    SPIDCustomContactFields  
+WHERE 
+    SP_ID = ?  
+    AND isDeleted != 1
+) AS result
+GROUP BY 
+ActuallName
+ORDER BY 
+custom_order, sort_order;`
 
  let getcolumnid = `SELECT  ColumnName AS displayName,CustomColumn as ActuallName  ,Type,Mandatory,Status,id,created_at,updated_at,description,dataTypeValues
  FROM SPIDCustomContactFields  

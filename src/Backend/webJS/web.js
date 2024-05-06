@@ -20,10 +20,8 @@ const fs = require('fs')
 const path = require("path");
 let clientSpidMapping = {};
 let clientPidMapping = {};
+let clientSpidInprogress = {};
 
-async function stopQRCounter() {
-
-}
 
 async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo, new Date());
@@ -32,7 +30,22 @@ async function createClientInstance(spid, phoneNo) {
     console.log("Client found in memory map and is ready");
     return { status: 201, value: 'Client is ready!' };
   }
+  if (isInProgressSpidQR(spid)) {
+    try{
+    console.log("Client qr generation inprogress");
+    var inPclient = clientSpidInprogress[spid];
 
+    inPclient.destroy();
+    
+    if (clientSpidInprogress.hasOwnProperty(spid)) {
+      console.log("clear mapping __________")
+      delete clientSpidInprogress[spid];
+    }
+  }catch(err){
+    console.log("ERR isInProgressSpidQR");
+    console.log(err)
+  }
+  }
 
   // delete chrome process
   if (clientPidMapping.hasOwnProperty(spid)) {
@@ -80,7 +93,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
            executablePath: "/usr/bin/google-chrome-stable",
-         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -112,11 +125,14 @@ function ClientInstance(spid, authStr, phoneNo) {
 
       let inc = 0;
       client.on("qr", (qr) => {
+        try{
         // Generate and scan this code with your phone
+        clientSpidInprogress[[spid]] = client;
         console.log("QR CODE top", new Date())
         console.log("QR RECEIVED", qr);
         inc++;
         console.log("inc: " + inc);
+    
         if (inc > 5) {
           console.log("Destroying client..." + client.authStrategy.userDataDir);
           client.destroy();
@@ -127,6 +143,10 @@ function ClientInstance(spid, authStr, phoneNo) {
         notify.NotifyServer(phoneNo, false, qr)
         console.log("Below notifyof QR", new Date())
         resolve({ status: 200, value: qr });
+      }catch(err){
+        console.log("err QR ............");
+        console.log(err)
+      }
       });
       client.on('ready', async () => {
 
@@ -177,14 +197,6 @@ function ClientInstance(spid, authStr, phoneNo) {
         // }
       });
 
-      const timeOut = setTimeout(() => {
-        //  client.initialize().catch(_ => _);
-        client.initialize().catch((error) => {
-          console.log("intilize_________________")
-          console.error(error);
-        });
-      }, 3000)
-
       client.on('message', async message => {
         try {
           const contact = await message.getContact();
@@ -213,15 +225,6 @@ function ClientInstance(spid, authStr, phoneNo) {
         }
       });
 
-      // client.on('state_changed', (reason) => {
-      //   try {
-      //     console.log('Client was logged out.', reason)
-
-      //   } catch (err) {
-      //     console.log("ERR state_changed", err)
-      //   }
-
-      // })
       client.on('authenticated', (session) => {
         try {
 
@@ -320,6 +323,13 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
         }
       });
 
+      const timeOut = setTimeout(() => {
+        //  client.initialize().catch(_ => _);
+        client.initialize().catch((error) => {
+          console.log("intilize_________________")
+          console.error(error);
+        });
+      }, 5000)
 
     } catch (err) {
       console.log("createClientInstance err");
@@ -354,6 +364,14 @@ function isActiveSpidClient(spid) {
   }
 }
 
+function isInProgressSpidQR(spid) {
+
+  if (clientSpidInprogress[spid]) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 async function saveSendedMessageStatus(messageStatus, timestamp, to, id) {
   console.log(timestamp, to, id)

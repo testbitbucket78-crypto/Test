@@ -1,5 +1,10 @@
-"SP_ID","Name","Phone_number","OptInStatus","reason"
-39,"Raunak","8130818921","Yes","Duplicate phone number"
-39,"Rishabh","8130818921","Yes","This contact not already exist"
-39,"vijay","9876473632","No","This contact not already exist"
-39,"Pawan sharma","7618157986","yes","This contact not already exist"
+"SP_ID","Name","Phone_number","emailId","OptInStatus","tag","ContactOwner","reason_1","reason_2","reason_3","reason_4","reason_5"
+34,"343543543","9.18131E+11","akashsaxena@gmail.com","KSFDHS","One","abc","Name contains non-alphabetic characters","Phone_number is not a valid","OptInStatus is not a valid switch value","tag is not exist in list","ContactOwner is invalid contact owner"
+34,"Qar","9.19876E+11",,"No","Two",,"Phone_number is not a valid","tag is not exist in list",,,
+34,"Pawan ee sharma","9.18E+11","Paw","yes","Tag",,"Phone_number is not a valid","emailId is not a valid email address","tag is not exist in list",,
+34,"Raunakerr","JDWJG","raun","Yes","one",,"Phone_number is not a valid","emailId is not a valid email address","tag is not exist in list",,
+34,"Rishabh","9.13544E+11","akashsaxena@gmail.com","Yes","One",,"Phone_number is not a valid","tag is not exist in list",,,
+34,"Rishabhe","8130818921","akashsaxena@gmail.com","Yes","One",,"tag is not exist in list",,,,
+34,"Rishabhf","8130818921","akashsaxena@gmail.com","Yes","One",,"tag is not exist in list",,,,
+34,"Pawan sharma","9.18E+11","Paw","yes","Tag",,"Phone_number is not a valid","emailId is not a valid email address","tag is not exist in list",,
+34,"Palak","91 7018278328",,"Yes","one",,"Phone_number is not a valid","tag is not exist in list",,,
