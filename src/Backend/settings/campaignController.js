@@ -340,7 +340,7 @@ const editCustomField = async (req, res) => {
 
 const enableMandatoryfield = async (req, res) => {
     try {
-        let mandatoryfield = await db.excuteQuery(val.enableMandatory, [req.body.Mandatory, new Date(), req.body.id])
+        let mandatoryfield = await db.excuteQuery(val.enableMandatory, [req.body.Mandatory, new Date().toUTCString(), req.body.id])
         res.send({
             status: 200,
             mandatoryfield: mandatoryfield
@@ -355,7 +355,7 @@ const enableMandatoryfield = async (req, res) => {
 const enableStatusfield = async (req, res) => {
     try {
 
-        let enableStatus = await db.excuteQuery(val.enablestatus, [req.body.Status, new Date(), req.body.id])
+        let enableStatus = await db.excuteQuery(val.enablestatus, [req.body.Status, new Date().toUTCString(), req.body.id])
         res.send({
             status: 200,
             enableStatus: enableStatus
