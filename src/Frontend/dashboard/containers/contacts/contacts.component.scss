@@ -804,6 +804,9 @@ opacity: 1;
     display: none;
 }
 
+* ::-webkit-scrollbar-track{
+    display: none !important;
+}
 .popup-dialog.ContactOption img {
     width: 20px;
     margin-right: 5px;
@@ -1425,3 +1428,12 @@ input[type="radio"], input[type="checkbox"] {
       -webkit-transform: rotate(47deg);
       -ms-transform: rotate(47deg);
     }
+
+    
+* ::-webkit-scrollbar{
+    background-color: transparent;
+}
+
+.h-100{
+    height: 100% !important;
+}

@@ -539,7 +539,7 @@ span {
 .container-mapping .left-part, .container-mapping .right-part {
     background: #fff4f2;
     border-radius: 25px;
-    height: 405px;
+    height: 52vh;
 }
 
 .head-section span.heading {
@@ -932,5 +932,17 @@ span {
 .import-body{
     height: calc(100% - 140px);
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
+* ::-webkit-scrollbar-track{
+    display: none !important;
+}
+
+.h-100{
+    height: 100% !important;
+}
+
+* ::-webkit-scrollbar{
+    background-color: transparent;
+}
