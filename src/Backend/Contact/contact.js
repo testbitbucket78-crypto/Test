@@ -318,7 +318,8 @@ app.post('/importContact', authenticateToken, async (req, res) => {
       try {
 
         let addNewUserOnly = await addOnlynewContact(CSVdata, identifier, SP_ID)
-        // sendMailAfterImport(emailId,user,addNewUserOnly?.length)
+     
+         sendMailAfterImport(emailId,user,addNewUserOnly?.count)
         res.status(200).send({
           msg: "Contact Added Successfully",
           data: addNewUserOnly,
@@ -347,7 +348,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
         else {
           var upExistContOnlyWithFields = await updateSelectedField(CSVdata, identifier, fields, SP_ID);
         }
-        // sendMailAfterImport(emailId,user,0)
+         sendMailAfterImport(emailId,user,0)
         res.status(200).send({
           msg: "Existing Contact Updated Successfully",
           upExistContOnly: upExistContOnly,
@@ -380,8 +381,10 @@ app.post('/importContact', authenticateToken, async (req, res) => {
 
           var addAndUpdatewithFields = await updateSelectedField(CSVdata, identifier, fields, SP_ID);
 
+
         }
-        //  sendMailAfterImport(emailId,user,addAndUpdateCont?.length)
+      
+          sendMailAfterImport(emailId,user,addAndUpdateCont?.count)
         res.status(200).send({
           msg: "Add and Updated Contact Successfully",
           addAndUpdatewithFields: addAndUpdatewithFields,
@@ -408,8 +411,8 @@ app.post('/importContact', authenticateToken, async (req, res) => {
 function sendMailAfterImport(emailId, user, noOfContact) {
   try {
 
-    let text = `<p>Hi` + user + `, your contact import is complete! `
-      + noOfContact + `new contacts have been added to your Engagekart account.
+    let text = `<p>Hi ` + user + `, your contact import is complete! `
+      + noOfContact + ` new contacts have been added to your Engagekart account.
     Start connecting now!</p>
     - Team Engagekart`
 
@@ -438,6 +441,7 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
 
   try {
     let result;
+    let count =0;
     for (let i = 0; i < CSVdata.length; i++) {
       const set = CSVdata[i];
       const fieldNames = set.map((field) => field.ActuallName).join(', ');
@@ -453,10 +457,12 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
 
       // Ensure db.executeQuery returns a promise
       result = await db.excuteQuery(query, [values, identifierValue, SP_ID]);
-
+if(result?.affectedRows == 1){
+  count ++;
+}
 
     }
-    return result;
+    return {result,count};
     // Ensure to handle the returned result outside the loop if needed
   } catch (err) {
     return err;
