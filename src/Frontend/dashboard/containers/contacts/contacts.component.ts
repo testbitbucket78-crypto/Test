@@ -35,6 +35,7 @@ export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
   }
   arrHideColumn:any[] =[];
   isShowColumn:boolean = false;
+  isImport:boolean = true;
 columnDefs: ColDef[] = [
   {
     field: '',
@@ -982,6 +983,11 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             });
             const control = new FormControl('');
             this.productForm.addControl(item.ActuallName,control);
+            const controls = this.productForm.get(item.ActuallName);
+            if (controls && item.mandatory == 1) {
+              controls.setValidators([Validators.required]); 
+              controls.updateValueAndValidity();
+            }
             if(item?.dataTypeValues && item?.type=='Select'){
               item.options = JSON.parse(item?.dataTypeValues);
             }
@@ -1033,7 +1039,14 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   }
 
   closeImport(){    
+    this.isImport =false;
     $("#importmodal").modal('hide');
+    this.isImport =true;
+  }
+
+  
+  checkTagAvailable(){
+
   }
 
   ngOnDestroy(){
@@ -1058,6 +1071,3 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   }
   
 }
-
-
-
