@@ -36,10 +36,11 @@ client.on('connect', function(connection) {
      }, 30000);
 });
 
+//client.connect('ws://localhost:3010/', 'echo-protocol');
 client.connect('ws://52.66.172.213:3010/', 'echo-protocol');
-
 function NotifyServer(display_phone_number,updatemessage,message)
 {
+  try{
     var notificationMsg ={};
     if(updatemessage == true){           //For webhhok teambox msg update
     notificationMsg= {"displayPhoneNumber":display_phone_number, "updateMessage":true};
@@ -54,6 +55,9 @@ function NotifyServer(display_phone_number,updatemessage,message)
     }
     // console.log(client.connection);
     conn.send(JSON.stringify(notificationMsg));
+  }catch(err){
+    console.log("Notify Err" ,err)
+  }
 }
 
 

@@ -28,7 +28,7 @@ const allregisterdUser = (req, res) => {
 //post Api for login
 const login = async (req, res) => {
     try {
-        var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id])
+        var credentials = await db.excuteQuery('SELECT * FROM user WHERE email_id =?  and isDeleted !=1 and IsActive !=2', [req.body.email_id])
         if (credentials.length <= 0) {
             res.status(401).send({
                 msg: 'Invalid User !',
