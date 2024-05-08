@@ -164,8 +164,18 @@ export class ImportComponent implements OnInit {
 
 	isIdentifierColumn(content:any){
 		if(this.identifierColumn) {
+			let error = true;
+			for(let i=0;i<this.displayNameChecked.length;i++){
+				if(!(this.displayNameChecked[i] && this.selectedCustomFields[i])){
+					error = false;
+				}
+			}
+			if(error){
 			this.stepper.next();
 			this.verifyImportedData();
+			}else{
+				this.showToaster('please map checked fields !','error');
+			}
 		}
 		else {
 			$("#importmodal").modal('hide');

@@ -75,14 +75,15 @@
 				<div class="p-2 sidebar-head">
 					<div class="parent d-flex justify-content-center w-100">
 						<div class="parent-img">
-							<img *ngIf="!items.contact_profile" src="../../../../assets/img/teambox/no-dp.svg">
+							<div *ngIf="!items.contact_profile" class="inti">{{intials}}</div>
+							<!-- <img *ngIf="!items.contact_profile" src="../../../../assets/img/teambox/no-dp.svg"> -->
 							<img *ngIf="items.contact_profile" id="profile-pic" src="{{items.contact_profile}}?{{randomNumber}}"/>
-							<div class="d-flex justify-content-center picture-crop-button-container">
+							<!-- <div class="d-flex justify-content-center picture-crop-button-container">
 								<div class="text-center picture-crop-button">
 								 <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
 								 <label for="myFileInput" class="m-0 fileLabel" ><img class="set-profile-pic" src="../../../../assets/img/profile/Fill 4.svg" /></label>    
-								</div>
-							</div>						
+								</div> 
+							</div>		-->				
 						</div>
 					
 						<div class="child">
