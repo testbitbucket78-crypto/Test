@@ -215,6 +215,7 @@ countryCodes = [
     items: any;
     customerData:[]=[];
     getFilterTags: [] = [];
+    intials:string ='';
     
     orderHeader: String = '';
     isDesOrder: boolean = true;
@@ -783,8 +784,21 @@ deletContactByID(data: any) {
     this.apiService.getContactById(data.customerId, SP_ID).subscribe((data:any) => {
       this.randomNumber = Math.random();
       this.customerData = data;
+      console.log(data);
+      console.log(data[0]?.Name);
+      this.getInitials(data[0]?.Name)
       this.getContact();
     });    
+  }
+
+  getInitials(name:any){
+    if(name){
+      let words = name.split(' ');
+      let inti = words[0][0] + (words[1] ? (words[1].trim())[0] :'');
+      this.intials =inti;
+    }else{
+      this.intials ='';
+    }
   }
 
   closeEditTag() {
@@ -865,8 +879,14 @@ deletContactByID(data: any) {
   
   exportCheckedContact() {
     const defaultFieldNames =["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
-
-    const exportContact = this.checkedConatct.map(obj => defaultFieldNames.reduce((acc:any, key) => {
+    console.log(this.checkedConatct);
+    let fields:any[] =[];
+    this.arrHideColumn.forEach((item)=>{
+      if(item.hide){
+        fields.push(item?.field)
+      }
+    })
+    const exportContact = this.checkedConatct.map(obj => fields.reduce((acc:any, key) => {
         if (obj.hasOwnProperty(key)) {
           acc[key] = obj[key];
          }
@@ -1064,10 +1084,15 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
           column.push(objA);
       }
   });
+  column.forEach((item:any)=>{
+    let idx = this.arrHideColumn.findIndex((it)=> it.field == item.field);
+    if(idx >-1)
+      this.arrHideColumn[idx].hide =  !item.hide;
+  });
   this.gridapi.setColumnDefs(column);
   console.log(this.gridapi?.getColumnDefs());
 }    
-  },2000);
+  },2000); 
   }
   
 }

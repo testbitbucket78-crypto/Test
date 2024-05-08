@@ -38,7 +38,20 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+    color: #6149cd;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    font-size: 28px;
+    font-weight: 800;
    }
+
+   .companyimg{
+    width: fit-content;
+    height: fit-content;
+   }
+
 
    .profile-margin-left{
     margin-left: 43%;
