@@ -166,7 +166,7 @@ export class ImportComponent implements OnInit {
 		if(this.identifierColumn) {
 			let error = true;
 			for(let i=0;i<this.displayNameChecked.length;i++){
-				if(!(this.displayNameChecked[i] && this.selectedCustomFields[i])){
+				if((this.displayNameChecked[i] && this.selectedCustomFields[i]=='')){
 					error = false;
 				}
 			}
