@@ -550,7 +550,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
     let allColumnsData = await mergeColumnData(SP_ID);
     let userList = await getUserList(SP_ID)
     let multiSelectValues = await getMultiSelectValues(SP_ID)
-
+    let TagsVal = await getTags(SP_ID)
 
     for (let j = 0; j < importedData.length; j++) {
       const currentData = importedData[j];
@@ -559,7 +559,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
       for (let i = 0; i < currentData.length; i++) {
         const { ActuallName, displayName } = currentData[i];
         if (allColumnsData.get(ActuallName) != undefined) {
-          let dataTypeVerification = await isDataInCorrectFormat(allColumnsData.get(ActuallName), ActuallName, displayName, userList, multiSelectValues);
+          let dataTypeVerification = await isDataInCorrectFormat(allColumnsData.get(ActuallName), ActuallName, displayName, userList, multiSelectValues,TagsVal);
 
           if (dataTypeVerification?.isError) {
             reasons.push(dataTypeVerification.reason);
@@ -780,7 +780,7 @@ async function mergeColumnData(SP_ID) {
 }
 
 
-async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, userList, multiSelectValues) {
+async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, userList, multiSelectValues,TagsList) {
   try {
     if (!columnDataType) return { isError: false, reason: `${ActuallName} Unknown column data type` };
     const emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
@@ -826,7 +826,13 @@ async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, u
         break;
       case 'Select':
         if (displayName) {
-          convertedValue = multiSelectValues.includes(displayName);
+          let convertedValue;
+          if (ActuallName === 'tag') {
+              convertedValue = TagsList.includes(displayName);
+             
+          } else {
+              convertedValue = multiSelectValues.includes(displayName);
+          }
           return { isError: !convertedValue, reason: `${ActuallName} is not exist in list` };
         }
         break;
@@ -866,6 +872,16 @@ async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, u
   }
 }
 
+async function getTags(SP_ID){
+  try{
+    const tags = await db.excuteQuery('SELECT TagName FROM EndCustomerTagMaster WHERE SP_ID=? AND isDeleted != 1', [SP_ID]);
+    
+    return tags.map(row => row.TagName).flat();
+  }catch (error) {
+    console.error("Error in getTagList:", error);
+    return error;
+  }
+}
 
 async function getUserList(SP_ID) {
   try {

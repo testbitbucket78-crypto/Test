@@ -533,11 +533,57 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 }
 
 
+async function autoResolveExpireInteraction() {
+  try {
+    console.log("autoResolveExpireInteraction")
+    // Get the maximum created_at date of messages for the latest interaction of each customer
+    const maxCreatedAtQuery = `
+    SELECT MAX(m.created_at) AS max_created_at, m.interaction_id
+    FROM Message m
+    WHERE m.interaction_id IN (
+        SELECT i.InteractionId
+        FROM (
+            SELECT InteractionId, ROW_NUMBER() OVER (PARTITION BY customerId ORDER BY created_at DESC) AS rn
+            FROM Interaction
+        ) AS i
+        WHERE i.rn = 1
+    )
+    GROUP BY m.interaction_id
+`;
+
+    const maxCreatedAtResult = await db.excuteQuery(maxCreatedAtQuery);
+    //console.log("maxCreatedAtResult",maxCreatedAtResult)
+    // Update the Interaction table based on the maximum created_at date
+    if (Array.isArray(maxCreatedAtResult)) {
+      for (const record of maxCreatedAtResult) {
+        const updateQuery = `
+        UPDATE Interaction
+        SET interaction_status = ?
+        WHERE InteractionId = ${record.interaction_id}
+        AND  TIMESTAMPDIFF(HOUR, (SELECT MAX(created_at) FROM Message WHERE interaction_id = ${record.interaction_id}), NOW()) >= 24 and interaction_status != 'Resolved'`;
+
+        await db.excuteQuery(updateQuery, ['Resolved']);
+        let getMapping = await db.excuteQuery(`select * from InteractionMapping where InteractionId =?`, [record.interaction_id])
+        if (getMapping?.length > 0) {
+          let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [record.interaction_id]);
+          
+        }
+      }
+    } else {
+      console.log("maxCreatedAtResult is not an array");
+    }
+
+    
+  } catch (err) {
+    console.log("err autoResolveExpireInteraction ---", err)
+  }
+}
+
 cron.schedule('*/5 * * * *', async () => {
   console.log('Running scheduled task...');
 
   fetchScheduledMessages();
-  // campaignAlerts()
+  autoResolveExpireInteraction();
 
 });
 
