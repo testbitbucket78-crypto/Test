@@ -597,8 +597,8 @@ async function insertInteractionAndRetrieveId(custid, sid) {
         console.log(custid, sid)
         // Check if Interaction exists for the customerId
         let rows = await db.excuteQuery(
-            'SELECT InteractionId FROM Interaction WHERE customerId = ? limit 1',
-            [custid]
+            'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ',
+            [custid,sid]
         );
 
         if (rows.length == 0) {
@@ -606,14 +606,14 @@ async function insertInteractionAndRetrieveId(custid, sid) {
             // If no existing interaction found, insert a new one
             await db.excuteQuery(
                 'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
-                [custid, 'Open', sid, 'User Initiated']
+                [custid, 'empty', sid, 'User Initiated']
             );
         } else {
 
             // Check for the maximum created_at date of Message
             let maxdate = await db.excuteQuery(
-                'SELECT MAX(created_at) AS maxdate FROM Interaction WHERE customerId = ?',
-                [custid]
+                'SELECT max(created_at) into maxdate from Message where interaction_id in (select InteractionId from Interaction where customerId=? and is_deleted !=1 and SP_ID=?)',
+                [custid,sid]
             );
 
 
@@ -622,15 +622,15 @@ async function insertInteractionAndRetrieveId(custid, sid) {
                 console.log("______________________")
                 await db.excuteQuery(
                     'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
-                    [custid, 'Open', sid, 'User Initiated']
+                    [custid, 'empty', sid, 'User Initiated']
                 );
             }
         }
 
         // Retrieve the newly inserted or existing Interaction ID
         let InteractionId = await db.excuteQuery(
-            'SELECT InteractionId FROM Interaction WHERE customerId = ? ORDER BY created_at DESC LIMIT 1',
-            [custid]
+            'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ORDER BY created_at DESC LIMIT 1',
+            [custid,sid]
         );
 
         // console.log('Newly inserted or existing Interaction ID:', InteractionId);

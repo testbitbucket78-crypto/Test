@@ -63,7 +63,8 @@ ic.InteractionId,
 ec.*,
 last_message.LastMessageId,
 COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
-m.*
+m.*,
+m.created_at AS LastMessageDate
 FROM 
 Interaction ic
 LEFT JOIN 
@@ -103,9 +104,9 @@ ic.interactionId IN (
 ) 
 AND ec.SP_ID = ?  
 AND ec.isDeleted != 1  
-AND ic.is_deleted =0
+AND ic.is_deleted = 0
 ORDER BY 
-ic.interactionId DESC
+LastMessageDate DESC, ic.interactionId DESC
 LIMIT ?,?`
 
 module.exports={host,user,password,database,
