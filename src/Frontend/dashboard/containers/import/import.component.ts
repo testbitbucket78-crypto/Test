@@ -112,6 +112,10 @@ export class ImportComponent implements OnInit {
 		this.selectedCustomFields =[];
 		this.selectedIdentifier =[];
 		this.importCSVdata =[];
+		this.csvfieldHeaders =[];
+		this.csvfieldValues =[];
+		this.getCustomFieldsData();
+		this.mappedFields =[];
 	}
 
 
@@ -160,8 +164,18 @@ export class ImportComponent implements OnInit {
 
 	isIdentifierColumn(content:any){
 		if(this.identifierColumn) {
+			let error = true;
+			for(let i=0;i<this.displayNameChecked.length;i++){
+				if((this.displayNameChecked[i] && this.selectedCustomFields[i]=='')){
+					error = false;
+				}
+			}
+			if(error){
 			this.stepper.next();
 			this.verifyImportedData();
+			}else{
+				this.showToaster('please map checked fields !','error');
+			}
 		}
 		else {
 			$("#importmodal").modal('hide');
@@ -233,10 +247,9 @@ export class ImportComponent implements OnInit {
    /******************* Method to capture mapping selections********************/
 
 	  onSelectMapping(selectedField: string, index: number) {
-		// let idx = this.customFieldData.findIndex((item:any)=> item.ActuallName == selectedField);
-		// let ith = this.selectedCustomFields.findIndex((item:any)=> item.ActuallName == selectedField);
 		this.selectedCustomFields[index] =selectedField;
-		console.log(this.selectedCustomFields);
+		if(selectedField == 'Phone_number')
+			this.toggleOverride[index] = false;
 		this.customFieldData.forEach((item)=>{
 			if(this.selectedCustomFields.findIndex((items:any)=> items == item.ActuallName) > -1)
 				item.isSelected =  true;
@@ -245,19 +258,36 @@ export class ImportComponent implements OnInit {
 		})
 		for (let i = 0; i < this.importedData.length; i++) {
 		  const mappedField:ColumnMapping = {
-			displayName: this.importedData[i][this.csvfieldHeaders[index]], // CSV value for current row and selected column
+			displayName: this.importedData[i][this.csvfieldHeaders[index]], 
 			ActuallName: selectedField // Selected field from dropdown
 		  };
 		  if (!this.mappedFields[i]) {
 			this.mappedFields[i] = []; // initialised the mappingFields
 		  }
 		  this.mappedFields[i][index] = mappedField;
-		  console.log(mappedField);
 		}
+		console.log(this.mappedFields);
 		if(selectedField == "Phone_number") {
 			this.identifierColumn = selectedField; // set phone number as a identifier column 
 		}
 
+	  }
+
+	  removeUncheck(e:any,ith:any){
+		if(!e.target.checked){
+		this.mappedFields.forEach((item:any)=>{
+			for(let i=0;i<item.length;i++){
+			if(item[i].ActuallName == this.selectedCustomFields[ith]){
+				item.splice(i,1);
+			}
+		}			
+		console.log(item)
+		});
+		console.log(this.mappedFields)
+		let idx = this.customFieldData.findIndex((ite:any)=>ite.ActuallName == this.selectedCustomFields[ith]);
+		this.customFieldData[idx].isSelected=false;
+		this.selectedCustomFields[ith]='';
+	} 
 	  }
 	
 	  constructContactFormData() {

@@ -254,7 +254,10 @@ patchFormDataValue() {
 
 addCustomFields() {
   this.selectedCustomField = null;
-  this.addCustomField =[];
+  this.addCustomField =[{
+    id: '',
+    Option: '',
+  }];
   this.isFormChanged = false;
   $("#addCustomFieldModal").modal('show');
 }

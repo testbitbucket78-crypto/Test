@@ -1520,7 +1520,6 @@ sendattachfile() {
 				progressbar['progressbarValue']= hourLeft;
 			}
 			return progressbar;
-
 	}
 	timeSinceLastMessage(lastMessage:any){
 		if(lastMessage){

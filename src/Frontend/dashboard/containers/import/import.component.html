@@ -5,8 +5,8 @@
 </div>
 <!-- Rewritten by rishabhsingh@stacknize.com -->
 
-<div class="row">
-	<div class="bs-stepper col-lg-12">
+<div class="row h-100">
+	<div class="bs-stepper col-lg-12 h-100">
 		<div class="d-flex justify-content-between align-items-center pb-0 bs_stepper_header">
 			<h1>Import Contacts</h1>
 			<button class="btn-cross" aria-label="Close" data-bs-dismiss="modal" (click)="closePopup()">X</button>
@@ -51,7 +51,7 @@
 								<h4>Attach files</h4>
 							</div>
 
-							<div class="d-flex upload-part">
+							<div class="d-flex upload-part pb-3">
 
 								<div class="box1" ngClass="{{dragAreaClass}}">
 									<div class="d-img">
@@ -151,7 +151,7 @@
 						</div>
 					
 					</div>
-					<div class="col-sm-12 pb-3 d-flex justify-content-end next_button_container">
+					<div class="col-sm-12 pb-3 pt-1 d-flex justify-content-end next_button_container">
 						<button type="button" (click)="incorrectFile(content)" class="next-button">Next</button>
 					</div>
 				</div>
@@ -198,7 +198,8 @@
 												<label class="form-check-label" for="displayNameInput{{ith}}" >
 													<input type="checkbox" id="displayNameInput{{ith}}" 
 													class="form-check-input" 
-													[(ngModel)]="displayNameChecked[ith]">
+													[(ngModel)]="displayNameChecked[ith]"
+													(change)="removeUncheck($event,ith)">
 													<span class="checkmark"></span>
 													{{fields}}
 												</label>
@@ -207,9 +208,9 @@
 
 										<div class="col-auto d-flex column_mapping_field ">
 											<div class="">
-												<select class="form-select input-form" aria-label="Select column or attribute" [ngClass]="{'select-placeholder':!selectedValue}"
+												<select class="form-select input-form" aria-label="Select column or attribute" [(ngModel)]="selectedCustomFields[ith]" [ngClass]="{'select-placeholder':!selectedValue}"
 												    (change)="onSelectMapping($event.target.value, ith)">
-													<option [disabled]="true" [selected]="true" [hidden]="true">Select column or attribute</option>
+													<option [disabled]="true" [selected]="true" [hidden]="true" [value]="''">Select column or attribute</option>
 													<option *ngFor="let fieldData of customFieldData;let i = index" [disabled]="!displayNameChecked[ith] || fieldData?.isSelected == true" [value]="fieldData.ActuallName">{{fieldData.displayName}}
 													</option>
 												  </select>
@@ -228,7 +229,7 @@
 											<div class="col-auto d-flex align-items-center active-toggle">
 												<label for="toggle-switch{{ith}}" class="m-0 switch">
 													<input type="checkbox" class="form-check-input" id="toggle-switch{{ith}}"
-														[disabled]="purpose==='Add new contact only' || !displayNameChecked[ith]"
+														[disabled]="purpose==='Add new contact only' || !displayNameChecked[ith] || selectedCustomFields[ith] =='Phone_number'"
 														[(ngModel)]="toggleOverride[ith]">
 													<span [ngClass]="{'toggle-disabled-slider':purpose==='Add new contact only'
 													       || !displayNameChecked[ith]}" class="slider" >
@@ -262,7 +263,7 @@
 				<!-- review upload step 3 -->
 				<div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">				
 					<div class="py-4 row">
-						<div class="col-lg-12 py-5 d-flex">
+						<div class="col-lg-12 py-3 d-flex">
 							<div class="col-sm-2"></div>
 							<div class=" col-sm-4 review-left-part">
 								<div class="card">

@@ -75,14 +75,15 @@
 				<div class="p-2 sidebar-head">
 					<div class="parent d-flex justify-content-center w-100">
 						<div class="parent-img">
-							<img *ngIf="!items.contact_profile" src="../../../../assets/img/teambox/no-dp.svg">
+							<div *ngIf="!items.contact_profile" class="inti">{{intials}}</div>
+							<!-- <img *ngIf="!items.contact_profile" src="../../../../assets/img/teambox/no-dp.svg"> -->
 							<img *ngIf="items.contact_profile" id="profile-pic" src="{{items.contact_profile}}?{{randomNumber}}"/>
-							<div class="d-flex justify-content-center picture-crop-button-container">
+							<!-- <div class="d-flex justify-content-center picture-crop-button-container">
 								<div class="text-center picture-crop-button">
 								 <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
 								 <label for="myFileInput" class="m-0 fileLabel" ><img class="set-profile-pic" src="../../../../assets/img/profile/Fill 4.svg" /></label>    
-								</div>
-							</div>						
+								</div> 
+							</div>		-->				
 						</div>
 					
 						<div class="child">
@@ -129,7 +130,7 @@
 	
 						<h5> <img class="m-0" data-bs-toggle="modal" data-bs-target="#edittag" src="../../../../assets/img/teambox/edit-icon.svg">Tag</h5>
 						<div class="child4 d-flex">
-							<h6 class="mt-2">{{items.tag?.replaceAll(',', ' | ')}}</h6>
+							<h6 class="mt-2">{{items.tag_names?.replaceAll(',', ' | ')}}</h6>
 						</div>
 					</div>
 					</div>
@@ -608,6 +609,11 @@
 					<ng-multiselect-dropdown *ngIf="item.type == 'Multi Select'" class="multiselect"  [formControlName]="item.ActuallName" 
 					[settings]="dropdownSettings" [data]="item?.options" >
 				</ng-multiselect-dropdown>
+				<div *ngIf="productForm.get(item.ActuallName)?.touched && productForm.get(item.ActuallName)?.hasError('required')"
+				class="text-danger">
+				! {{item.displayName}} is required.
+			</div>
+
 				</div>
 			</div>
 
@@ -653,13 +659,13 @@
 								<div class="py-2 px-0 form-check">
 									<label class="m-0 form-check-label" for="flexCheckDefault{{i}}">
 									<input class="form-check-input" type="checkbox" 
-									       [checked]="getFilterTags?.includes(tag.ID)"
+									       [checked]="getFilterTags?.includes(tag.ID.toString())"
 									       id="flexCheckDefault{{i}}"
 										   [ngModel]="checkedTags.includes(tag.ID)"
             							   (ngModelChange)="updateTags(tag.ID, $event)">
 										   <span class="checkmark"></span>
 									<span [ngClass]="{'color-dots': true}" [style.background]="tag.TagColour"></span>
-									 {{tag.TagName}}
+									 {{tag.TagName}} 
 							    	</label>
 								</div>
 						</div>
@@ -705,8 +711,8 @@
 	<div class="modal fade" tabindex="-1" id="importmodal" role="dialog" data-bs-backdrop="static">
         <div class="modal-dialog importsModal" role="document">
             <div class="modal-content" id="model">
-                <div class="modal-body alertmessage" id="model-message">
-                <sb-import (getContact)="getContact()" (closeImportPopup)="closeImport()">					
+                <div class="modal-body alertmessage h-100" id="model-message">
+                <sb-import *ngIf = "isImport"(getContact)="getContact()" (closeImportPopup)="closeImport()">					
 				</sb-import>
                 </div>
             </div>
