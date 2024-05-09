@@ -27,13 +27,15 @@ const defaultaction = async (req, res) => {
         isContactAdd = req.body.isContactAdd
         created_at = new Date();
         pausedTill = req.body.pausedTill
+        defaultAdminUid = req.body?.defaultAdminUid
+        defaultAdminName = req.body?.defaultAdminName
 
         console.log(req.body)
         var select = await db.excuteQuery(val.defaultactiondetails, [SP_ID])
         console.log(select)
         if (select.length != 0) {
 
-            var defaultValues = [req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at,req.body.pauseAgentActiveTime, req.body.pauseAutoReplyTime, req.body.SP_ID, select[0]?.id]
+            var defaultValues = [req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at,req.body.pauseAgentActiveTime, req.body.pauseAutoReplyTime,defaultAdminUid ,defaultAdminName ,req.body.SP_ID, select[0]?.id]
             var updateddefaultData = await db.excuteQuery(val.updatedefaultactionDetails, defaultValues)
 
             res.status(200).send({
@@ -42,7 +44,7 @@ const defaultaction = async (req, res) => {
                 status: 200
             });
         } else {
-            var defaultinsert = [req.body.SP_ID, req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at, req.body.pauseAgentActiveTime, req.body.pauseAutoReplyTime]
+            var defaultinsert = [req.body.SP_ID, req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at, req.body.pauseAgentActiveTime, req.body.pauseAutoReplyTime,defaultAdminUid ,defaultAdminName]
             var defaultaction = await db.excuteQuery(val.defaultinsertDetails, [[defaultinsert]])
 
             res.status(200).send({
@@ -287,14 +289,15 @@ const rotingsave = async (req, res) => {
         isMissChatAssigContactOwner = req.body.isMissChatAssigContactOwner
         manualAssignUid = req.body.manualAssignUid
         SpecificUserUid = req.body.SpecificUserUid
-
+        adminName = req.body?.adminName
+        adminUid = req.body?.adminUid
 
         var select = await db.excuteQuery(val.routingrule, [SP_ID])
        // console.log("select")
         if (select.length != 0) {
            // console.log(req.body.SpecificUserUid ," select.length != 0 "    ,req.body.manualAssignUid)
 
-            var routingValues = [req.body.contactowner, req.body.assignagent, req.body.broadcast, req.body.roundrobin, req.body.conversationallowed, req.body.manualassign, req.body.assignuser, req.body.timeoutperiod, req.body.isadmin, req.body.assignspecificuser, req.body.selectuser, req.body.isMissChatAssigContactOwner, created_at, manualAssignUid, SpecificUserUid, req.body.SP_ID,]
+            var routingValues = [req.body.contactowner, req.body.assignagent, req.body.broadcast, req.body.roundrobin, req.body.conversationallowed, req.body.manualassign, req.body.assignuser, req.body.timeoutperiod, req.body.isadmin, req.body.assignspecificuser, req.body.selectuser, req.body.isMissChatAssigContactOwner, created_at, manualAssignUid, SpecificUserUid,adminName,adminUid, req.body.SP_ID]
             //console.log(routingValues)
 
             var updatedroutingtData = await db.excuteQuery(val.routingdetails, routingValues)
@@ -305,7 +308,7 @@ const rotingsave = async (req, res) => {
                 status: 200
             });
         } else {
-            var routinginsert = [SP_ID, contactowner, assignagent, broadcast, roundrobin, conversationallowed, manualassign, assignuser, timeoutperiod, isadmin, assignspecificuser, selectuser, isMissChatAssigContactOwner, created_at, manualAssignUid, SpecificUserUid]
+            var routinginsert = [SP_ID, contactowner, assignagent, broadcast, roundrobin, conversationallowed, manualassign, assignuser, timeoutperiod, isadmin, assignspecificuser, selectuser, isMissChatAssigContactOwner, created_at, manualAssignUid, SpecificUserUid,adminName,adminUid]
             var insertedRoutes = await db.excuteQuery(val.insertRouteQuery, [[routinginsert]])
 
             res.status(200).send({
