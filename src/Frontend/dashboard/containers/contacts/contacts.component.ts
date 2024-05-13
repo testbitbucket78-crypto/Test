@@ -373,15 +373,12 @@ onChangePage(pageOfItems: any) {
   this.pageOfItems = pageOfItems;
 }
 
-
-  // multiselect settings
   onItemSelect(item: any) {
     console.log('onItemSelect', item);
 }
 onSelectAll(items: any) {
     console.log('onSelectAll', items);
 }
-
     
   quantities() : FormArray {  
     return this.productForm.get("quantities") as FormArray  
@@ -412,7 +409,6 @@ onSelectAll(items: any) {
 	  this.OptedIn = event.target.checked;
     this.productForm.value.OptedIn = this.OptedIn ? 'Yes' : 'No';
 	}
-
 
 	open(content:any) {
 		this.modalService.open(content,{windowClass:'contact-modal'});
@@ -1061,7 +1057,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   closeImport(){    
     this.isImport =false;
     $("#importmodal").modal('hide');
-    this.isImport =true;
+    setTimeout(()=>{this.isImport =true;},100)
   }
 
   

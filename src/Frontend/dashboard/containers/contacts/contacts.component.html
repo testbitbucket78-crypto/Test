@@ -17,13 +17,13 @@
 		</div>
 		<div class="d-flex">
 			<div id="export-btn">
-				<button class="btn-9 " (click)="clearFilters()" [disabled]="settingsService.checkRoleExist('9')"> <img
+				<button class="btn-9 " (click)="clearFilters()" > <img
 						src="../../../../assets/img/export.svg"> Clear Filters</button>
-				<button class="btn-9 " [disabled]="checkedConatct.length==0" (click)="isShowColumn = true" [disabled]="settingsService.checkRoleExist('9')"> <img
+				<button class="btn-9 " [disabled]="checkedConatct.length==0" (click)="isShowColumn = true" > <img
 						src="../../../../assets/img/export.svg"> Column Prefrences</button>
 			</div>
 			<div id="export-btn">
-				<button class="btn-9 "  (click)="openExport(content)" [disabled]="settingsService.checkRoleExist('9')"> <img
+				<button class="btn-9 "  (click)="openExport(content)" > <img
 						src="../../../../assets/img/export.svg"> Export </button>
 			</div>
 			<div id="import-btn" >
@@ -712,7 +712,7 @@
         <div class="modal-dialog importsModal" role="document">
             <div class="modal-content" id="model">
                 <div class="modal-body alertmessage h-100" id="model-message">
-                <sb-import *ngIf = "isImport"(getContact)="getContact()" (closeImportPopup)="closeImport()">					
+                <sb-import *ngIf = "isImport" (getContact)="getContact()" (closeImportPopup)="closeImport()">					
 				</sb-import>
                 </div>
             </div>
