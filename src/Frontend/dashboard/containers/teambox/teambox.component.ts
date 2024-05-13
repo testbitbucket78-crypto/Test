@@ -38,6 +38,7 @@ routerGuard = () => {
 	@ViewChild('notesSection') notesSection: ElementRef | any; 
 	@ViewChild('chatSection') chatSection: ElementRef | any; 
 	@ViewChild('chatEditor') chatEditor!: RichTextEditorComponent; 
+	@ViewChild('scrollContainer') scrollContainer: ElementRef | any;
 
 	@ViewChild('variableValue', { static: false }) variableValueForm!: NgForm;
 
@@ -132,6 +133,7 @@ routerGuard = () => {
 	showTopNav: boolean = true;
 	SPID = sessionStorage.getItem('SP_ID')
 	TeamLeadId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
+	uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
 	AgentId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
 	AgentName = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name
 	loginAs:any;
@@ -339,7 +341,7 @@ routerGuard = () => {
 					tooltipText: 'Quick Replies',
 					undo: true,
 					click: this.ToggleQuickReplies.bind(this),
-					template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+					template: '<button  style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
 							+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/quick-replies.svg"></div></button>'
 				},
 
@@ -549,12 +551,16 @@ InsertMentionOption(user:any){
 }
 
 ToggleInsertTemplateOption(){
+	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
 	$("#insertmodal").modal('show'); 
+	}
 	}
 
 ToggleAttributesOption(){
+	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
 	this.closeAllModal()
 	$("#atrributemodal").modal('show'); 
+	}
 
 }
 
@@ -574,9 +580,12 @@ selectAttributes(item:any) {
 }
 
 ToggleQuickReplies(){
+	
+	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
 	this.closeAllModal()
 	this.getQuickResponse();
 	$("#quikpopup").modal('show'); 
+	}
 }
 
 
@@ -652,11 +661,13 @@ filterTemplate(temType:any){
 }
   
 ToggleAttachmentBox(){
+	
+	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
 	this.closeAllModal()
 	$("#attachfle").modal('show'); 
 	document.getElementById('attachfle')!.style.display = 'inherit';
 	this.dragAreaClass = "dragarea";
-	
+	}
 }
 sendattachfile() {
     if (this.isAttachmentMedia === false) {
@@ -1211,6 +1222,9 @@ sendattachfile() {
 		let item:any ={};
 		let rangeStart = isNewMessage ? 0 : this.messageRangeStart;
 		let rangeEnd = isNewMessage ? 1 : this.messageRangeEnd;
+		const originalScrollPosition = this.scrollContainer.nativeElement.scrollTop;
+		const originalScrollHeight = this.scrollContainer.nativeElement.scrollHeight;
+	
 		item = selectedInteraction;
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',rangeStart,rangeEnd).subscribe((res:any) =>{
 			let messageList = res.result;
@@ -1258,6 +1272,13 @@ sendattachfile() {
 			item['allmedia'] = [...val, ...item['allmedia']];
 			}
 		})
+
+		if(!isNewMessage){
+			
+		const newScrollHeight = this.scrollContainer.nativeElement.scrollHeight;
+		const scrollDifference = newScrollHeight - originalScrollHeight;
+		this.scrollContainer.nativeElement.scrollTop = originalScrollPosition + scrollDifference;
+		}
 		console.log(this.isMessageCompletedMedia,this.isMessageCompletedNotes,this.isMessageCompletedText)
 	}
 
@@ -2117,6 +2138,13 @@ updateConversationStatus(status:any) {
 		// })
 
 		// });
+		if(status =='Open' && !this.selectedInteraction.assignTo){
+			this.updateInteractionMapping(this.selectedInteraction.InteractionId,this.uid,this.TeamLeadId)
+		}
+
+		if(status =='Resolved' ){
+			this.updateInteractionMapping(this.selectedInteraction.InteractionId,null,this.TeamLeadId)
+		}
 		
 		this.selectedInteraction['interaction_status']=status
 	});
@@ -2596,5 +2624,11 @@ sendMessage(){
 		this.messageRangeEnd = this.messageRangeEnd +30;
 		this.getMessageData(selectedInteraction)
 	}
-		  
+	
+	checkPermission(){
+		console.log(this.selectedInteraction?.assignTo?.AgentId) ;
+		if(this.selectedInteraction?.assignTo?.AgentId != this.uid && this.showChatNotes=='text' ){
+			this.showToaster('only a assinged user can send the message !','error');
+		}
+	}
 }

@@ -2701,3 +2701,17 @@ label span {
 	.conversation_list::-webkit-scrollbar {
 		display: none;
 	}
+
+    .agent-list{
+        margin-left: 200px !important;
+        z-index: 9999999999 !important;
+        position: fixed !important;
+        width: 200px !important;
+        /* min-width: 240px; */
+        margin-top: 65px !important;
+        display: none;
+    }
+
+    .AssignOption .agent-item:hover> .agent-list{
+        display: block !important;
+    }
