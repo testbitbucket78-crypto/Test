@@ -12,7 +12,7 @@ async function isDefaultContactOwner(SP_ID,custid) {
   try {
     let contactOwnerQuery = `SELECT * FROM EndCustomer WHERE customerId =? and SP_ID=? AND uid != NULL and isDeleted !=1`;
     let contactOwner = await db.excuteQuery(contactOwnerQuery, [custid, SP_ID]);
-    let mappingUid = contactOwner[0].uid;
+    let mappingUid = contactOwner[0]?.uid;
     if (contactOwner?.length == 0) {
       let defaultAdminQuery = `SELECT * FROM defaultActions WHERE spid=? AND isDeleted != 1`;
       let defaultAdmin = await db.excuteQuery(defaultAdminQuery, [SP_ID]);

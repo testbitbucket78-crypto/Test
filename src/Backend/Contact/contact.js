@@ -318,8 +318,8 @@ app.post('/importContact', authenticateToken, async (req, res) => {
       try {
 
         let addNewUserOnly = await addOnlynewContact(CSVdata, identifier, SP_ID)
-     
-         sendMailAfterImport(emailId,user,addNewUserOnly?.count)
+
+        sendMailAfterImport(emailId, user, addNewUserOnly?.count)
         res.status(200).send({
           msg: "Contact Added Successfully",
           data: addNewUserOnly,
@@ -348,7 +348,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
         else {
           var upExistContOnlyWithFields = await updateSelectedField(CSVdata, identifier, fields, SP_ID);
         }
-         sendMailAfterImport(emailId,user,0)
+        sendMailAfterImport(emailId, user, 0)
         res.status(200).send({
           msg: "Existing Contact Updated Successfully",
           upExistContOnly: upExistContOnly,
@@ -383,8 +383,8 @@ app.post('/importContact', authenticateToken, async (req, res) => {
 
 
         }
-      
-          sendMailAfterImport(emailId,user,addAndUpdateCont?.count)
+
+        sendMailAfterImport(emailId, user, addAndUpdateCont?.count)
         res.status(200).send({
           msg: "Add and Updated Contact Successfully",
           addAndUpdatewithFields: addAndUpdatewithFields,
@@ -441,7 +441,7 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
 
   try {
     let result;
-    let count =0;
+    let count = 0;
     for (let i = 0; i < CSVdata.length; i++) {
       const set = CSVdata[i];
       const fieldNames = set.map((field) => field.ActuallName).join(', ');
@@ -457,12 +457,12 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
 
       // Ensure db.executeQuery returns a promise
       result = await db.excuteQuery(query, [values, identifierValue, SP_ID]);
-if(result?.affectedRows == 1){
-  count ++;
-}
+      if (result?.affectedRows == 1) {
+        count++;
+      }
 
     }
-    return {result,count};
+    return { result, count };
     // Ensure to handle the returned result outside the loop if needed
   } catch (err) {
     return err;
@@ -559,7 +559,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
       for (let i = 0; i < currentData.length; i++) {
         const { ActuallName, displayName } = currentData[i];
         if (allColumnsData.get(ActuallName) != undefined) {
-          let dataTypeVerification = await isDataInCorrectFormat(allColumnsData.get(ActuallName), ActuallName, displayName, userList, multiSelectValues,TagsVal);
+          let dataTypeVerification = await isDataInCorrectFormat(allColumnsData.get(ActuallName), ActuallName, displayName, userList, multiSelectValues, TagsVal);
 
           if (dataTypeVerification?.isError) {
             reasons.push(dataTypeVerification.reason);
@@ -780,7 +780,7 @@ async function mergeColumnData(SP_ID) {
 }
 
 
-async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, userList, multiSelectValues,TagsList) {
+async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, userList, multiSelectValues, TagsList) {
   try {
     if (!columnDataType) return { isError: false, reason: `${ActuallName} Unknown column data type` };
     const emailFormat = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
@@ -820,7 +820,7 @@ async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, u
       case 'User':
         if (displayName) {
           convertedValue = userList.includes(displayName);
-          console.log("convertedValue" ,convertedValue)
+          console.log("convertedValue", convertedValue)
           return { isError: !convertedValue, reason: `${ActuallName} is invalid contact owner` };
         }
         break;
@@ -828,10 +828,10 @@ async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, u
         if (displayName) {
           let convertedValue;
           if (ActuallName === 'tag') {
-              convertedValue = TagsList.includes(displayName);
-             
+            convertedValue = TagsList.includes(displayName);
+
           } else {
-              convertedValue = multiSelectValues.includes(displayName);
+            convertedValue = multiSelectValues.includes(displayName);
           }
           return { isError: !convertedValue, reason: `${ActuallName} is not exist in list` };
         }
@@ -872,12 +872,12 @@ async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, u
   }
 }
 
-async function getTags(SP_ID){
-  try{
+async function getTags(SP_ID) {
+  try {
     const tags = await db.excuteQuery('SELECT TagName FROM EndCustomerTagMaster WHERE SP_ID=? AND isDeleted != 1', [SP_ID]);
-    
+
     return tags.map(row => row.TagName).flat();
-  }catch (error) {
+  } catch (error) {
     console.error("Error in getTagList:", error);
     return error;
   }
@@ -954,6 +954,7 @@ app.post('/blockedContact', authenticateToken, (req, res) => {
     if (req.body.isBlocked == 1) {
       blockedQuery = `UPDATE EndCustomer set  isBlocked=?,isBlockedOn=now() ,OptInStatus='No' where customerId=? and SP_ID=?`
     }
+    UnassignedBlockedContact(req.body.customerId, req.query.SP_ID)
     db.runQuery(req, res, blockedQuery, [req.body.isBlocked, req.body.customerId, req.query.SP_ID])
   } catch (err) {
     console.error(err);
@@ -965,6 +966,24 @@ app.post('/blockedContact', authenticateToken, (req, res) => {
   }
 })
 
+async function UnassignedBlockedContact(customerId, spid) {
+  try {
+    let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`,[customerId, spid])
+    let findMappingQuery = `SELECT *
+FROM InteractionMapping
+WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC);`
+
+    let mapping = await db.excuteQuery(findMappingQuery, [customerId, spid]);
+
+    if (mapping?.length > 0) {
+      let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId = -1 where MappingId =?`, [mapping[0]?.MappingId])
+    }
+
+    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`,['empty',getInteraction[0]?.InteractionId,customerId,spid])
+  } catch (err) {
+    console.log("err", err)
+  }
+}
 
 //common method for send email through node mailer
 let transporter = nodemailer.createTransport({
