@@ -345,7 +345,7 @@ const sendCampinMessage = async (req, res) => {
 
         const placeholders = parseMessageTemplate(content);
         if (placeholders.length > 0) {
-         
+
             const results = await removeTags.getDefaultAttribue(placeholders, spid, customerId);
             console.log("results", results)
 
@@ -362,13 +362,16 @@ const sendCampinMessage = async (req, res) => {
         //let channelType = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [spid] 
         let inputDate = new Date(schedule_datetime);
         console.log(formattedTime, inputDate, new Date(formattedTime), new Date(inputDate), new Date(inputDate) <= new Date(formattedTime))
-        if (new Date(inputDate) <= new Date(formattedTime)) {
+
+        const sqlQuery = `SELECT * FROM EndCustomer WHERE customerId=?  and SP_ID=? and isDeleted !=1`;
+        let results = await db.excuteQuery(sqlQuery, [customerId, spid]);
+        console.log(spid, req.body.channel_id, type, messageTo, "****", customerId)
+
+        if (new Date(inputDate) <= new Date(formattedTime) || results[0]?.isBlocked !=1) {
             let messagestatus;
             if (optInStatus == 'Yes') {
-                const sqlQuery = `SELECT OptInStatus FROM EndCustomer WHERE customerId=? and (OptInStatus='Yes' OR OptInStatus=1) and SP_ID=? and isDeleted !=1`;
-                let results = await db.excuteQuery(sqlQuery, [customerId, spid]);
-                console.log(spid, req.body.channel_id, type, messageTo, "****", customerId)
-                if (results?.length > 0) {
+
+                if (results[0]?.OptInStatus == 'Yes' || results[0]?.OptInStatus == '1') {
                     messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
                 }
             } else {
@@ -386,6 +389,10 @@ const sendCampinMessage = async (req, res) => {
             //if(messagestatus =='')
             console.log("messagestatus  " + JSON.stringify(messagestatus?.status))
             return res.send(messagestatus);
+        }else{
+            return res.send({
+                msg : 'time not match Or Contact is Block'
+            });
         }
 
 
@@ -598,7 +605,7 @@ async function insertInteractionAndRetrieveId(custid, sid) {
         // Check if Interaction exists for the customerId
         let rows = await db.excuteQuery(
             'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ',
-            [custid,sid]
+            [custid, sid]
         );
 
         if (rows.length == 0) {
@@ -613,7 +620,7 @@ async function insertInteractionAndRetrieveId(custid, sid) {
             // Check for the maximum created_at date of Message
             let maxdate = await db.excuteQuery(
                 'SELECT max(created_at) into maxdate from Message where interaction_id in (select InteractionId from Interaction where customerId=? and is_deleted !=1 and SP_ID=?)',
-                [custid,sid]
+                [custid, sid]
             );
 
 
@@ -630,7 +637,7 @@ async function insertInteractionAndRetrieveId(custid, sid) {
         // Retrieve the newly inserted or existing Interaction ID
         let InteractionId = await db.excuteQuery(
             'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ORDER BY created_at DESC LIMIT 1',
-            [custid,sid]
+            [custid, sid]
         );
 
         // console.log('Newly inserted or existing Interaction ID:', InteractionId);

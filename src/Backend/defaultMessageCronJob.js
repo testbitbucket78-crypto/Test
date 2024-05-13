@@ -19,10 +19,9 @@ var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, inte
 
 
 async function NoCustomerReplyReminder() {
-  console.log("NoCustomerReplyReminder")
   let defaultMessage = await db.excuteQuery(settingVal.CustomerReplyReminder, [])
-  console.log("NoCustomerReplyReminder" +defaultMessage.length)
-  if (defaultMessage.length > 0) {
+ // console.log("NoCustomerReplyReminder" +defaultMessage.length)
+  if (defaultMessage?.length > 0) {
     for (const message of defaultMessage) {
 
   
@@ -47,16 +46,54 @@ async function NoCustomerReplyReminder() {
   }
 }
 
+let systemMsgQuery=`SELECT
+ic.interaction_status,
+ic.InteractionId,
+ic.customerId,
+ec.channel,
+ec.phone_number AS customer_phone_number,
+dm.*,
+latestmsg.*
+FROM
+Interaction ic
+JOIN EndCustomer ec ON ic.customerId = ec.customerId
+JOIN defaultmessages dm ON dm.SP_ID = ic.SP_ID
+JOIN (
+SELECT 
+    m1.*
+FROM 
+    Message m1
+INNER JOIN (
+    SELECT
+        interaction_id,
+        MAX(updated_at) AS latestMessageDate
+    FROM
+        Message
+    WHERE 
+        (system_message_type_id IS NULL OR system_message_type_id IN (1, 2,3,4,5))
+    GROUP BY 
+        interaction_id
+) m2 ON m1.interaction_id = m2.interaction_id AND m1.updated_at = m2.latestMessageDate
+WHERE 
+    m1.message_direction = 'out'
+) latestmsg ON ic.InteractionId = latestmsg.interaction_id
+WHERE 
+(ic.interaction_status = 'open' OR ic.interaction_status = 'Open Interactions')
+AND ic.is_deleted = 0
+AND dm.title = 'No Customer Reply Timeout'
+AND dm.Is_disable = 1 
+AND latestmsg.updated_at <= DATE_SUB(NOW(), INTERVAL dm.autoreply MINUTE);
+`
 
 
 async function NoCustomerReplyTimeout() {
   try {
-    console.log("NoCustomerReplyTimeout")
-    let CustomerReplyTimeout = await db.excuteQuery(settingVal.noCustomerRqplyTimeOut, [])
-  
+   
+    let CustomerReplyTimeout = await db.excuteQuery(systemMsgQuery, [])  //settingVal.noCustomerRqplyTimeOut
+    console.log("NoCustomerReplyTimeout" + CustomerReplyTimeout)
     if (CustomerReplyTimeout.length > 0) {
       
-    console.log("NoCustomerReplyTimeout" + CustomerReplyTimeout.length)
+   
       for (const msg of CustomerReplyTimeout) {
         //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
         messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,msg.value,msg.link,'101714466262650',msg.channel)
@@ -78,14 +115,16 @@ async function NoCustomerReplyTimeout() {
 
 async function NoAgentReplyTimeOut() {
   try {
-console.log("NoAgentReplyTimeOut")
+
     let noAgentReplydata = await db.excuteQuery(settingVal.noAgentReply, [])
+  //  console.log("NoAgentReplyTimeOut" ,noAgentReplydata)
     if (noAgentReplydata.length > 0) {
-      console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
+    //  console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
       for (const msg of noAgentReplydata) {
         let isWorkingTime = await workingHoursDetails(msg.SP_ID);
-   
+     //   console.log("isWorkingTime"  ,isWorkingTime)
         if (isWorkingTime === true) {
+      //    console.log("time out working hour")
           //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
           messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,msg.value,msg.link,'101714466262650',msg.channel)
           
@@ -102,19 +141,56 @@ console.log("NoAgentReplyTimeOut")
   }
 }
 
+async function isClientActive(spid) {
 
+  return new Promise(async (resolve, reject) => {
+    try {
+
+      const apiUrl = 'https://waweb.stacknize.com/IsClientReady'; // Replace with your API endpoint
+      const dataToSend = {
+        spid: spid
+      };
+
+      const response = await axios.post(apiUrl, dataToSend);
+    //  console.log('Response from API:', response.data);
+
+      resolve(response.data); // Resolve with the response data
+    } catch (error) {
+      console.error('Error:', error.message);
+      reject(error.message); // Reject with the error
+    }
+  });
+
+
+}
 
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
-  console.log("spid, from, type, text, media, phone_number_id, channelType")
-  console.log(spid, from, type, text, media, phone_number_id, channelType)
-  if (channelType == 'WhatsApp Official' || channelType == 1) {
-    console.log("WhatsApp Official")
-    middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
-  } if (channelType == 'WhatsApp Web' || channelType == 2) {
-    console.log("WhatsApp Web")
-    middleWare.postDataToAPI(spid, from, type, text, media)
-  }
+  //console.log("spid, from, type, text, media, phone_number_id, channelType")
+  console.log(spid, from, type, phone_number_id, channelType)
+  try{
+    if (channelType == 'WhatsApp Official' || channelType == 1) {
+
+      let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+      return respose;
+    } if (channelType == 'WhatsApp Web' || channelType == 2) {
+      let clientReady = await isClientActive(spid);
+   
+      if (clientReady.status) {
+        let response = await middleWare.postDataToAPI(spid, from, type, text, media);
+        console.log("response", JSON.stringify(response.status));
+        return response;
+      }
+  
+      else {
+        console.log("isActiveSpidClient returned false for WhatsApp Web");
+        return { status: 404 };
+      }
+  
+    }
+}catch(err){
+  console.log(" err middleware -----" ,err)
+}
 }
 
 // async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {

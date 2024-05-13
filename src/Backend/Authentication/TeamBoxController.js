@@ -136,10 +136,29 @@ const blockCustomer = (req, res) => {
     if (req.body.isBlocked == 1) {
         blockedQuery = `UPDATE EndCustomer SET isBlocked =? ,OptInStatus='No' WHERE customerId =?`
     }
+    UnassignedBlockedContact(customerId, req.body?.SP_ID)
     var values = [[customerId, isBlocked]]
     db.runQuery(req, res, blockedQuery, [isBlocked, customerId])
 }
 
+async function UnassignedBlockedContact(customerId, spid) {
+    try {
+      let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`,[customerId, spid])
+      let findMappingQuery = `SELECT *
+  FROM InteractionMapping
+  WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC);`
+  
+      let mapping = await db.excuteQuery(findMappingQuery, [customerId, spid]);
+  
+      if (mapping?.length > 0) {
+        let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId = -1 where MappingId =?`, [mapping[0]?.MappingId])
+      }
+  
+      let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`,['empty',getInteraction[0]?.InteractionId,customerId,spid])
+    } catch (err) {
+      console.log("err", err)
+    }
+  }
 
 const createInteraction = async (req, res) => {
     try {
@@ -576,12 +595,12 @@ const updateInteractionMapping = async (req, res) => {
     MappedBy = req.body.MappedBy
     is_active = 1
     var values = [[is_active, InteractionId, AgentId, MappedBy]]
-
+   if(AgentId != -1){
     let nameData = await db.excuteQuery(val.assignedNameQuery, [AgentId])
 
     let notifyvalues = [[nameData[0].SP_ID, 'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, new Date()]]
     let notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues])
-
+   }
     db.runQuery(req, res, val.updateInteractionMapping, [values])
 }
 
