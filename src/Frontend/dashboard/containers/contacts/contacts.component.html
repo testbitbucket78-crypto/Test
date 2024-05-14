@@ -19,7 +19,7 @@
 			<div id="export-btn">
 				<button class="btn-9 " (click)="clearFilters()" > <img
 						src="../../../../assets/img/export.svg"> Clear Filters</button>
-				<button class="btn-9 " [disabled]="checkedConatct.length==0" (click)="isShowColumn = true" > <img
+				<button class="btn-9 " (click)="isShowColumn = true" > <img
 						src="../../../../assets/img/export.svg"> Column Prefrences</button>
 			</div>
 			<div id="export-btn">
@@ -597,17 +597,22 @@
 
 			<div>
 				<div *ngFor="let item of filteredCustomFields">
-					<label for="tag">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
+					<label for="tag" *ngIf="item.type != 'Multi Select'">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
 					<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
 					<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'">
-					<input type="datetime" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
+					<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
 					<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
 					<input type="date" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
+					<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
+					<div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
+						<input class="form-control-checkbox" type="checkbox" id="Opted-ins" [formControlName]="item.ActuallName"/>
+						<span>{{item.displayName}}</span>
+					</div>
 					<select *ngIf="item.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
 						<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
 					</select>
 					<ng-multiselect-dropdown *ngIf="item.type == 'Multi Select'" class="multiselect"  [formControlName]="item.ActuallName" 
-					[settings]="dropdownSettings" [data]="item?.options" >
+					[settings]="dynamicDropdownSettings" [data]="item?.options" >
 				</ng-multiselect-dropdown>
 				<div *ngIf="productForm.get(item.ActuallName)?.touched && productForm.get(item.ActuallName)?.hasError('required')"
 				class="text-danger">
