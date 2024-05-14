@@ -72,7 +72,7 @@ export class AcoountSettingsComponent implements OnInit {
 
   constructor( private apiService:SettingsService,public settingsService:SettingsService,private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
 
-  private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com');
+  private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify-staging.stacknize.com');
 
 
   ngOnInit(): void {

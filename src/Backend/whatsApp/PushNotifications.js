@@ -37,7 +37,7 @@ client.on('connect', function(connection) {
 });
 
 //client.connect('ws://localhost:3010/', 'echo-protocol');
-client.connect('ws://52.66.172.213:3010/', 'echo-protocol');
+client.connect('ws://13.126.146.43:3010/', 'echo-protocol');
 function NotifyServer(display_phone_number,updatemessage,message)
 {
   try{

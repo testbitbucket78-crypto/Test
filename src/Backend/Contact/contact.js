@@ -152,7 +152,7 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
 
 app.get('/', async function (req, res) {
   try {
-    let contacts = await db.excuteQuery(val.selectAllContact, [req.query.SP_ID, req.query.SP_ID]);
+    let contacts = await db.excuteQuery(val.selectAllContact, [req.query.SP_ID]);
 
     res.status(200).send({
       result: contacts,
@@ -234,7 +234,7 @@ app.post('/deletContact', authenticateToken, (req, res) => {
 app.get('/getContactById', authenticateToken, (req, res) => {
   try {
     console.log(req.query)
-    db.runQuery(req, res, val.selectbyid, [req.query.SP_ID, req.query.SP_ID, req.query.customerId])
+    db.runQuery(req, res, val.selectbyid, [req.query.SP_ID, req.query.customerId])
   } catch (err) {
     console.error(err);
     db.errlog(err);
@@ -695,7 +695,10 @@ async function writeErrFile(errData, res) {
 
       const fields = [];
       errData[0].data.forEach(entry => {
-        fields.push(entry.ActuallName);
+        // Exclude specific values like SP_ID and displayName
+        if (entry.ActuallName !== 'SP_ID' && entry.ActuallName !== 'displayPhoneNumber') {
+          fields.push(entry.ActuallName);
+        }
       });
       fields.push(...reasonColumns);
 
@@ -953,8 +956,9 @@ app.post('/blockedContact', authenticateToken, (req, res) => {
     console.log(req.body.isBlocked, "req.body.isBlocked == 1", req.body.isBlocked == 1)
     if (req.body.isBlocked == 1) {
       blockedQuery = `UPDATE EndCustomer set  isBlocked=?,isBlockedOn=now() ,OptInStatus='No' where customerId=? and SP_ID=?`
+      UnassignedBlockedContact(req.body.customerId, req.query.SP_ID)
     }
-    UnassignedBlockedContact(req.body.customerId, req.query.SP_ID)
+   
     db.runQuery(req, res, blockedQuery, [req.body.isBlocked, req.body.customerId, req.query.SP_ID])
   } catch (err) {
     console.error(err);
@@ -978,8 +982,10 @@ WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId =
     if (mapping?.length > 0) {
       let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId = -1 where MappingId =?`, [mapping[0]?.MappingId])
     }
-
-    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`,['empty',getInteraction[0]?.InteractionId,customerId,spid])
+console.log('empty',getInteraction[0]?.InteractionId,customerId,spid)
+  
+    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`,['empty',getInteraction[0]?.InteractionId,spid,customerId])
+    console.log("updateStatus",updateStatus)
   } catch (err) {
     console.log("err", err)
   }

@@ -135,8 +135,9 @@ const blockCustomer = (req, res) => {
     let blockedQuery = val.blockCustomerQuery
     if (req.body.isBlocked == 1) {
         blockedQuery = `UPDATE EndCustomer SET isBlocked =? ,OptInStatus='No' WHERE customerId =?`
+        UnassignedBlockedContact(customerId, req.body?.SP_ID)
     }
-    UnassignedBlockedContact(customerId, req.body?.SP_ID)
+  
     var values = [[customerId, isBlocked]]
     db.runQuery(req, res, blockedQuery, [isBlocked, customerId])
 }
@@ -154,7 +155,7 @@ async function UnassignedBlockedContact(customerId, spid) {
         let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId = -1 where MappingId =?`, [mapping[0]?.MappingId])
       }
   
-      let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`,['empty',getInteraction[0]?.InteractionId,customerId,spid])
+      let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`,['empty',getInteraction[0]?.InteractionId,spid,customerId])
     } catch (err) {
       console.log("err", err)
     }
