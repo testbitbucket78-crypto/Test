@@ -277,7 +277,7 @@ export class ImportComponent implements OnInit {
 		if(!e.target.checked){
 		this.mappedFields.forEach((item:any)=>{
 			for(let i=0;i<item.length;i++){
-			if(item[i].ActuallName == this.selectedCustomFields[ith]){
+			if(item[i]?.ActuallName == this.selectedCustomFields[ith]){
 				item.splice(i,1);
 			}
 		}			

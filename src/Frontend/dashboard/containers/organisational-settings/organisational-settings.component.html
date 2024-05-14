@@ -20,7 +20,7 @@
             <div class="w-90">
                 <!-- [ngStyle]="{'background-image': 'url(' + companyimage + '?' + randomNumber + ')'}" -->
                 <div class="profile-img profile-margin-left">
-                    <div class="companyimg">AB</div>
+                    <div class="companyimg">{{intials}}</div>
                 </div>
             </div>
             <button class="account-white-btn mx-1" (click)="patchCompanyForm()" data-bs-toggle="modal" data-bs-target="#companyDetailModal">
@@ -109,7 +109,7 @@
                 <div class="modal-body px-5 pt-0">
                     <div class="d-flex px-3">
                         <div class="profile-img" >
-                            <div class="companyimg">AB</div>
+                            <div class="companyimg">{{intials}}</div>
                         </div>
                         <div class="d-flex justify-content-center picture-crop-button-container">
                             <!-- <div class="text-center picture-crop-button">
