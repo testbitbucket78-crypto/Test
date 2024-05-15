@@ -36,7 +36,7 @@ async function createClientInstance(spid, phoneNo) {
   //   var inPclient = clientSpidInprogress[spid];
 
   //   inPclient.destroy();
-    
+
   //   if (clientSpidInprogress.hasOwnProperty(spid)) {
   //     console.log("clear mapping __________")
   //     delete clientSpidInprogress[spid];
@@ -92,7 +92,7 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-           executablePath: "/usr/bin/google-chrome-stable",
+          executablePath: "/usr/bin/google-chrome-stable",
           // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
@@ -125,30 +125,34 @@ function ClientInstance(spid, authStr, phoneNo) {
 
       let inc = 0;
       client.on("qr", (qr) => {
-        try{
-        // Generate and scan this code with your phone
-        //clientSpidInprogress[[spid]] = client;
-        console.log("QR CODE top", new Date())
-        console.log("QR RECEIVED", qr);
-        inc++;
-        console.log("inc: " + inc);
-    
-        if (inc > 5) {
-          console.log("Destroying client..." + client.authStrategy.userDataDir);
-          client.destroy();
-          notify.NotifyServer(phoneNo, false, 'QR generation timed out. Plese re-open account settings and generate QR code')
-          resolve({ status: 400, value: 'QR is expired' });
+        try {
+          // Generate and scan this code with your phone
+          //clientSpidInprogress[[spid]] = client;
+          console.log("QR CODE top", new Date())
+          console.log("QR RECEIVED", qr);
+          inc++;
+          console.log("inc: " + inc);
+
+          if (inc > 5) {
+            console.log("Destroying client..." + client.authStrategy.userDataDir);
+            client.destroy();
+            notify.NotifyServer(phoneNo, false, 'QR generation timed out. Plese re-open account settings and generate QR code')
+            resolve({ status: 400, value: 'QR is expired' });
+          }
+          if (!qr.startsWith(undefined)) {
+            console.log("Above notify of QR", new Date())
+            notify.NotifyServer(phoneNo, false, qr)
+            console.log("Below notifyof QR", new Date())
+          } else {
+            qr = qr.replace('undefined,', '');
+            notify.NotifyServer(phoneNo, false, qr)
+            console.log("Else undefined QR", new Date())
+          }
+          resolve({ status: 200, value: qr });
+        } catch (err) {
+          console.log("err QR ............");
+          console.log(err)
         }
-        if(!qr.startsWith(undefined)){
-        console.log("Above notify of QR", new Date())
-        notify.NotifyServer(phoneNo, false, qr)
-        console.log("Below notifyof QR", new Date())
-        }
-        resolve({ status: 200, value: qr });
-      }catch(err){
-        console.log("err QR ............");
-        console.log(err)
-      }
       });
       client.on('ready', async () => {
 
@@ -571,7 +575,7 @@ async function savelostChats(message, spPhone, spid) {
       let message_media = ""           //Type
       let Type = message.type
       let contactName = message._data.notifyName !== '' ? message._data.notifyName : endCustomer; //contactName
-    
+
       if (message.hasMedia) {
         const media = await message.downloadMedia();
 

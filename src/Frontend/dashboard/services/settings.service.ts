@@ -328,15 +328,15 @@ const headers = new HttpHeaders({
     return this.http.post<any>(`${this.API_URL}/editTeam/`,data)
   }
   craeteQRcode(spid:any): Observable<any> {
-    return this.http.post<any>('https://waweb-staging.stacknize.com/craeteQRcode',spid);
+    return this.http.post<any>('https://waweb.stacknize.com/craeteQRcode',spid);
   }
 
   clientAuthenticated(spid:any):Observable<any> {
-    return this.http.post<any>('https://waweb-staging.stacknize.com/IsClientReady',spid);
+    return this.http.post<any>('https://waweb.stacknize.com/IsClientReady',spid);
   
 }
    getSPPhoneNumber(uid:any):Observable<any> {
-    return this.http.get<any>(`https://authapi-staging.stacknize.com/users/${uid}`);
+    return this.http.get<any>(`https://authapi.stacknize.com/users/${uid}`);
    }
 
    
