@@ -8,7 +8,7 @@ import { billingDetail, billingDetailResponse,holidayData, companyDetail, compan
 })
 
 export class SettingsService {
-  API_URL:string='https://settings-staging.stacknize.com';
+  API_URL:string='https://settings.stacknize.com';
   token = 'cXlkZE04VzM3MTVaSkNwWlhINVlDNEY3eEJGV1V0S21FMGROaTJFWg==';
   subprivilages!:any;
 

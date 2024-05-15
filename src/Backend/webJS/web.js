@@ -30,22 +30,22 @@ async function createClientInstance(spid, phoneNo) {
     console.log("Client found in memory map and is ready");
     return { status: 201, value: 'Client is ready!' };
   }
-  if (isInProgressSpidQR(spid)) {
-    try{
-    console.log("Client qr generation inprogress");
-    var inPclient = clientSpidInprogress[spid];
+  // if (isInProgressSpidQR(spid)) {
+  //   try{
+  //   console.log("Client qr generation inprogress");
+  //   var inPclient = clientSpidInprogress[spid];
 
-    inPclient.destroy();
+  //   inPclient.destroy();
     
-    if (clientSpidInprogress.hasOwnProperty(spid)) {
-      console.log("clear mapping __________")
-      delete clientSpidInprogress[spid];
-    }
-  }catch(err){
-    console.log("ERR isInProgressSpidQR");
-    console.log(err)
-  }
-  }
+  //   if (clientSpidInprogress.hasOwnProperty(spid)) {
+  //     console.log("clear mapping __________")
+  //     delete clientSpidInprogress[spid];
+  //   }
+  // }catch(err){
+  //   console.log("ERR isInProgressSpidQR");
+  //   console.log(err)
+  // }
+  // }
 
   // delete chrome process
   if (clientPidMapping.hasOwnProperty(spid)) {
@@ -127,7 +127,7 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on("qr", (qr) => {
         try{
         // Generate and scan this code with your phone
-        clientSpidInprogress[[spid]] = client;
+        //clientSpidInprogress[[spid]] = client;
         console.log("QR CODE top", new Date())
         console.log("QR RECEIVED", qr);
         inc++;
@@ -139,9 +139,11 @@ function ClientInstance(spid, authStr, phoneNo) {
           notify.NotifyServer(phoneNo, false, 'QR generation timed out. Plese re-open account settings and generate QR code')
           resolve({ status: 400, value: 'QR is expired' });
         }
+        if(!qr.startsWith(undefined)){
         console.log("Above notify of QR", new Date())
         notify.NotifyServer(phoneNo, false, qr)
         console.log("Below notifyof QR", new Date())
+        }
         resolve({ status: 200, value: qr });
       }catch(err){
         console.log("err QR ............");

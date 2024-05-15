@@ -8,7 +8,7 @@ import { authChangePassword, roleName ,teamName, userActiveStatus ,savePlan, pro
 })
 export class ProfileService {
 
-  API_URL:string='https://settings-staging.stacknize.com';
+  API_URL:string='https://settings.stacknize.com';
   private profilePictureSubject: BehaviorSubject<string>;
   public profilePicture$: Observable<string>;
 

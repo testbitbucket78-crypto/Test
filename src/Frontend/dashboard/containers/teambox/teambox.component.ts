@@ -23,7 +23,7 @@ providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiP
 
 export class TeamboxComponent implements  OnInit {
 
-	private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify-staging.stacknize.com/');
+	private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com/');
 
 	incomingMessage: string = '';
 
