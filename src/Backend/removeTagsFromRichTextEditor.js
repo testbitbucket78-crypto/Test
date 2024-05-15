@@ -108,6 +108,11 @@ function convertHTML(htmlString) {
     result = result.replace(/<strong>(.*?)<\/strong>/g, '*$1*');
     // Replace <em> tags with underscores
     result = result.replace(/<em>(.*?)<\/em>/g, '_$1_');
+    //Replace attributes tag
+    // result = result.replace(
+    //   /<span style="color: rgb\(0, 0, 0\);">(.*?)<\/span>/g,
+    //   ''
+    // );
     // Replace <span> tags with strikethrough
     result = result.replace(/<span.*?>\s*(.*?)\s*<\/span>/g, '~$1~');
     // Remove any remaining HTML tags
@@ -186,9 +191,9 @@ function convertHTML(htmlString) {
    // '<p><strong>bold</strong>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <em>italic&nbsp; &nbsp;<span style="text-decoration: line-through;">strickthrough&nbsp;</span>&nbsp; &nbsp; </em>,</p><p><strong>Hi This is testing of bold itallic strickthrough&nbsp;</strong><br><em>italic itallic dhsfjdjfvb wisdjisd dkiiehfnjikdhn</em><br><span style="text-decoration: line-through;">strickfjd wskdjxiswkhcndi hswjd</span></p><p></p>';
   const modifiedString = modifyString(originalString);
   
-  console.log(modifiedString);
+  // console.log(modifiedString);
   
-  console.log(convertHTML(removeEmptyTags(modifiedString)));
+  // console.log(convertHTML(removeEmptyTags(modifiedString)));
 
   async function removeTagsFromMessages(originalString){
     const modifiedString = modifyString(originalString);
