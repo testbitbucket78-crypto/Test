@@ -195,10 +195,11 @@
                                
                                 <div class="d-flex flex-column billing-form-row">
                                     <label>Field Type </label>
-                                    <select name="type" id="type" formControlName="type" (change)="onInputChange()">
+                                    <select name="type" id="type" formControlName="type" (change)="onInputChange()" [disabled]="selectedCustomField">
                                         <option *ngFor="let type of types" [value]="type">
                                             {{type}}</option>
-                                    </select>                                                       
+                                    </select>
+                                    <div *ngIf="selectedCustomField" class="error">Please Note: Field Type once selected cannot be edited later.</div>                                                       
                                 </div>
                                 <div *ngIf="customFieldForm.get('type')?.value == 'Select' || customFieldForm.get('type')?.value == 'Multi Select'" class="select-options">
                                     <div  *ngFor="let option of addCustomField; let ith = index" class="d-flex flex-column">

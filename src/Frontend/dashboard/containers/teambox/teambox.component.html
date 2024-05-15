@@ -119,7 +119,7 @@
 					<div class="custom_row">
 						<div class=" left_part">
 							<div class="user_info">
-								<p class="user_name">{{selectedInteraction.Name.substring(0 ,15)}}</p>
+								<p class="user_name">{{selectedInteraction.Name.substring(0 ,15)}}  {{selectedInteraction.isBlocked}}</p>
 								<p *ngIf="selectedInteraction.channel=='WhatsApp Official'" class="user_from mt-2"><img
 										class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />WhatsApp Official
 								</p>
@@ -136,7 +136,7 @@
 									*ngIf="selectedInteraction?.progressbar?.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72"
 									style="margin:0 8px"
 									[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : 'drop-down-btn red-color'"
-									(click)="toggleConversationStatusOption()">
+									(click)="toggleConversationStatusOption()" [disabled]="selectedInteraction.isBlocked==1">
 									<img *ngIf="selectedInteraction.interaction_status=='Resolved'" class="icon"
 										src="/assets/img/teambox/checked_icon.png" />
 									{{selectedInteraction.interaction_status}}
@@ -186,10 +186,16 @@
 								<div *ngIf="ShowAssignOption" class="popup-dialog AssignOption">
 									<p class="label">Assign To</p>
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,null,TeamLeadId)">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,-1,TeamLeadId)">
 										<span class="text-capitalize initials"> U </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Unassigned</span>
+									</p>
+									<p class="d-flex align-items-center px-2 py-1" 
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)">
+										<span class="text-capitalize initials"> M </span>
+										<span key={k}>
+											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Myself</span>
 									</p>
 									<div class="agent-item">
 									<p class="d-flex align-items-center px-2 py-1">
@@ -225,7 +231,7 @@
 							<span>Let’s start a conversation through a message</span>
 						</div>
 						<div *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList?.length>0"
-							class="conversation_list chat" #chatSection #scrollContainer>
+							class="conversation_list chat"  #chatSection>
 							<div class="older-message" (click)="getOlderMessages(selectedInteraction)" *ngIf="!(isMessageCompletedMedia && isMessageCompletedNotes && isMessageCompletedText)">Click here to get older messages</div>
 							<div *ngFor="let messageGroup of selectedInteraction?.messageList; let i = index" id={{i}}
 								class="conversation_list_inner_box">

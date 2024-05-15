@@ -2143,7 +2143,7 @@ updateConversationStatus(status:any) {
 		}
 
 		if(status =='Resolved' ){
-			this.updateInteractionMapping(this.selectedInteraction.InteractionId,null,this.TeamLeadId)
+			this.updateInteractionMapping(this.selectedInteraction.InteractionId,-1,this.TeamLeadId)
 		}
 		
 		this.selectedInteraction['interaction_status']=status

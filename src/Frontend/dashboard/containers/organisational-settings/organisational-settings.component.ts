@@ -107,7 +107,7 @@ countryCodes = [
 
   fileName: any; 
   selectedPreview: string = '';
-  
+  intials: string = '';  
   constructor(private _settingsService:SettingsService,
     public settingsService:SettingsService,private fb: FormBuilder,private apiService: SettingsService, private _teamboxService: TeamboxService) {     
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
@@ -338,6 +338,7 @@ hideToaster(){
       if(result){
         this.companyData = result?.companyDetail[0];
         this.companyimage=result?.companyDetail[0].profile_img;
+        this.intials = this.settingsService.getInitials(this.companyData?.Company_Name)
       }
       console.log(this.companyimage);
       console.log(this.companyData);

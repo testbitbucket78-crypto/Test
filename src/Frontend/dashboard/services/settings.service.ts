@@ -52,6 +52,18 @@ export class SettingsService {
     }
   }
 
+  getInitials(name:any){
+    let intials ='';
+    if(name){
+      let words = name.split(' ');
+      let inti = words[0][0] + (words[1] ? (words[1].trim())[0] :'');
+      intials =inti;
+    }else{
+      intials ='';
+    }
+    return intials;
+  }
+
   getCompanyDetailData(spId: number): Observable<companyDetailResponse> {
     return this.http.get<companyDetailResponse>(`${this.API_URL}/companyDetail/${spId}`);
   }
