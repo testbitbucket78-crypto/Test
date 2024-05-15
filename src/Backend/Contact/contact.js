@@ -10,6 +10,7 @@ const path = require("path");
 const nodemailer = require('nodemailer');
 const awsHelper = require('../awsHelper')
 const { Key } = require("protractor");
+const axios = require('axios')
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
@@ -533,7 +534,59 @@ async function updateContact(CSVdata, identifier, SP_ID) {
   }
 
 }
+async function getHeadersArray(spid) {
+  try {
 
+ 
+    let getfields = await db.excuteQuery(val.getcolumn, [spid]);
+
+
+    // Update fields based on ActuallName
+    const updatedFields = getfields.map(field => {
+      switch (field.ActuallName) {
+        case 'Name':
+          field.type = 'Text';
+          field.mandatory = 1;
+          field.displayName = 'Name'
+          break;
+        case 'Phone_number':
+          field.type = 'Number';
+          field.mandatory = 1;
+          field.displayName = 'Phone Number'
+          break;
+        case 'emailId':
+          field.type = 'Text';
+          field.mandatory = 0;
+          field.displayName = 'Email'
+          break;
+        case 'OptInStatus':
+          field.type = 'Switch';
+          field.mandatory = 0;
+          field.displayName = 'Message Opt-in'
+          break;
+        case 'tag':
+          field.type = 'Multi Select';
+          field.mandatory = 0;
+          field.displayName = 'Tag'
+          break;
+        case 'ContactOwner':
+          field.type = 'User';
+          field.mandatory = 1;
+          field.displayName = 'Contact Owner'
+          break;
+        default:
+          // No changes required for other ActuallName values
+          break;
+      }
+      return field; // Return the updated field object
+    })
+
+    return updatedFields;
+  } catch (error) {
+    console.error(error);
+
+  }
+}
 
 app.post('/verifyData', authenticateToken, async (req, res) => {
   try {
@@ -551,7 +604,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
     let userList = await getUserList(SP_ID)
     let multiSelectValues = await getMultiSelectValues(SP_ID)
     let TagsVal = await getTags(SP_ID)
-
+    let headersArray = await getHeadersArray(SP_ID);
     for (let j = 0; j < importedData.length; j++) {
       const currentData = importedData[j];
       let phone;
@@ -644,7 +697,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
       }
 
 
-      let skipedContact = await writeErrFile(errData, res)
+      let skipedContact = await writeErrFile(errData, res, headersArray)
       res.status(200).send({
         newCon: newCon,
         upCont: upCont,
@@ -652,7 +705,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
         importData: importData
       });
     } else {
-      let skipedContact = await writeErrFile(errData, res)
+      let skipedContact = await writeErrFile(errData, res, headersArray)
       res.status(200).send({
         newCon: 0,
         upCont: 0,
@@ -670,14 +723,19 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
   }
 });
 
-async function writeErrFile(errData, res) {
+async function writeErrFile(errData, res, headersArray) {
   try {
     if (errData.length !== 0) {
       let maxReasonCount = 0;
       const formattedErrData = errData.map(error => {
         const formattedEntry = {};
         error.data.forEach(entry => {
-          formattedEntry[`${entry.ActuallName}`] = entry.displayName;
+          const matchedHeader = headersArray.find(header => header.ActuallName === entry.ActuallName);
+          if (matchedHeader) {
+            formattedEntry[matchedHeader.displayName] = entry.displayName;
+          } else {
+            formattedEntry[entry.displayName] = entry.displayName;
+          }
         });
         if (Array.isArray(error.reason)) {
           error.reason.forEach((reason, index) => {
@@ -697,11 +755,16 @@ async function writeErrFile(errData, res) {
       errData[0].data.forEach(entry => {
         // Exclude specific values like SP_ID and displayName
         if (entry.ActuallName !== 'SP_ID' && entry.ActuallName !== 'displayPhoneNumber') {
-          fields.push(entry.ActuallName);
+          const matchedHeader = headersArray.find(header => header.ActuallName === entry.ActuallName);
+          if (matchedHeader) {
+            fields.push(matchedHeader.displayName);
+          } else {
+            fields.push(entry.displayName);
+          }
         }
       });
-      fields.push(...reasonColumns);
 
+      fields.push(...reasonColumns);
 
       const json2csvParser = new Parser({ fields });
       const csv = json2csvParser.parse(formattedErrData);
@@ -712,6 +775,7 @@ async function writeErrFile(errData, res) {
         }
         console.log('Error file saved');
       });
+
       res.attachment("CSVerr.csv");
       return errData;
     }
@@ -958,7 +1022,7 @@ app.post('/blockedContact', authenticateToken, (req, res) => {
       blockedQuery = `UPDATE EndCustomer set  isBlocked=?,isBlockedOn=now() ,OptInStatus='No' where customerId=? and SP_ID=?`
       UnassignedBlockedContact(req.body.customerId, req.query.SP_ID)
     }
-   
+
     db.runQuery(req, res, blockedQuery, [req.body.isBlocked, req.body.customerId, req.query.SP_ID])
   } catch (err) {
     console.error(err);
@@ -972,7 +1036,7 @@ app.post('/blockedContact', authenticateToken, (req, res) => {
 
 async function UnassignedBlockedContact(customerId, spid) {
   try {
-    let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`,[customerId, spid])
+    let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`, [customerId, spid])
     let findMappingQuery = `SELECT *
 FROM InteractionMapping
 WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC);`
@@ -982,10 +1046,10 @@ WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId =
     if (mapping?.length > 0) {
       let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId = -1 where MappingId =?`, [mapping[0]?.MappingId])
     }
-console.log('empty',getInteraction[0]?.InteractionId,customerId,spid)
-  
-    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`,['empty',getInteraction[0]?.InteractionId,spid,customerId])
-    console.log("updateStatus",updateStatus)
+    console.log('empty', getInteraction[0]?.InteractionId, customerId, spid)
+
+    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, ['empty', getInteraction[0]?.InteractionId, spid, customerId])
+    console.log("updateStatus", updateStatus)
   } catch (err) {
     console.log("err", err)
   }

@@ -1,8 +1,4 @@
-"Name","Phone_number","emailId","reason_1","reason_2"
-"343543543","9.18E+11","akashsaxena@gmail.com","Name contains non-alphabetic characters","Phone_number is not a valid"
-"Qar","9.20E+11",,"Phone_number is not a valid",
-"Pawan ee sharma","9.18E+11","Paw","Phone_number is not a valid","emailId is not a valid email address"
-"Raunakerr","JDWJG","raun","Phone_number is not a valid","emailId is not a valid email address"
-"Rishabh","9.14E+11","akashsaxena@gmail.com","Phone_number is not a valid",
-"Pawan sharma","9.18E+11","Paw","Phone_number is not a valid","emailId is not a valid email address"
-"Palak","91 7018278328",,"Phone_number is not a valid",
+"Name","Phone Number","Email","Tag","reason_1","reason_2","reason_3"
+"vijay","9876473632","amansharma@gmail.com","Two","tag is not exist in list",,
+"Pawan sharma","7618157986","Pawa","Tag","emailId is not a valid email address","tag is not exist in list",
+"Raunak","6456","raun","One","Phone_number is not a valid","emailId is not a valid email address","tag is not exist in list"

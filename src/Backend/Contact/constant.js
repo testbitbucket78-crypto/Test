@@ -135,10 +135,153 @@ ActuallName
 ORDER BY 
 custom_order, sort_order;`
 
-
+let getcolumn = `SELECT 
+displayName,
+ActuallName,
+type,
+mandatory,
+status,
+id,
+created,
+updated,
+description,
+dataTypeValues
+FROM 
+(SELECT 
+    'Name' AS displayName,
+    'Name' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    1 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    'Phone_number' AS displayName,
+    'Phone_number' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    2 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    'emailId' AS displayName,
+    'emailId' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    3 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    'OptInStatus' AS displayName,
+    'OptInStatus' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    4 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    'ContactOwner' AS displayName,
+    'ContactOwner' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    5 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    'tag' AS displayName,
+    'tag' AS ActuallName,
+    'varchar' AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    6 AS sort_order,
+    0 AS custom_order
+UNION ALL
+SELECT 
+    column_name AS displayName,
+    column_name AS ActuallName,
+    data_type AS type,
+    1 AS mandatory,
+    1 AS status,
+    0 AS id,
+    "" AS created,
+    "" AS updated,
+    "" AS description,
+    "" AS dataTypeValues,
+    7 AS sort_order,
+    0 AS custom_order
+FROM 
+    information_schema.columns
+WHERE 
+    table_name = 'EndCustomer' 
+    AND column_name NOT LIKE '%column%' 
+    AND column_name NOT IN (
+        'created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at',
+        'isBlockedOn', 'isBlocked', 'channel', 'displayPhoneNumber', 'countryCode',
+        'IsTemporary', 'contact_profile', 'InstagramId', 'facebookId', 'Country',
+        'state', 'city', 'pincode', 'address', 'sex', 'status', 'age'
+    )
+UNION ALL
+SELECT 
+    ColumnName AS displayName,
+    CustomColumn AS ActuallName,
+    Type AS type,
+    Mandatory AS mandatory,
+    Status AS status,
+    id AS id,
+    created_at AS created,
+    updated_at AS updated,
+    description AS description,
+    dataTypeValues AS dataTypeValues,
+    8 AS sort_order,
+    id AS custom_order
+FROM 
+    SPIDCustomContactFields  
+WHERE 
+    SP_ID = ?  
+    AND isDeleted != 1
+) AS result
+GROUP BY 
+ActuallName
+ORDER BY 
+custom_order, sort_order;`
 
 module.exports = {
     host, user, password, database, email, appPassword, emailHost, port, otp, selectAllContact, insertContact
-    ,neweditContact, importquery,delet,selectbyid, Path, verfiyCount,  isBlockedQuery,
+    ,neweditContact, importquery,delet,selectbyid, Path, verfiyCount,  isBlockedQuery,getcolumn,
     importUpdate,crachlogQuery,existContactWithSameSpid ,getColumnsQuery
 }

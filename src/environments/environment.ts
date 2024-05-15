@@ -4,7 +4,7 @@
 
 export const environment = {
     production: false,
-    baseUrl: 'https://authapi.stacknize.com',
+    baseUrl: 'https://authapi.sampanatechnologies.com',
     API_URL:'https://settings.stacknize.com',
     API_Keyword:'stacknize'
 };
