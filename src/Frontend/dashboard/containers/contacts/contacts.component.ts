@@ -557,6 +557,14 @@ onSelectAll(items: any) {
     this.getContactById(event.data);
     this.addContactTitle= 'edit';
     this.patchFormValue();
+    this.gridOptions.api.deselectAll();
+    this.checkedConatct = [];
+    setTimeout(()=>{this.isShowSidebar=true;
+      document.getElementById('import-btn')!.style.display = 'block';
+      document.getElementById('add-contact')!.style.display = 'block';
+      document.getElementById('export-btn')!.style.display = 'block';
+      document.getElementById('delete-btn')!.style.display = 'none';
+    },50);
   };
   
 
@@ -783,7 +791,7 @@ deletContactByID(data: any) {
       console.log(data);
       console.log(data[0]?.Name);
       this.getInitials(data[0]?.Name)
-      this.getContact();
+      // this.getContact();
     });    
   }
 
@@ -882,13 +890,22 @@ deletContactByID(data: any) {
         fields.push(item?.field)
       }
     })
-    const exportContact = this.checkedConatct.map(obj => fields.reduce((acc:any, key) => {
-        if (obj.hasOwnProperty(key)) {
-          acc[key] = obj[key];
-         }
-        return acc;
-      }, {})
-    );
+
+    const fieldToHeaderMap:any = {};
+      this.columnDefs.forEach((item:any) => {
+        fieldToHeaderMap[item?.field] = item.headerName;
+    });
+
+    const exportContact = this.checkedConatct.map(obj => {
+      const newObj:any = {};
+      fields.forEach(field => {
+          const headerName = fieldToHeaderMap[field]; // Get the header name for the field
+          if (obj.hasOwnProperty(field) && headerName) {
+              newObj[headerName] = obj[field]; // Map field to headerName
+          }
+      });
+      return newObj;
+  });
     // console.log(exportContact,'export contact')
     var exContact = {
       data: exportContact,
@@ -1004,7 +1021,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
               controls.setValidators([Validators.required]); 
               controls.updateValueAndValidity();
             }
-            if(item?.dataTypeValues && item?.type=='Select'){
+            if(item?.dataTypeValues && (item?.type=='Select' || item?.type=='Multi Select')){
               item.options = JSON.parse(item?.dataTypeValues);
             }
           })
@@ -1084,6 +1101,12 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     let idx = this.arrHideColumn.findIndex((it)=> it.field == item.field);
     if(idx >-1)
       this.arrHideColumn[idx].hide =  !item.hide;
+  });
+
+  column.forEach((item:any)=>{
+    let idx = this.columnDefs.findIndex((it)=> it.field == item.field);
+    if(idx >-1)
+      item.headerName =  this.columnDefs[idx].headerName;
   });
   this.gridapi.setColumnDefs(column);
   console.log(this.gridapi?.getColumnDefs());
