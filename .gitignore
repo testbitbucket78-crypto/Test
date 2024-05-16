@@ -57,3 +57,14 @@ src/Backend/Authentication/uploads/
 src/environments/environment.ts
 
 package-lock.json
+
+# webJS local sessions
+
+/.wwebjs_auth/session/Default/Cache/
+/.wwebjs_auth/session/Default/chrome_debug.log
+/.wwebjs_auth/session/Default/File System/Origins/CURRENT
+/.wwebjs_auth/session/Default/File System/Origins/LOG
+/.wwebjs_auth/session/Default/File System/Origins/LOG.old
+/.wwebjs_auth/session/Default/File System/000/t/Paths/LOG
+/.wwebjs_auth/session/Default/File System/000/t/Paths/CURRENT
+/.wwebjs_auth/session/Default/GPUCache/

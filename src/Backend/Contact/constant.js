@@ -46,7 +46,7 @@ EC.isDeleted != 1
 AND EC.SP_ID = ?
 AND EC.IsTemporary != 1
 
-GROUP BY 
+and 
 EC.customerId =?`
 isBlockedQuery = "UPDATE EndCustomer set  isBlocked=?,isBlockedOn=now() where customerId=? and SP_ID=?"
 existContactWithSameSpid=`SELECT * FROM EndCustomer WHERE (emailId = ? or Phone_number=?) AND (isDeleted =0 ) AND SP_ID=? AND IsTemporary !=1  `
