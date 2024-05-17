@@ -75,43 +75,43 @@ app.post('/IsClientReady', (req, res) => {
 
 app.listen(3009, () => {
      console.log("Server is Running on Port : : 3009");
-    //     // Replace 'chrome' with the actual process name if needed
-    //     const processName = 'chrome';
+        // Replace 'chrome' with the actual process name if needed
+        const processName = 'chrome';
 
-    //     // Command to kill all processes with the given name
-    //     const killCommand = `killall ${processName}`;
+        // Command to kill all processes with the given name
+        const killCommand = `killall ${processName}`;
         
-    //     exec(killCommand, (error, stdout, stderr) => {
-    //       if (error) {
-    //         console.error(`Error killing processes: ${error.message}`);
-    //         return;
-    //       }
+        exec(killCommand, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error killing processes: ${error.message}`);
+            return;
+          }
         
-    //       if (stderr) {
-    //         console.error(`Error output: ${stderr}`);
-    //         return;
-    //       }
+          if (stderr) {
+            console.error(`Error output: ${stderr}`);
+            return;
+          }
         
-    //       console.log(`Successfully killed Chromium processes:\n${stdout}`);
-    //     });
+          console.log(`Successfully killed Chromium processes:\n${stdout}`);
+        });
         
-    // console.log(path.join(__dirname, '.wwebjs_auth'))
-    // var dir = path.join(__dirname, '.wwebjs_auth');
-    // try {
-    //     if (fs.existsSync(dir)) {
-    //         console.log("dir found");
-    //         fs.readdirSync(dir).forEach(f => {
-    //             if(f.indexOf("session-") >-1 && fs.existsSync(path.join(dir,f,"Default/Service Worker")))
-    //             {
-    //                 console.log("Deleting : "+ path.join(dir,f,"Default/Service Worker"));
-    //                 fs.rmdirSync(path.join(dir,f,"Default/Service Worker"), { recursive: true });
-    //             }});
-    //     }
-    // }
-    // catch (err) {
-    //     console.log(err);
-    //     console.log("error while deleting cached sessions. Please delete manually from within " + dir + " and restart the server")
-    // }
+    console.log(path.join(__dirname, '.wwebjs_auth'))
+    var dir = path.join(__dirname, '.wwebjs_auth');
+    try {
+        if (fs.existsSync(dir)) {
+            console.log("dir found");
+            fs.readdirSync(dir).forEach(f => {
+                if(f.indexOf("session-") >-1 && fs.existsSync(path.join(dir,f,"Default/Service Worker")))
+                {
+                    console.log("Deleting : "+ path.join(dir,f,"Default/Service Worker"));
+                    fs.rmdirSync(path.join(dir,f,"Default/Service Worker"), { recursive: true });
+                }});
+        }
+    }
+    catch (err) {
+        console.log(err);
+        console.log("error while deleting cached sessions. Please delete manually from within " + dir + " and restart the server")
+    }
 
 })
 
