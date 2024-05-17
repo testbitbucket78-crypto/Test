@@ -633,7 +633,14 @@ onSelectAll(items: any) {
 
     if(this.filteredCustomFields.length >0){
       this.filteredCustomFields.forEach((item:any)=>{
-        ContactFormData.result.push({displayName:this.productForm.get(item.ActuallName)?.value,ActuallName:item.ActuallName})
+        if(item.type =='Select'){
+          let selectedOption = item.options.filter((opt:any)=>opt.id == this.productForm.get(item.ActuallName)?.value.toString())[0];
+          console.log(this.productForm.get(item.ActuallName)?.value);
+          console.log(item.options);
+          ContactFormData.result.push({displayName:`${selectedOption.id}:${selectedOption?.optionName}`,ActuallName:item.ActuallName});
+        }else{
+          ContactFormData.result.push({displayName:this.productForm.get(item.ActuallName)?.value,ActuallName:item.ActuallName});
+        }
       })
     }
     if (this.isEditTag) {
@@ -840,8 +847,9 @@ deletContactByID(data: any) {
     console.log(data);
 
     // set tags values in edit tag
-    this.getFilterTags = data.tag?.split(',').map((tags: string) =>tags.trim());
+    this.getFilterTags = data.tag?.split(',').map((tags: string) =>tags.trim().toString());
     console.log(this.getFilterTags);
+    this.checkedTags = this.getFilterTags;
     const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim());
     //set the selectedTag in multiselect-dropdown format
     const selectedTags = this.tagListData.map((tag: any, index: number) => ({ idx: index, ...tag }))
@@ -858,13 +866,18 @@ deletContactByID(data: any) {
       if(this.productForm.get(prop))
       this.productForm.get(prop)?.setValue(value)
       this.productForm.get('tag')?.setValue(selectedTags); 
-      this.OptInStatus =data.OptInStatus
-      this.isBlocked=data.isBlocked
+      let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
+      if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
+        this.productForm.get(prop)?.setValue(new Date(value));
+      }
     }  
+    this.OptInStatus =data.OptInStatus
+    this.isBlocked=data.isBlocked;
   }
 
   updateTags(tagName: string, isChecked: boolean) {
     this.isEditTag = true;
+    console.log(this.checkedTags);
     if (isChecked) {
       this.checkedTags.push(tagName);
     } else {
@@ -873,6 +886,7 @@ deletContactByID(data: any) {
         this.checkedTags.splice(index, 1);
       }
     }
+    console.log(this.checkedTags)
     this.getCheckedTags()
   }
 
@@ -880,6 +894,9 @@ deletContactByID(data: any) {
     return this.checkedTags.join(', ');
   }
 
+  editTagS(){
+    this.checkedTags =[];
+  }
   
   exportCheckedContact() {
     const defaultFieldNames =["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
@@ -1037,8 +1054,6 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             }
             this.contacts =true;
           },50);
-          
-
   }
 
   toggleInfoIcon() {
@@ -1060,6 +1075,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     //   }, 10)
     //   console.log('hjghj')
     // }
+    console.log(this.columnDefs);
     this.gridapi.setColumnDefs(this.columnDefs);
   }
   checkHideFields() {
@@ -1102,16 +1118,24 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     if(idx >-1)
       this.arrHideColumn[idx].hide =  !item.hide;
   });
-
+  console.log(column);
   column.forEach((item:any)=>{
     let idx = this.columnDefs.findIndex((it)=> it.field == item.field);
     if(idx >-1)
       item.headerName =  this.columnDefs[idx].headerName;
   });
+  console.log(column);
+  this.columnDefs = column;
   this.gridapi.setColumnDefs(column);
-  console.log(this.gridapi?.getColumnDefs());
+ // console.log(this.gridapi?.getColumnDefs());
 }    
   },2000); 
+  console.log(this.columnDefs);
+  }
+
+  getSplitItem(val:any){
+    let selectName =  val.split(':');
+    return selectName[1] ?  selectName[1] : '';
   }
   
 }

@@ -250,6 +250,11 @@ patchFormDataValue() {
     this.ID=id;
     console.log(this.ID);
   }  
+  let options= JSON.parse(data?.dataTypeValues);
+  this.addCustomField = [];
+  options.forEach((item:any)=>{
+    this.addCustomField.push({id:item.id,Option:item.optionName});
+  })
 }
 
 addCustomFields() {
