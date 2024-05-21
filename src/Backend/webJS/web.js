@@ -92,8 +92,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          executablePath: "/usr/bin/google-chrome-stable",
-          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          //executablePath: "/usr/bin/google-chrome-stable",
+          executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -512,7 +512,7 @@ async function saveInMessages(message) {
     if (from != 'status@broadcast') {
 
 
-      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, 'null', new Date());
+      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, 'null', new Date().toUTCString());
       //console.log("saveMessage" ,)
       // console.log(saveMessage)
 
@@ -566,7 +566,9 @@ async function savelostChats(message, spPhone, spid) {
     }
     let getLastScannedTime = await db.excuteQuery(messageQuery, [endCustomer, spid]);
     // console.log(getLastScannedTime)
-    var d = new Date(message.timestamp * 1000);
+    var d = new Date(message.timestamp * 1000).toUTCString();
+   
+
     // console.log(d,new Date( getLastScannedTime[0]?.latest_message_created_date) < new Date(d) , getLastScannedTime[0]?.latest_message_created_date)
     if ((d > getLastScannedTime[0]?.latest_message_created_date && d < new Date()) || (getLastScannedTime?.length == 0)) {
 
@@ -588,7 +590,7 @@ async function savelostChats(message, spPhone, spid) {
 
       if (from != 'status@broadcast') {
 
-
+console.log("lost messages time",d)
         let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, d);
 
       }
@@ -628,7 +630,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
     var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WhatsApp Web', timestramp]);
     notify.NotifyServer(display_phone_number, true);
-    // console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
+     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
 
 
   }

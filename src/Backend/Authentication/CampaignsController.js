@@ -678,8 +678,8 @@ const saveCampaignMessages = async (req, res) => {
         let InteractionId = await insertInteractionAndRetrieveId(req.body.customerId, req.body.SP_ID);
         // console.log(req.body.message_content, "InteractionId InteractionId")
 
-        let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id) values ?`
-        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, type, req.body.SP_ID, type, '']]]);
+        let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent) values ?`
+        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, type, req.body.SP_ID, type, '',-1]]]);
 
 
         let content = await removeTags.removeTagsFromMessages(req.body.message_content);

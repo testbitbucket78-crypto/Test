@@ -27,6 +27,32 @@ app.get('/columns/:spid', authenticateToken, async (req, res) => {
   }
 })
 
+app.get('/getFilteredList', authenticateToken, async (req, res) => {
+  try {
+
+    let IsFilteredList = false;
+    let contactList = await db.excuteQuery('SELECT * FROM EndCustomer where SP_ID=? and isDeleted !=1', [req.body.SP_ID])
+    if (req.body?.Query != '') {
+      IsFilteredList = true
+      let Query = req.body.Query + " and isDeleted !=1"
+      contactList = await db.excuteQuery(Query, [])
+    }
+
+    res.send({
+      status: 200,
+      result: contactList,
+      IsFilteredList: IsFilteredList
+    })
+  } catch (err) {
+    console.log(err);
+    res.send({
+      status: 500,
+      msg: err
+    })
+  }
+
+})
+
 
 app.post('/addCustomContact', authenticateToken, async (req, res) => {
   try {
@@ -537,7 +563,7 @@ async function updateContact(CSVdata, identifier, SP_ID) {
 async function getHeadersArray(spid) {
   try {
 
- 
+
     let getfields = await db.excuteQuery(val.getcolumn, [spid]);
 
 
@@ -903,12 +929,43 @@ async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, u
           return { isError: !convertedValue, reason: `${ActuallName} is not exist in list` };
         }
         break;
-      case 'DateTime':
+      case 'Date Time':
         if (displayName) {
-          convertedValue = !isNaN(date.getTime());
-          return { isError: !convertedValue, reason: `${ActuallName} is invalid` };
+          // Regular expressions to match datetime formats
+          const date = new Date(displayName);
+          let convertedValue;
+          const isoDateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
+          const dateTimeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
+
+          if (isoDateTimeRegex.test(displayName)) {
+            // Validate ISO datetime format
+            console.log("ISO datetime format", convertedValue)
+            convertedValue = !isNaN(date.getTime()) && date.toISOString() === displayName;
+           
+          } else if (dateTimeRegex.test(displayName)) {
+            // Validate "YYYY-MM-DD HH:MM:SS" format
+            console.log("YYYY-MM-DD HH:MM:SS", convertedValue)
+            convertedValue = !isNaN(date.getTime()) && displayName === formatDateTime(date);
+           
+          }
+          console.log(convertedValue, date);
+          return { isError: !convertedValue, reason: `Date Time is invalid` };
         }
         break;
+        case 'Date':
+          if (displayName) {
+            const date = new Date(displayName);
+            // Regular expressions to match date-only formats
+            const dateDashRegex = /^\d{4}-\d{2}-\d{2}$/;
+            const dateSlashRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+
+            if (dateDashRegex.test(displayName) || dateSlashRegex.test(displayName)) {
+                // Validate "YYYY-MM-DD" or "YYYY/MM/DD" format
+                convertedValue = !isNaN(date.getTime()) && displayName === formatDate(date, displayName.includes('-') ? '-' : '/');
+            }
+            return { isError: !convertedValue, reason: `Date is invalid` };
+          }
+          break;
       case 'Switch':
         if (displayName) {
           convertedValue = ['yes', 'no'].includes(displayName.toLowerCase()) ? displayName.toLowerCase() : false;
@@ -939,6 +996,24 @@ async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, u
   }
 }
 
+
+function formatDate(date, separator) {
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
+  return `${year}${separator}${month}${separator}${day}`;
+}
+
+// Helper functions to format dates
+function formatDateTime(date) {
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
+  const hours = ('0' + date.getHours()).slice(-2);
+  const minutes = ('0' + date.getMinutes()).slice(-2);
+  const seconds = ('0' + date.getSeconds()).slice(-2);
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
 async function getTags(SP_ID) {
   try {
     const tags = await db.excuteQuery('SELECT TagName FROM EndCustomerTagMaster WHERE SP_ID=? AND isDeleted != 1', [SP_ID]);

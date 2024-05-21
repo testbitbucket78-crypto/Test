@@ -44,10 +44,10 @@ const login = async (req, res) => {
                 });
             }
             else {
-                const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY,{ expiresIn: '24h' });
+                const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY, { expiresIn: '24h' });
                 let utcTimestamp = new Date().toISOString();
-                
-                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=? where email_id=?' ,[utcTimestamp,req.body.email_id,req.body?.LoginIP])
+
+                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=? where email_id=?', [utcTimestamp, req.body.email_id, req.body?.LoginIP])
                 res.status(200).send({
                     msg: 'Logged in!',
                     token,
@@ -76,11 +76,11 @@ const register = async function (req, res) {
     email_id = req.body.email_id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
-    LoginIP = req.body.LoginIP  
+    LoginIP = req.body.LoginIP
     countryCode = req.body.country_code
 
     try {
-        var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id,mobile_number])
+        var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id, mobile_number])
         if (credentials.length > 0) {
             res.status(409).send({
                 msg: 'User Already Exist with this email or Phone Number !',
@@ -93,7 +93,7 @@ const register = async function (req, res) {
             }
             // Hash the password before storing it in the database
             const hash = await bcrypt.hash(password, 10);
-            var values = [name, mobile_number, email_id, hash,LoginIP,countryCode]  // pending add countryCode in stored procedure
+            var values = [name, mobile_number, email_id, hash, LoginIP, countryCode]  // pending add countryCode in stored procedure
             var registeredUser = await db.excuteQuery(val.registerQuery, values)   //need to change LoginIP in signup stored procedure
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
             res.status(200).send({
@@ -305,8 +305,15 @@ const sendOtp = async function (req, res) {
         var mailOptions = {
             from: val.email,
             to: req.body.email_id,
-            subject: "Otp for registration is: ",
-            html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
+            subject: "Verify your email - Engagekart",
+            //html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
+            html: `
+            <p>Dear ${req.body?.name},</p>
+            <p>To complete your Engagekart account activation, please use the below provided One-Time Password (OTP) to validate your email address on the sign up page.</p>
+            <P>OTP for account verification is</P>
+            <h5 style="font-weight:bold;">${otp}</h5>
+            <p>Best regards,</p>
+            <p>Team Engagekart</p> `
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
