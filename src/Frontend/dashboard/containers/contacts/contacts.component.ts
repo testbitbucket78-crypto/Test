@@ -77,7 +77,7 @@ columnDefs: ColDef[] = [
     hide:false,
     filter: "agNumberColumnFilter",
     cellRenderer: (params: { data: { countryCode: any; displayPhoneNumber: any; };
-     }) =>`${params.data.countryCode} ${params.data.displayPhoneNumber}`,
+     }) =>`${params.data.countryCode ? params.data.countryCode : ''} ${params.data.displayPhoneNumber}`,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
     sortable: true,
   },
@@ -638,7 +638,17 @@ onSelectAll(items: any) {
           console.log(this.productForm.get(item.ActuallName)?.value);
           console.log(item.options);
           ContactFormData.result.push({displayName:`${selectedOption.id}:${selectedOption?.optionName}`,ActuallName:item.ActuallName});
-        }else{
+        }
+        else if(item.type =='Multi Select'){
+          let values =''
+          console.log(this.productForm.get(item.ActuallName)?.value)
+          this.productForm.get(item.ActuallName)?.value.forEach((ite:any)=>{
+            values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
+          })
+          console.log(values);
+          ContactFormData.result.push({displayName:values,ActuallName:item.ActuallName});
+        }
+        else{
           ContactFormData.result.push({displayName:this.productForm.get(item.ActuallName)?.value,ActuallName:item.ActuallName});
         }
       })
@@ -845,8 +855,6 @@ deletContactByID(data: any) {
   patchFormValue(){
     const data:any=this.contactsData
     console.log(data);
-
-    // set tags values in edit tag
     this.getFilterTags = data.tag?.split(',').map((tags: string) =>tags.trim().toString());
     console.log(this.getFilterTags);
     this.checkedTags = this.getFilterTags;
@@ -869,6 +877,10 @@ deletContactByID(data: any) {
       let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
       if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
         this.productForm.get(prop)?.setValue(new Date(value));
+      }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
+        let val = value.split(':');
+        console.log(val);
+        this.productForm.get(prop)?.setValue(val[0]);
       }
     }  
     this.OptInStatus =data.OptInStatus
@@ -1020,7 +1032,8 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
           console.log(this.filteredCustomFields);
           this.contacts =false;
           this.filteredCustomFields.forEach((item:any)=>{
-            this.columnDefs.push({
+
+            let columnDesc:any = {
               field: item.ActuallName,
             headerName: item.displayName,
             flex: 2, 
@@ -1030,7 +1043,40 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             minWidth: 100,
             sortable: true,
             cellStyle: { background: "#FBFAFF", opacity: 0.86 },
-            });
+            }
+            if(item.type == 'Select'){
+              columnDesc.valueFormatter= (value:any) => {
+                if (value.value) {
+                  console.log(value.value);
+                  let selectName =  value.value.split(':');
+                  return selectName[1] ?  selectName[1] : '';
+                }
+                else {
+                  return null;
+                }
+              }
+              console.log(columnDesc);
+            }
+
+            if(item.type == 'Multi Select'){
+              columnDesc.valueFormatter= (value:any) => {
+                if (value.value) {
+                  let selectName =  value.value.split(',');
+                  let names ='';
+                  selectName.forEach((it:any)=>{
+                    let name = it.split(':');
+                    console.log(name);
+                    names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
+                  })
+                  return names;
+                }
+                else {
+                  return null;
+                }
+              }
+              console.log(columnDesc);
+            }
+            this.columnDefs.push(columnDesc);
             const control = new FormControl('');
             this.productForm.addControl(item.ActuallName,control);
             const controls = this.productForm.get(item.ActuallName);
@@ -1123,6 +1169,8 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     let idx = this.columnDefs.findIndex((it)=> it.field == item.field);
     if(idx >-1)
       item.headerName =  this.columnDefs[idx].headerName;
+      if(this.columnDefs[idx]?.valueFormatter)
+        item.valueFormatter =  this.columnDefs[idx]?.valueFormatter;
   });
   console.log(column);
   this.columnDefs = column;
