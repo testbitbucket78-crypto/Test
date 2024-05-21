@@ -61,6 +61,7 @@ export class ImportComponent implements OnInit {
 	ContactFormData:any;
 	identifierColumn :any;
 	dragAreaClass: string='';
+	messageOptIn:string = '';
 	
 
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService,private _settingsService:SettingsService,private router:Router) {
@@ -187,6 +188,7 @@ export class ImportComponent implements OnInit {
 	incorrectFile = (content:any) => {	
 		const currentfileformat = this.file?.name.split(".").pop();
 		if(currentfileformat) {
+			if(this.messageOptIn != ''){
 			if(currentfileformat !== this.fileformat && currentfileformat!=='CSV') {
 				$("#importmodal").modal('hide');
 				this.modalService.open(content);
@@ -194,6 +196,10 @@ export class ImportComponent implements OnInit {
 			else {
 				this.stepper.next();
 			}
+		}
+		else{
+			this.showToaster('Please select Message Opt-In before proceeding', 'error');
+		}
 		}
 		else{
 			this.showToaster('Please upload a CSV file before proceeding', 'error');
@@ -346,6 +352,7 @@ export class ImportComponent implements OnInit {
 			identifier: this.Identifier,
 			purpose: this.purpose,
 			SP_ID: this.spid,
+			messageOptIn: this.messageOptIn,
 			importedData: this.importCSVdata,
 			user:this.user.name,
 			emailId:this.user.email_id
