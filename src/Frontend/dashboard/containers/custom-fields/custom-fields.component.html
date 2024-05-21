@@ -195,7 +195,7 @@
                                
                                 <div class="d-flex flex-column billing-form-row">
                                     <label>Field Type </label>
-                                    <select name="type" id="type" formControlName="type" (change)="onInputChange()" [disabled]="selectedCustomField">
+                                    <select name="type" id="type" formControlName="type" (change)="onInputChange()" [disabled]="selectedCustomField ? true :false">
                                         <option *ngFor="let type of types" [value]="type">
                                             {{type}}</option>
                                     </select>
@@ -230,7 +230,7 @@
                 <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
                     <div class="m-0 modal-content delete-modal">
                         <div class="modal-body alertmessage">
-                            <p class="label pb-2">Do you really want to delete<br /> this CustomField ?</p>
+                            <p class="label pb-2">Do you really want to delete this CustomField ? <br> Attention! Deleting a Custom Field may impact some already configured automation like Campaign Audience, etc.</p>
                             <div class="delete_group_button d-flex justify-content-center">
                                 <button type="button" class="cancel-btn" aria-label="Close"
                                     data-bs-dismiss="modal">Cancel</button>

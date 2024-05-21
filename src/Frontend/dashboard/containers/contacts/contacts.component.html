@@ -128,7 +128,7 @@
 					<div class="parent d-flex justify-content-between px-4 py-2">
 					<div class="child5">
 	
-						<h5> <img class="m-0" data-bs-toggle="modal" data-bs-target="#edittag" src="../../../../assets/img/teambox/edit-icon.svg">Tag</h5>
+						<h5> <img class="m-0" data-bs-toggle="modal" data-bs-target="#edittag" (click)="editTagS()" src="../../../../assets/img/teambox/edit-icon.svg">Tag</h5>
 						<div class="child4 d-flex">
 							<h6 class="mt-2">{{items.tag_names?.replaceAll(',', ' | ')}}</h6>
 						</div>
@@ -140,7 +140,8 @@
 				<div class="parent-flex px-4 py-2 parent d-flex">
 					<div class="child23" *ngFor="let it of filteredCustomFields">
 						<h5>{{it?.displayName}}</h5>
-						<h6 class="mt-2">{{items[it?.ActuallName]}}</h6>
+						<h6 class="mt-2" *ngIf="it?.type != 'Select'">{{items[it?.ActuallName]}}</h6>
+						<h6 class="mt-2" *ngIf="it?.type == 'Select'">{{getSplitItem(items[it?.ActuallName])}}</h6>
 					</div>
 					</div>
 					<!-- <div class="justify-content-between px-4 py-2 parent d-flex">
@@ -597,7 +598,7 @@
 
 			<div>
 				<div *ngFor="let item of filteredCustomFields">
-					<label for="tag" *ngIf="item.type != 'Multi Select'">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
+					<label for="tag" *ngIf="item.type != 'Switch'">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
 					<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
 					<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'">
 					<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
