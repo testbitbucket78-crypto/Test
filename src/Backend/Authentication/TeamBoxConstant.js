@@ -8,6 +8,19 @@ const database= "cip_project"
 
 //Query for contactPage
 var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked !=1 and isDeleted !=1";
+var interactionsquery = "SELECT * FROM Interaction WHERE SP_ID=?  and is_deleted !=1"
+var contactsInteraction = `SELECT e.*, i.*
+FROM EndCustomer e
+JOIN Interaction i ON e.customerID = i.customerID
+WHERE e.isDeleted != 1 AND e.SP_ID=?
+  AND i.is_deleted != 1  AND i.SP_ID=?
+  AND i.created_at = (
+    SELECT MAX(created_at)
+    FROM Interaction
+    WHERE customerID = e.customerID
+);`
+
+
 var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,SP_ID,OptInStatus,countryCode,displayPhoneNumber) VALUES ?"
 var filterQuery="SELECT * from EndCustomer where Phone_number=? and isDeleted !=1"
 var searchQuery="SELECT * from EndCustomer where SP_ID=? and (Phone_number like ? or Name like ?)"
@@ -38,7 +51,7 @@ var selectInteractionByIdQuery="SELECT * FROM Interaction WHERE Interaction.Inte
 var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=? and Type=?"
 
 
-var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,mediaSize) VALUES ?"
+var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,mediaSize,assignAgent) VALUES ?"
 
 
 
@@ -115,7 +128,7 @@ createInteractionQuery,updateInteractionQuery,getAllInteraction,selectInteractio
 getAllMessagesByInteractionId,insertMessageQuery,
 updateInteractionMapping,getInteractionMapping,
 savedMessagesQuery,getquickReplyQuery,getTemplatesQuery,
-addNotification,assignedNameQuery,interactions
+addNotification,assignedNameQuery,interactions,contactsInteraction,interactionsquery
 }
 
 

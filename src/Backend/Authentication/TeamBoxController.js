@@ -41,8 +41,15 @@ const getAllAgents = (req, res) => {
 
 
 
-const getAllCustomer = (req, res) => {
-    db.runQuery(req, res, val.selectAllQuery, [req.params.spID]);
+const getAllCustomer = async (req, res) => {
+  //  db.runQuery(req, res, val.selectAllQuery, [req.params.spID]);
+  try{
+let contacts = await db.excuteQuery(val.selectAllQuery,[req.params.spID]);
+let interactions = await db.excuteQuery(val.interactionsquery,[req.params.spID]);
+let contactinteractions = await db.excuteQuery(val.contactsInteraction,[req.params.spID,req.params.spID])
+  }catch(err){
+    console.log(err)
+  }
 };
 
 const getCustomerById = (req, res) => {
@@ -71,7 +78,7 @@ const insertCustomers = async (req, res) => {
     countryCode = req.body.country_code
     displayPhoneNumber = req.body.displayPhoneNumber
     var values = [[Name, Phone_number, channel, SP_ID, OptInStatus, countryCode, displayPhoneNumber]]
-    let existContactWithSameSpid = `SELECT * FROM EndCustomer WHERE  Phone_number=? AND (isDeleted =0 AND isBlocked =0) AND SP_ID=?  `
+    let existContactWithSameSpid = `SELECT * FROM EndCustomer WHERE  Phone_number=? AND isDeleted !=1  AND SP_ID=?  `
 
     var result = await db.excuteQuery(existContactWithSameSpid, [Phone_number, SP_ID])
 
@@ -409,6 +416,7 @@ const insertMessage = async (req, res) => {
             ExternalMessageId = ''
             mediaSize = req.body.mediaSize
             spNumber = req.body?.spNumber
+            assignAgent = req.body?.assignAgent
 
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id])
             let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId, SPID]);
@@ -416,7 +424,7 @@ const insertMessage = async (req, res) => {
 
             const channel = channelType.length > 1 ? channelType[0].channel : spchannel[0]?.channel_id;
 
-            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize]]
+            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize,assignAgent]]
             let msg_id = await db.excuteQuery(messageQuery, [values])
             if (agentName.length >= 0) {
                 let mentionQuery = "SELECT * FROM Message WHERE ? LIKE ?";

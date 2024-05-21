@@ -66,7 +66,18 @@ userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
 updateQuery = "UPDATE user SET  email_id=?, name=?, mobile_number=?, LastModifiedDate=?, UserType=?,country_code=? ,display_mobile_number=? WHERE uid=?";
 insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP,country_code,display_mobile_number) VALUES ?";
 findEmail = "SELECT * FROM user WHERE (email_id=? OR mobile_number=?) and isDeleted !=1 and SP_ID=?"
-getRole = `SELECT * from roles where SP_ID=?  and isDeleted !=1`
+getRole = `SELECT 
+r.*,
+COUNT(u.UserType) AS NoOfUser,
+LENGTH(r.subPrivileges) - LENGTH(REPLACE(r.subPrivileges, ',', '')) + 1 AS rights
+FROM 
+roles r
+LEFT JOIN 
+user u ON r.roleID = u.UserType AND u.isDeleted != 1  -- Adding the condition to the join
+WHERE 
+r.SP_ID =? AND r.isDeleted != 1
+GROUP BY 
+r.roleID`
 
 
 
@@ -331,7 +342,7 @@ WHERE
         'created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at',
         'isBlockedOn', 'isBlocked', 'channel', 'displayPhoneNumber', 'countryCode',
         'IsTemporary', 'contact_profile', 'InstagramId', 'facebookId', 'Country',
-        'state', 'city', 'pincode', 'address', 'sex', 'status', 'age'
+        'state', 'city', 'pincode', 'address', 'sex', 'status', 'age','OptInStatus','tag'
     )
 UNION ALL
 SELECT 

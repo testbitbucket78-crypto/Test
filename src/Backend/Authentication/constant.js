@@ -24,7 +24,7 @@ var activeAgent = "select *from user where ParentId=? and UserType=? and IsActiv
 //Query for index.js pages
 
 var loginQuery = "SELECT * FROM user WHERE (email_id =? OR mobile_number=?) and isDeleted !=1 and IsActive !=2"
-var registerQuery = "call signUp(?,?,?,?)";
+var registerQuery = "call signUp(?,?,?,?,?,?)";
 var uidresetEmailQuery = "select uid from user where email_id=?"
 var verifyUid = "select uid from user where uid=?"
 var updatePassword = "UPDATE user SET password=? WHERE uid=?";
@@ -42,7 +42,7 @@ var content_type='application/json'
 
 
 //Sms varification variables
-const email = "info@sampana.in";
+const email = "notifications@engagekart.com";
 const appPassword = "xf*q(F#0";
 const emailHost = "us2.smtp.mailhostbox.com"
 const port = "587"

@@ -23,7 +23,7 @@ WHERE interaction_id = ? and system_message_type_id=?
   AND TIMESTAMPDIFF(Minute, updated_at, NOW()) <= 60  
 ORDER BY updated_at DESC 
 LIMIT 1`;
-var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id) VALUES ?";
+var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent) VALUES ?";
 
 async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType) {
   if (isAutoReplyDisable != 1) {
@@ -496,7 +496,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)
     if (result.status == 200) {
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", new Date(), new Date(), ""]]
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", new Date(), new Date(), "",-2]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
     }
   }
@@ -510,7 +510,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
 
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)
     if (result.status == 200) {
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", new Date(), new Date(), ""]]
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", new Date(), new Date(), "",-2]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
     }
   }
