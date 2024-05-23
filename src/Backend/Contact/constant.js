@@ -85,21 +85,9 @@ SELECT
     0 AS custom_order
 UNION ALL
 SELECT 
-    'OptInStatus' AS displayName,
-    'OptInStatus' AS ActuallName,
-    4 AS sort_order,
-    0 AS custom_order
-UNION ALL
-SELECT 
     'ContactOwner' AS displayName,
     'ContactOwner' AS ActuallName,
     5 AS sort_order,
-    0 AS custom_order
-UNION ALL
-SELECT 
-    'tag' AS displayName,
-    'tag' AS ActuallName,
-    6 AS sort_order,
     0 AS custom_order
 UNION ALL
 SELECT 
@@ -116,7 +104,7 @@ WHERE
         'created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at',
         'isBlockedOn', 'isBlocked', 'channel', 'displayPhoneNumber', 'countryCode',
         'IsTemporary', 'contact_profile', 'InstagramId', 'facebookId', 'Country',
-        'state', 'city', 'pincode', 'address', 'sex', 'status', 'age'
+        'state', 'city', 'pincode', 'address', 'sex', 'status', 'age','OptInStatus','tag'
     )
 UNION ALL
 SELECT 

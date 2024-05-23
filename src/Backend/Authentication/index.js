@@ -47,7 +47,8 @@ const login = async (req, res) => {
                 const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY, { expiresIn: '24h' });
                 let utcTimestamp = new Date().toISOString();
 
-                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=? where email_id=?', [utcTimestamp, req.body.email_id, req.body?.LoginIP])
+                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=? where email_id=?', [utcTimestamp, req.body?.LoginIP,req.body.email_id])
+              
                 res.status(200).send({
                     msg: 'Logged in!',
                     token,
@@ -140,7 +141,7 @@ const forgotPassword = async (req, res) => {
     try {
         email_id = req.body.email_id;
 
-        var results = await db.excuteQuery(val.loginQuery, [req.body.email_id])
+        var results = await db.excuteQuery('SELECT * FROM user WHERE email_id =? and isDeleted !=1 and IsActive !=2', [req.body.email_id])
 
         // Send Email for For forget password varification
 
@@ -163,14 +164,13 @@ const forgotPassword = async (req, res) => {
             var mailOptions = {
                 from: val.email,
                 to: req.body.email_id,
-                subject: "Request for reset Password: ",
+                subject: "Engagekart Password Reset",
                 html: '<p>You requested for reset password, kindly use this <a href="https://cip.stacknize.com/#/reset-password?uid=' + cipherdata + '">  link  </a>to reset your password</p>'
                 //html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/#/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
 
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-
 
                 res.status(200).send({
                     msg: "password has been sent",

@@ -42,14 +42,22 @@ const getAllAgents = (req, res) => {
 
 
 const getAllCustomer = async (req, res) => {
-  //  db.runQuery(req, res, val.selectAllQuery, [req.params.spID]);
-  try{
-let contacts = await db.excuteQuery(val.selectAllQuery,[req.params.spID]);
-let interactions = await db.excuteQuery(val.interactionsquery,[req.params.spID]);
-let contactinteractions = await db.excuteQuery(val.contactsInteraction,[req.params.spID,req.params.spID])
-  }catch(err){
-    console.log(err)
-  }
+    // db.runQuery(req, res, val.selectAllQuery, [req.params.spID]);
+    try {
+        let RangeStart = req.body.RangeStart
+        let RangeEnd = (req.body.RangeEnd - req.body.RangeStart)
+        let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID,RangeStart,RangeEnd]);
+        res.send({
+            status: 200,
+            results: contacts
+        })
+    } catch (err) {
+        console.log(err)
+        res.send({
+            status: 500,
+            err: err
+        })
+    }
 };
 
 const getCustomerById = (req, res) => {
@@ -144,29 +152,29 @@ const blockCustomer = (req, res) => {
         blockedQuery = `UPDATE EndCustomer SET isBlocked =? ,OptInStatus='No' WHERE customerId =?`
         UnassignedBlockedContact(customerId, req.body?.SP_ID)
     }
-  
+
     var values = [[customerId, isBlocked]]
     db.runQuery(req, res, blockedQuery, [isBlocked, customerId])
 }
 
 async function UnassignedBlockedContact(customerId, spid) {
     try {
-      let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`,[customerId, spid])
-      let findMappingQuery = `SELECT *
+        let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`, [customerId, spid])
+        let findMappingQuery = `SELECT *
   FROM InteractionMapping
   WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC);`
-  
-      let mapping = await db.excuteQuery(findMappingQuery, [customerId, spid]);
-  
-      if (mapping?.length > 0) {
-        let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId = -1 where MappingId =?`, [mapping[0]?.MappingId])
-      }
-  
-      let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`,['empty',getInteraction[0]?.InteractionId,spid,customerId])
+
+        let mapping = await db.excuteQuery(findMappingQuery, [customerId, spid]);
+
+        if (mapping?.length > 0) {
+            let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId = -1 where MappingId =?`, [mapping[0]?.MappingId])
+        }
+
+        let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, ['empty', getInteraction[0]?.InteractionId, spid, customerId])
     } catch (err) {
-      console.log("err", err)
+        console.log("err", err)
     }
-  }
+}
 
 const createInteraction = async (req, res) => {
     try {
@@ -393,6 +401,54 @@ const deleteMessage = (req, res) => {
     db.runQuery(req, res, messageQuery, [values])
 }
 
+async function autoReplyPauseTime(spid, newId) {
+    try {
+        // Execute the first query to get interactionPause data
+        let interactionPause = await db.excuteQuery('select * from Interaction where InteractionId = ? and is_deleted != 1', [newId]);
+
+        // Execute the second query to get defaultActions data
+        let defaultAction = await db.excuteQuery('select * from defaultActions where spid = ? and (isDeleted is null or isDeleted = 0);', [spid]);
+        let pauseTime;
+
+        // Check if the defaultAction result is not empty
+        if (defaultAction?.length > 0) {
+            let pauseAutoReplyTime = defaultAction[0]?.pauseAutoReplyTime;
+            // console.log("interactionPause", interactionPause, "autoReplyTime default", pauseAutoReplyTime, "new Date().getTime()", new Date().getTime(), new Date());
+
+            // Calculate the new time based on autoReplyTime and pauseDuration
+            let calcTime = new Date(new Date().getTime() + pauseAutoReplyTime * 60000);
+            let deActpausedTill = calcTime.toString();
+            // console.log("calcTime", calcTime, "deActpausedTill", deActpausedTill);
+
+            // Check and convert interactionPause[0]?.paused_till to timestamp if it's an ISO date string
+            let pausedTill = interactionPause[0]?.paused_till;
+            let pausedTillTime;
+            if (!isNaN(pausedTill)) {
+                pausedTillTime = parseInt(pausedTill, 10);
+            } else {
+                pausedTillTime = new Date(pausedTill).getTime();
+            }
+
+            //console.log(pausedTillTime, calcTime.getTime());
+
+            // Compare and get the maximum of the paused_till times
+            pauseTime = Math.max(pausedTillTime, calcTime.getTime());
+            // console.log("pauseTime", new Date(pauseTime));
+
+            let updateInteractionPause = await db.excuteQuery('UPDATE Interaction SET paused_till = ? WHERE InteractionId = ?', [pauseTime, newId]);
+            //  console.log("updateInteractionPause", updateInteractionPause);
+        } else {
+            console.error('No defaultAction found for the given spid');
+        }
+
+        return pauseTime;
+    } catch (err) {
+        console.log("autoReplyPauseTime Err");
+        console.log(err);
+        return err;
+    }
+}
+
 
 const insertMessage = async (req, res) => {
     try {
@@ -424,7 +480,7 @@ const insertMessage = async (req, res) => {
 
             const channel = channelType.length > 1 ? channelType[0].channel : spchannel[0]?.channel_id;
 
-            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize,assignAgent]]
+            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent]]
             let msg_id = await db.excuteQuery(messageQuery, [values])
             if (agentName.length >= 0) {
                 let mentionQuery = "SELECT * FROM Message WHERE ? LIKE ?";
@@ -449,7 +505,7 @@ const insertMessage = async (req, res) => {
                 console.log(placeholders)
                 const results = await removeTags.getDefaultAttribue(placeholders, SPID, customerId);
                 console.log("results", results)
-               
+
                 placeholders.forEach(placeholder => {
                     const result = results.find(result => result.hasOwnProperty(placeholder));
                     const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
@@ -473,6 +529,7 @@ const insertMessage = async (req, res) => {
                         middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber)
 
                     }
+                    autoReplyPauseTime(SPID, interaction_id)
                 }
                 if (middlewareresult.status != 200) {
                     let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]) // just mark msg_status 9 for  identify
@@ -604,12 +661,12 @@ const updateInteractionMapping = async (req, res) => {
     MappedBy = req.body.MappedBy
     is_active = 1
     var values = [[is_active, InteractionId, AgentId, MappedBy]]
-   if(AgentId != -1){
-    let nameData = await db.excuteQuery(val.assignedNameQuery, [AgentId])
+    if (AgentId != -1) {
+        let nameData = await db.excuteQuery(val.assignedNameQuery, [AgentId])
 
-    let notifyvalues = [[nameData[0].SP_ID, 'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, new Date()]]
-    let notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues])
-   }
+        let notifyvalues = [[nameData[0].SP_ID, 'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, new Date()]]
+        let notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues])
+    }
     db.runQuery(req, res, val.updateInteractionMapping, [values])
 }
 

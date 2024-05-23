@@ -25,21 +25,21 @@ const uploadCompanylogo = async (req, res) => {
         uid = req.body.uid
         user = req.body.user
         filePath = req.body.filePath
-          // Remove header
-          let streamSplit = filePath.split(';base64,');
-          let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
-          let datapart = streamSplit.pop();// this is dependent on the POP above
-  
-          let imgType = datapart.split('/').pop();
-          let imageName = 'CompanyProfile.png';//Default it to png.
-          if(imgType){
-              imageName = 'CompanyProfile' + '.' + imgType;
-          }
+        // Remove header
+        let streamSplit = filePath.split(';base64,');
+        let base64Image = streamSplit.pop();//With the change done in aws helper this is not required though keeping it in case required later.
+        let datapart = streamSplit.pop();// this is dependent on the POP above
+
+        let imgType = datapart.split('/').pop();
+        let imageName = 'CompanyProfile.png';//Default it to png.
+        if (imgType) {
+            imageName = 'CompanyProfile' + '.' + imgType;
+        }
         var selectImgUpload = await db.excuteQuery(val.selectCompanyDetails, [spid])
         console.log(selectImgUpload.length != 0)
         if (selectImgUpload.length != 0) {
-           
-            let awsres = await awsHelper.uploadStreamToAws( spid + "/" + uid + "/" + user + "/"+imageName, filePath)
+
+            let awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + user + "/" + imageName, filePath)
             let updateimgQuery = `UPDATE companyDetails set profile_img=? where SP_ID=?`
             console.log("awsres")
             console.log(awsres.value.Location)
@@ -48,18 +48,18 @@ const uploadCompanylogo = async (req, res) => {
             res.status(200).send({
                 msg: 'img updated successfully !',
                 updateimgRes: updateimgRes,
-                awsres:awsres,
+                awsres: awsres,
                 status: 200
             });
 
         } else {
-            let awsres = await awsHelper.uploadStreamToAws( spid + "/" + uid + "/" + user + "/"+imageName, filePath)
+            let awsres = await awsHelper.uploadStreamToAws(spid + "/" + uid + "/" + user + "/" + imageName, filePath)
             let insertimgQuery = `INSERT INTO companyDetails (profile_img,SP_ID) VALUES(?,?)`;
             let insertimgRes = await db.excuteQuery(insertimgQuery, [awsres.value.Location, spid])
             res.status(200).send({
                 msg: 'img added successfully !',
                 insertimgRes: insertimgRes,
-                awsres:awsres,
+                awsres: awsres,
                 status: 200
             });
 
@@ -616,16 +616,16 @@ const addUser = async (req, res) => {
         email_id = req.body.email_id
         name = req.body.name
         mobile_number = req.body.mobile_number
-        LoginIP=req.body.LoginIP
+        LoginIP = req.body.LoginIP
         const CreatedDate = new Date()
         ParentId = req.body.uid
         UserType = req.body.UserType
         IsDeleted = 0
         IsActive = 1
-        countryCode=req.body.country_code
+        countryCode = req.body.country_code
         displayPhoneNumber = req.body?.display_mobile_number
 
-        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id,req.body.mobile_number,SP_ID])
+        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id, req.body.mobile_number, SP_ID])
         if (credentials.length > 0) {
             res.status(409).send({
                 msg: 'User Already Exist with this Email OR Phone Number !',
@@ -635,55 +635,48 @@ const addUser = async (req, res) => {
             var randomstring = Math.random().toString(36).slice(-8);
             console.log(randomstring)
             const hash = await bcrypt.hash(randomstring, 10);
-            var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive,CreatedDate,LoginIP,countryCode,displayPhoneNumber]]
+            var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive, CreatedDate, LoginIP, countryCode, displayPhoneNumber]]
 
             var User = await db.excuteQuery(val.insertQuery, [values]);
 
             var getData = await db.excuteQuery(val.selectByIdQuery, [SP_ID])
 
             if (getData.length >= 0) {
-                var Company_Name = getData[0].Company_Name
-                var logo = getData[0].profile_img
+                var Company_Name = getData[0]?.Company_Name
+                var logo = getData[0]?.profile_img
             }
             var mailOptions = {
                 from: val.email,
                 to: req.body.email_id,
-                // subject: "user details",
-                // html: "<h3>User account details is </h3>" + "<h1 style='font-weight:bold;'>  Password = " + JSON.stringify(randomstring) + "</h1>" + " And Details = " + JSON.stringify(getData)
-                subject: 'Welcome to ' + Company_Name + ' ! Your Credentials Inside',
-                text:
-              `Dear ` + req.body.name + `,
-              
-              Welcome to `+ Company_Name + ` ! We're thrilled to have you on board.
-              
-              Please find your login credentials below:
-              
-              Email ID: ` + req.body.email_id +
-                    ` , Temporary Password : ` + JSON.stringify(randomstring) + `
-              
-              To access your official email account, follow these steps:
-              
-              1. Go to  https://cip.stacknize.com/#/login 
-              2. Enter your Email ID.
-              3. Use the temporary password provided above.
-              4. Set a new password when prompted.
-              
-              If you need any assistance, reach out to us.
-              
-              We're excited to see your contributions. Welcome once again!
-              
-              Best regards,
-              `+
-                    req.body.name + ` 
-              `+
-                    Company_Name + `
-              `+
-                    logo + `
-              Powered by EngageKart`
+                subject: 'Welcome to EngageKart!',
+                text: `Dear ${req.body.name},
+            
+            Welcome to ${Company_Name}'s account on Engagekart!
+            
+            Please find your account details below:
+            
+            Login ID: ${req.body.email_id}
+            Mobile: ${req.body.mobile_number}
+            Role: ${req.body?.RoleName}
+            Temporary Password:  ` + JSON.stringify(randomstring) + `
+            
+            To access your Engagekart account, follow these steps:
+            
+            1. Go to https://cip.stacknize.com/#/login
+            2. Enter your Email ID
+            3. Use the temporary password provided above.
+            
+            Do not forget to change your password once logged in.
+            
+            If you find any details incorrect, please contact your admin for changes.
+            
+            We're excited to see your contributions. Welcome once again!
+            
+            Best regards,
+            Team Engagekart`
             };
-
             transporter.sendMail(mailOptions, (error, info) => {
-          // console.log(info)
+                // console.log(info)
 
             });
             res.status(200).send({
@@ -740,14 +733,14 @@ const editUser = async (req, res) => {
         email_id = req.body.email_id
         name = req.body.name
         mobile_number = req.body.mobile_number
-        countryCode=req.body.country_code
+        countryCode = req.body.country_code
         displayPhoneNumber = req.body?.display_mobile_number
 
         const LastModifiedDate = new Date()
 
         UserType = req.body.UserType
 
-        var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType,countryCode,displayPhoneNumber, uid])
+        var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType, countryCode, displayPhoneNumber, uid])
         res.status(200).send({
             msg: 'User Updated successfully !',
             editUserData: editUserData,
@@ -777,12 +770,12 @@ const getUserByspid = async (req, res) => {
     }
 }
 
-const getUserByuid = async (req,res) =>{
-    try{
+const getUserByuid = async (req, res) => {
+    try {
         console.log("req.params.spid,req.params.uid")
-        console.log(req.params.spid,req.params.uid)
-       
-        var getUser = await db.excuteQuery(val.selectUserByIdQuery, [req.params.spid,req.params.uid])
+        console.log(req.params.spid, req.params.uid)
+
+        var getUser = await db.excuteQuery(val.selectUserByIdQuery, [req.params.spid, req.params.uid])
         res.status(200).send({
             msg: 'Get user',
             getUser: getUser,
@@ -805,17 +798,17 @@ const addTeam = async (req, res) => {
         created_at = new Date();
         console.log(userIDs)
         const userIDsString = userIDs.join(', ');
-        const teamVal = [[SP_ID, team_name, created_at,created_at,userIDsString]];
-       console.log(teamVal)
+        const teamVal = [[SP_ID, team_name, created_at, created_at, userIDsString]];
+        console.log(teamVal)
         var teamRes = await db.excuteQuery(val.addteamQuery, [teamVal])
         console.log(teamRes.insertId)
 
         const allTeamsUser = userIDs.map(data => [teamRes.insertId, data, created_at]);
-      
+
 
 
         var teamMapRes = await db.excuteQuery(val.addUserTeamMap, [allTeamsUser])
-   
+
 
 
 
@@ -915,5 +908,5 @@ module.exports = {
     uploadCompanylogo, savecompanyDetail, savebillingDetails, savelocalDetails, updateLocalDetails, updatebillingDetails, updateCompanyDetail,
     getbillingDetails, getlocalDetails, getcompanyDetail, saveworkingDetails, getworkingDetails, updateWorkingHours, addholidays, getHolidays, removeHolidays
     , subrights, rights, addRole, getRolesbyroleIDspid, getUserbyspiduserType, deleteRoleByroleIDspid, addUser, rolesListByspid,
-    deleteUser, editUser, getUserByspid, addTeam, deleteTeam, editTeam, teamsListByspid ,getUserByuid
+    deleteUser, editUser, getUserByspid, addTeam, deleteTeam, editTeam, teamsListByspid, getUserByuid
 }

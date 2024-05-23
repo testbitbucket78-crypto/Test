@@ -92,8 +92,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          //executablePath: "/usr/bin/google-chrome-stable",
-          executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          executablePath: "/usr/bin/google-chrome-stable",
+          //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -715,10 +715,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       var isAutoReply = defaultAction[0].isAutoReply
       var autoReplyTime = defaultAction[0].autoReplyTime
       var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
-
+      var pausedTill = defaultAction[0]?.pausedTill
 
     }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WhatsApp Web')
+    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WhatsApp Web')
     let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  // CALL Default Routing Rules
   }
 

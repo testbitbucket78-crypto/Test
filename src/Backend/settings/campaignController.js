@@ -293,7 +293,7 @@ const addCustomField = async (req, res) => {
                 return;
             } else {
                 // Check if the Type is 'select', format the values accordingly and update id with addfiled inserted id
-                if (Type === 'Select') {
+                if (Type === 'Select' || Type === 'Multi Select') {
                     values = values.map(option => ({
                         id: addFieldResult.insertId + '_' + option.id,
                         optionName: option.optionName
@@ -319,14 +319,20 @@ const addCustomField = async (req, res) => {
 
 const editCustomField = async (req, res) => {
     try {
-        ColumnName = req.body.ColumnName,
-            Type = req.body.Type,
-            description = req.body.description,
-
+        ColumnName = req.body.ColumnName;
+            Type = req.body.Type;
+            description = req.body.description;
+            let values = req.body.values;
+            id = req.body.id
+            values = values.map(option => ({
+                id: id + '_' + option.id,
+                optionName: option.optionName
+            }));
             updated_at = new Date().toUTCString();
 
-        id = req.body.id
-        let editedField = await db.excuteQuery(val.editfield, [ColumnName, Type, description, updated_at, id])
+      
+        let editedField = await db.excuteQuery(val.editfield, [ColumnName, Type, description, updated_at,JSON.stringify(values), id])
+        console.log(ColumnName, Type, description, updated_at, id ,editedField)
         res.send({
             status: 200,
             editedField: editedField
