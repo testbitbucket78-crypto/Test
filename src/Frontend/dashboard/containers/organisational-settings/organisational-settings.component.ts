@@ -395,6 +395,7 @@ hideToaster(){
       if(result){
         if(result?.status == 200)
         $("#companyDetailModal").modal('hide');
+        this.intials = this.settingsService.getInitials(this.companyData?.Company_Name)
       }
 
     })
