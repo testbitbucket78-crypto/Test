@@ -163,6 +163,7 @@ export interface defaultActionData {
     pausedTill:string;
     pauseAgentActiveTime: number;
     pauseAutoReplyTime: number;
+    defaultAdminUid: number;
 }
 
 export interface defaultMessagesData {
