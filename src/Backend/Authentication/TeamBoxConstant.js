@@ -7,7 +7,60 @@ const database= "cip_project"
 
 
 //Query for contactPage
-var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked !=1 and isDeleted !=1";
+//var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked !=1 and isDeleted !=1";
+var selectAllQuery =`WITH LatestInteractions AS (
+    SELECT i1.InteractionId, i1.customerId, i1.interaction_status, i1.interaction_details, 
+           i1.AutoReplyStatus, i1.AutoReplyUpdatedAt, i1.paused_till, i1.deleted_by, 
+           i1.is_deleted, i1.updated_at AS interaction_updated_at, i1.created_at AS interaction_created_at, 
+           i1.SP_ID, i1.interaction_type
+    FROM Interaction i1
+    JOIN (
+        SELECT customerId, MAX(InteractionId) as latestInteractionId
+        FROM Interaction
+        GROUP BY customerId
+    ) i2 ON i1.customerId = i2.customerId AND i1.InteractionId = i2.latestInteractionId
+    WHERE i1.is_deleted != 1
+      AND i1.SP_ID = ?
+),
+ContactsWithoutInteraction AS (
+    SELECT ec.customerId, ec.Phone_number, ec.Name, 'WithoutInteraction' AS source, 1 AS priority
+    FROM EndCustomer ec
+    WHERE ec.customerId NOT IN (SELECT customerId FROM Interaction)
+      AND ec.IsTemporary != 1
+      AND ec.isDeleted != 1
+      AND ec.SP_ID = ?
+),
+ContactsWithLatestInteraction AS (
+    SELECT ec.customerId, ec.Phone_number, ec.Name, li.InteractionId, 'WithLatestInteraction' AS source, 2 AS priority
+    FROM EndCustomer ec
+    JOIN LatestInteractions li ON ec.customerId = li.customerId
+    WHERE ec.IsTemporary != 1
+      AND ec.isDeleted != 1
+      AND ec.SP_ID = ?
+),
+ContactsWithLatestInteractionDeletedOrTemporary AS (
+    SELECT ec.customerId, ec.Phone_number, li.InteractionId, 'WithLatestInteractionDeletedOrTemporary' AS source, 3 AS priority
+    FROM EndCustomer ec
+    JOIN LatestInteractions li ON ec.customerId = li.customerId
+    WHERE (ec.IsTemporary = 1 OR ec.isDeleted = 1)
+      AND ec.SP_ID = ?
+)
+SELECT DISTINCT customerId, Phone_number, Name, InteractionId, source FROM (
+    SELECT customerId, Phone_number, Name, 
+           NULL AS InteractionId, source, priority
+    FROM ContactsWithoutInteraction
+    UNION ALL
+    SELECT customerId, Phone_number, Name, 
+           InteractionId, source, priority
+    FROM ContactsWithLatestInteraction
+    UNION ALL
+    SELECT customerId, Phone_number, NULL AS Name, 
+           InteractionId, source, priority
+    FROM ContactsWithLatestInteractionDeletedOrTemporary
+) AS CombinedResults
+ORDER BY priority, customerId
+LIMIT ?, ?;
+`;
 var interactionsquery = "SELECT * FROM Interaction WHERE SP_ID=?  and is_deleted !=1"
 var contactsInteraction = `SELECT e.*, i.*
 FROM EndCustomer e

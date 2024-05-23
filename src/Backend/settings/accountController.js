@@ -41,7 +41,7 @@ const insertAndEditWhatsAppWeb = async (req, res) => {
         restart = req.body.restart
         reset = req.body.reset
 
-
+console.log("id-------",id)
         if (id == 0) {
             let addVal = [[channel_id, connected_id, channel_status, is_deleted, spid, phone_type, import_conversation, QueueMessageCount, new Date(), WAVersion, InMessageStatus, OutMessageStatus, QueueLimit, delay_Time, INGrMessage, OutGrMessage, online_status, serviceMonetringTool, syncContact, DisconnAlertEmail, roboot, restart, reset]]
             let insertVal = await db.excuteQuery(val.insertWhatsappdetails, [addVal]);

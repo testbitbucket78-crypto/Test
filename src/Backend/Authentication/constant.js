@@ -42,7 +42,7 @@ var content_type='application/json'
 
 
 //Sms varification variables
-const email = "notifications@engagekart.com";
+const email = 'info@sampana.in' //"notifications@engagekart.com";
 const appPassword = "xf*q(F#0";
 const emailHost = "us2.smtp.mailhostbox.com"
 const port = "587"

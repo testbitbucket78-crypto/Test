@@ -375,7 +375,7 @@ custom_order, sort_order;`
 let deletecolumn=`UPDATE SPIDCustomContactFields SET isDeleted=1 , isDeletedOn=? where id=?`
 let enableMandatory=`UPDATE SPIDCustomContactFields SET Mandatory=? , updated_at=? where id=?`
 let enablestatus=`UPDATE SPIDCustomContactFields SET Status=? , updated_at=? where id=?`
-let editfield=`UPDATE SPIDCustomContactFields SET ColumnName=?,Type=?,description=?,updated_at=? where id=?`
+let editfield=`UPDATE SPIDCustomContactFields SET ColumnName=?,Type=?,description=?,updated_at=? ,dataTypeValues =? where id=?`
 
 
 //________________________________________TEMPLATE SETTINGS__________________________//

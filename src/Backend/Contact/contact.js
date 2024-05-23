@@ -453,7 +453,7 @@ function sendMailAfterImport(emailId, user, noOfContact) {
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log(err)
+        console.log(error)
       }
       console.log('Message sent: %s');
 
@@ -464,11 +464,25 @@ function sendMailAfterImport(emailId, user, noOfContact) {
   }
 }
 
-async function addOnlynewContact(CSVdata, identifier, SP_ID) {
 
+async function findTagId(TagName, spid) {
+  try {
+    let tagId = await db.excuteQuery('select * from EndCustomerTagMaster where SP_ID =? and TagName=? and isDeleted !=1', [spid, TagName]);
+    
+    let ID = tagId[0]?.ID;
+    console.log("tagId[0]?.ID", ID);
+    return ID;
+  } catch (err) {
+    console.log("find tag err", err);
+    return err;
+  }
+}
+
+async function addOnlynewContact(CSVdata, identifier, SP_ID) {
   try {
     let result;
     let count = 0;
+
     for (let i = 0; i < CSVdata.length; i++) {
       const set = CSVdata[i];
       const fieldNames = set.map((field) => field.ActuallName).join(', ');
@@ -477,50 +491,55 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
       const identifierField = set.find((field) => field.ActuallName === identifier);
       const identifierValue = identifierField ? identifierField.displayName : '';
 
-      let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=?  and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
-      const values = set.map((field) => field.displayName);
-      // values.push(SP_ID);
+      // Replace tag value with tag ID
+      for (let field of set) {
+        if (field.ActuallName === 'tag') {
+          field.displayName = await findTagId(field.displayName, SP_ID);
+        }
+      }
 
+      let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=? and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
+      const values = set.map((field) => field.displayName);
+      console.log(values, fieldNames);
 
       // Ensure db.executeQuery returns a promise
       result = await db.excuteQuery(query, [values, identifierValue, SP_ID]);
       if (result?.affectedRows == 1) {
         count++;
       }
-
     }
+
     return { result, count };
-    // Ensure to handle the returned result outside the loop if needed
   } catch (err) {
     return err;
   }
-
 }
-
 
 async function updateSelectedField(CSVdata, identifier, fields, SP_ID) {
   try {
-    // Iterate over each field in the 'fields' array
-    for (var j = 0; j < fields.length; j++) {
+    for (let j = 0; j < fields.length; j++) {
       const updateData = fields[j];
 
-      // Iterate over each set of CSV data
-      for (var i = 0; i < CSVdata.length; i++) {
+      for (let i = 0; i < CSVdata.length; i++) {
         const set = CSVdata[i];
 
         // Find identifier value and updated field value
         const identifierField = set.find((field) => field.ActuallName === identifier);
         const identifierValue = identifierField ? identifierField.displayName : '';
         const updatedField = set.find((field) => field.ActuallName === updateData);
-        const updatedFieldValue = updatedField ? updatedField.displayName : '';
+
+        // Replace tag value with tag ID
+        let updatedFieldValue = updatedField ? updatedField.displayName : '';
+        if (updatedField.ActuallName === 'tag') {
+          updatedFieldValue = await findTagId(updatedField.displayName, SP_ID);
+        }
 
         // Construct the update query
-        let query = 'UPDATE EndCustomer SET ' + updateData + '=? WHERE ' + identifier + '=? AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0)';
-
+        let query = `UPDATE EndCustomer SET ${updateData}=? WHERE ${identifier}=? AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0)`;
 
         // Execute the update query
         var upExistContOnlyWithFields = await db.excuteQuery(query, [updatedFieldValue, identifierValue, SP_ID]);
-        //console.log(upExistContOnlyWithFields);
+        console.log(upExistContOnlyWithFields);
       }
     }
     return upExistContOnlyWithFields;
@@ -529,37 +548,43 @@ async function updateSelectedField(CSVdata, identifier, fields, SP_ID) {
   }
 }
 
-
 async function updateContact(CSVdata, identifier, SP_ID) {
   try {
-    for (var i = 0; i < CSVdata.length; i++) {
+    for (let i = 0; i < CSVdata.length; i++) {
       const set = CSVdata[i];
 
       // Find the identifier field
       const identifierField = set.find((field) => field.ActuallName === identifier);
       const identifierValue = identifierField ? identifierField.displayName : '';
 
+      // Replace tag value with tag ID
+      for (let field of set) {
+        if (field.ActuallName === 'tag') {
+          field.displayName = await findTagId(field.displayName, SP_ID);
+        }
+      }
+
       // Build the SET clause for the UPDATE query
       const setClause = set.map((field) => `${field.ActuallName} = ?`).join(', ');
 
       // Build the UPDATE query
       let query = `UPDATE EndCustomer SET ${setClause} WHERE ${identifier} = ? AND SP_ID = ? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0);`;
-      // console.log(query);
+      console.log(query);
 
       // Add values for placeholders in the correct order
-      const values = set.map((field) => field.displayName); // Using displayName as FieldValue
+      const values = set.map((field) => field.displayName);
       values.push(identifierValue);
       values.push(SP_ID);
 
       var upExistContOnly = await db.excuteQuery(query, values);
-      // console.log(upExistContOnly);
+      console.log(upExistContOnly);
     }
     return upExistContOnly;
   } catch (err) {
     return err;
   }
-
 }
+
 async function getHeadersArray(spid) {
   try {
 
@@ -941,31 +966,32 @@ async function isDataInCorrectFormat(columnDataType, ActuallName, displayName, u
             // Validate ISO datetime format
             console.log("ISO datetime format", convertedValue)
             convertedValue = !isNaN(date.getTime()) && date.toISOString() === displayName;
-           
+
           } else if (dateTimeRegex.test(displayName)) {
             // Validate "YYYY-MM-DD HH:MM:SS" format
             console.log("YYYY-MM-DD HH:MM:SS", convertedValue)
             convertedValue = !isNaN(date.getTime()) && displayName === formatDateTime(date);
-           
+
           }
           console.log(convertedValue, date);
           return { isError: !convertedValue, reason: `Date Time is invalid` };
         }
         break;
-        case 'Date':
-          if (displayName) {
-            const date = new Date(displayName);
-            // Regular expressions to match date-only formats
-            const dateDashRegex = /^\d{4}-\d{2}-\d{2}$/;
-            const dateSlashRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+      case 'Date':
+        if (displayName) {
+          const date = new Date(displayName);
+          // Regular expressions to match date-only formats
+          const dateDashRegex = /^\d{4}-\d{2}-\d{2}$/;
+          const dateSlashRegex = /^\d{4}\/\d{2}\/\d{2}$/;
 
-            if (dateDashRegex.test(displayName) || dateSlashRegex.test(displayName)) {
-                // Validate "YYYY-MM-DD" or "YYYY/MM/DD" format
-                convertedValue = !isNaN(date.getTime()) && displayName === formatDate(date, displayName.includes('-') ? '-' : '/');
-            }
-            return { isError: !convertedValue, reason: `Date is invalid` };
+          if (dateDashRegex.test(displayName) || dateSlashRegex.test(displayName)) {
+            // Validate "YYYY-MM-DD" or "YYYY/MM/DD" format
+            console.log("if date", displayName)
+            convertedValue = !isNaN(date.getTime()) && displayName === formatDate(date, displayName.includes('-') ? '-' : '/');
           }
-          break;
+          return { isError: !convertedValue, reason: `Date is invalid` };
+        }
+        break;
       case 'Switch':
         if (displayName) {
           convertedValue = ['yes', 'no'].includes(displayName.toLowerCase()) ? displayName.toLowerCase() : false;
