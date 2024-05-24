@@ -35,7 +35,7 @@ export class RolesSettingsComponent implements OnInit {
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
         },
         {
-            field: 'optRights',
+            field: 'rights',
             headerName: 'Rights',
             width:200,
             suppressSizeToFit: false,
@@ -45,7 +45,7 @@ export class RolesSettingsComponent implements OnInit {
             sortable: true,
         },
         {
-            field: 'users_count',
+            field: 'NoOfUser',
             headerName: 'No. of Users',
             width:100,
             suppressSizeToFit: false,

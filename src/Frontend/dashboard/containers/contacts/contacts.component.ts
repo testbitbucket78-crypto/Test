@@ -35,6 +35,7 @@ export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
   }
   arrHideColumn:any[] =[];
   isShowColumn:boolean = false;
+  isShowFilter:boolean = false;
   isImport:boolean = true;
 columnDefs: ColDef[] = [
   {
@@ -881,6 +882,18 @@ deletContactByID(data: any) {
         let val = value.split(':');
         console.log(val);
         this.productForm.get(prop)?.setValue(val[0]);
+      }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
+        let val = value.split(':');
+        console.log(val);
+        this.productForm.get(prop)?.setValue(val[0]);
+
+        let selectName =  value.value.split(',');
+                  let names ='';
+                  selectName.forEach((it:any)=>{
+                    let name = it.split(':');
+                    console.log(name);
+                    names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
+                  })
       }
     }  
     this.OptInStatus =data.OptInStatus
@@ -1184,6 +1197,10 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   getSplitItem(val:any){
     let selectName =  val.split(':');
     return selectName[1] ?  selectName[1] : '';
+  }
+
+  openFilters(){
+    this.isShowFilter = true;
   }
   
 }
