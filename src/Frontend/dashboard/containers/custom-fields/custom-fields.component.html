@@ -185,7 +185,7 @@
                             <!-- <div *ngFor="let item of workingFormData;let idx=index"> -->
                                 <div class="d-flex flex-column billing-form-row">                         
                                         <label for="displayName" >Field Name</label>
-                                        <input type="text" name="displayName" id="displayName" (change)="onInputChange()" placeholder="Enter Name in max 50 Character" maxlength="50" formControlName="displayName">                              
+                                        <input type="text" name="displayName" id="displayName"  (change)="onInputChange()" placeholder="Enter Name in max 50 Character" maxlength="50" formControlName="displayName">                              
                                 </div>
                                     <div class="d-flex flex-column billing-form-row">
                                         <label for="description">Description <span>(Optional)</span></label>
@@ -195,11 +195,12 @@
                                
                                 <div class="d-flex flex-column billing-form-row">
                                     <label>Field Type </label>
-                                    <select name="type" id="type" formControlName="type" (change)="onInputChange()" [disabled]="selectedCustomField ? true :false">
+                                    <select name="type" id="type" formControlName="type" (change)="onInputChange()" [disabled]="isEdit">
                                         <option *ngFor="let type of types" [value]="type">
                                             {{type}}</option>
                                     </select>
-                                    <div *ngIf="selectedCustomField" class="error">Please Note: Field Type once selected cannot be edited later.</div>                                                       
+                                    <div *ngIf="!selectedCustomField" class="error">Please Note: Field Type once selected cannot be edited later.</div>                                                       
+                                    <div *ngIf="selectedCustomField" class="error">Field Type is not editable once created.</div>                                                       
                                 </div>
                                 <div *ngIf="customFieldForm.get('type')?.value == 'Select' || customFieldForm.get('type')?.value == 'Multi Select'" class="select-options">
                                     <div  *ngFor="let option of addCustomField; let ith = index" class="d-flex flex-column">
