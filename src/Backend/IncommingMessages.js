@@ -143,19 +143,19 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
 
 async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType) {
   try {
-    // console.log("in side getSmartReplies method")
+     console.log("in side getSmartReplies method" ,message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
     // console.log("message_text")
     // console.log(message_text)
     // console.log("_________process.env.insertMessage__________")
 
-    let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from, channelType, agid);
+    let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newId, phone_number_id, from, channelType, agid);
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
-    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, newlyInteractionId, channelType, agid);
+    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, newId, channelType, agid);
 
-    //console.log("defultOutOfOfficeMsg")
+    console.log("defultOutOfOfficeMsg")
     //console.log(defautWlcMsg)
     //console.log(replymessage)
-    //console.log(defultOutOfOfficeMsg)
+   // console.log(defultOutOfOfficeMsg)
     //var autoReply = replymessage[0].Message
     //console.log(replymessage.length)
 
@@ -165,9 +165,9 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
       iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType)
     } else if (defultOutOfOfficeMsg === false) {
 
-      // console.log("getOutOfOfficeResult")
-      let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newlyInteractionId, channelType, agid);
-      // console.log(getOutOfOfficeResult)
+      console.log("getOutOfOfficeResult")
+      let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid);
+      console.log(getOutOfOfficeResult)
     }
     else if (defautWlcMsg.length > 0 && defautWlcMsg[0].Is_disable == 1) {
       // console.log("defaut msg")
@@ -400,8 +400,13 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
     if (newlyInteractionId != null && newlyInteractionId != undefined && newlyInteractionId != "" && wlcMessage.length > 0 && wlcMessage[0].Is_disable == 1) {
       // console.log("defaut msg")
       // sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
+      let messageInterval = await db.excuteQuery('select * from Message where interaction_id=?', [newlyInteractionId])
+     // console.log(messageInterval)
+    if (messageInterval.length <= 0) {
+      // console.log("messageInterval" ,newId)
       messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, wlcMessage[0].value, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId)
       let updateSmsRes = await db.excuteQuery(updateSms, [1, new Date(), msg_id]);
+    }
     }
     // console.log(wlcMessage);
     return wlcMessage;
@@ -416,15 +421,16 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
     let result = '';
 
     var outOfOfficeMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Out of Office']);
-    // console.log(outOfOfficeMessage)
+   //  console.log(outOfOfficeMessage)
     if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
-      // console.log("outOfOfficeMessage Is_disable")
+       console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 2])
-      //  console.log(messageInterval.length)
+        console.log(messageInterval)
       if (messageInterval.length <= 0) {
-        // console.log("messageInterval")
+         console.log("messageInterval" ,newId)
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
         result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
+        console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
         let updateSmsRes = await db.excuteQuery(updateSms, [2, new Date(), msg_id]);
       }
     }
@@ -442,7 +448,7 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
   var workingData = await db.excuteQuery(workingHourQuery, [sid]);
   if ((isWorkingTime(workingData, currentTime))) {
     AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid);
-    // console.log('It is currently  within working hours.' + msg_id);
+     console.log('It is currently  within working hours.' + msg_id);
     return true;
   }
   // console.log('It is currently not within working hours.');
@@ -482,17 +488,18 @@ function isWorkingTime(data, currentTime) {
 
 
 async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid) {
-  //console.log("msg_id");
-  var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=?";
+  //console.log("AllAgentsOffline");
+  var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=? and ";
   let activeAgent = await db.excuteQuery(activeAgentQuery, [sid]);
 
   if (activeAgent.length <= 0) {
 
-    //console.log(msg_id + " " + newId);
+  //  console.log("activeAgent",msg_id + " " + newId);
 
     var AgentsOfflineMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'All Agents Offline']);
     if (AgentsOfflineMessage.length > 0 && AgentsOfflineMessage[0].Is_disable == 1) {
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 3])
+    //  console.log("inactive above   length" ,messageInterval.length)
       if (messageInterval.length <= 0) {
         //sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
         messageThroughselectedchannel(sid, from, AgentsOfflineMessage[0].message_type, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].link, phone_number_id, channelType, agid, newId)
@@ -510,7 +517,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
     middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
   } if (channelType == 'WhatsApp Web') {
-
+console.log("message midddleware" ,interactionId)
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)
     if (result.status == 200) {
       let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", new Date(), new Date(), "", -2]]

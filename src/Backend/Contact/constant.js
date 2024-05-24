@@ -264,7 +264,7 @@ WHERE
     AND isDeleted != 1
 ) AS result
 GROUP BY 
-ActuallName
+displayName
 ORDER BY 
 custom_order, sort_order;`
 

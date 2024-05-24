@@ -283,7 +283,7 @@ const addCustomField = async (req, res) => {
 
             // Insert the new custom field
             const addFieldResult = await db.excuteQuery(val.addcolumn, [[insertionValues]]);
-
+console.log("addFieldResult" ,addFieldResult) 
             // Return 500 if insertion failed
             if (!addFieldResult.insertId) {
                 res.status(500).send({
@@ -300,7 +300,7 @@ const addCustomField = async (req, res) => {
                     }));
                     let updateRes = await db.excuteQuery('UPDATE  SPIDCustomContactFields SET dataTypeValues=? WHERE id =?', [JSON.stringify(values), addFieldResult.insertId])
                 }
-
+console.log("efdgfd",addFieldResult)
                 // Return success response
                 res.status(200).send({
                     status: 200,

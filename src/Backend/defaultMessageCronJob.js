@@ -146,7 +146,7 @@ async function isClientActive(spid) {
   return new Promise(async (resolve, reject) => {
     try {
 
-      const apiUrl = 'https://waweb.stacknize.com/IsClientReady'; // Replace with your API endpoint
+      const apiUrl = 'http://localhost:3009/IsClientReady'; // Replace with your API endpoint
       const dataToSend = {
         spid: spid
       };

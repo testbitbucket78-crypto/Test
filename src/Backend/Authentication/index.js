@@ -165,8 +165,14 @@ const forgotPassword = async (req, res) => {
                 from: val.email,
                 to: req.body.email_id,
                 subject: "Engagekart Password Reset",
-                html: '<p>You requested for reset password, kindly use this <a href="https://cip.stacknize.com/#/reset-password?uid=' + cipherdata + '">  link  </a>to reset your password</p>'
-                //html: '<p>You requested for reset password, kindly use this <a href="http://localhost:4200/#/reset-password?uid=' + cipherdata + '">link</a>to reset your password</p>'
+                //html: '<p>You requested for reset password, kindly use this <a href="https://cip.stacknize.com/#/reset-password?uid=' + cipherdata + '">  link  </a>to reset your password</p>'
+                html: `<p>Hello,</p>
+
+                <p>We have received a Forgot Password request for your Engagekart account. Please use this link provided below to proceed with the reset.<br>
+                <a href="http://localhost:4200/#/reset-password?uid=${cipherdata}">link to reset password</a></p>
+                
+                <p>If you did not initiate this request, you may ignore this email and we suggest you report this to your business admin manager.</p>`
+                
 
             };
 
@@ -318,7 +324,11 @@ const sendOtp = async function (req, res) {
 
         transporter.sendMail(mailOptions, (error, info) => {
             try {
-
+if(error){
+    console.log("error ampt ----------",error)
+}else{
+    console.log("info---------",info)
+}
 
                 res.send(Status);
             } catch (error) {
@@ -333,10 +343,10 @@ const sendOtp = async function (req, res) {
 
         sendMessage(data)
         var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
-        console.log(storeEmailOtp)
+       // console.log(storeEmailOtp)
 
         var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, otp, 'Mobile'])
-        console.log(storePhoneOtp)
+       // console.log(storePhoneOtp)
 
 
         return res.status(200).send({

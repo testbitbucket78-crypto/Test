@@ -39,58 +39,58 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-   
- let message_varible = "[{\"label\":\"{{Name}}\",\"value\":\"Name\"},{\"label\":\"{{Phone_number}}\",\"value\":\"CountryCode\"}]"
 
- async function getDefaultAttribue(message_variables, spid ,customerId) {
-    try {
-        let results = [];
+let message_varible = "[{\"label\":\"{{Name}}\",\"value\":\"Name\"},{\"label\":\"{{Phone_number}}\",\"value\":\"CountryCode\"}]"
 
-        // Fetch all column names from EndCustomer table
-        const endCustomerColumnsQuery = `SHOW COLUMNS FROM EndCustomer`;
-        let endCustomerColumns = await db.excuteQuery(endCustomerColumnsQuery);
-        endCustomerColumns = endCustomerColumns.map(column => column.Field);
-        
-        // Fetch all column names from SPIDCustomContactFields table
-        const spidCustomColumnsQuery = `SELECT ColumnName, CustomColumn FROM SPIDCustomContactFields WHERE SP_ID=? AND isDeleted != 1`;
-        let spidCustomColumns = await db.excuteQuery(spidCustomColumnsQuery, [spid]);
-        let spidCustomColumnsMap = new Map();
-        spidCustomColumns.forEach(column => {
-            spidCustomColumnsMap.set(column.ColumnName, column.CustomColumn);
-        });
-        
-        for (let i = 0; i < message_variables.length; i++) {
-            const message_variable = message_variables[i];
-            let result = {};
-            
-            // Check if message_variable exists in EndCustomer columns
-            if (endCustomerColumns.includes(message_variable)) {
-                const endCustomerQuery = `SELECT ${message_variable} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
-                let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
-                
-                if (endCustomerResult.length > 0 && endCustomerResult[0][message_variable]) {
-                    result[message_variable] = endCustomerResult[0][message_variable];
-                }
-            } else if (spidCustomColumnsMap.has(message_variable)) {
-                const customColumn = spidCustomColumnsMap.get(message_variable);
-                const endCustomerQuery = `SELECT ${customColumn} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
-                let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
-                
-                if (endCustomerResult.length > 0 && endCustomerResult[0][customColumn]) {
-                    result[message_variable] = endCustomerResult[0][customColumn];
-                }
-            } else {
-                console.log(`[${message_variable}] not found in EndCustomer table or SPIDCustomContactFields.`);
-            }
+async function getDefaultAttribue(message_variables, spid, customerId) {
+  try {
+    let results = [];
 
-            results.push(result);
+    // Fetch all column names from EndCustomer table
+    const endCustomerColumnsQuery = `SHOW COLUMNS FROM EndCustomer`;
+    let endCustomerColumns = await db.excuteQuery(endCustomerColumnsQuery);
+    endCustomerColumns = endCustomerColumns.map(column => column.Field);
+
+    // Fetch all column names from SPIDCustomContactFields table
+    const spidCustomColumnsQuery = `SELECT ColumnName, CustomColumn FROM SPIDCustomContactFields WHERE SP_ID=? AND isDeleted != 1`;
+    let spidCustomColumns = await db.excuteQuery(spidCustomColumnsQuery, [spid]);
+    let spidCustomColumnsMap = new Map();
+    spidCustomColumns.forEach(column => {
+      spidCustomColumnsMap.set(column.ColumnName, column.CustomColumn);
+    });
+
+    for (let i = 0; i < message_variables.length; i++) {
+      const message_variable = message_variables[i];
+      let result = {};
+
+      // Check if message_variable exists in EndCustomer columns
+      if (endCustomerColumns.includes(message_variable)) {
+        const endCustomerQuery = `SELECT ${message_variable} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
+        let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
+
+        if (endCustomerResult.length > 0 && endCustomerResult[0][message_variable]) {
+          result[message_variable] = endCustomerResult[0][message_variable];
         }
+      } else if (spidCustomColumnsMap.has(message_variable)) {
+        const customColumn = spidCustomColumnsMap.get(message_variable);
+        const endCustomerQuery = `SELECT ${customColumn} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
+        let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
 
-        return results;
-    } catch (err) {
-        console.log("Error:", err);
-        return [];
+        if (endCustomerResult.length > 0 && endCustomerResult[0][customColumn]) {
+          result[message_variable] = endCustomerResult[0][customColumn];
+        }
+      } else {
+        console.log(`[${message_variable}] not found in EndCustomer table or SPIDCustomContactFields.`);
+      }
+
+      results.push(result);
     }
+
+    return results;
+  } catch (err) {
+    console.log("Error:", err);
+    return [];
+  }
 }
 
 // const value = setTimeout(async () => {
@@ -102,106 +102,322 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 function convertHTML(htmlString) {
-    // Replace <p> and <br> tags with newline characters
-  
-    let result = htmlString.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
-    result = result.replace(/<strong>(.*?)<\/strong>/g, '*$1*');
-    // Replace <em> tags with underscores
-    result = result.replace(/<em>(.*?)<\/em>/g, '_$1_');
-    //Replace attributes tag
-    // result = result.replace(
-    //   /<span style="color: rgb\(0, 0, 0\);">(.*?)<\/span>/g,
-    //   ''
-    // );
-    // Replace <span> tags with strikethrough
-    result = result.replace(/<span.*?>\s*(.*?)\s*<\/span>/g, '~$1~');
-    // Remove any remaining HTML tags
-    result = result.replace(/<[^>]*>/g, '');
-  
-    return result;
-  }
-  
-  function encloseWordsInMatchingTags(sentence) {
-    // Regular expression to find opening and closing tags (with nesting support)
-    const tagRegex = /<([a-z]+)[^>]*>(.*?)<\/\1>/gi;
-    sentence = sentence.replace(
-      '<span style="text-decoration: line-through;">',
-      '<tempMSpan>'
-    );
-  
-    let taggedSentence = sentence;
-    let match;
-  
-    // Loop through all tag matches
-    while ((match = tagRegex.exec(sentence)) !== null) {
-      const tag = match[1].toLowerCase(); // Extract and lowercase the tag name
-      const innerText = match[2]; // Capture the content within the tags
-  
-      // Replace with wrapped words (preserve attributes)
-      const fullTag = match[0]; // Capture the entire matched tag with attributes
-      taggedSentence = taggedSentence.replace(
-        fullTag,
-        innerText
-          .split(/\s+/)
-          .map((word) => `<${tag}>${word}</${tag}>`)
-          .join(' ')
-      );
-    }
+  // Replace <p> and <br> tags with newline characters
+
+  let result = htmlString.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
+  result = result.replace(/<strong>(.*?)<\/strong>/g, '*$1*');
+  // Replace <em> tags with underscores
+  result = result.replace(/<em>(.*?)<\/em>/g, '_$1_');
+  //Replace attributes tag
+  // result = result.replace(
+  //   /<span style="color: rgb\(0, 0, 0\);">(.*?)<\/span>/g,
+  //   ''
+  // );
+  // Replace <span> tags with strikethrough
+  result = result.replace(/<span.*?>\s*(.*?)\s*<\/span>/g, '~$1~');
+  // Remove any remaining HTML tags
+  result = result.replace(/<[^>]*>/g, '');
+
+  return result;
+}
+
+function encloseWordsInMatchingTags(sentence) {
+  // Regular expression to find opening and closing tags (with nesting support)
+  const tagRegex = /<([a-z]+)[^>]*>(.*?)<\/\1>/gi;
+  sentence = sentence.replace(
+    '<span style="text-decoration: line-through;">',
+    '<tempMSpan>'
+  );
+
+  let taggedSentence = sentence;
+  let match;
+
+  // Loop through all tag matches
+  while ((match = tagRegex.exec(sentence)) !== null) {
+    const tag = match[1].toLowerCase(); // Extract and lowercase the tag name
+    const innerText = match[2]; // Capture the content within the tags
+
+    // Replace with wrapped words (preserve attributes)
+    const fullTag = match[0]; // Capture the entire matched tag with attributes
     taggedSentence = taggedSentence.replace(
-      '<tempMSpan>',
-      '<span style="text-decoration: line-through;">'
+      fullTag,
+      innerText
+        .split(/\s+/)
+        .map((word) => `<${tag}>${word}</${tag}>`)
+        .join(' ')
     );
-    return taggedSentence;
   }
-  
-  function modifyString(htmlString) {
-    // Replace non-breaking space with a regular space
-    const modifiedString = htmlString.replace(/&nbsp;/g, ' ');
-  
-    // Split strikethrough text in second paragraph (optional)
-    const paragraphs = modifiedString.split(/<p>/);
-    if (paragraphs.length > 1) {
-      paragraphs[1] = paragraphs[1].replace(
-        /<span style="text-decoration: line-through;">(.*?)<\/span>/,
-        (match, content) => {
-          return `<span style="text-decoration: line-through;">${content.split(
-            ' '
-          )}</span>`;
-        }
-      );
-    }
-  
-    // Enclose words in all paragraphs
-    for (let i = 0; i < paragraphs.length; i++) {
-      paragraphs[i] = encloseWordsInMatchingTags(paragraphs[i]);
-    }
-  
-    return paragraphs.join('<p>');
-  }
-  function removeEmptyTags(htmlString) {
-    // Regular expression to find empty tags
-    const emptyTagRegex = /<([a-z]+)[^>]*>(?:\s*|&nbsp;)*?<\/\1>/gi;
-   
-    return htmlString.replace(emptyTagRegex, '');
-  }
-  
-  // Example usage
-  const originalString =`<p><strong>efred</strong></p><p><br></p><p><br></p><p><span style="color: rgb(0, 0, 0);">Z&nbsp; &nbsp;&nbsp;<span style="color: rgb(0, 0, 0);">a&nbsp;&nbsp;<span style="color: rgb(0, 0, 0);">a</span></span></span></p><p><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><strong>bold bold bold bold&nbsp; &nbsp;</strong><br><em>itallic itallic itallic&nbsp;</em><br></span></span></span></p><p><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><span style="text-decoration: line-through;">strick THROUGH&nbsp;</span><br><br><br>Lasht thanlsadjxweos</span></span></span></p><p><br></p><p><br></p><p><br></p>`
+  taggedSentence = taggedSentence.replace(
+    '<tempMSpan>',
+    '<span style="text-decoration: line-through;">'
+  );
+  return taggedSentence;
+}
 
-   // '<p><strong>bold</strong>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <em>italic&nbsp; &nbsp;<span style="text-decoration: line-through;">strickthrough&nbsp;</span>&nbsp; &nbsp; </em>,</p><p><strong>Hi This is testing of bold itallic strickthrough&nbsp;</strong><br><em>italic itallic dhsfjdjfvb wisdjisd dkiiehfnjikdhn</em><br><span style="text-decoration: line-through;">strickfjd wskdjxiswkhcndi hswjd</span></p><p></p>';
+function modifyString(htmlString) {
+  // Replace non-breaking space with a regular space
+  const modifiedString = htmlString.replace(/&nbsp;/g, ' ');
+
+  // Split strikethrough text in second paragraph (optional)
+  const paragraphs = modifiedString.split(/<p>/);
+  if (paragraphs.length > 1) {
+    paragraphs[1] = paragraphs[1].replace(
+      /<span style="text-decoration: line-through;">(.*?)<\/span>/,
+      (match, content) => {
+        return `<span style="text-decoration: line-through;">${content.split(
+          ' '
+        )}</span>`;
+      }
+    );
+  }
+
+  // Enclose words in all paragraphs
+  for (let i = 0; i < paragraphs.length; i++) {
+    paragraphs[i] = encloseWordsInMatchingTags(paragraphs[i]);
+  }
+
+  return paragraphs.join('<p>');
+}
+function removeEmptyTags(htmlString) {
+  // Regular expression to find empty tags
+  const emptyTagRegex = /<([a-z]+)[^>]*>(?:\s*|&nbsp;)*?<\/\1>/gi;
+
+  return htmlString.replace(emptyTagRegex, '');
+}
+
+// Example usage
+const originalString = `<p><strong>efred</strong></p><p><br></p><p><br></p><p><span style="color: rgb(0, 0, 0);">Z&nbsp; &nbsp;&nbsp;<span style="color: rgb(0, 0, 0);">a&nbsp;&nbsp;<span style="color: rgb(0, 0, 0);">a</span></span></span></p><p><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><strong>bold bold bold bold&nbsp; &nbsp;</strong><br><em>itallic itallic itallic&nbsp;</em><br></span></span></span></p><p><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><span style="text-decoration: line-through;">strick THROUGH&nbsp;</span><br><br><br>Lasht thanlsadjxweos</span></span></span></p><p><br></p><p><br></p><p><br></p>`
+
+// '<p><strong>bold</strong>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <em>italic&nbsp; &nbsp;<span style="text-decoration: line-through;">strickthrough&nbsp;</span>&nbsp; &nbsp; </em>,</p><p><strong>Hi This is testing of bold itallic strickthrough&nbsp;</strong><br><em>italic itallic dhsfjdjfvb wisdjisd dkiiehfnjikdhn</em><br><span style="text-decoration: line-through;">strickfjd wskdjxiswkhcndi hswjd</span></p><p></p>';
+const modifiedString = modifyString(originalString);
+
+// console.log(modifiedString);
+
+// console.log(convertHTML(removeEmptyTags(modifiedString)));
+
+async function removeTagsFromMessages(originalString) {
   const modifiedString = modifyString(originalString);
-  
-  // console.log(modifiedString);
-  
-  // console.log(convertHTML(removeEmptyTags(modifiedString)));
 
-  async function removeTagsFromMessages(originalString){
-    const modifiedString = modifyString(originalString);
-  
-   // console.log(modifiedString);
-    let  convertedMessageText = convertHTML(removeEmptyTags(modifiedString))
-   // console.log(convertHTML(removeEmptyTags(modifiedString)));
-    return convertedMessageText
+  // console.log(modifiedString);
+  let convertedMessageText = convertHTML(removeEmptyTags(modifiedString))
+  // console.log(convertHTML(removeEmptyTags(modifiedString)));
+  return convertedMessageText
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////// Date formate converter /////////////////////////
+
+const monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"];
+const shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function parseDate(inputData) {
+  const parsedDate = new Date(inputData);
+  if (isNaN(parsedDate.getTime())) {
+    throw new Error('Invalid date or format');
+  }
+  return parsedDate;
+}
+
+function formatDate(inputData, outputFormat) {
+  const parsedDate = parseDate(inputData);
+
+  const day = String(parsedDate.getDate()).padStart(2, '0');
+  const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+  const year = parsedDate.getFullYear();
+  const shortYear = String(year).slice(-2);
+  const monthName = monthNames[parsedDate.getMonth()];
+  const shortMonthName = shortMonthNames[parsedDate.getMonth()];
+  const dayWithoutPadding = parsedDate.getDate();
+  const monthWithoutPadding = parsedDate.getMonth() + 1;
+
+  const formatMap = {
+    'YYYY': year,
+    'YY': shortYear,
+    'MONTH': monthName,
+    'MTH': shortMonthName,
+    'MM': month,
+    'M': monthWithoutPadding,
+    'DD': day,
+    'D': dayWithoutPadding,
+  };
+
+  // Replace each format key with the corresponding value in the output format
+  let formattedDate = outputFormat;
+  for (const [key, value] of Object.entries(formatMap)) {
+    formattedDate = formattedDate.replace(new RegExp(`\\b${key}\\b`, 'g'), value);
   }
 
-module.exports = { removeTagsFromMessages,getDefaultAttribue }
+  return formattedDate;
+}
+
+
+// // Example usage:
+// try {
+//   const inputData = '2024-12-23'; // your input date
+//   const outputFormat = 'MONTH D, YYYY'; // desired output format from the dateFormats list
+
+//   const result = formatDate(inputData, outputFormat);
+//   console.log(`Results -----------: ${result}`); // Output: December 23, 2024
+// } catch (error) {
+//   console.error(error.message);
+// }
+
+
+
+
+
+//***************************************************************** */
+
+
+
+// Function to format time
+function formatTime(timeString, outputFormat) {
+  const [hourStr, minuteStr, secondStr] = timeString.split(':');
+  const hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+  const second = parseInt(secondStr, 10);
+
+  let formattedTime;
+  if (outputFormat === '12-hour') {
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12; // Convert hour to 12-hour format
+    formattedTime = `${hour12}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')} ${period}`;
+  } else if (outputFormat === '24-hour') {
+    formattedTime = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}`;
+  } else {
+    throw new Error('Invalid output time format');
+  }
+
+  return formattedTime;
+}
+
+
+
+
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+function convertTimeByTimeZone(timeString, format, targetTimeZone) {
+  const is12HourFormat = format.toLowerCase().includes('am') || format.toLowerCase().includes('pm');
+  const now = new Date();
+  
+  // Parse input time string based on its format
+  let date;
+  if (is12HourFormat) {
+    // 12-hour format with AM/PM
+    const [timePart, period] = timeString.trim().split(/\s+/);
+    const [hourStr, minuteStr, secondStr = '00'] = timePart.split(':');
+    let hour = parseInt(hourStr, 10);
+    const minute = parseInt(minuteStr, 10);
+    const second = parseInt(secondStr, 10);
+
+    if (/PM/i.test(period) && hour < 12) hour += 12;
+    if (/AM/i.test(period) && hour === 12) hour = 0;
+
+    date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, second);
+  } else {
+    // 24-hour format
+    const [hourStr, minuteStr, secondStr = '00'] = timeString.split(':');
+    const hour = parseInt(hourStr, 10);
+    const minute = parseInt(minuteStr, 10);
+    const second = parseInt(secondStr, 10);
+
+    date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, second);
+  }
+
+  // Convert to target time zone
+  const options = {
+    timeZone: targetTimeZone,
+    hour12: is12HourFormat,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  };
+  const formatter = new Intl.DateTimeFormat([], options);
+  const parts = formatter.formatToParts(date);
+
+  // Constructing the formatted time string
+  const timeParts = {};
+  parts.forEach(({ type, value }) => {
+    timeParts[type] = value;
+  });
+
+  let formattedTime;
+  if (is12HourFormat) {
+    formattedTime = `${timeParts.hour}:${timeParts.minute}:${timeParts.second} ${timeParts.dayPeriod}`;
+  } else {
+    formattedTime = `${timeParts.hour}:${timeParts.minute}:${timeParts.second}`;
+  }
+
+  return formattedTime;
+}
+
+// // Example usage:
+// try {
+//   const timeString1 = '17:41:00'; // 24-hour format input time
+//   const timeString2 = '05:54:00 PM'; // 12-hour format input time
+
+//   const result1 = convertTimeByTimeZone(timeString1, '24-hour', 'US/Eastern');
+//   const result2 = convertTimeByTimeZone(timeString2, '12-hour', 'US/Eastern');
+
+//   console.log(`Converted time (24-hour): ${result1}`); // Output: Correct converted time in 24-hour format
+//   console.log(`Converted time (12-hour): ${result2}`); // Output: Correct converted time in 12-hour format
+// } catch (error) {
+//   console.error(error.message);
+// }
+
+
+
+//##################################################################//
+
+
+
+
+
+
+function formatDateTimeZone(dateTimeString, outputDateFormat, outputTimeFormat, targetTimeZone) {
+  const [datePart, timePart] = dateTimeString.split(' ');
+  const formattedDate = formatDate(datePart, outputDateFormat);
+  const formattedTime = formatTime(timePart, outputTimeFormat);
+  const convertedTime = convertTimeByTimeZone(timePart, outputTimeFormat, targetTimeZone);
+
+  return `${formattedDate} ${formattedTime} ${targetTimeZone} (Converted time: ${convertedTime})`;
+}
+
+
+
+
+// Example usage:
+try {
+  const dateTimeString = '2024-05-22 13:44:23';
+  const outputDateFormat = 'D-M-YY';
+  const outputTimeFormat = '12-hour'; // or '24-hour'
+
+  const targetTimeZone = 'Asia/Calcutta';
+
+  const result = formatDateTimeZone(dateTimeString, outputDateFormat, outputTimeFormat, targetTimeZone);
+  console.log(`jyhy                  Formatted DateTime: ${result}`);
+} catch (error) {
+  console.error(error.message);
+}
+
+module.exports = { removeTagsFromMessages, getDefaultAttribue }
