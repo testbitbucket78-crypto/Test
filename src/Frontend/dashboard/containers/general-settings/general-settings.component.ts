@@ -22,6 +22,9 @@ export class GeneralSettingsComponent implements OnInit {
   date!:Date;
   agentInactivePattern:RegExp = /^(?:[1-9]\d{0,1}|[1-4]\d{2}|500)$/;
   pauseAutoTimePattern:RegExp = /^(?:[1-9]\d{0,2}|1[0-3]\d{2}|1440)$/;
+  userList:any[] =[];
+  initUserList:any[] =[];
+  defaultAdminUid:number=0;
 
 
 
@@ -56,6 +59,7 @@ export class GeneralSettingsComponent implements OnInit {
   ngOnInit(): void {
     this.spId = Number(sessionStorage.getItem('SP_ID'));
     this.getDefaultAction();
+    this.getUserList();
   }
 
   getDefaultAction() { 
@@ -71,8 +75,20 @@ export class GeneralSettingsComponent implements OnInit {
      this.pausedTill = a?.pausedTill;
      this.pauseAgentActiveTime = a?.pauseAgentActiveTime;
      this.pauseAutoReplyTime = a?.pauseAutoReplyTime;
+     this.defaultAdminUid = a?.defaultAdminUid;
     //  console.log(a);
 
+    })
+  }
+ 
+
+  getUserList() {
+    this.apiService.getUserList(this.spId).subscribe((result:any) =>{
+      if(result){
+        this.userList =result?.getUser;     
+        console.log('userList:', this.userList);
+        this.initUserList = this.userList.filter((item)=> item.RoleName == 'Admin');
+      }
     })
   }
 
@@ -135,6 +151,7 @@ export class GeneralSettingsComponent implements OnInit {
     this.defaultActionData.pausedTill = this.pausedTill;
     this.defaultActionData.pauseAgentActiveTime = this.pauseAgentActiveTime;
     this.defaultActionData.pauseAutoReplyTime = this.pauseAutoReplyTime;
+    this.defaultActionData.defaultAdminUid = this.defaultAdminUid;
     // console.log(this.defaultActionData)
 
     this.apiService.saveDefaultAction(this.defaultActionData).subscribe
