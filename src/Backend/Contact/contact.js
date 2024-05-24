@@ -180,7 +180,6 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
 app.get('/', async function (req, res) {
   try {
     let contacts = await db.excuteQuery(val.selectAllContact, [req.query.SP_ID]);
-
     res.status(200).send({
       result: contacts,
       status: 200
