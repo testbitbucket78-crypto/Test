@@ -36,6 +36,7 @@ export class CustomFieldsComponent implements OnInit {
   selectedType:string = 'Text';
   types:string[] =['Text','Number','Select','Switch','Date Time','Date','Time','Multi Select' ];
   isFormChanged:boolean = false;
+  isEdit:boolean = false;
   errorMessage = '';
 
 
@@ -125,6 +126,7 @@ addCustomFieldsOption(){
     id: '',
     Option: '',
   })
+  this.isEdit = false;
 }
 
 removeCustomFieldsOption(index:any){
@@ -270,6 +272,7 @@ addCustomFields() {
 editCustomField() { 
   $("#addCustomFieldModal").modal('show');
   this.isFormChanged = false;
+  this.isEdit = true;
   this.patchFormDataValue();
 }
 

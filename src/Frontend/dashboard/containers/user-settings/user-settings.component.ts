@@ -33,6 +33,9 @@ export class UserSettingsComponent implements OnInit {
             resizable: true,
             filter: true,
             sortable: true,
+            // cellRenderer: (params) => `<img style="height: 14px; width: 14px" src=${params.data.avatar} />`,
+            cellRenderer: (params: { data: { name: any; };
+            }) =>`<div class="user-img"><div class="img">${this.getInitials(params.data.name)}</div>${params.data.name ? params.data.name : ''}</div>`,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
         },
         {
@@ -56,7 +59,7 @@ export class UserSettingsComponent implements OnInit {
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
         },
         {
-            field: 'UserType',
+            field: 'RoleName',
             headerName: 'Roles Assigned',
             width:100,
             suppressSizeToFit: false,
@@ -75,7 +78,7 @@ export class UserSettingsComponent implements OnInit {
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
             valueFormatter: (value:any) => {
-                  return value.value == 1 ? 'Active'  : value.value == 2 ? 'Disabled' : 'In Active';
+                  return value.value == 1 ? 'Active'  : value.value == 0 ? 'In Active' : 'Disabled';
               },
         },
         {
@@ -326,4 +329,17 @@ export class UserSettingsComponent implements OnInit {
         let firstLetterLastName = lastName.charAt(0) || '';
         return firstLetterFirstName + firstLetterLastName;
     }
+
+    getInitials(name:any){
+        let intials ='';
+        if(name){
+          let words = name.split(' ');
+          let inti = words[0][0] + (words[1] ? (words[1].trim())[0] :'');
+          intials =inti;
+        }else{
+          intials ='';
+        }
+
+        return intials;
+      }
 }
