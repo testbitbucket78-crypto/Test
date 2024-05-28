@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { UserService } from 'Frontend/auth/services';
 import { SideNavItems, SideNavSection } from 'Frontend/navigation/models';
 import { NavigationService } from 'Frontend/navigation/services';
@@ -16,6 +16,7 @@ export class SideNavComponent implements OnInit {
     @Input() sidenavStyle!: string;
     @Input() sideNavItems!: SideNavItems;
     @Input() sideNavSections!: any[];
+    @Output() navWidth: any = new EventEmitter();
 
     subscription: Subscription = new Subscription();
     routeDataSubscription!: Subscription;
@@ -25,7 +26,7 @@ export class SideNavComponent implements OnInit {
         {id:1,name:'dashboard'},
         {id:2,name:'Contacts'},
         {id:11,name:'teambox'},
-        {id:1,name:'SmartReplies'},
+        {id:31,name:'SmartReplies'},
         {id:25,name:'camp'},
         {id:27,name:'Funnel'},
         {id:31,name:'FlowBuilder'},
@@ -69,19 +70,19 @@ export class SideNavComponent implements OnInit {
     
         if (sideNavMenu && sideBarToggle && sideBarBody && layoutMainSide) {
             if (sideBarBody.style.width === '100%') {
-                sideBarBody.style.width = '25%';
+                sideBarBody.style.width = '100%';
                 mainBody.style.marginLeft = '-4%';
                 layoutMainSide.style.paddingLeft= '155px';
                 sideBarToggle.style.marginLeft = '-3px';
+                this.navWidth.emit('56px');
             } else {
                 sideBarBody.style.width = '100%';
                 sideNavMenu.style.borderRight = '1px solid #EBEBEB';
                 mainBody.style.marginLeft = '0';
                 layoutMainSide.style.paddingLeft= '225px';
                 sideBarToggle.style.marginLeft = '-148px';
+                this.navWidth.emit('225px');
             }
         }
     }
-
-
 }
