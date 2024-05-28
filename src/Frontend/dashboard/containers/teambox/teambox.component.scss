@@ -94,6 +94,13 @@
     padding: 0px;
 }
 
+// .e-rte-content::-webkit-scrollbar{
+//     display: block !important;
+// }
+
+.e-content::-webkit-scrollbar{
+    display: block !important;
+}
 
 .flex {
     display: flex;
@@ -706,7 +713,8 @@ img.no-dp {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-around;
-    height: 90%;
+    height: -webkit-fill-available;
+    padding-bottom: 10px;
     flex-direction: column;
     margin-left: -0.75rem;
     margin-right: -0.75rem;
@@ -716,9 +724,10 @@ img.no-dp {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
     padding: 10%;
+    flex: 1 1 auto;
 }
 
 .conversation_blank.notes {
@@ -756,6 +765,10 @@ img.no-dp {
     height: 80%;
     overflow-y: scroll !important;
     margin-top: 2%;
+}
+
+.conversation_list::-webkit-scrollbar{
+    background-color: transparent;
 }
 
 .message_item {
@@ -2501,6 +2514,11 @@ label span {
 
 .contact-whatsapp{
     width: 27%;
+}
+
+.contacts_detail_timelog:hover .hovertext:before{
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .initials {

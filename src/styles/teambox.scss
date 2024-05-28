@@ -392,3 +392,6 @@ label.container input[type="radio"]:checked + span.label {
     .e-rte-image.e-imginline, .e-rte-audio.e-audio-inline, .e-rte-video.e-video-inline {
       max-width: 100%;
     }
+    .e-content {
+      min-height: 49px !important;
+    }

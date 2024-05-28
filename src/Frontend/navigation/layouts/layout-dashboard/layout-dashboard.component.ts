@@ -25,6 +25,7 @@ export class LayoutDashboardComponent implements OnInit, OnDestroy {
     sideNavItems = sideNavItems;
     sideNavSections = sideNavSections;
     sidenavStyle = 'sb-sidenav-dark';
+    navWidth:any = '225px';
 
     constructor(
         public navigationService: NavigationService,
