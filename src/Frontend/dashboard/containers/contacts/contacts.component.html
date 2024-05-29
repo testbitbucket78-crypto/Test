@@ -607,10 +607,10 @@
 					<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
 					<input type="date" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
 					<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
-					<div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
+					<!-- <div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
 						<input class="form-control-checkbox" type="checkbox" id="Opted-ins" [formControlName]="item.ActuallName"/>
 						<span>{{item.displayName}}</span>
-					</div>
+					</div> -->
 					<select *ngIf="item.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
 						<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
 					</select>
