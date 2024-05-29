@@ -270,7 +270,7 @@ let transporter = nodemailer.createTransport({
     // service: 'SMTP',
     host: val.emailHost,
     port: val.port,
-    secure: false,
+    secure: true,
     auth: {
         user: val.email,
         pass: val.appPassword
