@@ -180,10 +180,11 @@ const createInteraction = async (req, res) => {
     try {
         customerId = req.body.customerId
         SP_ID = req.body.spid
-        interaction_status = "Open"
+        interaction_status = "empty"
         interaction_details = " "
         interaction_type = "Marketing"
-        var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type]]
+        IsTemporary = req.body?.IsTemporary
+        var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type,IsTemporary]]
         console.log(values)
         let time = new Date();
         let createInteraction = await db.excuteQuery(val.createInteractionQuery, [values])
@@ -213,6 +214,9 @@ const createInteraction = async (req, res) => {
 }
 
 const updateInteraction = (req, res) => {
+    if (req.body?.IsTemporary && req.body?.IsTemporary != '') {
+        var updateQuery = "UPDATE Interaction SET IsTemporary ='" + req.body.IsTemporary + "' WHERE InteractionId =" + req.body.InteractionId
+    }
     if (req.body.Status && req.body.Status != '') {
         var updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' WHERE InteractionId =" + req.body.InteractionId
     }

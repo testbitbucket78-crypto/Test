@@ -91,7 +91,7 @@ where u.isDeleted !=1 and u.SP_ID=?`
 
 
 
-var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details,SP_ID,interaction_type) VALUES ?"
+var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details,SP_ID,interaction_type,IsTemporary) VALUES ?"
 var updateInteractionQuery="UPDATE Interaction SET interaction_status =? WHERE InteractionId =?";
 
 var getAllInteraction="SELECT ic.AutoReplyStatus,ic.AutoReplyUpdatedAt,ic.paused_till, ic.interaction_status,ic.InteractionId, ec.*     FROM    Interaction ic JOIN    EndCustomer ec ON ic.customerId = ec.customerId WHERE    ic.interactionId = (        SELECT MAX(interactionId)        FROM Interaction        WHERE customerId = ic.customerId    ) and ec.SP_ID=?  order by interactionId desc;"
@@ -130,7 +130,8 @@ ec.*,
 last_message.LastMessageId,
 COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
 m.*,
-m.created_at AS LastMessageDate
+m.created_at AS LastMessageDate,
+ww.connected_id
 FROM 
 Interaction ic
 LEFT JOIN 
@@ -161,19 +162,21 @@ GROUP BY
     ic.InteractionId
 ) AS unread_count ON ic.InteractionId = unread_count.InteractionId
 LEFT JOIN Message m ON ic.InteractionId = m.interaction_id AND m.Message_id = last_message.LastMessageId
+LEFT JOIN WhatsAppWeb ww ON ec.SP_ID = ww.spid AND ww.is_deleted != 1
 WHERE 
 ic.interactionId IN (
     SELECT MAX(interactionId)
     FROM Interaction
     WHERE customerId = ic.customerId
     GROUP BY customerId
-) 
+)
 AND ec.SP_ID = ?  
 AND ec.isDeleted != 1  
 AND ic.is_deleted = 0
+AND (ic.IsTemporary = 0 or ic.IsTemporary is null)
 ORDER BY 
 LastMessageDate DESC, ic.interactionId DESC
-LIMIT ?,?`
+LIMIT ?, ?`
 
 module.exports={host,user,password,database,
 selectAllAgentsQuery,selectAllQuery,insertCustomersQuery,filterQuery,searchQuery,selectByIdQuery,blockCustomerQuery,

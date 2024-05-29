@@ -16,11 +16,11 @@ const region = 'ap-south-1'
 const baseURL = 'https://staging.engageflo.com/api/';
 const accessToken = '64c4bcc7c05b1';
 
-insertCompanyDetails = 'INSERT INTO companyDetails(SP_ID,profile_img,Company_Name,Company_Website,Country,Phone_Number,Industry,Employees_count,created_By,created_at) VALUES ?'
+insertCompanyDetails = 'INSERT INTO companyDetails(SP_ID,profile_img,Company_Name,Company_Website,Country,Phone_Number,Industry,Employees_count,created_By,created_at,country_code) VALUES ?'
 insertlocalDetails = 'INSERT INTO localDetails(SP_ID,Date_Format,Time_Format,Time_Zone,Currency,created_By,created_at) VALUES ?'
 insertBillingDetails = 'INSERT INTO billing(SP_ID,InvoiceId,billing_email,Address1,zip_code,created_By,Address2,created_at,Country,City,State) VALUES ?'
 
-updateCompanyDetails = 'UPDATE companyDetails SET profile_img=?,Company_Name=?,Company_Website=?,Country=?,Phone_Number=?,Industry=?,Employees_count=?,created_By=?,updated_at=? Where SP_ID=?'
+updateCompanyDetails = 'UPDATE companyDetails SET profile_img=?,Company_Name=?,Company_Website=?,Country=?,Phone_Number=?,Industry=?,Employees_count=?,created_By=?,updated_at=?,country_code=? Where SP_ID=?'
 updatelocalDetails = 'UPDATE  localDetails SET Date_Format=?,Time_Format=?,Time_Zone=?,Currency=?,created_By=?,updated_at=? Where SP_ID=?'
 updateBillingDetails = 'UPDATE  billing SET InvoiceId=?,billing_email=?,Address1=?,zip_code=?,created_By=?,Address2=?,updated_at=?,Country=?,City=?,State=? Where SP_ID=?'
 
@@ -82,10 +82,10 @@ r.roleID`
 
 
 //Sms varification variables
-const email = "info@sampana.in";
-const appPassword = "xf*q(F#0";
-const emailHost = "us2.smtp.mailhostbox.com"
-const port = "587"
+const email =   "notification@engagekart.com"; 
+const appPassword = "Notification@123"  
+const emailHost = "mail.engagekart.com" 
+const port = "465"
 
 
 addteamQuery = `INSERT INTO teams(SP_ID,team_name,created_at,updated_at,userIDs) VALUES ?`

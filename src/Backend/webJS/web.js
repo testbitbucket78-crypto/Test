@@ -92,7 +92,7 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          executablePath: "/usr/bin/google-chrome-stable",
+         executablePath: "/usr/bin/google-chrome-stable",
          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
@@ -693,7 +693,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       newId: data[3][0]['@newId'],
       replystatus: data[4][0]['@replystatus'],
       msg_id: data[5][0]['@msg_id'],
-      newlyInteractionId: data[7][0]['@newlyInteractionId']
+      newlyInteractionId: data[7]?.[0]?.['@newlyInteractionId']
     };
 
 
@@ -703,7 +703,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var replystatus = extractedData.replystatus
     var newId = extractedData.newId
     var msg_id = extractedData.msg_id
-    var newlyInteractionId = extractedData.newlyInteractionId
+    var newlyInteractionId = extractedData?.newlyInteractionId
     console.log("in messages", from, false,"interaction id", newId, display_phone_number)
     notify.NotifyServer(display_phone_number, false, newId)
 

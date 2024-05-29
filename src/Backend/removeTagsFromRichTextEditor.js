@@ -128,7 +128,10 @@ function encloseWordsInMatchingTags(sentence) {
     '<span style="text-decoration: line-through;">',
     '<tempMSpan>'
   );
-
+  sentence = sentence.replace(
+    '<span style="color: rgb(0, 0, 0);">',
+    '<tempAtSpan>'
+  );
   let taggedSentence = sentence;
   let match;
 
@@ -150,6 +153,10 @@ function encloseWordsInMatchingTags(sentence) {
   taggedSentence = taggedSentence.replace(
     '<tempMSpan>',
     '<span style="text-decoration: line-through;">'
+  );
+  taggedSentence = taggedSentence.replace(
+    '<tempAtSpan>',
+    '<span style="color: rgb(0, 0, 0);">'
   );
   return taggedSentence;
 }
@@ -191,9 +198,9 @@ const originalString = `<p><strong>efred</strong></p><p><br></p><p><br></p><p><s
 // '<p><strong>bold</strong>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <em>italic&nbsp; &nbsp;<span style="text-decoration: line-through;">strickthrough&nbsp;</span>&nbsp; &nbsp; </em>,</p><p><strong>Hi This is testing of bold itallic strickthrough&nbsp;</strong><br><em>italic itallic dhsfjdjfvb wisdjisd dkiiehfnjikdhn</em><br><span style="text-decoration: line-through;">strickfjd wskdjxiswkhcndi hswjd</span></p><p></p>';
 const modifiedString = modifyString(originalString);
 
-// console.log(modifiedString);
+//console.log(modifiedString);
 
-// console.log(convertHTML(removeEmptyTags(modifiedString)));
+ //console.log(convertHTML(removeEmptyTags(modifiedString)));
 
 async function removeTagsFromMessages(originalString) {
   const modifiedString = modifyString(originalString);

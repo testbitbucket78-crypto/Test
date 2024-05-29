@@ -75,6 +75,7 @@ const uploadCompanylogo = async (req, res) => {
 
 const savecompanyDetail = async (req, res) => {
     try {
+        console.log("savecompanyDetail"  ,req.body)
         SP_ID = req.body.SP_ID
         profile_img = req.body.profile_img
         Company_Name = req.body.Company_Name
@@ -85,12 +86,12 @@ const savecompanyDetail = async (req, res) => {
         Employees_count = req.body.Employees_count
         created_By = req.body.created_By
         created_at = new Date();
-
+        country_code =  req.body?.country_code 
         var select = await db.excuteQuery(val.selectCompanyDetails, [SP_ID])
         console.log(select.length != 0)
         if (select.length != 0) {
 
-            var UpComValues = [req.body.profile_img, req.body.Company_Name, req.body.Company_Website, req.body.Country, req.body.Phone_Number, req.body.Industry, req.body.Employees_count, req.body.created_By, created_at, req.body.SP_ID]
+            var UpComValues = [req.body.profile_img, req.body.Company_Name, req.body.Company_Website, req.body.Country, req.body.Phone_Number, req.body.Industry, req.body.Employees_count, req.body.created_By, created_at,country_code, req.body.SP_ID]
             var updatedcompanyData = await db.excuteQuery(val.updateCompanyDetails, UpComValues)
 
             res.status(200).send({
@@ -100,7 +101,7 @@ const savecompanyDetail = async (req, res) => {
             });
 
         } else {
-            var InComValues = [req.body.SP_ID, req.body.profile_img, req.body.Company_Name, req.body.Company_Website, req.body.Country, req.body.Phone_Number, req.body.Industry, req.body.Employees_count, req.body.created_By, created_at]
+            var InComValues = [req.body.SP_ID, req.body.profile_img, req.body.Company_Name, req.body.Company_Website, req.body.Country, req.body.Phone_Number, req.body.Industry, req.body.Employees_count, req.body.created_By, created_at,country_code]
             var companyData = await db.excuteQuery(val.insertCompanyDetails, [[InComValues]])
 
             res.status(200).send({
@@ -600,7 +601,7 @@ let transporter = nodemailer.createTransport({
     // service: 'SMTP',
     host: val.emailHost,
     port: val.port,
-    secure: false,
+    secure: true,
     auth: {
         user: val.email,
         pass: val.appPassword

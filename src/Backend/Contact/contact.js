@@ -214,8 +214,10 @@ app.post('/exportCheckedContact', authenticateToken, (req, res) => {
     var mailOptions = {
       from: val.email,
       to: req.body.loginData,
-      subject: "Request for download Contact_Data: ",
-      html: '<p>Please find  the attachment of exported Contact_Data, kindly use  this file to see your contacts</p>',
+      subject: "Export Contacts Confirmation",
+      html: `Hi ${req.body?.Name}, your contacts export request is processed. Check your email for the details and continue your great work with Engagekart!
+      - Team Engagekart
+      `,
       attachments: [
         {
           filename: `${timestamp}-${randomNumber}.csv`,
@@ -445,7 +447,7 @@ function sendMailAfterImport(emailId, user, noOfContact) {
     var mailOptions = {
       from: val.email,
       to: emailId,
-      subject: "Conformation of upload csv file: ",
+      subject: "Import Success Confirmation",
       html: text,
 
     };
@@ -1160,7 +1162,7 @@ let transporter = nodemailer.createTransport({
   //service: 'gmail',
   host: val.emailHost,
   port: val.port,
-  secure: false,
+  secure: true,
   auth: {
     user: val.email,
     pass: val.appPassword

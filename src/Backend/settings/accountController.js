@@ -16,56 +16,89 @@ const axios = require('axios');
 
 const insertAndEditWhatsAppWeb = async (req, res) => {
     try {
-        id = req.body.id
-        channel_id = req.body.channel_id
-        connected_id = req.body.connected_id
-        channel_status = req.body.channel_status
-        is_deleted = 0
-        spid = req.body.spid
-        phone_type = req.body.phone_type
-        import_conversation = req.body.import_conversation
-        QueueMessageCount = req.body.QueueMessageCount
-        connection_date = req.body.connection_date
-        WAVersion = req.body.WAVersion
-        InMessageStatus = req.body.InMessageStatus
-        OutMessageStatus = req.body.OutMessageStatus
-        QueueLimit = req.body.QueueLimit
-        delay_Time = req.body.delay_Time
-        INGrMessage = req.body.INGrMessage
-        OutGrMessage = req.body.OutGrMessage
-        online_status = req.body.online_status
-        serviceMonetringTool = req.body.serviceMonetringTool
-        syncContact = req.body.syncContact
-        DisconnAlertEmail = req.body.DisconnAlertEmail
-        roboot = req.body.roboot
-        restart = req.body.restart
-        reset = req.body.reset
+        // Extracting request body parameters
+        const {
+            id,
+            channel_id,
+            connected_id,
+            channel_status,
+            spid,
+            phone_type,
+            import_conversation,
+            QueueMessageCount,
+            connection_date,
+            WAVersion,
+            InMessageStatus,
+            OutMessageStatus,
+            QueueLimit,
+            delay_Time,
+            INGrMessage,
+            OutGrMessage,
+            online_status,
+            serviceMonetringTool,
+            syncContact,
+            DisconnAlertEmail,
+            roboot,
+            restart,
+            reset
+        } = req.body;
+        
+        const is_deleted = 0;  // default value
+        const updated_at = new Date();
 
-console.log("id-------",id)
-        if (id == 0) {
-            let addVal = [[channel_id, connected_id, channel_status, is_deleted, spid, phone_type, import_conversation, QueueMessageCount, new Date(), WAVersion, InMessageStatus, OutMessageStatus, QueueLimit, delay_Time, INGrMessage, OutGrMessage, online_status, serviceMonetringTool, syncContact, DisconnAlertEmail, roboot, restart, reset]]
-            let insertVal = await db.excuteQuery(val.insertWhatsappdetails, [addVal]);
-            res.status(200).send({
-                insertVal: insertVal,
-                status: 200
-            })
+        console.log("id-------", id);
 
-        }
-        else {
-            let updateVal = [channel_id, connected_id, channel_status, is_deleted, spid, phone_type, import_conversation, QueueMessageCount, new Date(), WAVersion, InMessageStatus, OutMessageStatus, QueueLimit, delay_Time, INGrMessage, OutGrMessage, online_status, serviceMonetringTool, syncContact, DisconnAlertEmail, roboot, restart, reset, new Date(), id]
-            let updatedRes = await db.excuteQuery(val.updateWhatsappdetails, updateVal);
-            res.status(200).send({
-                updatedRes: updatedRes,
-                status: 200
-            })
-        }
+        // Prepare the call to the stored procedure
+        const procedureCall = `
+            CALL AddUpdateWhatsappDetails(
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            )
+        `;
+
+        // Parameters for the stored procedure
+        const params = [
+            id,
+            channel_id,
+            connected_id,
+            channel_status,
+            is_deleted,
+            spid,
+            phone_type,
+            import_conversation,
+            QueueMessageCount,
+            connection_date,
+            WAVersion,
+            InMessageStatus,
+            OutMessageStatus,
+            QueueLimit,
+            delay_Time,
+            INGrMessage,
+            OutGrMessage,
+            online_status,
+            serviceMonetringTool,
+            syncContact,
+            DisconnAlertEmail,
+            roboot,
+            restart,
+            reset,
+            updated_at
+        ];
+
+        // Execute the stored procedure
+        let result = await db.excuteQuery(procedureCall, params);
+
+        res.status(200).send({
+            result: result,
+            status: 200
+        });
 
     } catch (err) {
-        console.log(err)
+        console.log(err);
         db.errlog(err);
-        res.send(err)
+        res.status(500).send(err);
     }
 }
+
 
 const selectDetails = async (req, res) => {
     try {

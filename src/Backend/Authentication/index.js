@@ -127,7 +127,7 @@ let transporter = nodemailer.createTransport({
     // service: 'SMTP',
     host: val.emailHost,
     port: val.port,
-    secure: false,
+    secure: true,
     auth: {
         user: val.email,
         pass: val.appPassword
@@ -139,6 +139,7 @@ let transporter = nodemailer.createTransport({
 //Post api for forget password
 const forgotPassword = async (req, res) => {
     try {
+
         email_id = req.body.email_id;
 
         var results = await db.excuteQuery('SELECT * FROM user WHERE email_id =? and isDeleted !=1 and IsActive !=2', [req.body.email_id])
@@ -169,7 +170,7 @@ const forgotPassword = async (req, res) => {
                 html: `<p>Hello,</p>
 
                 <p>We have received a Forgot Password request for your Engagekart account. Please use this link provided below to proceed with the reset.<br>
-                <a href="http://localhost:4200/#/reset-password?uid=${cipherdata}">link to reset password</a></p>
+                <a href="https://cip.stacknize.com/#/reset-password?uid=${cipherdata}">link to reset password</a></p>
                 
                 <p>If you did not initiate this request, you may ignore this email and we suggest you report this to your business admin manager.</p>`
                 
@@ -177,13 +178,17 @@ const forgotPassword = async (req, res) => {
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
+            //   if(error){
+            //     console.log(error)
+            //   }else{
 
+             // console.log(info)
                 res.status(200).send({
                     msg: "password has been sent",
                     id: results
                 });
 
-
+          //  }
             });
 
         }

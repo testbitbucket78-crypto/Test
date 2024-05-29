@@ -6,10 +6,10 @@ const password = "amsdb1234"
 const database = "cip_project"
 
 
-const email = "info@sampana.in";
-const appPassword = "xf*q(F#0";
-const emailHost = "us2.smtp.mailhostbox.com"
-const port = "587"
+const email =   "notification@engagekart.com"; 
+const appPassword = "Notification@123"  
+const emailHost = "mail.engagekart.com" 
+const port = "465"
 var otp = Math.random();
 otp = otp * 1000000;
 otp = parseInt(otp);
