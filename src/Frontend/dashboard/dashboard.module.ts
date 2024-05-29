@@ -35,6 +35,7 @@ import { SearchfilterPipe } from './containers/Search/searchfilter.pipe';
 import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { DashboardComponent } from './containers';
 import { SanitizeHtmlPipe } from './containers/sanitizeHtml/sanitize-html.pipe';
+import { ContactFilterComponent } from './containers/contact-filter/contact-filter.component';
 
 
 @NgModule({
@@ -65,7 +66,8 @@ import { SanitizeHtmlPipe } from './containers/sanitizeHtml/sanitize-html.pipe';
             DashboardComponent,
             SearchfilterPipe,
             ReadMoreComponent,
-            SanitizeHtmlPipe
+            SanitizeHtmlPipe,
+            ContactFilterComponent
 
         ],
     exports: [...dashboardContainers.containers,

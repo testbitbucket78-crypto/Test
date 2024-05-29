@@ -17,6 +17,8 @@
 		</div>
 		<div class="d-flex">
 			<div id="export-btn">
+				<button class="btn-9 " (click)="openFilters()" > <img
+						src="../../../../assets/img/export.svg">Filters</button>
 				<button class="btn-9 " (click)="clearFilters()" > <img
 						src="../../../../assets/img/export.svg"> Clear Filters</button>
 				<button class="btn-9 " (click)="isShowColumn = true" > <img
@@ -598,7 +600,7 @@
 
 			<div>
 				<div *ngFor="let item of filteredCustomFields">
-					<label for="tag" *ngIf="item.type != 'Switch'">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
+					<label for="tag" >{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
 					<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
 					<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'">
 					<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
@@ -611,6 +613,11 @@
 					</div>
 					<select *ngIf="item.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
 						<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
+					</select>
+					<select *ngIf="item.type == 'Switch'" class="form-control" [formControlName]="item.ActuallName">
+						<option  value="" selected disabled>Select {{item.displayName}}</option>
+						<option  value="Yes">Yes</option>
+						<option  value="No">No</option>
 					</select>
 					<ng-multiselect-dropdown *ngIf="item.type == 'Multi Select'" class="multiselect"  [formControlName]="item.ActuallName" 
 					[settings]="dynamicDropdownSettings" [data]="item?.options" >
@@ -761,5 +768,6 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 </div>
 </div>
 
+<sb-contact-filter *ngIf="isShowFilter"></sb-contact-filter>
 
 </sb-layout-dashboard>
