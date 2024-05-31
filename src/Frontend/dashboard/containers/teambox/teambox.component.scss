@@ -194,7 +194,7 @@
     padding-right: 1%;
     background: #fbf9fe 0% 0% no-repeat padding-box;
     overflow: scroll;
-    height: 90vh;
+    height: 85vh;
 }
 
 .user_info {
@@ -211,6 +211,14 @@
 
 .custom_row, .flex {
     display: flex;
+}
+
+.custom_list{
+    width: 100%;
+}
+
+.w-100{
+    width: 100%;
 }
 
 .search-box {
@@ -403,7 +411,8 @@
 .right_box label {
     font-weight: 600;
     color: #6149CD;
-    margin-top: 1rem;
+    margin-top: 6px;
+    margin-bottom: 2px;
 }
 
 
@@ -713,7 +722,7 @@ img.no-dp {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-around;
-    height: -webkit-fill-available;
+    height: calc(100% - 20px);
     padding-bottom: 10px;
     flex-direction: column;
     margin-left: -0.75rem;
@@ -971,7 +980,7 @@ img.no-dp {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-bottom: 10px;
+    
 }
 
 .input-area .text-box {
@@ -991,8 +1000,8 @@ button:focus, input:focus {
     background: #6149CD 0% 0% no-repeat padding-box;
     box-shadow: 2px 14px 32px #6149CD1A;
     border-radius: 35%;
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     border: 0px;
 }
 
@@ -1036,6 +1045,11 @@ button:focus, input:focus {
 //     justify-content: center;
 // }
 
+.d-align-center{
+    display: flex;
+    align-items: center;
+}
+
 .save_notes_btn {
     cursor: pointer;
     float: right;
@@ -1044,6 +1058,7 @@ button:focus, input:focus {
     border-radius: 17px;
     opacity: 1;
     height: 40px;
+    width: 40px;
     color: #ffffff;
     border: none;
     font-size: 0.8vw;
@@ -2733,3 +2748,27 @@ label span {
     .AssignOption .agent-item:hover> .agent-list{
         display: block !important;
     }
+
+     
+  .user-img{
+    display: flex;
+  }
+
+  .user-img .img{
+    height: 30px;
+    width: 29px;
+    min-width: 29px;
+    border-radius: 50%;
+    background: white !important;
+    color: #6149cd;
+    background-color: white !important;
+    /* margin-top: 30px; */
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0px !important;
+    box-shadow: 3px 3px 9px rgb(16 6 0 / 22%);
+  }

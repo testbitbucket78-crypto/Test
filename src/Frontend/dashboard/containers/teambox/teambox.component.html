@@ -385,8 +385,8 @@
 									<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
 									<p class="label">@mention</p>
 								<p *ngFor="let user of agentsList;let k = index" (click)="InsertMentionOption(user)">
-								<span *ngIf="user.uid != uid">
-					<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
+								<span *ngIf="user.uid != uid" class="user-img">
+									<div class="img" >{{settingService.getInitials(user.name)}}</div>
 					{{user.name}}
 					</span>
 				</p>
@@ -395,13 +395,13 @@
 						<p class="label">@mention</p>
 						<p *ngFor="let user of agentsList;let k = index"
 							(click)="InsertMentionOption(user)">
-							<span *ngIf="user.uid != uid">
-								<img class="thumbnail" src="/assets/img/teambox/Richie_1.png" />
+							<span *ngIf="user.uid != uid" class="user-img">
+								<div class="img">{{settingService.getInitials(user.name)}}</div>
 								{{user.name}}
 							</span>
 						</p>
 					</div>
-					<div>
+					<div class="d-align-center"> 
 					<button *ngIf="showChatNotes=='text'" class="submit_btn">
 						<img src="/assets/img/teambox/icon-send.svg" (click)="sendMessage()">
 					</button>
@@ -451,8 +451,8 @@
 							</div>
 
 
-							<div class="custom_row mt-3">
-								<div class="col-md-6">
+							<div class="custom_list mt-3">
+								<div class="w-100">
 									<label>Email Id</label>
 									<p fxLayout="row" fxLayout.xs="column" fxLayoutAlign="start start" fxLayoutGap="10px" class="wrap-text">
 									  {{selectedInteraction.emailId}}
@@ -462,7 +462,7 @@
 									<p class="wrap-text">{{selectedInteraction.OptInStatus}}</p>
 								  </div>
 								  
-								<div class="col-md-6">
+								<div class="w-100">
 									<label>Phone Number</label>
 									<p>{{selectedInteraction.countryCode}} {{selectedInteraction.displayPhoneNumber}}</p>
 									<label>Contact Owner</label>
