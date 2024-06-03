@@ -86,7 +86,7 @@ export class RolesSettingsComponent implements OnInit {
     myForm!: FormGroup;
     
 
-    constructor(private _settingsService: SettingsService,private fb: FormBuilder) {
+    constructor(public _settingsService: SettingsService,private fb: FormBuilder) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
 

@@ -232,3 +232,58 @@
 .ag-header-cell .ag-header-cell-menu-button {
     opacity: 1;
 }
+
+.delete-token-modal{
+    width: 320px;
+   }
+  
+   .cancel-btn{
+    background: #fff;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    color: #7A86A1;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+   }
+  
+   .delete-btn{
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    border: 0px;
+    color: #fff;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+    background: #FF3636;
+   }
+
+   
+  .user-img{
+    display: flex;
+  }
+
+  .user-img .img{
+    height: 30px;
+    width: 29px;
+    min-width: 29px;
+    border-radius: 50%;
+    background: white !important;
+    color: #6149cd;
+    background-color: white !important;
+    /* margin-top: 30px; */
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 7px 8px 0px 0px;
+    box-shadow: 3px 3px 9px rgb(16 6 0 / 22%);
+  }
