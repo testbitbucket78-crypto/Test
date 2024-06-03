@@ -1,8 +1,4 @@
-"Name","Phone Number","saqwa","reason_1","reason_2"
-"343543543","9.18E+11","07-10-2845","Name contains non-alphabetic characters","Phone_number is not a valid"
-"Qar","9.20E+11","24-02-2029","Phone_number is not a valid",
-"Pawan ee sharma","9.18E+11","16-05-2024","Phone_number is not a valid",
-"Raunakerr","JDWJG",,"Phone_number is not a valid",
-"Rishabh","9.14E+11",,"Phone_number is not a valid",
-"Pawan sharma","9.18E+11",,"Phone_number is not a valid",
-"Palak","91 7018278328",,"Phone_number is not a valid",
+"select tp","multiselect","time","Name","Phone Number","Email","Tag","reason_1","reason_2","reason_3"
+"278_0:a","279_0:ab","25:00:00","vijay","9876473632","amansharma@gmail.com","Two","time is invalid","Phone Number is not valid","Tag does not exist in the list"
+"278_0:a","279_0:ab","12:00:00","Pawan sharma","7618157986","Pawa","Tag","Phone Number is not valid","Email is not a valid email address","Tag does not exist in the list"
+"278_0:a","279_0:ab","12:00:00","Raunak","6456","raun","One","Phone Number is not valid","Email is not a valid email address","Tag does not exist in the list"

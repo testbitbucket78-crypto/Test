@@ -516,7 +516,7 @@ async function sendBatchMessage(user, sp_id, type, message_content, message_medi
         }, 10)
     }
     let updateQuery = `UPDATE Campaign SET status=?,updated_at=? where Id=?`;
-    let updated = await db.excuteQuery(updateQuery, [updatedStatus, new Date(), Id])
+    let updated = await db.excuteQuery(updateQuery, [updatedStatus, new Date().toUTCString(), Id])
     console.log("updated")
     //console.log(updated)
 }

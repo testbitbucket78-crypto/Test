@@ -250,5 +250,5 @@ async function saveSendedMessageStatus(messageStatus) {
     var message_id = getMessageId[0].Message_id;
   }
   console.log(message_id)
-  let saveStatus = await db.excuteQuery(process.env.updateStatusQuery, [messageStatus, new Date(), message_id])
+  let saveStatus = await db.excuteQuery(process.env.updateStatusQuery, [messageStatus, new Date().toUTCString(), message_id])
 }
