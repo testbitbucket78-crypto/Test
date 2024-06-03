@@ -242,6 +242,7 @@ routerGuard = () => {
 	isMessageCompletedNotes:boolean = false;
 	isMessageCompletedMedia:boolean = false;
 	isMessageCompletedText:boolean = false;
+	isShowAttributes:boolean = false;
 
 	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
@@ -449,15 +450,18 @@ routerGuard = () => {
 	}
 	openVariableOption() {
 		$("#showvariableoption").modal('show'); 
+		this.isShowAttributes = true;
 		$("#editTemplate").modal('hide'); 
 	}
 	closeVariableOption() {
 		this.attributesearch=''; 
 		$("#showvariableoption").modal('hide');
+		this.isShowAttributes = false;
 		$("#editTemplate").modal('show'); 
 	}
 	SaveVariableOption(){
 		$("#showvariableoption").modal('hide'); 
+		this.isShowAttributes = false;
 		$("#editTemplate").modal('show'); 
 	}
 	showTemplatePreview() {
@@ -546,9 +550,38 @@ InsertMentionOption(user:any){
 	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
 	content = content+'<span class="mention"> @'+user.name+' </span>'
 	this.chatEditor.value = content;
+	content = content+'<span> </span>'
+	this.chatEditor.value = content;
+	setTimeout(() => {
+		this.attachMentionHandlers();
+	  }, 10);
 	this.showMention = false;
 	this.selectInteraction(this.selectedInteraction)
 }
+
+attachMentionHandlers() {
+	console.log(document.getElementById('defaultRTE'));
+    const mentions = document.getElementById('defaultRTE')?.querySelectorAll('.mention');
+	console.log(mentions);
+    mentions?.forEach((mention: HTMLElement | any) => {
+      mention.addEventListener('click', this.moveCursorToEndOfMention);
+    });
+  }
+
+  moveCursorToEndOfMention(event: MouseEvent) {
+	console.log(event)
+    const mention = event.target as HTMLElement;
+    if (mention && mention.nextSibling) {
+      const range = document.createRange();
+      const selection = window.getSelection();
+	  console.log(range)
+	  console.log(selection)
+      range.setStartAfter(mention);
+      range.collapse(true);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
+  }
 
 ToggleInsertTemplateOption(){
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
@@ -1344,13 +1377,18 @@ sendattachfile() {
 			var dataList:any = data?.conversations;
 			this.isCompleted = data?.isCompleted
 			console.log(dataList,'DataList *****')
-			if(this.selectedInteraction && selectInteraction ){
+			if(this.selectedInteraction){
 				this.selectedInteraction = dataList.filter((item: any)=> item.InteractionId == this.selectedInteraction.InteractionId)[0];
 			}
 			//this.getAssicatedInteractionData(dataList,selectInteraction)
-		this.interactionList.push(...dataList);
-		this.interactionListMain.push(...dataList);
-		if(selectInteraction)
+			if(selectInteraction){
+				this.interactionList.push(...dataList);
+				this.interactionListMain.push(...dataList);
+			}else{
+				this.interactionList= dataList;
+				this.interactionListMain= dataList;
+			}
+		if(this.selectedInteraction)
 		//this.selectedInteractionList =
 			this.selectInteraction(0);
 			
@@ -1361,11 +1399,15 @@ sendattachfile() {
 		console.log('Search keyup', event.target.value);
 	if(event.target.value.length>2){
 		var searchKey =event.target.value
-		this.interactionSearchKey = searchKey
-		this.getAllInteraction()
+		this.interactionSearchKey = searchKey;
+		this.currentPage = 0;
+		this.pageSize = 10;
+		this.getAllInteraction(false);
 	}else{
-		this.interactionSearchKey = ''
-		this.getAllInteraction()
+		this.interactionSearchKey = '';
+		this.currentPage = 0;
+		this.pageSize = 10;
+		this.getAllInteraction(false);
 	}
 	
 	}
@@ -1962,7 +2004,8 @@ getSearchContact(){
 blockCustomer(selectedInteraction:any){
 	var bodyData = {
 		customerId:selectedInteraction.customerId,
-		isBlocked:selectedInteraction.isBlocked==1?0:1
+		isBlocked:selectedInteraction.isBlocked==1?0:1,
+		SP_ID:this.SPID
 	}
 	this.apiService.blockCustomer(bodyData).subscribe(ResponseData =>{
 		this.selectedInteraction['isBlocked']=selectedInteraction.isBlocked==1?0:1
@@ -2626,9 +2669,11 @@ sendMessage(){
 	}
 	
 	checkPermission(){
-		console.log(this.selectedInteraction?.assignTo?.AgentId) ;
+		console.log(this.selectedInteraction) ;		
 		if(this.selectedInteraction?.assignTo?.AgentId != this.uid && this.showChatNotes=='text' ){
 			this.showToaster('only a assinged user can send the message !','error');
+		} else if(this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open'){
+			this.showToaster('Attention! You can write Note only to an Open Conversation','error');
 		}
 	}
 }
