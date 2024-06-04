@@ -24,7 +24,7 @@ let clientSpidInprogress = {};
 
 
 async function createClientInstance(spid, phoneNo) {
-  console.log(spid, phoneNo, new Date());
+  console.log(spid, phoneNo, new Date().toUTCString());
   console.log(clientPidMapping.hasOwnProperty(spid))
   if (isActiveSpidClient(spid)) {
     console.log("Client found in memory map and is ready");
@@ -53,7 +53,7 @@ async function createClientInstance(spid, phoneNo) {
       // kill the cycle with pid and sign = 'SIGINT' 
       // process.kill(clientPidMapping[spid], 'SIGINT');
       process.kill(clientPidMapping[spid])
-      console.log("process killed", new Date())
+      console.log("process killed", new Date().toUTCString())
       delete clientPidMapping[spid];
     } catch (err) {
       console.log("Delete clientPidMapping issues in wrong scan", err)
@@ -64,7 +64,7 @@ async function createClientInstance(spid, phoneNo) {
     clientId: spid
   });
 
-  console.log("client created call after verify", new Date())
+  console.log("client created call after verify", new Date().toUTCString())
   return await ClientInstance(spid, authStr, phoneNo);
 }
 
@@ -93,7 +93,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
          executablePath: "/usr/bin/google-chrome-stable",
-         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+        //  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
 
           args: [
@@ -110,7 +110,7 @@ function ClientInstance(spid, authStr, phoneNo) {
           remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2410.1.html',
         }
       });
-      console.log("client created", new Date());
+      console.log("client created", new Date().toUTCString());
 
       // Handle client creation errors
       client.on('error', (error) => {
@@ -128,7 +128,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         try {
           // Generate and scan this code with your phone
           //clientSpidInprogress[[spid]] = client;
-          console.log("QR CODE top", new Date())
+          console.log("QR CODE top", new Date().toUTCString())
           console.log("QR RECEIVED", qr);
           inc++;
           console.log("inc: " + inc);
@@ -140,13 +140,13 @@ function ClientInstance(spid, authStr, phoneNo) {
             resolve({ status: 400, value: 'QR is expired' });
           }
           if (!qr.startsWith(undefined)) {
-            console.log("Above notify of QR", new Date())
+            console.log("Above notify of QR", new Date().toUTCString())
             notify.NotifyServer(phoneNo, false, qr)
-            console.log("Below notifyof QR", new Date())
+            console.log("Below notifyof QR", new Date().toUTCString())
           } else {
             qr = qr.replace('undefined,', '');
             notify.NotifyServer(phoneNo, false, qr)
-            console.log("Else undefined QR", new Date())
+            console.log("Else undefined QR", new Date().toUTCString())
           }
           resolve({ status: 200, value: qr });
         } catch (err) {
@@ -157,7 +157,7 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on('ready', async () => {
 
         try {
-          console.log("Above client ready", new Date())
+          console.log("Above client ready", new Date().toUTCString())
           if (phoneNo != client.info.wid.user) {
             console.log("wrong Number")
             notify.NotifyServer(phoneNo, false, 'Wrong Number')
@@ -194,7 +194,7 @@ function ClientInstance(spid, authStr, phoneNo) {
                 }
               }
             }
-            console.log("resolve client ready", new Date())
+            console.log("resolve client ready", new Date().toUTCString())
             return resolve({ status: 201, value: 'Client is ready!' });
           }
         } catch (readyerr) {
@@ -234,7 +234,7 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on('authenticated', (session) => {
         try {
 
-          console.log("client authenticated", new Date());
+          console.log("client authenticated", new Date().toUTCString());
           clientSpidMapping[[spid]] = client;
 
           try {
@@ -254,12 +254,12 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on('disconnected', (reason) => {
         setTimeout(async () => {
           try {
-            console.log("disconnected", new Date());
+            console.log("disconnected", new Date().toUTCString());
 
             if (clientSpidMapping.hasOwnProperty(spid)) {
               try {
                 delete clientSpidMapping[spid];
-                let updateConnection = await db.excuteQuery('update WhatsAppWeb set updated_at = ? where connected_id =? and spid=? and is_deleted !=1', [new Date(), phoneNo, spid])
+                let updateConnection = await db.excuteQuery('update WhatsAppWeb set updated_at = ? where connected_id =? and spid=? and is_deleted !=1', [new Date().toUTCString(), phoneNo, spid])
                 // kill the cycle with pid and sign = 'SIGINT' 
                 console.log("Kill[spid]", clientPidMapping[spid])
                 process.kill(clientPidMapping[spid]);
@@ -432,37 +432,37 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       console.log("not avilable")
     }
     if (type === 'text') {
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
       client.sendMessage(endCust + '@c.us', text);
       // notify.NotifyServer(spNumber, false, interaction_id)
     }
     if (type === 'image') {
       const media = await MessageMedia.fromUrl(link);
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
       client.sendMessage(endCust + '@c.us', media, { caption: text });
     }
     if (type === 'video') {
       const media = await MessageMedia.fromUrl(link);
       // console.log(media.mimetype)
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
       client.sendMessage(endCust + '@c.us', media, { caption: text });
 
     }
     if (type === 'attachment' || type === 'document') {
       const media = new MessageMedia('pdf', link);
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
       client.sendMessage(endCust + '@c.us', media);
 
     } if (type === 'location') {
       const location = new Location(37.422, -122.084, 'Sampana Digital Private limited');
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
       const msg = await client.sendMessage(endCust + '@c.us', location);
     }
     if (type === 'vcard') {
       let firstName = 'CIP'
       let lastName = 'TEAM'
       let phoneNumber = '917017683064'
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
       client.sendMessage(endCust + '@c.us',
         'BEGIN:VCARD\n' +
         'VERSION:3.0\n' +
@@ -570,7 +570,7 @@ async function savelostChats(message, spPhone, spid) {
    
 
     // console.log(d,new Date( getLastScannedTime[0]?.latest_message_created_date) < new Date(d) , getLastScannedTime[0]?.latest_message_created_date)
-    if ((d > getLastScannedTime[0]?.latest_message_created_date && d < new Date()) || (getLastScannedTime?.length == 0)) {
+    if ((d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0)) {
 
 
 

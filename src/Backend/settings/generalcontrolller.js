@@ -25,7 +25,7 @@ const defaultaction = async (req, res) => {
         autoReplyTime = req.body.autoReplyTime
         isAutoReplyDisable = req.body.isAutoReplyDisable
         isContactAdd = req.body.isContactAdd
-        created_at = new Date();
+        created_at = new Date().toUTCString();
         pausedTill = req.body.pausedTill
         defaultAdminUid = req.body?.defaultAdminUid
         defaultAdminName = req.body?.defaultAdminName
@@ -119,7 +119,7 @@ const Abledisable = async (req, res) => {
     try {
         console.log(req.body.uid)
         Isdisable = req.body.Is_disable
-        updated_at = new Date();
+        updated_at = new Date().toUTCString();
 
 
 
@@ -148,7 +148,7 @@ const uploadimg = async (req, res) => {
         spid = req.body.spid
         message_type = req.body.message_type
         link = req.body.link
-        updated_at = new Date()
+        updated_at = new Date().toUTCString()
 
         // Remove header
         let streamSplit = link.split(';base64,');
@@ -199,7 +199,7 @@ const addAndUpdateDefaultMsg = async (req, res) => {
         spid = req.body.spid
         message_type = req.body.message_type
         link = req.body.link
-        updated_at = new Date()
+        updated_at = new Date().toUTCString()
 
         let image = link
 
@@ -229,7 +229,7 @@ const savedefaultmessages = async (req, res) => {
     try {
 
         SP_ID = req.body.SP_ID
-        updated_at = new Date()
+        updated_at = new Date().toUTCString()
         message_type = req.body.message_type
         link = req.body.link
 
@@ -252,7 +252,7 @@ const savedefaultmessages = async (req, res) => {
 
 const deletedefaultactions = async (req, res) => {
     try {
-        updated_at = new Date()
+        updated_at = new Date().toUTCString()
 
 
         var deletedefaultQuery = `UPDATE defaultmessages SET isDeleted=1,updated_at=? where SP_ID=? and uid=?`
@@ -285,7 +285,7 @@ const rotingsave = async (req, res) => {
         isadmin = req.body.isadmin
         assignspecificuser = req.body.assignspecificuser
         selectuser = req.body.selectuser
-        created_at = new Date();
+        created_at = new Date().toUTCString();
         isMissChatAssigContactOwner = req.body.isMissChatAssigContactOwner
         manualAssignUid = req.body.manualAssignUid
         SpecificUserUid = req.body.SpecificUserUid
@@ -357,7 +357,7 @@ const savemanagestorage = async (req, res) => {
         autodeletion_contacts = req.body.autodeletion_contacts
         numberof_messages = req.body.numberof_messages
         sizeof_messages = req.body.sizeof_messages
-        created_at = new Date();
+        created_at = new Date().toUTCString();
 
         var managebyspid = await db.excuteQuery(val.selectmanage, [spid])
         console.log(managebyspid.length != 0)
@@ -398,7 +398,7 @@ const getautodeletion = async (req, res) => {
         const storageUtilizationGB = (storageUtilizationMB / 1024).toFixed(2);
 
          var resultbyspid = await db.excuteQuery(val.getdeletion, [req.params.spid])
-        var resbyspid = await db.excuteQuery(val.messageSizeQuery, [req.params.spid, new Date()])
+        var resbyspid = await db.excuteQuery(val.messageSizeQuery, [req.params.spid, new Date().toUTCString()])
         console.log("routing" ,resbyspid[0]?.message_size ,storageUtilizationBytes?.totalSize)
         res.status(200).send({
             msg: 'routing got successfully !',
@@ -432,23 +432,23 @@ const manualDelation = async (req, res) => {
         let mediaDeleted = '';
         let textDeleted = '';
         if (message_type == 'Text') {
-            textDeleted = await db.excuteQuery(val.deleteText, [new Date(), SPID, result])
+            textDeleted = await db.excuteQuery(val.deleteText, [new Date().toUTCString(), SPID, result])
 
         } else if (message_type == 'Media') {
             // console.log(Media)
             let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
-            mediaDeleted = await db.excuteQuery(val.deleteMedia, [new Date(), SPID, result])
+            mediaDeleted = await db.excuteQuery(val.deleteMedia, [new Date().toUTCString(), SPID, result])
         }
         else if (message_type == 'Both') {
-            textDeleted = await db.excuteQuery(val.deleteText, [new Date(), SPID, result])
+            textDeleted = await db.excuteQuery(val.deleteText, [new Date().toUTCString(), SPID, result])
             let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
-            mediaDeleted = await db.excuteQuery(val.deleteMedia, [new Date(), SPID, result])
+            mediaDeleted = await db.excuteQuery(val.deleteMedia, [new Date().toUTCString(), SPID, result])
 
         }
 
 
         let insertmanagestorage = 'INSERT INTO managestorage (SP_ID, autodeletion_message, autodeletion_media, autodeletion_contacts, manually_deletion_days, message_type,created_at,isDeleted) VALUES ?';
-        let addManualData = await db.excuteQuery(insertmanagestorage, [[[SPID, '', '', '', manually_deletion_days, message_type, new Date(), '1']]]);
+        let addManualData = await db.excuteQuery(insertmanagestorage, [[[SPID, '', '', '', manually_deletion_days, message_type, new Date().toUTCString(), '1']]]);
 
 
         res.status(200).send({

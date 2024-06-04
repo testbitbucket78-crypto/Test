@@ -186,7 +186,7 @@ const createInteraction = async (req, res) => {
         IsTemporary = req.body?.IsTemporary
         var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type,IsTemporary]]
         console.log(values)
-        let time = new Date();
+        let time = new Date().toUTCString();
         let createInteraction = await db.excuteQuery(val.createInteractionQuery, [values])
 
         let currency_nameQuery = ` select Currency   from localDetails where SP_ID=?;`
@@ -496,7 +496,7 @@ const insertMessage = async (req, res) => {
             }
             if (mentionedNotification.length != 0) {
 
-                let notifyvalues = [[SPID, 'Mentioned You', message_text, Agent_id, 'teambox', Agent_id, new Date()]]
+                let notifyvalues = [[SPID, 'Mentioned You', message_text, Agent_id, 'teambox', Agent_id, new Date().toUTCString()]]
                 let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues])
                 console.log("mentionRes")
 
@@ -668,7 +668,7 @@ const updateInteractionMapping = async (req, res) => {
     if (AgentId != -1) {
         let nameData = await db.excuteQuery(val.assignedNameQuery, [AgentId])
 
-        let notifyvalues = [[nameData[0].SP_ID, 'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, new Date()]]
+        let notifyvalues = [[nameData[0].SP_ID, 'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, new Date().toUTCString()]]
         let notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues])
     }
     db.runQuery(req, res, val.updateInteractionMapping, [values])

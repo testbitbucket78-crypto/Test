@@ -70,7 +70,7 @@ const changePassword = async (req, res) => {
         oldPass = req.body.oldPass
         newPass = req.body.newPass
         confirmPass = req.body.confirmPass
-        const date = new Date();
+        const date = new Date().toUTCString();
 
         var resQuery = await db.excuteQuery(val.PasswordQuery, [uid])
         if (resQuery.length >= 0) {
@@ -111,7 +111,7 @@ const userActiveStatus = async (req, res) => {
     try {
    
         IsActive = req.body.isActive;
-        LastModifiedDate = new Date()
+        LastModifiedDate = new Date().toUTCString()
 
         var saveActiveStatus = await db.excuteQuery(val.activeStatusquery, [IsActive, LastModifiedDate, req.body.uid]);
 
@@ -136,7 +136,7 @@ const addNotification = async (req, res) => {
             PushNotificationValue = req.body.PushNotificationValue,
             SoundNotificationValue = req.body.SoundNotificationValue,
             isDeleted = 0,
-            created_at = new Date()
+            created_at = new Date().toUTCString()
 
         if (ID == 0) {
             var addNotification = await db.excuteQuery(val.addNotification, [[[UID, notificationId, PushNotificationValue, SoundNotificationValue, isDeleted, created_at]]])
@@ -188,7 +188,7 @@ const saveManagePlan = async (req, res) => {
             subtotalAmount = req.body.subtotalAmount,
             totalAmount = req.body.totalAmount,
             tax = req.body.tax,
-            created_at = new Date()
+            created_at = new Date().toUTCString()
         let existingPlan = await db.excuteQuery(val.selectPlan, [SP_ID]);
 
 
@@ -227,7 +227,7 @@ const saveManagePlan = async (req, res) => {
 const saveBillingHistory = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
-        billing_date = new Date()
+        billing_date = new Date().toUTCString()
         billing_id = req.body.billing_id
         amount = req.body.amount
         payment_status = req.body.payment_status
@@ -1013,7 +1013,7 @@ const ApproximateCharges = async (req, res) => {
 
 const deletePaymentMethod = async (req, res) => {
     try {
-        let date = new Date()
+        let date = new Date().toUTCString()
         var deletePayMethodQuery = `UPDATE PaymentMethodDetails SET isDeleted=1,updated_at=? where SP_ID=?`
         let deletepay = await db.excuteQuery(deletePayMethodQuery, [date, req.params.spid])
         res.status(200).send({
@@ -1031,7 +1031,7 @@ const deletePaymentMethod = async (req, res) => {
 const addfunds = async (req, res) => {
     try {
         sp_id = req.body.sp_id
-        const transation_date = new Date()
+        const transation_date = new Date().toUTCString()
         amount = req.body.amount
         transation_type = req.body.transation_type
         description = req.body.description
@@ -1135,7 +1135,7 @@ const addSPTransations = async (req, res) => {
     try {
 
         sp_id = req.body.sp_id
-        transation_date = new Date()
+        transation_date = new Date().toUTCString()
         amount = req.body.amount
         transation_type = req.body.transation_type
         currency = req.body.currency

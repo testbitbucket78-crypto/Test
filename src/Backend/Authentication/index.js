@@ -45,7 +45,7 @@ const login = async (req, res) => {
             }
             else {
                 const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY, { expiresIn: '24h' });
-                let utcTimestamp = new Date().toISOString();
+                let utcTimestamp = new Date().toUTCString();
 
                 let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=? where email_id=?', [utcTimestamp, req.body?.LoginIP,req.body.email_id])
               
@@ -79,7 +79,7 @@ const register = async function (req, res) {
     confirmPassword = req.body.confirmPassword
     LoginIP = req.body.LoginIP
     countryCode = req.body.country_code
-
+    display_mobile_number = req.body?.display_mobile_number
     try {
         var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id, mobile_number])
         if (credentials.length > 0) {
@@ -94,7 +94,7 @@ const register = async function (req, res) {
             }
             // Hash the password before storing it in the database
             const hash = await bcrypt.hash(password, 10);
-            var values = [name, mobile_number, email_id, hash, LoginIP, countryCode]  // pending add countryCode in stored procedure
+            var values = [name, mobile_number, email_id, hash, LoginIP, countryCode,display_mobile_number]  // pending add countryCode in stored procedure
             var registeredUser = await db.excuteQuery(val.registerQuery, values)   //need to change LoginIP in signup stored procedure
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
             res.status(200).send({

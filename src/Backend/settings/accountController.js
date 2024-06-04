@@ -44,7 +44,7 @@ const insertAndEditWhatsAppWeb = async (req, res) => {
         } = req.body;
         
         const is_deleted = 0;  // default value
-        const updated_at = new Date();
+        const updated_at = new Date().toUTCString();
 
         console.log("id-------", id);
 
@@ -123,7 +123,7 @@ const addToken = async (req, res) => {
         spid = req.body.spid
         APIName = req.body.APIName
         IPAddress = req.body.IPAddress
-        created_at = new Date()
+        created_at = new Date().toUTCString()
 
         let tokenVal = [[spid, APIName, created_at]];
         let addedToken = await db.excuteQuery(val.addTokenQuery, [tokenVal])
@@ -152,9 +152,9 @@ const editToken = async (req, res) => {
         spid = req.body.spid
         APIName = req.body.APIName
         IPAddress = req.body.IPAddress
-        updated_at = new Date();
+        updated_at = new Date().toUTCString();
 
-        let deleteIP = await db.excuteQuery(val.deleteIPQuery, [new Date(),id])
+        let deleteIP = await db.excuteQuery(val.deleteIPQuery, [new Date().toUTCString(),id])
       
         let updateTokenVal = [spid, APIName, updated_at, id];
         let updatedToken = await db.excuteQuery(val.updateTokenQuery, updateTokenVal)
@@ -178,8 +178,8 @@ const editToken = async (req, res) => {
 const deleteToken = async (req, res) => {
     try {
         
-        let deleteIPs = await db.excuteQuery(val.deleteIPQuery, [new Date(),req.params.id])
-        let deletedToken = await db.excuteQuery(val.deleteTokenQuery, [new Date(), req.params.id]);
+        let deleteIPs = await db.excuteQuery(val.deleteIPQuery, [new Date().toUTCString(),req.params.id])
+        let deletedToken = await db.excuteQuery(val.deleteTokenQuery, [new Date().toUTCString(), req.params.id]);
         res.status(200).send({
             deletedToken: deletedToken,
             status: 200
@@ -196,7 +196,7 @@ const enableToken = async (req, res) => {
     try {
         id = req.body.id
         isEnable = req.body.isEnable
-        let enabledVal = await db.excuteQuery(val.isEnableQuery, [isEnable, new Date(), id]);
+        let enabledVal = await db.excuteQuery(val.isEnableQuery, [isEnable, new Date().toUTCString(), id]);
         res.status(200).send({
             enabledVal: enabledVal,
             status: 200
