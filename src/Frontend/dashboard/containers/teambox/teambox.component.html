@@ -16,7 +16,7 @@
 	<!-- filter-popup -->
 				<div class="custom_row pt-3">
 					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
-						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search"
+						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search by Name or phone number"
 						aria-label="Search" aria-describedby="basic-addon2" />
 
 
@@ -52,7 +52,7 @@
 				</div>
 				<div class="custom_row mt-3">
 					<p *ngIf="interactionList" class="conversaction_status">{{interactionFilterBy}}<span
-							class="total_count red">{{interactionList.length}}</span></p>
+							class="total_count red">{{unreadList}}</span></p>
 				</div>
 				<div>
 					<div class="all_contacts">
@@ -68,8 +68,9 @@
 											src="/assets/img/teambox/pin.svg" />
 										<img *ngIf="item.avatar" class="profile_icon"
 											src="/assets/img/teambox/Richie_1.png" />
-										<img *ngIf="!item.avatar" class="profile_icon_no-dp"
-											src="/assets/img/teambox/no-dp.svg" />
+										<!-- <img *ngIf="!item.avatar" class="profile_icon_no-dp"
+											src="/assets/img/teambox/no-dp.svg" /> -->
+											<div class="profile_icon_no-dp">{{settingService.getInitials(item.Name)}}</div>
 										<div class="contacts_detail">
 											<p class="name">{{item.Name}}</p>
 											<div *ngIf="item.message_text" class="message"
@@ -113,13 +114,13 @@
 				</div>
 			</div>
 
-			<div class="col-sm-5 inner_section">
+			<div class="col-sm-6 inner_section">
 
 				<div *ngIf="selectedInteraction?.Name" class="col-md-12 mt-3">
 					<div class="custom_row">
 						<div class=" left_part">
 							<div class="user_info">
-								<p class="user_name">{{selectedInteraction.Name.substring(0 ,15)}}  {{selectedInteraction.isBlocked}}</p>
+								<p class="user_name">{{selectedInteraction.Name.substring(0 ,15)}}</p>
 								<p *ngIf="selectedInteraction.channel=='WhatsApp Official'" class="user_from mt-2"><img
 										class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />WhatsApp Official
 								</p>
@@ -209,7 +210,7 @@
 										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)" *ngIf="user.uid != uid">
 										<span class="text-capitalize initials"> {{ user.nameInitials }} </span>
 										<span key={k}>
-											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->{{user.name}}</span>
+											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->{{user?.name}} {{user?.UserType == 'Admin' ? '(Admin)' :''}}</span>
 									</p>
 								</div>
 								</div>
@@ -271,7 +272,7 @@
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
 										</div>
 										<div [ngClass]="{'message_box_container':message.media_type}">
-											<span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span>
+											<!-- <span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span> -->
 										
 											<span class="message_time"
 												*ngIf="message.created_at">{{timeSince(message.created_at)}}
@@ -420,7 +421,7 @@
 
 			</div>
 
-			<div  class=" col-sm-4 team py-2" style="background: #fbf9fe;">
+			<div  class=" col-sm-3 team pl-2" style="background: #fbf9fe;">
 				<div class="mt-3 sideBar-btn d-flex justify-content-end">
 					<button type="button" class="btn5 btn-close" (click)="toggleProfileView()" *ngIf="showFullProfile">
 						<img src="assets/img/teambox/icon-close.svg">
@@ -429,14 +430,15 @@
 				<div class="team-box right_box" *ngIf="selectedInteraction?.messageList">
 					<div class="sidenav">
 				
-						<div class="profile" style="padding: 0 45px 0 45px;" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
+						<div class="profile" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
 						
 							<div class="custom_row">
 								<div class="col-md-4 flex">
-									<img *ngIf="selectedInteraction.avatar" class="big-thumbnail"
+									<!-- <img *ngIf="selectedInteraction.avatar" class="big-thumbnail"
 										src="/assets/img/teambox/Richie_1.png" />
 									<img *ngIf="!selectedInteraction.avatar" class="big-thumbnail"
-										src="/assets/img/teambox/no-dp.svg" />
+										src="/assets/img/teambox/no-dp.svg" /> -->
+										<div class="big-thumbnail">{{settingService.getInitials(selectedInteraction.Name)}}</div>
 									<span *ngIf="selectedInteraction.channel=='WhatsApp'"
 										class="big-thumbnail-sufix"><img
 											src="/assets/img/teambox/whatsapp-icon-l.svg"></span>
@@ -582,7 +584,7 @@
 
 								<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color"
 									(click)="triggerBlockCustomer('Block',openBlockAlertmMessage)">Block</button>
-								<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn green-color"
+								<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn blocked-btn green-color"
 									(click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
 
 
@@ -650,7 +652,7 @@
 
 							<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color"
 								(click)="triggerBlockCustomer('Block',openBlockAlertmMessage)">Block</button>
-							<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn red-color"
+							<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn blocked-btn"
 								(click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
 						</div>
 

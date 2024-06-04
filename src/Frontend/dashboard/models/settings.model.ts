@@ -8,6 +8,7 @@ export interface companyDetail {
     Country: string;
     Phone_Number: number;
     Industry: string;
+    country_code: string;
     Employees_count: number;
     created_By: string;
 }
@@ -191,6 +192,7 @@ export interface routingRulesData {
     roundrobin:number,
     conversationallowed:string;
     manualassign:number;
+    enableAdmin:number;
     assignuser:string;
     timeoutperiod:string;
     isMissChatAssigContactOwner:number;
