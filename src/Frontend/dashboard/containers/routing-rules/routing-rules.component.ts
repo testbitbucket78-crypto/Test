@@ -20,6 +20,7 @@ export class RoutingRulesComponent implements OnInit {
   roundrobin = 0;
   conversationallowed = "";
   manualassign = 0;
+  enableAdmin=0;
   assignuser= "";
   timeoutperiod= "";
   defaultAssignRule='broadcast';
@@ -130,6 +131,7 @@ export class RoutingRulesComponent implements OnInit {
           this.roundrobin = data.roundrobin;
           this.conversationallowed = data.conversationallowed;
           this.manualassign = data.manualassign;
+          this.enableAdmin = data.enableAdmin;
           this.assignuser = data.assignuser;
           this.timeoutperiod = data.timeoutperiod;
           this.isMissChatAssigContactOwner = data.isMissChatAssigContactOwner;
