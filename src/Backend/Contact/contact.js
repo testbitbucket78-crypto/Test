@@ -81,16 +81,16 @@ app.post('/addCustomContact', authenticateToken, async (req, res) => {
 
       // Add values to the values array
       if (item.ActuallName === 'Name' || item.ActuallName === 'Phone_number') {
-        console.log("==========================")
+     
         if (!item.displayName) {
-          console.log("++++++++++++++++++++++++")
+     
           return res.status(400).json({
             message: 'Please add Name and Phone number',
             status: 400
           });
         } else if (item.ActuallName === 'Phone_number') {
-          console.log("********************************")
-          let existQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 AND SP_ID = ?`;
+       
+          let existQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 and IsTemporary !=1 AND SP_ID = ?`;
           let existingContact = await db.excuteQuery(existQuery, [item.displayName, req.body.SP_ID]);
 
           if (existingContact.length > 0) {
@@ -673,10 +673,9 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
       const currentData = importedData[j];
       let phone;
       let reasons = [];
-
+      let withoutCountryPhone ;
       for (let i = 0; i < currentData.length; i++) {
         const { ActuallName, displayName } = currentData[i];
-
         if (allColumnsData.get(ActuallName) === 'Select' && ActuallName != 'tag') {
           const { exists, value } = await SelectValues(ActuallName, SP_ID, displayName);
           //  console.log(exists,"select")
@@ -688,7 +687,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
         }
         if (allColumnsData.get(ActuallName) === 'Multi Select') {
           const { exists, value } = await MultiSelectValues(ActuallName, SP_ID, displayName);
-          // console.log(exists,"Multi")
+           console.log(exists,"Multi" ,value)
           if (exists) {
             currentData[i].displayName = value;
           } else {
@@ -705,24 +704,26 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
           if (phoneCheckResult.error) {
             existPhone = false;
           } else if (!phoneCheckResult.isValidLength) {
-            console.log("isValidLength")
+          //  console.log("isValidLength")
             existPhone = false;
           } else {
             console.log("currentData[i].countryCode = phoneCheckResult.country;", phoneCheckResult.phoneNumber)
             // Add country code and display phone number to the existing object
             const countryCode = phoneCheckResult.country;
-            const displayPhoneNumber = phoneCheckResult.phoneNumber;
+             withoutCountryPhone = phoneCheckResult.phoneNumber;
 
             // Find the index of the currentData object
             const currentIndex = currentData.findIndex(obj => obj.ActuallName === 'Phone_number');
             // Insert new properties after the currentData[i] object
             currentData.splice(currentIndex + 1, 0, { displayName: countryCode, ActuallName: 'countryCode' });
-            currentData.splice(currentIndex + 2, 0, { displayName: displayPhoneNumber, ActuallName: 'displayPhoneNumber' });
+           // currentData.splice(currentIndex + 2, 0, { displayName: displayPhoneNumber, ActuallName: 'displayPhoneNumber' });
            
           }
         }
-
-
+if(ActuallName === 'displayPhoneNumber'){
+  currentData[i].displayName = withoutCountryPhone
+}
+        
         if (allColumnsData.get(ActuallName) !== undefined) {
           const dataTypeVerification = await isDataInCorrectFormat(allColumnsData.get(ActuallName), ActuallName, displayName, userList, TagsVal, headersArray, existSelect, existMultiselect, existPhone);
 
@@ -985,7 +986,8 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
       case 'Select':
         if (displayName) {
           if (actuallName === 'tag') {
-            convertedValue = tagsList.includes(displayName);
+            console.log(displayName ,tagsList ,tagsList.includes(displayName[0]))
+            convertedValue = tagsList.includes(displayName[0]);
           } else {
             convertedValue = existSelect;
           }
@@ -1076,7 +1078,7 @@ function formatDateTime(date) {
 async function getTags(SP_ID) {
   try {
     const tags = await db.excuteQuery('SELECT TagName FROM EndCustomerTagMaster WHERE SP_ID=? AND isDeleted != 1', [SP_ID]);
-
+console.log(tags.map(row => row.TagName).flat())
     return tags.map(row => row.TagName).flat();
   } catch (error) {
     console.error("Error in getTagList:", error);
@@ -1397,32 +1399,35 @@ const expectedLengths = {
 };
 
 // Function to parse country codes into a map
-const parseCountryCodes = (countryCodes) => {
+
+function parseCountryCodes(countryCodes) {
   const codeMap = new Map();
   countryCodes.forEach(code => {
     const [country, phoneCode] = code.split(' +');
-    const codes = phoneCode.split(' ').map(c => `+${c}`);
-    codes.forEach(c => {
-      codeMap.set(c, phoneCode);
-    });
+    codeMap.set(phoneCode.trim(), `${country} +${phoneCode.trim()}`); // Store country name and code as value
   });
   return codeMap;
-};
+}
 
-// Function to separate country code and phone number
-const separatePhoneNumber = (countryPhone, countryCodeMap) => {
+
+
+function separatePhoneNumber(countryPhone, countryCodeMap) {
   for (const [code, fullCode] of countryCodeMap) {
-    if (countryPhone.startsWith(code.slice(1))) {
-      const phoneNumber = countryPhone.slice(code.length - 1).replace(/\s+/g, ''); // Remove spaces
-      return { country: code, phoneNumber };
+    if (countryPhone.startsWith(code)) {
+      const phoneNumber = countryPhone.slice(code.length).replace(/^0+/, ''); // Remove country code and leading zeros
+      return { country: fullCode, phoneNumber };
     }
   }
   return null;
-};
+}
+const countryCodeMap = parseCountryCodes(countryCodes);
+
+
+
 
 // Function to check length of phone numbers and validate country code
 const checkPhoneNumbersLength = (phoneNumbers, countryCodeMap, expectedLengths) => {
-  return phoneNumbers.map(phone => {
+ return phoneNumbers.map(phone => {
     const result = separatePhoneNumber(phone, countryCodeMap);
     if (result) {
       const expectedLength = expectedLengths[result.country.slice(1)];
@@ -1440,11 +1445,11 @@ const checkPhoneNumbersLength = (phoneNumbers, countryCodeMap, expectedLengths) 
 };
 
 // Example usage
-const countryCodeMap = parseCountryCodes(countryCodes);
 
 
-// const phoneNumberLengths = checkPhoneNumbersLength(phoneNumbers, countryCodeMap, expectedLengths);
-// // console.log(phoneNumberLengths);
+
+//const phoneNumberLengths = checkPhoneNumbersLength(phoneNumbers, countryCodeMap, expectedLengths);
+//console.log(phoneNumberLengths);
 
 
 

@@ -210,7 +210,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
       const response = axios({
         method: "GET", // Required, HTTP method, a string, e.g. POST, GET
         url:
-          "https://graph.facebook.com/v17.0/" +
+          "https://graph.facebook.com/v19.0/" +
           message.image.id +
           "?phone_number_id=" + phone_number_id,
         headers: {

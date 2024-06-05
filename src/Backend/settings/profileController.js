@@ -1157,7 +1157,7 @@ const addSPTransations = async (req, res) => {
 const getmanagePlansandCharges = async (req, res) => {
     try {
         let plans = await db.excuteQuery(val.manageplans, []);
-        let plansCharges = await db.excuteQuery(val.manageplansCharges, [])
+        let plansCharges = await db.excuteQuery(val.manageplansCharges, [req.params?.SP_ID])
         res.status(200).send({
             plans: plans,
             plansCharges: plansCharges,

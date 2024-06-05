@@ -42,7 +42,7 @@ getSubRight = `select * from subRights where  isDeleted !=1`
 getRights = `select * from rights where isDeleted !=1`
 
 
-addRoleQuery = `INSERT INTO roles (RoleName,Privileges,IsActive,subPrivileges,created_at,updated_at,SP_ID) values ?`
+addRoleQuery = `INSERT INTO roles (RoleName,Privileges,IsActive,subPrivileges,created_at,SP_ID) values ?`
 updateRole = `UPDATE roles set RoleName=?,Privileges=?,IsActive=?,subPrivileges=?,updated_at=? where roleID=? AND SP_ID=?`
 getRoleQuery = `SELECT * from roles where roleID=? and SP_ID=? and isDeleted !=1`
 getUserQuery = `SELECT * from user where SP_ID=? AND UserType=? AND IsDeleted != 1`
@@ -161,7 +161,7 @@ UserGuideTopicsQuery = `SELECT * FROM UserGuideTopics`
 UserGuideSubTopicsQuery = `SELECT *FROM UserGuideSubTopics WHERE headings_id=?`
 
 manageplans = `select * from ManagePlan`
-manageplansCharges = `select * from ManagePlanCharges`
+manageplansCharges = `select * from ManagePlanCharges where SP_ID=?`
 
 var selectNotification = `select * from Notification where sp_id=?`
 

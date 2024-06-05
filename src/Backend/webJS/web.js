@@ -93,9 +93,8 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
          executablePath: "/usr/bin/google-chrome-stable",
-        //  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
-
-
+        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    
           args: [
             '--no-sandbox',
             '--disable-dev-shm-usage', // <-- add this one
