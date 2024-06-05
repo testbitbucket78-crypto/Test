@@ -132,8 +132,18 @@ const savelocalDetails = async (req, res) => {
         var localdatabyspid = await db.excuteQuery(val.selectlocalDetails, [SP_ID])
         console.log(localdatabyspid.length != 0)
         if (localdatabyspid.length != 0) {
+            let query = `select SUM(amount) as remaningblance from SPTransations where sp_id=?`
+
+            let result = await db.excuteQuery(query, [req.params.spid])
+            //    let netAmount=result[0].amount
+            //    let usedAmount=result[0].available_blance
+    
+            let AvailableAmout = result[0].remaningblance
+            let fromCurrency = localdatabyspid[0].Currency;
+            let  toCurrency =  Currency;
             var UplocalVal = [Date_Format, Time_Format, Time_Zone, Currency, created_By, created_at, SP_ID]
             var UplocalData = await db.excuteQuery(val.updatelocalDetails, UplocalVal)
+            getChangesCurrency(AvailableAmout, fromCurrency, toCurrency)
             res.status(200).send({
                 msg: 'localDetails updated successfully !',
                 UplocalData: UplocalData,
@@ -154,6 +164,70 @@ const savelocalDetails = async (req, res) => {
         res.send(err)
     }
 }
+
+
+//--------------------- CURRENCY CONVERTER ---------------//
+
+// Function to fetch exchange rates and store them
+async function fetchExchangeRates() {
+    const apiUrl = 'https://api.exchangerate-api.com/v4/latest/USD';
+
+    try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        // Return the exchange rates
+        return data.rates;
+    } catch (error) {
+        console.error('Error fetching the exchange rates:', error);
+        return null;
+    }
+}
+
+// Function to convert from one currency to another
+function convertCurrency(amount, fromCurrency, toCurrency, rates) {
+    if (!rates) {
+        console.error('Exchange rates are not available.');
+        return null;
+    }
+
+    const fromRate = rates[fromCurrency];
+    const toRate = rates[toCurrency];
+
+    if (!fromRate || !toRate) {
+        console.error(`Invalid currency code: ${fromCurrency} or ${toCurrency}`);
+        return null;
+    }
+
+    // Convert the amount to USD first, then to the target currency
+    const amountInUSD = amount / fromRate;
+    const convertedAmount = amountInUSD * toRate;
+
+    return convertedAmount;
+}
+
+// Example usage
+async function getChangesCurrency(amount, fromCurrency, toCurrency) {
+    const rates = await fetchExchangeRates();
+
+    if (rates) {
+        // const amount = 100;
+        // const fromCurrency = 'USD';
+        // const toCurrency = 'INR';
+
+        const convertedAmount = convertCurrency(amount, fromCurrency, toCurrency, rates);
+        if (convertedAmount !== null) {
+            console.log(`${amount} ${fromCurrency} is equal to ${convertedAmount.toFixed(2)} ${toCurrency}`);
+            return convertedAmount.toFixed(2);
+        } else {
+            console.log('Conversion failed.');
+        }
+    }
+}
+
+//_______________________________________________________//
+
+
 
 const savebillingDetails = async (req, res) => {
     try {
@@ -522,7 +596,7 @@ const addRole = async (req, res) => {
         const created_at = new Date().toUTCString();
         if (roleID == 0) {
 
-            var addRoleValues = [[RoleName, Privileges, IsActive, subPrivileges, created_at, created_at, SP_ID]]
+            var addRoleValues = [[RoleName, Privileges, IsActive, subPrivileges, created_at, SP_ID]]
             var rolesRes = await db.excuteQuery(val.addRoleQuery, [addRoleValues])
             res.status(200).send({
                 msg: 'Roles added successfully',

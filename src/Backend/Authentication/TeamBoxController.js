@@ -46,7 +46,7 @@ const getAllCustomer = async (req, res) => {
     try {
         let RangeStart = req.body.RangeStart
         let RangeEnd = (req.body.RangeEnd - req.body.RangeStart)
-        let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID,RangeStart,RangeEnd]);
+        let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
         res.send({
             status: 200,
             results: contacts
@@ -86,7 +86,7 @@ const insertCustomers = async (req, res) => {
     countryCode = req.body.country_code
     displayPhoneNumber = req.body.displayPhoneNumber
     var values = [[Name, Phone_number, channel, SP_ID, OptInStatus, countryCode, displayPhoneNumber]]
-    let existContactWithSameSpid = `SELECT * FROM EndCustomer WHERE  Phone_number=? AND isDeleted !=1  AND SP_ID=?  `
+    let existContactWithSameSpid = `SELECT * FROM EndCustomer WHERE  Phone_number=? AND isDeleted !=1  and IsTemporary !=1  AND SP_ID=?  `
 
     var result = await db.excuteQuery(existContactWithSameSpid, [Phone_number, SP_ID])
 
@@ -184,7 +184,7 @@ const createInteraction = async (req, res) => {
         interaction_details = " "
         interaction_type = "Marketing"
         IsTemporary = req.body?.IsTemporary
-        var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type,IsTemporary]]
+        var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type, IsTemporary]]
         console.log(values)
         let time = new Date().toUTCString();
         let createInteraction = await db.excuteQuery(val.createInteractionQuery, [values])
@@ -253,23 +253,36 @@ const getAllFilteredInteraction = async (req, res) => {
 
             var filterBy = req.body.FilterBy
             if (filterBy == 'Open' || filterBy == 'Resolved') {
-                queryPath += " and Interaction.interaction_status='" + filterBy + "'"
+                queryPath += " and ic.interaction_status='" + filterBy + "'"
             } else if (filterBy == 'Unassigned') {
-                queryPath += " and Interaction.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping)"
+                queryPath += " and ic.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping)"
             } else if (filterBy == 'Mine') {
-                queryPath += " and Interaction.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.body.AgentId + " and is_active=1)"
+                queryPath += " and ic.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.body.AgentId + " and is_active=1)"
             } else if (filterBy == 'Mentioned') {
-                queryPath += " and Interaction.InteractionId  IN (SELECT interaction_id FROM `Message` WHERE `message_text` LIKE '%@" + req.body.AgentName + "%')"
+                queryPath += " and ic.InteractionId  IN (SELECT interaction_id FROM `Message` WHERE `message_text` LIKE '%@" + req.body.AgentName + "%')"
             } else if (filterBy == 'Pinned') {
-                queryPath += " and Interaction.InteractionId  IN (SELECT InteractionId FROM PinnedInteraction where AgentId=" + req.body.AgentId + ")"
+                queryPath += " and ic.InteractionId  IN (SELECT InteractionId FROM PinnedInteraction where AgentId=" + req.body.AgentId + ")"
             }
 
         }
+   
         if (req.body.SearchKey != '') {
             queryPath += " and EndCustomer.Name like '%" + req.body.SearchKey + "%'"
 
         }
-        // console.log(queryPath)
+     
+        queryPath += ` ORDER BY 
+        LastMessageDate DESC, 
+        ic.InteractionId DESC
+    LIMIT ?, ?`
+
+    console.log("------------------")
+    
+    console.log(queryPath)
+
+
+
+    console.log("==================")
         let conversations = await db.excuteQuery(queryPath, [req.body.SPID, RangeStart, RangeEnd]);
 
         let isCompleted = false;
@@ -335,18 +348,33 @@ const getFilteredInteraction = (req, res) => {
     db.runQuery(req, res, filterQuery, [req.params.SPID])
 }
 
-const getSearchInteraction = (req, res) => {
-    var searchKey = req.params.searchKey
-    let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and EndCustomer.Name like '%" + searchKey + "%'"
+const getSearchInteraction = async (req, res) => {
+    try {
 
-    if (req.params.AgentId && req.params.AgentId != '') {
-        // queryPath  +=" and Interaction.InteractionId IN (SELECT InteractionId FROM InteractionMapping where AgentId="+req.params.AgentId
-        // queryPath  +=" )"
+
+        var searchKey = req.params.searchKey
+        let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and EndCustomer.Name like '%" + searchKey + "%' and EndCustomer.SP_ID ='" + 40 + "' and EndCustomer.isDeleted !=1"
+
+        if (req.params.AgentId && req.params.AgentId != ':AgentId') {
+            queryPath += " and Interaction.InteractionId IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.params.AgentId
+            queryPath += " )"
+        }
+
+        console.log(req.params.AgentId,"queryPath",req.params.AgentId != ':AgentId')
+
+        let result = await db.excuteQuery(queryPath, [])
+        res.send({
+            result: result,
+            status: 200
+        })
+
+    } catch (err) {
+        console.log("err-------",err)
+        res.send({
+            err: err,
+            status: 500
+        })
     }
-
-
-
-    db.runQuery(req, res, queryPath, [searchKey])
 }
 
 
@@ -405,6 +433,14 @@ const deleteMessage = (req, res) => {
     db.runQuery(req, res, messageQuery, [values])
 }
 
+const updateNotes = (req, res) => {
+    if (req.body.Message_id > 0) {
+        var messageQuery = "UPDATE Message SET message_text =?,message_media=?,media_type=?,Type=? WHERE Message_id =" + req.body.Message_id;
+        var values = [req.body?.message_text, req.body?.message_media, req.body?.media_type, req.body?.Type]
+        db.runQuery(req, res, messageQuery, [values])
+    }
+}
+
 async function autoReplyPauseTime(spid, newId) {
     try {
         // Execute the first query to get interactionPause data
@@ -438,9 +474,10 @@ async function autoReplyPauseTime(spid, newId) {
             // Compare and get the maximum of the paused_till times
             pauseTime = Math.max(pausedTillTime, calcTime.getTime());
             // console.log("pauseTime", new Date(pauseTime));
-
-            let updateInteractionPause = await db.excuteQuery('UPDATE Interaction SET paused_till = ? WHERE InteractionId = ?', [pauseTime, newId]);
-            //  console.log("updateInteractionPause", updateInteractionPause);
+            if (pauseTime != NaN) {
+                let updateInteractionPause = await db.excuteQuery('UPDATE Interaction SET paused_till = ? WHERE InteractionId = ?', [pauseTime, newId]);
+                //  console.log("updateInteractionPause", updateInteractionPause);
+            }
         } else {
             console.error('No defaultAction found for the given spid');
         }
@@ -456,7 +493,7 @@ async function autoReplyPauseTime(spid, newId) {
 
 const insertMessage = async (req, res) => {
     try {
-        console.log(req.body.message_text)
+        console.log(req.body)
         if (req.body.Message_id == '') {
             var messageQuery = val.insertMessageQuery
 
@@ -485,7 +522,8 @@ const insertMessage = async (req, res) => {
             const channel = channelType.length > 1 ? channelType[0].channel : spchannel[0]?.channel_id;
 
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent]]
-            let msg_id = await db.excuteQuery(messageQuery, [values])
+            let msg_id = await db.excuteQuery(messageQuery, [values]);
+            console.log("msg_id -------------", msg_id)
             if (agentName.length >= 0) {
                 let mentionQuery = "SELECT * FROM Message WHERE ? LIKE ?";
                 let messageTextParameter = `%${message_text}%`; // assuming message_text is the text you want to search
@@ -518,30 +556,32 @@ const insertMessage = async (req, res) => {
             }
 
             let middlewareresult = ""
-            if (channelType[0].isBlocked != 1) {
+            if (Type != 'notes') {
+                if (channelType[0].isBlocked != 1) {
 
-                console.log("channelType[0].isBlocked != 1 ", channelType[0].isBlocked != 1, customerId)
-                //let content = await removeTags.removeTagsFromMessages(message_text);
-                if (req.body.message_type == 'text') {
-                    if (req.body.message_media != '') {
-                        // sendMediaOnWhatsApp(req.body.messageTo, message_media)
+                    console.log("channelType[0].isBlocked != 1 ", channelType[0].isBlocked != 1, customerId)
+                    //let content = await removeTags.removeTagsFromMessages(message_text);
+                    if (req.body.message_type == 'text') {
+                        if (req.body.message_media != '') {
+                            // sendMediaOnWhatsApp(req.body.messageTo, message_media)
 
-                        middlewareresult = await middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber)
+                            middlewareresult = await middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber)
+                        }
+                        // sendTextOnWhatsApp(req.body.messageTo, message_text)
+                        else {
+                            middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber)
+
+                        }
+                        autoReplyPauseTime(SPID, interaction_id)
                     }
-                    // sendTextOnWhatsApp(req.body.messageTo, message_text)
-                    else {
-                        middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber)
-
+                    if (middlewareresult.status != 200) {
+                        let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]) // just mark msg_status 9 for  identify
                     }
-                    autoReplyPauseTime(SPID, interaction_id)
+                    console.log("middlewareresult", middlewareresult)
+                } else {
+                    console.log("else _________")
+                    let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=10 where Message_id=?', [msg_id.insertId]) //// just mark msg_status 10 for block identify
                 }
-                if (middlewareresult.status != 200) {
-                    let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]) // just mark msg_status 9 for  identify
-                }
-                console.log("middlewareresult", middlewareresult)
-            } else {
-                console.log("else _________")
-                let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=10 where Message_id=?', [msg_id.insertId]) //// just mark msg_status 10 for block identify
             }
             res.send({ middlewareresult: middlewareresult, status: middlewareresult.status, insertId: msg_id.insertId })
 
@@ -697,7 +737,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes
 };
 
 

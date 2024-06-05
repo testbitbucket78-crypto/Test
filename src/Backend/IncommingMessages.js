@@ -492,7 +492,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
   var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=? and ";
   let activeAgent = await db.excuteQuery(activeAgentQuery, [sid]);
 
-  if (activeAgent.length <= 0) {
+  if (activeAgent?.length <= 0) {
 
   //  console.log("activeAgent",msg_id + " " + newId);
 

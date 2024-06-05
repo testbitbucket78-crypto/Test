@@ -59,7 +59,7 @@ SELECT DISTINCT customerId, Phone_number, Name, InteractionId, source FROM (
     FROM ContactsWithLatestInteractionDeletedOrTemporary
 ) AS CombinedResults
 ORDER BY priority, customerId
-LIMIT ?, ?;
+LIMIT 0, 10;
 `;
 var interactionsquery = "SELECT * FROM Interaction WHERE SP_ID=?  and is_deleted !=1"
 var contactsInteraction = `SELECT e.*, i.*
@@ -123,60 +123,62 @@ var assignedNameQuery = `SELECT name,SP_ID from user where uid=?`;
 
 // interaction with messages
 
-var  interactions =`SELECT 
-ic.interaction_status, 
-ic.InteractionId, 
-ec.*,
-last_message.LastMessageId,
-COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
-m.*,
-m.created_at AS LastMessageDate,
-ww.connected_id
-FROM 
-Interaction ic
-LEFT JOIN 
-EndCustomer ec ON ic.customerId = ec.customerId
-LEFT JOIN (
-SELECT 
-    ic.InteractionId,
-    MAX(m.Message_id) AS LastMessageId
-FROM 
-    Interaction ic
-JOIN 
-    Message m ON ic.InteractionId = m.interaction_id
-GROUP BY 
-    ic.InteractionId
-) AS last_message ON ic.InteractionId = last_message.InteractionId
-LEFT JOIN (
-SELECT 
-    ic.InteractionId,
-    COUNT(*) AS UnreadCount
-FROM 
-    Interaction ic
-JOIN 
-    Message m ON ic.InteractionId = m.interaction_id
-WHERE
-    m.is_read = 0
-    AND m.message_direction ='IN' 
-GROUP BY 
-    ic.InteractionId
-) AS unread_count ON ic.InteractionId = unread_count.InteractionId
-LEFT JOIN Message m ON ic.InteractionId = m.interaction_id AND m.Message_id = last_message.LastMessageId
-LEFT JOIN WhatsAppWeb ww ON ec.SP_ID = ww.spid AND ww.is_deleted != 1
-WHERE 
-ic.interactionId IN (
-    SELECT MAX(interactionId)
-    FROM Interaction
-    WHERE customerId = ic.customerId
-    GROUP BY customerId
+var  interactions =`WITH LatestInteraction AS (
+    SELECT 
+        customerId,
+        MAX(interactionId) AS LatestInteractionId
+    FROM 
+        Interaction
+    WHERE 
+        is_deleted = 0
+        AND (IsTemporary = 0 OR IsTemporary IS NULL)
+    GROUP BY 
+        customerId
 )
-AND ec.SP_ID = ?  
-AND ec.isDeleted != 1  
-AND ic.is_deleted = 0
-AND (ic.IsTemporary = 0 or ic.IsTemporary is null)
-ORDER BY 
-LastMessageDate DESC, ic.interactionId DESC
-LIMIT ?, ?`
+SELECT DISTINCT
+    ic.interaction_status, 
+    ic.InteractionId, 
+    ec.*,
+    last_message.LastMessageId,
+    COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
+    m.*,
+    m.created_at AS LastMessageDate,
+    ww.connected_id
+FROM 
+    LatestInteraction li
+JOIN 
+    Interaction ic ON li.LatestInteractionId = ic.interactionId
+LEFT JOIN 
+    EndCustomer ec ON ic.customerId = ec.customerId
+LEFT JOIN (
+    SELECT 
+        m.interaction_id,
+        MAX(m.Message_id) AS LastMessageId
+    FROM 
+        Message m
+    GROUP BY 
+        m.interaction_id
+) AS last_message ON ic.InteractionId = last_message.interaction_id
+LEFT JOIN (
+    SELECT 
+        m.interaction_id,
+        COUNT(*) AS UnreadCount
+    FROM 
+        Message m
+    WHERE
+        m.is_read = 0
+        AND m.message_direction = 'IN'
+    GROUP BY 
+        m.interaction_id
+) AS unread_count ON ic.InteractionId = unread_count.interaction_id
+LEFT JOIN 
+    Message m ON ic.InteractionId = m.interaction_id AND m.Message_id = last_message.LastMessageId
+LEFT JOIN 
+    WhatsAppWeb ww ON ec.SP_ID = ww.spid AND ww.is_deleted != 1
+WHERE 
+    ec.SP_ID = ?  
+    AND ec.isDeleted != 1  
+`
 
 module.exports={host,user,password,database,
 selectAllAgentsQuery,selectAllQuery,insertCustomersQuery,filterQuery,searchQuery,selectByIdQuery,blockCustomerQuery,

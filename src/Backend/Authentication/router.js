@@ -69,6 +69,7 @@ router.get('/getsavedMessages/:SPID',authenticateToken,TeamBoxController.getsave
 router.get('/getquickReply/:SPID',authenticateToken,TeamBoxController.getquickReply);
 router.get('/getTemplates/:SPID',authenticateToken,TeamBoxController.getTemplates);
 
+router.post('/editNotes',authenticateToken,TeamBoxController.updateNotes)
 
 const multer = require('multer');
 let fs = require('fs-extra');
