@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, AfterViewInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -643,9 +643,9 @@ onSelectAll(items: any) {
         else if(item.type =='Multi Select'){
           let values =''
           console.log(this.productForm.get(item.ActuallName)?.value)
-          this.productForm.get(item.ActuallName)?.value.forEach((ite:any)=>{
-            values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
-          })
+          // this.productForm.get(item.ActuallName)?.value.forEach((ite:any)=>{
+          //   values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
+          // })
           console.log(values);
           ContactFormData.result.push({displayName:values,ActuallName:item.ActuallName});
         }
@@ -856,7 +856,7 @@ deletContactByID(data: any) {
   patchFormValue(){
     const data:any=this.contactsData
     console.log(data);
-    this.getFilterTags = data.tag?.split(',').map((tags: string) =>tags.trim().toString());
+    this.getFilterTags = data.tag ? data.tag?.split(',').map((tags: string) =>tags.trim().toString()) : [];
     console.log(this.getFilterTags);
     this.checkedTags = this.getFilterTags;
     const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim());
@@ -879,15 +879,16 @@ deletContactByID(data: any) {
       if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
         this.productForm.get(prop)?.setValue(new Date(value));
       }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
-        let val = value.split(':');
+        let val = value ? value.split(':')[0] : '';
         console.log(val);
-        this.productForm.get(prop)?.setValue(val[0]);
+        this.productForm.get(prop)?.setValue(val);
       }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
         let val = value.split(':');
         console.log(val);
+        console.log(value);
         this.productForm.get(prop)?.setValue(val[0]);
 
-        let selectName =  value.value.split(',');
+        let selectName =  value?.split(',');
                   let names ='';
                   selectName.forEach((it:any)=>{
                     let name = it.split(':');
@@ -920,7 +921,10 @@ deletContactByID(data: any) {
   }
 
   editTagS(){
-    this.checkedTags =[];
+    // this.isEditTag =false;
+    // setTimeout(()=>{this.isEditTag =true},40);
+    this.checkedTags = this.getFilterTags;
+    console.log(this.checkedTags);
   }
   
   exportCheckedContact() {
@@ -1097,6 +1101,13 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
               controls.setValidators([Validators.required]); 
               controls.updateValueAndValidity();
             }
+            const yearValidatorFn: ValidatorFn = (control: AbstractControl |any ): { [key: string]: boolean } | null => {
+              return this.yearValidator(control);
+            };
+            if(controls && item?.type=='Date'){
+              controls.setValidators([yearValidatorFn]); 
+              controls.updateValueAndValidity();
+            }
             if(item?.dataTypeValues && (item?.type=='Select' || item?.type=='Multi Select')){
               item.options = JSON.parse(item?.dataTypeValues);
             }
@@ -1113,6 +1124,17 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             }
             this.contacts =true;
           },50);
+  }
+
+  
+  yearValidator(control: FormControl) : { [key: string]: boolean }  | null {
+    if (control.value) {
+      const year = new Date(control.value).getFullYear();
+      if (year.toString().length !== 4) {
+        return { invalidYear: true };
+      }
+    }
+    return null;
   }
 
   toggleInfoIcon() {
@@ -1182,6 +1204,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     let idx = this.columnDefs.findIndex((it)=> it.field == item.field);
     if(idx >-1)
       item.headerName =  this.columnDefs[idx].headerName;
+      item['hide'] =  this.columnDefs[idx]?.hide;
       if(this.columnDefs[idx]?.valueFormatter)
         item.valueFormatter =  this.columnDefs[idx]?.valueFormatter;
   });
@@ -1195,8 +1218,12 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   }
 
   getSplitItem(val:any){
-    let selectName =  val.split(':');
+    if(val){
+    let selectName =  val?.split(':');
     return selectName[1] ?  selectName[1] : '';
+    } else{
+      return '';
+    }
   }
 
   openFilters(){

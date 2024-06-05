@@ -626,6 +626,9 @@
 				class="text-danger">
 				! {{item.displayName}} is required.
 			</div>
+			<div *ngIf="productForm.get(item.ActuallName)?.touched && productForm.get(item.ActuallName)?.errors?.['invalidYear']" class="text-danger">
+				Year must be a 4-digit number.
+			  </div>
 
 				</div>
 			</div>
@@ -658,7 +661,7 @@
 	</ng-template>
 	
 	<div class="modal fade" tabindex="-1" id="edittag" role="dialog" data-bs-backdrop="static">
-		<div class="modal-dialog" role="document">
+		<div class="modal-dialog" role="document" >
 			<div class="modal-content p-2 pl-3 edittag ">
 				<div class="modal-header edit-tag-header">
 					<p id="edit-tag-head">Edit Tag</p>

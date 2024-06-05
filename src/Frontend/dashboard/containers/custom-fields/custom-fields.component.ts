@@ -127,6 +127,7 @@ addCustomFieldsOption(){
     Option: '',
   })
   this.isEdit = false;
+  this.customFieldForm.get('type')?.enable();
 }
 
 removeCustomFieldsOption(index:any){
@@ -267,12 +268,14 @@ addCustomFields() {
   }];
   this.isFormChanged = false;
   $("#addCustomFieldModal").modal('show');
+  this.customFieldForm.get('type')?.enable();
 }
 
 editCustomField() { 
   $("#addCustomFieldModal").modal('show');
   this.isFormChanged = false;
   this.isEdit = true;
+  this.customFieldForm.get('type')?.disable();
   this.patchFormDataValue();
 }
 

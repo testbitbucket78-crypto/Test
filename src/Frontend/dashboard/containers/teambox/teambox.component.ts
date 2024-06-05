@@ -244,7 +244,7 @@ routerGuard = () => {
 	isMessageCompletedText:boolean = false;
 	isShowAttributes:boolean = false;
 
-	constructor(private http: HttpClient,private apiService: TeamboxService ,private settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
+	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
 		
 		// customize default values of modals used by this component tree
 
@@ -1603,7 +1603,7 @@ sendattachfile() {
 		}else{
 			var hrPer =100
 			this.hourLeft =0
-			if(this.selectedInteraction['interaction_status']!=='Resolved'){
+			if(this.selectedInteraction['interaction_status']!=='Resolved' && this.selectedInteraction['isBlocked'] != 1){
 				this.updateConversationStatus('Resolved')
 			}
 		}
@@ -1699,10 +1699,10 @@ filterInteraction(filterBy:any){
 	if(filterBy != 'All'){
 		this.getFilteredInteraction(filterBy)
 	}else{
-		this.getAllInteraction()
+		this.getAllInteraction(false);
 	}
 	this.interactionFilterBy=filterBy
-	this.getAllInteraction()
+	this.getAllInteraction(false);
 	this.ShowFilerOption =false
 
 }

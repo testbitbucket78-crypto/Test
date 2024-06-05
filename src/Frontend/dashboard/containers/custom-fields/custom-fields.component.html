@@ -194,8 +194,8 @@
                                  
                                
                                 <div class="d-flex flex-column billing-form-row">
-                                    <label>Field Type </label>
-                                    <select name="type" id="type" formControlName="type" (change)="onInputChange()" [disabled]="isEdit">
+                                    <label>Field Type {{isEdit}}</label>
+                                    <select name="type" id="type" formControlName="type" (change)="onInputChange()" >
                                         <option *ngFor="let type of types" [value]="type">
                                             {{type}}</option>
                                     </select>
