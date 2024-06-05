@@ -20,7 +20,7 @@ export class SideNavComponent implements OnInit {
 
     subscription: Subscription = new Subscription();
     routeDataSubscription!: Subscription;
-
+    
     showNavItem: boolean = true;
     items=[
         {id:1,name:'dashboard'},
@@ -69,19 +69,20 @@ export class SideNavComponent implements OnInit {
         const mainBody = document.getElementsByClassName('container-fluid')[0] as HTMLElement;
     
         if (sideNavMenu && sideBarToggle && sideBarBody && layoutMainSide) {
+            console.log(sideBarBody.style.width);
             if (sideBarBody.style.width === '100%') {
+                this.navWidth.emit('56px');
                 sideBarBody.style.width = '100%';
                 mainBody.style.marginLeft = '-4%';
                 layoutMainSide.style.paddingLeft= '155px';
                 sideBarToggle.style.marginLeft = '-3px';
-                this.navWidth.emit('56px');
             } else {
+                this.navWidth.emit('225px');
                 sideBarBody.style.width = '100%';
                 sideNavMenu.style.borderRight = '1px solid #EBEBEB';
                 mainBody.style.marginLeft = '0';
                 layoutMainSide.style.paddingLeft= '225px';
                 sideBarToggle.style.marginLeft = '-148px';
-                this.navWidth.emit('225px');
             }
         }
     }

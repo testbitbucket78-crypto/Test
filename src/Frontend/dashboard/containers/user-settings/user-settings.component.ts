@@ -91,9 +91,8 @@ export class UserSettingsComponent implements OnInit {
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
             valueFormatter: (value:any) => {
-                if (value.value) {
-                    const date = new Date(value.value);
-          
+                if (value?.value && new Date(value.value).toString() != 'Invalid Date') {
+                    const date = new Date(value.value);      
                     return this.datepipe.transform(date, "dd-MMM-yyyy hh:mm a");
                   }
                   else {

@@ -376,6 +376,15 @@
     margin: 0px;
     border-radius: 50%;
     height: 105px;
+    text-align: center;
+    color: #6149cd;
+    background: white;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    min-width: 75px;
 }
 
 .edit-icon {
@@ -588,6 +597,9 @@ img.preview_icon {
     padding: 10px;
     background: #FBF9FE 0% 0% no-repeat padding-box;
     border: 1px solid #EDEDED;
+    width: 40px;
+    text-align: center;
+    color: #6149cd;
 }
 
 .popup-dialog.AssignOption span img {
@@ -2728,7 +2740,7 @@ label span {
 
     
 	.all_contacts::-webkit-scrollbar {
-		display: none;
+		display: block;
 	}
 
 	.conversation_list::-webkit-scrollbar {
@@ -2772,3 +2784,24 @@ label span {
     margin: 0px !important;
     box-shadow: 3px 3px 9px rgb(16 6 0 / 22%);
   }
+
+  .fallback-tooltip{
+    cursor:  pointer !important;
+  }
+
+  .blocked-btn{
+    color: white !important;
+    background: #f23b3b !important;
+  }
+  * ::-webkit-scrollbar-track{
+    background-color: transparent !important;
+  }
+
+      
+* ::-webkit-scrollbar{
+    background-color: transparent;
+}
+
+* ::-webkit-scrollbar-track{
+    display: none !important;
+}

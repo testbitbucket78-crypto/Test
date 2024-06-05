@@ -156,6 +156,7 @@ routerGuard = () => {
 	contactListInit:any = [];
     contactId:number = 0;
 	interactionList:any = [];
+	unreadList:number = 0;
 	interactionListMain:any=[];
 	selectedTemplate:any  = [];
 	variableValues:string[]=[];
@@ -1388,6 +1389,7 @@ sendattachfile() {
 				this.interactionList= dataList;
 				this.interactionListMain= dataList;
 			}
+			this.unreadList = this.interactionList.filter((item:any) => item?.UnreadCount != 0).length;
 		if(this.selectedInteraction)
 		//this.selectedInteractionList =
 			this.selectInteraction(0);
@@ -1604,7 +1606,7 @@ sendattachfile() {
 			var hrPer =100
 			this.hourLeft =0
 			if(this.selectedInteraction['interaction_status']!=='Resolved' && this.selectedInteraction['isBlocked'] != 1){
-				this.updateConversationStatus('Resolved')
+				//this.updateConversationStatus('Resolved')
 			}
 		}
 		
@@ -2011,6 +2013,7 @@ blockCustomer(selectedInteraction:any){
 		this.selectedInteraction['isBlocked']=selectedInteraction.isBlocked==1?0:1
 		if(selectedInteraction.isBlocked==1){
 			this.showToaster('Conversations is Blocked','success')
+			this.selectedInteraction['interaction_status']='empty';
 		}else{
 			this.showToaster('Conversations is UnBlocked','success')
 		}
@@ -2453,12 +2456,12 @@ sendMessage(){
 		};
 		this.settingService.clientAuthenticated(input).subscribe(response => {
 
-			if (response.status === 404) {
+			if (response.status === 404 && this.showChatNotes != 'notes') {
 				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
 				return;
 			}
 
-			if (response.status === 200 && response.message === 'Client is ready !') {
+			if ((response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes') {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
 						if(this.newMessage.value.Message_id==''){
