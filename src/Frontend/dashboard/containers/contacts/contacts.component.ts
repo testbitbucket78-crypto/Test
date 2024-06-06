@@ -10,6 +10,7 @@ import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
 import { Router } from '@angular/router';
 import { contactsImageData } from 'Frontend/dashboard/models/dashboard.model';
 import { AnyLengthString } from 'aws-sdk/clients/comprehend';
+import { join } from 'path';
 
 declare var $: any;
 @Component({
@@ -589,7 +590,7 @@ onSelectAll(items: any) {
   };
 
   
-  copyContactFormData() {
+  copyContactFormData(isEditTag:boolean) {
     let ContactFormData = {
         result: [
           {
@@ -655,13 +656,18 @@ onSelectAll(items: any) {
         }
       })
     }
-    if (this.isEditTag) {
+    if (isEditTag) {
       let tag = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
           if (tag) {
-              tag.displayName = this.getCheckedTags();
+            let tagArr:any =[];
+            this.tagListData.forEach((item:any)=>{
+              if(item.isSelected)
+              tagArr.push(item.ID);
+            })
+              tag.displayName = tagArr.join(', ');
     }
-  };
-    if (!this.isEditTag) {
+  }
+    if (!isEditTag) {
       let tagArray = this.productForm.controls.tag.value;
       console.log(tagArray)
       let tagString = tagArray?.map((tag: any) => `${tag.item_id}`).join(', ');
@@ -676,8 +682,8 @@ onSelectAll(items: any) {
     return ContactFormData
 }
 
-saveContact(addcontact:any,addcontacterror:any) {
-  let contactData = this.copyContactFormData()
+saveContact(addcontact:any,addcontacterror:any,isEditTag:boolean=false) {
+  let contactData = this.copyContactFormData(isEditTag)
   this.submitted = true;
 
   // if(!this.productForm.valid) {
@@ -870,7 +876,13 @@ deletContactByID(data: any) {
     }));
     console.log(selectedTags);
     // this.selectedTag = data.tag
-
+    this.tagListData.forEach((item:any)=>{
+      if(selectedTag?.includes((item.ID).toString())){
+        item['isSelected'] = true;
+      }else{
+        item['isSelected'] = false;
+      }
+    })
     for(let prop in data){
       let value = data[prop as keyof typeof data];
       if(this.productForm.get(prop))
@@ -1159,6 +1171,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     // }
     console.log(this.columnDefs);
     this.gridapi.setColumnDefs(this.columnDefs);
+    this.storeGridConfig();
   }
   checkHideFields() {
     let hiddenColumns = this.columnDefs.filter(item => item.hide == false && item.headerName);
@@ -1181,8 +1194,13 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   }
 
   ngOnDestroy(){
-    localStorage.setItem('gridOption',JSON.stringify(this.gridapi.getColumnDefs()));
     console.log(this.gridapi.getColumnDefs());
+    this.storeGridConfig();
+  }
+
+  storeGridConfig(){
+    localStorage.setItem('gridOption',JSON.stringify(this.gridapi.getColumnDefs()));
+
   }
 
   ngAfterViewInit(){
@@ -1199,13 +1217,14 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     let idx = this.arrHideColumn.findIndex((it)=> it.field == item.field);
     if(idx >-1)
       this.arrHideColumn[idx].hide =  !item.hide;
+      item['hide'] =  item?.hide ? true :false;
   });
   console.log(column);
   column.forEach((item:any)=>{
     let idx = this.columnDefs.findIndex((it)=> it.field == item.field);
     if(idx >-1)
       item.headerName =  this.columnDefs[idx].headerName;
-      item['hide'] =  this.columnDefs[idx]?.hide;
+      // item['hide'] =  this.columnDefs[idx]?.hide;
       if(this.columnDefs[idx]?.valueFormatter)
         item.valueFormatter =  this.columnDefs[idx]?.valueFormatter;
   });

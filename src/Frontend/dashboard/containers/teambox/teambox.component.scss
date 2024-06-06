@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
 *{
     ::-webkit-scrollbar {
-        display: none;
+        display: block;
     }
 }
 
@@ -2744,7 +2744,7 @@ label span {
 	}
 
 	.conversation_list::-webkit-scrollbar {
-		display: none;
+		display: block;
 	}
 
     .agent-list{
@@ -2764,6 +2764,7 @@ label span {
      
   .user-img{
     display: flex;
+    align-items: center;
   }
 
   .user-img .img{
@@ -2773,8 +2774,7 @@ label span {
     border-radius: 50%;
     background: white !important;
     color: #6149cd;
-    background-color: white !important;
-    /* margin-top: 30px; */
+    background-color: #F6EFFF !important;
     text-align: center;
     justify-content: center;
     display: flex;
@@ -2782,7 +2782,7 @@ label span {
     font-size: 14px;
     font-weight: 600;
     margin: 0px !important;
-    box-shadow: 3px 3px 9px rgb(16 6 0 / 22%);
+    margin-right: 3px !important;
   }
 
   .fallback-tooltip{
