@@ -674,11 +674,11 @@
 						<div *ngFor="let tag of tagListData; let i = index">
 								<div class="py-2 px-0 form-check">
 									<label class="m-0 form-check-label" for="flexCheckDefault{{i}}">
-									<input class="form-check-input" type="checkbox" 
-									       [checked]="getFilterTags?.includes(tag.ID.toString())"
+										<!-- [checked]="getFilterTags?.includes(tag.ID.toString())"
+										(ngModelChange)="updateTags(tag.ID, $event)" -->
+									<input class="form-check-input" type="checkbox" 									       
 									       id="flexCheckDefault{{i}}"
-										   [ngModel]="checkedTags.includes(tag.ID)"
-            							   (ngModelChange)="updateTags(tag.ID, $event)">
+										   [(ngModel)]="tag.isSelected">
 										   <span class="checkmark"></span>
 									<span [ngClass]="{'color-dots': true}" [style.background]="tag.TagColour"></span>
 									 {{tag.TagName}} 
@@ -689,7 +689,7 @@
 				</div>
 				<div class="modal-footer edittag-footer">
 					<button type="button" class="btn-close" id="edit-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-					<button type="button" class="btn-close" id="edit-btn-save" (click)="saveContact(addcontact,addcontacterror)">Save</button>
+					<button type="button" class="btn-close" id="edit-btn-save" (click)="saveContact(addcontact,addcontacterror,true)">Save</button>
 				</div>
 			</div>
 		</div>

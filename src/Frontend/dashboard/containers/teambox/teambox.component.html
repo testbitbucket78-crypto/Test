@@ -136,11 +136,11 @@
 								<button
 									*ngIf="selectedInteraction?.progressbar?.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72"
 									style="margin:0 8px"
-									[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : 'drop-down-btn red-color'"
+									[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : selectedInteraction.interaction_status=='Open' ? 'drop-down-btn red-color':'drop-down-btn'"
 									(click)="toggleConversationStatusOption()" [disabled]="selectedInteraction.isBlocked==1">
 									<img *ngIf="selectedInteraction.interaction_status=='Resolved'" class="icon"
 										src="/assets/img/teambox/checked_icon.png" />
-									{{selectedInteraction.interaction_status}}
+									{{selectedInteraction.interaction_status == 'empty'? 'Select': selectedInteraction.interaction_status}}
 								</button>
 
 								<button *ngIf="selectedInteraction?.progressbar?.progressbarValue >= 72"
@@ -218,7 +218,7 @@
 								</div>
 							
 							</div>
-							<input (focus)="focusInChatFunction()" (focusout)="focusOutChatFunction()"
+							<input (focus)="focusInChatFunction()" *ngIf="isRefresh" (focusout)="focusOutChatFunction()" 
 								(keyup)="seacrhInChat($event)"
 								[ngClass]="searchChatFocused ? 'chat-search-box active' : 'chat-search-box'"
 								type="text" />
@@ -377,7 +377,7 @@
 								<button [ngClass]="showChatNotes=='notes' ? 'tab_btn active' : 'tab_btn'"
 									(click)="toggleChatNotes('notes')">Notes</button>
 							</div>
-							<div class="input-area" (click)="checkPermission()">
+							<div class="input-area" (click)="checkPermission()" *ngIf="isRefresh">
 								<ejs-richtexteditor id='defaultRTE' [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open')" #chatEditor [toolbarSettings]='tools' [height]='100'
 								  placeholder="Enter Message">
 								</ejs-richtexteditor>
@@ -402,7 +402,7 @@
 							</span>
 						</p>
 					</div>
-					<div class="d-align-center"> 
+					<div class="d-align-center ml-2"> 
 					<button *ngIf="showChatNotes=='text'" class="submit_btn">
 						<img src="/assets/img/teambox/icon-send.svg" (click)="sendMessage()">
 					</button>
@@ -422,8 +422,11 @@
 			</div>
 
 			<div  class=" col-sm-3 team pl-2" style="background: #fbf9fe;">
-				<div class="mt-3 sideBar-btn d-flex justify-content-end">
+				<div class="mt-2 sideBar-btn d-flex justify-content-end">
 					<button type="button" class="btn5 btn-close" (click)="toggleProfileView()" *ngIf="showFullProfile">
+						<img src="assets/img/teambox/icon-close.svg">
+					</button>
+					<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
 						<img src="assets/img/teambox/icon-close.svg">
 					</button>
 				</div>
@@ -455,6 +458,9 @@
 
 							<div class="custom_list mt-3">
 								<div class="w-100">
+									<label>Phone Number</label>
+									<p>{{selectedInteraction.countryCode}} {{selectedInteraction.displayPhoneNumber}}</p>
+
 									<label>Email Id</label>
 									<p fxLayout="row" fxLayout.xs="column" fxLayoutAlign="start start" fxLayoutGap="10px" class="wrap-text">
 									  {{selectedInteraction.emailId}}
@@ -464,9 +470,7 @@
 									<p class="wrap-text">{{selectedInteraction.OptInStatus}}</p>
 								  </div>
 								  
-								<div class="w-100">
-									<label>Phone Number</label>
-									<p>{{selectedInteraction.countryCode}} {{selectedInteraction.displayPhoneNumber}}</p>
+								<div class="w-100">									
 									<label>Contact Owner</label>
 									<p>{{selectedInteraction.ContactOwner}}</p>
 								</div>
@@ -508,7 +512,7 @@
 							</div>
 						</div>
 
-						<div *ngIf="showFullProfile" style="padding: 0 45px 0 45px">
+						<div *ngIf="showFullProfile" >
 
 							<div class="custom_row">
 								<div class="col-md-6">
@@ -592,22 +596,22 @@
 										src="/assets/img/campaign/setting-g.svg"></button> -->
 
 							</div>
-							<div class="custom_row">
+							<!-- <div class="custom_row">
 
 								<button class="small-gradient-btn info_button">
 									<span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg" />
 										To add/edit any field according to your business from the settings</span>
 									</button>
-							</div>
+							</div> -->
 
 
 						</div>
 					</div>
-					<div *ngIf="selectedInteraction.InteractionId && showAttachedMedia" class="mt-3 sideBar-btn d-flex justify-content-end">
+					<!-- <div *ngIf="selectedInteraction.InteractionId && showAttachedMedia" class="mt-3 sideBar-btn d-flex justify-content-end">
 						<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()">
 							<img src="assets/img/teambox/icon-close.svg">
 						</button>
-					</div>
+					</div> -->
 				
 					<div class="profile pl-2 flex-row" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
 						
@@ -642,7 +646,7 @@
 						</div>
 					</div>
 				</div>
-					<div *ngIf="!showFullProfile" style="padding: 0 45px 0 45px;" class="footer">
+					<div *ngIf="!showFullProfile && !showAttachedMedia" style="padding: 0 45px 0 45px;" class="footer">
 
 						<div class="horizental_line mt-4">
 						</div>
@@ -1108,7 +1112,7 @@
 								</p>
 								
 								<div *ngIf="showInfo" class="showInfoFallback">
-									<p id="p-body">A default value that will be used for personalization if the system cannot find any value for the selected attribute in the user's contact fields.
+									<p id="p-body">You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
 									</p>
 									<button id="radio-close-btn" (click)="showInfo=false">X</button>
 								</div>
