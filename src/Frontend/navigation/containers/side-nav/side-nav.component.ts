@@ -20,7 +20,7 @@ export class SideNavComponent implements OnInit {
 
     subscription: Subscription = new Subscription();
     routeDataSubscription!: Subscription;
-    
+    sideBarCollapse:boolean = false;
     showNavItem: boolean = true;
     items=[
         {id:1,name:'dashboard'},
@@ -70,7 +70,7 @@ export class SideNavComponent implements OnInit {
     
         if (sideNavMenu && sideBarToggle && sideBarBody && layoutMainSide) {
             console.log(sideBarBody.style.width);
-            if (sideBarBody.style.width === '100%') {
+            if (!this.sideBarCollapse) {
                 this.navWidth.emit('56px');
                 sideBarBody.style.width = '100%';
                 mainBody.style.marginLeft = '-4%';
@@ -84,6 +84,7 @@ export class SideNavComponent implements OnInit {
                 layoutMainSide.style.paddingLeft= '225px';
                 sideBarToggle.style.marginLeft = '-148px';
             }
+            this.sideBarCollapse = ! this.sideBarCollapse;
         }
     }
 }
