@@ -306,6 +306,7 @@ hideToaster(){
     this.companyData.Employees_count = this.companyDetailForm.controls.Employees_count.value;
     this.companyData.Industry = this.companyDetailForm.controls.Industry.value;
     this.companyData.Phone_Number = this.companyDetailForm.controls.Phone_Number.value;
+    this.companyData.country_code = this.companyDetailForm.get('country_code')?.value;
   }  
 
   copyBillingFormData(){

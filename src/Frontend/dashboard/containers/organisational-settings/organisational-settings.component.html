@@ -33,7 +33,7 @@
         </div>
         <div class="profile-card mt-3" *ngIf="companyData">
             <span class="profile-heading">{{companyData?.Company_Name}}</span><br>
-            <p class="pb-0 mb-0">{{companyData?.Country}}&nbsp;|&nbsp;{{companyData?.Phone_Number}}</p>
+            <p class="pb-0 mb-0">{{companyData?.Country}}&nbsp;|&nbsp;{{companyData?.country_code ? companyData?.country_code : ''}}{{companyData?.Phone_Number}}</p>
         </div>
         <div class="flex-row mx-5">
             <div class="d-flex">
@@ -175,12 +175,26 @@
                             <div>
                                 <span>Phone Number*</span>
                                 <div class="numb-1">
+
+                                    <!-- <div class="ss d-flex justify-content-start">
+                                        <select class="input-form code-selector" id="country_code" formControlName="country_code">
+                                          <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
+                                            {{ countryCode }}
+                                          </option>
+                                          </select>
+                                          <input type="text" class="form-control" id="mobile_number" formControlName="mobile_number" 
+                                          name="mobile_number" style="display: none">  
+                                          <input type="text" class="form-control phone-input" id="mobile_number"  autocomplete="none" formControlName="display_mobile_number" 
+                                            name="display_mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
+                                            onKeyPress="return /^[0-9]$/.test(event.key)"
+                                            [ngClass]="{'is-invalid' : userDetailForm.controls.display_mobile_number.errors && (userDetailForm.get('display_mobile_number')?.touched || userDetailForm.get('display_mobile_number')?.dirty) }" 
+                                          (change)="formatPhoneNumber()" #text>    
+                                        </div> -->
                               
                                     <div class="row">
                                         <!-- <label for="floatingSelectGrid" class="required">Phone Number*</label> -->
                                         <select class="input-formm" id="country_code" formControlName="country_code">
-                                            <option [selected]=""
-                                                *ngFor="let countryCoode of countryCodes; let i = index">
+                                            <option [selected]="" [value]="countryCoode" *ngFor="let countryCoode of countryCodes; let i = index">
                                                 {{ countryCoode }}
                                             </option>
                                         </select>

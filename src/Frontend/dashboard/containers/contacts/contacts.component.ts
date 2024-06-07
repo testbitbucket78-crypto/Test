@@ -635,10 +635,11 @@ onSelectAll(items: any) {
     if(this.filteredCustomFields.length >0){
       this.filteredCustomFields.forEach((item:any)=>{
         if(item.type =='Select'){
-          let selectedOption = item.options.filter((opt:any)=>opt.id == this.productForm.get(item.ActuallName)?.value.toString())[0];
+          let selectedOption = item.options.filter((opt:any)=>opt.id == this.productForm.get(item.ActuallName)?.value?.toString())[0];
           console.log(this.productForm.get(item.ActuallName)?.value);
           console.log(item.options);
-          ContactFormData.result.push({displayName:`${selectedOption.id}:${selectedOption?.optionName}`,ActuallName:item.ActuallName});
+          if(selectedOption)
+          ContactFormData.result.push({displayName:`${selectedOption?.id}:${selectedOption?.optionName}`,ActuallName:item.ActuallName});
         }
         else if(item.type =='Multi Select'){
           let values =''
