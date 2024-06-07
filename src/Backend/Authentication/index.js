@@ -11,6 +11,7 @@ const { Status } = require('tslint/lib/runner');
 const CryptoJS = require('crypto-js');
 var axios = require('axios');
 const { error } = require('console');
+const moment = require('moment');
 const SECRET_KEY = 'RAUNAK'
 app.use(bodyParser.json());
 
@@ -45,8 +46,8 @@ const login = async (req, res) => {
             }
             else {
                 const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY, { expiresIn: '24h' });
-                let utcTimestamp = new Date().toUTCString();
-
+                let myUTCString = new Date().toUTCString();
+                const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=? where email_id=?', [utcTimestamp, req.body?.LoginIP,req.body.email_id])
               
                 res.status(200).send({
@@ -344,7 +345,7 @@ if(error){
         });
 
 
-        var data = getTextMessageInput('918130818921', otp);
+        var data = getTextMessageInput(mobile_number, otp);
 
         sendMessage(data)
         var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])

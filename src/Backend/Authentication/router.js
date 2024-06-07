@@ -58,7 +58,7 @@ router.post('/interactionpinned',authenticateToken,TeamBoxController.updatePinne
 router.get('/searchinteraction/:searchKey/:AgentId',authenticateToken,TeamBoxController.getSearchInteraction);
 
 
-router.get('/messages/:InteractionId/:Type/:RangeStart/:RangeEnd',TeamBoxController.getAllMessageByInteractionId);
+router.get('/messages/:InteractionId/:Type/:RangeStart/:RangeEnd/:spid',TeamBoxController.getAllMessageByInteractionId);
 router.post('/newmessage',authenticateToken,TeamBoxController.insertMessage);
 router.post('/deletemessage',authenticateToken,TeamBoxController.deleteMessage);
 router.post('/updatemessageread',authenticateToken,TeamBoxController.updateMessageRead);
@@ -70,6 +70,8 @@ router.get('/getquickReply/:SPID',authenticateToken,TeamBoxController.getquickRe
 router.get('/getTemplates/:SPID',authenticateToken,TeamBoxController.getTemplates);
 
 router.post('/editNotes',authenticateToken,TeamBoxController.updateNotes)
+router.post('/addAction',authenticateToken,TeamBoxController.addAction)
+
 
 const multer = require('multer');
 let fs = require('fs-extra');

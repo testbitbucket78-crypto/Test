@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors')
 app.use(bodyParser.json());
 app.use(cors());
+const moment = require('moment');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "5mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
@@ -258,7 +259,10 @@ function ClientInstance(spid, authStr, phoneNo) {
             if (clientSpidMapping.hasOwnProperty(spid)) {
               try {
                 delete clientSpidMapping[spid];
-                let updateConnection = await db.excuteQuery('update WhatsAppWeb set updated_at = ? where connected_id =? and spid=? and is_deleted !=1', [new Date().toUTCString(), phoneNo, spid])
+                
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+                let updateConnection = await db.excuteQuery('update WhatsAppWeb set updated_at = ? where connected_id =? and spid=? and is_deleted !=1', [updated_at, phoneNo, spid])
                 // kill the cycle with pid and sign = 'SIGINT' 
                 console.log("Kill[spid]", clientPidMapping[spid])
                 process.kill(clientPidMapping[spid]);
@@ -431,37 +435,50 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       console.log("not avilable")
     }
     if (type === 'text') {
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
+      
+      let myUTCString = new Date().toUTCString();
+      const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
       client.sendMessage(endCust + '@c.us', text);
       // notify.NotifyServer(spNumber, false, interaction_id)
     }
     if (type === 'image') {
+      let myUTCString = new Date().toUTCString();
+      const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link);
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
       client.sendMessage(endCust + '@c.us', media, { caption: text });
     }
     if (type === 'video') {
+      let myUTCString = new Date().toUTCString();
+      const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link);
       // console.log(media.mimetype)
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
       client.sendMessage(endCust + '@c.us', media, { caption: text });
 
     }
     if (type === 'attachment' || type === 'document') {
+      let myUTCString = new Date().toUTCString();
+      const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = new MessageMedia('pdf', link);
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
       client.sendMessage(endCust + '@c.us', media);
 
     } if (type === 'location') {
+      let myUTCString = new Date().toUTCString();
+      const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const location = new Location(37.422, -122.084, 'Sampana Digital Private limited');
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
       const msg = await client.sendMessage(endCust + '@c.us', location);
     }
     if (type === 'vcard') {
+      let myUTCString = new Date().toUTCString();
+      const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let firstName = 'CIP'
       let lastName = 'TEAM'
       let phoneNumber = '917017683064'
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [new Date().toUTCString(), msg_id])
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
       client.sendMessage(endCust + '@c.us',
         'BEGIN:VCARD\n' +
         'VERSION:3.0\n' +
@@ -510,8 +527,9 @@ async function saveInMessages(message) {
 
     if (from != 'status@broadcast') {
 
-
-      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, 'null', new Date().toUTCString());
+      let myUTCString = new Date().toUTCString();
+      const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, 'null', created_at);
       //console.log("saveMessage" ,)
       // console.log(saveMessage)
 
@@ -567,6 +585,7 @@ async function savelostChats(message, spPhone, spid) {
     // console.log(getLastScannedTime)
     var d = new Date(message.timestamp * 1000).toUTCString();
    
+      const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
 
     // console.log(d,new Date( getLastScannedTime[0]?.latest_message_created_date) < new Date(d) , getLastScannedTime[0]?.latest_message_created_date)
     if ((d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0)) {
@@ -590,7 +609,7 @@ async function savelostChats(message, spPhone, spid) {
       if (from != 'status@broadcast') {
 
 console.log("lost messages time",d)
-        let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, d);
+        let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time);
 
       }
     }

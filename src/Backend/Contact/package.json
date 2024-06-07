@@ -16,6 +16,7 @@
     "mysql2": "^2.3.3",
     "nodemailer": "^6.9.7",
     "nodemon": "^2.0.20",
-    "protractor": "^7.0.0"
+    "protractor": "^7.0.0",
+    "moment": "^2.29.4"
   }
 }

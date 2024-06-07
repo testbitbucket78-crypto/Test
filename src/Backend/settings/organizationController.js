@@ -10,6 +10,7 @@ const path = require("path");
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const awsHelper = require('../awsHelper');
+const moment = require('moment');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -85,7 +86,9 @@ const savecompanyDetail = async (req, res) => {
         Industry = req.body.Industry
         Employees_count = req.body.Employees_count
         created_By = req.body.created_By
-        created_at = new Date().toUTCString();
+       
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         country_code =  req.body?.country_code 
         var select = await db.excuteQuery(val.selectCompanyDetails, [SP_ID])
         console.log(select.length != 0)
@@ -127,7 +130,9 @@ const savelocalDetails = async (req, res) => {
         Time_Zone = req.body.Time_Zone
         Currency = req.body.Currency
         created_By = req.body.created_By
-        const created_at = new Date().toUTCString();
+     
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
         var localdatabyspid = await db.excuteQuery(val.selectlocalDetails, [SP_ID])
         console.log(localdatabyspid.length != 0)
@@ -242,7 +247,9 @@ const savebillingDetails = async (req, res) => {
         City = req.body.City
         State = req.body.State
 
-        const created_at = new Date().toUTCString();
+        
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
         var billingDATAbyspid = await db.excuteQuery(val.selectBillingDetails, [SP_ID])
         console.log(billingDATAbyspid.length != 0)
@@ -308,7 +315,9 @@ const updateLocalDetails = async (req, res) => {
         Time_Zone = req.body.Time_Zone
         Currency = req.body.Currency
         created_By = req.body.created_By
-        const updated_at = new Date().toUTCString();
+      
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var localVal = [Date_Format, Time_Format, Time_Zone, Currency, created_By, updated_at, SP_ID]
         var localData = await db.excuteQuery(val.updatelocalDetails, localVal)
         res.status(200).send({
@@ -336,7 +345,9 @@ const updatebillingDetails = async (req, res) => {
         City = req.body.City
         State = req.body.State
 
-        const updated_at = new Date().toUTCString();
+        
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var billingVal = [InvoiceId, billing_email, Address1, zip_code, created_By, Address2, updated_at, Country, City, State, SP_ID]
         var billingData = await db.excuteQuery(val.updateBillingDetails, billingVal);
         res.status(200).send({
@@ -405,7 +416,9 @@ const getbillingDetails = async (req, res) => {
 //_______________WORKING HOURS_________________________//
 const saveworkingDetails = async (req, res) => {
     try {
-        var created_at = new Date().toUTCString();
+      
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var data = req.body.days
         var isDeleted = 1;
         var deleteWork = await db.excuteQuery(val.deleteWork, [isDeleted, created_at, req.body.SP_ID])
@@ -448,7 +461,9 @@ const getworkingDetails = async (req, res) => {
 const updateWorkingHours = (req, res) => {
 
     try {
-        const updated_at = new Date().toUTCString();
+       
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var data = req.body.days
         data.forEach(async (item) => {
 
@@ -479,7 +494,9 @@ const addholidays = async (req, res) => {
         SP_ID = req.body.SP_ID
         holiday_date = req.body.holiday_date
         created_By = req.body.created_By
-        const created_at = new Date().toUTCString();
+       
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
 
 
@@ -522,7 +539,9 @@ const removeHolidays = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         holiday_date = req.body.holiday_date
-        const updated_at = new Date().toUTCString();
+       
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
         const holidayValue = holiday_date.map(date => [SP_ID, date, updated_at]);
         console.log(holidayValue)
@@ -593,7 +612,8 @@ const addRole = async (req, res) => {
         IsActive = 1
         subPrivileges = req.body.subPrivileges
         SP_ID = req.body.SP_ID
-        const created_at = new Date().toUTCString();
+        const myUTCString = new Date().toUTCString();
+        const  created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         if (roleID == 0) {
 
             var addRoleValues = [[RoleName, Privileges, IsActive, subPrivileges, created_at, SP_ID]]
@@ -692,7 +712,10 @@ const addUser = async (req, res) => {
         name = req.body.name
         mobile_number = req.body.mobile_number
         LoginIP = req.body.LoginIP
-        const CreatedDate = new Date().toUTCString()
+  
+        
+        let myUTCString = new Date().toUTCString();
+        const CreatedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         ParentId = req.body.uid
         UserType = req.body.UserType
         IsDeleted = 0
@@ -811,8 +834,10 @@ const editUser = async (req, res) => {
         countryCode = req.body.country_code
         displayPhoneNumber = req.body?.display_mobile_number
 
-        const LastModifiedDate = new Date().toUTCString()
+        
 
+        let myUTCString = new Date().toUTCString();
+        const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         UserType = req.body.UserType
 
         var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType, countryCode, displayPhoneNumber, uid])
@@ -870,7 +895,9 @@ const addTeam = async (req, res) => {
         team_name = req.body.team_name
         userIDs = req.body.userIDs
         // created_By = req.body.created_By
-        created_at = new Date().toUTCString();
+       
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         console.log(userIDs)
         const userIDsString = userIDs.join(', ');
         const teamVal = [[SP_ID, team_name, created_at, created_at, userIDsString]];
@@ -907,7 +934,10 @@ const deleteTeam = async (req, res) => {
         id = req.body.id;
         SP_ID = req.body.SP_ID;
         isDeleted = 1;
-        isDeletedOn = new Date().toUTCString();
+      
+        
+        let myUTCString = new Date().toUTCString();
+        const isDeletedOn = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var mapDel = await db.excuteQuery(val.mapteamDelete, [isDeleted, id])
         console.log("mapDel")
         console.log(mapDel)
@@ -930,7 +960,9 @@ const editTeam = async (req, res) => {
             SP_ID = req.body.SP_ID
         team_name = req.body.team_name
         userIDs = req.body.userIDs
-        updated_at = new Date().toUTCString();
+       
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         isDeleted = 1;
         var updateTeamdata = await db.excuteQuery(val.updateTeams, [SP_ID, team_name, updated_at, id])
         console.log("updateTeam")

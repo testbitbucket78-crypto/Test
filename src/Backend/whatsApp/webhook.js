@@ -12,6 +12,7 @@ const aws = require('../awsHelper');
 const Routing = require('../RoutingRules')
 const token = process.env.WHATSAPP_TOKEN;
 const incommingmsg = require('../IncommingMessages')
+const moment = require('moment');
 const mytoken = process.env.VERIFY_TOKEN;
 
 app.listen(process.env.PORT, () => {
@@ -125,14 +126,14 @@ async function extractDataFromMessage(body) {
     body.entry[0].changes[0].value.statuses.length > 0 && body.entry[0].changes[0].value.statuses[0]) {
 
     let messageStatus = body.entry[0].changes[0].value.statuses[0].status
-
-    console.log("messageStatus")
-    console.log(messageStatus)
-    let updatedStatus = await saveSendedMessageStatus(messageStatus)
+let displayPhoneNumber =  body.entry[0].changes[0].value.metadata.display_phone_number
+let customerPhoneNumber =  body.entry[0].changes[0].value.statuses[0].recipient_id
+    //console.log("messageStatus ,displayPhoneNumber ,customerPhoneNumber " )
+  // console.log(messageStatus ,displayPhoneNumber ,customerPhoneNumber)
+    let updatedStatus = await saveSendedMessageStatus(messageStatus,displayPhoneNumber,customerPhoneNumber)
   }
 
 }
-
 
 
 
@@ -149,7 +150,9 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   }
 
   if (message_text.length > 0) {
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type,'NULL','WhatsApp Official']);
+    let myUTCString = new Date().toUTCString();
+    const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type,'NULL','WhatsApp Official',created_at]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
@@ -242,13 +245,59 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
   })
 }
 
-async function saveSendedMessageStatus(messageStatus) {
+async function saveSendedMessageStatus(messageStatus,displayPhoneNumber,customerPhoneNumber) {
 
-  let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
-  console.log(getMessageId)
-  if (getMessageId.length > 0) {
-    var message_id = getMessageId[0].Message_id;
+  // let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
+  // console.log(getMessageId)
+  // if (getMessageId.length > 0) {
+  //   var message_id = getMessageId[0].Message_id;
+  // }
+  // console.log(message_id)
+  // let myUTCString = new Date().toUTCString();
+  // const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+  // let saveStatus = await db.excuteQuery(process.env.updateStatusQuery, [messageStatus, created_at, message_id])
+let userSP = await db.excuteQuery(`SELECT SP_ID from user where mobile_number = ? and isDeleted !=1 order by CreatedDate desc LIMIT 1`,[displayPhoneNumber])
+let spid ;
+if(userSP?.length){
+  spid = userSP[0].SP_ID
+ }
+if (messageStatus == 'send') {
+    const smsdelupdate = `UPDATE Message
+SET msg_status = 1 
+WHERE interaction_id IN (
+SELECT InteractionId FROM Interaction 
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL); `
+   // console.log(smsdelupdate)
+    let sended = await db.excuteQuery(smsdelupdate, [customerPhoneNumber, spid])
+  //  console.log("send", sended?.affectedRows)
+    notify.NotifyServer(displayPhoneNumber, true)
+
+
+  } else if (ack == 'delivered') {
+    let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1'
+    let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [customerPhoneNumber])
+    const smsdelupdate = `UPDATE Message
+SET msg_status = 2 
+WHERE interaction_id IN (
+SELECT InteractionId FROM Interaction 
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1); `
+    //console.log(smsdelupdate)
+    let deded = await db.excuteQuery(smsdelupdate, [customerPhoneNumber, spid])
+  //  console.log("deliver", deded?.affectedRows)
+    notify.NotifyServer(displayPhoneNumber, true)
+
+  } else if (ack == 'read') {
+  //  console.log("read")
+    let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2';
+    let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber])
+    const smsupdate = `UPDATE Message
+SET msg_status = 3 
+WHERE interaction_id IN (
+SELECT InteractionId FROM Interaction 
+WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1);`
+  //  console.log(smsupdate)
+    let resd = await db.excuteQuery(smsupdate, [customerPhoneNumber, spid])
+ //   console.log("read", resd?.affectedRows)
+    notify.NotifyServer(displayPhoneNumber, true)
   }
-  console.log(message_id)
-  let saveStatus = await db.excuteQuery(process.env.updateStatusQuery, [messageStatus, new Date().toUTCString(), message_id])
 }

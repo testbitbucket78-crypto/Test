@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const awsHelper = require('../awsHelper');
 const middleWare = require('../middleWare')
 const removeTags = require('../removeTagsFromRichTextEditor')
+const moment = require('moment');
 const cors = require('cors');
 app.use(bodyParser.json());
 app.use(cors());
@@ -20,7 +21,9 @@ const addCampaignTimings = async (req, res) => {
         days = req.body.days
         // start_time = req.body.start_time
         // end_time = req.body.end_time
-        created_at = new Date().toUTCString();
+     
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         //const values = CampaignTimingID.map(CTids => [sp_id, CTids, start_time, end_time, created_at]);
         //let result= await db.excuteQuery(val.addCampaignTimingsQuery,[values])
 
@@ -55,7 +58,9 @@ const updateCampaignTimings = async (req, res) => {
     CampaignTimingID = req.body.CampaignTimingID
     start_time = req.body.start_time
     end_time = req.body.end_time
-    updated_at = new Date().toUTCString();
+
+    let myUTCString = new Date().toUTCString();
+    const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     const values = CampaignTimingID.map(CTids => [sp_id, CTids, start_time, end_time, updated_at, updated_at]);
     let deleteCampaignTimings = await db.excuteQuery(val.deleteCampaignTimingsQuery, [updated_at, sp_id])
     console.log(deleteCampaignTimings)
@@ -98,7 +103,10 @@ const addAndUpdateCampaign = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         uid = req.body.uid
-        created_at = new Date().toUTCString();
+       
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        
         let deletexisting = await db.excuteQuery(val.deleteCampaignAlerts, [created_at, SP_ID])
 
         uid.forEach(async (item) => {
@@ -136,7 +144,9 @@ const addCampaignTest = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         uid = req.body.uid
-        created_at = new Date().toUTCString();
+       
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let deletexisting = await db.excuteQuery(val.deleteCampaignTest, [created_at, SP_ID])
 
         uid.forEach(async (item) => {
@@ -180,7 +190,9 @@ const addTag = async (req, res) => {
         SP_ID = req.body.SP_ID
         TagName = req.body.TagName
         TagColour = req.body.TagColour
-        created_at = new Date().toUTCString();
+        
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         if (ID != '0') {
             let updatedTad = await db.excuteQuery(val.updatetag, [TagName, TagColour, created_at, ID]);
             console.log(updatedTad)
@@ -230,7 +242,10 @@ const gettags = async (req, res) => {
 
 const deleteTag = async (req, res) => {
     try {
-        const updated_at = new Date().toUTCString();
+
+        
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let tagDelete = await db.excuteQuery(val.deletetag, [updated_at, req.body.ID])
         res.status(200).send({
             tagDelete: tagDelete,
@@ -250,7 +265,9 @@ const addCustomField = async (req, res) => {
         const SP_ID = req.body.SP_ID;
         const Type = req.body.Type;
         const description = req.body.description;
-        const created_at = new Date().toUTCString()
+       
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let values = (req.body.values);
 
 
@@ -328,7 +345,8 @@ const editCustomField = async (req, res) => {
                 id: id + '_' + option.id,
                 optionName: option.optionName
             }));
-            updated_at = new Date().toUTCString()
+            let myUTCString = new Date().toUTCString();
+            const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
       
         let editedField = await db.excuteQuery(val.editfield, [ColumnName, Type, description, updated_at,JSON.stringify(values), id])
@@ -346,7 +364,9 @@ const editCustomField = async (req, res) => {
 
 const enableMandatoryfield = async (req, res) => {
     try {
-        let mandatoryfield = await db.excuteQuery(val.enableMandatory, [req.body.Mandatory, new Date().toUTCString(), req.body.id])
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let mandatoryfield = await db.excuteQuery(val.enableMandatory, [req.body.Mandatory,created_at, req.body.id])
         res.send({
             status: 200,
             mandatoryfield: mandatoryfield
@@ -360,8 +380,9 @@ const enableMandatoryfield = async (req, res) => {
 
 const enableStatusfield = async (req, res) => {
     try {
-
-        let enableStatus = await db.excuteQuery(val.enablestatus, [req.body.Status, new Date().toUTCString(), req.body.id])
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let enableStatus = await db.excuteQuery(val.enablestatus, [req.body.Status, created_at, req.body.id])
         res.send({
             status: 200,
             enableStatus: enableStatus
@@ -445,7 +466,9 @@ const getCustomFieldById = async (req, res) => {
 
 const deleteCustomField = async (req, res) => {
     try {
-        let deletField = await db.excuteQuery(val.deletecolumn, [new Date().toUTCString(), req.params.id]);
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let deletField = await db.excuteQuery(val.deletecolumn, [created_at, req.params.id]);
         res.send({
             status: 200,
             deletField: deletField
@@ -477,7 +500,8 @@ const addTemplate = async (req, res) => {
             spid = req.body.spid,
             created_By = req.body.created_By,
             category_id = req.body.category_id
-        created_at = new Date().toUTCString()
+            let myUTCString = new Date().toUTCString();
+            const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         isTemplate = req.body.isTemplate
         industry = req.body.industry
 
@@ -565,7 +589,8 @@ const addGallery = async (req, res) => {
             spid = req.body.spid,
             created_By = req.body.created_By,
             category_id = req.body.category_id
-        created_at = new Date().toUTCString()
+            let myUTCString = new Date().toUTCString();
+            const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         isTemplate = req.body.isTemplate
         industry = req.body.industry
         topic = req.body.topic
@@ -654,9 +679,10 @@ const getApprovedTemplate = async (req, res) => {
 
 const deleteTemplates = async (req, res) => {
     try {
-        updated_at = new Date().toUTCString();
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         ID = req.body.ID;
-        let deleteVal = await db.excuteQuery(val.deleteTemplate, [updated_at, ID]);
+        let deleteVal = await db.excuteQuery(val.deleteTemplate, [created_at, ID]);
         res.status(200).send({
             deleteVal: deleteVal,
             status: 200
