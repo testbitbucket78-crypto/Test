@@ -5,6 +5,7 @@ const val = require('./generalconstant');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 const awsHelper = require('../awsHelper');
+const moment = require('moment');
 app.use(bodyParser.json());
 app.use(cors());
 // app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,7 +26,8 @@ const defaultaction = async (req, res) => {
         autoReplyTime = req.body.autoReplyTime
         isAutoReplyDisable = req.body.isAutoReplyDisable
         isContactAdd = req.body.isContactAdd
-        created_at = new Date().toUTCString();
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         pausedTill = req.body.pausedTill
         defaultAdminUid = req.body?.defaultAdminUid
         defaultAdminName = req.body?.defaultAdminName
@@ -119,7 +121,8 @@ const Abledisable = async (req, res) => {
     try {
         console.log(req.body.uid)
         Isdisable = req.body.Is_disable
-        updated_at = new Date().toUTCString();
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
 
 
@@ -148,7 +151,8 @@ const uploadimg = async (req, res) => {
         spid = req.body.spid
         message_type = req.body.message_type
         link = req.body.link
-        updated_at = new Date().toUTCString()
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
         // Remove header
         let streamSplit = link.split(';base64,');
@@ -199,7 +203,8 @@ const addAndUpdateDefaultMsg = async (req, res) => {
         spid = req.body.spid
         message_type = req.body.message_type
         link = req.body.link
-        updated_at = new Date().toUTCString()
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
         let image = link
 
@@ -229,7 +234,8 @@ const savedefaultmessages = async (req, res) => {
     try {
 
         SP_ID = req.body.SP_ID
-        updated_at = new Date().toUTCString()
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         message_type = req.body.message_type
         link = req.body.link
 
@@ -252,7 +258,8 @@ const savedefaultmessages = async (req, res) => {
 
 const deletedefaultactions = async (req, res) => {
     try {
-        updated_at = new Date().toUTCString()
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
 
         var deletedefaultQuery = `UPDATE defaultmessages SET isDeleted=1,updated_at=? where SP_ID=? and uid=?`
@@ -285,7 +292,8 @@ const rotingsave = async (req, res) => {
         isadmin = req.body.isadmin
         assignspecificuser = req.body.assignspecificuser
         selectuser = req.body.selectuser
-        created_at = new Date().toUTCString();
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         isMissChatAssigContactOwner = req.body.isMissChatAssigContactOwner
         manualAssignUid = req.body.manualAssignUid
         SpecificUserUid = req.body.SpecificUserUid
@@ -357,8 +365,8 @@ const savemanagestorage = async (req, res) => {
         autodeletion_contacts = req.body.autodeletion_contacts
         numberof_messages = req.body.numberof_messages
         sizeof_messages = req.body.sizeof_messages
-        created_at = new Date().toUTCString();
-
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var managebyspid = await db.excuteQuery(val.selectmanage, [spid])
         console.log(managebyspid.length != 0)
         if (managebyspid.length != 0) {
@@ -392,13 +400,14 @@ const getautodeletion = async (req, res) => {
         let spid = req.params.spid
         let storageUtilizationBytes = await awsHelper.getStorageUtilization(spid, '-1')
         console.log("storageUtilizationBytes"  ,storageUtilizationBytes)
-
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         const storageUtilizationKB = (storageUtilizationBytes.totalSize) / 1024;
         const storageUtilizationMB = storageUtilizationKB / 1024;
         const storageUtilizationGB = (storageUtilizationMB / 1024).toFixed(2);
 
          var resultbyspid = await db.excuteQuery(val.getdeletion, [req.params.spid])
-        var resbyspid = await db.excuteQuery(val.messageSizeQuery, [req.params.spid, new Date().toUTCString()])
+        var resbyspid = await db.excuteQuery(val.messageSizeQuery, [req.params.spid, created_at])
         console.log("routing" ,resbyspid[0]?.message_size ,storageUtilizationBytes?.totalSize)
         res.status(200).send({
             msg: 'routing got successfully !',
@@ -427,22 +436,23 @@ const manualDelation = async (req, res) => {
         }
         //UPDATE Message set is_deleted=1,updated_at=? where SPID=? AND created_at < ?`
 
-
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         const result = subtractDaysFromNow(manually_deletion_days);
         let mediaDeleted = '';
         let textDeleted = '';
         if (message_type == 'Text') {
-            textDeleted = await db.excuteQuery(val.deleteText, [new Date().toUTCString(), SPID, result])
+            textDeleted = await db.excuteQuery(val.deleteText, [created_at, SPID, result])
 
         } else if (message_type == 'Media') {
             // console.log(Media)
             let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
-            mediaDeleted = await db.excuteQuery(val.deleteMedia, [new Date().toUTCString(), SPID, result])
+            mediaDeleted = await db.excuteQuery(val.deleteMedia, [created_at, SPID, result])
         }
         else if (message_type == 'Both') {
-            textDeleted = await db.excuteQuery(val.deleteText, [new Date().toUTCString(), SPID, result])
+            textDeleted = await db.excuteQuery(val.deleteText, [created_at, SPID, result])
             let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
-            mediaDeleted = await db.excuteQuery(val.deleteMedia, [new Date().toUTCString(), SPID, result])
+            mediaDeleted = await db.excuteQuery(val.deleteMedia, [created_at, SPID, result])
 
         }
 

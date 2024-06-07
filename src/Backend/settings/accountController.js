@@ -5,6 +5,7 @@ const val = require('./constant');
 const bodyParser = require('body-parser');
 const awsHelper = require('../awsHelper')
 const cors = require('cors')
+const moment = require('moment');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -44,7 +45,9 @@ const insertAndEditWhatsAppWeb = async (req, res) => {
         } = req.body;
         
         const is_deleted = 0;  // default value
-        const updated_at = new Date().toUTCString();
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      
 
         console.log("id-------", id);
 
@@ -123,8 +126,9 @@ const addToken = async (req, res) => {
         spid = req.body.spid
         APIName = req.body.APIName
         IPAddress = req.body.IPAddress
-        created_at = new Date().toUTCString()
-
+        
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let tokenVal = [[spid, APIName, created_at]];
         let addedToken = await db.excuteQuery(val.addTokenQuery, [tokenVal])
         var newId = addedToken.insertId
@@ -152,9 +156,10 @@ const editToken = async (req, res) => {
         spid = req.body.spid
         APIName = req.body.APIName
         IPAddress = req.body.IPAddress
-        updated_at = new Date().toUTCString();
-
-        let deleteIP = await db.excuteQuery(val.deleteIPQuery, [new Date().toUTCString(),id])
+   
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let deleteIP = await db.excuteQuery(val.deleteIPQuery, [updated_at,id])
       
         let updateTokenVal = [spid, APIName, updated_at, id];
         let updatedToken = await db.excuteQuery(val.updateTokenQuery, updateTokenVal)
@@ -177,9 +182,10 @@ const editToken = async (req, res) => {
 
 const deleteToken = async (req, res) => {
     try {
-        
-        let deleteIPs = await db.excuteQuery(val.deleteIPQuery, [new Date().toUTCString(),req.params.id])
-        let deletedToken = await db.excuteQuery(val.deleteTokenQuery, [new Date().toUTCString(), req.params.id]);
+         let myUTCString = new Date().toUTCString();
+        const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let deleteIPs = await db.excuteQuery(val.deleteIPQuery, [time,req.params.id])
+        let deletedToken = await db.excuteQuery(val.deleteTokenQuery, [time, req.params.id]);
         res.status(200).send({
             deletedToken: deletedToken,
             status: 200
@@ -196,7 +202,9 @@ const enableToken = async (req, res) => {
     try {
         id = req.body.id
         isEnable = req.body.isEnable
-        let enabledVal = await db.excuteQuery(val.isEnableQuery, [isEnable, new Date().toUTCString(), id]);
+             let myUTCString = new Date().toUTCString();
+        const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let enabledVal = await db.excuteQuery(val.isEnableQuery, [isEnable, time, id]);
         res.status(200).send({
             enabledVal: enabledVal,
             status: 200

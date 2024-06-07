@@ -8,6 +8,7 @@ const http = require("https");
 const middleWare = require('../middleWare')
 const multer = require('multer');
 let fs = require('fs-extra');
+const moment = require('moment');
 const removeTags = require('../removeTagsFromRichTextEditor')
 
 app.use(bodyParser.json());
@@ -186,7 +187,9 @@ const createInteraction = async (req, res) => {
         IsTemporary = req.body?.IsTemporary
         var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type, IsTemporary]]
         console.log(values)
-        let time = new Date().toUTCString();
+     
+        let myUTCString = new Date().toUTCString();
+        const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let createInteraction = await db.excuteQuery(val.createInteractionQuery, [values])
 
         let currency_nameQuery = ` select Currency   from localDetails where SP_ID=?;`
@@ -387,17 +390,17 @@ const getAllMessageByInteractionId = async (req, res) => {
         let endRange = (req.params.RangeEnd - req.params.RangeStart)
         if (req.params.Type != 'media') {
             //var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
-            var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + "))  and Type='" + req.params.Type + "'  AND Message.is_deleted != 1 AND (Message.msg_status IS NULL OR Message.msg_status != 10 )  order by interaction_id desc , Message.created_at DESC LIMIT " + req.params.RangeStart + "," + endRange;
+          //  var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + "))  and Type='" + req.params.Type + "'  AND Message.is_deleted != 1 AND (Message.msg_status IS NULL OR Message.msg_status != 10 )  order by interaction_id desc , Message.created_at DESC LIMIT " + req.params.RangeStart + "," + endRange;
 
-            result = await db.excuteQuery(getAllMessagesByInteractionId, [])
+            result = await db.excuteQuery(val.getallMessagesWithScripts, [req.params.InteractionId,req.params.Type,req.params.spid,req.params.InteractionId,req.params.Type,req.params.spid,req.params.RangeStart, endRange])
 
 
         } else {
             //var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
-            var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) and is_deleted !=1 AND (msg_status IS NULL OR msg_status !=10 ) ORDER BY Message_id DESC LIMIT " + req.params.RangeStart + "," + endRange;
+         //  var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) and is_deleted !=1 AND (msg_status IS NULL OR msg_status !=10 ) ORDER BY Message_id DESC LIMIT " + req.params.RangeStart + "," + endRange;
 
 
-            result = await db.excuteQuery(getAllMessagesByInteractionId, [req.params.RangeStart, endRange])
+            result = await db.excuteQuery(val.getMediaMessage, [req.params.InteractionId,req.params.InteractionId,req.params.spid,req.params.Type,req.params.RangeStart, endRange])
 
 
 
@@ -428,7 +431,7 @@ const updateMessageRead = (req, res) => {
     }
 }
 const deleteMessage = (req, res) => {
-    var messageQuery = "UPDATE Message SET deleted_at ='" + req.body.deleted_at + "', is_deletedd =" + req.body.deleted + ", deleted_by =" + req.body.deleted_by + " WHERE Message_id =" + req.body.Message_id;
+    var messageQuery = "UPDATE Message SET deleted_at ='" + req.body.deleted_at + "', is_deleted =" + req.body.deleted + ", deleted_by =" + req.body.deleted_by + " WHERE Message_id =" + req.body.Message_id;
     var values = []
     db.runQuery(req, res, messageQuery, [values])
 }
@@ -438,6 +441,25 @@ const updateNotes = (req, res) => {
         var messageQuery = "UPDATE Message SET message_text =?,message_media=?,media_type=?,Type=? WHERE Message_id =" + req.body.Message_id;
         var values = [req.body?.message_text, req.body?.message_media, req.body?.media_type, req.body?.Type]
         db.runQuery(req, res, messageQuery, [values])
+    }
+}
+
+const addAction = async (req, res) => {
+    try{
+       let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
+      
+        let actions = await db.excuteQuery(actionQuery,[req.body.interactionId,req.body.action,req.body.action_at,req.body.action_by,req.body.created_at,req.body.SP_ID])
+
+        res.send({
+            actions: actions,
+            status: 200
+        })
+
+    } catch (err) {
+        res.send({
+            err: err,
+            status: 500
+        })
     }
 }
 
@@ -533,8 +555,9 @@ const insertMessage = async (req, res) => {
 
             }
             if (mentionedNotification.length != 0) {
-
-                let notifyvalues = [[SPID, 'Mentioned You', message_text, Agent_id, 'teambox', Agent_id, new Date().toUTCString()]]
+                let myUTCString = new Date().toUTCString();
+                const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+                let notifyvalues = [[SPID, 'Mentioned You', message_text, Agent_id, 'teambox', Agent_id, utcTimestamp]]
                 let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues])
                 console.log("mentionRes")
 
@@ -707,8 +730,9 @@ const updateInteractionMapping = async (req, res) => {
     var values = [[is_active, InteractionId, AgentId, MappedBy]]
     if (AgentId != -1) {
         let nameData = await db.excuteQuery(val.assignedNameQuery, [AgentId])
-
-        let notifyvalues = [[nameData[0].SP_ID, 'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, new Date().toUTCString()]]
+        let myUTCString = new Date().toUTCString();
+        const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let notifyvalues = [[nameData[0].SP_ID, 'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, utcTimestamp]]
         let notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues])
     }
     db.runQuery(req, res, val.updateInteractionMapping, [values])
@@ -737,7 +761,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes ,addAction
 };
 
 

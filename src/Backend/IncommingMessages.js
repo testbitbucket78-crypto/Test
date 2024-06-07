@@ -11,7 +11,8 @@ const removeTags = require('./removeTagsFromRichTextEditor')
 const db = require('./dbhelper')
 const axios = require('axios');
 const middleWare = require('./middleWare')
-const token = 'EAAU0g9iuku4BOzSD75ynSUzKSsYrIWv3qkEa9QPAnUNTUzPwN5aTjGxoAHxsXF4Nlrw8UxbMGqZBxqarODf2sY20MvFfTQm0umq4ZBKCpFAJdcPtbcYSZBsHMqYVwjfFPiQwFk1Rmadl4ctoncnxczMGJZALoVfZBpqoQ0lYHzOwbRb1nvImzhL4ex53c9HKVyzl2viy4EhLy9g0K';
+const moment = require('moment');
+const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=?`
 let updateSms = `UPDATE Message set system_message_type_id=?,updated_at=? where Message_id=?`
 let updateInteractionMapping = "INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy) VALUES ?"
@@ -175,7 +176,10 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
       if (messageInterval.length < 0) {
         // sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
         messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, wlcMessage[0].value, wlcMessage[0].link, phone_number_id, channelType, agid, newId)
-        let updateSmsRes = await db.excuteQuery(updateSms, [1, new Date(), msg_id]);
+        
+        let myUTCString = new Date().toUTCString();
+        const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let updateSmsRes = await db.excuteQuery(updateSms, [1, time, msg_id]);
       }
 
     }
@@ -405,7 +409,10 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
     if (messageInterval.length <= 0) {
       // console.log("messageInterval" ,newId)
       messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, wlcMessage[0].value, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId)
-      let updateSmsRes = await db.excuteQuery(updateSms, [1, new Date(), msg_id]);
+      
+      let myUTCString = new Date().toUTCString();
+      const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      let updateSmsRes = await db.excuteQuery(updateSms, [1, time, msg_id]);
     }
     }
     // console.log(wlcMessage);
@@ -431,7 +438,10 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
         result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
         console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
-        let updateSmsRes = await db.excuteQuery(updateSms, [2, new Date(), msg_id]);
+        
+        let myUTCString = new Date().toUTCString();
+        const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let updateSmsRes = await db.excuteQuery(updateSms, [2, time, msg_id]);
       }
     }
     return result;
@@ -504,7 +514,9 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
         //sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
         messageThroughselectedchannel(sid, from, AgentsOfflineMessage[0].message_type, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].link, phone_number_id, channelType, agid, newId)
 
-        let updateSmsRes = await db.excuteQuery(updateSms, [3, new Date(), msg_id]);
+        let myUTCString = new Date().toUTCString();
+        const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let updateSmsRes = await db.excuteQuery(updateSms, [3, time, msg_id]);
       }
     }
 
@@ -515,12 +527,20 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId) {
   if (channelType == 'WhatsApp Official') {
 
-    middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    let myUTCString = new Date().toUTCString();
+    const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+   let result = middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+   console.log(result)
+   let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time,time, "", -2]]
+   let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
   } if (channelType == 'WhatsApp Web') {
 console.log("message midddleware" ,interactionId)
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)
     if (result.status == 200) {
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", new Date(), new Date(), "", -2]]
+      
+      let myUTCString = new Date().toUTCString();
+      const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time,time, "", -2]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
     }
   }
@@ -529,12 +549,19 @@ console.log("message midddleware" ,interactionId)
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage) {
   if (channelType == 'WhatsApp Official') {
 
+    let myUTCString = new Date().toUTCString();
+    const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", time,time, "", -2]]
+    let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
   } if (channelType == 'WhatsApp Web') {
 
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)
     if (result.status == 200) {
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", new Date(), new Date(), "", -2]]
+      
+      let myUTCString = new Date().toUTCString();
+      const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "",time,time, "", -2]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
     }
   }

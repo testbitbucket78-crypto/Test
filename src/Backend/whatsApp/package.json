@@ -20,6 +20,7 @@
     "rxjs": "^7.8.1",
     "websocket": "^1.0.34",
     "whatsapp-business-api": "^0.0.4",
-    "ws": "^8.14.2"
+    "ws": "^8.14.2",
+    "moment": "^2.29.4"
   }
 }

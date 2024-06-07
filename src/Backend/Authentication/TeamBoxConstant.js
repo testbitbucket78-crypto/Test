@@ -1,14 +1,14 @@
 const db = require("../dbhelper");
 
-const host= "sdpl-staging.cdjbek5fprnn.ap-south-1.rds.amazonaws.com"
-const user= "scroot"
-const password= "amsdb1234"
-const database= "cip_project"
+const host = "sdpl-staging.cdjbek5fprnn.ap-south-1.rds.amazonaws.com"
+const user = "scroot"
+const password = "amsdb1234"
+const database = "cip_project"
 
 
 //Query for contactPage
 //var selectAllQuery = "SELECT * from EndCustomer where SP_ID=? and isBlocked !=1 and isDeleted !=1";
-var selectAllQuery =`WITH LatestInteractions AS (
+var selectAllQuery = `WITH LatestInteractions AS (
     SELECT i1.InteractionId, i1.customerId, i1.interaction_status, i1.interaction_details, 
            i1.AutoReplyStatus, i1.AutoReplyUpdatedAt, i1.paused_till, i1.deleted_by, 
            i1.is_deleted, i1.updated_at AS interaction_updated_at, i1.created_at AS interaction_created_at, 
@@ -59,7 +59,7 @@ SELECT DISTINCT customerId, Phone_number, Name, InteractionId, source FROM (
     FROM ContactsWithLatestInteractionDeletedOrTemporary
 ) AS CombinedResults
 ORDER BY priority, customerId
-LIMIT 0, 10;
+LIMIT ?, ?;
 `;
 var interactionsquery = "SELECT * FROM Interaction WHERE SP_ID=?  and is_deleted !=1"
 var contactsInteraction = `SELECT e.*, i.*
@@ -75,10 +75,10 @@ WHERE e.isDeleted != 1 AND e.SP_ID=?
 
 
 var insertCustomersQuery = "INSERT INTO EndCustomer (Name,Phone_number,channel,SP_ID,OptInStatus,countryCode,displayPhoneNumber) VALUES ?"
-var filterQuery="SELECT * from EndCustomer where Phone_number=? and isDeleted !=1"
-var searchQuery="SELECT * from EndCustomer where SP_ID=? and (Phone_number like ? or Name like ?)"
-var selectByIdQuery="SELECT * FROM EndCustomer WHERE customerId=? and isDeleted !=1"
-var blockCustomerQuery="UPDATE EndCustomer SET isBlocked =? WHERE customerId =?";
+var filterQuery = "SELECT * from EndCustomer where Phone_number=? and isDeleted !=1"
+var searchQuery = "SELECT * from EndCustomer where SP_ID=? and (Phone_number like ? or Name like ?)"
+var selectByIdQuery = "SELECT * FROM EndCustomer WHERE customerId=? and isDeleted !=1"
+var blockCustomerQuery = "UPDATE EndCustomer SET isBlocked =? WHERE customerId =?";
 
 
 
@@ -92,12 +92,12 @@ where u.isDeleted !=1 and u.SP_ID=?`
 
 
 var createInteractionQuery = "INSERT INTO Interaction (customerId,interaction_status,interaction_details,SP_ID,interaction_type,IsTemporary) VALUES ?"
-var updateInteractionQuery="UPDATE Interaction SET interaction_status =? WHERE InteractionId =?";
+var updateInteractionQuery = "UPDATE Interaction SET interaction_status =? WHERE InteractionId =?";
 
-var getAllInteraction="SELECT ic.AutoReplyStatus,ic.AutoReplyUpdatedAt,ic.paused_till, ic.interaction_status,ic.InteractionId, ec.*     FROM    Interaction ic JOIN    EndCustomer ec ON ic.customerId = ec.customerId WHERE    ic.interactionId = (        SELECT MAX(interactionId)        FROM Interaction        WHERE customerId = ic.customerId    ) and ec.SP_ID=?  order by interactionId desc;"
+var getAllInteraction = "SELECT ic.AutoReplyStatus,ic.AutoReplyUpdatedAt,ic.paused_till, ic.interaction_status,ic.InteractionId, ec.*     FROM    Interaction ic JOIN    EndCustomer ec ON ic.customerId = ec.customerId WHERE    ic.interactionId = (        SELECT MAX(interactionId)        FROM Interaction        WHERE customerId = ic.customerId    ) and ec.SP_ID=?  order by interactionId desc;"
 //var getAllInteraction = "SELECT  Interaction.AutoReplyStatus,Interaction.AutoReplyUpdatedAt,Interaction.paused_till, Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer where Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId OR Interaction.customerId=EndCustomer.Phone_number"
 //var searchInteractionQuery="SELECT * from Interaction where Phone_number=? or Name=?"
-var selectInteractionByIdQuery="SELECT * FROM Interaction WHERE Interaction.InteractionId=?"
+var selectInteractionByIdQuery = "SELECT * FROM Interaction WHERE Interaction.InteractionId=?"
 
 
 
@@ -108,7 +108,7 @@ var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, inte
 
 
 
-var updateInteractionMapping="INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy) VALUES ?"
+var updateInteractionMapping = "INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy) VALUES ?"
 var getInteractionMapping = "SELECT * from InteractionMapping,user where user.uid=InteractionMapping.AgentId  and  is_active=1 and InteractionMapping.InteractionId=? ORDER BY MappingId DESC LIMIT 1"
 
 var savedMessagesQuery = "SELECT * from savedMessages where is_active=1 and SPID=?";
@@ -123,7 +123,7 @@ var assignedNameQuery = `SELECT name,SP_ID from user where uid=?`;
 
 // interaction with messages
 
-var  interactions =`WITH LatestInteraction AS (
+var interactions = `WITH LatestInteraction AS (
     SELECT 
         customerId,
         MAX(interactionId) AS LatestInteractionId
@@ -180,13 +180,177 @@ WHERE
     AND ec.isDeleted != 1  
 `
 
-module.exports={host,user,password,database,
-selectAllAgentsQuery,selectAllQuery,insertCustomersQuery,filterQuery,searchQuery,selectByIdQuery,blockCustomerQuery,
-createInteractionQuery,updateInteractionQuery,getAllInteraction,selectInteractionByIdQuery,
-getAllMessagesByInteractionId,insertMessageQuery,
-updateInteractionMapping,getInteractionMapping,
-savedMessagesQuery,getquickReplyQuery,getTemplatesQuery,
-addNotification,assignedNameQuery,interactions,contactsInteraction,interactionsquery
+
+getallMessagesWithScripts = `(
+    SELECT 
+        Message.Message_id,
+        Message.message_direction,
+        Message.SPID,
+        Message.Agent_id,
+        Message.message_text,
+        Message.interaction_id,
+        Message.message_media,
+        Message.media_type,
+        Message.Message_template_id,
+        Message.Quick_reply_id,
+        Message.Type,
+        Message.ExternalMessageId,
+        Message.is_read,
+        Message.is_deleted,
+        Message.deleted_by,
+        Message.deleted_at,
+        Message.created_at,
+        Message.updated_at,
+        Message.components,
+        Message.template_type,
+        Message.msg_status,
+        Message.system_message_type_id,
+        Message.mediaSize,
+        Message.assignAgent,
+        Author.name AS AgentName,
+        DelAuthor.name AS DeletedBy,
+        NULL AS action,
+        NULL AS action_at,
+        NULL AS action_by
+    FROM 
+        Message 
+    LEFT JOIN 
+        user AS DelAuthor ON Message.Agent_id = DelAuthor.uid 
+    LEFT JOIN 
+        user AS Author ON Message.Agent_id = Author.uid 
+    WHERE 
+        Message.interaction_id IN (
+            SELECT InteractionId 
+            FROM Interaction 
+            WHERE customerId IN (
+                SELECT customerId 
+                FROM Interaction 
+                WHERE InteractionId = ?
+            )
+        )  
+        AND Message.Type = ? 
+        AND Message.is_deleted != 1 
+        AND (Message.msg_status IS NULL OR Message.msg_status != 10)
+        AND Message.SPID = ?
+)
+UNION
+(
+    SELECT 
+        NULL AS Message_id,
+        NULL AS message_direction,
+        InteractionEvents.SP_ID AS SPID,
+        NULL AS Agent_id,
+        NULL AS message_text,
+        InteractionEvents.interactionId AS interaction_id,
+        NULL AS message_media,
+        NULL AS media_type,
+        NULL AS Message_template_id,
+        NULL AS Quick_reply_id,
+        NULL AS Type,
+        NULL AS ExternalMessageId,
+        NULL AS is_read,
+        NULL AS is_deleted,
+        NULL AS deleted_by,
+        NULL AS deleted_at,
+        InteractionEvents.created_at,
+        NULL AS updated_at,
+        NULL AS components,
+        NULL AS template_type,
+        NULL AS msg_status,
+        NULL AS system_message_type_id,
+        NULL AS mediaSize,
+        NULL AS assignAgent,
+        NULL AS AgentName,
+        NULL AS DeletedBy,
+        InteractionEvents.action,
+        InteractionEvents.action_at,
+        InteractionEvents.action_by
+    FROM 
+        InteractionEvents 
+    WHERE 
+        InteractionEvents.interactionId = ?
+        AND InteractionEvents.Type = ? 
+        AND InteractionEvents.SP_ID = ?
+)
+ORDER BY 
+    created_at DESC,
+    interaction_id desc
+LIMIT ?, ?;
+`
+getMediaMessage = `(
+    SELECT 
+        Message.*,
+        NULL AS action,
+        NULL AS action_at,
+        NULL AS action_by
+    FROM 
+        Message 
+    WHERE 
+        message_media != '' 
+        AND interaction_id IN (
+            SELECT interactionId 
+            FROM Interaction 
+            WHERE customerid IN (
+                SELECT customerId 
+                FROM Interaction 
+                WHERE interactionId = ?
+            )
+        ) 
+        AND is_deleted != 1 
+        AND (msg_status IS NULL OR msg_status != 10)
+        
+)
+UNION
+(
+    SELECT 
+        NULL AS Message_id,
+        NULL AS message_direction,
+         InteractionEvents.SP_ID AS SPID,
+        NULL AS Agent_id,
+        NULL AS message_text,
+        NULL AS interaction_id,
+        NULL AS message_media,
+        NULL AS media_type,
+        NULL AS Message_template_id,
+        NULL AS Quick_reply_id,
+        NULL AS Type,
+        NULL AS ExternalMessageId,
+        NULL AS is_read,
+        NULL AS is_deleted,
+        NULL AS deleted_by,
+        NULL AS deleted_at,
+        InteractionEvents.created_at,
+        NULL AS updated_at,
+        NULL AS components,
+        NULL AS template_type,
+        NULL AS msg_status,
+        NULL AS system_message_type_id,
+        NULL AS mediaSize,
+        NULL AS assignAgent,
+         InteractionEvents.action,
+        InteractionEvents.action_at,
+        InteractionEvents.action_by
+    FROM 
+        InteractionEvents 
+    WHERE 
+        InteractionEvents.interactionId = ?
+        AND InteractionEvents.SP_ID = ?
+         AND InteractionEvents.Type = ?
+)
+ORDER BY 
+    created_at DESC,
+    Message_id desc;
+    LIMIT ?, ?;`
+
+
+module.exports = {
+    host, user, password, database,
+    selectAllAgentsQuery, selectAllQuery, insertCustomersQuery, filterQuery, searchQuery, selectByIdQuery, blockCustomerQuery,
+    createInteractionQuery, updateInteractionQuery, getAllInteraction, selectInteractionByIdQuery,
+    getAllMessagesByInteractionId, insertMessageQuery,
+    updateInteractionMapping, getInteractionMapping,
+    savedMessagesQuery, getquickReplyQuery, getTemplatesQuery,
+    addNotification, assignedNameQuery, interactions, contactsInteraction, interactionsquery, getallMessagesWithScripts, getMediaMessage
 }
 
 

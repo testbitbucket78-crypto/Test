@@ -10,6 +10,7 @@ const path = require("path");
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const awsHelper = require('../awsHelper');
+const moment = require('moment');
 //const puppeteer = require('puppeteer');
 var pdfMake = require('pdfmake');
 const pdfFonts = require('pdfmake/build/vfs_fonts');
@@ -70,7 +71,9 @@ const changePassword = async (req, res) => {
         oldPass = req.body.oldPass
         newPass = req.body.newPass
         confirmPass = req.body.confirmPass
-        const date = new Date().toUTCString();
+       
+        let myUTCString = new Date().toUTCString();
+        const date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
         var resQuery = await db.excuteQuery(val.PasswordQuery, [uid])
         if (resQuery.length >= 0) {
@@ -111,8 +114,10 @@ const userActiveStatus = async (req, res) => {
     try {
    
         IsActive = req.body.isActive;
-        LastModifiedDate = new Date().toUTCString()
+        
 
+        let myUTCString = new Date().toUTCString();
+        const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var saveActiveStatus = await db.excuteQuery(val.activeStatusquery, [IsActive, LastModifiedDate, req.body.uid]);
 
         res.status(200).send({
@@ -135,8 +140,10 @@ const addNotification = async (req, res) => {
             notificationId = req.body.notificationId,
             PushNotificationValue = req.body.PushNotificationValue,
             SoundNotificationValue = req.body.SoundNotificationValue,
-            isDeleted = 0,
-            created_at = new Date().toUTCString()
+            isDeleted = 0
+           
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
         if (ID == 0) {
             var addNotification = await db.excuteQuery(val.addNotification, [[[UID, notificationId, PushNotificationValue, SoundNotificationValue, isDeleted, created_at]]])
@@ -187,8 +194,10 @@ const saveManagePlan = async (req, res) => {
             discount = req.body.discount,
             subtotalAmount = req.body.subtotalAmount,
             totalAmount = req.body.totalAmount,
-            tax = req.body.tax,
-            created_at = new Date().toUTCString()
+            tax = req.body.tax
+            
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let existingPlan = await db.excuteQuery(val.selectPlan, [SP_ID]);
 
 
@@ -227,7 +236,10 @@ const saveManagePlan = async (req, res) => {
 const saveBillingHistory = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
-        billing_date = new Date().toUTCString()
+       
+        
+        let myUTCString = new Date().toUTCString();
+        const billing_date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         billing_id = req.body.billing_id
         amount = req.body.amount
         payment_status = req.body.payment_status
@@ -1013,7 +1025,9 @@ const ApproximateCharges = async (req, res) => {
 
 const deletePaymentMethod = async (req, res) => {
     try {
-        let date = new Date().toUTCString()
+        
+        let myUTCString = new Date().toUTCString();
+        const date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var deletePayMethodQuery = `UPDATE PaymentMethodDetails SET isDeleted=1,updated_at=? where SP_ID=?`
         let deletepay = await db.excuteQuery(deletePayMethodQuery, [date, req.params.spid])
         res.status(200).send({
@@ -1031,7 +1045,10 @@ const deletePaymentMethod = async (req, res) => {
 const addfunds = async (req, res) => {
     try {
         sp_id = req.body.sp_id
-        const transation_date = new Date().toUTCString()
+       
+        
+        let myUTCString = new Date().toUTCString();
+        const transation_date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         amount = req.body.amount
         transation_type = req.body.transation_type
         description = req.body.description
@@ -1135,7 +1152,10 @@ const addSPTransations = async (req, res) => {
     try {
 
         sp_id = req.body.sp_id
-        transation_date = new Date().toUTCString()
+       
+        
+        let myUTCString = new Date().toUTCString();
+        const transation_date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         amount = req.body.amount
         transation_type = req.body.transation_type
         currency = req.body.currency

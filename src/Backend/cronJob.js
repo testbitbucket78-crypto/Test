@@ -183,7 +183,9 @@ async function mapPhoneNumberfomCSV(message) {
     }
     campaignAlerts(message, 2) // campaignAlerts(new Date(), message.Id)    //Campaign is Running
     let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
-    let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
+    let myUTCString = new Date().toUTCString();
+    const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let updatedStatus = await db.excuteQuery(updateQuery, [currenttime, message.Id])
     let content = await removeTags.removeTagsFromMessages(message.message_content);
     batchofScheduledCampaign(contacts, message.sp_id, type, content, message.message_media, message.phone_number_id, message.channel_id, message, 'csv') //channelType[0].connected_id
   } catch (err) {
@@ -216,7 +218,9 @@ async function mapPhoneNumberfomList(message) {
   //   console.log("___________****" ,message.sp_id)
   campaignAlerts(message, 2)    //Campaign is Running
   let updateQuery = `UPDATE Campaign SET status=2,updated_at=? where Id=?`;
-  let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
+  let myUTCString = new Date().toUTCString();
+  const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+  let updatedStatus = await db.excuteQuery(updateQuery, [currenttime, message.Id])
   let content = await removeTags.removeTagsFromMessages(message.message_content);
   batchofScheduledCampaign(phoneNo, message.sp_id, type, content, message.message_media, message.phone_number_id, message.channel_id, message, 'List')
   // }
@@ -252,7 +256,9 @@ async function batchofScheduledCampaign(users, sp_id, type, message_content, mes
 
 async function campaignCompletedAlert(message) {
   let updateQuery = `UPDATE Campaign SET status=3,updated_at=? where Id=?`;
-  let updatedStatus = await db.excuteQuery(updateQuery, [new Date(), message.Id])
+  let myUTCString = new Date().toUTCString();
+  const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+  let updatedStatus = await db.excuteQuery(updateQuery, [currenttime, message.Id])
   campaignAlerts(message, 3) // Campaign Finish 
 
 }
