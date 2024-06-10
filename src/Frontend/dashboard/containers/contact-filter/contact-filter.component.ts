@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
@@ -142,6 +142,7 @@ export class ContactFilterComponent implements OnInit {
   filteredEndCustomerOrigional:any=[];
 	SPID = sessionStorage.getItem('SP_ID');
 	@ViewChild('addNewItemss', { static: true }) modalContent: TemplateRef<any> | undefined;
+	@Output() query = new EventEmitter<string> () ;
 
   constructor(private apiService: TeamboxService,private modalService: NgbModal,private _settingsService:SettingsService) {
 	
@@ -382,22 +383,23 @@ export class ContactFilterComponent implements OnInit {
       var bodyData={
         Query:contactFilter
       }
+	  this.query.emit(contactFilter)
       console.log(bodyData)
-      this.apiService.applyFilterOnEndCustomer(bodyData).subscribe(allCustomer =>{
-        var allCustomerList:any=allCustomer
-        if(allCustomerList){
-        allCustomerList.forEach((item:any) => {
-          item['tags'] = this.getTagsList(item.tag)
+    //   this.apiService.applyFilterOnEndCustomer(bodyData).subscribe(allCustomer =>{
+    //     var allCustomerList:any=allCustomer
+    //     if(allCustomerList){
+    //     allCustomerList.forEach((item:any) => {
+    //       item['tags'] = this.getTagsList(item.tag)
   
-        })
-      }
+    //     })
+    //   }
           
-        this.filteredEndCustomer = allCustomerList
-        this.filteredEndCustomer['sortOrder']=false
-        this.filteredEndCustomerOrigional =this.filteredEndCustomer
-      //  this.totalpages = Math.ceil(this.filteredEndCustomer.length/this.pagesize)
+    //     this.filteredEndCustomer = allCustomerList
+    //     this.filteredEndCustomer['sortOrder']=false
+    //     this.filteredEndCustomerOrigional =this.filteredEndCustomer
+    //   //  this.totalpages = Math.ceil(this.filteredEndCustomer.length/this.pagesize)
         
-    })
+    // })
   
     }
   

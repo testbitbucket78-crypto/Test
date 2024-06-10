@@ -234,6 +234,7 @@ countryCodes = [
 
    title = 'formValidation';
    submitted = false;
+   query = '';
  
   
   
@@ -435,9 +436,12 @@ onSelectAll(items: any) {
   }
 
   getContact() {
-    var SP_ID = sessionStorage.getItem('SP_ID')
+    var SP_ID = sessionStorage.getItem('SP_ID');
+    let data:any ={};
+    data.SP_ID = SP_ID;
+    data.Query = this.query;
     console.log(SP_ID)
-    this.apiService.Contact(SP_ID).subscribe((data:any) => {
+    this.apiService.getFilteredContact(data).subscribe((data:any) => {
       this.contacts = data.result;
       this.rowData = this.contacts;
       this.productForm.get('countryCode')?.setValue('IN +91');
@@ -1227,6 +1231,9 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
       // item['hide'] =  this.columnDefs[idx]?.hide;
       if(this.columnDefs[idx]?.valueFormatter)
         item.valueFormatter =  this.columnDefs[idx]?.valueFormatter;
+
+      if(this.columnDefs[idx]?.cellRenderer)
+      item['cellRenderer'] =  this.columnDefs[idx]?.cellRenderer;
   });
   console.log(column);
   this.columnDefs = column;

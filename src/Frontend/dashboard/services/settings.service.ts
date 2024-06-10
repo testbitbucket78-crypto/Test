@@ -45,7 +45,7 @@ export class SettingsService {
    }
 
   checkRoleExist(id:any){
-    if(this.subprivilages.includes(id)){
+    if(this.subprivilages?.includes(id)){
       return false;
     }else {
       return true;

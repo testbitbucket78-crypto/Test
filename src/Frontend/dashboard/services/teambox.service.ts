@@ -19,8 +19,8 @@ export class TeamboxService {
   }
 
   
-  public getCustomers(SPID:any) {
-    return this.http.get(API_URL+'/customers/'+SPID);
+  public getCustomers(SPID:any,rangeStart:number=0,rangeEnd:number=10) {
+    return this.http.get(API_URL+'/customers/'+SPID + '/'+rangeStart + '/' + rangeEnd);
   }
 
   public createCustomer(data: any) {
@@ -80,8 +80,8 @@ export class TeamboxService {
   }
 
 
-  public getAllMessageByInteractionId(InteractionId:any,Type:any,RangeStart:number=0,RangeEnd:number=30) {
-    return this.http.get(API_URL+'/messages/'+InteractionId+'/'+Type+'/'+RangeStart+'/'+RangeEnd);
+  public getAllMessageByInteractionId(InteractionId:any,Type:any,spid:any,RangeStart:number=0,RangeEnd:number=30) {
+    return this.http.get(API_URL+'/messages/'+InteractionId+'/'+Type+'/'+RangeStart+'/'+RangeEnd + '/'+spid);
   }
   public sendNewMessage(data: any) {
     return this.http.post(API_URL+'/newmessage/',data);
