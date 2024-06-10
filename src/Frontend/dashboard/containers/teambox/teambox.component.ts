@@ -1123,7 +1123,7 @@ sendattachfile() {
 		
 		item['tags'] = this.getTagsList(item.tag)
 		
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text').subscribe(messageList =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',this.SPID).subscribe(messageList =>{
 			item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
 			item['allmessages'] =messageList?messageList:[]
 
@@ -1143,12 +1143,12 @@ sendattachfile() {
 			// } 
 		})
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes').subscribe(notesList =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID).subscribe(notesList =>{
 			item['notesList'] =notesList?this.groupMessageByDate(notesList):[]
 			item['allnotes'] =notesList?notesList:[]
 		})
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media').subscribe(mediaList =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',this.SPID).subscribe(mediaList =>{
 			item['allmedia'] =mediaList?mediaList:[]
 		})
 
@@ -1197,7 +1197,7 @@ sendattachfile() {
 		item = this.interactionList[idx];
 		let threasholdMessages=0;
 		item['tags'] = this.getTagsList(item?.tag);
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text').subscribe((res:any) =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',this.SPID).subscribe((res:any) =>{
 			this.isMessageCompletedText = res.isCompleted;
 			let messageList = res.result;
 			item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
@@ -1215,14 +1215,14 @@ sendattachfile() {
 	
 		})
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes').subscribe((res1:any) =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID).subscribe((res1:any) =>{
 			this.isMessageCompletedNotes = res1.isCompleted;
 			let notesList = res1.result;
 			item['notesList'] =notesList?this.groupMessageByDate(notesList):[]
 			item['allnotes'] =notesList?notesList:[]
 		})
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media').subscribe((res2:any) =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',this.SPID).subscribe((res2:any) =>{
 			this.isMessageCompletedMedia = res2.isCompleted;
 			let mediaList = res2.result;
 			item['allmedia'] =mediaList?mediaList:[]
@@ -1282,7 +1282,7 @@ sendattachfile() {
 			}	
 		})
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',rangeStart,rangeEnd).subscribe((res1:any) =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID,rangeStart,rangeEnd).subscribe((res1:any) =>{
 			let notesList = res1.result;
 			let val = notesList?this.groupMessageByDate(notesList):[];
 			this.isMessageCompletedNotes = res1.isCompleted;
@@ -1297,7 +1297,7 @@ sendattachfile() {
 			}
 		})
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',rangeStart,rangeEnd).subscribe((res2:any) =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',this.SPID,rangeStart,rangeEnd).subscribe((res2:any) =>{
 			let mediaList = res2.result;
 			let val = mediaList?mediaList:[];
 			if(isNewMessage){
@@ -1398,6 +1398,16 @@ sendattachfile() {
 		});
 		this.scrollChatToBottom()
 	}
+
+	async getSearchInteractions(key:string){
+		await this.apiService.getSearchInteraction(key,this.uid).subscribe(async (data:any) =>{
+			var dataList:any = data?.conversations;
+			this.interactionList= dataList;
+			this.interactionListMain= dataList;
+			this.unreadList = this.interactionList.filter((item:any) => item?.UnreadCount != 0).length;
+			this.isCompleted = true;
+		})
+	}
 	async getSearchInteraction(event:any){
 		console.log('Search keyup', event.target.value);
 	if(event.target.value.length>2){
@@ -1405,7 +1415,7 @@ sendattachfile() {
 		this.interactionSearchKey = searchKey;
 		this.currentPage = 0;
 		this.pageSize = 10;
-		this.getAllInteraction(false);
+		this.getSearchInteractions(searchKey);
 	}else{
 		this.interactionSearchKey = '';
 		this.currentPage = 0;
@@ -2012,6 +2022,7 @@ blockCustomer(selectedInteraction:any){
 		if(selectedInteraction.isBlocked==1){
 			this.showToaster('Conversations is Blocked','success')
 			this.selectedInteraction['interaction_status']='empty';
+			this.updateInteractionMapping(selectedInteraction.InteractionId,-1,this.TeamLeadId)
 		}else{
 			this.showToaster('Conversations is UnBlocked','success')
 		}
@@ -2065,7 +2076,7 @@ toggleTagsModal(updatedtags:any){
 
 	this.selectedTags = ''; 
 	
-	var activeTags = this.selectedInteraction['tag'];
+	var activeTags = this.selectedInteraction['tags'];
 	for(var i=0;i<this.tagsoptios.length;i++){
 		var tagItem = this.tagsoptios[i]
 		if(activeTags?.includes(tagItem.name)){

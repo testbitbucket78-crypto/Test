@@ -69,6 +69,9 @@ export class DashboardService {
   addContact(data: any) {
     return this.http.post(API_URL1+'addCustomContact', data)
   }
+  getFilteredContact(data: any) {
+    return this.http.post(API_URL1+'getFilteredList', data)
+  }
   editContact(data: any, customerId: any, SP_ID: any) {
     console.log(customerId)
     const params = new HttpParams().set('customerId', customerId).set('SP_ID', SP_ID)

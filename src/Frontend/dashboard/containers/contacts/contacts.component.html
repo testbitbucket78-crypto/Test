@@ -583,7 +583,7 @@
 						[ngClass]="{'is-invalid' :productForm.controls.ContactOwner.touched && productForm.controls.ContactOwner.errors}"/>
 						<div *ngIf="ShowContactOwner" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
 							<p *ngFor="let uL of userList" (click)="selectContactOwner(uL.name)">
-							  <span>{{uL.name}}</span>
+							  <span>{{uL.name}} {{uL?.UserType == 'Admin' ? '(Admin)' :''}}</span>
 							</p>
 					    </div>
 				<div *ngIf="ShowContactOwner" class="overlay" (click)="this.ShowContactOwner=false"></div>
@@ -771,6 +771,6 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 </div>
 </div>
 
-<sb-contact-filter *ngIf="isShowFilter"></sb-contact-filter>
+<sb-contact-filter *ngIf="isShowFilter" (query)="query=$event; getContact();"></sb-contact-filter>
 
 </sb-layout-dashboard>

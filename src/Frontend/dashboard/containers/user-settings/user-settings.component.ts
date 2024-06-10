@@ -35,7 +35,7 @@ export class UserSettingsComponent implements OnInit {
             sortable: true,
             // cellRenderer: (params) => `<img style="height: 14px; width: 14px" src=${params.data.avatar} />`,
             cellRenderer: (params: { data: { name: any; };
-            }) =>`<div class="user-img"><div class="img">${this.getInitials(params.data.name)}</div>${params.data.name ? params.data.name : ''}</div>`,
+            }) =>`<div class="user-imgs"><div class="img">${this.getInitials(params.data.name)}</div>${params.data.name ? params.data.name : ''}</div>`,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
         },
         {
