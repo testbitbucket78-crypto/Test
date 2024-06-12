@@ -117,7 +117,7 @@ countryCodes = [
   }
 
 
-  ngOnInit(): void {
+    ngOnInit(): void {
     this.User = (JSON.parse(sessionStorage.getItem('loginDetails')!)).user ;
     this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
     console.log(JSON.stringify(this.profilePicture));
@@ -238,14 +238,15 @@ hideToaster(){
 
   prepareCompanyForm(){
     return new FormGroup({
-    Company_Name:new FormControl([Validators.required]),
+    Company_Name:new FormControl('', [Validators.required]),
     Company_Website:new FormControl(),
-    Country:new FormControl(),
+    Country:new FormControl('', [Validators.required]),
     Phone_Number:new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
-    Employees_count:new FormControl(),
-    Industry:new FormControl(),
+    Employees_count:new FormControl('', [Validators.required]),
+    Industry:new FormControl('', [Validators.required]),
     });
-  }
+    }
+
   preparebillingForm() {
     return this.fb.group({
       billing_email: ['', [Validators.required, Validators.email]],
@@ -277,12 +278,15 @@ hideToaster(){
   }
 
   
-  patchBillingForm(){
+    patchBillingForm(){
     const data = this.billingData;
     for(let prop in data){
       let value = data[prop as keyof typeof data];
       if(this.billingForm.get(prop))
-      this.billingForm.get(prop)?.setValue(value)
+            this.billingForm.get(prop)?.setValue(value)
+        if (this.state.length == 0) {
+            if (prop == "Country") this.getInitialStateList(value);
+        }
     }  
   }
 
@@ -357,23 +361,35 @@ hideToaster(){
     })
   }
 
-  getCountryList(){
+    getCountryList(){
     this._settingsService.getCountry()
     .subscribe(result =>{
       if(result){
         this.country = result;
-        console.log(this.country);
+          console.log(this.country); 
       }
 
     })
-  }
+    }
 
-  getStateList(countryName:any){
-    let country = this.country.filter((item:any)=> item.name == countryName)[0];
+    getInitialStateList(countryName: any) {
+        let country = this.country.filter((item: any) => item.name == countryName)[0];
+        this._settingsService.getState(country.iso2)
+            .subscribe(result => {
+                if (result) {
+                    this.state = result;
+                }
+            })
+    }
+
+    getStateList(countryName: any) {
+     let country = this.country.filter((item:any)=> item.name == countryName)[0];
     this._settingsService.getState(country.iso2)
     .subscribe(result =>{
-      if(result){
-        this.state = result;
+        if(result){
+            this.state = result;
+            this.billingForm.controls['State'].setValue("");
+            this.billingForm.controls['State'].markAsTouched();
       }
 
     })
@@ -403,7 +419,7 @@ hideToaster(){
   }
   }
 
-  saveBillingDetails() {
+    saveBillingDetails() {
     const emailControl = this.billingForm.get('billing_email'); 
     this.billingForm.markAllAsTouched();
     if (this.billingForm.valid) {

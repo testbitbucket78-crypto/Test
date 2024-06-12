@@ -68,13 +68,13 @@
 <div class="modal fade" tabindex="-1" id="workingHourModal" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content working-hour-modal ">
-            <div class="modal-header">
+            <div class="modal-header sticky-header">
                 <h5 class="modal-title">Add Working Hours</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
             </div>
-            <div class="modal-body px-5 pt-0">
+            <div class="modal-body px-5 pt-0 modal-body-scroll">
                 <!-- <form [formGroup]="workingHourForm" class="mt-4"> -->
                 <div *ngFor="let item of workingFormData;let idx=index">
                     <div class="billing-form-row">
@@ -109,7 +109,7 @@
                 </div>
                 <!-- </form> -->
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer sticky-footer">
                 <button type="button" class="account-btn" (click)="saveWorkingDetails()">Save</button>
             </div>
         </div>
