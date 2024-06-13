@@ -284,8 +284,9 @@ hideToaster(){
       let value = data[prop as keyof typeof data];
       if(this.billingForm.get(prop))
             this.billingForm.get(prop)?.setValue(value)
-        if (this.state.length == 0) {
-            if (prop == "Country") this.getInitialStateList(value);
+        
+        if (prop == "Country") {
+            this.getInitialStateList(value);
         }
     }  
   }
@@ -374,6 +375,7 @@ hideToaster(){
 
     getInitialStateList(countryName: any) {
         let country = this.country.filter((item: any) => item.name == countryName)[0];
+        this.state = [];
         this._settingsService.getState(country.iso2)
             .subscribe(result => {
                 if (result) {
