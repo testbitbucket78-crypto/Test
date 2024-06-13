@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { contactsImageData } from 'Frontend/dashboard/models/dashboard.model';
 import { AnyLengthString } from 'aws-sdk/clients/comprehend';
 import { join } from 'path';
+import { Subject } from 'rxjs';
 
 declare var $: any;
 @Component({
@@ -34,6 +35,7 @@ export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
       this.router.navigate(['login']);
     }
   }
+  changingValue: Subject<boolean> = new Subject();
   arrHideColumn:any[] =[];
   isShowColumn:boolean = false;
   isShowFilter:boolean = false;
@@ -487,7 +489,7 @@ onSelectAll(items: any) {
    }
 
   deleteRow(arr:any ["id"]) {
-      this.contacts.splice(arr, 1);
+      //this.contacts.splice(arr, 1);
       var deleteList = this.checkedConatct.map(x => x.customerId);
       var data = {
 
@@ -1255,6 +1257,12 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 
   openFilters(){
     this.isShowFilter = true;
+    this.changingValue.next(true);
+  }
+
+  closeFilter(){
+    console.log('xyz');
+   // this.isShowFilter = false;
   }
   
 }
