@@ -9,7 +9,6 @@ const moment = require('moment');
 app.use(bodyParser.json());
 app.use(cors());
 // app.use(bodyParser.urlencoded({ extended: true }));
-const moment = require('moment');
 app.use(express.json());
 app.use(bodyParser.json({ limit: "10000kb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));

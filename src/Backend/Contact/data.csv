@@ -1,4 +1,13 @@
-"customerId","Phone_number","channel","uid","SP_ID","status","Name","age","sex","emailId","address","pincode","city","state","Country","OptInStatus","tag","facebookId","InstagramId","created_at","updated_at","isBlocked","isBlockedOn","isDeleted"
-159,"37484947556",,,,"Premium","Sumit","23 Years",,"sumit@gmail.com",,,,,,,"Paid","dsnhfiewiw","hdmiufryunj","2023-03-31T04:25:04.000Z","2023-04-07T11:08:18.000Z",,,
-160,"918130818921",,,,"Premium,Customer","Raunak","23 Years",,"rk@gmail.com",,,,,,,"Order Complete,New Customer","facebook","jahkssrq?file=app%2Fapp","2023-03-31T06:46:13.000Z","2023-04-06T04:35:10.000Z",,,
-167,"0987654321",,,,"Return","Check","",,"abc@gmail.com",,,,,,,"New Customer","srq?file=app%2Fapp","jahkssrq?file=app%2Fapp","2023-04-08T06:22:05.000Z","2023-04-08T06:22:05.000Z",,,
+"ID","Name","Phone Number","Email","Message Opt-in","Contact Owner","Tag","select tp","multiselect","date","time"
+6244,"cdsfvd","24365476897",,"Yes",,"",,,,
+6250,"WWFSE","243654765856","WFRWEGW@GMAIL.COM","Yes","Riya","Red","278_1:b","279_1:cd","2024-06-04","12:50"
+6298,"qsqa","7634049804",,"Yes",,"",,,,
+6311,"manav","66666",,,,"",,,,
+6312,"Abhishek","7777777",,,,"",,,,
+6313,"Mohan","888888",,,,"",,,,
+6314,"gvdfh","465768976",,"Yes",,"",,,,
+6315,"rrrrrrrrrrrrrr","3333333333","abc@gmail.com","Yes","Riya","",,,,
+6317,"fsdg","234354356",,"Yes",,"",,,,
+6331,"Harsh bnbnbnbmnbnmbnmbnmbnm","985664745545","null","Yes","Riya","",,,,
+6337,"Add new Contact","545645645",,"Yes",,"",,,,
+6338,"Demo","545454545",,"Yes",,"",,,,
