@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { contactsImageData, importCSVData } from '../models';
-const API_URL ='http://52.66.106.90:3001/';
-const API_URL1 = 'http://52.66.106.90:3002/';
-const API_URL2 = 'http://52.66.106.90:3005/';
+const API_URL ='https://cip-api.stacknize.com/';
+const API_URL1 = 'https://contactapi.stacknize.com/';
+const API_URL2 = 'https://smartapi.stacknize.com/';
 
 
 @Injectable()

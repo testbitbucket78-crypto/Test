@@ -23,7 +23,7 @@ providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiP
 
 export class TeamboxComponent implements  OnInit {
 
-	private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://52.66.106.90:3010/');
+	private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com/');
 
 	incomingMessage: string = '';
 
@@ -1095,9 +1095,9 @@ sendattachfile() {
 		this.OptedIn = event.target.checked ? 'Yes': 'No';
 	}
 	getCustomers(){
-		this.apiService.getCustomers(this.SPID).subscribe(data =>{
-			this.contactList= data
-			this.contactListInit = data
+		this.apiService.getCustomers(this.SPID).subscribe((data:any) =>{
+			this.contactList= data?.results;
+			this.contactListInit = data?.results;
 			console.log(this.contactList,'contact list')
 		});
 	}
@@ -1719,6 +1719,7 @@ filterInteraction(filterBy:any){
 }
 toggleFilerOption(){
 	this.showfilter=!this.showfilter;
+	this.ShowFilerOption=!this.ShowFilerOption;
 }
 
 toggleContactOption(){
@@ -2424,7 +2425,7 @@ checkAuthentication(){
 	};
 	this.settingService.clientAuthenticated(input).subscribe(response => {
 
-		if (response.status === 404 && this.showChatNotes != 'notes') {
+		if (response.status === 404 && this.showChatNotes != 'notes' && false) {
 			this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
 			return;
 		}
@@ -2480,12 +2481,13 @@ sendMessage(){
 		};
 		this.settingService.clientAuthenticated(input).subscribe(response => {
 
-			if (response.status === 404 && this.showChatNotes != 'notes') {
+			if (response.status === 404 && this.showChatNotes != 'notes' && false) {
 				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
 				return;
 			}
+			//(response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes'
 
-			if ((response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes') {
+			if (true) {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
 						if(this.newMessage.value.Message_id==''){
