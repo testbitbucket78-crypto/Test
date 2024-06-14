@@ -218,8 +218,6 @@ select {
     flex: 1 1;
     font-size: 0.875rem;
     font-weight: 500;
-    cursor: default;
-
 }
 .data h6 {
     font-size: 1rem;
@@ -362,3 +360,7 @@ select {
     border:none;
     outline: none;
    }
+
+.select-pointer {
+    cursor: pointer;
+}

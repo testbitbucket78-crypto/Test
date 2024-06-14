@@ -11,7 +11,7 @@
             <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('39')">Working
                 Hours</a>
             <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3" *ngIf="!settingsService.checkRoleExist('40')">Roles</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==4 ? 'active' : ''" (click)="selectedTab = 4" *ngIf="!settingsService.checkRoleExist('40')">Teams</a>
+            <!--<a class="setting-field-link" [ngClass]="selectedTab==4 ? 'active' : ''" (click)="selectedTab = 4" *ngIf="!settingsService.checkRoleExist('40')">Teams</a>-->
             <a class="setting-field-link" [ngClass]="selectedTab==5 ? 'active' : ''" (click)="selectedTab = 5" *ngIf="!settingsService.checkRoleExist('40')">Users</a>
         </div>
     </div>
@@ -155,8 +155,13 @@
                     <form [formGroup]="companyDetailForm" class="mt-4">
                         <div class="profile-form-row">
                             <div class="profile-form-left">
-                                <span>Company Name*</span>
-                                <input type="text" class="company input-form" formControlName="Company_Name" placeholder="Enter company name" maxlength="17" >
+                                <span>Company Name<span class="aestric">*</span></span>
+                                <input type="text" class="company input-form" formControlName="Company_Name" placeholder="Enter company name" maxlength="17">
+                                <div *ngIf="companyDetailForm.get('Company_Name')?.invalid && (companyDetailForm.get('Company_Name')?.touched || companyDetailForm.get('Company_Name')?.dirty)" class="invalid-feedback">
+                                    <div *ngIf="companyDetailForm.get('Company_Name')?.hasError('required')">
+                                        Company Name is required.
+                                    </div>
+                                </div>
                             </div>
                             <div>
                                 <span>Company Website</span>
@@ -165,15 +170,20 @@
                         </div>
                         <div class="profile-form-row">
                             <div class="profile-form-left">
-                                <span>Country</span>
+                                <span>Country<span class="aestric">*</span></span>
                                 <select class="company input-form" formControlName="Country" required (change)="getStateList($event)">
-                                    <option value="0" selected>Select country</option>
-                                    <option  *ngFor="let item of country" [value]="item.name">{{item.name}}</option>
+                                    <option value="" selected>Select country</option>
+                                    <option *ngFor="let item of country" [value]="item.name">{{item.name}}</option>
                                 </select>
+                                <div *ngIf="companyDetailForm.get('Country')?.invalid && (companyDetailForm.get('Country')?.touched || companyDetailForm.get('Country')?.dirty)" class="invalid-feedback">
+                                    <div *ngIf="companyDetailForm.get('Country')?.hasError('required')">
+                                        Country is required.
+                                    </div>
+                                </div>
                             </div>
                           
                             <div>
-                                <span>Phone Number*</span>
+                                <span>Phone Number<span class="aestric">*</span></span>
                                 <div class="numb-1">
 
                                     <!-- <div class="ss d-flex justify-content-start">
@@ -217,18 +227,28 @@
                         </div>
                         <div class="profile-form-row">
                             <div class="profile-form-left">
-                                <span>Industry</span>
-                                <select class="company input-form" formControlName="Industry" required >
+                                <span>Industry<span class="aestric">*</span></span>
+                                <select class="company input-form" formControlName="Industry" required>
                                     <option value="" selected>Select Industry</option>
                                     <option *ngFor="let item of industry" [value]="item">{{item}}</option>
-                                  </select>
+                                </select>
+                                <div *ngIf="companyDetailForm.get('Industry')?.invalid && (companyDetailForm.get('Industry')?.touched || companyDetailForm.get('Industry')?.dirty)" class="invalid-feedback">
+                                    <div *ngIf="companyDetailForm.get('Industry')?.hasError('required')">
+                                        Industry is required.
+                                    </div>
+                                </div>
                             </div>
                             <div class="noemploye">
-                                <span>No. of Employees</span>
-                                <select class="company input-form" formControlName="Employees_count" required >
-                                    <option  value="" selected>Select no of employees</option>
+                                <span>No. of Employees<span class="aestric">*</span></span>
+                                <select class="company input-form" formControlName="Employees_count" required>
+                                    <option value="" selected>Select no of employees</option>
                                     <option *ngFor="let item of noOfEmployees" [value]="item">{{item}}</option>
                                 </select>
+                                <div *ngIf="companyDetailForm.get('Employees_count')?.invalid && (companyDetailForm.get('Employees_count')?.touched || companyDetailForm.get('Employees_count')?.dirty)" class="invalid-feedback">
+                                    <div *ngIf="companyDetailForm.get('Employees_count')?.hasError('required')">
+                                        Number of Employees must be at least 1.
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
