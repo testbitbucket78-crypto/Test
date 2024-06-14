@@ -1,7 +1,8 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'sb-contact-filter',
@@ -133,21 +134,29 @@ export class ContactFilterComponent implements OnInit {
 	];
 	
 	newContactListFilters:any=[]
-	ContactListNewFilters:any=[]
+	@Input() ContactListNewFilters:any=[];
+	@Input() openPopup!: Subject<boolean>;
 	selectedcontactFilterBy:any='';
   showContactFilter:any=false;
   showFilterByOption:any=false;
   showFilterTagOption:any=false;
   filteredEndCustomer:any=[];
   filteredEndCustomerOrigional:any=[];
+  modalReference: any;
 	SPID = sessionStorage.getItem('SP_ID');
 	@ViewChild('addNewItemss', { static: true }) modalContent: TemplateRef<any> | undefined;
+	@Output() query = new EventEmitter<string> () ;
+	@Output() closeFilterPopup = new EventEmitter<string>();
+	@Output() contactFilterList = new EventEmitter<any>();
 
   constructor(private apiService: TeamboxService,private modalService: NgbModal,private _settingsService:SettingsService) {
 	
     }
 	ngOnInit(): void {
-		this.modalService.open(this.modalContent,{size: 'xl', windowClass:'white-bg'});
+		this.openPopup.subscribe(v => { 
+			this.modalReference = this.modalService.open(this.modalContent,{size: 'xl', windowClass:'white-bg'});
+		  });
+		
 		this.addNewFilters(this.contactFilterBy);
 	}
 
@@ -382,22 +391,25 @@ export class ContactFilterComponent implements OnInit {
       var bodyData={
         Query:contactFilter
       }
+	  this.query.emit(contactFilter);
+	  //this.contactFilterList.emit(this.ContactListNewFilters)
+	  this.closeFilter();
       console.log(bodyData)
-      this.apiService.applyFilterOnEndCustomer(bodyData).subscribe(allCustomer =>{
-        var allCustomerList:any=allCustomer
-        if(allCustomerList){
-        allCustomerList.forEach((item:any) => {
-          item['tags'] = this.getTagsList(item.tag)
+    //   this.apiService.applyFilterOnEndCustomer(bodyData).subscribe(allCustomer =>{
+    //     var allCustomerList:any=allCustomer
+    //     if(allCustomerList){
+    //     allCustomerList.forEach((item:any) => {
+    //       item['tags'] = this.getTagsList(item.tag)
   
-        })
-      }
+    //     })
+    //   }
           
-        this.filteredEndCustomer = allCustomerList
-        this.filteredEndCustomer['sortOrder']=false
-        this.filteredEndCustomerOrigional =this.filteredEndCustomer
-      //  this.totalpages = Math.ceil(this.filteredEndCustomer.length/this.pagesize)
+    //     this.filteredEndCustomer = allCustomerList
+    //     this.filteredEndCustomer['sortOrder']=false
+    //     this.filteredEndCustomerOrigional =this.filteredEndCustomer
+    //   //  this.totalpages = Math.ceil(this.filteredEndCustomer.length/this.pagesize)
         
-    })
+    // })
   
     }
   
@@ -424,4 +436,10 @@ export class ContactFilterComponent implements OnInit {
         return [];
       }
     }
+
+	closeFilter(){
+		console.log('abcd');
+		this.closeFilterPopup.emit('');
+		this.modalReference.close();
+	}
 }

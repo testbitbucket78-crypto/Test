@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { contactsImageData } from 'Frontend/dashboard/models/dashboard.model';
 import { AnyLengthString } from 'aws-sdk/clients/comprehend';
 import { join } from 'path';
+import { Subject } from 'rxjs';
 
 declare var $: any;
 @Component({
@@ -34,6 +35,7 @@ export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
       this.router.navigate(['login']);
     }
   }
+  changingValue: Subject<boolean> = new Subject();
   arrHideColumn:any[] =[];
   isShowColumn:boolean = false;
   isShowFilter:boolean = false;
@@ -234,6 +236,7 @@ countryCodes = [
 
    title = 'formValidation';
    submitted = false;
+   query = '';
  
   
   
@@ -435,9 +438,12 @@ onSelectAll(items: any) {
   }
 
   getContact() {
-    var SP_ID = sessionStorage.getItem('SP_ID')
+    var SP_ID = sessionStorage.getItem('SP_ID');
+    let data:any ={};
+    data.SP_ID = SP_ID;
+    data.Query = this.query;
     console.log(SP_ID)
-    this.apiService.Contact(SP_ID).subscribe((data:any) => {
+    this.apiService.getFilteredContact(data).subscribe((data:any) => {
       this.contacts = data.result;
       this.rowData = this.contacts;
       this.productForm.get('countryCode')?.setValue('IN +91');
@@ -483,7 +489,7 @@ onSelectAll(items: any) {
    }
 
   deleteRow(arr:any ["id"]) {
-      this.contacts.splice(arr, 1);
+      //this.contacts.splice(arr, 1);
       var deleteList = this.checkedConatct.map(x => x.customerId);
       var data = {
 
@@ -1227,6 +1233,9 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
       // item['hide'] =  this.columnDefs[idx]?.hide;
       if(this.columnDefs[idx]?.valueFormatter)
         item.valueFormatter =  this.columnDefs[idx]?.valueFormatter;
+
+      if(this.columnDefs[idx]?.cellRenderer)
+      item['cellRenderer'] =  this.columnDefs[idx]?.cellRenderer;
   });
   console.log(column);
   this.columnDefs = column;
@@ -1248,6 +1257,12 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 
   openFilters(){
     this.isShowFilter = true;
+    this.changingValue.next(true);
+  }
+
+  closeFilter(){
+    console.log('xyz');
+   // this.isShowFilter = false;
   }
   
 }

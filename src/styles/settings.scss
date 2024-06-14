@@ -286,3 +286,27 @@
     font-weight: 600;
     margin: 7px 8px 0px 0px;
   }
+
+  
+  .user-imgs{
+    display: flex;
+    align-items: center !important;
+  }
+
+  .user-imgs .img{
+    height: 30px;
+    width: 29px;
+    min-width: 29px;
+    border-radius: 50%;
+    background: white !important;
+    color: #6149cd;
+    background-color: white !important;
+    /* margin-top: 30px; */
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    margin-right: 5px !important;
+  }

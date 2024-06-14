@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    baseUrl: 'https://authapi.stacknize.com'
+    baseUrl: 'http://52.66.106.90:3003'
 };
