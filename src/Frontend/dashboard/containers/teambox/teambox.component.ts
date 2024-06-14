@@ -165,6 +165,7 @@ routerGuard = () => {
 	OptedIn='No';
 	searchFocused=false;
 	searchChatFocused=false;
+	isRefresh:boolean = true;
 	errorMessage='';
 	successMessage='';
 	warningMessage='';
@@ -1625,30 +1626,25 @@ sendattachfile() {
 		}
 	}
 
-	async selectInteraction(idx:number) {
+	async selectInteraction(idx:number,) {
 
 		let Interaction = this.interactionList[idx];
 		//if(this.selectedInteractionList.findIndex(i => i == idx) == -1){
 			//this.selectedInteractionList.push(idx) 
 			await this.getInteractionDataById(idx);
 		//}
-
 		for(const item of this.interactionList) {
 			item['selected'] = false;
 		}	  
 		Interaction['selected'] = true;
-		this.contactId = Interaction.customerId;	
-
+		this.contactId = Interaction.customerId;
 		let channel = Interaction['channel'];
 		this.getTemplates(channel);
-
 		this.selectedCountryCode = Interaction['countryCode'];
-
 		this.Allmessages = Interaction['allmessages'];
-
 		this.selectedInteraction = Interaction;
-	
-
+		this.isRefresh = false;
+		setTimeout(()=>{this.isRefresh = true;},50)
 		this.getPausedTimer();
 		setTimeout(() => {
 			this.scrollChatToBottom();
@@ -1705,7 +1701,8 @@ filterInteraction(filterBy:any){
 	}
 	this.interactionFilterBy=filterBy
 	this.getAllInteraction(false);
-	this.ShowFilerOption =false
+	this.ShowFilerOption =false;
+	this.showfilter =false;
 
 }
 toggleFilerOption(){
@@ -1834,9 +1831,10 @@ filterContactByType(ChannelName:string){
 }
 
 toggleConversationStatusOption(){
+	console.log(this.loginAs)
 	if(this.loginAs !='Agent'){
 	this.ShowConversationStatusOption =!this.ShowConversationStatusOption
-	}else if(this.selectedInteraction.assignTo.AgentId == this.AgentId){
+	}else if(this.selectedInteraction.assignTo?.AgentId == this.AgentId){
 		this.ShowConversationStatusOption =!this.ShowConversationStatusOption
 	}else{
 		this.showToaster('Opps you dont have permission','warning')
@@ -2404,7 +2402,19 @@ deleteNotes(){
 		this.selectedNote.is_deleted=1
 		this.selectedNote.deleted_by=this.selectedNote.AgentName
 	})
-	
+}
+
+checkAuthentication(){
+	let input = {
+		spid: this.SPID,
+	};
+	this.settingService.clientAuthenticated(input).subscribe(response => {
+
+		if (response.status === 404 && this.showChatNotes != 'notes') {
+			this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+			return;
+		}
+	})
 }
 
 sendMessage(){
@@ -2672,7 +2682,10 @@ sendMessage(){
 	}
 	
 	checkPermission(){
-		console.log(this.selectedInteraction) ;		
+		console.log(this.selectedInteraction) ;	
+		if(this.showChatNotes=='text'){
+		this.checkAuthentication()
+		}
 		if(this.selectedInteraction?.assignTo?.AgentId != this.uid && this.showChatNotes=='text' ){
 			this.showToaster('only a assinged user can send the message !','error');
 		} else if(this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open'){
