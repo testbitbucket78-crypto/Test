@@ -8,7 +8,7 @@ import { billingDetail, billingDetailResponse,holidayData, companyDetail, compan
 })
 
 export class SettingsService {
-  API_URL:string='https://settings.stacknize.com';
+  API_URL:string='http://52.66.106.90:3004';
   token = 'cXlkZE04VzM3MTVaSkNwWlhINVlDNEY3eEJGV1V0S21FMGROaTJFWg==';
   subprivilages!:any;
 
@@ -340,15 +340,15 @@ const headers = new HttpHeaders({
     return this.http.post<any>(`${this.API_URL}/editTeam/`,data)
   }
   craeteQRcode(spid:any): Observable<any> {
-    return this.http.post<any>('https://waweb.stacknize.com/craeteQRcode',spid);
+    return this.http.post<any>('http://52.66.106.90:3009/craeteQRcode',spid);
   }
 
   clientAuthenticated(spid:any):Observable<any> {
-    return this.http.post<any>('https://waweb.stacknize.com/IsClientReady',spid);
+    return this.http.post<any>('http://52.66.106.90:3009/IsClientReady',spid);
   
 }
    getSPPhoneNumber(uid:any):Observable<any> {
-    return this.http.get<any>(`https://authapi.stacknize.com/users/${uid}`);
+    return this.http.get<any>(`http://52.66.106.90:3003/users/${uid}`);
    }
 
    

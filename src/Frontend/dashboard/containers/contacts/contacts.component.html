@@ -770,7 +770,7 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
   </div>
 </div>
 </div>
-
-<sb-contact-filter *ngIf="isShowFilter" (query)="query=$event; getContact();"></sb-contact-filter>
-
+<div *ngIf="isShowFilter">{{isShowFilter}}
+<sb-contact-filter *ngIf="isShowFilter == true" [openPopup]="changingValue" (query)="query=$event; getContact();" (closeFilterPopup)="closeFilter();"></sb-contact-filter>
+</div>
 </sb-layout-dashboard>

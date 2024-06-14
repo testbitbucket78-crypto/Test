@@ -23,7 +23,7 @@ providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiP
 
 export class TeamboxComponent implements  OnInit {
 
-	private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com/');
+	private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://52.66.106.90:3010/');
 
 	incomingMessage: string = '';
 
@@ -169,6 +169,7 @@ routerGuard = () => {
 	errorMessage='';
 	successMessage='';
 	warningMessage='';
+	status='';
 	showChatNotes='text';
 	message_text='';
 	selectedChannel:any=['WhatsApp Web'];
@@ -1393,6 +1394,7 @@ sendattachfile() {
 			this.unreadList = this.interactionList.filter((item:any) => item?.UnreadCount != 0).length;
 		if(this.selectedInteraction)
 		//this.selectedInteractionList =
+		console.log('selectInteraction(0)');
 			this.selectInteraction(0);
 			
 		});
@@ -2047,11 +2049,11 @@ handelStatusConfirm(){
 	}
 	if (this.selectedInteraction['interaction_status'] === 'Resolved' && this.hourLeft === 0) {
         this.hourLeft = 24;
-		this.updateConversationStatus('Open');
+		this.updateConversationStatus(this.status);
     }
     
   else {
-        this.updateConversationStatus('Resolved');
+        this.updateConversationStatus(this.status);
     }
 	
 }
@@ -2165,6 +2167,7 @@ triggerUpdateConversationStatus(status:any,openStatusAlertmMessage:any){
 			if(this.modalReference){
 				this.modalReference.close();
 			}
+			this.status = status;
 			this.confirmMessage= 'Are you sure you want to '+status+' this conversation?'
 			this.modalReference = this.modalService.open(openStatusAlertmMessage,{ size:'sm', windowClass:'white-bg'});
    
