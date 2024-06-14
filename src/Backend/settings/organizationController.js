@@ -76,7 +76,7 @@ const uploadCompanylogo = async (req, res) => {
 
 const savecompanyDetail = async (req, res) => {
     try {
-        console.log("savecompanyDetail"  ,req.body)
+        console.log("savecompanyDetail", req.body)
         SP_ID = req.body.SP_ID
         profile_img = req.body.profile_img
         Company_Name = req.body.Company_Name
@@ -86,15 +86,15 @@ const savecompanyDetail = async (req, res) => {
         Industry = req.body.Industry
         Employees_count = req.body.Employees_count
         created_By = req.body.created_By
-       
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        country_code =  req.body?.country_code 
+        country_code = req.body?.country_code
         var select = await db.excuteQuery(val.selectCompanyDetails, [SP_ID])
         console.log(select.length != 0)
         if (select.length != 0) {
 
-            var UpComValues = [req.body.profile_img, req.body.Company_Name, req.body.Company_Website, req.body.Country, req.body.Phone_Number, req.body.Industry, req.body.Employees_count, req.body.created_By, created_at,country_code, req.body.SP_ID]
+            var UpComValues = [req.body.profile_img, req.body.Company_Name, req.body.Company_Website, req.body.Country, req.body.Phone_Number, req.body.Industry, req.body.Employees_count, req.body.created_By, created_at, country_code, req.body.SP_ID]
             var updatedcompanyData = await db.excuteQuery(val.updateCompanyDetails, UpComValues)
 
             res.status(200).send({
@@ -104,7 +104,7 @@ const savecompanyDetail = async (req, res) => {
             });
 
         } else {
-            var InComValues = [req.body.SP_ID, req.body.profile_img, req.body.Company_Name, req.body.Company_Website, req.body.Country, req.body.Phone_Number, req.body.Industry, req.body.Employees_count, req.body.created_By, created_at,country_code]
+            var InComValues = [req.body.SP_ID, req.body.profile_img, req.body.Company_Name, req.body.Company_Website, req.body.Country, req.body.Phone_Number, req.body.Industry, req.body.Employees_count, req.body.created_By, created_at, country_code]
             var companyData = await db.excuteQuery(val.insertCompanyDetails, [[InComValues]])
 
             res.status(200).send({
@@ -130,7 +130,7 @@ const savelocalDetails = async (req, res) => {
         Time_Zone = req.body.Time_Zone
         Currency = req.body.Currency
         created_By = req.body.created_By
-     
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
@@ -142,10 +142,10 @@ const savelocalDetails = async (req, res) => {
             let result = await db.excuteQuery(query, [req.params.spid])
             //    let netAmount=result[0].amount
             //    let usedAmount=result[0].available_blance
-    
+
             let AvailableAmout = result[0].remaningblance
             let fromCurrency = localdatabyspid[0].Currency;
-            let  toCurrency =  Currency;
+            let toCurrency = Currency;
             var UplocalVal = [Date_Format, Time_Format, Time_Zone, Currency, created_By, created_at, SP_ID]
             var UplocalData = await db.excuteQuery(val.updatelocalDetails, UplocalVal)
             getChangesCurrency(AvailableAmout, fromCurrency, toCurrency)
@@ -247,7 +247,7 @@ const savebillingDetails = async (req, res) => {
         City = req.body.City
         State = req.body.State
 
-        
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
@@ -315,7 +315,7 @@ const updateLocalDetails = async (req, res) => {
         Time_Zone = req.body.Time_Zone
         Currency = req.body.Currency
         created_By = req.body.created_By
-      
+
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var localVal = [Date_Format, Time_Format, Time_Zone, Currency, created_By, updated_at, SP_ID]
@@ -345,7 +345,7 @@ const updatebillingDetails = async (req, res) => {
         City = req.body.City
         State = req.body.State
 
-        
+
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var billingVal = [InvoiceId, billing_email, Address1, zip_code, created_By, Address2, updated_at, Country, City, State, SP_ID]
@@ -416,7 +416,7 @@ const getbillingDetails = async (req, res) => {
 //_______________WORKING HOURS_________________________//
 const saveworkingDetails = async (req, res) => {
     try {
-      
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var data = req.body.days
@@ -461,7 +461,7 @@ const getworkingDetails = async (req, res) => {
 const updateWorkingHours = (req, res) => {
 
     try {
-       
+
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var data = req.body.days
@@ -494,7 +494,7 @@ const addholidays = async (req, res) => {
         SP_ID = req.body.SP_ID
         holiday_date = req.body.holiday_date
         created_By = req.body.created_By
-       
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
@@ -539,7 +539,7 @@ const removeHolidays = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         holiday_date = req.body.holiday_date
-       
+
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
@@ -613,7 +613,7 @@ const addRole = async (req, res) => {
         subPrivileges = req.body.subPrivileges
         SP_ID = req.body.SP_ID
         const myUTCString = new Date().toUTCString();
-        const  created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         if (roleID == 0) {
 
             var addRoleValues = [[RoleName, Privileges, IsActive, subPrivileges, created_at, SP_ID]]
@@ -706,77 +706,44 @@ let transporter = nodemailer.createTransport({
 
 const addUser = async (req, res) => {
     try {
-        console.log(req.body)
+        // console.log(req.body)
         SP_ID = req.body.SP_ID
         email_id = req.body.email_id
         name = req.body.name
         mobile_number = req.body.mobile_number
         LoginIP = req.body.LoginIP
-  
-        
+        RoleName = req.body?.RoleName
+
         let myUTCString = new Date().toUTCString();
         const CreatedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         ParentId = req.body.uid
         UserType = req.body.UserType
         IsDeleted = 0
-        IsActive = 1
+        IsActive = 3
         countryCode = req.body.country_code
         displayPhoneNumber = req.body?.display_mobile_number
 
-        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id, req.body.mobile_number, SP_ID])
+        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id, SP_ID])
         if (credentials.length > 0) {
+            let msg = "This email ID is already used by another user, please use a unique email";
+            if (credentials[0].name == name) {
+                msg = "User with this name already exist, please use a unique name";
+            }
+            if (credentials[0].mobile_number == mobile_number) {
+                msg = "User with this phone number already exist, please use a unique phone number";
+            }
             res.status(409).send({
-                msg: 'User Already Exist with this Email OR Phone Number !',
+                msg: msg,
                 status: 409
             });
         } else {
             var randomstring = Math.random().toString(36).slice(-8);
-            console.log(randomstring)
+            // console.log(randomstring)
             const hash = await bcrypt.hash(randomstring, 10);
             var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive, CreatedDate, LoginIP, countryCode, displayPhoneNumber]]
 
             var User = await db.excuteQuery(val.insertQuery, [values]);
-
-            var getData = await db.excuteQuery(val.selectByIdQuery, [SP_ID])
-
-            if (getData.length >= 0) {
-                var Company_Name = getData[0]?.Company_Name
-                var logo = getData[0]?.profile_img
-            }
-            var mailOptions = {
-                from: val.email,
-                to: req.body.email_id,
-                subject: 'Welcome to EngageKart!',
-                text: `Dear ${req.body.name},
-            
-            Welcome to ${Company_Name}'s account on Engagekart!
-            
-            Please find your account details below:
-            
-            Login ID: ${req.body.email_id}
-            Mobile: ${req.body.mobile_number}
-            Role: ${req.body?.RoleName}
-            Temporary Password:  ` + JSON.stringify(randomstring) + `
-            
-            To access your Engagekart account, follow these steps:
-            
-            1. Go to https://cip.stacknize.com/#/login
-            2. Enter your Email ID
-            3. Use the temporary password provided above.
-            
-            Do not forget to change your password once logged in.
-            
-            If you find any details incorrect, please contact your admin for changes.
-            
-            We're excited to see your contributions. Welcome once again!
-            
-            Best regards,
-            Team Engagekart`
-            };
-            transporter.sendMail(mailOptions, (error, info) => {
-                // console.log(info)
-
-            });
+            inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring)
             res.status(200).send({
                 msg: "user details has been sent",
 
@@ -791,6 +758,49 @@ const addUser = async (req, res) => {
     }
 }
 
+async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring) {
+
+    var getData = await db.excuteQuery(val.selectByIdQuery, [SP_ID])
+
+    if (getData.length >= 0) {
+        var Company_Name = getData[0]?.Company_Name
+        var logo = getData[0]?.profile_img
+    }
+    var mailOptions = {
+        from: val.email,
+        to: email_id,
+        subject: 'Welcome to EngageKart!',
+        text: `Dear ${name},
+    
+    Welcome to ${Company_Name}'s account on Engagekart!
+    
+    Please find your account details below:
+    
+    Login ID: ${email_id}
+    Mobile: ${mobile_number}
+    Role: ${RoleName}
+    Temporary Password:  ` + JSON.stringify(randomstring) + `
+    
+    To access your Engagekart account, follow these steps:
+    
+    1. Go to https://cip.stacknize.com/#/login
+    2. Enter your Email ID
+    3. Use the temporary password provided above.
+    
+    Do not forget to change your password once logged in.
+    
+    If you find any details incorrect, please contact your admin for changes.
+    
+    We're excited to see your contributions. Welcome once again!
+    
+    Best regards,
+    Team Engagekart`
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+        // console.log(info)
+
+    });
+}
 const rolesListByspid = async (req, res) => {
     try {
         var getRoles = await db.excuteQuery(val.getRole, [req.params.spid])
@@ -827,20 +837,77 @@ const deleteUser = async (req, res) => {
 const editUser = async (req, res) => {
     try {
         uid = req.body.uid
-
+        RoleName = req.body?.RoleName
+        SP_ID = req.body?.SP_ID
         email_id = req.body.email_id
         name = req.body.name
         mobile_number = req.body.mobile_number
         countryCode = req.body.country_code
         displayPhoneNumber = req.body?.display_mobile_number
 
-        
+        var randomstring = Math.random().toString(36).slice(-8);
+
 
         let myUTCString = new Date().toUTCString();
         const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         UserType = req.body.UserType
 
+        let currentUser = await db.excuteQuery(val.findEmail, [email_id,SP_ID])
+
+        // Check which details have changed
+        let changes = [];
+        if (currentUser[0].name !== name) changes.push(`New User Name: ${name}`);
+        if (currentUser[0].email_id !== email_id) changes.push(`New Email: ${email_id}`);
+        if (currentUser[0].mobile_number !== mobile_number) changes.push(`New Phone: ${mobile_number}`);
+        if (currentUser[0].RoleName !== RoleName) changes.push(`New Role: ${RoleName}`);
+
         var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType, countryCode, displayPhoneNumber, uid])
+
+
+   
+
+
+
+
+        if (changes.length > 0 && currentUser[0]?.IsActive != 3) {
+            // Construct the email body
+            let emailBody = `
+          Dear ${currentUser[0].name},
+  
+          Here are changes made to your Engagekart User details by your account Admin.
+  
+          ${changes.join('\n')}
+  
+          If you find any details not correct, please contact your admin for changes.
+  
+          Thank you,
+          Team Engagekart
+        `;
+
+            // Setup email options
+            var mailOptions = {
+                from: val.email, // Sender address
+                to: email_id, // Recipient's email
+                subject: "Engagekart - Users Details Updated",
+                text: emailBody
+            };
+
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+        }
+        if (currentUser?.length > 0 && currentUser[0].IsActive == 3) {
+            const hash = await bcrypt.hash(randomstring, 10);
+            inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring);
+            let updatePass = await db.excuteQuery('UPDATE user set password=? where uid=? ' ,[hash,uid])
+        }
+
+
         res.status(200).send({
             msg: 'User Updated successfully !',
             editUserData: editUserData,
@@ -895,7 +962,7 @@ const addTeam = async (req, res) => {
         team_name = req.body.team_name
         userIDs = req.body.userIDs
         // created_By = req.body.created_By
-       
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         console.log(userIDs)
@@ -934,8 +1001,8 @@ const deleteTeam = async (req, res) => {
         id = req.body.id;
         SP_ID = req.body.SP_ID;
         isDeleted = 1;
-      
-        
+
+
         let myUTCString = new Date().toUTCString();
         const isDeletedOn = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var mapDel = await db.excuteQuery(val.mapteamDelete, [isDeleted, id])
@@ -960,7 +1027,7 @@ const editTeam = async (req, res) => {
             SP_ID = req.body.SP_ID
         team_name = req.body.team_name
         userIDs = req.body.userIDs
-       
+
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         isDeleted = 1;

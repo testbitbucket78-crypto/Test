@@ -65,7 +65,7 @@ selectByIdQuery = `select Company_Name,profile_img from companyDetails where SP_
 userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
 updateQuery = "UPDATE user SET  email_id=?, name=?, mobile_number=?, LastModifiedDate=?, UserType=?,country_code=? ,display_mobile_number=? WHERE uid=?";
 insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP,country_code,display_mobile_number) VALUES ?";
-findEmail = "SELECT * FROM user WHERE (email_id=? OR mobile_number=?) and isDeleted !=1 and SP_ID=?"
+findEmail = "SELECT * FROM user WHERE email_id=?  and isDeleted !=1 and SP_ID=?"
 getRole = `SELECT 
 r.*,
 COUNT(u.UserType) AS NoOfUser,

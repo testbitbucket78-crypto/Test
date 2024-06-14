@@ -94,7 +94,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
          executablePath: "/usr/bin/google-chrome-stable",
-        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
     
           args: [
             '--no-sandbox',
@@ -105,10 +105,10 @@ function ClientInstance(spid, authStr, phoneNo) {
           takeoverTimeoutMs: 10,
         },
         authStrategy: authStr,
-        webVersionCache: {
+       /* webVersionCache: {
           type: 'remote',
           remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2410.1.html',
-        }
+        }*/
       });
       console.log("client created", new Date().toUTCString());
 
@@ -123,6 +123,9 @@ function ClientInstance(spid, authStr, phoneNo) {
         console.log('Client is auth_failure!');
       });
 
+      client.on("loading_screen",(percent,message)=>{
+        console.log("loading_screen",percent,message)
+      })
       let inc = 0;
       client.on("qr", (qr) => {
         try {

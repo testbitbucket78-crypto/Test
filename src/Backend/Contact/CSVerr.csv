@@ -1,5 +1,3 @@
-"Name","Email","Phone Number","MR +222","Tag","select tp","multiselect","reason_1","reason_2","reason_3"
-"raman","b@gmail.com","22222222","MR +222","[""mango""]","278_1:b","279_1:cd","Tag does not exist in the list",,
-"manav","c@gmail.com","6666666",,"[""mango""]","d","d","Tag does not exist in the list","select tp does not exist in the list","multiselect does not exist in the list"
-"Abhishek","d@gmail.com","77777777",,"[""mango""]","e","279_2:ef","Tag does not exist in the list","select tp does not exist in the list","multiselect does not exist in the list"
-"Mohan","End@gmail.com","7888888",,"[""mango""]","278_2:c","f","Tag does not exist in the list","select tp does not exist in the list","multiselect does not exist in the list"
+"Name","Phone Number","IN +91","reason_1"
+"Aman","918909893476","IN +91","This contact does not already exist"
+"raman","22222222",,"This contact does not already exist"
