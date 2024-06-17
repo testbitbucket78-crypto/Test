@@ -28,7 +28,7 @@ app.get('/columns/:spid', authenticateToken, async (req, res) => {
   }
 })
 
-app.get('/getFilteredList', authenticateToken, async (req, res) => {
+app.post('/getFilteredList', authenticateToken, async (req, res) => {
   try {
 
     let IsFilteredList = false;
@@ -215,9 +215,12 @@ app.post('/exportCheckedContact', authenticateToken, (req, res) => {
     var mailOptions = {
       from: val.email,
       to: req.body.loginData,
-      subject: "Export Contacts Confirmation",
-      html: `Hi ${req.body?.Name}, your contacts export request is processed. Check your email for the details and continue your great work with Engagekart!
-      - Team Engagekart
+      subject: "Engagekart - Contacts export report",
+      html: `
+      <p>Dear ${req.body?.Name},</p>
+      <p>Please find attached here the file containing your exported contacts from your Engagekart account.</p>
+      <p>Thank you,</p>
+      <p>Team Engagekart</p>
       `,
       attachments: [
         {
@@ -440,15 +443,18 @@ app.post('/importContact', authenticateToken, async (req, res) => {
 function sendMailAfterImport(emailId, user, noOfContact) {
   try {
 
-    let text = `<p>Hi ` + user + `, your contact import is complete! `
-      + noOfContact + ` new contacts have been added to your Engagekart account.
-    Start connecting now!</p>
-    - Team Engagekart`
+    let text =  `
+    <p>Dear ` + user + `,</p>
+    <p>The Contacts import initiated by you has been successfully processed. You can check your Engagekart account and start engaging with these newly added contacts.</p>
+    <p>Happy Engaging!</p>
+    <p>Thank you,</p>
+    <p>Team Engagekart</p>
+  `
 
     var mailOptions = {
       from: val.email,
       to: emailId,
-      subject: "Import Success Confirmation",
+      subject: "Engagekart - Contacts import successful",
       html: text,
 
     };

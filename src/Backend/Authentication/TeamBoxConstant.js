@@ -59,7 +59,7 @@ SELECT DISTINCT customerId, Phone_number, Name, InteractionId, source FROM (
     FROM ContactsWithLatestInteractionDeletedOrTemporary
 ) AS CombinedResults
 ORDER BY priority, customerId
-LIMIT ?, ?;
+LIMIT ?, ?
 `;
 var interactionsquery = "SELECT * FROM Interaction WHERE SP_ID=?  and is_deleted !=1"
 var contactsInteraction = `SELECT e.*, i.*
@@ -339,7 +339,7 @@ UNION
 )
 ORDER BY 
     created_at DESC,
-    Message_id desc;
+    Message_id desc
     LIMIT ?, ?;`
 
 

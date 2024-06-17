@@ -169,6 +169,7 @@ routerGuard = () => {
 	errorMessage='';
 	successMessage='';
 	warningMessage='';
+	status='';
 	showChatNotes='text';
 	message_text='';
 	selectedChannel:any=['WhatsApp Web'];
@@ -1094,9 +1095,9 @@ sendattachfile() {
 		this.OptedIn = event.target.checked ? 'Yes': 'No';
 	}
 	getCustomers(){
-		this.apiService.getCustomers(this.SPID).subscribe(data =>{
-			this.contactList= data
-			this.contactListInit = data
+		this.apiService.getCustomers(this.SPID).subscribe((data:any) =>{
+			this.contactList= data?.results;
+			this.contactListInit = data?.results;
 			console.log(this.contactList,'contact list')
 		});
 	}
@@ -1393,6 +1394,7 @@ sendattachfile() {
 			this.unreadList = this.interactionList.filter((item:any) => item?.UnreadCount != 0).length;
 		if(this.selectedInteraction)
 		//this.selectedInteractionList =
+		console.log('selectInteraction(0)');
 			this.selectInteraction(0);
 			
 		});
@@ -1717,6 +1719,7 @@ filterInteraction(filterBy:any){
 }
 toggleFilerOption(){
 	this.showfilter=!this.showfilter;
+	this.ShowFilerOption=!this.ShowFilerOption;
 }
 
 toggleContactOption(){
@@ -2047,11 +2050,11 @@ handelStatusConfirm(){
 	}
 	if (this.selectedInteraction['interaction_status'] === 'Resolved' && this.hourLeft === 0) {
         this.hourLeft = 24;
-		this.updateConversationStatus('Open');
+		this.updateConversationStatus(this.status);
     }
     
   else {
-        this.updateConversationStatus('Resolved');
+        this.updateConversationStatus(this.status);
     }
 	
 }
@@ -2165,6 +2168,7 @@ triggerUpdateConversationStatus(status:any,openStatusAlertmMessage:any){
 			if(this.modalReference){
 				this.modalReference.close();
 			}
+			this.status = status;
 			this.confirmMessage= 'Are you sure you want to '+status+' this conversation?'
 			this.modalReference = this.modalService.open(openStatusAlertmMessage,{ size:'sm', windowClass:'white-bg'});
    
@@ -2421,7 +2425,7 @@ checkAuthentication(){
 	};
 	this.settingService.clientAuthenticated(input).subscribe(response => {
 
-		if (response.status === 404 && this.showChatNotes != 'notes') {
+		if (response.status === 404 && this.showChatNotes != 'notes' && false) {
 			this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
 			return;
 		}
@@ -2477,12 +2481,13 @@ sendMessage(){
 		};
 		this.settingService.clientAuthenticated(input).subscribe(response => {
 
-			if (response.status === 404 && this.showChatNotes != 'notes') {
+			if (response.status === 404 && this.showChatNotes != 'notes' && false) {
 				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
 				return;
 			}
+			//(response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes'
 
-			if ((response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes') {
+			if (true) {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
 						if(this.newMessage.value.Message_id==''){

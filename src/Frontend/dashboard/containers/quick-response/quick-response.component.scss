@@ -445,15 +445,16 @@ padding: 1rem;
 
 .campaign_detail {
     width: 400px;
-    height: 95vh;
+    height: calc(100dvh - 56px);
     position: fixed;
     right: 0;
-    top: 54px;
+    top: 56px;
     background: #FBF9FE;
     border-radius: 0;
     margin: 0;
-    overflow-y: scroll;
-
+    display:grid;
+    grid-template-rows: max-content auto max-content;
+ 
 }
 
 .campaign_detail .campaigns_section_item {
@@ -1367,3 +1368,21 @@ select.input-form {
     justify-content: center;
     flex-direction: column;
   }
+
+.compaigns_section_scroll{
+    overflow-y: scroll;
+}
+
+.compaigns_section_scroll::-webkit-scrollbar {
+    width: 12px;
+    display: block;
+}
+
+.compaigns_section_scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.compaigns_section_scroll::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 6px;
+}

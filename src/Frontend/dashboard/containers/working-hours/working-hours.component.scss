@@ -60,7 +60,6 @@ font-family: Manrope;
   min-width: 650px;
   height: 600px;
   border-radius: 26px;
-  overflow-y: scroll;
  }
 
  .modal-footer{
@@ -117,11 +116,13 @@ font-family: Manrope;
  .remove-btn {
   color: #FF3636;
   font-size: 14px;
+  cursor: pointer; 
  }
 
  .add-btn {
   color: #6236FF;
   font-size: 14px;
+  cursor: pointer;
  }
 
  .flex-header{
@@ -143,7 +144,7 @@ font-family: Manrope;
 
  /* width */
 ::-webkit-scrollbar {
-  width: 0px;
+  width: 10px;
 }
 
 /* Track */
@@ -154,8 +155,8 @@ font-family: Manrope;
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: red;
-  border-radius: 10px;
+    background: #888;
+    border-radius: 10px;
 }
 
 .month-date{
@@ -337,6 +338,21 @@ label {
 input,
 label {
   margin: 0.4rem 0;
+}
+.modal-body-scroll {
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+.sticky-header {
+    position: sticky;
+}
+
+.sticky-footer {
+    position: sticky;
 }
 
 .billing-form-row {

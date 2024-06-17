@@ -45,9 +45,13 @@ const getAllAgents = (req, res) => {
 const getAllCustomer = async (req, res) => {
     // db.runQuery(req, res, val.selectAllQuery, [req.params.spID]);
     try {
-        let RangeStart = req.body.RangeStart
-        let RangeEnd = (req.body.RangeEnd - req.body.RangeStart)
+        let RangeStart = parseInt(req.params.RangeStart);
+      
+        let RangeEnd =  parseInt(req.params.RangeEnd - req.params.RangeStart);
+        console.log(RangeStart ,"RangeStart" ,RangeEnd)
         let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
+       console.log("req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd")
+        console.log(req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd)
         res.send({
             status: 200,
             results: contacts
@@ -216,11 +220,16 @@ const createInteraction = async (req, res) => {
 
 }
 
-const updateInteraction = (req, res) => {
+const updateInteraction = async (req, res) => {
     if (req.body?.IsTemporary && req.body?.IsTemporary != '') {
         var updateQuery = "UPDATE Interaction SET IsTemporary ='" + req.body.IsTemporary + "' WHERE InteractionId =" + req.body.InteractionId
     }
     if (req.body.Status && req.body.Status != '') {
+        let myUTCString = new Date().toUTCString();
+        const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
+      
+        let actions = await db.excuteQuery(actionQuery,[req.body.interactionId,req.body?.action,req.body?.action_at,req.body?.action_by,utcTimestamp,req.body?.SP_ID])
         var updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' WHERE InteractionId =" + req.body.InteractionId
     }
     if (req.body.AutoReply && req.body.AutoReply != '') {
@@ -281,7 +290,7 @@ const getAllFilteredInteraction = async (req, res) => {
 
     console.log("------------------")
     
-    console.log(queryPath)
+   // console.log(queryPath)
 
 
 
@@ -387,12 +396,12 @@ const getAllMessageByInteractionId = async (req, res) => {
 
         let result;
         let isCompleted = false
-        let endRange = (req.params.RangeEnd - req.params.RangeStart)
+        let endRange = parseInt(req.params.RangeEnd - req.params.RangeStart)
         if (req.params.Type != 'media') {
             //var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
           //  var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + "))  and Type='" + req.params.Type + "'  AND Message.is_deleted != 1 AND (Message.msg_status IS NULL OR Message.msg_status != 10 )  order by interaction_id desc , Message.created_at DESC LIMIT " + req.params.RangeStart + "," + endRange;
 
-            result = await db.excuteQuery(val.getallMessagesWithScripts, [req.params.InteractionId,req.params.Type,req.params.spid,req.params.InteractionId,req.params.Type,req.params.spid,req.params.RangeStart, endRange])
+            result = await db.excuteQuery(val.getallMessagesWithScripts, [req.params.InteractionId,req.params.Type,req.params.spid,req.params.InteractionId,req.params.Type,req.params.spid,parseInt(req.params.RangeStart), endRange])
 
 
         } else {
@@ -400,7 +409,7 @@ const getAllMessageByInteractionId = async (req, res) => {
          //  var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) and is_deleted !=1 AND (msg_status IS NULL OR msg_status !=10 ) ORDER BY Message_id DESC LIMIT " + req.params.RangeStart + "," + endRange;
 
 
-            result = await db.excuteQuery(val.getMediaMessage, [req.params.InteractionId,req.params.InteractionId,req.params.spid,req.params.Type,req.params.RangeStart, endRange])
+            result = await db.excuteQuery(val.getMediaMessage, [req.params.InteractionId,req.params.InteractionId,req.params.spid,req.params.Type,parseInt(req.params.RangeStart), endRange])
 
 
 
@@ -735,6 +744,12 @@ const updateInteractionMapping = async (req, res) => {
         let notifyvalues = [[nameData[0].SP_ID, 'Assigned a conversation', 'Assigned a conversation with' + nameData[0].name, AgentId, 'teambox', MappedBy, utcTimestamp]]
         let notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues])
     }
+    let myUTCString = new Date().toUTCString();
+    const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
+      
+    let actions = await db.excuteQuery(actionQuery,[req.body.interactionId,req.body?.action,req.body?.action_at,req.body?.action_by,utcTimestamp,req.body?.SP_ID])
+    
     db.runQuery(req, res, val.updateInteractionMapping, [values])
 }
 

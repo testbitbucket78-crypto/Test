@@ -363,3 +363,227 @@ display: flex;
 align-items: center;
 padding: 5px;
 }
+
+
+.form_row p.form-control,.form_row .form-control{
+	width: 220px;
+	font-size: 12px;
+	font-weight: 400;
+	color: #000000;
+	border-radius: 15px;
+	margin: 0;
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	height: 36px;
+	padding: 10px;
+
+	}
+	.form_row p.form-control .form-control.inner{
+	border: 0;
+	padding: 0;
+	margin: 0;
+	height: auto;
+	}
+
+	.form_row p.form-control .toggle_attribute{
+	background: #fff url("/assets/img/campaign/attribute.svg") no-repeat;
+	background-size: 10px;
+	background-position: center;
+	border: 1px solid #EBEBEB;
+	border-radius: 40%;
+	padding: 10px 12px;
+	}
+
+	.form_row p.form-control .map_attribute{
+	background: #fff url("/assets/img/campaign/arrow-down.svg") no-repeat;
+	background-size: 8px;
+	background-position: center right 5px;
+	border: 1px solid #EBEBEB;
+	border-radius: 15px;
+	padding: 5px 18px 5px 8px;
+	font-size: 10px!important;
+	}
+	.form_row p.form-control .map_attribute_img{
+	background: #FFFFFF 0% 0% no-repeat padding-box;
+	border: 1px solid #EBEBEB;
+	border-radius: 15px;
+	padding: 5px 8px;
+	}
+	.form_row p.form-control .map_attribute img{
+	width:15px
+	}
+	.variableoption .content{
+	width: 100%;
+	float: left;
+	padding: 1rem;
+	height: 400px;
+  	overflow: auto;
+	}
+	.variableoption .content .search-box{
+	background-color: #fff;
+	min-width:100%
+	}
+
+	.variableoption .content p.form-control{
+		background: #fff url(/assets/img/campaign/attribute-b.svg) no-repeat;
+		background-size: 12px;
+		background-position: center left 10px;
+		border: 1px solid #EBEBEB;
+		border-radius: 15px;
+		padding: 10px 10px 10px 29px;
+		font-size: 12px !important;
+		width: max-content;
+		margin: 1rem;
+		display: flex;
+		align-items: center;
+		width: 160px;
+	}
+	.variableoption .content .content_inner{
+	margin: 1rem;
+	}
+	.variableoption .content .content_inner .form-control{
+	border-radius: 15px;
+	cursor: pointer;
+	}
+
+	.formrow .form-control{
+		border: 1px solid #BDC3D0;
+		border-radius: 19px;
+		font-weight: 400;
+		font-size: 12px;
+		height: 35px;
+		display: flex;
+		align-items: center;
+		}
+		.formrow .form-control.white_bg{
+		background: #fff;
+		text-align: left;
+		}
+	
+		.formrow .form-control.select_box{
+		background: #fff url("/assets/img/teambox/dropdown.svg") no-repeat;
+		background-size: 9px;
+		background-position: center right 12px;
+		}
+
+	
+		.filter_buttons{
+			width: 90%;
+			margin: 0px 5%;
+			float: left;
+			}
+			.filter_buttons .btn{
+			background: transparent;
+			padding: 0;
+			margin: 5px 0;
+			height: auto;
+			font-size: 12px;
+			}
+			.filter_buttons .btn.add-btn{
+			color: #6149CD;
+			float:left;
+			}
+			.filter_buttons .btn.remove-btn{
+			color: red;
+			float:right;
+			}
+
+			.addnewitem_content_inner{
+				padding: 10px 0 0 10px;
+				}
+				.addnewitem_content_inner p{
+				margin-bottom: 10px;
+				}
+				.addnewitem_content_inner .formrow{
+				float: left;
+				width: 100%;
+				}
+				.addnewitem_content_inner .formrow .form-control{
+				border: 1px solid #D4D5D9;
+				background-color: transparent;
+				}
+				.addnewitem_content_inner .formrow.dateview .form-control{
+				width:49%;
+				}
+			
+				.addnewitem_content_inner .formrow span.add_filter{
+				font-size: 10px;
+				color:#6236FF;
+				float:left;
+				margin-top: 5px;
+				font-weight: 400;
+				}
+				.addnewitem_content_inner .formrow span.remove_filter{
+				font-size: 10px;
+				color:red;
+				float:right;
+				margin-top: 5px;
+				font-weight: 400;
+				}
+				.addnewitem_content_inner .switchbtn{
+				display: flex;
+				flex-direction: row;
+				min-width: 100px;
+				margin: auto auto 5px auto;
+				justify-content: center;
+				align-items: center;
+				}
+				.addnewitem_content_inner .switchbtn .left{
+				border-radius: 17px 0px 0px 17px;
+				}
+				.addnewitem_content_inner .switchbtn .right{
+				border-radius: 0px 17px 17px 0px;
+				}
+				.addnewitem_content_inner .switchbtn p{
+				height:30px;
+				font-size: 10px;
+				font-weight: 600;
+				display: flex;
+				align-items: center;
+				width: 40px;
+				justify-content: center;
+				border: 1px solid var(--unnamed-color-ebebeb);
+				box-shadow: 1px 8px 29px #695F9724;
+				border: 1px solid #EBEBEB;
+				color: #7A86A1;
+				}
+			
+				.addnewitem_content_inner .switchbtn p.left{
+				border-radius: 17px 0px 0px 17px;
+				}
+				.addnewitem_content_inner .switchbtn p.right{
+				border-radius: 0px 17px 17px 0px;
+				}
+				.addnewitem_content_inner .switchbtn p.active{
+				border: 1px solid var(--unnamed-color-ebebeb);
+				background: #FFFFFF 0% 0% no-repeat padding-box;
+				box-shadow: 1px 8px 29px #695F9724;
+				border: 1px solid #EBEBEB;
+				color: #6236FF;
+				}
+
+				.submit-btn {
+					background: #6149CD 0% 0% no-repeat padding-box;
+					box-shadow: 1px 8px 29px #695F9724;
+					border-radius: 15px;
+					width: auto;
+					height: 32px;
+					color: #ffffff;
+					border: 0px;
+					padding: 0px 25px;
+					font-size: 12px;
+					margin-left: 8px;
+					font-weight: 800;
+					padding: 0 4% 0% 4%;
+					outline: none;
+					}
+
+					.input_group_btn {
+						text-align: right;
+						margin-top: 20px;
+						float: left;
+						width: 100%;
+					}

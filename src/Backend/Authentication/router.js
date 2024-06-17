@@ -35,7 +35,7 @@ router.post('/verifyPhoneOtp',indexController.verifyPhoneOtp)
 const TeamBoxController=require('./TeamBoxController.js');
 
 router.get('/agents/:spID',authenticateToken,TeamBoxController.getAllAgents);
-router.get('/customers/:spID',authenticateToken,TeamBoxController.getAllCustomer);
+router.get('/customers/:spID/:RangeStart/:RangeEnd',authenticateToken,TeamBoxController.getAllCustomer);
 router.get('/searchcustomers/:Channel/:spID',authenticateToken,TeamBoxController.searchCustomer);
 router.get('/searchcustomers/:Channel/:spID/:key',authenticateToken,TeamBoxController.searchCustomer);
 router.post('/addcustomers',authenticateToken,TeamBoxController.insertCustomers);

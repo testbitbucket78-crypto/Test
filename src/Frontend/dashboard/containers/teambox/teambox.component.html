@@ -42,8 +42,6 @@
 									<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''"
 										(click)="filterInteraction('Pinned')"><span>Pinned</span></p>
 								</div>
-
-
 								<div *ngIf="showfilter" class="overlay" (click)="closeFilterOptions()"></div>
 
 					</div>
@@ -122,10 +120,10 @@
 							<div class="user_info">
 								<p class="user_name">{{selectedInteraction.Name.substring(0 ,15)}}</p>
 								<p *ngIf="selectedInteraction.channel=='WhatsApp Official'" class="user_from mt-2"><img
-										class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />WhatsApp Official
+										class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />Official{{selectedInteraction.connected_id ?'(' + selectedInteraction.connected_id + ')':''}}
 								</p>
 								<p *ngIf="selectedInteraction.channel=='WhatsApp Web'" class="user_from"><img class="icon"
-										src="/assets/img/teambox/whatsapp-icon-l.svg" />WhatsApp Web</p>
+										src="/assets/img/teambox/whatsapp-icon-l.svg" />Web{{selectedInteraction.connected_id ?'(' + selectedInteraction.connected_id + ')':''}}</p>
 							</div>
 						</div>
 						<div class=" right_part">
@@ -426,7 +424,7 @@
 					<button type="button" class="btn5 btn-close" (click)="toggleProfileView()" *ngIf="showFullProfile">
 						<img src="assets/img/teambox/icon-close.svg">
 					</button>
-					<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
+					<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()" *ngIf="selectedInteraction?.InteractionId && showAttachedMedia">
 						<img src="assets/img/teambox/icon-close.svg">
 					</button>
 				</div>

@@ -48,8 +48,8 @@ const login = async (req, res) => {
                 const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY, { expiresIn: '24h' });
                 let myUTCString = new Date().toUTCString();
                 const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=? where email_id=?', [utcTimestamp, req.body?.LoginIP,req.body.email_id])
-              
+                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=?,IsActive=1 where email_id=?', [utcTimestamp, req.body?.LoginIP, req.body.email_id])
+
                 res.status(200).send({
                     msg: 'Logged in!',
                     token,
@@ -95,9 +95,51 @@ const register = async function (req, res) {
             }
             // Hash the password before storing it in the database
             const hash = await bcrypt.hash(password, 10);
-            var values = [name, mobile_number, email_id, hash, LoginIP, countryCode,display_mobile_number]  // pending add countryCode in stored procedure
+            var values = [name, mobile_number, email_id, hash, LoginIP, countryCode, display_mobile_number]  // pending add countryCode in stored procedure
             var registeredUser = await db.excuteQuery(val.registerQuery, values)   //need to change LoginIP in signup stored procedure
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
+
+            let body = `
+            Welcome to Engagekart, ${name}!
+            Your account is all set and ready to go. Start exploring your new features and make the most out of our platform today!
+            - Team Engagekart
+          `;
+            var data = getTextMessageInput(mobile_number,body);
+
+            sendMessage(data)
+
+
+
+            let loginPageURL = "https://cip.stacknize.com/#/login";
+            var mailOptions = {
+                from: val.email,
+                to: req.body.email_id,
+                subject: `Hello ${req.body.name}! Getting started with Engagekart`,
+
+                text: `Dear ${req.body.name},
+
+                Welcome to Engagekart!
+                
+                We are delighted to have you onboard and can't wait to see you automate your business operations effortlessly with our platform. So get going and explore all the features on Engagekart to engage with your customers while converting new leads.
+                
+                Here are your account details on Engagekart:
+                ${loginPageURL}
+                
+                User ID: ${req.body.email_id}
+                Mobile: ${req.body.mobile_number}
+                Role: Admin
+                
+                Thank you for choosing Engagekart!
+                
+                Best regards,
+                Team Engagekart` };
+
+
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                // console.log(info)
+
+            });
             res.status(200).send({
                 msg: 'Registered !',
                 token,
@@ -174,22 +216,22 @@ const forgotPassword = async (req, res) => {
                 <a href="https://cip.stacknize.com/#/reset-password?uid=${cipherdata}">link to reset password</a></p>
                 
                 <p>If you did not initiate this request, you may ignore this email and we suggest you report this to your business admin manager.</p>`
-                
+
 
             };
 
             transporter.sendMail(mailOptions, (error, info) => {
-            //   if(error){
-            //     console.log(error)
-            //   }else{
+                //   if(error){
+                //     console.log(error)
+                //   }else{
 
-             // console.log(info)
+                // console.log(info)
                 res.status(200).send({
                     msg: "password has been sent",
                     id: results
                 });
 
-          //  }
+                //  }
             });
 
         }
@@ -294,8 +336,9 @@ function getTextMessageInput(recipient, text) {
         "to": recipient,
         "type": "text",
         "text": {
-            "body": "OTP for verification : " + text
+            "body": text
         }
+
 
     });
 }
@@ -330,11 +373,11 @@ const sendOtp = async function (req, res) {
 
         transporter.sendMail(mailOptions, (error, info) => {
             try {
-if(error){
-    console.log("error ampt ----------",error)
-}else{
-    console.log("info---------",info)
-}
+                if (error) {
+                    console.log("error ampt ----------", error)
+                } else {
+                    console.log("info---------", info)
+                }
 
                 res.send(Status);
             } catch (error) {
@@ -344,15 +387,21 @@ if(error){
 
         });
 
+        let text = `Hi ${req.body?.name}!
+        Just one more step to get started with Engagekart.
+        Here's your verification code: ${otp}.
+        Enter it on the signup page to verify your Phone Number.
+        Let's make magic happen!
+        - Team Engagekart`
 
-        var data = getTextMessageInput(mobile_number, otp);
+        var data = getTextMessageInput(mobile_number,text);
 
         sendMessage(data)
         var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
-       // console.log(storeEmailOtp)
+        // console.log(storeEmailOtp)
 
         var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, otp, 'Mobile'])
-       // console.log(storePhoneOtp)
+        // console.log(storePhoneOtp)
 
 
         return res.status(200).send({
