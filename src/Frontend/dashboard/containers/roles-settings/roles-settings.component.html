@@ -66,7 +66,7 @@
 
 <div class="sideBar" *ngIf="showSideBar">
     <div class="sidebar-close">
-    <button type="button" class="btn-close" (click)="showSideBar = false">
+    <button type="button" class="btn-close" (click)="showSideBar = false; resetArrowState(false)">
         <img src="../../../../assets/img/teambox/icon-close.svg">
     </button>
 </div>
@@ -74,23 +74,42 @@
         <p class="m-0">ID:<span class="team-id">{{roleData.roleID}}</span></p>
         <span class="heading">{{roleData?.RoleName}}</span>
         <p>Created on: <span class="team-id">{{roleData?.created_at ? (roleData?.created_at | date: 'dd MMM yyyy h:mm a'): 'N/A'}}</span> | Last Modified: <span class="team-id">{{roleData?.updated_at ? (roleData?.updated_at | date: 'dd MMM yyyy h:mm a') :'N/A'}}</span></p>
-        <div class="sub-heading py-2">Sub Rights<span class="team-id">({{selectedSubRights?.length}})</span></div>
         <div class="h-100">
-        <div class="user-assigned">
-            <div class="rights" *ngFor="let item of selectedSubRights">
-                <div >{{item?.subRights}}</div>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <span type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubRights" aria-expanded="false" aria-controls="collapseSubRights">
+                        <span class="sub-heading py-2">Sub Rights<span class="team-id">({{selectedSubRights?.length}})</span><span [ngClass]="{'sub-rights-rotated-arrow': subRightsArrowRotate === true, 'sub-rights-rotate-arrow': subRightsArrowRotate !== true}">&gt;</span></span>
+                    </span>
+                    <div id="collapseSubRights" class="accordion-collapse collapse" (shown.bs.collapse)="onToggleSubRights(true)" (hidden.bs.collapse)="onToggleSubRights(false)">
+                        <div class="accordion-body">
+                            <div class="user-assigned">
+                                <div class="rights" *ngFor="let item of selectedSubRights">
+                                    <div >{{item?.subRights}}</div>
+                                </div>
+                                <!-- *ngIf="checkPrivillage(item)" -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <span type="button" data-bs-toggle="collapse" data-bs-target="#collapseUserAssigned" aria-expanded="true" aria-controls="collapseUserAssigned">
+                        <span class="sub-heading py-2">No. of Users Assigned ({{userList.length}})<span [ngClass]="{'users-rotated-arrow': usersArrowRotate === true, 'users-rotate-arrow': usersArrowRotate !== true}">&gt;</span></span>
+                    </span>
+                    <div id="collapseUserAssigned" class="accordion-collapse collapse" (shown.bs.collapse)="onToggleUser(true)" (hidden.bs.collapse)="onToggleUser(false)">
+                        <div class="accordion-body">
+                            <div>
+                                <div *ngFor="let item of userList" class="user-row user-img">
+                                    <img *ngIf="item.profile_img" [src]="item.profile_img">
+                                    <div class="img" *ngIf="!item.profile_img">{{_settingsService.getInitials(item.name)}}</div>
+                                    <span>{{item.name}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-                <!-- *ngIf="checkPrivillage(item)" -->
+
         </div>
-        <div class="sub-heading py-2">No. of Users Assigned ({{userList.length}})</div>
-        <div >
-            <div *ngFor="let item of userList" class="user-row user-img">
-                <img *ngIf="item.profile_img" [src]="item.profile_img">
-                <div class="img" *ngIf="!item.profile_img">{{_settingsService.getInitials(item.name)}}</div>
-                <span>{{item.name}}</span>
-            </div>
-        </div>
-    </div>
     </div>
     <div class="sideBar-footer">
         <button type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#rolesModal" (click)="editRolesDetails()">

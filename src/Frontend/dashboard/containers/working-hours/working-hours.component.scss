@@ -338,3 +338,11 @@ input,
 label {
   margin: 0.4rem 0;
 }
+
+.billing-form-row {
+    input[type="time"] {
+        &::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+        }
+    }
+}
