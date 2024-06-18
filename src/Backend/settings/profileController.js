@@ -71,7 +71,7 @@ const changePassword = async (req, res) => {
         oldPass = req.body.oldPass
         newPass = req.body.newPass
         confirmPass = req.body.confirmPass
-       
+
         let myUTCString = new Date().toUTCString();
         const date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
@@ -112,10 +112,15 @@ const changePassword = async (req, res) => {
 
 const userActiveStatus = async (req, res) => {
     try {
-   
-        IsActive = req.body.isActive;
-        
 
+        IsActive = req.body.isActive;
+
+        if (IsActive != 1) {
+            let IsUserAssign = await db.excuteQuery('SELECT * FROM InteractionMapping WHERE AgentId=?', [req.body.uid]);
+            if (unAssignChat?.length > 0) {
+                let unAssignChat = await db.excuteQuery('update InteractionMapping set AgentId=? where AgentId=?', [-1, req.body.uid])
+            }
+        }
         let myUTCString = new Date().toUTCString();
         const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var saveActiveStatus = await db.excuteQuery(val.activeStatusquery, [IsActive, LastModifiedDate, req.body.uid]);
@@ -141,7 +146,7 @@ const addNotification = async (req, res) => {
             PushNotificationValue = req.body.PushNotificationValue,
             SoundNotificationValue = req.body.SoundNotificationValue,
             isDeleted = 0
-           
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
@@ -195,7 +200,7 @@ const saveManagePlan = async (req, res) => {
             subtotalAmount = req.body.subtotalAmount,
             totalAmount = req.body.totalAmount,
             tax = req.body.tax
-            
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let existingPlan = await db.excuteQuery(val.selectPlan, [SP_ID]);
@@ -236,8 +241,8 @@ const saveManagePlan = async (req, res) => {
 const saveBillingHistory = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
-       
-        
+
+
         let myUTCString = new Date().toUTCString();
         const billing_date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         billing_id = req.body.billing_id
@@ -1025,7 +1030,7 @@ const ApproximateCharges = async (req, res) => {
 
 const deletePaymentMethod = async (req, res) => {
     try {
-        
+
         let myUTCString = new Date().toUTCString();
         const date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         var deletePayMethodQuery = `UPDATE PaymentMethodDetails SET isDeleted=1,updated_at=? where SP_ID=?`
@@ -1045,8 +1050,8 @@ const deletePaymentMethod = async (req, res) => {
 const addfunds = async (req, res) => {
     try {
         sp_id = req.body.sp_id
-       
-        
+
+
         let myUTCString = new Date().toUTCString();
         const transation_date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         amount = req.body.amount
@@ -1152,8 +1157,8 @@ const addSPTransations = async (req, res) => {
     try {
 
         sp_id = req.body.sp_id
-       
-        
+
+
         let myUTCString = new Date().toUTCString();
         const transation_date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         amount = req.body.amount
