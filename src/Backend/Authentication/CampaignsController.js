@@ -104,7 +104,7 @@ const addCampaign = async (req, res) => {
 const isExistCampaign = async (req, res) => {
     try {
 
-        let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", [req.params.title, req.params.spid])
+        let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=? AND Id !=?", [req.params.title, req.params.spid,req.params.Id])
 
         if (campaignTitle?.length == 0) {
 

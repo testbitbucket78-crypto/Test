@@ -722,14 +722,16 @@ const addUser = async (req, res) => {
         IsActive = 3
         countryCode = req.body.country_code
         displayPhoneNumber = req.body?.display_mobile_number
+        var isNameExist = await db.excuteQuery('SELECT * FROM user WHERE name=? and isDeleted !=1 and SP_ID=?', [name, SP_ID])
+        var isPhoneExist = await db.excuteQuery('SELECT * FROM user WHERE mobile_number=? and isDeleted !=1 and SP_ID=?', [mobile_number, SP_ID])
+        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id, name, mobile_number, SP_ID])
 
-        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id, SP_ID])
-        if (credentials.length > 0) {
+        if (credentials?.length > 0 || isNameExist?.length > 0 || isPhoneExist?.length > 0) {
             let msg = "This email ID is already used by another user, please use a unique email";
-            if (credentials[0].name == name) {
+            if (isNameExist?.length > 0 && isNameExist[0].name == name) {
                 msg = "User with this name already exist, please use a unique name";
             }
-            if (credentials[0].mobile_number == mobile_number) {
+            if (isPhoneExist?.length > 0 && isPhoneExist[0].mobile_number == mobile_number) {
                 msg = "User with this phone number already exist, please use a unique phone number";
             }
             res.status(409).send({
@@ -844,7 +846,7 @@ const editUser = async (req, res) => {
         mobile_number = req.body.mobile_number
         countryCode = req.body.country_code
         displayPhoneNumber = req.body?.display_mobile_number
-
+        UserType = req.body?.UserType
         var randomstring = Math.random().toString(36).slice(-8);
 
 
@@ -852,19 +854,47 @@ const editUser = async (req, res) => {
         const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         UserType = req.body.UserType
 
-        let currentUser = await db.excuteQuery(val.findEmail, [email_id,SP_ID])
+        if (RoleName == 'Admin') {
+            let isAdminRemains = await db.excuteQuery('select * from roles where RoleName=? and UserType !=? and isDeleted !=1 and SP_ID=?', ['Admin', UserType, SP_ID]);
+            if (isAdminRemains?.length == 0) {
+                return res.status(409).send({
+                    msg: 'This is the last Admin minimum one user with Admin role is mandatory to keep.',
+                    status: 409
+                });
+            }
+        }
+        let currentUser = await db.excuteQuery(val.findEmail, [email_id, SP_ID])
+
+        var isNameExist = await db.excuteQuery('SELECT * FROM user WHERE name=? and isDeleted !=1 and SP_ID=? and uid !=?', [name, SP_ID, uid])
+        var isPhoneExist = await db.excuteQuery('SELECT * FROM user WHERE mobile_number=? and isDeleted !=1 and SP_ID=? and uid !=?', [mobile_number, SP_ID, uid])
+        var isEmailExist = await db.excuteQuery('SELECT * FROM user WHERE email_id=? and isDeleted !=1 and SP_ID=? and uid !=?', [email_id, SP_ID, uid])
+
+        if (isEmailExist?.length > 0 || isNameExist?.length > 0 || isPhoneExist?.length > 0) {
+            let msg = "This email ID is already used by another user, please use a unique email";
+            if (isNameExist?.length > 0 && isNameExist[0].name == name) {
+                msg = "User with this name already exist, please use a unique name";
+            }
+            if (isPhoneExist?.length > 0 && isPhoneExist[0].mobile_number == mobile_number) {
+                msg = "User with this phone number already exist, please use a unique phone number";
+            }
+            return res.status(409).send({
+                msg: msg,
+                status: 409
+            });
+        }
+
 
         // Check which details have changed
         let changes = [];
-        if (currentUser[0].name !== name) changes.push(`New User Name: ${name}`);
-        if (currentUser[0].email_id !== email_id) changes.push(`New Email: ${email_id}`);
-        if (currentUser[0].mobile_number !== mobile_number) changes.push(`New Phone: ${mobile_number}`);
-        if (currentUser[0].RoleName !== RoleName) changes.push(`New Role: ${RoleName}`);
+        if (currentUser[0]?.name !== name) changes.push(`New User Name: ${name}`);
+        if (currentUser[0]?.email_id !== email_id) changes.push(`New Email: ${email_id}`);
+        if (currentUser[0]?.mobile_number !== mobile_number) changes.push(`New Phone: ${mobile_number}`);
+        if (currentUser[0]?.RoleName !== RoleName) changes.push(`New Role: ${RoleName}`);
 
         var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType, countryCode, displayPhoneNumber, uid])
 
 
-   
+
 
 
 
@@ -904,7 +934,7 @@ const editUser = async (req, res) => {
         if (currentUser?.length > 0 && currentUser[0].IsActive == 3) {
             const hash = await bcrypt.hash(randomstring, 10);
             inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring);
-            let updatePass = await db.excuteQuery('UPDATE user set password=? where uid=? ' ,[hash,uid])
+            let updatePass = await db.excuteQuery('UPDATE user set password=? where uid=? ', [hash, uid])
         }
 
 
