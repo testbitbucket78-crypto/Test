@@ -273,7 +273,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
     notify.NotifyServer(displayPhoneNumber, true)
 
 
-  } else if (ack == 'delivered') {
+  } else if (messageStatus == 'delivered') {
     let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1'
     let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [customerPhoneNumber])
     const smsdelupdate = `UPDATE Message
@@ -286,7 +286,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
   //  console.log("deliver", deded?.affectedRows)
     notify.NotifyServer(displayPhoneNumber, true)
 
-  } else if (ack == 'read') {
+  } else if (messageStatus == 'read') {
   //  console.log("read")
     let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2';
     let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber])
