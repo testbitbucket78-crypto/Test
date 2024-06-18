@@ -168,7 +168,6 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		allVariablesList:string[]=[];
 		variableValues:string[]=[];
 	
-	
 		attributesList!:any;
 		userList:any;
 		userId!:number;

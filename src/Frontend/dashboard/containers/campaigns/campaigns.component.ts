@@ -1204,7 +1204,8 @@ formateDate(dateTime:string){
 	  }
 
 	selectStep2Option(option:any,modalname:any,step2Option:any){
-		this.step2Option =option
+		this.step2Option = option;
+		this.selectedcontactFilterBy['addeFilter'] = '';
 		if(step2Option ==option && this.step2Option ==='ImportContacts'){
 			this.closeAllModal()
 			this.openImportantContact(modalname)
@@ -1222,10 +1223,21 @@ formateDate(dateTime:string){
 			this.modalReference.close();
 	    }
 	}
+
+	resetSelectedContactList() {
+		this.newCampaignDetail = this.prepareCampaingForm();
+		if (this.allContactList.length !== 0) {
+			this.allContactList.forEach((x: any) => {
+				x.selected = false;
+			});
+		}
+		
+	}
+
 	openAddNew(addNewCampaign:any){
 		this.isEditCampaign = false;
 		this.activeStep=1;
-		this.newCampaignDetail= this.prepareCampaingForm();
+		//this.newCampaignDetail= this.prepareCampaingForm();
 		this.step2Option='';
 		this.selectedTemplate =[];
 		this.segmentsContactList =[];
@@ -1307,10 +1319,21 @@ formateDate(dateTime:string){
 		this.lowBalance=false;
 		//this.closeAllModal()		
 		this.checkCampignTiming();
-		this.modalReference2 = this.modalService.open(ConfirmCampaign,{size: 'sm', windowClass:'pink-bg-sm background-blur'});
+			this.modalReference2 = this.modalService.open(ConfirmCampaign, { size: 'sm', windowClass: 'pink-bg-sm background-blur' });
 		}
 	}
 
+	resetFormState() {
+		this.resetSchedule();
+		this.resetSelectedContactList();
+	}
+	resetSchedule() {
+		this.scheduled = 0;
+		this.selecteScheduleTime = '';
+		this.selectedScheduleTime = '';
+		this.selecteScheduleDate = '';
+		this.selScheduleDate = new Date();
+	}
 	closeConfirmModal(){
 		this.modalReference2.close();
 	}
@@ -1388,7 +1411,7 @@ formateDate(dateTime:string){
 			}
 			
 		})
-		
+		this.resetFormState();
 		this.getAllCampaigns()
 	}
 	
@@ -1759,7 +1782,7 @@ testinfo(){
 		this.modalReference = this.modalService.open(openalertmessage,{ size:'sm', windowClass:'white-bg'});
 	}
 
-	copyCampaign(){
+	copyCampaign() {
 		let CampaignID = this.selectedCampaign.Id
 		this.apiService.copyCampaign(CampaignID).subscribe(campaignDelete =>{
 			this.getAllCampaigns();
