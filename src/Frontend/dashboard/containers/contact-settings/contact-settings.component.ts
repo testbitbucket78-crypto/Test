@@ -21,6 +21,7 @@ export class ContactSettingsComponent implements OnInit {
   currentPage:number = 1;
   paging: number [] = [];
   showSideBar:boolean=false;
+  istagChanges:boolean=false;
   searchText = '';
 
   errorMessage='';
@@ -115,10 +116,12 @@ export class ContactSettingsComponent implements OnInit {
     this.tagColor='';
     this.selectedtagListData = null;
     $("#tagsModal").modal('show');
+    this.istagChanges = false;
   }
 
   editTag() {
     $("#tagsModal").modal('show');
+    this.istagChanges = false;
   }
 
   deleteTagData(){
@@ -140,6 +143,7 @@ export class ContactSettingsComponent implements OnInit {
     this.getTagData();
     this.showSideBar = false;
     $("#tagsModal").modal('hide');
+    this.istagChanges = false;
 }
 
   toggleSideBar(data:any){

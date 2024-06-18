@@ -902,6 +902,7 @@ deletContactByID(data: any) {
         console.log(val);
         this.productForm.get(prop)?.setValue(val);
       }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
+        if(value){
         let val = value.split(':');
         console.log(val);
         console.log(value);
@@ -914,6 +915,7 @@ deletContactByID(data: any) {
                     console.log(name);
                     names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
                   })
+                }
       }
     }  
     this.OptInStatus =data.OptInStatus
@@ -974,7 +976,8 @@ deletContactByID(data: any) {
     // console.log(exportContact,'export contact')
     var exContact = {
       data: exportContact,
-      loginData: (JSON.parse(sessionStorage.loginDetails)).email_id
+      loginData: (JSON.parse(sessionStorage.loginDetails)).email_id,
+      Name: (JSON.parse(sessionStorage.loginDetails)).name
     }
     this.apiService.exportCheckedContact(exContact).subscribe(response => {
       console.log(response);
