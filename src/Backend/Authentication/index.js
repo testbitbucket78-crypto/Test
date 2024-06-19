@@ -208,7 +208,7 @@ const forgotPassword = async (req, res) => {
             var mailOptions = {
                 from: val.email,
                 to: req.body.email_id,
-                subject: "Engagekart Password Reset",
+                subject: "Engagekart Forgot Password Request",
                 //html: '<p>You requested for reset password, kindly use this <a href="https://cip.stacknize.com/#/reset-password?uid=' + cipherdata + '">  link  </a>to reset your password</p>'
                 html: `<p>Hello,</p>
 
