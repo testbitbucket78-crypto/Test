@@ -823,15 +823,19 @@
 												  </p>
 					  
 												  <div class="content_inner">
-													  <p><span>Fallback</span><img class="px-2 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
-													  </p>
-													  
-													  <div *ngIf="showInfo" class="showInfoFallback">
-														  <p id="p-body">A default value that will be used for personalization if the system cannot find any value for the selected attribute in the user's contact fields.
-														  </p>
-														  <button id="radio-close-btn" (click)="showInfo=false">X</button>
+													  <div>
+														  <span class="titleFallback">Fallback</span>
+														  <div class="tooltip-container">
+															  <img class="px-2 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)" style="cursor:pointer">
+															  <div *ngIf="showInfo" class="showInfoFallback">
+																  <p id="p-body">
+																	  A default value that will be used for personalization if the system cannot find any value for the selected attribute in the user's contact fields.
+																  </p>
+																  <button id="radio-close-btn" (click)="showInfo=false">X</button>
+															  </div>
+														  </div>
 													  </div>
-													  <input style="cursor:text; width: 100%; margin: 0;" placeholder="Enter value" type="text" class="form-control" >
+													  <input style="cursor:text; width: 100%; margin: 0;" placeholder="Enter value" type="text" class="form-control">
 												  </div>
 																			  
 													  </div>
