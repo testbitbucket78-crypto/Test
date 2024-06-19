@@ -1,3 +1,4 @@
-"Name","Phone Number","IN +91","reason_1"
-"Aman","918909893476","IN +91","This contact does not already exist"
-"raman","22222222",,"This contact does not already exist"
+"Name","Email","Phone Number","Tag","reason_1","reason_2","reason_3"
+"raman","b@gmail.com","9.19653E+11","Two","Phone Number is not valid",,
+"last","Lastgmail.com","9165659874","21212","Email is not a valid email address","Phone Number is not valid","Tag does not exist in the list"
+"Aman","a@gmail.com","919653241258","One","This contact already exists",,

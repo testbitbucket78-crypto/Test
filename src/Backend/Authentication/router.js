@@ -55,7 +55,7 @@ router.get('/interaction/:InteractionId',authenticateToken,TeamBoxController.get
 router.get('/filterinteraction/:filterBy/:AgentId/:AgentName/:SPID',authenticateToken,TeamBoxController.getFilteredInteraction);
 router.get('/interactionpinned/:InteractionId/:AgentId',authenticateToken,TeamBoxController.checkInteractionPinned);
 router.post('/interactionpinned',authenticateToken,TeamBoxController.updatePinnedStatus);
-router.get('/searchinteraction/:searchKey/:AgentId',authenticateToken,TeamBoxController.getSearchInteraction);
+router.get('/searchinteraction/:searchKey/:AgentId/:spid',authenticateToken,TeamBoxController.getSearchInteraction);
 
 
 router.get('/messages/:InteractionId/:Type/:RangeStart/:RangeEnd/:spid',TeamBoxController.getAllMessageByInteractionId);

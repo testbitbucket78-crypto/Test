@@ -74,7 +74,20 @@ const addCampaign = async (req, res) => {
 
             updateQuery += " WHERE Id =" + req.body.Id
 
-            db.runQuery(req, res, updateQuery, []);
+            let addcampaign = {
+                insertId : req.body.Id
+            }
+            let statusToUpdate = 1;  //For scheduled campaign status
+            if (status == '-1') {
+                statusToUpdate = 2;
+            }
+            campaignAlerts(req.body, req.body.Id, statusToUpdate)
+           // db.runQuery(req, res, updateQuery, []);
+           res.send({
+            "status": 200,
+            "message": "Campaign added",
+            "addcampaign": addcampaign
+        })
         } else {
 
             var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time,media_type) values ? ";
@@ -619,7 +632,7 @@ async function insertInteractionAndRetrieveId(custid, sid) {
 
             // Check for the maximum created_at date of Message
             let maxdate = await db.excuteQuery(
-                'SELECT max(created_at) into maxdate from Message where interaction_id in (select InteractionId from Interaction where customerId=? and is_deleted !=1 and SP_ID=?)',
+                'SELECT max(created_at) as maxdate from Message where interaction_id in (select InteractionId from Interaction where customerId=? and is_deleted !=1 and SP_ID=?)',
                 [custid, sid]
             );
 

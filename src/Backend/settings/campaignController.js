@@ -764,7 +764,8 @@ const testCampaign = async (req, res) => {
 
         res.send({
             status: 200,
-            message_status: message_status?.status
+            message_status: message_status?.status,
+            err :  message_status?.err
         })
     }
     catch (err) {

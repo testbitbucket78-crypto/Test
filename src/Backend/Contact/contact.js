@@ -32,10 +32,10 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
   try {
 
     let IsFilteredList = false;
-    let contactList = await db.excuteQuery('SELECT * FROM EndCustomer where SP_ID=? and isDeleted !=1', [req.body.SP_ID])
+    let contactList = await db.excuteQuery('SELECT * FROM EndCustomer where SP_ID=? and isDeleted !=1 and IsTemporary !=1', [req.body.SP_ID])
     if (req.body?.Query != '') {
       IsFilteredList = true
-      let Query = req.body.Query + " and isDeleted !=1"
+      let Query = req.body.Query + " and isDeleted !=1 and IsTemporary !=1"
       contactList = await db.excuteQuery(Query, [])
     }
 
@@ -993,8 +993,13 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
       case 'Select':
         if (displayName) {
           if (actuallName === 'tag') {
-            console.log(displayName ,tagsList ,tagsList.includes(displayName[0]))
-            convertedValue = tagsList.includes(displayName[0]);
+            if (Array.isArray(displayName)) {
+              // If displayName is an array, check if the first element is in tagsList
+              convertedValue = tagsList.includes(displayName[0]);
+            } else if (typeof displayName === 'string') {
+              // If displayName is a string, check if it is in tagsList
+              convertedValue = tagsList.includes(displayName);
+            }
           } else {
             convertedValue = existSelect;
           }
