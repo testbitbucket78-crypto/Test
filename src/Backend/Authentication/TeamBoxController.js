@@ -550,7 +550,7 @@ const insertMessage = async (req, res) => {
             let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId, SPID]);
             let spchannel = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [SPID])
 
-            const channel = channelType.length > 1 ? channelType[0].channel : spchannel[0]?.channel_id;
+            const channel = channelType.length > 0 ? channelType[0].channel : spchannel[0]?.channel_id;
 
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent]]
             let msg_id = await db.excuteQuery(messageQuery, [values]);
@@ -606,7 +606,7 @@ const insertMessage = async (req, res) => {
                         }
                         autoReplyPauseTime(SPID, interaction_id)
                     }
-                    if (middlewareresult.status != 200) {
+                    if (middlewareresult?.status != 200) {
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]) // just mark msg_status 9 for  identify
                     }
                     console.log("middlewareresult", middlewareresult)
@@ -615,7 +615,7 @@ const insertMessage = async (req, res) => {
                     let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=10 where Message_id=?', [msg_id.insertId]) //// just mark msg_status 10 for block identify
                 }
             }
-            res.send({ middlewareresult: middlewareresult, status: middlewareresult.status, insertId: msg_id.insertId })
+            res.send({ middlewareresult: middlewareresult, status: middlewareresult?.status, insertId: msg_id.insertId })
 
         } else {
             message_text = req.body.message_text

@@ -15,18 +15,10 @@ declare var $:any;
 export class RolesSettingsComponent implements OnInit {
     columnDefs: ColDef[] = [
         {
-            field: 'roleID',
-            headerName: 'ID',
-            width:100,
-            suppressSizeToFit: false,
-            resizable: true,
-            sortable: true,
-            cellStyle: { background: '#FBFAFF', opacity: 0.86 },
-        },
-        {
             field: 'RoleName',
-            headerName: 'Roles',
-            width:180,
+            headerName: 'Role Name',
+            filter: true,
+            width:200,
             suppressSizeToFit: false,
             resizable: true,
             sortable: true,
@@ -79,8 +71,8 @@ export class RolesSettingsComponent implements OnInit {
     spid!:number;
     rolesData: RolesData = <RolesData>{};
     myForm!: FormGroup;
-    
-
+    subRightsArrowRotate: boolean = false;
+    usersArrowRotate: boolean = false;
     constructor(public _settingsService: SettingsService,private fb: FormBuilder) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
@@ -300,4 +292,15 @@ export class RolesSettingsComponent implements OnInit {
         console.log(this.selectedSubRights);
     }
 
+    onToggleSubRights(isShown: boolean) {
+        this.subRightsArrowRotate = isShown;
+    }
+    onToggleUser(isShown: boolean) {
+        this.usersArrowRotate = isShown;
+    }
+
+    resetArrowState(isReset: boolean) {
+        this.subRightsArrowRotate = isReset;
+        this.usersArrowRotate = isReset;
+    }
 }

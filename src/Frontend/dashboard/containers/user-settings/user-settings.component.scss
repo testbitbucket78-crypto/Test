@@ -141,6 +141,13 @@
     font-weight: bold;
   }
 
+#deleteModal {
+    .modal {
+        .delete-token-modal {
+            width: auto !important;
+        }
+    }
+}
   .aestric{
     color: red !important;
 }

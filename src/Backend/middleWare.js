@@ -127,29 +127,58 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
 
 
 async function sendTextOnWhatsApp(messageTo, messateText) {
-    let content = await removeTags.removeTagsFromMessages(messateText);
+    try {
+        const content = await removeTags.removeTagsFromMessages(messageText);
 
+        return new Promise((resolve, reject) => {
+            const req = http.request(WHATSAPPOptions, (res) => {
+                let chunks = [];
 
-    var reqBH = http.request(WHATSAPPOptions, (resBH) => {
-        var chunks = [];
-        resBH.on("data", function (chunk) {
-            chunks.push(chunk);
+                // Collect data chunks
+                res.on('data', (chunk) => {
+                    chunks.push(chunk);
+                });
+
+                // On end of the response, process the complete body
+                res.on('end', () => {
+                    const body = Buffer.concat(chunks);
+                    const bodyString = body.toString();
+
+                    try {
+                        const jsonResponse = JSON.parse(bodyString);
+                        resolve({ status: 200, data: jsonResponse }); // Resolve with status 200
+                    } catch (error) {
+                        reject({ status: 500, error: `Error parsing JSON: ${error.message}` });
+                    }
+                });
+
+                // Handle response errors
+                res.on('error', (error) => {
+                    reject({ status: 500, error: `Response error: ${error.message}` });
+                });
+            });
+
+            // Handle request errors
+            req.on('error', (error) => {
+                reject({ status: 500, error: `Request error: ${error.message}` });
+            });
+
+            // Write the request body and end the request
+            const requestBody = JSON.stringify({
+                messaging_product: "whatsapp",
+                recipient_type: "individual",
+                to: messageTo,
+                type: "text",
+                text: { body: content }
+            });
+            req.write(requestBody);
+            req.end();
         });
-        resBH.on("end", function () {
-            const body = Buffer.concat(chunks);
-        });
-    });
+    } catch (error) {
+        // Return error with status 500
+        return { status: 500, error: `Error in sendTextOnWhatsApp: ${error.message}` };
+    }
 
-    reqBH.write(JSON.stringify({
-        "messaging_product": "whatsapp",
-        "recipient_type": "individual",
-        "to": messageTo,
-        "type": "text",
-        "text": {
-            "body": content
-        }
-    }));
-    reqBH.end();
 
 }
 
@@ -187,7 +216,14 @@ async function sendMediaOnWhatsApp(messageTo, mediaFile,media) {
     
           resBH.on('end', () => {
             const body = Buffer.concat(chunks);
-            resolve('Message Sent'); // Resolve with the response body
+            const bodyString = body.toString();
+
+            try {
+                const jsonResponse = JSON.parse(bodyString);
+                resolve({ status: 200, data: jsonResponse }); // Resolve with status 200
+            } catch (error) {
+                reject({ status: 500, error: `Error parsing JSON: ${error.message}` });
+            }
           });
     
           resBH.on('error', (error) => {

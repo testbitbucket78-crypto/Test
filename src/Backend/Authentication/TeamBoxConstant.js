@@ -123,6 +123,62 @@ var assignedNameQuery = `SELECT name,SP_ID from user where uid=?`;
 
 // interaction with messages
 
+// var interactions = `WITH LatestInteraction AS (
+//     SELECT 
+//         customerId,
+//         MAX(interactionId) AS LatestInteractionId
+//     FROM 
+//         Interaction
+//     WHERE 
+//         is_deleted = 0
+//         AND (IsTemporary = 0 OR IsTemporary IS NULL)
+//     GROUP BY 
+//         customerId
+// )
+// SELECT DISTINCT
+//     ic.interaction_status, 
+//     ic.InteractionId, 
+//     ec.*,
+//     last_message.LastMessageId,
+//     COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
+//     m.*,
+//     m.created_at AS LastMessageDate,
+//     ww.connected_id
+// FROM 
+//     LatestInteraction li
+// JOIN 
+//     Interaction ic ON li.LatestInteractionId = ic.interactionId
+// LEFT JOIN 
+//     EndCustomer ec ON ic.customerId = ec.customerId
+// LEFT JOIN (
+//     SELECT 
+//         m.interaction_id,
+//         MAX(m.Message_id) AS LastMessageId
+//     FROM 
+//         Message m
+//     GROUP BY 
+//         m.interaction_id
+// ) AS last_message ON ic.InteractionId = last_message.interaction_id
+// LEFT JOIN (
+//     SELECT 
+//         m.interaction_id,
+//         COUNT(*) AS UnreadCount
+//     FROM 
+//         Message m
+//     WHERE
+//         m.is_read = 0
+//         AND m.message_direction = 'IN'
+//     GROUP BY 
+//         m.interaction_id
+// ) AS unread_count ON ic.InteractionId = unread_count.interaction_id
+// LEFT JOIN 
+//     Message m ON ic.InteractionId = m.interaction_id AND m.Message_id = last_message.LastMessageId
+// LEFT JOIN 
+//     WhatsAppWeb ww ON ec.SP_ID = ww.spid AND ww.is_deleted != 1
+// WHERE 
+//     ec.SP_ID = ?  
+//     AND ec.isDeleted != 1  
+// `
 var interactions = `WITH LatestInteraction AS (
     SELECT 
         customerId,
@@ -139,11 +195,16 @@ SELECT DISTINCT
     ic.interaction_status, 
     ic.InteractionId, 
     ec.*,
+    CASE 
+        WHEN ec.isDeleted != 1 THEN ec.Name
+        ELSE ec.Phone_Number
+    END AS Phone_Number,
     last_message.LastMessageId,
     COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
     m.*,
     m.created_at AS LastMessageDate,
-    ww.connected_id
+    ww.connected_id,
+    im.AgentId as InteractionMapping -- Assuming mapping_info is the column in InteractionMapping table that you need
 FROM 
     LatestInteraction li
 JOIN 
@@ -175,11 +236,11 @@ LEFT JOIN
     Message m ON ic.InteractionId = m.interaction_id AND m.Message_id = last_message.LastMessageId
 LEFT JOIN 
     WhatsAppWeb ww ON ec.SP_ID = ww.spid AND ww.is_deleted != 1
+LEFT JOIN 
+    InteractionMapping im ON ic.InteractionId = im.InteractionId -- Join with InteractionMapping table
 WHERE 
-    ec.SP_ID = ?  
-    AND ec.isDeleted != 1  
+    ec.SP_ID = ?
 `
-
 
 getallMessagesWithScripts = `(
     SELECT 
