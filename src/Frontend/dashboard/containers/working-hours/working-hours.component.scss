@@ -355,4 +355,10 @@ label {
     position: sticky;
 }
 
-
+.billing-form-row {
+    input[type="time"] {
+        &::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+        }
+    }
+}

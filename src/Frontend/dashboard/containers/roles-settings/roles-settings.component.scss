@@ -297,3 +297,22 @@ color: #7A86A1;
 .user-img{
   align-items: center;
 }
+
+.accordion .accordion-item .sub-rights-rotate-arrow,
+.accordion .accordion-item .users-rotate-arrow {
+    transform: rotate(90deg);
+    display: inline-block;
+    font-size: 25px;
+    height: 45px;
+    margin-left: 5px;
+}
+
+.accordion .accordion-item .sub-rights-rotated-arrow,
+.accordion .accordion-item .users-rotated-arrow {
+    transform: rotate(270deg);
+    display: inline-block;
+    font-size: 25px;
+    height: 45px;
+    margin-left: 10px;
+}
+

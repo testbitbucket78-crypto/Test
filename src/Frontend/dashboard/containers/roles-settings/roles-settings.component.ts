@@ -15,18 +15,8 @@ declare var $:any;
 export class RolesSettingsComponent implements OnInit {
     columnDefs: ColDef[] = [
         {
-            field: 'roleID',
-            headerName: 'ID',
-            width:100,
-            suppressSizeToFit: false,
-            resizable: true,
-            filter: true,
-            sortable: true,
-            cellStyle: { background: '#FBFAFF', opacity: 0.86 },
-        },
-        {
             field: 'RoleName',
-            headerName: 'Roles',
+            headerName: 'Role Name',
             filter: true,
             width:200,
             suppressSizeToFit: false,
@@ -36,7 +26,7 @@ export class RolesSettingsComponent implements OnInit {
         },
         {
             field: 'rights',
-            headerName: 'Rights',
+            headerName: 'No. of Rights',
             width:200,
             suppressSizeToFit: false,
             resizable: true,
@@ -84,8 +74,8 @@ export class RolesSettingsComponent implements OnInit {
     spid!:number;
     rolesData: RolesData = <RolesData>{};
     myForm!: FormGroup;
-    
-
+    subRightsArrowRotate: boolean = false;
+    usersArrowRotate: boolean = false;
     constructor(public _settingsService: SettingsService,private fb: FormBuilder) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
@@ -305,4 +295,15 @@ export class RolesSettingsComponent implements OnInit {
         console.log(this.selectedSubRights);
     }
 
+    onToggleSubRights(isShown: boolean) {
+        this.subRightsArrowRotate = isShown;
+    }
+    onToggleUser(isShown: boolean) {
+        this.usersArrowRotate = isShown;
+    }
+
+    resetArrowState(isReset: boolean) {
+        this.subRightsArrowRotate = isReset;
+        this.usersArrowRotate = isReset;
+    }
 }
