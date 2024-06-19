@@ -82,12 +82,12 @@
             <div class="notification-content-parent">
                 <div *ngFor="let taglist of tagListData | searchfilter:searchText | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" 
                   class="row justify-content-center  notification-content" (click)="toggleSideBar(taglist)">
-                    <div class="col-sm-12 d-flex py-3 text-center">
+                    <div class="col-sm-12 d-flex py-3 text-center border-bottom" role="button">
 
                         <div class="header-col text-center"><p [ngClass]="{'color-dots': true}" [style.background]="taglist.TagColour"></p></div>
                         <div class="header-col font-weight-bolder">{{ taglist.TagName }}</div>
                         <div class="header-col">{{ taglist.tag_count}}</div>
-                 </div>
+                   </div>
                 </div>
             </div>
         </div>
@@ -97,7 +97,7 @@
 
         <div class="col-sm-6 d-flex align-items-center text-left">
             <p class="p-0 m-0">Showing:</p>
-            <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
+            <select class="pl-2 m-0 select-pointer" (change)="getPaging()" [(ngModel)]="pageSize">
                 <option value="10">10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>

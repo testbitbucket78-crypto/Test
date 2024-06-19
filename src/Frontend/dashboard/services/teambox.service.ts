@@ -7,7 +7,7 @@ const API_URL = environment.baseUrl;
 
 @Injectable()
 export class TeamboxService {
-  Setting_API_URL:string='http://52.66.106.90:3004';
+  Setting_API_URL:string='https://settings.stacknize.com';
   constructor(private http: HttpClient) { }
 
   public uploadfile(FileData:any, spid:any,name:any) {
@@ -186,14 +186,14 @@ export class TeamboxService {
   }
 
   public download() {
-    return this.http.get(' http://52.66.106.90:3002/download', { responseType: 'blob' })
+    return this.http.get('https://contactapi.stacknize.com/download', { responseType: 'blob' })
   }
 
   public downloadErrFile() {
-    return this.http.get(' http://52.66.106.90:3002/downloadCSVerror', { responseType: 'blob' })
+    return this.http.get('https://contactapi.stacknize.com/downloadCSVerror', { responseType: 'blob' })
   }
   public getAttributeList(SP_ID: any) {
-    return this.http.get(` http://52.66.106.90:3002/columns/${SP_ID}`);
+    return this.http.get(`https://contactapi.stacknize.com/columns/${SP_ID}`);
   } 
 
   public isCampaignExists(title: any, spid: any) {
