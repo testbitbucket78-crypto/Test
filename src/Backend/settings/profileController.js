@@ -92,7 +92,40 @@ const changePassword = async (req, res) => {
                 }
                 var hasedPass = await bcrypt.hash(newPass, 10);
 
-                var insertRes = await db.excuteQuery(val.updatePasswordQuery, [hasedPass, date, uid])
+                var insertRes = await db.excuteQuery(val.updatePasswordQuery, [hasedPass, date, uid]);
+                // send mail with defined transport object
+                var mailOptions = {
+                    from: val.email,
+                    to: req.body?.email_id,
+                    subject: "Engagekart Password Reset",
+                    //html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
+                    html: `
+            <p>Dear ${req.body?.name},</p>
+   
+            <p>You have successfully reset your Engagekart account password.</p?
+            <p>If you find anything fishy, immediately contact your business admin manager.</p>
+
+            <p>Thank you,</p>
+            <p>Team Engagekart</p> `
+                };
+
+                transporter.sendMail(mailOptions, (error, info) => {
+
+                    if (error) {
+                        console.log("error ampt ----------", error)
+                    } else {
+                        console.log("info---------", info)
+                    }
+
+
+                });
+
+                let text = `You've successfully reset your password. Keep your new password safe, and contact your account Admin immediately if you didn't initiate this change.
+- Team Engagekart`
+
+                var data = getTextMessageInput(reb.body?.mobile_number, text);
+
+                sendMessage(data)
                 res.status(200).send({
                     msg: 'password updated',
                     insertRes: insertRes,
@@ -110,6 +143,36 @@ const changePassword = async (req, res) => {
 
 }
 
+
+function sendMessage(data) {
+    var config = {
+        method: 'post',
+        url: val.url,
+        headers: {
+            'Authorization': val.access_token,
+            'Content-Type': val.content_type
+        },
+        data: data
+    };
+
+    return axios(config)
+}
+
+function getTextMessageInput(recipient, text) {
+    return JSON.stringify({
+
+        "messaging_product": "whatsapp",
+        "preview_url": false,
+        "recipient_type": "individual",
+        "to": recipient,
+        "type": "text",
+        "text": {
+            "body": text
+        }
+
+
+    });
+}
 const userActiveStatus = async (req, res) => {
     try {
 
@@ -117,7 +180,7 @@ const userActiveStatus = async (req, res) => {
 
         if (IsActive != 1) {
             let IsUserAssign = await db.excuteQuery('SELECT * FROM InteractionMapping WHERE AgentId=?', [req.body.uid]);
-            if (unAssignChat?.length > 0) {
+            if (IsUserAssign?.length > 0) {
                 let unAssignChat = await db.excuteQuery('update InteractionMapping set AgentId=? where AgentId=?', [-1, req.body.uid])
             }
         }

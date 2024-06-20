@@ -98,8 +98,10 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
 async function BroadCast(sid, agid, newId) {
   try{
   console.log("BroadCast")
+  let myUTCString = new Date().toUTCString();
+  const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
   var addNotification = `INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`
-  let notifyvalues = [[sid, 'Notify Online Agents', 'New Unassign Chat is Avilable', agid, 'webhook', '-1', new Date()]]
+  let notifyvalues = [[sid, 'Notify Online Agents', 'New Unassign Chat is Avilable', agid, 'webhook', '-1',created_at ]]
   let notifyRes = await db.excuteQuery(addNotification, [notifyvalues])
   }catch(err){
     console.log("ERR _ _ _ BroadCast" ,err)

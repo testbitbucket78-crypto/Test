@@ -37,7 +37,7 @@
             <div class="modal-body px-5 pt-0">
                 <form [formGroup]="userDetailForm">
                     <div>
-                        <label>User Name</label> <br>
+                        <label>User Name <span class="aestric">*</span></label> <br>
                         <input type="text" class="input-form" formControlName="name" placeholder="Enter user name" maxlength="30">
                         <div *ngIf="userDetailForm.get('name')?.invalid && (userDetailForm.get('name')?.touched || userDetailForm.get('name')?.dirty)
                       " class="invalid-feedback">
@@ -53,7 +53,7 @@
                     </div>
                     </div>
                     <div class="pt-2">
-                        <label>User Email Id</label> <br>
+                        <label>User Email Id <span class="aestric">*</span></label> <br>
                         <input type="text" class="input-form" formControlName="email_id"
                             placeholder="Enter user email Id">
                         <div *ngIf="userDetailForm.get('email_id')?.invalid && (userDetailForm.get('email_id')?.touched || userDetailForm.get('email_id')?.dirty)
@@ -67,7 +67,7 @@
                     </div>
                     </div>
                     <div class="pt-2">
-                        <label>User Phone No.</label> <br>
+                        <label>User Phone No. <span class="aestric">*</span></label> <br>
 
                             <div class="ss d-flex justify-content-start">
                             <select class="input-form code-selector" id="country_code" formControlName="country_code">
@@ -103,7 +103,7 @@
                     </div>
 
                     <div class="pt-2">
-                        <label>Role</label> <br>
+                        <label>Role <span class="aestric">*</span></label> <br>
                         <select class="input-form" formControlName="UserType">
                             <option selected value="">Select Role</option>
                             <option *ngFor="let item of rolesList" [value]="item.roleID">{{item?.RoleName}}</option>
@@ -135,7 +135,7 @@
     </div>
     <div class="sidebar-content">
         <div class="d-flex pb-3">
-            <span class="user-status">{{userData?.IsActive ==1 ?'Active' : userData?.IsActive == 0 ? 'In Active' : 'Disabled'}} </span>
+            <span class="user-status">{{userData?.IsActive ==1 ?'Active' : userData?.IsActive == 0 ? 'In Active' : userData?.IsActive == 3 ? 'Invited' : 'Disabled'}} </span>
             <p class="user-id">Agent Id:</p>
             <p class="black mt-1"> {{userData?.uid}}</p>
         </div>
@@ -191,7 +191,7 @@
         <button type="button" class="account-white-btn ml-2" (click)="showSideBar = false" data-bs-toggle="modal" data-bs-target="#deleteModal">
             <img class="p-0" src="../../../../assets/img/delete.png">
         </button>
-        <button class="disable-btn ml-2 " >
+        <button class="disable-btn ml-2 " [disabled]="userData?.IsActive == 3">
             <div class="active-toggle">
                 <span>Disable</span>
                 <div class="px-2 switch-toggle">

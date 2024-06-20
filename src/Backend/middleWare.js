@@ -110,14 +110,15 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
         // Send the video message using Axios
         const response = await axios({
             method: "POST",
-            url: `https://graph.facebook.com/v17.0/${phone_number_id}/messages?access_token=${token}`,
+            url: `https://graph.facebook.com/v19.0/${phone_number_id}/messages?access_token=${token}`,
             data: messageData, // Use the video message structure
             headers: { "Content-Type": "application/json" },
         })
+         console.log("****META APIS****", response.data);
         return response.data
         //console.log("****META APIS****", caption);
     } catch (err) {
-        //  console.error("______META ERR_____", err);
+         console.error("______META ERR_____", err.message);
         return err.message;
     }
 
@@ -126,7 +127,7 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
 
 
 
-async function sendTextOnWhatsApp(messageTo, messateText) {
+async function sendTextOnWhatsApp(messageTo, messageText) {
     try {
         const content = await removeTags.removeTagsFromMessages(messageText);
 

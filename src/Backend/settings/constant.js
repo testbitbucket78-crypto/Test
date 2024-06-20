@@ -11,6 +11,11 @@ const accessKeyId = 'AKIAYY5FSMYVNUZHPOEH'
 const secretAccessKey = '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'
 const region = 'ap-south-1'
 
+var content_type='application/json'
+
+
+var access_token = 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S'
+var url='https://graph.facebook.com/v19.0/211544555367892/messages'
 //__________END_____________________//
 
 const baseURL = 'https://staging.engageflo.com/api/';
@@ -422,5 +427,6 @@ module.exports = {
     addCampaignAlerts, deleteCampaignAlerts, selectCampaignAlerts, addCampaignTest, deleteCampaignTest, selectCampaignTest,
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
-    getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery
+    getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
+    content_type,access_token,url
 }

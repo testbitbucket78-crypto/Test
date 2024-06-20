@@ -363,9 +363,9 @@ const getFilteredInteraction = (req, res) => {
 const getSearchInteraction = async (req, res) => {
     try {
 
-
         var searchKey = req.params.searchKey
-        let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and EndCustomer.Name like '%" + searchKey + "%' and EndCustomer.SP_ID ='" + 40 + "' and EndCustomer.isDeleted !=1"
+        var spid =  req.params.spid
+        let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and EndCustomer.Name like '%" + searchKey + "%' and EndCustomer.SP_ID ='" + spid + "' and EndCustomer.isDeleted !=1"
 
         if (req.params.AgentId && req.params.AgentId != ':AgentId') {
             queryPath += " and Interaction.InteractionId IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.params.AgentId
