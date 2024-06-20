@@ -141,10 +141,18 @@
     font-weight: bold;
   }
 
-#deleteModal {
-    .modal {
-        .delete-token-modal {
-            width: auto !important;
+
+.modal {
+    .delete-token-modal {
+        width: auto !important;
+
+        .alertmessage {
+            .input_group_btn {
+                .delete-btn.bgColorEnable {
+                    background-color: #6149cd;
+                    color: white;
+                }
+            }
         }
     }
 }

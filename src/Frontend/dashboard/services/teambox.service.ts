@@ -196,8 +196,8 @@ export class TeamboxService {
     return this.http.get(`https://contactapi.stacknize.com/columns/${SP_ID}`);
   } 
 
-  public isCampaignExists(title: any, spid: any) {
-    return this.http.get(`${API_URL}/exitCampaign/${title}/${spid}`);
+  public isCampaignExists(title: any, spid: any, id: any) {
+    return this.http.get(`${API_URL}/exitCampaign/${title}/${spid}/${id}`);
   }
 
 }

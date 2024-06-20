@@ -5,14 +5,18 @@ export interface teamboxNotifications {
     PushNotificationValue:number,
     SoundNotificationValue:number,
 }
-export interface authChangePassword {
+export interface authChangePassword extends loginDetails{
     
     uid:number;
     oldPass:string;
     newPass:string;
     confirmPass:string;
 }
-
+export interface loginDetails {
+    email_id: string;
+    mobile_number: string;
+    name: string;
+}
 export interface roleName {
    roleRes:any [];
 }

@@ -137,11 +137,13 @@ formatPhoneNumber() {
         if (this.registerForm.valid) {
             sessionStorage.setItem('formValues', JSON.stringify(registerData));
             sessionStorage.setItem('otpfieldEmailvalue',registerData.email_id);
-            sessionStorage.setItem('otpfieldMobilevalue',registerData.mobile_number);
+            sessionStorage.setItem('otpfieldMobilevalue', registerData.mobile_number);
+            sessionStorage.setItem('otpfieldNamevalue', registerData.name);
             
             var idfs={
                 "email_id":registerData.email_id,
-                "mobile_number":registerData.mobile_number
+                "mobile_number":registerData.mobile_number,
+                "name": registerData.name
             }
             this.apiService.sendOtp(idfs).subscribe
             (response => {

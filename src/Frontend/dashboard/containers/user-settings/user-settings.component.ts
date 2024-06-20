@@ -118,7 +118,9 @@ export class UserSettingsComponent implements OnInit {
     filteredRolesList: any[] = [];
     selectedUserData: any;
     countryCodes:string[] =[];
-    
+    title: string = '';
+    btnActionName: string = '';
+    isToggleDisabled: boolean = false;
     constructor(private _settingsService: SettingsService,private datepipe: DatePipe,) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
         this.countryCodes = this._settingsService.countryCodes;
@@ -284,11 +286,18 @@ export class UserSettingsComponent implements OnInit {
         });
     }
 
+    checkboxState(checkboxDisable: boolean) {
+        this.isToggleDisabled = checkboxDisable;
+        this.title = `Do you really want to ${this.isActive ? 'Enable' : 'disable'} this User`;
+        this.btnActionName = `Yes, ${this.isActive ? 'Enable' : 'Disable'}`;
+        this.isActive = !this.isActive;
+    }
     activeDeActiveUser() {
+        this.isToggleDisabled = false;
         let userData = <any>{};
         userData.uid = this.uid;
-        userData.isActive = !this.isActive? 2 : 1;
-        this.userData.IsActive = !this.isActive? 2 : 1;        
+        userData.isActive = this.isActive? 2 : 1;
+        this.userData.IsActive = this.isActive? 2 : 1;        
         this._settingsService.activeUser(userData).subscribe(result => {
             if (result) {
                 this.getUserList();
