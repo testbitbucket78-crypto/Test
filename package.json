@@ -39,6 +39,7 @@
     "@fortawesome/free-solid-svg-icons": "5.15.1",
     "@ng-bootstrap/ng-bootstrap": "14.2.0",
     "@popperjs/core": "^2.11.6",
+    "@syncfusion/ej2-angular-dropdowns": "^26.1.35",
     "@syncfusion/ej2-angular-richtexteditor": "23.2.4",
     "@types/jest": "^29.5.5",
     "ag-grid-angular": "^28.2.1",
