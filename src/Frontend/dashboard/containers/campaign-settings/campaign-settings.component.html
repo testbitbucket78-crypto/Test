@@ -188,7 +188,8 @@
                         <div *ngFor="let item of selectedUser" class="user-dropdown pb-3 d-flex">
                             <div class=" manage-user col-6">
                                 <label class="container"  let i = "index">
-                                    <img src="../../../../assets/img/profile/Richie_3.png" class="user-img mx-2">{{item.name}}        
+                                    <div class="img" *ngIf="!item.profile_img">{{_settingsService.getInitials(item.name)}}</div>
+                                    <!-- <img src="../../../../assets/img/profile/Richie_3.png" class="user-img mx-2">-->{{item.name}}         
                                     <div (click)="showCountWarning(!item.isSelected)" >          
                                     <input type="checkbox" name="status" class="user-checkbox" [disabled]="getCheckedCount() && !item.isSelected"  [(ngModel)]="item.isSelected" value={{item.value}}>   
                                       <span class="checkmark ml-2"></span>

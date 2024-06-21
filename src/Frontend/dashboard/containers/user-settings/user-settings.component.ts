@@ -15,23 +15,22 @@ declare var $: any;
 })
 export class UserSettingsComponent implements OnInit {
     columnDefs: ColDef[] | any = [
-        {
-            field: 'uid',
-            headerName: 'User Id',
-            width:100,
-            suppressSizeToFit: false,
-            resizable: true,
-            filter: true,
-            sortable: true,
-            cellStyle: { background: '#FBFAFF', opacity: 0.86 },
-        },
+        // {
+        //     field: 'uid',
+        //     headerName: 'User Id',
+        //     width:100,
+        //     suppressSizeToFit: false,
+        //     resizable: true,
+        //     filter: true,
+        //     sortable: true,
+        //     cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+        // },
         {
             field: 'name',
             headerName: 'User Name',
             width:200,
             suppressSizeToFit: false,
             resizable: true,
-            filter: true,
             sortable: true,
             // cellRenderer: (params) => `<img style="height: 14px; width: 14px" src=${params.data.avatar} />`,
             cellRenderer: (params: { data: { name: any; };
@@ -41,10 +40,9 @@ export class UserSettingsComponent implements OnInit {
         {
             field: 'email_id',
             headerName: 'Email Id',
-            width:200,
+            width:160,
             suppressSizeToFit: false,
             resizable: true,
-            filter: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
             sortable: true,
         },
@@ -54,52 +52,49 @@ export class UserSettingsComponent implements OnInit {
             width:150,
             suppressSizeToFit: false,
             resizable: true,
-            filter: true,
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
         },
         {
             field: 'RoleName',
-            headerName: 'Roles Assigned',
-            width:100,
+            headerName: 'Role',
+            width:130,
             suppressSizeToFit: false,
             resizable: true,
-            filter: true,
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
         },
         {
             field: 'IsActive',
-            headerName: 'Current Status',
-            width:100,
+            headerName: 'Status',
+            width:130,
             suppressSizeToFit: false,
             resizable: true,
-            filter: true,
             sortable: true,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
             valueFormatter: (value:any) => {
-                  return value.value == 1 ? 'Active'  : value.value == 0 ? 'In Active' : 'Disabled';
+                  return value.value == 1 ? 'Active'  : value.value == 0 ? 'In Active' : value.value == 3 ?'Invited' : 'Disabled';
               },
         },
-        {
-            field: 'LastLogIn',
-            headerName: 'Last Active',
-            width:200,
-            suppressSizeToFit: false,
-            resizable: false,
-            filter: true,
-            sortable: true,
-            cellStyle: { background: '#FBFAFF', opacity: 0.86 },
-            valueFormatter: (value:any) => {
-                if (value?.value && new Date(value.value).toString() != 'Invalid Date') {
-                    const date = new Date(value.value);      
-                    return this.datepipe.transform(date, "dd-MMM-yyyy hh:mm a");
-                  }
-                  else {
-                    return 'N/A';
-                  }
-              },
-        },
+        // {
+        //     field: 'LastLogIn',
+        //     headerName: 'Last Active',
+        //     width:200,
+        //     suppressSizeToFit: false,
+        //     resizable: false,
+        //     filter: true,
+        //     sortable: true,
+        //     cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+        //     valueFormatter: (value:any) => {
+        //         if (value?.value && new Date(value.value).toString() != 'Invalid Date') {
+        //             const date = new Date(value.value);      
+        //             return this.datepipe.transform(date, "dd-MMM-yyyy hh:mm a");
+        //           }
+        //           else {
+        //             return 'N/A';
+        //           }
+        //       },
+        // },
     ];
     public gridapi!: GridApi;
     sp_Id: number;
@@ -176,7 +171,7 @@ export class UserSettingsComponent implements OnInit {
             email_id: new FormControl('', [Validators.required, Validators.email]),
             name: new FormControl('',[
                 Validators.required,
-                Validators.pattern(/^[a-zA-Z.-]+(?:\s+[a-zA-Z.-]+)*$/),
+              //  Validators.pattern(/^[a-zA-Z.-]+(?:\s+[a-zA-Z.-]+)*$/),
                 Validators.minLength(2),
               ]),
             mobile_number: new FormControl(null,[Validators.required]),

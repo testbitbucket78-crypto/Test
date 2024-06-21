@@ -268,7 +268,7 @@
 				<h4 class="modal-title" id="modal-basic-title">{{isEditCampaign ? 'Edit Campaign' :'New Campaign'}}</h4>
 			</div>
 			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/icon-close.svg"></p>
+				<p class="close-box" aria-label="Close" (click)="d('Cross click'); resetFormState()"><img src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 			</div>
 		<div class="modal-body">
@@ -935,14 +935,21 @@
 			    </p>
 
 				<div class="content_inner">
-					<p><span>Fallback</span><img class="px-2 py-1 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
-					<input placeholder="Enter value" type="text" class="form-control" (keyup)="updateFallbackAttributeValue($event)">
-				</div>
-				<div  *ngIf="showInfo" class="showInfoFallback">
-					<p id="p-body">You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
-					</p>
-					<button id="radio-close-btn" (click)="showInfo=false">X</button>
-				  </div>
+					<div>
+						<span class="titleFallback">Fallback</span>
+						<div class="tooltip-container">
+							<img class="px-2 py-1 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
+							<div *ngIf="showInfo" class="showInfoFallbackAttribute">
+								<p id="p-body">
+									You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
+								</p>
+								<button id="radio-close-btn" (click)="showInfo=false">X</button>
+							</div>
+						</div>
+					</div>
+						<input placeholder="Enter value" type="text" class="form-control" (keyup)="updateFallbackAttributeValue($event)">
+                 </div>
+				
 									
 			</div>
 			

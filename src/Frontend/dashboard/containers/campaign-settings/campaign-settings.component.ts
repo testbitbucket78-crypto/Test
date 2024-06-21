@@ -49,7 +49,7 @@ campaignTestData:any;
   Testcampaign!: boolean;
   alertscamp!: boolean;
 
-  constructor(private _settingsService:SettingsService,public settingsService:SettingsService) {
+  constructor(public _settingsService:SettingsService,public settingsService:SettingsService) {
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
    }
 
