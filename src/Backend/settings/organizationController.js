@@ -954,7 +954,14 @@ const editUser = async (req, res) => {
 
 const getUserByspid = async (req, res) => {
     try {
-        var getUser = await db.excuteQuery(val.selectAllQuery, [req.params.spid])
+       let isActiveUser = req.params?.IsActive ?? 0;
+
+        let getUser;
+        if(isActiveUser == 0){
+         getUser = await db.excuteQuery(val.selectAllQuery, [req.params.spid])
+        }else{
+            getUser = await db.excuteQuery(val.selectActiveQuery, [req.params.spid])
+        }
         res.status(200).send({
             msg: 'Get user list ',
             getUser: getUser,

@@ -53,6 +53,11 @@ getRoleQuery = `SELECT * from roles where roleID=? and SP_ID=? and isDeleted !=1
 getUserQuery = `SELECT * from user where SP_ID=? AND UserType=? AND IsDeleted != 1`
 deleteQuery = `UPDATE roles set IsDeleted=1 where roleID=? and SP_ID=?`
 
+selectActiveQuery = `SELECT   r.RoleName,  u.*
+FROM user u
+JOIN roles r ON u.UserType = r.roleID
+WHERE u.SP_ID =? AND u.isDeleted != 1 and u.IsActive = 1 ;
+`
 
 selectAllQuery = `SELECT   r.RoleName,  u.*
 FROM user u
@@ -428,5 +433,5 @@ module.exports = {
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
-    content_type,access_token,url
+    content_type,access_token,url,selectActiveQuery
 }
