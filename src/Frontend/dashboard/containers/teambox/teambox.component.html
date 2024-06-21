@@ -381,7 +381,7 @@
 								</ejs-richtexteditor>
 							  
 
-									<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
+									<!-- <div *ngIf="false" class="popup-dialog mention" (click)="stopPropagation($event)">
 									<p class="label">@mention</p>
 								<p *ngFor="let user of agentsList;let k = index" (click)="InsertMentionOption(user)">
 								<span *ngIf="user.uid != uid" class="user-img">
@@ -389,7 +389,7 @@
 					{{user.name}}
 					</span>
 				</p>
-				</div>
+				</div> -->
 					<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
 						<p class="label">@mention</p>
 						<p *ngFor="let user of agentsList;let k = index"

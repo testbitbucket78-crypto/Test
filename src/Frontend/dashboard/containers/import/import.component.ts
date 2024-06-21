@@ -596,7 +596,7 @@ export class ImportComponent implements OnInit {
 		this._settingsService.getNewCustomField(this.spid).subscribe((response:any) => {
 			
 		  let customFieldData = response.getfields
-		  this.customFieldData = customFieldData.filter((field:any) => field.status === 1);
+		  this.customFieldData = customFieldData.filter((field:any) => field.status === 1 && field.ActuallName !="OptInStatus");
 		  this.customFieldData.forEach((item:any)=>{
 			item.isSelected= false;
 		  })

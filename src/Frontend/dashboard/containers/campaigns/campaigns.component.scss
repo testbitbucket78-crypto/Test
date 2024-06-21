@@ -1196,6 +1196,7 @@
 	display:none;
 	position: absolute;
 	top:10px;
+	overflow: auto;
 	}
 	.applied_filter_popup.active{
 	display:block;
@@ -2027,6 +2028,21 @@
     opacity: 1;
     overflow: auto;
 }
+.showInfoFallbackAttribute::-webkit-scrollbar {
+	display: none;
+}
+.content_inner .showInfoFallbackAttribute {
+	position: absolute;
+	width: 280px;
+	height: auto;
+	background: #ffffff 0% 0% no-repeat padding-box;
+	box-shadow: 4px 22px 54px #695f971a;
+	border-radius: 30px;
+	opacity: 1;
+	overflow: auto;
+	left: 100%;
+	bottom: 0px;
+}
 
 .showInfoFallback1 {
 	position: absolute;
@@ -2324,4 +2340,15 @@ position: absolute;
 }
 .w-100{
 	width: 100% !important;
+}
+
+.content_inner .tooltip-container {
+	position: relative;
+	display: inline;
+}
+
+.content_inner .titleFallback{
+	font-size: 12px;
+    color: #7a86a1;
+    font-weight: 400;
 }
