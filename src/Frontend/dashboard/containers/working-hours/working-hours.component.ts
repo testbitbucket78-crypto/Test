@@ -151,7 +151,7 @@ selectedPeriods: string[] = ['AM', 'PM'];
     this.addWorkingHours();
     else
     this.workingData.forEach(item=>{
-      this.workingFormData.push({day:item.working_days != '' ? item.working_days.split(',') : [],startTime:item.start_time,endTime:item.end_time,selectedPeriod:item.selectedPeriod})
+        this.workingFormData.push({ day: item.working_days != '' ? item.working_days.split(',') : [], startTime: item.start_time.split(' ')[0], endTime: item.end_time.split(' ')[0],selectedPeriod:item.selectedPeriod})
     })
   }
    createDynamicDate(month:any){
