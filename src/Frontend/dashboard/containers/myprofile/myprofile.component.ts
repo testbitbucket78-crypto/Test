@@ -58,7 +58,7 @@ export class MyprofileComponent implements OnInit,OnDestroy {
   NotificationDataInit:any;
   notificationData:any = [];
   notification:any;
-
+  body: any;
   private notificationIntervalSubscription: any;
 
   NotificationData = [
@@ -318,12 +318,21 @@ toggleActiveState(checked: boolean) {
 
 
   // change password api service
-
+    
   saveNewPassword() {
 
-    this.changePasswordValue = this.changepassword.value;
+      this.changePasswordValue = this.changepassword.value;
+      this.body = {
+          uid: this.changePasswordValue.uid,
+          oldPass: this.changePasswordValue.oldPass,
+          newPass: this.changePasswordValue.newPass,
+          confirmPass: this.changePasswordValue.confirmPass,
+          name: this.Name,
+          email_id: this.EmailId,
+          mobile_number: this.PhoneNumber
+      }
     if(this.changepassword.valid) {
-      this.apiService.changePass(this.changePasswordValue).subscribe(
+        this.apiService.changePass(this.body).subscribe(
         
       (response: any) => {
         if(response.status === 200) {

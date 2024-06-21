@@ -1416,7 +1416,7 @@ formateDate(dateTime:string){
 	}
 	
 	async runCampaign(CampaignId:any,BodyData:any){
-
+		
 		if(this.csvContactList.length>0){
 			let ix =0;
 			console.log(this.csvContactList,'---csvContactList');
@@ -1450,7 +1450,7 @@ formateDate(dateTime:string){
 					status:ix == this.csvContactList.length ? 3 :this.scheduled,
 					csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
 					segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
-				}
+					}
 				let allVariables:any = this.selectedTemplate.allVariables
 				console.log(allVariables)
 				let message_heading =this.selectedTemplate.Header
@@ -1505,6 +1505,7 @@ formateDate(dateTime:string){
 					if(customerDetail && customerDetail.Phone_number){
 						let MessageBodyData:any={
 							SP_ID:this.SPID,
+							message_footer: this.selectedTemplate.FooterText,
 							optInStatus:this.optInStatus,
 							customerId:customerDetail.customerId,
 							phone_number:customerDetail.Phone_number,
@@ -1808,7 +1809,7 @@ testinfo(){
 	
 	
 	nextStep(){
-		
+
 		this.CampaignNameAlreadyExist();
 
 		if(this.activeStep < 3){
@@ -2542,7 +2543,7 @@ console.log(this.allTemplatesMain);
 		  CampaignNameAlreadyExist() {
 			let spid = this.SPID;
 			let title = this.newCampaignDetail.get('title')?.value;
-			this.apiService.isCampaignExists(title, spid).subscribe(
+			  this.apiService.isCampaignExists(title, spid, this.selectedCampaign.Id).subscribe(
 				(response: any) => {
 					if (response.status === 409) {
 						this.isCampaignAlreadyExist = true;
@@ -2557,7 +2558,7 @@ console.log(this.allTemplatesMain);
 		getCampaignTimingList(){
 			this._settingsService.getCampaignTimingList(Number(this.SPID))
 			.subscribe((result:any) =>{
-			  if(result){
+				if(result){
 				this.workingData = [];
 				let timingData =result?.seletedCampaignTimings;  
 				timingData.forEach((data:any)=>{

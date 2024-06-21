@@ -193,13 +193,15 @@
         </button>
         <button class="disable-btn ml-2 " [disabled]="userData?.IsActive == 3">
             <div class="active-toggle">
-            <span>Disable</span>
-            <div class="px-2 switch-toggle">
-                <label class="m-0 switch">
-                  <input type="checkbox" class="m-0 form-control-checkbox" (click)="activeDeActiveUser()" [(ngModel)]="isActive">
-                  <span class="slider"></span>
-                </label>
-              </div>
+                <span>Disable</span>
+                <div class="px-2 switch-toggle">
+                    <label class="m-0 switch">
+                        <input type="checkbox" class="m-0 form-control-checkbox" (click)="checkboxState(true); showSideBar = false" [(ngModel)]="isActive"
+                               data-bs-toggle="modal"
+                               data-bs-target="#disableModal" />
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
         </button>
         <!-- <div class="c ol-sm-5 d-flex justify-content-center align-items-center active-toggle">
@@ -227,11 +229,28 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content delete-token-modal">
             <div class="modal-body alertmessage">
-                <p class="label pb-2">Do you really want to disable this User ?</p>
+                <p class="label pb-2">Do you really want to delete this User ?</p>
                 <div class="input_group_btn">
                     <button type="button" class="cancel-btn" aria-label="Close" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="delete-btn" aria-label="Close" data-bs-dismiss="modal"
                         (click)="deleteUser()">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" id="disableModal" data-bs-backdrop="static" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content delete-token-modal">
+            <div class="modal-body alertmessage">
+                <p class="label pb-2">{{title}}</p>
+                <div class="input_group_btn">
+                    <button type="button" class="cancel-btn" aria-label="Close" data-bs-dismiss="modal" (click)="checkboxState(false)">Cancel</button>
+                    <button type="button" class="delete-btn" aria-label="Close" data-bs-dismiss="modal"
+                            [ngClass]="{'bgColorEnable': isActive === false}"
+                            (click)="activeDeActiveUser()">
+                            {{btnActionName}}
+                    </button>
                 </div>
             </div>
         </div>

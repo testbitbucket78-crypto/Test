@@ -757,7 +757,7 @@
 									  <p class="form-control">
 										<input type="text" id="variableValue{{ith}}" name="variableValue{{ith}}" [(ngModel)]="variableValues[ith]" class="form-control inner"
 										placeholder="Input value or add attribute">
-										<span style="cursor: pointer;" (click)="openVariableOption()" class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
+										<span style="cursor: pointer;" (click)="openVariableOption(ith)" class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
 									  </p>
 								  <!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
 										  <p class="label">Map the column</p>
@@ -835,7 +835,7 @@
 															  </div>
 														  </div>
 													  </div>
-													  <input style="cursor:text; width: 100%; margin: 0;" placeholder="Enter value" type="text" class="form-control">
+													  <input style="cursor:text; width: 100%; margin: 0;" placeholder="Enter value" type="text" class="form-control" [(ngModel)]="attribute">
 												  </div>
 																			  
 													  </div>
