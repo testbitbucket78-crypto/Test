@@ -83,32 +83,67 @@ const searchCustomer = (req, res) => {
 }
 
 const insertCustomers = async (req, res) => {
-    Name = req.body.Name
-    Phone_number = req.body.Phone_number
-    channel = req.body.Channel
-    OptInStatus = req.body.OptedIn
-    SP_ID = req.body.SP_ID
-    countryCode = req.body.country_code
-    displayPhoneNumber = req.body.displayPhoneNumber
-    var values = [[Name, Phone_number, channel, SP_ID, OptInStatus, countryCode, displayPhoneNumber]]
-    let existContactWithSameSpid = `SELECT * FROM EndCustomer WHERE  Phone_number=? AND isDeleted !=1  and IsTemporary !=1  AND SP_ID=?  `
+    let Name = req.body.Name;
+    let Phone_number = req.body.Phone_number;
+    let channel = req.body.Channel;
+    let OptInStatus = req.body.OptedIn;
+    let SP_ID = req.body.SP_ID;
+    let countryCode = req.body.country_code;
+    let displayPhoneNumber = req.body.displayPhoneNumber;
+    let values = [[Name, Phone_number, channel, SP_ID, OptInStatus, countryCode, displayPhoneNumber]];
 
-    var result = await db.excuteQuery(existContactWithSameSpid, [Phone_number, SP_ID])
+    try {
+        // Check if contact with isTemporary = 1 exists
+        let checkTempContactQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 AND IsTemporary = 1 AND SP_ID = ?`;
+        let tempContactResult = await db.excuteQuery(checkTempContactQuery, [Phone_number, SP_ID]);
 
-    console.log("result >>>>>>>>>>")
-    console.log(result)
-    if (result.length > 0) {
-        // email or phone number already exist, return an error response
+        if (tempContactResult.length > 0) {
+            // Update the temporary contact to make it permanent
+            let updateTempContactQuery = `
+                UPDATE EndCustomer
+                SET Name = ?, channel = ?, OptInStatus = ?, countryCode = ?, displayPhoneNumber = ?, IsTemporary = 0
+                WHERE Phone_number = ? AND SP_ID = ? AND IsTemporary = 1
+            `;
+            await db.excuteQuery(updateTempContactQuery, [Name, channel, OptInStatus, countryCode, displayPhoneNumber, Phone_number, SP_ID]);
+            
+            return res.status(200).send({
+                msg: 'Temporary contact updated to permanent.',
+                status: 200
+            });
+        }
 
-        res.status(409).send({
-            msg: 'phone number already exist !',
-            status: 409
+        // Check if contact with isTemporary != 1 exists
+        let existContactWithSameSpidQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 AND IsTemporary != 1 AND SP_ID = ?`;
+        let existingContactResult = await db.excuteQuery(existContactWithSameSpidQuery, [Phone_number, SP_ID]);
+
+        if (existingContactResult.length > 0) {
+            // Phone number already exists as a permanent contact, return an error response
+            return res.status(409).send({
+                msg: 'Phone number already exists!',
+                status: 409
+            });
+        }
+
+        // Insert new contact
+        let insertQuery = `
+            INSERT INTO EndCustomer (Name, Phone_number, channel, SP_ID, OptInStatus, countryCode, displayPhoneNumber)
+            VALUES ?
+        `;
+        await db.excuteQuery(insertQuery, [values]);
+
+        res.status(200).send({
+            msg: 'Contact added successfully.',
+            status: 200
+        });
+    } catch (error) {
+        console.error("Error inserting/updating contact:", error);
+        res.status(500).send({
+            msg: 'Internal Server Error',
+            status: 500
         });
     }
-    else {
-        db.runQuery(req, res, val.insertCustomersQuery, [values])
-    }
-}
+};
+
 
 const updatedCustomer = async (req, res) => {
     try {

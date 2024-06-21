@@ -54,7 +54,6 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
 
 })
 
-
 app.post('/addCustomContact', authenticateToken, async (req, res) => {
   try {
     let data = req.body.result;
@@ -67,63 +66,81 @@ app.post('/addCustomContact', authenticateToken, async (req, res) => {
       });
     }
 
-    // Construct the INSERT query dynamically
-    let insertQuery = 'INSERT INTO EndCustomer (';
+    // Prepare the data for insertion/update
+    let columns = [];
+    let placeholders = [];
     let values = [];
+    let phoneNumber;
+    let spId = req.body.SP_ID;
 
     for (let i = 0; i < data.length; i++) {
       const item = data[i];
 
-      // Add column names to the query
-      insertQuery += `${item.ActuallName}`;
-      if (i < data.length - 1) {
-        insertQuery += ', ';
+      // Add column names to the columns array
+      columns.push(item.ActuallName);
+
+      // Capture the phone number for existence check
+      if (item.ActuallName === 'Phone_number') {
+        phoneNumber = item.displayName;
       }
 
       // Add values to the values array
-      if (item.ActuallName === 'Name' || item.ActuallName === 'Phone_number') {
-     
-        if (!item.displayName) {
-     
-          return res.status(400).json({
-            message: 'Please add Name and Phone number',
-            status: 400
-          });
-        } else if (item.ActuallName === 'Phone_number') {
-       
-          let existQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 and IsTemporary !=1 AND SP_ID = ?`;
-          let existingContact = await db.excuteQuery(existQuery, [item.displayName, req.body.SP_ID]);
-
-          if (existingContact.length > 0) {
-            return res.status(409).json({
-              message: 'Phone number already exists',
-              status: 409
-            });
-          }
-        }
-      }
-
-      // Handle arrays and non-arrays uniformly
       if (Array.isArray(item.displayName)) {
+        placeholders.push(item.displayName.join());
         values.push(item.displayName.join());
       } else {
+        placeholders.push('?');
         values.push(item.displayName);
       }
     }
 
-    insertQuery += ') VALUES (';
+    // Ensure Name and Phone_number are provided
+    if (!columns.includes('Name') || !columns.includes('Phone_number')) {
+      return res.status(400).json({
+        message: 'Please add Name and Phone number',
+        status: 400
+      });
+    }
 
-    // Add placeholders for values in the query
-    for (let i = 0; i < data.length; i++) {
-      insertQuery += '?';
-      if (i < data.length - 1) {
-        insertQuery += ', ';
+    // Check for existing contact
+    let existQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 AND SP_ID = ?`;
+    let existingContact = await db.excuteQuery(existQuery, [phoneNumber, spId]);
+
+    if (existingContact.length > 0) {
+      let contact = existingContact[0];
+      if (contact.IsTemporary === 1) {
+        // Update the temporary contact
+        let updateQuery = 'UPDATE EndCustomer SET ';
+        let updateValues = [];
+
+        for (let i = 0; i < data.length; i++) {
+          const item = data[i];
+          updateQuery += `${item.ActuallName} = ?`;
+          updateValues.push(item.displayName);
+          if (i < data.length - 1) {
+            updateQuery += ', ';
+          }
+        }
+
+        updateQuery += ', IsTemporary = 0 WHERE Phone_number = ? AND SP_ID = ?';
+        updateValues.push(phoneNumber, spId);
+       let result= await db.excuteQuery(updateQuery, updateValues);
+
+        return res.status(200).json({
+          message: 'Contact updated successfully',
+          result : result,
+          status: 200
+        });
+      } else {
+        return res.status(409).json({
+          message: 'Phone number already exists',
+          status: 409
+        });
       }
     }
 
-    insertQuery += ')';
-    console.log(values);
-    console.log(insertQuery);
+    // Construct the INSERT query dynamically
+    let insertQuery = `INSERT INTO EndCustomer (${columns.join(', ')}) VALUES (${placeholders.join(', ')})`;
     let result = await db.excuteQuery(insertQuery, values);
     res.status(200).json({ status: 200, result });
   } catch (err) {

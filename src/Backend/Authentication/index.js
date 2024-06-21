@@ -104,7 +104,7 @@ const register = async function (req, res) {
             Your account is all set and ready to go. Start exploring your new features and make the most out of our platform today!
             - Team Engagekart
           `;
-            var data = getTextMessageInput(mobile_number,body);
+            var data = getTextMessageInput(mobile_number, body);
 
             sendMessage(data)
 
@@ -213,9 +213,12 @@ const forgotPassword = async (req, res) => {
                 html: `<p>Hello,</p>
 
                 <p>We have received a Forgot Password request for your Engagekart account. Please use this link provided below to proceed with the reset.<br>
-                <a href="https://cip.stacknize.com/#/reset-password?uid=${cipherdata}">link to reset password</a></p>
+                <a href="https://cip.stacknize.com/#/reset-password?uid=${cipherdata}">https://cip.stacknize.com/#/reset-password?uid=${cipherdata}</a></p>
                 
-                <p>If you did not initiate this request, you may ignore this email and we suggest you report this to your business admin manager.</p>`
+                <p>If you did not initiate this request, you may ignore this email and we suggest you report this to your business admin manager.</p>
+
+                <p>Thank you </p>
+                <p>Team Engagekart</p>`
 
 
             };
@@ -394,7 +397,7 @@ const sendOtp = async function (req, res) {
         Let's make magic happen!
         - Team Engagekart`
 
-        var data = getTextMessageInput(mobile_number,text);
+        var data = getTextMessageInput(mobile_number, text);
 
         sendMessage(data)
         var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])

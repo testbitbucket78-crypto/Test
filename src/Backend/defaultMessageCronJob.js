@@ -8,7 +8,7 @@ var app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors')
 const middleWare = require('./middleWare')
-
+const moment = require('moment');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,12 +31,13 @@ async function NoCustomerReplyReminder() {
         if (data.length > 0) {
 
           //let sendDefult = await sendDefultMsg(data[0].link, data[0].value, data[0].message_type, 101714466262650, message.customer_phone_number)
-          messageThroughselectedchannel(message.SPID,message.customer_phone_number,data.message_type,data.value,data.link,'101714466262650',msg.channel)
+          let message_text =await getExtraxtedMessage(data.value)
+          messageThroughselectedchannel(message.SPID,message.customer_phone_number,data.message_type,message_text,data.link,'211544555367892',msg.channel)
           let myUTCString = new Date().toUTCString();
           const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.Message_id]);
     
-         let messageValu=[[message.SPID,message.Type,"101714466262650",message.interaction_id,message.Agent_id, 'out',data[0].value,data[0].link,data[0].message_type,"","",currenttime,currenttime,5]]
+         let messageValu=[[message.SPID,message.Type,"211544555367892",message.interaction_id,message.Agent_id, 'out',data[0].value,data[0].link,data[0].message_type,"","",currenttime,currenttime,5]]
          let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
         }
       } catch (error) {
@@ -98,13 +99,14 @@ async function NoCustomerReplyTimeout() {
    
       for (const msg of CustomerReplyTimeout) {
         //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
-        messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,msg.value,msg.link,'101714466262650',msg.channel)
+        let message_text =await getExtraxtedMessage(msg.value)
+        messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,message_text,msg.link,'211544555367892',msg.channel)
         
         let myUTCString = new Date().toUTCString();
         const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, msg.Message_id]);
+        let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
     
-       let messageValu=[[msg.SPID,msg.Type,"101714466262650",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",currenttime,currenttime,6]]
+        let messageValu=[[msg.SPID,msg.Type,"211544555367892",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",currenttime,currenttime,6]]
          let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
         let closeInteraction=await db.excuteQuery(`UPDATE Interaction SET interaction_status='' WHERE InteractionId=${msg.InteractionId}`,[]);
       }
@@ -131,10 +133,11 @@ async function NoAgentReplyTimeOut() {
         if (isWorkingTime === true) {
       //    console.log("time out working hour")
           //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
-          messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,msg.value,msg.link,'101714466262650',msg.channel)
+          let message_text =await getExtraxtedMessage(msg.value)
+          messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,message_text,msg.link,'211544555367892',msg.channel)
           let myUTCString = new Date().toUTCString();
           const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-          let messageValu=[[msg.SPID,msg.Type,"101714466262650",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",currenttime,currenttime,4]]
+          let messageValu=[[msg.SPID,msg.Type,"211544555367892",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",currenttime,currenttime,4]]
           let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [4, currenttime, msg.Message_id]);
       
@@ -152,7 +155,7 @@ async function isClientActive(spid) {
   return new Promise(async (resolve, reject) => {
     try {
 
-      const apiUrl = 'http://localhost:3009/IsClientReady'; // Replace with your API endpoint
+      const apiUrl = 'https://waweb.stacknize.com/IsClientReady'; // Replace with your API endpoint
       const dataToSend = {
         spid: spid
       };
@@ -199,47 +202,36 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 }
 }
 
-// async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
-//   console.log("messageData===")
-//   try {
 
-//     const messageData = {
-//       messaging_product: "whatsapp",
-//       recipient_type: "individual",
-//       to: from,
-//       type: typeOfmsg,
-//     };
 
-//     if (typeOfmsg === 'video' || typeOfmsg === 'image' || typeOfmsg === 'document') {
-//       messageData[typeOfmsg] = {
-//         link: link,
-//         caption: caption
-//       };
-//     }
-//     if (typeOfmsg === 'text') {
-//       messageData[typeOfmsg] = {
-//         "preview_url": true,
-//         "body": caption
-//       };
-//     }
-   
-//     // Send  message using Axios
-//     const response = await axios({
-//       method: "POST",
-//       url: `https://graph.facebook.com/v16.0/101714466262650/messages`,
-//       data: messageData, // Use the video message structure
-//       headers: {
-//         'Authorization': val.access_token,
-//         'Content-Type': val.content_type
-//       },
-//     });
+async function getExtraxtedMessage(message_text) {
+  try {
+    let content = await removeTags.removeTagsFromMessages(message_text);
+    // Parse the message template to get placeholders
+    const placeholders = parseMessageTemplate(content);
+    if (placeholders.length > 0) {
+      // Construct a dynamic SQL query based on the placeholders
+      console.log(placeholders)
+      const results = await removeTags.getDefaultAttribue(placeholders, SPID, customerId);
+      console.log("results", results)
 
-//     console.log("****META APIS****", response.data);
-//   } catch (err) {
-//     console.error("______META ERR_____", err.response.data);
-//   }
+      placeholders.forEach(placeholder => {
+        const result = results.find(result => result.hasOwnProperty(placeholder));
+        const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+        content = content.replace(`{{${placeholder}}}`, replacement);
+      });
+    }
+    return content;
+  } catch (err) {
+    console.log("ERR getExtractedMessage---", err)
+  }
+}
 
-// }
+
+
+
+
+
 
 
 function isWorkingTime(data, currentTime) {
@@ -252,9 +244,10 @@ function isWorkingTime(data, currentTime) {
     const date = new Date().getHours();
     const getMin = new Date().getMinutes();
  
-
-    const startTime = item.start_time.split(':');
-    const endTime = item.end_time.split(':');
+    const start_time = (item.start_time).replace(/\s*(AM|PM)/, "");
+    const end_time = (item.end_time).replace(/\s*(AM|PM)/, "");
+    const startTime = start_time.split(':');
+    const endTime = end_time.split(':');
  
     if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
       console.log("data===========")
@@ -284,9 +277,9 @@ async function workingHoursDetails(sid) {
 
 cron.schedule('*/5 * * * *', async () => {
   console.log('Running scheduled task...');
-  NoCustomerReplyReminder();
-  NoCustomerReplyTimeout();
-  NoAgentReplyTimeOut();
+  NoCustomerReplyReminder();  // system_message_type_id  = 5
+  NoCustomerReplyTimeout();     // system_message_type_id  = 6
+  NoAgentReplyTimeOut();         // system_message_type_id = 4
 
 });
 

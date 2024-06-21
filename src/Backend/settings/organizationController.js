@@ -855,15 +855,15 @@ const editUser = async (req, res) => {
         UserType = req.body.UserType
 
         if (RoleName == 'Admin') {
-            let isAdminRemains = await db.excuteQuery('select * from roles where RoleName=? and UserType !=? and isDeleted !=1 and SP_ID=?', ['Admin', UserType, SP_ID]);
-            if (isAdminRemains?.length == 0) {
+            let isAdminRemains = await db.excuteQuery('select * from roles where RoleName=? and roleID !=? and isDeleted !=1 and SP_ID=?', ['Admin', UserType, SP_ID]);
+            if (isAdminRemains?.length == 1) {
                 return res.status(409).send({
                     msg: 'This is the last Admin minimum one user with Admin role is mandatory to keep.',
                     status: 409
                 });
             }
         }
-        let currentUser = await db.excuteQuery(val.findEmail, [email_id, SP_ID])
+        let currentUser = await db.excuteQuery('SELECT * FROM user WHERE uid=?  and isDeleted !=1 and SP_ID=?', [uid, SP_ID])
 
         var isNameExist = await db.excuteQuery('SELECT * FROM user WHERE name=? and isDeleted !=1 and SP_ID=? and uid !=?', [name, SP_ID, uid])
         var isPhoneExist = await db.excuteQuery('SELECT * FROM user WHERE mobile_number=? and isDeleted !=1 and SP_ID=? and uid !=?', [mobile_number, SP_ID, uid])
@@ -884,12 +884,14 @@ const editUser = async (req, res) => {
         }
 
 
+        let previousRole = await db.excuteQuery('select * from roles where  roleID =? and isDeleted !=1 and SP_ID=?', [currentUser[0]?.UserType, SP_ID]);
+        let currentRole = await db.excuteQuery('select * from roles where roleID =? and isDeleted !=1 and SP_ID=?', [UserType, SP_ID]);
         // Check which details have changed
         let changes = [];
         if (currentUser[0]?.name !== name) changes.push(`New User Name: ${name}`);
         if (currentUser[0]?.email_id !== email_id) changes.push(`New Email: ${email_id}`);
         if (currentUser[0]?.mobile_number !== mobile_number) changes.push(`New Phone: ${mobile_number}`);
-        if (currentUser[0]?.RoleName !== RoleName) changes.push(`New Role: ${RoleName}`);
+        if (previousRole[0]?.RoleName !== currentRole[0]?.RoleName) changes.push(`New Role: ${RoleName}`);
 
         var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, mobile_number, LastModifiedDate, UserType, countryCode, displayPhoneNumber, uid])
 
@@ -954,7 +956,14 @@ const editUser = async (req, res) => {
 
 const getUserByspid = async (req, res) => {
     try {
-        var getUser = await db.excuteQuery(val.selectAllQuery, [req.params.spid])
+       let isActiveUser = req.params?.IsActive ?? 0;
+
+        let getUser;
+        if(isActiveUser == 0){
+         getUser = await db.excuteQuery(val.selectAllQuery, [req.params.spid])
+        }else{
+            getUser = await db.excuteQuery(val.selectActiveQuery, [req.params.spid])
+        }
         res.status(200).send({
             msg: 'Get user list ',
             getUser: getUser,
