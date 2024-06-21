@@ -250,6 +250,7 @@ export class UserSettingsComponent implements OnInit {
         userData.country_code = this.userDetailForm.controls.country_code.value;
         userData.name = this.userDetailForm.controls.name.value;
         userData.uid = this.uid;
+        userData.role = this.rolesList.filter((item:any)=> item.roleID ==this.userDetailForm.controls.UserType.value)[0].RoleName;
         return userData;
     }
 

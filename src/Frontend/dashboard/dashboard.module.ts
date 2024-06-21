@@ -36,6 +36,8 @@ import { RichTextEditorModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { DashboardComponent } from './containers';
 import { SanitizeHtmlPipe } from './containers/sanitizeHtml/sanitize-html.pipe';
 import { ContactFilterComponent } from './containers/contact-filter/contact-filter.component';
+import { MentionModule } from '@syncfusion/ej2-angular-dropdowns';
+import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 
 
 @NgModule({
@@ -56,6 +58,8 @@ import { ContactFilterComponent } from './containers/contact-filter/contact-filt
         ImageCropperModule,
         DragDropModule,
         QRCodeModule,
+        RichTextEditorAllModule,
+        MentionModule
     ],
     providers: [...dashboardServices.services,
                 ...dashboardGuards.guards,DatePipe,NgOptimizedImage

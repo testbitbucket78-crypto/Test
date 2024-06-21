@@ -124,6 +124,7 @@ export interface UserData {
     country_code:string;
     UserType: number;
     email_id: string;
+    role: string;
     SP_ID: number;
 }
 
