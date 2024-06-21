@@ -42,7 +42,7 @@ router.post('/addUser',authenticateToken,organizationController.addUser)
 router.get('/rolesList/:spid',authenticateToken,organizationController.rolesListByspid)
 router.post('/deleteUser',authenticateToken,organizationController.deleteUser)
 router.post('/editUser',authenticateToken,organizationController.editUser)
-router.get('/getUser/:spid',authenticateToken,organizationController.getUserByspid)
+router.get('/getUser/:spid/:IsActive',authenticateToken,organizationController.getUserByspid)
 router.get('/getUserByuid/:spid/:uid',authenticateToken,organizationController.getUserByuid)
 
 router.post('/addTeam',authenticateToken,organizationController.addTeam)

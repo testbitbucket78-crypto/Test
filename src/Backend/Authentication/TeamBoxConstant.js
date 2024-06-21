@@ -248,6 +248,15 @@ var interactions = `WITH LatestInteraction AS (
         AND (IsTemporary = 0 OR IsTemporary IS NULL)
     GROUP BY 
         customerId
+),
+LatestInteractionMapping AS (
+    SELECT 
+        InteractionId,
+        MAX(created_at) AS LatestMappingInfo -- Assuming 'mapping_info' is a timestamp or a column that indicates the latest entry
+    FROM 
+        InteractionMapping
+    GROUP BY 
+        InteractionId
 )
 SELECT DISTINCT
     ic.interaction_status, 
@@ -262,7 +271,7 @@ SELECT DISTINCT
     m.*,
     m.created_at AS LastMessageDate,
     ww.connected_id,
-    im.AgentId as InteractionMapping -- Assuming mapping_info is the column in InteractionMapping table that you need
+    im.AgentId as InteractionMapping -- Using the latest InteractionMapping
 FROM 
     LatestInteraction li
 JOIN 
@@ -295,7 +304,9 @@ LEFT JOIN
 LEFT JOIN 
     WhatsAppWeb ww ON ec.SP_ID = ww.spid AND ww.is_deleted != 1
 LEFT JOIN 
-    InteractionMapping im ON ic.InteractionId = im.InteractionId -- Join with InteractionMapping table
+    LatestInteractionMapping lim ON ic.InteractionId = lim.InteractionId -- Join with LatestInteractionMapping
+LEFT JOIN 
+    InteractionMapping im ON ic.InteractionId = im.InteractionId AND im.created_at = lim.LatestMappingInfo -- Join with InteractionMapping using the latest entry
 WHERE 
     ec.SP_ID = ?
 `
