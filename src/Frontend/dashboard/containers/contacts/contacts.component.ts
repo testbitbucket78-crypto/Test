@@ -313,7 +313,7 @@ contactForm() {
     Phone_number: new FormControl(''),
     displayPhoneNumber: new FormControl('',[Validators.pattern('^[0-9]+$'),Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
     countryCode:new FormControl('IN +91'),
-    emailId: new FormControl('', [Validators.pattern('^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$'),Validators.minLength(5),Validators.maxLength(50)]),
+    emailId: new FormControl('', [Validators.pattern(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@([a-zA-Z0-9-]+\.){1,}[a-zA-Z]{2,}$/),Validators.minLength(5),Validators.maxLength(50)]),
     ContactOwner: new FormControl('',[Validators.required]),
     tag: new FormControl([])
   })

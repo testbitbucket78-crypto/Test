@@ -946,3 +946,27 @@ span {
 * ::-webkit-scrollbar{
     background-color: transparent;
 }
+
+.modal-title-p-0 {
+    padding-left: 0 !important;
+}
+
+.rotate-180deg{
+    transform: rotate(180deg);
+}
+
+.pos-inherit {
+    position: inherit;
+    z-index: 2;
+}
+
+.image-to-left {
+    position: absolute;
+    bottom: -60px;
+    left: -90px;
+    z-index: 0;
+}
+
+.hide-outer{
+    overflow: hidden;
+}

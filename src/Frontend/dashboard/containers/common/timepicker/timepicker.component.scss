@@ -1,0 +1,61 @@
+.timepicker-parent{
+    position:relative;
+}
+.input-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    border: 1px solid #BDC3D0;
+    border-radius: 50px;
+    padding: 6px 12px;
+    background-color:white;
+}
+
+.time-input {
+    width: 100px;
+    background-color: transparent;
+    border:none;
+    outline:none;
+    font-size:12px;
+}
+
+.icon {
+    cursor: pointer;
+    padding-left: 5px;
+    font-size: 11px;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    z-index: 1;
+    max-height: 170px;
+    overflow-y: auto;
+    width: 80%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-radius: 10px;
+    padding: 0 20px;
+}
+
+.dropdown.show {
+    display: block;
+}
+
+.dropdown div {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.dropdown div:hover {
+    background-color: #f1f1f1;
+}
+
+.time-wrapper{
+    border-bottom: 0.5px solid #dededeee;
+    text-align:center;
+    font-size:14px;
+}
