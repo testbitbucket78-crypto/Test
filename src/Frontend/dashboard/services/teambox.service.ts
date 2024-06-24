@@ -60,8 +60,8 @@ export class TeamboxService {
   public getFilteredInteraction(InteractionStatus:any,AgentId:any,AgentName:any,SPID:any) {
     return this.http.get(API_URL+'/filterinteraction/'+InteractionStatus+'/'+AgentId+'/'+AgentName+'/'+SPID);
   }
-  public getSearchInteraction(SearchKey:any,AgentId:any) {
-    return this.http.get(API_URL+'/searchinteraction/'+SearchKey+'/'+AgentId);
+  public getSearchInteraction(SearchKey:any,AgentId:any,spid:any) {
+    return this.http.get(API_URL+'/searchinteraction/'+SearchKey+'/'+AgentId+'/'+spid);
   }
   public updateInteraction(data: any) {
     return this.http.post(API_URL+'/updateinteraction/',data);

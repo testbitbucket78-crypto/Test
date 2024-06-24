@@ -83,9 +83,9 @@
 											<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
-											<span *ngIf="item.channel=='WhatsApp Web'" class="icon" class="hovertext" [attr.data-hover]="'WhatsApp Web' + (item.connected_id ?'(' + item.connected_id + ')':'')" >
+											<span *ngIf="item.channel=='WhatsApp Web'" class="icon" class="hovertext" [attr.data-hover]="'WhatsApp Web ' + (item.connected_id ?'(' + item.connected_id + ')':'')" >
 											</span>
-											<span *ngIf="item.channel=='WhatsApp Official'" class="icon" class="hovertext" [attr.data-hover]="'WhatsApp Official' + (item.connected_id ?'(' + item.connected_id + ')':'')">
+											<span *ngIf="item.channel=='WhatsApp Official'" class="icon" class="hovertext" [attr.data-hover]="'WhatsApp Official ' + (item.connected_id ?'(' + item.connected_id + ')':'')">
 										</span>
 										</div>
 									</div>
@@ -387,7 +387,7 @@ popupWidth='250px' popupHeight='200px'>
             <tr>
               <td>
                 <div id="mention-TemplateList"> 
-                  <img class="mentionEmpImage" src="./assets/rich-text-editor/images/.png" alt="employee" />
+                  <!-- <img class="mentionEmpImage" src="./assets/rich-text-editor/images/.png" alt="employee" /> -->
                   <span class="e-badge e-badge-success e-badge-overlap e-badge-dot e-badge-bottom "></span>
                 </div>
                 </td>
