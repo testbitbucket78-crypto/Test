@@ -71,6 +71,7 @@
     position: fixed;
     bottom: 0;
     background: #fbf9fe;
+    width: 400px;
 }
 
 
@@ -110,7 +111,7 @@ html, body {
 }
 .btn:not(:disabled):not(.disabled) {
     cursor: pointer;
-    margin: 0px 0px 0px 5px;
+    margin: 0px 10px 0px 0px;
     width: 114px;
     height: 43px;
 }
@@ -136,7 +137,7 @@ html, body {
 
 .btn-9 {
     cursor: pointer;
-    width: 114px;
+    width: max-content;
     color: #7A86A1;
     background-color: #ffffff;
     border: 1px solid #EBEBEB;
@@ -144,7 +145,10 @@ html, body {
     font-family: "Manrope";
     font-size: 14px;
     height: 43px;
-
+    margin-right: 10px;
+}
+.btn-9 > img {
+    margin-right: 1px;
 }
 
 .btn-delete {
@@ -598,7 +602,7 @@ opacity: 1;
 .sidebar {
     font-family: 'Manrope';
     height: 100%;
-    width: 400px;
+    width: 360px;
     position: fixed;
     z-index: 1040;
     top: 0;
@@ -637,15 +641,20 @@ opacity: 1;
     display: block;
   }
 
-  .sidebar .parent .child {
-    width: 210px;
+.sidebar .parent .child {
+    width: 160px;
     word-wrap: break-word;
-  }
-  
-  .sidebar .parent .child .child1 h5{
+
+    .d-flex {
+        margin-bottom: 0.5rem;
+    }
+}
+
+.sidebar .parent .child .child1 h5 {
     color: #7A86A1;
     font-size: 12px;
     font-weight: 600;
+    margin-bottom: 0rem;
 }
   .sidebar .parent .child .child1 h6{
     color: #000000;
@@ -659,7 +668,7 @@ opacity: 1;
 }
 .sidebar .parent .child2 h5{
     color: #6149CD;
-    font-size: 13px;
+    font-size: 16px;
     margin: 0;
     font-weight: 600;
 }
@@ -695,7 +704,7 @@ opacity: 1;
 }
 .sidebar .parent .child3 h5{
     color: #6149CD;
-    font-size: 13px;
+    font-size: 16px;
     margin: 0;
     font-weight: 600;
 }
@@ -730,7 +739,7 @@ opacity: 1;
 }
 .sidebar .child5 h5{
     color: #6149CD;
-    font-size: 13px;
+    font-size: 16px;
     margin: 0;
     font-weight: 600;
 }
@@ -1439,7 +1448,7 @@ input[type="radio"], input[type="checkbox"] {
 }
 
 .parent-img{
-    height: 115px;
+    height: 90px;
     width: 90px;
     border-radius: 50%;
     background: white;
@@ -1452,6 +1461,7 @@ input[type="radio"], input[type="checkbox"] {
     font-size: 28px;
     font-weight: 800;
     margin: 30px 20px 0px -20px;
+    overflow: hidden;
     box-shadow: 3px 3px 9px rgb(16 6 0 / 22%)
 }
 
@@ -1460,3 +1470,31 @@ input[type="radio"], input[type="checkbox"] {
     text-transform: uppercase;
     letter-spacing: 1px;
 }
+.child .dialog-h4 {
+    margin: 32px 0 5px !important;
+}
+
+.auto-contact-scroll {
+    overflow-y: auto !important;
+
+    input[type="time"],
+    input[type="date"] {
+        &::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+        }
+    }
+
+    select.form-control {
+        cursor: pointer; 
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    select.form-control::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+    }
+}
+
+

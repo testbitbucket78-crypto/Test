@@ -25,7 +25,7 @@ export class RolesSettingsComponent implements OnInit {
         },
         {
             field: 'rights',
-            headerName: 'Rights',
+            headerName: 'No. of Rights',
             width:120,
             suppressSizeToFit: false,
             resizable: true,

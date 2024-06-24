@@ -1134,11 +1134,11 @@ formateDate(dateTime:string){
 	//   }
 	  
 
-	 selectScheduleTime(event:any){
-		this.selecteScheduleTime= event.target.value;
+	selectScheduleTime(event: any) {
+		this.selecteScheduleTime= event;
 		//this.selectedScheduleTime= new Date(event.target.valueAsDate).toLocaleTimeString()
-		this.selectedScheduleTime = new Date(new Date(new Date().setHours(event.target.value.split(':')[0],event.target.value.split(':')[1])).setSeconds(0)).toLocaleTimeString();
-		this.checkScheduleTiming(event.target.value);
+		this.selectedScheduleTime = new Date(new Date(new Date().setHours(event.split(':')[0],event.split(':')[1])).setSeconds(0)).toLocaleTimeString();
+		this.checkScheduleTiming(event);
 	  }
 
 	checkScheduleTiming(e:any){

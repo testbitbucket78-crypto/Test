@@ -605,23 +605,30 @@
 						<div class="middel_section_outer">
 							<div *ngIf="scheduled==1" class="middel_section">
 								<!-- <div class="formrow">
-									<p>Time Zone</p>
-									<p (click)="toggleTimeZone()" class="form-control select_box btn">{{selecteTimeZone}}</p>
-									<div *ngIf="showTimeZoneOption" class="popup-dialog">
-										<p class="label">Zone</p>
-										<p *ngFor='let timezone of timeZonesList ;let i = index' (click)="selectTimeZone(timezone)"><span>{{timezone}}</span></p>
-									</div>
-								</div> -->
-								  <div class="formrow">
+		<p>Time Zone</p>
+		<p (click)="toggleTimeZone()" class="form-control select_box btn">{{selecteTimeZone}}</p>
+		<div *ngIf="showTimeZoneOption" class="popup-dialog">
+			<p class="label">Zone</p>
+			<p *ngFor='let timezone of timeZonesList ;let i = index' (click)="selectTimeZone(timezone)"><span>{{timezone}}</span></p>
+		</div>
+	</div> -->
+								<div class="formrow">
 									<p class="mb-2">Schedule Date</p>
 									<input (change)="selectScheduleDate($event)" type="date" class="form-control btn white_bg d-block" value={{selecteScheduleDate}}>
 									<div *ngIf="selScheduleDate < currDate" class="invalid-feedback f-11">Schedule date should not be in past</div>
-								  </div>
+								</div>
 								<div class="formrow">
+									<p class="mb-2">Schedule Time</p>
+									<sb-timepicker [(timebind)]="selecteScheduleTime" [step]="5" (timeChanged)="selectScheduleTime($event)"></sb-timepicker>
+									<div *ngIf="!(selScheduleDate < currDate || selScheduleDate > currDate) && isTimingPast" class="invalid-feedback f-11">Schedule time should not be in past</div>
+								</div>
+								
+								<!--<div class="formrow">
+									// This Input Field is replaced with the above with same functionality
 									<p class="mb-2">Schedule Time</p>
 									<input (change)="selectScheduleTime($event)" type="time" class="form-control btn white_bg d-block" value={{selecteScheduleTime}}>
 									<div *ngIf="!(selScheduleDate < currDate || selScheduleDate > currDate) && isTimingPast" class="invalid-feedback f-11">Schedule time should not be in past</div>
-								</div>
+								</div>-->
 							</div>
 						</div>
 						<div class="bottom_section">
