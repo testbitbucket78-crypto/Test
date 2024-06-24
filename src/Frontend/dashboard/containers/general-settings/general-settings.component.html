@@ -65,7 +65,7 @@
                     <input class="form-control" name="pauseAutoReplyTime" type="text" 
                     [pattern]="pauseAutoTimePattern"
                      onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"  
-                     [disabled]="!isAutoReply"
+                     [disabled]="!isAutoReply || isAutoReplyDisable"
                      placeholder="Enter autoreply timeout (1-1440 minutes)"
                      (change)="autoRepliesPausedTill(pauseAutoReplyTime)"
                      [(ngModel)]="pauseAutoReplyTime"

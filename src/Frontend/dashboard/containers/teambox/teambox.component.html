@@ -376,9 +376,32 @@
 									(click)="toggleChatNotes('notes')">Notes</button>
 							</div>
 							<div class="input-area" (click)="checkPermission()" *ngIf="isRefresh">
-								<ejs-richtexteditor id='defaultRTE' [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open')" #chatEditor [toolbarSettings]='tools' [height]='100'
-								  placeholder="Enter Message">
+								<ejs-richtexteditor id="mention_integration" #mention_integration [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open')"  [toolbarSettings]='tools' [height]='100'
+								  placeholder="Enter Message" (actionBegin)="onActionBegin($event)">
 								</ejs-richtexteditor>
+
+								<ejs-mention *ngIf="showChatNotes=='notes'" #mention [dataSource]='agentsList' target='#mention_integration_rte-edit-view' [fields]='fieldsData' [suggestionCount]="8" [showMentionChar]="false" [allowSpaces]="true"  
+popupWidth='250px' popupHeight='200px'>
+    <ng-template #itemTemplate let-data>
+        <table>
+            <tr>
+              <td>
+                <div id="mention-TemplateList"> 
+                  <img class="mentionEmpImage" src="./assets/rich-text-editor/images/.png" alt="employee" />
+                  <span class="e-badge e-badge-success e-badge-overlap e-badge-dot e-badge-bottom "></span>
+                </div>
+                </td>
+                <td class="mentionNameList">
+                  <span class="person"></span>
+                  <span class="email"></span>
+                </td>
+              </tr>
+            </table>
+    </ng-template>
+    <!-- <ng-template #displayTemplate let-data>
+        <a href="mailto:" title="">&#64;</a>
+    </ng-template> -->
+</ejs-mention>
 							  
 
 									<!-- <div *ngIf="false" class="popup-dialog mention" (click)="stopPropagation($event)">

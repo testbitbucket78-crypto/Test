@@ -179,10 +179,10 @@
                 <span class="sub-heading">Roles Assigned</span><br>
                 <p class="black">{{ userData?.RoleName }}</p>
             </div>
-            <div class="w-45">
+            <!-- <div class="w-45">
                 <span class="sub-heading">Team Associated</span><br>
                 <p class="black">{{ userData?.team_name }}</p>
-            </div>
+            </div> -->
         </div>
     </div>
     <div class="sideBar-footer">
@@ -196,8 +196,7 @@
                 <span>Disable</span>
                 <div class="px-2 switch-toggle">
                     <label class="m-0 switch">
-                        <input type="checkbox" class="m-0 form-control-checkbox" (click)="checkboxState(true)" [(ngModel)]="isActive"
-                               [disabled]="isToggleDisabled"
+                        <input type="checkbox" class="m-0 form-control-checkbox" (click)="checkboxState(true); showSideBar = false" [(ngModel)]="isActive"
                                data-bs-toggle="modal"
                                data-bs-target="#disableModal" />
                         <span class="slider"></span>

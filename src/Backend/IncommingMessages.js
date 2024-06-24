@@ -144,19 +144,19 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
 
 async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType) {
   try {
-     console.log("in side getSmartReplies method" ,message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
+    console.log("in side getSmartReplies method", message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
     // console.log("message_text")
     // console.log(message_text)
     // console.log("_________process.env.insertMessage__________")
 
     let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newId, phone_number_id, from, channelType, agid);
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
-    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, newId, channelType, agid);
+    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid);
 
-    console.log("defultOutOfOfficeMsg")
+    //console.log("defautWlcMsg========" ,defautWlcMsg)
     //console.log(defautWlcMsg)
     //console.log(replymessage)
-   // console.log(defultOutOfOfficeMsg)
+    // console.log(defultOutOfOfficeMsg)
     //var autoReply = replymessage[0].Message
     //console.log(replymessage.length)
 
@@ -171,12 +171,14 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
       console.log(getOutOfOfficeResult)
     }
     else if (defautWlcMsg.length > 0 && defautWlcMsg[0].Is_disable == 1) {
-      // console.log("defaut msg")
+
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 1])
-      if (messageInterval.length < 0) {
+      console.log("above if else defautWlcMsg msg", messageInterval.length)
+      if (messageInterval.length <= 0) {
         // sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
-        messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, wlcMessage[0].value, wlcMessage[0].link, phone_number_id, channelType, agid, newId)
-        
+        let message_text =await getExtraxtedMessage(defautWlcMsg[0]?.value)
+        let result = await messageThroughselectedchannel(sid, from, defautWlcMsg[0].message_type, message_text, defautWlcMsg[0].link, phone_number_id, channelType, agid, newId)
+        console.log("main welcome", result)
         let myUTCString = new Date().toUTCString();
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateSmsRes = await db.excuteQuery(updateSms, [1, time, msg_id]);
@@ -306,7 +308,28 @@ function parseMessageTemplate(template) {
   return placeholders;
 }
 
+async function getExtraxtedMessage(message_text) {
+  try {
+    let content = await removeTags.removeTagsFromMessages(message_text);
+    // Parse the message template to get placeholders
+    const placeholders = parseMessageTemplate(content);
+    if (placeholders.length > 0) {
+      // Construct a dynamic SQL query based on the placeholders
+      console.log(placeholders)
+      const results = await removeTags.getDefaultAttribue(placeholders, SPID, customerId);
+      console.log("results", results)
 
+      placeholders.forEach(placeholder => {
+        const result = results.find(result => result.hasOwnProperty(placeholder));
+        const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+        content = content.replace(`{{${placeholder}}}`, replacement);
+      });
+    }
+    return content;
+  } catch (err) {
+    console.log("ERR getExtractedMessage---", err)
+  }
+}
 
 async function PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId) {
   // Perform actions based on the Action ID
@@ -402,18 +425,19 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
 
     var wlcMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Welcome Greeting']);
     if (newlyInteractionId != null && newlyInteractionId != undefined && newlyInteractionId != "" && wlcMessage.length > 0 && wlcMessage[0].Is_disable == 1) {
-      // console.log("defaut msg")
+      console.log(" welcome ist defaut msg")
       // sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
       let messageInterval = await db.excuteQuery('select * from Message where interaction_id=?', [newlyInteractionId])
-     // console.log(messageInterval)
-    if (messageInterval.length <= 0) {
-      // console.log("messageInterval" ,newId)
-      messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, wlcMessage[0].value, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId)
-      
-      let myUTCString = new Date().toUTCString();
-      const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let updateSmsRes = await db.excuteQuery(updateSms, [1, time, msg_id]);
-    }
+      console.log("welcome messageInterval?.length", messageInterval?.length)
+      if (messageInterval?.length <= 0) {
+        // console.log("messageInterval" ,newId)
+        let message_text =await getExtraxtedMessage(wlcMessage[0]?.value)
+        let result = await messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, message_text, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId)
+        console.log("result---------", result)
+        let myUTCString = new Date().toUTCString();
+        const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let updateSmsRes = await db.excuteQuery(updateSms, [1, time, msg_id]);
+      }
     }
     // console.log(wlcMessage);
     return wlcMessage;
@@ -428,17 +452,18 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
     let result = '';
 
     var outOfOfficeMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Out of Office']);
-   //  console.log(outOfOfficeMessage)
+    //  console.log(outOfOfficeMessage)
     if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
-       console.log("outOfOfficeMessage Is_disable")
+      console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 2])
-        console.log(messageInterval)
+      console.log(messageInterval)
       if (messageInterval.length <= 0) {
-         console.log("messageInterval" ,newId)
+        console.log("messageInterval", newId)
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
-        result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
+       let message_text =await getExtraxtedMessage(outOfOfficeMessage[0]?.value)
+        result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, message_text, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
         console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
-        
+
         let myUTCString = new Date().toUTCString();
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateSmsRes = await db.excuteQuery(updateSms, [2, time, msg_id]);
@@ -456,9 +481,10 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
   const currentTime = new Date();
   let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
   var workingData = await db.excuteQuery(workingHourQuery, [sid]);
+  console.log("working")
   if ((isWorkingTime(workingData, currentTime))) {
     AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid);
-     console.log('It is currently  within working hours.' + msg_id);
+    console.log('It is currently  within working hours.' + msg_id);
     return true;
   }
   // console.log('It is currently not within working hours.');
@@ -470,6 +496,7 @@ function isWorkingTime(data, currentTime) {
   //console.log(data)
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   const currentTimeStr = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  let datetime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
   // console.log(currentDay)
   const time = new Date()
 
@@ -477,17 +504,20 @@ function isWorkingTime(data, currentTime) {
     const workingDays = item.working_days.split(',');
     const date = new Date().getHours();
     const getMin = new Date().getMinutes();
-    // console.log(date + " :::::::" + getMin)
-
-    const startTime = item.start_time.split(':');
-    const endTime = item.end_time.split(':');
+   // console.log(date + " :::::::" + getMin)
+    const start_time = (item.start_time).replace(/\s*(AM|PM)/, "");
+    const end_time = (item.end_time).replace(/\s*(AM|PM)/, "");
+    const startTime = start_time.split(':');
+    const endTime = end_time.split(':');
     // console.log(startTime + " " + endTime + workingDays.includes(currentDay))
     // console.log(endTime[0] + " " + date + endTime[1] + "| " + getMin)
     if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
-      // console.log("data===========")
+      console.log("data===========")
       return true;
     }
-
+    // if ((((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
+    //   return true;
+    // }
 
 
   }
@@ -499,21 +529,22 @@ function isWorkingTime(data, currentTime) {
 
 async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid) {
   //console.log("AllAgentsOffline");
-  var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=? and ";
+  var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=? and isDeleted !=1";
   let activeAgent = await db.excuteQuery(activeAgentQuery, [sid]);
 
   if (activeAgent?.length <= 0) {
 
-  //  console.log("activeAgent",msg_id + " " + newId);
+    console.log("activeAgent", msg_id + " " + newId);
 
     var AgentsOfflineMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'All Agents Offline']);
     if (AgentsOfflineMessage.length > 0 && AgentsOfflineMessage[0].Is_disable == 1) {
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 3])
-    //  console.log("inactive above   length" ,messageInterval.length)
+      console.log("inactive above   length", messageInterval.length)
       if (messageInterval.length <= 0) {
         //sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
-        messageThroughselectedchannel(sid, from, AgentsOfflineMessage[0].message_type, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].link, phone_number_id, channelType, agid, newId)
-
+        let message_text =await getExtraxtedMessage(AgentsOfflineMessage[0]?.value)
+        let allAgentsmessage = await messageThroughselectedchannel(sid, from, AgentsOfflineMessage[0].message_type,message_text, AgentsOfflineMessage[0].link, phone_number_id, channelType, agid, newId)
+        console.log("allAgentsmessage", allAgentsmessage);
         let myUTCString = new Date().toUTCString();
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateSmsRes = await db.excuteQuery(updateSms, [3, time, msg_id]);
@@ -525,22 +556,24 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
 
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId) {
+  console.log("phone_number_id,channelType,spid, from, type, text")
+  console.log(phone_number_id, channelType, spid, from, type, text)
   if (channelType == 'WhatsApp Official') {
 
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-   let result = middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
-   console.log(result)
-   let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time,time, "", -2]]
-   let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+    let result = middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^", result)
+    let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time, time, "", -2]]
+    let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
   } if (channelType == 'WhatsApp Web') {
-console.log("message midddleware" ,interactionId)
+    console.log("message midddleware", interactionId)
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)
     if (result.status == 200) {
-      
+
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time,time, "", -2]]
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time, time, "", -2]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
     }
   }
@@ -552,16 +585,16 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
-    let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", time,time, "", -2]]
+    let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", time, time, "", -2]]
     let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
   } if (channelType == 'WhatsApp Web') {
 
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)
     if (result.status == 200) {
-      
+
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "",time,time, "", -2]]
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", time, time, "", -2]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
     }
   }
