@@ -61,7 +61,7 @@
     border-radius: 19px !important;
     border: 1px solid #EBEBEB;
     background-color: #ffffff;
-    margin: -4px 15px 0px -18px;
+    margin: -0px 15px 0px -18px;
     font-family: "Manrope";
     font-size: 14px;
     padding-left: 35px;
@@ -84,6 +84,7 @@
 .flex-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .new-token-btn {
@@ -213,7 +214,11 @@ select {
     border-bottom: 1px solid #695F971A;
     color: #C0BDCC;
 }
-
+.notification-content-parent {
+    max-height: 270px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 .header-col {
     flex: 1 1;
     font-size: 0.875rem;

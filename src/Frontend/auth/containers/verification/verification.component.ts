@@ -18,6 +18,7 @@ export class VerificationComponent implements OnInit {
     isVerified: boolean = false;
     email: any;
     phone: any;
+    name: any;
     verifyButton1Clicked = false;
     verifyButton2Clicked = false;
     errorMessage = '';
@@ -72,7 +73,7 @@ export class VerificationComponent implements OnInit {
     ngOnInit() {
         this.email_id = sessionStorage.getItem('otpfieldEmailvalue')
         this.phone = sessionStorage.getItem('otpfieldMobilevalue')
-       
+        this.name = sessionStorage.getItem('otpfieldNamevalue')
     }
 
     // checkSubmitButton() {
@@ -193,7 +194,8 @@ export class VerificationComponent implements OnInit {
     resendOtp() {
         let values = {
             "email_id":this.email_id,
-            "mobile_number":this.phone
+            "mobile_number": this.phone,
+            "name": this.name
         }
         this.apiService.sendOtp(values).subscribe((response:any) => {
             if(response.status === 200) {

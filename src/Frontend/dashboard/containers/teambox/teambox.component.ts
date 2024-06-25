@@ -12,6 +12,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ToolbarService,NodeSelection, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { debounceTime, map } from 'rxjs/operators';
+import { Mention } from '@syncfusion/ej2-angular-dropdowns';
 
 declare var $: any;
 @Component({
@@ -33,11 +34,27 @@ routerGuard = () => {
 		this.router.navigate(['login']);
 	}
 }
-
-
+public data: { [key: string]: Object }[] = [
+	{ Name: "Selma Rose", Status: "active", Eimg: "2", EmailId: "selma@gmail.com" },
+	{ Name: "Maria", Status: "active", Eimg: "1", EmailId: "maria@gmail.com" },
+	{ Name: "Russo Kay", Status: "busy", Eimg: "8", EmailId: "russo@gmail.com" },
+	{ Name: "Camden Kate", Status: "active", Eimg: "9", EmailId: "camden@gmail.com" },
+	{ Name: "Robert", Status: "busy", Eimg: "dp", EmailId: "robert@gmail.com" },
+	{ Name: "Garth", Status: "active", Eimg: "7", EmailId: "garth@gmail.com" },
+	{ Name: "Andrew James", Status: "away", Eimg: "pic04", EmailId: "noah@gmail.com" },
+	{ Name: "Olivia", Status: "busy", Eimg: "5", EmailId: "olivia@gmail.com" },
+	{ Name: "Sophia", Status: "away", Eimg: "6", EmailId: "sophia@gmail.com" },
+	{ Name: "Margaret", Status: "active", Eimg: "3", EmailId: "margaret@gmail.com" },
+	{ Name: "Ursula Ann", Status: "active", Eimg: "dp", EmailId: "ursula@gmail.com" },
+	{ Name: "Laura Grace", Status: "away", Eimg: "4", EmailId: "laura@gmail.com" },
+	{ Name: "Albert", Status: "active", Eimg: "pic03", EmailId: "albert@gmail.com" },
+	{ Name: "William", Status: "away", Eimg: "10", EmailId: "william@gmail.com" }
+  ];
+public  fieldsData: { [key: string]: string } = { text: 'name' };
+@ViewChild('mention') mentionObj!: Mention;
 	@ViewChild('notesSection') notesSection: ElementRef | any; 
 	@ViewChild('chatSection') chatSection: ElementRef | any; 
-	@ViewChild('chatEditor') chatEditor!: RichTextEditorComponent; 
+	@ViewChild('mention_integration') chatEditor!: RichTextEditorComponent; 
 	@ViewChild('scrollContainer') scrollContainer: ElementRef | any;
 
 	@ViewChild('variableValue', { static: false }) variableValueForm!: NgForm;
@@ -1402,7 +1419,7 @@ sendattachfile() {
 	}
 
 	async getSearchInteractions(key:string){
-		await this.apiService.getSearchInteraction(key,this.uid).subscribe(async (data:any) =>{
+		await this.apiService.getSearchInteraction(key,this.uid,this.SPID).subscribe(async (data:any) =>{
 			var dataList:any = data?.conversations;
 			this.interactionList= dataList;
 			this.interactionListMain= dataList;
@@ -2585,7 +2602,7 @@ sendMessage(){
 	  }
 
       limitCharacters(message: string) {
-        let maxLength = 50;
+        let maxLength = 22;
         if (message.length <= maxLength) {
         return message;
         } else {
@@ -2708,4 +2725,13 @@ sendMessage(){
 			this.showToaster('Attention! You can write Note only to an Open Conversation','error');
 		}
 	}
+
+	onActionBegin(args: any) {
+		console.log(args);
+		console.log(this.mentionObj.element?.classList);
+        if (args.requestType === 'EnterAction' && this.mentionObj.element?.classList?.contains('e-popup-open')) {
+			console.log('abc');
+          args.cancel = true;
+        }
+      }
 }

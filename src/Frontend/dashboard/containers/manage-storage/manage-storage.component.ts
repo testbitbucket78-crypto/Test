@@ -110,7 +110,7 @@ export class ManageStorageComponent implements OnInit {
     optionControl?.valueChanges.subscribe(value => {
       if (value) {
         radioControl?.setValue(null, { emitEvent: false });
-        radioControl?.disable({emitEvent:false});
+        //radioControl?.disable({emitEvent:false});
       }
       else {
         radioControl?.enable({emitEvent:false});
@@ -120,7 +120,7 @@ export class ManageStorageComponent implements OnInit {
     radioControl?.valueChanges.subscribe(value => {
       if (value) {
         optionControl?.setValue(null, { emitEvent: false });
-        optionControl?.disable({emitEvent:false});
+        //optionControl?.disable({emitEvent:false});
       }
       else {
         optionControl?.enable({emitEvent:false});

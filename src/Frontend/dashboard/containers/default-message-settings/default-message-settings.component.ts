@@ -228,6 +228,7 @@ showMessageType(type: string) {
 
   
   selectedButtonType(type: number) {
+    this.removeValue();
     this.selectedCategory = type;    
     this.defaultMessageForm =this.prepareUserForm();
     this.value = this.defaultMessageForm.get('value')?.value;
