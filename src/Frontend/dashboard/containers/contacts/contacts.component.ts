@@ -318,7 +318,31 @@ contactForm() {
     tag: new FormControl([])
   })
 }
- 
+
+    validatorsToggle() {
+        debugger;
+        const displayPhoneNumber = this.productForm?.get('displayPhoneNumber');
+        const countryCode = this.productForm?.get('countryCode');
+        if (countryCode) {
+            if (countryCode.value == 'IN +91') {
+                this.productForm.controls.displayPhoneNumber.setValidators([
+                    Validators.pattern('^[0-9]+$'),
+                    Validators.required,
+                    Validators.minLength(10),
+                    Validators.maxLength(10)
+                ]);
+                return true;
+            } else {
+                this.productForm.controls.displayPhoneNumber.setValidators([
+                    Validators.pattern('^[0-9]+$'),
+                    Validators.required,
+                    Validators.minLength(6),
+                    Validators.maxLength(15)
+                ]);
+                return false;
+            }
+        }
+    }
  onSelectionChanged(event: any) {
 
      this.isButtonEnabled = this.checkedConatct.length > 0 && event !== null;

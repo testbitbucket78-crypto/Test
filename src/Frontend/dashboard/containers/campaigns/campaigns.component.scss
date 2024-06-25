@@ -1338,11 +1338,13 @@
 	justify-content: center;
 	align-items: center;
 	}
-	.addnewitem_content_inner .switchbtn .left{
+    .addnewitem_content_inner .switchbtn .left {
 	border-radius: 17px 0px 0px 17px;
-	}
+	cursor: pointer;
+    }
 	.addnewitem_content_inner .switchbtn .right{
 	border-radius: 0px 17px 17px 0px;
+	cursor: pointer;
 	}
 	.addnewitem_content_inner .switchbtn p{
 	height:30px;
@@ -1946,14 +1948,15 @@
 	display: flex;
 	cursor: pointer;
 	}
-	.testcampaignmodal{
+    .testcampaignmodal {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	background: url("/assets/img/campaign/confirm-bg.png") no-repeat;
 	background-position: -10px 120px;
 	background-size: 60%;
-	}
+	top: -23px;
+    }
 	.testcampaignmodal img{
 	width: 35px;
 	margin-bottom:10px;

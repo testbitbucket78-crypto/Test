@@ -532,30 +532,36 @@
 					<label for="displayPhoneNumber">Phone Number<span class="text-danger">*</span></label>
 					<div class="form-floating">
 						<div class="d-flex ss">
-							
-						<select class="input-form" id="countryCode" formControlName="countryCode">
-							<option  *ngFor="let countryCode of countryCodes" [ngValue]="countryCode">
-								{{ countryCode }}
-							</option>
-						</select>
+
+							<select class="input-form" id="countryCode" formControlName="countryCode">
+								<option  *ngFor="let countryCode of countryCodes" [ngValue]="countryCode">
+									{{ countryCode }}
+								</option>
+							</select>
 							<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" style="display: none" />
-							<input type="text" class="form-control" id="displayPhoneNumber" formControlName="displayPhoneNumber" 
-								name="displayPhoneNumber" placeholder="Enter Phone Number" (change)="formatPhoneNumber()"
-								[ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }" > 
+							<input type="text" class="form-control" id="displayPhoneNumber" formControlName="displayPhoneNumber"
+								   name="displayPhoneNumber" placeholder="Enter Phone Number" (change)="formatPhoneNumber();validatorsToggle()"
+								   [ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }">
 						</div>
-						<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.valid && 
-						      productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength')"
+						<div *ngIf="productForm.controls.displayPhoneNumber.touched &&
+                               validatorsToggle() == true && ( productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength'))"
 							 class="text-danger">
-						! Phone number must consist of 6 to 15 digits.
-					  </div>
-					  <div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('required')"
-					  class="text-danger">
-					  ! Phone Number is required.
-				  </div>
-				  <div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('pattern')"
-				  class="text-danger">
-				  ! Invalid Phone Number.
-			  </div>
+							Phone number must consist of exactly 10 digits.
+						</div>
+
+						<div *ngIf="productForm.controls.displayPhoneNumber.touched && validatorsToggle() === false &&
+						      (productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength'))"
+							 class="text-danger">
+							! Phone number must consist of 6 to 15 digits.
+						</div>
+						<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('required')"
+							 class="text-danger">
+							! Phone Number is required.
+						</div>
+						<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('pattern')"
+							 class="text-danger">
+							! Invalid Phone Number.
+						</div>
 
 					</div>
 				</div>
@@ -576,7 +582,7 @@
 				</div>
 			
 			</div>
-			<div class="p-0 col-md">
+			<div class="py-2 row-md">
 				<label for="ContactOwner">Contact Owner<span class="text-danger">*</span></label>
 					<input class="form-control" type="text" readonly placeholder="Select Contact Owner" name="ContactOwner" [disabled]="settingsService.checkRoleExist('7')"
 						formControlName="ContactOwner" id="ContactOwner" (click)="toggleContactOption()" 
@@ -592,14 +598,14 @@
 				class="text-danger">
 				! Contact Owner is required.
 			</div>
-
+		    <div class="py-2 row-md">
 				<label for="tag">Tag</label>
 				<ng-multiselect-dropdown (click)="this.ShowContactOwner=false" class="multiselect" name="tag" formControlName="tag" id="tag"
 					[settings]="dropdownSettings" [data]="tag" [placeholder]="'Select Tag from dropdown'">
 				</ng-multiselect-dropdown>
-
+			</div>
 			<div>
-				<div *ngFor="let item of filteredCustomFields">
+				<div  class="py-2 row-md" *ngFor="let item of filteredCustomFields">
 					<label for="tag" >{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
 					<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
 					<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'">

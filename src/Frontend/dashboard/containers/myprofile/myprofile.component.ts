@@ -85,7 +85,7 @@ export class MyprofileComponent implements OnInit,OnDestroy {
     this.changepassword = this.fB.group({
       uid: this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid,
       oldPass:['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
-      newPass:['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
+      newPass:['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}'), this.passwordMatchValidator.bind(this)]],
       confirmPass: ['', [Validators.required, this.passwordMatchValidator.bind(this)]]
 
     });
@@ -154,7 +154,8 @@ export class MyprofileComponent implements OnInit,OnDestroy {
 		this.modalReference = this.modalService.open(changepassword);
 	}
 
-  togglePasswordVisibility(field: string) {
+    togglePasswordVisibility(field: string) {
+        debugger;
     if (field === 'currentPassword') {
       this.currentPasswordType = !this.currentPasswordType;
     } else if (field === 'newPassword') {
@@ -169,15 +170,17 @@ export class MyprofileComponent implements OnInit,OnDestroy {
     const confirmPasswordControl = this.changepassword?.get('confirmPass');
 
     if (passwordControl && confirmPasswordControl) {
-        const password = passwordControl.value;
-        const confirmPassword = confirmPasswordControl.value;
+        if (confirmPasswordControl.value && passwordControl.value) {
+            const password = passwordControl.value;
+            const confirmPassword = confirmPasswordControl.value;
 
-        if (password !== confirmPassword && password !== '') {
-            return { 'mismatch': true };
+            if (password !== confirmPassword && password !== '') {
+                return { 'mismatch': true };
+            }
         }
     }
     return null;
-}
+    }
 
   // get teamname and rolename from api response
 
