@@ -269,6 +269,8 @@ SELECT DISTINCT
     last_message.LastMessageId,
     COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
     m.*,
+    ic.created_at as InCreatedDate,
+    ic.updated_at as InUpdatedDate,
     m.created_at AS LastMessageDate,
     ww.connected_id,
     im.AgentId as InteractionMapping -- Using the latest InteractionMapping

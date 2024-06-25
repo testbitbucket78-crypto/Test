@@ -75,19 +75,19 @@ const addCampaign = async (req, res) => {
             updateQuery += " WHERE Id =" + req.body.Id
 
             let addcampaign = {
-                insertId : req.body.Id
+                insertId: req.body.Id
             }
             let statusToUpdate = 1;  //For scheduled campaign status
             if (status == '-1') {
                 statusToUpdate = 2;
             }
             campaignAlerts(req.body, req.body.Id, statusToUpdate)
-           // db.runQuery(req, res, updateQuery, []);
-           res.send({
-            "status": 200,
-            "message": "Campaign added",
-            "addcampaign": addcampaign
-        })
+            // db.runQuery(req, res, updateQuery, []);
+            res.send({
+                "status": 200,
+                "message": "Campaign added",
+                "addcampaign": addcampaign
+            })
         } else {
 
             var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time,media_type) values ? ";
@@ -117,7 +117,7 @@ const addCampaign = async (req, res) => {
 const isExistCampaign = async (req, res) => {
     try {
 
-        let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=? AND Id !=?", [req.params.title, req.params.spid,req.params.Id])
+        let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=? AND Id !=?", [req.params.title, req.params.spid, req.params.Id])
 
         if (campaignTitle?.length == 0) {
 
@@ -380,7 +380,7 @@ const sendCampinMessage = async (req, res) => {
         let results = await db.excuteQuery(sqlQuery, [customerId, spid]);
         console.log(spid, req.body.channel_id, type, messageTo, "****", customerId)
 
-        if (new Date(inputDate) <= new Date(formattedTime) || results[0]?.isBlocked !=1) {
+        if (new Date(inputDate) <= new Date(formattedTime) || results[0]?.isBlocked != 1) {
             let messagestatus;
             if (optInStatus == 'Yes') {
 
@@ -402,9 +402,9 @@ const sendCampinMessage = async (req, res) => {
             //if(messagestatus =='')
             console.log("messagestatus  " + JSON.stringify(messagestatus?.status))
             return res.send(messagestatus);
-        }else{
+        } else {
             return res.send({
-                msg : 'time not match Or Contact is Block'
+                msg: 'time not match Or Contact is Block'
             });
         }
 
@@ -692,7 +692,7 @@ const saveCampaignMessages = async (req, res) => {
         // console.log(req.body.message_content, "InteractionId InteractionId")
 
         let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent) values ?`
-        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, type, req.body.SP_ID, type, '',-1]]]);
+        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, type, req.body.SP_ID, type, '', -1]]]);
 
 
         let content = await removeTags.removeTagsFromMessages(req.body.message_content);
@@ -775,7 +775,24 @@ const copyCampaign = (req, res) => {
     db.runQuery(req, res, CopyQuery, []);
 }
 
-module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList, isExistCampaign, processContactQueries };
+
+const download = (req, res) => {
+    try {
+        var file = path.join(__dirname, '/sample_file.csv')
+
+
+        res.download(file)
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+            msg: err,
+            status: 500
+        });
+    }
+}
+
+module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList, isExistCampaign, processContactQueries, download };
 
 
 
