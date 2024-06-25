@@ -114,12 +114,19 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
             data: messageData, // Use the video message structure
             headers: { "Content-Type": "application/json" },
         })
-         console.log("****META APIS****", response.data);
-        return response.data
+         //console.log("****META APIS****", response.data);
+        return {
+            status :200,
+            message : response.data
+        };
         //console.log("****META APIS****", caption);
     } catch (err) {
-         console.error("______META ERR_____", err.message);
-        return err.message;
+        // console.error("______META ERR_____", err.message);
+       // return err.message;
+        return {
+            status :500,
+            message : err.message
+        };
     }
 
 }

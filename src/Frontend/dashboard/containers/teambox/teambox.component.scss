@@ -578,6 +578,7 @@ img.preview_icon {
     flex-direction: column;
     word-break: break-word;
     min-width: 70px;
+    width: 70px;
 }
 
 .contacts_list .pin_icon {
@@ -2360,7 +2361,10 @@ label span {
     position: relative;
     z-index: 1;
     left: 0rem;
-    bottom: -0.7rem;
+    bottom: -0.2rem;
+    width: 121px !important;
+    display: block;
+    text-align: right;
 }
 .hovertext:hover:before {
     opacity: 1;

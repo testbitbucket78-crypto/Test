@@ -200,7 +200,13 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
     }
     let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId,'WhatsApp Official')
-    let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  // CALL Default Routing Rules
+   console.log("defaultReplyAction-->>> boolean",defaultReplyAction)
+    if(defaultReplyAction == false){
+    let myUTCString = new Date().toUTCString();
+    const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?',['Open',updated_at,newId])
+    let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
+   }
   }
 
 }

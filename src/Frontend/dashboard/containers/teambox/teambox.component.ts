@@ -1419,7 +1419,7 @@ sendattachfile() {
 	}
 
 	async getSearchInteractions(key:string){
-		await this.apiService.getSearchInteraction(key,this.uid).subscribe(async (data:any) =>{
+		await this.apiService.getSearchInteraction(key,this.uid,this.SPID).subscribe(async (data:any) =>{
 			var dataList:any = data?.conversations;
 			this.interactionList= dataList;
 			this.interactionListMain= dataList;
@@ -2602,7 +2602,7 @@ sendMessage(){
 	  }
 
       limitCharacters(message: string) {
-        let maxLength = 50;
+        let maxLength = 22;
         if (message.length <= maxLength) {
         return message;
         } else {
