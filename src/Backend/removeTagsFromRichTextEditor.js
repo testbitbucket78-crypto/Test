@@ -114,7 +114,8 @@ function convertHTML(htmlString) {
   //   ''
   // );
   // Replace <span> tags with strikethrough
-  result = result.replace(/<span.*?>\s*(.*?)\s*<\/span>/g, '~$1~');
+  // result = result.replace(/<span.*?>\s*(.*?)\s*<\/span>/g, '~$1~');
+   result = result.replace(/<span\s+[^>]*style="[^"]*\btext-decoration:\s*line-through;[^"]*"[^>]*>(.*?)<\/span>/g, '~$1~'); // Add this because span is also attribute tag
   // Remove any remaining HTML tags
   result = result.replace(/<[^>]*>/g, '');
 
