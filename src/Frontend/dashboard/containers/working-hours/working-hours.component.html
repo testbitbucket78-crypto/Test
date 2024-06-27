@@ -46,15 +46,16 @@
                 <div class="month-card" *ngFor="let item of totalmonths;let idx =index"
                     (click)="createDynamicDate(idx+1)" data-bs-toggle="modal" data-bs-target="#holidayModal">
                     <div class=" date-time p-2 px-3">
-                        <img src="../../../../assets/img/settings/Edit-icon.svg">&nbsp;{{item}}
+                        <img src="../../../../assets/img/settings/Edit-icon.svg">&nbsp;{{item?.monthName}}
                     </div>
-                    <div class="dates-view px-3">
-                        <div class="month-date">1</div>
-                        <div class="month-date">12</div>
+                    <div class="dates-view px-3" *ngIf="item.values.length>0">
+                        <div class="month-date" *ngFor="let dt of item.values">{{dt | date:'dd'}}</div>
+                        <!-- <div class="month-date">12</div>
                         <div class="month-date">5</div>
                         <div class="month-date">1</div>
-                        <div class="month-date">13</div>
+                        <div class="month-date">13</div> -->
                     </div>
+                    <div *ngIf="item.values.length ==0" class="no-holidays">No holidays to show</div>
                 </div>
             </div>
 

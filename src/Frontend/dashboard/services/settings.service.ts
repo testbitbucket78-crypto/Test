@@ -166,7 +166,7 @@ const headers = new HttpHeaders({
   }
 
   getUserList(spId:number,userType:number =0): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/getUser/${spId}`);
+    return this.http.get<any>(`${this.API_URL}/getUser/${spId}/${userType}`);
   }
 
   userById(spId:number,userId:number =0): Observable<any> {
