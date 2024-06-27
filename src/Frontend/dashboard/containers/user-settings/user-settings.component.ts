@@ -115,6 +115,9 @@ export class UserSettingsComponent implements OnInit {
     countryCodes:string[] =[];
     title: string = '';
     btnActionName: string = '';
+    successMessage='';
+    errorMessage='';
+      warningMessage='';
     constructor(private _settingsService: SettingsService,private datepipe: DatePipe,) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
         this.countryCodes = this._settingsService.countryCodes;
@@ -218,21 +221,29 @@ export class UserSettingsComponent implements OnInit {
         let userData = this.copyUserData();
 
        if(isNullOrUndefined(this.selectedUserData)) {
-            this._settingsService.saveUserData(userData).subscribe(result => {
+            this._settingsService.saveUserData(userData).subscribe((result:any) => {
                 if (result) {
+                    if(result?.status == 200){
                     this.userDetailForm.reset();
                     $('#userModal').modal('hide');
                     this.getUserList();
+                    } else{
+                        this.showToaster('error',result?.msg);
+                    }
                 }
              });
             }
         else {
             this._settingsService.editUserData(userData).subscribe(result => {
                 if (result) {
+                    if(result?.status == 200){
                     this.userDetailForm.reset();
                     $('#userModal').modal('hide');
                     this.showSideBar = false;
                     this.getUserList();
+                } else{
+                    this.showToaster('error',result?.msg);
+                }
                 }
             });
         } 
@@ -343,4 +354,24 @@ export class UserSettingsComponent implements OnInit {
 
         return intials;
       }
+
+      
+showToaster(message:any,type:any){
+    if(type=='success'){
+      this.successMessage=message;
+    }else if(type=='error'){
+      this.errorMessage=message;
+    }else{
+      this.warningMessage=message;
+    }
+    setTimeout(() => {
+      this.hideToaster()
+    }, 5000);
+    
+  }
+  hideToaster(){
+    this.successMessage='';
+    this.errorMessage='';
+    this.warningMessage='';
+  }
 }
