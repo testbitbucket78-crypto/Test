@@ -509,8 +509,8 @@ function isWorkingTime(data, currentTime) {
 
   for (const item of data) {
     const workingDays = item.working_days.split(',');
-    const date = new Date().getHours();
-    const getMin = new Date().getMinutes();
+    const date = new Date(datetime).getHours();
+    const getMin = new Date(datetime).getMinutes();
     // console.log(date + " :::::::" + getMin)
     const start_time = (item.start_time).replace(/\s*(AM|PM)/, "");
     const end_time = (item.end_time).replace(/\s*(AM|PM)/, "");

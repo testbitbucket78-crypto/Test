@@ -330,7 +330,7 @@ const getAllFilteredInteraction = async (req, res) => {
 
 
     console.log("==================")
-        let conversations = await db.excuteQuery(queryPath, [req.body.SPID, RangeStart, RangeEnd]);
+        let conversations = await db.excuteQuery(queryPath, [req.body.SPID,req.body.SPID, RangeStart, RangeEnd]);
 
         let isCompleted = false;
         if (conversations?.length == 0 || conversations?.length < RangeEnd) {
