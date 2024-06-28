@@ -62,7 +62,7 @@ export class ImportComponent implements OnInit {
 	identifierColumn :any;
 	dragAreaClass: string='';
 	messageOptIn:string = '';
-	
+	identifierTooltip: boolean = false;
 
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService,private _settingsService:SettingsService,private router:Router) {
 		// customize default values of modals used by this component tree

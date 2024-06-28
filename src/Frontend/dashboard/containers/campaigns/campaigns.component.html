@@ -328,7 +328,7 @@
 						<div [ngClass]="step2Option =='ImportContacts' ? 'innerbox active' : 'innerbox'"  >
 							
 							<img class="icon ml" src="assets/img/campaign/import-contacts.svg" >
-							<p>Import Contacts</p>
+							<p>Import Audience</p>
 							<p><span>Add audience to your campaign by importing contacts from CSV file or Excel sheet</span></p>
 							<p *ngIf="!importedContacts" class="sm_icon"><span (click)="openImportContact('ImportContacts',importedContacts,openImportContact)" ><img src="../../../../assets/img/support/arrow.svg"></span></p> 	
 							<div *ngIf="importedContacts" class="formrow">
@@ -806,7 +806,7 @@
 					<div *ngIf="importantContact" class="important_contact_modal">
 						<div class="modal-header importantContact">
 							<div class="modal-header-left">
-								<h4 class="modal-title" id="modal-basic-title">Import Contacts</h4>
+								<h4 class="modal-title" id="modal-basic-title">Import Audience</h4>
 							</div>
 							<div class="modal-header-right">
 								<p  class="close-box" aria-label="Close" (click)="closeImportantContact(addNewCampaign)"><img src="assets/img/teambox/icon-close.svg"></p>

@@ -129,9 +129,20 @@
                             <div class="row m-0">
                                 <div class="col-md-12 p-0">
                                     <div *ngFor="let item of walletUsageInsight" class="usage-insight-container">
-                                    <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-header">
+                                    <div class="col-sm-12 p-2 px-3 d-flex justify-content-between align-items-center usage-content-header">
                                          
-                                            <h6 class="m-0 head">All Conversations <span class="px-2"><img src="assets/img/profile/Info.svg" /></span></h6>
+                                            <h6 class="m-0 head">All Conversations</h6>
+                                            <div class="info-container">
+                                                <div class="Info-Iconn">
+                                                    <img src="assets/img/profile/Info.svg" (click)="allCoversationTooltip =!allCoversationTooltip">
+                                                </div>
+                                                <div class="identfierTooltip" *ngIf="allCoversationTooltip">
+                                                    <button id="radio-close-btn" (click)="allCoversationTooltip = false">X</button>
+                                                    <p class="p-body">
+                                                        The provided data presents the cumulative count of conversations, including both free and paid interactions, categorized based on the types of conversations.
+                                                    </p>
+                                                </div>
+                                            </div>
                                             <h6 class="m-0">{{allConversationCount}}</h6>
                                     </div>
                                     <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
@@ -162,11 +173,22 @@
                                 <div class="col-md-12 p-0">
                                     <div class="col-md-10 my-3 line"></div>
                                     <div class="usage-insight-container">
-                                    <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-header">
-                                         
-                                            <h6 class="m-0 head">Free Conversations <span class="px-2"><img src="assets/img/profile/Info.svg" /></span></h6>
+                                        <div class="col-sm-12 p-2 px-3 d-flex justify-content-between align-items-center usage-content-header">
+
+                                            <h6 class="m-0 head">Free Conversations</h6>
+                                            <div class="info-container">
+                                                <div class="Info-Iconn">
+                                                    <img src="assets/img/profile/Info.svg" (click)="freeCoversationTooltip =!freeCoversationTooltip">
+                                                </div>
+                                                <div class="identfierTooltip" *ngIf="freeCoversationTooltip">
+                                                    <button id="radio-close-btn" (click)="freeCoversationTooltip = false">X</button>
+                                                    <p class="p-body">
+                                                        Data shows free conversations with details on the free tier and the free entry point. Check Support section for updated details as these are updated from time to time by Meta.
+                                                    </p>
+                                                </div>
+                                            </div>
                                             <h6 class="m-0"></h6>
-                                    </div>
+                                        </div>
                                     <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
                                      
                                             <p class="m-0">Free Tier</p>
@@ -184,10 +206,21 @@
                                 <div class="col-md-12 p-0">
                                     <div class="col-md-10 my-3 line"></div>
                                 <div class="usage-insight-container">
-                                    <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-header">
-                                         
-                                            <h6 class="m-0 head">Paid Conversations <span class="px-2"><img src="assets/img/profile/Info.svg" /></span></h6>
-                                            <h6 class="m-0"></h6>
+                                    <div class="col-sm-12 p-2 px-3 d-flex justify-content-between align-items-center usage-content-header">
+
+                                        <h6 class="m-0 head">Paid Conversations</h6>
+                                        <div class="info-container">
+                                            <div class="Info-Iconn">
+                                                <img src="assets/img/profile/Info.svg" (click)="paidCoversationTooltip =!paidCoversationTooltip">
+                                            </div>
+                                            <div class="identfierTooltip" *ngIf="paidCoversationTooltip">
+                                                <button id="radio-close-btn" (click)="paidCoversationTooltip = false">X</button>
+                                                <p class="p-body">
+                                                    The data provided focuses on paid conversations and provides a breakdown of the different conversation types within that category.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <h6 class="m-0"></h6>
                                     </div>
                                     <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">
                                      
@@ -217,10 +250,21 @@
 
                               <div class="row m-0">
                                 <div class="col-md-12 p-0">
-                                    <div class="col-md-10 my-3 line"></div>
-                                    <div class="usage-insight-container">
-                                        <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-header">
-                                            <h6 class="m-0 head">Approximate Charges <span class="px-2"><img src="assets/img/profile/Info.svg" /></span></h6>
+                                    <div class="col-md-10 my-3"></div>
+                                    <div class="usage-insight-container container-border">
+                                        <div class="col-sm-12 p-2 px-3 d-flex justify-content-between align-items-center usage-content-header">
+                                            <h6 class="m-0 head">Approximate Charges</h6>
+                                            <div class="info-container">
+                                                <div class="Info-Iconn">
+                                                    <img src="assets/img/profile/Info.svg" (click)="approxCChargesTooltip =!approxCChargesTooltip">
+                                                </div>
+                                                <div class="identfierTooltip" *ngIf="approxCChargesTooltip">
+                                                    <button id="radio-close-btn" (click)="approxCChargesTooltip = false">X</button>
+                                                    <p class="p-body">
+                                                        The approximate charges for paid conversations are categorized into Business-Initiated: Marketing, Utility, Authentication, and User-Initiated conversations.
+                                                    </p>
+                                                </div>
+                                            </div>
                                             <h6 class="m-0">{{ totalCharges | number }}</h6>
                                         </div>
                                         <div class="col-sm-12 p-2 px-3 d-flex justify-content-between usage-content-data">

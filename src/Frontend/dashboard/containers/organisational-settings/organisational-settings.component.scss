@@ -248,6 +248,11 @@ margin-right: 6rem;
     width: 100%;
 }
 
+select.company,
+select#country_code {
+    cursor: pointer;
+}
+
 .company.input-form{
     width: 19rem;
     height: 47px;
@@ -342,8 +347,16 @@ select option {
   .locale-detail.modal-dialog {
     max-width: 800px;
   }
-  
-  .input-formm{
+
+.locale-detail {
+    .locale-modal{
+        select.input-form{
+            cursor: pointer;
+        }
+    }
+}
+
+.input-formm {
     position: absolute;
     border: none;
     width: 4.2rem;
