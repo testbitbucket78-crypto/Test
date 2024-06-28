@@ -165,8 +165,8 @@ const headers = new HttpHeaders({
     return this.http.post<any>(`${this.API_URL}/deleteUser`,uid);
   }
 
-  getUserList(spId:number,userType:number =0): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/getUser/${spId}/${userType}`);
+  getUserList(spId:number,isActive:number =0): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getActiveUser/${spId}/${isActive}`);
   }
 
   userById(spId:number,userId:number =0): Observable<any> {
