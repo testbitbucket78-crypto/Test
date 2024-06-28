@@ -320,21 +320,22 @@
 						</div>
 					</div>
 					<ng-template #imports let-c="close" let-d="dismiss">
-						<div class="dd"><img src="assets/img/export1.png">
+						<div class="dd d-flex flex-column align-items-center justify-content-center p-4 hide-outer">
+							<img class="rotate-180deg" src="assets/img/export1.png"/>
 							<div class="modal-header">
 
-								<h4 class="modal-title" id="modal-basic-title">Import started in the background</h4>
+								<h4 class="modal-title modal-title-p-0" id="modal-basic-title">Import started in the background</h4>
 
 							</div>
 							<div class="modal-body">
-								<p>We will notify you by email once the job has been <br /> 
+								<p class="pos-inherit">We will notify you by email once the job has been <br /> 
 									completed. Now you can close this dialog box.
 								</p>
-								<div class="ss">
+								<div class="ss image-to-left">
 									<img src="assets/img/your.png">
 								</div>
 							</div>
-							<div class="modal-footer popfooter row text">
+							<div class="modal-footer popfooter row text footer-align">
 								<div class="col-md-3">
 									<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal"
 										aria-label="Close" data-bs-target="#importmodal" (click)="c('Save click')">Ok,Got it</button>

@@ -89,16 +89,16 @@
 						</div>
 					
 						<div class="child">
-							<h4><span class="text-capitalize">{{items.Name}}</span></h4>
-							<div class="child1 d-flex">
+							<h4 class="dialog-h4"><span class="text-capitalize">{{items.Name}}</span></h4>
+							<div class="child1 d-flex flex-column">
 								<h5>Customer Id:</h5>
 								<h6>{{items.customerId}}</h6>
 							</div>
-							<div class="child1 d-flex">
+							<div class="child1 d-flex flex-column">
 								<h5>Created Date:</h5>
 								<h6>{{items.created_at | date:'MMM d y, h:mm a'}}</h6>
 							</div>
-							<div class="child1 d-flex">
+							<div class="child1 d-flex flex-column">
 								<h5>Last Updated:</h5>
 								<h6>{{items.updated_at | date: 'MMM d y, h:mm a'}}</h6>
 							</div>
@@ -107,39 +107,39 @@
 				</div>
 	
 				<div class="p-4 sidebar-body">
-					<div class="parent d-flex justify-content-between px-4">
-						<div class="child2">
+					<div class="parent d-flex justify-content-between px-2 flex-column">
+						<div class="child2 pb-3">
 							<h5>Email Id</h5>
 							<h6 class="mt-2">{{items.emailId}}</h6>
 						</div>
-						<div class="child3">
+						<div class="child3 pb-2">
 							<h5>Phone Number</h5>
 							<h6 class="mt-2">{{items.countryCode}} {{items.displayPhoneNumber}}</h6>
 						</div>
 					</div>
-					<div class="parent d-flex justify-content-between px-4 py-2">
-						<div class="child2">
+					<div class="parent d-flex justify-content-between p-2 flex-column">
+						<div class="child2 pb-3">
 							<h5>Message Opt-in</h5>
 							<h6 class="mt-2">{{items.OptInStatus}}</h6>
 						</div>
-						<div class="child3">
+						<div class="child3 pb-2">
 							<h5>Contact Owner</h5>
 							<h6 class="mt-2">{{items.ContactOwner}}</h6>
 						</div>
 					</div>
-					<div class="parent d-flex justify-content-between px-4 py-2">
-					<div class="child5">
+					<div class="parent d-flex justify-content-between p-2">
+					<div class="child5 pb-3">
 	
 						<h5> <img class="m-0" data-bs-toggle="modal" data-bs-target="#edittag" (click)="editTagS()" src="../../../../assets/img/teambox/edit-icon.svg">Tag</h5>
-						<div class="child4 d-flex">
+						<div class="child4 d-flex pb-2">
 							<h6 class="mt-2">{{items.tag_names?.replaceAll(',', ' | ')}}</h6>
 						</div>
 					</div>
 					</div>
-					<div class="parent d-block justify-content-between px-4 py-2">
+					<div class="parent d-block justify-content-between p-2 flex-column">
 						<h4 class="m-0">Custom Fields</h4>
 					</div>
-				<div class="parent-flex px-4 py-2 parent d-flex">
+				<div class="parent-flex p-2 parent d-flex flex-column">
 					<div class="child23" *ngFor="let it of filteredCustomFields">
 						<h5>{{it?.displayName}}</h5>
 						<h6 class="mt-2" *ngIf="it?.type != 'Select'">{{items[it?.ActuallName]}}</h6>
@@ -172,7 +172,7 @@
 					</div> -->
 				</div>			
 			</div>
-			<div class="btn-footer py-2 mt-3">
+			<div class="btn-footer mt-3">
 				<div class="button my-4 d-flex justify-content-center align-items-center">
 					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('5')"><img
 							src="../../../../assets/img/profile/delete.svg">
@@ -180,11 +180,11 @@
 					<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="settingsService.checkRoleExist('5')"><img src="../../../../assets/img/teambox/Edit.svg">
 					</button>
 					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn">{{this.isBlocked==1 ? 'Blocked' : 'Block'}}</button>
-					<button class="btn7  btn-block "><img src="../../../../assets/img/settings.svg"> </button>
+					<!--<button class="btn7  btn-block "><img src="../../../../assets/img/settings.svg"> </button>-->
 				</div>
-				<div class="bbox">
+				<!--<div class="bbox">
 					<h6>To add/edit any field according to your business from the settings</h6>
-				</div>
+				</div>-->
 			</div>
 
 
@@ -497,7 +497,7 @@
 		<h4 class="modal-title" id="modal-basic-title">{{ addContactTitle === 'add' ? 'Add' : 'Edit' }} Contact</h4>
 		<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="resetForm()">X</button>
 	</div>
-	<form [formGroup]="productForm" autocomplete="off" class="contact-scroll" (ngSubmit)="saveContact(addcontact,addcontacterror)">
+	<form [formGroup]="productForm" autocomplete="off" class="contact-scroll auto-contact-scroll" (ngSubmit)="saveContact(addcontact,addcontacterror)">
 	<div class="px-4 modal-body">
 		
 			<div class="row g-2">

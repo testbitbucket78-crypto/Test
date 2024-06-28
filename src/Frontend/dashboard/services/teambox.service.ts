@@ -60,8 +60,8 @@ export class TeamboxService {
   public getFilteredInteraction(InteractionStatus:any,AgentId:any,AgentName:any,SPID:any) {
     return this.http.get(API_URL+'/filterinteraction/'+InteractionStatus+'/'+AgentId+'/'+AgentName+'/'+SPID);
   }
-  public getSearchInteraction(SearchKey:any,AgentId:any) {
-    return this.http.get(API_URL+'/searchinteraction/'+SearchKey+'/'+AgentId);
+  public getSearchInteraction(SearchKey:any,AgentId:any,spid:any) {
+    return this.http.get(API_URL+'/searchinteraction/'+SearchKey+'/'+AgentId+'/'+spid);
   }
   public updateInteraction(data: any) {
     return this.http.post(API_URL+'/updateinteraction/',data);
@@ -196,8 +196,8 @@ export class TeamboxService {
     return this.http.get(`https://contactapi.stacknize.com/columns/${SP_ID}`);
   } 
 
-  public isCampaignExists(title: any, spid: any) {
-    return this.http.get(`${API_URL}/exitCampaign/${title}/${spid}`);
+  public isCampaignExists(title: any, spid: any, id: any) {
+    return this.http.get(`${API_URL}/exitCampaign/${title}/${spid}/${id}`);
   }
 
 }

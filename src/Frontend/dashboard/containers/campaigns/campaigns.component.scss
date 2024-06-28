@@ -1190,7 +1190,7 @@
 	border-radius: 15px;
 	min-height: 50px;
 	padding: 10px;
-	width: 260px;
+	max-width: 260px;
 	z-index: 9;
 	margin-top: 10px;
 	display:none;
@@ -1211,7 +1211,6 @@
 	flex-wrap: nowrap;
 	padding-right: 15px;
 	background: white !important;
-	justify-content: space-between !important;
 
 	}
 	.applied_filter_popup .item p{

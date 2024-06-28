@@ -136,7 +136,8 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	matchingCriteria:any;
 	selectedcriteria:any;
 	templateStates: { [key: string]: boolean } = {};
-
+	attribute: string = '';
+	indexSelected: number = 0;
 	templateChecked: boolean = false;
 
 	isFilterTemplate:any = {
@@ -363,11 +364,10 @@ showAddSmartRepliesModal() {
 		}
 
 	}
-
+	
 	addAttributeInVariables(item: any) {
-		if (!this.variableValues.includes(item)) {
-			item = '{{'+item+'}}'
-			this.variableValues.push(item);
+		if (item) {
+			this.variableValues[this.indexSelected] = item ;
 			this.closeVariableOption();
 		  }
 		}
@@ -607,8 +607,10 @@ showAddSmartRepliesModal() {
 	}
 
    }
-
-   openVariableOption() {
+	
+	openVariableOption(indexSelected: number) {
+		this.indexSelected = indexSelected;
+		this.attribute = '';
 	$("#showvariableoption").modal('show'); 
 	$("#editTemplate").modal('hide'); 
 	}
@@ -617,7 +619,8 @@ showAddSmartRepliesModal() {
 		$("#showvariableoption").modal('hide');
 		$("#editTemplate").modal('show'); 
 	}
-	SaveVariableOption(){
+	SaveVariableOption() {
+		this.variableValues[this.indexSelected] = this.attribute; 
 		$("#showvariableoption").modal('hide'); 
 		$("#editTemplate").modal('show'); 
 	}
@@ -1271,7 +1274,7 @@ stopPropagation(event: Event) {
 		})
 	  }
   /*  GET ATTRIBUTE LIST  */
-	  getAttributeList() {
+	getAttributeList() {
 	   this.apiService.getAttributeList(this.SPID)
 	   .subscribe((response:any) =>{
 		if(response){

@@ -17,7 +17,6 @@ export class RolesSettingsComponent implements OnInit {
         {
             field: 'RoleName',
             headerName: 'Role Name',
-            filter: true,
             width:200,
             suppressSizeToFit: false,
             resizable: true,
@@ -26,7 +25,7 @@ export class RolesSettingsComponent implements OnInit {
         },
         {
             field: 'rights',
-            headerName: 'Rights',
+            headerName: 'No. of Rights',
             width:120,
             suppressSizeToFit: false,
             resizable: true,
