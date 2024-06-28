@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors')
 const middleWare = require('./middleWare')
 const moment = require('moment');
+const removeTags = require('./removeTagsFromRichTextEditor')
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -108,7 +109,7 @@ async function NoCustomerReplyTimeout() {
     
         let messageValu=[[msg.SPID,msg.Type,"211544555367892",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",currenttime,currenttime,6]]
          let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
-        let closeInteraction=await db.excuteQuery(`UPDATE Interaction SET interaction_status='' WHERE InteractionId=${msg.InteractionId}`,[]);
+        let closeInteraction=await db.excuteQuery(`UPDATE Interaction SET interaction_status='empty' WHERE InteractionId=${msg.InteractionId}`,[]);
       }
     }
   } catch (error) {
@@ -202,7 +203,16 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 }
 }
 
-
+// Common Function to parse the message template and retrieve {{}} placeholders
+function parseMessageTemplate(template) {
+  const placeholderRegex = /{{(.*?)}}/g;
+  const placeholders = [];
+  let match;
+  while ((match = placeholderRegex.exec(template))) {
+    placeholders.push(match[1]);
+  }
+  return placeholders;
+}
 
 async function getExtraxtedMessage(message_text) {
   try {
@@ -237,12 +247,12 @@ async function getExtraxtedMessage(message_text) {
 function isWorkingTime(data, currentTime) {
  
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-
+  let datetime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
 
   for (const item of data) {
     const workingDays = item.working_days.split(',');
-    const date = new Date().getHours();
-    const getMin = new Date().getMinutes();
+    const date = new Date(datetime).getHours();
+    const getMin = new Date(datetime).getMinutes();
  
     const start_time = (item.start_time).replace(/\s*(AM|PM)/, "");
     const end_time = (item.end_time).replace(/\s*(AM|PM)/, "");
