@@ -21,7 +21,7 @@ export class RolesSettingsComponent implements OnInit {
             suppressSizeToFit: false,
             resizable: true,
             sortable: true,
-            cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+           // cellStyle:this.cellStyle
         },
         {
             field: 'rights',
@@ -72,6 +72,9 @@ export class RolesSettingsComponent implements OnInit {
     myForm!: FormGroup;
     subRightsArrowRotate: boolean = false;
     usersArrowRotate: boolean = false;
+    successMessage='';
+    errorMessage='';
+      warningMessage='';
     constructor(public _settingsService: SettingsService,private fb: FormBuilder) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
@@ -84,6 +87,14 @@ export class RolesSettingsComponent implements OnInit {
             roleName: ['', Validators.required],
           });
     }
+
+    cellStyle(params: agGrid.CellClassParams) {
+            if (params.value=='Admin' || params.value=='Agent') {        
+                return { background: '#FBFAFF', opacity: 0.86, color:'purpel' };
+            } else {
+                return { background: '#FBFAFF', opacity: 0.86 };
+            }
+      }
 
     rowClicked = (event: any) => {
         console.log(event);
@@ -302,4 +313,29 @@ export class RolesSettingsComponent implements OnInit {
         this.subRightsArrowRotate = isReset;
         this.usersArrowRotate = isReset;
     }
+
+    checkRole(){
+        if(this.roleData?.RoleName == 'Admin' || this.roleData?.RoleName == 'Agent'){
+            this.showToaster('error','You cannot edit/delete these default roles');
+        }
+    }
+
+    showToaster(message:any,type:any){
+        if(type=='success'){
+          this.successMessage=message;
+        }else if(type=='error'){
+          this.errorMessage=message;
+        }else{
+          this.warningMessage=message;
+        }
+        setTimeout(() => {
+          this.hideToaster()
+        }, 5000);
+        
+      }
+      hideToaster(){
+        this.successMessage='';
+        this.errorMessage='';
+        this.warningMessage='';
+      }
 }
