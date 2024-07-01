@@ -175,8 +175,8 @@ selectAttributes(item:any){
 insertAtCursor(selectedValue:any) {
   const editorElement = this.chatEditor.element.querySelector('.e-content');
   const newNode = document.createElement('span');
-  newNode.innerHTML = '{{'+selectedValue+'}}';
-  newNode.style.color = '#000';
+  newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>';;
+  // newNode.style.color = '#000';
   this.lastCursorPosition?.insertNode(newNode);
 }
 
