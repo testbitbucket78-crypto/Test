@@ -28,7 +28,10 @@ export class WalletusageComponent implements OnInit {
 
     errorMessage='';
 	successMessage='';
-
+    allCoversationTooltip: boolean = false;
+    freeCoversationTooltip: boolean = false;
+    paidCoversationTooltip: boolean = false;
+    approxCChargesTooltip: boolean = false;
 
     @Output() selectab = new EventEmitter<string> () ;
 

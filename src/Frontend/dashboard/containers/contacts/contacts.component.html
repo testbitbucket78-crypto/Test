@@ -17,12 +17,20 @@
 		</div>
 		<div class="d-flex">
 			<div id="export-btn">
-				<button class="btn-9 " (click)="openFilters()" > <img
-						src="../../../../assets/img/export.svg">Filters</button>
+				<button class="btn-9 " (click)="openFilters()">
+					<img class="mr-2"
+						 src="../../../../assets/img/filter.png">Filters
+					<img class="ml-1"
+						 src="../../../../assets/img/arrow-down.svg">
+				</button>
 				<button class="btn-9 " (click)="clearFilters()" > <img
 						src="../../../../assets/img/export.svg"> Clear Filters</button>
-				<button class="btn-9 " (click)="isShowColumn = true" > <img
-						src="../../../../assets/img/export.svg"> Column Prefrences</button>
+				<button class="btn-9 " (click)="isShowColumn = true">
+					<img class="mr-1"
+						 src="../../../../assets/img/column.png"> Column Prefrences
+					<img class="ml-1"
+						 src="../../../../assets/img/arrow-down.svg">
+				</button>
 			</div>
 			<div id="export-btn">
 				<button class="btn-9 "  (click)="openExport(content)" > <img
@@ -56,22 +64,52 @@
 
 
 	<div *ngIf="contacts" class="box">
-
-		<ag-grid-angular class="ag-theme-alpine" 
-		style="height: 67vh;"
-		[rowData]="rowData" 
-		[columnDefs]="columnDefs" 
-		[animateRows]="true"
-		[gridOptions]="gridOptions"
-		(gridReady)="onGridReady($event)"
-		(selectionChanged)="onSelectionChanged($event)" 
-		suppressResize=true 
-		[suppressRowClickSelection]="true">
+		<ag-grid-angular class="ag-theme-alpine"
+						 style="height: 60vh;"
+						 [rowData]="rowData"
+						 [columnDefs]="columnDefs"
+						 [animateRows]="true"
+						 [gridOptions]="gridOptions"
+						 (gridReady)="onGridReady($event)"
+						 (selectionChanged)="onSelectionChanged($event)"
+						 suppressResize=true
+						 [suppressRowClickSelection]="true"
+						 [paginationPageSize]="paginationPageSize"
+						 (filterChanged)="onFilterChanged()">
 		</ag-grid-angular>
+		<div class="grid-pagination d-flex justify-content-between align-items-center">
+			<div class="d-flex align-items-center">
+				<p class="p-0 m-0">Showing:</p>
+				<select class="mx-3" [(ngModel)]="paginationPageSize" (change)="setPaging()">
+					<option value="10">10</option>
+					<option value="15">15</option>
+					<option value="20">20</option>
+					<option value="25">25</option>
+					<option value="30">30</option>
+					<option value="45">35</option>
+					<option value="40">40</option>
+					<option value="45">45</option>
+					<option value="50">50</option>
+				</select>
+			</div>
+			<div class="d-flex page-next-back mt-2">
+				<button class="pagination-btn left">
+					<img class="next-img" src="assets/img/profile/previous.svg" (click)="onBtPrevious()">
+				</button>
+				<div class="mx-2 d-flex align-items-center pages-gap-2">
+					<div *ngFor="let item of paging" [ngClass]="item == currPage ? 'page-No-selected':'page-No-unselected'"
+						 (click)="gotoPage(item)">{{item}}</div>
+				</div>
+				<button class="pagination-btn right button-box-shadow">
+					<img class="next-img" src="assets/img/profile/next.svg" (click)="onBtNext()">
+				</button>
+			</div>
+
+		</div>
 
 		<div *ngIf="isShowSidebar" id="sidebar" class="sidebar ">
 			<button type="button" class=" mt-3 mx-2 btn5 btn-close" aria-label="Close" id="close-btn" (click)="('Cross click')"
-				(click)="closesidenav(items)">X
+					(click)="closesidenav(items)">X
 			</button>
 			<div *ngFor="let items of customerData " class="scroll-height">
 				<div class="p-2 sidebar-head">
@@ -81,13 +119,13 @@
 							<!-- <img *ngIf="!items.contact_profile" src="../../../../assets/img/teambox/no-dp.svg"> -->
 							<img *ngIf="items.contact_profile" id="profile-pic" src="{{items.contact_profile}}?{{randomNumber}}"/>
 							<!-- <div class="d-flex justify-content-center picture-crop-button-container">
-								<div class="text-center picture-crop-button">
-								 <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
-								 <label for="myFileInput" class="m-0 fileLabel" ><img class="set-profile-pic" src="../../../../assets/img/profile/Fill 4.svg" /></label>    
-								</div> 
-							</div>		-->				
+							<div class="text-center picture-crop-button">
+							 <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
+							 <label for="myFileInput" class="m-0 fileLabel" ><img class="set-profile-pic" src="../../../../assets/img/profile/Fill 4.svg" /></label>
+							</div>
+						</div>		-->
 						</div>
-					
+
 						<div class="child">
 							<h4 class="dialog-h4"><span class="text-capitalize">{{items.Name}}</span></h4>
 							<div class="child1 d-flex flex-column">
@@ -105,7 +143,7 @@
 						</div>
 					</div>
 				</div>
-	
+
 				<div class="p-4 sidebar-body">
 					<div class="parent d-flex justify-content-between px-2 flex-column">
 						<div class="child2 pb-3">
@@ -128,63 +166,64 @@
 						</div>
 					</div>
 					<div class="parent d-flex justify-content-between p-2">
-					<div class="child5 pb-3">
-	
-						<h5> <img class="m-0" data-bs-toggle="modal" data-bs-target="#edittag" (click)="editTagS()" src="../../../../assets/img/teambox/edit-icon.svg">Tag</h5>
-						<div class="child4 d-flex pb-2">
-							<h6 class="mt-2">{{items.tag_names?.replaceAll(',', ' | ')}}</h6>
+						<div class="child5 pb-3">
+
+							<h5> <img class="m-0" data-bs-toggle="modal" data-bs-target="#edittag" (click)="editTagS()" src="../../../../assets/img/teambox/edit-icon.svg">Tag</h5>
+							<div class="child4 d-flex pb-2">
+								<h6 class="mt-2">{{items.tag_names?.replaceAll(',', ' | ')}}</h6>
+							</div>
 						</div>
-					</div>
 					</div>
 					<div class="parent d-block justify-content-between p-2 flex-column">
 						<h4 class="m-0">Custom Fields</h4>
 					</div>
-				<div class="parent-flex p-2 parent d-flex flex-column">
-					<div class="child23" *ngFor="let it of filteredCustomFields">
-						<h5>{{it?.displayName}}</h5>
-						<h6 class="mt-2" *ngIf="it?.type != 'Select'">{{items[it?.ActuallName]}}</h6>
-						<h6 class="mt-2" *ngIf="it?.type == 'Select'">{{getSplitItem(items[it?.ActuallName])}}</h6>
-					</div>
+					<div class="parent-flex p-2 parent d-flex flex-column">
+						<div class="child23" *ngFor="let it of filteredCustomFields">
+							<h5>{{it?.displayName}}</h5>
+							<h6 class="mt-2" *ngIf="it?.type != 'Select'">{{items[it?.ActuallName]}}</h6>
+							<h6 class="mt-2" *ngIf="it?.type == 'Select'">{{getSplitItem(items[it?.ActuallName])}}</h6>
+						</div>
 					</div>
 					<!-- <div class="justify-content-between px-4 py-2 parent d-flex">
-						<div class="child2">
-							<h5>Gender</h5>
-							<h6 class="mt-2">{{items.sex}}</h6>
-						</div>
-						<div class="age-field child3">
-							<h5>Age</h5>
-							<h6 class="mt-2">{{items.age}}</h6>
-						</div>
+					<div class="child2">
+						<h5>Gender</h5>
+						<h6 class="mt-2">{{items.sex}}</h6>
 					</div>
-					<div class="parent d-flex justify-content-between px-4 py-2">
-						<div class="child2">
-							<h5>Country</h5>
-							<h6 class="mt-2">{{items.Country}}</h6>
-						</div>
-						<div class="child3">
-							<h5>Default Channel</h5>
-							<h6 class="mt-2">{{items.channel}}</h6>
-						</div>
+					<div class="age-field child3">
+						<h5>Age</h5>
+						<h6 class="mt-2">{{items.age}}</h6>
 					</div>
-					<div class="px-4 py-2 child2">
-						<h5>Facebook Id</h5>
-						<h6 class="mt-2">{{items.facebookId}}</h6>
-					</div> -->
-				</div>			
+				</div>
+				<div class="parent d-flex justify-content-between px-4 py-2">
+					<div class="child2">
+						<h5>Country</h5>
+						<h6 class="mt-2">{{items.Country}}</h6>
+					</div>
+					<div class="child3">
+						<h5>Default Channel</h5>
+						<h6 class="mt-2">{{items.channel}}</h6>
+					</div>
+				</div>
+				<div class="px-4 py-2 child2">
+					<h5>Facebook Id</h5>
+					<h6 class="mt-2">{{items.facebookId}}</h6>
+				</div> -->
+				</div>
 			</div>
 			<div class="btn-footer mt-3">
 				<div class="button my-4 d-flex justify-content-center align-items-center">
-					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('5')"><img
-							src="../../../../assets/img/profile/delete.svg">
+					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('5')">
+						<img src="../../../../assets/img/profile/delete.svg">
 					</button>
-					<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="settingsService.checkRoleExist('5')"><img src="../../../../assets/img/teambox/Edit.svg">
+					<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="settingsService.checkRoleExist('5')">
+						<img src="../../../../assets/img/teambox/Edit.svg">
 					</button>
 					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn">{{this.isBlocked==1 ? 'Blocked' : 'Block'}}</button>
 					<!--<button class="btn7  btn-block "><img src="../../../../assets/img/settings.svg"> </button>-->
 				</div>
 				<!--<div class="bbox">
-					<h6>To add/edit any field according to your business from the settings</h6>
-				</div>-->
+				<h6>To add/edit any field according to your business from the settings</h6>
+			</div>-->
 			</div>
 
 
@@ -492,172 +531,195 @@
 		</div>
 	</ng-template> -->
 
-<ng-template #contactadd let-c="close" let-d="dismiss">
-	<div class="modal-header px-4 pb-0 align-items-center">
-		<h4 class="modal-title" id="modal-basic-title">{{ addContactTitle === 'add' ? 'Add' : 'Edit' }} Contact</h4>
-		<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="resetForm()">X</button>
-	</div>
-	<form [formGroup]="productForm" autocomplete="off" class="contact-scroll auto-contact-scroll" (ngSubmit)="saveContact(addcontact,addcontacterror)">
-	<div class="px-4 modal-body">
-		
-			<div class="row g-2">
-				<div class="col-md">
-					<label for="Name">Name <span class="text-danger">*</span></label>
-					<div class="form-floating">
-						<input class="form-control" type="text"
-						[ngClass]="{'is-invalid':productForm.controls.Name.touched && productForm.controls.Name.errors}"
-						placeholder="Enter Full Name" name="Name" formControlName="Name" id="Name" />
-						<div *ngIf="productForm.controls.Name.touched && productForm.controls.Name.hasError('required')"
-							class="text-danger">
-							! Name is required.
-						</div>
-						  <div *ngIf="productForm.get('Name')?.hasError('maxlength') && productForm.get('Name')?.touched"
-						  	class="text-danger">
-							! Maximum 50 characters are allowed.
-						  </div>
-						  <div *ngIf="productForm.get('Name')?.hasError('pattern') && productForm.get('Name')?.touched"
-						  class="text-danger">
-					       ! Invalid Name. 
-					 </div>
-					 <div *ngIf="productForm.get('Name')?.hasError('minlength') && productForm.get('Name')?.touched"
-					 class="text-danger">
-					  ! Minimum 3 characters required. 
-				</div>
-					</div>
-				</div>
-			</div>
+	<ng-template #contactadd let-c="close" let-d="dismiss">
+		<div class="modal-header px-4 pb-0 align-items-center">
+			<h4 class="modal-title" id="modal-basic-title">{{ addContactTitle === 'add' ? 'Add' : 'Edit' }} Contact</h4>
+			<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="resetForm()">X</button>
+		</div>
+		<form [formGroup]="productForm" autocomplete="off" class="contact-scroll auto-contact-scroll" (ngSubmit)="saveContact(addcontact,addcontacterror)">
+			<div class="px-4 modal-body">
 
-			<div class="row g-2 mt-3 mb-2">
-				<div class="col-md">
-					<label for="displayPhoneNumber">Phone Number<span class="text-danger">*</span></label>
-					<div class="form-floating">
-						<div class="d-flex ss">
-							
-						<select class="input-form" id="countryCode" formControlName="countryCode">
-							<option  *ngFor="let countryCode of countryCodes" [ngValue]="countryCode">
-								{{ countryCode }}
-							</option>
-						</select>
-							<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" style="display: none" />
-							<input type="text" class="form-control" id="displayPhoneNumber" formControlName="displayPhoneNumber" 
-								name="displayPhoneNumber" placeholder="Enter Phone Number" (change)="formatPhoneNumber()"
-								[ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }" > 
-						</div>
-						<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.valid && 
-						      productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength')"
-							 class="text-danger">
-						! Phone number must consist of 6 to 15 digits.
-					  </div>
-					  <div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('required')"
-					  class="text-danger">
-					  ! Phone Number is required.
-				  </div>
-				  <div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('pattern')"
-				  class="text-danger">
-				  ! Invalid Phone Number.
-			  </div>
-
-					</div>
-				</div>
-			</div>
-			<div class="row g-2 mt-3 mb-2">
-				<div class="col-md">
-					<label for="emailId">Email Id</label>
-					<div class="form-floating">
-						<input class="form-control" type="text"
-							[ngClass]="{'is-invalid' :productForm.controls.emailId.touched && productForm.controls.emailId.errors}"
-							placeholder="Enter Email" name="emailId" formControlName="emailId" id="emailId" />
-
-						<div *ngIf="productForm.controls.emailId.touched && productForm.controls.emailId.errors"
-							class="text-danger">
-							! Please enter a valid email address.
+				<div class="row g-2">
+					<div class="col-md">
+						<label for="Name">Name <span class="text-danger">*</span></label>
+						<div class="form-floating">
+							<input class="form-control" type="text"
+								   [ngClass]="{'is-invalid':productForm.controls.Name.touched && productForm.controls.Name.errors}"
+								   placeholder="Enter Full Name" name="Name" formControlName="Name" id="Name" />
+							<div *ngIf="productForm.controls.Name.touched && productForm.controls.Name.hasError('required')"
+								 class="text-danger">
+								! Name is required.
+							</div>
+							<div *ngIf="productForm.get('Name')?.hasError('maxlength') && productForm.get('Name')?.touched"
+								 class="text-danger">
+								! Maximum 50 characters are allowed.
+							</div>
+							<div *ngIf="productForm.get('Name')?.hasError('pattern') && productForm.get('Name')?.touched"
+								 class="text-danger">
+								! Invalid Name.
+							</div>
+							<div *ngIf="productForm.get('Name')?.hasError('minlength') && productForm.get('Name')?.touched"
+								 class="text-danger">
+								! Minimum 3 characters required.
+							</div>
 						</div>
 					</div>
 				</div>
-			
-			</div>
-			<div class="p-0 col-md">
-				<label for="ContactOwner">Contact Owner<span class="text-danger">*</span></label>
-					<input class="form-control" type="text" readonly placeholder="Select Contact Owner" name="ContactOwner" [disabled]="settingsService.checkRoleExist('7')"
-						formControlName="ContactOwner" id="ContactOwner" (click)="toggleContactOption()" 
-						[ngClass]="{'is-invalid' :productForm.controls.ContactOwner.touched && productForm.controls.ContactOwner.errors}"/>
-						<div *ngIf="ShowContactOwner" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
-							<p *ngFor="let uL of userList" (click)="selectContactOwner(uL.name)">
-							  <span>{{uL.name}} {{uL?.UserType == 'Admin' ? '(Admin)' :''}}</span>
+
+				<div class="row g-2 mt-3 mb-2">
+					<div class="col-md">
+						<label for="displayPhoneNumber">Phone Number<span class="text-danger">*</span></label>
+						<div class="form-floating">
+							<div class="d-flex ss">
+
+								<select class="input-form" id="countryCode" formControlName="countryCode">
+									<option  *ngFor="let countryCode of countryCodes" [ngValue]="countryCode">
+										{{ countryCode }}
+									</option>
+								</select>
+								<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" style="display: none" />
+								<input type="text" class="form-control" id="displayPhoneNumber" formControlName="displayPhoneNumber"
+									   name="displayPhoneNumber" placeholder="Enter Phone Number" (change)="formatPhoneNumber();validatorsToggle()"
+									   [ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }">
+							</div>
+							<div *ngIf="productForm.controls.displayPhoneNumber.touched &&
+                               validatorsToggle() == true && ( productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength'))"
+								 class="text-danger">
+								Phone number must consist of exactly 10 digits.
+							</div>
+
+							<div *ngIf="productForm.controls.displayPhoneNumber.touched && validatorsToggle() === false &&
+						      (productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength'))"
+								 class="text-danger">
+								! Phone number must consist of 6 to 15 digits.
+							</div>
+							<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('required')"
+								 class="text-danger">
+								! Phone Number is required.
+							</div>
+							<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('pattern')"
+								 class="text-danger">
+								! Invalid Phone Number.
+							</div>
+
+						</div>
+					</div>
+				</div>
+				<div class="row g-2 mt-3 mb-2">
+					<div class="col-md">
+						<label for="emailId">Email Id</label>
+						<div class="form-floating">
+							<input class="form-control" type="text"
+								   [ngClass]="{'is-invalid' :productForm.controls.emailId.touched && productForm.controls.emailId.errors}"
+								   placeholder="Enter Email" name="emailId" formControlName="emailId" id="emailId" />
+
+							<div *ngIf="productForm.controls.emailId.touched && productForm.controls.emailId.errors"
+								 class="text-danger">
+								! Please enter a valid email address.
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="py-2 row-md">
+					<label for="ContactOwner">Contact Owner<span class="text-danger">*</span></label>
+					<div class="info-container">
+						<div class="Info-Iconn">
+							<img src="assets/img/profile/Info.svg" (click)="contactOwnerTooltip =!contactOwnerTooltip">
+						</div>
+						<div class="identfierTooltip" *ngIf="contactOwnerTooltip">
+							<button id="radio-close-btn" (click)="contactOwnerTooltip = false">X</button>
+							<p class="p-body">
+								The contact owner by default is the individual who added the contact to the system either by filling up a form or through bulk import.
 							</p>
-					    </div>
-				<div *ngIf="ShowContactOwner" class="overlay" (click)="this.ShowContactOwner=false"></div>
-	        </div>
-			<div *ngIf="productForm.controls.ContactOwner.touched && productForm.controls.ContactOwner.hasError('required')"
-				class="text-danger">
-				! Contact Owner is required.
-			</div>
+						</div>
+					</div>
+					<input class="form-control" type="text" readonly placeholder="Select Contact Owner" name="ContactOwner" [disabled]="settingsService.checkRoleExist('7')"
+						   formControlName="ContactOwner" id="ContactOwner" (click)="toggleContactOption()"
+						   [ngClass]="{'is-invalid' :productForm.controls.ContactOwner.touched && productForm.controls.ContactOwner.errors}" />
 
-				<label for="tag">Tag</label>
-				<ng-multiselect-dropdown (click)="this.ShowContactOwner=false" class="multiselect" name="tag" formControlName="tag" id="tag"
-					[settings]="dropdownSettings" [data]="tag" [placeholder]="'Select Tag from dropdown'">
-				</ng-multiselect-dropdown>
-
-			<div>
-				<div *ngFor="let item of filteredCustomFields">
-					<label for="tag" >{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
-					<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
-					<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'">
-					<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
-					<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
-					<input type="date" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
-					<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
-					<!-- <div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
+					<div *ngIf="ShowContactOwner" class="popup-dialog ContactOption">
+						<input *ngIf="ShowContactOwner" type="search" class="form-control mb-2 searchContact" placeholder="Search"
+							   name="Search" id="contactOwnerValue"
+							   (keyup)="filterContactOwners()" />
+						<div (click)="stopPropagation($event)">
+							<p *ngFor="let uL of filteredUserList" (click)="selectContactOwner(uL.name)">
+								<span>{{uL.name}} {{uL?.UserType == 'Admin' ? '(Admin)' :''}}</span>
+							</p>
+						</div>
+					</div>
+					<div *ngIf="ShowContactOwner" class="overlay" (click)="this.ShowContactOwner=false"></div>
+				</div>
+				<div *ngIf="productForm.controls.ContactOwner.touched && productForm.controls.ContactOwner.hasError('required')"
+					 class="text-danger">
+					! Contact Owner is required.
+				</div>
+				<div class="py-2 row-md">
+					<label for="tag">Tag</label>
+					<ng-multiselect-dropdown (click)="this.ShowContactOwner=false" class="multiselect" name="tag" formControlName="tag" id="tag"
+											 [settings]="dropdownSettings" [data]="tag" [placeholder]="'Select Tag from dropdown'">
+					</ng-multiselect-dropdown>
+				</div>
+				<div>
+					<div class="py-2 row-md" *ngFor="let item of filteredCustomFields">
+						<label for="tag">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
+						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
+						<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'">
+						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
+						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
+						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
+						<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
+						<!-- <div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
 						<input class="form-control-checkbox" type="checkbox" id="Opted-ins" [formControlName]="item.ActuallName"/>
 						<span>{{item.displayName}}</span>
 					</div> -->
-					<select *ngIf="item.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
-						<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
-					</select>
-					<select *ngIf="item.type == 'Switch'" class="form-control" [formControlName]="item.ActuallName">
-						<option  value="" selected disabled>Select {{item.displayName}}</option>
-						<option  value="Yes">Yes</option>
-						<option  value="No">No</option>
-					</select>
-					<ng-multiselect-dropdown *ngIf="item.type == 'Multi Select'" class="multiselect"  [formControlName]="item.ActuallName" 
-					[settings]="dynamicDropdownSettings" [data]="item?.options" >
-				</ng-multiselect-dropdown>
-				<div *ngIf="productForm.get(item.ActuallName)?.touched && productForm.get(item.ActuallName)?.hasError('required')"
-				class="text-danger">
-				! {{item.displayName}} is required.
-			</div>
-			<div *ngIf="productForm.get(item.ActuallName)?.touched && productForm.get(item.ActuallName)?.errors?.['invalidYear']" class="text-danger">
-				Year must be a 4-digit number.
-			  </div>
+						<select *ngIf="item.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
+							<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
+						</select>
+						<select *ngIf="item.type == 'Switch'" class="form-control" [formControlName]="item.ActuallName">
+							<option value="" selected disabled>Select {{item.displayName}}</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>
+						<ng-multiselect-dropdown *ngIf="item.type == 'Multi Select'" class="multiselect" [formControlName]="item.ActuallName"
+												 [settings]="dynamicDropdownSettings" [data]="item?.options">
+						</ng-multiselect-dropdown>
+						<div *ngIf="productForm.get(item.ActuallName)?.touched && productForm.get(item.ActuallName)?.hasError('required')"
+							 class="text-danger">
+							! {{item.displayName}} is required.
+						</div>
+						<div *ngIf="productForm.get(item.ActuallName)?.touched && productForm.get(item.ActuallName)?.errors?.['invalidYear']" class="text-danger">
+							Year must be a 4-digit number.
+						</div>
 
+					</div>
 				</div>
-			</div>
 
-			<div class="row align-items-center pl-3 pt-3">
-				<div class="row_inline d-flex align-items-center">
-					<input class="form-control-checkbox" type="checkbox" id="Opted-in" [checked]="OptInStatus=='Yes'" (click)="updateOptedIn($event)" />
-					<span>Message Opt-In</span>
-					<span class="px-2 opt-In-Info"><img src="../../../../assets/img/info-icon.png" (click)="toggleInfoIcon()">
-						<div *ngIf="showInfoIcon" class="opt-In-Info-div">
-						   <button type="button" class="m-2 btn-close" (click)="showInfoIcon=false">
-							   <img src="../../../../assets/img/teambox/icon-close.svg">
-						   </button>
-						   <p id="p-body">Opt-In/Opt-Out indicates if your contacts want to receive promotional messages or not.</p>
-					   </div>
-					   </span>
+				<div class="row align-items-center pl-3 pt-3">
+					<div class="row_inline d-flex align-items-center">
+						<input class="form-control-checkbox" type="checkbox" id="Opted-in" [checked]="OptInStatus=='Yes'" (click)="updateOptedIn($event)" />
+						<span>Message Opt-In</span>
+						<span class="px-2 opt-In-Info">
+							<img src="../../../../assets/img/info-icon.png" (click)="toggleInfoIcon()">
+							<div *ngIf="showInfoIcon" class="opt-In-Info-div">
+								<button type="button" class="m-2 btn-close" (click)="showInfoIcon=false">
+									<img src="../../../../assets/img/teambox/icon-close.svg">
+								</button>
+								<p id="p-body">Opt-In/Opt-Out indicates if your contacts want to receive promotional messages or not.</p>
+							</div>
+						</span>
+					</div>
 				</div>
+
+
 			</div>
-
-		
-		</div>
-
-		<div class="modal-footer px-4 row popfooter">
+		</form>
+		<div class="modal-footer px-4 row popfooter sticky-footer">
 
 			<div class="col-md-6 text-right">
 				<button type="submit" [disabled]="productForm.invalid" [class.disabled]="productForm.invalid" class="btn1 btn-success">Save</button>
 			</div>
 		</div>
-	 </form>
 	</ng-template>
 	
 	<div class="modal fade" tabindex="-1" id="edittag" role="dialog" data-bs-backdrop="static">
@@ -748,7 +810,7 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 		X
 	  </div>
 	</div>
-	<div class="modal-body" style=" margin: 0px 0px 0px 10px; overflow-y: scroll;max-height: 500px;">
+	<div class="modal-body" style=" margin: 0px 0px 16px 10px; overflow-y: scroll;max-height: 500px;">
 	  <div class=" pt-2 column-school-container column-container" style="margin-right: 10px;margin-left: 10px;">		
 		<div class="clm-prf forms-check" *ngFor="let item of arrHideColumn; let ith = index">
 			<label class="form-check-label" for="displayNameInput{{ith}}" >

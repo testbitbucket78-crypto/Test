@@ -829,7 +829,7 @@
 															  <img class="px-2 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)" style="cursor:pointer">
 															  <div *ngIf="showInfo" class="showInfoFallback">
 																  <p id="p-body">
-																	  A default value that will be used for personalization if the system cannot find any value for the selected attribute in the user's contact fields.
+																	  You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
 																  </p>
 																  <button id="radio-close-btn" (click)="showInfo=false">X</button>
 															  </div>
@@ -1085,22 +1085,34 @@
 					  
 					  <!--smartreplysuccess  popup -->
 					  <ng-template #smartreplysuccess let-c="close" let-d="dismiss">
-						<div class="dd"><img src="assets/img/export1.png">
-					  
-						  <div class="modal-body smart-reply-success">
-							<p>Your Smart Reply is sucessfully saved,<br /> Now you can close the dialog box.
-							</p>
-							<div class="ss">
-							  <img src="assets/img/your.png">
-							</div>
+						  
+						  <div class="dd">
+							  <button (click)="smartReplySuccess()" type="button" class="btn5 btn-close" 
+									  style="width: 40px;" 
+									  data-bs-dismiss="modal" 
+									  aria-label="Close"
+									  data-bs-target="#smartrepliesModal">
+								  <img style="width: 10px;" src="assets/img/teambox/icon-close.svg">
+							  </button>
+							  <img src="assets/img/export1.png">
+
+							  <div class="modal-body smart-reply-success">
+								  <p>
+									  Your Smart Reply is sucessfully saved,<br /> Now you can close the dialog box.
+								  </p>
+								  <div class="ss">
+									  <img src="assets/img/your.png">
+								  </div>
+							  </div>
+							  <div class="modal-footer popfooter row text">
+								  <div class="col-md-3">
+									  <button type="button" class="btn btn-outline-dark" (click)="smartReplySuccess()" data-bs-dismiss="modal"
+							aria-label="Close" data-bs-target="#smartrepliesModal">
+										  Ok, Got it
+									  </button>
+								  </div>
+							  </div>
 						  </div>
-						  <div class="modal-footer popfooter row text">
-							<div class="col-md-3">
-							  <button type="button" class="btn btn-outline-dark" (click)="smartReplySuccess()" data-bs-dismiss="modal"
-								aria-label="Close" data-bs-target="#smartrepliesModal">Ok, Got it</button>
-							</div>
-						  </div>
-						</div>
 					  </ng-template>
 
 				</div>

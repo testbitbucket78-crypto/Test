@@ -467,7 +467,15 @@ span {
     width: 8px;
   }
 
-  .download .btn {
+.download {
+    .form-floating {
+        select {
+            cursor: pointer;
+        }
+    }
+}
+
+.download .btn {
     background: #fff4f2;
     border-radius: 13px;
     color: #000000;
@@ -485,9 +493,14 @@ span {
     vertical-align: sub;
   }
 
-  .purpose-identifier {
+.purpose-identifier {
     padding: 0% 22% 3% 23%;
-  }
+    .form-floating {
+        select {
+            cursor: pointer;
+        }
+    }
+}
 
   .purpose-identifier label {
     font-weight: 400!important;
@@ -539,7 +552,7 @@ span {
 .container-mapping .left-part, .container-mapping .right-part {
     background: #fff4f2;
     border-radius: 25px;
-    height: 52vh;
+    height: 386px;
 }
 
 .head-section span.heading {
@@ -629,7 +642,7 @@ span {
 }
 
 .active-toggle input:checked + .slider {
-    background-color: #6149CD;
+    background-color: #6149CD !important;
 }
 
 .active-toggle input:checked + .slider::before {
@@ -652,7 +665,7 @@ span {
 }
 
 .toggle-disabled-slider {
-     background-color: #F6EFFF!important;
+     background-color: #F6EFFF !important;
 }
 
 // input styling
@@ -931,8 +944,6 @@ span {
 
 .import-body{
     height: calc(100% - 140px);
-    overflow-y: scroll;
-    overflow-x: hidden;
 }
 
 * ::-webkit-scrollbar-track{
@@ -970,3 +981,49 @@ span {
 .hide-outer{
     overflow: hidden;
 }
+
+.info-container {
+    position: relative;
+    display: inline-block;
+
+    .Info-Iconn {
+        cursor: pointer;
+    }
+
+    .identfierTooltip {
+        position: absolute;
+        bottom: 18px;
+        left: 100%;
+        width: 280px;
+        height: auto;
+        background: #ffffff 0% 0% no-repeat padding-box;
+        box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+        border-radius: 30px;
+        opacity: 1;
+        overflow: auto;
+
+
+        .p-body {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 10%;
+            color: #7a86a1;
+            padding: 10%;
+        }
+
+        #radio-close-btn {
+            width: 36px;
+            height: 36px;
+            position: absolute;
+            top: 4%;
+            right: 6%;
+            background: #ffffff;
+            border-radius: 15px;
+            opacity: 1;
+            border: 1px solid #ebebeb;
+            font-family: 'Manrope';
+            font-size: 13px;
+        }
+    }
+    }
+

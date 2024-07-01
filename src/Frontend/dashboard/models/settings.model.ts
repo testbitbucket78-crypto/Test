@@ -74,6 +74,12 @@ export interface workingData {
     
 }
 
+export interface monthData {
+    monthName: string;
+    values: any[];
+    
+}
+
 export interface workingDataResponsePost {
     days: workingDataPost[]
     SP_ID: number;

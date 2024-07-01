@@ -47,7 +47,7 @@
         <div class="setting-card ml-5" >
             <div class="flex-row pb-2">
                 <div class="default-actions-heading">Campaign Alerts</div>
-                <div><img src="../../../../assets/img/settings/Info-icons.svg" (click)="campaignalerts()">
+                <div class="Info-Iconn"><img src="../../../../assets/img/settings/Info-icons.svg" (click)="campaignalerts()">
                 </div>
                 <div class="specific" *ngIf="alertscamp" (click)="stopPropagation($event)">
                     <p class="p-body">
@@ -83,7 +83,7 @@
     <div class="test-campaign-card ml-5" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('48')">
         <div class="flex-row pb-2">
             <div class="default-actions-heading">Test Campaign</div>
-            <div><img src="../../../../assets/img/settings/Info-icons.svg"(click)="testcamp()">
+            <div class="Info-Iconn"><img src="../../../../assets/img/settings/Info-icons.svg"(click)="testcamp()">
             </div>
         </div>
         <div class="specific" *ngIf="Testcampaign" (click)="stopPropagation($event)">

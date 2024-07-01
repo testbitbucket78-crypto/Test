@@ -111,7 +111,7 @@
                 </div>
             </div>
             <div class="select-heading py-2">Assign a Specific User</div>
-            <select [disabled]="missedChatOption!=='assignspecificuser'" class="input-form" [(ngModel)]="selectuser" >
+            <select [disabled]="missedChatOption!=='assignspecificuser'" class="input-form pointerCursor" [(ngModel)]="selectuser" >
                 <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
             </select>
             <p>If the contact owner is not defined, chat is assigned to Admin</p>

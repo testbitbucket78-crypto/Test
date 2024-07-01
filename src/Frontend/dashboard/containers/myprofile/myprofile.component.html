@@ -355,17 +355,22 @@
                                               
                                                 <label class="changepassform" for="newPassword">New Password</label>
                                                 <div class="input-group">
-                                                  <input [type]="newPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" formControlName="newPass"
-                                                    placeholder="8 character" name="newPassword" id="newPassword" autocomplete="newPassword"
-                                                    [ngClass]="{'is-invalid':changepassword.get('newPass')!.hasError('pattern') && changepassword.get('newPass')!.touched}">
-                                                  <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('newPassword')">
-                                                    <i [ngClass]="newPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
-                                                  </span>
-                                                  <div *ngIf="changepassword.get('newPass')!.invalid && changepassword.get('newPass')!.touched">
-                                                    <div class="change-pass-error-message" *ngIf="changepassword.get('newPass')!.hasError('pattern')">
-                                                        ! Password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters.
+                                                    <input [type]="newPasswordType ? 'password' : 'text'" class="form-control inputpassowrdfield" formControlName="newPass"
+                                                           placeholder="8 character" name="newPassword" id="newPassword" autocomplete="newPassword"
+                                                           [ngClass]="{'is-invalid':changepassword.get('newPass')!.hasError('pattern') && changepassword.get('newPass')!.touched}">
+                                                    <span class="input-group-addon eyeicon" (click)="togglePasswordVisibility('newPassword')">
+                                                        <i [ngClass]="newPasswordType ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+                                                    </span>
+                                                    <div *ngIf="changepassword.get('newPass')!.invalid && changepassword.get('newPass')!.touched">
+                                                        <div class="change-pass-error-message" *ngIf="changepassword.get('newPass')!.hasError('pattern')">
+                                                            ! Password must contain at least eight characters, at least one number and both lower and uppercase letters and special characters.
+                                                        </div>
                                                     </div>
-                                                  </div>
+                                                    <div *ngIf="changepassword.get('newPass')!.invalid && changepassword.get('newPass')!.touched">
+                                                        <div class="change-pass-error-message" *ngIf="changepassword.get('newPass')!.hasError('mismatch')">
+                                                            ! Passwords do not match please type again carefully.
+                                                        </div>
+                                                    </div>
                                                 </div>
                                               
                                                 <label class="changepassform" for="confirmPassword">Re-Enter New Password</label>

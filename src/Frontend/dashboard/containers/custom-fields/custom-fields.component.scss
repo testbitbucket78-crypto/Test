@@ -543,7 +543,7 @@ select {
 
    .scroll-custom{
     height: 48vh;
-    overflow-y: scroll;
+    overflow-y: auto;
    }
 
    .account-btn:disabled{

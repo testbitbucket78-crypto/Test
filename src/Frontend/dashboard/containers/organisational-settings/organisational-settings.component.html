@@ -204,7 +204,7 @@
                                     <div class="row">
                                         <!-- <label for="floatingSelectGrid" class="required">Phone Number*</label> -->
                                         <select class="input-formm" id="country_code" formControlName="country_code">
-                                            <option [selected]="" [value]="countryCoode" *ngFor="let countryCoode of countryCodes; let i = index">
+                                            <option *ngFor="let countryCoode of countryCodes; let i = index" [value]="countryCoode" >
                                                 {{ countryCoode }}
                                             </option>
                                         </select>

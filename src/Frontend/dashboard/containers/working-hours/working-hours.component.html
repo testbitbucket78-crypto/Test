@@ -36,7 +36,19 @@
     <div class="col-sm-8">
         <div class="setting-card">
             <div class="flex-header">
-                <span class="working-hour-heading pt-2">Holidays</span>
+                <div class="working-hour-heading pt-2 d-flex">
+                    Holidays
+                    <div class="Info-Iconn ml-2">
+                        <img src="../../../../assets/img/settings/Info-icons.svg" (click)="timinginfo($event)">
+                        <div class="specific" *ngIf="holidayTooltip" (click)="stopPropagation($event)">
+                            <p class="p-body">
+                                You can mark specific days as holidays, which will result in messages being auto replied to users to inform them about the holiday if they try to reach us and no other automation is triggered.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+               
                 <!-- <img src="../../../../assets/img/settings/drag.svg" /> -->
                 <select class="holiday-dropdown multiselect" [(ngModel)]="selectedYear">
                     <option *ngFor="let item of yearList" [value]="item">{{item}}</option>
@@ -46,15 +58,16 @@
                 <div class="month-card" *ngFor="let item of totalmonths;let idx =index"
                     (click)="createDynamicDate(idx+1)" data-bs-toggle="modal" data-bs-target="#holidayModal">
                     <div class=" date-time p-2 px-3">
-                        <img src="../../../../assets/img/settings/Edit-icon.svg">&nbsp;{{item}}
+                        <img src="../../../../assets/img/settings/Edit-icon.svg">&nbsp;{{item?.monthName}}
                     </div>
-                    <div class="dates-view px-3">
-                        <div class="month-date">1</div>
-                        <div class="month-date">12</div>
+                    <div class="dates-view px-3" *ngIf="item.values.length>0">
+                        <div class="month-date" *ngFor="let dt of item.values">{{dt | date:'dd'}}</div>
+                        <!-- <div class="month-date">12</div>
                         <div class="month-date">5</div>
                         <div class="month-date">1</div>
-                        <div class="month-date">13</div>
+                        <div class="month-date">13</div> -->
                     </div>
+                    <div *ngIf="item.values.length ==0" class="no-holidays">No holidays to show</div>
                 </div>
             </div>
 
@@ -63,7 +76,7 @@
     </div>
 
 </div>
-
+<div *ngIf="holidayTooltip" class="overlay" (click)="closeUtility()"></div>
 
 <div class="modal fade" tabindex="-1" data-bs-backdrop="static" id="workingHourModal" role="dialog">
     <div class="modal-dialog" role="document">
