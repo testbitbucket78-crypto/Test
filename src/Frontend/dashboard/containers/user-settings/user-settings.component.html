@@ -15,10 +15,40 @@
         </div>
     </div>
     <div class="p-3">
-        <ag-grid-angular style="height: calc(70vh - 50px);" class="ag-theme-alpine" [rowData]="userList" [columnDefs]="columnDefs" [animateRows]="true"
-            [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true"
-            (gridReady)="onGridReady($event)">
+        <ag-grid-angular style="height: calc(64vh - 50px);" class="ag-theme-alpine" [rowData]="userList" [columnDefs]="columnDefs" [animateRows]="true"
+                         [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true"
+                         (gridReady)="onGridReady($event)" [paginationPageSize]="paginationPageSize">
         </ag-grid-angular>
+        <hr class="custom-divider">
+        <div class="grid-pagination d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <p class="p-0 m-0">Showing:</p>
+                <select class="mx-3" [(ngModel)]="paginationPageSize" (change)="setPaging()">
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="45">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+            <div class="d-flex page-next-back mt-2">
+                <button class="pagination-btn left">
+                    <img class="next-img" src="assets/img/profile/previous.svg" (click)="onBtPrevious()">
+                </button>
+                <div class="mx-2 d-flex align-items-center pages-gap-2">
+                    <div *ngFor="let item of paging" [ngClass]="item == currPage ? 'page-No-selected':'page-No-unselected'"
+                         (click)="gotoPage(item)">{{item}}</div>
+                </div>
+                <button class="pagination-btn right button-box-shadow">
+                    <img class="next-img" src="assets/img/profile/next.svg" (click)="onBtNext()">
+                </button>
+            </div>
+
+        </div>
     </div>
 
 </div>

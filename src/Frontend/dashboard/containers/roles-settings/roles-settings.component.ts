@@ -4,7 +4,8 @@ import { SettingsService } from '../../services/settings.service';
 import { RolesData, rights } from '../../models/settings.model';
 import * as agGrid from 'ag-grid-community';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-declare var $:any;
+import { GridService } from '../../services/ag-grid.service';
+ declare var $:any;
 
 @Component({
     selector: 'sb-roles-settings',
@@ -72,7 +73,12 @@ export class RolesSettingsComponent implements OnInit {
     myForm!: FormGroup;
     subRightsArrowRotate: boolean = false;
     usersArrowRotate: boolean = false;
-    constructor(public _settingsService: SettingsService,private fb: FormBuilder) {
+    paginationPageSize: string = "10";
+    currPage: any = 10;
+    totalPage: any;
+    paging: any = 1;
+    lastElementOfPage: any;
+    constructor(public _settingsService: SettingsService, private fb: FormBuilder, public GridService: GridService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
 
@@ -109,6 +115,7 @@ export class RolesSettingsComponent implements OnInit {
         pagination: true,
         paginationPageSize: 15,
         paginateChildRows: true,
+        suppressPaginationPanel: true,
         overlayNoRowsTemplate:
             '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
         overlayLoadingTemplate:
@@ -131,7 +138,7 @@ export class RolesSettingsComponent implements OnInit {
                 this.rolesList = result?.getRoles;
                 this.rolesListinit = result?.getRoles;
                 this.gridOptions.api.sizeColumnsToFit();
-                
+                this.getGridPageSize()
             }
         });
     }
@@ -302,4 +309,34 @@ export class RolesSettingsComponent implements OnInit {
         this.subRightsArrowRotate = isReset;
         this.usersArrowRotate = isReset;
     }
+    
+    setPaging() {
+        this.getGridPageSize();
+    }
+
+    getGridPageSize() {
+        setTimeout(() => {
+            this.GridService.onChangePageSize(this.paginationPageSize, this.gridapi, this.rolesList);
+            this.paging = this.GridService.paging;
+        }, 50)
+    }
+
+    onBtNext() {
+        this.GridService.onBtNext(this.gridapi, this.rolesList);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+
+    }
+
+    onBtPrevious() {
+        this.GridService.onBtPrevious(this.gridapi, this.rolesList);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+
+    }
+
+    gotoPage(page: any) {
+        this.GridService.gotoPage(page, this.gridapi, this.rolesList)
+    }
+
 }

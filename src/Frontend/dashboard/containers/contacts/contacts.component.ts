@@ -12,6 +12,7 @@ import { contactsImageData } from 'Frontend/dashboard/models/dashboard.model';
 import { AnyLengthString } from 'aws-sdk/clients/comprehend';
 import { join } from 'path';
 import { Subject } from 'rxjs';
+import { GridService } from '../../services/ag-grid.service';
 
 declare var $: any;
 @Component({
@@ -25,9 +26,20 @@ export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
   public gridapi!:GridApi | any;
 
 
-  onGridReady(params: GridReadyEvent) {
+    onGridReady(params: GridReadyEvent) {
     this.gridapi = params.api;
-  }
+    }
+    onFilterChanged() {
+        setTimeout(() => {
+            const rowCount = this.gridOptions.api.getModel().getRowCount();
+            if (rowCount === 0) {
+                this.gridapi.showNoRowsOverlay();
+            } else {
+                this.gridapi.hideOverlay();
+            }
+        }, 100);
+    
+    }
 
   //******* Router Guard  *********//
   routerGuard = () => {
@@ -39,7 +51,7 @@ export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
   arrHideColumn:any[] =[];
   isShowColumn:boolean = false;
   isShowFilter:boolean = false;
-  isImport:boolean = true;
+    isImport:boolean = true;
 columnDefs: ColDef[] = [
   {
     field: '',
@@ -200,7 +212,6 @@ countryCodes = [
     addContactTitle: 'add' | 'edit' = 'add';
     checkedTags: string[] = [];
     isEditTag:boolean = false;
-
   // multiselect 
     disabled = false;
     ShowFilter = false;
@@ -210,6 +221,7 @@ countryCodes = [
     tagListData:[] = [];
     status: any = [];
     userList!:any;
+    filteredUserList: any;
     selectedItems: any = [];
     // selectedTagItems: any[] = []; 
     selectedStatusItems: any[] = []; 
@@ -227,7 +239,11 @@ countryCodes = [
     errorMessage = '';
     successMessage = '';
     warnMessage = '';
-
+    paginationPageSize: string = '10';
+    currPage: any = 10;
+    totalPage: any;
+    paging: any = 1;
+    lastElementOfPage: any;
    sort(headerName:String){
     this.isDesOrder = !this.isDesOrder;
     this.orderHeader = headerName;
@@ -237,11 +253,11 @@ countryCodes = [
    title = 'formValidation';
    submitted = false;
    query = '';
- 
+   contactOwnerTooltip!: boolean;
   
   
  constructor(config: NgbModalConfig, private modalService: NgbModal,
-  public settingsService:SettingsService, private apiService: DashboardService,private _settingsService:SettingsService,private teamboxService:TeamboxService, private fb: FormBuilder, private router:Router,private cdRef: ChangeDetectorRef)
+     public settingsService: SettingsService, private apiService: DashboardService, private _settingsService: SettingsService, private teamboxService: TeamboxService, private fb: FormBuilder, private router: Router, private cdRef: ChangeDetectorRef, public GridService: GridService)
  
  
  {
@@ -471,7 +487,8 @@ onSelectAll(items: any) {
       this.contacts = data.result;
       this.rowData = this.contacts;
       this.productForm.get('countryCode')?.setValue('IN +91');
-      console.log(this.contacts);
+        console.log(this.contacts);
+        this.getGridPageSize();
     });
   }
 
@@ -614,7 +631,8 @@ onSelectAll(items: any) {
     paginationAutoPageSize: false,
     paginationPageSize: 10,
     paginateChildRows:true,
-    overlayNoRowsTemplate: '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
+    suppressPaginationPanel: true,
+    overlayNoRowsTemplate: '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No records found.</span>',
     overlayLoadingTemplate:'<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
   
   };
@@ -884,7 +902,8 @@ deletContactByID(data: any) {
       this._settingsService.getUserList(this.spid)
       .subscribe(result =>{
         if(result){
-          this.userList =result?.getUser;      
+            this.userList =result?.getUser;  
+            this.filteredUserList = this.userList
         }
 
       })
@@ -1290,6 +1309,40 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   closeFilter(){
     console.log('xyz');
    // this.isShowFilter = false;
-  }
+    }
+
+    filterContactOwners() {
+        const searchInput = document.getElementById('contactOwnerValue') as HTMLInputElement;
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        this.filteredUserList = this.userList.filter((x: any) => x.name.toLowerCase().includes(searchTerm));
+    }
+    setPaging() {
+        this.getGridPageSize();
+    }
+
+    getGridPageSize() {
+        setTimeout(() => {
+            this.GridService.onChangePageSize(this.paginationPageSize, this.gridapi, this.rowData);
+            this.paging = this.GridService.paging;
+        }, 50)
+    }
+
+    onBtNext() {
+        this.GridService.onBtNext(this.gridapi, this.rowData);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+
+    }
+
+    onBtPrevious() {
+        this.GridService.onBtPrevious(this.gridapi, this.rowData);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+
+    }
+
+    gotoPage(page: any) {
+        this.GridService.gotoPage(page, this.gridapi, this.rowData)
+    }
   
 }

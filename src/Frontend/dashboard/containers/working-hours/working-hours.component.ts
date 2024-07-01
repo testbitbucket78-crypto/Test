@@ -37,7 +37,7 @@ monthDates:any[] =[];
 selectedDates:number[] =[];
 yearList:number[] =[];
 selectedPeriods: string[] = ['AM', 'PM'];
-
+holidayTooltip!: boolean;
   constructor(private _settingsService:SettingsService,private datepipe: DatePipe) { 
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     this.selectedYear =new Date().getFullYear();
@@ -181,6 +181,14 @@ selectedPeriods: string[] = ['AM', 'PM'];
     for(let i=1950;i<=2050;i++){
       this.yearList.push(i);
     }
-   }
-
+    }
+    closeUtility() {
+        this.holidayTooltip = false;
+    }
+    timinginfo(event: any) {
+        this.holidayTooltip = !this.holidayTooltip;
+    }
+    stopPropagation(event: Event) {
+        event.stopPropagation();
+    }
 }

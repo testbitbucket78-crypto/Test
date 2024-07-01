@@ -862,6 +862,13 @@ input:focus {
 .dd {
     background-color: #FFF4F2;
     border-radius: 20px;
+
+    .btn-close {
+        img {
+            width: 10px;
+            padding: 0px 0px 0px 0%;
+        }
+    }
 }
 
 .dd h4 {
@@ -2649,6 +2656,10 @@ img.icon.sm {
 .content_inner .tooltip-container {
     position: relative;
     display: inline;
+
+    #p-body {
+        margin-top: 15%;
+    }
 }
 .content_inner .titleFallback {
     font-size: 12px;
