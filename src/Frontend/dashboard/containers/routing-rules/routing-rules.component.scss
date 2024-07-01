@@ -23,8 +23,12 @@ p{
     font-size: 13px;    
     color: #7A86A1;
 }
-.sub-contents{
+.sub-contents {
     padding: 5px 0px 0px 30px;
+
+    select {
+        cursor: pointer;
+    }
 }
 
 .sub-contents p{
@@ -117,4 +121,7 @@ input[type="radio"]:checked + label::before {
     background-color: #6149CD;
     border: none;
    }
+.pointerCursor{
+    cursor: pointer;
+}
 

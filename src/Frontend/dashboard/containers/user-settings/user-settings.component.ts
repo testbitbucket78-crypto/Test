@@ -6,6 +6,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { isNullOrUndefined } from 'is-what';
 import { DatePipe } from '@angular/common';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { GridService } from '../../services/ag-grid.service';
 declare var $: any;
 
 @Component({
@@ -115,10 +116,15 @@ export class UserSettingsComponent implements OnInit {
     countryCodes:string[] =[];
     title: string = '';
     btnActionName: string = '';
-    successMessage='';
-    errorMessage='';
-      warningMessage='';
-    constructor(private _settingsService: SettingsService,private datepipe: DatePipe,) {
+    paginationPageSize: string = '10';
+    currPage: any = 10;
+    totalPage: any;
+    paging: any = 1;
+    lastElementOfPage: any;
+    successMessage = '';
+    errorMessage = '';
+    warningMessage = '';
+    constructor(private _settingsService: SettingsService, private datepipe: DatePipe, public GridService: GridService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
         this.countryCodes = this._settingsService.countryCodes;
     }
@@ -163,6 +169,7 @@ export class UserSettingsComponent implements OnInit {
         noRowsOverlay: true,
         pagination: true,
         paginationPageSize: 15,
+        suppressPaginationPanel: true,
         paginateChildRows: true,
         overlayNoRowsTemplate:
             '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
@@ -190,6 +197,7 @@ export class UserSettingsComponent implements OnInit {
                 this.userList = result?.getUser;
                 this.userListInIt = result?.getUser;
                 this.gridOptions.api.sizeColumnsToFit();
+                this.getGridPageSize();
             }
         });
     }
@@ -353,9 +361,38 @@ export class UserSettingsComponent implements OnInit {
         }
 
         return intials;
-      }
+    }
+    setPaging() {
+        this.getGridPageSize();
+    }
 
+    getGridPageSize() {
+        setTimeout(() => {
+            this.GridService.onChangePageSize(this.paginationPageSize, this.gridapi, this.rolesList);
+            this.paging = this.GridService.paging;
+        }, 50)
+    }
+
+    onBtNext() {
+        debugger;
+        this.GridService.onBtNext(this.gridapi, this.userList);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+
+    }
+
+    onBtPrevious() {
+        this.GridService.onBtPrevious(this.gridapi, this.userList);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+
+    }
+
+    gotoPage(page: any) {
+        this.GridService.gotoPage(page, this.gridapi, this.userList)
+    }
       
+
 showToaster(message:any,type:any){
     if(type=='success'){
       this.successMessage=message;

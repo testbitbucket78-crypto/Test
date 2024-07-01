@@ -159,3 +159,53 @@
   .aestric{
     color: red !important;
 }
+
+.grid-pagination {
+    p {
+        color: #7a86a1;
+    }
+
+    select {
+        cursor: pointer;
+        border: none;
+        outline: none;
+        color: #7a86a1;
+    }
+
+    .page-next-back {
+        .pagination-btn {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 15px;
+            opacity: 1;
+        }
+
+        .button-box-shadow {
+            box-shadow: 1px 8px 29px #695f972e;
+        }
+
+        .page-No-selected {
+            color: blue;
+            font-weight: bold;
+        }
+
+        .pages-gap-2 {
+            gap: 10px;
+        }
+
+        .page-No-unselected {
+            color: gray;
+        }
+    }
+}
+
+.custom-divider {
+    border: 0;
+    height: 1px;
+    background: #bababa;
+    margin: 0px 0;
+}

@@ -39,7 +39,7 @@
     font-size: 14px;
     color: #6149CD;
     left: 1px;
-    margin: 2% 5% 3% 5%;
+    margin: 2% 5% 0% 5%;
     
 }
 
@@ -806,7 +806,12 @@ opacity: 1;
 }
 
 .popup-dialog.ContactOption {
-    padding: 17px 0 17px 0;
+    padding: 4px 0 17px 0;
+
+    .searchContact {
+        width: 90%;
+        margin: 0px 0px 0px 9px;
+    }
 }
 
 .popup-dialog.ContactOption::-webkit-scrollbar {
@@ -1494,6 +1499,109 @@ input[type="radio"], input[type="checkbox"] {
 
     select.form-control::-webkit-calendar-picker-indicator {
         cursor: pointer;
+    }
+}
+
+.column-container {
+    .checkmark {
+        cursor: pointer;
+    }
+
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+}
+.sticky-footer{
+    position: sticky;
+}
+
+.grid-pagination {
+    padding: 0% 6% 0% 6%;
+    p {
+        color: #7a86a1;
+    }
+
+    select {
+        cursor: pointer;
+        border: none;
+        outline: none;
+        color: #7a86a1;
+    }
+
+    .page-next-back {
+        .pagination-btn {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 15px;
+            opacity: 1;
+        }
+
+        .button-box-shadow {
+            box-shadow: 1px 8px 29px #695f972e;
+        }
+
+        .page-No-selected {
+            color: blue;
+            font-weight: bold;
+        }
+
+        .pages-gap-2 {
+            gap: 10px;
+        }
+
+        .page-No-unselected {
+            color: gray;
+        }
+    }
+}
+
+
+.info-container {
+    position: relative;
+    display: inline-block;
+    left: 6px;
+
+    .Info-Iconn {
+        cursor: pointer;
+    }
+
+    .identfierTooltip {
+        position: absolute;
+        bottom: 12px;
+        width: 280px;
+        height: auto;
+        background: #ffffff 0% 0% no-repeat padding-box;
+        box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+        border-radius: 30px;
+        opacity: 1;
+        overflow: auto;
+
+
+        .p-body {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 10%;
+            color: #7a86a1;
+            padding: 10%;
+        }
+
+        #radio-close-btn {
+            width: 36px;
+            height: 36px;
+            position: absolute;
+            top: 4%;
+            right: 6%;
+            background: #ffffff;
+            border-radius: 15px;
+            opacity: 1;
+            border: 1px solid #ebebeb;
+            font-family: 'Manrope';
+            font-size: 13px;
+        }
     }
 }
 

@@ -467,7 +467,15 @@ span {
     width: 8px;
   }
 
-  .download .btn {
+.download {
+    .form-floating {
+        select {
+            cursor: pointer;
+        }
+    }
+}
+
+.download .btn {
     background: #fff4f2;
     border-radius: 13px;
     color: #000000;
@@ -485,9 +493,14 @@ span {
     vertical-align: sub;
   }
 
-  .purpose-identifier {
+.purpose-identifier {
     padding: 0% 22% 3% 23%;
-  }
+    .form-floating {
+        select {
+            cursor: pointer;
+        }
+    }
+}
 
   .purpose-identifier label {
     font-weight: 400!important;
@@ -539,7 +552,7 @@ span {
 .container-mapping .left-part, .container-mapping .right-part {
     background: #fff4f2;
     border-radius: 25px;
-    height: 52vh;
+    height: 386px;
 }
 
 .head-section span.heading {
@@ -629,7 +642,7 @@ span {
 }
 
 .active-toggle input:checked + .slider {
-    background-color: #6149CD;
+    background-color: #6149CD !important;
 }
 
 .active-toggle input:checked + .slider::before {
@@ -652,7 +665,7 @@ span {
 }
 
 .toggle-disabled-slider {
-     background-color: #F6EFFF!important;
+     background-color: #F6EFFF !important;
 }
 
 // input styling
@@ -931,8 +944,6 @@ span {
 
 .import-body{
     height: calc(100% - 140px);
-    overflow-y: scroll;
-    overflow-x: hidden;
 }
 
 * ::-webkit-scrollbar-track{
@@ -1014,5 +1025,5 @@ span {
             font-size: 13px;
         }
     }
-}
+    }
 
