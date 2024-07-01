@@ -968,7 +968,8 @@ formateDate(dateTime:string){
 			this.filteredEndCustomer = allCustomerList
 			this.filteredEndCustomer['sortOrder']=false
 			this.filteredEndCustomerOrigional =this.filteredEndCustomer
-			this.totalpages = Math.ceil(this.filteredEndCustomer.length/this.pagesize)
+			this.totalpages = Math.ceil(this.filteredEndCustomer.length/this.pagesize);
+			this.page =1;
 			
 	})
 

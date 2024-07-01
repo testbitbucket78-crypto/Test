@@ -1,3 +1,9 @@
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+</div>
+
 <div class="setting-card">
     <div class="flex-header">
         <span class="working-hour-heading">Roles</span>
@@ -103,7 +109,8 @@
     <div class="sidebar-content">
         <p class="m-0">ID:<span class="team-id">{{roleData.roleID}}</span></p>
         <span class="heading">{{roleData?.RoleName}}</span>
-        <p>Created on: <span class="team-id">{{roleData?.created_at ? (roleData?.created_at | date: 'dd MMM yyyy h:mm a'): 'N/A'}}</span> | Last Modified: <span class="team-id">{{roleData?.updated_at ? (roleData?.updated_at | date: 'dd MMM yyyy h:mm a') :'N/A'}}</span></p>
+        <p *ngIf="roleData?.RoleName != 'Admin' && roleData?.RoleName != 'Agent'">Created on: <span class="team-id">{{roleData?.created_at ? (roleData?.created_at | date: 'dd MMM yyyy h:mm a'): 'N/A'}}</span> | Last Modified: <span class="team-id">{{roleData?.updated_at ? (roleData?.updated_at | date: 'dd MMM yyyy h:mm a') :'N/A'}}</span></p>
+        <p  *ngIf="roleData?.RoleName == 'Admin' || roleData?.RoleName == 'Agent'">Created on: <span class="team-id">N/A</span> | Last Modified: <span class="team-id">N/A</span></p>
         <div class="h-100">
             <div class="accordion">
                 <div class="accordion-item">
@@ -142,9 +149,9 @@
         </div>
     </div>
     <div class="sideBar-footer">
-        <button type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#rolesModal" (click)="editRolesDetails()">
+        <button type="button" class="account-white-btn" [disabled]="roleData?.RoleName == 'Admin' || roleData?.RoleName == 'Agent'" data-bs-toggle="modal" data-bs-target="#rolesModal" (click)="editRolesDetails();checkRole();">
             <img class="p-0" src="../../../../assets/img/edit.png"></button>
-        <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+        <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" [disabled]="roleData?.RoleName == 'Admin' || roleData?.RoleName == 'Agent'" data-bs-target="#deleteModal" (click)="checkRole();">
             <img class="p-0" src="../../../../assets/img/delete.png">
         </button>
     </div>

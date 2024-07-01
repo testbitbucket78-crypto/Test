@@ -252,11 +252,36 @@ var interactions = `WITH LatestInteraction AS (
 LatestInteractionMapping AS (
     SELECT 
         InteractionId,
-        MAX(created_at) AS LatestMappingInfo -- Assuming 'mapping_info' is a timestamp or a column that indicates the latest entry
+        MAX(created_at) AS LatestMappingInfo
     FROM 
         InteractionMapping
     GROUP BY 
         InteractionId
+),
+TagSplit AS (
+    SELECT 
+        ec.customerId,
+        TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(ec.Tag, ',', numbers.n), ',', -1)) AS TagId
+    FROM 
+        EndCustomer ec
+    JOIN (
+        SELECT 1 n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL 
+        SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL 
+        SELECT 9 UNION ALL SELECT 10
+    ) numbers ON CHAR_LENGTH(ec.Tag) - CHAR_LENGTH(REPLACE(ec.Tag, ',', '')) >= numbers.n - 1
+),
+TagNames AS (
+    SELECT 
+        ts.customerId,
+        GROUP_CONCAT(ectm.TagName SEPARATOR ', ') AS TagNames
+    FROM 
+        TagSplit ts
+    JOIN 
+        EndCustomerTagMaster ectm ON ts.TagId = ectm.ID
+    WHERE 
+        ectm.isDeleted != 1 AND ectm.SP_ID = ?
+    GROUP BY 
+        ts.customerId
 )
 SELECT DISTINCT
     ic.interaction_status, 
@@ -265,15 +290,16 @@ SELECT DISTINCT
     CASE 
         WHEN ec.isDeleted != 1 THEN ec.Name
         ELSE ec.Phone_Number
-    END AS Phone_Number,
+    END AS Name,
     last_message.LastMessageId,
     COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
     m.*,
-    ic.created_at as InCreatedDate,
-    ic.updated_at as InUpdatedDate,
+    ic.created_at AS InCreatedDate,
+    ic.updated_at AS InUpdatedDate,
     m.created_at AS LastMessageDate,
     ww.connected_id,
-    im.AgentId as InteractionMapping -- Using the latest InteractionMapping
+    im.AgentId AS InteractionMapping,
+    tn.TagNames -- Include the TagNames from the EndCustomerTagMaster
 FROM 
     LatestInteraction li
 JOIN 
@@ -306,11 +332,13 @@ LEFT JOIN
 LEFT JOIN 
     WhatsAppWeb ww ON ec.SP_ID = ww.spid AND ww.is_deleted != 1
 LEFT JOIN 
-    LatestInteractionMapping lim ON ic.InteractionId = lim.InteractionId -- Join with LatestInteractionMapping
+    LatestInteractionMapping lim ON ic.InteractionId = lim.InteractionId
 LEFT JOIN 
-    InteractionMapping im ON ic.InteractionId = im.InteractionId AND im.created_at = lim.LatestMappingInfo -- Join with InteractionMapping using the latest entry
+    InteractionMapping im ON ic.InteractionId = im.InteractionId AND im.created_at = lim.LatestMappingInfo
+LEFT JOIN 
+    TagNames tn ON ec.customerId = tn.customerId -- Join with TagNames to get the comma-separated TagNames
 WHERE 
-    ec.SP_ID = ?
+    ec.SP_ID = ?;
 `
 
 getallMessagesWithScripts = `(

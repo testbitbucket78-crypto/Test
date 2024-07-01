@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { holidayData, workingData, workingDataResponse, workingDataResponsePost, workingFormData } from '../../models/settings.model';
+import { holidayData, monthData, workingData, workingDataResponse, workingDataResponsePost, workingFormData } from '../../models/settings.model';
 import { time } from 'console';
 import { SettingsService } from '../../services/settings.service';
 import { isNullOrUndefined } from 'is-what';
@@ -26,7 +26,7 @@ export class WorkingHoursComponent implements OnInit {
     itemsShowLimit: 3
 };
 
-totalmonths=['Jaunary','Febraury','March','April','May','June','July','August','September','October','November','December'];
+totalmonths:monthData[]=[{monthName:'Jaunary',values:[]},{monthName:'Febraury',values:[]},{monthName:'March',values:[]},{monthName:'April',values:[]},{monthName:'May',values:[]},{monthName:'June',values:[]},{monthName:'July',values:[]},{monthName:'August',values:[]},{monthName:'September',values:[]},{monthName:'October',values:[]},{monthName:'November',values:[]},{monthName:'December',values:[]}];
 sp_Id:number;
 workingData:workingData[]=[];
 workingFormData:workingFormData[]=[];
@@ -82,10 +82,17 @@ holidayTooltip!: boolean;
   getHolidayDetails(){
     let fromDate = new Date(this.selectedYear,0,1);
     let toDate = new Date(this.selectedYear,12,0);
-    this._settingsService.getHolidayData(this.sp_Id,'2023-1-1','2023-12-31')
-    .subscribe(result =>{
+    this._settingsService.getHolidayData(this.sp_Id,'2024-1-1','2024-12-31')
+    .subscribe((result:any) =>{
       if(result){
-        console.log(result);
+        let HolidayList = result?.HolidayList;
+        HolidayList.forEach((item:any)=>{
+          let month  = new Date(item.holiday_date).getMonth();
+          console.log(item.holiday_date);
+          console.log(month);
+          this.totalmonths[month].values.push(item?.holiday_date);
+        })
+        console.log(this.totalmonths);
         
       }
 

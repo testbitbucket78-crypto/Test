@@ -243,6 +243,7 @@ hideToaster(){
     Country:new FormControl('', [Validators.required]),
     Phone_Number:new FormControl('',[Validators.required,Validators.minLength(6),Validators.maxLength(15)]),
     Employees_count:new FormControl('', [Validators.required]),
+    country_code:new FormControl('', [Validators.required]),
     Industry:new FormControl('', [Validators.required]),
     });
     }
@@ -302,7 +303,7 @@ hideToaster(){
   }
 
   copyCompanyFormData(){
-    if(!this.companyData)
+   // if(!this.companyData)
       this.companyData =<companyDetail>{};
     this.companyData.SP_ID = this.sp_Id;
     this.companyData.Company_Name = this.companyDetailForm.controls.Company_Name.value;
@@ -311,6 +312,7 @@ hideToaster(){
     this.companyData.Employees_count = this.companyDetailForm.controls.Employees_count.value;
     this.companyData.Industry = this.companyDetailForm.controls.Industry.value;
     this.companyData.Phone_Number = this.companyDetailForm.controls.Phone_Number.value;
+    console.log(this.companyDetailForm.get('country_code')?.value);
     this.companyData.country_code = this.companyDetailForm.get('country_code')?.value;
   }  
 

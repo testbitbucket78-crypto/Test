@@ -35,7 +35,7 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
     let contactList = await db.excuteQuery('SELECT * FROM EndCustomer where SP_ID=? and isDeleted !=1 and IsTemporary !=1 order by customerId desc', [req.body.SP_ID])
     if (req.body?.Query != '') {
       IsFilteredList = true
-      let Query = req.body.Query + " and isDeleted !=1 and IsTemporary !=1 order by customerId desc"
+      let Query = req.body.Query + " and isDeleted !=1 and IsTemporary !=1 order by updated_at desc"
       contactList = await db.excuteQuery(Query, [])
     }
 

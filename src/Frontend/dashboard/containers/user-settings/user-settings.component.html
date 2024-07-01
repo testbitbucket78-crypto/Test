@@ -1,3 +1,8 @@
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+</div>
 <div class="setting-card">
     <div class="flex-header">
         <span class="working-hour-heading">Users</span>

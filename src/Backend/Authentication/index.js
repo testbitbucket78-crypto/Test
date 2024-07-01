@@ -112,27 +112,22 @@ const register = async function (req, res) {
 
             let loginPageURL = "https://cip.stacknize.com/#/login";
             var mailOptions = {
-                from: val.email,
-                to: req.body.email_id,
-                subject: `Hello ${req.body.name}! Getting started with Engagekart`,
-
-                text: `Dear ${req.body.name},
-
-                Welcome to Engagekart!
-                
-                We are delighted to have you onboard and can't wait to see you automate your business operations effortlessly with our platform. So get going and explore all the features on Engagekart to engage with your customers while converting new leads.
-                
-                Here are your account details on Engagekart:
-                ${loginPageURL}
-                
-                User ID: ${req.body.email_id}
-                Mobile: ${req.body.mobile_number}
-                Role: Admin
-                
-                Thank you for choosing Engagekart!
-                
-                Best regards,
-                Team Engagekart` };
+                from: val.email, // Use the sender's email address here
+                to: req.body.email_id, // Recipient's email address from the request body
+                subject: `Hello ${req.body.name}! Getting started with Engagekart`, // Email subject
+            
+                html: `<p>Dear ${req.body.name},</p>
+           <p>Welcome to Engagekart!</p>
+           <p>We are delighted to have you onboard and can't wait to see you automate your business operations effortlessly with our platform. So get going and explore all the features on Engagekart to engage with your customers while converting new leads.</p>
+           <p>Here are your account details on Engagekart:</p>
+           <p><a href="${loginPageURL}">${loginPageURL}</a></p>
+           <p>User ID: ${req.body.email_id}<br>
+           Mobile: ${req.body.mobile_number}<br>
+           Role: Admin</p>
+           <p>Thank you for choosing Engagekart!</p>
+           <p>Best regards,<br>
+           Team Engagekart</p>`
+            };
 
 
 
