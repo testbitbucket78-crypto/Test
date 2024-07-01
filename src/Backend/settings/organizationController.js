@@ -839,7 +839,7 @@ const deleteUser = async (req, res) => {
 const editUser = async (req, res) => {
     try {
         uid = req.body.uid
-        RoleName = req.body?.RoleName
+        RoleName = req.body?.role
         SP_ID = req.body?.SP_ID
         email_id = req.body.email_id
         name = req.body.name
@@ -854,7 +854,7 @@ const editUser = async (req, res) => {
         const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         UserType = req.body.UserType
 
-        if (RoleName == 'Admin') {
+       // if (RoleName == 'Admin') {
             let isAdminRemains = await db.excuteQuery('select * from roles where RoleName=? and roleID !=? and isDeleted !=1 and SP_ID=?', ['Admin', UserType, SP_ID]);
             if (isAdminRemains?.length == 1) {
                 return res.status(409).send({
@@ -862,7 +862,7 @@ const editUser = async (req, res) => {
                     status: 409
                 });
             }
-        }
+       // }
         let currentUser = await db.excuteQuery('SELECT * FROM user WHERE uid=?  and isDeleted !=1 and SP_ID=?', [uid, SP_ID])
 
         var isNameExist = await db.excuteQuery('SELECT * FROM user WHERE name=? and isDeleted !=1 and SP_ID=? and uid !=?', [name, SP_ID, uid])

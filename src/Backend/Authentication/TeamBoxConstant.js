@@ -338,7 +338,7 @@ LEFT JOIN
 LEFT JOIN 
     TagNames tn ON ec.customerId = tn.customerId -- Join with TagNames to get the comma-separated TagNames
 WHERE 
-    ec.SP_ID = ?;
+    ec.SP_ID = ?
 `
 
 getallMessagesWithScripts = `(
