@@ -13,6 +13,7 @@ import { ToolbarService,NodeSelection, LinkService, ImageService, EmojiPickerSer
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { debounceTime, map } from 'rxjs/operators';
 import { Mention } from '@syncfusion/ej2-angular-dropdowns';
+import { DatePipe } from '@angular/common';
 
 declare var $: any;
 @Component({
@@ -189,7 +190,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	status='';
 	showChatNotes='text';
 	message_text='';
-	selectedChannel:any=['WhatsApp Web'];
+	selectedChannel:any='';
 	contactSearchKey:any='';
 	ShowChannelOption:any=false;
 	CountryCode!:any;
@@ -264,7 +265,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isMessageCompletedText:boolean = false;
 	isShowAttributes:boolean = false;
 
-	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService) {
+	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
+		private datePipe:DatePipe) {
 		
 		// customize default values of modals used by this component tree
 
@@ -568,10 +570,10 @@ ToggleShowMentionOption(){
 InsertMentionOption(user:any){
 	let content:any = this.chatEditor.value || '';
 	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-	content = content+'<span class="mention"> @'+user.name+' </span>'
+	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">@'+user.name+'</a></span>'
 	this.chatEditor.value = content;
-	content = content+'<span> </span>'
-	this.chatEditor.value = content;
+	// content = content+'<span> </span>'
+	// this.chatEditor.value = content;
 	setTimeout(() => {
 		this.attachMentionHandlers();
 	  }, 10);
@@ -628,7 +630,8 @@ selectAttributes(item:any) {
 	const selectedValue = item;
 	let content:any = this.chatEditor.value || '';
 	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-	content = content+'<span>{{'+selectedValue+'}}</span>'
+	//content = content+'<span>{{'+selectedValue+'}}</span>'
+	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
 	this.chatEditor.value = content;
 }
 
@@ -2408,7 +2411,8 @@ toggleNoteOption(note:any){
 	$('.modal-backdrop').remove();
 }
 hideNoteOption(){
-	this.selectedNote.selected=false
+	this.selectedNote.selected=false;
+	$("#agModal").modal('hide'); 
 	
 }
 editNotes(){
@@ -2734,4 +2738,20 @@ sendMessage(){
           args.cancel = true;
         }
       }
+
+	  getTime(time:any){
+		let date = new Date(time);
+		let currDate = new Date();
+		const yesterday = new Date();
+		yesterday.setDate(new Date().getDate() - 1);
+		if(date.getFullYear() === currDate.getFullYear() && date.getMonth() === currDate.getMonth() &&
+		date.getDate() === currDate.getDate()){
+			return this.datePipe.transform(date,'hh:mm a');
+		} else if(date.getFullYear() === currDate.getFullYear() && date.getMonth() === currDate.getMonth() &&
+		date.getDate() === currDate.getDate()){
+			return 'Yesterday';
+		}else{
+			return this.datePipe.transform(date,'dd/MM/yyyy');
+		}
+	  }
 }
