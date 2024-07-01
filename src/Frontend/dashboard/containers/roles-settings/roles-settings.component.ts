@@ -75,8 +75,7 @@ export class RolesSettingsComponent implements OnInit {
     usersArrowRotate: boolean = false;
     successMessage='';
     errorMessage='';
-      warningMessage='';
-    constructor(public _settingsService: SettingsService,private fb: FormBuilder) {
+    warningMessage='';
     paginationPageSize: string = "10";
     currPage: any = 10;
     totalPage: any;

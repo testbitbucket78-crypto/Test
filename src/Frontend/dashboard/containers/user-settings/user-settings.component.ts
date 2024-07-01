@@ -121,7 +121,6 @@ export class UserSettingsComponent implements OnInit {
     totalPage: any;
     paging: any = 1;
     lastElementOfPage: any;
-    btnActionName: string = '';
     successMessage = '';
     errorMessage = '';
     warningMessage = '';
@@ -392,9 +391,8 @@ export class UserSettingsComponent implements OnInit {
     gotoPage(page: any) {
         this.GridService.gotoPage(page, this.gridapi, this.userList)
     }
-      }
-
       
+
 showToaster(message:any,type:any){
     if(type=='success'){
       this.successMessage=message;
