@@ -728,7 +728,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
           if (phoneCheckResult.error) {
             existPhone = false;
           } else if (!phoneCheckResult.isValidLength) {
-          //  console.log("isValidLength")
+            console.log("isValidLength")
             existPhone = false;
           } else {
             console.log("currentData[i].countryCode = phoneCheckResult.country;", phoneCheckResult.phoneNumber)
@@ -1458,8 +1458,10 @@ const countryCodeMap = parseCountryCodes(countryCodes);
 const checkPhoneNumbersLength = (phoneNumbers, countryCodeMap, expectedLengths) => {
  return phoneNumbers.map(phone => {
     const result = separatePhoneNumber(phone, countryCodeMap);
+
     if (result) {
-      const expectedLength = expectedLengths[result.country.slice(1)];
+      let country = result.country.replace(/\D/g, '');
+      const expectedLength = expectedLengths[country];
       const isValidLength = expectedLength !== undefined ? result.phoneNumber.length === expectedLength : true;
       return {
         country: result.country,
