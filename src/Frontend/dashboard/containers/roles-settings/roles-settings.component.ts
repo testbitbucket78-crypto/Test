@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, CellStyle, CellClassParams } from 'ag-grid-community';
 import { SettingsService } from '../../services/settings.service';
 import { RolesData, rights } from '../../models/settings.model';
 import * as agGrid from 'ag-grid-community';
@@ -22,7 +22,16 @@ export class RolesSettingsComponent implements OnInit {
             suppressSizeToFit: false,
             resizable: true,
             sortable: true,
-           // cellStyle:this.cellStyle
+            cellClass:this.cellStyle
+        //    cellStyle: params => {
+        //     if (params.value > 70000) {
+        //       return { color: 'red', fontWeight: 'bold' };
+        //     } else if (params.value > 50000) {
+        //       return { color: 'orange' };
+        //     } else {
+        //       return { color: 'green' };
+        //     }
+        //   }
         },
         {
             field: 'rights',
@@ -94,11 +103,11 @@ export class RolesSettingsComponent implements OnInit {
           });
     }
 
-    cellStyle(params: agGrid.CellClassParams) {
+    cellStyle(params: agGrid.CellClassParams):string {
             if (params.value=='Admin' || params.value=='Agent') {        
-                return { background: '#FBFAFF', opacity: 0.86, color:'purpel' };
+                return 'purpelCellStyle';
             } else {
-                return { background: '#FBFAFF', opacity: 0.86 };
+                return 'defaultCellStyle';
             }
       }
 
