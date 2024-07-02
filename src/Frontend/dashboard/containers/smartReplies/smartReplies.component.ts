@@ -630,7 +630,7 @@ showAddSmartRepliesModal() {
 		const selectedValue = item;
 		let content:any = this.chatEditor.value || '';
 		content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-		content = content+'<span style="color:#000">{{'+selectedValue+'}}</span>'
+		content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
 		this.chatEditor.value = content;
 	}
 	

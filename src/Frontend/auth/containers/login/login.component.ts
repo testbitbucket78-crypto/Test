@@ -53,29 +53,29 @@ export class LoginComponent implements OnInit {
                     localStorage.setItem('bearerToken',result.token);
                     console.log(result, '-------token');
                     console.log(localStorage.getItem('bearerToken'));
-                    this.router.navigate(['dashboard']);
 
                     var spid = Number(sessionStorage.getItem('SP_ID'));
 
                     let input = {
                         spid: spid,
                     };
-                    this.settingsService.clientAuthenticated(input).subscribe(response => {
-                        if (response.status === 200) {
-                            console.log(response.message);
-                        }
-                        if (response.status === 404) {
-                            console.log(response.message);
-                        }
-                    });
+                    
                     this.settingsService.getRolesData(spid,result.user?.UserType).subscribe(response => {
                         if (response.status === 200) {
                             sessionStorage.setItem('subPrivileges', response.getRoles[0]?.subPrivileges);
 
                             this.settingsService.subprivilages = response.getRoles[0]?.subPrivileges?.split(',');
+                            this.router.navigate(['dashboard']);
                             console.log(response.getRoles[0]?.subPrivileges);
                         }
-
+                        if (response.status === 404) {
+                            console.log(response.message);
+                        }
+                    });
+                    this.settingsService.clientAuthenticated(input).subscribe(response => {
+                        if (response.status === 200) {
+                            console.log(response.message);
+                        }
                         if (response.status === 404) {
                             console.log(response.message);
                         }
