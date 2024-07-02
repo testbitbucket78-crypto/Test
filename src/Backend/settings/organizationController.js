@@ -614,6 +614,14 @@ const addRole = async (req, res) => {
         SP_ID = req.body.SP_ID
         const myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let ifExist = await db.excuteQuery('SELECT * from roles where RoleName=? and SP_ID=? and isDeleted !=1 and roleID !=?', [RoleName, SP_ID, roleID]);
+        if (ifExist?.length > 0) {
+            res.status(409).send({
+                msg: 'Role Already exist',
+                updateRole: updateRoleData,
+                status: 409
+            })
+        }
         if (roleID == 0) {
 
             var addRoleValues = [[RoleName, Privileges, IsActive, subPrivileges, created_at, SP_ID]]
@@ -634,6 +642,7 @@ const addRole = async (req, res) => {
                 status: 200
             })
         }
+
     } catch (err) {
         console.log(err)
         db.errlog(err);
@@ -712,7 +721,7 @@ const addUser = async (req, res) => {
         name = req.body.name
         mobile_number = req.body.mobile_number
         LoginIP = req.body.LoginIP
-        RoleName = req.body?.RoleName
+        RoleName = req.body?.role
 
         let myUTCString = new Date().toUTCString();
         const CreatedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
@@ -839,7 +848,7 @@ const deleteUser = async (req, res) => {
 const editUser = async (req, res) => {
     try {
         uid = req.body.uid
-        RoleName = req.body?.RoleName
+        RoleName = req.body?.role
         SP_ID = req.body?.SP_ID
         email_id = req.body.email_id
         name = req.body.name
@@ -854,15 +863,15 @@ const editUser = async (req, res) => {
         const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         UserType = req.body.UserType
 
-        if (RoleName == 'Admin') {
-            let isAdminRemains = await db.excuteQuery('select * from roles where RoleName=? and roleID !=? and isDeleted !=1 and SP_ID=?', ['Admin', UserType, SP_ID]);
-            if (isAdminRemains?.length == 1) {
-                return res.status(409).send({
-                    msg: 'This is the last Admin minimum one user with Admin role is mandatory to keep.',
-                    status: 409
-                });
-            }
+        // if (RoleName == 'Admin') {
+        let isAdminRemains = await db.excuteQuery('select * from roles where RoleName=? and roleID !=? and isDeleted !=1 and SP_ID=?', ['Admin', UserType, SP_ID]);
+        if (isAdminRemains?.length == 1) {
+            return res.status(409).send({
+                msg: 'This is the last Admin minimum one user with Admin role is mandatory to keep.',
+                status: 409
+            });
         }
+        // }
         let currentUser = await db.excuteQuery('SELECT * FROM user WHERE uid=?  and isDeleted !=1 and SP_ID=?', [uid, SP_ID])
 
         var isNameExist = await db.excuteQuery('SELECT * FROM user WHERE name=? and isDeleted !=1 and SP_ID=? and uid !=?', [name, SP_ID, uid])
@@ -956,12 +965,12 @@ const editUser = async (req, res) => {
 
 const getUserByspid = async (req, res) => {
     try {
-       let isActiveUser = req.params?.IsActive ?? 0;
+        let isActiveUser = req.params?.IsActive ?? 0;
 
         let getUser;
-        if(isActiveUser == 0){
-         getUser = await db.excuteQuery(val.selectAllQuery, [req.params.spid])
-        }else{
+        if (isActiveUser == 0) {
+            getUser = await db.excuteQuery(val.selectAllQuery, [req.params.spid])
+        } else {
             getUser = await db.excuteQuery(val.selectActiveQuery, [req.params.spid])
         }
         res.status(200).send({
