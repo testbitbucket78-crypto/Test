@@ -80,7 +80,7 @@ export class QuickResponseComponent implements OnInit {
 
   lastCursorPosition: Range | null = null;
 
-  constructor(config: NgbModalConfig,private modalService: NgbModal,private apiService:SettingsService, private _teamboxService: TeamboxService) { }
+  constructor(config: NgbModalConfig,private modalService: NgbModal,public apiService:SettingsService, private _teamboxService: TeamboxService) { }
 
   ngOnInit(): void {
     this.spid = Number(sessionStorage.getItem('SP_ID'));
