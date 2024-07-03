@@ -79,7 +79,7 @@
 									
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
-											<p *ngIf="item.lastMessage" class="time">{{item.lastMessageReceved}}</p>
+											<p *ngIf="item.lastMessage" class="time">{{getTime(item.LastMessageDate)}}</p>
 											<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
@@ -337,7 +337,7 @@
 
 
 												</div>
-												<div class="message_text" [innerHTML]="note.message_text | sanitizeHtml"></div>
+												<div class="message_text" [innerHTML]="note.message_text"></div>
 												<span class="message_time"
 													*ngIf="note.created_at">{{timeSince(note.created_at)}}</span>
 											</div>
@@ -398,9 +398,9 @@ popupWidth='250px' popupHeight='200px'>
               </tr>
             </table>
     </ng-template>
-    <!-- <ng-template #displayTemplate let-data>
-        <a href="mailto:" title="">&#64;</a>
-    </ng-template> -->
+    <ng-template #displayTemplate let-data>
+        <a href="mailto:" title="">&#64;{{ data.name }}</a>
+    </ng-template>
 </ejs-mention>
 							  
 
@@ -1417,9 +1417,13 @@ popupWidth='250px' popupHeight='200px'>
 			</div>
 		</div>
 		<div class="modal-body messageadd">
-			<input class="search-box" type="text" placeholder="Search" aria-label="Search"
+			<input class="search-box" type="text" placeholder="Search by Name or phone number" aria-label="Search"
 				aria-describedby="basic-addon2" [(ngModel)]="header" />
 			<div class="drop-down-btn" (click)="toggleContactOption()">
+				
+				<button *ngIf="selectedChannel == ''" class="drop-down-btn">
+					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> Select Channels
+				</button>
 				
 				<button *ngIf="selectedChannel == 'WhatsApp Official'" class="drop-down-btn">
 					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WhatsApp Official

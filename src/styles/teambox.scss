@@ -295,7 +295,7 @@ label.container input[type="radio"]:checked + span.label {
       margin-left:5px;
     }
     .message_text p,.message_text p span{
-      color:#fff!important;
+      color:black!important;
       font-size: 12px;
     }
     .notes .message_text p,.notes .message_text p span{
@@ -394,4 +394,28 @@ label.container input[type="radio"]:checked + span.label {
     }
     .e-content {
       min-height: 49px !important;
+    }
+
+    .e-dropdownbase{
+      background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1882352941);
+    border-radius: 20px;
+    height: 179px;
+    overflow: scroll;
+    }
+
+    .e-dropdownbase .e-list-parent, .e-dropdownbase .e-ul{
+      padding: 0px !important;
+      width: 100%;
+    }
+    .e-dropdownbase .e-list-item{
+      padding: 5px 15px;
+      width: 100%;
+      float: left;
+      margin: 0px;
+      cursor: pointer;
+    }
+
+    .e-dropdownbase .e-list-item:hover{
+      background: #FFF4F2;
     }
