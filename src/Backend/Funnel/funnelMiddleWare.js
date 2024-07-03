@@ -2,20 +2,18 @@ const http = require("https");
 const axios = require('axios');
 const token = 'EAAU0g9iuku4BOzSD75ynSUzKSsYrIWv3qkEa9QPAnUNTUzPwN5aTjGxoAHxsXF4Nlrw8UxbMGqZBxqarODf2sY20MvFfTQm0umq4ZBKCpFAJdcPtbcYSZBsHMqYVwjfFPiQwFk1Rmadl4ctoncnxczMGJZALoVfZBpqoQ0lYHzOwbRb1nvImzhL4ex53c9HKVyzl2viy4EhLy9g0K';
 
-function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id) {
+function postDataToAPI(spid, phoneNo, type, text, link) {
  
     return new Promise(async (resolve, reject) => {
         try {
             var phoneNumber = removePlusFromPhoneNumber(phoneNo)
-            const apiUrl = 'http://localhost:3009/sendMessage'; // Replace with your API endpoint
+            const apiUrl = 'https://waweb.sampanatechnologies.com/sendFunnelMessage'; // Replace with your API endpoint
             const dataToSend = {
                 spid: spid,
                 type: type,
                 link: link,
                 text: text,
-                phoneNo: phoneNumber,
-                interaction_id:interaction_id,
-                msg_id:msg_id
+                phoneNo: phoneNumber
             };
 
             const response = await axios.post(apiUrl, dataToSend);

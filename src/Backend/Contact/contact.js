@@ -31,11 +31,11 @@ app.get('/columns/:spid', authenticateToken, async (req, res) => {
 app.post('/getFilteredList', authenticateToken, async (req, res) => {
   try {
 
+<<<<<<< HEAD
     let IsFilteredList = false;
     let contactList = await db.excuteQuery('SELECT * FROM EndCustomer where SP_ID=? and isDeleted !=1 and IsTemporary !=1 order by customerId desc', [req.body.SP_ID])
     if (req.body?.Query != '') {
       IsFilteredList = true
-      let Query = req.body.Query + " and isDeleted !=1 and IsTemporary !=1 order by updated_at desc"
       contactList = await db.excuteQuery(Query, [])
     }
 
@@ -52,11 +52,11 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
     })
   }
 
-})
-
-app.post('/addCustomContact', authenticateToken, async (req, res) => {
-  try {
-    let data = req.body.result;
+=======
+app.post('/addCustomContact', async (req, res) => {
+  try{
+  // Construct the INSERT query dynamically
+  let data = req.body.result
 
     // Check if data is an array
     if (!Array.isArray(data)) {
@@ -157,6 +157,8 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
     let query = val.neweditContact;
     let data = req.body.result
     let values = [];
+    let phoneNo;
+    let OptInStatus;
     // Iterate through the data array and add column names to the query
     data.forEach((item, index) => {
       query += `${item.ActuallName} =?`;
@@ -179,6 +181,13 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
       if (index < data.length - 1) {
         query += ', ';
       }
+
+      if (item.ActuallName == 'Phone_number'){
+        phoneNo = item.displayName;
+      }
+      if (item.ActuallName == 'OptInStatus'){
+        OptInStatus = item.displayName;
+      }
     });
 
     query += ' WHERE customerId = ? and SP_ID=?'
@@ -187,6 +196,7 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
     console.log(values);
     console.log(query);
     let result = await db.excuteQuery(query, values)
+    funnel.ScheduledFunnels(spid, phoneNo, OptInStatus, new Date(), new Date(),0);
     res.send({ status: 200, result: result })
   } catch (err) {
     console.log(err);
