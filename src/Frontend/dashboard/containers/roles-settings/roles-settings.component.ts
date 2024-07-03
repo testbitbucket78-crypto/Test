@@ -237,10 +237,18 @@ export class RolesSettingsComponent implements OnInit {
     }
 
     editRolesDetails(){
+        if(this.roleData?.RoleName != 'Admin' && this.roleData?.RoleName != 'Agent'){
         $('#rolesModal').modal('show');
+        }
 
     }
 
+    deleteRolesDetails(){
+        if(this.roleData?.RoleName != 'Admin' && this.roleData?.RoleName != 'Agent'){
+        $('#deleteModal').modal('show');
+        }
+
+    }
     deleteRole() {
         this._settingsService
             .deleteRolesData(this.sp_Id, this.roleData?.roleID)
@@ -361,12 +369,13 @@ export class RolesSettingsComponent implements OnInit {
 
 
     checkRole(){
+        console.log(this.roleData?.RoleName);
         if(this.roleData?.RoleName == 'Admin' || this.roleData?.RoleName == 'Agent'){
             this.showToaster('error','You cannot edit/delete these default roles');
         }
     }
 
-    showToaster(message:any,type:any){
+    showToaster(type:any,message:any){
         if(type=='success'){
           this.successMessage=message;
         }else if(type=='error'){
@@ -383,5 +392,11 @@ export class RolesSettingsComponent implements OnInit {
         this.successMessage='';
         this.errorMessage='';
         this.warningMessage='';
+      }
+
+      stopPropagation(event:any){
+        if (this.roleData?.RoleName === 'Admin' || this.roleData?.RoleName === 'Agent') {
+            event.stopPropagation();
+          }
       }
 }
