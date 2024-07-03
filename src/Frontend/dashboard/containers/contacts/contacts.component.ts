@@ -59,8 +59,12 @@ columnDefs: ColDef[] = [
     headerCheckboxSelectionFilteredOnly: true,
     checkboxSelection: true,
     hide:false,
-    flex: 0.5,
-    cellStyle: { background: "#FBFAFF" },
+    //flex: 0.5,
+      editable: false,
+      width: 50,
+      lockPosition: 'left',
+      cellClass: 'locked-col',
+    //cellStyle: { background: "#FBFAFF" },
   },
   {
     field: 'customerId',
@@ -738,7 +742,7 @@ saveContact(addcontact:any,addcontacterror:any,isEditTag:boolean=false) {
   //   console.log('Please enter valid details');
   //    return ;
   //  }
-
+console.log(this.contactId)
   if(this.contactId) {
     this.apiService.editContact(contactData, this.contactId, this.spid).subscribe(
       (response: any) => {

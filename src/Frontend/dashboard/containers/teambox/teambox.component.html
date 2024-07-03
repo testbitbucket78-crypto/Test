@@ -101,7 +101,7 @@
 													src="/assets/img/teambox/Richie_1.png" />
 												<img *ngIf="!item?.assignTo?.avatar" class="no-dp"
 													src="/assets/img/teambox/no-dp.svg" />
-												{{item?.assignTo ? item.assignTo?.name : 'Unassigned'}}
+													{{item?.assignAgent ? item.assignAgent : 'Unassigned'}}
 											</div>
 										</div>
 									</div>
@@ -506,14 +506,15 @@ popupWidth='250px' popupHeight='200px'>
 									<label (click)="toggleTagsModal(updatedtags)"><img class="edit-icon"
 											src="/assets/img/teambox/edit-icon.svg" />Tag</label>
 									<div class="tag_list">
-										<div
+										<!-- <div
 											*ngFor="let tagName of selectedInteraction.tags;let key= index; let last = last;">
 											<div class="tag_item" key="key">
 												<span class={{tagName}}></span>{{tagName}}<span *ngIf="!last"
 													class="tag_item_space">|</span>
 											</div>
 
-										</div>
+										</div> -->
+										<div>{{selectedInteraction?.TagNames}}</div>
 									</div>
 								</div>
 							</div>

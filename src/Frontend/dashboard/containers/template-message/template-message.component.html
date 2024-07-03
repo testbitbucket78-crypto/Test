@@ -48,8 +48,10 @@
                         <div class="campaigns_section_item_statics">
                             <div><p>{{item.Category}}</p><p><span>Category</span></p></div>
                             <div>
-                                <div class="d-flex">
-                                <img [src]="profilePicture"/><p>{{item.created_By}}</p>
+                                <div class="d-flex user-img align-items-center">
+                                <img  *ngIf="profilePicture" [src]="profilePicture"/>
+                                <div class="img" *ngIf="!profilePicture">{{apiService.getInitials(item.created_By)}}</div>
+                                <p>{{item.created_By}}</p>
                               </div>
                               <p><span>Created By</span></p>
                             </div>

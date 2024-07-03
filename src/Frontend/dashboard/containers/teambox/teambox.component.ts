@@ -1404,6 +1404,14 @@ sendattachfile() {
 				this.selectedInteraction = dataList.filter((item: any)=> item.InteractionId == this.selectedInteraction.InteractionId)[0];
 			}
 			//this.getAssicatedInteractionData(dataList,selectInteraction)
+			dataList.forEach((item:any)=>{
+				if(item.Agent_id !=0){
+					item.assignAgent = this.userList.filter((items:any) => items.uid == item.Agent_id)[0]?.name;
+				}else{
+					item.assignAgent = 'Unassigned';
+				}
+
+			})
 			if(selectInteraction){
 				this.interactionList.push(...dataList);
 				this.interactionListMain.push(...dataList);
@@ -1423,7 +1431,7 @@ sendattachfile() {
 
 	async getSearchInteractions(key:string){
 		await this.apiService.getSearchInteraction(key,this.uid,this.SPID).subscribe(async (data:any) =>{
-			var dataList:any = data?.conversations;
+			var dataList:any = data?.result;
 			this.interactionList= dataList;
 			this.interactionListMain= dataList;
 			this.unreadList = this.interactionList.filter((item:any) => item?.UnreadCount != 0).length;
@@ -2099,12 +2107,12 @@ toggleTagsModal(updatedtags:any){
 
 	this.selectedTags = ''; 
 	
-	var activeTags = this.selectedInteraction['tags'];
+	var activeTags = this.selectedInteraction['tag'];
 	for(var i=0;i<this.tagsoptios.length;i++){
 		var tagItem = this.tagsoptios[i]
-		if(activeTags?.includes(tagItem.name)){
+		if(activeTags?.includes(tagItem.ID)){
 			tagItem['status']=true;
-			this.selectedTags += tagItem.name+','
+			this.selectedTags += tagItem.ID+','
 		}
 		else {
 			tagItem['status'] = false;
@@ -2620,7 +2628,7 @@ sendMessage(){
 
 		getUserList() {
 		let spid = Number(this.SPID)
-			this.settingService.getUserList(spid)
+			this.settingService.getUserList(spid,1)
 			.subscribe(result =>{
 			  if(result){
 				this.userList =result?.getUser;
