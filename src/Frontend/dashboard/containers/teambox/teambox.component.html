@@ -1074,11 +1074,15 @@ popupWidth='250px' popupHeight='200px'>
 								<form #variableValue="ngForm">
 									<div *ngFor="let item of allVariablesList; let ith = index" class="form_row">
 									  <label for="variableValue{{ith}}">{{item}}</label>
+										<div class="form-control-wrapper">
 									  <p class="form-control">
 										<input type="text" id="variableValue{{ith}}" name="variableValue{{ith}}" [(ngModel)]="variableValues[ith]" class="form-control inner"
 										placeholder="Input value or add attribute">
-										<span style="cursor: pointer;" (click)="openVariableOption()" class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
+										<span style="cursor: pointer;" (click)="openVariableOption(ith)" class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
 									  </p>
+											<div *ngIf="fallbackvalue[ith]" class="fallback-value">fallbackValue : {{fallbackvalue[ith]}}</div>
+										</div>
+									  
 								  <!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
 										  <p class="label">Map the column</p>
 										  <p *ngFor="let map of mapNameOption ;let i = index" (click)="openMapOption('')"><span>{{map}}</span></p>
@@ -1130,12 +1134,13 @@ popupWidth='250px' popupHeight='200px'>
 				<div class="modal-body variableoption">
 						<div class="content">
 							<input class="search-box" type="search" placeholder="Search" [(ngModel)]="attributesearch" />
-							<p *ngFor='let alist of attributesList | searchfilter:attributesearch  ;let i = index' class="form-control" 
+							<p *ngFor='let alist of attributesList | searchfilter:attributesearch  ;let i = index' class="form-control" [ngClass]="{ 'selected': selectedAttribute == alist }" 
 							    (click)="addAttributeInVariables(alist)" style="cursor: pointer;">
 								{{alist}}
 							</p>
-
-							<div class="content_inner">
+						
+								</div>
+					<div class="content_inner">
 								<p><span>Fallback</span><img class="px-2 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
 								</p>
 								
@@ -1144,10 +1149,8 @@ popupWidth='250px' popupHeight='200px'>
 									</p>
 									<button id="radio-close-btn" (click)="showInfo=false">X</button>
 								</div>
-								<input style="cursor:text;" placeholder="Enter value" type="text" class="form-control" >
+								<input style="cursor:text;" placeholder="Enter value" type="text" class="form-control" [(ngModel)]="attribute">
 							</div>
-														
-								</div>
 							</div>
 							<div class="modal-footer" style="border: none;">
 								<div class="input_group_btn">

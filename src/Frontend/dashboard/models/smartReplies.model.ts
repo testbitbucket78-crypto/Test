@@ -3,7 +3,7 @@ export interface agentMessageList{
     ActionID:Number;
     Value:any;
     Media:any;
-    
+    MessageVariables: string;
 }
 
 export interface repliesList {

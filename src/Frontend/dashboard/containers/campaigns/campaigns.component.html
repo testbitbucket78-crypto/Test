@@ -64,11 +64,6 @@
 						</div>
 					</div>
 				</div>
-			
-
-				
-				
-
 			</div>
 			<div *ngIf="showCampaignDetail" class="campaign_detail" id="sidePanel">
 				<div class="modal-header filtercampaignheader">
@@ -157,10 +152,11 @@
 						<!-- <div *ngIf="selectedCampaign.message_media" class="template_img">
 							<img src="{{selectedCampaign.message_media}}">
 						</div> -->
-						<div class="template_text">
-							<p [innerHTML]="selectedCampaign.message_heading" class="name"></p>
-							<p class="description" [innerHTML]="selectedCampaign.message_content"></p>
-						</div>
+					<div class="template_text">
+						<p [innerHTML]="selectedCampaign.message_heading" class="name"></p>
+						<p class="description" [innerHTML]="selectedCampaign.message_content"></p>
+						<p class="footer" [innerHTML]="selectedCampaign.message_footer" ></p>
+					</div>
 
 					</div>
 					<!-- <div class="template_btn" *ngIf="selectedCampaign.channel_label == 'WhatsApp Official'">
@@ -417,7 +413,7 @@
 								<div class="template_text">
 									<p [innerHTML]="template.Header" class="m-0 font-weight-bold"></p>
 									<p [innerHTML]="template.BodyText"></p>
-									<p [innerHTML]="template.FooterText"></p>
+									<p [innerHTML]="template.FooterText" class="footer"></p>
 								  </div>
 							</div>
 
@@ -470,24 +466,26 @@
 								<div *ngIf="vartip" class="overlay" (click)="closeUtility()"></div>
 							  </div>
 							
-							<div class="form_row" *ngFor='let variable of selectedTemplate.allVariables ;let i = index' >
+							<div class="form_row" *ngFor='let variable of selectedTemplate.allVariables ;let i = index'>
 								<label>{{variable.label}}</label>
 								<div>
 									<p class="form-control" *ngIf="segmentsContactList.length>0">
 										<input *ngIf="variable.label == '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="checkNumber($event);updateAttributeValue($event,variable)" placeholder="Input value or add attribute">
 										<input *ngIf="variable.label != '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or add attribute">
-										<span  class="toggle_attribute" (click)="openAttributeOption(variable,AttributeOption)"></span>
+										<span class="toggle_attribute" (click)="openAttributeOption(variable,AttributeOption)"></span>
 									</p>
-									<p class="form-control" *ngIf="csvContactList.length>0" >
+									<p class="form-control" *ngIf="csvContactList.length>0">
 										<input type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or map">
 										<span class="map_attribute" (click)="openMapOption(variable)">Map</span>
 									</p>
-
+									<div *ngIf="variable?.fallback" class="fallbackContainer">
+										<span class="fallbackValue">Fallback Value : {{variable?.fallback}}</span>
+									</div>
 									<div *ngIf="csvContactList.length>0 && selecetdVariable.label==variable.label && selecetdVariable.selected" class="popup-dialog">
 										<p class="label">Map the column</p>
 										<p *ngFor="let map of csvContactColmuns ;let i = index" (click)="updatedCSVAttributeOption(map)"><span>{{map}}</span></p>
 									</div>
-							</div>
+								</div>
 							</div>
 							<div *ngIf="selectedTemplate.allVariables?.length ==0">No variable available in this message</div>
 							
@@ -937,36 +935,32 @@
 		<div class="modal-body variableoption">
 			<div class="content">
 				<input placeholder="Search" type="text" class="search-box" (keyup)="searchAttribute($event)">
-				<p *ngFor='let attribute of attributesoption ;let i = index' class="form-control" (click)="updatedAttributeOption(attribute,addNewCampaign)">
+				<p *ngFor='let attribute of attributesoption ;let i = index' style="cursor:pointer" class="form-control"  
+				   [ngClass]="{'selected': selectedAttribute === attribute}" (click)="updatedAttributeOption(attribute,addNewCampaign)">
 					{{attribute}}
 			    </p>
-
-				<div class="content_inner">
-					<div>
-						<span class="titleFallback">Fallback</span>
-						<div class="tooltip-container">
-							<img class="px-2 py-1 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
-							<div *ngIf="showInfo" class="showInfoFallbackAttribute">
-								<p id="p-body">
-									You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
-								</p>
-								<button id="radio-close-btn" (click)="showInfo=false">X</button>
-							</div>
+					
+			</div>
+			<div class="content_inner">
+				<div>
+					<span class="titleFallback">Fallback</span>
+					<div class="tooltip-container">
+						<img class="px-2 py-1 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
+						<div *ngIf="showInfo" class="showInfoFallbackAttribute">
+							<p id="p-body">
+								You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
+							</p>
+							<button id="radio-close-btn" (click)="showInfo=false">X</button>
 						</div>
 					</div>
-						<input placeholder="Enter value" type="text" class="form-control" (keyup)="updateFallbackAttributeValue($event)">
-                 </div>
-				
-									
+				</div>
+				<input placeholder="Enter value" type="text" class="form-control inputStyle" (keyup)="updateFallbackAttributeValue($event)">
 			</div>
-			
 			<div class="input_group_btn">
 				<button type="button" class="cancel-btn" aria-label="Close" (click)="closeAttributeOption('cancel',addNewCampaign)">Cancel</button>
 				<button type="button" class="submit-btn" aria-label="Close" (click)="closeAttributeOption('save',addNewCampaign)">Done</button>
 			</div>
-	
-			
-			
+
 		</div>
 		
 	</ng-template>

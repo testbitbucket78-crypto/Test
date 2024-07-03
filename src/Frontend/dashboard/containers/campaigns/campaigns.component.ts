@@ -75,7 +75,10 @@ export class CampaignsComponent implements OnInit {
 	 totalpages:any=1;
 	 optInStatus:string='';
 	 isCampaignAlreadyExist!:boolean;
-	 
+	selectedAttribute: any;
+	selectedAddNewCampaign: any;
+	selectedFallback: any;
+
 	 applyListModal:any;
 	 applylistFiltersWidth:any='900px';
 	 newListName:any=false;
@@ -1369,6 +1372,7 @@ formateDate(dateTime:string){
 			channel_id:this.newCampaignDetail.value.channel_id,
 			message_heading:this.selectedTemplate.Header,
 			message_content:this.selectedTemplate.BodyText,
+			message_footer: this.selectedTemplate.FooterText,
 			message_media:this.selectedTemplate.Links,
 			media_type:this.selectedTemplate.media_type,
 			message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
@@ -1506,7 +1510,6 @@ formateDate(dateTime:string){
 					if(customerDetail && customerDetail.Phone_number){
 						let MessageBodyData:any={
 							SP_ID:this.SPID,
-							message_footer: this.selectedTemplate.FooterText,
 							optInStatus:this.optInStatus,
 							customerId:customerDetail.customerId,
 							phone_number:customerDetail.Phone_number,
@@ -1604,7 +1607,7 @@ formateDate(dateTime:string){
 		this.closeAllModal()
 		this.importantContact=true;
 	}
-	selectAttribute(attribute:any,addNewCampaign:any){
+	selectAttribute(attribute: any, addNewCampaign: any) {
 		this.closeAllModal()
 		this.activeStep=3.2
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
@@ -1988,7 +1991,7 @@ testinfo(){
 		return flag;
 	}
 	updateFallbackAttributeValue(event:any){
-		this.selecetdVariable['value']=event.target.value
+		this.selectedFallback = event.target.value
 		console.log(this.selectedTemplate)
 	}
 
@@ -1996,23 +1999,33 @@ testinfo(){
 		this.selectedTemplate[variable]=event.target.value
 		console.log(this.selectedTemplate)
 	}
-	updatedAttributeOption(attribute:any,addNewCampaign:any){
+
+	
+
+	updatedAttributeOption(attribute: any, addNewCampaign: any) {
 		console.log(attribute)
-		this.selecetdVariable['value']=attribute
-		this.activeStep=3.1
-		this.closeAllModal()
-		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
-	    console.log(this.selectedTemplate)
+		this.selectedAttribute = attribute;
+		this.selectedAddNewCampaign = addNewCampaign;
 	}
-	closeAttributeOption(status:any,addNewCampaign:any){
-		if(status != 'save'){
-			this.selecetdVariable['value']=''
+	closeAttributeOption(status: any, addNewCampaign: any) {
+		debugger;
+		if (status != 'save') {
+			this.selecetdVariable['value'] = '';
 		}
+		else {
+			this.selecetdVariable['value'] = this.selectedAttribute;
+			this.selecetdVariable['fallback'] = this.selectedFallback;
+		}
+		this.resetAttributeSelection();
 		this.activeStep=3.1
 		this.closeAllModal()
-		console.log(this.selectedTemplate)
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	    
+	}
+
+	resetAttributeSelection() {
+		this.selectedAttribute = "";
+		this.selectedFallback = "";
 	}
 	
 	openMapOption(variable:any){

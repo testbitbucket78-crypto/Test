@@ -2653,16 +2653,37 @@ img.icon.sm {
     font-size: 13px;
 }
 
-.content_inner .tooltip-container {
-    position: relative;
-    display: inline;
+.content_inner {
+    border-radius: 19px;
+    margin: 0px 1px 0px 17px;
+    width: 90%;
 
-    #p-body {
-        margin-top: 15%;
+    .tooltip-container {
+        position: relative;
+        display: inline;
+
+        #p-body {
+            margin-top: 15%;
+        }
     }
 }
 .content_inner .titleFallback {
     font-size: 12px;
     color: #7a86a1;
     font-weight: 400;
+}
+
+.selected {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+.form-control-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.fallback-value {
+    margin: 0px 0px 0px 20px;
+    color: #767676;
+    font-size: 12px;
 }

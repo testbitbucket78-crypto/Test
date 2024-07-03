@@ -245,6 +245,10 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	showInfo:boolean = false;
 	selected:boolean=false;
 	filterChannel:string = '';
+	indexSelected: number = 0;
+	attribute: string = '';
+	fallbackvalue: string[] = [];
+	selectedAttribute: any;
 	isFilterTemplate:any = {
 		Marketing: true,
 		Utility: true,
@@ -468,7 +472,9 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		$("#editTemplate").modal('show'); 
 		$("#editTemplateMedia").modal('hide'); 
 	}
-	openVariableOption() {
+	
+	openVariableOption(indexSelected: number) {
+		this.indexSelected = indexSelected;
 		$("#showvariableoption").modal('show'); 
 		this.isShowAttributes = true;
 		$("#editTemplate").modal('hide'); 
@@ -479,10 +485,17 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.isShowAttributes = false;
 		$("#editTemplate").modal('show'); 
 	}
-	SaveVariableOption(){
+	SaveVariableOption() {
+		this.variableValues[this.indexSelected] = this.selectedAttribute;
+		this.fallbackvalue[this.indexSelected] = this.attribute;
+		this.resetAttributeSelection();
 		$("#showvariableoption").modal('hide'); 
 		this.isShowAttributes = false;
 		$("#editTemplate").modal('show'); 
+	}
+	resetAttributeSelection() {
+		this.attribute = '';
+		this.selectedAttribute = '';
 	}
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
@@ -501,13 +514,11 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 
 	}
-
+	
 	addAttributeInVariables(item: any) {
-	if (!this.variableValues.includes(item)) {
-		item = '{{'+item+'}}'
-		this.variableValues.push(item);
-		this.closeVariableOption();
-	  }
+		if (item) {
+			this.selectedAttribute = item;
+		}
 	}
 
 	replaceVariableInTemplate() {
