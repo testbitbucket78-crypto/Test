@@ -12,6 +12,7 @@ const awsHelper = require('../awsHelper')
 const { Key } = require("protractor");
 const axios = require('axios')
 const moment = require('moment');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
@@ -31,9 +32,8 @@ app.get('/columns/:spid', authenticateToken, async (req, res) => {
 app.post('/getFilteredList', authenticateToken, async (req, res) => {
   try {
 
-<<<<<<< HEAD
     let IsFilteredList = false;
-    let contactList = await db.excuteQuery('SELECT * FROM EndCustomer where SP_ID=? and isDeleted !=1 and IsTemporary !=1 order by customerId desc', [req.body.SP_ID])
+    let contactList = await db.excuteQuery(val.selectAllContact, [req.body.SP_ID])
     if (req.body?.Query != '') {
       IsFilteredList = true
       contactList = await db.excuteQuery(Query, [])
@@ -51,8 +51,8 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
       msg: err
     })
   }
+})
 
-=======
 app.post('/addCustomContact', async (req, res) => {
   try{
   // Construct the INSERT query dynamically
@@ -1231,13 +1231,51 @@ app.get('/downloadCSVerror', authenticateToken, (req, res) => {
   }
 })
 
+const writeToCsvFile = async (filePath, data) => {
+  // Separate dynamic and static columns
+  const dynamicColumns = data.filter(d => d.ActuallName.startsWith('column'));
+  const staticColumns = data.filter(d => !d.ActuallName.startsWith('column'));
 
+  // Create headers including both static and dynamic columns
+  const headers = [...staticColumns, ...dynamicColumns].map(d => ({ id: d.ActuallName, title: d.displayName }));
 
+  // Create row with types for dynamic columns and dummy data for static columns
+  const typeAndDummyRow = headers.reduce((acc, header) => {
+      const column = data.find(d => d.ActuallName === header.id);
+      if (dynamicColumns.map(d => d.ActuallName).includes(header.id)) {
+          acc[header.id] = column.type;
+      } else {
+          const dummyData = {
+              Name: 'Ram',
+              Phone_number: '1234567890',
+              emailId: 'ram@gmail.com',
+              OptInStatus: 'Subscribed',
+              ContactOwner: 'Owner',
+              tag: 'Tag1'
+          };
+          acc[header.id] = dummyData[header.id] || '';
+      }
+      return acc;
+  }, {});
 
-app.get('/download', authenticateToken, (req, res) => {
+  // Create CSV writer
+  const csvWriter = createCsvWriter({
+      path: filePath,
+      header: headers
+  });
+
+  // Write headers and row with types and dummy data
+  await csvWriter.writeRecords([typeAndDummyRow]);
+};
+
+app.get('/download/:SP_ID', authenticateToken, async (req, res) => {
   try {
+    let SP_ID =res.params?.SP_ID
+    let sampleData = await db.excuteQuery(val.getcolumn,[SP_ID])
+   
     var file = path.join(__dirname, '/sample_file.csv')
-
+    // Write to the CSV file
+     await writeToCsvFile(file, sampleData);
 
     res.download(file)
   } catch (err) {
