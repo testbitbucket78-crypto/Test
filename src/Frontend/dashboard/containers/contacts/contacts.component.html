@@ -17,15 +17,15 @@
 		</div>
 		<div class="d-flex">
 			<div id="export-btn">
-				<button class="btn-9 " (click)="openFilters()">
+				<button class="btn-press btn-9 " (click)="openFilters()">
 					<img class="mr-2"
 						 src="../../../../assets/img/filter.png">Filters
 					<img class="ml-1"
 						 src="../../../../assets/img/arrow-down.svg">
 				</button>
-				<button class="btn-9 " (click)="clearFilters()" > <img
+				<button class="btn-press btn-9 " (click)="clearFilters()" > <img
 						src="../../../../assets/img/export.svg"> Clear Filters</button>
-				<button class="btn-9 " (click)="isShowColumn = true">
+				<button class="btn-press btn-9 " (click)="isShowColumn = true">
 					<img class="mr-1"
 						 src="../../../../assets/img/column.png"> Column Prefrences
 					<img class="ml-1"
@@ -33,7 +33,7 @@
 				</button>
 			</div>
 			<div id="export-btn">
-				<button class="btn-9 "  (click)="openExport(content)" > <img
+				<button class="btn-press btn-9 "  (click)="openExport(content)" > <img
 						src="../../../../assets/img/export.svg"> Export </button>
 			</div>
 			<div id="import-btn" >
@@ -160,13 +160,13 @@
 							<h5>Message Opt-in</h5>
 							<h6 class="mt-2">{{items.OptInStatus}}</h6>
 						</div>
-						<div class="child3 pb-2">
+						<div class="child3 pb-1">
 							<h5>Contact Owner</h5>
 							<h6 class="mt-2">{{items.ContactOwner}}</h6>
 						</div>
 					</div>
 					<div class="parent d-flex justify-content-between p-2">
-						<div class="child5 pb-3">
+						<div class="child5 pb-1">
 
 							<h5> <img class="m-0" data-bs-toggle="modal" data-bs-target="#edittag" (click)="editTagS()" src="../../../../assets/img/teambox/edit-icon.svg">Tag</h5>
 							<div class="child4 d-flex pb-2">
@@ -579,7 +579,7 @@
 								</select>
 								<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" style="display: none" />
 								<input type="text" class="form-control" id="displayPhoneNumber" formControlName="displayPhoneNumber"
-									   name="displayPhoneNumber" placeholder="Enter Phone Number" (change)="formatPhoneNumber();validatorsToggle()"
+									   name="displayPhoneNumber" placeholder="Enter Phone Number" (change)="formatPhoneNumber()" (input)="validatorsToggle()"
 									   [ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }">
 							</div>
 							<div *ngIf="productForm.controls.displayPhoneNumber.touched &&
@@ -587,7 +587,6 @@
 								 class="text-danger">
 								Phone number must consist of exactly 10 digits.
 							</div>
-
 							<div *ngIf="productForm.controls.displayPhoneNumber.touched && validatorsToggle() === false &&
 						      (productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength'))"
 								 class="text-danger">

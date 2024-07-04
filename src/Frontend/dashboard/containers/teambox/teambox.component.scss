@@ -234,8 +234,8 @@
 }
 
 .search-box.active {
-    width: 135%;
-    margin-right: 10px;
+    width: 200%;
+    margin-right: 6px;
 }
 
 .chat-search-box {
@@ -2690,7 +2690,7 @@ label span {
 
     .showInfoFallback {
         position: absolute;
-        top: 9.3rem;
+        top: 13.3rem;
         right: 5.8rem;
         width: 280px;
         height: auto;
@@ -2862,4 +2862,24 @@ label span {
   .image-container:hover .hover-text, .image-container:hover .hover-text2 {
     display: block;
   }
-  
+.selected {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.fallback-value {
+    margin: 0px 0px 0px 20px;
+    color: #767676;
+    font-size: 12px;
+}
+
+.content_inner {
+    border-radius: 19px;
+    margin: 0px 1px 0px 17px;
+    width: 90%;
+}

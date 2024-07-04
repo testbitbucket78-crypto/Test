@@ -139,7 +139,9 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	attribute: string = '';
 	indexSelected: number = 0;
 	templateChecked: boolean = false;
-
+	allVariables: string = '';
+	selectedAttribute: any;
+	fallbackvalue: string[] = [];
 	isFilterTemplate:any = {
 		Marketing: true,
 		Utility: true,
@@ -350,6 +352,7 @@ showAddSmartRepliesModal() {
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
 		if(this.variableValues.length!==0 && this.allVariablesList.length!==0) {
+			this.addVariable();
 			this.replaceVariableInTemplate();
 			$("#editTemplate").modal('hide'); 
 			$("#templatePreview").modal('show'); 
@@ -364,11 +367,26 @@ showAddSmartRepliesModal() {
 		}
 
 	}
+	addVariable() {
+		const allVariables = [];
+		this.allVariablesList;
+		this.fallbackvalue;
+		this.variableValues;
+		for (let i = 0; i < this.allVariablesList.length; i++) {
+			const variable = {
+				label: this.allVariablesList[i],
+				value: this.variableValues[i],
+				fallback: this.fallbackvalue[i]
+			};
+			allVariables.push(variable);
+		}
+		this.allVariables = JSON.stringify(allVariables);
+	}
+	
 	
 	addAttributeInVariables(item: any) {
 		if (item) {
-			this.variableValues[this.indexSelected] = item ;
-			this.closeVariableOption();
+			this.selectedAttribute = item;
 		  }
 		}
 
@@ -619,10 +637,17 @@ showAddSmartRepliesModal() {
 		$("#showvariableoption").modal('hide');
 		$("#editTemplate").modal('show'); 
 	}
+	
 	SaveVariableOption() {
-		this.variableValues[this.indexSelected] = this.attribute; 
+		this.variableValues[this.indexSelected] = this.selectedAttribute;
+		this.fallbackvalue[this.indexSelected] = this.attribute;
+		this.resetAttributeSelection();
 		$("#showvariableoption").modal('hide'); 
 		$("#editTemplate").modal('show'); 
+	}
+	resetAttributeSelection() {
+		this.attribute = '';
+		this.selectedAttribute = '';
 	}
 
 	selectAttributes(item:any) {
@@ -862,7 +887,8 @@ showAddSmartRepliesModal() {
 				ActionID: 0, 
 				Message: this.chatEditor.value, 
 				Value: '', 
-				Media: this.messageMeidaFile
+				Media: this.messageMeidaFile,
+				MessageVariables: this.allVariables
 			});
 		}
 
@@ -1014,7 +1040,7 @@ stopPropagation(event: Event) {
 			}
 		})
 		if(!isExist) {
-			this.assignedAgentList.push({Message:'', ActionID:2, Value: this.agentsList[index].name,Media:''})
+			this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name, Media: '', MessageVariables: ''})
 		}
 			
 	}
@@ -1046,7 +1072,7 @@ stopPropagation(event: Event) {
 		if (!isExist) {
 			this.assignedTagList = [];
 			this.assignedTagList.push(this.addTagList[index].TagName);
-			this.assignedAgentList.push({ Message: '',ActionID: 1, Value: this.assignedTagList,Media:''});
+			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList, Media: '', MessageVariables: ''});
 			console.log('new value');
 		}
 		console.log(this.assignedAgentList);
@@ -1452,7 +1478,8 @@ stopPropagation(event: Event) {
 				{	ActionID: ActionId,
 					Message: this.data[i].Message,
 					Value: Value,
-					Media: this.data[i].Media
+					Media: this.data[i].Media,
+					MessageVariables: this.allVariables
 				});
 		}
 		console.log(this.assignedAgentList,'MESSAGE DATA')

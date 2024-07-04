@@ -754,11 +754,15 @@
 									<form #variableValue="ngForm">
 									<div *ngFor="let item of allVariablesList; let ith = index" class="form_row">
 									  <label for="variableValue{{ith}}">{{item}}</label>
-									  <p class="form-control">
-										<input type="text" id="variableValue{{ith}}" name="variableValue{{ith}}" [(ngModel)]="variableValues[ith]" class="form-control inner"
-										placeholder="Input value or add attribute">
-										<span style="cursor: pointer;" (click)="openVariableOption(ith)" class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
-									  </p>
+									  <div class="form-control-wrapper">
+										  <p class="form-control">
+											  <input type="text" id="variableValue{{ith}}" name="variableValue{{ith}}" [(ngModel)]="variableValues[ith]" class="form-control inner"
+							   placeholder="Input value or add attribute">
+											  <span style="cursor: pointer;" (click)="openVariableOption(ith)" class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
+										  </p>
+
+										  <div *ngIf="fallbackvalue[ith]" class="fallback-value">fallbackValue : {{fallbackvalue[ith]}}</div>
+									  </div>
 								  <!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
 										  <p class="label">Map the column</p>
 										  <p *ngFor="let map of mapNameOption ;let i = index" (click)="openMapOption('')"><span>{{map}}</span></p>
@@ -817,29 +821,27 @@
 									  <div class="modal-body variableoption">
 											  <div class="content">
 												  <input class="search-box" type="search" placeholder="Search" [(ngModel)]="attributesearch" />
-												  <p *ngFor='let alist of attributesList | searchfilter:attributesearch  ;let i = index' class="form-control" 
+												  <p *ngFor='let alist of attributesList | searchfilter:attributesearch  ;let i = index' class="form-control" [ngClass]="{ 'selected': selectedAttribute == alist }"
 													  (click)="addAttributeInVariables(alist)" style="cursor: pointer;">
 													  {{alist}}
 												  </p>
-					  
-												  <div class="content_inner">
-													  <div>
-														  <span class="titleFallback">Fallback</span>
-														  <div class="tooltip-container">
-															  <img class="px-2 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)" style="cursor:pointer">
-															  <div *ngIf="showInfo" class="showInfoFallback">
-																  <p id="p-body">
-																	  You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
-																  </p>
-																  <button id="radio-close-btn" (click)="showInfo=false">X</button>
-															  </div>
-														  </div>
-													  </div>
-													  <input style="cursor:text; width: 100%; margin: 0;" placeholder="Enter value" type="text" class="form-control" [(ngModel)]="attribute">
+											  </div>
+									  </div>
+									  <div class="content_inner">
+										  <div>
+											  <span class="titleFallback">Fallback</span>
+											  <div class="tooltip-container">
+												  <img class="px-2 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)" style="cursor:pointer">
+												  <div *ngIf="showInfo" class="showInfoFallback">
+													  <p id="p-body">
+														  You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
+													  </p>
+													  <button id="radio-close-btn" (click)="showInfo=false">X</button>
 												  </div>
-																			  
-													  </div>
-												  </div>
+											  </div>
+										  </div>
+										  <input style="cursor:text; width: 100%; margin: 0;" placeholder="Enter value" type="text" class="form-control" [(ngModel)]="attribute">
+									  </div>
 												  <div class="modal-footer" style="border: none;">
 													  <div class="input_group_btn">
 														  <button type="button" class="cancel-btn" aria-label="Close" (click)="closeVariableOption()">Cancel</button>
