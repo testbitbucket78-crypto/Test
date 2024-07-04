@@ -159,7 +159,7 @@
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
-    height: 90vh;
+    height: calc(100vh - 70px);
 }
 
 .inner_section .custom_row {
@@ -735,7 +735,7 @@ img.no-dp {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-around;
-    height: calc(100% - 20px);
+    height: calc(100% - 30px);
     padding-bottom: 10px;
     flex-direction: column;
     margin-left: -0.75rem;
@@ -2544,7 +2544,7 @@ label span {
 }
 
 .contact-whatsapp{
-    width: 27%;
+    width: 25px;
 }
 
 .contacts_detail_timelog:hover .hovertext:before{
@@ -2815,10 +2815,58 @@ label span {
     border-radius: 2px;
     color: #2e2ef1;
 }
+
+.image-container {
+    position: relative;
+    display: inline-block;
+    text-align: right;
+  }
+  
+//   .hover-image {
+//     width: 100%; 
+//     height: auto; 
+//   }
+  
+  .hover-text {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 77%;
+    transform: translate(-50%, -50%);
+    color: #7A86A1;
+    padding: 4px;
+    border-radius: 5px;
+    text-align: center;
+    pointer-events: none;
+    font-size: 14px;
+  }
+
+  .hover-text2{
+    display: none;
+    font-size: 12px;
+    position: absolute;
+    top: -51%;
+    left: -68%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    padding: 4px;
+    border-radius: 5px;
+    text-align: center;
+    pointer-events: none;
+    background: #707070;
+    /* width: 100%; */
+    word-wrap: normal !important;
+    width: 100px;
+  }
+  
+  .image-container:hover .hover-text, .image-container:hover .hover-text2 {
+    display: block;
+  }
 .selected {
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
+
 .form-control-wrapper {
     display: flex;
     flex-direction: column;
@@ -2829,8 +2877,9 @@ label span {
     color: #767676;
     font-size: 12px;
 }
+
 .content_inner {
     border-radius: 19px;
     margin: 0px 1px 0px 17px;
     width: 90%;
- }
+}

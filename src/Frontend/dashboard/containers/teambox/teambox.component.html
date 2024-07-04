@@ -82,11 +82,15 @@
 											<p *ngIf="item.lastMessage" class="time">{{getTime(item.LastMessageDate)}}</p>
 											<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
+											<div class="image-container">
 											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
-											<span *ngIf="item.channel=='WhatsApp Web'" class="icon" class="hovertext" [attr.data-hover]="'WhatsApp Web ' + (item.connected_id ?'(' + item.connected_id + ')':'')" >
-											</span>
-											<span *ngIf="item.channel=='WhatsApp Official'" class="icon" class="hovertext" [attr.data-hover]="'WhatsApp Official ' + (item.connected_id ?'(' + item.connected_id + ')':'')">
-										</span>
+											<div *ngIf="item.channel=='WhatsApp Web'" class="icon" class="hover-text2">
+												{{'WA Web ' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
+											</div>
+											<div *ngIf="item.channel=='WhatsApp Official'" class="icon" class="hover-text2">
+												{{'WA API ' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
+											</div>
+										</div>
 										</div>
 									</div>
 
@@ -101,7 +105,7 @@
 													src="/assets/img/teambox/Richie_1.png" />
 												<img *ngIf="!item?.assignTo?.avatar" class="no-dp"
 													src="/assets/img/teambox/no-dp.svg" />
-												{{item?.assignTo ? item.assignTo?.name : 'Unassigned'}}
+													{{item?.assignAgent ? item.assignAgent : 'Unassigned'}}
 											</div>
 										</div>
 									</div>
@@ -242,7 +246,12 @@
 
 								<div *ngFor="let message of messageGroup.items; let i = index" id={{message.Message_id}}
 									[ngClass]="message.message_direction =='IN' ? 'message_box left' : 'message_box'">
-									<label *ngIf="message.message_direction !='IN'">{{message.AgentName}}</label>
+									<label *ngIf="message.message_direction !='IN' && message.assignAgent !=-1 && message.assignAgent !=-2">{{message.AgentName}}</label>
+									<div class="image-container">
+									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg">
+									<div class="hover-text" >{{message.assignAgent ==-2 ?'Automation':'Campaign'}}</div>
+									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg">
+								</div>
 									<div class="content" (mouseover)="markItRead()">
 										<div *ngIf="message.message_media" class="message_media">
 											<img class="preview_icon" *ngIf="message.media_type == 'video/mp4'"
@@ -506,14 +515,15 @@ popupWidth='250px' popupHeight='200px'>
 									<label (click)="toggleTagsModal(updatedtags)"><img class="edit-icon"
 											src="/assets/img/teambox/edit-icon.svg" />Tag</label>
 									<div class="tag_list">
-										<div
+										<!-- <div
 											*ngFor="let tagName of selectedInteraction.tags;let key= index; let last = last;">
 											<div class="tag_item" key="key">
 												<span class={{tagName}}></span>{{tagName}}<span *ngIf="!last"
 													class="tag_item_space">|</span>
 											</div>
 
-										</div>
+										</div> -->
+										<div>{{selectedInteraction?.TagNames}}</div>
 									</div>
 								</div>
 							</div>
@@ -1743,7 +1753,7 @@ popupWidth='250px' popupHeight='200px'>
 				<div class="row" *ngFor="let tag of tagsoptios;">
 					<label for="floatingSelectGrid" class="required">
 						<input [checked]="tag.status" type="checkbox" name="tags" class="form-control-checkbox ml-2"
-							value="{{tag.name}}" (click)="addTags($event)" />
+							value="{{tag.ID}}" (click)="addTags($event)" />
 							<span [ngClass]="{'color-dots': true}" [style.background]="tag.color"></span>
 						{{tag.name}}
 					</label>

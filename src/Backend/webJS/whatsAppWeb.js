@@ -56,15 +56,34 @@ app.post('/sendMessage', async (req, res) => {
 })
 
 
+app.post('/sendFunnelMessage', async (req, res) => {
+    try {
+        spid = req.body.spid
+        type = req.body.type
+        link = req.body.link
+        text = req.body.text
+        phoneNo = req.body.phoneNo
+    
+        let response = await web.sendFunnel(spid, phoneNo, type, text, link);
+        console.log(response)
+        return res.send({ status: response })
+
+    } catch (err) {
+        console.log(err);
+        return res.send({ status: 500 })
+    }
+})
+
+
 app.post('/IsClientReady', (req, res) => {
     try {
         spid = req.body.spid
 
         console.log(web.isActiveSpidClient(spid))
         if (web.isActiveSpidClient(spid)) {
-            res.send({ status: 200, message: "Client is ready !" })
+          return  res.send({ status: 200, message: "Client is ready !" })
         } else {
-            res.send({ status: 404, message: "Please go to settings and Scan the QR Code !" })
+          return  res.send({ status: 404, message: "Please go to settings and Scan the QR Code !" })
         }
 
 
