@@ -82,11 +82,15 @@
 											<p *ngIf="item.lastMessage" class="time">{{getTime(item.LastMessageDate)}}</p>
 											<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
+											<div class="image-container">
 											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
-											<span *ngIf="item.channel=='WhatsApp Web'" class="icon" class="hovertext" [attr.data-hover]="'WhatsApp Web ' + (item.connected_id ?'(' + item.connected_id + ')':'')" >
-											</span>
-											<span *ngIf="item.channel=='WhatsApp Official'" class="icon" class="hovertext" [attr.data-hover]="'WhatsApp Official ' + (item.connected_id ?'(' + item.connected_id + ')':'')">
-										</span>
+											<div *ngIf="item.channel=='WhatsApp Web'" class="icon" class="hover-text2">
+												{{'WA Web ' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
+											</div>
+											<div *ngIf="item.channel=='WhatsApp Official'" class="icon" class="hover-text2">
+												{{'WA API ' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
+											</div>
+										</div>
 										</div>
 									</div>
 
@@ -242,7 +246,12 @@
 
 								<div *ngFor="let message of messageGroup.items; let i = index" id={{message.Message_id}}
 									[ngClass]="message.message_direction =='IN' ? 'message_box left' : 'message_box'">
-									<label *ngIf="message.message_direction !='IN'">{{message.AgentName}}</label>
+									<label *ngIf="message.message_direction !='IN' && message.assignAgent !=-1 && message.assignAgent !=-2">{{message.AgentName}}</label>
+									<div class="image-container">
+									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg">
+									<div class="hover-text" >{{message.assignAgent ==-2 ?'Automation':'Campaign'}}</div>
+									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg">
+								</div>
 									<div class="content" (mouseover)="markItRead()">
 										<div *ngIf="message.message_media" class="message_media">
 											<img class="preview_icon" *ngIf="message.media_type == 'video/mp4'"
@@ -1741,7 +1750,7 @@ popupWidth='250px' popupHeight='200px'>
 				<div class="row" *ngFor="let tag of tagsoptios;">
 					<label for="floatingSelectGrid" class="required">
 						<input [checked]="tag.status" type="checkbox" name="tags" class="form-control-checkbox ml-2"
-							value="{{tag.name}}" (click)="addTags($event)" />
+							value="{{tag.ID}}" (click)="addTags($event)" />
 							<span [ngClass]="{'color-dots': true}" [style.background]="tag.color"></span>
 						{{tag.name}}
 					</label>

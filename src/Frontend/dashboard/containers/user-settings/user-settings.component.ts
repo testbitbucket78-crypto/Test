@@ -126,8 +126,10 @@ export class UserSettingsComponent implements OnInit {
     successMessage = '';
     errorMessage = '';
     warningMessage = '';
+    login_uid:any;
     constructor(private _settingsService: SettingsService, private datepipe: DatePipe, public GridService: GridService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
+        this.login_uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;        
         this.countryCodes = this._settingsService.countryCodes;
     }
 
@@ -196,8 +198,9 @@ export class UserSettingsComponent implements OnInit {
     getUserList() {
         this._settingsService.getUserList(this.sp_Id).subscribe(result => {
             if (result) {
-                this.userList = result?.getUser;
-                this.userListInIt = result?.getUser;
+                let userData = result?.getUser.filter((item:any)=> item.uid != this.login_uid);
+                this.userList =userData;
+                this.userListInIt =userData;
                 this.gridOptions.api.sizeColumnsToFit();
                 this.getGridPageSize();
             }
