@@ -786,13 +786,13 @@ sendattachfile() {
 			spid: this.SPID,
 		};
 		this.settingService.clientAuthenticated(input).subscribe(response => {
-
-			if (response.status === 404) {
+			//response.status === 404
+			if (false) {
 				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
 				return;
 			}
-
-			if (response.status === 200 && response.message === 'Client is ready !') {
+			//response.status === 200 && response.message === 'Client is ready !
+			if (true) {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
 						if(this.newMessage.value.Message_id==''){
@@ -891,10 +891,11 @@ sendattachfile() {
 		event.preventDefault();
 	}
 	@HostListener("drop", ["$event"]) onDrop(event: any) {
+		if (event.dataTransfer.files) {
 		this.dragAreaClass = "dragarea";
 		event.preventDefault();
 		event.stopPropagation();
-		if (event.dataTransfer.files) {
+		
 		let files: FileList = event.dataTransfer.files;
 		this.saveFiles(files);
 		}
@@ -1404,14 +1405,15 @@ sendattachfile() {
 				this.selectedInteraction = dataList.filter((item: any)=> item.InteractionId == this.selectedInteraction.InteractionId)[0];
 			}
 			//this.getAssicatedInteractionData(dataList,selectInteraction)
+			setTimeout(()=>{
 			dataList.forEach((item:any)=>{
 				if(item.Agent_id !=0){
 					item.assignAgent = this.userList.filter((items:any) => items.uid == item.Agent_id)[0]?.name;
 				}else{
 					item.assignAgent = 'Unassigned';
 				}
-
 			})
+		},50)
 			if(selectInteraction){
 				this.interactionList.push(...dataList);
 				this.interactionListMain.push(...dataList);
@@ -2136,14 +2138,28 @@ updateTags(){
 		customerId:this.selectedInteraction.customerId
 	}
 	this.apiService.updateTags(bodyData).subscribe(async response =>{
-		this.selectedInteraction['tags'] = [];
-		this.selectedInteraction['tags']=this.getTagsList(this.selectedTags)
+		this.selectedInteraction['tag'] = [];
+		this.selectedInteraction['tag']=this.getTagsList(this.selectedTags)
+		this.selectedInteraction['TagNames']=this.getTagsName(this.selectedTags)
 		if(this.modalReference){
 			this.modalReference.close();
 		}
 		this.showToaster('Tags updated...','success')
 
 	});
+}
+
+getTagsName(tags:any){
+	if(tags){
+		const tagsArray = tags.split(',');
+		let tagNames ='';
+		tagsArray.forEach((item:any)=>{
+			let tagName = this.tagsoptios.filter((it:any)=>it.ID == item)[0]?.name;
+			if(tagName)
+			tagNames = (tagNames ?( tagNames +','):tagNames) + tagName ;
+		})
+		return tagNames;
+	}
 }
 
 triggerEditCustomer(updatecustomer:any){
@@ -2686,7 +2702,7 @@ sendMessage(){
 				  if (result) {
 					  let tagList = result.taglist;
 					  this.tagsoptios = tagList.map((tag:any,index:number) => ({
-					      id:index + 1,			
+					      ID:tag.ID,			
 						  name:tag.TagName,
 						  color:tag.TagColour,
 						  status:false
