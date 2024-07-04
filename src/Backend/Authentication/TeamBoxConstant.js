@@ -143,7 +143,7 @@ var blockCustomerQuery = "UPDATE EndCustomer SET isBlocked =? WHERE customerId =
 var selectAllAgentsQuery = `SELECT r.RoleName as UserType ,u.name as name , u.uid
 FROM roles r
 JOIN user u ON u.UserType = r.roleID
-where u.isDeleted !=1 and u.SP_ID=?`
+where u.isDeleted !=1 and u.SP_ID=? and u.IsActive=1`
 
 //var selectAllAgentsQuery = "SELECT * from user where SP_ID=?";
 
@@ -503,6 +503,202 @@ ORDER BY
     LIMIT ?, ?;`
 
 
+
+
+
+
+
+    let searchWithAllData =`
+    WITH LatestInteraction AS (
+        SELECT 
+            customerId,
+            MAX(interactionId) AS LatestInteractionId
+        FROM 
+            Interaction
+        WHERE 
+            is_deleted = 0
+            AND (IsTemporary = 0 OR IsTemporary IS NULL)
+        GROUP BY 
+            customerId
+    ),
+    LatestInteractionMapping AS (
+        SELECT 
+            InteractionId,
+            MAX(created_at) AS LatestMappingInfo
+        FROM 
+            InteractionMapping
+        GROUP BY 
+            InteractionId
+    ),
+    TagSplit AS (
+        SELECT 
+            ec.customerId,
+            TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(ec.Tag, ',', numbers.n), ',', -1)) AS TagId
+        FROM 
+            EndCustomer ec
+        JOIN (
+            SELECT 1 n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL 
+            SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL 
+            SELECT 9 UNION ALL SELECT 10
+        ) numbers ON CHAR_LENGTH(ec.Tag) - CHAR_LENGTH(REPLACE(ec.Tag, ',', '')) >= numbers.n - 1
+    ),
+    TagNames AS (
+        SELECT 
+            ts.customerId,
+            GROUP_CONCAT(ectm.TagName SEPARATOR ', ') AS TagNames
+        FROM 
+            TagSplit ts
+        JOIN 
+            EndCustomerTagMaster ectm ON ts.TagId = ectm.ID
+        WHERE 
+            ectm.isDeleted != 1 AND ectm.SP_ID = ?
+        GROUP BY 
+            ts.customerId
+    )
+    SELECT DISTINCT
+        ic.interaction_status, 
+        ic.InteractionId, 
+        ec.*,
+        CASE 
+            WHEN ec.isDeleted != 1 THEN ec.Name
+            ELSE ec.Phone_Number
+        END AS Name,
+        last_message.LastMessageId,
+        COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
+        m.*,
+        ic.created_at AS InCreatedDate,
+        ic.updated_at AS InUpdatedDate,
+        m.created_at AS LastMessageDate,
+        ww.connected_id,
+        im.AgentId AS InteractionMapping,
+        tn.TagNames -- Include the TagNames from the EndCustomerTagMaster
+    FROM 
+        LatestInteraction li
+    JOIN 
+        Interaction ic ON li.LatestInteractionId = ic.interactionId
+    LEFT JOIN 
+        EndCustomer ec ON ic.customerId = ec.customerId
+    LEFT JOIN (
+        SELECT 
+            m.interaction_id,
+            MAX(m.Message_id) AS LastMessageId
+        FROM 
+            Message m
+        GROUP BY 
+            m.interaction_id
+    ) AS last_message ON ic.InteractionId = last_message.interaction_id
+    LEFT JOIN (
+        SELECT 
+            m.interaction_id,
+            COUNT(*) AS UnreadCount
+        FROM 
+            Message m
+        WHERE
+            m.is_read = 0
+            AND m.message_direction = 'IN'
+        GROUP BY 
+            m.interaction_id
+    ) AS unread_count ON ic.InteractionId = unread_count.interaction_id
+    LEFT JOIN 
+        Message m ON ic.InteractionId = m.interaction_id AND m.Message_id = last_message.LastMessageId
+    LEFT JOIN 
+        WhatsAppWeb ww ON ec.SP_ID = ww.spid AND ww.is_deleted != 1
+    LEFT JOIN 
+        LatestInteractionMapping lim ON ic.InteractionId = lim.InteractionId
+    LEFT JOIN 
+        InteractionMapping im ON ic.InteractionId = im.InteractionId AND im.created_at = lim.LatestMappingInfo
+    LEFT JOIN 
+        TagNames tn ON ec.customerId = tn.customerId -- Join with TagNames to get the comma-separated TagNames
+    WHERE 
+        ec.SP_ID = ?
+        AND ec.Name LIKE ?
+        AND ec.isDeleted != 1
+        AND ic.is_deleted = 0
+       `;
+
+
+
+
+let interactionDataById = `WITH 
+    TagSplit AS (
+        SELECT 
+            ec.customerId,
+            TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(ec.Tag, ',', numbers.n), ',', -1)) AS TagId
+        FROM 
+            EndCustomer ec
+        JOIN (
+            SELECT 1 n UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL 
+            SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL 
+            SELECT 9 UNION ALL SELECT 10
+        ) numbers ON CHAR_LENGTH(ec.Tag) - CHAR_LENGTH(REPLACE(ec.Tag, ',', '')) >= numbers.n - 1
+    ),
+    TagNames AS (
+        SELECT 
+            ts.customerId,
+            GROUP_CONCAT(ectm.TagName SEPARATOR ', ') AS TagNames
+        FROM 
+            TagSplit ts
+        JOIN 
+            EndCustomerTagMaster ectm ON ts.TagId = ectm.ID
+        WHERE 
+            ectm.isDeleted != 1 AND ectm.SP_ID = ?
+        GROUP BY 
+            ts.customerId
+    )
+SELECT DISTINCT
+    ic.interaction_status, 
+    ic.InteractionId, 
+    ec.*,
+    CASE 
+        WHEN ec.isDeleted != 1 THEN ec.Name
+        ELSE ec.Phone_Number
+    END AS Name,
+    last_message.LastMessageId,
+    COALESCE(unread_count.UnreadCount, 0) AS UnreadCount,
+    m.*,
+    ic.created_at AS InCreatedDate,
+    ic.updated_at AS InUpdatedDate,
+    m.created_at AS LastMessageDate,
+    ww.connected_id,
+    im.AgentId AS InteractionMapping,
+    tn.TagNames -- Include the TagNames from the EndCustomerTagMaster
+FROM 
+    Interaction ic
+LEFT JOIN 
+    EndCustomer ec ON ic.customerId = ec.customerId
+LEFT JOIN (
+    SELECT 
+        m.interaction_id,
+        MAX(m.Message_id) AS LastMessageId
+    FROM 
+        Message m
+    GROUP BY 
+        m.interaction_id
+) AS last_message ON ic.InteractionId = last_message.interaction_id
+LEFT JOIN (
+    SELECT 
+        m.interaction_id,
+        COUNT(*) AS UnreadCount
+    FROM 
+        Message m
+    WHERE
+        m.is_read = 0
+        AND m.message_direction = 'IN'
+    GROUP BY 
+        m.interaction_id
+) AS unread_count ON ic.InteractionId = unread_count.interaction_id
+LEFT JOIN 
+    Message m ON ic.InteractionId = m.interaction_id AND m.Message_id = last_message.LastMessageId
+LEFT JOIN 
+    WhatsAppWeb ww ON ec.SP_ID = ww.spid AND ww.is_deleted != 1
+LEFT JOIN 
+    InteractionMapping im ON ic.InteractionId = im.InteractionId
+LEFT JOIN 
+    TagNames tn ON ec.customerId = tn.customerId -- Join with TagNames to get the comma-separated TagNames
+WHERE 
+    ic.InteractionId = ?
+`
+    
 module.exports = {
     host, user, password, database,
     selectAllAgentsQuery, selectAllQuery, insertCustomersQuery, filterQuery, searchQuery, selectByIdQuery, blockCustomerQuery,
@@ -510,7 +706,8 @@ module.exports = {
     getAllMessagesByInteractionId, insertMessageQuery,
     updateInteractionMapping, getInteractionMapping,
     savedMessagesQuery, getquickReplyQuery, getTemplatesQuery,
-    addNotification, assignedNameQuery, interactions, contactsInteraction, interactionsquery, getallMessagesWithScripts, getMediaMessage
+    addNotification, assignedNameQuery, interactions, contactsInteraction, interactionsquery, getallMessagesWithScripts, getMediaMessage,
+    searchWithAllData ,interactionDataById
 }
 
 

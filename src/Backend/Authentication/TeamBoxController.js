@@ -46,11 +46,11 @@ const getAllCustomer = async (req, res) => {
     // db.runQuery(req, res, val.selectAllQuery, [req.params.spID]);
     try {
         let RangeStart = parseInt(req.params.RangeStart);
-      
-        let RangeEnd =  parseInt(req.params.RangeEnd - req.params.RangeStart);
-        console.log(RangeStart ,"RangeStart" ,RangeEnd)
+
+        let RangeEnd = parseInt(req.params.RangeEnd - req.params.RangeStart);
+        console.log(RangeStart, "RangeStart", RangeEnd)
         let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
-       console.log("req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd")
+        console.log("req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd")
         console.log(req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd)
         res.send({
             status: 200,
@@ -105,7 +105,7 @@ const insertCustomers = async (req, res) => {
                 WHERE Phone_number = ? AND SP_ID = ? AND IsTemporary = 1
             `;
             await db.excuteQuery(updateTempContactQuery, [Name, channel, OptInStatus, countryCode, displayPhoneNumber, Phone_number, SP_ID]);
-            
+
             return res.status(200).send({
                 msg: 'Temporary contact updated to permanent.',
                 status: 200
@@ -225,12 +225,18 @@ const createInteraction = async (req, res) => {
         interaction_type = "Marketing"
         IsTemporary = req.body?.IsTemporary
         var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type, IsTemporary]]
-        console.log(values)
-     
+    
+       let isExist = await db.excuteQuery('select * from Interaction where SP_ID=? and customerId=? and is_deleted!=1',[SP_ID,customerId])
+       if(isExist?.length >0){
+        res.status(409).send({
+            msg: 'This customer interaction already exist !',
+            status: 409
+        })
+       }else{
         let myUTCString = new Date().toUTCString();
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let createInteraction = await db.excuteQuery(val.createInteractionQuery, [values])
-
+        let interactionData = await db.excuteQuery(val.interactionDataById,[SP_ID,createInteraction?.insertId])
         let currency_nameQuery = ` select Currency   from localDetails where SP_ID=?;`
         let currency_name = await db.excuteQuery(currency_nameQuery, [SP_ID])
         let country_nameQuery = `select Country  from companyDetails where SP_ID=?;`
@@ -246,8 +252,10 @@ const createInteraction = async (req, res) => {
 
         res.status(200).send({
             SPTransations: SPTransations,
+            interaction :interactionData,
             status: 200
         })
+    }
     } catch (err) {
         console.log(err)
         res.send(err)
@@ -263,8 +271,8 @@ const updateInteraction = async (req, res) => {
         let myUTCString = new Date().toUTCString();
         const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
-      
-        let actions = await db.excuteQuery(actionQuery,[req.body.interactionId,req.body?.action,req.body?.action_at,req.body?.action_by,utcTimestamp,req.body?.SP_ID])
+
+        let actions = await db.excuteQuery(actionQuery, [req.body.interactionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID])
         var updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' WHERE InteractionId =" + req.body.InteractionId
     }
     if (req.body.AutoReply && req.body.AutoReply != '') {
@@ -312,25 +320,25 @@ const getAllFilteredInteraction = async (req, res) => {
             }
 
         }
-   
+
         if (req.body.SearchKey != '') {
             queryPath += " and EndCustomer.Name like '%" + req.body.SearchKey + "%'"
 
         }
-     
+
         queryPath += ` ORDER BY 
         LastMessageDate DESC, 
         ic.InteractionId DESC
     LIMIT ?, ?`
 
-    console.log("------------------")
-    
-   // console.log(queryPath)
+        console.log("------------------")
+
+        // console.log(queryPath)
 
 
 
-    console.log("==================")
-        let conversations = await db.excuteQuery(queryPath, [req.body.SPID,req.body.SPID, RangeStart, RangeEnd]);
+        console.log("==================")
+        let conversations = await db.excuteQuery(queryPath, [req.body.SPID, req.body.SPID, RangeStart, RangeEnd]);
 
         let isCompleted = false;
         if (conversations?.length == 0 || conversations?.length < RangeEnd) {
@@ -399,24 +407,32 @@ const getSearchInteraction = async (req, res) => {
     try {
 
         var searchKey = req.params.searchKey
-        var spid =  req.params.spid
-        let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and EndCustomer.Name like '%" + searchKey + "%' and EndCustomer.SP_ID ='" + spid + "' and EndCustomer.isDeleted !=1"
+        var spid = req.params.spid
+        // let queryPath = "SELECT Interaction.interaction_status,Interaction.InteractionId, EndCustomer.* from Interaction,EndCustomer WHERE Interaction.is_deleted=0 and Interaction.customerId=EndCustomer.customerId and EndCustomer.Name like '%" + searchKey + "%' and EndCustomer.SP_ID ='" + spid + "' and EndCustomer.isDeleted !=1"
 
-        if (req.params.AgentId && req.params.AgentId != ':AgentId') {
-            queryPath += " and Interaction.InteractionId IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.params.AgentId
-            queryPath += " )"
+        // if (req.params.AgentId && req.params.AgentId != 0) {
+        //     queryPath += " and Interaction.InteractionId IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.params.AgentId
+        //     queryPath += " )"
+        // }
+
+
+        var agentId = req.params.AgentId;
+
+       let queryPath = val.searchWithAllData +` ${agentId != 0 ? 'AND im.AgentId = ?' : ''}`
+//  console.log(queryPath)
+        let queryParams = [spid, spid, `%${searchKey}%`];
+        if (agentId != 0) {
+            queryParams.push(agentId);
         }
-
-        console.log(req.params.AgentId,"queryPath",req.params.AgentId != ':AgentId')
-
-        let result = await db.excuteQuery(queryPath, [])
+        let result = await db.excuteQuery(queryPath, queryParams);
+      //  console.log(result)
         res.send({
             result: result,
             status: 200
         })
 
     } catch (err) {
-        console.log("err-------",err)
+        console.log("err-------", err)
         res.send({
             err: err,
             status: 500
@@ -434,17 +450,17 @@ const getAllMessageByInteractionId = async (req, res) => {
         let endRange = parseInt(req.params.RangeEnd - req.params.RangeStart)
         if (req.params.Type != 'media') {
             //var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=" + req.params.InteractionId + " and Type='" + req.params.Type + "'"
-          //  var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + "))  and Type='" + req.params.Type + "'  AND Message.is_deleted != 1 AND (Message.msg_status IS NULL OR Message.msg_status != 10 )  order by interaction_id desc , Message.created_at DESC LIMIT " + req.params.RangeStart + "," + endRange;
+            //  var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where Message.interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + "))  and Type='" + req.params.Type + "'  AND Message.is_deleted != 1 AND (Message.msg_status IS NULL OR Message.msg_status != 10 )  order by interaction_id desc , Message.created_at DESC LIMIT " + req.params.RangeStart + "," + endRange;
 
-            result = await db.excuteQuery(val.getallMessagesWithScripts, [req.params.InteractionId,req.params.Type,req.params.spid,req.params.InteractionId,req.params.Type,req.params.spid,parseInt(req.params.RangeStart), endRange])
+            result = await db.excuteQuery(val.getallMessagesWithScripts, [req.params.InteractionId, req.params.Type, req.params.spid, req.params.InteractionId, req.params.Type, req.params.spid, parseInt(req.params.RangeStart), endRange])
 
 
         } else {
             //var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id=" + req.params.InteractionId + " ORDER BY Message_id DESC"
-         //  var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) and is_deleted !=1 AND (msg_status IS NULL OR msg_status !=10 ) ORDER BY Message_id DESC LIMIT " + req.params.RangeStart + "," + endRange;
+            //  var getAllMessagesByInteractionId = "SELECT * from Message where message_media != '' and interaction_id IN ( SELECT interactionId FROM Interaction Where customerid IN ( SELECT customerId FROM Interaction where interactionId = " + req.params.InteractionId + ")) and is_deleted !=1 AND (msg_status IS NULL OR msg_status !=10 ) ORDER BY Message_id DESC LIMIT " + req.params.RangeStart + "," + endRange;
 
 
-            result = await db.excuteQuery(val.getMediaMessage, [req.params.InteractionId,req.params.InteractionId,req.params.spid,req.params.Type,parseInt(req.params.RangeStart), endRange])
+            result = await db.excuteQuery(val.getMediaMessage, [req.params.InteractionId, req.params.InteractionId, req.params.spid, req.params.Type, parseInt(req.params.RangeStart), endRange])
 
 
 
@@ -489,10 +505,10 @@ const updateNotes = (req, res) => {
 }
 
 const addAction = async (req, res) => {
-    try{
-       let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
-      
-        let actions = await db.excuteQuery(actionQuery,[req.body.interactionId,req.body.action,req.body.action_at,req.body.action_by,req.body.created_at,req.body.SP_ID])
+    try {
+        let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
+
+        let actions = await db.excuteQuery(actionQuery, [req.body.interactionId, req.body.action, req.body.action_at, req.body.action_by, req.body.created_at, req.body.SP_ID])
 
         res.send({
             actions: actions,
@@ -782,9 +798,9 @@ const updateInteractionMapping = async (req, res) => {
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
-      
-    let actions = await db.excuteQuery(actionQuery,[req.body.interactionId,req.body?.action,req.body?.action_at,req.body?.action_by,utcTimestamp,req.body?.SP_ID])
-    
+
+    let actions = await db.excuteQuery(actionQuery, [req.body.interactionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID])
+
     db.runQuery(req, res, val.updateInteractionMapping, [values])
 }
 
@@ -811,7 +827,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes ,addAction
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction
 };
 
 

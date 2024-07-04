@@ -368,8 +368,9 @@ function getCircularReplacer() {
 
 
 function isActiveSpidClient(spid) {
-
+  console.log("clientSpidMapping[spid]", spid, clientSpidMapping)
   if (clientSpidMapping[spid]) {
+    console.log("if client ready")
     return true;
   } else {
     return false;
@@ -494,6 +495,61 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
 
 
       );
+    }
+
+  } catch (err) {
+    console.log("++++++++++++++++++++++++++++++++++++++++++++")
+    console.log(err)
+  }
+}
+
+async function sendFunnel(spid, endCust, type, text, link) {
+  try {
+    let client = clientSpidMapping[[spid]];
+    console.log(spid, endCust, type, text, link)
+    if (client) {
+      console.log("if");
+      let msg = await sendDifferentFunnelTypes(client, endCust, type, text, link);
+      console.log("return send msg status")
+      return '200';
+    } else {
+      console.log("else");
+      return '401'
+    }
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+async function sendDifferentFunnelTypes(client, endCust, type, text, link) {
+  try {
+
+    //  console.log("messagesTypes", interaction_id, msg_id)
+    if (client.info) {
+      console.log("client info avilable")
+    } else {
+      console.log("not avilable")
+    }
+    if (type === 'text') {
+
+      client.sendMessage(endCust + '@c.us', text);
+    }
+    if (type === 'image') {
+      const media = await MessageMedia.fromUrl(link);
+
+      client.sendMessage(endCust + '@c.us', media, { caption: text });
+    }
+    if (type === 'video') {
+      const media = await MessageMedia.fromUrl(link);
+
+      client.sendMessage(endCust + '@c.us', media, { caption: text });
+
+    }
+    if (type === 'attachment') {
+      const media = new MessageMedia('pdf', link);
+
+      client.sendMessage(endCust + '@c.us', media);
+
     }
 
   } catch (err) {
@@ -724,9 +780,18 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var replystatus = extractedData.replystatus
     var newId = extractedData.newId
     var msg_id = extractedData.msg_id
+<<<<<<< HEAD
     var newlyInteractionId = extractedData?.newlyInteractionId
     console.log("in messages", from, false,"interaction id", newId, display_phone_number)
     notify.NotifyServer(display_phone_number, false, newId)
+=======
+    var newlyInteractionId = extractedData.newlyInteractionId
+
+    let contact = db.excuteQuery('select * from EndCustomer where customerId =?', [custid])
+    if(contact?.length >0){
+      funnel.ScheduledFunnels(contact[0].SP_ID, contact[0].Phone_number, contact[0].OptInStatus, new Date(), new Date(),0);
+    }
+>>>>>>> origin
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
@@ -747,4 +812,4 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
 
 
-module.exports = { createClientInstance, sendMessages, isActiveSpidClient }
+module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel }
