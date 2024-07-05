@@ -42,7 +42,6 @@ deleteWork = `UPDATE WorkingTimeDetails SET isDeleted=? , updated_at=? where SP_
 insertHoliday = `INSERT INTO holidays(SP_ID,holiday_date,created_By,created_at) values ?`
 selectHoliday = `select * from holidays WHERE holiday_date >= ? AND holiday_date <= ? and SP_ID=? AND isDeleted !='1' `
 removeHoliday = `UPDATE holidays SET isDeleted=1,updated_at=? WHERE SP_ID=? AND holiday_date=? `
-
 getSubRight = `select * from subRights where  isDeleted !=1`
 getRights = `select * from rights where isDeleted !=1`
 
@@ -204,7 +203,7 @@ JOIN user u ON u.uid=c.uid
 
 //_______________________________CONTACT SETTINGS________________________//
 
-var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at,updated_at) values ?`
+var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at) values ?`
 var updatetag = `UPDATE EndCustomerTagMaster set TagName=?,TagColour=?,updated_at=? where ID=?`
 var deletetag = `UPDATE EndCustomerTagMaster set isDeleted=1,updated_at=? where ID=?`
 var selecttag = `SELECT

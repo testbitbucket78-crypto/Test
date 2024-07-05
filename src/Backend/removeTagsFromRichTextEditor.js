@@ -42,6 +42,58 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 let message_varible = "[{\"label\":\"{{Name}}\",\"value\":\"Name\"},{\"label\":\"{{Phone_number}}\",\"value\":\"CountryCode\"}]"
 
+// async function getDefaultAttribue(message_variables, spid, customerId) {
+//   try {
+//     let results = [];
+
+//     // Fetch all column names from EndCustomer table
+//     const endCustomerColumnsQuery = `SHOW COLUMNS FROM EndCustomer`;
+//     let endCustomerColumns = await db.excuteQuery(endCustomerColumnsQuery);
+//     endCustomerColumns = endCustomerColumns.map(column => column.Field);
+
+//     // Fetch all column names from SPIDCustomContactFields table
+//     const spidCustomColumnsQuery = `SELECT ColumnName, CustomColumn FROM SPIDCustomContactFields WHERE SP_ID=? AND isDeleted != 1`;
+//     let spidCustomColumns = await db.excuteQuery(spidCustomColumnsQuery, [spid]);
+//     let spidCustomColumnsMap = new Map();
+//     spidCustomColumns.forEach(column => {
+//       spidCustomColumnsMap.set(column.ColumnName, column.CustomColumn);
+//     });
+
+//     for (let i = 0; i < message_variables.length; i++) {
+//       const message_variable = message_variables[i];
+//       let result = {};
+
+//       // Check if message_variable exists in EndCustomer columns
+//       if (endCustomerColumns.includes(message_variable)) {
+//         const endCustomerQuery = `SELECT ${message_variable} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
+//         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
+
+//         if (endCustomerResult.length > 0 && endCustomerResult[0][message_variable]) {
+//           result[message_variable] = endCustomerResult[0][message_variable];
+//         }
+//       } else if (spidCustomColumnsMap.has(message_variable)) {
+//         const customColumn = spidCustomColumnsMap.get(message_variable);
+//         const endCustomerQuery = `SELECT ${customColumn} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
+//         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
+
+//         if (endCustomerResult.length > 0 && endCustomerResult[0][customColumn]) {
+//           result[message_variable] = endCustomerResult[0][customColumn];
+//         }
+//       } else {
+//         console.log(`[${message_variable}] not found in EndCustomer table or SPIDCustomContactFields.`);
+//       }
+
+//       results.push(result);
+//     }
+
+//     return results;
+//   } catch (err) {
+//     console.log("Error:", err);
+//     return [];
+//   }
+// }
+
+// getDefaultAttribue with Fallback
 async function getDefaultAttribue(message_variables, spid, customerId) {
   try {
     let results = [];
@@ -60,27 +112,33 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
     });
 
     for (let i = 0; i < message_variables.length; i++) {
-      const message_variable = message_variables[i];
+      const message_variable = JSON.parse(message_variables[i]);
+      const { label, value, fallback } = message_variable;
       let result = {};
 
       // Check if message_variable exists in EndCustomer columns
-      if (endCustomerColumns.includes(message_variable)) {
-        const endCustomerQuery = `SELECT ${message_variable} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
+      if (endCustomerColumns.includes(value)) {
+        const endCustomerQuery = `SELECT ${value} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
 
-        if (endCustomerResult.length > 0 && endCustomerResult[0][message_variable]) {
-          result[message_variable] = endCustomerResult[0][message_variable];
+        if (endCustomerResult.length > 0 && endCustomerResult[0][value]) {
+          result[label] = endCustomerResult[0][value];
+        } else {
+          result[label] = fallback;
         }
-      } else if (spidCustomColumnsMap.has(message_variable)) {
-        const customColumn = spidCustomColumnsMap.get(message_variable);
+      } else if (spidCustomColumnsMap.has(value)) {
+        const customColumn = spidCustomColumnsMap.get(value);
         const endCustomerQuery = `SELECT ${customColumn} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
 
         if (endCustomerResult.length > 0 && endCustomerResult[0][customColumn]) {
-          result[message_variable] = endCustomerResult[0][customColumn];
+          result[label] = endCustomerResult[0][customColumn];
+        } else {
+          result[label] = fallback;
         }
       } else {
-        console.log(`[${message_variable}] not found in EndCustomer table or SPIDCustomContactFields.`);
+        console.log(`[${value}] not found in EndCustomer table or SPIDCustomContactFields.`);
+        result[label] = fallback;
       }
 
       results.push(result);

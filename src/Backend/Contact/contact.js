@@ -1231,42 +1231,56 @@ app.get('/downloadCSVerror', authenticateToken, (req, res) => {
   }
 })
 
-const writeToCsvFile = async (filePath, data) => {
-  // Separate dynamic and static columns
-  const dynamicColumns = data.filter(d => d.ActuallName.startsWith('column'));
-  const staticColumns = data.filter(d => !d.ActuallName.startsWith('column'));
-
-  // Create headers including both static and dynamic columns
-  const headers = [...staticColumns, ...dynamicColumns].map(d => ({ id: d.ActuallName, title: d.displayName }));
-
-  // Create row with types for dynamic columns and dummy data for static columns
-  const typeAndDummyRow = headers.reduce((acc, header) => {
-      const column = data.find(d => d.ActuallName === header.id);
-      if (dynamicColumns.map(d => d.ActuallName).includes(header.id)) {
-          acc[header.id] = column.type;
-      } else {
-          const dummyData = {
-              Name: 'Ram',
-              Phone_number: '1234567890',
-              emailId: 'ram@gmail.com',
-              OptInStatus: 'Subscribed',
-              ContactOwner: 'Owner',
-              tag: 'Tag1'
-          };
-          acc[header.id] = dummyData[header.id] || '';
+const updateDisplayName = (fields) => {
+  return fields.map(field => {
+      switch (field.ActuallName) {
+          case 'Name':
+              field.displayName = 'Name';
+              break;
+          case 'Phone_number':
+              field.displayName = 'Phone Number';
+              break;
+          case 'emailId':
+              field.displayName = 'Email';
+              break;
+          case 'OptInStatus':
+              field.displayName = 'Message Opt-in';
+              break;
+          case 'tag':
+              field.displayName = 'Tag';
+              break;
+          case 'ContactOwner':
+              field.displayName = 'Contact Owner';
+              break;
+          default:
+              // No changes required for other ActuallName values
+              break;
       }
-      return acc;
-  }, {});
-
-  // Create CSV writer
-  const csvWriter = createCsvWriter({
-      path: filePath,
-      header: headers
+      return field;
   });
-
-  // Write headers and row with types and dummy data
-  await csvWriter.writeRecords([typeAndDummyRow]);
 };
+
+// Function to write headers to CSV file
+const writeToCsvFile = async (filePath, data) => {
+  
+   const updatedData = updateDisplayName(data);
+
+   const dynamicColumns = updatedData.filter(d => d.ActuallName.startsWith('column'));
+   const staticColumns = updatedData.filter(d => !d.ActuallName.startsWith('column'));
+
+   // Create headers including both static and dynamic columns
+   const headers = [...staticColumns, ...dynamicColumns].map(d => ({ id: d.ActuallName, title: d.displayName }));
+
+   // Create CSV writer
+   const csvWriter = createCsvWriter({
+       path: filePath,
+       header: headers
+   });
+
+  // Write headers (an empty array of records)
+  await csvWriter.writeRecords([]);
+};
+
 
 app.get('/download/:SP_ID', authenticateToken, async (req, res) => {
   try {
