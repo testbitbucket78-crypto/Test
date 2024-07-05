@@ -246,6 +246,10 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	showInfo:boolean = false;
 	selected:boolean=false;
 	filterChannel:string = '';
+	indexSelected: number = 0;
+	attribute: string = '';
+	fallbackvalue: string[] = [];
+	selectedAttribute: any;
 	isFilterTemplate:any = {
 		Marketing: true,
 		Utility: true,
@@ -470,7 +474,9 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		$("#editTemplate").modal('show'); 
 		$("#editTemplateMedia").modal('hide'); 
 	}
-	openVariableOption() {
+	
+	openVariableOption(indexSelected: number) {
+		this.indexSelected = indexSelected;
 		$("#showvariableoption").modal('show'); 
 		this.isShowAttributes = true;
 		$("#editTemplate").modal('hide'); 
@@ -481,10 +487,17 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.isShowAttributes = false;
 		$("#editTemplate").modal('show'); 
 	}
-	SaveVariableOption(){
+	SaveVariableOption() {
+		this.variableValues[this.indexSelected] = this.selectedAttribute;
+		this.fallbackvalue[this.indexSelected] = this.attribute;
+		this.resetAttributeSelection();
 		$("#showvariableoption").modal('hide'); 
 		this.isShowAttributes = false;
 		$("#editTemplate").modal('show'); 
+	}
+	resetAttributeSelection() {
+		this.attribute = '';
+		this.selectedAttribute = '';
 	}
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
@@ -503,13 +516,11 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 
 	}
-
+	
 	addAttributeInVariables(item: any) {
-	if (!this.variableValues.includes(item)) {
-		item = '{{'+item+'}}'
-		this.variableValues.push(item);
-		this.closeVariableOption();
-	  }
+		if (item) {
+			this.selectedAttribute = item;
+		}
 	}
 
 	replaceVariableInTemplate() {
@@ -786,13 +797,13 @@ sendattachfile() {
 			spid: this.SPID,
 		};
 		this.settingService.clientAuthenticated(input).subscribe(response => {
-
-			if (response.status === 404) {
+			//response.status === 404
+			if (false) {
 				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
 				return;
 			}
-
-			if (response.status === 200 && response.message === 'Client is ready !') {
+			//response.status === 200 && response.message === 'Client is ready !
+			if (true) {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
 						if(this.newMessage.value.Message_id==''){
@@ -891,10 +902,11 @@ sendattachfile() {
 		event.preventDefault();
 	}
 	@HostListener("drop", ["$event"]) onDrop(event: any) {
+		if (event.dataTransfer.files) {
 		this.dragAreaClass = "dragarea";
 		event.preventDefault();
 		event.stopPropagation();
-		if (event.dataTransfer.files) {
+		
 		let files: FileList = event.dataTransfer.files;
 		this.saveFiles(files);
 		}
@@ -1404,6 +1416,15 @@ sendattachfile() {
 				this.selectedInteraction = dataList.filter((item: any)=> item.InteractionId == this.selectedInteraction.InteractionId)[0];
 			}
 			//this.getAssicatedInteractionData(dataList,selectInteraction)
+			setTimeout(()=>{
+			dataList.forEach((item:any)=>{
+				if(item.Agent_id !=0){
+					item.assignAgent = this.userList.filter((items:any) => items.uid == item.Agent_id)[0]?.name;
+				}else{
+					item.assignAgent = 'Unassigned';
+				}
+			})
+		},50)
 			if(selectInteraction){
 				this.interactionList.push(...dataList);
 				this.interactionListMain.push(...dataList);
@@ -1423,7 +1444,7 @@ sendattachfile() {
 
 	async getSearchInteractions(key:string){
 		await this.apiService.getSearchInteraction(key,this.uid,this.SPID).subscribe(async (data:any) =>{
-			var dataList:any = data?.conversations;
+			var dataList:any = data?.result;
 			this.interactionList= dataList;
 			this.interactionListMain= dataList;
 			this.unreadList = this.interactionList.filter((item:any) => item?.UnreadCount != 0).length;
@@ -2099,12 +2120,12 @@ toggleTagsModal(updatedtags:any){
 
 	this.selectedTags = ''; 
 	
-	var activeTags = this.selectedInteraction['tags'];
+	var activeTags = this.selectedInteraction['tag'];
 	for(var i=0;i<this.tagsoptios.length;i++){
 		var tagItem = this.tagsoptios[i]
-		if(activeTags?.includes(tagItem.name)){
+		if(activeTags?.includes(tagItem.ID)){
 			tagItem['status']=true;
-			this.selectedTags += tagItem.name+','
+			this.selectedTags += tagItem.ID+','
 		}
 		else {
 			tagItem['status'] = false;
@@ -2128,14 +2149,28 @@ updateTags(){
 		customerId:this.selectedInteraction.customerId
 	}
 	this.apiService.updateTags(bodyData).subscribe(async response =>{
-		this.selectedInteraction['tags'] = [];
-		this.selectedInteraction['tags']=this.getTagsList(this.selectedTags)
+		this.selectedInteraction['tag'] = [];
+		this.selectedInteraction['tag']=this.getTagsList(this.selectedTags)
+		this.selectedInteraction['TagNames']=this.getTagsName(this.selectedTags)
 		if(this.modalReference){
 			this.modalReference.close();
 		}
 		this.showToaster('Tags updated...','success')
 
 	});
+}
+
+getTagsName(tags:any){
+	if(tags){
+		const tagsArray = tags.split(',');
+		let tagNames ='';
+		tagsArray.forEach((item:any)=>{
+			let tagName = this.tagsoptios.filter((it:any)=>it.ID == item)[0]?.name;
+			if(tagName)
+			tagNames = (tagNames ?( tagNames +','):tagNames) + tagName ;
+		})
+		return tagNames;
+	}
 }
 
 triggerEditCustomer(updatecustomer:any){
@@ -2620,7 +2655,7 @@ sendMessage(){
 
 		getUserList() {
 		let spid = Number(this.SPID)
-			this.settingService.getUserList(spid)
+			this.settingService.getUserList(spid,1)
 			.subscribe(result =>{
 			  if(result){
 				this.userList =result?.getUser;
@@ -2678,7 +2713,7 @@ sendMessage(){
 				  if (result) {
 					  let tagList = result.taglist;
 					  this.tagsoptios = tagList.map((tag:any,index:number) => ({
-					      id:index + 1,			
+					      ID:tag.ID,			
 						  name:tag.TagName,
 						  color:tag.TagColour,
 						  status:false

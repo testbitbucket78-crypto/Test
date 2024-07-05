@@ -513,11 +513,13 @@
 	flex-direction: column;
 	padding: 1rem;
 	}
-	.template .template_text p{
-	color:#000;
+   .template .template_text p {
+	color: #000;
 	font-size: 12px;
 	margin-bottom: 5px;
-	}
+	white-space: pre-line;
+	word-break: break-word;
+    }
 	.template .template_text p.name{
 	font-weight: 600;
 	}
@@ -2033,17 +2035,25 @@
 .showInfoFallbackAttribute::-webkit-scrollbar {
 	display: none;
 }
-.content_inner .showInfoFallbackAttribute {
-	position: absolute;
-	width: 280px;
-	height: auto;
-	background: #ffffff 0% 0% no-repeat padding-box;
-	box-shadow: 4px 22px 54px #695f971a;
-	border-radius: 30px;
-	opacity: 1;
-	overflow: auto;
-	left: 100%;
-	bottom: 0px;
+.content_inner {
+	.inputStyle {
+		border-radius: 19px;
+		margin: 0px 1px 0px 17px;
+		width: 90%;
+	}
+
+	.showInfoFallbackAttribute {
+		position: absolute;
+		width: 280px;
+		height: auto;
+		background: #ffffff 0% 0% no-repeat padding-box;
+		box-shadow: 4px 22px 54px #695f971a;
+		border-radius: 30px;
+		opacity: 1;
+		overflow: auto;
+		left: 100%;
+		bottom: 0px;
+	}
 }
 
 .showInfoFallback1 {
@@ -2349,8 +2359,20 @@ position: absolute;
 	display: inline;
 }
 
-.content_inner .titleFallback{
+.content_inner .titleFallback {
 	font-size: 12px;
-    color: #7a86a1;
-    font-weight: 400;
+	color: #7a86a1;
+	font-weight: 400;
+	margin: 0px 0px 0px 19px;
+}
+.fallbackContainer {
+	.fallbackValue {
+		font-size: 12px;
+		margin-left: 5px;
+		color: #686868;
+	}
+}
+.selected {
+	outline: 0;
+	box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }

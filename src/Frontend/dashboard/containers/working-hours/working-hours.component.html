@@ -1,4 +1,9 @@
 <div class="row">
+    <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+        <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+    </div>
     <div class="col-sm-4">
         <div class="setting-card">
             <span class="working-hour-heading px-2">Working Hours</span>
@@ -26,7 +31,7 @@
 
             <div class="text-center pt-3">
                 <button class="working-hour-btn" (click)="manageWorkingHour()" data-bs-toggle="modal"
-                    data-bs-target="#workingHourModal">Manage Working
+                        data-bs-target="#workingHourModal">Manage Working
                     Hours</button>
             </div>
 
@@ -47,8 +52,8 @@
                         </div>
                     </div>
                 </div>
-                
-               
+
+
                 <!-- <img src="../../../../assets/img/settings/drag.svg" /> -->
                 <select class="holiday-dropdown multiselect" [(ngModel)]="selectedYear">
                     <option *ngFor="let item of yearList" [value]="item">{{item}}</option>
@@ -56,16 +61,18 @@
             </div>
             <div class="months-view">
                 <div class="month-card" *ngFor="let item of totalmonths;let idx =index"
-                    (click)="createDynamicDate(idx+1)" data-bs-toggle="modal" data-bs-target="#holidayModal">
+                     (click)="createDynamicDate(idx+1)">
                     <div class=" date-time p-2 px-3">
                         <img src="../../../../assets/img/settings/Edit-icon.svg">&nbsp;{{item?.monthName}}
                     </div>
                     <div class="dates-view px-3" *ngIf="item.values.length>0">
-                        <div class="month-date" *ngFor="let dt of item.values">{{dt | date:'dd'}}</div>
-                        <!-- <div class="month-date">12</div>
-                        <div class="month-date">5</div>
-                        <div class="month-date">1</div>
-                        <div class="month-date">13</div> -->
+                        <div class="month-date" *ngFor="let dt of item.values; let i=index">
+                            <span *ngIf="i < 15">{{ dt | date:'dd' }}</span>
+                            <ng-container *ngIf="i === 15 && item.values.length > 15">
+                                <span class="additional-items"> +{{ item.values.length - 15 }}</span>
+                            </ng-container>
+                        </div>
+                        
                     </div>
                     <div *ngIf="item.values.length ==0" class="no-holidays">No holidays to show</div>
                 </div>

@@ -250,8 +250,11 @@
 							<p><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{temp.Channel}}</p>
 							<div class="campaigns_section_item_statics">
 								<div>
-									<div class="d-flex">
-									<img [src]="profilePicture" /><p>{{temp.created_By}}</p></div><p><span>Created By</span></p>
+									<div class="d-flex user-img align-items-center">
+									<img [src]="profilePicture" *ngIf="profilePicture"/>
+									<div class="img" *ngIf="!profilePicture">{{apiService.getInitials(temp.created_By)}}</div>
+									<p>{{temp.created_By}}</p></div>
+									<p><span>Created By</span></p>
 								</div>
 							</div>
 						</div>

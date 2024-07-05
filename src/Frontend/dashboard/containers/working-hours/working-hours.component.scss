@@ -133,6 +133,7 @@ font-family: Manrope;
  .month-card{
   background: #FFF4F2;
   min-height: 170px;
+  max-height: 170px;
   border-radius: 20px;
  }
 
@@ -172,7 +173,13 @@ font-family: Manrope;
   gap: 0.4vw;
   grid-template-columns: auto auto auto auto;
 }
-
+.additional-items {
+    color: #ffffff;
+    background-color: #6149CD !important;
+    border-radius: 40%;
+    padding: 4px 6px;
+    font-size: 12px;
+}
 .holiday-calender-modal{
   width: 496px;
   height: 639px;

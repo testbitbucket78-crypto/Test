@@ -5,6 +5,7 @@ import { time } from 'console';
 import { SettingsService } from '../../services/settings.service';
 import { isNullOrUndefined } from 'is-what';
 import { DatePipe } from '@angular/common';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 declare var $:any;
 
 @Component({
@@ -38,7 +39,10 @@ selectedDates:number[] =[];
 yearList:number[] =[];
 selectedPeriods: string[] = ['AM', 'PM'];
 holidayTooltip!: boolean;
-  constructor(private _settingsService:SettingsService,private datepipe: DatePipe) { 
+errorMessage = '';
+successMessage = '';
+warningMessage = '';
+    constructor(private _settingsService: SettingsService, private datepipe: DatePipe, private modalService: NgbModal) { 
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     this.selectedYear =new Date().getFullYear();
    }
@@ -114,12 +118,13 @@ holidayTooltip!: boolean;
 
   
 
-  saveHolidayDetails(){
+    saveHolidayDetails(){
     let holidayResponse = this.copyHolidayData();
     this._settingsService.saveHolidayData(holidayResponse)
     .subscribe(result =>{
       if(result){
-        console.log(result);
+          console.log(result);
+         this.totalmonths.forEach(month => month.values = []);
         this.getHolidayDetails();
         $("#holidayModal").modal('hide');
       }
@@ -161,7 +166,12 @@ holidayTooltip!: boolean;
         this.workingFormData.push({ day: item.working_days != '' ? item.working_days.split(',') : [], startTime: item.start_time.split(' ')[0], endTime: item.end_time.split(' ')[0],selectedPeriod:item.selectedPeriod})
     })
   }
-   createDynamicDate(month:any){
+    createDynamicDate(month: any) {
+     if (!this.validation(month)) {
+         this.showToaster('You can Add or Edit holidays only for the future dates.', 'error');
+         return;
+     }
+
     this.monthDates =[];
     this.selectedMonth = month;
     let endDate = new Date(this.selectedYear,this.selectedMonth,0);
@@ -170,9 +180,46 @@ holidayTooltip!: boolean;
     for(let i=1;i<=endDate.getDate(); i++){
       let date = `${this.selectedYear}-${this.selectedMonth}-${i}`
       this.monthDates.push({onlyDate:i,completeDate:date,selected:false});
+        }
+        this.getselectedDataByMonth(month);
+        this.addEmptyDate(endDate.getDay(), 7);
+        $("#holidayModal").modal('show');
     }
-    this.addEmptyDate(endDate.getDay(),7);
-   }
+
+    validation(month: any) {
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth() + 1;
+        if (this.selectedYear < currentYear) {
+            return false;
+        } else if (this.selectedYear == currentYear && month < currentMonth) {
+            return false;
+        }
+        return true;
+    }
+    getselectedDataByMonth(month: any) {
+        const monthIndex = month - 1;
+        const choosedMonth = this.totalmonths[monthIndex];
+        this.monthDates.forEach((date: any) => {
+            if (date.completeDate != 0) { 
+            const dateStringParts = date.completeDate.split('-');
+            const dateString = `${dateStringParts[0]}-${dateStringParts[1].padStart(2, '0')}-${dateStringParts[2].padStart(2, '0')}`;
+            let foundMatch = false;
+
+            choosedMonth.values.forEach((value: any) => {
+                const valueDate = new Date(value).toISOString().substr(0, 10);
+
+                if (dateString === valueDate) {
+                    date.selected = true;
+                    foundMatch = true;
+                }
+            });
+
+            if (!foundMatch) {
+                date.selected = false;
+            }
+        }
+        });
+    }
 
    addEmptyDate(start:any,end:any){
     for(let i =start;i<end; i++){
@@ -180,10 +227,25 @@ holidayTooltip!: boolean;
     }
    }
 
-   selectDates(idx:number){
-      this.monthDates[idx].selected = !this.monthDates[idx].selected;
-   }
+    selectDates(idx: number) {
+        if (!this.validatedate(idx)) {
+            this.showToaster('You can Add or Edit holidays only for the future dates.', 'error');
+            return;
+        }
 
+      this.monthDates[idx].selected = !this.monthDates[idx].selected;
+    }
+    validatedate(idx: any) {
+        const selectedDate = new Date(this.monthDates[idx].completeDate); 
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        if (selectedDate < currentDate) {
+            return false; 
+        }
+        return true;
+    }
+  
    getYearData(){
     for(let i=1950;i<=2050;i++){
       this.yearList.push(i);
@@ -197,5 +259,24 @@ holidayTooltip!: boolean;
     }
     stopPropagation(event: Event) {
         event.stopPropagation();
+    }
+
+    showToaster(message: any, type: any) {
+        if (type == 'success') {
+            this.successMessage = message;
+        } else if (type == 'error') {
+            this.errorMessage = message;
+        } else {
+            this.warningMessage = message;
+        }
+        setTimeout(() => {
+            this.hideToaster()
+        }, 5000);
+
+    }
+    hideToaster() {
+        this.successMessage = '';
+        this.errorMessage = '';
+        this.warningMessage = '';
     }
 }
