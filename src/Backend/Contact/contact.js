@@ -12,6 +12,7 @@ const awsHelper = require('../awsHelper')
 const { Key } = require("protractor");
 const axios = require('axios')
 const moment = require('moment');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
@@ -32,10 +33,9 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
   try {
 
     let IsFilteredList = false;
-    let contactList = await db.excuteQuery('SELECT * FROM EndCustomer where SP_ID=? and isDeleted !=1 and IsTemporary !=1 order by customerId desc', [req.body.SP_ID])
+    let contactList = await db.excuteQuery(val.selectAllContact, [req.body.SP_ID])
     if (req.body?.Query != '') {
       IsFilteredList = true
-      let Query = req.body.Query + " and isDeleted !=1 and IsTemporary !=1 order by updated_at desc"
       contactList = await db.excuteQuery(Query, [])
     }
 
@@ -51,12 +51,12 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
       msg: err
     })
   }
-
 })
 
-app.post('/addCustomContact', authenticateToken, async (req, res) => {
-  try {
-    let data = req.body.result;
+app.post('/addCustomContact', async (req, res) => {
+  try{
+  // Construct the INSERT query dynamically
+  let data = req.body.result
 
     // Check if data is an array
     if (!Array.isArray(data)) {
@@ -157,6 +157,8 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
     let query = val.neweditContact;
     let data = req.body.result
     let values = [];
+    let phoneNo;
+    let OptInStatus;
     // Iterate through the data array and add column names to the query
     data.forEach((item, index) => {
       query += `${item.ActuallName} =?`;
@@ -179,6 +181,13 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
       if (index < data.length - 1) {
         query += ', ';
       }
+
+      if (item.ActuallName == 'Phone_number'){
+        phoneNo = item.displayName;
+      }
+      if (item.ActuallName == 'OptInStatus'){
+        OptInStatus = item.displayName;
+      }
     });
 
     query += ' WHERE customerId = ? and SP_ID=?'
@@ -187,6 +196,7 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
     console.log(values);
     console.log(query);
     let result = await db.excuteQuery(query, values)
+    funnel.ScheduledFunnels(spid, phoneNo, OptInStatus, new Date(), new Date(),0);
     res.send({ status: 200, result: result })
   } catch (err) {
     console.log(err);
@@ -1221,13 +1231,65 @@ app.get('/downloadCSVerror', authenticateToken, (req, res) => {
   }
 })
 
+const updateDisplayName = (fields) => {
+  return fields.map(field => {
+      switch (field.ActuallName) {
+          case 'Name':
+              field.displayName = 'Name';
+              break;
+          case 'Phone_number':
+              field.displayName = 'Phone Number';
+              break;
+          case 'emailId':
+              field.displayName = 'Email';
+              break;
+          case 'OptInStatus':
+              field.displayName = 'Message Opt-in';
+              break;
+          case 'tag':
+              field.displayName = 'Tag';
+              break;
+          case 'ContactOwner':
+              field.displayName = 'Contact Owner';
+              break;
+          default:
+              // No changes required for other ActuallName values
+              break;
+      }
+      return field;
+  });
+};
+
+// Function to write headers to CSV file
+const writeToCsvFile = async (filePath, data) => {
+  
+   const updatedData = updateDisplayName(data);
+
+   const dynamicColumns = updatedData.filter(d => d.ActuallName.startsWith('column'));
+   const staticColumns = updatedData.filter(d => !d.ActuallName.startsWith('column'));
+
+   // Create headers including both static and dynamic columns
+   const headers = [...staticColumns, ...dynamicColumns].map(d => ({ id: d.ActuallName, title: d.displayName }));
+
+   // Create CSV writer
+   const csvWriter = createCsvWriter({
+       path: filePath,
+       header: headers
+   });
+
+  // Write headers (an empty array of records)
+  await csvWriter.writeRecords([]);
+};
 
 
-
-app.get('/download', authenticateToken, (req, res) => {
+app.get('/download/:SP_ID', authenticateToken, async (req, res) => {
   try {
+    let SP_ID =res.params?.SP_ID
+    let sampleData = await db.excuteQuery(val.getcolumn,[SP_ID])
+   
     var file = path.join(__dirname, '/sample_file.csv')
-
+    // Write to the CSV file
+     await writeToCsvFile(file, sampleData);
 
     res.download(file)
   } catch (err) {

@@ -7,6 +7,8 @@ import { isNullOrUndefined } from 'is-what';
 import { DatePipe } from '@angular/common';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { GridService } from '../../services/ag-grid.service';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 declare var $: any;
 
 @Component({
@@ -124,8 +126,10 @@ export class UserSettingsComponent implements OnInit {
     successMessage = '';
     errorMessage = '';
     warningMessage = '';
+    login_uid:any;
     constructor(private _settingsService: SettingsService, private datepipe: DatePipe, public GridService: GridService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
+        this.login_uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;        
         this.countryCodes = this._settingsService.countryCodes;
     }
 
@@ -194,8 +198,9 @@ export class UserSettingsComponent implements OnInit {
     getUserList() {
         this._settingsService.getUserList(this.sp_Id).subscribe(result => {
             if (result) {
-                this.userList = result?.getUser;
-                this.userListInIt = result?.getUser;
+                let userData = result?.getUser.filter((item:any)=> item.uid != this.login_uid);
+                this.userList =userData;
+                this.userListInIt =userData;
                 this.gridOptions.api.sizeColumnsToFit();
                 this.getGridPageSize();
             }
@@ -229,7 +234,15 @@ export class UserSettingsComponent implements OnInit {
         let userData = this.copyUserData();
 
        if(isNullOrUndefined(this.selectedUserData)) {
-            this._settingsService.saveUserData(userData).subscribe((result:any) => {
+            this._settingsService.saveUserData(userData).pipe(
+                catchError((error) => {
+                    console.log('abcd');
+                    console.log(error?.msg);
+                    this.showToaster('error',error?.error?.msg);
+                    return of(null);  
+                })
+              )
+            .subscribe((result:any) => {
                 if (result) {
                     if(result?.status == 200){
                     this.userDetailForm.reset();
@@ -242,7 +255,15 @@ export class UserSettingsComponent implements OnInit {
              });
             }
         else {
-            this._settingsService.editUserData(userData).subscribe(result => {
+            this._settingsService.editUserData(userData).pipe(
+                catchError((error) => {
+                    console.log('abcd');
+                    console.log(error);
+                    this.showToaster('error',error?.error?.msg);
+                    return of(null);  
+                })
+              )
+            .subscribe(result => {
                 if (result) {
                     if(result?.status == 200){
                     this.userDetailForm.reset();
@@ -393,7 +414,7 @@ export class UserSettingsComponent implements OnInit {
     }
       
 
-showToaster(message:any,type:any){
+showToaster(type:any,message:any){
     if(type=='success'){
       this.successMessage=message;
     }else if(type=='error'){

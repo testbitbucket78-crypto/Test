@@ -364,6 +364,11 @@ color: #7A86A1;
     background: #bababa;
     margin: 0px 0;
 }
+
+.sideBar-footer{
+  display: flex;
+    justify-content: center;
+}
 .sidebar-content::-webkit-scrollbar {
     width: 5px;
 }

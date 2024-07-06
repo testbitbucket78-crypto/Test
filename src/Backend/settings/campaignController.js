@@ -204,7 +204,7 @@ const addTag = async (req, res) => {
         else {
             let selectTag = await db.excuteQuery('Select * from EndCustomerTagMaster where SP_ID=? and TagName=?', [SP_ID, TagName])
             if (selectTag?.length == 0) {
-                let addValue = [[TagName, TagColour, SP_ID, created_at, created_at]];
+                let addValue = [[TagName, TagColour, SP_ID, created_at]];
                 let addedTag = await db.excuteQuery(val.addtag, [addValue]);
                 console.log(addedTag)
                 res.status(200).send({

@@ -1,2 +1,2 @@
-Name,emailId,Phone_number,sex,status,tag,state,Country,uid,pincode,city,address,sp_account_id,OptInStatus,age,facebookId,InstagramId
-Test,sample@gmail.com,909090909,male,New customer,paid,Bihar,India,,,,,,,22,,
+Name,Phone Number,Email,Message Opt-in,Contact Owner,Tag,Select No,Days (Multi select),Time,Date,Date of joining,switch,Switch 1,location
+

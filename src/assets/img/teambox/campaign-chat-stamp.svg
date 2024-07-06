@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="28" height="28" viewBox="0 0 28 28">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f9b035"/>
+      <stop offset="0.53" stop-color="#f98c4e"/>
+      <stop offset="1" stop-color="#f96767"/>
+    </linearGradient>
+  </defs>
+  <g id="campaign-chat-stamp" transform="translate(-1391 -334)">
+    <g id="Ellipse_1063" data-name="Ellipse 1063" transform="translate(1391 334)" stroke="#ebebeb" stroke-width="1" fill="url(#linear-gradient)">
+      <circle cx="14" cy="14" r="14" stroke="none"/>
+      <circle cx="14" cy="14" r="13.5" fill="none"/>
+    </g>
+    <g id="Bag_2" data-name="Bag 2" transform="translate(1399.662 342.382)">
+      <path id="Bag_2-2" data-name="Bag 2" d="M7.935,11.238H2.74A2.779,2.779,0,0,1,0,8.428v-3.1A2.781,2.781,0,0,1,2.74,2.512h.115A2.572,2.572,0,0,1,3.589.736,2.5,2.5,0,0,1,5.343,0,2.43,2.43,0,0,1,7.085.735a2.562,2.562,0,0,1,.735,1.776h.115a2.781,2.781,0,0,1,2.74,2.815v3.1A2.779,2.779,0,0,1,7.935,11.238ZM7.421,3.18a.417.417,0,0,0-.411.421v.652a.411.411,0,1,0,.822,0V3.6A.417.417,0,0,0,7.421,3.18Zm-4.214,0a.422.422,0,0,0-.411.421v.652a.411.411,0,1,0,.822,0V3.6A.417.417,0,0,0,3.206,3.18ZM5.343.843a1.674,1.674,0,0,0-1.178.494,1.737,1.737,0,0,0-.487,1.175H7A1.685,1.685,0,0,0,5.343.843Z" transform="translate(0 0)"/>
+    </g>
+  </g>
+</svg>

@@ -536,7 +536,7 @@
 			<h4 class="modal-title" id="modal-basic-title">{{ addContactTitle === 'add' ? 'Add' : 'Edit' }} Contact</h4>
 			<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="resetForm()">X</button>
 		</div>
-		<form [formGroup]="productForm" autocomplete="off" class="contact-scroll auto-contact-scroll" (ngSubmit)="saveContact(addcontact,addcontacterror)">
+		<form [formGroup]="productForm" autocomplete="off" class="contact-scroll auto-contact-scroll" >
 			<div class="px-4 modal-body">
 
 				<div class="row g-2">
@@ -716,7 +716,7 @@
 		<div class="modal-footer px-4 row popfooter sticky-footer">
 
 			<div class="col-md-6 text-right">
-				<button type="submit" [disabled]="productForm.invalid" [class.disabled]="productForm.invalid" class="btn1 btn-success">Save</button>
+				<button type="submit" [disabled]="productForm.invalid" (click)="saveContact(addcontact,addcontacterror)" [class.disabled]="productForm.invalid" class="btn1 btn-success">Save</button>
 			</div>
 		</div>
 	</ng-template>
