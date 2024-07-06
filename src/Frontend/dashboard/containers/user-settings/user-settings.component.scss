@@ -50,18 +50,19 @@
     font-weight: 600;
    }
 
-   .flex-row{
+.flex-row {
     display: flex;
     justify-content: space-between;
-   }
+}
 
    .flex-row .w-45{
     width: 45%;
    }
 
-   .flex-row .w-50{
+.flex-row .w-50 {
     width: 50%;
-   }
+    overflow-wrap: break-word;
+}
 
    .sideBar .sideBar-footer{   
     border:none; 

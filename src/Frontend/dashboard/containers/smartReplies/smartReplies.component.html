@@ -413,7 +413,7 @@
 									  src="assets/img/teambox/add.svg">Add Action</button>
 								</div>
 					  
-								<div *ngIf="ShowAssignOption" (click)="stopPropagation($event)" class="popup-dialog AssignOption">
+								<div *ngIf="ShowAssignOption && agentsList.length > 0" (click)="stopPropagation($event)" class="popup-dialog AssignOption">
 								  <p class="label">Assign To</p>
 								  <p class="d-flex align-items-center px-2 py-1" *ngFor="let agent of agentsList; let k = index" (click)="assignConversation(k)"
 									(click)="closeAssignOption()">
@@ -447,7 +447,7 @@
 								  <div class="modal-dialog" role="document">
 									<div class="modal-content">
 									  <div class="row popup-dialog AddTag">
-										<p *ngIf="!ShowRemoveTag" class="label">Add Tag</p>
+										<p *ngIf="!ShowRemoveTag && addTagList.length > 0" class="label">Add Tag</p>
 										<p *ngIf="ShowRemoveTag" class="label">Remove Tag</p>
 					  
 										<div class="d-flex addTag " *ngFor="let AddTag of addTagList;let i = index">

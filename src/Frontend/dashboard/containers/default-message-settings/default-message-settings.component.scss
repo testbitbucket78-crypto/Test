@@ -463,9 +463,13 @@ textarea::placeholder {
   width: 108%;
   margin-left: -4%;
 }
+.custom_modal {
+    overflow: hidden;
+}
+
 .quickResponse {
-  width: 80%;
-  margin: 10px 10%;
+    width: 80%;
+    margin: 10px 10%;
 }
 
 .quickResponse .search-box {

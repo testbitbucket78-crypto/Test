@@ -501,7 +501,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	}
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
-		if(this.variableValues.length!==0 && this.allVariablesList.length!==0) {
+		if (this.variableValues.length!==0 && this.allVariablesList.length!==0) {
+			this.addVariable();
 			this.replaceVariableInTemplate();
 			$("#editTemplate").modal('hide'); 
 			$("#templatePreview").modal('show'); 
@@ -516,7 +517,22 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 
 	}
-	
+	allVariables: string = '';
+	addVariable() {
+		const allVariables = [];
+		this.allVariablesList;
+		this.fallbackvalue;
+		this.variableValues;
+		for (let i = 0; i < this.allVariablesList.length; i++) {
+			const variable = {
+				label: this.allVariablesList[i],
+				value: this.variableValues[i],
+				fallback: this.fallbackvalue[i]
+			};
+			allVariables.push(variable);
+		}
+		this.allVariables = JSON.stringify(allVariables);
+	}
 	addAttributeInVariables(item: any) {
 		if (item) {
 			this.selectedAttribute = item;
@@ -769,13 +785,11 @@ sendattachfile() {
 
 	
 	sendMediaMessage() {
-
 		if(this.SIPthreasholdMessages>0){
 		let objectDate = new Date();
 		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
 		var cDay = String(objectDate.getDate()).padStart(2, '0');
 		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
-
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
 			CustomerId: this.selectedInteraction.customerId,
@@ -2505,7 +2519,8 @@ sendMessage(){
 			message_type: this.showChatNotes,
 			created_at:new Date(),
 			mediaSize:this.mediaSize,
-			spNumber:this.spNumber
+			spNumber: this.spNumber,
+			MessageVariables: this.allVariables
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
