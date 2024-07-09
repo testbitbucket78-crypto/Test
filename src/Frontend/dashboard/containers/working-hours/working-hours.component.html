@@ -146,25 +146,21 @@
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
             </div>
-            <div class="modal-body px-5 pt-4 ">
+            <div class="modal-body px-5 pt-4">
                 <span class="month-heading pb-2 pl-4">{{totalmonths[selectedMonth-1]}}, {{selectedYear}}</span>
-                <div class="calender pl-4">
-                    <div class="calen d-flex">
-                        <div class="calender-day">Mon</div>
-                        <div class="calender-day">Tue</div>
-                        <div class="calender-day">Wed</div>
-                        <div class="calender-day">Thu</div>
-                        <div class="calender-day">Fri</div>
-                        <div class="calender-day">Sat</div>
-                        <div class="calender-day">Sun</div>
-                    </div>
-                    <div class="date-grid">
-                        <div *ngFor="let item of monthDates;let idx = index">
-                            <span *ngIf="item?.onlyDate !=0" class="calender-date"
-                                [ngClass]="item?.selected ? 'active' : ''"
-                                (click)="selectDates(idx)">{{item?.onlyDate}}</span>
-                        </div>
-                    </div>
+                <div class="calender pl-4 date-grid">
+                        <span class="calender-day">Mon</span>
+                        <span class="calender-day">Tue</span>
+                        <span class="calender-day">Wed</span>
+                        <span class="calender-day">Thu</span>
+                        <span class="calender-day">Fri</span>
+                        <span class="calender-day">Sat</span>
+                        <span class="calender-day">Sun</span>
+                        <span *ngFor="let item of monthDates;let idx = index">
+                            <span tabindex="0" *ngIf="item?.onlyDate !=0" class="calender-date focusable-span" [ngClass]="item?.selected ? 'active' : ''" (click)="selectDates(idx)">
+                                {{item?.onlyDate}}
+                            </span>
+                        </span>
                 </div>
 
             </div>

@@ -58,11 +58,11 @@
                     <option [ngValue]="'9'">9</option>
                 </select>
             </div>
-            <div class="d-flex align-items-center custom-control custom-checkbox">
-                <input type="checkbox" id="enableAdmin" class="custom-control-input"  [(ngModel)]="enableAdmin">
-               <label class="custom-control-label" for="enableAdmin"><span class="sub-heading">Enable Admin(s) to be included for assigning chats</span></label>
+            <div class="d-flex align-items-center custom-control custom-checkbox ml-4 mt-1">
+                <input type="checkbox" id="enableAdmin" class="custom-control-input" [disabled]="defaultAssignRule!=='roundrobin'"  [(ngModel)]="enableAdmin">
+               <label class="custom-control-label" for="enableAdmin"><span class="select-heading">Enable Admin(s) to be included for assigning chats</span></label>
             </div>
-            <div class="sub-contents">
+            <div class="sub-contents ml-2">
                 <p>Note: Broadcast rule will be applicable during non-working hours as defined under Organizational Settings and will not trigger Round Robin routing.</p>   
             </div>
         </div>

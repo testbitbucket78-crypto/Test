@@ -2376,3 +2376,11 @@ position: absolute;
 	outline: 0;
 	box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
+
+.overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}

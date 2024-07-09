@@ -1078,7 +1078,7 @@
 
 	<ng-template #addNewItem let-c="close" let-d="dismiss">
 		<div class="modal-header">
-			
+
 			<div class="modal-header-left">
 				<h4 class="modal-title" id="modal-basic-title">Create List</h4>
 			</div>
@@ -1086,26 +1086,26 @@
 				<p  class="close-box" aria-label="Close" (click)="selectStep2Option('AddSegmentAudience',addsegmentaudience,step2Option)"><img src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
-		
+
 		<div class="modal-body addnewitem">
-			
+
 			<div class="addnewitem-content">
 				<div class="addnewitem-content-left filterby">
 					<div *ngIf="selectedcontactFilterBy">
-					
-					<p>Filter {{selectedcontactFilterBy.label}}</p>
-					
-					
-					<div *ngFor="let addedF of ContactListNewFilters; let i=index;let last = last;">
+
+						<p>Filter {{selectedcontactFilterBy.label}}</p>
+
+
+						<div *ngFor="let addedF of ContactListNewFilters; let i=index;let last = last;">
 							<div *ngIf="i<ContactListNewFilters.length-1">
-							
-									<div *ngIf="addedF.filterOperator && i != 0" class="addnewitem_content_inner">
-										<div class="switchbtn">
-											<p [ngClass]="addedF.filterOperator=='AND' ? 'left active' : 'left'">AND</p>
-											<p [ngClass]="addedF.filterOperator=='OR' ? 'right active' : 'right'">Or</p>
-										</div>
+
+								<div *ngIf="addedF.filterOperator && i != 0" class="addnewitem_content_inner">
+									<div class="switchbtn">
+										<p [ngClass]="addedF.filterOperator=='AND' ? 'left active' : 'left'">AND</p>
+										<p [ngClass]="addedF.filterOperator=='OR' ? 'right active' : 'right'">Or</p>
 									</div>
-									<div class="d-flex">
+								</div>
+								<div class="d-flex">
 									<div class="formrow w-100">
 										<p class="form-control">
 											{{addedF.filterPrefix}}
@@ -1118,17 +1118,17 @@
 									</div>
 								</div>
 
-									<div class="addnewitem_content_inner">
-										<p><span>Value</span></p>
-										<div class="formrow">
-											<input type="text" class="form-control" value={{addedF.filterValue}} >
-										</div>
+								<div class="addnewitem_content_inner">
+									<p><span>Value</span></p>
+									<div class="formrow">
+										<input type="text" class="form-control" value={{addedF.filterValue}} >
 									</div>
+								</div>
 
 							</div>
 
 							<div *ngIf="i==ContactListNewFilters.length-1">
-							
+
 								<div *ngIf="ContactListNewFilters.length>1 " class="addnewitem_content_inner">
 									<div class="switchbtn">
 										<p [ngClass]="addedF.filterOperator=='AND' ? 'left active' : 'left'" (click)="selectFilterOperator(i,'AND')">AND</p>
@@ -1136,36 +1136,36 @@
 									</div>
 								</div>
 								<div class="d-flex">
-								<div class="formrow w-100">
-									<p (click)="toggleContactFilter()"  class="form-control select_box btn">
-										{{selectedcontactFilterBy.label}}
-									</p>
-									<!-- *ngIf="showContactFilter"  -->
-									<div *ngIf="showContactFilter" class="popup-dialog">
-										<p class="label">Select Column</p>
-										<p *ngFor="let filterItem of contactFilterBy" (click)="selectContactFilter(i,filterItem)">
-											<span>{{filterItem.label}}</span>
+									<div class="formrow w-100">
+										<p (click)="toggleContactFilter()"  class="form-control select_box btn">
+											{{selectedcontactFilterBy.label}}
 										</p>
-									</div>
-			
-								</div>
+										<!-- *ngIf="showContactFilter"  -->
+										<div *ngIf="showContactFilter" class="popup-dialog">
+											<p class="label">Select Column</p>
+											<p *ngFor="let filterItem of contactFilterBy" (click)="selectContactFilter(i,filterItem)">
+												<span>{{filterItem.label}}</span>
+											</p>
+										</div>
 
-								<div class="formrow w-100">
-									<p (click)="toggleFilterByOption()"  class="form-control select_box btn">
-										{{addedF.filterBy}}
-									</p>
-									<div *ngIf="showFilterByOption" class="popup-dialog">
-										<p *ngFor="let option of selectedcontactFilterBy.option ;let k = index" (click)="selectFilterBy(i,selectedcontactFilterBy,option)">
-											<span>{{option.label}}</span>
-										</p>
 									</div>
 
+									<div class="formrow w-100">
+										<p (click)="toggleFilterByOption()"  class="form-control select_box btn">
+											{{addedF.filterBy}}
+										</p>
+										<div *ngIf="showFilterByOption" class="popup-dialog">
+											<p *ngFor="let option of selectedcontactFilterBy.option ;let k = index" (click)="selectFilterBy(i,selectedcontactFilterBy,option)">
+												<span>{{option.label}}</span>
+											</p>
+										</div>
+
+									</div>
 								</div>
-							</div>
 
 								<div class="addnewitem_content_inner">
 									<p><span>Value</span></p>
-									
+
 									<div *ngIf="addedF.filterType =='text' " class="formrow">
 										<input type="text" class="form-control" value={{addedF.filterValue}}  (change)="selectFilterValue(i,$event)">
 									</div>
@@ -1221,40 +1221,41 @@
 								<button *ngIf="!last" type="button" class="btn remove-btn" (click)="removeFilter(i)">- Remove</button>
 								<button *ngIf="last" type="button" class="btn add-btn" (click)="addNewFilter()">+ Add</button>
 							</div>
-					
-					</div>					 
-				    <div  class="addnewitem_content_inner">
-					  <div class="input_group_btn">
-						<button type="button" class="submit-btn" (click)="addFilter()">Update</button>
-				    </div>
-					</div>
 
-				</div>
+						</div>
+						<div  class="addnewitem_content_inner">
+							<div class="input_group_btn">
+								<button type="button" class="submit-btn" (click)="addFilter()">Update</button>
+							</div>
+						</div>
+
+					</div>
 
 				</div>
 
 				<div class="addnewitem-content-left">
 					<p>Filter</p>
-					
+
 
 					<div class="applied_filter_popup">
-					    <div class="item" *ngFor="let filter of selectedcontactFilterBy.addeFilter; let i=index;let last = last;" title="Click to remove">
+						<div class="item" *ngFor="let filter of selectedcontactFilterBy.addeFilter; let i=index;let last = last;" title="Click to remove">
 							<div class="d-flex">
-							<span *ngIf="filter.filterOperator">{{filter.filterOperator}}</span>
-							<p>{{filter.filterPrefix}} {{filter.filterBy}} {{filter.filterValue}}</p>
-						</div>
+								<span *ngIf="filter.filterOperator">{{filter.filterOperator}}</span>
+								<p>{{filter.filterPrefix}} {{filter.filterBy}} {{filter.filterValue}}</p>
+							</div>
 							<div  (click)="removeFilter(i)"><img src="../../../../assets/img/settings/remove.svg" /></div>
-						</div>
-					</div>	
+						</div> 
+					</div>
 
 				</div>
 			</div>
 			<div class="input_group_btn">
-				  <button type="button" class="submit-btn" aria-label="Close" (click)="createListFromFilters(applyList)">Apply</button>
+				<button type="button" class="submit-btn" aria-label="Close" (click)="createListFromFilters(applyList)">Apply</button>
 			</div>
-	
+
 		</div>
-		
+		<div *ngIf="showContactFilter" class="overlay" (click)="showContactFilter = !showContactFilter"></div>
+		<div *ngIf="showFilterByOption" class="overlay" (click)="showFilterByOption = !showFilterByOption"></div>
 	</ng-template>
 	
 	<ng-template #applyList let-c="close" let-d="dismiss">

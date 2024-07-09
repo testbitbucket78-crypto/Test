@@ -751,6 +751,10 @@ input:focus {
     border: 1px solid #e2e2e2 !important;
     background: none !important;
 }
+.e-toolbar .e-toolbar-item .e-tbar-btn:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
 
 .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-icons {
     color: #7a86a1 !important;
