@@ -56,7 +56,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	@ViewChild('notesSection') notesSection: ElementRef | any; 
 	@ViewChild('chatSection') chatSection: ElementRef | any; 
 	@ViewChild('mention_integration') chatEditor!: RichTextEditorComponent; 
-	@ViewChild('scrollContainer') scrollContainer: ElementRef | any;
+	@ViewChild('chatSection') scrollContainer: ElementRef | any;
 
 	@ViewChild('variableValue', { static: false }) variableValueForm!: NgForm;
 
@@ -70,6 +70,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 
 	public TemplateList: any = [];
 		
+    filteredCustomFields:any;
 	public tools: object = {
 		items: [
 			
@@ -796,12 +797,12 @@ sendattachfile() {
 		let input = {
 			spid: this.SPID,
 		};
-		this.settingService.clientAuthenticated(input).subscribe(response => {
-			//response.status === 404
-			if (false) {
-				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
-				return;
-			}
+		// this.settingService.clientAuthenticated(input).subscribe(response => {
+		// 	//response.status === 404
+		// 	if (false) {
+		// 		this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+		// 		return;
+		// 	}
 			//response.status === 200 && response.message === 'Client is ready !
 			if (true) {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
@@ -861,12 +862,12 @@ sendattachfile() {
 							});
 				});
 			}
-		},
-		(error)=> {
-			if(error) {
-				this.showToaster('Internal Server Error Please Contact System Adminstrator','error');
-			}
-		});
+		// },
+		// (error)=> {
+		// 	if(error) {
+		// 		this.showToaster('Internal Server Error Please Contact System Adminstrator','error');
+		// 	}
+		// });
 	}else{
 		this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
 	}
@@ -972,6 +973,7 @@ sendattachfile() {
 				this.loginAs='Agent'
 		}
 		this.routerGuard()
+		this.getCustomFieldsData();
 		this.getAgents()
 		this.getUserList()
 		this.getAllInteraction()
@@ -2066,6 +2068,7 @@ blockCustomer(selectedInteraction:any){
 		if(selectedInteraction.isBlocked==1){
 			this.showToaster('Conversations is Blocked','success')
 			this.selectedInteraction['interaction_status']='empty';
+			this.selectedInteraction['OptInStatus']='No';
 			this.updateInteractionMapping(selectedInteraction.InteractionId,-1,this.TeamLeadId)
 		}else{
 			this.showToaster('Conversations is UnBlocked','success')
@@ -2316,7 +2319,7 @@ createCustomer() {
 					async (error) => {
 					  if (error.status === 409) {
 						this.showToaster('Phone Number already exist. Please Try another Number', 'error');
-						this.OptedIn = 'No';
+						//this.OptedIn = 'No';
 					  }
 					}
 				  );
@@ -2535,12 +2538,12 @@ sendMessage(){
 		let input = {
 			spid: this.SPID,
 		};
-		this.settingService.clientAuthenticated(input).subscribe(response => {
+		//this.settingService.clientAuthenticated(input).subscribe(response => {
 
-			if (response.status === 404 && this.showChatNotes != 'notes' && false) {
-				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
-				return;
-			}
+			// if (response.status === 404 && this.showChatNotes != 'notes' && false) {
+			// 	this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+			// 	return;
+			// }
 			//(response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes'
 
 			if (true) {
@@ -2601,15 +2604,15 @@ sendMessage(){
 							});
 				});
 			}
-		},
-		(error)=> {
-			if(error.status === 500) {
-				this.showToaster('! Internal Server Error Please Contact System Adminstrator','error');
-			}
-			else {
-				this.showToaster(error.message,'error');
-			}
-		});
+		// },
+		// (error)=> {
+		// 	if(error.status === 500) {
+		// 		this.showToaster('! Internal Server Error Please Contact System Adminstrator','error');
+		// 	}
+		// 	else {
+		// 		this.showToaster(error.message,'error');
+		// 	}
+		// });
 
 
 		}else{
@@ -2742,7 +2745,7 @@ sendMessage(){
         //   const newArr = [...data[0], ...data[1]];
         //   this.obsArray.next(newArr);
         // });
-		this.getAllInteraction(false);
+		this.getAllInteraction();
       }
     });
 	}
@@ -2783,10 +2786,30 @@ sendMessage(){
 		date.getDate() === currDate.getDate()){
 			return this.datePipe.transform(date,'hh:mm a');
 		} else if(date.getFullYear() === currDate.getFullYear() && date.getMonth() === currDate.getMonth() &&
-		date.getDate() === currDate.getDate()){
+		date.getDate() === yesterday.getDate()){
 			return 'Yesterday';
 		}else{
 			return this.datePipe.transform(date,'dd/MM/yyyy');
 		}
+	  }
+	  getSplitItem(val:any){
+		if(val){
+		let selectName =  val?.split(':');
+		return selectName[1] ?  selectName[1] : '';
+		} else{
+		  return '';
+		}
+	  }
+
+	  getCustomFieldsData() {
+		this.settingService.getNewCustomField(Number(this.SPID)).subscribe(response => {
+		  let customFieldData = response.getfields;
+		  console.log(customFieldData);  
+		  const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+    		if(customFieldData){
+       			const filteredFields:any = customFieldData?.filter((field:any) => !defaultFieldNames.includes(field.ActuallName) && field.status===1 );
+          		this.filteredCustomFields = filteredFields;
+			}
+		});
 	  }
 }
