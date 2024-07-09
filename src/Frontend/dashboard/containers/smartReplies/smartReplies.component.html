@@ -1087,8 +1087,9 @@
 					  
 					  <!--smartreplysuccess  popup -->
 					  <ng-template #smartreplysuccess let-c="close" let-d="dismiss">
+						  <div class="position-fixed" style="height: 100dvh; width: 100dvw; background-color: rgba(255, 255, 255, 0.892); transition: none !important; top: 0; left: 0; z-index: 2000; transform: none Im !important;"></div>
 						  
-						  <div class="dd">
+						  <div class="dd" style="z-index: 2001;">
 							  <button (click)="c()" type="button" class="btn5 btn-close" 
 									  style="width: 40px;" 
 									  data-bs-dismiss="modal" 
