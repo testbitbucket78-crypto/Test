@@ -472,7 +472,7 @@
 							  <div class="smrply-err-msg">
 					  
 								<span id="smrply-err-msg"></span>
-								<button *ngIf="isEdit==false" type="button" (click)="sendNewSmartReply(smartreplysuccess,smartreplyfailed)"
+								<button *ngIf="isEdit==false" type="button" (click)="smartReplySuccess(smartreplysuccess)"
 								  class="btn5 btn-block col-1 mt-3 ">Save
 								</button>
 								<button *ngIf="isEdit==true" type="button" (click)="updateSmartReplies(smartreplysuccess,smartreplyfailed)"
@@ -1089,11 +1089,11 @@
 					  <ng-template #smartreplysuccess let-c="close" let-d="dismiss">
 						  
 						  <div class="dd">
-							  <button (click)="smartReplySuccess()" type="button" class="btn5 btn-close" 
+							  <button (click)="c()" type="button" class="btn5 btn-close" 
 									  style="width: 40px;" 
 									  data-bs-dismiss="modal" 
 									  aria-label="Close"
-									  data-bs-target="#smartrepliesModal">
+									  data-bs-target="#smartreplysuccess">
 								  <img style="width: 10px;" src="assets/img/teambox/icon-close.svg">
 							  </button>
 							  <img src="assets/img/export1.png">
@@ -1108,7 +1108,7 @@
 							  </div>
 							  <div class="modal-footer popfooter row text">
 								  <div class="col-md-3">
-									  <button type="button" class="btn btn-outline-dark" (click)="smartReplySuccess()" data-bs-dismiss="modal"
+									  <button type="button" class="btn btn-outline-dark" (click)="sendNewSmartReply(smartreplysuccess,smartreplyfailed)" data-bs-dismiss="modal"
 							aria-label="Close" data-bs-target="#smartrepliesModal">
 										  Ok, Got it
 									  </button>

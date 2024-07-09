@@ -340,7 +340,6 @@ contactForm() {
 }
 
     validatorsToggle() {
-        debugger;
         const displayPhoneNumber = this.productForm?.get('displayPhoneNumber');
         const countryCode = this.productForm?.get('countryCode');
         if (countryCode) {
@@ -786,6 +785,9 @@ console.log(this.contactId)
           this.resetForm();
           this.productForm.clearValidators();
           this.modalService.open(addcontacterror);
+          if(error?.error){
+            this.showToaster(error.error.message,'error');
+          }
         }
         else if (error) {
           this.showToaster(error.message,'error');

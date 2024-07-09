@@ -120,11 +120,11 @@
     </div>
     <div class="sideBar-footer">
         <div (click)="checkRole();">
-        <button type="button" class="account-white-btn" (click)="editRolesDetails();">
+        <button type="button" class="account-white-btn" (click)="editRolesDetails(); showSideBar = false;">
             <img class="p-0" src="../../../../assets/img/edit.png"></button>
         </div>
         <div (click)="checkRole();">
-        <button type="button" class="account-white-btn ml-2" (click)="deleteRolesDetails();">
+        <button type="button" class="account-white-btn ml-2" (click)="deleteRolesDetails(); showSideBar = false;">
             <img class="p-0" src="../../../../assets/img/delete.png">
         </button>
     </div>

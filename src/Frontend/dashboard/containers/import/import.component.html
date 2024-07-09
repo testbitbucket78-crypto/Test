@@ -47,85 +47,106 @@
 				<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
 
 						<div class="col-lg-12 py-2 pt-1 upload-part-container">
-							<div class="head d-flex">
+							<!-- <div class="head d-flex">
 								<h4>Attach files</h4>
 								<button class="btn" (click)="download()">
 									<img src="../../../../assets/img/profile/download-file.svg" />
 									Download sample file
 								</button>
-							</div>
-
-							<div class="d-flex upload-part pb-3">
-
-								<div class="box1" ngClass="{{dragAreaClass}}">
-									<div class="d-img">
-										<img src="assets/img/im.png">
-									</div>
-									<h5 *ngIf="!this.file">Drag & Drop a CSV file</h5>
-									<h5 *ngIf="!this.file">to add or update contacts</h5>
-									<h5 *ngIf="this.file">Your file attached</h5>
-									<h5 *ngIf="this.file">successfully</h5>
-									<span *ngIf="!this.file" class="or">or</span>
-										<button *ngIf="!this.file" class="mt-2 mb-4 uploadFile-btn">
-											<img class="px-2" src="../../../../assets/img/profile/upload.svg"/>
-											<label class="m-0 uploadFile" for="uploadFile">
-												<input type="file" (change)="onUpload($event)" id="uploadFile" accept=".csv" />
-												  Browse files
-											   </label>
-										</button>
-										<button *ngIf="this.file" class="mt-4 mb-4 uploadFile-btn">
-											{{this.fileName}}
-											<img class="ml-4 remove-file" src="../../../../assets/img/profile/icon-close.svg"
-											      (click)="removeFile()" />
-										</button>
-								</div>
-						
-
-								<div class="download">											
-									<div class="box3">
-										<div class="box4 d-flex">
-											<img class="mr-2" src="../../../../assets/img/support/instraction.svg" />
-											<h6 class="m-0">Instructions</h6>
-										</div>
-										<!-- <p><sb-read-more *ngFor="let t of text" [content]="t" [limit]="245" [completeWords]="true">
-											</sb-read-more></p> -->
-											<div class="import contact info_box">
-												<p class="info">
-													<span>Upload the file that consists of contacts with the details that you would like to Import. Ensure the Imported file fulfills the following requirements:</span>
-													<span>1. Only CSV format file should be Imported.</span>
-													<span>2. File can have a maximum size of 10 MB.</span>
-													<span>3. Each row in the file represents a contact and each column represents a contact field (attribute).</span>
-													<span>4. Ensure first row contains NO data and just column headings with proper labels to help in attributes mapping. Data in first row is not imported.</span>
-													<span>5. The file must contain atleast 2 columns. One of them should contain Contact Numbers and the other Name of the Contacts.</span>
-													<span>6. If your import purpose is Update Existing Contacts Only, you can also select Email ID as an identifier.</span>
-												</p>
+							</div> -->
+							<div class="w-100 px-5">
+								<div class="px-5">
+									<div class="px-5">
+										<div class="px-5">
+											<div class="px-4">
+												<div class="row px-5">
+													<div class="col-6 d-flex flex-column justify-content-center">
+														<p class="font-weight-bold">Attach Files</p>
+														<div class="box1" ngClass="{{dragAreaClass}}">
+															<div class="d-img mt-4">
+																<img src="assets/img/im.png">
+															</div>
+															<h5 *ngIf="!this.file" class="mb-0">Drag & Drop a CSV file<br>to add or update
+																contacts</h5>
+															<h5 *ngIf="this.file" class="mb-0">Your file attached<br>successfully</h5>
+															<span *ngIf="!this.file" class="or">or</span>
+															<div class="px-3">
+																<div class="d-flex flex-column px-5">
+																	<button *ngIf="!this.file" class="mb-1 uploadFile-btn">
+																		<img class="px-2" src="../../../../assets/img/profile/upload.svg" />
+																		<label class="m-0 uploadFile" for="uploadFile">
+																			<input type="file" (change)="onUpload($event)" id="uploadFile" accept=".csv" />
+																			Browse files
+																		</label>
+																	</button>
+																	<button *ngIf="this.file" class="mb-1 uploadFile-btn">
+																		{{this.fileName}}
+																		<img class="ml-4 remove-file" src="../../../../assets/img/profile/icon-close.svg"
+																			(click)="removeFile()" />
+																	</button>
+																	<button
+																		class="uploadFile-btn mb-4 d-flex align-items-center justify-content-center"
+																		(click)="download()">
+																		<img src="../../../../assets/img/profile/download-file.svg" />
+																		<label class="m-0 uploadFile pl-2" for="uploadFile">
+																			Download sample
+																		</label>
+																	</button>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="col-6 d-flex justify-content-start px-4">
+														<div class="d-flex">
+															<div class="box3 p-4">
+																<div class="box4 d-flex">
+																	<img class="mr-2" src="../../../../assets/img/support/instraction.svg" />
+																	<h6 class="m-0">Instructions</h6>
+																</div>
+																<!-- <p><sb-read-more *ngFor="let t of text" [content]="t" [limit]="245" [completeWords]="true">		
+																</sb-read-more></p> -->
+																<div class="import contact info_box">
+																	<p class="info">
+																		<span>Upload the file that consists of contacts with the details that you would like to Import. Ensure the Imported file fulfills the following requirements:</span>
+																		<span>1. Only CSV format file should be Imported.</span>
+																		<span>2. File can have a maximum size of 10 MB.</span>
+																		<span>3. Each row in the file represents a contact and each column represents a contact field (attribute).</span>
+																		<span>4. Ensure first row contains NO data and just column headings with proper labels to help in attributes mapping. Data in first row is not imported.</span>
+																		<span>5. The file must contain atleast 2 columns. One of them should contain Contact Numbers and the other Name of the Contacts.</span>
+																		<span>6. If your import purpose is Update Existing Contacts Only, you can also select Email ID as an identifier.</span>
+																	</p>
+																</div>
+															</div>
+														<!-- <div>
+																<label for="floatingSelectGrid">Message Opt-In</label>
+																<div class="form-floating">
+																	<select class="form-select" id="floatingSelectGrid"
+																		aria-label="Floating label select example" [(ngModel)]="messageOptIn">
+																		<option value="" selected disabled>Select Message Opt-In</option>
+																		<option value="Yes">Yes</option>
+																		<option value="No">No</option>
+																	</select>
+																</div>
+															</div> -->
+														</div>
+													</div>
+												</div>
 											</div>
-									</div>
-									<div>
-										<label for="floatingSelectGrid">Message Opt-In</label>
-										<div class="form-floating">
-											<select class="form-select" id="floatingSelectGrid"
-												aria-label="Floating label select example" [(ngModel)]="messageOptIn">
-												<option value="" selected disabled>Select Message Opt-In</option>
-												<option value="Yes">Yes</option>
-												<option value="No">No</option>
-											</select>
 										</div>
 									</div>
 								</div>
 							</div>
-
 						</div>
 				
 					
 				
 					<div class="col-lg-12 purpose-identifier-container">
 
-						<div class="d-flex purpose-identifier pb-0">
-							<div class="mr-4">
+						<div class="row purpose-identifier pb-0">
+							<div class="col-6">
 								<label for="floatingInputGrid">Purpose</label>
-								<div class="form-floating">
-									<select class="form-select" id="floatingSelectGrid"
+								<div class="form-floating w-100">
+									<select class="form-select w-100" id="floatingSelectGrid"
 										aria-label="Floating label select example" #pure
 										(change)="onSelectPurpose(pure.value)">
 										<option value="Add new contact only">Add new contact only</option>
@@ -144,9 +165,21 @@
 								<span *ngIf="pure.value==='Add and Update Contacts'" id="con">
 									Update existing contacts with
 									the values from<br />the
-									CSV file, and add new contacts from the CSV file.</span>
+									CSV file, and add new contacts from the CSV file.</span><br>
+								<span *ngIf="Identifier==='Phone_number'" id="worksa">Phone Number works as identifier</span>
 							</div>
-							<div class="ml-4">
+							<div class="col-6">
+								<label for="floatingSelectGrid">Message Opt-In</label>
+								<div class="form-floating w-100">
+									<select class="form-select w-100" id="floatingSelectGrid"
+										aria-label="Floating label select example" [(ngModel)]="messageOptIn">
+										<option value="" selected disabled>Select Message Opt-In</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+									</select>
+								</div>
+							</div>
+							<!-- <div class="ml-4">
 								<label class="px-1" for="floatingSelectGrid">Identifier</label>
 								<div class="info-container">
 									
@@ -169,7 +202,7 @@
 								</div>
 								<span *ngIf="Identifier==='Phone_number'" id="worksa">Phone Number works as identifier</span>
 								<span *ngIf="Identifier==='emailId'" id="worksa">Email ID works as identifier</span>
-							</div>
+							</div> -->
 						</div>
 					
 					</div>
