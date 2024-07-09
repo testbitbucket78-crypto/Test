@@ -49,7 +49,6 @@
 .sub-contents input.form-control {
     width: 250px;
     height: 37px;
-    border: 1px solid #EBEBEB;
     border-radius: 16px;
 }
 
@@ -90,16 +89,24 @@
     border: none;
    }
 
-   .input-form {
+.input-form {
     height: 37px;
     border-radius: 16px;
-    border: 1px solid #EBEBEB;
+    border: 1px solid #ced4da;
     padding: 5px 15px;
-    border: 1px solid #EBEBEB;
     width: 35%;
-   }
+}
 
    .select-heading{
     font-size: 14px;
     font-weight: 600;
    }
+.margin-heading {
+    .select-heading {
+        margin-left: 21px;
+    }
+
+    .input-form {
+        margin-left: 27px;
+    }
+}

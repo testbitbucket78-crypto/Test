@@ -246,16 +246,6 @@ font-family: Manrope;
   cursor: pointer;
 }
 
-.calender .date-grid{
-  display: grid;
-  gap: 1vw;
-  grid-template-columns: auto auto auto auto auto auto auto;
-  padding-top: 15px;
-}
-
-.calender .date-grid .active{
-  color:#F23B3B
-}
 
 
 .input-form {
@@ -408,9 +398,33 @@ label {
 
 
 .no-holidays{
-  font-size: 15px;
+    font-size: 15px;
     height: 115px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.focusable-span:focus {
+    box-shadow: 1px 1px 15px #dedede;
+    border-radius: 40%;
+    border: 1px solid #7A86A1de;
+}
+
+.date-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(7, auto);
+
+    & span {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items:center;
+        justify-content:center;
+    }
+}
+
+.date-grid .active {
+    color: #F23B3B
 }

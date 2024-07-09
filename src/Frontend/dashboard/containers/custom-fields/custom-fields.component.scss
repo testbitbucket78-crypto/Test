@@ -349,6 +349,7 @@ select {
 
    .addCustomFieldBody {
     padding: 0 16% 0 16%;
+    overflow: auto;
    }
 
    .working-hour-modal::-webkit-scrollbar {
@@ -555,3 +556,7 @@ select {
     font-size: 13px;
     padding-top: 3px;
    }
+
+.Sticky{
+    position: sticky;
+}

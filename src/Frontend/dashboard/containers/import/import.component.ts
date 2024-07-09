@@ -237,14 +237,16 @@ export class ImportComponent implements OnInit {
 
 			this.importedData.forEach((data,idx) => {
 				this.csvfieldHeaders = Object.keys(data);
-				this.selectedCustomFields.push('');
 				if(idx==0)
 					this.csvfieldValues = Object.values(data);
 				this.toggleOverride = Array(this.csvfieldHeaders.length).fill(false);
 				this.displayNameChecked= Array(this.csvfieldHeaders.length).fill(false);
 				console.log(this.csvfieldHeaders);
 				console.log(this.csvfieldValues);
-			  });
+			});
+			this.csvfieldHeaders.forEach((x: any) => {
+				this.selectedCustomFields.push('');
+			});
 		}
 	}
 
@@ -252,7 +254,7 @@ export class ImportComponent implements OnInit {
 
    /******************* Method to capture mapping selections********************/
 
-	  onSelectMapping(selectedField: string, index: number) {
+	onSelectMapping(selectedField: string, index: number) {
 		this.selectedCustomFields[index] =selectedField;
 		if(selectedField == 'Phone_number')
 			this.toggleOverride[index] = false;
@@ -279,7 +281,7 @@ export class ImportComponent implements OnInit {
 
 	  }
 
-	  removeUncheck(e:any,ith:any){
+	removeUncheck(e: any, ith: any) {
 		if(!e.target.checked){
 		this.mappedFields.forEach((item:any)=>{
 			for(let i=0;i<item.length;i++){
@@ -290,6 +292,7 @@ export class ImportComponent implements OnInit {
 		console.log(item)
 		});
 		console.log(this.mappedFields)
+		this.toggleOverride[ith] = false;
 		let idx = this.customFieldData.findIndex((ite:any)=>ite.ActuallName == this.selectedCustomFields[ith]);
 		this.customFieldData[idx].isSelected=false;
 		this.selectedCustomFields[ith]='';
@@ -428,10 +431,16 @@ export class ImportComponent implements OnInit {
 //*********Download Sample file****************/
 
 	download() {
-		this.apiService.download().subscribe((data: any) => {
+		this.apiService.download(this.spid).subscribe((data: any) => {
 			const blob = new Blob([data], { type: 'text/csv' });
 			const url = window.URL.createObjectURL(blob);
-			window.open(url);
+			const fileName = document.createElement('a');
+			fileName.href = url;
+			fileName.download = 'Sample_Contacts_Import_File.csv'; 
+			document.body.appendChild(fileName);
+			fileName.click();
+			document.body.removeChild(fileName);
+			window.URL.revokeObjectURL(url);
 		})
 	}
 

@@ -16,7 +16,7 @@
 	<!-- filter-popup -->
 				<div class="custom_row pt-3">
 					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
-						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search by Name or No."
+						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search by Name or Phone No."
 						aria-label="Search" aria-describedby="basic-addon2" />
 
 
@@ -46,7 +46,7 @@
 
 					</div>
 					<button class="new-message-btn" (click)="openaddMessage(messageadd)"><img class="icon"
-							src="/assets/img/teambox/add.svg" /> New Message</button>
+							src="/assets/img/teambox/add.svg" /> {{ searchFocused ? '' : 'New Message' }}</button>
 				</div>
 				<div class="custom_row mt-3">
 					<p *ngIf="interactionList" class="conversaction_status">{{interactionFilterBy}}<span
