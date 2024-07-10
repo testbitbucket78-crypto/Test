@@ -126,11 +126,11 @@ async function extractDataFromMessage(body) {
     body.entry[0].changes[0].value.statuses.length > 0 && body.entry[0].changes[0].value.statuses[0]) {
 
     let messageStatus = body.entry[0].changes[0].value.statuses[0].status
-let displayPhoneNumber =  body.entry[0].changes[0].value.metadata.display_phone_number
-let customerPhoneNumber =  body.entry[0].changes[0].value.statuses[0].recipient_id
+    let displayPhoneNumber = body.entry[0].changes[0].value.metadata.display_phone_number
+    let customerPhoneNumber = body.entry[0].changes[0].value.statuses[0].recipient_id
     //console.log("messageStatus ,displayPhoneNumber ,customerPhoneNumber " )
-  // console.log(messageStatus ,displayPhoneNumber ,customerPhoneNumber)
-    let updatedStatus = await saveSendedMessageStatus(messageStatus,displayPhoneNumber,customerPhoneNumber)
+    // console.log(messageStatus ,displayPhoneNumber ,customerPhoneNumber)
+    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber)
   }
 
 }
@@ -152,7 +152,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   if (message_text.length > 0) {
     let myUTCString = new Date().toUTCString();
     const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type,'NULL','WhatsApp Official',created_at]);
+    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WhatsApp Official', created_at]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
@@ -164,7 +164,6 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
   if (saveMessage.length > 0) {
     console.log(display_phone_number + " .." + message_text)
-    notify.NotifyServer(display_phone_number,'true');
     const data = saveMessage;
     // Extracting the values
     const extractedData = {
@@ -174,10 +173,11 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       newId: data[3][0]['@newId'],
       replystatus: data[4][0]['@replystatus'],
       msg_id: data[5][0]['@msg_id'],
-      newlyInteractionId: data[7][0]['@newlyInteractionId']
-    };
+      newlyInteractionId: data[7][0]['@newlyInteractionId'],
+      isContactPreviousDeleted : data[10][0]['@isContactPreviousDeleted']
 
-    // console.log("getDetatilsOfSavedMessage");
+    };
+    
     var sid = extractedData.sid
     var custid = extractedData.custid
     var agid = extractedData.agid
@@ -185,31 +185,33 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var newId = extractedData.newId
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData.newlyInteractionId
-    
+    var isContactPreviousDeleted=extractedData.isContactPreviousDeleted
+    notify.NotifyServer(display_phone_number, false, newId)
     let contact = db.excuteQuery('select * from EndCustomer where customerId =?', [custid])
-    if(contact?.length >0){
-      funnel.ScheduledFunnels(contact[0].SP_ID, contact[0].Phone_number, contact[0].OptInStatus, new Date(), new Date(),0);
+    // if(contact?.length >0){
+    //   funnel.ScheduledFunnels(contact[0].SP_ID, contact[0].Phone_number, contact[0].OptInStatus, new Date(), new Date(),0);
+    // }
+    if (contact[0]?.isBlocked != 1) {
+      let defaultQuery = 'select * from defaultActions where spid=?';
+      let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
+      console.log(defaultAction.length)
+      if (defaultAction.length > 0) {
+        console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
+        var isAutoReply = defaultAction[0].isAutoReply
+        var autoReplyTime = defaultAction[0].autoReplyTime
+        var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
+
+
+      }
+      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WhatsApp Official',isContactPreviousDeleted)
+      console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
+      if (defaultReplyAction == false) {
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+        let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
+      }
     }
-
-    let defaultQuery = 'select * from defaultActions where spid=?';
-    let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
-    console.log(defaultAction.length)
-    if (defaultAction.length > 0) {
-      console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
-      var isAutoReply = defaultAction[0].isAutoReply
-      var autoReplyTime = defaultAction[0].autoReplyTime
-      var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
-
-
-    }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId,'WhatsApp Official')
-   console.log("defaultReplyAction-->>> boolean",defaultReplyAction)
-    if(defaultReplyAction == false){
-    let myUTCString = new Date().toUTCString();
-    const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?',['Open',updated_at,newId])
-    let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
-   }
   }
 
 }
@@ -241,7 +243,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
         //TODO: Save the AWS url to DB in messages table using SP similar to webhook_2 SP. 
 
-        notify.NotifyServer(display_phone_number,true);
+        notify.NotifyServer(display_phone_number, true);
 
         resolve({ value: awsDetails.value.Location });
       })
@@ -254,7 +256,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
   })
 }
 
-async function saveSendedMessageStatus(messageStatus,displayPhoneNumber,customerPhoneNumber) {
+async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber) {
 
   // let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
   // console.log(getMessageId)
@@ -265,20 +267,20 @@ async function saveSendedMessageStatus(messageStatus,displayPhoneNumber,customer
   // let myUTCString = new Date().toUTCString();
   // const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
   // let saveStatus = await db.excuteQuery(process.env.updateStatusQuery, [messageStatus, created_at, message_id])
-let userSP = await db.excuteQuery(`SELECT SP_ID from user where mobile_number = ? and isDeleted !=1 order by CreatedDate desc LIMIT 1`,[displayPhoneNumber])
-let spid ;
-if(userSP?.length){
-  spid = userSP[0].SP_ID
- }
-if (messageStatus == 'send') {
+  let userSP = await db.excuteQuery(`SELECT SP_ID from user where mobile_number = ? and isDeleted !=1 order by CreatedDate desc LIMIT 1`, [displayPhoneNumber])
+  let spid;
+  if (userSP?.length) {
+    spid = userSP[0].SP_ID
+  }
+  if (messageStatus == 'send') {
     const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL); `
-   // console.log(smsdelupdate)
+    // console.log(smsdelupdate)
     let sended = await db.excuteQuery(smsdelupdate, [customerPhoneNumber, spid])
-  //  console.log("send", sended?.affectedRows)
+    //  console.log("send", sended?.affectedRows)
     notify.NotifyServer(displayPhoneNumber, true)
 
 
@@ -292,11 +294,11 @@ SELECT InteractionId FROM Interaction
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1); `
     //console.log(smsdelupdate)
     let deded = await db.excuteQuery(smsdelupdate, [customerPhoneNumber, spid])
-  //  console.log("deliver", deded?.affectedRows)
+    //  console.log("deliver", deded?.affectedRows)
     notify.NotifyServer(displayPhoneNumber, true)
 
   } else if (messageStatus == 'read') {
-  //  console.log("read")
+    //  console.log("read")
     let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2';
     let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber])
     const smsupdate = `UPDATE Message
@@ -304,9 +306,9 @@ SET msg_status = 3
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1);`
-  //  console.log(smsupdate)
+    //  console.log(smsupdate)
     let resd = await db.excuteQuery(smsupdate, [customerPhoneNumber, spid])
- //   console.log("read", resd?.affectedRows)
+    //   console.log("read", resd?.affectedRows)
     notify.NotifyServer(displayPhoneNumber, true)
   }
 }

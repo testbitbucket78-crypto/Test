@@ -4,6 +4,7 @@ var express = require("express");
 var app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors')
+const moment = require('moment');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -14,7 +15,7 @@ async function isDefaultContactOwner(SP_ID,custid) {
     let contactOwner = await db.excuteQuery(contactOwnerQuery, [custid, SP_ID]);
     let mappingUid = contactOwner[0]?.uid;
     if (contactOwner?.length == 0) {
-      let defaultAdminQuery = `SELECT * FROM defaultActions WHERE spid=? AND isDeleted != 1`;
+      let defaultAdminQuery = `SELECT * FROM defaultActions WHERE spid=? AND  (isDeleted is null or isDeleted =0)`;
       let defaultAdmin = await db.excuteQuery(defaultAdminQuery, [SP_ID]);
       mappingUid = defaultAdmin[0]?.defaultAdminUid
     }
@@ -124,7 +125,7 @@ async function RoundRobin(sid, newId) {
     for (let agent of activeAgent) {
 
       let checkAssignInteraction = await db.excuteQuery(settingVal.checkAssignInteraction, [newId])
-      if (checkAssignInteraction.length <= 0) {
+      if ((checkAssignInteraction.length <= 0) || (checkAssignInteraction?.AgentId == -1)) {
         let assignedChatCount = await db.excuteQuery(settingVal.assignCount, [agent.uid, sid])
 
         let chatCount = assignedChatCount.length > 0 ? assignedChatCount[0].count : 0;
@@ -149,7 +150,7 @@ async function ManualAssign(sid, newId) {
   let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=?`;
   let RoutingRules = await db.excuteQuery(RoutingRulesQuery, [sid]);
   if (RoutingRules.length > 0) {
-    let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES ?`;
+    let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES (?,?,?,?)`;
     let assignAgentRes = await db.excuteQuery(assignAgentQuery, [newId, RoutingRules[0].manualAssignUid, '-1', 1]);
 
   }
@@ -163,7 +164,7 @@ async function ManagemissedChat(sid, newId, agid, custid, RoutingRules) {
   console.log("ManagemissedChat", new Date())
   let checkAssignInteraction = await db.excuteQuery(settingVal.checkAssignInteraction, [newId])
   console.log("checkAssignInteraction.length", checkAssignInteraction.length)
-  if (checkAssignInteraction.length <= 0) {
+  if ((checkAssignInteraction.length <= 0) || (checkAssignInteraction?.AgentId == -1)) {
     console.log("missed -------------------")
     let time = (RoutingRules[0].timeoutperiod).replace(/\s*(Min|hour)/g, '')
     console.log("missed chat time", time)
@@ -204,7 +205,7 @@ async function AssignSpecificUser(sid, newId) {
   let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=?`;
   let RoutingRules = await db.excuteQuery(RoutingRulesQuery, [sid]);
   if (RoutingRules.length > 0) {
-    let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES ?`;
+    let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES (?,?,?,?)`;
     let assignAgentRes = await db.excuteQuery(assignAgentQuery, [newId, RoutingRules[0].SpecificUserUid, '-1', 1]);
 
   }
