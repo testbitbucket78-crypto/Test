@@ -26,7 +26,7 @@ ORDER BY updated_at DESC
 LIMIT 1`;
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent) VALUES ?";
 
-async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType) {
+async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted) {
 
   let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?', [newId]);
   let interactionStatus = await db.excuteQuery('select * from Interaction where InteractionId = ? and is_deleted !=1 ', [newId])
@@ -37,11 +37,11 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
     const autoReplyVal = new Date(autoReplyTime)   // autoReplyTime when auto reply start
     //console.log(autoReplyVal ,autoReplyTime)
     if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined) {
-      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted)
       return sendSReply;
     }
     if (autoReplyTime == null || autoReplyTime == undefined || autoReplyTime == '') {
-      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted)
       return sendSReply;
     }
   } else if (isAutoReplyDisable == 1 && (assignAgent?.length == 0 || (assignAgent?.length != 0 && interactionStatus[0]?.interaction_status == 'Resolved'))) {
@@ -50,31 +50,31 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
     const autoReplyVal = new Date(autoReplyTime)   // autoReplyTime when auto reply start
     //console.log(autoReplyVal ,autoReplyTime)
     if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined) {
-      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted)
       return sendSReply;
     }
     if (autoReplyTime == null || autoReplyTime == undefined || autoReplyTime == '') {
-      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted)
       return sendSReply;
     }
   }
 
 }
 
-async function sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType) {
+async function sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted) {
   console.log("***********", replystatus, "____Send SMART REPLIESS______")
   const currentTime = new Date();
   const replystatus1 = new Date(replystatus);  //replystatus  is pauseTill 
   console.log(replystatus1, "(replystatus1 <= currentTime)", currentTime, (replystatus1 <= currentTime))
   if (replystatus != null && (replystatus1 <= currentTime) && replystatus != undefined) {
-    var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType);
+    var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted);
     console.log("____Send SMART REPLIESS______NOT  NULLL" + response);
     return response;
   }
   if (replystatus == null || replystatus == undefined || replystatus == "") {
     console.log("replystatus == null" + message_text)
-    var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType);
-     console.log("____Send SMART REPLIESS______" + response);
+    var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted);
+    console.log("____Send SMART REPLIESS______" + response);
     return response;
   }
 }
@@ -83,12 +83,12 @@ async function sendSmartReply(message_text, phone_number_id, contactName, from, 
 async function matchSmartReplies(message_text, sid, channelType) {
   var allSmartReplies = await db.excuteQuery(`select * from SmartReply where SP_ID =? and (isDeleted is null || isDeleted = 0 )`, [sid]);
   var reply;
-  console.log(sid,"allSmartReplies",allSmartReplies)
+  // console.log(sid,"allSmartReplies",allSmartReplies)
   for (let i = 0; i < allSmartReplies.length; i++) {
     // console.log(allSmartReplies[i])
     const storedValue = allSmartReplies[i].MatchingCriteria;
     let id = allSmartReplies[i].ID
-    console.log("storedValue",storedValue)
+    // console.log("storedValue",storedValue)
     // console.log(storedValue =='contains' || storedValue == 'Fuzzy Matching' || storedValue=='Exact matching')
 
     if (storedValue == 'contains') {
@@ -144,19 +144,20 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
     }
 
   }
-  console.log(reply,sid, channelType)
+  // console.log(reply,sid, channelType)
   return reply;
 }
 
-async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType) {
+async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted) {
   try {
     console.log("in side getSmartReplies method", message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
     // console.log("message_text")
     // console.log(message_text)
     // console.log("_________process.env.insertMessage__________")
 
-    let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newId, phone_number_id, from, channelType, agid);
+
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
+
     let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid);
 
     //console.log("defautWlcMsg========" ,defautWlcMsg)
@@ -166,32 +167,39 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     //var autoReply = replymessage[0].Message
     //console.log(replymessage.length)
 
-    console.log(replymessage," replymessage.length " + replymessage?.length)
+    console.log(replymessage, " replymessage.length " + replymessage?.length)
     if (replymessage?.length > 0) {
-      //console.log("replymessage.length")
-    let isSReply =  iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType);
-    return isSReply;
-    } else if (defultOutOfOfficeMsg === false) {
+
+      let isSReply = iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType);
+      console.log("iterateSmartReplies replymessage.length", isSReply)
+      return isSReply;
+    } else if (replymessage?.length <= 0) {
+      let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newId, phone_number_id, from, channelType, agid, isContactPreviousDeleted);
+      return false;
+    }
+    else if (defultOutOfOfficeMsg === false) {
 
       console.log("getOutOfOfficeResult")
       let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid);
-      console.log(getOutOfOfficeResult)
-    }
-    else if (defautWlcMsg.length > 0 && defautWlcMsg[0].Is_disable == 1) {
 
-      let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 1])
-      console.log("above if else defautWlcMsg msg", messageInterval.length)
-      if (messageInterval.length <= 0) {
-        // sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
-        let message_text = await getExtraxtedMessage(defautWlcMsg[0]?.value)
-        let result = await messageThroughselectedchannel(sid, from, defautWlcMsg[0].message_type, message_text, defautWlcMsg[0].link, phone_number_id, channelType, agid, newId)
-        console.log("main welcome", result)
-        let myUTCString = new Date().toUTCString();
-        const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let updateSmsRes = await db.excuteQuery(updateSms, [1, time, msg_id]);
-      }
-
+      return false;
     }
+    // else if (defautWlcMsg.length > 0 && defautWlcMsg[0].Is_disable == 1) {
+
+    //   let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 1])
+    //   console.log(messageInterval,"above if else defautWlcMsg msg", messageInterval.length)
+    //   if (messageInterval.length <= 0) {
+    //     // sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
+    //     let message_text = await getExtraxtedMessage(defautWlcMsg[0]?.value)
+    //     let result = await messageThroughselectedchannel(sid, from, defautWlcMsg[0].message_type, message_text, defautWlcMsg[0].link, phone_number_id, channelType, agid, newId)
+    //     console.log("main welcome", result)
+    //     let myUTCString = new Date().toUTCString();
+    //     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    //     let updateSmsRes = await db.excuteQuery(updateSms, [1, time, msg_id]);
+    //     return false;
+    //   }
+
+    // }
 
 
   } catch (err) {
@@ -200,109 +208,198 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
   }
 }
 
-
 async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType) {
   try {
     var messageToSend = [];
-    let respose;
-    // Loop over the messages array and send each message
-    var rm = new Promise((resolve, reject) => {
-      replymessage.forEach(async (message, index) => {
 
-        var media = message.Media
-        var value = message.Value;
-        var testMessage = message.Message;                  // Assuming the 'Message' property contains the message content
-        var actionId = message.ActionID;                 // Assuming the 'ActionID' property contains the action ID
-        // console.log("actionId", actionId)
-        let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
+    for (let message of replymessage) {
+      var media = message.Media;
+      var value = message.Value;
+      var testMessage = message.Message;  // Assuming the 'Message' property contains the message content
+      var actionId = message.ActionID;  // Assuming the 'ActionID' property contains the action ID
 
-        // Parse the message template to get placeholders
-        const placeholders = parseMessageTemplate(testMessage);
-        if (placeholders.length > 0) {
-          // Construct a dynamic SQL query based on the placeholders
+      let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
+      let content = await removeTags.removeTagsFromMessages(testMessage);
 
-          const results = await removeTags.getDefaultAttribue(placeholders, sid, custid);
-          console.log("results", results)
+      // Parse the message template to get placeholders
+      const placeholders = parseMessageTemplate(testMessage);
+      if (placeholders.length > 0) {
+        // Construct a dynamic SQL query based on the placeholders
+        const results = await removeTags.getDefaultAttribue(placeholders, sid, custid);
+        console.log("results", results);
 
-          placeholders.forEach(placeholder => {
-            const result = results.find(result => result.hasOwnProperty(placeholder));
-            const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
-            content = content.replace(`{{${placeholder}}}`, replacement);
-          });
+        placeholders.forEach(placeholder => {
+          const result = results.find(result => result.hasOwnProperty(placeholder));
+          const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+          content = content.replace(`{{${placeholder}}}`, replacement);
+        });
+      }
 
-        }
+      var type = 'image';
+      if (media == null || media == "") {
+        type = 'text';
+      }
 
-        var type = 'image';
-        if (media == null || media == "") {
-          var type = 'text';
-        }
-
-        let content = await removeTags.removeTagsFromMessages(testMessage);
-        var relyMsg = {
-          "replyId": message.ID,
-          "sid": sid,
-          "from": from,
-          "type": type,
-          "content": content,
-          "media": media,
-          "phone_number_id": phone_number_id,
-          "channelType": channelType,
-          "agentId": agid,
-          "interactionId": newId,
-          "testMessage": testMessage
-        }
-        console.log(index, "replysms")
-        messageToSend.push(relyMsg)
-
-        if (messageToSend.length === replymessage.length) {//once everything is iterated resolve the promois
-          console.log("*****************")
-          resolve();
-        }
-      });
-
-    });
-
-    rm.then(() => {
-      console.log("Before sort");
-      messageToSend.forEach((message) => {
-        console.log(message.replyId);
-      });
-      messageToSend = messageToSend.sort((a, b) => (a.replyId - b.replyId));
-      console.log("After sort");
-      messageToSend.forEach((message) => {
-        console.log(message.replyId);
-      });
-
-      var i = 1;
-      function myLoop(i) {
-        setTimeout(function () {
-          // console.log(message.content ,i); //  your code here 
-          var message = messageToSend[i - 1]
-          if (message.content?.length) {
-          respose =  SreplyThroughselectedchannel(message.sid, message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType, message.agentId, message.interactionId, message.testMessage);
-          }
-          i++;
-          if (i <= (messageToSend.length)) {
-            myLoop(i);   //  decrement i and call myLoop again if i > 0
-          }
-        }, 500)
+      var relyMsg = {
+        "replyId": message.ID,
+        "sid": sid,
+        "from": from,
+        "type": type,
+        "content": content,
+        "media": media,
+        "phone_number_id": phone_number_id,
+        "channelType": channelType,
+        "agentId": agid,
+        "interactionId": newId,
+        "testMessage": testMessage
       };
-      myLoop(i);
-      // messageToSend.forEach((message)=>{
+      console.log(message.replyId, "replysms");
+      messageToSend.push(relyMsg);
+    }
 
-
-
-
-
-      // })
+    console.log("Before sort");
+    messageToSend.forEach((message) => {
+      console.log(message.replyId);
     });
-return respose;
+    messageToSend = messageToSend.sort((a, b) => (a.replyId - b.replyId));
+    console.log("After sort");
+    messageToSend.forEach((message) => {
+      console.log(message.replyId);
+    });
+
+    for (let message of messageToSend) {
+      if (message.content?.length) {
+        let respose = await SreplyThroughselectedchannel(
+          message.sid,
+          message.from,
+          message.type,
+          message.content,
+          message.media,
+          message.phone_number_id,
+          message.channelType,
+          message.agentId,
+          message.interactionId,
+          message.testMessage
+        );
+        console.log("SreplyThroughselectedchannel response:", respose);
+      }
+      await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms before sending the next message
+    }
+
+    console.log("iterateSmartReplies completed");
+    return true;
+
   } catch (err) {
-    console.log(err)
+    console.log(err);
+    return false;
   }
-
-
 }
+
+
+// async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType) {
+//   try {
+//     var messageToSend = [];
+//     let respose;
+//     // Loop over the messages array and send each message
+//     var rm = new Promise((resolve, reject) => {
+//       replymessage.forEach(async (message, index) => {
+
+//         var media = message.Media
+//         var value = message.Value;
+//         var testMessage = message.Message;                  // Assuming the 'Message' property contains the message content
+//         var actionId = message.ActionID;                 // Assuming the 'ActionID' property contains the action ID
+//         // console.log("actionId", actionId)
+//         let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
+//         let content = await removeTags.removeTagsFromMessages(testMessage);
+//         // Parse the message template to get placeholders
+//         const placeholders = parseMessageTemplate(testMessage);
+//         if (placeholders.length > 0) {
+//           // Construct a dynamic SQL query based on the placeholders
+
+//           const results = await removeTags.getDefaultAttribue(placeholders, sid, custid);
+//           console.log("results", results)
+
+//           placeholders.forEach(placeholder => {
+//             const result = results.find(result => result.hasOwnProperty(placeholder));
+//             const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+//             content = content.replace(`{{${placeholder}}}`, replacement);
+//           });
+
+//         }
+
+//         var type = 'image';
+//         if (media == null || media == "") {
+//           var type = 'text';
+//         }
+
+
+//         var relyMsg = {
+//           "replyId": message.ID,
+//           "sid": sid,
+//           "from": from,
+//           "type": type,
+//           "content": content,
+//           "media": media,
+//           "phone_number_id": phone_number_id,
+//           "channelType": channelType,
+//           "agentId": agid,
+//           "interactionId": newId,
+//           "testMessage": testMessage
+//         }
+//         console.log(index, "replysms")
+//         messageToSend.push(relyMsg)
+
+//         if (messageToSend.length === replymessage.length) {//once everything is iterated resolve the promois
+//           console.log("*****************")
+//           resolve();
+//         }
+//       });
+
+//     });
+
+//     rm.then(() => {
+//       console.log("Before sort");
+//       messageToSend.forEach((message) => {
+//         console.log(message.replyId);
+//       });
+//       messageToSend = messageToSend.sort((a, b) => (a.replyId - b.replyId));
+//       console.log("After sort");
+//       messageToSend.forEach((message) => {
+//         console.log(message.replyId);
+//       });
+
+//       var i = 1;
+//       function myLoop(i) {
+//         setTimeout(function () {
+//           // console.log(message.content ,i); //  your code here 
+//           var message = messageToSend[i - 1]
+//           if (message.content?.length) {
+//           respose =  SreplyThroughselectedchannel(message.sid, message.from, message.type, message.content, message.media, message.phone_number_id, message.channelType, message.agentId, message.interactionId, message.testMessage);
+//           }
+//           i++;
+//           if (i <= (messageToSend.length)) {
+//             myLoop(i);   //  decrement i and call myLoop again if i > 0
+//           }
+//         }, 500)
+//       };
+//       myLoop(i);
+//       // messageToSend.forEach((message)=>{
+
+
+//         console.log("iterateSmartReplies   iterateSmartReplies *********** " ,respose)
+
+//         return respose; 
+
+//       // })
+//     });
+
+
+//   } catch (err) {
+//     console.log(err)
+//   }
+
+
+// }
 
 // Common Function to parse the message template and retrieve {{}} placeholders
 function parseMessageTemplate(template) {
@@ -427,11 +524,11 @@ async function removeTag(value, custid) {
 
 
 
-async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from, channelType, agid) {
+async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from, channelType, agid, isContactPreviousDeleted) {
   try {
 
     var wlcMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Welcome Greeting']);
-    if (newlyInteractionId != null && newlyInteractionId != undefined && newlyInteractionId != "" && wlcMessage.length > 0 && wlcMessage[0].Is_disable == 1) {
+    if (newlyInteractionId != null && newlyInteractionId != undefined && newlyInteractionId != "" && wlcMessage.length > 0 && wlcMessage[0].Is_disable == 1 && isContactPreviousDeleted != 0) {
       console.log(" welcome ist defaut msg")
       // sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from);
       let messageInterval = await db.excuteQuery('select * from Message where interaction_id=?', [newlyInteractionId])
@@ -536,8 +633,9 @@ function isWorkingTime(data, currentTime) {
 
 async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid) {
   //console.log("AllAgentsOffline");
-  var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=? and isDeleted !=1";
-  let activeAgent = await db.excuteQuery(activeAgentQuery, [sid]);
+
+  var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=? and isDeleted !=1 and uid !=? and UserType !=(select UserType from user where uid=?) ";
+  let activeAgent = await db.excuteQuery(activeAgentQuery, [sid, agid, agid]);
 
   if (activeAgent?.length <= 0) {
 
@@ -566,13 +664,17 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
   console.log("phone_number_id,channelType,spid, from, type, text")
   console.log(phone_number_id, channelType, spid, from, type, text)
   if (channelType == 'WhatsApp Official') {
-
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let result = middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
-    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^", result)
-    let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time, time, "", -2]]
-    let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+    let result = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    console.log("messageThroughselectedchannel", result?.status)
+    if (result?.status == 200) {
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time, time, "", -2]]
+      let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+    }
+
+
+
   } if (channelType == 'WhatsApp Web') {
     console.log("message midddleware", interactionId)
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)
@@ -588,16 +690,19 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage) {
   if (channelType == 'WhatsApp Official') {
-
+    let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+
     let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    console.log("sReply?.status ", sReply?.status)
     if (sReply?.status == 200) {
       let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", time, time, "", -2]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
-      return true;
+      response = true;
     }
-    return false;
+    console.log("sreply", response)
+    return response;
   } if (channelType == 'WhatsApp Web') {
 
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)

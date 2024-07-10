@@ -780,18 +780,9 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var replystatus = extractedData.replystatus
     var newId = extractedData.newId
     var msg_id = extractedData.msg_id
-<<<<<<< HEAD
     var newlyInteractionId = extractedData?.newlyInteractionId
     console.log("in messages", from, false,"interaction id", newId, display_phone_number)
     notify.NotifyServer(display_phone_number, false, newId)
-=======
-    var newlyInteractionId = extractedData.newlyInteractionId
-
-    let contact = db.excuteQuery('select * from EndCustomer where customerId =?', [custid])
-    if(contact?.length >0){
-      funnel.ScheduledFunnels(contact[0].SP_ID, contact[0].Phone_number, contact[0].OptInStatus, new Date(), new Date(),0);
-    }
->>>>>>> origin
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);

@@ -139,7 +139,7 @@ AND InteractionId IN (
 );`
 
 
-checkAssignInteraction=`SELECT * FROM InteractionMapping WHERE InteractionId = ?`
+checkAssignInteraction=`SELECT * FROM InteractionMapping WHERE InteractionId = ? order by  MappingId desc limit 1`
 
 messageSizeQuery=`SELECT 
 count( LENGTH(message_media) + LENGTH(Type) + LENGTH(message_text) ) AS message_size,

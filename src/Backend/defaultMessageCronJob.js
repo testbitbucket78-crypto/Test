@@ -21,7 +21,7 @@ var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, inte
 
 async function NoCustomerReplyReminder() {
   let defaultMessage = await db.excuteQuery(settingVal.CustomerReplyReminder, [])
- // console.log("NoCustomerReplyReminder" +defaultMessage.length)
+ console.log("NoCustomerReplyReminder" +defaultMessage?.length,defaultMessage)
   if (defaultMessage?.length > 0) {
     for (const message of defaultMessage) {
 
@@ -94,8 +94,8 @@ async function NoCustomerReplyTimeout() {
   try {
    
     let CustomerReplyTimeout = await db.excuteQuery(systemMsgQuery, [])  //settingVal.noCustomerRqplyTimeOut
-    console.log("NoCustomerReplyTimeout" + CustomerReplyTimeout)
-    if (CustomerReplyTimeout.length > 0) {
+    console.log(CustomerReplyTimeout?.length ,"NoCustomerReplyTimeout" + CustomerReplyTimeout)
+    if (CustomerReplyTimeout?.length > 0) {
       
    
       for (const msg of CustomerReplyTimeout) {
@@ -125,8 +125,8 @@ async function NoAgentReplyTimeOut() {
   try {
 
     let noAgentReplydata = await db.excuteQuery(settingVal.noAgentReply, [])
-  //  console.log("NoAgentReplyTimeOut" ,noAgentReplydata)
-    if (noAgentReplydata.length > 0) {
+    console.log(noAgentReplydata?.length,"NoAgentReplyTimeOut" ,noAgentReplydata)
+    if (noAgentReplydata?.length > 0) {
     //  console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
       for (const msg of noAgentReplydata) {
         let isWorkingTime = await workingHoursDetails(msg.SP_ID);
@@ -138,9 +138,11 @@ async function NoAgentReplyTimeOut() {
           messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,message_text,msg.link,'211544555367892',msg.channel)
           let myUTCString = new Date().toUTCString();
           const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [4, currenttime, msg.Message_id]);
+          console.log("No agent update message ",updateSmsRes)
           let messageValu=[[msg.SPID,msg.Type,"211544555367892",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",currenttime,currenttime,4]]
           let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
-          let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [4, currenttime, msg.Message_id]);
+          
       
         }
       }
