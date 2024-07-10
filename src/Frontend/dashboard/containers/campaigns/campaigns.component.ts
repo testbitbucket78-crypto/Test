@@ -1102,8 +1102,8 @@ formateDate(dateTime:string){
 			return [];
 		}
 	}
-	  
-
+	
+	
 
 	  selectScheduled(schedule:any){
 		this.scheduled=schedule
@@ -1421,7 +1421,7 @@ formateDate(dateTime:string){
 	}
 	
 	async runCampaign(CampaignId:any,BodyData:any){
-		
+
 		if(this.csvContactList.length>0){
 			let ix =0;
 			console.log(this.csvContactList,'---csvContactList');
@@ -2007,8 +2007,7 @@ testinfo(){
 		this.selectedAttribute = attribute;
 		this.selectedAddNewCampaign = addNewCampaign;
 	}
-	closeAttributeOption(status: any, addNewCampaign: any) {
-		debugger;
+	closeAttributeOption(status: any, addNewCampaign: any) {	
 		if (status != 'save') {
 			this.selecetdVariable['value'] = '';
 		}

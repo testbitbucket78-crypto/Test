@@ -80,14 +80,13 @@
     border: 2px dashed #ebebeb;
     border-radius: 25px;
     opacity: 1;
-    width: 855px;
+    width: 100%;
     text-align: center;
 }
 
 .download {
     display: flex;
     flex-direction: column;
-    padding-left: 32px;
     width: 845px;
   }
 
@@ -164,11 +163,11 @@
 .box3 p {
     font-size: 10px;
     color: #7A86A1;
-    height: 124px;
+    height: 220px;
     overflow: scroll;
     overflow-x: hidden;
     font-weight: 400;
-    margin: 8px 23px;
+    margin: 0px 23px;
     letter-spacing: 0.2px;
 }
 
@@ -251,7 +250,6 @@ label {
 
 .btn:not(:disabled):not(.disabled) {
     cursor: pointer;
-    float: right;
     background: #6149cd 0% 0% no-repeat padding-box;
     box-shadow: 1px 8px 29px #695f9724;
     border-radius: 17px;
@@ -430,6 +428,8 @@ span {
     padding: 0% 22% 0% 23%;
     font-size: 15px;
     font-weight: 600;
+    display: flex;
+    justify-content: center;
 }
 
 .upload-part {

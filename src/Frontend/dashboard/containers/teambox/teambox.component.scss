@@ -88,6 +88,10 @@
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25)!important;
 }
 
+::ng-deep .e-toolbar .e-toolbar-item .e-tbar-btn:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
 .e-richtexteditor .e-rte-toolbar .e-toolbar-item .e-icons {
     color: #7A86A1 !important;
     font-weight: 800 !important;
@@ -874,6 +878,10 @@ img.no-dp {
     background: #F6EFFF !important;
     border-radius: 17px 17px 17px 4px !important;
     color: #000;
+}
+
+.message_box p {
+    color: #fff !important;
 }
 
 .message_box.left .content .message_text p,
@@ -2886,4 +2894,8 @@ label span {
     border-radius: 19px;
     margin: 0px 1px 0px 17px;
     width: 90%;
+}
+.btn-press:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.35) !important;
 }

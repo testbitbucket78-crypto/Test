@@ -1,7 +1,7 @@
 import { Component, OnInit,ViewChild,ElementRef, HostListener, OnDestroy  } from '@angular/core';
 import { FormGroup,FormBuilder, FormControl, Validators, NgForm } from '@angular/forms';
 import Stepper from 'bs-stepper';
-import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalConfig, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { TeamboxService } from './../../services';
 import { Router } from '@angular/router';
@@ -286,6 +286,7 @@ showAddSmartRepliesModal() {
 
 /*** rich text editor ***/
 
+    hideModal!: boolean;
 	closeAllModal() {
 		// this.showAttachmenOption = false
 		// this.messageMeidaPopup = false
@@ -1167,8 +1168,10 @@ stopPropagation(event: Event) {
 			(response: any) => {
 			  console.log(response);
 			  if (response.status === 200) {
-				$("#smartrepliesModal").modal('hide'); 
-				this.modalService.open(smartreplysuccess);
+				this.location.replaceState(this.location.path());
+				window.location.reload();
+				// $("#smartrepliesModal").modal('hide'); 
+				// this.modalService.open(smartreplysuccess);
 			  }
 			},
 			(error: any) => {
@@ -1183,17 +1186,18 @@ stopPropagation(event: Event) {
 		} else {
 		  this.showToaster("! Message cannot be empty","warn");
 		}
-	  }
-
-	  smartReplySuccess() {
+	}
+	private modalRef!: NgbModalRef;
+	smartReplySuccess(smartreplysuccess: any) {
+		this.modalRef = this.modalService.open(smartreplysuccess);
 		// this.removeModalBackdrop()
 		// this.modalService.dismissAll()
 		// this.showSideBar = false;
 		// this.getReplies();
-		this.location.replaceState(this.location.path());
-		window.location.reload();
+		// this.location.replaceState(this.location.path());
+		// window.location.reload();
 	  }
-	  
+
 
 	  /*  METHOD FOR VERIFY KEYWORD DUPLICACY  */
 

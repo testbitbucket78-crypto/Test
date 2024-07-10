@@ -10,7 +10,7 @@
             <div class="d-flex align-items-center px-3 searchField">
                 <span><img src="../../../../assets/img/teambox/search-icon.svg" /></span>
                 <!-- (keyup)="searchCustomField($event)" -->
-                <input type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchCustomField" >        
+                <input class="custom-field-search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchCustomField" >        
             </div>
 
             <button (click)="addCustomFields()"><span><img src="../../../../assets/img/teambox/add.svg" alt="error" /></span>Add Field</button>
