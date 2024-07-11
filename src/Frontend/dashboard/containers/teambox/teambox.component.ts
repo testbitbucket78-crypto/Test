@@ -1306,11 +1306,11 @@ sendattachfile() {
 		let item:any ={};
 		let rangeStart = isNewMessage ? 0 : this.messageRangeStart;
 		let rangeEnd = isNewMessage ? 1 : this.messageRangeEnd;
-		const originalScrollPosition = this.scrollContainer.nativeElement.scrollTop;
+		let originalScrollPosition = this.scrollContainer.nativeElement.scrollTop;
 		const originalScrollHeight = this.scrollContainer.nativeElement.scrollHeight;
 	
 		item = selectedInteraction;
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',rangeStart,rangeEnd).subscribe((res:any) =>{
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',this.SPID,rangeStart,rangeEnd).subscribe((res:any) =>{
 			let messageList = res.result;
 			let val = messageList ? this.groupMessageByDate(messageList):[];
 			let val1 = messageList?messageList:[];
@@ -1358,7 +1358,7 @@ sendattachfile() {
 		})
 
 		if(!isNewMessage){
-			
+			originalScrollPosition = originalScrollPosition ==0 ? 5 : originalScrollPosition;
 		const newScrollHeight = this.scrollContainer.nativeElement.scrollHeight;
 		const scrollDifference = newScrollHeight - originalScrollHeight;
 		this.scrollContainer.nativeElement.scrollTop = originalScrollPosition + scrollDifference;
@@ -1434,8 +1434,8 @@ sendattachfile() {
 			//this.getAssicatedInteractionData(dataList,selectInteraction)
 			setTimeout(()=>{
 			dataList.forEach((item:any)=>{
-				if(item.Agent_id !=0){
-					item.assignAgent = this.userList.filter((items:any) => items.uid == item.Agent_id)[0]?.name;
+				if(item.InteractionMapping !=-1){
+					item.assignAgent = this.userList.filter((items:any) => items.uid == item.InteractionMapping)[0]?.name;
 				}else{
 					item.assignAgent = 'Unassigned';
 				}
@@ -1914,10 +1914,10 @@ toggleConversationStatusOption(){
 
 toggleAssignOption(){
 	this.ShowConversationStatusOption=false;
-	if(this.selectedInteraction.interaction_status =='Resolved'){
-		this.showToaster('Already Resolved','warning')
+	if(this.selectedInteraction.interaction_status =='Open'){
+		this.showToaster('Only Open Conversations can be assigned','warning')
 	}else{
-	if(this.loginAs =='Agent' || this.selectedInteraction.interaction_status !='Resolved'){
+	if(this.loginAs =='Agent' || this.selectedInteraction.interaction_status =='Open'){
 		this.ShowAssignOption =!this.ShowAssignOption
 	}else{
 		this.showToaster('Opps you dont have permission','warning')
@@ -2496,13 +2496,13 @@ checkAuthentication(){
 	let input = {
 		spid: this.SPID,
 	};
-	this.settingService.clientAuthenticated(input).subscribe(response => {
+	// this.settingService.clientAuthenticated(input).subscribe(response => {
 
-		if (response.status === 404 && this.showChatNotes != 'notes' && false) {
-			this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
-			return;
-		}
-	})
+	// 	if (response.status === 404 && this.showChatNotes != 'notes' && false) {
+	// 		this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+	// 		return;
+	// 	}
+	// })
 }
 
 sendMessage(){
@@ -2766,8 +2766,11 @@ sendMessage(){
 	}
 
 	getOlderMessages(selectedInteraction:any){
-		this.messageRangeStart = this.messageRangeEnd
-		this.messageRangeEnd = this.messageRangeEnd +30;
+		console.log(this.messageRangeEnd);
+		this.messageRangeStart = this.messageRangeEnd;
+		this.messageRangeEnd = this.messageRangeEnd + 30;
+		
+		console.log(this.messageRangeEnd,this.messageRangeStart);
 		this.getMessageData(selectedInteraction)
 	}
 	
@@ -2826,5 +2829,14 @@ sendMessage(){
           		this.filteredCustomFields = filteredFields;
 			}
 		});
+	  }
+
+	  getMediaType(val:any){
+		if(val?.includes('image'))
+			return 'Image';
+		else if(val?.includes('video'))
+			return 'Video';
+		else 
+			return '';
 	  }
 }

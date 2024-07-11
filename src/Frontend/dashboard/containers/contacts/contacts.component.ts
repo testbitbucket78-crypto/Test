@@ -697,9 +697,9 @@ onSelectAll(items: any) {
         else if(item.type =='Multi Select'){
           let values =''
           console.log(this.productForm.get(item.ActuallName)?.value)
-          // this.productForm.get(item.ActuallName)?.value.forEach((ite:any)=>{
-          //   values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
-          // })
+          this.productForm.get(item.ActuallName)?.value.forEach((ite:any)=>{
+            values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
+          })
           console.log(values);
           ContactFormData.result.push({displayName:values,ActuallName:item.ActuallName});
         }
@@ -956,15 +956,16 @@ deletContactByID(data: any) {
         let val = value.split(':');
         console.log(val);
         console.log(value);
-        this.productForm.get(prop)?.setValue(val[0]);
 
         let selectName =  value?.split(',');
-                  let names ='';
+                  let names:any =[];
                   selectName.forEach((it:any)=>{
                     let name = it.split(':');
                     console.log(name);
-                    names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
+                    names.push({id: (name[0] ?  name[0] : ''),optionName: (name[1] ?  name[1] : '')});
                   })
+                  
+        this.productForm.get(prop)?.setValue(names);
                 }
       }
     }  

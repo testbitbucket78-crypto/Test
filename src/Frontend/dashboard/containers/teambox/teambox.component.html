@@ -74,6 +74,7 @@
 											<div *ngIf="item.message_text" class="message"
 												[innerHTML]="limitCharacters(item.message_text) | sanitizeHtml">
 											</div>
+											<div  *ngIf="!item?.message_text && item?.message_media !='text'" class="message">{{getMediaType(item.message_media)}}</div>
 										</div>
 									</div>
 									
@@ -481,8 +482,8 @@ popupWidth='250px' popupHeight='200px'>
 								<div class="col-md-8 align-content-center">
 									<h1>{{selectedInteraction.Name}}</h1>
 									<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
-									<p>Created Date:<span>{{getFormatedDate(selectedInteraction.created_at)}}</span></p>
-									<p>Last Updated:<span>{{getFormatedDate(selectedInteraction.updated_at)}}</span></p>
+									<p>Created Date:<span>{{getFormatedDate(selectedInteraction.InCreatedDate)}}</span></p>
+									<p>Last Updated:<span>{{getFormatedDate(selectedInteraction.InUpdatedDate)}}</span></p>
 								</div>
 							</div>
 

@@ -234,7 +234,7 @@ export class ImportComponent implements OnInit {
 			let headersRow = this.getHeaderArray(csvRecordsArray);
 			this.headers = headersRow;
 			this.importedData = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
-
+			console.log('importedData',this.importedData);
 			this.importedData.forEach((data,idx) => {
 				this.csvfieldHeaders = Object.keys(data);
 				if(idx==0)
