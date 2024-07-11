@@ -21,7 +21,7 @@ const addCampaignTimings = async (req, res) => {
         days = req.body.days
         // start_time = req.body.start_time
         // end_time = req.body.end_time
-     
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         //const values = CampaignTimingID.map(CTids => [sp_id, CTids, start_time, end_time, created_at]);
@@ -103,10 +103,10 @@ const addAndUpdateCampaign = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         uid = req.body.uid
-       
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        
+
         let deletexisting = await db.excuteQuery(val.deleteCampaignAlerts, [created_at, SP_ID])
 
         uid.forEach(async (item) => {
@@ -144,7 +144,7 @@ const addCampaignTest = async (req, res) => {
     try {
         SP_ID = req.body.SP_ID
         uid = req.body.uid
-       
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let deletexisting = await db.excuteQuery(val.deleteCampaignTest, [created_at, SP_ID])
@@ -190,7 +190,7 @@ const addTag = async (req, res) => {
         SP_ID = req.body.SP_ID
         TagName = req.body.TagName
         TagColour = req.body.TagColour
-        
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         if (ID != '0') {
@@ -243,7 +243,7 @@ const gettags = async (req, res) => {
 const deleteTag = async (req, res) => {
     try {
 
-        
+
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let tagDelete = await db.excuteQuery(val.deletetag, [updated_at, req.body.ID])
@@ -265,7 +265,7 @@ const addCustomField = async (req, res) => {
         const SP_ID = req.body.SP_ID;
         const Type = req.body.Type;
         const description = req.body.description;
-       
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let values = (req.body.values);
@@ -300,7 +300,7 @@ const addCustomField = async (req, res) => {
 
             // Insert the new custom field
             const addFieldResult = await db.excuteQuery(val.addcolumn, [[insertionValues]]);
-console.log("addFieldResult" ,addFieldResult) 
+            console.log("addFieldResult", addFieldResult)
             // Return 500 if insertion failed
             if (!addFieldResult.insertId) {
                 res.status(500).send({
@@ -317,7 +317,7 @@ console.log("addFieldResult" ,addFieldResult)
                     }));
                     let updateRes = await db.excuteQuery('UPDATE  SPIDCustomContactFields SET dataTypeValues=? WHERE id =?', [JSON.stringify(values), addFieldResult.insertId])
                 }
-console.log("efdgfd",addFieldResult)
+                console.log("efdgfd", addFieldResult)
                 // Return success response
                 res.status(200).send({
                     status: 200,
@@ -337,20 +337,20 @@ console.log("efdgfd",addFieldResult)
 const editCustomField = async (req, res) => {
     try {
         ColumnName = req.body.ColumnName;
-            Type = req.body.Type;
-            description = req.body.description;
-            let values = req.body.values;
-            id = req.body.id
-            values = values.map(option => ({
-                id: id + '_' + option.id,
-                optionName: option.optionName
-            }));
-            let myUTCString = new Date().toUTCString();
-            const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        Type = req.body.Type;
+        description = req.body.description;
+        let values = req.body.values;
+        id = req.body.id
+        values = values.map(option => ({
+            id: id + '_' + option.id,
+            optionName: option.optionName
+        }));
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
-      
-        let editedField = await db.excuteQuery(val.editfield, [ColumnName, Type, description, updated_at,JSON.stringify(values), id])
-        console.log(ColumnName, Type, description, updated_at, id ,editedField)
+
+        let editedField = await db.excuteQuery(val.editfield, [ColumnName, Type, description, updated_at, JSON.stringify(values), id])
+        console.log(ColumnName, Type, description, updated_at, id, editedField)
         res.send({
             status: 200,
             editedField: editedField
@@ -366,7 +366,7 @@ const enableMandatoryfield = async (req, res) => {
     try {
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let mandatoryfield = await db.excuteQuery(val.enableMandatory, [req.body.Mandatory,created_at, req.body.id])
+        let mandatoryfield = await db.excuteQuery(val.enableMandatory, [req.body.Mandatory, created_at, req.body.id])
         res.send({
             status: 200,
             mandatoryfield: mandatoryfield
@@ -395,60 +395,60 @@ const enableStatusfield = async (req, res) => {
 }
 const getCustomField = async (req, res) => {
     try {
-      let getfields = await db.excuteQuery(val.getcolumn, [req.params.spid]);
-     
-  
-      // Update fields based on ActuallName
-      const updatedFields = getfields.map(field => {
-        switch (field.ActuallName) {
-          case 'Name':
-            field.type = 'Text';
-            field.mandatory = 1;
-            field.displayName='Name'
-            break;
-          case 'Phone_number':
-            field.type = 'Number';
-            field.mandatory = 1;
-            field.displayName='Phone Number'
-            break;
-          case 'emailId':
-            field.type = 'Text';
-            field.mandatory = 0;
-            field.displayName='Email'
-            break;
-          case 'OptInStatus':
-            field.type = 'Switch';
-            field.mandatory = 0;
-            field.displayName='Message Opt-in'
-            break;
-          case 'tag':
-            field.type = 'Multi Select';
-            field.mandatory = 0;
-            field.displayName='Tag'
-            break;
-          case 'ContactOwner':
-            field.type = 'User';
-            field.mandatory = 1;
-            field.displayName='Contact Owner'
-            break;
-          default:
-            // No changes required for other ActuallName values
-            break;
-        }
-        return field; // Return the updated field object
-      });
+        let getfields = await db.excuteQuery(val.getcolumn, [req.params.spid]);
 
-      res.send({
-        status: 200,
-        getfields: updatedFields
-      });
+
+        // Update fields based on ActuallName
+        const updatedFields = getfields.map(field => {
+            switch (field.ActuallName) {
+                case 'Name':
+                    field.type = 'Text';
+                    field.mandatory = 1;
+                    field.displayName = 'Name'
+                    break;
+                case 'Phone_number':
+                    field.type = 'Number';
+                    field.mandatory = 1;
+                    field.displayName = 'Phone Number'
+                    break;
+                case 'emailId':
+                    field.type = 'Text';
+                    field.mandatory = 0;
+                    field.displayName = 'Email'
+                    break;
+                case 'OptInStatus':
+                    field.type = 'Switch';
+                    field.mandatory = 0;
+                    field.displayName = 'Message Opt-in'
+                    break;
+                case 'tag':
+                    field.type = 'Multi Select';
+                    field.mandatory = 0;
+                    field.displayName = 'Tag'
+                    break;
+                case 'ContactOwner':
+                    field.type = 'User';
+                    field.mandatory = 1;
+                    field.displayName = 'Contact Owner'
+                    break;
+                default:
+                    // No changes required for other ActuallName values
+                    break;
+            }
+            return field; // Return the updated field object
+        });
+
+        res.send({
+            status: 200,
+            getfields: updatedFields
+        });
     } catch (err) {
-      console.log(err)
-      db.errlog(err);
-      res.send(err)
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
     }
-  }
-  
+}
+
 
 const getCustomFieldById = async (req, res) => {
     try {
@@ -480,12 +480,63 @@ const deleteCustomField = async (req, res) => {
     }
 }
 
-//_____________________________ TEMPLATE SETTINGS _________________________________//
+
+async function Createtemplate(messageData) {
+    try {
+        //   var access_token = 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S'
+        //_____________________________ TEMPLATE SETTINGS _________________________________//
+        const response = await axios({
+            method: "POST",
+            url: `https://graph.facebook.com/v20.0/192571223940007/message_templates?access_token`,
+            data: messageData, // Use the video message structure
+            "headers": {
+                "Authorization": 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S',
+                "Content-Type": "application/json",
+            }
+        })
+        console.log("response", response.data)
+
+        return response.data;
+    } catch (err) {
+        console.log("error", err.response ? err.response.data : err.message);
+        return err.message;
+    }
+}
+
+async function editTemplate(templateID,messageData) {
+    try {
+        const response = await axios({
+            method: "POST",
+            url: `https://graph.facebook.com/v20.0/${templateID}`,
+            data: messageData, // Use the video message structure
+            "headers": {
+                "Authorization": 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S',
+                "Content-Type": "application/json",
+            }
+        })
+        console.log("response", response.data)
+
+        return response.data;
+    } catch (err) {
+        console.log("error", err.response ? err.response.data : err.message);
+        return err.message;
+    }
+}
+
+async function getOfficialTemplate() {
+    try {
+
+    } catch (err) {
+        console.log("error", err.response ? err.response.data : err.message);
+        return err.message;
+    }
+}
 
 
 const addTemplate = async (req, res) => {
     try {
         ID = req.body.ID
+        templateID = req.body?.templateID
         TemplateName = req.body.TemplateName,
             Channel = req.body.Channel,
             Category = req.body.Category,
@@ -500,14 +551,20 @@ const addTemplate = async (req, res) => {
             spid = req.body.spid,
             created_By = req.body.created_By,
             category_id = req.body.category_id
-            let myUTCString = new Date().toUTCString();
-            const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         isTemplate = req.body.isTemplate
         industry = req.body.industry
 
         let image = Links
 
         if (ID == 0) {
+
+            if (Channel = 'WhatsApp Official') {
+
+                let templateStatus = Createtemplate(messageData);
+                console.log("templateStatus", templateStatus)
+            }
 
             let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
             let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
@@ -518,6 +575,10 @@ const addTemplate = async (req, res) => {
 
         }
         else {
+            if (Channel = 'WhatsApp Official') {
+                let edittemplateStatus  = editTemplate(templateID,messageData);
+               console.log("edittemplateStatus", edittemplateStatus)
+            }
             let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
             let updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
             res.status(200).send({
@@ -589,8 +650,8 @@ const addGallery = async (req, res) => {
             spid = req.body.spid,
             created_By = req.body.created_By,
             category_id = req.body.category_id
-            let myUTCString = new Date().toUTCString();
-            const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let myUTCString = new Date().toUTCString();
+        const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         isTemplate = req.body.isTemplate
         industry = req.body.industry
         topic = req.body.topic
@@ -701,7 +762,7 @@ const testCampaign = async (req, res) => {
 
         var TemplateData = req.body
         let customerID = "";
-     
+
         var messateText = TemplateData.message_content
 
         let channel = TemplateData.channel_id
@@ -710,7 +771,7 @@ const testCampaign = async (req, res) => {
 
         let content = await removeTags.removeTagsFromMessages(messateText)
         let message_variables = req.body.message_variables && req.body.message_variables.length > 0 ? JSON.parse(req.body.message_variables) : undefined;
-      
+
         if (message_variables) {
             message_variables.forEach(variable => {
                 const label = variable.label;
@@ -726,9 +787,9 @@ const testCampaign = async (req, res) => {
             const placeholders = parseMessageTemplate(content);
             if (placeholders.length > 0) {
                 console.log(placeholders)
-                const results = await removeTags.getDefaultAttribue(placeholders,TemplateData.sp_id,customerID);
+                const results = await removeTags.getDefaultAttribue(placeholders, TemplateData.sp_id, customerID);
                 console.log("results", results)
-               
+
                 placeholders.forEach(placeholder => {
                     const result = results.find(result => result.hasOwnProperty(placeholder));
                     const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
@@ -765,7 +826,7 @@ const testCampaign = async (req, res) => {
         res.send({
             status: 200,
             message_status: message_status?.status,
-            err :  message_status?.err
+            err: message_status?.err
         })
     }
     catch (err) {
