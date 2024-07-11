@@ -10,7 +10,7 @@
             <div class="d-flex align-items-center px-3 searchField">
                 <span><img src="../../../../assets/img/teambox/search-icon.svg" /></span>
                 <!-- (keyup)="searchCustomField($event)" -->
-                <input type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchCustomField" >        
+                <input class="custom-field-search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchCustomField" >        
             </div>
 
             <button (click)="addCustomFields()"><span><img src="../../../../assets/img/teambox/add.svg" alt="error" /></span>Add Field</button>
@@ -174,7 +174,7 @@
             <div class="modal fade" tabindex="-1" id="addCustomFieldModal" data-bs-backdrop="static" role="dialog">
                 <div class="m-auto modal-dialog" role="document">
                     <div class="modal-content working-hour-modal ">
-                        <div class="px-4 modal-header align-items-center">
+                        <div class="px-4 modal-header align-items-center Sticky">
                             <h5 *ngIf="!selectedCustomField" class="modal-title">Add Field</h5>
                             <h5 *ngIf="selectedCustomField" class="modal-title">Edit Field</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="resetSelectedCustomField()" aria-label="Close">
@@ -220,7 +220,7 @@
                             </div>
                             <!-- </div> -->
                         </div>
-                        <div class="px-4 modal-footer">
+                        <div class="px-4 modal-footer Sticky">
                             <button type="button" class="account-btn" (click)="saveNewCustomField()" [disabled]="!isFormChanged">Save</button>
                         </div>
                     </div>

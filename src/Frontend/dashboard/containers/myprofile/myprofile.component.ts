@@ -155,7 +155,6 @@ export class MyprofileComponent implements OnInit,OnDestroy {
 	}
 
     togglePasswordVisibility(field: string) {
-        debugger;
     if (field === 'currentPassword') {
       this.currentPasswordType = !this.currentPasswordType;
     } else if (field === 'newPassword') {

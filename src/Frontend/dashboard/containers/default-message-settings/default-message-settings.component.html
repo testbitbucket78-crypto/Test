@@ -11,7 +11,7 @@
             <div class="flex-row">
                 <span class="sub-heading">{{data.title}} </span>
                 <span *ngIf="data.Is_disable==0" class="disable">Disabled</span>
-                <span *ngIf="data.Is_disable==1 || data.Is_disable==null" class="enable">Enable</span>
+                <span *ngIf="data.Is_disable==1 || data.Is_disable==null" class="enable">Enabled</span>
             </div>
             <div class="sub-contents">
                 <p>{{data.description}}</p>
@@ -190,7 +190,7 @@
             <div class="d-flex">
                 <span *ngIf="selectedMessageData.Is_disable == 0" class="disable">Disabled</span>
                 <span *ngIf="selectedMessageData.Is_disable == 1 || selectedMessageData.Is_disable == null" 
-                       class="enable">Enable</span>
+                       class="enable">Enabled</span>
             </div>
            
                 <div class="p-3">

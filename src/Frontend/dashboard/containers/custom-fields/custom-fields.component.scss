@@ -13,6 +13,9 @@
     justify-content: space-between;
     align-items:center;
     padding: 1.5em 1.5em 0 1.5em;
+    p{
+      font-size: 22px;
+    }
 
 }
 
@@ -22,7 +25,7 @@
     letter-spacing: -0.55px;
     color: #000000;
     margin: 0;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 700;
 }
 
@@ -31,7 +34,7 @@
     box-shadow: 1px 8px 29px #695F9724;
     border-radius: 19px;
     border: none;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     padding: 1em;
     color: #6149CD;
@@ -84,7 +87,7 @@
     text-align: center;
     letter-spacing: 0px;
     color: #C0BDCC;
-    font-size: 12px;
+    font-size: 0.875rem;
     flex: 1 1;
     font-weight: 500;
 }
@@ -98,7 +101,7 @@
     text-align: center;
     letter-spacing: 0px;
     color: #000000;
-    font-size: 12px;
+    font-size: 0.875rem;
     flex: 1 1;
     font-weight: 500;
 }
@@ -349,6 +352,7 @@ select {
 
    .addCustomFieldBody {
     padding: 0 16% 0 16%;
+    overflow: auto;
    }
 
    .working-hour-modal::-webkit-scrollbar {
@@ -555,3 +559,11 @@ select {
     font-size: 13px;
     padding-top: 3px;
    }
+
+.Sticky{
+    position: sticky;
+}
+
+.custom-field-search::placeholder {
+  font-size: 14px !important;
+}

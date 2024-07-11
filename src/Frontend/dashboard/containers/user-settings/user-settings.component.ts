@@ -394,8 +394,7 @@ export class UserSettingsComponent implements OnInit {
         }, 50)
     }
 
-    onBtNext() {
-        debugger;
+    onBtNext() { 
         this.GridService.onBtNext(this.gridapi, this.userList);
         this.currPage = this.GridService.currPage;
         this.paging = this.GridService.paging;

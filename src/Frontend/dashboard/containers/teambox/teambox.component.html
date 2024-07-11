@@ -16,7 +16,7 @@
 	<!-- filter-popup -->
 				<div class="custom_row pt-3">
 					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
-						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search by Name or No."
+						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search by Name or Phone No."
 						aria-label="Search" aria-describedby="basic-addon2" />
 
 
@@ -46,7 +46,7 @@
 
 					</div>
 					<button class="new-message-btn" (click)="openaddMessage(messageadd)"><img class="icon"
-							src="/assets/img/teambox/add.svg" /> New Message</button>
+							src="/assets/img/teambox/add.svg" /> {{ searchFocused ? '' : 'New Message' }}</button>
 				</div>
 				<div class="custom_row mt-3">
 					<p *ngIf="interactionList" class="conversaction_status">{{interactionFilterBy}}<span
@@ -74,6 +74,7 @@
 											<div *ngIf="item.message_text" class="message"
 												[innerHTML]="limitCharacters(item.message_text) | sanitizeHtml">
 											</div>
+											<div  *ngIf="!item?.message_text && item?.message_media !='text'" class="message">{{getMediaType(item.message_media)}}</div>
 										</div>
 									</div>
 									
@@ -233,10 +234,11 @@
 							class="conversation_blank">
 							<img src="/assets/img/teambox/new-con@2x.png">
 							<p>Initiate Conversation</p>
-							<span>Let’s start a conversation through a message</span>
+							<!-- <span>Let’s start a conversation through a message</span> -->
+							<span>No messages to show</span>
 						</div>
 						<div *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList?.length>0"
-							class="conversation_list chat"  #chatSection>
+							class="conversation_list chat"  #chatSection id="chatSection">
 							<div class="older-message" (click)="getOlderMessages(selectedInteraction)" *ngIf="!(isMessageCompletedMedia && isMessageCompletedNotes && isMessageCompletedText)">Click here to get older messages</div>
 							<div *ngFor="let messageGroup of selectedInteraction?.messageList; let i = index" id={{i}}
 								class="conversation_list_inner_box">
@@ -248,7 +250,7 @@
 									[ngClass]="message.message_direction =='IN' ? 'message_box left' : 'message_box'">
 									<label *ngIf="message.message_direction !='IN' && message.assignAgent !=-1 && message.assignAgent !=-2">{{message.AgentName}}</label>
 									<div class="image-container">
-									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg">
+									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg" style="cursor:pointer;">
 									<div class="hover-text" >{{message.assignAgent ==-2 ?'Automation':'Campaign'}}</div>
 									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg">
 								</div>
@@ -433,10 +435,10 @@ popupWidth='250px' popupHeight='200px'>
 						</p>
 					</div>
 					<div class="d-align-center ml-2"> 
-					<button *ngIf="showChatNotes=='text'" class="submit_btn">
+					<button *ngIf="showChatNotes=='text'" class="submit_btn btn-press">
 						<img src="/assets/img/teambox/icon-send.svg" (click)="sendMessage()">
 					</button>
-					<button *ngIf="showChatNotes== 'notes'" class="save_notes_btn" (click)="sendMessage()">Save</button>
+					<button *ngIf="showChatNotes== 'notes'" class="save_notes_btn btn-press" (click)="sendMessage()">Save</button>
 				</div>
 
 				</div>
@@ -480,8 +482,8 @@ popupWidth='250px' popupHeight='200px'>
 								<div class="col-md-8 align-content-center">
 									<h1>{{selectedInteraction.Name}}</h1>
 									<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
-									<p>Created Date:<span>{{getFormatedDate(selectedInteraction.created_at)}}</span></p>
-									<p>Last Updated:<span>{{getFormatedDate(selectedInteraction.updated_at)}}</span></p>
+									<p>Created Date:<span>{{getFormatedDate(selectedInteraction.InCreatedDate)}}</span></p>
+									<p>Last Updated:<span>{{getFormatedDate(selectedInteraction.InUpdatedDate)}}</span></p>
 								</div>
 							</div>
 
@@ -550,15 +552,14 @@ popupWidth='250px' popupHeight='200px'>
 									<label class="color_black">Custom Fields</label>
 								</div>
 							</div>
-							<div class="custom_row">
-								<div class="col-md-12">
-									<label>Lead Status</label>
+							<div class="custom_row" *ngFor="let it of filteredCustomFields">
+								<div class="col-md-12" >
+									<label>{{it?.displayName}}</label>
+									<!-- <h6 class="mt-2" *ngIf="it?.type != 'Select'">{{items[it?.ActuallName]}}</h6>
+							<h6 class="mt-2" *ngIf="it?.type == 'Select'">{{getSplitItem(items[it?.ActuallName])}}</h6> -->
 									<div class="tag_list">
-										<div class="tag_item">
-											{{selectedInteraction.status}}
-										</div>
-
-
+										<div class="tag_item" *ngIf="it?.type != 'Select'">{{selectedInteraction[it?.ActuallName]}}</div>
+										<div class="tag_item" *ngIf="it?.type == 'Select'">{{getSplitItem(selectedInteraction[it?.ActuallName])}}</div>
 									</div>
 								</div>
 								<!-- <div class="parent-flex px-4 py-2 parent d-flex">

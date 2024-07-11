@@ -90,8 +90,11 @@ export class DashboardService {
     return this.http.post(API_URL1+'exportCheckedContact', data)
   }
 
-  download() {
-    return this.http.get(API_URL1+'download', { responseType: 'blob' })
+    download(spid: any) {
+        const params = new HttpParams().set('SP_ID', spid); 
+        const url = `${API_URL1}download/${spid}`;
+        return this.http.get(url, { params: params, responseType: 'blob' });
+
   }
 
   downloadErrFile() {
