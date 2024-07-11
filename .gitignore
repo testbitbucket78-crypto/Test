@@ -57,3 +57,5 @@ src/Backend/Authentication/uploads/
 src/environments/environment.ts
 
 package-lock.json
+
+.vscode/

@@ -428,3 +428,12 @@ label {
 .date-grid .active {
     color: #F23B3B
 }
+.confirmModal{
+  .modal-content{
+
+  width: auto !important;
+  .delete-btn{
+    background: #6149CD 0% 0% no-repeat padding-box;
+  }
+}
+}

@@ -81,7 +81,7 @@
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
 											<p *ngIf="item.lastMessage" class="time">{{getTime(item.LastMessageDate)}}</p>
-											<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
+											<!-- <span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span> -->
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<div class="image-container">
 											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
@@ -110,6 +110,7 @@
 											</div>
 										</div>
 									</div>
+									<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 								</div>
 							</div>
 						</div>

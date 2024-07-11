@@ -1270,9 +1270,8 @@
 		</div>
 		<div class="modal-body applyList">
 			<div class="applylist_filters_outer scroll-container">
-			<div class="applylist_filters"  [ngStyle]="{width:applylistFiltersWidth+'px'}">
-					<button type="button" class="submit-btn red-bg" (click)="removeAllAddedFilter()">Clear All</button>
-
+		           <button type="button" class="submit-btn red-bg" (click)="removeAllAddedFilter()">Clear All</button>
+		    <div class="applylist_filters"  [ngStyle]="{width:applylistFiltersWidth+'px'}">
 					<div *ngFor='let item of contactFilterBy ;let j = index' >
 						<div class="item" *ngFor='let item of item.addeFilter ;let k = index' (click)="removeAddedFilter(j,k)">
 							<span *ngIf="item.filterOperator">{{item.filterOperator}}</span>
