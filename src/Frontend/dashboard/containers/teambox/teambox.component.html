@@ -80,7 +80,7 @@
 									
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
-											<p *ngIf="item.lastMessage" class="time">{{getTime(item.LastMessageDate)}}</p>
+											<p *ngIf="item.LastMessageDate" class="time">{{getTime(item.LastMessageDate)}}</p>
 											<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<div class="image-container">
@@ -387,8 +387,8 @@
 									(click)="toggleChatNotes('notes')">Notes</button>
 							</div>
 							<div class="input-area" (click)="checkPermission()" *ngIf="isRefresh">
-								<ejs-richtexteditor id="mention_integration" #mention_integration [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open')"  [toolbarSettings]='tools' [height]='100'
-								  placeholder="Enter Message" (actionBegin)="onActionBegin($event)">
+								<ejs-richtexteditor id="mention_integration" #mention_integration [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open') || (this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) "  [toolbarSettings]='tools' [height]='100'
+								  [placeholder]="(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) ? 'Select Template':'Enter Message'" (actionBegin)="onActionBegin($event)">
 								</ejs-richtexteditor>
 
 								<ejs-mention *ngIf="showChatNotes=='notes'" #mention [dataSource]='agentsList' target='#mention_integration_rte-edit-view' [fields]='fieldsData' [suggestionCount]="8" [showMentionChar]="false" [allowSpaces]="true"  
