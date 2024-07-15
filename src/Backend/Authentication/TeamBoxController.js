@@ -310,7 +310,7 @@ const getAllFilteredInteraction = async (req, res) => {
             if (filterBy == 'Open' || filterBy == 'Resolved') {
                 queryPath += " and ic.interaction_status='" + filterBy + "'"
             } else if (filterBy == 'Unassigned') {
-                queryPath += " and ic.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping)"
+                queryPath += " and ic.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping where AgentId != -1)"
             } else if (filterBy == 'Mine') {
                 queryPath += " and ic.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.body.AgentId + " and is_active=1)"
             } else if (filterBy == 'Mentioned') {
