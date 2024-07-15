@@ -260,11 +260,14 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	// Interaction_ID:number = 0;
 	// template_json:any;
 	currentPage:number= 0;
+	contactCurrentPage:number= 0;
 	pageSize:number= 10;
+	contactPageSize:number= 10;
 	messageRangeStart:number= 0;
 	messageRangeEnd:number= 30;
 	selectedInteractionList:any[] =[];
 	isCompleted:boolean = false;
+	isContactCompleted:boolean = false;
 	isMessageCompletedNotes:boolean = false;
 	isMessageCompletedMedia:boolean = false;
 	isMessageCompletedText:boolean = false;
@@ -635,14 +638,20 @@ attachMentionHandlers() {
 
 ToggleInsertTemplateOption(){
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
+		// if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		// {
 	$("#insertmodal").modal('show'); 
+		//}
 	}
 	}
 
 ToggleAttributesOption(){
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
+		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		{
 	this.closeAllModal()
 	$("#atrributemodal").modal('show'); 
+		}
 	}
 
 }
@@ -666,9 +675,12 @@ selectAttributes(item:any) {
 ToggleQuickReplies(){
 	
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
+		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		{
 	this.closeAllModal()
 	this.getQuickResponse();
 	$("#quikpopup").modal('show'); 
+		}
 	}
 }
 
@@ -747,10 +759,13 @@ filterTemplate(temType:any){
 ToggleAttachmentBox(){
 	
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
-	this.closeAllModal()
-	$("#attachfle").modal('show'); 
-	document.getElementById('attachfle')!.style.display = 'inherit';
-	this.dragAreaClass = "dragarea";
+		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		{
+			this.closeAllModal()
+			$("#attachfle").modal('show'); 
+			document.getElementById('attachfle')!.style.display = 'inherit';
+			this.dragAreaClass = "dragarea";
+		}
 	}
 }
 sendattachfile() {
@@ -920,10 +935,10 @@ sendattachfile() {
 		if (event.dataTransfer.files) {
 		this.dragAreaClass = "dragarea";
 		event.preventDefault();
-		event.stopPropagation();
+		// event.stopPropagation();
 		
-		let files: FileList = event.dataTransfer.files;
-		this.saveFiles(files);
+		// let files: FileList = event.dataTransfer.files;
+		// this.saveFiles(files);
 		}
 	}
 	
@@ -1142,11 +1157,19 @@ sendattachfile() {
 	updateOptedIn(event:any){
 		this.OptedIn = event.target.checked ? 'Yes': 'No';
 	}
-	getCustomers(){
-		this.apiService.getCustomers(this.SPID).subscribe((data:any) =>{
+	getCustomers(isAddContacts:boolean = false){
+		let rangeStart =this.currentPage;
+    	let rangeEnd =this.currentPage + this.pageSize
+		this.apiService.getCustomers(this.SPID,rangeStart,rangeEnd).subscribe((data:any) =>{
+			this.isContactCompleted = data?.isCompleted ? data?.isCompleted : false;
+			if(isAddContacts){
+				this.contactList.push(...data?.results);
+				this.contactListInit.push(...data?.results);
+			}
+			else{
 			this.contactList= data?.results;
 			this.contactListInit = data?.results;
-			console.log(this.contactList,'contact list')
+			}
 		});
 	}
 	
@@ -1914,7 +1937,7 @@ toggleConversationStatusOption(){
 
 toggleAssignOption(){
 	this.ShowConversationStatusOption=false;
-	if(this.selectedInteraction.interaction_status =='Open'){
+	if(this.selectedInteraction.interaction_status !='Open'){
 		this.showToaster('Only Open Conversations can be assigned','warning')
 	}else{
 	if(this.loginAs =='Agent' || this.selectedInteraction.interaction_status =='Open'){
@@ -2765,12 +2788,30 @@ sendMessage(){
     });
 	}
 
+	
+	getContactOnScroll(){
+		const content = document.querySelector('.contact_list');
+    	const scroll$ = fromEvent(content!, 'scroll').pipe(map(() => { return content!.scrollTop; }));
+ 
+    scroll$.subscribe((scrollPos) => {
+      let limit = content!.scrollHeight - content!.clientHeight -1;
+	  console.log(scrollPos);
+	  console.log(limit);
+      if (Math.ceil(scrollPos) >= limit && !this.isContactCompleted) {
+        this.contactCurrentPage += this.contactPageSize;
+        // forkJoin([this.items$.pipe(take(1)), this.appService.getData(this.currentPage, this.pageSize)]).subscribe((data: Array<Array<any>>) => {
+        //   const newArr = [...data[0], ...data[1]];
+        //   this.obsArray.next(newArr);
+        // });
+		this.getCustomers(true);
+      }
+    });
+	}
+
+
 	getOlderMessages(selectedInteraction:any){
-		console.log(this.messageRangeEnd);
 		this.messageRangeStart = this.messageRangeEnd;
-		this.messageRangeEnd = this.messageRangeEnd + 30;
-		
-		console.log(this.messageRangeEnd,this.messageRangeStart);
+		this.messageRangeEnd = this.messageRangeEnd +30;
 		this.getMessageData(selectedInteraction)
 	}
 	

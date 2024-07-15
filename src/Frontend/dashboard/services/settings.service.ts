@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { billingDetail, billingDetailResponse,holidayData, companyDetail, companyDetailResponse, localeDetail, localeDetailResponse, workingData, workingDataResponse, workingDataResponsePost, rightsResponse, RolesData, UserData, TeamData, campaignDataResponsePost, campaignAlertUser, TagData, defaultActionData,defaultMessagesData,routingRulesData,newTemplateFormData,addCustomFieldsData } from '../models/settings.model';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,8 @@ export class SettingsService {
   API_URL:string='https://settings.stacknize.com';
   token = 'cXlkZE04VzM3MTVaSkNwWlhINVlDNEY3eEJGV1V0S21FMGROaTJFWg==';
   subprivilages!:any;
+  dateFormat:any;
+  timeFormat:any;
 
   countryCodes = [
     'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
@@ -39,7 +42,7 @@ export class SettingsService {
     'UZ +998', 'VA +39', 'VC +1784', 'VE +58', 'VG +1284', 'VI +1340', 'VN +84', 'VU +678', 'WF +681', 'WS +685',
     'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
   ];
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,private datePipe:DatePipe) {
 
     this.subprivilages = sessionStorage.getItem('subPrivileges')?.split(',');
    }
@@ -50,6 +53,16 @@ export class SettingsService {
     }else {
       return true;
     }
+  }
+
+  getDateTimeFormate(dateTime:any,onlyDate:boolean,onlyTime:boolean){    
+    let dates = new Date(dateTime);
+    if(onlyDate && onlyTime)
+      return this.datePipe.transform(dates,this.dateFormat+this.timeFormat);
+    else if(onlyDate)
+      return this.datePipe.transform(dates,this.dateFormat);
+    if(onlyTime)
+      return this.datePipe.transform(dates,this.timeFormat);
   }
 
   getInitials(name:any){
