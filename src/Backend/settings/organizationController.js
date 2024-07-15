@@ -867,8 +867,10 @@ const editUser = async (req, res) => {
         UserType = req.body.UserType
 
         // if (RoleName == 'Admin') {
-        let isAdminRemains = await db.excuteQuery('select * from roles where RoleName=? and roleID !=? and isDeleted !=1 and SP_ID=?', ['Admin', UserType, SP_ID]);
-        if (isAdminRemains?.length == 1) {
+        let isAdminRemains = await db.excuteQuery('select * from roles where RoleName=? and isDeleted !=1 and SP_ID=?', ['Admin', SP_ID]);
+        let getUserAdmin = await db.excuteQuery('SELECT * FROM user WHERE uid !=? and UserType=?  and isDeleted !=1 and SP_ID=?',[uid,isAdminRemains[0]?.roleID,SP_ID])
+        if (isAdminRemains?.length == 1 && getUserAdmin?.length < 1) {
+           
             return res.status(409).send({
                 msg: 'This is the last Admin minimum one user with Admin role is mandatory to keep.',
                 status: 409

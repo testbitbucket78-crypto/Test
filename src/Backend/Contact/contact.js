@@ -54,9 +54,9 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
 })
 
 app.post('/addCustomContact', async (req, res) => {
-  try{
-  // Construct the INSERT query dynamically
-  let data = req.body.result
+  try {
+    // Construct the INSERT query dynamically
+    let data = req.body.result
 
     // Check if data is an array
     if (!Array.isArray(data)) {
@@ -103,7 +103,7 @@ app.post('/addCustomContact', async (req, res) => {
     }
 
     // Check for existing contact
-    let existQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 AND SP_ID = ?`;
+    let existQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ?  AND SP_ID = ?`;
     let existingContact = await db.excuteQuery(existQuery, [phoneNumber, spId]);
 
     if (existingContact.length > 0) {
@@ -124,14 +124,38 @@ app.post('/addCustomContact', async (req, res) => {
 
         updateQuery += ', IsTemporary = 0 WHERE Phone_number = ? AND SP_ID = ?';
         updateValues.push(phoneNumber, spId);
-       let result= await db.excuteQuery(updateQuery, updateValues);
+        let result = await db.excuteQuery(updateQuery, updateValues);
 
         return res.status(200).json({
           message: 'Contact updated successfully',
-          result : result,
+          result: result,
           status: 200
         });
-      } else {
+      } else if (contact.isDeleted === 1) {
+        // Update the temporary contact
+        let updateQuery = 'UPDATE EndCustomer SET ';
+        let updateValues = [];
+
+        for (let i = 0; i < data.length; i++) {
+          const item = data[i];
+          updateQuery += `${item.ActuallName} = ?`;
+          updateValues.push(item.displayName);
+          if (i < data.length - 1) {
+            updateQuery += ', ';
+          }
+        }
+
+        updateQuery += ', isDeleted = 0 WHERE Phone_number = ? AND SP_ID = ?';
+        updateValues.push(phoneNumber, spId);
+        let result = await db.excuteQuery(updateQuery, updateValues);
+
+        return res.status(200).json({
+          message: 'Contact updated successfully',
+          result: result,
+          status: 200
+        });
+      }
+      else {
         return res.status(409).json({
           message: 'Phone number already exists',
           status: 409
@@ -182,10 +206,10 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
         query += ', ';
       }
 
-      if (item.ActuallName == 'Phone_number'){
+      if (item.ActuallName == 'Phone_number') {
         phoneNo = item.displayName;
       }
-      if (item.ActuallName == 'OptInStatus'){
+      if (item.ActuallName == 'OptInStatus') {
         OptInStatus = item.displayName;
       }
     });
@@ -196,7 +220,7 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
     console.log(values);
     console.log(query);
     let result = await db.excuteQuery(query, values)
-    funnel.ScheduledFunnels(spid, phoneNo, OptInStatus, new Date(), new Date(),0);
+    funnel.ScheduledFunnels(spid, phoneNo, OptInStatus, new Date(), new Date(), 0);
     res.send({ status: 200, result: result })
   } catch (err) {
     console.log(err);
@@ -470,7 +494,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
 function sendMailAfterImport(emailId, user, noOfContact) {
   try {
 
-    let text =  `
+    let text = `
     <p>Dear ` + user + `,</p>
     <p>The Contacts import initiated by you has been successfully processed. You can check your Engagekart account and start engaging with these newly added contacts.</p>
     <p>Happy Engaging!</p>
@@ -660,16 +684,16 @@ async function getHeadersArray(spid) {
           field.mandatory = 1;
           field.displayName = 'Contact Owner'
           break;
-          case 'countryCode':
-            field.type = 'Text';
-            field.mandatory = 1;
-            field.displayName = 'countryCode'
-            break;
-          case 'displayPhoneNumber':
-            field.type = 'Number';
-            field.mandatory = 1;
-            field.displayName = 'displayPhoneNumber'
-            break;
+        case 'countryCode':
+          field.type = 'Text';
+          field.mandatory = 1;
+          field.displayName = 'countryCode'
+          break;
+        case 'displayPhoneNumber':
+          field.type = 'Number';
+          field.mandatory = 1;
+          field.displayName = 'displayPhoneNumber'
+          break;
         default:
           // No changes required for other ActuallName values
           break;
@@ -707,7 +731,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
       const currentData = importedData[j];
       let phone;
       let reasons = [];
-      let withoutCountryPhone ;
+      let withoutCountryPhone;
       for (let i = 0; i < currentData.length; i++) {
         const { ActuallName, displayName } = currentData[i];
         if (allColumnsData.get(ActuallName) === 'Select' && ActuallName != 'tag') {
@@ -721,7 +745,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
         }
         if (allColumnsData.get(ActuallName) === 'Multi Select') {
           const { exists, value } = await MultiSelectValues(ActuallName, SP_ID, displayName);
-           console.log(exists,"Multi" ,value)
+          console.log(exists, "Multi", value)
           if (exists) {
             currentData[i].displayName = value;
           } else {
@@ -744,20 +768,20 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
             console.log("currentData[i].countryCode = phoneCheckResult.country;", phoneCheckResult.phoneNumber)
             // Add country code and display phone number to the existing object
             const countryCode = phoneCheckResult.country;
-             withoutCountryPhone = phoneCheckResult.phoneNumber;
+            withoutCountryPhone = phoneCheckResult.phoneNumber;
 
             // Find the index of the currentData object
             const currentIndex = currentData.findIndex(obj => obj.ActuallName === 'Phone_number');
             // Insert new properties after the currentData[i] object
             currentData.splice(currentIndex + 1, 0, { displayName: countryCode, ActuallName: 'countryCode' });
-           // currentData.splice(currentIndex + 2, 0, { displayName: displayPhoneNumber, ActuallName: 'displayPhoneNumber' });
-           
+            // currentData.splice(currentIndex + 2, 0, { displayName: displayPhoneNumber, ActuallName: 'displayPhoneNumber' });
+
           }
         }
-if(ActuallName === 'displayPhoneNumber'){
-  currentData[i].displayName = withoutCountryPhone
-}
-        
+        if (ActuallName === 'displayPhoneNumber') {
+          currentData[i].displayName = withoutCountryPhone
+        }
+
         if (allColumnsData.get(ActuallName) !== undefined) {
           const dataTypeVerification = await isDataInCorrectFormat(allColumnsData.get(ActuallName), ActuallName, displayName, userList, TagsVal, headersArray, existSelect, existMultiselect, existPhone);
 
@@ -1117,7 +1141,7 @@ function formatDateTime(date) {
 async function getTags(SP_ID) {
   try {
     const tags = await db.excuteQuery('SELECT TagName FROM EndCustomerTagMaster WHERE SP_ID=? AND isDeleted != 1', [SP_ID]);
-console.log(tags.map(row => row.TagName).flat())
+    console.log(tags.map(row => row.TagName).flat())
     return tags.map(row => row.TagName).flat();
   } catch (error) {
     console.error("Error in getTagList:", error);
@@ -1233,47 +1257,47 @@ app.get('/downloadCSVerror', authenticateToken, (req, res) => {
 
 const updateDisplayName = (fields) => {
   return fields.map(field => {
-      switch (field.ActuallName) {
-          case 'Name':
-              field.displayName = 'Name';
-              break;
-          case 'Phone_number':
-              field.displayName = 'Phone Number';
-              break;
-          case 'emailId':
-              field.displayName = 'Email';
-              break;
-          case 'OptInStatus':
-              field.displayName = 'Message Opt-in';
-              break;
-          case 'tag':
-              field.displayName = 'Tag';
-              break;
-          case 'ContactOwner':
-              field.displayName = 'Contact Owner';
-              break;
-          default:
-              // No changes required for other ActuallName values
-              break;
-      }
-      return field;
+    switch (field.ActuallName) {
+      case 'Name':
+        field.displayName = 'Name';
+        break;
+      case 'Phone_number':
+        field.displayName = 'Phone Number';
+        break;
+      case 'emailId':
+        field.displayName = 'Email';
+        break;
+      case 'OptInStatus':
+        field.displayName = 'Message Opt-in';
+        break;
+      case 'tag':
+        field.displayName = 'Tag';
+        break;
+      case 'ContactOwner':
+        field.displayName = 'Contact Owner';
+        break;
+      default:
+        // No changes required for other ActuallName values
+        break;
+    }
+    return field;
   });
 };
 
 // Function to write headers to CSV file
 const writeToCsvFile = async (filePath, data) => {
-   const updatedData = updateDisplayName(data);
-   const dynamicColumns = updatedData.filter(d => d.ActuallName.startsWith('column'));
-   const staticColumns = updatedData.filter(d => !d.ActuallName.startsWith('column'));
+  const updatedData = updateDisplayName(data);
+  const dynamicColumns = updatedData.filter(d => d.ActuallName.startsWith('column'));
+  const staticColumns = updatedData.filter(d => !d.ActuallName.startsWith('column'));
 
-   // Create headers including both static and dynamic columns
-   const headers = [...staticColumns, ...dynamicColumns].map(d => ({ id: d.ActuallName, title: d.displayName }));
+  // Create headers including both static and dynamic columns
+  const headers = [...staticColumns, ...dynamicColumns].map(d => ({ id: d.ActuallName, title: d.displayName }));
 
-   // Create CSV writer
-   const csvWriter = createCsvWriter({
-       path: filePath,
-       header: headers
-   });
+  // Create CSV writer
+  const csvWriter = createCsvWriter({
+    path: filePath,
+    header: headers
+  });
 
   // Write headers (an empty array of records)
   await csvWriter.writeRecords([]);
@@ -1282,13 +1306,13 @@ const writeToCsvFile = async (filePath, data) => {
 
 app.get('/download/:SP_ID', authenticateToken, async (req, res) => {
   try {
-    let SP_ID =req.params?.SP_ID
+    let SP_ID = req.params?.SP_ID
 
-    let sampleData = await db.excuteQuery(val.getcolumn,[SP_ID])
-   
+    let sampleData = await db.excuteQuery(val.getcolumn, [SP_ID])
+
     var file = path.join(__dirname, '/sample_file.csv')
     // Write to the CSV file
-     await writeToCsvFile(file, sampleData);
+    await writeToCsvFile(file, sampleData);
 
     res.download(file)
   } catch (err) {
@@ -1517,7 +1541,7 @@ const countryCodeMap = parseCountryCodes(countryCodes);
 
 // Function to check length of phone numbers and validate country code
 const checkPhoneNumbersLength = (phoneNumbers, countryCodeMap, expectedLengths) => {
- return phoneNumbers.map(phone => {
+  return phoneNumbers.map(phone => {
     const result = separatePhoneNumber(phone, countryCodeMap);
 
     if (result) {

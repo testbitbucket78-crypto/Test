@@ -15,6 +15,10 @@ const incommingmsg = require('../IncommingMessages')
 const moment = require('moment');
 const mytoken = process.env.VERIFY_TOKEN;
 
+
+let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 ) and is_deleted !=1   order by created_at desc`
+
+
 app.listen(process.env.PORT, () => {
   console.log('Server is running on port ' + process.env.PORT);
 });
@@ -281,8 +285,10 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
     // console.log(smsdelupdate)
     let sended = await db.excuteQuery(smsdelupdate, [customerPhoneNumber, spid])
     //  console.log("send", sended?.affectedRows)
-    notify.NotifyServer(displayPhoneNumber, true)
 
+    let ack1InId = await db.excuteQuery(notifyInteraction,[customerPhoneNumber, spid])
+    //notify.NotifyServer(displayPhoneNumber, true)
+    notify.NotifyServer(displayPhoneNumber, false, ack1InId[0]?.InteractionId)
 
   } else if (messageStatus == 'delivered') {
     let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1'
@@ -295,7 +301,9 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
     //console.log(smsdelupdate)
     let deded = await db.excuteQuery(smsdelupdate, [customerPhoneNumber, spid])
     //  console.log("deliver", deded?.affectedRows)
-    notify.NotifyServer(displayPhoneNumber, true)
+   //notify.NotifyServer(displayPhoneNumber, true)
+   let ack2InId = await db.excuteQuery(notifyInteraction,[phoneNumber, spid])
+           notify.NotifyServer(customerPhoneNumber, false, ack2InId[0]?.InteractionId)
 
   } else if (messageStatus == 'read') {
     //  console.log("read")
@@ -309,6 +317,8 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
     //  console.log(smsupdate)
     let resd = await db.excuteQuery(smsupdate, [customerPhoneNumber, spid])
     //   console.log("read", resd?.affectedRows)
-    notify.NotifyServer(displayPhoneNumber, true)
+   // notify.NotifyServer(displayPhoneNumber, true)
+   let ack3InId = await db.excuteQuery(notifyInteraction,[phoneNumber, spid])
+           notify.NotifyServer(customerPhoneNumber, false, ack3InId[0]?.InteractionId)
   }
 }
