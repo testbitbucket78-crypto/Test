@@ -94,15 +94,15 @@ const insertCustomers = async (req, res) => {
 
     try {
         // Check if contact with isTemporary = 1 exists
-        let checkTempContactQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 AND IsTemporary = 1 AND SP_ID = ?`;
+        let checkTempContactQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND (isDeleted = 1 or IsTemporary = 1) AND SP_ID = ?`;
         let tempContactResult = await db.excuteQuery(checkTempContactQuery, [Phone_number, SP_ID]);
-
+console.log("tempContactResult",tempContactResult.length ,tempContactResult.length > 0)
         if (tempContactResult.length > 0) {
             // Update the temporary contact to make it permanent
             let updateTempContactQuery = `
                 UPDATE EndCustomer
-                SET Name = ?, channel = ?, OptInStatus = ?, countryCode = ?, displayPhoneNumber = ?, IsTemporary = 0
-                WHERE Phone_number = ? AND SP_ID = ? AND IsTemporary = 1
+                SET Name = ?, channel = ?, OptInStatus = ?, countryCode = ?, displayPhoneNumber = ?, IsTemporary = 0, isDeleted = 0
+                WHERE Phone_number = ? AND SP_ID = ?
             `;
             await db.excuteQuery(updateTempContactQuery, [Name, channel, OptInStatus, countryCode, displayPhoneNumber, Phone_number, SP_ID]);
 

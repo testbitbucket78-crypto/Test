@@ -629,24 +629,24 @@ async function insertInteractionAndRetrieveId(custid, sid) {
             await db.excuteQuery(
                 'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
                 [custid, 'empty', sid, 'User Initiated']
-            );
-        } else {
+             );
+        // } else {
 
-            // Check for the maximum created_at date of Message
-            let maxdate = await db.excuteQuery(
-                'SELECT max(created_at) as maxdate from Message where interaction_id in (select InteractionId from Interaction where customerId=? and is_deleted !=1 and SP_ID=?)',
-                [custid, sid]
-            );
+        //     // Check for the maximum created_at date of Message
+        //     let maxdate = await db.excuteQuery(
+        //         'SELECT max(created_at) as maxdate from Message where interaction_id in (select InteractionId from Interaction where customerId=? and is_deleted !=1 and SP_ID=?)',
+        //         [custid, sid]
+        //     );
 
 
-            // If maxdate is older than 24 hours, insert a new interaction
-            if (!maxdate || new Date(maxdate) <= new Date(Date.now() - 24 * 60 * 60 * 1000)) {
-                console.log("______________________")
-                await db.excuteQuery(
-                    'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
-                    [custid, 'empty', sid, 'User Initiated']
-                );
-            }
+        //     // If maxdate is older than 24 hours, insert a new interaction
+        //     if (!maxdate || new Date(maxdate) <= new Date(Date.now() - 24 * 60 * 60 * 1000)) {
+        //         console.log("______________________")
+        //         await db.excuteQuery(
+        //             'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
+        //             [custid, 'empty', sid, 'User Initiated']
+        //         );
+        //     }
         }
 
         // Retrieve the newly inserted or existing Interaction ID
