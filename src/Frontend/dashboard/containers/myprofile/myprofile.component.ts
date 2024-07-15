@@ -175,7 +175,14 @@ export class MyprofileComponent implements OnInit,OnDestroy {
 
             if (password !== confirmPassword && password !== '') {
                 return { 'mismatch': true };
-            }
+            }else {
+              if (passwordControl.hasError('mismatch')) {
+                  passwordControl.setErrors(null);
+              }
+              if (confirmPasswordControl.hasError('mismatch')) {
+                  confirmPasswordControl.setErrors(null);
+              }
+          }
         }
     }
     return null;
@@ -322,38 +329,45 @@ toggleActiveState(checked: boolean) {
   // change password api service
     
   saveNewPassword() {
+    this.changePasswordValue = this.changepassword.value;
+    if (!this.validatePassword(this.changePasswordValue)) {
+      this.showToaster('Your new password cannot be the same as your old password. !', 'error')
+      return
+    }
+    this.body = {
+      uid: this.changePasswordValue.uid,
+      oldPass: this.changePasswordValue.oldPass,
+      newPass: this.changePasswordValue.newPass,
+      confirmPass: this.changePasswordValue.confirmPass,
+      name: this.Name,
+      email_id: this.EmailId,
+      mobile_number: this.PhoneNumber
+    }
+    if (this.changepassword.valid) {
+      this.apiService.changePass(this.body).subscribe(
 
-      this.changePasswordValue = this.changepassword.value;
-      this.body = {
-          uid: this.changePasswordValue.uid,
-          oldPass: this.changePasswordValue.oldPass,
-          newPass: this.changePasswordValue.newPass,
-          confirmPass: this.changePasswordValue.confirmPass,
-          name: this.Name,
-          email_id: this.EmailId,
-          mobile_number: this.PhoneNumber
-      }
-    if(this.changepassword.valid) {
-        this.apiService.changePass(this.body).subscribe(
-        
-      (response: any) => {
-        if(response.status === 200) {
-          this.changepassword.reset();
-          this.showToaster('! Password changed successfully.','success');
-          $("#changePasswordModal").modal('hide');
-        }
-      },
-  
-      (error: any) => {
-        if (error.status === 401) {
-          this.showToaster('! Current Password does not match','error');
-        } } ,
-   
+        (response: any) => {
+          if (response.status === 200) {
+            this.changepassword.reset();
+            this.showToaster('! Password changed successfully.', 'success');
+            $("#changePasswordModal").modal('hide');
+          }
+        },
+
+        (error: any) => {
+          if (error.status === 401) {
+            this.showToaster('! Current Password does not match', 'error');
+          }
+        },
       )
     }
-  
   }
-
+  validatePassword(passwords: any) {
+      if(passwords.oldPass == passwords.newPass){
+         return false;
+      }
+      return true;
+  }
   // add funds logic to fill pre defined amount in input field
 
   fillAmount(amount: number, divIndex: number) {

@@ -116,7 +116,56 @@ warningMessage = '';
     })
   }
 
+  deepEqual(obj1: any, obj2: any): boolean {
+    if (obj1 === obj2) return true;
+    if (obj1 == null || obj2 == null) return false;
+    if (typeof obj1 !== 'object' || typeof obj2 !== 'object') return false;
+    let keys1 = Object.keys(obj1);
+    let keys2 = Object.keys(obj2);
+    if (keys1.length !== keys2.length) return false;
+    for (let key of keys1) {
+      if (!keys2.includes(key) || !this.deepEqual(obj1[key], obj2[key])) return false;
+    }
+    return true;
+  }
   
+  haveCommonObjects(arr1: any[], arr2: any[]): boolean {
+    if (arr1.length !== arr2.length) return false;
+    for (let item1 of arr1) {
+      let foundMatch = false;
+      for (let item2 of arr2) {
+        if (this.deepEqual(item1, item2)) {
+          foundMatch = true;
+          break;
+        }
+      }
+      if (!foundMatch) return false;
+    }
+    return true;
+  }
+
+  ValidateWorkingDetails(){
+    let newData = this.copyFormValues()["days"];
+    let oldData = this.workingData;
+    const mapData = (data: any[], isNewData = false) =>
+      data.map(item => ({
+        start_time: isNewData ? item.startTime : item.start_time,
+        end_time: isNewData ? item.endTime : item.end_time,
+        working_days: isNewData ? item.day : item.working_days
+      }));
+    const filteredOlderData = mapData(oldData);
+    const filteredNewData = mapData(newData, true);
+    const isSame = this.haveCommonObjects(
+      filteredOlderData,
+      filteredNewData
+    )
+    // If data is updated
+    if(!isSame){
+      $("#confirmModal").modal('show');
+    } else{
+      $("#workingHourModal").modal('hide');
+    }
+  }
 
     saveHolidayDetails(){
     let holidayResponse = this.copyHolidayData();
@@ -247,7 +296,7 @@ warningMessage = '';
     }
   
    getYearData(){
-    for(let i=1950;i<=2050;i++){
+    for(let i=2024;i<=2050;i++){
       this.yearList.push(i);
     }
     }
@@ -279,4 +328,5 @@ warningMessage = '';
         this.errorMessage = '';
         this.warningMessage = '';
     }
+    
 }

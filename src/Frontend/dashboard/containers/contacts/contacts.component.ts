@@ -697,7 +697,7 @@ onSelectAll(items: any) {
         else if(item.type =='Multi Select'){
           let values =''
           console.log(this.productForm.get(item.ActuallName)?.value)
-          this.productForm.get(item.ActuallName)?.value.forEach((ite:any)=>{
+          this.productForm.get(item.ActuallName)?.value?.forEach((ite:any)=>{
             values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
           })
           console.log(values);
@@ -1047,6 +1047,18 @@ deletContactByID(data: any) {
     this.gridapi.setQuickFilter(searchTerm);
     this.contacts = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
   }
+
+  onFocus() {
+    const searchInput = document.querySelector('.search-container')
+    if (searchInput)
+      searchInput.classList.add('focused');
+  }
+
+  onBlur() {
+    const searchInput = document.querySelector('.search-container')
+    if (searchInput)
+      searchInput.classList.remove('focused');
+  }
   
 
 //  image cropping function for popup
@@ -1353,4 +1365,16 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
         this.GridService.gotoPage(page, this.gridapi, this.rowData)
     }
   
+    testFunc(){
+      let isSame
+      let arr1 = ['a','b','c']
+let arr2 = ['b','c','a']
+for (let item1 of arr1) {
+      for (let item2 of arr2) {
+        isSame = item1 == item2 ? true : false
+      }
+    }
+    
+    console.log(isSame);
+    }
 }

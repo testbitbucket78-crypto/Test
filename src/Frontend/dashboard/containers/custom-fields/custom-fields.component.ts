@@ -49,7 +49,7 @@ export class CustomFieldsComponent implements OnInit {
         this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.getCustomFieldsData();
         this.addCustomFieldsOption();
-        setTimeout(()=>{this.getPaging()},2000);
+        //setTimeout(()=>{this.getPaging()},2000);
     }
     constructor(private formBuilder:FormBuilder,private settingsService:SettingsService) {
       this.addCustomField = [];
@@ -152,7 +152,7 @@ getCustomFieldsData() {
     console.log(this.customFieldData);  
     this.getDefaulltFieldData();
     this.getDynamicFieldData();
-    //this.getPaging();
+    this.getPaging();
   })
 }
 
@@ -180,6 +180,7 @@ getDynamicFieldData() {
 }
 
 saveNewCustomField() {
+  
   if(this.customFieldForm.valid) {
     let addCustomFieldData = this.getCustomFieldFormData();
     if(this.selectedCustomField==null) {
@@ -301,7 +302,19 @@ deleteCustomField() {
 onInputChange(){
   this.isFormChanged = true;
 }
-
+previousFieldType: string = "";
+fieldTypeChanged(){
+  const currentFieldType = this.customFieldForm.controls['type'].value;
+  if(currentFieldType && this.previousFieldType){
+    if(this.previousFieldType != this.customFieldForm.controls['type'].value){
+      this.addCustomField = [];
+      this.addCustomField = [
+        { id: '', Option: '' },
+      ];
+    }
+  }
+   this.previousFieldType = currentFieldType;
+}
 showToaster(message:any,type:any){
   if(type=='error'){
     this.errorMessage=message;

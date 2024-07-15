@@ -10,7 +10,7 @@
         <div class="d-flex">
             <div class="input-group gf ">
                 <input class="form-control" type="text" (keyup)="searchUserData($event.target.value)"
-                    placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" name="Name"
+                    placeholder="Search by User name, email or phone" aria-label="Search" aria-describedby="basic-addon2" name="Name"
                     id="Search-Ag" />
                 <img src="assets/img/search.png">
             </div>
@@ -221,7 +221,7 @@
         </div>
     </div>
     <div class="sideBar-footer">
-        <button type="button" class="account-white-btn" data-bs-toggle="modal" data-bs-target="#userModal">
+        <button type="button" class="account-white-btn" (click)="showSideBar = false" data-bs-toggle="modal" data-bs-target="#userModal">
             <img class="p-0" src="../../../../assets/img/edit.png"></button>
         <button type="button" class="account-white-btn ml-2" (click)="showSideBar = false" data-bs-toggle="modal" data-bs-target="#deleteModal">
             <img class="p-0" src="../../../../assets/img/delete.png">

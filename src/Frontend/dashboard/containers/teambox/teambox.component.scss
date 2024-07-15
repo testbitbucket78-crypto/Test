@@ -436,6 +436,12 @@
 .all_contacts {
     height: 76vh;
     overflow-y: scroll;
+    .not-found-message{
+        text-align: center;
+        font-size: 1.3rem;
+        color: gray;
+        margin-top: 65px;
+    }
 }
 
 .contacts_row {
@@ -2898,4 +2904,16 @@ label span {
 .btn-press:focus {
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.35) !important;
+}
+.customized {
+    h1 {
+        margin-bottom: 10px; 
+    }
+
+    p {
+        span {
+            display: block;
+            margin-left: 0px;
+        }
+    }
 }

@@ -226,7 +226,9 @@
                 <div class="bodydata w-45">
                     <div *ngIf="selectedMessageData.message_type == 'image'" class="message_type"
                             [ngClass]="{'message_type_box':!selectedMessageData.value}" 
-                           [ngStyle]="{'background-image': 'url(' + selectedMessageData.link + ')'}">
+                           [ngStyle]="{'background-image': 'url(' + selectedMessageData.link + ')',
+                           'background-size': 'contain'
+                        }">
                     </div> 
                     <div *ngIf="selectedMessageData.message_type == 'video'" class="message_type" [ngClass]="{'vid':selectedMessageData.message_type=='video'}">
                         <video controls id="video-background" [ngClass]="{'message_type_box':!selectedMessageData.value}"

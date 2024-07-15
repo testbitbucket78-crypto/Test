@@ -5,6 +5,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { ColumnMapping, importCSVData } from 'Frontend/dashboard/models';
 import Stepper from 'bs-stepper';
 import { Router } from '@angular/router';
+import * as XLSX from 'xlsx'; 
 declare var $: any;
 
 
@@ -189,7 +190,7 @@ export class ImportComponent implements OnInit {
 		const currentfileformat = this.file?.name.split(".").pop();
 		if(currentfileformat) {
 			if(this.messageOptIn != ''){
-			if(currentfileformat !== this.fileformat && currentfileformat!=='CSV') {
+			if(currentfileformat !== this.fileformat && currentfileformat!=='CSV' && currentfileformat!=='xlsx') {
 				$("#importmodal").modal('hide');
 				this.modalService.open(content);
 			}
@@ -226,30 +227,59 @@ export class ImportComponent implements OnInit {
 	onUpload(event: any) {
 		this.file = event.target.files[0];
 		this.fileName = this.truncateFileName(this.file.name, 25);
-		let reader: FileReader = new FileReader();
-		reader.readAsText(this.file);
-		reader.onload = () => {
-			let csvData = reader.result;
-			let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);
-			let headersRow = this.getHeaderArray(csvRecordsArray);
-			this.headers = headersRow;
-			this.importedData = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
-			console.log('importedData',this.importedData);
-			this.importedData.forEach((data,idx) => {
+		const fileExtension = this.getFileExtension(this.file.name);
+		if(fileExtension == "xlsx"){
+			const fileReader = new FileReader();
+			fileReader.onload = (e: any) => {
+			  const data = new Uint8Array(e.target.result);
+			  const workbook = XLSX.read(data, { type: 'array' });
+			  const sheetName = workbook.SheetNames[0];
+			  const worksheet = workbook.Sheets[sheetName];
+			  this.importedData = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+			  console.log('importedData', this.importedData);
+			  // Processing the extracted Excel Data
+			  this.importedData.forEach((data,idx) => {
 				this.csvfieldHeaders = Object.keys(data);
 				if(idx==0)
 					this.csvfieldValues = Object.values(data);
 				this.toggleOverride = Array(this.csvfieldHeaders.length).fill(false);
 				this.displayNameChecked= Array(this.csvfieldHeaders.length).fill(false);
-				console.log(this.csvfieldHeaders);
-				console.log(this.csvfieldValues);
 			});
 			this.csvfieldHeaders.forEach((x: any) => {
 				this.selectedCustomFields.push('');
 			});
+			};
+			fileReader.readAsArrayBuffer(this.file);
 		}
+		else{
+			let reader: FileReader = new FileReader();
+			reader.readAsText(this.file);
+			reader.onload = () => {
+				let csvData = reader.result;
+				let csvRecordsArray = (<string>csvData).split(/\r\n|\n/);
+				let headersRow = this.getHeaderArray(csvRecordsArray);
+				this.headers = headersRow;
+				this.importedData = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
+				console.log('importedData',this.importedData);
+				this.importedData.forEach((data,idx) => {
+					this.csvfieldHeaders = Object.keys(data);
+					if(idx==0)
+						this.csvfieldValues = Object.values(data);
+					this.toggleOverride = Array(this.csvfieldHeaders.length).fill(false);
+					this.displayNameChecked= Array(this.csvfieldHeaders.length).fill(false);
+					console.log(this.csvfieldHeaders);
+					console.log(this.csvfieldValues);
+				});
+				this.csvfieldHeaders.forEach((x: any) => {
+					this.selectedCustomFields.push('');
+				});
+			}
+		}
+		
 	}
-
+	getFileExtension(filename: string): string {
+		return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2).toLowerCase();
+	  }
 	/****Written by Rishabh Singh  *****/
 
    /******************* Method to capture mapping selections********************/
