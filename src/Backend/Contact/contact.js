@@ -1262,9 +1262,7 @@ const updateDisplayName = (fields) => {
 
 // Function to write headers to CSV file
 const writeToCsvFile = async (filePath, data) => {
-  
    const updatedData = updateDisplayName(data);
-
    const dynamicColumns = updatedData.filter(d => d.ActuallName.startsWith('column'));
    const staticColumns = updatedData.filter(d => !d.ActuallName.startsWith('column'));
 
@@ -1284,7 +1282,8 @@ const writeToCsvFile = async (filePath, data) => {
 
 app.get('/download/:SP_ID', authenticateToken, async (req, res) => {
   try {
-    let SP_ID =res.params?.SP_ID
+    let SP_ID =req.params?.SP_ID
+
     let sampleData = await db.excuteQuery(val.getcolumn,[SP_ID])
    
     var file = path.join(__dirname, '/sample_file.csv')

@@ -45,8 +45,8 @@ app.post('/sendMessage', async (req, res) => {
         phoneNo = req.body.phoneNo
         interaction_id = req.body.interaction_id,
             msg_id = req.body.msg_id
-            spNumber = req.body?.spNumber
-        let response = await web.sendMessages(spid, phoneNo, type, text, link, interaction_id, msg_id,spNumber);
+        spNumber = req.body?.spNumber
+        let response = await web.sendMessages(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber);
         return res.send({ status: response })
 
     } catch (err) {
@@ -63,7 +63,7 @@ app.post('/sendFunnelMessage', async (req, res) => {
         link = req.body.link
         text = req.body.text
         phoneNo = req.body.phoneNo
-    
+
         let response = await web.sendFunnel(spid, phoneNo, type, text, link);
         console.log(response)
         return res.send({ status: response })
@@ -81,9 +81,9 @@ app.post('/IsClientReady', (req, res) => {
 
         console.log(web.isActiveSpidClient(spid))
         if (web.isActiveSpidClient(spid)) {
-          return  res.send({ status: 200, message: "Client is ready !" })
+            return res.send({ status: 200, message: "Client is ready !" })
         } else {
-          return  res.send({ status: 404, message: "Please go to settings and Scan the QR Code !" })
+            return res.send({ status: 404, message: "Please go to settings and Scan the QR Code !" })
         }
 
 
@@ -92,39 +92,50 @@ app.post('/IsClientReady', (req, res) => {
     }
 })
 
-app.listen(3009, () => {
-     console.log("Server is Running on Port : : 3009");
-        // Replace 'chrome' with the actual process name if needed
-        const processName = 'chrome';
+app.get('/webjsStatus', (req, res) => {
+    try {
 
-        // Command to kill all processes with the given name
-        const killCommand = `killall ${processName}`;
-        
-        exec(killCommand, (error, stdout, stderr) => {
-          if (error) {
+      let response = web.whatsappWebStatus();
+      res.send({ status: 200, message: response })
+
+    } catch (err) {
+        res.send({ status: 500, err: err })
+    }
+})
+
+app.listen(3009, () => {
+    console.log("Server is Running on Port : : 3009");
+    // Replace 'chrome' with the actual process name if needed
+    const processName = 'chrome';
+
+    // Command to kill all processes with the given name
+    const killCommand = `killall ${processName}`;
+
+    exec(killCommand, (error, stdout, stderr) => {
+        if (error) {
             console.error(`Error killing processes: ${error.message}`);
             return;
-          }
-        
-          if (stderr) {
+        }
+
+        if (stderr) {
             console.error(`Error output: ${stderr}`);
             return;
-          }
-        
-          console.log(`Successfully killed Chromium processes:\n${stdout}`);
-        });
-        
+        }
+
+        console.log(`Successfully killed Chromium processes:\n${stdout}`);
+    });
+
     console.log(path.join(__dirname, '.wwebjs_auth'))
     var dir = path.join(__dirname, '.wwebjs_auth');
     try {
         if (fs.existsSync(dir)) {
             console.log("dir found");
             fs.readdirSync(dir).forEach(f => {
-                if(f.indexOf("session-") >-1 && fs.existsSync(path.join(dir,f,"Default/Service Worker")))
-                {
-                    console.log("Deleting : "+ path.join(dir,f,"Default/Service Worker"));
-                    fs.rmdirSync(path.join(dir,f,"Default/Service Worker"), { recursive: true });
-                }});
+                if (f.indexOf("session-") > -1 && fs.existsSync(path.join(dir, f, "Default/Service Worker"))) {
+                    console.log("Deleting : " + path.join(dir, f, "Default/Service Worker"));
+                    fs.rmdirSync(path.join(dir, f, "Default/Service Worker"), { recursive: true });
+                }
+            });
         }
     }
     catch (err) {
