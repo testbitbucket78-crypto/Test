@@ -569,11 +569,11 @@ async function autoResolveExpireInteraction() {
         AND  TIMESTAMPDIFF(HOUR, (SELECT MAX(created_at) FROM Message WHERE interaction_id = ${record.interaction_id}), NOW()) >= 24 and interaction_status != 'Resolved'`;
 
         await db.excuteQuery(updateQuery, ['Resolved']);
-        let getMapping = await db.excuteQuery(`select * from InteractionMapping where InteractionId =?`, [record.interaction_id])
-        if (getMapping?.length > 0) {
-          let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [record.interaction_id]);
+        // let getMapping = await db.excuteQuery(`select * from InteractionMapping where InteractionId =?`, [record.interaction_id])
+        // if (getMapping?.length > 0) {
+        //   let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [record.interaction_id]);
           
-        }
+        // }
       }
     } else {
       console.log("maxCreatedAtResult is not an array");

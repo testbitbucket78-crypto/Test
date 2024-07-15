@@ -167,7 +167,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     //var autoReply = replymessage[0].Message
     //console.log(replymessage.length)
 
-    console.log(replymessage, " replymessage.length " + replymessage?.length)
+    console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg,replymessage, " SMARTREPLY.length " + replymessage?.length)
     if (replymessage?.length > 0) {
 
       let isSReply = iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType);
