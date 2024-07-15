@@ -71,7 +71,7 @@
 													<button *ngIf="!this.file" class="mb-1 uploadFile-btn">
 														<img class="px-2" src="../../../../assets/img/profile/upload.svg" />
 														<label class="m-0 uploadFile" for="uploadFile">
-															<input type="file" (change)="onUpload($event)" id="uploadFile" accept=".csv" />
+															<input type="file" (change)="onUpload($event)" id="uploadFile" accept=".csv,.xlsx" />
 															Browse files
 														</label>
 													</button>

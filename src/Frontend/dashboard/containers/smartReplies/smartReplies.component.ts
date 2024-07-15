@@ -11,6 +11,7 @@ import { agentMessageList } from 'Frontend/dashboard/models/smartReplies.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService,EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
+
 declare var $: any;
 
 @Component({
@@ -1169,7 +1170,9 @@ stopPropagation(event: Event) {
 			  console.log(response);
 			  if (response.status === 200) {
 				this.location.replaceState(this.location.path());
-				window.location.reload();
+				this.modalService.dismissAll(smartreplysuccess);
+				this.reloadCurrentRoute();
+				// window.location.reload();
 				// $("#smartrepliesModal").modal('hide'); 
 				// this.modalService.open(smartreplysuccess);
 			  }
@@ -1187,6 +1190,11 @@ stopPropagation(event: Event) {
 		  this.showToaster("! Message cannot be empty","warn");
 		}
 	}
+	reloadCurrentRoute() {
+		this.router.navigateByUrl('/reload', { skipLocationChange: true }).then(() => {
+		  this.router.navigate([decodeURI(this.location.path())]);
+		});
+	  }
 	private modalRef!: NgbModalRef;
 	smartReplySuccess(smartreplysuccess: any) {
 		this.modalRef = this.modalService.open(smartreplysuccess);

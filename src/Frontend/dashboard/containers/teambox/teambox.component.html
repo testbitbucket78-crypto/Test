@@ -54,6 +54,9 @@
 				</div>
 				<div>
 					<div class="all_contacts">
+						<div *ngIf="interactionList.length === 0" class="not-found-message">
+							No Conversation here!
+						</div>
 						<div *ngFor="let item of interactionList; let i = index" id={{i}}
 							(click)="selectInteraction(i)"
 							[ngClass]="item.selected ? 'contacts_row active' : 'contacts_row'">
@@ -480,7 +483,7 @@ popupWidth='250px' popupHeight='200px'>
 											src="/assets/img/teambox/whatsapp-icon-l.svg"></span>
 								</div>
 
-								<div class="col-md-8 align-content-center">
+								<div class="col-md-8 align-content-center customized">
 									<h1>{{selectedInteraction.Name}}</h1>
 									<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
 									<p>Created Date:<span>{{getFormatedDate(selectedInteraction.InCreatedDate)}}</span></p>

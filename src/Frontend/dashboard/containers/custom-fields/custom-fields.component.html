@@ -195,9 +195,10 @@
                                
                                 <div class="d-flex flex-column billing-form-row">
                                     <label>Field Type {{isEdit}}</label>
-                                    <select name="type" id="type" formControlName="type" (change)="onInputChange()" >
+                                    <select name="type" id="type" formControlName="type" (change)="onInputChange();fieldTypeChanged()" >
                                         <option *ngFor="let type of types" [value]="type">
-                                            {{type}}</option>
+                                            {{type}}
+                                        </option>
                                     </select>
                                     <div *ngIf="!selectedCustomField" class="error">Please Note: Field Type once selected cannot be edited later.</div>                                                       
                                     <div *ngIf="selectedCustomField" class="error">Field Type is not editable once created.</div>                                                       

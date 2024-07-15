@@ -130,14 +130,18 @@ warningMessage = '';
   }
   
   haveCommonObjects(arr1: any[], arr2: any[]): boolean {
-    let isSame = false;
     if (arr1.length !== arr2.length) return false;
     for (let item1 of arr1) {
+      let foundMatch = false;
       for (let item2 of arr2) {
-        isSame = this.deepEqual(item1, item2) ? true : false
+        if (this.deepEqual(item1, item2)) {
+          foundMatch = true;
+          break;
+        }
       }
+      if (!foundMatch) return false;
     }
-    return isSame;
+    return true;
   }
 
   ValidateWorkingDetails(){
@@ -292,7 +296,7 @@ warningMessage = '';
     }
   
    getYearData(){
-    for(let i=1950;i<=2050;i++){
+    for(let i=2024;i<=2050;i++){
       this.yearList.push(i);
     }
     }

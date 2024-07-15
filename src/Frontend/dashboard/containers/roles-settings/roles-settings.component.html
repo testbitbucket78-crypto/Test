@@ -41,7 +41,7 @@
                 <div>
                     <form  [formGroup]="myForm"> 
                         <div>
-                            <label>Role Name</label> <br>
+                            <label>Role Name<span class="text-danger">*</span></label> <br>
                             <input type="text" class="input-form" formControlName="roleName"  placeholder="Enter role name" maxlength="30">
                           <div *ngIf="(myForm.controls['roleName']?.dirty || myForm.controls['roleName']?.touched)" class="invalid-feedback">
                             <div *ngIf="myForm.controls['roleName']?.errors?.required">Role Name is required.</div>

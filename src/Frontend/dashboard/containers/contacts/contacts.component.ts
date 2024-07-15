@@ -1047,6 +1047,18 @@ deletContactByID(data: any) {
     this.gridapi.setQuickFilter(searchTerm);
     this.contacts = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
   }
+
+  onFocus() {
+    const searchInput = document.querySelector('.search-container')
+    if (searchInput)
+      searchInput.classList.add('focused');
+  }
+
+  onBlur() {
+    const searchInput = document.querySelector('.search-container')
+    if (searchInput)
+      searchInput.classList.remove('focused');
+  }
   
 
 //  image cropping function for popup

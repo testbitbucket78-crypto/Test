@@ -8,30 +8,29 @@
 
 		<sb-top-nav title="Contacts"></sb-top-nav>
 	<div class="contact-header">
-		<div class="">
-				<div class="input-group gf ">
-					<input class="form-control" type="search" placeholder="Search"
-						 name="Search" (input)="onFilterTextBoxChange()" id="Search-Ag" />
-					<img src="assets/img/search.png">
-				</div>
+		<div class="border d-flex flex-row-reverse align-items-center px-3 h-100 search-container">
+			<input class="form-control border-0" type="search" placeholder="Search" name="Search"
+				(input)="onFilterTextBoxChange()" id="Search-Ag" style="outline: none !important; box-shadow: none !important;"
+				(focus)="onFocus()" (blur)="onBlur()" />
+			<img src="assets/img/search.png" style="height: 15px; width: 15px;">
 		</div>
 		<div class="d-flex">
 			<div id="export-btn">
 				<button (click)="testFunc()"></button>
-				<button class="btn-press btn-9 " (click)="openFilters()">
-					<img class="mr-2"
-						 src="../../../../assets/img/filter.png">Filters
-					<img class="ml-1"
-						 src="../../../../assets/img/arrow-down.svg">
-				</button>
-				<button class="btn-press btn-9 " (click)="clearFilters()" > <img
-						src="../../../../assets/img/export.svg"> Clear Filters</button>
-				<button class="btn-press btn-9 " (click)="isShowColumn = true">
-					<img class="mr-1"
-						 src="../../../../assets/img/column.png"> Column Prefrences
-					<img class="ml-1"
-						 src="../../../../assets/img/arrow-down.svg">
-				</button>
+			<button class="btn-press btn-9 " (click)="openFilters()">
+				<img class="mr-2"
+						src="../../../../assets/img/filter.png">Filters
+				<img class="ml-1"
+						src="../../../../assets/img/arrow-down.svg">
+			</button>
+			<button class="btn-press btn-9 " (click)="clearFilters()" > <img
+					src="../../../../assets/img/export.svg"> Clear Filters</button>
+			<button class="btn-press btn-9 " (click)="isShowColumn = true">
+				<img class="mr-1"
+						src="../../../../assets/img/column.png"> Column Prefrences
+				<img class="ml-1"
+						src="../../../../assets/img/arrow-down.svg">
+			</button>
 			</div>
 			<div id="export-btn">
 				<button class="btn-press btn-9 "  (click)="openExport(content)" > <img
@@ -803,9 +802,9 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 <div class="modal-dialog" style="width:415px;height: 85vh;" >
   <div class="modal-content " style="border-radius: 15px 15px 19px 19px; cursor: default !important;">
 	<div class="modal-header"
-	  style="font-size: 17px;border-radius: 15px 15px 0px 0px; cursor: grab !important; font-weight: bolder;color: black;background-color:white;">
+	  style="font-size: 17px;border-radius: 15px 15px 0px 0px; font-weight: bolder;color: black;background-color:white;">
 	  <span class="modal-title" id="staticBackdropLabel">Column Preferences</span>
-	  <div (click)="isShowColumn = false" class="closestPopup">
+	  <div (click)="isShowColumn = false" class="closestPopup" style="cursor: pointer">
 		<!-- <img height="18px" width="18px" style="margin: 2px;" src="/../../assets/images/icons8-cross-50.png" alt="" /> -->
 		X
 	  </div>
