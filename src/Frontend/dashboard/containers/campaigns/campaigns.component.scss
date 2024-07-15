@@ -1440,7 +1440,6 @@
 	}
 	.applylist_filters_outer{
 	width: 100%;
-	overflow: auto;
 	}
 	.scroll-container::-webkit-scrollbar {
 	width: 5px;
@@ -1461,11 +1460,16 @@
 	.scroll-container::-webkit-scrollbar-button {
 	display: none;
 	}
-	.applylist_filters{
-		float:left;
+	.applylist_filters {
+		overflow: auto;
+		height: 100px;
+		float: left;
 		display: flex;
-    flex-wrap: wrap;
-	width: 100% !important;
+		flex-wrap: wrap;
+		width: 100% !important;
+	}
+	::ng-deep .applylist_content{
+		height: 400px !important;
 	}
 	.applylist_filters .submit-btn{
 	float:left;

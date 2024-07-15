@@ -306,7 +306,7 @@
                         <div class="billing-form-row">
                             <span class="billing-left-col">Location<span class="aestric">*</span></span>
                             <div class="billing-right-col">
-                            <select class="billing input-form" formControlName="Country" required (change)="getStateList($event.target.value)">
+                            <select style="cursor: pointer;" class="billing input-form" formControlName="Country" required (change)="getStateList($event.target.value)">
                                 <option value="">Select country</option>
                                 <option *ngFor="let item of country" [value]="item.name">{{item.name}}</option>
                             </select>
@@ -321,7 +321,7 @@
                         <div class="billing-form-row">
                             <span class="billing-left-col"></span>
                             <div class="billing-right-col">
-                            <select class="billing input-form" formControlName="State" required>
+                            <select style="cursor: pointer;" class="billing input-form" formControlName="State" required>
                                 <option value="">State</option>
                                 <option *ngFor="let item of state" [value]="item.name">{{item.name}}</option>
                             </select>

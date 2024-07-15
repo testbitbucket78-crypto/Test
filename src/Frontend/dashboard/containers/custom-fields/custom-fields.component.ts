@@ -152,7 +152,7 @@ getCustomFieldsData() {
     console.log(this.customFieldData);  
     this.getDefaulltFieldData();
     this.getDynamicFieldData();
-    //this.getPaging();
+    this.getPaging();
   })
 }
 

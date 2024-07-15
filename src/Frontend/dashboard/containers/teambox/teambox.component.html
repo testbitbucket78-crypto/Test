@@ -110,6 +110,7 @@
 											</div>
 										</div>
 									</div>
+									<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 								</div>
 							</div>
 						</div>
