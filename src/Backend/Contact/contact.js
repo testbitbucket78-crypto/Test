@@ -396,6 +396,10 @@ app.post('/importContact', authenticateToken, async (req, res) => {
     var SP_ID = result.SP_ID
     let emailId = result?.emailId
     let user = result?.user
+    let OptInStatus = req.body.messageOptIn
+    CSVdata.forEach(subArray => {
+      subArray.push({ "displayName": OptInStatus, "ActuallName": "OptInStatus" });
+    });
 
     if (purpose === 'Add new contact only') {
       try {
@@ -522,8 +526,26 @@ function sendMailAfterImport(emailId, user, noOfContact) {
     console.log("sendMailAfterImport", err)
   }
 }
+let messageOptIn = "Yes"
+const importData = [
+  [
+    { "displayName": 55, "ActuallName": "SP_ID" },
+    { "displayName": "okRaunak", "ActuallName": "Name" },
+    { "displayName": "Raunak@gmail.com", "ActuallName": "emailId" },
+    { "displayName": "India", "ActuallName": "Phone_number" },
+    { "displayName": "India", "ActuallName": "displayPhoneNumber" }
+  ],
+  [
+    { "displayName": 55, "ActuallName": "SP_ID" },
+    { "displayName": "ofRishabh", "ActuallName": "Name" },
+    { "displayName": "Rishabh@gmail.com", "ActuallName": "emailId" },
+    { "displayName": "India", "ActuallName": "Phone_number" },
+    { "displayName": "India", "ActuallName": "displayPhoneNumber" }
+  ]
+];
 
 
+console.log(importData);
 async function findTagId(TagName, spid) {
   try {
     let tagId = await db.excuteQuery('select * from EndCustomerTagMaster where SP_ID =? and TagName=? and isDeleted !=1', [spid, TagName]);

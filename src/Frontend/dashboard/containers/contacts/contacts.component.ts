@@ -746,7 +746,7 @@ console.log(this.contactId)
   if(this.contactId) {
     this.apiService.editContact(contactData, this.contactId, this.spid).subscribe(
       (response: any) => {
-      if(response.status === 200) {
+      if(response) {
         this.productForm.reset();
         this.productForm.clearValidators();
         this.resetForm();
@@ -1319,6 +1319,17 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     } else{
       return '';
     }
+  }
+
+  getSplitMultiSelect(val:any){
+      let selectName = val?.split(',');
+      let names ='';
+      selectName.forEach((it:any)=>{
+                    let name = it.split(':');
+                    console.log(name);
+                    names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
+  })
+  return names;
   }
 
   openFilters(){
