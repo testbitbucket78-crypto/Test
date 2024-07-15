@@ -1610,3 +1610,23 @@ input[type="radio"], input[type="checkbox"] {
 }
 
 
+
+
+.search-container {
+    border-radius: 20px;
+    padding: 2px 0;
+    min-width: 200px;
+    transition: box-shadow 0.3s;
+}
+
+.search-container.focused {
+    box-shadow: 0 0 0 .2rem #007bff40;
+}
+
+.search-container img {
+    transition: opacity 0.3s;
+}
+
+.search-container input:focus + img {
+    opacity: 0;
+}

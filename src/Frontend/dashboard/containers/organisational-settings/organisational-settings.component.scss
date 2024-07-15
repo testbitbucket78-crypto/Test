@@ -171,9 +171,19 @@
 
    .billing-modal{
     width: 54rem;
-    height: 45rem;
+    height: 40rem;
     border-radius: 1.5rem;
     margin-left: -9rem;
+    .modal-body{
+    overflow-y: auto;
+    overflow-x: hidden;
+    }
+    .modal-header{
+        position: sticky;
+    }
+    .modal-footer{
+        position: sticky;
+    }
    }
 
    .locale-modal{
