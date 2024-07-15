@@ -16,7 +16,7 @@
 		</div>
 		<div class="d-flex">
 			<div id="export-btn">
-				<button (click)="testFunc()"></button>
+				
 			<button class="btn-press btn-9 " (click)="openFilters()">
 				<img class="mr-2"
 						src="../../../../assets/img/filter.png">Filters
@@ -180,8 +180,9 @@
 					<div class="parent-flex p-2 parent d-flex flex-column">
 						<div class="child23" *ngFor="let it of filteredCustomFields">
 							<h5>{{it?.displayName}}</h5>
-							<h6 class="mt-2" *ngIf="it?.type != 'Select'">{{items[it?.ActuallName]}}</h6>
+							<h6 class="mt-2" *ngIf="it?.type != 'Select' && it?.type != 'Multi Select'">{{items[it?.ActuallName]}}</h6>
 							<h6 class="mt-2" *ngIf="it?.type == 'Select'">{{getSplitItem(items[it?.ActuallName])}}</h6>
+							<h6 class="mt-2" *ngIf="it?.type == 'Multi Select'">{{getSplitMultiSelect(items[it?.ActuallName])}}</h6>
 						</div>
 					</div>
 					<!-- <div class="justify-content-between px-4 py-2 parent d-flex">

@@ -64,7 +64,7 @@ columnDefs: ColDef[] = [
       width: 50,
       lockPosition: 'left',
       cellClass: 'locked-col',
-      pinned: 'left',  
+      //pinned: 'left',  
     //cellStyle: { background: "#FBFAFF" },
   },
   {
@@ -746,7 +746,7 @@ console.log(this.contactId)
   if(this.contactId) {
     this.apiService.editContact(contactData, this.contactId, this.spid).subscribe(
       (response: any) => {
-      if(response.status === 200) {
+      if(response) {
         this.productForm.reset();
         this.productForm.clearValidators();
         this.resetForm();
@@ -1321,6 +1321,17 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     }
   }
 
+  getSplitMultiSelect(val:any){
+      let selectName = val?.split(',');
+      let names ='';
+      selectName.forEach((it:any)=>{
+                    let name = it.split(':');
+                    console.log(name);
+                    names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
+  })
+  return names;
+  }
+
   openFilters(){
     this.isShowFilter = true;
     this.changingValue.next(true);
@@ -1364,17 +1375,5 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     gotoPage(page: any) {
         this.GridService.gotoPage(page, this.gridapi, this.rowData)
     }
-  
-    testFunc(){
-      let isSame
-      let arr1 = ['a','b','c']
-let arr2 = ['b','c','a']
-for (let item1 of arr1) {
-      for (let item2 of arr2) {
-        isSame = item1 == item2 ? true : false
-      }
-    }
-    
-    console.log(isSame);
-    }
+
 }

@@ -1212,6 +1212,17 @@
 											</p>
 										</div>
 									</div>
+									
+									<div *ngIf="addedF.filterType =='select_opt'" class="formrow">
+										<p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
+											{{addedF.filterValue}}
+										</p>
+										<div *ngIf="showFilterTagOption" class="popup-dialog">
+											<p *ngFor="let option of addedF.selectedOptions ;let l = index" (click)="selectFilterOption(i,option?.optionName)">
+												<span>{{option?.optionName}}</span>
+											</p>
+										</div>
+									</div>
 
 								</div>
 
