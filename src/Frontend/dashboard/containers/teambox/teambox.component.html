@@ -74,10 +74,10 @@
 											<div class="profile_icon_no-dp">{{settingService.getInitials(item.Name)}}</div>
 										<div class="contacts_detail">
 											<p class="name">{{item.Name}}</p>
-											<div *ngIf="item.message_text" class="message"
+											<div *ngIf="item.message_text && item?.message_media =='text'" class="message"
 												[innerHTML]="limitCharacters(item.message_text) | sanitizeHtml">
 											</div>
-											<div  *ngIf="!item?.message_text && item?.message_media !='text'" class="message">{{getMediaType(item.message_media)}}</div>
+											<div  *ngIf="item?.message_media !='text'" class="message s">{{getMediaType(item.media_type)}}</div>
 										</div>
 									</div>
 									
