@@ -22,8 +22,10 @@ const path = require("path");
 let clientSpidMapping = {};
 let clientPidMapping = {};
 let clientSpidInprogress = {};
+let isQRstack;
+let undefinedCount = 0;
 
-
+let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 ) and is_deleted !=1   order by created_at desc`
 async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo, new Date().toUTCString());
   console.log(clientPidMapping.hasOwnProperty(spid))
@@ -93,9 +95,9 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-         executablePath: "/usr/bin/google-chrome-stable",
-         //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
-    
+          executablePath: "/usr/bin/google-chrome-stable",
+          //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+
           args: [
             '--no-sandbox',
             '--disable-dev-shm-usage', // <-- add this one
@@ -105,10 +107,10 @@ function ClientInstance(spid, authStr, phoneNo) {
           takeoverTimeoutMs: 10,
         },
         authStrategy: authStr,
-       /* webVersionCache: {
-          type: 'remote',
+         webVersionCache: {
+           type: 'remote',
           remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2410.1.html',
-        }*/
+       }
       });
       console.log("client created", new Date().toUTCString());
 
@@ -123,8 +125,8 @@ function ClientInstance(spid, authStr, phoneNo) {
         console.log('Client is auth_failure!');
       });
 
-      client.on("loading_screen",(percent,message)=>{
-        console.log("loading_screen",percent,message)
+      client.on("loading_screen", (percent, message) => {
+        console.log("loading_screen", percent, message)
       })
       let inc = 0;
       client.on("qr", (qr) => {
@@ -135,7 +137,9 @@ function ClientInstance(spid, authStr, phoneNo) {
           console.log("QR RECEIVED", qr);
           inc++;
           console.log("inc: " + inc);
-
+          if (qr.startsWith(undefined)) {
+            undefinedCount = undefinedCount + 1;
+          }
           if (inc > 5) {
             console.log("Destroying client..." + client.authStrategy.userDataDir);
             client.destroy();
@@ -262,9 +266,9 @@ function ClientInstance(spid, authStr, phoneNo) {
             if (clientSpidMapping.hasOwnProperty(spid)) {
               try {
                 delete clientSpidMapping[spid];
-                
-        let myUTCString = new Date().toUTCString();
-        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+
+                let myUTCString = new Date().toUTCString();
+                const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 let updateConnection = await db.excuteQuery('update WhatsAppWeb set updated_at = ? where connected_id =? and spid=? and is_deleted !=1', [updated_at, phoneNo, spid])
                 // kill the cycle with pid and sign = 'SIGINT' 
                 console.log("Kill[spid]", clientPidMapping[spid])
@@ -295,10 +299,12 @@ SET msg_status = 1
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL); `
-           // console.log(smsdelupdate)
+
+     let ack1InId = await db.excuteQuery(notifyInteraction,[phoneNumber, spid])
+            // console.log(smsdelupdate)
             let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
-          //  console.log("send", sended?.affectedRows)
-            notify.NotifyServer(phoneNo, true)
+            //  console.log("send", sended?.affectedRows)
+            notify.NotifyServer(phoneNo, false, ack1InId[0]?.InteractionId)
 
 
           } else if (ack == '2') {
@@ -311,11 +317,12 @@ SELECT InteractionId FROM Interaction
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1); `
             //console.log(smsdelupdate)
             let deded = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
-          //  console.log("deliver", deded?.affectedRows)
-            notify.NotifyServer(phoneNo, true)
-
+            //  console.log("deliver", deded?.affectedRows)
+           // notify.NotifyServer(phoneNo, true)
+           let ack2InId = await db.excuteQuery(notifyInteraction,[phoneNumber, spid])
+           notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId)
           } else if (ack == '3') {
-          //  console.log("read")
+            //  console.log("read")
             let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2';
             let campaignRead = await db.excuteQuery(campaignReadQuery, [phoneNumber])
             const smsupdate = `UPDATE Message
@@ -323,10 +330,12 @@ SET msg_status = 3
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? and SP_ID=? and isDeleted !=1 AND isBlocked !=1)) and is_deleted !=1  AND (msg_status =2 OR msg_status = 1);`
-          //  console.log(smsupdate)
+            //  console.log(smsupdate)
             let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
-         //   console.log("read", resd?.affectedRows)
-            notify.NotifyServer(phoneNo, true)
+            //   console.log("read", resd?.affectedRows)
+           // notify.NotifyServer(phoneNo, true)
+           let ack3InId = await db.excuteQuery(notifyInteraction,[phoneNumber, spid])
+           notify.NotifyServer(phoneNo, false, ack3InId[0]?.InteractionId)
           }
 
 
@@ -365,7 +374,15 @@ function getCircularReplacer() {
   };
 }
 
+function whatsappWebStatus() {
+console.log("undefinedCount",undefinedCount)
+  if (undefinedCount >= 2) {
+    return false;
+  } else {
+    return true;
+  }
 
+}
 
 function isActiveSpidClient(spid) {
   console.log("clientSpidMapping[spid]", spid, clientSpidMapping)
@@ -439,7 +456,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       console.log("not avilable")
     }
     if (type === 'text') {
-      
+
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
@@ -643,8 +660,8 @@ async function savelostChats(message, spPhone, spid) {
     let getLastScannedTime = await db.excuteQuery(messageQuery, [endCustomer, spid]);
     // console.log(getLastScannedTime)
     var d = new Date(message.timestamp * 1000).toUTCString();
-   
-      const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+
+    const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
 
     // console.log(d,new Date( getLastScannedTime[0]?.latest_message_created_date) < new Date(d) , getLastScannedTime[0]?.latest_message_created_date)
     if ((d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0)) {
@@ -667,7 +684,7 @@ async function savelostChats(message, spPhone, spid) {
 
       if (from != 'status@broadcast') {
 
-console.log("lost messages time",d)
+        console.log("lost messages time", d)
         let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time);
 
       }
@@ -707,7 +724,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
     var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WhatsApp Web', timestramp]);
     notify.NotifyServer(display_phone_number, true);
- //    console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
+    //    console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
 
 
   }
@@ -781,7 +798,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var newId = extractedData.newId
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData?.newlyInteractionId
-    console.log("in messages", from, false,"interaction id", newId, display_phone_number)
+    console.log("in messages", from, false, "interaction id", newId, display_phone_number)
     notify.NotifyServer(display_phone_number, false, newId)
 
     let defaultQuery = 'select * from defaultActions where spid=?';
@@ -803,4 +820,4 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
 
 
-module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel }
+module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel,whatsappWebStatus }
