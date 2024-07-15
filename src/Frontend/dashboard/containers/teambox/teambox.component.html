@@ -16,7 +16,7 @@
 	<!-- filter-popup -->
 				<div class="custom_row pt-3">
 					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
-						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search by Name or Phone No."
+						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" [placeholder]="searchFocused ? 'Search by Name or Phone No.' : 'Search'" 
 						aria-label="Search" aria-describedby="basic-addon2" />
 
 
@@ -84,7 +84,7 @@
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
 											<p *ngIf="item.LastMessageDate" class="time">{{getTime(item.LastMessageDate)}}</p>
-											<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
+											<!-- <span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span> -->
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<div class="image-container">
 											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
@@ -256,7 +256,7 @@
 									<div class="image-container">
 									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg" style="cursor:pointer;">
 									<div class="hover-text" >{{message.assignAgent ==-2 ?'Automation':'Campaign'}}</div>
-									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg">
+									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg" style="cursor:pointer;">
 								</div>
 									<div class="content" (mouseover)="markItRead()">
 										<div *ngIf="message.message_media" class="message_media">

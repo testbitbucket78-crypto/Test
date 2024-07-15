@@ -64,7 +64,7 @@ columnDefs: ColDef[] = [
       width: 50,
       lockPosition: 'left',
       cellClass: 'locked-col',
-      pinned: 'left',  
+      suppressMovable: true,  
     //cellStyle: { background: "#FBFAFF" },
   },
   {
@@ -1364,17 +1364,5 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     gotoPage(page: any) {
         this.GridService.gotoPage(page, this.gridapi, this.rowData)
     }
-  
-    testFunc(){
-      let isSame
-      let arr1 = ['a','b','c']
-let arr2 = ['b','c','a']
-for (let item1 of arr1) {
-      for (let item2 of arr2) {
-        isSame = item1 == item2 ? true : false
-      }
-    }
-    
-    console.log(isSame);
-    }
+
 }

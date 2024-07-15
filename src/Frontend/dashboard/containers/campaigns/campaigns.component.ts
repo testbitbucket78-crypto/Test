@@ -536,7 +536,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				item['reportSeenLength'] =item.report_seen?JSON.parse(item.report_seen).length:0
 				item['reportRepliedLength'] =item.report_replied?JSON.parse(item.report_replied).length:0
 				console.log(item)
-
+                this.statusUpdate(CampaignID, item.status_label);
 				this.selectedCampaign = item
 				console.log("item**")
 				if(item.status>1){
@@ -547,7 +547,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 
 	}
-
+	statusUpdate(id:number,status:string){
+		const campaign = this.allCampaign.find((x: any) => x.Id === id);
+		if (campaign) {
+			campaign.status_label = status;
+		} else {
+			console.error(`Campaign with id ${id} not found.`);
+		}
+		
+	}
 	async getCampaignMessages(CampaignId:any){
 		await this.apiService.getCampaignMessages(CampaignId).subscribe((responseData:any )=>{
 			let allMessage:any= responseData
@@ -1341,7 +1349,7 @@ formateDate(dateTime:string){
 	closeConfirmModal(){
 		this.modalReference2.close();
 	}
-	async ConfirmScheduleClose (action:any){
+	async ConfirmScheduleClose (action:any){	
 		this.closeAllModal();
 		this.modalReference2.close();
 		//this.modalReference.close('addNewCampaign');
