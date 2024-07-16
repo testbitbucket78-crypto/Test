@@ -958,7 +958,7 @@
 			</div>
 			<div class="input_group_btn">
 				<button type="button" class="cancel-btn" aria-label="Close" (click)="closeAttributeOption('cancel',addNewCampaign)">Cancel</button>
-				<button type="button" class="submit-btn" aria-label="Close" (click)="closeAttributeOption('save',addNewCampaign)">Done</button>
+				<button type="button" class="submit-btn" aria-label="Close" [disabled]="!selectedAttribute" (click)="closeAttributeOption('save',addNewCampaign)">Done</button>
 			</div>
 
 		</div>
