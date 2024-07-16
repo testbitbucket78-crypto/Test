@@ -64,7 +64,7 @@ columnDefs: ColDef[] = [
       width: 50,
       lockPosition: 'left',
       cellClass: 'locked-col',
-      //pinned: 'left',  
+      suppressMovable: true,  
     //cellStyle: { background: "#FBFAFF" },
   },
   {

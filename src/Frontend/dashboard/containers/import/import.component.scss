@@ -158,16 +158,20 @@
     padding: 18px 23px 24px 18px;
     // padding: 17px;
     // width: 265px;
+    .overflow-container {
+        max-height: 222px; 
+        overflow-y: auto;
+        padding-right: 15px; 
+      }
 }
 
 .box3 p {
     font-size: 10px;
     color: #7A86A1;
-    height: 220px;
-    overflow: scroll;
-    overflow-x: hidden;
+    height: 222px;
+    // overflow: scroll;
+    // overflow-x: hidden;
     font-weight: 400;
-    margin: 0px 23px;
     letter-spacing: 0.2px;
 }
 
@@ -665,6 +669,7 @@ span {
 
 .toggle-disabled-slider {
      background-color: #F6EFFF !important;
+     cursor: default !important;
 }
 
 // input styling
@@ -943,6 +948,14 @@ span {
 
 .import-body{
     height: calc(100% - 140px);
+    .fs-15 {
+        font-size: 15px;
+      }
+      
+      .fw-600 {
+        font-weight: 600;
+      }
+
 }
 
 * ::-webkit-scrollbar-track{
@@ -1024,5 +1037,14 @@ span {
             font-size: 13px;
         }
     }
+ }
+ #worksa {
+    .note-text {
+        font-weight: bold;
+        font-size: 12px 
     }
-
+    .bold-text {
+        font-weight: bold;
+        font-size: 12px  
+    }
+}

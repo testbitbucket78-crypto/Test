@@ -162,9 +162,13 @@ warningMessage = '';
     // If data is updated
     if(!isSame){
       $("#confirmModal").modal('show');
+      $("#workingHourModal").modal('hide');
     } else{
       $("#workingHourModal").modal('hide');
     }
+  }
+  openModal(): void {
+    $("#workingHourModal").modal('show');
   }
 
     saveHolidayDetails(){
