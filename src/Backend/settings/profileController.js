@@ -83,7 +83,7 @@ const changePassword = async (req, res) => {
             if (hash == false) {
                 res.status(401).send({
                     msg: 'Old  Password is wrong !',
-                    status: 401
+                    status: 403
                 });
             }
             else {

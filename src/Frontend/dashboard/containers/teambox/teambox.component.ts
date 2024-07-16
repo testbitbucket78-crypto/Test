@@ -1096,7 +1096,12 @@ sendattachfile() {
 	async updateInteraction(id:any){		
 		let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == id);
 		if(idx >-1){
-			await this.getMessageData(this.interactionList[idx],true);
+			console.log(this.interactionList);
+			if(this.interactionList[idx]['messageList'])
+				await this.getMessageData(this.interactionList[idx],true);
+			else
+				this.getInteractionDataById(idx)
+			console.log(this.interactionList);
 			setTimeout(()=>{
 			let item = this.interactionList[idx];
 			let count =0;
@@ -1339,11 +1344,11 @@ sendattachfile() {
 			let val1 = messageList?messageList:[];
 			if(isNewMessage){
 				val.forEach(childObj => {
-					const parentObjIndex = item['messageList'].findIndex((parentObj:any) => parentObj.date === childObj.date);
+					const parentObjIndex = item['messageList']?.findIndex((parentObj:any) => parentObj.date === childObj.date);
 					if (parentObjIndex !== -1) {
 					  item['messageList'][parentObjIndex].items = [...item['messageList'][parentObjIndex].items, ...childObj.items];
 					} else {
-					  item['messageList'].push(childObj);
+					  item['messageList']?.push(childObj);
 					}
 				})
 				item['allmessages'].push(...val1);
@@ -1786,11 +1791,11 @@ counter(i: number) {
 
 filterInteraction(filterBy:any){
 	this.selectedInteraction=[]
-	if(filterBy != 'All'){
-		this.getFilteredInteraction(filterBy)
-	}else{
-		this.getAllInteraction(false);
-	}
+	// if(filterBy != 'All'){
+	// 	this.getFilteredInteraction(filterBy)
+	// }else{
+	// 	this.getAllInteraction(false);
+	// }
 	this.interactionFilterBy=filterBy
 	this.getAllInteraction(false);
 	this.ShowFilerOption =false;
@@ -2338,6 +2343,7 @@ createCustomer() {
 	this.newContact.value.Channel = this.selectedChannel;
 	this.newContact.value.OptedIn = this.OptedIn;
 	var bodyData = this.newContact.value;
+	bodyData['isTemporary']=1;
 	console.log(bodyData);
 		if(this.newContact.valid) {
 			if(this.OptedIn == 'Yes') {
@@ -2427,6 +2433,7 @@ updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
 			this.apiService.getInteractionMapping(InteractionId).subscribe(mappingList =>{
 				var mapping:any  = mappingList;
 				this.selectedInteraction['assignTo'] =mapping?mapping[mapping.length - 1]:'';
+				this.selectedInteraction['assignAgent'] =mapping && mapping?.length>0?mapping[mapping.length - 1]?.name:'';
 			})
 		
 		});
