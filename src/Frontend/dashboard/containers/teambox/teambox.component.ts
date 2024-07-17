@@ -2375,6 +2375,7 @@ createCustomer() {
 					async (response:any) => {
 						var responseData: any = response;
 						var insertId: any = responseData.insertId;
+						$("#contactadd").modal('hide');
 						if (insertId) {
 							this.createInteraction(insertId);
 							this.newContact.reset();
