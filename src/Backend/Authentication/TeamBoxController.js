@@ -270,9 +270,9 @@ const updateInteraction = async (req, res) => {
     if (req.body.Status && req.body.Status != '') {
         let myUTCString = new Date().toUTCString();
         const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
+        let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID,Type) values (?,?,?,?,?,?)`
 
-        let actions = await db.excuteQuery(actionQuery, [req.body.interactionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID])
+        let actions = await db.excuteQuery(actionQuery, [req.body.InteractionId , req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID,'text'])
         var updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' WHERE InteractionId =" + req.body.InteractionId
     }
     if (req.body.AutoReply && req.body.AutoReply != '') {
@@ -797,9 +797,9 @@ const updateInteractionMapping = async (req, res) => {
     }
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
+    let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID,Type) values (?,?,?,?,?,?)`
 
-    let actions = await db.excuteQuery(actionQuery, [req.body.interactionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID])
+    let actions = await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID,'text'])
 
     db.runQuery(req, res, val.updateInteractionMapping, [values])
 }
