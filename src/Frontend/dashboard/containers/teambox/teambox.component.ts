@@ -2887,4 +2887,8 @@ sendMessage(){
 		else 
 			return '';
 	  }
+	
+	  isHttpOrHttps(text: string): boolean {
+		return text.startsWith('http://') || text.startsWith('https://');
+	  }	
 }

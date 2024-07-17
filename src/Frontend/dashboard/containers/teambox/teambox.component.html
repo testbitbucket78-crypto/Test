@@ -281,9 +281,22 @@
 
 
 										</div>
-										<div class="message_text" [innerHTML]="message.message_text | sanitizeHtml">
+										<div class="message_text">
+											<ng-container *ngIf="isHttpOrHttps(message.message_text); else plainText">
+											  <a [href]="message.message_text" target="_blank" class="isLink">
+												{{ message.message_text }}
+											  </a>
+											</ng-container>
+											<ng-template #plainText>
+											  <div [innerHTML]="message.message_text | sanitizeHtml">
+											       <button *ngIf="!showFullMessage && message.message_text.length> maxLength" 
+													(click)="toggleShowFullMessage()">Read More</button>
+												</div>
+											</ng-template>
+										  </div>
+										<!-- <div class="message_text" [innerHTML]="message.message_text | sanitizeHtml">
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
-										</div>
+										</div> -->
 										<div [ngClass]="{'message_box_container':message.media_type}">
 											<!-- <span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span> -->
 										
@@ -1170,7 +1183,7 @@ popupWidth='250px' popupHeight='200px'>
 							<div class="modal-footer" style="border: none;">
 								<div class="input_group_btn">
 									<button type="button" class="cancel-btn" aria-label="Close" (click)="closeVariableOption()">Cancel</button>
-									<button type="button" class="submit-btn" aria-label="Close" (click)="SaveVariableOption()">Done</button>
+									<button type="button" class="submit-btn" aria-label="Close" (click)="SaveVariableOption()" [disabled]="!selectedAttribute">Done</button>
 								</div>
 							</div>
 						</div>
