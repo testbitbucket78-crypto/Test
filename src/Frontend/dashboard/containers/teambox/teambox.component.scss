@@ -896,6 +896,27 @@ img.no-dp {
     word-break: break-word;
 }
 
+::ng-deep .content .message_text .e-rte-anchor {
+    font-style: italic;
+    color: white !important;
+    text-decoration: underline !important;
+}
+
+::ng-deep .content .message_text .e-rte-anchor:hover {
+    color: orange !important;
+    font-style: italic;
+}
+    .isLink {
+        font-style: italic;
+        color: #000 !important;
+        text-decoration: underline !important;
+      }
+      
+      .isLink:hover {
+        font-style: italic;
+        color: orange !important;
+      }
+      
 .message_box .content span.message_time {
     margin: 0;
     padding: 0;

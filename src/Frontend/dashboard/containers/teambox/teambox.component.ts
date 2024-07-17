@@ -2919,6 +2919,10 @@ sendMessage(){
 		else 
 			return '';
 	  }
+	
+	  isHttpOrHttps(text: string): boolean {
+		return text.startsWith('http://') || text.startsWith('https://');
+	  }	
 
 	  getWhatsAppDetails() {
 		this.settingService.getWhatsAppDetails(this.SPID)

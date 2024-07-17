@@ -697,9 +697,11 @@ onSelectAll(items: any) {
         else if(item.type =='Multi Select'){
           let values =''
           console.log(this.productForm.get(item.ActuallName)?.value)
+          if(values){
           this.productForm.get(item.ActuallName)?.value?.forEach((ite:any)=>{
             values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
           })
+           }
           console.log(values);
           ContactFormData.result.push({displayName:values,ActuallName:item.ActuallName});
         }
@@ -946,7 +948,7 @@ deletContactByID(data: any) {
       this.productForm.get('tag')?.setValue(selectedTags); 
       let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
       if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
-        this.productForm.get(prop)?.setValue(new Date(value));
+        this.productForm.get(prop)?.setValue(value);
       }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
         let val = value ? value.split(':')[0] : '';
         console.log(val);

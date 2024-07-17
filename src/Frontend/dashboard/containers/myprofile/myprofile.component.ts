@@ -355,7 +355,7 @@ toggleActiveState(checked: boolean) {
         },
 
         (error: any) => {
-          if (error.status === 401) {
+          if (error.status === 403) {
             this.showToaster('! Current Password does not match', 'error');
           }
         },
