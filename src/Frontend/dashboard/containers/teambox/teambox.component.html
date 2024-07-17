@@ -100,7 +100,7 @@
 
 								</div>
 
-								<div class="contacts_list mt-2">
+								<div class="contacts_list mt-2" *ngIf="item?.interaction_status =='Open'">
 									<div class="contacts_left">
 										<p  class="assigned_to">Assigned To</p>
 										<div  class="assigned_to_btn">
@@ -281,8 +281,8 @@
 
 
 										</div>
-										<div class="message_text" [innerHTML]="message.message_text | sanitizeHtml">
-											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
+										<div class="message_text" [innerHTML]="message?.message_text | sanitizeHtml">
+											<button *ngIf="!showFullMessage && message?.message_text?.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
 										</div>
 										<div [ngClass]="{'message_box_container':message.media_type}">
 											<!-- <span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span> -->
