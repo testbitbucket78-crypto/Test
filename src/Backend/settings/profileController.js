@@ -81,7 +81,7 @@ const changePassword = async (req, res) => {
 
             console.log(hash)
             if (hash == false) {
-                res.status(401).send({
+                res.status(403).send({
                     msg: 'Old  Password is wrong !',
                     status: 403
                 });
