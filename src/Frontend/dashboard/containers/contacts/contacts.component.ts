@@ -64,7 +64,7 @@ columnDefs: ColDef[] = [
       width: 50,
       lockPosition: 'left',
       cellClass: 'locked-col',
-      pinned: 'left',  
+      suppressMovable: true,  
     //cellStyle: { background: "#FBFAFF" },
   },
   {
@@ -697,9 +697,11 @@ onSelectAll(items: any) {
         else if(item.type =='Multi Select'){
           let values =''
           console.log(this.productForm.get(item.ActuallName)?.value)
-          this.productForm.get(item.ActuallName)?.value.forEach((ite:any)=>{
+          if(values){
+          this.productForm.get(item.ActuallName)?.value?.forEach((ite:any)=>{
             values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
           })
+           }
           console.log(values);
           ContactFormData.result.push({displayName:values,ActuallName:item.ActuallName});
         }
@@ -746,7 +748,7 @@ console.log(this.contactId)
   if(this.contactId) {
     this.apiService.editContact(contactData, this.contactId, this.spid).subscribe(
       (response: any) => {
-      if(response.status === 200) {
+      if(response) {
         this.productForm.reset();
         this.productForm.clearValidators();
         this.resetForm();
@@ -946,7 +948,7 @@ deletContactByID(data: any) {
       this.productForm.get('tag')?.setValue(selectedTags); 
       let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
       if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
-        this.productForm.get(prop)?.setValue(new Date(value));
+        this.productForm.get(prop)?.setValue(value);
       }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
         let val = value ? value.split(':')[0] : '';
         console.log(val);
@@ -1046,6 +1048,18 @@ deletContactByID(data: any) {
     const searchTerm = searchInput.value.trim().toLowerCase();
     this.gridapi.setQuickFilter(searchTerm);
     this.contacts = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
+  }
+
+  onFocus() {
+    const searchInput = document.querySelector('.search-container')
+    if (searchInput)
+      searchInput.classList.add('focused');
+  }
+
+  onBlur() {
+    const searchInput = document.querySelector('.search-container')
+    if (searchInput)
+      searchInput.classList.remove('focused');
   }
   
 
@@ -1309,6 +1323,17 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     }
   }
 
+  getSplitMultiSelect(val:any){
+      let selectName = val?.split(',');
+      let names ='';
+      selectName.forEach((it:any)=>{
+                    let name = it.split(':');
+                    console.log(name);
+                    names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
+  })
+  return names;
+  }
+
   openFilters(){
     this.isShowFilter = true;
     this.changingValue.next(true);
@@ -1352,5 +1377,5 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     gotoPage(page: any) {
         this.GridService.gotoPage(page, this.gridapi, this.rowData)
     }
-  
+
 }

@@ -37,81 +37,12 @@ export class ContactFilterComponent implements OnInit {
 		{label:'Is',checked:false,type:'select',options:['Empty']},
 		{label:'Is not',checked:false,type:'select',options:['Empty']},
 	    ]},
-		// {value:'status',label:'status',checked:false,addeFilter:[],
-		// option:[
-		// {label:'Is',checked:false,type:'select',options:['Premium','Other']},
-		// {label:'Is not',checked:false,type:'select',options:['Premium','Other']},
-		// ]},
-		// {value:'channel',label:'channel',checked:false,addeFilter:[],
-		// option:[
-		// {label:'Is',checked:false,type:'select',options:['WhatsApp','Other']},
-		// {label:'Is not',checked:false,type:'select',options:['WhatsApp','Other']},
-		// ]},
 		{value:'tag',label:'Tag',checked:false,addeFilter:[],
 		option:[
-		{label:'Is',checked:false,type:'select',options:['Paid','Un-Paid','New Customer']},
-		{label:'Is not',checked:false,type:'select',options:['Paid','Un-Paid','New Customer']},
+		{label:'Is',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+		{label:'Is not',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
 		]},
 		
-		// {value:'sex',label:'sex',checked:false,addeFilter:[],
-		// option:[
-		// {label:'Is',checked:false,type:'select',options:['Male','Female','Transgender']},
-		// {label:'Is not',checked:false,type:'select',options:['Male','Female','Transgender']}
-	    // ]},
-		// {value:'age',label:'age',checked:false,addeFilter:[],
-		// option:[
-		// {label:'Is',checked:false,type:'number'},
-		// {label:'Is not',checked:false,type:'number'},
-		// {label:'Less Then',checked:false,type:'number'},
-		// {label:'Greater Then',checked:false,type:'number'}
-	    // ]},
-		// {value:'address',label:'address',checked:false,addeFilter:[],
-		// option:[
-		// 	{label:'Contains',checked:false,type:'text'},
-		// 	{label:'Does Not Contain',checked:false,type:'text'},
-		// 	{label:'Starts with',checked:false,type:'text'},
-		// 	{label:'End with',checked:false,type:'text'},
-		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
-		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
-			
-	    // ]},
-		
-		// {value:'city',label:'city',checked:false,addeFilter:[],
-		// option:[
-		// 	{label:'Contains',checked:false,type:'text'},
-		// 	{label:'Does Not Contain',checked:false,type:'text'},
-		// 	{label:'Starts with',checked:false,type:'text'},
-		// 	{label:'End with',checked:false,type:'text'},
-		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
-		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    // ]},
-		// {value:'state',label:'state',checked:false,addeFilter:[],
-		// option:[
-		// 	{label:'Contains',checked:false,type:'text'},
-		// 	{label:'Does Not Contain',checked:false,type:'text'},
-		// 	{label:'Starts with',checked:false,type:'text'},
-		// 	{label:'End with',checked:false,type:'text'},
-		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
-		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    // ]},
-		// {value:'pincode',label:'Pincode',checked:false,addeFilter:[],
-		// option:[
-		// 	{label:'Contains',checked:false,type:'text'},
-		// 	{label:'Does Not Contain',checked:false,type:'text'},
-		// 	{label:'Starts with',checked:false,type:'text'},
-		// 	{label:'End with',checked:false,type:'text'},
-		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
-		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    // ]},
-		// {value:'country',label:'country',checked:false,addeFilter:[],
-		// option:[
-		// 	{label:'Contains',checked:false,type:'text'},
-		// 	{label:'Does Not Contain',checked:false,type:'text'},
-		// 	{label:'Starts with',checked:false,type:'text'},
-		// 	{label:'End with',checked:false,type:'text'},
-		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
-		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    // ]},
 		{value:'OptInStatus',label:'OptInStatus',checked:false,addeFilter:[],
 		option:[
 		{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
@@ -143,7 +74,9 @@ export class ContactFilterComponent implements OnInit {
   filteredEndCustomer:any=[];
   filteredEndCustomerOrigional:any=[];
   modalReference: any;
-	SPID = sessionStorage.getItem('SP_ID');
+  customFieldData:[] = [];
+  tag:any;
+	SPID:any = sessionStorage.getItem('SP_ID');
 	@ViewChild('addNewItemss', { static: true }) modalContent: TemplateRef<any> | undefined;
 	@Output() query = new EventEmitter<string> () ;
 	@Output() closeFilterPopup = new EventEmitter<string>();
@@ -156,11 +89,98 @@ export class ContactFilterComponent implements OnInit {
 		this.openPopup.subscribe(v => { 
 			this.modalReference = this.modalService.open(this.modalContent,{size: 'xl', windowClass:'white-bg'});
 		  });
-		
+		  this.getTagData();
+		this.getCustomFieldsData();
 		this.addNewFilters(this.contactFilterBy);
 	}
 
-  
+    getCustomFieldsData() {
+		this._settingsService.getNewCustomField(this.SPID).subscribe(response => {
+		  this.customFieldData = response.getfields;
+		  console.log(this.customFieldData);  
+		  const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+		  if(this.customFieldData){
+			 const filteredFields:any = this.customFieldData?.filter(
+				(field:any) => !defaultFieldNames.includes(field.ActuallName) && field.status ==1 );
+				console.log(filteredFields);  
+		filteredFields.forEach((item:any)=>{
+			let options:any;
+			switch(item?.type){
+				case 'Date':{
+					 options =[
+						{label:'Is',checked:false,type:'datetime'},
+						{label:'Is not',checked:false,type:'datetime'},
+						{label:'Between',checked:false,type:'d_datetime'},
+						{label:'After',checked:false,type:'date'},
+						{label:'Before',checked:false,type:'date'}
+						];
+				}
+				case 'Switch':{
+					options =[
+						{label:'Is',checked:false,type:'select',options:['Yes','No']},
+						{label:'Is not',checked:false,type:'select',options:['Yes','No']}
+					];
+				}
+				case 'text':{
+					 options =[
+						{label:'Contains',checked:false,type:'text'},
+						{label:'Does Not Contain',checked:false,type:'text'},
+						{label:'Starts with',checked:false,type:'text'},
+						{label:'End with',checked:false,type:'text'},
+						{label:'Is',checked:false,type:'select',options:['Empty']},
+						{label:'Is not',checked:false,type:'select',options:['Empty']},
+						]
+				}
+				case 'Number':{
+					options =[
+					   {label:'Contains',checked:false,type:'text'},
+					   {label:'Does Not Contain',checked:false,type:'text'},
+					   {label:'Starts with',checked:false,type:'text'},
+					   {label:'End with',checked:false,type:'text'},
+					   {label:'Is',checked:false,type:'select',options:['Empty']},
+					   {label:'Is not',checked:false,type:'select',options:['Empty']},
+					   ]
+			   }
+				case 'Select':{
+					let selectOptions = JSON.parse(item?.dataTypeValues);
+					options =[
+						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
+						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+					];
+				}
+				case 'Multi Select':{
+					let selectOptions = JSON.parse(item?.dataTypeValues);
+					options =[
+						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
+						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+					];
+				}
+			}			
+			this.contactFilterBy.push({value:item?.ActuallName,label:item?.displayName,checked:false,addeFilter:[],option:options});
+			console.log(this.contactFilterBy);
+		  })
+		}
+		})
+	  }
+
+	  getTagData() {
+		this._settingsService.getTagData(this.SPID).subscribe(result => {
+		  if (result) {
+			  let tagListData = result.taglist;
+			  this.tag = tagListData.map((tag:any,index:number) => ({
+				  id: tag.ID, 
+				  optionName: tag.TagName
+			  }));
+			  let idx = this.contactFilterBy.findIndex((item:any)=> item.value =='tag');
+			  if(idx !=-1){
+				this.contactFilterBy[idx].option.forEach((item:any)=>{
+					item.options= this.tag;
+				})
+			  }
+			}
+			});
+	}
+
   toggleContactFilter(){
 		this.showContactFilter=!this.showContactFilter
 	  }
@@ -176,11 +196,11 @@ export class ContactFilterComponent implements OnInit {
 		// }
 		this.ContactListNewFilters[index]['filterPrefix'] = filter.label;
 		// let newFilter:any=[];
-		// newFilter['filterBy'] = filter['option']['0'].label
-		// newFilter['filterType'] = filter['option']['0'].type
-		// newFilter['selectedOptions'] = filter['option']['0'].options
-		// newFilter['filterPrefix'] = filter.label
-		// newFilter['filterValue']='';
+		this.ContactListNewFilters[index]['filterBy'] = filter['option']['0'].label
+		this.ContactListNewFilters[index]['filterType'] = filter['option']['0'].type
+		this.ContactListNewFilters[index]['selectedOptions'] = filter['option']['0'].options
+		this.ContactListNewFilters[index]['filterPrefix'] = filter.label
+		this.ContactListNewFilters[index]['filterValue']='';
 		// if(addeFilter.length>0){
 		// newFilter['filterOperator']='AND';
 		// }

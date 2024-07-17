@@ -130,7 +130,7 @@
                 <!-- </form> -->
             </div>
             <div class="modal-footer sticky-footer">
-                <button type="button" class="account-btn" (click)="saveWorkingDetails()">Save</button>
+                <button type="button" class="account-btn" (click)="ValidateWorkingDetails()">Save</button>
             </div>
         </div>
     </div>
@@ -166,6 +166,21 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="account-btn" (click)="saveHolidayDetails()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade confirmModal" tabindex="-1" id="confirmModal" data-bs-backdrop="static" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content confirm-token-modal">
+            <div class="modal-body alertmessage">
+                <p class="label pb-2">Are you sure you want to save?</p>
+                <div class="input_group_btn">
+                    <button type="button" class="cancel-btn" aria-label="Close"
+                        data-bs-dismiss="modal" (click)="openModal()">Cancel</button>
+                    <button type="button" class="delete-btn" aria-label="Close" 
+                        data-bs-dismiss="modal" (click)="saveWorkingDetails()">Yes</button>
+                </div>
             </div>
         </div>
     </div>

@@ -16,7 +16,7 @@
 	<!-- filter-popup -->
 				<div class="custom_row pt-3">
 					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
-						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" placeholder="Search by Name or Phone No."
+						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" [placeholder]="searchFocused ? 'Search by Name or Phone No.' : 'Search'" 
 						aria-label="Search" aria-describedby="basic-addon2" />
 
 
@@ -54,6 +54,9 @@
 				</div>
 				<div>
 					<div class="all_contacts">
+						<div *ngIf="interactionList.length === 0" class="not-found-message">
+							No Conversation here!
+						</div>
 						<div *ngFor="let item of interactionList; let i = index" id={{i}}
 							(click)="selectInteraction(i)"
 							[ngClass]="item.selected ? 'contacts_row active' : 'contacts_row'">
@@ -71,17 +74,17 @@
 											<div class="profile_icon_no-dp">{{settingService.getInitials(item.Name)}}</div>
 										<div class="contacts_detail">
 											<p class="name">{{item.Name}}</p>
-											<div *ngIf="item.message_text" class="message"
+											<div *ngIf="item.message_text && item?.message_media =='text'" class="message"
 												[innerHTML]="limitCharacters(item.message_text) | sanitizeHtml">
 											</div>
-											<div  *ngIf="!item?.message_text && item?.message_media !='text'" class="message">{{getMediaType(item.message_media)}}</div>
+											<div  *ngIf="item?.message_media !='text'" class="message s">{{getMediaType(item.media_type)}}</div>
 										</div>
 									</div>
 									
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
-											<p *ngIf="item.lastMessage" class="time">{{getTime(item.LastMessageDate)}}</p>
-											<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
+											<p *ngIf="item.LastMessageDate" class="time">{{getTime(item.LastMessageDate)}}</p>
+											<!-- <span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span> -->
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<div class="image-container">
 											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
@@ -110,6 +113,7 @@
 											</div>
 										</div>
 									</div>
+									<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 								</div>
 							</div>
 						</div>
@@ -252,7 +256,7 @@
 									<div class="image-container">
 									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg" style="cursor:pointer;">
 									<div class="hover-text" >{{message.assignAgent ==-2 ?'Automation':'Campaign'}}</div>
-									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg">
+									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg" style="cursor:pointer;">
 								</div>
 									<div class="content" (mouseover)="markItRead()">
 										<div *ngIf="message.message_media" class="message_media">
@@ -277,9 +281,22 @@
 
 
 										</div>
-										<div class="message_text" [innerHTML]="message.message_text | sanitizeHtml">
+										<div class="message_text">
+											<ng-container *ngIf="isHttpOrHttps(message.message_text); else plainText">
+											  <a [href]="message.message_text" target="_blank" class="isLink">
+												{{ message.message_text }}
+											  </a>
+											</ng-container>
+											<ng-template #plainText>
+											  <div [innerHTML]="message.message_text | sanitizeHtml">
+											       <button *ngIf="!showFullMessage && message.message_text.length> maxLength" 
+													(click)="toggleShowFullMessage()">Read More</button>
+												</div>
+											</ng-template>
+										  </div>
+										<!-- <div class="message_text" [innerHTML]="message.message_text | sanitizeHtml">
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
-										</div>
+										</div> -->
 										<div [ngClass]="{'message_box_container':message.media_type}">
 											<!-- <span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span> -->
 										
@@ -387,8 +404,8 @@
 									(click)="toggleChatNotes('notes')">Notes</button>
 							</div>
 							<div class="input-area" (click)="checkPermission()" *ngIf="isRefresh">
-								<ejs-richtexteditor id="mention_integration" #mention_integration [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open')"  [toolbarSettings]='tools' [height]='100'
-								  placeholder="Enter Message" (actionBegin)="onActionBegin($event)">
+								<ejs-richtexteditor id="mention_integration" #mention_integration [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open') || (this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) "  [toolbarSettings]='tools' [height]='100'
+								  [placeholder]="(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) ? 'Select Template':'Enter Message'" (actionBegin)="onActionBegin($event)">
 								</ejs-richtexteditor>
 
 								<ejs-mention *ngIf="showChatNotes=='notes'" #mention [dataSource]='agentsList' target='#mention_integration_rte-edit-view' [fields]='fieldsData' [suggestionCount]="8" [showMentionChar]="false" [allowSpaces]="true"  
@@ -479,7 +496,7 @@ popupWidth='250px' popupHeight='200px'>
 											src="/assets/img/teambox/whatsapp-icon-l.svg"></span>
 								</div>
 
-								<div class="col-md-8 align-content-center">
+								<div class="col-md-8 align-content-center customized">
 									<h1>{{selectedInteraction.Name}}</h1>
 									<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
 									<p>Created Date:<span>{{getFormatedDate(selectedInteraction.InCreatedDate)}}</span></p>
@@ -1166,7 +1183,7 @@ popupWidth='250px' popupHeight='200px'>
 							<div class="modal-footer" style="border: none;">
 								<div class="input_group_btn">
 									<button type="button" class="cancel-btn" aria-label="Close" (click)="closeVariableOption()">Cancel</button>
-									<button type="button" class="submit-btn" aria-label="Close" (click)="SaveVariableOption()">Done</button>
+									<button type="button" class="submit-btn" aria-label="Close" (click)="SaveVariableOption()" [disabled]="!selectedAttribute">Done</button>
 								</div>
 							</div>
 						</div>

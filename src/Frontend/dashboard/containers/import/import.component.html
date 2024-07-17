@@ -71,7 +71,7 @@
 													<button *ngIf="!this.file" class="mb-1 uploadFile-btn">
 														<img class="px-2" src="../../../../assets/img/profile/upload.svg" />
 														<label class="m-0 uploadFile" for="uploadFile">
-															<input type="file" (change)="onUpload($event)" id="uploadFile" accept=".csv" />
+															<input type="file" (change)="onUpload($event)" id="uploadFile" accept=".csv,.xlsx" />
 															Browse files
 														</label>
 													</button>
@@ -85,7 +85,7 @@
 														(click)="download()">
 														<img src="../../../../assets/img/profile/download-file.svg" />
 														<label class="m-0 uploadFile pl-2" for="uploadFile">
-															Download sample
+															Download sample file
 														</label>
 													</button>
 												</div>
@@ -93,12 +93,13 @@
 										</div>
 									</div>
 									<div class="col-4 d-flex justify-content-start px-4">
-										<div class="d-flex">
-											<div class="box3 p-4">
-												<div class="box4 d-flex">
-													<img class="mr-2" src="../../../../assets/img/support/instraction.svg" />
-													<h6 class="m-0">Instructions</h6>
-												</div>
+										
+										<div class="d-flex flex-column">
+											<div class="d-flex align-items-center mb-2">
+												<h6 class="m-0 fs-15 fw-600">Instructions</h6>
+											  </div>
+											<div class="box3 p-3">
+												<div class="overflow-container">
 												<!-- <p><sb-read-more *ngFor="let t of text" [content]="t" [limit]="245" [completeWords]="true">		
 																							</sb-read-more></p> -->
 												<div class="import contact info_box">
@@ -112,6 +113,7 @@
 														<span>6. If your import purpose is Update Existing Contacts Only, you can also select Email ID as an identifier.</span>
 													</p>
 												</div>
+											</div>
 											</div>
 											<!-- <div>
 																							<label for="floatingSelectGrid">Message Opt-In</label>
@@ -146,19 +148,17 @@
 										<option value="Add and Update Contacts">Add and Update Contacts</option>
 									</select>
 								</div>
-								<span *ngIf="pure.value==='Add new contact only'" id="con">
+								<span *ngIf="pure.value==='Add new contact only'" id="con" style="white-space: nowrap;">
 									Adds only new contacts from the
-									CSV file.<br />
-									Existing contacts will not be affected.</span>
-								<span *ngIf="pure.value==='Update Existing Contacts Only'" id="con">
-									Update only existing
-									contacts with the 
-									values from<br /> the CSV file. New contacts will not be added.</span>
-								<span *ngIf="pure.value==='Add and Update Contacts'" id="con">
-									Update existing contacts with
-									the values from<br />the
-									CSV file, and add new contacts from the CSV file.</span><br>
-								<span *ngIf="Identifier==='Phone_number'" id="worksa">Phone Number works as identifier</span>
+									CSV file. Existing contacts will not be affected.</span>
+								<span *ngIf="pure.value==='Update Existing Contacts Only'" id="con" style="white-space: nowrap;">
+									Update only existing contacts with the values from the CSV file. New contacts will not be added.</span>
+								<span *ngIf="pure.value==='Add and Update Contacts'" id="con" style="white-space: nowrap;"> 
+									Update existing contacts with the values from the CSV file, and add new contacts from the CSV file.</span><br>
+								<span *ngIf="Identifier==='Phone_number'" id="worksa">
+									<span class="bold-text">Note: </span>
+								    <span class="note-text"> Phone Number works as identifier</span>
+								</span>
 							</div>
 							<div class="col-6">
 								<label for="floatingSelectGrid">Message Opt-In</label>
@@ -279,7 +279,9 @@
 														[disabled]="purpose==='Add new contact only' || !displayNameChecked[ith] || selectedCustomFields[ith] =='Phone_number'"
 														[(ngModel)]="toggleOverride[ith]">
 													<span [ngClass]="{'toggle-disabled-slider':purpose==='Add new contact only'
-													       || !displayNameChecked[ith]}" class="slider" >
+													       || !displayNameChecked[ith]}" class="slider" 
+														   [ngStyle]="{'cursor': selectedCustomFields[ith] == 'Phone_number' ? 'default' : 'pointer'}"
+														   >
 													</span>
 												</label>
 												<p [ngClass]="{'toggle-disabled':purpose==='Add new contact only'|| !displayNameChecked[ith]}" 

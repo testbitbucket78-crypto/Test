@@ -24,7 +24,7 @@ export class CampaignsComponent implements OnInit {
 
 	@ViewChild('filterby') filterby: ElementRef |undefined; 
    currDate = new Date();
-	SPID = sessionStorage.getItem('SP_ID');
+	SPID:any = sessionStorage.getItem('SP_ID');
 	showTopNav: boolean = true;
 	TeamLeadId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
 	AgentId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
@@ -191,8 +191,8 @@ export class CampaignsComponent implements OnInit {
 		// ]},
 		{value:'tag',label:'Tag',checked:false,addeFilter:[],
 		option:[
-		{label:'Is',checked:false,type:'select',options:['Paid','Un-Paid','New Customer']},
-		{label:'Is not',checked:false,type:'select',options:['Paid','Un-Paid','New Customer']},
+		{label:'Is',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+		{label:'Is not',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
 		]},
 		
 		// {value:'sex',label:'sex',checked:false,addeFilter:[],
@@ -289,6 +289,9 @@ export class CampaignsComponent implements OnInit {
 	isCampaignTiming: boolean = false;
 	workingData:any =[];
 	csvText:string ='';
+	
+	customFieldData:[] = [];
+	tag:[] =[];
 	 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
@@ -374,6 +377,97 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.getAttributeList()
 		//this.getAdditiionalAttributes();
 		this.processData();
+		this.getCustomFieldsData();
+		this.getTagData()
+		
+	}
+
+	
+    getCustomFieldsData() {
+		this._settingsService.getNewCustomField(this.SPID).subscribe(response => {
+		  this.customFieldData = response.getfields;
+		  console.log(this.customFieldData);  
+		  const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
+		  if(this.customFieldData){
+			 const filteredFields:any = this.customFieldData?.filter(
+				(field:any) => !defaultFieldNames.includes(field.ActuallName) && field.status ==1 );
+				console.log(filteredFields);  
+		filteredFields.forEach((item:any)=>{
+			let options:any;
+			switch(item?.type){
+				case 'Date':{
+					 options =[
+						{label:'Is',checked:false,type:'datetime'},
+						{label:'Is not',checked:false,type:'datetime'},
+						{label:'Between',checked:false,type:'d_datetime'},
+						{label:'After',checked:false,type:'date'},
+						{label:'Before',checked:false,type:'date'}
+						];
+				}
+				case 'Switch':{
+					options =[
+						{label:'Is',checked:false,type:'select',options:['Yes','No']},
+						{label:'Is not',checked:false,type:'select',options:['Yes','No']}
+					];
+				}
+				case 'text':{
+					 options =[
+						{label:'Contains',checked:false,type:'text'},
+						{label:'Does Not Contain',checked:false,type:'text'},
+						{label:'Starts with',checked:false,type:'text'},
+						{label:'End with',checked:false,type:'text'},
+						{label:'Is',checked:false,type:'select',options:['Empty']},
+						{label:'Is not',checked:false,type:'select',options:['Empty']},
+						]
+				}
+				case 'Number':{
+					options =[
+					   {label:'Contains',checked:false,type:'text'},
+					   {label:'Does Not Contain',checked:false,type:'text'},
+					   {label:'Starts with',checked:false,type:'text'},
+					   {label:'End with',checked:false,type:'text'},
+					   {label:'Is',checked:false,type:'select',options:['Empty']},
+					   {label:'Is not',checked:false,type:'select',options:['Empty']},
+					   ]
+			   }
+				case 'Select':{
+					let selectOptions = JSON.parse(item?.dataTypeValues);
+					options =[
+						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
+						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+					];
+				}
+				case 'Multi Select':{
+					let selectOptions = JSON.parse(item?.dataTypeValues);
+					options =[
+						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
+						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+					];
+				}
+			}			
+			this.contactFilterBy.push({value:item?.ActuallName,label:item?.displayName,checked:false,addeFilter:[],option:options});
+			console.log(this.contactFilterBy);
+		  })
+		}
+		})
+	  }
+
+	  getTagData() {
+		this._settingsService.getTagData(this.SPID).subscribe(result => {
+		  if (result) {
+			  let tagListData = result.taglist;
+			  this.tag = tagListData.map((tag:any,index:number) => ({
+				  id: tag.ID, 
+				  optionName: tag.TagName
+			  }));
+			  let idx = this.contactFilterBy.findIndex((item:any)=> item.value =='tag');
+			  if(idx !=-1){
+				this.contactFilterBy[idx].option.forEach((item:any)=>{
+					item.options= this.tag;
+				})
+			  }
+			}
+			});
 	}
 	getAdditiionalAttributes(){
 		this.apiService.getAdditiionalAttributes(this.SPID).subscribe(allAttributes =>{
@@ -536,7 +630,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				item['reportSeenLength'] =item.report_seen?JSON.parse(item.report_seen).length:0
 				item['reportRepliedLength'] =item.report_replied?JSON.parse(item.report_replied).length:0
 				console.log(item)
-
+                this.statusUpdate(CampaignID, item.status_label);
 				this.selectedCampaign = item
 				console.log("item**")
 				if(item.status>1){
@@ -547,7 +641,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 
 	}
-
+	statusUpdate(id:number,status:string){
+		const campaign = this.allCampaign.find((x: any) => x.Id === id);
+		if (campaign) {
+			campaign.status_label = status;
+		} else {
+			console.error(`Campaign with id ${id} not found.`);
+		}
+		
+	}
 	async getCampaignMessages(CampaignId:any){
 		await this.apiService.getCampaignMessages(CampaignId).subscribe((responseData:any )=>{
 			let allMessage:any= responseData
@@ -742,11 +844,11 @@ formateDate(dateTime:string){
 		// }
 		this.ContactListNewFilters[index]['filterPrefix'] = filter.label;
 		// let newFilter:any=[];
-		// newFilter['filterBy'] = filter['option']['0'].label
-		// newFilter['filterType'] = filter['option']['0'].type
-		// newFilter['selectedOptions'] = filter['option']['0'].options
-		// newFilter['filterPrefix'] = filter.label
-		// newFilter['filterValue']='';
+		this.ContactListNewFilters[index]['filterBy'] = filter['option']['0'].label
+		this.ContactListNewFilters[index]['filterType'] = filter['option']['0'].type
+		this.ContactListNewFilters[index]['selectedOptions'] = filter['option']['0'].options
+		this.ContactListNewFilters[index]['filterPrefix'] = filter.label
+		this.ContactListNewFilters[index]['filterValue']='';
 		// if(addeFilter.length>0){
 		// newFilter['filterOperator']='AND';
 		// }
@@ -1341,7 +1443,7 @@ formateDate(dateTime:string){
 	closeConfirmModal(){
 		this.modalReference2.close();
 	}
-	async ConfirmScheduleClose (action:any){
+	async ConfirmScheduleClose (action:any){	
 		this.closeAllModal();
 		this.modalReference2.close();
 		//this.modalReference.close('addNewCampaign');

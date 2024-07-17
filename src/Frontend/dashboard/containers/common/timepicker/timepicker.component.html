@@ -1,6 +1,6 @@
 <div class="timepicker-parent">
     <div class="input-container d-flex justify-content-between align-items-center">
-        <input type="text" class="time-input" [value]="timebind" placeholder="-:-" readonly (click)="toggleDropdown()">
+        <input type="text" class="time-input" [value]="timebind" placeholder="hh:mm" readonly (click)="toggleDropdown()">
         <span class="icon" (click)="toggleDropdown()">🕒</span>
     </div>
     <div class="dropdown" [ngClass]="{'show': dropdownVisible}">

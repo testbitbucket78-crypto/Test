@@ -260,11 +260,14 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	// Interaction_ID:number = 0;
 	// template_json:any;
 	currentPage:number= 0;
+	contactCurrentPage:number= 0;
 	pageSize:number= 10;
+	contactPageSize:number= 10;
 	messageRangeStart:number= 0;
 	messageRangeEnd:number= 30;
 	selectedInteractionList:any[] =[];
 	isCompleted:boolean = false;
+	isContactCompleted:boolean = false;
 	isMessageCompletedNotes:boolean = false;
 	isMessageCompletedMedia:boolean = false;
 	isMessageCompletedText:boolean = false;
@@ -635,14 +638,20 @@ attachMentionHandlers() {
 
 ToggleInsertTemplateOption(){
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
+		// if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		// {
 	$("#insertmodal").modal('show'); 
+		//}
 	}
 	}
 
 ToggleAttributesOption(){
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
+		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		{
 	this.closeAllModal()
 	$("#atrributemodal").modal('show'); 
+		}
 	}
 
 }
@@ -666,9 +675,12 @@ selectAttributes(item:any) {
 ToggleQuickReplies(){
 	
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
+		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		{
 	this.closeAllModal()
 	this.getQuickResponse();
 	$("#quikpopup").modal('show'); 
+		}
 	}
 }
 
@@ -747,10 +759,13 @@ filterTemplate(temType:any){
 ToggleAttachmentBox(){
 	
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
-	this.closeAllModal()
-	$("#attachfle").modal('show'); 
-	document.getElementById('attachfle')!.style.display = 'inherit';
-	this.dragAreaClass = "dragarea";
+		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		{
+			this.closeAllModal()
+			$("#attachfle").modal('show'); 
+			document.getElementById('attachfle')!.style.display = 'inherit';
+			this.dragAreaClass = "dragarea";
+		}
 	}
 }
 sendattachfile() {
@@ -920,10 +935,10 @@ sendattachfile() {
 		if (event.dataTransfer.files) {
 		this.dragAreaClass = "dragarea";
 		event.preventDefault();
-		event.stopPropagation();
+		// event.stopPropagation();
 		
-		let files: FileList = event.dataTransfer.files;
-		this.saveFiles(files);
+		// let files: FileList = event.dataTransfer.files;
+		// this.saveFiles(files);
 		}
 	}
 	
@@ -1081,7 +1096,12 @@ sendattachfile() {
 	async updateInteraction(id:any){		
 		let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == id);
 		if(idx >-1){
-			await this.getMessageData(this.interactionList[idx],true);
+			console.log(this.interactionList);
+			if(this.interactionList[idx]['messageList'])
+				await this.getMessageData(this.interactionList[idx],true);
+			else
+				this.getInteractionDataById(idx)
+			console.log(this.interactionList);
 			setTimeout(()=>{
 			let item = this.interactionList[idx];
 			let count =0;
@@ -1142,11 +1162,19 @@ sendattachfile() {
 	updateOptedIn(event:any){
 		this.OptedIn = event.target.checked ? 'Yes': 'No';
 	}
-	getCustomers(){
-		this.apiService.getCustomers(this.SPID).subscribe((data:any) =>{
+	getCustomers(isAddContacts:boolean = false){
+		let rangeStart =this.currentPage;
+    	let rangeEnd =this.currentPage + this.pageSize
+		this.apiService.getCustomers(this.SPID,rangeStart,rangeEnd).subscribe((data:any) =>{
+			this.isContactCompleted = data?.isCompleted ? data?.isCompleted : false;
+			if(isAddContacts){
+				this.contactList.push(...data?.results);
+				this.contactListInit.push(...data?.results);
+			}
+			else{
 			this.contactList= data?.results;
 			this.contactListInit = data?.results;
-			console.log(this.contactList,'contact list')
+			}
 		});
 	}
 	
@@ -1316,11 +1344,11 @@ sendattachfile() {
 			let val1 = messageList?messageList:[];
 			if(isNewMessage){
 				val.forEach(childObj => {
-					const parentObjIndex = item['messageList'].findIndex((parentObj:any) => parentObj.date === childObj.date);
+					const parentObjIndex = item['messageList']?.findIndex((parentObj:any) => parentObj.date === childObj.date);
 					if (parentObjIndex !== -1) {
 					  item['messageList'][parentObjIndex].items = [...item['messageList'][parentObjIndex].items, ...childObj.items];
 					} else {
-					  item['messageList'].push(childObj);
+					  item['messageList']?.push(childObj);
 					}
 				})
 				item['allmessages'].push(...val1);
@@ -1763,11 +1791,11 @@ counter(i: number) {
 
 filterInteraction(filterBy:any){
 	this.selectedInteraction=[]
-	if(filterBy != 'All'){
-		this.getFilteredInteraction(filterBy)
-	}else{
-		this.getAllInteraction(false);
-	}
+	// if(filterBy != 'All'){
+	// 	this.getFilteredInteraction(filterBy)
+	// }else{
+	// 	this.getAllInteraction(false);
+	// }
 	this.interactionFilterBy=filterBy
 	this.getAllInteraction(false);
 	this.ShowFilerOption =false;
@@ -1914,7 +1942,7 @@ toggleConversationStatusOption(){
 
 toggleAssignOption(){
 	this.ShowConversationStatusOption=false;
-	if(this.selectedInteraction.interaction_status =='Open'){
+	if(this.selectedInteraction.interaction_status !='Open'){
 		this.showToaster('Only Open Conversations can be assigned','warning')
 	}else{
 	if(this.loginAs =='Agent' || this.selectedInteraction.interaction_status =='Open'){
@@ -2315,6 +2343,7 @@ createCustomer() {
 	this.newContact.value.Channel = this.selectedChannel;
 	this.newContact.value.OptedIn = this.OptedIn;
 	var bodyData = this.newContact.value;
+	bodyData['isTemporary']=1;
 	console.log(bodyData);
 		if(this.newContact.valid) {
 			if(this.OptedIn == 'Yes') {
@@ -2404,6 +2433,7 @@ updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
 			this.apiService.getInteractionMapping(InteractionId).subscribe(mappingList =>{
 				var mapping:any  = mappingList;
 				this.selectedInteraction['assignTo'] =mapping?mapping[mapping.length - 1]:'';
+				this.selectedInteraction['assignAgent'] =mapping && mapping?.length>0?mapping[mapping.length - 1]?.name:'';
 			})
 		
 		});
@@ -2765,12 +2795,30 @@ sendMessage(){
     });
 	}
 
+	
+	getContactOnScroll(){
+		const content = document.querySelector('.contact_list');
+    	const scroll$ = fromEvent(content!, 'scroll').pipe(map(() => { return content!.scrollTop; }));
+ 
+    scroll$.subscribe((scrollPos) => {
+      let limit = content!.scrollHeight - content!.clientHeight -1;
+	  console.log(scrollPos);
+	  console.log(limit);
+      if (Math.ceil(scrollPos) >= limit && !this.isContactCompleted) {
+        this.contactCurrentPage += this.contactPageSize;
+        // forkJoin([this.items$.pipe(take(1)), this.appService.getData(this.currentPage, this.pageSize)]).subscribe((data: Array<Array<any>>) => {
+        //   const newArr = [...data[0], ...data[1]];
+        //   this.obsArray.next(newArr);
+        // });
+		this.getCustomers(true);
+      }
+    });
+	}
+
+
 	getOlderMessages(selectedInteraction:any){
-		console.log(this.messageRangeEnd);
 		this.messageRangeStart = this.messageRangeEnd;
-		this.messageRangeEnd = this.messageRangeEnd + 30;
-		
-		console.log(this.messageRangeEnd,this.messageRangeStart);
+		this.messageRangeEnd = this.messageRangeEnd +30;
 		this.getMessageData(selectedInteraction)
 	}
 	
@@ -2839,4 +2887,8 @@ sendMessage(){
 		else 
 			return '';
 	  }
+	
+	  isHttpOrHttps(text: string): boolean {
+		return text.startsWith('http://') || text.startsWith('https://');
+	  }	
 }
