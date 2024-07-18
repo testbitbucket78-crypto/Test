@@ -1284,6 +1284,7 @@ sendattachfile() {
 			this.isMessageCompletedText = res.isCompleted;
 			let messageList = res.result;
 			item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
+			console.log(item['messageList']);
 			item['allmessages'] =messageList?messageList:[]
 
 			var lastMessage = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]:[];
@@ -2296,12 +2297,13 @@ triggerUpdateConversationStatus(status:any,openStatusAlertmMessage:any){
 }
 
 updateConversationStatus(status:any) {
+	let name = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 	var bodyData = {
 		Status:status,
 		InteractionId:this.selectedInteraction.InteractionId,		
-		action:status,
+		action:'Conversation ' +status,
 		action_at:new Date(),
-		action_by:this.uid,
+		action_by:name,
 		SP_ID:this.SPID
 	}
 	this.apiService.updateInteraction(bodyData).subscribe(async response =>{
@@ -2336,9 +2338,14 @@ updateConversationStatus(status:any) {
 
 groupMessageByDate(messageList:any){
 	const data =messageList;
+	// data.sort(function(a:any, b:any) {
+	// 	var dateA = new Date(a.Message_id);
+	// 	var dateB = new Date(b.Message_id);
+	// 	return dateA > dateB ? 1 : -1; 
+	// });
 	data.sort(function(a:any, b:any) {
-		var dateA = new Date(a.Message_id);
-		var dateB = new Date(b.Message_id);
+		var dateA = new Date(a.created_at);
+		var dateB = new Date(b.created_at);
 		return dateA > dateB ? 1 : -1; 
 	});
 
@@ -2376,6 +2383,9 @@ createCustomer() {
 						var responseData: any = response;
 						var insertId: any = responseData.insertId;
 						$("#contactadd").modal('hide');
+						if(this.modalReference){
+							this.modalReference.close();
+						}
 						if (insertId) {
 							this.createInteraction(insertId);
 							this.newContact.reset();
@@ -2448,15 +2458,17 @@ closeAssignOption() {
 
 updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
 	this.ShowAssignOption=false;
+	let name = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
+	let agentName = this.userList.filter((items:any) => items.uid == AgentId)[0]?.name;
 	var bodyData = {
 		InteractionId: InteractionId,
 		AgentId: AgentId,
 		MappedBy: MappedBy,
-		action:'Assinged',
+		action:'Conversation Assinged to ' + agentName,
 		action_at:new Date(),
-		action_by:this.uid,
-		SP_ID:this.SPID
-	//	lastAssistedAgent: this.selectedInteraction['assignTo'].
+		action_by:name,
+		SP_ID:this.SPID,
+		lastAssistedAgent: this.selectedInteraction['InteractionMapping']
 	}
 	this.apiService.resetInteractionMapping(bodyData).subscribe(responseData1 =>{
 		this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
@@ -2922,7 +2934,10 @@ sendMessage(){
 	  }
 	
 	  isHttpOrHttps(text: string): boolean {
+		if(text)
 		return text.startsWith('http://') || text.startsWith('https://');
+		else
+		return false;
 	  }	
 
 	  getWhatsAppDetails() {
