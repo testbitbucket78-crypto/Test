@@ -45,7 +45,8 @@ async function channelssetUp(spid, channelType, mediaType, messageTo, message_bo
        // console.log(spid, channelType, mediaType, messageTo, message_body, media)
         if (channelType == 'WhatsApp Official' || channelType == 1) {
 
-            let WhatsAppOfficialMessage = await sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body,media)
+           // let WhatsAppOfficialMessage = await sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body,media)
+            let WhatsAppOfficialMessage = await sendDefultMsg(media, message_body, mediaType, 211544555367892, phoneNumber)
             // console.log("WhatsAppOfficialMessage")
             // console.log(WhatsAppOfficialMessage)
             return WhatsAppOfficialMessage;

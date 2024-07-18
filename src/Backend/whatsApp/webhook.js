@@ -190,7 +190,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData.newlyInteractionId
     var isContactPreviousDeleted=extractedData.isContactPreviousDeleted
-    notify.NotifyServer(display_phone_number, false, newId)
+    notify.NotifyServer(display_phone_number, false, newId,'IN')
     let contact =await db.excuteQuery('select * from EndCustomer where customerId =?', [custid])
     // if(contact?.length >0){
     //   funnel.ScheduledFunnels(contact[0].SP_ID, contact[0].Phone_number, contact[0].OptInStatus, new Date(), new Date(),0);
@@ -276,7 +276,7 @@ async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, custom
   if (userSP?.length) {
     spid = userSP[0].SP_ID
   }
-  if (messageStatus == 'send') {
+  if (messageStatus == 'sent') {
     const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
 WHERE interaction_id IN (
@@ -288,7 +288,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
     let ack1InId = await db.excuteQuery(notifyInteraction,[customerPhoneNumber, spid])
     //notify.NotifyServer(displayPhoneNumber, true)
-    notify.NotifyServer(displayPhoneNumber, false, ack1InId[0]?.InteractionId)
+    notify.NotifyServer(displayPhoneNumber, false, ack1InId[0]?.InteractionId,'Out')
 
   } else if (messageStatus == 'delivered') {
     let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1'
@@ -303,7 +303,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
     //  console.log("deliver", deded?.affectedRows)
    //notify.NotifyServer(displayPhoneNumber, true)
    let ack2InId = await db.excuteQuery(notifyInteraction,[customerPhoneNumber, spid])
-           notify.NotifyServer(customerPhoneNumber, false, ack2InId[0]?.InteractionId)
+           notify.NotifyServer(displayPhoneNumber, false, ack2InId[0]?.InteractionId,'Out')
 
   } else if (messageStatus == 'read') {
     //  console.log("read")
@@ -319,6 +319,6 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
     //   console.log("read", resd?.affectedRows)
    // notify.NotifyServer(displayPhoneNumber, true)
    let ack3InId = await db.excuteQuery(notifyInteraction,[customerPhoneNumber, spid])
-           notify.NotifyServer(customerPhoneNumber, false, ack3InId[0]?.InteractionId)
+           notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId,'Out')
   }
 }

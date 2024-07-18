@@ -113,7 +113,7 @@ console.log(url)
 
 const uuidv = uuidv4()
 
-let awsres = await awsHelper.uploadAttachment(`${req.params.spid}/${req.params.name}/${uuidv}/${file.filename}`, url,file.media_type)
+let awsres = await awsHelper.uploadAttachment(`${req.params.spid}/${req.params.name}/${uuidv}/${file.filename}`, url,file.mimetype)
  
 
 console.log("awsres" ,awsres.size)

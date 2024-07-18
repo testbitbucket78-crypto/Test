@@ -168,8 +168,8 @@ export class DashboardComponent implements OnInit {
     getAvailableAmount() {
         const spid = Number(sessionStorage.getItem('SP_ID'));
         this.profileService.showAvailableAmount(spid).subscribe(response => {
-            let amountAvilable = response.AvailableAmout;
-            this.availableAmount = amountAvilable.toFixed(2);
+            let amountAvilable = response?.AvailableAmout;
+            this.availableAmount = amountAvilable?.toFixed(2);
             console.log(this.availableAmount)
       });
     }

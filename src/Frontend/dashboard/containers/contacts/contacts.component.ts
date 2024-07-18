@@ -1330,11 +1330,13 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   getSplitMultiSelect(val:any){
       let selectName = val?.split(',');
       let names ='';
+      if(selectName && selectName?.length>0){
       selectName.forEach((it:any)=>{
                     let name = it.split(':');
                     console.log(name);
                     names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
   })
+}
   return names;
   }
 

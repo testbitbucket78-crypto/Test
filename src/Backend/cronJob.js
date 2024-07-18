@@ -568,7 +568,8 @@ async function autoResolveExpireInteraction() {
         WHERE InteractionId = ${record.interaction_id}
         AND  TIMESTAMPDIFF(HOUR, (SELECT MAX(created_at) FROM Message WHERE interaction_id = ${record.interaction_id}), NOW()) >= 24 and interaction_status != 'Resolved'`;
 
-        await db.excuteQuery(updateQuery, ['Resolved']);
+        let result = await db.excuteQuery(updateQuery, ['Resolved']);
+        console.log(record.interaction_id,"result",result?.affectedRows)
         // let getMapping = await db.excuteQuery(`select * from InteractionMapping where InteractionId =?`, [record.interaction_id])
         // if (getMapping?.length > 0) {
         //   let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [record.interaction_id]);

@@ -237,6 +237,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	allTemplatesMain:any=[];
 	filterTemplateOption:any='';
 	attributesList:any=[];
+	WhatsAppDetailList:any=[];
     showFullMessage: boolean = false;
 	maxLength: number = 150;
 	allmessages:any=[];
@@ -1039,11 +1040,12 @@ sendattachfile() {
 		this.getCustomers()
 		this.getquickReply()
 		// this.getTemplates()
-		this.subscribeToNotifications()
-		this.getAttributeList()
-        this.sendattachfile()
-		this.getQuickResponse()
-		this.getTagData()
+		this.subscribeToNotifications();
+		this.getAttributeList();
+        this.sendattachfile();
+		this.getQuickResponse();
+		this.getTagData();
+		this.getWhatsAppDetails();
 		this.NewContactForm = this.newContact;
         this.EditContactForm = this.editContact;
 	}
@@ -1088,7 +1090,11 @@ sendattachfile() {
 							if(msgjson.message)
 							{
 								if(msgjson.message == this.selectedInteraction?.InteractionId){
+									if(msgjson.status=="IN"){
 									this.updateMessages();
+									}else{
+										this.getMessageData(this.selectedInteraction,true,true)
+									}
 								}else{
 									this.updateInteraction(msgjson.message);
 								}
@@ -1307,6 +1313,7 @@ sendattachfile() {
 			this.isMessageCompletedText = res.isCompleted;
 			let messageList = res.result;
 			item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
+			console.log(item['messageList']);
 			item['allmessages'] =messageList?messageList:[]
 
 			var lastMessage = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]:[];
@@ -1359,7 +1366,7 @@ sendattachfile() {
 		// }
 	}
 
-	async getMessageData(selectedInteraction:any,isNewMessage:boolean = false){
+	async getMessageData(selectedInteraction:any,isNewMessage:boolean,updateMessage:boolean =false ){
 		let item:any ={};
 		let rangeStart = isNewMessage ? 0 : this.messageRangeStart;
 		let rangeEnd = isNewMessage ? 1 : this.messageRangeEnd;
@@ -1371,7 +1378,7 @@ sendattachfile() {
 			let messageList = res.result;
 			let val = messageList ? this.groupMessageByDate(messageList):[];
 			let val1 = messageList?messageList:[];
-			if(isNewMessage){
+			if(isNewMessage && !updateMessage){
 				val.forEach(childObj => {
 					const parentObjIndex = item['messageList']?.findIndex((parentObj:any) => parentObj.date === childObj.date);
 					if (parentObjIndex !== -1) {
@@ -1381,7 +1388,21 @@ sendattachfile() {
 					}
 				})
 				item['allmessages'].push(...val1);
-			}else{
+			} else if(isNewMessage && updateMessage){
+				val.forEach(childObj => {
+					const parentObjIndex = item['messageList']?.findIndex((parentObj:any) => parentObj.date === childObj.date);
+					if (parentObjIndex !== -1) {
+					  item['messageList'][parentObjIndex].items[item['messageList'][parentObjIndex].items.length-1] = childObj.items[0];
+					} else {
+					  item['messageList']?.push(childObj);
+					}
+				})
+				//item['messageList'].splice(item['messageList'].length-1,1)
+				item['allmessages'].splice(item['allmessages'].length-1,1)
+				// item['messageList'].push(val);
+			item['allmessages'].push(val1);
+			}
+			else{
 			this.isMessageCompletedText = res.isCompleted;
 			item['messageList'] = [...val, ...item['messageList']];
 			item['allmessages'] = [...val1, ...item['allmessages']];
@@ -2305,9 +2326,14 @@ triggerUpdateConversationStatus(status:any,openStatusAlertmMessage:any){
 }
 
 updateConversationStatus(status:any) {
+	let name = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 	var bodyData = {
 		Status:status,
-		InteractionId:this.selectedInteraction.InteractionId
+		InteractionId:this.selectedInteraction.InteractionId,		
+		action:'Conversation ' +status,
+		action_at:new Date(),
+		action_by:name,
+		SP_ID:this.SPID
 	}
 	this.apiService.updateInteraction(bodyData).subscribe(async response =>{
 		this.ShowConversationStatusOption=false
@@ -2341,9 +2367,14 @@ updateConversationStatus(status:any) {
 
 groupMessageByDate(messageList:any){
 	const data =messageList;
+	// data.sort(function(a:any, b:any) {
+	// 	var dateA = new Date(a.Message_id);
+	// 	var dateB = new Date(b.Message_id);
+	// 	return dateA > dateB ? 1 : -1; 
+	// });
 	data.sort(function(a:any, b:any) {
-		var dateA = new Date(a.Message_id);
-		var dateB = new Date(b.Message_id);
+		var dateA = new Date(a.created_at);
+		var dateB = new Date(b.created_at);
 		return dateA > dateB ? 1 : -1; 
 	});
 
@@ -2380,6 +2411,10 @@ createCustomer() {
 					async (response:any) => {
 						var responseData: any = response;
 						var insertId: any = responseData.insertId;
+						$("#contactadd").modal('hide');
+						if(this.modalReference){
+							this.modalReference.close();
+						}
 						if (insertId) {
 							this.createInteraction(insertId);
 							this.newContact.reset();
@@ -2452,10 +2487,17 @@ closeAssignOption() {
 
 updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
 	this.ShowAssignOption=false;
+	let name = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
+	let agentName = this.userList.filter((items:any) => items.uid == AgentId)[0]?.name;
 	var bodyData = {
 		InteractionId: InteractionId,
 		AgentId: AgentId,
-		MappedBy: MappedBy
+		MappedBy: MappedBy,
+		action:'Conversation Assinged to ' + agentName,
+		action_at:new Date(),
+		action_by:name,
+		SP_ID:this.SPID,
+		lastAssistedAgent: this.selectedInteraction['InteractionMapping']
 	}
 	this.apiService.resetInteractionMapping(bodyData).subscribe(responseData1 =>{
 		this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
@@ -2626,6 +2668,7 @@ sendMessage(){
 						if(this.newMessage.value.Message_id==''){
 							var insertId:any = responseData.insertId
 							if(insertId){
+								let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name
 								var lastMessage ={
 									"interaction_id": bodyData.InteractionId,
 									"Message_id": insertId,
@@ -2639,7 +2682,9 @@ sendMessage(){
 									"Type": bodyData.message_media,
 									"ExternalMessageId": bodyData.message_media,
 									"created_at": createdAt,
-									"mediaSize":bodyData.mediaSize
+									"mediaSize":bodyData.mediaSize,
+									"AgentName":agentName,
+									//"created_at":new Date()
 								}
 								
 								if(this.showChatNotes=='text'){
@@ -2848,7 +2893,7 @@ sendMessage(){
 	getOlderMessages(selectedInteraction:any){
 		this.messageRangeStart = this.messageRangeEnd;
 		this.messageRangeEnd = this.messageRangeEnd +30;
-		this.getMessageData(selectedInteraction)
+		this.getMessageData(selectedInteraction, false)
 	}
 	
 	checkPermission(){
@@ -2918,6 +2963,19 @@ sendMessage(){
 	  }
 	
 	  isHttpOrHttps(text: string): boolean {
+		if(text)
 		return text.startsWith('http://') || text.startsWith('https://');
+		else
+		return false;
 	  }	
+
+	  getWhatsAppDetails() {
+		this.settingService.getWhatsAppDetails(this.SPID)
+		.subscribe((response:any) =>{
+		 if(response){
+			 let WhatsAppDetailList = response?.result;
+			 console.log(this.attributesList);
+		 }
+	   })
+	 }
 }

@@ -36,7 +36,7 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
     let contactList = await db.excuteQuery(val.selectAllContact, [req.body.SP_ID])
     if (req.body?.Query != '') {
       IsFilteredList = true
-      contactList = await db.excuteQuery(Query, [])
+      contactList = await db.excuteQuery(req.body?.Query, [])
     }
 
     res.send({
@@ -526,26 +526,7 @@ function sendMailAfterImport(emailId, user, noOfContact) {
     console.log("sendMailAfterImport", err)
   }
 }
-let messageOptIn = "Yes"
-const importData = [
-  [
-    { "displayName": 55, "ActuallName": "SP_ID" },
-    { "displayName": "okRaunak", "ActuallName": "Name" },
-    { "displayName": "Raunak@gmail.com", "ActuallName": "emailId" },
-    { "displayName": "India", "ActuallName": "Phone_number" },
-    { "displayName": "India", "ActuallName": "displayPhoneNumber" }
-  ],
-  [
-    { "displayName": 55, "ActuallName": "SP_ID" },
-    { "displayName": "ofRishabh", "ActuallName": "Name" },
-    { "displayName": "Rishabh@gmail.com", "ActuallName": "emailId" },
-    { "displayName": "India", "ActuallName": "Phone_number" },
-    { "displayName": "India", "ActuallName": "displayPhoneNumber" }
-  ]
-];
 
-
-console.log(importData);
 async function findTagId(TagName, spid) {
   try {
     let tagId = await db.excuteQuery('select * from EndCustomerTagMaster where SP_ID =? and TagName=? and isDeleted !=1', [spid, TagName]);

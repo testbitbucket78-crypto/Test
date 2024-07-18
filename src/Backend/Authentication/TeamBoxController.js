@@ -91,12 +91,14 @@ const insertCustomers = async (req, res) => {
     let countryCode = req.body.country_code;
     let displayPhoneNumber = req.body.displayPhoneNumber;
     let values = [[Name, Phone_number, channel, SP_ID, OptInStatus, countryCode, displayPhoneNumber]];
-
+    let interactionId;
+    let customerId;
     try {
         // Check if contact with isTemporary = 1 exists
         let checkTempContactQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND (isDeleted = 1 or IsTemporary = 1) AND SP_ID = ?`;
         let tempContactResult = await db.excuteQuery(checkTempContactQuery, [Phone_number, SP_ID]);
-console.log("tempContactResult",tempContactResult.length ,tempContactResult.length > 0)
+
+      //  console.log("tempContactResult", tempContactResult.length, tempContactResult.length > 0)
         if (tempContactResult.length > 0) {
             // Update the temporary contact to make it permanent
             let updateTempContactQuery = `
@@ -105,10 +107,15 @@ console.log("tempContactResult",tempContactResult.length ,tempContactResult.leng
                 WHERE Phone_number = ? AND SP_ID = ?
             `;
             await db.excuteQuery(updateTempContactQuery, [Name, channel, OptInStatus, countryCode, displayPhoneNumber, Phone_number, SP_ID]);
-
+            customerId = tempContactResult[0]?.customerId;
+          //  console.log("customerId", customerId)
+            interactionId = await db.excuteQuery('select * from Interaction  where customerId=? and is_deleted !=1 and SP_ID=? order by created_at desc', [customerId, SP_ID]);
+          //  console.log("interactionId", interactionId)
             return res.status(200).send({
                 msg: 'Temporary contact updated to permanent.',
-                status: 200
+                status: 200,
+                customerId: customerId,
+                interactionId: interactionId
             });
         }
 
@@ -129,11 +136,16 @@ console.log("tempContactResult",tempContactResult.length ,tempContactResult.leng
             INSERT INTO EndCustomer (Name, Phone_number, channel, SP_ID, OptInStatus, countryCode, displayPhoneNumber)
             VALUES ?
         `;
-        await db.excuteQuery(insertQuery, [values]);
-
+        let insertedCon = await db.excuteQuery(insertQuery, [values]);
+        customerId = insertedCon?.insertId;
+       // console.log("customerId", customerId)
+        interactionId = await db.excuteQuery('select * from Interaction  where customerId=? and is_deleted !=1 and SP_ID=? order by created_at desc', [customerId, SP_ID]);
+       // console.log("interactionId", interactionId)
         res.status(200).send({
             msg: 'Contact added successfully.',
-            status: 200
+            status: 200,
+            customerId: customerId,
+            interactionId: interactionId
         });
     } catch (error) {
         console.error("Error inserting/updating contact:", error);
@@ -225,37 +237,37 @@ const createInteraction = async (req, res) => {
         interaction_type = "Marketing"
         IsTemporary = req.body?.IsTemporary
         var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type, IsTemporary]]
-    
-       let isExist = await db.excuteQuery('select * from Interaction where SP_ID=? and customerId=? and is_deleted!=1',[SP_ID,customerId])
-       if(isExist?.length >0){
-        res.status(409).send({
-            msg: 'This customer interaction already exist !',
-            status: 409
-        })
-       }else{
-        let myUTCString = new Date().toUTCString();
-        const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let createInteraction = await db.excuteQuery(val.createInteractionQuery, [values])
-        let interactionData = await db.excuteQuery(val.interactionDataById,[SP_ID,createInteraction?.insertId])
-        let currency_nameQuery = ` select Currency   from localDetails where SP_ID=?;`
-        let currency_name = await db.excuteQuery(currency_nameQuery, [SP_ID])
-        let country_nameQuery = `select Country  from companyDetails where SP_ID=?;`
-        let country_name = await db.excuteQuery(country_nameQuery, [SP_ID])
 
-        let template_costQuery = `select Marketing from whatsappPlanPricing where Market =?;`
-        let template_cost = await db.excuteQuery(template_costQuery, [country_name[0]?.Country])
-        let overall_cost = (-1 * template_cost[0]?.Marketing) ? (-1 * template_cost[0]?.Marketing) : '0';
-        let SPTransationsQuery = `INSERT INTO SPTransations (sp_id,transation_date,amount,transation_type,description,interaction_id,currency) values ?`
-        let SPTransationsvalues = [[SP_ID, time, overall_cost, 'Credited', 'Your Wallet amount is debited and credited to Marketing charges', createInteraction.insertId, currency_name[0]?.Currency]]
+        let isExist = await db.excuteQuery('select * from Interaction where SP_ID=? and customerId=? and is_deleted!=1', [SP_ID, customerId])
+        if (isExist?.length > 0) {
+            res.status(409).send({
+                msg: 'This customer interaction already exist !',
+                status: 409
+            })
+        } else {
+            let myUTCString = new Date().toUTCString();
+            const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+            let createInteraction = await db.excuteQuery(val.createInteractionQuery, [values])
+            let interactionData = await db.excuteQuery(val.interactionDataById, [SP_ID, createInteraction?.insertId])
+            let currency_nameQuery = ` select Currency   from localDetails where SP_ID=?;`
+            let currency_name = await db.excuteQuery(currency_nameQuery, [SP_ID])
+            let country_nameQuery = `select Country  from companyDetails where SP_ID=?;`
+            let country_name = await db.excuteQuery(country_nameQuery, [SP_ID])
 
-        let SPTransations = await db.excuteQuery(SPTransationsQuery, [SPTransationsvalues])
+            let template_costQuery = `select Marketing from whatsappPlanPricing where Market =?;`
+            let template_cost = await db.excuteQuery(template_costQuery, [country_name[0]?.Country])
+            let overall_cost = (-1 * template_cost[0]?.Marketing) ? (-1 * template_cost[0]?.Marketing) : '0';
+            let SPTransationsQuery = `INSERT INTO SPTransations (sp_id,transation_date,amount,transation_type,description,interaction_id,currency) values ?`
+            let SPTransationsvalues = [[SP_ID, time, overall_cost, 'Credited', 'Your Wallet amount is debited and credited to Marketing charges', createInteraction.insertId, currency_name[0]?.Currency]]
 
-        res.status(200).send({
-            SPTransations: SPTransations,
-            interaction :interactionData,
-            status: 200
-        })
-    }
+            let SPTransations = await db.excuteQuery(SPTransationsQuery, [SPTransationsvalues])
+
+            res.status(200).send({
+                SPTransations: SPTransations,
+                interaction: interactionData,
+                status: 200
+            })
+        }
     } catch (err) {
         console.log(err)
         res.send(err)
@@ -270,9 +282,9 @@ const updateInteraction = async (req, res) => {
     if (req.body.Status && req.body.Status != '') {
         let myUTCString = new Date().toUTCString();
         const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
+        let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID,Type) values (?,?,?,?,?,?,?)`
 
-        let actions = await db.excuteQuery(actionQuery, [req.body.interactionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID])
+        let actions = await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text'])
         var updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' WHERE InteractionId =" + req.body.InteractionId
     }
     if (req.body.AutoReply && req.body.AutoReply != '') {
@@ -418,14 +430,14 @@ const getSearchInteraction = async (req, res) => {
 
         var agentId = req.params.AgentId;
 
-       let queryPath = val.searchWithAllData +` ${agentId != 0 ? 'AND im.AgentId = ?' : ''}`
-//  console.log(queryPath)
+        let queryPath = val.searchWithAllData + ` ${agentId != 0 ? 'AND im.AgentId = ?' : ''}`
+        //  console.log(queryPath)
         let queryParams = [spid, spid, `%${searchKey}%`];
         if (agentId != 0) {
             queryParams.push(agentId);
         }
         let result = await db.excuteQuery(queryPath, queryParams);
-      //  console.log(result)
+        //  console.log(result)
         res.send({
             result: result,
             status: 200
@@ -506,7 +518,7 @@ const updateNotes = (req, res) => {
 
 const addAction = async (req, res) => {
     try {
-        let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
+        let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?,?)`
 
         let actions = await db.excuteQuery(actionQuery, [req.body.interactionId, req.body.action, req.body.action_at, req.body.action_by, req.body.created_at, req.body.SP_ID])
 
@@ -555,8 +567,8 @@ async function autoReplyPauseTime(spid, newId) {
 
             // Compare and get the maximum of the paused_till times
             pauseTime = Math.max(pausedTillTime, calcTime.getTime());
-            // console.log("pauseTime", new Date(pauseTime));
-            if (pauseTime != NaN) {
+            //  console.log("pauseTime", pauseTime != NaN,pauseTime);
+            if (!isNaN(pauseTime)) {
                 let updateInteractionPause = await db.excuteQuery('UPDATE Interaction SET paused_till = ? WHERE InteractionId = ?', [pauseTime, newId]);
                 //  console.log("updateInteractionPause", updateInteractionPause);
             }
@@ -647,8 +659,9 @@ const insertMessage = async (req, res) => {
                     if (req.body.message_type == 'text') {
                         if (req.body.message_media != '') {
                             // sendMediaOnWhatsApp(req.body.messageTo, message_media)
-
-                            middlewareresult = await middleWare.channelssetUp(SPID, channel, 'image', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber)
+                            const mediaType = determineMediaType(media_type);
+                            console.log(media_type, "mediaType", mediaType)
+                            middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber)
                         }
                         // sendTextOnWhatsApp(req.body.messageTo, message_text)
                         else {
@@ -686,6 +699,24 @@ const insertMessage = async (req, res) => {
 
 
 }
+
+
+function determineMediaType(mediaType) {
+    switch (mediaType) {
+        case 'video/mp4':
+            return 'video';
+        case 'application/pdf':
+            return 'document';
+        case 'image/jpeg':
+            return 'image';
+        case '':
+            return 'text';
+        default:
+            return 'unknown'; // Optional: handle other cases
+    }
+}
+
+
 
 
 // Function to parse the message template and retrieve placeholders
@@ -797,9 +828,9 @@ const updateInteractionMapping = async (req, res) => {
     }
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?)`
+    let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID,Type) values (?,?,?,?,?,?,?)`
 
-    let actions = await db.excuteQuery(actionQuery, [req.body.interactionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID])
+    let actions = await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text'])
 
     db.runQuery(req, res, val.updateInteractionMapping, [values])
 }

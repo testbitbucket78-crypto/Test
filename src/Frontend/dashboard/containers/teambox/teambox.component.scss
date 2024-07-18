@@ -868,6 +868,10 @@ img.no-dp {
     font-size: 12px;
 }
 
+.action_box{
+    align-content: center !important;
+}
+
 .message_box .content {
     font-weight: 400;
     padding: 10px 15px;
@@ -2946,3 +2950,29 @@ label span {
 .input-custom-color {
 	color: blue!important; 
   }
+  
+.flex-end{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-end;
+}
+
+.action-tab{
+    background: #FFF8EB 0% 0% no-repeat padding-box;
+    border-radius: 12px;
+    padding: 5px 12px;
+}
+
+.action-tab .action-heading{
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.action-tab .action-sub-heading{
+    font-size: 13px;
+    color: #7A86A1;
+    text-align: center;
+}
