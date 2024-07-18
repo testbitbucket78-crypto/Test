@@ -256,6 +256,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		Utility: true,
 		Authentication: true
 	  };
+	  allVariables: string = '';
+	isFallback: any[] = [];
 	// isNewInteraction:boolean=false;
 	// Interaction_ID:number = 0;
 	// template_json:any;
@@ -492,8 +494,9 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		$("#editTemplate").modal('show'); 
 	}
 	SaveVariableOption() {
-		this.variableValues[this.indexSelected] = this.selectedAttribute;
+		this.variableValues[this.indexSelected] = '{{'+this.selectedAttribute+'}}';;
 		this.fallbackvalue[this.indexSelected] = this.attribute;
+		this.isFallback[this.indexSelected] = this.isCustomValue('{{'+this.selectedAttribute+'}}');
 		this.resetAttributeSelection();
 		$("#showvariableoption").modal('hide'); 
 		this.isShowAttributes = false;
@@ -521,17 +524,15 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 
 	}
-	allVariables: string = '';
+	
 	addVariable() {
 		const allVariables = [];
-		this.allVariablesList;
-		this.fallbackvalue;
-		this.variableValues;
 		for (let i = 0; i < this.allVariablesList.length; i++) {
 			const variable = {
 				label: this.allVariablesList[i],
 				value: this.variableValues[i],
-				fallback: this.fallbackvalue[i]
+				fallback: this.fallbackvalue[i],
+				isFallback: this.isFallback[i],
 			};
 			allVariables.push(variable);
 		}
@@ -662,6 +663,18 @@ showToolTip(event: MouseEvent) {
 		this.showInfo = true;
 	}
 }
+UpdateVariable(event: any, index: number) {
+	const currentValue = event.target.value;
+	 const regex = /\{\{.*?\}\}/;
+	 this.isFallback[index] = this.isCustomValue(currentValue);
+	    if(!this.isFallback[index]){
+			this.fallbackvalue[index] = "";
+		}
+	if(event.keyCode === 8 && !regex.test(currentValue) && currentValue.startsWith('{')){
+		this.variableValues[index] = ""
+	}
+	console.log(this.selectedTemplate)
+}
 selectAttributes(item:any) {
 	this.closeAllModal();
 	const selectedValue = item;
@@ -671,6 +684,22 @@ selectAttributes(item:any) {
 	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
 	this.chatEditor.value = content;
 }
+isCustomValue(value: string): boolean {
+	if(value){
+		let isMatched = false
+		const availableAttributes = this.attributesList.map((attribute: string) => `{{${attribute}}}`);
+		availableAttributes.forEach((attribute: string) =>{
+			if(attribute == value){
+			   isMatched = true;
+			}
+
+		});
+		return isMatched
+	}
+	else {
+		return false;
+	}
+  }
 
 ToggleQuickReplies(){
 	
@@ -2577,7 +2606,7 @@ sendMessage(){
 			created_at:new Date(),
 			mediaSize:this.mediaSize,
 			spNumber: this.spNumber,
-			MessageVariables: this.allVariables
+			MessageVariables: this.allVariables,
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {

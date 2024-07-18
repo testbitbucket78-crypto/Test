@@ -508,7 +508,10 @@
 								</div>
 							  </div>
 							  <div class="modal-body attachmentboxbody">
+								<div class="header-line">
 								<h4>{{isAttachmentMedia==true ? 'Replace Media' : 'Attach file'}}</h4>
+								<h4>Instructions</h4>
+							  </div>
 								<div class="attachmentbox">
 								  <div class="attachmentbox_left" ngClass="{{dragAreaClass}}">
 									<img class="icon" src="/assets/img/teambox/image-a@2x.png">
@@ -524,15 +527,10 @@
 								  </div>
 								  <div class="attachmentbox_right">
 									<div>
-									  <img class="icon" src="/assets/img/teambox/instraction@2x.png">
-									</div>
-									<div>
-									  <h4>Instructions</h4>
-									  <p>Upload the Image, Video or Document you want to attach here. Ensure the Imported media file fulfills
-										the following requirements:<br>
-										<br>1. The Image format should be JPEG, JPG, PNG with maximum size of 5 MB<br>
-										<br>2. The Video format should be MP4 with maximum size of 10MB<br>
-										<br>3. The Document format should be PDF with maximum size of 10MB
+									  <p>Media file attachment must fulfill following requirements:<br>
+										<br>1. Images should be JPEG or PNG with maximum size of 5 MB.<br>
+										<br>2. Video should be MP4 with maximum size of 10 MB.<br>
+										<br>3. Document should be PDF with maximum size of 10 MB.
 									  </p>
 									</div>
 								  </div>
@@ -757,7 +755,7 @@
 									  <div class="form-control-wrapper">
 										  <p class="form-control">
 											  <input type="text" id="variableValue{{ith}}" name="variableValue{{ith}}" [(ngModel)]="variableValues[ith]" class="form-control inner"
-							   placeholder="Input value or add attribute">
+							                   (keyup)="UpdateVariable($event, ith)" placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': isFallback[ith] == true}">
 											  <span style="cursor: pointer;" (click)="openVariableOption(ith)" class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
 										  </p>
 

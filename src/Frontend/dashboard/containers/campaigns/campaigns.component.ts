@@ -1642,11 +1642,11 @@ formateDate(dateTime:string){
 
 						await allVariables.map(async (item:any)=>{
 							let varValue = item.value
-							if(varValue.indexOf('{{') !== -1){
-								let attributeName = varValue.replaceAll('{{','')
-								attributeName = attributeName.replaceAll('}}','')
-								varValue = SIPattribute && SIPattribute[attributeName]?SIPattribute[attributeName]:'NULL';
-							}
+							// if(varValue.indexOf('{{') !== -1){
+							// 	let attributeName = varValue.replaceAll('{{','')
+							// 	attributeName = attributeName.replaceAll('}}','')
+							// 	varValue = SIPattribute && SIPattribute[attributeName]?SIPattribute[attributeName]:'NULL';
+							// }
 							message_heading = message_heading.replaceAll(item.label,varValue)
 							message_content = message_content.replaceAll(item.label,varValue)
 							MessageBodyData['message_heading']=message_heading
@@ -2078,9 +2078,22 @@ testinfo(){
 			this.modalReference = this.modalService.open(AttributeOption,{size: 'ml', windowClass:'pink-bg'});
 	}
 	updateAttributeValue(event:any,variable:any){
-		variable['value']=event.target.value
+		const currentValue = event.target.value;
+        const regex = /\{\{.*?\}\}/;
+        variable['isAttribute'] = this.isCustomValue(currentValue);
+		 if(event.keyCode === 8 && !regex.test(currentValue) && currentValue.startsWith('{{')){
+				variable['value'] = "";
+				variable['fallback'] = "";
+		} else variable['value']=event.target.value
 		console.log(this.selectedTemplate)
 	}
+
+	isCustomValue(value: string): boolean {
+		const allVariables = this.selectedTemplate.allVariables;
+		const isVariableMatched = allVariables.some((x:any) => x.label == value);
+		return isVariableMatched;
+	  }
+
 	checkVariableValue(){
 		console.log(this.selectedTemplate.allVariables);
 		let flag = true;
@@ -2102,7 +2115,7 @@ testinfo(){
 		console.log(this.selectedTemplate)
 	}
 
-	
+
 
 	updatedAttributeOption(attribute: any, addNewCampaign: any) {
 		console.log(attribute)
@@ -2114,8 +2127,9 @@ testinfo(){
 			this.selecetdVariable['value'] = '';
 		}
 		else {
-			this.selecetdVariable['value'] = this.selectedAttribute;
+			this.selecetdVariable['value'] = '{{'+this.selectedAttribute +'}}';
 			this.selecetdVariable['fallback'] = this.selectedFallback;
+			this.selecetdVariable['isAttribute'] = this.isCustomValue(this.selecetdVariable.value);
 		}
 		this.resetAttributeSelection();
 		this.activeStep=3.1

@@ -75,6 +75,7 @@ export class ContactFilterComponent implements OnInit {
   filteredEndCustomerOrigional:any=[];
   modalReference: any;
   customFieldData:[] = [];
+  showContact! : boolean;
   tag:any;
 	SPID:any = sessionStorage.getItem('SP_ID');
 	@ViewChild('addNewItemss', { static: true }) modalContent: TemplateRef<any> | undefined;
@@ -276,8 +277,9 @@ export class ContactFilterComponent implements OnInit {
 	  }
 	  removeFilter(itemIndex:any){
 		this.ContactListNewFilters.splice(itemIndex, 1);
-		this.ContactListNewFilters[0]['filterOperator']='';
-		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters
+		if(this.ContactListNewFilters.length != 0) this.ContactListNewFilters[0]['filterOperator']='';
+		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters;
+		if(this.ContactListNewFilters.length == 0) this.addNewFilter();
 	  }
 	  addFilter(){
 		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters

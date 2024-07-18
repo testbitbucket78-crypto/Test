@@ -776,6 +776,7 @@
 						<div class="modal-body quickResponse">
 							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
 								aria-describedby="basic-addon2" [(ngModel)]="attributesearch" />
+                            <div type="button" class="btn add-btn" (click)="addCustomAttribute();selectAttributes(customValue)">+ Add Custom Variable</div>
 							<div class="items_list">
 								<div (click)="selectAttributes(alist)" *ngFor="let alist of attributesList  | searchfilter:attributesearch " class="attribute">
 									<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>

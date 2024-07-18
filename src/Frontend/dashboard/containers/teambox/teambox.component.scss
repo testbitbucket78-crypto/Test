@@ -1657,12 +1657,17 @@ span {
 
 .attachmentboxbody {
     padding: 10px 100px 50px 100px;
+    .header-line{
+        display: flex;
+        align-items: center;
+    }
 }
 
 .attachmentboxbody h4 {
     color: #000;
     font-size: 16px;
     font-weight: 800;
+    margin-right: 255px;
 }
 
 .attachmentbox {
@@ -2938,3 +2943,6 @@ label span {
         }
     }
 }
+.input-custom-color {
+	color: blue!important; 
+  }

@@ -364,6 +364,15 @@ align-items: center;
 padding: 5px;
 }
 
+.overlay{
+	position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+	z-index: 999999;
+}
+
 
 .form_row p.form-control,.form_row .form-control{
 	width: 220px;
@@ -533,9 +542,11 @@ padding: 5px;
 				}
 				.addnewitem_content_inner .switchbtn .left{
 				border-radius: 17px 0px 0px 17px;
+				cursor: pointer;
 				}
 				.addnewitem_content_inner .switchbtn .right{
 				border-radius: 0px 17px 17px 0px;
+				cursor: pointer;
 				}
 				.addnewitem_content_inner .switchbtn p{
 				height:30px;

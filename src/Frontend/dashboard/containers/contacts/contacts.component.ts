@@ -50,7 +50,7 @@ export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
   changingValue: Subject<boolean> = new Subject();
   arrHideColumn:any[] =[];
   isShowColumn:boolean = false;
-  isShowFilter:boolean = false;
+  isShowFilter:boolean = true;
     isImport:boolean = true;
 columnDefs: ColDef[] = [
   {
@@ -73,7 +73,6 @@ columnDefs: ColDef[] = [
     flex: 1,
     resizable: true,
     minWidth: 50,
-    filter: true,
     hide:false,
     sortable: true,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
@@ -82,7 +81,6 @@ columnDefs: ColDef[] = [
     field: 'Name',
     headerName: 'Name',
     flex: 2,
-    filter: "agTextColumnFilter",
     resizable: true,
     minWidth: 100,
     hide:false,
@@ -96,7 +94,6 @@ columnDefs: ColDef[] = [
     resizable: true,
     minWidth: 100,
     hide:false,
-    filter: "agNumberColumnFilter",
     cellRenderer: (params: { data: { countryCode: any; displayPhoneNumber: any; };
      }) =>`${params.data.countryCode ? params.data.countryCode : ''} ${params.data.displayPhoneNumber}`,
     cellStyle: { background: "#FBFAFF", opacity: 0.86 },
@@ -106,7 +103,6 @@ columnDefs: ColDef[] = [
     field: 'emailId',
     headerName: 'Email',
     flex: 2,
-    filter: "agTextColumnFilter",
     minWidth: 100,
     resizable: true,
     hide:false,
@@ -117,7 +113,6 @@ columnDefs: ColDef[] = [
     field: 'OptInStatus',
     headerName: 'Message Opt-in',
     flex: 2,
-    filter: true,
     resizable: true,
     minWidth: 100,
     hide:false,
@@ -128,7 +123,6 @@ columnDefs: ColDef[] = [
     field: 'ContactOwner',
     headerName: 'Contact Owner',
     flex: 2,
-    filter: "agTextColumnFilter",
     minWidth: 100,
     resizable: true,
     hide:false,
@@ -139,7 +133,6 @@ columnDefs: ColDef[] = [
     field: 'tag_names',
     headerName: 'Tag',
     flex: 2,
-    filter: "agTextColumnFilter",
     minWidth: 100,
     resizable: true,
     hide:false,
@@ -490,12 +483,21 @@ onSelectAll(items: any) {
     this.apiService.getFilteredContact(data).subscribe((data:any) => {
       this.contacts = data.result;
       this.rowData = this.contacts;
+      if(this.rowData.length == 0){
+        this.isEmptyData();
+      }
       this.productForm.get('countryCode')?.setValue('IN +91');
         console.log(this.contacts);
         this.getGridPageSize();
     });
   }
 
+  isEmptyData(){
+    //errors while assigning this instantly;
+    setTimeout(() => {
+      this.contacts = false;
+  }, 50);
+  }
   onchange(event:any, column:any) {
     var id = document.getElementsByClassName(column)
     if(event.target.checked === true) {
@@ -1142,7 +1144,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             headerName: item.displayName,
             flex: 2, 
             hide:false,
-            filter: item.type == 'Number' ? 'agNumberColumnFilter': item.type == 'Date Time' ? 'agDateColumnFilter' :'agTextColumnFilter',
+           // filter: item.type == 'Number' ? 'agNumberColumnFilter': item.type == 'Date Time' ? 'agDateColumnFilter' :'agTextColumnFilter',
             resizable: true,
             minWidth: 100,
             sortable: true,
@@ -1209,7 +1211,9 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             if (this.gridOptions?.api) {
               this.gridOptions?.api.sizeColumnsToFit();
             }
-            this.contacts =true;
+            if(this.rowData.length == 0){
+              this.contacts =false;
+            } else this.contacts =true;
           },50);
   }
 
@@ -1377,5 +1381,8 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     gotoPage(page: any) {
         this.GridService.gotoPage(page, this.gridapi, this.rowData)
     }
-
+    filterIsApplied! : boolean;
+    filterApplied(){
+      this.filterIsApplied = true;
+    }
 }

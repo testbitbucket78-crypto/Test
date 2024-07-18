@@ -6,9 +6,11 @@
             <h4 class="modal-title" id="modal-basic-title">Create List</h4>
         </div>
         <div class="modal-header-right">
-            <div  class="close-box" aria-label="Close" (click)="closeFilter()"><img src="assets/img/teambox/icon-close.svg"></div>
+            <div style="cursor:pointer" class="close-box" aria-label="Close" (click)="closeFilter()"><img src="assets/img/teambox/icon-close.svg"></div>
         </div>
     </div>
+    <div class="overlay" *ngIf="showContactFilter" (click)="showContactFilter=!showContactFilter"></div>
+    <div class="overlay" *ngIf="showFilterByOption" (click)="showFilterByOption=!showFilterByOption"></div>
     
     <div class="modal-body addnewitem">
         
@@ -24,7 +26,7 @@
                         
                                 <div *ngIf="addedF.filterOperator && i != 0" class="addnewitem_content_inner">
                                     <div class="switchbtn">
-                                        <p [ngClass]="addedF.filterOperator=='AND' ? 'left active' : 'left'">AND{{i}}</p>
+                                        <p [ngClass]="addedF.filterOperator=='AND' ? 'left active' : 'left'">AND</p>
                                         <p [ngClass]="addedF.filterOperator=='OR' ? 'right active' : 'right'">Or</p>
                                     </div>
                                 </div>
@@ -60,10 +62,10 @@
                             </div>
                             <div class="d-flex">
                             <div class="formrow w-100">
-                                <p (click)="toggleContactFilter()"  class="form-control select_box btn">
+                                <p (click)="toggleContactFilter();showContact=!showContact"  class="form-control select_box btn">
                                     {{selectedcontactFilterBy.label}}
                                 </p>
-                                <!-- *ngIf="showContactFilter"  -->
+                                <!-- *ngIf="showContactFilter"  -->                                 
                                 <div *ngIf="showContactFilter" class="popup-dialog">
                                     <p class="label">Select Column</p>
                                     <p *ngFor="let filterItem of contactFilterBy" (click)="selectContactFilter(i,filterItem)">
