@@ -295,7 +295,7 @@ const headers = new HttpHeaders({
     return this.http.post<any>(`${this.API_URL}/addVedioTemplate`,newTemplateFormData,Link);
   }
   
-  getWhatsAppDetails(spId:number): Observable<any> {
+  getWhatsAppDetails(spId:any): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getWhatsAppDetails/${spId}`);
   }
   
@@ -372,5 +372,10 @@ const headers = new HttpHeaders({
    getrolesdata(spid:any,userType:any): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getUser/${spid}/${userType}`);
   }
+
+  // getWhatsAppDetails(spid:any): Observable<any> {
+  //   return this.http.get<any>(`${this.API_URL}/getWhatsAppDetails/${spid}`);
+  // }
+  
 
 }

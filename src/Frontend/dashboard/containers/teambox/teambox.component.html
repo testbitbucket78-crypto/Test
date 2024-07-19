@@ -100,7 +100,7 @@
 
 								</div>
 
-								<div class="contacts_list mt-2">
+								<div class="contacts_list mt-2" *ngIf="item?.interaction_status =='Open'">
 									<div class="contacts_left">
 										<p  class="assigned_to">Assigned To</p>
 										<div  class="assigned_to_btn">
@@ -251,7 +251,8 @@
 								</div>
 
 								<div *ngFor="let message of messageGroup.items; let i = index" id={{message.Message_id}}
-									[ngClass]="message.message_direction =='IN' ? 'message_box left' : 'message_box'">
+									[ngClass]="message?.message_direction ? (message?.message_direction =='IN' ? 'message_box left' : 'message_box'):'message_box action_box'">
+									<div *ngIf="message?.message_direction" class="flex-end">
 									<label *ngIf="message.message_direction !='IN' && message.assignAgent !=-1 && message.assignAgent !=-2">{{message.AgentName}}</label>
 									<div class="image-container">
 									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg" style="cursor:pointer;">
@@ -311,6 +312,11 @@
 										</div>
 								
 									</div>
+								</div>
+								<div *ngIf="message?.message_direction ==null || !message?.message_direction" class="flex-end action-tab">
+									<div class="action-heading">{{message?.action}}</div>
+									<div class="action-sub-heading">by {{message?.action_by}} at {{timeSince(message.created_at)}}</div>
+								</div>
 								</div>	
 							</div>	
 						</div>
