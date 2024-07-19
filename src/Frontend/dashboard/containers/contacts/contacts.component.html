@@ -18,12 +18,12 @@
 			<div id="export-btn">
 			<button *ngIf="filterIsApplied" class="btn-press btn-9 " (click)="clearFilters()" > <img
 					src="../../../../assets/img/export.svg"> Clear Filters</button>
-			<button class="btn-press btn-9 " (click)="openFilters()" [ngStyle]="filterIsApplied == true? { 'background-color': 'black', 'color' : 'white'} : {}">
+			<button class="btn-press btn-9 " (click)="openFilters()" [ngStyle]="filterIsApplied == true? { 'background-color': '#f23b3b', 'color' : 'white'} : {}">
 				<img class="mr-2"
 				[src]="filterIsApplied == true ? '../../../../assets/img/Filter_White.svg' : '../../../../assets/img/filter.svg'" 
 				>Filters
 				<img class="ml-1"
-						src="../../../../assets/img/arrow-down.svg">
+						[src]="filterIsApplied==true ? '../../../../assets/img/teambox/dropdown-w.svg' : '../../../../assets/img/arrow-down.svg'">
 			</button>
 			<button class="btn-press btn-9 " (click)="isShowColumn = true">
 				<img class="mr-1"

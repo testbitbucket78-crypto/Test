@@ -640,14 +640,21 @@ showAddSmartRepliesModal() {
 	}
 
 	UpdateVariable(event: any, index: number) {
-		const currentValue = event.target.value;
-        const regex = /\{\{.*?\}\}/;
-		this.isFallback[index] = this.isCustomValue(currentValue);
-	    if(!this.isFallback[index]){
+		let currentValue = event.target.value;
+		const forbiddenKeys = ['{', '}'];
+		if (forbiddenKeys.some(key => currentValue.includes(key))) {
+			currentValue = currentValue.replace(/[{}]/g, '');
+			event.target.value = currentValue;
+		}
+
+		if( this.isFallback[index] == true) {
+			event.target.value = ''
+            currentValue = '';
+			this.variableValues[index] = "";
 			this.fallbackvalue[index] = "";
 		}
-		if(event.keyCode === 8 && !regex.test(currentValue) && currentValue.startsWith('{')){
-			this.variableValues[index] = "";
+		this.isFallback[index] = this.isCustomValue(currentValue);
+	    if(!this.isFallback[index]){
 			this.fallbackvalue[index] = "";
 		}
 		console.log(this.selectedTemplate)

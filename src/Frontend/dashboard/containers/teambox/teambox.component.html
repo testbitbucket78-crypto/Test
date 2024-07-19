@@ -1188,7 +1188,7 @@ popupWidth='250px' popupHeight='200px'>
 							<div class="modal-footer" style="border: none;">
 								<div class="input_group_btn">
 									<button type="button" class="cancel-btn" aria-label="Close" (click)="closeVariableOption()">Cancel</button>
-									<button type="button" class="submit-btn" aria-label="Close" (click)="SaveVariableOption()" [disabled]="!selectedAttribute">Done</button>
+									<button [ngClass]="{'disabledAttribute': !selectedAttribute}"  type="button" class="submit-btn" aria-label="Close" (click)="SaveVariableOption()" [disabled]="!selectedAttribute">Done</button>
 								</div>
 							</div>
 						</div>

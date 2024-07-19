@@ -2078,13 +2078,23 @@ testinfo(){
 			this.modalReference = this.modalService.open(AttributeOption,{size: 'ml', windowClass:'pink-bg'});
 	}
 	updateAttributeValue(event:any,variable:any){
-		const currentValue = event.target.value;
-        const regex = /\{\{.*?\}\}/;
+		let currentValue = event.target.value;
+		const forbiddenKeys = ['{', '}'];
+
+		if (forbiddenKeys.some(key => currentValue.includes(key))) {
+			currentValue = currentValue.replace(/[{}]/g, '');
+			event.target.value = currentValue;
+		}
+
+		if( variable['isAttribute'] == true) {
+			event.target.value = ''
+            currentValue = '';
+			variable['value'] = "";
+			variable['fallback'] = "";
+		}
+		
         variable['isAttribute'] = this.isCustomValue(currentValue);
-		 if(event.keyCode === 8 && !regex.test(currentValue) && currentValue.startsWith('{{')){
-				variable['value'] = "";
-				variable['fallback'] = "";
-		} else variable['value']=event.target.value
+        variable['value']=event.target.value
 		console.log(this.selectedTemplate)
 	}
 

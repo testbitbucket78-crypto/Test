@@ -2724,8 +2724,13 @@ label span {
     height: 30px;
   
     }
+        .disabledAttribute{
+            background-color: grey;
+           }
+
     .variableoption .content .content_inner{
     margin: 1rem;
+    
     }
     .variableoption .content .content_inner .form-control{
     border-radius: 15px;
