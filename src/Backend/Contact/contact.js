@@ -17,6 +17,8 @@ app.use(bodyParser.json({ limit: '100mb' }));
 app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 const authenticateToken = require('../Authorize');
+const logger = require('../logger.log');
+
 
 app.get('/columns/:spid', authenticateToken, async (req, res) => {
   try {
@@ -29,29 +31,56 @@ app.get('/columns/:spid', authenticateToken, async (req, res) => {
   }
 })
 
-app.post('/getFilteredList', authenticateToken, async (req, res) => {
-  try {
+// app.post('/getFilteredList', authenticateToken, async (req, res) => {
+//   try {
 
+//     let IsFilteredList = false;
+//     let contactList = await db.excuteQuery(val.selectAllContact, [req.body.SP_ID])
+//     if (req.body?.Query != '') {
+//       IsFilteredList = true
+//       contactList = await db.excuteQuery(req.body?.Query, [])
+//     }
+
+//     res.send({
+//       status: 200,
+//       result: contactList,
+//       IsFilteredList: IsFilteredList
+//     })
+//   } catch (err) {
+//     console.log(err);
+//     res.send({
+//       status: 500,
+//       msg: err
+//     })
+//   }
+// })
+app.post('/getFilteredList', authenticateToken, async (req, res) => {
+  logger.info('Received request for /getFilteredList');
+  try {
     let IsFilteredList = false;
-    let contactList = await db.excuteQuery(val.selectAllContact, [req.body.SP_ID])
-    if (req.body?.Query != '') {
-      IsFilteredList = true
-      contactList = await db.excuteQuery(req.body?.Query, [])
+    let contactList = await db.excuteQuery(val.selectAllContact, [req.body.SP_ID]);
+    logger.info(`Query executed: ${val.selectAllContact} with SP_ID: ${req.body.SP_ID}`);
+
+    if (req.body?.Query && req.body.Query.trim() !== '') {
+      IsFilteredList = true;
+      contactList = await db.excuteQuery(req.body.Query, []);
+      logger.info(`Filtered query executed: ${req.body.Query}`);
     }
 
     res.send({
       status: 200,
       result: contactList,
       IsFilteredList: IsFilteredList
-    })
+    });
+    logger.info(`Response sent with status 200 : ${contactList}`);
   } catch (err) {
-    console.log(err);
+    logger.error(`Error occurred: ${err.message}`, { stack: err.stack });
     res.send({
       status: 500,
-      msg: err
-    })
+      msg: err.message
+    });
   }
-})
+});
 
 app.post('/addCustomContact', async (req, res) => {
   try {

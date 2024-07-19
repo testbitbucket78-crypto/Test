@@ -95,8 +95,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          executablePath: "/usr/bin/google-chrome-stable",
-          //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         // executablePath: "/usr/bin/google-chrome-stable",
+          executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -237,27 +237,34 @@ function ClientInstance(spid, authStr, phoneNo) {
           console.log("client message err")
         }
       });
-
-      client.on('authenticated', (session) => {
+      client.on('authenticated', async (session) => {
         try {
-
           console.log("client authenticated", new Date().toUTCString());
           clientSpidMapping[[spid]] = client;
-
+      
           try {
             clientPidMapping[[spid]] = client.pupBrowser.process().pid;
-            console.log("clientPidMapping[spid]", clientPidMapping[spid])
+            console.log("clientPidMapping[spid]", clientPidMapping[spid]);
+          } catch (err) {
+            console.log("Set clientPidMapping issues in Authentication", err);
           }
-          catch (err) {
-            console.log("Set clientPidMapping issues in Authentication")
-          }
-          notify.NotifyServer(phoneNo, false, 'Client Authenticated')
-
+      
+          notify.NotifyServer(phoneNo, false, 'Client Authenticated');
+      
+          // Set an interval to click #pane-side every 30 minutes
+          setInterval(async () => {
+            try {
+              await client.pupPage.click("#pane-side");
+              console.log("Clicked #pane-side at", new Date().toUTCString());
+            } catch (intervalError) {
+              console.log("Error clicking #pane-side:", intervalError);
+            }
+          }, 30 * 60 * 1000); // 30 minutes in milliseconds
+      
         } catch (authenticatederr) {
-          console.log(authenticatederr)
+          console.log(authenticatederr);
         }
-
-      });
+      });      
       client.on('disconnected', (reason) => {
         setTimeout(async () => {
           try {

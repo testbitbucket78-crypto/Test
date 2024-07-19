@@ -15,6 +15,7 @@ const batchSize = 10; // Number of users to send in each batch
 const delayBetweenBatches = 1000; // 10 seconds in milliseconds
 const web = require('./webJS/web')
 const removeTags = require('./removeTagsFromRichTextEditor')
+const logger = require('./logger.log');
 
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
@@ -541,7 +542,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
 async function autoResolveExpireInteraction() {
   try {
-    console.log("autoResolveExpireInteraction")
+    logger.info('autoResolveExpireInteraction is called');
     // Get the maximum created_at date of messages for the latest interaction of each customer
     const maxCreatedAtQuery = `
     SELECT MAX(m.created_at) AS max_created_at, m.interaction_id
@@ -559,6 +560,7 @@ async function autoResolveExpireInteraction() {
 
     const maxCreatedAtResult = await db.excuteQuery(maxCreatedAtQuery);
     //console.log("maxCreatedAtResult",maxCreatedAtResult)
+    logger.log("maxCreatedAtResult length  of  auto resolve",{maxCreatedAtResult})
     // Update the Interaction table based on the maximum created_at date
     if (Array.isArray(maxCreatedAtResult)) {
       for (const record of maxCreatedAtResult) {
@@ -569,7 +571,7 @@ async function autoResolveExpireInteraction() {
         AND  TIMESTAMPDIFF(HOUR, (SELECT MAX(created_at) FROM Message WHERE interaction_id = ${record.interaction_id}), NOW()) >= 24 and interaction_status != 'Resolved'`;
 
         let result = await db.excuteQuery(updateQuery, ['Resolved']);
-        console.log(record.interaction_id,"result",result?.affectedRows)
+        logger.log(record.interaction_id,"result",result?.affectedRows)
         // let getMapping = await db.excuteQuery(`select * from InteractionMapping where InteractionId =?`, [record.interaction_id])
         // if (getMapping?.length > 0) {
         //   let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [record.interaction_id]);
@@ -577,12 +579,12 @@ async function autoResolveExpireInteraction() {
         // }
       }
     } else {
-      console.log("maxCreatedAtResult is not an array");
+      logger.warn(' cron job scheduler maxCreatedAtResult is not an array');
     }
 
     
   } catch (err) {
-    console.log("err autoResolveExpireInteraction ---", err)
+    logger.error("err autoResolveExpireInteraction ---", {err});
   }
 }
 
