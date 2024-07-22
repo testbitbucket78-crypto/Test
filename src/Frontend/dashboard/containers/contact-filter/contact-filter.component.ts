@@ -319,7 +319,8 @@ export class ContactFilterComponent implements OnInit {
       let contactFilter ='SELECT * FROM `EndCustomer` where SP_ID='+this.SPID;
       if(groupArrays.length>0){
         
-        groupArrays.map((filters:any)=>{
+        groupArrays.map((filters:any,idx)=>{
+			console.log(idx);
           if(filters.items.length>0){
           filters.items[0]['filterOperator']=''	
           
@@ -328,7 +329,7 @@ export class ContactFilterComponent implements OnInit {
             colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
           }
   
-          contactFilter += ' and (';
+          contactFilter += idx == 0 ?' and ((' : ' and (';
           filters.items.map((filter:any)=>{
   
           //this.applylistFiltersWidth =parseInt(this.applylistFiltersWidth)+100	
@@ -388,6 +389,7 @@ export class ContactFilterComponent implements OnInit {
           contactFilter += ' )';
           }
           })
+		  contactFilter += ' )';
         
         }
         console.log(contactFilter)

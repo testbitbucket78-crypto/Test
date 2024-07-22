@@ -13,6 +13,7 @@ import { AnyLengthString } from 'aws-sdk/clients/comprehend';
 import { join } from 'path';
 import { Subject } from 'rxjs';
 import { GridService } from '../../services/ag-grid.service';
+import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 
 declare var $: any;
 @Component({
@@ -255,6 +256,7 @@ countryCodes = [
   
   
  constructor(config: NgbModalConfig, private modalService: NgbModal,
+  public phoneValidator:PhoneValidationService,
      public settingsService: SettingsService, private apiService: DashboardService, private _settingsService: SettingsService, private teamboxService: TeamboxService, private fb: FormBuilder, private router: Router, private cdRef: ChangeDetectorRef, public GridService: GridService)
  
  
@@ -318,6 +320,8 @@ countryCodes = [
     this.getUserList();
     this.getTagData();
     this.getCustomFieldsData();
+    this.getPhoneNumberValidation()
+
   
 } 
 
@@ -331,6 +335,17 @@ contactForm() {
     ContactOwner: new FormControl('',[Validators.required]),
     tag: new FormControl([])
   })
+}
+
+getPhoneNumberValidation(){
+  this.productForm.get('countryCode')?.valueChanges.subscribe(() => {
+    this.productForm.get('displayPhoneNumber')?.setValidators([
+      Validators.required,
+      this.phoneValidator.phoneNumberValidator(this.productForm.get('countryCode'))
+    ]);
+    this.productForm.get('displayPhoneNumber')?.updateValueAndValidity();
+    console.log(this.productForm);
+  });
 }
 
     validatorsToggle() {
@@ -1110,6 +1125,13 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     const phoneNumber = this.productForm.get('displayPhoneNumber')?.value;
     const countryCode = this.productForm.get('countryCode')?.value;
     let formattedPhoneNumber = null;
+    
+    this.productForm.get('displayPhoneNumber')?.setValidators([
+      Validators.required,
+      this.phoneValidator.phoneNumberValidator(this.productForm.get('countryCode'))
+    ]);
+    this.productForm.get('displayPhoneNumber')?.updateValueAndValidity();
+    console.log(this.productForm);
 
       if (phoneNumber && countryCode) {
         const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
