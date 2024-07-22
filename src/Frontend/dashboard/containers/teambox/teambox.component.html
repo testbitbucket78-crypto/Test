@@ -77,7 +77,10 @@
 											<div *ngIf="item.message_text && item?.message_media =='text'" class="message"
 												[innerHTML]="limitCharacters(item.message_text) | sanitizeHtml">
 											</div>
-											<div  *ngIf="item?.message_media !='text'" class="message s">{{getMediaType(item.media_type)}}</div>
+											<div  *ngIf="item?.message_media !='text'" class="message s">
+												<img src="/assets/img/teambox/document-icon.svg" class="pr-2" height="15px" width="15px" *ngIf="getMediaType(item.media_type) == 'Document'">
+												<img src="/assets/img/teambox/video-icon.svg" class="pr-2" height="15px" width="15px"  *ngIf="getMediaType(item.media_type) == 'Video'">
+												<img src="/assets/img/teambox/photo-icon.svg" class="pr-2" height="15px" width="15px"  *ngIf="getMediaType(item.media_type) == 'Image'">{{getMediaType(item.media_type)}}</div>
 										</div>
 									</div>
 									
@@ -1467,18 +1470,18 @@ popupWidth='250px' popupHeight='200px'>
 				</button>
 			</div>
 			<div *ngIf="ShowContactOption" class="popup-dialog ContactOption">
-				<p (click)="filterContactByType('WhatsApp Official')">
+				<p *ngFor="let item of WhatsAppDetailList" (click)="filterContactByType(item)" >
 					<span>
 						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
-						WhatsApp Official
+						{{item?.channel_id}}
 					</span>
 				</p>
-				<p (click)="filterContactByType('WhatsApp Web')">
+				<!-- <p (click)="filterContactByType('WhatsApp Web')">
 					<span>
 						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
 						WhatsApp Web
 					</span>
-				</p>
+				</p> -->
 			</div>
 
 			<div class="contact_list">

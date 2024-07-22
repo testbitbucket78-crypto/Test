@@ -1975,8 +1975,9 @@ updateCustomer(){
 
 }
 
-filterContactByType(ChannelName:string){
-    this.selectedChannel = ChannelName;
+filterContactByType(Channel:any){
+	if(Channel?.channel_status == 1){
+    this.selectedChannel = Channel?.channel_id;
 
 	this.contactList.forEach((item: any) => {
 		item.channel = this.selectedChannel;
@@ -1984,6 +1985,9 @@ filterContactByType(ChannelName:string){
 	console.log(this.contactList)
     this.getSearchContact();
     this.ShowContactOption = false;
+} else{
+	this.showToaster('Chhanel is not active','error');
+}
 }
 
 toggleConversationStatusOption(){
@@ -2966,8 +2970,10 @@ sendMessage(){
 			return 'Image';
 		else if(val?.includes('video'))
 			return 'Video';
-		else 
-			return '';
+		else if(val?.includes('application'))
+			return 'Document';
+		else
+		return '';
 	  }
 	
 	  isHttpOrHttps(text: string): boolean {
@@ -2981,8 +2987,7 @@ sendMessage(){
 		this.settingService.getWhatsAppDetails(this.SPID)
 		.subscribe((response:any) =>{
 		 if(response){
-			 let WhatsAppDetailList = response?.result;
-			 console.log(this.attributesList);
+			 this.WhatsAppDetailList = response?.whatsAppDetails;
 		 }
 	   })
 	 }
