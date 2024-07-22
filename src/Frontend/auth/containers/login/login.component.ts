@@ -36,11 +36,12 @@ export class LoginComponent implements OnInit {
 
     onSubmit() {
         this.loginformValue = this.loginForm.value;
-        this.apiService.ip()
-        .subscribe(result => {
-        this.loginformValue.LoginIP = result?.IPv4;
+        // this.apiService.ip()
+        // .subscribe(result => {
+        // this.loginformValue.LoginIP = result?.IPv4;
+         this.loginformValue.LoginIP = '127.00.00.1';
         this.login();
-        })
+        //})
     }
 
     login(){

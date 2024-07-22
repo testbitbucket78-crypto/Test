@@ -219,7 +219,8 @@ warningMessage = '';
         this.workingFormData.push({ day: item.working_days != '' ? item.working_days.split(',') : [], startTime: item.start_time.split(' ')[0], endTime: item.end_time.split(' ')[0],selectedPeriod:item.selectedPeriod})
     })
   }
-    createDynamicDate(month: any) {
+
+  createDynamicDate(month: any) {
      if (!this.validation(month)) {
          this.showToaster('You can Add or Edit holidays only for the future dates.', 'error');
          return;
