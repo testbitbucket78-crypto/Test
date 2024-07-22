@@ -1369,6 +1369,13 @@ input[type="radio"]:checked + label::before {
 .quickResponse {
     width: 80%;
     margin: 10px 10%;
+    .add-btn{
+        color: #6149CD;
+        font-size: 12px;
+    }
+    .add-btn:hover{
+        text-decoration: underline;
+    }
 }
 
 .quickResponse .search-box {
