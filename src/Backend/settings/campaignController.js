@@ -560,9 +560,8 @@ const addTemplate = async (req, res) => {
 
         if (ID == 0) {
 
-            if (Channel = 'WhatsApp Official') {
-
-                let templateStatus = Createtemplate(messageData);
+            if (Channel == 'WhatsApp Official') {
+                let templateStatus = Createtemplate(template_json);
                 console.log("templateStatus", templateStatus)
             }
 
