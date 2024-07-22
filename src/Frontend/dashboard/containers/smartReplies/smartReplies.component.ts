@@ -143,6 +143,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	allVariables: string = '';
 	selectedAttribute: any;
 	fallbackvalue: string[] = [];
+	isFallback: any[] = [];
 	isFilterTemplate:any = {
 		Marketing: true,
 		Utility: true,
@@ -371,14 +372,12 @@ showAddSmartRepliesModal() {
 	}
 	addVariable() {
 		const allVariables = [];
-		this.allVariablesList;
-		this.fallbackvalue;
-		this.variableValues;
 		for (let i = 0; i < this.allVariablesList.length; i++) {
 			const variable = {
 				label: this.allVariablesList[i],
 				value: this.variableValues[i],
-				fallback: this.fallbackvalue[i]
+				fallback: this.fallbackvalue[i],
+				isFallback: this.isFallback[i],
 			};
 			allVariables.push(variable);
 		}
@@ -639,10 +638,47 @@ showAddSmartRepliesModal() {
 		$("#showvariableoption").modal('hide');
 		$("#editTemplate").modal('show'); 
 	}
-	
+
+	UpdateVariable(event: any, index: number) {
+		let currentValue = event.target.value;
+		const forbiddenKeys = ['{', '}'];
+		if (forbiddenKeys.some(key => currentValue.includes(key))) {
+			currentValue = currentValue.replace(/[{}]/g, '');
+			event.target.value = currentValue;
+		}
+
+		if( this.isFallback[index] == true) {
+			event.target.value = ''
+            currentValue = '';
+			this.variableValues[index] = "";
+			this.fallbackvalue[index] = "";
+		}
+		this.isFallback[index] = this.isCustomValue(currentValue);
+	    if(!this.isFallback[index]){
+			this.fallbackvalue[index] = "";
+		}
+		console.log(this.selectedTemplate)
+	}
+	isCustomValue(value: string): boolean {
+		if(value){
+			let isMatched = false
+			const availableAttributes = this.attributesList.map((attribute: string) => `{{${attribute}}}`);
+            availableAttributes.forEach((attribute: string) =>{
+				if(attribute == value){
+                   isMatched = true;
+				}
+
+			});
+			return isMatched
+		}
+		else {
+			return false;
+		}
+	  }
 	SaveVariableOption() {
-		this.variableValues[this.indexSelected] = this.selectedAttribute;
+		this.variableValues[this.indexSelected] = '{{'+this.selectedAttribute+'}}';
 		this.fallbackvalue[this.indexSelected] = this.attribute;
+		this.isFallback[this.indexSelected] = this.isCustomValue('{{'+this.selectedAttribute+'}}');
 		this.resetAttributeSelection();
 		$("#showvariableoption").modal('hide'); 
 		$("#editTemplate").modal('show'); 
@@ -884,7 +920,7 @@ showAddSmartRepliesModal() {
 			this.editableMessageIndex = null;
 			this.isEditable = [];
 		} else {
-	
+
 			this.assignedAgentList.push({
 				ActionID: 0, 
 				Message: this.chatEditor.value, 

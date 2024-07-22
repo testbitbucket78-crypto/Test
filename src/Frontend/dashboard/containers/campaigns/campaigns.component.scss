@@ -1758,6 +1758,11 @@
 	.form_row p.form-control .map_attribute img{
 	width:15px
 	}
+.variableoption{
+		.disabledAttribute{
+			background-color: grey;
+		}
+	}
 	.variableoption .content{
 	width: 100%;
 	float: left;
@@ -2388,3 +2393,6 @@ position: absolute;
 	bottom: 0;
 	left: 0;
 }
+.input-custom-color {
+	color: blue!important; 
+  }
