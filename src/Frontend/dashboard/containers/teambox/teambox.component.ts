@@ -104,7 +104,11 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
 		}]
 	};
-
+	public pasteCleanupSettings: object = {
+		prompt: false,
+		plainText: true,
+		keepFormat: false,
+	};
 			countryCodes = [
 			'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
 			'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',

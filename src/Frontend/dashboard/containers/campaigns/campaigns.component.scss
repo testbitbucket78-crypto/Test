@@ -839,7 +839,7 @@
 	border-radius: 30px;
     width: 180%;
     margin-left: -37%;
-    height: 41rem;
+    height: 28rem;
 	}
 	.important_contact_modal.sm{
 		width: 30%;
@@ -856,11 +856,14 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+	align-items: center;
 	}
 	.important_contact p{
-	color: #000;
-	font-size: 12px;
-	font-weight: 600;
+	font-family: Manrope;
+    font-size: 13px;
+    font-weight: 600;
+    color: #000;
+    text-align: center;
 	margin-bottom: 5px;
 	}
 	.important_contact p span{
@@ -879,6 +882,13 @@
 	align-items: center;
 	justify-content: center;
 	padding:0;
+	.paper-download{
+		background: #FFFFFF 0% 0% no-repeat padding-box;
+		color: #7A86A1;
+		border: 1px solid #EBEBEB;
+		font-size: 14px;
+
+	}
 	}
 
 	.important_contact .important_contact_left img.icon.xl{
@@ -912,6 +922,7 @@
 	align-content: center;
 	flex-wrap: nowrap;
 	margin: 0;
+	margin-bottom: 4px;
 	}
 	.droparea {
 	border: 1px solid #bbb;
@@ -955,7 +966,6 @@
 	background: #FFFFFF 0% 0% no-repeat padding-box;
 	border-radius: 13px;
 	border: 1px solid #fff;
-	margin-top: 1rem;
 	padding: 1rem;
 	box-shadow: 4px 22px 54px #695F971A;
 	}
@@ -2395,4 +2405,20 @@ position: absolute;
 }
 .input-custom-color {
 	color: blue!important; 
+  }
+
+  .header-container{
+	display: flex;
+    align-items: center;
+	.header-1{
+		margin-right: 185px;
+		color: #000;
+		font-size: 16px;
+		font-weight: 800;
+	}
+	.header-2{
+		color: #000;
+		font-size: 16px;
+		font-weight: 800;
+	}
   }

@@ -378,32 +378,35 @@ textarea::placeholder {
 // sidebar 
 
 
-.sidebar-content {
-  height: 900px;
-  width: 100%;
-}
-
-
-.sideBar .sideBar-footer{   
-    border:none; 
-    position: fixed;
-    bottom: 0;    
-    padding: 15px;
-    text-align: center;
-    background-color: #FBF9FE;
-  }
-
   .sideBar{
-    height: 100%;
+    display: grid;
+    grid-template-rows: max-content 100% max-content;
+    justify-content: space-between;
+    height: 100dvh;
     width: 28% !important;
     position: fixed;
     z-index: 1030;
     top: 0;
     right: 0;
     background-color: #FBF9FE;
-    overflow-x: hidden;
+    overflow: hidden;
     transition: 0.5s;
   }
+
+  .sideBar .sidebar-close{
+    padding: 15px 20px 15px 0 !important;
+  }
+
+  .sideBar .sidebar-content{
+    height: calc(100dvh - 144px);
+    overflow-y: auto;
+  }
+  .sideBar .sideBar-footer{   
+      border:none;   
+      padding: 15px;
+      text-align: center;
+      background-color: #FBF9FE;
+    }
 
   .disable-btn{
     background: #FFFFFF 0% 0% no-repeat padding-box;
@@ -681,7 +684,7 @@ textarea::placeholder {
 }
 
 #defaultRTErte-view {
-  height: 450px!important;
+  height: 205px!important;
 }
 
 .e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
@@ -702,7 +705,7 @@ textarea::placeholder {
   word-wrap: break-word;
   overflow: auto;
   overflow-x: hidden;
-  height: 50vh;
+  min-height: 12vh
 }
 
 .message_data.preview {

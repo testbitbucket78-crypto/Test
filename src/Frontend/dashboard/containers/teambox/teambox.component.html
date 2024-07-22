@@ -414,7 +414,7 @@
 							</div>
 							<div class="input-area" (click)="checkPermission()" *ngIf="isRefresh">
 								<ejs-richtexteditor id="mention_integration" #mention_integration [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open') || (this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) "  [toolbarSettings]='tools' [height]='100'
-								  [placeholder]="(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) ? 'Select Template':'Enter Message'" (actionBegin)="onActionBegin($event)">
+								  [placeholder]="(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) ? 'Select Template':'Enter Message'" (actionBegin)="onActionBegin($event)" [pasteCleanupSettings]="pasteCleanupSettings">
 								</ejs-richtexteditor>
 
 								<ejs-mention *ngIf="showChatNotes=='notes'" #mention [dataSource]='agentsList' target='#mention_integration_rte-edit-view' [fields]='fieldsData' [suggestionCount]="8" [showMentionChar]="false" [allowSpaces]="true"  
@@ -1774,7 +1774,7 @@ popupWidth='250px' popupHeight='200px'>
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
-		<div class="modal-body">
+		<div class="modal-body" style="max-height: 400px;overflow: auto;">
 			<form class="inner_form large" (ngSubmit)="updateTags()">
 				<div class="row" *ngFor="let tag of tagsoptios;">
 					<label for="floatingSelectGrid" class="required">

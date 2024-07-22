@@ -714,9 +714,9 @@
 			</div>
 		</form>
 		<div class="modal-footer px-4 row popfooter sticky-footer">
-
+			
 			<div class="col-md-6 text-right">
-				<button type="submit" [disabled]="productForm.invalid" (click)="saveContact(addcontact,addcontacterror)" [class.disabled]="productForm.invalid" class="btn1 btn-success">Save</button>
+				<button type="submit" [disabled]="productForm.invalid || !productForm.touched" (click)="saveContact(addcontact,addcontacterror)" [class.disabled]="(productForm.invalid || !productForm.touched)" class="btn1 btn-success">Save</button>
 			</div>
 		</div>
 	</ng-template>

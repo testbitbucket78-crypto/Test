@@ -811,7 +811,12 @@
 							</div>
 							</div>
 						<div class="modal-body">
+							<div class="header-container">
+								<h4 class="header-1">Attach File</h4>
+								<h4 class="header-2">Instruction</h4>
+							</div>
 							<div class="important_contact">
+
 								<div class="important_contact_left dragAreaClass"> 
 								
 									<img class="icon xl" src="assets/img/campaign/image-a@2x.png">
@@ -826,21 +831,25 @@
 											   accept=".xlsx, .xls, .csv"/>
 										<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
 									</label>
+
+									<button type="button" class="paper-download" (click)="download()">
+										<img src="assets/img/campaign/paper-download.png">
+										Download sample file
+									</button>
+								    
 									<p><span></span></p>
 									<p>{{selecetdCSV}}</p>
 								</div>
 				
 								<div class="important_contact_right">
-									<button type="button" class="paper-download" (click)="download()"><img src="assets/img/campaign/paper-download.png">Download sample file</button>
+									
 									<div class="import contact info_box">
-										<p class="info"><img src="assets/img/campaign/info-icon.png">Instructions</p>
 										<p class="info">
-											<span>Upload the file that consists of contacts with the details that you would like to Import. Ensure the Imported file fulfills the following requirements:</span>
-											<span>1. Only CSV format file should be Imported.</span>
-											<span>2. File can have a maximum size of 10 MB.</span>
-											<span>3. The file must contain at least 1 column with Contact Numbers.</span>
-											<span>4. Ensure the first row contains NO data and just column headings with proper labels to help in variables mapping. Data in the first row is not imported.</span>
-											<span>5. As the message template that you will select in the next step may include variables, so please include the variable values in the CSV file against each contact to personalize your message.</span>
+											<span>1. Use only EXCEL or CSV file format.</span>
+											<span>2. Maximum file size allowed 10 MB.</span>
+											<span>3. Phone number must include country code, e.g. 91 for India - 919876543210.</span>
+											<span>4. Message template to be selected in the next step may include variables, so include the variable values against each phone number to personalize your message.</span>
+											<span>5. Data in first row is not imported. Ensure first row contains ONLY column headings with proper labels to help in variables mapping</span>
 										</p>
 									</div>
 									
@@ -848,7 +857,7 @@
 								
 							</div>
 							<div class="important_contact_middle">
-								<div class="left_part">
+								<!-- <div class="left_part">
 								 <p>Remove Duplicate</p>
 								 <div class="radio_group">
 									   <label class="container" (click)="updateCSVDuplicate('yes')">
@@ -864,8 +873,8 @@
 				
 									 
 								 </div>
-								</div>
-								<div class="right_part">
+								</div> -->
+								<!-- <div class="right_part">
 									<p>Prefix <img src="../../../../assets/img/campaign/Info.svg"(click)="prefix()"></p>
 									<div  *ngIf="prefixInfo" class="prefixInfo">
 										<p id="p-body">You have the option to input a prefix value and choose whether to add or remove that prefix from mapped phone numbers.
@@ -892,7 +901,7 @@
 											<input type="text" class="text-input" placeholder="Enter" name="prefix_remove" (change)="updateCSVPRefix($event)">
 										  </div>
 									</div>
-								</div>
+								</div> -->
 				
 							</div>
 							
