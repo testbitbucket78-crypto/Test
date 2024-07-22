@@ -1,0 +1,46 @@
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, printf } = format;
+const path = require('path');
+const schedule = require('node-schedule');
+
+// Utility function to get caller file and function name
+const getCallerInfo = () => {
+  const stack = new Error().stack.split('\n')[3];
+  const callerPath = stack.match(/\(([^)]+)\)/)[1];
+  const callerFile = path.basename(callerPath.split(':')[0]);
+  const callerFunction = stack.split(' ')[5];
+  return `${callerFile}:${callerFunction}`;
+}
+
+// Custom format for log entries
+const customFormat = printf(({ timestamp, level, message }) => {
+  return `${timestamp} <${level}> <${getCallerInfo()}> ${message}`;
+});
+
+const logger = createLogger({
+  format: combine(
+    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    customFormat
+  ),
+  transports: [
+    new transports.File({ filename: 'logger.log' })
+  ]
+});
+
+// Schedule job to clear the log file every 24 hours
+const clearLogFile = () => {
+  const logFilePath = 'logger.log';
+
+  fs.writeFile(logFilePath, '', (err) => {
+    if (err) {
+      logger.error(`Failed to clear log file: ${err.message}`);
+    } else {
+      logger.info('Log file cleared');
+    }
+  });
+};
+
+// Schedule the job to run at midnight every day
+schedule.scheduleJob('0 0 * * *', clearLogFile);
+
+module.exports = logger;
