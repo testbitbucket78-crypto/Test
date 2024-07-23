@@ -1254,7 +1254,12 @@ sendattachfile() {
 			item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
 			item['allmessages'] =messageList?messageList:[]
 
-			var lastMessage = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]:[];
+			var lastMessage = [];
+			if(item['allmessages']){
+				let filteredMsg = item['allmessages'].filter((item:any)=>item.message_direction == 'In');
+				lastMessage = filteredMsg[filteredMsg.length -1]
+			}
+			console.log(lastMessage);
 			item['lastMessage'] = lastMessage
 			item['lastMessageReceved']= this.timeSinceLastMessage(item.lastMessage)
 			item['progressbar']= this.getProgressBar(item.lastMessage)
@@ -1331,7 +1336,12 @@ sendattachfile() {
 			console.log(item['messageList']);
 			item['allmessages'] =messageList?messageList:[]
 
-			var lastMessage = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]:[];
+			var lastMessage = [];
+			if(item['allmessages']){
+				let filteredMsg = item['allmessages'].filter((item:any)=>item.message_direction == 'IN');
+				lastMessage = filteredMsg[filteredMsg.length -1]
+			}
+			console.log(lastMessage);
 			item['lastMessage'] = lastMessage
 			item['lastMessageReceved']= this.timeSinceLastMessage(item.lastMessage)
 			item['progressbar']= this.getProgressBar(item.lastMessage)
@@ -1387,7 +1397,7 @@ sendattachfile() {
 		let rangeEnd = isNewMessage ? 1 : this.messageRangeEnd;
 		let originalScrollPosition = this.scrollContainer.nativeElement.scrollTop;
 		const originalScrollHeight = this.scrollContainer.nativeElement.scrollHeight;
-	
+		console.log(originalScrollHeight);
 		item = selectedInteraction;
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',this.SPID,rangeStart,rangeEnd).subscribe((res:any) =>{
 			let messageList = res.result;
@@ -1452,12 +1462,14 @@ sendattachfile() {
 		})
 
 		if(!isNewMessage){
-			originalScrollPosition = originalScrollPosition ==0 ? 5 : originalScrollPosition;
+			setTimeout(()=>{
+			originalScrollPosition = originalScrollPosition ==0 ? 15 : originalScrollPosition;
 		const newScrollHeight = this.scrollContainer.nativeElement.scrollHeight;
 		const scrollDifference = newScrollHeight - originalScrollHeight;
 		this.scrollContainer.nativeElement.scrollTop = originalScrollPosition + scrollDifference;
+		console.log(originalScrollPosition,newScrollHeight,originalScrollHeight)
+	},800)
 		}
-		console.log(this.isMessageCompletedMedia,this.isMessageCompletedNotes,this.isMessageCompletedText)
 	}
 
 	getUpdatedList(dataList:any) {
@@ -1553,7 +1565,7 @@ sendattachfile() {
 	}
 
 	async getSearchInteractions(key:string){
-		await this.apiService.getSearchInteraction(key,this.uid,this.SPID).subscribe(async (data:any) =>{
+		await this.apiService.getSearchInteraction(key,0,this.SPID).subscribe(async (data:any) =>{
 			var dataList:any = data?.result;
 			this.interactionList= dataList;
 			this.interactionListMain= dataList;

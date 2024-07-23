@@ -17,7 +17,7 @@ app.use(bodyParser.json({ limit: '100mb' }));
 app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 const authenticateToken = require('../Authorize');
-const logger = require('../logger.log');
+const logger = require('../common/logger.log');
 
 
 app.get('/columns/:spid', authenticateToken, async (req, res) => {
@@ -63,7 +63,7 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
 
     if (req.body?.Query && req.body.Query.trim() !== '') {
       IsFilteredList = true;
-      contactList = await db.excuteQuery(req.body.Query, []);
+      contactList = await db.excuteQuery(req.body.Query + 'and isDeleted !=1 and IsTemporary !=1', []);
       logger.info(`Filtered query executed: ${req.body.Query}`);
     }
 

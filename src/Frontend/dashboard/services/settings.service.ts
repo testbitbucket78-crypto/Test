@@ -15,6 +15,7 @@ export class SettingsService {
   dateFormat:any;
   timeFormat:any;
 
+  
   countryCodes = [
     'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
     'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',
@@ -42,6 +43,7 @@ export class SettingsService {
     'UZ +998', 'VA +39', 'VC +1784', 'VE +58', 'VG +1284', 'VI +1340', 'VN +84', 'VU +678', 'WF +681', 'WS +685',
     'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
   ];
+  
   constructor(private http: HttpClient,private datePipe:DatePipe) {
 
     this.subprivilages = sessionStorage.getItem('subPrivileges')?.split(',');

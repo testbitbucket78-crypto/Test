@@ -460,3 +460,18 @@ label.container {
  .background-blur{
 	background: rgb(255 255 255 / 80%) !important;
 }
+
+.img{
+  min-width: 29px;
+    border-radius: 50%;
+    background: white !important;
+    color: #6149cd;
+    background-color: white !important;
+    /* margin-top: 30px; */
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+}

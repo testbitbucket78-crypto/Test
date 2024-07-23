@@ -9,6 +9,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { GridService } from '../../services/ag-grid.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 declare var $: any;
 
 @Component({
@@ -115,7 +116,7 @@ export class UserSettingsComponent implements OnInit {
     isActive: boolean = false;
     filteredRolesList: any[] = [];
     selectedUserData: any;
-    countryCodes:string[] =[];
+    countryCodes:any[] =[];
     title: string = '';
     btnActionName: string = '';
     paginationPageSize: string = '10';
@@ -127,7 +128,8 @@ export class UserSettingsComponent implements OnInit {
     errorMessage = '';
     warningMessage = '';
     login_uid:any;
-    constructor(private _settingsService: SettingsService, private datepipe: DatePipe, public GridService: GridService) {
+    constructor(private _settingsService: SettingsService, private datepipe: DatePipe, public GridService: GridService,
+        public phoneValidator:PhoneValidationService,) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
         this.login_uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;        
         this.countryCodes = this._settingsService.countryCodes;
@@ -141,8 +143,21 @@ export class UserSettingsComponent implements OnInit {
         this.userDetailForm = this.prepareUserForm();
         this.getUserList();
         this.getRolesList(); 
+        this.getPhoneNumberValidation(); 
         console.log(this.uid);
     }
+
+    
+getPhoneNumberValidation(){
+    //this.userDetailForm.get('country_code')?.valueChanges.subscribe(() => {
+      this.userDetailForm.get('display_mobile_number')?.setValidators([
+        Validators.required,
+        this.phoneValidator.phoneNumberValidator(this.userDetailForm.get('country_code'))
+      ]);
+      this.userDetailForm.get('display_mobile_number')?.updateValueAndValidity();
+      console.log(this.userDetailForm);
+  //  });
+  }
 
     rowClicked = (event: any) => {
         console.log(event);
@@ -351,6 +366,11 @@ export class UserSettingsComponent implements OnInit {
     formatPhoneNumber() {
         let phoneNumber = this.userDetailForm.get('display_mobile_number')?.value;
         let countryCode = this.userDetailForm.get('country_code')?.value;
+        this.userDetailForm.get('display_mobile_number')?.setValidators([
+            Validators.required,
+            this.phoneValidator.phoneNumberValidator(this.userDetailForm.get('country_code'))
+          ]);
+          this.userDetailForm.get('display_mobile_number')?.updateValueAndValidity();
       
         if (phoneNumber && countryCode) {
           let phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;

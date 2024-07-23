@@ -584,7 +584,7 @@
 									   name="displayPhoneNumber" placeholder="Enter Phone Number" (change)="formatPhoneNumber()" (input)="validatorsToggle()"
 									   [ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }">
 							</div>
-							<div *ngIf="productForm.controls.displayPhoneNumber.touched &&
+							<!-- <div *ngIf="productForm.controls.displayPhoneNumber.touched &&
                                validatorsToggle() == true && ( productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength'))"
 								 class="text-danger">
 								Phone number must consist of exactly 10 digits.
@@ -593,14 +593,14 @@
 						      (productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength'))"
 								 class="text-danger">
 								! Phone number must consist of 6 to 15 digits.
-							</div>
+							</div> -->
 							<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('required')"
 								 class="text-danger">
 								! Phone Number is required.
 							</div>
-							<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('pattern')"
+							<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.get('displayPhoneNumber')?.hasError('invalidPhoneNumberLength')"
 								 class="text-danger">
-								! Invalid Phone Number.
+								! Invalid phone number length for the selected country.
 							</div>
 
 						</div>
