@@ -10,7 +10,7 @@ const multer = require('multer');
 let fs = require('fs-extra');
 const moment = require('moment');
 const removeTags = require('../removeTagsFromRichTextEditor')
-const logger = require('../logger.log');
+const logger = require('../common/logger.log');
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
