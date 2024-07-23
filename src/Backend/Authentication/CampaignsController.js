@@ -382,7 +382,7 @@ const sendCampinMessage = async (req, res) => {
         let results = await db.excuteQuery(sqlQuery, [customerId, spid]);
         console.log(spid, req.body.channel_id, type, messageTo, "****", customerId)
 
-        if (new Date(inputDate) <= new Date(formattedTime) || results[0]?.isBlocked != 1) {
+        if (new Date(inputDate) <= new Date(formattedTime) && results[0]?.isBlocked != 1) {
             let messagestatus;
             if (optInStatus == 'Yes') {
 

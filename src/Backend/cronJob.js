@@ -15,7 +15,7 @@ const batchSize = 10; // Number of users to send in each batch
 const delayBetweenBatches = 1000; // 10 seconds in milliseconds
 const web = require('./webJS/web')
 const removeTags = require('./removeTagsFromRichTextEditor')
-const logger = require('./logger.log');
+const logger = require('./common/logger.log');
 
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
@@ -207,9 +207,9 @@ async function mapPhoneNumberfomList(message) {
 
 
 
-  let Query = "SELECT * from EndCustomer  where customerId IN ? and isDeleted != 1";
+  let Query = "SELECT * from EndCustomer  where customerId IN ? and isDeleted != 1 and isBlocked !=1";
   if (message.OptInStatus == 'Yes') {
-    Query = `SELECT * FROM EndCustomer WHERE customerId IN ? and (OptInStatus='Yes' OR OptInStatus=1) AND SP_ID=? and isDeleted !=1`;
+    Query = `SELECT * FROM EndCustomer WHERE customerId IN ? and (OptInStatus='Yes' OR OptInStatus=1) AND SP_ID=? and isDeleted !=1 and isBlocked !=1`;
   }
 
 
