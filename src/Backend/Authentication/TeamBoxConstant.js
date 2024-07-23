@@ -299,6 +299,7 @@ SELECT DISTINCT
     m.created_at AS LastMessageDate,
     ww.connected_id,
     im.AgentId AS InteractionMapping,
+    pnin.InteractionId AS PinnedInteractionID
     tn.TagNames -- Include the TagNames from the EndCustomerTagMaster
 FROM 
     LatestInteraction li
@@ -337,6 +338,8 @@ LEFT JOIN
     InteractionMapping im ON ic.InteractionId = im.InteractionId AND im.created_at = lim.LatestMappingInfo
 LEFT JOIN 
     TagNames tn ON ec.customerId = tn.customerId -- Join with TagNames to get the comma-separated TagNames
+    LEFT JOIN 
+    PinnedInteraction pnin ON ic.InteractionId = pnin.InteractionId
 WHERE 
     ec.SP_ID = ?
 `

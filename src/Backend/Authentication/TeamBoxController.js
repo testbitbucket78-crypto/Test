@@ -54,10 +54,14 @@ const getAllCustomer = async (req, res) => {
 
         let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
         logger.info('Query executed for getAllCustomer', { spID: req.params.spID, RangeStart, RangeEnd, contacts });
-
+        let isCompleted = false;
+        if (contacts?.length === 0 || contacts?.length < RangeEnd) {
+            isCompleted = true;
+        }
         res.send({
             status: 200,
-            results: contacts
+            results: contacts,
+            isCompleted : isCompleted
         });
     } catch (err) {
         logger.error('Error occurred in getAllCustomer', { error: err.message, stack: err.stack });

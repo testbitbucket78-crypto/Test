@@ -193,7 +193,12 @@ async function AssignAdmin(newId, sid) {
   console.log("AssignAdmin")
   let selectAdminUid = `SELECT * FROM routingrules WHERE SP_ID=?`;
   let selectAdmin = await db.excuteQuery(selectAdminUid, [sid]);
-  let admin = selectAdmin.length > 0 ? selectAdmin[0].adminUid : 0;
+  let admin =  selectAdmin[0]?.adminUid;
+  if (selectAdmin?.length == 0) {
+    let defaultAdminQuery = `SELECT * FROM defaultActions WHERE spid=? AND  (isDeleted is null or isDeleted =0)`;
+    let defaultAdmin = await db.excuteQuery(defaultAdminQuery, [sid]);
+    admin = defaultAdmin[0]?.defaultAdminUid
+  }
   let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES ?`;
   let assignAgentRes = await db.excuteQuery(assignAgentQuery, [[[newId, admin, '-1', 1]]]);
   }catch(err){
