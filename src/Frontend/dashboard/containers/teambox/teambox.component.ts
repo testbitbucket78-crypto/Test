@@ -257,6 +257,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		Utility: true,
 		Authentication: true
 	  };
+	  allVariables: string = '';
+	isFallback: any[] = [];
 	// isNewInteraction:boolean=false;
 	// Interaction_ID:number = 0;
 	// template_json:any;
@@ -493,8 +495,9 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		$("#editTemplate").modal('show'); 
 	}
 	SaveVariableOption() {
-		this.variableValues[this.indexSelected] = this.selectedAttribute;
+		this.variableValues[this.indexSelected] = '{{'+this.selectedAttribute+'}}';;
 		this.fallbackvalue[this.indexSelected] = this.attribute;
+		this.isFallback[this.indexSelected] = this.isCustomValue('{{'+this.selectedAttribute+'}}');
 		this.resetAttributeSelection();
 		$("#showvariableoption").modal('hide'); 
 		this.isShowAttributes = false;
@@ -522,17 +525,15 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 
 	}
-	allVariables: string = '';
+	
 	addVariable() {
 		const allVariables = [];
-		this.allVariablesList;
-		this.fallbackvalue;
-		this.variableValues;
 		for (let i = 0; i < this.allVariablesList.length; i++) {
 			const variable = {
 				label: this.allVariablesList[i],
 				value: this.variableValues[i],
-				fallback: this.fallbackvalue[i]
+				fallback: this.fallbackvalue[i],
+				isFallback: this.isFallback[i],
 			};
 			allVariables.push(variable);
 		}
@@ -663,6 +664,26 @@ showToolTip(event: MouseEvent) {
 		this.showInfo = true;
 	}
 }
+UpdateVariable(event: any, index: number) {
+	let currentValue = event.target.value;
+		const forbiddenKeys = ['{', '}'];
+		if (forbiddenKeys.some(key => currentValue.includes(key))) {
+			currentValue = currentValue.replace(/[{}]/g, '');
+			event.target.value = currentValue;
+		}
+
+		if( this.isFallback[index] == true) {
+			event.target.value = ''
+            currentValue = '';
+			this.variableValues[index] = "";
+			this.fallbackvalue[index] = "";
+		}
+	 this.isFallback[index] = this.isCustomValue(currentValue);
+	    if(!this.isFallback[index]){
+			this.fallbackvalue[index] = "";
+		}
+	console.log(this.selectedTemplate)
+}
 selectAttributes(item:any) {
 	this.closeAllModal();
 	const selectedValue = item;
@@ -672,6 +693,22 @@ selectAttributes(item:any) {
 	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
 	this.chatEditor.value = content;
 }
+isCustomValue(value: string): boolean {
+	if(value){
+		let isMatched = false
+		const availableAttributes = this.attributesList.map((attribute: string) => `{{${attribute}}}`);
+		availableAttributes.forEach((attribute: string) =>{
+			if(attribute == value){
+			   isMatched = true;
+			}
+
+		});
+		return isMatched
+	}
+	else {
+		return false;
+	}
+  }
 
 ToggleQuickReplies(){
 	
@@ -1210,7 +1247,12 @@ sendattachfile() {
 			item['messageList'] =messageList?this.groupMessageByDate(messageList):[]
 			item['allmessages'] =messageList?messageList:[]
 
-			var lastMessage = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]:[];
+			var lastMessage = [];
+			if(item['allmessages']){
+				let filteredMsg = item['allmessages'].filter((item:any)=>item.message_direction == 'In');
+				lastMessage = filteredMsg[filteredMsg.length -1]
+			}
+			console.log(lastMessage);
 			item['lastMessage'] = lastMessage
 			item['lastMessageReceved']= this.timeSinceLastMessage(item.lastMessage)
 			item['progressbar']= this.getProgressBar(item.lastMessage)
@@ -1287,7 +1329,12 @@ sendattachfile() {
 			console.log(item['messageList']);
 			item['allmessages'] =messageList?messageList:[]
 
-			var lastMessage = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]:[];
+			var lastMessage = [];
+			if(item['allmessages']){
+				let filteredMsg = item['allmessages'].filter((item:any)=>item.message_direction == 'IN');
+				lastMessage = filteredMsg[filteredMsg.length -1]
+			}
+			console.log(lastMessage);
 			item['lastMessage'] = lastMessage
 			item['lastMessageReceved']= this.timeSinceLastMessage(item.lastMessage)
 			item['progressbar']= this.getProgressBar(item.lastMessage)
@@ -1343,7 +1390,7 @@ sendattachfile() {
 		let rangeEnd = isNewMessage ? 1 : this.messageRangeEnd;
 		let originalScrollPosition = this.scrollContainer.nativeElement.scrollTop;
 		const originalScrollHeight = this.scrollContainer.nativeElement.scrollHeight;
-	
+		console.log(originalScrollHeight);
 		item = selectedInteraction;
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',this.SPID,rangeStart,rangeEnd).subscribe((res:any) =>{
 			let messageList = res.result;
@@ -1407,12 +1454,14 @@ sendattachfile() {
 		})
 
 		if(!isNewMessage){
-			originalScrollPosition = originalScrollPosition ==0 ? 5 : originalScrollPosition;
+			setTimeout(()=>{
+			originalScrollPosition = originalScrollPosition ==0 ? 15 : originalScrollPosition;
 		const newScrollHeight = this.scrollContainer.nativeElement.scrollHeight;
 		const scrollDifference = newScrollHeight - originalScrollHeight;
 		this.scrollContainer.nativeElement.scrollTop = originalScrollPosition + scrollDifference;
+		console.log(originalScrollPosition,newScrollHeight,originalScrollHeight)
+	},800)
 		}
-		console.log(this.isMessageCompletedMedia,this.isMessageCompletedNotes,this.isMessageCompletedText)
 	}
 
 	getUpdatedList(dataList:any) {
@@ -1508,7 +1557,7 @@ sendattachfile() {
 	}
 
 	async getSearchInteractions(key:string){
-		await this.apiService.getSearchInteraction(key,this.uid,this.SPID).subscribe(async (data:any) =>{
+		await this.apiService.getSearchInteraction(key,0,this.SPID).subscribe(async (data:any) =>{
 			var dataList:any = data?.result;
 			this.interactionList= dataList;
 			this.interactionListMain= dataList;
@@ -1938,8 +1987,9 @@ updateCustomer(){
 
 }
 
-filterContactByType(ChannelName:string){
-    this.selectedChannel = ChannelName;
+filterContactByType(Channel:any){
+	if(Channel?.channel_status == 1){
+    this.selectedChannel = Channel?.channel_id;
 
 	this.contactList.forEach((item: any) => {
 		item.channel = this.selectedChannel;
@@ -1947,6 +1997,9 @@ filterContactByType(ChannelName:string){
 	console.log(this.contactList)
     this.getSearchContact();
     this.ShowContactOption = false;
+} else{
+	this.showToaster('Chhanel is not active','error');
+}
 }
 
 toggleConversationStatusOption(){
@@ -2619,7 +2672,7 @@ sendMessage(){
 			created_at:new Date(),
 			mediaSize:this.mediaSize,
 			spNumber: this.spNumber,
-			MessageVariables: this.allVariables
+			MessageVariables: this.allVariables,
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
@@ -2929,8 +2982,10 @@ sendMessage(){
 			return 'Image';
 		else if(val?.includes('video'))
 			return 'Video';
-		else 
-			return '';
+		else if(val?.includes('application'))
+			return 'Document';
+		else
+		return '';
 	  }
 	
 	  isHttpOrHttps(text: string): boolean {
@@ -2944,8 +2999,7 @@ sendMessage(){
 		this.settingService.getWhatsAppDetails(this.SPID)
 		.subscribe((response:any) =>{
 		 if(response){
-			 let WhatsAppDetailList = response?.result;
-			 console.log(this.attributesList);
+			 this.WhatsAppDetailList = response?.whatsAppDetails;
 		 }
 	   })
 	 }

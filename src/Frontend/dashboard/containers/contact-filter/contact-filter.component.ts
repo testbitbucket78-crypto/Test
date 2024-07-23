@@ -75,6 +75,7 @@ export class ContactFilterComponent implements OnInit {
   filteredEndCustomerOrigional:any=[];
   modalReference: any;
   customFieldData:[] = [];
+  showContact! : boolean;
   tag:any;
 	SPID:any = sessionStorage.getItem('SP_ID');
 	@ViewChild('addNewItemss', { static: true }) modalContent: TemplateRef<any> | undefined;
@@ -276,8 +277,9 @@ export class ContactFilterComponent implements OnInit {
 	  }
 	  removeFilter(itemIndex:any){
 		this.ContactListNewFilters.splice(itemIndex, 1);
-		this.ContactListNewFilters[0]['filterOperator']='';
-		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters
+		if(this.ContactListNewFilters.length != 0) this.ContactListNewFilters[0]['filterOperator']='';
+		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters;
+		if(this.ContactListNewFilters.length == 0) this.addNewFilter();
 	  }
 	  addFilter(){
 		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters
@@ -317,7 +319,8 @@ export class ContactFilterComponent implements OnInit {
       let contactFilter ='SELECT * FROM `EndCustomer` where SP_ID='+this.SPID;
       if(groupArrays.length>0){
         
-        groupArrays.map((filters:any)=>{
+        groupArrays.map((filters:any,idx)=>{
+			console.log(idx);
           if(filters.items.length>0){
           filters.items[0]['filterOperator']=''	
           
@@ -326,7 +329,7 @@ export class ContactFilterComponent implements OnInit {
             colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
           }
   
-          contactFilter += ' and (';
+          contactFilter += idx == 0 ?' and ((' : ' and (';
           filters.items.map((filter:any)=>{
   
           //this.applylistFiltersWidth =parseInt(this.applylistFiltersWidth)+100	
@@ -386,6 +389,7 @@ export class ContactFilterComponent implements OnInit {
           contactFilter += ' )';
           }
           })
+		  contactFilter += ' )';
         
         }
         console.log(contactFilter)

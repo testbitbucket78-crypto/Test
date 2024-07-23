@@ -907,4 +907,10 @@ onContentChange() {
     }
     return trimmedText;
   }
+  countValue: number = 1;
+  customValue: string = "val1";
+  addCustomAttribute(){
+    this.customValue = `val${this.countValue}`
+    this.countValue++;
+  }
 }

@@ -1661,12 +1661,17 @@ span {
 
 .attachmentboxbody {
     padding: 10px 100px 50px 100px;
+    .header-line{
+        display: flex;
+        align-items: center;
+    }
 }
 
 .attachmentboxbody h4 {
     color: #000;
     font-size: 16px;
     font-weight: 800;
+    margin-right: 255px;
 }
 
 .attachmentbox {
@@ -2719,8 +2724,13 @@ label span {
     height: 30px;
   
     }
+        .disabledAttribute{
+            background-color: grey;
+           }
+
     .variableoption .content .content_inner{
     margin: 1rem;
+    
     }
     .variableoption .content .content_inner .form-control{
     border-radius: 15px;
@@ -2942,7 +2952,10 @@ label span {
         }
     }
 }
-
+.input-custom-color {
+	color: blue!important; 
+  }
+  
 .flex-end{
     display: flex;
     flex-direction: column;

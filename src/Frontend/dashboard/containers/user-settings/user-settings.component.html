@@ -105,7 +105,7 @@
                         <label>User Phone No. <span class="aestric">*</span></label> <br>
 
                             <div class="ss d-flex justify-content-start">
-                            <select class="input-form code-selector" id="country_code" formControlName="country_code">
+                            <select class="input-form code-selector" id="country_code" formControlName="country_code" (change)="getPhoneNumberValidation()">
                               <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
                                 {{ countryCode }}
                               </option>
@@ -120,7 +120,10 @@
                             </div>
 
 
-
+                            <div *ngIf="userDetailForm.controls.display_mobile_number.touched && userDetailForm.get('display_mobile_number')?.hasError('invalidPhoneNumberLength')"
+								 class="invalid-feedback">
+								! Invalid phone number length for the selected country.
+							</div>
                         <!-- <input type="text" class="input-form" formControlName="mobile_number"
                             placeholder="Enter Phone Number" minlength="6" maxlength="15">
                          <div *ngIf="userDetailForm.get('mobile_number')?.invalid && (userDetailForm.get('mobile_number')?.touched || userDetailForm.get('mobile_number')?.dirty)

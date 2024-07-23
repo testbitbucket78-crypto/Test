@@ -10,8 +10,8 @@
         <div *ngFor="let data of defaultMessageDataInit; let idx = index" (click)="populateData(data)">
             <div class="flex-row">
                 <span class="sub-heading">{{data.title}} </span>
-                <span *ngIf="data.Is_disable==0" class="disable">Disabled</span>
-                <span *ngIf="data.Is_disable==1 || data.Is_disable==null" class="enable">Enabled</span>
+                <span *ngIf="data.Is_disable==0 || data.Is_disable==null" class="disable">Disabled</span>
+                <span *ngIf="data.Is_disable==1" class="enable">Enabled</span>
             </div>
             <div class="sub-contents">
                 <p>{{data.description}}</p>
