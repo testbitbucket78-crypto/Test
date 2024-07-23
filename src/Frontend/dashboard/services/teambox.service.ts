@@ -185,8 +185,9 @@ export class TeamboxService {
     return this.http.get(API_URL+'/interactionmapping/'+InteractionId);
   }
   
-  public download() {
-    return this.http.get('https://contactapi.stacknize.com/download', { responseType: 'blob' })
+  public download(spid: any) {
+    const url = `https://contactapi.stacknize.com/download/${spid}`;
+    return this.http.get(url, { responseType: 'blob' });
   }
 
   public downloadErrFile() {

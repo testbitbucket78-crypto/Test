@@ -211,7 +211,11 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
 				}]
 		};
-	
+		public pasteCleanupSettings: object = {
+			prompt: false,
+			plainText: true,
+			keepFormat: false,
+		};
 	isSendButtonDisabled=false
 	click: any;
 	selecetdpdf: any='';

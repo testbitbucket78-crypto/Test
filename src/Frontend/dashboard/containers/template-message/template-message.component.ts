@@ -147,7 +147,11 @@ export class TemplateMessageComponent implements OnInit {
             },
         ],
     };
-
+    public pasteCleanupSettings: object = {
+        prompt: false,
+        plainText: true,
+        keepFormat: false,
+    };
     newTemplateForm!: FormGroup;
 
     constructor(public apiService: SettingsService, private _teamboxService: TeamboxService) {}
@@ -244,7 +248,7 @@ export class TemplateMessageComponent implements OnInit {
         this.newTemplateForm.get('Header')?.setValue('');
         this.selectedPreview = '';
     }
-
+ 
     applyGalleryFilter() {
         this.filteredGalleryData = this.galleryData.filter((template: any) => {
             const selectedTopics = this.filterListTopic.filter(topic => topic.checked).map(topic => topic.label);
