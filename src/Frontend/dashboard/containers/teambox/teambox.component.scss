@@ -1542,6 +1542,9 @@ span {
     margin: 0px;
 }
 
+::ng-deep .contact-message-popup .modal-content {
+    height: 510px !important;
+}
 .messageadd .search-box {
     width: 100%;
     background-color: #fff;
@@ -1576,6 +1579,12 @@ span {
 .contact_list {
     max-height: 300px;
     overflow: auto;
+    .noRecords{
+        span{
+            font-size: 18px;
+            color: #414141
+        }
+    }
 }
 
 .conversation_list_inner_box {

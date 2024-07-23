@@ -252,7 +252,7 @@ countryCodes = [
    submitted = false;
    query = '';
    contactOwnerTooltip!: boolean;
-  
+   isLoading!: boolean;
   
  constructor(config: NgbModalConfig, private modalService: NgbModal,
      public settingsService: SettingsService, private apiService: DashboardService, private _settingsService: SettingsService, private teamboxService: TeamboxService, private fb: FormBuilder, private router: Router, private cdRef: ChangeDetectorRef, public GridService: GridService)
@@ -266,6 +266,7 @@ countryCodes = [
     this.productForm = this.contactForm();
  }
     ngOnInit() {
+      this.isLoading = true;
       this.spid = Number(sessionStorage.getItem('SP_ID'));
       document.getElementById('delete-btn')!.style.display = 'none';
       this.showTopNav = true;
@@ -473,7 +474,7 @@ onSelectAll(items: any) {
     this.patchFormValue();
     this.modalService.open(contactedit,{windowClass:'contact-modal'});
   }
-
+ 
   getContact() {
     var SP_ID = sessionStorage.getItem('SP_ID');
     let data:any ={};
@@ -489,6 +490,7 @@ onSelectAll(items: any) {
       this.productForm.get('countryCode')?.setValue('IN +91');
         console.log(this.contacts);
         this.getGridPageSize();
+        this.isLoading = false;
     });
   }
 

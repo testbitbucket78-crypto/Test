@@ -6,7 +6,7 @@
 		<p *ngIf="successMessage" class="success">{{successMessage}}</p>
 		<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 	</div>
-	
+	<sb-loader [isLoading]="isLoading"></sb-loader>
 	<div class="row team-box-page" id="team-box-page">
 	
 		<div class="d-flex justify-content-center w-100">
@@ -247,6 +247,7 @@
 						<div *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList?.length>0"
 							class="conversation_list chat"  #chatSection id="chatSection">
 							<div class="older-message" (click)="getOlderMessages(selectedInteraction)" *ngIf="!(isMessageCompletedMedia && isMessageCompletedNotes && isMessageCompletedText)">Click here to get older messages</div>
+							<sb-loader [isLoading]="isLoadingOlderMessage" [message]="''" [loaderType]="'small'"></sb-loader>
 							<div *ngFor="let messageGroup of selectedInteraction?.messageList; let i = index" id={{i}}
 								class="conversation_list_inner_box">
 								<div class="date_seprator"><span>---</span>
@@ -1485,7 +1486,9 @@ popupWidth='250px' popupHeight='200px'>
 			</div>
 
 			<div class="contact_list">
-
+				<div *ngIf="(contactList | searchfilter:header)?.length === 0" class="noRecords d-flex justify-content-center align-items-center">
+					<span>No Records Found</span>
+				  </div>
 				<div class="contact_item" *ngFor="let item of contactList | searchfilter:header; let i = index"
 					(click)="createInteraction(item.customerId)">
 					<div class="contact_item_left">
