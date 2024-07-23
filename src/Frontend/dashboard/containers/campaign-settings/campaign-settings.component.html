@@ -199,7 +199,8 @@
                             <div class="copy col-6" *ngIf="item.isSelected == true" >
                                 <div class="d-flex align-item-center">
                                     <div class="align-items-center d-flex">
-                                <img src="../../../../assets/img/profile/Richie_3.png"  class="user-img-2 ">
+                                        <div class="img" *ngIf="!item.profile_img">{{_settingsService.getInitials(item.name)}}</div>
+                                <!-- <img src="../../../../assets/img/profile/Richie_3.png"  class="user-img-2 "> -->
                             </div>
                                 <span class="ml-2"  >{{item.name}}</span>
                             </div>
