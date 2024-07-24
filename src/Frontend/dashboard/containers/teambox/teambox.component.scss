@@ -1251,8 +1251,6 @@ button:focus, input:focus {
     width: 100px;
     margin-left: 0;
     position: absolute;
-    left: 25rem;
-    top: -12.5rem;
 }
 
 .popup-dialog p {
@@ -2989,4 +2987,13 @@ label span {
     font-size: 13px;
     color: #7A86A1;
     text-align: center;
+}
+
+.delete-note .modal-dialog{
+    left: 20rem;
+    position: relative !important;
+}
+
+.delete-note .modal-content{
+    position: absolute !important;
 }

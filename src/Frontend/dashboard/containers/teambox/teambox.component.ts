@@ -450,6 +450,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.variableValueForm.reset();
 		this.variableValues=[];
 		this.getCustomers()
+		this.newContact.reset();
 		// this.getTemplates();
 
 		$("#editTemplateMedia").modal('hide');
@@ -990,6 +991,7 @@ sendattachfile() {
 		if(files[0]){
 		let imageFile = files[0]
 		let spid = this.SPID
+		if((files[0].type == 'video/mp4' || files[0].type == 'application/pdf' || files[0].type == 'image/jpg' || files[0].type == 'image/jpeg' || files[0].type == 'image/png' || files[0].type == 'image/webp' )){
 		this.mediaType = files[0].type
 		let fileSize = files[0].size;
 
@@ -1024,6 +1026,9 @@ sendattachfile() {
 
 			});
 		}
+	} else{
+		this.showToaster('Please select valid file type','error')
+	}
 
 		  };	
 	}
@@ -1902,9 +1907,13 @@ toggleGenderOption(){
 	this.ShowLeadStatusOption = false;
 	this.ShowChannelOption = false;
 }
-selectChannelOption(ChannelName:any){
-	this.selectedChannel = ChannelName
-	this.ShowChannelOption=false
+selectChannelOption(Channel:any){
+	if(Channel?.channel_status == 1){
+		this.selectedChannel = Channel?.channel_id;
+		this.ShowChannelOption = false;
+	} else{
+		this.showToaster('Chhanel is not active','error');
+	}
 }
 hangeEditContactInuts(item:any){
 	if(item.target.name =='OptInStatus'){
@@ -2442,7 +2451,7 @@ createCustomer() {
 				this.apiService.createCustomer(bodyData).subscribe(
 					async (response:any) => {
 						var responseData: any = response;
-						var insertId: any = responseData.insertId;
+						var insertId: any = responseData.customerId;
 						$("#contactadd").modal('hide');
 						if(this.modalReference){
 							this.modalReference.close();
@@ -2450,10 +2459,11 @@ createCustomer() {
 						if (insertId) {
 							this.createInteraction(insertId);
 							this.newContact.reset();
-							this.getAllInteraction();
-							this.getCustomers();
+							//this.getAllInteraction();
+							//this.getCustomers();
 							this.OptedIn = 'No';
 							this.filterChannel='';
+							this.showToaster('Contact created successfully', 'success');
 						}},
 					async (error) => {
 					  if (error.status === 409) {
@@ -2471,6 +2481,7 @@ createCustomer() {
 		}
 		else {
 			this.newContact.markAllAsTouched();
+			this.newContact.controls.Name.markAsDirty();
 		}
 
   }
@@ -2479,17 +2490,25 @@ createCustomer() {
 createInteraction(customerId:any) {
 var bodyData = {
 	customerId: customerId,
-	spid:this.SPID
+	spid:this.SPID,
+	IsTemporary: 1
 
 }
-this.apiService.createInteraction(bodyData).subscribe(async data =>{
+this.apiService.createInteraction(bodyData).subscribe(async( data:any) =>{
 	if(this.modalReference){
 		this.modalReference.close();
 	}
 	// this.isNewInteraction=true;
-	this.getInteractionsFromStart();
+	//this.getInteractionsFromStart();
 	this.getCustomers();
 	this.filterChannel='';
+	//item['messageList'] = [...val, ...item['messageList']];
+	//item['allmessages'] = [...val1, ...item['allmessages']];
+	this.interactionList = [...data.interaction, ...this.interactionList]
+	this.interactionListMain = [...data.interaction, ...this.interactionListMain];
+	this.selectInteraction(0);
+	console.log(this.interactionList);
+	//this.getAllInteraction()
 
 });
 	
@@ -3012,4 +3031,61 @@ sendMessage(){
 		 }
 	   })
 	 }
+
+	//  patchFormValue(){
+	// 	const data:any=this.contactsData
+	// 	console.log(data);
+	// 	this.getFilterTags = data.tag ? data.tag?.split(',').map((tags: string) =>tags.trim().toString()) : [];
+	// 	console.log(this.getFilterTags);
+	// 	this.checkedTags = this.getFilterTags;
+	// 	const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim());
+	// 	//set the selectedTag in multiselect-dropdown format
+	// 	const selectedTags = this.tagListData.map((tag: any, index: number) => ({ idx: index, ...tag }))
+	// 	.filter(tag => selectedTag?.includes((tag.ID).toString()))
+	// 	.map((tag: any) => ({
+	// 		item_id: tag.ID,
+	// 		item_text: tag.TagName,
+	// 	}));
+	// 	console.log(selectedTags);
+	// 	// this.selectedTag = data.tag
+	// 	this.tagListData.forEach((item:any)=>{
+	// 	  if(selectedTag?.includes((item.ID).toString())){
+	// 		item['isSelected'] = true;
+	// 	  }else{
+	// 		item['isSelected'] = false;
+	// 	  }
+	// 	})
+	// 	for(let prop in data){
+	// 	  let value = data[prop as keyof typeof data];
+	// 	  if(this.productForm.get(prop))
+	// 	  this.productForm.get(prop)?.setValue(value)
+	// 	  this.productForm.get('tag')?.setValue(selectedTags); 
+	// 	  let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
+	// 	  if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
+	// 		this.productForm.get(prop)?.setValue(value);
+	// 	  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
+	// 		let val = value ? value.split(':')[0] : '';
+	// 		console.log(val);
+	// 		this.productForm.get(prop)?.setValue(val);
+	// 	  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
+	// 		if(value){
+	// 		let val = value.split(':');
+	// 		console.log(val);
+	// 		console.log(value);
+	
+	// 		let selectName =  value?.split(',');
+	// 				  let names:any =[];
+	// 				  selectName.forEach((it:any)=>{
+	// 					let name = it.split(':');
+	// 					console.log(name);
+	// 					names.push({id: (name[0] ?  name[0] : ''),optionName: (name[1] ?  name[1] : '')});
+	// 				  })
+					  
+	// 		this.productForm.get(prop)?.setValue(names);
+	// 				}
+	// 	  }
+	// 	}  
+	// 	this.OptInStatus =data.OptInStatus
+	// 	this.isBlocked=data.isBlocked;
+	//   }
 }
