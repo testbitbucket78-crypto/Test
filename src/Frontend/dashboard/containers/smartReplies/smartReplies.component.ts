@@ -1440,9 +1440,9 @@ stopPropagation(event: Event) {
 	getReplies() {
 		var SP_ID=sessionStorage.getItem('SP_ID')
 		this.apiService.getSmartReply(SP_ID).subscribe((data: any) => {
+			this.isLoading = false;
 			console.log(data,'replies data')
 			this.replies = data;
-			this.isLoading = false;
 		});
 	}
 

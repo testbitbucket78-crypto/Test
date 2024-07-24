@@ -497,6 +497,7 @@ onSelectAll(items: any) {
     data.Query = this.query;
     console.log(SP_ID)
     this.apiService.getFilteredContact(data).subscribe((data:any) => {
+      this.isLoading = false;
       this.contacts = data.result;
       this.rowData = this.contacts;
       if(this.rowData.length == 0){
@@ -505,7 +506,7 @@ onSelectAll(items: any) {
       this.productForm.get('countryCode')?.setValue('IN +91');
         console.log(this.contacts);
         this.getGridPageSize();
-        this.isLoading = false;
+        
     });
   }
 
@@ -544,7 +545,7 @@ onSelectAll(items: any) {
     this.modalService.dismissAll()
   }
    closesidenav(items: any){
-    this.productForm.reset();
+    this.productForm.reset()
     this.productForm.get('countryCode')?.setValue('IN +91');
     this.contactId=0;
     this.customerData = [];
@@ -768,7 +769,6 @@ console.log(this.contactId)
     this.apiService.editContact(contactData, this.contactId, this.spid).subscribe(
       (response: any) => {
       if(response) {
-        this.productForm.reset();
         this.productForm.clearValidators();
         this.resetForm();
         this.modalService.dismissAll();

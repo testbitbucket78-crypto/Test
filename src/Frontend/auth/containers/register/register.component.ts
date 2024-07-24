@@ -4,6 +4,7 @@ import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 
 @Component({
     selector: 'sb-register',
@@ -57,7 +58,7 @@ export class RegisterComponent implements OnInit {
       ];
 
 
-    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) {
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, public phoneValidator:PhoneValidationService) {
         this.registerForm = this.formBuilder.group({
             name: new FormControl('', [Validators.required,Validators.maxLength(30),Validators.pattern(/^[a-zA-Z0-9 ]*$/),this.validateName]),
             mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),Validators.maxLength(15)])),
@@ -103,6 +104,13 @@ export class RegisterComponent implements OnInit {
 formatPhoneNumber() {
   let phoneNumber = this.registerForm.get('display_mobile_number')?.value;
   let countryCode = this.registerForm.get('country_code')?.value;
+
+  this.registerForm.get('display_mobile_number')?.setValidators([
+    Validators.required,
+    this.phoneValidator.phoneNumberValidator(this.registerForm.get('country_code'))
+  ]);
+  this.registerForm.get('display_mobile_number')?.updateValueAndValidity();
+  console.log(this.registerForm);
 
   if (phoneNumber && countryCode) {
     let phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;

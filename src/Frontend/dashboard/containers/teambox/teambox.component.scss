@@ -899,7 +899,16 @@ img.no-dp {
     color: #000;
     word-break: break-word;
 }
-
+::ng-deep .conversation_list.chat .message_box .content .message_text{
+   a{
+    font-style: italic;
+    text-decoration: underline;
+    color: rgb(245, 186, 76)
+   }
+   a:hover{
+    color: rgb(255, 166, 0);
+   }
+}
 ::ng-deep .content .message_text .e-rte-anchor {
     font-style: italic;
     color: white !important;
@@ -1539,6 +1548,21 @@ span {
     width: 100%;
     margin: 0px;
 }
+::ng-deep .update-tag-custom .modal-content{
+    max-height: 500px;
+    width: 65%;
+   
+    .modal-body{
+        font-size: 12px;
+        .inner_form{
+            padding: 0px 0rem;
+            .row{
+                margin: 0 3%;
+            }
+        }
+    }
+}
+
 
 ::ng-deep .contact-message-popup .modal-content {
     height: 510px !important;
@@ -2882,6 +2906,18 @@ label span {
     text-align: right;
   }
   
+  .image-wrapper{
+    width: max-content;
+    height: max-content;
+    position: relative;
+  }
+
+  .image-wrapper:hover{
+    .hover-text{
+        display: inline-block;
+    }
+  }
+
 //   .hover-image {
 //     width: 100%; 
 //     height: auto; 
@@ -2891,7 +2927,7 @@ label span {
     display: none;
     position: absolute;
     top: 50%;
-    left: 77%;
+    left: -40px;
     transform: translate(-50%, -50%);
     color: #7A86A1;
     padding: 4px;
