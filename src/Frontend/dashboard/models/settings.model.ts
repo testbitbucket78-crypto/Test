@@ -206,6 +206,8 @@ export interface routingRulesData {
     isadmin:number;
     assignspecificuser:number;
     selectuser:string;
+    SpecificUserUid: number;
+    manualAssignUid: number;
 }
 
 export interface templateMessageData {

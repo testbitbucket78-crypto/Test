@@ -2,6 +2,7 @@
 	<ng-container *ngIf="showTopNav">
 		<sb-top-nav title="Campaigns"></sb-top-nav>
 	</ng-container>
+	<sb-loader [isLoading]="isLoading"></sb-loader>
 	<div class="campaigns_page">
 
 		<div class="toaster" (click)="hideToaster()">

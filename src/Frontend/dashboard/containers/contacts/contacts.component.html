@@ -51,7 +51,9 @@
 			</div>
 		</div>
 	</div>
-	<div *ngIf="!contacts" class=" my-5 smartreplies-empty-state">
+	<sb-loader [isLoading]="isLoading"></sb-loader>
+
+	<div *ngIf="!contacts && !filterIsApplied" class=" my-5 smartreplies-empty-state">
 		<div class="d-flex justify-content-center my-5 align-items-center container-empty-state">
 			<div class="text-center py-5 body-empty-state">
 				<img src="../../../../assets/img/contact-empty.png" />
@@ -59,10 +61,10 @@
 				<p>Add contacts individually or Import in bulk</p>
 			</div>
 		</div>
-</div>
+    </div>
 
 
-	<div *ngIf="contacts" class="box">
+	<div *ngIf="contacts || filterIsApplied" class="box">
 		<ag-grid-angular class="ag-theme-alpine"
 						 style="height: 60vh;"
 						 [rowData]="rowData"

@@ -279,7 +279,9 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isMessageCompletedMedia:boolean = false;
 	isMessageCompletedText:boolean = false;
 	isShowAttributes:boolean = false;
-
+	
+	isLoading!: boolean;
+	isLoadingOlderMessage!: boolean;
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
 		private datePipe:DatePipe) {
 		
@@ -1027,6 +1029,7 @@ sendattachfile() {
 	}
 			
 	ngOnInit() {
+		this.isLoading = true;
 		switch(this.loginAs) {
 			case 1:
 				this.loginAs='Admin'
@@ -1429,6 +1432,7 @@ sendattachfile() {
 			item['messageList'] = [...val, ...item['messageList']];
 			item['allmessages'] = [...val1, ...item['allmessages']];
 			}	
+			this.isLoadingOlderMessage = false;
 		})
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID,rangeStart,rangeEnd).subscribe((res1:any) =>{
@@ -1555,7 +1559,7 @@ sendattachfile() {
 		//this.selectedInteractionList =
 		console.log('selectInteraction(0)');
 			this.selectInteraction(0);
-			
+			this.isLoading = false;
 		});
 		this.scrollChatToBottom()
 	}
@@ -2544,7 +2548,7 @@ openaddMessage(messageadd: any) {
 	if(this.modalReference){
 	this.modalReference.close();
 	}
-	this.modalReference = this.modalService.open(messageadd,{windowClass:'teambox-pink'});
+	this.modalReference = this.modalService.open(messageadd,{windowClass:'teambox-pink contact-message-popup'});
 }
 
 openaddMediaGallery(mediagallery:any, slideIndex:any) {
@@ -2917,8 +2921,9 @@ sendMessage(){
     });
 	}
 
-
+	
 	getOlderMessages(selectedInteraction:any){
+        this.isLoadingOlderMessage = true;
 		this.messageRangeStart = this.messageRangeEnd;
 		this.messageRangeEnd = this.messageRangeEnd +30;
 		this.getMessageData(selectedInteraction, false)

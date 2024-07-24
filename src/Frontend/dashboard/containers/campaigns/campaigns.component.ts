@@ -290,7 +290,7 @@ export class CampaignsComponent implements OnInit {
 	isCampaignTiming: boolean = false;
 	workingData:any =[];
 	csvText:string ='';
-	
+	isLoading!:boolean;
 	customFieldData:[] = [];
 	tag:[] =[];
 	 
@@ -354,6 +354,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 
 	ngOnInit() {
+		this.isLoading = true;
 		this.getCampaignTimingList();
 		switch(this.loginAs) {
 			case 1:
@@ -800,7 +801,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			if(allCampaignList){
 			this.mapCampaignData(allCampaignList)
 			}
-			
+			this.isLoading = false;
 		})
 		
 	}

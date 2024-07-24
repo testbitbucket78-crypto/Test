@@ -160,7 +160,23 @@ export class RoutingRulesComponent implements OnInit {
     });
 console.log(this.defaultAssignRule)
   }
+assignUUID(manualassign: string, assignspecificuser: string){
+  const manualAssignUser = this.userList.find((user: any) => user.name === manualassign);
+  const assignSpecificUser = this.userList.find((user: any) => user.name === assignspecificuser);
 
+  if (manualAssignUser) {
+    this.routingRulesData.manualAssignUid = manualAssignUser.uid;
+  } else {
+    console.log(`User with name '${manualassign}' not found.`);
+  }
+
+  if (assignSpecificUser) {
+    this.routingRulesData.SpecificUserUid = assignSpecificUser.uid;
+  } else {
+    console.log(`User with name '${assignspecificuser}' not found.`);
+  }
+
+}
   saveRoutingRules() {
     this.routingRulesData.SP_ID = this.spId;
     this.routingRulesData.contactowner  = this.contactowner;
@@ -180,7 +196,7 @@ console.log(this.defaultAssignRule)
       this.routingRulesData.assignspecificuser = Number(this.missedChatOption === 'assignspecificuser' ? '1' : '0');
       this.routingRulesData.selectuser = this.selectuser;
     };
-   
+   this.assignUUID( this.routingRulesData.assignuser ,  this.routingRulesData.selectuser);
 
     if(this.myForm.valid) {
       this.apiService.saveRoutingRulesData(this.routingRulesData).subscribe(response=>{
