@@ -299,7 +299,7 @@ label.container input[type="radio"]:checked + span.label {
       font-size: 12px;
     }
     .notes .message_text p,.notes .message_text p span{
-      color:#000;
+      color:#000 !important;
     }
 
     .message_box.left .content .message_text p,
