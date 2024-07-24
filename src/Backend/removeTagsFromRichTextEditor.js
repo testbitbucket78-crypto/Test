@@ -112,6 +112,9 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
     });
 
     for (let i = 0; i < message_variables.length; i++) {
+      console.log(i,"logs for check json parse in message variables")
+      console.log(message_variables[0])
+      console.log(i,"**********END************")
       const message_variable = JSON.parse(message_variables[i]);
       const { label, value, fallback } = message_variable;
       let result = {};
