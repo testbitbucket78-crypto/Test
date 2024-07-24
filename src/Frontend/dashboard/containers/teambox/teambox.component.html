@@ -1588,7 +1588,7 @@ popupWidth='250px' popupHeight='200px'>
 					</div>
 					
 				</div>
-				<div>
+				<!-- <div>
 					<div class="py-2 row-md" *ngFor="let item of filteredCustomFields">
 						<label for="tag">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
 						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
@@ -1596,11 +1596,11 @@ popupWidth='250px' popupHeight='200px'>
 						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
 						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
 						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
-						<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
-						<!-- <div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
+						 <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> 
+						<div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
 						<input class="form-control-checkbox" type="checkbox" id="Opted-ins" [formControlName]="item.ActuallName"/>
 						<span>{{item.displayName}}</span>
-					</div> -->
+					</div> 
 						<select *ngIf="item.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
 							<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
 						</select>
@@ -1621,7 +1621,7 @@ popupWidth='250px' popupHeight='200px'>
 						</div>
 
 					</div>
-				</div>
+				</div> -->
 				<div class="row">
 					<div class="row_inline">
 						<input class="form-control-checkbox" type="checkbox" id="Opted-in"
