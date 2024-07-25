@@ -185,6 +185,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	selectedTemplate:any  = [];
 	variableValues:string[]=[];
 	agentsList:any = [];
+	mentionAgentsList:any = [];
 	modalReference: any;
 	OptedIn='No';
 	searchFocused=false;
@@ -1058,6 +1059,7 @@ sendattachfile() {
 		this.getUserList()
 		this.getAllInteraction()
 		this.getInteractionsOnScroll()
+		this.getContactOnScroll()
 		this.getCustomers()
 		this.getquickReply()
 		// this.getTemplates()
@@ -1245,6 +1247,7 @@ sendattachfile() {
     
                 item.nameInitials = nameInitials;
             });
+			this.mentionAgentsList = this.agentsList.filter((item:any)=>item.uid != this.uid);
 			console.log(this.agentsList,'agentlist')
 		});
 
@@ -2579,7 +2582,8 @@ openaddMessage(messageadd: any) {
 	if(this.modalReference){
 	this.modalReference.close();
 	}
-	this.modalReference = this.modalService.open(messageadd,{windowClass:'teambox-pink contact-message-popup'});
+	this.modalReference = this.modalService.open(messageadd,{windowClass:'teambox-pink'});
+	this.getContactOnScroll();
 }
 
 openaddMediaGallery(mediagallery:any, slideIndex:any) {
@@ -2966,7 +2970,7 @@ sendMessage(){
 		this.checkAuthentication()
 		}
 		if(this.selectedInteraction?.assignTo?.AgentId != this.uid && this.showChatNotes=='text' ){
-			this.showToaster('only a assinged user can send the message !','error');
+			this.showToaster('Attention! You can send message only to an Open and Self assigned Conversation','error');
 		} else if(this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open'){
 			this.showToaster('Attention! You can write Note only to an Open Conversation','error');
 		}

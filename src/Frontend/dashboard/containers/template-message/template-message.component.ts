@@ -663,34 +663,58 @@ checkTemplateName(e:any){
         newTemplateForm.template_id = 0;
         newTemplateForm.template_json = [];
         if(this.newTemplateForm.controls.Channel.value == 'WhatsApp Official') {
+            let buttons =[];
+            if(this.newTemplateForm.controls.buttonType.value == 'Quick Reply'){
+               // let obj =[];
+                let i = 0;
+                for(let item of this.quickReplyButtons){
+                    i++;
+                    buttons.push({type: "QUICK_REPLY",text: this.newTemplateForm.get(`quickreply${i}`)?.value})
+                }
+            }else{
+                console.log(this.newTemplateForm.controls.displayPhoneNumber.value)
+                buttons =[{
+                    type: 'PHONE_NUMBER',
+                    text: this.newTemplateForm.controls.buttonText.value,
+                    phone_number: this.newTemplateForm.controls.phone_number.value,
+                   // countryCode: this.newTemplateForm.controls.country_code.value,
+                    //displayPhoneNumber: this.newTemplateForm.controls.displayPhoneNumber.value,
+                },
+                // {
+                //     type: 'URL',
+                //     text: this.newTemplateForm.controls.url?.value,
+                //     url: this.newTemplateForm.controls.url?.value,
+                // }
+            ]
+            }
+            let headerMedia ={};
+            if(this.selectedType != 'Text'){
+                 headerMedia = {
+                        header_handle: [this.newTemplateForm.controls.Links.value]
+            }
+        }
             newTemplateForm.template_json.push({
                 name: this.newTemplateForm.controls.TemplateName.value,
                 category: this.newTemplateForm.controls.Category.value,
-                category_id: this.category_id,
-                language: this.newTemplateForm.controls.Language.value,
+                language: this.newTemplateForm.controls.Language.value == 'English' ? 'en_US' :this.newTemplateForm.controls.Language.value,
                 components: [
+                    {
+                        type: 'HEADER',
+                        format: this.selectedType,
+                        [this.selectedType =='Text' ?'text' :'example' ]: this.selectedType =='Text' ? this.newTemplateForm.controls.Header.value : headerMedia,
+                    },
                     {
                         type: 'BODY',
                         text: this.newTemplateForm.controls.BodyText.value,
                     },
-                    
                     {
-                        type: this.newTemplateForm.controls.buttonType.value,
-                       
-                        buttons: [
-                            {
-                                type: 'PHONE_NUMBER',
-                                text: this.newTemplateForm.controls.buttonText.value,
-                                phone_number: this.newTemplateForm.controls.phone_number.value,
-                                countryCode: this.newTemplateForm.controls.country_code.value,
-                                displayPhoneNumber: this.newTemplateForm.controls.displayPhoneNumber.value,
-                            },
-                            {
-                                type: 'URL',
-                                text: this.newTemplateForm.controls.url?.value,
-                                url: this.newTemplateForm.controls.url?.value,
-                            },
-                        ],
+                        type: 'FOOTER',
+                        text: this.newTemplateForm.controls.FooterText.value,
+                    },
+                    {
+                        //type: this.newTemplateForm.controls.buttonType.value,
+                        type: 'BUTTONS',                       
+                        buttons:buttons
                         // button: [
                         //     {
                         //         name1: this.newTemplateForm.controls.quickreply1.value,
@@ -699,11 +723,12 @@ checkTemplateName(e:any){
                                
                         //     },
                         // ],
-                        button:[
-                            this.newTemplateForm.controls.quickreply1.value,
-                            this.newTemplateForm.controls.quickreply2.value,
-                           this.newTemplateForm.controls.quickreply3.value,
-                        ]
+                        // button:[
+                        //     {type: "QUICK_REPLY",text: this.newTemplateForm.controls.quickreply1.value},
+                        // //     this.newTemplateForm.controls.quickreply1.value,
+                        // //     this.newTemplateForm.controls.quickreply2.value,
+                        // //    this.newTemplateForm.controls.quickreply3.value,
+                        // ]
                     },
                 ],
             });
