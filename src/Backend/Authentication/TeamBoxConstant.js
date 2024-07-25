@@ -299,8 +299,8 @@ SELECT DISTINCT
     m.created_at AS LastMessageDate,
     ww.connected_id,
     im.AgentId AS InteractionMapping,
-    pnin.InteractionId AS PinnedInteractionID
-    tn.TagNames -- Include the TagNames from the EndCustomerTagMaster
+    pnin.InteractionId AS PinnedInteractionID,
+    tn.TagNames 
 FROM 
     LatestInteraction li
 JOIN 
@@ -337,8 +337,8 @@ LEFT JOIN
 LEFT JOIN 
     InteractionMapping im ON ic.InteractionId = im.InteractionId AND im.created_at = lim.LatestMappingInfo
 LEFT JOIN 
-    TagNames tn ON ec.customerId = tn.customerId -- Join with TagNames to get the comma-separated TagNames
-    LEFT JOIN 
+    TagNames tn ON ec.customerId = tn.customerId
+LEFT JOIN 
     PinnedInteraction pnin ON ic.InteractionId = pnin.InteractionId
 WHERE 
     ec.SP_ID = ?
@@ -395,6 +395,7 @@ getallMessagesWithScripts = `(
         AND Message.is_deleted != 1 
         AND (Message.msg_status IS NULL OR Message.msg_status != 10)
         AND Message.SPID = ?
+        order by Message_id desc
 )
 UNION
 (
@@ -434,10 +435,11 @@ UNION
         InteractionEvents.interactionId = ?
         AND InteractionEvents.Type = ? 
         AND InteractionEvents.SP_ID = ?
+    ORDER BY 
+    created_at DESC
 )
 ORDER BY 
-    created_at DESC,
-    interaction_id desc
+    created_at DESC,   
 LIMIT ?, ?;
 `
 getMediaMessage = `(
@@ -574,6 +576,7 @@ ORDER BY
         m.created_at AS LastMessageDate,
         ww.connected_id,
         im.AgentId AS InteractionMapping,
+        pnin.InteractionId AS PinnedInteractionID,
         tn.TagNames -- Include the TagNames from the EndCustomerTagMaster
     FROM 
         LatestInteraction li
@@ -612,9 +615,11 @@ ORDER BY
         InteractionMapping im ON ic.InteractionId = im.InteractionId AND im.created_at = lim.LatestMappingInfo
     LEFT JOIN 
         TagNames tn ON ec.customerId = tn.customerId -- Join with TagNames to get the comma-separated TagNames
+    LEFT JOIN 
+    PinnedInteraction pnin ON ic.InteractionId = pnin.InteractionId
     WHERE 
         ec.SP_ID = ?
-        AND ec.Name LIKE ?
+        AND (ec.Name LIKE ? or  ec.Phone_number LIKE ?)
         AND ec.isDeleted != 1
         AND ic.is_deleted = 0
        `;
@@ -664,6 +669,7 @@ SELECT DISTINCT
     m.created_at AS LastMessageDate,
     ww.connected_id,
     im.AgentId AS InteractionMapping,
+    pnin.InteractionId AS PinnedInteractionID,
     tn.TagNames -- Include the TagNames from the EndCustomerTagMaster
 FROM 
     Interaction ic
@@ -698,6 +704,8 @@ LEFT JOIN
     InteractionMapping im ON ic.InteractionId = im.InteractionId
 LEFT JOIN 
     TagNames tn ON ec.customerId = tn.customerId -- Join with TagNames to get the comma-separated TagNames
+ LEFT JOIN 
+    PinnedInteraction pnin ON ic.InteractionId = pnin.InteractionId
 WHERE 
     ic.InteractionId = ?
 `

@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
 var axios = require('axios');
-
+const logger = require('../common/logger.log');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -200,6 +200,7 @@ app.put('/updateSmartReply', async (req, res) => {
 //________________ Smart Reply Action API's_______________//
 
 app.post('/updateInteractionMapping', async (req, res) => {
+  logger.info('SmartReply ******* updateInteractionMapping');
   InteractionId = req.body.InteractionId
   AgentId = req.body.AgentId
   MappedBy = req.body.MappedBy
@@ -209,10 +210,12 @@ app.post('/updateInteractionMapping', async (req, res) => {
 })
 
 app.get('/getInteractionMapping/:InteractionId', (req, res) => {
+  logger.info('SmartReply ******* getInteractionMapping');
   db.runQuery(req, res, val.getInteractionMapping, [req.params.InteractionId])
 })
 
 app.post('/resetInteractionMapping', (req, res) => {
+  logger.info('SmartReply ******* resetInteractionMapping');
   InteractionId = req.body.InteractionId
   var valuesUpdate = [[InteractionId]]
 

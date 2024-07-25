@@ -82,6 +82,10 @@ const register = async function (req, res) {
     countryCode = req.body.country_code
     display_mobile_number = req.body?.display_mobile_number
     try {
+
+        const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        let  ip = clientIp.startsWith('::ffff:') ? clientIp.substring(7) : clientIp;
+        console.log('Client IP:', ip);
         var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id, mobile_number])
         if (credentials.length > 0) {
             res.status(409).send({
