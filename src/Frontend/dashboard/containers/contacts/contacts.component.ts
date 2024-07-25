@@ -68,6 +68,17 @@ columnDefs: ColDef[] = [
       suppressMovable: true,  
     //cellStyle: { background: "#FBFAFF" },
   },
+  //  {
+  //   headerName: '',
+  //     headerTooltip: 'Actions',
+  //     width: 150,
+  //     editable: false,
+  //     resizable: false,
+  //     filter: false,
+  //     sortable: false,
+  //     clickable: false,
+  //     cellRenderer: this.actionsCellRenderer.bind(this),
+  // },
   {
     field: 'customerId',
     headerName: 'ID',
