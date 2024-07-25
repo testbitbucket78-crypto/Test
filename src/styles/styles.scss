@@ -89,3 +89,7 @@
 .toaster{
   z-index: 9999999 !important;
 }
+// for font size for all text in here to 12px;
+ ejs-richtexteditor .e-rte-content .e-content {
+  font-size: 12px!important;
+}

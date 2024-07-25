@@ -34,7 +34,7 @@
                 <div class="pp"  id="col">
                   <label for="floatingInputGrid" id="la-ph">Phone Number</label> 
                   <div class="ss d-flex justify-content-start">
-                  <select class="input-form" id="country_code" formControlName="country_code">
+                  <select class="input-form" id="country_code" formControlName="country_code" (change)="formatPhoneNumber()">
                     <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
                       {{ countryCode }}
                     </option>
@@ -47,6 +47,10 @@
                       [ngClass]="{'is-invalid' :submitted && registerForm.controls.display_mobile_number.errors }" 
                     (change)="formatPhoneNumber()" #text>    
                   </div>
+                  <div *ngIf="registerForm.controls.display_mobile_number.touched && registerForm.get('display_mobile_number')?.hasError('invalidPhoneNumberLength')"
+								 class="text-danger">
+								! Invalid phone number length for the selected country.
+							</div>
                 </div>
            
               </div>

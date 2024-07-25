@@ -203,7 +203,7 @@
                               
                                     <div class="row">
                                         <!-- <label for="floatingSelectGrid" class="required">Phone Number*</label> -->
-                                        <select class="input-formm" id="country_code" formControlName="country_code">
+                                        <select class="input-formm" id="country_code" formControlName="country_code" (change)="formatPhoneNumber()">
                                             <option *ngFor="let countryCoode of countryCodes; let i = index" [value]="countryCoode" >
                                                 {{ countryCoode }}
                                             </option>
@@ -218,9 +218,13 @@
                                     <div *ngIf="companyDetailForm.get('Phone_Number')?.hasError('required')">
                                         Phone number is required.
                                     </div>
-                                    <div *ngIf="companyDetailForm.get('Phone_Number')?.hasError('minlength') || companyDetailForm.get('Phone_Number')?.hasError('maxlength')">
+                                    <!-- <div *ngIf="companyDetailForm.get('Phone_Number')?.hasError('minlength') || companyDetailForm.get('Phone_Number')?.hasError('maxlength')">
                                         Phone number must consist of 6 to 15 digits.
-                                    </div>
+                                    </div> -->
+                                    <div *ngIf="companyDetailForm.controls.Phone_Number.touched && companyDetailForm.get('Phone_Number')?.hasError('invalidPhoneNumberLength')"
+								         class="text-danger">
+								         ! Invalid phone number length for the selected country.
+							         </div>
                                   </div>
                                 </div>
                             </div>

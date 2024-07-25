@@ -14,6 +14,7 @@ import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angu
 import { debounceTime, map } from 'rxjs/operators';
 import { Mention } from '@syncfusion/ej2-angular-dropdowns';
 import { DatePipe } from '@angular/common';
+import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 
 declare var $: any;
 @Component({
@@ -283,7 +284,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
-		private datePipe:DatePipe) {
+		public phoneValidator:PhoneValidationService, private datePipe:DatePipe) {
 		
 		// customize default values of modals used by this component tree
 
@@ -1536,6 +1537,7 @@ sendattachfile() {
 		}
 		
 		await this.apiService.getAllInteraction(bodyData).subscribe(async (data:any) =>{
+			this.isLoading = false;
 			var dataList:any = data?.conversations;
 			this.isCompleted = data?.isCompleted
 			console.log(dataList,'DataList *****')
@@ -1550,6 +1552,7 @@ sendattachfile() {
 				}else{
 					item.assignAgent = 'Unassigned';
 				}
+			
 			})
 		},50)
 			if(selectInteraction){
@@ -1564,7 +1567,7 @@ sendattachfile() {
 		//this.selectedInteractionList =
 		console.log('selectInteraction(0)');
 			this.selectInteraction(0);
-			this.isLoading = false;
+			
 		});
 		this.scrollChatToBottom()
 	}
@@ -2151,7 +2154,11 @@ formatPhoneNumber(contactForm: FormGroup) {
 	const phoneNumber = contactForm.get('displayPhoneNumber')?.value;
 	const countryCode = contactForm.get('country_code')?.value;
 	const phoneControl = contactForm.get('Phone_number');
-  
+	contactForm.get('displayPhoneNumber')?.setValidators([
+		Validators.required,
+		this.phoneValidator.phoneNumberValidator(contactForm.get('country_code'))
+	  ]);
+	  contactForm.get('displayPhoneNumber')?.updateValueAndValidity();
 	if (phoneNumber && countryCode && phoneControl) {
 	  const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
 	  const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
@@ -2165,6 +2172,11 @@ formatPhoneNumber(contactForm: FormGroup) {
     const phoneNumber = this.EditContactForm['displayPhoneNumber'];
     const countryCode = this.EditContactForm['country_code'];
     let formattedPhoneNumber = null;
+	this.EditContactForm.get('displayPhoneNumber')?.setValidators([
+		Validators.required,
+		this.phoneValidator.phoneNumberValidator(this.EditContactForm.get('country_code'))
+	  ]);
+	  this.EditContactForm.get('displayPhoneNumber')?.updateValueAndValidity();
       if (phoneNumber && countryCode) {
         const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
         formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
@@ -2267,7 +2279,7 @@ toggleTagsModal(updatedtags:any){
 			tagItem['status'] = false;
 		}
 	}
-	 this.modalReference = this.modalService.open(updatedtags,{ size:'ml', windowClass:'white-bg'});
+	 this.modalReference = this.modalService.open(updatedtags,{ size:'ml', windowClass:'white-bg update-tag-custom'});
 
 }
 addTags(tagName:any){
@@ -3016,12 +3028,12 @@ sendMessage(){
 		return '';
 	  }
 	
-	  isHttpOrHttps(text: string): boolean {
-		if(text)
-		return text.startsWith('http://') || text.startsWith('https://');
-		else
-		return false;
-	  }	
+	//   isHttpOrHttps(text: string): boolean {
+	// 	if(text)
+	// 	return text.startsWith('http://') || text.startsWith('https://');
+	// 	else
+	// 	return false;
+	//   }	
 
 	  getWhatsAppDetails() {
 		this.settingService.getWhatsAppDetails(this.SPID)

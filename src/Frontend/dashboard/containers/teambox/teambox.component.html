@@ -256,12 +256,17 @@
 
 								<div *ngFor="let message of messageGroup.items; let i = index" id={{message.Message_id}}
 									[ngClass]="message?.message_direction ? (message?.message_direction =='IN' ? 'message_box left' : 'message_box'):'message_box action_box'">
-									<div *ngIf="message?.message_direction" class="flex-end">
+									<div *ngIf="message?.message_direction" [ngClass]="{
+										'flex-start': message?.message_direction == 'IN',
+										'flex-end':  message?.message_direction != 'IN'
+									  }">
 									<label *ngIf="message.message_direction !='IN' && message.assignAgent !=-1 && message.assignAgent !=-2">{{message.AgentName}}</label>
-									<div class="image-container">
-									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg" style="cursor:pointer;">
-									<div class="hover-text" >{{message.assignAgent ==-2 ?'Automation':'Campaign'}}</div>
-									<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg" style="cursor:pointer;">
+									<div class="d-flex align-items-center justify-content-end">
+										<div class="image-wrapper">
+											<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg" style="cursor:pointer;">
+											<div class="hover-text" >{{message.assignAgent ==-2 ?'Automation':'Campaign'}}</div>
+											<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg" style="cursor:pointer;">
+										</div>
 								</div>
 									<div class="content" (mouseover)="markItRead()">
 										<div *ngIf="message.message_media" class="message_media">
@@ -286,7 +291,7 @@
 
 
 										</div>
-										<div class="message_text">
+										<!-- <div class="message_text">
 											<ng-container *ngIf="isHttpOrHttps(message.message_text); else plainText">
 											  <a [href]="message.message_text" target="_blank" class="isLink">
 												{{ message.message_text }}
@@ -298,10 +303,10 @@
 													(click)="toggleShowFullMessage()">Read More</button>
 												</div>
 											</ng-template>
-										  </div>
-										<!-- <div class="message_text" [innerHTML]="message.message_text | sanitizeHtml">
+										  </div> -->
+										<div class="message_text" [innerHTML]="message.message_text | linkify | sanitizeHtml">
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
-										</div> -->
+										</div>
 										<div [ngClass]="{'message_box_container':message.media_type}">
 											<!-- <span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span> -->
 										
@@ -1549,7 +1554,7 @@ popupWidth='250px' popupHeight='200px'>
 				</div>
 				<div class="phonefield row">
 					<label for="floatingSelectGrid">Phone Number<span class="text-danger">*</span></label>
-					<select class="country_code" formControlName="country_code" id="country_code">
+					<select class="country_code" formControlName="country_code" id="country_code" (change)="formatPhoneNumber(newContact)">
 						<option *ngFor="let country_code of countryCodes" [ngValue]="country_code">
 							{{ country_code }}
 						</option>
@@ -1560,19 +1565,19 @@ popupWidth='250px' popupHeight='200px'>
 					id="displayPhoneNumber" (change)="formatPhoneNumber(newContact)"
 					[ngClass]="{'is-invalid' :newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.errors }">
 				</div>
-				<div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.invalid && 
+				<!-- <div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.invalid && 
 					newContact.controls.displayPhoneNumber.hasError('minlength') || newContact.controls.displayPhoneNumber.hasError('maxlength')"
 			     	class="text-danger">
 		         	! Phone number must consist of 6 to 15 digits.
-					</div>
+					</div> -->
 					<div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.hasError('required')"
 					class="text-danger">
 					! Phone Number is required.
 				</div>
-				<div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.hasError('pattern')"
-				class="text-danger">
-				! Invalid Phone Number.
-			</div>
+				<div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.get('displayPhoneNumber')?.hasError('invalidPhoneNumberLength')"
+					 class="text-danger">
+							! Invalid phone number length for the selected country.
+				</div>
 				<div class="row" style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Channel<span class="text-danger">*</span></label>
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
@@ -1685,7 +1690,7 @@ popupWidth='250px' popupHeight='200px'>
 
 				<div class="phoneFieldEdit row" style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Phone Number<span class="text-danger">*</span></label>
-					<select class="input-formm" name="country_code" (change)="hangeEditContactInuts($event)" formControlName="country_code">
+					<select class="input-formm" name="country_code" (change)="hangeEditContactInuts($event);updatePhoneNumber()" formControlName="country_code">
 						<option *ngFor="let country_code of countryCodes" [ngValue]="country_code">
 							{{ country_code }}
 						</option>
@@ -1696,19 +1701,19 @@ popupWidth='250px' popupHeight='200px'>
 						type="text" (input)="hangeEditContactInuts($event)" (change)="updatePhoneNumber()" placeholder="Enter Phone" 	
 					    [ngClass]="{'is-invalid' :editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.errors }"> 
 						
-						<div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.invalid && 
+						<!-- <div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.invalid && 
 							editContact.controls.displayPhoneNumber.hasError('minlength') || editContact.controls.displayPhoneNumber.hasError('maxlength')"
 							class="text-danger">
 							! Phone number must consist of 6 to 15 digits.
-						</div>
+						</div> -->
 							<div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.hasError('required')"
 							class="text-danger">
 							! Phone Number is required.
 						</div>
-						<div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.hasError('pattern')"
-						class="text-danger">
-						! Invalid Phone Number.
-					   </div>
+						<div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.get('displayPhoneNumber')?.hasError('invalidPhoneNumberLength')"
+								 class="text-danger">
+								! Invalid phone number length for the selected country.
+						</div>
 		      		</div>
 			
 
@@ -1811,7 +1816,7 @@ popupWidth='250px' popupHeight='200px'>
 						<input [checked]="tag.status" type="checkbox" name="tags" class="form-control-checkbox ml-2"
 							value="{{tag.ID}}" (click)="addTags($event)" />
 							<span [ngClass]="{'color-dots': true}" [style.background]="tag.color"></span>
-						{{tag.name}}
+						{{tag.name}
 					</label>
 				</div>
 			</form>

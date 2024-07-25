@@ -796,12 +796,13 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		}
 		console.log(bodyData)
 		this.apiService.getCampaign(bodyData).subscribe(allCampaign =>{
+			this.isLoading = false;
 			var allCampaignList:any=allCampaign
 			console.log(allCampaignList)
 			if(allCampaignList){
 			this.mapCampaignData(allCampaignList)
 			}
-			this.isLoading = false;
+			
 		})
 		
 	}
