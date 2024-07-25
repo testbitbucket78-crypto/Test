@@ -2141,10 +2141,9 @@
   .ContactOption {
     position: absolute;
     text-align: center;
-    height: 175px;
+    max-height: 175px;
     overflow: auto;
     z-index: 9;
-    margin-left: 2.3rem;
 	margin-top: 1px;
 }
 
@@ -2422,3 +2421,18 @@ position: absolute;
 		font-weight: 800;
 	}
   }
+
+  .popup-dialog.ContactOption {
+    margin-top: 0px;
+}
+
+.popup-dialog.ContactOption img {
+    width: 20px;
+    margin-right: 5px;
+}
+
+.popup-dialog.ContactOption span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

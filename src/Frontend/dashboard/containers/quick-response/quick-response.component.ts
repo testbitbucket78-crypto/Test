@@ -54,7 +54,8 @@ export class QuickResponseComponent implements OnInit {
   attributesearch:string='';
   attributesList:any=[];
   profilePicture!: string;
-
+  channelOption: any = [];
+  ShowChannelOption! : boolean;
   
   fileName: any; 
   selectedPreview: string = '';
@@ -95,8 +96,31 @@ export class QuickResponseComponent implements OnInit {
     this.usertemplateForm=this.prepareUserForm();
     this.getformvalue();
     this.getAttributeList();
+    this.getWhatsAppDetails();
   }
   
+  getWhatsAppDetails() {
+		this.apiService.getWhatsAppDetails(this.spid)
+		.subscribe((response:any) =>{
+		 if(response){
+			 if (response && response.whatsAppDetails) {
+				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
+				  value: item.id,
+				  label: item.channel_id,
+				  connected_id: item.connected_id
+				}));
+			  }
+		 }
+	   })
+	 }
+     stopPropagation(event: Event) {
+        event.stopPropagation();
+      }
+      selectChannel(channel:any){
+		this.usertemplateForm.get('channel_id')?.setValue(channel.value);
+		this.usertemplateForm.get('Channel')?.setValue(channel.label);
+		this.ShowChannelOption=false
+	}
 
   	toggleCampaign(){
 		this.showCampaignDetail =!this.showCampaignDetail 

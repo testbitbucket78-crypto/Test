@@ -297,9 +297,12 @@
 						<label for="Channel" class="required">Channel <span class="text-danger">*</span></label>
 						<input class="form-control select_box" type="text" placeholder="Select channel" name="channel_label"
 								formControlName="channel_label" id="channel_label" (click)="toggleChannelOption()" readonly />
-						<div *ngIf="ShowChannelOption" (click)="stopPropagation($event)" class="popup-dialog">
+						<div *ngIf="ShowChannelOption" (click)="stopPropagation($event)" class="popup-dialog ContactOption">
 							<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)">
-								{{channel.label}}
+								<span>
+									<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+									{{channel?.label}} ({{channel?.connected_id}})
+								</span>
 							</p>
 						</div>
 						<div *ngIf="newCampaignDetail.controls.channel_label.value == 'Select Channel' && isNextClicked" class="invalid-feedback f-11">Please select Channel</div>

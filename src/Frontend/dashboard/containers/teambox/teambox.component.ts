@@ -1897,6 +1897,7 @@ toggleFilerOption(){
 }
 
 toggleContactOption(){
+
 	this.ShowContactOption =!this.ShowContactOption;
 }
 closeFilterOptions() {

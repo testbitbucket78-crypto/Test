@@ -177,9 +177,10 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		userList:any;
 		userId!:number;
 		ShowChannelOption:any=false;
-		channelOption:any=[
-			{value:1,label:'WhatsApp Official',checked:false},
-			{value:2,label:'WhatsApp Web',checked:false}];
+		channelOption : any = [];
+		// channelOption:any=[
+		// 	{value:1,label:'WhatsApp Official',checked:false},
+		// 	{value:2,label:'WhatsApp Web',checked:false}];
 	
 		public tools: object = {
 			items: ['Bold', 'Italic', 'StrikeThrough','EmojiPicker',
@@ -255,6 +256,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		 this.getQuickResponse();
 		 this.routerGuard();
 		 this.getReplies();
+		 this.getWhatsAppDetails();
 		}
 
 	ngAfterViewInit() {
@@ -355,7 +357,21 @@ showAddSmartRepliesModal() {
 		$("#editTemplate").modal('hide');
 		$("#attachmentbox").modal('show');
 	}
-
+	
+	getWhatsAppDetails() {
+		this.settingsService.getWhatsAppDetails(this.SPID)
+		.subscribe((response:any) =>{
+		 if(response){
+			 if (response && response.whatsAppDetails) {
+				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
+				  value: item.id,
+				  label: item.channel_id,
+				  connected_id: item.connected_id
+				}));
+			  }
+		 }
+	   })
+	 }
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
 		if(this.variableValues.length!==0 && this.allVariablesList.length!==0) {

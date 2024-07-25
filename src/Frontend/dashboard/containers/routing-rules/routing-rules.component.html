@@ -83,6 +83,7 @@
             <div class="sub-contents pl-0">
                 <p>Fallback assignment rule if the chat could not be assigned as per selected rule within the allowed time as configured here.</p>           
             </div>
+            <div class="sub-contents">
             <div class="select-heading pt-3 pb-2">
                 Chat Assign Timeout Period
             </div>
@@ -115,6 +116,7 @@
                 <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
             </select>
             <p>If the contact owner is not defined, chat is assigned to Admin</p>
+            </div>
         </div>
     </div>
     <div class="d-flex justify-content-end pb-4 default-footer">

@@ -401,10 +401,20 @@
 
                 <div class="p-1 msg-head">
                     <h6 class="pt-1 pb-2">Channel <span class="text-danger font-weight-bold">*</span></h6>
-                    <select class="sel input-form" formControlName="Channel">
+                    <input class="sel input-form" type="text" placeholder="Select channel" name="Channel"
+								formControlName="Channel" id="Channel" (click)="ShowChannelOption = !ShowChannelOption" readonly />
+						<div *ngIf="ShowChannelOption" (click)="stopPropagation($event)" class="popup-dialog ContactOption">
+							<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)">
+								<span>
+									<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+									{{channel?.label}} ({{channel?.connected_id}})
+								</span>
+							</p>
+						</div>
+                    <!-- <select class="sel input-form" formControlName="Channel">
                         <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select channel</option>
                         <option *ngFor="let item of filterListChannel">{{item.label}}</option>
-                    </select>
+                    </select> -->
                 </div>
                 <div class="p-1 msg-head">
                     <h6 class="pt-1 pb-2">Category <span class="text-danger font-weight-bold">*</span></h6>
@@ -475,7 +485,7 @@
                                 <h6>Header <span>(Optional)</span></h6><div><span class="characters-count">{{ getCharacterCount(3) }}</span><span>/60 Characters</span></div>
                             </div>
                             <div class="sel-type-text">
-                                <textarea name="text-editor" formControlName="Header" maxlength="60"rows="6" placeholder="Enter" (input)="updateCharacterCount($event,3)"></textarea>
+                                <textarea id = "headerText" name="text-editor" formControlName="Header" maxlength="60"rows="6" placeholder="Enter" (input)="updateCharacterCount($event,3)"></textarea>
                                 <button (click)="isHeaderAttribute = true;ToggleAttributesOption();" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="attibutes-btn">
                                     <div><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div>
                                 </button>

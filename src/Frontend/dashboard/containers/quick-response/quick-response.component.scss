@@ -1386,3 +1386,83 @@ select.input-form {
     background-color: #888;
     border-radius: 6px;
 }
+
+.popup-dialog{
+	background: #FFFFFF 0% 0% no-repeat padding-box;
+	box-shadow: 4px 22px 54px #695F9730;
+	border-radius: 20px;
+	padding: 10px 0px;
+	position: absolute;
+	max-width: 200px;
+	margin-top: 10px;
+	max-height: 200px;
+	overflow: auto;
+	z-index: 99999;
+	}
+	.popup-dialog p{
+	color:#000;
+	float:left;
+	width: 100%;
+	margin: 0;
+	font-size: 12px;
+	cursor: pointer;
+	}
+	.popup-dialog p span{
+	padding: 5px 15px;
+	width: 100%;
+	float: left;
+	margin:0px;
+	cursor: pointer;
+	}
+	.popup-dialog p.label{
+	font-weight: 600;
+	color: #6149CD;
+	padding: 5px 15px;
+	cursor: pointer;
+	}
+	#channel_label {
+		cursor: pointer;
+	}
+	.popup-dialog p.label:hover{
+	background: #fff;
+	}
+	.popup-dialog p:hover{
+	background: #FFF4F2;
+	}
+	.popup-dialog p.active{
+	background: #FFF4F2;
+	background: #FFF4F2 url("/assets/img/teambox/icon-selected.svg") no-repeat;
+	background-size: 12px;
+	background-position: center right 10px;
+	}
+	.alertmessage p.label{
+	text-align: center;
+	margin: 1rem;
+	}
+    .ContactOption {
+        position: absolute;
+        text-align: center;
+        max-height: 175px;
+        overflow: auto;
+        z-index: 99999;
+        margin-top: 1px;
+    }
+    .popup-dialog.ContactOption img {
+        width: 20px;
+        margin-right: 5px;
+    }
+    
+    .popup-dialog.ContactOption span {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        word-break: break-word;
+        cursor: pointer;
+    }
+    
+    .popup-dialog.ContactOption span:hover{
+        background-color: #FFF4F2;
+    }
+    .z-index99999{
+        z-index: 99999;
+    }
