@@ -1251,8 +1251,6 @@ button:focus, input:focus {
     width: 100px;
     margin-left: 0;
     position: absolute;
-    left: 25rem;
-    top: -12.5rem;
 }
 
 .popup-dialog p {
@@ -1542,6 +1540,9 @@ span {
     margin: 0px;
 }
 
+::ng-deep .contact-message-popup .modal-content {
+    height: 510px !important;
+}
 .messageadd .search-box {
     width: 100%;
     background-color: #fff;
@@ -1576,6 +1577,12 @@ span {
 .contact_list {
     max-height: 300px;
     overflow: auto;
+    .noRecords{
+        span{
+            font-size: 18px;
+            color: #414141
+        }
+    }
 }
 
 .conversation_list_inner_box {
@@ -2980,4 +2987,13 @@ label span {
     font-size: 13px;
     color: #7A86A1;
     text-align: center;
+}
+
+.delete-note .modal-dialog{
+    left: 20rem;
+    position: relative !important;
+}
+
+.delete-note .modal-content{
+    position: absolute !important;
 }

@@ -87,6 +87,11 @@ export class DefaultMessageSettingsComponent implements OnInit {
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
 		}
   ]};  
+  public pasteCleanupSettings: object = {
+    prompt: false,
+    plainText: true,
+    keepFormat: false,
+  };
   lastCursorPosition: Range | null = null;
 
   constructor(private apiService:SettingsService,private _teamboxService:TeamboxService,private fb: FormBuilder) { }

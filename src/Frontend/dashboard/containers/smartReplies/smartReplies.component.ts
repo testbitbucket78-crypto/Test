@@ -172,7 +172,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		attributesearch!:string;
 		allVariablesList:string[]=[];
 		variableValues:string[]=[];
-	
+		isLoading!: boolean;
 		attributesList!:any;
 		userList:any;
 		userId!:number;
@@ -211,7 +211,11 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
 				}]
 		};
-	
+		public pasteCleanupSettings: object = {
+			prompt: false,
+			plainText: true,
+			keepFormat: false,
+		};
 	isSendButtonDisabled=false
 	click: any;
 	selecetdpdf: any='';
@@ -227,7 +231,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	}
 
 	ngOnInit() {
-
+        this.isLoading = true;
 		$('body').addClass('modal-smart-reply-open');
 
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
@@ -580,13 +584,13 @@ showAddSmartRepliesModal() {
 		console.log(this.messageMeidaFile)
 		let mediaContent:any;
 		if(this.mediaType == 'image/jpeg' || this.mediaType == 'image/jpg' || this.mediaType == 'image/png' || this.mediaType == 'image/webp') {
-			mediaContent ='<p><img style="width:100%; height:100%" src="'+this.messageMeidaFile+'" /></p><p style="color: #B8B8B8">'+this.fileSize+' MB '+'</p>'
+			mediaContent ='<p><img style="width:100%; height:100%" src="'+this.messageMeidaFile+'" /></p><p style="color: #B8B8B8"></p>'
 		  }
 		  else if(this.mediaType == 'video/mp4') {
-			  mediaContent ='<p><video controls width="100%" height="100%" src="'+this.messageMeidaFile+'"></video></p><p style="color: #B8B8B8">'+this.fileSize+' MB '+'</p>'
+			  mediaContent ='<p><video controls width="100%" height="100%" src="'+this.messageMeidaFile+'"></video></p><p style="color: #B8B8B8"></p>'
 		  }
 		  else if(this.mediaType == 'application/pdf') {
-			  mediaContent ='<p><a href="'+this.messageMeidaFile+'"><img style="width:14px; height:17px" src="../../../../assets/img/settings/doc.svg" />'+this.fileName+'</a></p><p style="color: #B8B8B8">'+this.fileSize+' MB '+'</p>'
+			  mediaContent ='<p><a href="'+this.messageMeidaFile+'"><img style="width:14px; height:17px" src="../../../../assets/img/settings/doc.svg" />'+this.fileName+'</a></p><p style="color: #B8B8B8"></p>'
 		  }
 
 		this.chatEditor.value = mediaContent;
@@ -1438,6 +1442,7 @@ stopPropagation(event: Event) {
 		this.apiService.getSmartReply(SP_ID).subscribe((data: any) => {
 			console.log(data,'replies data')
 			this.replies = data;
+			this.isLoading = false;
 		});
 	}
 

@@ -78,6 +78,11 @@ export class QuickResponseComponent implements OnInit {
       ],
   };
 
+  public pasteCleanupSettings: object = {
+    prompt: false,
+    plainText: true,
+    keepFormat: false,
+};
   lastCursorPosition: Range | null = null;
 
   constructor(config: NgbModalConfig,private modalService: NgbModal,public apiService:SettingsService, private _teamboxService: TeamboxService) { }

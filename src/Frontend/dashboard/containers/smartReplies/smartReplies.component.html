@@ -1,6 +1,6 @@
 <sb-layout-dashboard>
 	<sb-top-nav title="Smart Replies"></sb-top-nav>
-
+	<sb-loader [isLoading]="isLoading"></sb-loader>
 	<div [ngStyle]="isShowSmartReplies ? {'position': 'fixed'} : {}" class="row r1">
 
 
@@ -404,7 +404,7 @@
 								  <div class="conversation_inout_area">
 					  
 									<div class="input-area">
-									  <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply..."> </ejs-richtexteditor>
+									  <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply..." [pasteCleanupSettings]="pasteCleanupSettings"> </ejs-richtexteditor>
 									  <button class="submit_btn" (click)="addMessage()">Add</button>
 									</div>
 								  </div>

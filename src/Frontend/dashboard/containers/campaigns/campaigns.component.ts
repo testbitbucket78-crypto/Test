@@ -5,6 +5,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from './../../services';
 import { DatePipe } from '@angular/common';
+import * as XLSX from 'xlsx'; 
 declare var $: any;
 
 @Component({
@@ -289,7 +290,7 @@ export class CampaignsComponent implements OnInit {
 	isCampaignTiming: boolean = false;
 	workingData:any =[];
 	csvText:string ='';
-	
+	isLoading!:boolean;
 	customFieldData:[] = [];
 	tag:[] =[];
 	 
@@ -353,6 +354,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 
 	ngOnInit() {
+		this.isLoading = true;
 		this.getCampaignTimingList();
 		switch(this.loginAs) {
 			case 1:
@@ -799,7 +801,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			if(allCampaignList){
 			this.mapCampaignData(allCampaignList)
 			}
-			
+			this.isLoading = false;
 		})
 		
 	}
@@ -2273,7 +2275,52 @@ testinfo(){
 					this.csvContactList = contactsData
 					this.selecetdCSV = fileName
        			}
-	    } else {
+	    } else if(FileExt == "xlsx"){
+			let file =files[0];
+			const fileReader = new FileReader();
+			fileReader.onload = (e: any) => {
+				const data = new Uint8Array(e.target.result);
+				const workbook = XLSX.read(data, { type: 'array' });
+				const sheetName = workbook.SheetNames[0];
+				const worksheet = workbook.Sheets[sheetName];
+				
+				const csvData = XLSX.utils.sheet_to_csv(worksheet);
+				const results = csvData.split("\n");
+				let tableHeader: any[] = [];
+				let tableRows: any[] = [];
+				let i = 0;
+				results.map((row: any) => {
+					if (row) {
+						const rowCol = row.split(",");
+						if (i == 0) {
+							tableHeader = rowCol;
+						} else {
+							tableRows.push(rowCol);
+						}
+						i++;
+					}
+				});
+				this.csvContactColmuns = tableHeader;
+				let contactsData: any[] = [];
+				tableRows.map((rowbh: any) => {
+					let row: any = {};
+					for (var k = 0; k < tableHeader.length; k++) {
+						let keyName: any = tableHeader[k].replace('\r', '');
+						keyName = keyName.replaceAll(' ', '');
+						let value: any = rowbh[k];
+						row[keyName] = value != '\r' ? value : 'null';
+					}
+					contactsData.push(row);
+				});
+				console.log(contactsData);
+				this.csvContactList = contactsData;
+				this.selecetdCSV = file.name;
+			};
+			fileReader.readAsArrayBuffer(file);
+
+				fileReader.readAsArrayBuffer(this.file);
+			}
+		else {
 			this.showToaster('Please Upload csv file only...','error')
 		}
 		}
@@ -2652,10 +2699,16 @@ console.log(this.allTemplatesMain);
 		//*********Download Sample file****************/
 
 		download() {
-			this.apiService.download().subscribe((data: any) => {
+			this.apiService.download(this.SPID).subscribe((data: any) => {
 				const blob = new Blob([data], { type: 'text/csv' });
 				const url = window.URL.createObjectURL(blob);
-				window.open(url);
+				const fileName = document.createElement('a');
+				fileName.href = url;
+				fileName.download = 'Sample_Import_Audience_File'; 
+				document.body.appendChild(fileName);
+				fileName.click();
+				document.body.removeChild(fileName);
+				window.URL.revokeObjectURL(url);
 			})
 		}
 	
