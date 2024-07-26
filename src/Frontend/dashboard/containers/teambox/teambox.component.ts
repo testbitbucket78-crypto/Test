@@ -1155,9 +1155,9 @@ sendattachfile() {
 		let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == id);
 		if(idx >-1){
 			console.log(this.interactionList);
-			if(this.interactionList[idx]['messageList'])
-				await this.getMessageData(this.interactionList[idx],true);
-			else
+			// if(this.interactionList[idx]['messageList'])
+			// 	await this.getMessageData(this.interactionList[idx],true);
+			// else
 				this.getInteractionDataById(idx)
 			console.log(this.interactionList);
 			setTimeout(()=>{
@@ -1169,6 +1169,7 @@ sendattachfile() {
 				count++;
 			})
 			this.interactionList[idx]['UnreadCount'] = count;
+			this.updateUnreadCount();
 		},400)
 			console.log(this.interactionList[idx]);
 		}
@@ -1423,10 +1424,16 @@ sendattachfile() {
 				})
 				item['allmessages'].push(...val1);
 			} else if(isNewMessage && updateMessage){
+				let idx =this.interactionList.findIndex((item:any)=>item.InteractionId = selectedInteraction.InteractionId);			
 				val.forEach(childObj => {
 					const parentObjIndex = item['messageList']?.findIndex((parentObj:any) => parentObj.date === childObj.date);
 					if (parentObjIndex !== -1) {
 					  item['messageList'][parentObjIndex].items[item['messageList'][parentObjIndex].items.length-1] = childObj.items[0];
+					  if(idx != -1){
+						this.interactionList[idx].message_text = childObj.items[0].message_text;
+						this.interactionList[idx].LastMessageDate = childObj.items[0].created_at;
+						this.interactionList[idx].message_media = 'text';
+					}
 					} else {
 					  item['messageList']?.push(childObj);
 					}
@@ -1435,6 +1442,7 @@ sendattachfile() {
 				item['allmessages'].splice(item['allmessages'].length-1,1)
 				// item['messageList'].push(val);
 			item['allmessages'].push(val1);
+			
 			}
 			else{
 			this.isMessageCompletedText = res.isCompleted;
@@ -1569,7 +1577,7 @@ sendattachfile() {
 		if(this.selectedInteraction)
 		//this.selectedInteractionList =
 		console.log('selectInteraction(0)');
-			this.selectInteraction(0);
+		//	this.selectInteraction(0);
 			
 		});
 		this.scrollChatToBottom()
@@ -2073,7 +2081,6 @@ setTimeout(() => {
 
 }
 markItRead(){
-
 	if(this.selectedInteraction['UnreadCount'] > 0) {
 			this.selectedInteraction.messageList.map((messageGroup:any)=>{
 				messageGroup.items.map((message:any)=>{
@@ -2086,23 +2093,33 @@ markItRead(){
 							selectedInteraction['UnreadCount']=selectedInteraction['UnreadCount']>0?selectedInteraction['UnreadCount']-1:0
 							this.selectedInteraction =selectedInteraction
 							message.is_read=1;	
+							
 						})
 				   }
 				});
 		});
+		this.updateUnreadCount();
        }
 
+}
+
+updateUnreadCount(){
+	let idx =this.interactionList.findIndex((item:any)=>item.InteractionId = this.selectedInteraction.InteractionId);
+	if(idx>-1){
+		this.interactionList[idx].UnreadCount=0;
+	}
+	this.unreadList = this.interactionList.filter((item:any) => item?.UnreadCount != 0).length;
 }
 
 
 getUnreadCount(messages:any){
 	let unreadCount=0
 	for(var i=0;i<messages.length;i++){
-		if(messages[i].message_direction!='Out' && messages[i].is_read==0){
+		if(messages[i].message_direction=='IN' && messages[i].message_direction && messages[i].is_read==0){
 			unreadCount=unreadCount+1
 		}
 	}
-	return unreadCount
+	return unreadCount;
 }
 
 hideToaster(){
