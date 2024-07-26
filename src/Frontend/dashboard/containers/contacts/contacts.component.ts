@@ -68,17 +68,17 @@ columnDefs: ColDef[] = [
       suppressMovable: true,  
     //cellStyle: { background: "#FBFAFF" },
   },
-  //  {
-  //   headerName: '',
-  //     headerTooltip: 'Actions',
-  //     width: 150,
-  //     editable: false,
-  //     resizable: false,
-  //     filter: false,
-  //     sortable: false,
-  //     clickable: false,
-  //     cellRenderer: this.actionsCellRenderer.bind(this),
-  // },
+   {
+    headerName: '',
+      headerTooltip: 'Actions',
+      width: 40,
+      editable: false,
+      resizable: false,
+      filter: false,
+      sortable: false,
+      //clickable: false,
+      cellRenderer: this.actionsCellRenderer.bind(this),
+  },
   {
     field: 'customerId',
     headerName: 'ID',
@@ -278,6 +278,29 @@ countryCodes = [
 
     this.productForm = this.contactForm();
  }
+
+ actionsCellRenderer(params: any) {
+  const element = params.data;
+  const buttonsHtml = `
+    <img
+      style="margin-left: -3px; cursor: pointer;" class="delete-button"      
+      height="15px"
+      width="15px"
+      src="/../../assets/img/chat.svg"
+      alt=""
+    />  
+  `;
+  const div = document.createElement('div');
+  div.innerHTML = buttonsHtml;
+  div.addEventListener('click', this.onButtonClick.bind(this, element));
+  return div;
+}
+
+onButtonClick(data:any, event: any) {
+ // this.activeDistrictId = data.schoolDistrictID;
+  const target = event.target;  
+    this.router.navigateByUrl(`Dashboard/teambox?isNewMessage=${true}`);
+}
     ngOnInit() {
       this.isLoading = true;
       this.spid = Number(sessionStorage.getItem('SP_ID'));
@@ -1292,6 +1315,11 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   }
 
   clearFilters() {
+   // this.changingValue.next(true);
+    this.isShowFilter = false;
+    this.filterIsApplied = false;
+    this.query ='';
+    this.getContact();
     this.gridapi!.setFilterModel(null);
   }
 
