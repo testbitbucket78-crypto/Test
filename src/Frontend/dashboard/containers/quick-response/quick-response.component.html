@@ -81,12 +81,21 @@
 						   </div>
 						   <div class="d-inline-block flex-column sel-type-link pb-2">
 							<label for="link" class="linkch" >Channel<span class="text-danger font-weight-bold">*</span></label>
-							
-							<select class="input-form" formControlName="Channel"  id="linken"   >
+							<input class="input-form " type="text" placeholder="Select channel" name="Channel"
+								formControlName="Channel" id="linken" (click)="ShowChannelOption = !ShowChannelOption" readonly />
+								<div *ngIf="ShowChannelOption" (click)="stopPropagation($event)" class="popup-dialog ContactOption z-index99999">
+									<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)">
+										<span>
+											<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+											{{channel?.label}} ({{channel?.connected_id}})
+										</span>
+									</p>
+								</div>
+							<!-- <select class="input-form" formControlName="Channel"  id="linken"   >
 								<option value=""  [disabled]="true" [selected]="true" [hidden]="true">Select channel</option>
 								<option value="WhatsApp Web">WhatsApp Web</option>
 								<option value="WhatsApp Official">WhatsApp Official</option>
-							</select>
+							</select> -->
 							<div *ngIf="usertemplateForm.get('Channel')?.invalid && (usertemplateForm.get('Channel')?.touched || usertemplateForm.get('Channel')?.dirty)
                         " class="invalid-feedback">
                         <div *ngIf="usertemplateForm.get('Channel')?.hasError('required')">

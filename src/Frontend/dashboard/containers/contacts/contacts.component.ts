@@ -1078,6 +1078,7 @@ deletContactByID(data: any) {
     const searchTerm = searchInput.value.trim().toLowerCase();
     this.gridapi.setQuickFilter(searchTerm);
     this.contacts = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
+    this.setPaging()
   }
 
   onFocus() {

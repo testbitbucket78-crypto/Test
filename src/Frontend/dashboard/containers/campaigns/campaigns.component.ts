@@ -127,7 +127,7 @@ export class CampaignsComponent implements OnInit {
 	 isUtility:boolean = true;
 	 isMarketing:boolean = true;
 	 isAuthentication:boolean = true;
-	 
+	 channelOption : any = [];
 
 	 contactTagsOption:any=[
 		{value:0,label:'Paid',checked:false},
@@ -141,9 +141,9 @@ export class CampaignsComponent implements OnInit {
 		{value:2,label:'Running',checked:false},
 		{value:3,label:'Completed',checked:false}];
 	 
-	 channelOption:any=[
-			{value:1,label:'WhatsApp Official',checked:false},
-			{value:2,label:'WhatsApp Web',checked:false}];
+	//  channelOption:any=[
+	// 		{value:1,label:'WhatsApp Official',checked:false},
+	// 		{value:2,label:'WhatsApp Web',checked:false}];
 	 categoriesOption:any=[
 				{value:1,label:'Marketing',checked:false},
 				{value:2,label:'Utility',checked:false},
@@ -381,9 +381,25 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.processData();
 		this.getCustomFieldsData();
 		this.getTagData()
-		
+		this.getWhatsAppDetails();
 	}
 
+	
+	getWhatsAppDetails() {
+		this._settingsService.getWhatsAppDetails(this.SPID)
+		.subscribe((response:any) =>{
+		 if(response){
+			 if (response && response.whatsAppDetails) {
+				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
+				  value: item.id,
+				  label: item.channel_id,
+				  connected_id: item.connected_id,
+				  channel_status: item.channel_status
+				}));
+			  }
+		 }
+	   })
+	 }
 	
     getCustomFieldsData() {
 		this._settingsService.getNewCustomField(this.SPID).subscribe(response => {
@@ -1281,6 +1297,10 @@ formateDate(dateTime:string){
 		this.showAdvance =!this.showAdvance;
     }
 	selectChannel(channel:any){
+		if(channel.channel_status == 0){
+			this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+			return;
+		}
 		this.newCampaignDetail.get('channel_id').setValue(channel.value);
 		this.newCampaignDetail.get('channel_label').setValue(channel.label);
 		this.ShowChannelOption=false
