@@ -923,6 +923,7 @@
 	flex-wrap: nowrap;
 	margin: 0;
 	margin-bottom: 4px;
+	cursor: pointer;
 	}
 	.droparea {
 	border: 1px solid #bbb;
@@ -960,7 +961,7 @@
         display: block;
         margin-bottom: 10px;
         padding-left: 20px;
-        text-indent: -20px;
+        text-indent: -13px;
     }
 	.info_box{
 	background: #FFFFFF 0% 0% no-repeat padding-box;
@@ -976,6 +977,7 @@
 	font-size: 12px;
 	margin-bottom: 10px;
 	font-weight: 400;
+	text-align: left;
 
 	}
 	.info_box p.info img{

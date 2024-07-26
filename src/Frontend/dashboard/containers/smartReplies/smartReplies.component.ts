@@ -366,7 +366,8 @@ showAddSmartRepliesModal() {
 				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
 				  value: item.id,
 				  label: item.channel_id,
-				  connected_id: item.connected_id
+				  connected_id: item.connected_id,
+				  channel_status: item.channel_status
 				}));
 			  }
 		 }
@@ -1596,6 +1597,10 @@ stopPropagation(event: Event) {
 		}
 
 		selectChannel(channel:any){
+			if(channel.channel_status == 0){
+				this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+				return;
+			}
 			this.newReply.get('Channel')?.setValue(channel.label);
 			console.log(channel.label)
 			this.ShowChannelOption=false;

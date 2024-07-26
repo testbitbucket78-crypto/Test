@@ -1915,6 +1915,10 @@ toggleGenderOption(){
 	this.ShowChannelOption = false;
 }
 selectChannelOption(Channel:any){
+	if(Channel.channel_status == 0){
+		this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+		return;
+	}
 	if(Channel?.channel_status == 1){
 		this.selectedChannel = Channel?.channel_id;
 		this.ShowChannelOption = false;
@@ -2012,6 +2016,10 @@ updateCustomer(){
 }
 
 filterContactByType(Channel:any){
+	if(Channel.channel_status == 0){
+		this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+		return;
+	}
 	if(Channel?.channel_status == 1){
     this.selectedChannel = Channel?.channel_id;
 

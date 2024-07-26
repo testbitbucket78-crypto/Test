@@ -52,6 +52,9 @@ export class TemplateMessageComponent implements OnInit {
     filterTemplateCategory = ['Status', 'Channel','Category', 'Language'];
     ShowChannelOption! : boolean;
     channelOption: any = [];
+    countValue: number = 1;
+    customValue: string = "val1";
+    valuesMap: Map<number, string> = new Map();
     filterListTopic = [
         { value: 0, label: 'Lead Gen', checked: false },
         { value: 1, label: 'Order Confirm', checked: false },
@@ -217,7 +220,8 @@ export class TemplateMessageComponent implements OnInit {
 				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
 				  value: item.id,
 				  label: item.channel_id,
-				  connected_id: item.connected_id
+				  connected_id: item.connected_id,
+                  channel_status: item.channel_status
 				}));
 			  }
 		 }
@@ -227,6 +231,10 @@ export class TemplateMessageComponent implements OnInit {
         event.stopPropagation();
       }
       selectChannel(channel:any){
+        if(channel.channel_status == 0){
+            this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+            return;
+        }
 		this.newTemplateForm.get('channel_id')?.setValue(channel.value);
 		this.newTemplateForm.get('Channel')?.setValue(channel.label);
 		this.ShowChannelOption=false
@@ -357,7 +365,21 @@ export class TemplateMessageComponent implements OnInit {
 
     updateCharacterCount(event: Event, idx: number) {
         const inputElement = event.target as HTMLInputElement;
-        this.characterCounts[idx] = inputElement.value.length;
+        let value = inputElement.value;
+        const validPattern = /{{[^{}]*}}/g;
+        const hasValidExpressions = validPattern.test(value);
+        if(!hasValidExpressions){
+        const malformedPattern = /{{[^{}]*[^{}]|[^{}]*}}[^{}]*|[^{}]*{{[^{}]*$|{{[^{}]*[^{}]}[^{}]*$/g;
+        const hasMalformed = malformedPattern.test(value);
+            if(hasMalformed) {
+            value = value.replace(malformedPattern, '');
+            value = value.replace(/[{}]+/g, ''); 
+            this.newTemplateForm.controls.Header.setValue(value);
+            }
+        }
+        inputElement.value = value;
+        this.characterCounts[idx] = value.length;
+       
     }
 
     getCharacterCount(idx: number) {
@@ -869,7 +891,7 @@ checkTemplateName(e:any){
     insertAtCursor(selectedValue:any) {
         const editorElement = this.chatEditor.element.querySelector('.e-content');
         const newNode = document.createElement('span');
-        newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>';;
+        newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';;
         //newNode.style.color = '#000';
         this.lastCursorPosition?.insertNode(newNode);
       }
@@ -951,7 +973,7 @@ onContentChange() {
     } 
   }
 
-  valuesMap: Map<number, string> = new Map();
+ 
   processText(text: string){
     this.valuesMap.clear();
     const headerText = document.getElementById('headerText') as HTMLInputElement;
@@ -964,11 +986,8 @@ onContentChange() {
       this.valuesMap.set(num, `val${num}`);
     }
 
-    let sortedEntries = Array.from(this.valuesMap.entries()).sort((a, b) => {
-        if (a[0] < b[0]) return -1;
-        if (a[0] > b[0]) return 1;
-        return 0;
-      });
+    let sortedEntries = Array.from(this.valuesMap.entries()).sort((a, b) => a[0] - b[0]);
+    this.valuesMap = new Map(sortedEntries);
   }
   trimContent(text: string, characterCount: number): string {
     const emojisToAdd = 1; 
@@ -980,11 +999,8 @@ onContentChange() {
     }
     return trimmedText;
   }
-  countValue: number = 1;
-  customValue: string = "val1";
+  
   addCustomAttribute(){
-   // this.onContentChange();
-   // this.processText("{{"+`val${this.countValue}`+"}}")
     if (this.valuesMap.size == 0) {
         this.valuesMap.set(1, `val${1}`);
         return;
@@ -994,7 +1010,6 @@ onContentChange() {
             this.countValue++
         }
     });
-
     this.valuesMap.set(this.countValue,`val${this.countValue}`);
     this.customValue = `val${this.countValue}`
     this.countValue = 1;

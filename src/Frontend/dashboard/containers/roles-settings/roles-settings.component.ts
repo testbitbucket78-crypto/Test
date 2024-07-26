@@ -300,6 +300,7 @@ export class RolesSettingsComponent implements OnInit {
 
     searchData(srchText: string) {
         this.gridOptions.api.setQuickFilter(srchText);
+        this.setPaging()
         // this.rolesList = [];
         // console.log(srchText)
         // if(srchText !=''){

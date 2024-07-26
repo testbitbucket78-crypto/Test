@@ -107,7 +107,8 @@ export class QuickResponseComponent implements OnInit {
 				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
 				  value: item.id,
 				  label: item.channel_id,
-				  connected_id: item.connected_id
+				  connected_id: item.connected_id,
+          channel_status: item.channel_status
 				}));
 			  }
 		 }
@@ -117,6 +118,10 @@ export class QuickResponseComponent implements OnInit {
         event.stopPropagation();
       }
       selectChannel(channel:any){
+        if(channel.channel_status == 0){
+          this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+          return;
+        }
 		this.usertemplateForm.get('channel_id')?.setValue(channel.value);
 		this.usertemplateForm.get('Channel')?.setValue(channel.label);
 		this.ShowChannelOption=false
