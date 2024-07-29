@@ -96,7 +96,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
           executablePath: "/usr/bin/google-chrome-stable",
-          //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+       //   executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -393,7 +393,7 @@ console.log("undefinedCount",undefinedCount)
 }
 
 function isActiveSpidClient(spid) {
-  console.log("clientSpidMapping[spid]", spid, clientSpidMapping)
+  //console.log("clientSpidMapping[spid]", spid, clientSpidMapping)
   if (clientSpidMapping[spid]) {
     console.log("if client ready")
     return true;
@@ -490,7 +490,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
     if (type === 'attachment' || type === 'document') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      const media = new MessageMedia('pdf', link);
+      const media = await MessageMedia.fromUrl(link)//MessageMedia('pdf', link);
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
       client.sendMessage(endCust + '@c.us', media);
 
@@ -603,10 +603,13 @@ async function saveInMessages(message) {
     let message_media = ""           //Type
     let Type = message.type
     let contactName = message._data.notifyName      //contactName
+
+
     if (message.hasMedia) {
       const media = await message.downloadMedia();
-
-      message_media = media.data
+console.log("media", message.type)   
+ message_media = media.data
+   //  console.log(media.data)
     }
 
     if (from != 'status@broadcast') {
@@ -719,7 +722,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
     var media_type = 'image/jpg'
   }
   if (Type == "video") {
-    // console.log("lets check the video");
+    console.log("lets check the video");
 
     var imageurl = await saveImageFromReceivedMessage(from, message_media, phone_number_id, display_phone_number, Type);
 
@@ -727,6 +730,16 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
     //  console.log(message_media)
     message_text = " "
     var media_type = 'video/mp4'
+  }
+  if (Type == "document") {
+    console.log("lets check the document");
+
+    var imageurl = await saveImageFromReceivedMessage(from, message_media, phone_number_id, display_phone_number, Type);
+
+    message_media = imageurl.value;
+    //  console.log(message_media)
+    message_text = " "
+    var media_type = 'application/pdf'
   }
   if (message_text.length > 0) {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
@@ -758,7 +771,13 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
         // console.log(awsDetails)
       }
       if (type == 'video') {
-        awsDetails = await awsHelper.uploadVideoToAws(sid[0]?.SP_ID + "/teambox/" + phone_number_id + "/" + "whatsAppWeb.mp4", message)
+        awsDetails = await awsHelper.uploadVideoToAws(sid[0]?.SP_ID + "/teambox/" + phone_number_id + "/" + "whatsAppWeb.mp4", message,'video/mp4')
+        // console.log("awsDetails video");
+
+        // console.log(awsDetails)
+      }
+      if (type == 'document') {
+        awsDetails = await awsHelper.uploadVideoToAws(sid[0]?.SP_ID + "/teambox/" + phone_number_id + "/" + "whatsAppWeb.pdf", message,'application/pdf')
         // console.log("awsDetails video");
 
         // console.log(awsDetails)
@@ -769,7 +788,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
       resolve({ value: awsDetails.value.Location });
 
-      //console.log("****image API****" + JSON.stringify(response))
+      console.log("****image API****", awsDetails.value.Location)
     }
     catch (err) {
       console.log("______image api ERR_____" + err)

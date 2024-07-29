@@ -241,7 +241,7 @@ const createInteraction = async (req, res) => {
         IsTemporary = req.body?.IsTemporary;
         var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type, IsTemporary]];
 
-        let isExist = await db.excuteQuery('select * from Interaction where SP_ID=? and customerId=? and is_deleted!=1', [SP_ID, customerId]);
+        let isExist = await db.excuteQuery('select * from Interaction where SP_ID=? and customerId=? and is_deleted!=1 and IsTemporary !=1', [SP_ID, customerId]);
         if (isExist?.length > 0) {
             res.status(409).send({
                 msg: 'This customer interaction already exists!',

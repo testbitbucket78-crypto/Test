@@ -27,7 +27,8 @@ LIMIT 1`;
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent) VALUES ?";
 
 async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted) {
-
+console.log("isAutoReply, autoReplyTime, isAutoReplyDisable")
+console.log(isAutoReply, autoReplyTime, isAutoReplyDisable)
   let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?', [newId]);
   let interactionStatus = await db.excuteQuery('select * from Interaction where InteractionId = ? and is_deleted !=1 ', [newId])
 
