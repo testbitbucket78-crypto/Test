@@ -14,6 +14,7 @@ import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angu
 import { debounceTime, map } from 'rxjs/operators';
 import { Mention } from '@syncfusion/ej2-angular-dropdowns';
 import { DatePipe } from '@angular/common';
+import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 
 declare var $: any;
 @Component({
@@ -104,7 +105,11 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
 		}]
 	};
-
+	public pasteCleanupSettings: object = {
+		prompt: false,
+		plainText: true,
+		keepFormat: false,
+	};
 			countryCodes = [
 			'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
 			'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',
@@ -180,6 +185,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	selectedTemplate:any  = [];
 	variableValues:string[]=[];
 	agentsList:any = [];
+	mentionAgentsList:any = [];
 	modalReference: any;
 	OptedIn='No';
 	searchFocused=false;
@@ -275,9 +281,11 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isMessageCompletedMedia:boolean = false;
 	isMessageCompletedText:boolean = false;
 	isShowAttributes:boolean = false;
-
+	
+	isLoading!: boolean;
+	isLoadingOlderMessage!: boolean;
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
-		private datePipe:DatePipe) {
+		public phoneValidator:PhoneValidationService, private datePipe:DatePipe) {
 		
 		// customize default values of modals used by this component tree
 
@@ -444,6 +452,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.variableValueForm.reset();
 		this.variableValues=[];
 		this.getCustomers()
+		this.newContact.reset();
 		// this.getTemplates();
 
 		$("#editTemplateMedia").modal('hide');
@@ -984,6 +993,7 @@ sendattachfile() {
 		if(files[0]){
 		let imageFile = files[0]
 		let spid = this.SPID
+		if((files[0].type == 'video/mp4' || files[0].type == 'application/pdf' || files[0].type == 'image/jpg' || files[0].type == 'image/jpeg' || files[0].type == 'image/png' || files[0].type == 'image/webp' )){
 		this.mediaType = files[0].type
 		let fileSize = files[0].size;
 
@@ -1018,11 +1028,15 @@ sendattachfile() {
 
 			});
 		}
+	} else{
+		this.showToaster('Please select valid file type','error')
+	}
 
 		  };	
 	}
 			
 	ngOnInit() {
+		this.isLoading = true;
 		switch(this.loginAs) {
 			case 1:
 				this.loginAs='Admin'
@@ -1045,6 +1059,7 @@ sendattachfile() {
 		this.getUserList()
 		this.getAllInteraction()
 		this.getInteractionsOnScroll()
+		this.getContactOnScroll()
 		this.getCustomers()
 		this.getquickReply()
 		// this.getTemplates()
@@ -1140,9 +1155,9 @@ sendattachfile() {
 		let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == id);
 		if(idx >-1){
 			console.log(this.interactionList);
-			if(this.interactionList[idx]['messageList'])
-				await this.getMessageData(this.interactionList[idx],true);
-			else
+			// if(this.interactionList[idx]['messageList'])
+			// 	await this.getMessageData(this.interactionList[idx],true);
+			// else
 				this.getInteractionDataById(idx)
 			console.log(this.interactionList);
 			setTimeout(()=>{
@@ -1154,6 +1169,7 @@ sendattachfile() {
 				count++;
 			})
 			this.interactionList[idx]['UnreadCount'] = count;
+			this.updateUnreadCount();
 		},400)
 			console.log(this.interactionList[idx]);
 		}
@@ -1232,6 +1248,7 @@ sendattachfile() {
     
                 item.nameInitials = nameInitials;
             });
+			this.mentionAgentsList = this.agentsList.filter((item:any)=>item.uid != this.uid);
 			console.log(this.agentsList,'agentlist')
 		});
 
@@ -1407,10 +1424,16 @@ sendattachfile() {
 				})
 				item['allmessages'].push(...val1);
 			} else if(isNewMessage && updateMessage){
+				let idx =this.interactionList.findIndex((item:any)=>item.InteractionId = selectedInteraction.InteractionId);			
 				val.forEach(childObj => {
 					const parentObjIndex = item['messageList']?.findIndex((parentObj:any) => parentObj.date === childObj.date);
 					if (parentObjIndex !== -1) {
 					  item['messageList'][parentObjIndex].items[item['messageList'][parentObjIndex].items.length-1] = childObj.items[0];
+					  if(idx != -1){
+						this.interactionList[idx].message_text = childObj.items[0].message_text;
+						this.interactionList[idx].LastMessageDate = childObj.items[0].created_at;
+						this.interactionList[idx].message_media = 'text';
+					}
 					} else {
 					  item['messageList']?.push(childObj);
 					}
@@ -1419,12 +1442,14 @@ sendattachfile() {
 				item['allmessages'].splice(item['allmessages'].length-1,1)
 				// item['messageList'].push(val);
 			item['allmessages'].push(val1);
+			
 			}
 			else{
 			this.isMessageCompletedText = res.isCompleted;
 			item['messageList'] = [...val, ...item['messageList']];
 			item['allmessages'] = [...val1, ...item['allmessages']];
 			}	
+			this.isLoadingOlderMessage = false;
 		})
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID,rangeStart,rangeEnd).subscribe((res1:any) =>{
@@ -1523,6 +1548,7 @@ sendattachfile() {
 		}
 		
 		await this.apiService.getAllInteraction(bodyData).subscribe(async (data:any) =>{
+			this.isLoading = false;
 			var dataList:any = data?.conversations;
 			this.isCompleted = data?.isCompleted
 			console.log(dataList,'DataList *****')
@@ -1537,6 +1563,7 @@ sendattachfile() {
 				}else{
 					item.assignAgent = 'Unassigned';
 				}
+			
 			})
 		},50)
 			if(selectInteraction){
@@ -1550,7 +1577,7 @@ sendattachfile() {
 		if(this.selectedInteraction)
 		//this.selectedInteractionList =
 		console.log('selectInteraction(0)');
-			this.selectInteraction(0);
+		//	this.selectInteraction(0);
 			
 		});
 		this.scrollChatToBottom()
@@ -1878,6 +1905,7 @@ toggleFilerOption(){
 }
 
 toggleContactOption(){
+
 	this.ShowContactOption =!this.ShowContactOption;
 }
 closeFilterOptions() {
@@ -1894,9 +1922,17 @@ toggleGenderOption(){
 	this.ShowLeadStatusOption = false;
 	this.ShowChannelOption = false;
 }
-selectChannelOption(ChannelName:any){
-	this.selectedChannel = ChannelName
-	this.ShowChannelOption=false
+selectChannelOption(Channel:any){
+	if(Channel.channel_status == 0){
+		this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+		return;
+	}
+	if(Channel?.channel_status == 1){
+		this.selectedChannel = Channel?.channel_id;
+		this.ShowChannelOption = false;
+	} else{
+		this.showToaster('Chhanel is not active','error');
+	}
 }
 hangeEditContactInuts(item:any){
 	if(item.target.name =='OptInStatus'){
@@ -1988,6 +2024,10 @@ updateCustomer(){
 }
 
 filterContactByType(Channel:any){
+	if(Channel.channel_status == 0){
+		this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+		return;
+	}
 	if(Channel?.channel_status == 1){
     this.selectedChannel = Channel?.channel_id;
 
@@ -2041,7 +2081,6 @@ setTimeout(() => {
 
 }
 markItRead(){
-
 	if(this.selectedInteraction['UnreadCount'] > 0) {
 			this.selectedInteraction.messageList.map((messageGroup:any)=>{
 				messageGroup.items.map((message:any)=>{
@@ -2054,23 +2093,33 @@ markItRead(){
 							selectedInteraction['UnreadCount']=selectedInteraction['UnreadCount']>0?selectedInteraction['UnreadCount']-1:0
 							this.selectedInteraction =selectedInteraction
 							message.is_read=1;	
+							
 						})
 				   }
 				});
 		});
+		this.updateUnreadCount();
        }
 
+}
+
+updateUnreadCount(){
+	let idx =this.interactionList.findIndex((item:any)=>item.InteractionId = this.selectedInteraction.InteractionId);
+	if(idx>-1){
+		this.interactionList[idx].UnreadCount=0;
+	}
+	this.unreadList = this.interactionList.filter((item:any) => item?.UnreadCount != 0).length;
 }
 
 
 getUnreadCount(messages:any){
 	let unreadCount=0
 	for(var i=0;i<messages.length;i++){
-		if(messages[i].message_direction!='Out' && messages[i].is_read==0){
+		if(messages[i].message_direction=='IN' && messages[i].message_direction && messages[i].is_read==0){
 			unreadCount=unreadCount+1
 		}
 	}
-	return unreadCount
+	return unreadCount;
 }
 
 hideToaster(){
@@ -2134,7 +2183,11 @@ formatPhoneNumber(contactForm: FormGroup) {
 	const phoneNumber = contactForm.get('displayPhoneNumber')?.value;
 	const countryCode = contactForm.get('country_code')?.value;
 	const phoneControl = contactForm.get('Phone_number');
-  
+	contactForm.get('displayPhoneNumber')?.setValidators([
+		Validators.required,
+		this.phoneValidator.phoneNumberValidator(contactForm.get('country_code'))
+	  ]);
+	  contactForm.get('displayPhoneNumber')?.updateValueAndValidity();
 	if (phoneNumber && countryCode && phoneControl) {
 	  const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
 	  const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
@@ -2148,6 +2201,11 @@ formatPhoneNumber(contactForm: FormGroup) {
     const phoneNumber = this.EditContactForm['displayPhoneNumber'];
     const countryCode = this.EditContactForm['country_code'];
     let formattedPhoneNumber = null;
+	this.EditContactForm.get('displayPhoneNumber')?.setValidators([
+		Validators.required,
+		this.phoneValidator.phoneNumberValidator(this.EditContactForm.get('country_code'))
+	  ]);
+	  this.EditContactForm.get('displayPhoneNumber')?.updateValueAndValidity();
       if (phoneNumber && countryCode) {
         const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
         formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
@@ -2250,7 +2308,7 @@ toggleTagsModal(updatedtags:any){
 			tagItem['status'] = false;
 		}
 	}
-	 this.modalReference = this.modalService.open(updatedtags,{ size:'ml', windowClass:'white-bg'});
+	 this.modalReference = this.modalService.open(updatedtags,{ size:'ml', windowClass:'white-bg update-tag-custom'});
 
 }
 addTags(tagName:any){
@@ -2434,7 +2492,7 @@ createCustomer() {
 				this.apiService.createCustomer(bodyData).subscribe(
 					async (response:any) => {
 						var responseData: any = response;
-						var insertId: any = responseData.insertId;
+						var insertId: any = responseData.customerId;
 						$("#contactadd").modal('hide');
 						if(this.modalReference){
 							this.modalReference.close();
@@ -2442,10 +2500,11 @@ createCustomer() {
 						if (insertId) {
 							this.createInteraction(insertId);
 							this.newContact.reset();
-							this.getAllInteraction();
-							this.getCustomers();
+							//this.getAllInteraction();
+							//this.getCustomers();
 							this.OptedIn = 'No';
 							this.filterChannel='';
+							this.showToaster('Contact created successfully', 'success');
 						}},
 					async (error) => {
 					  if (error.status === 409) {
@@ -2463,6 +2522,7 @@ createCustomer() {
 		}
 		else {
 			this.newContact.markAllAsTouched();
+			this.newContact.controls.Name.markAsDirty();
 		}
 
   }
@@ -2471,17 +2531,25 @@ createCustomer() {
 createInteraction(customerId:any) {
 var bodyData = {
 	customerId: customerId,
-	spid:this.SPID
+	spid:this.SPID,
+	IsTemporary: 1
 
 }
-this.apiService.createInteraction(bodyData).subscribe(async data =>{
+this.apiService.createInteraction(bodyData).subscribe(async( data:any) =>{
 	if(this.modalReference){
 		this.modalReference.close();
 	}
 	// this.isNewInteraction=true;
-	this.getInteractionsFromStart();
+	//this.getInteractionsFromStart();
 	this.getCustomers();
 	this.filterChannel='';
+	//item['messageList'] = [...val, ...item['messageList']];
+	//item['allmessages'] = [...val1, ...item['allmessages']];
+	this.interactionList = [...data.interaction, ...this.interactionList]
+	this.interactionListMain = [...data.interaction, ...this.interactionListMain];
+	this.selectInteraction(0);
+	console.log(this.interactionList);
+	//this.getAllInteraction()
 
 });
 	
@@ -2541,6 +2609,7 @@ openaddMessage(messageadd: any) {
 	this.modalReference.close();
 	}
 	this.modalReference = this.modalService.open(messageadd,{windowClass:'teambox-pink'});
+	this.getContactOnScroll();
 }
 
 openaddMediaGallery(mediagallery:any, slideIndex:any) {
@@ -2913,8 +2982,9 @@ sendMessage(){
     });
 	}
 
-
+	
 	getOlderMessages(selectedInteraction:any){
+        this.isLoadingOlderMessage = true;
 		this.messageRangeStart = this.messageRangeEnd;
 		this.messageRangeEnd = this.messageRangeEnd +30;
 		this.getMessageData(selectedInteraction, false)
@@ -2926,7 +2996,7 @@ sendMessage(){
 		this.checkAuthentication()
 		}
 		if(this.selectedInteraction?.assignTo?.AgentId != this.uid && this.showChatNotes=='text' ){
-			this.showToaster('only a assinged user can send the message !','error');
+			this.showToaster('Attention! You can send message only to an Open and Self assigned Conversation','error');
 		} else if(this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open'){
 			this.showToaster('Attention! You can write Note only to an Open Conversation','error');
 		}
@@ -2988,12 +3058,12 @@ sendMessage(){
 		return '';
 	  }
 	
-	  isHttpOrHttps(text: string): boolean {
-		if(text)
-		return text.startsWith('http://') || text.startsWith('https://');
-		else
-		return false;
-	  }	
+	//   isHttpOrHttps(text: string): boolean {
+	// 	if(text)
+	// 	return text.startsWith('http://') || text.startsWith('https://');
+	// 	else
+	// 	return false;
+	//   }	
 
 	  getWhatsAppDetails() {
 		this.settingService.getWhatsAppDetails(this.SPID)
@@ -3003,4 +3073,61 @@ sendMessage(){
 		 }
 	   })
 	 }
+
+	//  patchFormValue(){
+	// 	const data:any=this.contactsData
+	// 	console.log(data);
+	// 	this.getFilterTags = data.tag ? data.tag?.split(',').map((tags: string) =>tags.trim().toString()) : [];
+	// 	console.log(this.getFilterTags);
+	// 	this.checkedTags = this.getFilterTags;
+	// 	const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim());
+	// 	//set the selectedTag in multiselect-dropdown format
+	// 	const selectedTags = this.tagListData.map((tag: any, index: number) => ({ idx: index, ...tag }))
+	// 	.filter(tag => selectedTag?.includes((tag.ID).toString()))
+	// 	.map((tag: any) => ({
+	// 		item_id: tag.ID,
+	// 		item_text: tag.TagName,
+	// 	}));
+	// 	console.log(selectedTags);
+	// 	// this.selectedTag = data.tag
+	// 	this.tagListData.forEach((item:any)=>{
+	// 	  if(selectedTag?.includes((item.ID).toString())){
+	// 		item['isSelected'] = true;
+	// 	  }else{
+	// 		item['isSelected'] = false;
+	// 	  }
+	// 	})
+	// 	for(let prop in data){
+	// 	  let value = data[prop as keyof typeof data];
+	// 	  if(this.productForm.get(prop))
+	// 	  this.productForm.get(prop)?.setValue(value)
+	// 	  this.productForm.get('tag')?.setValue(selectedTags); 
+	// 	  let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
+	// 	  if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
+	// 		this.productForm.get(prop)?.setValue(value);
+	// 	  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
+	// 		let val = value ? value.split(':')[0] : '';
+	// 		console.log(val);
+	// 		this.productForm.get(prop)?.setValue(val);
+	// 	  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
+	// 		if(value){
+	// 		let val = value.split(':');
+	// 		console.log(val);
+	// 		console.log(value);
+	
+	// 		let selectName =  value?.split(',');
+	// 				  let names:any =[];
+	// 				  selectName.forEach((it:any)=>{
+	// 					let name = it.split(':');
+	// 					console.log(name);
+	// 					names.push({id: (name[0] ?  name[0] : ''),optionName: (name[1] ?  name[1] : '')});
+	// 				  })
+					  
+	// 		this.productForm.get(prop)?.setValue(names);
+	// 				}
+	// 	  }
+	// 	}  
+	// 	this.OptInStatus =data.OptInStatus
+	// 	this.isBlocked=data.isBlocked;
+	//   }
 }

@@ -273,6 +273,7 @@ export class ContactFilterComponent implements OnInit {
 		newFilter['filterValue']='';
 		newFilter['filterOperator']='AND';
 		this.ContactListNewFilters.push(newFilter)
+		if(this.ContactListNewFilters[0]?.filterOperator) this.ContactListNewFilters[0].filterOperator = '';
 		console.log(this.ContactListNewFilters)
 	  }
 	  removeFilter(itemIndex:any){
@@ -313,6 +314,8 @@ export class ContactFilterComponent implements OnInit {
       };
       });
       console.log('/////groupArrays/////')
+      console.log(addeFilter)
+      console.log(this.ContactListNewFilters)
       console.log(groupArrays)
   
   
@@ -322,14 +325,14 @@ export class ContactFilterComponent implements OnInit {
         groupArrays.map((filters:any,idx)=>{
 			console.log(idx);
           if(filters.items.length>0){
-          filters.items[0]['filterOperator']=''	
+         // filters.items[0]['filterOperator']='';	
           
           let colName = filters.filterPrefix
           if(colName =='Phone_number'){
             colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
           }
   
-          contactFilter += idx == 0 ?' and ((' : ' and (';
+          contactFilter += idx == 0 ?' and ((' :  filters.items[0]['filterOperator'] == '' ? ' and ('  : filters.items[0]['filterOperator'] + ' (';
           filters.items.map((filter:any)=>{
   
           //this.applylistFiltersWidth =parseInt(this.applylistFiltersWidth)+100	
@@ -400,6 +403,8 @@ export class ContactFilterComponent implements OnInit {
   
       getFilterOnEndCustomer(){
       let addedNewFilters:any=[];
+	  console.log(this.contactFilterBy);
+	  console.log(this.ContactListNewFilters);
       this.contactFilterBy.map((item:any)=>{
         item.addeFilter.map((filter:any)=>{
           addedNewFilters.push({
@@ -411,6 +416,7 @@ export class ContactFilterComponent implements OnInit {
             })
         })
       })
+	  console.log(addedNewFilters);
       let contactFilter = this.getContactFilterQuery(addedNewFilters)
       var bodyData={
         Query:contactFilter
@@ -462,8 +468,7 @@ export class ContactFilterComponent implements OnInit {
     }
 
 	closeFilter(){
-		console.log('abcd');
-		this.closeFilterPopup.emit('');
 		this.modalReference.close();
+		//this.closeFilterPopup.emit('');
 	}
 }

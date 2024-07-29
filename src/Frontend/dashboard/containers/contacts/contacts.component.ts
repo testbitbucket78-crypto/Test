@@ -68,6 +68,17 @@ columnDefs: ColDef[] = [
       suppressMovable: true,  
     //cellStyle: { background: "#FBFAFF" },
   },
+   {
+    headerName: '',
+      headerTooltip: 'Actions',
+      width: 40,
+      editable: false,
+      resizable: false,
+      filter: false,
+      sortable: false,
+      //clickable: false,
+      cellRenderer: this.actionsCellRenderer.bind(this),
+  },
   {
     field: 'customerId',
     headerName: 'ID',
@@ -253,7 +264,7 @@ countryCodes = [
    submitted = false;
    query = '';
    contactOwnerTooltip!: boolean;
-  
+   isLoading!: boolean;
   
  constructor(config: NgbModalConfig, private modalService: NgbModal,
   public phoneValidator:PhoneValidationService,
@@ -267,7 +278,31 @@ countryCodes = [
 
     this.productForm = this.contactForm();
  }
+
+ actionsCellRenderer(params: any) {
+  const element = params.data;
+  const buttonsHtml = `
+    <img
+      style="margin-left: -3px; cursor: pointer;" class="delete-button"      
+      height="15px"
+      width="15px"
+      src="/../../assets/img/chat.svg"
+      alt=""
+    />  
+  `;
+  const div = document.createElement('div');
+  div.innerHTML = buttonsHtml;
+  div.addEventListener('click', this.onButtonClick.bind(this, element));
+  return div;
+}
+
+onButtonClick(data:any, event: any) {
+ // this.activeDistrictId = data.schoolDistrictID;
+  const target = event.target;  
+    this.router.navigateByUrl(`Dashboard/teambox?isNewMessage=${true}`);
+}
     ngOnInit() {
+      this.isLoading = true;
       this.spid = Number(sessionStorage.getItem('SP_ID'));
       document.getElementById('delete-btn')!.style.display = 'none';
       this.showTopNav = true;
@@ -488,7 +523,7 @@ onSelectAll(items: any) {
     this.patchFormValue();
     this.modalService.open(contactedit,{windowClass:'contact-modal'});
   }
-
+ 
   getContact() {
     var SP_ID = sessionStorage.getItem('SP_ID');
     let data:any ={};
@@ -496,6 +531,7 @@ onSelectAll(items: any) {
     data.Query = this.query;
     console.log(SP_ID)
     this.apiService.getFilteredContact(data).subscribe((data:any) => {
+      this.isLoading = false;
       this.contacts = data.result;
       this.rowData = this.contacts;
       if(this.rowData.length == 0){
@@ -504,6 +540,7 @@ onSelectAll(items: any) {
       this.productForm.get('countryCode')?.setValue('IN +91');
         console.log(this.contacts);
         this.getGridPageSize();
+        
     });
   }
 
@@ -542,7 +579,7 @@ onSelectAll(items: any) {
     this.modalService.dismissAll()
   }
    closesidenav(items: any){
-    this.productForm.reset();
+    this.productForm.reset()
     this.productForm.get('countryCode')?.setValue('IN +91');
     this.contactId=0;
     this.customerData = [];
@@ -766,7 +803,6 @@ console.log(this.contactId)
     this.apiService.editContact(contactData, this.contactId, this.spid).subscribe(
       (response: any) => {
       if(response) {
-        this.productForm.reset();
         this.productForm.clearValidators();
         this.resetForm();
         this.modalService.dismissAll();
@@ -1065,6 +1101,7 @@ deletContactByID(data: any) {
     const searchTerm = searchInput.value.trim().toLowerCase();
     this.gridapi.setQuickFilter(searchTerm);
     this.contacts = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
+    this.setPaging()
   }
 
   onFocus() {
@@ -1279,6 +1316,11 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   }
 
   clearFilters() {
+   // this.changingValue.next(true);
+    this.isShowFilter = false;
+    this.filterIsApplied = false;
+    this.query ='';
+    this.getContact();
     this.gridapi!.setFilterModel(null);
   }
 

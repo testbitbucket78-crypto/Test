@@ -899,7 +899,16 @@ img.no-dp {
     color: #000;
     word-break: break-word;
 }
-
+::ng-deep .conversation_list.chat .message_box .content .message_text{
+   a{
+    font-style: italic;
+    text-decoration: underline;
+    color: rgb(245, 186, 76)
+   }
+   a:hover{
+    color: rgb(255, 166, 0);
+   }
+}
 ::ng-deep .content .message_text .e-rte-anchor {
     font-style: italic;
     color: white !important;
@@ -976,9 +985,9 @@ img.no-dp {
 .conversation_list.chat .message_box .content {
     background: #6149CD;
     border-radius: 17px 17px 4px 17px;
+    max-width: 44vh;
     color: #fff;
     font-size: 12px;
-    width: 56%;
     word-break: break-word;
 }
 
@@ -1251,8 +1260,6 @@ button:focus, input:focus {
     width: 100px;
     margin-left: 0;
     position: absolute;
-    left: 25rem;
-    top: -12.5rem;
 }
 
 .popup-dialog p {
@@ -1541,7 +1548,25 @@ span {
     width: 100%;
     margin: 0px;
 }
+::ng-deep .update-tag-custom .modal-content{
+    max-height: 500px;
+    width: 65%;
+   
+    .modal-body{
+        font-size: 12px;
+        .inner_form{
+            padding: 0px 0rem;
+            .row{
+                margin: 0 3%;
+            }
+        }
+    }
+}
 
+
+::ng-deep .contact-message-popup .modal-content {
+    height: 510px !important;
+}
 .messageadd .search-box {
     width: 100%;
     background-color: #fff;
@@ -1576,6 +1601,12 @@ span {
 .contact_list {
     max-height: 300px;
     overflow: auto;
+    .noRecords{
+        span{
+            font-size: 18px;
+            color: #414141
+        }
+    }
 }
 
 .conversation_list_inner_box {
@@ -2875,6 +2906,18 @@ label span {
     text-align: right;
   }
   
+  .image-wrapper{
+    width: max-content;
+    height: max-content;
+    position: relative;
+  }
+
+  .image-wrapper:hover{
+    .hover-text{
+        display: inline-block;
+    }
+  }
+
 //   .hover-image {
 //     width: 100%; 
 //     height: auto; 
@@ -2884,7 +2927,7 @@ label span {
     display: none;
     position: absolute;
     top: 50%;
-    left: 77%;
+    left: -40px;
     transform: translate(-50%, -50%);
     color: #7A86A1;
     padding: 4px;
@@ -2980,4 +3023,13 @@ label span {
     font-size: 13px;
     color: #7A86A1;
     text-align: center;
+}
+
+.delete-note .modal-dialog{
+    left: 20rem;
+    position: relative !important;
+}
+
+.delete-note .modal-content{
+    position: absolute !important;
 }

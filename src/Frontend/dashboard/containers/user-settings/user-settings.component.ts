@@ -355,6 +355,7 @@ getPhoneNumberValidation(){
 
     searchUserData(srchText: string) {        
         this.gridOptions.api.setQuickFilter(srchText);
+        this.setPaging();
     }
 
     createUser(){

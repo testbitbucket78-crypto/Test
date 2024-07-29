@@ -439,7 +439,7 @@ UNION
     created_at DESC
 )
 ORDER BY 
-    created_at DESC  
+    created_at DESC, Message_id desc   
 LIMIT ?, ?;
 `
 getMediaMessage = `(

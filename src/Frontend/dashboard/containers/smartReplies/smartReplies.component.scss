@@ -949,13 +949,22 @@ input:focus {
     font-size: 14px;
 }
 
-.popup-dialog.channelSelection {
+.popup-dialog.ContactOption {
     left: 32%!important;
     top: 84%!important;
-}
-
-.channelSelection p {
-    font-size: 12px;
+    img{
+            width: 20px;
+            margin-right: 5px;
+    }
+    span {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: 0px 0px 0px 0px !important;
+    }
+    span:hover{
+        background-color: #FFF4F2;
+    }
 }
 
   .select_box{
@@ -1364,7 +1373,6 @@ input:focus {
     background: #ffffff 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px #695f9730;
     border-radius: 20px;
-    padding: 10px 0px;
     position: absolute;
     max-width: 200px;
     margin-top: 10px;
@@ -2702,3 +2710,5 @@ img.icon.sm {
   .disabledAttribute{
     background-color: grey;
    }
+
+ 

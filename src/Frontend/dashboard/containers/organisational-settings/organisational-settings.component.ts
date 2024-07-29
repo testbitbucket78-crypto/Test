@@ -6,7 +6,7 @@ import { billingDetail, companyDetail, localeDetail,profilesettingPicData } from
 import { ImageCroppedEvent, base64ToFile  } from 'ngx-image-cropper';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
-
+import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 
 
 declare var $:any;
@@ -108,7 +108,7 @@ countryCodes = [
   fileName: any; 
   selectedPreview: string = '';
   intials: string = '';  
-  constructor(private _settingsService:SettingsService,
+  constructor(private _settingsService:SettingsService, public phoneValidator:PhoneValidationService,
     public settingsService:SettingsService,private fb: FormBuilder,private apiService: SettingsService, private _teamboxService: TeamboxService) {     
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     this.form = this.fb.group({
@@ -469,9 +469,15 @@ hideToaster(){
   }
   // Function to format the phone number using libphonenumber-js
 formatPhoneNumber() {
-  const phoneNumber = this.companyDetailForm.get('Phone_number')?.value;
+  const phoneNumber = this.companyDetailForm.get('Phone_Number')?.value;
   const countryCode = this.companyDetailForm.get('country_code')?.value;
-  
+   
+  this.companyDetailForm.get('Phone_Number')?.setValidators([
+    Validators.required,
+    this.phoneValidator.phoneNumberValidator(this.companyDetailForm.get('country_code'))
+  ]);
+  this.companyDetailForm.get('Phone_Number')?.updateValueAndValidity();
+
   if (phoneNumber && countryCode) {
     const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
     const formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);

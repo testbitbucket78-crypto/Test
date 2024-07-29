@@ -54,7 +54,8 @@ export class QuickResponseComponent implements OnInit {
   attributesearch:string='';
   attributesList:any=[];
   profilePicture!: string;
-
+  channelOption: any = [];
+  ShowChannelOption! : boolean;
   
   fileName: any; 
   selectedPreview: string = '';
@@ -78,6 +79,11 @@ export class QuickResponseComponent implements OnInit {
       ],
   };
 
+  public pasteCleanupSettings: object = {
+    prompt: false,
+    plainText: true,
+    keepFormat: false,
+};
   lastCursorPosition: Range | null = null;
 
   constructor(config: NgbModalConfig,private modalService: NgbModal,public apiService:SettingsService, private _teamboxService: TeamboxService) { }
@@ -90,8 +96,36 @@ export class QuickResponseComponent implements OnInit {
     this.usertemplateForm=this.prepareUserForm();
     this.getformvalue();
     this.getAttributeList();
+    this.getWhatsAppDetails();
   }
   
+  getWhatsAppDetails() {
+		this.apiService.getWhatsAppDetails(this.spid)
+		.subscribe((response:any) =>{
+		 if(response){
+			 if (response && response.whatsAppDetails) {
+				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
+				  value: item.id,
+				  label: item.channel_id,
+				  connected_id: item.connected_id,
+          channel_status: item.channel_status
+				}));
+			  }
+		 }
+	   })
+	 }
+     stopPropagation(event: Event) {
+        event.stopPropagation();
+      }
+      selectChannel(channel:any){
+        if(channel.channel_status == 0){
+          this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+          return;
+        }
+		this.usertemplateForm.get('channel_id')?.setValue(channel.value);
+		this.usertemplateForm.get('Channel')?.setValue(channel.label);
+		this.ShowChannelOption=false
+	}
 
   	toggleCampaign(){
 		this.showCampaignDetail =!this.showCampaignDetail 

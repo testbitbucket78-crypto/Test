@@ -172,14 +172,15 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		attributesearch!:string;
 		allVariablesList:string[]=[];
 		variableValues:string[]=[];
-	
+		isLoading!: boolean;
 		attributesList!:any;
 		userList:any;
 		userId!:number;
 		ShowChannelOption:any=false;
-		channelOption:any=[
-			{value:1,label:'WhatsApp Official',checked:false},
-			{value:2,label:'WhatsApp Web',checked:false}];
+		channelOption : any = [];
+		// channelOption:any=[
+		// 	{value:1,label:'WhatsApp Official',checked:false},
+		// 	{value:2,label:'WhatsApp Web',checked:false}];
 	
 		public tools: object = {
 			items: ['Bold', 'Italic', 'StrikeThrough','EmojiPicker',
@@ -211,7 +212,11 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 						+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/insert-temp.svg"></div></button>'
 				}]
 		};
-	
+		public pasteCleanupSettings: object = {
+			prompt: false,
+			plainText: true,
+			keepFormat: false,
+		};
 	isSendButtonDisabled=false
 	click: any;
 	selecetdpdf: any='';
@@ -227,7 +232,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	}
 
 	ngOnInit() {
-
+        this.isLoading = true;
 		$('body').addClass('modal-smart-reply-open');
 
 		this.SPID = Number(sessionStorage.getItem('SP_ID'));
@@ -251,6 +256,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		 this.getQuickResponse();
 		 this.routerGuard();
 		 this.getReplies();
+		 this.getWhatsAppDetails();
 		}
 
 	ngAfterViewInit() {
@@ -351,7 +357,22 @@ showAddSmartRepliesModal() {
 		$("#editTemplate").modal('hide');
 		$("#attachmentbox").modal('show');
 	}
-
+	
+	getWhatsAppDetails() {
+		this.settingsService.getWhatsAppDetails(this.SPID)
+		.subscribe((response:any) =>{
+		 if(response){
+			 if (response && response.whatsAppDetails) {
+				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
+				  value: item.id,
+				  label: item.channel_id,
+				  connected_id: item.connected_id,
+				  channel_status: item.channel_status
+				}));
+			  }
+		 }
+	   })
+	 }
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
 		if(this.variableValues.length!==0 && this.allVariablesList.length!==0) {
@@ -580,13 +601,13 @@ showAddSmartRepliesModal() {
 		console.log(this.messageMeidaFile)
 		let mediaContent:any;
 		if(this.mediaType == 'image/jpeg' || this.mediaType == 'image/jpg' || this.mediaType == 'image/png' || this.mediaType == 'image/webp') {
-			mediaContent ='<p><img style="width:100%; height:100%" src="'+this.messageMeidaFile+'" /></p><p style="color: #B8B8B8">'+this.fileSize+' MB '+'</p>'
+			mediaContent ='<p><img style="width:100%; height:100%" src="'+this.messageMeidaFile+'" /></p><p style="color: #B8B8B8"></p>'
 		  }
 		  else if(this.mediaType == 'video/mp4') {
-			  mediaContent ='<p><video controls width="100%" height="100%" src="'+this.messageMeidaFile+'"></video></p><p style="color: #B8B8B8">'+this.fileSize+' MB '+'</p>'
+			  mediaContent ='<p><video controls width="100%" height="100%" src="'+this.messageMeidaFile+'"></video></p><p style="color: #B8B8B8"></p>'
 		  }
 		  else if(this.mediaType == 'application/pdf') {
-			  mediaContent ='<p><a href="'+this.messageMeidaFile+'"><img style="width:14px; height:17px" src="../../../../assets/img/settings/doc.svg" />'+this.fileName+'</a></p><p style="color: #B8B8B8">'+this.fileSize+' MB '+'</p>'
+			  mediaContent ='<p><a href="'+this.messageMeidaFile+'"><img style="width:14px; height:17px" src="../../../../assets/img/settings/doc.svg" />'+this.fileName+'</a></p><p style="color: #B8B8B8"></p>'
 		  }
 
 		this.chatEditor.value = mediaContent;
@@ -1436,6 +1457,7 @@ stopPropagation(event: Event) {
 	getReplies() {
 		var SP_ID=sessionStorage.getItem('SP_ID')
 		this.apiService.getSmartReply(SP_ID).subscribe((data: any) => {
+			this.isLoading = false;
 			console.log(data,'replies data')
 			this.replies = data;
 		});
@@ -1575,6 +1597,10 @@ stopPropagation(event: Event) {
 		}
 
 		selectChannel(channel:any){
+			if(channel.channel_status == 0){
+				this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+				return;
+			}
 			this.newReply.get('Channel')?.setValue(channel.label);
 			console.log(channel.label)
 			this.ShowChannelOption=false;

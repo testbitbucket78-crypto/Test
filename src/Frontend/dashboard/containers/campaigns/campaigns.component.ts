@@ -5,6 +5,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from './../../services';
 import { DatePipe } from '@angular/common';
+import * as XLSX from 'xlsx'; 
 declare var $: any;
 
 @Component({
@@ -126,7 +127,7 @@ export class CampaignsComponent implements OnInit {
 	 isUtility:boolean = true;
 	 isMarketing:boolean = true;
 	 isAuthentication:boolean = true;
-	 
+	 channelOption : any = [];
 
 	 contactTagsOption:any=[
 		{value:0,label:'Paid',checked:false},
@@ -140,9 +141,9 @@ export class CampaignsComponent implements OnInit {
 		{value:2,label:'Running',checked:false},
 		{value:3,label:'Completed',checked:false}];
 	 
-	 channelOption:any=[
-			{value:1,label:'WhatsApp Official',checked:false},
-			{value:2,label:'WhatsApp Web',checked:false}];
+	//  channelOption:any=[
+	// 		{value:1,label:'WhatsApp Official',checked:false},
+	// 		{value:2,label:'WhatsApp Web',checked:false}];
 	 categoriesOption:any=[
 				{value:1,label:'Marketing',checked:false},
 				{value:2,label:'Utility',checked:false},
@@ -289,7 +290,7 @@ export class CampaignsComponent implements OnInit {
 	isCampaignTiming: boolean = false;
 	workingData:any =[];
 	csvText:string ='';
-	
+	isLoading!:boolean;
 	customFieldData:[] = [];
 	tag:[] =[];
 	 
@@ -353,6 +354,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 
 	ngOnInit() {
+		this.isLoading = true;
 		this.getCampaignTimingList();
 		switch(this.loginAs) {
 			case 1:
@@ -379,9 +381,25 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.processData();
 		this.getCustomFieldsData();
 		this.getTagData()
-		
+		this.getWhatsAppDetails();
 	}
 
+	
+	getWhatsAppDetails() {
+		this._settingsService.getWhatsAppDetails(this.SPID)
+		.subscribe((response:any) =>{
+		 if(response){
+			 if (response && response.whatsAppDetails) {
+				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
+				  value: item.id,
+				  label: item.channel_id,
+				  connected_id: item.connected_id,
+				  channel_status: item.channel_status
+				}));
+			  }
+		 }
+	   })
+	 }
 	
     getCustomFieldsData() {
 		this._settingsService.getNewCustomField(this.SPID).subscribe(response => {
@@ -794,6 +812,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		}
 		console.log(bodyData)
 		this.apiService.getCampaign(bodyData).subscribe(allCampaign =>{
+			this.isLoading = false;
 			var allCampaignList:any=allCampaign
 			console.log(allCampaignList)
 			if(allCampaignList){
@@ -1278,6 +1297,10 @@ formateDate(dateTime:string){
 		this.showAdvance =!this.showAdvance;
     }
 	selectChannel(channel:any){
+		if(channel.channel_status == 0){
+			this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+			return;
+		}
 		this.newCampaignDetail.get('channel_id').setValue(channel.value);
 		this.newCampaignDetail.get('channel_label').setValue(channel.label);
 		this.ShowChannelOption=false
@@ -2273,7 +2296,52 @@ testinfo(){
 					this.csvContactList = contactsData
 					this.selecetdCSV = fileName
        			}
-	    } else {
+	    } else if(FileExt == "xlsx"){
+			let file =files[0];
+			const fileReader = new FileReader();
+			fileReader.onload = (e: any) => {
+				const data = new Uint8Array(e.target.result);
+				const workbook = XLSX.read(data, { type: 'array' });
+				const sheetName = workbook.SheetNames[0];
+				const worksheet = workbook.Sheets[sheetName];
+				
+				const csvData = XLSX.utils.sheet_to_csv(worksheet);
+				const results = csvData.split("\n");
+				let tableHeader: any[] = [];
+				let tableRows: any[] = [];
+				let i = 0;
+				results.map((row: any) => {
+					if (row) {
+						const rowCol = row.split(",");
+						if (i == 0) {
+							tableHeader = rowCol;
+						} else {
+							tableRows.push(rowCol);
+						}
+						i++;
+					}
+				});
+				this.csvContactColmuns = tableHeader;
+				let contactsData: any[] = [];
+				tableRows.map((rowbh: any) => {
+					let row: any = {};
+					for (var k = 0; k < tableHeader.length; k++) {
+						let keyName: any = tableHeader[k].replace('\r', '');
+						keyName = keyName.replaceAll(' ', '');
+						let value: any = rowbh[k];
+						row[keyName] = value != '\r' ? value : 'null';
+					}
+					contactsData.push(row);
+				});
+				console.log(contactsData);
+				this.csvContactList = contactsData;
+				this.selecetdCSV = file.name;
+			};
+			fileReader.readAsArrayBuffer(file);
+
+				fileReader.readAsArrayBuffer(this.file);
+			}
+		else {
 			this.showToaster('Please Upload csv file only...','error')
 		}
 		}
@@ -2652,10 +2720,16 @@ console.log(this.allTemplatesMain);
 		//*********Download Sample file****************/
 
 		download() {
-			this.apiService.download().subscribe((data: any) => {
+			this.apiService.download(this.SPID).subscribe((data: any) => {
 				const blob = new Blob([data], { type: 'text/csv' });
 				const url = window.URL.createObjectURL(blob);
-				window.open(url);
+				const fileName = document.createElement('a');
+				fileName.href = url;
+				fileName.download = 'Sample_Import_Audience_File'; 
+				document.body.appendChild(fileName);
+				fileName.click();
+				document.body.removeChild(fileName);
+				window.URL.revokeObjectURL(url);
 			})
 		}
 	

@@ -39,7 +39,8 @@ import { ContactFilterComponent } from './containers/contact-filter/contact-filt
 import { MentionModule } from '@syncfusion/ej2-angular-dropdowns';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { TimepickerComponent } from './containers/common/timepicker/timepicker.component';
-
+import { LoaderComponent } from './containers/common/loader/loader.component';
+import { LinkifyPipe } from './containers/linkify/linkify.pipe';
 
 @NgModule({
     imports: [
@@ -73,8 +74,9 @@ import { TimepickerComponent } from './containers/common/timepicker/timepicker.c
             ReadMoreComponent,
             SanitizeHtmlPipe,
             ContactFilterComponent,
-            TimepickerComponent
-
+            TimepickerComponent,
+            LoaderComponent,
+            LinkifyPipe
         ],
     exports: [...dashboardContainers.containers,
               ...dashboardComponents.components,
