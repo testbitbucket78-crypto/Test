@@ -486,6 +486,22 @@ const getAllMessageByInteractionId = async (req, res) => {
     }
 };
 
+
+const getMessagesByMsgId = async (req, res) => {
+    try {
+  
+       let  result = await db.excuteQuery(val.getmessageBymsgId, [ req.params.Message_id,req.params.SP_ID])
+    res.send({
+        result: result,
+      
+        status: 200
+    });
+    } catch (err) {
+        logger.error('Error in getsavedMessages:', err);
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
 const updateMessageRead = (req, res) => {
    // logger.info('Starting updateMessageRead function');
     if (req.body.Message_id > 0) {
@@ -932,7 +948,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction,getMessagesByMsgId
 };
 
 

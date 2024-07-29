@@ -711,6 +711,49 @@ WHERE
     ic.InteractionId = ?
 `
     
+
+getmessageBymsgId =`
+    SELECT 
+        Message.Message_id,
+        Message.message_direction,
+        Message.SPID,
+        Message.Agent_id,
+        Message.message_text,
+        Message.interaction_id,
+        Message.message_media,
+        Message.media_type,
+        Message.Message_template_id,
+        Message.Quick_reply_id,
+        Message.Type,
+        Message.ExternalMessageId,
+        Message.is_read,
+        Message.is_deleted,
+        Message.deleted_by,
+        Message.deleted_at,
+        Message.created_at,
+        Message.updated_at,
+        Message.components,
+        Message.template_type,
+        Message.msg_status,
+        Message.system_message_type_id,
+        Message.mediaSize,
+        Message.assignAgent,
+        Author.name AS AgentName,
+        DelAuthor.name AS DeletedBy
+    FROM 
+        Message 
+    LEFT JOIN 
+        user AS DelAuthor ON Message.Agent_id = DelAuthor.uid 
+    LEFT JOIN 
+        user AS Author ON Message.Agent_id = Author.uid 
+    WHERE 
+      
+        Message.Message_id = ?
+        AND Message.is_deleted != 1 
+        AND (Message.msg_status IS NULL OR Message.msg_status != 10)
+        AND Message.SPID = ?
+`
+
 module.exports = {
     host, user, password, database,
     selectAllAgentsQuery, selectAllQuery, insertCustomersQuery, filterQuery, searchQuery, selectByIdQuery, blockCustomerQuery,
@@ -718,7 +761,7 @@ module.exports = {
     getAllMessagesByInteractionId, insertMessageQuery,
     updateInteractionMapping, getInteractionMapping,
     savedMessagesQuery, getquickReplyQuery, getTemplatesQuery,
-    addNotification, assignedNameQuery, interactions, contactsInteraction, interactionsquery, getallMessagesWithScripts, getMediaMessage,
+    addNotification, assignedNameQuery, interactions, contactsInteraction, interactionsquery, getallMessagesWithScripts, getMediaMessage,getmessageBymsgId,
     searchWithAllData ,interactionDataById
 }
 

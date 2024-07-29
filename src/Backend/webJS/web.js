@@ -312,7 +312,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             // console.log(smsdelupdate)
             let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
             //  console.log("send", sended?.affectedRows)
-            notify.NotifyServer(phoneNo, false, ack1InId[0]?.InteractionId,'Out',1)
+            notify.NotifyServer(phoneNo, false, ack1InId[0]?.InteractionId,'Out',1,0)
 
 
           } else if (ack == '2') {
@@ -328,7 +328,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             //  console.log("deliver", deded?.affectedRows)
            // notify.NotifyServer(phoneNo, true)
            let ack2InId = await db.excuteQuery(notifyInteraction,[phoneNumber, spid])
-           notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId,'Out',2)
+           notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId,'Out',2,0)
           } else if (ack == '3') {
             //  console.log("read")
             let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2';
@@ -343,7 +343,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
             //   console.log("read", resd?.affectedRows)
            // notify.NotifyServer(phoneNo, true)
            let ack3InId = await db.excuteQuery(notifyInteraction,[phoneNumber, spid])
-           notify.NotifyServer(phoneNo, false, ack3InId[0]?.InteractionId,'Out',3)
+           notify.NotifyServer(phoneNo, false, ack3InId[0]?.InteractionId,'Out',3,0)
           }
 
 
@@ -826,7 +826,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData?.newlyInteractionId
     console.log("in messages", from, false, "interaction id", newId, display_phone_number)
-    notify.NotifyServer(display_phone_number, false, newId,'IN')
+    notify.NotifyServer(display_phone_number, false, newId,'IN',0,msg_id)
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);

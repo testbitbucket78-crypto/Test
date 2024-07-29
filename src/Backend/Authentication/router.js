@@ -66,6 +66,7 @@ router.post('/interactionmapping',authenticateToken,TeamBoxController.updateInte
 router.post('/resetInteractionMapping',authenticateToken,TeamBoxController.resetInteractionMapping);
 router.get('/interactionmapping/:InteractionId',authenticateToken,TeamBoxController.getInteractionMapping);
 router.get('/getsavedMessages/:SPID',authenticateToken,TeamBoxController.getsavedMessages);
+router.get('/getsavedMessages/:Message_id/:SP_ID',authenticateToken,TeamBoxController.getMessagesByMsgId);
 router.get('/getquickReply/:SPID',authenticateToken,TeamBoxController.getquickReply);
 router.get('/getTemplates/:SPID',authenticateToken,TeamBoxController.getTemplates);
 
