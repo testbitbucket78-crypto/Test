@@ -299,7 +299,8 @@ countryCodes = [
 onButtonClick(data:any, event: any) {
  // this.activeDistrictId = data.schoolDistrictID;
   const target = event.target;  
-    this.router.navigateByUrl(`Dashboard/teambox?isNewMessage=${true}`);
+   // this.router.navigateByUrl(`Dashboard/teambox?isNewMessage=${true}`);
+    this.router.navigate(['/dashboard/teambox'], { queryParams: { isNewMessage: true } });
 }
     ngOnInit() {
       this.isLoading = true;
