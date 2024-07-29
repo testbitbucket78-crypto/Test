@@ -63,7 +63,7 @@
 							<div class="contacts_item">
 								<div class="contacts_list">
 									<div class="contacts_left">
-										<img *ngIf="item.isPinned" (click)="updatePinnedStatus(item)" class="pin_icon"
+										<img *ngIf="item.PinnedInteractionID" (click)="updatePinnedStatus(item)" class="pin_icon"
 											src="/assets/img/teambox/pinned.svg" />
 										<img *ngIf="!item.isPinned" (click)="updatePinnedStatus(item)" class="pin_icon"
 											src="/assets/img/teambox/pin.svg" />
@@ -442,7 +442,7 @@ popupWidth='250px' popupHeight='200px'>
             </table>
     </ng-template>
     <ng-template #displayTemplate let-data>
-        <a href="mailto:" title="">&#64;{{ data.name }}</a>
+        <a>&#64;{{ data.name }}</a>
     </ng-template>
 </ejs-mention>
 							  
@@ -1583,7 +1583,7 @@ popupWidth='250px' popupHeight='200px'>
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
 						<button (click)="toggleChannelOption()" type="button" class="drop-down-btn"
 							style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;">
-							{{selectedChannel}}
+							{{selectedChannel == '' ? 'Select Channel' : selectedChannel}}
 						</button>
 					</div>
 					<div *ngIf="ShowChannelOption" class="popup-dialog ContactOption">						
