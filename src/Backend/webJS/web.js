@@ -96,7 +96,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
           executablePath: "/usr/bin/google-chrome-stable",
-        //  executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -281,6 +281,7 @@ function ClientInstance(spid, authStr, phoneNo) {
                 console.log("Kill[spid]", clientPidMapping[spid])
                 process.kill(clientPidMapping[spid]);
                 delete clientPidMapping[spid];
+                let updateWebdetails= await db.excuteQuery('update WhatsAppWeb set channel_status=0 where connected_id =? and spid=?',[phoneNo,spid]);
               } catch (err) {
                 console.log("Delete clientPidMapping issues in disconnected", err)
               }
