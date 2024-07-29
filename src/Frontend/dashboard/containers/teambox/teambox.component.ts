@@ -873,14 +873,14 @@ sendattachfile() {
 		let input = {
 			spid: this.SPID,
 		};
-		// this.settingService.clientAuthenticated(input).subscribe(response => {
-		// 	//response.status === 404
-		// 	if (false) {
-		// 		this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
-		// 		return;
-		// 	}
+		this.settingService.clientAuthenticated(input).subscribe(response => {
+			//response.status === 404
+			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WhatsApp Official') {
+				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+				return;
+			}
 			//response.status === 200 && response.message === 'Client is ready !
-			if (true) {
+			else if ((response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes' || (this.selectedInteraction?.channel =='WhatsApp Official')) {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
 						if(this.newMessage.value.Message_id==''){
@@ -943,7 +943,7 @@ sendattachfile() {
 		// 	if(error) {
 		// 		this.showToaster('Internal Server Error Please Contact System Adminstrator','error');
 		// 	}
-		// });
+		 });
 	}else{
 		this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
 	}
@@ -1222,8 +1222,8 @@ sendattachfile() {
 		this.OptedIn = event.target.checked ? 'Yes': 'No';
 	}
 	getCustomers(isAddContacts:boolean = false){
-		let rangeStart =this.currentPage;
-    	let rangeEnd =this.currentPage + this.pageSize
+		let rangeStart =this.contactCurrentPage;
+    	let rangeEnd =this.contactCurrentPage + this.contactPageSize;
 		this.apiService.getCustomers(this.SPID,rangeStart,rangeEnd).subscribe((data:any) =>{
 			this.isContactCompleted = data?.isCompleted ? data?.isCompleted : false;
 			if(isAddContacts){
@@ -1577,7 +1577,7 @@ sendattachfile() {
 		if(this.selectedInteraction)
 		//this.selectedInteractionList =
 		console.log('selectInteraction(0)');
-		//	this.selectInteraction(0);
+		this.selectInteraction(0);
 			
 		});
 		this.scrollChatToBottom()
@@ -1931,7 +1931,7 @@ selectChannelOption(Channel:any){
 		this.selectedChannel = Channel?.channel_id;
 		this.ShowChannelOption = false;
 	} else{
-		this.showToaster('Chhanel is not active','error');
+		this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it','error');
 	}
 }
 hangeEditContactInuts(item:any){
@@ -2488,6 +2488,7 @@ createCustomer() {
 	bodyData['isTemporary']=1;
 	console.log(bodyData);
 		if(this.newContact.valid) {
+			if(this.selectedChannel !=''){
 			if(this.OptedIn == 'Yes') {
 				this.apiService.createCustomer(bodyData).subscribe(
 					async (response:any) => {
@@ -2512,13 +2513,15 @@ createCustomer() {
 						//this.OptedIn = 'No';
 					  }
 					}
-				  );
-				
+				  );				
 			}
 			else {
 				this.showToaster('! Contact Opt In is required ', 'error');
 			}
-	
+		}
+		else{
+			this.showToaster('! Channel Selection is required ', 'error');
+		}
 		}
 		else {
 			this.newContact.markAllAsTouched();
@@ -2690,13 +2693,12 @@ checkAuthentication(){
 	let input = {
 		spid: this.SPID,
 	};
-	// this.settingService.clientAuthenticated(input).subscribe(response => {
-
-	// 	if (response.status === 404 && this.showChatNotes != 'notes' && false) {
-	// 		this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
-	// 		return;
-	// 	}
-	// })
+	this.settingService.clientAuthenticated(input).subscribe(response => {
+		if (response.status === 404 && this.showChatNotes != 'notes' ) {
+			this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+			return;
+		}
+	})
 }
 
 sendMessage(){
@@ -2747,15 +2749,15 @@ sendMessage(){
 		let input = {
 			spid: this.SPID,
 		};
-		//this.settingService.clientAuthenticated(input).subscribe(response => {
+		this.settingService.clientAuthenticated(input).subscribe(response => {
 
-			// if (response.status === 404 && this.showChatNotes != 'notes' && false) {
-			// 	this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
-			// 	return;
-			// }
+			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WhatsApp Official') {
+				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+				return;
+			}
 			//(response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes'
 
-			if (true) {
+			else if ((response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes' || (this.selectedInteraction?.channel =='WhatsApp Official')) {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
 						if(this.newMessage.value.Message_id==''){
@@ -2824,7 +2826,7 @@ sendMessage(){
 		// 	else {
 		// 		this.showToaster(error.message,'error');
 		// 	}
-		// });
+		 });
 
 
 		}else{
@@ -2992,8 +2994,8 @@ sendMessage(){
 	
 	checkPermission(){
 		console.log(this.selectedInteraction) ;	
-		if(this.showChatNotes=='text'){
-		this.checkAuthentication()
+		if(this.showChatNotes=='text' && this.selectedInteraction.channel!='WhatsApp Official'){
+			this.checkAuthentication()
 		}
 		if(this.selectedInteraction?.assignTo?.AgentId != this.uid && this.showChatNotes=='text' ){
 			this.showToaster('Attention! You can send message only to an Open and Self assigned Conversation','error');

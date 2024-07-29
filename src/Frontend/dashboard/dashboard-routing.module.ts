@@ -56,6 +56,32 @@ export const ROUTES: Routes = [
                     text: 'Dashboard',
                     link: '/dashboard',
                 },
+                // {
+                //     text: 'Dashboard',
+                //     link: '/teambox:isNewMessage',
+                // },
+                {
+                    text: 'Teambox',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        canActivate: [],
+        component: dashboardContainers.TeamboxComponent,
+    },
+     {
+        path: 'teambox/:isNewMessage',
+        data: {
+            title: 'Teambox',
+            breadcrumbs: [
+                {
+                    text: 'Dashboard',
+                    link: '/dashboard',
+                },
+                // {
+                //     text: 'Dashboard',
+                //     link: '/teambox:isNewMessage',
+                // },
                 {
                     text: 'Teambox',
                     active: true,
