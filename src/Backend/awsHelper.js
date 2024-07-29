@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json({ limit: "10mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
-async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken) {
+async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken,mime_type) {
     return new Promise((resolve, reject) => {
 
         const axiosConfig = {
@@ -40,6 +40,7 @@ async function uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken) {
                     Bucket: val.awsbucket,
                     Key: filekey,
                     Body: readStream,
+                    ContentType: mime_type
                 };
 
                 s3.upload(params, (err, data) => {
@@ -108,11 +109,11 @@ async function uploadToAws(awspath, stream, type) {
     })
 }
 
-async function uploadWhatsAppImageToAws(spid, imageid, fileUrl, fileAccessToken) {
-    let awspath = spid + "/whatsappMessage/" + imageid + ".jpg"
-    //console.log(awspath)
+async function uploadWhatsAppImageToAws(spid, imageid, fileUrl, fileAccessToken,extension,mime_type) {
+    let awspath = spid + "/whatsappMessage/" + imageid + extension
+    //console.log(awspath,mime_type)
     // return uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken);
-    let res = await uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken)
+    let res = await uploadimageFromUrlToAws(awspath, fileUrl, fileAccessToken,mime_type)
     return res;
 }
 

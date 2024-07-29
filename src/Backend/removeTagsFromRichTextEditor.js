@@ -96,8 +96,9 @@ let message_varible = "[{\"label\":\"{{Name}}\",\"value\":\"Name\"},{\"label\":\
 // getDefaultAttribue with Fallback
 async function getDefaultAttribue(message_variables, spid, customerId) {
   try {
+    
     let results = [];
-
+//console.log(message_variables,"message_variables" , spid, customerId)
     // Fetch all column names from EndCustomer table
     const endCustomerColumnsQuery = `SHOW COLUMNS FROM EndCustomer`;
     let endCustomerColumns = await db.excuteQuery(endCustomerColumnsQuery);
@@ -112,11 +113,13 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
     });
 
     for (let i = 0; i < message_variables.length; i++) {
-      console.log(i,"logs for check json parse in message variables")
-      console.log(message_variables[0])
+     // console.log(i,"logs for check json parse in message variables")
+     // console.log(message_variables[0])
       console.log(i,"**********END************")
-      const message_variable = JSON.parse(message_variables[i]);
+      const message_variable = message_variables[i];
       const { label, value, fallback } = message_variable;
+      //console.log(" label, value, fallback")
+      //console.log( label, value, fallback)
       let result = {};
 
       // Check if message_variable exists in EndCustomer columns
@@ -267,9 +270,9 @@ const modifiedString = modifyString(originalString);
 async function removeTagsFromMessages(originalString) {
   const modifiedString = modifyString(originalString);
 
-  // console.log(modifiedString);
+  // console.log("modifiedString",modifiedString);
   let convertedMessageText = convertHTML(removeEmptyTags(modifiedString))
-  // console.log(convertHTML(removeEmptyTags(modifiedString)));
+  console.log("convertHTML(removeEmptyTags(modifiedString))",convertedMessageText);
   return convertedMessageText
 }
 

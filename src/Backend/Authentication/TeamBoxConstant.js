@@ -166,7 +166,7 @@ var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, inte
 
 
 
-var updateInteractionMapping = "INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy) VALUES ?"
+var updateInteractionMapping = "INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy,lastAssistedAgent) VALUES ?"
 var getInteractionMapping = "SELECT * from InteractionMapping,user where user.uid=InteractionMapping.AgentId  and  is_active=1 and InteractionMapping.InteractionId=? ORDER BY MappingId DESC LIMIT 1"
 
 var savedMessagesQuery = "SELECT * from savedMessages where is_active=1 and SPID=?";
@@ -620,7 +620,8 @@ ORDER BY
     WHERE 
         ec.SP_ID = ?
         AND (ec.Name LIKE ? or  ec.Phone_number LIKE ?)
-        AND ec.isDeleted != 1
+        AND ic.IsTemporary !=1 
+        AND (ec.isDeleted !=1 or (ec.isDeleted =1 and ic.is_deleted = 0))
         AND ic.is_deleted = 0
        `;
 

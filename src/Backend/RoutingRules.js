@@ -146,7 +146,7 @@ async function RoundRobin(sid, newId) {
 
 }
 
-async function ManualAssign(sid, newId) {
+async function ManualAssign(newId,sid ) {
   try{
   console.log("ManualAssign")
   let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=?`;

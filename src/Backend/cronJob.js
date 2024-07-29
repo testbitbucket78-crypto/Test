@@ -572,11 +572,11 @@ async function autoResolveExpireInteraction() {
 
         let result = await db.excuteQuery(updateQuery, ['Resolved']);
         logger.log(record.interaction_id,"result",result?.affectedRows)
-        // let getMapping = await db.excuteQuery(`select * from InteractionMapping where InteractionId =?`, [record.interaction_id])
-        // if (getMapping?.length > 0) {
-        //   let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [record.interaction_id]);
+        let getMapping = await db.excuteQuery(`select * from InteractionMapping where InteractionId =?`, [record.interaction_id])
+        if (updateQuery?.length > 0) {
+          let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [record.interaction_id]);
           
-        // }
+        }
       }
     } else {
       logger.warn(' cron job scheduler maxCreatedAtResult is not an array');

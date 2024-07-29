@@ -291,13 +291,25 @@ const getContactAttributesByCustomer = (req, res) => {
 
 
 // Function to parse the message template and retrieve placeholders
-function parseMessageTemplate(template) {
+ function parseMessageTemplate(template) {
+    console.log("2983728",template)
+    // const placeholderRegex = /{{(.*?)}}/g;
+    // const placeholders = [];
+    // let match;
+    // while ((match = placeholderRegex.exec(template))) {
+    //     console.log(match[1])
+    //     placeholders.push(match[1]);
+    // }
+    // console.log(placeholders)
+    // return placeholders;
     const placeholderRegex = /{{(.*?)}}/g;
     const placeholders = [];
     let match;
-    while ((match = placeholderRegex.exec(template))) {
+    while ((match = placeholderRegex.exec(template)) !== null) {
+        console.log(`Matched placeholder: ${match[1]} at position ${match.index}`);
         placeholders.push(match[1]);
     }
+    console.log("All placeholders:", placeholders);
     return placeholders;
 }
 
@@ -349,6 +361,7 @@ const sendCampinMessage = async (req, res) => {
 
         console.log(content, "___________message_variables ____________", message_variables)
         //         // Replace placeholders in the content with values from message_variables
+        const placeholders =  parseMessageTemplate(content);
         if (message_variables) {
             message_variables.forEach(variable => {
                 const label = variable.label;
@@ -358,14 +371,16 @@ const sendCampinMessage = async (req, res) => {
         }
 
 
-        const placeholders = parseMessageTemplate(content);
-        if (placeholders.length > 0) {
+        
+        //console.log(placeholders?.length,"parseMessageTemplate"  ,parseMessageTemplate)
+        if (placeholders?.length > 0) {
 
-            const results = await removeTags.getDefaultAttribue(placeholders, spid, customerId);
-            console.log("results", results)
-
+            const results = await removeTags.getDefaultAttribue(message_variables, spid, customerId);
+          //  console.log("results", results)
+//console.log("placeholders",placeholders)
             placeholders.forEach(placeholder => {
                 const result = results.find(result => result.hasOwnProperty(placeholder));
+                console.log(placeholder,"place foreach",results)
                 const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
                 content = content.replace(`{{${placeholder}}}`, replacement);
             });
@@ -383,6 +398,7 @@ const sendCampinMessage = async (req, res) => {
         console.log(spid, req.body.channel_id, type, messageTo, "****", customerId)
 
         if (new Date(inputDate) <= new Date(formattedTime) && results[0]?.isBlocked != 1) {
+            console.log("iiiiiiiiiiiiiii",content)
             let messagestatus;
             if (optInStatus == 'Yes') {
 
@@ -683,6 +699,14 @@ const saveCampaignMessages = async (req, res) => {
         let schedule_datetime = req.body.schedule_datetime
         let SP_ID = req.body.SP_ID
         let type = req.body.media_type
+        let mediaType;
+        if(type == 'image'){
+            mediaType = 'image/jpg'
+        }if(type == 'video'){
+            mediaType ='video/mp4'
+        }if(type == 'document'){
+            mediaType ='application/pdf'
+        }
         // let content = req.body.message_content
         button_yes = (button_yes === null || button_yes === undefined) ? '' : button_yes;
         button_no = (button_no === null || button_no === undefined) ? '' : button_no;
@@ -694,7 +718,7 @@ const saveCampaignMessages = async (req, res) => {
         // console.log(req.body.message_content, "InteractionId InteractionId")
 
         let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent) values ?`
-        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, type, req.body.SP_ID, type, '', -1]]]);
+        let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, 'text', req.body.SP_ID, mediaType, '', -1]]]);
 
 
         let content = await removeTags.removeTagsFromMessages(req.body.message_content);

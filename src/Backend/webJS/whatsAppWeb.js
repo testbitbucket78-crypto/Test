@@ -11,6 +11,7 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 const fs = require('fs')
 const path = require('path');
 const { exec } = require('child_process');
+const logger = require('../common/logger.log');
 // const { MessageMedia, Location, Contact } = require('whatsapp-web.js');
 app.get('/get', (req, res) => {
     res.send("webjs is working")
@@ -106,6 +107,7 @@ app.get('/webjsStatus', (req, res) => {
 app.listen(3009, () => {
     console.log("Server is Running on Port : : 3009");
     // Replace 'chrome' with the actual process name if needed
+    logger.info('port 3003 restarted ');
     const processName = 'chrome';
 
     // Command to kill all processes with the given name

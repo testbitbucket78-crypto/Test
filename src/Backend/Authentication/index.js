@@ -29,6 +29,9 @@ const allregisterdUser = (req, res) => {
 //post Api for login
 const login = async (req, res) => {
     try {
+        const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        let  ip = clientIp.startsWith('::ffff:') ? clientIp.substring(7) : clientIp;
+        console.log('Client IP:', ip);
         var credentials = await db.excuteQuery('SELECT * FROM user WHERE email_id =?  and isDeleted !=1 and IsActive !=2', [req.body.email_id])
         if (credentials.length <= 0) {
             res.status(401).send({
@@ -48,7 +51,7 @@ const login = async (req, res) => {
                 const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY, { expiresIn: '24h' });
                 let myUTCString = new Date().toUTCString();
                 const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=?,IsActive=1 where email_id=?', [utcTimestamp, req.body?.LoginIP, req.body.email_id])
+                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=?,IsActive=1 where email_id=?', [utcTimestamp, ip, req.body.email_id])
 
                 res.status(200).send({
                     msg: 'Logged in!',
@@ -83,9 +86,7 @@ const register = async function (req, res) {
     display_mobile_number = req.body?.display_mobile_number
     try {
 
-        const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        let  ip = clientIp.startsWith('::ffff:') ? clientIp.substring(7) : clientIp;
-        console.log('Client IP:', ip);
+       
         var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id, mobile_number])
         if (credentials.length > 0) {
             res.status(409).send({
