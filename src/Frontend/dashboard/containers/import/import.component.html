@@ -331,15 +331,18 @@
 							</div>
 							<div class="col-sm-4 review-right-part">
 								<div class="mb-3 review-right-part-sub1">
+									<sb-loader [isLoading]="importDataLoader" [loaderType]="'small'" [message]="''"></sb-loader>
 									<h5 class="m-0">{{numberOfNewContact}}</h5>
 									<h6 class="m-0">New contact will added</h6>
-
+ 
 								</div>
 								<div class="mb-3 review-right-part-sub2">
+									<sb-loader [isLoading]="importDataLoader" [loaderType]="'small'" [message]="''"></sb-loader>
 									<h5 class="m-0">{{countUpdatedData}}</h5>
 									<h6 class="m-0">existing contacts will updated</h6>
 								</div>
 								<div class="mb-3 review-right-part-sub3">
+									<sb-loader [isLoading]="importDataLoader" [loaderType]="'small'" [message]="''"></sb-loader>
 									<h5 class="m-0">{{skipCont}}</h5>
 									<h6 class="mb-3">Contact skipped due to error</h6>
 

@@ -29,19 +29,25 @@
 						</div>
 						</div>
 					<div class="modal-body px-3 filterchannelsbody">
-						<div class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
+						<div *ngFor="let channel of channelOption">
+						<div *ngIf="channel?.label == 'WhatsApp Official'" class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
 							<input type="checkbox" class="custom-control-input" [(ngModel)]="isWhatsappOfficial" id="radio1" name="optradio"  value="option1" checked>
 							<img class="user-img ml-2">
-							<label class="custom-control-label" for="radio1"><span class="ml-2" [ngClass]="isWhatsappOfficial ? 'filter-selected':'filter-Unselected'" >WhatsApp Official</span></label>
+							<label class="custom-control-label" for="radio1"><span class="ml-2" [ngClass]="isWhatsappOfficial ? 'filter-selected':'filter-Unselected'" >WA API</span></label>
 						  </div>
-						  <div class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
+						  <div *ngIf="channel?.label == 'WhatsApp Web'" class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
 							<input type="checkbox" class="custom-control-input" id="radio2" [(ngModel)]="isWhatsappWeb"  name="optradio"  value="option2" >
 							<img class="user-img ml-2">
-							<label class="custom-control-label" for="radio2"><span class="ml-2" [ngClass]="isWhatsappWeb ? 'filter-selected':'filter-Unselected'" >WhatsApp Web</span></label>
+							<label class="custom-control-label" for="radio2"><span class="ml-2" [ngClass]="isWhatsappWeb ? 'filter-selected':'filter-Unselected'" >WA Web</span></label>
 							
 						  </div>
-			 
-				 </div>
+						</div>
+						  <!-- <div *ngFor="let channel of channelOptions" class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
+							<input type="checkbox" class="custom-control-input" [(ngModel)]="isWhatsappOfficial" id="radio1" name="optradio"  value="option1" checked>
+							<img class="user-img ml-2">
+							<label class="custom-control-label" for="radio1"><span class="ml-2" [ngClass]="isWhatsappOfficial ? 'filter-selected':'filter-Unselected'" >{{channel.label}}</span></label>
+						  </div> -->
+				    </div>
 					<div class="modal-footer filterchannelsfooter">					  
 							<button type="button" class="submit-btn" aria-label="Close" (click)="filterQuickRes(); d('Cross click')">Apply</button>						  
 					</div>
@@ -87,7 +93,11 @@
 									<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)">
 										<span>
 											<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
-											{{channel?.label}} ({{channel?.connected_id}})
+											{{
+												channel?.label === 'WhatsApp Official' ? 'WA API' : 
+												channel?.label === 'WhatsApp Web' ? 'WA Web' : 
+												channel?.label 
+											}} ({{channel?.connected_id}})
 										</span>
 									</p>
 								</div>

@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, AfterViewInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -14,6 +14,7 @@ import { join } from 'path';
 import { Subject } from 'rxjs';
 import { GridService } from '../../services/ag-grid.service';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
+import {ContactFilterComponent} from '../contact-filter/contact-filter.component';
 
 declare var $: any;
 @Component({
@@ -23,6 +24,7 @@ declare var $: any;
   styleUrls: ['./contacts.component.scss']
 })
 export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
+  @ViewChild('child') child!: ContactFilterComponent;
 
   public gridapi!:GridApi | any;
 
@@ -48,7 +50,7 @@ export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
       this.router.navigate(['login']);
     }
   }
-  changingValue: Subject<boolean> = new Subject();
+  changingValue: boolean = false;
   arrHideColumn:any[] =[];
   isShowColumn:boolean = false;
   isShowFilter:boolean = true;
@@ -357,10 +359,14 @@ onButtonClick(data:any, event: any) {
     this.getTagData();
     this.getCustomFieldsData();
     this.getPhoneNumberValidation()
-
+    
   
 } 
-
+clearFilterChild() {
+  if (this.child) {
+    this.child.clearFilter();
+  }
+}
 contactForm() {
   return this.fb.group({
     Name: new FormControl('', [Validators.required,Validators.minLength(3),Validators.maxLength(50),Validators.pattern('^(?:[a-zA-Z.0-9]+|(?:a to z))(?: [a-zA-Z0-9]+)*$')]),
@@ -533,6 +539,7 @@ onSelectAll(items: any) {
     console.log(SP_ID)
     this.apiService.getFilteredContact(data).subscribe((data:any) => {
       this.isLoading = false;
+      this.deleteBloackContactLoader = false;
       this.contacts = data.result;
       this.rowData = this.contacts;
       if(this.rowData.length == 0){
@@ -587,7 +594,7 @@ onSelectAll(items: any) {
     this.OptInStatus='No';
     this.isShowSidebar = false;
    }
-
+   deleteBloackContactLoader! : boolean;
   deleteRow(arr:any ["id"]) {
       //this.contacts.splice(arr, 1);
       var deleteList = this.checkedConatct.map(x => x.customerId);
@@ -752,7 +759,7 @@ onSelectAll(items: any) {
         else if(item.type =='Multi Select'){
           let values =''
           console.log(this.productForm.get(item.ActuallName)?.value)
-          if(values){
+          if( this.productForm.get(item.ActuallName)?.value){
           this.productForm.get(item.ActuallName)?.value?.forEach((ite:any)=>{
             values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
           })
@@ -886,6 +893,7 @@ console.log(this.contactId)
 
 
 deletContactByID(data: any) {
+  this.deleteBloackContactLoader = true;
   console.log("delete")
   console.log(data)
   this.apiService.deletContactById(data).subscribe((response => {
@@ -897,6 +905,7 @@ deletContactByID(data: any) {
 }
 
   blockContactByID(data: any) {
+    this.deleteBloackContactLoader = true;
     if(data.isBlocked==1) {
       this.isBlocked = 0;
     }
@@ -1157,7 +1166,15 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 })
 
 }
-
+countryCodeChanged(){
+  const countryCodeControl = this.productForm.get('countryCode');
+  const phoneNumber = this.productForm.get('displayPhoneNumber');
+  if (countryCodeControl && phoneNumber) {
+    countryCodeControl.markAsTouched();
+    phoneNumber.markAsTouched();
+    this.formatPhoneNumber();
+  }
+}
 // Function to format the phone number using libphonenumber-js
   formatPhoneNumber() {
     const phoneNumber = this.productForm.get('displayPhoneNumber')?.value;
@@ -1323,6 +1340,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
     this.query ='';
     this.getContact();
     this.gridapi!.setFilterModel(null);
+    this.clearFilterChild()
   }
 
   closeImport(){    
@@ -1407,11 +1425,12 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 
   openFilters(){
     this.isShowFilter = true;
-    this.changingValue.next(true);
+    this.changingValue = true;
   }
 
   closeFilter(){
     console.log('xyz');
+    this.changingValue = false;
    // this.isShowFilter = false;
     }
 

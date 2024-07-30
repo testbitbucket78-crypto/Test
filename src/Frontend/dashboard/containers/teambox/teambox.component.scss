@@ -899,16 +899,16 @@ img.no-dp {
     color: #000;
     word-break: break-word;
 }
-::ng-deep .conversation_list.chat .message_box .content .message_text{
-   a{
-    font-style: italic;
-    text-decoration: underline;
-    color: rgb(245, 186, 76)
-   }
-   a:hover{
-    color: rgb(255, 166, 0);
-   }
-}
+// ::ng-deep .conversation_list.chat .message_box .content .message_text{
+//    a{
+//     font-style: italic;
+//     text-decoration: underline;
+//     color: rgb(245, 186, 76)
+//    }
+//    a:hover{
+//     color: rgb(255, 166, 0);
+//    }
+// }
 ::ng-deep .content .message_text .e-rte-anchor {
     font-style: italic;
     color: white !important;
@@ -916,16 +916,15 @@ img.no-dp {
 }
 
 ::ng-deep .content .message_text .e-rte-anchor:hover {
-    color: orange !important;
     font-style: italic;
 }
-    .isLink {
+   ::ng-deep .isLink {
+        color: rgb(245, 186, 76) !important;
         font-style: italic;
-        color: #000 !important;
         text-decoration: underline !important;
       }
       
-      .isLink:hover {
+     ::ng-deep .isLink:hover {
         font-style: italic;
         color: orange !important;
       }
@@ -1245,7 +1244,7 @@ button:focus, input:focus {
     border-radius: 20px;
     padding: 10px 0px;
     position: absolute;
-    max-width: 200px;
+    max-width: 185px;
     margin-top: 10px;
     max-height: 240px;
     overflow: auto;

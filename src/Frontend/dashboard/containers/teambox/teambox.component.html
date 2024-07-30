@@ -1479,7 +1479,11 @@ popupWidth='250px' popupHeight='200px'>
 				<p *ngFor="let item of WhatsAppDetailList" (click)="filterContactByType(item)" >
 					<span>
 						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
-						{{item?.channel_id}} ({{item?.connected_id}})
+						{{
+                            item?.channel_id === 'WhatsApp Official' ? 'WA API' : 
+                            item?.channel_id === 'WhatsApp Web' ? 'WA Web' : 
+                            item?.channel_id 
+                            }} ({{item?.connected_id}})
 					</span>
 				</p>
 				<!-- <p (click)="filterContactByType('WhatsApp Web')">
@@ -1590,7 +1594,11 @@ popupWidth='250px' popupHeight='200px'>
 						<p *ngFor="let item of WhatsAppDetailList" (click)="selectChannelOption(item)">
 							<span>
 								<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
-								{{item?.channel_id}} ({{item?.connected_id}})
+								{{
+									item?.channel_id === 'WhatsApp Official' ? 'WA API' : 
+									item?.channel_id === 'WhatsApp Web' ? 'WA Web' : 
+									item?.channel_id 
+									}} ({{item?.connected_id}})
 							</span>
 						</p>						
 					</div>

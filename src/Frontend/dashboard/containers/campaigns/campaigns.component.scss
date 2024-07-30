@@ -373,6 +373,8 @@
 	}
 	.filtercampaign{
 	padding:1.5rem;
+	max-height: 435px;
+	overflow: auto;
 	}
 	.filtercampaign p.label{
 	color: #000000;

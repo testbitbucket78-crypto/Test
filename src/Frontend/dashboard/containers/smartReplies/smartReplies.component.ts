@@ -465,6 +465,7 @@ showAddSmartRepliesModal() {
 			}
 		}
 		this.showSideBar = false
+		this.isAttachingLoader = false;
 	}
 
 	cancelEditTemplateMedia(){
@@ -476,8 +477,9 @@ showAddSmartRepliesModal() {
 		$("#editTemplate").modal('show'); 
 		$("#editTemplateMedia").modal('hide'); 
 	}
-
+	isAttachingLoader! : boolean;
 	saveFiles(files: FileList) {
+		this.isAttachingLoader = true;
 		if (files.length > 0) {
 		  let fileName: any = files[0].name;
 		  let fileExt: string = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
@@ -1597,10 +1599,6 @@ stopPropagation(event: Event) {
 		}
 
 		selectChannel(channel:any){
-			if(channel.channel_status == 0){
-				this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
-				return;
-			}
 			this.newReply.get('Channel')?.setValue(channel.label);
 			console.log(channel.label)
 			this.ShowChannelOption=false;
