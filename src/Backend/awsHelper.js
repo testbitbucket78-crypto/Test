@@ -155,7 +155,7 @@ async function uploadStreamToAws(destinationPath, streamdata, type) {
 
 }
 
-async function uploadVideoToAws(awspath, videoData) {
+async function uploadVideoToAws(awspath, videoData,contentType) {
     // Example usage:
     const awsConfig = {
         awsaccessKeyId: val.awsaccessKeyId,
@@ -179,7 +179,7 @@ async function uploadVideoToAws(awspath, videoData) {
         const videoBuffer = Buffer.from(videoData, 'base64');
 
         // Specify the content type for your video (e.g., 'video/mp4')
-        const contentType = 'video/mp4';
+       // const contentType = 'video/mp4';
 
         const params = {
             Bucket: awsConfig.awsbucket,

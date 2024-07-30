@@ -241,7 +241,7 @@ const createInteraction = async (req, res) => {
         IsTemporary = req.body?.IsTemporary;
         var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type, IsTemporary]];
 
-        let isExist = await db.excuteQuery('select * from Interaction where SP_ID=? and customerId=? and is_deleted!=1', [SP_ID, customerId]);
+        let isExist = await db.excuteQuery('select * from Interaction where SP_ID=? and customerId=? and is_deleted!=1 and IsTemporary !=1', [SP_ID, customerId]);
         if (isExist?.length > 0) {
             res.status(409).send({
                 msg: 'This customer interaction already exists!',
@@ -483,6 +483,22 @@ const getAllMessageByInteractionId = async (req, res) => {
             err: err,
             status: 500
         });
+    }
+};
+
+
+const getMessagesByMsgId = async (req, res) => {
+    try {
+  
+       let  result = await db.excuteQuery(val.getmessageBymsgId, [ req.params.Message_id,req.params.SP_ID])
+    res.send({
+        result: result,
+      
+        status: 200
+    });
+    } catch (err) {
+        logger.error('Error in getsavedMessages:', err);
+        res.status(500).send({ error: 'Internal server error' });
     }
 };
 
@@ -932,7 +948,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction,getMessagesByMsgId
 };
 
 

@@ -30,47 +30,59 @@ const allregisterdUser = (req, res) => {
 const login = async (req, res) => {
     try {
         const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        let  ip = clientIp.startsWith('::ffff:') ? clientIp.substring(7) : clientIp;
+        const ip = clientIp.startsWith('::ffff:') ? clientIp.substring(7) : clientIp;
         console.log('Client IP:', ip);
-        var credentials = await db.excuteQuery('SELECT * FROM user WHERE email_id =?  and isDeleted !=1 and IsActive !=2', [req.body.email_id])
-        if (credentials.length <= 0) {
-            res.status(401).send({
-                msg: 'Invalid User !',
+        
+        const emailId = req.body.email_id;
+        const password = req.body.password;
+        
+        // Retrieve all user records with the matching email ID
+        const credentials = await db.excuteQuery('SELECT * FROM user WHERE email_id = ? AND isDeleted != 1 AND IsActive != 2', [emailId]);
+
+        if (credentials.length === 0) {
+            return res.status(401).send({
+                msg: 'Invalid User!',
                 status: 401
             });
-        } else {
-            var password = await bcrypt.compare(req.body.password, credentials[0]['password'])
+        }
 
-            if (!password) {
-                res.status(401).send({
-                    msg: 'Username or password is incorrect!',
-                    status: 401
-                });
-            }
-            else {
-                const token = jwt.sign({ email_id: credentials.email_id }, SECRET_KEY, { expiresIn: '24h' });
-                let myUTCString = new Date().toUTCString();
-                const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-                let LastLogInTim = await db.excuteQuery('UPDATE user set LastLogIn=?,LoginIP=?,IsActive=1 where email_id=?', [utcTimestamp, ip, req.body.email_id])
-
-                res.status(200).send({
-                    msg: 'Logged in!',
-                    token,
-                    user: credentials[0],
-                    status: 200
-                });
+        let user = null;
+        for (let i = 0; i < credentials.length; i++) {
+            const validPassword = await bcrypt.compare(password, credentials[i]['password']);
+            if (validPassword) {
+                user = credentials[i];
+                break;
             }
         }
+
+        if (!user) {
+            return res.status(401).send({
+                msg: 'Username or password is incorrect!',
+                status: 401
+            });
+        }
+
+        const token = jwt.sign({ email_id: user.email_id }, SECRET_KEY, { expiresIn: '24h' });
+        const utcTimestamp = moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss');
+        
+        await db.excuteQuery('UPDATE user SET LastLogIn = ?, LoginIP = ?, IsActive = 1 WHERE email_id = ?', [utcTimestamp, ip, emailId]);
+
+        res.status(200).send({
+            msg: 'Logged in!',
+            token,
+            user: user,
+            status: 200
+        });
     } catch (err) {
         console.error(err);
-        db.errlog(err)
+        db.errlog(err);
         res.status(500).send({
-            msg: err,
+            msg: 'Internal Server Error',
             status: 500
         });
     }
+};
 
-}
 
 //post api for register
 
