@@ -38,14 +38,14 @@ client.on('connect', function(connection) {
 
 //client.connect('ws://localhost:3010/', 'echo-protocol');
 client.connect('ws://52.66.172.213:3010/', 'echo-protocol');
-function NotifyServer(display_phone_number,updatemessage,message,status,msg_status)
+function NotifyServer(display_phone_number,updatemessage,message,status,msg_status,msg_id)
 {
   try{
     var notificationMsg ={};
     if(updatemessage == true){           //For webhhok teambox msg update
     notificationMsg= {"displayPhoneNumber":display_phone_number, "updateMessage":true};
     }else if(message != undefined){    // notify message
-      notificationMsg= {"displayPhoneNumber":display_phone_number,"message":message,"status" : status ,"msg_status":msg_status};
+      notificationMsg= {"displayPhoneNumber":display_phone_number,"message":message,"status" : status ,"msg_status":msg_status,"msg_id":msg_id};
     }
 
 
