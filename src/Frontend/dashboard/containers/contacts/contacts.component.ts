@@ -1033,7 +1033,13 @@ deletContactByID(data: any) {
         this.productForm.get(prop)?.setValue(names);
                 }
       }
-    }  
+    } 
+    const countryCodeControl = this.productForm.get('countryCode');
+    const phoneNumber = this.productForm.get('displayPhoneNumber');
+    if (countryCodeControl && phoneNumber) {
+      countryCodeControl.markAsTouched();
+      phoneNumber.markAsTouched();
+    } 
     this.OptInStatus =data.OptInStatus
     this.isBlocked=data.isBlocked;
   }
@@ -1165,15 +1171,6 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   this.showToaster('error saving contact image','error');
 })
 
-}
-countryCodeChanged(){
-  const countryCodeControl = this.productForm.get('countryCode');
-  const phoneNumber = this.productForm.get('displayPhoneNumber');
-  if (countryCodeControl && phoneNumber) {
-    countryCodeControl.markAsTouched();
-    phoneNumber.markAsTouched();
-    this.formatPhoneNumber();
-  }
 }
 // Function to format the phone number using libphonenumber-js
   formatPhoneNumber() {

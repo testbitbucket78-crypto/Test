@@ -574,7 +574,7 @@
 						<div class="form-floating">
 							<div class="d-flex ss">
 
-								<select class="input-form" id="countryCode" formControlName="countryCode" (change)="countryCodeChanged()">
+								<select class="input-form" id="countryCode" formControlName="countryCode">
 									<option  *ngFor="let countryCode of countryCodes" [ngValue]="countryCode" >
 										{{ countryCode }}
 									</option>

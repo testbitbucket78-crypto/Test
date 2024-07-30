@@ -90,7 +90,7 @@ export class ContactFilterComponent implements OnInit {
 	@Output() query = new EventEmitter<string> () ;
 	@Output() closeFilterPopup = new EventEmitter<string>();
 	@Output() contactFilterList = new EventEmitter<any>();
-    @Input()  clearFilerApplied = new EventEmitter<any>();
+	
   constructor(private apiService: TeamboxService,private modalService: NgbModal,private _settingsService:SettingsService) {
 	
     }
