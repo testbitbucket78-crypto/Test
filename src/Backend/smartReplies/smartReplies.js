@@ -50,16 +50,12 @@ app.post('/addNewReply', async (req, res) => {
         value: myStringArray.join(',')
       }
     };
-    console.log("params " + params.strings.value)
+    //console.log("params " + params.strings.value)
     const jsonData = JSON.stringify(req.body.ReplyActions);
-
-
-    console.log(req.body.ReplyActions)
-
 
     //db.runQuery(req, res, val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData])
     var saveReply = await db.excuteQuery(val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData,Channel])
-    console.log(saveReply)
+    //onsole.log(saveReply)
     res.status(200).send({
       msg: "Smart Reply added",
       status: 200
