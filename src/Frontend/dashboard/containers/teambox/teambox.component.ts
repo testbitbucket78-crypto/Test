@@ -442,7 +442,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.filterChannel='';
 		this.templateChecked = false;
 		this.showAttachmenOption=false
-		this.messageMeidaFile=""
+		this.messageMeidaFile=false
 		this.showAttributes=false
 		this.newContact.reset()
 		this.editTemplate=false
