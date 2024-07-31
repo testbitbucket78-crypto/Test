@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener  } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener,TemplateRef  } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder,FormGroup, FormControl, Validators, NgForm } from '@angular/forms';
+import { FormBuilder,FormGroup, FormControl, Validators, NgForm, ValidatorFn, AbstractControl } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { TeamboxService } from './../../services';
+import { DashboardService, TeamboxService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
@@ -58,6 +58,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	@ViewChild('chatSection') chatSection: ElementRef | any; 
 	@ViewChild('mention_integration') chatEditor!: RichTextEditorComponent; 
 	@ViewChild('chatSection') scrollContainer: ElementRef | any;
+	@ViewChild('messageadd') contactadd!: TemplateRef<any> ;
 
 	@ViewChild('variableValue', { static: false }) variableValueForm!: NgForm;
 
@@ -245,6 +246,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	filterTemplateOption:any='';
 	attributesList:any=[];
 	WhatsAppDetailList:any=[];
+    dynamicDropdownSettings = {};
     showFullMessage: boolean = false;
 	maxLength: number = 150;
 	allmessages:any=[];
@@ -286,7 +288,9 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
-		public phoneValidator:PhoneValidationService, private datePipe:DatePipe) {
+		public phoneValidator:PhoneValidationService, private datePipe:DatePipe,
+		private dashboardService: DashboardService,
+		private route: ActivatedRoute) {
 		
 		// customize default values of modals used by this component tree
 
@@ -316,8 +320,6 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.newMessage =fb.group({
 			Message_id:new FormControl(''),
 		});
-		
-
 	}
 	selectTemplate(template:any){
 		this.templateChecked = true;
@@ -440,7 +442,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.filterChannel='';
 		this.templateChecked = false;
 		this.showAttachmenOption=false
-		this.messageMeidaFile=false
+		this.messageMeidaFile=""
 		this.showAttributes=false
 		this.newContact.reset()
 		this.editTemplate=false
@@ -535,6 +537,20 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 
 	}
+
+	onCreate() {
+		const instance: any = this.chatEditor;
+		instance.contentModule.getDocument().addEventListener("keydown", (e: any)=> {
+		// if (e.key === 's' && e.ctrlKey === true) {
+			
+		// }
+		console.log('abcd');
+		if(this.modalReference){
+			this.modalReference.close();
+		}
+		
+		});
+		}
 	
 	addVariable() {
 		const allVariables = [];
@@ -605,6 +621,15 @@ showeditTemplate(){
 		this.showToaster('! Please Select Any Template To Proceed','error');
 	}
 
+}
+openNewMessagePopup(){
+	setTimeout(()=>{
+	this.route.queryParams.subscribe(params => {
+		let isMessage = params['isNewMessage'] === 'true' ? true :false;
+		if(isMessage)
+		this.openaddMessage(this.contactadd);				
+	});
+},50)
 }	
 ToggleShowMentionOption(){
 	this.closeAllModal()
@@ -1072,8 +1097,19 @@ sendattachfile() {
 		this.getQuickResponse();
 		this.getTagData();
 		this.getWhatsAppDetails();
+		this.openNewMessagePopup();
 		this.NewContactForm = this.newContact;
         this.EditContactForm = this.editContact;
+		 
+		this.dynamicDropdownSettings = {
+			singleSelection: false,
+			idField: 'id',
+			textField: 'optionName',
+			selectAllText: 'Select All',
+			unSelectAllText: 'UnSelect All',
+			itemsShowLimit: 3,
+			allowSearchFilter: false
+		};
 	}
 
 	ngAfterViewInit() {
@@ -1603,7 +1639,8 @@ sendattachfile() {
 		this.currentPage = 0;
 		this.pageSize = 10;
 		this.getSearchInteractions(searchKey);
-	}else{
+	}
+	else{
 		this.interactionSearchKey = '';
 		this.currentPage = 0;
 		this.pageSize = 10;
@@ -1952,7 +1989,7 @@ toggleLeadStatusOption(){
 
 
 hangeEditContactSelect(name:any,value:any){
-	this.EditContactForm.get(name)?.setValue(value);
+	this.editContact.get(name)?.setValue(value);
 	console.log(this.editContact)
 	this.ShowChannelOption=false
 	this.ShowGenderOption=false;
@@ -1984,46 +2021,164 @@ stopPropagation(event: Event) {
 
 
 updateCustomer(){
-	var bodyData = {
-	Name: this.EditContactForm.get('Name')?.value,
-	countryCode: this.EditContactForm.get('country_code')?.value,
-	Phone_number: this.EditContactForm.get('Phone_number')?.value,
-	displayPhoneNumber: this.EditContactForm.get('displayPhoneNumber')?.value,
-	channel: this.EditContactForm.get('channel')?.value,
-	OptInStatus: this.EditContactForm.get('OptInStatus')?.value,
-	emailId: this.EditContactForm.get('emailId')?.value,
-	ContactOwner: this.EditContactForm.get('ContactOwner')?.value,
-	customerId: this.EditContactForm.get('customerId')?.value
-	};
-	console.log(bodyData)
+	// var bodyData = {
+	// Name: this.EditContactForm.get('Name')?.value,
+	// countryCode: this.EditContactForm.get('country_code')?.value,
+	// Phone_number: this.EditContactForm.get('Phone_number')?.value,
+	// displayPhoneNumber: this.EditContactForm.get('displayPhoneNumber')?.value,
+	// channel: this.EditContactForm.get('channel')?.value,
+	// OptInStatus: this.EditContactForm.get('OptInStatus')?.value,
+	// emailId: this.EditContactForm.get('emailId')?.value,
+	// ContactOwner: this.EditContactForm.get('ContactOwner')?.value,
+	// customerId: this.EditContactForm.get('customerId')?.value
+	// };
+	//console.log(bodyData)
+	let contactData = this.copyContactFormData();
 		
-	 if(this.EditContactForm.valid) {
-		this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
-		this.selectedInteraction['Name']=this.EditContactForm.Name
-		this.selectedInteraction['countryCode']=this.EditContactForm.country_code
-		this.selectedInteraction['Phone_number']=this.EditContactForm.value.Phone_number
-		this.selectedInteraction['displayPhoneNumber']=this.EditContactForm.displayPhoneNumber
-		this.selectedInteraction['channel']=this.EditContactForm.channel
-		this.selectedInteraction['status']=this.EditContactForm.status
-		this.selectedInteraction['OptInStatus']=this.EditContactForm.OptInStatus
-		this.selectedInteraction['emailId']=this.EditContactForm.emailId
-		this.selectedInteraction['ContactOwner']=this.EditContactForm.ContactOwner
-		this.selectedInteraction['CustomerId']=this.EditContactForm.customerId
-	
-			if(this.modalReference){
-				this.modalReference.close();
+	 if(this.editContact.valid) {
+		  this.dashboardService.editContact(contactData, this.contactId, this.SPID).subscribe(
+			(response: any) => {
+			if(response) {
+				if(this.modalReference){
+					this.modalReference.close();
+				}
+				this.showToaster('Contact information updated...','success');
+				//this.getAllInteraction(false);
+				this.getCustomers();
+				this.filterChannel='';
 			}
-			this.showToaster('Contact information updated...','success');
-			this.getAllInteraction(false);
-			this.getCustomers();
-			this.filterChannel='';
+		   },
+		   (error:any) =>{
+			if(error) {
+	  
+			  if(error.status == 409)
+			  this.showToaster('Phone Number already exist !','error');
+			  else
+			  this.showToaster(error.message,'error');
+			}
 		});
+
+
+
+
+		// this.apiService.updatedCustomer(bodyData).subscribe(async response =>{
+		// this.selectedInteraction['Name']=this.EditContactForm.Name
+		// this.selectedInteraction['countryCode']=this.EditContactForm.country_code
+		// this.selectedInteraction['Phone_number']=this.EditContactForm.value.Phone_number
+		// this.selectedInteraction['displayPhoneNumber']=this.EditContactForm.displayPhoneNumber
+		// this.selectedInteraction['channel']=this.EditContactForm.channel
+		// this.selectedInteraction['status']=this.EditContactForm.status
+		// this.selectedInteraction['OptInStatus']=this.EditContactForm.OptInStatus
+		// this.selectedInteraction['emailId']=this.EditContactForm.emailId
+		// this.selectedInteraction['ContactOwner']=this.EditContactForm.ContactOwner
+		// this.selectedInteraction['CustomerId']=this.EditContactForm.customerId
+	
+		// 	if(this.modalReference){
+		// 		this.modalReference.close();
+		// 	}
+		// 	this.showToaster('Contact information updated...','success');
+		// 	//this.getAllInteraction(false);
+		// 	this.getCustomers();
+		// 	this.filterChannel='';
+		// });
 	}
 	else {
-		this.EditContactForm.markAllAsTouched();
+		this.editContact.markAllAsTouched();
 	} 
+}
 
+copyContactFormData() {
+    let ContactFormData = {
+        result: [
+          {
+            displayName:this.SPID,
+            ActuallName:"SP_ID"
+          },
+            {
+                displayName: this.editContact.controls.Name.value,
+                ActuallName: "Name"
+            },
+            {
+              displayName: this.editContact.controls.country_code.value,
+              ActuallName: "CountryCode"
+           },
+            {
+                displayName: this.editContact.controls.Phone_number.value,
+                ActuallName: "Phone_number"
+            },
+            {
+              displayName: this.editContact.controls.displayPhoneNumber.value,
+              ActuallName: "displayPhoneNumber"
+           },
+            {
+                displayName: this.editContact.controls.emailId.value,
+                ActuallName: "emailId"
+            },
+            {
+              displayName: this.editContact.controls.ContactOwner.value,
+              ActuallName: "ContactOwner"
+            },
+            {
+              displayName: '',
+              ActuallName: "tag"
+            },
+            {
+              displayName: this.OptedIn ? 'Yes' : 'No',
+              ActuallName: "OptInStatus"
+            },
+        ],
+        SP_ID:this.SPID
+    }
 
+    if(this.filteredCustomFields.length >0){
+      this.filteredCustomFields.forEach((item:any)=>{
+        if(item.type =='Select'){
+          let selectedOption = item.options.filter((opt:any)=>opt.id == this.editContact.get(item.ActuallName)?.value?.toString())[0];
+          console.log(this.editContact.get(item.ActuallName)?.value);
+          console.log(item.options);
+          if(selectedOption)
+          ContactFormData.result.push({displayName:`${selectedOption?.id}:${selectedOption?.optionName}`,ActuallName:item.ActuallName});
+        }
+        else if(item.type =='Multi Select'){
+          let values =''
+          console.log(this.editContact.get(item.ActuallName)?.value)
+          if(values){
+          this.editContact.get(item.ActuallName)?.value?.forEach((ite:any)=>{
+            values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
+          })
+           }
+          console.log(values);
+          ContactFormData.result.push({displayName:values,ActuallName:item.ActuallName});
+        }
+        else{
+          ContactFormData.result.push({displayName:this.editContact.get(item.ActuallName)?.value,ActuallName:item.ActuallName});
+        }
+      })
+    }
+//     if (isEditTag) {
+//       let tag = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
+//           if (tag) {
+//             let tagArr:any =[];
+//             this.tagListData.forEach((item:any)=>{
+//               if(item.isSelected)
+//               tagArr.push(item.ID);
+//             })
+//               tag.displayName = tagArr.join(', ');
+//     }
+//   }
+//    if (!isEditTag) {
+//       let tagArray = this.editContact.controls.tag.value;
+//       console.log(tagArray)
+//       let tagString = tagArray?.map((tag: any) => `${tag.item_id}`).join(', ');
+//       console.log(tagString)
+
+//       let tagField = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
+//       if (tagField) {
+//           tagField.displayName = tagString;
+//   }
+       
+//  };
+    return ContactFormData
 }
 
 filterContactByType(Channel:any){
@@ -2357,16 +2512,17 @@ triggerEditCustomer(updatecustomer:any){
 	if(this.modalReference){
 		this.modalReference.close();
 	}
-	this.EditContactForm.get('Name')?.setValue(this.selectedInteraction.Name)
-	this.EditContactForm.get('country_code')?.setValue(this.selectedInteraction.countryCode)
-	this.EditContactForm.get('Phone_number')?.setValue(this.selectedInteraction.Phone_number)
-	this.EditContactForm.get('displayPhoneNumber')?.setValue(this.selectedInteraction.displayPhoneNumber)
-	this.EditContactForm.get('channel')?.setValue(this.selectedInteraction.channel)
-	this.EditContactForm.get('OptInStatus')?.setValue(this.selectedInteraction.OptInStatus)
-	this.EditContactForm.get('emailId')?.setValue(this.selectedInteraction.emailId)
-	this.EditContactForm.get('ContactOwner')?.setValue(this.selectedInteraction.ContactOwner)
-	this.EditContactForm.get('channel')?.setValue(this.selectedInteraction.channel)
-	this.EditContactForm.get('customerId')?.setValue(this.selectedInteraction.customerId)
+	// this.EditContactForm.get('Name')?.setValue(this.selectedInteraction.Name)
+	// this.EditContactForm.get('country_code')?.setValue(this.selectedInteraction.countryCode)
+	// this.EditContactForm.get('Phone_number')?.setValue(this.selectedInteraction.Phone_number)
+	// this.EditContactForm.get('displayPhoneNumber')?.setValue(this.selectedInteraction.displayPhoneNumber)
+	// this.EditContactForm.get('channel')?.setValue(this.selectedInteraction.channel)
+	// this.EditContactForm.get('OptInStatus')?.setValue(this.selectedInteraction.OptInStatus)
+	// this.EditContactForm.get('emailId')?.setValue(this.selectedInteraction.emailId)
+	// this.EditContactForm.get('ContactOwner')?.setValue(this.selectedInteraction.ContactOwner)
+	// this.EditContactForm.get('channel')?.setValue(this.selectedInteraction.channel)
+	// this.EditContactForm.get('customerId')?.setValue(this.selectedInteraction.customerId)
+	this.patchFormValue();
 	this.modalReference = this.modalService.open(updatecustomer,{ size:'md', windowClass:'white-bg'});
 }
 
@@ -2502,7 +2658,13 @@ createCustomer() {
 							this.modalReference.close();
 						}
 						if (insertId) {
-							this.createInteraction(insertId);
+							if(responseData?.interactionId?.length ==0){
+								this.createInteraction(insertId);
+							}else{
+								if(this.modalReference){
+									this.modalReference.close();
+								}
+							}
 							this.newContact.reset();
 							//this.getAllInteraction();
 							//this.getCustomers();
@@ -2738,7 +2900,7 @@ sendMessage(){
 			messageTo:this.selectedInteraction.Phone_number,
 			message_text: value || "",
 			Message_id:this.newMessage.value.Message_id,
-			message_media: this.messageMeidaFile == false ? this.messageMediaFile : this.messageMeidaFile,
+			message_media: this.messageMeidaFile ? this.messageMeidaFile :'text',
 			media_type: this.mediaType,
 			quick_reply_id: '',
 			template_id:'',
@@ -2914,7 +3076,7 @@ sendMessage(){
 		
 			previewTemplate() {
 				if(this.selectedTemplate.media_type) {
-				this.messageMediaFile = this.selectedTemplate.Links;
+				this.messageMeidaFile = this.selectedTemplate.Links;
 				this.mediaType = this.selectedTemplate.media_type;
 				}
 				let isVariableValue='';
@@ -3052,9 +3214,44 @@ sendMessage(){
     		if(customFieldData){
        			const filteredFields:any = customFieldData?.filter((field:any) => !defaultFieldNames.includes(field.ActuallName) && field.status===1 );
           		this.filteredCustomFields = filteredFields;
+				this.getfilteredCustomFields();
 			}
 		});
 	  }
+
+	  getfilteredCustomFields() {
+			  this.filteredCustomFields.forEach((item:any)=>{
+				const control = new FormControl('');
+				this.editContact.addControl(item.ActuallName,control);
+				const controls = this.editContact.get(item.ActuallName);
+				if (controls && item.mandatory == 1) {
+				  controls.setValidators([Validators.required]); 
+				  controls.updateValueAndValidity();
+				}
+				const yearValidatorFn: ValidatorFn = (control: AbstractControl |any ): { [key: string]: boolean } | null => {
+				  return this.yearValidator(control);
+				};
+				if(controls && item?.type=='Date'){
+				  controls.setValidators([yearValidatorFn]); 
+				  controls.updateValueAndValidity();
+				}
+				if(item?.dataTypeValues && (item?.type=='Select' || item?.type=='Multi Select')){
+				  item.options = JSON.parse(item?.dataTypeValues);
+				}
+			  })
+			  console.log(this.editContact);
+	  }
+
+	  yearValidator(control: FormControl) : { [key: string]: boolean }  | null {
+		if (control.value) {
+		  const year = new Date(control.value).getFullYear();
+		  if (year.toString().length !== 4) {
+			return { invalidYear: true };
+		  }
+		}
+		return null;
+	  }
+	
 
 	  getMediaType(val:any){
 		if(val?.includes('image'))
@@ -3083,60 +3280,60 @@ sendMessage(){
 	   })
 	 }
 
-	//  patchFormValue(){
-	// 	const data:any=this.contactsData
-	// 	console.log(data);
-	// 	this.getFilterTags = data.tag ? data.tag?.split(',').map((tags: string) =>tags.trim().toString()) : [];
-	// 	console.log(this.getFilterTags);
-	// 	this.checkedTags = this.getFilterTags;
-	// 	const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim());
-	// 	//set the selectedTag in multiselect-dropdown format
-	// 	const selectedTags = this.tagListData.map((tag: any, index: number) => ({ idx: index, ...tag }))
-	// 	.filter(tag => selectedTag?.includes((tag.ID).toString()))
-	// 	.map((tag: any) => ({
-	// 		item_id: tag.ID,
-	// 		item_text: tag.TagName,
-	// 	}));
-	// 	console.log(selectedTags);
-	// 	// this.selectedTag = data.tag
-	// 	this.tagListData.forEach((item:any)=>{
-	// 	  if(selectedTag?.includes((item.ID).toString())){
-	// 		item['isSelected'] = true;
-	// 	  }else{
-	// 		item['isSelected'] = false;
-	// 	  }
-	// 	})
-	// 	for(let prop in data){
-	// 	  let value = data[prop as keyof typeof data];
-	// 	  if(this.productForm.get(prop))
-	// 	  this.productForm.get(prop)?.setValue(value)
-	// 	  this.productForm.get('tag')?.setValue(selectedTags); 
-	// 	  let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
-	// 	  if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
-	// 		this.productForm.get(prop)?.setValue(value);
-	// 	  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
-	// 		let val = value ? value.split(':')[0] : '';
-	// 		console.log(val);
-	// 		this.productForm.get(prop)?.setValue(val);
-	// 	  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
-	// 		if(value){
-	// 		let val = value.split(':');
-	// 		console.log(val);
-	// 		console.log(value);
+	 patchFormValue(){
+		const data:any=this.selectedInteraction;
+		console.log(data);
+		// this.getFilterTags = data.tag ? data.tag?.split(',').map((tags: string) =>tags.trim().toString()) : [];
+		// console.log(this.getFilterTags);
+		// this.checkedTags = this.getFilterTags;
+		// const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim());
+		// //set the selectedTag in multiselect-dropdown format
+		// const selectedTags = this.tagListData.map((tag: any, index: number) => ({ idx: index, ...tag }))
+		// .filter(tag => selectedTag?.includes((tag.ID).toString()))
+		// .map((tag: any) => ({
+		// 	item_id: tag.ID,
+		// 	item_text: tag.TagName,
+		// }));
+		// console.log(selectedTags);
+		// // this.selectedTag = data.tag
+		// this.tagListData.forEach((item:any)=>{
+		//   if(selectedTag?.includes((item.ID).toString())){
+		// 	item['isSelected'] = true;
+		//   }else{
+		// 	item['isSelected'] = false;
+		//   }
+		// })
+		for(let prop in data){
+		  let value = data[prop as keyof typeof data];
+		  if(this.editContact.get(prop))
+		  this.editContact.get(prop)?.setValue(value)
+		  //this.editContact.get('tag')?.setValue(selectedTags); 
+		  let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
+		  if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
+			this.editContact.get(prop)?.setValue(value);
+		  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
+			let val = value ? value.split(':')[0] : '';
+			console.log(val);
+			this.editContact.get(prop)?.setValue(val);
+		  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
+			if(value){
+			let val = value.split(':');
+			console.log(val);
+			console.log(value);
 	
-	// 		let selectName =  value?.split(',');
-	// 				  let names:any =[];
-	// 				  selectName.forEach((it:any)=>{
-	// 					let name = it.split(':');
-	// 					console.log(name);
-	// 					names.push({id: (name[0] ?  name[0] : ''),optionName: (name[1] ?  name[1] : '')});
-	// 				  })
+			let selectName =  value?.split(',');
+					  let names:any =[];
+					  selectName.forEach((it:any)=>{
+						let name = it.split(':');
+						console.log(name);
+						names.push({id: (name[0] ?  name[0] : ''),optionName: (name[1] ?  name[1] : '')});
+					  })
 					  
-	// 		this.productForm.get(prop)?.setValue(names);
-	// 				}
-	// 	  }
-	// 	}  
-	// 	this.OptInStatus =data.OptInStatus
-	// 	this.isBlocked=data.isBlocked;
-	//   }
+			this.editContact.get(prop)?.setValue(names);
+					}
+		  }
+		}  
+		// this.OptInStatus =data.OptInStatus
+		// this.isBlocked=data.isBlocked;
+	  }
 }

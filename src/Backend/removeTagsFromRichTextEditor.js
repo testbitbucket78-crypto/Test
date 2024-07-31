@@ -42,63 +42,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 let message_varible = "[{\"label\":\"{{Name}}\",\"value\":\"Name\"},{\"label\":\"{{Phone_number}}\",\"value\":\"CountryCode\"}]"
 
-// async function getDefaultAttribue(message_variables, spid, customerId) {
-//   try {
-//     let results = [];
-
-//     // Fetch all column names from EndCustomer table
-//     const endCustomerColumnsQuery = `SHOW COLUMNS FROM EndCustomer`;
-//     let endCustomerColumns = await db.excuteQuery(endCustomerColumnsQuery);
-//     endCustomerColumns = endCustomerColumns.map(column => column.Field);
-
-//     // Fetch all column names from SPIDCustomContactFields table
-//     const spidCustomColumnsQuery = `SELECT ColumnName, CustomColumn FROM SPIDCustomContactFields WHERE SP_ID=? AND isDeleted != 1`;
-//     let spidCustomColumns = await db.excuteQuery(spidCustomColumnsQuery, [spid]);
-//     let spidCustomColumnsMap = new Map();
-//     spidCustomColumns.forEach(column => {
-//       spidCustomColumnsMap.set(column.ColumnName, column.CustomColumn);
-//     });
-
-//     for (let i = 0; i < message_variables.length; i++) {
-//       const message_variable = message_variables[i];
-//       let result = {};
-
-//       // Check if message_variable exists in EndCustomer columns
-//       if (endCustomerColumns.includes(message_variable)) {
-//         const endCustomerQuery = `SELECT ${message_variable} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
-//         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
-
-//         if (endCustomerResult.length > 0 && endCustomerResult[0][message_variable]) {
-//           result[message_variable] = endCustomerResult[0][message_variable];
-//         }
-//       } else if (spidCustomColumnsMap.has(message_variable)) {
-//         const customColumn = spidCustomColumnsMap.get(message_variable);
-//         const endCustomerQuery = `SELECT ${customColumn} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
-//         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
-
-//         if (endCustomerResult.length > 0 && endCustomerResult[0][customColumn]) {
-//           result[message_variable] = endCustomerResult[0][customColumn];
-//         }
-//       } else {
-//         console.log(`[${message_variable}] not found in EndCustomer table or SPIDCustomContactFields.`);
-//       }
-
-//       results.push(result);
-//     }
-
-//     return results;
-//   } catch (err) {
-//     console.log("Error:", err);
-//     return [];
-//   }
-// }
-
-// getDefaultAttribue with Fallback
-async function getDefaultAttribue(message_variables, spid, customerId) {
+async function getDefaultAttribueWithoutFallback(message_variables, spid, customerId) {
   try {
-    
     let results = [];
-//console.log(message_variables,"message_variables" , spid, customerId)
+
     // Fetch all column names from EndCustomer table
     const endCustomerColumnsQuery = `SHOW COLUMNS FROM EndCustomer`;
     let endCustomerColumns = await db.excuteQuery(endCustomerColumnsQuery);
@@ -113,38 +60,27 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
     });
 
     for (let i = 0; i < message_variables.length; i++) {
-     // console.log(i,"logs for check json parse in message variables")
-     // console.log(message_variables[0])
-      console.log(i,"**********END************")
       const message_variable = message_variables[i];
-      const { label, value, fallback } = message_variable;
-      //console.log(" label, value, fallback")
-      //console.log( label, value, fallback)
       let result = {};
 
       // Check if message_variable exists in EndCustomer columns
-      if (endCustomerColumns.includes(value)) {
-        const endCustomerQuery = `SELECT ${value} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
+      if (endCustomerColumns.includes(message_variable)) {
+        const endCustomerQuery = `SELECT ${message_variable} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
 
-        if (endCustomerResult.length > 0 && endCustomerResult[0][value]) {
-          result[label] = endCustomerResult[0][value];
-        } else {
-          result[label] = fallback;
+        if (endCustomerResult.length > 0 && endCustomerResult[0][message_variable]) {
+          result[message_variable] = endCustomerResult[0][message_variable];
         }
-      } else if (spidCustomColumnsMap.has(value)) {
-        const customColumn = spidCustomColumnsMap.get(value);
+      } else if (spidCustomColumnsMap.has(message_variable)) {
+        const customColumn = spidCustomColumnsMap.get(message_variable);
         const endCustomerQuery = `SELECT ${customColumn} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
 
         if (endCustomerResult.length > 0 && endCustomerResult[0][customColumn]) {
-          result[label] = endCustomerResult[0][customColumn];
-        } else {
-          result[label] = fallback;
+          result[message_variable] = endCustomerResult[0][customColumn];
         }
       } else {
-        console.log(`[${value}] not found in EndCustomer table or SPIDCustomContactFields.`);
-        result[label] = fallback;
+        console.log(`[${message_variable}] not found in EndCustomer table or SPIDCustomContactFields.`);
       }
 
       results.push(result);
@@ -156,6 +92,99 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
     return [];
   }
 }
+
+// getDefaultAttribue with Fallback
+async function getDefaultAttribue(message_variables, spid, customerId) {
+  try {
+    // Parse the input if it is a string
+    if (typeof message_variables === 'string') {
+      try {
+        message_variables = JSON.parse(message_variables);
+      } catch (err) {
+        console.error("Failed to parse message_variables:", err);
+        return [];
+      }
+    }
+
+    // Check if message_variables is an array
+    if (!Array.isArray(message_variables)) {
+      console.error("message_variables is not an array");
+      return [];
+    }
+
+    let results = [];
+    
+
+    // Fetch all column names from EndCustomer table
+    const endCustomerColumnsQuery = `SHOW COLUMNS FROM EndCustomer`;
+    let endCustomerColumns = await db.excuteQuery(endCustomerColumnsQuery);
+    endCustomerColumns = endCustomerColumns.map(column => column.Field);
+
+    // Fetch all column names from SPIDCustomContactFields table
+    const spidCustomColumnsQuery = `SELECT ColumnName, CustomColumn FROM SPIDCustomContactFields WHERE SP_ID=? AND isDeleted != 1`;
+    let spidCustomColumns = await db.excuteQuery(spidCustomColumnsQuery, [spid]);
+    let spidCustomColumnsMap = new Map();
+    spidCustomColumns.forEach(column => {
+      spidCustomColumnsMap.set(column.ColumnName, column.CustomColumn);
+    });
+
+
+    // Iterate over each message variable
+    for (let i = 0; i < message_variables.length; i++) {
+      const message_variable = message_variables[i];
+      console.log(`Processing message variable ${i}:`, message_variable);
+
+      // Ensure message_variable is an object and has required keys
+      if (typeof message_variable !== 'object' || !message_variable.label || !message_variable.value || !message_variable.fallback) {
+        console.error(`Invalid message variable at index ${i}:`, message_variable);
+        continue;
+      }
+
+      // Strip the curly braces from label and value
+      let label = message_variable.label.replace(/{{|}}/g, '').trim();
+      let value = message_variable.value.replace(/{{|}}/g, '').trim();
+      const fallback = message_variable.fallback;
+
+      
+
+      let result = {};
+
+      // Check if the value exists in EndCustomer columns
+      if (endCustomerColumns.includes(value)) {
+        const endCustomerQuery = `SELECT ${value} FROM EndCustomer WHERE customerId=? AND isDeleted != 1 AND SP_ID=?`;
+        let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
+
+        if (endCustomerResult.length > 0 && endCustomerResult[0][value]) {
+          result[label] = endCustomerResult[0][value];
+        } else {
+          result[label] = fallback;
+        }
+      } 
+      // Check if the value exists in SPIDCustomContactFields columns
+      else if (spidCustomColumnsMap.has(value)) {
+        const customColumn = spidCustomColumnsMap.get(value);
+        const endCustomerQuery = `SELECT ${customColumn} FROM EndCustomer WHERE customerId=? AND isDeleted != 1 AND SP_ID=?`;
+        let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
+
+        if (endCustomerResult.length > 0 && endCustomerResult[0][customColumn]) {
+          result[label] = endCustomerResult[0][customColumn];
+        } else {
+          result[label] = fallback;
+        }
+      } else {
+        console.log(`[${value}] not found in EndCustomer table or SPIDCustomContactFields.`);
+        result[label] = fallback;
+      }
+      results.push(result);
+    }
+
+    return results;
+  } catch (err) {
+    console.log("Error:", err);
+    return [];
+  }
+}
+
 
 // const value = setTimeout(async () => {
 //     const results = await getDefaultAttribue(['Name','CountryCode','displayPhoneNumber'], 35,4931);
@@ -182,6 +211,10 @@ function convertHTML(htmlString) {
    result = result.replace(/<span\s+[^>]*style="[^"]*\btext-decoration:\s*line-through;[^"]*"[^>]*>(.*?)<\/span>/g, '~$1~'); // Add this because span is also attribute tag
   // Remove any remaining HTML tags
   result = result.replace(/<[^>]*>/g, '');
+// Remove specific attributes from <span> tags
+//result = result.replace(/(<span\s+[^>]*)\scontenteditable="[^"]*"\sclass="[^"]*"([^>]*>)/g, '$1$2');
+// Remove specific attributes from <a> tags
+result = result.replace(/\s_ngcontent-[^"]*=""\s?href="mailto:"\s?title="">/g, '');
 
   return result;
 }
@@ -196,6 +229,10 @@ function encloseWordsInMatchingTags(sentence) {
   sentence = sentence.replace(
     '<span style="color: rgb(0, 0, 0);">',
     '<tempAtSpan>'
+  );
+  sentence = sentence.replace(
+    '<span contenteditable="false" class="e-mention-chip">',
+    '<tempFallbackSpan>'
   );
   let taggedSentence = sentence;
   let match;
@@ -222,6 +259,10 @@ function encloseWordsInMatchingTags(sentence) {
   taggedSentence = taggedSentence.replace(
     '<tempAtSpan>',
     '<span style="color: rgb(0, 0, 0);">'
+  );
+  taggedSentence = taggedSentence.replace(
+    '<tempFallbackSpan>',
+ '<span contenteditable="false" class="e-mention-chip">',
   );
   return taggedSentence;
 }
@@ -265,7 +306,6 @@ const modifiedString = modifyString(originalString);
 
 //console.log(modifiedString);
 
- //console.log(convertHTML(removeEmptyTags(modifiedString)));
 
 async function removeTagsFromMessages(originalString) {
   const modifiedString = modifyString(originalString);
@@ -492,4 +532,4 @@ try {
   console.error(error.message);
 }
 
-module.exports = { removeTagsFromMessages, getDefaultAttribue }
+module.exports = { removeTagsFromMessages, getDefaultAttribue,getDefaultAttribueWithoutFallback }

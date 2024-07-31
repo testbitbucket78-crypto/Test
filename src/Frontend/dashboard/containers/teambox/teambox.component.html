@@ -419,7 +419,7 @@
 									(click)="toggleChatNotes('notes')">Notes</button>
 							</div>
 							<div class="input-area" (click)="checkPermission()" *ngIf="isRefresh">
-								<ejs-richtexteditor id="mention_integration" #mention_integration [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open') || (this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) "  [toolbarSettings]='tools' [height]='100'
+								<ejs-richtexteditor id="mention_integration" #mention_integration (onChange)="onCreate()" [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open') || (this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) "  [toolbarSettings]='tools' [height]='100'
 								  [placeholder]="(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) ? 'Select Template':'Enter Message'" (actionBegin)="onActionBegin($event)" [pasteCleanupSettings]="pasteCleanupSettings">
 								</ejs-richtexteditor>
 
@@ -1518,7 +1518,7 @@ popupWidth='250px' popupHeight='200px'>
 
 
 
-	<ng-template #contactadd let-c="close" let-d="dismiss">
+	<ng-template #contactadd let-c="close" let-d="dismiss" id="contactadd">
 	
 		<div class="modal-header">
 			<div class="modal-header-left">
@@ -1669,10 +1669,11 @@ popupWidth='250px' popupHeight='200px'>
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
-		<div class="modal-body">
+		<div class="modal-body contact-modal-body">
 			<form [formGroup]="editContact" class="p-0 inner_form large" (ngSubmit)="updateCustomer()">
+				<div class="contact-form-scroll px-3">
 				
-				<div class="row" style="flex-direction:column">
+				<div style="flex-direction:column">
 					<label for="floatingInputGrid" class="required">Name<span class="text-danger">*</span></label>
 					<input class="form-control" (input)="hangeEditContactInuts($event)" type="text" formControlName="Name" 
 					[ngClass]="{'is-invalid':editContact.get('Name')?.touched && editContact.get('Name')?.errors}"
@@ -1697,7 +1698,7 @@ popupWidth='250px' popupHeight='200px'>
 				</div>
 	
 
-				<div class="phoneFieldEdit row" style="flex-direction:column">
+				<div class="phoneFieldEdit" style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Phone Number<span class="text-danger">*</span></label>
 					<select class="input-formm" name="country_code" (change)="hangeEditContactInuts($event);updatePhoneNumber()" formControlName="country_code">
 						<option *ngFor="let country_code of countryCodes" [ngValue]="country_code">
@@ -1726,7 +1727,7 @@ popupWidth='250px' popupHeight='200px'>
 		      		</div>
 			
 
-				<div class="row" style="flex-direction:column">
+				<div style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Email</label>
 					<input class="form-control" type="text" formControlName="emailId" (input)="hangeEditContactInuts($event)" 
 					  [ngClass]="{'is-invalid' :editContact.controls.emailId.touched && editContact.controls.emailId.errors}"
@@ -1737,7 +1738,7 @@ popupWidth='250px' popupHeight='200px'>
 				     </div>
 				</div>
 					  
-				<div class="row" style="flex-direction:column">
+				<div style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Contact Owner<span class="text-danger">*</span></label>
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
 						<input class="form-control" type="text" readonly placeholder="Select Contact Owner"
@@ -1758,7 +1759,7 @@ popupWidth='250px' popupHeight='200px'>
 					  </div>
 				</div>
 
-				<!-- <div class="row" style="flex-direction:column">
+				<!-- <div style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Channel</label>
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
 						<input class="form-control" type="text" readonly placeholder="Select Channel"
@@ -1781,8 +1782,43 @@ popupWidth='250px' popupHeight='200px'>
 						</p>
 					  </div>
 				</div> -->
+				<div>
+					<div class="py-2 row-md" *ngFor="let item of filteredCustomFields">
+						<label for="tag">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
+						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
+						<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'">
+						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
+						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
+						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
+						<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
+						<!-- <div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
+						<input class="form-control-checkbox" type="checkbox" id="Opted-ins" [formControlName]="item.ActuallName"/>
+						<span>{{item.displayName}}</span>
+					</div> -->
+						<select *ngIf="item.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
+							<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
+						</select>
+						<select *ngIf="item.type == 'Switch'" class="form-control" [formControlName]="item.ActuallName">
+							<option value="" selected disabled>Select {{item.displayName}}</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>
+						<ng-multiselect-dropdown *ngIf="item.type == 'Multi Select'" class="multiselect" [formControlName]="item.ActuallName"
+												 [settings]="dynamicDropdownSettings" [data]="item?.options">
+						</ng-multiselect-dropdown>
+						<div *ngIf="editContact.get(item.ActuallName)?.touched && editContact.get(item.ActuallName)?.hasError('required')"
+							 class="text-danger">
+							! {{item.displayName}} is required.
+						</div>
+						<div *ngIf="editContact.get(item.ActuallName)?.touched && editContact.get(item.ActuallName)?.errors?.['invalidYear']" class="text-danger">
+							Year must be a 4-digit number.
+						</div>
 
-				<div class="row" style="flex-direction:column">
+					</div>
+				</div>
+
+
+				<div style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">
 						Opt-in Status
 						<input [checked]="selectedInteraction.OptInStatus=='Yes'" type="checkbox"
@@ -1790,6 +1826,7 @@ popupWidth='250px' popupHeight='200px'>
 							(click)="hangeEditContactInuts($event)" />
 					</label>
 				</div>
+			</div>
 
 				<div class="row" class="m-0 d-flex flex-row-reverse">
 					<div class="m-0 modal-footer row popfooter">
@@ -1825,7 +1862,7 @@ popupWidth='250px' popupHeight='200px'>
 						<input [checked]="tag.status" type="checkbox" name="tags" class="form-control-checkbox ml-2"
 							value="{{tag.ID}}" (click)="addTags($event)" />
 							<span [ngClass]="{'color-dots': true}" [style.background]="tag.color"></span>
-						{{tag.name}
+						{{tag.name}}
 					</label>
 				</div>
 			</form>

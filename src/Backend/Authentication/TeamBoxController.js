@@ -39,21 +39,21 @@ const uploadfile = (req, res) => {
 
 
 const getAllAgents = (req, res) => {
-  //  logger.info('Received request for getAllAgents', { spID: req.params.spID });
+    //  logger.info('Received request for getAllAgents', { spID: req.params.spID });
     db.runQuery(req, res, val.selectAllAgentsQuery, [req.params.spID])
-        // .then(() => logger.info('Query executed for getAllAgents', { spID: req.params.spID }))
-        // .catch(err => logger.error('Error executing query for getAllAgents', { error: err.message, stack: err.stack }));
+    // .then(() => logger.info('Query executed for getAllAgents', { spID: req.params.spID }))
+    // .catch(err => logger.error('Error executing query for getAllAgents', { error: err.message, stack: err.stack }));
 };
 
 const getAllCustomer = async (req, res) => {
-   // logger.info('Received request for getAllCustomer', { spID: req.params.spID, RangeStart: req.params.RangeStart, RangeEnd: req.params.RangeEnd });
+    // logger.info('Received request for getAllCustomer', { spID: req.params.spID, RangeStart: req.params.RangeStart, RangeEnd: req.params.RangeEnd });
     try {
         let RangeStart = parseInt(req.params.RangeStart);
         let RangeEnd = parseInt(req.params.RangeEnd - req.params.RangeStart);
-      //  logger.info('RangeStart and RangeEnd calculated', { RangeStart, RangeEnd });
+        //  logger.info('RangeStart and RangeEnd calculated', { RangeStart, RangeEnd });
 
         let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
-       // logger.info('Query executed for getAllCustomer', { spID: req.params.spID, RangeStart, RangeEnd, contacts });
+        // logger.info('Query executed for getAllCustomer', { spID: req.params.spID, RangeStart, RangeEnd, contacts });
         let isCompleted = false;
         if (contacts?.length === 0 || contacts?.length < RangeEnd) {
             isCompleted = true;
@@ -61,7 +61,7 @@ const getAllCustomer = async (req, res) => {
         res.send({
             status: 200,
             results: contacts,
-            isCompleted : isCompleted
+            isCompleted: isCompleted
         });
     } catch (err) {
         logger.error('Error occurred in getAllCustomer', { error: err.message, stack: err.stack });
@@ -73,17 +73,17 @@ const getAllCustomer = async (req, res) => {
 };
 
 const getCustomerById = (req, res) => {
-   // logger.info('Received request for getCustomerById', { id: req.params.id });
+    // logger.info('Received request for getCustomerById', { id: req.params.id });
     db.runQuery(req, res, val.selectByIdQuery, [req.params.id])
-      //  .then(() => logger.info('Query executed for getCustomerById', { id: req.params.id }))
-       // .catch(err => logger.error('Error executing query for getCustomerById', { error: err.message, stack: err.stack }));
+    //  .then(() => logger.info('Query executed for getCustomerById', { id: req.params.id }))
+    // .catch(err => logger.error('Error executing query for getCustomerById', { error: err.message, stack: err.stack }));
 };
 
 const filterCustomers = (req, res) => {
-  //  logger.info('Received request for filterCustomers', { id: req.params.id });
+    //  logger.info('Received request for filterCustomers', { id: req.params.id });
     db.runQuery(req, res, val.filterQuery, [req.params.id])
-        //.then(() => logger.info('Query executed for filterCustomers', { id: req.params.id }))
-        //.catch(err => logger.error('Error executing query for filterCustomers', { error: err.message, stack: err.stack }));
+    //.then(() => logger.info('Query executed for filterCustomers', { id: req.params.id }))
+    //.catch(err => logger.error('Error executing query for filterCustomers', { error: err.message, stack: err.stack }));
 };
 
 const searchCustomer = (req, res) => {
@@ -91,10 +91,10 @@ const searchCustomer = (req, res) => {
     if (req.params.key) {
         sQuery = sQuery + " and (Phone_number like '%" + req.params.key + "%' or Name like '%" + req.params.key + "%')";
     }
-   // logger.info('Received request for searchCustomer', { sQuery });
+    // logger.info('Received request for searchCustomer', { sQuery });
     db.runQuery(req, res, sQuery, [req.params.spID, req.params.key, req.params.key])
-     //   .then(() => logger.info('Query executed for searchCustomer', { sQuery }))
-     //   .catch(err => logger.error('Error executing query for searchCustomer', { error: err.message, stack: err.stack }));
+    //   .then(() => logger.info('Query executed for searchCustomer', { sQuery }))
+    //   .catch(err => logger.error('Error executing query for searchCustomer', { error: err.message, stack: err.stack }));
 };
 
 const insertCustomers = async (req, res) => {
@@ -123,7 +123,7 @@ const insertCustomers = async (req, res) => {
                 customerId: customerId,
                 interactionId: interactionId
             });
-           // logger.info('Temporary contact updated to permanent', { customerId, interactionId });
+            // logger.info('Temporary contact updated to permanent', { customerId, interactionId });
         } else {
             let existContactWithSameSpidQuery = `SELECT * FROM EndCustomer WHERE Phone_number = ? AND isDeleted != 1 AND IsTemporary != 1 AND SP_ID = ?`;
             let existingContactResult = await db.excuteQuery(existContactWithSameSpidQuery, [Phone_number, SP_ID]);
@@ -133,7 +133,7 @@ const insertCustomers = async (req, res) => {
                     msg: 'Phone number already exists!',
                     status: 409
                 });
-              //  logger.warn('Phone number already exists', { Phone_number, SP_ID });
+                //  logger.warn('Phone number already exists', { Phone_number, SP_ID });
             } else {
                 let insertQuery = `
                     INSERT INTO EndCustomer (Name, Phone_number, channel, SP_ID, OptInStatus, countryCode, displayPhoneNumber)
@@ -161,7 +161,7 @@ const insertCustomers = async (req, res) => {
 };
 
 const updatedCustomer = async (req, res) => {
-   // logger.info('Received request for updatedCustomer', { body: req.body });
+    // logger.info('Received request for updatedCustomer', { body: req.body });
     try {
         var updateQueryQuery = "UPDATE EndCustomer SET Name ='" + req.body.Name + "',";
         updateQueryQuery += " OptInStatus ='" + req.body.OptInStatus + "',"
@@ -178,9 +178,9 @@ const updatedCustomer = async (req, res) => {
             status: 200,
             updateCustomer: updateCustomer
         });
-     //   logger.info('Customer updated successfully', { customerId: req.body.customerId, updateCustomer });
+        //   logger.info('Customer updated successfully', { customerId: req.body.customerId, updateCustomer });
     } catch (err) {
-      //  logger.error('Error updating customer:', { error: err.message, stack: err.stack });
+        //  logger.error('Error updating customer:', { error: err.message, stack: err.stack });
         res.send({
             status: 500,
             err: err
@@ -190,10 +190,10 @@ const updatedCustomer = async (req, res) => {
 
 const updateTags = (req, res) => {
     var updateQueryQuery = "UPDATE EndCustomer SET tag ='" + req.body.tag + "'  WHERE customerId =" + req.body.customerId;
- //   logger.info('Received request for updateTags', { updateQueryQuery });
+    //   logger.info('Received request for updateTags', { updateQueryQuery });
     db.runQuery(req, res, updateQueryQuery, [])
-     //   .then(() => logger.info('Tags updated successfully', { customerId: req.body.customerId }))
-      //  .catch(err => logger.error('Error updating tags', { error: err.message, stack: err.stack }));
+    //   .then(() => logger.info('Tags updated successfully', { customerId: req.body.customerId }))
+    //  .catch(err => logger.error('Error updating tags', { error: err.message, stack: err.stack }));
 };
 
 const blockCustomer = (req, res) => {
@@ -206,10 +206,10 @@ const blockCustomer = (req, res) => {
     }
 
     var values = [[customerId, isBlocked]];
-   // logger.info('Received request for blockCustomer', { customerId, isBlocked });
+    // logger.info('Received request for blockCustomer', { customerId, isBlocked });
     db.runQuery(req, res, blockedQuery, [isBlocked, customerId])
-      //  .then(() => logger.info('Customer blocked successfully', { customerId }))
-       // .catch(err => logger.error('Error blocking customer', { error: err.message, stack: err.stack }));
+    //  .then(() => logger.info('Customer blocked successfully', { customerId }))
+    // .catch(err => logger.error('Error blocking customer', { error: err.message, stack: err.stack }));
 };
 
 async function UnassignedBlockedContact(customerId, spid) {
@@ -224,7 +224,7 @@ async function UnassignedBlockedContact(customerId, spid) {
         }
 
         await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, ['empty', getInteraction[0]?.InteractionId, spid, customerId]);
-       // logger.info('Unassigned blocked contact successfully', { customerId, spid });
+        // logger.info('Unassigned blocked contact successfully', { customerId, spid });
     } catch (err) {
         logger.error('Error unassigning blocked contact:', { error: err.message, stack: err.stack });
     }
@@ -271,7 +271,7 @@ const createInteraction = async (req, res) => {
                 interaction: interactionData,
                 status: 200
             });
-           // logger.info('Interaction created successfully', { SP_ID, interactionId: createInteraction.insertId });
+            // logger.info('Interaction created successfully', { SP_ID, interactionId: createInteraction.insertId });
         }
     } catch (err) {
         logger.error('Error creating interaction:', { error: err.message, stack: err.stack });
@@ -308,23 +308,23 @@ const updateInteraction = async (req, res) => {
 
 const deleteInteraction = (req, res) => {
     var deleteQuery = "UPDATE Interaction SET deleted_by =" + req.body.AgentId + " ,is_deleted =1 WHERE InteractionId =" + req.body.InteractionId;
- //   logger.info('Received request for deleteInteraction', { deleteQuery });
+    //   logger.info('Received request for deleteInteraction', { deleteQuery });
     db.runQuery(req, res, deleteQuery, [])
-       // .then(() => logger.info('Interaction deleted successfully', { InteractionId: req.body.InteractionId }))
-       // .catch(err => logger.error('Error deleting interaction', { error: err.message, stack: err.stack }));
+    // .then(() => logger.info('Interaction deleted successfully', { InteractionId: req.body.InteractionId }))
+    // .catch(err => logger.error('Error deleting interaction', { error: err.message, stack: err.stack }));
 };
 
 const getAllInteraction = (req, res) => {
-  //  logger.info('Received request for getAllInteraction', { SP_ID: req.body.SPID });
+    //  logger.info('Received request for getAllInteraction', { SP_ID: req.body.SPID });
     db.runQuery(req, res, val.getAllInteraction, [req.body.SPID])
-      //  .then(() => logger.info('Query executed for getAllInteraction', { SP_ID: req.body.SPID }))
-       // .catch(err => logger.error('Error executing query for getAllInteraction', { error: err.message, stack: err.stack }));
+    //  .then(() => logger.info('Query executed for getAllInteraction', { SP_ID: req.body.SPID }))
+    // .catch(err => logger.error('Error executing query for getAllInteraction', { error: err.message, stack: err.stack }));
 };
 
 
 const getAllFilteredInteraction = async (req, res) => {
     try {
-      //  logger.info('Starting getAllFilteredInteraction function');
+        //  logger.info('Starting getAllFilteredInteraction function');
         let queryPath = val.interactions;
         let RangeStart = req.body.RangeStart;
         let RangeEnd = req.body.RangeEnd - req.body.RangeStart;
@@ -353,7 +353,7 @@ const getAllFilteredInteraction = async (req, res) => {
             ic.InteractionId DESC
         LIMIT ?, ?`;
 
-       // logger.debug('Query Path:', queryPath);
+        // logger.debug('Query Path:', queryPath);
         let conversations = await db.excuteQuery(queryPath, [req.body.SPID, req.body.SPID, RangeStart, RangeEnd]);
 
         let isCompleted = false;
@@ -366,7 +366,7 @@ const getAllFilteredInteraction = async (req, res) => {
             conversations: conversations,
             isCompleted: isCompleted
         });
-      //  logger.info('getAllFilteredInteraction function completed successfully');
+        //  logger.info('getAllFilteredInteraction function completed successfully');
     } catch (err) {
         logger.error('Error in getAllFilteredInteraction:', err);
         db.errlog(err);
@@ -379,20 +379,20 @@ const getAllFilteredInteraction = async (req, res) => {
 };
 
 const getInteractionById = (req, res) => {
-   // logger.info('Starting getInteractionById function');
+    // logger.info('Starting getInteractionById function');
     db.runQuery(req, res, val.selectInteractionByIdQuery, [req.params.InteractionId]);
-   // logger.info('getInteractionById function completed successfully');
+    // logger.info('getInteractionById function completed successfully');
 };
 
 const checkInteractionPinned = (req, res) => {
-   // logger.info('Starting checkInteractionPinned function');
+    // logger.info('Starting checkInteractionPinned function');
     var queryPath = "SELECT Id FROM PinnedInteraction WHERE InteractionId=? and AgentId=?";
     db.runQuery(req, res, queryPath, [req.params.InteractionId, req.params.AgentId]);
-   // logger.info('checkInteractionPinned function completed successfully');
+    // logger.info('checkInteractionPinned function completed successfully');
 };
 
 const updatePinnedStatus = (req, res) => {
-  //  logger.info('Starting updatePinnedStatus function');
+    //  logger.info('Starting updatePinnedStatus function');
     if (req.body.isPinned) {
         var updateQuery = "DELETE FROM PinnedInteraction WHERE AgentId =" + req.body.AgentId + " and InteractionId =" + req.body.InteractionId;
     } else {
@@ -401,7 +401,7 @@ const updatePinnedStatus = (req, res) => {
     var values = [[req.body.AgentId, req.body.InteractionId]];
 
     db.runQuery(req, res, updateQuery, [values]);
-   // logger.info('updatePinnedStatus function completed successfully');
+    // logger.info('updatePinnedStatus function completed successfully');
 };
 
 // filter interactions
@@ -424,7 +424,7 @@ const getFilteredInteraction = (req, res) => {
     filterQuery += " order by interactionId desc";
 
     db.runQuery(req, res, filterQuery, [req.params.SPID]);
-  // logger.info('getFilteredInteraction function completed successfully');
+    // logger.info('getFilteredInteraction function completed successfully');
 };
 
 const getSearchInteraction = async (req, res) => {
@@ -436,7 +436,7 @@ const getSearchInteraction = async (req, res) => {
         var agentId = req.params.AgentId;
 
         let queryPath = val.searchWithAllData + ` ${agentId != 0 ? 'AND im.AgentId = ?' : ''}`;
-        let queryParams = [spid, spid, `%${searchKey}%`,`%${searchKey}%`];
+        let queryParams = [spid, spid, `%${searchKey}%`, `%${searchKey}%`];
         if (agentId != 0) {
             queryParams.push(agentId);
         }
@@ -446,7 +446,7 @@ const getSearchInteraction = async (req, res) => {
             result: result,
             status: 200
         });
-      //  logger.info('getSearchInteraction function completed successfully',queryPath);
+        //  logger.info('getSearchInteraction function completed successfully',queryPath);
     } catch (err) {
         logger.error('Error in getSearchInteraction:', err);
         res.send({
@@ -458,7 +458,7 @@ const getSearchInteraction = async (req, res) => {
 
 const getAllMessageByInteractionId = async (req, res) => {
     try {
-      //  logger.info('Starting getAllMessageByInteractionId function');
+        //  logger.info('Starting getAllMessageByInteractionId function');
         let result;
         let isCompleted = false;
         let endRange = parseInt(req.params.RangeEnd - req.params.RangeStart);
@@ -489,13 +489,13 @@ const getAllMessageByInteractionId = async (req, res) => {
 
 const getMessagesByMsgId = async (req, res) => {
     try {
-  
-       let  result = await db.excuteQuery(val.getmessageBymsgId, [ req.params.Message_id,req.params.SP_ID])
-    res.send({
-        result: result,
-      
-        status: 200
-    });
+
+        let result = await db.excuteQuery(val.getmessageBymsgId, [req.params.Message_id, req.params.SP_ID])
+        res.send({
+            result: result,
+
+            status: 200
+        });
     } catch (err) {
         logger.error('Error in getsavedMessages:', err);
         res.status(500).send({ error: 'Internal server error' });
@@ -503,12 +503,12 @@ const getMessagesByMsgId = async (req, res) => {
 };
 
 const updateMessageRead = (req, res) => {
-   // logger.info('Starting updateMessageRead function');
+    // logger.info('Starting updateMessageRead function');
     if (req.body.Message_id > 0) {
         var messageQuery = "UPDATE Message SET is_read =1 WHERE Message_id =" + req.body.Message_id;
         var values = [];
         db.runQuery(req, res, messageQuery, [values]);
-    //    logger.info('updateMessageRead function completed successfully');
+        //    logger.info('updateMessageRead function completed successfully');
     }
 };
 
@@ -517,22 +517,22 @@ const deleteMessage = (req, res) => {
     var messageQuery = "UPDATE Message SET deleted_at ='" + req.body.deleted_at + "', is_deleted =" + req.body.deleted + ", deleted_by =" + req.body.deleted_by + " WHERE Message_id =" + req.body.Message_id;
     var values = [];
     db.runQuery(req, res, messageQuery, [values]);
-  //  logger.info('deleteMessage function completed successfully');
+    //  logger.info('deleteMessage function completed successfully');
 };
 
 const updateNotes = (req, res) => {
-   // logger.info('Starting updateNotes function');
+    // logger.info('Starting updateNotes function');
     if (req.body.Message_id > 0) {
         var messageQuery = "UPDATE Message SET message_text =?,message_media=?,media_type=?,Type=? WHERE Message_id =" + req.body.Message_id;
         var values = [req.body?.message_text, req.body?.message_media, req.body?.media_type, req.body?.Type];
         db.runQuery(req, res, messageQuery, [values]);
-    //    logger.info('updateNotes function completed successfully');
+        //    logger.info('updateNotes function completed successfully');
     }
 };
 
 const addAction = async (req, res) => {
     try {
-      //  logger.info('Starting addAction function');
+        //  logger.info('Starting addAction function');
         let actionQuery = `insert into InteractionEvents (interactionId,action,action_at,action_by,created_at,SP_ID) values (?,?,?,?,?,?,?)`;
 
         let values = [req.body.interactionId, req.body.action, req.body.action_at, req.body.action_by, req.body.created_at, req.body.SP_ID];
@@ -604,8 +604,8 @@ async function autoReplyPauseTime(spid, newId) {
 
 const insertMessage = async (req, res) => {
     try {
-       // logger.info('Starting insertMessage function');
-   //     logger.debug('Request Body:', req.body);
+        // logger.info('Starting insertMessage function');
+        //     logger.debug('Request Body:', req.body);
 
         if (req.body.Message_id == '') {
             var messageQuery = val.insertMessageQuery;
@@ -626,7 +626,7 @@ const insertMessage = async (req, res) => {
             let mediaSize = req.body.mediaSize;
             let spNumber = req.body?.spNumber;
             let assignAgent = req.body?.assignAgent;
-
+            var msgVar = req.body?.MessageVariables;            ;
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id]);
             let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId, SPID]);
             let spchannel = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [SPID]);
@@ -635,7 +635,7 @@ const insertMessage = async (req, res) => {
 
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent]];
             let msg_id = await db.excuteQuery(messageQuery, [values]);
-          //  logger.debug('Message ID:', msg_id);
+            //  logger.debug('Message ID:', msg_id);
 
             if (agentName.length >= 0) {
                 let mentionQuery = "SELECT * FROM Message WHERE ? LIKE ?";
@@ -650,15 +650,30 @@ const insertMessage = async (req, res) => {
                 const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 let notifyvalues = [[SPID, 'Mentioned You', message_text, Agent_id, 'teambox', Agent_id, utcTimestamp]];
                 let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
-              //  logger.debug('Mention Result:', mentionRes);
+                //  logger.debug('Mention Result:', mentionRes);
             }
 
             let content = await removeTags.removeTagsFromMessages(message_text);
             const placeholders = parseMessageTemplate(content);
+            console.log(placeholders)
             if (placeholders.length > 0) {
-                const results = await removeTags.getDefaultAttribue(placeholders, SPID, customerId);
-              //  logger.debug('Placeholders:', placeholders);
-              //  logger.debug('Results:', results);
+
+                let results;
+                console.log("msgVar",msgVar)
+                if (msgVar != null) {
+
+                    results = await removeTags.getDefaultAttribue(msgVar, SPID, customerId);
+                    console.log("atribute result ",results)
+                    placeholders.forEach(placeholder => {
+                        const result = results.find(result => result.hasOwnProperty(placeholder));
+                        //  console.log(placeholder,"place foreach",results)
+                        const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+                        content = content.replace(`{{${placeholder}}}`, replacement);
+                    });
+                } else {
+
+                    results = await removeTags.getDefaultAttribueWithoutFallback(placeholders, SPID, customerId);
+                }
 
                 placeholders.forEach(placeholder => {
                     const result = results.find(result => result.hasOwnProperty(placeholder));
@@ -682,7 +697,7 @@ const insertMessage = async (req, res) => {
                     if (middlewareresult?.status != 200) {
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]);
                     }
-                  //  logger.debug('Middleware Result:', middlewareresult);
+                    //  logger.debug('Middleware Result:', middlewareresult);
                 } else {
                     let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=10 where Message_id=?', [msg_id.insertId]);
                 }
@@ -695,7 +710,7 @@ const insertMessage = async (req, res) => {
             var values = [[message_text, Message_id]];
             var messageQuery = "UPDATE Message SET updated_at ='" + created_at + "', message_text ='" + message_text + "' WHERE Message_id =" + Message_id;
             db.runQuery(req, res, messageQuery, [values]);
-           // logger.info('insertMessage function completed successfully with message update');
+            // logger.info('insertMessage function completed successfully with message update');
         }
     } catch (err) {
         logger.error('Error in insertMessage:', err);
@@ -837,7 +852,7 @@ const updateInteractionMapping = async (req, res) => {
         const is_active = 1;
         logger.debug('InteractionId:', InteractionId, 'AgentId:', AgentId, 'MappedBy:', MappedBy);
 
-        const values = [[is_active, InteractionId, AgentId, MappedBy,req.body?.lastAssistedAgent]];
+        const values = [[is_active, InteractionId, AgentId, MappedBy, req.body?.lastAssistedAgent]];
         if (AgentId != -1) {
             const nameData = await db.excuteQuery(val.assignedNameQuery, [AgentId]);
             logger.debug('Name Data:', nameData);
@@ -872,13 +887,13 @@ const updateInteractionMapping = async (req, res) => {
 
 const getInteractionMapping = (req, res) => {
     try {
-       // logger.info('Starting getInteractionMapping function');
+        // logger.info('Starting getInteractionMapping function');
         db.runQuery(req, res, val.getInteractionMapping, [req.params.InteractionId], (err, result) => {
             if (err) {
-              //  logger.error('Error in getInteractionMapping:', err);
+                //  logger.error('Error in getInteractionMapping:', err);
                 res.status(500).send({ error: 'Database query error' });
             } else {
-             //   logger.info('getInteractionMapping function completed successfully', result);
+                //   logger.info('getInteractionMapping function completed successfully', result);
                 res.send(result);
             }
         });
@@ -890,13 +905,13 @@ const getInteractionMapping = (req, res) => {
 
 const getsavedMessages = (req, res) => {
     try {
-      //  logger.info('Starting getsavedMessages function');
+        //  logger.info('Starting getsavedMessages function');
         db.runQuery(req, res, val.savedMessagesQuery, [req.params.SPID], (err, result) => {
             if (err) {
                 logger.error('Error in getsavedMessages:', err);
                 res.status(500).send({ error: 'Database query error' });
             } else {
-            //    logger.info('getsavedMessages function completed successfully', result);
+                //    logger.info('getsavedMessages function completed successfully', result);
                 res.send(result);
             }
         });
@@ -908,13 +923,13 @@ const getsavedMessages = (req, res) => {
 
 const getquickReply = (req, res) => {
     try {
-       // logger.info('Starting getquickReply function');
+        // logger.info('Starting getquickReply function');
         db.runQuery(req, res, val.getquickReplyQuery, [req.params.SPID], (err, result) => {
             if (err) {
                 logger.error('Error in getquickReply:', err);
                 res.status(500).send({ error: 'Database query error' });
             } else {
-            //    logger.info('getquickReply function completed successfully', result);
+                //    logger.info('getquickReply function completed successfully', result);
                 res.send(result);
             }
         });
@@ -926,7 +941,7 @@ const getquickReply = (req, res) => {
 
 const getTemplates = (req, res) => {
     try {
-     //   logger.info('Starting getTemplates function');
+        //   logger.info('Starting getTemplates function');
         db.runQuery(req, res, val.getTemplatesQuery, [req.params.SPID], (err, result) => {
             if (err) {
                 logger.error('Error in getTemplates:', err);
@@ -948,7 +963,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction,getMessagesByMsgId
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId
 };
 
 
