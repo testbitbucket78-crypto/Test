@@ -2867,6 +2867,7 @@ checkAuthentication(){
 }
 
 sendMessage(){
+	debugger;
 	var tempDivElement = document.createElement("div");   
 
 	tempDivElement.innerHTML = this.chatEditor.value;
@@ -2891,7 +2892,10 @@ sendMessage(){
 		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
 		var cDay = String(objectDate.getDate()).padStart(2, '0');
 		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
-
+		if(this.messageMediaFile != ''){
+			this.messageMeidaFile = this.messageMediaFile;
+			this.messageMediaFile = '';
+		}
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
 			CustomerId: this.selectedInteraction.customerId,
@@ -3076,7 +3080,8 @@ sendMessage(){
 		
 			previewTemplate() {
 				if(this.selectedTemplate.media_type) {
-				this.messageMeidaFile = this.selectedTemplate.Links;
+
+				this.messageMediaFile = this.selectedTemplate.Links;
 				this.mediaType = this.selectedTemplate.media_type;
 				}
 				let isVariableValue='';
