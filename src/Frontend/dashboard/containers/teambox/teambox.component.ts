@@ -2867,7 +2867,6 @@ checkAuthentication(){
 }
 
 sendMessage(){
-	debugger;
 	var tempDivElement = document.createElement("div");   
 
 	tempDivElement.innerHTML = this.chatEditor.value;
