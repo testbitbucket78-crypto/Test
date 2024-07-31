@@ -168,7 +168,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     //var autoReply = replymessage[0].Message
     //console.log(replymessage.length)
 
-    console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg,replymessage, " SMARTREPLY.length " + replymessage?.length)
+    //console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg,replymessage, " SMARTREPLY.length " + replymessage?.length)
     if (replymessage?.length > 0) {
 
       let isSReply = iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType);
@@ -218,16 +218,34 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       var value = message.Value;
       var testMessage = message.Message;  // Assuming the 'Message' property contains the message content
       var actionId = message.ActionID;  // Assuming the 'ActionID' property contains the action ID
-
+      var msgVar = message.message_variables;
       let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
       let content = await removeTags.removeTagsFromMessages(testMessage);
-
+//console.log("content",content)
       // Parse the message template to get placeholders
       const placeholders = parseMessageTemplate(testMessage);
+      //console.log(testMessage)
       if (placeholders.length > 0) {
         // Construct a dynamic SQL query based on the placeholders
-        const results = await removeTags.getDefaultAttribue(placeholders, sid, custid);
-        console.log("results", results);
+
+        let results;
+       //S console.log("msgVar",msgVar)
+        if(msgVar != null){
+         
+          results = await removeTags.getDefaultAttribue(msgVar, sid, custid);
+          //console.log("atribute result ")
+          placeholders.forEach(placeholder => {
+            const result = results.find(result => result.hasOwnProperty(placeholder));
+          //  console.log(placeholder,"place foreach",results)
+            const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+            content = content.replace(`{{${placeholder}}}`, replacement);
+        });
+        }else{
+          
+        results = await removeTags.getDefaultAttribueWithoutFallback(placeholders, sid, custid);
+        }
+       
+       // console.log("results", results);
 
         placeholders.forEach(placeholder => {
           const result = results.find(result => result.hasOwnProperty(placeholder));
@@ -263,7 +281,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       console.log(message.replyId);
     });
     messageToSend = messageToSend.sort((a, b) => (a.replyId - b.replyId));
-    console.log("After sort");
+   console.log("After sort");
     messageToSend.forEach((message) => {
       console.log(message.replyId);
     });
@@ -282,7 +300,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           message.interactionId,
           message.testMessage
         );
-        console.log("SreplyThroughselectedchannel response:", respose);
+        //console.log("SreplyThroughselectedchannel response:", respose);
       }
       await new Promise(resolve => setTimeout(resolve, 500)); // Wait 500ms before sending the next message
     }
@@ -696,13 +714,13 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
     let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
-    console.log("sReply?.status ", sReply?.status)
+    //console.log("sReply?.status ", sReply?.status)
     if (sReply?.status == 200) {
       let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", time, time, "", -2]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       response = true;
     }
-    console.log("sreply", response)
+   // console.log("sreply", response)
     return response;
   } if (channelType == 'WhatsApp Web') {
 
