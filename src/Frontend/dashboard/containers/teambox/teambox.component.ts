@@ -183,6 +183,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	unreadList:number = 0;
 	interactionListMain:any=[];
 	selectedTemplate:any  = [];
+	messageMediaFile: string = '';
 	variableValues:string[]=[];
 	agentsList:any = [];
 	mentionAgentsList:any = [];
@@ -281,7 +282,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isMessageCompletedMedia:boolean = false;
 	isMessageCompletedText:boolean = false;
 	isShowAttributes:boolean = false;
-	
+	isUploadingLoader! : boolean;
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
@@ -954,6 +955,7 @@ sendattachfile() {
 		$('.modal-backdrop').remove();
 	}
 	onFileChange(event: any) {
+		this.isUploadingLoader = true;
 		let files: FileList = event.target.files;
 		this.saveFiles(files);
 		
@@ -1024,6 +1026,7 @@ sendattachfile() {
 				this.sendattachfile();
 				console.log(this.messageMeidaFile);
 				this.showAttachmenOption=false;
+				this.isUploadingLoader = false;
 			}
 
 			});
@@ -1824,7 +1827,7 @@ sendattachfile() {
 
 		let Interaction = this.interactionList[idx];
 		//if(this.selectedInteractionList.findIndex(i => i == idx) == -1){
-			//this.selectedInteractionList.push(idx) 
+			//this.selectedInteractionList.push(idx)
 			await this.getInteractionDataById(idx);
 		//}
 		for(const item of this.interactionList) {
@@ -2735,7 +2738,7 @@ sendMessage(){
 			messageTo:this.selectedInteraction.Phone_number,
 			message_text: value || "",
 			Message_id:this.newMessage.value.Message_id,
-			message_media: this.messageMeidaFile,
+			message_media: this.messageMeidaFile == false ? this.messageMediaFile : this.messageMeidaFile,
 			media_type: this.mediaType,
 			quick_reply_id: '',
 			template_id:'',
@@ -2910,6 +2913,10 @@ sendMessage(){
 			
 		
 			previewTemplate() {
+				if(this.selectedTemplate.media_type) {
+				this.messageMediaFile = this.selectedTemplate.Links;
+				this.mediaType = this.selectedTemplate.media_type;
+				}
 				let isVariableValue='';
 				if(this.selectedTemplate.media_type == 'text') {
 					isVariableValue = this.selectedTemplate.Header + this.selectedTemplate.BodyText;
