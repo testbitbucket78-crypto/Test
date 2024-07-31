@@ -221,8 +221,10 @@ export class TemplateMessageComponent implements OnInit {
 				  value: item.id,
 				  label: item.channel_id,
 				  connected_id: item.connected_id,
-                  channel_status: item.channel_status
+                  channel_status: item.channel_status,
+                  checked: false
 				}));
+                this.filterListChannel = this.channelOption;
 			  }
 		 }
 	   })
@@ -231,7 +233,7 @@ export class TemplateMessageComponent implements OnInit {
         event.stopPropagation();
       }
       selectChannel(channel:any){
-        if(channel.channel_status == 0){
+        if(channel.channel_status == 0 && channel?.label == "WhatsApp Official"){
             this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
             return;
         }

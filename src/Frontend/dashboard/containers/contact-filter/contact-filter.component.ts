@@ -66,8 +66,16 @@ export class ContactFilterComponent implements OnInit {
 	
 	newContactListFilters:any=[]
 	@Input() ContactListNewFilters:any=[];
-	@Input() openPopup!: Subject<boolean>;
-	selectedcontactFilterBy:any='';
+	//@Input() openPopup!: Subject<boolean>;
+	@Input() set openPopup(value: boolean) {
+		if (value) {
+			this.modalReference = this.modalService.open(this.modalContent,{size: 'xl', windowClass:'white-bg'});
+		} 
+		this.getTagData();
+		this.getCustomFieldsData();
+		this.addNewFilters(this.contactFilterBy);
+	  }
+  selectedcontactFilterBy:any='';
   showContactFilter:any=false;
   showFilterByOption:any=false;
   showFilterTagOption:any=false;
@@ -82,17 +90,17 @@ export class ContactFilterComponent implements OnInit {
 	@Output() query = new EventEmitter<string> () ;
 	@Output() closeFilterPopup = new EventEmitter<string>();
 	@Output() contactFilterList = new EventEmitter<any>();
-
+	
   constructor(private apiService: TeamboxService,private modalService: NgbModal,private _settingsService:SettingsService) {
 	
     }
 	ngOnInit(): void {
-		this.openPopup.subscribe(v => { 
-			this.modalReference = this.modalService.open(this.modalContent,{size: 'xl', windowClass:'white-bg'});
-		  });
-		  this.getTagData();
-		this.getCustomFieldsData();
-		this.addNewFilters(this.contactFilterBy);
+		// this.openPopup.subscribe(v => { 
+		// 	this.modalReference = this.modalService.open(this.modalContent,{size: 'xl', windowClass:'white-bg'});
+		//   });
+		//   this.getTagData();
+		// this.getCustomFieldsData();
+		// this.addNewFilters(this.contactFilterBy);
 	}
 
     getCustomFieldsData() {
@@ -264,6 +272,12 @@ export class ContactFilterComponent implements OnInit {
 	  selectFilterOperator(index:any,Operator:any){
 		this.ContactListNewFilters[index]['filterOperator'] = Operator
 	  }
+	  clearFilter(){
+		this.ContactListNewFilters = [];
+		if(this.ContactListNewFilters.length != 0) this.ContactListNewFilters[0]['filterOperator']='';
+		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters;
+		if(this.ContactListNewFilters.length == 0) this.addNewFilter();
+	  }
       addNewFilter(){
 		let newFilter:any=[];
 		newFilter['filterBy'] = this.selectedcontactFilterBy['option']['0'].label
@@ -399,7 +413,7 @@ export class ContactFilterComponent implements OnInit {
         return contactFilter;
     }
   
-  
+	
   
       getFilterOnEndCustomer(){
       let addedNewFilters:any=[];
@@ -469,6 +483,6 @@ export class ContactFilterComponent implements OnInit {
 
 	closeFilter(){
 		this.modalReference.close();
-		//this.closeFilterPopup.emit('');
+		this.closeFilterPopup.emit();
 	}
 }

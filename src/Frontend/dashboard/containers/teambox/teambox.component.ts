@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener  } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener,TemplateRef  } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder,FormGroup, FormControl, Validators, NgForm } from '@angular/forms';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -58,6 +58,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	@ViewChild('chatSection') chatSection: ElementRef | any; 
 	@ViewChild('mention_integration') chatEditor!: RichTextEditorComponent; 
 	@ViewChild('chatSection') scrollContainer: ElementRef | any;
+	@ViewChild('messageadd') contactadd!: TemplateRef<any> ;
 
 	@ViewChild('variableValue', { static: false }) variableValueForm!: NgForm;
 
@@ -285,7 +286,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
-		public phoneValidator:PhoneValidationService, private datePipe:DatePipe) {
+		public phoneValidator:PhoneValidationService, private datePipe:DatePipe,
+		private route: ActivatedRoute) {
 		
 		// customize default values of modals used by this component tree
 
@@ -315,8 +317,6 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.newMessage =fb.group({
 			Message_id:new FormControl(''),
 		});
-		
-
 	}
 	selectTemplate(template:any){
 		this.templateChecked = true;
@@ -534,6 +534,20 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 
 	}
+
+	onCreate() {
+		const instance: any = this.chatEditor;
+		instance.contentModule.getDocument().addEventListener("keydown", (e: any)=> {
+		// if (e.key === 's' && e.ctrlKey === true) {
+			
+		// }
+		console.log('abcd');
+		if(this.modalReference){
+			this.modalReference.close();
+		}
+		
+		});
+		}
 	
 	addVariable() {
 		const allVariables = [];
@@ -604,6 +618,15 @@ showeditTemplate(){
 		this.showToaster('! Please Select Any Template To Proceed','error');
 	}
 
+}
+openNewMessagePopup(){
+	setTimeout(()=>{
+	this.route.queryParams.subscribe(params => {
+		let isMessage = params['isNewMessage'] === 'true' ? true :false;
+		if(isMessage)
+		this.openaddMessage(this.contactadd);				
+	});
+},50)
 }	
 ToggleShowMentionOption(){
 	this.closeAllModal()
@@ -1069,6 +1092,7 @@ sendattachfile() {
 		this.getQuickResponse();
 		this.getTagData();
 		this.getWhatsAppDetails();
+		this.openNewMessagePopup();
 		this.NewContactForm = this.newContact;
         this.EditContactForm = this.editContact;
 	}
@@ -1600,7 +1624,8 @@ sendattachfile() {
 		this.currentPage = 0;
 		this.pageSize = 10;
 		this.getSearchInteractions(searchKey);
-	}else{
+	}
+	else{
 		this.interactionSearchKey = '';
 		this.currentPage = 0;
 		this.pageSize = 10;
@@ -2011,7 +2036,7 @@ updateCustomer(){
 				this.modalReference.close();
 			}
 			this.showToaster('Contact information updated...','success');
-			this.getAllInteraction(false);
+			//this.getAllInteraction(false);
 			this.getCustomers();
 			this.filterChannel='';
 		});
@@ -2499,7 +2524,13 @@ createCustomer() {
 							this.modalReference.close();
 						}
 						if (insertId) {
-							this.createInteraction(insertId);
+							if(responseData?.interactionId?.length ==0){
+								this.createInteraction(insertId);
+							}else{
+								if(this.modalReference){
+									this.modalReference.close();
+								}
+							}
 							this.newContact.reset();
 							//this.getAllInteraction();
 							//this.getCustomers();
@@ -2735,7 +2766,7 @@ sendMessage(){
 			messageTo:this.selectedInteraction.Phone_number,
 			message_text: value || "",
 			Message_id:this.newMessage.value.Message_id,
-			message_media: this.messageMeidaFile,
+			message_media: this.messageMeidaFile ? this.messageMeidaFile :'text',
 			media_type: this.mediaType,
 			quick_reply_id: '',
 			template_id:'',

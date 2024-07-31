@@ -224,7 +224,11 @@
 			<p class="label">By Channels</p>
 			<div class="input_group">			  
 				  <label class="container" *ngFor="let channel of channelOption ;let i = index">
-					{{channel.label}}
+					{{
+						channel?.label === 'WhatsApp Official' ? 'WA API' : 
+						channel?.label === 'WhatsApp Web' ? 'WA Web' : 
+						channel?.label 
+					  }} 
 					<input [(ngModel)]="channel.checked" type="checkbox" name="channel" value={{channel.value}} (click)="updateFilter($event,channel)">
 					<span class="checkmark"></span>
 				  </label>
@@ -248,7 +252,7 @@
 					<input (change)="updateFilterDates($event)" class="input_value" name="end_date" value={{datesFilter.end_date}}  type="date" placeholder="End Date">
 				</p>
 			</div>
-			<div class="input_group_btn">
+			<div class="input_group_btn mt-0">
 			<button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
 			<button type="button" class="date submit-btn" aria-label="Close" (click)="applyFilterOnCampaign()">Apply</button>
 			</div>
@@ -301,7 +305,11 @@
 							<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)">
 								<span>
 									<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
-									{{channel?.label}} ({{channel?.connected_id}})
+									{{
+										channel?.label === 'WhatsApp Official' ? 'WA API' : 
+										channel?.label === 'WhatsApp Web' ? 'WA Web' : 
+										channel?.label 
+									  }}  ({{channel?.connected_id}})
 								</span>
 							</p>
 						</div>
