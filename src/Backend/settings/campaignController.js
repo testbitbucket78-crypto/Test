@@ -13,6 +13,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "10000kb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
+const logger = require('../common/logger.log');
 
 const addCampaignTimings = async (req, res) => {
     try {
@@ -485,10 +486,23 @@ async function Createtemplate(messageData) {
     try {
         //   var access_token = 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S'
         //_____________________________ TEMPLATE SETTINGS _________________________________//
+
+        // Convert array to object
+        const dataObject = messageData[0];
+        // Find the BODY component
+        const bodyComponent = dataObject.components.find(component => component.type === 'BODY');
+
+        // Check if BODY component exists and then update its text
+        if (bodyComponent) {
+            bodyComponent.text = await removeTags.removeTagsFromMessages(bodyComponent.text);
+        }
+
+
+        console.log("Yes json", dataObject)
         const response = await axios({
             method: "POST",
             url: `https://graph.facebook.com/v20.0/192571223940007/message_templates?access_token`,
-            data: messageData, // Use the video message structure
+            data: dataObject, // Use the video message structure
             "headers": {
                 "Authorization": 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S',
                 "Content-Type": "application/json",
@@ -498,12 +512,13 @@ async function Createtemplate(messageData) {
 
         return response.data;
     } catch (err) {
+        logger.error('add template :', err.response ? err.response.data : err.message);
         console.log("error", err.response ? err.response.data : err.message);
         return err.message;
     }
 }
 
-async function editTemplate(templateID,messageData) {
+async function editTemplate(templateID, messageData) {
     try {
         const response = await axios({
             method: "POST",
@@ -523,15 +538,25 @@ async function editTemplate(templateID,messageData) {
     }
 }
 
+
+
 async function getOfficialTemplate() {
     try {
-
+        const response = await axios({
+            method: "GET",
+            url: `https://graph.facebook.com/v20.0/192571223940007/message_templates?access_token`,
+            "headers": {
+                "Authorization": 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S',
+                "Content-Type": "application/json",
+            }
+        });
+        // console.log(response.data, "**********");
+        return response.data;
     } catch (err) {
         console.log("error", err.response ? err.response.data : err.message);
         return err.message;
     }
 }
-
 
 const addTemplate = async (req, res) => {
     try {
@@ -559,24 +584,32 @@ const addTemplate = async (req, res) => {
         let image = Links
 
         if (ID == 0) {
-
+            let templateStatus;
+            let addedtem;
             if (Channel == 'WhatsApp Official') {
-                let templateStatus = Createtemplate(template_json);
-                console.log("templateStatus", templateStatus)
-            }
+                 templateStatus = await Createtemplate(template_json);
+                console.log("templateStatus", templateStatus.status)
+                status = templateStatus.status
+                if( templateStatus.status){
+                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
+                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
+                }
+            }else{
 
             let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
-            let addedtem = await db.excuteQuery(val.addTemplates, [temValues])
+             addedtem = await db.excuteQuery(val.addTemplates, [temValues])
+            }
             res.status(200).send({
                 addedtem: addedtem,
+                templateStatus :templateStatus,
                 status: 200
             })
 
         }
         else {
             if (Channel = 'WhatsApp Official') {
-                let edittemplateStatus  = editTemplate(templateID,messageData);
-               console.log("edittemplateStatus", edittemplateStatus)
+                let edittemplateStatus = editTemplate(templateID, messageData);
+                console.log("edittemplateStatus", edittemplateStatus)
             }
             let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
             let updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
@@ -618,7 +651,23 @@ const isExistTemplate = async (req, res) => {
 
 const getTemplate = async (req, res) => {
     try {
-        let templates = await db.excuteQuery(val.selectTemplate, [req.params.spid, req.params.isTemplate])
+        let officialTemplates = await getOfficialTemplate();
+        //console.log(officialTemplates)
+        let templates = await db.excuteQuery(val.selectTemplate, [req.params.spid, req.params.isTemplate]);
+
+        // Create a lookup object from newData
+        const statusLookup = officialTemplates.data.reduce((lookup, item) => {
+            lookup[item.name] = item.status;
+            return lookup;
+        }, {});
+
+        // Update status in rowDataPackets based on the lookup object
+        templates.forEach(packet => {
+            if (statusLookup[packet.TemplateName]) {
+                packet.status = statusLookup[packet.TemplateName];
+            }
+        });
+        console.log(templates)
         res.status(200).send({
             templates: templates,
             status: 200

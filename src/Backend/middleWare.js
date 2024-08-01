@@ -273,4 +273,62 @@ const WHATSAPPOptions = {
 
 
 
-module.exports = { channelssetUp, postDataToAPI, sendDefultMsg }
+async function sendDiffTypeTemplate(link, typeOfmsg, phone_number_id, from) {
+    try {
+        const messageData = {
+            messaging_product: "whatsapp",
+            recipient_type: "individual",
+            to: from,
+            type: typeOfmsg,
+            template: {
+                name: "template_name",
+                language: {
+                    code: "language_code"
+                },
+                components: []
+            }
+        };
+
+        if (typeOfmsg === 'video' || typeOfmsg === 'image' || typeOfmsg === 'document') {
+            messageData.template.components.push({
+                type: "header",
+                parameters: [
+                    {
+                        type: typeOfmsg,
+                        [typeOfmsg]: {
+                            link: link
+                        }
+                    }
+                ]
+            });
+          
+        } else if (typeOfmsg === 'text') {
+            messageData.template.components.push({
+                type: "body",
+                parameters: [
+                    {
+                        type: "text",
+                        text: caption
+                    }
+                ]
+            });
+        }
+
+        const response = await fetch( `https://graph.facebook.com/v19.0/${phone_number_id}/messages?access_token=${token}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(messageData)
+        });
+
+        const data = await response.json();
+        console.log('Message sent:', data);
+    } catch (error) {
+        console.error('Error sending message:', error);
+    }
+
+
+}
+
+module.exports = { channelssetUp, postDataToAPI, sendDefultMsg,sendDiffTypeTemplate }

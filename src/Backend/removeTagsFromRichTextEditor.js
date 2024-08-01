@@ -155,9 +155,9 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
 
         if (endCustomerResult.length > 0 && endCustomerResult[0][value]) {
-          result[label] = endCustomerResult[0][value];
+          result[value] = endCustomerResult[0][value];
         } else {
-          result[label] = fallback;
+          result[value] = fallback;
         }
       } 
       // Check if the value exists in SPIDCustomContactFields columns
@@ -167,13 +167,13 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
 
         if (endCustomerResult.length > 0 && endCustomerResult[0][customColumn]) {
-          result[label] = endCustomerResult[0][customColumn];
+          result[value] = endCustomerResult[0][customColumn];
         } else {
-          result[label] = fallback;
+          result[value] = fallback;
         }
       } else {
         console.log(`[${value}] not found in EndCustomer table or SPIDCustomContactFields.`);
-        result[label] = fallback;
+        result[value] = fallback;
       }
       results.push(result);
     }
