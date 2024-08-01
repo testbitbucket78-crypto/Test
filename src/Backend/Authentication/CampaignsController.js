@@ -362,13 +362,13 @@ const sendCampinMessage = async (req, res) => {
         console.log(content, "___________message_variables ____________", message_variables)
         //         // Replace placeholders in the content with values from message_variables
         const placeholders =  parseMessageTemplate(content);
-        if (message_variables) {
-            message_variables.forEach(variable => {
-                const label = variable.label;
-                const value = variable.value;
-                content = content.replace(new RegExp(label, 'g'), value);
-            });
-        }
+        // if (message_variables) {
+        //     message_variables.forEach(variable => {
+        //         const label = variable.label;
+        //         const value = variable.value;
+        //         content = content.replace(new RegExp(label, 'g'), value);
+        //     });
+        // }
 
 
         
@@ -376,7 +376,7 @@ const sendCampinMessage = async (req, res) => {
         if (placeholders?.length > 0) {
 
             const results = await removeTags.getDefaultAttribue(message_variables, spid, customerId);
-          //  console.log("results", results)
+            console.log("results", results)
 //console.log("placeholders",placeholders)
             placeholders.forEach(placeholder => {
                 const result = results.find(result => result.hasOwnProperty(placeholder));

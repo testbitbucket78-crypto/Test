@@ -223,7 +223,7 @@ async function UnassignedBlockedContact(customerId, spid) {
             await db.excuteQuery(`update InteractionMapping set AgentId = -1 where MappingId =?`, [mapping[0]?.MappingId]);
         }
 
-        await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, ['empty', getInteraction[0]?.InteractionId, spid, customerId]);
+        await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, ['Resolved', getInteraction[0]?.InteractionId, spid, customerId]);
         // logger.info('Unassigned blocked contact successfully', { customerId, spid });
     } catch (err) {
         logger.error('Error unassigning blocked contact:', { error: err.message, stack: err.stack });
@@ -668,6 +668,7 @@ const insertMessage = async (req, res) => {
                         const result = results.find(result => result.hasOwnProperty(placeholder));
                         //  console.log(placeholder,"place foreach",results)
                         const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+                        console.log(replacement,"replacement placeholder ",placeholder)
                         content = content.replace(`{{${placeholder}}}`, replacement);
                     });
                 } else {
