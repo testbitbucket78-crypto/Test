@@ -736,7 +736,7 @@ checkTemplateName(e:any){
             ]
             }
             let headerMedia ={};
-            if(this.selectedType != 'Text'){
+            if(this.selectedType != 'text'){
                  headerMedia = {
                         header_handle: [this.newTemplateForm.controls.Links.value]
             }
@@ -749,7 +749,7 @@ checkTemplateName(e:any){
                     {
                         type: 'HEADER',
                         format: this.selectedType,
-                        [this.selectedType =='Text' ?'text' :'example' ]: this.selectedType =='Text' ? this.newTemplateForm.controls.Header.value : headerMedia,
+                        [this.selectedType =='text' ?'text' :'example' ]: this.selectedType =='text' ? this.newTemplateForm.controls.Header.value : headerMedia,
                     },
                     {
                         type: 'BODY',
