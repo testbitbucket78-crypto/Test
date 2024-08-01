@@ -232,7 +232,7 @@
 		</div>
 
 	</div>
-
+	<sb-loader [isLoading]="deleteBloackContactLoader"  [message]="''"></sb-loader>
 	<div class="modal fade" id="deleteContact" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
 		<div class="modal-dialog deletecontacts">
 			<div class="modal-content deletecontacts-content">
@@ -575,7 +575,7 @@
 							<div class="d-flex ss">
 
 								<select class="input-form" id="countryCode" formControlName="countryCode">
-									<option  *ngFor="let countryCode of countryCodes" [ngValue]="countryCode">
+									<option  *ngFor="let countryCode of countryCodes" [ngValue]="countryCode" >
 										{{ countryCode }}
 									</option>
 								</select>
@@ -834,6 +834,6 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 </div>
 </div>
 <div *ngIf="isShowFilter">
-<sb-contact-filter *ngIf="isShowFilter == true" [openPopup]="changingValue" (query)="query=$event; getContact();filterApplied()" (closeFilterPopup)="closeFilter();"></sb-contact-filter>
+<sb-contact-filter #child *ngIf="isShowFilter == true" [openPopup]="changingValue" (query)="query=$event; getContact();filterApplied()" (closeFilterPopup)="closeFilter();"></sb-contact-filter>
 </div>
 </sb-layout-dashboard>

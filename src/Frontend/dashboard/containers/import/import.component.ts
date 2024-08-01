@@ -419,8 +419,9 @@ export class ImportComponent implements OnInit {
 
 }
 
-
+importDataLoader! : boolean;
 	verifyImportedData() {
+		this.importDataLoader = true;
 		const importedData = this.constructContactFormData();
 		const csvData = {
 			importedData: importedData.result,
@@ -437,11 +438,13 @@ export class ImportComponent implements OnInit {
 				this.numberOfNewContact = data.newCon
 				this.skipCont = data.skipCont
 				this.importCSVdata = data.importData
+				this.importDataLoader = false;
 			}
 	
 		}, (error)=> {
 			if(error) {
 				this.showToaster('Error while verifying Data.','error');
+				this.importDataLoader = false;
 			}
 		});
 

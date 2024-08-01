@@ -118,14 +118,10 @@ export class QuickResponseComponent implements OnInit {
         event.stopPropagation();
       }
       selectChannel(channel:any){
-        if(channel.channel_status == 0){
-          this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
-          return;
-        }
-		this.usertemplateForm.get('channel_id')?.setValue(channel.value);
-		this.usertemplateForm.get('Channel')?.setValue(channel.label);
-		this.ShowChannelOption=false
-	}
+      this.usertemplateForm.get('channel_id')?.setValue(channel.value);
+      this.usertemplateForm.get('Channel')?.setValue(channel.label);
+      this.ShowChannelOption=false
+	  }
 
   	toggleCampaign(){
 		this.showCampaignDetail =!this.showCampaignDetail 

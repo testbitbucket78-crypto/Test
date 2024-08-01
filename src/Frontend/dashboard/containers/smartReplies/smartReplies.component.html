@@ -208,7 +208,11 @@
 									<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)" style="cursor: pointer;">
 										<span>
 											<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
-											{{channel?.label}} ({{channel?.connected_id}})
+											{{
+										channel?.label === 'WhatsApp Official' ? 'WA API' : 
+										channel?.label === 'WhatsApp Web' ? 'WA Web' : 
+										channel?.label 
+									  }} ({{channel?.connected_id}})
 										</span>
 									</p>
 									<div *ngIf="ShowChannelOption" class="overlay" (click)="ShowChannelOption=false"></div>
@@ -520,6 +524,7 @@
 									<img class="icon" src="/assets/img/teambox/image-a@2x.png">
 									<p>Drag & Drop file</p>
 									<p><span>OR</span></p>
+									<sb-loader [isLoading]="isAttachingLoader" [loaderType]="'small'" [message]="''"></sb-loader>
 									<label class="custom-file-upload">
 									  <input type="file" #file
 										accept="image/*, application/msword, application/pdf, video/*"
