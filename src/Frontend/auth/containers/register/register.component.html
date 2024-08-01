@@ -33,7 +33,7 @@
                 <div class="col-sm-1"></div>
                 <div class="pp"  id="col">
                   <label for="floatingInputGrid" id="la-ph">Phone Number</label> 
-                  <div class="ss d-flex justify-content-start">
+                  <div class="ss d-flex justify-content-start position-relative">
                   <select class="input-form" id="country_code" formControlName="country_code" (change)="formatPhoneNumber()">
                     <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
                       {{ countryCode }}
@@ -45,7 +45,8 @@
                       name="display_mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
                       onKeyPress="return /^[0-9]$/.test(event.key)"
                       [ngClass]="{'is-invalid' :submitted && registerForm.controls.display_mobile_number.errors }" 
-                    (change)="formatPhoneNumber()" #text>    
+                    (change)="formatPhoneNumber()" #text> 
+                    <img *ngIf="VerificationData[1].isverifyphoneOtp" src="assets/img/verified.svg" width="16px" height="16px" style="inset: 0 10px 0 auto;margin: auto;" class="position-absolute" alt="verified-logo"/>
                   </div>
                   <div *ngIf="registerForm.controls.display_mobile_number.touched && registerForm.get('display_mobile_number')?.hasError('invalidPhoneNumberLength')"
 								 class="text-danger">
@@ -57,9 +58,12 @@
               <div class="you-em">
                 <div class="">
                   <label for="floatingInputGrid">Your Email</label>
-  
-                  <input formControlName="email_id"  type="text-right mr-3" class="form-control" id="gem" [ngClass]="{'is-invalid' :submitted && registerForm.controls.email_id.errors}" placeholder="Email" aria-label="City" name="email_id"
+                  <div class="position-relative">  
+                    <input formControlName="email_id"  type="text-right mr-3" class="form-control" id="gem" [ngClass]="{'is-invalid' :submitted && registerForm.controls.email_id.errors}" placeholder="Email" aria-label="City" name="email_id"
                     formControlName="email_id" id="email_id">
+                    <img *ngIf="VerificationData[0].isverfyEmailOtp" src="assets/img/verified.svg" width="16px" height="16px" style="inset: 0 10px 0 auto;margin: auto;" class="position-absolute" alt="verified-logo"/>
+                  </div>
+
                 </div>
               </div>
               <div class="password-confirm">

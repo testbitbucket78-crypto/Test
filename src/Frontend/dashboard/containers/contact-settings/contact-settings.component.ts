@@ -23,7 +23,7 @@ export class ContactSettingsComponent implements OnInit {
   showSideBar:boolean=false;
   istagChanges:boolean=false;
   searchText = '';
-
+  isLoading!:boolean;
   errorMessage='';
 	successMessage='';
 	warningMessage='';
@@ -33,6 +33,7 @@ export class ContactSettingsComponent implements OnInit {
    }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.getTagData();
   
   }
@@ -59,6 +60,7 @@ export class ContactSettingsComponent implements OnInit {
   getTagData(){
     this._settingsService.getTagData(this.sp_Id)
     .subscribe(result =>{
+      this.isLoading = false;
       if(result){
        this.tagListData = result.taglist;
        console.log(this.tagListData);

@@ -31,7 +31,7 @@ export class CustomFieldsComponent implements OnInit {
   defaultFieldsData = [];
   dynamicFieldData = [];
   selectedCustomField:any = [];
-
+  isLoading!:boolean;
 
   selectedType:string = 'Text';
   types:string[] =['Text','Number','Select','Switch','Date','Time','Multi Select' ];
@@ -46,6 +46,7 @@ export class CustomFieldsComponent implements OnInit {
   //   } 
 
     ngOnInit(): void {
+        this.isLoading = true;
         this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.getCustomFieldsData();
         this.addCustomFieldsOption();
@@ -148,11 +149,13 @@ removeCustomFieldsOption(index:any){
 
 getCustomFieldsData() {
   this.settingsService.getNewCustomField(this.spId).subscribe(response => {
+    this.isLoading = false;
     this.customFieldData = response.getfields;
     console.log(this.customFieldData);  
     this.getDefaulltFieldData();
     this.getDynamicFieldData();
     this.getPaging();
+   
   })
 }
 

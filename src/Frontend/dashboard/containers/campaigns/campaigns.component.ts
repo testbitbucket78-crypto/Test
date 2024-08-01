@@ -577,11 +577,12 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 
 	toggleCampaign(campaign:any){
+		this.isLoading = true;
 		this.selectedCampaign=[]
 		this.showCampaignDetail =!this.showCampaignDetail 
 		if(this.showCampaignDetail && campaign.Id){
 		  this.getCampaignDetail(campaign.Id)
-		}
+		} else this.isLoading = false;
 	}
 
     async getCampaignDetail(CampaignID:any){
@@ -651,6 +652,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
                 this.statusUpdate(CampaignID, item.status_label);
 				this.selectedCampaign = item
 				console.log("item**")
+				this.isLoading = false;
 				if(item.status>1){
 					this.getCampaignMessages(item.Id)
 				}
@@ -721,6 +723,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 	}
 	deleteCampaignConfirmed(){
+		this.isLoading = true;
 		this.closeAllModal()
 		let CampaignID = this.selectedCampaign.Id
 		this.apiService.deleteCampaignDetail(CampaignID).subscribe(campaignDelete =>{
@@ -1466,7 +1469,8 @@ formateDate(dateTime:string){
 	closeConfirmModal(){
 		this.modalReference2.close();
 	}
-	async ConfirmScheduleClose (action:any){	
+	async ConfirmScheduleClose (action:any){
+		this.isLoading = true;
 		this.closeAllModal();
 		this.modalReference2.close();
 		//this.modalReference.close('addNewCampaign');

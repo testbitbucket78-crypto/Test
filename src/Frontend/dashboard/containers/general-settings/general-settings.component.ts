@@ -25,7 +25,7 @@ export class GeneralSettingsComponent implements OnInit {
   userList:any[] =[];
   initUserList:any[] =[];
   defaultAdminUid:number=0;
-
+  isLoading! : boolean;
 
 
   errorMessage='';
@@ -55,8 +55,9 @@ export class GeneralSettingsComponent implements OnInit {
 		this.warningMessage='';
 	}
 
-
+  
   ngOnInit(): void {
+    this.isLoading = true;
     this.spId = Number(sessionStorage.getItem('SP_ID'));
     this.getDefaultAction();
     this.getUserList();
@@ -76,6 +77,7 @@ export class GeneralSettingsComponent implements OnInit {
      this.pauseAgentActiveTime = a?.pauseAgentActiveTime;
      this.pauseAutoReplyTime = a?.pauseAutoReplyTime;
      this.defaultAdminUid = a?.defaultAdminUid;
+     this.isLoading = false;
     //  console.log(a);
 
     })

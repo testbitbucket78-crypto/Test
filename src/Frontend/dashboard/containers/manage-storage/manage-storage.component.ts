@@ -39,7 +39,7 @@ export class ManageStorageComponent implements OnInit {
   mediaCount:any;
   combinedCount:any;
   combinedSize:any;
-
+  isLoading!: boolean;
   errorMessage = '';
 	successMessage = '';
 	warnMessage = '';
@@ -49,6 +49,7 @@ export class ManageStorageComponent implements OnInit {
   constructor(private apiService:SettingsService,private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.spid = Number(sessionStorage.getItem('SP_ID'));
     this.getManageStorage();
     this.postmanualDelation();
@@ -278,7 +279,7 @@ export class ManageStorageComponent implements OnInit {
           this.combinedSize = Number(this.message_size + this.totalSize);
           this.combinedCount = Number(this.message_count + this.mediaCount);
         }
-       
+        this.isLoading = false;
       });
      }
 

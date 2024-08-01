@@ -43,7 +43,7 @@ export class AcoountSettingsComponent implements OnInit {
   numberCount:number = 0;
   qrcode:any;
   link:any;
-
+  isLoading!:boolean;
 
   errorMessage = '';
 	successMessage = '';
@@ -76,7 +76,7 @@ export class AcoountSettingsComponent implements OnInit {
 
 
   ngOnInit(): void {
-
+    this.isLoading = true;
     this.spid = Number(sessionStorage.getItem('SP_ID'));
     this.phoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
     this.email = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
@@ -109,6 +109,7 @@ export class AcoountSettingsComponent implements OnInit {
   // getwhatsappwebdetails
 getwhatsapp() { 
   this.apiService.getWhatsAppDetails(this.spid).subscribe(response => {
+    this.isLoading = false
     this.whatsAppDetails=response.whatsAppDetails;
     this.numberCount = response.channelCounts[0]?.count_of_channel_id;
     console.log(this.numberCount);

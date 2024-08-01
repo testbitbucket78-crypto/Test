@@ -56,7 +56,7 @@ export class QuickResponseComponent implements OnInit {
   profilePicture!: string;
   channelOption: any = [];
   ShowChannelOption! : boolean;
-  
+  isLoading!:boolean;
   fileName: any; 
   selectedPreview: string = '';
   loadingVideo:boolean = false;
@@ -89,6 +89,7 @@ export class QuickResponseComponent implements OnInit {
   constructor(config: NgbModalConfig,private modalService: NgbModal,public apiService:SettingsService, private _teamboxService: TeamboxService) { }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.spid = Number(sessionStorage.getItem('SP_ID'));
     this.created_By = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
     this.profilePicture = JSON.parse(sessionStorage.getItem('loginDetails')!).profile_img;
@@ -227,6 +228,7 @@ filterQuickRes(){
 
   Template(){
     this.apiService.getTemplateData(this.spid,0).subscribe(response => {
+      this.isLoading = false;
       this.templates=response.templates;
       this.initTemplates=response.templates;
       console.log(this.templates);
