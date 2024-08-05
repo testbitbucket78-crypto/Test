@@ -407,8 +407,8 @@ const sendCampinMessage = async (req, res) => {
                 }
             } else {
              //   console.log(spid, req.body.channel_id, type, messageTo, "+++++++", customerId)
-              //  messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
-              messagestatus = await middleWare.createWhatsAppPayload(type, messageTo, templateName, languageCode, headerVariables = [], bodyVariables = [], media)
+                messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+             // messagestatus = await middleWare.createWhatsAppPayload(type, messageTo, templateName, languageCode, headerVariables = [], bodyVariables = [], media)
             }
             console.log("isFinished ", isFinished, TemplateData.status)
             if (isFinished == true) {

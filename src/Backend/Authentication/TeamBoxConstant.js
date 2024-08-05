@@ -75,6 +75,7 @@ var selectAllQuery = `WITH LatestInteractions AS (
     ) i2 ON i1.customerId = i2.customerId AND i1.InteractionId = i2.latestInteractionId
     WHERE i1.is_deleted != 1
       AND i1.SP_ID = ?
+     and i1.IsTemporary !=1 
 ),
 ContactsWithoutInteraction AS (
     SELECT ec.customerId, ec.Phone_number, ec.Name, 'WithoutInteraction' AS source, 1 AS priority
