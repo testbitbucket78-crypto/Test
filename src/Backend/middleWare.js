@@ -273,62 +273,76 @@ const WHATSAPPOptions = {
 
 
 
-async function sendDiffTypeTemplate(link, typeOfmsg, phone_number_id, from) {
-    try {
-        const messageData = {
-            messaging_product: "whatsapp",
-            recipient_type: "individual",
-            to: from,
-            type: typeOfmsg,
-            template: {
-                name: "template_name",
-                language: {
-                    code: "language_code"
-                },
-                components: []
+async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables = [], mediaLink = null) {
+    let payload = {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: to,
+        type: "template",
+        template: {
+            name: templateName,
+            language: {
+                code: languageCode
             }
-        };
+        }
+    };
 
-        if (typeOfmsg === 'video' || typeOfmsg === 'image' || typeOfmsg === 'document') {
-            messageData.template.components.push({
+    if (type === 'text') {
+        let components = [];
+
+        if (headerVariables.length > 0) {
+            components.push({
                 type: "header",
-                parameters: [
-                    {
-                        type: typeOfmsg,
-                        [typeOfmsg]: {
-                            link: link
-                        }
-                    }
-                ]
-            });
-          
-        } else if (typeOfmsg === 'text') {
-            messageData.template.components.push({
-                type: "body",
-                parameters: [
-                    {
-                        type: "text",
-                        text: caption
-                    }
-                ]
+                parameters: headerVariables.map(variable => ({
+                    type: "text",
+                    text: variable
+                }))
             });
         }
 
-        const response = await fetch( `https://graph.facebook.com/v19.0/${phone_number_id}/messages?access_token=${token}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(messageData)
-        });
+        if (bodyVariables.length > 0) {
+            components.push({
+                type: "body",
+                parameters: bodyVariables.map(variable => ({
+                    type: "text",
+                    text: variable
+                }))
+            });
+        }
 
-        const data = await response.json();
-        console.log('Message sent:', data);
-    } catch (error) {
-        console.error('Error sending message:', error);
+        payload.template.components = components;
+    } else if (['image', 'video', 'doc'].includes(type)) {
+        let headerComponent = {
+            type: "header",
+            parameters: [{
+                type: type,
+                [type]: { link: mediaLink }
+            }]
+        };
+
+        if (bodyVariables.length > 0) {
+            payload.template.components = [
+                headerComponent,
+                {
+                    type: "body",
+                    parameters: bodyVariables.map(variable => ({
+                        type: "text",
+                        text: variable
+                    }))
+                }
+            ];
+        } else {
+            payload.template.components = [headerComponent];
+        }
     }
 
-
+    return payload;
 }
 
-module.exports = { channelssetUp, postDataToAPI, sendDefultMsg,sendDiffTypeTemplate }
+// const headerVariables = ['Header Text']; // Variables for header in 'text' type
+// const bodyVariables = ['Body Text 1', 'Body Text 2'];
+
+// const payload = createWhatsAppPayload('text', '918130818921', 'cip_attribute', 'en', headerVariables, bodyVariables, 'https://picsum.photos/id/1/200/300');
+// console.log(JSON.stringify(payload, null, 2));
+
+module.exports = { channelssetUp, postDataToAPI, sendDefultMsg,createWhatsAppPayload }

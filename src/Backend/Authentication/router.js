@@ -28,7 +28,7 @@ router.post('/resetPassword/:uid',authenticateToken,indexController.resetPasswor
 router.post('/allAgents',authenticateToken,userController.getAllAgents)
 router.post('/isActiveAgents',authenticateToken,userController.getisActiveAgents)
 router.post('/verifyPhoneOtp',indexController.verifyPhoneOtp)
-
+router.post('/isSpAlreadyExist',indexController.isSpAlreadyExist)
 
 /**Added by Raman Bhasker*/
 

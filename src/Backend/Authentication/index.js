@@ -32,10 +32,10 @@ const login = async (req, res) => {
         const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const ip = clientIp.startsWith('::ffff:') ? clientIp.substring(7) : clientIp;
         console.log('Client IP:', ip);
-        
+
         const emailId = req.body.email_id;
         const password = req.body.password;
-        
+
         // Retrieve all user records with the matching email ID
         const credentials = await db.excuteQuery('SELECT * FROM user WHERE email_id = ? AND isDeleted != 1 AND IsActive != 2', [emailId]);
 
@@ -64,7 +64,7 @@ const login = async (req, res) => {
 
         const token = jwt.sign({ email_id: user.email_id }, SECRET_KEY, { expiresIn: '24h' });
         const utcTimestamp = moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss');
-        
+
         await db.excuteQuery('UPDATE user SET LastLogIn = ?, LoginIP = ?, IsActive = 1 WHERE email_id = ?', [utcTimestamp, ip, emailId]);
 
         res.status(200).send({
@@ -84,6 +84,42 @@ const login = async (req, res) => {
 };
 
 
+const isSpAlreadyExist = async function (req, res) {
+    try {
+        var loginQuery = `SELECT * FROM user WHERE email_id =?  and isDeleted !=1 and IsActive !=2`
+        var credentialsOfEmail = await db.excuteQuery(loginQuery, [req.body.email_id])
+        if (credentialsOfEmail?.length > 0) {
+            return res.status(409).send({
+                msg: 'User Already Exist with this email !',
+                status: 409
+            });
+        }
+        var loginQueryPhone = `SELECT * FROM user WHERE  mobile_number=? and isDeleted !=1 and IsActive !=2`
+        var credentialsOfPhone = await db.excuteQuery(loginQueryPhone, [req.body.mobile_number])
+        if (credentialsOfPhone?.length > 0) {
+            return res.status(409).send({
+                msg: 'User Already Exist with this Phone Number !',
+                status: 409
+            });
+        }
+        if(credentialsOfEmail?.length <= 0 && credentialsOfPhone?.length <= 0){
+            return res.status(200).send({
+                msg: 'User Ready to register !',
+                status: 200
+            });
+        }
+
+
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+        res.status(500).send({
+            msg: 'Internal Server Error',
+            status: 500
+        });
+    }
+}
+
 //post api for register
 
 const register = async function (req, res) {
@@ -98,7 +134,7 @@ const register = async function (req, res) {
     display_mobile_number = req.body?.display_mobile_number
     try {
 
-       
+
         var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id, mobile_number])
         if (credentials.length > 0) {
             res.status(409).send({
@@ -132,7 +168,7 @@ const register = async function (req, res) {
                 from: val.email, // Use the sender's email address here
                 to: req.body.email_id, // Recipient's email address from the request body
                 subject: `Hello ${req.body.name}! Getting started with Engagekart`, // Email subject
-            
+
                 html: `<p>Dear ${req.body.name},</p>
            <p>Welcome to Engagekart!</p>
            <p>We are delighted to have you onboard and can't wait to see you automate your business operations effortlessly with our platform. So get going and explore all the features on Engagekart to engage with your customers while converting new leads.</p>
@@ -517,4 +553,4 @@ const verifyPhoneOtp = async function (req, res, err) {
 
 
 
-module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, verifyPhoneOtp };
+module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, verifyPhoneOtp,isSpAlreadyExist };
