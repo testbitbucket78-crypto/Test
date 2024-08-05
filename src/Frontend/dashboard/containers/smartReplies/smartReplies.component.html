@@ -426,7 +426,7 @@
 									(click)="closeAssignOption()">
 									<span *ngIf="!agent.profileImg" class="text-capitalize initials mt-0 w-25"> {{ agent.nameInitials }} </span>
 									<img *ngIf="agent.profileImg" class="rounded-circle mt-0" style="width: 30px; height: 30px; margin-left: 11px;" src="{{agent.profileImg}}" />
-									<span key={k} class="agentName mt-0 w-75">{{agent.name}}</span>
+									<span key={k} class="agentName mt-0 w-75">{{agent.name}} {{agent?.RoleName == 'Admin' ? '(Admin)' :''}}</span>
 								  </p>
 								  <div *ngIf="ShowAssignOption" class="overlay" (click)="closeAssignOption()"></div>
 								</div>
