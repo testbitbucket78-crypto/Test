@@ -35,13 +35,15 @@
                                 <input type="number" class="form-control"
                                     [ngClass]="{'is-invalid' :submitted && otpForm.controls.otp.errors}"
                                     placeholder="Enter OTP" aria-label="City" name="otp" formControlName="otp" id="otp">
-                                <button class="btn1 me-1" type="button" (click)="onVerifyphoneOtp()">Verify</button>
+                                <button class="btn1 me-1" type="button" (click)="onVerifyphoneOtp()"[ngClass]="{'btn-verified': isverifyphoneOtp}">{{isverifyphoneOtp ? 'Verified' : 'Verify'}}</button>
                                 <!-- <button class="verified1" *ngIf="showSecondButton1"><img src="assets/img/verified.png"></button> -->
                             </div>
                         </div>
                         <div class="disc"><a style="display: inline-flex ">
-                                <h6>Don't receive the code? </h6>
-                                <h6 (click)="resendOtp()" class="ml-1"> Resend </h6>
+                                <h6>Did not receive the code? </h6>
+                                <h6 (click)="resendOtp()" class="ml-1" [class.disabled]="phoneOtpTimer > 0"
+                                    [style.pointer-events]="phoneOtpTimer > 0 ? 'none' : 'auto'"
+                                    [style.cursor]="phoneOtpTimer > 0 ? 'default' : 'pointer'"> Resend {{ phoneOtpTimer > 0 ? ' (' + phoneOtpTimer + 's)' : '' }}</h6>
                             </a></div>
 
                         <div *ngIf="submitted && otpForm.controls.otp.errors" class="text-danger">
@@ -58,15 +60,17 @@
                                     [ngClass]="{'is-invalid' :submitted && otpForm.controls.otp1.errors}"
                                     placeholder="Enter OTP" aria-label="City" name="otp" formControlName="otp1"
                                     id="otp1">
-                                <button class="btn1 me-1" type="button" (click)="onVerify()">Verify</button>
+                                <button class="btn1 me-1" type="button" (click)="onVerify()" [ngClass]="{'btn-verified': isverfyEmailOtp}">{{isverfyEmailOtp ? 'Verified' : 'Verify'}}</button>
 
                             </div>
                         </div>
                         <!-- <button *ngIf="!showSecondButton" (click)="showSecondButton = true">Click me to show second button</button> -->
                         <button class="verified" *ngIf="showSecondButton"><img src="assets/img/verified.png"></button>
                         <div class="disc"><a style="display: inline-flex">
-                                <h6>Don't receive the code? </h6>
-                                <h6 (click)="resendOtp()" class="ml-1"> Resend </h6>
+                                <h6>Did not receive the code? </h6>
+                                <h6 (click)="resendOtp()" class="ml-1" [class.disabled]="emailotpTimer > 0"
+                                    [style.pointer-events]="emailotpTimer > 0 ? 'none' : 'auto'"
+                                    [style.cursor]="emailotpTimer > 0 ? 'default' : 'pointer'"> Resend {{ emailotpTimer > 0 ? ' (' + emailotpTimer + 's)' : '' }}</h6>
                             </a></div>
                         <div *ngIf="submitted && otpForm.controls.otp1.errors" class="text-danger1">
                             ! Otp Required

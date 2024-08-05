@@ -83,6 +83,9 @@ export class TeamboxService {
   public getAllMessageByInteractionId(InteractionId:any,Type:any,spid:any,RangeStart:number=0,RangeEnd:number=30) {
     return this.http.get(API_URL+'/messages/'+InteractionId+'/'+Type+'/'+RangeStart+'/'+RangeEnd + '/'+spid);
   }
+  public getsavedMessages(SP_ID: any,Message_id:any) {
+    return this.http.get(API_URL+`/getsavedMessages/${Message_id}/${SP_ID}`);
+  }
   public sendNewMessage(data: any) {
     return this.http.post(API_URL+'/newmessage/',data);
   }
@@ -93,9 +96,9 @@ export class TeamboxService {
     return this.http.post(API_URL+'/updatemessageread/',data);
   }
 
-  public getsavedMessages(SPID: any) {
-    return this.http.get(API_URL+'/getsavedMessages/'+SPID);
-  }
+  // public getsavedMessages(SPID: any) {
+  //   return this.http.get(API_URL+'/getsavedMessages/'+SPID);
+  // }
   public getquickReply(SPID: any) {
     return this.http.get(API_URL+'/getquickReply/'+SPID);
   }

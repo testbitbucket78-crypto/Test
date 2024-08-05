@@ -1,6 +1,6 @@
 <sb-layout-dashboard>
   <sb-top-nav title="Dashboard"></sb-top-nav>
-
+  <sb-loader [isLoading]="isLoading"></sb-loader>
   <div>
     <p class="heading">Hello <span class="text-capitalize"> {{Name}}</span>, welcome back</p>
   </div>
@@ -167,7 +167,7 @@
                   <p id="item-message" [innerHTML]="getLimitedMessageText(items.message_text)"></p>
                 </div>
   
-                <p id="item-date"><span *ngIf="items.isread == 0"><div class="red-dot"></div></span>{{items.interaction_date | date:'h:mm a'}}</p>
+                <p id="item-date"><span *ngIf="items.isread == 0 && items.message_direction != 'Out'"><div class="red-dot"></div></span>{{items.interaction_date | date:'h:mm a'}}</p>
               </div>
             </div>
   

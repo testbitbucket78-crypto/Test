@@ -223,7 +223,7 @@ async function UnassignedBlockedContact(customerId, spid) {
             await db.excuteQuery(`update InteractionMapping set AgentId = -1 where MappingId =?`, [mapping[0]?.MappingId]);
         }
 
-        await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, ['empty', getInteraction[0]?.InteractionId, spid, customerId]);
+        await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, ['Resolved', getInteraction[0]?.InteractionId, spid, customerId]);
         // logger.info('Unassigned blocked contact successfully', { customerId, spid });
     } catch (err) {
         logger.error('Error unassigning blocked contact:', { error: err.message, stack: err.stack });
@@ -466,7 +466,7 @@ const getAllMessageByInteractionId = async (req, res) => {
         if (req.params.Type !== 'media') {
             result = await db.excuteQuery(val.getallMessagesWithScripts, [req.params.InteractionId, req.params.Type, req.params.spid, req.params.InteractionId, req.params.Type, req.params.spid, parseInt(req.params.RangeStart), endRange]);
         } else {
-            result = await db.excuteQuery(val.getMediaMessage, [req.params.InteractionId, req.params.InteractionId, req.params.spid, req.params.Type, parseInt(req.params.RangeStart), endRange]);
+            result = await db.excuteQuery(val.getMediaMessage, [req.params.InteractionId,req.params.spid, req.params.InteractionId, req.params.spid, req.params.Type, parseInt(req.params.RangeStart), endRange]);
         }
         if (result?.length === 0 || result?.length < endRange) {
             isCompleted = true;
@@ -505,7 +505,7 @@ const getMessagesByMsgId = async (req, res) => {
 const updateMessageRead = (req, res) => {
     // logger.info('Starting updateMessageRead function');
     if (req.body.Message_id > 0) {
-        var messageQuery = "UPDATE Message SET is_read =1 WHERE Message_id =" + req.body.Message_id;
+        var messageQuery = "UPDATE Message SET is_read =1 WHERE Message_id <=" + req.body.Message_id;
         var values = [];
         db.runQuery(req, res, messageQuery, [values]);
         //    logger.info('updateMessageRead function completed successfully');
@@ -659,15 +659,16 @@ const insertMessage = async (req, res) => {
             if (placeholders.length > 0) {
 
                 let results;
-                console.log("msgVar",msgVar)
-                if (msgVar != null) {
-
+                // console.log(msgVar != null,"msgVar",msgVar,msgVar !='')
+                if (msgVar != null && msgVar !='') {
+                  
                     results = await removeTags.getDefaultAttribue(msgVar, SPID, customerId);
                     console.log("atribute result ",results)
                     placeholders.forEach(placeholder => {
                         const result = results.find(result => result.hasOwnProperty(placeholder));
                         //  console.log(placeholder,"place foreach",results)
                         const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+                        console.log(replacement,"replacement placeholder ",placeholder)
                         content = content.replace(`{{${placeholder}}}`, replacement);
                     });
                 } else {

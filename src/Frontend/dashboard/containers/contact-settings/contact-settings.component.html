@@ -3,7 +3,7 @@
     <p *ngIf="successMessage" class="success">{{successMessage}}</p>
     <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 </div>
-
+<sb-loader [isLoading]="isLoading"></sb-loader>
 <div>
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">

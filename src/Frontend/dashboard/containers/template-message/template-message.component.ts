@@ -54,6 +54,7 @@ export class TemplateMessageComponent implements OnInit {
     channelOption: any = [];
     countValue: number = 1;
     customValue: string = "val1";
+    isLoading!:boolean;
     valuesMap: Map<number, string> = new Map();
     filterListTopic = [
         { value: 0, label: 'Lead Gen', checked: false },
@@ -197,6 +198,7 @@ export class TemplateMessageComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.isLoading = true;
         this.spid = Number(sessionStorage.getItem('SP_ID'));
         this.profilePicture = JSON.parse(sessionStorage.getItem('loginDetails')!).profile_img;
         this.currentUser = JSON.parse(sessionStorage.getItem('loginDetails')!).name;
@@ -522,6 +524,7 @@ export class TemplateMessageComponent implements OnInit {
     getTemplatesData() {
         // get templates data
         this.apiService.getTemplateData(this.spid, 1).subscribe(response => {
+            this.isLoading = false;
             this.templatesData = response.templates;
             this.filteredTemplatesData = this.templatesData;
         });
@@ -736,7 +739,7 @@ checkTemplateName(e:any){
             ]
             }
             let headerMedia ={};
-            if(this.selectedType != 'Text'){
+            if(this.selectedType != 'text'){
                  headerMedia = {
                         header_handle: [this.newTemplateForm.controls.Links.value]
             }
@@ -749,7 +752,7 @@ checkTemplateName(e:any){
                     {
                         type: 'HEADER',
                         format: this.selectedType,
-                        [this.selectedType =='Text' ?'text' :'example' ]: this.selectedType =='Text' ? this.newTemplateForm.controls.Header.value : headerMedia,
+                        [this.selectedType =='text' ?'text' :'example' ]: this.selectedType =='text' ? this.newTemplateForm.controls.Header.value : headerMedia,
                     },
                     {
                         type: 'BODY',

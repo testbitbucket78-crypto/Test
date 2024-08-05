@@ -273,4 +273,76 @@ const WHATSAPPOptions = {
 
 
 
-module.exports = { channelssetUp, postDataToAPI, sendDefultMsg }
+async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables = [], mediaLink = null) {
+    let payload = {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: to,
+        type: "template",
+        template: {
+            name: templateName,
+            language: {
+                code: languageCode
+            }
+        }
+    };
+
+    if (type === 'text') {
+        let components = [];
+
+        if (headerVariables.length > 0) {
+            components.push({
+                type: "header",
+                parameters: headerVariables.map(variable => ({
+                    type: "text",
+                    text: variable
+                }))
+            });
+        }
+
+        if (bodyVariables.length > 0) {
+            components.push({
+                type: "body",
+                parameters: bodyVariables.map(variable => ({
+                    type: "text",
+                    text: variable
+                }))
+            });
+        }
+
+        payload.template.components = components;
+    } else if (['image', 'video', 'doc'].includes(type)) {
+        let headerComponent = {
+            type: "header",
+            parameters: [{
+                type: type,
+                [type]: { link: mediaLink }
+            }]
+        };
+
+        if (bodyVariables.length > 0) {
+            payload.template.components = [
+                headerComponent,
+                {
+                    type: "body",
+                    parameters: bodyVariables.map(variable => ({
+                        type: "text",
+                        text: variable
+                    }))
+                }
+            ];
+        } else {
+            payload.template.components = [headerComponent];
+        }
+    }
+
+    return payload;
+}
+
+// const headerVariables = ['Header Text']; // Variables for header in 'text' type
+// const bodyVariables = ['Body Text 1', 'Body Text 2'];
+
+// const payload = createWhatsAppPayload('text', '918130818921', 'cip_attribute', 'en', headerVariables, bodyVariables, 'https://picsum.photos/id/1/200/300');
+// console.log(JSON.stringify(payload, null, 2));
+
+module.exports = { channelssetUp, postDataToAPI, sendDefultMsg,createWhatsAppPayload }

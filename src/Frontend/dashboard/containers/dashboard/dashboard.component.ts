@@ -32,11 +32,11 @@ export class DashboardComponent implements OnInit {
     SPID = 0;
     nameInitials: string[] = [];
     availableAmount=0;
-   
+    isLoading!:boolean;
 
     constructor(private apiService: DashboardService, private router: Router,private profileService:ProfileService) { }
     ngOnInit() {
-
+        this.isLoading = true;
         this.routerGuard();
         this.getDashboardSubscribers();
         this.getDashboardInteractions();
@@ -168,6 +168,7 @@ export class DashboardComponent implements OnInit {
     getAvailableAmount() {
         const spid = Number(sessionStorage.getItem('SP_ID'));
         this.profileService.showAvailableAmount(spid).subscribe(response => {
+            this.isLoading = false;
             let amountAvilable = response?.AvailableAmout;
             this.availableAmount = amountAvilable?.toFixed(2);
             console.log(this.availableAmount)

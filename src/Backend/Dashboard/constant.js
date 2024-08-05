@@ -8,18 +8,54 @@ const database = "cip_project"
 
 
 //Query for dashboard
-interactionsQuery = `SELECT interaction_status, COUNT(*) AS count
-FROM Interaction
-WHERE SP_ID = ?  AND is_deleted !=1
-AND created_at >= now() - INTERVAL 30 DAY
-GROUP BY interaction_status
+// interactionsQuery = `SELECT interaction_status, COUNT(*) AS count
+// FROM Interaction
+// WHERE SP_ID = ?  AND is_deleted !=1
+// AND created_at >= now() - INTERVAL 30 DAY
+// GROUP BY interaction_status
 
-UNION
+// UNION
 
-SELECT 'Total Interactions' AS interaction_status, COUNT(*) AS count
-FROM Interaction
-WHERE SP_ID = ? AND  is_deleted !=1
-AND created_at >= now()  - INTERVAL 30 DAY; `;
+// SELECT 'Total Interactions' AS interaction_status, COUNT(*) AS count
+// FROM Interaction
+// WHERE SP_ID = ? AND  is_deleted !=1
+// AND created_at >= now()  - INTERVAL 30 DAY; `;
+
+interactionsQuery =`
+WITH LatestInteractions AS (
+    SELECT 
+        InteractionId,
+        SP_ID,
+        customerId,
+        interaction_status,
+        created_at,
+        ROW_NUMBER() OVER (PARTITION BY customerId ORDER BY created_at DESC) AS rn
+    FROM 
+        Interaction
+    WHERE 
+        SP_ID = 55 
+        AND is_deleted != 1 AND IsTemporary !=1
+)
+SELECT 
+    interaction_status, 
+    COUNT(*) AS count
+FROM 
+    LatestInteractions
+WHERE 
+    rn = 1
+GROUP BY 
+    interaction_status
+
+UNION ALL
+
+SELECT 
+    'Total Interactions' AS interaction_status, 
+    COUNT(*) AS count
+FROM 
+    LatestInteractions
+WHERE 
+    rn = 1;
+`
 
 
 campaignsQuery = ` SELECT STATUS,COUNT(*) COUNT FROM Campaign

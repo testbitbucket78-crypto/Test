@@ -52,7 +52,7 @@
 		</div>
 	</div>
 	<sb-loader [isLoading]="isLoading"></sb-loader>
-
+    <sb-loader [isLoading]="isLoadingOnInit"></sb-loader>
 	<div *ngIf="!contacts && !filterIsApplied" class=" my-5 smartreplies-empty-state">
 		<div class="d-flex justify-content-center my-5 align-items-center container-empty-state">
 			<div class="text-center py-5 body-empty-state">
@@ -645,7 +645,7 @@
 							   (keyup)="filterContactOwners()" />
 						<div (click)="stopPropagation($event)">
 							<p *ngFor="let uL of filteredUserList" (click)="selectContactOwner(uL.name)">
-								<span>{{uL.name}} {{uL?.UserType == 'Admin' ? '(Admin)' :''}}</span>
+								<span>{{uL.name}} {{uL?.RoleName == 'Admin' ? '(Admin)' :''}}</span>
 							</p>
 						</div>
 					</div>

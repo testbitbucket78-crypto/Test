@@ -3,7 +3,7 @@
     <p *ngIf="successMessage" class="success">{{successMessage}}</p>
     <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 </div>
-
+<sb-loader [isLoading]="isLoading"></sb-loader>
 <div class="row" *ngIf="selectedTab == 0">
     <div class="col p-0">
         <div class="d-flex pb-2 pt-4 main-header-container">
@@ -80,7 +80,9 @@
                         <p class="start_time">Created on: <span>{{templatesMessageData?.created_at | date:'dd MMM yy, h:mm a'}}</span> 
                                               Modified On: <span>{{templatesMessageData?.updated_at ?(templatesMessageData?.updated_at | date:'dd MMM yy, h:mm a'): 'NA'}}</span></p>
                         <div class="campaigns_section_user">
-                            <div class="d-flex align-items-center"> <img [src]="profilePicture" />
+                            <div class="d-flex align-items-center user-img "> 
+                                <!-- <img [src]="profilePicture" /> -->
+                                <div class="img" *ngIf="!profilePicture">{{apiService.getInitials(templatesMessageData?.created_By)}}</div>
                             <p class="m-0">{{templatesMessageData?.created_By}}</p></div>
                             <p><span>Created By</span></p>
                         </div>
