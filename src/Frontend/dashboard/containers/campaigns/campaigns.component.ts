@@ -3036,4 +3036,7 @@ console.log(this.allTemplatesMain);
 	// 		}
 	// 	}
 	// }
+	removeFile(){
+		this.selecetdCSV = '';
+	}
 }

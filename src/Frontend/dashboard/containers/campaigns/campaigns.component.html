@@ -834,7 +834,7 @@
 									<img class="icon xl" src="assets/img/campaign/image-a@2x.png">
 									<p>Drag & Drop files</p>
 									<p><span>or</span></p>
-									<label class="custom-file-upload">
+									<label *ngIf="!selecetdCSV" class="custom-file-upload w-190">
 										<input type="file"
 											   #file
 											   [multiple]="false"
@@ -842,15 +842,20 @@
 											   style="display:none" 
 											   accept=".xlsx, .xls, .csv"/>
 										<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
+										
 									</label>
-
+									<button *ngIf="selecetdCSV" type="button" class="paper-download file-info-btn mb-1">
+										<span class="file-name">{{selecetdCSV}}</span>
+										<img class="ml-4 remove-file" src="../../../../assets/img/profile/icon-close.svg"
+												(click)="removeFile()" />
+									</button>
 									<button type="button" class="paper-download" (click)="download()">
 										<img src="assets/img/campaign/paper-download.png">
 										Download sample file
 									</button>
 								    
-									<p><span></span></p>
-									<p>{{selecetdCSV}}</p>
+									<!-- <p><span></span></p>
+									<p>{{selecetdCSV}}</p> -->
 								</div>
 				
 								<div class="important_contact_right">
