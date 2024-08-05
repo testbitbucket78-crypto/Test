@@ -435,9 +435,9 @@ export class ContactFilterComponent implements OnInit {
       var bodyData={
         Query:contactFilter
       }
-	  this.query.emit(contactFilter);
 	  //this.contactFilterList.emit(this.ContactListNewFilters)
 	  this.closeFilter();
+	  this.query.emit(contactFilter);
       console.log(bodyData)
     //   this.apiService.applyFilterOnEndCustomer(bodyData).subscribe(allCustomer =>{
     //     var allCustomerList:any=allCustomer
@@ -482,7 +482,8 @@ export class ContactFilterComponent implements OnInit {
     }
 
 	closeFilter(){
-		this.modalReference.close();
+		this.modalReference.close();		
+		this.modalService.dismissAll();
 		this.closeFilterPopup.emit();
 	}
 }
