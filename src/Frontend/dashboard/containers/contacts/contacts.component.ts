@@ -267,7 +267,7 @@ countryCodes = [
    query = '';
    contactOwnerTooltip!: boolean;
    isLoading!: boolean;
-  
+   isLoadingOnInit!:boolean;
  constructor(config: NgbModalConfig, private modalService: NgbModal,
   public phoneValidator:PhoneValidationService,
      public settingsService: SettingsService, private apiService: DashboardService, private _settingsService: SettingsService, private teamboxService: TeamboxService, private fb: FormBuilder, private router: Router, private cdRef: ChangeDetectorRef, public GridService: GridService)
@@ -305,7 +305,7 @@ onButtonClick(data:any, event: any) {
     this.router.navigate(['/dashboard/teambox'], { queryParams: { isNewMessage: true } });
 }
     ngOnInit() {
-      this.isLoading = true;
+      this.isLoadingOnInit = true;
       this.spid = Number(sessionStorage.getItem('SP_ID'));
       document.getElementById('delete-btn')!.style.display = 'none';
       this.showTopNav = true;
@@ -1389,6 +1389,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
       if(this.columnDefs[idx]?.cellRenderer)
       item['cellRenderer'] =  this.columnDefs[idx]?.cellRenderer;
   });
+  this.isLoadingOnInit = false;
   console.log(column);
   this.columnDefs = column;
   this.gridapi.setColumnDefs(column);

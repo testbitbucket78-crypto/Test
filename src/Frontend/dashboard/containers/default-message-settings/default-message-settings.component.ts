@@ -103,7 +103,9 @@ export class DefaultMessageSettingsComponent implements OnInit {
       autoreply: ['']
     });
   }
+  isLoading!:boolean;
   ngOnInit(): void {
+    this.isLoading = true;
     this.spId = Number(sessionStorage.getItem('SP_ID'));
     this.defaultMessageForm =this.prepareUserForm();
     this.value = this.defaultMessageForm.get('value')?.value;
@@ -324,6 +326,7 @@ removeMedia() {
 
   getDefaultMessages() {
     this.apiService.getDefaultMessages(this.spId).subscribe(response => {
+      this.isLoading = false;
         this.defaultMessages = response.defaultaction
         // console.log(response.defaultaction);
         
