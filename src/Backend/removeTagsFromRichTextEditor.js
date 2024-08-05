@@ -98,6 +98,7 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
   try {
     // Parse the input if it is a string
     if (typeof message_variables === 'string') {
+      console.log("string",message_variables)
       try {
         message_variables = JSON.parse(message_variables);
       } catch (err) {
@@ -132,10 +133,10 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
     // Iterate over each message variable
     for (let i = 0; i < message_variables.length; i++) {
       const message_variable = message_variables[i];
-      console.log(`Processing message variable ${i}:`, message_variable);
+      console.log(!message_variable.fallback,`Processing message variable ${i}:`, message_variable);
 
       // Ensure message_variable is an object and has required keys
-      if (typeof message_variable !== 'object' || !message_variable.label || !message_variable.value || !message_variable.fallback) {
+      if (typeof message_variable !== 'object' || !message_variable.label || !message_variable.value ) {
         console.error(`Invalid message variable at index ${i}:`, message_variable);
         continue;
       }
@@ -212,10 +213,10 @@ function convertHTML(htmlString) {
   // Remove any remaining HTML tags
   result = result.replace(/<[^>]*>/g, '');
 // Remove specific attributes from <span> tags
-//result = result.replace(/(<span\s+[^>]*)\scontenteditable="[^"]*"\sclass="[^"]*"([^>]*>)/g, '$1$2');
+result = result.replace(/contenteditable="false" class="e-mention-chip">/g, '');
 // Remove specific attributes from <a> tags
 result = result.replace(/\s_ngcontent-[^"]*=""\s?href="mailto:"\s?title="">/g, '');
-
+result = result.replace(/\s_ngcontent-yyb-c67[^"]*=""\s?title="">/g, '');
   return result;
 }
 
@@ -312,7 +313,7 @@ async function removeTagsFromMessages(originalString) {
 
   // console.log("modifiedString",modifiedString);
   let convertedMessageText = convertHTML(removeEmptyTags(modifiedString))
-  console.log("convertHTML(removeEmptyTags(modifiedString))",convertedMessageText);
+  //console.log("convertHTML(removeEmptyTags(modifiedString))",convertedMessageText);
   return convertedMessageText
 }
 
