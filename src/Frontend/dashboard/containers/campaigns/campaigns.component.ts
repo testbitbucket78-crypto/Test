@@ -945,9 +945,11 @@ formateDate(dateTime:string){
 		console.log(this.ContactListNewFilters)
 	  }
 	  removeFilter(itemIndex:any){
+		
 		this.ContactListNewFilters.splice(itemIndex, 1);
-		this.ContactListNewFilters[0]['filterOperator']='';
-		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters
+		if(this.ContactListNewFilters.length != 0) this.ContactListNewFilters[0]['filterOperator']='';
+		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters;
+		if(this.ContactListNewFilters.length == 0) this.addNewFilter();
 	  }
 	  addFilter(){
 		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters

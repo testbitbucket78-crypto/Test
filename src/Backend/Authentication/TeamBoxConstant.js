@@ -75,6 +75,7 @@ var selectAllQuery = `WITH LatestInteractions AS (
     ) i2 ON i1.customerId = i2.customerId AND i1.InteractionId = i2.latestInteractionId
     WHERE i1.is_deleted != 1
       AND i1.SP_ID = ?
+     and i1.IsTemporary !=1 
 ),
 ContactsWithoutInteraction AS (
     SELECT ec.customerId, ec.Phone_number, ec.Name, 'WithoutInteraction' AS source, 1 AS priority
@@ -96,7 +97,7 @@ ContactsWithLatestInteractionDeletedOrTemporary AS (
     SELECT ec.customerId, ec.Phone_number, li.InteractionId, 'WithLatestInteractionDeletedOrTemporary' AS source, 3 AS priority
     FROM EndCustomer ec
     JOIN LatestInteractions li ON ec.customerId = li.customerId
-    WHERE (ec.IsTemporary = 1 OR ec.isDeleted = 1)
+    WHERE (ec.IsTemporary = 1 and ec.isDeleted = 1 )
       AND ec.SP_ID = ?
 ),
 CombinedResults AS (
@@ -463,7 +464,8 @@ getMediaMessage = `(
         ) 
         AND is_deleted != 1 
         AND (msg_status IS NULL OR msg_status != 10)
-        
+        AND Message.SPID = ?
+        order by Message_id desc
 )
 UNION
 (
@@ -501,6 +503,8 @@ UNION
         InteractionEvents.interactionId = ?
         AND InteractionEvents.SP_ID = ?
          AND InteractionEvents.Type = ?
+         ORDER BY 
+    created_at DESC
 )
 ORDER BY 
     created_at DESC,
