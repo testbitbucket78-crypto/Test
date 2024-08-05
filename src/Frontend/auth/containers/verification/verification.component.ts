@@ -133,7 +133,6 @@ export class VerificationComponent implements OnInit {
 
 
     onVerify() {
-        debugger;
         this.otpFormValue = this.otpForm.value;
         this.apiService.verifyOtp(this.otpFormValue).subscribe((response: any) => {
 
@@ -190,7 +189,6 @@ export class VerificationComponent implements OnInit {
     }
    
     onVerifyphoneOtp() {
-        debugger;
         this.apiService.verifyphoneOtp(this.otpForm.value).subscribe((response: any) => {
             // this.verified = true;
             console.log(this.otpForm.value)
