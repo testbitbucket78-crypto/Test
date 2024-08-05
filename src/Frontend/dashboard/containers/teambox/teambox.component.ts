@@ -286,6 +286,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
+	srchText:string ='';
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
 		public phoneValidator:PhoneValidationService, private datePipe:DatePipe,
 		private dashboardService: DashboardService,
@@ -625,8 +626,11 @@ openNewMessagePopup(){
 	setTimeout(()=>{
 	this.route.queryParams.subscribe(params => {
 		let isMessage = params['isNewMessage'] === 'true' ? true :false;
-		if(isMessage)
-		this.openaddMessage(this.contactadd);				
+		if(isMessage){
+		this.openaddMessage(this.contactadd);			
+		this.header = params['srchText'] ? params['srchText'] :'';	
+		console.log(this.header);	
+		}	
 	});
 },50)
 }	
@@ -1149,10 +1153,15 @@ sendattachfile() {
 							if(msgjson.message)
 							{
 								if(msgjson.message == this.selectedInteraction?.InteractionId){
-									if(msgjson.status=="IN"){
-									this.updateMessages();
+									if(msgjson.msg_status=="IN"){
+									//this.updateMessages();
+									this.getMessagesById(msgjson?.msg_id)
 									}else{
-										this.getMessageData(this.selectedInteraction,true,true)
+										// if(msgjson.msg_status == 1){
+										// this.getMessageData(this.selectedInteraction,true)
+										// }else{
+											this.getMessageData(this.selectedInteraction,true,true)
+										//}
 									}
 								}else{
 									this.updateInteraction(msgjson.message);
@@ -1187,7 +1196,8 @@ sendattachfile() {
 		this.getMessageData(this.selectedInteraction,true);
 	}
 
-	async updateInteraction(id:any){		
+	async updateInteraction(id:any){	
+		console.log(this.interactionList);	
 		let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == id);
 		if(idx >-1){
 			console.log(this.interactionList);
@@ -1540,12 +1550,15 @@ sendattachfile() {
 	async updatePinnedStatus(item: any) {
 		var bodyData = {
 		  AgentId: this.AgentId,
-		  isPinned: item.isPinned,
+		  isPinned: item.PinnedInteractionID ? true :false,
 		  InteractionId: item.InteractionId
 		};
+		let idx = this.interactionList.findIndex((it:any)=> it?.InteractionId ==   item.InteractionId);
 	  
 		this.apiService.updateInteractionPinned(bodyData).subscribe(async response => {
-		  item.isPinned = !item.isPinned;
+			this.interactionList[idx].isPinned = !item.isPinned;
+		  this.interactionList[idx].PinnedInteractionID = this.interactionList[idx].PinnedInteractionID ? null : -1;
+		  console.log(this.interactionList[idx].PinnedInteractionID)
 		//   this.sortItemsByPinnedStatus(); // After updating, sort the items
 		});
 	  }
@@ -1564,6 +1577,25 @@ sendattachfile() {
 //     return 0;
 //   });
 // }
+
+	async getMessagesById(messageId:any){
+		await this.apiService.getsavedMessages(this.SPID,messageId).subscribe(async (data:any) =>{
+			var dataList:any = data?.result;
+			console.log(data);
+			let item = this.selectedInteraction;				
+			let val = dataList ? this.groupMessageByDate(dataList):[];
+			let val1 = dataList ? dataList:[];
+				val.forEach(childObj => {
+					const parentObjIndex = item['messageList']?.findIndex((parentObj:any) => parentObj.date === childObj.date);
+					if (parentObjIndex !== -1) {
+					  item['messageList'][parentObjIndex].items = [...item['messageList'][parentObjIndex].items, ...childObj.items];
+					} else {
+					  item['messageList']?.push(childObj);
+					}
+				})
+				item['allmessages'].push(...val1);
+		});
+	}
 
 	async getFilteredInteraction(filterBy:any){
 		await this.apiService.getFilteredInteraction(filterBy,this.AgentId,this.AgentName,this.SPID).subscribe(async data =>{
@@ -1601,7 +1633,7 @@ sendattachfile() {
 				}
 			
 			})
-		},50)
+		},100)
 			if(selectInteraction){
 				this.interactionList.push(...dataList);
 				this.interactionListMain.push(...dataList);
@@ -2602,6 +2634,7 @@ updateConversationStatus(status:any) {
 		// })
 
 		// });
+		this.getMessageData(this.selectedInteraction,true);
 		if(status =='Open' && !this.selectedInteraction.assignTo){
 			this.updateInteractionMapping(this.selectedInteraction.InteractionId,this.uid,this.TeamLeadId)
 		}
@@ -2706,6 +2739,7 @@ createCustomer() {
   
 
 createInteraction(customerId:any) {
+	if(this.selectedChannel !=''){
 var bodyData = {
 	customerId: customerId,
 	spid:this.SPID,
@@ -2713,6 +2747,7 @@ var bodyData = {
 
 }
 this.apiService.createInteraction(bodyData).subscribe(async( data:any) =>{
+	if(data.status != 409){
 	if(this.modalReference){
 		this.modalReference.close();
 	}
@@ -2728,8 +2763,14 @@ this.apiService.createInteraction(bodyData).subscribe(async( data:any) =>{
 	this.updateConversationStatus('Open');
 	console.log(this.interactionList);
 	//this.getAllInteraction()
-
+}else{
+	this.showToaster(data.msg,'error');
+}
 });
+	}
+	else{
+		this.showToaster('! Channel Selection is required ', 'error');
+	}
 	
 }
 
@@ -2759,11 +2800,12 @@ updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
 	this.ShowAssignOption=false;
 	let name = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 	let agentName = this.userList.filter((items:any) => items.uid == AgentId)[0]?.name;
+	agentName = agentName == name ? 'Self' :agentName;
 	var bodyData = {
 		InteractionId: InteractionId,
 		AgentId: AgentId,
 		MappedBy: MappedBy,
-		action:'Conversation Assinged to ' + agentName,
+		action:agentName ? ('Conversation Assinged to ' + agentName) : 'Conversation Unassigned',
 		action_at:new Date(),
 		action_by:name,
 		SP_ID:this.SPID,
@@ -2772,6 +2814,7 @@ updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
 	this.apiService.resetInteractionMapping(bodyData).subscribe(responseData1 =>{
 		this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
 			this.apiService.getInteractionMapping(InteractionId).subscribe(mappingList =>{
+				this.getMessageData(this.selectedInteraction,true)
 				var mapping:any  = mappingList;
 				this.selectedInteraction['assignTo'] =mapping?mapping[mapping.length - 1]:'';
 				this.selectedInteraction['assignAgent'] =mapping && mapping?.length>0?mapping[mapping.length - 1]?.name:'';
@@ -2854,6 +2897,9 @@ deleteNotes(){
 		Message_id:this.selectedNote.Message_id,
 		deleted:1,
 		deleted_by:this.AgentId,
+		action:'Conversation ',
+		action_at:new Date(),
+		action_by:name,
 		deleted_at:new Date()
 	}
 	////console.log(bodyData)
@@ -2958,10 +3004,12 @@ sendMessage(){
 								}
 								
 								if(this.showChatNotes=='text'){
-									var allmessages =this.selectedInteraction.allmessages
-									this.selectedInteraction.lastMessage= lastMessage
-									allmessages.push(lastMessage)
-									this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
+									// var allmessages =this.selectedInteraction.allmessages
+									// this.selectedInteraction.lastMessage= lastMessage
+									// allmessages.push(lastMessage)
+									// this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
+									// console.log(this.selectedInteraction.messageList);
+									this.getMessagesById(insertId)
 									setTimeout(() => {
 										this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
 									}, 500);
@@ -3032,12 +3080,25 @@ sendMessage(){
 		$('.modal-backdrop').remove();
 	  }
 
+	  convertHtmlToText(html: string): string {
+		const tempElement = document.createElement('div');
+		tempElement.innerHTML = html;
+	
+		let text = tempElement.textContent || tempElement.innerText || '';
+	
+		// Optional: Convert multiple spaces to a single space
+		text = text.replace(/\s\s+/g, ' ');
+	
+		return text;
+	  }
+
       limitCharacters(message: string) {
+		let msg = this.convertHtmlToText(message);
         let maxLength = 22;
-        if (message.length <= maxLength) {
-        return message;
+        if (msg.length <= maxLength) {
+        return msg;
         } else {
-		return this.showFullMessage ? message : message.substring(0,maxLength) + "...";
+		return this.showFullMessage ? msg : msg.substring(0,maxLength) + "...";
         }
     }
 

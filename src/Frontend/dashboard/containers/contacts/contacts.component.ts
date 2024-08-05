@@ -300,9 +300,10 @@ countryCodes = [
 
 onButtonClick(data:any, event: any) {
  // this.activeDistrictId = data.schoolDistrictID;
+ console.log(data);
   const target = event.target;  
    // this.router.navigateByUrl(`Dashboard/teambox?isNewMessage=${true}`);
-    this.router.navigate(['/dashboard/teambox'], { queryParams: { isNewMessage: true } });
+    this.router.navigate(['/dashboard/teambox'], { queryParams: { isNewMessage: true,srchText: data?.Name} });
 }
     ngOnInit() {
       this.isLoading = true;
