@@ -544,7 +544,9 @@ input:focus {
     border: 1px solid #ebebeb;
     width: 122px;
 }
-
+.sidebar .box4{
+    word-wrap: break-word;
+}
 .dropdown-menu li {
     position: relative;
     color: #6149cd;

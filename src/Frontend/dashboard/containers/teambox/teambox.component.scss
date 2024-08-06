@@ -914,12 +914,21 @@ img.no-dp {
     color: white !important;
     text-decoration: underline !important;
 }
-
+ ::ng-deep  .left .message_text .isLink{
+    color: black !important;
+    
+}
+::ng-deep  .left .message_text .isLink:hover{
+    color: orange !important;
+    font-style: italic;
+}
+::ng-deep  .message_text .isLink{
+    color: white !important;
+}
 ::ng-deep .content .message_text .e-rte-anchor:hover {
     font-style: italic;
 }
    ::ng-deep .isLink {
-        color: rgb(245, 186, 76) !important;
         font-style: italic;
         text-decoration: underline !important;
       }

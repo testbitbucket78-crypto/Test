@@ -184,6 +184,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	unreadList:number = 0;
 	interactionListMain:any=[];
 	selectedTemplate:any  = [];
+	messageMediaFile: string = '';
 	variableValues:string[]=[];
 	agentsList:any = [];
 	mentionAgentsList:any = [];
@@ -283,7 +284,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isMessageCompletedMedia:boolean = false;
 	isMessageCompletedText:boolean = false;
 	isShowAttributes:boolean = false;
-	
+	isUploadingLoader! : boolean;
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
 	srchText:string ='';
@@ -983,6 +984,7 @@ sendattachfile() {
 		$('.modal-backdrop').remove();
 	}
 	onFileChange(event: any) {
+		this.isUploadingLoader = true;
 		let files: FileList = event.target.files;
 		this.saveFiles(files);
 		
@@ -1053,6 +1055,7 @@ sendattachfile() {
 				this.sendattachfile();
 				console.log(this.messageMeidaFile);
 				this.showAttachmenOption=false;
+				this.isUploadingLoader = false;
 			}
 
 			});
@@ -1894,7 +1897,7 @@ sendattachfile() {
 
 		let Interaction = this.interactionList[idx];
 		//if(this.selectedInteractionList.findIndex(i => i == idx) == -1){
-			//this.selectedInteractionList.push(idx) 
+			//this.selectedInteractionList.push(idx)
 			await this.getInteractionDataById(idx);
 		//}
 		for(const item of this.interactionList) {
@@ -2947,7 +2950,10 @@ sendMessage(){
 		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
 		var cDay = String(objectDate.getDate()).padStart(2, '0');
 		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
-
+		if(this.messageMediaFile != ''){
+			this.messageMeidaFile = this.messageMediaFile;
+			this.messageMediaFile = '';
+		}
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
 			CustomerId: this.selectedInteraction.customerId,
@@ -3146,6 +3152,11 @@ sendMessage(){
 			
 		
 			previewTemplate() {
+				if(this.selectedTemplate.media_type) {
+
+				this.messageMediaFile = this.selectedTemplate.Links;
+				this.mediaType = this.selectedTemplate.media_type;
+				}
 				let isVariableValue='';
 				if(this.selectedTemplate.media_type == 'text') {
 					isVariableValue = this.selectedTemplate.Header + this.selectedTemplate.BodyText;

@@ -482,7 +482,7 @@
 								<button *ngIf="isEdit==false" type="button" (click)="smartReplySuccess(smartreplysuccess)"
 								  class="btn5 btn-block col-1 mt-3 ">Save
 								</button>
-								<button *ngIf="isEdit==true" type="button" (click)="updateSmartReplies(smartreplysuccess,smartreplyfailed)"
+								<button *ngIf="isEdit==true" type="button" (click)="smartReplySuccess(smartreplysuccess)"
 								class="btn5 btn-block col-1 mt-3 ">Save
 							  </button>
 							  </div>
@@ -1115,7 +1115,11 @@
 							  </div>
 							  <div class="modal-footer popfooter row text">
 								  <div class="col-md-3">
-									  <button type="button" class="btn btn-outline-dark" (click)="sendNewSmartReply(smartreplysuccess,smartreplyfailed)" data-bs-dismiss="modal"
+									  <button *ngIf="isEdit==false" type="button" class="btn btn-outline-dark" (click)="sendNewSmartReply(smartreplysuccess,smartreplyfailed)" data-bs-dismiss="modal"
+							aria-label="Close" data-bs-target="#smartrepliesModal">
+							              Confirm
+									  </button>
+									  <button *ngIf="isEdit==true" type="button" class="btn btn-outline-dark" (click)="updateSmartReplies(smartreplysuccess,smartreplyfailed)" data-bs-dismiss="modal"
 							aria-label="Close" data-bs-target="#smartrepliesModal">
 							              Confirm
 									  </button>
