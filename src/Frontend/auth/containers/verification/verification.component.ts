@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { FormControl, FormBuilder} from '@angular/forms';
@@ -26,13 +26,18 @@ export class VerificationComponent implements OnInit {
 	warnMessage = '';
     successDiv!: any;
     errorDiv!: any;
+    
+    isverifyphoneOtp!: boolean;
+    isverfyEmailOtp!: boolean;
+    phoneOtpTimer: number = 0;
+    emailotpTimer: number = 0;
 
     otpFormValue:any;
     otpForm:any;
     title = 'formValidation';
     submitted = false;
     values: any;
-    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder) { 
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, private cdr: ChangeDetectorRef) { 
         
         this.otpForm = this.formBuilder.group({
             otpfieldvalue: sessionStorage.getItem('otpfieldEmailvalue'),
@@ -103,6 +108,8 @@ export class VerificationComponent implements OnInit {
             if (response.status === 200) {
                 this.verifyButton1Clicked = true;
                 let  successMessage = "! Success";
+                this.verfyOtp("email", this.otpForm?.value?.otp);
+                this.cdr.detectChanges();
                 this.successDiv = document.getElementById("success-message");
                 if (this.successDiv) {
                     this.successDiv.innerHTML = successMessage;
@@ -119,13 +126,16 @@ export class VerificationComponent implements OnInit {
 
 
                 if (error.status === 401) {
+                    this.isverfyEmailOtp = false
                     let errorMessage = "! Invalid Otp.";
                     this.errorDiv = document.getElementById("error-message");
+                    this.startOtpTimer("email", 30);
                     if (this.errorDiv) {
                         this.errorDiv.innerHTML = errorMessage;
                     }
                     this.verifyButton1Clicked = false;
                 } else if (error.status === 410) {
+                    this.isverfyEmailOtp = false
                     let errorMessage = "! Otp Expired.";
                      this.errorDiv = document.getElementById("error-message");
                     if (this.errorDiv) {
@@ -143,8 +153,8 @@ export class VerificationComponent implements OnInit {
 
 
     }
+   
     onVerifyphoneOtp() {
-     
         this.apiService.verifyphoneOtp(this.otpForm.value).subscribe((response: any) => {
             // this.verified = true;
             console.log(this.otpForm.value)
@@ -154,6 +164,8 @@ export class VerificationComponent implements OnInit {
             if (response.status === 200) {
                 this.verifyButton2Clicked = true;
                 let successMessage = "! Success.";
+                this.verfyOtp("phone",this.otpForm?.value?.otp);
+                this.cdr.detectChanges();
                 this.successDiv = document.getElementById("success-message1");
                 if (this.successDiv) {
                     this.successDiv.innerHTML = successMessage;
@@ -167,6 +179,8 @@ export class VerificationComponent implements OnInit {
 
 
                 if (error.status === 401) {
+                    this.isverifyphoneOtp = false;
+                   this.startOtpTimer("phone", 30);
                     let errorMessage = "! Invalid Otp.";
                      this.errorDiv = document.getElementById("error-message1");
                     if (this.errorDiv) {
@@ -174,6 +188,7 @@ export class VerificationComponent implements OnInit {
                     }
                     this.verifyButton2Clicked = false;
                 } else if (error.status === 410) {
+                    this.isverifyphoneOtp = false;
                     let errorMessage = "! Otp Expired.";
                     this.errorDiv = document.getElementById("error-message1");
                     if (this.errorDiv) {
@@ -191,6 +206,57 @@ export class VerificationComponent implements OnInit {
 
     }
 
+    verfyOtp(type: 'phone' | 'email', otp: number){
+        if(type === 'email'){
+            this.isverfyEmailOtp = true;
+            const verificationData = {
+                type: type,
+                isverfyEmailOtp: this.isverfyEmailOtp,
+                otp: otp,
+            };
+            sessionStorage.setItem('verificationDataEmail', JSON.stringify(verificationData));
+        } else if(type === 'phone'){
+            this.isverifyphoneOtp = true;
+            const verificationData = {
+                type: type,
+                isverifyphoneOtp: this.isverifyphoneOtp,
+                otp: otp,
+            };
+            sessionStorage.setItem('verificationDataPhone', JSON.stringify(verificationData));
+        }
+        if(this.isverfyEmailOtp && this.isverifyphoneOtp){
+            this.onSubmitRegisterform();
+        }
+    }
+    startOtpTimer(type: 'phone' | 'email', seconds: number) {
+        if (type === 'phone') {
+            let phoneOtpIntervalId: any;
+          this.phoneOtpTimer = seconds;
+          if (phoneOtpIntervalId) {
+            clearInterval(phoneOtpIntervalId);
+          }
+          phoneOtpIntervalId = setInterval(() => {
+            this.phoneOtpTimer--;
+            if (this.phoneOtpTimer === 0) {
+              clearInterval(phoneOtpIntervalId);
+            }
+            this.cdr.detectChanges(); 
+          }, 1000);
+        } else if (type === 'email') {
+            let otpIntervalId: any;
+          this.emailotpTimer = seconds;
+          if (otpIntervalId) {
+            clearInterval(otpIntervalId);
+          }
+          otpIntervalId = setInterval(() => {
+            this.emailotpTimer--;
+            if (this.emailotpTimer === 0) {
+              clearInterval(otpIntervalId);
+            }
+            this.cdr.detectChanges(); 
+          }, 1000);
+        }
+      }
     resendOtp() {
         let values = {
             "email_id":this.email_id,
@@ -234,6 +300,8 @@ export class VerificationComponent implements OnInit {
                 if (response.status === 200) {
                     $("#successRegister").modal('show'); 
                     sessionStorage.removeItem('formValues')
+                    sessionStorage.removeItem('verificationDataEmail')
+                    sessionStorage.removeItem('verificationDataPhone')
                 }
             },
                 (error) => {

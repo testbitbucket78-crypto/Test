@@ -128,6 +128,7 @@ export class UserSettingsComponent implements OnInit {
     errorMessage = '';
     warningMessage = '';
     login_uid:any;
+    isLoading!:boolean;
     constructor(private _settingsService: SettingsService, private datepipe: DatePipe, public GridService: GridService,
         public phoneValidator:PhoneValidationService,) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
@@ -140,6 +141,7 @@ export class UserSettingsComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.isLoading = true;
         this.userDetailForm = this.prepareUserForm();
         this.getUserList();
         this.getRolesList(); 
@@ -238,6 +240,7 @@ getPhoneNumberValidation(){
 
     getRolesList() {
         this._settingsService.getRolesList(this.sp_Id).subscribe(result => {
+            this.isLoading = false;
             if (result) {
                 this.rolesList = result?.getRoles;
             }

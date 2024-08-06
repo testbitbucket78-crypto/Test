@@ -65,7 +65,7 @@
 									<div class="contacts_left">
 										<img *ngIf="item.PinnedInteractionID" (click)="updatePinnedStatus(item)" class="pin_icon"
 											src="/assets/img/teambox/pinned.svg" />
-										<img *ngIf="!item.isPinned" (click)="updatePinnedStatus(item)" class="pin_icon"
+										<img *ngIf="!item.PinnedInteractionID" (click)="updatePinnedStatus(item)" class="pin_icon"
 											src="/assets/img/teambox/pin.svg" />
 										<img *ngIf="item.avatar" class="profile_icon"
 											src="/assets/img/teambox/Richie_1.png" />

@@ -1203,6 +1203,7 @@ stopPropagation(event: Event) {
 	
 
 	sendNewSmartReply(smartreplysuccess: any, smartreplyfailed: any) {
+		this.isLoading = true;
 		var data = {
 		  SP_ID: sessionStorage.getItem('SP_ID'),
 		  Title: this.newReply.value.Title,
@@ -1228,6 +1229,7 @@ stopPropagation(event: Event) {
 			(response: any) => {
 			  console.log(response);
 			  if (response.status === 200) {
+				this.isLoading = false;
 				this.location.replaceState(this.location.path());
 				this.modalService.dismissAll(smartreplysuccess);
 				this.reloadCurrentRoute();
@@ -1468,8 +1470,8 @@ stopPropagation(event: Event) {
 	toggleSideBar() {
 		this.showSideBar = !this.showSideBar
 	}
-
 	getRepliesByID(data:any) {
+		this.isLoading = true;
 		this.apiService.sideNav(data.ID).subscribe((response => {
 			this.data = response;
 			console.log(this.data)
@@ -1499,6 +1501,8 @@ stopPropagation(event: Event) {
 						});
 				   }
 			}
+			this.showSideBar = true;
+			this.isLoading = false;
 			console.log(this.repliesData.ActionList,'Action List')
 			this.items = this.data[0]		
 		}))
@@ -1512,6 +1516,7 @@ stopPropagation(event: Event) {
 	  }
 
 	deleteRepliesById (data:any) {
+		this.isLoading = true;
 		let deleteId = {ID:data[0].ID};
 		this.apiService.deletesmartReply(deleteId).subscribe((response) => {
 			    this.getReplies();
@@ -1558,6 +1563,7 @@ stopPropagation(event: Event) {
 	 }
 
 	 updateSmartReplies(smartreplysuccess: any, smartreplyfailed: any) {
+		this.isLoading = true;
 	  const BodyData = {
 			ID: this.repliesData.ID,
 			Title: this.newReply.get('Title')?.value,
@@ -1582,8 +1588,12 @@ stopPropagation(event: Event) {
 			.subscribe(
 			   (response: any) => {
 				if (response.status == 200) {
-					$("#smartrepliesModal").modal('hide'); 
-					this.modalService.open(smartreplysuccess);
+					this.isLoading = false;
+					//$("#smartrepliesModal").modal('hide'); 
+					//this.modalService.open(smartreplysuccess);
+					this.modalService.dismissAll(smartreplysuccess);
+					this.location.replaceState(this.location.path());
+				    this.reloadCurrentRoute();
 				   }
 				},
 				(error: any) => {

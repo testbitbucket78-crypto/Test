@@ -3,7 +3,7 @@
     <p *ngIf="successMessage" class="success">{{successMessage}}</p>
     <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 </div>
-
+<sb-loader [isLoading]="isLoading"></sb-loader>
 <div class="row" *ngIf="selectedTab == 0">
     <div class="col p-0">
         <div class="d-flex pb-2 pt-4 main-header-container">

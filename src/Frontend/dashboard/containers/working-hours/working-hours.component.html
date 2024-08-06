@@ -4,6 +4,7 @@
         <p *ngIf="successMessage" class="success">{{successMessage}}</p>
         <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
     </div>
+    <sb-loader [isLoading]="isLoading"></sb-loader>
     <div class="col-sm-4">
         <div class="setting-card">
             <span class="working-hour-heading px-2">Working Hours</span>

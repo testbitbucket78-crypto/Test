@@ -4,7 +4,7 @@
         <p *ngIf="successMessage" class="success">{{successMessage}}</p>
         <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
     </div>
-
+    <sb-loader [isLoading]="isLoading"></sb-loader>
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">
             <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" *ngIf="!settingsService.checkRoleExist('36')" (click)="selectedTab = 1">Default
