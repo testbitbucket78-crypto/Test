@@ -901,7 +901,7 @@ sendattachfile() {
 		this.settingService.clientAuthenticated(input).subscribe(response => {
 			//response.status === 404
 			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WhatsApp Official') {
-				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+				this.showToaster('The Channel of this conversation is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error')
 				return;
 			}
 			//response.status === 200 && response.message === 'Client is ready !
@@ -1572,7 +1572,7 @@ sendattachfile() {
 		});
 	}
 	
-	async getAllInteraction(selectInteraction:any=true){
+	async getAllInteraction(selectInteraction:any=true,isSearchInteraction:boolean=false){
 		let bodyData={
 			SearchKey:this.interactionSearchKey,
 			FilterBy:this.interactionFilterBy,
@@ -1588,7 +1588,7 @@ sendattachfile() {
 			var dataList:any = data?.conversations;
 			this.isCompleted = data?.isCompleted
 			console.log(dataList,'DataList *****')
-			if(this.selectedInteraction){
+			if(this.selectedInteraction && !isSearchInteraction){
 				this.selectedInteraction = dataList.filter((item: any)=> item.InteractionId == this.selectedInteraction.InteractionId)[0];
 			}
 			//this.getAssicatedInteractionData(dataList,selectInteraction)
@@ -1610,10 +1610,11 @@ sendattachfile() {
 				this.interactionListMain= dataList;
 			}
 			this.unreadList = this.interactionList.filter((item:any) => item?.UnreadCount != 0).length;
-		if(this.selectedInteraction)
+		if(!isSearchInteraction){
 		//this.selectedInteractionList =
 		console.log('selectInteraction(0)');
 		this.selectInteraction(0);
+		}
 			
 		});
 		this.scrollChatToBottom()
@@ -1641,7 +1642,7 @@ sendattachfile() {
 		this.interactionSearchKey = '';
 		this.currentPage = 0;
 		this.pageSize = 10;
-		this.getAllInteraction(false);
+		this.getAllInteraction(false,true);
 	}
 	
 	}
@@ -2041,6 +2042,7 @@ updateCustomer(){
 				}
 				this.showToaster('Contact information updated...','success');
 				//this.getAllInteraction(false);
+				this.updateContactData();
 				this.getCustomers();
 				this.filterChannel='';
 			}
@@ -2080,8 +2082,18 @@ updateCustomer(){
 		// });
 	}
 	else {
-		this.editContact.markAllAsTouched();
+		this.EditContactForm.markAllAsTouched();
 	} 
+}
+
+updateContactData(){
+	let data = this.selectedInteraction;
+	for(let prop in data){
+		let value = data[prop as keyof typeof data];
+		if(this.editContact.get(prop)){
+			this.selectedInteraction[prop as keyof typeof data] = this.editContact.get(prop)?.value;
+		}
+	}
 }
 
 copyContactFormData() {
@@ -2713,6 +2725,7 @@ this.apiService.createInteraction(bodyData).subscribe(async( data:any) =>{
 	this.interactionList = [...data.interaction, ...this.interactionList]
 	this.interactionListMain = [...data.interaction, ...this.interactionListMain];
 	this.selectInteraction(0);
+	this.updateConversationStatus('Open');
 	console.log(this.interactionList);
 	//this.getAllInteraction()
 
@@ -2857,7 +2870,7 @@ checkAuthentication(){
 	};
 	this.settingService.clientAuthenticated(input).subscribe(response => {
 		if (response.status === 404 && this.showChatNotes != 'notes' ) {
-			this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+			this.showToaster('The Channel of this conversation is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error')
 			return;
 		}
 	})
@@ -2914,7 +2927,7 @@ sendMessage(){
 		this.settingService.clientAuthenticated(input).subscribe(response => {
 
 			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WhatsApp Official') {
-				this.showToaster('Oops You\'re not Authenticated ,Please go to Account Settings and Scan QR code first to link your device.','warning')
+				this.showToaster('The Channel of this conversation is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error')
 				return;
 			}
 			//(response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes'
