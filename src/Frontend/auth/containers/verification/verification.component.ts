@@ -160,7 +160,7 @@ export class VerificationComponent implements OnInit {
             (error) => {
 
 
-                if (error.status === 401) {
+                if (error.status === 403) {
                     this.isverfyEmailOtp = false
                     let errorMessage = "! Invalid Otp.";
                     this.errorDiv = document.getElementById("error-message");
@@ -212,7 +212,7 @@ export class VerificationComponent implements OnInit {
             (error) => {
 
 
-                if (error.status === 401) {
+                if (error.status === 403) {
                     this.isverifyphoneOtp = false;
                     let errorMessage = "! Invalid Otp.";
                      this.errorDiv = document.getElementById("error-message1");

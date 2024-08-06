@@ -23,13 +23,13 @@
                 <div (click)="setChannelId('WhatsApp Web')" [ngClass]="{'card1_Wb': channel_id === 'WhatsApp Web'}" class="account-card card1 mb-3">
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
-                        <button class="account-btn" (click)="openDiv()">Connect</button>
+                        <!-- <button class="account-btn" (click)="openDiv()">Connect</button> -->
                     </div>
                     <div>
                         <h5>WhatsApp Web</h5>
                         <p>WhatsApp Web automation of your WhatsApp Personal or WhatsApp Business numbers</p>
                         <div class="whatsapp-cSonnect">
-                            <span class="font-weight-bold">{{ numberCount !== undefined ? numberCount : 0 }} Connected</span>
+                            <span class="font-weight-bold">{{ numberCount !== undefined ? numberCount : 0 }} Configured</span>
                         <span class="grey">&nbsp;&nbsp;&nbsp;></span>
                     </div>
                     </div>
@@ -37,13 +37,13 @@
                 <div (click)="setChannelId('WhatsApp Official')" [ngClass]="{'card2_Wof': channel_id === 'WhatsApp Official'}" class="account-card card2 mb-3">
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
-                        <button class="account-btn" (click)="openDiv()">Connect</button>
+                        <!-- <button class="account-btn" (click)="openDiv()">Connect</button> -->
                     </div>
                     <div>
                         <h5>WhatsApp Official</h5>
                         <p>WhatsApp Official API to automate and scale your business messaging requirements</p>
                         <div class="whatsapp-connect">
-                        <span>0 Connected</span>
+                        <span>0 Configured</span>
                         <span class="grey">&nbsp;&nbsp;&nbsp;></span>
                         </div>
                     </div>
@@ -56,13 +56,14 @@
                 <div class="connection-card"  *ngFor="let detail of whatsAppDetails">
                     <div class="account-card-header" >
                         <div >
-                            <div class="card-desc">Connected Number : {{ detail.connected_id}}</div>
+                            <div class="card-desc">Configured Number : {{ detail.connected_id}}</div>
                             <div class="d-flex">
-                                <div class="card-desc">Channel Id: {{ detail.id}}</div>
+                                <!-- <div class="card-desc">Channel Id: {{ detail.id}}</div> -->
                                 <div *ngIf="!detail.channel_status" class="card-desc">
-                                  <img src="../../../../assets/img/settings/not-connected.svg" alt="error" />Not connected</div>
+                                  <img src="../../../../assets/img/settings/not-connected.svg" alt="error" />Disconnected</div>
                                 <div *ngIf="detail.channel_status" class="card-desc">
                                   <img src="../../../../assets/img/settings/connected.svg" alt="error" />Connected</div>
+                                  <button class="account-btn h-35" (click)="openDiv()">Connect</button>
                             </div>
                         </div>
                         <!-- <div  >

@@ -547,7 +547,16 @@ select {
 
    .scroll-custom{
     height: 48vh;
+    position: relative;
     overflow-y: auto;
+    .no-data-found {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 50%; 
+      width: 100%;  
+      position: absolute;
+    }
    }
 
    .account-btn:disabled{
