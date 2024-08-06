@@ -128,6 +128,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	QuickReplyListMain:any=[];
 	filterTemplateOption:any='';
 	selectedTemplate:any  = [];
+	mediaLink: string= '';
 	Media:any;
 	fileName!:string;
 	fileSize!:number;
@@ -603,13 +604,13 @@ showAddSmartRepliesModal() {
 		console.log(this.messageMeidaFile)
 		let mediaContent:any;
 		if(this.mediaType == 'image/jpeg' || this.mediaType == 'image/jpg' || this.mediaType == 'image/png' || this.mediaType == 'image/webp') {
-			mediaContent ='<p><img style="width:100%; height:100%" src="'+this.messageMeidaFile+'" /></p><p style="color: #B8B8B8"></p>'
+			mediaContent ='<p><img style="width:100%; height:100%" src="'+this.messageMeidaFile+'" /></p>'
 		  }
 		  else if(this.mediaType == 'video/mp4') {
-			  mediaContent ='<p><video controls width="100%" height="100%" src="'+this.messageMeidaFile+'"></video></p><p style="color: #B8B8B8"></p>'
+			  mediaContent ='<p><video controls width="100%" height="100%" src="'+this.messageMeidaFile+'"></video></p>'
 		  }
 		  else if(this.mediaType == 'application/pdf') {
-			  mediaContent ='<p><a href="'+this.messageMeidaFile+'"><img style="width:14px; height:17px" src="../../../../assets/img/settings/doc.svg" />'+this.fileName+'</a></p><p style="color: #B8B8B8"></p>'
+			  mediaContent ='<p><a href="'+this.messageMeidaFile+'"><img style="width:14px; height:17px" src="../../../../assets/img/settings/doc.svg" />'+this.fileName+'</a></p>'
 		  }
 
 		this.chatEditor.value = mediaContent;
@@ -1214,7 +1215,9 @@ stopPropagation(event: Event) {
 		  ReplyActions: this.assignedAgentList || [],
 		  Tags: this.assignedTagList || []
 		};
-
+		if(data.ReplyActions.length > 0) {
+		data.ReplyActions[0].Media = this.mediaLink
+		}
 		let isMessage:boolean = false
 		for (const action of data.ReplyActions) {
 		   if (action.ActionID === 0) {
@@ -1439,6 +1442,7 @@ stopPropagation(event: Event) {
 			}
 
 		replaceVariableInTemplate() {
+			this.mediaLink = this.selectedTemplate.Links;
 			this.allVariablesList.forEach((placeholder, index) => {
 				const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
 				if(this.selectedTemplate.media_type == 'text') {

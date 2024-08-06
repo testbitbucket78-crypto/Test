@@ -513,11 +513,11 @@ async function isClientActive(spid) {
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
   //console.log("messageThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
-  if (channelType == 'WhatsApp Official' || channelType == 1) {
+  if (channelType == 'WhatsApp Official' || channelType == 1  || channelType == 'WA API') {
 
     let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
     return respose;
-  } if (channelType == 'WhatsApp Web' || channelType == 2) {
+  } if (channelType == 'WhatsApp Web' || channelType == 2  || channelType == 'WA Web') {
     // if (web.isActiveSpidClient(spid)) {
     // let respose = await middleWare.postDataToAPI(spid, from, type, text, media)
     //return respose;
@@ -573,7 +573,7 @@ async function autoResolveExpireInteraction() {
         let result = await db.excuteQuery(updateQuery, ['Resolved']);
         logger.log(record.interaction_id,"result",result?.affectedRows)
         let getMapping = await db.excuteQuery(`select * from InteractionMapping where InteractionId =?`, [record.interaction_id])
-        if (updateQuery?.length > 0) {
+        if (result?.length > 0) {
           let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [record.interaction_id]);
           
         }

@@ -196,7 +196,7 @@ const updateTags = (req, res) => {
     //  .catch(err => logger.error('Error updating tags', { error: err.message, stack: err.stack }));
 };
 
-const blockCustomer = (req, res) => {
+const blockCustomer = async (req, res) => {
     customerId = req.body.customerId;
     isBlocked = req.body.isBlocked;
     let blockedQuery = val.blockCustomerQuery;
@@ -207,6 +207,15 @@ const blockCustomer = (req, res) => {
 
     var values = [[customerId, isBlocked]];
     // logger.info('Received request for blockCustomer', { customerId, isBlocked });
+
+    let getInteractionWithCId = await db.excuteQuery('select * FROM Interaction where customerId = ?  and   is_deleted !=1 order by created_at desc limit 1 ',[customerId])
+
+    let myUTCString = new Date().toUTCString();
+    const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
+
+    let actiond = await db.excuteQuery(actionQuery, [getInteractionWithCId[0]?.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text']);
+
     db.runQuery(req, res, blockedQuery, [isBlocked, customerId])
     //  .then(() => logger.info('Customer blocked successfully', { customerId }))
     // .catch(err => logger.error('Error blocking customer', { error: err.message, stack: err.stack }));
@@ -466,7 +475,7 @@ const getAllMessageByInteractionId = async (req, res) => {
         if (req.params.Type !== 'media') {
             result = await db.excuteQuery(val.getallMessagesWithScripts, [req.params.InteractionId, req.params.Type, req.params.spid, req.params.InteractionId, req.params.Type, req.params.spid, parseInt(req.params.RangeStart), endRange]);
         } else {
-            result = await db.excuteQuery(val.getMediaMessage, [req.params.InteractionId,req.params.spid, req.params.InteractionId, req.params.spid, req.params.Type, parseInt(req.params.RangeStart), endRange]);
+            result = await db.excuteQuery(val.getMediaMessage, [req.params.InteractionId, req.params.spid, req.params.InteractionId, req.params.spid, req.params.Type, parseInt(req.params.RangeStart), endRange]);
         }
         if (result?.length === 0 || result?.length < endRange) {
             isCompleted = true;
@@ -512,10 +521,17 @@ const updateMessageRead = (req, res) => {
     }
 };
 
-const deleteMessage = (req, res) => {
+const deleteMessage = async (req, res) => {
     //logger.info('Starting deleteMessage function');
+    //Type=notes
     var messageQuery = "UPDATE Message SET deleted_at ='" + req.body.deleted_at + "', is_deleted =" + req.body.deleted + ", deleted_by =" + req.body.deleted_by + " WHERE Message_id =" + req.body.Message_id;
     var values = [];
+
+    let myUTCString = new Date().toUTCString();
+    const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
+
+    let actiond = await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'notes']);
     db.runQuery(req, res, messageQuery, [values]);
     //  logger.info('deleteMessage function completed successfully');
 };
@@ -626,7 +642,7 @@ const insertMessage = async (req, res) => {
             let mediaSize = req.body.mediaSize;
             let spNumber = req.body?.spNumber;
             let assignAgent = req.body?.assignAgent;
-            var msgVar = req.body?.MessageVariables;            ;
+            var msgVar = req.body?.MessageVariables;;
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id]);
             let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId, SPID]);
             let spchannel = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [SPID]);
@@ -660,15 +676,15 @@ const insertMessage = async (req, res) => {
 
                 let results;
                 // console.log(msgVar != null,"msgVar",msgVar,msgVar !='')
-                if (msgVar != null && msgVar !='') {
-                  
+                if (msgVar != null && msgVar != '') {
+
                     results = await removeTags.getDefaultAttribue(msgVar, SPID, customerId);
-                    console.log("atribute result ",results)
+                    console.log("atribute result ", results)
                     placeholders.forEach(placeholder => {
                         const result = results.find(result => result.hasOwnProperty(placeholder));
                         //  console.log(placeholder,"place foreach",results)
                         const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
-                        console.log(replacement,"replacement placeholder ",placeholder)
+                        console.log(replacement, "replacement placeholder ", placeholder)
                         content = content.replace(`{{${placeholder}}}`, replacement);
                     });
                 } else {

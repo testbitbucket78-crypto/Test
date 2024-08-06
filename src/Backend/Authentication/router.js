@@ -178,6 +178,6 @@ router.get('/copyCampaign/:CampaignId',authenticateToken,CampaignsController.cop
 router.post('/alertUser',authenticateToken,CampaignsController.campaignAlerts);
 router.get('/exitCampaign/:title/:spid/:Id',authenticateToken,CampaignsController.isExistCampaign);
 router.post('/processQuery',authenticateToken,CampaignsController.processContactQueries)
-app.get('/csvSample', authenticateToken,CampaignsController.download)
+router.get('/csvSample', authenticateToken,CampaignsController.download)
 
 module.exports = router;
