@@ -42,7 +42,8 @@ async function AssignToContactOwner(sid, newId, agid, custid) {
 
       let updateInteractionMapQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES ?`
       let values = [[newId, contactOwnerUid, '-1', 1]] // 2ng agid is MappedBy  values in teambox uid is used here also
-      let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values])
+      let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
+      console.log("AssignToContactOwner ---contact owner assign" ,updateInteractionMap)
     } else {
       assignToLastAssistedAgent(sid, newId, agid, custid)
     }
@@ -77,7 +78,7 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
     console.log("if ----- LastAssistedAgent")
     let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES ?`;
     let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0].AgentId, '-1', 1]]]);
-    console.log(assignAgent)
+    console.log("LastAssistedAgent",assignAgent)
   } else if (RoutingRules?.length > 0 && RoutingRules[0]?.broadcast == '1') {
     console.log("broadcast")
     BroadCast(sid, agid, newId)
@@ -135,7 +136,7 @@ async function RoundRobin(sid, newId) {
         if (maxAllowd > chatCount) {
           let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES ?`
           let chatAssigend = db.excuteQuery(assignAgentQuery, [[[newId, agent.uid, '-1', 1]]]);
-
+console.log("RoundRobin" ,chatAssigend)
         }
       }
     }
@@ -154,6 +155,7 @@ async function ManualAssign(newId,sid ) {
   if (RoutingRules.length > 0) {
     let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES (?,?,?,?)`;
     let assignAgentRes = await db.excuteQuery(assignAgentQuery, [newId, RoutingRules[0].manualAssignUid, '-1', 1]);
+    console.log("ManualAssign" ,assignAgentRes)
 
   }
 }catch(err){
@@ -201,6 +203,7 @@ async function AssignAdmin(newId, sid) {
   }
   let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES ?`;
   let assignAgentRes = await db.excuteQuery(assignAgentQuery, [[[newId, admin, '-1', 1]]]);
+  console.log("AssignAdmin" ,assignAgentRes)
   }catch(err){
     console.log("ERR _ _ _ AssignAdmin ManagemissedChat" ,err)
   }
@@ -214,6 +217,7 @@ async function AssignSpecificUser(sid, newId) {
   if (RoutingRules.length > 0) {
     let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES (?,?,?,?)`;
     let assignAgentRes = await db.excuteQuery(assignAgentQuery, [newId, RoutingRules[0].SpecificUserUid, '-1', 1]);
+    console.log("AssignSpecificUser",assignAgentRes)
 
   }
 }catch(err){
@@ -238,6 +242,7 @@ async function AssignMissedToContactOwner(sid, newId, agid, custid) {
       let updateInteractionMapQuery = `INSERT INTO InteractionMapping (InteractionId,AgentId,MappedBy,is_active) VALUES ?`
       let values = [[newId, contactOwnerUid, '-1', 1]] // 2ng agid is MappedBy  values in teambox uid is used here also
       let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values])
+      console.log("AssignMissedToContactOwner",updateInteractionMap)
     // } else if (RoutingRules[0].assignagent == '1') {   // Here I have to add condition if contact owner not the find from defaultaction tables default admin and assign to him
     //   assignToLastAssistedAgent(sid, newId, agid, custid)
      }

@@ -181,11 +181,11 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
   //console.log("spid, from, type, text, media, phone_number_id, channelType")
   console.log(spid, from, type, phone_number_id, channelType)
   try{
-    if (channelType == 'WhatsApp Official' || channelType == 1) {
+    if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
       let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
       return respose;
-    } if (channelType == 'WhatsApp Web' || channelType == 2) {
+    } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
       let clientReady = await isClientActive(spid);
    
       if (clientReady.status) {

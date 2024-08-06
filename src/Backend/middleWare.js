@@ -43,14 +43,14 @@ async function channelssetUp(spid, channelType, mediaType, messageTo, message_bo
     try {
         var phoneNumber = removePlusFromPhoneNumber(messageTo)
        // console.log(spid, channelType, mediaType, messageTo, message_body, media)
-        if (channelType == 'WhatsApp Official' || channelType == 1) {
+        if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API' ) {
 
            // let WhatsAppOfficialMessage = await sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body,media)
             let WhatsAppOfficialMessage = await sendDefultMsg(media, message_body, mediaType, 211544555367892, phoneNumber)
             // console.log("WhatsAppOfficialMessage")
             // console.log(WhatsAppOfficialMessage)
             return WhatsAppOfficialMessage;
-        } else if (channelType == 'WhatsApp Web' || channelType == 2) {
+        } else if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
 
            // let content = await removeTags.removeTagsFromMessages(message_body);
 

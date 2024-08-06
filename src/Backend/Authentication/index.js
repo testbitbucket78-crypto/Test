@@ -454,7 +454,7 @@ const sendOtp = async function (req, res) {
         var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, otp, 'Mobile'])
         // console.log(storePhoneOtp)
 
-
+        // 6 entries and within 2 hour 
         return res.status(200).send({
             msg: 'Otp Sended sucessfully !',
             status: 200
@@ -485,9 +485,9 @@ const verifyOtp = async function (req, res, err) {
                 })
             }
             if ((result.length != 0 && req.body.otp1 != result[0].otp)) {
-                return res.status(401).send({
+                return res.status(403).send({
                     msg: 'Invalid otp',
-                    status: 401
+                    status: 403
                 })
             }
             if (result.length == 0) {
@@ -525,9 +525,9 @@ const verifyPhoneOtp = async function (req, res, err) {
                 })
             }
             if ((result.length != 0 && req.body.otp != result[0].otp)) {
-                return res.status(401).send({
+                return res.status(403).send({
                     msg: 'Invalid otp',
-                    status: 401
+                    status: 403
                 })
             }
             if (result.length == 0) {
