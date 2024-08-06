@@ -458,10 +458,11 @@ async function PerformingSReplyActions(actionId, value, sid, custid, agid, reply
   // Perform actions based on the Action ID
   switch (actionId) {
     case 1:
-      let assignActionRes = await assignAction(value, agid, newId)
+      let AddTagRes = await addTag(value, sid, custid);
+     
       break;
     case 2:
-      let AddTagRes = await addTag(value, sid, custid);
+      let assignActionRes = await assignAction(value, agid, newId)
       break;
     case 3:
       let removedTagRes = await removeTag(value, custid);
@@ -486,9 +487,9 @@ async function PerformingSReplyActions(actionId, value, sid, custid, agid, reply
 async function assignAction(value, agid, newId) {
   //console.log(`Performing action 1 for  Assign Conversation: ${value}`);
   is_active = 1
-  var values = [[is_active, newId, agid, value]]
+  var values = [[is_active, newId,value,agid]]
   var assignCon = await db.excuteQuery(updateInteractionMapping, [values])
-  //console.log(assignCon)
+ // console.log("assignAction",assignCon)
 }
 
 
@@ -682,7 +683,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId) {
   console.log("phone_number_id,channelType,spid, from, type, text")
   console.log(phone_number_id, channelType, spid, from, type, text)
-  if (channelType == 'WhatsApp Official') {
+  if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     let result = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
@@ -694,7 +695,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
 
 
-  } if (channelType == 'WhatsApp Web') {
+  } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
     console.log("message midddleware", interactionId)
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)
     if (result.status == 200) {
@@ -708,7 +709,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 }
 
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage) {
-  if (channelType == 'WhatsApp Official') {
+  if (channelType == 'WhatsApp Official'  || channelType == 1 || channelType == 'WA API') {
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
@@ -722,7 +723,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     }
    // console.log("sreply", response)
     return response;
-  } if (channelType == 'WhatsApp Web') {
+  } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
 
     let result = await middleWare.postDataToAPI(spid, from, type, text, media)
     if (result.status == 200) {

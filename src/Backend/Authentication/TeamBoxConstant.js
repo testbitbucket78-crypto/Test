@@ -326,6 +326,7 @@ LEFT JOIN (
     WHERE
         m.is_read = 0
         AND m.message_direction = 'IN'
+        AND m.is_deleted !=1
     GROUP BY 
         m.interaction_id
 ) AS unread_count ON ic.InteractionId = unread_count.interaction_id

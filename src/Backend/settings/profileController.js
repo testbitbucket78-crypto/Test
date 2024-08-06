@@ -136,7 +136,10 @@ const changePassword = async (req, res) => {
     } catch (err) {
         console.log(err)
         db.errlog(err);
-        res.send(err)
+        res.status(500).send({
+            msg: 'err on password updated',
+            status: 500
+        })
     }
 
 

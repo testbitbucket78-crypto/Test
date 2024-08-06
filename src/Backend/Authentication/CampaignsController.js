@@ -6,6 +6,7 @@ const http = require("https");
 const middleWare = require('../middleWare')
 const removeTags = require('../removeTagsFromRichTextEditor')
 app.use(bodyParser.json());
+const path = require("path");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
