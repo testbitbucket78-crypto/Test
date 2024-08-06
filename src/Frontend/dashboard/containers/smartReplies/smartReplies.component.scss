@@ -1386,7 +1386,8 @@ input:focus {
 .popup-dialog.AssignOption {
     margin-top: 30px;
     width: 34%;
-    right: 11px;
+    inset: auto 30px 60px auto;
+    // right: 11px;
 }
 
 
@@ -1494,8 +1495,9 @@ input:focus {
     max-height: 208px;
     overflow: auto;
     z-index: 9;
-    top: 58%;
-    right: 2%;
+    inset: auto 20px 60px auto;
+    // top: 58%;
+    // right: 2%;
 }
 
 .popup-dialog.AddTag {
@@ -1505,10 +1507,12 @@ input:focus {
     // padding: 10px 0px;
     position: absolute;
     max-width: 178px;
+    min-width: 178px;
     // margin-top: 10px;
     max-height: 272px;
     overflow: auto;
     z-index: 9;
+    inset: auto 0 -168px auto;
     // top: 34%;
     // right: 2%;
 }

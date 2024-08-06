@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule, FormBuilder, FormControl, FormGroup, NgForm } from '@angular/forms';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
@@ -58,7 +58,7 @@ export class RegisterComponent implements OnInit {
       ];
 
 
-    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, public phoneValidator:PhoneValidationService) {
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, public phoneValidator:PhoneValidationService, private cdr: ChangeDetectorRef) {
         this.registerForm = this.formBuilder.group({
             name: new FormControl('', [Validators.required,Validators.maxLength(30),Validators.pattern(/^[a-zA-Z0-9 ]*$/),this.validateName]),
             mobile_number: new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),Validators.maxLength(15)])),
@@ -67,7 +67,7 @@ export class RegisterComponent implements OnInit {
             email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[a-zA-Z0-9]+\\.[a-zA-Z]{2,}$'), Validators.minLength(1),Validators.maxLength(50)])])),
             password: ['', [Validators.required, Validators.pattern('(?=\\D*\\d)(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=.*[$@$!%*?&]).{8,30}')]],
             confirmPassword: ['', Validators.required]}, { validator: this.passwordMatchValidator });
-           
+            
      }
     ngOnInit() {
         this.getFormValues();
@@ -87,22 +87,37 @@ export class RegisterComponent implements OnInit {
                   confirmPassword: formValues.confirmPassword
                 });
               }
+              let checkboxValue = sessionStorage.getItem('checkbox');
+              if(checkboxValue) {
+                const checkboxvalue = JSON.parse(checkboxValue);
+                this.checkboxChecked = checkboxvalue.checkboxChecked;
+                this.checkbox2Checked = checkboxvalue.checkbox2Checked;
+              }
+        sessionStorage.removeItem('checkbox');
         sessionStorage.removeItem('formValues');
     }
     VerificationData = [
-        { type: 'email', isverfyEmailOtp: false, otp: 0 },
-        { type: 'phone', isverifyphoneOtp: false, otp: 0 }
+        { type: 'email', isverfyEmailOtp: false, otp: 0, email_id : '' },
+        { type: 'phone', isverifyphoneOtp: false, otp: 0, mobile_number: 0 }
     ];
     getVerificationData(){
         let valueForEmail = sessionStorage.getItem('verificationDataEmail');
         let valueForPhone = sessionStorage.getItem('verificationDataPhone');
         if (valueForEmail) {
             const verificationData = JSON.parse(valueForEmail);
-            this.VerificationData[0] = verificationData;
-        } else if (valueForPhone) {
+            if(verificationData.isverfyEmailOtp && verificationData.otp > 0){
+               this.VerificationData[0] = verificationData;
+            }
+        } if (valueForPhone) {
             const verificationData = JSON.parse(valueForPhone);
-            this.VerificationData[1] = verificationData;
+            if(verificationData.isverifyphoneOtp && verificationData.otp > 0){
+               this.VerificationData[1] = verificationData;
+            }
         }
+        let email_id = this.registerForm.controls['email_id'].value;
+        let mobile_number = this.registerForm.controls['mobile_number'].value;
+        if(email_id) this.VerificationData[0].email_id = email_id;
+        if(mobile_number) this.VerificationData[1].mobile_number = mobile_number;
         sessionStorage.removeItem('verificationDataEmail');
         sessionStorage.removeItem('verificationDataPhone');
     }
@@ -154,15 +169,18 @@ formatPhoneNumber() {
     }
   }
   }
-
+  checkbox2Checked!: boolean;
     onCheckboxChange(checked: boolean) {
+        
         this.checkboxChecked = checked;
         this.buttonColor = checked ? '' : '';
       }
-  
-
+      onCheckbox2Change(checked: boolean){
+        
+        this.checkbox2Checked = checked;
+      }
+      errorDiv: string = '';
       onSubmit(){
-
         let registerData = {
             name:this.registerForm.get('name')?.value, 
             mobile_number:this.registerForm.get('mobile_number')?.value, 
@@ -172,20 +190,39 @@ formatPhoneNumber() {
             password:this.registerForm.get('password')?.value, 
             confirmPassword:this.registerForm.get('confirmPassword')?.value 
         }
-       
-        console.log(this.registerForm.value)
+       let checkBox = {
+        checkbox2Checked: this.checkbox2Checked,
+        checkboxChecked: this.checkboxChecked
+       }
+        console.log(this.registerForm.value);
+
+        this.ifCredAlreadyExist(registerData).then((exists: boolean) => {
+            this.cdr.detectChanges();
+            if (exists) {
+              console.log("User already exists. Hence Breaking the process");
+              return;
+            } else {
+              console.log("Proceed with the registration");
+           
         this.submitted = true
         if (this.registerForm.valid) {
             sessionStorage.setItem('formValues', JSON.stringify(registerData));
             sessionStorage.setItem('otpfieldEmailvalue',registerData.email_id);
             sessionStorage.setItem('otpfieldMobilevalue', registerData.mobile_number);
             sessionStorage.setItem('otpfieldNamevalue', registerData.name);
+            sessionStorage.setItem('checkbox', JSON.stringify(checkBox));
             
             var idfs={
                 "email_id":registerData.email_id,
                 "mobile_number":registerData.mobile_number,
                 "name": registerData.name
             }
+            if(this.VerificationData[0].email_id == registerData.email_id && 
+                this.VerificationData[1].mobile_number == registerData.mobile_number){
+                    sessionStorage.setItem('verificationDataEmail', JSON.stringify(this.VerificationData[0]));
+                    sessionStorage.setItem('verificationDataPhone', JSON.stringify(this.VerificationData[1]));
+                    this.router.navigate(['verification'])
+            } else {
             this.apiService.sendOtp(idfs).subscribe
             (response => {
                 if(response) {
@@ -198,15 +235,47 @@ formatPhoneNumber() {
                     alert('! Internal Server Error, Please Try After Sometime');
                 }
             });
-
+            }
         }
        
         if (this.registerForm.invalid){
             return
         }
-
     }
-
+        }).catch((error) => {
+        console.error("An error occurred while checking for the credentials:", error);
+        });
+    }
+    ifCredAlreadyExist(registerData: any): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+          if (registerData) {
+            this.apiService.isSpAlreadyExist(registerData).subscribe(
+              (response: any) => {
+                if (response.status === 200) {
+                  resolve(false);
+                }
+              },
+              (error) => {
+                if (error.status === 409) {
+                    this.errorDiv = ''
+                    let errorMessage;
+                    if(error?.error?.msg) {
+                        errorMessage = error.error.msg;
+                    }
+                  if (errorMessage) {
+                    this.errorDiv = errorMessage;
+                  }
+                  resolve(true);
+                } else {
+                  reject(error);
+                }
+              }
+            );
+          } else {
+            resolve(false);
+          }
+        });
+      }
 
     viewpass(){
         this.visible = !this.visible;

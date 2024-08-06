@@ -16,7 +16,7 @@
           
       <div class="mt-4 ml-5">
 
-                <div class="text"><a routerLink="/register" style="display: inline-flex">
+                <div class="text"><a routerLink="/register" style="display: inline-flex" (click)="backBtnClicked()">
                         Back to Create Account</a>
                 </div>
 
@@ -41,7 +41,7 @@
                         </div>
                         <div class="disc"><a style="display: inline-flex ">
                                 <h6>Did not receive the code? </h6>
-                                <h6 (click)="resendOtp()" class="ml-1" [class.disabled]="phoneOtpTimer > 0"
+                                <h6 (click)="resendOtp(); startOtpTimer('phone', 30)" class="ml-1" [class.disabled]="phoneOtpTimer > 0"
                                     [style.pointer-events]="phoneOtpTimer > 0 ? 'none' : 'auto'"
                                     [style.cursor]="phoneOtpTimer > 0 ? 'default' : 'pointer'"> Resend {{ phoneOtpTimer > 0 ? ' (' + phoneOtpTimer + 's)' : '' }}</h6>
                             </a></div>
@@ -53,22 +53,21 @@
                         <div id="success-message1"></div>
                     </div>
                     <div class="">
-                        <div class="" [(ngModel)]="email_id">
+                       <!-- <div class="" [(ngModel)]="email_id"> -->
                             <label class="conten" for="floatingInputGrid">Verify your Email Id {{email_id}}</label>
                             <div class=" d-md-flex justify-content">
                                 <input type="number" class="form-control"
                                     [ngClass]="{'is-invalid' :submitted && otpForm.controls.otp1.errors}"
-                                    placeholder="Enter OTP" aria-label="City" name="otp" formControlName="otp1"
-                                    id="otp1">
+                                    placeholder="Enter OTP" aria-label="City" name="otp" formControlName="otp1" id="otp1">
                                 <button class="btn1 me-1" type="button" (click)="onVerify()" [ngClass]="{'btn-verified': isverfyEmailOtp}">{{isverfyEmailOtp ? 'Verified' : 'Verify'}}</button>
 
                             </div>
-                        </div>
+                        <!-- </div> -->
                         <!-- <button *ngIf="!showSecondButton" (click)="showSecondButton = true">Click me to show second button</button> -->
                         <button class="verified" *ngIf="showSecondButton"><img src="assets/img/verified.png"></button>
                         <div class="disc"><a style="display: inline-flex">
                                 <h6>Did not receive the code? </h6>
-                                <h6 (click)="resendOtp()" class="ml-1" [class.disabled]="emailotpTimer > 0"
+                                <h6 (click)="resendOtp();startOtpTimer('email', 30)" class="ml-1" [class.disabled]="emailotpTimer > 0"
                                     [style.pointer-events]="emailotpTimer > 0 ? 'none' : 'auto'"
                                     [style.cursor]="emailotpTimer > 0 ? 'default' : 'pointer'"> Resend {{ emailotpTimer > 0 ? ' (' + emailotpTimer + 's)' : '' }}</h6>
                             </a></div>
