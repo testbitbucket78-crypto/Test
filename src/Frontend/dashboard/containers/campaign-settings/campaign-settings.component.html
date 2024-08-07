@@ -5,6 +5,7 @@
             <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('48')">Test Campaign</a>
         </div>
     </div>
+    <sb-loader [isLoading]="isLoading"></sb-loader>
     <div class="d-flex" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('48')">
         <div class="setting-card" >
             <div class="flex-row pb-2">

@@ -70,9 +70,42 @@ export class RegisterComponent implements OnInit {
            
      }
     ngOnInit() {
-     
+        this.getFormValues();
+        this.getVerificationData();
     }
-
+    getFormValues(){
+        let value = sessionStorage.getItem('formValues');
+            if (value) {
+                const formValues = JSON.parse(value);
+                this.registerForm.patchValue({
+                  name: formValues.name,
+                  mobile_number: formValues.mobile_number,
+                  display_mobile_number: formValues.display_mobile_number,
+                  country_code: formValues.country_code,
+                  email_id: formValues.email_id,
+                  password: formValues.password,
+                  confirmPassword: formValues.confirmPassword
+                });
+              }
+        sessionStorage.removeItem('formValues');
+    }
+    VerificationData = [
+        { type: 'email', isverfyEmailOtp: false, otp: 0 },
+        { type: 'phone', isverifyphoneOtp: false, otp: 0 }
+    ];
+    getVerificationData(){
+        let valueForEmail = sessionStorage.getItem('verificationDataEmail');
+        let valueForPhone = sessionStorage.getItem('verificationDataPhone');
+        if (valueForEmail) {
+            const verificationData = JSON.parse(valueForEmail);
+            this.VerificationData[0] = verificationData;
+        } else if (valueForPhone) {
+            const verificationData = JSON.parse(valueForPhone);
+            this.VerificationData[1] = verificationData;
+        }
+        sessionStorage.removeItem('verificationDataEmail');
+        sessionStorage.removeItem('verificationDataPhone');
+    }
     validateName(control: { value: any; }) {
         const name = control.value;
     
@@ -139,7 +172,7 @@ formatPhoneNumber() {
             password:this.registerForm.get('password')?.value, 
             confirmPassword:this.registerForm.get('confirmPassword')?.value 
         }
-
+       
         console.log(this.registerForm.value)
         this.submitted = true
         if (this.registerForm.valid) {

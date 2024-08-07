@@ -34,7 +34,7 @@ export class RoutingRulesComponent implements OnInit {
   userList:any;
   routingRulesData = <routingRulesData>{};
   chatAssignTimeoutPattern:RegExp = /^(?:[1-9]\d{0,2}|1[0-3]\d{2}|1440)$/;
-
+  isLoading!: boolean;
 
   errorMessage='';
 	successMessage='';
@@ -43,6 +43,7 @@ export class RoutingRulesComponent implements OnInit {
   constructor(private apiService:SettingsService) { }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.spId = Number(sessionStorage.getItem('SP_ID'));
     this.getRoutingRules();
     this.getUserList();
@@ -157,6 +158,7 @@ export class RoutingRulesComponent implements OnInit {
           if(this.assignspecificuser==1) {
             this.missedChatOption = 'assignspecificuser';
           }
+          this.isLoading = false;
     });
 console.log(this.defaultAssignRule)
   }

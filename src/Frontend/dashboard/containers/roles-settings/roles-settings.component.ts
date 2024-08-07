@@ -90,11 +90,13 @@ export class RolesSettingsComponent implements OnInit {
     totalPage: any;
     paging: any = 1;
     lastElementOfPage: any;
+    isLoading!:boolean;
     constructor(public _settingsService: SettingsService, private fb: FormBuilder, public GridService: GridService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
 
     ngOnInit(): void {
+        this.isLoading = true;
         this.getRolesList();
         this.getSubRightsList();
         this.getRightsList();
@@ -154,11 +156,13 @@ export class RolesSettingsComponent implements OnInit {
 
     getRolesList() {
         this._settingsService.getRolesList(this.sp_Id).subscribe(result => {
+            this.isLoading = false;
             if (result) {
                 this.rolesList = result?.getRoles;
                 this.rolesListinit = result?.getRoles;
                 this.gridOptions.api.sizeColumnsToFit();
                 this.getGridPageSize()
+               
             }
         });
     }

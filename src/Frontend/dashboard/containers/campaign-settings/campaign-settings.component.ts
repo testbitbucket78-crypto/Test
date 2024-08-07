@@ -36,7 +36,7 @@ roleData:any;
 totalRights:any[]= [];
 rolesList:any;
 userDetailForm!:FormGroup;
-
+isLoading!:boolean;
 errorMessage = '';
 successMessage = '';
 warnMessage = '';
@@ -54,6 +54,7 @@ campaignTestData:any;
    }
 
   ngOnInit(): void {
+    this.isLoading = true
     this.getUserList();
     this.getCampaignTimingList();
     this.getCampaignAlertData();
@@ -115,6 +116,7 @@ campaignTestData:any;
   getCampaignTestData(){
     this._settingsService.getTestCampaignData(this.sp_Id)
     .subscribe((result:any) =>{
+      this.isLoading = false;
       if(result){
         this.campaignTestData = result?.getCampaignTest; 
         console.log(result);

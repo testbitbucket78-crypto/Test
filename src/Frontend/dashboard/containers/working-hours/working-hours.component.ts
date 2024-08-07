@@ -42,12 +42,14 @@ holidayTooltip!: boolean;
 errorMessage = '';
 successMessage = '';
 warningMessage = '';
+isLoading!: boolean;
     constructor(private _settingsService: SettingsService, private datepipe: DatePipe, private modalService: NgbModal) { 
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     this.selectedYear =new Date().getFullYear();
    }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.workingHourForm = this.prepareCompanyForm();
     this.getWorkingDetails();
     this.getHolidayDetails();
@@ -77,7 +79,7 @@ warningMessage = '';
       if(result){
         this.workingData = result?.result;
         console.log(result);
-        
+        this.isLoading = false;
       }
 
     })

@@ -3,7 +3,7 @@
     <p *ngIf="successMessage" class="success">{{successMessage}}</p>
     <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 </div>
-
+<sb-loader [isLoading]="isLoading"></sb-loader>
 <div class="setting-card" >
     <div class="default-actions-heading pb-4">Default Messages</div>
     <div class=" grid-view p-2 px-4" >
