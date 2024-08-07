@@ -13,12 +13,16 @@
     font-size: 22px;
     font-weight: bold;
 }
-
+.w-70{
+  width: 100%;
+}
 .sub-heading{
     font-size: 16px;
     font-weight: 600;
 }
-
+.agent-reply{
+  color:#6149CD;
+}
 .sub-contents{
     padding: 6px 0px 0px 0px;
 }
@@ -383,7 +387,7 @@ textarea::placeholder {
     grid-template-rows: max-content 100% max-content;
     justify-content: space-between;
     height: 100dvh;
-    width: 28% !important;
+    width: 26% !important;
     position: fixed;
     z-index: 1030;
     top: 0;
@@ -400,6 +404,10 @@ textarea::placeholder {
   .sideBar .sidebar-content{
     height: calc(100dvh - 144px);
     overflow-y: auto;
+    padding: 38px;
+    .selectedMessageData{
+      font-size: 14px;
+    }
   }
   .sideBar .sideBar-footer{   
       border:none;   
@@ -705,9 +713,12 @@ textarea::placeholder {
   word-wrap: break-word;
   overflow: auto;
   overflow-x: hidden;
-  min-height: 12vh
+  min-height: 6vh;
+ 
 }
-
+::ng-deep .message_data p{
+  color:#030303;
+}
 .message_data.preview {
   border-radius: 12px 12px 12px 12px;
 }

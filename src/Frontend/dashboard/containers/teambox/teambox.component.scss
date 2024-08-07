@@ -2531,7 +2531,7 @@ label span {
 }
 .input-formm{
     position: relative;
-    top: 2.8rem;
+    top: 2.7rem;
     border: none;
     //left: 0.5rem;
     right: 7rem;
@@ -2540,6 +2540,7 @@ label span {
     font-size: 12px;
     cursor: pointer;
     text-align: center;
+    outline: none;
 }
 .country_code{
     position: absolute;

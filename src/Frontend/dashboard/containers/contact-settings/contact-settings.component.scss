@@ -216,8 +216,18 @@ select {
 }
 .notification-content-parent {
     max-height: 270px;
+    min-height: 270px;
     overflow-y: auto;
     overflow-x: hidden;
+    position: relative;
+    .no-data-found {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50%; 
+        width: 100%;  
+        position: absolute;
+      }
 }
 .header-col {
     flex: 1 1;

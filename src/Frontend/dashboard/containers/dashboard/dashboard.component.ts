@@ -2,7 +2,7 @@ import { Component, OnInit,ChangeDetectionStrategy } from '@angular/core';
 import { DashboardService } from './../../services';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
 import { Router } from '@angular/router';
-
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 @Component({
     selector: 'sb-dashboard',
     templateUrl: './dashboard.component.html',
@@ -34,8 +34,13 @@ export class DashboardComponent implements OnInit {
     availableAmount=0;
     isLoading!:boolean;
 
-    constructor(private apiService: DashboardService, private router: Router,private profileService:ProfileService) { }
+    errorMessage='';
+	successMessage='';
+	warningMessage='';
+
+    constructor(private apiService: DashboardService, private router: Router,private profileService:ProfileService,private settingsService:SettingsService) { }
     ngOnInit() {
+       
         this.isLoading = true;
         this.routerGuard();
         this.getDashboardSubscribers();
@@ -46,15 +51,53 @@ export class DashboardComponent implements OnInit {
         this.getAvailableAmount();
         this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
         this.SPID = Number(sessionStorage.getItem('SP_ID'));
+        this.clientAuthentication();
+       
+        
     }
-
+    showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}else if(type=='error'){
+			this.errorMessage=message;
+		}else{
+			this.warningMessage=message;
+		}
+		setTimeout(() => {
+			this.hideToaster()
+		}, 5000);
+	}
+    hideToaster(){
+		this.successMessage='';
+		this.errorMessage='';
+		this.warningMessage='';
+	}
   // ******* Router Guard  *********//
     routerGuard = () => {
         if (sessionStorage.getItem('SP_ID') === null) {
             this.router.navigate(['login']);
         }
      }
-
+     clientAuthentication(){
+        const navigation = history.state
+        if (navigation?.message == 'Logged In') {
+            let input = {
+                spid: this.SPID
+            };
+            setTimeout(() => {
+            this.settingsService.clientAuthenticated(input).subscribe(response => {
+                if (response.status === 200) {
+                    console.log(response.message);
+                }
+                if (response.status === 404) {
+                    console.log(response.message);
+                    this.showToaster('Channel not connected', 'error');
+                }
+            });
+        },600);
+        }
+     }
+    
     getDashboardSubscribers() {
         var sPid = sessionStorage.getItem('SP_ID')
         this.apiService.dashboardSubscribers(sPid).subscribe(data => {

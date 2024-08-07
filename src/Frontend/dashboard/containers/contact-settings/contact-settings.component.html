@@ -22,7 +22,7 @@
             <div class="d-flex">
                 <div class="input-group gf ">
                     <input class="form-control" type="text" [(ngModel)]="searchText" placeholder="Search" aria-label="Search"
-                       name="Name" id="Search-Ag" />
+                       (input)="onSearchFieldChange()" name="Name" id="Search-Ag" />
                     <img src="assets/img/search.png">
                 </div>
                 <button class="new-token-btn" (click)="addTag()">
@@ -80,6 +80,12 @@
             </div>
             </div>
             <div class="notification-content-parent">
+                <ng-container *ngIf="(tagListData | searchfilter: searchText).length === 0; else showData">
+                    <div class="no-data-found">
+                        No records found.
+                    </div>
+                  </ng-container>
+                <ng-template #showData>
                 <div *ngFor="let taglist of tagListData | searchfilter:searchText | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" 
                   class="row justify-content-center  notification-content" (click)="toggleSideBar(taglist)">
                     <div class="col-sm-12 d-flex py-3 text-center border-bottom" role="button">
@@ -89,6 +95,7 @@
                         <div class="header-col">{{ taglist.tag_count}}</div>
                    </div>
                 </div>
+            </ng-template>
             </div>
         </div>
     </div>
