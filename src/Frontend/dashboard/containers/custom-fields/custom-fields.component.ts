@@ -3,6 +3,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { addCustomFieldsData, customFieldFormData } from 'Frontend/dashboard/models/settings.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { SearchfilterPipe } from '../Search/searchfilter.pipe';
 declare var $:any;
 
 @Component({
@@ -52,6 +53,7 @@ export class CustomFieldsComponent implements OnInit {
         this.addCustomFieldsOption();
         //setTimeout(()=>{this.getPaging()},2000);
     }
+    private searchFilterPipe = new SearchfilterPipe(); 
     constructor(private formBuilder:FormBuilder,private settingsService:SettingsService) {
       this.addCustomField = [];
 
@@ -144,8 +146,19 @@ removeCustomFieldsOption(index:any){
       this.paging.push(i);
   }
 }
-
-
+filteredData: any[] = [];
+onSearchFieldChange() {
+  this.filteredData = this.searchFilterPipe.transform(this.customFieldData, this.searchCustomField);
+  this.getPagingOfSearch()
+}
+getPagingOfSearch(){
+  this.paging = [];
+  this.currentPage = 1;
+  let totalPages = Math.ceil(this.filteredData.length / this.pageSize);
+  for (let i = 1; i <= totalPages; i++) {
+      this.paging.push(i);
+  }
+}
 
 getCustomFieldsData() {
   this.settingsService.getNewCustomField(this.spId).subscribe(response => {

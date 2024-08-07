@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TagData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { SearchfilterPipe } from '../Search/searchfilter.pipe';
 declare var $:any;
 
 @Component({
@@ -27,7 +28,7 @@ export class ContactSettingsComponent implements OnInit {
   errorMessage='';
 	successMessage='';
 	warningMessage='';
-
+  private searchFilterPipe = new SearchfilterPipe();
   constructor(private _settingsService:SettingsService,public settingsService:SettingsService) {
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
    }
@@ -159,6 +160,19 @@ export class ContactSettingsComponent implements OnInit {
     let totalPages = Math.ceil( this.tagListData.length/this.pageSize);
     for (let i = 1; i <= totalPages; i++) {
        this.paging.push(i);
+  }
+}
+filteredData: any[] = [];
+onSearchFieldChange() {
+  this.filteredData = this.searchFilterPipe.transform(this.tagListData, this.searchText);
+  this.getPagingOfSearch()
+}
+getPagingOfSearch(){
+  this.paging = [];
+  this.currentPage = 1;
+  let totalPages = Math.ceil(this.filteredData.length / this.pageSize);
+  for (let i = 1; i <= totalPages; i++) {
+      this.paging.push(i);
   }
 }
 }

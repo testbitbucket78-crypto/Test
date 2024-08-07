@@ -821,6 +821,7 @@ popupWidth='250px' popupHeight='200px'>
 									<img class="icon" src="/assets/img/teambox/image-a@2x.png">
 									<p>Drag & Drop file</p>
 									<p><span>OR</span></p>
+									<sb-loader [isLoading]="isUploadingLoader" [loaderType]="'small'" [message]="''"></sb-loader>
 									<label class="custom-file-upload">
 										<input type="file" #file
 											accept="image/*, application/msword, application/pdf, video/*"

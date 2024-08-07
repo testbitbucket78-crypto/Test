@@ -11,7 +11,7 @@
             <div class="d-flex align-items-center px-3 searchField">
                 <span><img src="../../../../assets/img/teambox/search-icon.svg" /></span>
                 <!-- (keyup)="searchCustomField($event)" -->
-                <input class="custom-field-search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchCustomField" >        
+                <input class="custom-field-search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchCustomField" (input)="onSearchFieldChange()" >        
             </div>
 
             <button (click)="addCustomFields()"><span><img src="../../../../assets/img/teambox/add.svg" alt="error" /></span>Add Field</button>
@@ -39,6 +39,12 @@
             <div *ngIf="customFieldData" class="main-part-body">
                 <div class="scroll-custom">
                 <div *ngIf="currentPage==1">
+                    <ng-container *ngIf="(defaultFieldsData | searchfilter: searchCustomField).length === 0 && !paging.length; else showData">
+                        <div class="no-data-found">
+                            No records found.
+                        </div>
+                      </ng-container>
+                      <ng-template #showData>
                 <div *ngFor="let df of defaultFieldsData  | searchfilter:searchCustomField" class="column">
                     <!-- <div class="body-col">
                      {{df.ActuallName}}   
@@ -68,6 +74,7 @@
                         </div>
                     </div>
                 </div>
+               </ng-template>
             </div>
 
                 <!-- <div class="dynamicFieldContainer" cdkDropList (cdkDropListDropped)="Drop($event)"> -->

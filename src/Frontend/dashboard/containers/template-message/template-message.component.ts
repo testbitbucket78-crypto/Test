@@ -53,7 +53,7 @@ export class TemplateMessageComponent implements OnInit {
     ShowChannelOption! : boolean;
     channelOption: any = [];
     countValue: number = 1;
-    customValue: string = "val1";
+    customValue: string = "var1";
     isLoading!:boolean;
     valuesMap: Map<number, string> = new Map();
     filterListTopic = [
@@ -969,7 +969,7 @@ onContentChange() {
     const container = document.createElement('div');
     container.innerHTML = this.chatEditor?.value;
     const text = container.innerText;
-    this.processText(text);
+    //this.processText(text);
     const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; 
     const characterCount = text?.replace(emojiRegex, '__').length || 0; 
     if (characterCount > 1024) {
@@ -978,22 +978,24 @@ onContentChange() {
     } 
   }
 
- 
-  processText(text: string){
-    this.valuesMap.clear();
-    const headerText = document.getElementById('headerText') as HTMLInputElement;
-    if(headerText.value) text += headerText.value;
-    const customValueRegex = /{{val(\d+)}}/g;
-    let match;
+// #region Process Text for Value Mapping
+//   processText(text: string){
+//     this.valuesMap.clear();
+//     const headerText = document.getElementById('headerText') as HTMLInputElement;
+//     if(headerText.value) text += headerText.value;
+//     const customValueRegex = /{{var(\d+)}}/g;
+//     let match;
     
-    while ((match = customValueRegex.exec(text)) !== null) {
-      const num = parseInt(match[1], 10);
-      this.valuesMap.set(num, `val${num}`);
-    }
+//     while ((match = customValueRegex.exec(text)) !== null) {
+//       const num = parseInt(match[1], 10);
+//       this.valuesMap.set(num, `var${num}`);
+//     }
 
-    let sortedEntries = Array.from(this.valuesMap.entries()).sort((a, b) => a[0] - b[0]);
-    this.valuesMap = new Map(sortedEntries);
-  }
+//     let sortedEntries = Array.from(this.valuesMap.entries()).sort((a, b) => a[0] - b[0]);
+//     this.valuesMap = new Map(sortedEntries);
+//   }
+// #endregion
+
   trimContent(text: string, characterCount: number): string {
     const emojisToAdd = 1; 
     const extraCharacters = characterCount - 1024 + emojisToAdd;
@@ -1005,18 +1007,23 @@ onContentChange() {
     return trimmedText;
   }
   
-  addCustomAttribute(){
-    if (this.valuesMap.size == 0) {
-        this.valuesMap.set(1, `val${1}`);
-        return;
-    }
-    this.valuesMap.forEach((value, key) => {
-        if (key == this.countValue ) {
-            this.countValue++
-        }
-    });
-    this.valuesMap.set(this.countValue,`val${this.countValue}`);
-    this.customValue = `val${this.countValue}`
-    this.countValue = 1;
-  }
+addCustomAttribute(){
+     this.customValue = `var${this.countValue}`
+     this.countValue++;
+}
+
+//   addCustomAttribute(){
+//     if (this.valuesMap.size == 0) {
+//         this.valuesMap.set(1, `var${1}`);
+//         return;
+//     }
+//     this.valuesMap.forEach((value, key) => {
+//         if (key == this.countValue ) {
+//             this.countValue++
+//         }
+//     });
+//     this.valuesMap.set(this.countValue,`var${this.countValue}`);
+//     this.customValue = `var${this.countValue}`
+//     this.countValue = 1;
+//   }
 }

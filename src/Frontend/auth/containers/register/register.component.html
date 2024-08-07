@@ -86,16 +86,16 @@
               <div class="form-group row">
                 <div class=""></div>
                 <div class="custom-control custom-checkbox">
-                  <input class="custom-control-input" type="checkbox" id="custom-control-input1" (change)="onCheckboxChange($event.target.checked)">
-                  <label class="custom-control-label" for="custom-control-input1">
+                  <input class="custom-control-input" type="checkbox" id="custom-control-input1" [checked]="checkboxChecked" (change)="onCheckboxChange($event.target.checked)">
+                  <label class="custom-control-label" for="custom-control-input1" [ngClass]="{'bgwhite': checkboxChecked}">
                    I accept the <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> 
                   </label>
                   </div>
                  
                 <div class="checkbox2" id="chbo">
                   <div class="custom-control custom-checkbox">
-                  <input class="custom-control-input" type="checkbox" id="custom-control-input2">
-                  <label class="custom-control-label" for="custom-control-input2">Remember Me</label>
+                  <input class="custom-control-input" type="checkbox" id="custom-control-input2" [checked]="checkbox2Checked" (change)="onCheckbox2Change($event.target.checked)">
+                  <label class="custom-control-label" [ngClass]="{'bgwhite': checkbox2Checked}" for="custom-control-input2">Remember Me</label>
                 </div>
               
             
@@ -141,7 +141,9 @@
           <div *ngIf=" registerForm.hasError('mismatch')" class="text-danger">
           !  Passwords do not match
             </div>
-      
+            <div *ngIf="errorDiv" id="error-message" class="text-danger">
+              {{ errorDiv }}
+            </div>
           </div>
          
           </div>
