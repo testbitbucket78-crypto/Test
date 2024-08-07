@@ -453,11 +453,22 @@ const sendOtp = async function (req, res) {
 
         var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, otp, 'Mobile'])
         // console.log(storePhoneOtp)
-
+        let msg;
+        let status = 200;
         // 6 entries and within 2 hour 
+        let otpcansend = await canSendOTP(mobile_number)
+        if (otpcansend.canSend) {
+            console.log("You can send the OTP.");
+            msg = "You can send the OTP."
+
+          } else {
+            console.log(`Please wait ${result.remainingTime} minutes before sending another OTP.`);
+            msg = `Please wait ${result.remainingTime} minutes before sending another OTP.`
+            status = 403
+          }
         return res.status(200).send({
-            msg: 'Otp Sended sucessfully !',
-            status: 200
+            msg: msg,
+            status: status
         })
     } catch (err) {
         console.error(err);
@@ -470,6 +481,38 @@ const sendOtp = async function (req, res) {
     }
 
 };
+
+
+
+async function canSendOTP(mobile_number) {
+    try {
+      const result = await db.excuteQuery(
+        'SELECT COUNT(*) AS count, MIN(created_at) AS first_sent_time FROM otpVerify WHERE otpfieldvalue = ? AND created_at >= NOW() - INTERVAL 2 HOUR',
+        [mobile_number]
+      );
+  
+      const otpCount = result[0].count;
+      const firstSentTime = result[0].first_sent_time;
+  
+      if (otpCount < 3) {
+        // Allow sending OTP
+        return { canSend: true };
+      } else {
+        // Calculate remaining time
+        const currentTime = moment();
+        const firstSentTimeMoment = moment(firstSentTime);
+        const timePassed = currentTime.diff(firstSentTimeMoment, 'minutes');
+        const remainingTime = 120 - timePassed; // 120 minutes = 2 hours
+  
+        return { canSend: false, remainingTime: remainingTime };
+      }
+    } catch (err) {
+      console.log("ERR -- canSendOTP", err);
+      return err;
+    }
+  }
+
+  
 const verifyOtp = async function (req, res, err) {
 
     try {

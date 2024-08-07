@@ -252,7 +252,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
         let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
-
+console.log("RoutingRulesVaues",RoutingRulesVaues)
+if(RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true){
+  notify.NotifyServer(display_phone_number, false, newId,0, 'IN',msg_id)
+}
         //Here i have to check if any routing rules addded then send websocket
       }
     }
