@@ -1357,7 +1357,8 @@ stopPropagation(event: Event) {
 				this.agentsList.push({
 					name: this.userList[i].name,
 					nameInitials: this.userList[i].nameInitials,
-					profileImg: this.userList[i].profile_img
+					profileImg: this.userList[i].profile_img,
+					RoleName:this.userList[i].RoleName
 				});
 			}
 		  }
