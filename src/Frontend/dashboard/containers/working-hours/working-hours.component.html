@@ -56,7 +56,7 @@
 
 
                 <!-- <img src="../../../../assets/img/settings/drag.svg" /> -->
-                <select class="holiday-dropdown multiselect" [(ngModel)]="selectedYear">
+                <select class="holiday-dropdown multiselect" [(ngModel)]="selectedYear" (change)="selectYear()">
                     <option *ngFor="let item of yearList" [value]="item">{{item}}</option>
                 </select>
             </div>

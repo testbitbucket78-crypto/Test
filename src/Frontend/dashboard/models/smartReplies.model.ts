@@ -2,6 +2,7 @@ export interface agentMessageList{
     Message:string;
     ActionID:Number;
     Value:any;
+    ValueUuid: any;
     Media:any;
     MessageVariables: string;
 }

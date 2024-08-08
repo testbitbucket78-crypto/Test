@@ -217,9 +217,9 @@ filterQuickRes(){
   if(this.isWhatsappWeb && this.isWhatsappOfficial)
     this.templates = this.initTemplates
   else if(!this.isWhatsappWeb && this.isWhatsappOfficial)
-    this.templates = this.initTemplates.filter(item=> item.Channel == 'WhatsApp Official')
+    this.templates = this.initTemplates.filter(item=> item.Channel == 'WA API')
   else if(this.isWhatsappWeb && !this.isWhatsappOfficial)
-    this.templates = this.initTemplates.filter(item=> item.Channel == 'WhatsApp Web')
+    this.templates = this.initTemplates.filter(item=> item.Channel == 'WA Web')
   else
     this.templates = this.initTemplates;
 
