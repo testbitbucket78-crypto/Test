@@ -84,14 +84,30 @@ isLoading!: boolean;
 
     })
   }
-
+    monthsStateRefreshed(){
+      this.totalmonths = [
+        { monthName: 'January', values: [] },
+        { monthName: 'February', values: [] },
+        { monthName: 'March', values: [] },
+        { monthName: 'April', values: [] },
+        { monthName: 'May', values: [] },
+        { monthName: 'June', values: [] },
+        { monthName: 'July', values: [] },
+        { monthName: 'August', values: [] },
+        { monthName: 'September', values: [] },
+        { monthName: 'October', values: [] },
+        { monthName: 'November', values: [] },
+        { monthName: 'December', values: [] }
+      ];
+    }
   getHolidayDetails(){
     let fromDate = new Date(this.selectedYear,0,1);
     let toDate = new Date(this.selectedYear,12,0);
-    this._settingsService.getHolidayData(this.sp_Id,'2024-1-1','2024-12-31')
+    this._settingsService.getHolidayData(this.sp_Id,`${this.selectedYear}-1-1`,`${this.selectedYear}-12-31`)
     .subscribe((result:any) =>{
       if(result){
         let HolidayList = result?.HolidayList;
+        this.monthsStateRefreshed();
         HolidayList.forEach((item:any)=>{
           let month  = new Date(item.holiday_date).getMonth();
           console.log(item.holiday_date);
@@ -301,7 +317,10 @@ isLoading!: boolean;
         }
         return true;
     }
-  
+    
+  selectYear(){
+   this.getHolidayDetails();
+  }
    getYearData(){
     for(let i=2024;i<=2050;i++){
       this.yearList.push(i);

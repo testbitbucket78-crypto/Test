@@ -235,7 +235,7 @@ export class TemplateMessageComponent implements OnInit {
         event.stopPropagation();
       }
       selectChannel(channel:any){
-        if(channel.channel_status == 0 && channel?.label == "WhatsApp Official"){
+        if(channel.channel_status == 0 && channel?.label == "WA API"){
             this.showToaster('This Channel is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
             return;
         }

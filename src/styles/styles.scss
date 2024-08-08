@@ -25,7 +25,9 @@
 .modal-smart-reply-open {
     @import "smartReply.scss";
   }
-
+.modal-smart-reply-open{
+  overflow: auto!important;
+}
 
 // Layout
 @import "layout/authentication.scss";

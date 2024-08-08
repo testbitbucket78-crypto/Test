@@ -188,6 +188,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	messageMediaFile: string = '';
 	variableValues:string[]=[];
 	agentsList:any = [];
+	filteredAgentList: any;
 	mentionAgentsList:any = [];
 	modalReference: any;
 	OptedIn='No';
@@ -289,6 +290,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
 	srchText:string ='';
+	isLoadingOnScroll!: boolean;
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
 		public phoneValidator:PhoneValidationService, private datePipe:DatePipe,
 		private dashboardService: DashboardService,
@@ -613,6 +615,34 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.isTemplate = true;
 	}
 
+	processMediaType(mediaType: any,message_media:any, messageMeidaFile: any):string{
+		if (message_media) {
+			const extension = message_media.split('.').pop()?.toLowerCase();
+			const mimeTypeMap: Record<string, string> = {
+				'jpg': 'jpeg', 'jpeg': 'jpeg', 'png': 'png', 'gif': 'gif',
+				'mp4': 'mp4', 'mov': 'quicktime', 'avi': 'x-msvideo', 'wmv': 'x-ms-wmv',
+				'pdf': 'pdf', 'doc': 'msword', 'docx': 'vnd.openxmlformats-officedocument.wordprocessingml.document',
+				'ppt': 'vnd.ms-powerpoint', 'pptx': 'vnd.openxmlformats-officedocument.presentationml.presentation'
+			};
+	
+			const mimeType = mimeTypeMap[extension!];
+			if (mimeType) {
+				if (mediaType === 'image') {
+					this.mediaType = `image/${mimeType}`;
+				} else if (mediaType === 'video') {
+					this.mediaType = `video/${mimeType}`;
+				} else if (mediaType === 'document') {
+					this.mediaType = `application/${mimeType}`;
+				}
+			}
+		}
+		if(messageMeidaFile){
+			return this.removeMediaTags(messageMeidaFile);
+		} else return messageMeidaFile;
+	}
+	removeMediaTags(htmlContent: string): string {
+		return htmlContent.replace(/<img[^>]*>|<video[^>]*>[^<]*<\/video>/gi, '');
+	  }
 showeditTemplate(){
 	if(this.selectedTemplate.length!==0) {
 		$("#editTemplate").modal('show'); 
@@ -1279,6 +1309,7 @@ sendattachfile() {
 		let rangeStart =this.contactCurrentPage;
     	let rangeEnd =this.contactCurrentPage + this.contactPageSize;
 		this.apiService.getCustomers(this.SPID,rangeStart,rangeEnd).subscribe((data:any) =>{
+			this.isLoadingOnScroll = false;
 			this.isContactCompleted = data?.isCompleted ? data?.isCompleted : false;
 			if(isAddContacts){
 				this.contactList.push(...data?.results);
@@ -1293,7 +1324,8 @@ sendattachfile() {
 	
 	getAgents(){
 		this.apiService.getAgents(this.SPID).subscribe(data =>{
-			this.agentsList= data
+			this.agentsList= data;
+			if(this.agentsList.length) this.filteredAgentList = this.agentsList;
 			this.agentsList.forEach((item: { name: string; nameInitials: string; }) => {
                 const nameParts = item.name.split(' ');
                 const firstName = nameParts[0] || '';
@@ -2959,6 +2991,7 @@ sendMessage(){
 		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
 		if(this.messageMediaFile != ''){
 			this.messageMeidaFile = this.messageMediaFile;
+			value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
 			this.messageMediaFile = '';
 		}
 		var bodyData = {
@@ -3226,6 +3259,7 @@ sendMessage(){
     	const scroll$ = fromEvent(content!, 'scroll').pipe(map(() => { return content!.scrollTop; }));
  
     scroll$.subscribe((scrollPos) => {
+		this.isLoadingOnScroll = true;
       let limit = content!.scrollHeight - content!.clientHeight -1;
 	  console.log(scrollPos);
 	  console.log(limit);
@@ -3421,7 +3455,8 @@ sendMessage(){
 		  }
 		}  
 		if (data?.countryCode) {
-			this.editContact.get('country_code')?.setValue(data.countryCode);
+			// country code is sometimes +91 or sometime IN +91
+			this.checkAndSetCountryCode(data);
 		  }
 		// this.OptInStatus =data.OptInStatus
 		// this.isBlocked=data.isBlocked;
@@ -3439,4 +3474,25 @@ sendMessage(){
   }
 	return names;
 	}
+	checkAndSetCountryCode(data: any) {
+		if (data?.countryCode) {
+		  const countryCodeOnly = this.countryCodes.map(code => code.split(' ')[1]);
+		  if (countryCodeOnly.includes(data.countryCode)) {
+			const matchedCountry = this.countryCodes.find(code => code.includes(data.countryCode));
+			this.editContact.get('country_code')?.setValue(matchedCountry);
+		  } else {
+			const matchedCountry = this.countryCodes.find(code => code === data.countryCode);
+			if (matchedCountry) {
+			  this.editContact.get('country_code')?.setValue(matchedCountry);
+			} else {
+			  console.warn(`Country code ${data.countryCode} not found in the countryCodes list.`);
+			}
+		  }
+		}
+	  }
+	  filterContactOwners() {
+        const searchInput = document.getElementById('contactOwnerValue') as HTMLInputElement;
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        this.filteredAgentList = this.agentsList.filter((x: any) => x.name.toLowerCase().includes(searchTerm));
+    }
 }

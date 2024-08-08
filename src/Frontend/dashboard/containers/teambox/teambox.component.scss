@@ -1253,14 +1253,26 @@ button:focus, input:focus {
     box-shadow: 4px 22px 54px #695F9730;
     border-radius: 20px;
     padding: 10px 0px;
-    position: absolute;
+    //position: absolute;
     max-width: 185px;
     margin-top: 10px;
-    max-height: 240px;
+    max-height: 170px;
     overflow: auto;
     z-index: 9;
 }
-
+.ContactOption{
+    .searchContact {
+        width: 90%;
+        margin: 0px 0px 0px 9px;
+        height: 40px;
+    }
+}
+.ContactOptiondropdown{
+    position: absolute;
+}
+.popup-dialog.ContactOptiondropdown::-webkit-scrollbar {
+    display: none;
+}
 .popup-dialog.autoreply {
     max-width: 90%;
     margin-top: -236px;
@@ -1280,11 +1292,12 @@ button:focus, input:focus {
 }
 
 .popup-dialog p span {
-    padding: 5px 15px;
-    width: 100%;
-    float: left;
-    margin: 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    word-break: break-word;
     cursor: pointer;
+    padding: 10px 12px 10px 20px;
 
 }
 
@@ -3053,4 +3066,24 @@ label span {
 
 .contact-modal-body{
     height: 85vh;
+}
+.editContact{
+input[type="time"],
+input[type="date"] {
+    &::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+    }
+}
+
+select.form-control {
+    cursor: pointer; 
+}
+
+select.form-control {
+    cursor: pointer;
+}
+
+select.form-control::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+}
 }

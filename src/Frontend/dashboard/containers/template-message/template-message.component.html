@@ -289,7 +289,7 @@
                 </button>
             </div>
             <div class="modal-body px-5 pt-0">
-                <div class="container d-flex flex-row">
+                <div class="container d-flex">
 
                 
                 <div *ngIf="selectedTab==1" class="d-flex flex-column filter-cateegory" >
@@ -306,7 +306,7 @@
                     <img class="" src="../../../../assets/img/profile/next1.svg"/>
                     </div>
                 </div>
-                <div class="px-5 flex-grow-1 filter-list">
+                <div class="pl-5 flex-grow-1 filter-list">
                     <label *ngIf="selectedCategory == 0 && selectedTab == 1" class="pb-2">Filter by {{filterCategory[selectedCategory]}}</label>
                     <label *ngIf="selectedCategory == 1 && selectedTab == 1" class="pb-2">Filter by {{filterCategory[selectedCategory]}}</label>
 
@@ -352,7 +352,7 @@
                             Channel?.label === 'WhatsApp Official' ? 'WA API' : 
                             Channel?.label === 'WhatsApp Web' ? 'WA Web' : 
                             Channel?.label 
-                            }}</span></label> 
+                            }} ({{Channel?.connected_id}})</span></label> 
                         </div>
                       </div>
                     <div *ngIf="selectedCategory == 2">

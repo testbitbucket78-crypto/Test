@@ -120,6 +120,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	media_Type:string='';
 	assignAddTag: [] =[];
 	assignedTagList:any []=[];
+	assignedTagListUuid: any []=[];
 	dragAreaClass: string='';
 	selectedChannel:any='WhatsApp Offical';
 	contactList:any = [];
@@ -280,7 +281,6 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		const chatWindowElement: HTMLElement = this.chatSection.nativeElement;
         chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
 	    chatWindowElement.querySelector('.e-toolbar');
-	
 	  }
 
 
@@ -949,6 +949,7 @@ showAddSmartRepliesModal() {
 				ActionID: 0, 
 				Message: this.chatEditor.value, 
 				Value: '', 
+				ValueUuid: '',
 				Media: this.messageMeidaFile,
 				MessageVariables: this.allVariables
 			});
@@ -1102,7 +1103,7 @@ stopPropagation(event: Event) {
 			}
 		})
 		if(!isExist) {
-			this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name, Media: '', MessageVariables: ''})
+			this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: ''})
 		}
 			
 	}
@@ -1119,6 +1120,7 @@ stopPropagation(event: Event) {
 						  console.log(this.addTagList[index]);
 						  // item.Value.push(this.addTagList[index]);
 						  this.assignedTagList.push(this.addTagList[index].TagName);
+						  this.assignedTagListUuid.push(this.addTagList[index].ID);
 					  }
 				  }
 				  else {
@@ -1126,7 +1128,7 @@ stopPropagation(event: Event) {
 					console.log(idx);
 					console.log(this.assignedTagList[idx]);
 					this.assignedTagList.splice(idx,1);
-					
+					this.assignedTagListUuid.splice(idx,1);
 				  }
 				
 		}
@@ -1134,7 +1136,8 @@ stopPropagation(event: Event) {
 		if (!isExist) {
 			this.assignedTagList = [];
 			this.assignedTagList.push(this.addTagList[index].TagName);
-			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList, Media: '', MessageVariables: ''});
+			this.assignedTagListUuid.push(this.addTagList[index].ID);
+			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: ''});
 			console.log('new value');
 		}
 		console.log(this.assignedAgentList);
@@ -1213,7 +1216,8 @@ stopPropagation(event: Event) {
 		  MatchingCriteria: this.model,
 		  Keywords: this.keywords || [], 
 		  ReplyActions: this.assignedAgentList || [],
-		  Tags: this.assignedTagList || []
+		  Tags: this.assignedTagList || [],
+		  TagsUuid: this.assignedTagListUuid || [],
 		};
 		if(data.ReplyActions.length > 0) {
 		data.ReplyActions[0].Media = this.mediaLink
@@ -1358,7 +1362,8 @@ stopPropagation(event: Event) {
 					name: this.userList[i].name,
 					nameInitials: this.userList[i].nameInitials,
 					profileImg: this.userList[i].profile_img,
-					RoleName:this.userList[i].RoleName
+					RoleName:this.userList[i].RoleName,
+					uuid: this.userList[i].uid
 				});
 			}
 		  }
@@ -1546,6 +1551,7 @@ stopPropagation(event: Event) {
 		for (let i=0;i<this.repliesData.ActionList.length;i++) {
 			let ActionId:number = 0
 			let Value = this.data[i].Value
+			let uuid = this.data[i].uuid
 			if(this.repliesData.ActionList[i].Name == ''){
 				ActionId = 0
 			}
@@ -1560,6 +1566,7 @@ stopPropagation(event: Event) {
 				{	ActionID: ActionId,
 					Message: this.data[i].Message,
 					Value: Value,
+					ValueUuid: uuid,
 					Media: this.data[i].Media,
 					MessageVariables: this.allVariables
 				});

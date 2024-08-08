@@ -263,9 +263,9 @@ getPhoneNumberValidation(){
             .subscribe((result:any) => {
                 if (result) {
                     if(result?.status == 200){
-                    this.userDetailForm.reset();
-                    $('#userModal').modal('hide');
-                    this.getUserList();
+                        $('#userModal').modal('hide');
+                        this.getUserList();
+                        this.userDetailForm.reset();
                     } else{
                         this.showToaster('error',result?.msg);
                     }
@@ -284,10 +284,10 @@ getPhoneNumberValidation(){
             .subscribe(result => {
                 if (result) {
                     if(result?.status == 200){
-                    this.userDetailForm.reset();
-                    $('#userModal').modal('hide');
-                    this.showSideBar = false;
-                    this.getUserList();
+                        $('#userModal').modal('hide');
+                        this.showSideBar = false;
+                        this.getUserList();
+                        this.userDetailForm.reset();
                 } else{
                     this.showToaster('error',result?.msg);
                 }
