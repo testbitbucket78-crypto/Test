@@ -166,6 +166,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	messageTimeLimit=10;
 	SIPmaxMessageLimt=100;
 	SIPthreasholdMessages=1;
+	isTemplate: boolean = false;
 	showFullProfile=false;
 	showAttachedMedia=false;
 	showattachmentbox=false;
@@ -608,7 +609,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 			htmlcontent+='<p>'+item.FooterText+'</p>';
 		}
 		this.chatEditor.value =htmlcontent
-		this.isAttachmentMedia = false
+		this.isAttachmentMedia = false;
+		this.isTemplate = true;
 	}
 
 showeditTemplate(){
@@ -955,7 +957,8 @@ sendattachfile() {
 								this.chatEditor.value ='';
 								this.messageMeidaFile='';
 								this.mediaType='';
-								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
+								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1;
+								this.isTemplate = false;
 							}
 				
 				
@@ -2974,6 +2977,7 @@ sendMessage(){
 			created_at:new Date(),
 			mediaSize:this.mediaSize,
 			spNumber: this.spNumber,
+			isTemplate:this.isTemplate,
 			MessageVariables: this.allVariables,
 		}
 		console.log(bodyData,'Bodydata')
@@ -3037,7 +3041,8 @@ sendMessage(){
 								this.chatEditor.value ='';
 								this.messageMeidaFile='';
 								this.mediaType='';
-								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
+								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1;
+								this.isTemplate = false
 							}
 				
 				
@@ -3421,4 +3426,17 @@ sendMessage(){
 		// this.OptInStatus =data.OptInStatus
 		// this.isBlocked=data.isBlocked;
 	  }
+
+	  getSplitMultiSelect(val:any){
+		let selectName = val?.split(',');
+		let names ='';
+		if(selectName && selectName?.length>0){
+		selectName.forEach((it:any)=>{
+					  let name = it.split(':');
+					  console.log(name);
+					  names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
+	})
+  }
+	return names;
+	}
 }

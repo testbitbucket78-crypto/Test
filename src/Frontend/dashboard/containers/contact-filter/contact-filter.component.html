@@ -88,8 +88,8 @@
                             </div>
                         </div>
 
-                            <div class="addnewitem_content_inner">
-                                <p><span>Value</span></p>
+                            <div class="addnewitem_content_inner" *ngIf="addedF.filterType !='switch' " >
+                                <p><span>Value {{addedF.filterType}}</span></p>
                                 
                                 <div *ngIf="addedF.filterType =='text' " class="formrow">
                                     <input type="text" class="form-control" value={{addedF.filterValue}}  (change)="selectFilterValue(i,$event)">

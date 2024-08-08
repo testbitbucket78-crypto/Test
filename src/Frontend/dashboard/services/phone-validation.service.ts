@@ -97,7 +97,7 @@ export class PhoneValidationService {
 phoneNumberValidator(countryControl: AbstractControl | null): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const countryCode = countryControl?.value;
-    const expectedLength = this.countryCodes.filter((item)=> item.countryCode == countryCode)[0].length;
+    const expectedLength = this.countryCodes.filter((item)=> item.countryCode == countryCode)[0]?.length;
 
     if (!expectedLength) {
       return { invalidCountryCode: true };
