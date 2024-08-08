@@ -101,6 +101,8 @@ export class GeneralSettingsComponent implements OnInit {
       if(this.isAgentActive==0) {
         this.pauseAgentActiveTime = 0;
         this.agentActiveTime ='';
+      }else{
+        this.pauseAgentActiveTime = 5;
       }
     }; if (action === 'autoReplyTime') {
       this.isAutoReply = checked ? 1 : 0;
@@ -108,6 +110,8 @@ export class GeneralSettingsComponent implements OnInit {
           this.autoReplyTime ='';
           this.pauseAutoReplyTime = 0;
           this.pausedTill ='';
+        }else{
+          this.pauseAutoReplyTime = 5;
         }
     }; if (action === 'autoReplyDisable') {
       this.isAutoReplyDisable = checked ? 1 : 0;
