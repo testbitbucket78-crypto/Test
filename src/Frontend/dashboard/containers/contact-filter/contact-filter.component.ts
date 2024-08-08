@@ -11,58 +11,7 @@ import { Subject } from 'rxjs';
 })
 export class ContactFilterComponent implements OnInit {
   
-	contactFilterBy:any=[
-		{value:'Phone_number',label:'Phone_number',checked:false,addeFilter:[],
-		option:[
-		{label:'Contains',checked:false,type:'text'},
-		{label:'Does Not Contain',checked:false,type:'text'},
-		{label:'Starts with',checked:false,type:'text'},
-		{label:'End with',checked:false,type:'text'},
-		]},
-		{value:'Name',label:'Name',checked:false,addeFilter:[],
-		option:[
-		{label:'Contains',checked:false,type:'text'},
-		{label:'Does Not Contain',checked:false,type:'text'},
-		{label:'Starts with',checked:false,type:'text'},
-		{label:'End with',checked:false,type:'text'},
-		{label:'Is',checked:false,type:'select',options:['Empty']},
-		{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
-		{value:'emailId',label:'emailId',checked:false,addeFilter:[],
-		option:[
-		{label:'Contains',checked:false,type:'text'},
-		{label:'Does Not Contain',checked:false,type:'text'},
-		{label:'Includes domain',checked:false,type:'text'},
-		{label:'Exclude domain',checked:false,type:'text'},
-		{label:'Is',checked:false,type:'select',options:['Empty']},
-		{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
-		{value:'tag',label:'Tag',checked:false,addeFilter:[],
-		option:[
-		{label:'Is',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
-		{label:'Is not',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
-		]},
-		
-		{value:'OptInStatus',label:'OptInStatus',checked:false,addeFilter:[],
-		option:[
-		{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
-		{label:'Is not',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']}
-	    ]},		
-		{value:'isBlocked',label:'Blocked',checked:false,addeFilter:[],
-		option:[
-			{label:'Is',checked:false,type:'select',options:['true','false']},
-			{label:'Is not',checked:false,type:'select',options:['true','false']}
-	    ]},
-		{value:'created_at',label:'Created At',checked:false,addeFilter:[],
-		option:[
-		{label:'Is',checked:false,type:'datetime'},
-		{label:'Is not',checked:false,type:'datetime'},
-		{label:'Between',checked:false,type:'d_datetime'},
-		{label:'After',checked:false,type:'date'},
-		{label:'Before',checked:false,type:'date'}
-	    ]},
-		
-	];
+	contactFilterBy:any=[];
 	
 	newContactListFilters:any=[]
 	@Input() ContactListNewFilters:any=[];
@@ -103,7 +52,62 @@ export class ContactFilterComponent implements OnInit {
 		// this.addNewFilters(this.contactFilterBy);
 	}
 
+	getContactFilterBy(){
+		this.contactFilterBy=[
+			{value:'Phone_number',label:'Phone_number',checked:false,addeFilter:[],
+			option:[
+			{label:'Contains',checked:false,type:'text'},
+			{label:'Does Not Contain',checked:false,type:'text'},
+			{label:'Starts with',checked:false,type:'text'},
+			{label:'End with',checked:false,type:'text'},
+			]},
+			{value:'Name',label:'Name',checked:false,addeFilter:[],
+			option:[
+			{label:'Contains',checked:false,type:'text'},
+			{label:'Does Not Contain',checked:false,type:'text'},
+			{label:'Starts with',checked:false,type:'text'},
+			{label:'End with',checked:false,type:'text'},
+			{label:'Is',checked:false,type:'select',options:['Empty']},
+			{label:'Is not',checked:false,type:'select',options:['Empty']},
+			]},
+			{value:'emailId',label:'emailId',checked:false,addeFilter:[],
+			option:[
+			{label:'Contains',checked:false,type:'text'},
+			{label:'Does Not Contain',checked:false,type:'text'},
+			{label:'Includes domain',checked:false,type:'text'},
+			{label:'Exclude domain',checked:false,type:'text'},
+			{label:'Is',checked:false,type:'select',options:['Empty']},
+			{label:'Is not',checked:false,type:'select',options:['Empty']},
+			]},
+			{value:'tag',label:'Tag',checked:false,addeFilter:[],
+			option:[
+			{label:'Is',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+			{label:'Is not',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+			]},
+			
+			{value:'OptInStatus',label:'OptInStatus',checked:false,addeFilter:[],
+			option:[
+			{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
+			{label:'Is not',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']}
+			]},		
+			{value:'isBlocked',label:'Blocked',checked:false,addeFilter:[],
+			option:[
+				{label:'Is',checked:false,type:'select',options:['true','false']},
+				{label:'Is not',checked:false,type:'select',options:['true','false']}
+			]},
+			{value:'created_at',label:'Created At',checked:false,addeFilter:[],
+			option:[
+			{label:'Is',checked:false,type:'datetime'},
+			{label:'Is not',checked:false,type:'datetime'},
+			{label:'Between',checked:false,type:'d_datetime'},
+			{label:'After',checked:false,type:'date'},
+			{label:'Before',checked:false,type:'date'}
+			]},
+			
+		];
+	}
     getCustomFieldsData() {
+		this.getContactFilterBy();
 		this._settingsService.getNewCustomField(this.SPID).subscribe(response => {
 		  this.customFieldData = response.getfields;
 		  console.log(this.customFieldData);  
@@ -114,6 +118,7 @@ export class ContactFilterComponent implements OnInit {
 				console.log(filteredFields);  
 		filteredFields.forEach((item:any)=>{
 			let options:any;
+			console.log(item,'txt');  
 			switch(item?.type){
 				case 'Date':{
 					 options =[
@@ -126,12 +131,16 @@ export class ContactFilterComponent implements OnInit {
 				}
 				case 'Switch':{
 					options =[
-						{label:'Is',checked:false,type:'select',options:['Yes','No']},
-						{label:'Is not',checked:false,type:'select',options:['Yes','No']}
+						{label:'Is empty',checked:false,type:'switch'},
+						{label:'Is not empty',checked:false,type:'switch'},
+						{label:'Yes',checked:false,type:'switch'},
+						{label:'No',checked:false,type:'switch'},
 					];
 				}
 				case 'text':{
 					 options =[
+						{label:'Is empty',checked:false,type:'switch'},
+						{label:'Is not empty',checked:false,type:'switch'},
 						{label:'Contains',checked:false,type:'text'},
 						{label:'Does Not Contain',checked:false,type:'text'},
 						{label:'Starts with',checked:false,type:'text'},
@@ -142,8 +151,12 @@ export class ContactFilterComponent implements OnInit {
 				}
 				case 'Number':{
 					options =[
+						{label:'Is empty',checked:false,type:'switch'},
+						{label:'Is not empty',checked:false,type:'switch'},
 					   {label:'Contains',checked:false,type:'text'},
 					   {label:'Does Not Contain',checked:false,type:'text'},
+					   {label:'Less than',checked:false,type:'text'},
+					   {label:'Greater than',checked:false,type:'text'},
 					   {label:'Starts with',checked:false,type:'text'},
 					   {label:'End with',checked:false,type:'text'},
 					   {label:'Is',checked:false,type:'select',options:['Empty']},
@@ -153,15 +166,19 @@ export class ContactFilterComponent implements OnInit {
 				case 'Select':{
 					let selectOptions = JSON.parse(item?.dataTypeValues);
 					options =[
-						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
-						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is empty',checked:false,type:'switch'},
+						{label:'Is not empty',checked:false,type:'switch'},
+						// {label:'Is',checked:false,type:'select_opt',options:selectOptions},
+						// {label:'Is not',checked:false,type:'select_opt',options:selectOptions}
 					];
 				}
 				case 'Multi Select':{
 					let selectOptions = JSON.parse(item?.dataTypeValues);
 					options =[
-						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
-						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is empty',checked:false,type:'switch'},
+						{label:'Is not empty',checked:false,type:'switch'},
+						// {label:'Is',checked:false,type:'select_opt',options:selectOptions},
+						// {label:'Is not',checked:false,type:'select_opt',options:selectOptions}
 					];
 				}
 			}			

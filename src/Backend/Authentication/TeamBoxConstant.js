@@ -80,7 +80,7 @@ var selectAllQuery = `WITH LatestInteractions AS (
 ContactsWithoutInteraction AS (
     SELECT ec.customerId, ec.Phone_number, ec.Name, 'WithoutInteraction' AS source, 1 AS priority
     FROM EndCustomer ec
-    WHERE ec.customerId NOT IN (SELECT customerId FROM Interaction)
+    WHERE ec.customerId NOT IN (SELECT customerId FROM Interaction  where SP_ID=? and IsTemporary !=1)
       AND ec.IsTemporary != 1
       AND ec.isDeleted != 1
       AND ec.SP_ID = ?

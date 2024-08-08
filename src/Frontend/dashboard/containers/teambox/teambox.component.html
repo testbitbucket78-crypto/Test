@@ -590,8 +590,9 @@ popupWidth='250px' popupHeight='200px'>
 									<!-- <h6 class="mt-2" *ngIf="it?.type != 'Select'">{{items[it?.ActuallName]}}</h6>
 							<h6 class="mt-2" *ngIf="it?.type == 'Select'">{{getSplitItem(items[it?.ActuallName])}}</h6> -->
 									<div class="tag_list">
-										<div class="tag_item" *ngIf="it?.type != 'Select'">{{selectedInteraction[it?.ActuallName]}}</div>
+										<div class="tag_item" *ngIf="it?.type != 'Select' && it?.type != 'Multi Select'">{{selectedInteraction[it?.ActuallName]}}</div>
 										<div class="tag_item" *ngIf="it?.type == 'Select'">{{getSplitItem(selectedInteraction[it?.ActuallName])}}</div>
+										<div class="tag_item" *ngIf="it?.type == 'Multi Select'">{{getSplitMultiSelect(selectedInteraction[it?.ActuallName])}}</div>
 									</div>
 								</div>
 								<!-- <div class="parent-flex px-4 py-2 parent d-flex">

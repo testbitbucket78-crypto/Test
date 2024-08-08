@@ -108,8 +108,12 @@ async function NoCustomerReplyTimeout() {
         let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
     
         let messageValu=[[msg.SPID,msg.Type,"211544555367892",msg.interaction_id,msg.Agent_id, 'out',msg.value,msg.link,msg.message_type,"","",currenttime,currenttime,6]]
-         let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
-        let closeInteraction=await db.excuteQuery(`UPDATE Interaction SET interaction_status='empty' WHERE InteractionId=${msg.InteractionId}`,[]);
+        let insertedMessage=await db.excuteQuery(insertMessageQuery,[messageValu])
+        let closeInteraction=await db.excuteQuery(`UPDATE Interaction SET interaction_status='Resolved' WHERE InteractionId=${msg.InteractionId}`,[]);
+        if (closeInteraction.affectedRows  > 0) {
+          let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [msg.interaction_id]);
+          
+        }
       }
     }
   } catch (error) {
