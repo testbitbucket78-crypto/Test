@@ -52,7 +52,7 @@ const getAllCustomer = async (req, res) => {
         let RangeEnd = parseInt(req.params.RangeEnd - req.params.RangeStart);
         //  logger.info('RangeStart and RangeEnd calculated', { RangeStart, RangeEnd });
 
-        let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
+        let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID,req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
         // logger.info('Query executed for getAllCustomer', { spID: req.params.spID, RangeStart, RangeEnd, contacts });
         let isCompleted = false;
         if (contacts?.length === 0 || contacts?.length < RangeEnd) {
@@ -208,7 +208,7 @@ const blockCustomer = async (req, res) => {
     var values = [[customerId, isBlocked]];
     // logger.info('Received request for blockCustomer', { customerId, isBlocked });
 
-    let getInteractionWithCId = await db.excuteQuery('select * FROM Interaction where customerId = ?  and   is_deleted !=1 order by created_at desc limit 1 ',[customerId])
+    let getInteractionWithCId = await db.excuteQuery('select * FROM Interaction where customerId = ?  and   is_deleted !=1 order by created_at desc limit 1 ', [customerId])
 
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
@@ -249,6 +249,7 @@ const createInteraction = async (req, res) => {
         interaction_type = "Marketing";
         IsTemporary = req.body?.IsTemporary;
         var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type, IsTemporary]];
+//Update EndCustomer for customer
 
         let isExist = await db.excuteQuery('select * from Interaction where SP_ID=? and customerId=? and is_deleted!=1 and IsTemporary !=1', [SP_ID, customerId]);
         if (isExist?.length > 0) {
@@ -261,6 +262,7 @@ const createInteraction = async (req, res) => {
             let myUTCString = new Date().toUTCString();
             const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
             let createInteraction = await db.excuteQuery(val.createInteractionQuery, [values]);
+            let updateChannel = await db.excuteQuery('update EndCustomer set channel=? where customerId=? and SP_ID=?',[req.body?.channel,customerId, SP_ID])
             let interactionData = await db.excuteQuery(val.interactionDataById, [SP_ID, createInteraction?.insertId]);
             let currency_nameQuery = `select Currency from localDetails where SP_ID=?;`;
             let currency_name = await db.excuteQuery(currency_nameQuery, [SP_ID]);
@@ -358,6 +360,7 @@ const getAllFilteredInteraction = async (req, res) => {
         }
 
         queryPath += ` ORDER BY 
+          pnin.InteractionId IS NULL,
             LastMessageDate DESC, 
             ic.InteractionId DESC
         LIMIT ?, ?`;
@@ -536,11 +539,16 @@ const deleteMessage = async (req, res) => {
     //  logger.info('deleteMessage function completed successfully');
 };
 
-const updateNotes = (req, res) => {
+const updateNotes = async (req, res) => {
     // logger.info('Starting updateNotes function');
     if (req.body.Message_id > 0) {
         var messageQuery = "UPDATE Message SET message_text =?,message_media=?,media_type=?,Type=? WHERE Message_id =" + req.body.Message_id;
         var values = [req.body?.message_text, req.body?.message_media, req.body?.media_type, req.body?.Type];
+        let myUTCString = new Date().toUTCString();
+        const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
+
+        let actiond = await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'notes']);
         db.runQuery(req, res, messageQuery, [values]);
         //    logger.info('updateNotes function completed successfully');
     }
