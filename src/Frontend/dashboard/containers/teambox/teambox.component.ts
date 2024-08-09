@@ -290,8 +290,12 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
 	srchText:string ='';
-	isLoadingOnScroll!: boolean;
-	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
+	public insertImageSettings: object = {
+		width: '50px',
+		height: '50px'
+	  };
+	  isLoadingOnScroll!: boolean;
+	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService,public settingsService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
 		public phoneValidator:PhoneValidationService, private datePipe:DatePipe,
 		private dashboardService: DashboardService,
 		private route: ActivatedRoute) {
@@ -2783,6 +2787,7 @@ createInteraction(customerId:any) {
 var bodyData = {
 	customerId: customerId,
 	spid:this.SPID,
+	channel:this.selectedChannel,
 	IsTemporary: 1
 
 }
@@ -3301,6 +3306,17 @@ sendMessage(){
 			console.log('abc');
           args.cancel = true;
         }
+			if (args.requestType === 'Image') {
+			  setTimeout(() => {
+				console.log('gjkdsfngs');
+				const images = document.querySelectorAll('img');
+				if (images.length > 0) {
+				  const lastImage = images[images.length - 1];
+				  lastImage.style.width = '50px';  // Set default width
+				  lastImage.style.height = '50px'; // Set default height
+				}
+			  }, 0);
+			}
       }
 
 	  getTime(time:any){

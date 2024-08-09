@@ -1215,9 +1215,13 @@ formateDate(dateTime:string){
 			})
 			console.log(searchData)
 			this.filteredEndCustomer =searchData; 
+			
 		}else{
 			this.filteredEndCustomer = this.filteredEndCustomerOrigional
 		}
+		
+		this.totalpages = Math.ceil(this.filteredEndCustomer.length/this.pagesize);
+		this.page =1;
 		
 		//this.filteredEndCustomerOrigional
 	}

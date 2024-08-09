@@ -710,7 +710,7 @@ checkTemplateName(e:any){
         newTemplateForm.Category = this.Category;
         newTemplateForm.category_id = this.category_id;
         newTemplateForm.Language = this.newTemplateForm.controls.Language.value;
-        newTemplateForm.status = this.status;
+        newTemplateForm.status = this.status == 'saved'? this.newTemplateForm.controls.Channel.value == 'WA API' ? 'pending':this.status: this.status;
         newTemplateForm.template_id = 0;
         newTemplateForm.template_json = [];
         if(this.newTemplateForm.controls.Channel.value == 'WA API') {

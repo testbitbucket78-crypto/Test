@@ -3067,6 +3067,11 @@ label span {
 .contact-modal-body{
     height: 85vh;
 }
+
+.disabled{
+    pointer-events: none;
+    opacity: 0.5;
+}
 .editContact{
 input[type="time"],
 input[type="date"] {
