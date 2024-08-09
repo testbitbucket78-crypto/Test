@@ -45,12 +45,12 @@
                       name="display_mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
                       onKeyPress="return /^[0-9]$/.test(event.key)"
                       [ngClass]="{'is-invalid' :submitted && registerForm.controls.display_mobile_number.errors }" 
-                    (change)="formatPhoneNumber()" #text> 
-                    <img *ngIf="VerificationData[1].isverifyphoneOtp" src="assets/img/verified.svg" width="16px" height="16px" style="inset: 0 10px 0 auto;margin: auto;" class="position-absolute" alt="verified-logo"/>
+                    (change)="formatPhoneNumber()" (input)="ValidatePhone()" #text> 
+                    <img *ngIf="isVerifiedPhone" src="assets/img/verified.svg" width="16px" height="16px" style="inset: 0 10px 0 auto;margin: auto;" class="position-absolute" alt="verified-logo"/>
                   </div>
                   <div *ngIf="registerForm.controls.display_mobile_number.touched && registerForm.get('display_mobile_number')?.hasError('invalidPhoneNumberLength')"
 								 class="text-danger">
-								! Invalid phone number length for the selected country.
+								
 							</div>
                 </div>
            
@@ -60,8 +60,8 @@
                   <label for="floatingInputGrid">Your Email</label>
                   <div class="position-relative">  
                     <input formControlName="email_id"  type="text-right mr-3" class="form-control" id="gem" [ngClass]="{'is-invalid' :submitted && registerForm.controls.email_id.errors}" placeholder="Email" aria-label="City" name="email_id"
-                    formControlName="email_id" id="email_id">
-                    <img *ngIf="VerificationData[0].isverfyEmailOtp" src="assets/img/verified.svg" width="16px" height="16px" style="inset: 0 10px 0 auto;margin: auto;" class="position-absolute" alt="verified-logo"/>
+                    formControlName="email_id" id="email_id" (input)="ValidateEmail()">
+                    <img *ngIf="isVerifiedEmail" src="assets/img/verified.svg" width="16px" height="16px" style="inset: 0 10px 0 auto;margin: auto;" class="position-absolute" alt="verified-logo"/>
                   </div>
 
                 </div>
@@ -122,7 +122,7 @@
           </div>
                     
           <div *ngIf="submitted && registerForm.controls.display_mobile_number.errors" class="text-danger">
-            ! Phone number must between 6 to 15 digits
+            ! Invalid phone number length for the selected country.
           </div>
           <br>
           <div *ngIf="submitted && registerForm.controls.email_id.errors" class="text-danger">
