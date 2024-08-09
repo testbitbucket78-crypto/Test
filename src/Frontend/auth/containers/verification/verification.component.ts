@@ -141,6 +141,7 @@ export class VerificationComponent implements OnInit {
             console.warn("verification! ", response)
 
             if (response.status === 200) {
+                this.isverfyEmailOtp = true;
                 this.verifyButton1Clicked = true;
                 let  successMessage = "! Success";
                 this.verfyOtp("email", this.otpForm?.value?.otp1);
@@ -161,7 +162,8 @@ export class VerificationComponent implements OnInit {
 
 
                 if (error.status === 403) {
-                    this.isverfyEmailOtp = false
+                    this.isverfyEmailOtp = false;
+                    this.verfyOtp("email", this.otpForm?.value?.otp1);
                     let errorMessage = "! Invalid Otp.";
                     this.errorDiv = document.getElementById("error-message");
                     if (this.errorDiv) {
@@ -170,6 +172,7 @@ export class VerificationComponent implements OnInit {
                     this.verifyButton1Clicked = false;
                 } else if (error.status === 410) {
                     this.isverfyEmailOtp = false
+                    this.verfyOtp("email", this.otpForm?.value?.otp1);
                     let errorMessage = "! Otp Expired.";
                      this.errorDiv = document.getElementById("error-message");
                     if (this.errorDiv) {
@@ -196,6 +199,7 @@ export class VerificationComponent implements OnInit {
             console.warn("verification! ", response)
     
             if (response.status === 200) {
+                this.isverifyphoneOtp = true;
                 this.verifyButton2Clicked = true;
                 let successMessage = "! Success.";
                 this.verfyOtp("phone",this.otpForm?.value?.otp);
@@ -214,6 +218,7 @@ export class VerificationComponent implements OnInit {
 
                 if (error.status === 403) {
                     this.isverifyphoneOtp = false;
+                    this.verfyOtp("phone",this.otpForm?.value?.otp);
                     let errorMessage = "! Invalid Otp.";
                      this.errorDiv = document.getElementById("error-message1");
                     if (this.errorDiv) {
@@ -222,6 +227,7 @@ export class VerificationComponent implements OnInit {
                     this.verifyButton2Clicked = false;
                 } else if (error.status === 410) {
                     this.isverifyphoneOtp = false;
+                    this.verfyOtp("phone",this.otpForm?.value?.otp);
                     let errorMessage = "! Otp Expired.";
                     this.errorDiv = document.getElementById("error-message1");
                     if (this.errorDiv) {
@@ -241,9 +247,9 @@ export class VerificationComponent implements OnInit {
     verificationDataEmail: { type: string; isverfyEmailOtp: boolean; otp: number } | null = null;
     verificationDataPhone: { type: string; isverifyphoneOtp: boolean; otp: number } | null = null;
     verfyOtp(type: 'phone' | 'email', otp: number){
-        ;
+        
         if(type === 'email'){
-            this.isverfyEmailOtp = true;
+            
             this.verificationDataEmail = {
                 type: type,
                 isverfyEmailOtp: this.isverfyEmailOtp,
@@ -251,7 +257,7 @@ export class VerificationComponent implements OnInit {
             };
            
         } else if(type === 'phone'){
-            this.isverifyphoneOtp = true;
+           
             this.verificationDataPhone = {
                 type: type,
                 isverifyphoneOtp: this.isverifyphoneOtp,
@@ -262,6 +268,7 @@ export class VerificationComponent implements OnInit {
         if(this.isverfyEmailOtp && this.isverifyphoneOtp){
             this.onSubmitRegisterform();
         }
+        this.cdr.detectChanges()
     }
     startOtpTimer(type: 'phone' | 'email', seconds: number) {
         if (type === 'phone') {
@@ -325,7 +332,7 @@ export class VerificationComponent implements OnInit {
             return
         }
 
-        if (this.verifyButton1Clicked && this.verifyButton2Clicked == true) {
+        if (this.isverfyEmailOtp && this.isverifyphoneOtp == true) {
             this.isVerified = true;
         }
         else return;
