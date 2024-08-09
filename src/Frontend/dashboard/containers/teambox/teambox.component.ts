@@ -291,6 +291,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isLoadingOlderMessage!: boolean;
 	srchText:string ='';
 	isLoadingOnScroll!: boolean;
+	event='teamBox';
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
 		public phoneValidator:PhoneValidationService, private datePipe:DatePipe,
 		private dashboardService: DashboardService,
@@ -808,9 +809,52 @@ selectQuickReplies(item:any){
 	}
 	var htmlcontent = mediaContent+'<p>'+item.BodyText+'</p>';
 	this.chatEditor.value =htmlcontent
-
+	this.mediaType = item.media_type
+	this.messageMeidaFile = item.Links;
+	this.addingStylingToMedia(item);
 }
+addingStylingToMedia(item: any){
+	if (item.media_type === 'image' || item.media_type === 'video') {
+		setTimeout(() => {
+		  const editorContent = this.chatEditor.element.querySelector('.e-content');
+		  const mediaElements = editorContent?.querySelectorAll('img, video');
+	
+		  mediaElements?.forEach((element) => {
+			const media = element as HTMLElement;
 
+			media.style.width = '100%';
+			media.style.height = '50%';
+			media.style.position = 'inherit';
+			media.style.zIndex = '99';
+	
+			const crossButton = document.createElement('button');
+			crossButton.textContent = '✖';
+			crossButton.style.position = 'absolute';
+			crossButton.style.top = '5px';
+			crossButton.style.right = '5px';
+			crossButton.style.zIndex = '100';
+			crossButton.style.background = '#ffffff';
+			crossButton.style.color = 'red';
+			crossButton.style.height = '24px';
+			crossButton.style.width = '24px';
+			crossButton.style.border ='none';
+			crossButton.style.outline ='none';
+			crossButton.style.borderRadius = '50%';
+			crossButton.style.cursor = 'pointer';
+	        
+			const parentElement = media.parentElement as HTMLElement;
+			parentElement.style.position = 'relative';
+			parentElement.style.width = '50%';
+			parentElement.appendChild(crossButton);
+
+			crossButton.addEventListener('click', () => {
+			  media.remove();
+			  crossButton.remove();
+			});
+		  });
+		}, 0); 
+	  }
+}
 searchQuickReply(event:any){
 	let searchKey = event.target.value
 	if(searchKey.length>2){
@@ -2089,7 +2133,6 @@ stopPropagation(event: Event) {
   }
 
 
-
 updateCustomer(){
 	// var bodyData = {
 	// Name: this.EditContactForm.get('Name')?.value,
@@ -2208,7 +2251,8 @@ copyContactFormData() {
               ActuallName: "OptInStatus"
             },
         ],
-        SP_ID:this.SPID
+        SP_ID:this.SPID,
+		event: this.event,
     }
 
     if(this.filteredCustomFields.length >0){
@@ -2993,6 +3037,8 @@ sendMessage(){
 			this.messageMeidaFile = this.messageMediaFile;
 			value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
 			this.messageMediaFile = '';
+		} else if(this.messageMeidaFile != ''){
+            value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
 		}
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
@@ -3300,7 +3346,7 @@ sendMessage(){
         if (args.requestType === 'EnterAction' && this.mentionObj.element?.classList?.contains('e-popup-open')) {
 			console.log('abc');
           args.cancel = true;
-        }
+		  }
       }
 
 	  getTime(time:any){

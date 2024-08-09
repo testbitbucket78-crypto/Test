@@ -50,7 +50,7 @@
                   </div>
                   <div *ngIf="registerForm.controls.display_mobile_number.touched && registerForm.get('display_mobile_number')?.hasError('invalidPhoneNumberLength')"
 								 class="text-danger">
-								! Invalid phone number length for the selected country.
+								
 							</div>
                 </div>
            
@@ -122,7 +122,7 @@
           </div>
                     
           <div *ngIf="submitted && registerForm.controls.display_mobile_number.errors" class="text-danger">
-            ! Phone number must between 6 to 15 digits
+            ! Invalid phone number length for the selected country.
           </div>
           <br>
           <div *ngIf="submitted && registerForm.controls.email_id.errors" class="text-danger">
