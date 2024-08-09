@@ -30,20 +30,20 @@
                     <div class="">
                         <div class="" [(ngModel)]="phone">
 
-                            <label class="conten" for="floatingInputGrid">Verify your Phone No. +{{ phone}}</label>
+                            <label class="conten" for="floatingInputGrid">Verify your Phone  No. +{{ phone}}</label>
                             <div class=" d-md-flex justify-content">
-                                <input type="number" class="form-control"
+                                <input type="number" class="form-control" [disabled]="isverifyphoneOtp" [readonly]="isverifyphoneOtp"
                                     [ngClass]="{'is-invalid' :submitted && otpForm.controls.otp.errors}"
-                                    placeholder="Enter OTP" aria-label="City" name="otp" formControlName="otp" id="otp">
-                                <button class="btn1 me-1" type="button" (click)="onVerifyphoneOtp()"[ngClass]="{'btn-verified': isverifyphoneOtp}">{{isverifyphoneOtp ? 'Verified' : 'Verify'}}</button>
+                                    placeholder="Enter OTP" aria-label="City" name="otp" formControlName="otp" id="otp" (input)="otpOnChange()">
+                                <button [disabled]="isverifyphoneOtp" class="btn1 me-1" type="button" (click)="onVerifyphoneOtp()"[ngClass]="{'btn-verified': isverifyphoneOtp}">{{isverifyphoneOtp ? 'Verified' : 'Verify'}}</button>
                                 <!-- <button class="verified1" *ngIf="showSecondButton1"><img src="assets/img/verified.png"></button> -->
                             </div>
                         </div>
                         <div class="disc"><a style="display: inline-flex ">
                                 <h6>Did not receive the code? </h6>
-                                <h6 (click)="resendOtp(); startOtpTimer('phone', 30)" class="ml-1" [class.disabled]="phoneOtpTimer > 0"
-                                    [style.pointer-events]="phoneOtpTimer > 0 ? 'none' : 'auto'"
-                                    [style.cursor]="phoneOtpTimer > 0 ? 'default' : 'pointer'"> Resend {{ phoneOtpTimer > 0 ? ' (' + phoneOtpTimer + 's)' : '' }}</h6>
+                                <h6 (click)="resendOtp(); startOtpTimer('phone', 30)" class="ml-1" [class.disabled]="phoneOtpTimer > 0 || isverifyphoneOtp"
+                                    [style.pointer-events]="(phoneOtpTimer > 0 || isverifyphoneOtp )? 'none' : 'auto'"
+                                    [style.cursor]="(phoneOtpTimer > 0 || isverifyphoneOtp)? 'default' : 'pointer'"> Resend {{ phoneOtpTimer > 0 ? ' (' + phoneOtpTimer + 's)' : '' }}</h6>
                             </a></div>
 
                         <div *ngIf="submitted && otpForm.controls.otp.errors" class="text-danger">
@@ -56,10 +56,10 @@
                        <!-- <div class="" [(ngModel)]="email_id"> -->
                             <label class="conten" for="floatingInputGrid">Verify your Email Id {{email_id}}</label>
                             <div class=" d-md-flex justify-content">
-                                <input type="number" class="form-control"
+                                <input type="number" class="form-control" [disabled]="isverfyEmailOtp" [readonly]="isverfyEmailOtp"
                                     [ngClass]="{'is-invalid' :submitted && otpForm.controls.otp1.errors}"
-                                    placeholder="Enter OTP" aria-label="City" name="otp" formControlName="otp1" id="otp1">
-                                <button class="btn1 me-1" type="button" (click)="onVerify()" [ngClass]="{'btn-verified': isverfyEmailOtp}">{{isverfyEmailOtp ? 'Verified' : 'Verify'}}</button>
+                                    placeholder="Enter OTP" aria-label="City" name="otp" formControlName="otp1" id="otp1" (input)="otp1OnChange()">
+                                <button [disabled]="isverfyEmailOtp" class="btn1 me-1" type="button" (click)="onVerify()" [ngClass]="{'btn-verified': isverfyEmailOtp}">{{isverfyEmailOtp ? 'Verified' : 'Verify'}}</button>
 
                             </div>
                         <!-- </div> -->
@@ -67,9 +67,9 @@
                         <button class="verified" *ngIf="showSecondButton"><img src="assets/img/verified.png"></button>
                         <div class="disc"><a style="display: inline-flex">
                                 <h6>Did not receive the code? </h6>
-                                <h6 (click)="resendOtp();startOtpTimer('email', 30)" class="ml-1" [class.disabled]="emailotpTimer > 0"
-                                    [style.pointer-events]="emailotpTimer > 0 ? 'none' : 'auto'"
-                                    [style.cursor]="emailotpTimer > 0 ? 'default' : 'pointer'"> Resend {{ emailotpTimer > 0 ? ' (' + emailotpTimer + 's)' : '' }}</h6>
+                                <h6 (click)="resendOtp();startOtpTimer('email', 30)" class="ml-1" [class.disabled]="emailotpTimer > 0 || isverfyEmailOtp"
+                                    [style.pointer-events]="(emailotpTimer > 0 || isverfyEmailOtp)? 'none' : 'auto'"
+                                    [style.cursor]="(emailotpTimer > 0 || isverfyEmailOtp) ? 'default' : 'pointer'"> Resend {{ emailotpTimer > 0 ? ' (' + emailotpTimer + 's)' : '' }}</h6>
                             </a></div>
                         <div *ngIf="submitted && otpForm.controls.otp1.errors" class="text-danger1">
                             ! Otp Required
@@ -79,12 +79,12 @@
                     </div>
 
 
-                    <div class="form-group d-flex align-items-center justify-content-between  ">
+                    <!-- <div class="form-group d-flex align-items-center justify-content-between  "> -->
                         <!-- <a class="btn btn2" routerLink="/login">Submit</a> -->
-                        <button class="btn btn2" type="submit"
+                        <!-- <button class="btn btn2" type="submit"
                             (click)="onSubmitRegisterform()">Submit
                         </button>
-                    </div>
+                    </div> -->
 
                 </form>
             </div>

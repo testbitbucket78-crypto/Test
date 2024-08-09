@@ -256,6 +256,7 @@ countryCodes = [
     totalPage: any;
     paging: any = 1;
     lastElementOfPage: any;
+     event='contact'
    sort(headerName:String){
     this.isDesOrder = !this.isDesOrder;
     this.orderHeader = headerName;
@@ -704,7 +705,7 @@ onSelectAll(items: any) {
   
   };
 
-  
+ 
   copyContactFormData(isEditTag:boolean) {
     let ContactFormData = {
         result: [
@@ -745,7 +746,8 @@ onSelectAll(items: any) {
               ActuallName: "OptInStatus"
             },
         ],
-        SP_ID:this.spid
+        SP_ID:this.spid,
+        event: this.event,
     }
 
     if(this.filteredCustomFields.length >0){

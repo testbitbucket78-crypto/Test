@@ -130,7 +130,17 @@ export class VerificationComponent implements OnInit {
 
     }
 
-
+    otp1OnChange(){
+        if(this.isverfyEmailOtp){
+            this.onVerify();
+        }
+    }
+    otpOnChange(){
+        // for phone
+        if(this.isverifyphoneOtp){
+            this.onVerifyphoneOtp();
+        }
+    }
 
     onVerify() {
         this.otpFormValue = this.otpForm.value;

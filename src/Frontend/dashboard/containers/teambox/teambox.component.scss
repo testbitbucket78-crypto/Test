@@ -1253,7 +1253,7 @@ button:focus, input:focus {
     box-shadow: 4px 22px 54px #695F9730;
     border-radius: 20px;
     padding: 10px 0px;
-    //position: absolute;
+    position: absolute;
     max-width: 185px;
     margin-top: 10px;
     max-height: 170px;
@@ -1267,9 +1267,9 @@ button:focus, input:focus {
         height: 40px;
     }
 }
-.ContactOptiondropdown{
-    position: absolute;
-}
+// .ContactOptiondropdown{
+//     position: absolute;
+// }
 .popup-dialog.ContactOptiondropdown::-webkit-scrollbar {
     display: none;
 }
