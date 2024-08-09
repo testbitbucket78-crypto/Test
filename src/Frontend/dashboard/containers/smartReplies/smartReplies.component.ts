@@ -179,6 +179,9 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		userList:any;
 		userId!:number;
 		ShowChannelOption:any=false;
+		isAssigned:any=false;
+		isEditAssigned:any=false;
+		AssignedIndex:any = 0;
 		channelOption : any = [];
 		// channelOption:any=[
 		// 	{value:1,label:'WhatsApp Official',checked:false},
@@ -290,7 +293,8 @@ showAddSmartRepliesModal() {
 	$("#smartrepliesModal").modal('show');
 	// $('body').addClass('modal-add-smart-reply-open');
 	$('body').removeClass('modal-smart-reply-open');
-	this.isShowSmartReplies = true
+	this.isShowSmartReplies = true;
+	this.isEditAssigned = false;
 }
 
 /*** rich text editor ***/
@@ -993,6 +997,11 @@ showAddSmartRepliesModal() {
 	toggleEditable(index: number) {
 		this.isEditable[index] = !this.isEditable[index];
 		this.editableMessageIndex = this.isEditable[index] ? index : null;
+		if(this.assignedAgentList[index]?.ValueUuid){
+			this.ShowAssignOption = true;
+			this.isEditAssigned =true;
+			this.AssignedIndex = index;
+		}else{
 	    const element = document.getElementById(`msgbox-body${index}`);
 		
 		  if (element) {
@@ -1001,6 +1010,7 @@ showAddSmartRepliesModal() {
 			this.chatEditor.value = currentValue;
 			console.log(element);
 		  }
+		}
 		
 	  }
 	
@@ -1103,7 +1113,12 @@ stopPropagation(event: Event) {
 			}
 		})
 		if(!isExist) {
-			this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: ''})
+			this.isAssigned = true;
+			if(this.isEditAssigned){
+				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: ''}
+			}else{
+				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: ''})
+			}
 		}
 			
 	}
@@ -1240,9 +1255,7 @@ stopPropagation(event: Event) {
 				this.location.replaceState(this.location.path());
 				this.modalService.dismissAll(smartreplysuccess);
 				this.reloadCurrentRoute();
-				// window.location.reload();
-				// $("#smartrepliesModal").modal('hide'); 
-				// this.modalService.open(smartreplysuccess);
+				this.isEditAssigned = false;
 			  }
 			},
 			(error: any) => {
