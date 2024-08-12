@@ -254,7 +254,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
 console.log("RoutingRulesVaues",RoutingRulesVaues)
 if(RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true){
-  notify.NotifyServer(display_phone_number, false, newId,0, 'IN',msg_id)
+  notify.NotifyServer(display_phone_number, false, newId,0, 'IN','Assign Agent')
 }
         //Here i have to check if any routing rules addded then send websocket
       }

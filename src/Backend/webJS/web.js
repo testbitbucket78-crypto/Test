@@ -392,13 +392,17 @@ console.log("undefinedCount",undefinedCount)
 
 }
 
-function isActiveSpidClient(spid) {
+async function isActiveSpidClient(spid) {
   //console.log("clientSpidMapping[spid]", spid, clientSpidMapping)
+ 
   if (clientSpidMapping[spid]) {
     console.log("if client ready")
-    return true;
+    let WAwebdetails= await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1',[spid]);
+    return {"isActiveSpidClient": true,"WAweb":WAwebdetails};
   } else {
-    return false;
+    let disconnectWAweb= await db.excuteQuery('update WhatsAppWeb set channel_status=0 where spid=? and channel_id =? ',[spid,'WA Web']);
+    let WAwebdetails= await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1',[spid]);
+    return {"isActiveSpidClient": false,"WAweb":WAwebdetails};
   }
 }
 
