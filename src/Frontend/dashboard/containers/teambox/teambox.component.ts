@@ -166,6 +166,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	messageTimeLimit=10;
 	SIPmaxMessageLimt=100;
 	SIPthreasholdMessages=1;
+	isTemplate: boolean = false;
 	showFullProfile=false;
 	showAttachedMedia=false;
 	showattachmentbox=false;
@@ -187,6 +188,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	messageMediaFile: string = '';
 	variableValues:string[]=[];
 	agentsList:any = [];
+	filteredAgentList: any;
 	mentionAgentsList:any = [];
 	modalReference: any;
 	OptedIn='No';
@@ -288,7 +290,13 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
 	srchText:string ='';
-	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
+	public insertImageSettings: object = {
+		width: '50px',
+		height: '50px'
+	  };
+	  isLoadingOnScroll!: boolean;
+	event='teamBox';
+	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService,public settingsService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
 		public phoneValidator:PhoneValidationService, private datePipe:DatePipe,
 		private dashboardService: DashboardService,
 		private route: ActivatedRoute) {
@@ -608,9 +616,38 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 			htmlcontent+='<p>'+item.FooterText+'</p>';
 		}
 		this.chatEditor.value =htmlcontent
-		this.isAttachmentMedia = false
+		this.isAttachmentMedia = false;
+		this.isTemplate = true;
 	}
 
+	processMediaType(mediaType: any,message_media:any, messageMeidaFile: any):string{
+		if (message_media) {
+			const extension = message_media.split('.').pop()?.toLowerCase();
+			const mimeTypeMap: Record<string, string> = {
+				'jpg': 'jpeg', 'jpeg': 'jpeg', 'png': 'png', 'gif': 'gif',
+				'mp4': 'mp4', 'mov': 'quicktime', 'avi': 'x-msvideo', 'wmv': 'x-ms-wmv',
+				'pdf': 'pdf', 'doc': 'msword', 'docx': 'vnd.openxmlformats-officedocument.wordprocessingml.document',
+				'ppt': 'vnd.ms-powerpoint', 'pptx': 'vnd.openxmlformats-officedocument.presentationml.presentation'
+			};
+	
+			const mimeType = mimeTypeMap[extension!];
+			if (mimeType) {
+				if (mediaType === 'image') {
+					this.mediaType = `image/${mimeType}`;
+				} else if (mediaType === 'video') {
+					this.mediaType = `video/${mimeType}`;
+				} else if (mediaType === 'document') {
+					this.mediaType = `application/${mimeType}`;
+				}
+			}
+		}
+		if(messageMeidaFile){
+			return this.removeMediaTags(messageMeidaFile);
+		} else return messageMeidaFile;
+	}
+	removeMediaTags(htmlContent: string): string {
+		return htmlContent.replace(/<img[^>]*>|<video[^>]*>[^<]*<\/video>/gi, '');
+	  }
 showeditTemplate(){
 	if(this.selectedTemplate.length!==0) {
 		$("#editTemplate").modal('show'); 
@@ -776,9 +813,52 @@ selectQuickReplies(item:any){
 	}
 	var htmlcontent = mediaContent+'<p>'+item.BodyText+'</p>';
 	this.chatEditor.value =htmlcontent
-
+	this.mediaType = item.media_type
+	this.messageMeidaFile = item.Links;
+	this.addingStylingToMedia(item);
 }
+addingStylingToMedia(item: any){
+	if (item.media_type === 'image' || item.media_type === 'video') {
+		setTimeout(() => {
+		  const editorContent = this.chatEditor.element.querySelector('.e-content');
+		  const mediaElements = editorContent?.querySelectorAll('img, video');
+	
+		  mediaElements?.forEach((element) => {
+			const media = element as HTMLElement;
 
+			media.style.width = '100%';
+			media.style.height = '50%';
+			media.style.position = 'inherit';
+			media.style.zIndex = '99';
+	
+			const crossButton = document.createElement('button');
+			crossButton.textContent = '✖';
+			crossButton.style.position = 'absolute';
+			crossButton.style.top = '5px';
+			crossButton.style.right = '5px';
+			crossButton.style.zIndex = '100';
+			crossButton.style.background = '#ffffff';
+			crossButton.style.color = 'red';
+			crossButton.style.height = '24px';
+			crossButton.style.width = '24px';
+			crossButton.style.border ='none';
+			crossButton.style.outline ='none';
+			crossButton.style.borderRadius = '50%';
+			crossButton.style.cursor = 'pointer';
+	        
+			const parentElement = media.parentElement as HTMLElement;
+			parentElement.style.position = 'relative';
+			parentElement.style.width = '50%';
+			parentElement.appendChild(crossButton);
+
+			crossButton.addEventListener('click', () => {
+			  media.remove();
+			  crossButton.remove();
+			});
+		  });
+		}, 0); 
+	  }
+}
 searchQuickReply(event:any){
 	let searchKey = event.target.value
 	if(searchKey.length>2){
@@ -955,7 +1035,8 @@ sendattachfile() {
 								this.chatEditor.value ='';
 								this.messageMeidaFile='';
 								this.mediaType='';
-								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
+								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1;
+								this.isTemplate = false;
 							}
 				
 				
@@ -1276,6 +1357,7 @@ sendattachfile() {
 		let rangeStart =this.contactCurrentPage;
     	let rangeEnd =this.contactCurrentPage + this.contactPageSize;
 		this.apiService.getCustomers(this.SPID,rangeStart,rangeEnd).subscribe((data:any) =>{
+			this.isLoadingOnScroll = false;
 			this.isContactCompleted = data?.isCompleted ? data?.isCompleted : false;
 			if(isAddContacts){
 				this.contactList.push(...data?.results);
@@ -1290,7 +1372,8 @@ sendattachfile() {
 	
 	getAgents(){
 		this.apiService.getAgents(this.SPID).subscribe(data =>{
-			this.agentsList= data
+			this.agentsList= data;
+			if(this.agentsList.length) this.filteredAgentList = this.agentsList;
 			this.agentsList.forEach((item: { name: string; nameInitials: string; }) => {
                 const nameParts = item.name.split(' ');
                 const firstName = nameParts[0] || '';
@@ -2054,7 +2137,6 @@ stopPropagation(event: Event) {
   }
 
 
-
 updateCustomer(){
 	// var bodyData = {
 	// Name: this.EditContactForm.get('Name')?.value,
@@ -2173,7 +2255,8 @@ copyContactFormData() {
               ActuallName: "OptInStatus"
             },
         ],
-        SP_ID:this.SPID
+        SP_ID:this.SPID,
+		event: this.event,
     }
 
     if(this.filteredCustomFields.length >0){
@@ -2748,6 +2831,7 @@ createInteraction(customerId:any) {
 var bodyData = {
 	customerId: customerId,
 	spid:this.SPID,
+	channel:this.selectedChannel,
 	IsTemporary: 1
 
 }
@@ -2956,7 +3040,10 @@ sendMessage(){
 		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
 		if(this.messageMediaFile != ''){
 			this.messageMeidaFile = this.messageMediaFile;
+			value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
 			this.messageMediaFile = '';
+		} else if(this.messageMeidaFile != ''){
+            value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
 		}
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
@@ -2974,6 +3061,7 @@ sendMessage(){
 			created_at:new Date(),
 			mediaSize:this.mediaSize,
 			spNumber: this.spNumber,
+			isTemplate:this.isTemplate,
 			MessageVariables: this.allVariables,
 		}
 		console.log(bodyData,'Bodydata')
@@ -3037,7 +3125,8 @@ sendMessage(){
 								this.chatEditor.value ='';
 								this.messageMeidaFile='';
 								this.mediaType='';
-								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1
+								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1;
+								this.isTemplate = false
 							}
 				
 				
@@ -3221,6 +3310,7 @@ sendMessage(){
     	const scroll$ = fromEvent(content!, 'scroll').pipe(map(() => { return content!.scrollTop; }));
  
     scroll$.subscribe((scrollPos) => {
+		this.isLoadingOnScroll = true;
       let limit = content!.scrollHeight - content!.clientHeight -1;
 	  console.log(scrollPos);
 	  console.log(limit);
@@ -3261,7 +3351,18 @@ sendMessage(){
         if (args.requestType === 'EnterAction' && this.mentionObj.element?.classList?.contains('e-popup-open')) {
 			console.log('abc');
           args.cancel = true;
-        }
+		  }
+			if (args.requestType === 'Image') {
+			  setTimeout(() => {
+				console.log('gjkdsfngs');
+				const images = document.querySelectorAll('img');
+				if (images.length > 0) {
+				  const lastImage = images[images.length - 1];
+				  lastImage.style.width = '50px';  // Set default width
+				  lastImage.style.height = '50px'; // Set default height
+				}
+			  }, 0);
+			}
       }
 
 	  getTime(time:any){
@@ -3416,9 +3517,44 @@ sendMessage(){
 		  }
 		}  
 		if (data?.countryCode) {
-			this.editContact.get('country_code')?.setValue(data.countryCode);
+			// country code is sometimes +91 or sometime IN +91
+			this.checkAndSetCountryCode(data);
 		  }
 		// this.OptInStatus =data.OptInStatus
 		// this.isBlocked=data.isBlocked;
 	  }
+
+	  getSplitMultiSelect(val:any){
+		let selectName = val?.split(',');
+		let names ='';
+		if(selectName && selectName?.length>0){
+		selectName.forEach((it:any)=>{
+					  let name = it.split(':');
+					  console.log(name);
+					  names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
+	})
+  }
+	return names;
+	}
+	checkAndSetCountryCode(data: any) {
+		if (data?.countryCode) {
+		  const countryCodeOnly = this.countryCodes.map(code => code.split(' ')[1]);
+		  if (countryCodeOnly.includes(data.countryCode)) {
+			const matchedCountry = this.countryCodes.find(code => code.includes(data.countryCode));
+			this.editContact.get('country_code')?.setValue(matchedCountry);
+		  } else {
+			const matchedCountry = this.countryCodes.find(code => code === data.countryCode);
+			if (matchedCountry) {
+			  this.editContact.get('country_code')?.setValue(matchedCountry);
+			} else {
+			  console.warn(`Country code ${data.countryCode} not found in the countryCodes list.`);
+			}
+		  }
+		}
+	  }
+	  filterContactOwners() {
+        const searchInput = document.getElementById('contactOwnerValue') as HTMLInputElement;
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        this.filteredAgentList = this.agentsList.filter((x: any) => x.name.toLowerCase().includes(searchTerm));
+    }
 }

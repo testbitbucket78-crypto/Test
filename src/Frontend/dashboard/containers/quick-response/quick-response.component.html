@@ -31,15 +31,15 @@
 						</div>
 					<div class="modal-body px-3 filterchannelsbody">
 						<div *ngFor="let channel of channelOption">
-						<div *ngIf="channel?.label == 'WhatsApp Official'" class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
+						<div *ngIf="channel?.label == 'WA API'" class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
 							<input type="checkbox" class="custom-control-input" [(ngModel)]="isWhatsappOfficial" id="radio1" name="optradio"  value="option1" checked>
 							<img class="user-img ml-2">
-							<label class="custom-control-label" for="radio1"><span class="ml-2" [ngClass]="isWhatsappOfficial ? 'filter-selected':'filter-Unselected'" >WA API</span></label>
+							<label class="custom-control-label" for="radio1"><span class="ml-2" [ngClass]="isWhatsappOfficial ? 'filter-selected':'filter-Unselected'" >WA API ({{channel?.connected_id}})</span></label>
 						  </div>
-						  <div *ngIf="channel?.label == 'WhatsApp Web'" class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
+						  <div *ngIf="channel?.label == 'WA Web'" class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
 							<input type="checkbox" class="custom-control-input" id="radio2" [(ngModel)]="isWhatsappWeb"  name="optradio"  value="option2" >
 							<img class="user-img ml-2">
-							<label class="custom-control-label" for="radio2"><span class="ml-2" [ngClass]="isWhatsappWeb ? 'filter-selected':'filter-Unselected'" >WA Web</span></label>
+							<label class="custom-control-label" for="radio2"><span class="ml-2" [ngClass]="isWhatsappWeb ? 'filter-selected':'filter-Unselected'" >WA Web ({{channel?.connected_id}})</span></label>
 							
 						  </div>
 						</div>
@@ -90,7 +90,7 @@
 							<label for="link" class="linkch" >Channel<span class="text-danger font-weight-bold">*</span></label>
 							<input class="input-form " type="text" placeholder="Select channel" name="Channel"
 								formControlName="Channel" id="linken" (click)="ShowChannelOption = !ShowChannelOption" readonly />
-								<div *ngIf="ShowChannelOption" (click)="stopPropagation($event)" class="popup-dialog ContactOption z-index99999">
+								<div *ngIf="ShowChannelOption" (click)="stopPropagation($event)" class="popup-dialog ContactOption">
 									<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)">
 										<span>
 											<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />

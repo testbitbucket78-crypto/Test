@@ -28,7 +28,9 @@ export class RegisterComponent implements OnInit {
     title = 'formValidation';
     submitted = false;
     forbiddenChars = ['!', '@', '#', '$', '&', '%'];
-
+    isVerifiedPhone!: boolean;
+    isVerifiedEmail!: boolean;
+    emailVerified!: boolean;
     countryCodes = [
         'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
         'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',
@@ -107,11 +109,13 @@ export class RegisterComponent implements OnInit {
             const verificationData = JSON.parse(valueForEmail);
             if(verificationData.isverfyEmailOtp && verificationData.otp > 0){
                this.VerificationData[0] = verificationData;
+               this.isVerifiedEmail = verificationData.isverfyEmailOtp
             }
         } if (valueForPhone) {
             const verificationData = JSON.parse(valueForPhone);
             if(verificationData.isverifyphoneOtp && verificationData.otp > 0){
                this.VerificationData[1] = verificationData;
+               this.isVerifiedPhone = verificationData.isverifyphoneOtp
             }
         }
         let email_id = this.registerForm.controls['email_id'].value;
@@ -265,6 +269,9 @@ formatPhoneNumber() {
                   if (errorMessage) {
                     this.errorDiv = errorMessage;
                   }
+                    setTimeout(() => {
+                      this.errorDiv = '';
+                    }, 3000);
                   resolve(true);
                 } else {
                   reject(error);
@@ -276,7 +283,32 @@ formatPhoneNumber() {
           }
         });
       }
+     
+      ValidateEmail(){
+        const email = this.registerForm.get("email_id").value;
+        const PreviousEmail = this.VerificationData[0].email_id
+        if(!email && !PreviousEmail) return;
+        if(this.VerificationData[0].isverfyEmailOtp == true){
+          if(email != PreviousEmail){
+            this.isVerifiedEmail = false;
+          }else this.isVerifiedEmail = true;
+        }
+        
+      }
+      ValidatePhone(){
+        const countryCode = this.registerForm.get("country_code").value;
+        const displayMobileNumber = this.registerForm.get("display_mobile_number").value;
+        const extractedCode = countryCode.match(/\d+/g)?.join('') || '';
 
+  const phone = `${extractedCode}${displayMobileNumber}`;
+        const previousPhone = this.VerificationData[1].mobile_number || '';
+        if(!phone && !previousPhone) return;
+        if(this.VerificationData[1].isverifyphoneOtp == true){
+          if(phone != previousPhone){
+            this.isVerifiedPhone = false;
+          }else this.isVerifiedPhone = true;
+        }
+      }
     viewpass(){
         this.visible = !this.visible;
         this.changetype = !this.changetype;

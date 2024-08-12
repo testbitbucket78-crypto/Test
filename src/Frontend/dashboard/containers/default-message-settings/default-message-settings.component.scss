@@ -691,8 +691,8 @@ textarea::placeholder {
     width: 386px!important;
 }
 
-#defaultRTErte-view {
-  height: 205px!important;
+.sel-type-text #defaultRTErte-view{
+  height: 100% !important;
 }
 
 .e-richtexteditor .e-rte-emojipicker-popup.e-popup.e-popup-open {
@@ -910,4 +910,10 @@ p span {
   color: #000000!important;
 }
 
-
+.flex-column{
+  display: flex;
+  flex-direction: column;
+}
+.h-100{
+  height: 100%;
+}
