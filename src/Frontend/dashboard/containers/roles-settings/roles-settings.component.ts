@@ -243,6 +243,9 @@ export class RolesSettingsComponent implements OnInit {
     editRolesDetails(){
         if(this.roleData?.RoleName != 'Admin' && this.roleData?.RoleName != 'Agent'){
         $('#rolesModal').modal('show');
+        this.showSideBar = false;
+        } else{
+            this.showToaster('You cannot edit/delete these default roles.','error');
         }
 
     }
@@ -250,6 +253,9 @@ export class RolesSettingsComponent implements OnInit {
     deleteRolesDetails(){
         if(this.roleData?.RoleName != 'Admin' && this.roleData?.RoleName != 'Agent'){
         $('#deleteModal').modal('show');
+        this.showSideBar = false;
+        }else{
+            this.showToaster('You cannot edit/delete these default roles.','error');
         }
 
     }

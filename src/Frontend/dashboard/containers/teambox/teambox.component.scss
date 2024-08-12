@@ -914,12 +914,21 @@ img.no-dp {
     color: white !important;
     text-decoration: underline !important;
 }
-
+ ::ng-deep  .left .message_text .isLink{
+    color: black !important;
+    
+}
+::ng-deep  .left .message_text .isLink:hover{
+    color: orange !important;
+    font-style: italic;
+}
+::ng-deep  .message_text .isLink{
+    color: white !important;
+}
 ::ng-deep .content .message_text .e-rte-anchor:hover {
     font-style: italic;
 }
    ::ng-deep .isLink {
-        color: rgb(245, 186, 76) !important;
         font-style: italic;
         text-decoration: underline !important;
       }
@@ -2522,7 +2531,7 @@ label span {
 }
 .input-formm{
     position: relative;
-    top: 2.8rem;
+    top: 2.7rem;
     border: none;
     //left: 0.5rem;
     right: 7rem;
@@ -2531,6 +2540,7 @@ label span {
     font-size: 12px;
     cursor: pointer;
     text-align: center;
+    outline: none;
 }
 .country_code{
     position: absolute;
@@ -2838,12 +2848,12 @@ label span {
 	}
 
     .agent-list{
-        margin-left: 200px !important;
+        margin-left: 185px !important;
         z-index: 9999999999 !important;
         position: fixed !important;
         width: 200px !important;
         /* min-width: 240px; */
-        margin-top: 65px !important;
+        margin-top: 115px !important;
         display: none;
     }
 

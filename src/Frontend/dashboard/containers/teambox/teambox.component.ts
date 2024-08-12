@@ -184,6 +184,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	unreadList:number = 0;
 	interactionListMain:any=[];
 	selectedTemplate:any  = [];
+	messageMediaFile: string = '';
 	variableValues:string[]=[];
 	agentsList:any = [];
 	mentionAgentsList:any = [];
@@ -283,7 +284,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isMessageCompletedMedia:boolean = false;
 	isMessageCompletedText:boolean = false;
 	isShowAttributes:boolean = false;
-	
+	isUploadingLoader! : boolean;
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
 	srchText:string ='';
@@ -932,10 +933,11 @@ sendattachfile() {
 								}
 								
 								if(this.showChatNotes=='text'){
-									var allmessages =this.selectedInteraction.allmessages
-									this.selectedInteraction.lastMessage= lastMessage
-									allmessages.push(lastMessage)
-									this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
+									// var allmessages =this.selectedInteraction.allmessages
+									// this.selectedInteraction.lastMessage= lastMessage
+									// allmessages.push(lastMessage)
+									// this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
+									this.getMessagesById(insertId);
 									setTimeout(() => {
 										this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
 									}, 500);
@@ -983,6 +985,7 @@ sendattachfile() {
 		$('.modal-backdrop').remove();
 	}
 	onFileChange(event: any) {
+		this.isUploadingLoader = true;
 		let files: FileList = event.target.files;
 		this.saveFiles(files);
 		
@@ -1053,6 +1056,7 @@ sendattachfile() {
 				this.sendattachfile();
 				console.log(this.messageMeidaFile);
 				this.showAttachmenOption=false;
+				this.isUploadingLoader = false;
 			}
 
 			});
@@ -1133,6 +1137,7 @@ sendattachfile() {
 		this.websocketService.connect(notificationIdentifier);
 			this.websocketService.getMessage().pipe(debounceTime(200)).subscribe(message => {
 				console.log(message);
+				console.log(this.interactionList,'check id');
 				if(message != undefined )
 				{
 					console.log("Seems like some message update from webhook");
@@ -1470,7 +1475,7 @@ sendattachfile() {
 				})
 				item['allmessages'].push(...val1);
 			} else if(isNewMessage && updateMessage){
-				let idx =this.interactionList.findIndex((item:any)=>item.InteractionId = selectedInteraction.InteractionId);			
+				let idx =this.interactionList.findIndex((item:any)=>item.InteractionId == selectedInteraction.InteractionId);			
 				val.forEach(childObj => {
 					const parentObjIndex = item['messageList']?.findIndex((parentObj:any) => parentObj.date === childObj.date);
 					if (parentObjIndex !== -1) {
@@ -1891,10 +1896,10 @@ sendattachfile() {
 	}
 
 	async selectInteraction(idx:number,) {
-
+		console.log(this.interactionList,'check id')
 		let Interaction = this.interactionList[idx];
 		//if(this.selectedInteractionList.findIndex(i => i == idx) == -1){
-			//this.selectedInteractionList.push(idx) 
+			//this.selectedInteractionList.push(idx)
 			await this.getInteractionDataById(idx);
 		//}
 		for(const item of this.interactionList) {
@@ -2303,7 +2308,7 @@ markItRead(){
 }
 
 updateUnreadCount(){
-	let idx =this.interactionList.findIndex((item:any)=>item.InteractionId = this.selectedInteraction.InteractionId);
+	let idx =this.interactionList.findIndex((item:any)=>item.InteractionId == this.selectedInteraction.InteractionId);
 	if(idx>-1){
 		this.interactionList[idx].UnreadCount=0;
 	}
@@ -2900,7 +2905,9 @@ deleteNotes(){
 		action:'Conversation ',
 		action_at:new Date(),
 		action_by:name,
-		deleted_at:new Date()
+		deleted_at:new Date(),
+		InteractionId:this.selectedInteraction.InteractionId,
+		SP_ID:this.SPID
 	}
 	////console.log(bodyData)
 	this.apiService.deleteMessage(bodyData).subscribe(async data =>{
@@ -2947,7 +2954,10 @@ sendMessage(){
 		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
 		var cDay = String(objectDate.getDate()).padStart(2, '0');
 		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
-
+		if(this.messageMediaFile != ''){
+			this.messageMeidaFile = this.messageMediaFile;
+			this.messageMediaFile = '';
+		}
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
 			CustomerId: this.selectedInteraction.customerId,
@@ -3146,6 +3156,11 @@ sendMessage(){
 			
 		
 			previewTemplate() {
+				if(this.selectedTemplate.media_type) {
+
+				this.messageMediaFile = this.selectedTemplate.Links;
+				this.mediaType = this.selectedTemplate.media_type;
+				}
 				let isVariableValue='';
 				if(this.selectedTemplate.media_type == 'text') {
 					isVariableValue = this.selectedTemplate.Header + this.selectedTemplate.BodyText;
@@ -3400,6 +3415,9 @@ sendMessage(){
 					}
 		  }
 		}  
+		if (data?.countryCode) {
+			this.editContact.get('country_code')?.setValue(data.countryCode);
+		  }
 		// this.OptInStatus =data.OptInStatus
 		// this.isBlocked=data.isBlocked;
 	  }

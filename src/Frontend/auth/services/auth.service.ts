@@ -21,6 +21,9 @@ export class AuthService {
     register(data: authRegister): Observable<any> {
         return this.http.post(API_URL+'/register', data,{headers:{'Content-Type':'application/json'}});
     }
+    isSpAlreadyExist(data: authRegister): Observable<any> {
+        return this.http.post(API_URL+'/isSpAlreadyExist', data,{headers:{'Content-Type':'application/json'}});
+    }
     forgotpassword(data: authForgotPassword): Observable<any> {
         return this.http.post(API_URL+'/forgotPassword', data)
     }

@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
                             sessionStorage.setItem('subPrivileges', response.getRoles[0]?.subPrivileges);
 
                             this.settingsService.subprivilages = response.getRoles[0]?.subPrivileges?.split(',');
-                            this.router.navigate(['dashboard']);
+                            this.router.navigate(['dashboard'], { state: { message: 'Logged In' } });
                             console.log(response.getRoles[0]?.subPrivileges);
                         }
                         if (response.status === 404) {

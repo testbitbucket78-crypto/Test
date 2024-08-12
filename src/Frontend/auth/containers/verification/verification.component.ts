@@ -79,6 +79,7 @@ export class VerificationComponent implements OnInit {
         this.email_id = sessionStorage.getItem('otpfieldEmailvalue')
         this.phone = sessionStorage.getItem('otpfieldMobilevalue')
         this.name = sessionStorage.getItem('otpfieldNamevalue')
+        this.validateAndPatch();
     }
 
     // checkSubmitButton() {
@@ -86,8 +87,42 @@ export class VerificationComponent implements OnInit {
     //         this.isVerified = true;
     //     }
     // }
+    formValues: any = []
+    checkbox: any = []
+    validateAndPatch() {
+        let valueForEmail = sessionStorage.getItem('verificationDataEmail');
+        let valueForPhone = sessionStorage.getItem('verificationDataPhone');
+        if (valueForEmail) {
+            const verificationData = JSON.parse(valueForEmail);
+            if(verificationData.isverfyEmailOtp && verificationData.otp > 0){
+                this.otpForm.patchValue({
+                    otp1: verificationData.otp,
+                });
+            }
+            this.isverfyEmailOtp = verificationData.isverfyEmailOtp;
+            this.verificationDataEmail = verificationData;
+        } 
+        if (valueForPhone) {
+            const verificationData = JSON.parse(valueForPhone);
+            if(verificationData.isverifyphoneOtp && verificationData.otp > 0){
+                this.otpForm.patchValue({
+                    otp: verificationData.otp,
+                });
+            }
+            this.isverifyphoneOtp = verificationData.isverifyphoneOtp;
+            this.verificationDataPhone = verificationData;
+        }
+        const formValues = sessionStorage.getItem('formValues');
+        if(formValues) this.formValues = formValues;
+        let checkbox = sessionStorage.getItem('checkbox');
+        if(checkbox) this.checkbox = checkbox;
 
-
+        sessionStorage.removeItem('formValues');
+        sessionStorage.removeItem('checkbox');
+        sessionStorage.removeItem('verificationDataEmail')
+        sessionStorage.removeItem('verificationDataPhone');
+        this.cdr.detectChanges();
+    }
 
     callApi() {
         this.otpFormValue = this.otpForm.value;
@@ -108,7 +143,7 @@ export class VerificationComponent implements OnInit {
             if (response.status === 200) {
                 this.verifyButton1Clicked = true;
                 let  successMessage = "! Success";
-                this.verfyOtp("email", this.otpForm?.value?.otp);
+                this.verfyOtp("email", this.otpForm?.value?.otp1);
                 this.cdr.detectChanges();
                 this.successDiv = document.getElementById("success-message");
                 if (this.successDiv) {
@@ -125,11 +160,10 @@ export class VerificationComponent implements OnInit {
             (error) => {
 
 
-                if (error.status === 401) {
+                if (error.status === 403) {
                     this.isverfyEmailOtp = false
                     let errorMessage = "! Invalid Otp.";
                     this.errorDiv = document.getElementById("error-message");
-                    this.startOtpTimer("email", 30);
                     if (this.errorDiv) {
                         this.errorDiv.innerHTML = errorMessage;
                     }
@@ -178,9 +212,8 @@ export class VerificationComponent implements OnInit {
             (error) => {
 
 
-                if (error.status === 401) {
+                if (error.status === 403) {
                     this.isverifyphoneOtp = false;
-                   this.startOtpTimer("phone", 30);
                     let errorMessage = "! Invalid Otp.";
                      this.errorDiv = document.getElementById("error-message1");
                     if (this.errorDiv) {
@@ -205,24 +238,26 @@ export class VerificationComponent implements OnInit {
             }, 3000);
 
     }
-
+    verificationDataEmail: { type: string; isverfyEmailOtp: boolean; otp: number } | null = null;
+    verificationDataPhone: { type: string; isverifyphoneOtp: boolean; otp: number } | null = null;
     verfyOtp(type: 'phone' | 'email', otp: number){
+        ;
         if(type === 'email'){
             this.isverfyEmailOtp = true;
-            const verificationData = {
+            this.verificationDataEmail = {
                 type: type,
                 isverfyEmailOtp: this.isverfyEmailOtp,
                 otp: otp,
             };
-            sessionStorage.setItem('verificationDataEmail', JSON.stringify(verificationData));
+           
         } else if(type === 'phone'){
             this.isverifyphoneOtp = true;
-            const verificationData = {
+            this.verificationDataPhone = {
                 type: type,
                 isverifyphoneOtp: this.isverifyphoneOtp,
                 otp: otp,
             };
-            sessionStorage.setItem('verificationDataPhone', JSON.stringify(verificationData));
+            
         }
         if(this.isverfyEmailOtp && this.isverifyphoneOtp){
             this.onSubmitRegisterform();
@@ -256,6 +291,12 @@ export class VerificationComponent implements OnInit {
             this.cdr.detectChanges(); 
           }, 1000);
         }
+      }
+      backBtnClicked(){
+        if(this.verificationDataEmail) sessionStorage.setItem('verificationDataEmail', JSON.stringify(this.verificationDataEmail));
+        if(this.verificationDataPhone) sessionStorage.setItem('verificationDataPhone', JSON.stringify(this.verificationDataPhone));
+        if(this.formValues.length > 0) sessionStorage.setItem('formValues', this.formValues);
+        if(this.checkbox.length > 0) sessionStorage.setItem('checkbox', this.checkbox );
       }
     resendOtp() {
         let values = {
@@ -295,13 +336,14 @@ export class VerificationComponent implements OnInit {
             this.values = sessionStorage.getItem('formValues')
 
 
-            this.apiService.register(this.values).subscribe((response: any) => {
+            this.apiService.register(this.formValues).subscribe((response: any) => {
 
                 if (response.status === 200) {
                     $("#successRegister").modal('show'); 
                     sessionStorage.removeItem('formValues')
                     sessionStorage.removeItem('verificationDataEmail')
                     sessionStorage.removeItem('verificationDataPhone')
+                    sessionStorage.removeItem('checkbox');
                 }
             },
                 (error) => {

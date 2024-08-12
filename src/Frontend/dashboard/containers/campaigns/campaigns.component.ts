@@ -942,6 +942,7 @@ formateDate(dateTime:string){
 		newFilter['filterValue']='';
 		newFilter['filterOperator']='AND';
 		this.ContactListNewFilters.push(newFilter)
+		if(this.ContactListNewFilters[0]?.filterOperator) this.ContactListNewFilters[0].filterOperator = '';
 		console.log(this.ContactListNewFilters)
 	  }
 	  removeFilter(itemIndex:any){
@@ -3038,4 +3039,7 @@ console.log(this.allTemplatesMain);
 	// 		}
 	// 	}
 	// }
+	removeFile(){
+		this.selecetdCSV = '';
+	}
 }
