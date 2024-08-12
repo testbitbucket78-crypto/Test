@@ -41,7 +41,7 @@
                 </div>
                 <form [formGroup]="defaultMessageForm" autocomplete="off">
                     
-                <div class="modal-body welcomGreeting px-5 pt-0">
+                <div class="modal-body welcomGreeting px-5 pt-0 ">
                      <div *ngIf="selectedCategory==1 || selectedCategory==5" class="sel-type-link autoreply pt-2 pb-3">
                         <label *ngIf="selectedCategory==1" class="pb-2 form-label" for="autoreply">Agent Reply Timeout Period
                             <span class="text-danger">*</span>
@@ -151,13 +151,13 @@
                    </div>
                       </div>
 
-                      <div class="sel-type-text-container">
+                      <div class="sel-type-text-container flex-column h-100">
                         <div class="d-flex justify-content-between align-items-center mt-4 pt-3 pb-2 msg-head">
                             <h6>Message</h6> <span>Characters</span>
                          </div>
 
-                         <div class="sel-type-text">
-                             <ejs-richtexteditor formControlName="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools'
+                         <div class="sel-type-text h-100">
+                             <ejs-richtexteditor class="h-100" formControlName="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools'
                              [maxLength]='1024' [showCharCount]='true' placeholder="Enter"  (change)="onContentChange()" [pasteCleanupSettings]="pasteCleanupSettings">
                             </ejs-richtexteditor>
                          </div>

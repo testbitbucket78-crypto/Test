@@ -528,6 +528,7 @@ const deleteMessage = async (req, res) => {
     //logger.info('Starting deleteMessage function');
     //Type=notes
     var messageQuery = "UPDATE Message SET deleted_at ='" + req.body.deleted_at + "', is_deleted =" + req.body.deleted + ", deleted_by =" + req.body.deleted_by + " WHERE Message_id =" + req.body.Message_id;
+ 
     var values = [];
 
     let myUTCString = new Date().toUTCString();
@@ -535,6 +536,7 @@ const deleteMessage = async (req, res) => {
     let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
 
     let actiond = await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'notes']);
+   console.log(actiond)
     db.runQuery(req, res, messageQuery, [values]);
     //  logger.info('deleteMessage function completed successfully');
 };

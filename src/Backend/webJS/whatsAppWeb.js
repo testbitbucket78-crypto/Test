@@ -76,15 +76,15 @@ app.post('/sendFunnelMessage', async (req, res) => {
 })
 
 
-app.post('/IsClientReady', (req, res) => {
+app.post('/IsClientReady', async (req, res) => {
     try {
         spid = req.body.spid
 
-        console.log(web.isActiveSpidClient(spid))
-        if (web.isActiveSpidClient(spid)) {
-            return res.send({ status: 200, message: "Client is ready !" })
+        let result = await web.isActiveSpidClient(spid)
+        if (result.isActiveSpidClient) {
+            return res.send({ status: 200, message: "Client is ready !" ,result: result.WAweb})
         } else {
-            return res.send({ status: 404, message: "Please go to settings and Scan the QR Code !" })
+            return res.send({ status: 404, message: "Please go to settings and Scan the QR Code !" ,result: result.WAweb})
         }
 
 
