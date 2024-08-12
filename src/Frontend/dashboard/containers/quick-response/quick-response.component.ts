@@ -187,9 +187,12 @@ $('#welcomGreeting').modal('hide');
 
   insertAtCursor(selectedValue:any) {
   const editorElement = this.chatEditor.element.querySelector('.e-content');
-  const newNode = document.createElement('span');
-  newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>';;
-  this.lastCursorPosition?.insertNode(newNode);
+  const newNode = '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
+  //const newNode = document.createElement('span');
+  //newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>';;
+  console.log("newNode data " +newNode);
+  const fragement =  this.lastCursorPosition?.createContextualFragment(newNode);
+  if(fragement) this.lastCursorPosition?.insertNode(fragement);
   }
 
 

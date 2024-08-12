@@ -648,6 +648,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	removeMediaTags(htmlContent: string): string {
 		let updatedHtml = htmlContent.replace(/<img[^>]*>[^<]*|<video[^>]*>[^<]*<\/video>/gi, '');
 		updatedHtml = updatedHtml.replace(/<p[^>]*><a[^>]*href=['"][^'"]*\.(pdf|doc|docx|ppt|pptx)['"][^>]*>[^<]*<\/a><\/p>/gi, '');
+		updatedHtml = updatedHtml.replace(/\sstyle="[^"]*"/gi, '');
+		updatedHtml = updatedHtml.replace(/<button[^>]*>✖<\/button>/gi, '');
 		return updatedHtml;
 	  }
 showeditTemplate(){
@@ -2296,8 +2298,7 @@ copyContactFormData() {
         else if(item.type =='Multi Select'){
           let values =''
           console.log(this.editContact.get(item.ActuallName)?.value)
-		  //todo
-          if(values == ''){ 
+          if(this.editContact.get(item.ActuallName)?.value){ 
           this.editContact.get(item.ActuallName)?.value?.forEach((ite:any)=>{
             values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
           })
