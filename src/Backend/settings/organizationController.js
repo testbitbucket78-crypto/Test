@@ -501,8 +501,19 @@ const addholidays = async (req, res) => {
         const date = new Date(holiday_date[0]);
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ensure two digits
         console.log("month",month)
-        const deleteRecord = await db.excuteQuery(`UPDATE holidays SET isDeleted=1,updated_at=? WHERE SP_ID=? AND DATE_FORMAT(holiday_date, '%m') = ?`,[created_at,SP_ID,month])
-        console.log("deleteRecord",deleteRecord)
+        const year = date.getFullYear(); // Extract year
+      
+        console.log("year", year);
+
+        // Update query to check both month and year
+        const deleteRecord = await db.excuteQuery(
+            `UPDATE holidays SET isDeleted=1, updated_at=? 
+             WHERE SP_ID=? AND DATE_FORMAT(holiday_date, '%m') = ? 
+             AND DATE_FORMAT(holiday_date, '%Y') = ?`,
+            [created_at, SP_ID, month, year]
+        );
+
+        console.log("deleteRecord", deleteRecord);
 
         const holidayValue = holiday_date.map(date => [SP_ID, date, created_By, created_at]);
 

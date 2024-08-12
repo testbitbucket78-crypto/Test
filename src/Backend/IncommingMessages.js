@@ -215,7 +215,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
 
     for (let message of replymessage) {
       var media = message.Media;
-      var value = message.Value;
+      var value = message.ValueUuid;
       var testMessage = message.Message;  // Assuming the 'Message' property contains the message content
       var actionId = message.ActionID;  // Assuming the 'ActionID' property contains the action ID
       var msgVar = message.message_variables;
