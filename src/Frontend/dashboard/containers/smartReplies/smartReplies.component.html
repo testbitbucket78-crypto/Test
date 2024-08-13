@@ -468,7 +468,9 @@
 											<span class="fix-dots px-2 text-capitalize flex-grow-1 font-weight-normal">{{AddTag.TagName}}</span>
 										  </div> 
 										</div>
-					  
+					                     <div class="p-4" *ngIf="!addTagList.length">
+                                            <p>No Data Available.</p>
+										 </div>
 									  </div>
 									</div>
 								  </div>

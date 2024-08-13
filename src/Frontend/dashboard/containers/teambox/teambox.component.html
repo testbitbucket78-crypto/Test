@@ -465,6 +465,9 @@ popupWidth='250px' popupHeight='200px'>
 								{{user.name}} {{user?.UserType == 'Admin' ? '(Admin)' :''}}
 							</span>
 						</p>
+						<div class="p-4" *ngIf="shouldShowNoData">
+							<p>No Data Available.</p>
+					   </div>
 					</div>
 					<div class="d-align-center ml-2"> 
 					<button *ngIf="showChatNotes=='text'" class="submit_btn btn-press">
@@ -1881,6 +1884,9 @@ popupWidth='250px' popupHeight='200px'>
 							<span [ngClass]="{'color-dots': true}" [style.background]="tag.color"></span>
 						{{tag.name}}
 					</label>
+				</div>
+				<div *ngIf="!tagsoptios.length" class="d-flex justify-content-center">
+                    <p>No Data Available.</p>
 				</div>
 			</form>
 		</div>

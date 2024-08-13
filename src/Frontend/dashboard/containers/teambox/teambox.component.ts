@@ -474,6 +474,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		$("#insertmodal").modal('hide');
 		$("#editTemplate").modal('hide');
 		$("#attachfle").modal('hide');
+		$("#sendfile").modal('hide');
 		$('body').removeClass('modal-open');
 		$('.modal-backdrop').remove();
 
@@ -646,7 +647,11 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		} else return messageMeidaFile;
 	}
 	removeMediaTags(htmlContent: string): string {
-		return htmlContent.replace(/<img[^>]*>|<video[^>]*>[^<]*<\/video>/gi, '');
+		let updatedHtml = htmlContent.replace(/<img[^>]*>[^<]*|<video[^>]*>[^<]*<\/video>/gi, '');
+		updatedHtml = updatedHtml.replace(/<p[^>]*><a[^>]*href=['"][^'"]*\.(pdf|doc|docx|ppt|pptx)['"][^>]*>[^<]*<\/a><\/p>/gi, '');
+		updatedHtml = updatedHtml.replace(/\sstyle="[^"]*"/gi, '');
+		updatedHtml = updatedHtml.replace(/<button[^>]*>✖<\/button>/gi, '');
+		return updatedHtml;
 	  }
 showeditTemplate(){
 	if(this.selectedTemplate.length!==0) {
@@ -720,6 +725,8 @@ ToggleInsertTemplateOption(){
 		// {
 	$("#insertmodal").modal('show'); 
 		//}
+		this.fallbackvalue = [];
+
 	}
 	}
 
@@ -802,23 +809,36 @@ ToggleQuickReplies(){
 selectQuickReplies(item:any){
 	this.closeAllModal()
 	let mediaContent
+	let mediaName
+    const fileNameWithPrefix = item.Links.substring(item.Links.lastIndexOf('/') + 1);
+	let originalName;
+	if (item.media_type === 'video') {
+		originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
+		originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+	} else {
+		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+	}
+
 	if(item.media_type === 'image') {
 	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
+	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 	}
 	else if(item.media_type === 'video') {
 		mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
+		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 	}
 	else {
 		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
 	}
-	var htmlcontent = mediaContent+'<p>'+item.BodyText+'</p>';
-	this.chatEditor.value =htmlcontent
+	var htmlcontent = mediaName+'<p>'+item.BodyText+'</p>';
+	this.chatEditor.value = htmlcontent
 	this.mediaType = item.media_type
 	this.messageMeidaFile = item.Links;
 	this.addingStylingToMedia(item);
 }
 addingStylingToMedia(item: any){
-	if (item.media_type === 'image' || item.media_type === 'video') {
+	if (item.media_type === 'image' || item.media_type === 'video' || item.media_type === 'document') {
 		setTimeout(() => {
 		  const editorContent = this.chatEditor.element.querySelector('.e-content');
 		  const mediaElements = editorContent?.querySelectorAll('img, video');
@@ -826,20 +846,18 @@ addingStylingToMedia(item: any){
 		  mediaElements?.forEach((element) => {
 			const media = element as HTMLElement;
 
-			media.style.width = '100%';
-			media.style.height = '50%';
+			media.style.width = '18px';
+			media.style.height = '10%';
 			media.style.position = 'inherit';
 			media.style.zIndex = '99';
 	
 			const crossButton = document.createElement('button');
 			crossButton.textContent = '✖';
 			crossButton.style.position = 'absolute';
-			crossButton.style.top = '5px';
 			crossButton.style.right = '5px';
 			crossButton.style.zIndex = '100';
 			crossButton.style.background = '#ffffff';
 			crossButton.style.color = 'red';
-			crossButton.style.height = '24px';
 			crossButton.style.width = '24px';
 			crossButton.style.border ='none';
 			crossButton.style.outline ='none';
@@ -848,10 +866,22 @@ addingStylingToMedia(item: any){
 	        
 			const parentElement = media.parentElement as HTMLElement;
 			parentElement.style.position = 'relative';
-			parentElement.style.width = '50%';
+			parentElement.style.width = '34%';
+			parentElement.style.overflow = 'hidden';
+			parentElement.style.textOverflow = 'ellipsis'; 
+			parentElement.style.whiteSpace = 'nowrap'; 
+			parentElement.style.paddingRight = '30px'; 
 			parentElement.appendChild(crossButton);
 
 			crossButton.addEventListener('click', () => {
+			const mediaNameElement = editorContent?.querySelector('.custom-class-attachmentType');
+			if (mediaNameElement) {
+				mediaNameElement.remove();
+			}
+			if(this.mediaType){
+                this.mediaType = ''
+				this.messageMeidaFile = ''
+			}
 			  media.remove();
 			  crossButton.remove();
 			});
@@ -1130,10 +1160,11 @@ sendattachfile() {
 			this.apiService.uploadfile(data,spid,name).subscribe(uploadStatus => {
 			let responseData:any = uploadStatus
 			if(responseData.filename){
-				this.messageMeidaFile = responseData.filename
-				this.attachmentMedia = responseData.filename
+				this.messageMeidaFile = responseData.filename;
+				this.attachmentMedia = responseData.filename;
 				this.mediaSize=responseData.fileSize
 				console.log(this.mediaSize);
+				console.log(this.selectedTemplate);
 				this.sendattachfile();
 				console.log(this.messageMeidaFile);
 				this.showAttachmenOption=false;
@@ -2271,7 +2302,7 @@ copyContactFormData() {
         else if(item.type =='Multi Select'){
           let values =''
           console.log(this.editContact.get(item.ActuallName)?.value)
-          if(values){
+          if(this.editContact.get(item.ActuallName)?.value){ 
           this.editContact.get(item.ActuallName)?.value?.forEach((ite:any)=>{
             values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
           })
@@ -3557,4 +3588,7 @@ sendMessage(){
         const searchTerm = searchInput.value.trim().toLowerCase();
         this.filteredAgentList = this.agentsList.filter((x: any) => x.name.toLowerCase().includes(searchTerm));
     }
+	get shouldShowNoData(): boolean {
+		return this.agentsList.length === 0 || !this.agentsList.some((user:any) => user.uid !== this.uid);
+	  }
 }

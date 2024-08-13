@@ -671,6 +671,7 @@ checkTemplateName(e:any){
         copyTemplateForm.category_id = this.templatesMessageDataById.category_id;
         copyTemplateForm.Language = this.templatesMessageDataById.Language;
         copyTemplateForm.status = 'draft';
+        copyTemplateForm.isCopied = 1;
         copyTemplateForm.template_id = this.templatesMessageDataById.template_id;
         if(this.templatesMessageDataById.Category=='WhatsApp Official') {
             copyTemplateForm.template_json = this.templatesMessageDataById.template_json;
@@ -712,6 +713,7 @@ checkTemplateName(e:any){
         newTemplateForm.Language = this.newTemplateForm.controls.Language.value;
         newTemplateForm.status = this.status == 'saved'? this.newTemplateForm.controls.Channel.value == 'WA API' ? 'pending':this.status: this.status;
         newTemplateForm.template_id = 0;
+        newTemplateForm.isCopied = 0;
         newTemplateForm.template_json = [];
         if(this.newTemplateForm.controls.Channel.value == 'WA API') {
             let buttons =[];
