@@ -245,7 +245,7 @@ export class RolesSettingsComponent implements OnInit {
         $('#rolesModal').modal('show');
         this.showSideBar = false;
         } else{
-            this.showToaster('You cannot edit/delete these default roles.','error');
+            this.showToaster('error','You cannot edit/delete these default roles.');
         }
 
     }
@@ -255,7 +255,7 @@ export class RolesSettingsComponent implements OnInit {
         $('#deleteModal').modal('show');
         this.showSideBar = false;
         }else{
-            this.showToaster('You cannot edit/delete these default roles.','error');
+            this.showToaster('error','You cannot edit/delete these default roles.');
         }
 
     }
