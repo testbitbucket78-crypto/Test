@@ -232,7 +232,7 @@ const applyFilterOnEndCustomer = async (req, res) => {
 }
 const processContactQueries = async (req, res) => {
     const queries = req.body.Query;
-
+    const isOptIn = req.body?.isOptIn;
     if (!queries || !Array.isArray(queries) || queries.length === 0) {
         res.send({
             status: 400,
@@ -245,7 +245,11 @@ const processContactQueries = async (req, res) => {
     try {
         // Execute each query sequentially
         for (const query of queries) {
-            const queryResult = await db.excuteQuery(query + " and isDeleted !=1  AND IsTemporary !=1");
+            let listQuery = query + " and isDeleted !=1  AND IsTemporary !=1"
+            if(isOptIn == 1){
+                listQuery = query + " and isDeleted !=1  AND IsTemporary !=1 and OptInStatus =? "
+            }
+            const queryResult = await db.excuteQuery(listQuery,['Yes']);
             results = results.concat(queryResult);
         }
 

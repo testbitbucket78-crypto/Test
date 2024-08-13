@@ -29,7 +29,10 @@ let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId 
 async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo, new Date().toUTCString());
   console.log(clientPidMapping.hasOwnProperty(spid))
-  if (isActiveSpidClient(spid)) {
+ 
+  let isConnected = await isActiveSpidClient(spid);
+  if (isConnected.isActiveSpidClient) {
+
     console.log("Client found in memory map and is ready");
     return { status: 201, value: 'Client is ready!' };
   }

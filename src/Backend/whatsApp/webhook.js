@@ -136,7 +136,15 @@ if (Type === 'image') {
       console.log("status present");
     }
     console.log("________________SAVEING MESSAGE___________________");
-    // console.log(message_text)
+
+    if (message_text) {
+      message_text = message_text.replace(/\*/g, '<strong>').replace(/\*/g, '</strong>');
+      message_text = message_text.replace(/_/g, '<em>').replace(/_/g, '</em>');
+      message_text = message_text.replace(/~/g, '<span>').replace(/~/g, '</span>');
+      message_text = message_text.replace(/~/g, '<del>').replace(/~/g, '</del>');
+      message_text = message_text.replace(/\n/g, '<br>');
+    }
+     console.log("after text replacement",message_text)
     var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName,extension)
     var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
   }
@@ -199,7 +207,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
 }
 
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
-  if (saveMessage.length > 0) {
+  if (saveMessage?.length > 0) {
     console.log(display_phone_number + " .." + message_text)
     const data = saveMessage;
     // Extracting the values
