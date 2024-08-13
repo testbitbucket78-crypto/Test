@@ -35,7 +35,7 @@ export class TeamboxService {
   
 
   public searchCustomer(channel:any,SPID:any,key:any) {
-      return this.http.get(API_URL+'/'+channel+'/'+SPID+'/'+key);
+      return this.http.get(API_URL+'/searchcustomers/'+channel+'/'+SPID+'/'+key);
   }
   public blockCustomer(data:any) {
     return this.http.post(API_URL+'/blockcustomer/',data);
@@ -189,7 +189,7 @@ export class TeamboxService {
   }
   
   public download(spid: any) {
-    const url = `https://contactapi.stacknize.com/download/${spid}`;
+    const url = `https://authapi.stacknize.com/csvSample`;
     return this.http.get(url, { responseType: 'blob' });
   }
 
