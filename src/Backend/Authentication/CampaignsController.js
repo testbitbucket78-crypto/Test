@@ -408,11 +408,11 @@ const sendCampinMessage = async (req, res) => {
             if (optInStatus == 'Yes') {
 
                 if (results[0]?.OptInStatus == 'Yes' || results[0]?.OptInStatus == '1') {
-                    messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+                    messagestatus = await middleWare.channelssetUp(spid,2, type, messageTo, content, media)
                 }
             } else {
              //   console.log(spid, req.body.channel_id, type, messageTo, "+++++++", customerId)
-                messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+                messagestatus = await middleWare.channelssetUp(spid,2, type, messageTo, content, media)
              // messagestatus = await middleWare.createWhatsAppPayload(type, messageTo, templateName, languageCode, headerVariables = [], bodyVariables = [], media)
             }
             console.log("isFinished ", isFinished, TemplateData.status)

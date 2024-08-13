@@ -26,13 +26,18 @@ app.post('/craeteQRcode', async (req, res) => {
 
 
         let response = await web.createClientInstance(spid, phoneNo);
+        logger.info(`response of create QR CODE  ${JSON.stringify(response.status)}`)
         res.send({
             status: response.status,
             QRcode: response.value
         })
 
     } catch (err) {
-        console.log(err);
+        logger.error(`err of create QR CODE ${err}`)
+         res.send({
+            status: 500,
+            err: err
+        })
 
     }
 })
@@ -80,7 +85,8 @@ app.post('/IsClientReady', async (req, res) => {
     try {
         spid = req.body.spid
 
-        let result = await web.isActiveSpidClient(spid)
+        let result = await web.isActiveSpidClient(spid);
+        logger.info(`IsClientReady ready api result  ${result.isActiveSpidClient}`)
         if (result.isActiveSpidClient) {
             return res.send({ status: 200, message: "Client is ready !" ,result: result.WAweb})
         } else {
@@ -89,6 +95,7 @@ app.post('/IsClientReady', async (req, res) => {
 
 
     } catch (err) {
+        logger.error(`IsClientReady error ${err}`)
         res.send({ status: 500, err: err })
     }
 })
