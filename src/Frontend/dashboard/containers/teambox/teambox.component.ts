@@ -720,6 +720,8 @@ ToggleInsertTemplateOption(){
 		// {
 	$("#insertmodal").modal('show'); 
 		//}
+		this.fallbackvalue = [];
+
 	}
 	}
 
@@ -1130,10 +1132,11 @@ sendattachfile() {
 			this.apiService.uploadfile(data,spid,name).subscribe(uploadStatus => {
 			let responseData:any = uploadStatus
 			if(responseData.filename){
-				this.messageMeidaFile = responseData.filename
-				this.attachmentMedia = responseData.filename
+				this.messageMeidaFile = responseData.filename;
+				this.attachmentMedia = responseData.filename;
 				this.mediaSize=responseData.fileSize
 				console.log(this.mediaSize);
+				console.log(this.selectedTemplate);
 				this.sendattachfile();
 				console.log(this.messageMeidaFile);
 				this.showAttachmenOption=false;

@@ -364,12 +364,12 @@ export class ContactFilterComponent implements OnInit {
           }
   
           contactFilter += idx == 0 ?' and ((' :  filters.items[0]['filterOperator'] == '' ? ' and ('  : filters.items[0]['filterOperator'] + ' (';
-          filters.items.map((filter:any)=>{
+          filters.items.map((filter:any,index:any)=>{
   
           //this.applylistFiltersWidth =parseInt(this.applylistFiltersWidth)+100	
           let filterOper = "='"+filter.filterValue+"'";
               let QueryOperator ='';
-          QueryOperator = filter.filterOperator?filter.filterOperator:''
+          QueryOperator = index == 0 ? '':filter.filterOperator?filter.filterOperator:''
           if(filter.filterBy=="End with"){
             filterOper = "LIKE '%"+filter.filterValue+"'";
           }
