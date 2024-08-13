@@ -159,8 +159,8 @@
             <div class="modal-footer">
                 <button *ngIf="!selectedUserData" type="button" class="account-btn"
                     (click)="addEditUserDetails()">Create and Invite</button>
-                <button *ngIf="selectedUserData" type="button" class="account-btn" (click)="addEditUserDetails()">Update
-                    User Details</button>
+                <button *ngIf="selectedUserData" type="button" class="account-btn" (click)="addEditUserDetails()">
+                    {{userData?.IsActive == 3 ?'Update and Invite': 'Update User Details' }}</button>
             </div>
         </div>
     </div>

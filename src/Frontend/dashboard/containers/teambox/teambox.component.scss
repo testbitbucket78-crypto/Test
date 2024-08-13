@@ -23,8 +23,8 @@
 
 .input-area .popup-dialog.mention {
     max-width: 220px;
-    margin-top: -185px;
-    margin-left: 151px;
+    margin-top: -116px;
+    margin-left: 220px;
 }
 
 .input-area .popup-dialog .tabs {
@@ -646,9 +646,10 @@ img.preview_icon {
 }
 
 .message_media img {
-    max-width: 220px;
+    max-width: 100%;
+    object-fit: cover;
+    max-height: 200px;
     border-radius: 17px;
-    margin: -5px -10px 5px -10px;
 }
 
 .contacts_detail_timelog {
@@ -1299,6 +1300,17 @@ button:focus, input:focus {
     cursor: pointer;
     padding: 10px 12px 10px 20px;
 
+}
+ .AssignOption p span{
+    display: block ;
+    flex-direction: initial; 
+    align-items: initial; 
+    cursor: default; 
+    padding: 5px 15px;
+    width: 100%;
+    float: left;
+    margin: 0px; 
+    word-break: normal;
 }
 
 .popup-dialog p .deletenotes-btn {
