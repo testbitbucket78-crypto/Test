@@ -474,6 +474,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		$("#insertmodal").modal('hide');
 		$("#editTemplate").modal('hide');
 		$("#attachfle").modal('hide');
+		$("#sendfile").modal('hide');
 		$('body').removeClass('modal-open');
 		$('.modal-backdrop').remove();
 
