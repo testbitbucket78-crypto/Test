@@ -199,7 +199,8 @@ formatPhoneNumber() {
         checkboxChecked: this.checkboxChecked
        }
         console.log(this.registerForm.value);
-
+        this.submitted = true;
+        if(this.registerForm.invalid) return;
         this.ifCredAlreadyExist(registerData).then((exists: boolean) => {
             this.cdr.detectChanges();
             if (exists) {
@@ -208,7 +209,6 @@ formatPhoneNumber() {
             } else {
               console.log("Proceed with the registration");
            
-        this.submitted = true
         if (this.registerForm.valid) {
             sessionStorage.setItem('formValues', JSON.stringify(registerData));
             sessionStorage.setItem('otpfieldEmailvalue',registerData.email_id);
