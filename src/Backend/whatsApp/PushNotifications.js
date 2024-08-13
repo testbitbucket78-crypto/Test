@@ -53,7 +53,7 @@ function NotifyServer(display_phone_number,updatemessage,message,status,msg_stat
     {
       console.log("client is undefined");
     }
-     console.log("client.connection",notificationMsg,"updatemessage,message",updatemessage,message);
+    // console.log("client.connection",notificationMsg,"updatemessage,message",updatemessage,message);
     conn.send(JSON.stringify(notificationMsg));
   }catch(err){
     console.log("Notify Err" ,err)

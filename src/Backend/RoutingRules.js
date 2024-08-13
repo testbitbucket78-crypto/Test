@@ -40,7 +40,7 @@ async function AssignToContactOwner(sid, newId, agid, custid) {
         let values = [[newId, contactOwnerUid, '-1', 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
         console.log("AssignToContactOwner --- contact owner assign", updateInteractionMap);
-        if (updateInteractionMap.affectedRows > 0) {
+        if (updateInteractionMap?.affectedRows > 0) {
           return true; // Return true if insertion is successful
         } else {
           return { message: "Insertion into InteractionMapping failed" };
@@ -83,7 +83,7 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
       let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
       let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0].AgentId, '-1', 1]]]);
       console.log("LastAssistedAgent", assignAgent);
-      if (assignAgent.affectedRows > 0) {
+      if (assignAgent?.affectedRows > 0) {
         return true; // Return true if insertion is successful
       } else {
         return { message: "Insertion into InteractionMapping failed" };
@@ -151,7 +151,7 @@ async function RoundRobin(sid, newId) {
             let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
             let chatAssigend = await db.excuteQuery(assignAgentQuery, [[[newId, agent.uid, '-1', 1]]]);
             console.log("RoundRobin", chatAssigend);
-            if (chatAssigend.affectedRows > 0) {
+            if (chatAssigend?.affectedRows > 0) {
               return true; // Return true if insertion is successful
             } else {
               return { message: "Insertion into InteractionMapping failed" };
@@ -176,7 +176,7 @@ async function ManualAssign(newId, sid) {
       let newAssignQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
       let assignvalues = [[newId, '-1', '-1', 1]];
       let assignRes = await db.excuteQuery(newAssignQuery, [assignvalues]);
-      if (assignRes.affectedRows > 0) {
+      if (assignRes?.affectedRows > 0) {
         return true; // Return true if insertion is successful
       } else {
         return { message: "Insertion into InteractionMapping failed" };
@@ -243,7 +243,7 @@ async function AssignAdmin(newId, sid) {
     let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
     let assignAgentRes = await db.excuteQuery(assignAgentQuery, [[[newId, admin, '-1', 1]]]);
     console.log("AssignAdmin", assignAgentRes);
-    if (assignAgentRes.affectedRows > 0) {
+    if (assignAgentRes?.affectedRows > 0) {
       return true;
     } else {
       return { message: "Insertion into InteractionMapping failed" };
@@ -264,7 +264,7 @@ async function AssignSpecificUser(sid, newId) {
       let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES (?, ?, ?, ?)`;
       let assignAgentRes = await db.excuteQuery(assignAgentQuery, [newId, RoutingRules[0].SpecificUserUid, '-1', 1]);
       console.log("AssignSpecificUser", assignAgentRes);
-      if (assignAgentRes.affectedRows > 0) {
+      if (assignAgentRes?.affectedRows > 0) {
         return true;
       } else {
         return { message: "Insertion into InteractionMapping failed" };
@@ -291,7 +291,7 @@ async function AssignMissedToContactOwner(sid, newId, agid, custid) {
         let values = [[newId, contactOwnerUid, '-1', 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
         console.log("AssignMissedToContactOwner", updateInteractionMap);
-        if (updateInteractionMap.affectedRows > 0) {
+        if (updateInteractionMap?.affectedRows > 0) {
           return true;
         } else {
           return { message: "Insertion into InteractionMapping failed" };

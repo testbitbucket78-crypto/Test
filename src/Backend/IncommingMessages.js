@@ -171,7 +171,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     //console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg,replymessage, " SMARTREPLY.length " + replymessage?.length)
     if (replymessage?.length > 0) {
 
-      let isSReply = iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType);
+      let isSReply =await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType);
       console.log("iterateSmartReplies replymessage.length", isSReply)
       return isSReply;
     } else if (replymessage?.length <= 0) {
@@ -496,7 +496,11 @@ async function assignAction(value, agid, newId) {
 
 async function addTag(value, sid, custid) {
   //  console.log(`Performing action 2 for Add Contact Tag: ${value}`);
-  var addConRes = await db.excuteQuery(addTagQuery, [value, custid, sid])
+  let stringValue=''
+  if (value !== null && value !== undefined) {
+   stringValue = value.replace(/[\[\]\s]/g, ''); 
+  }
+  var addConRes = await db.excuteQuery(addTagQuery, [stringValue, custid, sid])
   // console.log(addConRes)
 }
 

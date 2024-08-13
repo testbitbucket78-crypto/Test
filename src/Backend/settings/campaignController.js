@@ -489,16 +489,16 @@ async function Createtemplate(messageData) {
 
         // Convert array to object
         const dataObject = messageData[0];
-        // Find the BODY component
-        const bodyComponent = dataObject.components.find(component => component.type === 'BODY');
+        // // Find the BODY component
+        // const bodyComponent = dataObject.components.find(component => component.type === 'BODY');
 
-        // Check if BODY component exists and then update its text
-        if (bodyComponent) {
-            bodyComponent.text = await removeTags.removeTagsFromMessages(bodyComponent.text);
-        }
+        // // Check if BODY component exists and then update its text
+        // if (bodyComponent) {
+        //     bodyComponent.text = await removeTags.removeTagsFromMessages(bodyComponent.text);
+        // }
 
 
-        console.log("Yes json", dataObject)
+        console.log("Yes json", messageData)
         const response = await axios({
             method: "POST",
             url: `https://graph.facebook.com/v20.0/192571223940007/message_templates?access_token`,
@@ -520,10 +520,14 @@ async function Createtemplate(messageData) {
 
 async function editTemplate(templateID, messageData) {
     try {
+
+        // Convert array to object
+        const dataObject = messageData[0];
+
         const response = await axios({
             method: "POST",
             url: `https://graph.facebook.com/v20.0/${templateID}`,
-            data: messageData, // Use the video message structure
+            data: dataObject, // Use the video message structure
             "headers": {
                 "Authorization": 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S',
                 "Content-Type": "application/json",
@@ -560,9 +564,9 @@ async function getOfficialTemplate() {
 
 const addTemplate = async (req, res) => {
     try {
-        ID = req.body.ID
-        templateID = req.body?.templateID
-        TemplateName = req.body.TemplateName,
+            ID = req.body.ID
+            templateID = req.body?.templateID
+            TemplateName = req.body.TemplateName,
             Channel = req.body.Channel,
             Category = req.body.Category,
             Language = req.body.Language,
@@ -580,39 +584,48 @@ const addTemplate = async (req, res) => {
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         isTemplate = req.body.isTemplate
         industry = req.body.industry
-
+        isCopied = req.body?.isCopied
         let image = Links
 
         if (ID == 0) {
             let templateStatus;
             let addedtem;
-            if (Channel == 'WhatsApp Official') {
-                 templateStatus = await Createtemplate(template_json);
+            if (Channel == 'WhatsApp Official' || Channel == 'WA API') {
+                templateStatus = await Createtemplate(template_json);
                 console.log("templateStatus", templateStatus.status)
                 status = templateStatus.status
-                if( templateStatus.status){
+                if (templateStatus.status || isTemplate == 0 || isCopied ==1) {
                     let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
-                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
+                    addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                 }
-            }else{
+            } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {
 
-            let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
-             addedtem = await db.excuteQuery(val.addTemplates, [temValues])
+                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
+                addedtem = await db.excuteQuery(val.addTemplates, [temValues])
             }
             res.status(200).send({
                 addedtem: addedtem,
-                templateStatus :templateStatus,
+                templateStatus: templateStatus,
                 status: 200
             })
 
         }
         else {
-            if (Channel = 'WhatsApp Official') {
-                let edittemplateStatus = editTemplate(templateID, messageData);
-                console.log("edittemplateStatus", edittemplateStatus)
+            let updatedTemplate;
+            if (Channel == 'WhatsApp Official' || Channel == 'WA API') {
+                let edittemplateStatus = editTemplate(templateID, template_json);
+                console.log("edittemplateStatus", edittemplateStatus);
+                if (edittemplateStatus.status || isTemplate == 0) {
+                    let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
+                    updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
+                    console.log(Channel, "updatedTemplate", updatedTemplate)
+                }
+            } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {
+                let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
+                updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
+                console.log(Channel, "updatedTemplate", updatedTemplate)
             }
-            let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
-            let updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
+
             res.status(200).send({
                 updatedTemplate: updatedTemplate,
                 status: 200
@@ -667,7 +680,7 @@ const getTemplate = async (req, res) => {
                 packet.status = statusLookup[packet.TemplateName];
             }
         });
-        console.log(templates)
+        //  console.log(templates)
         res.status(200).send({
             templates: templates,
             status: 200
