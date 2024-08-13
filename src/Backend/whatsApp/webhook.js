@@ -138,7 +138,7 @@ if (Type === 'image') {
     console.log("________________SAVEING MESSAGE___________________");
 
     if (message_text) {
-      message_text = message_text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+     message_text = message_text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
       message_text = message_text.replace(/_(.*?)_/g, '<em>$1</em>');
       message_text = message_text.replace(/~(.*?)~/g, '<del>$1</del>');
       message_text = message_text.replace(/\n/g, '<br>');
