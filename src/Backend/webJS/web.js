@@ -749,7 +749,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
   }
   if (message_text.length > 0) {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WhatsApp Web', timestramp]);
+    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp]);
     notify.NotifyServer(display_phone_number, true);
     //    console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
 
@@ -845,7 +845,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       var pausedTill = defaultAction[0]?.pausedTill
 
     }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WhatsApp Web')
+    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web')
 
 
     console.log("defaultReplyAction-->>> boolean", defaultReplyAction)

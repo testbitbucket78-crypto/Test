@@ -196,7 +196,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   if (message_text.length > 0) {
     let myUTCString = new Date().toUTCString();
     const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WhatsApp Official', created_at]);
+    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', created_at]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
@@ -247,7 +247,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
 
       }
-      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WhatsApp Official', isContactPreviousDeleted)
+      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted)
       console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
       if(defaultReplyAction == true){
         let myUTCString = new Date().toUTCString();
