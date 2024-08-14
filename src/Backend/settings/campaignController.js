@@ -676,9 +676,12 @@ const getTemplate = async (req, res) => {
 
         // Update status in rowDataPackets based on the lookup object
         templates.forEach(packet => {
+           // console.log(packet.status  ,packet.TemplateName)
+            if( packet.status != 'draft'){
+             //   console.log("if")
             if (statusLookup[packet.TemplateName]) {
                 packet.status = statusLookup[packet.TemplateName];
-            }
+            }}
         });
         //  console.log(templates)
         res.status(200).send({

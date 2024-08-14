@@ -12,6 +12,7 @@ const CryptoJS = require('crypto-js');
 var axios = require('axios');
 const { error } = require('console');
 const moment = require('moment');
+const middleWare = require('../middleWare')
 const SECRET_KEY = 'RAUNAK'
 app.use(bodyParser.json());
 
@@ -102,7 +103,7 @@ const isSpAlreadyExist = async function (req, res) {
                 status: 409
             });
         }
-        if(credentialsOfEmail?.length <= 0 && credentialsOfPhone?.length <= 0){
+        if (credentialsOfEmail?.length <= 0 && credentialsOfPhone?.length <= 0) {
             return res.status(200).send({
                 msg: 'User Ready to register !',
                 status: 200
@@ -406,7 +407,11 @@ const sendOtp = async function (req, res) {
         mobile_number = req.body.mobile_number;
 
         let otp = Math.floor(100000 + Math.random() * 900000);
+        let phoneOtp = Math.floor(100000 + Math.random() * 900000);
+        let otpFor = req.body?.otpFor;
 
+        let bodyVar=[req.body?.name, phoneOtp]
+        let headerVar =[]
         // send mail with defined transport object
         var mailOptions = {
             from: val.email,
@@ -422,56 +427,105 @@ const sendOtp = async function (req, res) {
             <p>Team Engagekart</p> `
         };
 
-        transporter.sendMail(mailOptions, (error, info) => {
-            try {
-                if (error) {
-                    console.log("error ampt ----------", error)
-                } else {
-                    console.log("info---------", info)
+
+
+
+        if (otpFor == 'both') {
+            transporter.sendMail(mailOptions, (error, info) => {
+                try {
+                    if (error) {
+                        console.log("error ampt ----------", error)
+                    } else {
+                        console.log("info---------", info)
+                    }
+
+                    res.send(Status);
+                } catch (error) {
+
+                    res.send(err)
                 }
 
-                res.send(Status);
-            } catch (error) {
+            });
 
-                res.send(err)
-            }
-
-        });
-
-        let text = `Hi ${req.body?.name}!
+            let text = `Hi ${req.body?.name}!
         Just one more step to get started with Engagekart.
         Here's your verification code: ${otp}.
         Enter it on the signup page to verify your Phone Number.
         Let's make magic happen!
         - Team Engagekart`
 
-        var data = getTextMessageInput(mobile_number, text);
+            // var data = getTextMessageInput(mobile_number, text);
 
-        sendMessage(data)
-        var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
-        // console.log(storeEmailOtp)
 
-        var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, otp, 'Mobile'])
-        // console.log(storePhoneOtp)
-        let msg;
-        let status = 200;
-        // 6 entries and within 2 hour 
-        let otpcansend = await canSendOTP(mobile_number)
-        if (otpcansend.canSend) {
-            console.log("You can send the OTP.");
-            msg = "You can send the OTP."
+            let sendWAmsg =await middleWare.createWhatsAppPayload('text', mobile_number, 'verify_opt_signin', 'en', headerVar, bodyVar, mediaLink = null)
+            let data = JSON.stringify(sendWAmsg, null, 2);
+            sendMessage(data)
+            var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
+            // console.log(storeEmailOtp)
 
-          } else {
-            console.log(`Please wait ${result.remainingTime} minutes before sending another OTP.`);
-            msg = `Please wait ${result.remainingTime} minutes before sending another OTP.`
-            status = 403
-          }
+            var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, phoneOtp, 'Mobile'])
+
+            // console.log(storePhoneOtp)
+        } else if (otpFor == 'email') {
+
+            // 6 entries and within 2 hour 
+            let otpcansend = await canSendOTP(email_id)
+            if (!otpcansend.canSend) {
+
+                console.log(`Please wait ${result.remainingTime} minutes before sending another OTP.`);
+
+                return res.status(403).send({
+                    msg: `Please wait ${result.remainingTime} minutes before sending another OTP.`,
+                    status: 403
+                })
+
+            }
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                try {
+                    if (error) {
+                        console.log("error ampt ----------", error)
+                    } else {
+                        console.log("info---------", info)
+                    }
+
+                    res.send(Status);
+                } catch (error) {
+
+                    res.send(err)
+                }
+
+            });
+            var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
+
+        } else if (otpFor == 'phone') {
+
+            // 6 entries and within 2 hour 
+            let otpcansend = await canSendOTP(mobile_number)
+            if (!otpcansend.canSend) {
+
+                console.log(`Please wait ${result.remainingTime} minutes before sending another OTP.`);
+
+                return res.status(403).send({
+                    msg: `Please wait ${result.remainingTime} minutes before sending another OTP.`,
+                    status: 403
+                })
+
+            }
+
+            let sendWAmsg =await middleWare.createWhatsAppPayload('text', mobile_number, 'verify_opt_signin', 'en', headerVar,bodyVar , mediaLink = null)
+            let data = JSON.stringify(sendWAmsg, null, 2);
+            sendMessage(data)
+
+            var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, phoneOtp, 'Mobile'])
+
+        }
         return res.status(200).send({
-            msg: msg,
-            status: status
+            msg: 'opt sended',
+            status: 200
         })
     } catch (err) {
-        console.error(err);
+        //console.error(err);
         db.errlog(err);
 
         res.status(500).send({
@@ -486,33 +540,33 @@ const sendOtp = async function (req, res) {
 
 async function canSendOTP(mobile_number) {
     try {
-      const result = await db.excuteQuery(
-        'SELECT COUNT(*) AS count, MIN(created_at) AS first_sent_time FROM otpVerify WHERE otpfieldvalue = ? AND created_at >= NOW() - INTERVAL 2 HOUR',
-        [mobile_number]
-      );
-  
-      const otpCount = result[0].count;
-      const firstSentTime = result[0].first_sent_time;
-  
-      if (otpCount < 3) {
-        // Allow sending OTP
-        return { canSend: true };
-      } else {
-        // Calculate remaining time
-        const currentTime = moment();
-        const firstSentTimeMoment = moment(firstSentTime);
-        const timePassed = currentTime.diff(firstSentTimeMoment, 'minutes');
-        const remainingTime = 120 - timePassed; // 120 minutes = 2 hours
-  
-        return { canSend: false, remainingTime: remainingTime };
-      }
-    } catch (err) {
-      console.log("ERR -- canSendOTP", err);
-      return err;
-    }
-  }
+        const result = await db.excuteQuery(
+            'SELECT COUNT(*) AS count, MIN(created_at) AS first_sent_time FROM otpVerify WHERE otpfieldvalue = ? AND created_at >= NOW() - INTERVAL 2 HOUR',
+            [mobile_number]
+        );
 
-  
+        const otpCount = result[0].count;
+        const firstSentTime = result[0].first_sent_time;
+
+        if (otpCount < 3) {
+            // Allow sending OTP
+            return { canSend: true };
+        } else {
+            // Calculate remaining time
+            const currentTime = moment();
+            const firstSentTimeMoment = moment(firstSentTime);
+            const timePassed = currentTime.diff(firstSentTimeMoment, 'minutes');
+            const remainingTime = 120 - timePassed; // 120 minutes = 2 hours
+
+            return { canSend: false, remainingTime: remainingTime };
+        }
+    } catch (err) {
+        console.log("ERR -- canSendOTP", err);
+        return err;
+    }
+}
+
+
 const verifyOtp = async function (req, res, err) {
 
     try {
@@ -596,4 +650,4 @@ const verifyPhoneOtp = async function (req, res, err) {
 
 
 
-module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, verifyPhoneOtp,isSpAlreadyExist };
+module.exports = { allregisterdUser, login, register, forgotPassword, sendOtp, verifyOtp, resetPassword, verifyPhoneOtp, isSpAlreadyExist };
