@@ -455,9 +455,9 @@
 						            <div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
 								</div>
 								<div class="template_text">
-									<p [innerHTML]="selectedTemplate.Header" class="name"></p>
-									<p [innerHTML]="selectedTemplate.BodyText" class="description"></p>
-									<p [innerHTML]="selectedTemplate.FooterText" class="footer"></p>
+									<p [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="name"></p>
+									<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml" class="description"></p>
+									<p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml" class="footer"></p>
 								</div>
 		
 							</div>

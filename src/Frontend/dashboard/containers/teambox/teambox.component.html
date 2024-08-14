@@ -203,7 +203,7 @@
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Unassigned</span>
 									</p>
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="!(selectedInteraction.assignTo == -1 && !settingsService.checkRoleExist('21'))">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('21'))">
 										<span class="text-capitalize initials"> M </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Myself</span>
@@ -217,7 +217,7 @@
 									<div class="popup-dialog AssignOption agent-list">
 										<div *ngFor="let user of agentsList;let k = index">
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)" *ngIf="user.uid != uid" [class.disabled]="!(selectedInteraction.assignTo == -1 && !settingsService.checkRoleExist('23')) && !(selectedInteraction.assignTo != -1 && !settingsService.checkRoleExist('23'))">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)" *ngIf="user.uid != uid" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('23')) && !(selectedInteraction.assignTo?.AgentId != -1 && !settingsService.checkRoleExist('23'))">
 										<span class="text-capitalize initials"> {{ user.nameInitials }} </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->{{user?.name}} {{user?.UserType == 'Admin' ? '(Admin)' :''}}</span>

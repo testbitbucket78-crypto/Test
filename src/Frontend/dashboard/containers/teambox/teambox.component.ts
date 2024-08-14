@@ -2822,6 +2822,12 @@ createCustomer() {
 							if(responseData?.interactionId?.length ==0){
 								this.createInteraction(insertId);
 							}else{
+								let interactionId = responseData?.interactionId[0]?.InteractionId;
+								let idx = this.interactionList.findIndex((item:any)=> item.InteractionId == interactionId);
+								if(idx > -1){
+									this.selectInteraction(idx);
+									this.interactionList[idx].Name = bodyData?.Name;
+								}
 								if(this.modalReference){
 									this.modalReference.close();
 								}
