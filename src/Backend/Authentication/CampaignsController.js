@@ -232,7 +232,7 @@ const applyFilterOnEndCustomer = async (req, res) => {
 }
 const processContactQueries = async (req, res) => {
     const queries = req.body.Query;
-
+    const isOptIn = req.body?.isOptIn;
     if (!queries || !Array.isArray(queries) || queries.length === 0) {
         res.send({
             status: 400,
@@ -245,7 +245,11 @@ const processContactQueries = async (req, res) => {
     try {
         // Execute each query sequentially
         for (const query of queries) {
-            const queryResult = await db.excuteQuery(query + " and isDeleted !=1  AND IsTemporary !=1");
+            let listQuery = query + " and isDeleted !=1  AND IsTemporary !=1"
+            if(isOptIn == 1){
+                listQuery = query + " and isDeleted !=1  AND IsTemporary !=1 and OptInStatus =? "
+            }
+            const queryResult = await db.excuteQuery(listQuery,['Yes']);
             results = results.concat(queryResult);
         }
 
@@ -404,11 +408,11 @@ const sendCampinMessage = async (req, res) => {
             if (optInStatus == 'Yes') {
 
                 if (results[0]?.OptInStatus == 'Yes' || results[0]?.OptInStatus == '1') {
-                    messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+                    messagestatus = await middleWare.channelssetUp(spid,2, type, messageTo, content, media)
                 }
             } else {
              //   console.log(spid, req.body.channel_id, type, messageTo, "+++++++", customerId)
-                messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+                messagestatus = await middleWare.channelssetUp(spid,2, type, messageTo, content, media)
              // messagestatus = await middleWare.createWhatsAppPayload(type, messageTo, templateName, languageCode, headerVariables = [], bodyVariables = [], media)
             }
             console.log("isFinished ", isFinished, TemplateData.status)

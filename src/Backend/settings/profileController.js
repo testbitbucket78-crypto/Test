@@ -123,7 +123,7 @@ const changePassword = async (req, res) => {
                 let text = `You've successfully reset your password. Keep your new password safe, and contact your account Admin immediately if you didn't initiate this change.
 - Team Engagekart`
 
-                var data = getTextMessageInput(reb.body?.mobile_number, text);
+                var data = getTextMessageInput(req.body?.mobile_number, text);
 
                 sendMessage(data)
                 res.status(200).send({

@@ -2840,7 +2840,10 @@ console.log(this.allTemplatesMain);
 				list.push(this.getContactFilterQuery(JSON.parse(this.allContactList[i].filters)));
 			}
 		}
-		let bodyData ={Query:list};
+		let bodyData ={
+			Query:list,
+			isOptIn:this.optInStatus =='Yes' ? 1:0
+		};
 		console.log(list);
 		this.segmentsContactList =[];
 		this.apiService.processQuery(bodyData).subscribe((result:any) =>{

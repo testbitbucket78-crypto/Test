@@ -29,7 +29,10 @@ let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId 
 async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo, new Date().toUTCString());
   console.log(clientPidMapping.hasOwnProperty(spid))
-  if (isActiveSpidClient(spid)) {
+ 
+  let isConnected = await isActiveSpidClient(spid);
+  if (isConnected.isActiveSpidClient) {
+
     console.log("Client found in memory map and is ready");
     return { status: 201, value: 'Client is ready!' };
   }
@@ -95,8 +98,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          executablePath: "/usr/bin/google-chrome-stable",
-       //   executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         executablePath: "/usr/bin/google-chrome-stable",
+        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -219,15 +222,16 @@ function ClientInstance(spid, authStr, phoneNo) {
           if (message.hasQuotedMsg) {
             // Check if the replied message is sent by your application
             const repliedMessage = await message.getQuotedMessage();
-
+              // Notify about the reply
+             console.log("reply message status ========",(repliedMessage && repliedMessage.fromMe), repliedMessage.fromMe)
             if (repliedMessage && repliedMessage.fromMe) {
               // Notify about the reply
               const repliedNumber = (message.from).replace(/@c\.us$/, "");
               console.log("reply ___________________")
-              let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND message_content = '${repliedMessage._data.caption}'`
-
+              let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND message_content = '${repliedMessage.body}'`
+console.log(campaignRepliedQuery)
               let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
-              console.log("campaignReplied*******", campaignReplied)
+              console.log(repliedNumber,spid,"campaignReplied*******", campaignReplied?.affectedRows)
             }
           }
 
@@ -594,10 +598,9 @@ async function saveInMessages(message) {
   try {
     let message_text = message.body   //firstMessage
     if (message_text) {
-      message_text = message_text.replace(/\*/g, '<strong>').replace(/\*/g, '</strong>');
-      message_text = message_text.replace(/_/g, '<em>').replace(/_/g, '</em>');
-      message_text = message_text.replace(/~/g, '<span>').replace(/~/g, '</span>');
-      message_text = message_text.replace(/~/g, '<del>').replace(/~/g, '</del>');
+      message_text = message_text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+      message_text = message_text.replace(/_(.*?)_/g, '<em>$1</em>');
+      message_text = message_text.replace(/~(.*?)~/g, '<del>$1</del>');
       message_text = message_text.replace(/\n/g, '<br>');
     }
     let message_direction = 'IN'
@@ -655,10 +658,9 @@ async function savelostChats(message, spPhone, spid) {
     let message_text = message.body   //firstMessage
 
     if (message_text) {
-      message_text = message_text.replace(/\*/g, '<strong>').replace(/\*/g, '</strong>');
-      message_text = message_text.replace(/_/g, '<em>').replace(/_/g, '</em>');
-      message_text = message_text.replace(/~/g, '<span>').replace(/~/g, '</span>');
-      message_text = message_text.replace(/~/g, '<del>').replace(/~/g, '</del>');
+      message_text = message_text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+      message_text = message_text.replace(/_(.*?)_/g, '<em>$1</em>');
+      message_text = message_text.replace(/~(.*?)~/g, '<del>$1</del>');
       message_text = message_text.replace(/\n/g, '<br>');
     }
     let ackStatus = message.ack;
@@ -747,7 +749,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
   }
   if (message_text.length > 0) {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WhatsApp Web', timestramp]);
+    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp]);
     notify.NotifyServer(display_phone_number, true);
     //    console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
 
@@ -843,7 +845,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       var pausedTill = defaultAction[0]?.pausedTill
 
     }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WhatsApp Web')
+    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web')
 
 
     console.log("defaultReplyAction-->>> boolean", defaultReplyAction)

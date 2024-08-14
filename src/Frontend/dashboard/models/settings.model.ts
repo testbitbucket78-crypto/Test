@@ -341,6 +341,7 @@ export interface newTemplateFormData {
     template_id:number;
     template_json:any[];
     isTemplate:number;
+    isCopied:number;
 }
 export interface profilesettingPicData{
     spid: number;
