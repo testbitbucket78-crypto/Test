@@ -15,7 +15,15 @@
 		</div>
 </div> -->
 <div class="toaster" (click)="hideToaster()">
-  <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+  <div *ngIf="errorMessage" class="error">
+    <p>{{ errorMessage}}</p>
+    <div class="container">
+      <div class="item" *ngFor="let detail of whatsAppDisplay; let i = index">
+        <div class="channel">{{ detail.channel_id }}</div>
+        <div class="number">({{ detail.connected_id }})</div>
+      </div>
+    </div>
+  </div>
   <p *ngIf="successMessage" class="success">{{successMessage}}</p>
   <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 </div>
