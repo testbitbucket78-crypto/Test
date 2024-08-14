@@ -2870,7 +2870,6 @@ var bodyData = {
 	spid:this.SPID,
 	channel:this.selectedChannel,
 	IsTemporary: 1
-
 }
 this.apiService.createInteraction(bodyData).subscribe(async( data:any) =>{
 	if(data.status != 409){
@@ -2890,9 +2889,15 @@ this.apiService.createInteraction(bodyData).subscribe(async( data:any) =>{
 	console.log(this.interactionList);
 	//this.getAllInteraction()
 }else{
+	console.log('xyzzzz')
 	this.showToaster(data.msg,'error');
 }
-});
+},async (error) => {
+	if (error.status === 409) {
+		this.showToaster(error?.msg,'error');
+	  //this.OptedIn = 'No';
+	}
+  });
 	}
 	else{
 		this.showToaster('! Channel Selection is required ', 'error');
