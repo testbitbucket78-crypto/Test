@@ -91,10 +91,10 @@
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<div class="image-container">
 											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
-											<div *ngIf="item.channel=='WhatsApp Web'" class="icon" class="hover-text2">
+											<div *ngIf="item.channel=='WA Web'" class="icon" class="hover-text2">
 												{{'WA Web ' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
 											</div>
-											<div *ngIf="item.channel=='WhatsApp Official'" class="icon" class="hover-text2">
+											<div *ngIf="item.channel=='WA API'" class="icon" class="hover-text2">
 												{{'WA API ' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
 											</div>
 										</div>
@@ -131,11 +131,11 @@
 						<div class=" left_part">
 							<div class="user_info">
 								<p class="user_name">{{selectedInteraction.Name.substring(0 ,15)}}</p>
-								<p *ngIf="selectedInteraction.channel=='WhatsApp Official'" class="user_from mt-2"><img
-										class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />Official{{selectedInteraction.connected_id ?'(' + selectedInteraction.connected_id + ')':''}}
-								</p>
-								<p *ngIf="selectedInteraction.channel=='WhatsApp Web'" class="user_from"><img class="icon"
-										src="/assets/img/teambox/whatsapp-icon-l.svg" />Web{{selectedInteraction.connected_id ?'(' + selectedInteraction.connected_id + ')':''}}</p>
+								<!-- <p *ngIf="selectedInteraction.channel=='WA API'" class="user_from mt-2"><img
+										class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedInteraction.channel}}{{selectedInteraction.connected_id ?'(' + selectedInteraction.connected_id + ')':''}}
+								</p> -->
+								<p class="user_from f-9"><img class="icon"
+										src="/assets/img/teambox/whatsapp-icon-l.svg" /> {{selectedInteraction.channel}} {{selectedInteraction.connected_id ?'(' + selectedInteraction.connected_id + ')':''}}</p>
 							</div>
 						</div>
 						<div class=" right_part">
@@ -203,7 +203,7 @@
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Unassigned</span>
 									</p>
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="!(selectedInteraction.assignTo == -1 && !settingsService.checkRoleExist('21'))">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('21'))">
 										<span class="text-capitalize initials"> M </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Myself</span>
@@ -217,7 +217,7 @@
 									<div class="popup-dialog AssignOption agent-list">
 										<div *ngFor="let user of agentsList;let k = index">
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)" *ngIf="user.uid != uid" [class.disabled]="!(selectedInteraction.assignTo == -1 && !settingsService.checkRoleExist('23')) && !(selectedInteraction.assignTo != -1 && !settingsService.checkRoleExist('23'))">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)" *ngIf="user.uid != uid" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('23')) && !(selectedInteraction.assignTo?.AgentId != -1 && !settingsService.checkRoleExist('23'))">
 										<span class="text-capitalize initials"> {{ user.nameInitials }} </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->{{user?.name}} {{user?.UserType == 'Admin' ? '(Admin)' :''}}</span>
@@ -348,7 +348,7 @@
 								<div class="conversation_list_inner_box" *ngFor="let note of notesGroup.items;"
 									id={{note.Message_id}}>
 
-									<div *ngIf="note.is_deleted != 1"
+									<div *ngIf="note?.Message_id"
 										[ngClass]="note.message_direction =='IN' ? 'message_box left' : 'message_box'">
 										<label *ngIf="note.message_direction !='IN'">{{note.AgentName}}</label>
 										<div class="content-box">
@@ -387,18 +387,18 @@
 										</div>
 									</div>
 
-									<div *ngIf="note.is_deleted == 1" class="content-box-edited">
+									<!-- <div *ngIf="note.is_deleted == 1" class="content-box-edited">
 										<div class="content_box_edited_inner">
 											<p>Deleted By {{note.DeletedBy}}</p>
 											<span *ngIf="note.deleted_at">{{timeSince(note.deleted_at)}}</span>
 										</div>
-									</div>
+									</div> -->
 
 
-									<div *ngIf="note.updated_at && note.is_deleted != 1 && note.created_at != note.updated_at"
+									<div *ngIf="!note?.Message_id"
 										class="content-box-edited">
 										<div class="content_box_edited_inner">
-											<p>Edited By {{note.AgentName}}</p>
+											<p>{{note?.action}}</p>
 											<span *ngIf="note.updated_at">{{timeSince(note.updated_at)}}</span>
 										</div>
 									</div>
@@ -419,8 +419,8 @@
 									(click)="toggleChatNotes('notes')">Notes</button>
 							</div>
 							<div class="input-area" (click)="checkPermission()" *ngIf="isRefresh">
-								<ejs-richtexteditor id="mention_integration" [insertImageSettings]="insertImageSettings" #mention_integration (onChange)="onCreate()" [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open') || (this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) "  [toolbarSettings]='tools' [height]='100'
-								  [placeholder]="(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue ==0) ? 'Select Template':'Enter Message'" (actionBegin)="onActionBegin($event)" [pasteCleanupSettings]="pasteCleanupSettings">
+								<ejs-richtexteditor id="mention_integration" [insertImageSettings]="insertImageSettings" #mention_integration (onChange)="onCreate()" [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open') || (this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue ==0) "  [toolbarSettings]='tools' [height]='100'
+								  [placeholder]="(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue ==0) ? 'Select Template':'Enter Message'" (actionBegin)="onActionBegin($event)" [pasteCleanupSettings]="pasteCleanupSettings">
 								</ejs-richtexteditor>
 
 								<ejs-mention *ngIf="showChatNotes=='notes'" #mention [dataSource]='mentionAgentsList' target='#mention_integration_rte-edit-view' [fields]='fieldsData' [suggestionCount]="8" [showMentionChar]="false" [allowSpaces]="true"  
@@ -1060,7 +1060,7 @@ popupWidth='250px' popupHeight='200px'>
 											<p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 										  </div>
 									</div>
-									<div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" class="px-2 template_btn">
+									<div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
 										<div *ngFor="let button of selectedTemplate.buttons">
 											<button type="button" class="btn">{{button.name}}</button>
 										</div>
@@ -1137,7 +1137,7 @@ popupWidth='250px' popupHeight='200px'>
 									</div>
 								  </form>
 
-								<div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" >
+								<div *ngIf="selectedTemplate.Channel === 'WA API'" >
 								<p class="mt-2">Button Payload <span>(Optional)</span><img class="px-2 icon sm"
 										src="/assets/img/campaign/Info.svg"></p>
 								<div *ngFor="let button of selectedTemplate.buttons; let ith = index">
@@ -1339,7 +1339,7 @@ popupWidth='250px' popupHeight='200px'>
 							<p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 						  </div>
 					</div>
-					<div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" class="px-2 template_btn">
+					<div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
 						<div *ngFor="let button of selectedTemplate.buttons">
 							<button type="button" class="btn">{{button.name}}</button>
 						</div>

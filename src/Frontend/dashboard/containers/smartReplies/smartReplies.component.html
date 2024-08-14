@@ -306,12 +306,11 @@
 								<div  class="child-int-1 py-2">
 								  <div  #chatSection class="child-interaction-1">
 									<div *ngFor="let message of assignedAgentList; let i = index">
-					  
 									  <div class="message-container" *ngIf="message.ActionID == 0">
-					  
-										<div class="col-6 message-box" *ngIf="message.Message">
+										<div class="col-6 message-box" *ngIf="message.Message || message.Media">
 										  <p id="msgbox-head">Message</p>
-										  <p id="msgbox-body{{i}}" [innerHTML]="message.Message | sanitizeHtml"></p>
+										  <img *ngIf="message.Media" [src]="message.Media" alt="Media" style="max-width: 100%; height: auto;">
+										  <p *ngIf="message.Message" id="msgbox-body{{i}}" [innerHTML]="message.Message | sanitizeHtml"></p>
 										</div>
 					  
 										<div class="col-6 message-buttons">
@@ -701,7 +700,7 @@
 										  <p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 										  </div>
 									  </div>
-									  <div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" class="px-2 template_btn">
+									  <div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
 										<button type="button" class="btn">Button 1</button>
 										<button type="button" class="btn">Button 2</button>
 										<button type="button" class="btn">Button 3</button>
@@ -777,7 +776,7 @@
 										</div> -->
 									</div>
 								  </form>
-								  <div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" >
+								  <div *ngIf="selectedTemplate.Channel === 'WA API'" >
 									<p class="mt-2">Button Payload <span>(Optional)</span><img class="px-2 icon sm"
 										src="/assets/img/campaign/Info.svg"></p>
 									<div class="form_row">
@@ -990,7 +989,7 @@
 								  <p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 								  </div>
 							  </div>
-							  <div *ngIf="selectedTemplate.Channel === 'WhatsApp Official'" class="px-2 template_btn">
+							  <div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
 								<button type="button" class="btn">Button 1</button>
 								<button type="button" class="btn">Button 2</button>
 								<button type="button" class="btn">Button 3</button>

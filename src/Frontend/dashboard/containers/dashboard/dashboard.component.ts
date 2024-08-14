@@ -38,6 +38,7 @@ export class DashboardComponent implements OnInit {
 	successMessage='';
 	warningMessage='';
 
+    whatsAppDisplay: any[] = [];
     constructor(private apiService: DashboardService, private router: Router,private profileService:ProfileService,private settingsService:SettingsService) { }
     ngOnInit() {
        
@@ -59,8 +60,8 @@ export class DashboardComponent implements OnInit {
 		if(type=='success'){
 			this.successMessage=message;
 		}else if(type=='error'){
-			this.errorMessage=message;
-		}else{
+            this.errorMessage=message;
+        }else{
 			this.warningMessage=message;
 		}
 		setTimeout(() => {
@@ -91,6 +92,7 @@ export class DashboardComponent implements OnInit {
                 }
                 if (response.status === 404) {
                     console.log(response.message);
+                    this.whatsAppDisplay = response.result
                     this.showToaster('Channel not connected', 'error');
                 }
             });
