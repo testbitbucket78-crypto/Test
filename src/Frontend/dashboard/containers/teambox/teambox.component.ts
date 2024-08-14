@@ -732,7 +732,7 @@ ToggleInsertTemplateOption(){
 
 ToggleAttributesOption(){
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
-		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA Web') || this.showChatNotes=='notes' )
 		{
 	this.closeAllModal()
 	$("#atrributemodal").modal('show'); 
@@ -796,7 +796,7 @@ isCustomValue(value: string): boolean {
 ToggleQuickReplies(){
 	
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
-		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA Web') || this.showChatNotes=='notes' )
 		{
 	this.closeAllModal()
 	this.getQuickResponse();
@@ -946,7 +946,7 @@ filterTemplate(temType:any){
 ToggleAttachmentBox(){
 	
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
-		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WhatsApp Web') || this.showChatNotes=='notes' )
+		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA Web') || this.showChatNotes=='notes' )
 		{
 			this.closeAllModal()
 			$("#attachfle").modal('show'); 
@@ -1015,12 +1015,12 @@ sendattachfile() {
 		};
 		this.settingService.clientAuthenticated(input).subscribe(response => {
 			//response.status === 404
-			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WhatsApp Official') {
+			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WA API') {
 				this.showToaster('The Channel of this conversation is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error')
 				return;
 			}
 			//response.status === 200 && response.message === 'Client is ready !
-			else if ((response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes' || (this.selectedInteraction?.channel =='WhatsApp Official')) {
+			else if ((response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes' || (this.selectedInteraction?.channel =='WA API')) {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
 						if(this.newMessage.value.Message_id==''){
@@ -3101,13 +3101,13 @@ sendMessage(){
 		};
 		this.settingService.clientAuthenticated(input).subscribe(response => {
 
-			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WhatsApp Official') {
+			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WA API') {
 				this.showToaster('The Channel of this conversation is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error')
 				return;
 			}
 			//(response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes'
 
-			else if ((response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes' || (this.selectedInteraction?.channel =='WhatsApp Official')) {
+			else if ((response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes' || (this.selectedInteraction?.channel =='WA API')) {
 				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
 					var responseData:any = data
 						if(this.newMessage.value.Message_id==''){
@@ -3366,7 +3366,7 @@ sendMessage(){
 	
 	checkPermission(){
 		console.log(this.selectedInteraction) ;	
-		if(this.showChatNotes=='text' && this.selectedInteraction.channel!='WhatsApp Official'){
+		if(this.showChatNotes=='text' && this.selectedInteraction.channel!='WA API'){
 			this.checkAuthentication()
 		}
 		if(this.selectedInteraction?.assignTo?.AgentId != this.uid && this.showChatNotes=='text' ){

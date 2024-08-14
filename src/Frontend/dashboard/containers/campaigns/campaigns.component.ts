@@ -609,9 +609,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				item['created_datetime_formated']=this.formattedDate(item.created_at)
 
 				if(item.channel_id==1){
-					item['channel_label'] ='WhatsApp Official'
+					item['channel_label'] ='WA API'
 				}else{
-					item['channel_label'] ='WhatsApp Web'
+					item['channel_label'] ='WA Web'
 				}
 
 
@@ -756,9 +756,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				item['created_datetime_formated']=this.formateDate(item.created_at)
 
 				if(item.channel_id==1){
-					item['channel_label'] ='WhatsApp Official'
+					item['channel_label'] ='WA API'
 				}else{
-					item['channel_label'] ='WhatsApp Web'
+					item['channel_label'] ='WA Web'
 				}
 
 

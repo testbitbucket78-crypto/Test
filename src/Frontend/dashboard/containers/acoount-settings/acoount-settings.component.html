@@ -121,8 +121,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content qr-modal">
                 <div class="align-items-center modal-header">
-                    <h5 class="modal-title" *ngIf="channel_id==='WhatsApp Web'">Connect WhatsApp Web</h5>
-                    <h5 class="modal-title" *ngIf="channel_id==='WhatsApp Official'">Connect WhatsApp Official</h5>
+                    <h5 class="modal-title" *ngIf="channel_id==='WA Web'">Connect WhatsApp Web</h5>
+                    <h5 class="modal-title" *ngIf="channel_id==='WA API'">Connect WhatsApp Official</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="close()" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
@@ -160,8 +160,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content whatsWebSetting-modal">
                 <div class="modal-header" >
-                    <h5 *ngIf="repliesaccountData?.channel_id==='WhatsApp Web'" class="modal-title">WhatsApp Web Settings</h5>
-                    <h5 *ngIf="repliesaccountData?.channel_id==='WhatsApp Official'" class="modal-title">WhatsApp Official Settings</h5>
+                    <h5 *ngIf="repliesaccountData?.channel_id==='WA Web'" class="modal-title">WhatsApp Web Settings</h5>
+                    <h5 *ngIf="repliesaccountData?.channel_id==='WA API'" class="modal-title">WhatsApp Official Settings</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"(click)="populateModal()">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
