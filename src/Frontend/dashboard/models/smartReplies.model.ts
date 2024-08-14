@@ -5,6 +5,7 @@ export interface agentMessageList{
     ValueUuid: any;
     Media:any;
     MessageVariables: string;
+    media_type: string;
 }
 
 export interface repliesList {

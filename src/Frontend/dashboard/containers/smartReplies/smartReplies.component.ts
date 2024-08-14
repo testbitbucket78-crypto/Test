@@ -740,6 +740,7 @@ showAddSmartRepliesModal() {
 		else {
 			mediaContent=''
 		}
+		if(item.Links) this.messageMeidaFile = item.Links
 		var htmlcontent = mediaContent+item.BodyText;
 		this.chatEditor.value = htmlcontent
 	
@@ -939,6 +940,12 @@ showAddSmartRepliesModal() {
 			this.showToaster('! Please type your message first','error');
 			return;
 		}
+		let value = '';
+		let mediaType = '';
+        if(this.chatEditor.value){
+			value = this.removeMediaTags(this.chatEditor.value);
+			if(this.messageMeidaFile) mediaType = this.getMediaType(this.messageMeidaFile);
+		}
 
 		if (this.editableMessageIndex !== null && this.editableMessageIndex >= 0 && this.editableMessageIndex < this.assignedAgentList.length) {
 
@@ -951,14 +958,15 @@ showAddSmartRepliesModal() {
 
 			this.assignedAgentList.push({
 				ActionID: 0, 
-				Message: this.chatEditor.value, 
+				Message: value, 
 				Value: '', 
 				ValueUuid: '',
 				Media: this.messageMeidaFile,
-				MessageVariables: this.allVariables
+				MessageVariables: this.allVariables,
+				media_type : mediaType
 			});
 		}
-
+		this.messageMeidaFile = '';
 		console.log(this.assignedAgentList,'ADDED MESSAGE DATA')
 
 			this.chatEditor.value = '';
@@ -969,7 +977,23 @@ showAddSmartRepliesModal() {
 				this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
 			}, 100);
 		}
-	
+		removeMediaTags(htmlContent: string): string {
+			let updatedHtml = htmlContent.replace(/<img[^>]*>[^<]*|<video[^>]*>[^<]*<\/video>/gi, '');
+			updatedHtml = updatedHtml.replace(/<[^\/>]+>\s*<\/[^>]+>/gi, ''); // remove tags that is empty 
+			return updatedHtml;
+		  }
+		  getMediaType(url: string): string | '' {
+			const extensionToMimeType: { [key: string]: string } = {
+			  'jpeg': 'image/jpeg','jpg': 'image/jpeg','png': 'image/png',
+			  'gif': 'image/gif','bmp': 'image/bmp','webp': 'image/webp',
+			  'mp4': 'video/mp4','webm': 'video/webm','ogg': 'video/ogg',
+			  'mp3': 'audio/mpeg','wav': 'audio/wav','pdf': 'application/pdf',
+			  'doc': 'application/doc','docx': 'application/docx','xls': 'application/xls',
+			  'xlsx': 'application/xlsx','ppt': 'application/ppt','pptx': 'application/pptx',
+			};
+			const extension = url.split('.').pop()?.toLowerCase();
+			return extension ? extensionToMimeType[extension] || '' : '';
+		  }
 	removeMessage(index:number) {
 		this.assignedAgentList.splice(index, 1);
 	}
@@ -1115,9 +1139,9 @@ stopPropagation(event: Event) {
 		if(!isExist) {
 			this.isAssigned = true;
 			if(this.isEditAssigned){
-				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: ''}
+				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : ''}
 			}else{
-				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: ''})
+				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: ''})
 			}
 		}
 			
@@ -1152,7 +1176,7 @@ stopPropagation(event: Event) {
 			this.assignedTagList = [];
 			this.assignedTagList.push(this.addTagList[index].TagName);
 			this.assignedTagListUuid.push(this.addTagList[index].ID);
-			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: ''});
+			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: '', media_type: '',});
 			console.log('new value');
 		}
 		console.log(this.assignedAgentList);
@@ -1234,9 +1258,6 @@ stopPropagation(event: Event) {
 		  Tags: this.assignedTagList || [],
 		  TagsUuid: this.assignedTagListUuid || [],
 		};
-		if(data.ReplyActions.length > 0) {
-		data.ReplyActions[0].Media = this.mediaLink
-		}
 		let isMessage:boolean = false
 		for (const action of data.ReplyActions) {
 		   if (action.ActionID === 0) {
@@ -1581,7 +1602,8 @@ stopPropagation(event: Event) {
 					Value: Value,
 					ValueUuid: uuid,
 					Media: this.data[i].Media,
-					MessageVariables: this.allVariables
+					MessageVariables: this.allVariables,
+					media_type: this.data[i].media_type
 				});
 		}
 		console.log(this.assignedAgentList,'MESSAGE DATA')
