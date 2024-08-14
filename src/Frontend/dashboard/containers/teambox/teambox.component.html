@@ -348,7 +348,7 @@
 								<div class="conversation_list_inner_box" *ngFor="let note of notesGroup.items;"
 									id={{note.Message_id}}>
 
-									<div *ngIf="note.is_deleted != 1"
+									<div *ngIf="note?.Message_id"
 										[ngClass]="note.message_direction =='IN' ? 'message_box left' : 'message_box'">
 										<label *ngIf="note.message_direction !='IN'">{{note.AgentName}}</label>
 										<div class="content-box">
@@ -387,18 +387,18 @@
 										</div>
 									</div>
 
-									<div *ngIf="note.is_deleted == 1" class="content-box-edited">
+									<!-- <div *ngIf="note.is_deleted == 1" class="content-box-edited">
 										<div class="content_box_edited_inner">
 											<p>Deleted By {{note.DeletedBy}}</p>
 											<span *ngIf="note.deleted_at">{{timeSince(note.deleted_at)}}</span>
 										</div>
-									</div>
+									</div> -->
 
 
-									<div *ngIf="note.updated_at && note.is_deleted != 1 && note.created_at != note.updated_at"
+									<div *ngIf="!note?.Message_id"
 										class="content-box-edited">
 										<div class="content_box_edited_inner">
-											<p>Edited By {{note.AgentName}}</p>
+											<p>{{note?.action}}</p>
 											<span *ngIf="note.updated_at">{{timeSince(note.updated_at)}}</span>
 										</div>
 									</div>

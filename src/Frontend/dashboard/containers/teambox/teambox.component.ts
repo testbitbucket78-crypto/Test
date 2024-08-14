@@ -2247,6 +2247,7 @@ updateContactData(){
 }
 
 copyContactFormData() {
+	let name = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
     let ContactFormData = {
         result: [
           {
@@ -2288,6 +2289,9 @@ copyContactFormData() {
         ],
         SP_ID:this.SPID,
 		event: this.event,
+		action:'Contact Updated ',
+		action_at:new Date(),
+		action_by:name,
     }
 
     if(this.filteredCustomFields.length >0){
@@ -2539,8 +2543,7 @@ formatPhoneNumber(contactForm: FormGroup) {
 
 searchContact(event:any){
 	this.contactSearchKey = event.target.value;
-	this.getSearchContact()
-	
+	this.getSearchContact();
 }
 
 getSearchContact(){
@@ -2550,10 +2553,14 @@ getSearchContact(){
 }
 
 blockCustomer(selectedInteraction:any){
+	let name = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 	var bodyData = {
 		customerId:selectedInteraction.customerId,
 		isBlocked:selectedInteraction.isBlocked==1?0:1,
-		SP_ID:this.SPID
+		SP_ID:this.SPID,    
+		action:'Contact Updated ',
+		action_at:new Date(),
+		action_by:name,
 	}
 	this.apiService.blockCustomer(bodyData).subscribe(ResponseData =>{
 		this.selectedInteraction['isBlocked']=selectedInteraction.isBlocked==1?0:1
@@ -3024,11 +3031,12 @@ editNotes(){
 
 deleteNotes(){
 	this.hideNoteOption()
+	let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 	var bodyData = {
 		Message_id:this.selectedNote.Message_id,
 		deleted:1,
 		deleted_by:this.AgentId,
-		action:'Conversation ',
+		action:'delete by ' + agentName,
 		action_at:new Date(),
 		action_by:name,
 		deleted_at:new Date(),
