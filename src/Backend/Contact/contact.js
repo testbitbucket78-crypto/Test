@@ -249,7 +249,7 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
     console.log(values);
     console.log(query);
     let result = await db.excuteQuery(query, values);
-    if(req.body?.event == 'teambox'){
+    if(req.body?.event == 'teamBox'){
     let getInteractionWithCId = await db.excuteQuery('select * FROM Interaction where customerId = ?  and   is_deleted !=1 order by created_at desc limit 1 ',[id])
 
     let myUTCString = new Date().toUTCString();
@@ -257,8 +257,9 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
     let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
 
     let actiond = await db.excuteQuery(actionQuery, [getInteractionWithCId[0]?.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text']);
-    }
-    funnel.ScheduledFunnels(spid, phoneNo, OptInStatus, new Date(), new Date(), 0);
+    console.log(actiond,"actiond")
+  }
+    //funnel.ScheduledFunnels(spid, phoneNo, OptInStatus, new Date(), new Date(), 0);
     res.send({ status: 200, result: result })
   } catch (err) {
     console.log(err);
