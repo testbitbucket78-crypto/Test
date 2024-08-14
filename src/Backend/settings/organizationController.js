@@ -630,7 +630,7 @@ const addRole = async (req, res) => {
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let ifExist = await db.excuteQuery('SELECT * from roles where RoleName=? and SP_ID=? and isDeleted !=1 and roleID !=?', [RoleName, SP_ID, roleID]);
         if (ifExist?.length > 0) {
-            res.status(409).send({
+          return  res.status(409).send({
                 msg: 'Role Already exist',
                 updateRole: updateRoleData,
                 status: 409
@@ -640,7 +640,7 @@ const addRole = async (req, res) => {
 
             var addRoleValues = [[RoleName, Privileges, IsActive, subPrivileges, created_at, SP_ID]]
             var rolesRes = await db.excuteQuery(val.addRoleQuery, [addRoleValues])
-            res.status(200).send({
+            return   res.status(200).send({
                 msg: 'Roles added successfully',
                 rolesRes: rolesRes,
                 status: 200
@@ -650,7 +650,7 @@ const addRole = async (req, res) => {
 
             var updateRoleVal = [RoleName, Privileges, IsActive, subPrivileges, created_at, roleID, SP_ID]
             var updateRoleData = await db.excuteQuery(val.updateRole, updateRoleVal)
-            res.status(200).send({
+            return  res.status(200).send({
                 msg: 'Roles Updated successfully',
                 updateRole: updateRoleData,
                 status: 200
