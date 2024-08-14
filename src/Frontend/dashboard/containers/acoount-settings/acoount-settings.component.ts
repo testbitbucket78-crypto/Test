@@ -20,6 +20,7 @@ export class AcoountSettingsComponent implements OnInit {
   email!:string;
   getWhatsAppDetails:any;
   whatsAppDetails!: any[];
+  whatsAppDetailsDisplay!: any[];
   Quemescou!:number;
   channel!:number;
   connectionn!:number;
@@ -143,6 +144,12 @@ getDetailById(id: number) {
 }
 
 setChannelId(id: string) {
+  const matchingDetail = this.whatsAppDetails.filter(detail => detail.channel_id === id);
+  if (matchingDetail) {
+    this.whatsAppDetailsDisplay = matchingDetail;
+  } else {
+    this.whatsAppDetailsDisplay = [];
+  }
   this.channel_id = id;
 }
 

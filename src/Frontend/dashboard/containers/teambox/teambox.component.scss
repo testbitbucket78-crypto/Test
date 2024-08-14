@@ -1257,7 +1257,7 @@ button:focus, input:focus {
     position: absolute;
     max-width: 185px;
     margin-top: 10px;
-    max-height: 170px;
+    max-height: 182px;
     overflow: auto;
     z-index: 9;
 }
@@ -3103,4 +3103,7 @@ select.form-control {
 select.form-control::-webkit-calendar-picker-indicator {
     cursor: pointer;
 }
+}
+.f-9{
+    font-size: 9px !important;
 }

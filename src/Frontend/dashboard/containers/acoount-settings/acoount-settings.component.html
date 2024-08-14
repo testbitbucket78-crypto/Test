@@ -20,7 +20,7 @@
         <h4>Channels</h4>
         <div class="row">
             <div class="col-sm-6 p-5">
-                <div (click)="setChannelId('WhatsApp Web')" [ngClass]="{'card1_Wb': channel_id === 'WhatsApp Web'}" class="account-card card1 mb-3">
+                <div (click)="setChannelId('WA Web')" [ngClass]="{'card1_Wb': channel_id === 'WA Web'}" class="account-card card1 mb-3">
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
                         <!-- <button class="account-btn" (click)="openDiv()">Connect</button> -->
@@ -29,12 +29,12 @@
                         <h5>WhatsApp Web</h5>
                         <p>WhatsApp Web automation of your WhatsApp Personal or WhatsApp Business numbers</p>
                         <div class="whatsapp-cSonnect">
-                            <span class="font-weight-bold">{{ numberCount !== undefined ? numberCount : 0 }} Configured</span>
+                            <span class="font-weight-bold">{{whatsAppDetails[0].channel_id == 'WA Web' ? (numberCount !== undefined ? numberCount : 0) : 0 }} Configured</span>
                         <span class="grey">&nbsp;&nbsp;&nbsp;></span>
                     </div>
                     </div>
                 </div>
-                <div (click)="setChannelId('WhatsApp Official')" [ngClass]="{'card2_Wof': channel_id === 'WhatsApp Official'}" class="account-card card2 mb-3">
+                <div (click)="setChannelId('WA API')" [ngClass]="{'card2_Wof': channel_id === 'WA API'}" class="account-card card2 mb-3">
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
                         <!-- <button class="account-btn" (click)="openDiv()">Connect</button> -->
@@ -43,17 +43,17 @@
                         <h5>WhatsApp Official</h5>
                         <p>WhatsApp Official API to automate and scale your business messaging requirements</p>
                         <div class="whatsapp-connect">
-                        <span>0 Configured</span>
+                        <span>{{ whatsAppDetails[0].channel_id == 'WA API' ? (numberCount !== undefined ? numberCount : 0) : 0 }} Configured</span>
                         <span class="grey">&nbsp;&nbsp;&nbsp;></span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6">
-                <h5 *ngIf="channel_id==='WhatsApp Web'" class="mt-5">WhatsApp Web</h5>
-                <h5 *ngIf="channel_id==='WhatsApp Official'" class="mt-5">WhatsApp Official</h5>
-                <div class="connected_agent_list" *ngIf="channel_id==='WhatsApp Web'">
-                <div class="connection-card"  *ngFor="let detail of whatsAppDetails">
+                <h5 *ngIf="channel_id==='WA Web'" class="mt-5">WhatsApp Web</h5>
+                <h5 *ngIf="channel_id==='WA API'" class="mt-5">WhatsApp Official</h5>
+                <div class="connected_agent_list">
+                <div class="connection-card"  *ngFor="let detail of whatsAppDetailsDisplay">
                     <div class="account-card-header" >
                         <div >
                             <div class="card-desc">Configured Number : {{ detail.connected_id}}</div>
@@ -121,8 +121,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content qr-modal">
                 <div class="align-items-center modal-header">
-                    <h5 class="modal-title" *ngIf="channel_id==='WhatsApp Web'">Connect WhatsApp Web</h5>
-                    <h5 class="modal-title" *ngIf="channel_id==='WhatsApp Official'">Connect WhatsApp Official</h5>
+                    <h5 class="modal-title" *ngIf="channel_id==='WA Web'">Connect WhatsApp Web</h5>
+                    <h5 class="modal-title" *ngIf="channel_id==='WA API'">Connect WhatsApp Official</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="close()" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
@@ -160,8 +160,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content whatsWebSetting-modal">
                 <div class="modal-header" >
-                    <h5 *ngIf="repliesaccountData?.channel_id==='WhatsApp Web'" class="modal-title">WhatsApp Web Settings</h5>
-                    <h5 *ngIf="repliesaccountData?.channel_id==='WhatsApp Official'" class="modal-title">WhatsApp Official Settings</h5>
+                    <h5 *ngIf="repliesaccountData?.channel_id==='WA Web'" class="modal-title">WhatsApp Web Settings</h5>
+                    <h5 *ngIf="repliesaccountData?.channel_id==='WA API'" class="modal-title">WhatsApp Official Settings</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"(click)="populateModal()">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>

@@ -80,8 +80,8 @@ export class TemplateMessageComponent implements OnInit {
         { value: 2, label: 'Utility', checked: false },
     ];
     filterListChannel = [
-        { value: 1, label: 'WhatsApp Official', checked: false },
-        { value: 2, label: 'WhatsApp Web', checked: false },
+        { value: 1, label: 'WA API', checked: false },
+        { value: 2, label: 'WA Web', checked: false },
     ];
     filterListLanguage = [
         { value: 0, label: 'English', checked: false },
@@ -673,7 +673,7 @@ checkTemplateName(e:any){
         copyTemplateForm.status = 'draft';
         copyTemplateForm.isCopied = 1;
         copyTemplateForm.template_id = this.templatesMessageDataById.template_id;
-        if(this.templatesMessageDataById.Category=='WhatsApp Official') {
+        if(this.templatesMessageDataById.Category=='WA API') {
             copyTemplateForm.template_json = this.templatesMessageDataById.template_json;
 
         }

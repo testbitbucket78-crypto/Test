@@ -228,7 +228,7 @@
 						channel?.label === 'WhatsApp Official' ? 'WA API' : 
 						channel?.label === 'WhatsApp Web' ? 'WA Web' : 
 						channel?.label 
-					  }} 
+					  }} ({{channel?.connected_id}})
 					<input [(ngModel)]="channel.checked" type="checkbox" name="channel" value={{channel.value}} (click)="updateFilter($event,channel)">
 					<span class="checkmark"></span>
 				  </label>
@@ -455,9 +455,9 @@
 						            <div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
 								</div>
 								<div class="template_text">
-									<p [innerHTML]="selectedTemplate.Header" class="name"></p>
-									<p [innerHTML]="selectedTemplate.BodyText" class="description"></p>
-									<p [innerHTML]="selectedTemplate.FooterText" class="footer"></p>
+									<p [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="name"></p>
+									<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml" class="description"></p>
+									<p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml" class="footer"></p>
 								</div>
 		
 							</div>
@@ -827,7 +827,7 @@
 								<h4 class="header-1">Attach File</h4>
 								<h4 class="header-2">Instruction</h4>
 							</div>
-							<div class="important_contact">
+							<div class="important_contact align-unset">
 
 								<div class="important_contact_left dragAreaClass"> 
 								
@@ -873,7 +873,7 @@
 								</div>
 								
 							</div>
-							<div class="important_contact_middle">
+							<div class="important_contact_middle customize-inportant-contact-middle">
 								<!-- <div class="left_part">
 								 <p>Remove Duplicate</p>
 								 <div class="radio_group">
@@ -919,7 +919,7 @@
 										  </div>
 									</div>
 								</div> -->
-				
+				               	  <p><span>Duplicate phone numbers will be removed</span></p>
 							</div>
 							
 
@@ -928,7 +928,7 @@
 								  <label class="container">
 									<input type="checkbox" name="term_cond" [(ngModel)]="checkboxChecked">
 									<span class="checkmark"></span>
-									<p><span>By checking this box I declare that the contacts uploaded have been opted-in and given consent accordingly</span></p>
+									<p class="text-start"><span>By checking this box I declare that the contacts uploaded have been opted-in and given consent accordingly</span></p>
 								  </label>
 							  
 								  <button type="button" class="submit-btn" aria-label="Close" (click)="incorrectfile(mpcampaign)" (click)="mapImportantContact(mpcampaign)">Map</button>
@@ -1006,7 +1006,7 @@
 			</div>
 			</div>
 		<div class="modal-body mpcampaign">
-			<p><span>Here have to select the column from the CSV which contains the phone numbers you wish to use for broadcasting campaigns.</span></p>
+			<p><span>Select the column containing phone numbers of your target audience.</span></p>
 			
 			<div class="formrow">
 				<input (click)="toggleMapCsvContact()" type="text" class="form-control select_box" value={{CsvContactCol}} placeholder='Type or select column'>
