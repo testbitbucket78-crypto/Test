@@ -858,7 +858,13 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	align-items: center;
+	//align-items: center;
+	.text-start{
+		text-align: left;
+	}
+	}
+	.align-unset{
+		align-items: unset;
 	}
 	.important_contact p{
 	font-family: Manrope;
@@ -908,7 +914,6 @@
 	align-content: center;
 	align-items: flex-start;
 	justify-content: flex-start;
-	margin-top: 10px;
 	}
 	.custom-file-upload{
 	background: #FFFFFF 0% 0% no-repeat padding-box;
@@ -957,13 +962,14 @@
 
 	.import.contact.info_box {
 		height: 180px;
-		overflow: auto;
+		//overflow: auto;
 	}
 	.info span {
         display: block;
         margin-bottom: 10px;
         padding-left: 20px;
         text-indent: -13px;
+
     }
 	.info_box{
 	background: #FFFFFF 0% 0% no-repeat padding-box;
@@ -980,6 +986,8 @@
 	margin-bottom: 10px;
 	font-weight: 400;
 	text-align: left;
+	height: 145px;
+	overflow: auto;
 
 	}
 	.info_box p.info img{
@@ -1034,7 +1042,12 @@
 	.important_contact_middle .radio_group_col .radio_group_col_inner .container{
 	max-width: 30%;
 	}
-
+	.customize-inportant-contact-middle{
+		margin: 31px 28px -32px 26px;
+		p span{
+			font-size: 10px;
+		}
+	}
 
 	.text-input{
 	background: #FFFFFF 0% 0% no-repeat padding-box;

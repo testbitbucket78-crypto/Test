@@ -1366,6 +1366,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 
   ngAfterViewInit(){
     setTimeout(()=>{
+      this.isLoadingOnInit = false;
     let options = JSON.parse(localStorage.getItem('gridOption')!);
     if(options){
     let column = options.filter((objB:any) => this.columnDefs.some(objA => objA.field === objB.field));
@@ -1392,7 +1393,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
       if(this.columnDefs[idx]?.cellRenderer)
       item['cellRenderer'] =  this.columnDefs[idx]?.cellRenderer;
   });
-  this.isLoadingOnInit = false;
+ 
   console.log(column);
   this.columnDefs = column;
   this.gridapi.setColumnDefs(column);
