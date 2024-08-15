@@ -72,7 +72,7 @@ router.get('/getTemplates/:SPID',authenticateToken,TeamBoxController.getTemplate
 
 router.post('/editNotes',authenticateToken,TeamBoxController.updateNotes)
 router.post('/addAction',authenticateToken,TeamBoxController.addAction)
-
+router.get('/searchConatct/:spid/:searchTerm',authenticateToken,TeamBoxController.searchConatct)
 
 const multer = require('multer');
 let fs = require('fs-extra');

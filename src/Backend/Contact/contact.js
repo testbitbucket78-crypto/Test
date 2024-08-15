@@ -249,16 +249,16 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
     console.log(values);
     console.log(query);
     let result = await db.excuteQuery(query, values);
-    if(req.body?.event == 'teamBox'){
-    let getInteractionWithCId = await db.excuteQuery('select * FROM Interaction where customerId = ?  and   is_deleted !=1 order by created_at desc limit 1 ',[id])
+    if (req.body?.event == 'teamBox') {
+      let getInteractionWithCId = await db.excuteQuery('select * FROM Interaction where customerId = ?  and   is_deleted !=1 order by created_at desc limit 1 ', [id])
 
-    let myUTCString = new Date().toUTCString();
-    const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
+      let myUTCString = new Date().toUTCString();
+      const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
 
-    let actiond = await db.excuteQuery(actionQuery, [getInteractionWithCId[0]?.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text']);
-    console.log(actiond,"actiond")
-  }
+      let actiond = await db.excuteQuery(actionQuery, [getInteractionWithCId[0]?.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text']);
+      console.log(actiond, "actiond")
+    }
     //funnel.ScheduledFunnels(spid, phoneNo, OptInStatus, new Date(), new Date(), 0);
     res.send({ status: 200, result: result })
   } catch (err) {
@@ -1609,7 +1609,32 @@ const checkPhoneNumbersLength = (phoneNumbers, countryCodeMap, expectedLengths) 
 //const phoneNumberLengths = checkPhoneNumbersLength(phoneNumbers, countryCodeMap, expectedLengths);
 //console.log(phoneNumberLengths);
 
+app.post('/verifyPhoneCode', (req, res) => {
+  try {
+    let phone = req.body.phone;
+    let existPhone = true;
+    const phoneCheckResult = checkPhoneNumbersLength([phone], countryCodeMap, expectedLengths)[0];
+    if (phoneCheckResult.error) {
+      existPhone = false;
+    } else if (!phoneCheckResult.isValidLength) {
+      console.log("isValidLength")
+      existPhone = false;
+    } else {
+      res.status(200).send({
+        isValid: existPhone,
+        status: 200
+      });
 
+    }
+    logger.log(`response of verify otp `)
+  } catch (err) {
+    logger.error(`err on verify phone code ${err}`)
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
+})
 
 app.listen(3002);
 

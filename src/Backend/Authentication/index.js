@@ -12,7 +12,6 @@ const CryptoJS = require('crypto-js');
 var axios = require('axios');
 const { error } = require('console');
 const moment = require('moment');
-const middleWare = require('../middleWare')
 const SECRET_KEY = 'RAUNAK'
 app.use(bodyParser.json());
 
@@ -395,7 +394,71 @@ function getTextMessageInput(recipient, text) {
     });
 }
 
+async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables = [], mediaLink = null) {
+    let payload = {
+        messaging_product: "whatsapp",
+        recipient_type: "individual",
+        to: to,
+        type: "template",
+        template: {
+            name: templateName,
+            language: {
+                code: languageCode
+            }
+        }
+    };
 
+    if (type === 'text') {
+        let components = [];
+
+        if (headerVariables.length > 0) {
+            components.push({
+                type: "header",
+                parameters: headerVariables.map(variable => ({
+                    type: "text",
+                    text: variable
+                }))
+            });
+        }
+
+        if (bodyVariables.length > 0) {
+            components.push({
+                type: "body",
+                parameters: bodyVariables.map(variable => ({
+                    type: "text",
+                    text: variable
+                }))
+            });
+        }
+
+        payload.template.components = components;
+    } else if (['image', 'video', 'doc'].includes(type)) {
+        let headerComponent = {
+            type: "header",
+            parameters: [{
+                type: type,
+                [type]: { link: mediaLink }
+            }]
+        };
+
+        if (bodyVariables.length > 0) {
+            payload.template.components = [
+                headerComponent,
+                {
+                    type: "body",
+                    parameters: bodyVariables.map(variable => ({
+                        type: "text",
+                        text: variable
+                    }))
+                }
+            ];
+        } else {
+            payload.template.components = [headerComponent];
+        }
+    }
+
+    return payload;
+}
 
 
 // Opt for Varification
@@ -457,7 +520,7 @@ const sendOtp = async function (req, res) {
             // var data = getTextMessageInput(mobile_number, text);
 
 
-            let sendWAmsg =await middleWare.createWhatsAppPayload('text', mobile_number, 'verify_opt_signin', 'en', headerVar, bodyVar, mediaLink = null)
+            let sendWAmsg =await createWhatsAppPayload('text', mobile_number, 'verify_opt_signin', 'en', headerVar, bodyVar, mediaLink = null)
             let data = JSON.stringify(sendWAmsg, null, 2);
             sendMessage(data)
             var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
@@ -513,7 +576,7 @@ const sendOtp = async function (req, res) {
 
             }
 
-            let sendWAmsg =await middleWare.createWhatsAppPayload('text', mobile_number, 'verify_opt_signin', 'en', headerVar,bodyVar , mediaLink = null)
+            let sendWAmsg =await createWhatsAppPayload('text', mobile_number, 'verify_opt_signin', 'en', headerVar,bodyVar , mediaLink = null)
             let data = JSON.stringify(sendWAmsg, null, 2);
             sendMessage(data)
 
