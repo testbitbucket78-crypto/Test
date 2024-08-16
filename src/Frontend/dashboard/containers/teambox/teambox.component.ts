@@ -592,15 +592,27 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	}
 	insertTemplate(item:any) {
 		this.closeAllModal()
-		let mediaContent
+		let mediaContent;
+		let mediaName;
+		const fileNameWithPrefix = item.Links.substring(item.Links.lastIndexOf('/') + 1);
+		let originalName;
+		if (item.media_type === 'video') {
+			originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
+			originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+		} else {
+			originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+		}
 		if(item.media_type === 'image') {
-		  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
+		  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>';
+		  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 		}
 		else if(item.media_type === 'video') {
-			mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
+			mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>';
+			mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 		}
 		else if(item.media_type === 'document') {
-			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>';
+			mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
 		}
 		
 		let htmlcontent = '';
@@ -619,7 +631,42 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.chatEditor.value =htmlcontent
 		this.isAttachmentMedia = false;
 		this.isTemplate = true;
+		this.mediaType = item.media_type;
+		this.messageMeidaFile = item.Links;
+		this.addingStylingToMedia(item);
 	}
+
+	// selectQuickReplies(item:any){
+	// 	this.closeAllModal()
+	// 	let mediaContent
+	// 	let mediaName
+	// 	const fileNameWithPrefix = item.Links.substring(item.Links.lastIndexOf('/') + 1);
+	// 	let originalName;
+	// 	if (item.media_type === 'video') {
+	// 		originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
+	// 		originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+	// 	} else {
+	// 		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+	// 	}
+	
+	// 	if(item.media_type === 'image') {
+	// 	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
+	// 	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
+	// 	}
+	// 	else if(item.media_type === 'video') {
+	// 		mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
+	// 		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
+	// 	}
+	// 	else {
+	// 		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+	// 		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
+	// 	}
+	// 	var htmlcontent = mediaName+'<p>'+item.BodyText+'</p>';
+	// 	this.chatEditor.value = htmlcontent
+	// 	this.mediaType = item.media_type
+	// 	this.messageMeidaFile = item.Links;
+	// 	this.addingStylingToMedia(item);
+	// }
 
 	processMediaType(mediaType: any,message_media:any, messageMeidaFile: any):string{
 		if (message_media) {
@@ -2544,11 +2591,15 @@ formatPhoneNumber(contactForm: FormGroup) {
 
 searchContact(event:any){
 	this.contactSearchKey = event.target.value;
-	this.getSearchContact();
+	console.log(event.target.value);
+	if(this.contactSearchKey)
+		this.getSearchContact();
+	else
+		this.getCustomers();
 }
 
 getSearchContact(){
-	this.apiService.searchCustomer(this.selectedChannel,this.SPID,this.contactSearchKey).subscribe(data =>{
+	this.apiService.searchCustomers(this.SPID,this.contactSearchKey).subscribe(data =>{
 		this.contactList= data
 	});
 }
@@ -2741,7 +2792,7 @@ updateConversationStatus(status:any) {
 	var bodyData = {
 		Status:status,
 		InteractionId:this.selectedInteraction.InteractionId,		
-		action:'Conversation ' +status,
+		action:'Conversation ' +(status == 'Open'?'Opened':status),
 		action_at:new Date(),
 		action_by:name,
 		SP_ID:this.SPID

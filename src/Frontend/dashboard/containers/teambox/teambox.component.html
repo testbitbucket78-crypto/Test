@@ -1466,7 +1466,7 @@ popupWidth='250px' popupHeight='200px'>
 		
 		<div class="modal-body messageadd">
 			<input class="search-box" type="text" placeholder="Search by Name or phone number" aria-label="Search"
-				aria-describedby="basic-addon2" [(ngModel)]="header" />
+				aria-describedby="basic-addon2" [(ngModel)]="header" (keyup)="searchContact($event)"/>
 		<div class="position-relative">
 			<div class="drop-down-btn" (click)="toggleContactOption()">
 				
