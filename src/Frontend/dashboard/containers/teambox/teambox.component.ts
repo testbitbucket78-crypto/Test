@@ -2193,7 +2193,8 @@ updateCustomer(){
 				this.showToaster('Contact information updated...','success');
 				//this.getAllInteraction(false);
 				this.updateContactData();
-				this.getCustomers();
+				this.getCustomers();				
+				this.getMessageData(this.selectedInteraction,true)
 				this.filterChannel='';
 			}
 		   },
@@ -2357,7 +2358,7 @@ filterContactByType(Channel:any){
 		item.channel = this.selectedChannel;
 	});
 	console.log(this.contactList)
-    this.getSearchContact();
+    //this.getSearchContact();
     this.ShowContactOption = false;
 } else{
 	this.showToaster('Chhanel is not active','error');
@@ -2568,8 +2569,10 @@ blockCustomer(selectedInteraction:any){
 			this.showToaster('Conversations is Blocked','success')
 			this.selectedInteraction['interaction_status']='empty';
 			this.selectedInteraction['OptInStatus']='No';
+			this.getMessageData(this.selectedInteraction,true)
 			this.updateInteractionMapping(selectedInteraction.InteractionId,-1,this.TeamLeadId)
 		}else{
+			this.getMessageData(this.selectedInteraction,true);
 			this.showToaster('Conversations is UnBlocked','success')
 		}
 		console.log(ResponseData);

@@ -91,12 +91,12 @@
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<div class="image-container">
 											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
-											<div *ngIf="item.channel=='WA Web'" class="icon" class="hover-text2">
-												{{'WA Web ' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
+											<div  class="icon" class="hover-text2">
+												{{item.channel}} {{(item.connected_id ?'(' + item.connected_id + ')':'')}}
 											</div>
-											<div *ngIf="item.channel=='WA API'" class="icon" class="hover-text2">
-												{{'WA API ' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
-											</div>
+											<!-- <div *ngIf="item.channel=='WA API'" class="icon" class="hover-text2">
+												{{'WA API' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
+											</div> -->
 										</div>
 										</div>
 									</div>
@@ -203,7 +203,7 @@
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Unassigned</span>
 									</p>
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('21'))">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('21'))">
 										<span class="text-capitalize initials"> M </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Myself</span>
