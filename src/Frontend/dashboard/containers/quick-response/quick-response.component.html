@@ -69,7 +69,7 @@
 						</button>
 					</div>
 					<form [formGroup]="usertemplateForm" class="form-height">
-					<div class="modal-body px-5 pt-0">
+					<div class="modal-body px-5 pt-0 flex-column">
 						<div class="d-inline-block flex-column sel-type-link pb-2">
 							<label for="link" class="linkes mb-2" >Response Name<span class="text-danger font-weight-bold">*</span></label>
 							<input type="url" id="linkrespone" formControlName="Header" placeholder="Enter" (change)="checkQuickResponseName($event)">
@@ -209,7 +209,7 @@
 					   </div> -->
 	
 	
-				 <div  >
+				 <div  class="rich-text-h-100">
 					<!-- <div class="d-inline-block flex-column sel-type-link">
 						<label for="link" id="link" >Link</label>
 						<input type="url" id="link" formControlName="Links" placeholder="Enter" >
@@ -217,9 +217,9 @@
 					   <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
 						<h6>Body Text</h6> <span> Characters</span>
 					 </div>
-					 <div class="sel-type-text">
+					 <div class="sel-type-text h-100">
 						<!-- <textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="8" placeholder="Enter" (input)="updateCharacterCount($event,4)"></textarea> -->
-						<ejs-richtexteditor
+						<ejs-richtexteditor class="h-100"
 						[(value)]="BodyText"
 						formControlName="BodyText"
 						id='defaultRTE'

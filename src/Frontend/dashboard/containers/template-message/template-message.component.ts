@@ -673,13 +673,13 @@ checkTemplateName(e:any){
         copyTemplateForm.status = 'draft';
         copyTemplateForm.isCopied = 1;
         copyTemplateForm.template_id = this.templatesMessageDataById.template_id;
-        if(this.templatesMessageDataById.Category=='WA API') {
-            copyTemplateForm.template_json = this.templatesMessageDataById.template_json;
+      //  if(this.templatesMessageDataById.Category=='WA API') {
+            copyTemplateForm.template_json = this.templatesMessageDataById?.template_json;
 
-        }
-        else {
-            copyTemplateForm.template_json = [];
-        }
+        // }
+        // else {
+        //     copyTemplateForm.template_json = [];
+        // }
        
             this.apiService.saveNewTemplateData(copyTemplateForm, this.selectedPreview)
             .subscribe(response => {

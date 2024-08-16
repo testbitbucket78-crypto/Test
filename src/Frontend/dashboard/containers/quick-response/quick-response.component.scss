@@ -1466,3 +1466,19 @@ select.input-form {
     .z-index99999{
         z-index: 99999;
     }
+
+    .flex-column{
+        display: flex;
+    flex-direction: column;
+    }
+    .h-100{
+        height: 100% !important;
+    }
+
+    .rich-text-h-100{
+        height: calc(100% - 20px) !important;
+    }
+
+    #defaultRTErte-view{
+        height: 100% !important;
+    }
