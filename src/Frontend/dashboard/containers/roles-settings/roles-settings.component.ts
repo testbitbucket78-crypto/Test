@@ -237,7 +237,7 @@ export class RolesSettingsComponent implements OnInit {
         },
 					async (error) => {
 					  if (error.status === 409) {
-						this.showToaster('Role name already exist. Please Try another name', 'error');
+						this.showToaster('error','Role name already exist. Please Try another name');
 						//this.OptedIn = 'No';
 					  }
                     }

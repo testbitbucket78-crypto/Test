@@ -93,6 +93,9 @@ export class TeamboxService {
   public sendNewMessage(data: any) {
     return this.http.post(API_URL+'/newmessage/',data);
   }
+  public editNotes(data: any) {
+    return this.http.post(API_URL+'/editNotes/',data);
+  }
   public deleteMessage(data: any) {
     return this.http.post(API_URL+'/deletemessage/',data);
   }
