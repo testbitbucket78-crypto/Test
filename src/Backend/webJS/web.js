@@ -29,7 +29,7 @@ let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId 
 async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo, new Date().toUTCString());
   console.log(clientPidMapping.hasOwnProperty(spid))
- 
+
   let isConnected = await isActiveSpidClient(spid);
   if (isConnected.isActiveSpidClient) {
 
@@ -98,8 +98,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-         executablePath: "/usr/bin/google-chrome-stable",
-        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          executablePath: "/usr/bin/google-chrome-stable",
+          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -110,10 +110,10 @@ function ClientInstance(spid, authStr, phoneNo) {
           takeoverTimeoutMs: 10,
         },
         authStrategy: authStr,
-         webVersionCache: {
-           type: 'remote',
+        webVersionCache: {
+          type: 'remote',
           remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2410.1.html',
-       }
+        }
       });
       console.log("client created", new Date().toUTCString());
 
@@ -222,8 +222,8 @@ function ClientInstance(spid, authStr, phoneNo) {
           if (message.hasQuotedMsg) {
             // Check if the replied message is sent by your application
             const repliedMessage = await message.getQuotedMessage();
-              // Notify about the reply
-             console.log("reply message status ========",(repliedMessage && repliedMessage.fromMe), repliedMessage.fromMe)
+            // Notify about the reply
+            console.log("reply message status ========", (repliedMessage && repliedMessage.fromMe), repliedMessage.fromMe)
             if (repliedMessage && repliedMessage.fromMe) {
               // Notify about the reply
               const repliedNumber = (message.from).replace(/@c\.us$/, "");
@@ -231,7 +231,7 @@ function ClientInstance(spid, authStr, phoneNo) {
               let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND message_content = '${repliedMessage.body}'`
               console.log(campaignRepliedQuery)
               let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
-              console.log(repliedNumber,spid,"campaignReplied*******", campaignReplied?.affectedRows)
+              console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
             }
           }
 
@@ -245,16 +245,16 @@ function ClientInstance(spid, authStr, phoneNo) {
         try {
           console.log("client authenticated", new Date().toUTCString());
           clientSpidMapping[[spid]] = client;
-      
+
           try {
             clientPidMapping[[spid]] = client.pupBrowser.process().pid;
             console.log("clientPidMapping[spid]", clientPidMapping[spid]);
           } catch (err) {
             console.log("Set clientPidMapping issues in Authentication", err);
           }
-      
+
           notify.NotifyServer(phoneNo, false, 'Client Authenticated');
-      
+
           // Set an interval to click #pane-side every 30 minutes
           setInterval(async () => {
             try {
@@ -264,11 +264,11 @@ function ClientInstance(spid, authStr, phoneNo) {
               console.log("Error clicking #pane-side:", intervalError);
             }
           }, 30 * 60 * 1000); // 30 minutes in milliseconds
-      
+
         } catch (authenticatederr) {
           console.log(authenticatederr);
         }
-      });      
+      });
       client.on('disconnected', (reason) => {
         setTimeout(async () => {
           try {
@@ -285,7 +285,7 @@ function ClientInstance(spid, authStr, phoneNo) {
                 console.log("Kill[spid]", clientPidMapping[spid])
                 process.kill(clientPidMapping[spid]);
                 delete clientPidMapping[spid];
-                let updateWebdetails= await db.excuteQuery('update WhatsAppWeb set channel_status=0 where connected_id =? and spid=?',[phoneNo,spid]);
+                let updateWebdetails = await db.excuteQuery('update WhatsAppWeb set channel_status=0 where connected_id =? and spid=?', [phoneNo, spid]);
               } catch (err) {
                 console.log("Delete clientPidMapping issues in disconnected", err)
               }
@@ -309,18 +309,18 @@ function ClientInstance(spid, authStr, phoneNo) {
             var d = new Date(message.t * 1000).toUTCString();
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
-            let updateMessageTime = await db.excuteQuery('UPDATE Message set created_at=? where Message_template_id=?',[message_time,message._data.id.id])
+            let updateMessageTime = await db.excuteQuery('UPDATE Message set created_at=? where Message_template_id=?', [message_time, message._data.id.id])
             const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1  AND (msg_status IS NULL); `
 
-     let ack1InId = await db.excuteQuery(notifyInteraction,[phoneNumber, spid])
+            let ack1InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid])
             // console.log(smsdelupdate)
             let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
             //  console.log("send", sended?.affectedRows)
-            notify.NotifyServer(phoneNo, false, ack1InId[0]?.InteractionId,'Out',1,0)
+            notify.NotifyServer(phoneNo, false, ack1InId[0]?.InteractionId, 'Out', 1, 0)
 
 
           } else if (ack == '2') {
@@ -334,9 +334,9 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             //console.log(smsdelupdate)
             let deded = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
             //  console.log("deliver", deded?.affectedRows)
-           // notify.NotifyServer(phoneNo, true)
-           let ack2InId = await db.excuteQuery(notifyInteraction,[phoneNumber, spid])
-           notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId,'Out',2,0)
+            // notify.NotifyServer(phoneNo, true)
+            let ack2InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid])
+            notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId, 'Out', 2, 0)
           } else if (ack == '3') {
             //  console.log("read")
             let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2';
@@ -349,9 +349,9 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
             //  console.log(smsupdate)
             let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
             //   console.log("read", resd?.affectedRows)
-           // notify.NotifyServer(phoneNo, true)
-           let ack3InId = await db.excuteQuery(notifyInteraction,[phoneNumber, spid])
-           notify.NotifyServer(phoneNo, false, ack3InId[0]?.InteractionId,'Out',3,0)
+            // notify.NotifyServer(phoneNo, true)
+            let ack3InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid])
+            notify.NotifyServer(phoneNo, false, ack3InId[0]?.InteractionId, 'Out', 3, 0)
           }
 
 
@@ -391,7 +391,7 @@ function getCircularReplacer() {
 }
 
 function whatsappWebStatus() {
-console.log("undefinedCount",undefinedCount)
+  console.log("undefinedCount", undefinedCount)
   if (undefinedCount >= 2) {
     return false;
   } else {
@@ -402,15 +402,15 @@ console.log("undefinedCount",undefinedCount)
 
 async function isActiveSpidClient(spid) {
   //console.log("clientSpidMapping[spid]", spid, clientSpidMapping)
- 
+
   if (clientSpidMapping[spid]) {
     console.log("if client ready")
-    let WAwebdetails= await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1',[spid]);
-    return {"isActiveSpidClient": true,"WAweb":WAwebdetails};
+    let WAwebdetails = await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1', [spid]);
+    return { "isActiveSpidClient": true, "WAweb": WAwebdetails };
   } else {
-    let disconnectWAweb= await db.excuteQuery('update WhatsAppWeb set channel_status=0 where spid=? and channel_id =? ',[spid,'WA Web']);
-    let WAwebdetails= await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1',[spid]);
-    return {"isActiveSpidClient": false,"WAweb":WAwebdetails};
+    let disconnectWAweb = await db.excuteQuery('update WhatsAppWeb set channel_status=0 where spid=? and channel_id =? ', [spid, 'WA Web']);
+    let WAwebdetails = await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1', [spid]);
+    return { "isActiveSpidClient": false, "WAweb": WAwebdetails };
   }
 }
 
@@ -462,7 +462,7 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
       return '401'
     }
   } catch (err) {
-  console.log(err);
+    console.log(err);
   }
 }
 
@@ -480,8 +480,8 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let sendId = await client.sendMessage(endCust + '@c.us', text);
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id,  msg_id])
-      
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
+
       // notify.NotifyServer(spNumber, false, interaction_id)
     }
     if (type === 'image') {
@@ -489,17 +489,17 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link);
       let sendId = await client.sendMessage(endCust + '@c.us', media, { caption: text });
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id,  msg_id])
-     
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
+
     }
     if (type === 'video') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link);
       // console.log(media.mimetype)
-      let sendId = await  client.sendMessage(endCust + '@c.us', media, { caption: text });
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id,  msg_id])
-      
+      let sendId = await client.sendMessage(endCust + '@c.us', media, { caption: text });
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
+
 
     }
     if (type === 'attachment' || type === 'document') {
@@ -507,16 +507,16 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link)//MessageMedia('pdf', link);
       let sendId = await client.sendMessage(endCust + '@c.us', media);
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id,  msg_id])
-    
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
+
 
     } if (type === 'location') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const location = new Location(37.422, -122.084, 'Sampana Digital Private limited');
       let sendId = await client.sendMessage(endCust + '@c.us', location);
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id, msg_id])
-     
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
+
     }
     if (type === 'vcard') {
       let myUTCString = new Date().toUTCString();
@@ -524,7 +524,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       let firstName = 'CIP'
       let lastName = 'TEAM'
       let phoneNumber = '917017683064'
-      let  sendId = await client.sendMessage(endCust + '@c.us',
+      let sendId = await client.sendMessage(endCust + '@c.us',
         'BEGIN:VCARD\n' +
         'VERSION:3.0\n' +
         'N:' + firstName + ';' + lastName + ';;;\n' +
@@ -536,8 +536,8 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
 
 
       );
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id, msg_id])
-     
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
+
     }
 
   } catch (err) {
@@ -624,9 +624,9 @@ async function saveInMessages(message) {
 
     if (message.hasMedia) {
       const media = await message.downloadMedia();
-console.log("media", message.type)   
- message_media = media.data
-   //  console.log(media.data)
+      console.log("media", message.type)
+      message_media = media.data
+      //  console.log(media.data)
     }
 
     if (from != 'status@broadcast') {
@@ -791,13 +791,13 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
         // console.log(awsDetails)
       }
       if (type == 'video') {
-        awsDetails = await awsHelper.uploadVideoToAws(sid[0]?.SP_ID + "/teambox/" + phone_number_id + "/" + "whatsAppWeb.mp4", message,'video/mp4')
+        awsDetails = await awsHelper.uploadVideoToAws(sid[0]?.SP_ID + "/teambox/" + phone_number_id + "/" + "whatsAppWeb.mp4", message, 'video/mp4')
         // console.log("awsDetails video");
 
         // console.log(awsDetails)
       }
       if (type == 'document') {
-        awsDetails = await awsHelper.uploadVideoToAws(sid[0]?.SP_ID + "/teambox/" + phone_number_id + "/" + "whatsAppWeb.pdf", message,'application/pdf')
+        awsDetails = await awsHelper.uploadVideoToAws(sid[0]?.SP_ID + "/teambox/" + phone_number_id + "/" + "whatsAppWeb.pdf", message, 'application/pdf')
         // console.log("awsDetails video");
 
         // console.log(awsDetails)
@@ -846,7 +846,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData?.newlyInteractionId
     console.log("in messages", from, false, "interaction id", newId, display_phone_number)
-    notify.NotifyServer(display_phone_number, false, newId,'IN',0,msg_id)
+    notify.NotifyServer(display_phone_number, false, newId, 'IN', 0, msg_id)
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
@@ -858,19 +858,24 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
       var pausedTill = defaultAction[0]?.pausedTill
       var inactiveAgent = defaultAction[0].isAgentActive
-      var inactiveTimeOut= defaultAction[0].pauseAgentActiveTime
+      var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
     }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web',inactiveAgent,inactiveTimeOut)
+    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web', inactiveAgent, inactiveTimeOut)
 
 
     console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
-    if(defaultReplyAction == true){
+    if (defaultReplyAction == true) {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId])
-      if (updateInteraction?.affectedRows > 0) {
-        let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
-        
+      if (newlyInteractionId == null) {
+        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId])
+        if (updateInteraction?.affectedRows > 0) {
+          let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
+
+        }
+      }else{
+        let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?',[newId,sid]);
+        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
       }
     }
     if (defaultReplyAction == false) {
@@ -887,4 +892,4 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
 
 
-module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel,whatsappWebStatus }
+module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus }

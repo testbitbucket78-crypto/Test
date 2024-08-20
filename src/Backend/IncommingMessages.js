@@ -721,7 +721,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let result = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
     console.log("messageThroughselectedchannel", result?.status)
     if (result?.status == 200) {
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time, time, "", -2,result.message.messages[0].id]]
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, (media?media:'text'), "", "", "", time, time, "", -2,result.message.messages[0].id]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
     }
 
@@ -734,7 +734,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time, time, "", -2]]
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, (media?media:'text'), "", "", "", time, time, "", -2]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
     }
   }
@@ -749,7 +749,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
     //console.log("sReply?.status ", sReply?.status)
     if (sReply?.status == 200) {
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", time, time, "", -2,result.message.messages[0].id]]
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, (media?media:'text'), "", "", "", time, time, "", -2,result.message.messages[0].id]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       response = true;
     }
@@ -762,7 +762,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
 
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", time, time, "", -2]]
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, (media?media:'text'), "", "", "", time, time, "", -2]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       return true;
     }

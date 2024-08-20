@@ -8,6 +8,7 @@
     "mysql": "^2.18.1",
     "node-cron": "^3.0.2",
     "node-schedule": "^2.1.1",
-    "winston": "^3.13.1"
+    "winston": "^3.13.1",
+    "winston-daily-rotate-file": "^5.0.0"
   }
 }
