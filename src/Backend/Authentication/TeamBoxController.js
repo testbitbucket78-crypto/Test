@@ -984,13 +984,27 @@ const getTemplates = (req, res) => {
     }
 };
 
+const searchConatct = async (req, res) => {
+    try {
+        logger.info('Starting searchConatct function');
+        let getCustomerQuery = `CALL GetCustomerInteractions(?,?)`
+        let resultList = await db.excuteQuery(getCustomerQuery,[req.params.spid,req.params.searchTerm]);
+        logger.info(`GetCustomerInteractions response  ${resultList}`);
+        res.status(200).send({ resultList: resultList ,status :200 });
+
+    } catch (err) {
+        logger.error('Error in searchConatct:', err);
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
 
 module.exports = {
     getAllFilteredInteraction, getAllAgents, getAllCustomer, insertCustomers, updatedCustomer, getCustomerById, filterCustomers, searchCustomer, blockCustomer,
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId,searchConatct
 };
 
 

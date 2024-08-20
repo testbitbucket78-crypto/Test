@@ -234,7 +234,14 @@ export class RolesSettingsComponent implements OnInit {
                 $('#rolesModal').modal('hide');
                 this.showSideBar = false;
             }
-        });
+        },
+					async (error) => {
+					  if (error.status === 409) {
+						this.showToaster('Role name already exist. Please Try another name', 'error');
+						//this.OptedIn = 'No';
+					  }
+                    }
+        );
     } else{
         this.myForm.markAllAsTouched();
     }

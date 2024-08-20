@@ -37,6 +37,10 @@ export class TeamboxService {
   public searchCustomer(channel:any,SPID:any,key:any) {
       return this.http.get(API_URL+'/searchcustomers/'+channel+'/'+SPID+'/'+key);
   }
+
+  public searchCustomers(SPID:any,key:any) {
+      return this.http.get(API_URL+'/searchConatct/'+SPID+'/'+key);
+  }
   public blockCustomer(data:any) {
     return this.http.post(API_URL+'/blockcustomer/',data);
   }

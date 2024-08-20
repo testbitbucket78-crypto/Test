@@ -747,7 +747,7 @@ const addUser = async (req, res) => {
         displayPhoneNumber = req.body?.display_mobile_number
         var isNameExist = await db.excuteQuery('SELECT * FROM user WHERE name=? and isDeleted !=1 and SP_ID=?', [name, SP_ID])
         var isPhoneExist = await db.excuteQuery('SELECT * FROM user WHERE mobile_number=? and isDeleted !=1 and SP_ID=?', [mobile_number, SP_ID])
-        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id, name, mobile_number, SP_ID])
+        var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id, SP_ID])
 
         if (credentials?.length > 0 || isNameExist?.length > 0 || isPhoneExist?.length > 0) {
             let msg = "This email ID is already used by another user, please use a unique email";
