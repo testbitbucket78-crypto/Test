@@ -727,24 +727,135 @@ showAddSmartRepliesModal() {
 	
 	selectQuickReplies(item:any){
 		this.closeAllModal()
-		let mediaContent
+		let mediaContent;
+		let mediaName;
+		const fileNameWithPrefix = item.Links.substring(item.Links.lastIndexOf('/') + 1);
+		let originalName;
+		if (item.media_type === 'video') {
+			originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
+			originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+		} else {
+			originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+		}
 		if(item.media_type == 'image') {
 		  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
+		  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 		}
 		else if(item.media_type == 'video') {
 			mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
+			mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 		}
 		else if(item.media_type == 'document') {
 			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+			mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
 		}
 		else {
 			mediaContent=''
 		}
 		if(item.Links) this.messageMeidaFile = item.Links
 		var htmlcontent = mediaContent+item.BodyText;
-		this.chatEditor.value = htmlcontent
-	
+		this.chatEditor.value = htmlcontent;
+		this.addingStylingToMedia(item);	
 	}
+
+	addingStylingToMedia(item: any){
+		if (item.media_type === 'image' || item.media_type === 'video' || item.media_type === 'document') {
+			setTimeout(() => {
+			  const editorContent = this.chatEditor.element.querySelector('.e-content');
+			  const mediaElements = editorContent?.querySelectorAll('img, video');
+		
+			  mediaElements?.forEach((element) => {
+				const media = element as HTMLElement;
+	
+				media.style.width = '18px';
+				media.style.height = '10%';
+				media.style.position = 'inherit';
+				media.style.zIndex = '99';
+		
+				const crossButton = document.createElement('button');
+				crossButton.textContent = '✖';
+				crossButton.style.position = 'absolute';
+				crossButton.style.right = '5px';
+				crossButton.style.zIndex = '100';
+				crossButton.style.background = '#ffffff';
+				crossButton.style.color = 'red';
+				crossButton.style.width = '24px';
+				crossButton.style.border ='none';
+				crossButton.style.outline ='none';
+				crossButton.style.borderRadius = '50%';
+				crossButton.style.cursor = 'pointer';
+				
+				const parentElement = media.parentElement as HTMLElement;
+				parentElement.style.position = 'relative';
+				parentElement.style.width = '34%';
+				parentElement.style.overflow = 'hidden';
+				parentElement.style.textOverflow = 'ellipsis'; 
+				parentElement.style.whiteSpace = 'nowrap'; 
+				parentElement.style.paddingRight = '30px'; 
+				parentElement.appendChild(crossButton);
+	
+				crossButton.addEventListener('click', () => {
+				const mediaNameElement = editorContent?.querySelector('.custom-class-attachmentType');
+				if (mediaNameElement) {
+					mediaNameElement.remove();
+				}
+				if(this.mediaType){
+					this.mediaType = ''
+					this.messageMeidaFile = ''
+				}
+				  media.remove();
+				  crossButton.remove();
+				});
+			  });
+			}, 0); 
+		  }
+	}
+	// insertTemplate(item:any) {
+	// 	this.closeAllModal()
+	// 	let mediaContent;
+	// 	let mediaName;
+	// 	const fileNameWithPrefix = item.Links.substring(item.Links.lastIndexOf('/') + 1);
+	// 	let originalName;
+	// 	if (item.media_type === 'video') {
+	// 		originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
+	// 		originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+	// 	} else {
+	// 		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+	// 	}
+	// 	if(item.media_type === 'image') {
+	// 	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>';
+	// 	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
+	// 	}
+	// 	else if(item.media_type === 'video') {
+	// 		mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>';
+	// 		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
+	// 	}
+	// 	else if(item.media_type === 'document') {
+	// 		mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>';
+	// 		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
+	// 	}
+		
+	// 	let htmlcontent = '';
+	// 	if (item.Header && item.media_type == 'text') {
+	// 		htmlcontent += '<p><strong>'+item.Header+'</strong></p><br>';
+	// 	}
+
+	// 	if(mediaContent && item.media_type!== 'text') {
+	// 		htmlcontent += mediaContent
+	// 	}
+	
+	// 	htmlcontent +='<p>'+ item.BodyText+'</p>'+'<br>';
+	// 	if (item.FooterText) {
+	// 		htmlcontent+='<p>'+item.FooterText+'</p>';
+	// 	}
+	// 	this.chatEditor.value =htmlcontent
+	// 	this.isAttachmentMedia = false;
+	// 	this.isTemplate = true;
+	// 	this.mediaType = item.media_type;
+	// 	this.messageMeidaFile = item.Links;
+	// 	this.addingStylingToMedia(item);
+	// }
+
 
 	searchQuickReply(event:any){
 		let searchKey = event.target.value

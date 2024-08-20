@@ -1,46 +1,25 @@
-const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, printf } = format;
-const path = require('path');
-const schedule = require('node-schedule');
+const winston = require('winston');
+const DailyRotateFile = require('winston-daily-rotate-file');
 
-// Utility function to get caller file and function name
-const getCallerInfo = () => {
-  const stack = new Error().stack.split('\n')[3];
-  const callerPath = stack.match(/\(([^)]+)\)/)[1];
-  const callerFile = path.basename(callerPath.split(':')[0]);
-  const callerFunction = stack.split(' ')[5];
-  return `${callerFile}:${callerFunction}`;
-}
-
-// Custom format for log entries
-const customFormat = printf(({ timestamp, level, message }) => {
-  return `${timestamp} <${level}> <${getCallerInfo()}> ${message}`;
+// Create the logger
+const logger = winston.createLogger({
+    level: 'info', // Set the default logging level
+    format: winston.format.combine(
+        winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss',
+        }),
+        winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+    ),
+    transports: [
+        new DailyRotateFile({
+            filename: 'logger-%DATE%.log',
+            datePattern: 'YYYY-MM-DD',
+            zippedArchive: false, // Set to true if you want to compress the log files
+            maxSize: '1000m' // Set file size limit to 1000MB
+        }),
+        new winston.transports.Console() // Optionally log to the console as well
+    ]
 });
 
-const logger = createLogger({
-  format: combine(
-    timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    customFormat
-  ),
-  transports: [
-    new transports.File({ filename: 'logger.log' })
-  ]
-});
-
-// Schedule job to clear the log file every 24 hours
-const clearLogFile = () => {
-  const logFilePath = 'logger.log';
-
-  fs.writeFile(logFilePath, '', (err) => {
-    if (err) {
-      logger.error(`Failed to clear log file: ${err.message}`);
-    } else {
-      logger.info('Log file cleared');
-    }
-  });
-};
-
-// Schedule the job to run at midnight every day
-schedule.scheduleJob('0 0 * * *', clearLogFile);
-
+// Make sure to export the logger if you need to use it in other modules
 module.exports = logger;

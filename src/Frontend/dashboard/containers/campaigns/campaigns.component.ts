@@ -986,8 +986,9 @@ formateDate(dateTime:string){
 		console.log('/////groupArrays/////')
 		console.log(groupArrays)
 
+		let contactFilter ="SELECT EC.*,IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) AND (ECTM.isDeleted != 1) where EC.SP_ID ="+this.SPID;
+    
 
-		let contactFilter ='SELECT * FROM `EndCustomer` where SP_ID='+this.SPID;
 		if(groupArrays.length>0){
 			
 			groupArrays.map((filters:any)=>{

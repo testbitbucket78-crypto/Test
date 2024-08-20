@@ -588,13 +588,53 @@ async function autoResolveExpireInteraction() {
   }
 }
 
-cron.schedule('*/5 * * * *', async () => {
-  console.log('Running scheduled task...');
+// cron.schedule('*/5 * * * *', async () => {
+//   console.log('Running scheduled task...');
 
-  fetchScheduledMessages();
-  autoResolveExpireInteraction();
+//   fetchScheduledMessages();
+//   autoResolveExpireInteraction();
 
-});
+// });
+
+// Function to start the scheduler
+function startScheduler() {
+  cron.schedule('*/5 * * * *', async () => {
+      console.log('Running scheduled task at:', new Date());
+
+      // Execute your scheduled tasks
+      await fetchScheduledMessages();
+      await autoResolveExpireInteraction();
+  });
+}
+
+// Calculate the initial delay
+function calculateInitialDelay() {
+  const now = new Date();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+
+  // Calculate how many minutes to add to reach the next multiple of 5
+  const minutesToNextMultipleOf5 = (5 - (minutes % 5)) % 5;
+
+  // Calculate the total delay in milliseconds
+  const delay = (minutesToNextMultipleOf5 * 60 - seconds) * 1000;
+console.log("delay ---------",delay)
+  return delay;
+}
+
+// Initial startup
+const initialDelay = calculateInitialDelay();
+
+if (initialDelay > 0) {
+  console.log(`Waiting ${initialDelay / 1000} seconds to start the scheduler...`);
+  setTimeout(() => {
+      console.log('Starting the scheduler at:', new Date());
+      startScheduler();
+  }, initialDelay);
+} else {
+  console.log('Starting the scheduler immediately at:', new Date());
+  startScheduler();
+}
 
 app.listen(3008, () => {
   console.log("Campaign scheduler  is listening on port 3008");

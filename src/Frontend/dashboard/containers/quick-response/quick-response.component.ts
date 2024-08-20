@@ -329,6 +329,10 @@ copyCampaign() {
   this.editQuickResponse();
   this.ID = 0;
   this.usertemplateForm.controls.Header.setValue('Copied ' + this.repliestemplateData.Header);
+  let nameExist = this.initTemplates.filter((item:any)=>item.TemplateName == ('Copied ' + this.repliestemplateData.Header));
+        if(nameExist.length >0){
+          this.usertemplateForm.controls.Header.setValue((`Copied_${Math.random()} ` + this.repliestemplateData.Header));
+        }
   this.saveTemplate();
 }
 
