@@ -582,14 +582,37 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	}
 
 	replaceVariableInTemplate() {
+		let val:any =[];
 		this.allVariablesList.forEach((placeholder, index) => {
 			const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
 			if(this.selectedTemplate.media_type == 'text') {
-				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, '{{' + index + '}}');
 			}
-			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
+			val.push({idx:'{{' + index + '}}',value:this.variableValues[index]});
+			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, '{{' + index + '}}');
+		});
+		val.forEach((placeholder:any) => {
+			const regex = new RegExp(placeholder?.idx?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+			if(this.selectedTemplate.media_type == 'text') {
+				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, placeholder?.value);
+			}
+			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, placeholder?.value);
 		});
 	}
+
+	//replaceVariableInTemplate() {
+		// 	let header = this.selectedTemplate.Header;
+		// 	let BodyText = this.selectedTemplate.BodyText;
+		// 	this.allVariablesList.forEach((placeholder, index) => {
+		// 		const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+		// 		if(this.selectedTemplate.media_type == 'text') {
+		// 			header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+		// 		}
+		// 		BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
+		// 	});
+		// 	this.selectedTemplate.Header = header;
+		// 	this.selectedTemplate.BodyText = BodyText;
+		// }
 	insertTemplate(item:any) {
 		this.closeAllModal()
 		let mediaContent;
@@ -635,38 +658,6 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.messageMeidaFile = item.Links;
 		this.addingStylingToMedia(item);
 	}
-
-	// selectQuickReplies(item:any){
-	// 	this.closeAllModal()
-	// 	let mediaContent
-	// 	let mediaName
-	// 	const fileNameWithPrefix = item.Links.substring(item.Links.lastIndexOf('/') + 1);
-	// 	let originalName;
-	// 	if (item.media_type === 'video') {
-	// 		originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
-	// 		originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
-	// 	} else {
-	// 		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
-	// 	}
-	
-	// 	if(item.media_type === 'image') {
-	// 	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
-	// 	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
-	// 	}
-	// 	else if(item.media_type === 'video') {
-	// 		mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
-	// 		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
-	// 	}
-	// 	else {
-	// 		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
-	// 		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
-	// 	}
-	// 	var htmlcontent = mediaName+'<p>'+item.BodyText+'</p>';
-	// 	this.chatEditor.value = htmlcontent
-	// 	this.mediaType = item.media_type
-	// 	this.messageMeidaFile = item.Links;
-	// 	this.addingStylingToMedia(item);
-	// }
 
 	processMediaType(mediaType: any,message_media:any, messageMeidaFile: any):string{
 		if (message_media) {
@@ -773,7 +764,9 @@ ToggleInsertTemplateOption(){
 	$("#insertmodal").modal('show'); 
 		//}
 		this.fallbackvalue = [];
-
+		this.allTemplates = JSON.parse(JSON.stringify(this.allTemplatesMain));
+		console.log(this.allTemplatesMain, 'allTemplatesMain');
+		console.log(this.allTemplates, 'allTemplates');
 	}
 	}
 
@@ -2609,8 +2602,8 @@ searchContact(event:any){
 }
 
 getSearchContact(){
-	this.apiService.searchCustomers(this.SPID,this.contactSearchKey).subscribe(data =>{
-		this.contactList= data
+	this.apiService.searchCustomers(this.SPID,this.contactSearchKey).subscribe((data:any) =>{
+		this.contactList= data?.resultList[0];
 	});
 }
 
