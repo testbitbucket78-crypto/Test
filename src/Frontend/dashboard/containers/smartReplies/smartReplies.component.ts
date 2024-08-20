@@ -811,6 +811,7 @@ showAddSmartRepliesModal() {
 		if (item.FooterText) {
 			htmlcontent+='<p>'+item.FooterText+'</p>';
 		}
+		if(item.Links) this.messageMeidaFile = item.Links
 		this.chatEditor.value =htmlcontent
 		this.isAttachmentMedia = false
 	}

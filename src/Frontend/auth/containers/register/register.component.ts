@@ -232,12 +232,8 @@ formatPhoneNumber() {
                 "name": registerData.name,
                 "otpFor" : this.otpFor
             }
-            if(this.VerificationData[0].email_id == registerData.email_id && 
-                this.VerificationData[1].mobile_number == registerData.mobile_number){
-                    sessionStorage.setItem('verificationDataEmail', JSON.stringify(this.VerificationData[0]));
-                    sessionStorage.setItem('verificationDataPhone', JSON.stringify(this.VerificationData[1]));
-                    this.router.navigate(['verification'])
-            } else {
+            if(this.VerificationData[0].email_id == registerData.email_id) sessionStorage.setItem('verificationDataEmail', JSON.stringify(this.VerificationData[0]));
+            if(this.VerificationData[1].mobile_number == registerData.mobile_number) sessionStorage.setItem('verificationDataPhone', JSON.stringify(this.VerificationData[1]));
             this.apiService.sendOtp(idfs).subscribe
             (response => {
                 if(response) {
@@ -250,7 +246,6 @@ formatPhoneNumber() {
                     alert('! Internal Server Error, Please Try After Sometime');
                 }
             });
-            }
         }
        
         if (this.registerForm.invalid){
