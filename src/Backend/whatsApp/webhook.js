@@ -132,7 +132,7 @@ async function extractDataFromMessage(body) {
     var d = new Date(firstMessage.timestamp * 1000).toUTCString();
 
     const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
-    console.log("message_time" ,message_time)
+    console.log("message_time", message_time)
     // Getting the file extension
 
     console.log(Type, " body.entry " + phoneNo, extension)
@@ -156,7 +156,7 @@ async function extractDataFromMessage(body) {
       message_text = message_text.replace(/\n/g, '<br>');
     }
     console.log("after text replacement", message_text)
-    var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension,message_time)
+    var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time)
     var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
   }
   else if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
@@ -173,14 +173,14 @@ async function extractDataFromMessage(body) {
     let customerPhoneNumber = body.entry[0].changes[0].value.statuses[0].recipient_id
     //console.log("messageStatus ,displayPhoneNumber ,customerPhoneNumber " )
     // console.log(messageStatus ,displayPhoneNumber ,customerPhoneNumber)
-    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber,smsId,d)
+    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, d)
   }
 
 }
 
 
 
-async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension,message_time) {
+async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time) {
   console.log("sabewdfesk", Type, extension)
   if (Type == "image") {
     console.log("lets check the image");
@@ -262,18 +262,24 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         var autoReplyTime = defaultAction[0].autoReplyTime
         var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
         var inactiveAgent = defaultAction[0].isAgentActive
-        var inactiveTimeOut= defaultAction[0].pauseAgentActiveTime
+        var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
 
       }
-      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted,inactiveAgent,inactiveTimeOut)
+      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut)
       console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
       if (defaultReplyAction == true) {
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
-        if (updateInteraction?.affectedRows > 0) {
-          let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
-          
+        if (newlyInteractionId == null) {
+
+          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
+          if (updateInteraction?.affectedRows > 0) {
+            let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
+
+          }
+        } else {
+          let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
+          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
         }
       }
       if (defaultReplyAction == false) {
@@ -332,7 +338,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
   })
 }
 
-async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber,smsId,createdTime) {
+async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, createdTime) {
 
   // let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
   // console.log(getMessageId)
@@ -349,7 +355,7 @@ async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, custom
     spid = userSP[0].SP_ID
   }
   if (messageStatus == 'sent') {
-    let updateMessageTime = await db.excuteQuery('UPDATE Message set created_at=? where Message_template_id=?',[createdTime,smsId])
+    let updateMessageTime = await db.excuteQuery('UPDATE Message set created_at=? where Message_template_id=?', [createdTime, smsId])
     const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
 WHERE interaction_id IN (

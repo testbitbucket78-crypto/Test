@@ -545,14 +545,16 @@ const updateNotes = async (req, res) => {
     // logger.info('Starting updateNotes function');
     if (req.body.Message_id > 0) {
         var messageQuery = "UPDATE Message SET message_text =?,message_media=?,media_type=?,Type=? WHERE Message_id =" + req.body.Message_id;
-        var values = [req.body?.message_text, req.body?.message_media, req.body?.media_type, req.body?.Type];
+        logger.info(`updateNotes messageQuery completed successfully  ${messageQuery}`);
+        var values = [req.body?.message_text, req.body?.message_media, req.body?.message_type, req.body?.message_type];
         let myUTCString = new Date().toUTCString();
         const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
 
         let actiond = await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'notes']);
-        db.runQuery(req, res, messageQuery, [values]);
-        //    logger.info('updateNotes function completed successfully');
+         logger.info(`${values},updateNotes function completed successfully  ${JSON.stringify(actiond)}`);
+        db.runQuery(req, res, messageQuery, values);
+        
     }
 };
 
@@ -993,7 +995,7 @@ const searchConatct = async (req, res) => {
         logger.info('Starting searchConatct function');
         let getCustomerQuery = `CALL GetCustomerInteractions(?,?)`
         let resultList = await db.excuteQuery(getCustomerQuery,[req.params.spid,req.params.searchTerm]);
-        logger.info(`GetCustomerInteractions response  ${resultList}`);
+        logger.info(`GetCustomerInteractions response  ${JSON.stringify(resultList)}`);
         res.status(200).send({ resultList: resultList ,status :200 });
 
     } catch (err) {

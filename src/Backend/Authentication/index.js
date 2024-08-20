@@ -614,7 +614,7 @@ async function canSendOTP(mobile_number) {
         const otpCount = result[0].count;
         const firstSentTime = result[0].first_sent_time;
 
-        if (otpCount < 3) {
+        if (otpCount < 4) {   // increase one because of one already add on both case
             // Allow sending OTP
             return { canSend: true };
         } else {
