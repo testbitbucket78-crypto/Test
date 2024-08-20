@@ -815,10 +815,10 @@ UpdateVariable(event: any, index: number) {
 	console.log(this.selectedTemplate)
 }
 selectAttributes(item:any) {
-	this.closeAllModal();
+	 this.closeAllModal();
 	const selectedValue = item;
 	let content:any = this.chatEditor.value || '';
-	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+	//content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
 	//content = content+'<span>{{'+selectedValue+'}}</span>'
 	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
 	this.chatEditor.value = content;
@@ -881,7 +881,7 @@ selectQuickReplies(item:any){
 	var htmlcontent = mediaName+'<p>'+item.BodyText+'</p>';
 	this.chatEditor.value = htmlcontent
 	this.mediaType = item.media_type
-	this.messageMeidaFile = item.Links;
+	this.messageMediaFile = item.Links;
 	this.addingStylingToMedia(item);
 }
 addingStylingToMedia(item: any){
@@ -2081,7 +2081,13 @@ sendattachfile() {
 		}, 1000);
 	  }
 	  
-
+	   formatDaysData(data: any): string {
+			if (Array.isArray(data) && data.every(item => item.id && item.optionName)) {
+				return data.map(day => `${day.id}:${day.optionName}`).join(',');
+			}
+			console.warn("Unexpected data format. Please check the input.");
+			return data;
+	    }
 getPausedTimer(){
 	//console.log('getPausedTimer')
 	
@@ -2292,6 +2298,9 @@ updateContactData(){
 		if(this.editContact.get(prop)){
 			this.selectedInteraction[prop as keyof typeof data] = this.editContact.get(prop)?.value;
 		}
+	}
+	if (this.selectedInteraction['column9']) {
+		this.selectedInteraction['column9'] = this.formatDaysData(this.selectedInteraction['column9']);
 	}
 }
 
@@ -3148,7 +3157,7 @@ sendMessage(){
 			this.messageMeidaFile = this.messageMediaFile;
 			value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
 			this.messageMediaFile = '';
-		} else if(this.messageMeidaFile != ''){
+		} else if(this.messageMeidaFile){
             value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
 		}
 		var bodyData = {

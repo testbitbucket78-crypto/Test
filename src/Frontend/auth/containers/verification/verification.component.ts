@@ -315,11 +315,13 @@ export class VerificationComponent implements OnInit {
         if(this.formValues.length > 0) sessionStorage.setItem('formValues', this.formValues);
         if(this.checkbox.length > 0) sessionStorage.setItem('checkbox', this.checkbox );
       }
-    resendOtp() {
+
+    resendOtp(otPFor: string) {
         let values = {
             "email_id":this.email_id,
             "mobile_number": this.phone,
-            "name": this.name
+            "name": this.name,
+            "otpFor" : otPFor
         }
         this.apiService.sendOtp(values).subscribe((response:any) => {
             if(response.status === 200) {

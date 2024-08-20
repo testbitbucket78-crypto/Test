@@ -128,7 +128,7 @@ export class CampaignsComponent implements OnInit {
 	 isMarketing:boolean = true;
 	 isAuthentication:boolean = true;
 	 channelOption : any = [];
-
+     selectedChannel: string = '';
 	 contactTagsOption:any=[
 		{value:0,label:'Paid',checked:false},
 		{value:1,label:'Unpaid',checked:false},
@@ -1314,12 +1314,20 @@ formateDate(dateTime:string){
 		}
 		this.newCampaignDetail.get('channel_id').setValue(channel.value);
 		this.newCampaignDetail.get('channel_label').setValue(channel.label);
+		this.selectedChannel = channel.label;
 		this.ShowChannelOption=false
 		console.log(this.allTemplates)
 		this.allTemplates = this.allTemplatesMain.filter((item:any) => item.Channel == channel.label);
 		this.initallTemplates =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item.Channel == channel.label)));
 	}
-
+   
+	channelId(channel: string): number{
+		if(channel == 'WA API'){
+         return 1
+		}else if(channel == 'WA Web'){
+           return 2
+		} else return 0;
+	}
 	
 	openImportContact(option:any,modalname:any,openImportContact:any){
 		this.closeAllModal()
@@ -1585,7 +1593,7 @@ formateDate(dateTime:string){
 					CampaignId:CampaignId,
 					isFinished:ix == this.csvContactList.length ? true :false,
 					category_id:this.selectedTemplate.category_id,
-					channel_id:this.newCampaignDetail.value.channel_id,
+					channel_id:!this.newCampaignDetail.value.channel_id,
 					channel_label:this.newCampaignDetail.value.channel_label,
 					category:this.selectedTemplate.Category,
 					title:this.newCampaignDetail.value.title,
@@ -1594,6 +1602,7 @@ formateDate(dateTime:string){
 					csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
 					segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
 					}
+					if(this.selectedChannel) MessageBodyData.channel_id = this.channelId(this.selectedChannel);
 				let allVariables:any = this.selectedTemplate.allVariables
 				console.log(allVariables)
 				let message_heading =this.selectedTemplate.Header
@@ -1661,7 +1670,7 @@ formateDate(dateTime:string){
 							media_type:this.selectedTemplate.media_type,
 							CampaignId:CampaignId,
 							isFinished:idx == this.segmentsContactList.length ? true :false,
-							channel_id:this.newCampaignDetail.value.channel_id,
+							channel_id:!this.newCampaignDetail.value.channel_id,
 							channel_label:this.newCampaignDetail.value.channel_label,
 							category:this.selectedTemplate.Category,
 							title:this.newCampaignDetail.value.title,
@@ -1670,8 +1679,7 @@ formateDate(dateTime:string){
 							csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
 							segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
 						}
-						
-
+						if(this.selectedChannel) MessageBodyData.channel_id = this.channelId(this.selectedChannel);
 						let allVariables:any = this.selectedTemplate.allVariables
 						let message_heading =this.selectedTemplate.Header
 						let message_content= this.selectedTemplate.BodyText
