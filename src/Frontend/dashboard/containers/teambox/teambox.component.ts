@@ -2172,7 +2172,8 @@ selectChannelOption(Channel:any){
 }
 hangeEditContactInuts(item:any){
 	if(item.target.name =='OptInStatus'){
-		this.EditContactForm['OptInStatus'] = item.target.checked ? 'Yes': 'No';
+		this.editContact.get('OptInStatus')?.setValue(item.target.checked ? 'Yes': 'No');
+		this.OptedIn = item.target.checked;
 	}else{
 		this.EditContactForm[item.target.name] = item.target.value
 	}
