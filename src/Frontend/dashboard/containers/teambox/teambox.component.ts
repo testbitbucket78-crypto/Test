@@ -2172,7 +2172,8 @@ selectChannelOption(Channel:any){
 }
 hangeEditContactInuts(item:any){
 	if(item.target.name =='OptInStatus'){
-		this.EditContactForm['OptInStatus'] = item.target.checked ? 'Yes': 'No';
+		this.editContact.get('OptInStatus')?.setValue(item.target.checked ? 'Yes': 'No');
+		this.OptedIn = item.target.checked;
 	}else{
 		this.EditContactForm[item.target.name] = item.target.value
 	}
@@ -2954,8 +2955,9 @@ this.apiService.createInteraction(bodyData).subscribe(async( data:any) =>{
 	this.showToaster(data.msg,'error');
 }
 },async (error) => {
-	if (error.status === 409) {
-		this.showToaster(error?.msg,'error');
+	console.log(error);
+	if (error?.error?.status === 409) {
+		this.showToaster(error?.error?.msg,'error');
 	  //this.OptedIn = 'No';
 	}
   });
@@ -3172,6 +3174,7 @@ sendMessage(){
 		let input = {
 			spid: this.SPID,
 		};
+		if(this.newMessage.value.Message_id == ''){
 		this.settingService.clientAuthenticated(input).subscribe(response => {
 
 			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WA API') {
@@ -3253,8 +3256,16 @@ sendMessage(){
 		// 		this.showToaster(error.message,'error');
 		// 	}
 		 });
-
-
+		}
+		 else{
+			this.apiService.editNotes(bodyData).subscribe(async data => {
+				this.selectedNote.message_text= bodyData.message_text;						
+				this.newMessage.reset({
+					Message_id: ''
+				});
+							
+			})
+		 }
 		}else{
 			this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
 		}

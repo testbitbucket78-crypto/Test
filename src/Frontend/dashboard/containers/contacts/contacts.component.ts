@@ -1036,6 +1036,10 @@ deletContactByID(data: any) {
         this.productForm.get(prop)?.setValue(names);
                 }
       }
+      if (data?.countryCode) {
+        console.log(data?.countryCode);
+        this.checkAndSetCountryCode(data);
+        }
     } 
     const countryCodeControl = this.productForm.get('countryCode');
     const phoneNumber = this.productForm.get('displayPhoneNumber');
@@ -1046,6 +1050,23 @@ deletContactByID(data: any) {
     this.OptInStatus =data.OptInStatus
     this.isBlocked=data.isBlocked;
   }
+
+  checkAndSetCountryCode(data: any) {
+		if (data?.countryCode) {
+		  const countryCodeOnly = this.countryCodes.map(code => code.split(' ')[1]);
+		  if (countryCodeOnly.includes(data.countryCode)) {
+			const matchedCountry = this.countryCodes.find(code => code.includes(data.countryCode));
+			this.productForm.get('countryCode')?.setValue(matchedCountry);
+		  } else {
+			const matchedCountry = this.countryCodes.find(code => code === data.countryCode);
+			if (matchedCountry) {
+			  this.productForm.get('countryCode')?.setValue(matchedCountry);
+			} else {
+			  console.warn(`Country code ${data.countryCode} not found in the countryCodes list.`);
+			}
+		  }
+		}
+	  }
 
   updateTags(tagName: string, isChecked: boolean) {
     this.isEditTag = true;
@@ -1418,7 +1439,6 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
       if(selectName && selectName?.length>0){
       selectName.forEach((it:any)=>{
                     let name = it.split(':');
-                    console.log(name);
                     names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
   })
 }
