@@ -229,7 +229,7 @@ function ClientInstance(spid, authStr, phoneNo) {
               const repliedNumber = (message.from).replace(/@c\.us$/, "");
               console.log("reply ___________________")
               let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND message_content = '${repliedMessage.body}'`
-console.log(campaignRepliedQuery)
+              console.log(campaignRepliedQuery)
               let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
               console.log(repliedNumber,spid,"campaignReplied*******", campaignReplied?.affectedRows)
             }
@@ -306,6 +306,10 @@ console.log(campaignRepliedQuery)
         try {
           let phoneNumber = (message.to).replace(/@c\.us$/, "");
           if (ack == '1') {
+            var d = new Date(message.t * 1000).toUTCString();
+
+            const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+            let updateMessageTime = await db.excuteQuery('UPDATE Message set created_at=? where Message_template_id=?',[message_time,message._data.id.id])
             const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
 WHERE interaction_id IN (
@@ -458,7 +462,7 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
       return '401'
     }
   } catch (err) {
-    console.log(err)
+  console.log(err);
   }
 }
 
@@ -475,39 +479,44 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
 
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
-      client.sendMessage(endCust + '@c.us', text);
+      let sendId = await client.sendMessage(endCust + '@c.us', text);
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id,  msg_id])
+      
       // notify.NotifyServer(spNumber, false, interaction_id)
     }
     if (type === 'image') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link);
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
-      client.sendMessage(endCust + '@c.us', media, { caption: text });
+      let sendId = await client.sendMessage(endCust + '@c.us', media, { caption: text });
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id,  msg_id])
+     
     }
     if (type === 'video') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link);
       // console.log(media.mimetype)
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
-      client.sendMessage(endCust + '@c.us', media, { caption: text });
+      let sendId = await  client.sendMessage(endCust + '@c.us', media, { caption: text });
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id,  msg_id])
+      
 
     }
     if (type === 'attachment' || type === 'document') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link)//MessageMedia('pdf', link);
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
-      client.sendMessage(endCust + '@c.us', media);
+      let sendId = await client.sendMessage(endCust + '@c.us', media);
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id,  msg_id])
+    
 
     } if (type === 'location') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const location = new Location(37.422, -122.084, 'Sampana Digital Private limited');
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
-      const msg = await client.sendMessage(endCust + '@c.us', location);
+      let sendId = await client.sendMessage(endCust + '@c.us', location);
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id, msg_id])
+     
     }
     if (type === 'vcard') {
       let myUTCString = new Date().toUTCString();
@@ -515,8 +524,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       let firstName = 'CIP'
       let lastName = 'TEAM'
       let phoneNumber = '917017683064'
-      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? where Message_id=?`, [updated_at, msg_id])
-      client.sendMessage(endCust + '@c.us',
+      let  sendId = await client.sendMessage(endCust + '@c.us',
         'BEGIN:VCARD\n' +
         'VERSION:3.0\n' +
         'N:' + firstName + ';' + lastName + ';;;\n' +
@@ -528,6 +536,8 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
 
 
       );
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at,sendId?._data?.id?.id, msg_id])
+     
     }
 
   } catch (err) {
@@ -621,9 +631,13 @@ console.log("media", message.type)
 
     if (from != 'status@broadcast') {
 
-      let myUTCString = new Date().toUTCString();
-      const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, 'null', created_at);
+      // let myUTCString = new Date().toUTCString();
+      // const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+
+      var d = new Date(message.timestamp * 1000).toUTCString();
+
+      const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, 'null', message_time);
       //console.log("saveMessage" ,)
       // console.log(saveMessage)
 
@@ -843,9 +857,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       var autoReplyTime = defaultAction[0].autoReplyTime
       var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
       var pausedTill = defaultAction[0]?.pausedTill
-
+      var inactiveAgent = defaultAction[0].isAgentActive
+      var inactiveTimeOut= defaultAction[0].pauseAgentActiveTime
     }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web')
+    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web',inactiveAgent,inactiveTimeOut)
 
 
     console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
@@ -853,6 +868,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId])
+      if (updateInteraction?.affectedRows > 0) {
+        let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
+        
+      }
     }
     if (defaultReplyAction == false) {
       let myUTCString = new Date().toUTCString();

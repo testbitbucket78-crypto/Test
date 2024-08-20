@@ -406,7 +406,7 @@ const checkInteractionPinned = (req, res) => {
 const updatePinnedStatus = (req, res) => {
     //  logger.info('Starting updatePinnedStatus function');
     if (req.body.isPinned) {
-        var updateQuery = "DELETE FROM PinnedInteraction WHERE AgentId =" + req.body.AgentId + " and InteractionId =" + req.body.InteractionId;
+        var updateQuery = "DELETE FROM PinnedInteraction WHERE Id>=1 and AgentId =" + req.body.AgentId + " and InteractionId =" + req.body.InteractionId;
     } else {
         var updateQuery = "INSERT INTO PinnedInteraction (AgentId,InteractionId) VALUES ?";
     }
@@ -723,7 +723,11 @@ const insertMessage = async (req, res) => {
                     }
                     if (middlewareresult?.status != 200) {
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]);
+                    };
+                    if (middlewareresult?.status == 200) {
+                        let NotSendedMessage = await db.excuteQuery('UPDATE Message set Message_template_id=? where Message_id=?', [middlewareresult?.message?.messages[0]?.id,msg_id.insertId]);
                     }
+                   
                     //  logger.debug('Middleware Result:', middlewareresult);
                 } else {
                     let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=10 where Message_id=?', [msg_id.insertId]);
