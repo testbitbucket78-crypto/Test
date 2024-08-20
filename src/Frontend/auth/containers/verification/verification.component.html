@@ -41,7 +41,7 @@
                         </div>
                         <div class="disc"><a style="display: inline-flex ">
                                 <h6>Did not receive the code? </h6>
-                                <h6 (click)="resendOtp(); startOtpTimer('phone', 30)" class="ml-1" [class.disabled]="phoneOtpTimer > 0 || isverifyphoneOtp"
+                                <h6 (click)="resendOtp('phone'); startOtpTimer('phone', 30)" class="ml-1" [class.disabled]="phoneOtpTimer > 0 || isverifyphoneOtp"
                                     [style.pointer-events]="(phoneOtpTimer > 0 || isverifyphoneOtp )? 'none' : 'auto'"
                                     [style.cursor]="(phoneOtpTimer > 0 || isverifyphoneOtp)? 'default' : 'pointer'"> Resend {{ phoneOtpTimer > 0 ? ' (' + phoneOtpTimer + 's)' : '' }}</h6>
                             </a></div>
@@ -67,7 +67,7 @@
                         <button class="verified" *ngIf="showSecondButton"><img src="assets/img/verified.png"></button>
                         <div class="disc"><a style="display: inline-flex">
                                 <h6>Did not receive the code? </h6>
-                                <h6 (click)="resendOtp();startOtpTimer('email', 30)" class="ml-1" [class.disabled]="emailotpTimer > 0 || isverfyEmailOtp"
+                                <h6 (click)="resendOtp('email');startOtpTimer('email', 30)" class="ml-1" [class.disabled]="emailotpTimer > 0 || isverfyEmailOtp"
                                     [style.pointer-events]="(emailotpTimer > 0 || isverfyEmailOtp)? 'none' : 'auto'"
                                     [style.cursor]="(emailotpTimer > 0 || isverfyEmailOtp) ? 'default' : 'pointer'"> Resend {{ emailotpTimer > 0 ? ' (' + emailotpTimer + 's)' : '' }}</h6>
                             </a></div>

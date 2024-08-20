@@ -42,7 +42,7 @@
                     <input type="text" class="form-control" id="mobile_number" formControlName="mobile_number" 
                     name="mobile_number" style="display: none">  
                     <input type="text" class="form-control" id="mobile_number"  autocomplete="none" formControlName="display_mobile_number" 
-                      name="display_mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
+                      name="display_mobile_number" placeholder="WhatsApp number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
                       onKeyPress="return /^[0-9]$/.test(event.key)"
                       [ngClass]="{'is-invalid' :submitted && registerForm.controls.display_mobile_number.errors }" 
                     (change)="formatPhoneNumber()" (input)="ValidatePhone()" #text> 
@@ -50,8 +50,8 @@
                   </div>
                   <div *ngIf="registerForm.controls.display_mobile_number.touched && registerForm.get('display_mobile_number')?.hasError('invalidPhoneNumberLength')"
 								 class="text-danger">
-								
 							</div>
+              <p style="color: black">(share your WhatsApp enabled phone number)</p> 
                 </div>
            
               </div>
@@ -114,6 +114,7 @@
                 Name must be at least 3 characters or not a single digit.
               </div>
             </div>        -->
+            <br>
             <div *ngIf="submitted && registerForm.get('name').hasError('pattern')"  class="text-danger">
               Name should contain only alphabetic characters.
             </div>
@@ -124,11 +125,9 @@
           <div *ngIf="submitted && registerForm.controls.display_mobile_number.errors" class="text-danger">
             ! Invalid phone number length for the selected country.
           </div>
-          <br>
           <div *ngIf="submitted && registerForm.controls.email_id.errors" class="text-danger">
             ! Invalid Email Id
           </div>
-          <br>
             <div *ngIf="submitted && registerForm.controls.password.errors" class="text-danger">
             ! Password is required
           </div>
