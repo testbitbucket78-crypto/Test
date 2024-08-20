@@ -24,13 +24,20 @@ WHERE interaction_id = ? and system_message_type_id=?
   AND TIMESTAMPDIFF(Minute, updated_at, NOW()) <= 60  
 ORDER BY updated_at DESC 
 LIMIT 1`;
-var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent) VALUES ?";
+var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,Message_template_id) VALUES ?";
 
-async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted) {
-console.log("isAutoReply, autoReplyTime, isAutoReplyDisable")
-console.log(isAutoReply, autoReplyTime, isAutoReplyDisable)
+async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, inactiveAgent, inactiveTimeOut) {
+  console.log("isAutoReply, autoReplyTime, isAutoReplyDisable")
+  console.log(isAutoReply, autoReplyTime, isAutoReplyDisable)
   let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?', [newId]);
   let interactionStatus = await db.excuteQuery('select * from Interaction where InteractionId = ? and is_deleted !=1 ', [newId])
+
+  const timeoutDuration = inactiveTimeOut * 60 * 1000; // Convert minutes to milliseconds
+console.log(timeoutDuration,inactiveTimeOut)
+  // Set timeout to trigger inactivity check after the specified period
+  setTimeout(() => {
+    inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId, agid);
+  }, timeoutDuration)
 
   if (isAutoReplyDisable != 1) {
 
@@ -60,6 +67,27 @@ console.log(isAutoReply, autoReplyTime, isAutoReplyDisable)
     }
   }
 
+ 
+
+
+}
+
+
+async function inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId,agid) {
+  try {
+    if (inactiveAgent == 1) {
+      let isChatAssign = await db.excuteQuery('select * from InteractionMapping where InteractionId =? and (AgentId != -1 OR AgentId !=?)  order by created_at desc limit 1', [newId,agid]);
+     console.log("isChatAssign",isChatAssign)
+      if (isChatAssign?.length > 0) {
+        let isReplySended = await db.excuteQuery(`SELECT * FROM Message WHERE interaction_id = ? and SPID=?  AND message_direction = 'out'  AND created_at >= NOW() - INTERVAL ? MINUTE; `, [newId, sid, inactiveTimeOut]);
+        if (isReplySended?.length <= 0) {
+          let inactiveUser = await db.excuteQuery('update user set IsActive =0 where uid =? and SP_ID=?', [isChatAssign[0]?.AgentId, sid])
+        }
+      }
+    }
+  } catch (err) {
+    console.log("inActiveAgentTimeOut ERR", err)
+  }
 }
 
 async function sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted) {
@@ -171,7 +199,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     //console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg,replymessage, " SMARTREPLY.length " + replymessage?.length)
     if (replymessage?.length > 0) {
 
-      let isSReply =await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType);
+      let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType);
       console.log("iterateSmartReplies replymessage.length", isSReply)
       return isSReply;
     } else if (replymessage?.length <= 0) {
@@ -221,7 +249,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       var msgVar = message.message_variables;
       let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
       let content = await removeTags.removeTagsFromMessages(testMessage);
-//console.log("content",content)
+      //console.log("content",content)
       // Parse the message template to get placeholders
       const placeholders = parseMessageTemplate(testMessage);
       //console.log(testMessage)
@@ -229,23 +257,23 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         // Construct a dynamic SQL query based on the placeholders
 
         let results;
-       //S console.log("msgVar",msgVar)
-        if(msgVar != null){
-         
+        //S console.log("msgVar",msgVar)
+        if (msgVar != null) {
+
           results = await removeTags.getDefaultAttribue(msgVar, sid, custid);
           //console.log("atribute result ")
           placeholders.forEach(placeholder => {
             const result = results.find(result => result.hasOwnProperty(placeholder));
-          //  console.log(placeholder,"place foreach",results)
+            //  console.log(placeholder,"place foreach",results)
             const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
             content = content.replace(`{{${placeholder}}}`, replacement);
-        });
-        }else{
-          
-        results = await removeTags.getDefaultAttribueWithoutFallback(placeholders, sid, custid);
+          });
+        } else {
+
+          results = await removeTags.getDefaultAttribueWithoutFallback(placeholders, sid, custid);
         }
-       
-       // console.log("results", results);
+
+        // console.log("results", results);
 
         placeholders.forEach(placeholder => {
           const result = results.find(result => result.hasOwnProperty(placeholder));
@@ -281,7 +309,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       console.log(message.replyId);
     });
     messageToSend = messageToSend.sort((a, b) => (a.replyId - b.replyId));
-   console.log("After sort");
+    console.log("After sort");
     messageToSend.forEach((message) => {
       console.log(message.replyId);
     });
@@ -459,7 +487,7 @@ async function PerformingSReplyActions(actionId, value, sid, custid, agid, reply
   switch (actionId) {
     case 1:
       let AddTagRes = await addTag(value, sid, custid);
-     
+
       break;
     case 2:
       let assignActionRes = await assignAction(value, agid, newId)
@@ -487,18 +515,18 @@ async function PerformingSReplyActions(actionId, value, sid, custid, agid, reply
 async function assignAction(value, agid, newId) {
   //console.log(`Performing action 1 for  Assign Conversation: ${value}`);
   is_active = 1
-  var values = [[is_active, newId,value,agid]]
+  var values = [[is_active, newId, value, agid]]
   var assignCon = await db.excuteQuery(updateInteractionMapping, [values])
- // console.log("assignAction",assignCon)
+  // console.log("assignAction",assignCon)
 }
 
 
 
 async function addTag(value, sid, custid) {
   //  console.log(`Performing action 2 for Add Contact Tag: ${value}`);
-  let stringValue=''
+  let stringValue = ''
   if (value !== null && value !== undefined) {
-   stringValue = value.replace(/[\[\]\s]/g, ''); 
+    stringValue = value.replace(/[\[\]\s]/g, '');
   }
   var addConRes = await db.excuteQuery(addTagQuery, [stringValue, custid, sid])
   // console.log(addConRes)
@@ -693,7 +721,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let result = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
     console.log("messageThroughselectedchannel", result?.status)
     if (result?.status == 200) {
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time, time, "", -2]]
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', text, media, "", "", "", time, time, "", -2,result.message.messages[0].id]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
     }
 
@@ -713,7 +741,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 }
 
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage) {
-  if (channelType == 'WhatsApp Official'  || channelType == 1 || channelType == 'WA API') {
+  if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
@@ -721,11 +749,11 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
     //console.log("sReply?.status ", sReply?.status)
     if (sReply?.status == 200) {
-      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", time, time, "", -2]]
+      let messageValu = [[spid, type, "", interactionId, agentId, 'Out', testMessage, media, "", "", "", time, time, "", -2,result.message.messages[0].id]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       response = true;
     }
-   // console.log("sreply", response)
+    // console.log("sreply", response)
     return response;
   } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
 

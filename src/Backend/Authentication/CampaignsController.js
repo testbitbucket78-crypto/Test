@@ -219,7 +219,7 @@ const deleteContactList = (req, res) => {
 
 const applyFilterOnEndCustomer = async (req, res) => {
     try {
-        let Query = req.body.Query + " and isDeleted !=1  AND IsTemporary !=1"
+        let Query = req.body.Query + " and EC.isDeleted !=1  AND EC.IsTemporary !=1"
         console.log(Query)
         let contactList = await db.excuteQuery(Query, []);
         //console.log(contactList)

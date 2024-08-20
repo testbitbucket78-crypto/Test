@@ -532,17 +532,18 @@ const sendOtp = async function (req, res) {
         } else if (otpFor == 'email') {
 
             // 6 entries and within 2 hour 
-            let otpcansend = await canSendOTP(email_id)
+            let otpcansend = await canSendOTP(email_id);
+            console.log(otpcansend,"email")
             if (!otpcansend.canSend) {
 
-                console.log(`Please wait ${result.remainingTime} minutes before sending another OTP.`);
+                console.log(`Please wait ${otpcansend.remainingTime} minutes before sending another OTP.`);
 
                 return res.status(403).send({
-                    msg: `Please wait ${result.remainingTime} minutes before sending another OTP.`,
+                    msg: `Please wait ${otpcansend.remainingTime} minutes before sending another OTP.`,
                     status: 403
                 })
 
-            }
+            }else{
 
             transporter.sendMail(mailOptions, (error, info) => {
                 try {
@@ -559,30 +560,32 @@ const sendOtp = async function (req, res) {
                 }
 
             });
-            var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
-
+            var storeEmailOtp = await db.excuteQuery('insert into otpVerify (otpfieldvalue,otp,fieldtype) values (?,?,?)', [req.body.email_id, otp, 'Email'])
+        }
         } else if (otpFor == 'phone') {
 
             // 6 entries and within 2 hour 
-            let otpcansend = await canSendOTP(mobile_number)
+            let otpcansend = await canSendOTP(mobile_number);
+            console.log(otpcansend)
             if (!otpcansend.canSend) {
 
-                console.log(`Please wait ${result.remainingTime} minutes before sending another OTP.`);
+                console.log(`Please wait ${otpcansend.remainingTime} minutes before sending another OTP.`);
 
                 return res.status(403).send({
-                    msg: `Please wait ${result.remainingTime} minutes before sending another OTP.`,
+                    msg: `Please wait ${otpcansend.remainingTime} minutes before sending another OTP.`,
                     status: 403
                 })
 
-            }
+            }else{
 
             let sendWAmsg =await createWhatsAppPayload('text', mobile_number, 'verify_opt_signin', 'en', headerVar,bodyVar , mediaLink = null)
             let data = JSON.stringify(sendWAmsg, null, 2);
             sendMessage(data)
 
-            var storePhoneOtp = await db.excuteQuery(val.insertOtp, [mobile_number, phoneOtp, 'Mobile'])
+            var storePhoneOtp = await db.excuteQuery('insert into otpVerify (otpfieldvalue,otp,fieldtype) values (?,?,?)', [mobile_number, phoneOtp, 'Mobile']);
+            console.log("storePhoneOtp",storePhoneOtp?.insertId,mobile_number, phoneOtp)
 
-        }
+        }}
         return res.status(200).send({
             msg: 'opt sended',
             status: 200
@@ -604,7 +607,7 @@ const sendOtp = async function (req, res) {
 async function canSendOTP(mobile_number) {
     try {
         const result = await db.excuteQuery(
-            'SELECT COUNT(*) AS count, MIN(created_at) AS first_sent_time FROM otpVerify WHERE otpfieldvalue = ? AND created_at >= NOW() - INTERVAL 2 HOUR',
+            'SELECT COUNT(*) AS count, MIN(created_at) AS first_sent_time FROM otpVerify WHERE otpfieldvalue = ? AND created_at >= NOW() - INTERVAL 2 HOUR order by created_at desc',
             [mobile_number]
         );
 
@@ -616,11 +619,11 @@ async function canSendOTP(mobile_number) {
             return { canSend: true };
         } else {
             // Calculate remaining time
-            const currentTime = moment();
-            const firstSentTimeMoment = moment(firstSentTime);
+            const currentTime = moment().utc();
+            const firstSentTimeMoment = moment(firstSentTime).utc();
             const timePassed = currentTime.diff(firstSentTimeMoment, 'minutes');
-            const remainingTime = 120 - timePassed; // 120 minutes = 2 hours
-
+            const remainingTime = Math.abs(120 - timePassed); // 120 minutes = 2 hours
+            console.log("remainingTime,firstSentTime ,timePassed",remainingTime,firstSentTime ,timePassed)
             return { canSend: false, remainingTime: remainingTime };
         }
     } catch (err) {

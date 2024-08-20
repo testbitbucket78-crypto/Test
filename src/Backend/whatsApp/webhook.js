@@ -74,7 +74,7 @@ app.post("/webhook", async (req, res) => {
 
   } catch (err) {
     db.errlog(err);
-    console.log("errrrrrrrr",err)
+    console.log("errrrrrrrr", err)
     res.status(500).send({
       msg: err,
       status: 500
@@ -108,22 +108,34 @@ async function extractDataFromMessage(body) {
 
     let Message_template_id = firstMessage.id;
     let Type = firstMessage.type
-// Variable to hold the filename
-let  extension ;
+    // Variable to hold the filename
+    let extension;
 
-// Conditional check to determine the filename based on type
-if (Type === 'image') {
-  extension = '.jpg';
-} else if (Type === 'video') {
-  extension = '.mp4';
-} else if (Type === 'document') {
-  let filename = firstMessage.document.filename;
-  extension = filename.substring(filename.lastIndexOf('.'));
-}
+    if (firstMessage.context) {
+      let spid = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
+      let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND message_content = '${repliedMessage.body}'`
+      console.log(campaignRepliedQuery)
+      let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
+      console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
+    }
 
-// Getting the file extension
+    // Conditional check to determine the filename based on type
+    if (Type === 'image') {
+      extension = '.jpg';
+    } else if (Type === 'video') {
+      extension = '.mp4';
+    } else if (Type === 'document') {
+      let filename = firstMessage.document.filename;
+      extension = filename.substring(filename.lastIndexOf('.'));
+    }
 
-    console.log(Type, " body.entry " + phoneNo,extension)
+    var d = new Date(firstMessage.timestamp * 1000).toUTCString();
+
+    const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+    console.log("message_time" ,message_time)
+    // Getting the file extension
+
+    console.log(Type, " body.entry " + phoneNo, extension)
     let firstStatus = "";
     let Quick_reply_id = "";
     let uniqueId = "";
@@ -138,13 +150,13 @@ if (Type === 'image') {
     console.log("________________SAVEING MESSAGE___________________");
 
     if (message_text) {
-     message_text = message_text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+      message_text = message_text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
       message_text = message_text.replace(/_(.*?)_/g, '<em>$1</em>');
       message_text = message_text.replace(/~(.*?)~/g, '<del>$1</del>');
       message_text = message_text.replace(/\n/g, '<br>');
     }
-     console.log("after text replacement",message_text)
-    var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName,extension)
+    console.log("after text replacement", message_text)
+    var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension,message_time)
     var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
   }
   else if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
@@ -152,23 +164,28 @@ if (Type === 'image') {
     body.entry[0].changes[0].value.statuses.length > 0 && body.entry[0].changes[0].value.statuses[0]) {
 
     let messageStatus = body.entry[0].changes[0].value.statuses[0].status
+    let smsId = body.entry[0].changes[0].value.statuses[0].id
+    let smsTime = body.entry[0].changes[0].value.statuses[0].timestamp
+    var d = new Date(smsTime * 1000).toUTCString();
+
+    const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
     let displayPhoneNumber = body.entry[0].changes[0].value.metadata.display_phone_number
     let customerPhoneNumber = body.entry[0].changes[0].value.statuses[0].recipient_id
     //console.log("messageStatus ,displayPhoneNumber ,customerPhoneNumber " )
     // console.log(messageStatus ,displayPhoneNumber ,customerPhoneNumber)
-    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber)
+    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber,smsId,d)
   }
 
 }
 
 
 
-async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName,extension) {
- console.log("sabewdfesk",Type,extension)
+async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension,message_time) {
+  console.log("sabewdfesk", Type, extension)
   if (Type == "image") {
     console.log("lets check the image");
 
-    var imageurl = await saveImageFromReceivedMessage(from, firstMessage.image.id, phone_number_id, display_phone_number,extension,firstMessage.image.mime_type);
+    var imageurl = await saveImageFromReceivedMessage(from, firstMessage.image.id, phone_number_id, display_phone_number, extension, firstMessage.image.mime_type);
 
     message_media = imageurl.value;
 
@@ -177,7 +194,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   }
 
   if (Type == "video") {
-    var imageurl = await saveImageFromReceivedMessage(from, firstMessage.video.id, phone_number_id, display_phone_number,extension,firstMessage.video.mime_type);
+    var imageurl = await saveImageFromReceivedMessage(from, firstMessage.video.id, phone_number_id, display_phone_number, extension, firstMessage.video.mime_type);
 
     message_media = imageurl.value;
 
@@ -185,7 +202,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
     var media_type = "video/mp4"
   }
   if (Type == "document") {
-    var imageurl = await saveImageFromReceivedMessage(from, firstMessage.document.id, phone_number_id, display_phone_number,extension,firstMessage.document.mime_type);
+    var imageurl = await saveImageFromReceivedMessage(from, firstMessage.document.id, phone_number_id, display_phone_number, extension, firstMessage.document.mime_type);
 
     message_media = imageurl.value;
 
@@ -196,7 +213,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   if (message_text.length > 0) {
     let myUTCString = new Date().toUTCString();
     const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', created_at]);
+    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
@@ -230,7 +247,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData.newlyInteractionId
     var isContactPreviousDeleted = extractedData.isContactPreviousDeleted
-    notify.NotifyServer(display_phone_number, false, newId,0, 'IN',msg_id)
+    notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', msg_id)
     let contact = await db.excuteQuery('select * from EndCustomer where customerId =?', [custid])
     // if(contact?.length >0){
     //   funnel.ScheduledFunnels(contact[0].SP_ID, contact[0].Phone_number, contact[0].OptInStatus, new Date(), new Date(),0);
@@ -244,25 +261,30 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         var isAutoReply = defaultAction[0].isAutoReply
         var autoReplyTime = defaultAction[0].autoReplyTime
         var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
-
+        var inactiveAgent = defaultAction[0].isAgentActive
+        var inactiveTimeOut= defaultAction[0].pauseAgentActiveTime
 
       }
-      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted)
+      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted,inactiveAgent,inactiveTimeOut)
       console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
-      if(defaultReplyAction == true){
+      if (defaultReplyAction == true) {
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId])
+        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
+        if (updateInteraction?.affectedRows > 0) {
+          let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
+          
+        }
       }
       if (defaultReplyAction == false) {
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
         let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
-console.log("RoutingRulesVaues",RoutingRulesVaues)
-if(RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true){
-  notify.NotifyServer(display_phone_number, false, newId,0, 'IN','Assign Agent')
-}
+        console.log("RoutingRulesVaues", RoutingRulesVaues)
+        if (RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true) {
+          notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+        }
         //Here i have to check if any routing rules addded then send websocket
       }
     }
@@ -270,7 +292,7 @@ if(RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true){
 
 }
 
-async function saveImageFromReceivedMessage(from, message, phone_number_id, display_phone_number,extension,mime_type) {
+async function saveImageFromReceivedMessage(from, message, phone_number_id, display_phone_number, extension, mime_type) {
   console.log("saveImageFromReceivedMessage")
   //https://graph.facebook.com/{{Version}}/{{Media-ID}}?phone_number_id=<PHONE_NUMBER_ID>
   return new Promise((resolve, reject) => {
@@ -293,7 +315,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
         //let sid = query to get using display phone number.
         let sid = await db.excuteQuery(process.env.findSpid, [display_phone_number])
 
-        let awsDetails = await aws.uploadWhatsAppImageToAws(sid[0].SP_ID, message, result.data.url, token,extension,mime_type)//spid, imageid, fileUrl, fileAccessToken
+        let awsDetails = await aws.uploadWhatsAppImageToAws(sid[0].SP_ID, message, result.data.url, token, extension, mime_type)//spid, imageid, fileUrl, fileAccessToken
 
         //TODO: Save the AWS url to DB in messages table using SP similar to webhook_2 SP. 
 
@@ -310,7 +332,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
   })
 }
 
-async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber) {
+async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber,smsId,createdTime) {
 
   // let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
   // console.log(getMessageId)
@@ -327,6 +349,7 @@ async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, custom
     spid = userSP[0].SP_ID
   }
   if (messageStatus == 'sent') {
+    let updateMessageTime = await db.excuteQuery('UPDATE Message set created_at=? where Message_template_id=?',[createdTime,smsId])
     const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
 WHERE interaction_id IN (
@@ -338,7 +361,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
     let ack1InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
     //notify.NotifyServer(displayPhoneNumber, true)
-    notify.NotifyServer(displayPhoneNumber, false, ack1InId[0]?.InteractionId, 'Out',1,0)
+    notify.NotifyServer(displayPhoneNumber, false, ack1InId[0]?.InteractionId, 'Out', 1, 0)
 
   } else if (messageStatus == 'delivered') {
     let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1'
@@ -353,7 +376,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
     //  console.log("deliver", deded?.affectedRows)
     //notify.NotifyServer(displayPhoneNumber, true)
     let ack2InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
-    notify.NotifyServer(displayPhoneNumber, false, ack2InId[0]?.InteractionId, 'Out',2,0)
+    notify.NotifyServer(displayPhoneNumber, false, ack2InId[0]?.InteractionId, 'Out', 2, 0)
 
   } else if (messageStatus == 'read') {
     //  console.log("read")
@@ -369,6 +392,6 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
     //   console.log("read", resd?.affectedRows)
     // notify.NotifyServer(displayPhoneNumber, true)
     let ack3InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
-    notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out',3,0)
+    notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 3, 0)
   }
 }
