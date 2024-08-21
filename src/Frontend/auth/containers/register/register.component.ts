@@ -184,6 +184,16 @@ formatPhoneNumber() {
         this.checkbox2Checked = checked;
       }
       errorDiv: string = '';
+      otpFor: string = '';
+      checkOtpFor(emailVerified: boolean, phoneVerified: boolean){
+        if(!phoneVerified && !emailVerified){
+          this.otpFor = 'both';
+        } else if (!phoneVerified) {
+          this.otpFor = 'phone';
+        } else{
+          this.otpFor = 'email';
+        }
+      }
       onSubmit(){
         let registerData = {
             name:this.registerForm.get('name')?.value, 
@@ -215,11 +225,12 @@ formatPhoneNumber() {
             sessionStorage.setItem('otpfieldMobilevalue', registerData.mobile_number);
             sessionStorage.setItem('otpfieldNamevalue', registerData.name);
             sessionStorage.setItem('checkbox', JSON.stringify(checkBox));
-            
+            this.checkOtpFor(this.isVerifiedEmail, this.isVerifiedPhone);
             var idfs={
                 "email_id":registerData.email_id,
                 "mobile_number":registerData.mobile_number,
-                "name": registerData.name
+                "name": registerData.name,
+                "otpFor" : this.otpFor
             }
             if(this.VerificationData[0].email_id == registerData.email_id && 
                 this.VerificationData[1].mobile_number == registerData.mobile_number){
