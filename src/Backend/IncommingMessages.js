@@ -257,6 +257,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       var testMessage = message.Message;  // Assuming the 'Message' property contains the message content
       var actionId = message.ActionID;  // Assuming the 'ActionID' property contains the action ID
       var msgVar = message.message_variables;
+      var media_type = message.media_type;
       let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
       let content = await removeTags.removeTagsFromMessages(testMessage);
       if(actionId == 2){
@@ -295,10 +296,8 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         });
       }
 
-      var type = 'image';
-      if (media == null || media == "") {
-        type = 'text';
-      }
+      var type = determineMediaType(media_type);;
+      
 
       var relyMsg = {
         "replyId": message.ID,
@@ -470,6 +469,23 @@ function parseMessageTemplate(template) {
     placeholders.push(match[1]);
   }
   return placeholders;
+}
+
+function determineMediaType(mediaType) {
+  switch (mediaType) {
+      case 'video/mp4':
+          return 'video';
+      case 'application/pdf':
+          return 'document';
+      case 'image/jpeg':
+          return 'image';
+      case '':
+          return 'text';
+      case 'text':
+        return 'text';
+      default:
+          return 'unknown'; // Optional: handle other cases
+  }
 }
 
 async function getExtraxtedMessage(message_text) {
