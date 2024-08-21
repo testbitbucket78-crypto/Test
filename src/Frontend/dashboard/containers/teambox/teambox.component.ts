@@ -3211,10 +3211,13 @@ sendMessage(){
 		} else if(this.messageMeidaFile){
             value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
 		}
+		
+	let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
 			CustomerId: this.selectedInteraction.customerId,
 			SPID:this.SPID,
+			SP_ID:this.SPID,
 			AgentId: this.AgentId,
 			messageTo:this.selectedInteraction.Phone_number,
 			message_text: value || "",
@@ -3229,6 +3232,9 @@ sendMessage(){
 			spNumber: this.spNumber,
 			isTemplate:this.isTemplate,
 			MessageVariables: this.allVariables,
+			action:'edited by ' + agentName,
+			action_at:new Date(),
+			action_by:name,
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
@@ -3323,7 +3329,8 @@ sendMessage(){
 				this.newMessage.reset({
 					Message_id: ''
 				});
-							
+				this.chatEditor.value ='';					
+				this.getMessageData(this.selectedInteraction,true)
 			})
 		 }
 		}else{
