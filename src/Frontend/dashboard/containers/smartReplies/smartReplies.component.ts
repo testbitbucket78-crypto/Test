@@ -674,6 +674,8 @@ showAddSmartRepliesModal() {
 		this.closeAllModal()
 		$("#insertTemplate").modal('show');
         document.getElementById('addsmartreplies')!.style.display = 'none';
+		this.fallbackvalue = [];
+		this.allTemplates = JSON.parse(JSON.stringify(this.allTemplatesMain));
 	}
 
 	showeditTemplate(){
@@ -1637,17 +1639,35 @@ stopPropagation(event: Event) {
 			  }
 			}
 
+		// replaceVariableInTemplate() {
+		// 	this.mediaLink = this.selectedTemplate.Links;
+		// 	this.allVariablesList.forEach((placeholder, index) => {
+		// 		const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+		// 		if(this.selectedTemplate.media_type == 'text') {
+		// 			this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+		// 		}
+		// 		this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
+		// 	});
+		// }
+	
 		replaceVariableInTemplate() {
-			this.mediaLink = this.selectedTemplate.Links;
+			let val:any =[];
 			this.allVariablesList.forEach((placeholder, index) => {
 				const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
 				if(this.selectedTemplate.media_type == 'text') {
-					this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+					this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, '{{' + index + '}}');
 				}
-				this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
+				val.push({idx:'{{' + index + '}}',value:this.variableValues[index]});
+				this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, '{{' + index + '}}');
+			});
+			val.forEach((placeholder:any) => {
+				const regex = new RegExp(placeholder?.idx?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+				if(this.selectedTemplate.media_type == 'text') {
+					this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, placeholder?.value);
+				}
+				this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, placeholder?.value);
 			});
 		}
-	
 		populateValues(item:any) {
 
 		}
