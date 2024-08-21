@@ -271,10 +271,10 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         // Construct a dynamic SQL query based on the placeholders
 
         let results;
-        //S console.log("msgVar",msgVar)
-        if (msgVar != null) {
+        // console.log(msgVar !='',"msgVar",msgVar != null ,msgVar,msgVar != null || msgVar !='')
+        if (msgVar != null && msgVar !='') {
 
-          results = await removeTags.getDefaultAttribue(msgVar, sid, custid);
+         results = await removeTags.getDefaultAttribue(msgVar, sid, custid);
           //console.log("atribute result ")
           placeholders.forEach(placeholder => {
             const result = results.find(result => result.hasOwnProperty(placeholder));
@@ -312,7 +312,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         "interactionId": newId,
         "testMessage": testMessage
       };
-      console.log(message.replyId, "replysms");
+      console.log(message.replyId, "replysms",relyMsg);
       messageToSend.push(relyMsg);
     }
 
@@ -327,7 +327,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
     });
 
     for (let message of messageToSend) {
-      if (message.content?.length) {
+      if (message.content?.length || message.media?.length) {
         let respose = await SreplyThroughselectedchannel(
           message.sid,
           message.from,
@@ -785,9 +785,8 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-
     let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
-    //console.log("sReply?.status ", sReply?.status)
+   // console.log("sReply?.status ", sReply?.status)
     if (sReply?.status == 200) {
 
      
