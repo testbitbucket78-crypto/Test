@@ -680,6 +680,10 @@ checkTemplateName(e:any){
         // else {
         //     copyTemplateForm.template_json = [];
         // }
+        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == this.templatesMessageDataById.TemplateName +' copy');
+        if(nameExist.length >0){
+            copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +' copy' + Math.random();
+        }
        
             this.apiService.saveNewTemplateData(copyTemplateForm, this.selectedPreview)
             .subscribe(response => {

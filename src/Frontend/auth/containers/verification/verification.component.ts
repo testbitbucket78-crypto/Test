@@ -323,12 +323,19 @@ export class VerificationComponent implements OnInit {
             "name": this.name,
             "otpFor" : otPFor
         }
-        this.apiService.sendOtp(values).subscribe((response:any) => {
-            if(response.status === 200) {
+        this.apiService.sendOtp(values).subscribe(
+            (response: any) => {
+              if (response.status === 200) {
                 console.log('response is 200');
-                this.showToaster('! OTP Resend Successfully','success');
+                this.showToaster('! OTP Resend Successfully', 'success');
+              } 
+            },
+            (error: any) => {
+              if (error.status == 403) {
+                this.showToaster('Oops! looks like some issue here. Please try after some time.', 'error');
+              }
             }
-        });
+          );
     }
 
     // isBothButtonsClicked() {

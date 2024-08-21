@@ -126,6 +126,10 @@ export class DashboardService {
     return this.http.get(API_URL1+`getProfileImg/${customerId}`);
   }
 
+  getContactVerified(data: any) {
+    return this.http.post(API_URL1+`verifyPhoneCode`,data);
+  }
+
   saveContactImage(contactsImageData:contactsImageData): Observable<any> {
     return this.http.post(API_URL1+'addProfileImg',contactsImageData);
   }

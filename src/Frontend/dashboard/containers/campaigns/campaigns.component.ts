@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
-import { TeamboxService } from './../../services';
+import { DashboardService, TeamboxService } from './../../services';
 import { DatePipe } from '@angular/common';
 import * as XLSX from 'xlsx'; 
 declare var $: any;
@@ -294,7 +294,7 @@ export class CampaignsComponent implements OnInit {
 	customFieldData:[] = [];
 	tag:[] =[];
 	 
-constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,
+constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private dashboardService: DashboardService,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
 	private fb: FormBuilder,private router: Router,private el: ElementRef) {
 		// customize default values of modals used by this component tree
@@ -986,7 +986,7 @@ formateDate(dateTime:string){
 		console.log('/////groupArrays/////')
 		console.log(groupArrays)
 
-		let contactFilter ="SELECT EC.*,IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) AND (ECTM.isDeleted != 1) where EC.SP_ID"+this.SPID;
+		let contactFilter ="SELECT EC.*,IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) AND (ECTM.isDeleted != 1) where EC.SP_ID ="+this.SPID;
     
 
 		if(groupArrays.length>0){
@@ -1485,6 +1485,13 @@ formateDate(dateTime:string){
 	closeConfirmModal(){
 		this.modalReference2.close();
 	}
+	constructMessageContent(BodyText: string): string {
+		let content = BodyText;
+		if (this.selectedTemplate.FooterText && this.selectedTemplate.FooterText.trim() !== '') {
+		  content += this.selectedTemplate.FooterText;
+		}
+		return content;
+	  }
 	async ConfirmScheduleClose (action:any){
 		this.isLoading = true;
 		this.closeAllModal();
@@ -1515,9 +1522,9 @@ formateDate(dateTime:string){
 			SP_ID:this.SPID,
 			optInStatus:this.optInStatus,
 			title:this.newCampaignDetail.value.title,
-			channel_id:this.newCampaignDetail.value.channel_id,
+			channel_id:this.channelId(this.selectedChannel),
 			message_heading:this.selectedTemplate.Header,
-			message_content:this.selectedTemplate.BodyText,
+			message_content: this.constructMessageContent(this.selectedTemplate.BodyText),
 			message_footer: this.selectedTemplate.FooterText,
 			message_media:this.selectedTemplate.Links,
 			media_type:this.selectedTemplate.media_type,
@@ -1557,6 +1564,7 @@ formateDate(dateTime:string){
 			if(newCampaign.insertId > 0){
 				CampaignId= newCampaign.insertId;
 			}
+			//todo
 			// if(this.scheduled !=1){
 			// 	this.runCampaign(CampaignId,BodyData)
 			// }
@@ -1795,7 +1803,7 @@ formateDate(dateTime:string){
 				//delete obj[item];
 		});
 
-	   this.CsvContactCol = item  
+	   this.CsvContactCol = item;
 	   this.mapCsvContact= false
 	}else{
 		this.showToaster('Column should only have numeric values','error');
@@ -1856,11 +1864,17 @@ formateDate(dateTime:string){
 			})
 		
 	   }
+	   console.log(this.csvContactList);
+	   this.getContactVerified(this.csvContactList);
+	   if(this.csvContactList.length > 0){
 		this.newListName=false;
 		this.importedContacts=this.csvContactList.length+' unique contacts selected';
 		this.closeAllModal()
 		this.activeStep=2
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
+	   } else{
+		this.showToaster('No valid record found','error')
+	   }
 	    
 	}
 	closeImportantContact(addNewCampaign:any){
@@ -3058,5 +3072,23 @@ console.log(this.allTemplatesMain);
 	// }
 	removeFile(){
 		this.selecetdCSV = '';
+	}
+	getContactVerified(importData:any){
+		//let importData;
+		let phoneArray:any[] =[];
+		importData.forEach((element:any,index:number) => {
+			phoneArray.push({phone:element[this.CsvContactCol],id:index});
+			element['id'] =index;
+		});
+		this.csvContactList =[];
+		this.dashboardService.getContactVerified(phoneArray).subscribe((data:any)=>{
+			let verifiedData =  data?.results;
+			verifiedData.forEach((item:any)=>{
+				const data = importData.filter((it:any) => it.id == item.id);
+				if(data?.length >0){
+					this.csvContactList.push(data[0]);
+				}
+			})
+		})
 	}
 }
