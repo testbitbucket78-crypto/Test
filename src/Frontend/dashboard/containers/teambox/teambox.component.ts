@@ -1416,6 +1416,7 @@ attachMedia(Link: string, media_type: string){
 				if(it.is_read == 0)
 				count++;
 			})
+			this.interactionList[idx]['LastMessageDate'] = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]['created_at']:[];
 			this.interactionList[idx]['UnreadCount'] = count;
 			this.updateUnreadCount();
 		},400)
@@ -2725,6 +2726,9 @@ toggleTagsModal(updatedtags:any){
 	this.selectedTags = ''; 
 	
 	var activeTags = this.selectedInteraction['tag'];
+	if (Array.isArray(activeTags)) {
+		activeTags = activeTags.filter(tag => tag).join(','); 
+	  }
 	for(var i=0;i<this.tagsoptios.length;i++){
 		var tagItem = this.tagsoptios[i]
 		if(activeTags?.includes(tagItem.ID)){
@@ -2760,8 +2764,8 @@ updateTags(){
 			this.modalReference.close();
 		}
 		this.showToaster('Tags updated...','success')
-
 	});
+	
 }
 
 getTagsName(tags:any){
