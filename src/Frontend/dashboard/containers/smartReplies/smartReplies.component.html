@@ -77,8 +77,10 @@
 				<h6>Edited on:</h6>
 				<h5>{{repliesData?.ModifiedDate | date: 'dd MMM yyyy' }}</h5>
 			</div>
-			<h4 class="help-support-btn p-0" routerLink="/dashboard/support"><img id="Edit-icon"
-					src="assets/img/Edit-icon.png">Help & Support</h4>
+			<!-- <h4 class="help-support-btn p-0" routerLink="/dashboard/support"><img id="Edit-icon"
+					src="assets/img/Edit-icon.png">Help & Support</h4> -->
+			<h4 class="help-support-btn p-0" (click)="editSmartReply(1)"><img id="Edit-icon"
+					src="assets/img/Edit-icon.png">{{items?.Title}}</h4>
 			<div class="row d-flex">
 				<h6 class="text-justify">{{items?.Description}}.</h6>
 			</div>

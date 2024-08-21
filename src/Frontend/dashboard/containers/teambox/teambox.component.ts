@@ -1044,13 +1044,13 @@ attachMedia(Link: string, media_type: string){
 	}
 
 	if(getMimeTypePrefix === 'image') {
-	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p><br>'
+	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 	}
 	else if(getMimeTypePrefix === 'video') {
-		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p><br>'
+		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 	}
 	else {
-		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p><br>'
+		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
 	}
 	const editorElement = this.chatEditor?.contentModule?.getEditPanel?.();
 
@@ -1059,10 +1059,11 @@ attachMedia(Link: string, media_type: string){
 	  
 	  if (existingMediaElement) {
 		const newElement = document.createElement('div');
-		newElement.innerHTML = mediaName;
+		newElement.innerHTML = mediaName+ '<br>';
 		editorElement.replaceChild(newElement.firstElementChild!, existingMediaElement);
 	  } else {
-		this.chatEditor.value = mediaName;
+		const editorValue = this.chatEditor.value ?? '<br>';
+			this.chatEditor.value = mediaName + editorValue;
 	  }
 	}
 	this.mediaType = media_type
@@ -1320,10 +1321,13 @@ attachMedia(Link: string, media_type: string){
 
 	scrollChatToBottom() {
 		const chatWindowElement = this.chatSection?.nativeElement;
+		const notesWindowElement = this.notesSection?.nativeElement
 		if (chatWindowElement) {
 			chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
-		  }
-
+		}
+		if (notesWindowElement) {
+            notesWindowElement.scrollTop = notesWindowElement.scrollHeight;
+        }
 	  }
 
 	async subscribeToNotifications() {

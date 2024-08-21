@@ -14,7 +14,7 @@
                <label class="custom-control-label" for="contactowner"><span class="sub-heading">Assign to Contact Owner</span></label>
             </div>
             <div class="sub-contents">
-                <p>If this is selected, override all other rules and always assign the chat to its Contact Owner. If the Contact Owner is not defined or not available then the below routing rules will apply if enabled.</p>           
+                <p>If this is selected, override all other rules and always assign the chat to its Contact Owner. If the Contact Owner is not available then the below routing rules will apply if enabled.</p>           
             </div>
         </div>
         <div class="pl-2 pr-5 pb-3">
@@ -116,7 +116,7 @@
             <select [disabled]="missedChatOption!=='assignspecificuser'" class="input-form pointerCursor" [(ngModel)]="selectuser" >
                 <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
             </select>
-            <p>If the contact owner is not defined, chat is assigned to Admin</p>
+            <p>If the contact owner is not defined or there are multiple admins, then the chat is assigned to default Admin.</p>
             </div>
         </div>
     </div>
