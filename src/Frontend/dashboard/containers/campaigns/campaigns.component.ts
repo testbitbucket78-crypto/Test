@@ -1485,6 +1485,13 @@ formateDate(dateTime:string){
 	closeConfirmModal(){
 		this.modalReference2.close();
 	}
+	constructMessageContent(BodyText: string): string {
+		let content = BodyText;
+		if (this.selectedTemplate.FooterText && this.selectedTemplate.FooterText.trim() !== '') {
+		  content += this.selectedTemplate.FooterText;
+		}
+		return content;
+	  }
 	async ConfirmScheduleClose (action:any){
 		this.isLoading = true;
 		this.closeAllModal();
@@ -1515,9 +1522,9 @@ formateDate(dateTime:string){
 			SP_ID:this.SPID,
 			optInStatus:this.optInStatus,
 			title:this.newCampaignDetail.value.title,
-			channel_id:this.newCampaignDetail.value.channel_id,
+			channel_id:this.channelId(this.selectedChannel),
 			message_heading:this.selectedTemplate.Header,
-			message_content:this.selectedTemplate.BodyText,
+			message_content: this.constructMessageContent(this.selectedTemplate.BodyText),
 			message_footer: this.selectedTemplate.FooterText,
 			message_media:this.selectedTemplate.Links,
 			media_type:this.selectedTemplate.media_type,
@@ -1557,6 +1564,7 @@ formateDate(dateTime:string){
 			if(newCampaign.insertId > 0){
 				CampaignId= newCampaign.insertId;
 			}
+			//todo
 			// if(this.scheduled !=1){
 			// 	this.runCampaign(CampaignId,BodyData)
 			// }

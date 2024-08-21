@@ -644,7 +644,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 
 		if(mediaContent && item.media_type!== 'text') {
-			htmlcontent += mediaContent
+			htmlcontent += mediaName
 		}
 	
 		htmlcontent +='<p>'+ item.BodyText+'</p>'+'<br>';
@@ -871,7 +871,7 @@ selectQuickReplies(item:any){
 		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
 		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
 	}
-	var htmlcontent = mediaName+'<p>'+item.BodyText+'</p>';
+	var htmlcontent = mediaName+item.BodyText;
 	this.chatEditor.value = htmlcontent
 	this.mediaType = item.media_type
 	this.messageMediaFile = item.Links;
@@ -911,6 +911,8 @@ addingStylingToMedia(item: any){
 			parentElement.style.textOverflow = 'ellipsis'; 
 			parentElement.style.whiteSpace = 'nowrap'; 
 			parentElement.style.paddingRight = '30px'; 
+			parentElement.style.border = '0.5px solid';
+			parentElement.style.padding = '4px';
 			parentElement.appendChild(crossButton);
 
 			crossButton.addEventListener('click', () => {
@@ -1025,8 +1027,51 @@ sendattachfile() {
         }
     }
 }
+getMimeTypePrefix(mimeType: string): string {
+	return mimeType.split('/')[0];
+  }
+attachMedia(Link: string, media_type: string){
+	this.closeAllModal()
+	let mediaName
+    const fileNameWithPrefix = Link.substring(Link.lastIndexOf('/') + 1);
+	let originalName;
+	let getMimeTypePrefix = this.getMimeTypePrefix(media_type);
+	if (getMimeTypePrefix === 'video/') {
+		originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
+		originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+	} else {
+		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+	}
 
-	
+	if(getMimeTypePrefix === 'image') {
+	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p><br>'
+	}
+	else if(getMimeTypePrefix === 'video') {
+		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p><br>'
+	}
+	else {
+		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p><br>'
+	}
+	const editorElement = this.chatEditor?.contentModule?.getEditPanel?.();
+
+	if (editorElement) {
+	  const existingMediaElement = editorElement.querySelector('.custom-class-attachmentType');
+	  
+	  if (existingMediaElement) {
+		const newElement = document.createElement('div');
+		newElement.innerHTML = mediaName;
+		editorElement.replaceChild(newElement.firstElementChild!, existingMediaElement);
+	  } else {
+		this.chatEditor.value = mediaName;
+	  }
+	}
+	this.mediaType = media_type
+	this.messageMediaFile = Link;
+	let item = {
+		media_type: getMimeTypePrefix,
+	}
+	this.addingStylingToMedia(item);
+}
 	sendMediaMessage() {
 		if(this.SIPthreasholdMessages>0){
 		let objectDate = new Date();
@@ -3438,7 +3483,7 @@ sendMessage(){
         //   this.obsArray.next(newArr);
         // });
 		this.getCustomers(true);
-      }
+      }else this.isLoadingOnScroll = false;
     });
 	}
 
