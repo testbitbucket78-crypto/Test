@@ -508,13 +508,13 @@ extractMessage(htmlString: string): string {
 
 // enable browser notifications
 showBrowserNotification(message: string): void {
-  this.notificationService.requestPermission().then(permission => {
-    if (permission === 'granted') {
-      this.notificationService.showNotification(message);
-    } else {
-      console.error('Notification permission denied.');
-    }
-  });
+  // this.notificationService.requestPermission().then(permission => {
+  //   if (permission === 'granted') {
+  //     this.notificationService.showNotification(message);
+  //   } else {
+  //     console.error('Notification permission denied.');
+  //   }
+  // });
 }
 
 startNotificationInterval(): void {

@@ -710,6 +710,7 @@ openNewMessagePopup(){
 		if(isMessage){
 		this.openaddMessage(this.contactadd);			
 		this.header = params['srchText'] ? params['srchText'] :'';	
+		this.searchContact(this.header);
 		console.log(this.header);	
 		}	
 	});
@@ -1661,8 +1662,8 @@ attachMedia(Link: string, media_type: string){
 		let item:any ={};
 		let rangeStart = isNewMessage ? 0 : this.messageRangeStart;
 		let rangeEnd = isNewMessage ? 1 : this.messageRangeEnd;
-		let originalScrollPosition = this.scrollContainer.nativeElement.scrollTop;
-		const originalScrollHeight = this.scrollContainer.nativeElement.scrollHeight;
+		let originalScrollPosition = this.scrollContainer?.nativeElement?.scrollTop;
+		const originalScrollHeight = this.scrollContainer?.nativeElement?.scrollHeight;
 		console.log(originalScrollHeight);
 		item = selectedInteraction;
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',this.SPID,rangeStart,rangeEnd).subscribe((res:any) =>{
@@ -1708,20 +1709,20 @@ attachMedia(Link: string, media_type: string){
 			this.isLoadingOlderMessage = false;
 		})
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID,rangeStart,rangeEnd).subscribe((res1:any) =>{
-			let notesList = res1.result;
-			let val = notesList?this.groupMessageByDate(notesList):[];
-			this.isMessageCompletedNotes = res1.isCompleted;
-			let val1 = notesList?notesList:[];
-			if(isNewMessage){
-				item['notesList'].push(...val);
-				item['allnotes'].push(...val1);
-			}else{
-			this.isMessageCompletedNotes = res1.isCompleted;
-			item['notesList'] =[...val, ...item['notesList']];
-			item['allnotes'] =[...val1, ...item['allnotes']];
-			}
-		})
+		// this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID,rangeStart,rangeEnd).subscribe((res1:any) =>{
+		// 	let notesList = res1.result;
+		// 	let val = notesList?this.groupMessageByDate(notesList):[];
+		// 	this.isMessageCompletedNotes = res1.isCompleted;
+		// 	let val1 = notesList?notesList:[];
+		// 	if(isNewMessage){
+		// 		item['notesList'].push(...val);
+		// 		item['allnotes'].push(...val1);
+		// 	}else{
+		// 	this.isMessageCompletedNotes = res1.isCompleted;
+		// 	item['notesList'] =[...val, ...item['notesList']];
+		// 	item['allnotes'] =[...val1, ...item['allnotes']];
+		// 	}
+		// })
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',this.SPID,rangeStart,rangeEnd).subscribe((res2:any) =>{
 			let mediaList = res2.result;
@@ -1743,6 +1744,21 @@ attachMedia(Link: string, media_type: string){
 		console.log(originalScrollPosition,newScrollHeight,originalScrollHeight)
 	},800)
 		}
+	}
+
+	getNoteData(selectedInteraction:any){
+		let item:any ={};
+		item = selectedInteraction;
+		let rangeStart = 0;
+		let rangeEnd = 30;
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID,rangeStart,rangeEnd).subscribe((res1:any) =>{
+			let notesList = res1.result;
+			let val = notesList?this.groupMessageByDate(notesList):[];
+			this.isMessageCompletedNotes = res1.isCompleted;
+			let val1 = notesList?notesList:[];
+				item['notesList'] =val;
+				item['allnotes']= val1;
+		})
 	}
 
 	getUpdatedList(dataList:any) {
@@ -2644,8 +2660,8 @@ formatPhoneNumber(contactForm: FormGroup) {
   
 
 searchContact(event:any){
-	this.contactSearchKey = event.target.value;
-	console.log(event.target.value);
+	this.contactSearchKey = event;
+	console.log(event);
 	if(this.contactSearchKey)
 		this.getSearchContact();
 	else
@@ -3166,9 +3182,22 @@ deleteNotes(){
 	////console.log(bodyData)
 	this.apiService.deleteMessage(bodyData).subscribe(async data =>{
 		//console.log(data)
-		this.selectedNote.is_deleted=1
-		this.selectedNote.deleted_by=this.selectedNote.AgentName
+		this.selectedNote.is_deleted=1;
+		this.selectedNote.deleted_by=this.selectedNote.AgentName;
+		this.getNoteData(this.selectedInteraction);
+		this.selectedNote=[];
+		if(this.modalReference){
+			this.modalReference.close();
+		}
 	})
+}
+
+openPopup(popup:any){
+	this.hideNoteOption()
+	if(this.modalReference){
+		this.modalReference.close();
+	}
+	this.modalReference = this.modalService.open(popup,{ size:'sm', windowClass:'white-bg'});
 }
 
 checkAuthentication(){
@@ -3334,7 +3363,9 @@ sendMessage(){
 					Message_id: ''
 				});
 				this.chatEditor.value ='';					
-				this.getMessageData(this.selectedInteraction,true)
+				// this.getMessageData(this.selectedInteraction,true)
+				this.getNoteData(this.selectedInteraction);
+				this.selectedNote =[];
 			})
 		 }
 		}else{
