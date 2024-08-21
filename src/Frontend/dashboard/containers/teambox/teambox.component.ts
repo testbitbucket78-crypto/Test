@@ -2381,7 +2381,7 @@ copyContactFormData() {
               ActuallName: "ContactOwner"
             },
             {
-              displayName: '',
+              displayName: this.selectedInteraction['tag'],
               ActuallName: "tag"
             },
             {
