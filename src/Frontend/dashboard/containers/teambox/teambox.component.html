@@ -883,7 +883,7 @@ popupWidth='250px' popupHeight='200px'>
 
 
 						<div class="input_group_btn" id="senddoc">
-							<button type="button" class="submit-btn" (click)="sendMediaMessage()">Attach</button>
+							<button type="button" class="submit-btn" (click)="attachMedia(messageMeidaFile, mediaType)">Attach</button>
 						</div>
 </div>
 </div>
@@ -1466,7 +1466,7 @@ popupWidth='250px' popupHeight='200px'>
 		
 		<div class="modal-body messageadd">
 			<input class="search-box" type="text" placeholder="Search by Name or phone number" aria-label="Search"
-				aria-describedby="basic-addon2" [(ngModel)]="header" (keyup)="searchContact($event)"/>
+				aria-describedby="basic-addon2" [(ngModel)]="header" (keyup)="searchContact($event.target.value)"/>
 		<div class="position-relative">
 			<div class="drop-down-btn" (click)="toggleContactOption()">
 				
@@ -1980,7 +1980,7 @@ popupWidth='250px' popupHeight='200px'>
 						<p (click)="editNotes()">
 							<span class="editnotes-btn">Edit</span>
 						</p>
-						<p (click)="deleteNotes()">
+						<p (click)="openPopup(openNoteDeleteAlertmMessage)">
 							<span class="deletenotes-btn">Delete</span>
 						</p>
 					</div>
@@ -1990,6 +1990,18 @@ popupWidth='250px' popupHeight='200px'>
 	</div>
 
 
+	<ng-template #openNoteDeleteAlertmMessage let-c="close" let-d="dismiss">
+
+		<div class="modal-body alertmessage">
+			<p class="label">are you sure you want to delete this note ?</p>
+			<div class="input_group_btn">
+				<button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
+				<button type="button" class="submit-btn red-bg" aria-label="Close"
+					(click)="deleteNotes()">Confirm</button>
+			</div>
+		</div>
+
+	</ng-template>
 
 
 

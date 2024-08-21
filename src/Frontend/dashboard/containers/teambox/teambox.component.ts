@@ -582,14 +582,37 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	}
 
 	replaceVariableInTemplate() {
+		let val:any =[];
 		this.allVariablesList.forEach((placeholder, index) => {
 			const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
 			if(this.selectedTemplate.media_type == 'text') {
-				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, '{{' + index + '}}');
 			}
-			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
+			val.push({idx:'{{' + index + '}}',value:this.variableValues[index]});
+			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, '{{' + index + '}}');
+		});
+		val.forEach((placeholder:any) => {
+			const regex = new RegExp(placeholder?.idx?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+			if(this.selectedTemplate.media_type == 'text') {
+				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, placeholder?.value);
+			}
+			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, placeholder?.value);
 		});
 	}
+
+	//replaceVariableInTemplate() {
+		// 	let header = this.selectedTemplate.Header;
+		// 	let BodyText = this.selectedTemplate.BodyText;
+		// 	this.allVariablesList.forEach((placeholder, index) => {
+		// 		const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+		// 		if(this.selectedTemplate.media_type == 'text') {
+		// 			header = this.selectedTemplate.Header.replace(regex, this.variableValues[index]);
+		// 		}
+		// 		BodyText = this.selectedTemplate.BodyText.replace(regex, this.variableValues[index]);
+		// 	});
+		// 	this.selectedTemplate.Header = header;
+		// 	this.selectedTemplate.BodyText = BodyText;
+		// }
 	insertTemplate(item:any) {
 		this.closeAllModal()
 		let mediaContent;
@@ -621,7 +644,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 
 		if(mediaContent && item.media_type!== 'text') {
-			htmlcontent += mediaContent
+			htmlcontent += mediaName
 		}
 	
 		htmlcontent +='<p>'+ item.BodyText+'</p>'+'<br>';
@@ -635,38 +658,6 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.messageMeidaFile = item.Links;
 		this.addingStylingToMedia(item);
 	}
-
-	// selectQuickReplies(item:any){
-	// 	this.closeAllModal()
-	// 	let mediaContent
-	// 	let mediaName
-	// 	const fileNameWithPrefix = item.Links.substring(item.Links.lastIndexOf('/') + 1);
-	// 	let originalName;
-	// 	if (item.media_type === 'video') {
-	// 		originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
-	// 		originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
-	// 	} else {
-	// 		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
-	// 	}
-	
-	// 	if(item.media_type === 'image') {
-	// 	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
-	// 	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
-	// 	}
-	// 	else if(item.media_type === 'video') {
-	// 		mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
-	// 		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
-	// 	}
-	// 	else {
-	// 		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
-	// 		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
-	// 	}
-	// 	var htmlcontent = mediaName+'<p>'+item.BodyText+'</p>';
-	// 	this.chatEditor.value = htmlcontent
-	// 	this.mediaType = item.media_type
-	// 	this.messageMeidaFile = item.Links;
-	// 	this.addingStylingToMedia(item);
-	// }
 
 	processMediaType(mediaType: any,message_media:any, messageMeidaFile: any):string{
 		if (message_media) {
@@ -719,6 +710,7 @@ openNewMessagePopup(){
 		if(isMessage){
 		this.openaddMessage(this.contactadd);			
 		this.header = params['srchText'] ? params['srchText'] :'';	
+		this.searchContact(this.header);
 		console.log(this.header);	
 		}	
 	});
@@ -726,7 +718,8 @@ openNewMessagePopup(){
 }	
 ToggleShowMentionOption(){
 	this.closeAllModal()
-	this.showMention=!this.showMention
+	setTimeout(()=>{this.showMention=!this.showMention},50)
+	
 }
 InsertMentionOption(user:any){
 	let content:any = this.chatEditor.value || '';
@@ -773,7 +766,9 @@ ToggleInsertTemplateOption(){
 	$("#insertmodal").modal('show'); 
 		//}
 		this.fallbackvalue = [];
-
+		this.allTemplates = JSON.parse(JSON.stringify(this.allTemplatesMain));
+		console.log(this.allTemplatesMain, 'allTemplatesMain');
+		console.log(this.allTemplates, 'allTemplates');
 	}
 	}
 
@@ -878,7 +873,7 @@ selectQuickReplies(item:any){
 		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
 		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
 	}
-	var htmlcontent = mediaName+'<p>'+item.BodyText+'</p>';
+	var htmlcontent = mediaName+item.BodyText;
 	this.chatEditor.value = htmlcontent
 	this.mediaType = item.media_type
 	this.messageMediaFile = item.Links;
@@ -918,6 +913,8 @@ addingStylingToMedia(item: any){
 			parentElement.style.textOverflow = 'ellipsis'; 
 			parentElement.style.whiteSpace = 'nowrap'; 
 			parentElement.style.paddingRight = '30px'; 
+			parentElement.style.border = '0.5px solid';
+			parentElement.style.padding = '4px';
 			parentElement.appendChild(crossButton);
 
 			crossButton.addEventListener('click', () => {
@@ -1032,8 +1029,51 @@ sendattachfile() {
         }
     }
 }
+getMimeTypePrefix(mimeType: string): string {
+	return mimeType.split('/')[0];
+  }
+attachMedia(Link: string, media_type: string){
+	this.closeAllModal()
+	let mediaName
+    const fileNameWithPrefix = Link.substring(Link.lastIndexOf('/') + 1);
+	let originalName;
+	let getMimeTypePrefix = this.getMimeTypePrefix(media_type);
+	if (getMimeTypePrefix === 'video/') {
+		originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
+		originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+	} else {
+		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+	}
 
-	
+	if(getMimeTypePrefix === 'image') {
+	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p><br>'
+	}
+	else if(getMimeTypePrefix === 'video') {
+		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p><br>'
+	}
+	else {
+		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p><br>'
+	}
+	const editorElement = this.chatEditor?.contentModule?.getEditPanel?.();
+
+	if (editorElement) {
+	  const existingMediaElement = editorElement.querySelector('.custom-class-attachmentType');
+	  
+	  if (existingMediaElement) {
+		const newElement = document.createElement('div');
+		newElement.innerHTML = mediaName;
+		editorElement.replaceChild(newElement.firstElementChild!, existingMediaElement);
+	  } else {
+		this.chatEditor.value = mediaName;
+	  }
+	}
+	this.mediaType = media_type
+	this.messageMediaFile = Link;
+	let item = {
+		media_type: getMimeTypePrefix,
+	}
+	this.addingStylingToMedia(item);
+}
 	sendMediaMessage() {
 		if(this.SIPthreasholdMessages>0){
 		let objectDate = new Date();
@@ -1317,6 +1357,7 @@ sendattachfile() {
 							if(msgjson.message)
 							{
 								if(msgjson.message == this.selectedInteraction?.InteractionId){
+									if(msgjson.msg_id != 'Assign Agent'){
 									if(msgjson.msg_status=="IN"){
 									//this.updateMessages();
 									this.getMessagesById(msgjson?.msg_id)
@@ -1327,6 +1368,9 @@ sendattachfile() {
 											this.getMessageData(this.selectedInteraction,true,true)
 										//}
 									}
+								}else{
+									this.getInteraction(this.selectedInteraction?.InteractionId);
+								}
 								}else{
 									this.updateInteraction(msgjson.message);
 								}
@@ -1378,6 +1422,7 @@ sendattachfile() {
 				if(it.is_read == 0)
 				count++;
 			})
+			this.interactionList[idx]['LastMessageDate'] = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]['created_at']:[];
 			this.interactionList[idx]['UnreadCount'] = count;
 			this.updateUnreadCount();
 		},400)
@@ -1617,8 +1662,8 @@ sendattachfile() {
 		let item:any ={};
 		let rangeStart = isNewMessage ? 0 : this.messageRangeStart;
 		let rangeEnd = isNewMessage ? 1 : this.messageRangeEnd;
-		let originalScrollPosition = this.scrollContainer.nativeElement.scrollTop;
-		const originalScrollHeight = this.scrollContainer.nativeElement.scrollHeight;
+		let originalScrollPosition = this.scrollContainer?.nativeElement?.scrollTop;
+		const originalScrollHeight = this.scrollContainer?.nativeElement?.scrollHeight;
 		console.log(originalScrollHeight);
 		item = selectedInteraction;
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'text',this.SPID,rangeStart,rangeEnd).subscribe((res:any) =>{
@@ -1664,20 +1709,20 @@ sendattachfile() {
 			this.isLoadingOlderMessage = false;
 		})
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID,rangeStart,rangeEnd).subscribe((res1:any) =>{
-			let notesList = res1.result;
-			let val = notesList?this.groupMessageByDate(notesList):[];
-			this.isMessageCompletedNotes = res1.isCompleted;
-			let val1 = notesList?notesList:[];
-			if(isNewMessage){
-				item['notesList'].push(...val);
-				item['allnotes'].push(...val1);
-			}else{
-			this.isMessageCompletedNotes = res1.isCompleted;
-			item['notesList'] =[...val, ...item['notesList']];
-			item['allnotes'] =[...val1, ...item['allnotes']];
-			}
-		})
+		// this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID,rangeStart,rangeEnd).subscribe((res1:any) =>{
+		// 	let notesList = res1.result;
+		// 	let val = notesList?this.groupMessageByDate(notesList):[];
+		// 	this.isMessageCompletedNotes = res1.isCompleted;
+		// 	let val1 = notesList?notesList:[];
+		// 	if(isNewMessage){
+		// 		item['notesList'].push(...val);
+		// 		item['allnotes'].push(...val1);
+		// 	}else{
+		// 	this.isMessageCompletedNotes = res1.isCompleted;
+		// 	item['notesList'] =[...val, ...item['notesList']];
+		// 	item['allnotes'] =[...val1, ...item['allnotes']];
+		// 	}
+		// })
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',this.SPID,rangeStart,rangeEnd).subscribe((res2:any) =>{
 			let mediaList = res2.result;
@@ -1699,6 +1744,21 @@ sendattachfile() {
 		console.log(originalScrollPosition,newScrollHeight,originalScrollHeight)
 	},800)
 		}
+	}
+
+	getNoteData(selectedInteraction:any){
+		let item:any ={};
+		item = selectedInteraction;
+		let rangeStart = 0;
+		let rangeEnd = 30;
+		this.apiService.getAllMessageByInteractionId(item.InteractionId,'notes',this.SPID,rangeStart,rangeEnd).subscribe((res1:any) =>{
+			let notesList = res1.result;
+			let val = notesList?this.groupMessageByDate(notesList):[];
+			this.isMessageCompletedNotes = res1.isCompleted;
+			let val1 = notesList?notesList:[];
+				item['notesList'] =val;
+				item['allnotes']= val1;
+		})
 	}
 
 	getUpdatedList(dataList:any) {
@@ -2337,7 +2397,7 @@ copyContactFormData() {
               ActuallName: "ContactOwner"
             },
             {
-              displayName: '',
+              displayName: this.selectedInteraction['tag'],
               ActuallName: "tag"
             },
             {
@@ -2600,8 +2660,8 @@ formatPhoneNumber(contactForm: FormGroup) {
   
 
 searchContact(event:any){
-	this.contactSearchKey = event.target.value;
-	console.log(event.target.value);
+	this.contactSearchKey = event;
+	console.log(event);
 	if(this.contactSearchKey)
 		this.getSearchContact();
 	else
@@ -2609,8 +2669,8 @@ searchContact(event:any){
 }
 
 getSearchContact(){
-	this.apiService.searchCustomers(this.SPID,this.contactSearchKey).subscribe(data =>{
-		this.contactList= data
+	this.apiService.searchCustomers(this.SPID,this.contactSearchKey).subscribe((data:any) =>{
+		this.contactList= data?.resultList[0];
 	});
 }
 
@@ -2687,6 +2747,9 @@ toggleTagsModal(updatedtags:any){
 	this.selectedTags = ''; 
 	
 	var activeTags = this.selectedInteraction['tag'];
+	if (Array.isArray(activeTags)) {
+		activeTags = activeTags.filter(tag => tag).join(','); 
+	  }
 	for(var i=0;i<this.tagsoptios.length;i++){
 		var tagItem = this.tagsoptios[i]
 		if(activeTags?.includes(tagItem.ID)){
@@ -2722,8 +2785,8 @@ updateTags(){
 			this.modalReference.close();
 		}
 		this.showToaster('Tags updated...','success')
-
 	});
+	
 }
 
 getTagsName(tags:any){
@@ -3027,6 +3090,14 @@ updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
   });
 }
 
+getInteraction(InteractionId:any){
+	this.apiService.getInteractionMapping(InteractionId).subscribe(mappingList =>{
+		//this.getMessageData(this.selectedInteraction,true)
+		var mapping:any  = mappingList;
+		this.selectedInteraction['assignTo'] =mapping?mapping[mapping.length - 1]:'';
+		this.selectedInteraction['assignAgent'] =mapping && mapping?.length>0?mapping[mapping.length - 1]?.name:'';
+	})
+}
 
 openaddMessage(messageadd: any) {
 	if(this.modalReference){
@@ -3111,9 +3182,22 @@ deleteNotes(){
 	////console.log(bodyData)
 	this.apiService.deleteMessage(bodyData).subscribe(async data =>{
 		//console.log(data)
-		this.selectedNote.is_deleted=1
-		this.selectedNote.deleted_by=this.selectedNote.AgentName
+		this.selectedNote.is_deleted=1;
+		this.selectedNote.deleted_by=this.selectedNote.AgentName;
+		this.getNoteData(this.selectedInteraction);
+		this.selectedNote=[];
+		if(this.modalReference){
+			this.modalReference.close();
+		}
 	})
+}
+
+openPopup(popup:any){
+	this.hideNoteOption()
+	if(this.modalReference){
+		this.modalReference.close();
+	}
+	this.modalReference = this.modalService.open(popup,{ size:'sm', windowClass:'white-bg'});
 }
 
 checkAuthentication(){
@@ -3160,10 +3244,13 @@ sendMessage(){
 		} else if(this.messageMeidaFile){
             value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
 		}
+		
+	let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
 			CustomerId: this.selectedInteraction.customerId,
 			SPID:this.SPID,
+			SP_ID:this.SPID,
 			AgentId: this.AgentId,
 			messageTo:this.selectedInteraction.Phone_number,
 			message_text: value || "",
@@ -3178,6 +3265,9 @@ sendMessage(){
 			spNumber: this.spNumber,
 			isTemplate:this.isTemplate,
 			MessageVariables: this.allVariables,
+			action:'edited by ' + agentName,
+			action_at:new Date(),
+			action_by:name,
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
@@ -3272,7 +3362,10 @@ sendMessage(){
 				this.newMessage.reset({
 					Message_id: ''
 				});
-							
+				this.chatEditor.value ='';					
+				// this.getMessageData(this.selectedInteraction,true)
+				this.getNoteData(this.selectedInteraction);
+				this.selectedNote =[];
 			})
 		 }
 		}else{
@@ -3445,7 +3538,7 @@ sendMessage(){
         //   this.obsArray.next(newArr);
         // });
 		this.getCustomers(true);
-      }
+      }else this.isLoadingOnScroll = false;
     });
 	}
 
@@ -3684,4 +3777,16 @@ sendMessage(){
 	get shouldShowNoData(): boolean {
 		return this.agentsList.length === 0 || !this.agentsList.some((user:any) => user.uid !== this.uid);
 	  }
+
+	  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const popupElement = document.querySelector('.popup-dialog.mention');
+
+    if (this.showMention && popupElement && !popupElement.contains(target)) {
+		console.log('jhgjhg');
+      this.showMention = false;
+    }
+  }
+
 }
