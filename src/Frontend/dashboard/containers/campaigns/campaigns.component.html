@@ -1344,11 +1344,7 @@
 								<td>{{item.emailId}}</td>
 								<td>{{item.OptInStatus}}</td>
 								<td>{{item.ContactOwner}}</td>
-								<td>
-									<p class="tag_item" *ngFor='let tag of item.tags ;let t = index'>
-										<span *ngIf="tag == 'New Customer'"class="new"></span> {{tag}}
-									</p>
-							    </td>
+								<td>{{item?.tag_names}}</td>
 						</tr>
 					</tbody>
 				</table>

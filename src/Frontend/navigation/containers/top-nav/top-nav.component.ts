@@ -4,6 +4,9 @@ import { AuthService } from 'Frontend/auth/services';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { Router } from '@angular/router';
+import { interval } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { NotificationService } from 'Frontend/dashboard/services/notification.service';
 
 @HostListener('window:scroll', ['$event'])
 
@@ -36,12 +39,15 @@ export class TopNavComponent implements OnInit {
     firstLetterFirstName!:string;
     firstLetterLastName!:string;
     notificationData = [];
+    LastnotificationData = [];
     currentUserDetails:any;
     randomNumber:number=0;
+    private notificationInterval: any;
+    subscription:any;
 
 
     constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: 
-        ProfileService,private elementRef: ElementRef,private _settingsService:SettingsService) {}
+        ProfileService,private elementRef: ElementRef,private _settingsService:SettingsService,private notificationService:NotificationService) {}
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
@@ -72,16 +78,43 @@ export class TopNavComponent implements OnInit {
         
         this.firstLetterFirstName = firstName.charAt(0) || '';
         this.firstLetterLastName = lastName.charAt(0) || '';
+        this.notificationService.requestPermission();
 
         this.getNotificationData();
+        this.getFirstNotificationData();
         this.getUserList();
+        // this.notificationInterval = setInterval(() => {
+        //   this.notify();
+        // }, 300000);
     }
 
     getNotificationData() {
-      this.apiService.getNotifications(this.spId).subscribe((response=> {
-          this.notificationData = response.notifications;
-          this.notificationData.reverse();
+      this.subscription = interval(60000) .pipe(switchMap(() =>this.apiService.getNotifications(this.spId))).
+      subscribe((response=> {
+        this.notificationData = response.notifications;
+        if(this.notificationData.length != this.LastnotificationData.length){
+          this.notify();
+        }
+        this.LastnotificationData =  JSON.parse(JSON.stringify(this.notificationData));
+        this.notificationData.reverse();
+        console.log(this.notificationData)
       }));
+      
+    }
+    getFirstNotificationData(){
+      this.apiService.getNotifications(this.spId).subscribe((response=> {
+        this.notificationData = response.notifications;       
+        this.LastnotificationData =  JSON.parse(JSON.stringify(this.notificationData));
+        this.notificationData.reverse();
+      }));
+    }
+
+    notify() {
+      console.log('notification send');
+      this.notificationService.showNotification('New message!', {
+        body: 'You have a notification from engagekart.',
+        icon: '../../../../assets/img/main-logo.png'
+      });
     }
 
     toggleShowNotifications() {
