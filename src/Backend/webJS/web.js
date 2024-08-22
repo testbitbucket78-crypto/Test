@@ -864,39 +864,52 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       var inactiveAgent = defaultAction[0].isAgentActive
       var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
     }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web',isContactPreviousDeleted, inactiveAgent, inactiveTimeOut,ifgot)
+    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web',isContactPreviousDeleted, inactiveAgent, inactiveTimeOut,ifgot)
 
 
     console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
-    if (defaultReplyAction == true || defaultReplyAction >0) {
+    if (defaultReplyAction == true || defaultReplyAction >= 0) {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       if (ifgot == 'If not exist') {
 
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
         if (updateInteraction?.affectedRows > 0) {
+          notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
           let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
-
+          if(updateMapping?.affectedRows >0){
+            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+           }
         }
       } else {
         let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
         //check if assignment trigger and chat is ressolve then open 
-        if (defaultReplyAction > 0) {
+        if (defaultReplyAction >= 0) {
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
           //console.log("updateInteraction",updateInteraction)
+
+          if(updateInteraction?.affectedRows >0){
+            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
+            }
+            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
         } else {
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
+          if(updateInteraction?.affectedRows >0){
+            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
+            }
         }
 
 
       }
     }
-    if (defaultReplyAction == false) {
+    if (defaultReplyAction == false || defaultReplyAction != '-1') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
       let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
-
+      if (RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true) {
+        notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+      }
       //Here i have to check if any routing rules addded then send websocket
     }
   }

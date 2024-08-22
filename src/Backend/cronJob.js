@@ -38,14 +38,14 @@ async function fetchScheduledMessages() {
     const currentDay = currentDate.getDay();
 
     let currentDateTime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
-    console.log(currentDateTime)
+    console.log("messagesData",messagesData)
     for (const message of messagesData) {
 
       //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
       console.log(message.sp_id, "campaignTime", isWorkingTime(message), new Date(message.start_datetime) < new Date(currentDateTime), new Date(message.start_datetime), new Date(), new Date(currentDateTime))
       if (isWorkingTime(message)) {
 
-        if (new Date(message.start_datetime) < new Date(currentDateTime)) {
+        if (new Date(message.start_datetime) <= new Date(currentDateTime)) {
           console.log(" isWorkingTime messagesData loop",)
           const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
 
@@ -55,10 +55,10 @@ async function fetchScheduledMessages() {
       }
 
     }
-
+console.log("remaingMessage",remaingMessage)
     for (const message of remaingMessage) {
 
-      //  console.log("remaingMessage loop", message.sp_id)
+        console.log("remaingMessage loop", message.sp_id)
       //let campaignTime = await getCampTime(message.sp_id)  //comment for get time from campaign instead of campaign timing settings
       if (isWorkingTime(message)) {
         //  console.log("remaingMessage  isWorkingTime loop", isWithinTimeWindow(message.start_datetime))
@@ -78,29 +78,86 @@ async function fetchScheduledMessages() {
 
 }
 
-async function parseMessage(content, customerId, spid, messageVariable) {
-  // Replace placeholders in the content with values from message_variables
-  let message_variables = messageVariable && messageVariable.length > 0 ? JSON.parse(messageVariable) : undefined;
 
-  if (message_variables) {
-    message_variables.forEach(variable => {
-      const label = variable.label;
-      const value = variable.value;
-      content = content.replace(new RegExp(label, 'g'), value);
-    });
-  }
-  const placeholders = parseMessageTemplate(content);
-  if (placeholders.length > 0) {
-    const results = await removeTags.getDefaultAttribue(placeholders, spid, customerId);
-    console.log("results", results)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function parseMessage(testMessage, custid, sid, msgVar) {
+  // // Replace placeholders in the content with values from message_variables
+  // let message_variables = messageVariable && messageVariable.length > 0 ? JSON.parse(messageVariable) : undefined;
+
+  // if (message_variables) {
+  //   message_variables.forEach(variable => {
+  //     const label = variable.label;
+  //     const value = variable.value;
+  //     content = content.replace(new RegExp(label, 'g'), value);
+  //   });
+  // }
+  // const placeholders = parseMessageTemplate(content);
+  // if (placeholders.length > 0) {
+  //   const results = await removeTags.getDefaultAttribue(placeholders, spid, customerId);
+  //   console.log("results", results)
+
+  //   placeholders.forEach(placeholder => {
+  //     const result = results.find(result => result.hasOwnProperty(placeholder));
+  //     const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+  //     content = content.replace(`{{${placeholder}}}`, replacement);
+  //   });
+  // }
+  // return content;
+
+
+
+
+
+
+
+
+let content = await removeTags.removeTagsFromMessages(testMessage);
+const placeholders = parseMessageTemplate(testMessage);
+//console.log(testMessage)
+if (placeholders.length > 0) {
+  // Construct a dynamic SQL query based on the placeholders
+
+  let results;
+  // console.log(msgVar !='',"msgVar",msgVar != null ,msgVar,msgVar != null || msgVar !='')
+  if (msgVar != null && msgVar !='') {
+
+   results = await removeTags.getDefaultAttribue(msgVar, sid, custid);
+    //console.log("atribute result ")
     placeholders.forEach(placeholder => {
       const result = results.find(result => result.hasOwnProperty(placeholder));
+      //  console.log(placeholder,"place foreach",results)
       const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
       content = content.replace(`{{${placeholder}}}`, replacement);
     });
+  } else {
+
+    results = await removeTags.getDefaultAttribueWithoutFallback(placeholders, sid, custid);
   }
-  return content;
+
+  // console.log("results", results);
+
+  placeholders.forEach(placeholder => {
+    const result = results.find(result => result.hasOwnProperty(placeholder));
+    const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+    content = content.replace(`{{${placeholder}}}`, replacement);
+  });
+}
+return content;
 }
 
 async function parseMessageForCSV(content, contact, messageVariable) {
@@ -136,7 +193,7 @@ function parseMessageTemplate(template) {
   return placeholders;
 }
 
-async function sendMessages(phoneNumber, message, id, campaign, response) {
+async function sendMessages(phoneNumber, message, id, campaign, response,textMessage) {
   try {
     var status = 0
     if (response == 200) {
@@ -148,12 +205,13 @@ async function sendMessages(phoneNumber, message, id, campaign, response) {
       button_no: campaign.button_no,
       button_exp: campaign.button_exp,
       message_media: campaign.message_media,
-      message_content: campaign.message_content,
+      message_content: textMessage,
       message_heading: campaign.message_heading,
       CampaignId: campaign.Id,
       schedule_datetime: campaign.start_datetime,
       status_message: response,
-      status: status
+      status: status,
+      sp_id :campaign.sp_id
     }
 
 
@@ -265,7 +323,7 @@ async function campaignCompletedAlert(message) {
 }
 
 async function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list) {
-  //  console.log("sendScheduledCampaign", "channel_id", batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message)
+   console.log("sendScheduledCampaign", "channel_id", batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message)
   for (var i = 0; i < batch.length; i++) {
     let Phone_number = batch[i].Phone_number
     //Attributes for contact_list
@@ -282,8 +340,8 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
     var response;
     setTimeout(async () => {
       response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id);
-      console.log("response", JSON.stringify(response.status))
-      sendMessages(Phone_number, message.message_content, message.Id, message, response.status)
+      //console.log("response",response)
+      sendMessages(Phone_number, message.message_content, message.Id, message, response.status,textMessage)
     }, 10)
 
   }
@@ -483,7 +541,6 @@ async function msg(alert, status) {
 
 
 async function isClientActive(spid) {
-
   return new Promise(async (resolve, reject) => {
     try {
 
@@ -493,7 +550,7 @@ async function isClientActive(spid) {
       };
 
       const response = await axios.post(apiUrl, dataToSend);
-      console.log('Response from API:', response.data);
+      //console.log('Response from API:', response.data);
 
       resolve(response.data); // Resolve with the response data
     } catch (error) {
@@ -518,16 +575,12 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
     return respose;
   } if (channelType == 'WhatsApp Web' || channelType == 2  || channelType == 'WA Web') {
-    // if (web.isActiveSpidClient(spid)) {
-    // let respose = await middleWare.postDataToAPI(spid, from, type, text, media)
-    //return respose;
-    // } else {
-    //   return ({status:401});
-    // }
+  
     let clientReady = await isClientActive(spid);
-    if (clientReady.status) {
+    //console.log("clientReady",clientReady)
+    if (clientReady?.status) {
       let response = await middleWare.postDataToAPI(spid, from, type, text, media);
-      console.log("response", JSON.stringify(response.status));
+      console.log("response", JSON.stringify(response?.status));
       return response;
     }
 
@@ -559,8 +612,8 @@ async function autoResolveExpireInteraction() {
 `;
 
     const maxCreatedAtResult = await db.excuteQuery(maxCreatedAtQuery);
-    //console.log("maxCreatedAtResult",maxCreatedAtResult)
-    logger.log("maxCreatedAtResult length  of  auto resolve",{maxCreatedAtResult})
+   // console.log("maxCreatedAtResult length  of  auto resolve",maxCreatedAtResult)
+   // logger.log("maxCreatedAtResult length  of  auto resolve",{maxCreatedAtResult})
     // Update the Interaction table based on the maximum created_at date
     if (Array.isArray(maxCreatedAtResult)) {
       for (const record of maxCreatedAtResult) {
@@ -571,7 +624,7 @@ async function autoResolveExpireInteraction() {
         AND  TIMESTAMPDIFF(HOUR, (SELECT MAX(created_at) FROM Message WHERE interaction_id = ${record.interaction_id}), NOW()) >= 24 and interaction_status != 'Resolved'`;
 
         let result = await db.excuteQuery(updateQuery, ['Resolved']);
-        logger.log(record.interaction_id,"result",result?.affectedRows)
+       // logger.log(record.interaction_id,"result",result?.affectedRows)
         let getMapping = await db.excuteQuery(`select * from InteractionMapping where InteractionId =?`, [record.interaction_id])
         if (result?.length > 0) {
           let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [record.interaction_id]);
@@ -584,7 +637,8 @@ async function autoResolveExpireInteraction() {
 
     
   } catch (err) {
-    logger.error("err autoResolveExpireInteraction ---", {err});
+    console.log("err autoResolveExpireInteraction ---",err)
+   // logger.error("err autoResolveExpireInteraction ---", {err});
   }
 }
 

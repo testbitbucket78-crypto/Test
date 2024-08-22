@@ -1888,16 +1888,8 @@ formateDate(dateTime:string){
 		
 	   }
 	   console.log(this.csvContactList);
-	   this.getContactVerified(this.csvContactList);
-	   if(this.csvContactList.length > 0){
-		this.newListName=false;
-		this.importedContacts=this.csvContactList.length+' unique contacts selected';
-		this.closeAllModal()
-		this.activeStep=2
-		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
-	   } else{
-		this.showToaster('No valid record found','error')
-	   }
+	   this.getContactVerified(this.csvContactList,addNewCampaign);
+	   
 	    
 	}
 	closeImportantContact(addNewCampaign:any){
@@ -3097,22 +3089,32 @@ console.log(this.allTemplatesMain);
 	removeFile(){
 		this.selecetdCSV = '';
 	}
-	getContactVerified(importData:any){
+	getContactVerified(importData:any,addNewCampaign:any){
 		//let importData;
 		let phoneArray:any[] =[];
 		importData.forEach((element:any,index:number) => {
 			phoneArray.push({phone:element[this.CsvContactCol],id:index});
 			element['id'] =index;
-		});
+		});		
+		let obj = {phones:phoneArray};
 		this.csvContactList =[];
-		this.dashboardService.getContactVerified(phoneArray).subscribe((data:any)=>{
+		this.dashboardService.getContactVerified(obj).subscribe((data:any)=>{
 			let verifiedData =  data?.results;
 			verifiedData.forEach((item:any)=>{
 				const data = importData.filter((it:any) => it.id == item.id);
-				if(data?.length >0){
+				if(data?.length >0 && item.phone){
 					this.csvContactList.push(data[0]);
 				}
-			})
+			});
+			if(this.csvContactList.length > 0){
+				this.newListName=false;
+				this.importedContacts=this.csvContactList.length+' unique contacts selected';
+				this.closeAllModal()
+				this.activeStep=2
+				this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
+			   } else{
+				this.showToaster('No valid record found','error')
+			   }
 		})
 	}
 }
