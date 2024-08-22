@@ -33,7 +33,7 @@ WITH LatestInteractions AS (
     FROM 
         Interaction
     WHERE 
-        SP_ID = 55 
+        SP_ID = ? 
         AND is_deleted != 1 AND IsTemporary !=1
 )
 SELECT 

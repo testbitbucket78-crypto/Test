@@ -69,7 +69,7 @@ router.get('/getsavedMessages/:SPID',authenticateToken,TeamBoxController.getsave
 router.get('/getsavedMessages/:Message_id/:SP_ID',authenticateToken,TeamBoxController.getMessagesByMsgId);
 router.get('/getquickReply/:SPID',authenticateToken,TeamBoxController.getquickReply);
 router.get('/getTemplates/:SPID',authenticateToken,TeamBoxController.getTemplates);
-
+router.get('/interactionById/:InteractionId',authenticateToken,TeamBoxController.getInteraction);
 router.post('/editNotes',authenticateToken,TeamBoxController.updateNotes)
 router.post('/addAction',authenticateToken,TeamBoxController.addAction)
 router.get('/searchConatct/:spid/:searchTerm',authenticateToken,TeamBoxController.searchConatct)

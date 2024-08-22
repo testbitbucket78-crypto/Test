@@ -935,7 +935,23 @@ const getInteractionMapping = (req, res) => {
         res.status(500).send({ error: 'Internal server error' });
     }
 };
-
+const getInteraction = (req, res) => {
+    try {
+        // logger.info('Starting getInteractionMapping function');
+        db.runQuery(req, res, 'select * from Interaction where InteractionId =?', [req.params.InteractionId], (err, result) => {
+            if (err) {
+                //  logger.error('Error in getInteractionMapping:', err);
+                res.status(500).send({ error: 'Database query error' });
+            } else {
+                //   logger.info('getInteractionMapping function completed successfully', result);
+                res.send(result);
+            }
+        });
+    } catch (err) {
+        logger.error('Error in getInteraction:', err);
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
 const getsavedMessages = (req, res) => {
     try {
         //  logger.info('Starting getsavedMessages function');
@@ -1010,7 +1026,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId,searchConatct
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId,searchConatct,getInteraction
 };
 
 
