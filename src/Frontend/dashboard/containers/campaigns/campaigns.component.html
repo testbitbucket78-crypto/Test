@@ -155,7 +155,7 @@
 						</div> -->
 					<div class="template_text">
 						<p [innerHTML]="selectedCampaign.message_heading" class="name"></p>
-						<p class="description" [innerHTML]="selectedCampaign.message_content"></p>
+						<p class="description" [innerHTML]="selectedCampaign.message_content |sanitizeHtml"></p>
 						<!-- <p class="footer" [innerHTML]="selectedCampaign.message_footer" ></p> -->
 					</div>
 

@@ -973,7 +973,8 @@ showAddSmartRepliesModal() {
 		}
 		if(item.Links) this.messageMeidaFile = item.Links
 		this.chatEditor.value =htmlcontent
-		this.isAttachmentMedia = false
+		this.isAttachmentMedia = false;
+		this.addMessage(true,htmlcontent);
 	}
 
 	searchTemplate(event:any){
@@ -1092,16 +1093,16 @@ showAddSmartRepliesModal() {
 
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
-	addMessage() {
+	addMessage(isTemplate:boolean=false,templateTxt:string='') {
 		// var tempDivElement = document.createElement("div");   
 		// tempDivElement.innerHTML = this.chatEditor.value;
 		// let val = tempDivElement.textContent || tempDivElement.innerText || "";
+		let value = isTemplate ?templateTxt :(this.chatEditor.value || "");
 
-		if (!this.chatEditor.value) {
+		if (!value) {
 			this.showToaster('! Please type your message first','error');
 			return;
 		}
-		let value = '';
 		let mediaType = '';
         if(this.chatEditor.value){
 			value = this.removeMediaTags(this.chatEditor.value);
