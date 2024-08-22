@@ -820,6 +820,7 @@ showAddSmartRepliesModal() {
 				crossButton.style.outline ='none';
 				crossButton.style.borderRadius = '50%';
 				crossButton.style.cursor = 'pointer';
+				crossButton.style.pointerEvents = 'auto';
 				
 				const parentElement = media.parentElement as HTMLElement;
 				parentElement.style.position = 'relative';
@@ -831,6 +832,9 @@ showAddSmartRepliesModal() {
 				parentElement.style.border = '0.5px solid';
 			    parentElement.style.padding = '4px';
 				parentElement.appendChild(crossButton);
+
+				parentElement.style.pointerEvents = 'none';
+                parentElement.setAttribute('contenteditable', 'false'); 
 	
 				crossButton.addEventListener('click', () => {
 				const mediaNameElement = editorContent?.querySelector('.custom-class-attachmentType');
@@ -848,6 +852,13 @@ showAddSmartRepliesModal() {
 			}, 0); 
 		  }
 	}
+	isImage(media: string): boolean {
+		return media.match(/\.(jpeg|jpg|gif|png)$/) != null;
+	  }
+	
+	  isVideo(media: string): boolean {
+		return media.match(/\.(mp4|webm|ogg)$/) != null;
+	  }
 	// insertTemplate(item:any) {
 	// 	this.closeAllModal()
 	// 	let mediaContent;

@@ -252,7 +252,7 @@ countryCodes = [
     successMessage = '';
     warnMessage = '';
     paginationPageSize: string = '10';
-    currPage: any = 10;
+    currPage: any = 1;
     totalPage: any;
     paging: any = 1;
     lastElementOfPage: any;
@@ -1469,9 +1469,15 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
         setTimeout(() => {
             this.GridService.onChangePageSize(this.paginationPageSize, this.gridapi, this.rowData);
             this.paging = this.GridService.paging;
+            this.onBtFirst()
         }, 50)
+        
     }
-
+    onBtFirst(){
+      this.GridService.onBtFirst(this.gridapi, this.rowData);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+    }
     onBtNext() {
         this.GridService.onBtNext(this.gridapi, this.rowData);
         this.currPage = this.GridService.currPage;
