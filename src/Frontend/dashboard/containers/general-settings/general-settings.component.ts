@@ -24,6 +24,7 @@ export class GeneralSettingsComponent implements OnInit {
   pauseAutoTimePattern:RegExp = /^(?:[1-9]\d{0,2}|1[0-3]\d{2}|1440)$/;
   userList:any[] =[];
   initUserList:any[] =[];
+  currentLoggedInUserUID: number = 0;
   defaultAdminUid:number=0;
   isLoading! : boolean;
 
@@ -85,6 +86,7 @@ export class GeneralSettingsComponent implements OnInit {
  
 
   getUserList() {
+    this.currentLoggedInUserUID = JSON.parse(sessionStorage.getItem('loginDetails')!).uid
     this.apiService.getUserList(this.spId).subscribe((result:any) =>{
       if(result){
         this.userList =result?.getUser;     
