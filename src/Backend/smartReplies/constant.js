@@ -105,6 +105,8 @@ t.ModifiedDate,
 t.Channel,
 m.Message,
 m.Value ,
+m.media_type,
+m.Media,
 n.Name 
 from
 SmartReply t
