@@ -36,9 +36,9 @@
 					 (click)="getRepliesByID(reply)">
 					<div class="card-body gy-2">
 						<h6 class="id">Id:{{ reply.ID }}</h6>
-						<h5 class="card-title">{{reply.Title}}</h5>
+						<h5 class="card-title ellipsis">{{reply.Title}}</h5>
 
-						<p [innerHTML]="reply.Description" class="card-text">
+						<p [innerHTML]="reply.Description" class="card-text ellipsis">
 						</p>
 						<p class="text-dark mb-1" style="font-size: 11px;">
 						  <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg" class="channel-selected"/>
@@ -522,7 +522,7 @@
 							  </div>
 							  <div class="modal-body attachmentboxbody">
 								<div class="header-line">
-								<h4>{{isAttachmentMedia==true ? 'Replace Media' : 'Attach file'}}</h4>
+								<h4>{{isAttachmentMedia==true ? 'Replace&nbsp;Media' : 'Attach file'}}</h4>
 								<h4>Instructions</h4>
 							  </div>
 								<div class="attachmentbox">

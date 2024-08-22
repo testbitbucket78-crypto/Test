@@ -1517,6 +1517,7 @@ formateDate(dateTime:string){
 					end_Time = item.end_time;
 				}
 			});
+		this.processMediaType(this.selectedTemplate.media_type, this.selectedTemplate.Links)
 		let BodyData:any={
 			Id:this.newCampaignDetail.Id?this.newCampaignDetail.Id:'',
 			SP_ID:this.SPID,
@@ -1574,6 +1575,28 @@ formateDate(dateTime:string){
 		this.getAllCampaigns()
 	}
 	
+	processMediaType(mediaType: any,message_media:any){
+		if (message_media) {
+			const extension = message_media.split('.').pop()?.toLowerCase();
+			const mimeTypeMap: Record<string, string> = {
+				'jpg': 'jpeg', 'jpeg': 'jpeg', 'png': 'png', 'gif': 'gif',
+				'mp4': 'mp4', 'mov': 'quicktime', 'avi': 'x-msvideo', 'wmv': 'x-ms-wmv',
+				'pdf': 'pdf', 'doc': 'msword', 'docx': 'vnd.openxmlformats-officedocument.wordprocessingml.document',
+				'ppt': 'vnd.ms-powerpoint', 'pptx': 'vnd.openxmlformats-officedocument.presentationml.presentation'
+			};
+	
+			const mimeType = mimeTypeMap[extension!];
+			if (mimeType) {
+				if (mediaType === 'image') {
+					this.selectedTemplate.media_type = `image/${mimeType}`;
+				} else if (mediaType === 'video') {
+					this.selectedTemplate.media_type = `video/${mimeType}`;
+				} else if (mediaType === 'document') {
+					this.selectedTemplate.media_type = `application/${mimeType}`;
+				}
+			}
+		}
+	}
 	async runCampaign(CampaignId:any,BodyData:any){
 
 		if(this.csvContactList.length>0){
@@ -1974,6 +1997,7 @@ testinfo(){
 	
 	nextStep(){
 
+	   if(this.newCampaignDetail.value.channel_label) this.selectedChannel = this.newCampaignDetail.value.channel_label;
 		this.CampaignNameAlreadyExist();
 
 		if(this.activeStep < 3){
