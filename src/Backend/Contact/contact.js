@@ -1568,6 +1568,7 @@ function parseCountryCodes(countryCodes) {
 
 
 function separatePhoneNumber(countryPhone, countryCodeMap) {
+  
   for (const [code, fullCode] of countryCodeMap) {
     if (countryPhone.startsWith(code)) {
       const phoneNumber = countryPhone.slice(code.length).replace(/^0+/, ''); // Remove country code and leading zeros
@@ -1611,30 +1612,50 @@ const checkPhoneNumbersLength = (phoneNumbers, countryCodeMap, expectedLengths) 
 
 app.post('/verifyPhoneCode', (req, res) => {
   try {
-    let phone = req.body.phone;
-    let existPhone = true;
-    const phoneCheckResult = checkPhoneNumbersLength([phone], countryCodeMap, expectedLengths)[0];
-    if (phoneCheckResult.error) {
-      existPhone = false;
-    } else if (!phoneCheckResult.isValidLength) {
-      console.log("isValidLength")
-      existPhone = false;
-    } else {
-      res.status(200).send({
-        isValid: existPhone,
-        status: 200
-      });
+    const phones = req.body.phones; // Expecting an array of phone objects
+    const results = [];
 
+    // Iterate over each phone object in the array
+    for (let i = 0; i < phones.length; i++) {
+      let phoneObj = phones[i];
+      let phone = phoneObj.phone;
+      let existPhone = true;
+
+      const phoneCheckResult = checkPhoneNumbersLength([phone], countryCodeMap, expectedLengths)[0];
+      
+      if (phoneCheckResult.error || !phoneCheckResult.isValidLength) {
+        existPhone = false;
+      }
+
+      // Store the result for this phone
+      results.push({
+        phone: existPhone,
+        id: phoneObj.id
+      });
     }
-    logger.log(`response of verify otp `)
+
+    // Send the array of results
+    res.status(200).send({
+      results: results,
+      status: 200
+    });
+
+    // Log the result as an object
+    logger.log({
+      level: 'info', // or 'debug', 'warn', 'error', depending on your logging setup
+      message: 'response of verify phone code with results',
+      results: results
+    });
   } catch (err) {
-    logger.error(`err on verify phone code ${err}`)
+    logger.error(`Error on verify phone code: ${err}`);
     res.status(500).send({
-      msg: err,
+      msg: err.toString(),
       status: 500
     });
   }
-})
+});
+
+
 
 app.listen(3002);
 

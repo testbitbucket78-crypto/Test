@@ -113,10 +113,10 @@ async function extractDataFromMessage(body) {
 
     if (firstMessage.context) {
       let spid = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
-      let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND message_content = '${repliedMessage.body}'`
+      let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND message_content = '${message_text}'` // will replace it withmessage id later
       console.log(campaignRepliedQuery)
       let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
-      console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
+      //console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
     }
 
     // Conditional check to determine the filename based on type
@@ -173,7 +173,7 @@ async function extractDataFromMessage(body) {
     let customerPhoneNumber = body.entry[0].changes[0].value.statuses[0].recipient_id
     //console.log("messageStatus ,displayPhoneNumber ,customerPhoneNumber " )
     // console.log(messageStatus ,displayPhoneNumber ,customerPhoneNumber)
-    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, d)
+    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, message_time)
   }
 
 }
@@ -235,8 +235,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       replystatus: data[4][0]['@replystatus'],
       msg_id: data[5][0]['@msg_id'],
       newlyInteractionId: data[7][0]['@newlyInteractionId'],
-      isContactPreviousDeleted: data[10][0]['@isContactPreviousDeleted']
-
+      isContactPreviousDeleted: data[10][0]['@isContactPreviousDeleted'],
+      ifgot: data[12][0]['ifgot']
     };
 
     var sid = extractedData.sid
@@ -247,6 +247,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData.newlyInteractionId
     var isContactPreviousDeleted = extractedData.isContactPreviousDeleted
+    var ifgot = extractedData.ifgot
     notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', msg_id)
     let contact = await db.excuteQuery('select * from EndCustomer where customerId =?', [custid])
     // if(contact?.length >0){
@@ -259,18 +260,18 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       if (defaultAction.length > 0) {
         console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
         var isAutoReply = defaultAction[0].isAutoReply
-        var autoReplyTime = defaultAction[0].autoReplyTime
+        var autoReplyTime = defaultAction[0].pauseAutoReplyTime
         var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
         var inactiveAgent = defaultAction[0].isAgentActive
         var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
 
       }
-      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut)
+      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut,ifgot)
       console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
-      if (defaultReplyAction == true) {
+      if (defaultReplyAction == true || defaultReplyAction > 0) {
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        if (newlyInteractionId == null) {
+        if (ifgot == 'If not exist') {
 
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
           if (updateInteraction?.affectedRows > 0) {
@@ -279,7 +280,15 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
           }
         } else {
           let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
-          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
+          //check if assignment trigger and chat is ressolve then open 
+          if (defaultReplyAction > 0) {
+            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+            //console.log("updateInteraction",updateInteraction)
+          } else {
+            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
+          }
+
+
         }
       }
       if (defaultReplyAction == false) {
