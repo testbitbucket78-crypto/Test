@@ -219,7 +219,7 @@ const deleteContactList = (req, res) => {
 
 const applyFilterOnEndCustomer = async (req, res) => {
     try {
-        let Query = req.body.Query + " and EC.isDeleted !=1  AND EC.IsTemporary !=1"
+        let Query = req.body.Query + " and EC.isDeleted !=1  AND EC.IsTemporary !=1 GROUP BY EC.customerId"
         console.log(Query)
         let contactList = await db.excuteQuery(Query, []);
         //console.log(contactList)
@@ -245,9 +245,9 @@ const processContactQueries = async (req, res) => {
     try {
         // Execute each query sequentially
         for (const query of queries) {
-            let listQuery = query + " and isDeleted !=1  AND IsTemporary !=1"
+            let listQuery = query + " and EC.isDeleted !=1  AND EC.IsTemporary !=1"
             if(isOptIn == 1){
-                listQuery = query + " and isDeleted !=1  AND IsTemporary !=1 and OptInStatus =? "
+                listQuery = query + " and EC.isDeleted !=1  AND EC.IsTemporary !=1 and EC.OptInStatus =? "
             }
             const queryResult = await db.excuteQuery(listQuery,['Yes']);
             results = results.concat(queryResult);

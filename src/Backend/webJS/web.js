@@ -834,7 +834,9 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       newId: data[3][0]['@newId'],
       replystatus: data[4][0]['@replystatus'],
       msg_id: data[5][0]['@msg_id'],
-      newlyInteractionId: data[7]?.[0]?.['@newlyInteractionId']
+      newlyInteractionId: data[7]?.[0]?.['@newlyInteractionId'],
+      isContactPreviousDeleted: data[10][0]['@isContactPreviousDeleted'],
+      ifgot : data[12][0]['ifgot']
     };
 
 
@@ -845,6 +847,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var newId = extractedData.newId
     var msg_id = extractedData.msg_id
     var newlyInteractionId = extractedData?.newlyInteractionId
+    var isContactPreviousDeleted = extractedData.isContactPreviousDeleted
+    var ifgot = extractedData.ifgot
     console.log("in messages", from, false, "interaction id", newId, display_phone_number)
     notify.NotifyServer(display_phone_number, false, newId, 'IN', 0, msg_id)
 
@@ -854,28 +858,37 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     if (defaultAction.length > 0) {
       //console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
       var isAutoReply = defaultAction[0].isAutoReply
-      var autoReplyTime = defaultAction[0].autoReplyTime
+      var autoReplyTime = defaultAction[0].pauseAutoReplyTime
       var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
       var pausedTill = defaultAction[0]?.pausedTill
       var inactiveAgent = defaultAction[0].isAgentActive
       var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
     }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web', inactiveAgent, inactiveTimeOut)
+    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, pausedTill, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web',isContactPreviousDeleted, inactiveAgent, inactiveTimeOut,ifgot)
 
 
     console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
-    if (defaultReplyAction == true) {
+    if (defaultReplyAction == true || defaultReplyAction >0) {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      if (newlyInteractionId == null) {
-        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId])
+      if (ifgot == 'If not exist') {
+
+        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
         if (updateInteraction?.affectedRows > 0) {
           let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
 
         }
-      }else{
-        let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?',[newId,sid]);
-        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
+      } else {
+        let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
+        //check if assignment trigger and chat is ressolve then open 
+        if (defaultReplyAction > 0) {
+          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+          //console.log("updateInteraction",updateInteraction)
+        } else {
+          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
+        }
+
+
       }
     }
     if (defaultReplyAction == false) {
