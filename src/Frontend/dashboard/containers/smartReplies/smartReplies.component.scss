@@ -546,6 +546,15 @@ input:focus {
 }
 .sidebar .box4{
     word-wrap: break-word;
+   .box4-Media{
+    display: flex;
+    justify-content: center;
+    img{
+        max-width: 280px !important;
+        height: auto;
+        object-fit: contain;
+    }
+   }
 }
 .dropdown-menu li {
     position: relative;
@@ -2717,4 +2726,6 @@ img.icon.sm {
     background-color: grey;
    }
 
- 
+.help-support-btn{
+    cursor: default;
+}

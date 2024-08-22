@@ -79,8 +79,8 @@
 			</div>
 			<!-- <h4 class="help-support-btn p-0" routerLink="/dashboard/support"><img id="Edit-icon"
 					src="assets/img/Edit-icon.png">Help & Support</h4> -->
-			<h4 class="help-support-btn p-0" (click)="editSmartReply(1)"><img id="Edit-icon"
-					src="assets/img/Edit-icon.png">{{items?.Title}}</h4>
+			<h4 class="help-support-btn p-0"><img id="Edit-icon"
+					src="assets/img/Edit-icon.png" (click)="editSmartReply(1)" style="cursor: pointer;">{{items?.Title}}</h4>
 			<div class="row d-flex">
 				<h6 class="text-justify">{{items?.Description}}.</h6>
 			</div>
@@ -103,7 +103,10 @@
 			<div *ngFor="let item of repliesData?.ActionList">
 				<div class="box4" *ngIf="item.Message">
 					<h3>Message</h3>
-					<p [innerHTML]="item.Media | sanitizeHtml" *ngIf="item.Media"></p>
+					<div class="box4-Media">
+					<img *ngIf="isImage(item.Media)" [src]="item.Media" alt="Media" />
+                    <video *ngIf="isVideo(item.Media)" [src]="item.Media" controls></video>
+				    </div>
 					<p [innerHTML]="item.Message | sanitizeHtml"></p>
 				</div>
 				<div *ngIf="item.Name =='Assign Conversation' && item.Name" class="sidebar-assign-conversation">

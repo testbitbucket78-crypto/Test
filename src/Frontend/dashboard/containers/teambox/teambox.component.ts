@@ -905,6 +905,7 @@ addingStylingToMedia(item: any){
 			crossButton.style.outline ='none';
 			crossButton.style.borderRadius = '50%';
 			crossButton.style.cursor = 'pointer';
+			crossButton.style.pointerEvents = 'auto';
 	        
 			const parentElement = media.parentElement as HTMLElement;
 			parentElement.style.position = 'relative';
@@ -915,6 +916,9 @@ addingStylingToMedia(item: any){
 			parentElement.style.paddingRight = '30px'; 
 			parentElement.style.border = '0.5px solid';
 			parentElement.style.padding = '4px';
+
+			parentElement.style.pointerEvents = 'none';
+            parentElement.setAttribute('contenteditable', 'false'); 
 			parentElement.appendChild(crossButton);
 
 			crossButton.addEventListener('click', () => {
