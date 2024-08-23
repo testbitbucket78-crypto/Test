@@ -314,7 +314,11 @@
 									  <div class="message-container" *ngIf="message.ActionID == 0">
 										<div class="col-6 message-box" *ngIf="message.Message || message.Media">
 										  <p id="msgbox-head">Message</p>
-										  <img *ngIf="message.Media" [src]="message.Media" alt="Media" style="max-width: 100%; height: auto;">
+										  <!-- <img *ngIf="message.Media" [src]="message.Media" alt="Media" style="max-width: 100%; height: auto;"> -->
+										  <img *ngIf="isImage(message.Media)" [src]="message.Media" alt="Media" style="max-width: 100%; height: auto;"/>
+										  <img *ngIf="isDocument(message.Media)" src="../../../../assets/img/settings/doc.svg" alt="Media" style="max-width: 100%; height: auto;"/>
+										  <video *ngIf="isVideo(message.Media)" [src]="message.Media" controls style="max-width: 100%; height: auto;"></video>
+
 										  <p *ngIf="message.Message" id="msgbox-body{{i}}" [innerHTML]="message.Message | sanitizeHtml"></p>
 										</div>
 					  

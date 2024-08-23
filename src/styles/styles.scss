@@ -73,11 +73,12 @@
 }
 
 .contact-modal .modal-content{
-  height: 90vh;
+  height: max-content;
+  max-height: 90vh;
  }
 
  .contact-modal .contact-scroll{
-  height: calc(100% - 25px);
+  height: max-content;
   overflow-y: scroll;
   overflow-x: hidden;
  }
