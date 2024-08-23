@@ -52,7 +52,7 @@
 						
 					</div>
 					<p class="title ellipsis">{{campaign.title}}</p>
-					<p class="start_time">Start time <span>{{campaign.start_datetime_formated}}</span></p>
+					<p class="start_time">Start time <span>{{settingsService?.getDateTimeFormate(campaign.start_datetime_formated)}}</span></p>
 					<p><img *ngIf="campaign.channel_id==1" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{campaign.channel_label}}</p>
 					<div class="campaigns_section_item_statics">
 						<div>
@@ -80,7 +80,7 @@
 						<label>{{selectedCampaign.status_label}}</label>
 						<span>id: {{selectedCampaign.Id}}</span>
 					</div>
-					<p class="start_time">Created on <span>{{selectedCampaign.created_datetime_formated}}</span> Start time <span>{{selectedCampaign.start_datetime_formated}}</span></p>
+					<p class="start_time">Created on <span>{{settingsService?.getDateTimeFormate(selectedCampaign.created_datetime_formated)}}</span> Start time <span>{{settingsService?.getDateTimeFormate(selectedCampaign.start_datetime_formated)}}</span></p>
 					<p class="title" ><img *ngIf="selectedCampaign.status==0 || selectedCampaign.status==1" (click)="editCampaign(addNewCampaign,1)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> {{selectedCampaign.title}}</p>
 					<p><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedCampaign.channel_label}}</p>
 					<!--If running start-->
@@ -1057,7 +1057,7 @@
 						</button>
 					</div>
 					<p class="title">{{list.list_name}}</p>
-					<p class="start_time">Last modified on <span>{{list.updated_formated}}</span></p>
+					<p class="start_time">Last modified on <span>{{settingsService?.getDateTimeFormate(list.updated_formated)}}</span></p>
 					<div class="applied_filter">
 				     <p (click)="selectItem(i)">
 						{{list.addedfilters?list.addedfilters.length:0}} Filter Applied<img src="/assets/img/teambox/dropdown.svg"> 

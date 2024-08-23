@@ -221,9 +221,9 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     }
     else if (defultOutOfOfficeMsg === false) {
 
-      console.log("getOutOfOfficeResult",defultOutOfOfficeMsg)
+      
       let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid);
-
+      console.log("getOutOfOfficeResult",defultOutOfOfficeMsg,"getOutOfOfficeResult",getOutOfOfficeResult)
       return getOutOfOfficeResult;
     }else if (defultOutOfOfficeMsg === 'Agents Offline' && replymessage?.length <= 0){
       return true;
@@ -626,7 +626,7 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
       if (messageInterval?.length <= 0) {
         // console.log("messageInterval" ,newId)
         let message_text = await getExtraxtedMessage(wlcMessage[0]?.value)
-        let result = await messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, message_text, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId,AgentsOfflineMessage[0].message_type)
+        let result = await messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, message_text, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId,wlcMessage[0].message_type)
         console.log("result---------", result)
         response = result
         let myUTCString = new Date().toUTCString();
@@ -644,19 +644,19 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
 
 async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid) {
   try {
-    let result = '';
+    let result = 'false';
 
     var outOfOfficeMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Out of Office']);
     //  console.log(outOfOfficeMessage)
     if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
       console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 2])
-      console.log(messageInterval)
+      //console.log(messageInterval)
       if (messageInterval.length <= 0) {
         console.log("messageInterval", newId)
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
         let message_text = await getExtraxtedMessage(outOfOfficeMessage[0]?.value)
-        result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, message_text, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId,AgentsOfflineMessage[0].message_type)
+        result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, message_text, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId,outOfOfficeMessage[0].message_type)
         console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
 
         let myUTCString = new Date().toUTCString();

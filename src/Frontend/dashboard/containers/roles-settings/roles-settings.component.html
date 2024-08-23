@@ -108,7 +108,7 @@
     <div class="sidebar-content">
         <p class="m-0">ID:<span class="team-id">{{roleData.roleID}}</span></p>
         <span class="heading">{{roleData?.RoleName}}</span>
-        <p *ngIf="roleData?.RoleName != 'Admin' && roleData?.RoleName != 'Agent'">Created on: <span class="team-id">{{roleData?.created_at ? (roleData?.created_at | date: 'dd MMM yyyy h:mm a'): 'N/A'}}</span> | Last Modified: <span class="team-id">{{roleData?.updated_at ? (roleData?.updated_at | date: 'dd MMM yyyy h:mm a') :'N/A'}}</span></p>
+        <p *ngIf="roleData?.RoleName != 'Admin' && roleData?.RoleName != 'Agent'">Created on: <span class="team-id">{{roleData?.created_at ? (settingsService?.getDateTimeFormate(roleData?.created_at )): 'N/A'}}</span> | Last Modified: <span class="team-id">{{roleData?.updated_at ? (settingsService?.getDateTimeFormate(roleData?.updated_at )) :'N/A'}}</span></p>
         <p  *ngIf="roleData?.RoleName == 'Admin' || roleData?.RoleName == 'Agent'">Created on: <span class="team-id">N/A</span> | Last Modified: <span class="team-id">N/A</span></p>
         <div>
             <div class="accordion">

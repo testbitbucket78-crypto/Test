@@ -129,7 +129,7 @@ export class UserSettingsComponent implements OnInit {
     warningMessage = '';
     login_uid:any;
     isLoading!:boolean;
-    constructor(private _settingsService: SettingsService, private datepipe: DatePipe, public GridService: GridService,
+    constructor(private _settingsService: SettingsService,public settingsService: SettingsService, private datepipe: DatePipe, public GridService: GridService,
         public phoneValidator:PhoneValidationService,) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
         this.login_uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;        
