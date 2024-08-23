@@ -265,7 +265,7 @@
 							<div class="campaigns_section_item_header">
 								<div>
 
-							<p class="title">{{temp.Header}}</p>
+							<p class="title ellipsis">{{temp.Header}}</p>
 							<p class="start_time">Created On: <span>{{temp.created_at | date:'dd MMM yy, h:mm a'}}</span></p>
 							<p class="start_time" *ngIf="repliestemplateData?.updated_at">Modified On: <span>{{temp.updated_at | date:'dd MMM yy, h:mm a'}}</span></p>
 							<p><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{temp.Channel}}</p>
@@ -274,7 +274,7 @@
 									<div class="d-flex user-img align-items-center">
 									<img [src]="profilePicture" *ngIf="profilePicture"/>
 									<div class="img" *ngIf="!profilePicture">{{apiService.getInitials(temp.created_By)}}</div>
-									<p>{{temp.created_By}}</p></div>
+									<p class="ellipsis w-170">{{temp.created_By}}</p></div>
 									<p><span>Created By</span></p>
 								</div>
 							</div>

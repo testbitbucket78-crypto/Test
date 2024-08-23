@@ -993,7 +993,7 @@ select:invalid { color: gray; }
 
 .main-preview-type-video {
     position: absolute;
-    right: 6%;
+    right: 12%;
     z-index: 99999;
     cursor: pointer;
 }
@@ -1482,3 +1482,11 @@ select.input-form {
     #defaultRTErte-view{
         height: 100% !important;
     }
+    .ellipsis {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .w-170{
+        width: 170px;
+      }
