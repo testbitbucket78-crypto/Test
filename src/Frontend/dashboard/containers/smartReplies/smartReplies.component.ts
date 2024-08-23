@@ -599,25 +599,59 @@ showAddSmartRepliesModal() {
 		this.saveFiles(files);
 		}
 	 }
-	  
+	 getMimeTypePrefix(mimeType: string): string {
+		return mimeType.split('/')[0];
+	  }
 	sendMediaMessage(){
 		// this.saveMessage();
 		// this.Media=this.messageMeidaFile;
 		this.closeAllModal()
 		console.log(this.mediaType)
 		console.log(this.messageMeidaFile)
+		let mediaName
+		const fileNameWithPrefix = this.messageMeidaFile.substring(this.messageMeidaFile.lastIndexOf('/') + 1);
+		let originalName;
+		let getMimeTypePrefix = this.getMimeTypePrefix(this.mediaType);
+		if (this.mediaType === 'video/mp4') {
+			originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
+			originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+		} else {
+			originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+		}
+
 		let mediaContent:any;
 		if(this.mediaType == 'image/jpeg' || this.mediaType == 'image/jpg' || this.mediaType == 'image/png' || this.mediaType == 'image/webp') {
 			mediaContent ='<p><img style="width:100%; height:100%" src="'+this.messageMeidaFile+'" /></p>'
+			mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 		  }
 		  else if(this.mediaType == 'video/mp4') {
 			  mediaContent ='<p><video controls width="100%" height="100%" src="'+this.messageMeidaFile+'"></video></p>'
+			  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 		  }
 		  else if(this.mediaType == 'application/pdf') {
 			  mediaContent ='<p><a href="'+this.messageMeidaFile+'"><img style="width:14px; height:17px" src="../../../../assets/img/settings/doc.svg" />'+this.fileName+'</a></p>'
+			  mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
 		  }
+		  let item = {
+			media_type: getMimeTypePrefix,
+		}
 
-		this.chatEditor.value = mediaContent;
+		const editorElement = this.chatEditor?.contentModule?.getEditPanel?.();
+
+		if (editorElement) {
+		const existingMediaElement = editorElement.querySelector('.custom-class-attachmentType');
+		
+		if (existingMediaElement) {
+			const newElement = document.createElement('div');
+			newElement.innerHTML = mediaName+ '<br>';
+			editorElement.replaceChild(newElement.firstElementChild!, existingMediaElement);
+		} else {
+			const editorValue = this.chatEditor.value ?? '<br>';
+			this.chatEditor.value = mediaName + editorValue;
+		}
+		}
+		// this.chatEditor.value = mediaContent;
+		this.addingStylingToMedia(item);
 	}
 
 	toggleChannelOption(){
@@ -755,7 +789,7 @@ showAddSmartRepliesModal() {
 			mediaContent=''
 		}
 		if(item.Links) this.messageMeidaFile = item.Links
-		var htmlcontent = mediaContent+item.BodyText;
+		var htmlcontent = mediaName+item.BodyText;
 		this.chatEditor.value = htmlcontent;
 		this.addingStylingToMedia(item);	
 	}
@@ -786,6 +820,7 @@ showAddSmartRepliesModal() {
 				crossButton.style.outline ='none';
 				crossButton.style.borderRadius = '50%';
 				crossButton.style.cursor = 'pointer';
+				crossButton.style.pointerEvents = 'auto';
 				
 				const parentElement = media.parentElement as HTMLElement;
 				parentElement.style.position = 'relative';
@@ -794,7 +829,12 @@ showAddSmartRepliesModal() {
 				parentElement.style.textOverflow = 'ellipsis'; 
 				parentElement.style.whiteSpace = 'nowrap'; 
 				parentElement.style.paddingRight = '30px'; 
+				parentElement.style.border = '0.5px solid';
+			    parentElement.style.padding = '4px';
 				parentElement.appendChild(crossButton);
+
+				parentElement.style.pointerEvents = 'none';
+                parentElement.setAttribute('contenteditable', 'false'); 
 	
 				crossButton.addEventListener('click', () => {
 				const mediaNameElement = editorContent?.querySelector('.custom-class-attachmentType');
@@ -812,6 +852,13 @@ showAddSmartRepliesModal() {
 			}, 0); 
 		  }
 	}
+	isImage(media: string): boolean {
+		return media.match(/\.(jpeg|jpg|gif|png)$/) != null;
+	  }
+	
+	  isVideo(media: string): boolean {
+		return media.match(/\.(mp4|webm|ogg)$/) != null;
+	  }
 	// insertTemplate(item:any) {
 	// 	this.closeAllModal()
 	// 	let mediaContent;
@@ -926,7 +973,8 @@ showAddSmartRepliesModal() {
 		}
 		if(item.Links) this.messageMeidaFile = item.Links
 		this.chatEditor.value =htmlcontent
-		this.isAttachmentMedia = false
+		this.isAttachmentMedia = false;
+		this.addMessage(true,htmlcontent);
 	}
 
 	searchTemplate(event:any){
@@ -1045,19 +1093,20 @@ showAddSmartRepliesModal() {
 
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
-	addMessage() {
+	addMessage(isTemplate:boolean=false,templateTxt:string='') {
 		// var tempDivElement = document.createElement("div");   
 		// tempDivElement.innerHTML = this.chatEditor.value;
 		// let val = tempDivElement.textContent || tempDivElement.innerText || "";
+		let value = isTemplate ?templateTxt :(this.chatEditor.value || "");
 
-		if (!this.chatEditor.value) {
+		if (!value) {
 			this.showToaster('! Please type your message first','error');
 			return;
 		}
-		let value = '';
 		let mediaType = '';
         if(this.chatEditor.value){
 			value = this.removeMediaTags(this.chatEditor.value);
+			value = this.removeClass(value);
 			if(this.messageMeidaFile) mediaType = this.getMediaType(this.messageMeidaFile);
 		}
 
@@ -1093,8 +1142,15 @@ showAddSmartRepliesModal() {
 		}
 		removeMediaTags(htmlContent: string): string {
 			let updatedHtml = htmlContent.replace(/<img[^>]*>[^<]*|<video[^>]*>[^<]*<\/video>/gi, '');
-			updatedHtml = updatedHtml.replace(/<[^\/>]+>\s*<\/[^>]+>/gi, ''); // remove tags that is empty 
+			updatedHtml = updatedHtml.replace(/<[^\/>]+>\s*<\/[^>]+>/gi, '');
 			return updatedHtml;
+		  }
+		  removeClass(htmlContent: string): string {
+			const tempDiv = document.createElement('div');
+			tempDiv.innerHTML = htmlContent;
+			const mediaElements = tempDiv.querySelectorAll('.custom-class-attachmentType');
+			mediaElements.forEach(element => element.remove());
+			return tempDiv.innerHTML;
 		  }
 		  getMediaType(url: string): string | '' {
 			const extensionToMimeType: { [key: string]: string } = {

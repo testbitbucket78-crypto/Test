@@ -613,6 +613,41 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		// 	this.selectedTemplate.Header = header;
 		// 	this.selectedTemplate.BodyText = BodyText;
 		// }
+		// insertTemplate(item:any) {
+		// 	this.closeAllModal()
+		// 	let mediaContent
+		// 	if(item.media_type === 'image') {
+		// 	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
+		// 	}
+		// 	else if(item.media_type === 'video') {
+		// 		mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
+		// 	}
+		// 	else if(item.media_type === 'document') {
+		// 		mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+		// 	}
+			
+		// 	let htmlcontent = '';
+		// 	if (item.Header && item.media_type == 'text') {
+		// 		htmlcontent += '<p><strong>'+item.Header+'</strong></p><br>';
+		// 	}
+	
+		// 	if(mediaContent && item.media_type!== 'text') {
+		// 		htmlcontent += mediaContent
+		// 	}
+		
+		// 	htmlcontent +='<p>'+ item.BodyText+'</p>'+'<br>';
+		// 	if (item.FooterText) {
+		// 		htmlcontent+='<p>'+item.FooterText+'</p>';
+		// 	}
+		// 	this.chatEditor.value =htmlcontent
+		// 	this.isAttachmentMedia = false;
+		// 	this.isTemplate = true;
+		// 	this.mediaType = item.media_type;
+		// 	this.messageMeidaFile = item.Links;
+		// 	//this.addingStylingToMedia(item);
+		//console.log(htmlcontent);
+		// 	this.sendMediaMessage(true,htmlcontent)
+		// }
 	insertTemplate(item:any) {
 		this.closeAllModal()
 		let mediaContent;
@@ -635,7 +670,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 		else if(item.media_type === 'document') {
 			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>';
-			mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
+			mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>'+originalName+'</p>'
 		}
 		
 		let htmlcontent = '';
@@ -651,12 +686,14 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		if (item.FooterText) {
 			htmlcontent+='<p>'+item.FooterText+'</p>';
 		}
-		this.chatEditor.value =htmlcontent
+		//this.chatEditor.value =htmlcontent
 		this.isAttachmentMedia = false;
 		this.isTemplate = true;
 		this.mediaType = item.media_type;
 		this.messageMeidaFile = item.Links;
 		this.addingStylingToMedia(item);
+		console.log(htmlcontent);
+		this.sendMessage(true,htmlcontent);
 	}
 
 	processMediaType(mediaType: any,message_media:any, messageMeidaFile: any):string{
@@ -871,7 +908,7 @@ selectQuickReplies(item:any){
 	}
 	else {
 		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
-		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
+		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>'+originalName+'</p>'
 	}
 	var htmlcontent = mediaName+item.BodyText;
 	this.chatEditor.value = htmlcontent
@@ -905,6 +942,7 @@ addingStylingToMedia(item: any){
 			crossButton.style.outline ='none';
 			crossButton.style.borderRadius = '50%';
 			crossButton.style.cursor = 'pointer';
+			crossButton.style.pointerEvents = 'auto';
 	        
 			const parentElement = media.parentElement as HTMLElement;
 			parentElement.style.position = 'relative';
@@ -915,6 +953,9 @@ addingStylingToMedia(item: any){
 			parentElement.style.paddingRight = '30px'; 
 			parentElement.style.border = '0.5px solid';
 			parentElement.style.padding = '4px';
+
+			parentElement.style.pointerEvents = 'none';
+            parentElement.setAttribute('contenteditable', 'false'); 
 			parentElement.appendChild(crossButton);
 
 			crossButton.addEventListener('click', () => {
@@ -1044,15 +1085,17 @@ attachMedia(Link: string, media_type: string){
 	} else {
 		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
 	}
-
+console.log(getMimeTypePrefix);
 	if(getMimeTypePrefix === 'image') {
-	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p><br>'
+	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 	}
 	else if(getMimeTypePrefix === 'video') {
-		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p><br>'
+		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 	}
 	else {
-		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p><br>'
+		media_type ='document';
+		getMimeTypePrefix ='document';
+		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>'+originalName+'</p><br>'
 	}
 	const editorElement = this.chatEditor?.contentModule?.getEditPanel?.();
 
@@ -1061,10 +1104,11 @@ attachMedia(Link: string, media_type: string){
 	  
 	  if (existingMediaElement) {
 		const newElement = document.createElement('div');
-		newElement.innerHTML = mediaName;
+		newElement.innerHTML = mediaName+ '<br>';
 		editorElement.replaceChild(newElement.firstElementChild!, existingMediaElement);
 	  } else {
-		this.chatEditor.value = mediaName;
+		const editorValue = this.chatEditor.value ?? '<br>';
+			this.chatEditor.value = mediaName + editorValue;
 	  }
 	}
 	this.mediaType = media_type
@@ -1074,9 +1118,10 @@ attachMedia(Link: string, media_type: string){
 	}
 	this.addingStylingToMedia(item);
 }
-	sendMediaMessage() {
+	sendMediaMessage(isTemplate:boolean=false,templateTxt:string='') {
 		if(this.SIPthreasholdMessages>0){
 		let objectDate = new Date();
+		console.log(this.chatEditor.value);
 		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
 		var cDay = String(objectDate.getDate()).padStart(2, '0');
 		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
@@ -1086,7 +1131,7 @@ attachMedia(Link: string, media_type: string){
 			SPID:this.SPID,
 			AgentId: this.AgentId,
 			messageTo:this.selectedInteraction.Phone_number,
-			message_text: this.chatEditor.value || "",
+			message_text: isTemplate ?templateTxt :(this.chatEditor.value || ""),
 			Message_id:this.newMessage.value.Message_id,
 			mediaSize:this.mediaSize,
 			message_media: this.messageMeidaFile,
@@ -1248,6 +1293,7 @@ attachMedia(Link: string, media_type: string){
 			let responseData:any = uploadStatus
 			if(responseData.filename){
 				this.messageMeidaFile = responseData.filename;
+				this.messageMediaFile = responseData.filename;
 				this.attachmentMedia = responseData.filename;
 				this.mediaSize=responseData.fileSize
 				console.log(this.mediaSize);
@@ -1322,10 +1368,13 @@ attachMedia(Link: string, media_type: string){
 
 	scrollChatToBottom() {
 		const chatWindowElement = this.chatSection?.nativeElement;
+		const notesWindowElement = this.notesSection?.nativeElement
 		if (chatWindowElement) {
 			chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
-		  }
-
+		}
+		if (notesWindowElement) {
+            notesWindowElement.scrollTop = notesWindowElement.scrollHeight;
+        }
 	  }
 
 	async subscribeToNotifications() {
@@ -3212,16 +3261,18 @@ checkAuthentication(){
 	})
 }
 
-sendMessage(){
+sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	var tempDivElement = document.createElement("div");   
 
 	tempDivElement.innerHTML = this.chatEditor.value;
-	let value =this.chatEditor.value;
+	let value =isTemplate ?templateTxt :(this.chatEditor.value || "");
     let val = tempDivElement.textContent || tempDivElement.innerText || "";
+	if(!isTemplate){
 	if (this.chatEditor.value == null || val.trim()=='') {
 		this.showToaster('! Please enter a message before sending.','error');
 		return;
 	}
+}
 
 	 else {
 		let postAllowed =false;
@@ -3244,7 +3295,7 @@ sendMessage(){
 		} else if(this.messageMeidaFile){
             value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
 		}
-		
+		console.log(value);
 	let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
@@ -3319,13 +3370,14 @@ sendMessage(){
 									}, 500);
 				
 								}else{
-									var allnotes =this.selectedInteraction.allnotes
-									allnotes.push(lastMessage)
-									this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
+									// var allnotes =this.selectedInteraction.allnotes
+									// allnotes.push(lastMessage)
+									// this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
 									setTimeout(() => {
 										this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
 									}, 500);
-				
+									this.getNoteData(this.selectedInteraction);
+									this.selectedNote =[];
 								
 								}
 								this.chatEditor.value ='';
