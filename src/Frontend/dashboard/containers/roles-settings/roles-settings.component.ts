@@ -58,7 +58,7 @@ export class RolesSettingsComponent implements OnInit {
             suppressSizeToFit: false,
             resizable: true,
             sortable: true,
-            valueFormatter: this.dateFormatter,
+            valueFormatter: this.dateFormatter ,
             cellStyle: { background: '#FBFAFF', opacity: 0.86 },
         },
     ];
@@ -91,7 +91,7 @@ export class RolesSettingsComponent implements OnInit {
     paging: any = 1;
     lastElementOfPage: any;
     isLoading!:boolean;
-    constructor(public _settingsService: SettingsService, private fb: FormBuilder, public GridService: GridService) {
+    constructor(public _settingsService: SettingsService,public settingsService: SettingsService, private fb: FormBuilder, public GridService: GridService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
 
@@ -152,6 +152,8 @@ export class RolesSettingsComponent implements OnInit {
         const date = new Date(params.value);
         const options:{} = { year: 'numeric', month: 'short', day: 'numeric' };
         return date.toLocaleDateString('en-IN', options);
+        
+        //return this._settingsService.getDateTimeFormate(date,true) ? this._settingsService.getDateTimeFormate(date,true) : date.toLocaleDateString('en-IN', options);
       }
 
     getRolesList() {

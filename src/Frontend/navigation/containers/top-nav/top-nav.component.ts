@@ -81,6 +81,7 @@ export class TopNavComponent implements OnInit {
         this.notificationService.requestPermission();
 
         this.getNotificationData();
+        this.getLocaleDetails();
         this.getFirstNotificationData();
         this.getUserList();
         // this.notificationInterval = setInterval(() => {
@@ -149,6 +150,20 @@ export class TopNavComponent implements OnInit {
         }
     });
   }
+
+  
+  getLocaleDetails(){
+    this._settingsService.getLocaleData(this.spId)
+    .subscribe(result =>{
+      if(result){
+        let localeData = result?.localDetails[0];
+        console.log(localeData,'localeData');
+        this._settingsService.dateFormat = localeData?.Date_Format;
+        this._settingsService.timeFormat = localeData?.Time_Format;
+        this._settingsService.timezone = localeData?.Time_Zone;
+      }
+    })
+  }  
 
     // toggle active/inactive state of logged-in user
 
