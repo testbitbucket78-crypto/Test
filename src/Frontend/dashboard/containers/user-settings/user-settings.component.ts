@@ -147,6 +147,7 @@ export class UserSettingsComponent implements OnInit {
         this.getRolesList(); 
         this.getPhoneNumberValidation(); 
         console.log(this.uid);
+        let formattedDate = this.datepipe.transform(new Date(), `dd-MM-YY hh:mm a`);
     }
 
     

@@ -71,7 +71,8 @@ export class SettingsService {
   getDateTimeFormate(dateTime: any, onlyDate: boolean = false,) {
     let dates = new Date(dateTime);
     let formattedDate: string | null;
-
+  if(dates.toString() != 'Invalid Date'){
+    
     if (!onlyDate) {
       if (this.timeFormat === '12') {
         formattedDate = this.datePipe.transform(dates, `${this.dateFormat} hh:mm a`, this.timezone);
@@ -83,6 +84,9 @@ export class SettingsService {
     }
 
     return formattedDate;
+  } else{
+    return 'N/A';
+  }
   }
 
   getInitials(name:any){
