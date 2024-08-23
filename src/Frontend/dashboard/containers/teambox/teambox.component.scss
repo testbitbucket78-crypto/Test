@@ -3062,13 +3062,32 @@ label span {
     text-align: center;
 }
 
-.delete-note .modal-dialog{
-    left: 20rem;
-    position: relative !important;
+.delete-note.modal{
+    position: absolute !important ;
+    inset: 0 0 0 -75px;
+    overflow: visible ;
+    width: max-content;
+    height: max-content;
 }
 
-.delete-note .modal-content{
-    position: absolute !important;
+.delete-note {
+    .popup-dialog {
+        background: #FFFFFF 0% 0% no-repeat padding-box !important;
+        box-shadow: 4px 22px 54px #695F9730 !important;
+        border-radius: 20px !important;
+        padding: 10px 0px !important;
+        position: relative !important;
+        max-width: 185px !important;
+        margin-top: 0px !important;
+        max-height: 182px !important;
+        overflow: auto !important;
+        z-index: 9 !important;
+    }
+}
+
+
+.delete-note .modal-body{
+    padding: 0 !important;
 }
 
 .contact-form-scroll{

@@ -345,19 +345,35 @@
 								<div class="date_seprator"><span>---</span>
 									<p>{{dateSince(notesGroup.date)}}</p><span>---</span>
 								</div>
-								<div class="conversation_list_inner_box" *ngFor="let note of notesGroup.items;"
+								<div class="conversation_list_inner_box" *ngFor="let note of notesGroup.items; let i = index"
 									id={{note.Message_id}}>
-
+									<div *ngIf="isAgmodalOpened" class="overlay" (click)="agmodalClose(selectedModalIndex);isAgmodalOpened = !isAgmodalOpened"></div>
 									<div *ngIf="note?.Message_id"
 										[ngClass]="note.message_direction =='IN' ? 'message_box left' : 'message_box'">
 										<label *ngIf="note.message_direction !='IN'">{{note.AgentName}}</label>
-										<div class="content-box">
-											<div *ngIf="selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId"
-												class="content-before">
-												<p (click)="toggleNoteOption(note)">...</p>
+										<div class="position-relative d-flex align-items-center justify-content-center flex-nowrap">
+											<div class="modal fade delete-note" tabindex="-1" id="agmodal_{{i}}"  data-bs-backdrop="dynamic" role="dialog">
+												<div class="modal-dialog" role="document">
+													<div class="modal-content">
+														<div class="modal-body">
+															<div class="popup-dialog NoteOption">
+																<p class="label" style="color: #6149cd!important;" (click)="hideNoteOption(i)">Options</p>
+																<p (click)="editNotes(i)">
+																	<span class="editnotes-btn">Edit</span>
+																</p>
+																<p (click)="openPopup(openNoteDeleteAlertmMessage,i)">
+																	<span class="deletenotes-btn">Delete</span>
+																</p>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div *ngIf="selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId">
+												<small (click)="toggleNoteOption(note,i); isAgmodalOpened = !isAgmodalOpened" class="ellipsis_button mb-0 p-1 cursor-pointer">···</small>
 											</div>
 
-											<div class="content">
+											<div class="content"style="max-width: 450px;">
 												<div *ngIf="note.message_media" class="message_media">
 													<img class="preview_icon" *ngIf="note.media_type == 'video/mp4'"
 														src="/assets/img/teambox/video_preview.png"
@@ -1971,23 +1987,6 @@ popupWidth='250px' popupHeight='200px'>
 	</div> -->
 
 	<!-- edit-del popup -->
-	<div class="modal fade delete-note" tabindex="-1" id="agModal" #agModal data-bs-backdrop="dynamic" role="dialog">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-body">
-					<div class="popup-dialog NoteOption">
-						<p class="label" (click)="hideNoteOption()">Options</p>
-						<p (click)="editNotes()">
-							<span class="editnotes-btn">Edit</span>
-						</p>
-						<p (click)="openPopup(openNoteDeleteAlertmMessage)">
-							<span class="deletenotes-btn">Delete</span>
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 
 
 	<ng-template #openNoteDeleteAlertmMessage let-c="close" let-d="dismiss">

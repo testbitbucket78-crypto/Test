@@ -290,6 +290,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	isLoading!: boolean;
 	isLoadingOlderMessage!: boolean;
 	srchText:string ='';
+	selectedModalIndex: number = 0;
+	isAgmodalOpened!:boolean;
 	public insertImageSettings: object = {
 		width: '50px',
 		height: '50px'
@@ -3185,9 +3187,10 @@ openadd(contactadd: any) {
 	this.modalReference  = this.modalService.open(contactadd,{windowClass:'teambox-white'});
 }
 
-toggleNoteOption(note:any){
+toggleNoteOption(note:any,index: number){
 	console.log(note)
-	this.hideNoteOption()
+	this.hideNoteOption(this.selectedModalIndex)
+	this.selectedModalIndex = index;
 	if(note && this.selectedNote.Message_id != note.Message_id){
 	note.selected=true
 	this.selectedNote= note
@@ -3196,17 +3199,23 @@ toggleNoteOption(note:any){
 		this.selectedNote= []
 	
 	}
-	$("#agModal").modal('show'); 
+	$(`#agmodal_${index}`).modal('show'); 
 	$('body').removeClass('modal-open');
-	$('.modal-backdrop').remove();
+	$('.modal-backdrop').remove()
 }
-hideNoteOption(){
+
+hideNoteOption(index: number){
+	this.isAgmodalOpened = false;
 	this.selectedNote.selected=false;
-	$("#agModal").modal('hide'); 
+	$(`#agmodal_${index}`).modal('hide'); 
 	
 }
-editNotes(){
-	this.hideNoteOption()
+agmodalClose(index: number){
+	this.selectedNote.selected=false;
+	$(`#agmodal_${index}`).modal('hide'); 
+}
+editNotes(index: number){
+	this.hideNoteOption(index)
 	this.chatEditor.value = this.selectedNote.message_text
 	this.newMessage.reset({
 		Message_id: this.selectedNote.Message_id
@@ -3215,7 +3224,7 @@ editNotes(){
 }
 
 deleteNotes(){
-	this.hideNoteOption()
+	this.hideNoteOption(this.selectedModalIndex)
 	let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 	var bodyData = {
 		Message_id:this.selectedNote.Message_id,
@@ -3241,8 +3250,9 @@ deleteNotes(){
 	})
 }
 
-openPopup(popup:any){
-	this.hideNoteOption()
+openPopup(popup:any, index:number){
+	this.selectedModalIndex = index;
+	this.hideNoteOption(this.selectedModalIndex);
 	if(this.modalReference){
 		this.modalReference.close();
 	}
