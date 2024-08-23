@@ -1406,19 +1406,23 @@ console.log(getMimeTypePrefix);
 							if(msgjson.message)
 							{
 								if(msgjson.message == this.selectedInteraction?.InteractionId){
-									if(msgjson.msg_id != 'Assign Agent'){
+									if(msgjson.msg_id == 'Assign Agent'){
+										this.getInteraction(this.selectedInteraction?.InteractionId);
+									
+								}else if(msgjson.msg_id == 'Status changed'){
+									this.getInteractionStatus(this.selectedInteraction?.InteractionId);
+								}
+								else{
 									if(msgjson.msg_status=="IN"){
-									//this.updateMessages();
-									this.getMessagesById(msgjson?.msg_id)
-									}else{
-										// if(msgjson.msg_status == 1){
-										// this.getMessageData(this.selectedInteraction,true)
-										// }else{
-											this.getMessageData(this.selectedInteraction,true,true)
-										//}
-									}
-								}else{
-									this.getInteraction(this.selectedInteraction?.InteractionId);
+										//this.updateMessages();
+										this.getMessagesById(msgjson?.msg_id)
+										}else{
+											// if(msgjson.msg_status == 1){
+											// this.getMessageData(this.selectedInteraction,true)
+											// }else{
+												this.getMessageData(this.selectedInteraction,true,true)
+											//}
+										}
 								}
 								}else{
 									this.updateInteraction(msgjson.message);
@@ -2909,6 +2913,12 @@ triggerUpdateConversationStatus(status:any,openStatusAlertmMessage:any){
 	}
 }
 
+getInteractionStatus(InteractionId:any){
+	this.apiService.getInteractionStatusById(InteractionId).subscribe(async (response:any) =>{
+		this.selectedInteraction['interaction_status']=response[0]?.interaction_status;
+	});
+}
+
 updateConversationStatus(status:any) {
 	let name = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 	var bodyData = {
@@ -3264,8 +3274,8 @@ checkAuthentication(){
 sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	var tempDivElement = document.createElement("div");   
 
-	tempDivElement.innerHTML = this.chatEditor.value;
 	let value =isTemplate ?templateTxt :(this.chatEditor.value || "");
+	tempDivElement.innerHTML = value;
     let val = tempDivElement.textContent || tempDivElement.innerText || "";
 //	if(!isTemplate){
 	if (value == null || val.trim()=='') {
@@ -3325,6 +3335,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			spid: this.SPID,
 		};
 		if(this.newMessage.value.Message_id == ''){
+			this.getInteractionStatus(this.selectedInteraction?.InteractionId);
 		this.settingService.clientAuthenticated(input).subscribe(response => {
 
 			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WA API') {
@@ -3839,6 +3850,10 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		console.log('jhgjhg');
       this.showMention = false;
     }
+  }
+
+  changeRoutes(){
+	this.router.navigate(['/dashboard/teambox']);
   }
 
 }

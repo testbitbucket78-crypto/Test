@@ -61,6 +61,9 @@ export class TeamboxService {
   public getInteractionById(InteractionId:any) {
     return this.http.get(API_URL+'/interaction/'+InteractionId);
   }
+  public getInteractionStatusById(InteractionId:any) {
+    return this.http.get(API_URL+'/interactionById/'+InteractionId);
+  }
   public getFilteredInteraction(InteractionStatus:any,AgentId:any,AgentName:any,SPID:any) {
     return this.http.get(API_URL+'/filterinteraction/'+InteractionStatus+'/'+AgentId+'/'+AgentName+'/'+SPID);
   }
