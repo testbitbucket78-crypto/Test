@@ -135,9 +135,9 @@
             
 						<div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
 							<input type="file" accept="image/jpeg, image/png" formControlName="Links" (change)="onFileChange($event)" id="sel-type-image">
-							<div *ngIf="usertemplateForm.get('Links')?.value == null" class="text-center">
+							<div *ngIf="usertemplateForm.get('Links')?.value == null" class="text-center py-4">
 							<label class="type_label text-center" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
-							<p class="m-0">Upload image</p></div> 
+							<p class="m-0 p-0">Upload image</p></div> 
 							<div class="main-preview-type-image" *ngIf="usertemplateForm.get('Links')?.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
 								<span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
 							</div>
@@ -162,7 +162,7 @@
 						<div class="custom-play-button"></div>
 					</div>
 				
-					<div *ngIf="selectedType === 'document'" class="my-4 sel-type-doc" [ngClass]="{'document-selected':usertemplateForm.get('Links')?.value !== null}">
+					<div *ngIf="selectedType === 'document'" style="background-color: white;" class="my-4 sel-type-doc" [ngClass]="{'document-selected':usertemplateForm.get('Links')?.value !== null}">
 						<div class="main-preview-type-doc" *ngIf="usertemplateForm.get('Links')?.value !== null">
 							<span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
 						</div>
@@ -173,7 +173,7 @@
 						<span class="document-preview" *ngIf="usertemplateForm.get('Links')?.value !== null" >{{ this.fileName }}</span>
 						<span class="document-preview" *ngIf="usertemplateForm.get('Links')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
 							<input type="file" accept=".doc, .docx, .pdf" formControlName="Links" (change)="onFileChange($event)" name="document-select" id="sel-type-document">
-							<div *ngIf="usertemplateForm.get('Links')?.value == null" class="text-center">
+							<div *ngIf="usertemplateForm.get('Links')?.value == null" class="pb-4 text-center">
 							<label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
 							<p class="m-0">Upload document</p>
 						   </div>
