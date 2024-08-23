@@ -41,7 +41,7 @@
                             <label [style.background]="statusColors[item.status]">{{item.status}}</label>
                             <span>id: {{item.ID}}</span>
                         </div>
-                        <p class="pb-2 title">{{getLimitedMessageText(item.TemplateName)}}</p>
+                        <p class="pb-2 title ellipsis">{{getLimitedMessageText(item.TemplateName)}}</p>
                         <p class="start_time">Created On: <span>{{item.created_at | date:'dd MMM yy, h:mm a'}}</span></p>
                         <p class="start_time">Modified On: <span>{{ item.updated_at ? (item.updated_at | date:'dd MMM yy, h:mm a') : 'NA' }}</span></p>
                         <p class="pt-2"><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{item.Channel}}</p>
@@ -51,7 +51,7 @@
                                 <div class="d-flex user-img align-items-center">
                                 <img  *ngIf="profilePicture" [src]="profilePicture"/>
                                 <div class="img" *ngIf="!profilePicture">{{apiService.getInitials(item.created_By)}}</div>
-                                <p>{{item.created_By}}</p>
+                                <p class="ellipsis w-110">{{item.created_By}}</p>
                               </div>
                               <p><span>Created By</span></p>
                             </div>

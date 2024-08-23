@@ -178,7 +178,7 @@
     flex-direction: column;
     flex-wrap: nowrap;
     padding: 20px;
-    min-height: 240px;
+    height: 240px;
     background: #FFF4F2;
     // cursor: pointer;
 }
@@ -257,7 +257,14 @@
     font-size: 14px;
     word-wrap: break-word;
 }
-
+.ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.w-110{
+    width: 110px;
+}
 .campaigns_section_item .start_time {
     color: #7A86A1;
     font-size: 11px;

@@ -51,7 +51,7 @@
 						<span>id: {{campaign.Id}}</span>
 						
 					</div>
-					<p class="title">{{campaign.title}}</p>
+					<p class="title ellipsis">{{campaign.title}}</p>
 					<p class="start_time">Start time <span>{{campaign.start_datetime_formated}}</span></p>
 					<p><img *ngIf="campaign.channel_id==1" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{campaign.channel_label}}</p>
 					<div class="campaigns_section_item_statics">
@@ -1507,7 +1507,7 @@
 				</div>
 			  </div>
 			  <div class="modal-body attachmentboxbody">
-				<h4>Replace Media</h4>
+				<h4>Replace&nbsp;Media</h4>
 				<div class="attachmentbox">
 				  <div class="attachmentbox_left" ngClass="{{dragAreaClass}}">
 					<img class="icon1" src="/assets/img/teambox/image-a@2x.png">

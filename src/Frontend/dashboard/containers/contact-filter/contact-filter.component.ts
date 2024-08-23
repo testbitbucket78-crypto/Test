@@ -238,6 +238,7 @@ export class ContactFilterComponent implements OnInit {
 
 	addNewFilters(filter:any){
 		console.log(filter);
+		if(this.ContactListNewFilters.length) return;
 		this.ContactListNewFilters=[];
 		this.selectedcontactFilterBy = filter[0];
 		filter.forEach((item:any)=>{

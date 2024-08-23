@@ -2420,7 +2420,7 @@ position: absolute;
 	left: 0;
 }
 .input-custom-color {
-	color: blue!important; 
+	color: #007bff !important; 
   }
 
   .header-container{
@@ -2469,4 +2469,9 @@ position: absolute;
   }
    .w-190{
 	width: 190px;
+  }
+  .ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
