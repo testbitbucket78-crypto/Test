@@ -629,6 +629,8 @@ showAddSmartRepliesModal() {
 			  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 		  }
 		  else if(this.mediaType == 'application/pdf') {
+			//media_type ='document';
+		getMimeTypePrefix ='document';
 			  mediaContent ='<p><a href="'+this.messageMeidaFile+'"><img style="width:14px; height:17px" src="../../../../assets/img/settings/doc.svg" />'+this.fileName+'</a></p>'
 			  mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
 		  }

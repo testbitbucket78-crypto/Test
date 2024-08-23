@@ -160,7 +160,7 @@ export class TemplateMessageComponent implements OnInit {
     };
     newTemplateForm!: FormGroup;
 
-    constructor(public apiService: SettingsService, private _teamboxService: TeamboxService) {}
+    constructor(public apiService: SettingsService,public settingsService: SettingsService, private _teamboxService: TeamboxService) {}
 
     errorMessage = '';
     successMessage = '';
