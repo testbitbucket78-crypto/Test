@@ -3267,7 +3267,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	tempDivElement.innerHTML = this.chatEditor.value;
 	let value =isTemplate ?templateTxt :(this.chatEditor.value || "");
     let val = tempDivElement.textContent || tempDivElement.innerText || "";
-	// if(!isTemplate){
+//	if(!isTemplate){
 	if (value == null || val.trim()=='') {
 		this.showToaster('! Please enter a message before sending.','error');
 		return;
