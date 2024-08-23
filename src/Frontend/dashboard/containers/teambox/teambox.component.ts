@@ -3267,13 +3267,13 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	tempDivElement.innerHTML = this.chatEditor.value;
 	let value =isTemplate ?templateTxt :(this.chatEditor.value || "");
     let val = tempDivElement.textContent || tempDivElement.innerText || "";
-	if(!isTemplate){
-	if (this.chatEditor.value == null || val.trim()=='') {
+	// if(!isTemplate){
+	if (value == null || val.trim()=='') {
 		this.showToaster('! Please enter a message before sending.','error');
 		return;
 	}
-}
-
+  // }
+ 
 	 else {
 		let postAllowed =false;
 		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
