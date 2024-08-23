@@ -2720,7 +2720,7 @@ img.icon.sm {
     font-size: 12px;
 }
 .input-custom-color {
-	color: blue!important; 
+	color: #007bff !important; 
   }
   .disabledAttribute{
     background-color: grey;
@@ -2729,3 +2729,12 @@ img.icon.sm {
 .help-support-btn{
     cursor: default;
 }
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-body{
+    height: 240px !important;
+    max-width: 100% !important;
+  }

@@ -853,10 +853,12 @@ showAddSmartRepliesModal() {
 		  }
 	}
 	isImage(media: string): boolean {
+		if(!media) return false;
 		return media.match(/\.(jpeg|jpg|gif|png)$/) != null;
 	  }
 	
 	  isVideo(media: string): boolean {
+		if(!media) return false;
 		return media.match(/\.(mp4|webm|ogg)$/) != null;
 	  }
 	// insertTemplate(item:any) {
