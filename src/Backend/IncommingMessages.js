@@ -86,11 +86,11 @@ async function inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId,a
      console.log("isChatAssign",isChatAssign.length)
       if (isChatAssign?.length > 0) {
         let isReplySended = await db.excuteQuery(`SELECT * FROM Message WHERE interaction_id = ? and SPID=?  AND message_direction = 'Out'  AND created_at >= NOW() - INTERVAL ? MINUTE; `, [newId, sid, inactiveTimeOut]);
-        console.log("isReplySended",isReplySended)
+      //  console.log("isReplySended",isReplySended)
         if (isReplySended?.length <= 0) {
           let inactiveUser = await db.excuteQuery('update user set IsActive =0 where uid =? and SP_ID=?', [isChatAssign[0]?.AgentId, sid]);
           let updateMapping = await db.excuteQuery('Update InteractionMapping set AgentId = -1 where MappingId =?',[isChatAssign[0]?.MappingId]);
-          console.log("inactiveUser",inactiveUser,"updateMapping",updateMapping)
+          console.log("inactiveUser",inactiveUser?.affectedRows,"updateMapping",updateMapping?.affectedRows)
         }
       }
     }
@@ -103,18 +103,18 @@ async function sendSmartReply(message_text, phone_number_id, contactName, from, 
   console.log("***********", replystatus, "____Send SMART REPLIESS______")
   const currentTime = new Date();
   const replystatus1 = new Date(replystatus);  //replystatus  is pauseTill 
-  console.log(replystatus1, "(replystatus1 <= currentTime)", currentTime, (replystatus1 <= currentTime))
-  if (replystatus != null && (replystatus1 <= currentTime) && replystatus != undefined) {
-    var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted,newiN);
-    console.log("____Send SMART REPLIESS______NOT  NULLL" + response);
-    return response;
-  }
-  if (replystatus == null || replystatus == undefined || replystatus == "") {
-    console.log("replystatus == null" + message_text)
+  console.log(replystatus,replystatus1, "(replystatus1 <= currentTime)", currentTime, (replystatus1 <= currentTime))
+  // if (replystatus != null && (replystatus1 <= currentTime) && replystatus != undefined) {
+  //   var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted,newiN);
+  //   console.log("____Send SMART REPLIESS______NOT  NULLL" + response);
+  //   return response;
+  // }
+ // if (replystatus == null || replystatus == undefined || replystatus == "") {
+   // console.log("replystatus == null" + message_text)
     var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted,newiN);
     console.log("____Send SMART REPLIESS______" + response);
     return response;
-  }
+ // }
 }
 
 
@@ -217,18 +217,18 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
         console.log("getOutOfOfficeResult WLC",defultOutOfOfficeMsg)
          defautWlcMsg = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid);
        }
-       return defautWlcMsg;
+       return 'false'    //defautWlcMsg;  comment this is because routing rules only disable for smartreply or flow
     }
     else if (defultOutOfOfficeMsg === false) {
 
       
       let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid);
       console.log("getOutOfOfficeResult",defultOutOfOfficeMsg,"getOutOfOfficeResult",getOutOfOfficeResult)
-      return getOutOfOfficeResult;
+      return 'false' // getOutOfOfficeResult;  comment this is because routing rules only disable for smartreply or flow
     }else if (defultOutOfOfficeMsg === 'Agents Offline' && replymessage?.length <= 0){
-      return true;
+      return 'false';    //changed this is because routing rules only disable for smartreply or flow
     }else if (defultOutOfOfficeMsg === true && replymessage?.length <= 0){
-      return false;
+      return 'false';
     }
     // else if (defautWlcMsg.length > 0 && defautWlcMsg[0].Is_disable == 1) {
 
