@@ -1049,6 +1049,13 @@ img.no-dp {
 .tab_btn.active {
     color: #6149CD;
 }
+.footerProfile{
+    .fixed{
+        position: fixed;
+        bottom: 0;
+        padding: 0 40px 40px 60px;
+    }
+}
 
 .input-area {
     padding: 0px 10px;
@@ -1786,7 +1793,6 @@ span {
 
 .message_meida_preview {
     background: #fff;
-    box-shadow: 4px 22px 54px #695F971A;
     border-radius: 30px;
 }
 
