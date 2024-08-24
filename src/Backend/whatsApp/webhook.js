@@ -14,7 +14,7 @@ const token = process.env.WHATSAPP_TOKEN;
 const incommingmsg = require('../IncommingMessages')
 const moment = require('moment');
 const mytoken = process.env.VERIFY_TOKEN;
-
+const mapCountryCode = require('../Contact/utils.js');
 
 let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=?  ) and is_deleted !=1   order by created_at desc`
 
@@ -101,6 +101,10 @@ async function extractDataFromMessage(body) {
     let contact = changes.value.contacts && changes.value.contacts.length > 0 ? changes.value.contacts[0] : null;
 
     let contactName = contact.profile.name ? contact.profile.name : from;
+
+    if (phoneNo){
+      let countryCode = mapCountryCode(phoneNo); //Country Code abstraction eg: 9190000000000
+    }
     let phoneNo = contact.wa_id;
     let ExternalMessageId = body.entry[0].id;
     let message_text = firstMessage.text ? firstMessage.text.body : "";  // extract the message text from the webhook payload
