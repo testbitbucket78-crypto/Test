@@ -467,6 +467,9 @@ export class TemplateMessageComponent implements OnInit {
         this.characterCounts = {};
         this.BodyText = '';
         this.newTemplateForm.reset();
+        this.newTemplateForm.get('BodyText')?.setValue('');
+        this.newTemplateForm.get('Header')?.setValue('');
+
     }
 
     addQuickReplyButtons() {

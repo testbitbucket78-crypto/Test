@@ -63,7 +63,7 @@
 
        
 
-                <div *ngIf="showCampaignDetail" class="campaign_detail">
+                <div *ngIf="showCampaignDetail" class="campaign_detail d-flex flex-column justify-content-between">
                     <div class="modal-header filtercampaignheader">
                         <div class="modal-header-left">
                         </div>
@@ -72,7 +72,7 @@
                         </div>
                     </div>
     
-                    <div class="campaigns_section_item">
+                    <div class="campaigns_section_item m-0" style="height: calc(100dvh - 160px); overflow: auto;">
                         <div class="campaigns_section_item_header">
                             <label [style.background]="statusColors[templatesMessageData?.status]">{{templatesMessageData?.status}}</label>
                             <span>id: {{templatesMessageData?.ID}}</span>
@@ -740,9 +740,9 @@
                 </div>
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
                 <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
-                    <span class="font-weight-bolder" [innerHTML]="newTemplateForm.get('Header')?.value | sanitizeHtml"></span><br /><br />
-                    <span [innerHTML]="newTemplateForm.get('BodyText')?.value | sanitizeHtml" ></span><br /><br />
-                    <span [innerHTML]="newTemplateForm.get('FooterText')?.value | sanitizeHtml"></span><br />
+                    <span *ngIf="newTemplateForm.get('Header')?.value" class="font-weight-bolder" [innerHTML]="newTemplateForm.get('Header')?.value | sanitizeHtml"></span><br /><br />
+                    <span *ngIf="newTemplateForm.get('BodyText')?.value" [innerHTML]="newTemplateForm.get('BodyText')?.value | sanitizeHtml" ></span><br /><br />
+                    <span *ngIf="newTemplateForm.get('FooterText')?.value" [innerHTML]="newTemplateForm.get('FooterText')?.value | sanitizeHtml"></span><br />
                 </div>
                 <!-- <div class="contact-us">
                     Contact Us
