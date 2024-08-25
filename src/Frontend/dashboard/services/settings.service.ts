@@ -13,6 +13,7 @@ export class SettingsService {
   token = 'cXlkZE04VzM3MTVaSkNwWlhINVlDNEY3eEJGV1V0S21FMGROaTJFWg==';
   subprivilages!:any;
   dateFormat:any;
+  timezone:any;
   timeFormat:any;
 
   
@@ -57,14 +58,35 @@ export class SettingsService {
     }
   }
 
-  getDateTimeFormate(dateTime:any,onlyDate:boolean,onlyTime:boolean){    
+  // getDateTimeFormate(dateTime:any,onlyDate:boolean){    
+  //   let dates = new Date(dateTime);
+  //   if(!onlyDate)
+  //     return this.datePipe.transform(dates,this.dateFormat+'hh:mm');
+  //   else if(onlyDate)
+  //     return this.datePipe.transform(dates,this.dateFormat);
+  //   // if(onlyTime)
+  //   //   return this.datePipe.transform(dates,this.timeFormat);
+  // }
+
+  getDateTimeFormate(dateTime: any, onlyDate: boolean = false,) {
     let dates = new Date(dateTime);
-    if(onlyDate && onlyTime)
-      return this.datePipe.transform(dates,this.dateFormat+this.timeFormat);
-    else if(onlyDate)
-      return this.datePipe.transform(dates,this.dateFormat);
-    if(onlyTime)
-      return this.datePipe.transform(dates,this.timeFormat);
+    let formattedDate: string | null;
+  if(dates.toString() != 'Invalid Date'){
+    
+    if (!onlyDate) {
+      if (this.timeFormat === '12') {
+        formattedDate = this.datePipe.transform(dates, `${this.dateFormat} hh:mm a`, this.timezone);
+      } else {
+        formattedDate = this.datePipe.transform(dates, `${this.dateFormat} HH:mm`, this.timezone);
+      }
+    } else {
+      formattedDate = this.datePipe.transform(dates, this.dateFormat, this.timezone);
+    }
+
+    return formattedDate;
+  } else{
+    return 'N/A';
+  }
   }
 
   getInitials(name:any){

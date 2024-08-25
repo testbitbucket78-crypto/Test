@@ -135,11 +135,11 @@
 							</div>
 							<div class="child1 d-flex flex-column">
 								<h5>Created Date:</h5>
-								<h6>{{items.created_at | date:'MMM d y, h:mm a'}}</h6>
+								<h6>{{settingsService?.getDateTimeFormate(items.created_at)}}</h6>
 							</div>
 							<div class="child1 d-flex flex-column">
 								<h5>Last Updated:</h5>
-								<h6>{{items.updated_at | date: 'MMM d y, h:mm a'}}</h6>
+								<h6>{{settingsService?.getDateTimeFormate(items.updated_at)}}</h6>
 							</div>
 						</div>
 					</div>

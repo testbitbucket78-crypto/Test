@@ -72,10 +72,10 @@
 				<h5>{{repliesData?.ID}}.</h5>
 				<div class="line"></div>
 				<h6>Created on:</h6>
-				<h5>{{repliesData?.CreatedDate | date: 'dd MMM yyyy'}}</h5>
+				<h5>{{settingsService?.getDateTimeFormate(repliesData?.CreatedDate,true)}}</h5>
 				<div class="line"></div>
 				<h6>Edited on:</h6>
-				<h5>{{repliesData?.ModifiedDate | date: 'dd MMM yyyy' }}</h5>
+				<h5>{{settingsService?.getDateTimeFormate(repliesData?.ModifiedDate, true) }}</h5>
 			</div>
 			<!-- <h4 class="help-support-btn p-0" routerLink="/dashboard/support"><img id="Edit-icon"
 					src="assets/img/Edit-icon.png">Help & Support</h4> -->
@@ -626,7 +626,7 @@
 								</div>
 							 <div class="template_head flex-column">
 							  <p class="template_name">{{template.TemplateName}}</p>
-							  <p class="m-0"><span>{{ template.created_at | date:'dd-MM-yyyy' }}</span></p>
+							  <p class="m-0"><span>{{ settingsService?.getDateTimeFormate(template.created_at,true) }}</span></p>
 					  
 							  <div class="inner_box">
 								<img *ngIf="template.media_type === 'image'" class="template_img" src="{{template.Links}}">
