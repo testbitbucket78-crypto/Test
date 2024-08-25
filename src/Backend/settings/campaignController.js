@@ -490,7 +490,7 @@ async function Createtemplate(messageData) {
         // Convert array to object
         const dataObject = messageData[0];
         // // Find the BODY component
-         const bodyComponent = dataObject.components.find(component => component.type === 'BODY');
+        const bodyComponent = dataObject.components.find(component => component.type === 'BODY');
 
         // // Check if BODY component exists and then update its text
         if (bodyComponent) {
@@ -503,7 +503,7 @@ async function Createtemplate(messageData) {
         const response = await axios({
             method: "POST",
             url: `https://graph.facebook.com/v20.0/192571223940007/message_templates?access_token`,
-            data: JSON.stringify(messageData), // Use the video message structure
+            data: dataObject, // Use the video message structure
             "headers": {
                 "Authorization": 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S',
                 "Content-Type": "application/json",
@@ -565,9 +565,9 @@ async function getOfficialTemplate() {
 
 const addTemplate = async (req, res) => {
     try {
-            ID = req.body.ID
-            templateID = req.body?.templateID
-            TemplateName = req.body.TemplateName,
+        ID = req.body.ID
+        templateID = req.body?.templateID
+        TemplateName = req.body.TemplateName,
             Channel = req.body.Channel,
             Category = req.body.Category,
             Language = req.body.Language,
@@ -587,20 +587,21 @@ const addTemplate = async (req, res) => {
         industry = req.body.industry
         isCopied = req.body?.isCopied
         let image = Links
-console.log(ID,status,Channel)
+        console.log(ID, status, Channel)
         if (ID == 0) {
             let templateStatus;
             let addedtem;
             if (Channel == 'WhatsApp Official' || Channel == 'WA API') {
-                templateStatus = await Createtemplate(template_json);
-                console.log("templateStatus", templateStatus)
-                
-                status = templateStatus.status
-if(!templateStatus.status && isCopied ==1){
-    status = req.body.status
-}
-                if (templateStatus.status || isTemplate == 0 || isCopied ==1) {
-                    
+                if(isTemplate == 1){
+                    templateStatus = await Createtemplate(template_json);
+                    console.log("templateStatus", templateStatus)
+    
+                    status = templateStatus.status
+                    if (!templateStatus.status){
+                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
+                    addedtem = await db.excuteQuery(val.addTemplates, [temValues])
+                    }
+                }else if (isTemplate == 0 || isCopied == 1) {
                     let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                 }
@@ -619,12 +620,19 @@ if(!templateStatus.status && isCopied ==1){
         else {
             let updatedTemplate;
             if (Channel == 'WhatsApp Official' || Channel == 'WA API') {
-                let edittemplateStatus =await editTemplate('1639866336812961', template_json);
-                console.log("edittemplateStatus", edittemplateStatus);
-                if (edittemplateStatus.status || isTemplate == 0) {
+               
+                if (isTemplate == 1) {
+                    let edittemplateStatus = await Createtemplate(template_json);
+                    console.log("edittemplateStatus", edittemplateStatus);
+                    if(edittemplateStatus.status){
                     let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
                     updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
-                    console.log(Channel,status, "updatedTemplate", updatedTemplate)
+                    console.log(Channel, status, "updatedTemplate", updatedTemplate)
+                    }
+                }else if(isTemplate == 0){
+                    let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
+                    updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
+                    console.log(Channel, status, "updatedTemplate", updatedTemplate)
                 }
             } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {
                 let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
@@ -682,12 +690,13 @@ const getTemplate = async (req, res) => {
 
         // Update status in rowDataPackets based on the lookup object
         templates.forEach(packet => {
-           // console.log(packet.status  ,packet.TemplateName)
-            if( packet.status != 'draft'){
-           //     console.log("if")
-            if (statusLookup[packet.TemplateName]) {
-                packet.status = statusLookup[packet.TemplateName];
-            }}
+            // console.log(packet.status  ,packet.TemplateName)
+            if (packet.status != 'draft') {
+                //     console.log("if")
+                if (statusLookup[packet.TemplateName]) {
+                    packet.status = statusLookup[packet.TemplateName];
+                }
+            }
         });
         //  console.log(templates)
         res.status(200).send({

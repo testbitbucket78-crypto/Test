@@ -33,7 +33,7 @@ async function NoCustomerReplyReminder() {
 
           //let sendDefult = await sendDefultMsg(data[0].link, data[0].value, data[0].message_type, 101714466262650, message.customer_phone_number)
           let message_text =await getExtraxtedMessage(data.value)
-          messageThroughselectedchannel(message.SPID,message.customer_phone_number,data.message_type,message_text,data.link,'211544555367892',msg.channel)
+          messageThroughselectedchannel(message.SPID,message.customer_phone_number,data.message_type,message_text,data.link,'211544555367892',msg.channel,msg.message_type)
           let myUTCString = new Date().toUTCString();
           const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.Message_id]);
@@ -101,7 +101,7 @@ async function NoCustomerReplyTimeout() {
       for (const msg of CustomerReplyTimeout) {
         //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
         let message_text =await getExtraxtedMessage(msg.value)
-        messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,message_text,msg.link,'211544555367892',msg.channel)
+        messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,message_text,msg.link,'211544555367892',msg.channel,msg.message_type)
         
         let myUTCString = new Date().toUTCString();
         const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
@@ -139,7 +139,7 @@ async function NoAgentReplyTimeOut() {
       //    console.log("time out working hour")
           //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
           let message_text =await getExtraxtedMessage(msg.value)
-          messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,message_text,msg.link,'211544555367892',msg.channel)
+          messageThroughselectedchannel(msg.SPID,msg.customer_phone_number,msg.message_type,message_text,msg.link,'211544555367892',msg.channel,msg.message_type)
           let myUTCString = new Date().toUTCString();
           const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [4, currenttime, msg.Message_id]);
@@ -181,19 +181,20 @@ async function isClientActive(spid) {
 }
 
 
-async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
+async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType,media_type) {
   //console.log("spid, from, type, text, media, phone_number_id, channelType")
+  let getMediaType =media_type  //determineMediaType(media_type);
   console.log(spid, from, type, phone_number_id, channelType)
   try{
     if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
-      let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+      let respose = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from);
       return respose;
     } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
       let clientReady = await isClientActive(spid);
    
       if (clientReady.status) {
-        let response = await middleWare.postDataToAPI(spid, from, type, text, media);
+        let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media);
         console.log("response", JSON.stringify(response.status));
         return response;
       }
