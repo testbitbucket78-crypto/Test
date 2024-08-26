@@ -281,10 +281,29 @@
 	flex-direction: row;
 	justify-content: space-between;
 	margin-top:10px;
+	.default_avtar{
+		display: flex;
+	  align-items: center;
+	  margin-right: 7px;
+	  .campaign-profile {
+		  margin-right: 7px;
+		  width: 27px;
+		  height: 14px;
+		  border-radius: 50%;
+		  background-color: white;
+		  color: #6149CD !important;
+		  align-items: center;
+		  justify-content: center;
+		  font-size: 11px;
+		  font-weight: bold;
+		  margin-right: 7px !important;
+		}
+  }
 	}
 	.campaigns_section_item_statics p{
 	margin: 0px;
 	}
+
 
 	.modal-title{
 	color: #6149CD;
@@ -2475,3 +2494,5 @@ position: absolute;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+

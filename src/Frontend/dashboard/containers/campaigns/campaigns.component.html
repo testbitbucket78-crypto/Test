@@ -1075,8 +1075,7 @@
 							<p><span>No. of Audience</span></p>
 						</div> -->
 						<div>
-							<p *ngIf="list.owner" class="default_avtar">  <img [src]="profilePicture"/>{{list.owner}}</p>
-							
+							<div *ngIf="list.owner" class="default_avtar"><p class="campaign-profile">{{settingsService.getInitials(list.owner)}}</p> {{list.owner}}</div>
 							<p><span>Created By</span></p>
 						</div>
 					</div>

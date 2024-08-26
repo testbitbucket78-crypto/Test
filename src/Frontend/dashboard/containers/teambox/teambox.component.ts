@@ -2872,7 +2872,7 @@ triggerEditCustomer(updatecustomer:any){
 	// this.EditContactForm.get('channel')?.setValue(this.selectedInteraction.channel)
 	// this.EditContactForm.get('customerId')?.setValue(this.selectedInteraction.customerId)
 	this.patchFormValue();
-	this.modalReference = this.modalService.open(updatecustomer,{ size:'md', windowClass:'white-bg'});
+	this.modalReference = this.modalService.open(updatecustomer,{ size:'md', windowClass:'white-bg, updateCustomerCustom'});
 }
 
 
