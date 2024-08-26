@@ -107,6 +107,7 @@ wss.on('connection', (ws) => {
     Object.keys(clients).forEach(key => {
       if (clients[key] == ws) {
         console.log('Client disconnected : ' + key);
+        //spAgentMapping[[key][inside]]
       }
       else {
         tempClients[key] = clients[key];
