@@ -673,10 +673,10 @@ const insertMessage = async (req, res) => {
                 var mentionedNotification = await db.excuteQuery(mentionQuery, [messageTextParameter, agentNameParameter]);
             }
 
-            if (mentionedNotification.length != 0) {
+            if (mentionedNotification.length != 0 && 'notes') {
                 let myUTCString = new Date().toUTCString();
                 const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-                let notifyvalues = [[SPID, 'Mentioned You', message_text, Agent_id, 'teambox', Agent_id, utcTimestamp]];
+                let notifyvalues = [[SPID, '@Mention in the Notes', 'A new Chat has been Assigned to you', Agent_id, 'teambox', Agent_id, utcTimestamp]];
                 let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
                 //  logger.debug('Mention Result:', mentionRes);
             }
@@ -892,7 +892,7 @@ const updateInteractionMapping = async (req, res) => {
 
             const myUTCString = new Date().toUTCString();
             const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-            const notifyvalues = [[nameData[0].SP_ID, 'Assigned a conversation', 'Assigned a conversation with ' + nameData[0].name, AgentId, 'teambox', MappedBy, utcTimestamp]];
+            const notifyvalues = [[nameData[0].SP_ID, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', AgentId, 'teambox', MappedBy, utcTimestamp]];
             const notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
             logger.debug('Notification Result:', notifyRes);
         }

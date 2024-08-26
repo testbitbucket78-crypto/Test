@@ -943,7 +943,7 @@ async function writeErrFile(errData, res, headersArray) {
       const fields = [];
       errData[0].data.forEach(entry => {
         // Exclude specific values like SP_ID and displayName
-        if (entry.ActuallName !== 'SP_ID' && entry.ActuallName !== 'displayPhoneNumber') {
+        if (entry.ActuallName !== 'SP_ID' && entry.ActuallName !== 'displayPhoneNumber' && entry.ActuallName !== 'countryCode') {
           const matchedHeader = headersArray.find(header => header.ActuallName === entry.ActuallName);
           if (matchedHeader) {
             fields.push(matchedHeader.displayName);

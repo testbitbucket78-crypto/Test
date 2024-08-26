@@ -41,6 +41,11 @@ async function AssignToContactOwner(sid, newId, agid, custid) {
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
         console.log("AssignToContactOwner --- contact owner assign", updateInteractionMap);
         if (updateInteractionMap?.affectedRows > 0) {
+         
+          let myUTCString = new Date().toUTCString();
+          const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
           return true; // Return true if insertion is successful
         } else {
           return { message: "Insertion into InteractionMapping failed" };
@@ -84,6 +89,12 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
       let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0].AgentId, '-1', 1]]]);
       console.log("LastAssistedAgent", assignAgent);
       if (assignAgent?.affectedRows > 0) {
+
+          let myUTCString = new Date().toUTCString();
+          const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+
         return true; // Return true if insertion is successful
       } else {
         return { message: "Insertion into InteractionMapping failed" };
@@ -117,7 +128,7 @@ async function BroadCast(sid, agid, newId) {
     let myUTCString = new Date().toUTCString();
     const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     var addNotification = `INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`;
-    let notifyvalues = [[sid, 'Notify Online Agents', 'New Unassign Chat is Avilable', agid, 'webhook', '-1', created_at]];
+    let notifyvalues = [[sid, 'Notify Online Agents', 'A new Unassigned Chat is available to assigned', agid, 'webhook', '-1', created_at]];
     let notifyRes = await db.excuteQuery(addNotification, [notifyvalues]);
     return 'broadcast'; // Return the result of the query
   } catch (err) {
@@ -148,10 +159,16 @@ async function RoundRobin(sid, newId) {
           let chatCount = assignedChatCount.length > 0 ? assignedChatCount[0].count : 0;
 
           if (maxAllowd > chatCount) {
-            let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
-            let chatAssigend = await db.excuteQuery(assignAgentQuery, [[[newId, agent.uid, '-1', 1]]]);
+            let lastAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId=? order by MappingId desc ',[newId])
+            let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active,lastAssistedAgent) VALUES ?`;
+            let chatAssigend = await db.excuteQuery(assignAgentQuery, [[[newId, agent.uid, '-1', 1,lastAgent[0]?.AgentId]]]);
             console.log("RoundRobin", chatAssigend);
             if (chatAssigend?.affectedRows > 0) {
+              let myUTCString = new Date().toUTCString();
+          const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+
               return true; // Return true if insertion is successful
             } else {
               return { message: "Insertion into InteractionMapping failed" };
@@ -177,6 +194,10 @@ async function ManualAssign(newId, sid) {
       let assignvalues = [[newId, '-1', '-1', 1]];
       let assignRes = await db.excuteQuery(newAssignQuery, [assignvalues]);
       if (assignRes?.affectedRows > 0) {
+        let myUTCString = new Date().toUTCString();
+          const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
         return true; // Return true if insertion is successful
       } else {
         return { message: "Insertion into InteractionMapping failed" };
@@ -244,6 +265,10 @@ async function AssignAdmin(newId, sid) {
     let assignAgentRes = await db.excuteQuery(assignAgentQuery, [[[newId, admin, '-1', 1]]]);
     console.log("AssignAdmin", assignAgentRes);
     if (assignAgentRes?.affectedRows > 0) {
+      let myUTCString = new Date().toUTCString();
+          const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
       return true;
     } else {
       return { message: "Insertion into InteractionMapping failed" };
@@ -265,6 +290,10 @@ async function AssignSpecificUser(sid, newId) {
       let assignAgentRes = await db.excuteQuery(assignAgentQuery, [newId, RoutingRules[0].SpecificUserUid, '-1', 1]);
       console.log("AssignSpecificUser", assignAgentRes);
       if (assignAgentRes?.affectedRows > 0) {
+        let myUTCString = new Date().toUTCString();
+          const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
         return true;
       } else {
         return { message: "Insertion into InteractionMapping failed" };
@@ -292,6 +321,10 @@ async function AssignMissedToContactOwner(sid, newId, agid, custid) {
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
         console.log("AssignMissedToContactOwner", updateInteractionMap);
         if (updateInteractionMap?.affectedRows > 0) {
+          let myUTCString = new Date().toUTCString();
+          const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
           return true;
         } else {
           return { message: "Insertion into InteractionMapping failed" };
