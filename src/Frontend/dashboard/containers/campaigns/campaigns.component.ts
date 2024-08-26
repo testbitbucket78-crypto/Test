@@ -1974,6 +1974,7 @@ testinfo(){
 	}
 
 	prevStep(){
+		this.allTemplates = JSON.parse(JSON.stringify(this.initallTemplates));
 		if(this.activeStep >1){
 			if(this.activeStep ==3.1){
 				this.activeStep = 3;
@@ -2175,7 +2176,7 @@ testinfo(){
 	isCustomValue(value: string): boolean {
 		const allVariables = this.selectedTemplate.allVariables;
 		const isVariableMatched = allVariables.some((x:any) => x.label == value);
-		return isVariableMatched;
+		return true;
 	  }
 
 	checkVariableValue(){
