@@ -632,11 +632,8 @@ showAddSmartRepliesModal() {
 			//media_type ='document';
 		getMimeTypePrefix ='document';
 			  mediaContent ='<p><a href="'+this.messageMeidaFile+'"><img style="width:14px; height:17px" src="../../../../assets/img/settings/doc.svg" />'+this.fileName+'</a></p>'
-			  mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
+			  mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>'+originalName+'</p>'
 		  }
-		  let item = {
-			media_type: getMimeTypePrefix,
-		}
 
 		const editorElement = this.chatEditor?.contentModule?.getEditPanel?.();
 
@@ -652,6 +649,9 @@ showAddSmartRepliesModal() {
 			this.chatEditor.value = mediaName + editorValue;
 		}
 		}
+		let item = {
+			media_type: getMimeTypePrefix,
+		    }
 		// this.chatEditor.value = mediaContent;
 		this.addingStylingToMedia(item);
 	}
@@ -785,7 +785,7 @@ showAddSmartRepliesModal() {
 		}
 		else if(item.media_type == 'document') {
 			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
-			mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</a></p>'
+			mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" />'+originalName+'</p>'
 		}
 		else {
 			mediaContent=''
@@ -797,7 +797,7 @@ showAddSmartRepliesModal() {
 	}
 
 	addingStylingToMedia(item: any){
-		if (item.media_type === 'image' || item.media_type === 'video' || item.media_type === 'document') {
+		if (item.media_type === 'image' || item.media_type === 'video' || item.media_type === 'document' || item.media_type == 'application') {
 			setTimeout(() => {
 			  const editorContent = this.chatEditor.element.querySelector('.e-content');
 			  const mediaElements = editorContent?.querySelectorAll('img, video');
@@ -839,16 +839,20 @@ showAddSmartRepliesModal() {
                 parentElement.setAttribute('contenteditable', 'false'); 
 	
 				crossButton.addEventListener('click', () => {
-				const mediaNameElement = editorContent?.querySelector('.custom-class-attachmentType');
-				if (mediaNameElement) {
-					mediaNameElement.remove();
-				}
-				if(this.mediaType){
-					this.mediaType = ''
-					this.messageMeidaFile = ''
-				}
-				  media.remove();
-				  crossButton.remove();
+					if (media && media.parentElement) {
+						media.remove();
+					  }
+					  if (crossButton && crossButton.parentElement) {
+						crossButton.remove();
+					  }
+					  const mediaNameElement = editorContent?.querySelector('.custom-class-attachmentType');
+					  if (mediaNameElement) {
+						mediaNameElement.remove();
+					  }
+					  if (this.mediaType) {
+						this.mediaType = '';
+						this.messageMeidaFile = '';
+					  }
 				});
 			  });
 			}, 0); 
@@ -862,6 +866,10 @@ showAddSmartRepliesModal() {
 	  isVideo(media: string): boolean {
 		if(!media) return false;
 		return media.match(/\.(mp4|webm|ogg)$/) != null;
+	  }
+	  isDocument(media: string): boolean {
+		if(!media) return false;
+		return /\.(pdf|doc|docx|xls|xlsx)$/i.test(media);
 	  }
 	// insertTemplate(item:any) {
 	// 	this.closeAllModal()
