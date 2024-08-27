@@ -792,11 +792,11 @@ checkTemplateName(e:any){
                 // ]
             },
         ]
-        if(headerAtt){
+        if(headerAtt && headerAtt.length > 0){
             header_text ={ "header_text": headerAtt}
             comp[0]['example'] = header_text
         }
-        if(bodyAtt){
+        if(bodyAtt && bodyAtt.length >0){
             body_text ={ "body_text": bodyAtt}
             comp[1]['example'] = body_text
         }
