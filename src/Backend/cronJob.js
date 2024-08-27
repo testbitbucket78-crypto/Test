@@ -29,7 +29,7 @@ function isWithinTimeWindow(scheduleDatetime) {
 async function fetchScheduledMessages() {
   try {
 
-    var messagesData = await db.excuteQuery(`select * from Campaign where status=1 and is_deleted != 1`, [])
+    var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
     var remaingMessage = [];
     //console.log(messagesData)
 
@@ -37,8 +37,10 @@ async function fetchScheduledMessages() {
 
     const currentDay = currentDate.getDay();
 
-    let currentDateTime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
+    let currentDateTime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' }); // UTC
     console.log("messagesData",messagesData)
+
+    // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
     for (const message of messagesData) {
 
       //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
@@ -55,7 +57,7 @@ async function fetchScheduledMessages() {
       }
 
     }
-console.log("remaingMessage",remaingMessage)
+   console.log("remaingMessage",remaingMessage)
     for (const message of remaingMessage) {
 
         console.log("remaingMessage loop", message.sp_id)
@@ -351,7 +353,7 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
 function isWorkingTime(item) {
   try {
     const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });  // for finding current date
-    let datetime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
+    let datetime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' }); // TO CHANGE WITH UTC
 
 
     // for (const item of data) {
@@ -573,24 +575,82 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
   if (channelType == 'WhatsApp Official' || channelType == 1  || channelType == 'WA API') {
 
     let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    if(respose?.status){
+    let saveSendedMessage = await saveMessage(from,spid,respose?.message?.messages[0]?.id)
+    }
+     
     return respose;
   } if (channelType == 'WhatsApp Web' || channelType == 2  || channelType == 'WA Web') {
   
     let clientReady = await isClientActive(spid);
     //console.log("clientReady",clientReady)
     if (clientReady?.status) {
-      let response = await middleWare.postDataToAPI(spid, from, type, text, media);
+      let saveSendedMessage = await saveMessage(from,spid,'')
+      let response = await middleWare.postDataToAPI(spid, from, type, text, media,'',saveSendedMessage);
       console.log("response", JSON.stringify(response?.status));
+     
       return response;
-    }
-
-    else {
+    
+  }else {
       console.log("isActiveSpidClient returned false for WhatsApp Web");
       return { status: 404 };
     }
 
   }
 }
+
+
+
+
+
+async function saveMessage(PhoneNo,spid,msgTemplateId){
+  
+  let InteractionId = await insertInteractionAndRetrieveId(PhoneNo,spid);
+  // console.log(req.body.message_content, "InteractionId InteractionId")
+
+  let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,Message_template_id) values ?`
+  let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, 'text', req.body.SP_ID, mediaType, '', -1,msgTemplateId]]]);
+  let insertedMsgId = saveMessage?.insertId
+}
+
+async function insertInteractionAndRetrieveId(phoneNo, sid) {
+  try {
+    let customerId = await db.excuteQuery(`select customerId from EndCustomer where Phone_Number =? AND SP_ID=? AND isDeleted !=1 ORDER BY created_at desc limit 1`,[phoneNo,sid])
+    let custid = customerId[0]?.customerId;
+    
+    console.log(phoneNo, sid,custid)
+      // Check if Interaction exists for the customerId
+      let rows = await db.excuteQuery(
+          'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ',
+          [custid, sid]
+      );
+
+      if (rows.length == 0) {
+
+          // If no existing interaction found, insert a new one
+          await db.excuteQuery(
+              'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
+              [custid, 'empty', sid, 'User Initiated']
+           );
+
+      }
+
+      // Retrieve the newly inserted or existing Interaction ID
+      let InteractionId = await db.excuteQuery(
+          'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ORDER BY created_at DESC LIMIT 1',
+          [custid, sid]
+      );
+
+      // console.log('Newly inserted or existing Interaction ID:', InteractionId);
+
+      return InteractionId;
+  } catch (error) {
+      console.error('Error:', error);
+      return error;
+  }
+}
+
+
 
 
 async function autoResolveExpireInteraction() {

@@ -72,15 +72,15 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
     let RoutingRules = await db.excuteQuery(RoutingRulesQuery, [sid]);
     //console.log("--------------------------", RoutingRules);
 
-    let LastAssistedAgentQuery = `SELECT im.MappingId
-      FROM InteractionMapping im
-      JOIN (
-        SELECT MAX(i.interactionId) AS latestInteractionId
-        FROM Interaction i
-        WHERE i.customerId =? AND i.interaction_status ='Resolved'
-      ) latestInteraction
-      ON im.interactionId = latestInteraction.latestInteractionId and im.AgentId !=-1;`;
-    let LastAssistedAgent = await db.excuteQuery(LastAssistedAgentQuery, [custid]);
+    // let LastAssistedAgentQuery = `SELECT im.MappingId
+    //   FROM InteractionMapping im
+    //   JOIN (
+    //     SELECT MAX(i.interactionId) AS latestInteractionId
+    //     FROM Interaction i
+    //     WHERE i.customerId =? AND i.interaction_status ='Resolved'
+    //   ) latestInteraction
+    //   ON im.interactionId = latestInteraction.latestInteractionId and im.AgentId !=-1;`;
+    let LastAssistedAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =? and lastAssistedAgent is not null order by created_at desc limit 1', [newId]);
     console.log(RoutingRules[0]?.broadcast == '1', LastAssistedAgent, LastAssistedAgent.length, new Date(), RoutingRules[0]?.broadcast == 1);
 
     if (LastAssistedAgent.length > 0 && RoutingRules[0]?.assignagent == '1') {

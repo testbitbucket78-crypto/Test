@@ -17,6 +17,7 @@ const db = require('../dbhelper')
 const awsHelper = require('../awsHelper');
 const incommingmsg = require('../IncommingMessages')
 const notify = require('../whatsApp/PushNotifications')
+const mapCountryCode = require('../Contact/utils.js');
 const fs = require('fs')
 const path = require("path");
 let clientSpidMapping = {};
@@ -98,8 +99,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-         // executablePath: "/usr/bin/google-chrome-stable",
-           executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          executablePath: "/usr/bin/google-chrome-stable",
+          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -621,7 +622,10 @@ async function saveInMessages(message) {
     let Type = message.type
     let contactName = message._data.notifyName      //contactName
 
-
+    let countryCode;
+    if (from){
+       countryCode = mapCountryCode(phoneNo); //Country Code abstraction eg: 9190000000000
+    }
     if (message.hasMedia) {
       const media = await message.downloadMedia();
       console.log("media", message.type)
@@ -637,7 +641,7 @@ async function saveInMessages(message) {
       var d = new Date(message.timestamp * 1000).toUTCString();
 
       const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
-      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, 'null', message_time);
+      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, 'null', message_time,countryCode);
       //console.log("saveMessage" ,)
       // console.log(saveMessage)
 
@@ -694,9 +698,9 @@ async function savelostChats(message, spPhone, spid) {
 
     const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
 
-     console.log(d,new Date( getLastScannedTime[0]?.latest_message_created_date) < new Date(d) , getLastScannedTime[0]?.latest_message_created_date)
+     console.log(d,new Date().toUTCString() , getLastScannedTime[0]?.latest_message_created_date.toUTCString(),(d > getLastScannedTime[0]?.latest_message_created_date),new Date( getLastScannedTime[0]?.latest_message_created_date))
 
-     console.log(getLastScannedTime.length,(d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0))
+    // console.log(message_text,getLastScannedTime.length,(d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0))
     if ((d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0)) {
 
 
@@ -909,7 +913,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
       }
     }
-    if (defaultReplyAction == false) {
+    if (defaultReplyAction == 'false') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
