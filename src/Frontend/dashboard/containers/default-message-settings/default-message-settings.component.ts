@@ -342,8 +342,13 @@ removeMedia() {
         // console.log(this.defaultMessageDataInit);
     })
   }
-
+mediaType: string = 'text';
   addEditDefaultMessageData() {
+    const Link = this.defaultMessageForm.get('link')?.value
+    this.mediaType = 'text'
+    if(Link){
+      this.mediaType = this.getMimeType(Link);
+    }
     var tempDivElement = document.createElement("div");   
 
 	   tempDivElement.innerHTML = this.chatEditor.value;
@@ -385,16 +390,45 @@ removeMedia() {
      }
 
   }
+ getMimeType(url: string): string {
+    const extension = url.split('.').pop()?.toLowerCase();
+  
+    const mimeTypes: { [key: string]: string } = {
+      'jpeg': 'image/jpeg','jpg': 'image/jpeg','png': 'image/png','gif': 'image/gif',
+      'bmp': 'image/bmp','svg': 'image/svg+xml','webp': 'image/webp','mp4': 'video/mp4',
+      'mov': 'video/quicktime','avi': 'video/x-msvideo','mkv': 'video/x-matroska','webm': 'video/webm',
+      'pdf': 'application/pdf','doc': 'application/msword','docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'xls': 'application/vnd.ms-excel','xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'ppt': 'application/vnd.ms-powerpoint','pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    };
+
+    return mimeTypes[extension || ''] || 'unknown';
+  }
+  isImage(media: string): boolean {
+		if(!media) return false;
+    return /^(image\/jpeg|image\/jpg|image\/gif|image\/png)$/i.test(media);
+	  }
+	  isVideo(media: string): boolean {
+		if(!media) return false;
+    return /^(video\/mp4|video\/webm|video\/ogg)$/i.test(media);
+	  }
+	  isDocument(media: string): boolean {
+		if(!media) return false;
+		return /^(application\/pdf|application\/msword|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|application\/vnd\.ms-excel|application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet)$/i.test(media);
+	  }
 
   editDefaultMessages() { 
     $("#welcomGreeting").modal('show');
-    this.selectedType = this.selectedMessageData.message_type;
+    this.selectedType = this.getMimeTypePrefix(this.selectedMessageData.message_type);
     this.selectedTitle = this.selectedMessageData.title;
     this.selectedDescription = this.selectedMessageData.description;
     this.selectedPreview = this.selectedMessageData.link;
     this.defaultMessageForm.clearAsyncValidators();
   }
-
+  getMimeTypePrefix(mimeType: string): string {
+    if(!mimeType) return '';
+		return mimeType.split('/')[0];
+	  }
   isShowSideBar(data:any,type: number) {
       this.showSideBar = true;
       this.selectedMessageData = data;
@@ -425,7 +459,7 @@ removeMedia() {
     }
     defaultMessagesData.title = this.selectedTitle;
     defaultMessagesData.description = this.selectedDescription;
-    defaultMessagesData.message_type = this.selectedType;
+    defaultMessagesData.message_type = this.mediaType;
     defaultMessagesData.value = this.defaultMessageForm.controls.value.value;
     defaultMessagesData.link = this.selectedPreview;
     defaultMessagesData.override = this.defaultMessageForm.controls.override.value;
