@@ -174,7 +174,7 @@ app.post('/addCustomContact', async (req, res) => {
           }
         }
 
-        updateQuery += ', isDeleted = 0 WHERE Phone_number = ? AND SP_ID = ?';
+        updateQuery += ',created_at = NOW(), isDeleted = 0 WHERE Phone_number = ? AND SP_ID = ?';
         updateValues.push(phoneNumber, spId);
         let result = await db.excuteQuery(updateQuery, updateValues);
 
@@ -599,12 +599,29 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
         }
       }
 
-      let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=? and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
-      const values = set.map((field) => field.displayName);
-      console.log(values, fieldNames);
-
-      // Ensure db.executeQuery returns a promise
-      result = await db.excuteQuery(query, [values, identifierValue, SP_ID]);
+      const checkDeletedQuery = `
+      SELECT * FROM EndCustomer 
+      WHERE ${identifier} = ? 
+      AND SP_ID = ? 
+      AND isDeleted = 1
+    `;
+      const checkResult = await db.excuteQuery(checkDeletedQuery, [identifierValue, SP_ID]);
+      if (checkResult && checkResult.length > 0) {
+        const updateQuery = `
+        UPDATE EndCustomer SET ${fieldNames.replace(/,/g, ' = ?, ')} = ?, isDeleted = 0, created_at = NOW() 
+        WHERE ${identifier} = ? AND SP_ID = ?
+      `;
+      const updateValues = set.map((field) => field.displayName).concat([identifierValue, SP_ID]);
+      result = await db.excuteQuery(updateQuery, updateValues);
+      }
+      else{
+        let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=? and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
+        const values = set.map((field) => field.displayName);
+        console.log(values, fieldNames);
+  
+        // Ensure db.executeQuery returns a promise
+        result = await db.excuteQuery(query, [values, identifierValue, SP_ID]);
+      }
       if (result?.affectedRows == 1) {
         count++;
       }
