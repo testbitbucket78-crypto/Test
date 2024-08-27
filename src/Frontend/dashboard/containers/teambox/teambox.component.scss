@@ -1125,15 +1125,14 @@ button:focus, input:focus {
 }
 
 
-// .edit-block-section {
-//     text-align: center;
-//     margin: 20px 0px;
-//     display: flex;
-//     flex-direction: row;
-//     align-content: center;
-//     flex-wrap: nowrap;
-//     justify-content: center;
-// }
+ .footer .edit-block-section {
+ padding: 0px 45px 25px 45px;
+    width: 20%;
+    background-color: #f8f9fa;
+    position: fixed;
+    bottom: 0px;
+    display: flex;
+}
 
 .d-align-center{
     display: flex;
@@ -3104,13 +3103,9 @@ label span {
     padding: 0 !important;
 }
 
-.contact-form-scroll{
-    overflow-y: scroll;
-    height: calc(85vh - 70px);
-}
 
 .contact-modal-body{
-    height: 85vh;
+    height: max-content;
 }
 
 .disabled{

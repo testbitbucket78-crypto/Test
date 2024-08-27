@@ -130,13 +130,35 @@ AND dm.Is_disable=1 and latestmsg.updated_at <= DATE_SUB(NOW(), INTERVAL dm.auto
 systemMsgQuery='UPDATE Message set system_message_type_id=?,updated_at=? where Message_id=?'
 selectdefaultMsgQuery = `SELECT * FROM defaultmessages WHERE Is_disable = 1 and title=? and SP_ID=?`;
 
-assignCount=`SELECT COUNT(*)  as count
-FROM InteractionMapping
-WHERE AgentId = ?
-AND InteractionId IN (
-    SELECT InteractionId 
-    FROM Interaction where (interaction_status = 'open' OR interaction_status = 'Open Interactions') and SP_ID=?
-);`
+assignCount=`SELECT 
+  COUNT(*) AS count
+FROM 
+    InteractionMapping im
+JOIN 
+    (SELECT 
+        InteractionId,
+        MAX(created_at) AS latest_created_at
+     FROM 
+        InteractionMapping
+     GROUP BY 
+        InteractionId) AS latest_interactions
+ON 
+    im.InteractionId = latest_interactions.InteractionId 
+AND 
+    im.created_at = latest_interactions.latest_created_at
+WHERE 
+    im.AgentId = ?
+AND 
+    im.InteractionId IN (
+        SELECT 
+            InteractionId 
+        FROM 
+            Interaction 
+        WHERE 
+            (interaction_status = 'open' OR interaction_status = 'Open Interactions') 
+            AND SP_ID = ?
+    );
+;`
 
 
 checkAssignInteraction=`SELECT * FROM InteractionMapping WHERE InteractionId = ? order by  MappingId desc limit 1`

@@ -108,6 +108,7 @@ export class GeneralSettingsComponent implements OnInit {
       }
     }; if (action === 'autoReplyTime') {
       this.isAutoReply = checked ? 1 : 0;
+      this.isAutoReplyDisable = checked ?this.isAutoReplyDisable : 0;
         if(this.isAutoReply==0) {
           this.autoReplyTime ='';
           this.pauseAutoReplyTime = 0;

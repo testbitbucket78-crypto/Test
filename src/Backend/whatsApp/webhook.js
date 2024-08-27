@@ -253,6 +253,14 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var isContactPreviousDeleted = extractedData.isContactPreviousDeleted
     var ifgot = extractedData.ifgot
     notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', msg_id)
+
+ 
+    let myUTCString = new Date().toUTCString();
+    const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', agid, utcTimestamp]];
+    let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+
+
     let contact = await db.excuteQuery('select * from EndCustomer where customerId =?', [custid])
     // if(contact?.length >0){
     //   funnel.ScheduledFunnels(contact[0].SP_ID, contact[0].Phone_number, contact[0].OptInStatus, new Date(), new Date(),0);
@@ -320,6 +328,11 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         console.log("RoutingRulesVaues", RoutingRulesVaues)
         if (RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true) {
           notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+
+          let myUTCString = new Date().toUTCString();
+          const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
         }
         //Here i have to check if any routing rules addded then send websocket
       }

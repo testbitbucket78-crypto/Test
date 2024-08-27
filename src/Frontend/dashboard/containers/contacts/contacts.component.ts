@@ -304,7 +304,7 @@ onButtonClick(data:any, event: any) {
  console.log(data);
   const target = event.target;  
    // this.router.navigateByUrl(`Dashboard/teambox?isNewMessage=${true}`);
-    this.router.navigate(['/dashboard/teambox'], { queryParams: { isNewMessage: true,srchText: data?.Name} });
+    this.router.navigate(['/dashboard/teambox'], { queryParams: { isNewMessage: true,srchText: data?.Phone_number} });
 }
     ngOnInit() {
       this.isLoadingOnInit = true;

@@ -47,10 +47,12 @@ const login = async (req, res) => {
         }
 
         let user = null;
+        let spPhoneNumber = null;
         for (let i = 0; i < credentials.length; i++) {
             const validPassword = await bcrypt.compare(password, credentials[i]['password']);
             if (validPassword) {
                 user = credentials[i];
+                spPhoneNumber = await db.excuteQuery('select * from user where SP_ID=? AND ParentId IS NULL ORDER BY CreatedDate DESC LIMIT 1',[credentials[i]?.SP_ID])
                 break;
             }
         }
@@ -71,6 +73,7 @@ const login = async (req, res) => {
             msg: 'Logged in!',
             token,
             user: user,
+            spPhoneNumber : spPhoneNumber[0]?.mobile_number,
             status: 200
         });
     } catch (err) {
