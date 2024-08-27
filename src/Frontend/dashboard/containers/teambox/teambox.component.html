@@ -737,7 +737,7 @@ popupWidth='250px' popupHeight='200px'>
 						</div>
 					</div>
 				</div>
-					<div *ngIf="!showFullProfile && !showAttachedMedia" style="padding: 0 45px 0 45px;" class="footer">
+					<div *ngIf="!showFullProfile && !showAttachedMedia" class="footer">
 
 						<div class="horizental_line mt-4">
 						</div>
@@ -754,13 +754,13 @@ popupWidth='250px' popupHeight='200px'>
 
 
 						<!-- autoreply-dropdown -->
-						<div class="mt-3">
+						<!-- <div class="mt-3">
 							<button class="auto-rep-btn" (click)="toggleAutoReply()"><img class="icon"
 									src="/assets/img/teambox/time-circle.svg" />{{selectedInteraction.AutoReplyStatus}}
 								<img class="icon right-aligned" src="/assets/img/teambox/dropdown-w.svg" /></button>
-
-
-						</div>
+						
+						
+						</div> -->
 						<div class="custom_row mt-1">
 							<div class="col-md-12" id="addteamboox">
 								<div *ngIf="AutoReplyOption" class="popup-dialog autoreply"  (click)="stopPropagation($event)">
@@ -1692,7 +1692,7 @@ popupWidth='250px' popupHeight='200px'>
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
-		<div class="modal-body contact-modal-body">
+		<div class="modal-body  contact-modal-body" style="height: max-content; overflow: auto;">
 			<form [formGroup]="editContact" class="p-0 inner_form large editContact" (ngSubmit)="updateCustomer()">
 				<div class="contact-form-scroll px-3">
 				

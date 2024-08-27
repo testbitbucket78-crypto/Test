@@ -849,10 +849,8 @@ showAddSmartRepliesModal() {
 					  if (mediaNameElement) {
 						mediaNameElement.remove();
 					  }
-					  if (this.mediaType) {
-						this.mediaType = '';
-						this.messageMeidaFile = '';
-					  }
+					  if (this.mediaType) this.mediaType = '';
+					  if(this.messageMeidaFile) this.messageMeidaFile = '';
 				});
 			  });
 			}, 0); 
@@ -1124,7 +1122,7 @@ showAddSmartRepliesModal() {
 
 		if (this.editableMessageIndex !== null && this.editableMessageIndex >= 0 && this.editableMessageIndex < this.assignedAgentList.length) {
 
-			this.assignedAgentList[this.editableMessageIndex].Message = this.chatEditor.value;
+			this.assignedAgentList[this.editableMessageIndex].Message = value;
 			this.assignedAgentList[this.editableMessageIndex].Media = this.messageMeidaFile;
 	
 			this.editableMessageIndex = null;
@@ -1209,12 +1207,47 @@ showAddSmartRepliesModal() {
 			this.AssignedIndex = index;
 		}else{
 	    const element = document.getElementById(`msgbox-body${index}`);
-		
+		let getMimeTypePrefix;
+		let mediaName;
+		let Link;
+        if(this.assignedAgentList[index]?.media_type && this.assignedAgentList[index]?.Media){
+			const mediaType = this.assignedAgentList[index]?.media_type;
+			Link = this.assignedAgentList[index].Media;
+			const fileNameWithPrefix = Link.substring(Link.lastIndexOf('/') + 1);
+			getMimeTypePrefix = this.getMimeTypePrefix(mediaType);
+			let originalName;
+				if (getMimeTypePrefix === 'video') {
+					originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
+					originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+				} else {
+					originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+				}
+
+			if(getMimeTypePrefix = 'image') {
+				mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
+			  }
+			  else if(getMimeTypePrefix = 'video') {
+				  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
+			  }
+			  else if(getMimeTypePrefix== 'application' || getMimeTypePrefix == 'document') {
+				  mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>'+originalName+'</p>'
+			  }
+		}
+
 		  if (element) {
 			// element.focus();
-			let currentValue = element.innerHTML
-			this.chatEditor.value = currentValue;
+			let currentValue = element.innerHTML ?? '<br>';
+			if(mediaName) this.chatEditor.value = mediaName + currentValue;
+			else this.chatEditor.value = currentValue;
 			console.log(element);
+			if(getMimeTypePrefix){
+				this.messageMeidaFile = Link;
+				let item ={
+					media_type: getMimeTypePrefix
+				  }
+				this.addingStylingToMedia(item);
+			}
+			
 		  }
 		}
 		
