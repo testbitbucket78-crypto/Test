@@ -74,7 +74,7 @@
                 </div>
                 <div class="d-flex align-items-center w-40 py-3 custom-control custom-checkbox">
                     <input class="custom-control-input" type="checkbox" name="isAutoReplyDisable" id="isAutoReplyDisable"
-                      (change)="defaultActionState('autoReplyDisable',$event.target.checked)"
+                      (change)="defaultActionState('autoReplyDisable',$event.target.checked)"  [disabled]="!isAutoReply"
                        [(ngModel)]="isAutoReplyDisable" >
                    <label class="custom-control-label" for="isAutoReplyDisable">
                     <p>Disable Auto Replies completely when a chat is assigned to an agent until resolved.</p>

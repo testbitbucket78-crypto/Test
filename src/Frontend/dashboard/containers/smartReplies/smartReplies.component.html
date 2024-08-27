@@ -105,7 +105,8 @@
 					<h3>Message</h3>
 					<div class="box4-Media">
 					<img *ngIf="isImage(item.Media)" [src]="item.Media" alt="Media" />
-                    <video *ngIf="isVideo(item.Media)" [src]="item.Media" controls></video>
+					<img *ngIf="isDocument(item.Media)" src="../../../../assets/img/settings/doc.svg" alt="Media" style="max-width: 100%; height: auto;"/>
+                    <video *ngIf="isVideo(item.Media)" [src]="item.Media" controls style="max-width: 100%; height: auto;"></video>
 				    </div>
 					<p [innerHTML]="item.Message | sanitizeHtml"></p>
 				</div>

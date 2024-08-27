@@ -1385,7 +1385,7 @@ console.log(getMimeTypePrefix);
 			"spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
 		}
 		this.websocketService.connect(notificationIdentifier);
-			this.websocketService.getMessage().pipe(debounceTime(200)).subscribe(message => {
+			this.websocketService.getMessage().pipe().subscribe(message => {
 				console.log(message);
 				console.log(this.interactionList,'check id');
 				if(message != undefined )
@@ -2749,7 +2749,8 @@ blockCustomer(selectedInteraction:any){
 			this.updateInteractionMapping(selectedInteraction.InteractionId,-1,this.TeamLeadId)
 		}else{
 			this.getMessageData(this.selectedInteraction,true);
-			this.showToaster('Conversations is UnBlocked','success')
+			this.showToaster('Conversations is UnBlocked','success');
+			this.updateConversationStatus('Resolved');
 		}
 		console.log(ResponseData);
 	});
@@ -2872,7 +2873,7 @@ triggerEditCustomer(updatecustomer:any){
 	// this.EditContactForm.get('channel')?.setValue(this.selectedInteraction.channel)
 	// this.EditContactForm.get('customerId')?.setValue(this.selectedInteraction.customerId)
 	this.patchFormValue();
-	this.modalReference = this.modalService.open(updatecustomer,{ size:'md', windowClass:'white-bg'});
+	this.modalReference = this.modalService.open(updatecustomer,{ size:'md', windowClass:'white-bg, updateCustomerCustom'});
 }
 
 

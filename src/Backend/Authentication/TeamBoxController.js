@@ -111,7 +111,7 @@ const insertCustomers = async (req, res) => {
         if (tempContactResult.length > 0) {
             let updateTempContactQuery = `
                 UPDATE EndCustomer
-                SET Name = ?, channel = ?, OptInStatus = ?, countryCode = ?, displayPhoneNumber = ?, IsTemporary = 0, isDeleted = 0
+                SET Name = ?, channel = ?, OptInStatus = ?, countryCode = ?, displayPhoneNumber = ?, IsTemporary = 0, isDeleted = 0, created_at = NOW()
                 WHERE Phone_number = ? AND SP_ID = ?
             `;
             await db.excuteQuery(updateTempContactQuery, [Name, Channel, OptInStatus, country_code, displayPhoneNumber, Phone_number, SP_ID]);
