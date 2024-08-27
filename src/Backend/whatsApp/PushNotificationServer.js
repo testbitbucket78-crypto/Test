@@ -102,7 +102,7 @@ wss.on('connection', (ws) => {
   });
 
   // Handle WebSocket connection close
-  ws.on('close', () => {
+ /* ws.on('close', () => {
     let tempClients = {};
     Object.keys(clients).forEach(key => {
       if (clients[key] == ws) {
@@ -115,7 +115,49 @@ wss.on('connection', (ws) => {
     })
     clients = tempClients;
     console.log('Client disconnected. Now active clients : ' + Object.keys(clients).length);
+  });*/
+
+
+  ws.on('close', () => {
+    let tempClients = {};
+    let keysToRemove = []; // To keep track of keys to remove from spAgentMapping
+  
+    // Iterate over all clients
+    Object.keys(clients).forEach(key => {              //clients = {  "12345": wsA,  "54321": wsB };
+      if (clients[key] === ws) {
+        console.log('Client disconnected : ' + key);                 
+  
+        // Find and remove the client from spAgentMapping
+        Object.keys(spAgentMapping).forEach(spKey => {       // spAgentMapping object  ex  spAgentMapping = { "67890": ["12345", "54321"] };
+        
+          const index = spAgentMapping[spKey].indexOf(key);
+          if (index > -1) {
+            // Remove the key (phone number) from the spAgentMapping array
+            spAgentMapping[spKey].splice(index, 1);
+  
+            // If the spAgentMapping array is empty after removal, mark it for deletion
+            if (spAgentMapping[spKey].length === 0) {
+              keysToRemove.push(spKey);
+            }
+          }
+        });
+      } else {
+        // Retain the clients that are not disconnected
+        tempClients[key] = clients[key];
+      }
+    });
+  
+    // Delete empty mappings from spAgentMapping
+    keysToRemove.forEach(key => {
+      delete spAgentMapping[key];
+    });
+  
+    // Update the clients object with the remaining active connections
+    clients = tempClients;
+    console.log('Client disconnected. Now active clients : ' + Object.keys(clients).length);
   });
+  
+
 });
 
 // Start the server

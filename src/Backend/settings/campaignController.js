@@ -602,7 +602,7 @@ const addTemplate = async (req, res) => {
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                     }
                 }else if (isTemplate == 0 || isCopied == 1) {
-                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
+                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id]]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                 }
             } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {

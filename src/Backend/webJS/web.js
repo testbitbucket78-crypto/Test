@@ -98,8 +98,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          executablePath: "/usr/bin/google-chrome-stable",
-          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         // executablePath: "/usr/bin/google-chrome-stable",
+           executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -617,7 +617,7 @@ async function saveInMessages(message) {
     let from = (message.from).replace(/@c\.us$/, '')   //phoneNo
     let phone_number_id = message.id.id
     let display_phone_number = (message.to).replace(/@c\.us$/, '')
-    let message_media = ""           //Type
+    let message_media = "text"           //Type
     let Type = message.type
     let contactName = message._data.notifyName      //contactName
 
@@ -694,12 +694,14 @@ async function savelostChats(message, spPhone, spid) {
 
     const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
 
-    // console.log(d,new Date( getLastScannedTime[0]?.latest_message_created_date) < new Date(d) , getLastScannedTime[0]?.latest_message_created_date)
+     console.log(d,new Date( getLastScannedTime[0]?.latest_message_created_date) < new Date(d) , getLastScannedTime[0]?.latest_message_created_date)
+
+     console.log(getLastScannedTime.length,(d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0))
     if ((d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0)) {
 
 
 
-      let message_media = ""           //Type
+      let message_media = "text"           //Type
       let Type = message.type
       let contactName = message._data.notifyName !== '' ? message._data.notifyName : endCustomer; //contactName
 
@@ -717,7 +719,7 @@ async function savelostChats(message, spPhone, spid) {
 
         console.log("lost messages time", d)
         let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time);
-
+        var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number)
       }
     }
   } catch (err) {
@@ -851,10 +853,15 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var ifgot = extractedData.ifgot
     console.log("in messages", from, false, "interaction id", newId, display_phone_number)
     notify.NotifyServer(display_phone_number, false, newId, 'IN', 0, msg_id)
+    
+    let myUTCString = new Date().toUTCString();
+    const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', agid, utcTimestamp]];
+    let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
 
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
-    //console.log(defaultAction)
+    //console.log(defaultAction)You have a new message in you current Open Chat
     if (defaultAction.length > 0) {
       //console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
       var isAutoReply = defaultAction[0].isAutoReply
@@ -912,6 +919,11 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
       if (RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true) {
         notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+        
+        let myUTCString = new Date().toUTCString();
+        const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+        let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
       }
       //Here i have to check if any routing rules addded then send websocket
     }
