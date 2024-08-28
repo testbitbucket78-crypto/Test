@@ -2043,7 +2043,7 @@ console.log(getMimeTypePrefix);
 		if(diffDays<2){
 			return 'Yesterday';
 		}else{
-			return groupDate;
+			return this.datePipe.transform(b , this.settingService.dateFormat);
 		}
 		
 	}else{
@@ -2061,7 +2061,7 @@ console.log(getMimeTypePrefix);
 			var hoursBH = hours < 10 ? "0" + hours : hours;
 			var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
 			var time = hoursBH + ":" + minutes  + " " + am_pm;
-			return time
+			return this.datePipe.transform(messCreated, this.settingService.timeFormat == '12'?'hh:mm a':'hh mm');
 		
 	}else{
 		return ''
@@ -2951,11 +2951,11 @@ updateConversationStatus(status:any) {
 		// });
 		this.getMessageData(this.selectedInteraction,true);
 		if(status =='Open' && !this.selectedInteraction.assignTo){
-			this.updateInteractionMapping(this.selectedInteraction.InteractionId,this.uid,this.TeamLeadId)
+			setTimeout(()=>{ this.updateInteractionMapping(this.selectedInteraction.InteractionId,this.uid,this.TeamLeadId)},100);
 		}
 
 		if(status =='Resolved' ){
-			this.updateInteractionMapping(this.selectedInteraction.InteractionId,-1,this.TeamLeadId)
+			setTimeout(()=>{ this.updateInteractionMapping(this.selectedInteraction.InteractionId,-1,this.TeamLeadId)},100);
 		}
 		
 		this.selectedInteraction['interaction_status']=status
@@ -3142,7 +3142,7 @@ updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
 	this.apiService.resetInteractionMapping(bodyData).subscribe(responseData1 =>{
 		this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
 			this.apiService.getInteractionMapping(InteractionId).subscribe(mappingList =>{
-				this.getMessageData(this.selectedInteraction,true)
+				this.getMessageData(this.selectedInteraction,true);
 				var mapping:any  = mappingList;
 				this.selectedInteraction['assignTo'] =mapping?mapping[mapping.length - 1]:'';
 				this.selectedInteraction['assignAgent'] =mapping && mapping?.length>0?mapping[mapping.length - 1]?.name:'';
@@ -3663,12 +3663,12 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		yesterday.setDate(new Date().getDate() - 1);
 		if(date.getFullYear() === currDate.getFullYear() && date.getMonth() === currDate.getMonth() &&
 		date.getDate() === currDate.getDate()){
-			return this.datePipe.transform(date,'hh:mm a');
+			return this.datePipe.transform(date,this.settingService.timeFormat =='12' ?'hh:mm a' : 'hh:mm');
 		} else if(date.getFullYear() === currDate.getFullYear() && date.getMonth() === currDate.getMonth() &&
 		date.getDate() === yesterday.getDate()){
 			return 'Yesterday';
 		}else{
-			return this.datePipe.transform(date,'dd/MM/yyyy');
+			return this.datePipe.transform(date,this.settingService.dateFormat);
 		}
 	  }
 	  getSplitItem(val:any){

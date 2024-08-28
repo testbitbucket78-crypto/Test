@@ -78,7 +78,7 @@ export class TopNavComponent implements OnInit {
         
         this.firstLetterFirstName = firstName.charAt(0) || '';
         this.firstLetterLastName = lastName.charAt(0) || '';
-        this.notificationService.requestPermission();
+        
 
         this.getNotificationData();
         this.getLocaleDetails();
@@ -92,9 +92,12 @@ export class TopNavComponent implements OnInit {
     getNotificationData() {
       this.subscription = interval(60000) .pipe(switchMap(() =>this.apiService.getNotifications(this.spId))).
       subscribe((response=> {
+        let data = response.notifications;
         this.notificationData = response.notifications;
         if(this.notificationData.length != this.LastnotificationData.length){
-          this.notify();
+          console.log(data);
+          console.log(data);
+          this.notify(data[data.length-1]?.message);
         }
         this.LastnotificationData =  JSON.parse(JSON.stringify(this.notificationData));
         this.notificationData.reverse();
@@ -110,10 +113,10 @@ export class TopNavComponent implements OnInit {
       }));
     }
 
-    notify() {
+    notify(msg:any) {
       console.log('notification send');
       this.notificationService.showNotification('New message!', {
-        body: 'You have a notification from engagekart.',
+        body: msg,
         icon: '../../../../assets/img/main-logo.png'
       });
     }

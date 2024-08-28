@@ -88,7 +88,7 @@
                             </div>
                         </div>
 
-                            <div class="addnewitem_content_inner" *ngIf="addedF.filterType !='switch' " >
+                            <div class="addnewitem_content_inner" *ngIf="addedF.filterType !='switch' &&  addedF.filterType != 'none'" >
                                 <p><span>Value {{addedF.filterType}}</span></p>
                                 
                                 <div *ngIf="addedF.filterType =='text' " class="formrow">
@@ -134,6 +134,16 @@
                                     <div *ngIf="showFilterTagOption" class="popup-dialog">
                                         <p *ngFor="let option of addedF.selectedOptions ;let l = index" (click)="selectFilterOption(i,option)">
                                             <span>{{option}}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div *ngIf="addedF.filterType =='user'" class="formrow">
+                                    <p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
+                                        {{addedF.filterValue}}
+                                    </p>
+                                    <div *ngIf="showFilterTagOption" class="popup-dialog">
+                                        <p *ngFor="let option of userList ;let l = index" (click)="selectFilterOption(i,option?.name)">
+                                            <span>{{option?.name}}</span>
                                         </p>
                                     </div>
                                 </div>
