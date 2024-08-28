@@ -738,6 +738,7 @@
                         <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
                     </div>
                 </div>
+                {{newTemplateForm.get('FooterText')?.value}}
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
                 <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
                     <span *ngIf="newTemplateForm.get('Header')?.value" class="font-weight-bolder" [innerHTML]="newTemplateForm.get('Header')?.value | sanitizeHtml"></span><br /><br />
