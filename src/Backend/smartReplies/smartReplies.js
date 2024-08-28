@@ -159,18 +159,18 @@ app.put('/updateSmartReply', async (req, res) => {
   try{
 
   const myStringArray = req.body.Keywords;
-  console.log(req.body.Keywords)
+  //console.log(req.body.Keywords)
   const params = {
     strings: {
 
       value: myStringArray.join(',')
     }
   };
-  console.log("params " + params.strings.value)
+  //console.log("params " + params.strings.value)
   const jsonData = JSON.stringify(req.body.ReplyActions);
 
 
-  console.log(req.body.ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData)
+  console.log(req.body.ID, req.body.Title, req.body.Description, req.body.MatchingCriteria,req.body?.Channel, params.strings.value, jsonData)
 
  
  let response = await db.excuteQuery( val.updateSmartReply, [req.body.ID, req.body.Title, req.body.Description, req.body.MatchingCriteria,req.body?.Channel, params.strings.value, jsonData])

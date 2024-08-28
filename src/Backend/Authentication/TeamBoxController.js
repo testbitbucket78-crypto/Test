@@ -52,7 +52,7 @@ const getAllCustomer = async (req, res) => {
         let RangeEnd = parseInt(req.params.RangeEnd - req.params.RangeStart);
         //  logger.info('RangeStart and RangeEnd calculated', { RangeStart, RangeEnd });
 
-        let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID,req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
+        let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
         // logger.info('Query executed for getAllCustomer', { spID: req.params.spID, RangeStart, RangeEnd, contacts });
         let isCompleted = false;
         if (contacts?.length === 0 || contacts?.length < RangeEnd) {
@@ -249,7 +249,7 @@ const createInteraction = async (req, res) => {
         interaction_type = "Marketing";
         IsTemporary = req.body?.IsTemporary;
         var values = [[customerId, interaction_status, interaction_details, SP_ID, interaction_type, IsTemporary]];
-//Update EndCustomer for customer
+        //Update EndCustomer for customer
 
         let isExist = await db.excuteQuery('select * from Interaction where SP_ID=? and customerId=? and is_deleted!=1 and IsTemporary !=1', [SP_ID, customerId]);
         if (isExist?.length > 0) {
@@ -262,7 +262,7 @@ const createInteraction = async (req, res) => {
             let myUTCString = new Date().toUTCString();
             const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
             let createInteraction = await db.excuteQuery(val.createInteractionQuery, [values]);
-            let updateChannel = await db.excuteQuery('update EndCustomer set channel=? where customerId=? and SP_ID=?',[req.body?.channel,customerId, SP_ID])
+            let updateChannel = await db.excuteQuery('update EndCustomer set channel=? where customerId=? and SP_ID=?', [req.body?.channel, customerId, SP_ID])
             let interactionData = await db.excuteQuery(val.interactionDataById, [SP_ID, createInteraction?.insertId]);
             let currency_nameQuery = `select Currency from localDetails where SP_ID=?;`;
             let currency_name = await db.excuteQuery(currency_nameQuery, [SP_ID]);
@@ -528,7 +528,7 @@ const deleteMessage = async (req, res) => {
     //logger.info('Starting deleteMessage function');
     //Type=notes
     var messageQuery = "UPDATE Message SET deleted_at ='" + req.body.deleted_at + "', is_deleted =" + req.body.deleted + ", deleted_by =" + req.body.deleted_by + " WHERE Message_id =" + req.body.Message_id;
- 
+
     var values = [];
 
     let myUTCString = new Date().toUTCString();
@@ -536,7 +536,7 @@ const deleteMessage = async (req, res) => {
     let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
 
     let actiond = await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'notes']);
-   console.log(actiond)
+    console.log(actiond)
     db.runQuery(req, res, messageQuery, [values]);
     //  logger.info('deleteMessage function completed successfully');
 };
@@ -552,9 +552,9 @@ const updateNotes = async (req, res) => {
         let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
 
         let actiond = await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'notes']);
-         logger.info(`${values},updateNotes function completed successfully  ${JSON.stringify(actiond)}`);
+        logger.info(`${values},updateNotes function completed successfully  ${JSON.stringify(actiond)}`);
         db.runQuery(req, res, messageQuery, values);
-        
+
     }
 };
 
@@ -649,7 +649,7 @@ const insertMessage = async (req, res) => {
             let Message_template_id = req.body.template_id;
             let Quick_reply_id = req.body.quick_reply_id;
             let Type = req.body.message_type;
-            let created_at = req.body.created_at;
+            let created_at = req.body.created_at;  //send time in utc
             let ExternalMessageId = '';
             let mediaSize = req.body.mediaSize;
             let spNumber = req.body?.spNumber;
@@ -727,9 +727,10 @@ const insertMessage = async (req, res) => {
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]);
                     };
                     if (middlewareresult?.status == 200) {
-                        let NotSendedMessage = await db.excuteQuery('UPDATE Message set Message_template_id=? where Message_id=?', [middlewareresult?.message?.messages[0]?.id,msg_id.insertId]);
+                        let UpdatePauseTime  = await getDefaultActionTimeandUpdatePauseTime(SPID)
+                        let NotSendedMessage = await db.excuteQuery('UPDATE Message set Message_template_id=? where Message_id=?', [middlewareresult?.message?.messages[0]?.id, msg_id.insertId]);
                     }
-                   
+
                     //  logger.debug('Middleware Result:', middlewareresult);
                 } else {
                     let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=10 where Message_id=?', [msg_id.insertId]);
@@ -750,6 +751,21 @@ const insertMessage = async (req, res) => {
         res.send({ status: 500, error: err });
     }
 };
+
+async function getDefaultActionTimeandUpdatePauseTime(spid) {
+    try {
+        let id = 0 ; // set default
+        let getDefaultAction = await db.excuteQuery('select * from defaultActions where spid=? and isDeleted !=1', [spid]);
+        let timePause = getDefaultAction[0]?.pauseAutoReplyTime;
+        id = getDefaultAction[0]?.id;
+        let updatePauseTime = await db.excuteQuery('update defaultActions set pauseMin_from_teambox_after_agent_reply =? where id =? and spid=?', [timePause, id, spid])
+        console.log(getDefaultAction[0]?.pauseAutoReplyTime,getDefaultAction[0]?.id,spid,"Teambox updatePauseTime", updatePauseTime)
+    } catch (err) {
+
+        logger.error('Error in getDefaultActionTimeandUpdatePauseTime');
+
+    }
+}
 
 function determineMediaType(mediaType) {
     switch (mediaType) {
@@ -1010,9 +1026,9 @@ const searchConatct = async (req, res) => {
     try {
         logger.info('Starting searchConatct function');
         let getCustomerQuery = `CALL GetCustomerInteractions(?,?)`
-        let resultList = await db.excuteQuery(getCustomerQuery,[req.params.spid,req.params.searchTerm]);
+        let resultList = await db.excuteQuery(getCustomerQuery, [req.params.spid, req.params.searchTerm]);
         logger.info(`GetCustomerInteractions response  ${JSON.stringify(resultList)}`);
-        res.status(200).send({ resultList: resultList ,status :200 });
+        res.status(200).send({ resultList: resultList, status: 200 });
 
     } catch (err) {
         logger.error('Error in searchConatct:', err);
@@ -1026,7 +1042,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId,searchConatct,getInteraction
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId, searchConatct, getInteraction
 };
 
 

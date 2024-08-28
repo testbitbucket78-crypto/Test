@@ -89,7 +89,7 @@ const login = async (req, res) => {
 
 const isSpAlreadyExist = async function (req, res) {
     try {
-        var loginQuery = `SELECT * FROM user WHERE email_id =?  and isDeleted !=1 and IsActive !=2`
+        var loginQuery = `SELECT * FROM user WHERE email_id =?  and isDeleted !=1 and IsActive !=2 and ParentId !=0`
         var credentialsOfEmail = await db.excuteQuery(loginQuery, [req.body.email_id])
         if (credentialsOfEmail?.length > 0) {
             return res.status(409).send({
@@ -97,7 +97,7 @@ const isSpAlreadyExist = async function (req, res) {
                 status: 409
             });
         }
-        var loginQueryPhone = `SELECT * FROM user WHERE  mobile_number=? and isDeleted !=1 and IsActive !=2`
+        var loginQueryPhone = `SELECT * FROM user WHERE  mobile_number=? and isDeleted !=1 and IsActive !=2 and ParentId !=0`
         var credentialsOfPhone = await db.excuteQuery(loginQueryPhone, [req.body.mobile_number])
         if (credentialsOfPhone?.length > 0) {
             return res.status(409).send({

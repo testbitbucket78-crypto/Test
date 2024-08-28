@@ -102,12 +102,16 @@ async function extractDataFromMessage(body) {
 
     let contactName = contact.profile.name ? contact.profile.name : from;
 
-  
+
     let phoneNo = contact.wa_id;
-    let countryCode;
+    let countryCodeObj;
     if (phoneNo){
-       countryCode = mapCountryCode(phoneNo); //Country Code abstraction eg: 9190000000000
+      countryCodeObj = mapCountryCode(phoneNo); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
     }
+
+    let countryCode =  countryCodeObj.country+ " +" +countryCodeObj.countryCode 
+   
+  
     let ExternalMessageId = body.entry[0].id;
     let message_text = firstMessage.text ? firstMessage.text.body : "";  // extract the message text from the webhook payload
     let message_media = firstMessage.type;
@@ -186,7 +190,7 @@ async function extractDataFromMessage(body) {
 
 
 
-async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time) {
+async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time,countryCode) {
   console.log("sabewdfesk", Type, extension)
   if (Type == "image") {
     console.log("lets check the image");
@@ -219,7 +223,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   if (message_text.length > 0) {
     let myUTCString = new Date().toUTCString();
     const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time]);
+    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time,countryCode]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
@@ -274,10 +278,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       if (defaultAction.length > 0) {
         console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
         var isAutoReply = defaultAction[0].isAutoReply
-        var autoReplyTime = defaultAction[0].pauseAutoReplyTime
+        var autoReplyTime = defaultAction[0].pauseMin_from_teambox_after_agent_reply
         var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
         var inactiveAgent = defaultAction[0].isAgentActive
-        var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
+        var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime 
 
       }
       let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut,ifgot)

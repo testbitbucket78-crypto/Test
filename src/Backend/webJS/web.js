@@ -621,11 +621,12 @@ async function saveInMessages(message) {
     let message_media = "text"           //Type
     let Type = message.type
     let contactName = message._data.notifyName      //contactName
-
-    let countryCode;
-    if (from){
-       countryCode = mapCountryCode(phoneNo); //Country Code abstraction eg: 9190000000000
+    let countryCodeObj;
+    if (phoneNo){
+      countryCodeObj = mapCountryCode(phoneNo); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
     }
+
+    let countryCode =  countryCodeObj.country+ " +" +countryCodeObj.countryCode 
     if (message.hasMedia) {
       const media = await message.downloadMedia();
       console.log("media", message.type)
@@ -734,7 +735,7 @@ async function savelostChats(message, spPhone, spid) {
 
 
 
-async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, ackStatus, timestramp) {
+async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, ackStatus, timestramp,countryCode) {
   // console.log("saveIncommingMessages")
 
   if (Type == "image") {
@@ -768,8 +769,8 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
     var media_type = 'application/pdf'
   }
   if (message_text.length > 0) {
-    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp]);
+    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp,countryCode]);
     notify.NotifyServer(display_phone_number, true);
     //    console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
 
@@ -869,7 +870,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     if (defaultAction.length > 0) {
       //console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
       var isAutoReply = defaultAction[0].isAutoReply
-      var autoReplyTime = defaultAction[0].pauseAutoReplyTime
+      var autoReplyTime = defaultAction[0].pauseMin_from_teambox_after_agent_reply
       var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
       var pausedTill = defaultAction[0]?.pausedTill
       var inactiveAgent = defaultAction[0].isAgentActive

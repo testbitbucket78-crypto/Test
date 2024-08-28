@@ -173,7 +173,7 @@ router.post('/sendCampinMessage',authenticateToken,CampaignsController.sendCampi
 router.post('/saveCampaignMessages',authenticateToken,CampaignsController.saveCampaignMessages);
 
 router.get('/getCampaignMessages/:CampaignId',authenticateToken,CampaignsController.getCampaignMessages);
-router.get('/copyCampaign/:CampaignId',authenticateToken,CampaignsController.copyCampaign);
+router.get('/copyCampaign/:CampaignId/:spid',authenticateToken,CampaignsController.copyCampaign);
 
 router.post('/alertUser',authenticateToken,CampaignsController.campaignAlerts);
 router.get('/exitCampaign/:title/:spid/:Id',authenticateToken,CampaignsController.isExistCampaign);
