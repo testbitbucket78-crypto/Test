@@ -345,7 +345,7 @@ showAddSmartRepliesModal() {
 		this.selectedcriteria = ''
 		this.assignedAgentList = []
 		this.assignedTagList = []
-		this.assignActionList = []
+		//this.assignActionList = []
 		this.getTemplatesList()
 		this.ShowChannelOption = false
 		this.isShowSmartReplies = false
