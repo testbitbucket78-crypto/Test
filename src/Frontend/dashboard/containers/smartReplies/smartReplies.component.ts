@@ -1223,13 +1223,13 @@ showAddSmartRepliesModal() {
 					originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
 				}
 
-			if(getMimeTypePrefix = 'image') {
+			if(getMimeTypePrefix == 'image') {
 				mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 			  }
-			  else if(getMimeTypePrefix = 'video') {
+			  else if(getMimeTypePrefix == 'video') {
 				  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 			  }
-			  else if(getMimeTypePrefix== 'application' || getMimeTypePrefix == 'document') {
+			  else if(getMimeTypePrefix == 'application' || getMimeTypePrefix == 'document') {
 				  mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>'+originalName+'</p>'
 			  }
 		}
