@@ -102,10 +102,12 @@ async function extractDataFromMessage(body) {
 
     let contactName = contact.profile.name ? contact.profile.name : from;
 
-    if (phoneNo){
-      let countryCode = mapCountryCode(phoneNo); //Country Code abstraction eg: 9190000000000
-    }
+  
     let phoneNo = contact.wa_id;
+    let countryCode;
+    if (phoneNo){
+       countryCode = mapCountryCode(phoneNo); //Country Code abstraction eg: 9190000000000
+    }
     let ExternalMessageId = body.entry[0].id;
     let message_text = firstMessage.text ? firstMessage.text.body : "";  // extract the message text from the webhook payload
     let message_media = firstMessage.type;
@@ -160,7 +162,7 @@ async function extractDataFromMessage(body) {
       message_text = message_text.replace(/\n/g, '<br>');
     }
     console.log("after text replacement", message_text)
-    var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time)
+    var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time,countryCode)
     var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
   }
   else if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&

@@ -58,6 +58,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted,newiN)
       return sendSReply;
     }
+    return false;
   } else if (isAutoReplyDisable == 1 && (assignAgent?.length == 0 || (assignAgent?.length != 0 && interactionStatus[0]?.interaction_status == 'Resolved'))) {
 
     const currentTime = new Date();
@@ -71,9 +72,10 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted)
       return sendSReply;
     }
+    return false;
   }
 
- 
+  return false;
 
 
 }
@@ -627,7 +629,7 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
         // console.log("messageInterval" ,newId)
         let message_text = await getExtraxtedMessage(wlcMessage[0]?.value)
         let result = await messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, message_text, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId,wlcMessage[0].message_type)
-        console.log("result---------", result)
+       // console.log("result---------", result)
         response = result
         let myUTCString = new Date().toUTCString();
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');

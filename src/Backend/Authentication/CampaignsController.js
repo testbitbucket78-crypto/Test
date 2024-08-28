@@ -35,7 +35,7 @@ const addCampaign = async (req, res) => {
         let button_exp = req.body.button_exp
         let category = req.body.category
         let time_zone = req.body?.time_zone
-        let start_datetime = req.body.start_datetime
+        let start_datetime = req.body.start_datetime  // Get UTC TIME FROM FE
         let end_datetime = req.body.end_datetime
         let csv_contacts = req.body.csv_contacts
         let segments_contacts = req.body.segments_contacts
