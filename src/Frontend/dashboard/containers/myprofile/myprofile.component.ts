@@ -63,7 +63,7 @@ export class MyprofileComponent implements OnInit,OnDestroy {
 
   NotificationData = [
     { id:1,
-      title:"New Chat Notification",
+      title:"New Unassigned Chat Notification",
       description:"When a new chat is available to be assigned"
     },
     { id:2,
@@ -75,8 +75,8 @@ export class MyprofileComponent implements OnInit,OnDestroy {
       description:"When you receive a new message in your current conversation"
     },
     { id:4,
-      title:"New Chat Assigned to Team",
-      description:"When a new chat is assigned to your team, any team member can choose to assign the chat to himself and start a conversation"
+      title:"@Mention in the Notes",
+      description:"When you are @mentioned in the Notes by other users"
     }
   ];
 
