@@ -587,6 +587,7 @@ const addTemplate = async (req, res) => {
         industry = req.body.industry
         isCopied = req.body?.isCopied
         let image = Links
+        let templateStatus;
         console.log(ID, status, Channel)
         if (ID == 0) {
             let templateStatus;
@@ -597,7 +598,7 @@ const addTemplate = async (req, res) => {
                     console.log("templateStatus", templateStatus)
     
                     status = templateStatus.status
-                    if (!templateStatus.status){
+                    if (templateStatus.status){
                     let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                     }
@@ -622,9 +623,10 @@ const addTemplate = async (req, res) => {
             if (Channel == 'WhatsApp Official' || Channel == 'WA API') {
                
                 if (isTemplate == 1) {
-                    let edittemplateStatus = await Createtemplate(template_json);
-                    console.log("edittemplateStatus", edittemplateStatus);
-                    if(edittemplateStatus.status){
+                     updatedTemplate = await Createtemplate(template_json);
+                    console.log("edittemplateStatus", updatedTemplate);
+                    status = updatedTemplate.status
+                    if(updatedTemplate.status){
                     let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
                     updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
                     console.log(Channel, status, "updatedTemplate", updatedTemplate)
@@ -635,7 +637,7 @@ const addTemplate = async (req, res) => {
                     console.log(Channel, status, "updatedTemplate", updatedTemplate)
                 }
             } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {
-                let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
+                let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
                 updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
                 console.log(Channel, "updatedTemplate", updatedTemplate)
             }

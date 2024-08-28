@@ -23,7 +23,7 @@ function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id,sp
             };
 
             const response = await axios.post(apiUrl, dataToSend);
-            console.log(response)
+           //console.log(response)
             resolve(response.data); // Resolve with the response data
         } catch (error) {
             console.error('Error:', error.message);

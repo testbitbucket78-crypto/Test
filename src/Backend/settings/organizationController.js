@@ -768,6 +768,12 @@ const addUser = async (req, res) => {
             var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive, CreatedDate, LoginIP, countryCode, displayPhoneNumber]]
 
             var User = await db.excuteQuery(val.insertQuery, [values]);
+
+            var addNotifyOnestatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,1,1,1,0,now()]]])
+            var addNotifyTwostatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,2,1,1,0,now()]]])
+            var addNotifyThreestatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,3,1,1,0,now()]]])
+            var addNotifyFourstatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,4,1,1,0,now()]]])
+
             inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring)
             res.status(200).send({
                 msg: "user details has been sent",
