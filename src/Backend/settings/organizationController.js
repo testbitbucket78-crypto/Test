@@ -497,8 +497,14 @@ const addholidays = async (req, res) => {
 
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-
-        const date = new Date(holiday_date[0]);
+     
+        let date 
+        if(holiday_date.length > 0){
+           date = new Date(holiday_date[0]);
+        }
+        if(req.body.dataToRemove.length){
+            date = new Date(req.body.dataToRemove[0]);
+        }
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ensure two digits
         console.log("month",month)
         const year = date.getFullYear(); // Extract year
@@ -514,10 +520,11 @@ const addholidays = async (req, res) => {
         );
 
         console.log("deleteRecord", deleteRecord);
-
+        if(!req.body.dataToRemove.length){
         const holidayValue = holiday_date.map(date => [SP_ID, date, created_By, created_at]);
 
         var holidayResult = await db.excuteQuery(val.insertHoliday, [holidayValue])
+        }
         res.status(200).send({
             msg: 'holidays added successfully !',
             holidayResult: holidayResult,
