@@ -569,6 +569,7 @@ export class TemplateMessageComponent implements OnInit {
 
     saveTemplateNextStep() {
         let val = this.newTemplateForm.get('TemplateName')?.value;
+        if(this.newTemplateForm.get('BodyText')?.value == null)  this.newTemplateForm.get('BodyText')?.setValue('');
     let temp:any = this.templatesData.filter((item:any) => item.TemplateName == val)[0];
     console.log(temp)
     if(temp && this.id != temp?.ID){
@@ -848,6 +849,7 @@ checkTemplateName(e:any){
         const TemplateID = {
             ID: this.templatesMessageData?.ID,
         };
+        this.selectedType = 'text';
         this.apiService.deleteTemplateData(TemplateID).subscribe(result => {
             if (result) {
                 $('#deleteModal').modal('hide');

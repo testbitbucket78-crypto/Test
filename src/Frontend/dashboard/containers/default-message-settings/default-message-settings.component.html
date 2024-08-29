@@ -90,8 +90,8 @@
                         <label [ngClass]="{'radio-label': selectedType == 'image'}"  class="m-0" for="sel-image">Image</label>
                         <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')" [checked]="selectedType=='video'">
                         <label [ngClass]="{'radio-label': selectedType == 'video'}"  class="m-0" for="sel-video">Video</label>
-                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')" [checked]="selectedType=='document'">
-                        <label [ngClass]="{'radio-label': selectedType == 'document'}" class="m-0" for="sel-document">Document</label>
+                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')" [checked]="selectedType=='document' || selectedType =='application'">
+                        <label [ngClass]="{'radio-label': selectedType == 'document' || selectedType =='application'}" class="m-0" for="sel-document">Document</label>
                       
                     </div>
 
@@ -126,7 +126,7 @@
                     </div>       
                   </div>
 
-                   <div *ngIf="selectedType === 'document'" class="mt-5 mb-4 sel-type-image" [ngClass]="{'document-selected':defaultMessageForm.get('link')?.value !== null}">
+                   <div *ngIf="selectedType === 'document' || selectedType =='application'" class="mt-5 mb-4 sel-type-image" [ngClass]="{'document-selected':defaultMessageForm.get('link')?.value !== null}">
                     <div class="main-preview-type-doc" *ngIf="defaultMessageForm.get('link')?.value !== null && defaultMessageForm.get('link')?.value !=''">
                         <span class="p-2" (click)="removeMedia()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                     </div>
@@ -224,17 +224,17 @@
                    <img src="" />
                 </div> -->
                 <div class="bodydata w-45">
-                    <div *ngIf="selectedMessageData.message_type == 'image'" class="message_type"
+                    <div *ngIf="isImage(selectedMessageData.message_type)" class="message_type"
                             [ngClass]="{'message_type_box':!selectedMessageData.value}" 
                            [ngStyle]="{'background-image': 'url(' + selectedMessageData.link + ')',
-                           'background-size': 'contain'
+                            'background-size': 'contain'
                         }">
                     </div> 
-                    <div *ngIf="selectedMessageData.message_type == 'video'" class="message_type" [ngClass]="{'vid':selectedMessageData.message_type=='video'}">
+                    <div *ngIf="isVideo(selectedMessageData.message_type)" class="message_type" [ngClass]="{'vid':isVideo(selectedMessageData.message_type)}">
                         <video controls id="video-background" [ngClass]="{'message_type_box':!selectedMessageData.value}"
                            [src]="selectedMessageData.link" type="video/mp4"></video>
                     </div>
-                    <div *ngIf="selectedMessageData.message_type == 'document'" class="message_type"  [ngClass]="{'message_type_box':!selectedMessageData.value}" >
+                    <div *ngIf="isDocument(selectedMessageData.message_type)" class="message_type"  [ngClass]="{'message_type_box':!selectedMessageData.value}" >
                         <div class="doc-preview" *ngIf="selectedMessageData.link" width="100%" height="150px">
                           <a [href]="selectedMessageData.link"><img src="../../../../assets/img/settings/doc.svg" />
                         </a>
