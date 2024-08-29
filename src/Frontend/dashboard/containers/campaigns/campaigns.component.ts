@@ -2740,9 +2740,9 @@ console.log(this.allTemplatesMain);
 		this.checkboxChecked = false;
 		for (const listItem of this.allContactList) {
             listItem['selected'] = false;
-			this.modalRef.dismiss();
 
         }
+		this.modalRef.dismiss();
 	  }
 
 
