@@ -266,8 +266,8 @@
 								<div>
 
 							<p class="title ellipsis">{{temp.Header}}</p>
-							<p class="start_time">Created On: <span>{{temp.created_at | date:'dd MMM yy, h:mm a'}}</span></p>
-							<p class="start_time" *ngIf="repliestemplateData?.updated_at">Modified On: <span>{{temp.updated_at | date:'dd MMM yy, h:mm a'}}</span></p>
+							<p class="start_time">Created On: <span>{{settingsService?.getDateTimeFormate(temp.created_at)}}</span></p>
+							<p class="start_time" *ngIf="repliestemplateData?.updated_at">Modified On: <span>{{settingsService?.getDateTimeFormate(temp.updated_at)}}</span></p>
 							<p><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{temp.Channel}}</p>
 							<div class="campaigns_section_item_statics">
 								<div>

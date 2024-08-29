@@ -22,6 +22,7 @@ export class ContactFilterComponent implements OnInit {
 		} 
 		this.getTagData();
 		this.getCustomFieldsData();
+		this.getUserList();
 		this.addNewFilters(this.contactFilterBy);
 	  }
   selectedcontactFilterBy:any='';
@@ -34,6 +35,7 @@ export class ContactFilterComponent implements OnInit {
   customFieldData:[] = [];
   showContact! : boolean;
   tag:any;
+  userList:any;
 	SPID:any = sessionStorage.getItem('SP_ID');
 	@ViewChild('addNewItemss', { static: true }) modalContent: TemplateRef<any> | undefined;
 	@Output() query = new EventEmitter<string> () ;
@@ -103,6 +105,43 @@ export class ContactFilterComponent implements OnInit {
 			{label:'After',checked:false,type:'date'},
 			{label:'Before',checked:false,type:'date'}
 			]},
+			{value:'name',label:'Last Conversation With',checked:false,addeFilter:[],
+			option:[
+			{label:'bot',checked:false,type:'none'},
+			{label:'user',checked:false,type:'user'},
+			]},
+			{value:'name',label:'Creator',checked:false,addeFilter:[],
+			option:[
+			{label:'bot',checked:false,type:'none'},
+			{label:'user',checked:false,type:'user'},
+			]},
+			{value:'created_at',label:'Conversation Resolved',checked:false,addeFilter:[],
+			option:[
+			{label:'true',checked:false,type:'none'},
+			{label:'false',checked:false,type:'none'}
+			]},
+			{value:'created_at',label:'Conversation Assigned to',checked:false,addeFilter:[],
+			option:[
+				{label:'bot',checked:false,type:'none'},
+				{label:'unassigned',checked:false,type:'none'},
+				{label:'user',checked:false,type:'user'},
+			]},
+			{value:'created_at',label:'Last Message Received At',checked:false,addeFilter:[],
+			option:[
+			{label:'Is',checked:false,type:'datetime'},
+			{label:'Is not',checked:false,type:'datetime'},
+			{label:'Between',checked:false,type:'d_datetime'},
+			{label:'After',checked:false,type:'date'},
+			{label:'Before',checked:false,type:'date'}
+			]},
+			{value:'created_at',label:'Last Message Sent At',checked:false,addeFilter:[],
+			option:[
+			{label:'Is',checked:false,type:'datetime'},
+			{label:'Is not',checked:false,type:'datetime'},
+			{label:'Between',checked:false,type:'d_datetime'},
+			{label:'After',checked:false,type:'date'},
+			{label:'Before',checked:false,type:'date'}
+			]},
 			
 		];
 	}
@@ -122,12 +161,13 @@ export class ContactFilterComponent implements OnInit {
 			switch(item?.type){
 				case 'Date':{
 					 options =[
-						{label:'Is',checked:false,type:'datetime'},
-						{label:'Is not',checked:false,type:'datetime'},
-						{label:'Between',checked:false,type:'d_datetime'},
+						{label:'Is',checked:false,type:'date'},
+						{label:'Is not',checked:false,type:'date'},
+						{label:'Between',checked:false,type:'d_date'},
 						{label:'After',checked:false,type:'date'},
 						{label:'Before',checked:false,type:'date'}
 						];
+						break;
 				}
 				case 'Switch':{
 					options =[
@@ -136,6 +176,7 @@ export class ContactFilterComponent implements OnInit {
 						{label:'Yes',checked:false,type:'switch'},
 						{label:'No',checked:false,type:'switch'},
 					];
+					break;
 				}
 				case 'text':{
 					 options =[
@@ -147,7 +188,8 @@ export class ContactFilterComponent implements OnInit {
 						{label:'End with',checked:false,type:'text'},
 						{label:'Is',checked:false,type:'select',options:['Empty']},
 						{label:'Is not',checked:false,type:'select',options:['Empty']},
-						]
+						];
+						break;
 				}
 				case 'Number':{
 					options =[
@@ -161,7 +203,8 @@ export class ContactFilterComponent implements OnInit {
 					   {label:'End with',checked:false,type:'text'},
 					   {label:'Is',checked:false,type:'select',options:['Empty']},
 					   {label:'Is not',checked:false,type:'select',options:['Empty']},
-					   ]
+					   ];
+					   break;
 			   }
 				case 'Select':{
 					let selectOptions = JSON.parse(item?.dataTypeValues);
@@ -171,6 +214,7 @@ export class ContactFilterComponent implements OnInit {
 						// {label:'Is',checked:false,type:'select_opt',options:selectOptions},
 						// {label:'Is not',checked:false,type:'select_opt',options:selectOptions}
 					];
+					break;
 				}
 				case 'Multi Select':{
 					let selectOptions = JSON.parse(item?.dataTypeValues);
@@ -180,6 +224,7 @@ export class ContactFilterComponent implements OnInit {
 						// {label:'Is',checked:false,type:'select_opt',options:selectOptions},
 						// {label:'Is not',checked:false,type:'select_opt',options:selectOptions}
 					];
+					break;
 				}
 			}			
 			this.contactFilterBy.push({value:item?.ActuallName,label:item?.displayName,checked:false,addeFilter:[],option:options});
@@ -206,6 +251,16 @@ export class ContactFilterComponent implements OnInit {
 			}
 			});
 	}
+
+	getUserList(){
+		this._settingsService.getUserList(this.SPID)
+		.subscribe(result =>{
+		  if(result){
+			  this.userList =result?.getUser;  
+		  }
+  
+		})
+	  }
 
   toggleContactFilter(){
 		this.showContactFilter=!this.showContactFilter
@@ -351,7 +406,7 @@ export class ContactFilterComponent implements OnInit {
       console.log(groupArrays)
   
   
-      let contactFilter ="SELECT EC.*,IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) AND (ECTM.isDeleted != 1) where EC.SP_ID="+this.SPID;
+      let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN (SELECT interactionId, MAX(created_at) AS latestCreatedAt,AgentId, lastAssistedAgent FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.InteractionId = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID;
       if(groupArrays.length>0){
         
         groupArrays.map((filters:any,idx)=>{
@@ -360,6 +415,23 @@ export class ContactFilterComponent implements OnInit {
          // filters.items[0]['filterOperator']='';	
           
           let colName = filters.filterPrefix
+		  if(colName =="Conversation Resolved"){
+			if(filters?.items[0].filterBy == 'true')
+				contactFilter = contactFilter + "(and Interaction.interaction_status='Resolved')";
+			else
+				contactFilter = contactFilter + "(and Interaction.interaction_status='Open')";
+		  }else if(colName =="Last Conversation With"){
+			contactFilter = contactFilter + `and  (((  Message.Agent_id LIKE '%${380}%' ))`;
+		  }else if(colName =="Conversation Assigned to"){
+			contactFilter = contactFilter + `(and IM.AgentId='${380}')`;
+		  }else if(colName =="Last Message Received At"){
+			contactFilter = contactFilter + `and (Message.message_direction ='out' and Message.created_at=?)`;
+		  }else if(colName =="Last Message Sent At"){
+			contactFilter = contactFilter + `and (Message.message_direction ='IN' and Message.created_at=?) `;
+		  }else if(colName =="Creator"){
+			contactFilter = contactFilter + `and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
+		  } else{
+		  
           if(colName =='Phone_number'){
             colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
           }
@@ -422,6 +494,7 @@ export class ContactFilterComponent implements OnInit {
           contactFilter += ' '+QueryOperator +' '+colName+' '+filterOper
             })
           contactFilter += ' )';
+		}
           }
           })
 		  contactFilter += ' )';

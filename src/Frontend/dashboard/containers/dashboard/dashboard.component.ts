@@ -39,7 +39,7 @@ export class DashboardComponent implements OnInit {
 	warningMessage='';
 
     whatsAppDisplay: any[] = [];
-    constructor(private apiService: DashboardService, private router: Router,private profileService:ProfileService,private settingsService:SettingsService) { }
+    constructor(private apiService: DashboardService, private router: Router,private profileService:ProfileService,public settingsService:SettingsService) { }
     ngOnInit() {
        
         this.isLoading = true;

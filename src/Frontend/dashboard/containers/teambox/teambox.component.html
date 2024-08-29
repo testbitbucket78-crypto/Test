@@ -28,13 +28,13 @@
 									<p class="label">Filter</p>
 		
 									<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''"
-										(click)="filterInteraction('All')"><span>All</span></p>
+										(click)="filterInteraction('All')"><span>All Chats</span></p>
 									<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''"
 										(click)="filterInteraction('Unassigned')"><span>Unassigned</span></p>
 									<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''"
 										(click)="filterInteraction('Mine')"><span>Mine</span></p>
 									<p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
-										(click)="filterInteraction('Open')"><span>Open</span></p>
+										(click)="filterInteraction('Open')"><span>My Open</span></p>
 									<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''"
 										(click)="filterInteraction('Resolved')"><span>Resolved</span></p>
 									<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''"
