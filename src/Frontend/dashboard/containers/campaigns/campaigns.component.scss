@@ -914,7 +914,8 @@
 		color: #7A86A1;
 		border: 1px solid #EBEBEB;
 		font-size: 14px;
-
+        display: flex;
+		flex-direction: row;
 	}
 	}
 
@@ -976,7 +977,6 @@
 	}
 	.paper-download img{
 	width: 12px;
-	margin-right: 5px;
 	}
 
 	.import.contact.info_box {

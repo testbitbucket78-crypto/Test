@@ -108,7 +108,7 @@ export class MyprofileComponent implements OnInit,OnDestroy {
     this.getRoleName();
     this.getUserList();
     this.getAvailableAmount();
-    this.startNotificationInterval();
+    //this.startNotificationInterval();
 
     this.profilePicture = this.apiService.getProfilePicture();
 
@@ -518,11 +518,7 @@ showBrowserNotification(message: string): void {
 }
 
 startNotificationInterval(): void {
-  this.getNotificationData();
-
-  this.notificationIntervalSubscription = interval(60000).subscribe(() => {
-    this.getNotificationData();
-  });
+  this.notificationService.requestPermission();
 }
 
 stopNotificationInterval(): void {

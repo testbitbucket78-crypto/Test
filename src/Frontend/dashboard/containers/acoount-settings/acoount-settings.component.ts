@@ -49,7 +49,7 @@ export class AcoountSettingsComponent implements OnInit {
   errorMessage = '';
 	successMessage = '';
 	warnMessage = '';
-
+  whatsAppDataUpdated!:boolean;
   
   INGrMessage=[0];
   OutGrMessage=[0];
@@ -121,6 +121,9 @@ getwhatsapp() {
     this.channel=this.whatsAppDetails[0]?.channel_status;
     this.connectionn=this.whatsAppDetails[0]?.connection_date;
     this.wave=this.whatsAppDetails[0]?.WAVersion;
+    if(this.whatsAppDataUpdated){
+      if(this.whatsAppDetails[0]?.channel_id) this.setChannelId(this.whatsAppDetails[0]?.channel_id);
+    }
   });
 }
 
@@ -154,7 +157,6 @@ setChannelId(id: string) {
 }
 
 saveWhatsappWebDetails(id:number) { 
-
   this.whatAppDetails.id = id;
   this.whatAppDetails.spid = this.spid;
   this.whatAppDetails.channel_id= this.channel_id;
@@ -184,6 +186,8 @@ saveWhatsappWebDetails(id:number) {
       console.log(this.whatAppDetails)
       console.log(resopnse)
       this.showToaster('Your Session Details Updated Succesfully','success');
+      this.whatsAppDataUpdated = true;
+      this.getwhatsapp();
     }
 
   });
