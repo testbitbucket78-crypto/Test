@@ -1826,7 +1826,7 @@ formateDate(dateTime:string){
 				//delete obj[item];
 		});
 
-	   this.CsvContactCol = item;
+	   this.CsvContactCol = item.replaceAll(' ','');
 	   this.mapCsvContact= false
 	}else{
 		this.showToaster('Column should only have numeric values','error');
