@@ -499,7 +499,7 @@ const addholidays = async (req, res) => {
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
         let date = new Date(holiday_date[0]);
-        if(req.body.dataToRemove.length){
+        if(req.body.dataToRemove.length > 0){
             date = new Date(req.body.dataToRemove[0]);
         }
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ensure two digits
