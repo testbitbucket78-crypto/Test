@@ -134,8 +134,8 @@ export class TeamboxService {
   public deleteCampaignDetail(CampaignID: any) {
     return this.http.get(API_URL+'/deleteCampaign/'+CampaignID);
   }
-  public copyCampaign(CampaignID: any) {
-    return this.http.get(API_URL+'/copyCampaign/'+CampaignID);
+  public copyCampaign(CampaignID: any, spid: number) {
+    return this.http.get(API_URL+'/copyCampaign/'+CampaignID+"/"+spid);
   }
   
   public getFilteredCampaign(bodyData: any) {
