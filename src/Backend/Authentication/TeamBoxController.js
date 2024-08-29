@@ -721,7 +721,7 @@ const insertMessage = async (req, res) => {
                         } else {
                             middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                         }
-                        autoReplyPauseTime(SPID, interaction_id);
+                       // autoReplyPauseTime(SPID, interaction_id);
                     }
                     if (middlewareresult?.status != 200) {
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]);
@@ -755,10 +755,10 @@ const insertMessage = async (req, res) => {
 async function getDefaultActionTimeandUpdatePauseTime(spid) {
     try {
         let id = 0 ; // set default
-        let getDefaultAction = await db.excuteQuery('select * from defaultActions where spid=? and isDeleted !=1', [spid]);
+        let getDefaultAction = await db.excuteQuery(val.defaultQuery, [spid]);
         let timePause = getDefaultAction[0]?.pauseAutoReplyTime;
         id = getDefaultAction[0]?.id;
-        let updatePauseTime = await db.excuteQuery('update defaultActions set pauseMin_from_teambox_after_agent_reply =? where id =? and spid=?', [timePause, id, spid])
+        let updatePauseTime = await db.excuteQuery(val.updateDefaultQuery, [timePause, id, spid])
         console.log(getDefaultAction[0]?.pauseAutoReplyTime,getDefaultAction[0]?.id,spid,"Teambox updatePauseTime", updatePauseTime)
     } catch (err) {
 

@@ -47,13 +47,13 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
     let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN)
     return sendSReply;
   }
-  else if (isAutoReply == 1) {
+  else{
 
-    let currentTime = new Date();
+    let currentTime = new Date(); // new Date(new Date().toUTCString().replace('GMT',''))
 
     let autoReplyVal = new Date(currentTime);
     if (autoReplyTime != 0) {
-      autoReplyVal.setMinutes(autoReplyVal.getMinutes() + autoReplyTime);
+      autoReplyVal.setMinutes(autoReplyVal.getMinutes() + autoReplyTime).toUTCString();
     }
     //const autoReplyVal = new Date(currentTime)   // autoReplyTime when auto reply start
     console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyVal, autoReplyTime)

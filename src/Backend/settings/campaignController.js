@@ -587,7 +587,7 @@ const addTemplate = async (req, res) => {
         industry = req.body.industry
         isCopied = req.body?.isCopied
         let image = Links
-        let templateStatus;
+        let statusCode = 200;
         console.log(ID, status, Channel)
         if (ID == 0) {
             let templateStatus;
@@ -601,6 +601,8 @@ const addTemplate = async (req, res) => {
                     if (templateStatus.status){
                     let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id]]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
+                    }else{
+                        statusCode = 400;
                     }
                 }else if (isTemplate == 0 || isCopied == 1) {
                     let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id]]
@@ -614,7 +616,7 @@ const addTemplate = async (req, res) => {
             res.status(200).send({
                 addedtem: addedtem,
                 templateStatus: templateStatus,
-                status: 200
+                status: statusCode
             })
 
         }
@@ -630,6 +632,8 @@ const addTemplate = async (req, res) => {
                     let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
                     updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
                     console.log(Channel, status, "updatedTemplate", updatedTemplate)
+                    }else{
+                        statusCode = 400;
                     }
                 }else if(isTemplate == 0){
                     let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id, ID]
@@ -644,7 +648,7 @@ const addTemplate = async (req, res) => {
 
             res.status(200).send({
                 updatedTemplate: updatedTemplate,
-                status: 200
+                status: statusCode
             })
         }
     } catch (err) {
