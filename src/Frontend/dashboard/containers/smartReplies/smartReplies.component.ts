@@ -1210,9 +1210,10 @@ showAddSmartRepliesModal() {
 		let getMimeTypePrefix;
 		let mediaName;
 		let Link;
-        if(this.assignedAgentList[index]?.media_type && this.assignedAgentList[index]?.Media){
-			const mediaType = this.assignedAgentList[index]?.media_type;
+        if(this.assignedAgentList[index]?.Media){
+			let mediaType
 			Link = this.assignedAgentList[index].Media;
+			mediaType = this.getMediaType(Link);
 			const fileNameWithPrefix = Link.substring(Link.lastIndexOf('/') + 1);
 			getMimeTypePrefix = this.getMimeTypePrefix(mediaType);
 			let originalName;
