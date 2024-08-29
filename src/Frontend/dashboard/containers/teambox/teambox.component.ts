@@ -1385,7 +1385,7 @@ console.log(getMimeTypePrefix);
 			"spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
 		}
 		this.websocketService.connect(notificationIdentifier);
-			this.websocketService.getMessage().pipe().subscribe(message => {
+			this.websocketService.getMessage().pipe().subscribe((message:any) => {
 				console.log(message);
 				console.log(this.interactionList,'check id');
 				if(message != undefined )
@@ -2539,14 +2539,14 @@ filterContactByType(Channel:any){
 
 toggleConversationStatusOption(){
 	console.log(this.loginAs)
-	if(this.loginAs !='Agent'){
+	//if(this.loginAs !='Agent'){
 	this.ShowConversationStatusOption =!this.ShowConversationStatusOption
-	}else if(this.selectedInteraction.assignTo?.AgentId == this.AgentId){
-		this.ShowConversationStatusOption =!this.ShowConversationStatusOption
-	}else{
-		this.showToaster('Opps you dont have permission','warning')
-	}
-	this.ShowAssignOption=false
+	//}else if(this.selectedInteraction.assignTo?.AgentId == this.AgentId){
+	//	this.ShowConversationStatusOption =!this.ShowConversationStatusOption
+	// }else{
+	// 	this.showToaster('Opps you dont have permission','warning')
+	// }
+	this.ShowAssignOption=false;
 }
 
 toggleAssignOption(){
@@ -2828,10 +2828,14 @@ addTags(tagName:any){
 	//console.log(this.selectedTags)
 }
 
-updateTags(){
+updateTags(){	
+	let name = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 	var bodyData = {
 		tag:this.selectedTags,
-		customerId:this.selectedInteraction.customerId
+		customerId:this.selectedInteraction.customerId,
+		action:'Contact Updated',
+		action_at:new Date(),
+		action_by:name,
 	}
 	this.apiService.updateTags(bodyData).subscribe(async response =>{
 		this.selectedInteraction['tag'] = [];
@@ -2951,14 +2955,14 @@ updateConversationStatus(status:any) {
 		// });
 		this.getMessageData(this.selectedInteraction,true);
 		if(status =='Open' && !this.selectedInteraction.assignTo){
-			setTimeout(()=>{ this.updateInteractionMapping(this.selectedInteraction.InteractionId,this.uid,this.TeamLeadId)},100);
+			setTimeout(()=>{ this.updateInteractionMapping(this.selectedInteraction.InteractionId,this.uid,this.TeamLeadId)},200);
 		}
 
 		if(status =='Resolved' ){
-			setTimeout(()=>{ this.updateInteractionMapping(this.selectedInteraction.InteractionId,-1,this.TeamLeadId)},100);
+			setTimeout(()=>{ this.updateInteractionMapping(this.selectedInteraction.InteractionId,-1,this.TeamLeadId)},200);
 		}
 		
-		this.selectedInteraction['interaction_status']=status
+		this.selectedInteraction['interaction_status']=status;
 	});
 
 }
@@ -3581,9 +3585,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
     	const scroll$ = fromEvent(content!, 'scroll').pipe(map(() => { return content!.scrollTop; }));
  
     scroll$.subscribe((scrollPos) => {
-      let limit = content!.scrollHeight - content!.clientHeight -1;
-	  console.log(scrollPos);
-	  console.log(limit);
+      let limit = content!.scrollHeight - content!.clientHeight -1;	 
       if (Math.ceil(scrollPos) >= limit && !this.isCompleted) {
         this.currentPage += this.pageSize;
         // forkJoin([this.items$.pipe(take(1)), this.appService.getData(this.currentPage, this.pageSize)]).subscribe((data: Array<Array<any>>) => {

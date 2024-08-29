@@ -533,8 +533,8 @@ popupWidth='250px' popupHeight='200px'>
 								<div class="col-md-8 align-content-center customized">
 									<h1>{{selectedInteraction.Name}}</h1>
 									<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
-									<p>Created Date:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.InCreatedDate)}}</span></p>
-									<p>Last Updated:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.InUpdatedDate)}}</span></p>
+									<p>Created Date:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.created_at)}}</span></p>
+									<p>Last Updated:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.updated_at)}}</span></p>
 								</div>
 							</div>
 
