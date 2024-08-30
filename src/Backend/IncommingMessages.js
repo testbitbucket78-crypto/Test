@@ -53,7 +53,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
 
     let autoReplyVal = new Date(currentTime);
     if (autoReplyTime != 0) {
-      autoReplyVal.setMinutes(autoReplyVal.getMinutes() + autoReplyTime).toUTCString();
+      autoReplyVal.setMinutes(autoReplyVal.getMinutes() + autoReplyTime);
     }
     //const autoReplyVal = new Date(currentTime)   // autoReplyTime when auto reply start
     console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyVal, autoReplyTime)

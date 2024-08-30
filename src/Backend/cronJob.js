@@ -195,7 +195,7 @@ function parseMessageTemplate(template) {
   return placeholders;
 }
 
-async function sendMessages(phoneNumber, message, id, campaign, response,textMessage) {
+async function sendMessages(phoneNumber, message, id, campaign, response,textMessage,msgId) {
   try {
     var status = 0
     if (response == 200) {
@@ -213,7 +213,8 @@ async function sendMessages(phoneNumber, message, id, campaign, response,textMes
       schedule_datetime: campaign.start_datetime,
       status_message: response,
       status: status,
-      sp_id :campaign.sp_id
+      sp_id :campaign.sp_id,
+      msgId : msgId
     }
 
 
@@ -227,8 +228,8 @@ async function sendMessages(phoneNumber, message, id, campaign, response,textMes
 
 
 async function saveSendedMessage(MessageBodyData) {
-  var inserQuery = "INSERT INTO CampaignMessages (phone_number,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,schedule_datetime,status_message,status,SP_ID) values ?";
-  let saveMessage = await db.excuteQuery(inserQuery, [[[MessageBodyData.phone_number, '', '', '', MessageBodyData.message_media, MessageBodyData.message_content, '', MessageBodyData.CampaignId, MessageBodyData.schedule_datetime, MessageBodyData.status_message, MessageBodyData.status, MessageBodyData.sp_id]]])
+  var inserQuery = "INSERT INTO CampaignMessages (phone_number,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,schedule_datetime,status_message,status,SP_ID,messageTemptateId) values ?";
+  let saveMessage = await db.excuteQuery(inserQuery, [[[MessageBodyData.phone_number, '', '', '', MessageBodyData.message_media, MessageBodyData.message_content, '', MessageBodyData.CampaignId, MessageBodyData.schedule_datetime, MessageBodyData.status_message, MessageBodyData.status, MessageBodyData.sp_id,MessageBodyData.msgId]]])
 }
 
 
@@ -341,9 +342,8 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
 
     var response;
     setTimeout(async () => {
-      response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id);
-      //console.log("response",response)
-      sendMessages(Phone_number, message.message_content, message.Id, message, response.status,textMessage)
+      response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id,message.Id,message);
+      //console.log("response",response)     
     }, 10)
 
   }
@@ -458,7 +458,7 @@ function sendBatchMessage(batch, sp_id, type, message_content, message_media, ph
     let mobile_number = batch[i].mobile_number
 
     setTimeout(() => {
-      messageThroughselectedchannel(sp_id, mobile_number, type, message_content, message_media, phone_number_id, channel_id)
+      campaignAlertsThroughselectedchannel(sp_id, mobile_number, type, message_content, message_media, phone_number_id, channel_id)
     }, 10)
   }
 }
@@ -570,8 +570,41 @@ async function isClientActive(spid) {
 
 //_________________________COMMON METHOD FOR SEND MESSAGE___________________________//
 
-async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
+async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType,campaignId,message) {
   //console.log("messageThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
+  if (channelType == 'WhatsApp Official' || channelType == 1  || channelType == 'WA API') {
+
+    let response = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    if(response?.status){
+    let saveSendedMessage = await saveMessage(from,spid,response?.message?.messages[0]?.id);
+    let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status,text,response.message?.messages[0]?.id)
+    }else{
+    let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status,text,response.message?.messages[0]?.id)
+    }
+     
+    return response;
+  } if (channelType == 'WhatsApp Web' || channelType == 2  || channelType == 'WA Web') {
+  
+    let clientReady = await isClientActive(spid);
+    //console.log("clientReady",clientReady)
+    if (clientReady?.status) {
+      let saveSendedMessage = await saveMessage(from,spid,'')
+      let response = await middleWare.postDataToAPI(spid, from, type, text, media,'',saveSendedMessage);
+      console.log("response", JSON.stringify(response?.status),response.msgId);
+    
+      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status,text,response.msgId)
+      return response;
+    
+  }else {
+      console.log("isActiveSpidClient returned false for WhatsApp Web");
+      return { status: 404 };
+    }
+
+  }
+}
+
+async function campaignAlertsThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
+  //console.log("campaignAlertsThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
   if (channelType == 'WhatsApp Official' || channelType == 1  || channelType == 'WA API') {
 
     let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
@@ -598,7 +631,6 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
   }
 }
-
 
 
 

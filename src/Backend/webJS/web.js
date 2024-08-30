@@ -100,7 +100,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
           executablePath: "/usr/bin/google-chrome-stable",
-          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -457,10 +457,10 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
     if (client) {
       let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id, spNumber);
 
-      return '200';
+      return msg;
     } else {
       console.log("else");
-      return '401'
+      return  {status : 400 ,msgId : 'Channel is disconnected'}
     }
   } catch (err) {
     console.log(err);
@@ -482,7 +482,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let sendId = await client.sendMessage(endCust + '@c.us', text);
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-
+      return {status : 200 ,msgId :sendId?._data?.id?.id}
       // notify.NotifyServer(spNumber, false, interaction_id)
     }
     if (type === 'image') {
@@ -491,7 +491,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const media = await MessageMedia.fromUrl(link);
       let sendId = await client.sendMessage(endCust + '@c.us', media, { caption: text });
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-
+      return {status : 200 ,msgId :sendId?._data?.id?.id}
     }
     if (type === 'video') {
       let myUTCString = new Date().toUTCString();
@@ -500,7 +500,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       // console.log(media.mimetype)
       let sendId = await client.sendMessage(endCust + '@c.us', media, { caption: text });
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-
+      return {status : 200 ,msgId :sendId?._data?.id?.id}
 
     }
     if (type === 'attachment' || type === 'document') {
@@ -509,7 +509,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const media = await MessageMedia.fromUrl(link)//MessageMedia('pdf', link);
       let sendId = await client.sendMessage(endCust + '@c.us', media);
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-
+      return {status : 200 ,msgId :sendId?._data?.id?.id}
 
     } if (type === 'location') {
       let myUTCString = new Date().toUTCString();
@@ -517,7 +517,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const location = new Location(37.422, -122.084, 'Sampana Digital Private limited');
       let sendId = await client.sendMessage(endCust + '@c.us', location);
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-
+      return {status : 200 ,msgId :sendId?._data?.id?.id}
     }
     if (type === 'vcard') {
       let myUTCString = new Date().toUTCString();
@@ -538,12 +538,13 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
 
       );
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-
+      return {status : 200 ,msgId :sendId?._data?.id?.id}
     }
 
   } catch (err) {
     console.log("++++++++++++++++++++++++++++++++++++++++++++")
     console.log(err)
+    return {status : 500 ,msgId :"error on send message"}
   }
 }
 
@@ -694,15 +695,22 @@ async function savelostChats(message, spPhone, spid) {
       display_phone_number = spPhone;
     }
     let getLastScannedTime = await db.excuteQuery(messageQuery, [endCustomer, spid]);
-    // console.log(getLastScannedTime)
+    // console.log(message_text)
     var d = new Date(message.timestamp * 1000).toUTCString();
-
+   //console.log("message.timestamp ",message.timestamp )
+   //console.log("d",d)
     const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
-
-     console.log(d,new Date().toUTCString() , getLastScannedTime[0]?.latest_message_created_date.toUTCString(),(d > getLastScannedTime[0]?.latest_message_created_date),new Date( getLastScannedTime[0]?.latest_message_created_date))
+    //console.log("message_time",message_time)
+    //console.log("new Date().toUTCString()",new Date().toUTCString())
+   // console.log("getLastScannedTime[0]?.latest_message_created_date",getLastScannedTime[0]?.latest_message_created_date,getLastScannedTime.length)
+    // if(getLastScannedTime[0]?.latest_message_created_date){
+    // console.log("latest_message_created_date UTC",getLastScannedTime[0]?.latest_message_created_date.toUTCString())
+    // }
+    // console.log("----------------------------------")
+    // console.log(d,new Date().toUTCString() , getLastScannedTime[0]?.latest_message_created_date.toUTCString(),(d > getLastScannedTime[0]?.latest_message_created_date),new Date( getLastScannedTime[0]?.latest_message_created_date))
 
     // console.log(message_text,getLastScannedTime.length,(d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0))
-    if ((d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0)) {
+    if ((d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime[0]?.latest_message_created_date == null)) {
 
 
 
