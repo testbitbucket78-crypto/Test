@@ -458,7 +458,7 @@
             <div class="d-flex justify-content-between align-items-center modal-header">
                 <h5 *ngIf="!templatesMessageDataById && selectedTab==0" class="pl-4 modal-title">New Template Message</h5>
                 <h5 *ngIf="templatesMessageDataById || galleryMessageData.ID" class="pl-4 modal-title">Edit Template Message</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="removeFormValues()">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
             </div>
@@ -696,7 +696,7 @@
             <div class="d-flex justify-content-between align-items-center modal-header">
                 <h5 *ngIf="!templatesMessageDataById && selectedTab==0" class="pl-4 modal-title">New Template Message</h5>
                 <h5 *ngIf="templatesMessageDataById || galleryMessageData.ID" class="pl-4 modal-title">Edit Template Message</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="removeFormValues()">
                     <img src="../../../../assets/img/teambox/icon-close.svg">
                 </button>
             </div>

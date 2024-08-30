@@ -42,6 +42,7 @@ holidayTooltip!: boolean;
 errorMessage = '';
 successMessage = '';
 warningMessage = '';
+selectedYearMonth:string='';
 isLoading!: boolean;
     constructor(private _settingsService: SettingsService, private datepipe: DatePipe, private modalService: NgbModal) { 
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
@@ -207,10 +208,12 @@ isLoading!: boolean;
     let holidayResponse:holidayData =<holidayData>{};
     holidayResponse.SP_ID = this.sp_Id;
     holidayResponse.holiday_date =[];
+    holidayResponse.dataToRemove=[];
     this.monthDates.forEach(item =>{
       if(item.selected)
       holidayResponse.holiday_date.push(item.completeDate);
     })
+     if(!holidayResponse.holiday_date.length) holidayResponse.dataToRemove.push(this.selectedYearMonth);
     return holidayResponse
   }
 
@@ -246,6 +249,9 @@ isLoading!: boolean;
 
     this.monthDates =[];
     this.selectedMonth = month;
+    const formattedMonth = this.selectedMonth.toString().padStart(2, '0');
+    this.selectedYearMonth = `${this.selectedYear}-${formattedMonth}-01`;
+
     let endDate = new Date(this.selectedYear,this.selectedMonth,0);
     let startDate = new Date(this.selectedYear,this.selectedMonth-1,1);
     this.addEmptyDate(1,startDate.getDay());

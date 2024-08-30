@@ -345,7 +345,7 @@ showAddSmartRepliesModal() {
 		this.selectedcriteria = ''
 		this.assignedAgentList = []
 		this.assignedTagList = []
-		this.assignActionList = []
+		//this.assignActionList = []
 		this.getTemplatesList()
 		this.ShowChannelOption = false
 		this.isShowSmartReplies = false
@@ -1210,9 +1210,10 @@ showAddSmartRepliesModal() {
 		let getMimeTypePrefix;
 		let mediaName;
 		let Link;
-        if(this.assignedAgentList[index]?.media_type && this.assignedAgentList[index]?.Media){
-			const mediaType = this.assignedAgentList[index]?.media_type;
+        if(this.assignedAgentList[index]?.Media){
+			let mediaType
 			Link = this.assignedAgentList[index].Media;
+			mediaType = this.getMediaType(Link);
 			const fileNameWithPrefix = Link.substring(Link.lastIndexOf('/') + 1);
 			getMimeTypePrefix = this.getMimeTypePrefix(mediaType);
 			let originalName;
@@ -1223,13 +1224,13 @@ showAddSmartRepliesModal() {
 					originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
 				}
 
-			if(getMimeTypePrefix = 'image') {
+			if(getMimeTypePrefix == 'image') {
 				mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 			  }
-			  else if(getMimeTypePrefix = 'video') {
+			  else if(getMimeTypePrefix == 'video') {
 				  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 			  }
-			  else if(getMimeTypePrefix== 'application' || getMimeTypePrefix == 'document') {
+			  else if(getMimeTypePrefix == 'application' || getMimeTypePrefix == 'document') {
 				  mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>'+originalName+'</p>'
 			  }
 		}
