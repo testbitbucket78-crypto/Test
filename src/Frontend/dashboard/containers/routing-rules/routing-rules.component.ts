@@ -105,7 +105,7 @@ export class RoutingRulesComponent implements OnInit {
 
 
   getUserList() {
-    this.apiService.getUserList(this.spId).subscribe((result:any) =>{
+    this.apiService.getUserList(this.spId,1).subscribe((result:any) =>{
       if(result){
         this.userList =result?.getUser;     
         console.log('userList:', this.userList);

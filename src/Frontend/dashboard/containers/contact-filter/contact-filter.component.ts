@@ -253,7 +253,7 @@ export class ContactFilterComponent implements OnInit {
 	}
 
 	getUserList(){
-		this._settingsService.getUserList(this.SPID)
+		this._settingsService.getUserList(this.SPID,1)
 		.subscribe(result =>{
 		  if(result){
 			  this.userList =result?.getUser;  

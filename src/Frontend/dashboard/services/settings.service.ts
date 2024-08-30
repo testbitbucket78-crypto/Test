@@ -75,12 +75,12 @@ export class SettingsService {
     
     if (!onlyDate) {
       if (this.timeFormat === '12') {
-        formattedDate = this.datePipe.transform(dates, `${this.dateFormat} hh:mm a`, this.timezone);
+        formattedDate = this.datePipe.transform(dates, `${this.dateFormat} hh:mm a`);
       } else {
-        formattedDate = this.datePipe.transform(dates, `${this.dateFormat} HH:mm`, this.timezone);
+        formattedDate = this.datePipe.transform(dates, `${this.dateFormat} HH:mm`);
       }
     } else {
-      formattedDate = this.datePipe.transform(dates, this.dateFormat, this.timezone);
+      formattedDate = this.datePipe.transform(dates, this.dateFormat);
     }
 
     return formattedDate;

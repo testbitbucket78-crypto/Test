@@ -1594,7 +1594,7 @@ stopPropagation(event: Event) {
 
 	  /*  GET USER LIST  */
 	  getUserList(){
-		this.settingsService.getUserList(this.SPID)
+		this.settingsService.getUserList(this.SPID,1)
 		.subscribe((result:any) =>{
 		  if(result){
 			this.userList =result?.getUser;  

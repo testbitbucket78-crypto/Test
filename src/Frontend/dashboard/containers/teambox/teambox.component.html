@@ -147,7 +147,7 @@
 									*ngIf="selectedInteraction?.progressbar?.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72"
 									style="margin:0 8px"
 									[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : selectedInteraction.interaction_status=='Open' ? 'drop-down-btn red-color':'drop-down-btn'"
-									(click)="toggleConversationStatusOption()" [disabled]="selectedInteraction.isBlocked==1">
+									(click)="toggleConversationStatusOption()" >
 									<img *ngIf="selectedInteraction.interaction_status=='Resolved'" class="icon"
 										src="/assets/img/teambox/checked_icon.png" />
 									{{selectedInteraction.interaction_status == 'empty'? 'Select': selectedInteraction.interaction_status}}
@@ -155,7 +155,7 @@
 
 								<button *ngIf="selectedInteraction?.progressbar?.progressbarValue >= 72"
 									style="margin:0 8px" class="drop-down-btn green-color"
-									(click)="toggleConversationStatusOption()"  [disabled]="selectedInteraction.isBlocked==1">
+									(click)="toggleConversationStatusOption()"  >
 									<img class="icon" src="/assets/img/teambox/checked_icon.png" /> Resolved
 								</button>
 
@@ -180,7 +180,7 @@
 
 
 							<div *ngIf="!searchChatFocused" class="drop-down-btn">
-								<button class="drop-down-btn" (click)="toggleAssignOption()" [disabled]="selectedInteraction.isBlocked==1">
+								<button class="drop-down-btn" (click)="toggleAssignOption()" >
 									<span *ngIf="selectedInteraction.assignTo">
 										<img *ngIf="selectedInteraction.assignTo.avatar" class="thumbnail"
 											src="/assets/img/teambox/Richie_1.png" />
@@ -1524,7 +1524,8 @@ popupWidth='250px' popupHeight='200px'>
 				<div class="contact_item" *ngFor="let item of contactList | searchfilter:header; let i = index"
 					(click)="createInteraction(item.customerId)">
 					<div class="contact_item_left">
-						<img class="profile_icon" src="/assets/img/teambox/Richie_1.png" />
+						<!-- <img class="profile_icon" src="/assets/img/teambox/Richie_1.png" /> -->
+						<div class="profile_icon_no-dp">{{settingService.getInitials(item.Name)}}</div>
 						<div>
 							<p class="name">{{item.Name}}</p>
 							<p class="phone">{{item.Phone_number}}</p>
