@@ -759,6 +759,9 @@ getmessageBymsgId =`
         AND Message.SPID = ?
 `
 
+let defaultQuery = 'select * from defaultActions where spid=? and isDeleted !=1'
+let updateDefaultQuery = 'update defaultActions set pauseMin_from_teambox_after_agent_reply =? where id =? and spid=?'
+
 module.exports = {
     host, user, password, database,
     selectAllAgentsQuery, selectAllQuery, insertCustomersQuery, filterQuery, searchQuery, selectByIdQuery, blockCustomerQuery,
@@ -767,7 +770,7 @@ module.exports = {
     updateInteractionMapping, getInteractionMapping,
     savedMessagesQuery, getquickReplyQuery, getTemplatesQuery,
     addNotification, assignedNameQuery, interactions, contactsInteraction, interactionsquery, getallMessagesWithScripts, getMediaMessage,getmessageBymsgId,
-    searchWithAllData ,interactionDataById
+    searchWithAllData ,interactionDataById,defaultQuery,updateDefaultQuery
 }
 
 

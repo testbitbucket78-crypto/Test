@@ -56,8 +56,10 @@ wss.on('connection', (ws) => {
         if( spAgentMapping[msgjson["spPhoneNumber"]] == undefined){
           spAgentMapping[msgjson["spPhoneNumber"]] = [];
         }
-       
+        
+       if(!(spAgentMapping[msgjson["spPhoneNumber"]].includes(msgjson["UniqueSPPhonenumber"]))){
         spAgentMapping[msgjson["spPhoneNumber"]].push(msgjson["UniqueSPPhonenumber"]);
+       }
         // console.log("UniqueSPPhonenumber 1", clients)
         console.log('Active clients : ' + Object.keys(clients).length);
 

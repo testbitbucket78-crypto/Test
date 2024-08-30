@@ -33,8 +33,17 @@ WITH LatestInteractions AS (
     FROM 
         Interaction
     WHERE 
-        SP_ID = ? 
-        AND is_deleted != 1 AND IsTemporary !=1
+        SP_ID = ?
+        AND is_deleted != 1 
+        AND IsTemporary != 1
+),
+BlockedInteractions AS (
+    SELECT 
+        customerId
+    FROM 
+        EndCustomer
+    WHERE 
+        isBlocked = 1
 )
 SELECT 
     interaction_status, 
@@ -43,19 +52,22 @@ FROM
     LatestInteractions
 WHERE 
     rn = 1
+    AND customerId NOT IN (SELECT customerId FROM BlockedInteractions)
+    AND interaction_status IN ('Open', 'Resolved')
 GROUP BY 
     interaction_status
 
 UNION ALL
 
 SELECT 
-    'Total Interactions' AS interaction_status, 
+    'Total Conversations' AS interaction_status, 
     COUNT(*) AS count
 FROM 
     LatestInteractions
 WHERE 
-    rn = 1;
-`
+    rn = 1
+    AND customerId NOT IN (SELECT customerId FROM BlockedInteractions)
+    AND interaction_status IN ('Open', 'Resolved');`
 
 
 campaignsQuery = ` SELECT STATUS,COUNT(*) COUNT FROM Campaign
@@ -79,7 +91,7 @@ FROM user
 WHERE SP_ID =? AND isDeleted != 1;`;
 
 subscribersQuery = `select OptInStatus,count(*) count from EndCustomer WHERE SP_ID=? and (isDeleted IS NULL OR isDeleted = 0)  AND IsTemporary !=1  Group by (OptInStatus) union select  'Total Contacts',
-count(*) count from EndCustomer WHERE SP_ID=?  and (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0) AND IsTemporary !=1  `;
+count(*) count from EndCustomer WHERE SP_ID=?  and (isDeleted IS NULL OR isDeleted = 0)  AND IsTemporary !=1  `;
 conversationQuery = "CALL dashboardRecentConversations(?)"
 crachlogQuery = `INSERT INTO CrashLog(processText,created_at) VALUES (?,now())`
 
