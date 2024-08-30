@@ -170,7 +170,7 @@
 											[ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'">Open</span>
 									</p>
 									<p [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'"
-										(click)="triggerUpdateConversationStatus('Resolved',openStatusAlertmMessage)" [class.disabled]="!(selectedInteraction.assignTo == this.uid && !settingsService.checkRoleExist('10')) && !(selectedInteraction.assignTo == -1 && !settingsService.checkRoleExist('10')) && !((selectedInteraction.assignTo != -1 && selectedInteraction.assignTo != this.uid) && !settingsService.checkRoleExist('11'))">
+										(click)="triggerUpdateConversationStatus('Resolved',openStatusAlertmMessage)" [class.disabled]="!(selectedInteraction.assignTo == this.uid && !settingsService.checkRoleExist('10')) && !(selectedInteraction.assignTo == -1 && !settingsService.checkRoleExist('11')) && !((selectedInteraction.assignTo != -1 && selectedInteraction.assignTo != this.uid) && !settingsService.checkRoleExist('12'))">
 										<span
 											[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'">Resolved</span>
 									</p>
@@ -565,7 +565,7 @@ popupWidth='250px' popupHeight='200px'>
 
 							<div class="custom_row">
 								<div class="col-md-12">
-									<label (click)="toggleTagsModal(updatedtags)"><img class="edit-icon"
+									<label *ngIf="!settingsService.checkRoleExist('18')" (click)="toggleTagsModal(updatedtags)"><img class="edit-icon"
 											src="/assets/img/teambox/edit-icon.svg" />Tag</label>
 									<div class="tag_list">
 										<!-- <div
@@ -1473,7 +1473,7 @@ popupWidth='250px' popupHeight='200px'>
 				<h4 class="modal-title" id="modal-basic-title">New Message</h4>
 			</div>
 			<div class="modal-header-right">
-				<button type="button" class="custom-width-btn" (click)="openadd(contactadd)"><img class="icon"
+				<button *ngIf="!settingsService.checkRoleExist('17')" type="button" class="custom-width-btn" (click)="openadd(contactadd)"><img class="icon"
 						src="../../../../assets/img/teambox/add-User.svg" /> Create Contacts</button>
 				<p class="close-box" aria-label="Close" (click)="closeAllModal();changeRoutes()"><img
 						src="assets/img/teambox/icon-close.svg"></p>
@@ -1541,7 +1541,7 @@ popupWidth='250px' popupHeight='200px'>
 
 
 
-	<ng-template #contactadd let-c="close" let-d="dismiss" id="contactadd">
+	<ng-template *ngIf="!settingsService.checkRoleExist('17')" #contactadd let-c="close" let-d="dismiss" id="contactadd">
 	
 		<div class="modal-header">
 			<div class="modal-header-left">

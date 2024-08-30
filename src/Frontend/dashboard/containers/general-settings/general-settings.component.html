@@ -9,7 +9,7 @@
         <div class="col-sm-9 py-4 setting-field">
             <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" *ngIf="!settingsService.checkRoleExist('31')" (click)="selectedTab = 1">Default
                 Actions</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''"  *ngIf="!settingsService.checkRoleExist('31')" (click)="selectedTab = 2">Default
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''"  *ngIf="!settingsService.checkRoleExist('32')" (click)="selectedTab = 2">Default
                 Messages</a>
             <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3" *ngIf="!settingsService.checkRoleExist('33')">Routing
                 Rules</a>
@@ -124,7 +124,7 @@
      </form>
     </div>
 
-    <div *ngIf="selectedTab==2 && !settingsService.checkRoleExist('31')">
+    <div *ngIf="selectedTab==2 && !settingsService.checkRoleExist('32')">
         <sb-default-message-settings></sb-default-message-settings>
     </div>
 
