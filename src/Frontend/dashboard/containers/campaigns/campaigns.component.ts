@@ -2174,9 +2174,9 @@ testinfo(){
 	}
 
 	isCustomValue(value: string): boolean {
-		const allVariables = this.selectedTemplate.allVariables;
-		const isVariableMatched = allVariables.some((x:any) => x.label == value);
-		return true;
+		const allVariables = this.attributesoption
+		const isVariableMatched = allVariables.some((x:any) => `{{${x}}}` == value);
+		return isVariableMatched;
 	  }
 
 	checkVariableValue(){
