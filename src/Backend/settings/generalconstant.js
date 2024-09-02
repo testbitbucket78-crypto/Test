@@ -184,8 +184,26 @@ AND   DATE(created_at) <= ?;`
 deleteText=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and (media_type is null OR media_type="")  AND DATE(created_at) <=  ? `
 deleteMedia=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and  ( media_type !="")   AND DATE(created_at) <=  ? `
 
+// default sms query
+
+let isNoReplySent = `select * from Message where interaction_id =? and system_message_type_id=4`
+let getInteractionbyId =`select * from Interaction WHERE InteractionId=? and interaction_status=?  and is_deleted !=1`
+let getLatestMsgbyInteraction = `SELECT M.*
+FROM Message M
+JOIN (
+    SELECT interaction_id, MAX(Message_id) AS LatestMessageId
+    FROM Message
+    WHERE (msg_status != 9 AND msg_status != 10) 
+      AND is_deleted != 1
+    GROUP BY interaction_id
+) AS LatestMessages ON M.interaction_id = LatestMessages.interaction_id 
+   AND M.Message_id = LatestMessages.LatestMessageId
+ORDER BY M.Message_id DESC;`
+
+let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1` 
+let customerPhone =`select * from EndCustomer where customerId=?`
 module.exports={
     defaultactiondetails,updatedefaultactionDetails,defaultinsertDetails,getenabledisable,Abledisablequery,selectdefaultquery,uploaddetails,routingrule,routingdetails,selectmanage,updatemanagestorage,insertmanagestorage,getdeletion,insertRouteQuery,
     CustomerReplyReminder,systemMsgQuery,selectdefaultMsgQuery,noCustomerRqplyTimeOut,noAgentReply,addDefaultMsg,assignCount,checkAssignInteraction,
-    messageSizeQuery,deleteText,deleteMedia,mediaSizeQuery
+    messageSizeQuery,deleteText,deleteMedia,mediaSizeQuery,isNoReplySent,getInteractionbyId,getLatestMsgbyInteraction,defaultMessageQuery,customerPhone
 }

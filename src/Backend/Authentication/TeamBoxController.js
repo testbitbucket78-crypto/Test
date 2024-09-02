@@ -664,7 +664,7 @@ const insertMessage = async (req, res) => {
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent]];
             let msg_id = await db.excuteQuery(messageQuery, [values]);
             //  logger.debug('Message ID:', msg_id);
-
+            let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery,[0,interaction_id])
             if (agentName.length >= 0) {
                 let mentionQuery = "SELECT * FROM Message WHERE ? LIKE ?";
                 let messageTextParameter = `%${message_text}%`; // assuming message_text is the text you want to search
