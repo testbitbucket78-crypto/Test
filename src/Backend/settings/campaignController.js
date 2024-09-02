@@ -593,7 +593,7 @@ const addTemplate = async (req, res) => {
             let templateStatus;
             let addedtem;
             if (Channel == 'WhatsApp Official' || Channel == 'WA API') {
-                if(isTemplate == 1){
+                if(isTemplate == 1 && isCopied != 1){
                     templateStatus = await Createtemplate(template_json);
                     console.log("templateStatus", templateStatus)
     

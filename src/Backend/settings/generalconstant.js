@@ -94,7 +94,8 @@ LEFT JOIN EndCustomer ec ON ic.customerId = ec.customerId
 WHERE
 (ic.interaction_status = 'Open' OR ic.interaction_status = 'Open Interactions') and ic.is_deleted=0
 AND ic.SP_ID IN (SELECT SP_ID FROM defaultmessages WHERE Is_disable = 1 and title='No Customer Reply Reminder')
-AND m_in.interaction_id IS NULL`
+AND m_in.interaction_id IS NULL
+group by latestMsg.interaction_id`
 
 
 
@@ -188,17 +189,17 @@ deleteMedia=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and  ( me
 
 let isNoReplySent = `select * from Message where interaction_id =? and system_message_type_id=4`
 let getInteractionbyId =`select * from Interaction WHERE InteractionId=? and interaction_status=?  and is_deleted !=1`
-let getLatestMsgbyInteraction = `SELECT M.*
-FROM Message M
-JOIN (
-    SELECT interaction_id, MAX(Message_id) AS LatestMessageId
-    FROM Message
-    WHERE (msg_status != 9 AND msg_status != 10) 
-      AND is_deleted != 1
-    GROUP BY interaction_id
-) AS LatestMessages ON M.interaction_id = LatestMessages.interaction_id 
-   AND M.Message_id = LatestMessages.LatestMessageId
-ORDER BY M.Message_id DESC;`
+let getLatestMsgbyInteraction = `SELECT M.interaction_id, M.SPID, M.Agent_id, MAX(M.Message_id) as MaxMessageId, M.updated_at
+ ,dm.autoreply, dm.value, dm.message_type, dm.link, ec.channel,ec.Phone_number as customer_phone_number, interaction_status, 
+       ms.Message_id as SystemReplyMessageId, ms.system_message_type_id
+    FROM Interaction I
+     left Join  Message M on I.InteractionId = M.interaction_id 
+     Left join EndCustomer ec on I.customerId = ec.customerId
+     left join Message ms on I.InteractionId = ms.interaction_id and ms.system_message_type_id = 4
+     left join defaultmessages dm on dm.SP_ID = M.SPID and title='No Agent Reply' and dm.isDeleted !=1
+     WHERE (M.msg_status != 9 AND M.msg_status != 10) 
+      AND M.is_deleted != 1 and I.interaction_status = 'Open' and I.is_deleted !=1
+    GROUP BY M.interaction_id`
 
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1` 
 let customerPhone =`select * from EndCustomer where customerId=?`

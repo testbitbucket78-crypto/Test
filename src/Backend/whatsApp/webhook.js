@@ -123,7 +123,7 @@ async function extractDataFromMessage(body) {
 
     if (firstMessage.context) {
       let spid = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
-      let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND message_content = '${message_text}'` // will replace it withmessage id later
+      let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND messageTemptateId = '${firstMessage.context?.id}'` // will replace it withmessage id later
       console.log(campaignRepliedQuery)
       let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
       //console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
@@ -419,8 +419,8 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
     notify.NotifyServer(displayPhoneNumber, false, ack1InId[0]?.InteractionId, 'Out', 1, 0)
 
   } else if (messageStatus == 'delivered') {
-    let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1'
-    let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [customerPhoneNumber])
+    let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1 and messageTemptateId =?'
+    let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [customerPhoneNumber,smsId])
     const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -435,8 +435,8 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
   } else if (messageStatus == 'read') {
     //  console.log("read")
-    let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2';
-    let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber])
+    let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2  and messageTemptateId =?';
+    let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber,smsId])
     const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
