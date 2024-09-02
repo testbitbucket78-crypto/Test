@@ -1515,7 +1515,8 @@ stopPropagation(event: Event) {
 	  }
 	private modalRef!: NgbModalRef;
 	smartReplySuccess(smartreplysuccess: any) {
-		this.modalRef = this.modalService.open(smartreplysuccess);
+		if(this.assignedAgentList.length) this.modalRef = this.modalService.open(smartreplysuccess);
+		else this.showToaster('! Please type your message first','error');
 		// this.removeModalBackdrop()
 		// this.modalService.dismissAll()
 		// this.showSideBar = false;
