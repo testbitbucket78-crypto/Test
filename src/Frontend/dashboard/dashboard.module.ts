@@ -80,7 +80,8 @@ import { LinkifyPipe } from './containers/linkify/linkify.pipe';
         ],
     exports: [...dashboardContainers.containers,
               ...dashboardComponents.components,
-                 DashboardComponent
+                 DashboardComponent,
+                 LoaderComponent,
             ],
 })
 export class DashboardModule { }

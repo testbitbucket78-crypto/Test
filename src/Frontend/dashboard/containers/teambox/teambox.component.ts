@@ -1335,7 +1335,7 @@ console.log(getMimeTypePrefix);
 		}
 		this.routerGuard()
 		this.getCustomFieldsData();
-		this.getAgents()
+		//this.getAgents()
 		this.getUserList()
 		this.getAllInteraction()
 		this.getInteractionsOnScroll()
@@ -2077,8 +2077,10 @@ console.log(getMimeTypePrefix);
 			return '../../../../assets/img/teambox/duble-tick-g.svg';
 		  } else if (message.msg_status === '3') {
 			return '../../../../assets/img/teambox/double-tick-green.svg';
-		  } else if (message.msg_status === null || message.msg_status === '9') {
+		  } else if (message.msg_status === '9') {
 			return '../../../../assets/img/teambox/error.svg';
+		  } else{
+			return '../../../../assets/img/teambox/tick-gry.svg';
 		  }
 		}
 	  }
@@ -2538,7 +2540,7 @@ filterContactByType(Channel:any){
 }
 
 toggleConversationStatusOption(){
-	console.log(this.loginAs)
+	if(this.selectedInteraction.isBlocked!=1){
 	//if(this.loginAs !='Agent'){
 	this.ShowConversationStatusOption =!this.ShowConversationStatusOption
 	//}else if(this.selectedInteraction.assignTo?.AgentId == this.AgentId){
@@ -2547,9 +2549,13 @@ toggleConversationStatusOption(){
 	// 	this.showToaster('Opps you dont have permission','warning')
 	// }
 	this.ShowAssignOption=false;
+	}else{
+		this.showToaster('Sorry, this contact is Blocked.','error');
+	}
 }
 
 toggleAssignOption(){
+	if(this.selectedInteraction.isBlocked!=1){
 	this.ShowConversationStatusOption=false;
 	if(this.selectedInteraction.interaction_status !='Open'){
 		this.showToaster('Only Open Conversations can be assigned','warning')
@@ -2559,6 +2565,9 @@ toggleAssignOption(){
 	}else{
 		this.showToaster('Opps you dont have permission','warning')
 	}
+}
+}else{
+	this.showToaster('Sorry, this contact is Blocked.','error');
 }
 }
 
@@ -3350,7 +3359,6 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			spid: this.SPID,
 		};
 		if(this.newMessage.value.Message_id == ''){
-			this.getInteractionStatus(this.selectedInteraction?.InteractionId);
 		this.settingService.clientAuthenticated(input).subscribe(response => {
 
 			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WA API') {
@@ -3512,6 +3520,17 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 						console.log(this.loginAs,'Current Role')
 					}
 				}    
+				this.agentsList= result?.getUser;
+			if(this.agentsList.length) this.filteredAgentList = this.agentsList;
+			this.agentsList.forEach((item: { name: string; nameInitials: string; }) => {
+                const nameParts = item.name.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts[1] || '';
+                const nameInitials = firstName.charAt(0)+ ' ' +lastName.charAt(0);
+    
+                item.nameInitials = nameInitials;
+            });
+			this.mentionAgentsList = this.agentsList.filter((item:any)=>item.uid != this.uid);
 			  }
 			});
 		  }

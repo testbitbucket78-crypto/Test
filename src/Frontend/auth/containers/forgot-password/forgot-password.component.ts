@@ -19,6 +19,7 @@ export class ForgotPasswordComponent implements OnInit {
     title = 'formValidation';
     submitted = false;
     submittedValue:any;
+    isLoading!:boolean;
     constructor(private apiService :AuthService ,private router: Router,  private formBuilder: FormBuilder) { }
     ngOnInit() {
       
@@ -29,20 +30,23 @@ export class ForgotPasswordComponent implements OnInit {
      }
 
     onSubmit() {
+        this.isLoading = true;
         this.submitted = true;
         this.submittedValue = this.forgetpassword.value;
         if (this.forgetpassword.valid) {
 
             this.apiService.forgotpassword(this.submittedValue).subscribe(
                 (result) => {
+                    this.isLoading = false;
                     this.openModal();
                 if (result.status === 200) {
-             
+            
                     sessionStorage.setItem('uid', result.id[0].uid);
                   
                 }
             },
                 (error) => {
+                    this.isLoading = false;
                     if (error.status === 400) {
                         const errorMessage = "! Email Not Found";
                         const errorDiv = document.getElementById("error-message");
@@ -55,7 +59,8 @@ export class ForgotPasswordComponent implements OnInit {
     
                 this.forgetpassword.reset;
         }
-
+        else  this.isLoading = false;
+       
     
       
     }
