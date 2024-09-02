@@ -18,6 +18,7 @@ const awsHelper = require('../awsHelper');
 const incommingmsg = require('../IncommingMessages')
 const notify = require('../whatsApp/PushNotifications')
 const mapCountryCode = require('../Contact/utils.js');
+const logger = require('../common/logger.log');
 const fs = require('fs')
 const path = require("path");
 let clientSpidMapping = {};
@@ -100,7 +101,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
           executablePath: "/usr/bin/google-chrome-stable",
-         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -224,12 +225,13 @@ function ClientInstance(spid, authStr, phoneNo) {
             // Check if the replied message is sent by your application
             const repliedMessage = await message.getQuotedMessage();
             // Notify about the reply
-            console.log("reply message status ========", (repliedMessage && repliedMessage.fromMe), repliedMessage.fromMe)
+            //logger.info(`replied sms  ${JSON.stringify(repliedMessage)}`)
+           // console.log("reply message status ========", (repliedMessage && repliedMessage.fromMe), repliedMessage.fromMe)
             if (repliedMessage && repliedMessage.fromMe) {
               // Notify about the reply
               const repliedNumber = (message.from).replace(/@c\.us$/, "");
-              console.log("reply ___________________")
-              let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND message_content = '${repliedMessage.body}'`
+              console.log(repliedMessage?._data?.id?.id,"reply ___________________",message.body)
+              let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND messageTemptateId = '${repliedMessage?._data?.id?.id}'`
               console.log(campaignRepliedQuery)
               let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
               console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
@@ -325,8 +327,8 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
 
           } else if (ack == '2') {
-            let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1'
-            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [phoneNumber])
+            let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1 and messageTemptateId=?'
+            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [phoneNumber,message?._data?.id?.id])
             const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -340,8 +342,8 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId, 'Out', 2, 0)
           } else if (ack == '3') {
             //  console.log("read")
-            let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2';
-            let campaignRead = await db.excuteQuery(campaignReadQuery, [phoneNumber])
+            let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2 and messageTemptateId=?';
+            let campaignRead = await db.excuteQuery(campaignReadQuery, [phoneNumber,message?._data?.id?.id])
             const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
@@ -695,22 +697,26 @@ async function savelostChats(message, spPhone, spid) {
       display_phone_number = spPhone;
     }
     let getLastScannedTime = await db.excuteQuery(messageQuery, [endCustomer, spid]);
-    // console.log(message_text)
+   // logger.info(`Message -----------Text   ${message_text}`)
+    //logger.info(`getLastScannedTime",${getLastScannedTime[0]?.latest_message_created_date.toUTCString()}`)
+   
     var d = new Date(message.timestamp * 1000).toUTCString();
-   //console.log("message.timestamp ",message.timestamp )
-   //console.log("d",d)
-    const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
-    //console.log("message_time",message_time)
-    //console.log("new Date().toUTCString()",new Date().toUTCString())
-   // console.log("getLastScannedTime[0]?.latest_message_created_date",getLastScannedTime[0]?.latest_message_created_date,getLastScannedTime.length)
-    // if(getLastScannedTime[0]?.latest_message_created_date){
-    // console.log("latest_message_created_date UTC",getLastScannedTime[0]?.latest_message_created_date.toUTCString())
-    // }
-    // console.log("----------------------------------")
-    // console.log(d,new Date().toUTCString() , getLastScannedTime[0]?.latest_message_created_date.toUTCString(),(d > getLastScannedTime[0]?.latest_message_created_date),new Date( getLastScannedTime[0]?.latest_message_created_date))
+   // logger.info(`lost message timestamp d",${d}`)
 
-    // console.log(message_text,getLastScannedTime.length,(d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime?.length == 0))
-    if ((d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime[0]?.latest_message_created_date == null)) {
+    const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+
+    // logger.info(`new Date().toUTCString()",${new Date().toUTCString()}`)
+    // logger.info(`if condition1 of lost sms",${(d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) }`)
+    // logger.info(`if condition---2 of lost sms",${(getLastScannedTime[0]?.latest_message_created_date == null) }`)
+    // logger.info(`all if condition ${(d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime[0]?.latest_message_created_date == null)}`)
+
+    // logger.info(`d > getLastScannedTime[0]?.latest_message_created_date.toUTCString() ${d > getLastScannedTime[0]?.latest_message_created_date.toUTCString()}`)
+     //logger.info(`d < new Date().toUTCString()  ${d < new Date().toUTCString()}`)
+    // logger.info(`d >== getLastScannedTime[0]?.latest_message_created_date.toUTCString() ${d >= getLastScannedTime[0]?.latest_message_created_date.toUTCString()}`)
+    // logger.info(`d <== new Date().toUTCString()  ${d <= new Date().toUTCString()}`)
+    // logger.info(`==============================================`)
+    
+    if ((d > getLastScannedTime[0]?.latest_message_created_date.toUTCString() && d < new Date().toUTCString()) || (getLastScannedTime[0]?.latest_message_created_date == null)) {
 
 
 
@@ -732,7 +738,7 @@ async function savelostChats(message, spPhone, spid) {
 
         console.log("lost messages time", d)
         let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time);
-        var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number)
+      //  var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number)
       }
     }
   } catch (err) {

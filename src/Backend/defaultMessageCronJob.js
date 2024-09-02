@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent) VALUES ?"
+var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status) VALUES ?"
 let metaPhoneNumberID = 211544555367892
 
 
@@ -39,7 +39,7 @@ async function NoCustomerReplyReminder() {
             const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
             let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.Message_id]);
 
-            let messageValu = [[message.SPID, message.Type, metaPhoneNumberID, message.interaction_id, message.Agent_id, 'out', data[0].value, (message.link ? message.link : 'text'), data[0].message_type, "", "", currenttime, currenttime, 5, -2]]
+            let messageValu = [[message.SPID, message.Type, metaPhoneNumberID, message.interaction_id, message.Agent_id, 'out', data[0].value, (message.link ? message.link : 'text'), data[0].message_type, "", "", currenttime, currenttime, 5, -2,1]]
             let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
           }
         }
@@ -88,7 +88,8 @@ WHERE
 AND ic.is_deleted = 0
 AND dm.title = 'No Customer Reply Timeout'
 AND dm.Is_disable = 1 
-AND latestmsg.updated_at <= DATE_SUB(NOW(), INTERVAL dm.autoreply MINUTE);
+AND latestmsg.updated_at <= DATE_SUB(NOW(), INTERVAL dm.autoreply MINUTE)
+group by latestmsg.interaction_id
 `
 
 
@@ -111,8 +112,9 @@ async function NoCustomerReplyTimeout() {
           const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
 
-          let messageValu = [[msg.SPID, msg.Type, metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 6, -2]]
+          let messageValu = [[msg.SPID, msg.Type, metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 6, -2,1]]
           let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
+          console.log("NoCustomerReplyTimeout msg" ,insertedMessage)
           let closeInteraction = await db.excuteQuery(`UPDATE Interaction SET interaction_status='Resolved' WHERE InteractionId=${msg.InteractionId}`, []);
           if (closeInteraction.affectedRows > 0) {
             let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [msg.interaction_id]);
@@ -129,14 +131,18 @@ async function NoCustomerReplyTimeout() {
 }
 
 
-/* let noAgentReplydata = await db.excuteQuery(settingVal.noAgentReply, [])
- console.log(noAgentReplydata?.length, "NoAgentReplyTimeOut", noAgentReplydata)
+
+async function NoAgentReplyTimeOut() {
+  try {
+
+let noAgentReplydata = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, [])
+ console.log(noAgentReplydata?.length, "NoAgentReplyTimeOut")
  if (noAgentReplydata?.length > 0) {
    //  console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
    for (const msg of noAgentReplydata) {
-     let isReplyPause = await isAutoReplyPause(msg.SP_ID, msg.InteractionId)
+     let isReplyPause = await isAutoReplyPause(msg.SPID, msg.interaction_id)
      if (isReplyPause) {
-       let isWorkingTime = await workingHoursDetails(msg.SP_ID);
+       let isWorkingTime = await workingHoursDetails(msg.SPID);
        //   console.log("isWorkingTime"  ,isWorkingTime)
        if (isWorkingTime === true) {
          //    console.log("time out working hour")
@@ -145,159 +151,106 @@ async function NoCustomerReplyTimeout() {
          messageThroughselectedchannel(msg.SPID, msg.customer_phone_number, msg.message_type, message_text, msg.link, metaPhoneNumberID, msg.channel, msg.message_type)
          let myUTCString = new Date().toUTCString();
          const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-         let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [4, currenttime, msg.Message_id]);
-         console.log("No agent update message ", updateSmsRes);
-         let messageValu = [[msg.SPID, msg.Type, metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 4,-2]]
+
+         let messageValu = [[msg.SPID, msg.Type, metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 4,-2,1]]
          let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
- 
+  console.log("no agent reply ",insertedMessage)
  
        }
      }
    }
- }*/
+ }
+
+  } catch (error) {
+
+    console.error(`Error sending message to `, error);
+  }
+}
+
+
 
 // async function NoAgentReplyTimeOut() {
 //   try {
+//     // Fetch all latest messages by interaction
+//     const messages = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, []);
 
-
-
-//     // Execute the query to get the latest messages by interaction
-//     let getMessages = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, []);
-
-//     // Iterate over each message
-//     for (const message of getMessages) {
+//     for (const message of messages) {
 //       const interactionId = message.interaction_id;
-//       const spid = message.SPID
-//       // Execute query to check if the interaction is open and not deleted
-//       let interactionResults = await db.excuteQuery(settingVal.getInteractionbyId, [interactionId, 'Open']);
-//       let getPhone = await db.excuteQuery(settingVal.customerPhone, [interactionResults[0].customerId])
-//       // Check if there are results (interaction is open)
-//       if (interactionResults.length > 0) {
-//         // Execute query to check if a system message type of 4 has been sent
-//         let isMessageSentResults = await db.excuteQuery(settingVal.isNoReplySent, [interactionId]);
-//         console.log(message.interaction_id, "is message reply", isMessageSentResults)
-//         // If no such message has been sent, proceed to send an SMS
-//         if (isMessageSentResults.length <= 0) {
-//           let msg = await db.excuteQuery(settingVal.defaultMessageQuery, [spid, 'No Agent Reply'])
-//           // Replace this comment with your logic to send an SMS
-//           console.log(`Sending SMS for interaction_id: ${interactionId}`);
-//           let isReplyPause = await isAutoReplyPause(spid, interactionId)
-//           if (isReplyPause) {
-//             let isWorkingTime = await workingHoursDetails(spid);
+//       const spid = message.SPID;
 
+//       // Fetch interaction details to check if it's open and not deleted
+//       const interactionResults = await db.excuteQuery(settingVal.getInteractionbyId, [interactionId, 'Open']);
+//       if (interactionResults.length === 0) continue; // Skip if no open interaction is found
 
-//             if (isWorkingTime === true) {
+//       // Fetch customer phone number
+//       const customerPhoneResults = await db.excuteQuery(settingVal.customerPhone, [interactionResults[0].customerId]);
+//       const customerPhone = customerPhoneResults[0]?.Phone_number;
 
-//               let message_text;
-//               if (msg[0].value) {
-//                 message_text = await getExtraxtedMessage(msg[0].value)
-//               }
+//       // Check if a message with system_message_type_id = 4 has been sent
+//       const isMessageSentResults = await db.excuteQuery(settingVal.isNoReplySent, [interactionId]);
+//       if (isMessageSentResults.length > 0) continue; // Skip if a message has already been sent
+//       console.log(isMessageSentResults, "isMessageSentResults")
+//       // Fetch the default autoreply message and interval
+//       const defaultMessageResults = await db.excuteQuery(settingVal.defaultMessageQuery, [spid, 'No Agent Reply']);
+//       const autoReplyInterval = parseInt(defaultMessageResults[0]?.autoreply, 10);
+//       const lastUpdatedAt = moment(message.updated_at);
+//       console.log(autoReplyInterval, autoReplyInterval, "autoReplyInterval", message.updated_at, moment().diff(lastUpdatedAt, 'minutes'))
+//       // Check if enough time has passed since the last message
+//       if (moment().diff(lastUpdatedAt, 'minutes') < autoReplyInterval) continue; // Skip if not enough time has passed
 
-//               messageThroughselectedchannel(spid, getPhone[0]?.Phone_number, msg[0].message_type, message_text, msg[0].link, metaPhoneNumberID, getPhone[0]?.channel, msg[0].message_type)
-//               let myUTCString = new Date().toUTCString();
-//               const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-//               let messageValu = [[spid, msg[0].message_type, metaPhoneNumberID, isMessageSentResults[0].interaction_id, isMessageSentResults[0].Agent_id, 'out', msg[0].value, (msg.link ? msg.link : 'text'), msg[0].message_type, "", "", currenttime, currenttime, 4, -2]]
-//               let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
+//       // Check if auto-reply is paused and if it's within working hours
+//       const isReplyPause = await isAutoReplyPause(spid, interactionId);
+//       if (!isReplyPause) continue;
 
+//       const isWorkingTime = await workingHoursDetails(spid);
+//       if (!isWorkingTime) continue;
 
-//             }
-//           }
-
-//         }
+//       // Prepare message text
+//       let messageText;
+//       if (defaultMessageResults[0]?.value) {
+//         messageText = await getExtraxtedMessage(defaultMessageResults[0].value);
 //       }
+
+//       // Send the message through the selected channel
+//       messageThroughselectedchannel(
+//         spid,
+//         customerPhone,
+//         defaultMessageResults[0]?.message_type,
+//         messageText,
+//         defaultMessageResults[0]?.link,
+//         metaPhoneNumberID,
+//         customerPhoneResults[0]?.channel,
+//         defaultMessageResults[0]?.message_type
+//       );
+
+//       // Record the sent message in the database
+//       const currentTimeUTC = moment.utc().format('YYYY-MM-DD HH:mm:ss');
+//       const messageValues = [
+//         [
+//           spid,
+//           defaultMessageResults[0]?.message_type,
+//           metaPhoneNumberID,
+//           interactionId,
+//           message.Agent_id,
+//           'out',
+//           defaultMessageResults[0]?.value,
+//           defaultMessageResults[0]?.link || 'text',
+//           defaultMessageResults[0]?.message_type,
+//           "", "", // These fields are left empty based on your context
+//           currentTimeUTC,
+//           currentTimeUTC,
+//           4,
+//           -2
+//         ]
+//       ];
+//       await db.excuteQuery(insertMessageQuery, [messageValues]);
+
+//       console.log(`SMS sent for interaction_id: ${interactionId}`);
 //     }
-
-
 //   } catch (error) {
-
-//     console.error(`Error sending message to `, error);
+//     console.error(`Error sending message: `, error);
 //   }
 // }
-
-
-
-async function NoAgentReplyTimeOut() {
-  try {
-    // Fetch all latest messages by interaction
-    const messages = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, []);
-
-    for (const message of messages) {
-      const interactionId = message.interaction_id;
-      const spid = message.SPID;
-
-      // Fetch interaction details to check if it's open and not deleted
-      const interactionResults = await db.excuteQuery(settingVal.getInteractionbyId, [interactionId, 'Open']);
-      if (interactionResults.length === 0) continue; // Skip if no open interaction is found
-
-      // Fetch customer phone number
-      const customerPhoneResults = await db.excuteQuery(settingVal.customerPhone, [interactionResults[0].customerId]);
-      const customerPhone = customerPhoneResults[0]?.Phone_number;
-
-      // Check if a message with system_message_type_id = 4 has been sent
-      const isMessageSentResults = await db.excuteQuery(settingVal.isNoReplySent, [interactionId]);
-      if (isMessageSentResults.length > 0) continue; // Skip if a message has already been sent
-      console.log(isMessageSentResults, "isMessageSentResults")
-      // Fetch the default autoreply message and interval
-      const defaultMessageResults = await db.excuteQuery(settingVal.defaultMessageQuery, [spid, 'No Agent Reply']);
-      const autoReplyInterval = parseInt(defaultMessageResults[0]?.autoreply, 10);
-      const lastUpdatedAt = moment(message.updated_at);
-      console.log(autoReplyInterval, autoReplyInterval, "autoReplyInterval", message.updated_at, moment().diff(lastUpdatedAt, 'minutes'))
-      // Check if enough time has passed since the last message
-      if (moment().diff(lastUpdatedAt, 'minutes') < autoReplyInterval) continue; // Skip if not enough time has passed
-
-      // Check if auto-reply is paused and if it's within working hours
-      const isReplyPause = await isAutoReplyPause(spid, interactionId);
-      if (!isReplyPause) continue;
-
-      const isWorkingTime = await workingHoursDetails(spid);
-      if (!isWorkingTime) continue;
-
-      // Prepare message text
-      let messageText;
-      if (defaultMessageResults[0]?.value) {
-        messageText = await getExtraxtedMessage(defaultMessageResults[0].value);
-      }
-
-      // Send the message through the selected channel
-      messageThroughselectedchannel(
-        spid,
-        customerPhone,
-        defaultMessageResults[0]?.message_type,
-        messageText,
-        defaultMessageResults[0]?.link,
-        metaPhoneNumberID,
-        customerPhoneResults[0]?.channel,
-        defaultMessageResults[0]?.message_type
-      );
-
-      // Record the sent message in the database
-      const currentTimeUTC = moment.utc().format('YYYY-MM-DD HH:mm:ss');
-      const messageValues = [
-        [
-          spid,
-          defaultMessageResults[0]?.message_type,
-          metaPhoneNumberID,
-          interactionId,
-          message.Agent_id,
-          'out',
-          defaultMessageResults[0]?.value,
-          defaultMessageResults[0]?.link || 'text',
-          defaultMessageResults[0]?.message_type,
-          "", "", // These fields are left empty based on your context
-          currentTimeUTC,
-          currentTimeUTC,
-          4,
-          -2
-        ]
-      ];
-      await db.excuteQuery(insertMessageQuery, [messageValues]);
-
-      console.log(`SMS sent for interaction_id: ${interactionId}`);
-    }
-  } catch (error) {
-    console.error(`Error sending message: `, error);
-  }
-}
 
 
 
@@ -355,7 +308,7 @@ async function isReplySent(isAutoReply, autoReplyTime, isAutoReplyDisable, assig
       autoReplyVal.setMinutes(autoReplyVal.getMinutes() + autoReplyTime);
     }
     //const autoReplyVal = new Date(currentTime)   // autoReplyTime when auto reply start
-    console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyVal, autoReplyTime)
+  //  console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyVal, autoReplyTime)
     if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined && autoReplyTime != 0) {
 
       return true;

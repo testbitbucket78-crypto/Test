@@ -16,7 +16,8 @@ const delayBetweenBatches = 1000; // 10 seconds in milliseconds
 const web = require('./webJS/web')
 const removeTags = require('./removeTagsFromRichTextEditor')
 const logger = require('./common/logger.log');
-
+const mapCountryCode = require('./Contact/utils.js');
+let metaPhoneNumberID = 211544555367892
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
   const currentTime = moment();
@@ -38,7 +39,7 @@ async function fetchScheduledMessages() {
     const currentDay = currentDate.getDay();
 
     let currentDateTime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' }); // UTC
-    console.log("messagesData",messagesData)
+    console.log("messagesData", messagesData)
 
     // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
     for (const message of messagesData) {
@@ -57,10 +58,10 @@ async function fetchScheduledMessages() {
       }
 
     }
-   console.log("remaingMessage",remaingMessage)
+    console.log("remaingMessage", remaingMessage)
     for (const message of remaingMessage) {
 
-        console.log("remaingMessage loop", message.sp_id)
+      console.log("remaingMessage loop", message.sp_id)
       //let campaignTime = await getCampTime(message.sp_id)  //comment for get time from campaign instead of campaign timing settings
       if (isWorkingTime(message)) {
         //  console.log("remaingMessage  isWorkingTime loop", isWithinTimeWindow(message.start_datetime))
@@ -128,38 +129,38 @@ async function parseMessage(testMessage, custid, sid, msgVar) {
 
 
 
-let content = await removeTags.removeTagsFromMessages(testMessage);
-const placeholders = parseMessageTemplate(testMessage);
-//console.log(testMessage)
-if (placeholders.length > 0) {
-  // Construct a dynamic SQL query based on the placeholders
+  let content = await removeTags.removeTagsFromMessages(testMessage);
+  const placeholders = parseMessageTemplate(testMessage);
+  //console.log(testMessage)
+  if (placeholders.length > 0) {
+    // Construct a dynamic SQL query based on the placeholders
 
-  let results;
-  // console.log(msgVar !='',"msgVar",msgVar != null ,msgVar,msgVar != null || msgVar !='')
-  if (msgVar != null && msgVar !='') {
+    let results;
+    // console.log(msgVar !='',"msgVar",msgVar != null ,msgVar,msgVar != null || msgVar !='')
+    if (msgVar != null && msgVar != '') {
 
-   results = await removeTags.getDefaultAttribue(msgVar, sid, custid);
-    //console.log("atribute result ")
+      results = await removeTags.getDefaultAttribue(msgVar, sid, custid);
+      //console.log("atribute result ")
+      placeholders.forEach(placeholder => {
+        const result = results.find(result => result.hasOwnProperty(placeholder));
+        //  console.log(placeholder,"place foreach",results)
+        const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+        content = content.replace(`{{${placeholder}}}`, replacement);
+      });
+    } else {
+
+      results = await removeTags.getDefaultAttribueWithoutFallback(placeholders, sid, custid);
+    }
+
+    // console.log("results", results);
+
     placeholders.forEach(placeholder => {
       const result = results.find(result => result.hasOwnProperty(placeholder));
-      //  console.log(placeholder,"place foreach",results)
       const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
       content = content.replace(`{{${placeholder}}}`, replacement);
     });
-  } else {
-
-    results = await removeTags.getDefaultAttribueWithoutFallback(placeholders, sid, custid);
   }
-
-  // console.log("results", results);
-
-  placeholders.forEach(placeholder => {
-    const result = results.find(result => result.hasOwnProperty(placeholder));
-    const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
-    content = content.replace(`{{${placeholder}}}`, replacement);
-  });
-}
-return content;
+  return content;
 }
 
 async function parseMessageForCSV(content, contact, messageVariable) {
@@ -195,7 +196,7 @@ function parseMessageTemplate(template) {
   return placeholders;
 }
 
-async function sendMessages(phoneNumber, message, id, campaign, response,textMessage,msgId) {
+async function sendMessages(phoneNumber, message, id, campaign, response, textMessage, msgId) {
   try {
     var status = 0
     if (response == 200) {
@@ -213,8 +214,8 @@ async function sendMessages(phoneNumber, message, id, campaign, response,textMes
       schedule_datetime: campaign.start_datetime,
       status_message: response,
       status: status,
-      sp_id :campaign.sp_id,
-      msgId : msgId
+      sp_id: campaign.sp_id,
+      msgId: msgId
     }
 
 
@@ -229,7 +230,7 @@ async function sendMessages(phoneNumber, message, id, campaign, response,textMes
 
 async function saveSendedMessage(MessageBodyData) {
   var inserQuery = "INSERT INTO CampaignMessages (phone_number,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,schedule_datetime,status_message,status,SP_ID,messageTemptateId) values ?";
-  let saveMessage = await db.excuteQuery(inserQuery, [[[MessageBodyData.phone_number, '', '', '', MessageBodyData.message_media, MessageBodyData.message_content, '', MessageBodyData.CampaignId, MessageBodyData.schedule_datetime, MessageBodyData.status_message, MessageBodyData.status, MessageBodyData.sp_id,MessageBodyData.msgId]]])
+  let saveMessage = await db.excuteQuery(inserQuery, [[[MessageBodyData.phone_number, '', '', '', MessageBodyData.message_media, MessageBodyData.message_content, '', MessageBodyData.CampaignId, MessageBodyData.schedule_datetime, MessageBodyData.status_message, MessageBodyData.status, MessageBodyData.sp_id, MessageBodyData.msgId]]])
 }
 
 
@@ -259,7 +260,7 @@ async function mapPhoneNumberfomCSV(message) {
 
 async function mapPhoneNumberfomList(message) {
   // Map the values to customer IDs
-  console.log("mapPhoneNumberfomList", message)
+  //console.log("mapPhoneNumberfomList", message)
   var dataArray = JSON.parse(message.segments_contacts);
   var type = 'image';
   if (message.message_media == null || message.message_media == "") {
@@ -326,7 +327,7 @@ async function campaignCompletedAlert(message) {
 }
 
 async function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list) {
-   console.log("sendScheduledCampaign", "channel_id", batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message)
+  console.log("sendScheduledCampaign", "channel_id", sp_id, type, message_content, message_media, phone_number_id, channel_id)
   for (var i = 0; i < batch.length; i++) {
     let Phone_number = batch[i].Phone_number
     //Attributes for contact_list
@@ -342,7 +343,7 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
 
     var response;
     setTimeout(async () => {
-      response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id,message.Id,message);
+      response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message);
       //console.log("response",response)     
     }, 10)
 
@@ -570,32 +571,35 @@ async function isClientActive(spid) {
 
 //_________________________COMMON METHOD FOR SEND MESSAGE___________________________//
 
-async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType,campaignId,message) {
+async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, campaignId, message) {
   //console.log("messageThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
-  if (channelType == 'WhatsApp Official' || channelType == 1  || channelType == 'WA API') {
+  if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
-    let response = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
-    if(response?.status){
-    let saveSendedMessage = await saveMessage(from,spid,response?.message?.messages[0]?.id);
-    let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status,text,response.message?.messages[0]?.id)
-    }else{
-    let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status,text,response.message?.messages[0]?.id)
+    let response = await middleWare.sendDefultMsg(media, text, type, metaPhoneNumberID, from);
+    console.log("Official response", JSON.stringify(response?.status));
+
+    if (response?.status) {
+      //interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,Message_template_id
+      let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, text, media, type, type, 'WA API');
+      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id)
+    } else {
+      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id)
     }
-     
+
     return response;
-  } if (channelType == 'WhatsApp Web' || channelType == 2  || channelType == 'WA Web') {
-  
+  } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
+
     let clientReady = await isClientActive(spid);
     //console.log("clientReady",clientReady)
     if (clientReady?.status) {
-      let saveSendedMessage = await saveMessage(from,spid,'')
-      let response = await middleWare.postDataToAPI(spid, from, type, text, media,'',saveSendedMessage);
-      console.log("response", JSON.stringify(response?.status),response.msgId);
-    
-      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status,text,response.msgId)
+      let saveSendedMessage = await saveMessage(from, spid, '', text, media, type, type, 'WA Web')
+      let response = await middleWare.postDataToAPI(spid, from, type, text, media, '', saveSendedMessage);
+      console.log(" web response", JSON.stringify(response?.status), response.msgId);
+
+      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId)
       return response;
-    
-  }else {
+
+    } else {
       console.log("isActiveSpidClient returned false for WhatsApp Web");
       return { status: 404 };
     }
@@ -605,26 +609,27 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
 async function campaignAlertsThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
   //console.log("campaignAlertsThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
-  if (channelType == 'WhatsApp Official' || channelType == 1  || channelType == 'WA API') {
+  if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
-    let respose = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
-    if(respose?.status){
-    let saveSendedMessage = await saveMessage(from,spid,respose?.message?.messages[0]?.id)
+    let respose = await middleWare.sendDefultMsg(media, text, type, metaPhoneNumberID, from);
+    console.log("campaignAlerts", media, text, type, metaPhoneNumberID, from, respose)
+    if (respose?.status == 200) {
+      let saveSendedMessage = await saveMessage(from, spid, respose?.message?.messages[0]?.id, text, media, type, type, 'WA API')
     }
-     
+
     return respose;
-  } if (channelType == 'WhatsApp Web' || channelType == 2  || channelType == 'WA Web') {
-  
+  } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
+
     let clientReady = await isClientActive(spid);
     //console.log("clientReady",clientReady)
     if (clientReady?.status) {
-      let saveSendedMessage = await saveMessage(from,spid,'')
-      let response = await middleWare.postDataToAPI(spid, from, type, text, media,'',saveSendedMessage);
+      let saveSendedMessage = await saveMessage(from, spid, '', text, media, type, type, 'WA Web')
+      let response = await middleWare.postDataToAPI(spid, from, type, text, media, '', saveSendedMessage);
       console.log("response", JSON.stringify(response?.status));
-     
+
       return response;
-    
-  }else {
+
+    } else {
       console.log("isActiveSpidClient returned false for WhatsApp Web");
       return { status: 404 };
     }
@@ -635,50 +640,62 @@ async function campaignAlertsThroughselectedchannel(spid, from, type, text, medi
 
 
 
-async function saveMessage(PhoneNo,spid,msgTemplateId){
-  
-  let InteractionId = await insertInteractionAndRetrieveId(PhoneNo,spid);
-  // console.log(req.body.message_content, "InteractionId InteractionId")
+async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, mediaType, channel) {
 
-  let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,Message_template_id) values ?`
-  let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', req.body.message_content, req.body.message_media, 'text', req.body.SP_ID, mediaType, '', -1,msgTemplateId]]]);
+  let InteractionId = await insertInteractionAndRetrieveId(PhoneNo, spid, channel);
+  console.log(PhoneNo, spid, "InteractionId InteractionId", InteractionId)
+
+  let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,msg_status,Message_template_id) values ?`
+  let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', text, media, 'text', spid, mediaType, '', -1, 1, msgTemplateId]]]);
   let insertedMsgId = saveMessage?.insertId
 }
 
-async function insertInteractionAndRetrieveId(phoneNo, sid) {
+async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
   try {
-    let customerId = await db.excuteQuery(`select customerId from EndCustomer where Phone_Number =? AND SP_ID=? AND isDeleted !=1 ORDER BY created_at desc limit 1`,[phoneNo,sid])
+    let customerId = await db.excuteQuery(`select customerId from EndCustomer where Phone_Number =? AND SP_ID=?  ORDER BY created_at desc limit 1`, [phoneNo, sid]);
+
     let custid = customerId[0]?.customerId;
-    
-    console.log(phoneNo, sid,custid)
-      // Check if Interaction exists for the customerId
-      let rows = await db.excuteQuery(
-          'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ',
-          [custid, sid]
-      );
+  
+    if (!custid) {
 
-      if (rows.length == 0) {
-
-          // If no existing interaction found, insert a new one
-          await db.excuteQuery(
-              'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
-              [custid, 'empty', sid, 'User Initiated']
-           );
-
+      let countryCodeObj;
+      if (phoneNo) {
+        countryCodeObj = mapCountryCode(phoneNo); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
       }
+      let countryCode = countryCodeObj.country + " +" + countryCodeObj.countryCode
+      let displayPhoneNumber = countryCodeObj.localNumber
+      let addTempContact = await db.excuteQuery(`INSERT into EndCustomer(Phone_Number,SP_ID,channel,Name,OptInStatus,countryCode,displayPhoneNumber,IsTemporary) values (?,?,?,?,?,?,?,?)`, [phoneNo, sid, channel, phoneNo, 'Yes', countryCode, displayPhoneNumber, 1]);
+      custid = addTempContact?.insertId
+    }
+    console.log(phoneNo, sid, custid)
+    // Check if Interaction exists for the customerId
+    let rows = await db.excuteQuery(
+      'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ',
+      [custid, sid]
+    );
 
-      // Retrieve the newly inserted or existing Interaction ID
-      let InteractionId = await db.excuteQuery(
-          'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ORDER BY created_at DESC LIMIT 1',
-          [custid, sid]
+    if (rows.length == 0) {
+
+      // If no existing interaction found, insert a new one
+      await db.excuteQuery(
+        'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
+        [custid, 'Open', sid, 'User Initiated']
       );
 
-      // console.log('Newly inserted or existing Interaction ID:', InteractionId);
+    }
 
-      return InteractionId;
+    // Retrieve the newly inserted or existing Interaction ID
+    let InteractionId = await db.excuteQuery(
+      'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ORDER BY created_at DESC LIMIT 1',
+      [custid, sid]
+    );
+
+    // console.log('Newly inserted or existing Interaction ID:', InteractionId);
+
+    return InteractionId;
   } catch (error) {
-      console.error('Error:', error);
-      return error;
+    console.error('Error:', error);
+    return error;
   }
 }
 
@@ -704,8 +721,8 @@ async function autoResolveExpireInteraction() {
 `;
 
     const maxCreatedAtResult = await db.excuteQuery(maxCreatedAtQuery);
-   // console.log("maxCreatedAtResult length  of  auto resolve",maxCreatedAtResult)
-   // logger.log("maxCreatedAtResult length  of  auto resolve",{maxCreatedAtResult})
+    // console.log("maxCreatedAtResult length  of  auto resolve",maxCreatedAtResult)
+    // logger.log("maxCreatedAtResult length  of  auto resolve",{maxCreatedAtResult})
     // Update the Interaction table based on the maximum created_at date
     if (Array.isArray(maxCreatedAtResult)) {
       for (const record of maxCreatedAtResult) {
@@ -716,21 +733,21 @@ async function autoResolveExpireInteraction() {
         AND  TIMESTAMPDIFF(HOUR, (SELECT MAX(created_at) FROM Message WHERE interaction_id = ${record.interaction_id}), NOW()) >= 24 and interaction_status != 'Resolved'`;
 
         let result = await db.excuteQuery(updateQuery, ['Resolved']);
-       // logger.log(record.interaction_id,"result",result?.affectedRows)
+        // logger.log(record.interaction_id,"result",result?.affectedRows)
         let getMapping = await db.excuteQuery(`select * from InteractionMapping where InteractionId =?`, [record.interaction_id])
         if (result?.length > 0) {
           let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [record.interaction_id]);
-          
+
         }
       }
     } else {
       logger.warn(' cron job scheduler maxCreatedAtResult is not an array');
     }
 
-    
+
   } catch (err) {
-    console.log("err autoResolveExpireInteraction ---",err)
-   // logger.error("err autoResolveExpireInteraction ---", {err});
+    console.log("err autoResolveExpireInteraction ---", err)
+    // logger.error("err autoResolveExpireInteraction ---", {err});
   }
 }
 
@@ -745,11 +762,11 @@ async function autoResolveExpireInteraction() {
 // Function to start the scheduler
 function startScheduler() {
   cron.schedule('*/5 * * * *', async () => {
-      console.log('Running scheduled task at:', new Date());
+    console.log('Running scheduled task at:', new Date());
 
-      // Execute your scheduled tasks
-      await fetchScheduledMessages();
-      await autoResolveExpireInteraction();
+    // Execute your scheduled tasks
+    await fetchScheduledMessages();
+    await autoResolveExpireInteraction();
   });
 }
 
@@ -764,7 +781,7 @@ function calculateInitialDelay() {
 
   // Calculate the total delay in milliseconds
   const delay = (minutesToNextMultipleOf5 * 60 - seconds) * 1000;
-console.log("delay ---------",delay)
+  console.log("delay ---------", delay)
   return delay;
 }
 
@@ -774,8 +791,8 @@ const initialDelay = calculateInitialDelay();
 if (initialDelay > 0) {
   console.log(`Waiting ${initialDelay / 1000} seconds to start the scheduler...`);
   setTimeout(() => {
-      console.log('Starting the scheduler at:', new Date());
-      startScheduler();
+    console.log('Starting the scheduler at:', new Date());
+    startScheduler();
   }, initialDelay);
 } else {
   console.log('Starting the scheduler immediately at:', new Date());

@@ -19,13 +19,14 @@ let updateSms = `UPDATE Message set system_message_type_id=?,updated_at=? where 
 let updateInteractionMapping = "INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy) VALUES ?"
 addTagQuery = "UPDATE EndCustomer SET tag =?  WHERE customerId =? and SP_ID=?"
 selectTagQuery = "select tag from EndCustomer where customerId= ?"
-msgBetweenOneHourQuery = `SELECT *
-FROM Message
-WHERE interaction_id = ? and system_message_type_id=?
-  AND TIMESTAMPDIFF(Minute, updated_at, NOW()) <= 60  
-ORDER BY updated_at DESC 
-LIMIT 1`;
-var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent) VALUES ?";
+msgBetweenOneHourQuery = `SELECT M.*
+FROM Message M
+JOIN Interaction I ON I.InteractionId = M.interaction_id
+WHERE M.interaction_id = ?
+  AND M.system_message_type_id = ?
+  AND I.interaction_status = 'Open'
+  AND I.is_deleted != 1`;
+var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status) VALUES ?";
 
 async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, newiN) {
   console.log("isAutoReply, autoReplyTime, isAutoReplyDisable")
@@ -737,7 +738,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from);
     // console.log("messageThroughselectedchannel", result?.status)
     if (result?.status == 200) {
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2,1]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       response = true;
     }
@@ -751,7 +752,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', text, (media ? media : 'text'), media_type, "", "", time, time, "", -2]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', text, (media ? media : 'text'), media_type, "", "", time, time, "", -2,1]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       return true;
     }
@@ -769,7 +770,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     if (sReply?.status == 200) {
 
 
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, sReply.message.messages[0].id, "", time, time, "", -2]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, sReply.message.messages[0].id, "", time, time, "", -2,1]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       response = true;
     }
@@ -782,7 +783,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
 
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, "", "", time, time, "", -2]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, "", "", time, time, "", -2,1]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       return true;
     }

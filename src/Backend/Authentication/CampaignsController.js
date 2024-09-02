@@ -803,22 +803,23 @@ const copyCampaign = async (req, res) => {
     let Query = "SELECT * from Campaign  where Id = " + req.params.CampaignId
     let existCampaign = await db.excuteQuery(Query,[])
     //console.log("existCampaign",'Copy of '+existCampaign[0].title)
+    let randomName = Math.floor(100000 + Math.random() * 900000);
+    let CopyQuery;
     let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", ['Copy of '+existCampaign[0].title, req.params.spid])
     if (campaignTitle?.length == 0) {
-        let CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('Copy of ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = " + req.params.CampaignId
+         CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('Copy of ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = " + req.params.CampaignId
 
-        //  console.log(CopyQuery)
+    } else { 
+        CopyQuery = `INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('Copy of ${existCampaign[0].title} ', ${randomName}),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = ` + req.params.CampaignId
+    }
+//  console.log(CopyQuery)
        let campaignCopied = await db.excuteQuery(CopyQuery, []);
         res.send({
             "status": 200,
             "message": campaignCopied,
         })
-    } else {
-        res.send({
-            "status": 409,
-            "message": "Campaign Name already exist"
-        })
-    }
+    
+    
  
 }
 
