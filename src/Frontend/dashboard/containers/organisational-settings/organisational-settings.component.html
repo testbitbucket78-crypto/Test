@@ -56,7 +56,8 @@
                     <img class="p-0" src="../../../../assets/img/edit.png">
                 </button>
             </div>
-            <p>{{localeData?.Time_Zone ? localeData?.Time_Zone:'--'}}&nbsp;|&nbsp;{{localeData?.Currency ? localeData?.Currency:'--'}}</p>
+            <!-- {{localeData?.Time_Zone ? localeData?.Time_Zone:'--'}}&nbsp;|&nbsp; -->
+            <p>{{localeData?.Currency ? localeData?.Currency:'--'}}</p>
             <div class="d-flex">
                 <div class="left-col">
                     <span class="profile-sub-heading">Time Format</span>
@@ -418,13 +419,13 @@
                                 <option [value]='24'>24 Hours</option>
                             </select>
                         </div>
-                        <div class="billing-form-row">
+                        <!-- <div class="billing-form-row">
                             <span class="billing-left-col">Time Zone</span>                            
                             <select name="timezone" class="input-form" formControlName="Time_Zone" required>
                                 <option value="" >Select time zone</option>
                                 <option *ngFor="let item of timezoneList" [value]="item?.value">{{item?.name}}</option>
                              </select>
-                        </div>
+                        </div> -->
                         <div class="billing-form-row">
                             <span class="billing-left-col">Currency</span>
                             <select class="input-form" id="currency" formControlName="Currency" required>

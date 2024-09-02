@@ -974,7 +974,7 @@ deletContactByID(data: any) {
 }
 
     getUserList(){
-      this._settingsService.getUserList(this.spid)
+      this._settingsService.getUserList(this.spid,1)
       .subscribe(result =>{
         if(result){
             this.userList =result?.getUser;  
