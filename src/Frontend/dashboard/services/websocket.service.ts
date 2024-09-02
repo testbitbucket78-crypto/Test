@@ -22,6 +22,11 @@ export class WebsocketService {
       },
       (error) => {
         console.error('WebSocket error:', error);
+        this.connect(spn);
+      },
+      () => {
+        console.log('WebSocket connection closed');
+        this.connect(spn); // Handle disconnection on close
       }
     );
     setInterval(() => {      
