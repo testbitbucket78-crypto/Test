@@ -25,7 +25,7 @@
 					    <span>Filter</span>
 					</div>
 				</div>
-				<button class="new-message-btn" (click)="openAddNew(addNewCampaign)" [disabled]="settingsService.checkRoleExist('26')"><img class="icon" src="/assets/img/teambox/add.svg" /> New Campaign</button>		
+				<button class="new-message-btn" (click)="openAddNew(addNewCampaign)" [disabled]="settingsService.checkRoleExist('21')"><img class="icon" src="/assets/img/teambox/add.svg" /> New Campaign</button>		
 					
 			</div>
 			
@@ -184,9 +184,9 @@
 					
 				</div>
 				<div class="action_section">
-					<button type="button" class="btn" (click)="copyCampaign()" [disabled]="settingsService.checkRoleExist('26')"><img src="/assets/img/teambox/copy.svg" ></button>
-					<button type="button" *ngIf="selectedCampaign.status == 0 || selectedCampaign.status == 1" class="btn" (click)="editCampaign(addNewCampaign,1)"  [disabled]="settingsService.checkRoleExist('26')"><img src="../../../../assets/img/teambox/Edit.svg"></button>
-					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)" [disabled]="settingsService.checkRoleExist('26')"><img src="/assets/img/teambox/delete.svg"></button>
+					<button type="button" class="btn" (click)="copyCampaign()" [disabled]="settingsService.checkRoleExist('21')"><img src="/assets/img/teambox/copy.svg" ></button>
+					<button type="button" *ngIf="selectedCampaign.status == 0 || selectedCampaign.status == 1" class="btn" (click)="editCampaign(addNewCampaign,1)"  [disabled]="settingsService.checkRoleExist('21')"><img src="../../../../assets/img/teambox/Edit.svg"></button>
+					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)" [disabled]="settingsService.checkRoleExist('21')"><img src="/assets/img/teambox/delete.svg"></button>
 				</div>
 			</div>
 			<div *ngIf="allCampaign.length<1 && searchKey == ''" class="campaigns_section_items no-campaign">

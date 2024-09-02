@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-
+import { DashboardModule } from '../dashboard/dashboard.module';
 /* Modules */
 import { AppCommonModule } from '../app-common/app-common.module';
 import { NavigationModule } from '../navigation/navigation.module';
@@ -28,6 +28,7 @@ import * as authServices from './services';
         FormsModule,
         AppCommonModule,
         NavigationModule,
+        DashboardModule,
     ],
     providers: [...authServices.services, ...authGuards.guards],
     declarations: [...authContainers.containers, ...authComponents.components],

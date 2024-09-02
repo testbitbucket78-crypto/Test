@@ -8,15 +8,15 @@
       <sb-loader [isLoading]="isLoading"></sb-loader>
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">
-            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''"  *ngIf="!settingsService.checkRoleExist('41')"
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''"  *ngIf="!settingsService.checkRoleExist('45')"
                 (click)="selectedTab = 1">Channels</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('42')">API
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('46')">API
                 Token</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" *ngIf="!settingsService.checkRoleExist('43')"
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" *ngIf="!settingsService.checkRoleExist('47')"
                 (click)="selectedTab = 3">Integration</a>
         </div>
     </div>
-    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('41')">
+    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('45')">
         <h4>Channels</h4>
         <div class="row">
             <div class="col-sm-6 p-5">
@@ -311,7 +311,7 @@
 
 
 
-    <div class="setting-card api-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('42')">
+    <div class="setting-card api-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('46')">
         <div class="account-card-header">
             <h4>API Token</h4>
             <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#createTokenModal">
@@ -426,7 +426,7 @@
 
 
 
-    <div class="setting-card " *ngIf="selectedTab==3 && !settingsService.checkRoleExist('43')">
+    <div class="setting-card " *ngIf="selectedTab==3 && !settingsService.checkRoleExist('47')">
         <div class="account-card-header">
             <h4>Integration</h4>            
         </div>

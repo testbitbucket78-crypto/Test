@@ -7,16 +7,16 @@
 <div>
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">
-            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1" *ngIf="!settingsService.checkRoleExist('44')">Custom Fields</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('45')">Tags</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1" *ngIf="!settingsService.checkRoleExist('39')">Custom Fields</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('40')">Tags</a>
         </div>
     </div>
 
-    <div *ngIf="selectedTab==1 && !settingsService.checkRoleExist('44')">
+    <div *ngIf="selectedTab==1 && !settingsService.checkRoleExist('39')">
         <sb-custom-fields></sb-custom-fields>
     </div>
  <div>
-    <div  class="setting-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('45')">
+    <div  class="setting-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('40')">
         <div class="flex-header">
             <span class="working-hour-heading">Tags</span>    
             <div class="d-flex">
