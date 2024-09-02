@@ -148,8 +148,8 @@
     </div>
         <div class="sidebar-content">
             <p class="m-0">Tag Id:<span>{{selectedtagListData?.ID}}</span></p>
-            <p>Created on: <span>{{selectedtagListData?.created_at| date:'dd-MM-yyyy'}}</span> </p>
-            <p>Last Modified: <span>{{selectedtagListData?.updated_at | date:'dd-MM-yyyy'}}</span></p>
+            <p>Created on: <span>{{settingsService?.getDateTimeFormate(selectedtagListData?.created_at)}}</span> </p>
+            <p>Last Modified: <span>{{settingsService?.getDateTimeFormate(selectedtagListData?.updated_at)}}</span></p>
             <div class="sub-heading py-2">Tag Name</div>
             <div class="description">
                 {{selectedtagListData?.TagName}}

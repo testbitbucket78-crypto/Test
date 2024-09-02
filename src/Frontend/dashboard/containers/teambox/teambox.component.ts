@@ -1385,7 +1385,7 @@ console.log(getMimeTypePrefix);
 			"spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
 		}
 		this.websocketService.connect(notificationIdentifier);
-			this.websocketService.getMessage().pipe().subscribe(message => {
+			this.websocketService.getMessage().pipe().subscribe((message:any) => {
 				console.log(message);
 				console.log(this.interactionList,'check id');
 				if(message != undefined )
@@ -2043,7 +2043,7 @@ console.log(getMimeTypePrefix);
 		if(diffDays<2){
 			return 'Yesterday';
 		}else{
-			return groupDate;
+			return this.datePipe.transform(b , this.settingService.dateFormat);
 		}
 		
 	}else{
@@ -2061,7 +2061,7 @@ console.log(getMimeTypePrefix);
 			var hoursBH = hours < 10 ? "0" + hours : hours;
 			var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
 			var time = hoursBH + ":" + minutes  + " " + am_pm;
-			return time
+			return this.datePipe.transform(messCreated, this.settingService.timeFormat == '12'?'hh:mm a':'hh mm');
 		
 	}else{
 		return ''
@@ -2539,14 +2539,14 @@ filterContactByType(Channel:any){
 
 toggleConversationStatusOption(){
 	console.log(this.loginAs)
-	if(this.loginAs !='Agent'){
+	//if(this.loginAs !='Agent'){
 	this.ShowConversationStatusOption =!this.ShowConversationStatusOption
-	}else if(this.selectedInteraction.assignTo?.AgentId == this.AgentId){
-		this.ShowConversationStatusOption =!this.ShowConversationStatusOption
-	}else{
-		this.showToaster('Opps you dont have permission','warning')
-	}
-	this.ShowAssignOption=false
+	//}else if(this.selectedInteraction.assignTo?.AgentId == this.AgentId){
+	//	this.ShowConversationStatusOption =!this.ShowConversationStatusOption
+	// }else{
+	// 	this.showToaster('Opps you dont have permission','warning')
+	// }
+	this.ShowAssignOption=false;
 }
 
 toggleAssignOption(){
@@ -2828,10 +2828,14 @@ addTags(tagName:any){
 	//console.log(this.selectedTags)
 }
 
-updateTags(){
+updateTags(){	
+	let name = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 	var bodyData = {
 		tag:this.selectedTags,
-		customerId:this.selectedInteraction.customerId
+		customerId:this.selectedInteraction.customerId,
+		action:'Contact Updated',
+		action_at:new Date(),
+		action_by:name,
 	}
 	this.apiService.updateTags(bodyData).subscribe(async response =>{
 		this.selectedInteraction['tag'] = [];
@@ -2951,14 +2955,14 @@ updateConversationStatus(status:any) {
 		// });
 		this.getMessageData(this.selectedInteraction,true);
 		if(status =='Open' && !this.selectedInteraction.assignTo){
-			this.updateInteractionMapping(this.selectedInteraction.InteractionId,this.uid,this.TeamLeadId)
+			setTimeout(()=>{ this.updateInteractionMapping(this.selectedInteraction.InteractionId,this.uid,this.TeamLeadId)},200);
 		}
 
 		if(status =='Resolved' ){
-			this.updateInteractionMapping(this.selectedInteraction.InteractionId,-1,this.TeamLeadId)
+			setTimeout(()=>{ this.updateInteractionMapping(this.selectedInteraction.InteractionId,-1,this.TeamLeadId)},200);
 		}
 		
-		this.selectedInteraction['interaction_status']=status
+		this.selectedInteraction['interaction_status']=status;
 	});
 
 }
@@ -3142,7 +3146,7 @@ updateInteractionMapping(InteractionId:any,AgentId:any,MappedBy:any){
 	this.apiService.resetInteractionMapping(bodyData).subscribe(responseData1 =>{
 		this.apiService.updateInteractionMapping(bodyData).subscribe(responseData =>{
 			this.apiService.getInteractionMapping(InteractionId).subscribe(mappingList =>{
-				this.getMessageData(this.selectedInteraction,true)
+				this.getMessageData(this.selectedInteraction,true);
 				var mapping:any  = mappingList;
 				this.selectedInteraction['assignTo'] =mapping?mapping[mapping.length - 1]:'';
 				this.selectedInteraction['assignAgent'] =mapping && mapping?.length>0?mapping[mapping.length - 1]?.name:'';
@@ -3581,9 +3585,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
     	const scroll$ = fromEvent(content!, 'scroll').pipe(map(() => { return content!.scrollTop; }));
  
     scroll$.subscribe((scrollPos) => {
-      let limit = content!.scrollHeight - content!.clientHeight -1;
-	  console.log(scrollPos);
-	  console.log(limit);
+      let limit = content!.scrollHeight - content!.clientHeight -1;	 
       if (Math.ceil(scrollPos) >= limit && !this.isCompleted) {
         this.currentPage += this.pageSize;
         // forkJoin([this.items$.pipe(take(1)), this.appService.getData(this.currentPage, this.pageSize)]).subscribe((data: Array<Array<any>>) => {
@@ -3663,12 +3665,12 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		yesterday.setDate(new Date().getDate() - 1);
 		if(date.getFullYear() === currDate.getFullYear() && date.getMonth() === currDate.getMonth() &&
 		date.getDate() === currDate.getDate()){
-			return this.datePipe.transform(date,'hh:mm a');
+			return this.datePipe.transform(date,this.settingService.timeFormat =='12' ?'hh:mm a' : 'hh:mm');
 		} else if(date.getFullYear() === currDate.getFullYear() && date.getMonth() === currDate.getMonth() &&
 		date.getDate() === yesterday.getDate()){
 			return 'Yesterday';
 		}else{
-			return this.datePipe.transform(date,'dd/MM/yyyy');
+			return this.datePipe.transform(date,this.settingService.dateFormat);
 		}
 	  }
 	  getSplitItem(val:any){

@@ -52,6 +52,7 @@ export class LoginComponent implements OnInit {
                     sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
                     sessionStorage.setItem('SP_ID', result.user.SP_ID);
                     localStorage.setItem('bearerToken',result.token);
+                    sessionStorage.setItem('SPPhonenumber',result.spPhoneNumber);
                     console.log(result, '-------token');
                     console.log(localStorage.getItem('bearerToken'));
 

@@ -14,6 +14,7 @@ export class WebsocketService {
     this.socket$ = webSocket('wss://notify.stacknize.com/'); // Replace with your server's URL
     this.socket$.next(JSON.stringify(spn));
     // Handle incoming messages
+    let i =0
     this.socket$.subscribe(
       (message) => {
         console.log('Received message:', message);
@@ -39,6 +40,7 @@ export class WebsocketService {
   disconnect(): void {
     if (this.socket$) {
       this.socket$.complete();
+      //connect();
       //this.socket$ = null;
     }
   }

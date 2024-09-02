@@ -128,8 +128,8 @@
                 </div>
                     <div class="sidebar-content">
                         <p class="m-0 py-1">Field Id:<span>{{selectedCustomField?.id}}</span></p>
-                        <p class="m-0 py-1">Created on: <span>{{selectedCustomField?.created | date:'h:mm a, dd MMM yyyy'}}</span> </p>
-                        <p class="m-0 py-1">Last Modified: <span>{{selectedCustomField?.updated ? (selectedCustomField?.updated | date:'h:mm a, dd MMM yyyy'): 'NA'}}</span></p>
+                        <p class="m-0 py-1">Created on: <span>{{settingsService?.getDateTimeFormate(selectedCustomField?.created)}}</span> </p>
+                        <p class="m-0 py-1">Last Modified: <span>{{selectedCustomField?.updated ? settingsService?.getDateTimeFormate(selectedCustomField?.updated): 'NA'}}</span></p>
                         <div class="text-capitalize py-2 displayName">{{selectedCustomField?.displayName}}</div>
                         <div class="description">
                             <p>{{selectedCustomField?.description}}</p>

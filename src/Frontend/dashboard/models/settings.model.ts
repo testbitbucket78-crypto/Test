@@ -102,6 +102,7 @@ export interface workingDataResponse {
 export interface holidayData {
     holiday_date: string[];
     SP_ID: number;
+    dataToRemove:string[];
     created_By: string;
 }
 

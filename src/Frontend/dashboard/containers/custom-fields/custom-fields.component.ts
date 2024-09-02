@@ -54,7 +54,7 @@ export class CustomFieldsComponent implements OnInit {
         //setTimeout(()=>{this.getPaging()},2000);
     }
     private searchFilterPipe = new SearchfilterPipe(); 
-    constructor(private formBuilder:FormBuilder,private settingsService:SettingsService) {
+    constructor(private formBuilder:FormBuilder,public settingsService:SettingsService,) {
       this.addCustomField = [];
 
       this.customFieldForm = this.formBuilder.group({

@@ -85,8 +85,8 @@ export class QuickResponseComponent implements OnInit {
     keepFormat: false,
 };
   lastCursorPosition: Range | null = null;
-
-  constructor(config: NgbModalConfig,private modalService: NgbModal,public apiService:SettingsService, private _teamboxService: TeamboxService) { }
+  
+  constructor(config: NgbModalConfig,private modalService: NgbModal,public apiService:SettingsService,public settingsService:SettingsService, private _teamboxService: TeamboxService) { }
 
   ngOnInit(): void {
     this.isLoading = true;

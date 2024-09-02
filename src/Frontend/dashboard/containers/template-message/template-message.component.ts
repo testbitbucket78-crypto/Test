@@ -566,10 +566,21 @@ export class TemplateMessageComponent implements OnInit {
             this.category_id = 2
         }
     }
-
+    settingValue(){
+        if(this.newTemplateForm.get('BodyText')?.value == null)  this.newTemplateForm.get('BodyText')?.setValue('');
+        if(this.newTemplateForm.get('Header')) this.newTemplateForm.get('Header')?.setValue('');
+        if(this.newTemplateForm.get('FooterText')) this.newTemplateForm.get('FooterText')?.setValue('');
+        this.showMessageType("text")
+        this.templatesMessageData.media_type = "text";
+        const selTextRadio = document.getElementById('sel-text') as HTMLInputElement;
+        if (selTextRadio) {
+          selTextRadio.checked = true;
+        }
+    }
     saveTemplateNextStep() {
         let val = this.newTemplateForm.get('TemplateName')?.value;
-        if(this.newTemplateForm.get('BodyText')?.value == null)  this.newTemplateForm.get('BodyText')?.setValue('');
+        this.settingValue()
+        
     let temp:any = this.templatesData.filter((item:any) => item.TemplateName == val)[0];
     console.log(temp)
     if(temp && this.id != temp?.ID){

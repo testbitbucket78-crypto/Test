@@ -1826,7 +1826,7 @@ formateDate(dateTime:string){
 				//delete obj[item];
 		});
 
-	   this.CsvContactCol = item;
+	   this.CsvContactCol = item.replaceAll(' ','');
 	   this.mapCsvContact= false
 	}else{
 		this.showToaster('Column should only have numeric values','error');
@@ -1964,7 +1964,7 @@ testinfo(){
 
 	copyCampaign() {
 		let CampaignID = this.selectedCampaign.Id
-		this.apiService.copyCampaign(CampaignID).subscribe(campaignDelete =>{
+		this.apiService.copyCampaign(CampaignID,this.SPID).subscribe(campaignDelete =>{
 			this.getAllCampaigns();
 			this.showToaster('Campaign Copied', 'success');
 			this.selectedCampaign=[];
@@ -2740,9 +2740,9 @@ console.log(this.allTemplatesMain);
 		this.checkboxChecked = false;
 		for (const listItem of this.allContactList) {
             listItem['selected'] = false;
-			this.modalRef.dismiss();
 
         }
+		this.modalRef.dismiss();
 	  }
 
 
