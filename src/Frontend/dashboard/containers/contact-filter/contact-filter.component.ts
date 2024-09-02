@@ -497,7 +497,7 @@ export class ContactFilterComponent implements OnInit {
 		}
           }
           })
-		  contactFilter += ' )';
+		  contactFilter += ' ) Group by EC.customerId';
         
         }
         console.log(contactFilter)

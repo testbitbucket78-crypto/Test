@@ -32,9 +32,9 @@
 									<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''"
 										(click)="filterInteraction('Unassigned')"><span>Unassigned</span></p>
 									<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''"
-										(click)="filterInteraction('Mine')"><span>Mine</span></p>
-									<p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
-										(click)="filterInteraction('Open')"><span>My Open</span></p>
+										(click)="filterInteraction('Mine')"><span>My Open</span></p>
+									<!-- <p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
+										(click)="filterInteraction('Open')"><span>My Open</span></p> -->
 									<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''"
 										(click)="filterInteraction('Resolved')"><span>Resolved</span></p>
 									<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''"
@@ -304,7 +304,7 @@
 												</div>
 											</ng-template>
 										  </div> -->
-										<div class="message_text" [innerHTML]="message.message_text | linkify | sanitizeHtml">
+										<div class="message_text" [innerHTML]="message.message_text | sanitizeHtml">
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
 										</div>
 										<div [ngClass]="{'message_box_container':message.media_type}">

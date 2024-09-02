@@ -1188,36 +1188,36 @@
 									</div>
 								</div>
 
-								<div class="addnewitem_content_inner">
-									<p><span>Value</span></p>
-
+								<div class="addnewitem_content_inner" *ngIf="addedF.filterType !='switch' &&  addedF.filterType != 'none'" >
+									<p><span>Value {{addedF.filterType}}</span></p>
+									
 									<div *ngIf="addedF.filterType =='text' " class="formrow">
 										<input type="text" class="form-control" value={{addedF.filterValue}}  (change)="selectFilterValue(i,$event)">
 									</div>
-
+	
 									<div *ngIf="addedF.filterType =='number' " class="formrow">
 										<input type="number" class="form-control" value={{addedF.filterValue}} (change)="selectFilterValue(i,$event)">
 									</div>
-
-
+	
+	
 									<div *ngIf="addedF.filterType =='date'" class="formrow dateview">
 										<input type="date" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 									</div>
-
+	
 									<div *ngIf="addedF.filterType =='d_date'" class="formrow dateview">
 										<input type="date" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 										<input type="date" class="form-control" name="end_date"  (change)="selectFilterDates(i,$event)">
 									</div>
-
+	
 									<div *ngIf="addedF.filterType =='time'" class="formrow dateview">
 										<input type="time" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 									</div>
-
+	
 									<div *ngIf="addedF.filterType =='d_time'" class="formrow dateview">
 										<input type="time" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 										<input type="time" class="form-control" name="end_date"  (change)="selectFilterDates(i,$event)">
 									</div>
-
+	
 									<div *ngIf="addedF.filterType =='datetime'" class="formrow dateview">
 										<input type="datetime-local" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 										<input type="datetime-local" class="form-control" name="end_date"  (change)="selectFilterDates(i,$event)">
@@ -1225,8 +1225,8 @@
 									<div *ngIf="addedF.filterType =='d_datetime'" class="formrow dateview">
 										<input type="datetime-local" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 									</div>
-
-
+	
+	
 									<div *ngIf="addedF.filterType =='select'" class="formrow">
 										<p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
 											{{addedF.filterValue}}
@@ -1237,7 +1237,16 @@
 											</p>
 										</div>
 									</div>
-									
+									<div *ngIf="addedF.filterType =='user'" class="formrow">
+										<p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
+											{{addedF.filterValue}}
+										</p>
+										<div *ngIf="showFilterTagOption" class="popup-dialog">
+											<p *ngFor="let option of userList ;let l = index" (click)="selectFilterOption(i,option?.name)">
+												<span>{{option?.name}}</span>
+											</p>
+										</div>
+									</div>
 									<div *ngIf="addedF.filterType =='select_opt'" class="formrow">
 										<p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
 											{{addedF.filterValue}}
@@ -1248,7 +1257,6 @@
 											</p>
 										</div>
 									</div>
-
 								</div>
 
 							</div>
