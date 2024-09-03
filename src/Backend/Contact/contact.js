@@ -285,12 +285,13 @@ app.get('/', async function (req, res) {
 });
 
 
-app.post('/exportCheckedContact/:SP_ID', authenticateToken, async(req, res) => {
+app.post('/exportCheckedContact', authenticateToken, async(req, res) => {
   try {
     console.log(req.body)
     var data = req.body.data
+    let SP_ID = req.query.SP_ID
     if(data.length > 0) {
-      let result = await formatterDateTime(data, req.params.SP_ID);
+      let result = await formatterDateTime(data, SP_ID);
       if(result){
         data = result
       }
