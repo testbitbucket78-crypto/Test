@@ -39,7 +39,7 @@ async function NoCustomerReplyReminder() {
             const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
             let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.Message_id]);
 
-            let messageValu = [[message.SPID, message.Type, metaPhoneNumberID, message.interaction_id, message.Agent_id, 'out', data[0].value, (message.link ? message.link : 'text'), data[0].message_type, "", "", currenttime, currenttime, 5, -2,1]]
+            let messageValu = [[message.SPID,'text', metaPhoneNumberID, message.interaction_id, message.Agent_id, 'out', data[0].value, (message.link ? message.link : 'text'), data[0].message_type, "", "", currenttime, currenttime, 5, -2,1]]
             let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
           }
         }
@@ -103,7 +103,7 @@ async function NoCustomerReplyTimeout() {
 
       for (const msg of CustomerReplyTimeout) {
         let isReplyPause = await isAutoReplyPause(msg.SP_ID, msg.InteractionId)
-        if (isReplyPause) {
+        if (isReplyPause && msg.Is_disable !=0) {
           //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
           let message_text = await getExtraxtedMessage(msg.value)
           messageThroughselectedchannel(msg.SPID, msg.customer_phone_number, msg.message_type, message_text, msg.link, metaPhoneNumberID, msg.channel, msg.message_type)
@@ -112,7 +112,7 @@ async function NoCustomerReplyTimeout() {
           const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
 
-          let messageValu = [[msg.SPID, msg.Type, metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 6, -2,1]]
+          let messageValu = [[msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 6, -2,1]]
           let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
           console.log("NoCustomerReplyTimeout msg" ,insertedMessage)
           let closeInteraction = await db.excuteQuery(`UPDATE Interaction SET interaction_status='Resolved' WHERE InteractionId=${msg.InteractionId}`, []);
@@ -141,7 +141,7 @@ let noAgentReplydata = await db.excuteQuery(settingVal.getLatestMsgbyInteraction
    //  console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
    for (const msg of noAgentReplydata) {
      let isReplyPause = await isAutoReplyPause(msg.SPID, msg.interaction_id)
-     if (isReplyPause) {
+     if (isReplyPause && msg.Is_disable !=0) {
        let isWorkingTime = await workingHoursDetails(msg.SPID);
        //   console.log("isWorkingTime"  ,isWorkingTime)
        if (isWorkingTime === true) {
@@ -152,9 +152,9 @@ let noAgentReplydata = await db.excuteQuery(settingVal.getLatestMsgbyInteraction
          let myUTCString = new Date().toUTCString();
          const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
-         let messageValu = [[msg.SPID, msg.Type, metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 4,-2,1]]
+         let messageValu = [[msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 4,-2,1]]
          let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
-  console.log("no agent reply ",insertedMessage)
+         console.log("no agent reply ",insertedMessage)
  
        }
      }
