@@ -18,7 +18,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 const authenticateToken = require('../Authorize');
 const logger = require('../common/logger.log');
-
+const {formatterDateTime,formatterDate,formatterTime  }  = require('./utils.js');
 
 app.get('/columns/:spid', authenticateToken, async (req, res) => {
   try {
@@ -285,14 +285,20 @@ app.get('/', async function (req, res) {
 });
 
 
-app.post('/exportCheckedContact', authenticateToken, (req, res) => {
+app.post('/exportCheckedContact/:SP_ID', authenticateToken, async(req, res) => {
   try {
     console.log(req.body)
     var data = req.body.data
+    if(data.length > 0) {
+      let result = await formatterDateTime(data, req.params.SP_ID);
+      if(result){
+        data = result
+      }
+    }
     const json2csvParser = new Parser();
     const csv = json2csvParser.parse(data)
-
-    fs.writeFile("data.csv", csv, function (err) {
+    const filePath = path.join(__dirname, 'data.csv');
+    fs.writeFile(filePath, csv, function (err) {
       if (err) {
         res.send(err);
       }
@@ -315,7 +321,7 @@ app.post('/exportCheckedContact', authenticateToken, (req, res) => {
       attachments: [
         {
           filename: `${timestamp}-${randomNumber}.csv`,
-          path: path.join(__dirname, '/data.csv'),
+          path: filePath,
         },
       ]
     };
@@ -785,7 +791,8 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
     let existSelect = true;
     let existMultiselect = true;
     let existPhone = true;
-
+    const select = 'SELECT * FROM localDetails WHERE SP_ID = ?';
+    const formatSettings = await db.excuteQuery(select, [SP_ID]);
     for (let j = 0; j < importedData.length; j++) {
       const currentData = importedData[j];
       let phone;
@@ -847,9 +854,15 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
           if (dataTypeVerification?.isError) {
             reasons.push(dataTypeVerification.reason);
           }
+          if(allColumnsData.get(ActuallName) == 'Date'){
+            currentData[i].displayName = await formatterDate(displayName,formatSettings);
+          }
+          if(allColumnsData.get(ActuallName) == 'Time'){
+            currentData[i].displayName = await formatterTime(displayName, formatSettings);
+          }
         }
       }
-
+      
       if (reasons.length === 0) {
         if (seenPhoneNumbers.has(phone)) {
           reasons.push("Duplicate phone number");
