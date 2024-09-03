@@ -262,10 +262,10 @@ async function mapPhoneNumberfomList(message) {
   // Map the values to customer IDs
   //console.log("mapPhoneNumberfomList", message)
   var dataArray = JSON.parse(message.segments_contacts);
-  var type = 'image';
-  if (message.message_media == null || message.message_media == "") {
-    type = 'text';
-  }
+  // var type = 'image';
+  // if (message.message_media == null || message.message_media == "") {
+  //   type = 'text';
+  // }
 
 
 
@@ -285,7 +285,7 @@ async function mapPhoneNumberfomList(message) {
   const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
   let updatedStatus = await db.excuteQuery(updateQuery, [currenttime, message.Id])
   let content = await removeTags.removeTagsFromMessages(message.message_content);
-  batchofScheduledCampaign(phoneNo, message.sp_id, type, content, message.message_media, message.phone_number_id, message.channel_id, message, 'List')
+  batchofScheduledCampaign(phoneNo, message.sp_id, message.media_type, content, message.message_media, message.phone_number_id, message.channel_id, message, 'List')
   // }
 
 }
@@ -421,7 +421,7 @@ JOIN user u ON u.uid=c.uid
       type = 'text';
     }
 
-    sendBatchMessage(user, message.sp_id, type, alertmessages, message.message_media, message.phone_number_id, message.channel_id, message.CampaignId, updatedStatus)
+    sendBatchMessage(user, message.sp_id, message.media_type, alertmessages, message.message_media, message.phone_number_id, message.channel_id, message.CampaignId, updatedStatus)
 
 
     //batchofAlertUsers(user, alert.sp_id, type, message, alert.message_media, '101714466262650', alert.channel_id)
@@ -573,9 +573,10 @@ async function isClientActive(spid) {
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, campaignId, message) {
   //console.log("messageThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
+  let getMediaType = determineMediaType(type);
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
-    let response = await middleWare.sendDefultMsg(media, text, type, metaPhoneNumberID, from);
+    let response = await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from);
     console.log("Official response", JSON.stringify(response?.status));
 
     if (response?.status) {
@@ -593,7 +594,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     //console.log("clientReady",clientReady)
     if (clientReady?.status) {
       let saveSendedMessage = await saveMessage(from, spid, '', text, media, type, type, 'WA Web')
-      let response = await middleWare.postDataToAPI(spid, from, type, text, media, '', saveSendedMessage);
+      let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
       console.log(" web response", JSON.stringify(response?.status), response.msgId);
 
       let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId)
@@ -609,9 +610,10 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
 async function campaignAlertsThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
   //console.log("campaignAlertsThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
+  let getMediaType = determineMediaType(type);
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
-    let respose = await middleWare.sendDefultMsg(media, text, type, metaPhoneNumberID, from);
+    let respose = await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from);
     console.log("campaignAlerts", media, text, type, metaPhoneNumberID, from, respose)
     if (respose?.status == 200) {
       let saveSendedMessage = await saveMessage(from, spid, respose?.message?.messages[0]?.id, text, media, type, type, 'WA API')
@@ -624,7 +626,7 @@ async function campaignAlertsThroughselectedchannel(spid, from, type, text, medi
     //console.log("clientReady",clientReady)
     if (clientReady?.status) {
       let saveSendedMessage = await saveMessage(from, spid, '', text, media, type, type, 'WA Web')
-      let response = await middleWare.postDataToAPI(spid, from, type, text, media, '', saveSendedMessage);
+      let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
       console.log("response", JSON.stringify(response?.status));
 
       return response;
@@ -638,7 +640,22 @@ async function campaignAlertsThroughselectedchannel(spid, from, type, text, medi
 }
 
 
-
+function determineMediaType(mediaType) {
+  switch (mediaType) {
+    case 'video/mp4':
+      return 'video';
+    case 'application/pdf':
+      return 'document';
+    case 'image/jpeg':
+      return 'image';
+    case '':
+      return 'text';
+    case 'text':
+      return 'text';
+    default:
+      return 'unknown'; // Optional: handle other cases
+  }
+}
 
 async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, mediaType, channel) {
 

@@ -106,12 +106,12 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
       return result; // Return the result from BroadCast
     } else if (RoutingRules?.length > 0 && RoutingRules[0]?.roundrobin == '1') {
       console.log("RoundRobin");
-      let result = await RoundRobin(sid, newId);
+      let result = await RoundRobin(sid, newId,agid);
       await ManagemissedChat(sid, newId, agid, custid, RoutingRules);
       return result; // Return the result from RoundRobin
     } else if (RoutingRules?.length > 0 && RoutingRules[0]?.manualassign == '1') {
       console.log("ManualAssign");
-      let result = await ManualAssign(newId, sid);
+      let result = await ManualAssign(newId, sid,agid);
       await ManagemissedChat(sid, newId, agid, custid, RoutingRules);
       return result; // Return the result from ManualAssign
     }
@@ -138,7 +138,7 @@ async function BroadCast(sid, agid, newId) {
 }
 
 
-async function RoundRobin(sid, newId) {
+async function RoundRobin(sid, newId,agid) {
   try {
     console.log("RoundRobin");
     let activeAgentQuery = "select *from user where IsActive=1 and SP_ID=? and isDeleted !=1 ";
@@ -184,7 +184,7 @@ async function RoundRobin(sid, newId) {
 }
 
 
-async function ManualAssign(newId, sid) {
+async function ManualAssign(newId, sid,agid) {
   try {
     console.log("ManualAssign");
     let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=?`;
@@ -227,10 +227,10 @@ async function ManagemissedChat(sid, newId, agid, custid, RoutingRules) {
         RoutingRules[0].isMissChatAssigContactOwner === 1
           ? async () => await AssignMissedToContactOwner(sid, newId, agid, custid)
           : RoutingRules[0].assignspecificuser === 1
-            ? async () => await AssignSpecificUser(sid, newId)
+            ? async () => await AssignSpecificUser(sid, newId,agid)
             : RoutingRules[0].isadmin === 1
-              ? async () => await AssignAdmin(newId, sid)
-              : async () => await AssignAdmin(newId, sid);
+              ? async () => await AssignAdmin(newId, sid,agid)
+              : async () => await AssignAdmin(newId, sid,agid);
 
       // Set timeout to perform operation after the specified time period
       setTimeout(async () => {
@@ -250,7 +250,7 @@ async function ManagemissedChat(sid, newId, agid, custid, RoutingRules) {
   }
 }
 
-async function AssignAdmin(newId, sid) {
+async function AssignAdmin(newId, sid,agid) {
   try {
     console.log("AssignAdmin");
     let selectAdminUid = `SELECT * FROM routingrules WHERE SP_ID=?`;
@@ -280,7 +280,7 @@ async function AssignAdmin(newId, sid) {
 }
 
 
-async function AssignSpecificUser(sid, newId) {
+async function AssignSpecificUser(sid, newId,agid) {
   try {
     console.log("AssignSpecificUser");
     let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=?`;

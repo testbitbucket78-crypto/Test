@@ -728,7 +728,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
 
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, media_type) {
-  let getMediaType = media_type  //determineMediaType(media_type);
+  let getMediaType = determineMediaType(media_type); //media_type  
   console.log("phone_number_id,channelType,spid, from, getMediaType, text")
   console.log(phone_number_id, channelType, spid, from, getMediaType, text)
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
@@ -747,8 +747,9 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
   } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
     console.log("message midddleware", interactionId)
-    let result = await middleWare.postDataToAPI(spid, from, getMediaType, text, media)
-    if (result.status == 200) {
+    let result = await middleWare.postDataToAPI(spid, from, getMediaType, text, media);
+    console.log("result",result)
+    if (result?.status == 200) {
 
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');

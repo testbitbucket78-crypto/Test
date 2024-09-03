@@ -53,6 +53,7 @@ app.post('/sendMessage', async (req, res) => {
             msg_id = req.body.msg_id
         spNumber = req.body?.spNumber
         let response = await web.sendMessages(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber);
+        logger.info(`Response of webjs sendMessage API ${response,spid, phoneNo, type, text, link}`)
         return res.send({ status: response.status , msgId : response.msgId })
 
     } catch (err) {
