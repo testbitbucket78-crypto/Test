@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
 import { FormControl } from '@angular/forms';
@@ -26,8 +26,9 @@ export class LoginComponent implements OnInit {
     title = 'formValidation';
     submitted = false;
     parentId = 0;
+    isLoading!: boolean;
 
-    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, private settingsService:SettingsService) {
+    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, private settingsService:SettingsService,private cdr: ChangeDetectorRef) {
 
     }
     ngOnInit() {
@@ -35,6 +36,7 @@ export class LoginComponent implements OnInit {
     }
 
     onSubmit() {
+        this.isLoading = true;
         this.loginformValue = this.loginForm.value;
         // this.apiService.ip()
         // .subscribe(result => {
@@ -47,6 +49,7 @@ export class LoginComponent implements OnInit {
     login(){
         this.apiService.login(this.loginformValue).subscribe(
             result => {
+                this.isLoading = false;
                 if (result.status === 200) {
                     this.parentId = result.user.ParentId;
                     sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
@@ -98,6 +101,7 @@ export class LoginComponent implements OnInit {
             },
 
             error => {
+                this.isLoading = false;
                 if (error?.status === 401) {
                     const errorMessage = '! Incorrect Email or Password.';
                     const errorDiv = document.getElementById('error-message');
@@ -124,7 +128,8 @@ export class LoginComponent implements OnInit {
                         errorDiv.innerHTML = errorMessage;
                     }
                 }
-            }
+                this.cdr.detectChanges();
+            },
         );
     }
     onVerification() {

@@ -1432,7 +1432,7 @@ WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId =
     }
     console.log('empty', getInteraction[0]?.InteractionId, customerId, spid)
 
-    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, ['Resolved', getInteraction[0]?.InteractionId, spid, customerId])
+    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, ['empty', getInteraction[0]?.InteractionId, spid, customerId])
     console.log("updateStatus", updateStatus)
   } catch (err) {
     console.log("err", err)
