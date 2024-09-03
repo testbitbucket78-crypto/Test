@@ -190,7 +190,7 @@ deleteMedia=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and  ( me
 let isNoReplySent = `select * from Message where interaction_id =? and system_message_type_id=4`
 let getInteractionbyId =`select * from Interaction WHERE InteractionId=? and interaction_status=?  and is_deleted !=1`
 let getLatestMsgbyInteraction = `SELECT M.interaction_id, M.SPID, M.Agent_id, MAX(M.Message_id) as MaxMessageId, M.updated_at
- ,dm.autoreply, dm.value, dm.message_type, dm.link, ec.channel,ec.Phone_number as customer_phone_number, interaction_status, 
+ ,dm.autoreply, dm.value, dm.message_type,dm.Is_disable, dm.link, ec.channel,ec.Phone_number as customer_phone_number, interaction_status, 
        ms.Message_id as SystemReplyMessageId, ms.system_message_type_id
     FROM Interaction I
      left Join  Message M on I.InteractionId = M.interaction_id 

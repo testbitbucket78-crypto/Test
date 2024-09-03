@@ -84,7 +84,7 @@ const addCampaign = async (req, res) => {
             if (status == '-1') {
                 statusToUpdate = 2;
             }
-            campaignAlerts(req.body, req.body.Id, statusToUpdate)
+           // campaignAlerts(req.body, req.body.Id, statusToUpdate)
             // db.runQuery(req, res, updateQuery, []);
             res.send({
                 "status": 200,

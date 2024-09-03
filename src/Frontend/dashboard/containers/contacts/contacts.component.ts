@@ -1125,7 +1125,7 @@ deletContactByID(data: any) {
       loginData: (JSON.parse(sessionStorage.loginDetails)).email_id,
       Name: (JSON.parse(sessionStorage.loginDetails)).name
     }
-    this.apiService.exportCheckedContact(exContact).subscribe(response => {
+    this.apiService.exportCheckedContact(exContact,this.spid).subscribe(response => {
       console.log(response);
       this.getContact();
       this.onRowSelected(null);
