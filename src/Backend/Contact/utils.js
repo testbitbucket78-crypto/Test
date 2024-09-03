@@ -1,3 +1,5 @@
+const db = require("../dbhelper");
+const moment = require('moment');
 function mapCountryCode(phoneNumber){
   // Map the country code to the respective country pass number in this function eg: '919000000000'
     const expectedLengths = {
@@ -86,4 +88,100 @@ function parseCountryCodes(countryCodes) {
   return countryCodeMap;
 }
 
-module.exports = mapCountryCode
+
+
+async function formatterDateTime(data, sp_id) {
+  const select = 'SELECT * FROM localDetails WHERE SP_ID = ?';
+  const formatSettings = await db.excuteQuery(select, [sp_id]);
+
+  if (!formatSettings || formatSettings.length === 0) {
+     return data;
+  }
+
+  let { Date_Format, Time_Format } = formatSettings[0];
+  for (let i = 0; i < data.length; i++) {
+      const record = data[i];
+      const { Date: originalDate, Time: originalTime } = record;
+
+      try {
+          const date = moment(originalDate);
+          const time = moment(originalTime, 'HH:mm'); 
+          if(Date_Format) Date_Format = convertToUppercaseFormat(Date_Format)
+          let formattedDate = date.format(Date_Format || 'MM/DD/YYYY');
+          if(formattedDate == 'Invalid date'){formattedDate = originalDate};
+          let formattedTime = time.format(Time_Format === '12' ? 'h:mm A' : 'HH:mm');
+          if(formattedTime == 'Invalid date') {formattedTime = originalTime};
+          
+          data[i] = {
+              ...record,
+              Date: formattedDate,
+              Time: formattedTime
+          };
+      } catch (error) {
+          console.error('Error formatting record:', error);
+      }
+  }
+
+  return data;
+}
+function convertToUppercaseFormat(format) {
+  const formatMapping = {
+      'd': 'D', 
+      'dd': 'DD', 
+      'm': 'M', 
+      'mm': 'MM',
+      'yy': 'YY', 
+      'yyyy': 'YYYY'
+  };
+
+  return format.replace(/d{1,2}|m{1,2}|y{2,4}/gi, match => formatMapping[match.toLowerCase()] || match);
+}
+
+
+async function formatterDate(Date, FormatSettings) {
+  const formatSettings = FormatSettings
+
+  if (!formatSettings || formatSettings.length === 0) {
+    return Date;
+  }
+
+  let { Date_Format } = formatSettings[0];
+
+  try {
+    const date = moment(Date);
+    if(Date_Format) Date_Format = convertToUppercaseFormat(Date_Format)
+    let formattedDate = date.format(Date_Format || 'MM/DD/YYYY');
+    if(formattedDate == 'Invalid date'){formattedDate = Date};
+    return formattedDate;
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return date;
+  }
+}
+
+
+async function formatterTime(Time, FormatSettings){
+  const formatSettings = FormatSettings
+
+  if (!formatSettings || formatSettings.length === 0) {
+    return Time; 
+  }
+  let { Time_Format } = formatSettings[0];
+  try {
+    if (!Time_Format) {
+      return Time; 
+    }
+    const time = moment(Time, 'HH:mm:ss'); 
+    let formattedTime = time.format(Time_Format === '12' ? 'h:mm A' : 'HH:mm');
+    if (formattedTime === 'Invalid date') {
+      formattedTime = Time; 
+    }
+
+    return formattedTime;
+  } catch (error) {
+    console.error('Error formatting time:', error);
+    return Time; 
+  }
+
+}
+module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime};
