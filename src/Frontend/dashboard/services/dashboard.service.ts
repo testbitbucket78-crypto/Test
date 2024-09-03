@@ -86,8 +86,9 @@ export class DashboardService {
     return this.http.get(API_URL1+'exportAllContact')
   }
 
-  exportCheckedContact(data: any) {
-    return this.http.post(API_URL1+'exportCheckedContact', data)
+  exportCheckedContact(data: any, SP_ID: any) {
+    const params = new HttpParams().set('SP_ID', SP_ID)
+    return this.http.post(API_URL1+'exportCheckedContact', data, { params: params })
   }
 
     download(spid: any) {
