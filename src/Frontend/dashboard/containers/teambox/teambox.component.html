@@ -32,9 +32,9 @@
 									<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''"
 										(click)="filterInteraction('Unassigned')"><span>Unassigned</span></p>
 									<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''"
-										(click)="filterInteraction('Mine')"><span>Mine</span></p>
-									<p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
-										(click)="filterInteraction('Open')"><span>My Open</span></p>
+										(click)="filterInteraction('Mine')"><span>My Open</span></p>
+									<!-- <p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
+										(click)="filterInteraction('Open')"><span>My Open</span></p> -->
 									<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''"
 										(click)="filterInteraction('Resolved')"><span>Resolved</span></p>
 									<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''"
@@ -147,7 +147,7 @@
 									*ngIf="selectedInteraction?.progressbar?.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72"
 									style="margin:0 8px"
 									[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : selectedInteraction.interaction_status=='Open' ? 'drop-down-btn red-color':'drop-down-btn'"
-									(click)="toggleConversationStatusOption()" [disabled]="selectedInteraction.isBlocked==1">
+									(click)="toggleConversationStatusOption()" >
 									<img *ngIf="selectedInteraction.interaction_status=='Resolved'" class="icon"
 										src="/assets/img/teambox/checked_icon.png" />
 									{{selectedInteraction.interaction_status == 'empty'? 'Select': selectedInteraction.interaction_status}}
@@ -155,7 +155,7 @@
 
 								<button *ngIf="selectedInteraction?.progressbar?.progressbarValue >= 72"
 									style="margin:0 8px" class="drop-down-btn green-color"
-									(click)="toggleConversationStatusOption()"  [disabled]="selectedInteraction.isBlocked==1">
+									(click)="toggleConversationStatusOption()"  >
 									<img class="icon" src="/assets/img/teambox/checked_icon.png" /> Resolved
 								</button>
 
@@ -166,11 +166,11 @@
 											[ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'">Open</span>
 									</p> -->
 									<p [ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'"
-										(click)="triggerUpdateConversationStatus('Open',openStatusAlertmMessage)" [class.disabled]="(settingsService.checkRoleExist('12'))"><span
+										(click)="triggerUpdateConversationStatus('Open',openStatusAlertmMessage)" [class.disabled]="(settingsService.checkRoleExist('9'))"><span
 											[ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'">Open</span>
 									</p>
 									<p [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'"
-										(click)="triggerUpdateConversationStatus('Resolved',openStatusAlertmMessage)" [class.disabled]="!(selectedInteraction.assignTo == this.uid && !settingsService.checkRoleExist('13')) && !(selectedInteraction.assignTo == -1 && !settingsService.checkRoleExist('14')) && !((selectedInteraction.assignTo != -1 && selectedInteraction.assignTo != this.uid) && !settingsService.checkRoleExist('15'))">
+										(click)="triggerUpdateConversationStatus('Resolved',openStatusAlertmMessage)" [class.disabled]="!(selectedInteraction.assignTo == this.uid && !settingsService.checkRoleExist('10')) && !(selectedInteraction.assignTo == -1 && !settingsService.checkRoleExist('11')) && !((selectedInteraction.assignTo != -1 && selectedInteraction.assignTo != this.uid) && !settingsService.checkRoleExist('12'))">
 										<span
 											[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'">Resolved</span>
 									</p>
@@ -180,7 +180,7 @@
 
 
 							<div *ngIf="!searchChatFocused" class="drop-down-btn">
-								<button class="drop-down-btn" (click)="toggleAssignOption()" [disabled]="selectedInteraction.isBlocked==1">
+								<button class="drop-down-btn" (click)="toggleAssignOption()" >
 									<span *ngIf="selectedInteraction.assignTo">
 										<img *ngIf="selectedInteraction.assignTo.avatar" class="thumbnail"
 											src="/assets/img/teambox/Richie_1.png" />
@@ -197,13 +197,13 @@
 								<div *ngIf="ShowAssignOption" class="popup-dialog AssignOption">
 									<p class="label">Assign To</p>
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,-1,TeamLeadId)" [class.disabled]="(settingsService.checkRoleExist('20'))">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,-1,TeamLeadId)" [class.disabled]="(settingsService.checkRoleExist('15'))">
 										<span class="text-capitalize initials"> U </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Unassigned</span>
 									</p>
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('21'))">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('13'))">
 										<span class="text-capitalize initials"> M </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Myself</span>
@@ -217,7 +217,7 @@
 									<div class="popup-dialog AssignOption agent-list">
 										<div *ngFor="let user of agentsList;let k = index">
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)" *ngIf="user.uid != uid" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('23')) && !(selectedInteraction.assignTo?.AgentId != -1 && !settingsService.checkRoleExist('23'))">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)" *ngIf="user.uid != uid" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('10')) && !(selectedInteraction.assignTo?.AgentId != -1 && !settingsService.checkRoleExist('14'))">
 										<span class="text-capitalize initials"> {{ user.nameInitials }} </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->{{user?.name}} {{user?.UserType == 'Admin' ? '(Admin)' :''}}</span>
@@ -304,7 +304,7 @@
 												</div>
 											</ng-template>
 										  </div> -->
-										<div class="message_text" [innerHTML]="message.message_text | linkify | sanitizeHtml">
+										<div class="message_text" [innerHTML]="message.message_text | sanitizeHtml">
 											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
 										</div>
 										<div [ngClass]="{'message_box_container':message.media_type}">
@@ -565,7 +565,7 @@ popupWidth='250px' popupHeight='200px'>
 
 							<div class="custom_row">
 								<div class="col-md-12">
-									<label (click)="toggleTagsModal(updatedtags)"><img class="edit-icon"
+									<label *ngIf="!settingsService.checkRoleExist('18')" (click)="toggleTagsModal(updatedtags)"><img class="edit-icon"
 											src="/assets/img/teambox/edit-icon.svg" />Tag</label>
 									<div class="tag_list">
 										<!-- <div
@@ -1473,7 +1473,7 @@ popupWidth='250px' popupHeight='200px'>
 				<h4 class="modal-title" id="modal-basic-title">New Message</h4>
 			</div>
 			<div class="modal-header-right">
-				<button type="button" class="custom-width-btn" (click)="openadd(contactadd)"><img class="icon"
+				<button *ngIf="!settingsService.checkRoleExist('17')" type="button" class="custom-width-btn" (click)="openadd(contactadd)"><img class="icon"
 						src="../../../../assets/img/teambox/add-User.svg" /> Create Contacts</button>
 				<p class="close-box" aria-label="Close" (click)="closeAllModal();changeRoutes()"><img
 						src="assets/img/teambox/icon-close.svg"></p>
@@ -1524,7 +1524,8 @@ popupWidth='250px' popupHeight='200px'>
 				<div class="contact_item" *ngFor="let item of contactList | searchfilter:header; let i = index"
 					(click)="createInteraction(item.customerId)">
 					<div class="contact_item_left">
-						<img class="profile_icon" src="/assets/img/teambox/Richie_1.png" />
+						<!-- <img class="profile_icon" src="/assets/img/teambox/Richie_1.png" /> -->
+						<div class="profile_icon_no-dp">{{settingService.getInitials(item.Name)}}</div>
 						<div>
 							<p class="name">{{item.Name}}</p>
 							<p class="phone">{{item.Phone_number}}</p>
@@ -1541,7 +1542,7 @@ popupWidth='250px' popupHeight='200px'>
 
 
 
-	<ng-template #contactadd let-c="close" let-d="dismiss" id="contactadd">
+	<ng-template *ngIf="!settingsService.checkRoleExist('17')" #contactadd let-c="close" let-d="dismiss" id="contactadd">
 	
 		<div class="modal-header">
 			<div class="modal-header-left">

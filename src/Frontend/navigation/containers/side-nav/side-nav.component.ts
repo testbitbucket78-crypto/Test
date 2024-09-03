@@ -25,11 +25,11 @@ export class SideNavComponent implements OnInit {
     items=[
         {id:1,name:'dashboard'},
         {id:2,name:'Contacts'},
-        {id:11,name:'teambox'},
-        {id:31,name:'SmartReplies'},
-        {id:25,name:'camp'},
-        {id:27,name:'Funnel'},
-        {id:31,name:'FlowBuilder'},
+        {id:8,name:'teambox'},
+        {id:26,name:'SmartReplies'},
+        {id:20,name:'camp'},
+        {id:22,name:'Funnel'},
+        {id:24,name:'FlowBuilder'},
         {id:1,name:'rep'},
     ]
  

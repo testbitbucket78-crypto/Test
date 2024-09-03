@@ -620,7 +620,7 @@ checkTemplateName(e:any){
                     .saveNewTemplateData(newTemplateFormData, this.selectedPreview)
                     .subscribe(response => {
                         // add new template
-                        if (response) {
+                        if (response.status != 400) {
                             this.newTemplateForm.reset();
                             this.newTemplateForm.clearValidators();
                             this.templatesMessageDataById = null;
@@ -632,13 +632,16 @@ checkTemplateName(e:any){
                             this.getTemplatesData();
                             this.removeFormValues();
                         }
+                        else{
+                            this.showToaster('there is something wrong in this template','error')
+                        }
                     });
             } else {
                 this.apiService
                     .saveNewTemplateData(newTemplateFormData, this.selectedPreview)
                     .subscribe(response => {
                         // edit existing template
-                        if (response) {
+                        if (response.status != 400) {
                             this.newTemplateForm.reset();
                             this.newTemplateForm.clearValidators();
                             this.showCampaignDetail = false;
@@ -648,6 +651,9 @@ checkTemplateName(e:any){
                             $('#newTemplateMessagePreview').modal('hide');
                             this.getTemplatesData();
                             this.removeFormValues();
+                        }
+                        else{
+                            this.showToaster('there is something wrong in this template','error')
                         }
                     });
             }

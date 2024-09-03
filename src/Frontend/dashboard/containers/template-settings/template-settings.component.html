@@ -1,16 +1,16 @@
 <div>
     <div class="row">
         <div class="col-sm-9 py-4 setting-field">
-            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1" *ngIf="!settingsService.checkRoleExist('49')">Template Message</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('47')">Quick Response</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1" *ngIf="!settingsService.checkRoleExist('43')">Template Message</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('44')">Quick Response</a>
         </div>
     </div>
 
-    <div *ngIf="selectedTab==1 && !settingsService.checkRoleExist('49')">
+    <div *ngIf="selectedTab==1 && !settingsService.checkRoleExist('43')">
         <sb-template-message></sb-template-message>
     </div>
     
-    <div *ngIf="selectedTab==2 && !settingsService.checkRoleExist('47')">
+    <div *ngIf="selectedTab==2 && !settingsService.checkRoleExist('44')">
         <sb-quick-response></sb-quick-response>
     </div>
 </div>

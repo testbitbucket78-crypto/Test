@@ -154,127 +154,7 @@ export class CampaignsComponent implements OnInit {
 	newContactListFilters:any=[]
 	ContactListNewFilters:any=[]
 	
-	contactFilterBy:any=[
-		{value:'Phone_number',label:'Phone_number',checked:false,addeFilter:[],
-		option:[
-		{label:'Contains',checked:false,type:'text'},
-		{label:'Does Not Contain',checked:false,type:'text'},
-		{label:'Starts with',checked:false,type:'text'},
-		{label:'End with',checked:false,type:'text'},
-		]},
-		{value:'Name',label:'Name',checked:false,addeFilter:[],
-		option:[
-		{label:'Contains',checked:false,type:'text'},
-		{label:'Does Not Contain',checked:false,type:'text'},
-		{label:'Starts with',checked:false,type:'text'},
-		{label:'End with',checked:false,type:'text'},
-		{label:'Is',checked:false,type:'select',options:['Empty']},
-		{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
-		{value:'emailId',label:'emailId',checked:false,addeFilter:[],
-		option:[
-		{label:'Contains',checked:false,type:'text'},
-		{label:'Does Not Contain',checked:false,type:'text'},
-		{label:'Includes domain',checked:false,type:'text'},
-		{label:'Exclude domain',checked:false,type:'text'},
-		{label:'Is',checked:false,type:'select',options:['Empty']},
-		{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    ]},
-		// {value:'status',label:'status',checked:false,addeFilter:[],
-		// option:[
-		// {label:'Is',checked:false,type:'select',options:['Premium','Other']},
-		// {label:'Is not',checked:false,type:'select',options:['Premium','Other']},
-		// ]},
-		// {value:'channel',label:'channel',checked:false,addeFilter:[],
-		// option:[
-		// {label:'Is',checked:false,type:'select',options:['WhatsApp','Other']},
-		// {label:'Is not',checked:false,type:'select',options:['WhatsApp','Other']},
-		// ]},
-		{value:'tag',label:'Tag',checked:false,addeFilter:[],
-		option:[
-		{label:'Is',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
-		{label:'Is not',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
-		]},
-		
-		// {value:'sex',label:'sex',checked:false,addeFilter:[],
-		// option:[
-		// {label:'Is',checked:false,type:'select',options:['Male','Female','Transgender']},
-		// {label:'Is not',checked:false,type:'select',options:['Male','Female','Transgender']}
-	    // ]},
-		// {value:'age',label:'age',checked:false,addeFilter:[],
-		// option:[
-		// {label:'Is',checked:false,type:'number'},
-		// {label:'Is not',checked:false,type:'number'},
-		// {label:'Less Then',checked:false,type:'number'},
-		// {label:'Greater Then',checked:false,type:'number'}
-	    // ]},
-		// {value:'address',label:'address',checked:false,addeFilter:[],
-		// option:[
-		// 	{label:'Contains',checked:false,type:'text'},
-		// 	{label:'Does Not Contain',checked:false,type:'text'},
-		// 	{label:'Starts with',checked:false,type:'text'},
-		// 	{label:'End with',checked:false,type:'text'},
-		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
-		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
-			
-	    // ]},
-		
-		// {value:'city',label:'city',checked:false,addeFilter:[],
-		// option:[
-		// 	{label:'Contains',checked:false,type:'text'},
-		// 	{label:'Does Not Contain',checked:false,type:'text'},
-		// 	{label:'Starts with',checked:false,type:'text'},
-		// 	{label:'End with',checked:false,type:'text'},
-		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
-		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    // ]},
-		// {value:'state',label:'state',checked:false,addeFilter:[],
-		// option:[
-		// 	{label:'Contains',checked:false,type:'text'},
-		// 	{label:'Does Not Contain',checked:false,type:'text'},
-		// 	{label:'Starts with',checked:false,type:'text'},
-		// 	{label:'End with',checked:false,type:'text'},
-		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
-		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    // ]},
-		// {value:'pincode',label:'Pincode',checked:false,addeFilter:[],
-		// option:[
-		// 	{label:'Contains',checked:false,type:'text'},
-		// 	{label:'Does Not Contain',checked:false,type:'text'},
-		// 	{label:'Starts with',checked:false,type:'text'},
-		// 	{label:'End with',checked:false,type:'text'},
-		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
-		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    // ]},
-		// {value:'country',label:'country',checked:false,addeFilter:[],
-		// option:[
-		// 	{label:'Contains',checked:false,type:'text'},
-		// 	{label:'Does Not Contain',checked:false,type:'text'},
-		// 	{label:'Starts with',checked:false,type:'text'},
-		// 	{label:'End with',checked:false,type:'text'},
-		// 	{label:'Is',checked:false,type:'select',options:['Empty']},
-		// 	{label:'Is not',checked:false,type:'select',options:['Empty']},
-	    // ]},
-		{value:'OptInStatus',label:'OptInStatus',checked:false,addeFilter:[],
-		option:[
-		{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
-		{label:'Is not',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']}
-	    ]},		
-		{value:'isBlocked',label:'Blocked',checked:false,addeFilter:[],
-		option:[
-			{label:'Is',checked:false,type:'select',options:['true','false']},
-			{label:'Is not',checked:false,type:'select',options:['true','false']}
-	    ]},
-		{value:'created_at',label:'Created At',checked:false,addeFilter:[],
-		option:[
-		{label:'Is',checked:false,type:'datetime'},
-		{label:'Is not',checked:false,type:'datetime'},
-		{label:'Between',checked:false,type:'d_datetime'},
-		{label:'After',checked:false,type:'date'},
-		{label:'Before',checked:false,type:'date'}
-	    ]},
-		
-	];
+	contactFilterBy:any=[];
 	
 	selectedcontactFilterBy:any='';
 	modalRef: any;
@@ -293,6 +173,7 @@ export class CampaignsComponent implements OnInit {
 	isLoading!:boolean;
 	customFieldData:[] = [];
 	tag:[] =[];
+	userList:any;
 	 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private dashboardService: DashboardService,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
@@ -382,6 +263,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.getCustomFieldsData();
 		this.getTagData()
 		this.getWhatsAppDetails();
+		this.getContactFilterBy();
+		this.getUserList();
 	}
 
 	
@@ -400,8 +283,111 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		 }
 	   })
 	 }
+
+	 getUserList(){
+		this._settingsService.getUserList(this.SPID,1)
+		.subscribe(result =>{
+		  if(result){
+			  this.userList =result?.getUser;  
+		  }
+  
+		})
+	  }
+
+	 getContactFilterBy(){
+		this.contactFilterBy=[
+			{value:'Phone_number',label:'Phone_number',checked:false,addeFilter:[],
+			option:[
+			{label:'Contains',checked:false,type:'text'},
+			{label:'Does Not Contain',checked:false,type:'text'},
+			{label:'Starts with',checked:false,type:'text'},
+			{label:'End with',checked:false,type:'text'},
+			]},
+			{value:'Name',label:'Name',checked:false,addeFilter:[],
+			option:[
+			{label:'Contains',checked:false,type:'text'},
+			{label:'Does Not Contain',checked:false,type:'text'},
+			{label:'Starts with',checked:false,type:'text'},
+			{label:'End with',checked:false,type:'text'},
+			{label:'Is',checked:false,type:'select',options:['Empty']},
+			{label:'Is not',checked:false,type:'select',options:['Empty']},
+			]},
+			{value:'emailId',label:'emailId',checked:false,addeFilter:[],
+			option:[
+			{label:'Contains',checked:false,type:'text'},
+			{label:'Does Not Contain',checked:false,type:'text'},
+			{label:'Includes domain',checked:false,type:'text'},
+			{label:'Exclude domain',checked:false,type:'text'},
+			{label:'Is',checked:false,type:'select',options:['Empty']},
+			{label:'Is not',checked:false,type:'select',options:['Empty']},
+			]},
+			{value:'tag',label:'Tag',checked:false,addeFilter:[],
+			option:[
+			{label:'Is',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+			{label:'Is not',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+			]},
+			
+			{value:'OptInStatus',label:'OptInStatus',checked:false,addeFilter:[],
+			option:[
+			{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
+			{label:'Is not',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']}
+			]},		
+			{value:'isBlocked',label:'Blocked',checked:false,addeFilter:[],
+			option:[
+				{label:'Is',checked:false,type:'select',options:['true','false']},
+				{label:'Is not',checked:false,type:'select',options:['true','false']}
+			]},
+			{value:'created_at',label:'Created At',checked:false,addeFilter:[],
+			option:[
+			{label:'Is',checked:false,type:'datetime'},
+			{label:'Is not',checked:false,type:'datetime'},
+			{label:'Between',checked:false,type:'d_datetime'},
+			{label:'After',checked:false,type:'date'},
+			{label:'Before',checked:false,type:'date'}
+			]},
+			{value:'name',label:'Last Conversation With',checked:false,addeFilter:[],
+			option:[
+			{label:'bot',checked:false,type:'none'},
+			{label:'user',checked:false,type:'user'},
+			]},
+			{value:'name',label:'Creator',checked:false,addeFilter:[],
+			option:[
+			{label:'bot',checked:false,type:'none'},
+			{label:'user',checked:false,type:'user'},
+			]},
+			{value:'created_at',label:'Conversation Resolved',checked:false,addeFilter:[],
+			option:[
+			{label:'true',checked:false,type:'none'},
+			{label:'false',checked:false,type:'none'}
+			]},
+			{value:'created_at',label:'Conversation Assigned to',checked:false,addeFilter:[],
+			option:[
+				{label:'bot',checked:false,type:'none'},
+				{label:'unassigned',checked:false,type:'none'},
+				{label:'user',checked:false,type:'user'},
+			]},
+			{value:'created_at',label:'Last Message Received At',checked:false,addeFilter:[],
+			option:[
+			{label:'Is',checked:false,type:'datetime'},
+			{label:'Is not',checked:false,type:'datetime'},
+			{label:'Between',checked:false,type:'d_datetime'},
+			{label:'After',checked:false,type:'date'},
+			{label:'Before',checked:false,type:'date'}
+			]},
+			{value:'created_at',label:'Last Message Sent At',checked:false,addeFilter:[],
+			option:[
+			{label:'Is',checked:false,type:'datetime'},
+			{label:'Is not',checked:false,type:'datetime'},
+			{label:'Between',checked:false,type:'d_datetime'},
+			{label:'After',checked:false,type:'date'},
+			{label:'Before',checked:false,type:'date'}
+			]},
+			
+		];
+	}
 	
-    getCustomFieldsData() {
+	 getCustomFieldsData() {
+		this.getContactFilterBy();
 		this._settingsService.getNewCustomField(this.SPID).subscribe(response => {
 		  this.customFieldData = response.getfields;
 		  console.log(this.customFieldData);  
@@ -412,55 +398,74 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				console.log(filteredFields);  
 		filteredFields.forEach((item:any)=>{
 			let options:any;
+			console.log(item,'txt');  
 			switch(item?.type){
 				case 'Date':{
 					 options =[
-						{label:'Is',checked:false,type:'datetime'},
-						{label:'Is not',checked:false,type:'datetime'},
-						{label:'Between',checked:false,type:'d_datetime'},
+						{label:'Is',checked:false,type:'date'},
+						{label:'Is not',checked:false,type:'date'},
+						{label:'Between',checked:false,type:'d_date'},
 						{label:'After',checked:false,type:'date'},
 						{label:'Before',checked:false,type:'date'}
 						];
+						break;
 				}
 				case 'Switch':{
 					options =[
-						{label:'Is',checked:false,type:'select',options:['Yes','No']},
-						{label:'Is not',checked:false,type:'select',options:['Yes','No']}
+						{label:'Is empty',checked:false,type:'switch'},
+						{label:'Is not empty',checked:false,type:'switch'},
+						{label:'Yes',checked:false,type:'switch'},
+						{label:'No',checked:false,type:'switch'},
 					];
+					break;
 				}
 				case 'text':{
 					 options =[
+						{label:'Is empty',checked:false,type:'switch'},
+						{label:'Is not empty',checked:false,type:'switch'},
 						{label:'Contains',checked:false,type:'text'},
 						{label:'Does Not Contain',checked:false,type:'text'},
 						{label:'Starts with',checked:false,type:'text'},
 						{label:'End with',checked:false,type:'text'},
 						{label:'Is',checked:false,type:'select',options:['Empty']},
 						{label:'Is not',checked:false,type:'select',options:['Empty']},
-						]
+						];
+						break;
 				}
 				case 'Number':{
 					options =[
+						{label:'Is empty',checked:false,type:'switch'},
+						{label:'Is not empty',checked:false,type:'switch'},
 					   {label:'Contains',checked:false,type:'text'},
 					   {label:'Does Not Contain',checked:false,type:'text'},
+					   {label:'Less than',checked:false,type:'text'},
+					   {label:'Greater than',checked:false,type:'text'},
 					   {label:'Starts with',checked:false,type:'text'},
 					   {label:'End with',checked:false,type:'text'},
 					   {label:'Is',checked:false,type:'select',options:['Empty']},
 					   {label:'Is not',checked:false,type:'select',options:['Empty']},
-					   ]
+					   ];
+					   break;
 			   }
 				case 'Select':{
 					let selectOptions = JSON.parse(item?.dataTypeValues);
 					options =[
-						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
-						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is empty',checked:false,type:'switch'},
+						{label:'Is not empty',checked:false,type:'switch'},
+						// {label:'Is',checked:false,type:'select_opt',options:selectOptions},
+						// {label:'Is not',checked:false,type:'select_opt',options:selectOptions}
 					];
+					break;
 				}
 				case 'Multi Select':{
 					let selectOptions = JSON.parse(item?.dataTypeValues);
 					options =[
-						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
-						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is empty',checked:false,type:'switch'},
+						{label:'Is not empty',checked:false,type:'switch'},
+						// {label:'Is',checked:false,type:'select_opt',options:selectOptions},
+						// {label:'Is not',checked:false,type:'select_opt',options:selectOptions}
 					];
+					break;
 				}
 			}			
 			this.contactFilterBy.push({value:item?.ActuallName,label:item?.displayName,checked:false,addeFilter:[],option:options});
@@ -968,103 +973,124 @@ formateDate(dateTime:string){
 	getContactFilterQuery(addeFilter:any){
 		console.log('///////////getContactFilterQuery',addeFilter)
 		const groups = addeFilter.reduce((groups:any, filter:any) => {
-			
-			if (!groups[filter.filterPrefix]) {
-				groups[filter.filterPrefix] = [];
-			}
-
-			groups[filter.filterPrefix].push(filter);
-			return groups;
+		  
+		  if (!groups[filter.filterPrefix]) {
+			groups[filter.filterPrefix] = [];
+		  }
+	
+		  groups[filter.filterPrefix].push(filter);
+		  return groups;
 		}, {});
-
+	
 		const groupArrays = Object.keys(groups).map((filterPrefix) => {
 		return {
-			filterPrefix,
-			items: groups[filterPrefix]
+		  filterPrefix,
+		  items: groups[filterPrefix]
 		};
 		});
 		console.log('/////groupArrays/////')
+		console.log(addeFilter)
+		console.log(this.ContactListNewFilters)
 		console.log(groupArrays)
-
-		let contactFilter ="SELECT EC.*,IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) AND (ECTM.isDeleted != 1) where EC.SP_ID ="+this.SPID;
-    
-
+	
+	
+		let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN (SELECT interactionId, MAX(created_at) AS latestCreatedAt,AgentId, lastAssistedAgent FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.InteractionId = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
 		if(groupArrays.length>0){
+		  
+		  groupArrays.map((filters:any,idx)=>{
+			  console.log(idx);
+			if(filters.items.length>0){
+		   // filters.items[0]['filterOperator']='';	
 			
-			groupArrays.map((filters:any)=>{
-				if(filters.items.length>0){
-				filters.items[0]['filterOperator']=''	
-				
-				let colName = filters.filterPrefix
-				if(colName =='Phone_number'){
-					colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
-				}
-
-				contactFilter += ' and (';
-				filters.items.map((filter:any)=>{
-
-				this.applylistFiltersWidth =parseInt(this.applylistFiltersWidth)+100	
-				let filterOper = "='"+filter.filterValue+"'";
-		        let QueryOperator ='';
-				QueryOperator = filter.filterOperator?filter.filterOperator:''
-				if(filter.filterBy=="End with"){
-					filterOper = "LIKE '%"+filter.filterValue+"'";
-				}
-				if(filter.filterBy=="Starts with"){
-					filterOper = "LIKE '"+filter.filterValue+"%'";
-				}
-				if(filter.filterBy=="Is"){
-					filterOper = '=='+filter.filterValue;
-					filterOper = "LIKE '%"+filter.filterValue+"%'";
-				}
-				if(filter.filterBy=="Is not"){
-					filterOper = '!='+filter.filterValue;
-					filterOper = "NOT LIKE '"+filter.filterValue+"'";
-				}
-
-				if(filter.filterBy=="Contains"){
-					filterOper = "LIKE '%"+filter.filterValue+"%'";
-				}
-				if(filter.filterBy=="Does Not Contain"){
-					filterOper = "NOT LIKE '"+filter.filterValue+"'";
-				}
-				if(filter.filterBy=="After" || filter.filterBy =="Greater than"){
-					filterOper = "> '"+filter.filterValue+"'";
-				}
-				if(filter.filterBy=="Before" || filter.filterBy =="Less than"){
-					filterOper = "< '"+filter.filterValue+"'";
-				}
-				
-				if(filter.filterBy=="Between"){
-					let valueArray = filter.filterValue.split('/')
-					filterOper = "Between '"+valueArray[0]+"' AND '"+valueArray[1]+"'" 
-				}
-
-				if(filter.filterBy=="Includes domain"){
-					filterOper = "LIKE '%"+filter.filterValue+"%'";
-				}
-				if(filter.filterBy=="Exclude domain"){
-					filterOper = "NOT LIKE '%"+filter.filterValue+"%'";
-					
-				}
-
-				if(filter.filterBy=="Includes extension"){
-					filterOper = "LIKE '%."+filter.filterValue+"'";
-				}
-				if(filter.filterBy=="Exclude extension"){
-					filterOper = "NOT LIKE '."+filter.filterValue+"'";
-				}
-				
-				contactFilter += ' '+QueryOperator +' '+colName+' '+filterOper
-			    })
-				contactFilter += ' )';
-				}
-		    })
+			let colName = filters.filterPrefix
+			if(colName =="Conversation Resolved"){
+			  if(filters?.items[0].filterBy == 'true')
+				  contactFilter = contactFilter + " and ((Interaction.interaction_status='Resolved')";
+			  else
+				  contactFilter = contactFilter + " and (Interaction.interaction_status !='Resolved')";
+			}else if(colName =="Last Conversation With"){
+			  contactFilter = contactFilter + `and  (((  Message.Agent_id LIKE '%${380}%' ))`;
+			}else if(colName =="Conversation Assigned to"){
+			  contactFilter = contactFilter + `(and IM.AgentId='${380}')`;
+			}else if(colName =="Last Message Received At"){
+			  contactFilter = contactFilter + `and (Message.message_direction ='out' and Message.created_at=?)`;
+			}else if(colName =="Last Message Sent At"){
+			  contactFilter = contactFilter + `and (Message.message_direction ='IN' and Message.created_at=?) `;
+			}else if(colName =="Creator"){
+			  contactFilter = contactFilter + `and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
+			} else{
 			
+			if(colName =='Phone_number'){
+			  colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
+			}
+	
+			contactFilter += idx == 0 ?' and ((' :  filters.items[0]['filterOperator'] == '' ? ' and ('  : filters.items[0]['filterOperator'] + ' (';
+			filters.items.map((filter:any,index:any)=>{
+	
+			//this.applylistFiltersWidth =parseInt(this.applylistFiltersWidth)+100	
+			let filterOper = "='"+filter.filterValue+"'";
+				let QueryOperator ='';
+			QueryOperator = index == 0 ? '':filter.filterOperator?filter.filterOperator:''
+			if(filter.filterBy=="End with"){
+			  filterOper = "LIKE '%"+filter.filterValue+"'";
+			}
+			if(filter.filterBy=="Starts with"){
+			  filterOper = "LIKE '"+filter.filterValue+"%'";
+			}
+			if(filter.filterBy=="Is"){
+			  filterOper = '=='+filter.filterValue;
+			  filterOper = "LIKE '%"+filter.filterValue+"%'";
+			}
+			if(filter.filterBy=="Is not"){
+			  filterOper = '!='+filter.filterValue;
+			  filterOper = "NOT LIKE '"+filter.filterValue+"'";
+			}
+	
+			if(filter.filterBy=="Contains"){
+			  filterOper = "LIKE '%"+filter.filterValue+"%'";
+			}
+			if(filter.filterBy=="Does Not Contain"){
+			  filterOper = "NOT LIKE '"+filter.filterValue+"'";
+			}
+			if(filter.filterBy=="After" || filter.filterBy =="Greater than"){
+			  filterOper = "> '"+filter.filterValue+"'";
+			}
+			if(filter.filterBy=="Before" || filter.filterBy =="Less than"){
+			  filterOper = "< '"+filter.filterValue+"'";
+			}
+			
+			if(filter.filterBy=="Between"){
+			  let valueArray = filter.filterValue.split('/')
+			  filterOper = "Between '"+valueArray[0]+"' AND '"+valueArray[1]+"'" 
+			}
+	
+			if(filter.filterBy=="Includes domain"){
+			  filterOper = "LIKE '%"+filter.filterValue+"%'";
+			}
+			if(filter.filterBy=="Exclude domain"){
+			  filterOper = "NOT LIKE '%"+filter.filterValue+"%'";
+			  
+			}
+	
+			if(filter.filterBy=="Includes extension"){
+			  filterOper = "LIKE '%."+filter.filterValue+"'";
+			}
+			if(filter.filterBy=="Exclude extension"){
+			  filterOper = "NOT LIKE '."+filter.filterValue+"'";
+			}
+			
+			contactFilter += ' '+QueryOperator +' '+colName+' '+filterOper
+			  })
+			contactFilter += ' )';
+		  }
+			}
+			})
+			contactFilter += ' ) Group by EC.customerId';
+		  
 		  }
 		  console.log(contactFilter)
 		  return contactFilter;
-	}
+	  }
 
 
 
@@ -2174,9 +2200,9 @@ testinfo(){
 	}
 
 	isCustomValue(value: string): boolean {
-		const allVariables = this.selectedTemplate.allVariables;
-		const isVariableMatched = allVariables.some((x:any) => x.label == value);
-		return true;
+		const allVariables = this.attributesoption
+		const isVariableMatched = allVariables.some((x:any) => `{{${x}}}` == value);
+		return isVariableMatched;
 	  }
 
 	checkVariableValue(){
@@ -3098,18 +3124,19 @@ console.log(this.allTemplatesMain);
 			element['id'] =index;
 		});		
 		let obj = {phones:phoneArray};
-		this.csvContactList =[];
+		let verifiedContactList:any[] =[];
 		this.dashboardService.getContactVerified(obj).subscribe((data:any)=>{
 			let verifiedData =  data?.results;
 			verifiedData.forEach((item:any)=>{
 				const data = importData.filter((it:any) => it.id == item.id);
 				if(data?.length >0 && item.phone){
-					this.csvContactList.push(data[0]);
+					verifiedContactList.push(data[0]);
 				}
 			});
-			if(this.csvContactList.length > 0){
+			if(verifiedContactList.length > 0){
 				this.newListName=false;
-				this.importedContacts=this.csvContactList.length+' unique contacts selected';
+				this.csvContactList = verifiedContactList;
+				this.importedContacts=verifiedContactList.length+' unique contacts selected';
 				this.closeAllModal()
 				this.activeStep=2
 				this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});

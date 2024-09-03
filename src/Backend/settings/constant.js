@@ -42,8 +42,8 @@ deleteWork = `UPDATE WorkingTimeDetails SET isDeleted=? , updated_at=? where SP_
 insertHoliday = `INSERT INTO holidays(SP_ID,holiday_date,created_By,created_at) values ?`
 selectHoliday = `select * from holidays WHERE holiday_date >= ? AND holiday_date <= ? and SP_ID=? AND isDeleted !='1' `
 removeHoliday = `UPDATE holidays SET isDeleted=1,updated_at=? WHERE SP_ID=? AND holiday_date=? `
-getSubRight = `select * from subRights where  isDeleted !=1`
-getRights = `select * from rights where isDeleted !=1`
+getSubRight = `select * from subRights where  isDeleted !=1 and visibilityStatus = 1`
+getRights = `select * from rights where isDeleted !=1 and visibilityStatus = 1`
 
 
 addRoleQuery = `INSERT INTO roles (RoleName,Privileges,IsActive,subPrivileges,created_at,SP_ID) values ?`
