@@ -28,6 +28,23 @@ WHERE M.interaction_id = ?
   AND I.is_deleted != 1`;
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status) VALUES ?";
 
+async function sReplyActionOnlostMessage(message_text, sid, channelType, phone_number_id, from,custid, agid, newId){
+  try{
+    var replymessage = await matchSmartReplies(message_text, sid, channelType)
+    if (replymessage?.length > 0) {
+
+      let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType);
+      console.log("iterateSmartReplies replymessage.length", isSReply)
+      return isSReply;
+    }
+  }catch(err){
+    console.log("err sReplyActionOnlostMessage",err)
+  }
+}
+
+
+
+
 async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, newiN) {
   console.log("isAutoReply, autoReplyTime, isAutoReplyDisable")
   console.log(isAutoReply, autoReplyTime, isAutoReplyDisable)
@@ -195,7 +212,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
 
     if (replymessage?.length > 0) {
 
-      let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType);
+      let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType);
       console.log("iterateSmartReplies replymessage.length", isSReply)
       return isSReply;
     } else if (defultOutOfOfficeMsg === false) {
@@ -215,7 +232,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
   }
 }
 
-async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, replystatus, newId, channelType) {
+async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType) {
   try {
     var messageToSend = [];
     var isActionAddded = -1;
@@ -226,7 +243,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       var actionId = message.ActionID;  // Assuming the 'ActionID' property contains the action ID
       var msgVar = message.message_variables;
       var media_type = message.media_type;
-      let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId);
+      let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, newId);
       let content = await removeTags.removeTagsFromMessages(testMessage);
       if (actionId == 2) {
         isActionAddded = isActionAddded + 1;
@@ -481,7 +498,7 @@ async function getExtraxtedMessage(message_text) {
   }
 }
 
-async function PerformingSReplyActions(actionId, value, sid, custid, agid, replystatus, newId) {
+async function PerformingSReplyActions(actionId, value, sid, custid, agid, newId) {
   // Perform actions based on the Action ID
   switch (actionId) {
     case 1:
@@ -792,4 +809,4 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
   }
 }
 
-module.exports = { autoReplyDefaultAction }
+module.exports = { autoReplyDefaultAction ,sReplyActionOnlostMessage}

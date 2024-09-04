@@ -106,7 +106,7 @@ async function extractDataFromMessage(body) {
     let phoneNo = contact.wa_id;
     let countryCodeObj;
     if (phoneNo){
-      countryCodeObj = mapCountryCode(phoneNo); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
+      countryCodeObj = mapCountryCode.mapCountryCode(phoneNo); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
     }
 
     let countryCode =  countryCodeObj.country+ " +" +countryCodeObj.countryCode 
@@ -267,7 +267,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
 
 
-    let contact = await db.excuteQuery('select * from EndCustomer where customerId =?', [custid])
+    let contact = await db.excuteQuery('select * from EndCustomer where customerId =? and SP_ID=?',[custid,sid])
     // if(contact?.length >0){
     //   funnel.ScheduledFunnels(contact[0].SP_ID, contact[0].Phone_number, contact[0].OptInStatus, new Date(), new Date(),0);
     // }
@@ -278,7 +278,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       if (defaultAction.length > 0) {
         console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
         var isAutoReply = defaultAction[0].isAutoReply
-        var autoReplyTime = defaultAction[0].pauseMin_from_teambox_after_agent_reply
+        var autoReplyTime = contact[0].defaultAction_PauseTime
         var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
         var inactiveAgent = defaultAction[0].isAgentActive
         var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime 

@@ -770,7 +770,6 @@ const addUser = async (req, res) => {
             });
         } else {
             var randomstring = Math.random().toString(36).slice(-8);
-            // console.log(randomstring)
             const hash = await bcrypt.hash(randomstring, 10);
             var values = [[SP_ID, email_id, name, mobile_number, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive, CreatedDate, LoginIP, countryCode, displayPhoneNumber]]
 

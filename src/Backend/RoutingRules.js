@@ -37,7 +37,7 @@ async function AssignToContactOwner(sid, newId, agid, custid) {
     if (RoutingRules.length > 0) {
       if (contactOwnerUid != undefined && RoutingRules[0].contactowner == '1') {
         let updateInteractionMapQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
-        let values = [[newId, contactOwnerUid, '-1', 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
+        let values = [[newId, (contactOwnerUid ?contactOwnerUid:agid), '-1', 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
         console.log("AssignToContactOwner --- contact owner assign", updateInteractionMap);
         if (updateInteractionMap?.affectedRows > 0) {
@@ -262,7 +262,7 @@ async function AssignAdmin(newId, sid,agid) {
       admin = defaultAdmin[0]?.defaultAdminUid;
     }
     let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
-    let assignAgentRes = await db.excuteQuery(assignAgentQuery, [[[newId, admin, '-1', 1]]]);
+    let assignAgentRes = await db.excuteQuery(assignAgentQuery, [[[newId, (admin?admin:agid), '-1', 1]]]);
     console.log("AssignAdmin", assignAgentRes);
     if (assignAgentRes?.affectedRows > 0) {
       let myUTCString = new Date().toUTCString();

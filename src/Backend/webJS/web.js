@@ -80,6 +80,7 @@ process.on('uncaughtException', function (err) {
   try {
     console.log("uncaught exception was trying to close this. THe expectation is that it is coming from pupeeter hence ignoring.")
     console.log(err)
+    let getAllclient = getAllWidData(clientSpidMapping)
     if (err.message.includes('Puppeteer')) {
       console.log("Ignoring Puppeteer-related error");
       // Perform any necessary cleanup or handling specific to Puppeteer errors
@@ -89,7 +90,7 @@ process.on('uncaughtException', function (err) {
     }
     //Need spid in this process for delete client from mapping
   } catch (err) {
-
+    let getAllclient = getAllWidData(clientSpidMapping)
     console.log(err);
   }
 });
@@ -100,8 +101,8 @@ function ClientInstance(spid, authStr, phoneNo) {
       const client = new Client({
         puppeteer: {
           headless: true,
-          executablePath: "/usr/bin/google-chrome-stable",
-          //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         executablePath: "/usr/bin/google-chrome-stable",
+         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -198,12 +199,17 @@ function ClientInstance(spid, authStr, phoneNo) {
             for (const chat of chat_activos) {
               if (!chat.isGroup) {
                 let mensajes_verificar = await chat.fetchMessages({ limit: 20 });
+                let lastIndex = mensajes_verificar.length - 1;
+                for (let currentIndex = 0; currentIndex <= lastIndex; currentIndex++) {
+                  let n_chat_mensaje = mensajes_verificar[currentIndex];
 
-                for (const n_chat_mensaje of mensajes_verificar) {
-
-                  let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid)
+                  let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid, currentIndex, lastIndex);
 
                 }
+
+
+
+                // apply rauting rules and sreply 
               }
             }
             console.log("resolve client ready", new Date().toUTCString())
@@ -226,11 +232,11 @@ function ClientInstance(spid, authStr, phoneNo) {
             const repliedMessage = await message.getQuotedMessage();
             // Notify about the reply
             //logger.info(`replied sms  ${JSON.stringify(repliedMessage)}`)
-           // console.log("reply message status ========", (repliedMessage && repliedMessage.fromMe), repliedMessage.fromMe)
+            // console.log("reply message status ========", (repliedMessage && repliedMessage.fromMe), repliedMessage.fromMe)
             if (repliedMessage && repliedMessage.fromMe) {
               // Notify about the reply
               const repliedNumber = (message.from).replace(/@c\.us$/, "");
-              console.log(repliedMessage?._data?.id?.id,"reply ___________________",message.body)
+              console.log(repliedMessage?._data?.id?.id, "reply ___________________", message.body)
               let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND messageTemptateId = '${repliedMessage?._data?.id?.id}'`
               console.log(campaignRepliedQuery)
               let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
@@ -328,7 +334,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
           } else if (ack == '2') {
             let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1 and messageTemptateId=?'
-            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [phoneNumber,message?._data?.id?.id])
+            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [phoneNumber, message?._data?.id?.id])
             const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -343,7 +349,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
           } else if (ack == '3') {
             //  console.log("read")
             let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2 and messageTemptateId=?';
-            let campaignRead = await db.excuteQuery(campaignReadQuery, [phoneNumber,message?._data?.id?.id])
+            let campaignRead = await db.excuteQuery(campaignReadQuery, [phoneNumber, message?._data?.id?.id])
             const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
@@ -404,8 +410,9 @@ function whatsappWebStatus() {
 }
 
 async function isActiveSpidClient(spid) {
-  //console.log("clientSpidMapping[spid]", spid, clientSpidMapping)
+  // console.log("clientSpidMapping[spid]", spid, clientSpidMapping[spid]?.info?.wid)
 
+  //logger.info( `CLIENT ============== ${clientSpidMapping[spid].info.wid}`)
   if (clientSpidMapping[spid]) {
     console.log("if client ready")
     let WAwebdetails = await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1', [spid]);
@@ -415,6 +422,27 @@ async function isActiveSpidClient(spid) {
     let WAwebdetails = await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1', [spid]);
     return { "isActiveSpidClient": false, "WAweb": WAwebdetails };
   }
+}
+
+
+function getAllWidData(clientSpidMapping) {
+  const widDataMap = {}; // Initialize an empty object to store wid data
+  console.log("getAllWidData-------------")
+  for (const spid in clientSpidMapping) {  // Iterate over each spid in the clientSpidMapping object
+    if (clientSpidMapping.hasOwnProperty(spid)) { // Check if the property is actually part of the object
+      const widData = clientSpidMapping[spid]?.info?.wid; // Safely access wid data using optional chaining
+      console.log("spid------------", spid)
+      if (widData) { // If wid data exists
+        widDataMap[spid] = widData; // Add wid data to widDataMap with spid as the key
+        let phoneNo = clientSpidMapping[spid]?.info?.wid.user;
+        console.log("phoneNo", phoneNo)
+        let reConnectClient = createClientInstance(spid, phoneNo)
+      }
+    }
+  }
+
+
+  return widDataMap; // Return the object containing wid data for all spids
 }
 
 function isInProgressSpidQR(spid) {
@@ -462,7 +490,7 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
       return msg;
     } else {
       console.log("else");
-      return  {status : 400 ,msgId : 'Channel is disconnected'}
+      return { status: 400, msgId: 'Channel is disconnected' }
     }
   } catch (err) {
     console.log(err);
@@ -484,7 +512,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let sendId = await client.sendMessage(endCust + '@c.us', text);
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-      return {status : 200 ,msgId :sendId?._data?.id?.id}
+      return { status: 200, msgId: sendId?._data?.id?.id }
       // notify.NotifyServer(spNumber, false, interaction_id)
     }
     if (type === 'image') {
@@ -493,7 +521,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const media = await MessageMedia.fromUrl(link);
       let sendId = await client.sendMessage(endCust + '@c.us', media, { caption: text });
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-      return {status : 200 ,msgId :sendId?._data?.id?.id}
+      return { status: 200, msgId: sendId?._data?.id?.id }
     }
     if (type === 'video') {
       let myUTCString = new Date().toUTCString();
@@ -502,7 +530,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       // console.log(media.mimetype)
       let sendId = await client.sendMessage(endCust + '@c.us', media, { caption: text });
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-      return {status : 200 ,msgId :sendId?._data?.id?.id}
+      return { status: 200, msgId: sendId?._data?.id?.id }
 
     }
     if (type === 'attachment' || type === 'document') {
@@ -511,7 +539,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const media = await MessageMedia.fromUrl(link)//MessageMedia('pdf', link);
       let sendId = await client.sendMessage(endCust + '@c.us', media);
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-      return {status : 200 ,msgId :sendId?._data?.id?.id}
+      return { status: 200, msgId: sendId?._data?.id?.id }
 
     } if (type === 'location') {
       let myUTCString = new Date().toUTCString();
@@ -519,7 +547,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       const location = new Location(37.422, -122.084, 'Sampana Digital Private limited');
       let sendId = await client.sendMessage(endCust + '@c.us', location);
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-      return {status : 200 ,msgId :sendId?._data?.id?.id}
+      return { status: 200, msgId: sendId?._data?.id?.id }
     }
     if (type === 'vcard') {
       let myUTCString = new Date().toUTCString();
@@ -540,13 +568,13 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
 
       );
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
-      return {status : 200 ,msgId :sendId?._data?.id?.id}
+      return { status: 200, msgId: sendId?._data?.id?.id }
     }
 
   } catch (err) {
     console.log("++++++++++++++++++++++++++++++++++++++++++++")
     console.log(err)
-    return {status : 500 ,msgId :"error on send message"}
+    return { status: 500, msgId: "error on send message" }
   }
 }
 
@@ -625,11 +653,11 @@ async function saveInMessages(message) {
     let Type = message.type
     let contactName = message._data.notifyName      //contactName
     let countryCodeObj;
-    if (phoneNo){
-      countryCodeObj = mapCountryCode(phoneNo); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
+    if (from) {
+      countryCodeObj = mapCountryCode.mapCountryCode(from); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
     }
 
-    let countryCode =  countryCodeObj.country+ " +" +countryCodeObj.countryCode 
+    let countryCode = countryCodeObj.country + " +" + countryCodeObj.countryCode
     if (message.hasMedia) {
       const media = await message.downloadMedia();
       console.log("media", message.type)
@@ -645,7 +673,7 @@ async function saveInMessages(message) {
       var d = new Date(message.timestamp * 1000).toUTCString();
 
       const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
-      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, 'null', message_time,countryCode);
+      let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, from, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, 'null', message_time, countryCode);
       //console.log("saveMessage" ,)
       // console.log(saveMessage)
 
@@ -675,7 +703,7 @@ AND ec.SP_ID = ?
 GROUP BY 
 ec.customerId;`
 
-async function savelostChats(message, spPhone, spid) {
+async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
   try {
     let message_text = message.body   //firstMessage
 
@@ -697,11 +725,11 @@ async function savelostChats(message, spPhone, spid) {
       display_phone_number = spPhone;
     }
     let getLastScannedTime = await db.excuteQuery(messageQuery, [endCustomer, spid]);
-   // logger.info(`Message -----------Text   ${message_text}`)
+    // logger.info(`Message -----------Text   ${message_text}`)
     //logger.info(`getLastScannedTime",${getLastScannedTime[0]?.latest_message_created_date.toUTCString()}`)
-   
+
     var d = new Date(message.timestamp * 1000).toUTCString();
-   // logger.info(`lost message timestamp d",${d}`)
+    // logger.info(`lost message timestamp d",${d}`)
 
     const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
 
@@ -711,11 +739,11 @@ async function savelostChats(message, spPhone, spid) {
     // logger.info(`all if condition ${(d > getLastScannedTime[0]?.latest_message_created_date && d < new Date().toUTCString()) || (getLastScannedTime[0]?.latest_message_created_date == null)}`)
 
     // logger.info(`d > getLastScannedTime[0]?.latest_message_created_date.toUTCString() ${d > getLastScannedTime[0]?.latest_message_created_date.toUTCString()}`)
-     //logger.info(`d < new Date().toUTCString()  ${d < new Date().toUTCString()}`)
+    //logger.info(`d < new Date().toUTCString()  ${d < new Date().toUTCString()}`)
     // logger.info(`d >== getLastScannedTime[0]?.latest_message_created_date.toUTCString() ${d >= getLastScannedTime[0]?.latest_message_created_date.toUTCString()}`)
     // logger.info(`d <== new Date().toUTCString()  ${d <= new Date().toUTCString()}`)
     // logger.info(`==============================================`)
-    
+
     if ((d > getLastScannedTime[0]?.latest_message_created_date.toUTCString() && d < new Date().toUTCString()) || (getLastScannedTime[0]?.latest_message_created_date == null)) {
 
 
@@ -738,7 +766,11 @@ async function savelostChats(message, spPhone, spid) {
 
         console.log("lost messages time", d)
         let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time);
-      //  var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number)
+
+        if (currentIndex == lastIndex) {
+          console.log("mett indec=======================")
+          var SavedMessageDetails = await actionsOflatestLostMessage(message_text, phone_number_id, from, display_phone_number, saveMessage)
+        }
       }
     }
   } catch (err) {
@@ -748,8 +780,85 @@ async function savelostChats(message, spPhone, spid) {
 }
 
 
+async function actionsOflatestLostMessage(message_text, phone_number_id, from, display_phone_number, saveMessage) {
+  try {
+    if (saveMessage?.length > 0) {
 
-async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, ackStatus, timestramp,countryCode) {
+      const data = saveMessage;
+      // Extracting the values
+      const extractedData = {
+        sid: data[0][0]['@sid'],
+        custid: data[2][0]['@custid'],
+        agid: data[1][0]['@agid'],
+        newId: data[3][0]['@newId'],
+        msg_id: data[5][0]['@msg_id'],
+        ifgot: data[12][0]['ifgot']
+      };
+
+
+      var sid = extractedData.sid
+      var custid = extractedData.custid
+      var agid = extractedData.agid
+      var newId = extractedData.newId
+      var msg_id = extractedData.msg_id
+      var ifgot = extractedData.ifgot
+
+      notify.NotifyServer(display_phone_number, false, newId, 'IN', 0, msg_id)
+      let smartReplyActions = await incommingmsg.sReplyActionOnlostMessage(message_text, sid, 'WA Web', phone_number_id, from, custid, agid, newId);
+     
+      let myUTCString = new Date().toUTCString();
+      const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      if (smartReplyActions >= -1) {
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        if (ifgot == 'If not exist') {
+
+          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
+          if (updateInteraction?.affectedRows > 0) {
+            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
+            let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
+            if (updateMapping?.affectedRows > 0) {
+              notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+            }
+          }
+        } else {
+
+          //check if assignment trigger from smart reply and chat is ressolve then open 
+          if (smartReplyActions >= 0) {
+            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+            //console.log("updateInteraction",updateInteraction)
+
+            if (updateInteraction?.affectedRows > 0) {
+              notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
+            }
+            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+          }
+
+
+        }
+      } else {
+        let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
+        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
+        if (updateInteraction?.affectedRows > 0) {
+          notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
+        }
+      }
+      let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
+      if (RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true) {
+        notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+
+        let myUTCString = new Date().toUTCString();
+        const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+        let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+      }
+    }
+  } catch (err) {
+    console.log("err actionsOflatestLostMessage", err)
+  }
+}
+
+async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, ackStatus, timestramp, countryCode) {
   // console.log("saveIncommingMessages")
 
   if (Type == "image") {
@@ -784,7 +893,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
   }
   if (message_text.length > 0) {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp,countryCode]);
+    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode]);
     notify.NotifyServer(display_phone_number, true);
     //    console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
 
@@ -857,7 +966,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       msg_id: data[5][0]['@msg_id'],
       newlyInteractionId: data[7]?.[0]?.['@newlyInteractionId'],
       isContactPreviousDeleted: data[10][0]['@isContactPreviousDeleted'],
-      ifgot : data[12][0]['ifgot']
+      ifgot: data[12][0]['ifgot']
     };
 
 
@@ -872,25 +981,25 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var ifgot = extractedData.ifgot
     console.log("in messages", from, false, "interaction id", newId, display_phone_number)
     notify.NotifyServer(display_phone_number, false, newId, 'IN', 0, msg_id)
-    
+
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', agid, utcTimestamp]];
     let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
-
+    let contactDefaultPauseTime = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?',[custid,sid])
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
     //console.log(defaultAction)You have a new message in you current Open Chat
     if (defaultAction.length > 0) {
       //console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
       var isAutoReply = defaultAction[0].isAutoReply
-      var autoReplyTime = defaultAction[0].pauseMin_from_teambox_after_agent_reply
+      var autoReplyTime = contactDefaultPauseTime[0].defaultAction_PauseTime
       var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
       var pausedTill = defaultAction[0]?.pausedTill
       var inactiveAgent = defaultAction[0].isAgentActive
       var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
     }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web',isContactPreviousDeleted, inactiveAgent, inactiveTimeOut,ifgot)
+    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, ifgot)
 
 
     console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
@@ -903,9 +1012,9 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         if (updateInteraction?.affectedRows > 0) {
           notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
           let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
-          if(updateMapping?.affectedRows >0){
+          if (updateMapping?.affectedRows > 0) {
             notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
-           }
+          }
         }
       } else {
         let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
@@ -914,15 +1023,15 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
           //console.log("updateInteraction",updateInteraction)
 
-          if(updateInteraction?.affectedRows >0){
+          if (updateInteraction?.affectedRows > 0) {
             notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
-            }
-            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+          }
+          notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
         } else {
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
-          if(updateInteraction?.affectedRows >0){
+          if (updateInteraction?.affectedRows > 0) {
             notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
-           }
+          }
         }
 
 
@@ -932,13 +1041,13 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
-      if(updateInteraction?.affectedRows >0){
+      if (updateInteraction?.affectedRows > 0) {
         notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
       }
       let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
       if (RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true) {
         notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
-        
+
         let myUTCString = new Date().toUTCString();
         const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
