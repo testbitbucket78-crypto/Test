@@ -2750,9 +2750,10 @@ console.log(this.allTemplatesMain);
 		  let files: FileList = event.dataTransfer.files;
 		  if(this.showEditTemplateMedia){
 			this.uploadTemplateMedia(files);
-		  }else{
-			this.saveFiles(files);
 		  }
+		//   else{
+		// 	this.saveFiles(files);
+		//   }
 		  
 		}
 	  }
@@ -3126,7 +3127,8 @@ console.log(this.allTemplatesMain);
 		let obj = {phones:phoneArray};
 		let verifiedContactList:any[] =[];
 		this.dashboardService.getContactVerified(obj).subscribe((data:any)=>{
-			let verifiedData =  data?.results;
+			let verifiedData =  data?.results;			
+		$("#dagdropmodal").modal('hide');
 			verifiedData.forEach((item:any)=>{
 				const data = importData.filter((it:any) => it.id == item.id);
 				if(data?.length >0 && item.phone){
