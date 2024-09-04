@@ -579,7 +579,7 @@ export class TemplateMessageComponent implements OnInit {
     }
     saveTemplateNextStep() {
         let val = this.newTemplateForm.get('TemplateName')?.value;
-        this.settingValue()
+        //this.settingValue()
         
     let temp:any = this.templatesData.filter((item:any) => item.TemplateName == val)[0];
     console.log(temp)
@@ -832,13 +832,20 @@ checkTemplateName(e:any){
     // for template form
     patchFormValue() {
         const data = this.templatesMessageData;
+        console.log(data,'data');
         const databyid = this.templatesMessageDataById;
         let ID = databyid.ID;
         for (let prop in data) {
             let value = data[prop as keyof typeof data];
-            if (this.newTemplateForm.get(prop)) this.newTemplateForm.get(prop)?.setValue(value);
+            if (this.newTemplateForm.get(prop)){
+                if(prop == 'FooterText')
+                    console.log(value);
+             this.newTemplateForm.get(prop)?.setValue(value);
+            }
             this.id = ID;
         }
+        this.selectedType = this.templatesMessageData?.media_type;
+        this.selectedPreview = this.templatesMessageData.Links;
         this.onCategoryChange('');
     }
     // for gallery form
