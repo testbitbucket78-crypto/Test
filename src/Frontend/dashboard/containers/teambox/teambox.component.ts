@@ -1415,7 +1415,7 @@ console.log(getMimeTypePrefix);
 									this.getInteractionStatus(this.selectedInteraction?.InteractionId);
 								}
 								else{
-									if(msgjson.msg_status=="IN"){
+									if(msgjson.msg_status=="IN" || msgjson?.status =="IN"){
 										//this.updateMessages();
 										this.getMessagesById(msgjson?.msg_id)
 										}else{
