@@ -2856,6 +2856,7 @@ updateTags(){
 		action:'Contact Updated',
 		action_at:new Date(),
 		action_by:name,
+		SP_ID:this.SPID,
 	}
 	this.apiService.updateTags(bodyData).subscribe(async response =>{
 		this.selectedInteraction['tag'] = [];
@@ -2864,7 +2865,8 @@ updateTags(){
 		if(this.modalReference){
 			this.modalReference.close();
 		}
-		this.showToaster('Tags updated...','success')
+		this.showToaster('Tags updated...','success')				
+		this.getMessageData(this.selectedInteraction,true)
 	});
 	
 }
