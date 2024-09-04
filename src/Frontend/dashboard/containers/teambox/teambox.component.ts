@@ -1480,10 +1480,21 @@ console.log(getMimeTypePrefix);
 			this.interactionList[idx]['LastMessageDate'] = item['allmessages']?item['allmessages'][item['allmessages'].length - 1]['created_at']:[];
 			this.interactionList[idx]['UnreadCount'] = count;
 			this.updateUnreadCount();
+			this.interactionList = this.moveItemToFirstPosition(this.interactionList,idx);
+			this.interactionListMain = JSON.parse(JSON.stringify(this.interactionList));
 		},400)
 			console.log(this.interactionList[idx]);
 		}
 	}
+
+	moveItemToFirstPosition(items: any[], idx: any): any[] {		
+		if (idx > -1) {
+		  const item = items.splice(idx, 1)[0];
+		  items.unshift(item);
+		}
+		console.log(items);
+		return items;
+	  }
 
 
 	async getQuickResponse(){
@@ -3398,7 +3409,12 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 									// allmessages.push(lastMessage)
 									// this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
 									// console.log(this.selectedInteraction.messageList);
-									this.getMessagesById(insertId)
+									this.getMessagesById(insertId);
+									let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == this.selectedInteraction.InteractionId);
+									if(idx >0){
+										this.interactionList = this.moveItemToFirstPosition(this.interactionList,idx);
+										this.interactionListMain = JSON.parse(JSON.stringify(this.interactionList));
+									}
 									setTimeout(() => {
 										this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
 									}, 500);

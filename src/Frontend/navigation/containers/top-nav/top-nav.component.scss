@@ -467,4 +467,13 @@
 
 }
 
+.notify-cont{
+    height: 87vh;
+}
+
+.notify-scroll{
+    height: calc(100% - 216px) !important;
+    overflow-y: scroll !important;
+}
+
 
