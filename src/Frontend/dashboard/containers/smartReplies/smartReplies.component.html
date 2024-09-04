@@ -463,7 +463,7 @@
 								  <div class="modal-dialog" role="document">
 									<div class="modal-content">
 									  <div class="row popup-dialog AddTag">
-										<p *ngIf="!ShowRemoveTag && addTagList.length > 0" class="label">Add Tag</p>
+										<p *ngIf="!ShowRemoveTag && addTagList?.length > 0" class="label">Add Tag</p>
 										<p *ngIf="ShowRemoveTag" class="label">Remove Tag</p>
 					  
 										<div class="d-flex addTag " *ngFor="let AddTag of addTagList;let i = index">
@@ -477,7 +477,7 @@
 											<span class="fix-dots px-2 text-capitalize flex-grow-1 font-weight-normal">{{AddTag.TagName}}</span>
 										  </div> 
 										</div>
-					                     <div class="p-4" *ngIf="!addTagList.length">
+					                     <div class="p-4" *ngIf="!addTagList?.length">
                                             <p>No Data Available.</p>
 										 </div>
 									  </div>

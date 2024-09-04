@@ -1647,15 +1647,20 @@ app.post('/verifyPhoneCode', (req, res) => {
     const results = [];
 
     // Iterate over each phone object in the array
+    const seenPhones = new Set();  // hash set to treat duplicate phone no. as false.
     for (let i = 0; i < phones.length; i++) {
       let phoneObj = phones[i];
       let phone = phoneObj.phone;
       let existPhone = true;
-
-      const phoneCheckResult = checkPhoneNumbersLength([phone], countryCodeMap, expectedLengths)[0];
       
-      if (phoneCheckResult.error || !phoneCheckResult.isValidLength) {
-        existPhone = false;
+      if (seenPhones.has(phone)) {
+          existPhone = false;
+      } else {
+        const phoneCheckResult = checkPhoneNumbersLength([phone], countryCodeMap, expectedLengths)[0];
+        if (phoneCheckResult.error || !phoneCheckResult.isValidLength) {
+            existPhone = false;
+        }
+        seenPhones.add(phone); 
       }
 
       // Store the result for this phone
