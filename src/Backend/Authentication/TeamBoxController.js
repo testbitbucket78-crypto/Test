@@ -727,7 +727,7 @@ const insertMessage = async (req, res) => {
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]);
                     };
                     if (middlewareresult?.status == 200) {
-                        let UpdatePauseTime  = await getDefaultActionTimeandUpdatePauseTime(SPID)
+                        let UpdatePauseTime  = await getDefaultActionTimeandUpdatePauseTime(SPID,customerId)
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set Message_template_id=? where Message_id=?', [middlewareresult?.message?.messages[0]?.id, msg_id.insertId]);
                     }
 
@@ -752,14 +752,13 @@ const insertMessage = async (req, res) => {
     }
 };
 
-async function getDefaultActionTimeandUpdatePauseTime(spid) {
+async function getDefaultActionTimeandUpdatePauseTime(spid,customerId) {
     try {
-        let id = 0 ; // set default
         let getDefaultAction = await db.excuteQuery(val.defaultQuery, [spid]);
-        let timePause = getDefaultAction[0]?.pauseAutoReplyTime;
-        id = getDefaultAction[0]?.id;
-        let updatePauseTime = await db.excuteQuery(val.updateDefaultQuery, [timePause, id, spid])
-        console.log(getDefaultAction[0]?.pauseAutoReplyTime,getDefaultAction[0]?.id,spid,"Teambox updatePauseTime", updatePauseTime)
+        let timePause = getDefaultAction[0]?.pauseAutoReplyTime ? getDefaultAction[0]?.pauseAutoReplyTime :0;
+        
+        let updatePauseTime = await db.excuteQuery(val.updateContactDefaultQuery, [timePause, customerId, spid])
+        console.log(timePause,spid,"Teambox updatePauseTime", updatePauseTime.affectedRows)
     } catch (err) {
 
         logger.error('Error in getDefaultActionTimeandUpdatePauseTime');

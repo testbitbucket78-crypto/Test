@@ -760,7 +760,7 @@ getmessageBymsgId =`
 `
 
 let defaultQuery = 'select * from defaultActions where spid=? and isDeleted !=1'
-let updateDefaultQuery = 'update defaultActions set pauseMin_from_teambox_after_agent_reply =? where id =? and spid=?'
+let updateContactDefaultQuery = 'update EndCustomer set defaultAction_PauseTime =? where customerId =? and SP_ID=?'
 
 module.exports = {
     host, user, password, database,
@@ -770,7 +770,7 @@ module.exports = {
     updateInteractionMapping, getInteractionMapping,
     savedMessagesQuery, getquickReplyQuery, getTemplatesQuery,
     addNotification, assignedNameQuery, interactions, contactsInteraction, interactionsquery, getallMessagesWithScripts, getMediaMessage,getmessageBymsgId,
-    searchWithAllData ,interactionDataById,defaultQuery,updateDefaultQuery,updateTempInteractionQuery
+    searchWithAllData ,interactionDataById,defaultQuery,updateContactDefaultQuery,updateTempInteractionQuery
 }
 
 

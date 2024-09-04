@@ -10,6 +10,7 @@ const cors = require('cors')
 const middleWare = require('./middleWare')
 const moment = require('moment');
 const removeTags = require('./removeTagsFromRichTextEditor')
+const lostMessageTimeGap = 6;
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,14 +21,14 @@ let metaPhoneNumberID = 211544555367892
 
 
 async function NoCustomerReplyReminder() {
-  let defaultMessage = await db.excuteQuery(settingVal.CustomerReplyReminder, [])
+  let defaultMessage = await db.excuteQuery(settingVal.CustomerReplyReminder, [lostMessageTimeGap])
   console.log("NoCustomerReplyReminder" + defaultMessage?.length)
   if (defaultMessage?.length > 0) {
     for (const message of defaultMessage) {
 
 
       try {
-        let isReplyPause = await isAutoReplyPause(message.SP_ID, message.InteractionId)
+        let isReplyPause = await isAutoReplyPause(message.SP_ID, message.InteractionId,message.defaultAction_PauseTime)
         if (isReplyPause) {
           let data = await db.excuteQuery(settingVal.selectdefaultMsgQuery, ['No Customer Reply Reminder', message.SP_ID])
           if (data.length > 0) {
@@ -58,6 +59,7 @@ ic.InteractionId,
 ic.customerId,
 ec.channel,
 ec.phone_number AS customer_phone_number,
+ec.defaultAction_PauseTime,
 dm.*,
 latestmsg.*
 FROM
@@ -88,7 +90,9 @@ WHERE
 AND ic.is_deleted = 0
 AND dm.title = 'No Customer Reply Timeout'
 AND dm.Is_disable = 1 
+and (latestmsg.msg_status != 9 AND latestmsg.msg_status != 10) 
 AND latestmsg.updated_at <= DATE_SUB(NOW(), INTERVAL dm.autoreply MINUTE)
+and   latestmsg.created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
 group by latestmsg.interaction_id
 `
 
@@ -96,13 +100,13 @@ group by latestmsg.interaction_id
 async function NoCustomerReplyTimeout() {
   try {
 
-    let CustomerReplyTimeout = await db.excuteQuery(systemMsgQuery, [])  //settingVal.noCustomerRqplyTimeOut
+    let CustomerReplyTimeout = await db.excuteQuery(systemMsgQuery, [lostMessageTimeGap])  //settingVal.noCustomerRqplyTimeOut
     console.log(CustomerReplyTimeout?.length, "NoCustomerReplyTimeout" )
     if (CustomerReplyTimeout?.length > 0) {
 
 
       for (const msg of CustomerReplyTimeout) {
-        let isReplyPause = await isAutoReplyPause(msg.SP_ID, msg.InteractionId)
+        let isReplyPause = await isAutoReplyPause(msg.SP_ID, msg.InteractionId,msg.defaultAction_PauseTime)
         if (isReplyPause && msg.Is_disable !=0) {
           //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
           let message_text = await getExtraxtedMessage(msg.value)
@@ -135,13 +139,13 @@ async function NoCustomerReplyTimeout() {
 async function NoAgentReplyTimeOut() {
   try {
 
-let noAgentReplydata = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, [])
+let noAgentReplydata = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, [lostMessageTimeGap])
  console.log(noAgentReplydata?.length, "NoAgentReplyTimeOut")
  if (noAgentReplydata?.length > 0) {
    //  console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
    for (const msg of noAgentReplydata) {
-     let isReplyPause = await isAutoReplyPause(msg.SPID, msg.interaction_id)
-     if (isReplyPause && msg.Is_disable !=0) {
+     let isReplyPause = await isAutoReplyPause(msg.SPID, msg.interaction_id,msg.defaultAction_PauseTime)
+     if (isReplyPause && msg.Is_disable !=0 && msg.system_message_type_id !=4) {
        let isWorkingTime = await workingHoursDetails(msg.SPID);
        //   console.log("isWorkingTime"  ,isWorkingTime)
        if (isWorkingTime === true) {
@@ -277,14 +281,15 @@ async function isClientActive(spid) {
 
 }
 
-async function isAutoReplyPause(spid, newId) {
+async function isAutoReplyPause(spid, newId,contactDefaultPauseTime) {
   let defaultQuery = 'select * from defaultActions where spid=?';
   let defaultAction = await db.excuteQuery(defaultQuery, [spid]);
+ // let contactDefaultPauseTime = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?',[customerId,spid])
   //console.log(defaultAction)You have a new message in you current Open Chat
   if (defaultAction.length > 0) {
     //console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
     var isAutoReply = defaultAction[0].isAutoReply
-    var autoReplyTime = defaultAction[0].pauseMin_from_teambox_after_agent_reply
+    var autoReplyTime = contactDefaultPauseTime 
     var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
   }
   let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?', [newId]);
