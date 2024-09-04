@@ -594,6 +594,8 @@ showAddSmartRepliesModal() {
 		this.dragAreaClass = "dragarea";
 		event.preventDefault();
 		event.stopPropagation();
+		console.log(this.stepper);
+		console.log(this.stepper.getActiveStepIndex());
 		if (event.dataTransfer.files) {
 		let files: FileList = event.dataTransfer.files;
 		this.saveFiles(files);
@@ -1436,7 +1438,7 @@ stopPropagation(event: Event) {
 
 	}
 	getNewSmartReplyData() {
-		console.log(this.newReply)
+		console.log(this.newReply);
 		if (this.newReply.valid) {
 			this.next();
 		} else {
