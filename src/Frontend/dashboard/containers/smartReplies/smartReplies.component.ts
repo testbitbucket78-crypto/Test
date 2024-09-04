@@ -595,8 +595,8 @@ showAddSmartRepliesModal() {
 		event.preventDefault();
 		event.stopPropagation();
 		console.log(this.stepper);
-		console.log(this.stepper.getActiveStepIndex());
-		if (event.dataTransfer.files) {
+		console.log(this.stepper._currentIndex);
+		if (event.dataTransfer.files && this.stepper._currentIndex == 2) {
 		let files: FileList = event.dataTransfer.files;
 		this.saveFiles(files);
 		}
