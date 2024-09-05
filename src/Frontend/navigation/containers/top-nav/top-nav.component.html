@@ -23,7 +23,7 @@
 <!-- ***Notification section*** -->
 
 <div [ngClass]="{'notification-show': ShowNotification, 'notification-hide': !ShowNotification}" *ngIf="ShowNotification" class="popup-notification w-25">
-    <div class="container">
+    <div class="container notify-cont">
     <h3 class="heading p-3 mt-3">Latest Notifications</h3>
     <div class="toggle-btn d-flex justify-content-sm-left p-3">
     <button id="teambox-btn">Teambox</button>
@@ -35,7 +35,7 @@
     <h5>No Notifications</h5>
     <p>Lorium ipsum dolor sit amet</p>
   </div>
-
+  <div class="notify-scroll">
   <div  *ngFor="let item of notificationData.slice(0, 5)" class="row ml-0 mr-0 notifications-container">
  
     <div *ngIf="notificationData.length > 0" class="col-sm-10 p-4 notification-content">
@@ -44,6 +44,7 @@
       <span id="date">{{item.created_at  | date: 'd MMM y, h:mm a'}}</span>
     </div>
   </div>
+</div>
 
   <div class="footer d-flex align-items-center justify-content-center p-4 pb-3">
     <button id="view-notifications-btn" routerLink="/dashboard/notifications">View all Notifications</button>

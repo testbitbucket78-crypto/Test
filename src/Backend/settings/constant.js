@@ -173,7 +173,7 @@ manageplans = `select * from ManagePlan`
 manageplansCharges = `select * from ManagePlanCharges where SP_ID=?`
 
 var selectNotification = `select * from Notification where sp_id=?`
-
+var updateNotifications = `UPDATE Notification SET isRead=1 WHERE sp_id=? AND uid=?`
 
 
 //_____________________________________CAMPAIGN QUERY_____________________________________//
@@ -427,7 +427,7 @@ module.exports = {
     PasswordQuery, updatePasswordQuery, activeStatusquery, addNotification, getNotification, savePlanQuery
     , profilebillQuery, updatePlanQuery, selectbillinghistory, useData, selectPlan, usageInsiteQuery, addFunds
     , subFAQsQuery, FAQsQuery, UserGuideTopicsQuery, UserGuideSubTopicsQuery, allusageInsiteCount, invoicePdf, billhistoryQuery, planquery, cNameQuery, insertSPTransations
-    , manageplans, manageplansCharges, selectNotification, addCampaignTimingsQuery, deleteCampaignTimingsQuery, selectCampaignTimingsQuery, campaignAlertUsersList,
+    , manageplans, manageplansCharges, selectNotification, updateNotifications, addCampaignTimingsQuery, deleteCampaignTimingsQuery, selectCampaignTimingsQuery, campaignAlertUsersList,
     addCampaignAlerts, deleteCampaignAlerts, selectCampaignAlerts, addCampaignTest, deleteCampaignTest, selectCampaignTest,
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,

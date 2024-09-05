@@ -1374,6 +1374,7 @@ formateDate(dateTime:string){
 		this.importedContacts = false;
 		this.selecetdCSV = '';
 		this.CsvContactCol = '';
+		this.csvContactList =[];
 
 	  }
 
@@ -1528,7 +1529,9 @@ formateDate(dateTime:string){
 		let start_datetime =this.selecteScheduleDate+' '+this.selecteScheduleTime;
 		 sratdatetime = (new Date ((new Date((new Date(new Date(start_datetime))).toISOString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
 		}else{
-			let startTime = new Date(new Date().setMinutes(new Date().getMinutes() +5));
+			let getMin =new Date().getMinutes();
+			getMin = (getMin % 5) ? 5 - (getMin % 5): 0;
+			let startTime = new Date(new Date(new Date().setMinutes(new Date().getMinutes() + getMin)).setSeconds(0));
 			sratdatetime = (new Date((new Date((new Date(startTime)).toISOString())).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
 		}		
 		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];

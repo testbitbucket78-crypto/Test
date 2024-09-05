@@ -1405,7 +1405,7 @@ app.post('/blockedContact', authenticateToken, (req, res) => {
     console.log(req.body.isBlocked, "req.body.isBlocked == 1", req.body.isBlocked == 1)
     if (req.body.isBlocked == 1) {
       blockedQuery = `UPDATE EndCustomer set  isBlocked=?,isBlockedOn=now() ,OptInStatus='No' where customerId=? and SP_ID=?`
-      UnassignedBlockedContact(req.body.customerId, req.query.SP_ID)
+      UnassignedBlockedContact(req.body.customerId, req.query.SP_ID, req.body.isBlocked)
     }
 
     db.runQuery(req, res, blockedQuery, [req.body.isBlocked, req.body.customerId, req.query.SP_ID])
@@ -1419,7 +1419,7 @@ app.post('/blockedContact', authenticateToken, (req, res) => {
   }
 })
 
-async function UnassignedBlockedContact(customerId, spid) {
+async function UnassignedBlockedContact(customerId, spid, isBloacked) {
   try {
     let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`, [customerId, spid])
     let findMappingQuery = `SELECT *
@@ -1433,7 +1433,7 @@ WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId =
     }
     console.log('empty', getInteraction[0]?.InteractionId, customerId, spid)
 
-    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, ['empty', getInteraction[0]?.InteractionId, spid, customerId])
+    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, [isBloacked ? 'empty':'Resolved', getInteraction[0]?.InteractionId, spid, customerId])
     console.log("updateStatus", updateStatus)
   } catch (err) {
     console.log("err", err)
