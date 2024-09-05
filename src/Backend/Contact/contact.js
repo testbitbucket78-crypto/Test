@@ -1403,10 +1403,8 @@ app.post('/blockedContact', authenticateToken, (req, res) => {
   try {
     let blockedQuery = val.isBlockedQuery
     console.log(req.body.isBlocked, "req.body.isBlocked == 1", req.body.isBlocked == 1)
-    if (req.body.isBlocked == 1) {
       blockedQuery = `UPDATE EndCustomer set  isBlocked=?,isBlockedOn=now() ,OptInStatus='No' where customerId=? and SP_ID=?`
       UnassignedBlockedContact(req.body.customerId, req.query.SP_ID, req.body.isBlocked)
-    }
 
     db.runQuery(req, res, blockedQuery, [req.body.isBlocked, req.body.customerId, req.query.SP_ID])
   } catch (err) {
