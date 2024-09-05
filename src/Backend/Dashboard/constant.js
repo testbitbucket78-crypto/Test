@@ -60,7 +60,7 @@ GROUP BY
 UNION ALL
 
 SELECT 
-    'Total Conversations' AS interaction_status, 
+    'Total Interactions' AS interaction_status, 
     COUNT(*) AS count
 FROM 
     LatestInteractions

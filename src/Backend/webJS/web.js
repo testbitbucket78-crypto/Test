@@ -80,6 +80,7 @@ process.on('uncaughtException', function (err) {
   try {
     console.log("uncaught exception was trying to close this. THe expectation is that it is coming from pupeeter hence ignoring.")
     console.log(err)
+    logger.info(`uncaught exception was trying to close this`)
     let getAllclient = getAllWidData(clientSpidMapping)
     if (err.message.includes('Puppeteer')) {
       console.log("Ignoring Puppeteer-related error");
@@ -537,7 +538,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link)//MessageMedia('pdf', link);
-      let sendId = await client.sendMessage(endCust + '@c.us', media);
+      let sendId = await client.sendMessage(endCust + '@c.us', media ,{ caption: text });
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
       return { status: 200, msgId: sendId?._data?.id?.id }
 
@@ -768,7 +769,8 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
         let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time);
 
         if (currentIndex == lastIndex) {
-          console.log("mett indec=======================")
+          console.log(message_text,"mett indec=======================",currentIndex , lastIndex)
+      
           var SavedMessageDetails = await actionsOflatestLostMessage(message_text, phone_number_id, from, display_phone_number, saveMessage)
         }
       }
@@ -802,9 +804,9 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
       var newId = extractedData.newId
       var msg_id = extractedData.msg_id
       var ifgot = extractedData.ifgot
-
+      let latestSms = await db.excuteQuery('select * from Message where interaction_id=?  and is_deleted !=1 order by created_at desc',[newId])
       notify.NotifyServer(display_phone_number, false, newId, 'IN', 0, msg_id)
-      let smartReplyActions = await incommingmsg.sReplyActionOnlostMessage(message_text, sid, 'WA Web', phone_number_id, from, custid, agid, newId);
+      let smartReplyActions = await incommingmsg.sReplyActionOnlostMessage(latestSms[0]?.message_text, sid, 'WA Web', phone_number_id, from, custid, agid, newId,display_phone_number);
      
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
@@ -999,7 +1001,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       var inactiveAgent = defaultAction[0].isAgentActive
       var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
     }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, ifgot)
+    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, ifgot,display_phone_number)
 
 
     console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
