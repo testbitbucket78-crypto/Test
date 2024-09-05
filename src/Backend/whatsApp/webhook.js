@@ -284,7 +284,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime 
 
       }
-      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut,ifgot)
+      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut,ifgot,display_phone_number)
       console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
       if (defaultReplyAction >= -1) {
         //console.log("defaultReplyAction________ boolean", defaultReplyAction)
