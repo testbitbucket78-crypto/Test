@@ -239,9 +239,13 @@ export class ImportComponent implements OnInit {
 			  console.log('importedData', this.importedData);
 			  // Processing the extracted Excel Data
 			  this.importedData.forEach((data,idx) => {
-				this.csvfieldHeaders = Object.keys(data);
-				if(idx==0)
+				if(idx==0){
+					this.csvfieldHeaders = Object.keys(data);
 					this.csvfieldValues = Object.values(data);
+				}
+				if(Object.keys(data).length>this.csvfieldHeaders.length){
+					this.csvfieldHeaders = Object.keys(data);
+				}
 				this.toggleOverride = Array(this.csvfieldHeaders.length).fill(false);
 				this.displayNameChecked= Array(this.csvfieldHeaders.length).fill(false);
 			});
