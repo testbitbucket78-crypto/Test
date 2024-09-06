@@ -3512,16 +3512,61 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		return text;
 	  }
 
-      limitCharacters(message: string) {
-		let msg = this.convertHtmlToText(message);
-        let maxLength = 22;
-        if (msg.length <= maxLength) {
-        return msg;
-        } else {
-		return this.showFullMessage ? msg : msg.substring(0,maxLength) + "...";
-        }
-    }
+    //   limitCharacters(message: string) {
+	// 	const tempElement = document.createElement('div');
+	// 	tempElement.innerHTML = message;
+	
+	// 	let text = tempElement.textContent || tempElement.innerText || '';
+	
+	// 	// Optional: Convert multiple spaces to a single space
+	// 	text = text.replace(/\s\s+/g, ' ');
+	// 	let msg ;
+    //     let maxLength = 22;
+    //     if (text.length <= maxLength) {
+	// 		tempElement.textContent = text;
+    //     return tempElement?.innerHTML;
+    //     } else {
+	// 	msg = this.showFullMessage ? text : text.substring(0,maxLength) + "...";
+	// 	tempElement.textContent = msg;
+	// 	return tempElement?.innerHTML;
+    //     }
+    // }
 
+
+	limitCharacters(message: string, maxLength: number = 22) {
+		const tempElement = document.createElement('div');
+		tempElement.innerHTML = message;
+		
+		let charCount = 0;
+		const truncateNode = (node: Node): boolean => {
+		  if (charCount >= maxLength) return true;
+		  
+		  if (node.nodeType === Node.TEXT_NODE) {
+			const text = node.textContent || '';
+			const remainingChars = maxLength - charCount;
+			if (text.length + charCount > maxLength) {
+			  node.textContent = text.substring(0, remainingChars) + "...";
+			  charCount = maxLength;
+			  return true;
+			} else {
+			  charCount += text.length;
+			}
+		  } else if (node.nodeType === Node.ELEMENT_NODE && node.childNodes) {
+			for (let i = 0; i < node.childNodes.length; i++) {
+			  if (truncateNode(node.childNodes[i])) {
+				while (node.childNodes.length > i + 1) {
+				  node.removeChild(node.childNodes[i + 1]);
+				}
+				return true;
+			  }
+			}
+		  }
+		  return false;
+		};
+	  
+		truncateNode(tempElement);
+		return tempElement.innerHTML;
+	  }
 		toggleShowFullMessage() {
 			this.showFullMessage = !this.showFullMessage;
 		}
