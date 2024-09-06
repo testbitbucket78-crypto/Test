@@ -47,7 +47,7 @@
                             <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
-                                      <input type="checkbox" class="m-0 form-control-checkbox" 
+                                      <input type="checkbox" class="m-0 form-control-checkbox" [disabled]="!notifyData?.PushNotificationValue"
                                       [(ngModel)]="notifyData.SoundNotificationValue" 
                                       (change)="toggleSoundNotification($event.target.checked,notifyData.notificationId,notifyData.ID,ith)">
                                       <span class="slider"></span>
