@@ -164,6 +164,9 @@ isLoading!: boolean;
   }
 
   ValidateWorkingDetails(){
+    let val =this.checkForOverlappingTimes(this.copyFormValues()["days"]);
+    console.log(val);
+    if(!val){
     let newData = this.copyFormValues()["days"];
     let oldData = this.workingData;
     const mapData = (data: any[], isNewData = false) =>
@@ -174,6 +177,7 @@ isLoading!: boolean;
       }));
     const filteredOlderData = mapData(oldData);
     const filteredNewData = mapData(newData, true);
+    console.log(newData,'newData');
     const isSame = this.haveCommonObjects(
       filteredOlderData,
       filteredNewData
@@ -185,6 +189,9 @@ isLoading!: boolean;
     } else{
       $("#workingHourModal").modal('hide');
     }
+  } else{
+    this.showToaster('Time of a day is overlaping, Please fix that.','error');
+  }
   }
   openModal(): void {
     $("#workingHourModal").modal('show');
@@ -359,6 +366,59 @@ isLoading!: boolean;
         this.successMessage = '';
         this.errorMessage = '';
         this.warningMessage = '';
+    }
+
+    checkForOverlappingTimes(schedules: any[]): boolean {
+      const daysMap: { [key: string]: { start: Date, end: Date }[] } = {};
+    
+      for (const schedule of schedules) {
+        const days = schedule.day.split(',');
+        const startTime = this.parseTime(schedule.startTime);
+        const endTime = this.parseTime(schedule.endTime);
+    
+        for (const day of days) {
+          if (!daysMap[day]) {
+            daysMap[day] = [];
+          }
+    
+          const isOverlap = daysMap[day].some(timeRange => 
+            (startTime >= timeRange.start && startTime < timeRange.end) ||
+            (endTime > timeRange.start && endTime <= timeRange.end) ||
+            (startTime <= timeRange.start && endTime >= timeRange.end)
+          );
+    
+          if (isOverlap) {
+            console.log('true', 'last');
+            return true; 
+          }
+    
+          daysMap[day].push({ start: startTime, end: endTime });
+        }
+      }
+    
+      console.log('false', 'last');
+      return false; 
+    }
+    
+    parseTime(time: string): Date {
+      let hours: number;
+      let minutes: number;
+    
+      if (time.includes('AM') || time.includes('PM')) {
+        const [timePart, modifier] = time.split(' ');
+        [hours, minutes] = timePart.split(':').map(Number);    
+        if (modifier === 'PM' && hours !== 12) {
+          hours += 12;
+        } else if (modifier === 'AM' && hours === 12) {
+          hours = 0;
+        }
+      } else {
+        [hours, minutes] = time.split(':').map(Number);
+      }
+    
+      const date = new Date();
+      date.setHours(hours, minutes, 0, 0);
+      return date;
     }
     
 }

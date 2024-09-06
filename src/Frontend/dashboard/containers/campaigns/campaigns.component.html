@@ -148,8 +148,8 @@
 						<div class="doc-preview"*ngIf="selectedCampaign.media_type=='document'" width="100%" height="150px">
 							<a [href]="selectedCampaign.message_media"><img src="../../../../assets/img/settings/doc.svg" /></a>
 							</div>
-							<video *ngIf="selectedCampaign.media_type=='video'" muted id="video-background" [src]="selectedCampaign.message_media"></video>
-							<img *ngIf="selectedCampaign.media_type=='image'" class="template_img" src="{{selectedCampaign.message_media}}">
+							<video *ngIf="getMediaType(selectedCampaign.media_type,'video')" muted id="video-background" [src]="selectedCampaign.message_media"></video>
+							<img *ngIf="getMediaType(selectedCampaign.media_type,'image')" class="template_img" src="{{selectedCampaign.message_media}}">
 						<!-- <div *ngIf="selectedCampaign.message_media" class="template_img">
 							<img src="{{selectedCampaign.message_media}}">
 						</div> -->

@@ -1598,10 +1598,10 @@ formateDate(dateTime:string){
 			// if(this.scheduled !=1){
 			// 	this.runCampaign(CampaignId,BodyData)
 			// }
+		this.getAllCampaigns()
 			
 		})
 		this.resetFormState();
-		this.getAllCampaigns()
 	}
 	
 	processMediaType(mediaType: any,message_media:any){
@@ -3149,5 +3149,9 @@ console.log(this.allTemplatesMain);
 				this.showToaster('No valid record found','error')
 			   }
 		})
+	}
+
+	getMediaType(val:any,type:any){
+			return val.includes(type);
 	}
 }
