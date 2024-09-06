@@ -192,10 +192,24 @@ const updateTags = (req, res) => {
     var updateQueryQuery = "UPDATE EndCustomer SET tag ='" + req.body.tag + "'  WHERE customerId =" + req.body.customerId;
     //   logger.info('Received request for updateTags', { updateQueryQuery });
     db.runQuery(req, res, updateQueryQuery, [])
+    updateActionTagUpdation(req)
+    
     //   .then(() => logger.info('Tags updated successfully', { customerId: req.body.customerId }))
     //  .catch(err => logger.error('Error updating tags', { error: err.message, stack: err.stack }));
 };
-
+async function updateActionTagUpdation(req) {
+    try {
+      let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`, [req.body.customerId, req.body?.SP_ID])
+      let myUTCString = new Date().toUTCString();
+      const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      var interactionId = getInteraction[0].InteractionId; 
+      let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
+      let actiond = await db.excuteQuery(actionQuery, [interactionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, 78, 'text']);
+      console.log("updateStatus", updateStatus)
+    } catch (err) {
+      console.log("err", err)
+    }
+  }
 const blockCustomer = async (req, res) => {
     customerId = req.body.customerId;
     isBlocked = req.body.isBlocked;
