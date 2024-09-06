@@ -19,6 +19,7 @@ async function isDefaultContactOwner(SP_ID,custid) {
       let defaultAdmin = await db.excuteQuery(defaultAdminQuery, [SP_ID]);
       mappingUid = defaultAdmin[0]?.defaultAdminUid
     }
+    //console.log("isDefaultContactOwne ***************", mappingUid);
     return mappingUid;
   } catch (err) {
     console.log("ERR -- isDefaultContactOwner", err)
@@ -31,13 +32,13 @@ async function AssignToContactOwner(sid, newId, agid, custid) {
     console.log("AssignToContactOwner", sid, newId, agid, custid);
     let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=${sid}`;
     let RoutingRules = await db.excuteQuery(RoutingRulesQuery, []);
-    console.log("RoutingRules", RoutingRules?.length);
+   
     let contactOwnerUid = await isDefaultContactOwner(sid, custid);
-
+    console.log("RoutingRules", RoutingRules?.length,contactOwnerUid != undefined,RoutingRules[0].contactowner,RoutingRules[0].contactowner == '1');
     if (RoutingRules.length > 0) {
       if (contactOwnerUid != undefined && RoutingRules[0].contactowner == '1') {
         let updateInteractionMapQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
-        let values = [[newId, (contactOwnerUid ?contactOwnerUid:agid), '-1', 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
+        let values = [[newId, (contactOwnerUid ?contactOwnerUid:agid), agid, 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
         console.log("AssignToContactOwner --- contact owner assign", updateInteractionMap);
         if (updateInteractionMap?.affectedRows > 0) {
@@ -141,13 +142,16 @@ async function BroadCast(sid, agid, newId) {
 async function RoundRobin(sid, newId,agid) {
   try {
     console.log("RoundRobin");
-    let activeAgentQuery = "select *from user where IsActive=1 and SP_ID=? and isDeleted !=1 ";
-    let activeAgent = await db.excuteQuery(activeAgentQuery, [sid]);
+    let activeAgentQuery = "select *from user where IsActive=1 and SP_ID=? and ParentId is null and isDeleted !=1 ";
+   
 
     let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=?`;
     let routingData = await db.excuteQuery(RoutingRulesQuery, [sid]);
     let maxAllowd = routingData.length > 0 ? routingData[0].conversationallowed : 0;
-
+    if(routingData[0]?.enableAdmin == 1){
+        activeAgentQuery = "select *from user where IsActive=1 and SP_ID=? and isDeleted !=1 " ;     
+    }
+    let activeAgent = await db.excuteQuery(activeAgentQuery, [sid]);
     if (activeAgent.length > 0) {
       for (let agent of activeAgent) {
         let checkAssignInteraction = await db.excuteQuery(settingVal.checkAssignInteraction, [newId]);
@@ -191,7 +195,7 @@ async function ManualAssign(newId, sid,agid) {
     let RoutingRules = await db.excuteQuery(RoutingRulesQuery, [sid]);
     if (RoutingRules?.length > 0) {
       let newAssignQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
-      let assignvalues = [[newId, '-1', '-1', 1]];
+      let assignvalues = [[newId, RoutingRules[0].manualAssignUid, agid, 1]];
       let assignRes = await db.excuteQuery(newAssignQuery, [assignvalues]);
       if (assignRes?.affectedRows > 0) {
         let myUTCString = new Date().toUTCString();

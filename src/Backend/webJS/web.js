@@ -516,7 +516,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       return { status: 200, msgId: sendId?._data?.id?.id }
       // notify.NotifyServer(spNumber, false, interaction_id)
     }
-    if (type === 'image') {
+    if (type === 'image' || type === 'image/jpeg') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link);
@@ -524,7 +524,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
       return { status: 200, msgId: sendId?._data?.id?.id }
     }
-    if (type === 'video') {
+    if (type === 'video' || type === 'video/mp4') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link);
@@ -534,7 +534,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       return { status: 200, msgId: sendId?._data?.id?.id }
 
     }
-    if (type === 'attachment' || type === 'document') {
+    if (type === 'attachment' || type === 'document' || type ===  'application/pdf') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       const media = await MessageMedia.fromUrl(link)//MessageMedia('pdf', link);

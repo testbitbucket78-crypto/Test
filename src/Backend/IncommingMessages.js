@@ -283,9 +283,9 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       }
 
       var type = determineMediaType(media_type);
-      var delay = 1500;
+      var delay = 2000;
       if (type == 'video') {
-        delay = 4000
+        delay = 7000
       }
 
       var relyMsg = {
@@ -814,7 +814,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
-    //console.log(type,"sReply?.status ", sReply?.status,media_type)
+    console.log(type,"sReply?.status ", sReply?.status,media_type)
     if (sReply?.status == 200) {
 
 

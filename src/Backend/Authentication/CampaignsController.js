@@ -219,7 +219,7 @@ const deleteContactList = (req, res) => {
 
 const applyFilterOnEndCustomer = async (req, res) => {
     try {
-        let Query = req.body.Query + " and EC.isDeleted !=1  AND EC.IsTemporary !=1 GROUP BY EC.customerId"
+        let Query = req.body.Query //+ " and EC.isDeleted !=1  AND EC.IsTemporary !=1 GROUP BY EC.customerId"
         console.log(Query)
         let contactList = await db.excuteQuery(Query, []);
         //console.log(contactList)
@@ -244,10 +244,11 @@ const processContactQueries = async (req, res) => {
 
     try {
         // Execute each query sequentially
-        for (const query of queries) {
-            let listQuery = query + " and EC.isDeleted !=1  AND EC.IsTemporary !=1"
+        for (let query of queries) {
+            let listQuery = query //+ " and EC.isDeleted !=1  AND EC.IsTemporary !=1"
             if(isOptIn == 1){
-                listQuery = query + " and EC.isDeleted !=1  AND EC.IsTemporary !=1 and EC.OptInStatus =? "
+                listQuery = query //+ " and EC.isDeleted !=1  AND EC.IsTemporary !=1 and EC.OptInStatus =? "
+                query=query.replace('Group by EC.customerId',' and EC.OptInStatus =? Group by EC.customerId ')
             }
             const queryResult = await db.excuteQuery(listQuery,['Yes']);
             results = results.concat(queryResult);
@@ -262,6 +263,7 @@ const processContactQueries = async (req, res) => {
             uniqueResults: uniqueResults
         });
     } catch (error) {
+        console.log(error)
         res.send({
             status: 500,
             error: 'Error processing queries'
