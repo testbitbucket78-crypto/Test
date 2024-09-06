@@ -28,8 +28,8 @@ addDefaultMsg='INSERT INTO defaultmessages (SP_ID,title,description,message_type
 
 // routing rules
 routingrule = 'select * from routingrules where SP_ID=?'
-routingdetails = 'UPDATE routingrules SET  contactowner=?,assignagent=?,broadcast=?,roundrobin=?,conversationallowed=?,manualassign=?,assignuser=?,timeoutperiod=?,isadmin=?,assignspecificuser=?,selectuser=?,isMissChatAssigContactOwner=?,updated_at=?,manualAssignUid=?,SpecificUserUid=?,adminName=?,adminUid=? Where SP_ID=?'
-insertRouteQuery=`INSERT INTO routingrules (SP_ID,contactowner,assignagent,broadcast,roundrobin,conversationallowed,manualassign,assignuser,timeoutperiod,isadmin,assignspecificuser,selectuser,isMissChatAssigContactOwner,created_at,manualAssignUid,SpecificUserUid,adminName,adminUid) VALUES ?`
+routingdetails = 'UPDATE routingrules SET  contactowner=?,assignagent=?,broadcast=?,roundrobin=?,conversationallowed=?,manualassign=?,assignuser=?,timeoutperiod=?,isadmin=?,assignspecificuser=?,selectuser=?,isMissChatAssigContactOwner=?,updated_at=?,manualAssignUid=?,SpecificUserUid=?,adminName=?,adminUid=?,enableAdmin=? Where SP_ID=?'
+insertRouteQuery=`INSERT INTO routingrules (SP_ID,contactowner,assignagent,broadcast,roundrobin,conversationallowed,manualassign,assignuser,timeoutperiod,isadmin,assignspecificuser,selectuser,isMissChatAssigContactOwner,created_at,manualAssignUid,SpecificUserUid,adminName,adminUid,enableAdmin) VALUES ?`
 
 // manage storage
 selectmanage = 'select * from managestorage where SP_ID=? AND  isDeleted !=1'
