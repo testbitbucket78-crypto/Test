@@ -414,7 +414,7 @@ export class ContactFilterComponent implements OnInit {
           if(filters.items.length>0){
          // filters.items[0]['filterOperator']='';	
           
-          let colName = filters.filterPrefix
+			let colName = 'EC.'+filters.filterPrefix
 		  if(colName =="Conversation Resolved"){
 			if(filters?.items[0].filterBy == 'true')
 				contactFilter = contactFilter + " and ((Interaction.interaction_status='Resolved')";

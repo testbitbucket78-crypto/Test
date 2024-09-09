@@ -166,7 +166,7 @@ isLoading!: boolean;
   ValidateWorkingDetails(){
     let val =this.checkForOverlappingTimes(this.copyFormValues()["days"]);
     console.log(val);
-    if(!val){
+    if(!val.isOverlap){
     let newData = this.copyFormValues()["days"];
     let oldData = this.workingData;
     const mapData = (data: any[], isNewData = false) =>
@@ -190,7 +190,8 @@ isLoading!: boolean;
       $("#workingHourModal").modal('hide');
     }
   } else{
-    this.showToaster('Time of a day is overlaping, Please fix that.','error');
+    if(!val?.isNone)
+      this.showToaster('Please ensure there is NO overlap in the time slot selected within each day','error');
   }
   }
   openModal(): void {
@@ -368,13 +369,18 @@ isLoading!: boolean;
         this.warningMessage = '';
     }
 
-    checkForOverlappingTimes(schedules: any[]): boolean {
+    checkForOverlappingTimes(schedules: any[]) {
       const daysMap: { [key: string]: { start: Date, end: Date }[] } = {};
     
       for (const schedule of schedules) {
         const days = schedule.day.split(',');
         const startTime = this.parseTime(schedule.startTime);
         const endTime = this.parseTime(schedule.endTime);
+
+        if (endTime <= startTime) {
+          this.showToaster(`Warning: End time cannot be earlier than or same as Start time for schedule on ${schedule.day}.`,'error');
+          return {isOverlap: false, isNone:true};
+        }
     
         for (const day of days) {
           if (!daysMap[day]) {
@@ -389,7 +395,7 @@ isLoading!: boolean;
     
           if (isOverlap) {
             console.log('true', 'last');
-            return true; 
+            return {isOverlap: true, isNone:false};
           }
     
           daysMap[day].push({ start: startTime, end: endTime });
@@ -397,7 +403,7 @@ isLoading!: boolean;
       }
     
       console.log('false', 'last');
-      return false; 
+      return {isOverlap: false, isNone:false};
     }
     
     parseTime(time: string): Date {

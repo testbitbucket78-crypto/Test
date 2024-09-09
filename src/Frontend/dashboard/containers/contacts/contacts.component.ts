@@ -15,6 +15,7 @@ import { Subject } from 'rxjs';
 import { GridService } from '../../services/ag-grid.service';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import {ContactFilterComponent} from '../contact-filter/contact-filter.component';
+import { DatePipe } from '@angular/common';
 
 declare var $: any;
 @Component({
@@ -271,7 +272,9 @@ countryCodes = [
    isLoadingOnInit!:boolean;
  constructor(config: NgbModalConfig, private modalService: NgbModal,
   public phoneValidator:PhoneValidationService,
-     public settingsService: SettingsService, private apiService: DashboardService, private _settingsService: SettingsService, private teamboxService: TeamboxService, private fb: FormBuilder, private router: Router, private cdRef: ChangeDetectorRef, public GridService: GridService)
+     public settingsService: SettingsService, private apiService: DashboardService,
+     private datePipe:DatePipe,
+      private _settingsService: SettingsService, private teamboxService: TeamboxService, private fb: FormBuilder, private router: Router, private cdRef: ChangeDetectorRef, public GridService: GridService)
  
  
  {
@@ -1259,7 +1262,9 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
                   return null;
                 }
               }
-              console.log(columnDesc);
+            }
+            if(item.type == 'Date'){
+              columnDesc.valueFormatter= this.dateFormatter.bind(this);
             }
 
             if(item.type == 'Multi Select'){
@@ -1315,7 +1320,11 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
           },50);
   }
 
-  
+  dateFormatter(params: any): string {
+    const date = new Date(params.value);
+    const formattedDate = this.datePipe.transform(date, this._settingsService.dateFormat);
+    return formattedDate ? formattedDate : '';
+}
   yearValidator(control: FormControl) : { [key: string]: boolean }  | null {
     if (control.value) {
       const year = new Date(control.value).getFullYear();
