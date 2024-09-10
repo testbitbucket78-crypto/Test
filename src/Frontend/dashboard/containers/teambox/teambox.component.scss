@@ -916,7 +916,9 @@ img.no-dp {
 }
  ::ng-deep  .left .message_text .isLink{
     color: black !important;
-    
+}
+::ng-deep  .message_text{
+    white-space: pre-wrap;
 }
 ::ng-deep  .left .message_text .isLink:hover{
     color: orange !important;
