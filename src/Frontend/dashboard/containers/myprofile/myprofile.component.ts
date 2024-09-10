@@ -221,7 +221,9 @@ togglePushNotification(checked:boolean,notificationId: number,ID: number,idx:num
   else {
     this.ID = ID;
   }
+  
   this.PushNotificationValue = checked ? 1 : 0;
+  this.SoundNotificationValue = checked ? this.NotificationDataInit[idx]?.SoundNotificationValue : 0;
 
   let PushNotificationData = {
     ID:this.ID,
