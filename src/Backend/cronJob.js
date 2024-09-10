@@ -783,7 +783,7 @@ function startScheduler() {
 
     // Execute your scheduled tasks
     await fetchScheduledMessages();
-    await autoResolveExpireInteraction();
+    //await autoResolveExpireInteraction();
   });
 }
 

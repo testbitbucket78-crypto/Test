@@ -100,7 +100,8 @@ const file = req.file;
 if (!file) {
 res.send({message:'File no uplaoded...'})
 }
-const url =  path.join(__dirname, `/uploads/${file.filename}`)//`${req.protocol}://${req.get('host')}/uploads/${file.filename}`
+const uuidv = uuidv4()
+const url =  path.join(__dirname, `/uploads/${uuidv}/${file.filename}`)//`${req.protocol}://${req.get('host')}/uploads/${file.filename}`
 
 // Get file stats to obtain file size
 const stats = await fs.stat(url);
@@ -112,7 +113,7 @@ if(fileSizeInMegabytes <= 10){
 
 console.log(url)
 
-const uuidv = uuidv4()
+
 
 let awsres = await awsHelper.uploadAttachment(`${req.params.spid}/${req.params.name}/${uuidv}/${file.filename}`, url,file.mimetype)
  

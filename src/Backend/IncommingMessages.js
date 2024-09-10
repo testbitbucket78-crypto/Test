@@ -33,13 +33,14 @@ async function sReplyActionOnlostMessage(message_text, sid, channelType, phone_n
   try {
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
     if (replymessage?.length > 0) {
-
+console.log("replymessage",replymessage)
       let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType,display_phone_number);
       console.log("iterateSmartReplies replymessage.length", isSReply)
       return isSReply;
     }
   } catch (err) {
-    console.log("err sReplyActionOnlostMessage", err)
+    console.log("err sReplyActionOnlostMessage", err);
+    return err;
   }
 }
 
