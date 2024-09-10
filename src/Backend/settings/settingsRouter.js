@@ -7,7 +7,8 @@ const profileController=require('./profileController');
 const notification=require('./NotifyClients')
 const campaignController=require('./campaignController');
 const accountController=require('./accountController')
-const generalcontroller=require('./generalcontrolller')
+const generalcontroller=require('./generalcontrolller');
+const {v4 : uuidv4} = require('uuid')
 //_____________________________Organization Settings_______________________//
 
 
@@ -124,6 +125,78 @@ router.post('/deleteTemplates',authenticateToken,campaignController.deleteTempla
 router.post('/addGallery',authenticateToken,campaignController.addGallery)
 router.get('/getGallery/:spid/:isTemplate',authenticateToken,campaignController.getGallery)  // pass spid=0,isTemplate=2
 router.get('/exitTemplate/:spid/:isTemplate/:name',authenticateToken,campaignController.isExistTemplate);  // istemplate=1
+
+//------------------UPLOAD  MEDIA ON METS IMPLEMENTATIONS------------------------//
+const multer = require('multer');
+let fs = require('fs-extra');
+// handle storage using multer
+var storage = multer.diskStorage({
+   destination: function (req, file, cb) {
+      //cb(null, '/var/www/api/uploads');
+     
+    let path = `./uploads`;
+    fs.mkdirsSync(path);
+    cb(null, path);
+    
+   },
+   filename: function (req, file, cb) {
+      cb(null, `${Date.now()}-${file.originalname}`);
+   }
+});
+var upload = multer({ storage: storage });
+
+
+// handle single file upload
+router.post('/uploadfiletoMeta/:spid/:name',upload.single('file'), async (req, res)=> {
+    try{   
+      console.log(req)
+ const file = req.file;
+ console.log(file)
+ if (!file) {
+ res.send({message:'File no uplaoded...'})
+ }
+ else{
+ const uuidv = uuidv4()
+ const url =  path.join(__dirname, `/uploads/${uuidv}/${file.filename}`)//`${req.protocol}://${req.get('host')}/uploads/${file.filename}`
+ 
+ // Get file stats to obtain file size
+ const stats = await fs.stat(url);
+ 
+ const fileSizeInBytes = stats?.size;
+ const fileSizeInKilobytes = fileSizeInBytes / 1024;
+ const fileSizeInMegabytes = fileSizeInKilobytes / 1024;
+ if(fileSizeInMegabytes <= 10){
+ 
+ console.log(url)
+ 
+
+
+ let file_length = stats?.size
+ let file_name = file.filename
+ let file_type = file.mimetype
+ let awsres = await awsHelper.uploadAttachment(`${req.params.spid}/${req.params.name}/${uuidv}/${file.filename}`, url,file.mimetype)
+
+ let uploadedURL = await campaignController.uploadMediaOnMeta(file_length,file_name,file_type,url);
+ res.send({status:200,awsUploadedId:awsres.value.Location,fileSize:awsres.size , metaUploadedId : uploadedURL})
+ 
+ }else{
+   
+   try {
+    await fs.unlink(url); 
+ } catch (unlinkErr) {
+    console.error("Error occurred while unlinking file:", unlinkErr);
+ }
+ res.status(413).send({ message: 'File size limit exceeds 10MB' });
+ }
+ }}catch(err){
+    console.log(err)
+    res.send({status:500,err:err})
+ }
+ });
+
+//====================================END=======================================//
+
+
 //__________________ACCOUNT API'S__________________________//
 
 router.post('/addWhatsAppDetails',authenticateToken,accountController.insertAndEditWhatsAppWeb)

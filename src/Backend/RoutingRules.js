@@ -27,6 +27,16 @@ async function isDefaultContactOwner(SP_ID,custid) {
   }
 }
 
+async function updateInteraction(interactionId,spid,appliedRule) {
+  try{
+    let openStatus = await  db.excuteQuery('update Interaction set interaction_status =? where InteractionId = ? and SP_ID =?',['Open',interactionId,spid]) ;
+    console.log(interactionId,"openStatus",openStatus?.affectedRows ,appliedRule)
+  }catch(err){
+    console.log("err openStatus",openStatus)
+  }
+  
+}
+
 async function AssignToContactOwner(sid, newId, agid, custid) {
   try {
     console.log("AssignToContactOwner", sid, newId, agid, custid);
@@ -42,7 +52,7 @@ async function AssignToContactOwner(sid, newId, agid, custid) {
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
         console.log("AssignToContactOwner --- contact owner assign", updateInteractionMap);
         if (updateInteractionMap?.affectedRows > 0) {
-         
+          updateInteraction(newId,sid,'AssignToContactOwner')
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
@@ -90,7 +100,7 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
       let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0].AgentId, '-1', 1]]]);
       console.log("LastAssistedAgent", assignAgent);
       if (assignAgent?.affectedRows > 0) {
-
+        updateInteraction(newId,sid,'LastAssistedAgent')
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
@@ -168,6 +178,7 @@ async function RoundRobin(sid, newId,agid) {
             let chatAssigend = await db.excuteQuery(assignAgentQuery, [[[newId, agent.uid, '-1', 1,lastAgent[0]?.AgentId]]]);
             console.log("RoundRobin", chatAssigend);
             if (chatAssigend?.affectedRows > 0) {
+              updateInteraction(newId,sid,'RoundRobin')
               let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
@@ -198,6 +209,7 @@ async function ManualAssign(newId, sid,agid) {
       let assignvalues = [[newId, RoutingRules[0].manualAssignUid, agid, 1]];
       let assignRes = await db.excuteQuery(newAssignQuery, [assignvalues]);
       if (assignRes?.affectedRows > 0) {
+        updateInteraction(newId,sid,'ManualAssign')
         let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
@@ -267,8 +279,9 @@ async function AssignAdmin(newId, sid,agid) {
     }
     let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
     let assignAgentRes = await db.excuteQuery(assignAgentQuery, [[[newId, (admin?admin:agid), '-1', 1]]]);
-    console.log("AssignAdmin", assignAgentRes);
+    //console.log("AssignAdmin", assignAgentRes);
     if (assignAgentRes?.affectedRows > 0) {
+      updateInteraction(newId,sid,'AssignAdmin')
       let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
@@ -294,6 +307,7 @@ async function AssignSpecificUser(sid, newId,agid) {
       let assignAgentRes = await db.excuteQuery(assignAgentQuery, [newId, RoutingRules[0].SpecificUserUid, '-1', 1]);
       console.log("AssignSpecificUser", assignAgentRes);
       if (assignAgentRes?.affectedRows > 0) {
+        updateInteraction(newId,sid,'AssignSpecificUser')
         let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
@@ -325,6 +339,7 @@ async function AssignMissedToContactOwner(sid, newId, agid, custid) {
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
         console.log("AssignMissedToContactOwner", updateInteractionMap);
         if (updateInteractionMap?.affectedRows > 0) {
+          updateInteraction(newId,sid,'AssignMissedToContactOwner')
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];

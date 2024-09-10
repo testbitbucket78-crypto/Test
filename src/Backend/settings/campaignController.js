@@ -14,7 +14,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: "10000kb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
 const logger = require('../common/logger.log');
-
+let fs = require('fs-extra');
+const path = require("path");
+const FormData = require('form-data');
 const addCampaignTimings = async (req, res) => {
     try {
         console.log(req.body)
@@ -563,6 +565,57 @@ async function getOfficialTemplate() {
     }
 }
 
+
+async function uploadMediaOnMeta(file_length,file_name,file_type,filePath) {
+    try {
+        console.log("uploadMediaOnMeta")
+        // First API - Upload the file details
+        const uploadUrl = 'https://graph.facebook.com/v20.0/1147412316230943/uploads';
+        const uploadData = {
+          file_length: file_length,
+          file_type: file_type,
+          file_name: file_name // Initial file name for the first API
+        };
+    
+        const uploadResponse = await axios.post(uploadUrl, uploadData, {
+          headers: {
+            'Authorization': val.access_token,
+            'Content-Type': 'application/json'
+          }
+        });
+    
+        const { id: uploadId} = uploadResponse.data; // Assuming response has 'id' and 'file_name'
+        console.log('File uploaded successfully, ID:', uploadId);
+    
+        // Now, for the second API, upload the actual file using the returned file name
+        const secondUrl = `https://graph.facebook.com/v20.0/${uploadId}`;
+      
+      
+         // Prepare the form-data
+         const form = new FormData();
+         //const filePath = path.join(__dirname +"/uploads", file_name); // File path based on returned file_name
+         form.append('file', fs.createReadStream(filePath)); // Attach file to form
+         const formHeaders = form.getHeaders();
+        
+       
+
+         const secondResponse = await axios.post(secondUrl, form, {
+             headers: {
+                 'Authorization':'OAuth EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S',
+                 ...formHeaders // Include form-data headers
+             }
+         });
+    
+       // console.log('File uploaded in 2nd API:', secondResponse.data);
+        await fs.unlink(filePath);
+        return secondResponse.data;
+      } catch (error) {
+       // console.error('Error during API integration:', error.response ? error.response.data : error);
+        await fs.unlink(filePath);
+        return error.message;
+      }
+}
+
 const addTemplate = async (req, res) => {
     try {
         ID = req.body.ID
@@ -937,6 +990,6 @@ module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
     testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
-    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate
+    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta
 
 }
