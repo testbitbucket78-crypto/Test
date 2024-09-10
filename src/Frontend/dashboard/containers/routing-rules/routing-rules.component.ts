@@ -132,7 +132,7 @@ export class RoutingRulesComponent implements OnInit {
           this.roundrobin = data.roundrobin;
           this.conversationallowed = data.conversationallowed;
           this.manualassign = data.manualassign;
-          this.enableAdmin = data.enableAdmin;
+          this.enableAdmin = data?.enableAdmin;
           this.assignuser = data.assignuser;
           this.timeoutperiod = data.timeoutperiod;
           this.isMissChatAssigContactOwner = data.isMissChatAssigContactOwner;
@@ -192,6 +192,7 @@ assignUUID(manualassign: string, assignspecificuser: string){
     };
 
     this.routingRulesData.timeoutperiod = this.timeoutperiod;
+    this.routingRulesData.enableAdmin = this.enableAdmin;
     if(this.missedChatOption) {
       this.routingRulesData.isMissChatAssigContactOwner = Number(this.missedChatOption === 'isMissChatAssigContactOwner' ? '1' : '0');
       this.routingRulesData.isadmin = Number(this.missedChatOption === 'isadmin' ? '1' : '0');

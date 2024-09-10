@@ -1436,7 +1436,7 @@ formateDate(dateTime:string){
 		}else if(this.selectedCampaign.csv_contacts.length>0){
 			this.step2Option='ImportContacts'
 			this.csvContactList = 	JSON.parse(this.selectedCampaign.csv_contacts)
-			this.newListName=JSON.parse(this.selectedCampaign.csv_contacts).length+' unique contacts selected';
+			this.importedContacts=JSON.parse(this.selectedCampaign.csv_contacts).length+' unique contacts selected';
 		}
 		this.selectedTemplate = this.selectedCampaign
 		this.selectedTemplate['Header']=this.selectedCampaign.message_heading
@@ -1574,8 +1574,8 @@ formateDate(dateTime:string){
 			segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
 		}
 		if(action=='save'){
-			BodyData['status']=0
-			this.getAllCampaigns()
+			BodyData['status']=2;
+			//this.getAllCampaigns()
 		}
 		else if(action=='updateWallet'){
 
@@ -1583,9 +1583,9 @@ formateDate(dateTime:string){
 			if(this.scheduled ==1){
 				BodyData['status']=1;
 			}else{
-				BodyData['status']=-1;
+				BodyData['status']=2;
 			}
-			this.getAllCampaigns()
+			//this.getAllCampaigns()
 		}
 		let CampaignId:any=this.newCampaignDetail.Id?this.newCampaignDetail.Id:'';
 		await this.apiService.addCampaign(BodyData).subscribe((responseData:any) =>{

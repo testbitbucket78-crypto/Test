@@ -101,7 +101,6 @@ export class TopNavComponent implements OnInit {
         }
         this.LastnotificationData =  JSON.parse(JSON.stringify(this.notificationData));
         this.notificationData.reverse();
-        console.log(this.notificationData)
       }));
       
     }
