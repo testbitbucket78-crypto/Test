@@ -488,12 +488,12 @@
 									</p>
 									<p class="form-control" *ngIf="csvContactList.length>0">
 										<input type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or map">
-										<span class="map_attribute" (click)="openMapOption(variable)">Map</span>
+										<span class="map_attribute" (click)="openMapOption(variable,i)">Map</span>
 									</p>
 									<div *ngIf="variable?.fallback" class="fallbackContainer">
 										<span class="fallbackValue">Fallback Value : {{variable?.fallback}}</span>
 									</div>
-									<div *ngIf="csvContactList.length>0 && selecetdVariable.label==variable.label && selecetdVariable.selected" class="popup-dialog">
+									<div *ngIf="csvContactList.length>0 && selecetdVariable.label== variable.label && selecetdVariable.selected && selecetdVariable.index==i" class="popup-dialog">
 										<p class="label">Map the column</p>
 										<p *ngFor="let map of csvContactColmuns ;let i = index" (click)="updatedCSVAttributeOption(map)"><span>{{map}}</span></p>
 									</div>

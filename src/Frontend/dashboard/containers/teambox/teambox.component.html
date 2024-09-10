@@ -86,13 +86,13 @@
 									
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
-											<p *ngIf="item.LastMessageDate" class="time">{{getTime(item.LastMessageDate)}}</p>
+											<p *ngIf="item.LastMessageDate" class="time">{{getTime(item?.LastMessageDate)}}</p>
 											<!-- <span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span> -->
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<div class="image-container">
 											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
 											<div  class="icon" class="hover-text2">
-												{{item.channel}} {{(item.connected_id ?'(' + item.connected_id + ')':'')}}
+												{{item?.channel}} {{(item?.connected_id ?'(' + item?.connected_id + ')':'')}}
 											</div>
 											<!-- <div *ngIf="item.channel=='WA API'" class="icon" class="hover-text2">
 												{{'WA API' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
@@ -534,7 +534,7 @@ popupWidth='250px' popupHeight='200px'>
 									<h1>{{selectedInteraction.Name}}</h1>
 									<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
 									<p>Created Date:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.InCreatedDate)}}</span></p>
-									<p>Last Updated:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.InUpadatedDate)}}</span></p>
+									<p>Last Updated:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.InUpdatedDate)}}</span></p>
 								</div>
 							</div>
 
@@ -609,9 +609,10 @@ popupWidth='250px' popupHeight='200px'>
 									<!-- <h6 class="mt-2" *ngIf="it?.type != 'Select'">{{items[it?.ActuallName]}}</h6>
 							<h6 class="mt-2" *ngIf="it?.type == 'Select'">{{getSplitItem(items[it?.ActuallName])}}</h6> -->
 									<div class="tag_list">
-										<div class="tag_item" *ngIf="it?.type != 'Select' && it?.type != 'Multi Select'">{{selectedInteraction[it?.ActuallName]}}</div>
+										<div class="tag_item" *ngIf="it?.type != 'Select' && it?.type != 'Multi Select' && it?.type != 'Date'">{{selectedInteraction[it?.ActuallName]}}</div>
 										<div class="tag_item" *ngIf="it?.type == 'Select'">{{getSplitItem(selectedInteraction[it?.ActuallName])}}</div>
 										<div class="tag_item" *ngIf="it?.type == 'Multi Select'">{{getSplitMultiSelect(selectedInteraction[it?.ActuallName])}}</div>
+										<div class="tag_item" *ngIf="it?.type == 'Date'">{{settingsService?.getDateTimeFormate(selectedInteraction[it?.ActuallName],true)}}</div>
 									</div>
 								</div>
 								<!-- <div class="parent-flex px-4 py-2 parent d-flex">
