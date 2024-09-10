@@ -729,7 +729,7 @@ const insertMessage = async (req, res) => {
             if (Type != 'notes') {
                 if (channelType[0].isBlocked != 1) {
                     if (req.body.message_type == 'text') {
-                        if (req.body.message_media != '' || req.body.message_media == 'text') {
+                        if (req.body.message_media !='text') {
                             const mediaType = determineMediaType(media_type);
                             middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                         } else {
