@@ -81,7 +81,7 @@ const addCampaign = async (req, res) => {
                 insertId: req.body.Id
             }
             let statusToUpdate = 1;  //For scheduled campaign status
-            if (status == '-1') {
+            if (status == '2') {
                 statusToUpdate = 2;
             }
            // campaignAlerts(req.body, req.body.Id, statusToUpdate)
@@ -99,7 +99,7 @@ const addCampaign = async (req, res) => {
             let addcampaign = await db.excuteQuery(inserQuery, [addCampaignValue]);
 
             let statusToUpdate = 1;  //For scheduled campaign status
-            if (status == '-1') {
+            if (status == '2') {
                 statusToUpdate = 2;
             }
             campaignAlerts(req.body, addcampaign.insertId, statusToUpdate)
@@ -247,8 +247,9 @@ const processContactQueries = async (req, res) => {
         for (let query of queries) {
             let listQuery = query //+ " and EC.isDeleted !=1  AND EC.IsTemporary !=1"
             if(isOptIn == 1){
-                listQuery = query //+ " and EC.isDeleted !=1  AND EC.IsTemporary !=1 and EC.OptInStatus =? "
+              //+ " and EC.isDeleted !=1  AND EC.IsTemporary !=1 and EC.OptInStatus =? "
                 query=query.replace('Group by EC.customerId',' and EC.OptInStatus =? Group by EC.customerId ')
+                listQuery = query 
             }
             const queryResult = await db.excuteQuery(listQuery,['Yes']);
             results = results.concat(queryResult);
