@@ -23,13 +23,13 @@
                 <div (click)="setChannelId('WA Web')" [ngClass]="{'card1_Wb': channel_id === 'WA Web'}" class="account-card card1 mb-3">
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
-                        <!-- <button class="account-btn" (click)="openDiv()">Connect</button> -->
+                        <button *ngIf="whatsAppDetails.length ==0" class="account-btn" (click)="openDiv()">Connect</button>
                     </div>
                     <div>
                         <h5>WhatsApp Web</h5>
                         <p>WhatsApp Web automation of your WhatsApp Personal or WhatsApp Business numbers</p>
                         <div class="whatsapp-cSonnect">
-                            <span class="font-weight-bold">{{whatsAppDetails[0].channel_id == 'WA Web' ? (numberCount !== undefined ? numberCount : 0) : 0 }} Configured</span>
+                            <span class="font-weight-bold">{{whatsAppDetails.length >0 ? (whatsAppDetails[0]?.channel_id == 'WA Web' ? (numberCount !== undefined ? numberCount : 0) : 0):0 }} Configured</span>
                         <span class="grey">&nbsp;&nbsp;&nbsp;></span>
                     </div>
                     </div>
@@ -43,7 +43,7 @@
                         <h5>WhatsApp Official</h5>
                         <p>WhatsApp Official API to automate and scale your business messaging requirements</p>
                         <div class="whatsapp-connect">
-                        <span>{{ whatsAppDetails[0].channel_id == 'WA API' ? (numberCount !== undefined ? numberCount : 0) : 0 }} Configured</span>
+                        <span>{{whatsAppDetails.length >0 ? ( whatsAppDetails[0]?.channel_id == 'WA API' ? (numberCount !== undefined ? numberCount : 0) : 0):0 }} Configured</span>
                         <span class="grey">&nbsp;&nbsp;&nbsp;></span>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                 <div class="connection-card"  *ngFor="let detail of whatsAppDetailsDisplay">
                     <div class="account-card-header" >
                         <div >
-                            <div class="card-desc">Configured Number : {{ detail.connected_id}}</div>
+                            <div class="card-desc">Configured Number : {{ detail?.connected_id}}</div>
                             <div class="d-flex align-items-center p-1">
                                 <!-- <div class="card-desc">Channel Id: {{ detail.id}}</div> -->
                                 <div *ngIf="!detail.channel_status" class="card-desc">

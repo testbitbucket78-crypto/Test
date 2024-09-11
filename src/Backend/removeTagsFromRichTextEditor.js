@@ -198,7 +198,10 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
 function convertHTML(htmlString) {
   // Replace <p> and <br> tags with newline characters
 
-  let result = htmlString.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
+  let result = htmlString
+    .replace(/<p>/g, '\n')   
+    .replace(/<\/p>/g, '\n')    
+    .replace(/<br>/g, '\n');
   result = result.replace(/<strong>(.*?)<\/strong>/g, '*$1*');
   // Replace <em> tags with underscores
   result = result.replace(/<em>(.*?)<\/em>/g, '_$1_');
@@ -217,9 +220,40 @@ result = result.replace(/contenteditable="false" class="e-mention-chip">/g, '');
 // Remove specific attributes from <a> tags
 result = result.replace(/\s_ngcontent-[^"]*=""\s?href="mailto:"\s?title="">/g, '');
 result = result.replace(/\s_ngcontent-yyb-c67[^"]*=""\s?title="">/g, '');
+result = result.replace(/\*\s+([^\*]+?)\s*\*/g, '**$1**'); 
+result = result.replace(/_\s+([^_]+?)\s*_*/g, '_$1_'); 
+result = result.replace(/~\s+([^~]+?)\s*~/g, '~$1~ \n');
+result = result.replace(/~\s*(.*?)\s*~/g, ' ~$1~ \n');
+
+// Fix extra spaces around newlines
+result = cleanMessage(result);
   return result;
 }
 
+
+function cleanMessage(result) {
+  if (!result) return result;
+  result = htmltagsReplace(result);
+  result = result
+    .replace(/\*<([^>]+)>/g, '<$1>')
+    .replace(/_\*([^\*_]+)\*_+/g, '$1') 
+    .replace(/\*(\w+)\*/g, '$1')
+    .replace(/_(\w+)_/g, '$1')
+    .replace(/\s_ngcontent-[^"]*="[^"]*"/g, '');
+  return result;
+}
+
+function htmltagsReplace(data) {
+  if (!data) return data;
+  let result = data
+    .replace(/&amp;/g, '&') 
+    .replace(/&lt;/g, '<')   
+    .replace(/&gt;/g, '>')    
+    .replace(/&quot;/g, '"')  
+    .replace(/&apos;/g, "'"); 
+
+  return result;
+}
 function encloseWordsInMatchingTags(sentence) {
   // Regular expression to find opening and closing tags (with nesting support)
   const tagRegex = /<([a-z]+)[^>]*>(.*?)<\/\1>/gi;

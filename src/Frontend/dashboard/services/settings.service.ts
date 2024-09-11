@@ -89,6 +89,35 @@ export class SettingsService {
   }
   }
 
+  convertTimeFormat(time: string): string {
+    let format = this.timeFormat;
+    if(time){
+    if (format === '24') {
+        const [timePart, modifier] = time.split(' ');
+        let [hours, minutes] = timePart.split(':');
+
+        if (hours === '12') {
+            hours = '00';
+        }
+        if (modifier === 'PM') {
+            hours = (parseInt(hours, 10) + 12).toString();
+        }
+        return `${hours.padStart(2, '0')}:${minutes}`;
+    } else {
+        let [hours, minutes] = time.split(':');
+        const modifier = parseInt(hours, 10) >= 12 ? 'PM' : 'AM';
+        if (parseInt(hours, 10) === 0) {
+            hours = '12';
+        } else if (parseInt(hours, 10) > 12) {
+            hours = (parseInt(hours, 10) - 12).toString();
+        }
+        return `${hours.padStart(2, '0')}:${minutes} ${modifier}`;
+    }
+  }else
+    return '';
+}
+
+
   getInitials(name:any){
     let intials ='';
     if(name){

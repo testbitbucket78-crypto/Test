@@ -32,12 +32,12 @@
 						src="../../../../assets/img/arrow-down.svg">
 			</button>
 			</div>
-			<div id="export-btn">
+			<div id="export-btn" *ngIf="!settingsService.checkRoleExist('6')">
 				<button class="btn-press btn-9 "  (click)="openExport(content)" > <img
 						src="../../../../assets/img/export.svg"> Export </button>
 			</div>
-			<div id="import-btn" >
-				<button class="btn  btn-block" id="import-btn" data-bs-toggle="modal" data-bs-target="#importmodal" [disabled]="settingsService.checkRoleExist('5')"><img
+			<div id="import-btn" *ngIf="!settingsService.checkRoleExist('6')">
+				<button class="btn  btn-block" id="import-btn" data-bs-toggle="modal" data-bs-target="#importmodal" ><img
 						src="../../../../assets/img/import.svg">
 					Import
 				</button>
@@ -45,8 +45,8 @@
 			<div id="add-contact">
 				<button class="btn  btn-block" id="add-contact" (click)="open(contactadd)" [disabled]="settingsService.checkRoleExist('3')"><span><img src="../../../../assets/img/teambox/add.svg" /></span>Add Contact</button>
 			</div>
-			<div id="delete-btn">
-				<button class="btn-delete row-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteContact" [disabled]="settingsService.checkRoleExist('6')"><img
+			<div id="delete-btn" *ngIf="!settingsService.checkRoleExist('6')">
+				<button class="btn-delete row-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteContact" ><img
 						src="../../../../assets/img/profile/delete.svg"></button>
 			</div>
 		</div>
@@ -181,10 +181,11 @@
 					<div class="parent-flex p-2 parent d-flex flex-column">
 						<div class="child23" *ngFor="let it of filteredCustomFields">
 							<h5>{{it?.displayName}}</h5>
-							<h6 class="mt-2" *ngIf="it?.type != 'Select' && it?.type != 'Multi Select' && it?.type != 'Date'">{{items[it?.ActuallName]}}</h6>
+							<h6 class="mt-2" *ngIf="it?.type != 'Select' && it?.type != 'Multi Select' && it?.type != 'Date' && it?.type != 'Time'">{{items[it?.ActuallName]}}</h6>
 							<h6 class="mt-2" *ngIf="it?.type == 'Select'">{{getSplitItem(items[it?.ActuallName])}}</h6>
 							<h6 class="mt-2" *ngIf="it?.type == 'Multi Select'">{{getSplitMultiSelect(items[it?.ActuallName])}}</h6>
 							<h6 class="mt-2" *ngIf="it?.type == 'Date'">{{settingsService?.getDateTimeFormate(items[it?.ActuallName],true)}}</h6>
+							<h6 class="mt-2" *ngIf="it?.type == 'Time'">{{settingsService?.convertTimeFormat(items[it?.ActuallName])}}</h6>
 						</div>
 					</div>
 					<!-- <div class="justify-content-between px-4 py-2 parent d-flex">
@@ -215,10 +216,10 @@
 			</div>
 			<div class="btn-footer mt-3">
 				<div class="button my-4 d-flex justify-content-center align-items-center">
-					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('4')">
+					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('5')">
 						<img src="../../../../assets/img/profile/delete.svg">
 					</button>
-					<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="settingsService.checkRoleExist('4')">
+					<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="settingsService.checkRoleExist('5')">
 						<img src="../../../../assets/img/teambox/Edit.svg">
 					</button>
 					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn" [ngClass]="{'blocked':this.isBlocked==1}">{{this.isBlocked==1 ? 'Blocked' : 'Block'}}</button>
