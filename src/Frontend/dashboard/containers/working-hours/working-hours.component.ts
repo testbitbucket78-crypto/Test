@@ -379,7 +379,7 @@ isLoading!: boolean;
 
         if (endTime <= startTime) {
           this.showToaster(`Warning: End time cannot be earlier than or same as Start time for schedule on ${schedule.day}.`,'error');
-          return {isOverlap: false, isNone:true};
+          return {isOverlap: true, isNone:true};
         }
     
         for (const day of days) {
