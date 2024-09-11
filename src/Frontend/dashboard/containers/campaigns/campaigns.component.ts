@@ -1428,7 +1428,10 @@ formateDate(dateTime:string){
 		this.newCampaignDetail.get('channel_id').setValue(this.selectedCampaign.channel_id);
 		this.newCampaignDetail.get('channel_label').setValue(this.selectedCampaign.channel_label);
 		this.newCampaignDetail.get('title').setValue(this.selectedCampaign.title);
-		
+		this.newListName = '';
+		this.importedContacts = '';
+		this.segmentsContactList =[];
+		this.csvContactList =[];
 		if(this.selectedCampaign.segments_contacts.length>0){
 		this.segmentsContactList = 	JSON.parse(this.selectedCampaign.segments_contacts)
 		this.step2Option='AddSegmentAudience'
