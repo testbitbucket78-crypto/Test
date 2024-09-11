@@ -199,7 +199,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
 
     message_media = imageurl.value;
 
-   // message_text = " "
+    message_text = " "
     var media_type = 'image/jpg'
   }
 
@@ -220,7 +220,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
     var media_type = "application/pdf"
   }
 
-  if (message_text.length > 0) {
+  if (message_text.length > 0 || message_media.length > 0) {
     let myUTCString = new Date().toUTCString();
     const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time,countryCode]);

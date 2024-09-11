@@ -103,7 +103,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
          executablePath: "/usr/bin/google-chrome-stable",
-          //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+       // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 
           args: [
             '--no-sandbox',
@@ -769,6 +769,7 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
       let contactName = message._data.notifyName!== '' ? message._data.notifyName : endCustomer; //contactName
 
       if (message.hasMedia) {
+        console.log("media" ,Type)
         const media = await message.downloadMedia();
 
         message_media = media?.data
@@ -779,8 +780,8 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
 
 
       if (from != 'status@broadcast') {
-        console.log(message_text,"****************",currentIndex , lastIndex,message.timestamp)
-        console.log("lost messages time", d)
+        console.log("endCustomer",endCustomer,"Type",Type,"message_text",message_text,"****************",currentIndex , lastIndex,message.timestamp)
+      //  console.log("lost messages time", d)
         let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time);
  //console.log(saveMessage)
         if (currentIndex == lastIndex) {
@@ -822,7 +823,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
       let latestSms = await db.excuteQuery('select * from Message where interaction_id=?  and is_deleted !=1 order by created_at desc',[newId])
       notify.NotifyServer(display_phone_number, false, newId, 'IN', 0, msg_id)
       let smartReplyActions = await incommingmsg.sReplyActionOnlostMessage(latestSms[0]?.message_text, sid, 'WA Web', phone_number_id, from, custid, agid, newId,display_phone_number);
-     console.log("smartReplyActions" ,smartReplyActions)
+     console.log("smartReplyActions" ,smartReplyActions,custid,agid,latestSms)
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       if (smartReplyActions >= -1) {
@@ -862,7 +863,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
           console.log(newId,"------------in case of smart reply not trigger")
           notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
         }
-      }
+      
       let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
       if (RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true) {
         notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
@@ -873,6 +874,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
         let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
       }
     }
+    }
   } catch (err) {
     console.log("err actionsOflatestLostMessage", err)
   }
@@ -882,7 +884,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
   // console.log("saveIncommingMessages")
 
   if (Type == "image") {
-    // console.log("lets check the image");
+     console.log("lets check the image");
 
     var imageurl = await saveImageFromReceivedMessage(from, message_media, phone_number_id, display_phone_number, Type);
 
@@ -911,11 +913,12 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
    // message_text = " "
     var media_type = 'application/pdf'
   }
-  if (message_text.length > 0) {
+  if ((message_text.length > 0 || message_media.length > 0 ) && Type != 'e2e_notification') {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+   // console.log([phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode])
     var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode]);
     notify.NotifyServer(display_phone_number, true);
-    //    console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
+       //console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
 
 
   }

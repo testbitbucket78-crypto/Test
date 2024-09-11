@@ -77,7 +77,8 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
     }
     //const autoReplyVal = new Date(currentTime)   // autoReplyTime when auto reply start
     console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyVal, autoReplyTime)
-    if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined ) {
+    console.log( (autoReplyTime <= currentTime),"(autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ",(autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ))
+    if (autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ) {
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number)
       return sendSReply;
     }
@@ -538,7 +539,9 @@ async function assignAction(value, agid, newId, custid,sid,display_phone_number)
   is_active = 1
   var values = [[is_active, newId, value, agid]]
   let activeUser = await isAgentActive(value)
+  console.log(activeUser,"activeUser")
   if(activeUser){
+    console.log("iffffffffff","activeUser")
     var assignCon = await db.excuteQuery(updateInteractionMapping, [values])
   }else{
     defaultRoutingRules(sid, newId, agid, custid,display_phone_number)
