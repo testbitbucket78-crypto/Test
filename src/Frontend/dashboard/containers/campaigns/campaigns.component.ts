@@ -1002,7 +1002,7 @@ formateDate(dateTime:string){
 			if(filters.items.length>0){
 		   // filters.items[0]['filterOperator']='';	
 			
-			let colName = filters.filterPrefix
+			let colName = 'EC.'+filters.filterPrefix
 			if(colName =="Conversation Resolved"){
 			  if(filters?.items[0].filterBy == 'true')
 				  contactFilter = contactFilter + " and ((Interaction.interaction_status='Resolved')";
@@ -1021,7 +1021,7 @@ formateDate(dateTime:string){
 			} else{
 			
 			if(colName =='Phone_number'){
-			  colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
+			  colName = "REGEXP_REPLACE(EC.Phone_number, '[^0-9]', '')"
 			}
 	
 			contactFilter += idx == 0 ?' and ((' :  filters.items[0]['filterOperator'] == '' ? ' and ('  : filters.items[0]['filterOperator'] + ' (';
@@ -2257,9 +2257,10 @@ testinfo(){
 		this.selectedFallback = "";
 	}
 	
-	openMapOption(variable:any){
+	openMapOption(variable:any,index:any){
 		this.selecetdVariable = variable
-		this.selecetdVariable['selected']=true
+		this.selecetdVariable['selected']=true;
+		this.selecetdVariable['index']=index;
 		console.log(this.selecetdVariable)
 	}
 	updatedCSVAttributeOption(attribute:any,){

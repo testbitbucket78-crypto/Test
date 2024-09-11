@@ -1422,7 +1422,7 @@ async function UnassignedBlockedContact(customerId, spid, isBloacked) {
     let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`, [customerId, spid])
     let findMappingQuery = `SELECT *
 FROM InteractionMapping
-WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC);`
+WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC) order by created_at desc limit 1;`
 
     let mapping = await db.excuteQuery(findMappingQuery, [customerId, spid]);
 
