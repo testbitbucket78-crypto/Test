@@ -726,7 +726,14 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	removeMediaTags(htmlContent: string): string {
 		let updatedHtml = htmlContent.replace(/<img[^>]*>[^<]*|<video[^>]*>[^<]*<\/video>/gi, '');
 		updatedHtml = updatedHtml.replace(/<p[^>]*><a[^>]*href=['"][^'"]*\.(pdf|doc|docx|ppt|pptx)['"][^>]*>[^<]*<\/a><\/p>/gi, '');
-		updatedHtml = updatedHtml.replace(/\sstyle="[^"]*"/gi, '');
+		updatedHtml = updatedHtml.replace(/\sstyle="([^"]*)"/gi, (match, styles) => {
+			const allowedStyles = ['text-decoration: line-through'];
+			const filteredStyles = styles
+				.split(';')
+				.map((style: any)=> style.trim())
+				.filter((style: any) => allowedStyles.includes(style));
+			return filteredStyles.length > 0 ? ` style="${filteredStyles.join('; ')}"` : '';
+		});
 		updatedHtml = updatedHtml.replace(/<button[^>]*>✖<\/button>/gi, '');
 		return updatedHtml;
 	  }
