@@ -477,7 +477,7 @@
 
                         <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" 
                            [checked]="templatesMessageData.media_type=='text' || galleryMessageData.media_type=='text'">
-                        <label [ngClass]="{'radio-label': selectedType === 'text'}" class="m-0" for="sel-text">Text{{selectedType}}</label>
+                        <label [ngClass]="{'radio-label': selectedType === 'text'}" class="m-0" for="sel-text">Text</label>
                         <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')"
                         [checked]="templatesMessageData.media_type=='image' || galleryMessageData.media_type=='image'">
                         <label [ngClass]="{'radio-label': selectedType === 'image'}"  class="m-0" for="sel-image">Image</label>
@@ -738,7 +738,6 @@
                         <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
                     </div>
                 </div>
-                {{newTemplateForm.get('FooterText')?.value}}
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
                 <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
                     <span *ngIf="newTemplateForm.get('Header')?.value" class="font-weight-bolder" [innerHTML]="newTemplateForm.get('Header')?.value | sanitizeHtml"></span><br /><br />
