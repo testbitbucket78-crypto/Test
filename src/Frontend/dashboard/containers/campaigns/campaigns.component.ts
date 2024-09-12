@@ -1087,6 +1087,8 @@ formateDate(dateTime:string){
 			})
 			contactFilter += ' ) Group by EC.customerId';
 		  
+		  } else {
+			contactFilter += ' Group by EC.customerId';
 		  }
 		  console.log(contactFilter)
 		  return contactFilter;
@@ -1299,7 +1301,7 @@ formateDate(dateTime:string){
 	selectScheduleTime(event: any) {
 		this.selecteScheduleTime= event;
 		//this.selectedScheduleTime= new Date(event.target.valueAsDate).toLocaleTimeString()
-		this.selectedScheduleTime = new Date(new Date(new Date().setHours(event.split(':')[0],event.split(':')[1])).setSeconds(0)).toLocaleTimeString();
+		this.selectedScheduleTime = this.datepipe.transform(new Date(new Date(new Date().setHours(event.split(':')[0],event.split(':')[1])).setSeconds(0)),'hh:mm a');
 		this.checkScheduleTiming(event);
 	  }
 
