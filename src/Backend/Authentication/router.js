@@ -87,7 +87,7 @@ var storage = multer.diskStorage({
     
    },
    filename: function (req, file, cb) {
-      cb(null, `${Date.now()}-${file.originalname}`);
+      cb(null, `${Date.now()}-${uuidv4()}-${file.originalname}`);
    }
 });
 var upload = multer({ storage: storage });
@@ -101,7 +101,7 @@ if (!file) {
 res.send({message:'File no uplaoded...'})
 }
 const uuidv = uuidv4()
-const url =  path.join(__dirname, `/uploads/${uuidv}/${file.filename}`)//`${req.protocol}://${req.get('host')}/uploads/${file.filename}`
+const url =  path.join(__dirname, `/uploads/${file.filename}`)//`${req.protocol}://${req.get('host')}/uploads/${file.filename}`
 
 // Get file stats to obtain file size
 const stats = await fs.stat(url);
