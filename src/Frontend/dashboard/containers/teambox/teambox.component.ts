@@ -2079,7 +2079,7 @@ console.log(getMimeTypePrefix);
 			var hoursBH = hours < 10 ? "0" + hours : hours;
 			var minutes = messCreated.getMinutes() < 10 ? "0" + messCreated.getMinutes() : messCreated.getMinutes();
 			var time = hoursBH + ":" + minutes  + " " + am_pm;
-			return this.datePipe.transform(messCreated, this.settingService.timeFormat == '12'?'hh:mm a':'hh mm');
+			return this.datePipe.transform(messCreated, this.settingService.timeFormat == '12'?'hh:mm a':'HH:mm');
 		
 	}else{
 		return ''
@@ -3754,7 +3754,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		yesterday.setDate(new Date().getDate() - 1);
 		if(date.getFullYear() === currDate.getFullYear() && date.getMonth() === currDate.getMonth() &&
 		date.getDate() === currDate.getDate()){
-			return this.datePipe.transform(date,this.settingService.timeFormat =='12' ?'hh:mm a' : 'hh:mm');
+			return this.datePipe.transform(date,this.settingService.timeFormat =='12' ?'hh:mm a' : 'HH:mm');
 		} else if(date.getFullYear() === currDate.getFullYear() && date.getMonth() === currDate.getMonth() &&
 		date.getDate() === yesterday.getDate()){
 			return 'Yesterday';
