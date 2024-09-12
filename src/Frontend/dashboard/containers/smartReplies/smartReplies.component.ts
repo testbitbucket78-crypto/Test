@@ -143,6 +143,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	indexSelected: number = 0;
 	templateChecked: boolean = false;
 	allVariables: string = '';
+	InitallVariables:any;
 	selectedAttribute: any;
 	fallbackvalue: string[] = [];
 	isFallback: any[] = [];
@@ -408,6 +409,7 @@ showAddSmartRepliesModal() {
 			allVariables.push(variable);
 		}
 		this.allVariables = JSON.stringify(allVariables);
+		this.InitallVariables = allVariables;
 	}
 	
 	

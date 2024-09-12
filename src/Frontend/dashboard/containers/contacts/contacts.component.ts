@@ -312,7 +312,7 @@ onButtonClick(data:any, event: any) {
     ngOnInit() {
       this.isLoadingOnInit = true;
       this.spid = Number(sessionStorage.getItem('SP_ID'));
-      document.getElementById('delete-btn')!.style.display = 'none';
+      //document.getElementById('delete-btn')!.style.display = 'none';
       this.showTopNav = true;
 
       this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
@@ -357,9 +357,9 @@ onButtonClick(data:any, event: any) {
       itemsShowLimit: 3,
       allowSearchFilter: this.ShowFilter
   };
+  this.getContact();
 
     this.routerGuard();
-		this.getContact();
     this.getUserList();
     this.getTagData();
     this.getCustomFieldsData();
@@ -1016,8 +1016,9 @@ deletContactByID(data: any) {
       this.productForm.get(prop)?.setValue(value)
       this.productForm.get('tag')?.setValue(selectedTags); 
       let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
-      if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
-        this.productForm.get(prop)?.setValue(value);
+      if( idx>-1 &&  this.filteredCustomFields[idx] && this.filteredCustomFields[idx].type == 'Date'){
+        let dateVal = this.datePipe.transform(new Date(value),'yyyy-MM-dd')
+        this.productForm.get(prop)?.setValue(dateVal);
       }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
         let val = value ? value.split(':')[0] : '';
         console.log(val);
