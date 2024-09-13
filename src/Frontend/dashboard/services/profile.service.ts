@@ -101,6 +101,10 @@ export class ProfileService {
     return this.http.get(`${this.API_URL}/getNotifications/${spId}`);
   }
 
+  readNotification(spId:number,uid:number): Observable<any> { 
+    return this.http.post(`${this.API_URL}/updateNotifications/${spId}/${uid}`,null);
+   }
+
   // support page FAQS
 
   getFaqsTitles(): Observable<any> { 

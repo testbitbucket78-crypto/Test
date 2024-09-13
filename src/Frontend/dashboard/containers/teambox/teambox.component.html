@@ -49,7 +49,7 @@
 							src="/assets/img/teambox/add.svg" /> {{ searchFocused ? '' : 'New Message' }}</button>
 				</div>
 				<div class="custom_row mt-3">
-					<p *ngIf="interactionList" class="conversaction_status">{{interactionFilterBy}}<span
+					<p *ngIf="interactionList" class="conversaction_status">{{interactionFilterBy =='Mine' ? 'My Open' : interactionFilterBy}}<span
 							class="total_count red">{{unreadList}}</span></p>
 				</div>
 				<div>
@@ -203,7 +203,7 @@
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Unassigned</span>
 									</p>
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('13'))">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('13'))">
 										<span class="text-capitalize initials"> M </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Myself</span>

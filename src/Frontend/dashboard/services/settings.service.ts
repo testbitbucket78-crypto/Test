@@ -15,6 +15,7 @@ export class SettingsService {
   dateFormat:any;
   timezone:any;
   timeFormat:any;
+  unreadCount:any= 0;
 
   
   countryCodes = [
