@@ -92,6 +92,7 @@ export class RolesSettingsComponent implements OnInit {
     paging: any = 1;
     lastElementOfPage: any;
     isLoading!:boolean;
+    disabledRights=[22,23,24,25,28,29,30];
     constructor(public _settingsService: SettingsService,public settingsService: SettingsService,private datePipe:DatePipe, private fb: FormBuilder, public GridService: GridService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
@@ -224,7 +225,7 @@ export class RolesSettingsComponent implements OnInit {
                 }
             });
         }
-        console.log(this.totalRights);
+        console.log(this.totalRights,'tR');
     }
 
     saveRolesDetails() {
@@ -419,5 +420,17 @@ export class RolesSettingsComponent implements OnInit {
         if (this.roleData?.RoleName === 'Admin' || this.roleData?.RoleName === 'Agent') {
             event.stopPropagation();
           }
+      }
+
+      getDisableRight(subRightId:any){
+        if(this.disabledRights.includes(subRightId)){
+            return true;
+        } else return false;
+      }
+
+      setFirstRight(index:any,event:any){
+        console.log(event);
+        if(event.target.checked)
+            this.totalRights[index].subRights[0].isSelected = true;
       }
 }

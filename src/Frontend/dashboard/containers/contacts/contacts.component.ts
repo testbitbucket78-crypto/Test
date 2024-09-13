@@ -1263,8 +1263,12 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
                 }
               }
             }
+           
             if(item.type == 'Date'){
               columnDesc.valueFormatter= this.dateFormatter.bind(this);
+            }
+            if(item.type == 'Time'){
+              columnDesc.valueFormatter= this.timeFormatter.bind(this);
             }
 
             if(item.type == 'Multi Select'){
@@ -1322,7 +1326,13 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 
   dateFormatter(params: any): string {
     const date = new Date(params.value);
-    const formattedDate = this.datePipe.transform(date, this._settingsService.dateFormat);
+    const formattedDate = this.settingsService.getDateTimeFormate(date, true);
+    return formattedDate ? formattedDate : '';
+}
+
+timeFormatter(params: any): string {
+    const date = params.value;
+    const formattedDate = this.settingsService.convertTimeFormat(date);
     return formattedDate ? formattedDate : '';
 }
   yearValidator(control: FormControl) : { [key: string]: boolean }  | null {
@@ -1385,7 +1395,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   }
 
   ngOnDestroy(){
-    console.log(this.gridapi.getColumnDefs());
+    console.log(this.gridapi?.getColumnDefs());
     this.storeGridConfig();
   }
 
