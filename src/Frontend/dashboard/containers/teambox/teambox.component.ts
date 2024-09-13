@@ -591,8 +591,11 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, '{{' + index + '}}');
 			}
 			val.push({idx:'{{' + index + '}}',value:this.variableValues[index]});
-			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, '{{' + index + '}}');
+			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, (match: any) => {
+				return '{{' + index++ + '}}';
+			});
 		});
+		
 		val.forEach((placeholder:any) => {
 			const regex = new RegExp(placeholder?.idx?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
 			if(this.selectedTemplate.media_type == 'text') {
