@@ -312,7 +312,7 @@ onButtonClick(data:any, event: any) {
     ngOnInit() {
       this.isLoadingOnInit = true;
       this.spid = Number(sessionStorage.getItem('SP_ID'));
-      //document.getElementById('delete-btn')!.style.display = 'none';
+      
       this.showTopNav = true;
 
       this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
@@ -1442,6 +1442,8 @@ timeFormatter(params: any): string {
 }    
   },2000); 
   console.log(this.columnDefs);
+  if(document.getElementById('delete-btn'))
+        document.getElementById('delete-btn')!.style.display = 'none';
   }
 
   getSplitItem(val:any){

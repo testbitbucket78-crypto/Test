@@ -499,7 +499,9 @@ export class ContactFilterComponent implements OnInit {
           })
 		  contactFilter += ' ) Group by EC.customerId';
         
-        }
+        } else{
+			contactFilter += ' Group by EC.customerId';
+		}
         console.log(contactFilter)
         return contactFilter;
     }

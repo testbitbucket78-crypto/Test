@@ -688,8 +688,7 @@ opacity: 1;
     margin-bottom: 9px;
 }
 .parent-flex{
-    display: flex;
-    flex-wrap: wrap;
+    word-wrap: break-word;
 }
 .sidebar .parent .child23 h5{
     color: #6149CD;
