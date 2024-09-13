@@ -999,10 +999,28 @@
 								  <p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 								  </div>
 							  </div>
-							  <div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
-								<button type="button" class="btn">Button 1</button>
-								<button type="button" class="btn">Button 2</button>
-								<button type="button" class="btn">Button 3</button>
+							  
+							  <!-- (click)="toggleshowAdvance()"   *ngIf="showAdvance" -->
+							  <p class="sub_title_lg blackcolor dropdown mb-2">Advance Options<img  class="icon" src="/assets/img/teambox/down-aarow.svg"><img class="icon" src="/assets/img/teambox/up-aarow.svg"></p>
+							<div >
+							<p class="sub_title_sm blackcolor">Variable Values</p>
+							<div class="btn_group" *ngFor='let variable of InitallVariables ;let i = index' >
+								<input type="text" value={{variable.label}} /> {{variable.value}}
+							</div>
+							<!--<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1 && (selectedTemplate?.buttons?.length>1 || selectedTemplate?.buttons?.length ==1)">
+							<p class="sub_title_sm blackcolor mt-2 mb-2">Button Payload</p>
+							 <div class="btn_group"><input type="text" value="YES" /> {{selectedTemplate.button_yes}}</div>
+							<div class="btn_group"><input type="text" value="No" /> {{selectedTemplate.button_no}}</div>
+							<div class="btn_group"><input type="text" value="EXPLORE" /> {{selectedTemplate.button_exp}}</div>
+						</div> -->
+						<div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
+							<button type="button" class="btn">Button 1</button>
+							<button type="button" class="btn">Button 2</button>
+							<button type="button" class="btn">Button 3</button>
+						  </div>
+							</div>
+							  <div>
+
 							  </div>
 							</div>
 					  

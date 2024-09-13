@@ -105,6 +105,7 @@ export class SettingsService {
         return `${hours.padStart(2, '0')}:${minutes}`;
     } else {
         let [hours, minutes] = time.split(':');
+        minutes = minutes.split(' ')[0];
         const modifier = parseInt(hours, 10) >= 12 ? 'PM' : 'AM';
         if (parseInt(hours, 10) === 0) {
             hours = '12';

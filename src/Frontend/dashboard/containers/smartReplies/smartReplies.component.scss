@@ -2739,3 +2739,33 @@ img.icon.sm {
     height: 240px !important;
     max-width: 100% !important;
   }
+
+  .btn_group{
+	margin:5px 0px;
+	font-size: 12px;
+	font-weight: 400;
+	}
+	.btn_group input{
+	border: 1px solid #E9E9EA;
+	border-radius: 15px;
+	background: #FFFFFF;
+	width: auto;
+	height:35px;
+	font-size: 12px;
+	text-align: center;
+	margin-right: 1rem;
+	}
+
+    .sub_title_sm{
+        font-size:12px;
+        font-weight: 600;
+        color:#6149CD
+        }
+.sub_title_lg{
+        font-size:14px;
+        font-weight: 600;
+        color:#6149CD
+        }
+.blackcolor{
+        color: #000;
+        }

@@ -211,8 +211,8 @@ export class ContactFilterComponent implements OnInit {
 					options =[
 						{label:'Is empty',checked:false,type:'switch'},
 						{label:'Is not empty',checked:false,type:'switch'},
-						// {label:'Is',checked:false,type:'select_opt',options:selectOptions},
-						// {label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
+						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
 					];
 					break;
 				}
@@ -221,8 +221,8 @@ export class ContactFilterComponent implements OnInit {
 					options =[
 						{label:'Is empty',checked:false,type:'switch'},
 						{label:'Is not empty',checked:false,type:'switch'},
-						// {label:'Is',checked:false,type:'select_opt',options:selectOptions},
-						// {label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
+						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
 					];
 					break;
 				}
@@ -499,7 +499,9 @@ export class ContactFilterComponent implements OnInit {
           })
 		  contactFilter += ' ) Group by EC.customerId';
         
-        }
+        } else{
+			contactFilter += ' Group by EC.customerId';
+		}
         console.log(contactFilter)
         return contactFilter;
     }

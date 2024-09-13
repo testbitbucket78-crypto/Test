@@ -192,7 +192,7 @@ assignUUID(manualassign: string, assignspecificuser: string){
     };
 
     this.routingRulesData.timeoutperiod = this.timeoutperiod;
-    this.routingRulesData.enableAdmin = this.enableAdmin;
+    this.routingRulesData.enableAdmin = this.enableAdmin ? 1 :0;
     if(this.missedChatOption) {
       this.routingRulesData.isMissChatAssigContactOwner = Number(this.missedChatOption === 'isMissChatAssigContactOwner' ? '1' : '0');
       this.routingRulesData.isadmin = Number(this.missedChatOption === 'isadmin' ? '1' : '0');
