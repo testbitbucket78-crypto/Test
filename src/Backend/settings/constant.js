@@ -203,7 +203,7 @@ JOIN user u ON u.uid=c.uid
 
 //_______________________________CONTACT SETTINGS________________________//
 
-var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at) values ?`
+var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at,updated_at) values ?`
 var updatetag = `UPDATE EndCustomerTagMaster set TagName=?,TagColour=?,updated_at=? where ID=?`
 var deletetag = `UPDATE EndCustomerTagMaster set isDeleted=1,updated_at=? where ID=?`
 var selecttag = `SELECT
@@ -223,7 +223,7 @@ AND tm.isDeleted != 1;`
 
 
  var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1 `
- var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,dataTypeValues) values ?`
+ var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,updated_at,dataTypeValues) values ?`
  
 //  let getcolumn = `SELECT column_name as displayName,column_name as ActuallName ,data_type as type, 1 as mandatory,1 as status,0 as id,"" as created,"" as updated ,"" as description ,"" as dataTypeValues
 //  FROM information_schema.columns
