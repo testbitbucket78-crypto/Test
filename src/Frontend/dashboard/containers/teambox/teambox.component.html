@@ -1005,7 +1005,7 @@ popupWidth='250px' popupHeight='200px'>
 									</div>
 									<!-- <embed *ngIf="template.media_type === 'document'" [src]="template.Links" type="application/pdf" width="100%" height="400px"> -->
 								  <div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
-									<p *ngIf="template.media_type ==='text'"  [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+									<p *ngIf="template.media_type ==='text' && template.Header"  [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 									<p [innerHTML]="template.BodyText| sanitizeHtml"></p>
 									<p [innerHTML]="template.FooterText | sanitizeHtml"></p>
 								  </div>

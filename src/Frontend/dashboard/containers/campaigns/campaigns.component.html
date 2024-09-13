@@ -423,7 +423,7 @@
 								<img *ngIf="template.media_type=='image'" class="template_img" src="{{template.Links}}">
 								<div *ngIf="!template.media_type" class="template_img_placeholder"></div>
 								<div class="template_text">
-									<p [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+									<p *ngIf="template.Header" [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 									<div [innerHTML]="template.BodyText | sanitizeHtml"> </div>
 									<p [innerHTML]="template.FooterText | sanitizeHtml" class="footer"></p>
 								  </div>
