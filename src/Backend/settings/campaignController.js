@@ -207,7 +207,8 @@ const addTag = async (req, res) => {
         else {
             let selectTag = await db.excuteQuery('Select * from EndCustomerTagMaster where SP_ID=? and TagName=?', [SP_ID, TagName])
             if (selectTag?.length == 0) {
-                let addValue = [[TagName, TagColour, SP_ID, created_at]];
+                const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+                let addValue = [[TagName, TagColour, SP_ID, created_at,updated_at]];
                 let addedTag = await db.excuteQuery(val.addtag, [addValue]);
                 console.log(addedTag)
                 res.status(200).send({
@@ -271,6 +272,7 @@ const addCustomField = async (req, res) => {
 
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let values = (req.body.values);
 
 
@@ -299,7 +301,7 @@ const addCustomField = async (req, res) => {
             const CustomColumn = "column" + (allData[0].columnCount + 1);
 
             // Prepare values for insertion
-            const insertionValues = [CustomColumn, ColumnName, SP_ID, Type, description, created_at, JSON.stringify(values)];
+            const insertionValues = [CustomColumn, ColumnName, SP_ID, Type, description, created_at,updated_at, JSON.stringify(values)];
 
             // Insert the new custom field
             const addFieldResult = await db.excuteQuery(val.addcolumn, [[insertionValues]]);
@@ -400,6 +402,17 @@ const getCustomField = async (req, res) => {
     try {
         let getfields = await db.excuteQuery(val.getcolumn, [req.params.spid]);
 
+        getfields.forEach((record) => {
+            if (record.created) {
+                const createdDate = new Date(record.created); 
+                record.created = createdDate 
+            }
+    
+            if (record.updated) {
+                const updatedDate = new Date(record.updated);
+                record.updated = updatedDate
+            }
+        });
 
         // Update fields based on ActuallName
         const updatedFields = getfields.map(field => {
