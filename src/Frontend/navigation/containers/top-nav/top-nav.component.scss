@@ -475,5 +475,21 @@
     height: calc(100% - 216px) !important;
     overflow-y: scroll !important;
 }
-
+.notify-count{
+    background: red;
+    color: white;
+    padding: 0px 3px;
+    border-radius: 6px;
+    font-size: 12px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    height: 19px;
+    /* margin-bottom: 2px; */
+    position: relative;
+    top: -11px;
+    right: 3px;
+    min-width: 18px;
+    justify-content: center;
+}
 

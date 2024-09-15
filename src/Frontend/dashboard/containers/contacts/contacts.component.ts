@@ -1397,11 +1397,12 @@ timeFormatter(params: any): string {
 
   ngOnDestroy(){
     console.log(this.gridapi?.getColumnDefs());
-    this.storeGridConfig();
+    if(this.gridapi?.getColumnDefs())
+      this.storeGridConfig();
   }
 
   storeGridConfig(){
-    localStorage.setItem('gridOption',JSON.stringify(this.gridapi.getColumnDefs()));
+    localStorage.setItem('gridOption',JSON.stringify(this.gridapi?.getColumnDefs()));
 
   }
 

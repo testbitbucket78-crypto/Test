@@ -13,6 +13,9 @@ export class TeamboxService {
   public uploadfile(FileData:any, spid:any,name:any) {
     return this.http.post(`${API_URL}/uploadfile/${spid}/${name}`,FileData);
 }
+  public uploadfileToMeta(FileData:any, spid:any,name:any) {
+    return this.http.post(`${this.Setting_API_URL}/uploadfiletoMeta/${spid}/${name}`,FileData);
+}
 
   public getAgents(SPID:any) {
     return this.http.get(API_URL+'/agents/'+SPID);
