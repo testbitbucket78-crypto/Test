@@ -28,10 +28,10 @@ async function NoCustomerReplyReminder() {
 
 
       try {
-        let isReplyPause = await isAutoReplyPause(message.SP_ID, message.InteractionId,message.defaultAction_PauseTime)
+        let isReplyPause = await isAutoReplyPause(message.SP_ID, message.InteractionId, message.defaultAction_PauseTime)
         if (isReplyPause) {
           let data = await db.excuteQuery(settingVal.selectdefaultMsgQuery, ['No Customer Reply Reminder', message.SP_ID])
-          if (data.length > 0) {
+          if (data.length > 0 && !(message.updated_at >= message.updateTime)) {
 
             //let sendDefult = await sendDefultMsg(data[0].link, data[0].value, data[0].message_type, 101714466262650, message.customer_phone_number)
             let message_text = await getExtraxtedMessage(data.value)
@@ -40,7 +40,7 @@ async function NoCustomerReplyReminder() {
             const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
             let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.Message_id]);
 
-            let messageValu = [[message.SPID,'text', metaPhoneNumberID, message.interaction_id, message.Agent_id, 'out', data[0].value, (message.link ? message.link : 'text'), data[0].message_type, "", "", currenttime, currenttime, 5, -2,1]]
+            let messageValu = [[message.SPID, 'text', metaPhoneNumberID, message.interaction_id, message.Agent_id, 'out', data[0].value, (message.link ? message.link : 'text'), data[0].message_type, "", "", currenttime, currenttime, 5, -2, 1]]
             let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
           }
         }
@@ -57,6 +57,7 @@ let systemMsgQuery = `SELECT
 ic.interaction_status,
 ic.InteractionId,
 ic.customerId,
+ic.updated_at as updateTime,
 ec.channel,
 ec.phone_number AS customer_phone_number,
 ec.defaultAction_PauseTime,
@@ -101,13 +102,13 @@ async function NoCustomerReplyTimeout() {
   try {
 
     let CustomerReplyTimeout = await db.excuteQuery(systemMsgQuery, [lostMessageTimeGap])  //settingVal.noCustomerRqplyTimeOut
-    console.log(CustomerReplyTimeout?.length, "NoCustomerReplyTimeout" )
+    console.log(CustomerReplyTimeout?.length, "NoCustomerReplyTimeout")
     if (CustomerReplyTimeout?.length > 0) {
 
 
       for (const msg of CustomerReplyTimeout) {
-        let isReplyPause = await isAutoReplyPause(msg.SP_ID, msg.InteractionId,msg.defaultAction_PauseTime)
-        if (isReplyPause && msg.Is_disable !=0) {
+        let isReplyPause = await isAutoReplyPause(msg.SP_ID, msg.InteractionId, msg.defaultAction_PauseTime)
+        if (isReplyPause && msg.Is_disable != 0  && !(msg.updated_at >= msg.updateTime)) {
           //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
           let message_text = await getExtraxtedMessage(msg.value)
           messageThroughselectedchannel(msg.SPID, msg.customer_phone_number, msg.message_type, message_text, msg.link, metaPhoneNumberID, msg.channel, msg.message_type)
@@ -116,9 +117,9 @@ async function NoCustomerReplyTimeout() {
           const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
 
-          let messageValu = [[msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 6, -2,1]]
+          let messageValu = [[msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 6, -2, 1]]
           let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
-          console.log("NoCustomerReplyTimeout msg" ,insertedMessage)
+          console.log("NoCustomerReplyTimeout msg", insertedMessage)
           let closeInteraction = await db.excuteQuery(`UPDATE Interaction SET interaction_status='Resolved' WHERE InteractionId=${msg.InteractionId}`, []);
           if (closeInteraction.affectedRows > 0) {
             let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [msg.interaction_id]);
@@ -139,31 +140,31 @@ async function NoCustomerReplyTimeout() {
 async function NoAgentReplyTimeOut() {
   try {
 
-let noAgentReplydata = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, [lostMessageTimeGap])
- console.log(noAgentReplydata?.length, "NoAgentReplyTimeOut")
- if (noAgentReplydata?.length > 0) {
-   //  console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
-   for (const msg of noAgentReplydata) {
-     let isReplyPause = await isAutoReplyPause(msg.SPID, msg.interaction_id,msg.defaultAction_PauseTime)
-     if (isReplyPause && msg.Is_disable !=0 && msg.system_message_type_id !=4) {
-       let isWorkingTime = await workingHoursDetails(msg.SPID);
-       //   console.log("isWorkingTime"  ,isWorkingTime)
-       if (isWorkingTime === true) {
-         //    console.log("time out working hour")
-         //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
-         let message_text = await getExtraxtedMessage(msg.value)
-         messageThroughselectedchannel(msg.SPID, msg.customer_phone_number, msg.message_type, message_text, msg.link, metaPhoneNumberID, msg.channel, msg.message_type)
-         let myUTCString = new Date().toUTCString();
-         const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let noAgentReplydata = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, [lostMessageTimeGap])
+    console.log(noAgentReplydata?.length, "NoAgentReplyTimeOut")
+    if (noAgentReplydata?.length > 0) {
+      //  console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
+      for (const msg of noAgentReplydata) {
+        let isReplyPause = await isAutoReplyPause(msg.SPID, msg.interaction_id, msg.defaultAction_PauseTime)
+        if (isReplyPause && msg.Is_disable != 0 && msg.system_message_type_id != 4 && !(msg.updated_at >= msg.updateTime)) {
+          let isWorkingTime = await workingHoursDetails(msg.SPID);
+          //   console.log("isWorkingTime"  ,isWorkingTime)
+          if (isWorkingTime === true) {
+            //    console.log("time out working hour")
+            //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
+            let message_text = await getExtraxtedMessage(msg.value)
+            messageThroughselectedchannel(msg.SPID, msg.customer_phone_number, msg.message_type, message_text, msg.link, metaPhoneNumberID, msg.channel, msg.message_type)
+            let myUTCString = new Date().toUTCString();
+            const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
-         let messageValu = [[msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 4,-2,1]]
-         let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
-         console.log("no agent reply ",insertedMessage)
- 
-       }
-     }
-   }
- }
+            let messageValu = [[msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 4, -2, 1]]
+            let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu])
+            console.log("no agent reply ", insertedMessage)
+
+          }
+        }
+      }
+    }
 
   } catch (error) {
 
@@ -281,15 +282,15 @@ async function isClientActive(spid) {
 
 }
 
-async function isAutoReplyPause(spid, newId,contactDefaultPauseTime) {
+async function isAutoReplyPause(spid, newId, contactDefaultPauseTime) {
   let defaultQuery = 'select * from defaultActions where spid=?';
   let defaultAction = await db.excuteQuery(defaultQuery, [spid]);
- // let contactDefaultPauseTime = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?',[customerId,spid])
+  // let contactDefaultPauseTime = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?',[customerId,spid])
   //console.log(defaultAction)You have a new message in you current Open Chat
   if (defaultAction.length > 0) {
     //console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
     var isAutoReply = defaultAction[0].isAutoReply
-    var autoReplyTime = contactDefaultPauseTime 
+    var autoReplyTime = contactDefaultPauseTime
     var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
   }
   let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?', [newId]);
@@ -313,7 +314,7 @@ async function isReplySent(isAutoReply, autoReplyTime, isAutoReplyDisable, assig
       autoReplyVal.setMinutes(autoReplyVal.getMinutes() + autoReplyTime);
     }
     //const autoReplyVal = new Date(currentTime)   // autoReplyTime when auto reply start
-  //  console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyVal, autoReplyTime)
+    //  console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyVal, autoReplyTime)
     if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined && autoReplyTime != 0) {
 
       return true;
@@ -454,14 +455,46 @@ async function workingHoursDetails(sid) {
   return false;
 }
 
-cron.schedule('*/5 * * * *', async () => {
-  console.log('Running scheduled task...');
-  NoCustomerReplyReminder();  // system_message_type_id  = 5
-  NoCustomerReplyTimeout();     // system_message_type_id  = 6
-  NoAgentReplyTimeOut();         // system_message_type_id = 4
+// Calculate the initial delay
+function calculateInitialDelay() {
+  const now = new Date();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
 
-});
+  // Calculate how many minutes to add to reach the next multiple of 5
+  const minutesToNextMultipleOf5 = (5 - (minutes % 5)) % 5;
 
+  // Calculate the total delay in milliseconds
+  const delay = (minutesToNextMultipleOf5 * 60 - seconds) * 1000;
+  console.log("delay ---------", delay)
+  return delay;
+}
+
+// Initial startup
+const initialDelay = calculateInitialDelay();
+
+if (initialDelay > 0) {
+  console.log(`Waiting ${initialDelay / 1000} seconds to start the scheduler...`);
+  setTimeout(() => {
+    console.log('Starting the scheduler at:', new Date());
+    startScheduler();
+  }, initialDelay);
+} else {
+  console.log('Starting the scheduler immediately at:', new Date());
+  startScheduler();
+}
+
+
+
+function startScheduler() {
+  cron.schedule('*/5 * * * *', async () => {
+    console.log('Running scheduled task...');
+    NoCustomerReplyReminder();  // system_message_type_id  = 5
+    NoCustomerReplyTimeout();     // system_message_type_id  = 6
+    NoAgentReplyTimeOut();         // system_message_type_id = 4
+
+  });
+}
 app.listen(3006, () => {
   console.log("defaultMessage scheduler  is listening on port 3006");
 });

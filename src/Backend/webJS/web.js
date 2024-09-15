@@ -19,6 +19,7 @@ const incommingmsg = require('../IncommingMessages')
 const notify = require('../whatsApp/PushNotifications')
 const mapCountryCode = require('../Contact/utils.js');
 const logger = require('../common/logger.log');
+const commonFun = require('../common/resuableFunctions.js')
 const fs = require('fs')
 const path = require("path");
 let clientSpidMapping = {};
@@ -844,9 +845,12 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
 
           //check if assignment trigger from smart reply and chat is ressolve then open 
           if (smartReplyActions >= 0) {
-            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
-            //console.log("updateInteraction",updateInteraction)
+            let isEmptyInteraction = await   commonFun.isStatusEmpty(InteractionId, sid,custid)
 
+            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+            if(isEmptyInteraction == 1){
+              updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+            }
             if (updateInteraction?.affectedRows > 0) {
               console.log(newId,"assign conversation triggere smart reply")
               notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
@@ -858,7 +862,14 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
         }
       } else {
        // let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
-        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+      
+        let isEmptyInteraction = await   commonFun.isStatusEmpty(InteractionId, sid,custid)
+
+        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+        if(isEmptyInteraction == 1){
+          updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+        }
+
         if (updateInteraction?.affectedRows > 0) {
           console.log(newId,"------------in case of smart reply not trigger")
           notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
@@ -1043,8 +1054,12 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
         //check if assignment trigger and chat is ressolve then open 
         if (defaultReplyAction >= 0) {
-          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
-          //console.log("updateInteraction",updateInteraction)
+          let isEmptyInteraction = await   commonFun.isStatusEmpty(InteractionId, sid,custid)
+
+            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+            if(isEmptyInteraction == 1){
+              updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+            }
 
           if (updateInteraction?.affectedRows > 0) {
             notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')

@@ -20,13 +20,16 @@ let updateSms = `UPDATE Message set system_message_type_id=?,updated_at=? where 
 let updateInteractionMapping = "INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy) VALUES ?"
 addTagQuery = "UPDATE EndCustomer SET tag =?  WHERE customerId =? and SP_ID=?"
 selectTagQuery = "select tag from EndCustomer where customerId= ?"
-msgBetweenOneHourQuery = `SELECT M.*
+msgBetweenOneHourQuery = `SELECT M.*,
+I.updated_at  as updateTime
 FROM Message M
 JOIN Interaction I ON I.InteractionId = M.interaction_id
 WHERE M.interaction_id = ?
   AND M.system_message_type_id = ?
   AND I.interaction_status = 'Open'
-  AND I.is_deleted != 1`;
+  AND I.is_deleted != 1 order by M.updated_at desc limit 1`;
+
+  checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary =! and is_deleted !=1 `
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status) VALUES ?";
 
 async function sReplyActionOnlostMessage(message_text, sid, channelType, phone_number_id, from, custid, agid, newId,display_phone_number) {
@@ -71,7 +74,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
 
     let currentTime = new Date(); // new Date(new Date().toUTCString().replace('GMT',''))
 
-    let autoReplyVal = new Date(currentTime);
+    let autoReplyVal = new Date(currentTime).toUTCString();
     if (autoReplyTime != 0) {
       autoReplyVal.setMinutes(autoReplyVal.getMinutes() + autoReplyTime);
     }
@@ -660,11 +663,14 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
 
     var outOfOfficeMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Out of Office']);
     //  console.log(outOfOfficeMessage)
+    // resolve condition
     if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
       console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 2])
-      //console.log(messageInterval)
-      if (messageInterval.length <= 0) {
+      console.log(messageInterval[0]?.updated_at >= messageInterval[0]?.updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
+      let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid])
+      if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
+      if (messageInterval.length <= 0 || !(messageInterval[0].updated_at >= messageInterval[0].updateTime)) {
         console.log("messageInterval", newId)
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
         let message_text = await getExtraxtedMessage(outOfOfficeMessage[0]?.value)
@@ -675,6 +681,7 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateSmsRes = await db.excuteQuery(updateSms, [2, time, msg_id]);
       }
+    }
     }
     return result;
   } catch (err) {
@@ -751,7 +758,10 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
     if (AgentsOfflineMessage.length > 0 && AgentsOfflineMessage[0].Is_disable == 1) {
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 3])
       console.log("inactive above   length", messageInterval.length)
-      if (messageInterval.length <= 0) {
+      console.log(messageInterval[0].updated_at <= messageInterval[0].updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
+      let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid])
+      if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
+      if (messageInterval.length <= 0 || (messageInterval[0].updated_at <= messageInterval[0].updateTime)) {
         //sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
         let message_text = await getExtraxtedMessage(AgentsOfflineMessage[0]?.value)
         let allAgentsmessage = await messageThroughselectedchannel(sid, from, AgentsOfflineMessage[0].message_type, message_text, AgentsOfflineMessage[0].link, phone_number_id, channelType, agid, newId, AgentsOfflineMessage[0].message_type)
@@ -761,7 +771,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
           let myUTCString = new Date().toUTCString();
           const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
-          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, currenttime, newId]);
+          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, newId]);
           // if(updateInteraction?.affectedRows >0){
           //   notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')  // when this mendatory to refresh then need to pull display_phone_number
           // }
@@ -771,6 +781,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateSmsRes = await db.excuteQuery(updateSms, [3, time, msg_id]);
       }
+    }
     }
 
   }

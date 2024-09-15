@@ -317,7 +317,7 @@ const updateInteraction = async (req, res) => {
             let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
 
             await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text']);
-            updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' WHERE InteractionId =" + req.body.InteractionId;
+            updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' ,updated_at ='" + utcTimestamp + "' WHERE InteractionId =" + req.body.InteractionId;
         }
         if (req.body.AutoReply && req.body.AutoReply != '') {
             updateQuery = "UPDATE Interaction SET AutoReplyStatus ='" + req.body.AutoReply + "',paused_till ='" + req.body.paused_till + "' , AutoReplyUpdatedAt ='" + req.body.updated_at + "'  WHERE InteractionId =" + req.body.InteractionId;

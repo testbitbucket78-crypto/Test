@@ -15,7 +15,7 @@ const incommingmsg = require('../IncommingMessages')
 const moment = require('moment');
 const mytoken = process.env.VERIFY_TOKEN;
 const mapCountryCode = require('../Contact/utils.js');
-
+const commonFun = require('../common/resuableFunctions.js')
 let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=?  ) and is_deleted !=1   order by created_at desc`
 
 
@@ -105,13 +105,13 @@ async function extractDataFromMessage(body) {
 
     let phoneNo = contact.wa_id;
     let countryCodeObj;
-    if (phoneNo){
+    if (phoneNo) {
       countryCodeObj = mapCountryCode.mapCountryCode(phoneNo); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
     }
 
-    let countryCode =  countryCodeObj.country+ " +" +countryCodeObj.countryCode 
-   
-  
+    let countryCode = countryCodeObj.country + " +" + countryCodeObj.countryCode
+
+
     let ExternalMessageId = body.entry[0].id;
     let message_text = firstMessage.text ? firstMessage.text.body : "";  // extract the message text from the webhook payload
     let message_media = firstMessage.type;
@@ -166,7 +166,7 @@ async function extractDataFromMessage(body) {
       message_text = message_text.replace(/\n/g, '<br>');
     }
     console.log("after text replacement", message_text)
-    var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time,countryCode)
+    var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode)
     var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
   }
   else if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
@@ -190,7 +190,7 @@ async function extractDataFromMessage(body) {
 
 
 
-async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time,countryCode) {
+async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode) {
   console.log("sabewdfesk", Type, extension)
   if (Type == "image") {
     console.log("lets check the image");
@@ -208,7 +208,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
 
     message_media = imageurl.value;
 
-   // message_text = " "
+    // message_text = " "
     var media_type = "video/mp4"
   }
   if (Type == "document") {
@@ -216,14 +216,14 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
 
     message_media = imageurl.value;
 
-   // message_text = " "
+    // message_text = " "
     var media_type = "application/pdf"
   }
 
   if (message_text.length > 0 || message_media.length > 0) {
     let myUTCString = new Date().toUTCString();
     const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time,countryCode]);
+    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
 
@@ -260,14 +260,14 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     var ifgot = extractedData.ifgot
     notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', msg_id)
 
- 
+
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', agid, utcTimestamp]];
     let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
 
 
-    let contact = await db.excuteQuery('select * from EndCustomer where customerId =? and SP_ID=?',[custid,sid])
+    let contact = await db.excuteQuery('select * from EndCustomer where customerId =? and SP_ID=?', [custid, sid])
     // if(contact?.length >0){
     //   funnel.ScheduledFunnels(contact[0].SP_ID, contact[0].Phone_number, contact[0].OptInStatus, new Date(), new Date(),0);
     // }
@@ -281,10 +281,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         var autoReplyTime = contact[0].defaultAction_PauseTime
         var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
         var inactiveAgent = defaultAction[0].isAgentActive
-        var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime 
+        var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
 
       }
-      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut,ifgot,display_phone_number)
+      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA API', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, ifgot, display_phone_number)
       console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
       if (defaultReplyAction >= -1) {
         //console.log("defaultReplyAction________ boolean", defaultReplyAction)
@@ -295,26 +295,31 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
           if (updateInteraction?.affectedRows > 0) {
             notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
-            
+
             let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
-            if(updateMapping?.affectedRows >0){
+            if (updateMapping?.affectedRows > 0) {
               notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
-             }
+            }
           }
         } else {
           let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
           //check if assignment trigger and chat is ressolve then open 
-          if (defaultReplyAction >= 0 ) {
-            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
-           // console.log("updateInteraction",updateInteraction)
-            if(updateInteraction?.affectedRows >0){
-            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
+          if (defaultReplyAction >= 0) {
+            let isEmptyInteraction = await   commonFun.isStatusEmpty(InteractionId, sid,custid)
+
+            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open',updated_at, newId])
+            if(isEmptyInteraction == 1){
+              updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open', updated_at,updated_at, newId])
+            }
+             console.log("commonFun",updateInteraction)
+            if (updateInteraction?.affectedRows > 0) {
+              notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
             }
             notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
           } else {
-            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
-           // console.log("updateInteraction",updateInteraction.affectedRows)
-            if(updateInteraction?.affectedRows >0){
+            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, newId])
+             console.log("DEBUGGGGGGGGGGGGGGGGGG",updateInteraction.affectedRows)
+            if (updateInteraction?.affectedRows > 0) {
               notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
             }
           }
@@ -323,11 +328,16 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         }
       }
       if (defaultReplyAction == 'false') {
-      //  console.log("routing ------------ called after false return")
+        //  console.log("routing ------------ called after false return")
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
-        if(updateInteraction?.affectedRows >0){
+        let isEmptyInteraction = await   commonFun.isStatusEmpty(InteractionId, sid,custid)
+
+        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+        if(isEmptyInteraction == 1){
+          updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+        }
+        if (updateInteraction?.affectedRows > 0) {
           notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
         }
         let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
@@ -420,7 +430,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
   } else if (messageStatus == 'delivered') {
     let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1 and messageTemptateId =?'
-    let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [customerPhoneNumber,smsId])
+    let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [customerPhoneNumber, smsId])
     const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -436,7 +446,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
   } else if (messageStatus == 'read') {
     //  console.log("read")
     let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2  and messageTemptateId =?';
-    let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber,smsId])
+    let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber, smsId])
     const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
