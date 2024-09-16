@@ -108,7 +108,8 @@ export class RolesSettingsComponent implements OnInit {
     }
 
     cellStyle(params: agGrid.CellClassParams):string {
-            if (params.value=='Admin' || params.value=='Agent') {        
+            if (params.value=='Admin' || params.value=='Agent') { 
+                params.data.created_at = ''       
                 return 'purpelCellStyle';
             } else {
                 return 'defaultCellStyle';
@@ -152,6 +153,9 @@ export class RolesSettingsComponent implements OnInit {
 
     dateFormatter(params: any): string {
         const date = new Date(params.value);
+        if (isNaN(date.getTime())) {
+            return 'N/A';
+        }
         console.log(date);
         console.log(this._settingsService?.dateFormat);
         const formattedDate = this.datePipe.transform(date, this._settingsService.dateFormat);
