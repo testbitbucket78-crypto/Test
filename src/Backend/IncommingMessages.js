@@ -29,7 +29,7 @@ WHERE M.interaction_id = ?
   AND I.interaction_status = 'Open'
   AND I.is_deleted != 1 order by M.updated_at desc limit 1`;
 
-  checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary =! and is_deleted !=1 `
+  checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary !=1 and is_deleted !=1 `
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status) VALUES ?";
 
 async function sReplyActionOnlostMessage(message_text, sid, channelType, phone_number_id, from, custid, agid, newId,display_phone_number) {
@@ -215,7 +215,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
 
     let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid);
-
+console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg)
     if (replymessage?.length > 0) {
 
       let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType,display_phone_number);
@@ -695,7 +695,7 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
   const currentTime = new Date();
   let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
   var workingData = await db.excuteQuery(workingHourQuery, [sid]);
-  console.log("working")
+  console.log(currentTime,"working",(isWorkingTime(workingData, currentTime)));
   if ((isWorkingTime(workingData, currentTime))) {
     let agentofflinestatus = await AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid);
     console.log('It is currently  within working hours.' + msg_id);
@@ -726,7 +726,7 @@ function isWorkingTime(data, currentTime) {
     const end_time = (item.end_time).replace(/\s*(AM|PM)/, "");
     const startTime = start_time.split(':');
     const endTime = end_time.split(':');
-    // console.log(startTime + " " + endTime + workingDays.includes(currentDay))
+     console.log(startTime + " " + endTime + workingDays.includes(currentDay))
     // console.log(endTime[0] + " " + date + endTime[1] + "| " + getMin)
     if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
       console.log("data===========")
@@ -758,7 +758,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
     if (AgentsOfflineMessage.length > 0 && AgentsOfflineMessage[0].Is_disable == 1) {
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 3])
       console.log("inactive above   length", messageInterval.length)
-      console.log(messageInterval[0].updated_at <= messageInterval[0].updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
+      console.log(messageInterval[0]?.updated_at <= messageInterval[0]?.updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
       let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid])
       if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
       if (messageInterval.length <= 0 || (messageInterval[0].updated_at <= messageInterval[0].updateTime)) {
