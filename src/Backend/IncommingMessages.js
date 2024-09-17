@@ -267,8 +267,9 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
 
           results = await removeTags.getDefaultAttribue(msgVar, sid, custid);
           //console.log("atribute result ")
-          placeholders.forEach(placeholder => {
-            const result = results.find(result => result.hasOwnProperty(placeholder));
+          placeholders.forEach((placeholder, index) => {
+            //const result = results.find(result => result.hasOwnProperty(placeholder));
+            const result = results[index];
             //  console.log(placeholder,"place foreach",results)
             const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
             content = content.replace(`{{${placeholder}}}`, replacement);
@@ -280,8 +281,9 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
 
         // console.log("results", results);
 
-        placeholders.forEach(placeholder => {
-          const result = results.find(result => result.hasOwnProperty(placeholder));
+        placeholders.forEach((placeholder, index) => {
+          //const result = results.find(result => result.hasOwnProperty(placeholder));
+          const result = results[index];
           const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
           content = content.replace(`{{${placeholder}}}`, replacement);
         });
