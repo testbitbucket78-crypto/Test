@@ -90,8 +90,8 @@ export class SettingsService {
   }
   }
 
-  convertTimeFormat(time: string): string {
-    let format = this.timeFormat;
+  convertTimeFormat(time: string,isStaticFormate:boolean = false): string {
+    let format = isStaticFormate ? '24':this.timeFormat;
     if(time){
     if (format === '24') {
         const [timePart, modifier] = time.split(' ');
