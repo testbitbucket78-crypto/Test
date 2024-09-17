@@ -47,7 +47,8 @@
             <div class="sub-contents">
                 <p>Assign incoming chats to all the available agents one after another ensuring chats are getting distributed equally among them.</p>           
                 <div class="select-heading py-2">Max. No. of Open Conversation Allowed</div>
-                <select class="input-form" [disabled]="defaultAssignRule!=='roundrobin'" [(ngModel)]="conversationallowed" >
+                <select class="input-form" [disabled]="defaultAssignRule!=='roundrobin'" [(ngModel)]="conversationallowed"
+                [ngClass]="{'error-outline': conversationallowed === '' && defaultAssignRule === 'roundrobin'}" >
                     <option [ngValue]="'1'">1</option>
                     <option [ngValue]="'2'">2</option>
                     <option [ngValue]="'3'">3</option>
@@ -74,7 +75,8 @@
             <div class="sub-contents">
                 <p>All the chats are first assigned to a selected user (usually manager). Further this user assigns agents or teams to each of these chats. If this selected manager is not available, then chats will be assigned according to the rules defined under “Missed Chat”.</p>           
                 <div class="select-heading py-2">Assign a User</div>
-                <select class="input-form" [disabled]="defaultAssignRule!=='manualassign'" [(ngModel)]="assignuser" >
+                <select class="input-form" [disabled]="defaultAssignRule!=='manualassign'" [(ngModel)]="assignuser" 
+                [ngClass]="{'error-outline': assignuser === '' && defaultAssignRule==='manualassign'}">
                     <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
                 </select>
             </div>
@@ -95,7 +97,8 @@
                     [pattern]="chatAssignTimeoutPattern"
                     [(ngModel)]="timeoutperiod"
                     placeholder="Enter chat timeout (1-1440 minutes)"
-                    [ngClass]="{'is-invalid':myForm.controls['chatAssignTimeout']?.dirty && myForm.controls['chatAssignTimeout']?.hasError('pattern')}">
+                    [ngClass]="{'is-invalid error-outline':myForm.controls['chatAssignTimeout']?.dirty && (myForm.controls['chatAssignTimeout']?.hasError('pattern') 
+                    || errorOnchatAssignTimeout())}">
             </div>
             </form>
             <div class="d-flex py-2">
@@ -113,7 +116,8 @@
                 </div>
             </div>
             <div class="select-heading py-2">Assign a Specific User</div>
-            <select [disabled]="missedChatOption!=='assignspecificuser'" class="input-form pointerCursor" [(ngModel)]="selectuser" >
+            <select [disabled]="missedChatOption!=='assignspecificuser'" class="input-form pointerCursor" [(ngModel)]="selectuser" 
+            [ngClass]="{'is-invalid error-outline': errorOnMissedChatOption()}">
                 <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
             </select>
             <p>If the contact owner is not defined or there are multiple admins, then the chat is assigned to default Admin.</p>
@@ -121,7 +125,7 @@
         </div>
     </div>
     <div class="d-flex justify-content-end pb-4 default-footer">
-        <button (click)="saveRoutingRules()" type="button" class="account-btn">Save</button>
+        <button (click)="saveRoutingRules()" [disabled]="checkIfValid" [class.disabled]="checkIfValid" type="button" class="account-btn">Save</button>
     </div>
     
 
