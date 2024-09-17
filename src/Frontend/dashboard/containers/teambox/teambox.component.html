@@ -170,7 +170,7 @@
 											[ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'">Open</span>
 									</p>
 									<p [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'"
-										(click)="triggerUpdateConversationStatus('Resolved',openStatusAlertmMessage)" [class.disabled]="!(selectedInteraction.assignTo == this.uid && !settingsService.checkRoleExist('10')) && !(selectedInteraction.assignTo == -1 && !settingsService.checkRoleExist('11')) && !((selectedInteraction.assignTo != -1 && selectedInteraction.assignTo != this.uid) && !settingsService.checkRoleExist('12'))">
+										(click)="triggerUpdateConversationStatus('Resolved',openStatusAlertmMessage)" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == this.uid && !settingsService.checkRoleExist('10')) && !(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('11')) && !((selectedInteraction.assignTo?.AgentId != -1 && selectedInteraction?.assignTo?.AgentId != this.uid) && !settingsService.checkRoleExist('12'))">
 										<span
 											[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'">Resolved</span>
 									</p>
@@ -203,7 +203,7 @@
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Unassigned</span>
 									</p>
 									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('13'))">
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == -1 && !settingsService.checkRoleExist('13'))">
 										<span class="text-capitalize initials"> M </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Myself</span>

@@ -301,7 +301,7 @@
 						<button type="button" (click)="isIdentifierColumn(contents)"  class="next-button">Next</button>
 					</div>
 					<ng-template #contents let-c="close" let-d="dismiss">
-						<div class="incorrect-card-main">
+						<div class="incorrect-card-main d-flex flex-column align-items-center">
 							<p>The identifier column must be <br /> mapped before proceeding</p>
 							<button type="button" class="btn" (click)="closeErrorModal()">Ok, Got it</button>
 						</div>

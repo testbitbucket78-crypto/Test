@@ -44,7 +44,7 @@ successMessage = '';
 warningMessage = '';
 selectedYearMonth:string='';
 isLoading!: boolean;
-    constructor(private _settingsService: SettingsService, private datepipe: DatePipe, private modalService: NgbModal) { 
+    constructor(public _settingsService: SettingsService, private datepipe: DatePipe, private modalService: NgbModal) { 
     this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     this.selectedYear =new Date().getFullYear();
    }
@@ -231,8 +231,8 @@ isLoading!: boolean;
     workingResponse.days = [];
     this.workingFormData.forEach(item=>{
       if(item.day?.length >0){
-        let st = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.startTime.split(':')[0]),Number(item?.startTime.split(':')[1])))),'HH:mm a');
-        let et = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.endTime.split(':')[0]),Number(item?.endTime.split(':')[1])))),'HH:mm a');
+        let st = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.startTime.split(':')[0]),Number(item?.startTime.split(':')[1])))),'hh:mm a');
+        let et = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.endTime.split(':')[0]),Number(item?.endTime.split(':')[1])))),'hh:mm a');
       workingResponse.days.push({day:item.day.toString(),startTime:st ? st :'',endTime:et ? et :''});
       }
     });
