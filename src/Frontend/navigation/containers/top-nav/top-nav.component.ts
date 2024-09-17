@@ -13,7 +13,7 @@ import { NotificationService } from 'Frontend/dashboard/services/notification.se
 
 @Component({
     selector: 'sb-top-nav',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    //changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './top-nav.component.html',
     styleUrls: ['top-nav.component.scss'],
 })
@@ -44,6 +44,7 @@ export class TopNavComponent implements OnInit {
     randomNumber:number=0;
     private notificationInterval: any;
     subscription:any;
+    unreadCount!:number;
 
 
     constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: 
@@ -101,6 +102,8 @@ export class TopNavComponent implements OnInit {
         }
         this.LastnotificationData =  JSON.parse(JSON.stringify(this.notificationData));
         this.notificationData.reverse();
+       this.unreadCount =  this.LastnotificationData.filter((item:any)=> item.isRead == 0).length;
+       console.log(this.unreadCount);
       }));
       
     }
@@ -109,6 +112,8 @@ export class TopNavComponent implements OnInit {
         this.notificationData = response.notifications;       
         this.LastnotificationData =  JSON.parse(JSON.stringify(this.notificationData));
         this.notificationData.reverse();
+        this.unreadCount =  this.LastnotificationData.filter((item:any)=> item.isRead == 0).length;
+        console.log(this.unreadCount);
       }));
     }
 
@@ -124,7 +129,14 @@ export class TopNavComponent implements OnInit {
 		
 		this.ShowNotification = !this.ShowNotification;
         this.ShowProfile =false;
+        this.readAllNotification()
 	}
+  readAllNotification(){
+    this.apiService.readNotification(this.spId,this.uid).subscribe((response=> {
+      //this.unreadCount =  this.LastnotificationData.filter((item:any)=> item.isRead == 0).length;
+      console.log(this.unreadCount);
+    }));
+  }
    
 
     hideDiv() {

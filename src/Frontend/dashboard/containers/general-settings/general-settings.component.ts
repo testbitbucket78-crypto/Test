@@ -86,7 +86,8 @@ export class GeneralSettingsComponent implements OnInit {
  
 
   getUserList() {
-    this.currentLoggedInUserUID = JSON.parse(sessionStorage.getItem('loginDetails')!).uid
+    this.currentLoggedInUserUID = JSON.parse(sessionStorage.getItem('loginDetails')!).uid;
+
     this.apiService.getUserList(this.spId,1).subscribe((result:any) =>{
       if(result){
         this.userList =result?.getUser;     
@@ -161,7 +162,7 @@ export class GeneralSettingsComponent implements OnInit {
     this.defaultActionData.pauseAgentActiveTime = this.pauseAgentActiveTime;
     this.defaultActionData.pauseAutoReplyTime = this.pauseAutoReplyTime;
     this.defaultActionData.defaultAdminUid = this.defaultAdminUid;
-    // console.log(this.defaultActionData)
+    console.log(this.defaultAdminUid)
 
     this.apiService.saveDefaultAction(this.defaultActionData).subscribe
     ((resopnse :any) => {

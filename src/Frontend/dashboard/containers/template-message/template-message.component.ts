@@ -418,7 +418,7 @@ export class TemplateMessageComponent implements OnInit {
                 let name='template-message'
                 this.loadingVideo = true;
     
-                this._teamboxService.uploadfile(data,spid,name).subscribe
+                this._teamboxService.uploadfileToMeta(data,spid,name).subscribe
                 (uploadStatus => {
                     let responseData: any = uploadStatus;
                     if (responseData.filename) {

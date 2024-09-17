@@ -8,7 +8,10 @@
     <ul class="navbar-nav ml-auto md-0 top-icons">
         <img routerLink="/dashboard/setting" title="Settings" src="../../../../assets/img/top-nav/Setting.svg">
         <img routerLink="/dashboard/support" title="Support" src="../../../../assets/img/top-nav/support.svg">
+        <div class="d-flex">
         <img  src="../../../../assets/img/top-nav/notifications.svg" title="Notifications" (click)="toggleShowNotifications()">
+        <div class="notify-count">{{unreadCount}}</div>
+      </div>
         <img  routerLink="/dashboard/teambox" title="Teambox" src="../../../../assets/img/top-nav/chat-icon.svg">
         <div>
         <img *ngIf="profilePicture" class="profilepic" src="{{profilePicture}}?{{randomNumber}}" title="Profile" (click)="toggleShowProfile()"/>

@@ -200,10 +200,7 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
 function convertHTML(htmlString) {
   // Replace <p> and <br> tags with newline characters
 
-  let result = htmlString
-    .replace(/<p>/g, '\n')   
-    .replace(/<\/p>/g, '\n')    
-    .replace(/<br>/g, '\n');
+  let result = htmlString.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
   result = result.replace(/<strong>(.*?)<\/strong>/g, '*$1*');
   // Replace <em> tags with underscores
   result = result.replace(/<em>(.*?)<\/em>/g, '_$1_');
@@ -222,13 +219,13 @@ result = result.replace(/contenteditable="false" class="e-mention-chip">/g, '');
 // Remove specific attributes from <a> tags
 result = result.replace(/\s_ngcontent-[^"]*=""\s?href="mailto:"\s?title="">/g, '');
 result = result.replace(/\s_ngcontent-yyb-c67[^"]*=""\s?title="">/g, '');
-result = result.replace(/\*\s+([^\*]+?)\s*\*/g, '**$1**'); 
-result = result.replace(/_\s+([^_]+?)\s*_*/g, '_$1_'); 
-result = result.replace(/~\s+([^~]+?)\s*~/g, '~$1~ \n');
-result = result.replace(/~\s*(.*?)\s*~/g, ' ~$1~ \n');
+//result = result.replace(/\*\s+([^\*]+?)\s*\*/g, '**$1**'); 
+//result = result.replace(/_\s+([^_]+?)\s*_*/g, '_$1_'); 
+//result = result.replace(/~\s+([^~]+?)\s*~/g, '~$1~ \n');
+//result = result.replace(/~\s*(.*?)\s*~/g, ' ~$1~ \n');
 
 // Fix extra spaces around newlines
-result = cleanMessage(result);
+//result = cleanMessage(result);
   return result;
 }
 
