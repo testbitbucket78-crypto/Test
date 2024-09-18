@@ -35,6 +35,7 @@ export class RoutingRulesComponent implements OnInit {
   routingRulesData = <routingRulesData>{};
   chatAssignTimeoutPattern:RegExp = /^(?:[1-9]\d{0,2}|1[0-3]\d{2}|1440)$/;
   isLoading!: boolean;
+  isValid: boolean = true;
 
   errorMessage='';
 	successMessage='';
@@ -103,6 +104,31 @@ export class RoutingRulesComponent implements OnInit {
 
 
 
+
+errorOnchatAssignTimeout(): boolean {
+  this.isValid = this.timeoutperiod === '' && (
+    this.missedChatOption === 'isadmin' ||
+    this.missedChatOption === 'isMissChatAssigContactOwner' ||
+    this.missedChatOption === 'assignspecificuser'
+  );
+  return this.isValid;
+}
+
+errorOnMissedChatOption(): boolean {
+  this.isValid = this.selectuser === '' && this.missedChatOption === 'assignspecificuser';
+  return this.isValid;
+}
+
+get checkIfValid(): boolean {
+  // to check if every input field is valid and do not consist "" empty 
+  const isConversationAllowedValid = !(this.conversationallowed === '' && this.defaultAssignRule === 'roundrobin');
+  const isAssignUserValid = !(this.assignuser === '' && this.defaultAssignRule === 'manualassign');
+  const isTimeoutValid = !this.errorOnchatAssignTimeout();
+  const isSelectUserValid = !this.errorOnMissedChatOption();
+  this.isValid = isConversationAllowedValid && isAssignUserValid && isTimeoutValid && isSelectUserValid;
+  
+  return !this.isValid; 
+}
 
   getUserList() {
     this.apiService.getUserList(this.spId,1).subscribe((result:any) =>{
