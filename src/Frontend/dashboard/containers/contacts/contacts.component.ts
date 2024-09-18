@@ -432,14 +432,13 @@ bulk(e: any) {
     for (var i = 0; i < this.contacts.length; i++) {
       this.checkedcustomerId.push(this.contacts[i].customerId)
       this.checkedConatct.push(this.contacts[i]);
-      
     }
     this.checks = true;
   }
   else {
     this.checks = false;
-    this.checkedcustomerId.length = 0;
-    this.checkedConatct.length=0;
+    this.checkedcustomerId = [];
+    this.checkedConatct=[];
   }
   console.log("this.customerId")
   console.log(this.checkedcustomerId)
@@ -649,6 +648,8 @@ onSelectAll(items: any) {
        }
       }
     console.log(this.checkedConatct.length );
+    console.log('onRowSelected');
+    console.log(event);
 
 
     if (this.checkedConatct.length > 0 && event !== null) {
@@ -678,7 +679,8 @@ onSelectAll(items: any) {
     this.addContactTitle= 'edit';
     this.patchFormValue();
     this.gridOptions.api.deselectAll();
-    this.checkedConatct = [];
+    //this.checkedConatct = [];
+    console.log('rowClicked');
     setTimeout(()=>{this.isShowSidebar=true;
       document.getElementById('import-btn')!.style.display = 'block';
       document.getElementById('add-contact')!.style.display = 'block';
@@ -1023,7 +1025,11 @@ deletContactByID(data: any) {
         let val = value ? value.split(':')[0] : '';
         console.log(val);
         this.productForm.get(prop)?.setValue(val);
-      }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
+      } else if( idx>-1 &&  this.filteredCustomFields[idx] && this.filteredCustomFields[idx].type == 'Time'){
+        let val =this.settingsService.convertTimeFormat(value,true);
+        this.productForm.get(prop)?.setValue(val)
+      }
+      else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
         if(value){
         let val = value.split(':');
         console.log(val);
