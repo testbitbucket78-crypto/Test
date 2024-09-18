@@ -317,6 +317,7 @@ export class ImportComponent implements OnInit {
 
 	removeUncheck(e: any, ith: any) {
 		if(!e.target.checked){
+			const val = this.selectedCustomFields[ith];
 		this.mappedFields.forEach((item:any)=>{
 			for(let i=0;i<item.length;i++){
 			if(item[i]?.ActuallName == this.selectedCustomFields[ith]){
@@ -326,6 +327,10 @@ export class ImportComponent implements OnInit {
 		console.log(item)
 		});
 		console.log(this.mappedFields)
+		console.log(val,'hgffhgff');
+		if(val =='Phone_number'){
+			this.identifierColumn ='';
+		}
 		this.toggleOverride[ith] = false;
 		let idx = this.customFieldData.findIndex((ite:any)=>ite.ActuallName == this.selectedCustomFields[ith]);
 		this.customFieldData[idx].isSelected=false;

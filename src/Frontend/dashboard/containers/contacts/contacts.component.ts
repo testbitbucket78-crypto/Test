@@ -432,14 +432,13 @@ bulk(e: any) {
     for (var i = 0; i < this.contacts.length; i++) {
       this.checkedcustomerId.push(this.contacts[i].customerId)
       this.checkedConatct.push(this.contacts[i]);
-      
     }
     this.checks = true;
   }
   else {
     this.checks = false;
-    this.checkedcustomerId.length = 0;
-    this.checkedConatct.length=0;
+    this.checkedcustomerId = [];
+    this.checkedConatct=[];
   }
   console.log("this.customerId")
   console.log(this.checkedcustomerId)
@@ -649,6 +648,8 @@ onSelectAll(items: any) {
        }
       }
     console.log(this.checkedConatct.length );
+    console.log('onRowSelected');
+    console.log(event);
 
 
     if (this.checkedConatct.length > 0 && event !== null) {
@@ -678,7 +679,8 @@ onSelectAll(items: any) {
     this.addContactTitle= 'edit';
     this.patchFormValue();
     this.gridOptions.api.deselectAll();
-    this.checkedConatct = [];
+    //this.checkedConatct = [];
+    console.log('rowClicked');
     setTimeout(()=>{this.isShowSidebar=true;
       document.getElementById('import-btn')!.style.display = 'block';
       document.getElementById('add-contact')!.style.display = 'block';
@@ -1017,13 +1019,19 @@ deletContactByID(data: any) {
       this.productForm.get('tag')?.setValue(selectedTags); 
       let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
       if( idx>-1 &&  this.filteredCustomFields[idx] && this.filteredCustomFields[idx].type == 'Date'){
-        let dateVal = this.datePipe.transform(new Date(value),'yyyy-MM-dd')
-        this.productForm.get(prop)?.setValue(dateVal);
+        if(value){
+          let dateVal = this.datePipe.transform(new Date(value),'yyyy-MM-dd')
+          this.productForm.get(prop)?.setValue(dateVal);
+        }
       }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
         let val = value ? value.split(':')[0] : '';
         console.log(val);
         this.productForm.get(prop)?.setValue(val);
-      }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
+      } else if( idx>-1 &&  this.filteredCustomFields[idx] && this.filteredCustomFields[idx].type == 'Time'){
+        let val =this.settingsService.convertTimeFormat(value,true);
+        this.productForm.get(prop)?.setValue(val)
+      }
+      else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
         if(value){
         let val = value.split(':');
         console.log(val);
@@ -1326,12 +1334,14 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
   }
 
   dateFormatter(params: any): string {
+    if(!params?.value) return '';
     const date = new Date(params.value);
     const formattedDate = this.settingsService.getDateTimeFormate(date, true);
     return formattedDate ? formattedDate : '';
 }
 
 timeFormatter(params: any): string {
+  if(!params?.value) return '';
     const date = params.value;
     const formattedDate = this.settingsService.convertTimeFormat(date);
     return formattedDate ? formattedDate : '';

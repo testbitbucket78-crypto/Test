@@ -23,8 +23,8 @@ const notification = async (req, res) => {
     }
 }
  const update = async (req, res) => {
-    const spId = req.query.SP_ID;
-    const uid = req.query.uuid;
+    const spId = req.params.spid;
+    const uid = req.params.uid;
     try {
         let notifications = await db.excuteQuery(
             val.updateNotifications,

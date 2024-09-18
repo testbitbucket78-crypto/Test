@@ -87,7 +87,7 @@ router.get('/managePlan',authenticateToken,profileController.getmanagePlansandCh
 //________________________ Notification_____________________//
 
 router.get('/getNotifications/:spid',authenticateToken,notification.notification)
-router.post('/updateNotifications',authenticateToken,notification.update)
+router.post('/updateNotifications/:spid/:uid',authenticateToken,notification.update)
 
 //_________________________Campaign Settings__________________//
 

@@ -70,6 +70,7 @@ export class SettingsService {
   // }
 
   getDateTimeFormate(dateTime: any, onlyDate: boolean = false,) {
+    if(!dateTime) return
     let dates = new Date(dateTime);
     let formattedDate: string | null;
   if(dates.toString() != 'Invalid Date'){
@@ -90,8 +91,8 @@ export class SettingsService {
   }
   }
 
-  convertTimeFormat(time: string): string {
-    let format = this.timeFormat;
+  convertTimeFormat(time: string,isStaticFormate:boolean = false): string {
+    let format = isStaticFormate ? '24':this.timeFormat;
     if(time){
     if (format === '24') {
         const [timePart, modifier] = time.split(' ');
