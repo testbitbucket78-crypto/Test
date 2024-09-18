@@ -193,24 +193,16 @@ deleteMedia=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and  ( me
 
 let isNoReplySent = `select * from Message where interaction_id =? and system_message_type_id=4`
 let getInteractionbyId =`select * from Interaction WHERE InteractionId=? and interaction_status=?  and is_deleted !=1`
-let getLatestMsgbyInteraction = `SELECT M.interaction_id,M.created_at, M.SPID, M.Agent_id, MAX(M.Message_id) as MaxMessageId, M.updated_at ,I.updated_at as updateTime,
- dm.autoreply, dm.value, dm.message_type,dm.Is_disable, dm.link, ec.channel,ec.Phone_number as customer_phone_number,ec.defaultAction_PauseTime, interaction_status, 
-       ms.Message_id as SystemReplyMessageId, ms.system_message_type_id
-    FROM Interaction I
+let getLatestMsgbyInteraction = ` SELECT M.interaction_id, I.customerId, M.SPID, M.Agent_id, MAX(M.Message_id) as MaxMessageId, Max(M.updated_at) as updated_at, I.updated_at as updateTime
+ ,dm.autoreply, dm.value, dm.message_type, dm.Is_disable, dm.link, ec.channel, ec.Phone_number as customer_phone_number,ec.defaultAction_PauseTime, interaction_status, ms.Message_id as SystemReplyMessageId, ms.system_message_type_id
+    FROM (SELECT MAX(InteractionId) AS InteractionId, customerId, interaction_status, Max(updated_at) as updated_at FROM Interaction where interaction_status = 'Open' group by customerId) AS I
      left Join  Message M on I.InteractionId = M.interaction_id 
      Left join EndCustomer ec on I.customerId = ec.customerId
-     left join (SELECT *
-     FROM Message ms1
-     WHERE ms1.system_message_type_id = 4
-     ORDER BY ms1.updated_at DESC
-     LIMIT 1) ms 
-     ON I.InteractionId = ms.interaction_id
+     left join Message ms on I.InteractionId = ms.interaction_id and ms.system_message_type_id = 4
      left join defaultmessages dm on dm.SP_ID = M.SPID and title='No Agent Reply' and dm.isDeleted !=1
-     WHERE (M.msg_status != 9 AND M.msg_status != 10) 
-     AND M.created_at <= DATE_SUB(NOW(), INTERVAL dm.autoreply MINUTE)
-    
-     AND M.is_deleted != 1 and I.interaction_status = 'Open' and I.is_deleted !=1
-    GROUP BY M.interaction_id`
+    WHERE (M.msg_status != 9 AND M.msg_status != 10) 
+      AND M.is_deleted != 1 and I.interaction_status = 'Open'       
+    GROUP BY M.interaction_id, I.customerId order by M.updated_at desc;`
 
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1` 
 let customerPhone =`select * from EndCustomer where customerId=?`

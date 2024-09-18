@@ -146,6 +146,7 @@ async function NoAgentReplyTimeOut() {
       //  console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
       for (const msg of noAgentReplydata) {
         let isReplyPause = await isAutoReplyPause(msg.SPID, msg.interaction_id, msg.defaultAction_PauseTime)
+        console.log(msg.SPID,msg.customerId,msg.customer_phone_number,isReplyPause , msg.Is_disable != 0 ,   !(msg.updated_at >= msg.updateTime),msg.updated_at,msg.updateTime)
         if (isReplyPause && msg.Is_disable != 0 &&   !(msg.updated_at >= msg.updateTime)) { //msg.system_message_type_id != 4
           let isWorkingTime = await workingHoursDetails(msg.SPID);
           //   console.log("isWorkingTime"  ,isWorkingTime)

@@ -714,14 +714,11 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
   return false;
 }
 
-// setTimeout(async ()=>{
-//   let getHolidays = await db.excuteQuery('SELECT Date(holiday_date) as date FROM holidays WHERE SP_ID = ? AND isDeleted != 1', [55]);
-//   console.log(getHolidays)
-// },1234)
+
 
 async function isHolidays(spid) {
   // Execute the query to get holidays for the given SP_ID
-  let getHolidays = await db.excuteQuery('SELECT id, SP_ID, month, DATE(holiday_date) as holiday_date FROM holidays WHERE SP_ID = ? AND isDeleted != 1', [spid]);
+  let getHolidays = await db.excuteQuery('SELECT id, SP_ID, month, DATE_FORMAT(holiday_date,"%Y-%m-%d") as holiday_date FROM holidays WHERE SP_ID = ? AND isDeleted != 1', [spid]);
   
 
   // Check if today is a holiday
