@@ -88,7 +88,7 @@ export class LoginComponent implements OnInit {
                     
                     this.settingsService.getSPPhoneNumber(this.parentId).subscribe(
                         response => {
-                            if (response && response.length > 0) {
+                            if ((Array.isArray(response) && response.length > 0) || (!Array.isArray(response) && response)) {
                                 if (this.parentId == 0 || this.parentId == null) {
                                     sessionStorage.setItem('SPPhonenumber',result.user.mobile_number);
                                 } else {
