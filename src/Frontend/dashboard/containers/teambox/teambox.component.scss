@@ -939,7 +939,9 @@ img.no-dp {
         font-style: italic;
         color: orange !important;
       }
-      
+::ng-deep .sidenav .tag_list .tag_item{
+    word-break: break-all;
+}
 .message_box .content span.message_time {
     margin: 0;
     padding: 0;

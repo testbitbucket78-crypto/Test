@@ -109,12 +109,12 @@
             </div>
         </div> -->
         <div class="margin-heading px-2">
-            <div class="sub-heading mt-3 ml-4">Assign a Default Admin</div>
+            <div class="sub-heading mt-3 ml-4">Assign a Default Admin </div>
             <div class="sub-contents py-2">
                 <p class="margin-content">Select a Default Admin that will be assigned as Contact Owner in case no other Contact Owner is defined at the time of contact creation. Missed Chat will also be assigned to a Default Admin in case an Admin is configured for the same under Routing Rules.</p>
             </div>
-            <select class="input-form">
-                <option *ngFor="let item of initUserList" [ngValue]="item.uid" [selected]="item.uid === currentLoggedInUserUID"><span class="text-capitalize">{{ item?.name }}</span></option>
+            <select class="input-form" [(ngModel)]="defaultAdminUid" [ngModelOptions]="{standalone: true}">
+                <option *ngFor="let item of initUserList" [value]="item.uid"><span class="text-capitalize">{{ item?.name }}</span></option>
             </select>
             <!-- <p>If the contact owner is not defined, chat is assigned to Admin</p> -->
         </div>

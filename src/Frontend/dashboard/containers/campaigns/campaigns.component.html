@@ -423,9 +423,9 @@
 								<img *ngIf="template.media_type=='image'" class="template_img" src="{{template.Links}}">
 								<div *ngIf="!template.media_type" class="template_img_placeholder"></div>
 								<div class="template_text">
-									<p [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+									<p *ngIf="template.Header" [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 									<div [innerHTML]="template.BodyText | sanitizeHtml"> </div>
-									<p [innerHTML]="template.FooterText | sanitizeHtml" class="footer"></p>
+									<p *ngIf="template.FooterText" [innerHTML]="template.FooterText | sanitizeHtml" class="footer"></p>
 								  </div>
 							</div>
 
@@ -455,9 +455,9 @@
 						            <div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
 								</div>
 								<div class="template_text">
-									<p [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="name"></p>
+									<p *ngIf="selectedTemplate.Header" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="name"></p>
 									<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml" class="description"></p>
-									<p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml" class="footer"></p>
+									<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml" class="footer"></p>
 								</div>
 		
 							</div>
@@ -536,9 +536,9 @@
 								</div>
 								<!-- <div><img src="/assets/img/teambox/edit-icon.svg"></div> -->
 								<div class="template_text">
-									<p [innerHTML]="selectedTemplate.TemplateName |sanitizeHtml" class="name"></p>
+									<p *ngIf="selectedTemplate.TemplateName" [innerHTML]="selectedTemplate.TemplateName |sanitizeHtml" class="name"></p>
 									<p [innerHTML]="selectedTemplate.BodyText |sanitizeHtml" class="description"></p>
-									<p [innerHTML]="selectedTemplate.FooterText |sanitizeHtml" class="footer"></p>
+									<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText |sanitizeHtml" class="footer"></p>
 								</div>
 		
 							</div>
@@ -572,9 +572,9 @@
 								<div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
 							</div>
 							<div class="template_text">
-								<p [innerHTML]="selectedTemplate.TemplateName |sanitizeHtml" class="name"></p>
+								<p *ngIf="selectedTemplate.TemplateName" [innerHTML]="selectedTemplate.TemplateName |sanitizeHtml" class="name"></p>
 								<p [innerHTML]="selectedTemplate.BodyText |sanitizeHtml" class="description"></p>
-								<p [innerHTML]="selectedTemplate.FooterText |sanitizeHtml" class="footer"></p>
+								<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText |sanitizeHtml" class="footer"></p>
 							</div>
 	
 						</div>
