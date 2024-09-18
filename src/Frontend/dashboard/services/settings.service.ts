@@ -70,6 +70,7 @@ export class SettingsService {
   // }
 
   getDateTimeFormate(dateTime: any, onlyDate: boolean = false,) {
+    if(!dateTime) return
     let dates = new Date(dateTime);
     let formattedDate: string | null;
   if(dates.toString() != 'Invalid Date'){
