@@ -13,7 +13,8 @@ const db = require('./dbhelper')
 const axios = require('axios');
 const middleWare = require('./middleWare')
 const moment = require('moment');
-const Routing = require('./RoutingRules')
+const Routing = require('./RoutingRules');
+const { Console } = require("console");
 const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1`
 let updateSms = `UPDATE Message set system_message_type_id=?,updated_at=? where Message_id=?`
@@ -210,9 +211,9 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
 
 
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
-
+   
     let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid);
-console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg)
+    console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg)
     if (replymessage?.length > 0) {
 
       let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType,display_phone_number);
@@ -224,7 +225,7 @@ console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg)
       return 'false' // getOutOfOfficeResult;  comment this is because routing rules only disable for smartreply or flow
     } else if (defultOutOfOfficeMsg === 'Agents Offline' && replymessage?.length <= 0) {
       return 'false';    //changed this is because routing rules only disable for smartreply or flow
-    } else if (defultOutOfOfficeMsg === true && replymessage?.length <= 0) {
+    } else if (defultOutOfOfficeMsg === true && replymessage?.length <= 0)  {
       return 'false';
     }
 
@@ -661,26 +662,26 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
     let result = 'false';
 
     var outOfOfficeMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Out of Office']);
-    //  console.log(outOfOfficeMessage)
+   //  console.log(outOfOfficeMessage)
     // resolve condition
     if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
       console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 2])
       console.log(messageInterval[0]?.updated_at >= messageInterval[0]?.updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
-      let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid])
-      if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
+      let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid]);
+    // if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
       if (messageInterval.length <= 0 || !(messageInterval[0].updated_at >= messageInterval[0].updateTime)) {
         console.log("messageInterval", newId)
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
         let message_text = await getExtraxtedMessage(outOfOfficeMessage[0]?.value)
         result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, message_text, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId, outOfOfficeMessage[0].message_type)
-        console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
+       // console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
 
         let myUTCString = new Date().toUTCString();
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateSmsRes = await db.excuteQuery(updateSms, [2, time, msg_id]);
       }
-    }
+   // }
     }
     return result;
   } catch (err) {
@@ -695,6 +696,8 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
   let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
   var workingData = await db.excuteQuery(workingHourQuery, [sid]);
   console.log(currentTime,"working",(isWorkingTime(workingData, currentTime)));
+
+  let isTodayHoliday = await isHolidays(sid);
   if ((isWorkingTime(workingData, currentTime))) {
     let agentofflinestatus = await AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid);
     console.log('It is currently  within working hours.' + msg_id);
@@ -702,9 +705,41 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
       return 'Agents Offline'
     }
     return true;
+  }else if ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == true){
+    console.log("else ******* ",)
+    let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid);
+    return false;
   }
   // console.log('It is currently not within working hours.');
   return false;
+}
+
+// setTimeout(async ()=>{
+//   let getHolidays = await db.excuteQuery('SELECT Date(holiday_date) as date FROM holidays WHERE SP_ID = ? AND isDeleted != 1', [55]);
+//   console.log(getHolidays)
+// },1234)
+
+async function isHolidays(spid) {
+  // Execute the query to get holidays for the given SP_ID
+  let getHolidays = await db.excuteQuery('SELECT id, SP_ID, month, DATE(holiday_date) as holiday_date FROM holidays WHERE SP_ID = ? AND isDeleted != 1', [spid]);
+  
+
+  // Check if today is a holiday
+  const isTodayHoliday = (holidays) => {
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+    return holidays.some(holiday => {
+      const holidayDate = holiday.holiday_date.toISOString().split('T')[0]; // Extract 'YYYY-MM-DD' from the returned holiday date
+      return holidayDate === today;
+    });
+  };
+
+  if (isTodayHoliday(getHolidays)) {
+    console.log("Today is a holiday!");
+    return true;
+  } else {
+    console.log("Today is not a holiday.");
+    return false;
+  }
 }
 
 
