@@ -834,7 +834,7 @@ async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, random
     Team Engagekart`
     };
     transporter.sendMail(mailOptions, (error, info) => {
-        // console.log(info)
+         console.log(info)
 
     });
 }

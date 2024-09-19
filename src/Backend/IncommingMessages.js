@@ -13,7 +13,8 @@ const db = require('./dbhelper')
 const axios = require('axios');
 const middleWare = require('./middleWare')
 const moment = require('moment');
-const Routing = require('./RoutingRules')
+const Routing = require('./RoutingRules');
+const { Console } = require("console");
 const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1`
 let updateSms = `UPDATE Message set system_message_type_id=?,updated_at=? where Message_id=?`
@@ -29,7 +30,7 @@ WHERE M.interaction_id = ?
   AND I.interaction_status = 'Open'
   AND I.is_deleted != 1 order by M.updated_at desc limit 1`;
 
-  checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary =! and is_deleted !=1 `
+  checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary !=1 and is_deleted !=1 `
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status) VALUES ?";
 
 async function sReplyActionOnlostMessage(message_text, sid, channelType, phone_number_id, from, custid, agid, newId,display_phone_number) {
@@ -74,12 +75,9 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
 
     let currentTime = new Date(); // new Date(new Date().toUTCString().replace('GMT',''))
 
-    let autoReplyVal = new Date(currentTime).toUTCString();
-    if (autoReplyTime != 0) {
-      autoReplyVal.setMinutes(autoReplyVal.getMinutes() + autoReplyTime);
-    }
+   
     //const autoReplyVal = new Date(currentTime)   // autoReplyTime when auto reply start
-    console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyVal, autoReplyTime)
+    console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyTime)
     console.log( (autoReplyTime <= currentTime),"(autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ",(autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ))
     if (autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ) {
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number)
@@ -213,9 +211,9 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
 
 
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
-
+   
     let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid);
-
+    console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg)
     if (replymessage?.length > 0) {
 
       let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType,display_phone_number);
@@ -227,7 +225,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
       return 'false' // getOutOfOfficeResult;  comment this is because routing rules only disable for smartreply or flow
     } else if (defultOutOfOfficeMsg === 'Agents Offline' && replymessage?.length <= 0) {
       return 'false';    //changed this is because routing rules only disable for smartreply or flow
-    } else if (defultOutOfOfficeMsg === true && replymessage?.length <= 0) {
+    } else if (defultOutOfOfficeMsg === true && replymessage?.length <= 0)  {
       return 'false';
     }
 
@@ -664,26 +662,26 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
     let result = 'false';
 
     var outOfOfficeMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Out of Office']);
-    //  console.log(outOfOfficeMessage)
+   //  console.log(outOfOfficeMessage)
     // resolve condition
     if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
       console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 2])
       console.log(messageInterval[0]?.updated_at >= messageInterval[0]?.updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
-      let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid])
-      if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
+      let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid]);
+    // if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
       if (messageInterval.length <= 0 || !(messageInterval[0].updated_at >= messageInterval[0].updateTime)) {
         console.log("messageInterval", newId)
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
         let message_text = await getExtraxtedMessage(outOfOfficeMessage[0]?.value)
         result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, message_text, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId, outOfOfficeMessage[0].message_type)
-        console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
+       // console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
 
         let myUTCString = new Date().toUTCString();
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateSmsRes = await db.excuteQuery(updateSms, [2, time, msg_id]);
       }
-    }
+   // }
     }
     return result;
   } catch (err) {
@@ -697,7 +695,9 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
   const currentTime = new Date();
   let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
   var workingData = await db.excuteQuery(workingHourQuery, [sid]);
-  console.log("working")
+  console.log(currentTime,"working",(isWorkingTime(workingData, currentTime)));
+
+  let isTodayHoliday = await isHolidays(sid);
   if ((isWorkingTime(workingData, currentTime))) {
     let agentofflinestatus = await AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid);
     console.log('It is currently  within working hours.' + msg_id);
@@ -705,9 +705,38 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
       return 'Agents Offline'
     }
     return true;
+  }else if ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == true){
+    console.log("else ******* ",)
+    let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid);
+    return false;
   }
   // console.log('It is currently not within working hours.');
   return false;
+}
+
+
+
+async function isHolidays(spid) {
+  // Execute the query to get holidays for the given SP_ID
+  let getHolidays = await db.excuteQuery('SELECT id, SP_ID, month, DATE_FORMAT(holiday_date,"%Y-%m-%d") as holiday_date FROM holidays WHERE SP_ID = ? AND isDeleted != 1', [spid]);
+  
+
+  // Check if today is a holiday
+  const isTodayHoliday = (holidays) => {
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+    return holidays.some(holiday => {
+      const holidayDate = holiday.holiday_date.toISOString().split('T')[0]; // Extract 'YYYY-MM-DD' from the returned holiday date
+      return holidayDate === today;
+    });
+  };
+
+  if (isTodayHoliday(getHolidays)) {
+    console.log("Today is a holiday!");
+    return true;
+  } else {
+    console.log("Today is not a holiday.");
+    return false;
+  }
 }
 
 
@@ -728,7 +757,7 @@ function isWorkingTime(data, currentTime) {
     const end_time = (item.end_time).replace(/\s*(AM|PM)/, "");
     const startTime = start_time.split(':');
     const endTime = end_time.split(':');
-    // console.log(startTime + " " + endTime + workingDays.includes(currentDay))
+     console.log(startTime + " " + endTime + workingDays.includes(currentDay))
     // console.log(endTime[0] + " " + date + endTime[1] + "| " + getMin)
     if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
       console.log("data===========")
@@ -760,7 +789,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
     if (AgentsOfflineMessage.length > 0 && AgentsOfflineMessage[0].Is_disable == 1) {
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 3])
       console.log("inactive above   length", messageInterval.length)
-      console.log(messageInterval[0].updated_at <= messageInterval[0].updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
+      console.log(messageInterval[0]?.updated_at <= messageInterval[0]?.updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
       let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid])
       if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
       if (messageInterval.length <= 0 || (messageInterval[0].updated_at <= messageInterval[0].updateTime)) {

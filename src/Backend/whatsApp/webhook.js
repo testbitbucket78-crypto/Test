@@ -305,7 +305,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
           let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
           //check if assignment trigger and chat is ressolve then open 
           if (defaultReplyAction >= 0) {
-            let isEmptyInteraction = await   commonFun.isStatusEmpty(InteractionId, sid,custid)
+            let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
 
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open',updated_at, newId])
             if(isEmptyInteraction == 1){
@@ -331,7 +331,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         //  console.log("routing ------------ called after false return")
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let isEmptyInteraction = await   commonFun.isStatusEmpty(InteractionId, sid,custid)
+        let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
 
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
         if(isEmptyInteraction == 1){

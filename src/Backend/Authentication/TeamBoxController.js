@@ -770,12 +770,12 @@ async function getDefaultActionTimeandUpdatePauseTime(spid,customerId) {
     try {
         let getDefaultAction = await db.excuteQuery(val.defaultQuery, [spid]);
         let timePause = getDefaultAction[0]?.pauseAutoReplyTime ? getDefaultAction[0]?.pauseAutoReplyTime :0;
-        let currentTime = new Date(); // Current time in local time
-        let utcTime = new Date(currentTime.toUTCString()); // Convert to UTC
-        let autoReplyVal = new Date(utcTime); // Clone the UTC time
-        
-        autoReplyVal.setMinutes(autoReplyVal.getMinutes() + timePause);
-        console.log("currentTime,autoReplyVal ,timePause----", currentTime,  autoReplyVal,timePause)
+        let currentTime = new Date(); // Its default gives utc on server and i have to use it to compare only server time so not changed into UTC.
+      
+        let autoReplyVal = new Date(currentTime.getTime() + timePause * 60000); // Clone the UTC time
+      
+        console.log("currentTime,autoReplyVal ,timePause----", new Date(),  autoReplyVal,timePause,autoReplyVal.toISOString())
+ 
         let updatePauseTime = await db.excuteQuery(val.updateContactDefaultQuery, [autoReplyVal, customerId, spid])
         console.log(timePause,spid,"Teambox updatePauseTime", updatePauseTime.affectedRows)
     } catch (err) {

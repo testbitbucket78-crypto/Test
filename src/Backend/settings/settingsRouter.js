@@ -129,6 +129,8 @@ router.get('/exitTemplate/:spid/:isTemplate/:name',authenticateToken,campaignCon
 //------------------UPLOAD  MEDIA ON METS IMPLEMENTATIONS------------------------//
 const multer = require('multer');
 let fs = require('fs-extra');
+const awsHelper = require('../awsHelper');
+const path = require("path");
 // handle storage using multer
 var storage = multer.diskStorage({
    destination: function (req, file, cb) {
@@ -147,9 +149,8 @@ var upload = multer({ storage: storage });
 
 
 // handle single file upload
-router.post('/uploadfiletoMeta/:spid/:name',upload.single('file'), async (req, res)=> {
+router.post('/uploadfiletoMeta/:spid/:name',upload.single('dataFile'), async (req, res)=> {
     try{   
-      console.log(req)
  const file = req.file;
  console.log(file)
  if (!file) {

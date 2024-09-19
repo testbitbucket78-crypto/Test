@@ -863,7 +863,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
       } else {
        // let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
       
-        let isEmptyInteraction = await   commonFun.isStatusEmpty(InteractionId, sid,custid)
+        let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
 
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
         if(isEmptyInteraction == 1){
@@ -1054,7 +1054,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
         //check if assignment trigger and chat is ressolve then open 
         if (defaultReplyAction >= 0) {
-          let isEmptyInteraction = await   commonFun.isStatusEmpty(InteractionId, sid,custid)
+          let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
 
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
             if(isEmptyInteraction == 1){
@@ -1078,7 +1078,12 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     if (defaultReplyAction == 'false') {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+      let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
+
+      let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+      if(isEmptyInteraction == 1){
+        updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+      }
       if (updateInteraction?.affectedRows > 0) {
         notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
       }
