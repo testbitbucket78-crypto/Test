@@ -171,8 +171,8 @@ export class ContactFilterComponent implements OnInit {
 				}
 				case 'Switch':{
 					options =[
-						{label:'Is empty',checked:false,type:'switch'},
-						{label:'Is not empty',checked:false,type:'switch'},
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
 						{label:'Yes',checked:false,type:'switch'},
 						{label:'No',checked:false,type:'switch'},
 					];
@@ -180,37 +180,37 @@ export class ContactFilterComponent implements OnInit {
 				}
 				case 'text':{
 					 options =[
-						{label:'Is empty',checked:false,type:'switch'},
-						{label:'Is not empty',checked:false,type:'switch'},
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
 						{label:'Contains',checked:false,type:'text'},
 						{label:'Does Not Contain',checked:false,type:'text'},
 						{label:'Starts with',checked:false,type:'text'},
 						{label:'End with',checked:false,type:'text'},
-						{label:'Is',checked:false,type:'select',options:['Empty']},
-						{label:'Is not',checked:false,type:'select',options:['Empty']},
+						{label:'Is',checked:false,type:'text'},
+						{label:'Is not',checked:false,type:'text'},
 						];
 						break;
 				}
 				case 'Number':{
 					options =[
-						{label:'Is empty',checked:false,type:'switch'},
-						{label:'Is not empty',checked:false,type:'switch'},
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
 					   {label:'Contains',checked:false,type:'text'},
 					   {label:'Does Not Contain',checked:false,type:'text'},
 					   {label:'Less than',checked:false,type:'text'},
 					   {label:'Greater than',checked:false,type:'text'},
 					   {label:'Starts with',checked:false,type:'text'},
 					   {label:'End with',checked:false,type:'text'},
-					   {label:'Is',checked:false,type:'select',options:['Empty']},
-					   {label:'Is not',checked:false,type:'select',options:['Empty']},
+					   {label:'Is',checked:false,type:'text'},
+					   {label:'Is not',checked:false,type:'text'},
 					   ];
 					   break;
 			   }
 				case 'Select':{
 					let selectOptions = JSON.parse(item?.dataTypeValues);
 					options =[
-						{label:'Is empty',checked:false,type:'switch'},
-						{label:'Is not empty',checked:false,type:'switch'},
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
 						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
 						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
 					];
@@ -219,8 +219,8 @@ export class ContactFilterComponent implements OnInit {
 				case 'Multi Select':{
 					let selectOptions = JSON.parse(item?.dataTypeValues);
 					options =[
-						{label:'Is empty',checked:false,type:'switch'},
-						{label:'Is not empty',checked:false,type:'switch'},
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
 						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
 						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
 					];

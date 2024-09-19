@@ -69,7 +69,7 @@
 
                 <div class="col-sm-6 d-flex align-items-center text-left">
                     <p class="p-0 m-0">Showing:</p>
-                    <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
+                    <select class="pl-2 m-0"  [(ngModel)]="pageSize" (change)="getPaging(); currentPage = 1">
                         <option value="10">10</option>
                         <option value="15">15</option>
                         <option value="20">20</option>
@@ -86,15 +86,15 @@
                 <nav aria-label="navigation">
                     <ul class="justify-content-end align-items-center m-0 pagination">
                       <li class="btn-list">
-                        <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1">
+                        <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1; getPaging()">
                             <img src="assets/img/profile/previous.svg" />
                         </button>
                     </li>
                       <li *ngFor="let item of paging" class="pagination-num-container">
-                        <a  [ngClass]="{'pagination-disabled': currentPage !=item}" (click)="currentPage=item" class="pagination-num-body">{{item}}</a>
+                        <a  [ngClass]="{'pagination-disabled': currentPage !=item}" (click)="currentPage=item; getPaging();" class="pagination-num-body">{{item}}</a>
                      </li>
                       <li class="btn-list">
-                        <button class="pagination-btn" [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" >
+                        <button class="pagination-btn" [disabled]="currentPage==paging[paging.length-1]" (click)="currentPage= currentPage+1; getPaging();" >
                             <img src="assets/img/profile/next.svg" />
                         </button>
                     </li>

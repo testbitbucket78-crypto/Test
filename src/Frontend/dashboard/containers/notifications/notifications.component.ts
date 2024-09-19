@@ -35,9 +35,10 @@ export class NotificationsComponent implements OnInit {
 
   getPaging() {
     this.paging = [];
-    this.currentPage = 1;
-    let totalPages = Math.ceil( this.notificationData.length/this.pageSize);
-    for (let i = 1; i <= totalPages; i++) {
+    //this.currentPage = 1;
+    let pagingStart = this.currentPage >3 ? this.currentPage - 2 : 1;
+    let totalPages = Math.ceil( this.notificationData.length/this.pageSize) > this.currentPage+2 ? this.currentPage+2 :  Math.ceil( this.notificationData.length/this.pageSize);
+    for (let i = pagingStart; i <= totalPages; i++) {
        this.paging.push(i);
   }
  
