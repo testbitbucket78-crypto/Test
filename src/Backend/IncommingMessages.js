@@ -722,10 +722,10 @@ async function isHolidays(spid) {
   
 
   // Check if today is a holiday
-  const isTodayHoliday = (holidays) => {
+  const isTodayHoliday = (getHolidays) => {
     const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
-    return holidays.some(holiday => {
-      const holidayDate = holiday.holiday_date.toISOString().split('T')[0]; // Extract 'YYYY-MM-DD' from the returned holiday date
+    return getHolidays.some(holiday => {
+      const holidayDate = holiday.holiday_date//.toISOString().split('T')[0]; // Extract 'YYYY-MM-DD' from the returned holiday date
       return holidayDate === today;
     });
   };
