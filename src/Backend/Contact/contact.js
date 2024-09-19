@@ -63,7 +63,7 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
 
     if (req.body?.Query && req.body.Query.trim() !== '') {
       IsFilteredList = true;
-      contactList = await db.excuteQuery(req.body.Query + 'and isDeleted !=1 and IsTemporary !=1 and group by customerId', []);
+      contactList = await db.excuteQuery(req.body.Query, []);
       logger.info(`Filtered query executed: ${req.body.Query}`);
     }
 

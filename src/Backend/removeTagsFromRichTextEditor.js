@@ -52,7 +52,7 @@ async function getDefaultAttribueWithoutFallback(message_variables, spid, custom
     endCustomerColumns = endCustomerColumns.map(column => column.Field);
 
     // Fetch all column names from SPIDCustomContactFields table
-    const spidCustomColumnsQuery = `SELECT ColumnName, CustomColumn FROM SPIDCustomContactFields WHERE SP_ID=? AND isDeleted != 1`;
+    const spidCustomColumnsQuery = `SELECT ColumnName, CustomColumn, Type FROM SPIDCustomContactFields WHERE SP_ID=? AND isDeleted != 1`;
     let spidCustomColumns = await db.excuteQuery(spidCustomColumnsQuery, [spid]);
     let spidCustomColumnsMap = new Map();
     spidCustomColumns.forEach(column => {
@@ -75,8 +75,16 @@ async function getDefaultAttribueWithoutFallback(message_variables, spid, custom
         const customColumn = spidCustomColumnsMap.get(message_variable);
         const endCustomerQuery = `SELECT ${customColumn} FROM EndCustomer WHERE customerId=? and isDeleted !=1 and SP_ID=?`;
         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
-
+        let TypeFound = spidCustomColumns.find(item => item.ColumnName === message_variable);
         if (endCustomerResult.length > 0 && endCustomerResult[0][customColumn]) {
+          if (TypeFound) {
+            if (TypeFound.Type === 'Multi Select' || TypeFound.Type === 'Select') {
+                let processedValues = endCustomerResult[0][customColumn].split(',').map(part => {
+                    return part.split(':')[1];
+                });
+                endCustomerResult[0][customColumn] = processedValues.join(', ');
+            }
+        }
           result[message_variable] = endCustomerResult[0][customColumn];
         }
       } else {
@@ -122,7 +130,7 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
     endCustomerColumns = endCustomerColumns.map(column => column.Field);
 
     // Fetch all column names from SPIDCustomContactFields table
-    const spidCustomColumnsQuery = `SELECT ColumnName, CustomColumn FROM SPIDCustomContactFields WHERE SP_ID=? AND isDeleted != 1`;
+    const spidCustomColumnsQuery = `SELECT ColumnName, CustomColumn, Type FROM SPIDCustomContactFields WHERE SP_ID=? AND isDeleted != 1`;
     let spidCustomColumns = await db.excuteQuery(spidCustomColumnsQuery, [spid]);
     let spidCustomColumnsMap = new Map();
     spidCustomColumns.forEach(column => {
@@ -168,6 +176,16 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
 
         if (endCustomerResult.length > 0 && endCustomerResult[0][customColumn]) {
+        let TypeFound = spidCustomColumns.find(item => item.ColumnName === value);
+        if (TypeFound) {
+            let columnValue = endCustomerResult[0][customColumn];
+            if (TypeFound.Type === 'Multi Select' || TypeFound.Type === 'Select') {
+                let processedValues = columnValue.split(',').map(part => {
+                    return part.split(':')[1]; 
+                });
+                endCustomerResult[0][customColumn] = processedValues.join(', ');
+            }
+        }
           result[value] = endCustomerResult[0][customColumn];
         } else {
           result[value] = fallback;
