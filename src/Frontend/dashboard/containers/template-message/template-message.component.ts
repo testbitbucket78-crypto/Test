@@ -421,8 +421,8 @@ export class TemplateMessageComponent implements OnInit {
                 this._teamboxService.uploadfileToMeta(data,spid,name).subscribe
                 (uploadStatus => {
                     let responseData: any = uploadStatus;
-                    if (responseData.filename) {
-                        this.selectedPreview = responseData.filename.toString();
+                    if (responseData.awsUploadedId) {
+                        this.selectedPreview = responseData.awsUploadedId.toString();
                         this.newTemplateForm.get('Links')?.setValue(this.selectedPreview);
                         console.log(this.selectedPreview);
                     }

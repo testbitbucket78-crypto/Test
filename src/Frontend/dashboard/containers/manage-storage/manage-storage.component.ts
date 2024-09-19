@@ -52,7 +52,7 @@ export class ManageStorageComponent implements OnInit {
     this.isLoading = true;
     this.spid = Number(sessionStorage.getItem('SP_ID'));
     this.getManageStorage();
-    this.postmanualDelation();
+    //this.postmanualDelation();
     this.getmanualDelation();
 
     this.editAutoDeletionForm = this.fb.group({
@@ -169,6 +169,7 @@ export class ManageStorageComponent implements OnInit {
   
   patchFormValue() {
     const data = this.autoDeletionData;
+    console.log(data);
     for (let prop in data) {
       let value = data[prop as keyof typeof data];
       if (this.editAutoDeletionForm.get(prop)) {
@@ -179,6 +180,16 @@ export class ManageStorageComponent implements OnInit {
         }
       }
     }
+    this.editAutoDeletionForm.get('optionradio3')?.setValue(data?.autodeletion_contacts == '-1'? '1' :'');
+    this.editAutoDeletionForm.get('optionradio2')?.setValue(data?.autodeletion_media == '-1'? '1' :'');
+    this.editAutoDeletionForm.get('optionradio1')?.setValue(data?.autodeletion_message == '-1'? '1' :'');
+    console.log(this.editAutoDeletionForm);
+    // autodeletion_message: [''],
+    //   autodeletion_media: [''],
+    //   autodeletion_contacts: [''],
+    //   optionradio1: [''],
+    //   optionradio2: [''],
+    //   optionradio3: [''],
   }
   
   showToaster(message:any,type:any){
