@@ -343,13 +343,23 @@ const modifiedString = modifyString(originalString);
 
 async function removeTagsFromMessages(originalString) {
   const modifiedString = modifyString(originalString);
-
   // console.log("modifiedString",modifiedString);
   let convertedMessageText = convertHTML(removeEmptyTags(modifiedString))
+  console.log(convertedMessageText,'modifying string');
+  let val = fixBoldItalicSpacing(convertedMessageText)
   //console.log("convertHTML(removeEmptyTags(modifiedString))",convertedMessageText);
-  return convertedMessageText
+  return val;
 }
-
+function fixBoldItalicSpacing(result) {
+  result = result.replace(/\*\s+(.*?)\s*\*/g, ' *$1*');
+  result = result.replace(/\*(.*?)\*(?!\s|[.,!?])/g, '*$1* ');
+  result = result.replace(/_\s+(.*?)\s*_+/g, ' _$1_');
+  result = result.replace(/_(.*?)_(?!\s|[.,!?])/g, '_$1_ ');
+  return result;
+}
+setTimeout(() => {
+  removeTagsFromMessages(originalString);
+}, 100);
 
 
 

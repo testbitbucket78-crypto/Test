@@ -231,8 +231,8 @@ isLoading!: boolean;
     workingResponse.days = [];
     this.workingFormData.forEach(item=>{
       if(item.day?.length >0){
-        let st = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.startTime.split(':')[0]),Number(item?.startTime.split(':')[1])))),'hh:mm a');
-        let et = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.endTime.split(':')[0]),Number(item?.endTime.split(':')[1])))),'hh:mm a');
+        let st = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.startTime.split(':')[0]),Number(item?.startTime.split(':')[1])))),'HH:mm');
+        let et = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.endTime.split(':')[0]),Number(item?.endTime.split(':')[1])))),'HH:mm');
       workingResponse.days.push({day:item.day.toString(),startTime:st ? st :'',endTime:et ? et :''});
       }
     });

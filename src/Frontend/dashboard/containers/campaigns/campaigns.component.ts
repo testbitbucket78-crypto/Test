@@ -3158,6 +3158,7 @@ console.log(this.allTemplatesMain);
 	}
 
 	getMediaType(val:any,type:any){
-			return val.includes(type);
+		if(!val) return 
+		return val.includes(type);
 	}
 }

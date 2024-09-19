@@ -15,8 +15,8 @@ export class GeneralSettingsComponent implements OnInit {
   isContactAdd = 0;
   isAutoReplyDisable= 0;
   autoReplyTime ='';
-  pauseAutoReplyTime = 0;
-  pauseAgentActiveTime = 0;
+  pauseAutoReplyTime : any = 0;
+  pauseAgentActiveTime : any = 0;
   agentActiveTime='';
   pausedTill='';
   date!:Date;

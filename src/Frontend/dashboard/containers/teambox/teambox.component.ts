@@ -2197,6 +2197,7 @@ console.log(getMimeTypePrefix);
 	async selectInteraction(idx:number,) {
 		console.log(this.interactionList,'check id')
 		let Interaction = this.interactionList[idx];
+		this.selectedInteraction = Interaction;
 		//if(this.selectedInteractionList.findIndex(i => i == idx) == -1){
 			//this.selectedInteractionList.push(idx)
 			await this.getInteractionDataById(idx);

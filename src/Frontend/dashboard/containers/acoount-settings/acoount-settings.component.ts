@@ -32,6 +32,7 @@ export class AcoountSettingsComponent implements OnInit {
   selectedWhatsappData: any;
   phone!:any;
   phoneNumber!:number;
+  SPPhonenumber!:number;
   repliesaccountData!:repliesaccountList;
   whatAppDetails = <whatsAppDetails> {};
   fetchdata:any;
@@ -81,6 +82,7 @@ export class AcoountSettingsComponent implements OnInit {
     this.spid = Number(sessionStorage.getItem('SP_ID'));
     this.phoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
     this.email = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
+    this.SPPhonenumber = (JSON.parse(sessionStorage.getItem('SPPhonenumber')!));
     this.getwhatsapp();
     this.subscribeToNotifications();
   }
@@ -161,7 +163,7 @@ saveWhatsappWebDetails(id:number) {
   this.whatAppDetails.spid = this.spid;
   this.whatAppDetails.channel_id= this.channel_id;
   this.whatAppDetails.channel_status = this.channel_status;
-  this.whatAppDetails.connected_id = this.phoneNumber;
+  this.whatAppDetails.connected_id = this.SPPhonenumber;
   this.whatAppDetails.phone_type=this.phoneType;
   this.whatAppDetails.import_conversation = 0;
   this.whatAppDetails.QueueMessageCount = 0;
@@ -230,7 +232,7 @@ openDiv() {
     this.loadingQRCode = true; // Show the loadeßr
     let data = {
       spid: this.spid,
-      phoneNo: this.phoneNumber
+      phoneNo: this.SPPhonenumber
     }
     var id =0;
     if (this.selectedId?.length > 0) {
@@ -249,6 +251,7 @@ openDiv() {
             // },15000); 
             }
           }
+          if(response.status === 404) $("#qrWhatsappModal").modal('hide');
           this.loadingQRCode = false;
           if (response.QRcode === 'Client is ready!') {    
             this.channel_status = 1;      
