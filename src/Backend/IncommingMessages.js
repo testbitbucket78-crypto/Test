@@ -698,13 +698,14 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
   console.log(currentTime,"working",(isWorkingTime(workingData, currentTime)));
 
   let isTodayHoliday = await isHolidays(sid);
+ // console.log(isTodayHoliday,"(isWorkingTime(workingData, currentTime)) && isTodayHoliday == true",(isWorkingTime(workingData, currentTime)) && isTodayHoliday == true)
   if ((isWorkingTime(workingData, currentTime))) {
     let agentofflinestatus = await AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid);
     console.log('It is currently  within working hours.' + msg_id);
     if (agentofflinestatus == true) {
       return 'Agents Offline'
     }
-    return true;
+    //return true;
   }else if ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == true){
     console.log("else ******* ",)
     let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid);

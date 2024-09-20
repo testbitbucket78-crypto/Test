@@ -811,7 +811,8 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
         agid: data[1][0]['@agid'],
         newId: data[3][0]['@newId'],
         msg_id: data[5][0]['@msg_id'],
-        ifgot: data[12][0]['ifgot']
+        ifgot: data[12][0]['ifgot'],
+        replystatus: data[4][0]['@replystatus']
       };
 
 
@@ -821,6 +822,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
       var newId = extractedData.newId
       var msg_id = extractedData.msg_id
       var ifgot = extractedData.ifgot
+      var replystatus = extractedData.replystatus
       let latestSms = await db.excuteQuery('select * from Message where interaction_id=?  and is_deleted !=1 order by created_at desc',[newId])
       notify.NotifyServer(display_phone_number, false, newId, 'IN', 0, msg_id)
       let smartReplyActions = await incommingmsg.sReplyActionOnlostMessage(latestSms[0]?.message_text, sid, 'WA Web', phone_number_id, from, custid, agid, newId,display_phone_number);
