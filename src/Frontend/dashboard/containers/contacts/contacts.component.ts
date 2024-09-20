@@ -312,6 +312,7 @@ onButtonClick(data:any, event: any) {
     ngOnInit() {
       this.isLoadingOnInit = true;
       this.spid = Number(sessionStorage.getItem('SP_ID'));
+	    this.userid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
       
       this.showTopNav = true;
 
@@ -1531,5 +1532,13 @@ timeFormatter(params: any): string {
     filterIsApplied! : boolean;
     filterApplied(){
       this.filterIsApplied = true;
+    }
+    checkContactOwner(contacOwner:any){
+      let contactUid = this.userList.filter((item:any)=> item.name == contacOwner)[0]?.uid;
+      console.log(contactUid, this.userid);
+      if(contactUid == this.userid)
+        return false;
+      else 
+       return true;
     }
 }

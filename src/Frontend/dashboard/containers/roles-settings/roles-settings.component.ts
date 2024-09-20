@@ -92,7 +92,7 @@ export class RolesSettingsComponent implements OnInit {
     paging: any = 1;
     lastElementOfPage: any;
     isLoading!:boolean;
-    disabledRights=[22,23,24,25,28,29,30];
+    disabledRights=[7,22,23,24,25,28,29,30];
     constructor(public _settingsService: SettingsService,public settingsService: SettingsService,private datePipe:DatePipe, private fb: FormBuilder, public GridService: GridService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }

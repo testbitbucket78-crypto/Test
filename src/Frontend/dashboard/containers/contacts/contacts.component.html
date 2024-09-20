@@ -162,7 +162,7 @@
 							<h6 class="mt-2">{{items.OptInStatus}}</h6>
 						</div>
 						<div class="child3 pb-1">
-							<h5>Contact Owner</h5>
+							<h5>Contact Owner </h5>
 							<h6 class="mt-2">{{items.ContactOwner}}</h6>
 						</div>
 					</div>
@@ -176,7 +176,7 @@
 						</div>
 					</div>
 					<div class="parent d-block justify-content-between p-2 flex-column">
-						<h4 class="m-0">Custom Fields</h4>
+						<h4 class="m-0">Custom Fields </h4>
 					</div>
 					<div class="parent-flex p-2 parent d-flex flex-column">
 						<div class="child23" *ngFor="let it of filteredCustomFields">
@@ -214,12 +214,13 @@
 				</div> -->
 				</div>
 			</div>
-			<div class="btn-footer mt-3">
+			<div class="btn-footer mt-3" *ngFor="let items of customerData ">
 				<div class="button my-4 d-flex justify-content-center align-items-center">
-					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('5')">
+					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="(settingsService.checkRoleExist('5') && (!settingsService.checkRoleExist('4') && checkContactOwner(items.ContactOwner)))">
 						<img src="../../../../assets/img/profile/delete.svg">
 					</button>
-					<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="settingsService.checkRoleExist('5')">
+					<!-- && (!settingsService.checkRoleExist('4') && checkContactOwner(items.ContactOwner)) -->
+					<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="(settingsService.checkRoleExist('5') && (!settingsService.checkRoleExist('4') && checkContactOwner(items.ContactOwner)))">
 						<img src="../../../../assets/img/teambox/Edit.svg">
 					</button>
 					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn" [ngClass]="{'blocked':this.isBlocked==1}">{{this.isBlocked==1 ? 'Blocked' : 'Block'}}</button>
