@@ -241,7 +241,7 @@ WHERE
         'created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at',
         'isBlockedOn', 'isBlocked', 'channel', 'displayPhoneNumber', 'countryCode',
         'IsTemporary', 'contact_profile', 'InstagramId', 'facebookId', 'Country',
-        'state', 'city', 'pincode', 'address', 'sex', 'status', 'age'
+        'state', 'city', 'pincode', 'address', 'sex', 'status', 'age', 'defaultAction_PauseTime'
     )
 UNION ALL
 SELECT 
