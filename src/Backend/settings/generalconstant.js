@@ -72,7 +72,8 @@ let CustomerReplyReminder = `SELECT
 ic.InteractionId,
 ic.customerId,
 ic.updated_at  as updateTime,
-m.*,
+
+m.interaction_id, m.SPID, m.Agent_id, MAX(m.Message_id) as MaxMessageId, Max(m.updated_at) as updated_at,
 ec.channel,
 ec.phone_number AS customer_phone_number,
 ec.defaultAction_PauseTime
@@ -84,7 +85,7 @@ SELECT
     MAX(updated_at) AS latestMessageDate
 FROM Message
 WHERE message_direction = 'out' 
-AND (system_message_type_id IS NULL OR system_message_type_id IN (1, 2,3,4,6))
+AND (system_message_type_id IS NULL OR system_message_type_id IN (1, 2,3,4,6))  
 AND updated_at <= DATE_SUB(NOW(), INTERVAL 23 HOUR)
 GROUP BY interaction_id
 ) latestMsg ON ic.interactionId = latestMsg.interaction_id
@@ -96,10 +97,9 @@ LEFT JOIN EndCustomer ec ON ic.customerId = ec.customerId
 WHERE
 (ic.interaction_status = 'Open' OR ic.interaction_status = 'Open Interactions') and ic.is_deleted=0
 AND ic.SP_ID IN (SELECT SP_ID FROM defaultmessages WHERE Is_disable = 1 and title='No Customer Reply Reminder')
-AND m.created_at = DATE_SUB(NOW(), INTERVAL ? HOUR) 
 AND  (m.msg_status != 9 AND m.msg_status != 10) 
 AND m_in.interaction_id IS NULL
-group by latestMsg.interaction_id`
+group by latestMsg.interaction_id, ic.customerId `
 
 
 

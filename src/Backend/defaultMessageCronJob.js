@@ -30,12 +30,15 @@ async function NoCustomerReplyReminder() {
       try {
         let isReplyPause = await isAutoReplyPause(message.SP_ID, message.InteractionId, message.defaultAction_PauseTime)
         if (isReplyPause) {
-          let data = await db.excuteQuery(settingVal.selectdefaultMsgQuery, ['No Customer Reply Reminder', message.SP_ID])
+          let data = await db.excuteQuery(`SELECT * FROM defaultmessages WHERE Is_disable = 1 and title=? and SP_ID=?`, ['No Customer Reply Reminder',message.SPID])
+          //console.log("data",data)
+          //console.log(data.length > 0,message.SPID,message.customerId,message.customer_phone_number,isReplyPause , message.Is_disable != 0 ,   !(message.updated_at >= message.updateTime),message.updated_at,message.updateTime)
           if (data.length > 0 && !(message.updated_at >= message.updateTime)) {
-
+            console.log("data",data[0].value)
             //let sendDefult = await sendDefultMsg(data[0].link, data[0].value, data[0].message_type, 101714466262650, message.customer_phone_number)
-            let message_text = await getExtraxtedMessage(data.value)
-            messageThroughselectedchannel(message.SPID, message.customer_phone_number, data.message_type, message_text, data.link, metaPhoneNumberID, message.channel, message.message_type)
+            let message_text = await getExtraxtedMessage(data[0].value)
+            console.log(message_text)
+            messageThroughselectedchannel(message.SPID, message.customer_phone_number, data[0].message_type, message_text, data[0].link, metaPhoneNumberID, message.channel, message.message_type)
             let myUTCString = new Date().toUTCString();
             const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
             let updateSmsRes = await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.Message_id]);
@@ -93,8 +96,7 @@ AND dm.title = 'No Customer Reply Timeout'
 AND dm.Is_disable = 1 
 and (latestmsg.msg_status != 9 AND latestmsg.msg_status != 10) 
 AND latestmsg.updated_at <= DATE_SUB(NOW(), INTERVAL dm.autoreply MINUTE)
-and   latestmsg.created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
-group by latestmsg.interaction_id
+group by latestmsg.interaction_id ,ic.customerId
 `
 
 
@@ -146,7 +148,7 @@ async function NoAgentReplyTimeOut() {
       //  console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
       for (const msg of noAgentReplydata) {
         let isReplyPause = await isAutoReplyPause(msg.SPID, msg.interaction_id, msg.defaultAction_PauseTime)
-        console.log(msg.SPID,msg.customerId,msg.customer_phone_number,isReplyPause , msg.Is_disable != 0 ,   !(msg.updated_at >= msg.updateTime),msg.updated_at,msg.updateTime)
+        //console.log(msg.SPID,msg.customerId,msg.customer_phone_number,isReplyPause , msg.Is_disable != 0 ,   !(msg.updated_at >= msg.updateTime),msg.updated_at,msg.updateTime)
         if (isReplyPause && msg.Is_disable != 0 &&   !(msg.updated_at >= msg.updateTime)) { //msg.system_message_type_id != 4
           let isWorkingTime = await workingHoursDetails(msg.SPID);
           //   console.log("isWorkingTime"  ,isWorkingTime)
@@ -329,9 +331,9 @@ async function isReplySent(isAutoReply, autoReplyTime, isAutoReplyDisable, assig
 }
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, media_type) {
-  //console.log("spid, from, type, text, media, phone_number_id, channelType")
+  console.log("spid, from, type, text, media, phone_number_id, channelType")
   let getMediaType = determineMediaType(media_type);
-  console.log(spid, from, type, phone_number_id, channelType)
+  console.log(spid, from, getMediaType, phone_number_id, channelType)
   try {
     if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
