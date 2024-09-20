@@ -860,7 +860,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
 
 
         }
-      } else {
+      } else if(replystatus != "Open") {
        // let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
       
         let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
@@ -1075,7 +1075,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
       }
     }
-    if (defaultReplyAction == 'false') {
+    if (defaultReplyAction == 'false' && replystatus != "Open") {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
