@@ -1099,6 +1099,7 @@ formateDate(dateTime:string){
     getFilterOnEndCustomer(){
 		this.applylistFiltersWidth=400;
 		let addedNewFilters:any=[];
+		console.log(this.contactFilterBy,'this.contactFilterBy');
 		this.contactFilterBy.map((item:any)=>{
 			item.addeFilter.map((filter:any)=>{
 				addedNewFilters.push({
