@@ -31,14 +31,14 @@ export const ROUTES: Routes = [
             title: 'CIP - Sign In',
         } as SBRouteData,
     },
-    {
-        path: 'register',
-        canActivate: [],
-        component: authContainers.RegisterComponent,
-        data: {
-            title: 'CIP - Sign Up',
-        } as SBRouteData,
-    },
+    // {
+    //     path: 'register',
+    //     canActivate: [],
+    //     component: authContainers.RegisterComponent,
+    //     data: {
+    //         title: 'CIP - Sign Up',
+    //     } as SBRouteData,
+    // },
     {
         path: 'forgot-password',
         canActivate: [],
