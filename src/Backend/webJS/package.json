@@ -15,7 +15,6 @@
     "path": "^0.12.7",
     "qrcode-terminal": "^0.12.0",
     "websocket": "^1.0.34",
-    "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#webpack-exodus",
-    "moment": "^2.29.4"
+    "whatsapp-web.js": "^1.26.0"
   }
 }
