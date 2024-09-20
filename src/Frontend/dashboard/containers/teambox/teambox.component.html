@@ -1007,7 +1007,7 @@ popupWidth='250px' popupHeight='200px'>
 								  <div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
 									<p *ngIf="template.media_type ==='text' && template.Header"  [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 									<p [innerHTML]="template.BodyText| sanitizeHtml"></p>
-									<p [innerHTML]="template.FooterText | sanitizeHtml"></p>
+									<p *ngIf="template.FooterText" [innerHTML]="template.FooterText | sanitizeHtml"></p>
 								  </div>
 								<!--  <div *ngIf="template.Channel === 'WhatsApp Official'" class="template_btn">
 									<button type="button" class="btn">Button 1</button>
@@ -1073,9 +1073,9 @@ popupWidth='250px' popupHeight='200px'>
 											<img src="/assets/img/campaign/edit.svg">
 										</p>
 										 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-											<p *ngIf="selectedTemplate.media_type ==='text'"  [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+											<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header"  [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 											<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
-											<p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
+											<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 										  </div>
 									</div>
 									<div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
@@ -1352,9 +1352,9 @@ popupWidth='250px' popupHeight='200px'>
 							<img src="/assets/img/campaign/edit.svg">
 						</p> -->
 						 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-							<p *ngIf="selectedTemplate.media_type ==='text'" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+							<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 							<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
-							<p [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
+							<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 						  </div>
 					</div>
 					<div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
