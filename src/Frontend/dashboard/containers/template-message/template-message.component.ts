@@ -33,6 +33,7 @@ export class TemplateMessageComponent implements OnInit {
     TemplateName = '';
     selectedType: string = 'text';
     selectedPreview: string = '';
+    metaUploadedId: string = '';
     showCampaignDetail: boolean = false;
     showGalleryDetail: boolean = false;
     showInfoIcon:boolean = false;
@@ -423,6 +424,7 @@ export class TemplateMessageComponent implements OnInit {
                     let responseData: any = uploadStatus;
                     if (responseData.awsUploadedId) {
                         this.selectedPreview = responseData.awsUploadedId.toString();
+                        this.metaUploadedId = responseData.metaUploadedId['h'];
                         this.newTemplateForm.get('Links')?.setValue(this.selectedPreview);
                         console.log(this.selectedPreview);
                     }
@@ -772,7 +774,7 @@ checkTemplateName(e:any){
             let headerMedia ={};
             if(this.selectedType != 'text'){
                  headerMedia = {
-                        header_handle: [this.newTemplateForm.controls.Links.value]
+                        header_handle: [this.metaUploadedId]
             }
             
         }
