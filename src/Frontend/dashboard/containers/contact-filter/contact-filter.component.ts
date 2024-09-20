@@ -58,10 +58,14 @@ export class ContactFilterComponent implements OnInit {
 		this.contactFilterBy=[
 			{value:'Phone_number',label:'Phone_number',checked:false,addeFilter:[],
 			option:[
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
 			{label:'Contains',checked:false,type:'text'},
 			{label:'Does Not Contain',checked:false,type:'text'},
 			{label:'Starts with',checked:false,type:'text'},
 			{label:'End with',checked:false,type:'text'},
+			{label:'Is equal to',checked:false,type:'text'},
+			{label:'Is not equal to',checked:false,type:'text'},
 			]},
 			{value:'Name',label:'Name',checked:false,addeFilter:[],
 			option:[
@@ -69,17 +73,21 @@ export class ContactFilterComponent implements OnInit {
 			{label:'Does Not Contain',checked:false,type:'text'},
 			{label:'Starts with',checked:false,type:'text'},
 			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
+			{label:'Is empty',checked:false,type:'none'},
+			{label:'Is not empty',checked:false,type:'none'},
+			{label:'Is equal to',checked:false,type:'text'},
+			{label:'Is not equal to',checked:false,type:'text'},
 			]},
 			{value:'emailId',label:'emailId',checked:false,addeFilter:[],
 			option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Includes domain',checked:false,type:'text'},
-			{label:'Exclude domain',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
+				{label:'Contains',checked:false,type:'text'},
+				{label:'Does Not Contain',checked:false,type:'text'},
+				{label:'Starts with',checked:false,type:'text'},
+				{label:'End with',checked:false,type:'text'},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Is equal to',checked:false,type:'text'},
+				{label:'Is not equal to',checked:false,type:'text'},
 			]},
 			{value:'tag',label:'Tag',checked:false,addeFilter:[],
 			option:[
@@ -89,58 +97,66 @@ export class ContactFilterComponent implements OnInit {
 			
 			{value:'OptInStatus',label:'OptInStatus',checked:false,addeFilter:[],
 			option:[
-			{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
-			{label:'Is not',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']}
+				{label:'True',checked:false,type:'switch'},
+				{label:'False',checked:false,type:'switch'},
+			//{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
+			//{label:'Is not',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']}
 			]},		
 			{value:'isBlocked',label:'Blocked',checked:false,addeFilter:[],
 			option:[
-				{label:'Is',checked:false,type:'select',options:['true','false']},
-				{label:'Is not',checked:false,type:'select',options:['true','false']}
+				{label:'True',checked:false,type:'switch'},
+				{label:'False',checked:false,type:'switch'},
 			]},
 			{value:'created_at',label:'Created At',checked:false,addeFilter:[],
 			option:[
-			{label:'Is',checked:false,type:'datetime'},
-			{label:'Is not',checked:false,type:'datetime'},
-			{label:'Between',checked:false,type:'d_datetime'},
-			{label:'After',checked:false,type:'date'},
-			{label:'Before',checked:false,type:'date'}
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Between',checked:false,type:'d_date'},
+				{label:'After',checked:false,type:'date'},
+				{label:'Before',checked:false,type:'date'},
+				{label:'Is equal to',checked:false,type:'date'},
+				{label:'Is not equal to',checked:false,type:'date'},
 			]},
-			{value:'name',label:'Last Conversation With',checked:false,addeFilter:[],
+			{value:'Last Conversation With',label:'Last Conversation With',checked:false,addeFilter:[],
 			option:[
 			{label:'bot',checked:false,type:'none'},
 			{label:'user',checked:false,type:'user'},
 			]},
-			{value:'name',label:'Creator',checked:false,addeFilter:[],
+			{value:'Creator',label:'Creator',checked:false,addeFilter:[],
 			option:[
 			{label:'bot',checked:false,type:'none'},
 			{label:'user',checked:false,type:'user'},
 			]},
-			{value:'created_at',label:'Conversation Resolved',checked:false,addeFilter:[],
+			{value:'Conversation Resolved',label:'Conversation Resolved',checked:false,addeFilter:[],
 			option:[
 			{label:'true',checked:false,type:'none'},
 			{label:'false',checked:false,type:'none'}
 			]},
-			{value:'created_at',label:'Conversation Assigned to',checked:false,addeFilter:[],
+			{value:'Conversation Assigned to',label:'Conversation Assigned to',checked:false,addeFilter:[],
 			option:[
 				{label:'bot',checked:false,type:'none'},
 				{label:'unassigned',checked:false,type:'none'},
 				{label:'user',checked:false,type:'user'},
 			]},
-			{value:'created_at',label:'Last Message Received At',checked:false,addeFilter:[],
+			{value:'Last Message Received At',label:'Last Message Received At',checked:false,addeFilter:[],
 			option:[
-			{label:'Is',checked:false,type:'datetime'},
-			{label:'Is not',checked:false,type:'datetime'},
-			{label:'Between',checked:false,type:'d_datetime'},
-			{label:'After',checked:false,type:'date'},
-			{label:'Before',checked:false,type:'date'}
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Between',checked:false,type:'d_date'},
+				{label:'After',checked:false,type:'date'},
+				{label:'Before',checked:false,type:'date'},
+				{label:'Is equal to',checked:false,type:'date'},
+				{label:'Is not equal to',checked:false,type:'date'},
 			]},
-			{value:'created_at',label:'Last Message Sent At',checked:false,addeFilter:[],
+			{value:'Last Message Sent At',label:'Last Message Sent At',checked:false,addeFilter:[],
 			option:[
-			{label:'Is',checked:false,type:'datetime'},
-			{label:'Is not',checked:false,type:'datetime'},
-			{label:'Between',checked:false,type:'d_datetime'},
-			{label:'After',checked:false,type:'date'},
-			{label:'Before',checked:false,type:'date'}
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Between',checked:false,type:'d_date'},
+				{label:'After',checked:false,type:'date'},
+				{label:'Before',checked:false,type:'date'},
+				{label:'Is equal to',checked:false,type:'date'},
+				{label:'Is not equal to',checked:false,type:'date'},
 			]},
 			
 		];
@@ -161,11 +177,13 @@ export class ContactFilterComponent implements OnInit {
 			switch(item?.type){
 				case 'Date':{
 					 options =[
-						{label:'Is',checked:false,type:'date'},
-						{label:'Is not',checked:false,type:'date'},
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
 						{label:'Between',checked:false,type:'d_date'},
 						{label:'After',checked:false,type:'date'},
-						{label:'Before',checked:false,type:'date'}
+						{label:'Before',checked:false,type:'date'},
+						{label:'Is equal to',checked:false,type:'date'},
+						{label:'Is not equal to',checked:false,type:'date'},
 						];
 						break;
 				}
@@ -186,8 +204,8 @@ export class ContactFilterComponent implements OnInit {
 						{label:'Does Not Contain',checked:false,type:'text'},
 						{label:'Starts with',checked:false,type:'text'},
 						{label:'End with',checked:false,type:'text'},
-						{label:'Is',checked:false,type:'text'},
-						{label:'Is not',checked:false,type:'text'},
+						{label:'Is equal to',checked:false,type:'text'},
+						{label:'Is not equal to',checked:false,type:'text'},
 						];
 						break;
 				}
@@ -201,8 +219,8 @@ export class ContactFilterComponent implements OnInit {
 					   {label:'Greater than',checked:false,type:'text'},
 					   {label:'Starts with',checked:false,type:'text'},
 					   {label:'End with',checked:false,type:'text'},
-					   {label:'Is',checked:false,type:'text'},
-					   {label:'Is not',checked:false,type:'text'},
+					   {label:'Is equal to',checked:false,type:'text'},
+					   {label:'Is not equal to',checked:false,type:'text'},
 					   ];
 					   break;
 			   }
@@ -211,8 +229,8 @@ export class ContactFilterComponent implements OnInit {
 					options =[
 						{label:'Is empty',checked:false,type:'none'},
 						{label:'Is not empty',checked:false,type:'none'},
-						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
-						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is equal to',checked:false,type:'select_opt',options:selectOptions},
+						{label:'Is not equal to',checked:false,type:'select_opt',options:selectOptions}
 					];
 					break;
 				}
@@ -221,8 +239,8 @@ export class ContactFilterComponent implements OnInit {
 					options =[
 						{label:'Is empty',checked:false,type:'none'},
 						{label:'Is not empty',checked:false,type:'none'},
-						{label:'Is',checked:false,type:'select_opt',options:selectOptions},
-						{label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is equal to',checked:false,type:'select_opt',options:selectOptions},
+						{label:'Is not equal to',checked:false,type:'select_opt',options:selectOptions}
 					];
 					break;
 				}
@@ -267,6 +285,7 @@ export class ContactFilterComponent implements OnInit {
 	  }
 	  selectContactFilter(index:any,filter:any){
 		// this.ContactListNewFilters=[]
+		console.log(filter,'filter');
 		// let addeFilter = filter.addeFilter
 		this.selectedcontactFilterBy = filter;
 		this.showContactFilter=false;
@@ -275,12 +294,12 @@ export class ContactFilterComponent implements OnInit {
 		// 	this.ContactListNewFilters.push(addeFilter[i])
 		// }
 		// }
-		this.ContactListNewFilters[index]['filterPrefix'] = filter.label;
+		this.ContactListNewFilters[index]['filterPrefix'] = filter.value;
 		// let newFilter:any=[];
 		this.ContactListNewFilters[index]['filterBy'] = filter['option']['0'].label
 		this.ContactListNewFilters[index]['filterType'] = filter['option']['0'].type
 		this.ContactListNewFilters[index]['selectedOptions'] = filter['option']['0'].options
-		this.ContactListNewFilters[index]['filterPrefix'] = filter.label
+		this.ContactListNewFilters[index]['filterPrefix'] = filter.value;
 		this.ContactListNewFilters[index]['filterValue']='';
 		// if(addeFilter.length>0){
 		// newFilter['filterOperator']='AND';
@@ -321,7 +340,7 @@ export class ContactFilterComponent implements OnInit {
 		this.ContactListNewFilters[index]['filterBy'] = filter.label
 		this.ContactListNewFilters[index]['filterType'] = filter.type
 		this.ContactListNewFilters[index]['selectedOptions'] = filter.options
-		this.ContactListNewFilters[index]['filterPrefix'] = selectedcontactFilterBy.label
+		this.ContactListNewFilters[index]['filterPrefix'] = selectedcontactFilterBy.value
 		this.ContactListNewFilters[index]['filterValue']='';
 		console.log(this.ContactListNewFilters)
 		
@@ -356,7 +375,7 @@ export class ContactFilterComponent implements OnInit {
 		newFilter['filterBy'] = this.selectedcontactFilterBy['option']['0'].label
 		newFilter['filterType'] = this.selectedcontactFilterBy['option']['0'].type
 		newFilter['selectedOptions'] = this.selectedcontactFilterBy['option']['0'].options
-		newFilter['filterPrefix'] = this.selectedcontactFilterBy.label
+		newFilter['filterPrefix'] = this.selectedcontactFilterBy.value
 		newFilter['filterValue']='';
 		newFilter['filterOperator']='AND';
 		this.ContactListNewFilters.push(newFilter)
@@ -414,23 +433,27 @@ export class ContactFilterComponent implements OnInit {
           if(filters.items.length>0){
          // filters.items[0]['filterOperator']='';	
           
-			let colName = 'EC.'+filters.filterPrefix
+			let colName = filters.filterPrefix;
 		  if(colName =="Conversation Resolved"){
 			if(filters?.items[0].filterBy == 'true')
 				contactFilter = contactFilter + " and ((Interaction.interaction_status='Resolved')";
 			else
 				contactFilter = contactFilter + " and (Interaction.interaction_status !='Resolved')";
 		  }else if(colName =="Last Conversation With"){
-			contactFilter = contactFilter + `and  (((  Message.Agent_id LIKE '%${380}%' ))`;
+			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
+			contactFilter = contactFilter + `and  (((  Message.Agent_id LIKE '%${userId}%' ))`;
 		  }else if(colName =="Conversation Assigned to"){
-			contactFilter = contactFilter + `(and IM.AgentId='${380}')`;
+			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
+			contactFilter = contactFilter + `(and IM.AgentId='${userId}')`;
 		  }else if(colName =="Last Message Received At"){
 			contactFilter = contactFilter + `and (Message.message_direction ='out' and Message.created_at=?)`;
 		  }else if(colName =="Last Message Sent At"){
 			contactFilter = contactFilter + `and (Message.message_direction ='IN' and Message.created_at=?) `;
 		  }else if(colName =="Creator"){
+			//let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
 			contactFilter = contactFilter + `and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
 		  } else{
+			let colName = 'EC.'+filters.filterPrefix;
 		  
           if(colName =='Phone_number'){
             colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
@@ -449,17 +472,43 @@ export class ContactFilterComponent implements OnInit {
           if(filter.filterBy=="Starts with"){
             filterOper = "LIKE '"+filter.filterValue+"%'";
           }
-          if(filter.filterBy=="Is"){
-            filterOper = '=='+filter.filterValue;
-            filterOper = "LIKE '%"+filter.filterValue+"%'";
+          if(filter.filterBy=="Is equal to"){
+            filterOper = '='+filter.filterValue;
+            //filterOper = "LIKE '%"+filter.filterValue+"%'";
           }
-          if(filter.filterBy=="Is not"){
+          if(filter.filterBy=="Is not equal to"){
             filterOper = '!='+filter.filterValue;
-            filterOper = "NOT LIKE '"+filter.filterValue+"'";
+           // filterOper = "NOT LIKE '"+filter.filterValue+"'";
           }
   
           if(filter.filterBy=="Contains"){
             filterOper = "LIKE '%"+filter.filterValue+"%'";
+          }
+  
+          if(filter.filterBy=="Yes"){
+            filterOper = "LIKE '%Yes%'";
+          }
+  
+          if(filter.filterBy=="No"){
+            filterOper = "LIKE '%No%'";
+          }
+		  
+          if(filter.filterBy=="true"){
+            filterOper = "LIKE '%true%'";
+          }
+  
+          if(filter.filterBy=="false"){
+            filterOper = "LIKE '%false%'";
+          }
+  
+          if(filter.filterBy=="Is empty"){
+            filterOper = "LIKE '%No%'";
+            filterOper = "='' OR EC."+filter.filterPrefix+" IS NULL";
+          }
+  
+          if(filter.filterBy=="Is not empty"){
+            filterOper = "LIKE '%No%'";
+            filterOper = "!=''";
           }
           if(filter.filterBy=="Does Not Contain"){
             filterOper = "NOT LIKE '"+filter.filterValue+"'";
