@@ -1099,8 +1099,8 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
             convertedValue = displayName ? displayName.toString() : '';
           }
         } else {
-          if (actuallName === 'Name' && displayName && !/^[a-zA-Z ]*$/.test(displayName)) {
-            return { isError: true, reason: `${fieldDisplayName} contains non-alphabetic characters` };
+          if (actuallName === 'Name' && displayName && !/^[a-zA-Z0-9 ]*$/.test(displayName)) {
+            return { isError: true, reason: `${fieldDisplayName} contains invalid characters` };
           } else {
             convertedValue = displayName ? displayName.toString() : '';
           }
