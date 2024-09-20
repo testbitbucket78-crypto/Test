@@ -327,7 +327,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
         }
       }
-      if (defaultReplyAction == 'false') {
+      if (defaultReplyAction == 'false' && replystatus != "Open") {
         //  console.log("routing ------------ called after false return")
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
