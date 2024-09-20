@@ -1365,6 +1365,7 @@ formateDate(dateTime:string){
 	}
 
 	openAudience(option:any,modalname:any,step2Option:any){
+		this.csvContactList=[];
 		this.closeAllModal()
 			this.openSegmentAudience(modalname)
 			$("#addsegmentaudience").modal('show');

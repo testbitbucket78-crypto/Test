@@ -1930,6 +1930,7 @@ console.log(getMimeTypePrefix);
 			dataList.forEach((item:any)=>{
 				if(item.InteractionMapping !=-1){
 					item.assignAgent = this.userList.filter((items:any) => items.uid == item.InteractionMapping)[0]?.name;
+					console.log(this.userList);
 				}else{
 					item.assignAgent = 'Unassigned';
 				}
