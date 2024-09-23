@@ -172,8 +172,8 @@ UserGuideSubTopicsQuery = `SELECT *FROM UserGuideSubTopics WHERE headings_id=?`
 manageplans = `select * from ManagePlan`
 manageplansCharges = `select * from ManagePlanCharges where SP_ID=?`
 
-var selectNotification = `select * from Notification where sp_id=?`
-var updateNotifications = `UPDATE Notification SET isRead=1 WHERE sp_id=? AND uid=?`
+var selectNotification = `select * from Notification where sp_id=? AND uid=?`
+var updateNotifications = `UPDATE Notification SET isRead=1 WHERE sp_id=? AND uid=? AND isRead!=1`
 
 
 //_____________________________________CAMPAIGN QUERY_____________________________________//

@@ -1149,18 +1149,28 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
 
         break;
 
-      case 'Date':
-        if (displayName) {
-          const date = new Date(displayName);
-          const dateDashRegex = /^\d{4}-\d{2}-\d{2}$/;
-          const dateSlashRegex = /^\d{4}\/\d{2}\/\d{2}$/;
-
-          if (dateDashRegex.test(displayName) || dateSlashRegex.test(displayName)) {
-            convertedValue = !isNaN(date.getTime()) && displayName === formatDate(date, displayName.includes('-') ? '-' : '/');
+        case 'Date':
+          if (displayName) {
+            const date = moment(displayName);
+            if (date.isValid()) {
+              return { isError: false };
+            } else {
+              return { isError: true, reason: `${fieldDisplayName} is invalid` };
+            }
           }
-          return { isError: !convertedValue, reason: `${fieldDisplayName} is invalid` };
-        }
-        break;
+          break;
+      // case 'Date':
+      //   if (displayName) {
+      //     const date = new Date(displayName);
+      //     const dateDashRegex = /^\d{4}-\d{2}-\d{2}$/;
+      //     const dateSlashRegex = /^\d{4}\/\d{2}\/\d{2}$/;
+
+      //     if (dateDashRegex.test(displayName) || dateSlashRegex.test(displayName)) {
+      //       convertedValue = !isNaN(date.getTime()) && displayName === formatDate(date, displayName.includes('-') ? '-' : '/');
+      //     }
+      //     return { isError: !convertedValue, reason: `${fieldDisplayName} is invalid` };
+      //   }
+      //   break;
 
       case 'Switch':
         if (displayName) {

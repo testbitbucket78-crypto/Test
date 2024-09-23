@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const notification = async (req, res) => {
     try {
-        let notifications = await db.excuteQuery(val.selectNotification, [req.params.spid]);
+        let notifications = await db.excuteQuery(val.selectNotification, [req.params.spid, req.params.uid]);
         res.status(200).send({
             notifications: notifications,
             status: 200
