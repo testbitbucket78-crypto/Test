@@ -64,7 +64,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
     inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId, agid);
   }, timeoutDuration)
   if (newiN == 'If not exist') {
-    let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newId, phone_number_id, from, channelType, agid, isContactPreviousDeleted);
+    let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newId, phone_number_id, from, channelType, agid, isContactPreviousDeleted,custid);
     console.log("defautWlcMsg", defautWlcMsg)
   }
   if (isAutoReply != 1) {
@@ -212,7 +212,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
 
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
    
-    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid);
+    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
     console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg)
     if (replymessage?.length > 0) {
 
@@ -220,7 +220,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
       console.log("iterateSmartReplies replymessage.length", isSReply)
       return isSReply;
     } else if (defultOutOfOfficeMsg === false) {
-      let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid);
+      let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
       console.log("getOutOfOfficeResult", defultOutOfOfficeMsg, "getOutOfOfficeResult", getOutOfOfficeResult)
       return 'false' // getOutOfOfficeResult;  comment this is because routing rules only disable for smartreply or flow
     } else if (defultOutOfOfficeMsg === 'Agents Offline' && replymessage?.length <= 0) {
@@ -484,7 +484,7 @@ function determineMediaType(mediaType) {
   }
 }
 
-async function getExtraxtedMessage(message_text) {
+async function getExtraxtedMessage(message_text,SPID,customerId) {
   try {
     let content = await removeTags.removeTagsFromMessages(message_text);
     // Parse the message template to get placeholders
@@ -629,7 +629,7 @@ async function removeTag(value, custid) {
 
 
 
-async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from, channelType, agid, isContactPreviousDeleted) {
+async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from, channelType, agid, isContactPreviousDeleted,custid) {
   try {
     let response = false;
     var wlcMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Welcome Greeting']);
@@ -640,7 +640,7 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
       console.log("welcome messageInterval?.length", messageInterval?.length)
       if (messageInterval?.length <= 0) {
         // console.log("messageInterval" ,newId)
-        let message_text = await getExtraxtedMessage(wlcMessage[0]?.value)
+        let message_text = await getExtraxtedMessage(wlcMessage[0]?.value,sid,custid)
         let result = await messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, message_text, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId, wlcMessage[0].message_type)
         // console.log("result---------", result)
         response = result
@@ -657,7 +657,7 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
 }
 
 
-async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid) {
+async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid) {
   try {
     let result = 'false';
 
@@ -673,7 +673,7 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
       if (messageInterval.length <= 0 || !(messageInterval[0].updated_at >= messageInterval[0].updateTime)) {
         console.log("messageInterval", newId)
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
-        let message_text = await getExtraxtedMessage(outOfOfficeMessage[0]?.value)
+        let message_text = await getExtraxtedMessage(outOfOfficeMessage[0]?.value,sid,custid)
         result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, message_text, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId, outOfOfficeMessage[0].message_type)
        // console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
 
@@ -691,16 +691,16 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
 }
 
 
-async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid) {
+async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid) {
   const currentTime = new Date();
   let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
   var workingData = await db.excuteQuery(workingHourQuery, [sid]);
   console.log(currentTime,"working",(isWorkingTime(workingData, currentTime)));
-
+  let isWorkingHour = isWorkingTime(workingData, currentTime)
   let isTodayHoliday = await isHolidays(sid);
  // console.log(isTodayHoliday,"(isWorkingTime(workingData, currentTime)) && isTodayHoliday == true",(isWorkingTime(workingData, currentTime)) && isTodayHoliday == true)
   if ((isWorkingTime(workingData, currentTime))) {
-    let agentofflinestatus = await AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid);
+    let agentofflinestatus = await AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
     console.log('It is currently  within working hours.' + msg_id);
     if (agentofflinestatus == true) {
       return 'Agents Offline'
@@ -708,11 +708,11 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
     //return true;
   }else if ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == true){
     console.log("else ******* ",)
-    let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid);
-    return false;
+    let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
+    return 'working hour and holidays';
   }
   // console.log('It is currently not within working hours.');
-  return false;
+  return isWorkingHour;
 }
 
 
@@ -776,7 +776,7 @@ function isWorkingTime(data, currentTime) {
 
 
 
-async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid) {
+async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid) {
   //console.log("AllAgentsOffline");
   let response = false;
   var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=? and isDeleted !=1"; // comment this because now i have to take sp also (and UserType !=(select UserType from user where uid=?))
@@ -795,7 +795,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
       if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
       if (messageInterval.length <= 0 || (messageInterval[0].updated_at <= messageInterval[0].updateTime)) {
         //sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
-        let message_text = await getExtraxtedMessage(AgentsOfflineMessage[0]?.value)
+        let message_text = await getExtraxtedMessage(AgentsOfflineMessage[0]?.value,sid,custid)
         let allAgentsmessage = await messageThroughselectedchannel(sid, from, AgentsOfflineMessage[0].message_type, message_text, AgentsOfflineMessage[0].link, phone_number_id, channelType, agid, newId, AgentsOfflineMessage[0].message_type)
         response = allAgentsmessage
         // console.log("response",response)

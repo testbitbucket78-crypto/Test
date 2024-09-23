@@ -1031,6 +1031,23 @@ const getUserByuid = async (req, res) => {
     }
 }
 
+
+const getUsers= async (req, res) => {
+    try {
+
+        var getUser = await db.excuteQuery(val.getAllUserQuery, [req.params.spid, req.params.uid])
+        res.status(200).send({
+            msg: 'Get user',
+            getUser: getUser,
+            status: 200
+        })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
 const addTeam = async (req, res) => {
     try {
 
@@ -1158,5 +1175,5 @@ module.exports = {
     uploadCompanylogo, savecompanyDetail, savebillingDetails, savelocalDetails, updateLocalDetails, updatebillingDetails, updateCompanyDetail,
     getbillingDetails, getlocalDetails, getcompanyDetail, saveworkingDetails, getworkingDetails, updateWorkingHours, addholidays, getHolidays, removeHolidays
     , subrights, rights, addRole, getRolesbyroleIDspid, getUserbyspiduserType, deleteRoleByroleIDspid, addUser, rolesListByspid,
-    deleteUser, editUser, getUserByspid, addTeam, deleteTeam, editTeam, teamsListByspid, getUserByuid
+    deleteUser, editUser, getUserByspid, addTeam, deleteTeam, editTeam, teamsListByspid, getUserByuid,getUsers
 }
