@@ -45,7 +45,7 @@ router.post('/deleteUser',authenticateToken,organizationController.deleteUser)
 router.post('/editUser',authenticateToken,organizationController.editUser)
 router.get('/getActiveUser/:spid/:IsActive',authenticateToken,organizationController.getUserByspid)
 router.get('/getUserByuid/:spid/:uid',authenticateToken,organizationController.getUserByuid)
-
+router.get('/getUsers/:spid',authenticateToken,organizationController.getUsers)
 router.post('/addTeam',authenticateToken,organizationController.addTeam)
 router.post('/deleteTeam',authenticateToken,organizationController.deleteTeam)
 router.post('/editTeam',authenticateToken,organizationController.editTeam)
