@@ -847,7 +847,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
 
           //check if assignment trigger from smart reply and chat is ressolve then open 
           if (smartReplyActions >= 0) {
-            let isEmptyInteraction = await   commonFun.isStatusEmpty(InteractionId, sid,custid)
+            let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
 
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
             if(isEmptyInteraction == 1){
