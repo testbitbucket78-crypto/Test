@@ -52,7 +52,7 @@ async function AssignToContactOwner(sid, newId, agid, custid) {
     let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=${sid}`;
     let RoutingRules = await db.excuteQuery(RoutingRulesQuery, []);
    
-    let contactOwnerUid = await db.excuteQuery('FROM EndCustomer WHERE customerId =? and SP_ID=?  and isDeleted !=1',[custid,sid]);
+    let contactOwnerUid = await db.excuteQuery('SELECT * FROM EndCustomer WHERE customerId =? and SP_ID=?  and isDeleted !=1',[custid,sid]);
     console.log(contactOwnerUid,"RoutingRules", RoutingRules?.length,contactOwnerUid != undefined,RoutingRules[0].contactowner,RoutingRules[0].contactowner == '1');
     if (RoutingRules.length > 0) {
       if (contactOwnerUid != undefined && contactOwnerUid != null && RoutingRules[0].contactowner == '1') {
