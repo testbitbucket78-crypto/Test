@@ -15,6 +15,7 @@ const middleWare = require('./middleWare')
 const moment = require('moment');
 const Routing = require('./RoutingRules');
 const { Console } = require("console");
+const commonFun = require('./common/resuableFunctions')
 const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1`
 let updateSms = `UPDATE Message set system_message_type_id=?,updated_at=? where Message_id=?`
@@ -492,7 +493,7 @@ async function getExtraxtedMessage(message_text,SPID,customerId) {
     if (placeholders.length > 0) {
       // Construct a dynamic SQL query based on the placeholders
       console.log(placeholders)
-      const results = await removeTags.getDefaultAttribue(placeholders, SPID, customerId);
+      const results = await commonFun.getDefaultAttribue(placeholders, SPID, customerId);
       console.log("results", results)
 
       placeholders.forEach(placeholder => {
@@ -641,7 +642,7 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
       if (messageInterval?.length <= 0) {
         // console.log("messageInterval" ,newId)
         let message_text = await getExtraxtedMessage(wlcMessage[0]?.value,sid,custid)
-        let result = await messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, message_text, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId, wlcMessage[0].message_type)
+        let result = await messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, message_text, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId, wlcMessage[0].message_type,wlcMessage[0]?.value)
         // console.log("result---------", result)
         response = result
         let myUTCString = new Date().toUTCString();
@@ -674,7 +675,7 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
         console.log("messageInterval", newId)
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
         let message_text = await getExtraxtedMessage(outOfOfficeMessage[0]?.value,sid,custid)
-        result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, message_text, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId, outOfOfficeMessage[0].message_type)
+        result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, message_text, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId, outOfOfficeMessage[0].message_type,outOfOfficeMessage[0]?.value,sid,custid)
        // console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
 
         let myUTCString = new Date().toUTCString();
@@ -706,7 +707,8 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
       return 'Agents Offline'
     }
     //return true;
-  }else if ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == true){
+  } 
+  if ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == true){
     console.log("else ******* ",)
     let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
     return 'working hour and holidays';
@@ -781,7 +783,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
   let response = false;
   var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=? and isDeleted !=1"; // comment this because now i have to take sp also (and UserType !=(select UserType from user where uid=?))
   let activeAgent = await db.excuteQuery(activeAgentQuery, [sid, agid]);
-
+  //console.log("AllAgentsOffline",activeAgent?.length);
   if (activeAgent?.length <= 0) {
 
     console.log("activeAgent", msg_id + " " + newId);
@@ -792,11 +794,11 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
       console.log("inactive above   length", messageInterval.length)
       console.log(messageInterval[0]?.updated_at <= messageInterval[0]?.updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
       let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid])
-      if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
+      //if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
       if (messageInterval.length <= 0 || (messageInterval[0].updated_at <= messageInterval[0].updateTime)) {
         //sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
         let message_text = await getExtraxtedMessage(AgentsOfflineMessage[0]?.value,sid,custid)
-        let allAgentsmessage = await messageThroughselectedchannel(sid, from, AgentsOfflineMessage[0].message_type, message_text, AgentsOfflineMessage[0].link, phone_number_id, channelType, agid, newId, AgentsOfflineMessage[0].message_type)
+        let allAgentsmessage = await messageThroughselectedchannel(sid, from, AgentsOfflineMessage[0].message_type, message_text, AgentsOfflineMessage[0].link, phone_number_id, channelType, agid, newId, AgentsOfflineMessage[0].message_type,AgentsOfflineMessage[0]?.value)
         response = allAgentsmessage
         // console.log("response",response)
         if (response == true) {
@@ -813,7 +815,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateSmsRes = await db.excuteQuery(updateSms, [3, time, msg_id]);
       }
-    }
+    //}
     }
 
   }
@@ -821,7 +823,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
 }
 
 
-async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, media_type) {
+async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, media_type,Message_text) {
   let getMediaType = determineMediaType(media_type); //media_type  
   console.log("phone_number_id,channelType,spid, from, getMediaType, text")
   console.log(phone_number_id, channelType, spid, from, getMediaType, text)
@@ -832,7 +834,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from);
     // console.log("messageThroughselectedchannel", result?.status)
     if (result?.status == 200) {
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       response = true;
     }
@@ -847,7 +849,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', text, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       return true;
     }

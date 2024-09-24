@@ -340,6 +340,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             // console.log(smsdelupdate)
             let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
             //  console.log("send", sended?.affectedRows)
+             logger.info( `send ============== ${sended?.affectedRows}`)
             notify.NotifyServer(phoneNo, false, ack1InId[0]?.InteractionId, 'Out', 1, 0)
 
 
@@ -355,6 +356,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             let deded = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
             //  console.log("deliver", deded?.affectedRows)
             // notify.NotifyServer(phoneNo, true)
+            logger.info( `deliver ============== ${deded?.affectedRows}`)
             let ack2InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid])
             notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId, 'Out', 2, 0)
           } else if (ack == '3') {
@@ -370,6 +372,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
             let resd = await db.excuteQuery(smsupdate, [phoneNumber, spid])
             //   console.log("read", resd?.affectedRows)
             // notify.NotifyServer(phoneNo, true)
+            logger.info( `Read ============== ${resd?.affectedRows}`)
             let ack3InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid])
             notify.NotifyServer(phoneNo, false, ack3InId[0]?.InteractionId, 'Out', 3, 0)
           }
@@ -826,7 +829,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
       let latestSms = await db.excuteQuery('select * from Message where interaction_id=?  and is_deleted !=1 order by created_at desc',[newId])
       notify.NotifyServer(display_phone_number, false, newId, 'IN', 0, msg_id)
       let smartReplyActions = await incommingmsg.sReplyActionOnlostMessage(latestSms[0]?.message_text, sid, 'WA Web', phone_number_id, from, custid, agid, newId,display_phone_number);
-     console.log("smartReplyActions" ,smartReplyActions,custid,agid,latestSms)
+     //console.log("smartReplyActions" ,smartReplyActions,custid,agid,latestSms)
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       if (smartReplyActions >= -1) {

@@ -10,6 +10,7 @@ const cors = require('cors')
 const middleWare = require('./middleWare')
 const moment = require('moment');
 const removeTags = require('./removeTagsFromRichTextEditor')
+const commonFun = require('./common/resuableFunctions')
 const lostMessageTimeGap = 6;
 app.use(bodyParser.json());
 app.use(cors());
@@ -36,7 +37,7 @@ async function NoCustomerReplyReminder() {
           if (data.length > 0 && !(message.updated_at >= message.updateTime)) {
             console.log("data",data[0].value)
             //let sendDefult = await sendDefultMsg(data[0].link, data[0].value, data[0].message_type, 101714466262650, message.customer_phone_number)
-            let message_text = await getExtraxtedMessage(data[0].value)
+            let message_text = await getExtraxtedMessage(data[0].value,message.SP_ID,message.customerId)
             console.log(message_text)
             messageThroughselectedchannel(message.SPID, message.customer_phone_number, data[0].message_type, message_text, data[0].link, metaPhoneNumberID, message.channel, message.message_type)
             let myUTCString = new Date().toUTCString();
@@ -110,9 +111,10 @@ async function NoCustomerReplyTimeout() {
 
       for (const msg of CustomerReplyTimeout) {
         let isReplyPause = await isAutoReplyPause(msg.SP_ID, msg.InteractionId, msg.defaultAction_PauseTime)
+        console.log(msg.SPID,msg.customer_phone_number,isReplyPause , msg.Is_disable != 0  , !(msg.updated_at >= msg.updateTime),msg.updated_at , msg.updateTime)
         if (isReplyPause && msg.Is_disable != 0  && !(msg.updated_at >= msg.updateTime)) {
           //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
-          let message_text = await getExtraxtedMessage(msg.value)
+          let message_text = await getExtraxtedMessage(msg.value,msg.SP_ID,msg.customerId)
           messageThroughselectedchannel(msg.SPID, msg.customer_phone_number, msg.message_type, message_text, msg.link, metaPhoneNumberID, msg.channel, msg.message_type)
 
           let myUTCString = new Date().toUTCString();
@@ -148,14 +150,14 @@ async function NoAgentReplyTimeOut() {
       //  console.log("NoAgentReplyTimeOut" +noAgentReplydata.length)
       for (const msg of noAgentReplydata) {
         let isReplyPause = await isAutoReplyPause(msg.SPID, msg.interaction_id, msg.defaultAction_PauseTime)
-        //console.log(msg.SPID,msg.customerId,msg.customer_phone_number,isReplyPause , msg.Is_disable != 0 ,   !(msg.updated_at >= msg.updateTime),msg.updated_at,msg.updateTime)
-        if (isReplyPause && msg.Is_disable != 0 &&   !(msg.updated_at >= msg.updateTime)) { //msg.system_message_type_id != 4
+        console.log(msg.SPID,msg.customerId,msg.customer_phone_number,isReplyPause , msg.Is_disable != 0 ,   !(msg.updated_at >= msg.updateTime),msg.updated_at,msg.updateTime)
+        if (isReplyPause && msg.Is_disable != 0 &&   (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null)) { //msg.system_message_type_id != 4
           let isWorkingTime = await workingHoursDetails(msg.SPID);
           //   console.log("isWorkingTime"  ,isWorkingTime)
           if (isWorkingTime === true) {
             //    console.log("time out working hour")
             //let sendDefult = await sendDefultMsg(msg.link, msg.value, msg.message_type, 101714466262650, msg.customer_phone_number)
-            let message_text = await getExtraxtedMessage(msg.value)
+            let message_text = await getExtraxtedMessage(msg.value,msg.SPID,msg.customerId)
             messageThroughselectedchannel(msg.SPID, msg.customer_phone_number, msg.message_type, message_text, msg.link, metaPhoneNumberID, msg.channel, msg.message_type)
             let myUTCString = new Date().toUTCString();
             const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
@@ -387,7 +389,7 @@ function parseMessageTemplate(template) {
   return placeholders;
 }
 
-async function getExtraxtedMessage(message_text) {
+async function getExtraxtedMessage(message_text,SPID, customerId) {
   try {
     let content = await removeTags.removeTagsFromMessages(message_text);
     // Parse the message template to get placeholders
@@ -395,7 +397,7 @@ async function getExtraxtedMessage(message_text) {
     if (placeholders.length > 0) {
       // Construct a dynamic SQL query based on the placeholders
       console.log(placeholders)
-      const results = await removeTags.getDefaultAttribue(placeholders, SPID, customerId);
+      const results = await commonFun.getDefaultAttribue(placeholders, SPID, customerId);
       console.log("results", results)
 
       placeholders.forEach(placeholder => {
