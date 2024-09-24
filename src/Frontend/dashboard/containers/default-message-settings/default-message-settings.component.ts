@@ -219,11 +219,11 @@ showMessageType(type: string) {
 
   // validator for autoreply timeout //
   if(this.selectedCategory === 1) {
-    this.defaultMessageForm.get('autoreply')?.setValidators([Validators.required,Validators.pattern('^(?:[1-9]|[1-9][0-9]|1[01][0-9]|120)$')]);
+    this.defaultMessageForm.get('autoreply')?.setValidators([Validators.required,Validators.pattern('^(?:[5-9]|[1-9][0-9]|1[01][0-9]|120)$')]);
   }
 
   else if (this.selectedCategory === 5) {
-    this.defaultMessageForm.get('autoreply')?.setValidators([Validators.required,Validators.pattern('^(?:[1-9]|[1-9][0-9]{0,2}|1[0-3][0-9]{2}|1440)$')]);
+    this.defaultMessageForm.get('autoreply')?.setValidators([Validators.required,Validators.pattern('^(?:[5-9]|[1-9][0-9]|[1-9][0-9]{2}|1[0-3][0-9]{2}|14[0-3][0-9]|1440)$')]);
   }
   else {
     this.defaultMessageForm.get('autoreply')?.clearValidators();
@@ -241,6 +241,7 @@ showMessageType(type: string) {
     this.value = this.defaultMessageForm.get('value')?.value;
     this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
     this.defaultMessageForm.get('link')?.clearValidators();
+    if(this.selectedCategory == 1 || this.selectedCategory == 5) this.showMessageType("text");
   }
 
   uploadMessageMedia(files: FileList) {
@@ -353,7 +354,9 @@ mediaType: string = 'text';
 
 	   tempDivElement.innerHTML = this.chatEditor.value;
      let val = tempDivElement.textContent || tempDivElement.innerText || "";
-
+    if(this.defaultMessageForm.controls['autoreply'].invalid){
+     return;
+    }
      if(val.trim()=='' && this.selectedType==='text') {
       this.defaultMessageForm.invalid;
       return;
@@ -420,6 +423,7 @@ mediaType: string = 'text';
   editDefaultMessages() { 
     $("#welcomGreeting").modal('show');
     this.selectedType = this.getMimeTypePrefix(this.selectedMessageData.message_type);
+    if(this.selectedType) this.showMessageType(this.selectedType);
     this.selectedTitle = this.selectedMessageData.title;
     this.selectedDescription = this.selectedMessageData.description;
     this.selectedPreview = this.selectedMessageData.link;
