@@ -795,11 +795,11 @@ checkTemplateName(e:any){
             {
                 type: 'HEADER',
                 format: this.selectedType,
-                [this.selectedType =='text' ?'text' :'example' ]: this.selectedType =='text' ? this.newTemplateForm.controls.Header.value : headerMedia,
+                [this.selectedType =='text' ?'text' :'example' ]: this.selectedType =='text' ? this.replaceBracesWithNumbers(this.newTemplateForm.controls.Header.value) : headerMedia,
             },
             {
                 type: 'BODY',
-                text: this.newTemplateForm.controls.BodyText.value,
+                text: this.replaceBracesWithNumbers(this.newTemplateForm.controls.BodyText.value),
             },
             {
                 type: 'FOOTER',
@@ -844,7 +844,13 @@ checkTemplateName(e:any){
         }   
         return newTemplateForm;
     }
-    
+
+    replaceBracesWithNumbers(text: string): string {
+        let counter = 1;
+        return text.replace(/{{.*?}}/g, () => {
+          return `{{${counter++}}}`; 
+        });
+      }
     // for template form
     patchFormValue() {
         const data = this.templatesMessageData;
