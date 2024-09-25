@@ -11,6 +11,7 @@ const { Status } = require('tslint/lib/runner');
 const CryptoJS = require('crypto-js');
 var axios = require('axios');
 const { error } = require('console');
+const logger = require('../common/logger.log');
 const moment = require('moment');
 const SECRET_KEY = 'RAUNAK'
 app.use(bodyParser.json());
@@ -77,6 +78,7 @@ const login = async (req, res) => {
             status: 200
         });
     } catch (err) {
+        logger.error(`login error ${err}`)
         console.error(err);
         db.errlog(err);
         res.status(500).send({

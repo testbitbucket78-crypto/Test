@@ -52,10 +52,10 @@ async function AssignToContactOwner(sid, newId, agid, custid) {
     let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=${sid}`;
     let RoutingRules = await db.excuteQuery(RoutingRulesQuery, []);
    
-    let contactOwnerUid = await isDefaultContactOwner(sid, custid);
+    let contactOwnerUid = await db.excuteQuery('SELECT * FROM EndCustomer WHERE customerId =? and SP_ID=?  and isDeleted !=1',[custid,sid]);
     console.log(contactOwnerUid,"RoutingRules", RoutingRules?.length,contactOwnerUid != undefined,RoutingRules[0].contactowner,RoutingRules[0].contactowner == '1');
     if (RoutingRules.length > 0) {
-      if (contactOwnerUid != undefined && RoutingRules[0].contactowner == '1') {
+      if (contactOwnerUid != undefined && contactOwnerUid != null && RoutingRules[0].contactowner == '1') {
         let updateInteractionMapQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
         let values = [[newId, (contactOwnerUid ?contactOwnerUid:agid), agid, 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
