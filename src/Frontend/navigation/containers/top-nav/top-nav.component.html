@@ -10,7 +10,7 @@
         <img routerLink="/dashboard/support" title="Support" src="../../../../assets/img/top-nav/support.svg">
         <div class="d-flex">
         <img  src="../../../../assets/img/top-nav/notifications.svg" title="Notifications" (click)="toggleShowNotifications()">
-        <div class="notify-count">{{unreadCount}}</div>
+        <div *ngIf="unreadCount > 0" class="notify-count">{{unreadCount}}</div>
       </div>
         <img  routerLink="/dashboard/teambox" title="Teambox" src="../../../../assets/img/top-nav/chat-icon.svg">
         <div>

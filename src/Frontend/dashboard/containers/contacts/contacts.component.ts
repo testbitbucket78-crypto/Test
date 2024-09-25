@@ -3,15 +3,11 @@ import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Valida
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
-import { TeamboxService } from './../../services';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ColDef,GridApi,GridReadyEvent} from 'ag-grid-community';
 import { Router } from '@angular/router';
 import { contactsImageData } from 'Frontend/dashboard/models/dashboard.model';
-import { AnyLengthString } from 'aws-sdk/clients/comprehend';
-import { join } from 'path';
-import { Subject } from 'rxjs';
 import { GridService } from '../../services/ag-grid.service';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import {ContactFilterComponent} from '../contact-filter/contact-filter.component';
@@ -45,7 +41,7 @@ export class ContactsComponent implements OnInit,OnDestroy,AfterViewInit {
     
     }
 
-  //******* Router Guard  *********//
+
   routerGuard = () => {
     if (sessionStorage.getItem('SP_ID') === null) {
       this.router.navigate(['login']);
@@ -63,13 +59,11 @@ columnDefs: ColDef[] = [
     headerCheckboxSelectionFilteredOnly: true,
     checkboxSelection: true,
     hide:false,
-    //flex: 0.5,
       editable: false,
       width: 50,
       lockPosition: 'left',
       cellClass: 'locked-col',
       suppressMovable: true,  
-    //cellStyle: { background: "#FBFAFF" },
   },
    {
     headerName: '',
@@ -79,7 +73,6 @@ columnDefs: ColDef[] = [
       resizable: false,
       filter: false,
       sortable: false,
-      //clickable: false,
       cellRenderer: this.actionsCellRenderer.bind(this),
   },
   {
@@ -225,7 +218,6 @@ countryCodes = [
     addContactTitle: 'add' | 'edit' = 'add';
     checkedTags: string[] = [];
     isEditTag:boolean = false;
-  // multiselect 
     disabled = false;
     ShowFilter = false;
     limitSelection = false;
@@ -236,7 +228,6 @@ countryCodes = [
     userList!:any;
     filteredUserList: any;
     selectedItems: any = [];
-    // selectedTagItems: any[] = []; 
     selectedStatusItems: any[] = []; 
     dropdownSettings = {};
     dynamicDropdownSettings = {};
@@ -274,11 +265,11 @@ countryCodes = [
   public phoneValidator:PhoneValidationService,
      public settingsService: SettingsService, private apiService: DashboardService,
      private datePipe:DatePipe,
-      private _settingsService: SettingsService, private teamboxService: TeamboxService, private fb: FormBuilder, private router: Router, private cdRef: ChangeDetectorRef, public GridService: GridService)
+      private _settingsService: SettingsService, private fb: FormBuilder, private router: Router, private cdRef: ChangeDetectorRef, public GridService: GridService)
  
  
  {
-		// customize default values of modals used by this component tree
+
 		config.backdrop = 'static';
 		config.keyboard = false;  
 
@@ -303,10 +294,9 @@ countryCodes = [
 }
 
 onButtonClick(data:any, event: any) {
- // this.activeDistrictId = data.schoolDistrictID;
- console.log(data);
+
   const target = event.target;  
-   // this.router.navigateByUrl(`Dashboard/teambox?isNewMessage=${true}`);
+
     this.router.navigate(['/dashboard/teambox'], { queryParams: { isNewMessage: true,srchText: data?.Phone_number} });
 }
     ngOnInit() {
@@ -392,7 +382,6 @@ getPhoneNumberValidation(){
       this.phoneValidator.phoneNumberValidator(this.productForm.get('countryCode'))
     ]);
     this.productForm.get('displayPhoneNumber')?.updateValueAndValidity();
-    console.log(this.productForm);
   });
 }
 
@@ -429,7 +418,6 @@ getPhoneNumberValidation(){
 checks=false
 bulk(e: any) {
   if (e.target.checked == true) {
-    console.log(this.contacts[0].customerId)
     for (var i = 0; i < this.contacts.length; i++) {
       this.checkedcustomerId.push(this.contacts[i].customerId)
       this.checkedConatct.push(this.contacts[i]);
@@ -441,8 +429,6 @@ bulk(e: any) {
     this.checkedcustomerId = [];
     this.checkedConatct=[];
   }
-  console.log("this.customerId")
-  console.log(this.checkedcustomerId)
 }
 
 showToaster(message:any,type:any){
@@ -473,16 +459,9 @@ addqty(code: any) {
 }
 
 onChangePage(pageOfItems: any) {
-  // update current page of items
   this.pageOfItems = pageOfItems;
 }
 
-  onItemSelect(item: any) {
-    console.log('onItemSelect', item);
-}
-onSelectAll(items: any) {
-    console.log('onSelectAll', items);
-}
     
   quantities() : FormArray {  
     return this.productForm.get("quantities") as FormArray  
@@ -504,9 +483,7 @@ onSelectAll(items: any) {
   }  
      
   onSubmit() {  
-    console.log(this.productForm.value);  
     this.productForm.reset();
-
   } 
 
   updateOptedIn(event:any){
@@ -521,8 +498,6 @@ onSelectAll(items: any) {
 	} 
 
   openExport(content:any){
-    console.log(this.gridapi.getSelectedNodes())
-   // this.gridapi.api.getSelectedNodes()
     if(this.gridapi.getSelectedNodes().length == 0)
       this.showToaster('Please select the Contacts you want to export first !','error');    
     else{
@@ -541,7 +516,6 @@ onSelectAll(items: any) {
     let data:any ={};
     data.SP_ID = SP_ID;
     data.Query = this.query;
-    console.log(SP_ID)
     this.apiService.getFilteredContact(data).subscribe((data:any) => {
       this.isLoading = false;
       this.deleteBloackContactLoader = false;
@@ -551,14 +525,13 @@ onSelectAll(items: any) {
         this.isEmptyData();
       }
       this.productForm.get('countryCode')?.setValue('IN +91');
-        console.log(this.contacts);
         this.getGridPageSize();
         
     });
   }
 
   isEmptyData(){
-    //errors while assigning this instantly;
+
     setTimeout(() => {
       this.contacts = false;
   }, 50);
@@ -569,15 +542,13 @@ onSelectAll(items: any) {
       for (let i = 0; i<id.length; i++) {
         id[i].classList.remove("tabCol")
       }
-      
-    //  alert("checked")
+
     }
     else 
     {
       for (let i = 0; i < id.length; i++) {
         id[i].classList.add("tabCol")
       }
-      // console.log(column)
     }
   }
      
@@ -601,7 +572,6 @@ onSelectAll(items: any) {
    }
    deleteBloackContactLoader! : boolean;
   deleteRow(arr:any ["id"]) {
-      //this.contacts.splice(arr, 1);
       var deleteList = this.checkedConatct.map(x => x.customerId);
       var data = {
 
@@ -610,7 +580,6 @@ onSelectAll(items: any) {
       }
       
       this.apiService.deletContactById(data).subscribe(response => {
-        console.log(response)
         this.getContact();
         this.onRowSelected(null);
 
@@ -648,9 +617,7 @@ onSelectAll(items: any) {
 
        }
       }
-    console.log(this.checkedConatct.length );
-    console.log('onRowSelected');
-    console.log(event);
+
 
 
     if (this.checkedConatct.length > 0 && event !== null) {
@@ -680,8 +647,7 @@ onSelectAll(items: any) {
     this.addContactTitle= 'edit';
     this.patchFormValue();
     this.gridOptions.api.deselectAll();
-    //this.checkedConatct = [];
-    console.log('rowClicked');
+
     setTimeout(()=>{this.isShowSidebar=true;
       document.getElementById('import-btn')!.style.display = 'block';
       document.getElementById('add-contact')!.style.display = 'block';
@@ -760,20 +726,19 @@ onSelectAll(items: any) {
       this.filteredCustomFields.forEach((item:any)=>{
         if(item.type =='Select'){
           let selectedOption = item.options.filter((opt:any)=>opt.id == this.productForm.get(item.ActuallName)?.value?.toString())[0];
-          console.log(this.productForm.get(item.ActuallName)?.value);
-          console.log(item.options);
+
           if(selectedOption)
           ContactFormData.result.push({displayName:`${selectedOption?.id}:${selectedOption?.optionName}`,ActuallName:item.ActuallName});
         }
         else if(item.type =='Multi Select'){
           let values =''
-          console.log(this.productForm.get(item.ActuallName)?.value)
+
           if( this.productForm.get(item.ActuallName)?.value){
           this.productForm.get(item.ActuallName)?.value?.forEach((ite:any)=>{
             values = (values ? values +',' : '')+ ite.id + ':' + ite.optionName;
           })
            }
-          console.log(values);
+
           ContactFormData.result.push({displayName:values,ActuallName:item.ActuallName});
         }
         else{
@@ -794,9 +759,9 @@ onSelectAll(items: any) {
   }
     if (!isEditTag) {
       let tagArray = this.productForm.controls.tag.value;
-      console.log(tagArray)
+
       let tagString = tagArray?.map((tag: any) => `${tag.item_id}`).join(', ');
-      console.log(tagString)
+
 
       let tagField = ContactFormData.result.find((item: any) => item.ActuallName === "tag");
       if (tagField) {
@@ -811,11 +776,7 @@ saveContact(addcontact:any,addcontacterror:any,isEditTag:boolean=false) {
   let contactData = this.copyContactFormData(isEditTag)
   this.submitted = true;
 
-  // if(!this.productForm.valid) {
-  //   console.log('Please enter valid details');
-  //    return ;
-  //  }
-console.log(this.contactId)
+
   if(this.contactId) {
     this.apiService.editContact(contactData, this.contactId, this.spid).subscribe(
       (response: any) => {
@@ -870,32 +831,26 @@ console.log(this.contactId)
   }
 
 }
-  // onSelectedTag(value: any) {
-  //   this.selectedTag = value;
 
-  // }
 
 
   getCheckBoxEvent(isSelected: any, contact: any) {
-    console.log("contact");
-    console.log(isSelected)
+
     var obj = {
       data: contact,
       status: isSelected
     }
     if (obj.status === true) {
-      console.log("obj.status")
+
       this.checkedConatct.push(obj.data);
       this.checkedcustomerId.push(contact.customerId)
-      console.log(this.checkedcustomerId)
+
     } else if (obj.status === false) {
 
       var index = this.checkedConatct.indexOf(obj.data)
-      console.log(index)
+
       this.checkedConatct.splice(index, 1);
       this.checkedcustomerId.splice(index, 1);
-      console.log("this.splice(index, 1)")
-      console.log(this.checkedcustomerId)
     }
 
   }
@@ -903,10 +858,8 @@ console.log(this.contactId)
 
 deletContactByID(data: any) {
   this.deleteBloackContactLoader = true;
-  console.log("delete")
-  console.log(data)
+
   this.apiService.deletContactById(data).subscribe((response => {
-    console.log(response);
     this.getContact();
     this.closesidenav(this.items);
   }));
@@ -927,7 +880,6 @@ deletContactByID(data: any) {
     }
     var SP_ID = sessionStorage.getItem('SP_ID')
     this.apiService.blockContact(Body, SP_ID).subscribe((response => {
-      console.log(response);
       this.getContact();
       this.closesidenav(this.items);
     }));
@@ -942,10 +894,8 @@ deletContactByID(data: any) {
     this.apiService.getContactById(data.customerId, SP_ID).subscribe((data:any) => {
       this.randomNumber = Math.random();
       this.customerData = data;
-      console.log(data);
-      console.log(data[0]?.Name);
       this.getInitials(data[0]?.Name)
-      // this.getContact();
+
     });    
   }
 
@@ -973,8 +923,6 @@ deletContactByID(data: any) {
               item_text: tag.TagName,
               item_color: tag.TagColour
           }));
-          console.log(this.tag,'tag list array');
-          console.log(this.tagListData);
             }
         });
 }
@@ -992,20 +940,20 @@ deletContactByID(data: any) {
 
   patchFormValue(){
     const data:any=this.contactsData
-    console.log(data);
+
     this.getFilterTags = data.tag ? data.tag?.split(',').map((tags: string) =>tags.trim().toString()) : [];
-    console.log(this.getFilterTags);
+
     this.checkedTags = this.getFilterTags;
     const selectedTag:string[] = data.tag?.split(',').map((tagName: string) => tagName.trim());
-    //set the selectedTag in multiselect-dropdown format
+
     const selectedTags = this.tagListData.map((tag: any, index: number) => ({ idx: index, ...tag }))
     .filter(tag => selectedTag?.includes((tag.ID).toString()))
     .map((tag: any) => ({
         item_id: tag.ID,
         item_text: tag.TagName,
     }));
-    console.log(selectedTags);
-    // this.selectedTag = data.tag
+
+
     this.tagListData.forEach((item:any)=>{
       if(selectedTag?.includes((item.ID).toString())){
         item['isSelected'] = true;
@@ -1026,7 +974,7 @@ deletContactByID(data: any) {
         }
       }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
         let val = value ? value.split(':')[0] : '';
-        console.log(val);
+
         this.productForm.get(prop)?.setValue(val);
       } else if( idx>-1 &&  this.filteredCustomFields[idx] && this.filteredCustomFields[idx].type == 'Time'){
         let val =this.settingsService.convertTimeFormat(value,true);
@@ -1035,14 +983,13 @@ deletContactByID(data: any) {
       else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
         if(value){
         let val = value.split(':');
-        console.log(val);
-        console.log(value);
+
 
         let selectName =  value?.split(',');
                   let names:any =[];
                   selectName.forEach((it:any)=>{
                     let name = it.split(':');
-                    console.log(name);
+
                     names.push({id: (name[0] ?  name[0] : ''),optionName: (name[1] ?  name[1] : '')});
                   })
                   
@@ -1050,7 +997,7 @@ deletContactByID(data: any) {
                 }
       }
       if (data?.countryCode) {
-        console.log(data?.countryCode);
+
         this.checkAndSetCountryCode(data);
         }
     } 
@@ -1083,7 +1030,7 @@ deletContactByID(data: any) {
 
   updateTags(tagName: string, isChecked: boolean) {
     this.isEditTag = true;
-    console.log(this.checkedTags);
+
     if (isChecked) {
       this.checkedTags.push(tagName);
     } else {
@@ -1092,7 +1039,7 @@ deletContactByID(data: any) {
         this.checkedTags.splice(index, 1);
       }
     }
-    console.log(this.checkedTags)
+
     this.getCheckedTags()
   }
 
@@ -1101,15 +1048,13 @@ deletContactByID(data: any) {
   }
 
   editTagS(){
-    // this.isEditTag =false;
-    // setTimeout(()=>{this.isEditTag =true},40);
     this.checkedTags = this.getFilterTags;
-    console.log(this.checkedTags);
+
   }
   
   exportCheckedContact() {
     const defaultFieldNames =["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
-    console.log(this.checkedConatct);
+
     let fields:any[] =[];
     this.arrHideColumn.forEach((item)=>{
       if(item.hide){
@@ -1125,27 +1070,26 @@ deletContactByID(data: any) {
     const exportContact = this.checkedConatct.map(obj => {
       const newObj:any = {};
       fields.forEach(field => {
-          const headerName = fieldToHeaderMap[field]; // Get the header name for the field
+          const headerName = fieldToHeaderMap[field]; 
           if (obj.hasOwnProperty(field) && headerName) {
-              newObj[headerName] = obj[field]; // Map field to headerName
+              newObj[headerName] = obj[field];
           }
       });
       return newObj;
   });
-    // console.log(exportContact,'export contact')
+
     var exContact = {
       data: exportContact,
       loginData: (JSON.parse(sessionStorage.loginDetails)).email_id,
       Name: (JSON.parse(sessionStorage.loginDetails)).name
     }
     this.apiService.exportCheckedContact(exContact,this.spid).subscribe(response => {
-      console.log(response);
+
       this.getContact();
       this.onRowSelected(null);
   
     });
     this.checkedConatct = [];
-    console.log(this.checkedConatct + " checked");
 
   }
 
@@ -1170,7 +1114,7 @@ deletContactByID(data: any) {
   }
   
 
-//  image cropping function for popup
+
 
 fileChangeEvent(event: any): void {
   $("#pictureCropModal").modal('show');
@@ -1180,12 +1124,12 @@ fileChangeEvent(event: any): void {
     const newImageUrl = event.base64 + '?timestamp=' + new Date().getTime();
     this.croppedImage = newImageUrl;
     
-    // Trigger change detection
+
     this.cdRef.detectChanges();
  }
 
  
-//API call to save the cropped image
+
 
 saveContactsProfilePicture() {
   let SP_ID = Number(sessionStorage.getItem('SP_ID'))
@@ -1209,7 +1153,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 })
 
 }
-// Function to format the phone number using libphonenumber-js
+
   formatPhoneNumber() {
     const phoneNumber = this.productForm.get('displayPhoneNumber')?.value;
     const countryCode = this.productForm.get('countryCode')?.value;
@@ -1220,13 +1164,11 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
       this.phoneValidator.phoneNumberValidator(this.productForm.get('countryCode'))
     ]);
     this.productForm.get('displayPhoneNumber')?.updateValueAndValidity();
-    console.log(this.productForm);
 
       if (phoneNumber && countryCode) {
         const phoneNumberWithCountryCode = `${countryCode} ${phoneNumber}`;
         formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
           this.productForm.patchValue({
-             // Set the actual value with country code
             Phone_number: formattedPhoneNumber ? formattedPhoneNumber.formatInternational().replace(/[\s+]/g, '') : '',
           });
     }
@@ -1234,8 +1176,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
 
   getCustomFieldsData() {
     this._settingsService.getNewCustomField(this.spid).subscribe(response => {
-      this.customFieldData = response.getfields;
-      console.log(this.customFieldData);  
+      this.customFieldData = response.getfields; 
       this.getfilteredCustomFields();
     })
   }
@@ -1246,7 +1187,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
        const filteredFields:any = this.customFieldData?.filter(
           (field:any) => !defaultFieldNames.includes(field.ActuallName) && field.status===1 );
           this.filteredCustomFields = filteredFields;
-          console.log(this.filteredCustomFields);
+
           this.contacts =false;
           this.filteredCustomFields.forEach((item:any)=>{
 
@@ -1264,7 +1205,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             if(item.type == 'Select'){
               columnDesc.valueFormatter= (value:any) => {
                 if (value.value) {
-                  console.log(value.value);
+
                   let selectName =  value.value.split(':');
                   return selectName[1] ?  selectName[1] : '';
                 }
@@ -1288,7 +1229,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
                   let names ='';
                   selectName.forEach((it:any)=>{
                     let name = it.split(':');
-                    console.log(name);
+
                     names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
                   })
                   return names;
@@ -1297,7 +1238,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
                   return null;
                 }
               }
-              console.log(columnDesc);
+
             }
             this.columnDefs.push(columnDesc);
             const control = new FormControl('');
@@ -1323,7 +1264,7 @@ this.apiService.saveContactImage(this.contactsImageData).subscribe(
             if(item?.headerName)
               this.arrHideColumn.push({field:item?.field,headerName:item?.headerName,hide:true});
           })
-          console.log(this.productForm);
+
           setTimeout(()=>{
             if (this.gridOptions?.api) {
               this.gridOptions?.api.sizeColumnsToFit();
@@ -1367,16 +1308,6 @@ timeFormatter(params: any): string {
     obj.hide = !value;
     let hiddenColumns = this.columnDefs.filter(o => o.hide === false);
     let actionColumn:any = this.columnDefs.find(o => o.headerName === 'Actions');
-    // if (hiddenColumns?.length > 11) {
-    //   actionColumn.width = 300;
-    // } else {
-    //   actionColumn.width = 150;
-    //   setTimeout(() => {
-    //     this.gridOptions.api.sizeColumnsToFit();
-    //   }, 10)
-    //   console.log('hjghj')
-    // }
-    console.log(this.columnDefs);
     this.gridapi.setColumnDefs(this.columnDefs);
     this.storeGridConfig();
   }
@@ -1386,7 +1317,6 @@ timeFormatter(params: any): string {
   }
 
   clearFilters() {
-   // this.changingValue.next(true);
     this.isShowFilter = false;
     this.filterIsApplied = false;
     this.query ='';
@@ -1407,7 +1337,6 @@ timeFormatter(params: any): string {
   }
 
   ngOnDestroy(){
-    console.log(this.gridapi?.getColumnDefs());
     if(this.gridapi?.getColumnDefs())
       this.storeGridConfig();
   }
@@ -1434,12 +1363,11 @@ timeFormatter(params: any): string {
       this.arrHideColumn[idx].hide =  !item.hide;
       item['hide'] =  item?.hide ? true :false;
   });
-  console.log(column);
+
   column.forEach((item:any)=>{
     let idx = this.columnDefs.findIndex((it)=> it.field == item.field);
     if(idx >-1)
       item.headerName =  this.columnDefs[idx].headerName;
-      // item['hide'] =  this.columnDefs[idx]?.hide;
       if(this.columnDefs[idx]?.valueFormatter)
         item.valueFormatter =  this.columnDefs[idx]?.valueFormatter;
 
@@ -1447,13 +1375,12 @@ timeFormatter(params: any): string {
       item['cellRenderer'] =  this.columnDefs[idx]?.cellRenderer;
   });
  
-  console.log(column);
+
   this.columnDefs = column;
   this.gridapi.setColumnDefs(column);
- // console.log(this.gridapi?.getColumnDefs());
 }    
   },2000); 
-  console.log(this.columnDefs);
+
   if(document.getElementById('delete-btn'))
         document.getElementById('delete-btn')!.style.display = 'none';
   }
@@ -1485,9 +1412,9 @@ timeFormatter(params: any): string {
   }
 
   closeFilter(){
-    console.log('xyz');
+
     this.changingValue = false;
-   // this.isShowFilter = false;
+
     }
 
     filterContactOwners() {
@@ -1535,7 +1462,7 @@ timeFormatter(params: any): string {
     }
     checkContactOwner(contacOwner:any){
       let contactUid = this.userList.filter((item:any)=> item.name == contacOwner)[0]?.uid;
-      console.log(contactUid, this.userid);
+
       if(contactUid == this.userid)
         return false;
       else 
