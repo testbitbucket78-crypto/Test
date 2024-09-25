@@ -698,7 +698,7 @@ async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
       // If no existing interaction found, insert a new one
       await db.excuteQuery(
         'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
-        [custid, 'Open', sid, 'User Initiated']
+        [custid, 'Resolved', sid, 'User Initiated']
       );
 
     }
