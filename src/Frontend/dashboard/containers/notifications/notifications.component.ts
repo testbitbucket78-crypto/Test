@@ -15,18 +15,19 @@ export class NotificationsComponent implements OnInit {
   paging: number [] = [];
   searchText = '';
   notificationData = [];
-
+  uid!:number;
   constructor(private apiservice:ProfileService) { }
 
   ngOnInit(): void {
     this.spId = Number(sessionStorage.getItem('SP_ID'));
+    this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
     this.getNotificationData();
     this.getPaging();
    
   }
 
   getNotificationData() {
-    this.apiservice.getNotifications(this.spId).subscribe((response=> {
+    this.apiservice.getNotifications(this.spId,this.uid).subscribe((response=> {
       this.notificationData = response.notifications;
       this.notificationData.reverse();
       this.getPaging(); 

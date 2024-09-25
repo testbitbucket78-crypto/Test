@@ -719,6 +719,17 @@ checkTemplateName(e:any){
             });
          }
 
+         replaceVariable(val:string[]){
+            let replacedVariables:any[] =[];
+            if(val?.length >0){
+            val.forEach((item:any,idx)=>{
+                replacedVariables.push(`var${idx+1}`);
+            })
+        }
+        return replacedVariables;
+
+         }
+
       
     createNewTemplateFormData() {
         const newTemplateForm: newTemplateFormData = <newTemplateFormData>{};
@@ -745,7 +756,9 @@ checkTemplateName(e:any){
         if(this.newTemplateForm.controls.Channel.value == 'WA API') {
             let buttons =[];
             let headerAtt = this.getVariables(this.newTemplateForm.controls.Header.value, "{{", "}}", true);
+             headerAtt = this.replaceVariable(headerAtt);
             let bodyAtt = this.getVariables(this.newTemplateForm.controls.BodyText.value, "{{", "}}",true);
+             bodyAtt = this.replaceVariable(bodyAtt);
             let header_text;
             let body_text;
             if(this.newTemplateForm.controls.buttonType.value == 'Quick Reply'){
@@ -831,6 +844,7 @@ checkTemplateName(e:any){
         }   
         return newTemplateForm;
     }
+    
     // for template form
     patchFormValue() {
         const data = this.templatesMessageData;
