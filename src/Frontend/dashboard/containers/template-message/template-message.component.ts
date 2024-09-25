@@ -719,6 +719,17 @@ checkTemplateName(e:any){
             });
          }
 
+         replaceVariable(val:string[]){
+            let replacedVariables:any[] =[];
+            if(val?.length >0){
+            val.forEach((item:any,idx)=>{
+                replacedVariables.push(`var${idx+1}`);
+            })
+        }
+        return replacedVariables;
+
+         }
+
       
     createNewTemplateFormData() {
         const newTemplateForm: newTemplateFormData = <newTemplateFormData>{};
@@ -745,7 +756,9 @@ checkTemplateName(e:any){
         if(this.newTemplateForm.controls.Channel.value == 'WA API') {
             let buttons =[];
             let headerAtt = this.getVariables(this.newTemplateForm.controls.Header.value, "{{", "}}", true);
+             headerAtt = this.replaceVariable(headerAtt);
             let bodyAtt = this.getVariables(this.newTemplateForm.controls.BodyText.value, "{{", "}}",true);
+             bodyAtt = this.replaceVariable(bodyAtt);
             let header_text;
             let body_text;
             if(this.newTemplateForm.controls.buttonType.value == 'Quick Reply'){
@@ -782,11 +795,11 @@ checkTemplateName(e:any){
             {
                 type: 'HEADER',
                 format: this.selectedType,
-                [this.selectedType =='text' ?'text' :'example' ]: this.selectedType =='text' ? this.newTemplateForm.controls.Header.value : headerMedia,
+                [this.selectedType =='text' ?'text' :'example' ]: this.selectedType =='text' ? this.replaceBracesWithNumbers(this.newTemplateForm.controls.Header.value) : headerMedia,
             },
             {
                 type: 'BODY',
-                text: this.newTemplateForm.controls.BodyText.value,
+                text: this.replaceBracesWithNumbers(this.newTemplateForm.controls.BodyText.value),
             },
             {
                 type: 'FOOTER',
@@ -831,6 +844,13 @@ checkTemplateName(e:any){
         }   
         return newTemplateForm;
     }
+
+    replaceBracesWithNumbers(text: string): string {
+        let counter = 1;
+        return text.replace(/{{.*?}}/g, () => {
+          return `{{${counter++}}}`; 
+        });
+      }
     // for template form
     patchFormValue() {
         const data = this.templatesMessageData;

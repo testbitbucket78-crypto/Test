@@ -97,8 +97,8 @@ export class ProfileService {
 
   // notifications page
 
-  getNotifications(spId:number): Observable<any> {
-    return this.http.get(`${this.API_URL}/getNotifications/${spId}`);
+  getNotifications(spId:number,uid:number): Observable<any> {
+    return this.http.get(`${this.API_URL}/getNotifications/${spId}/${uid}`);
   }
 
   readNotification(spId:number,uid:number): Observable<any> { 

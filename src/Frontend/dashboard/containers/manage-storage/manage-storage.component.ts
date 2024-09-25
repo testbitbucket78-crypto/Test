@@ -59,9 +59,9 @@ export class ManageStorageComponent implements OnInit {
       autodeletion_message: [''],
       autodeletion_media: [''],
       autodeletion_contacts: [''],
-      optionradio1: [''],
-      optionradio2: [''],
-      optionradio3: [''],
+      optionradio1: [false],
+      optionradio2: [false],
+      optionradio3: [false],
       
     });
     this.toggleSelection('autodeletion_message', 'optionradio1');
@@ -110,11 +110,17 @@ export class ManageStorageComponent implements OnInit {
 
     optionControl?.valueChanges.subscribe(value => {
       if (value) {
-        radioControl?.setValue(null, { emitEvent: false });
+        
+      if(value == 0){
+        radioControl?.setValue('1',{emitEvent:false});
+        optionControl?.setValue(null, { emitEvent: false });
+      }else{
+        radioControl?.setValue('', { emitEvent: false });
         //radioControl?.disable({emitEvent:false});
       }
+      }
       else {
-        radioControl?.enable({emitEvent:false});
+        radioControl?.setValue('1',{emitEvent:false});
       }
     });
 
@@ -302,6 +308,31 @@ export class ManageStorageComponent implements OnInit {
         this.message_type = (this.textChecked ? 'Text' : '') || (this.mediaChecked ? 'Media' : '');
     }
 }
+
+
+// listenToAutoDeletionChanges(): void {
+//   this.editAutoDeletionForm.get('autodeletion_message').valueChanges.subscribe(value => {
+//     this.handleInputValueChanges(value, 'autodeletion_message', 'autoDeletionMessageChecked');
+//   });
+
+//   this.editAutoDeletionForm.get('autodeletion_media').valueChanges.subscribe(value => {
+//     this.handleInputValueChanges(value, 'autodeletion_media', 'autoDeletionMediaChecked');
+//   });
+
+//   this.editAutoDeletionForm.get('autodeletion_contacts').valueChanges.subscribe(value => {
+//     this.handleInputValueChanges(value, 'autodeletion_contacts', 'autoDeletionContactsChecked');
+//   });
+// }
+
+// handleInputValueChanges(value: string, controlName: string, checkboxVar: string): void {
+//   // If the value is empty or 0, clear the input and check the radio button
+//   if (!value || value === '0') {
+//     this.editAutoDeletionForm.get(controlName).setValue('');
+//     this[checkboxVar] = true;
+//   } else {
+//     this[checkboxVar] = false;
+//   }
+// }
 
 
 }

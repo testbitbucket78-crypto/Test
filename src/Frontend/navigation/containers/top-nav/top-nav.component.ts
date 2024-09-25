@@ -91,7 +91,7 @@ export class TopNavComponent implements OnInit {
     }
 
     getNotificationData() {
-      this.subscription = interval(60000) .pipe(switchMap(() =>this.apiService.getNotifications(this.spId))).
+      this.subscription = interval(60000) .pipe(switchMap(() =>this.apiService.getNotifications(this.spId,this.uid))).
       subscribe((response=> {
         let data = response.notifications;
         this.notificationData = response.notifications;
@@ -108,7 +108,7 @@ export class TopNavComponent implements OnInit {
       
     }
     getFirstNotificationData(){
-      this.apiService.getNotifications(this.spId).subscribe((response=> {
+      this.apiService.getNotifications(this.spId,this.uid).subscribe((response=> {
         this.notificationData = response.notifications;       
         this.LastnotificationData =  JSON.parse(JSON.stringify(this.notificationData));
         this.notificationData.reverse();
