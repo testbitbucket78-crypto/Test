@@ -66,15 +66,15 @@ export class ImportComponent implements OnInit {
 	identifierTooltip: boolean = false;
 
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService,private _settingsService:SettingsService,private router:Router) {
-		// customize default values of modals used by this component tree
+
 		config.backdrop = 'static';
 		config.keyboard = false;
 	}
 	ngOnInit() {
 		this.spid = Number(sessionStorage.getItem('SP_ID'));
 		this.user =  JSON.parse(sessionStorage.getItem('loginDetails')!);
-		console.log(this.user);
-		// this.routerGuard();
+
+
 		this.showTopNav = false;
 
 
@@ -101,13 +101,13 @@ export class ImportComponent implements OnInit {
 		this.modalService.open(instruction);
 	}
 
-   //******* Router Guard  *********//
+
 	routerGuard = () => {
 		if (sessionStorage.getItem('SP_ID') === null) {
 			this.router.navigate(['login']);
 		}
 	}
-//********remove csv file*********
+
 	removeFile() {
 		this.file = null;
 		this.importedData =[];
@@ -121,14 +121,14 @@ export class ImportComponent implements OnInit {
 	}
 
 
-	//********csv file upload  *********
+
 	onChange(event: any) {
 
 		this.file = event.target.files[0];
 
 	}
 
-    //********open error dialog boxes *********/
+
 	open(any: any) {
 		this.updatedDataCount();
 		if(!this.importedData) {
@@ -185,7 +185,7 @@ export class ImportComponent implements OnInit {
 		}
 	}
 
-	 //**** incorrect file format popup ****//
+
 	incorrectFile = (content:any) => {	
 		const currentfileformat = this.file?.name.split(".").pop();
 		if(currentfileformat) {
@@ -208,7 +208,7 @@ export class ImportComponent implements OnInit {
 	
 	}
 
-	/***** import started in background popup and function ****/
+
 
 	importStrated = (imports:any ,importfailed:any) => {
 		if (this.numberOfNewContact !== 0 && this.countUpdatedData === 0) {
@@ -223,7 +223,7 @@ export class ImportComponent implements OnInit {
 		}
 	}
 
-//*********After upload read file *********/
+
 	onUpload(event: any) {
 		this.file = event.target.files[0];
 		this.fileName = this.truncateFileName(this.file.name, 25);
@@ -236,7 +236,7 @@ export class ImportComponent implements OnInit {
 			  const sheetName = workbook.SheetNames[0];
 			  const worksheet = workbook.Sheets[sheetName];
 			  this.importedData = XLSX.utils.sheet_to_json(worksheet, { raw: false });
-			  console.log('importedData', this.importedData);
+
 			  // Processing the extracted Excel Data
 			  this.importedData.forEach((data,idx) => {
 				if(idx==0){
@@ -264,15 +264,14 @@ export class ImportComponent implements OnInit {
 				let headersRow = this.getHeaderArray(csvRecordsArray);
 				this.headers = headersRow;
 				this.importedData = this.getDataRecordsArrayFromCSVFile(csvRecordsArray, headersRow);
-				console.log('importedData',this.importedData);
+
 				this.importedData.forEach((data,idx) => {
 					this.csvfieldHeaders = Object.keys(data);
 					if(idx==0)
 						this.csvfieldValues = Object.values(data);
 					this.toggleOverride = Array(this.csvfieldHeaders.length).fill(false);
 					this.displayNameChecked= Array(this.csvfieldHeaders.length).fill(false);
-					console.log(this.csvfieldHeaders);
-					console.log(this.csvfieldValues);
+
 				});
 				this.csvfieldHeaders.forEach((x: any) => {
 					this.selectedCustomFields.push('');
@@ -284,9 +283,9 @@ export class ImportComponent implements OnInit {
 	getFileExtension(filename: string): string {
 		return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2).toLowerCase();
 	  }
-	/****Written by Rishabh Singh  *****/
 
-   /******************* Method to capture mapping selections********************/
+
+
 
 	onSelectMapping(selectedField: string, index: number) {
 		this.selectedCustomFields[index] =selectedField;
@@ -301,16 +300,16 @@ export class ImportComponent implements OnInit {
 		for (let i = 0; i < this.importedData.length; i++) {
 		  const mappedField:ColumnMapping = {
 			displayName: this.importedData[i][this.csvfieldHeaders[index]], 
-			ActuallName: selectedField // Selected field from dropdown
+			ActuallName: selectedField 
 		  };
 		  if (!this.mappedFields[i]) {
-			this.mappedFields[i] = []; // initialised the mappingFields
+			this.mappedFields[i] = []; 
 		  }
 		  this.mappedFields[i][index] = mappedField;
 		}
-		console.log(this.mappedFields);
+
 		if(selectedField == "Phone_number") {
-			this.identifierColumn = selectedField; // set phone number as a identifier column 
+			this.identifierColumn = selectedField; 
 		}
 
 	  }
@@ -324,10 +323,10 @@ export class ImportComponent implements OnInit {
 				item.splice(i,1);
 			}
 		}			
-		console.log(item)
+
 		});
-		console.log(this.mappedFields)
-		console.log(val,'hgffhgff');
+
+
 		if(val =='Phone_number'){
 			this.identifierColumn ='';
 		}
@@ -343,20 +342,20 @@ export class ImportComponent implements OnInit {
 		  result: []
 		};
 	  
-		// Iterate over each row of mappedFields
-		console.log(this.mappedFields);
+
+
 		for (let i = 0; i < this.mappedFields.length; i++) {
 		  const row = this.mappedFields[i];
 		  const rowData = [];
 
-		  // Add SPID to each rowData
+
 		const SPID = {
 			displayName: this.spid,
 			ActuallName: "SP_ID"
 		  };
 		  rowData.push(SPID);
 	  
-		  // Iterate over each field in the row
+
 		  for (let j = 0; j < row.length; j++) {
 			const mapping = row[j];
 			if (mapping?.ActuallName !== undefined) {
@@ -375,22 +374,22 @@ export class ImportComponent implements OnInit {
 		  }
 		}
 
-		  // Check if rowData has any valid fields before pushing
+
 		  if (rowData.length > 1) {
 			this.ContactFormData.result.push(rowData);
 		  }
 		}
-		//this.ContactFormData.result.push({displayName: ,ActuallName: });	  
+	  
 		return this.ContactFormData;
 	  }
 	  
 	  
-	//******************Add Imported Contacts******************** /
+
 
 	onImportContacts(modal:any) {
 
 		const bodyData:importCSVData = {
-			field: [], //override fields
+			field: [], 
 			identifier: this.Identifier,
 			purpose: this.purpose,
 			SP_ID: this.spid,
@@ -399,8 +398,8 @@ export class ImportComponent implements OnInit {
 			user:this.user.name,
 			emailId:this.user.email_id
 		}
-		console.log(this.importCSVdata,'filtered csv data', this.skipCont)
-		// api call to add contacts in a bulk manner
+
+
 
 		if(this.numberOfNewContact !== 0 || this.countUpdatedData !==0) {
 			this.apiService.importContact(bodyData).subscribe(
@@ -438,7 +437,7 @@ importDataLoader! : boolean;
 			purpose: this.purpose,
 			SP_ID: this.spid
 		}
-		console.log(csvData, ': VERIFY DATA');
+
 
 		this.apiService.updatedDataCount(csvData).subscribe(
 		   (data: any)=> {
@@ -459,9 +458,9 @@ importDataLoader! : boolean;
 
 	}
 
-	/****Written by Rishabh Singh  *****/
 
-//*********Truncate fileName *********//
+
+
 
 	truncateFileName(fileName: string, maxLength: number): string {
 		if (fileName.length > maxLength) {
@@ -470,7 +469,7 @@ importDataLoader! : boolean;
 		return fileName;
 	}
 
-//*********Download Sample file****************/
+
 
 	download() {
 		this.apiService.download(this.spid).subscribe((data: any) => {
@@ -495,22 +494,22 @@ importDataLoader! : boolean;
 	}
 
 
-//**********Method to collect header of csv file**********/
+
 	getHeaderArray(csvRecordsArr: any) {
 		let headers = (<string>csvRecordsArr[0]).split(',');
 		let headerArray = [];
 		for (let j = 0; j < headers.length; j++) {
 			headerArray.push(headers[j]);
 		}
-		console.log(headerArray)
+
 		return headerArray;
 	}
 
-//***********Collect csv file headers value******** /
+
 	getDataRecordsArrayFromCSVFile(csvRecordsArray: any, headerLength: any) {
 		let csvArr: any = [];
 		let errorDataArray: any = [];
-		console.log("headerLength*******", headerLength.length)
+
 
 		for (let i = 1; i < csvRecordsArray.length - 1; i++) {
 			let curruntRecord = (<string>csvRecordsArray[i]).split(',');
@@ -523,11 +522,11 @@ importDataLoader! : boolean;
 				if (val === '') {
 					val = null;
 				}
-				  // Handle special case for the "tag" column
+
 				  if (propertyName === 'Tag') {
-					// Trim whitespace and remove extra double quotes
+
 					val = val.trim().replace(/^"(.*)"$/, '$1');
-					// Split by comma and remove surrounding double quotes
+
 					val = val.split(',').map((tag: string) => tag.trim().replace(/^"(.*)"$/, '$1'));
 				  }
 			
@@ -536,18 +535,18 @@ importDataLoader! : boolean;
 			}
 			csvArr.push(obj)
 		}
-		console.log(csvArr)
+
 
 		return csvArr;
 	}
-	//*********Override field Method ******** */
+
 	getUpdateFields(event: any, data: any) {
 		this.fields.push(data);
 
 
 	}
 
-	// drag and drop csv method //
+
 
 	@HostListener("dragover", ["$event"]) onDragOver(event: any) {
 		this.dragAreaClass = "droparea";
@@ -575,13 +574,13 @@ importDataLoader! : boolean;
 		}
 	}
 
-	//********************For move next page************************ */
+
 	previous() {
 		this.stepper.previous();
 	}
 
 
-	//******************Update and save csv file data******************** /
+
 	updateAndSave() {
 		var Data = {
 
@@ -593,7 +592,7 @@ importDataLoader! : boolean;
 			"SP_ID":sessionStorage.getItem('SP_ID')
 		}
 		this.apiService.update(Data).subscribe((Data: any) => {
-           console.log(Data)
+
 		})
 
 		this.selectedIdentifier.length = 0;
@@ -602,27 +601,26 @@ importDataLoader! : boolean;
 
 	}
 
-	//************************* Select Identifier of imported file ********************************* */
+
 
 	onSelected(value: any) {
-		console.log("onSelected"+value)
+
 		this.Identifier = value
 		this.selectedIdentifier.length = 0;
 
 		this.selectedIdentifier.push(value);
-		console.log("onSelected" + this.selectedIdentifier)
+
 
 	}
 
-	//*******************************Select purose of imported file******************************************* */
+
 	onSelectPurpose(value: any) {
 		this.purpose = value;
 	}
 
-	//*************************Updated and added data count*************************** /
+
 	updatedDataCount() {
-		console.log("update count" + this.records.length)
-		console.log(this.importedData)
+
 		var csvdata = {
 			"field": this.fields,
 			"identifier": this.selectedIdentifier,
@@ -637,12 +635,12 @@ importDataLoader! : boolean;
 			this.numberOfNewContact = data.newCon
 			this.skipCont = data.skipCont
 			this.importCSVdata = data.importData
-			console.log(this.numberOfNewContact)
+
 		})
 
 	}
 
-	//*************************Get Custom Fields Data Columns*************************** /
+
 	getCustomFieldsData() {
 		this._settingsService.getNewCustomField(this.spid).subscribe((response:any) => {
 			
@@ -651,10 +649,7 @@ importDataLoader! : boolean;
 		  this.customFieldData.forEach((item:any)=>{
 			item.isSelected= false;
 		  })
-		  console.log(this.customFieldData,'custom data');  
-		//   for(let i=0;i<this.customFieldData.length;i++){
-		// 	this.customFieldData[i][isSelected] = false;
-		//   }
+
 		});	  
 	  }
 

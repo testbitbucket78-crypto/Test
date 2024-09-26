@@ -3,7 +3,6 @@
 	<p *ngIf="successMessage" class="success">{{successMessage}}</p>
 	<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 </div>
-<!-- Rewritten by rishabhsingh@stacknize.com -->
 
 <div class="row h-100">
 	<div class="bs-stepper col-lg-12 h-100">
@@ -100,8 +99,6 @@
 											  </div>
 											<div class="box3 p-3">
 												<div class="overflow-container">
-												<!-- <p><sb-read-more *ngFor="let t of text" [content]="t" [limit]="245" [completeWords]="true">		
-																							</sb-read-more></p> -->
 												<div class="import contact info_box">
 													<p class="info">
 														<span>1. Use only EXCEL or CSV file format.</span>
@@ -113,17 +110,6 @@
 												</div>
 											</div>
 											</div>
-											<!-- <div>
-																							<label for="floatingSelectGrid">Message Opt-In</label>
-																							<div class="form-floating">
-																								<select class="form-select" id="floatingSelectGrid"
-																									aria-label="Floating label select example" [(ngModel)]="messageOptIn">
-																									<option value="" selected disabled>Select Message Opt-In</option>
-																									<option value="Yes">Yes</option>
-																									<option value="No">No</option>
-																								</select>
-																							</div>
-																						</div> -->
 										</div>
 									</div>
 								</div>
@@ -207,11 +193,11 @@
 						</p>
 						<div class="d-flex justify-content-center">
 						  <button type="button" class="btn closeErrorModal" (click)="closeErrorModal()">Close</button>
+						  
 					    </div>
 					</div>
 				</ng-template>
 
-				<!--column mapping step 2-->
 
 				<div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
 
@@ -263,14 +249,6 @@
 												  
 
 
-												<!-- <input type="text" class="form-control" name="column-mapping"
-													placeholder="Select column or attribute" [value]="fields+ith"> -->
-													<!-- <div *ngIf="false" class="popup-dialog ContactOption">
-														<p *ngFor="let fieldData of customFieldData" 
-														   (click)="selectColumnMapping(fieldData.ActuallName)">
-														  {{fieldData.ActuallName}}
-														</p>
-													</div> -->
 											</div>
 											<div class="col-auto d-flex align-items-center active-toggle">
 												<label for="toggle-switch{{ith}}" class="m-0 switch">
