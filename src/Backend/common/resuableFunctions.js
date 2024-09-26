@@ -98,6 +98,63 @@ async function isStatusEmpty(InteractionId, spid,cusid) {
       return [];
     }
   }
-  
 
-  module.exports  ={isStatusEmpty,getDefaultAttribue}
+
+  async function isWorkingTime(sid) {
+    //console.log(data)
+    const currentTime = new Date();
+    let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
+    var workingData = await db.excuteQuery(workingHourQuery, [sid]);
+    const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    const currentTimeStr = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    let datetime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
+    // console.log(currentDay)
+    const time = new Date()
+  
+    for (const item of workingData) {
+      const workingDays = item.working_days.split(',');
+      const date = new Date(datetime).getHours();
+      const getMin = new Date(datetime).getMinutes();
+      // console.log(date + " :::::::" + getMin)
+      const start_time = (item.start_time).replace(/\s*(AM|PM)/, "");
+      const end_time = (item.end_time).replace(/\s*(AM|PM)/, "");
+      const startTime = start_time.split(':');
+      const endTime = end_time.split(':');
+       console.log(startTime + " " + endTime + workingDays.includes(currentDay))
+      // console.log(endTime[0] + " " + date + endTime[1] + "| " + getMin)
+      if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
+        console.log("data===========")
+        return true;
+      }
+     
+  
+  
+    }
+  
+    return false;
+  }
+  
+  async function isHolidays(spid) {
+    // Execute the query to get holidays for the given SP_ID
+    let getHolidays = await db.excuteQuery('SELECT id, SP_ID, month, DATE_FORMAT(holiday_date,"%Y-%m-%d") as holiday_date FROM holidays WHERE SP_ID = ? AND isDeleted != 1', [spid]);
+    
+  
+    // Check if today is a holiday
+    const isTodayHoliday = (getHolidays) => {
+      const today = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+      return getHolidays.some(holiday => {
+        const holidayDate = holiday.holiday_date//.toISOString().split('T')[0]; // Extract 'YYYY-MM-DD' from the returned holiday date
+        return holidayDate === today;
+      });
+    };
+  
+    if (isTodayHoliday(getHolidays)) {
+      console.log("Today is a holiday!");
+      return true;
+    } else {
+      console.log("Today is not a holiday.");
+      return false;
+    }
+  }
+
+  module.exports  ={isStatusEmpty,getDefaultAttribue,isHolidays,isWorkingTime}
