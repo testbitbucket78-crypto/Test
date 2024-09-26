@@ -215,7 +215,7 @@
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Other's</span>
 									</p>
 									<div class="popup-dialog AssignOption agent-list">
-										<div *ngFor="let user of agentsList;let k = index">
+										<div *ngFor="let user of assigineeList;let k = index">
 									<p class="d-flex align-items-center px-2 py-1" 
 										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)" *ngIf="user.uid != uid" [class.disabled]="!((selectedInteraction.assignTo?.AgentId == -1 || !selectedInteraction.assignTo?.AgentId) && !settingsService.checkRoleExist('14')) && !(selectedInteraction.assignTo?.AgentId != -1 && !settingsService.checkRoleExist('16'))">
 										<span class="text-capitalize initials"> {{ user.nameInitials }} </span>

@@ -285,6 +285,10 @@ const headers = new HttpHeaders({
   }
 
   getUserList(spId:number,isActive:number =0): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getUsers/${spId}`);
+  }
+
+  getActiveUserList(spId:number,isActive:number =0): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getActiveUser/${spId}/${isActive}`);
   }
 
