@@ -5,6 +5,8 @@ const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js')
 const puppeteer = require('puppeteer')
 // const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
+const val = require('../settings/constant.js')
 const cors = require('cors')
 app.use(bodyParser.json());
 app.use(cors());
@@ -289,6 +291,7 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on('disconnected', (reason) => {
         setTimeout(async () => {
           try {
+            sendMailOnDisconnection(phoneNo,spid);
             console.log("disconnected", new Date().toUTCString());
 
             if (clientSpidMapping.hasOwnProperty(spid)) {
@@ -399,6 +402,55 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
   })
 }
 
+let transporter = nodemailer.createTransport({
+  // service: 'SMTP',
+  host: val.emailHost,
+  port: val.port,
+  secure: true,
+  auth: {
+      user: val.email,
+      pass: val.appPassword
+  },
+  port: val.port,
+  host: val.emailHost
+});
+async function sendMailOnDisconnection(phoneNo, spid) {
+  try {
+    const userData = await db.excuteQuery('SELECT name, mobile_number, email_id FROM user WHERE SP_ID = ? AND mobile_number = ? AND isDeleted != 1', [spid, phoneNo]);
+    if (userData.length > 0) {
+      const userName = userData[0].name;
+      const number = userData[0].mobile_number;
+      const email_id = userData[0].email_id; 
+      
+var mailOptions = {
+  from: val.email,
+  to: email_id,
+  subject: 'Alert! Engagekart Channel Disconnected',
+  text: `Dear ${userName},
+
+Your Engagekart Channel ${userName} and ${number} is logged out. Your immediate action is required to ensure seamless flow of services and that messages from customers are received.
+
+Please login to your Engagekart Account > Settings > Account Settings > Channels and connect your channel again to ensure no interruption to your scheduled campaigns, automated customer replies, or other automations.
+
+Best regards,
+Team Engagekart`
+};
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error('Error encountered while sending mail:', error);
+        } else {
+          console.log('Mail sent successfully:', info);
+        }
+      });
+      
+    } else {
+      console.error('No user data found for the given spid and number --------------------------------------------------------------');
+    }
+
+  } catch (err) {
+    console.error('Error encountered while sending mail during the process:', err);
+  }
+}
 
 function getCircularReplacer() {
   const seen = new WeakSet();

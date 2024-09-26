@@ -487,7 +487,7 @@ addFunds(addFundsSuccess: any) {
 
 // get teambox notification data
 getNotificationData() {
-  this.apiService.getNotifications(this.spId).subscribe((response=> {
+  this.apiService.getNotifications(this.spId,this.uid).subscribe((response=> {
     this.notificationData = response.notifications;
     this.notificationData.reverse();
 

@@ -225,6 +225,7 @@ export class RolesSettingsComponent implements OnInit {
                         rightsID: item?.rightsID,
                         subRights: item?.subRights,
                         isSelected: false,
+                        accessRight: item?.accessRight
                     });
                 }
             });
@@ -426,15 +427,24 @@ export class RolesSettingsComponent implements OnInit {
           }
       }
 
-      getDisableRight(subRightId:any){
-        if(this.disabledRights.includes(subRightId)){
+      getDisableRight(subRight:any,index:any){
+        if(this.disabledRights.includes(subRight?.id)){
             return true;
+        } else if(subRight.accessRight == 1){
+            let subrights =this.totalRights[index].subRights.filter((item:any)=>item.isSelected == true);
+            if(subrights.length>1 && subRight?.isSelected)
+                return true;
+            else
+                return false;
         } else return false;
       }
 
       setFirstRight(index:any,event:any){
         console.log(event);
-        if(event.target.checked)
-            this.totalRights[index].subRights[0].isSelected = true;
+        if(event.target.checked){
+            let idx = this.totalRights[index].subRights.findIndex((item:any)=> item.accessRight == 1);
+            if(idx >-1)
+                this.totalRights[index].subRights[idx].isSelected = true;
+        }
       }
 }
