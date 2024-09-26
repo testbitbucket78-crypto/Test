@@ -49,6 +49,26 @@ console.log("replymessage",replymessage)
   }
 }
 
+async function getOutMessageAfterIn(newId,sid){
+  try{
+    let isAgentReplyQuery = `SELECT * 
+FROM Message m
+JOIN Interaction i ON m.interaction_id = i.InteractionId
+WHERE m.interaction_id = ?
+  AND m.SPID = ?
+  AND m.message_direction = 'Out' and m.msg_status != 9 AND m.msg_status != 10
+  AND m.created_at >= i.updated_at;`
+
+  let isAgentReply = await db.excuteQuery(isAgentReplyQuery,[newId,sid]);
+  if(isAgentReply?.length){
+   return false;
+  }
+  return true;
+
+  }catch(err){
+    console.log("Err getOutMessageAfterIn",err)
+  }
+}
 
 
 
@@ -61,9 +81,14 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
   const timeoutDuration = inactiveTimeOut * 60 * 1000; // Convert minutes to milliseconds
   console.log(timeoutDuration, inactiveTimeOut)
   // Set timeout to trigger inactivity check after the specified period
-  setTimeout(() => {
-    inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId, agid);
-  }, timeoutDuration)
+
+  let isChatReplied = await getOutMessageAfterIn(newId,sid);
+  if(isChatReplied == true){
+    setTimeout(() => {
+      inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId, agid);
+    }, timeoutDuration)
+  }
+
   if (newiN == 'If not exist') {
     let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newId, phone_number_id, from, channelType, agid, isContactPreviousDeleted,custid);
     console.log("defautWlcMsg", defautWlcMsg)
@@ -109,7 +134,7 @@ async function inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId, 
         //  console.log("isReplySended",isReplySended)
         if (isReplySended?.length <= 0) {
           let inactiveUser = await db.excuteQuery('update user set IsActive =0 where uid =? and SP_ID=?', [isChatAssign[0]?.AgentId, sid]);
-          let updateMapping = await db.excuteQuery('Update InteractionMapping set AgentId = -1 where MappingId =?', [isChatAssign[0]?.MappingId]);
+          let updateMapping = await db.excuteQuery('Update InteractionMapping set AgentId = -1 ,isAgentInactiveTimeOut=1 where MappingId =?', [isChatAssign[0]?.MappingId]);
           console.log("inactiveUser", inactiveUser?.affectedRows, "updateMapping", updateMapping?.affectedRows)
         }
       }
