@@ -172,14 +172,22 @@ async function parseMessageForCSV(content, contact, messageVariable) {
     message_variables.forEach(variable => {
       const label = variable.label;
       const value = variable.value;
-      content = content.replace(new RegExp(label, 'g'), value);
+      const regex = new RegExp(label);
+
+      content = content.replace(regex, (match) => {
+        if (contact.hasOwnProperty(value)) {
+          return contact[value]; 
+        } else {
+          return value;
+        }
+      });
     });
   }
   // Replace any remaining placeholders in the content with values from the contact object
-  Object.keys(contact).forEach(key => {
-    const value = contact[key];
-    content = content.replace(new RegExp(`{{${key}}}`, 'g'), value);
-  });
+  // Object.keys(contact).forEach(key => {
+  //   const value = contact[key];
+  //   content = content.replace(new RegExp(`${key}`, 'g'), value);
+  // });
 
   return content;
 }
@@ -242,7 +250,7 @@ async function mapPhoneNumberfomCSV(message) {
 
     var contacts = JSON.parse(message.csv_contacts);
 
-    var type = 'image';
+    var type = message?.media_type;
     if (message.message_media == null || message.message_media == "") {
       type = 'text';
     }
@@ -576,6 +584,7 @@ async function isClientActive(spid) {
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, campaignId, message,message_content) {
   //console.log("messageThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
   let getMediaType = determineMediaType(type);
+  if(getMediaType === 'unknown' && media) getMediaType = determineMediaFromLink(media);
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
     let response = await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from);
@@ -608,6 +617,24 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     }
 
   }
+}
+function determineMediaFromLink(link) {
+  try{
+  const fileExtension = link.split('.').pop().toLowerCase();
+
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension)) {
+        return 'image';
+    } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm'].includes(fileExtension)) {
+        return 'video';
+    } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'].includes(fileExtension)) {
+        return 'document';
+    } else {
+        return 'unknown'; 
+    }
+  } catch(error){
+       console.error('Error while extracting media type from link:', error.message);
+       return 'unknown'; 
+    }
 }
 
 async function campaignAlertsThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType) {
