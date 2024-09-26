@@ -429,7 +429,6 @@ getPhoneNumberValidation(){
 checks=false
 bulk(e: any) {
   if (e.target.checked == true) {
-    console.log(this.contacts[0].customerId)
     for (var i = 0; i < this.contacts.length; i++) {
       this.checkedcustomerId.push(this.contacts[i].customerId)
       this.checkedConatct.push(this.contacts[i]);
@@ -441,8 +440,6 @@ bulk(e: any) {
     this.checkedcustomerId = [];
     this.checkedConatct=[];
   }
-  console.log("this.customerId")
-  console.log(this.checkedcustomerId)
 }
 
 showToaster(message:any,type:any){

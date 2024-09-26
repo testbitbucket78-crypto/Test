@@ -82,7 +82,7 @@
                     <div *ngFor="let item of totalRights;let i = index">
                         <div class="rights-name">{{item?.rightName}}</div>
                         <div *ngFor="let subRight of item?.subRights;let idx = index;" class="sub-rights custom-checkbox">
-                            <input type="checkbox" [(ngModel)]="subRight.isSelected" name="isAgentActive{{idx}}" id="isAgentActive{{idx}}_{{i}}" (change)="setFirstRight(i,$event)" [disabled]="getDisableRight(subRight.id)" class="checkBox custom-control-input">
+                            <input type="checkbox" [(ngModel)]="subRight.isSelected" name="isAgentActive{{idx}}" id="isAgentActive{{idx}}_{{i}}" (change)="setFirstRight(i,$event)" [disabled]="getDisableRight(subRight,i)" class="checkBox custom-control-input">
                             <label class="custom-control-label" for="isAgentActive{{idx}}_{{i}}">
                             <span >&nbsp;&nbsp;{{subRight?.subRights}}</span>
                         </label>
