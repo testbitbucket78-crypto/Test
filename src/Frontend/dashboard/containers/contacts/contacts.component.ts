@@ -1308,6 +1308,15 @@ timeFormatter(params: any): string {
     obj.hide = !value;
     let hiddenColumns = this.columnDefs.filter(o => o.hide === false);
     let actionColumn:any = this.columnDefs.find(o => o.headerName === 'Actions');
+    // if (hiddenColumns?.length > 11) {
+    //   actionColumn.width = 300;
+    // } else {
+    //   actionColumn.width = 150;
+    //   setTimeout(() => {
+    //     this.gridOptions.api.sizeColumnsToFit();
+    //   }, 10)
+    //   console.log('hjghj')
+    // }
     this.gridapi.setColumnDefs(this.columnDefs);
     this.storeGridConfig();
   }

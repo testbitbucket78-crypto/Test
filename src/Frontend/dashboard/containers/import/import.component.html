@@ -154,6 +154,30 @@
 									</select>
 								</div>
 							</div>
+							<!-- <div class="ml-4">
+								<label class="px-1" for="floatingSelectGrid">Identifier</label>
+								<div class="info-container">
+									
+									<div class="Info-Iconn">
+										<img src="../../../../assets/img/settings/Info-icons.svg" (click)="identifierTooltip =!identifierTooltip">
+									</div>
+									<div class="identfierTooltip" *ngIf="identifierTooltip">
+										<button id="radio-close-btn" (click)="identifierTooltip=false">X</button>
+										<p class="p-body">
+											Identifier will be a primary column, selected identifier will be kept as primary column and no duplicate entries can be made there.
+										</p>
+									</div>
+								</div>
+								<div class="form-floating">
+									<select class="form-select" id="floatingSelectGrid"
+											aria-label="Floating label select example" #identifier
+											(change)="onSelected(identifier.value)">
+										<option value="Phone_number">Phone Number</option>
+									</select>
+								</div>
+								<span *ngIf="Identifier==='Phone_number'" id="worksa">Phone Number works as identifier</span>
+								<span *ngIf="Identifier==='emailId'" id="worksa">Email ID works as identifier</span>
+							</div> -->
 						</div>
 					
 					</div>
@@ -169,6 +193,7 @@
 						</p>
 						<div class="d-flex justify-content-center">
 						  <button type="button" class="btn closeErrorModal" (click)="closeErrorModal()">Close</button>
+						  
 					    </div>
 					</div>
 				</ng-template>
