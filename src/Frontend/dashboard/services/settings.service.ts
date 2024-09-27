@@ -91,35 +91,85 @@ export class SettingsService {
   }
   }
 
-  convertTimeFormat(time: string,isStaticFormate:boolean = false): string {
-    let format = isStaticFormate ? '24':this.timeFormat;
-    if(time){
-    if (format === '24') {
-        const [timePart, modifier] = time.split(' ');
-        let [hours, minutes] = timePart.split(':');
+//   convertTimeFormat(time: string,isStaticFormate:boolean = false): string {
+//     let format = isStaticFormate ? '24':this.timeFormat;
+//     if(time){
+//     if (format === '24') {
+//         const [timePart, modifier] = time.split(' ');
+//         let [hours, minutes] = timePart.split(':');
 
-        if (hours === '12') {
-            hours = '00';
-        }
-        if (modifier === 'PM') {
-            hours = (parseInt(hours, 10) + 12).toString();
-        }
-        return `${hours.padStart(2, '0')}:${minutes}`;
-    } else {
-        let [hours, minutes] = time.split(':');
-        minutes = minutes.split(' ')[0];
-        const modifier = parseInt(hours, 10) >= 12 ? 'PM' : 'AM';
-        if (parseInt(hours, 10) === 0) {
-            hours = '12';
-        } else if (parseInt(hours, 10) > 12) {
-            hours = (parseInt(hours, 10) - 12).toString();
-        }
-        return `${hours.padStart(2, '0')}:${minutes} ${modifier}`;
+//         if (hours === '12') {
+//             hours = '00';
+//         }
+//         if (modifier === 'PM') {
+//             hours = (parseInt(hours, 10) + 12).toString();
+//         }
+//         return `${hours.padStart(2, '0')}:${minutes}`;
+//     } else {
+//         let [hours, minutes] = time.split(':');
+//         minutes = minutes.split(' ')[0];
+//         const modifier = parseInt(hours, 10) >= 12 ? 'PM' : 'AM';
+//         if (parseInt(hours, 10) === 0) {
+//             hours = '12';
+//         } else if (parseInt(hours, 10) > 12) {
+//             hours = (parseInt(hours, 10) - 12).toString();
+//         }
+//         return `${hours.padStart(2, '0')}:${minutes} ${modifier}`;
+//     }
+//   }else
+//     return '';
+// }
+
+convertTimeFormat(time: string | null | undefined, isStaticFormate: boolean = false): string {
+  if (!time || typeof time !== 'string') {
+    return ''; 
+  }
+
+  let format = isStaticFormate ? '24' : this.timeFormat;
+  const trimmedTime = time.trim(); 
+
+  if (format === '24') {
+    const [timePart, modifier] = trimmedTime.split(' ');
+
+    if (!timePart || !modifier) {
+      return ''; 
     }
-  }else
-    return '';
-}
 
+    let [hours, minutes] = timePart.split(':');
+    
+    if (!hours || !minutes) {
+      return ''; 
+    }
+
+    if (hours === '12') {
+      hours = '00';
+    }
+    if (modifier === 'PM' && hours !== '00') {
+      hours = (parseInt(hours, 10) + 12).toString();
+    }
+
+    return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+
+  } else {
+    let [hours, minutes] = trimmedTime.split(':');
+
+    if (!hours || !minutes) {
+      return ''; 
+    }
+
+    minutes = minutes.split(' ')[0] || '00'; 
+    const hourNumber = parseInt(hours, 10);
+
+    const modifier = hourNumber >= 12 ? 'PM' : 'AM';
+    if (hourNumber === 0) {
+      hours = '12';
+    } else if (hourNumber > 12) {
+      hours = (hourNumber - 12).toString();
+    }
+
+    return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')} ${modifier}`;
+  }
+}
 
   getInitials(name:any){
     let intials ='';
@@ -235,6 +285,10 @@ const headers = new HttpHeaders({
   }
 
   getUserList(spId:number,isActive:number =0): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getUsers/${spId}`);
+  }
+
+  getActiveUserList(spId:number,isActive:number =0): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getActiveUser/${spId}/${isActive}`);
   }
 

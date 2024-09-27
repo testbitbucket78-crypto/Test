@@ -188,6 +188,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	messageMediaFile: string = '';
 	variableValues:string[]=[];
 	agentsList:any = [];
+	assigineeList:any = [];
 	filteredAgentList: any;
 	mentionAgentsList:any = [];
 	modalReference: any;
@@ -3606,6 +3607,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
                 item.nameInitials = nameInitials;
             });
 			this.mentionAgentsList = this.agentsList.filter((item:any)=>item.uid != this.uid);
+			this.assigineeList = this.agentsList.filter((item:any)=>item.isActive == 1);
 			  }
 			});
 		  }
@@ -3885,7 +3887,12 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			let val = value ? value.split(':')[0] : '';
 			console.log(val);
 			this.editContact.get(prop)?.setValue(val);
-		  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
+		  }
+		  else if( idx>-1 &&  this.filteredCustomFields[idx] && this.filteredCustomFields[idx].type == 'Time'){
+			let val =this.settingsService.convertTimeFormat(value,true);
+			this.editContact.get(prop)?.setValue(val)
+		  }
+		  else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
 			if(value){
 			let val = value.split(':');
 			console.log(val);

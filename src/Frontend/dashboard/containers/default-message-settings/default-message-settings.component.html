@@ -49,7 +49,7 @@
                         <input  *ngIf="selectedCategory==1" class="form-control" id="autoreply" name="autoreply" 
                             type="text" formControlName="autoreply"
                             [ngClass]="{'is-invalid':defaultMessageForm.controls.autoreply.touched && defaultMessageForm.controls.autoreply.errors}"
-                            placeholder="Enter reply timeout (1-120 minutes)">
+                            placeholder="Enter reply timeout (5-120 minutes)">
 
                         <label *ngIf="selectedCategory==5" class="pb-2 form-label" for="autoreply">No Customer Reply Timeout 
                             <span class="text-danger">*</span>
@@ -57,7 +57,7 @@
                         <input *ngIf="selectedCategory==5" class="form-control" id="autoreply" name="autoreply" 
                             type="text" formControlName="autoreply"
                             [ngClass]="{'is-invalid':defaultMessageForm.controls.autoreply.touched && defaultMessageForm.controls.autoreply.errors}"
-                            placeholder="Enter reply timeout (1-1440 minutes)">
+                            placeholder="Enter reply timeout (5-1440 minutes)">
 
                             <div *ngIf="defaultMessageForm.controls.autoreply.touched && defaultMessageForm.controls.autoreply.hasError('required')"
 							class="text-danger">
