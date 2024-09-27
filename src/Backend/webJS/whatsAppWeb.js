@@ -12,6 +12,7 @@ const fs = require('fs')
 const path = require('path');
 const { exec } = require('child_process');
 const logger = require('../common/logger.log');
+var processSet = new Set();
 // const { MessageMedia, Location, Contact } = require('whatsapp-web.js');
 app.get('/get', (req, res) => {
     res.send("webjs is working")
@@ -20,12 +21,18 @@ app.get('/get', (req, res) => {
 app.post('/craeteQRcode', async (req, res) => {
 
     try {
-        console.log("get")
+        
         spid = req.body.spid;
         phoneNo = req.body.phoneNo
 
-
+        let isProcessing = processStart(spid); // To check Process for SPID 
+        console.log(`current: ${spid}, current processSet:`, processSet);
+        if(!isProcessing){
+            return res.status(409).json({ value: 'QR Generation already in progress for this spId' });
+          }
         let response = await web.createClientInstance(spid, phoneNo);
+        processSet.delete(spid);
+        console.log(`Deleted spid: ${spid}, current processSet:`, processSet);
         logger.info(`response of create QR CODE  ${JSON.stringify(response.status)}`)
         res.send({
             status: response.status,
@@ -33,6 +40,7 @@ app.post('/craeteQRcode', async (req, res) => {
         })
 
     } catch (err) {
+        processSet.delete(spid);
         logger.error(`err of create QR CODE ${err}`)
          res.send({
             status: 500,
@@ -41,6 +49,21 @@ app.post('/craeteQRcode', async (req, res) => {
 
     }
 })
+
+function processStart(spId) {
+    if (processSet.has(spId)) {
+      console.error(`Error: Process already running for spId: ${spId}`);
+      return false; 
+    }
+      processSet.add(spId);
+      console.log(`Process started for spId: ${spId}`);
+      const timeoutId = setTimeout(() => {
+        processSet.delete(spId);
+        console.log(`Process timed out for spId: ${spId}`);
+        processTimeouts.delete(spId); // if any case the try and catch block dont get triggered 
+    }, 15000); 
+    return true;
+  }
 
 app.post('/sendMessage', async (req, res) => {
     try {

@@ -107,6 +107,7 @@ function ClientInstance(spid, authStr, phoneNo) {
           headless: true,
          executablePath: "/usr/bin/google-chrome-stable",
        // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+       // executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
 
           args: [
             '--no-sandbox',
