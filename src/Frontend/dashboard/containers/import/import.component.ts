@@ -64,6 +64,7 @@ export class ImportComponent implements OnInit {
 	dragAreaClass: string='';
 	messageOptIn:string = '';
 	identifierTooltip: boolean = false;
+    userList!:any;
 
 	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService,private _settingsService:SettingsService,private router:Router) {
 
@@ -86,6 +87,7 @@ export class ImportComponent implements OnInit {
 		});
 
 		this.getCustomFieldsData();
+		this.getUserList();
 		this.dragAreaClass = "dragarea";
 	}
 
@@ -223,7 +225,15 @@ export class ImportComponent implements OnInit {
 		}
 	}
 
-
+	getUserList(){
+		this._settingsService.getUserList(this.spid,1)
+		.subscribe(result =>{
+		  if(result){
+			  this.userList =result?.getUser;  
+		  }
+		})
+	  }
+//*********After upload read file *********/
 	onUpload(event: any) {
 		this.file = event.target.files[0];
 		this.fileName = this.truncateFileName(this.file.name, 25);
@@ -430,7 +440,8 @@ export class ImportComponent implements OnInit {
 importDataLoader! : boolean;
 	verifyImportedData() {
 		this.importDataLoader = true;
-		const importedData = this.constructContactFormData();
+		let importedData = this.constructContactFormData();
+		if(importedData && this.userList) importedData = this.findUidForContactOwner(importedData, this.userList);
 		const csvData = {
 			importedData: importedData.result,
 		    identifier: this.identifierColumn,
@@ -457,6 +468,24 @@ importDataLoader! : boolean;
 		});
 
 	}
+	findUidForContactOwner(importedData: any, userList: any) {
+		importedData.result.forEach((dataArray: any) => {
+		  const contactOwner = dataArray.find((item:any) => item.ActuallName === 'ContactOwner');
+		  
+		  if (contactOwner) {
+			const matchedUser = userList.find((user: any) => user.name === contactOwner.displayName);
+			
+			if (matchedUser) {
+			  dataArray.push({
+				displayName: matchedUser.uid,
+				ActuallName: 'uid'
+			  });
+			}
+		  }
+		});
+		return importedData;
+	  }
+	  
 
 
 

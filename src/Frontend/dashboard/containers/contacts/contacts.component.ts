@@ -775,6 +775,14 @@ onChangePage(pageOfItems: any) {
 saveContact(addcontact:any,addcontacterror:any,isEditTag:boolean=false) {
   let contactData = this.copyContactFormData(isEditTag)
   this.submitted = true;
+  const contactOwner = contactData.result.find((item:any) => item.ActuallName === 'ContactOwner');
+  if(contactOwner) {
+    const uidFound = this.userList.find((item:any) => item?.name == contactOwner.displayName);
+    if (uidFound) contactData.result.push({
+      displayName: uidFound?.uid,
+      ActuallName: 'uid'
+    })
+  }
 
 
   if(this.contactId) {
