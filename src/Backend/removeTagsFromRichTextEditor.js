@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { trace } = require('console');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -215,38 +216,150 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
 
 
 
-function convertHTML(htmlString) {
-  // Replace <p> and <br> tags with newline characters
+// function convertHTML(htmlString) {
+//   // Replace <p> and <br> tags with newline characters
 
-  let result = htmlString.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
-  result = result.replace(/<strong>(.*?)<\/strong>/g, '*$1*');
-  // Replace <em> tags with underscores
-  result = result.replace(/<em>(.*?)<\/em>/g, '_$1_');
-  //Replace attributes tag
-  // result = result.replace(
-  //   /<span style="color: rgb\(0, 0, 0\);">(.*?)<\/span>/g,
-  //   ''
-  // );
-  // Replace <span> tags with strikethrough
-  // result = result.replace(/<span.*?>\s*(.*?)\s*<\/span>/g, '~$1~');
-   result = result.replace(/<span\s+[^>]*style="[^"]*\btext-decoration:\s*line-through;[^"]*"[^>]*>(.*?)<\/span>/g, '~$1~'); // Add this because span is also attribute tag
+//   let result = htmlString.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
+//   result = result.replace(/<strong>(.*?)<\/strong>/g, '*$1*');
+//   // Replace <em> tags with underscores
+//   result = result.replace(/<em>(.*?)<\/em>/g, '_$1_');
+//   //Replace attributes tag
+//   // result = result.replace(
+//   //   /<span style="color: rgb\(0, 0, 0\);">(.*?)<\/span>/g,
+//   //   ''
+//   // );
+//   // Replace <span> tags with strikethrough
+//   // result = result.replace(/<span.*?>\s*(.*?)\s*<\/span>/g, '~$1~');
+//    result = result.replace(/<span\s+[^>]*style="[^"]*\btext-decoration:\s*line-through;[^"]*"[^>]*>(.*?)<\/span>/g, '~$1~'); // Add this because span is also attribute tag
+//   // Remove any remaining HTML tags
+//   result = result.replace(/<[^>]*>/g, '');
+// // Remove specific attributes from <span> tags
+// result = result.replace(/contenteditable="false" class="e-mention-chip">/g, '');
+// // Remove specific attributes from <a> tags
+// result = result.replace(/\s_ngcontent-[^"]*=""\s?href="mailto:"\s?title="">/g, '');
+// result = result.replace(/\s_ngcontent-yyb-c67[^"]*=""\s?title="">/g, '');
+// //result = result.replace(/\*\s+([^\*]+?)\s*\*/g, '**$1**'); 
+// //result = result.replace(/_\s+([^_]+?)\s*_*/g, '_$1_'); 
+// //result = result.replace(/~\s+([^~]+?)\s*~/g, '~$1~ \n');
+// //result = result.replace(/~\s*(.*?)\s*~/g, ' ~$1~ \n');
+
+// // Fix extra spaces around newlines
+// //result = cleanMessage(result);
+//   return result;
+// }
+function convertHTML(htmlString) {
+
+  let result = htmlString.replace(/&nbsp;/g, ' ');
+  // Replace <p> and <br> tags with newline characters
+    result = result.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
+  
+  // Replace <strong> tags with * (for bold) but ensure no extra spaces around asterisks
+  //result = result.replace(/<strong>\s*(.*?)\s*<\/strong>/g, '*$1*');
+  result = result.replace(/<strong>(.*?)<\/strong>/g, (match, content) => {   
+    const trail = content.match(/(\s+)$/);
+    const trailSpace = trail ? trail[0]:' ';
+
+    const forward = content.match(/^(\s+)/);
+    const forwardSpace = forward ? forward[0]:' ';
+    
+    return (/^\s/.test(content) ? forwardSpace : '') + `*${content.trim()}*` + (/\s$/.test(content) ? trailSpace : '');
+  });
+
+
+  // Replace <em> tags with underscores (for italics)
+  result = result.replace(/<em>(.*?)<\/em>/g, (match, content) => {   
+    const trail = content.match(/(\s+)$/);
+    const trailSpace = trail ? trail[0]:' ';
+
+    const forward = content.match(/^(\s+)/);
+    const forwardSpace = forward ? forward[0]:' ';
+    return (/^\s/.test(content) ? forwardSpace : '') + `_${content.trim()}_` + (/\s$/.test(content) ? trailSpace : '');
+});
+
+
+ // result = result.replace(/<em>\s*(.*?)\s*<\/em>/g, '_$1_');
+  
+  // Replace strikethrough <span> with ~
+  //result = result.replace(/<span\s+[^>]*style="[^"]*\btext-decoration:\s*line-through;[^"]*"[^>]*>\s*(.*?)\s*<\/span>/g, '~$1~');
+  result = result.replace(/<span\s+[^>]*style="[^"]*\btext-decoration:\s*line-through;[^"]*"[^>]*>(.*?)<\/span>/g, (match, content) => {   
+    const trail = content.match(/(\s+)$/);
+    const trailSpace = trail ? trail[0]:' ';
+
+    const forward = content.match(/^(\s+)/);
+    const forwardSpace = forward ? forward[0]:' ';
+    return (/^\s/.test(content) ? forwardSpace : '') + `~${content.trim()}~` + (/\s$/.test(content) ? trailSpace : '');
+  });
+
+
+
+
+  result = result.replace(/_(.*?)_/g, (match, content) => {   
+    const trail = content.match(/(\s+)$/);
+    const trailSpace = trail ? trail[0]:' ';
+
+    const forward = content.match(/^(\s+)/);
+    const forwardSpace = forward ? forward[0]:' ';
+    return (/^\s/.test(content) ? forwardSpace : '') + `_${content.trim()}_` + (/\s$/.test(content) ? trailSpace : '');
+  });
+  result = result.replace(/\*(.*?)\*/g, (match, content) => {   
+    const trail = content.match(/(\s+)$/);
+    const trailSpace = trail ? trail[0]:' ';
+
+    const forward = content.match(/^(\s+)/);
+    const forwardSpace = forward ? forward[0]:' ';
+    return (/^\s/.test(content) ? forwardSpace : '') + `*${content.trim()}*` + (/\s$/.test(content) ? trailSpace : '');
+  });
+   result = result.replace(/~(.*?)~/g, (match, content) => {   
+    const trail = content.match(/(\s+)$/);
+    const trailSpace = trail ? trail[0]:' ';
+
+    const forward = content.match(/^(\s+)/);
+    const forwardSpace = forward ? forward[0]:' ';
+    return (/^\s/.test(content) ? forwardSpace : '') + `~${content.trim()}~` + (/\s$/.test(content) ? trailSpace : '');
+  });
+
+
+
+
+  result = result.replace(/_(.*?)_/g, (match, content) => {   
+    const trail = content.match(/(\s+)$/);
+    const trailSpace = trail ? trail[0]:' ';
+
+    const forward = content.match(/^(\s+)/);
+    const forwardSpace = forward ? forward[0]:' ';
+    return (/^\s/.test(content) ? forwardSpace : '') + `_${content.trim()}_` + (/\s$/.test(content) ? trailSpace : '');
+  });
+  result = result.replace(/\*(.*?)\*/g, (match, content) => {   
+    const trail = content.match(/(\s+)$/);
+    const trailSpace = trail ? trail[0]:' ';
+
+    const forward = content.match(/^(\s+)/);
+    const forwardSpace = forward ? forward[0]:' ';
+    return (/^\s/.test(content) ? forwardSpace : '') + `*${content.trim()}*` + (/\s$/.test(content) ? trailSpace : '');
+  });
+   result = result.replace(/~(.*?)~/g, (match, content) => {   
+    const trail = content.match(/(\s+)$/);
+    const trailSpace = trail ? trail[0]:' ';
+
+    const forward = content.match(/^(\s+)/);
+    const forwardSpace = forward ? forward[0]:' ';
+    return (/^\s/.test(content) ? forwardSpace : '') + `~${content.trim()}~` + (/\s$/.test(content) ? trailSpace : '');
+  });
+
+
   // Remove any remaining HTML tags
   result = result.replace(/<[^>]*>/g, '');
-// Remove specific attributes from <span> tags
-result = result.replace(/contenteditable="false" class="e-mention-chip">/g, '');
-// Remove specific attributes from <a> tags
-result = result.replace(/\s_ngcontent-[^"]*=""\s?href="mailto:"\s?title="">/g, '');
-result = result.replace(/\s_ngcontent-yyb-c67[^"]*=""\s?title="">/g, '');
-//result = result.replace(/\*\s+([^\*]+?)\s*\*/g, '**$1**'); 
-//result = result.replace(/_\s+([^_]+?)\s*_*/g, '_$1_'); 
-//result = result.replace(/~\s+([^~]+?)\s*~/g, '~$1~ \n');
-//result = result.replace(/~\s*(.*?)\s*~/g, ' ~$1~ \n');
 
-// Fix extra spaces around newlines
-//result = cleanMessage(result);
+
+  result = result.replaceAll(/&amp;/g, '&').replaceAll(/&lt;/g, '<').replaceAll(/&gt;/g, '>') 
+    
+   
+
+  // Clean up remaining extra spaces (optional but helpful)
+ // result = result.replace(/\s+/g, ' ').trim();
+
   return result;
 }
-
 
 function cleanMessage(result) {
   if (!result) return result;
@@ -360,13 +473,14 @@ const modifiedString = modifyString(originalString);
 
 
 async function removeTagsFromMessages(originalString) {
+  console.log(originalString , "originalString")
   const modifiedString = modifyString(originalString);
-  // console.log("modifiedString",modifiedString);
-  let convertedMessageText = convertHTML(removeEmptyTags(modifiedString))
+   //console.log("modifiedString",modifiedString);
+  let convertedMessageText = convertHTML(removeEmptyTags(originalString))
   console.log(convertedMessageText,'modifying string');
-  let val = fixBoldItalicSpacing(convertedMessageText)
+  //let val = fixBoldItalicSpacing(convertedMessageText)
   //console.log("convertHTML(removeEmptyTags(modifiedString))",convertedMessageText);
-  return val;
+  return convertedMessageText;
 }
 function fixBoldItalicSpacing(result) {
   result = result.replace(/\*\s+(.*?)\s*\*/g, ' *$1*');
@@ -375,9 +489,9 @@ function fixBoldItalicSpacing(result) {
   result = result.replace(/_(.*?)_(?!\s|[.,!?])/g, '_$1_ ');
   return result;
 }
-setTimeout(() => {
-  removeTagsFromMessages(originalString);
-}, 100);
+// setTimeout(() => {
+//   removeTagsFromMessages(originalString);
+// }, 100);
 
 
 
